@@ -57,18 +57,16 @@ SmallDeformationLocalAssemblerFracture<ShapeFunction, IntegrationMethod,
 
     auto mat_id = (*_process_data._mesh_prop_materialIDs)[e.getID()];
     auto frac_id = _process_data._map_materialID_to_fractureID[mat_id];
-    _fracture_property = _process_data._vec_fracture_property[frac_id].get();
+    _fracture_property = &_process_data.fracture_properties[frac_id];
     for (auto fid : process_data._vec_ele_connected_fractureIDs[e.getID()])
     {
         _fracID_to_local.insert({fid, _fracture_props.size()});
-        _fracture_props.push_back(
-            _process_data._vec_fracture_property[fid].get());
+        _fracture_props.push_back(&_process_data.fracture_properties[fid]);
     }
 
     for (auto jid : process_data._vec_ele_connected_junctionIDs[e.getID()])
     {
-        _junction_props.push_back(
-            _process_data._vec_junction_property[jid].get());
+        _junction_props.push_back(&_process_data.junction_properties[jid]);
     }
 
     SpatialPosition x_position;
@@ -100,7 +98,7 @@ SmallDeformationLocalAssemblerFracture<ShapeFunction, IntegrationMethod,
 
         ip_data._C.resize(DisplacementDim, DisplacementDim);
 
-        ip_data._aperture0 = (*_fracture_property->aperture0)(0, x_position)[0];
+        ip_data._aperture0 = _fracture_property->aperture0(0, x_position)[0];
         ip_data._aperture_prev = ip_data._aperture0;
 
         _secondary_data.N[ip] = sm.N;
@@ -177,12 +175,6 @@ void SmallDeformationLocalAssemblerFracture<
     SpatialPosition x_position;
     x_position.setElementID(_element.getID());
 
-    std::size_t this_frac_local_index = 0;
-    for (; this_frac_local_index < _fracture_props.size();
-         this_frac_local_index++)
-        if (_fracture_props[this_frac_local_index] == _fracture_property)
-            break;
-
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         x_position.setIntegrationPoint(ip);
@@ -201,7 +193,7 @@ void SmallDeformationLocalAssemblerFracture<
 
         Eigen::Vector3d const ip_physical_coords(
             computePhysicalCoordinates(_element, N).getCoords());
-        std::vector<double> const levelsets(du_global_enrichments(
+        std::vector<double> const levelsets(duGlobalEnrichments(
             _fracture_property->fracture_id, _fracture_props, _junction_props,
             _fracID_to_local, ip_physical_coords));
 
@@ -283,12 +275,6 @@ void SmallDeformationLocalAssemblerFracture<ShapeFunction, IntegrationMethod,
         vec_nodal_g.push_back(sub);
     }
 
-    std::size_t this_frac_local_index = 0;
-    for (; this_frac_local_index < _fracture_props.size();
-         this_frac_local_index++)
-        if (_fracture_props[this_frac_local_index] == _fracture_property)
-            break;
-
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         x_position.setIntegrationPoint(ip);
@@ -307,7 +293,7 @@ void SmallDeformationLocalAssemblerFracture<ShapeFunction, IntegrationMethod,
 
         Eigen::Vector3d const ip_physical_coords(
             computePhysicalCoordinates(_element, N).getCoords());
-        std::vector<double> const levelsets(du_global_enrichments(
+        std::vector<double> const levelsets(duGlobalEnrichments(
             _fracture_property->fracture_id, _fracture_props, _junction_props,
             _fracID_to_local, ip_physical_coords));
 
@@ -326,10 +312,12 @@ void SmallDeformationLocalAssemblerFracture<ShapeFunction, IntegrationMethod,
         // aperture
         b_m = ip_data._aperture0 + w[index_normal];
         if (b_m < 0.0)
+        {
             OGS_FATAL(
                 "Element %d, gp %d: Fracture aperture is %g, but it must be "
                 "non-negative.",
                 _element.getID(), ip, b_m);
+        }
 
         // local C, local stress
         mat.computeConstitutiveRelation(

@@ -60,7 +60,9 @@ std::unique_ptr<Process> createSmallDeformationProcess(
                 "'displacement_junctionN'");
         }
         if (pv_name.find("displacement_jump") == 0)
+        {
             n_var_du++;
+        }
 
         auto variable = std::find_if(variables.cbegin(), variables.cend(),
                                      [&pv_name](ProcessVariable const& v) {
@@ -146,25 +148,22 @@ std::unique_ptr<Process> createSmallDeformationProcess(
     }
 
     // Fracture properties
-    std::vector<std::unique_ptr<FractureProperty>> vec_fracture_property;
+    std::vector<FractureProperty> fracture_properties;
     for (
         auto fracture_properties_config :
         //! \ogs_file_param{prj__processes__process__SMALL_DEFORMATION_WITH_LIE__fracture_properties}
         config.getConfigSubtreeList("fracture_properties"))
     {
-        auto& para_b0 = ProcessLib::findParameter<double>(
-            //! \ogs_file_param_special{prj__processes__process__SMALL_DEFORMATION_WITH_LIE__fracture_properties__initial_aperture}
-            fracture_properties_config, "initial_aperture", parameters, 1);
-        auto frac_prop(new FractureProperty());
-        frac_prop->fracture_id = vec_fracture_property.size();
-        frac_prop->mat_id =
+        fracture_properties.emplace_back(
+            fracture_properties.size(),
             //! \ogs_file_param{prj__processes__process__SMALL_DEFORMATION_WITH_LIE__fracture_properties__material_id}
-            fracture_properties_config.getConfigParameter<int>("material_id");
-        frac_prop->aperture0 = &para_b0;
-        vec_fracture_property.emplace_back(frac_prop);
+            fracture_properties_config.getConfigParameter<int>("material_id"),
+            ProcessLib::findParameter<double>(
+                //! \ogs_file_param_special{prj__processes__process__SMALL_DEFORMATION_WITH_LIE__fracture_properties__initial_aperture}
+                fracture_properties_config, "initial_aperture", parameters, 1));
     }
 
-    if (n_var_du < vec_fracture_property.size())
+    if (n_var_du < fracture_properties.size())
     {
         OGS_FATAL(
             "The number of displacement jumps and the number of "
@@ -180,7 +179,7 @@ std::unique_ptr<Process> createSmallDeformationProcess(
 
     SmallDeformationProcessData<DisplacementDim> process_data(
         materialIDs(mesh), std::move(solid_constitutive_relations),
-        std::move(fracture_model), std::move(vec_fracture_property),
+        std::move(fracture_model), std::move(fracture_properties),
         reference_temperature);
 
     SecondaryVariableCollection secondary_variables;

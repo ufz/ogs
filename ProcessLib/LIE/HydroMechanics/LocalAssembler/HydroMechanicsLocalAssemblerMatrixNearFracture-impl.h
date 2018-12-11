@@ -79,7 +79,7 @@ void HydroMechanicsLocalAssemblerMatrixNearFracture<
 
     // levelset value of the element
     // remark: this assumes the levelset function is uniform within an element
-    std::vector<double> levelsets = u_global_enrichments(
+    std::vector<double> levelsets = uGlobalEnrichments(
         _fracture_props, _junction_props, _fracID_to_local, _e_center_coords);
     double const ele_levelset = levelsets[0];  // single fracture
 
@@ -137,12 +137,14 @@ void HydroMechanicsLocalAssemblerMatrixNearFracture<
     auto p = const_cast<Eigen::VectorXd&>(local_x).segment(pressure_index,
                                                            pressure_size);
     if (_process_data.deactivate_matrix_in_flow)
+    {
         Base::setPressureOfInactiveNodes(t, p);
+    }
     auto u = local_x.segment(displacement_index, displacement_size);
 
     // levelset value of the element
     // remark: this assumes the levelset function is uniform within an element
-    std::vector<double> levelsets = u_global_enrichments(
+    std::vector<double> levelsets = uGlobalEnrichments(
         _fracture_props, _junction_props, _fracID_to_local, _e_center_coords);
     double const ele_levelset = levelsets[0];  // single fracture
 

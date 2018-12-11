@@ -9,9 +9,10 @@
 
 #pragma once
 
+#include <Eigen/Eigen>
 #include <array>
 
-#include <Eigen/Eigen>
+#include "MeshLib/Node.h"
 
 namespace ProcessLib
 {
@@ -19,10 +20,19 @@ namespace LIE
 {
 struct JunctionProperty final
 {
-    Eigen::Vector3d coords;
-    int junction_id;
-    int node_id;
-    std::array<int, 2> fracture_IDs;
+    JunctionProperty(int const junction_id_,
+                     MeshLib::Node const& junctionNode,
+                     std::array<int, 2> const fracture_ids_)
+        : coords{junctionNode.getCoords()},
+          node_id{junctionNode.getID()},
+          fracture_ids{fracture_ids_},
+          junction_id{junction_id_}
+    {
+    }
+    Eigen::Vector3d const coords;
+    std::size_t const node_id;
+    std::array<int, 2> const fracture_ids;
+    int const junction_id;
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };

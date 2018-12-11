@@ -30,19 +30,19 @@ namespace ProcessLib
 {
 namespace LIE
 {
-double levelset_fracture(FractureProperty const& frac, Eigen::Vector3d const& x)
+double levelsetFracture(FractureProperty const& frac, Eigen::Vector3d const& x)
 {
     return boost::math::sign(
         frac.normal_vector.dot(x - frac.point_on_fracture));
 }
 
-double levelset_branch(BranchProperty const& branch, Eigen::Vector3d const& x)
+double levelsetBranch(BranchProperty const& branch, Eigen::Vector3d const& x)
 {
     return boost::math::sign(
         branch.normal_vector_branch.dot(x - branch.coords));
 }
 
-std::vector<double> u_global_enrichments(
+std::vector<double> uGlobalEnrichments(
     std::vector<FractureProperty*> const& frac_props,
     std::vector<JunctionProperty*> const& junction_props,
     std::unordered_map<int, int> const& fracID_to_local,
@@ -51,7 +51,7 @@ std::vector<double> u_global_enrichments(
     // pre-calculate levelsets for all fractures
     std::vector<double> levelsets(frac_props.size());
     for (std::size_t i = 0; i < frac_props.size(); i++)
-        levelsets[i] = Heaviside(levelset_fracture(*frac_props[i], x));
+        levelsets[i] = Heaviside(levelsetFracture(*frac_props[i], x));
 
     std::vector<double> enrichments(frac_props.size() + junction_props.size());
     // fractures possibly with branches
@@ -60,7 +60,7 @@ std::vector<double> u_global_enrichments(
         auto const* frac = frac_props[i];
         double enrich = levelsets[i];
         for (std::size_t j = 0; j < frac->branches_slave.size(); j++)
-            enrich *= Heaviside(levelset_branch(*frac->branches_slave[j], x));
+            enrich *= Heaviside(levelsetBranch(frac->branches_slave[j], x));
         enrichments[i] = enrich;
     }
 
@@ -68,8 +68,8 @@ std::vector<double> u_global_enrichments(
     for (std::size_t i = 0; i < junction_props.size(); i++)
     {
         auto const* junction = junction_props[i];
-        auto fid1 = fracID_to_local.at(junction->fracture_IDs[0]);
-        auto fid2 = fracID_to_local.at(junction->fracture_IDs[1]);
+        auto fid1 = fracID_to_local.at(junction->fracture_ids[0]);
+        auto fid2 = fracID_to_local.at(junction->fracture_ids[1]);
         double enrich = levelsets[fid1] * levelsets[fid2];
         enrichments[i + frac_props.size()] = enrich;
     }
@@ -77,7 +77,7 @@ std::vector<double> u_global_enrichments(
     return enrichments;
 }
 
-std::vector<double> du_global_enrichments(
+std::vector<double> duGlobalEnrichments(
     std::size_t this_frac_id,
     std::vector<FractureProperty*> const& frac_props,
     std::vector<JunctionProperty*> const& junction_props,
@@ -89,7 +89,7 @@ std::vector<double> du_global_enrichments(
     // pre-calculate levelsets for all fractures
     std::vector<double> levelsets(frac_props.size());
     for (std::size_t i = 0; i < frac_props.size(); i++)
-        levelsets[i] = Heaviside(levelset_fracture(*frac_props[i], x));
+        levelsets[i] = Heaviside(levelsetFracture(*frac_props[i], x));
 
     std::vector<double> enrichments(frac_props.size() + junction_props.size());
     enrichments[this_frac_local_index] = 1.0;
@@ -99,16 +99,16 @@ std::vector<double> du_global_enrichments(
     {
         for (auto const& branch : this_frac.branches_master)
         {
-            if (branch->master_fracture_ID != this_frac.fracture_id)
+            if (branch.master_fracture_id != this_frac.fracture_id)
                 continue;
 
-            if (fracID_to_local.find(branch->slave_fracture_ID) ==
+            if (fracID_to_local.find(branch.slave_fracture_id) ==
                 fracID_to_local.end())
                 continue;
 
             double singned = boost::math::sign(
-                this_frac.normal_vector.dot(branch->normal_vector_branch));
-            auto slave_fid = fracID_to_local.at(branch->slave_fracture_ID);
+                this_frac.normal_vector.dot(branch.normal_vector_branch));
+            auto slave_fid = fracID_to_local.at(branch.slave_fracture_id);
             double enrich = singned * levelsets[slave_fid];
             enrichments[slave_fid] = enrich;
         }
@@ -118,13 +118,13 @@ std::vector<double> du_global_enrichments(
     for (unsigned i = 0; i < junction_props.size(); i++)
     {
         auto const* junction = junction_props[i];
-        if (!BaseLib::contains(junction->fracture_IDs, this_frac.fracture_id))
+        if (!BaseLib::contains(junction->fracture_ids, this_frac.fracture_id))
             continue;
 
         auto another_frac_id =
-            (junction->fracture_IDs[0] == this_frac.fracture_id)
-                ? junction->fracture_IDs[1]
-                : junction->fracture_IDs[0];
+            (junction->fracture_ids[0] == this_frac.fracture_id)
+                ? junction->fracture_ids[1]
+                : junction->fracture_ids[0];
         auto fid = fracID_to_local.at(another_frac_id);
         double enrich = levelsets[fid];
         enrichments[i + frac_props.size()] = enrich;

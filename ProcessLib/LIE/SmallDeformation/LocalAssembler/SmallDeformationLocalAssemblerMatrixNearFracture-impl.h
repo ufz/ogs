@@ -114,14 +114,12 @@ SmallDeformationLocalAssemblerMatrixNearFracture<ShapeFunction,
     for (auto fid : process_data._vec_ele_connected_fractureIDs[e.getID()])
     {
         _fracID_to_local.insert({fid, _fracture_props.size()});
-        _fracture_props.push_back(
-            _process_data._vec_fracture_property[fid].get());
+        _fracture_props.push_back(&_process_data.fracture_properties[fid]);
     }
 
     for (auto jid : process_data._vec_ele_connected_junctionIDs[e.getID()])
     {
-        _junction_props.push_back(
-            _process_data._vec_junction_property[jid].get());
+        _junction_props.push_back(&_process_data.junction_properties[jid]);
     }
 }
 
@@ -225,8 +223,8 @@ void SmallDeformationLocalAssemblerMatrixNearFracture<
         Eigen::Vector3d const ip_physical_coords(
             computePhysicalCoordinates(_element, N).getCoords());
         std::vector<double> const levelsets(
-            u_global_enrichments(_fracture_props, _junction_props,
-                                 _fracID_to_local, ip_physical_coords));
+            uGlobalEnrichments(_fracture_props, _junction_props,
+                               _fracID_to_local, ip_physical_coords));
 
         // u = u^hat + sum_i(enrich^br_i(x) * [u]_i) + sum_i(enrich^junc_i(x) *
         // [u]_i)

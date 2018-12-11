@@ -51,7 +51,9 @@ MathLib::Point3d computePhysicalCoordinates(
     {
         MeshLib::Node const& node = *e.getNode(i);
         for (unsigned j = 0; j < 3; j++)
+        {
             pt[j] += shape[i] * node[j];
+        }
     }
     return pt;
 }

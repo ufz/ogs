@@ -51,7 +51,9 @@ public:
                              double const /*delta_t*/) override
     {
         for (auto& data : _ip_data)
+        {
             data.pushBackState();
+        }
     }
 
     void computeSecondaryVariableConcreteWithVector(
