@@ -34,7 +34,7 @@ public:
             return;
         }
 
-        LOGOG_COUT << std::flush;
+        std::cout << std::flush;
     }
 
     //! Optionally flushes Python's stdout after running Python code.
