@@ -19,9 +19,9 @@
 
 #include <fstream>
 #include <list>
-#include <logog/include/logog.hpp>
 
 #include "BaseLib/FileTools.h"
+#include "BaseLib/Logging.h"
 #include "BaseLib/StringTools.h"
 #include "GeoLib/StationBorehole.h"
 #include "MeshLib/Elements/Prism.h"

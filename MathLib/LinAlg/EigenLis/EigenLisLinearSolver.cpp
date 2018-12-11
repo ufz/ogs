@@ -13,7 +13,7 @@
 #ifdef _OPENMP
 #include <omp.h>
 #endif
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "BaseLib/ConfigTree.h"
 #include "MathLib/LinAlg/Eigen/EigenMatrix.h"

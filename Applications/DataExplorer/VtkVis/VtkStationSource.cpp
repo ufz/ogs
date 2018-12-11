@@ -15,7 +15,7 @@
 // ** VTK INCLUDES **
 #include "VtkStationSource.h"
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "StationBorehole.h"
 

@@ -13,7 +13,7 @@
 #include <functional>
 #include <memory>
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "NumLib/ODESolver/NonlinearSolver.h"
 #include "NumLib/TimeStepping/Algorithms/TimeStepAlgorithm.h"

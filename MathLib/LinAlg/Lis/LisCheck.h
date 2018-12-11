@@ -15,8 +15,8 @@
 #pragma once
 
 #include <vector>
+#include "BaseLib/Logging.h"
 #include "lis.h"
-#include <logog/include/logog.hpp>
 
 namespace MathLib
 {

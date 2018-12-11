@@ -18,7 +18,7 @@
 #include "MeshNodesAlongSurface.h"
 #include "MeshNodesOnPoint.h"
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "GeoLib/Point.h"
 #include "GeoLib/Polyline.h"

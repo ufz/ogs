@@ -11,7 +11,7 @@
 #include <memory>
 #include <vector>
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "InfoLib/GitInfo.h"
 #include "BaseLib/FileTools.h"

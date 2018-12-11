@@ -10,7 +10,7 @@
 
 #include "EigenLinearSolver.h"
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #ifdef USE_MKL
 #include <Eigen/PardisoSupport>

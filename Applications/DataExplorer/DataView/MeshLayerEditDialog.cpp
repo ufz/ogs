@@ -15,7 +15,7 @@
 #include "MeshGenerators/LayeredVolume.h"
 #include "MeshLayerEditDialog.h"
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "OGSError.h"
 #include "StringTools.h"

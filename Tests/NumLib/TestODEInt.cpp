@@ -13,8 +13,8 @@
 #include <memory>
 #include <typeinfo>
 
-#include <logog/include/logog.hpp>
 #include <boost/property_tree/xml_parser.hpp>
+#include "BaseLib/Logging.h"
 
 #include "InfoLib/TestInfo.h"
 #include "NumLib/NumericsConfig.h"

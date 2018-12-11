@@ -9,7 +9,7 @@
 
 #include "CreateTwoPhaseFlowMaterialProperties.h"
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "BaseLib/Algorithm.h"
 #include "MaterialLib/Fluid/FluidProperty.h"

@@ -15,7 +15,7 @@
 #include <fstream>
 #include <memory>
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "DirectConditionGenerator.h"
 

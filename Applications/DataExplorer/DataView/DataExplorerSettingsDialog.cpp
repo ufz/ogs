@@ -17,7 +17,7 @@
 #include <QFileDialog>
 #include <QSettings>
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "OGSError.h"
 

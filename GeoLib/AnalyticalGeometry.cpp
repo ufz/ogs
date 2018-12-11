@@ -18,7 +18,7 @@
 #include <cmath>
 #include <limits>
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include <Eigen/Dense>
 

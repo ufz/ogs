@@ -11,7 +11,7 @@
 #include "ConfigTreeUtil.h"
 
 #include <boost/property_tree/xml_parser.hpp>
-#include <logog/include/logog.hpp>
+#include "Logging.h"
 
 #include "Error.h"
 

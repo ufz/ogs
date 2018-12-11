@@ -19,7 +19,7 @@
 #include <ctime>
 #include <sstream>
 
-#include <logog/include/logog.hpp>
+#include "Logging.h"
 
 namespace BaseLib
 {

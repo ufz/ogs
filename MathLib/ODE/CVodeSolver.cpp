@@ -10,7 +10,7 @@
 #include "CVodeSolver.h"
 
 #include <cassert>
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include <cvode/cvode.h>             /* prototypes for CVODE fcts., consts. */
 #include <nvector/nvector_serial.h>  /* serial N_Vector types, fcts., macros */

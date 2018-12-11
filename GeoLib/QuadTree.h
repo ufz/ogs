@@ -17,8 +17,9 @@
 #include <cassert>
 #include <limits>
 #include <list>
-#include <logog/include/logog.hpp>
 #include <utility>
+
+#include "BaseLib/Logging.h"
 
 namespace GeoLib
 {

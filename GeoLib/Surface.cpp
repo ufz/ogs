@@ -9,7 +9,7 @@
 
 #include <list>
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "Surface.h"
 

@@ -24,7 +24,7 @@
 #include <tuple>
 #include <vector>
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "BaseLib/Error.h"
 #include "MathLib/Point3d.h"

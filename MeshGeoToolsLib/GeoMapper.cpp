@@ -18,7 +18,7 @@
 #include <sstream>
 #include <numeric>
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "BaseLib/Algorithm.h"
 

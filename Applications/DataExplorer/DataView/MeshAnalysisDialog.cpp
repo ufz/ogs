@@ -20,7 +20,7 @@
 
 #include "StrictDoubleValidator.h"
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 MeshAnalysisDialog::MeshAnalysisDialog(
     std::vector<std::unique_ptr<MeshLib::Mesh>> const& mesh_vec,

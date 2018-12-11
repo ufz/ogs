@@ -15,7 +15,7 @@
 #include "DiagramList.h"
 #include "GetDateTime.h"
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "DateTools.h"
 #include "StringTools.h"

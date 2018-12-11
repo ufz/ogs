@@ -33,8 +33,8 @@
 #include "xtiffio.h"
 #endif
 
-#include <logog/include/logog.hpp>
 #include <memory>
+#include "BaseLib/Logging.h"
 
 #include "Applications/FileIO/AsciiRasterInterface.h"
 #include "BaseLib/StringTools.h"

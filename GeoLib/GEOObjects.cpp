@@ -15,7 +15,7 @@
 #include "GEOObjects.h"
 
 #include <fstream>
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "Triangle.h"
 

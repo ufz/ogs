@@ -9,7 +9,7 @@
  */
 
 #include "ConvergenceCriterionPerComponentResidual.h"
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "BaseLib/ConfigTree.h"
 #include "NumLib/DOF/DOFTableUtil.h"

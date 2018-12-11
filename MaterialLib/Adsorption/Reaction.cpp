@@ -7,7 +7,7 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "BaseLib/StringTools.h"
 

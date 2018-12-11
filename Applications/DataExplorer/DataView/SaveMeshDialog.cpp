@@ -17,7 +17,7 @@
 #include <QFileDialog>
 #include <QSettings>
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/IO/Legacy/MeshIO.h"

@@ -21,8 +21,8 @@
 #include <cstdarg>
 #include <cstdio>
 #include <iomanip>
-#include <logog/include/logog.hpp>
 #include <random>
+#include "Logging.h"
 
 namespace BaseLib
 {

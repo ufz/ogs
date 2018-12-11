@@ -13,7 +13,7 @@
 #ifdef OGS_FATAL_ABORT
 
 #include <cstdlib>
-#include <logog/include/logog.hpp>
+#include "Logging.h"
 
 namespace BaseLib
 {

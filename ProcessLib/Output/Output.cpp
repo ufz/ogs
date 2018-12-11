@@ -14,7 +14,7 @@
 #include <fstream>
 #include <vector>
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "Applications/InSituLib/Adaptor.h"
 #include "BaseLib/FileTools.h"

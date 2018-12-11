@@ -7,10 +7,10 @@
  *
  */
 
+#include <gtest/gtest.h>
 #include <limits>
 #include <type_traits>
-#include <gtest/gtest.h>
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 #include "MathLib/Nonlinear/Root1D.h"
 
 double f(double x)

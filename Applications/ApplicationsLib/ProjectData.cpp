@@ -15,7 +15,7 @@
 
 #include <algorithm>
 #include <cctype>
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 #include <set>
 
 #ifdef OGS_USE_PYTHON

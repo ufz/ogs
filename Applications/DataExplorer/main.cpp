@@ -3,8 +3,8 @@
 #include <QApplication>
 #include <QSurfaceFormat>
 #include <QVTKOpenGLWidget.h>
-#include <logog/include/logog.hpp>
 #include <memory>
+#include "BaseLib/Logging.h"
 
 #ifdef VTKFBXCONVERTER_FOUND
 #include <fbxsdk.h>

@@ -10,7 +10,7 @@
 
 #include "NonlinearSolver.h"
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"

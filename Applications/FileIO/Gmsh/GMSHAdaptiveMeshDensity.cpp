@@ -15,7 +15,7 @@
 
 #include <list>
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "GeoLib/Point.h"
 #include "GeoLib/Polygon.h"

@@ -12,7 +12,7 @@
  *
  */
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "GeoObjectListItem.h"
 #include "GeoTreeItem.h"

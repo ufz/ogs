@@ -15,7 +15,7 @@
 // ** INCLUDES **
 #include "VtkPolylinesSource.h"
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include <vtkCellArray.h>
 #include <vtkCellData.h>

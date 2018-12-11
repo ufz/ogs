@@ -15,7 +15,7 @@
 #include <cmath>
 #include <memory>
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "../Mesh.h"
 #include "../Node.h"

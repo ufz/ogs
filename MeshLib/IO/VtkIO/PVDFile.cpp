@@ -13,8 +13,8 @@
 #include <fstream>
 #include <iomanip>
 #include <limits>
-#include <logog/include/logog.hpp>
 #include "BaseLib/Error.h"
+#include "BaseLib/Logging.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 
 namespace MeshLib

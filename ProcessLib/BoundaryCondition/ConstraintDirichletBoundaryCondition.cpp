@@ -12,7 +12,7 @@
 
 #include <algorithm>
 #include <vector>
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "MeshLib/MeshSearch/NodeSearch.h"  // for getUniqueNodes
 #include "MeshLib/Node.h"

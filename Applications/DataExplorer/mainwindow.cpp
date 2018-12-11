@@ -14,7 +14,7 @@
 
 #include "mainwindow.h"
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 // Qt includes
 #include <QDate>

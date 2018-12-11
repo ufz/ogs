@@ -10,17 +10,15 @@
 
 #include "ProcessModel.h"
 
-// ThirdParty/logog
-#include <logog/include/logog.hpp>
-
 #include <vtkPolyDataAlgorithm.h>
+
 #include <QFileInfo>
 
 #include "Applications/DataHolderLib/FemCondition.h"
+#include "BaseLib/Logging.h"
+#include "CondItem.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/GeoObject.h"
-
-#include "CondItem.h"
 #include "GeoType.h"
 #include "ProcessVarItem.h"
 

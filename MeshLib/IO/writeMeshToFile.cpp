@@ -9,7 +9,7 @@
 
 #include "writeMeshToFile.h"
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "BaseLib/FileTools.h"
 #include "BaseLib/StringTools.h"

@@ -9,8 +9,8 @@
  */
 
 #include "ConvergenceCriterionPerComponentDeltaX.h"
-#include <logog/include/logog.hpp>
 #include <limits>
+#include "BaseLib/Logging.h"
 
 #include "BaseLib/ConfigTree.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"

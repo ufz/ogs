@@ -42,8 +42,7 @@
 #include <QString>
 #include <QTime>
 
-
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "MathLib/InterpolationAlgorithms/LinearIntervalInterpolation.h"
 #include "MeshLib/Mesh.h"

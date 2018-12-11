@@ -11,8 +11,8 @@
 #include "ProcessVariable.h"
 
 #include <algorithm>
-#include <logog/include/logog.hpp>
 #include <utility>
+#include "BaseLib/Logging.h"
 
 #include "BaseLib/Algorithm.h"
 #include "BaseLib/TimeInterval.h"

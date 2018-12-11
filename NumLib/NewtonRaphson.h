@@ -11,7 +11,7 @@
 #pragma once
 
 #include <boost/optional.hpp>
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include <Eigen/Dense>
 

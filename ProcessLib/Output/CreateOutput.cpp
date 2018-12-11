@@ -10,9 +10,9 @@
 
 #include "CreateOutput.h"
 
-#include <logog/include/logog.hpp>
 #include <memory>
 #include <tuple>
+#include "BaseLib/Logging.h"
 
 #include "BaseLib/Algorithm.h"
 #include "BaseLib/ConfigTree.h"

@@ -17,7 +17,7 @@
 #include <fstream>
 #include <limits>
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 namespace BaseLib
 {

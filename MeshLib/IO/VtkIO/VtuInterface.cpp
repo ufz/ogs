@@ -22,7 +22,7 @@
 #include <vtkSmartPointer.h>
 #include <vtkUnstructuredGrid.h>
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include <boost/algorithm/string/erase.hpp>
 

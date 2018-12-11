@@ -8,7 +8,7 @@
  */
 
 #include "Adsorption.h"
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 #include "MaterialLib/PhysicalConstant.h"
 
 namespace {

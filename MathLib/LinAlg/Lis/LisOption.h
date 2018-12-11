@@ -17,7 +17,7 @@
 #include <string>
 #include <map>
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "BaseLib/ConfigTree.h"
 #include "MathLib/LinAlg/LinearSolverOptions.h"

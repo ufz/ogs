@@ -17,7 +17,7 @@
 
 #include "SHPInterface.h"
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "Applications/FileIO/Legacy/createSurface.h"
 

@@ -14,7 +14,7 @@
 #include <utility>
 #include <vector>
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "NumLib/TimeStepping/TimeStep.h"
 #include "NumLib/TimeStepping/Algorithms/IterationNumberBasedTimeStepping.h"

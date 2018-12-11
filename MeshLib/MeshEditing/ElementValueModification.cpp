@@ -16,7 +16,7 @@
 
 #include <algorithm>
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"

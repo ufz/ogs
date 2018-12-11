@@ -8,7 +8,7 @@
  */
 
 #include <gtest/gtest.h>
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include <boost/property_tree/xml_parser.hpp>
 #include <numeric>

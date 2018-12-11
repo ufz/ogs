@@ -12,7 +12,7 @@
 
 #include <array>
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "MathLib/GeometricBasics.h"
 

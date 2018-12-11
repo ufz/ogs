@@ -11,8 +11,8 @@
 #include "ConfigTree.h"
 
 #include <forward_list>
-#include <logog/include/logog.hpp>
 #include <utility>
+#include "Logging.h"
 
 #include "Error.h"
 

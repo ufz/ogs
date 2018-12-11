@@ -8,28 +8,27 @@
  */
 
 // STL
+#include <tclap/CmdLine.h>
+
 #include <cctype>
 #include <iostream>
 #include <limits>
 #include <memory>
+#include <netcdf>
 #include <numeric>
 #include <sstream>
 #include <string>
 #include <utility>
 
-#include <tclap/CmdLine.h>
-
 #include "Applications/ApplicationsLib/LogogSetup.h"
-
-#include <netcdf>
-
 #include "BaseLib/FileTools.h"
 #include "BaseLib/LogogSimpleFormatter.h"
-#include "InfoLib/GitInfo.h"
+#include "BaseLib/Logging.h"
 #include "GeoLib/Raster.h"
+#include "InfoLib/GitInfo.h"
+#include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshGenerators/RasterToMesh.h"
-#include "MeshLib/IO/VtkIO/VtuInterface.h"
 
 using namespace netCDF;
 

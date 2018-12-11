@@ -17,7 +17,7 @@
 #include <cstdlib>
 #include <utility>
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "BaseLib/StringTools.h"
 

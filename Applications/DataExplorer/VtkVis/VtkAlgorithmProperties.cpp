@@ -15,7 +15,7 @@
 // ** INCLUDES **
 #include "VtkAlgorithmProperties.h"
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include <vtkProperty.h>
 #include <vtkTexture.h>

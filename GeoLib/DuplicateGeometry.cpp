@@ -10,8 +10,8 @@
 
 #include "DuplicateGeometry.h"
 
-#include <logog/include/logog.hpp>
 #include <utility>
+#include "BaseLib/Logging.h"
 
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Point.h"

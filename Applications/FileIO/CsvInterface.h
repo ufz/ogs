@@ -13,8 +13,8 @@
 
 #pragma once
 
-#include <logog/include/logog.hpp>
 #include <boost/any.hpp>
+#include "BaseLib/Logging.h"
 
 #include <array>
 #include <fstream>

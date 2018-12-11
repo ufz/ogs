@@ -10,7 +10,7 @@
 
 #include "ThermalTwoPhaseFlowWithPPMaterialProperties.h"
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "MaterialLib/Fluid/FluidProperty.h"
 #include "MaterialLib/PorousMedium/Porosity/Porosity.h"

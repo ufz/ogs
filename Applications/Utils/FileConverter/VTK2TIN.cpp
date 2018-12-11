@@ -17,7 +17,7 @@
 
 // BaseLib
 #include "InfoLib/GitInfo.h"
-#include "BaseLib/LogogSimpleFormatter.h"
+#include "BaseLib/Logging.h"
 
 // GeoLib
 #include "GeoLib/GEOObjects.h"

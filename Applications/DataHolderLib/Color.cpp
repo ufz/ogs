@@ -14,7 +14,7 @@
 
 #include "Color.h"
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 namespace DataHolderLib {
 

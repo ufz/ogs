@@ -9,8 +9,8 @@
  */
 
 #include "CreateTwoPhaseFlowPrhoMaterialProperties.h"
-#include <logog/include/logog.hpp>
 #include "BaseLib/Algorithm.h"
+#include "BaseLib/Logging.h"
 #include "MaterialLib/Fluid/FluidProperty.h"
 #include "MaterialLib/PorousMedium/Porosity/Porosity.h"
 #include "MaterialLib/PorousMedium/Storage/Storage.h"

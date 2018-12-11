@@ -15,7 +15,7 @@
 
 #include "NodePartitionedMeshReader.h"
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #ifdef USE_PETSC
 #include <mpi.h>

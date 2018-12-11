@@ -15,7 +15,7 @@
 // ** INCLUDES **
 #include "VtkCompositeTextureOnSurfaceFilter.h"
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "VtkTextureOnSurfaceFilter.h"
 #include <vtkDataSetSurfaceFilter.h>

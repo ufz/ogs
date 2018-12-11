@@ -11,6 +11,7 @@
 #include "ConstantParameter.h"
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
+#include "BaseLib/Logging.h"
 
 namespace ParameterLib
 {

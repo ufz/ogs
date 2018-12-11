@@ -14,10 +14,10 @@
 
 #include "MeshModel.h"
 
+#include <vtkUnstructuredGridAlgorithm.h>
 #include <QFileInfo>
 #include <QString>
-#include <vtkUnstructuredGridAlgorithm.h>
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "Applications/DataHolderLib/Project.h"
 #include "BaseLib/StringTools.h"

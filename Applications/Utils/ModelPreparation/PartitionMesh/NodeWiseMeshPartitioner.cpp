@@ -18,7 +18,7 @@
 #include <numeric>
 #include <unordered_map>
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "BaseLib/Error.h"
 #include "BaseLib/Stream.h"

@@ -15,7 +15,7 @@
 #include "MeshSurfaceExtraction.h"
 
 #include <boost/math/constants/constants.hpp>
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 #include <memory>
 
 #include "MeshLib/Elements/Line.h"

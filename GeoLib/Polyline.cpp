@@ -15,9 +15,9 @@
 #include "Polyline.h"
 
 #include <algorithm>
-#include <logog/include/logog.hpp>
-#include "BaseLib/Error.h"
 #include "AnalyticalGeometry.h"
+#include "BaseLib/Error.h"
+#include "BaseLib/Logging.h"
 #include "MathLib/GeometricBasics.h"
 
 namespace GeoLib

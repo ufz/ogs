@@ -10,7 +10,7 @@
 
 #include "PyramidRule13.h"
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "MeshLib/Node.h"
 #include "Quad.h"

@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "GeoLib/Raster.h"
 #include "MeshLib/Location.h"

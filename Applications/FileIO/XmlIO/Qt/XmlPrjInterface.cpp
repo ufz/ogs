@@ -16,7 +16,7 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QtXml/QDomDocument>
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "Applications/DataExplorer/Base/OGSError.h"
 #include "Applications/DataHolderLib/FemCondition.h"

@@ -11,7 +11,7 @@
 #pragma once
 
 #include <vector>
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "BaseLib/Error.h"
 #include "EigenMatrix.h" // for EigenMatrix::IndexType

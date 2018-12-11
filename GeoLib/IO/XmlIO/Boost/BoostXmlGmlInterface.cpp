@@ -15,7 +15,7 @@
 #include "BoostXmlGmlInterface.h"
 
 #include <boost/property_tree/xml_parser.hpp>
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "BaseLib/Algorithm.h"
 #include "BaseLib/ConfigTreeUtil.h"

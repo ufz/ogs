@@ -15,7 +15,7 @@
 // ** INCLUDES **
 #include "VtkCustomInteractorStyle.h"
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include <vtkActor.h>
 #include <vtkAlgorithmOutput.h>

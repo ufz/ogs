@@ -24,8 +24,8 @@
 #include <QXmlSchemaValidator>
 #include <QXmlStreamReader>
 
-#include <logog/include/logog.hpp>
 #include <utility>
+#include "Logging.h"
 
 namespace BaseLib
 {

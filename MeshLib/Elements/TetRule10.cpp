@@ -12,7 +12,7 @@
 
 #include <array>
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "MeshLib/Node.h"
 #include "Tri.h"

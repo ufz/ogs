@@ -10,7 +10,7 @@
 
 #include "CreateNodalSourceTerm.h"
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "BaseLib/ConfigTree.h"
 #include "ParameterLib/Utils.h"

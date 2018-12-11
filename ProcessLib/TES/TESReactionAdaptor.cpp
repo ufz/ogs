@@ -10,7 +10,7 @@
 
 #include <cassert>
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "MathLib/Nonlinear/Root1D.h"
 #include "MathLib/ODE/ODESolverBuilder.h"

@@ -16,7 +16,7 @@
 
 #include <numeric>
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "GeoLib/Grid.h"
 #include "MathLib/GeometricBasics.h"
