@@ -17,7 +17,7 @@ See the [docs](https://docs.docker.com) for installation instructions.
 
 ## Images
 
-Docker images can be created by [Dockerfiles](https://docs.docker.com/reference/builder/) which can be stacked and thus form a directed graph. OGS-6 image definitions can be found at the [ufz/dockerfiles](https://github.com/ufz/dockerfiles)-repo. Built images can be found at [Docker Hub](https://registry.hub.docker.com/repos/ogs6/).
+Docker images can be created by [Dockerfiles](https://docs.docker.com/reference/builder/) which can be stacked and thus form a directed graph. OGS-6 image definitions can be found at the [ufz/dockerfiles](https://github.com/ufz/dockerfiles)-repo. Built images can be found at [Docker Hub](https://hub.docker.com/u/ogs6/).
 
 To build an image by yourself create a Dockerfile:
 
@@ -63,13 +63,13 @@ $ docker run -i -t -v /host/directory:/container/directory image_name /bin/bash
 
 There are docker images provided on [Docker Hub](https://hub.docker.com/u/ogs6/) which include everything necessary to build OGS-6.
 
-There are images for `gcc`, `clang` and `mingw`. For every compiler there is one basic image with the compiler ready (`-dev-essentials`), one image with all dependencies for the OGS simulator (`-base`) and maybe an image for Data Explorer development (`-gui`).
+There are images for `gcc`, `clang` and `mingw`.
 
 E.g. to start developing OGS:
 
 ```bash
-docker pull ogs6/gcc-base
-docker run -t -i -v /path/to/ogs/source/on/host:/usr/src/ogs ogs6/gcc-base /bin/bash
+docker pull ogs6/gcc
+docker run -t -i -v /path/to/ogs/source/on/host:/usr/src/ogs ogs6/gcc
 ```
 
 You are now in the Docker container the ogs source code from your host computer mounted at `/usr/src/ogs`. Now you can build and run OGS:
