@@ -129,8 +129,8 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
         auto const& material_ids = vec_junction_nodeID_matIDs[i].second;
         assert(material_ids.size() == 2);
         std::array<int, 2> fracture_ids{
-            _process_data._map_materialID_to_fractureID[material_ids[0]],
-            _process_data._map_materialID_to_fractureID[material_ids[1]]};
+            {_process_data._map_materialID_to_fractureID[material_ids[0]],
+             _process_data._map_materialID_to_fractureID[material_ids[1]]}};
 
         _process_data.junction_properties.emplace_back(
             i, *mesh.getNode(vec_junction_nodeID_matIDs[i].first),
