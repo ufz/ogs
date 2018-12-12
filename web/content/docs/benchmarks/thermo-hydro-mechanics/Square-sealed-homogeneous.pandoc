@@ -1,0 +1,25 @@
++++
+project = "ThermoHydroMechanics/Linear/Square_sealed_homogeneous/square_1e0.prj"
+
+author = "Tianyuan Zheng"
+date = "2017-08-23T20:39:58+01:00"
+title = "Square sealed homogeneous"
+weight = 101
+
+[menu]
+  [menu.benchmarks]
+    parent = "Thermohydromechanics"
+
++++
+
+{{< data-link >}}
+
+## Problem description
+
+In this case, an axisymmetric homogeneous domain (see Fig. 1) was set up withthe length of 1mm. The whole domain was heated up from the left boundary
+from 273.15K to 353.15K and the liquid was sealed in the area from the surrounding Neumann no flow boundary. After 10000 s, the result of the numerical
+solution reached steady state with homogeneous pressure.
+
+## Results and evaluation
+
+See [this PDF](THM.pdf).

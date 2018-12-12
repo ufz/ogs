@@ -1,0 +1,31 @@
++++
+project = "ThermoHydroMechanics/Linear/Point_injection/square_1e2.prj"
+
+author = "Tianyuan Zheng"
+date = "2017-08-23T20:39:58+01:00"
+title = "Point heat source consolidation"
+weight = 101
+
+[menu]
+  [menu.benchmarks]
+    parent = "Thermohydromechanics"
+
++++
+
+{{< data-link >}}
+
+## Problem description
+
+A 2D axisymmertic model is set up for this verification.
+ A line source is seleted to represent the injection
+ source which is located between center point
+of the quarter and the closest node. After the axisymmetric rotation around
+the vertical direction, the line source has converted into a circular source and
+the Neumann boundary heat flux can be thus calculated. The
+radius of the domain is 10m and the initial temperature and pore pressure are
+273K and 0Pa respectively.
+
+## Results and evaluation
+
+See [this PDF](THM.pdf).
+

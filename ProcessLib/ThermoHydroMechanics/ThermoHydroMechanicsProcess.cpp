@@ -234,6 +234,11 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
         MeshLib::getOrCreateMeshProperty<double>(
             const_cast<MeshLib::Mesh&>(mesh), "pressure_interpolated",
             MeshLib::MeshItemType::Node, 1);
+
+    _process_data.temperature_interpolated =
+        MeshLib::getOrCreateMeshProperty<double>(
+            const_cast<MeshLib::Mesh&>(mesh), "temperature_interpolated",
+            MeshLib::MeshItemType::Node, 1);
 }
 
 template <int DisplacementDim>
@@ -406,7 +411,8 @@ void ThermoHydroMechanicsProcess<
 template <int DisplacementDim>
 void ThermoHydroMechanicsProcess<
     DisplacementDim>::computeSecondaryVariableConcrete(const double t,
-                                                       GlobalVector const& x, const int process_id)
+                                                       GlobalVector const& x,
+                                                       const int process_id)
 {
     DBUG("Compute the secondary variables for HydroMechanicsProcess.");
     GlobalExecutor::executeMemberOnDereferenced(

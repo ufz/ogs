@@ -1,0 +1,30 @@
++++
+project = "ThermoHydroMechanics/Linear/Beam_unsealed_bimaterial/square_1e2.prj"
+
+author = "Tianyuan Zheng"
+date = "2017-08-23T20:39:58+01:00"
+title = "Beam unsealed bimaterial"
+weight = 101
+
+[menu]
+  [menu.benchmarks]
+    parent = "Thermohydromechanics"
+
++++
+
+{{< data-link >}}
+
+## Problem description
+
+A composite material composed of a cylindrical core and an annular domain of a different
+material were modelled as an axisymmetric domain with three materials was set up.
+The third material is the interface between the two material domains by which we control 
+the mechanical and hydraulic connectivity of the two adjacent domains.
+In this case, A hydraulic connection is established between the two reservoirs. To
+estimate the average modulus of the bi-material domain, the rule of mixtures
+was applied.
+
+## Results and evaluation
+
+See [this PDF](THM.pdf).
+

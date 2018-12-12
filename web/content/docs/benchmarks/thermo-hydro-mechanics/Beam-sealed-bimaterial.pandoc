@@ -1,0 +1,31 @@
++++
+project = "ThermoHydroMechanics/Linear/Beam_sealed_bimaterial/square_1e2.prj"
+
+author = "Tianyuan Zheng"
+date = "2017-08-23T20:39:58+01:00"
+title = "Beam sealed bimaterial"
+weight = 101
+
+[menu]
+  [menu.benchmarks]
+    parent = "Thermohydromechanics"
+
++++
+
+{{< data-link >}}
+
+## Problem description
+
+A composite material composed of a cylindrical core and an annular domain of a different
+material were modelled as an axisymmetric domain with three materials was set up.
+The third material is the interface between the two material domains by which we control 
+the mechanical and hydraulic connectivity of the two adjacent domains.
+In this case, it would be expected to capture this feature as if the two materials
+were separated from each other. The impermeable intermediate layer would prevent the 
+flow moving mass from regions of higher pressure to those of
+lower pressure. The thermally induced volume change in one material is smaller
+than that of another one which leads to the different pressure.
+
+## Results and evaluation
+
+See [this PDF](THM.pdf).
