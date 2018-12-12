@@ -14,6 +14,9 @@
 
 #include "ComponentTransportProcessData.h"
 #include "MaterialLib/Fluid/FluidProperties/FluidProperties.h"
+#include "MaterialLib/MPL/mpMedium.h"
+#include "MaterialLib/MPL/mpProperty.h"
+#include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
@@ -236,10 +239,21 @@ public:
         GlobalDimMatrixType const& I(
             GlobalDimMatrixType::Identity(GlobalDim, GlobalDim));
 
+        // get material properties
+        auto const medium =
+            _process_data.media_map->getMedium(_element.getID());
+        // Select the only valid for component transport liquid phase.
+        auto const& phase = medium->phase("aqueous liquid");
+
+        // Assume that the component name is the same as the process variable
+        // name. Components are shifted by one because the first one is always
+        // pressure.
+        auto const& component =
+            phase.component(_process_variables[0][comp_id + 1].get().getName());
+
         for (std::size_t ip(0); ip < n_integration_points; ++ip)
         {
             pos.setIntegrationPoint(ip);
-
 
             auto const& ip_data = _ip_data[ip];
             auto const& N = ip_data.N;
@@ -261,11 +275,17 @@ public:
                 _process_data.retardation_factor(t, pos)[0];
 
             auto const& solute_dispersivity_transverse =
-                _process_data.solute_dispersivity_transverse(t, pos)[0];
+                MaterialPropertyLib::getScalar(
+                    medium->property(MaterialPropertyLib::PropertyEnum::
+                                         transveral_dispersivity));
             auto const& solute_dispersivity_longitudinal =
-                _process_data.solute_dispersivity_longitudinal(t, pos)[0];
+                MaterialPropertyLib::getScalar(
+                    medium->property(MaterialPropertyLib::PropertyEnum::
+                                         longitudinal_dispersivity));
 
             // Use the fluid density model to compute the density
+            // TODO: concentration of which component as the argument for
+            // calculation of fluid density
             vars[static_cast<int>(
                 MaterialLib::Fluid::PropertyVariableType::C)] = C_int_pt;
             vars[static_cast<int>(
@@ -273,8 +293,10 @@ public:
             auto const density = _process_data.fluid_properties->getValue(
                 MaterialLib::Fluid::FluidPropertyType::Density, vars);
             auto const& decay_rate = _process_data.decay_rate(t, pos)[0];
+
             auto const& molecular_diffusion_coefficient =
-                _process_data.molecular_diffusion_coefficient(t, pos)[0];
+                MaterialPropertyLib::getScalar(component.property(
+                    MaterialPropertyLib::PropertyEnum::molecular_diffusion));
 
             auto const& K =
                 _process_data.porous_media_properties.getIntrinsicPermeability(
