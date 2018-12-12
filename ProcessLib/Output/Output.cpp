@@ -43,6 +43,15 @@ int convertVtkDataMode(std::string const& data_mode)
         "Binary, or Appended.",
         data_mode.c_str());
 }
+
+std::string constructFileName(std::string const& prefix,
+                              int const process_id,
+                              unsigned const timestep,
+                              double const t)
+{
+    return prefix + "_pcs_" + std::to_string(process_id) + "_ts_" +
+           std::to_string(timestep) + "_t_" + std::to_string(t);
+}
 }  // namespace
 
 namespace ProcessLib
@@ -164,8 +173,8 @@ void Output::doOutputAlways(Process const& process,
         return;
 
     std::string const output_file_name =
-        _output_file_prefix + "_pcs_" + std::to_string(process_id) + "_ts_" +
-        std::to_string(timestep) + "_t_" + std::to_string(t) + ".vtu";
+        constructFileName(_output_file_prefix, process_id, timestep, t) +
+        ".vtu";
     std::string const output_file_path =
         BaseLib::joinPaths(_output_directory, output_file_name);
 
@@ -206,9 +215,7 @@ void Output::doOutputAlways(Process const& process,
                           process.getIntegrationPointWriter(), _process_output);
 
         std::string const mesh_output_file_name =
-            mesh.getName() + "_pcs_" + std::to_string(process_id) +
-            "_ts_" + std::to_string(timestep) + "_t_" + std::to_string(t) +
-            ".vtu";
+            constructFileName(mesh.getName(), process_id, timestep, t) + ".vtu";
         std::string const mesh_output_file_path =
             BaseLib::joinPaths(_output_directory, mesh_output_file_name);
 
@@ -289,9 +296,8 @@ void Output::doOutputNonlinearIteration(Process const& process,
     findProcessData(process, process_id);
 
     std::string const output_file_name =
-        _output_file_prefix + "_pcs_" + std::to_string(process_id) + "_ts_" +
-        std::to_string(timestep) + "_t_" + std::to_string(t) + "_nliter_" +
-        std::to_string(iteration) + ".vtu";
+        constructFileName(_output_file_prefix, process_id, timestep, t) +
+        "_nliter_" + std::to_string(iteration) + ".vtu";
     std::string const output_file_path =
         BaseLib::joinPaths(_output_directory, output_file_name);
 
