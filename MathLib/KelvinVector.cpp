@@ -81,6 +81,32 @@ Eigen::Matrix<double, 3, 3> kelvinVectorToTensor(
 }
 
 template <>
+Eigen::Matrix<double, 3, 3> kelvinVectorToTensor(Eigen::Matrix<double,
+                                                               Eigen::Dynamic,
+                                                               1,
+                                                               Eigen::ColMajor,
+                                                               Eigen::Dynamic,
+                                                               1> const& v)
+{
+    if (v.size() == 4)
+    {
+        Eigen::Matrix<double, 4, 1, Eigen::ColMajor, 4, 1> v4;
+        v4 << v[0], v[1], v[2], v[3];
+        return kelvinVectorToTensor(v4);
+    }
+    if (v.size() == 6)
+    {
+        Eigen::Matrix<double, 6, 1, Eigen::ColMajor, 6, 1> v6;
+        v6 << v[0], v[1], v[2], v[3], v[4], v[5];
+        return kelvinVectorToTensor(v6);
+    }
+    OGS_FATAL(
+        "Conversion of dynamic Kelvin vector of size %d to a tensor is not "
+        "possible. Kelvin vector must be of size 4 or 6.",
+        v.size());
+}
+
+template <>
 KelvinVectorType<2> tensorToKelvin<2>(Eigen::Matrix<double, 3, 3> const& m)
 {
     assert(std::abs(m(0, 1) - m(1, 0)) <
