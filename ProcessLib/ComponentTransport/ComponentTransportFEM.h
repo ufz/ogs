@@ -22,10 +22,12 @@
 #include "NumLib/Function/Interpolation.h"
 #include "ProcessLib/LocalAssemblerInterface.h"
 #include "ProcessLib/Parameter/Parameter.h"
+#include "ProcessLib/ProcessVariable.h"
 #include "ProcessLib/Utils/InitShapeMatrices.h"
 
 namespace ProcessLib
 {
+class ProcessVariable;
 namespace ComponentTransport
 {
 template <typename NodalRowVectorType, typename GlobalDimNodalMatrixType>
@@ -43,8 +45,6 @@ struct IntegrationPointData final
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
-
-const unsigned NUM_NODAL_DOF = 2;
 
 class ComponentTransportLocalAssemblerInterface
     : public ProcessLib::LocalAssemblerInterface,
@@ -65,12 +65,9 @@ class LocalAssemblerData : public ComponentTransportLocalAssemblerInterface
     using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction, GlobalDim>;
     using ShapeMatrices = typename ShapeMatricesType::ShapeMatrices;
 
-    using LocalMatrixType = typename ShapeMatricesType::template MatrixType<
-        NUM_NODAL_DOF * ShapeFunction::NPOINTS,
-        NUM_NODAL_DOF * ShapeFunction::NPOINTS>;
-    using LocalVectorType =
-        typename ShapeMatricesType::template VectorType<NUM_NODAL_DOF *
-                                                        ShapeFunction::NPOINTS>;
+    using LocalMatrixType =
+        Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
+    using LocalVectorType = Eigen::Matrix<double, Eigen::Dynamic, 1>;
 
     using NodalVectorType = typename ShapeMatricesType::NodalVectorType;
     using NodalRowVectorType = typename ShapeMatricesType::NodalRowVectorType;
@@ -85,14 +82,20 @@ public:
                        std::size_t const local_matrix_size,
                        bool is_axially_symmetric,
                        unsigned const integration_order,
-                       ComponentTransportProcessData const& process_data)
+                       ComponentTransportProcessData const& process_data,
+                       std::vector<std::vector<std::reference_wrapper<ProcessVariable>>> const&
+                       process_variables)
         : _element(element),
           _process_data(process_data),
-          _integration_method(integration_order)
+          _integration_method(integration_order),
+          _process_variables(process_variables)
     {
         // This assertion is valid only if all nodal d.o.f. use the same shape
         // matrices.
-        assert(local_matrix_size == ShapeFunction::NPOINTS * NUM_NODAL_DOF);
+        // _process_variables[0].size() can represents number of nodal DOFs in
+        // either monolithic or staggered scheme.
+        assert(local_matrix_size ==
+               ShapeFunction::NPOINTS * _process_variables[0].size());
         (void)local_matrix_size;
 
         unsigned const n_integration_points =
@@ -120,9 +123,12 @@ public:
                   std::vector<double>& local_b_data) override
     {
         auto const local_matrix_size = local_x.size();
+
+        int const num_nodal_dof = _process_variables[0].size();
+
         // This assertion is valid only if all nodal d.o.f. use the same shape
         // matrices.
-        assert(local_matrix_size == ShapeFunction::NPOINTS * NUM_NODAL_DOF);
+        assert(local_matrix_size == ShapeFunction::NPOINTS * num_nodal_dof);
 
         auto local_M = MathLib::createZeroedMatrix<LocalMatrixType>(
             local_M_data, local_matrix_size, local_matrix_size);
@@ -405,6 +411,9 @@ private:
     ComponentTransportProcessData const& _process_data;
 
     IntegrationMethod const _integration_method;
+    std::vector<std::vector<std::reference_wrapper<ProcessVariable>>> const&
+        _process_variables;
+
     std::vector<
         IntegrationPointData<NodalRowVectorType, GlobalDimNodalMatrixType>,
         Eigen::aligned_allocator<
