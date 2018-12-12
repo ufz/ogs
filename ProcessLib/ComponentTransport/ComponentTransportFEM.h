@@ -62,8 +62,20 @@ template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
 class LocalAssemblerData : public ComponentTransportLocalAssemblerInterface
 {
+    // Pressure always first
+    static const int pressure_index = 0;
+    static const int pressure_size = ShapeFunction::NPOINTS;
+    // per component
+    static const int concentration_size = ShapeFunction::NPOINTS;
+
     using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction, GlobalDim>;
     using ShapeMatrices = typename ShapeMatricesType::ShapeMatrices;
+
+    using LocalBlockMatrixType =
+        typename ShapeMatricesType::template MatrixType<pressure_size,
+                                                        pressure_size>;
+    using LocalSegmentVectorType =
+        typename ShapeMatricesType::template VectorType<pressure_size>;
 
     using LocalMatrixType =
         Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
@@ -137,33 +149,92 @@ public:
         auto local_b = MathLib::createZeroedVector<LocalVectorType>(
             local_b_data, local_matrix_size);
 
+        // Nodal DOFs include pressure
+        auto const num_comp = num_nodal_dof - 1;
+
+        // Get block matrices
+        auto Kpp = local_K.template block<pressure_size, pressure_size>(
+            pressure_index, pressure_index);
+        auto Mpp = local_M.template block<pressure_size, pressure_size>(
+            pressure_index, pressure_index);
+        auto Bp = local_b.template segment<pressure_size>(pressure_index);
+
+        auto local_p = Eigen::Map<const NodalVectorType>(
+            &local_x[pressure_index], pressure_size);
+
+        for (int comp_id = 0; comp_id < num_comp; ++comp_id)
+        {
+            /*  Partitioned assembler matrix
+             *  |  pp | pc1 | pc2 | pc3 |
+             *  |-----|-----|-----|-----|
+             *  | c1p | c1c1|  0  |  0  |
+             *  |-----|-----|-----|-----|
+             *  | c2p |  0  | c2c2|  0  |
+             *  |-----|-----|-----|-----|
+             *  | c3p |  0  |  0  | c3c3|
+             */
+            auto concentration_index =
+                pressure_size + comp_id * concentration_size;
+
+            auto KCC =
+                local_K.template block<concentration_size, concentration_size>(
+                    concentration_index, concentration_index);
+            auto MCC =
+                local_M.template block<concentration_size, concentration_size>(
+                    concentration_index, concentration_index);
+            auto MCp =
+                local_M.template block<concentration_size, pressure_size>(
+                    concentration_index, pressure_index);
+            auto MpC =
+                local_M.template block<pressure_size, concentration_size>(
+                    pressure_index, concentration_index);
+
+            auto local_C = Eigen::Map<const NodalVectorType>(
+                &local_x[concentration_index], concentration_size);
+
+            // Prevent duplicate computation in loops
+            Kpp.setZero();
+            Mpp.setZero();
+
+            assembleBlockMatrices(comp_id, t, local_C, local_p, KCC, MCC, MCp,
+                                  MpC, Kpp, Mpp, Bp);
+        }
+    }
+
+    void assembleBlockMatrices(
+        int const comp_id,
+        double const t,
+        Eigen::Ref<const NodalVectorType> const& C_nodal_values,
+        Eigen::Ref<const NodalVectorType> const& p_nodal_values,
+        Eigen::Ref<LocalBlockMatrixType>
+            KCC,
+        Eigen::Ref<LocalBlockMatrixType>
+            MCC,
+        Eigen::Ref<LocalBlockMatrixType>
+            MCp,
+        Eigen::Ref<LocalBlockMatrixType>
+            MpC,
+        Eigen::Ref<LocalBlockMatrixType>
+            Kpp,
+        Eigen::Ref<LocalBlockMatrixType>
+            Mpp,
+        Eigen::Ref<LocalSegmentVectorType>
+            Bp)
+    {
+        assert(comp_id <= static_cast<int>(_process_variables[0].size() - 1));
+
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
 
         SpatialPosition pos;
         pos.setElementID(_element.getID());
 
-        auto const num_nodes = ShapeFunction::NPOINTS;
-        auto p_nodal_values =
-            Eigen::Map<const NodalVectorType>(&local_x[num_nodes], num_nodes);
-        auto C_nodal_values =
-            Eigen::Map<const NodalVectorType>(&local_x[0], num_nodes);
         auto const& b = _process_data.specific_body_force;
 
         MaterialLib::Fluid::FluidProperty::ArrayType vars;
 
         GlobalDimMatrixType const& I(
             GlobalDimMatrixType::Identity(GlobalDim, GlobalDim));
-
-        auto KCC = local_K.template block<num_nodes, num_nodes>(0, 0);
-        auto MCC = local_M.template block<num_nodes, num_nodes>(0, 0);
-        auto MCp = local_M.template block<num_nodes, num_nodes>(0, num_nodes);
-        auto Kpp =
-            local_K.template block<num_nodes, num_nodes>(num_nodes, num_nodes);
-        auto Mpp =
-            local_M.template block<num_nodes, num_nodes>(num_nodes, num_nodes);
-        auto MpC = local_M.template block<num_nodes, num_nodes>(num_nodes, 0);
-        auto Bp = local_b.template block<num_nodes, 1>(num_nodes, 0);
 
         for (std::size_t ip(0); ip < n_integration_points; ++ip)
         {
@@ -177,8 +248,9 @@ public:
 
             double C_int_pt = 0.0;
             double p_int_pt = 0.0;
-            // Order matters: First C, then p!
-            NumLib::shapeFunctionInterpolate(local_x, N, C_int_pt, p_int_pt);
+
+            NumLib::shapeFunctionInterpolate(C_nodal_values, N, C_int_pt);
+            NumLib::shapeFunctionInterpolate(p_nodal_values, N, p_int_pt);
 
             // porosity model
             auto const porosity =
@@ -281,6 +353,16 @@ public:
         assert(!indices.empty());
         auto const local_x = current_solution.get(indices);
 
+        // concentration index of the component ranking first
+        auto const concentration_index = 1 * ShapeFunction::NPOINTS;
+        // assuming that fluid density always depends on concentration of the
+        // first component.
+        // get local_C and local_p
+        auto const C_nodal_values = Eigen::Map<const NodalVectorType>(
+            &local_x[concentration_index], concentration_size);
+        auto const p_nodal_values = Eigen::Map<const NodalVectorType>(
+            &local_x[pressure_index], pressure_size);
+
         cache.clear();
         auto cache_mat = MathLib::createZeroedMatrix<
             Eigen::Matrix<double, GlobalDim, Eigen::Dynamic, Eigen::RowMajor>>(
@@ -290,9 +372,6 @@ public:
         pos.setElementID(_element.getID());
 
         MaterialLib::Fluid::FluidProperty::ArrayType vars;
-        auto const num_nodes = ShapeFunction::NPOINTS;
-        auto const p_nodal_values =
-            Eigen::Map<const NodalVectorType>(&local_x[num_nodes], num_nodes);
 
         for (unsigned ip = 0; ip < n_integration_points; ++ip)
         {
@@ -314,8 +393,10 @@ public:
             {
                 double C_int_pt = 0.0;
                 double p_int_pt = 0.0;
-                NumLib::shapeFunctionInterpolate(local_x, N, C_int_pt,
-                                                 p_int_pt);
+
+                NumLib::shapeFunctionInterpolate(C_nodal_values, N, C_int_pt);
+                NumLib::shapeFunctionInterpolate(p_nodal_values, N, p_int_pt);
+
                 vars[static_cast<int>(
                     MaterialLib::Fluid::PropertyVariableType::C)] = C_int_pt;
                 vars[static_cast<int>(
@@ -365,6 +446,16 @@ public:
             return shape_matrices;
         }();
 
+        // concentration index of the component ranking first
+        auto const concentration_index = 1 * ShapeFunction::NPOINTS;
+        // assuming that fluid density always depends on concentration of the
+        // first component.
+        // get local_C and local_p
+        auto const C_nodal_values = Eigen::Map<const NodalVectorType>(
+            &local_x[concentration_index], concentration_size);
+        auto const p_nodal_values = Eigen::Map<const NodalVectorType>(
+            &local_x[pressure_index], pressure_size);
+
         SpatialPosition pos;
         pos.setElementID(_element.getID());
 
@@ -372,8 +463,11 @@ public:
 
         // local_x contains the local concentration and pressure values
         NumLib::shapeFunctionInterpolate(
-            local_x, shape_matrices.N,
-            vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::C)],
+            C_nodal_values, shape_matrices.N,
+            vars[static_cast<int>(
+                MaterialLib::Fluid::PropertyVariableType::C)]);
+        NumLib::shapeFunctionInterpolate(
+            p_nodal_values, shape_matrices.N,
             vars[static_cast<int>(
                 MaterialLib::Fluid::PropertyVariableType::p)]);
 
@@ -388,8 +482,6 @@ public:
             MaterialLib::Fluid::FluidPropertyType::Viscosity, vars);
         GlobalDimMatrixType const K_over_mu = K / mu;
 
-        auto const p_nodal_values = Eigen::Map<const NodalVectorType>(
-            &local_x[local_x.size()/2], ShapeFunction::NPOINTS);
         GlobalDimVectorType q =
             -K_over_mu * shape_matrices.dNdx * p_nodal_values;
 
