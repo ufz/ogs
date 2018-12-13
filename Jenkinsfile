@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-@Library('jenkins-pipeline@1.0.12') _
+@Library('jenkins-pipeline@1.0.13') _
 
 def stage_required = [build: false, data: false, full: false, docker: false]
 
