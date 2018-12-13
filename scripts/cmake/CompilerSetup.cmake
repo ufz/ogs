@@ -122,6 +122,7 @@ if(MSVC)
         # This fixes compile errors with
         # std::numeric_limits<T>::min() / max()
         -DNOMINMAX
+        -DBOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE # when VC is newer than Boost
     )
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /ignore:4099")
 endif()
