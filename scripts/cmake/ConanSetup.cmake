@@ -31,7 +31,8 @@ endif()
 include(${PROJECT_SOURCE_DIR}/scripts/cmake/conan/conan.cmake)
 
 set(CONAN_REQUIRES
-    Boost/1.64.0@conan/stable
+    boost_optional/1.66.0@bincrafters/stable
+    boost_property_tree/1.66.0@bincrafters/stable
     Eigen3/3.2.9@bilke/stable
     VTK/8.1.1@bilke/stable
     CACHE INTERNAL ""
