@@ -30,11 +30,7 @@ public:
     {
     }
 
-    explicit TimeInterval(const TimeInterval& time_inverval)
-        : _start_time(time_inverval._start_time),
-          _end_time(time_inverval._end_time)
-    {
-    }
+    TimeInterval(const TimeInterval& time_inverval) = default;
 
     bool contains(const double current_time) const
     {
