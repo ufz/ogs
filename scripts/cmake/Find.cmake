@@ -60,8 +60,10 @@ find_program(MODULE_CMD modulecmd
 ######################
 ### Find libraries ###
 ######################
-find_package(Boost REQUIRED)
-include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
+if(NOT OGS_USE_CONAN)
+    find_package(Boost REQUIRED)
+    include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
+endif()
 
 find_package(VTK 8.1.0 REQUIRED)
 include(${VTK_USE_FILE})
