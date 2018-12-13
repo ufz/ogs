@@ -24,8 +24,6 @@
 
 #include "BaseLib/Algorithm.h"
 #include "BaseLib/FileTools.h"
-// include due to the forward declaration in ProcessVariable.h
-#include "BaseLib/TimeInterval.h"
 
 #include "GeoLib/GEOObjects.h"
 #include "MathLib/Curve/CreatePiecewiseLinearCurve.h"

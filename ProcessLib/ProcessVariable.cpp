@@ -26,7 +26,6 @@
 #include "ProcessLib/BoundaryCondition/BoundaryCondition.h"
 #include "ProcessLib/BoundaryCondition/CreateBoundaryCondition.h"
 #include "ProcessLib/BoundaryCondition/DirichletBoundaryConditionWithinTimeInterval.h"
-#include "ProcessLib/DeactivatedSubdomain.h"
 #include "ProcessLib/SourceTerms/CreateSourceTerm.h"
 #include "ProcessLib/SourceTerms/SourceTerm.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
@@ -119,9 +118,9 @@ ProcessVariable::ProcessVariable(
                   _shapefunction_order);
 
     // Boundary conditions
-    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions}
     if (auto bcs_config =
-            config.getConfigSubtreeOptional("boundary_conditions"))
+        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions}
+        config.getConfigSubtreeOptional("boundary_conditions"))
     {
         for (
             auto bc_config :

@@ -16,7 +16,6 @@
 
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
-#include "BaseLib/TimeInterval.h"
 
 #include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
 #include "MeshLib/Mesh.h"

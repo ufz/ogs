@@ -15,6 +15,11 @@
 #include "ProcessLib/Parameter/Parameter.h"
 #include "ProcessLib/SourceTerms/SourceTermConfig.h"
 
+// DeactivatedSubdomain cannot be forwardly declared because that
+// std::unique_ptr<DeactivatedSubdomain> type member requires its full
+// definition (see https://stackoverflow.com/a/6089065).
+#include "ProcessLib/DeactivatedSubdomain.h"
+
 namespace MeshLib
 {
 class Mesh;
@@ -35,8 +40,6 @@ class Process;
 
 namespace ProcessLib
 {
-struct DeactivatedSubdomain;
-
 /// A named process variable. Its properties includes the mesh, and the initial
 /// and boundary conditions as well as the source terms.
 class ProcessVariable
