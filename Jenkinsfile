@@ -177,7 +177,8 @@ pipeline {
               configure {
                 cmakeOptions =
                   '-DOGS_BUILD_UTILS=ON ' +
-                  '-DBUILD_SHARED_LIBS=ON '
+                  '-DBUILD_SHARED_LIBS=ON ' +
+                  '-DOGS_USE_CONAN=OFF '
                 env = 'envinf1/cli.sh'
               }
               build {
@@ -210,7 +211,8 @@ pipeline {
                 cmakeOptions =
                   '-DOGS_BUILD_UTILS=ON ' +
                   '-DBUILD_SHARED_LIBS=ON ' +
-                  '-DOGS_USE_PETSC=ON '
+                  '-DOGS_USE_PETSC=ON ' +
+                  '-DOGS_USE_CONAN=OFF '
                 env = 'envinf1/petsc.sh'
               }
               build {

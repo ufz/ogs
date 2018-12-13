@@ -60,7 +60,7 @@ find_program(MODULE_CMD modulecmd
 ######################
 ### Find libraries ###
 ######################
-if(NOT OGS_USE_CONAN)
+if(NOT OGS_USE_CONAN OR NOT CONAN_CMD)
     find_package(Boost REQUIRED)
     include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 endif()
