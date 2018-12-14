@@ -55,7 +55,7 @@ find_program(PIP pip)
 find_program(PANDOC_CITEPROC pandoc-citeproc)
 
 find_program(MODULE_CMD modulecmd
-    PATHS /usr/local/modules/3.2.10-1/Modules/3.2.10/bin)
+    PATHS /usr/local/modules/3.3.4-1/Modules/3.3.4/bin)
 
 ######################
 ### Find libraries ###
@@ -68,7 +68,7 @@ endif()
 find_package(VTK 8.1.0 REQUIRED)
 include(${VTK_USE_FILE})
 
-find_package(Eigen3 3.2.9 REQUIRED)
+find_package(Eigen3 3.3.4 REQUIRED)
 include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
 
 ## pthread, is a requirement of logog ##

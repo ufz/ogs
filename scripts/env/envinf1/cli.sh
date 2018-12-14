@@ -7,7 +7,7 @@ module load git
 
 # Libraries
 module load boost/1.62.0-1
-module load eigen/3.2.9-1-cmake
+module load eigen/3.3.4-1-cmake
 module load vtk/8.1.1_gcc-6.2.0_openmpi-1.8.8
 
 # Tools
