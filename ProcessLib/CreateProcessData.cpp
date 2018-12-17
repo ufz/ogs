@@ -81,6 +81,7 @@ std::vector<std::unique_ptr<ProcessData>> createPerProcessData(
             //! \ogs_file_param{prj__time_loop__processes__process__convergence_criterion}
             pcs_config.getConfigSubtree("convergence_criterion"));
 
+        //! \ogs_file_param{prj__time_loop__processes__process__output}
         auto output = pcs_config.getConfigSubtreeOptional("output");
         if (output)
         {

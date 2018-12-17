@@ -96,8 +96,8 @@ std::unique_ptr<Output> createOutput(
         output_variables.insert(out_var);
     }
 
+    //! \ogs_file_param{prj__time_loop__output__output_extrapolation_residuals}
     bool const output_residuals = config.getConfigParameter<bool>(
-        //! \ogs_file_param{prj__time_loop__output__output_extrapolation_residuals}
         "output_extrapolation_residuals", false);
 
     ProcessOutput process_output{output_variables, output_residuals};
