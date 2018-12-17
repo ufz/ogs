@@ -92,10 +92,20 @@ public:
 
     /// Computes the flux in the point \c p_local_coords that is given in local
     /// coordinates using the values from \c local_x.
+    /// Fits to monolithic scheme.
     virtual Eigen::Vector3d getFlux(
         MathLib::Point3d const& /*p_local_coords*/,
         double const /*t*/,
         std::vector<double> const& /*local_x*/) const
+    {
+        return Eigen::Vector3d{};
+    }
+
+    /// Fits to staggered scheme.
+    virtual Eigen::Vector3d getFlux(
+        MathLib::Point3d const& /*p_local_coords*/,
+        double const /*t*/,
+        std::vector<std::vector<double>> const& /*local_xs*/) const
     {
         return Eigen::Vector3d{};
     }

@@ -112,6 +112,12 @@ public:
                             MathLib::Point3d const& p, double const t,
                             GlobalVector const& x) const override;
 
+    void setCoupledTermForTheStaggeredSchemeToLocalAssemblers() override;
+
+    void preTimestepConcreteProcess(GlobalVector const& x, const double /*t*/,
+                                    const double /*delta_t*/,
+                                    int const process_id) override;
+
     void postTimestepConcreteProcess(GlobalVector const& x,
                                      const double t,
                                      const double delta_t,
@@ -132,10 +138,15 @@ private:
         const double dxdot_dx, const double dx_dx, GlobalMatrix& M,
         GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac) override;
 
+    void setCoupledSolutionsOfPreviousTimeStep();
+
     ComponentTransportProcessData _process_data;
 
     std::vector<std::unique_ptr<ComponentTransportLocalAssemblerInterface>>
         _local_assemblers;
+
+    /// Solutions of the previous time step
+    std::array<std::unique_ptr<GlobalVector>, 2> _xs_previous_timestep;
 
     std::unique_ptr<ProcessLib::SurfaceFluxData> _surfaceflux;
 };
