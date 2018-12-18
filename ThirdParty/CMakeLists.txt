@@ -17,7 +17,7 @@ if(MSVC)
     set_target_properties(logog PROPERTIES COMPILE_FLAGS /W0)
 endif()
 
-add_subdirectory(gtest)
+add_subdirectory(googletest)
 
 # This is a workaround for Travis builds.
 option(OGS_USE_OPTIONAL_SUBMODULES "Option for enabling optional submodules" OFF)
