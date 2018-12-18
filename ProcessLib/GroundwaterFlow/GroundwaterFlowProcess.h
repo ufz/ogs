@@ -77,7 +77,7 @@ public:
         ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
         _surfaceflux->integrate(x, t, *this, process_id, _integration_order,
-                                _mesh, pv.getElementDeactivationFlags());
+                                _mesh, pv.getActiveElementIDs());
         _surfaceflux->save(t);
     }
 

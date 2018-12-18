@@ -274,7 +274,7 @@ void ProcessVariable::checkElementDeactivation(double const time)
 {
     if (_deactivated_subdomains.empty())
     {
-        _element_deactivation_flags.clear();
+        _ids_of_active_elements.clear();
         return;
     }
 
@@ -287,26 +287,27 @@ void ProcessVariable::checkElementDeactivation(double const time)
 
     if (found_a_set == _deactivated_subdomains.end())
     {
-        _element_deactivation_flags.clear();
+        _ids_of_active_elements.clear();
         return;
     }
 
     // Already initialized.
-    if (!_element_deactivation_flags.empty())
+    if (!_ids_of_active_elements.empty())
         return;
 
     auto const& deactivated_materialIDs = (*found_a_set)->materialIDs;
 
     auto const* const material_ids = MeshLib::materialIDs(_mesh);
-    _element_deactivation_flags.resize(_mesh.getNumberOfElements());
+    _ids_of_active_elements.clear();
     auto const number_of_elements = _mesh.getNumberOfElements();
 
     for (std::size_t i = 0; i < number_of_elements; i++)
     {
-        _element_deactivation_flags[i] =
-            std::binary_search(deactivated_materialIDs.begin(),
+        if (std::binary_search(deactivated_materialIDs.begin(),
                                deactivated_materialIDs.end(),
-                               (*material_ids)[i]);
+                               (*material_ids)[i]))
+            continue;
+        _ids_of_active_elements.push_back(_mesh.getElement(i)->getID());
     }
 }
 

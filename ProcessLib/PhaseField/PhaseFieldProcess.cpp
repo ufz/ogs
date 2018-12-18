@@ -240,7 +240,7 @@ void PhaseFieldProcess<DisplacementDim>::assembleConcreteProcess(
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        pv.getElementDeactivationFlags(), dof_tables, t, x, M, K, b,
+        pv.getActiveElementIDs(), dof_tables, t, x, M, K, b,
         _coupled_solutions);
 }
 
@@ -285,7 +285,7 @@ void PhaseFieldProcess<DisplacementDim>::assembleWithJacobianConcreteProcess(
 
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, pv.getElementDeactivationFlags(), dof_tables, t,
+        _local_assemblers, pv.getActiveElementIDs(), dof_tables, t,
         x, xdot, dxdot_dx, dx_dx, M, K, b, Jac, _coupled_solutions);
 
     if (!_use_monolithic_scheme && (_coupled_solutions->process_id == 0))
@@ -311,7 +311,7 @@ void PhaseFieldProcess<DisplacementDim>::preTimestepConcreteProcess(
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerInterface::preTimestep, _local_assemblers,
-        pv.getElementDeactivationFlags(), getDOFTable(process_id), x, t, dt);
+        pv.getActiveElementIDs(), getDOFTable(process_id), x, t, dt);
 }
 
 template <int DisplacementDim>
@@ -338,7 +338,7 @@ void PhaseFieldProcess<DisplacementDim>::postTimestepConcreteProcess(
 
         GlobalExecutor::executeSelectedMemberOnDereferenced(
             &LocalAssemblerInterface::computeEnergy, _local_assemblers,
-            pv.getElementDeactivationFlags(), dof_tables, x, _process_data.t,
+            pv.getActiveElementIDs(), dof_tables, x, _process_data.t,
             _process_data.elastic_energy, _process_data.surface_energy,
             _process_data.pressure_work, _use_monolithic_scheme,
             _coupled_solutions);

@@ -172,7 +172,7 @@ void HeatTransportBHEProcess::assembleConcreteProcess(const double t,
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        pv.getElementDeactivationFlags(), dof_table, t, x, M, K, b,
+        pv.getActiveElementIDs(), dof_table, t, x, M, K, b,
         _coupled_solutions);
 }
 
@@ -193,7 +193,7 @@ void HeatTransportBHEProcess::computeSecondaryVariableConcrete(
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &HeatTransportBHELocalAssemblerInterface::computeSecondaryVariable,
-        _local_assemblers, pv.getElementDeactivationFlags(),
+        _local_assemblers, pv.getActiveElementIDs(),
         getDOFTable(process_id), t, x, _coupled_solutions);
 }
 

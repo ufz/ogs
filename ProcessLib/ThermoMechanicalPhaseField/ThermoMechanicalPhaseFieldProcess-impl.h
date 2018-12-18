@@ -214,7 +214,7 @@ void ThermoMechanicalPhaseFieldProcess<
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        pv.getElementDeactivationFlags(), dof_table, t, x, M, K, b,
+        pv.getActiveElementIDs(), dof_table, t, x, M, K, b,
         _coupled_solutions);
 }
 
@@ -267,7 +267,7 @@ void ThermoMechanicalPhaseFieldProcess<DisplacementDim>::
 
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, pv.getElementDeactivationFlags(), dof_tables, t, x,
+        _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, x,
         xdot, dxdot_dx, dx_dx, M, K, b, Jac, _coupled_solutions);
 }
 
@@ -292,7 +292,7 @@ void ThermoMechanicalPhaseFieldProcess<
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &ThermoMechanicalPhaseFieldLocalAssemblerInterface::preTimestep,
-        _local_assemblers, pv.getElementDeactivationFlags(),
+        _local_assemblers, pv.getActiveElementIDs(),
         getDOFTable(process_id), x, t, dt);
 }
 
@@ -309,7 +309,7 @@ void ThermoMechanicalPhaseFieldProcess<
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &ThermoMechanicalPhaseFieldLocalAssemblerInterface::postTimestep,
-        _local_assemblers, pv.getElementDeactivationFlags(),
+        _local_assemblers, pv.getActiveElementIDs(),
         getDOFTable(process_id), x);
 }
 
@@ -331,7 +331,7 @@ void ThermoMechanicalPhaseFieldProcess<
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerInterface::postNonLinearSolver, _local_assemblers,
-        pv.getElementDeactivationFlags(), getDOFTable(process_id), x, t,
+        pv.getActiveElementIDs(), getDOFTable(process_id), x, t,
         use_monolithic_scheme);
 }
 

@@ -455,7 +455,7 @@ void HydroMechanicsProcess<GlobalDim>::computeSecondaryVariableConcrete(
 
         GlobalExecutor::executeSelectedMemberOnDereferenced(
             &HydroMechanicsLocalAssemblerInterface::computeSecondaryVariable,
-            _local_assemblers, pv.getElementDeactivationFlags(),
+            _local_assemblers, pv.getActiveElementIDs(),
             dof_table, t, x, _coupled_solutions);
     }
 
@@ -583,7 +583,7 @@ void HydroMechanicsProcess<GlobalDim>::assembleWithJacobianConcreteProcess(
        dof_table = {std::ref(*_local_to_global_index_map)};
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, pv.getElementDeactivationFlags(), dof_table, t, x,
+        _local_assemblers, pv.getActiveElementIDs(), dof_table, t, x,
         xdot, dxdot_dx, dx_dx, M, K, b, Jac, _coupled_solutions);
 
     auto copyRhs = [&](int const variable_id, auto& output_vector) {
@@ -610,7 +610,7 @@ void HydroMechanicsProcess<GlobalDim>::preTimestepConcreteProcess(
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &HydroMechanicsLocalAssemblerInterface::preTimestep, _local_assemblers,
-        pv.getElementDeactivationFlags(), *_local_to_global_index_map,
+        pv.getActiveElementIDs(), *_local_to_global_index_map,
         x, t, dt);
 }
 

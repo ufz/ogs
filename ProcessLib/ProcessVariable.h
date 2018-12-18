@@ -65,9 +65,9 @@ public:
 
     void checkElementDeactivation(double const time);
 
-    std::vector<bool>& getElementDeactivationFlags() const
+    std::vector<std::size_t>& getActiveElementIDs() const
     {
-        return _element_deactivation_flags;
+        return _ids_of_active_elements;
     }
 
     /// Returns the number of components of the process variable.
@@ -111,7 +111,9 @@ private:
     std::vector<std::unique_ptr<DeactivatedSubdomain const>>
         _deactivated_subdomains;
 
-    mutable std::vector<bool> _element_deactivation_flags;
+    /// IDs of the active elements. It is initialized only if there are
+    /// deactivated subdomains.
+    mutable std::vector<std::size_t> _ids_of_active_elements;
 
     void createBoundaryConditionsForDeactivatedSubDomains(
         const NumLib::LocalToGlobalIndexMap& dof_table, const int variable_id,

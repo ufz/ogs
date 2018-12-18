@@ -95,7 +95,7 @@ void LiquidFlowProcess::assembleConcreteProcess(const double t,
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        pv.getElementDeactivationFlags(),  dof_table, t, x, M, K, b,
+        pv.getActiveElementIDs(),  dof_table, t, x, M, K, b,
         _coupled_solutions);
 }
 
@@ -114,7 +114,7 @@ void LiquidFlowProcess::assembleWithJacobianConcreteProcess(
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, pv.getElementDeactivationFlags(), dof_table, t,
+        _local_assemblers, pv.getActiveElementIDs(), dof_table, t,
         x, xdot, dxdot_dx, dx_dx, M, K, b, Jac, _coupled_solutions);
 }
 
@@ -127,7 +127,7 @@ void LiquidFlowProcess::computeSecondaryVariableConcrete(const double t,
     DBUG("Compute the velocity for LiquidFlowProcess.");
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LiquidFlowLocalAssemblerInterface::computeSecondaryVariable,
-        _local_assemblers, pv.getElementDeactivationFlags(),
+        _local_assemblers, pv.getActiveElementIDs(),
         getDOFTable(process_id), t, x, _coupled_solutions);
 }
 

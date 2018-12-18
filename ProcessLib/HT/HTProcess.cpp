@@ -122,7 +122,7 @@ void HTProcess::assembleConcreteProcess(const double t,
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        pv.getElementDeactivationFlags(), dof_tables, t, x, M, K, b,
+        pv.getActiveElementIDs(), dof_tables, t, x, M, K, b,
         _coupled_solutions);
 }
 
@@ -152,7 +152,7 @@ void HTProcess::assembleWithJacobianConcreteProcess(
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, pv.getElementDeactivationFlags(), dof_tables, t, x,
+        _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, x,
         xdot, dxdot_dx, dx_dx, M, K, b, Jac, _coupled_solutions);
 }
 
@@ -192,7 +192,7 @@ void HTProcess::setCoupledTermForTheStaggeredSchemeToLocalAssemblers()
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &HTLocalAssemblerInterface::setStaggeredCoupledSolutions,
-        _local_assemblers, pv.getElementDeactivationFlags(),
+        _local_assemblers, pv.getActiveElementIDs(),
         _coupled_solutions);
 }
 
@@ -285,7 +285,7 @@ void HTProcess::postTimestepConcreteProcess(GlobalVector const& x,
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
     _surfaceflux->integrate(x, t, *this, process_id, _integration_order, _mesh,
-                            pv.getElementDeactivationFlags());
+                            pv.getActiveElementIDs());
     _surfaceflux->save(t);
 }
 

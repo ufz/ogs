@@ -36,8 +36,8 @@ struct SerialExecutor
     /// \tparam C    input container type.
     /// \tparam Args types additional arguments passed to \c f.
     ///
-    /// \param f    a function that accepts a a reference to container's
-    /// elements,
+    /// \param f    a function that accepts a reference to container's
+    ///             elements,
     ///             an index as arguments (and possibly further arguments).
     /// \param c    a container supporting access over operator[].
     ///             The elements of \c c must have pointer semantics, i.e.,
@@ -64,7 +64,7 @@ struct SerialExecutor
     /// \param container collection of objects having pointer semantics.
     /// \param object    the object whose method will be called.
     /// \param method    the method being called, i.e., a member function
-    /// pointer
+    ///                  pointer
     ///                  to a member function of the class \c Object.
     /// \param args      further arguments passed on to the method
     ///
@@ -86,38 +86,33 @@ struct SerialExecutor
     ///
     /// This method is very similar to executeDereferenced().
     ///
-    /// \param object             the object whose method will be called.
-    /// \param method             the method being called, i.e., a member
-    ///                           function pointer to a member function of the
-    ///                           class \c Object.
-    /// \param container          collection of objects having pointer
-    ///                           semantics.
-    /// \param container_selector A boolean vector, each element of it
-    ///                           indicates whether its associated element
-    ///                           of \c container is skipped or not.
-    /// \param args               further arguments passed on to the method
+    /// \param object               the object whose method will be called.
+    /// \param method               the method being called, i.e., a member
+    ///                             function pointer to a member function of the
+    ///                             class \c Object.
+    /// \param container            collection of objects having pointer
+    ///                             semantics.
+    /// \param active_container_ids The IDs of active elements of \c container.
+    /// \param args                 further arguments passed on to the method.
     ///
     /// \see executeDereferenced()
     template <typename Container, typename Object, typename Method,
               typename... Args>
     static void executeSelectedMemberDereferenced(
         Object& object, Method method, Container const& container,
-        std::vector<bool> const& container_selector, Args&&... args)
+        std::vector<std::size_t> const& active_container_ids, Args&&... args)
     {
-        if (container_selector.empty())
+        if (active_container_ids.empty())
         {
             executeMemberDereferenced(object, method, container,
                                       std::forward<Args>(args)...);
             return;
         }
 
-        assert(container.size() == container_selector.size());
-        for (std::size_t i = 0; i < container.size(); i++)
+        for (std::size_t i = 0; i < active_container_ids.size(); i++)
         {
-            if (container_selector[i])
-                continue;
-
-            (object.*method)(i, *container[i], std::forward<Args>(args)...);
+            (object.*method)(i, *container[active_container_ids[i]],
+                             std::forward<Args>(args)...);
         }
     }
 
@@ -127,7 +122,7 @@ struct SerialExecutor
     ///
     /// \param container collection of objects having pointer semantics.
     /// \param method    the method being called, i.e., a member function
-    /// pointer
+    ///                  pointer.
     ///                  to a member function of the \c container's elements.
     /// \param args      further arguments passed on to the method
     ///
@@ -148,36 +143,31 @@ struct SerialExecutor
     ///
     /// This method is very similar to executeSelectedMemberDereferenced().
     ///
-    /// \param method             the method being called, i.e., a member
-    ///                           function pointer to a member function of the
-    ///                           \c container's elements.
-    /// \param container          collection of objects having pointer
-    ///                           semantics.
-    /// \param container_selector A boolean vector, each element of it
-    ///                           indicates whether its associated element is
-    ///                           skppied or not.
-    /// \param args               further arguments passed on to the method.
+    /// \param method               the method being called, i.e., a member
+    ///                             function pointer to a member function of the
+    ///                             \c container's elements.
+    /// \param container            collection of objects having pointer
+    ///                             semantics.
+    /// \param active_container_ids The IDs of active elements of \c container.
+    /// \param args                 further arguments passed on to the method.
     ///
     /// \see executeDereferenced()
     template <typename Container, typename Method, typename... Args>
     static void executeSelectedMemberOnDereferenced(
         Method method, Container const& container,
-        std::vector<bool> const& container_selector, Args&&... args)
+        std::vector<std::size_t> const& active_container_ids, Args&&... args)
     {
-        if (container_selector.empty())
+        if (active_container_ids.empty())
         {
             executeMemberOnDereferenced(method, container,
                                         std::forward<Args>(args)...);
             return;
         }
 
-        assert(container.size() == container_selector.size());
-        for (std::size_t i = 0; i < container.size(); i++)
+        for (std::size_t i = 0; i < active_container_ids.size(); i++)
         {
-            if (container_selector[i])
-                continue;
-
-            ((*container[i]).*method)(i, std::forward<Args>(args)...);
+            ((*container[active_container_ids[i]]).*method)(
+                i, std::forward<Args>(args)...);
         }
     }
 
@@ -192,11 +182,11 @@ struct SerialExecutor
     ///             an index, and a second container element as arguments, which
     ///             is modified.
     /// \param c    a container supporting const access over operator[] and
-    /// size().
+    ///             size().
     ///             The elements of \c c must have pointer semantics, i.e.,
     ///             support dereferencing via unary operator*().
     /// \param data a container supporting non-const access over operator[] and
-    /// size().
+    ///             size().
     /// \param args additional arguments passed to \c f
     template <typename F, typename C, typename Data, typename... Args_>
     static void
