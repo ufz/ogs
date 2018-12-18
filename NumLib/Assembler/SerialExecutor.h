@@ -19,7 +19,6 @@
 
 namespace NumLib
 {
-
 struct SerialExecutor
 {
     /// Executes \c f for each element from the input container.
@@ -37,16 +36,16 @@ struct SerialExecutor
     /// \tparam C    input container type.
     /// \tparam Args types additional arguments passed to \c f.
     ///
-    /// \param f    a function that accepts a a reference to container's elements,
+    /// \param f    a function that accepts a a reference to container's
+    /// elements,
     ///             an index as arguments (and possibly further arguments).
     /// \param c    a container supporting access over operator[].
     ///             The elements of \c c must have pointer semantics, i.e.,
     ///             support dereferencing via unary operator*().
     /// \param args additional arguments passed to \c f.
     ///
-    template <typename F, typename C, typename ...Args_>
-    static
-    void
+    template <typename F, typename C, typename... Args_>
+    static void
 #if defined(_MSC_VER) && (_MSC_VER >= 1700)
     executeDereferenced(F& f, C const& c, Args_&&... args)
 #else
@@ -64,18 +63,20 @@ struct SerialExecutor
     ///
     /// \param container collection of objects having pointer semantics.
     /// \param object    the object whose method will be called.
-    /// \param method    the method being called, i.e., a member function pointer
+    /// \param method    the method being called, i.e., a member function
+    /// pointer
     ///                  to a member function of the class \c Object.
     /// \param args      further arguments passed on to the method
     ///
     /// \see executeDereferenced()
-    template <typename Container, typename Object, typename Method, typename... Args>
-    static void
-    executeMemberDereferenced(
-            Object& object, Method method,
-            Container const& container, Args&&... args)
+    template <typename Container, typename Object, typename Method,
+              typename... Args>
+    static void executeMemberDereferenced(Object& object, Method method,
+                                          Container const& container,
+                                          Args&&... args)
     {
-        for (std::size_t i = 0; i < container.size(); i++) {
+        for (std::size_t i = 0; i < container.size(); i++)
+        {
             (object.*method)(i, *container[i], std::forward<Args>(args)...);
         }
     }
@@ -97,25 +98,23 @@ struct SerialExecutor
     /// \param args               further arguments passed on to the method
     ///
     /// \see executeDereferenced()
-    template <typename Container, typename Object, typename Method, typename... Args>
-    static void
-    executeSelectedMemberDereferenced(
-            Object& object, Method method, Container const& container,
-            std::vector<bool> const& container_selector, Args&&... args)
+    template <typename Container, typename Object, typename Method,
+              typename... Args>
+    static void executeSelectedMemberDereferenced(
+        Object& object, Method method, Container const& container,
+        std::vector<bool> const& container_selector, Args&&... args)
     {
         if (container_selector.empty())
         {
-            for (std::size_t i = 0; i < container.size(); i++)
-            {
-                (object.*method)(i, *container[i], std::forward<Args>(args)...);
-            }
+            executeMemberDereferenced(object, method, container,
+                                      std::forward<Args>(args)...);
             return;
         }
 
         assert(container.size() == container_selector.size());
         for (std::size_t i = 0; i < container.size(); i++)
         {
-            if(container_selector[i])
+            if (container_selector[i])
                 continue;
 
             (object.*method)(i, *container[i], std::forward<Args>(args)...);
@@ -127,7 +126,8 @@ struct SerialExecutor
     /// This method is very similar to executeMemberDereferenced().
     ///
     /// \param container collection of objects having pointer semantics.
-    /// \param method    the method being called, i.e., a member function pointer
+    /// \param method    the method being called, i.e., a member function
+    /// pointer
     ///                  to a member function of the \c container's elements.
     /// \param args      further arguments passed on to the method
     ///
@@ -137,7 +137,8 @@ struct SerialExecutor
                                             Container const& container,
                                             Args&&... args)
     {
-        for (std::size_t i = 0; i < container.size(); i++) {
+        for (std::size_t i = 0; i < container.size(); i++)
+        {
             ((*container[i]).*method)(i, std::forward<Args>(args)...);
         }
     }
@@ -163,19 +164,17 @@ struct SerialExecutor
         Method method, Container const& container,
         std::vector<bool> const& container_selector, Args&&... args)
     {
-        if(container_selector.empty())
+        if (container_selector.empty())
         {
-            for (std::size_t i = 0; i < container.size(); i++)
-            {
-                ((*container[i]).*method)(i, std::forward<Args>(args)...);
-            }
+            executeMemberOnDereferenced(method, container,
+                                        std::forward<Args>(args)...);
             return;
         }
 
         assert(container.size() == container_selector.size());
         for (std::size_t i = 0; i < container.size(); i++)
         {
-            if(container_selector[i])
+            if (container_selector[i])
                 continue;
 
             ((*container[i]).*method)(i, std::forward<Args>(args)...);
@@ -192,14 +191,15 @@ struct SerialExecutor
     /// \param f    a function that accepts a pointer to container's elements,
     ///             an index, and a second container element as arguments, which
     ///             is modified.
-    /// \param c    a container supporting const access over operator[] and size().
+    /// \param c    a container supporting const access over operator[] and
+    /// size().
     ///             The elements of \c c must have pointer semantics, i.e.,
     ///             support dereferencing via unary operator*().
-    /// \param data a container supporting non-const access over operator[] and size().
+    /// \param data a container supporting non-const access over operator[] and
+    /// size().
     /// \param args additional arguments passed to \c f
-    template <typename F, typename C, typename Data, typename ...Args_>
-    static
-    void
+    template <typename F, typename C, typename Data, typename... Args_>
+    static void
 #if defined(_MSC_VER) && (_MSC_VER >= 1700)
     transformDereferenced(F& f, C const& c, Data& data, Args_&&... args)
 #else
@@ -213,4 +213,4 @@ struct SerialExecutor
     }
 };
 
-}   // namespace NumLib
+}  // namespace NumLib

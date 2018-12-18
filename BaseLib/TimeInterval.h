@@ -32,6 +32,8 @@ public:
 
     TimeInterval(const TimeInterval& time_inverval) = default;
 
+    TimeInterval& operator=(const TimeInterval& time_inverval) = default;
+
     bool contains(const double current_time) const
     {
         return (current_time >= _start_time && current_time <= _end_time);
