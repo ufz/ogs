@@ -133,5 +133,20 @@ protected:
 extern template class LinearElasticIsotropic<2>;
 extern template class LinearElasticIsotropic<3>;
 
+template <int DisplacementDim>
+MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>
+elasticTangentStiffness(double const first_lame_parameter,
+                        double const shear_modulus)
+{
+    using KelvinMatrix =
+        MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>;
+
+    KelvinMatrix tangentStiffness = KelvinMatrix::Zero();
+    tangentStiffness.template topLeftCorner<3, 3>().setConstant(
+        first_lame_parameter);
+    tangentStiffness.noalias() += 2 * shear_modulus * KelvinMatrix::Identity();
+    return tangentStiffness;
+}
+
 }  // namespace Solids
 }  // namespace MaterialLib

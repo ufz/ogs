@@ -47,12 +47,8 @@ LinearElasticIsotropic<DisplacementDim>::getElasticTensor(
     double const t, ProcessLib::SpatialPosition const& x,
     double const /*T*/) const
 {
-    KelvinMatrix C = KelvinMatrix::Zero();
-
-    C.template topLeftCorner<3, 3>().setConstant(_mp.lambda(t, x));
-    C.noalias() += 2 * _mp.mu(t, x) * KelvinMatrix::Identity();
-
-    return C;
+    return elasticTangentStiffness<DisplacementDim>(_mp.lambda(t, x),
+                                                    _mp.mu(t, x));
 }
 
 template class LinearElasticIsotropic<2>;

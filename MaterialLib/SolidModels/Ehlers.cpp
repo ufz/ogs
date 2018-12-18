@@ -9,8 +9,9 @@
 
 #include "Ehlers.h"
 #include <boost/math/special_functions/pow.hpp>
-
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
+
+#include "LinearElasticIsotropic.h"
 
 /**
  * Common convenitions for naming:
@@ -52,19 +53,6 @@ namespace Ehlers
 template <int DisplacementDim>
 MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> sOdotS(
     MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const& v);
-
-template <int DisplacementDim>
-MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>
-elasticTangentStiffness(double const K, double const G)
-{
-    using KelvinMatrix =
-        MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>;
-
-    KelvinMatrix tangentStiffness = KelvinMatrix::Zero();
-    tangentStiffness.template topLeftCorner<3, 3>().setConstant(K - 2. / 3 * G);
-    tangentStiffness.noalias() += 2 * G * KelvinMatrix::Identity();
-    return tangentStiffness;
-}
 
 template <int DisplacementDim>
 struct PhysicalStressWithInvariants final
@@ -527,7 +515,8 @@ SolidEhlers<DisplacementDim>::integrateStress(
              calculateIsotropicHardening(mp.kappa, mp.hardening_coefficient,
                                          state.eps_p.eff)) < 0))
     {
-        tangentStiffness = elasticTangentStiffness<DisplacementDim>(mp.K, mp.G);
+        tangentStiffness = elasticTangentStiffness<DisplacementDim>(
+            mp.K - 2. / 3 * mp.G, mp.G);
     }
     else
     {
