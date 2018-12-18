@@ -9,6 +9,7 @@
 
 #include <algorithm>
 #include <numeric>
+#include <random>
 #include <vector>
 
 #include <gtest/gtest.h>
@@ -19,12 +20,13 @@ TEST(BaseLibAlgorithm, testreorderVector)
 {
     const std::size_t size = 100;
     std::vector<double> vec(size);
-    std::generate(vec.begin(), vec.end(), std::rand);
+    std::default_random_engine random_engine;
+    std::generate(vec.begin(), vec.end(), random_engine);
     std::vector<double> vec0 = vec;
 
     std::vector<int> order(size);
     std::iota(order.begin(), order.end(), 0);
-    std::random_shuffle(order.begin(), order.end());
+    std::shuffle(order.begin(), order.end(), random_engine);
 
     BaseLib::reorderVector(vec, order);
 
