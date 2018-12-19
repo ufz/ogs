@@ -100,6 +100,8 @@ std::unique_ptr<Process> createThermoMechanicsProcess(
             variable_T->getNumberOfComponents());
     }
 
+    //! \ogs_file_param{prj__processes__process__THERMO_MECHANICS__constitutive_relation}
+    config.peekConfigParameter<std::string>("constitutive_relation");
     auto solid_constitutive_relations =
         MaterialLib::Solids::createConstitutiveRelations<DisplacementDim>(
             parameters, config);
