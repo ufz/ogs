@@ -8,7 +8,7 @@
             <type>ComponentTransport</type>
             <integration_order>2</integration_order>
             <process_variables>
-                <concentration>concentration</concentration>
+                <concentration>Si</concentration>
                 <pressure>pressure</pressure>
             </process_variables>
             <fluid>
@@ -38,9 +38,6 @@
                 </porous_medium>
             </porous_medium>
             <fluid_reference_density>rho_fluid</fluid_reference_density>
-            <solute_dispersivity_longitudinal>beta_l</solute_dispersivity_longitudinal>
-            <solute_dispersivity_transverse>beta_t</solute_dispersivity_transverse>
-            <molecular_diffusion_coefficient>Dm</molecular_diffusion_coefficient>
             <retardation_factor>retardation</retardation_factor>
             <decay_rate>decay</decay_rate>
             <specific_body_force>0 0</specific_body_force>
@@ -49,6 +46,39 @@
             </secondary_variables>
         </process>
     </processes>
+    <media>
+        <medium id="0">
+            <phases>
+                <phase>
+                    <type>AqueousLiquid</type>
+                    <components>
+                        <component>
+                            <name>Si</name>
+                            <properties>
+                                <property>
+                                    <name>molecular_diffusion</name>
+                                    <type>Constant</type>
+                                    <value>1e-5</value>
+                                </property>
+                            </properties>
+                        </component>
+                    </components>
+                </phase>
+            </phases>
+            <properties>
+                <property>
+                    <name>longitudinal_dispersivity</name>
+                    <type>Constant</type>
+                    <value>1</value>
+                </property>
+                <property>
+                    <name>transversal_dispersivity</name>
+                    <type>Constant</type>
+                    <value>0.1</value>
+                </property>
+            </properties>
+        </medium>
+    </media>
     <time_loop>
         <processes>
             <process ref="hc">
@@ -56,7 +86,7 @@
                 <convergence_criterion>
                     <type>PerComponentDeltaX</type>
                     <norm_type>NORM2</norm_type>
-                    <reltols>5e-3 5e-3</reltols>
+                    <reltols>1e-15 1e-15</reltols>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>
@@ -84,7 +114,7 @@
                 </pair>
             </timesteps>
             <variables>
-                <variable>concentration</variable>
+                <variable>Si</variable>
                 <variable>pressure</variable>
                 <variable>darcy_velocity</variable>
             </variables>
@@ -97,11 +127,6 @@
             <value>1000</value>
         </parameter>
         <parameter>
-            <name>Dm</name>
-            <type>Constant</type>
-            <value>1e-5</value>
-        </parameter>
-        <parameter>
             <name>retardation</name>
             <type>Constant</type>
             <value>1</value>
@@ -110,16 +135,6 @@
             <name>decay</name>
             <type>Constant</type>
             <value>0</value>
-        </parameter>
-        <parameter>
-            <name>beta_l</name>
-            <type>Constant</type>
-            <value>1</value>
-        </parameter>
-        <parameter>
-            <name>beta_t</name>
-            <type>Constant</type>
-            <value>0.1</value>
         </parameter>
         <parameter>
             <name>c0</name>
@@ -156,7 +171,7 @@
     </parameters>
     <process_variables>
         <process_variable>
-            <name>concentration</name>
+            <name>Si</name>
             <components>1</components>
             <order>1</order>
             <initial_condition>c0</initial_condition>
@@ -201,16 +216,16 @@
     <linear_solvers>
         <linear_solver>
             <name>general_linear_solver</name>
-            <lis>-i bicgstab -p ilut -tol 1e-8 -maxiter 20000</lis>
+            <lis>-i bicgstab -p ilut -tol 1e-16 -maxiter 20000</lis>
             <eigen>
                 <solver_type>BiCGSTAB</solver_type>
-                <precon_type>ILUT</precon_type>
+                <precon_type>DIAGONAL</precon_type>
                 <max_iteration_step>20000</max_iteration_step>
-                <error_tolerance>1e-8</error_tolerance>
+                <error_tolerance>1e-16</error_tolerance>
             </eigen>
             <petsc>
                 <prefix>hc</prefix>
-                <parameters>-hc_ksp_type bcgs -hc_pc_type bjacobi -hc_ksp_rtol 1e-8 -hc_ksp_max_it 20000</parameters>
+                <parameters>-hc_ksp_type bcgs -hc_pc_type bjacobi -hc_ksp_rtol 1e-16 -hc_ksp_max_it 20000</parameters>
             </petsc>
         </linear_solver>
     </linear_solvers>
