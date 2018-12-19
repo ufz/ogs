@@ -17,6 +17,7 @@ if(MSVC)
     set_target_properties(logog PROPERTIES COMPILE_FLAGS /W0)
 endif()
 
+set(gtest_force_shared_crt ON CACHE INTERNAL "") # Use dynamic MSVC runtime
 add_subdirectory(googletest)
 
 # This is a workaround for Travis builds.
