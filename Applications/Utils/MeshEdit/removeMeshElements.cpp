@@ -177,7 +177,7 @@ int main (int argc, char* argv[])
         if (property_name_arg.isSet() &&
             !((min_property_arg.isSet() && max_property_arg.isSet()) || property_arg.isSet()))
         {
-            ERR("Specify a value or range (\"-min-value\" and \"-max_value\") "
+            ERR("Specify a value or range ('-min-value' and '-max_value') "
                 "for the property selected.");
             return EXIT_FAILURE;
         }

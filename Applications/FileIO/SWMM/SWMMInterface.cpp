@@ -606,7 +606,8 @@ bool SwmmInterface::readSubcatchments(std::ifstream &in, std::map< std::string, 
         }
         if (sc.rain_gauge == std::numeric_limits<std::size_t>::max())
         {
-            ERR ("Rain gauge for subcatchment \"%s\" not found.", split_str[0].c_str());
+            ERR("Rain gauge for subcatchment '%s' not found.",
+                split_str[0].c_str());
             return false;
         }
 
@@ -614,7 +615,8 @@ bool SwmmInterface::readSubcatchments(std::ifstream &in, std::map< std::string, 
         auto const it = name_id_map.find(split_str[2]);
         if (it == name_id_map.end())
         {
-            ERR ("Outlet node for subcatchment \"%s\" not found.", split_str[0].c_str());
+            ERR("Outlet node for subcatchment '%s' not found.",
+                split_str[0].c_str());
             return false;
         }
         sc.outlet = it->second;
@@ -828,7 +830,7 @@ bool SwmmInterface::matchSubcatchmentsWithPolygons(std::vector<GeoLib::Polyline*
         }
         if (found == false)
         {
-            ERR ("No match in subcatcments for outline \"%s\".", names[i].c_str());
+            ERR("No match in subcatcments for outline '%s'.", names[i].c_str());
             return false;
         }
     }
@@ -980,7 +982,7 @@ bool SwmmInterface::addResultsToMesh(MeshLib::Mesh &mesh, SwmmObject const swmm_
         MeshLib::getOrCreateMeshProperty<double>(mesh, vec_name, item_type, 1);
     if (!prop)
     {
-        ERR("Error fetching array \"%s\".", vec_name.c_str());
+        ERR("Error fetching array '%s'.", vec_name.c_str());
         return false;
     }
     std::copy(data.cbegin(), data.cend(), prop->begin());
@@ -1042,8 +1044,8 @@ std::vector<double> SwmmInterface::getArrayAtTimeStep(SwmmObject obj_type, std::
         return data;
     }
 
-    INFO ("Fetching \"%s\"-data for time step %d...",
-        getArrayName(obj_type, var_idx, SWMM_Npolluts).c_str(), time_step);
+    INFO("Fetching '%s'-data for time step %d...",
+         getArrayName(obj_type, var_idx, SWMM_Npolluts).c_str(), time_step);
 
     for (std::size_t i=0; i<n_objects; ++i)
     {
@@ -1200,7 +1202,8 @@ bool SwmmInterface::addRainGaugeTimeSeriesLocations(std::ifstream &in)
 
     for (auto const& stn : _rain_gauges)
         if (stn.second.empty())
-            WARN ("No associated time series found for rain gauge \"%s\".", stn.first.getName().c_str());
+            WARN("No associated time series found for rain gauge '%s'.",
+                 stn.first.getName().c_str());
     return true;
 }
 

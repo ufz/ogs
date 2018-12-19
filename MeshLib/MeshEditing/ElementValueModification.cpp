@@ -51,7 +51,7 @@ bool ElementValueModification::replace(MeshLib::Mesh &mesh,
             {
                 WARN(
                     "ElementValueModification::replaceElementValue() "
-                    "- Replacement value \"%d\" is already taken, "
+                    "- Replacement value '%d' is already taken, "
                     "no changes have been made.",
                     new_value);
                 return false;

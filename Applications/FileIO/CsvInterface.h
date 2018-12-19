@@ -157,7 +157,7 @@ public:
         std::size_t const column_idx = CsvInterface::findColumn(line, delim, column_name);
         if (column_idx == std::numeric_limits<std::size_t>::max())
         {
-            ERR ("Column \"%s\" not found in file header.", column_name.c_str());
+            ERR("Column '%s' not found in file header.", column_name.c_str());
             return -1;
         }
         return readColumn<T>(in, delim, data_array, column_idx);

@@ -42,7 +42,8 @@ public:
         auto const* const data_vec =
             mesh.getProperties().getPropertyVector<T>(name);
         if (data_vec->empty()) {
-            INFO("Mesh does not contain values for the property \"%s\".", name.c_str());
+            INFO("Mesh does not contain values for the property '%s'.",
+                 name.c_str());
             return {std::numeric_limits<T>::max(), std::numeric_limits<T>::max()};
         }
         auto vec_bounds = std::minmax_element(data_vec->cbegin(), data_vec->cend());

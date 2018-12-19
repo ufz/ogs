@@ -90,7 +90,7 @@ int main (int argc, char* argv[])
     // *** get vector of polylines
     GeoLib::PolylineVec const* plys(geometries.getPolylineVecObj(geo_name));
     if (!plys) {
-        ERR("Could not get vector of polylines out of geometry \"%s\".",
+        ERR("Could not get vector of polylines out of geometry '%s'.",
             geo_name.c_str());
         return EXIT_FAILURE;
     }
@@ -100,7 +100,7 @@ int main (int argc, char* argv[])
         plys->getElementByName(polygon_name_arg.getValue())
     );
     if (! ply) {
-        ERR("Polyline \"%s\" not found.", polygon_name_arg.getValue().c_str());
+        ERR("Polyline '%s' not found.", polygon_name_arg.getValue().c_str());
         return EXIT_FAILURE;
     }
 
@@ -108,8 +108,9 @@ int main (int argc, char* argv[])
     bool closed (ply->isClosed());
     if (!closed)
     {
-        ERR("Polyline \"%s\" is not closed, i.e. does not describe a\
-            region.", polygon_name_arg.getValue().c_str());
+        ERR("Polyline '%s' is not closed, i.e. does not describe a\
+            region.",
+            polygon_name_arg.getValue().c_str());
         return EXIT_FAILURE;
     }
 

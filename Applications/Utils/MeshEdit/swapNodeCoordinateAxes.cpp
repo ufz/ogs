@@ -55,7 +55,8 @@ static bool parseNewOrder(std::string const& str_order, std::array<int, 3> &new_
         else if (str_order[i] == 'z')
             new_axes_indices[i] = 2;
         else {
-            ERR("Invalid argument for the new order. The  given argument contains a character other than \"x\", \"y\", \"z\".");
+            ERR("Invalid argument for the new order. The  given argument "
+                "contains a character other than 'x', 'y', 'z'.");
             return false;
         }
     }
@@ -90,9 +91,11 @@ int main(int argc, char *argv[])
     cmd.add( input_arg );
     TCLAP::ValueArg<std::string> output_arg("o", "output-mesh-file","output mesh file",true,"","string");
     cmd.add( output_arg );
-    TCLAP::ValueArg<std::string> new_order_arg("n", "new-order", "the new order of swapped coordinate values "
-                                                                 "(e.g. \"xzy\" for converting XYZ values to XZY values)",
-                                               true, "", "string");
+    TCLAP::ValueArg<std::string> new_order_arg(
+        "n", "new-order",
+        "the new order of swapped coordinate values "
+        "(e.g. 'xzy' for converting XYZ values to XZY values)",
+        true, "", "string");
     cmd.add( new_order_arg );
     cmd.parse( argc, argv );
 

@@ -32,7 +32,7 @@ MshEditDialog::MshEditDialog(const MeshLib::Mesh* mesh, QDialog* parent)
       _msh(mesh),
       _noDataDeleteBox(nullptr),
       _nLayerLabel(new QLabel("Please specify the number of layers to add:")),
-      _nLayerExplanation(new QLabel("(select \"0\" for surface mapping)")),
+      _nLayerExplanation(new QLabel("(select '0' for surface mapping)")),
       _layerEdit(new QLineEdit("0")),
       _nextButton(new QPushButton("Next")),
       _layerBox(nullptr),
@@ -237,7 +237,8 @@ void MshEditDialog::accept()
             OGSError::box("Please specifiy raster files for all layers.");
     }
     else
-        OGSError::box("Please specifiy the number and\n type of layers and press \"Next\"");
+        OGSError::box(
+            "Please specifiy the number and\n type of layers and press 'Next'");
 }
 
 void MshEditDialog::reject()

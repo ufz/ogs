@@ -101,10 +101,10 @@ int main (int argc, char* argv[])
         }
     }
 
-    INFO("Reading mesh \"%s\" ... ", mesh_arg.getValue().c_str());
+    INFO("Reading mesh '%s' ... ", mesh_arg.getValue().c_str());
     std::unique_ptr<MeshLib::Mesh> const sfc_mesh (MeshLib::IO::readMeshFromFile(mesh_arg.getValue()));
     if (!sfc_mesh) {
-        ERR("Error reading mesh \"%s\".", mesh_arg.getValue().c_str());
+        ERR("Error reading mesh '%s'.", mesh_arg.getValue().c_str());
         return EXIT_FAILURE;
     }
     if (sfc_mesh->getDimension() != 2) {
@@ -129,7 +129,7 @@ int main (int argc, char* argv[])
     std::string output_name (mesh_out_arg.getValue());
     if (!BaseLib::hasFileExtension("vtu", output_name))
         output_name.append(".vtu");
-    INFO("Writing mesh \"%s\" ... ", output_name.c_str());
+    INFO("Writing mesh '%s' ... ", output_name.c_str());
     MeshLib::IO::writeMeshToFile(*(mapper.getMesh("SubsurfaceMesh").release()), output_name);
     INFO("done.");
 

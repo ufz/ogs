@@ -214,8 +214,10 @@ void XmlGmlInterface::readPolylines(
             if (it == ply_names->end()) {
                 ply_names->insert(std::pair<std::string, std::size_t>(ply_name, idx));
             } else {
-                WARN("Polyline \"%s\" exists already. The polyline will be "
-                    "inserted without a name.", ply_name.c_str());
+                WARN(
+                    "Polyline '%s' exists already. The polyline will be "
+                    "inserted without a name.",
+                    ply_name.c_str());
             }
         }
 

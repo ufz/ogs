@@ -40,7 +40,7 @@ std::vector<double> getSurfaceIntegratedValuesForNodes(
 
     if (!mesh.getProperties().existsPropertyVector<double>(prop_name))
     {
-        ERR("Need element property, but the property \"%s\" is not "
+        ERR("Need element property, but the property '%s' is not "
             "available.",
             prop_name.c_str());
         return std::vector<double>();
@@ -79,7 +79,7 @@ int main(int argc, char* argv[])
     TCLAP::CmdLine cmd(
         "Integrates the given element property and outputs an OGS-5 direct "
         "Neumann boundary condition. The mesh has to contain a property "
-        "\"bulk_node_ids\" that stores the original subsurface "
+        "'bulk_node_ids' that stores the original subsurface "
         "mesh node ids. Such surface meshes can be created using the OGS-6 "
         "tool ExtractSurface.\n\n"
         "OpenGeoSys-6 software, version " +

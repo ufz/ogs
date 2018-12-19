@@ -186,7 +186,7 @@ getConfigAttribute(std::string const& attr) const
     if (auto a = getConfigAttributeOptional<T>(attr))
         return *a;
 
-    error("Did not find XML attribute with name \"" + attr + "\".");
+    error("Did not find XML attribute with name '" + attr + "'.");
 }
 
 template <typename T>
@@ -213,7 +213,7 @@ getConfigAttributeOptional(std::string const& attr) const
             if (auto v = a->get_value_optional<T>()) {
                 return v;
             }
-            error("Value for XML attribute \"" + attr + "\" `" +
+            error("Value for XML attribute '" + attr + "' `" +
                   shortString(a->data()) +
                   "' not convertible to the desired type.");
         }
@@ -238,8 +238,9 @@ markVisited(std::string const& key, Attr const is_attr,
         if (v.type == type) {
             if (!peek_only) ++v.count;
         } else {
-            error("There already was an attempt to obtain key <" + key
-                  + "> with type \"" + v.type.name() + "\" (now: \"" + type.name() + "\").");
+            error("There already was an attempt to obtain key <" + key +
+                  "> with type '" + v.type.name() + "' (now: '" + type.name() +
+                  "').");
         }
     }
 

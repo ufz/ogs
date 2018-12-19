@@ -53,7 +53,7 @@ void GeoMapper::mapOnDEM(std::unique_ptr<GeoLib::Raster const> raster)
 {
     std::vector<GeoLib::Point*> const* pnts(_geo_objects.getPointVec(_geo_name));
     if (! pnts) {
-        ERR("Geometry \"%s\" does not exist.", _geo_name.c_str());
+        ERR("Geometry '%s' does not exist.", _geo_name.c_str());
         return;
     }
     _raster = std::move(raster);
@@ -69,7 +69,7 @@ void GeoMapper::mapOnMesh(MeshLib::Mesh const*const mesh)
 {
     std::vector<GeoLib::Point*> const* pnts(_geo_objects.getPointVec(_geo_name));
     if (! pnts) {
-        ERR("Geometry \"%s\" does not exist.", _geo_name.c_str());
+        ERR("Geometry '%s' does not exist.", _geo_name.c_str());
         return;
     }
 
@@ -113,7 +113,7 @@ void GeoMapper::mapToConstantValue(double value)
     std::vector<GeoLib::Point*> const* points (this->_geo_objects.getPointVec(this->_geo_name));
     if (points == nullptr)
     {
-        ERR ("Geometry \"%s\" not found.", this->_geo_name.c_str());
+        ERR("Geometry '%s' not found.", this->_geo_name.c_str());
         return;
     }
     std::for_each(points->begin(), points->end(), [value](GeoLib::Point* pnt){ (*pnt)[2] = value; });

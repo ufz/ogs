@@ -86,7 +86,8 @@ int main(int argc, char *argv[])
     // check if line exists
     if (line == nullptr)
     {
-        ERR ("No polyline found with name \"%s\". Aborting...", polyline_name.c_str());
+        ERR("No polyline found with name '%s'. Aborting...",
+            polyline_name.c_str());
         return EXIT_FAILURE;
     }
 

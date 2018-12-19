@@ -184,8 +184,10 @@ void XmlStnInterface::readStratigraphy( const QDomNode &stratRoot,
                 depth_check = depth;
             }
             else
-                WARN("XmlStnInterface::readStratigraphy(): Skipped layer \"%s\" in borehole \"%s\" because of thickness 0.0.",
-                     horizonName.c_str(), borehole->getName().c_str());
+                WARN(
+                    "XmlStnInterface::readStratigraphy(): Skipped layer '%s' "
+                    "in borehole '%s' because of thickness 0.0.",
+                    horizonName.c_str(), borehole->getName().c_str());
         }
         else
             WARN("XmlStnInterface::readStratigraphy(): Attribute missing in <horizon> tag.");
@@ -481,9 +483,10 @@ void XmlStnInterface::rapidReadStratigraphy( const rapidxml::xml_node<>* strat_r
             }
             else
                 WARN(
-                        "XmlStnInterface::rapidReadStratigraphy(): Skipped layer \"%s\" in borehole \"%s\" because of thickness 0.0.",
-                        horizon_name.c_str(),
-                        borehole->getName().c_str());
+                    "XmlStnInterface::rapidReadStratigraphy(): Skipped layer "
+                    "'%s' in borehole '%s' because of thickness 0.0.",
+                    horizon_name.c_str(),
+                    borehole->getName().c_str());
         }
         else
             WARN("XmlStnInterface::rapidReadStratigraphy(): Attribute missing in <horizon> tag.");

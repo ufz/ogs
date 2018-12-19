@@ -64,7 +64,7 @@ MeshLib::Mesh* MeshLayerMapper::createStaticLayers(MeshLib::Mesh const& mesh, st
         "MaterialIDs", MeshLib::MeshItemType::Cell);
     if (!materials)
     {
-        ERR("Could not create PropertyVector object \"MaterialIDs\".");
+        ERR("Could not create PropertyVector object 'MaterialIDs'.");
         return nullptr;
     }
 

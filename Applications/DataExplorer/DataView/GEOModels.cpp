@@ -70,7 +70,8 @@ void GEOModels::updateGeometry(const std::string &geo_name)
         }
     }
     else
-        ERR("GEOModels::updateGeometry() - Geometry \"%s\" not found.", geo_name.c_str());
+        ERR("GEOModels::updateGeometry() - Geometry '%s' not found.",
+            geo_name.c_str());
 }
 
 void GEOModels::removeGeometry(std::string const& geo_name,

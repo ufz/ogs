@@ -190,7 +190,7 @@ int main (int argc, char* argv[])
                 if (vec_d0Arg[i]->isSet()) {
                     OGS_FATAL(
                         "Specifying all of --m?, --d?0 and --n? for coordinate "
-                        "\"?\" is not supported.");
+                        "'?' is not supported.");
                 }
                 vec_div.emplace_back(new BaseLib::GradualSubdivisionFixedNum(
                     length[i], vec_ndivArg[i]->getValue(),

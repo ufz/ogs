@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
     std::unique_ptr<MeshLib::Mesh> mesh(MeshLib::IO::readMeshFromFile(fname));
 
     if (!mesh) {
-        ERR("Could not read mesh from file \"%s\".", fname.c_str());
+        ERR("Could not read mesh from file '%s'.", fname.c_str());
         return EXIT_FAILURE;
     }
 
