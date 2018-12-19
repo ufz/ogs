@@ -64,7 +64,7 @@ createConstitutiveRelation(
         return MaterialLib::Solids::MFront::createMFront<DisplacementDim>(
             parameters, config);
     }
-    OGS_FATAL("Cannot construct constitutive relation of given type \'%s\'.",
+    OGS_FATAL("Cannot construct constitutive relation of given type '%s'.",
               type.c_str());
 }
 

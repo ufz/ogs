@@ -24,7 +24,7 @@ std::unique_ptr<GeoLib::GEOObjects> readGeometry(std::string const& filename)
     auto geo_objects = std::make_unique<GeoLib::GEOObjects>();
     GeoLib::IO::BoostXmlGmlInterface gml_reader(*geo_objects);
 
-    DBUG("Reading geometry file \'%s\'.", filename.c_str());
+    DBUG("Reading geometry file '%s'.", filename.c_str());
     gml_reader.readFile(filename);
     return geo_objects;
 }

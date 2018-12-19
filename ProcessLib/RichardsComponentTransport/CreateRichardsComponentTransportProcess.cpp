@@ -88,7 +88,7 @@ std::unique_ptr<Process> createRichardsComponentTransportProcess(
         config,
         //! \ogs_file_param_special{prj__processes__process__RichardsComponentTransport__fluid_reference_density}
         "fluid_reference_density", parameters, 1);
-    DBUG("Use \'%s\' as fluid_reference_density parameter.",
+    DBUG("Use '%s' as fluid_reference_density parameter.",
          fluid_reference_density.name.c_str());
 
     // Parameter for the longitudinal solute dispersivity.
@@ -96,7 +96,7 @@ std::unique_ptr<Process> createRichardsComponentTransportProcess(
         config,
         //! \ogs_file_param_special{prj__processes__process__RichardsComponentTransport__molecular_diffusion_coefficient}
         "molecular_diffusion_coefficient", parameters, 1);
-    DBUG("Use \'%s\' as molecular diffusion coefficient parameter.",
+    DBUG("Use '%s' as molecular diffusion coefficient parameter.",
          molecular_diffusion_coefficient.name.c_str());
 
     // Parameter for the longitudinal solute dispersivity.
@@ -104,7 +104,7 @@ std::unique_ptr<Process> createRichardsComponentTransportProcess(
         config,
         //! \ogs_file_param_special{prj__processes__process__RichardsComponentTransport__solute_dispersivity_longitudinal}
         "solute_dispersivity_longitudinal", parameters, 1);
-    DBUG("Use \'%s\' as longitudinal solute dispersivity parameter.",
+    DBUG("Use '%s' as longitudinal solute dispersivity parameter.",
          solute_dispersivity_longitudinal.name.c_str());
 
     // Parameter for the transverse solute dispersivity.
@@ -112,7 +112,7 @@ std::unique_ptr<Process> createRichardsComponentTransportProcess(
         config,
         //! \ogs_file_param_special{prj__processes__process__RichardsComponentTransport__solute_dispersivity_transverse}
         "solute_dispersivity_transverse", parameters, 1);
-    DBUG("Use \'%s\' as transverse solute dispersivity parameter.",
+    DBUG("Use '%s' as transverse solute dispersivity parameter.",
          solute_dispersivity_transverse.name.c_str());
 
     // Parameter for the retardation factor.

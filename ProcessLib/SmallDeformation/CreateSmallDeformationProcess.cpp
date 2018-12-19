@@ -47,7 +47,7 @@ createSmallDeformationProcess(
         {//! \ogs_file_param_special{prj__processes__process__SMALL_DEFORMATION__process_variables__process_variable}
          "process_variable"});
 
-    DBUG("Associate displacement with process variable \'%s\'.",
+    DBUG("Associate displacement with process variable '%s'.",
          per_process_variables.back().get().getName().c_str());
 
     if (per_process_variables.back().get().getNumberOfComponents() !=
@@ -73,7 +73,7 @@ createSmallDeformationProcess(
         config,
         //! \ogs_file_param_special{prj__processes__process__SMALL_DEFORMATION__solid_density}
         "solid_density", parameters, 1);
-    DBUG("Use \'%s\' as solid density parameter.", solid_density.name.c_str());
+    DBUG("Use '%s' as solid density parameter.", solid_density.name.c_str());
 
     // Specific body force
     Eigen::Matrix<double, DisplacementDim, 1> specific_body_force;
