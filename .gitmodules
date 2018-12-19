@@ -28,3 +28,6 @@
 [submodule "ThirdParty/googletest"]
 	path = ThirdParty/googletest
 	url = https://github.com/google/googletest.git
+[submodule "ThirdParty/jedbrown-cmake-modules"]
+	path = ThirdParty/jedbrown-cmake-modules
+	url = https://github.com/jedbrown/cmake-modules.git

@@ -8,6 +8,7 @@ set(REQUIRED_SUBMODULES
     ThirdParty/autocheck
     ThirdParty/cmake-modules
     ThirdParty/googletest
+    ThirdParty/jedbrown-cmake-modules
     ThirdParty/tclap
     ThirdParty/tetgen
     ThirdParty/vtkdiff
