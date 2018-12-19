@@ -29,6 +29,7 @@
                 <mp>mp</mp>
                 <betap>betap</betap>
                 <gammap>gammap</gammap>
+                <tangent_type>Plastic</tangent_type>
                 <nonlinear_solver>
                     <maximum_iterations>1000</maximum_iterations>
                     <error_tolerance>1e-8</error_tolerance>

@@ -9,8 +9,9 @@
 
 #include "Ehlers.h"
 #include <boost/math/special_functions/pow.hpp>
-
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
+
+#include "LinearElasticIsotropic.h"
 
 /**
  * Common convenitions for naming:
@@ -514,10 +515,8 @@ SolidEhlers<DisplacementDim>::integrateStress(
              calculateIsotropicHardening(mp.kappa, mp.hardening_coefficient,
                                          state.eps_p.eff)) < 0))
     {
-        tangentStiffness.setZero();
-        tangentStiffness.template topLeftCorner<3, 3>().setConstant(
-            mp.K - 2. / 3 * mp.G);
-        tangentStiffness.noalias() += 2 * mp.G * KelvinMatrix::Identity();
+        tangentStiffness = elasticTangentStiffness<DisplacementDim>(
+            mp.K - 2. / 3 * mp.G, mp.G);
     }
     else
     {
@@ -618,10 +617,30 @@ SolidEhlers<DisplacementDim>::integrateStress(
         dresidual_deps.template block<KelvinVectorSize, KelvinVectorSize>(0, 0)
             .noalias() = calculateDResidualDEps<DisplacementDim>(mp.K, mp.G);
 
-        tangentStiffness =
-            mp.G *
-            linear_solver.solve(-dresidual_deps)
-                .template block<KelvinVectorSize, KelvinVectorSize>(0, 0);
+        if (_tangent_type == TangentType::Elastic)
+        {
+            tangentStiffness =
+                elasticTangentStiffness<DisplacementDim>(mp.K, mp.G);
+        }
+        else if (_tangent_type == TangentType::Plastic ||
+                 _tangent_type == TangentType::PlasticDamageSecant)
+        {
+            tangentStiffness =
+                mp.G *
+                linear_solver.solve(-dresidual_deps)
+                    .template block<KelvinVectorSize, KelvinVectorSize>(0, 0);
+            if (_tangent_type == TangentType::PlasticDamageSecant)
+            {
+                tangentStiffness *= 1 - state.damage.value();
+            }
+        }
+        else
+        {
+            OGS_FATAL(
+                "Unimplemented tangent type behaviour for the tangent type "
+                "'%d'.",
+                _tangent_type);
+        }
     }
 
     KelvinVector sigma_final = mp.G * sigma;
