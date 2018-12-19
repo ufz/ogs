@@ -688,7 +688,7 @@ void ProjectData::parseTimeLoop(BaseLib::ConfigTree const& config,
     DBUG("Reading time loop configuration.");
 
     _time_loop = ProcessLib::createUncoupledProcessesTimeLoop(
-        config, output_directory, _processes, _nonlinear_solvers);
+        config, output_directory, _processes, _nonlinear_solvers, _mesh_vec);
 
     if (!_time_loop)
     {

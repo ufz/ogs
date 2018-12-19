@@ -44,7 +44,9 @@ public:
            bool const output_nonlinear_iteration_results,
            std::vector<PairRepeatEachSteps> repeats_each_steps,
            std::vector<double>&& fixed_output_times,
-           ProcessOutput&& process_output);
+           ProcessOutput&& process_output,
+           std::vector<std::string>&& mesh_names_for_output,
+           std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes);
 
     //! TODO doc. Opens a PVD file for each process.
     void addProcess(ProcessLib::Process const& process, const int process_id);
@@ -118,6 +120,8 @@ private:
     bool shallDoOutput(unsigned timestep, double const t);
 
     ProcessOutput const _process_output;
+    std::vector<std::string> const _mesh_names_for_output;
+    std::vector<std::unique_ptr<MeshLib::Mesh>> const& _meshes;
 };
 
 

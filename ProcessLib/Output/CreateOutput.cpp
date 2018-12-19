@@ -17,12 +17,16 @@
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/FileTools.h"
 
+#include "MeshLib/Mesh.h"
+
 #include "Output.h"
 
 namespace ProcessLib
 {
-std::unique_ptr<Output> createOutput(const BaseLib::ConfigTree& config,
-                                     std::string const& output_directory)
+std::unique_ptr<Output> createOutput(
+    const BaseLib::ConfigTree& config,
+    std::string const& output_directory,
+    std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes)
 {
     DBUG("Parse output configuration:");
 
@@ -92,11 +96,25 @@ std::unique_ptr<Output> createOutput(const BaseLib::ConfigTree& config,
         output_variables.insert(out_var);
     }
 
+    //! \ogs_file_param{prj__time_loop__output__output_extrapolation_residuals}
     bool const output_residuals = config.getConfigParameter<bool>(
-        //! \ogs_file_param{prj__time_loop__output__output_extrapolation_residuals}
         "output_extrapolation_residuals", false);
 
     ProcessOutput process_output{output_variables, output_residuals};
+
+    std::vector<std::string> mesh_names_for_output;
+    //! \ogs_file_param{prj__time_loop__output__meshes}
+    if (auto const meshes_config = config.getConfigSubtreeOptional("meshes"))
+    {
+        //! \ogs_file_param{prj__time_loop__output__meshes__mesh}
+        for (auto mesh_config : meshes_config->getConfigParameterList("mesh"))
+        {
+            mesh_names_for_output.push_back(
+                mesh_config.getValue<std::string>());
+            INFO("Configure mesh '%s' for output.",
+                 mesh_names_for_output.back().c_str());
+        }
+    }
 
     auto fixed_output_times_ptr =
         //! \ogs_file_param{prj__time_loop__output__fixed_output_times}
@@ -113,11 +131,11 @@ std::unique_ptr<Output> createOutput(const BaseLib::ConfigTree& config,
         //! \ogs_file_param{prj__time_loop__output__output_iteration_results}
         config.getConfigParameter<bool>("output_iteration_results", false);
 
-    return std::make_unique<Output>(output_directory, prefix, compress_output,
-                                    data_mode, output_iteration_results,
-                                    std::move(repeats_each_steps),
-                                    std::move(fixed_output_times),
-                                    std::move(process_output));
+    return std::make_unique<Output>(
+        output_directory, prefix, compress_output, data_mode,
+        output_iteration_results, std::move(repeats_each_steps),
+        std::move(fixed_output_times), std::move(process_output),
+        std::move(mesh_names_for_output), meshes);
 }
 
 }  // namespace ProcessLib

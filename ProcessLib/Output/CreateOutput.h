@@ -11,10 +11,16 @@
 
 #include <memory>
 #include <string>
+#include <vector>
 
 namespace BaseLib
 {
 class ConfigTree;
+}
+
+namespace MeshLib
+{
+class Mesh;
 }
 
 namespace ProcessLib
@@ -25,7 +31,9 @@ class Output;
 
 namespace ProcessLib
 {
-std::unique_ptr<Output> createOutput(const BaseLib::ConfigTree& config,
-                                     const std::string& output_directory);
+std::unique_ptr<Output> createOutput(
+    const BaseLib::ConfigTree& config,
+    const std::string& output_directory,
+    std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes);
 
 }  // namespace ProcessLib

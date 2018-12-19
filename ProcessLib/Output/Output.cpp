@@ -43,6 +43,15 @@ int convertVtkDataMode(std::string const& data_mode)
         "Binary, or Appended.",
         data_mode.c_str());
 }
+
+std::string constructFileName(std::string const& prefix,
+                              int const process_id,
+                              unsigned const timestep,
+                              double const t)
+{
+    return prefix + "_pcs_" + std::to_string(process_id) + "_ts_" +
+           std::to_string(timestep) + "_t_" + std::to_string(t);
+}
 }  // namespace
 
 namespace ProcessLib
@@ -86,7 +95,9 @@ Output::Output(std::string output_directory, std::string prefix,
                bool const output_nonlinear_iteration_results,
                std::vector<PairRepeatEachSteps> repeats_each_steps,
                std::vector<double>&& fixed_output_times,
-               ProcessOutput&& process_output)
+               ProcessOutput&& process_output,
+               std::vector<std::string>&& mesh_names_for_output,
+               std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes)
     : _output_directory(std::move(output_directory)),
       _output_file_prefix(std::move(prefix)),
       _output_file_compression(compress_output),
@@ -94,7 +105,9 @@ Output::Output(std::string output_directory, std::string prefix,
       _output_nonlinear_iteration_results(output_nonlinear_iteration_results),
       _repeats_each_steps(std::move(repeats_each_steps)),
       _fixed_output_times(std::move(fixed_output_times)),
-      _process_output(std::move(process_output))
+      _process_output(std::move(process_output)),
+      _mesh_names_for_output(mesh_names_for_output),
+      _meshes(meshes)
 {
 }
 
@@ -144,12 +157,13 @@ void Output::doOutputAlways(Process const& process,
     BaseLib::RunTime time_output;
     time_output.start();
 
+    bool output_secondary_variable = true;
     // Need to add variables of process to vtu even no output takes place.
     processOutputData(t, x, process.getMesh(), process.getDOFTable(process_id),
                       process.getProcessVariables(process_id),
                       process.getSecondaryVariables(),
-                      process.getIntegrationPointWriter(),
-                      _process_output);
+                      output_secondary_variable,
+                      process.getIntegrationPointWriter(), _process_output);
 
     // For the staggered scheme for the coupling, only the last process, which
     // gives the latest solution within a coupling loop, is allowed to make
@@ -159,8 +173,8 @@ void Output::doOutputAlways(Process const& process,
         return;
 
     std::string const output_file_name =
-        _output_file_prefix + "_pcs_" + std::to_string(process_id) + "_ts_" +
-        std::to_string(timestep) + "_t_" + std::to_string(t) + ".vtu";
+        constructFileName(_output_file_prefix, process_id, timestep, t) +
+        ".vtu";
     std::string const output_file_path =
         BaseLib::joinPaths(_output_directory, output_file_name);
 
@@ -168,11 +182,54 @@ void Output::doOutputAlways(Process const& process,
 
     ProcessData* process_data = findProcessData(process, process_id);
     process_data->pvd_file.addVTUFile(output_file_name, t);
-    INFO("[time] Output of timestep %d took %g s.", timestep,
-         time_output.elapsed());
 
     makeOutput(output_file_path, process.getMesh(), _output_file_compression,
                _output_file_data_mode);
+
+    for (auto const& mesh_output_name : _mesh_names_for_output)
+    {
+        if (process.getMesh().getName() == mesh_output_name)
+            continue;
+        auto& mesh = *BaseLib::findElementOrError(
+            begin(_meshes), end(_meshes),
+            [&mesh_output_name](auto const& m) {
+                return m->getName() == mesh_output_name;
+            },
+            "Need mesh '" + mesh_output_name + "' for the output.");
+
+        std::vector<MeshLib::Node*> const& nodes = mesh.getNodes();
+        DBUG(
+            "Found %d nodes for output at mesh '%s'.",
+            nodes.size(), mesh.getName().c_str());
+
+        MeshLib::MeshSubset mesh_subset(mesh, nodes);
+        std::unique_ptr<NumLib::LocalToGlobalIndexMap> mesh_dof_table(
+            process.getDOFTable(process_id)
+                .deriveBoundaryConstrainedMap(std::move(mesh_subset)));
+
+        output_secondary_variable = false;
+        processOutputData(t, x, mesh, *mesh_dof_table,
+                          process.getProcessVariables(process_id),
+                          process.getSecondaryVariables(),
+                          output_secondary_variable,
+                          process.getIntegrationPointWriter(), _process_output);
+
+        std::string const mesh_output_file_name =
+            constructFileName(mesh.getName(), process_id, timestep, t) + ".vtu";
+        std::string const mesh_output_file_path =
+            BaseLib::joinPaths(_output_directory, mesh_output_file_name);
+
+        DBUG("output to %s", mesh_output_file_path.c_str());
+
+        // TODO (TomFischer): add pvd support here. This can be done if the
+        // output is mesh related instead of process related. This would also
+        // allow for merging bulk mesh output and arbitrary mesh output.
+
+        makeOutput(mesh_output_file_path, mesh, _output_file_compression,
+                   _output_file_data_mode);
+    }
+    INFO("[time] Output of timestep %d took %g s.", timestep,
+         time_output.elapsed());
 }
 
 void Output::doOutput(Process const& process,
@@ -221,12 +278,12 @@ void Output::doOutputNonlinearIteration(Process const& process,
     BaseLib::RunTime time_output;
     time_output.start();
 
-    processOutputData(t, x, process.getMesh(),
-                      process.getDOFTable(process_id),
+    bool const output_secondary_variable = true;
+    processOutputData(t, x, process.getMesh(), process.getDOFTable(process_id),
                       process.getProcessVariables(process_id),
                       process.getSecondaryVariables(),
-                      process.getIntegrationPointWriter(),
-                      _process_output);
+                      output_secondary_variable,
+                      process.getIntegrationPointWriter(), _process_output);
 
     // For the staggered scheme for the coupling, only the last process, which
     // gives the latest solution within a coupling loop, is allowed to make
@@ -239,9 +296,8 @@ void Output::doOutputNonlinearIteration(Process const& process,
     findProcessData(process, process_id);
 
     std::string const output_file_name =
-        _output_file_prefix + "_pcs_" + std::to_string(process_id) + "_ts_" +
-        std::to_string(timestep) + "_t_" + std::to_string(t) + "_nliter_" +
-        std::to_string(iteration) + ".vtu";
+        constructFileName(_output_file_prefix, process_id, timestep, t) +
+        "_nliter_" + std::to_string(iteration) + ".vtu";
     std::string const output_file_path =
         BaseLib::joinPaths(_output_directory, output_file_name);
 

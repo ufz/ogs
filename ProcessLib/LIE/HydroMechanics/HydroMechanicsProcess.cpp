@@ -479,8 +479,9 @@ void HydroMechanicsProcess<GlobalDim>::computeSecondaryVariableConcrete(
     const int monolithic_process_id = 0;
     ProcessVariable& pv_g =
         this->getProcessVariables(monolithic_process_id)[g_variable_id];
-    auto& mesh_prop_g = pv_g.getOrCreateMeshProperty();
     auto const num_comp = pv_g.getNumberOfComponents();
+    auto& mesh_prop_g = *MeshLib::getOrCreateMeshProperty<double>(
+        _mesh, pv_g.getName(), MeshLib::MeshItemType::Node, num_comp);
     for (int component_id = 0; component_id < num_comp; ++component_id)
     {
         auto const& mesh_subset = dof_table.getMeshSubset(
