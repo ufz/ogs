@@ -8,8 +8,11 @@ cmake_minimum_required(VERSION 3.3)
 # Set CMake policies
 cmake_policy(SET CMP0011 NEW)
 cmake_policy(SET CMP0054 NEW)
-if(${CMAKE_VERSION} VERSION_GREATER 3.9.6)
+if(POLICY 0071)
     cmake_policy(SET CMP0071 NEW)
+endif()
+if(POLICY 0074)
+    cmake_policy(SET CMP0074 NEW)
 endif()
 
 if(WIN32 AND
