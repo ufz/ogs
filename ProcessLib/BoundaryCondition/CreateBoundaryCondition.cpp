@@ -134,6 +134,7 @@ std::unique_ptr<BoundaryCondition> createBoundaryCondition(
     {
         return ProcessLib::
             createPhaseFieldIrreversibleDamageOracleBoundaryCondition(
+                //! \ogs_file_param_special{prj__process_variables__process_variable__boundary_conditions__boundary_condition__PhaseFieldIrreversibleDamageOracleBoundaryCondition}
                 config.config, dof_table, bulk_mesh, variable_id,
                 *config.component_id);
     }
