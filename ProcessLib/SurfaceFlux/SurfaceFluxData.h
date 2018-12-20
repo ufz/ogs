@@ -42,8 +42,8 @@ struct SurfaceFluxData
     {
         DBUG(
             "read surfaceflux meta data:\n\tsurfaceflux "
-            "mesh:\"%s\"\n\tproperty name: "
-            "\"%s\"\n\toutput to: \"%s\"",
+            "mesh:'%s'\n\tproperty name: "
+            "'%s'\n\toutput to: '%s'",
             mesh_name.c_str(), property_vector_name.c_str(),
             output_mesh_file_name.c_str());
     }

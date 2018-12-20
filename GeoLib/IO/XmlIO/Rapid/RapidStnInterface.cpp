@@ -239,7 +239,7 @@ void RapidStnInterface::readStratigraphy( const rapidxml::xml_node<>* strat_root
             else
             {
                 WARN(
-                    "Warning: Skipped layer \"%s\" in borehole \"%s\" because "
+                    "Warning: Skipped layer '%s' in borehole '%s' because "
                     "of thickness 0.0.",
                     horizon_name.c_str(), borehole->getName().c_str());
             }

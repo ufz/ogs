@@ -64,8 +64,7 @@ std::unique_ptr<ParameterBase> createParameter(
         return param;
     }
 
-    OGS_FATAL("Cannot construct a parameter of given type \'%s\'.",
-              type.c_str());
+    OGS_FATAL("Cannot construct a parameter of given type '%s'.", type.c_str());
 }
 
 }  // ProcessLib

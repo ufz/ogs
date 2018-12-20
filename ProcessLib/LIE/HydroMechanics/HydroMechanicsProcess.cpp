@@ -468,7 +468,7 @@ void HydroMechanicsProcess<GlobalDim>::computeSecondaryVariableConcrete(
         if (it == pvs.end())
         {
             OGS_FATAL(
-                "Didn't find expected \"displacement_jump1\" process "
+                "Didn't find expected 'displacement_jump1' process "
                 "variable.");
         }
         g_variable_id = static_cast<int>(std::distance(pvs.begin(), it));

@@ -76,7 +76,7 @@ std::unique_ptr<Process> createThermoMechanicsProcess(
         variable_u = &process_variables[1][0].get();
     }
 
-    DBUG("Associate displacement with process variable \'%s\'.",
+    DBUG("Associate displacement with process variable '%s'.",
          variable_u->getName().c_str());
 
     if (variable_u->getNumberOfComponents() != DisplacementDim)
@@ -89,7 +89,7 @@ std::unique_ptr<Process> createThermoMechanicsProcess(
             DisplacementDim);
     }
 
-    DBUG("Associate temperature with process variable \'%s\'.",
+    DBUG("Associate temperature with process variable '%s'.",
          variable_T->getName().c_str());
     if (variable_T->getNumberOfComponents() != 1)
     {
@@ -111,7 +111,7 @@ std::unique_ptr<Process> createThermoMechanicsProcess(
         config,
         //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICS__reference_solid_density}
         "reference_solid_density", parameters, 1);
-    DBUG("Use \'%s\' as solid density parameter.",
+    DBUG("Use '%s' as solid density parameter.",
          reference_solid_density.name.c_str());
 
     // Linear thermal expansion coefficient
@@ -119,21 +119,21 @@ std::unique_ptr<Process> createThermoMechanicsProcess(
         config,
         //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICS__linear_thermal_expansion_coefficient}
         "linear_thermal_expansion_coefficient", parameters, 1);
-    DBUG("Use \'%s\' as linear thermal expansion coefficient.",
+    DBUG("Use '%s' as linear thermal expansion coefficient.",
          linear_thermal_expansion_coefficient.name.c_str());
     // Specific heat capacity
     auto& specific_heat_capacity = findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICS__specific_heat_capacity}
         "specific_heat_capacity", parameters, 1);
-    DBUG("Use \'%s\' as specific heat capacity parameter.",
+    DBUG("Use '%s' as specific heat capacity parameter.",
          specific_heat_capacity.name.c_str());
     // Thermal conductivity // TODO To be changed as tensor input.
     auto& thermal_conductivity = findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICS__thermal_conductivity}
         "thermal_conductivity", parameters, 1);
-    DBUG("Use \'%s\' as thermal conductivity parameter.",
+    DBUG("Use '%s' as thermal conductivity parameter.",
          thermal_conductivity.name.c_str());
 
     // Specific body force

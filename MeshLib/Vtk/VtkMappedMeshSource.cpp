@@ -144,7 +144,7 @@ int VtkMappedMeshSource::RequestData(vtkInformation*,
         if (addProperty<char>(properties, *name))
             continue;
 
-        DBUG("Mesh property \"%s\" with unknown data type.", *name->c_str());
+        DBUG("Mesh property '%s' with unknown data type.", *name->c_str());
     }
 
     output->GetPointData()->ShallowCopy(this->PointData.GetPointer());

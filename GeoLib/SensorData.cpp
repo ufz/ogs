@@ -81,7 +81,8 @@ const std::vector<float>* SensorData::getTimeSeries(SensorDataType time_series_n
         if (time_series_name == _vec_names[i])
             return _data_vecs[i];
     }
-    ERR("Error in SensorData::getTimeSeries() - Time series \"%d\" not found.", time_series_name);
+    ERR("Error in SensorData::getTimeSeries() - Time series '%d' not found.",
+        time_series_name);
     return nullptr;
 }
 
@@ -92,7 +93,8 @@ std::string SensorData::getDataUnit(SensorDataType time_series_name) const
         if (time_series_name == _vec_names[i])
             return _data_unit_string[i];
     }
-    ERR("Error in SensorData::getDataUnit() - Time series \"%d\" not found.", time_series_name);
+    ERR("Error in SensorData::getDataUnit() - Time series '%d' not found.",
+        time_series_name);
     return "";
 }
 

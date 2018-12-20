@@ -321,7 +321,7 @@ void ConfigTree::checkUniqueAttr(const std::string &attr) const
     }
 
     if (_visited_params.find({Attr::ATTR, attr}) != _visited_params.end()) {
-        error("Attribute \"" + attr + "\" has already been processed.");
+        error("Attribute '" + attr + "' has already been processed.");
     }
 }
 
@@ -394,11 +394,15 @@ ConfigTree::checkAndInvalidate()
         switch (p.first.first) {
         case Attr::ATTR:
             if (count > 0) {
-                warning("XML attribute \"" + tag + "\" has been read " + std::to_string(count)
-                        + " time(s) more than it was present in the configuration tree.");
+                warning("XML attribute '" + tag + "' has been read " +
+                        std::to_string(count) +
+                        " time(s) more than it was present in the "
+                        "configuration tree.");
             } else if (count < 0) {
-                warning("XML attribute \"" + tag + "\" has been read " + std::to_string(-count)
-                        + " time(s) less than it was present in the configuration tree.");
+                warning("XML attribute '" + tag + "' has been read " +
+                        std::to_string(-count) +
+                        " time(s) less than it was present in the "
+                        "configuration tree.");
             }
             break;
         case Attr::TAG:

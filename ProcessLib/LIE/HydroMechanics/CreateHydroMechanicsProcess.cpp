@@ -79,7 +79,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
                 "list for config tag <%s>.",
                 pv_name.c_str(), "process_variable");
         }
-        DBUG("Found process variable \'%s\' for config tag <%s>.",
+        DBUG("Found process variable '%s' for config tag <%s>.",
              variable->getName().c_str(), "process_variable");
 
         if (pv_name.find("displacement") != std::string::npos &&
@@ -139,7 +139,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__intrinsic_permeability}
         "intrinsic_permeability", parameters, 1);
 
-    DBUG("Use \'%s\' as intrinsic permeabiltiy parameter.",
+    DBUG("Use '%s' as intrinsic permeabiltiy parameter.",
          intrinsic_permeability.name.c_str());
 
     // Storage coefficient
@@ -148,7 +148,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__specific_storage}
         "specific_storage", parameters, 1);
 
-    DBUG("Use \'%s\' as specific storage parameter.",
+    DBUG("Use '%s' as specific storage parameter.",
          specific_storage.name.c_str());
 
     // Fluid viscosity
@@ -156,7 +156,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         config,
         //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__fluid_viscosity}
         "fluid_viscosity", parameters, 1);
-    DBUG("Use \'%s\' as fluid viscosity parameter.",
+    DBUG("Use '%s' as fluid viscosity parameter.",
          fluid_viscosity.name.c_str());
 
     // Fluid density
@@ -164,14 +164,14 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         config,
         //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__fluid_density}
         "fluid_density", parameters, 1);
-    DBUG("Use \'%s\' as fluid density parameter.", fluid_density.name.c_str());
+    DBUG("Use '%s' as fluid density parameter.", fluid_density.name.c_str());
 
     // Biot coefficient
     auto& biot_coefficient = findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__biot_coefficient}
         "biot_coefficient", parameters, 1);
-    DBUG("Use \'%s\' as Biot coefficient parameter.",
+    DBUG("Use '%s' as Biot coefficient parameter.",
          biot_coefficient.name.c_str());
 
     // Porosity
@@ -179,14 +179,14 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         config,
         //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__porosity}
         "porosity", parameters, 1);
-    DBUG("Use \'%s\' as porosity parameter.", porosity.name.c_str());
+    DBUG("Use '%s' as porosity parameter.", porosity.name.c_str());
 
     // Solid density
     auto& solid_density = findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__solid_density}
         "solid_density", parameters, 1);
-    DBUG("Use \'%s\' as solid density parameter.", solid_density.name.c_str());
+    DBUG("Use '%s' as solid density parameter.", solid_density.name.c_str());
 
     // Specific body force
     Eigen::Matrix<double, GlobalDim, 1> specific_body_force;
@@ -243,7 +243,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         {
             OGS_FATAL(
                 "Cannot construct fracture constitutive relation of given type "
-                "\'%s\'.",
+                "'%s'.",
                 frac_type.c_str());
         }
     }
@@ -285,7 +285,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__initial_effective_stress}
         "initial_effective_stress", parameters,
         MathLib::KelvinVector::KelvinVectorDimensions<GlobalDim>::value);
-    DBUG("Use \'%s\' as initial effective stress parameter.",
+    DBUG("Use '%s' as initial effective stress parameter.",
          initial_effective_stress.name.c_str());
 
     // initial effective stress in fracture
@@ -293,7 +293,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         config,
         //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__initial_fracture_effective_stress}
         "initial_fracture_effective_stress", parameters, GlobalDim);
-    DBUG("Use \'%s\' as initial fracture effective stress parameter.",
+    DBUG("Use '%s' as initial fracture effective stress parameter.",
          initial_fracture_effective_stress.name.c_str());
 
     // deactivation of matrix elements in flow

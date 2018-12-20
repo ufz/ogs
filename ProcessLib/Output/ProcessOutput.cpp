@@ -241,7 +241,7 @@ void makeOutput(std::string const& file_name, MeshLib::Mesh& mesh,
                 bool const compress_output, int const data_mode)
 {
     // Write output file
-    DBUG("Writing output to \'%s\'.", file_name.c_str());
+    DBUG("Writing output to '%s'.", file_name.c_str());
     MeshLib::IO::VtuInterface vtu_interface(&mesh, data_mode, compress_output);
     vtu_interface.writeToFile(file_name);
 }

@@ -65,8 +65,10 @@ HeuristicSearchLength::HeuristicSearchLength(MeshLib::Mesh const& mesh, LengthTy
             _search_length = std::numeric_limits<double>::epsilon();
     }
 
-    DBUG("[MeshNodeSearcher::MeshNodeSearcher] Calculated search length for mesh \"%s\" is %f.",
-            _mesh.getName().c_str(), _search_length);
+    DBUG(
+        "[MeshNodeSearcher::MeshNodeSearcher] Calculated search length for "
+        "mesh '%s' is %f.",
+        _mesh.getName().c_str(), _search_length);
 }
 
 } // end namespace MeshGeoToolsLib

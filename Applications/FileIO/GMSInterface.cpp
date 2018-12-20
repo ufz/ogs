@@ -80,8 +80,10 @@ int GMSInterface::readBoreholesFromGMS(std::vector<GeoLib::Point*>* boreholes,
                     depth = (*pnt)[2];
                 }
                 else
-                    WARN("GMSInterface::readBoreholeFromGMS(): Skipped layer \"%s\" in borehole \"%s\" because of thickness 0.0.",
-                         sName.c_str(), cName.c_str());
+                    WARN(
+                        "GMSInterface::readBoreholeFromGMS(): Skipped layer "
+                        "'%s' in borehole '%s' because of thickness 0.0.",
+                        sName.c_str(), cName.c_str());
             }
             else // add new borehole
             {
@@ -312,8 +314,10 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string &filename)
             continue; // skip because nodes have already been read
         else //default
         {
-            WARN("GMSInterface::readGMS3DMMesh() - Element type \"%s\" not recognised.",
-                 element_id.c_str());
+            WARN(
+                "GMSInterface::readGMS3DMMesh() - Element type '%s' not "
+                "recognised.",
+                element_id.c_str());
             return nullptr;
         }
     }

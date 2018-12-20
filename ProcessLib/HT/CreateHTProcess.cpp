@@ -90,14 +90,14 @@ std::unique_ptr<Process> createHTProcess(
         config,
         //! \ogs_file_param_special{prj__processes__process__HT__density_solid}
         "density_solid", parameters, 1);
-    DBUG("Use \'%s\' as density_solid parameter.", density_solid.name.c_str());
+    DBUG("Use '%s' as density_solid parameter.", density_solid.name.c_str());
 
     // Parameter for the specific heat capacity of the solid.
     auto& specific_heat_capacity_solid = findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__HT__specific_heat_capacity_solid}
         "specific_heat_capacity_solid", parameters, 1);
-    DBUG("Use \'%s\' as specific_heat_capacity_solid parameter.",
+    DBUG("Use '%s' as specific_heat_capacity_solid parameter.",
          specific_heat_capacity_solid.name.c_str());
 
     // Parameter for the thermal conductivity of the solid (only one scalar per
@@ -123,7 +123,7 @@ std::unique_ptr<Process> createHTProcess(
             *dispersion_config,
             //! \ogs_file_param_special{prj__processes__process__HT__thermal_dispersivity__longitudinal}
             "longitudinal", parameters, 1);
-        DBUG("Use \'%s\' as thermal_dispersivity_longitudinal parameter.",
+        DBUG("Use '%s' as thermal_dispersivity_longitudinal parameter.",
              thermal_dispersivity_longitudinal->name.c_str());
 
         // Parameter for the thermal conductivity of the solid (only one scalar
@@ -133,7 +133,7 @@ std::unique_ptr<Process> createHTProcess(
             *dispersion_config,
             //! \ogs_file_param_special{prj__processes__process__HT__thermal_dispersivity__transversal}
             "transversal", parameters, 1);
-        DBUG("Use \'%s\' as thermal_dispersivity_transversal parameter.",
+        DBUG("Use '%s' as thermal_dispersivity_transversal parameter.",
              thermal_dispersivity_transversal->name.c_str());
     }
 
@@ -143,7 +143,7 @@ std::unique_ptr<Process> createHTProcess(
         config,
         //! \ogs_file_param_special{prj__processes__process__HT__thermal_conductivity_solid}
         "thermal_conductivity_solid", parameters, 1);
-    DBUG("Use \'%s\' as thermal_conductivity_solid parameter.",
+    DBUG("Use '%s' as thermal_conductivity_solid parameter.",
          thermal_conductivity_solid.name.c_str());
 
     // Parameter for the thermal conductivity of the fluid.
@@ -151,7 +151,7 @@ std::unique_ptr<Process> createHTProcess(
         config,
         //! \ogs_file_param_special{prj__processes__process__HT__thermal_conductivity_fluid}
         "thermal_conductivity_fluid", parameters, 1);
-    DBUG("Use \'%s\' as thermal_conductivity_fluid parameter.",
+    DBUG("Use '%s' as thermal_conductivity_fluid parameter.",
          thermal_conductivity_fluid.name.c_str());
 
     // Specific body force parameter.
@@ -191,12 +191,12 @@ std::unique_ptr<Process> createHTProcess(
         solid_thermal_expansion = &findParameter<double>(
             //! \ogs_file_param_special{prj__processes__process__HT__solid_thermal_expansion__thermal_expansion}
             *solid_config, "thermal_expansion", parameters, 1);
-        DBUG("Use \'%s\' as solid thermal expansion.",
+        DBUG("Use '%s' as solid thermal expansion.",
              solid_thermal_expansion->name.c_str());
         biot_constant = &findParameter<double>(
             //! \ogs_file_param_special{prj__processes__process__HT__solid_thermal_expansion__biot_constant}
             *solid_config, "biot_constant", parameters, 1);
-        DBUG("Use \'%s\' as Biot's constant.", biot_constant->name.c_str());
+        DBUG("Use '%s' as Biot's constant.", biot_constant->name.c_str());
     }
 
     std::unique_ptr<ProcessLib::SurfaceFluxData> surfaceflux;

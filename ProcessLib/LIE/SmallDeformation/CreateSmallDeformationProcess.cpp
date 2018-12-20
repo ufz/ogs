@@ -77,7 +77,7 @@ std::unique_ptr<Process> createSmallDeformationProcess(
                 "list for config tag <%s>.",
                 pv_name.c_str(), "process_variable");
         }
-        DBUG("Found process variable \'%s\' for config tag <%s>.",
+        DBUG("Found process variable '%s' for config tag <%s>.",
              variable->getName().c_str(), "process_variable");
 
         per_process_variables.emplace_back(
@@ -89,7 +89,7 @@ std::unique_ptr<Process> createSmallDeformationProcess(
         OGS_FATAL("No displacement jump variables are specified");
     }
 
-    DBUG("Associate displacement with process variable \'%s\'.",
+    DBUG("Associate displacement with process variable '%s'.",
          per_process_variables.back().get().getName().c_str());
 
     if (per_process_variables.back().get().getNumberOfComponents() !=
@@ -143,7 +143,7 @@ std::unique_ptr<Process> createSmallDeformationProcess(
     {
         OGS_FATAL(
             "Cannot construct fracture constitutive relation of given type "
-            "\'%s\'.",
+            "'%s'.",
             frac_type.c_str());
     }
 

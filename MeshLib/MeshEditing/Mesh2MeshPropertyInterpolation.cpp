@@ -59,7 +59,7 @@ bool Mesh2MeshPropertyInterpolation::setPropertiesForMesh(Mesh& dest_mesh) const
     }
     else
     {
-        INFO("Create new PropertyVector \"%s\" of type double.",
+        INFO("Create new PropertyVector '%s' of type double.",
              _property_name.c_str());
         dest_properties =
             dest_mesh.getProperties().createNewPropertyVector<double>(
@@ -68,7 +68,7 @@ bool Mesh2MeshPropertyInterpolation::setPropertiesForMesh(Mesh& dest_mesh) const
         {
             WARN(
                 "Could not get or create a PropertyVector of type double"
-                " using the given name \"%s\".",
+                " using the given name '%s'.",
                 _property_name.c_str());
             return false;
         }
@@ -146,7 +146,7 @@ void Mesh2MeshPropertyInterpolation::interpolateElementPropertiesToNodePropertie
     // fetch the source of property values
     if (!_src_mesh.getProperties().existsPropertyVector<double>(_property_name))
     {
-        WARN("Did not find PropertyVector<double> \"%s\".",
+        WARN("Did not find PropertyVector<double> '%s'.",
              _property_name.c_str());
         return;
     }

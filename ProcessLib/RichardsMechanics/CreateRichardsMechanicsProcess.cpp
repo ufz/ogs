@@ -77,7 +77,7 @@ std::unique_ptr<Process> createRichardsMechanicsProcess(
         variable_u = &process_variables[1][0].get();
     }
 
-    DBUG("Associate displacement with process variable \'%s\'.",
+    DBUG("Associate displacement with process variable '%s'.",
          variable_u->getName().c_str());
 
     if (variable_u->getNumberOfComponents() != DisplacementDim)
@@ -90,7 +90,7 @@ std::unique_ptr<Process> createRichardsMechanicsProcess(
             DisplacementDim);
     }
 
-    DBUG("Associate pressure with process variable \'%s\'.",
+    DBUG("Associate pressure with process variable '%s'.",
          variable_p->getName().c_str());
     if (variable_p->getNumberOfComponents() != 1)
     {
@@ -111,7 +111,7 @@ std::unique_ptr<Process> createRichardsMechanicsProcess(
         //! \ogs_file_param_special{prj__processes__process__RICHARDS_MECHANICS__intrinsic_permeability}
         "intrinsic_permeability", parameters, 1);
 
-    DBUG("Use \'%s\' as intrinsic conductivity parameter.",
+    DBUG("Use '%s' as intrinsic conductivity parameter.",
          intrinsic_permeability.name.c_str());
 
     // Fluid bulk modulus
@@ -119,7 +119,7 @@ std::unique_ptr<Process> createRichardsMechanicsProcess(
         config,
         //! \ogs_file_param_special{prj__processes__process__RICHARDS_MECHANICS__fluid_bulk_modulus}
         "fluid_bulk_modulus", parameters, 1);
-    DBUG("Use \'%s\' as fluid bulk modulus parameter.",
+    DBUG("Use '%s' as fluid bulk modulus parameter.",
          fluid_bulk_modulus.name.c_str());
 
     // Biot coefficient
@@ -127,7 +127,7 @@ std::unique_ptr<Process> createRichardsMechanicsProcess(
         config,
         //! \ogs_file_param_special{prj__processes__process__RICHARDS_MECHANICS__biot_coefficient}
         "biot_coefficient", parameters, 1);
-    DBUG("Use \'%s\' as Biot coefficient parameter.",
+    DBUG("Use '%s' as Biot coefficient parameter.",
          biot_coefficient.name.c_str());
 
     // Solid density
@@ -135,14 +135,14 @@ std::unique_ptr<Process> createRichardsMechanicsProcess(
         config,
         //! \ogs_file_param_special{prj__processes__process__RICHARDS_MECHANICS__solid_density}
         "solid_density", parameters, 1);
-    DBUG("Use \'%s\' as solid density parameter.", solid_density.name.c_str());
+    DBUG("Use '%s' as solid density parameter.", solid_density.name.c_str());
 
     // Solid bulk modulus
     auto& solid_bulk_modulus = findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__RICHARDS_MECHANICS__solid_bulk_modulus}
         "solid_bulk_modulus", parameters, 1);
-    DBUG("Use \'%s\' as solid bulk modulus parameter.",
+    DBUG("Use '%s' as solid bulk modulus parameter.",
          solid_bulk_modulus.name.c_str());
 
     // Specific body force

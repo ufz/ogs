@@ -39,7 +39,7 @@ int convertVtkDataMode(std::string const& data_mode)
         return 2;
     }
     OGS_FATAL(
-        "Unsupported vtk output file data mode \"%s\". Expected Ascii, "
+        "Unsupported vtk output file data mode '%s'. Expected Ascii, "
         "Binary, or Appended.",
         data_mode.c_str());
 }

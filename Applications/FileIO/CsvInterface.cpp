@@ -93,7 +93,8 @@ int CsvInterface::readPoints(std::string const& fname, char delim,
     for (std::size_t i=0; i<3; ++i)
         if (column_idx[i] == std::numeric_limits<std::size_t>::max())
         {
-            ERR ("Column \"%s\" not found in file header.", column_names[i].c_str());
+            ERR("Column '%s' not found in file header.",
+                column_names[i].c_str());
             return -1;
         }
 

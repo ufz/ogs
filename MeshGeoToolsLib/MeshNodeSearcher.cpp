@@ -40,8 +40,8 @@ MeshNodeSearcher::MeshNodeSearcher(
       _search_length_algorithm(std::move(search_length_algorithm)),
       _search_all_nodes(search_all_nodes)
 {
-    DBUG("The search length for mesh \"%s\" is %e.",
-        _mesh.getName().c_str(), _search_length_algorithm->getSearchLength());
+    DBUG("The search length for mesh '%s' is %e.", _mesh.getName().c_str(),
+         _search_length_algorithm->getSearchLength());
 }
 
 MeshNodeSearcher::~MeshNodeSearcher()

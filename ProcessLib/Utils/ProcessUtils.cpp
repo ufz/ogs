@@ -32,7 +32,7 @@ ProcessVariable& findProcessVariable(
             "list for config tag <%s>.",
             name.c_str(), tag.c_str());
     }
-    DBUG("Found process variable \'%s\' for config tag <%s>.",
+    DBUG("Found process variable '%s' for config tag <%s>.",
          variable->getName().c_str(), tag.c_str());
 
     // Const cast is needed because of variables argument constness.

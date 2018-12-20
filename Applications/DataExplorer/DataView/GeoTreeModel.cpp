@@ -73,7 +73,8 @@ void GeoTreeModel::addPointList(QString geoName, GeoLib::PointVec const& pointVe
     for (auto pnt = pointVec.getNameIDMapBegin(); pnt != pointVec.getNameIDMapEnd(); ++pnt)
         QVariant pnt_data (pointList->child(pnt->second)->setData(4, QString::fromStdString(pnt->first)));
 
-    INFO("Geometry \"%s\" built. %d points added.", geoName.toStdString().c_str(), nPoints);
+    INFO("Geometry '%s' built. %d points added.", geoName.toStdString().c_str(),
+         nPoints);
 
     endResetModel();
 }
@@ -92,7 +93,9 @@ void GeoTreeModel::addPolylineList(QString geoName, GeoLib::PolylineVec const& p
 
     if (geo == nullptr)
     {
-        ERR("GeoTreeModel::addPolylineList(): No corresponding geometry for \"%s\" found.", geoName.toStdString().c_str());
+        ERR("GeoTreeModel::addPolylineList(): No corresponding geometry for "
+            "'%s' found.",
+            geoName.toStdString().c_str());
         return;
     }
 
@@ -182,7 +185,9 @@ void GeoTreeModel::addSurfaceList(QString geoName, GeoLib::SurfaceVec const& sur
 
     if (geo == nullptr)
     {
-        ERR("GeoTreeModel::addSurfaceList(): No corresponding geometry for \"%s\" found.", geoName.toStdString().c_str());
+        ERR("GeoTreeModel::addSurfaceList(): No corresponding geometry for "
+            "'%s' found.",
+            geoName.toStdString().c_str());
         return;
     }
 

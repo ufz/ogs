@@ -49,7 +49,7 @@ Color const getColor(const std::string &id, std::map<std::string, Color> &colors
         if (id == it->first)
             return it->second;
     }
-    WARN("Key \"%s\" not found in color lookup table.", id.c_str());
+    WARN("Key '%s' not found in color lookup table.", id.c_str());
     Color c = getRandomColor();
     colors.insert(std::pair<std::string, Color>(id, c));
     return c;

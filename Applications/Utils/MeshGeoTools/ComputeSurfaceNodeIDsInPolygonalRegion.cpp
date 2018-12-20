@@ -36,11 +36,13 @@ void writeToFile(std::string const& id_area_fname, std::string const& csv_fname,
 {
     std::ofstream ids_and_area_out(id_area_fname);
     if (!ids_and_area_out) {
-        OGS_FATAL("Unable to open the file \"%s\" - aborting.", id_area_fname.c_str());
+        OGS_FATAL("Unable to open the file '%s' - aborting.",
+                  id_area_fname.c_str());
     }
     std::ofstream csv_out(csv_fname);
     if (!csv_out) {
-        OGS_FATAL("Unable to open the file \"%s\" - aborting.", csv_fname.c_str());
+        OGS_FATAL("Unable to open the file '%s' - aborting.",
+                  csv_fname.c_str());
     }
 
     ids_and_area_out << std::setprecision(20);
@@ -95,10 +97,10 @@ int main (int argc, char* argv[])
     FileIO::readGeometryFromFile(geo_in.getValue(), geo_objs);
     std::vector<std::string> geo_names;
     geo_objs.getGeometryNames(geo_names);
-    INFO("Geometry \"%s\" read: %u points, %u polylines.",
-        geo_names[0].c_str(),
-        geo_objs.getPointVec(geo_names[0])->size(),
-        geo_objs.getPolylineVec(geo_names[0])->size());
+    INFO("Geometry '%s' read: %u points, %u polylines.",
+         geo_names[0].c_str(),
+         geo_objs.getPointVec(geo_names[0])->size(),
+         geo_objs.getPolylineVec(geo_names[0])->size());
 
     MathLib::Vector3 const dir(0.0, 0.0, -1.0);
     double angle(90);
@@ -145,8 +147,9 @@ int main (int argc, char* argv[])
             }
         }
         if (ids_and_areas.empty()) {
-            ERR("Polygonal part of surface \"%s\" doesn't contains nodes. No "
-                "output will be generated.", polygon_name.c_str());
+            ERR("Polygonal part of surface '%s' doesn't contains nodes. No "
+                "output will be generated.",
+                polygon_name.c_str());
             continue;
         }
 
@@ -155,13 +158,13 @@ int main (int argc, char* argv[])
         std::string csv_fname(out_path + polygon_name);
         id_and_area_fname += std::to_string(j) + ".txt";
         csv_fname += std::to_string(j) + ".csv";
-        INFO("Polygonal part of surface \"%s\" contains %ul nodes. Writting to"
-            " files \"%s\" and \"%s\".",
+        INFO(
+            "Polygonal part of surface '%s' contains %ul nodes. Writting to"
+            " files '%s' and '%s'.",
             polygon_name.c_str(),
             ids_and_areas.size(),
             id_and_area_fname.c_str(),
-            csv_fname.c_str()
-        );
+            csv_fname.c_str());
         writeToFile(id_and_area_fname, csv_fname, ids_and_areas, mesh_nodes);
     }
 

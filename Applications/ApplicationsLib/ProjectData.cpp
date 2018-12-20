@@ -107,7 +107,7 @@ namespace
 {
 void readGeometry(std::string const& fname, GeoLib::GEOObjects& geo_objects)
 {
-    DBUG("Reading geometry file \'%s\'.", fname.c_str());
+    DBUG("Reading geometry file '%s'.", fname.c_str());
     GeoLib::IO::BoostXmlGmlInterface gml_reader(geo_objects);
     gml_reader.readFile(fname);
 }
@@ -118,13 +118,13 @@ std::unique_ptr<MeshLib::Mesh> readSingleMesh(
 {
     std::string const mesh_file = BaseLib::copyPathToFileName(
         mesh_config_parameter.getValue<std::string>(), project_directory);
-    DBUG("Reading mesh file \'%s\'.", mesh_file.c_str());
+    DBUG("Reading mesh file '%s'.", mesh_file.c_str());
 
     auto mesh = std::unique_ptr<MeshLib::Mesh>(
         MeshLib::IO::readMeshFromFile(mesh_file));
     if (!mesh)
     {
-        OGS_FATAL("Could not read mesh from \'%s\' file. No mesh added.",
+        OGS_FATAL("Could not read mesh from '%s' file. No mesh added.",
                   mesh_file.c_str());
     }
 

@@ -235,7 +235,7 @@ bool isPointInElementXY(MathLib::Point3d const& p, Element const& e)
                MathLib::isPointInTriangleXY(p, n0, n2, n3);
     }
 
-    WARN("isPointInElementXY: element type \"%s\" is not supported.",
+    WARN("isPointInElementXY: element type '%s' is not supported.",
          MeshLib::MeshElemType2String(e.getGeomType()).c_str());
     return false;
 }

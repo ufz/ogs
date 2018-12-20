@@ -73,7 +73,7 @@ std::unique_ptr<Process> createThermoMechanicalPhaseFieldProcess(
     ProcessVariable* variable_ph =
         &process_variables[process_variables.size() - 1][0].get();
 
-    DBUG("Associate displacement with process variable \'%s\'.",
+    DBUG("Associate displacement with process variable '%s'.",
          variable_u->getName().c_str());
 
     if (variable_u->getNumberOfComponents() != DisplacementDim)
@@ -86,7 +86,7 @@ std::unique_ptr<Process> createThermoMechanicalPhaseFieldProcess(
             DisplacementDim);
     }
 
-    DBUG("Associate phase field with process variable \'%s\'.",
+    DBUG("Associate phase field with process variable '%s'.",
          variable_ph->getName().c_str());
     if (variable_ph->getNumberOfComponents() != 1)
     {
@@ -97,7 +97,7 @@ std::unique_ptr<Process> createThermoMechanicalPhaseFieldProcess(
             variable_ph->getNumberOfComponents());
     }
 
-    DBUG("Associate temperature with process variable \'%s\'.",
+    DBUG("Associate temperature with process variable '%s'.",
          variable_T->getName().c_str());
     if (variable_T->getNumberOfComponents() != 1)
     {
@@ -126,43 +126,42 @@ std::unique_ptr<Process> createThermoMechanicalPhaseFieldProcess(
         phasefield_parameters_config,
         //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICAL_PHASE_FIELD__phasefield_parameters__residual_stiffness}
         "residual_stiffness", parameters, 1);
-    DBUG("Use \'%s\' as residual stiffness.", residual_stiffness.name.c_str());
+    DBUG("Use '%s' as residual stiffness.", residual_stiffness.name.c_str());
 
     // Crack resistance
     auto& crack_resistance = findParameter<double>(
         phasefield_parameters_config,
         //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICAL_PHASE_FIELD__phasefield_parameters__crack_resistance}
         "crack_resistance", parameters, 1);
-    DBUG("Use \'%s\' as crack resistance.", crack_resistance.name.c_str());
+    DBUG("Use '%s' as crack resistance.", crack_resistance.name.c_str());
 
     // Crack length scale
     auto& crack_length_scale = findParameter<double>(
         phasefield_parameters_config,
         //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICAL_PHASE_FIELD__phasefield_parameters__crack_length_scale}
         "crack_length_scale", parameters, 1);
-    DBUG("Use \'%s\' as crack length scale.", crack_length_scale.name.c_str());
+    DBUG("Use '%s' as crack length scale.", crack_length_scale.name.c_str());
 
     // Kinetic coefficient
     auto& kinetic_coefficient = findParameter<double>(
         phasefield_parameters_config,
         //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICAL_PHASE_FIELD__phasefield_parameters__kinetic_coefficient}
         "kinetic_coefficient", parameters, 1);
-    DBUG("Use \'%s\' as kinetic coefficient.",
-         kinetic_coefficient.name.c_str());
+    DBUG("Use '%s' as kinetic coefficient.", kinetic_coefficient.name.c_str());
 
     // Solid density
     auto& solid_density = findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICAL_PHASE_FIELD__reference_solid_density}
         "solid_density", parameters, 1);
-    DBUG("Use \'%s\' as solid density parameter.", solid_density.name.c_str());
+    DBUG("Use '%s' as solid density parameter.", solid_density.name.c_str());
 
     // Linear thermal expansion coefficient
     auto& linear_thermal_expansion_coefficient = findParameter<double>(
         thermal_parameters_config,
         //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICAL_PHASE_FIELD__thermal_parameters__linear_thermal_expansion_coefficient}
         "linear_thermal_expansion_coefficient", parameters, 1);
-    DBUG("Use \'%s\' as linear thermal expansion coefficient.",
+    DBUG("Use '%s' as linear thermal expansion coefficient.",
          linear_thermal_expansion_coefficient.name.c_str());
 
     // Specific heat capacity
@@ -170,7 +169,7 @@ std::unique_ptr<Process> createThermoMechanicalPhaseFieldProcess(
         thermal_parameters_config,
         //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICAL_PHASE_FIELD__thermal_parameters__specific_heat_capacity}
         "specific_heat_capacity", parameters, 1);
-    DBUG("Use \'%s\' as specific heat capacity.",
+    DBUG("Use '%s' as specific heat capacity.",
          specific_heat_capacity.name.c_str());
 
     // Thermal conductivity
@@ -178,14 +177,14 @@ std::unique_ptr<Process> createThermoMechanicalPhaseFieldProcess(
         thermal_parameters_config,
         //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICAL_PHASE_FIELD__thermal_parameters__thermal_conductivity}
         "thermal_conductivity", parameters, 1);
-    DBUG("Use \'%s\' as thermal conductivity parameter.",
+    DBUG("Use '%s' as thermal conductivity parameter.",
          thermal_conductivity.name.c_str());
     // Residual thermal conductivity
     auto& residual_thermal_conductivity = findParameter<double>(
         thermal_parameters_config,
         //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICAL_PHASE_FIELD__thermal_parameters__residual_thermal_conductivity}
         "residual_thermal_conductivity", parameters, 1);
-    DBUG("Use \'%s\' as residual thermal conductivity parameter.",
+    DBUG("Use '%s' as residual thermal conductivity parameter.",
          residual_thermal_conductivity.name.c_str());
     // Reference temperature
     const double reference_temperature =

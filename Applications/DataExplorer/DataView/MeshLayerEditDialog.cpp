@@ -259,7 +259,8 @@ void MeshLayerEditDialog::accept()
 {
     if (this->_edits.isEmpty())
     {
-        OGSError::box("Please specifiy the number and\n type of layers and press \"Next\"");
+        OGSError::box(
+            "Please specifiy the number and\n type of layers and press 'Next'");
         return;
     }
 

@@ -261,19 +261,22 @@ bool BoostXmlGmlInterface::write()
 
     GeoLib::PointVec const*const pnt_vec(_geo_objects.getPointVecObj(_exportName));
     if (! pnt_vec) {
-        ERR("BoostXmlGmlInterface::write(): No PointVec within the geometry \"%s\".",
+        ERR("BoostXmlGmlInterface::write(): No PointVec within the geometry "
+            "'%s'.",
             _exportName.c_str());
         return false;
     }
 
     std::vector<GeoLib::Point*> const*const pnts(pnt_vec->getVector());
     if (! pnts) {
-        ERR("BoostXmlGmlInterface::write(): No vector of points within the geometry \"%s\".",
+        ERR("BoostXmlGmlInterface::write(): No vector of points within the "
+            "geometry '%s'.",
             _exportName.c_str());
         return false;
     }
     if (pnts->empty()) {
-        ERR("BoostXmlGmlInterface::write(): No points within the geometry \"%s\".",
+        ERR("BoostXmlGmlInterface::write(): No points within the geometry "
+            "'%s'.",
             _exportName.c_str());
         return false;
     }
@@ -313,8 +316,10 @@ void BoostXmlGmlInterface::addSurfacesToPropertyTree(
 {
     GeoLib::SurfaceVec const*const sfc_vec(_geo_objects.getSurfaceVecObj(_exportName));
     if (!sfc_vec) {
-        INFO("BoostXmlGmlInterface::addSurfacesToPropertyTree(): "
-            "No surfaces within the geometry \"%s\".", _exportName.c_str());
+        INFO(
+            "BoostXmlGmlInterface::addSurfacesToPropertyTree(): "
+            "No surfaces within the geometry '%s'.",
+            _exportName.c_str());
         return;
     }
 
@@ -323,7 +328,7 @@ void BoostXmlGmlInterface::addSurfacesToPropertyTree(
     {
         INFO(
             "BoostXmlGmlInterface::addSurfacesToPropertyTree(): "
-            "No surfaces within the geometry \"%s\".",
+            "No surfaces within the geometry '%s'.",
             _exportName.c_str());
         return;
     }
@@ -351,8 +356,10 @@ void BoostXmlGmlInterface::addPolylinesToPropertyTree(
 {
     GeoLib::PolylineVec const*const vec(_geo_objects.getPolylineVecObj(_exportName));
     if (!vec) {
-        INFO("BoostXmlGmlInterface::addPolylinesToPropertyTree(): "
-            "No polylines within the geometry \"%s\".", _exportName.c_str());
+        INFO(
+            "BoostXmlGmlInterface::addPolylinesToPropertyTree(): "
+            "No polylines within the geometry '%s'.",
+            _exportName.c_str());
         return;
     }
 
@@ -361,7 +368,7 @@ void BoostXmlGmlInterface::addPolylinesToPropertyTree(
     {
         INFO(
             "BoostXmlGmlInterface::addPolylinesToPropertyTree(): "
-            "No polylines within the geometry \"%s\".",
+            "No polylines within the geometry '%s'.",
             _exportName.c_str());
         return;
     }
