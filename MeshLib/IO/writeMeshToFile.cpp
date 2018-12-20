@@ -34,7 +34,13 @@ int writeMeshToFile(const MeshLib::Mesh &mesh, const std::string &file_name)
     if (BaseLib::hasFileExtension("vtu", file_name))
     {
         MeshLib::IO::VtuInterface writer(&mesh);
-        writer.writeToFile(file_name);
+        auto const result = writer.writeToFile(file_name);
+        if (!result)
+        {
+            ERR("writeMeshToFile(): Could not write mesh to '%s'.",
+                file_name.c_str());
+            return -1;
+        }
         return 0;
     }
 
