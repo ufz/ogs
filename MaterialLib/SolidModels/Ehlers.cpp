@@ -469,6 +469,40 @@ splitSolutionVector(ResidualVector const& solution)
 }
 
 template <int DisplacementDim>
+SolidEhlers<DisplacementDim>::SolidEhlers(
+    NumLib::NewtonRaphsonSolverParameters nonlinear_solver_parameters,
+    MaterialPropertiesParameters material_properties,
+    std::unique_ptr<DamagePropertiesParameters>&& damage_properties,
+    TangentType tangent_type)
+    : _nonlinear_solver_parameters(std::move(nonlinear_solver_parameters)),
+      _mp(std::move(material_properties)),
+      _damage_properties(std::move(damage_properties)),
+      _tangent_type(tangent_type)
+{
+}
+
+template <int DisplacementDim>
+double SolidEhlers<DisplacementDim>::computeFreeEnergyDensity(
+    double const /*t*/,
+    ProcessLib::SpatialPosition const& /*x*/,
+    double const /*dt*/,
+    KelvinVector const& eps,
+    KelvinVector const& sigma,
+    typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
+        material_state_variables) const
+{
+    assert(dynamic_cast<StateVariables<DisplacementDim> const*>(
+               &material_state_variables) != nullptr);
+
+    auto const& eps_p = static_cast<StateVariables<DisplacementDim> const&>(
+                            material_state_variables)
+                            .eps_p;
+    using Invariants = MathLib::KelvinVector::Invariants<KelvinVectorSize>;
+    auto const& identity2 = Invariants::identity2;
+    return (eps - eps_p.D - eps_p.V / 3 * identity2).dot(sigma) / 2;
+}
+
+template <int DisplacementDim>
 boost::optional<std::tuple<typename SolidEhlers<DisplacementDim>::KelvinVector,
                            std::unique_ptr<typename MechanicsBase<
                                DisplacementDim>::MaterialStateVariables>,

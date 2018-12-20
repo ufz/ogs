@@ -297,17 +297,11 @@ public:
         MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>;
 
 public:
-    explicit SolidEhlers(
+    SolidEhlers(
         NumLib::NewtonRaphsonSolverParameters nonlinear_solver_parameters,
         MaterialPropertiesParameters material_properties,
         std::unique_ptr<DamagePropertiesParameters>&& damage_properties,
-        TangentType tangent_type)
-        : _nonlinear_solver_parameters(std::move(nonlinear_solver_parameters)),
-          _mp(std::move(material_properties)),
-          _damage_properties(std::move(damage_properties)),
-          _tangent_type(tangent_type)
-    {
-    }
+        TangentType tangent_type);
 
     double computeFreeEnergyDensity(
         double const /*t*/,
@@ -316,18 +310,7 @@ public:
         KelvinVector const& eps,
         KelvinVector const& sigma,
         typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
-            material_state_variables) const override
-    {
-        assert(dynamic_cast<StateVariables<DisplacementDim> const*>(
-                   &material_state_variables) != nullptr);
-
-        auto const& eps_p = static_cast<StateVariables<DisplacementDim> const&>(
-                                material_state_variables)
-                                .eps_p;
-        using Invariants = MathLib::KelvinVector::Invariants<KelvinVectorSize>;
-        auto const& identity2 = Invariants::identity2;
-        return (eps - eps_p.D - eps_p.V / 3 * identity2).dot(sigma) / 2;
-    }
+            material_state_variables) const override;
 
     boost::optional<std::tuple<KelvinVector,
                                std::unique_ptr<typename MechanicsBase<
