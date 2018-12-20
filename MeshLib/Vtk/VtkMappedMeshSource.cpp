@@ -135,6 +135,8 @@ int VtkMappedMeshSource::RequestData(vtkInformation*,
     {
         if (addProperty<double>(properties, *name))
             continue;
+        if (addProperty<float>(properties, *name))
+            continue;
         if (addProperty<int>(properties, *name))
             continue;
         if (addProperty<unsigned>(properties, *name))
