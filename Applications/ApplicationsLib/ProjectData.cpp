@@ -26,7 +26,7 @@
 #include "BaseLib/FileTools.h"
 
 #include "GeoLib/GEOObjects.h"
-#include "MaterialLib/MPL/mpMedium.h"
+#include "MaterialLib/MPL/CreateMedium.h"
 #include "MathLib/Curve/CreatePiecewiseLinearCurve.h"
 #include "MeshGeoToolsLib/ConstructMeshesFromGeometries.h"
 #include "MeshGeoToolsLib/CreateSearchLength.h"
@@ -328,32 +328,28 @@ void ProjectData::parseMedia(
     }
 
     for (auto const& medium_config :
-         //! \ogs_file_param{material__media__medium}
+         //! \ogs_file_param{prj__media__medium}
          media_config->getConfigSubtreeList("medium"))
     {
+        //! \ogs_file_attr{prj__media__medium__id}
         auto const material_id = medium_config.getConfigAttribute<int>("id", 0);
 
         if (_media.find(material_id) != _media.end())
         {
             OGS_FATAL(
-                "Multiple media were specified for the same "
-                "material id %d. Keep in mind, that if no material id is "
-                "specified, it is assumed to be 0 by default.",
+                "Multiple media were specified for the same material id %d. "
+                "Keep in mind, that if no material id is specified, it is "
+                "assumed to be 0 by default.",
                 material_id);
         }
 
-        _media[material_id] =
-            std::make_unique<MaterialPropertyLib::Medium>(medium_config);
+        _media[material_id] = MaterialPropertyLib::createMedium(medium_config);
     }
 
     if (_media.empty())
+    {
         OGS_FATAL("No entity is found inside <media>.");
-
-    if (_media.rbegin()->first != static_cast<int>(_media.size()) - 1)
-           OGS_FATAL(
-               "The ids in the porous media definitions in the project file have "
-               "to be sequential, starting with the id zero.");
-
+    }
 }
 
 void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,

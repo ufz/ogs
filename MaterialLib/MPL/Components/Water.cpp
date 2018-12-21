@@ -1,6 +1,7 @@
 /**
  * \file
- * \date   Nov 28, 2017
+ * \author Norbert Grunwald
+ * \date   Sep 7, 2017
  *
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
@@ -9,16 +10,19 @@
  *              http://www.opengeosys.org/project/license
  *
  */
-#include "MaterialSpatialDistributionMap.h"
-#include "MeshLib/Mesh.h"
+
+#include "Water.h"
+#include "MaterialLib/MPL/Properties/Properties.h"
 
 namespace MaterialPropertyLib
 {
-Medium* MaterialSpatialDistributionMap::getMedium(std::size_t const element_id)
+Water::Water(std::unique_ptr<PropertyArray>&& properties)
 {
-    auto const material_id =
-        _material_ids == nullptr ? 0 : (*_material_ids)[element_id];
+    _properties[PropertyType::name] = std::make_unique<Constant>("Water");
 
-    return _media.at(material_id).get();
+    if (properties)
+    {
+        overwriteExistingProperties(_properties, *properties);
+    }
 }
 }  // namespace MaterialPropertyLib

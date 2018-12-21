@@ -18,7 +18,7 @@
 #include <string>
 
 #include "BaseLib/ConfigTree.h"
-#include "MaterialLib/MPL/mpMedium.h"
+#include "MaterialLib/MPL/Medium.h"
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 
 #include "ProcessLib/Parameter/Parameter.h"

@@ -3,7 +3,7 @@
  * \date   Nov 28, 2017
  *
  * \copyright
- * Copyright (c) 2012-2018, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
@@ -28,12 +28,14 @@ createMaterialSpatialDistributionMap(
             : *std::max_element(begin(*material_ids), end(*material_ids));
 
     if (max_material_id > static_cast<int>(media.size() - 1))
+    {
         OGS_FATAL(
-            "The maximum value of MaterialIDs in mesh is %d. As the "
-            "given number of porous media definitions in the project "
-            "file is %d, the maximum value of MaterialIDs in mesh must be %d "
-            "(index starts with zero).",
+            "The maximum value of MaterialIDs in mesh is %d. As the given "
+            "number of porous media definitions in the project file is %d, the "
+            "maximum value of MaterialIDs in mesh must be %d (index starts "
+            "with zero).",
             max_material_id, media.size(), max_material_id - 1);
+    }
 
     if (max_material_id < static_cast<int>(media.size() - 1))
         WARN(

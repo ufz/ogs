@@ -4,7 +4,7 @@
  * \date   Oct 22, 2018
  *
  * \copyright
- * Copyright (c) 2012-2018, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
@@ -15,7 +15,7 @@
 
 #include "Tests/TestTools.h"
 
-#include "MaterialLib/MPL/mpMedium.h"
+#include "MaterialLib/MPL/Medium.h"
 namespace MPL = MaterialPropertyLib;
 
-MPL::Medium createTestMaterial(std::string const& xml);
+std::unique_ptr<MPL::Medium> createTestMaterial(std::string const& xml);
