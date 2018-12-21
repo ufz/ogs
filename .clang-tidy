@@ -1,2 +1,6 @@
 ---
-Checks: ''
+Checks: '-*,clang-diagnostic-*,clang-analyzer-*,readability-braces-around-statements,readability-named-parameter,*readability-namespace-comments,*readability-inconsistent-*,*explicit-conversions*'
+WarningsAsErrors: ''
+HeaderFilterRegex: '.*'
+AnalyzeTemporaryDtors: false
+FormatStyle:     file
