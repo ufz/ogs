@@ -54,8 +54,8 @@
                     <t_initial>0</t_initial>
                     <t_end>10000</t_end>
                     <timesteps>
-                        <pair><repeat>10</repeat>
-                        <delta_t>1000</delta_t></pair>
+                        <pair><repeat>100</repeat>
+                        <delta_t>100</delta_t></pair>
                     </timesteps>
                 </time_stepping>
             </process>
@@ -185,6 +185,11 @@
             <value>11500000</value>
         </parameter>
         <parameter>
+            <name>temperature_source_term</name>
+            <type>Constant</type>
+            <value>150</value>
+        </parameter>
+        <parameter>
             <name>rho_fr</name>
             <type>Constant</type>
             <value>999.1</value>
@@ -249,13 +254,13 @@
             <order>1</order>
             <initial_condition>temperature_ic</initial_condition>
             <boundary_conditions>
-                <boundary_condition>
+               <!-- <boundary_condition>
                     <geometrical_set>square_1x1_geometry</geometrical_set>
                     <geometry>flux_bc</geometry>
                     <type>Neumann</type>
 					<component>0</component>
                     <parameter>temperature_bc_center</parameter>
-                </boundary_condition>
+                </boundary_condition> -->
                 <boundary_condition>
                    <geometrical_set>square_1x1_geometry</geometrical_set>
                    <geometry>out</geometry>
@@ -264,6 +269,14 @@
                    <parameter>temperature_bc_left</parameter>
                 </boundary_condition>
             </boundary_conditions>
+			<source_terms>
+			    <source_term>
+			        <geometrical_set>square_1x1_geometry</geometrical_set>
+			        <geometry>center</geometry>
+			        <type>Nodal</type>
+			        <parameter>temperature_source_term</parameter>
+			    </source_term>
+			</source_terms>
         </process_variable>
     </process_variables>
     <nonlinear_solvers>

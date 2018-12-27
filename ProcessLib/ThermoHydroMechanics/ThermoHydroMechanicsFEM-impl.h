@@ -68,19 +68,6 @@ ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
             _integration_method.getWeightedPoint(ip).getWeight() *
             sm_u.integralMeasure * sm_u.detJ;
 
-        // Initialize current time step values
-        static const int kelvin_vector_size =
-            MathLib::KelvinVector::KelvinVectorDimensions<
-                DisplacementDim>::value;
-        ip_data.sigma_eff.setZero(kelvin_vector_size);
-        ip_data.eps.setZero(kelvin_vector_size);
-        ip_data.eps_m.setZero(kelvin_vector_size);
-        ip_data.eps_m_prev.resize(kelvin_vector_size);
-
-        // Previous time step values are not initialized and are set later.
-        ip_data.eps_prev.resize(kelvin_vector_size);
-        ip_data.sigma_eff_prev.resize(kelvin_vector_size);
-
         ip_data.N_u_op = ShapeMatricesTypeDisplacement::template MatrixType<
             DisplacementDim, displacement_size>::Zero(DisplacementDim,
                                                       displacement_size);
@@ -513,6 +500,14 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         ShapeFunctionPressure, typename ShapeFunctionDisplacement::MeshElement,
         DisplacementDim>(_element, _is_axially_symmetric, p,
                          *_process_data.pressure_interpolated);
+
+    auto T = Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
+        pressure_size> const>(local_x.data() + temperature_index, temperature_size);
+
+    NumLib::interpolateToHigherOrderNodes<
+        ShapeFunctionPressure, typename ShapeFunctionDisplacement::MeshElement,
+        DisplacementDim>(_element, _is_axially_symmetric, T,
+                         *_process_data.temperature_interpolated);
 }
 
 }  // namespace ThermoHydroMechanics
