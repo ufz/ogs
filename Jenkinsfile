@@ -171,6 +171,9 @@ pipeline {
             expression { return stage_required.build || stage_required.full }
           }
           agent { label "envinf1"}
+          environment {
+            OMP_NUM_THREADS = '1'
+          }
           steps {
             script {
               sh 'git submodule sync'
@@ -205,6 +208,9 @@ pipeline {
             expression { return stage_required.build || stage_required.full }
           }
           agent { label "envinf1"}
+          environment {
+            OMP_NUM_THREADS = '1'
+          }
           steps {
             script {
               configure {
