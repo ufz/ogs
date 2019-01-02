@@ -9,6 +9,11 @@ As OGS-6 is a reimplementation of OGS-5 with new concepts and methodologies ther
 
 ## Downloads
 
+### OpenGeoSys 5.8
+
+- [Linux](https://ogsstorage.blob.core.windows.net/binaries/ogs5/ogs-5.8-Linux-2.6.32-754.3.5.el6.x86_64-x64.tar.gz)
+- [Windows](https://ogsstorage.blob.core.windows.net/binaries/ogs5/ogs-5.8-Windows-x64.zip)
+
 ### OpenGeoSys 5.7
 
 #### Linux
