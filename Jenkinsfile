@@ -99,8 +99,8 @@ pipeline {
               build { target="doc" }
               // TODO: .*DOT_GRAPH_MAX_NODES.
               //       .*potential recursive class relation.*
-              recordIssues tools: [[pattern: 'build/DoxygenWarnings.log',
-                tool: [$class: 'Doxygen']]],
+
+              recordIssues tools: [doxygen(pattern: 'build/DoxygenWarnings.log')],
                 unstableTotalAll: 24
               dir('build/docs') { stash(name: 'doxygen') }
               publishHTML(target: [allowMissing: false, alwaysLinkToLastBuild: true,
@@ -125,8 +125,7 @@ pipeline {
               publishReports { }
               recordIssues enabledForFailure: true, filters: [
                 excludeFile('.*qrc_icons\\.cpp.*'), excludeFile('.*QVTKWidget.*')],
-                tools: [[pattern: 'build/build.log', name: 'GCC',
-                  tool: [$class: 'GnuMakeGcc']]],
+                tools: [gcc4(name: 'GCC', pattern: 'build/build.log')],
                 unstableTotalAll: 19
             }
             success {
@@ -275,8 +274,7 @@ pipeline {
               recordIssues enabledForFailure: true, filters: [
                 excludeFile('.*\\.conan.*'), excludeFile('.*ThirdParty.*'),
                 excludeFile('.*thread.hpp')],
-                tools: [[pattern: 'build/build.log', name: 'MSVC',
-                  tool: [$class: 'MsBuild']]],
+                tools: [msBuild(name: 'MSVC', pattern: 'build/build.log')],
                 unstableTotalAll: 4
             }
             success {
@@ -320,9 +318,8 @@ pipeline {
               publishReports { }
               recordIssues enabledForFailure: true, filters: [
                 excludeFile('.*qrc_icons\\.cpp.*'), excludeFile('.*QVTKWidget.*')],
-                tools: [[pattern: 'build/build.log', name: 'Clang (macOS)',
-                   id: 'clang-mac', tool: [$class: 'Clang']]],
-                unstableTotalAll: 3
+                tools: [clang(name: 'Clang (macOS)', pattern: 'build/build.log',
+                  id: 'clang-mac')], unstableTotalAll: 3
             }
             success {
               archiveArtifacts 'build/*.tar.gz,build/*.dmg,build/conaninfo.txt'
@@ -504,7 +501,7 @@ pipeline {
             always {
               recordIssues enabledForFailure : true,
                 filters: [includeCategory('clang-analyzer.*')],
-                tools: [[name:'Clang (StaticAnalyzer)', tool:[$class:'Clang']]]
+                tools: [clang(name: 'Clang (StaticAnalyzer)')]
             }
           }
         }
