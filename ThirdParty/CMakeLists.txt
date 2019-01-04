@@ -17,7 +17,8 @@ if(MSVC)
     set_target_properties(logog PROPERTIES COMPILE_FLAGS /W0)
 endif()
 
-add_subdirectory(gtest)
+set(gtest_force_shared_crt ON CACHE INTERNAL "") # Use dynamic MSVC runtime
+add_subdirectory(googletest)
 
 # This is a workaround for Travis builds.
 option(OGS_USE_OPTIONAL_SUBMODULES "Option for enabling optional submodules" OFF)

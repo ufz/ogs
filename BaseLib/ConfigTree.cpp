@@ -73,7 +73,8 @@ ConfigTree(ConfigTree && other)
 
 ConfigTree::~ConfigTree()
 {
-    if (std::uncaught_exception()) {
+    if (std::uncaught_exceptions() > 0)
+    {
         /* If the stack unwinds the check below shall be suppressed in order to
          * not accumulate false-positive configuration errors.
          */

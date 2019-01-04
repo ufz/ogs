@@ -9,7 +9,7 @@ pipeline {
     ansiColor('xterm')
     timestamps()
     buildDiscarder(logRotator(numToKeepStr: '30', artifactNumToKeepStr: '10'))
-    timeout(time: 3, unit: 'HOURS')
+    timeout(time: 4, unit: 'HOURS')
   }
   stages {
      // *************************** Git Check **********************************
@@ -82,9 +82,12 @@ pipeline {
               additionalBuildArgs '--pull'
             }
           }
+          environment {
+            OMP_NUM_THREADS = '1'
+          }
           steps {
             script {
-              sh 'conan user'
+              sh 'git submodule sync'
               configure {
                 cmakeOptions =
                   '-DOGS_CPU_ARCHITECTURE=generic ' +
@@ -150,7 +153,7 @@ pipeline {
           }
           steps {
             script {
-              sh 'conan user'
+              sh 'git submodule sync'
               configure {
                 cmakeOptions =
                   '-DOGS_CPU_ARCHITECTURE=generic '
@@ -171,8 +174,12 @@ pipeline {
             expression { return stage_required.build || stage_required.full }
           }
           agent { label "envinf1"}
+          environment {
+            OMP_NUM_THREADS = '1'
+          }
           steps {
             script {
+              sh 'git submodule sync'
               configure {
                 cmakeOptions =
                   '-DOGS_BUILD_UTILS=ON ' +
@@ -204,9 +211,13 @@ pipeline {
             expression { return stage_required.build || stage_required.full }
           }
           agent { label "envinf1"}
+          environment {
+            OMP_NUM_THREADS = '1'
+          }
           steps {
             script {
               configure {
+                sh 'git submodule sync'
                 cmakeOptions =
                   '-DOGS_BUILD_UTILS=ON ' +
                   '-DBUILD_SHARED_LIBS=ON ' +
@@ -242,10 +253,12 @@ pipeline {
           environment {
             MSVC_NUMBER = '15'
             MSVC_VERSION = '2017'
+            OMP_NUM_THREADS = '1'
           }
           steps {
             script {
               // CLI
+              bat 'git submodule sync'
               bat 'conan remove --locks'
               configure {
                 cmakeOptions =
@@ -289,8 +302,12 @@ pipeline {
             expression { return stage_required.build || stage_required.full }
           }
           agent { label "mac"}
+          environment {
+            OMP_NUM_THREADS = '1'
+          }
           steps {
             script {
+              sh 'git submodule sync'
               configure {
                 cmakeOptions =
                   '-DOGS_CPU_ARCHITECTURE=core2 ' +
@@ -368,7 +385,7 @@ pipeline {
           }
           steps {
             script {
-              sh 'conan user'
+              sh 'git submodule sync'
               sh 'find $CONAN_USER_HOME -name "system_reqs.txt" -exec rm {} \\;'
               configure {
                 cmakeOptions =
@@ -478,7 +495,7 @@ pipeline {
           }
           steps {
             script {
-              sh 'conan user'
+              sh 'git submodule sync'
               sh 'find $CONAN_USER_HOME -name "system_reqs.txt" -exec rm {} \\;'
               configure {
                 cmakeOptions =

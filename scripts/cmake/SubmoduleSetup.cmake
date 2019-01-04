@@ -7,9 +7,11 @@ endif()
 set(REQUIRED_SUBMODULES
     ThirdParty/autocheck
     ThirdParty/cmake-modules
-    ThirdParty/vtkdiff
+    ThirdParty/googletest
+    ThirdParty/jedbrown-cmake-modules
     ThirdParty/tclap
     ThirdParty/tetgen
+    ThirdParty/vtkdiff
     ${OGS_ADDITIONAL_SUBMODULES_TO_CHECKOUT}
 )
 if(OGS_BUILD_UTILS)
