@@ -47,6 +47,7 @@ struct IntegrationPointData final
         N_u_op;
     typename BMatricesType::KelvinVectorType sigma_eff, sigma_eff_prev;
     typename BMatricesType::KelvinVectorType eps, eps_prev;
+    typename BMatricesType::KelvinVectorType eps_m;
 
     typename ShapeMatrixTypeDisplacement::NodalRowVectorType N_u;
     typename ShapeMatrixTypeDisplacement::GlobalDimNodalMatrixType dNdx_u;

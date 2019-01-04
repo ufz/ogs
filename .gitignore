@@ -10,6 +10,7 @@ tags
 
 # Visual Studio Code project files
 .vscode
+/.vs/*
 
 # Conan package manager
 conanbuildinfo.cmake
@@ -19,3 +20,4 @@ CMakeLists.txt.user*
 *.pyc
 
 Tests/**/*.md5
+

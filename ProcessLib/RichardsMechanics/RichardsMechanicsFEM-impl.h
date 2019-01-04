@@ -197,7 +197,6 @@ void RichardsMechanicsLocalAssembler<
         double const K_intrinsic =
             _process_data.intrinsic_permeability(t, x_position)[0];
         double const K_over_mu = K_intrinsic / mu;
-
         //
         // displacement equation, displacement part
         //
@@ -372,12 +371,11 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto& eps = _ip_data[ip].eps;
         auto& S_L = _ip_data[ip].saturation;
         auto const& sigma_eff = _ip_data[ip].sigma_eff;
-
-        auto const alpha = _process_data.biot_coefficient(t, x_position)[0];
         auto const rho_SR = _process_data.solid_density(t, x_position)[0];
         auto const K_SR = _process_data.solid_bulk_modulus(t, x_position)[0];
         auto const K_LR = _process_data.fluid_bulk_modulus(t, x_position)[0];
         auto const temperature = _process_data.temperature(t, x_position)[0];
+        auto const alpha = _process_data.biot_coefficient(t,x_position)[0];
 
         auto const porosity = _process_data.flow_material->getPorosity(
             material_id, t, x_position, -p_cap_ip, temperature, p_cap_ip);
@@ -390,7 +388,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         S_L = _process_data.flow_material->getSaturation(
             material_id, t, x_position, -p_cap_ip, temperature, p_cap_ip);
-
+        
         double const dS_L_dp_cap =
             _process_data.flow_material->getSaturationDerivative(
                 material_id, t, x_position, -p_cap_ip, temperature, S_L);
@@ -413,8 +411,37 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         //
         eps.noalias() = B * u;
 
+        using Invariants = MathLib::KelvinVector::Invariants<
+            MathLib::KelvinVector::KelvinVectorDimensions<
+                DisplacementDim>::value>;
+
+        auto const max_swelling_pressure =
+            _process_data.swelling_pressure(t, x_position)[0];
+        auto const exponent_swell =
+            _process_data.swelling_exponent(t, x_position)[0];
+       
+        auto& eps_tmp = _ip_data[ip].eps;
+        auto const dp_cap = p_cap_dot_ip * dt;
+        auto p_cap_old = p_cap_ip - dp_cap;
+        auto const S_L_old = _process_data.flow_material->getSaturation(
+            material_id, t, x_position, -p_cap_old, temperature, p_cap_old);
+
+        double const S_init = 0.28340161433904271; //@TODO add initial saturation as parameter?
+        auto const delta_S_L = S_L - S_init;
+        auto eps_swell_increment = 0.0;
+
+        if (_process_data.has_swelling)
+        {
+           eps_swell_increment =
+                max_swelling_pressure * pow(delta_S_L, exponent_swell)/(3.0*K_S);
+            eps.noalias() = eps_tmp - eps_swell_increment * identity2;
+        }
+        
+
         auto C = _ip_data[ip].updateConstitutiveRelation(t, x_position, dt, u,
                                                          temperature);
+
+       // eps.noalias() = B * u;
 
         local_Jac
             .template block<displacement_size, displacement_size>(
@@ -429,24 +456,24 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         //
         // displacement equation, pressure part
         //
-        Kup.noalias() += B.transpose() * alpha * S_L * identity2 * N_p * w;
+        Kup.noalias() += B.transpose() * alpha * identity2 * N_p * w * S_L;
 
-        /* For future implementation including swelling.
-        double const dsigma_eff_dp_cap = -K_intrinsic * m_swell * n *
-                                         std::pow(S_L, n - 1) * dS_L_dp_cap *
-                                         identity2;
+        if (_process_data.has_swelling)
+        {   
+        double const d_eps_swell_dp_cap =
+                max_swelling_pressure * exponent_swell *
+                std::pow(S_L, exponent_swell - 1) * dS_L_dp_cap; // 3.0;
         local_Jac
             .template block<displacement_size, pressure_size>(
                 displacement_index, pressure_index)
-            .noalias() -= B.transpose() * dsigma_eff_dp_cap * N_p * w;
-        */
-
-        local_Jac
+            .noalias() -=
+            B.transpose() * d_eps_swell_dp_cap * C  *identity2 * N_p * w;
+        }
+      local_Jac
             .template block<displacement_size, pressure_size>(
                 displacement_index, pressure_index)
             .noalias() -= B.transpose() * alpha *
                           (S_L + p_cap_ip * dS_L_dp_cap) * identity2 * N_p * w;
-
         local_Jac
             .template block<displacement_size, pressure_size>(
                 displacement_index, pressure_index)
@@ -485,7 +512,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         /* In the derivation there is a div(du/dt) term in the Jacobian, but
          * this implementation increases the total runtime by 1%. Maybe a very
-         * large step is needed to see the increase of efficiency.
+         * large step is needed to see the increase of efficiency.*/
         double div_u_dot = 0;
         for (int i = 0; i < DisplacementDim; ++i)
         {
@@ -499,7 +526,6 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                                           pressure_index)
             .noalias() -= N_p.transpose() * rho_LR * dS_L_dp_cap * alpha *
                           div_u_dot * N_p * w;
-         */
 
         double const dk_rel_dS_l =
             _process_data.flow_material->getRelativePermeabilityDerivative(
