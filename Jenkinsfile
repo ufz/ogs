@@ -82,6 +82,9 @@ pipeline {
               additionalBuildArgs '--pull'
             }
           }
+          environment {
+            OMP_NUM_THREADS = '1'
+          }
           steps {
             script {
               sh 'git submodule sync'
@@ -250,6 +253,7 @@ pipeline {
           environment {
             MSVC_NUMBER = '15'
             MSVC_VERSION = '2017'
+            OMP_NUM_THREADS = '1'
           }
           steps {
             script {
@@ -298,6 +302,9 @@ pipeline {
             expression { return stage_required.build || stage_required.full }
           }
           agent { label "mac"}
+          environment {
+            OMP_NUM_THREADS = '1'
+          }
           steps {
             script {
               sh 'git submodule sync'
