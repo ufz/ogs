@@ -1,3 +1,17 @@
+if (NOT OGS_USE_MPI)
+    OgsTest(PROJECTFILE ThermoMechanics/CreepBGRa/Verification/m2_1D1bt/m2_1D1bt.prj)
+    OgsTest(PROJECTFILE ThermoMechanics/CreepBGRa/Verification/m2_1D2bt/m2_1D2bt.prj)
+    OgsTest(PROJECTFILE ThermoMechanics/CreepBGRa/Verification/m2_1Dcreep/m2_1Dcreep.prj)
+    OgsTest(PROJECTFILE ThermoMechanics/CreepBGRa/Verification/m2_1Dlozenge/m2_1Dlozenge.prj)
+    OgsTest(PROJECTFILE ThermoMechanics/CreepBGRa/Verification/m2_1Dlozengebt/m2_1Dlozengebt.prj)
+    OgsTest(PROJECTFILE ThermoMechanics/CreepBGRa/Verification/m2_1Drelax/m2_1Drelax.prj)
+    OgsTest(PROJECTFILE ThermoMechanics/CreepBGRa/Verification/m2_2Dload/m2_2Dload.prj)
+    OgsTest(PROJECTFILE ThermoMechanics/CreepBGRa/Verification/m2_2Dload/m2_2Dload_ym45.prj)
+    OgsTest(PROJECTFILE ThermoMechanics/CreepBGRa/Verification/m2_2Dloadbt/m2_2Dloadbt.prj)
+    OgsTest(PROJECTFILE ThermoMechanics/CreepBGRa/Verification/m2_3Dload/m2_3Dload.prj)
+    OgsTest(PROJECTFILE ThermoMechanics/CreepBGRa/Verification/m2_3Dloadbt/m2_3Dloadbt.prj)
+endif()
+
 AddTest(
     NAME ThermoMechanics_3D_ThermoElastic_Stress_Analysis
     PATH ThermoMechanics
