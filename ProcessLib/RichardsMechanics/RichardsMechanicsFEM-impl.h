@@ -374,6 +374,8 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const rho_SR = _process_data.solid_density(t, x_position)[0];
         auto const K_SR = _process_data.solid_bulk_modulus(t, x_position)[0];
         auto const K_LR = _process_data.fluid_bulk_modulus(t, x_position)[0];
+        double const K_S =
+            _ip_data[ip].solid_material.getBulkModulus(t, x_position);
         auto const temperature = _process_data.temperature(t, x_position)[0];
         auto const alpha = _process_data.biot_coefficient(t,x_position)[0];
 

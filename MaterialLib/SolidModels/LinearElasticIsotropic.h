@@ -123,7 +123,8 @@ public:
     KelvinMatrix getElasticTensor(double const t,
                                   ProcessLib::SpatialPosition const& x,
                                   double const T) const;
-
+    double getBulkModulus(double const t,
+                          ProcessLib::SpatialPosition const& x) const;
     MaterialProperties getMaterialProperties() const { return _mp; }
 
 protected:

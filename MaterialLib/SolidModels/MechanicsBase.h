@@ -157,7 +157,13 @@ struct MechanicsBase
     {
         return 0.0;
     }
-
+    virtual double getBulkModulus(double const /*t*/,
+                                  ProcessLib::SpatialPosition const & /*x*/
+                                  ) const
+    {
+        OGS_FATAL("get bulk modulus not implemented in base mechanics");
+        return 0.0;
+    }
     virtual double computeFreeEnergyDensity(
         double const t,
         ProcessLib::SpatialPosition const& x,

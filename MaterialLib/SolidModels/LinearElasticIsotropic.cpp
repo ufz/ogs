@@ -42,6 +42,13 @@ LinearElasticIsotropic<DisplacementDim>::integrateStress(
 }
 
 template <int DisplacementDim>
+    double LinearElasticIsotropic<DisplacementDim>::getBulkModulus(
+        double const t, ProcessLib::SpatialPosition const& x) const
+{
+    return _mp.bulk_modulus(t, x);
+}
+
+template <int DisplacementDim>
 typename LinearElasticIsotropic<DisplacementDim>::KelvinMatrix
 LinearElasticIsotropic<DisplacementDim>::getElasticTensor(
     double const t, ProcessLib::SpatialPosition const& x,
