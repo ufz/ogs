@@ -60,7 +60,7 @@ int main(int argc, char* argv[])
         "OpenGeoSys-6 software, version " +
             BaseLib::BuildInfo::git_describe +
             ".\n"
-            "Copyright (c) 2012-2018, OpenGeoSys Community "
+            "Copyright (c) 2012-2019, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
         ' ', BaseLib::BuildInfo::git_describe);
 

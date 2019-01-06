@@ -2,7 +2,7 @@
  * \brief Reset material properties in meshes in a polygonal region.
  *
  * \copyright
- * Copyright (c) 2012-2018, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
@@ -38,7 +38,7 @@ int main (int argc, char* argv[])
         "OpenGeoSys-6 software, version " +
             BaseLib::BuildInfo::git_describe +
             ".\n"
-            "Copyright (c) 2012-2018, OpenGeoSys Community "
+            "Copyright (c) 2012-2019, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
         ' ', BaseLib::BuildInfo::git_describe);
     TCLAP::ValueArg<std::string> mesh_out("o", "mesh-output-file",

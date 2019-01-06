@@ -5,7 +5,7 @@
  * \brief  Implementation of the shp to gli converter tool.
  *
  * \copyright
- * Copyright (c) 2012-2018, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
@@ -139,7 +139,7 @@ int main (int argc, char* argv[])
         "OpenGeoSys-6 software, version " +
             BaseLib::BuildInfo::git_describe +
             ".\n"
-            "Copyright (c) 2012-2018, OpenGeoSys Community "
+            "Copyright (c) 2012-2019, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
         ' ', BaseLib::BuildInfo::git_describe);
     TCLAP::ValueArg<std::string> shapefile_arg("s",
