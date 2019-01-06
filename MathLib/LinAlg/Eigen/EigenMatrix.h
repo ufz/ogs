@@ -39,10 +39,14 @@ public:
      * @param n the number of rows (that is equal to the number of columns)
      * @param n_nonzero_columns the number of non-zero columns used for preallocation
      */
-    explicit EigenMatrix(IndexType n, IndexType n_nonzero_columns = 0) :_mat(n, n)
+    explicit EigenMatrix(IndexType n, IndexType n_nonzero_columns = 0)
+        : _mat(n, n)
     {
         if (n_nonzero_columns > 0)
-            _mat.reserve(Eigen::VectorXi::Constant(n, n_nonzero_columns));
+        {
+            _mat.reserve(Eigen::Matrix<IndexType, Eigen::Dynamic, 1>::Constant(
+                n, n_nonzero_columns));
+        }
     }
 
     /// return the number of rows
