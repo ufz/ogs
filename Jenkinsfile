@@ -398,11 +398,16 @@ pipeline {
         // ************************* Tests-Large *******************************
         stage('Tests-Large') {
           agent {
-            docker {
-              image 'ogs6/gcc-gui:latest'
+            dockerfile {
+              filename 'Dockerfile.gcc.full'
+              dir 'scripts/docker'
               label 'envinf11w'
-              args '-v /home/jenkins/.ccache:/usr/src/.ccache'
+              args '-v /home/jenkins/cache:/home/jenkins/cache'
+              additionalBuildArgs '--pull'
             }
+          }
+          environment {
+            OMP_NUM_THREADS = '1'
           }
           steps {
             script {
