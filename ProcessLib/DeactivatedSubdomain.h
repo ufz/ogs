@@ -1,7 +1,7 @@
 /**
  *
  * \copyright
- * Copyright (c) 2012-2018, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
@@ -51,7 +51,7 @@ struct DeactivatedSubdomain
         std::unique_ptr<BaseLib::TimeInterval> time_interval_,
         std::vector<int>&& materialIDs_,
         std::vector<std::unique_ptr<DeactivetedSubdomainMesh>>&&
-            deactivated_sudomain_meshes_);
+            deactivated_subdomain_meshes_);
 
     bool includesTimeOf(double const t) const;
 
@@ -61,7 +61,7 @@ struct DeactivatedSubdomain
     std::vector<int> const materialIDs;
 
     std::vector<std::unique_ptr<DeactivetedSubdomainMesh>> const
-        deactivated_sudomain_meshes;
+        deactivated_subdomain_meshes;
 
     static const std::string name_of_paramater_of_zero;
 };

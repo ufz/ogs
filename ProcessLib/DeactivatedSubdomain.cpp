@@ -1,7 +1,7 @@
 /**
  *
  * \copyright
- * Copyright (c) 2012-2018, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
@@ -39,10 +39,10 @@ DeactivatedSubdomain::DeactivatedSubdomain(
     std::unique_ptr<BaseLib::TimeInterval> time_interval_,
     std::vector<int>&& materialIDs_,
     std::vector<std::unique_ptr<DeactivetedSubdomainMesh>>&&
-        deactivated_sudomain_meshes_)
+        deactivated_subdomain_meshes_)
     : time_interval(std::move(time_interval_)),
       materialIDs(std::move(materialIDs_)),
-      deactivated_sudomain_meshes(std::move(deactivated_sudomain_meshes_))
+      deactivated_subdomain_meshes(std::move(deactivated_subdomain_meshes_))
 {
 }
 
@@ -67,17 +67,24 @@ std::unique_ptr<DeactivatedSubdomain const> createDeactivatedSubdomain(
     if (deactivated_subdomain_material_ids.empty())
     {
         OGS_FATAL(
-            "The material IDs of the deactivated subdomains are not given.");
+            "The material IDs of the deactivated subdomains are not given. The "
+            "program terminates now.");
     }
 
     std::sort(deactivated_subdomain_material_ids.begin(),
               deactivated_subdomain_material_ids.end());
 
     auto const* const material_ids = MeshLib::materialIDs(mesh);
+    if (material_ids == nullptr)
+    {
+        OGS_FATAL(
+            "The mesh doesn't contain materialIDs for subdomain deactivation. "
+            "The program terminates now.");
+    }
 
     std::vector<std::unique_ptr<DeactivetedSubdomainMesh>>
-        deactivated_sudomain_meshes;
-    deactivated_sudomain_meshes.reserve(
+        deactivated_subdomain_meshes;
+    deactivated_subdomain_meshes.reserve(
         deactivated_subdomain_material_ids.size());
 
     for (auto const ids : deactivated_subdomain_material_ids)
@@ -125,7 +132,7 @@ std::unique_ptr<DeactivatedSubdomain const> createDeactivatedSubdomain(
             "deactivate_subdomain" + std::to_string(ids),
             MeshLib::cloneElements(deactivated_elements));
 
-        deactivated_sudomain_meshes.emplace_back(
+        deactivated_subdomain_meshes.emplace_back(
             std::make_unique<DeactivetedSubdomainMesh>(
                 std::move(bc_mesh), std::move(deactivated_nodes)));
     }
@@ -133,7 +140,7 @@ std::unique_ptr<DeactivatedSubdomain const> createDeactivatedSubdomain(
     return std::make_unique<DeactivatedSubdomain const>(
         std::move(time_interval),
         std::move(deactivated_subdomain_material_ids),
-        std::move(deactivated_sudomain_meshes));
+        std::move(deactivated_subdomain_meshes));
 }
 
 std::vector<std::unique_ptr<DeactivatedSubdomain const>>
@@ -144,7 +151,7 @@ createDeactivatedSubdomains(BaseLib::ConfigTree const& config,
         deactivated_subdomains;
     // Deactivated subdomains
     if (auto subdomains_config =
-        //! \ogs_file_param{prj__process_variables__process_variable__deactivated_subdomains}
+            //! \ogs_file_param{prj__process_variables__process_variable__deactivated_subdomains}
         config.getConfigSubtreeOptional("deactivated_subdomains"))
     {
         INFO("There are subdomains being deactivated.");
