@@ -546,7 +546,7 @@ bool UncoupledProcessesTimeLoop::loop()
         int process_id = 0;
         for (auto& process_data : _per_process_data)
         {
-            process_data->process.checkElementDeactivation(t, process_id);
+            process_data->process.updateDeactivatedSubdomains(t, process_id);
             ++process_id;
         }
 

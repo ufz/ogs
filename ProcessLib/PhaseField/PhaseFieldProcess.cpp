@@ -368,10 +368,13 @@ void PhaseFieldProcess<DisplacementDim>::postNonLinearSolverConcreteProcess(
 
         DBUG("PostNonLinearSolver crack volume computation.");
 
-        GlobalExecutor::executeMemberOnDereferenced(
+        ProcessLib::ProcessVariable const& pv
+            = getProcessVariables(process_id)[0];
+        GlobalExecutor::executeSelectedMemberOnDereferenced(
             &LocalAssemblerInterface::computeCrackIntegral, _local_assemblers,
-            dof_tables, x, t, _process_data.crack_volume,
-            _use_monolithic_scheme, _coupled_solutions);
+            pv.getActiveElementIDs(), dof_tables, x, t,
+            _process_data.crack_volume, _use_monolithic_scheme,
+            _coupled_solutions);
 
         INFO("Integral of crack: %g", _process_data.crack_volume);
 

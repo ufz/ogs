@@ -49,7 +49,7 @@ Process::Process(
           return pcs_BCs;
       }(_process_variables.size())),
       _source_term_collections([&](const std::size_t number_of_processes)
-                               -> std::vector<SourceTermCollection> {
+                                   -> std::vector<SourceTermCollection> {
           std::vector<SourceTermCollection> pcs_sts;
           pcs_sts.reserve(number_of_processes);
           for (std::size_t i = 0; i < number_of_processes; i++)
@@ -59,23 +59,6 @@ Process::Process(
           return pcs_sts;
       }(_process_variables.size()))
 {
-    // If there are deactivated subdomains, check whether MaterialIDs exist in
-    // mesh data.
-    for (auto const& per_process_process_variables : _process_variables)
-    {
-        for (auto const& process_variable : per_process_process_variables)
-        {
-            if ((!process_variable.get()
-                      .getDeactivatedSubdomains()
-                      .empty()) &&
-                (!materialIDs(mesh)))
-            {
-                OGS_FATAL(
-                    "The mesh does not contain matertialIDs for the "
-                    "deactivation of subdomains. The program terminates now.");
-            }
-        }
-    }
 }
 
 void Process::initializeProcessBoundaryConditionsAndSourceTerms(
@@ -190,12 +173,13 @@ MathLib::MatrixSpecifications Process::getMatrixSpecifications(
             &l.getGhostIndices(), &_sparsity_pattern};
 }
 
-void Process::checkElementDeactivation(double const time, const int process_id)
+void Process::updateDeactivatedSubdomains(double const time,
+                                          const int process_id)
 {
     auto const& variables_per_process = getProcessVariables(process_id);
     for (auto const& variable : variables_per_process)
     {
-       variable.get().checkElementDeactivation(time);
+        variable.get().updateDeactivatedSubdomains(time);
     }
 }
 

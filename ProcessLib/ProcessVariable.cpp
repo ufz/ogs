@@ -9,8 +9,6 @@
 
 #include "ProcessVariable.h"
 
-#include <iostream>
-
 #include <algorithm>
 #include <utility>
 
@@ -119,7 +117,7 @@ ProcessVariable::ProcessVariable(
 
     // Boundary conditions
     if (auto bcs_config =
-        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions}
+            //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions}
         config.getConfigSubtreeOptional("boundary_conditions"))
     {
         for (
@@ -237,10 +235,10 @@ void ProcessVariable::createBoundaryConditionsForDeactivatedSubDomains(
 
     for (auto const& deactivated_subdomain : _deactivated_subdomains)
     {
-        auto const& deactivated_sudomain_meshes =
-            (*deactivated_subdomain).deactivated_sudomain_meshes;
-        for (auto const& deactivated_sudomain_mesh :
-             deactivated_sudomain_meshes)
+        auto const& deactivated_subdomain_meshes =
+            deactivated_subdomain->deactivated_subdomain_meshes;
+        for (auto const& deactivated_subdomain_mesh :
+             deactivated_subdomain_meshes)
         {
             for (int component_id = 0;
                  component_id < dof_table.getNumberOfComponents();
@@ -249,16 +247,17 @@ void ProcessVariable::createBoundaryConditionsForDeactivatedSubDomains(
                 // Copy the time interval.
                 std::unique_ptr<BaseLib::TimeInterval> time_interval =
                     std::make_unique<BaseLib::TimeInterval>(
-                        (*(*deactivated_subdomain).time_interval));
+                        *deactivated_subdomain->time_interval);
 
                 auto bc = std::make_unique<
                     DirichletBoundaryConditionWithinTimeInterval>(
                     std::move(time_interval), parameter,
-                    (*(*deactivated_sudomain_mesh).mesh),
-                    (*deactivated_sudomain_mesh).inactive_nodes, dof_table,
+                    *(deactivated_subdomain_mesh->mesh),
+                    deactivated_subdomain_mesh->inactive_nodes, dof_table,
                     variable_id, component_id);
 
 #ifdef USE_PETSC
+                // TODO: make it work under PETSc too.
                 if (bc == nullptr)
                 {
                     continue;
@@ -270,7 +269,7 @@ void ProcessVariable::createBoundaryConditionsForDeactivatedSubDomains(
     }
 }
 
-void ProcessVariable::checkElementDeactivation(double const time)
+void ProcessVariable::updateDeactivatedSubdomains(double const time)
 {
     if (_deactivated_subdomains.empty())
     {

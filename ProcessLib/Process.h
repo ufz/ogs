@@ -90,7 +90,7 @@ public:
         _coupled_solutions = coupled_solutions;
     }
 
-    void checkElementDeactivation(double const time, const int process_id);
+    void updateDeactivatedSubdomains(double const time, const int process_id);
 
     bool isMonolithicSchemeUsed() const { return _use_monolithic_scheme; }
     virtual void setCoupledTermForTheStaggeredSchemeToLocalAssemblers() {}
