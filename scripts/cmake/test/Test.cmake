@@ -37,7 +37,9 @@ configure_file(
 include(${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/test/AddTest.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/test/OgsTest.cmake)
 
-if(DEFINED ENV{NUM_THREADS})
+if(DEFINED ENV{CTEST_NUM_THREADS})
+    set(NUM_CTEST_PROCESSORS $ENV{CTEST_NUM_THREADS})
+elseif(DEFINED ENV{NUM_THREADS})
     set(NUM_CTEST_PROCESSORS $ENV{NUM_THREADS})
 else()
     set(NUM_CTEST_PROCESSORS 3)
