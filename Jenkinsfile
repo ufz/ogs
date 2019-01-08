@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-@Library('jenkins-pipeline@1.0.13') _
+@Library('jenkins-pipeline@1.0.15') _
 
 def stage_required = [build: false, data: false, full: false, docker: false]
 
@@ -91,24 +91,58 @@ pipeline {
               configure {
                 cmakeOptions =
                   '-DOGS_CPU_ARCHITECTURE=generic ' +
-                  '-DDOCS_GENERATE_LOGFILE=ON ' + // redirects to build/DoxygenWarnings.log
                   '-DOGS_USE_PYTHON=ON ' +
                   '-DOGS_BUILD_UTILS=ON '
               }
-              build { }
-              archiveArtifacts 'build/*.tar.gz,build/conaninfo.txt'
+              build { log="build.log" }
               build { target="tests" }
               build { target="ctest" }
               build { target="doc" }
+            }
+          }
+          post {
+            always {
+              xunit([
+                // Testing/-folder is a CTest convention
+                CTest(pattern: 'build/Testing/**/*.xml'),
+                GoogleTest(pattern: 'build/Tests/testrunner.xml')
+              ])
+              recordIssues enabledForFailure: true, filters: [
+                excludeFile('.*qrc_icons\\.cpp.*'), excludeFile('.*QVTKWidget.*')],
+                tools: [gcc4(name: 'GCC', pattern: 'build/build.log')],
+                unstableTotalAll: 3
               // TODO: .*DOT_GRAPH_MAX_NODES.
               //       .*potential recursive class relation.*
-
               recordIssues tools: [doxygen(pattern: 'build/DoxygenWarnings.log')],
-                unstableTotalAll: 24
-              dir('build/docs') { stash(name: 'doxygen') }
+                unstableTotalAll: 25
+            }
+            success {
               publishHTML(target: [allowMissing: false, alwaysLinkToLastBuild: true,
                   keepAll: true, reportDir: 'build/docs', reportFiles: 'index.html',
                   reportName: 'Doxygen'])
+              archiveArtifacts 'build/*.tar.gz,build/conaninfo.txt'
+              dir('build/docs') { stash(name: 'doxygen') }
+            }
+          }
+        }
+        // *********************** Docker-Conan-GUI *****************************
+        stage('Docker-Conan-GUI') {
+          when {
+            beforeAgent true
+            expression { return stage_required.build || stage_required.full }
+          }
+          agent {
+            dockerfile {
+              filename 'Dockerfile.gcc.full'
+              dir 'scripts/docker'
+              label 'docker'
+              args '-v /home/jenkins/cache:/home/jenkins/cache'
+              additionalBuildArgs '--pull'
+            }
+          }
+          steps {
+            script {
+              sh 'git submodule sync'
               configure {
                 cmakeOptions =
                   '-DOGS_CPU_ARCHITECTURE=generic ' +
@@ -119,21 +153,17 @@ pipeline {
                   '-DOGS_BUILD_TESTS=OFF '
               }
               build { log="build.log" }
-              archiveArtifacts 'build/*.tar.gz'
-              build { target="doc" }
             }
           }
           post {
             always {
-              publishReports { }
               recordIssues enabledForFailure: true, filters: [
                 excludeFile('.*qrc_icons\\.cpp.*'), excludeFile('.*QVTKWidget.*')],
-                tools: [gcc4(name: 'GCC', pattern: 'build/build.log')],
-                unstableTotalAll: 19
+                tools: [gcc4(name: 'GCC-GUI', id: 'gcc4-gui',
+                             pattern: 'build/build.log')],
+                unstableTotalAll: 4
             }
-            success {
-              dir('build/docs') { stash(name: 'doxygen') }
-            }
+            success { archiveArtifacts 'build/*.tar.gz,build/conaninfo.txt' }
           }
         }
         // ********************* Docker-Conan-Debug ****************************
@@ -164,7 +194,11 @@ pipeline {
             }
           }
           post {
-            always { publishReports { } }
+            always {
+              xunit([
+                GoogleTest(pattern: 'build/Tests/testrunner.xml')
+              ])
+            }
           }
         }
         // ************************** envinf1 **********************************
@@ -202,7 +236,12 @@ pipeline {
             }
           }
           post {
-            always { publishReports { } }
+            always {
+              xunit([
+                CTest(pattern: 'build/Testing/**/*.xml'),
+                GoogleTest(pattern: 'build/Tests/testrunner.xml')
+              ])
+            }
           }
         }
         stage('Envinf1 (parallel)') {
@@ -240,7 +279,12 @@ pipeline {
             }
           }
           post {
-            always { publishReports { } }
+            always {
+              xunit([
+                CTest(pattern: 'build/Testing/**/*.xml'),
+                GoogleTest(pattern: 'build/Tests/testrunner.xml')
+              ])
+            }
           }
         }
         // ************************** Windows **********************************
@@ -257,38 +301,33 @@ pipeline {
           }
           steps {
             script {
-              // CLI
               bat 'git submodule sync'
               bat 'conan remove --locks'
-              configure {
-                cmakeOptions =
-                  '-DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON ' +
-                  '-DOGS_USE_PYTHON=ON '
-              }
-              build { }
-              build { target="tests" }
-              build { target="ctest" }
-              // GUI
+              // CLI + GUI
               configure {
                 cmakeOptions =
                   '-DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON ' +
                   '-DOGS_USE_PYTHON=ON ' +
                   '-DOGS_BUILD_GUI=ON ' +
                   '-DOGS_BUILD_UTILS=ON ' +
-                  '-DOGS_BUILD_TESTS=OFF ' +
                   '-DOGS_BUILD_SWMM=ON '
               }
+              build { target="tests" }
+              build { target="ctest" }
               build { log="build.log" }
             }
           }
           post {
             always {
-              publishReports { }
+              xunit([
+                CTest(pattern: 'build/Testing/**/*.xml'),
+                GoogleTest(pattern: 'build/Tests/testrunner.xml')
+              ])
               recordIssues enabledForFailure: true, filters: [
                 excludeFile('.*\\.conan.*'), excludeFile('.*ThirdParty.*'),
                 excludeFile('.*thread.hpp')],
                 tools: [msBuild(name: 'MSVC', pattern: 'build/build.log')],
-                unstableTotalAll: 4
+                unstableTotalAll: 1
             }
             success {
               archiveArtifacts 'build/*.zip,build/conaninfo.txt'
@@ -332,7 +371,10 @@ pipeline {
           }
           post {
             always {
-              publishReports { }
+              xunit([
+                CTest(pattern: 'build/Testing/**/*.xml'),
+                GoogleTest(pattern: 'build/Tests/testrunner.xml')
+              ])
               recordIssues enabledForFailure: true, filters: [
                 excludeFile('.*qrc_icons\\.cpp.*'), excludeFile('.*QVTKWidget.*')],
                 tools: [clang(name: 'Clang (macOS)', pattern: 'build/build.log',
