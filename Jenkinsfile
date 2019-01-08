@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-@Library('jenkins-pipeline@1.0.13') _
+@Library('jenkins-pipeline@1.0.15') _
 
 def stage_required = [build: false, data: false, full: false, docker: false]
 
@@ -114,7 +114,7 @@ pipeline {
               // TODO: .*DOT_GRAPH_MAX_NODES.
               //       .*potential recursive class relation.*
               recordIssues tools: [doxygen(pattern: 'build/DoxygenWarnings.log')],
-                unstableTotalAll: 24
+                unstableTotalAll: 25
             }
             success {
               publishHTML(target: [allowMissing: false, alwaysLinkToLastBuild: true,

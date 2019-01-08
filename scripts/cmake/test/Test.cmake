@@ -37,7 +37,11 @@ configure_file(
 include(${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/test/AddTest.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/test/OgsTest.cmake)
 
-set(NUM_CTEST_PROCESSORS 3)
+if(DEFINED ENV{NUM_THREADS})
+    set(NUM_CTEST_PROCESSORS $ENV{NUM_THREADS})
+else()
+    set(NUM_CTEST_PROCESSORS 3)
+endif()
 
 if(CMAKE_CONFIGURATION_TYPES)
     set(CONFIG_PARAMETER --build-config "$<CONFIGURATION>")
