@@ -57,15 +57,16 @@ void SurfaceFlux::integrate(
     MeshLib::PropertyVector<double>& balance,
     double const t,
     MeshLib::Mesh const& bulk_mesh,
+    std::vector<std::size_t> const& active_element_ids,
     std::function<Eigen::Vector3d(std::size_t const, MathLib::Point3d const&,
                                   double const, GlobalVector const&)> const&
         getFlux)
 {
     DBUG("Integrate SurfaceFlux.");
 
-    GlobalExecutor::executeMemberOnDereferenced(
+    GlobalExecutor::executeSelectedMemberOnDereferenced(
         &SurfaceFluxLocalAssemblerInterface::integrate,
-        _local_assemblers, x, balance, t, bulk_mesh, getFlux);
+        _local_assemblers, active_element_ids, x, balance, t, bulk_mesh, getFlux);
 }
 
 }  // namespace ProcessLib

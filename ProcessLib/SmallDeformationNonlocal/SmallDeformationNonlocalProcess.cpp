@@ -140,7 +140,6 @@ void SmallDeformationNonlocalProcess<DisplacementDim>::
         &LocalAssemblerInterface::nonlocal, _local_assemblers,
         _local_assemblers);
 
-
     // Set initial conditions for integration point data.
     for (auto const& ip_writer : _integration_point_writer)
     {
@@ -230,10 +229,14 @@ void SmallDeformationNonlocalProcess<DisplacementDim>::assembleConcreteProcess(
 
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
         dof_table = {std::ref(*_local_to_global_index_map)};
+
+    const int process_id = 0;
+    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
+
     // Call global assembler for each local assembly item.
-    GlobalExecutor::executeMemberDereferenced(
+    GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        dof_table, t, x, M, K, b, _coupled_solutions);
+        pv.getActiveElementIDs(), dof_table, t, x, M, K, b, _coupled_solutions);
 }
 
 template <int DisplacementDim>
@@ -243,10 +246,14 @@ void SmallDeformationNonlocalProcess<
 {
     DBUG("preAssemble SmallDeformationNonlocalProcess.");
 
+    const int process_id = 0;
+    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
+
     // Call global assembler for each local assembly item.
-    GlobalExecutor::executeMemberDereferenced(
+    GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::preAssemble,
-        _local_assemblers, *_local_to_global_index_map, t, x);
+        _local_assemblers, pv.getActiveElementIDs(),
+        *_local_to_global_index_map, t, x);
 }
 
 template <int DisplacementDim>
@@ -262,11 +269,15 @@ void SmallDeformationNonlocalProcess<DisplacementDim>::
 
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
         dof_table = {std::ref(*_local_to_global_index_map)};
+
+    const int process_id = 0;
+    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
+
     // Call global assembler for each local assembly item.
-    GlobalExecutor::executeMemberDereferenced(
+    GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, dof_table, t, x, xdot, dxdot_dx, dx_dx, M, K, b, Jac,
-        _coupled_solutions);
+        _local_assemblers, pv.getActiveElementIDs(), dof_table, t, x, xdot,
+        dxdot_dx, dx_dx, M, K, b, Jac, _coupled_solutions);
 
     b.copyValues(*_nodal_forces);
     std::transform(_nodal_forces->begin(), _nodal_forces->end(),
@@ -285,9 +296,12 @@ void SmallDeformationNonlocalProcess<
     _process_data.dt = dt;
     _process_data.t = t;
 
-    GlobalExecutor::executeMemberOnDereferenced(
+    const int process_id = 0;
+    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
+
+    GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerInterface::preTimestep, _local_assemblers,
-        *_local_to_global_index_map, x, t, dt);
+        pv.getActiveElementIDs(), *_local_to_global_index_map, x, t, dt);
 }
 
 template <int DisplacementDim>
@@ -300,9 +314,13 @@ SmallDeformationNonlocalProcess<DisplacementDim>::postIterationConcreteProcess(
 
     DBUG("PostNonLinearSolver crack volume computation.");
 
-    GlobalExecutor::executeMemberOnDereferenced(
+    const int process_id = 0;
+    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
+
+    GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerInterface::computeCrackIntegral, _local_assemblers,
-        *_local_to_global_index_map, x, _process_data.crack_volume);
+        pv.getActiveElementIDs(), *_local_to_global_index_map, x,
+        _process_data.crack_volume);
 
     INFO("Integral of crack: %g", _process_data.crack_volume);
 

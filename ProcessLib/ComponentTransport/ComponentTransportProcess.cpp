@@ -68,12 +68,16 @@ void ComponentTransportProcess::assembleConcreteProcess(
 {
     DBUG("Assemble ComponentTransportProcess.");
 
+    const int process_id = 0;
+    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
+
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
         dof_table = {std::ref(*_local_to_global_index_map)};
     // Call global assembler for each local assembly item.
-    GlobalExecutor::executeMemberDereferenced(
+    GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        dof_table, t, x, M, K, b, _coupled_solutions);
+        pv.getActiveElementIDs(), dof_table, t, x, M, K, b,
+        _coupled_solutions);
 }
 
 void ComponentTransportProcess::assembleWithJacobianConcreteProcess(
@@ -83,13 +87,15 @@ void ComponentTransportProcess::assembleWithJacobianConcreteProcess(
 {
     DBUG("AssembleWithJacobian ComponentTransportProcess.");
 
+    const int process_id = 0;
+    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
         dof_table = {std::ref(*_local_to_global_index_map)};
     // Call global assembler for each local assembly item.
-    GlobalExecutor::executeMemberDereferenced(
+    GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, dof_table, t, x, xdot, dxdot_dx,
-        dx_dx, M, K, b, Jac, _coupled_solutions);
+        _local_assemblers, pv.getActiveElementIDs(), dof_table, t, x,
+        xdot, dxdot_dx, dx_dx, M, K, b, Jac, _coupled_solutions);
 }
 
 Eigen::Vector3d ComponentTransportProcess::getFlux(std::size_t const element_id,
@@ -128,7 +134,11 @@ void ComponentTransportProcess::postTimestepConcreteProcess(
     {
         return;
     }
-    _surfaceflux->integrate(x, t, *this, process_id, _integration_order, _mesh);
+
+    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
+
+    _surfaceflux->integrate(x, t, *this, process_id, _integration_order,
+                            _mesh, pv.getActiveElementIDs());
     _surfaceflux->save(t);
 }
 

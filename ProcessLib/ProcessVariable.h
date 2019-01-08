@@ -9,14 +9,22 @@
 
 #pragma once
 
+#include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
+
 #include "ProcessLib/BoundaryCondition/BoundaryConditionConfig.h"
 #include "ProcessLib/Parameter/Parameter.h"
 #include "ProcessLib/SourceTerms/SourceTermConfig.h"
 
+// DeactivatedSubdomain cannot be forwardly declared because that
+// std::unique_ptr<DeactivatedSubdomain> type member requires its full
+// definition (see https://stackoverflow.com/a/6089065).
+#include "ProcessLib/DeactivatedSubdomain.h"
+
 namespace MeshLib
 {
 class Mesh;
-template <typename T> class PropertyVector;
+template <typename T>
+class PropertyVector;
 }
 namespace NumLib
 {
@@ -38,8 +46,7 @@ class ProcessVariable
 {
 public:
     ProcessVariable(
-        BaseLib::ConfigTree const& config,
-        MeshLib::Mesh& mesh,
+        BaseLib::ConfigTree const& config, MeshLib::Mesh& mesh,
         std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
         std::vector<std::unique_ptr<ParameterBase>> const& parameters);
 
@@ -50,9 +57,21 @@ public:
     /// Returns a mesh on which the process variable is defined.
     MeshLib::Mesh const& getMesh() const;
 
+    std::vector<std::unique_ptr<DeactivatedSubdomain const>> const&
+    getDeactivatedSubdomains() const
+    {
+        return _deactivated_subdomains;
+    }
+
+    void updateDeactivatedSubdomains(double const time);
+
+    std::vector<std::size_t>& getActiveElementIDs() const
+    {
+        return _ids_of_active_elements;
+    }
+
     /// Returns the number of components of the process variable.
     int getNumberOfComponents() const { return _n_components; }
-
     std::vector<std::unique_ptr<BoundaryCondition>> createBoundaryConditions(
         const NumLib::LocalToGlobalIndexMap& dof_table, const int variable_id,
         unsigned const integration_order,
@@ -70,7 +89,6 @@ public:
     }
 
     unsigned getShapeFunctionOrder() const { return _shapefunction_order; }
-
 private:
     std::string const _name;
     MeshLib::Mesh& _mesh;
@@ -89,6 +107,19 @@ private:
     ///
     /// \sa MeshLib::CellRule MeshLib::FaceRule MeshLib::EdgeRule.
     unsigned _shapefunction_order;
+
+    std::vector<std::unique_ptr<DeactivatedSubdomain const>>
+        _deactivated_subdomains;
+
+    /// IDs of the active elements. It is initialized only if there are
+    /// deactivated subdomains.
+    mutable std::vector<std::size_t> _ids_of_active_elements;
+
+    void createBoundaryConditionsForDeactivatedSubDomains(
+        const NumLib::LocalToGlobalIndexMap& dof_table, const int variable_id,
+        std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+        std::vector<std::unique_ptr<BoundaryCondition>>& bcs);
+
     Parameter<double> const& _initial_condition;
 
     std::vector<BoundaryConditionConfig> _bc_configs;

@@ -90,6 +90,8 @@ public:
         _coupled_solutions = coupled_solutions;
     }
 
+    void updateDeactivatedSubdomains(double const time, const int process_id);
+
     bool isMonolithicSchemeUsed() const { return _use_monolithic_scheme; }
     virtual void setCoupledTermForTheStaggeredSchemeToLocalAssemblers() {}
     void preAssemble(const double t, GlobalVector const& x) override final;
@@ -284,7 +286,7 @@ protected:
 
     GlobalSparsityPattern _sparsity_pattern;
 
-private:
+protected:
     /// Variables used by this process.  For the monolithic scheme or a
     /// single process, the size of the outer vector is one. For the
     /// staggered scheme, the size of the outer vector is the number of the
@@ -292,7 +294,6 @@ private:
     std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>
         _process_variables;
 
-protected:
     /// Vector for boundary conditions. For the monolithic scheme or a
     /// single process, the size of the vector is one. For the staggered
     /// scheme, the size of vector is the number of the coupled processes.

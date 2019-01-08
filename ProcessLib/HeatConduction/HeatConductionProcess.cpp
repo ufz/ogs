@@ -78,12 +78,16 @@ void HeatConductionProcess::assembleConcreteProcess(const double t,
 {
     DBUG("Assemble HeatConductionProcess.");
 
+    const int process_id = 0;
+    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
+
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
         dof_table = {std::ref(*_local_to_global_index_map)};
     // Call global assembler for each local assembly item.
-    GlobalExecutor::executeMemberDereferenced(
+    GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        dof_table, t, x, M, K, b, _coupled_solutions);
+        pv.getActiveElementIDs(), dof_table, t, x, M, K, b,
+        _coupled_solutions);
 }
 
 void HeatConductionProcess::assembleWithJacobianConcreteProcess(
@@ -93,23 +97,29 @@ void HeatConductionProcess::assembleWithJacobianConcreteProcess(
 {
     DBUG("AssembleWithJacobian HeatConductionProcess.");
 
+    const int process_id = 0;
+    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
+
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
         dof_table = {std::ref(*_local_to_global_index_map)};
     // Call global assembler for each local assembly item.
-    GlobalExecutor::executeMemberDereferenced(
+    GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, dof_table, t, x, xdot, dxdot_dx,
-        dx_dx, M, K, b, Jac, _coupled_solutions);
+        _local_assemblers, pv.getActiveElementIDs(), dof_table, t, x,
+        xdot, dxdot_dx, dx_dx, M, K, b, Jac, _coupled_solutions);
 }
 
 void HeatConductionProcess::computeSecondaryVariableConcrete(
     const double t, GlobalVector const& x, int const process_id)
 {
     DBUG("Compute heat flux for HeatConductionProcess.");
-    GlobalExecutor::executeMemberOnDereferenced(
+
+    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
+
+    GlobalExecutor::executeSelectedMemberOnDereferenced(
             &HeatConductionLocalAssemblerInterface::computeSecondaryVariable,
-            _local_assemblers, getDOFTable(process_id), t, x,
-            _coupled_solutions);
+            _local_assemblers, pv.getActiveElementIDs(),
+             getDOFTable(process_id), t, x, _coupled_solutions);
 }
 
 }  // namespace HeatConduction

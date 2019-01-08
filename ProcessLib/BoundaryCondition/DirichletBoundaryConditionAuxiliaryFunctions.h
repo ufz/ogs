@@ -17,11 +17,13 @@
  */
 #pragma once
 
+#include <vector>
 #include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
 
 namespace MeshLib
 {
 class Mesh;
+class Node;
 }
 
 namespace NumLib
@@ -44,6 +46,7 @@ void checkParametersOfDirichletBoundaryCondition(
 
 void getEssentialBCValuesLocal(
     Parameter<double> const& parameter, MeshLib::Mesh const& bc_mesh,
+    std::vector<MeshLib::Node*> const& nodes_in_bc_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table_boundary,
     int const variable_id, int const component_id, const double t,
     GlobalVector const& x,

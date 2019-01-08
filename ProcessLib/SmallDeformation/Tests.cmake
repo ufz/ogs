@@ -21,6 +21,7 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE Mechanics/Linear/PressureBC/axisymmetric_pipe.prj)
     OgsTest(PROJECTFILE Mechanics/Linear/PressureBC/hollow_sphere.prj LARGE)
     OgsTest(PROJECTFILE Mechanics/Linear/PressureBC/axisymmetric_sphere.prj)
+    OgsTest(PROJECTFILE Mechanics/Linear/square_with_deactivated_hole.prj)
     OgsTest(PROJECTFILE Mechanics/Ehlers/axisymmetric_sphere_pl.prj LARGE)
 endif()
 

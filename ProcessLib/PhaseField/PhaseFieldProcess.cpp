@@ -233,10 +233,15 @@ void PhaseFieldProcess<DisplacementDim>::assembleConcreteProcess(
         dof_tables.emplace_back(*_local_to_global_index_map);
     }
 
+    const int process_id =
+        _use_monolithic_scheme ? 0 : _coupled_solutions->process_id;
+    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
+
     // Call global assembler for each local assembly item.
-    GlobalExecutor::executeMemberDereferenced(
+    GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        dof_tables, t, x, M, K, b, _coupled_solutions);
+        pv.getActiveElementIDs(), dof_tables, t, x, M, K, b,
+        _coupled_solutions);
 }
 
 template <int DisplacementDim>
@@ -274,10 +279,14 @@ void PhaseFieldProcess<DisplacementDim>::assembleWithJacobianConcreteProcess(
     }
     // Call global assembler for each local assembly item.
 
-    GlobalExecutor::executeMemberDereferenced(
+    const int process_id =
+        _use_monolithic_scheme ? 0 : _coupled_solutions->process_id;
+    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
+
+    GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, dof_tables, t, x, xdot, dxdot_dx, dx_dx, M, K, b,
-        Jac, _coupled_solutions);
+        _local_assemblers, pv.getActiveElementIDs(), dof_tables, t,
+        x, xdot, dxdot_dx, dx_dx, M, K, b, Jac, _coupled_solutions);
 
     if (!_use_monolithic_scheme && (_coupled_solutions->process_id == 0))
     {
@@ -298,9 +307,11 @@ void PhaseFieldProcess<DisplacementDim>::preTimestepConcreteProcess(
     _process_data.t = t;
     _process_data.injected_volume = _process_data.t;
 
-    GlobalExecutor::executeMemberOnDereferenced(
+    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
+
+    GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerInterface::preTimestep, _local_assemblers,
-        getDOFTable(process_id), x, t, dt);
+        pv.getActiveElementIDs(), getDOFTable(process_id), x, t, dt);
 }
 
 template <int DisplacementDim>
@@ -322,11 +333,15 @@ void PhaseFieldProcess<DisplacementDim>::postTimestepConcreteProcess(
         dof_tables.emplace_back(*_local_to_global_index_map);
         dof_tables.emplace_back(*_local_to_global_index_map_single_component);
 
-        GlobalExecutor::executeMemberOnDereferenced(
+        ProcessLib::ProcessVariable const& pv
+            = getProcessVariables(process_id)[0];
+
+        GlobalExecutor::executeSelectedMemberOnDereferenced(
             &LocalAssemblerInterface::computeEnergy, _local_assemblers,
-            dof_tables, x, _process_data.t, _process_data.elastic_energy,
-            _process_data.surface_energy, _process_data.pressure_work,
-            _use_monolithic_scheme, _coupled_solutions);
+            pv.getActiveElementIDs(), dof_tables, x, _process_data.t,
+            _process_data.elastic_energy, _process_data.surface_energy,
+            _process_data.pressure_work, _use_monolithic_scheme,
+            _coupled_solutions);
 
         INFO("Elastic energy: %g Surface energy: %g Pressure work: %g ",
              _process_data.elastic_energy, _process_data.surface_energy,
@@ -353,10 +368,13 @@ void PhaseFieldProcess<DisplacementDim>::postNonLinearSolverConcreteProcess(
 
         DBUG("PostNonLinearSolver crack volume computation.");
 
-        GlobalExecutor::executeMemberOnDereferenced(
+        ProcessLib::ProcessVariable const& pv
+            = getProcessVariables(process_id)[0];
+        GlobalExecutor::executeSelectedMemberOnDereferenced(
             &LocalAssemblerInterface::computeCrackIntegral, _local_assemblers,
-            dof_tables, x, t, _process_data.crack_volume,
-            _use_monolithic_scheme, _coupled_solutions);
+            pv.getActiveElementIDs(), dof_tables, x, t,
+            _process_data.crack_volume, _use_monolithic_scheme,
+            _coupled_solutions);
 
         INFO("Integral of crack: %g", _process_data.crack_volume);
 

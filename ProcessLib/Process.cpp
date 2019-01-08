@@ -49,7 +49,7 @@ Process::Process(
           return pcs_BCs;
       }(_process_variables.size())),
       _source_term_collections([&](const std::size_t number_of_processes)
-                               -> std::vector<SourceTermCollection> {
+                                   -> std::vector<SourceTermCollection> {
           std::vector<SourceTermCollection> pcs_sts;
           pcs_sts.reserve(number_of_processes);
           for (std::size_t i = 0; i < number_of_processes; i++)
@@ -171,6 +171,16 @@ MathLib::MatrixSpecifications Process::getMatrixSpecifications(
     auto const& l = *_local_to_global_index_map;
     return {l.dofSizeWithoutGhosts(), l.dofSizeWithoutGhosts(),
             &l.getGhostIndices(), &_sparsity_pattern};
+}
+
+void Process::updateDeactivatedSubdomains(double const time,
+                                          const int process_id)
+{
+    auto const& variables_per_process = getProcessVariables(process_id);
+    for (auto const& variable : variables_per_process)
+    {
+        variable.get().updateDeactivatedSubdomains(time);
+    }
 }
 
 void Process::preAssemble(const double t, GlobalVector const& x)
