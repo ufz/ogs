@@ -27,6 +27,7 @@ public:
     Iterator begin() const { return _begin; }
     Iterator end()   const { return _end; }
     std::size_t size() const { return std::distance(_begin, _end); }
+    bool empty() const { return size() == 0; }
 
 private:
     Iterator _begin;
