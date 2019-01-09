@@ -2,7 +2,10 @@ add_library(ProcessLibBoundaryConditionPython
     PythonBoundaryCondition.cpp
     PythonBoundaryCondition.h
     PythonBoundaryConditionLocalAssembler.h
-    PythonBoundaryConditionPythonSideInterface.h)
+    PythonBoundaryConditionPythonSideInterface.h
+    BHEInflowPythonBoundaryCondition.cpp
+    BHEInflowPythonBoundaryCondition.h
+    BHEInflowPythonBoundaryConditionPythonSideInterface.h)
 if(BUILD_SHARED_LIBS)
     install(TARGETS ProcessLibBoundaryConditionPython
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
@@ -18,7 +21,8 @@ target_link_libraries(ProcessLibBoundaryConditionPython
 # For the embedded Python module
 add_library(ProcessLibBoundaryConditionPythonModule
     PythonBoundaryConditionModule.cpp
-    PythonBoundaryConditionModule.h)
+    PythonBoundaryConditionModule.h
+    BHEInflowPythonBoundaryConditionModule.cpp)
 if(BUILD_SHARED_LIBS)
     install(TARGETS ProcessLibBoundaryConditionPythonModule
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
