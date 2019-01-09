@@ -3,7 +3,7 @@ function (OgsTest)
         return()
     endif()
     set(options LARGE)
-    set(oneValueArgs PROJECTFILE)
+    set(oneValueArgs PROJECTFILE RUNTIME)
     set(multiValueArgs WRAPPER)
     cmake_parse_arguments(OgsTest "${options}" "${oneValueArgs}"
         "${multiValueArgs}" ${ARGN})
@@ -14,6 +14,10 @@ function (OgsTest)
 
     if (OgsTest_UNPARSED_ARGUMENTS)
         message(FATAL_ERROR "Unparsed argument(s) '${OgsTest_UNPARSED_ARGUMENTS}' to OgsTest call.")
+    endif()
+
+    if (NOT DEFINED OgsTest_RUNTIME)
+        set(OgsTest_RUNTIME 1)
     endif()
 
     set(OgsTest_SOURCE_DIR "${Data_SOURCE_DIR}/${OgsTest_DIR}")
@@ -44,8 +48,9 @@ function (OgsTest)
     #    WORKING_DIRECTORY ${OgsTest_BINARY_DIR}
     #    COMMAND ${OgsTest_WRAPPER} $<TARGET_FILE:ogs> -r ${OgsTest_SOURCE_DIR} ${OgsTest_SOURCE_DIR}/${OgsTest_NAME})
 
-    set_tests_properties(${TEST_NAME} PROPERTIES ENVIRONMENT
-        VTKDIFF_EXE=$<TARGET_FILE:vtkdiff>)
+    set_tests_properties(${TEST_NAME} PROPERTIES
+        ENVIRONMENT VTKDIFF_EXE=$<TARGET_FILE:vtkdiff>
+        COST ${OgsTest_RUNTIME})
 
     if(TARGET ${OgsTest_EXECUTABLE})
         add_dependencies(ctest ${OgsTest_EXECUTABLE})

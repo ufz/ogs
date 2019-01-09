@@ -50,6 +50,7 @@ AddTest(
     EXECUTABLE ogs
     EXECUTABLE_ARGS tes-inert-axi.prj
     TESTER vtkdiff
+    RUNTIME 23
     REQUIREMENTS NOT OGS_USE_MPI
     # Note: Since the temperature and pressure only vary by a factor of ~ 1.e-6 in x-direction
     # the relative tolerance has to be much smaller than 1.e-6

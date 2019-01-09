@@ -32,6 +32,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
+    RUNTIME 13
     DIFF_DATA
     GLOB Padilla_NaCl6_pcs_0_ts_*.vtu concentration concentration 1e-13 0
     GLOB Padilla_NaCl6_pcs_0_ts_*.vtu pressure pressure 1e-10 0
