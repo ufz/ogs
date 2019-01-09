@@ -16,6 +16,8 @@
 #                  enable the test, e.g.
 #                  OGS_USE_PETSC AND (OGS_USE_EIGEN OR OGS_USE_LIS)
 #   VIS <vtu output file(s)> # optional for documentation
+#   RUNTIME <in seconds> # optional for optimizing ctest duration
+#                          values should be taken from envinf1 serial job
 # )
 #
 # Conditional arguments:
@@ -42,7 +44,7 @@ function (AddTest)
     endif()
     # parse arguments
     set(options NONE)
-    set(oneValueArgs EXECUTABLE PATH NAME WRAPPER TESTER ABSTOL RELTOL)
+    set(oneValueArgs EXECUTABLE PATH NAME WRAPPER TESTER ABSTOL RELTOL RUNTIME)
     set(multiValueArgs EXECUTABLE_ARGS DATA DIFF_DATA WRAPPER_ARGS REQUIREMENTS VIS)
     cmake_parse_arguments(AddTest "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
@@ -54,11 +56,14 @@ function (AddTest)
     set(AddTest_STDOUT_FILE_PATH "${AddTest_BINARY_PATH}/${AddTest_NAME}_stdout.log")
 
     # set defaults
-    if(NOT AddTest_EXECUTABLE)
+    if(NOT DEFINED AddTest_EXECUTABLE)
         set(AddTest_EXECUTABLE ogs)
     endif()
-    if (NOT AddTest_REQUIREMENTS)
-        set (AddTest_REQUIREMENTS TRUE)
+    if (NOT DEFINED AddTest_REQUIREMENTS)
+        set(AddTest_REQUIREMENTS TRUE)
+    endif()
+    if (NOT DEFINED AddTest_RUNTIME)
+        set(AddTest_RUNTIME 1)
     endif()
 
     if("${AddTest_EXECUTABLE}" STREQUAL "ogs")
@@ -243,6 +248,7 @@ Use six arguments version of AddTest with absolute and relative tolerances")
         -DSTDOUT_FILE_PATH=${AddTest_STDOUT_FILE_PATH}
         -P ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestWrapper.cmake
     )
+    set_tests_properties(${TEST_NAME} PROPERTIES COST ${AddTest_RUNTIME})
 
     if(TARGET ${AddTest_EXECUTABLE})
         add_dependencies(ctest ${AddTest_EXECUTABLE})
