@@ -34,8 +34,8 @@ public:
     /// @param t The balance will be computed at the time t.
     /// @param bulk_mesh Stores a reference to the bulk mesh that is needed to
     /// fetch the information for the integration over the surface mesh.
-    /// @active_element_ids The IDs of active elements. It is empty if there is
-    ///                     no deactivated subdomain.
+    /// @param active_element_ids The IDs of active elements. It is empty if
+    ///                           there is no deactivated subdomain.
     /// @param getFlux function that calculates the flux in the integration
     /// points of the face elements of the bulk element that belongs to the
     /// surface.
