@@ -39,6 +39,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
+    RUNTIME 23
     DIFF_DATA
     DiffusionAndStorageAndAdvection_pcs_0_ts_100_t_5.700000_expected.vtu DiffusionAndStorageAndAdvection_pcs_0_ts_100_t_5.700000.vtu concentration concentration 1e-7 1e-10
     DiffusionAndStorageAndAdvection_pcs_0_ts_200_t_35.700000_expected.vtu DiffusionAndStorageAndAdvection_pcs_0_ts_200_t_35.700000.vtu concentration concentration 1e-7 1e-10
@@ -72,6 +73,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
+    RUNTIME 46
     DIFF_DATA
     DiffusionAndStorageAndGravityAndDispersionHalf_pcs_0_ts_1000_t_2500.000000_expected.vtu DiffusionAndStorageAndGravityAndDispersionHalf_pcs_0_ts_1000_t_2500.000000.vtu concentration concentration 1e-5 1e-10
     DiffusionAndStorageAndGravityAndDispersionHalf_pcs_0_ts_1100_t_5000.000000_expected.vtu DiffusionAndStorageAndGravityAndDispersionHalf_pcs_0_ts_1100_t_5000.000000.vtu concentration concentration 1e-5 1e-10
@@ -102,6 +104,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
+    RUNTIME 26
     DIFF_DATA
     DiffusionAndStorageAndAdvectionAndDispersion_pcs_0_ts_100_t_5.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersion_pcs_0_ts_100_t_5.700000.vtu concentration concentration 1e-7 1e-10
     DiffusionAndStorageAndAdvectionAndDispersion_pcs_0_ts_200_t_35.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersion_pcs_0_ts_200_t_35.700000.vtu concentration concentration 1e-7 1e-10
@@ -135,6 +138,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
+    RUNTIME 23
     DIFF_DATA
     DiffusionAndStorageAndAdvectionAndDecay_pcs_0_ts_100_t_5.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_pcs_0_ts_100_t_5.700000.vtu concentration concentration 1e-7 1e-10
     DiffusionAndStorageAndAdvectionAndDecay_pcs_0_ts_200_t_35.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_pcs_0_ts_200_t_35.700000.vtu concentration concentration 1e-7 1e-10
@@ -168,6 +172,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
+    RUNTIME 25
     DIFF_DATA
     DiffusionAndStorageAndAdvectionAndDispersionHalf_pcs_0_ts_100_t_5.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersionHalf_pcs_0_ts_100_t_5.700000.vtu concentration concentration 1e-7 1e-10
     DiffusionAndStorageAndAdvectionAndDispersionHalf_pcs_0_ts_200_t_35.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersionHalf_pcs_0_ts_200_t_35.700000.vtu concentration concentration 1e-7 1e-10
@@ -410,6 +415,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
+    RUNTIME 15
     DIFF_DATA
     3D1P-GWFlow_1_reference.vtu out_ogs5_H_pcs_0_ts_1_t_10000000.000000.vtu pressure_ogs5 pressure 2.4e1 1.4e-2
     3D1P-GWFlow_1_reference.vtu out_ogs5_H_pcs_0_ts_1_t_10000000.000000.vtu NODAL_VELOCITY1 darcy_velocity 1e-10 1.4e-2
