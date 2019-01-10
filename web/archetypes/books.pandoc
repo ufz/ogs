@@ -9,7 +9,7 @@ book_cover = "[TODO]"
 
 +++
 
-[<i class="fas fa-file-pdf"></i> Download this book as PDF](https://ogsstorage.blob.core.windows.net/web/Books/TODO-DONWLOAD-LINK.pdf) 
+[<i class="far fa-file-pdf"></i> Download this book as PDF](https://ogsstorage.blob.core.windows.net/web/Books/TODO-DONWLOAD-LINK.pdf) 
 
 TODO DESCRIPTION
 
@@ -17,11 +17,11 @@ TODO DESCRIPTION
 :::
 
 ::: {.note}
-### <i class="fas fa-download"></i> Downloads
-- [<i class="fas fa-file-archive"></i> TODO LINK DESCRIPTION](https://ogsstorage.blob.core.windows.net/web/Books/TODO-DOWNLOAD-LINK)  
+### <i class="far fa-download"></i> Downloads
+- [<i class="far fa-file-archive"></i> TODO LINK DESCRIPTION](https://ogsstorage.blob.core.windows.net/web/Books/TODO-DOWNLOAD-LINK)  
 :::
 
 ::: {.note}
-### <i class="fas fa-book"></i> Bibliography
+### <i class="far fa-book"></i> Bibliography
 {{< bib id="TODO-BIB-ID" >}}
 :::

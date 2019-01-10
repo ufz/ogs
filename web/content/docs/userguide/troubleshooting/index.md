@@ -16,7 +16,7 @@ toc = true
 
 You may encountering the following error (or similar) on opening `.gml`, `.cnd`, `std` or `.prj` files in the Data Explorer or file conversion tools (e.g. `OGSFileConverter`):
 
-<i class="fas fa-exclamation-triangle"></i> Error message:
+<i class="far fa-exclamation-triangle"></i> Error message:
 
 ```bash
 Error XSDError in http://www.opengeosys.org/images/xsd/OpenGeoSysCND.xsd, at line 1, column 1: Start tag expected.
@@ -25,7 +25,7 @@ XMLInterface::isValid() - XML File is invalid (in reference to schema ./OpenGeoS
 Error XSDError in http://www.opengeosys.org/images/xsd/OpenGeoSysCND.xsd, at line 1, column 1: Start tag expected.
 ```
 
-<i class="fas fa-arrow-right"></i> Solution:
+<i class="far fa-arrow-right"></i> Solution:
 
 Open the affected file (e.g. `well.cnd` in this case) in a text editor and remove the following parameter of the XML root element (the first element in `< >`-brackets in the element, e.g. `<OpenGeoSysCND>`):
 

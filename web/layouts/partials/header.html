@@ -28,7 +28,7 @@
   <script async
     src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
   </script>
-  <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-LRlmVvLKVApDVGuspQFnRQJjkv0P7/YFrw84YYQtmYG4nK8c+M+NlmYDCv0rKWpG" crossorigin="anonymous">
 
 </head>
 
@@ -54,7 +54,7 @@
       </nav>
       {{ if .Site.Params.alert }}
       <div class="text-sm flex justify-center my-2 p-2 bg-blue-lightest text-blue-darker border-l-4 border-blue">
-        <i class="fas fa-exclamation-triangle"></i>&nbsp;
+        <i class="far fa-exclamation-triangle"></i>&nbsp;
         <span class="lh-title ml3">{{ .Site.Params.alert | safeHTML }}</span>
       </div>
       {{ end }}

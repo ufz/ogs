@@ -32,7 +32,7 @@ When you want to start over with a new configuration simply delete the build-dir
 
 ::: {.win}
 ::: {.note}
-### <i class="fas fa-exclamation-triangle"></i> Supported Visual Studio Generators
+### <i class="far fa-exclamation-triangle"></i> Supported Visual Studio Generators
 
 - `Visual Studio 15 2017 Win64` (preferred)
 - `Visual Studio 14 2015 Win64`
@@ -48,7 +48,7 @@ Instead of using Conan you can optionally [install the required libraries manual
 
 ::: {.win}
 ::: {.note}
-#### <i class="fas fa-exclamation-triangle"></i> Multi-configuration with Conan and Visual Studio
+#### <i class="far fa-exclamation-triangle"></i> Multi-configuration with Conan and Visual Studio
 
 With Conan one build directory corresponds to one configuration. If you want to have e.g. a release and a debug build you need to create two build directories. This is nothing new new to Linux / GCC user but differs to Visual Studios default behavior having just one build-folder / project with different configurations. A typical Visual Studio setup with both Release and Debug configs would be initialized as follows:
 

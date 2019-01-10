@@ -42,7 +42,7 @@ $ ninja
 ```
 
 ::: {.note}
-### <i class="fas fa-exclamation-triangle"></i> Visual Studio remarks
+### <i class="far fa-exclamation-triangle"></i> Visual Studio remarks
 
 When you configure with the Ninja generator you have to run CMake from the appropriate Visual Studio Command Prompt! From there you can both use `cmake` as well as `cmake-gui` which starts the GUI. In the GUI select the `Ninja` generator and leave the toggle `Use default native compilers` on.
 :::
