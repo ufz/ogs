@@ -17,7 +17,7 @@
 #include <logog/include/logog.hpp>
 
 #include "NumLib/TimeStepping/TimeStep.h"
-#include "NumLib/TimeStepping/Algorithms/IterationNumberBasedAdaptiveTimeStepping.h"
+#include "NumLib/TimeStepping/Algorithms/IterationNumberBasedTimeStepping.h"
 
 #include "Tests/TestTools.h"
 #include "TimeSteppingTestingTools.h"
@@ -26,7 +26,7 @@ TEST(NumLib, TimeSteppingIterationNumberBased1)
 {
     std::vector<std::size_t> iter_times_vector = {0, 3, 5, 7};
     std::vector<double> multiplier_vector = {2.0, 1.0, 0.5, 0.25};
-    NumLib::IterationNumberBasedAdaptiveTimeStepping alg(1, 31, 1, 10, 1, iter_times_vector, multiplier_vector);
+    NumLib::IterationNumberBasedTimeStepping alg(1, 31, 1, 10, 1, iter_times_vector, multiplier_vector);
 
     const double solution_error = 0.;
 
@@ -95,7 +95,7 @@ TEST(NumLib, TimeSteppingIterationNumberBased2)
 {
     std::vector<std::size_t> iter_times_vector = {0, 3, 5, 7};
     std::vector<double> multiplier_vector = {2.0, 1.0, 0.5, 0.25};
-    NumLib::IterationNumberBasedAdaptiveTimeStepping alg(1, 31, 1, 10, 1, iter_times_vector, multiplier_vector);
+    NumLib::IterationNumberBasedTimeStepping alg(1, 31, 1, 10, 1, iter_times_vector, multiplier_vector);
 
     std::vector<std::size_t> nr_iterations = {2, 2, 2, 4, 6, 8, 4, 4, 2, 2};
     const std::vector<double> expected_vec_t = {1, 2, 4, 8, 16, 24, 26, 28, 30, 31};
@@ -111,7 +111,7 @@ TEST(NumLib, TimeSteppingIterationNumberBased2)
         std::vector<std::size_t> _nr_iterations;
         std::size_t& i;
 
-        void operator()(NumLib::IterationNumberBasedAdaptiveTimeStepping &obj)
+        void operator()(NumLib::IterationNumberBasedTimeStepping &obj)
         {
             std::size_t n = (i<_nr_iterations.size()) ? _nr_iterations[i++] : 0;
             obj.setIterationNumber(n);

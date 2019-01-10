@@ -1,4 +1,5 @@
 /**
+ * \file
  * \author Haibing Shao and Norihiro Watanabe
  * \date   2013-08-07
  *
@@ -9,7 +10,7 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#include "IterationNumberBasedAdaptiveTimeStepping.h"
+#include "IterationNumberBasedTimeStepping.h"
 
 #include <algorithm>
 #include <cassert>
@@ -19,12 +20,11 @@
 
 namespace NumLib
 {
-IterationNumberBasedAdaptiveTimeStepping::
-    IterationNumberBasedAdaptiveTimeStepping(
-        double const t_initial, double const t_end, double const min_dt,
-        double const max_dt, double const initial_dt,
-        std::vector<int> const& iter_times_vector,
-        std::vector<double> const& multiplier_vector)
+IterationNumberBasedTimeStepping::IterationNumberBasedTimeStepping(
+    double const t_initial, double const t_end, double const min_dt,
+    double const max_dt, double const initial_dt,
+    std::vector<int> const& iter_times_vector,
+    std::vector<double> const& multiplier_vector)
     : TimeStepAlgorithm(t_initial, t_end),
       _iter_times_vector(iter_times_vector),
       _multiplier_vector(multiplier_vector),
@@ -36,8 +36,7 @@ IterationNumberBasedAdaptiveTimeStepping::
     assert(iter_times_vector.size() == multiplier_vector.size());
 }
 
-bool IterationNumberBasedAdaptiveTimeStepping::next(
-    double const /*solution_error*/)
+bool IterationNumberBasedTimeStepping::next(double const /*solution_error*/)
 {
     // check current time step
     if (std::abs(_ts_current.current() - end()) <
@@ -64,7 +63,7 @@ bool IterationNumberBasedAdaptiveTimeStepping::next(
     return true;
 }
 
-double IterationNumberBasedAdaptiveTimeStepping::getNextTimeStepSize() const
+double IterationNumberBasedTimeStepping::getNextTimeStepSize() const
 {
     double dt = 0.0;
 
@@ -112,7 +111,7 @@ double IterationNumberBasedAdaptiveTimeStepping::getNextTimeStepSize() const
     return dt;
 }
 
-bool IterationNumberBasedAdaptiveTimeStepping::accepted() const
+bool IterationNumberBasedTimeStepping::accepted() const
 {
     return _iter_times <= _max_iter;
 }

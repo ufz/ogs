@@ -1,4 +1,5 @@
 /**
+ * \file
  * \author Haibing Shao and Norihiro Watanabe
  * \date   2013-08-07
  *
@@ -62,7 +63,7 @@ namespace NumLib
  * Friedrich-Alexander-Universität Erlangen-Nürnberg.
  *
  */
-class IterationNumberBasedAdaptiveTimeStepping final : public TimeStepAlgorithm
+class IterationNumberBasedTimeStepping final : public TimeStepAlgorithm
 {
 public:
     /**
@@ -83,7 +84,7 @@ public:
      * given by iter_times_vector.
      * A time step size is calculated by \f$\Delta t_{n+1} = a * \Delta t_{n}\f$
      */
-    IterationNumberBasedAdaptiveTimeStepping(
+    IterationNumberBasedTimeStepping(
         double const t_initial,
         double const t_end,
         double const min_dt,
@@ -92,7 +93,7 @@ public:
         std::vector<int> const& iter_times_vector,
         std::vector<double> const& multiplier_vector);
 
-    ~IterationNumberBasedAdaptiveTimeStepping() override = default;
+    ~IterationNumberBasedTimeStepping() override = default;
 
     /// move to the next time step
     bool next(double solution_error) override;
