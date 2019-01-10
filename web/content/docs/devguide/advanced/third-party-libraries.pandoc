@@ -10,7 +10,7 @@ weight = 1049
 +++
 
 ::: {.note}
-### <i class="fas fa-exclamation-triangle"></i> Attention!
+### <i class="far fa-exclamation-triangle"></i> Attention!
 
 We strongly recommend to simply use [Conan]({{< ref "conan.pandoc" >}}) for handling required third-party libraries.
 :::

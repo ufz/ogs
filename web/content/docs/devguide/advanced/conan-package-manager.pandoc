@@ -10,7 +10,7 @@ weight = 1032
 +++
 
 ::: {.note}
-### <i class="fas fa-exclamation-triangle"></i> Conan 1.0.0 required
+### <i class="far fa-exclamation-triangle"></i> Conan 1.0.0 required
 
 As of OpenGeoSys 6.1.0 Conan version 1.0.0 is required! Please update Conan by running `pip install --upgrade conan` or by downloading the Windows installer.
 :::
