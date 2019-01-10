@@ -1,0 +1,42 @@
+backend:
+  name: git-gateway
+  branch: netlify-cms
+media_folder: "web/static/images/uploads"
+public_folder: "/images/uploads"
+
+collections:
+  - name: "books" # Used in routes, e.g., /admin/collections/blog
+    label: "Books" # Used in the UI
+    folder: "web/content/books" # The path to the folder where the documents are stored
+    create: true # Allow users to create new documents in this collection
+    slug: "{{slug}}" # Filename template, e.g., YYYY-MM-DD-title.md
+    extension: pandoc
+    format: frontmatter
+    fields: # The fields for each document, usually in front matter
+      - {label: "Title", name: "title", widget: "string"}
+      - {label: "Sub-title", name: "subtitle", widget: "string"}
+      - {label: "Publish Date", name: "date", widget: "datetime"}
+      - {label: "Cover image", name: "book_cover", widget: "image"}
+      - label: "Type"
+        name: "book_type"
+        widget: "select"
+        options: ["Book", "Tutorial"]
+        default: "Book"
+      - {label: "Body", name: "body", widget: "markdown"}
+  - name: "pages"
+    label: "Pages"
+    extension: pandoc
+    format: frontmatter
+    files:
+      - file: "web/content/_index.pandoc"
+        label: "Home Page"
+        name: "home"
+        fields:
+          - {label: "Title", name: "title", widget: "string"}
+          - {label: "Body", name: "body", widget: "markdown"}
+      - file: "web/content/imprint.pandoc"
+        label: "Imprint"
+        name: "imprint"
+        fields:
+          - {label: "Title", name: "title", widget: "string"}
+          - {label: "Body", name: "body", widget: "markdown"}

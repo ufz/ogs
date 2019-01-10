@@ -8,5 +8,18 @@
 
   {{ $scripts := slice (resources.Get "js/header-anchor.js") (resources.Get "js/osselector.js") (resources.Get "js/sitesearch.js") (resources.Get "js/fancybox.js") | resources.Concat "bundle.js" | minify | fingerprint }}
   <script type="text/javascript" src="{{ $scripts.Permalink }}" integrity="{{ $scripts.Data.Integrity }}" media="screen"></script>
+
+  <script>
+    if (window.netlifyIdentity) {
+      window.netlifyIdentity.on("init", user => {
+        if (!user) {
+          window.netlifyIdentity.on("login", () => {
+            document.location.href = "/admin/";
+          });
+        }
+      });
+    }
+  </script>
+
 </body>
 </html>
