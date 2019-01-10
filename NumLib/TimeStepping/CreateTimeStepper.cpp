@@ -29,33 +29,24 @@ std::unique_ptr<TimeStepAlgorithm> createTimeStepper(
     //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__type}
     auto const type = config.peekConfigParameter<std::string>("type");
 
-    std::unique_ptr<NumLib::TimeStepAlgorithm> timestepper;
-
     if (type == "SingleStep")
     {
         //! \ogs_file_param_special{prj__time_loop__processes__process__time_stepping__SingleStep}
         config.ignoreConfigParameter("type");
-        timestepper =
-            std::make_unique<NumLib::FixedTimeStepping>(0.0, 1.0, 1.0);
+        return std::make_unique<NumLib::FixedTimeStepping>(0.0, 1.0, 1.0);
     }
-    else if (type == "FixedTimeStepping")
+    if (type == "FixedTimeStepping")
     {
-        timestepper = NumLib::createFixedTimeStepping(config);
+        return NumLib::createFixedTimeStepping(config);
     }
-    else if (type == "EvolutionaryPIDcontroller")
+    if (type == "EvolutionaryPIDcontroller")
     {
-        timestepper = NumLib::createEvolutionaryPIDcontroller(config);
+        return NumLib::createEvolutionaryPIDcontroller(config);
     }
-    else
-    {
-        OGS_FATAL(
-            "Unknown time stepping type: `%s'. "
-            "The available types are \n\tSingleStep, \n\tFixedTimeStepping"
-            "\n\tEvolutionaryPIDcontroller\n",
-            type.data());
-    }
-
-    return timestepper;
+    OGS_FATAL(
+        "Unknown time stepping type: '%s'. The available types are: "
+        "\n\tSingleStep, \n\tFixedTimeStepping\n\tEvolutionaryPIDcontroller\n",
+        type.data());
 }
 
 }  // end of namespace NumLib
