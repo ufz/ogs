@@ -31,7 +31,7 @@ BHEInflowPythonBoundaryCondition::BHEInflowPythonBoundaryCondition(
     std::vector<MeshLib::Node*> const& vec_inflow_bc_nodes,
     int const variable_id,
     int const component_id,
-    std::unique_ptr<ProcessLib::HeatTransportBHE::BHE::BHEAbstract> const&
+    std::unique_ptr<ProcessLib::HeatTransportBHE::BHE::BHETypes> const&
         pt_bhe,
     BHEInflowPythonBoundaryConditionPythonSideInterface* py_bc_object)
     : _bc_mesh(bc_mesh), _pt_bhe(pt_bhe),_py_bc_object(py_bc_object)
@@ -142,7 +142,7 @@ std::unique_ptr<BHEInflowPythonBoundaryCondition>createBHEInflowPythonBoundaryCo
     MeshLib::Mesh const& bc_mesh,
     std::vector<MeshLib::Node*> const& vec_inflow_bc_nodes,
     int const variable_id, int const component_id,
-    std::unique_ptr<ProcessLib::HeatTransportBHE::BHE::BHEAbstract> const& pt_bhe,
+    std::unique_ptr<ProcessLib::HeatTransportBHE::BHE::BHETypes> const& pt_bhe,
     BHEInflowPythonBoundaryConditionPythonSideInterface* py_bc_object)
 
 {

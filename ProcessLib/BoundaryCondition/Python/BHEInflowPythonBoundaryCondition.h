@@ -16,7 +16,7 @@
 
 #include "BHEInflowPythonBoundaryConditionPythonSideInterface.h"
 
-#include "ProcessLib/HeatTransportBHE/BHE/BHEAbstract.h"
+#include "ProcessLib/HeatTransportBHE/BHE/BHETypes.h"
 #include "ProcessLib/Parameter/Parameter.h"
 
 namespace ProcessLib
@@ -33,7 +33,7 @@ public:
                             std::vector<MeshLib::Node*> const& vec_inflow_bc_nodes,
                             int const variable_id,
                             int const component_id,
-                            std::unique_ptr<ProcessLib::HeatTransportBHE::BHE::BHEAbstract> const&
+                            std::unique_ptr<ProcessLib::HeatTransportBHE::BHE::BHETypes> const&
                             pt_bhe,
                             BHEInflowPythonBoundaryConditionPythonSideInterface* py_bc_object);
 
@@ -57,7 +57,7 @@ private:
 
     NumLib::IndexValueVector<GlobalIndexType> _bc_values;
 
-    std::unique_ptr<ProcessLib::HeatTransportBHE::BHE::BHEAbstract> const&
+    std::unique_ptr<ProcessLib::HeatTransportBHE::BHE::BHETypes> const&
         _pt_bhe;
 
     BHEInflowPythonBoundaryConditionPythonSideInterface* _py_bc_object;
@@ -69,7 +69,7 @@ std::unique_ptr<BHEInflowPythonBoundaryCondition>createBHEInflowPythonBoundaryCo
     MeshLib::Mesh const& bc_mesh,
     std::vector<MeshLib::Node*> const& vec_outflow_bc_nodes,
     int const variable_id, int const component_id,
-    std::unique_ptr<ProcessLib::HeatTransportBHE::BHE::BHEAbstract> const&
+    std::unique_ptr<ProcessLib::HeatTransportBHE::BHE::BHETypes> const&
         pt_bhe,
     BHEInflowPythonBoundaryConditionPythonSideInterface* py_bc_object);
 

@@ -18,6 +18,7 @@
 
 #include "ProcessLib/BoundaryCondition/BHEBottomDirichletBoundaryCondition.h"
 #include "ProcessLib/BoundaryCondition/BHEInflowDirichletBoundaryCondition.h"
+#include "ProcessLib/BoundaryCondition/Python/BHEInflowPythonBoundaryCondition.h"
 
 namespace ProcessLib
 {
@@ -197,6 +198,44 @@ void HeatTransportBHEProcess::computeSecondaryVariableConcrete(
         getDOFTable(process_id), t, x, _coupled_solutions);
 }
 
+NumLib::IterationResult HeatTransportBHEProcess::postIterationConcreteProcess(
+    GlobalVector const& x)
+{
+    // if the process use python boundary conditon
+    if (_process_data.if_bhe_network_exist_python_bc == false)
+        return NumLib::IterationResult::SUCCESS;
+    else
+    {
+        // Here the task is to get the outflow temperature,
+        // transfer it to TESPy and to get inflow temperature,
+        // and determine whether it converges.
+        auto const Tout_nodes_id =
+            std::get<3>(_process_data.py_bc_object->dataframe_network);
+        const std::size_t n_bc_nodes = Tout_nodes_id.size();
+        for (std::size_t i = 0; i < n_bc_nodes; i++)
+        {
+            // read the T_out and store them in dataframe
+            std::get<2>(_process_data.py_bc_object->dataframe_network)[i] =
+                x[Tout_nodes_id[i]];
+        }
+        // Tout transfer to Python
+        auto const tespy_result =
+            _process_data.py_bc_object->tespyThermalSolver(
+                std::get<1>(_process_data.py_bc_object->dataframe_network),
+                std::get<2>(_process_data.py_bc_object->dataframe_network));
+        auto const cur_Tin = std::get<2>(tespy_result);
+
+        auto const if_convergence = std::get<1>(tespy_result);
+        if (if_convergence == true)
+            return NumLib::IterationResult::SUCCESS;
+        else
+            for (std::size_t i = 0; i < n_bc_nodes; i++)
+                std::get<1>(_process_data.py_bc_object->dataframe_network)[i] =
+                    cur_Tin[i];
+        return NumLib::IterationResult::REPEAT_ITERATION;
+    }
+}
+
 void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
     std::vector<std::vector<MeshLib::Node*>> const& all_bhe_nodes)
 {
@@ -239,18 +278,44 @@ void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
             for (auto const& in_out_component_id :
                  bhe.inflow_outflow_bc_component_ids)
             {
-                // Top, inflow.
-                bcs.addBoundaryCondition(
-                    ProcessLib::createBHEInflowDirichletBoundaryCondition(
-                        get_global_bhe_bc_indices(bc_top_node_id,
-                                                  in_out_component_id),
-                        bhe));
+                if (_process_data._vec_BHE_property[bhe_i]
+                        ->bhe_if_use_python_bc == true)
+                {
+                    // TODO,Shuang call BHEPythonBoundarycondition
 
-                // Bottom, outflow.
-                bcs.addBoundaryCondition(
-                    ProcessLib::createBHEBottomDirichletBoundaryCondition(
-                        get_global_bhe_bc_indices(bc_bottom_node_id,
-                                                  in_out_component_id)));
+                    // Top, inflow.
+                    bcs.push_back(
+                        ProcessLib::createBHEInflowPythonBoundaryCondition(
+                            get_global_bhe_bc_indices(bc_top_node->getID(),
+                                                      in_out_component_id),
+                            _mesh, {bc_top_node}, variable_id,
+                            in_out_component_id.first,
+                            _process_data._vec_BHE_property[bhe_i],
+                            _process_data.py_bc_object));
+
+                    // Bottom, outflow.
+                    bcs.push_back(
+                        ProcessLib::createBHEBottomDirichletBoundaryCondition(
+                            get_global_bhe_bc_indices(bc_bottom_node_id,
+                                                      in_out_component_id)));
+                }
+                else
+                {
+                    // Top, inflow.
+                    bcs.push_back(
+                        ProcessLib::createBHEInflowDirichletBoundaryCondition(
+                            get_global_bhe_bc_indices(bc_top_node->getID(),
+                                                      in_out_component_id),
+                            _mesh, {bc_top_node}, variable_id,
+                            in_out_component_id.first,
+                            _process_data._vec_BHE_property[bhe_i]));
+
+                    // Bottom, outflow.
+                    bcs.push_back(
+                        ProcessLib::createBHEBottomDirichletBoundaryCondition(
+                            get_global_bhe_bc_indices(bc_bottom_node_id,
+                                                      in_out_component_id)));
+                }
             }
         };
         apply_visitor(createBCs, _process_data._vec_BHE_property[bhe_i]);

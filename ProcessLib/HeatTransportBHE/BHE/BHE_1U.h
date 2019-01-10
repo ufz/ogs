@@ -43,7 +43,8 @@ public:
            RefrigerantProperties const& refrigerant,
            GroutParameters const& grout,
            FlowAndTemperatureControl const& flowAndTemperatureControl,
-           PipeConfiguration1U const& pipes);
+           PipeConfiguration1U const& pipes,
+           bool bhe_if_use_python_bc);
 
     static constexpr int number_of_unknowns = 4;
 

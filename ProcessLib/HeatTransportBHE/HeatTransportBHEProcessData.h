@@ -14,6 +14,8 @@
 #include "MeshLib/PropertyVector.h"
 #include "ProcessLib/HeatTransportBHE/BHE/BHETypes.h"
 
+#include "ProcessLib/BoundaryCondition/Python/BHEInflowPythonBoundaryConditionPythonSideInterface.h"
+
 namespace MeshLib
 {
 class Element;
@@ -38,7 +40,9 @@ struct HeatTransportBHEProcessData
         Parameter<double> const& density_solid_,
         Parameter<double> const& density_fluid_,
         Parameter<double> const& density_gas_,
-        std::vector<BHE::BHETypes>&& vec_BHEs_)
+        std::vector<BHE::BHETypes>&& vec_BHEs_,
+        bool const& if_bhe_network_exist_python_bc_,
+        BHEInflowPythonBoundaryConditionPythonSideInterface* py_bc_object_ = nullptr)
         : thermal_conductivity_solid(thermal_conductivity_solid_),
           thermal_conductivity_fluid(thermal_conductivity_fluid_),
           thermal_conductivity_gas(thermal_conductivity_gas_),
@@ -48,7 +52,9 @@ struct HeatTransportBHEProcessData
           density_solid(density_solid_),
           density_fluid(density_fluid_),
           density_gas(density_gas_),
-          _vec_BHE_property(std::move(vec_BHEs_))
+          _vec_BHE_property(std::move(vec_BHEs_)),
+          if_bhe_network_exist_python_bc(if_bhe_network_exist_python_bc_),
+          py_bc_object(py_bc_object_)
     {
     }
 
@@ -82,6 +88,12 @@ struct HeatTransportBHEProcessData
     std::unordered_map<int, int> _map_materialID_to_BHE_ID;
 
     std::vector<BHE::BHETypes> _vec_BHE_property;
+
+    // if bhe network exists python boundary condition
+    bool if_bhe_network_exist_python_bc;
+
+    //! Python object computing BC values.
+    BHEInflowPythonBoundaryConditionPythonSideInterface* py_bc_object;
 };
 }  // namespace HeatTransportBHE
 }  // namespace ProcessLib
