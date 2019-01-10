@@ -70,9 +70,9 @@ public:
      *
      * @param t_initial             start time
      * @param t_end                 end time
-     * @param min_ts                the minimum allowed time step size
-     * @param max_ts                the maximum allowed time step size
-     * @param initial_ts            initial time step size
+     * @param min_dt                the minimum allowed time step size
+     * @param max_dt                the maximum allowed time step size
+     * @param initial_dt            initial time step size
      * @param iter_times_vector     a vector of iteration numbers
      * (\f$i_1\f$, \f$i_2\f$, ..., \f$i_n\f$) which defines intervals as
      * \f$[i_1,i_2)\f$, \f$[i_2,i_3)\f$, ..., \f$[i_n,\infty)\f$.
@@ -84,29 +84,26 @@ public:
      * A time step size is calculated by \f$\Delta t_{n+1} = a * \Delta t_{n}\f$
      */
     IterationNumberBasedAdaptiveTimeStepping(
-        double t_initial,
-        double t_end,
-        double min_ts,
-        double max_ts,
-        double initial_ts,
-        std::vector<std::size_t>& iter_times_vector,
-        std::vector<double>& multiplier_vector);
+        double const t_initial,
+        double const t_end,
+        double const min_dt,
+        double const max_dt,
+        double const initial_dt,
+        std::vector<int> const& iter_times_vector,
+        std::vector<double> const& multiplier_vector);
 
     ~IterationNumberBasedAdaptiveTimeStepping() override = default;
 
     /// move to the next time step
-    bool next(const double solution_error) override;
+    bool next(double solution_error) override;
 
     /// return if the current step is accepted
     bool accepted() const override;
 
     /// set the number of iterations
-    void setIterationNumber(std::size_t n_itr) { this->_iter_times = n_itr; }
+    void setIterationNumber(int const n_itr) { _iter_times = n_itr; }
     /// return the number of repeated steps
-    std::size_t getNumberOfRepeatedSteps() const
-    {
-        return this->_n_rejected_steps;
-    }
+    int getNumberOfRepeatedSteps() const { return _n_rejected_steps; }
 
 private:
     /// calculate the next time step size
@@ -114,21 +111,21 @@ private:
 
     /// this vector stores the number of iterations to which the respective
     /// multiplier coefficient will be applied
-    const std::vector<std::size_t> _iter_times_vector;
+    const std::vector<int> _iter_times_vector;
     /// this vector stores the multiplier coefficients
     const std::vector<double> _multiplier_vector;
     /// the minimum allowed time step size
-    const double _min_ts;
+    const double _min_dt;
     /// the maximum allowed time step size
-    const double _max_ts;
+    const double _max_dt;
     /// initial time step size
-    const double _initial_ts;
+    const double _initial_dt;
     /// the maximum allowed iteration number to accept current time step
-    const std::size_t _max_iter;
+    const int _max_iter;
     /// the number of nonlinear iterations
-    std::size_t _iter_times;
+    int _iter_times = 0;
     /// the number of rejected steps
-    std::size_t _n_rejected_steps;
+    int _n_rejected_steps = 0;
 };
 
-}  // NumLib
+}  // namespace NumLib
