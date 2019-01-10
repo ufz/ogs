@@ -19,6 +19,7 @@
 
 #include "NumLib/TimeStepping/Algorithms/CreateEvolutionaryPIDcontroller.h"
 #include "NumLib/TimeStepping/Algorithms/CreateFixedTimeStepping.h"
+#include "NumLib/TimeStepping/Algorithms/CreateIterationNumberBasedTimeStepping.h"
 #include "NumLib/TimeStepping/Algorithms/FixedTimeStepping.h"
 
 namespace NumLib
@@ -43,9 +44,16 @@ std::unique_ptr<TimeStepAlgorithm> createTimeStepper(
     {
         return NumLib::createEvolutionaryPIDcontroller(config);
     }
+    if (type == "IterationNumberBasedTimeStepping")
+    {
+        return NumLib::createIterationNumberBasedTimeStepping(config);
+    }
     OGS_FATAL(
         "Unknown time stepping type: '%s'. The available types are: "
-        "\n\tSingleStep, \n\tFixedTimeStepping\n\tEvolutionaryPIDcontroller\n",
+        "\n\tSingleStep,"
+        "\n\tFixedTimeStepping,"
+        "\n\tEvolutionaryPIDcontroller,",
+        "\n\tIterationNumberBasedTimeStepping\n",
         type.data());
 }
 

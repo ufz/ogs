@@ -23,11 +23,11 @@ namespace NumLib
 IterationNumberBasedTimeStepping::IterationNumberBasedTimeStepping(
     double const t_initial, double const t_end, double const min_dt,
     double const max_dt, double const initial_dt,
-    std::vector<int> const& iter_times_vector,
-    std::vector<double> const& multiplier_vector)
+    std::vector<int>&& iter_times_vector,
+    std::vector<double>&& multiplier_vector)
     : TimeStepAlgorithm(t_initial, t_end),
-      _iter_times_vector(iter_times_vector),
-      _multiplier_vector(multiplier_vector),
+      _iter_times_vector(std::move(iter_times_vector)),
+      _multiplier_vector(std::move(multiplier_vector)),
       _min_dt(min_dt),
       _max_dt(max_dt),
       _initial_dt(initial_dt),

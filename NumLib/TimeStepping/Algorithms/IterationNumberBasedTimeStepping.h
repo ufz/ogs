@@ -84,14 +84,13 @@ public:
      * given by iter_times_vector.
      * A time step size is calculated by \f$\Delta t_{n+1} = a * \Delta t_{n}\f$
      */
-    IterationNumberBasedTimeStepping(
-        double const t_initial,
-        double const t_end,
-        double const min_dt,
-        double const max_dt,
-        double const initial_dt,
-        std::vector<int> const& iter_times_vector,
-        std::vector<double> const& multiplier_vector);
+    IterationNumberBasedTimeStepping(double const t_initial,
+                                     double const t_end,
+                                     double const min_dt,
+                                     double const max_dt,
+                                     double const initial_dt,
+                                     std::vector<int>&& iter_times_vector,
+                                     std::vector<double>&& multiplier_vector);
 
     ~IterationNumberBasedTimeStepping() override = default;
 
