@@ -39,7 +39,7 @@ info: Mesh created: 210 nodes, 120 elements.
 
 ## Basic options
 
-### Output mesh format `-o filneme.ext`
+### Output mesh format `-o filename.ext`
 
 Depending on the file ending `.msh` or `.vtu` either a legacy OGS5 mesh file or VTK unstructured grid file is generated. Unsupported file endings will result in an error.
 
