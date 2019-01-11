@@ -63,6 +63,9 @@ private:
     void createBHEBoundaryConditionTopBottom(
         std::vector<std::vector<MeshLib::Node*>> const& all_bhe_nodes);
 
+    NumLib::IterationResult postIterationConcreteProcess(
+        GlobalVector const& x) override;
+
     HeatTransportBHEProcessData _process_data;
 
     std::vector<std::unique_ptr<HeatTransportBHELocalAssemblerInterface>>

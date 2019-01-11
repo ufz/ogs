@@ -8,13 +8,10 @@
  */
 
 #include "BHEInflowPythonBoundaryCondition.h"
-
+#include "BaseLib/Error.h"
 #include <pybind11/pybind11.h>
 #include <iostream>
 
-#include "MeshLib/MeshSearch/NodeSearch.h"
-#include "ProcessLib/Utils/CreateLocalAssemblers.h"
-#include "ProcessLib/Utils/ProcessUtils.h"
 #include "PythonBoundaryConditionLocalAssembler.h"
 
 #include <algorithm>
@@ -25,54 +22,25 @@
 
 namespace ProcessLib
 {
-BHEInflowPythonBoundaryCondition::BHEInflowPythonBoundaryCondition(
+template <typename BHEType>
+BHEInflowPythonBoundaryCondition<BHEType>::BHEInflowPythonBoundaryCondition(
     std::pair<GlobalIndexType, GlobalIndexType>&& in_out_global_indices,
-    MeshLib::Mesh const& bc_mesh,
-    std::vector<MeshLib::Node*> const& vec_inflow_bc_nodes,
-    int const variable_id,
-    int const component_id,
-    std::unique_ptr<ProcessLib::HeatTransportBHE::BHE::BHETypes> const&
-        pt_bhe,
+    BHEType& bhe,
     BHEInflowPythonBoundaryConditionPythonSideInterface* py_bc_object)
-    : _bc_mesh(bc_mesh), _pt_bhe(pt_bhe),_py_bc_object(py_bc_object)
+    : _in_out_global_indices(std::move(in_out_global_indices)),
+      _bhe(bhe),
+      _py_bc_object(py_bc_object)
 {
 
-    DBUG(
-    "Found %d nodes for BHE Inflow Python BCs for the variable %d and "
-    "component %d",
-    vec_inflow_bc_nodes.size(), variable_id, component_id);
-
-    MeshLib::MeshSubset bc_mesh_subset{_bc_mesh, vec_inflow_bc_nodes};
-
-    // create memory to store Tout values
-    _T_out_values.clear();
-    _T_out_indices.clear();
-
-    _bc_values.ids.clear();
-    _bc_values.values.clear();
-
-        
-    // convert mesh node ids to global index for the given component
-    assert(bc_mesh_subset.getNumberOfNodes() == 1);
-    _bc_values.ids.reserve(bc_mesh_subset.getNumberOfNodes());
-    _bc_values.values.reserve(bc_mesh_subset.getNumberOfNodes());
-
-    // that might be slow, but only done once
-    const auto g_idx_T_in = in_out_global_indices.first;
     const auto g_idx_T_out = in_out_global_indices.second;
 
-    if (g_idx_T_in >= 0 && g_idx_T_out >= 0)
-    {
-        _T_out_indices.emplace_back(g_idx_T_out);
-        _T_out_values.emplace_back(320.0 /*using initial value*/);
-        _bc_values.ids.emplace_back(g_idx_T_in);
-        _bc_values.values.emplace_back(320.0 /*using initial value*/);
-        //store the bc node ids to BHE network dataframe
-        std::get<3>(_py_bc_object->dataframe_network).emplace_back(g_idx_T_out);
-    }
+    //store the bc node ids to BHE network dataframe
+    std::get<3>(_py_bc_object->dataframe_network).emplace_back(g_idx_T_out);
+    
 }
 
-void BHEInflowPythonBoundaryCondition::getEssentialBCValues(
+template <typename BHEType>
+void BHEInflowPythonBoundaryCondition<BHEType>::getEssentialBCValues(
     const double t, GlobalVector const& x,
     NumLib::IndexValueVector<GlobalIndexType>& bc_values) const
 {
@@ -115,41 +83,36 @@ void BHEInflowPythonBoundaryCondition::getEssentialBCValues(
 
 }
 
-void BHEInflowPythonBoundaryCondition::preTimestep(const double /*t*/,
-                                                      const GlobalVector& x)
-{
-    // for each BHE, the inflow temperature is dependent on
-    // the ouflow temperature of the BHE.
-    // Here the task is to get the outflow temperature and
-    // save it locally
-    auto const n_nodes = _bc_values.ids.size();
-    for (std::size_t i = 0; i < n_nodes; i++)
-    {
-        // read the T_out
-        _T_out_values[i] = x[_T_out_indices[i]];
-    }
-}
-
-void BHEInflowPythonBoundaryCondition::applyNaturalBC(const double t,
-                                             const GlobalVector& x,
-                                             GlobalMatrix& K, GlobalVector& b,
-                                             GlobalMatrix* Jac)
-{
-}
-
-std::unique_ptr<BHEInflowPythonBoundaryCondition>createBHEInflowPythonBoundaryCondition(
+template <typename BHEType>
+std::unique_ptr<BHEInflowPythonBoundaryCondition<BHEType>>
+createBHEInflowPythonBoundaryCondition(
     std::pair<GlobalIndexType, GlobalIndexType>&& in_out_global_indices,
-    MeshLib::Mesh const& bc_mesh,
-    std::vector<MeshLib::Node*> const& vec_inflow_bc_nodes,
-    int const variable_id, int const component_id,
-    std::unique_ptr<ProcessLib::HeatTransportBHE::BHE::BHETypes> const& pt_bhe,
+    BHEType& bhe,
     BHEInflowPythonBoundaryConditionPythonSideInterface* py_bc_object)
 
 {
+    DBUG("Constructing BHEInflowPythonBoundaryCondition.");
 
-    return std::make_unique<BHEInflowPythonBoundaryCondition>(
-        std::move(in_out_global_indices), bc_mesh, vec_inflow_bc_nodes,
-        variable_id, component_id, pt_bhe, py_bc_object);
+    // In case of partitioned mesh the boundary could be empty, i.e. there is no
+    // boundary condition.
+#ifdef USE_PETSC
+    // For this special boundary condition the boundary condition is not empty
+    // if the global indices are non-negative.
+    if (in_out_global_indices.first < 0 && in_out_global_indices.second < 0)
+    {
+        return nullptr;
+    }
+    // If only one of the global indices (in or out) is negative the
+    // implementation is not valid.
+    if (in_out_global_indices.first < 0 || in_out_global_indices.second < 0)
+    {
+        OGS_FATAL(
+            "The partition cuts the BHE into two independent parts. This "
+            "behaviour is not implemented.");
+    }
+#endif  // USE_PETSC
+    return std::make_unique<BHEInflowPythonBoundaryCondition<BHEType>>(
+        std::move(in_out_global_indices), bhe, py_bc_object);
 }
 
 }  // namespace ProcessLib
