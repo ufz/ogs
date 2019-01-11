@@ -275,9 +275,17 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
         auto const tespy_flow_velocity =
             std::get<1>(process_data->py_bc_object->tespyHydroSolver());
         const std::size_t n_bhe = tespy_flow_velocity.size();
-        
+        // for (std::size_t i = 0; i < n_bhe; i++)
+        //{
+        //     1U type:
+        //     for (std::size_t j = 0; j < 4; j++)
+        //               {
+        //        auto tmp = tespy_flow_velocity[i];
+        //        process_data->_vec_BHE_property[i]->replaceFlowVelocity(
+        //            j, tmp);
+        //    }
+        //}
     }
-
     SecondaryVariableCollection secondary_variables;
 
     NumLib::NamedFunctionCaller named_function_caller(
