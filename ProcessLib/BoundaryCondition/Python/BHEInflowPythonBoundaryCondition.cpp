@@ -12,6 +12,8 @@
 #include <pybind11/pybind11.h>
 #include <iostream>
 
+#include "ProcessLib/Utils/CreateLocalAssemblers.h"
+#include "ProcessLib/Utils/ProcessUtils.h"
 #include "PythonBoundaryConditionLocalAssembler.h"
 
 #include <algorithm>
@@ -44,42 +46,13 @@ void BHEInflowPythonBoundaryCondition<BHEType>::getEssentialBCValues(
     const double t, GlobalVector const& x,
     NumLib::IndexValueVector<GlobalIndexType>& bc_values) const
 {
-    bc_values.ids.clear();
-    bc_values.values.clear();
+    bc_values.ids.resize(1);
+    bc_values.values.resize(1);
 
-    bc_values.ids.resize(_bc_values.ids.size());
-    bc_values.values.resize(_bc_values.values.size());
-
-    const std::size_t n_nodes = _T_out_values.size();
-
-    std::vector<double> primary_variables;
-
-    // get the number of all boundary nodes
-    const std::size_t n_bc_nodes = std::get<3>(_py_bc_object->dataframe_network).size();
-
-    for (std::size_t i = 0; i < n_nodes; i++)
-    {
-        bc_values.ids[i] = _bc_values.ids[i];
-
-        // here call the corresponding BHE functions
-        auto const tmp_T_out = x[_T_out_indices[i]];
-
-        primary_variables.push_back(tmp_T_out);
-
-        auto const boundary_node_id = _T_out_indices[i];
-
-        //return T_in from currently BHE dataframe column 2
-        for (std::size_t j = 0; j < n_bc_nodes; j++)
-        {
-            auto const dataframe_node_id = std::get<3>(_py_bc_object->dataframe_network);
-            auto const dataframe_Tin_val = std::get<1>(_py_bc_object->dataframe_network);
-            if (dataframe_node_id[j] == boundary_node_id)
-            {
-                bc_values.values[i] = dataframe_Tin_val[j];
-                break;
-            }
-        }
-    }
+    bc_values.ids[0] = _in_out_global_indices.first;
+    // here call the corresponding BHE functions
+    auto const T_out = x[_in_out_global_indices.second];
+    bc_values.values[0] = _bhe.updateFlowRateAndTemperature(T_out, t);
 
 }
 
