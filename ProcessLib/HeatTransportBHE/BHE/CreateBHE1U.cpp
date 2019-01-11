@@ -24,12 +24,10 @@ BHE::BHE_1U createBHE1U(
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
         curves)
 {
-    //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger}
-    auto const& borehole_heat_exchange_config = config.getConfigSubtree("borehole_heat_exchange");
     // if the BHE is using python boundary condition
     bool bhe_if_use_python_bc = false;
     if (auto const bhe_if_use_python_bc_conf =
-            borehole_heat_exchange_config.getConfigParameterOptional<bool>(
+            config.getConfigParameterOptional<bool>(
                 "bhe_if_use_python_bc"))
     {
         DBUG("If  using python boundary condition : %s",

@@ -18,7 +18,6 @@
 
 namespace ProcessLib
 {
-template <typename BHEType>
 
 //! A boundary condition whose values are computed by a Python script.
 class BHEInflowPythonBoundaryCondition final : public BoundaryCondition
@@ -26,7 +25,6 @@ class BHEInflowPythonBoundaryCondition final : public BoundaryCondition
 public:
     BHEInflowPythonBoundaryCondition(
         std::pair<GlobalIndexType, GlobalIndexType>&& in_out_global_indices,
-        BHEType& bhe,
         BHEInflowPythonBoundaryConditionPythonSideInterface* py_bc_object);
         
     void getEssentialBCValues(
@@ -38,17 +36,14 @@ private:
 
     std::pair<GlobalIndexType, GlobalIndexType> const _in_out_global_indices;
 
-    BHEType& _bhe;
 
     BHEInflowPythonBoundaryConditionPythonSideInterface* _py_bc_object;
 };
 
 //! Creates a new PythonBoundaryCondition object.
-template <typename BHEType>
-std::unique_ptr<BHEInflowPythonBoundaryCondition<BHEType>>
+std::unique_ptr<BHEInflowPythonBoundaryCondition>
 createBHEInflowPythonBoundaryCondition(
     std::pair<GlobalIndexType, GlobalIndexType>&& in_out_global_indices,
-    BHEType& bhe,
     BHEInflowPythonBoundaryConditionPythonSideInterface* py_bc_object);
 
 }  // namespace ProcessLib

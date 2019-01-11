@@ -24,13 +24,10 @@
 
 namespace ProcessLib
 {
-template <typename BHEType>
-BHEInflowPythonBoundaryCondition<BHEType>::BHEInflowPythonBoundaryCondition(
+BHEInflowPythonBoundaryCondition::BHEInflowPythonBoundaryCondition(
     std::pair<GlobalIndexType, GlobalIndexType>&& in_out_global_indices,
-    BHEType& bhe,
     BHEInflowPythonBoundaryConditionPythonSideInterface* py_bc_object)
     : _in_out_global_indices(std::move(in_out_global_indices)),
-      _bhe(bhe),
       _py_bc_object(py_bc_object)
 {
 
@@ -41,8 +38,7 @@ BHEInflowPythonBoundaryCondition<BHEType>::BHEInflowPythonBoundaryCondition(
     
 }
 
-template <typename BHEType>
-void BHEInflowPythonBoundaryCondition<BHEType>::getEssentialBCValues(
+void BHEInflowPythonBoundaryCondition::getEssentialBCValues(
     const double t, GlobalVector const& x,
     NumLib::IndexValueVector<GlobalIndexType>& bc_values) const
 {
@@ -52,15 +48,12 @@ void BHEInflowPythonBoundaryCondition<BHEType>::getEssentialBCValues(
     bc_values.ids[0] = _in_out_global_indices.first;
     // here call the corresponding BHE functions
     auto const T_out = x[_in_out_global_indices.second];
-    bc_values.values[0] = _bhe.updateFlowRateAndTemperature(T_out, t);
 
 }
 
-template <typename BHEType>
-std::unique_ptr<BHEInflowPythonBoundaryCondition<BHEType>>
+std::unique_ptr<BHEInflowPythonBoundaryCondition>
 createBHEInflowPythonBoundaryCondition(
     std::pair<GlobalIndexType, GlobalIndexType>&& in_out_global_indices,
-    BHEType& bhe,
     BHEInflowPythonBoundaryConditionPythonSideInterface* py_bc_object)
 
 {
@@ -84,8 +77,8 @@ createBHEInflowPythonBoundaryCondition(
             "behaviour is not implemented.");
     }
 #endif  // USE_PETSC
-    return std::make_unique<BHEInflowPythonBoundaryCondition<BHEType>>(
-        std::move(in_out_global_indices), bhe, py_bc_object);
+    return std::make_unique<BHEInflowPythonBoundaryCondition>(
+        std::move(in_out_global_indices),  py_bc_object);
 }
 
 }  // namespace ProcessLib

@@ -170,8 +170,10 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
     // reading BHE parameters --------------------------------------------------
     std::vector<BHE::BHETypes> bhes;
 
-    // if bhe use python boundary condition
-    bool if_bhe_network_exist_python_bc = false;
+    // find if bhe uses python boundary condition
+    const bool if_bhe_network_exist_python_bc =
+        //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__if_bhe_network_exist_python_bc}
+        config.getConfigParameter<bool>("if_bhe_network_exist_python_bc");
 
     auto const& bhe_configs =
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers}
@@ -197,21 +199,6 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
     }
     // end of reading BHE parameters -------------------------------------------
 
-    // find if bhe use python boundary condition
-    for (
-        auto const& bhe_config :
-        //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger}
-        bhe_configs.getConfigSubtreeList("borehole_heat_exchanger"))
-    {
-        const bool bhe_if_use_python_bc =
-            //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__type}
-            bhe_config.getConfigParameter<bool>("bhe_if_use_python_bc");
-        if (bhe_if_use_python_bc == true)
-        {
-            if_bhe_network_exist_python_bc = true;
-            break;
-        }
-    }
 
     //! Python object computing BC values.
     HeatTransportBHEProcessData* process_data;

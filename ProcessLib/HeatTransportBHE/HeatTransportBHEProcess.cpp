@@ -290,7 +290,7 @@ void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
                         ProcessLib::createBHEInflowPythonBoundaryCondition(
                             get_global_bhe_bc_indices(bc_top_node_id,
                                                       in_out_component_id),
-                            bhe, _process_data.py_bc_object));
+                             _process_data.py_bc_object));
 
                     // Bottom, outflow.
                     bcs.addBoundaryCondition(
