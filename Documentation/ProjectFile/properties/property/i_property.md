@@ -1,0 +1,1 @@
+A constitutive property.
