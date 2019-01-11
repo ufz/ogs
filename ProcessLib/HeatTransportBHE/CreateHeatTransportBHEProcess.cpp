@@ -193,15 +193,25 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
             continue;
         }
 
-        // find if bhe use python boundary condition
-        bool aaa = bhes.back();
-        {
-            if_bhe_network_exist_python_bc = true;
-        }
         OGS_FATAL("Unknown BHE type '%s'.", bhe_type.c_str());
     }
     // end of reading BHE parameters -------------------------------------------
 
+    // find if bhe use python boundary condition
+    for (
+        auto const& bhe_config :
+        //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger}
+        bhe_configs.getConfigSubtreeList("borehole_heat_exchanger"))
+    {
+        const bool bhe_if_use_python_bc =
+            //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__type}
+            bhe_config.getConfigParameter<bool>("bhe_if_use_python_bc");
+        if (bhe_if_use_python_bc == true)
+        {
+            if_bhe_network_exist_python_bc = true;
+            break;
+        }
+    }
 
     //! Python object computing BC values.
     HeatTransportBHEProcessData* process_data;
@@ -265,31 +275,7 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
         auto const tespy_flow_velocity =
             std::get<1>(process_data->py_bc_object->tespyHydroSolver());
         const std::size_t n_bhe = tespy_flow_velocity.size();
-        for (std::size_t i = 0; i < n_bhe; i++)
-        {
-            // 2U type:
-            if (process_data->_vec_BHE_property[i]->bhe_type ==
-                BHE_TYPE::TYPE_2U)
-            {
-                for (std::size_t j = 0; j < 4; j++)
-                {
-                    auto tmp = tespy_flow_velocity[i];
-                    process_data->_vec_BHE_property[i]->replaceFlowVelocity(
-                        j, tmp);
-                }
-            }
-            // 1U,CXA,CXC type:
-            if (process_data->_vec_BHE_property[i]->bhe_type !=
-                BHE_TYPE::TYPE_2U)
-            {
-                for (std::size_t j = 0; j < 2; j++)
-                {
-                    auto tmp = tespy_flow_velocity[i];
-                    process_data->_vec_BHE_property[i]->replaceFlowVelocity(
-                        j, tmp);
-                }
-            }
-        }
+        
     }
 
     SecondaryVariableCollection secondary_variables;

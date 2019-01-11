@@ -25,8 +25,8 @@ BHE_1U::BHE_1U(BoreholeGeometry const& borehole,
                GroutParameters const& grout,
                FlowAndTemperatureControl const& flowAndTemperatureControl,
                PipeConfiguration1U const& pipes,
-               bool bhe_if_use_python_bc = false)
-    : BHECommon{borehole, refrigerant, grout, flowAndTemperatureControl, bhe_if_use_python_bc},
+               bool _bhe_if_use_python_bc = false)
+    : BHECommon{borehole, refrigerant, grout, flowAndTemperatureControl},
       _pipes(pipes)
 {
     // Initialize thermal resistances.
@@ -37,6 +37,9 @@ BHE_1U::BHE_1U(BoreholeGeometry const& borehole,
         },
         flowAndTemperatureControl);
     updateHeatTransferCoefficients(values.flow_rate);
+
+    /// If BHE uses python boundary condition
+    bool bhe_if_use_python_bc = _bhe_if_use_python_bc;
 }
 
 std::array<double, BHE_1U::number_of_unknowns> BHE_1U::pipeHeatCapacities()

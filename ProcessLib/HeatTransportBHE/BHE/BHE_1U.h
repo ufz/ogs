@@ -44,7 +44,7 @@ public:
            GroutParameters const& grout,
            FlowAndTemperatureControl const& flowAndTemperatureControl,
            PipeConfiguration1U const& pipes,
-           bool bhe_if_use_python_bc);
+           bool _bhe_if_use_python_bc);
 
     static constexpr int number_of_unknowns = 4;
 
@@ -162,6 +162,10 @@ private:
 
     /// Flow velocity inside the pipes. Depends on the flow_rate.
     double _flow_velocity;
+
+public:
+    /// If BHE uses python boundary condition
+    bool bhe_if_use_python_bc = false;
 };
 }  // namespace BHE
 }  // namespace HeatTransportBHE
