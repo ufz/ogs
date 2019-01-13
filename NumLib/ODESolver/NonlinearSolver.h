@@ -54,8 +54,8 @@ public:
      * \retval false otherwise
      */
     virtual bool solve(GlobalVector& x,
-                       std::function<void(unsigned, GlobalVector const&)> const&
-                           postIterationCallback) = 0;
+        std::function<void(int, GlobalVector const&)> const&
+            postIterationCallback) = 0;
 
     virtual ~NonlinearSolverBase() = default;
 };
@@ -89,7 +89,7 @@ public:
      * \param damping \copydoc _damping
      */
     explicit NonlinearSolver(GlobalLinearSolver& linear_solver,
-                             const unsigned maxiter,
+                             int const maxiter,
                              double const damping = 1.0)
         : _linear_solver(linear_solver), _maxiter(maxiter), _damping(damping)
     {
@@ -106,8 +106,8 @@ public:
     void assemble(GlobalVector const& x) const override;
 
     bool solve(GlobalVector& x,
-               std::function<void(unsigned, GlobalVector const&)> const&
-                   postIterationCallback) override;
+        std::function<void(int, GlobalVector const&)> const&
+            postIterationCallback) override;
 
 private:
     GlobalLinearSolver& _linear_solver;
@@ -115,7 +115,7 @@ private:
 
     // TODO doc
     ConvergenceCriterion* _convergence_criterion = nullptr;
-    const unsigned _maxiter;  //!< maximum number of iterations
+    int const _maxiter;  //!< maximum number of iterations
 
     //! A positive damping factor. The default value 1.0 gives a non-damped
     //! Newton method. Common values are in the range 0.5 to 0.7 for somewhat
@@ -149,7 +149,7 @@ public:
      *                equation.
      */
     explicit NonlinearSolver(GlobalLinearSolver& linear_solver,
-                             const unsigned maxiter)
+                             const int maxiter)
         : _linear_solver(linear_solver), _maxiter(maxiter)
     {
     }
@@ -165,8 +165,8 @@ public:
     void assemble(GlobalVector const& x) const override;
 
     bool solve(GlobalVector& x,
-               std::function<void(unsigned, GlobalVector const&)> const&
-                   postIterationCallback) override;
+        std::function<void(int, GlobalVector const&)> const&
+            postIterationCallback) override;
 
 private:
     GlobalLinearSolver& _linear_solver;
@@ -174,7 +174,7 @@ private:
 
     // TODO doc
     ConvergenceCriterion* _convergence_criterion = nullptr;
-    const unsigned _maxiter;  //!< maximum number of iterations
+    const int _maxiter;  //!< maximum number of iterations
 
     std::size_t _A_id = 0u;      //!< ID of the \f$ A \f$ matrix.
     std::size_t _rhs_id = 0u;    //!< ID of the right-hand side vector.

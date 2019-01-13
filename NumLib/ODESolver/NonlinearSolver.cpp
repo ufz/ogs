@@ -28,7 +28,8 @@ void NonlinearSolver<NonlinearSolverTag::Picard>::assemble(
 
 bool NonlinearSolver<NonlinearSolverTag::Picard>::solve(
     GlobalVector& x,
-    std::function<void(unsigned, GlobalVector const&)> const& postIterationCallback)
+    std::function<void(int, GlobalVector const&)> const&
+        postIterationCallback)
 {
     namespace LinAlg = MathLib::LinAlg;
     auto& sys = *_equation_system;
@@ -45,7 +46,7 @@ bool NonlinearSolver<NonlinearSolverTag::Picard>::solve(
 
     _convergence_criterion->preFirstIteration();
 
-    unsigned iteration = 1;
+    int iteration = 1;
     for (; iteration <= _maxiter;
          ++iteration, _convergence_criterion->reset())
     {
@@ -174,7 +175,8 @@ void NonlinearSolver<NonlinearSolverTag::Newton>::assemble(
 
 bool NonlinearSolver<NonlinearSolverTag::Newton>::solve(
     GlobalVector& x,
-    std::function<void(unsigned, GlobalVector const&)> const& postIterationCallback)
+    std::function<void(int, GlobalVector const&)> const&
+        postIterationCallback)
 {
     namespace LinAlg = MathLib::LinAlg;
     auto& sys = *_equation_system;
@@ -195,7 +197,7 @@ bool NonlinearSolver<NonlinearSolverTag::Newton>::solve(
 
     _convergence_criterion->preFirstIteration();
 
-    unsigned iteration = 1;
+    int iteration = 1;
     for (; iteration <= _maxiter;
          ++iteration, _convergence_criterion->reset())
     {
@@ -320,7 +322,7 @@ createNonlinearSolver(GlobalLinearSolver& linear_solver,
     //! \ogs_file_param{prj__nonlinear_solvers__nonlinear_solver__type}
     auto const type = config.getConfigParameter<std::string>("type");
     //! \ogs_file_param{prj__nonlinear_solvers__nonlinear_solver__max_iter}
-    auto const max_iter = config.getConfigParameter<unsigned>("max_iter");
+    auto const max_iter = config.getConfigParameter<int>("max_iter");
 
     if (type == "Picard") {
         auto const tag = NonlinearSolverTag::Picard;

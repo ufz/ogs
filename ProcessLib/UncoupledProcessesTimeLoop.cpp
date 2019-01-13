@@ -127,12 +127,12 @@ std::unique_ptr<UncoupledProcessesTimeLoop> createUncoupledProcessesTimeLoop(
 
     std::vector<std::unique_ptr<NumLib::ConvergenceCriterion>>
         global_coupling_conv_criteria;
-    unsigned max_coupling_iterations = 1;
+    int max_coupling_iterations = 1;
     if (coupling_config)
     {
         max_coupling_iterations
             //! \ogs_file_param{prj__time_loop__global_process_coupling__max_iter}
-            = coupling_config->getConfigParameter<unsigned>("max_iter");
+            = coupling_config->getConfigParameter<int>("max_iter");
 
         auto const& coupling_convergence_criteria_config =
             //! \ogs_file_param{prj__time_loop__global_process_coupling__convergence_criteria}
@@ -257,7 +257,7 @@ bool solveOneTimeStepOneProcess(int const process_id, GlobalVector& x,
 
     time_disc.nextTimestep(t, delta_t);
 
-    auto const post_iteration_callback = [&](unsigned iteration,
+    auto const post_iteration_callback = [&](int iteration,
                                              GlobalVector const& x) {
         output_control.doOutputNonlinearIteration(process, process_id,
                                                   timestep, t, x, iteration);
@@ -277,7 +277,7 @@ bool solveOneTimeStepOneProcess(int const process_id, GlobalVector& x,
 UncoupledProcessesTimeLoop::UncoupledProcessesTimeLoop(
     std::unique_ptr<Output>&& output,
     std::vector<std::unique_ptr<ProcessData>>&& per_process_data,
-    const unsigned global_coupling_max_iterations,
+    const int global_coupling_max_iterations,
     std::vector<std::unique_ptr<NumLib::ConvergenceCriterion>>&&
         global_coupling_conv_crit,
     const double start_time, const double end_time)
@@ -704,7 +704,7 @@ bool UncoupledProcessesTimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
     };
 
     bool coupling_iteration_converged = true;
-    for (unsigned global_coupling_iteration = 0;
+    for (int global_coupling_iteration = 0;
          global_coupling_iteration < _global_coupling_max_iterations;
          global_coupling_iteration++, resetCouplingConvergenceCriteria())
     {
