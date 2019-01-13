@@ -30,10 +30,10 @@ AddTest(
 )
 
 AddTest(
-    NAME 2D_RichardsFlow_h_us_quad_small_Adaptive_dt
+    NAME 2D_RichardsFlow_h_us_quad_small_PID_adaptive_dt
     PATH Parabolic/Richards
     EXECUTABLE ogs
-    EXECUTABLE_ARGS RichardsFlow_2d_small_adaptive_dt.prj
+    EXECUTABLE_ARGS RichardsFlow_2d_small_PID_adaptive_dt.prj
     TESTER vtkdiff
     DIFF_DATA
     ref_t_1600.000000.vtu richards_pcs_0_ts_803_t_1600.000000.vtu pressure pressure 1e-8 1e-3
@@ -48,9 +48,9 @@ AddTest(
 
 #PETSc/MPI
 AddTest(
-    NAME 2D_RichardsFlow_h_us_quad_small_Adaptive_dt
+    NAME 2D_RichardsFlow_h_us_quad_small_PID_adaptive_dt
     PATH Parabolic/Richards
-    EXECUTABLE_ARGS RichardsFlow_2d_small_adaptive_dt.prj
+    EXECUTABLE_ARGS RichardsFlow_2d_small_PID_adaptive_dt.prj
     WRAPPER mpirun
     WRAPPER_ARGS -np 1
     TESTER vtkdiff
