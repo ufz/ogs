@@ -23,7 +23,6 @@
             <thermal_conductivity_gas>K_g</thermal_conductivity_gas>
             <heat_capacity_gas>Cp_g</heat_capacity_gas>
             <density_gas>rho_g</density_gas>
-            <if_bhe_network_exist_python_bc>true</if_bhe_network_exist_python_bc>
             <borehole_heat_exchangers>
                 <borehole_heat_exchanger>
                     <type>1U</type>
