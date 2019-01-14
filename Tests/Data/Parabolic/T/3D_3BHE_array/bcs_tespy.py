@@ -35,10 +35,13 @@ def get_hydraulics():
         for c in nw.conns.index:
             if c.t.label == data_index[i]:#t:inlet comp, s:outlet comp
                 df.loc[df.index[i],'flowrate'] = c.get_attr('m').val_SI
-    #convert flowrate to velocity: #m/s
+#    #convert flowrate to velocity: #m/s
+#    for i in range(n_BHE):
+#        df.loc[df.index[i],'f_velocity'] = (df.loc[df.index[i],'flowrate']/refrig_density)/(
+#        math.pi * (0.5*df.loc[df.index[i],'diameter'])**2)
+    #convert flowrate to velocity: #m^3/s
     for i in range(n_BHE):
-        df.loc[df.index[i],'f_velocity'] = (df.loc[df.index[i],'flowrate']/refrig_density)/(
-        math.pi * (0.5*df.loc[df.index[i],'diameter'])**2)
+        df.loc[df.index[i],'f_velocity'] = df.loc[df.index[i],'flowrate']/refrig_density
     return df
 
     
