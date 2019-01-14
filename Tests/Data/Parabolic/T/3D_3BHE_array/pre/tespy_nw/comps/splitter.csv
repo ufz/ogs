@@ -1,0 +1,2 @@
+label;cp;busses;bus_factors;mode;design;offdesign;num_out;num_out_set;num_out_var
+splitter;splitter;[];[];auto;[];[];3;True;False
