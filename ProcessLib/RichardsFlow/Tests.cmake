@@ -51,7 +51,6 @@ AddTest(
     PATH Parabolic/Richards
     EXECUTABLE ogs
     EXECUTABLE_ARGS RichardsFlow_2d_small_iteration_adaptive_dt.prj
-    TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     # No vtkdiff comparison here, because of the different file names for
     # different machines, which again is due to the adaptive time stepping
