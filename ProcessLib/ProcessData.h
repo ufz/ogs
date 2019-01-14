@@ -34,7 +34,7 @@ struct ProcessData
         : timestepper(std::move(timestepper_)),
           nonlinear_solver_tag(NLTag),
           nonlinear_solver(nonlinear_solver),
-          nonlinear_solver_converged(true),
+          nonlinear_solver_status{true, 0},
           conv_crit(std::move(conv_crit_)),
           time_disc(std::move(time_disc_)),
           process(process_)
@@ -45,7 +45,7 @@ struct ProcessData
         : timestepper(std::move(pd.timestepper)),
           nonlinear_solver_tag(pd.nonlinear_solver_tag),
           nonlinear_solver(pd.nonlinear_solver),
-          nonlinear_solver_converged(pd.nonlinear_solver_converged),
+          nonlinear_solver_status(pd.nonlinear_solver_status),
           conv_crit(std::move(pd.conv_crit)),
           time_disc(std::move(pd.time_disc)),
           tdisc_ode_sys(std::move(pd.tdisc_ode_sys)),
@@ -66,7 +66,7 @@ struct ProcessData
     //! other members of this struct to their concrety types.
     NumLib::NonlinearSolverTag const nonlinear_solver_tag;
     NumLib::NonlinearSolverBase& nonlinear_solver;
-    bool nonlinear_solver_converged;
+    NumLib::NonlinearSolverStatus nonlinear_solver_status;
     std::unique_ptr<NumLib::ConvergenceCriterion> conv_crit;
 
     std::unique_ptr<NumLib::TimeDiscretization> time_disc;

@@ -26,7 +26,7 @@ void NonlinearSolver<NonlinearSolverTag::Picard>::assemble(
     _equation_system->assemble(x);
 }
 
-bool NonlinearSolver<NonlinearSolverTag::Picard>::solve(
+NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
     GlobalVector& x,
     std::function<void(int, GlobalVector const&)> const&
         postIterationCallback)
@@ -161,7 +161,7 @@ bool NonlinearSolver<NonlinearSolverTag::Picard>::solve(
     NumLib::GlobalVectorProvider::provider.releaseVector(rhs);
     NumLib::GlobalVectorProvider::provider.releaseVector(x_new);
 
-    return error_norms_met;
+    return {error_norms_met, iteration};
 }
 
 void NonlinearSolver<NonlinearSolverTag::Newton>::assemble(
@@ -173,7 +173,7 @@ void NonlinearSolver<NonlinearSolverTag::Newton>::assemble(
     //      equation every time and could not forget it.
 }
 
-bool NonlinearSolver<NonlinearSolverTag::Newton>::solve(
+NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
     GlobalVector& x,
     std::function<void(int, GlobalVector const&)> const&
         postIterationCallback)
@@ -312,7 +312,7 @@ bool NonlinearSolver<NonlinearSolverTag::Newton>::solve(
     NumLib::GlobalVectorProvider::provider.releaseVector(
         minus_delta_x);
 
-    return error_norms_met;
+    return {error_norms_met, iteration};
 }
 
 std::pair<std::unique_ptr<NonlinearSolverBase>, NonlinearSolverTag>

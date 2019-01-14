@@ -35,7 +35,7 @@ struct ProcessData;
 class UncoupledProcessesTimeLoop
 {
 public:
-    explicit UncoupledProcessesTimeLoop(
+    UncoupledProcessesTimeLoop(
         std::unique_ptr<Output>&& output,
         std::vector<std::unique_ptr<ProcessData>>&& per_process_data,
         const int global_coupling_max_iterations,
@@ -98,8 +98,8 @@ private:
      * @return            true:  if all nonlinear solvers convergence.
      *                    false: if any of nonlinear solvers divergences.
      */
-    bool solveUncoupledEquationSystems(const double t, const double dt,
-                                       const std::size_t timestep_id);
+    NumLib::NonlinearSolverStatus solveUncoupledEquationSystems(
+        const double t, const double dt, const std::size_t timestep_id);
 
     /**
      * \brief Member to solver coupled systems of equations by the staggered
@@ -111,7 +111,7 @@ private:
      * @return            true:   if all nonlinear solvers convergence.
      *                    false:  if any of nonlinear solvers divergences.
      */
-    bool solveCoupledEquationSystemsByStaggeredScheme(
+    NumLib::NonlinearSolverStatus solveCoupledEquationSystemsByStaggeredScheme(
         const double t, const double dt, const std::size_t timestep_id);
 
     /**

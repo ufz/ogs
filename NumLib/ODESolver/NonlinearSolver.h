@@ -14,6 +14,7 @@
 #include <logog/include/logog.hpp>
 
 #include "ConvergenceCriterion.h"
+#include "NonlinearSolverStatus.h"
 #include "NonlinearSystem.h"
 #include "Types.h"
 
@@ -53,7 +54,8 @@ public:
      * \retval true if the equation system could be solved
      * \retval false otherwise
      */
-    virtual bool solve(GlobalVector& x,
+    virtual NonlinearSolverStatus solve(
+        GlobalVector& x,
         std::function<void(int, GlobalVector const&)> const&
             postIterationCallback) = 0;
 
@@ -105,7 +107,8 @@ public:
 
     void assemble(GlobalVector const& x) const override;
 
-    bool solve(GlobalVector& x,
+    NonlinearSolverStatus solve(
+        GlobalVector& x,
         std::function<void(int, GlobalVector const&)> const&
             postIterationCallback) override;
 
@@ -164,7 +167,8 @@ public:
 
     void assemble(GlobalVector const& x) const override;
 
-    bool solve(GlobalVector& x,
+    NonlinearSolverStatus solve(
+        GlobalVector& x,
         std::function<void(int, GlobalVector const&)> const&
             postIterationCallback) override;
 
