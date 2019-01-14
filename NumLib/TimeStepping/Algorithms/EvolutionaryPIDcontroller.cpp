@@ -20,7 +20,8 @@
 
 namespace NumLib
 {
-bool EvolutionaryPIDcontroller::next(const double solution_error)
+bool EvolutionaryPIDcontroller::next(double const solution_error,
+                                     int const /*number_iterations*/)
 {
     const bool is_previous_step_accepted = _is_accepted;
 

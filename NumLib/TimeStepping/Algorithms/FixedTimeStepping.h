@@ -58,7 +58,7 @@ public:
                       const std::vector<double>& vec_all_dt);
 
     /// move to the next time step
-    bool next(const double solution_error) override;
+    bool next(double solution_error, int number_iterations) override;
 
     /// return if current time step is accepted
     bool accepted() const override { return true; }

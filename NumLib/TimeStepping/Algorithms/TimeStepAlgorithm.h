@@ -90,8 +90,9 @@ public:
 
     /// move to the next time step
     /// \param solution_error Solution error between two successive time steps.
+    /// \param number_iterations Number of non-linear iterations used.
     /// \return true if the next step exists
-    virtual bool next(const double solution_error) = 0;
+    virtual bool next(const double solution_error, int number_iterations) = 0;
 
     /// return if current time step is accepted or not
     virtual bool accepted() const = 0;

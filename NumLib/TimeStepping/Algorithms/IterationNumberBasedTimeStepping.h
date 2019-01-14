@@ -95,7 +95,7 @@ public:
     ~IterationNumberBasedTimeStepping() override = default;
 
     /// move to the next time step
-    bool next(double solution_error) override;
+    bool next(double solution_error, int number_iterations) override;
 
     /// return if the current step is accepted
     bool accepted() const override;

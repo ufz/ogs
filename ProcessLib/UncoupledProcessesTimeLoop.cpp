@@ -356,7 +356,8 @@ double UncoupledProcessesTimeLoop::computeTimeStepping(
             timestepper->setAcceptedOrNot(false);
         }
 
-        if (!timestepper->next(solution_error) &&
+        if (!timestepper->next(solution_error,
+                               ppd.nonlinear_solver_status.number_iterations) &&
             // In case of FixedTimeStepping, which makes timestepper->next(...)
             // return false when the ending time is reached.
             t + std::numeric_limits<double>::epsilon() < timestepper->end())

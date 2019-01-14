@@ -36,8 +36,11 @@ IterationNumberBasedTimeStepping::IterationNumberBasedTimeStepping(
     assert(iter_times_vector.size() == multiplier_vector.size());
 }
 
-bool IterationNumberBasedTimeStepping::next(double const /*solution_error*/)
+bool IterationNumberBasedTimeStepping::next(double const /*solution_error*/,
+                                            int const number_iterations)
 {
+    _iter_times = number_iterations;
+
     // check current time step
     if (std::abs(_ts_current.current() - end()) <
         std::numeric_limits<double>::epsilon())
@@ -59,6 +62,7 @@ bool IterationNumberBasedTimeStepping::next(double const /*solution_error*/)
     // prepare the next time step info
     _ts_current = _ts_prev;
     _ts_current += getNextTimeStepSize();
+    _iter_times = 0;
 
     return true;
 }
