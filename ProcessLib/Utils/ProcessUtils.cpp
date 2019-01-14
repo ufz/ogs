@@ -70,7 +70,7 @@ std::vector<std::reference_wrapper<ProcessVariable>> findProcessVariables(
 
     auto var_names = pv_config.getConfigParameterList<std::string>(tag);
 
-    if (var_names.size() == 0)
+    if (var_names.empty())
         OGS_FATAL("Config tag <%s> is not found.", tag.c_str());
 
     // collect variable names to check if there are duplicates
