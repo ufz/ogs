@@ -73,8 +73,7 @@ std::vector<std::reference_wrapper<ProcessVariable>> findProcessVariables(
     if (var_names.empty())
         OGS_FATAL("Config tag <%s> is not found.", tag.c_str());
 
-    // collect variable names to check if there are duplicates
-    std::set<std::string> cached_var_names;
+    std::vector<std::string> cached_var_names;
 
     for (std::string const& var_name : var_names)
     {
@@ -96,8 +95,11 @@ std::vector<std::reference_wrapper<ProcessVariable>> findProcessVariables(
 
         vars.emplace_back(const_cast<ProcessVariable&>(*variable));
 
-        cached_var_names.insert(var_name);
+        cached_var_names.push_back(var_name);
     }
+
+    // Eliminate duplicates in the set of variable names
+    BaseLib::makeVectorUnique(cached_var_names);
 
     if (cached_var_names.size() != var_names.size())
         OGS_FATAL("Found duplicates with config tag <%s>.", tag.c_str());
