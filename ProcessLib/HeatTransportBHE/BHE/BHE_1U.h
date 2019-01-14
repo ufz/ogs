@@ -165,7 +165,7 @@ private:
 
 public:
     /// If BHE uses python boundary condition
-    bool bhe_if_use_python_bc = false;
+    const bool bhe_if_use_python_bc;
 };
 }  // namespace BHE
 }  // namespace HeatTransportBHE

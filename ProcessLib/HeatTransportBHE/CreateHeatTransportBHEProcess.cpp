@@ -192,13 +192,14 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
         if (bhe_type == "1U")
         {
             bhes.push_back(BHE::createBHE1U(bhe_config, curves));
+            BHE::BHE_1U indivisual_bhe = boost::get<BHE::BHE_1U>(bhes[0]); 
             continue;
         }
 
         OGS_FATAL("Unknown BHE type '%s'.", bhe_type.c_str());
     }
     // end of reading BHE parameters -------------------------------------------
-
+    
 
     //! Python object computing BC values.
     HeatTransportBHEProcessData* process_data;
