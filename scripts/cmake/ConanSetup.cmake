@@ -31,6 +31,7 @@ endif()
 include(${PROJECT_SOURCE_DIR}/scripts/cmake/conan/conan.cmake)
 
 set(CONAN_REQUIRES
+    boost_dynamic_bitset/1.66.0@bincrafters/stable
     boost_optional/1.66.0@bincrafters/stable
     boost_property_tree/1.66.0@bincrafters/stable
     Eigen3/3.3.4@bilke/stable
