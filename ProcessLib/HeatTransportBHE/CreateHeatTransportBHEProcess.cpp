@@ -191,8 +191,8 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
         {
             bhes.push_back(BHE::createBHE1U(bhe_config, curves));
             // find if bhe uses python boundary condition
-            BHE::BHE_1U indivisual_bhe = boost::get<BHE::BHE_1U>(bhes[0]);
-            if (indivisual_bhe.bhe_if_use_python_bc == true)
+            BHE::BHE_1U individual_bhe = boost::get<BHE::BHE_1U>(bhes[0]);
+            if (individual_bhe.bhe_if_use_python_bc == true)
             {
                 if_bhe_network_exist_python_bc = true;
             }
@@ -263,19 +263,10 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
 
         // here calls the tespyHydroSolver to get the pipe flow velocity in bhe
         // network, and replace the value in flow velocity Matrix _u
-        auto const tespy_flow_velocity =
+        auto const tespy_flow_rate =
             std::get<1>(process_data->py_bc_object->tespyHydroSolver());
-        const std::size_t n_bhe = tespy_flow_velocity.size();
-        // for (std::size_t i = 0; i < n_bhe; i++)
-        //{
-        //     1U type:
-        //     for (std::size_t j = 0; j < 4; j++)
-        //               {
-        //        auto tmp = tespy_flow_velocity[i];
-        //        process_data->_vec_BHE_property[i]->replaceFlowVelocity(
-        //            j, tmp);
-        //    }
-        //}
+        const std::size_t n_bhe = tespy_flow_rate.size();
+        //TODO the flow_rate in OGS should be updated from the flow_rate computed by TESPy here.
     }
     SecondaryVariableCollection secondary_variables;
 
