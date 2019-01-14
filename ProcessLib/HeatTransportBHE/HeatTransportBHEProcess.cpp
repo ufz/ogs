@@ -279,10 +279,7 @@ void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
             for (auto const& in_out_component_id :
                  bhe.inflow_outflow_bc_component_ids)
             {
-                auto bhe_if_use_python_bc = apply_visitor(
-                    [](auto const& bhe) { return bhe.bhe_if_use_python_bc; },
-                    _process_data._vec_BHE_property[bhe_i]);
-                if (bhe_if_use_python_bc == true)
+                if ( bhe.bhe_if_use_python_bc == true)
                 // call BHEPythonBoundarycondition
                 {
                     // Top, inflow.
@@ -290,7 +287,7 @@ void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
                         ProcessLib::createBHEInflowPythonBoundaryCondition(
                             get_global_bhe_bc_indices(bc_top_node_id,
                                                       in_out_component_id),
-                             _process_data.py_bc_object));
+                            bhe, _process_data.py_bc_object));
 
                     // Bottom, outflow.
                     bcs.addBoundaryCondition(

@@ -170,10 +170,8 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
     // reading BHE parameters --------------------------------------------------
     std::vector<BHE::BHETypes> bhes;
 
-    // find if bhe uses python boundary condition
-    const bool if_bhe_network_exist_python_bc =
-        //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__if_bhe_network_exist_python_bc}
-        config.getConfigParameter<bool>("if_bhe_network_exist_python_bc");
+    // bhe array network parameter.
+    bool if_bhe_network_exist_python_bc = false;
 
     auto const& bhe_configs =
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers}
@@ -192,7 +190,12 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
         if (bhe_type == "1U")
         {
             bhes.push_back(BHE::createBHE1U(bhe_config, curves));
-            BHE::BHE_1U indivisual_bhe = boost::get<BHE::BHE_1U>(bhes[0]); 
+            // find if bhe uses python boundary condition
+            BHE::BHE_1U indivisual_bhe = boost::get<BHE::BHE_1U>(bhes[0]);
+            if (indivisual_bhe.bhe_if_use_python_bc == true)
+            {
+                if_bhe_network_exist_python_bc = true;
+            }
             continue;
         }
 
