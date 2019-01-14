@@ -100,6 +100,8 @@ public:
     /// return if the current step is accepted
     bool accepted() const override;
 
+    bool isSolutionErrorComputationNeeded() override { return true; }
+
     /// set the number of iterations
     void setIterationNumber(int const n_itr) { _iter_times = n_itr; }
     /// return the number of repeated steps
