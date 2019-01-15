@@ -96,15 +96,7 @@ double IterationNumberBasedTimeStepping::getNextTimeStepSize() const
         dt = _ts_prev.dt() * multiplier;
     }
 
-    // check whether out of the boundary
-    if (dt < _min_dt)
-    {
-        dt = _min_dt;
-    }
-    else if (dt > _max_dt)
-    {
-        dt = _max_dt;
-    }
+    dt = std::min(std::max(dt, _min_dt), _max_dt);
 
     double const t_next = dt + _ts_prev.current();
     if (t_next > end())
