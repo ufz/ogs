@@ -1,2 +1,2 @@
 T_max;T_min;T_unit;fluids;h_max;h_min;h_unit;m_unit;p_max;p_min;p_unit
-373.15;273.25;K;['TTSE::water'];1000;1;kJ / kg;kg / s;100;1;bar
+373.15;273.25;K;['water'];1000;1;kJ / kg;kg / s;100;1;bar

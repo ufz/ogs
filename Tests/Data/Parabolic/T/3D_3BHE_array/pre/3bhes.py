@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 import math
 # %% network
-btes = nwk.network(fluids=['TTSE::water'],
+btes = nwk.network(fluids=['water'],
 				 T_unit='K', p_unit='bar', h_unit='kJ / kg',
 				 T_range=[273.25, 373.15], p_range=[1, 100], h_range=[1, 1000])
 
@@ -65,7 +65,7 @@ btes.add_conns(fc_p1, p1_sp, sp_bhe1, sp_bhe2, sp_bhe3, bhe1_mg, bhe2_mg, bhe3_m
 # busses
 
 heat = con.bus('consumer heat demand')
-heat.add_comps([cons, 1])
+heat.add_comps({'c': cons, 'p': 'P'})
 btes.add_busses(heat)   
 
 # provide volumetric flow in m^3 / s
@@ -103,7 +103,7 @@ p1.set_attr( flow_char=f)
 #    inflow_temp = 283.15#unit:K273.15
 inflow_head = 2 #bar
 
-fc_p1.set_attr(p=inflow_head, fluid={'TTSE::water': 1})
+fc_p1.set_attr(p=inflow_head, fluid={'water': 1})
 
 #p1_sp.set_attr(h=con.ref(fc_p1, 1, 0))
 #parametrization
@@ -143,7 +143,7 @@ cons_fc.set_attr(p=con.ref(fc_p1, 1, 0))
 heat.set_attr(P=-4500) #W
 
 #solve
-btes.set_printoptions(print_level='none')
+btes.set_printoptions(print_level='info')
 btes.solve('design')
 #-----------------------------------------------------------------------------------------------------
 # solving and save new global temperature distribution to df
