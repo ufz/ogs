@@ -66,8 +66,9 @@ public:
      * \retval false otherwise
      */
     template <typename Callback>
-    bool loop(const double t0, GlobalVector const& x0, const double t_end,
-              const double delta_t, Callback& post_timestep);
+    NumLib::NonlinearSolverStatus loop(const double t0, GlobalVector const& x0,
+                                       const double t_end, const double delta_t,
+                                       Callback& post_timestep);
 
 private:
     TDiscODESys& _ode_sys;
@@ -80,13 +81,12 @@ private:
 
 template <NonlinearSolverTag NLTag>
 template <typename Callback>
-bool TimeLoopSingleODE<NLTag>::loop(const double t0, GlobalVector const& x0,
-                                    const double t_end, const double delta_t,
-                                    Callback& post_timestep)
+NumLib::NonlinearSolverStatus TimeLoopSingleODE<NLTag>::loop(
+    const double t0, GlobalVector const& x0, const double t_end,
+    const double delta_t, Callback& post_timestep)
 {
     // solution vector
-    GlobalVector& x =
-        NumLib::GlobalVectorProvider::provider.getVector(x0);
+    GlobalVector& x = NumLib::GlobalVectorProvider::provider.getVector(x0);
 
     auto& time_disc = _ode_sys.getTimeDiscretization();
 
@@ -104,7 +104,7 @@ bool TimeLoopSingleODE<NLTag>::loop(const double t0, GlobalVector const& x0,
 
     double t;
     unsigned timestep = 0;
-    bool nl_slv_succeeded = true;
+    NumLib::NonlinearSolverStatus nonlinear_solver_status = {false, 0};
     for (t = t0 + delta_t; t < t_end + std::numeric_limits<double>::epsilon();
          t = t0 + (timestep + 1) * delta_t)
     {
@@ -113,8 +113,8 @@ bool TimeLoopSingleODE<NLTag>::loop(const double t0, GlobalVector const& x0,
         // INFO("time: %e, delta_t: %e", t, delta_t);
         time_disc.nextTimestep(t, delta_t);
 
-        nl_slv_succeeded = _nonlinear_solver->solve(x, nullptr);
-        if (!nl_slv_succeeded)
+        nonlinear_solver_status = _nonlinear_solver->solve(x, nullptr);
+        if (!nonlinear_solver_status.error_norms_met)
             break;
 
         time_disc.pushState(t, x, _ode_sys);
@@ -127,10 +127,10 @@ bool TimeLoopSingleODE<NLTag>::loop(const double t0, GlobalVector const& x0,
 
     NumLib::GlobalVectorProvider::provider.releaseVector(x);
 
-    if (!nl_slv_succeeded)
+    if (!nonlinear_solver_status.error_norms_met)
     {
         ERR("Nonlinear solver failed in timestep #%u at t = %g s", timestep, t);
     }
-    return nl_slv_succeeded;
+    return nonlinear_solver_status;
 }
-}
+}  // namespace NumLib

@@ -50,8 +50,9 @@ TEST(NumLibTimeStepping, testEvolutionaryPIDcontroller)
     auto const PIDStepper = createTestTimeStepper(xml);
 
     double solution_error = 0.;
+    int const number_iterations = 0;
     // 1st step
-    ASSERT_TRUE(PIDStepper->next(solution_error));
+    ASSERT_TRUE(PIDStepper->next(solution_error, number_iterations));
     NumLib::TimeStep ts = PIDStepper->getTimeStep();
     double h_new = 0.01;
     double t_previous = 0.;
@@ -64,7 +65,7 @@ TEST(NumLibTimeStepping, testEvolutionaryPIDcontroller)
 
     // e_n_minus1 is filled.
     solution_error = 1.0e-4;
-    PIDStepper->next(solution_error);
+    PIDStepper->next(solution_error, number_iterations);
     ts = PIDStepper->getTimeStep();
     h_new = ts.dt();
     ASSERT_EQ(2u, ts.steps());
@@ -76,7 +77,7 @@ TEST(NumLibTimeStepping, testEvolutionaryPIDcontroller)
 
     // e_n_minus2 is filled.
     solution_error = 0.5e-3;
-    PIDStepper->next(solution_error);
+    PIDStepper->next(solution_error, number_iterations);
     ts = PIDStepper->getTimeStep();
     h_new = ts.dt();
     ASSERT_EQ(3u, ts.steps());
@@ -86,7 +87,7 @@ TEST(NumLibTimeStepping, testEvolutionaryPIDcontroller)
 
     // error > TOL=1.3-3, step rejected and new step size estimated.
     solution_error = 0.01;
-    PIDStepper->next(solution_error);
+    PIDStepper->next(solution_error, number_iterations);
     ts = PIDStepper->getTimeStep();
     h_new = ts.dt();
     // No change in ts.steps
@@ -100,7 +101,7 @@ TEST(NumLibTimeStepping, testEvolutionaryPIDcontroller)
 
     // With e_n, e_n_minus1, e_n_minus2
     solution_error = 0.4e-3;
-    PIDStepper->next(solution_error);
+    PIDStepper->next(solution_error, number_iterations);
     ts = PIDStepper->getTimeStep();
     h_new = ts.dt();
     ASSERT_EQ(4u, ts.steps());

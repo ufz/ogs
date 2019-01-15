@@ -62,7 +62,6 @@ bool IterationNumberBasedTimeStepping::next(double const /*solution_error*/,
     // prepare the next time step info
     _ts_current = _ts_prev;
     _ts_current += getNextTimeStepSize();
-    _iter_times = 0;
 
     return true;
 }
