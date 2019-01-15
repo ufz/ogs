@@ -113,11 +113,11 @@ fc_p1.set_attr(p=inflow_head, fluid={'water': 1})
 #bhe2.set_attr(D=0.02733,L=100,ks=100,hydro_group ='HW', Q =0)
 #bhe3.set_attr(D=0.02733,L=100,ks=100,hydro_group ='HW', Q =0)
 
-bhe1.set_attr(D=0.02733,L=100,ks=100,hydro_group ='HW')
-bhe2.set_attr(D=0.02733,L=100,ks=100,hydro_group ='HW')
-bhe3.set_attr(D=0.02733,L=100,ks=100,hydro_group ='HW')
+bhe1.set_attr(D=0.02733,L=100,ks=100)
+bhe2.set_attr(D=0.02733,L=100,ks=100)
+bhe3.set_attr(D=0.02733,L=100,ks=100)
 
-cons.set_attr(D=0.025,L=100,ks=100,hydro_group ='HW')
+cons.set_attr(D=0.025,L=100,ks=100)
 #cons.set_attr(D=0.02733,L=100,ks=100,hydro_char ='HW', P=-18e3)
 
 #pump
@@ -143,7 +143,7 @@ cons_fc.set_attr(p=con.ref(fc_p1, 1, 0))
 heat.set_attr(P=-4500) #W
 
 #solve
-btes.set_printoptions(print_level='info')
+btes.set_printoptions(print_level='none')
 btes.solve('design')
 #-----------------------------------------------------------------------------------------------------
 # solving and save new global temperature distribution to df
