@@ -22,7 +22,8 @@ target_link_libraries(ProcessLibBoundaryConditionPython
 add_library(ProcessLibBoundaryConditionPythonModule
     PythonBoundaryConditionModule.cpp
     PythonBoundaryConditionModule.h
-    BHEInflowPythonBoundaryConditionModule.cpp)
+    BHEInflowPythonBoundaryConditionModule.cpp
+    BHEInflowPythonBoundaryConditionModule.h)
 if(BUILD_SHARED_LIBS)
     install(TARGETS ProcessLibBoundaryConditionPythonModule
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
