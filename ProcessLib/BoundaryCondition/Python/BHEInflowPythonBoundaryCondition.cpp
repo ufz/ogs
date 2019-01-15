@@ -1,26 +1,23 @@
 /**
  * \copyright
- * Copyright (c) 2012-2018, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
  */
 
-#include "BHEInflowPythonBoundaryCondition.h"
-#include "BaseLib/Error.h"
 #include <pybind11/pybind11.h>
-#include <iostream>
-
-#include "ProcessLib/Utils/CreateLocalAssemblers.h"
-#include "ProcessLib/Utils/ProcessUtils.h"
-#include "PythonBoundaryConditionLocalAssembler.h"
-
 #include <algorithm>
+#include <iostream>
 #include <logog/include/logog.hpp>
 #include <vector>
 
-
+#include "BHEInflowPythonBoundaryCondition.h"
+#include "BaseLib/Error.h"
+#include "ProcessLib/Utils/CreateLocalAssemblers.h"
+#include "ProcessLib/Utils/ProcessUtils.h"
+#include "PythonBoundaryConditionLocalAssembler.h"
 
 namespace ProcessLib
 {
@@ -30,12 +27,10 @@ BHEInflowPythonBoundaryCondition::BHEInflowPythonBoundaryCondition(
     : _in_out_global_indices(std::move(in_out_global_indices)),
       _py_bc_object(py_bc_object)
 {
-
     const auto g_idx_T_out = in_out_global_indices.second;
 
-    //store the bc node ids to BHE network dataframe
+    // store the bc node ids to BHE network dataframe
     std::get<3>(_py_bc_object->dataframe_network).emplace_back(g_idx_T_out);
-    
 }
 
 void BHEInflowPythonBoundaryCondition::getEssentialBCValues(
@@ -49,7 +44,7 @@ void BHEInflowPythonBoundaryCondition::getEssentialBCValues(
     const std::size_t n_bc_nodes =
         std::get<3>(_py_bc_object->dataframe_network).size();
 
-    //get T_out bc_id
+    // get T_out bc_id
     bc_values.ids[0] = _in_out_global_indices.second;
 
     auto const boundary_node_id = bc_values.ids[0];
@@ -67,7 +62,6 @@ void BHEInflowPythonBoundaryCondition::getEssentialBCValues(
             break;
         }
     }
-    
 }
 
 std::unique_ptr<BHEInflowPythonBoundaryCondition>
@@ -97,7 +91,6 @@ createBHEInflowPythonBoundaryCondition(
     }
 #endif  // USE_PETSC
     return std::make_unique<BHEInflowPythonBoundaryCondition>(
-        std::move(in_out_global_indices),  py_bc_object);
+        std::move(in_out_global_indices), py_bc_object);
 }
-
 }  // namespace ProcessLib

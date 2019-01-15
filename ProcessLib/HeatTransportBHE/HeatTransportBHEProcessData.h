@@ -42,7 +42,8 @@ struct HeatTransportBHEProcessData
         Parameter<double> const& density_gas_,
         std::vector<BHE::BHETypes>&& vec_BHEs_,
         bool const& if_bhe_network_exist_python_bc_,
-        BHEInflowPythonBoundaryConditionPythonSideInterface* py_bc_object_ = nullptr)
+        BHEInflowPythonBoundaryConditionPythonSideInterface* py_bc_object_ =
+            nullptr)
         : thermal_conductivity_solid(thermal_conductivity_solid_),
           thermal_conductivity_fluid(thermal_conductivity_fluid_),
           thermal_conductivity_gas(thermal_conductivity_gas_),

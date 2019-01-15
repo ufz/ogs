@@ -59,5 +59,4 @@ void pythonBindBoundaryCondition(pybind11::module& m)
              &PythonBoundaryConditionPythonSideInterface::getDirichletBCValue);
     pybc.def("getFlux", &PythonBoundaryConditionPythonSideInterface::getFlux);
 }
-
 }  // namespace ProcessLib

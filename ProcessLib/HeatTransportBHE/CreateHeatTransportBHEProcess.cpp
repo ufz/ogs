@@ -202,7 +202,6 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
         OGS_FATAL("Unknown BHE type '%s'.", bhe_type.c_str());
     }
     // end of reading BHE parameters -------------------------------------------
-    
 
     //! Python object computing BC values.
     HeatTransportBHEProcessData* process_data;
@@ -225,8 +224,6 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
     // creat a pythonBoundaryCondition object
     else
     {
-        BHEInflowPythonBoundaryConditionPythonSideInterface* py_bc_object;
-
         // Evaluate Python code in scope of main module
         pybind11::object scope =
             pybind11::module::import("__main__").attr("__dict__");
@@ -266,7 +263,8 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
         auto const tespy_flow_rate =
             std::get<1>(process_data->py_bc_object->tespyHydroSolver());
         const std::size_t n_bhe = tespy_flow_rate.size();
-        //TODO the flow_rate in OGS should be updated from the flow_rate computed by TESPy here.
+        // TODO the flow_rate in OGS should be updated from the flow_rate
+        // computed by TESPy here.
     }
     SecondaryVariableCollection secondary_variables;
 
