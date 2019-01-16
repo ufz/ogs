@@ -59,7 +59,7 @@ btes.add_conns(fc_p1, p1_sp, sp_bhe1, sp_bhe2, sp_bhe3, bhe1_mg, bhe2_mg, bhe3_m
 # busses
 heat = con.bus('consumer heat demand')
 heat.add_comps({'c': cons, 'p': 'P'})
-btes.add_busses(heat)   
+btes.add_busses(heat)
 
 # flow_char
 # provide volumetric flow in m^3 / s
@@ -118,7 +118,7 @@ bhe3_mg.set_attr(T= 283.15)
 # consumer heat demand
 heat.set_attr(P=-4500) #W
 
-#from consumer outflow parameter 
+#from consumer outflow parameter
 cons_fc.set_attr(p=con.ref(fc_p1, 1, 0))
 
 #solve

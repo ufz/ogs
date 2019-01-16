@@ -21,7 +21,7 @@ def get_hydraulics():
     refrig_density = 992.92 #kg/m3
     #solve imported network
     nw.solve(mode='design', design_file='pre/tespy_nw/results.csv', init_file='pre/tespy_nw/results.csv')
-    #get flowrate #kg/s 
+    #get flowrate #kg/s
     for i in range(n_BHE):
         for c in nw.conns.index:
             if c.t.label == data_index[i]:#t:inlet comp, s:outlet comp
@@ -37,7 +37,7 @@ def get_thermal():
         createVar['outlet_BHE'+ str(i+1)].set_attr( T= df.loc[data_index[i],'Tout_val'])
 
     # solving network
-    nw.solve(mode='design')    
+    nw.solve(mode='design')
 
     #get Tin_val
     for i in range(n_BHE):
@@ -89,7 +89,7 @@ n_BHE = np.size(df.iloc[:,0])
 data_index = df.index.tolist()
 
 #create global variables of the components label and connections label in network
-createVar = locals() 
+createVar = locals()
 
 data_index = df.index.tolist()
 for i in range(n_BHE):
