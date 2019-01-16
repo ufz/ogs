@@ -39,10 +39,9 @@ void BHEInflowPythonBoundaryCondition::getEssentialBCValues(
 {
     bc_values.ids.resize(1);
     bc_values.values.resize(1);
-
+    auto const& data_exchange = _py_bc_object->dataframe_network;
     // get the number of all boundary nodes
-    const std::size_t n_bc_nodes =
-        std::get<3>(_py_bc_object->dataframe_network).size();
+    const std::size_t n_bc_nodes = std::get<3>(data_exchange).size();
 
     // get T_out bc_id
     bc_values.ids[0] = _in_out_global_indices.second;
@@ -52,10 +51,8 @@ void BHEInflowPythonBoundaryCondition::getEssentialBCValues(
     // return T_in from currently BHE dataframe column 2
     for (std::size_t i = 0; i < n_bc_nodes; i++)
     {
-        auto const dataframe_node_id =
-            std::get<3>(_py_bc_object->dataframe_network);
-        auto const dataframe_Tin_val =
-            std::get<1>(_py_bc_object->dataframe_network);
+        auto const dataframe_node_id = std::get<3>(data_exchange);
+        auto const dataframe_Tin_val = std::get<1>(data_exchange);
         if (dataframe_node_id[i] == boundary_node_id)
         {
             bc_values.values[0] = dataframe_Tin_val[i];
