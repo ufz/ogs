@@ -111,10 +111,12 @@ pipeline {
                 excludeFile('.*qrc_icons\\.cpp.*'), excludeFile('.*QVTKWidget.*')],
                 tools: [gcc4(name: 'GCC', pattern: 'build/build.log')],
                 unstableTotalAll: 3
-              // TODO: .*DOT_GRAPH_MAX_NODES.
-              //       .*potential recursive class relation.*
-              recordIssues tools: [doxygen(pattern: 'build/DoxygenWarnings.log')],
-                unstableTotalAll: 25
+              recordIssues filters: [
+                  excludeFile('-'), excludeFile('.*Functional\\.h'),
+                  excludeFile('.*gmock-.*\\.h'), excludeFile('.*gtest-.*\\.h')
+                ],
+                tools: [doxygen(pattern: 'build/DoxygenWarnings.log')],
+                failedTotalAll: 1
             }
             success {
               publishHTML(target: [allowMissing: false, alwaysLinkToLastBuild: true,
