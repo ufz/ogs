@@ -51,6 +51,8 @@ void BHEInflowPythonBoundaryCondition::getEssentialBCValues(
     // return T_in from currently BHE dataframe column 2
     for (std::size_t i = 0; i < n_bc_nodes; i++)
     {
+
+        // auto pair_flag_value = _bc_data.bc_object->getDirichletBCValue(boundary_node_id);
         auto const dataframe_node_id = std::get<3>(data_exchange);
         auto const dataframe_Tin_val = std::get<1>(data_exchange);
         if (dataframe_node_id[i] == boundary_node_id)
