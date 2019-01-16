@@ -1,4 +1,5 @@
 /**
+ * \file
  * \author Norihiro Watanabe
  * \date   2012-08-03
  *
@@ -57,11 +58,10 @@ public:
     FixedTimeStepping(double t_initial, double t_end,
                       const std::vector<double>& vec_all_dt);
 
-    /// move to the next time step
     bool next(double solution_error, int number_iterations) override;
 
-    /// return if current time step is accepted
     bool accepted() const override { return true; }
+
 private:
     /// determine true end time
     static double computeEnd(double t_initial, double t_end,

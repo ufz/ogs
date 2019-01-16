@@ -19,7 +19,7 @@
 namespace NumLib
 {
 /**
- * \brief Iteration number based adaptive time stepping
+ * \brief Iteration number based adaptive time stepping.
  *
  * This algorithm estimates a time step size depending on the number of
  * iterations (e.g. of iterative linear solvers, nonlinear methods, partitioned
@@ -67,8 +67,6 @@ class IterationNumberBasedTimeStepping final : public TimeStepAlgorithm
 {
 public:
     /**
-     * Constructor
-     *
      * @param t_initial             start time
      * @param t_end                 end time
      * @param min_dt                the minimum allowed time step size
@@ -94,37 +92,35 @@ public:
 
     ~IterationNumberBasedTimeStepping() override = default;
 
-    /// move to the next time step
     bool next(double solution_error, int number_iterations) override;
 
-    /// return if the current step is accepted
     bool accepted() const override;
 
     bool isSolutionErrorComputationNeeded() override { return true; }
 
-    /// return the number of repeated steps
+    /// Return the number of repeated steps.
     int getNumberOfRepeatedSteps() const { return _n_rejected_steps; }
 
 private:
-    /// calculate the next time step size
+    /// Calculate the next time step size.
     double getNextTimeStepSize() const;
 
-    /// this vector stores the number of iterations to which the respective
-    /// multiplier coefficient will be applied
+    /// This vector stores the number of iterations to which the respective
+    /// multiplier coefficient will be applied.
     const std::vector<int> _iter_times_vector;
-    /// this vector stores the multiplier coefficients
+    /// This vector stores the multiplier coefficients.
     const std::vector<double> _multiplier_vector;
-    /// the minimum allowed time step size
+    /// The minimum allowed time step size.
     const double _min_dt;
-    /// the maximum allowed time step size
+    /// The maximum allowed time step size.
     const double _max_dt;
-    /// initial time step size
+    /// Initial time step size.
     const double _initial_dt;
-    /// the maximum allowed iteration number to accept current time step
+    /// The maximum allowed iteration number to accept current time step.
     const int _max_iter;
-    /// the number of nonlinear iterations
+    /// The number of nonlinear iterations.
     int _iter_times = 0;
-    /// the number of rejected steps
+    /// The number of rejected steps.
     int _n_rejected_steps = 0;
 };
 

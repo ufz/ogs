@@ -28,7 +28,7 @@ bool EvolutionaryPIDcontroller::next(double const solution_error,
     const double e_n = solution_error;
     const double zero_threshlod = std::numeric_limits<double>::epsilon();
     // step rejected.
-    if (e_n > _tol)  // e_n < TOL
+    if (e_n > _tol)
     {
         _is_accepted = false;
 
@@ -167,4 +167,4 @@ void EvolutionaryPIDcontroller::addFixedOutputTimes(
     // Remove possible duplicated elements and sort in descending order.
     BaseLib::makeVectorUnique(_fixed_output_times, std::greater<double>());
 }
-}  // end of namespace NumLib
+}  // namespace NumLib

@@ -71,28 +71,17 @@ public:
     {
     }
 
-    /**
-     * move to the next time step
-     * @param solution_error \f$e_n\f$, solution error between two successive
-                              time steps.
-     * @return true if the next step exists
-     */
     bool next(double solution_error, int number_iterations) override;
 
-    /// return if current time step is accepted
     bool accepted() const override { return _is_accepted; }
-    /// Set the status of the step
-    /// \param accepted A flag for whether the step is accepted or not
+
     void setAcceptedOrNot(const bool accepted) override
     {
         _is_accepted = accepted;
     }
 
-    /// Get a flag to indicate that this algorithm need to compute
-    /// solution error.
     bool isSolutionErrorComputationNeeded() override { return true; }
 
-    /// \copydoc NumLib::TimeStepAlgorithm::addFixedOutputTimes
     void addFixedOutputTimes(
         std::vector<double> const& extra_fixed_output_times) override;
 

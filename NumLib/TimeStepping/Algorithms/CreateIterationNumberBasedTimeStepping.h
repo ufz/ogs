@@ -27,4 +27,4 @@ namespace NumLib
 /// configuration.
 std::unique_ptr<TimeStepAlgorithm> createIterationNumberBasedTimeStepping(
     BaseLib::ConfigTree const& config);
-}  // end of namespace NumLib
+}  // namespace NumLib

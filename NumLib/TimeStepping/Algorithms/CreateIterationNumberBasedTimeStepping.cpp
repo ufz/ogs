@@ -47,4 +47,4 @@ std::unique_ptr<TimeStepAlgorithm> createIterationNumberBasedTimeStepping(
         t_initial, t_end, minimum_dt, maximum_dt, initial_dt,
         std::move(number_iterations), std::move(multiplier));
 }
-}  // end of namespace NumLib
+}  // namespace NumLib
