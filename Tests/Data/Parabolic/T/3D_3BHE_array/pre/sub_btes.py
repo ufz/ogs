@@ -31,7 +31,6 @@ class btes_para(subsys.subsystem):
         self.subsys_init()
         self.set_attr(**kwargs)
 
-
     def attr(self):
 
         values = ([n for n in subsys.subsystem.attr(self) if
@@ -42,20 +41,6 @@ class btes_para(subsys.subsystem):
             # BTES
             values += ['Q' + j, 'pr' + j, 'T_out' + j, 'T_in' + j ,'L_bhe'+ j,
                        'ks_bhe'+ j,'D_bhe'+ j,'hydro_group']
-
-#            # pipe feed flow (from BTES)
-#            values += ['pr_pf' + j, 'Q_pf' + j, 'dT_pf' + j,
-#                       'L_pf' + j, 'ks_pf' + j, 'D_pf' + j]
-
-#            # pipe back flow (to BTES)
-#            values += ['pr_pb' + j, 'Q_pb' + j, 'dT_pb' + j,
-#                       'L_pb' + j, 'ks_pb' + j, 'D_pb' + j]
-
-#        # ambient temperature
-#        values += ['t_a', 't_a_design']
-#
-#        # subsurface temperature
-#        values +=[ 't_sub', 't_sub_design']
 
         return values
 
@@ -68,10 +53,7 @@ class btes_para(subsys.subsystem):
         self.outlet = cmp.subsys_interface(label=self.label + '_outlet',
                                            num_inter=self.num_o)
 
-#        self.vessel = []
         self.btes = []
-#        self.pipe_feed = []
-#        self.pipe_back = []
 
         self.splitter = cmp.splitter(label=self.label + '_splitter',
                                      num_out=self.num_btes)
@@ -83,12 +65,6 @@ class btes_para(subsys.subsystem):
             self.btes += [cmp.heat_exchanger_simple(label=self.label +
                                                     '_' + j,
                                                     offdesign=['zeta', 'kA'])]
-#            self.pipe_feed += [cmp.pipe(label=self.label +
-#                                        '_pipe feed_' + j,
-#                                        offdesign=['zeta', 'kA'])]
-#            self.pipe_back += [cmp.pipe(label=self.label +
-#                                        '_pipe back_' + j,
-#                                        offdesign=['zeta', 'kA'])]
 
     def set_comps(self):
 
@@ -100,24 +76,6 @@ class btes_para(subsys.subsystem):
                                   L=self.get_attr('L_bhe' + j),
                                   ks=self.get_attr('ks_bhe' + j),
                                   hydro_group=self.get_attr('hydro_group'))
-#                                  t_a_design=self.get_attr('t_sub_design'),
-#                                  t_a=self.get_attr('t_sub'))
-
-#            self.pipe_feed[i].set_attr(pr=self.get_attr('pr_pf' + j),
-#                                       Q=self.get_attr('Q_pf' + j),
-#                                       D=self.get_attr('D_pf' + j),
-#                                       L=self.get_attr('L_pf' + j),
-#                                       ks=self.get_attr('ks_pf' + j))
-##                                       t_a_design=self.get_attr('t_a_design'),
-##                                       t_a=self.get_attr('t_a'))
-#
-#            self.pipe_back[i].set_attr(pr=self.get_attr('pr_pb' + j),
-#                                       Q=self.get_attr('Q_pb' + j),
-#                                       D=self.get_attr('D_pb' + j),
-#                                       L=self.get_attr('L_pb' + j),
-#                                       ks=self.get_attr('ks_pb' + j))
-##                                       t_a_design=self.get_attr('t_a_design'),
-##                                       t_a=self.get_attr('t_a'))
 
     def create_conns(self):
 
@@ -130,27 +88,6 @@ class btes_para(subsys.subsystem):
 
         for i in range(self.num_btes):
             j = str(i + 1)
-#            if i > 0:
-#                # mass flow distributes equally to all pipes
-#                self.conns += [con.connection(self.splitter, 'out' + j,
-#                                              self.pipe_back[i], 'in1',
-#                                              m=con.ref(self.conns[0],
-#                                                        1 / self.num_btes, 0))]
-#            else:
-#                self.conns += [con.connection(self.splitter, 'out' + j,
-#                                              self.pipe_back[i], 'in1')]
-
-#            self.conns += [con.connection(self.splitter, 'out' + j,
-#                                          self.pipe_back[i], 'in1')]
-
-#            self.conns += [con.connection(self.pipe_back[i], 'out1',
-#                                          self.btes[i], 'in1',
-#                                          design=['T'])]
-#            self.conns += [con.connection(self.btes[i], 'out1',
-#                                          self.pipe_feed[i], 'in1',
-#                                          design=['T'])]
-#            self.conns += [con.connection(self.pipe_feed[i], 'out1',
-#                                          self.merge, 'in' + j)]
 
             self.conns += [con.connection(self.splitter, 'out' + j,
                                           self.btes[i], 'in1')]
@@ -180,50 +117,3 @@ class btes_para(subsys.subsystem):
             inc.set_attr(T=self.get_attr('T_in' + j))
             outc.set_attr(T=self.get_attr('T_out' + j))
             i += 1
-
-#        i = 0
-#        for pipe in self.pipe_feed:
-#            j = str(i)
-#
-#            inc = pd.DataFrame()
-#            inc['t'] = self.nw.conns.t == pipe
-#            inc['t_id'] = self.nw.conns.t_id == 'in1'
-#            c, cid = inc['t'] == True, inc['t_id'] == True
-#            inc = inc.index[c & cid][0]
-#
-#            outc = pd.DataFrame()
-#            outc['s'] = self.nw.conns.s == pipe
-#            outc['s_id'] = self.nw.conns.s_id == 'out1'
-#            c, cid = outc['s'] == True, outc['s_id'] == True
-#            outc = outc.index[c & cid][0]
-#
-#            if self.get_attr('dT_pf' + j + '_set'):
-#                inc.set_attr(T=con.ref(outc, 1,
-#                                       self.get_attr('dT_pf' + j)))
-#            else:
-#                inc.set_attr(T=np.nan)
-#            i += 1
-#
-#        i = 0
-#        for pipe in self.pipe_back:
-#            j = str(i)
-#
-#            inc = pd.DataFrame()
-#            inc['t'] = self.nw.conns.t == pipe
-#            inc['t_id'] = self.nw.conns.t_id == 'in1'
-#            c, cid = inc['t'] == True, inc['t_id'] == True
-#            inc = inc.index[c & cid][0]
-#
-#            outc = pd.DataFrame()
-#            outc['s'] = self.nw.conns.s == pipe
-#            outc['s_id'] = self.nw.conns.s_id == 'out1'
-#            c, cid = outc['s'] == True, outc['s_id'] == True
-#            outc = outc.index[c & cid][0]
-#
-#            if self.get_attr('dT_pb' + j + '_set'):
-#                outc.set_attr(T=con.ref(inc, 1,
-#                              -self.get_attr('dT_pb' + j)))
-#            else:
-#                outc.set_attr(T=np.nan)
-#            i += 1
-#

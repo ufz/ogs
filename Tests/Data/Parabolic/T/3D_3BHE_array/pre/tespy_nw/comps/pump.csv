@@ -1,2 +1,2 @@
 label;cp;busses;bus_param;bus_P_ref;bus_char;mode;design;offdesign;P;P_set;P_var;eta_s;eta_s_set;eta_s_var;pr;pr_set;pr_var;Sirr;Sirr_set;Sirr_var;eta_s_char;eta_s_char_set;eta_s_char_method;eta_s_char_param;flow_char;flow_char_set;flow_char_method;flow_char_param
-pump;pump;[];[];[];[];auto;['pr', 'eta_s'];['eta_s_char'];23.584463270893032;False;False;0.9000000009468131;True;False;1.238897994208993;False;False;0.008400977093005078;False;False;0x00000275851162B0;False;default;nan;0x0000027585116320;True;default;nan
+pump;pump;[];[];[];[];auto;['pr', 'eta_s'];['eta_s_char'];23.584463270893032;False;False;0.9000000009468131;True;False;1.238897994208993;False;False;0.008400977093005078;False;False;0x000001EF72576358;False;default;nan;0x000001EF725763C8;True;default;nan
