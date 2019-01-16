@@ -97,30 +97,11 @@ TEST(NumLib, TimeSteppingIterationNumberBased2)
                                                  std::move(iter_times_vector),
                                                  std::move(multiplier_vector));
 
-    std::vector<int> nr_iterations = {2, 2, 2, 4, 6, 8, 4, 4, 2, 2};
-    const std::vector<double> expected_vec_t = {1, 2, 4, 8, 16, 24, 26, 28, 30, 31};
+    std::vector<int> nr_iterations = {0, 2, 2, 2, 4, 6, 8, 4, 4, 2, 2};
+    const std::vector<double> expected_vec_t = {1,  2,  4,  8,  16,
+                                                24, 28, 28, 30, 31};
 
-    struct IterationNumberUpdate
-    {
-        IterationNumberUpdate(std::vector<int> vec, std::size_t& counter)
-            : _nr_iterations(std::move(vec)), i(counter)
-        {
-        }
-
-        std::vector<int> _nr_iterations;
-        std::size_t& i;
-
-        void operator()(NumLib::IterationNumberBasedTimeStepping &obj)
-        {
-            std::size_t n = (i<_nr_iterations.size()) ? _nr_iterations[i++] : 0;
-            obj.setIterationNumber(n);
-        }
-    };
-
-    std::size_t counter = 0;
-    IterationNumberUpdate update(nr_iterations, counter);
-
-    std::vector<double> vec_t = timeStepping(alg, nr_iterations, &update);
+    std::vector<double> vec_t = timeStepping(alg, nr_iterations);
 
     ASSERT_EQ(expected_vec_t.size(), vec_t.size());
     ASSERT_EQ(1u, alg.getNumberOfRepeatedSteps());
