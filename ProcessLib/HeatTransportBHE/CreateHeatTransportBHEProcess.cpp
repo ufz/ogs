@@ -245,7 +245,7 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
                                              density_gas,
                                              std::move(bhes),
                                              if_bhe_network_exist_python_bc,
-                                             bc);
+                                             std::move(*bc));
 
     SecondaryVariableCollection secondary_variables;
 

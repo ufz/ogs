@@ -42,8 +42,7 @@ struct HeatTransportBHEProcessData
         Parameter<double> const& density_gas_,
         std::vector<BHE::BHETypes>&& vec_BHEs_,
         bool const& if_bhe_network_exist_python_bc_,
-        BHEInflowPythonBoundaryConditionPythonSideInterface* py_bc_object_ =
-            nullptr)
+        BHEInflowPythonBoundaryConditionPythonSideInterface&& py_bc_object_)
         : thermal_conductivity_solid(thermal_conductivity_solid_),
           thermal_conductivity_fluid(thermal_conductivity_fluid_),
           thermal_conductivity_gas(thermal_conductivity_gas_),
@@ -55,7 +54,7 @@ struct HeatTransportBHEProcessData
           density_gas(density_gas_),
           _vec_BHE_property(std::move(vec_BHEs_)),
           if_bhe_network_exist_python_bc(if_bhe_network_exist_python_bc_),
-          py_bc_object(py_bc_object_)
+          py_bc_object(std::move(py_bc_object_))
     {
     }
 
@@ -94,7 +93,7 @@ struct HeatTransportBHEProcessData
     bool if_bhe_network_exist_python_bc;
 
     //! Python object computing BC values.
-    BHEInflowPythonBoundaryConditionPythonSideInterface* py_bc_object;
+    BHEInflowPythonBoundaryConditionPythonSideInterface py_bc_object;
 };
 }  // namespace HeatTransportBHE
 }  // namespace ProcessLib
