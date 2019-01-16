@@ -30,7 +30,7 @@ class btes_para(subsys.subsystem):
 
         self.subsys_init()
         self.set_attr(**kwargs)
-        
+
 
     def attr(self):
 
@@ -46,17 +46,17 @@ class btes_para(subsys.subsystem):
 #            # pipe feed flow (from BTES)
 #            values += ['pr_pf' + j, 'Q_pf' + j, 'dT_pf' + j,
 #                       'L_pf' + j, 'ks_pf' + j, 'D_pf' + j]
-#            
+
 #            # pipe back flow (to BTES)
 #            values += ['pr_pb' + j, 'Q_pb' + j, 'dT_pb' + j,
 #                       'L_pb' + j, 'ks_pb' + j, 'D_pb' + j]
-            
+
 #        # ambient temperature
 #        values += ['t_a', 't_a_design']
-#        
+#
 #        # subsurface temperature
 #        values +=[ 't_sub', 't_sub_design']
-            
+
         return values
 
     def create_comps(self):
@@ -72,7 +72,7 @@ class btes_para(subsys.subsystem):
         self.btes = []
 #        self.pipe_feed = []
 #        self.pipe_back = []
-        
+
         self.splitter = cmp.splitter(label=self.label + '_splitter',
                                      num_out=self.num_btes)
         self.merge = cmp.merge(label=self.label + '_merge',
@@ -102,7 +102,7 @@ class btes_para(subsys.subsystem):
                                   hydro_group=self.get_attr('hydro_group'))
 #                                  t_a_design=self.get_attr('t_sub_design'),
 #                                  t_a=self.get_attr('t_sub'))
-            
+
 #            self.pipe_feed[i].set_attr(pr=self.get_attr('pr_pf' + j),
 #                                       Q=self.get_attr('Q_pf' + j),
 #                                       D=self.get_attr('D_pf' + j),
@@ -110,7 +110,7 @@ class btes_para(subsys.subsystem):
 #                                       ks=self.get_attr('ks_pf' + j))
 ##                                       t_a_design=self.get_attr('t_a_design'),
 ##                                       t_a=self.get_attr('t_a'))
-#            
+#
 #            self.pipe_back[i].set_attr(pr=self.get_attr('pr_pb' + j),
 #                                       Q=self.get_attr('Q_pb' + j),
 #                                       D=self.get_attr('D_pb' + j),
@@ -122,7 +122,7 @@ class btes_para(subsys.subsystem):
     def create_conns(self):
 
         self.conns = []
-        
+
         self.conns += [con.connection(self.inlet, 'out1',
                                       self.splitter, 'in1')]
         self.conns += [con.connection(self.merge, 'out1',
@@ -139,10 +139,10 @@ class btes_para(subsys.subsystem):
 #            else:
 #                self.conns += [con.connection(self.splitter, 'out' + j,
 #                                              self.pipe_back[i], 'in1')]
-#                
+
 #            self.conns += [con.connection(self.splitter, 'out' + j,
 #                                          self.pipe_back[i], 'in1')]
-#                
+
 #            self.conns += [con.connection(self.pipe_back[i], 'out1',
 #                                          self.btes[i], 'in1',
 #                                          design=['T'])]
@@ -151,7 +151,7 @@ class btes_para(subsys.subsystem):
 #                                          design=['T'])]
 #            self.conns += [con.connection(self.pipe_feed[i], 'out1',
 #                                          self.merge, 'in' + j)]
-                                         
+
             self.conns += [con.connection(self.splitter, 'out' + j,
                                           self.btes[i], 'in1')]
             self.conns += [con.connection(self.btes[i], 'out1',
@@ -164,7 +164,7 @@ class btes_para(subsys.subsystem):
         i = 0
         for bt in self.btes:
             j = str(i)
-   
+
             inc = pd.DataFrame()
             inc['t'] = self.nw.conns.t == bt
             inc['t_id'] = self.nw.conns.t_id == 'in1'
@@ -180,7 +180,7 @@ class btes_para(subsys.subsystem):
             inc.set_attr(T=self.get_attr('T_in' + j))
             outc.set_attr(T=self.get_attr('T_out' + j))
             i += 1
-            
+
 #        i = 0
 #        for pipe in self.pipe_feed:
 #            j = str(i)
@@ -226,4 +226,4 @@ class btes_para(subsys.subsystem):
 #            else:
 #                outc.set_attr(T=np.nan)
 #            i += 1
-#            
+#

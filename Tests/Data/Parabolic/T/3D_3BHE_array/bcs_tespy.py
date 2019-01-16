@@ -1,6 +1,6 @@
 import sys
 print(sys.version)
-import os 
+import os
 
 import OpenGeoSys
 
@@ -22,7 +22,7 @@ def create_dataframe():
     df_nw = pd.read_csv(path_network,delimiter=';', index_col=[0], dtype={'data_index':str})
 
     return(df_nw)
-    
+   
 
 # %% TESPy hydraulic calculation process
 def get_hydraulics():
@@ -30,7 +30,7 @@ def get_hydraulics():
     refrig_density = 992.92 #kg/m3
     #solve input network
     nw.solve(mode='design', design_file='pre/tespy_nw/results.csv', init_file='pre/tespy_nw/results.csv')
-    #get flowrate #kg/s 
+    #get flowrate #kg/s
     for i in range(n_BHE):
         for c in nw.conns.index:
             if c.t.label == data_index[i]:#t:inlet comp, s:outlet comp
@@ -44,25 +44,25 @@ def get_hydraulics():
         df.loc[df.index[i],'f_velocity'] = df.loc[df.index[i],'flowrate']/refrig_density
     return df
 
-    
+   
 # %% TESPy Thermal calculation process
 def get_thermal():
     ###reset bhe system parameters
     #set or reset and how to unset a parameter see tespy_online_doc.
     #unset a parameter use: c.set_attr( ? = math.nan)
 #    data_index = df.index.tolist()
-    
+   
 #    nw.set_printoptions(print_level='none')
-    
+   
     for i in range(n_BHE):
 #        for c in nw.conns.index:
 #            if c.s.label == data_index[i]:#s: outlet comp
         createVar['outlet_BHE'+ str(i+1)].set_attr( T= df.loc[data_index[i],'Tout_val'])
 
     # solving and save new global temperature distribution to df
-    nw.solve(mode='design')    
-    
-    #get Tin 
+    nw.solve(mode='design')
+
+    #get Tin
     #here use eval func to instead code like: sp_bhe1.get_attr('T').val_SI
     for i in range(n_BHE):
         df.loc[df.index[i],'Tin_val'] = createVar['inlet_BHE'+ str(i+1)].get_attr('T').val_SI
@@ -72,13 +72,13 @@ def get_thermal():
 # %% OGS setting
 # Dirichlet BCs
 class BC(OpenGeoSys.BHENetwork):
-    def initializeDataContainer(self):            
-#    def creatNetwork(self):            
+    def initializeDataContainer(self):
+#    def creatNetwork(self):
         #convert dataframe to column list
         data_col_1 = df['Tin_val'].tolist()#'Tin_val'
         data_col_2 = df['Tout_val'].tolist()#'Tout_val'
         data_col_3 = df['Tout_node_id'].astype(int).tolist()#'Tout_node_id'
-        
+
         return (True, data_col_1,data_col_2,data_col_3)
     def tespyThermalSolver(self, Tin_val, Tout_val):
         #read Tout to dataframe
@@ -132,7 +132,7 @@ bc_bhe = BC()#bc_bhe is the default name in OGS6 source code and can not be rewr
 ###set global variables which need to be used in tespyThermalSolver
 #use one loop to get all the components label and connection label of nw,
 #which need to change properties:
-createVar = locals() 
+createVar = locals()
 
 data_index = df.index.tolist()
 for i in range(n_BHE):
@@ -147,6 +147,3 @@ for i in range(n_BHE):
 #            pu_sp = c
 #        if c.s.label == 'merge' and c.t.label == 'consumer':
 #            mg_cons = c
-#            
-            
-           
