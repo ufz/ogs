@@ -221,7 +221,7 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
                                             std::move(bhes),
                                             if_bhe_network_exist_python_bc);
     }
-    // creat a pythonBoundaryCondition object
+    // create a pythonBoundaryCondition object
     else
     {
         // Evaluate Python code in scope of main module
@@ -251,7 +251,7 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
                                             std::move(bhes),
                                             if_bhe_network_exist_python_bc,
                                             bc);
-        // creat BHE network dataframe from Python
+        // create BHE network dataframe from Python
         process_data->py_bc_object->dataframe_network =
             process_data->py_bc_object->initializeDataContainer();
         // clear ogs bc_node_id memory in dataframe
