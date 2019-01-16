@@ -221,7 +221,7 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
                                             std::move(bhes),
                                             if_bhe_network_exist_python_bc);
     }
-    // creat a pythonBoundaryCondition object
+    // create a pythonBoundaryCondition object
     else
     {
         // Evaluate Python code in scope of main module

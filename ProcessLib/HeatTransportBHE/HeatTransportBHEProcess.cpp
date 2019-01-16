@@ -9,8 +9,8 @@
 
 #include "HeatTransportBHEProcess.h"
 
-#include <iostream>
 #include <cassert>
+#include <iostream>
 #include "ProcessLib/HeatTransportBHE/BHE/MeshUtils.h"
 #include "ProcessLib/HeatTransportBHE/LocalAssemblers/CreateLocalAssemblers.h"
 
@@ -174,8 +174,7 @@ void HeatTransportBHEProcess::assembleConcreteProcess(const double t,
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        pv.getActiveElementIDs(), dof_table, t, x, M, K, b,
-        _coupled_solutions);
+        pv.getActiveElementIDs(), dof_table, t, x, M, K, b, _coupled_solutions);
 }
 
 void HeatTransportBHEProcess::assembleWithJacobianConcreteProcess(
@@ -195,8 +194,8 @@ void HeatTransportBHEProcess::computeSecondaryVariableConcrete(
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &HeatTransportBHELocalAssemblerInterface::computeSecondaryVariable,
-        _local_assemblers, pv.getActiveElementIDs(),
-        getDOFTable(process_id), t, x, _coupled_solutions);
+        _local_assemblers, pv.getActiveElementIDs(), getDOFTable(process_id), t,
+        x, _coupled_solutions);
 }
 
 NumLib::IterationResult HeatTransportBHEProcess::postIterationConcreteProcess(
@@ -205,36 +204,35 @@ NumLib::IterationResult HeatTransportBHEProcess::postIterationConcreteProcess(
     // if the process use python boundary conditon
     if (_process_data.if_bhe_network_exist_python_bc == false)
         return NumLib::IterationResult::SUCCESS;
+
+    // Here the task is to get the outflow temperature,
+    // transfer it to TESPy and to get inflow temperature,
+    // and determine whether it converges.
+    auto const Tout_nodes_id =
+        std::get<3>(_process_data.py_bc_object->dataframe_network);
+    const std::size_t n_bc_nodes = Tout_nodes_id.size();
+    for (std::size_t i = 0; i < n_bc_nodes; i++)
+    {
+        // read the T_out and store them in dataframe
+        std::get<2>(_process_data.py_bc_object->dataframe_network)[i] =
+            x[Tout_nodes_id[i]];
+    }
+    // Tout transfer to Python
+    auto const tespy_result = _process_data.py_bc_object->tespyThermalSolver(
+        std::get<1>(_process_data.py_bc_object->dataframe_network),
+        std::get<2>(_process_data.py_bc_object->dataframe_network));
+    auto const cur_Tin = std::get<2>(tespy_result);
+
+    auto const if_convergence = std::get<1>(tespy_result);
+    if (if_convergence == true)
+        return NumLib::IterationResult::SUCCESS;
     else
     {
-        // Here the task is to get the outflow temperature,
-        // transfer it to TESPy and to get inflow temperature,
-        // and determine whether it converges.
-        auto const Tout_nodes_id =
-            std::get<3>(_process_data.py_bc_object->dataframe_network);
-        const std::size_t n_bc_nodes = Tout_nodes_id.size();
         for (std::size_t i = 0; i < n_bc_nodes; i++)
-        {
-            // read the T_out and store them in dataframe
-            std::get<2>(_process_data.py_bc_object->dataframe_network)[i] =
-                x[Tout_nodes_id[i]];
-        }
-        // Tout transfer to Python
-        auto const tespy_result =
-            _process_data.py_bc_object->tespyThermalSolver(
-                std::get<1>(_process_data.py_bc_object->dataframe_network),
-                std::get<2>(_process_data.py_bc_object->dataframe_network));
-        auto const cur_Tin = std::get<2>(tespy_result);
-
-        auto const if_convergence = std::get<1>(tespy_result);
-        if (if_convergence == true)
-            return NumLib::IterationResult::SUCCESS;
-        else
-            for (std::size_t i = 0; i < n_bc_nodes; i++)
-                std::get<1>(_process_data.py_bc_object->dataframe_network)[i] =
-                    cur_Tin[i];
-        return NumLib::IterationResult::REPEAT_ITERATION;
+            std::get<1>(_process_data.py_bc_object->dataframe_network)[i] =
+                cur_Tin[i];
     }
+    return NumLib::IterationResult::REPEAT_ITERATION;
 }
 
 void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
@@ -279,7 +277,7 @@ void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
             for (auto const& in_out_component_id :
                  bhe.inflow_outflow_bc_component_ids)
             {
-                if ( bhe.bhe_if_use_python_bc == true)
+                if (bhe.bhe_if_use_python_bc == true)
                 // call BHEPythonBoundarycondition
                 {
                     // Top, inflow.
