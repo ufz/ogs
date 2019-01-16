@@ -30,7 +30,11 @@
 /// Implementation of the googletest testrunner
 int main(int argc, char* argv[])
 {
+#ifdef NDEBUG
+    std::string logLevel("info");
+#else
     std::string logLevel("all");
+#endif
     for (int i = 1; i < argc; i++)
     {
         if(i + 1 == argc)

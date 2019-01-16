@@ -33,7 +33,7 @@ class Element;
 /**
  * A mesh node with coordinates in 3D space.
  */
-class Node final : public MathLib::Point3dWithID
+class Node : public MathLib::Point3dWithID
 {
     /* friend classes: */
     friend class Mesh;

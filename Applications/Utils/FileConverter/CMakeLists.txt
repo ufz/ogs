@@ -43,11 +43,19 @@ add_executable(TecPlotTools TecPlotTools.cpp)
 set_target_properties(TecPlotTools PROPERTIES FOLDER Utilities)
 target_link_libraries(TecPlotTools GeoLib MeshLib)
 
+add_executable(GocadSGridReader GocadSGridReaderMain.cpp)
+set_target_properties(GocadSGridReader PROPERTIES FOLDER Utilities)
+target_link_libraries(GocadSGridReader
+    GeoLib
+    MeshLib
+    ApplicationsFileIO
+    ${Boost_LIBRARIES}
+)
 
 ####################
 ### Installation ###
 ####################
-install(TARGETS generateMatPropsFromMatID GMSH2OGS OGS2VTK VTK2OGS VTK2TIN
+install(TARGETS generateMatPropsFromMatID GMSH2OGS OGS2VTK VTK2OGS VTK2TIN GocadSGridReader
     RUNTIME DESTINATION bin COMPONENT ogs_converter)
 
 if(Qt5XmlPatterns_FOUND)
