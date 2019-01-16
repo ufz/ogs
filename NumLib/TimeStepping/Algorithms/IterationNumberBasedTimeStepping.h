@@ -102,8 +102,6 @@ public:
 
     bool isSolutionErrorComputationNeeded() override { return true; }
 
-    /// set the number of iterations
-    void setIterationNumber(int const n_itr) { _iter_times = n_itr; }
     /// return the number of repeated steps
     int getNumberOfRepeatedSteps() const { return _n_rejected_steps; }
 
