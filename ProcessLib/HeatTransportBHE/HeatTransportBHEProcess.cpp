@@ -286,12 +286,6 @@ void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
                             get_global_bhe_bc_indices(bc_top_node_id,
                                                       in_out_component_id),
                             &(_process_data.py_bc_object)));
-
-                    // Bottom, outflow.
-                    bcs.addBoundaryCondition(
-                        ProcessLib::createBHEBottomDirichletBoundaryCondition(
-                            get_global_bhe_bc_indices(bc_bottom_node_id,
-                                                      in_out_component_id)));
                 }
                 else
                 {
@@ -301,13 +295,12 @@ void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
                             get_global_bhe_bc_indices(bc_top_node_id,
                                                       in_out_component_id),
                             bhe));
-
-                    // Bottom, outflow.
-                    bcs.addBoundaryCondition(
-                        ProcessLib::createBHEBottomDirichletBoundaryCondition(
-                            get_global_bhe_bc_indices(bc_bottom_node_id,
-                                                      in_out_component_id)));
                 }
+                // Bottom, outflow.
+                bcs.addBoundaryCondition(
+                    ProcessLib::createBHEBottomDirichletBoundaryCondition(
+                        get_global_bhe_bc_indices(bc_bottom_node_id,
+                                                  in_out_component_id)));
             }
         };
         apply_visitor(createBCs, _process_data._vec_BHE_property[bhe_i]);
