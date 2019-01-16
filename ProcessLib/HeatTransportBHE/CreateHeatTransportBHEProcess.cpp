@@ -204,25 +204,9 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
     // end of reading BHE parameters -------------------------------------------
 
     //! Python object computing BC values.
-    HeatTransportBHEProcessData* process_data;
-
-    if (if_bhe_network_exist_python_bc == false)
-    {
-        process_data =
-            new HeatTransportBHEProcessData(thermal_conductivity_solid,
-                                            thermal_conductivity_fluid,
-                                            thermal_conductivity_gas,
-                                            heat_capacity_solid,
-                                            heat_capacity_fluid,
-                                            heat_capacity_gas,
-                                            density_solid,
-                                            density_fluid,
-                                            density_gas,
-                                            std::move(bhes),
-                                            if_bhe_network_exist_python_bc);
-    }
+    BHEInflowPythonBoundaryConditionPythonSideInterface* bc = nullptr;
     // create a pythonBoundaryCondition object
-    else
+    if (if_bhe_network_exist_python_bc == true)
     {
         // Evaluate Python code in scope of main module
         pybind11::object scope =
@@ -234,38 +218,35 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
                 "or there "
                 "was no python script file specified.");
 
-        auto* bc =
-            scope["bc_bhe"]
-                .cast<BHEInflowPythonBoundaryConditionPythonSideInterface*>();
+        bc = scope["bc_bhe"]
+                 .cast<BHEInflowPythonBoundaryConditionPythonSideInterface*>();
 
-        process_data =
-            new HeatTransportBHEProcessData(thermal_conductivity_solid,
-                                            thermal_conductivity_fluid,
-                                            thermal_conductivity_gas,
-                                            heat_capacity_solid,
-                                            heat_capacity_fluid,
-                                            heat_capacity_gas,
-                                            density_solid,
-                                            density_fluid,
-                                            density_gas,
-                                            std::move(bhes),
-                                            if_bhe_network_exist_python_bc,
-                                            bc);
         // create BHE network dataframe from Python
-        process_data->py_bc_object->dataframe_network =
-            process_data->py_bc_object->initializeDataContainer();
+        bc->dataframe_network = bc->initializeDataContainer();
         // clear ogs bc_node_id memory in dataframe
-        std::get<3>(process_data->py_bc_object->dataframe_network)
-            .clear();  // ogs_bc_node_id
+        std::get<3>(bc->dataframe_network).clear();  // ogs_bc_node_id
 
         // here calls the tespyHydroSolver to get the pipe flow velocity in bhe
         // network, and replace the value in flow velocity Matrix _u
-        auto const tespy_flow_rate =
-            std::get<1>(process_data->py_bc_object->tespyHydroSolver());
+        auto const tespy_flow_rate = std::get<1>(bc->tespyHydroSolver());
         const std::size_t n_bhe = tespy_flow_rate.size();
         // TODO the flow_rate in OGS should be updated from the flow_rate
         // computed by TESPy here.
     }
+
+    HeatTransportBHEProcessData process_data(thermal_conductivity_solid,
+                                             thermal_conductivity_fluid,
+                                             thermal_conductivity_gas,
+                                             heat_capacity_solid,
+                                             heat_capacity_fluid,
+                                             heat_capacity_gas,
+                                             density_solid,
+                                             density_fluid,
+                                             density_gas,
+                                             std::move(bhes),
+                                             if_bhe_network_exist_python_bc,
+                                             bc);
+
     SecondaryVariableCollection secondary_variables;
 
     NumLib::NamedFunctionCaller named_function_caller(
@@ -276,7 +257,7 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
 
     return std::make_unique<HeatTransportBHEProcess>(
         mesh, std::move(jacobian_assembler), parameters, integration_order,
-        std::move(process_variables), std::move(*process_data),
+        std::move(process_variables), std::move(process_data),
         std::move(secondary_variables), std::move(named_function_caller));
 }
 }  // namespace HeatTransportBHE
