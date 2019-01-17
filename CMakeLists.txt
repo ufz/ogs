@@ -108,7 +108,11 @@ set(ProcessesList
     ThermoMechanicalPhaseField
     ThermoMechanics
     TwoPhaseFlowWithPP
-    TwoPhaseFlowWithPrho)
+    TwoPhaseFlowWithPrho
+)
+if(NOT OGS_USE_PYTHON)
+    list(REMOVE_ITEM ProcessesList HeatTransportBHE)
+endif()
 
 # Add a cmake option for each process.
 foreach(process ${ProcessesList})
