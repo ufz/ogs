@@ -70,6 +70,8 @@ TEST(FileIOGocadSGridReader, flow_simulation_grid_klein_Rinne)
     ASSERT_EQ("shc", property_names[10]);
 }
 
+/*
+ This test is not public.
 // this project uses split nodes
 TEST(FileIOGocadSGridReader, IFG_Uni_Kiel_SGrid_Test)
 {
@@ -91,3 +93,4 @@ TEST(FileIOGocadSGridReader, IFG_Uni_Kiel_SGrid_Test)
     ASSERT_EQ("VISIBLE_TETRA_RECORD_ID", property_names[4]);
     ASSERT_EQ("fault_blocks", property_names[5]);
 }
+*/
