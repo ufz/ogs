@@ -293,7 +293,7 @@ void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
                     {
                         OGS_FATAL(
                             "The Python Boundary Condition was switched on, "
-                            "but the data object does not exist! ");                            
+                            "but the data object does not exist! ");
                     }
                 }
                 else
