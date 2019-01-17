@@ -22,7 +22,7 @@ class BHEInflowPythonBoundaryCondition final : public BoundaryCondition
 public:
     BHEInflowPythonBoundaryCondition(
         std::pair<GlobalIndexType, GlobalIndexType>&& in_out_global_indices,
-        BHEInflowPythonBoundaryConditionPythonSideInterface* py_bc_object);
+        BHEInflowPythonBoundaryConditionPythonSideInterface& py_bc_object);
 
     void getEssentialBCValues(
         const double t, const GlobalVector& x,
@@ -31,12 +31,12 @@ public:
 private:
     std::pair<GlobalIndexType, GlobalIndexType> const _in_out_global_indices;
 
-    BHEInflowPythonBoundaryConditionPythonSideInterface* _py_bc_object;
+    BHEInflowPythonBoundaryConditionPythonSideInterface& _py_bc_object;
 };
 
 //! Creates a new PythonBoundaryCondition object.
 std::unique_ptr<BHEInflowPythonBoundaryCondition>
 createBHEInflowPythonBoundaryCondition(
     std::pair<GlobalIndexType, GlobalIndexType>&& in_out_global_indices,
-    BHEInflowPythonBoundaryConditionPythonSideInterface* py_bc_object);
+    BHEInflowPythonBoundaryConditionPythonSideInterface& py_bc_object);
 }  // namespace ProcessLib

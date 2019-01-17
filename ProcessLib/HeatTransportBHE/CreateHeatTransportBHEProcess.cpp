@@ -204,7 +204,7 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
     // end of reading BHE parameters -------------------------------------------
 
     //! Python object computing BC values.
-    BHEInflowPythonBoundaryConditionPythonSideInterface* bc = nullptr;
+    BHEInflowPythonBoundaryConditionPythonSideInterface* bc;
     // create a pythonBoundaryCondition object
     if (if_bhe_network_exist_python_bc == true)
     {
@@ -220,6 +220,11 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
 
         bc = scope["bc_bhe"]
                  .cast<BHEInflowPythonBoundaryConditionPythonSideInterface*>();
+
+        if (bc == nullptr)
+            OGS_FATAL(
+                "Not able to access the correct bc pointer from python script "
+                "file specified.");
 
         // create BHE network dataframe from Python
         bc->dataframe_network = bc->initializeDataContainer();
@@ -245,7 +250,7 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
                                              density_gas,
                                              std::move(bhes),
                                              if_bhe_network_exist_python_bc,
-                                             std::move(*bc));
+                                             bc);
 
     SecondaryVariableCollection secondary_variables;
 

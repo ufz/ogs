@@ -23,14 +23,14 @@ namespace ProcessLib
 {
 BHEInflowPythonBoundaryCondition::BHEInflowPythonBoundaryCondition(
     std::pair<GlobalIndexType, GlobalIndexType>&& in_out_global_indices,
-    BHEInflowPythonBoundaryConditionPythonSideInterface* py_bc_object)
+    BHEInflowPythonBoundaryConditionPythonSideInterface& py_bc_object)
     : _in_out_global_indices(std::move(in_out_global_indices)),
       _py_bc_object(py_bc_object)
 {
     const auto g_idx_T_out = in_out_global_indices.second;
 
     // store the bc node ids to BHE network dataframe
-    std::get<3>(_py_bc_object->dataframe_network).emplace_back(g_idx_T_out);
+    std::get<3>(_py_bc_object.dataframe_network).emplace_back(g_idx_T_out);
 }
 
 void BHEInflowPythonBoundaryCondition::getEssentialBCValues(
@@ -39,7 +39,7 @@ void BHEInflowPythonBoundaryCondition::getEssentialBCValues(
 {
     bc_values.ids.resize(1);
     bc_values.values.resize(1);
-    auto const& data_exchange = _py_bc_object->dataframe_network;
+    auto const& data_exchange = _py_bc_object.dataframe_network;
     // get the number of all boundary nodes
     const std::size_t n_bc_nodes = std::get<3>(data_exchange).size();
 
@@ -66,7 +66,7 @@ void BHEInflowPythonBoundaryCondition::getEssentialBCValues(
 std::unique_ptr<BHEInflowPythonBoundaryCondition>
 createBHEInflowPythonBoundaryCondition(
     std::pair<GlobalIndexType, GlobalIndexType>&& in_out_global_indices,
-    BHEInflowPythonBoundaryConditionPythonSideInterface* py_bc_object)
+    BHEInflowPythonBoundaryConditionPythonSideInterface& py_bc_object)
 
 {
     DBUG("Constructing BHEInflowPythonBoundaryCondition.");
