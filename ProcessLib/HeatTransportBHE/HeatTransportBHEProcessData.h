@@ -54,7 +54,7 @@ struct HeatTransportBHEProcessData
           density_gas(density_gas_),
           _vec_BHE_property(std::move(vec_BHEs_)),
           if_bhe_network_exist_python_bc(if_bhe_network_exist_python_bc_),
-          py_bc_object(std::move(py_bc_object_))
+          py_bc_object(py_bc_object_)
     {
     }
 
