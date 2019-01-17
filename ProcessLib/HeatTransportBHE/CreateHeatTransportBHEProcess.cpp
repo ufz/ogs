@@ -204,7 +204,7 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
     // end of reading BHE parameters -------------------------------------------
 
     //! Python object computing BC values.
-    BHEInflowPythonBoundaryConditionPythonSideInterface* bc;
+    BHEInflowPythonBoundaryConditionPythonSideInterface* bc = nullptr;
     // create a pythonBoundaryCondition object
     if (if_bhe_network_exist_python_bc == true)
     {
