@@ -23,11 +23,13 @@ struct ThermoMechanicsLocalAssemblerInterface;
 struct SigmaIntegrationPointWriter final : public IntegrationPointWriter
 {
     explicit SigmaIntegrationPointWriter(
+        std::string const& name,
         int const n_components,
         int const integration_order,
         std::function<std::vector<std::vector<double>>()>
             callback)
-        : _n_components(n_components),
+        : _name(name),
+          _n_components(n_components),
           _integration_order(integration_order),
           _callback(callback)
     {
@@ -41,7 +43,7 @@ struct SigmaIntegrationPointWriter final : public IntegrationPointWriter
         // TODO (naumov) remove ip suffix. Probably needs modification of the
         // mesh properties, s.t. there is no "overlapping" with cell/point data.
         // See getOrCreateMeshProperty.
-        return "sigma_ip";
+        return _name;
     }
 
     std::vector<std::vector<double>> values() const override
@@ -50,6 +52,7 @@ struct SigmaIntegrationPointWriter final : public IntegrationPointWriter
     }
 
 private:
+    std::string const _name;
     int const _n_components;
     int const _integration_order;
     std::function<std::vector<std::vector<double>>()> _callback;

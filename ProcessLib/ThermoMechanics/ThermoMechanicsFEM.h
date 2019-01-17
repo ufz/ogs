@@ -186,6 +186,10 @@ public:
         {
             return setSigma(values);
         }
+        else if (name == "epsilon_ip")
+        {
+            return setEpsilon(values);
+        }
 
         return 0;
     }
@@ -482,6 +486,53 @@ private:
         }
 
         return cache;
+    }
+
+    std::size_t setEpsilon(double const* values)
+    {
+        auto const kelvin_vector_size =
+            MathLib::KelvinVector::KelvinVectorDimensions<
+                DisplacementDim>::value;
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
+
+        std::vector<double> ip_epsilon_values;
+        auto epsilon_values =
+            Eigen::Map<Eigen::Matrix<double, kelvin_vector_size, Eigen::Dynamic,
+                                     Eigen::ColMajor> const>(
+                values, kelvin_vector_size, n_integration_points);
+
+        for (unsigned ip = 0; ip < n_integration_points; ++ip)
+        {
+            _ip_data[ip].eps =
+                MathLib::KelvinVector::symmetricTensorToKelvinVector(
+                    epsilon_values.col(ip));
+        }
+
+        return n_integration_points;
+    }
+
+    std::vector<double> getEpsilon() const override
+    {
+        auto const kelvin_vector_size =
+            MathLib::KelvinVector::KelvinVectorDimensions<
+                DisplacementDim>::value;
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
+
+        std::vector<double> ip_epsilon_values;
+        auto cache_mat = MathLib::createZeroedMatrix<Eigen::Matrix<
+            double, Eigen::Dynamic, kelvin_vector_size, Eigen::RowMajor>>(
+            ip_epsilon_values, n_integration_points, kelvin_vector_size);
+
+        for (unsigned ip = 0; ip < n_integration_points; ++ip)
+        {
+            auto const& eps = _ip_data[ip].eps;
+            cache_mat.row(ip) =
+                MathLib::KelvinVector::kelvinVectorToSymmetricTensor(eps);
+        }
+
+        return ip_epsilon_values;
     }
 
     virtual std::vector<double> const& getIntPtEpsilon(
