@@ -236,7 +236,7 @@ AddTest(
 )
 
 AddTest(
-    NAME 2D_ComponentTransport_Goswami
+    NAME LARGE_2D_ComponentTransport_Goswami
     PATH Parabolic/ComponentTransport/goswami
     EXECUTABLE ogs
     EXECUTABLE_ARGS goswami_input.prj
