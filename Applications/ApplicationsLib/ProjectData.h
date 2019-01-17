@@ -18,7 +18,9 @@
 #include <string>
 
 #include "BaseLib/ConfigTree.h"
+#include "MaterialLib/MPL/Medium.h"
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
+
 #include "ProcessLib/Parameter/Parameter.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/ProcessVariable.h"
@@ -89,6 +91,9 @@ private:
     /// Checks if a parameter has name tag.
     void parseParameters(BaseLib::ConfigTree const& parameters_config);
 
+    /// Parses media configuration and saves them in an object.
+    void parseMedia(boost::optional<BaseLib::ConfigTree> const& media_config);
+
     /// Parses the processes configuration and creates new processes for each
     /// process entry passing the corresponding subtree to the process
     /// constructor.
@@ -106,12 +111,15 @@ private:
 
     void parseCurves(boost::optional<BaseLib::ConfigTree> const& config);
 
+    std::unique_ptr<MaterialPropertyLib::Medium> _medium;
     std::vector<std::unique_ptr<MeshLib::Mesh>> _mesh_vec;
     std::map<std::string, std::unique_ptr<ProcessLib::Process>> _processes;
     std::vector<ProcessLib::ProcessVariable> _process_variables;
 
     /// Buffer for each parameter config passed to the process.
     std::vector<std::unique_ptr<ProcessLib::ParameterBase>> _parameters;
+
+    std::map<int, std::unique_ptr<MaterialPropertyLib::Medium>> _media;
 
     /// The time loop used to solve this project's processes.
     std::unique_ptr<TimeLoop> _time_loop;
