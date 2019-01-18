@@ -596,12 +596,12 @@ bool UncoupledProcessesTimeLoop::loop()
         {
             ALERT(
                 "\tTime step %u is rejected and the new computed"
-                " step size is the same as\n"
+                " step size (dt = %g) is the same as\n"
                 "\tthat was just used.\n"
                 "\tSuggest to adjust the parameters of the time"
                 " stepper or try other time stepper.\n"
                 "\tThe program will stop.",
-                timesteps);
+                dt, timesteps);
             // save unsuccessful solution
             const bool output_initial_condition = false;
             outputSolutions(output_initial_condition, is_staggered_coupling,
