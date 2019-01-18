@@ -12,15 +12,17 @@ import pandas as pd
 # %% create network dataframe
 def create_dataframe():
     #return dataframe
-    path_network =os.path.abspath('pre/bhe_network.csv')
-    df_nw = pd.read_csv(path_network,delimiter=';', index_col=[0], dtype={'data_index':str})
+    df_nw = pd.read_csv(project_dir + 'pre/bhe_network.csv', delimiter=';',
+        index_col=[0], dtype={'data_index':str})
     return(df_nw)
 # %% TESPy hydraulic calculation process
 def get_hydraulics():
     #refrigerant parameters
     refrig_density = 992.92 #kg/m3
     #solve imported network
-    nw.solve(mode='design', design_file='pre/tespy_nw/results.csv', init_file='pre/tespy_nw/results.csv')
+    nw.solve(mode='design',
+             design_file=project_dir + 'pre/tespy_nw/results.csv',
+             init_file=project_dir + 'pre/tespy_nw/results.csv')
     #get flowrate #kg/s
     for i in range(n_BHE):
         for c in nw.conns.index:
@@ -34,14 +36,14 @@ def get_hydraulics():
 def get_thermal():
     #bhe network thermal parametrization
     for i in range(n_BHE):
-        createVar['outlet_BHE'+ str(i+1)].set_attr( T= df.loc[data_index[i],'Tout_val'])
+        localVars['outlet_BHE'+ str(i+1)].set_attr( T= df.loc[data_index[i],'Tout_val'])
 
     # solving network
     nw.solve(mode='design')
 
     #get Tin_val
     for i in range(n_BHE):
-        df.loc[df.index[i],'Tin_val'] = createVar['inlet_BHE'+ str(i+1)].get_attr('T').val_SI
+        df.loc[df.index[i],'Tin_val'] = localVars['inlet_BHE'+ str(i+1)].get_attr('T').val_SI
 
     return df['Tin_val'].tolist()
 # %% OGS setting
@@ -76,9 +78,9 @@ class BC(OpenGeoSys.BHENetwork):
 # %% main
 #initialize the tespy model of the bhe network
 #load path of network model:
-nw_path = os.path.abspath('pre/tespy_nw')
 #load the model
-nw = nwkr.load_nwk(nw_path)
+print("Project dir: {}".format(project_dir))
+nw = nwkr.load_nwk(project_dir + '/pre/tespy_nw')
 #set if print the information of the network
 nw.set_printoptions(print_level='none')
 
@@ -88,17 +90,17 @@ n_BHE = np.size(df.iloc[:,0])
 #bhes name
 data_index = df.index.tolist()
 
-#create global variables of the components label and connections label in network
-createVar = locals()
+#create local variables of the components label and connections label in network
+localVars = locals()
 
 data_index = df.index.tolist()
 for i in range(n_BHE):
     for c in nw.conns.index:
         #bhe inlet and outlet conns
         if c.t.label == data_index[i]:# inlet conns of bhe
-            createVar['inlet_BHE'+ str(i+1)] = c
+            localVars['inlet_BHE'+ str(i+1)] = c
         if c.s.label == data_index[i]:# outlet conns of bhe
-            createVar['outlet_BHE'+ str(i+1)] = c
+            localVars['outlet_BHE'+ str(i+1)] = c
 
 # instantiate BC objects referenced in OpenGeoSys
 bc_bhe = BC()
