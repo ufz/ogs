@@ -39,7 +39,7 @@ ThermoMechanicsProcess<DisplacementDim>::ThermoMechanicsProcess(
       _process_data(std::move(process_data))
 {
     _integration_point_writer.emplace_back(
-        std::make_unique<SigmaIntegrationPointWriter>(
+        std::make_unique<KelvinVectorIntegrationPointWriter>(
             "sigma_ip",
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
             2 /*integration order*/, [this]() {
@@ -59,7 +59,7 @@ ThermoMechanicsProcess<DisplacementDim>::ThermoMechanicsProcess(
             }));
 
     _integration_point_writer.emplace_back(
-        std::make_unique<SigmaIntegrationPointWriter>(
+        std::make_unique<KelvinVectorIntegrationPointWriter>(
             "epsilon_ip",
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
             2 /*integration order*/, [this]() {

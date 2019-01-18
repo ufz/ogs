@@ -20,9 +20,9 @@ namespace ThermoMechanics
 {
 struct ThermoMechanicsLocalAssemblerInterface;
 
-struct SigmaIntegrationPointWriter final : public IntegrationPointWriter
+struct KelvinVectorIntegrationPointWriter final : public IntegrationPointWriter
 {
-    explicit SigmaIntegrationPointWriter(
+    explicit KelvinVectorIntegrationPointWriter(
         std::string const& name,
         int const n_components,
         int const integration_order,
