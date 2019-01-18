@@ -8,10 +8,10 @@ cmake_minimum_required(VERSION 3.8)
 # Set CMake policies
 cmake_policy(SET CMP0011 NEW)
 cmake_policy(SET CMP0054 NEW)
-if(POLICY 0071)
+if(POLICY CMP0071)
     cmake_policy(SET CMP0071 NEW)
 endif()
-if(POLICY 0074)
+if(POLICY CMP0074)
     cmake_policy(SET CMP0074 NEW)
 endif()
 
