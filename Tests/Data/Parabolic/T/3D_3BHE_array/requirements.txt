@@ -1,0 +1,3 @@
+CoolProp==6.2.1
+numpy==1.16.0
+TESPy==0.0.5
