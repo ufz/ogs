@@ -92,7 +92,7 @@ double IterationNumberBasedTimeStepping::findMultiplier(
     // finding the right multiplier
     for (std::size_t i = 0; i < _iter_times_vector.size(); i++)
     {
-        if (_iter_times > _iter_times_vector[i])
+        if (_iter_times >= _iter_times_vector[i])
         {
             multiplier = _multiplier_vector[i];
         }

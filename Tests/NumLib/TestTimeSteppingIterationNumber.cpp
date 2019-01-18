@@ -32,7 +32,7 @@ TEST(NumLib, TimeSteppingIterationNumberBased1)
 
     const double solution_error = 0.;
 
-    ASSERT_TRUE(alg.next(solution_error, 1));  // t=2, dt=1
+    ASSERT_TRUE(alg.next(solution_error, 1));
     NumLib::TimeStep ts = alg.getTimeStep();
     ASSERT_EQ(1u, ts.steps());
     ASSERT_EQ(1., ts.previous());
@@ -40,51 +40,45 @@ TEST(NumLib, TimeSteppingIterationNumberBased1)
     ASSERT_EQ(1., ts.dt());
     ASSERT_TRUE(alg.accepted());
 
-    ASSERT_TRUE(alg.next(solution_error, 1));  // t=4, dt=2
+    ASSERT_TRUE(alg.next(solution_error, 1));
 
-    // dt*=2
-    ASSERT_TRUE(alg.next(solution_error, 3));  // t=8, dt=4
+    ASSERT_TRUE(alg.next(solution_error, 3));
     ts = alg.getTimeStep();
     ASSERT_EQ(3u, ts.steps());
     ASSERT_EQ(4., ts.previous());
-    ASSERT_EQ(8., ts.current());
-    ASSERT_EQ(4., ts.dt());
-    ASSERT_TRUE(alg.accepted());
-
-    // dt*=1
-    ASSERT_TRUE(alg.next(solution_error, 5));  // t=12, dt=4
-    ts = alg.getTimeStep();
-    ASSERT_EQ(4u, ts.steps());
-    ASSERT_EQ(8., ts.previous());
-    ASSERT_EQ(12., ts.current());
-    ASSERT_EQ(4., ts.dt());
-    ASSERT_TRUE(alg.accepted());
-
-    // dt*=0.5
-    ASSERT_TRUE(alg.next(solution_error, 7));  // t=14, dt=2
-    ts = alg.getTimeStep();
-    ASSERT_EQ(5u, ts.steps());
-    ASSERT_EQ(12., ts.previous());
-    ASSERT_EQ(14., ts.current());
+    ASSERT_EQ(6., ts.current());
     ASSERT_EQ(2., ts.dt());
     ASSERT_TRUE(alg.accepted());
 
-    // dt*=0.25 but dt_min = 1
-    ASSERT_TRUE(
-        alg.next(solution_error, 8 /* exceed maximum */));  // t=13, dt=1
+    ASSERT_TRUE(alg.next(solution_error, 5));
+    ts = alg.getTimeStep();
+    ASSERT_EQ(4u, ts.steps());
+    ASSERT_EQ(6., ts.previous());
+    ASSERT_EQ(7., ts.current());
+    ASSERT_EQ(1., ts.dt());
+    ASSERT_TRUE(alg.accepted());
+
+    ASSERT_TRUE(alg.next(solution_error, 7));
     ts = alg.getTimeStep();
     ASSERT_EQ(5u, ts.steps());
-    ASSERT_EQ(12., ts.previous());
-    ASSERT_EQ(13, ts.current());
+    ASSERT_EQ(7., ts.previous());
+    ASSERT_EQ(8., ts.current());
+    ASSERT_EQ(1., ts.dt());
+    ASSERT_TRUE(alg.accepted());
+
+    ASSERT_TRUE(alg.next(solution_error, 8 /* exceed maximum */));
+    ts = alg.getTimeStep();
+    ASSERT_EQ(5u, ts.steps());
+    ASSERT_EQ(7., ts.previous());
+    ASSERT_EQ(8, ts.current());
     ASSERT_EQ(1., ts.dt());
     ASSERT_FALSE(alg.accepted());
 
-    // restart, dt*=1
-    ASSERT_TRUE(alg.next(solution_error, 4));  // t=14, dt=1
+    ASSERT_TRUE(alg.next(solution_error, 4));
     ts = alg.getTimeStep();
     ASSERT_EQ(6u, ts.steps());
-    ASSERT_EQ(13., ts.previous());
-    ASSERT_EQ(14, ts.current());
+    ASSERT_EQ(8., ts.previous());
+    ASSERT_EQ(9, ts.current());
     ASSERT_EQ(1., ts.dt());
     ASSERT_TRUE(alg.accepted());
 }
