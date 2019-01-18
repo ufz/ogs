@@ -148,6 +148,11 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
 
         if (error_norms_met)
             break;
+
+        // Avoid increment of the 'iteration' if the error norms are not met,
+        // but maximum number of iterations is reached.
+        if (iteration >= _maxiter)
+            break;
     }
 
     if (iteration > _maxiter)
@@ -297,6 +302,11 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
              time_iteration.elapsed());
 
         if (error_norms_met)
+            break;
+
+        // Avoid increment of the 'iteration' if the error norms are not met,
+        // but maximum number of iterations is reached.
+        if (iteration >= _maxiter)
             break;
     }
 
