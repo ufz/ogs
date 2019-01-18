@@ -104,14 +104,16 @@ double IterationNumberBasedTimeStepping::getNextTimeStepSize() const
 {
     double dt = 0.0;
 
-    // if this is the first time step
-    // then we use initial guess provided by a user
-    if (_ts_prev.steps() == 0)
+    // In first time step and first non-linear iteration take the initial dt.
+    if (_ts_prev.steps() == 0 && _iter_times == 0)
     {
         dt = _initial_dt;
     }
-    else  // not the first time step
+    else
     {
+        // Attention: for the first time step and second iteration the
+        // ts_prev.dt is 0 and 0*multiplier is the next dt, which will be
+        // clamped to the minimum dt.
         dt = _ts_prev.dt() * findMultiplier(_iter_times);
     }
 
