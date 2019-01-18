@@ -6,7 +6,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    ref_ts_10_t_10000.000000.vtu twophaseflow_pcs_0_ts_10_t_10000.000000.vtu liquid_pressure liquid_pressure 1e-8 1e-12
+    ref_ts_10_t_10000.000000.vtu twophaseflow_pcs_0_ts_10_t_10000.000000.vtu liquid_pressure liquid_pressure 2e-6 1e-12
     ref_ts_10_t_10000.000000.vtu twophaseflow_pcs_0_ts_10_t_10000.000000.vtu overall_mass_density overall_mass_density 1e-8 1e-12
     ref_ts_10_t_10000.000000.vtu twophaseflow_pcs_0_ts_10_t_10000.000000.vtu saturation saturation 1e-8 1e-12
 )
