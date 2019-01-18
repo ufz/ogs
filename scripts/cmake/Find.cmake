@@ -23,7 +23,7 @@ find_program(CPPCHECK_TOOL_PATH cppcheck)
 find_package(Python COMPONENTS Interpreter Development)
 if(Python_FOUND)
     # Make sure pybind uses the same python interpreter
-    set(PYTHON_EXECUTABLE ${Python_EXECUTABLE})
+    set(PYTHON_EXECUTABLE ${Python_EXECUTABLE} CACHE INTERNAL "")
 endif()
 
 # Find bash itself ...
