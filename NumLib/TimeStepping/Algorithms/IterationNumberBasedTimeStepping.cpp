@@ -33,7 +33,21 @@ IterationNumberBasedTimeStepping::IterationNumberBasedTimeStepping(
       _initial_dt(initial_dt),
       _max_iter(_iter_times_vector.empty() ? 0 : _iter_times_vector.back())
 {
-    assert(iter_times_vector.size() == multiplier_vector.size());
+    if (_iter_times_vector.empty())
+    {
+        OGS_FATAL("Vector of iteration numbers must not be empty.");
+    }
+    if (_iter_times_vector.size() != _multiplier_vector.size())
+    {
+        OGS_FATAL(
+            "Vector of iteration numbers must be of the same size as the "
+            "vector of multipliers.");
+    }
+    if (!std::is_sorted(std::begin(_iter_times_vector),
+                        std::end(_iter_times_vector)))
+    {
+        OGS_FATAL("Vector of iteration numbers must be sorted.");
+    }
 }
 
 bool IterationNumberBasedTimeStepping::next(double const /*solution_error*/,
