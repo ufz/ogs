@@ -80,6 +80,26 @@ bool IterationNumberBasedTimeStepping::next(double const /*solution_error*/,
     return true;
 }
 
+double IterationNumberBasedTimeStepping::findMultiplier(
+    int const number_iterations) const
+{
+    double multiplier = 1.0;
+    // get the first multiplier by default
+    if (!_multiplier_vector.empty())
+    {
+        multiplier = _multiplier_vector[0];
+    }
+    // finding the right multiplier
+    for (std::size_t i = 0; i < _iter_times_vector.size(); i++)
+    {
+        if (_iter_times > _iter_times_vector[i])
+        {
+            multiplier = _multiplier_vector[i];
+        }
+    }
+    return multiplier;
+}
+
 double IterationNumberBasedTimeStepping::getNextTimeStepSize() const
 {
     double dt = 0.0;
@@ -92,21 +112,7 @@ double IterationNumberBasedTimeStepping::getNextTimeStepSize() const
     }
     else  // not the first time step
     {
-        double multiplier = 1.0;
-        // get the first multiplier by default
-        if (!_multiplier_vector.empty())
-        {
-            multiplier = _multiplier_vector[0];
-        }
-        // finding the right multiplier
-        for (std::size_t i = 0; i < _iter_times_vector.size(); i++)
-        {
-            if (_iter_times > _iter_times_vector[i])
-            {
-                multiplier = _multiplier_vector[i];
-            }
-        }
-        dt = _ts_prev.dt() * multiplier;
+        dt = _ts_prev.dt() * findMultiplier(_iter_times);
     }
 
     dt = std::min(std::max(dt, _min_dt), _max_dt);
