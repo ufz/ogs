@@ -186,6 +186,14 @@ public:
         {
             return setSigma(values);
         }
+        else if (name == "epsilon_ip")
+        {
+            return setEpsilon(values);
+        }
+        else if (name == "epsilon_m_ip")
+        {
+            return setEpsilonMechanical(values);
+        }
 
         return 0;
     }
@@ -415,7 +423,6 @@ private:
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
 
-        std::vector<double> ip_sigma_values;
         auto sigma_values =
             Eigen::Map<Eigen::Matrix<double, kelvin_vector_size, Eigen::Dynamic,
                                      Eigen::ColMajor> const>(
@@ -484,6 +491,52 @@ private:
         return cache;
     }
 
+    std::size_t setEpsilon(double const* values)
+    {
+        auto const kelvin_vector_size =
+            MathLib::KelvinVector::KelvinVectorDimensions<
+                DisplacementDim>::value;
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
+
+        auto epsilon_values =
+            Eigen::Map<Eigen::Matrix<double, kelvin_vector_size, Eigen::Dynamic,
+                                     Eigen::ColMajor> const>(
+                values, kelvin_vector_size, n_integration_points);
+
+        for (unsigned ip = 0; ip < n_integration_points; ++ip)
+        {
+            _ip_data[ip].eps =
+                MathLib::KelvinVector::symmetricTensorToKelvinVector(
+                    epsilon_values.col(ip));
+        }
+
+        return n_integration_points;
+    }
+
+    std::vector<double> getEpsilon() const override
+    {
+        auto const kelvin_vector_size =
+            MathLib::KelvinVector::KelvinVectorDimensions<
+                DisplacementDim>::value;
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
+
+        std::vector<double> ip_epsilon_values;
+        auto cache_mat = MathLib::createZeroedMatrix<Eigen::Matrix<
+            double, Eigen::Dynamic, kelvin_vector_size, Eigen::RowMajor>>(
+            ip_epsilon_values, n_integration_points, kelvin_vector_size);
+
+        for (unsigned ip = 0; ip < n_integration_points; ++ip)
+        {
+            auto const& eps = _ip_data[ip].eps;
+            cache_mat.row(ip) =
+                MathLib::KelvinVector::kelvinVectorToSymmetricTensor(eps);
+        }
+
+        return ip_epsilon_values;
+    }
+
     virtual std::vector<double> const& getIntPtEpsilon(
         const double /*t*/,
         GlobalVector const& /*current_solution*/,
@@ -509,6 +562,52 @@ private:
         }
 
         return cache;
+    }
+
+    std::size_t setEpsilonMechanical(double const* values)
+    {
+        auto const kelvin_vector_size =
+            MathLib::KelvinVector::KelvinVectorDimensions<
+                DisplacementDim>::value;
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
+
+        auto epsilon_m_values =
+            Eigen::Map<Eigen::Matrix<double, kelvin_vector_size, Eigen::Dynamic,
+                                     Eigen::ColMajor> const>(
+                values, kelvin_vector_size, n_integration_points);
+
+        for (unsigned ip = 0; ip < n_integration_points; ++ip)
+        {
+            _ip_data[ip].eps_m =
+                MathLib::KelvinVector::symmetricTensorToKelvinVector(
+                    epsilon_m_values.col(ip));
+        }
+
+        return n_integration_points;
+    }
+
+    std::vector<double> getEpsilonMechanical() const override
+    {
+        auto const kelvin_vector_size =
+            MathLib::KelvinVector::KelvinVectorDimensions<
+                DisplacementDim>::value;
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
+
+        std::vector<double> ip_epsilon_m_values;
+        auto cache_mat = MathLib::createZeroedMatrix<Eigen::Matrix<
+            double, Eigen::Dynamic, kelvin_vector_size, Eigen::RowMajor>>(
+            ip_epsilon_m_values, n_integration_points, kelvin_vector_size);
+
+        for (unsigned ip = 0; ip < n_integration_points; ++ip)
+        {
+            auto const& eps_m = _ip_data[ip].eps_m;
+            cache_mat.row(ip) =
+                MathLib::KelvinVector::kelvinVectorToSymmetricTensor(eps_m);
+        }
+
+        return ip_epsilon_m_values;
     }
 
     ThermoMechanicsProcessData<DisplacementDim>& _process_data;

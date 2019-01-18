@@ -39,7 +39,8 @@ ThermoMechanicsProcess<DisplacementDim>::ThermoMechanicsProcess(
       _process_data(std::move(process_data))
 {
     _integration_point_writer.emplace_back(
-        std::make_unique<SigmaIntegrationPointWriter>(
+        std::make_unique<KelvinVectorIntegrationPointWriter>(
+            "sigma_ip",
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
             2 /*integration order*/, [this]() {
                 // Result containing integration point data for each local
@@ -52,6 +53,46 @@ ThermoMechanicsProcess<DisplacementDim>::ThermoMechanicsProcess(
                     auto const& local_asm = *_local_assemblers[i];
 
                     result[i] = local_asm.getSigma();
+                }
+
+                return result;
+            }));
+
+    _integration_point_writer.emplace_back(
+        std::make_unique<KelvinVectorIntegrationPointWriter>(
+            "epsilon_ip",
+            static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
+            2 /*integration order*/, [this]() {
+                // Result containing integration point data for each local
+                // assembler.
+                std::vector<std::vector<double>> result;
+                result.resize(_local_assemblers.size());
+
+                for (std::size_t i = 0; i < _local_assemblers.size(); ++i)
+                {
+                    auto const& local_asm = *_local_assemblers[i];
+
+                    result[i] = local_asm.getEpsilon();
+                }
+
+                return result;
+            }));
+
+    _integration_point_writer.emplace_back(
+        std::make_unique<KelvinVectorIntegrationPointWriter>(
+            "epsilon_m_ip",
+            static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
+            2 /*integration order*/, [this]() {
+                // Result containing integration point data for each local
+                // assembler.
+                std::vector<std::vector<double>> result;
+                result.resize(_local_assemblers.size());
+
+                for (std::size_t i = 0; i < _local_assemblers.size(); ++i)
+                {
+                    auto const& local_asm = *_local_assemblers[i];
+
+                    result[i] = local_asm.getEpsilonMechanical();
                 }
 
                 return result;

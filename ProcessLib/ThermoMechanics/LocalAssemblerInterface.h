@@ -28,6 +28,10 @@ struct ThermoMechanicsLocalAssemblerInterface
 
     virtual std::vector<double> getSigma() const = 0;
 
+    virtual std::vector<double> getEpsilon() const = 0;
+
+    virtual std::vector<double> getEpsilonMechanical() const = 0;
+
     virtual std::vector<double> const& getIntPtSigma(
         const double /*t*/,
         GlobalVector const& /*current_solution*/,
