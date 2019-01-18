@@ -423,7 +423,6 @@ private:
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
 
-        std::vector<double> ip_sigma_values;
         auto sigma_values =
             Eigen::Map<Eigen::Matrix<double, kelvin_vector_size, Eigen::Dynamic,
                                      Eigen::ColMajor> const>(
@@ -500,7 +499,6 @@ private:
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
 
-        std::vector<double> ip_epsilon_values;
         auto epsilon_values =
             Eigen::Map<Eigen::Matrix<double, kelvin_vector_size, Eigen::Dynamic,
                                      Eigen::ColMajor> const>(
@@ -574,7 +572,6 @@ private:
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
 
-//        std::vector<double> ip_epsilon_values;
         auto epsilon_m_values =
             Eigen::Map<Eigen::Matrix<double, kelvin_vector_size, Eigen::Dynamic,
                                      Eigen::ColMajor> const>(
