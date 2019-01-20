@@ -33,12 +33,12 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
     //! \ogs_file_param{properties__property__type}
     auto const property_type = config.getConfigParameter<std::string>("type");
 
-    // If (and only if) the given property type is 'constant', a
-    // corresponding value is needed.
+    // If (and only if) the given property type is 'constant', a corresponding
+    // value is needed.
     if (property_type == "Constant")
     {
-        //! \ogs_file_param{properties__property__Constant__value}
         std::vector<double> const values =
+            //! \ogs_file_param{properties__property__Constant__value}
             config.getConfigParameter<std::vector<double>>("value");
 
         switch (values.size())
