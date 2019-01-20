@@ -157,15 +157,11 @@
             </timesteps>
             <variables>
                 <variable>temperature</variable>
-                <variable>heat_flux</variable>
-            </variables>
-            <variables>
                 <variable>displacement</variable>
+                <variable>phasefield</variable>
+                <variable>heat_flux</variable>
                 <variable>sigma</variable>
                 <variable>epsilon</variable>
-            </variables>
-            <variables>
-                <variable>phasefield</variable>
             </variables>
         </output>
     </time_loop>
