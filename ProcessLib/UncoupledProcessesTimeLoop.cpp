@@ -583,27 +583,6 @@ bool UncoupledProcessesTimeLoop::loop()
                 dt, timesteps, t);
             break;
         }
-
-        // If this step was rejected twice with the same time step size, jump
-        // out this function directly with a failure flag and let the main
-        // function terminate the program.
-        if (std::abs(dt - prev_dt) < std::numeric_limits<double>::min() &&
-            _last_step_rejected)
-        {
-            ALERT(
-                "\tTime step %u is rejected and the new computed"
-                " step size (dt = %g) is the same as\n"
-                "\tthat was just used.\n"
-                "\tSuggest to adjust the parameters of the time"
-                " stepper or try other time stepper.\n"
-                "\tThe program will stop.",
-                dt, timesteps);
-            // save unsuccessful solution
-            const bool output_initial_condition = false;
-            outputSolutions(output_initial_condition, is_staggered_coupling,
-                            timesteps, t, *_output, &Output::doOutputAlways);
-            return false;
-        }
     }
 
     INFO(
