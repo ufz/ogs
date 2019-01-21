@@ -328,12 +328,6 @@ double UncoupledProcessesTimeLoop::computeTimeStepping(
     {
         auto& ppd = *_per_process_data[i];
         const auto& timestepper = ppd.timestepper;
-        if (t > timestepper->end())
-        {
-            // skip the process that already reaches the ending time.
-            ppd.skip_time_stepping = true;
-            continue;
-        }
 
         auto& time_disc = ppd.time_disc;
         auto const& x = *_process_solutions[i];
@@ -431,7 +425,8 @@ double UncoupledProcessesTimeLoop::computeTimeStepping(
         }
         else
         {
-            if (t < _end_time)
+            if (t < _end_time || std::abs(t - _end_time) <
+                                     std::numeric_limits<double>::epsilon())
             {
                 WARN(
                     "Time step %d was rejected %d times "
@@ -451,7 +446,8 @@ double UncoupledProcessesTimeLoop::computeTimeStepping(
         }
         else
         {
-            if (t < _end_time)
+            if (t < _end_time || std::abs(t - _end_time) <
+                                     std::numeric_limits<double>::epsilon())
             {
                 t -= prev_dt;
                 rejected_steps++;
