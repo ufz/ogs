@@ -43,7 +43,6 @@ USER root
 RUN apt-get update && apt-get install -y \
     biber \
     clang-tidy \
-    cppcheck \
     doxygen \
     graphviz \
     libxml2-utils \
@@ -53,6 +52,14 @@ RUN apt-get update && apt-get install -y \
 RUN curl https://include-what-you-use.org/downloads/include-what-you-use-0.8-x86_64-linux-gnu-ubuntu-16.04.tar.gz -O \
   && tar xf include-what-you-use-0.8-x86_64-linux-gnu-ubuntu-16.04.tar.gz -C /usr/ --strip-components=1 \
   && rm include-what-you-use-0.8-x86_64-linux-gnu-ubuntu-16.04.tar.gz
+
+# cppcheck
+RUN curl -L -o 1.86.tar.gz https://github.com/danmar/cppcheck/archive/1.86.tar.gz \
+  && tar xf 1.86.tar.gz \
+  && cd cppcheck-1.86 \
+  && make SRCDIR=build CFGDIR=/usr/share/cppcheck/ CXXFLAGS="-O2 -DNDEBUG -Wall -Wno-sign-compare -Wno-unused-function" \
+  && make install CFGDIR=/usr/share/cppcheck/ \
+  && cd .. && rm -r cppcheck-1.86 1.86.tar.gz
 
 RUN apt-get install -y mesa-common-dev libgl1-mesa-dev libxt-dev wget
 
