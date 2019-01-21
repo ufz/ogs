@@ -112,13 +112,14 @@ pipeline {
                 excludeFile('.*qrc_icons\\.cpp.*'), excludeFile('.*QVTKWidget.*')],
                 tools: [gcc4(name: 'GCC', pattern: 'build/build.log')],
                 unstableTotalAll: 3
-              recordIssues filters: [
+              recordIssues enabledForFailure: true, filters: [
                   excludeFile('-'), excludeFile('.*Functional\\.h'),
                   excludeFile('.*gmock-.*\\.h'), excludeFile('.*gtest-.*\\.h')
                 ],
                 tools: [doxygen(pattern: 'build/DoxygenWarnings.log')],
                 failedTotalAll: 1
-              recordIssues tools: [cppCheck(pattern: 'build/cppcheck.log')]
+              recordIssues enabledForFailure: true,
+                tools: [cppCheck(pattern: 'build/cppcheck.log')]
             }
             success {
               publishHTML(target: [allowMissing: false, alwaysLinkToLastBuild: true,
