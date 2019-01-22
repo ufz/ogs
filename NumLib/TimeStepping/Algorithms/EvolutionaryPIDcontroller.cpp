@@ -20,14 +20,15 @@
 
 namespace NumLib
 {
-bool EvolutionaryPIDcontroller::next(const double solution_error)
+bool EvolutionaryPIDcontroller::next(double const solution_error,
+                                     int const /*number_iterations*/)
 {
     const bool is_previous_step_accepted = _is_accepted;
 
     const double e_n = solution_error;
     const double zero_threshlod = std::numeric_limits<double>::epsilon();
     // step rejected.
-    if (e_n > _tol)  // e_n < TOL
+    if (e_n > _tol)
     {
         _is_accepted = false;
 
@@ -166,4 +167,4 @@ void EvolutionaryPIDcontroller::addFixedOutputTimes(
     // Remove possible duplicated elements and sort in descending order.
     BaseLib::makeVectorUnique(_fixed_output_times, std::greater<double>());
 }
-}  // end of namespace NumLib
+}  // namespace NumLib

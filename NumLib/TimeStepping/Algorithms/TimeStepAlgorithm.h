@@ -1,4 +1,5 @@
 /**
+ * \file
  * \author Norihiro Watanabe
  * \date   2012-08-03
  *
@@ -88,17 +89,20 @@ public:
         _ts_current += dt;
     }
 
-    /// move to the next time step
-    /// \param solution_error Solution error between two successive time steps.
+    /// Move to the next time step
+    /// \param solution_error Solution error \f$e_n\f$ between two successive
+    ///        time steps.
+    /// \param number_iterations Number of non-linear iterations used.
     /// \return true if the next step exists
-    virtual bool next(const double solution_error) = 0;
+    virtual bool next(const double solution_error, int number_iterations) = 0;
 
     /// return if current time step is accepted or not
     virtual bool accepted() const = 0;
 
-    /// Set the status of the step. A boolean parameter is needed to indicated
-    /// whether the step is accepted or not.
-    virtual void setAcceptedOrNot(const bool /*accepted*/){};
+    /// Set the status of the step.
+    /// \param accepted A boolean parameter is needed to indicated whether the
+    /// step is accepted or not.
+    virtual void setAcceptedOrNot(const bool accepted) { (void)accepted; };
 
     /// return a history of time step sizes
     const std::vector<double>& getTimeStepSizeHistory() const
@@ -110,13 +114,11 @@ public:
     /// solution error. The default return value is false.
     virtual bool isSolutionErrorComputationNeeded() { return false; }
 
-    /**
-     * Add specified times to the existing vector of the specified times.
-     * If there are specified times, they will be used as constraints in the
-     * computing of time step size such that the time step can exactly reach at
-     * the specified times. The function is mainly used to accept the specified
-     * times from the configuration of output.
-     */
+    /// Add specified times to the existing vector of the specified times.
+    /// If there are specified times, they will be used as constraints in the
+    /// computing of time step size such that the time step can exactly reach at
+    /// the specified times. The function is mainly used to accept the specified
+    /// times from the configuration of output.
     virtual void addFixedOutputTimes(
         std::vector<double> const& /*fixed_output_times*/)
     {
@@ -137,4 +139,4 @@ protected:
     std::vector<double> _dt_vector;
 };
 
-}  // NumLib
+}  // namespace NumLib

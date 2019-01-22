@@ -25,14 +25,22 @@ struct Dummy
     void operator()(T &/*obj*/) {}
 };
 
-template <class T_TIME_STEPPING, class T=Dummy>
-std::vector<double> timeStepping(T_TIME_STEPPING &algorithm, T* obj=nullptr)
+template <class T_TIME_STEPPING, class T = Dummy>
+std::vector<double> timeStepping(T_TIME_STEPPING& algorithm,
+                                 std::vector<int> const& number_iterations,
+                                 T* obj = nullptr)
 {
     std::vector<double> vec_t;
     vec_t.push_back(algorithm.begin());
 
-    while (algorithm.next(0.0))
+    double const solution_error = 0;
+    for (auto const& i : number_iterations)
     {
+        if (!algorithm.next(solution_error, i))
+        {
+            break;
+        }
+
         NumLib::TimeStep t = algorithm.getTimeStep();
         //INFO("t: n=%d,t=%g,dt=%g", t.steps(), t.current(), t.dt());
         if (obj)

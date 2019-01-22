@@ -127,12 +127,12 @@ std::unique_ptr<UncoupledProcessesTimeLoop> createUncoupledProcessesTimeLoop(
 
     std::vector<std::unique_ptr<NumLib::ConvergenceCriterion>>
         global_coupling_conv_criteria;
-    unsigned max_coupling_iterations = 1;
+    int max_coupling_iterations = 1;
     if (coupling_config)
     {
         max_coupling_iterations
             //! \ogs_file_param{prj__time_loop__global_process_coupling__max_iter}
-            = coupling_config->getConfigParameter<unsigned>("max_iter");
+            = coupling_config->getConfigParameter<int>("max_iter");
 
         auto const& coupling_convergence_criteria_config =
             //! \ogs_file_param{prj__time_loop__global_process_coupling__convergence_criteria}
@@ -235,11 +235,10 @@ std::vector<GlobalVector*> setInitialConditions(
     return process_solutions;
 }
 
-bool solveOneTimeStepOneProcess(int const process_id, GlobalVector& x,
-                                std::size_t const timestep, double const t,
-                                double const delta_t,
-                                ProcessData const& process_data,
-                                Output& output_control)
+NumLib::NonlinearSolverStatus solveOneTimeStepOneProcess(
+    int const process_id, GlobalVector& x, std::size_t const timestep,
+    double const t, double const delta_t, ProcessData const& process_data,
+    Output& output_control)
 {
     auto& process = process_data.process;
     auto& time_disc = *process_data.time_disc;
@@ -257,27 +256,27 @@ bool solveOneTimeStepOneProcess(int const process_id, GlobalVector& x,
 
     time_disc.nextTimestep(t, delta_t);
 
-    auto const post_iteration_callback = [&](unsigned iteration,
+    auto const post_iteration_callback = [&](int iteration,
                                              GlobalVector const& x) {
         output_control.doOutputNonlinearIteration(process, process_id,
                                                   timestep, t, x, iteration);
     };
 
-    bool nonlinear_solver_succeeded =
+    auto const nonlinear_solver_status =
         nonlinear_solver.solve(x, post_iteration_callback);
 
-    if (nonlinear_solver_succeeded)
+    if (nonlinear_solver_status.error_norms_met)
     {
         process.postNonLinearSolver(x, t, process_id);
     }
 
-    return nonlinear_solver_succeeded;
+    return nonlinear_solver_status;
 }
 
 UncoupledProcessesTimeLoop::UncoupledProcessesTimeLoop(
     std::unique_ptr<Output>&& output,
     std::vector<std::unique_ptr<ProcessData>>&& per_process_data,
-    const unsigned global_coupling_max_iterations,
+    const int global_coupling_max_iterations,
     std::vector<std::unique_ptr<NumLib::ConvergenceCriterion>>&&
         global_coupling_conv_crit,
     const double start_time, const double end_time)
@@ -329,12 +328,6 @@ double UncoupledProcessesTimeLoop::computeTimeStepping(
     {
         auto& ppd = *_per_process_data[i];
         const auto& timestepper = ppd.timestepper;
-        if (t > timestepper->end())
-        {
-            // skip the process that already reaches the ending time.
-            ppd.skip_time_stepping = true;
-            continue;
-        }
 
         auto& time_disc = ppd.time_disc;
         auto const& x = *_process_solutions[i];
@@ -352,12 +345,13 @@ double UncoupledProcessesTimeLoop::computeTimeStepping(
                              x, norm_type))
                 : 0.;
 
-        if (!ppd.nonlinear_solver_converged)
+        if (!ppd.nonlinear_solver_status.error_norms_met)
         {
             timestepper->setAcceptedOrNot(false);
         }
 
-        if (!timestepper->next(solution_error) &&
+        if (!timestepper->next(solution_error,
+                               ppd.nonlinear_solver_status.number_iterations) &&
             // In case of FixedTimeStepping, which makes timestepper->next(...)
             // return false when the ending time is reached.
             t + std::numeric_limits<double>::epsilon() < timestepper->end())
@@ -366,7 +360,7 @@ double UncoupledProcessesTimeLoop::computeTimeStepping(
             all_process_steps_accepted = false;
         }
 
-        if (!ppd.nonlinear_solver_converged)
+        if (!ppd.nonlinear_solver_status.error_norms_met)
         {
             WARN("Time step will be rejected due to nonlinear solver diverged");
             all_process_steps_accepted = false;
@@ -431,7 +425,8 @@ double UncoupledProcessesTimeLoop::computeTimeStepping(
         }
         else
         {
-            if (t < _end_time)
+            if (t < _end_time || std::abs(t - _end_time) <
+                                     std::numeric_limits<double>::epsilon())
             {
                 WARN(
                     "Time step %d was rejected %d times "
@@ -451,7 +446,8 @@ double UncoupledProcessesTimeLoop::computeTimeStepping(
         }
         else
         {
-            if (t < _end_time)
+            if (t < _end_time || std::abs(t - _end_time) <
+                                     std::numeric_limits<double>::epsilon())
             {
                 t -= prev_dt;
                 rejected_steps++;
@@ -525,7 +521,7 @@ bool UncoupledProcessesTimeLoop::loop()
     double t = _start_time;
     std::size_t accepted_steps = 0;
     std::size_t rejected_steps = 0;
-    bool nonlinear_solver_succeeded = true;
+    NumLib::NonlinearSolverStatus nonlinear_solver_status{true, 0};
 
     double dt = computeTimeStepping(0.0, t, accepted_steps, rejected_steps);
 
@@ -552,12 +548,12 @@ bool UncoupledProcessesTimeLoop::loop()
 
         if (is_staggered_coupling)
         {
-            nonlinear_solver_succeeded =
+            nonlinear_solver_status =
                 solveCoupledEquationSystemsByStaggeredScheme(t, dt, timesteps);
         }
         else
         {
-            nonlinear_solver_succeeded =
+            nonlinear_solver_status =
                 solveUncoupledEquationSystems(t, dt, timesteps);
         }
 
@@ -587,27 +583,6 @@ bool UncoupledProcessesTimeLoop::loop()
                 dt, timesteps, t);
             break;
         }
-
-        // If this step was rejected twice with the same time step size, jump
-        // out this function directly with a failure flag and let the main
-        // function terminate the program.
-        if (std::abs(dt - prev_dt) < std::numeric_limits<double>::min() &&
-            _last_step_rejected)
-        {
-            ALERT(
-                "\tTime step %u is rejected and the new computed"
-                " step size is the same as\n"
-                "\tthat was just used.\n"
-                "\tSuggest to adjust the parameters of the time"
-                " stepper or try other time stepper.\n"
-                "\tThe program will stop.",
-                timesteps);
-            // save unsuccessful solution
-            const bool output_initial_condition = false;
-            outputSolutions(output_initial_condition, is_staggered_coupling,
-                            timesteps, t, *_output, &Output::doOutputAlways);
-            return false;
-        }
     }
 
     INFO(
@@ -616,7 +591,7 @@ bool UncoupledProcessesTimeLoop::loop()
         accepted_steps + rejected_steps, accepted_steps, rejected_steps);
 
     // output last time step
-    if (nonlinear_solver_succeeded)
+    if (nonlinear_solver_status.error_norms_met)
     {
         const bool output_initial_condition = false;
         outputSolutions(output_initial_condition, is_staggered_coupling,
@@ -624,17 +599,18 @@ bool UncoupledProcessesTimeLoop::loop()
                         &Output::doOutputLastTimestep);
     }
 
-    return nonlinear_solver_succeeded;
+    return nonlinear_solver_status.error_norms_met;
 }
 
 static std::string const nonlinear_fixed_dt_fails_info =
-    "Nonlinear solver fails. Because the time stepper"
-    " FixedTimeStepping is used, the program has to be"
-    " terminated ";
+    "Nonlinear solver fails. Because the time stepper FixedTimeStepping is "
+    "used, the program has to be terminated.";
 
-bool UncoupledProcessesTimeLoop::solveUncoupledEquationSystems(
+NumLib::NonlinearSolverStatus
+UncoupledProcessesTimeLoop::solveUncoupledEquationSystems(
     const double t, const double dt, const std::size_t timestep_id)
 {
+    NumLib::NonlinearSolverStatus nonlinear_solver_status;
     // TODO(wenqing): use process name
     unsigned process_id = 0;
     for (auto& process_data : _per_process_data)
@@ -653,19 +629,19 @@ bool UncoupledProcessesTimeLoop::solveUncoupledEquationSystems(
         auto& pcs = process_data->process;
         pcs.preTimestep(x, t, dt, process_id);
 
-        const auto nonlinear_solver_succeeded = solveOneTimeStepOneProcess(
+        nonlinear_solver_status = solveOneTimeStepOneProcess(
             process_id, x, timestep_id, t, dt, *process_data, *_output);
-        process_data->nonlinear_solver_converged = nonlinear_solver_succeeded;
+        process_data->nonlinear_solver_status = nonlinear_solver_status;
         pcs.postTimestep(x, t, dt, process_id);
         pcs.computeSecondaryVariable(t, x, process_id);
 
         INFO("[time] Solving process #%u took %g s in time step #%u ",
              process_id, time_timestep_process.elapsed(), timestep_id);
 
-        if (!nonlinear_solver_succeeded)
+        if (!nonlinear_solver_status.error_norms_met)
         {
-            ERR("The nonlinear solver failed in time step #%u at t = %g "
-                "s for process #%u.",
+            ERR("The nonlinear solver failed in time step #%u at t = %g s for "
+                "process #%u.",
                 timestep_id, t, process_id);
 
             if (!process_data->timestepper->isSolutionErrorComputationNeeded())
@@ -675,16 +651,17 @@ bool UncoupledProcessesTimeLoop::solveUncoupledEquationSystems(
                 OGS_FATAL(nonlinear_fixed_dt_fails_info.data());
             }
 
-            return false;
+            return nonlinear_solver_status;
         }
 
         ++process_id;
     }  // end of for (auto& process_data : _per_process_data)
 
-    return true;
+    return nonlinear_solver_status;
 }
 
-bool UncoupledProcessesTimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
+NumLib::NonlinearSolverStatus
+UncoupledProcessesTimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
     const double t, const double dt, const std::size_t timestep_id)
 {
     // Coupling iteration
@@ -703,13 +680,13 @@ bool UncoupledProcessesTimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
         }
     };
 
+    NumLib::NonlinearSolverStatus nonlinear_solver_status{true, 0};
     bool coupling_iteration_converged = true;
-    for (unsigned global_coupling_iteration = 0;
+    for (int global_coupling_iteration = 0;
          global_coupling_iteration < _global_coupling_max_iterations;
          global_coupling_iteration++, resetCouplingConvergenceCriteria())
     {
         // TODO(wenqing): use process name
-        bool nonlinear_solver_succeeded = true;
         coupling_iteration_converged = true;
         int process_id = 0;
         int const last_process_id = _per_process_data.size() - 1;
@@ -741,10 +718,9 @@ bool UncoupledProcessesTimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
             process_data->process.setCoupledSolutionsForStaggeredScheme(
                 &coupled_solutions);
 
-            const auto nonlinear_solver_succeeded = solveOneTimeStepOneProcess(
+            nonlinear_solver_status = solveOneTimeStepOneProcess(
                 process_id, x, timestep_id, t, dt, *process_data, *_output);
-            process_data->nonlinear_solver_converged =
-                nonlinear_solver_succeeded;
+            process_data->nonlinear_solver_status = nonlinear_solver_status;
 
             INFO(
                 "[time] Solving process #%u took %g s in time step #%u "
@@ -752,11 +728,10 @@ bool UncoupledProcessesTimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
                 process_id, time_timestep_process.elapsed(), timestep_id,
                 global_coupling_iteration);
 
-            if (!nonlinear_solver_succeeded)
+            if (!nonlinear_solver_status.error_norms_met)
             {
-                ERR("The nonlinear solver failed in time step #%u at t = %g "
-                    "s"
-                    " for process #%u.",
+                ERR("The nonlinear solver failed in time step #%u at t = %g s "
+                    "for process #%u.",
                     timestep_id, t, process_id);
 
                 if (!process_data->timestepper
@@ -797,9 +772,9 @@ bool UncoupledProcessesTimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
             break;
         }
 
-        if (!nonlinear_solver_succeeded)
+        if (!nonlinear_solver_status.error_norms_met)
         {
-            return false;
+            return nonlinear_solver_status;
         }
     }
 
@@ -833,7 +808,7 @@ bool UncoupledProcessesTimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
         ++process_id;
     }
 
-    return true;
+    return nonlinear_solver_status;
 }
 
 template <typename OutputClass, typename OutputClassMember>
@@ -848,7 +823,7 @@ void UncoupledProcessesTimeLoop::outputSolutions(
         auto& pcs = process_data->process;
         // If nonlinear solver diverged, the solution has already been
         // saved.
-        if ((!process_data->nonlinear_solver_converged) ||
+        if ((!process_data->nonlinear_solver_status.error_norms_met) ||
             process_data->skip_time_stepping)
         {
             ++process_id;

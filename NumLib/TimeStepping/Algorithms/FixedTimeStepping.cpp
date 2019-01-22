@@ -30,7 +30,8 @@ FixedTimeStepping::FixedTimeStepping(double t0, double tn, double dt)
 {
 }
 
-bool FixedTimeStepping::next(const double /*solution_error*/)
+bool FixedTimeStepping::next(double const /*solution_error*/,
+                             int const /*number_iterations*/)
 {
     // check if last time step
     if (_ts_current.steps() == _dt_vector.size() ||

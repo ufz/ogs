@@ -104,7 +104,7 @@ public:
 
         if (num_timesteps > 0)
         {
-            EXPECT_TRUE(loop.loop(t0, x0, t_end, delta_t, cb));
+            EXPECT_TRUE(loop.loop(t0, x0, t_end, delta_t, cb).error_norms_met);
         }
 
         for (auto& x :  sol.solutions)
