@@ -11,20 +11,17 @@
 #include <iterator>
 #include "ProcessLib/ProcessVariable.h"
 
-namespace ProcessLib
+namespace
 {
-ProcessVariable& findProcessVariable(
-    std::vector<ProcessVariable> const& variables,
-    BaseLib::ConfigTree const& pv_config, std::string const& tag)
+ProcessLib::ProcessVariable& findVariableByName(
+    std::vector<ProcessLib::ProcessVariable> const& variables,
+    std::string const& name, std::string const& tag)
 {
-    // Find process variable name in process config.
-    //! \ogs_file_special
-    std::string const name = pv_config.getConfigParameter<std::string>(tag);
-
     // Find corresponding variable by name.
-    auto variable = std::find_if(
-        variables.cbegin(), variables.cend(),
-        [&name](ProcessVariable const& v) { return v.getName() == name; });
+    auto variable = std::find_if(variables.cbegin(), variables.cend(),
+                                 [&name](ProcessLib::ProcessVariable const& v) {
+                                     return v.getName() == name;
+                                 });
 
     if (variable == variables.end())
     {
@@ -37,7 +34,20 @@ ProcessVariable& findProcessVariable(
          variable->getName().c_str(), tag.c_str());
 
     // Const cast is needed because of variables argument constness.
-    return const_cast<ProcessVariable&>(*variable);
+    return const_cast<ProcessLib::ProcessVariable&>(*variable);
+}
+}  // namespace
+
+namespace ProcessLib
+{
+ProcessVariable& findProcessVariable(
+    std::vector<ProcessVariable> const& variables,
+    BaseLib::ConfigTree const& pv_config, std::string const& tag)
+{
+    // Find process variable name in process config.
+    //! \ogs_file_special
+    std::string const name = pv_config.getConfigParameter<std::string>(tag);
+    return findVariableByName(variables, name, tag);
 }
 
 std::vector<std::reference_wrapper<ProcessVariable>> findProcessVariables(
@@ -68,6 +78,7 @@ std::vector<std::reference_wrapper<ProcessVariable>> findProcessVariables(
 {
     std::vector<std::reference_wrapper<ProcessVariable>> vars;
 
+    //! \ogs_file_special
     auto var_names = pv_config.getConfigParameterList<std::string>(tag);
 
     if (var_names.empty())
@@ -77,24 +88,7 @@ std::vector<std::reference_wrapper<ProcessVariable>> findProcessVariables(
 
     for (std::string const& var_name : var_names)
     {
-        auto variable = std::find_if(variables.cbegin(), variables.cend(),
-                                     [&var_name](ProcessVariable const& v) {
-                                         return v.getName() == var_name;
-                                     });
-
-        if (variable == variables.end())
-        {
-            OGS_FATAL(
-                "Could not find process variable '%s' in the provided "
-                "variables "
-                "list for config tag <%s>.",
-                var_name.c_str(), tag.c_str());
-        }
-        DBUG("Found process variable \'%s\' for config tag <%s>.",
-             variable->getName().c_str(), tag.c_str());
-
-        vars.emplace_back(const_cast<ProcessVariable&>(*variable));
-
+        vars.push_back(findVariableByName(variables, var_name, tag));
         cached_var_names.push_back(var_name);
     }
 
@@ -106,4 +100,4 @@ std::vector<std::reference_wrapper<ProcessVariable>> findProcessVariables(
 
     return vars;
 }
-}  // ProcessLib
+}  // namespace ProcessLib
