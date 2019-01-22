@@ -51,7 +51,7 @@ void ComponentTransportProcess::initializeConcreteProcess(
         mesh.getDimension(), mesh.getElements(), dof_table,
         pv.getShapeFunctionOrder(), _local_assemblers,
         mesh.isAxiallySymmetric(), integration_order, _process_data,
-        _process_variables);
+        _process_variables[process_id]);
 
     _secondary_variables.addSecondaryVariable(
         "darcy_velocity",

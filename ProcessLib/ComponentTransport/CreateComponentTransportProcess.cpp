@@ -55,41 +55,42 @@ std::unique_ptr<Process> createComponentTransportProcess(
     std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>
         process_variables;
 
-    // get all process variables stored in a vector before allocation
+    // Collect all process variables in a vector before allocation
     // pressure first, concentration then
-    auto const unalloc_process_variables = findProcessVariables(
+    auto const collected_process_variables = findProcessVariables(
         variables, pv_config,
         {//! \ogs_file_param_special{prj__processes__process__ComponentTransport__process_variables__pressure}
          "pressure",
          //! \ogs_file_param_special{prj__processes__process__ComponentTransport__process_variables__concentration}
          "concentration"});
 
-    // check number of components for each process variable
+    // Check number of components for each process variable
     auto it = std::find_if(
-        unalloc_process_variables.cbegin(), unalloc_process_variables.cend(),
+        collected_process_variables.cbegin(),
+        collected_process_variables.cend(),
         [](std::reference_wrapper<ProcessLib::ProcessVariable> const& pv) {
             return pv.get().getNumberOfComponents() != 1;
         });
 
-    if (it != unalloc_process_variables.end())
+    if (it != collected_process_variables.end())
         OGS_FATAL(
-            "Number of components for process variable \"%s\" should be 1 "
-            "rather than %d.",
+            "Number of components for process variable '%s' should be 1 rather "
+            "than %d.",
             it->get().getName().c_str(),
             it->get().getNumberOfComponents());
 
-    // allocated into a two-dimensional vector, depending on what scheme is
-    // adopted
+    // Allocate the collected process variables into a two-dimensional vector,
+    // depending on what scheme is adopted
     if (use_monolithic_scheme)  // monolithic scheme.
     {
-        process_variables.push_back(std::move(unalloc_process_variables));
+        process_variables.push_back(std::move(collected_process_variables));
     }
     else  // staggered scheme.
     {
         std::vector<std::reference_wrapper<ProcessLib::ProcessVariable>>
             per_process_variable;
 
-        for (auto& pv : unalloc_process_variables)
+        for (auto& pv : collected_process_variables)
         {
             per_process_variable.emplace_back(pv);
             process_variables.push_back(std::move(per_process_variable));

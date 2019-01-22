@@ -21,7 +21,8 @@ namespace ProcessLib
 {
 namespace ComponentTransport
 {
-std::unique_ptr<Process> createComponentTransportProcess(MeshLib::Mesh& mesh,
+std::unique_ptr<Process> createComponentTransportProcess(
+    MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
@@ -29,7 +30,7 @@ std::unique_ptr<Process> createComponentTransportProcess(MeshLib::Mesh& mesh,
     BaseLib::ConfigTree const& config,
     std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
     std::string const& output_directory,
-    std::map<int, std::unique_ptr<MaterialPropertyLib::Medium> > const& media);
+    std::map<int, std::unique_ptr<MaterialPropertyLib::Medium>> const& media);
 
 }  // namespace ComponentTransport
 }  // namespace ProcessLib

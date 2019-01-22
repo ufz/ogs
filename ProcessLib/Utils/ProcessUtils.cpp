@@ -71,7 +71,7 @@ std::vector<std::reference_wrapper<ProcessVariable>> findProcessVariables(
     auto var_names = pv_config.getConfigParameterList<std::string>(tag);
 
     if (var_names.empty())
-        OGS_FATAL("Config tag <%s> is not found.", tag.c_str());
+        OGS_FATAL("No entity is found with config tag <%s>.", tag.c_str());
 
     std::vector<std::string> cached_var_names;
 
