@@ -10,7 +10,7 @@
 #include "HeatTransportBHEProcess.h"
 
 #include <cassert>
-// #include <iostream>
+
 #include "ProcessLib/HeatTransportBHE/BHE/MeshUtils.h"
 #include "ProcessLib/HeatTransportBHE/LocalAssemblers/CreateLocalAssemblers.h"
 
