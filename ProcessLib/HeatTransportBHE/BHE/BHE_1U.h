@@ -145,9 +145,9 @@ public:
          borehole_geometry.area() / 2 - _pipes.inlet.area(),
          borehole_geometry.area() / 2 - _pipes.outlet.area()}};
 
-private:
     void updateHeatTransferCoefficients(double const flow_rate);
 
+private:
     std::array<double, number_of_unknowns> calcThermalResistances(
         double const Nu);
 

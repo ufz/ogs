@@ -235,8 +235,20 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
         // network, and replace the value in flow velocity Matrix _u
         auto const tespy_flow_rate = std::get<1>(bc->tespyHydroSolver());
         const std::size_t n_bhe = tespy_flow_rate.size();
-        // TODO the flow_rate in OGS should be updated from the flow_rate
-        // computed by TESPy here.
+        if (bhes.size() != n_bhe)
+            OGS_FATAL(
+                "The number of BHEs defined in OGS and TESPy are not the "
+                "same!");
+
+        for (auto idx_bhe = 0; idx_bhe < n_bhe; idx_bhe++)
+        {
+            // the flow_rate in OGS should be updated from the flow_rate
+            // computed by TESPy.
+            auto update_flow_rate = [&](auto& bhe) {
+                bhe.updateHeatTransferCoefficients(tespy_flow_rate[idx_bhe]);
+            };
+            apply_visitor(update_flow_rate, bhes[idx_bhe]);
+        }
     }
 
     HeatTransportBHEProcessData process_data(thermal_conductivity_solid,
