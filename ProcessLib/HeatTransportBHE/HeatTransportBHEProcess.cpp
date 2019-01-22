@@ -226,12 +226,11 @@ NumLib::IterationResult HeatTransportBHEProcess::postIterationConcreteProcess(
     auto const if_convergence = std::get<1>(tespy_result);
     if (if_convergence == true)
         return NumLib::IterationResult::SUCCESS;
-    else
-    {
-        for (std::size_t i = 0; i < n_bc_nodes; i++)
-            std::get<1>(_process_data.py_bc_object->dataframe_network)[i] =
-                cur_Tin[i];
-    }
+
+    // if no convergance, update the T_in and repeat iteration
+    for (std::size_t i = 0; i < n_bc_nodes; i++)
+        std::get<1>(_process_data.py_bc_object->dataframe_network)[i] =
+            cur_Tin[i];
     return NumLib::IterationResult::REPEAT_ITERATION;
 }
 
