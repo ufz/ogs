@@ -49,9 +49,11 @@ enum PropertyType : int
     entry_pressure,
     fredlund_parameters,
     heat_capacity,
+    /// used to compute the hydrodynamic dispersion tensor.
     longitudinal_dispersivity,
     molar_mass,
     mole_fraction,
+    /// used to compute the hydrodynamic dispersion tensor.
     molecular_diffusion,
     name,
     permeability,
@@ -67,6 +69,7 @@ enum PropertyType : int
     specific_heat_capacity,
     thermal_conductivity,
     thermal_expansivity,
+    /// used to compute the hydrodynamic dispersion tensor.
     transversal_dispersivity,
     viscosity,
     number_of_properties
