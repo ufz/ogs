@@ -11,7 +11,7 @@
             <type>ComponentTransport</type>
             <integration_order>2</integration_order>
             <process_variables>
-                <concentration>conc</concentration>
+                <concentration>Si</concentration>
                 <pressure>pressure</pressure>
             </process_variables>
             <fluid>
@@ -45,15 +45,45 @@
             <decay_rate>decay_rate</decay_rate>
             <fluid_reference_density>rho_fluid</fluid_reference_density>
             <retardation_factor>retardation_factor</retardation_factor>
-            <solute_dispersivity_longitudinal>alpha_l</solute_dispersivity_longitudinal>
-            <solute_dispersivity_transverse>alpha_t</solute_dispersivity_transverse>
-            <molecular_diffusion_coefficient>Dm</molecular_diffusion_coefficient>
             <specific_body_force>0 0 -9.81</specific_body_force>
             <secondary_variables>
                 <secondary_variable type="static" internal_name="darcy_velocity" output_name="darcy_velocity"/>
             </secondary_variables>
         </process>
     </processes>
+    <media>
+        <medium id="0">
+            <phases>
+                <phase>
+                    <type>AqueousLiquid</type>
+                    <components>
+                        <component>
+                            <name>Si</name>
+                            <properties>
+                                <property>
+                                    <name>molecular_diffusion</name>
+                                    <type>Constant</type>
+                                    <value>3.57e-6</value>
+                                </property>
+                            </properties>
+                        </component>
+                    </components>
+                </phase>
+            </phases>
+            <properties>
+                <property>
+                    <name>longitudinal_dispersivity</name>
+                    <type>Constant</type>
+                    <value>0</value>
+                </property>
+                <property>
+                    <name>transversal_dispersivity</name>
+                    <type>Constant</type>
+                    <value>0</value>
+                </property>
+            </properties>
+        </medium>
+    </media>
     <time_loop>
         <processes>
             <process ref="HC">
@@ -89,7 +119,7 @@
                 </pair>
             </timesteps>
             <variables>
-                <variable>conc</variable>
+                <variable>Si</variable>
                 <variable>pressure</variable>
                 <variable>darcy_velocity</variable>
             </variables>
@@ -100,21 +130,6 @@
             <name>rho_fluid</name>
             <type>Constant</type>
             <value>1000.0</value>
-        </parameter>
-        <parameter>
-            <name>alpha_l</name>
-            <type>Constant</type>
-            <value>0</value>
-        </parameter>
-        <parameter>
-            <name>alpha_t</name>
-            <type>Constant</type>
-            <value>0</value>
-        </parameter>
-        <parameter>
-            <name>Dm</name>
-            <type>Constant</type>
-            <value>3.57e-6</value>
         </parameter>
         <parameter>
             <name>decay_rate</name>
@@ -149,7 +164,7 @@
     </parameters>
     <process_variables>
         <process_variable>
-            <name>conc</name>
+            <name>Si</name>
             <components>1</components>
             <order>1</order>
             <initial_condition>c_ini</initial_condition>

@@ -8,7 +8,7 @@
             <type>ComponentTransport</type>
             <integration_order>2</integration_order>
             <process_variables>
-                <concentration>concentration</concentration>
+                <concentration>Si</concentration>
                 <pressure>pressure</pressure>
             </process_variables>
             <fluid>
@@ -56,9 +56,6 @@
                 </porous_medium>
             </porous_medium>
             <fluid_reference_density>rho_fluid</fluid_reference_density>
-            <solute_dispersivity_longitudinal>beta_l</solute_dispersivity_longitudinal>
-            <solute_dispersivity_transverse>beta_t</solute_dispersivity_transverse>
-            <molecular_diffusion_coefficient>Dm</molecular_diffusion_coefficient>
             <retardation_factor>retardation</retardation_factor>
             <decay_rate>decay</decay_rate>
             <specific_body_force>0 0</specific_body_force>
@@ -67,6 +64,39 @@
             </secondary_variables>
         </process>
     </processes>
+    <media>
+        <medium id="0">
+            <phases>
+                <phase>
+                    <type>AqueousLiquid</type>
+                    <components>
+                        <component>
+                            <name>Si</name>
+                            <properties>
+                                <property>
+                                    <name>molecular_diffusion</name>
+                                    <value>1</value>
+                                    <type>Constant</type>
+                                </property>
+                            </properties>
+                        </component>
+                    </components>
+                </phase>
+            </phases>
+            <properties>
+                <property>
+                    <name>longitudinal_dispersivity</name>
+                    <type>Constant</type>
+                    <value>0</value>
+                </property>
+                <property>
+                    <name>transversal_dispersivity</name>
+                    <type>Constant</type>
+                    <value>1</value>
+                </property>
+            </properties>
+        </medium>
+    </media>
     <time_loop>
         <processes>
             <process ref="hc">
@@ -110,7 +140,7 @@
                 </pair>
             </timesteps>
             <variables>
-                <variable>concentration</variable>
+                <variable>Si</variable>
                 <variable>pressure</variable>
                 <variable>darcy_velocity</variable>
             </variables>
@@ -128,11 +158,6 @@
             <value>1000</value>
         </parameter>
         <parameter>
-            <name>Dm</name>
-            <type>Constant</type>
-            <value>1</value>
-        </parameter>
-        <parameter>
             <name>retardation</name>
             <type>Constant</type>
             <value>1</value>
@@ -141,16 +166,6 @@
             <name>decay</name>
             <type>Constant</type>
             <value>0</value>
-        </parameter>
-        <parameter>
-            <name>beta_l</name>
-            <type>Constant</type>
-            <value>0</value>
-        </parameter>
-        <parameter>
-            <name>beta_t</name>
-            <type>Constant</type>
-            <value>1</value>
         </parameter>
         <parameter>
             <name>c0</name>
@@ -195,7 +210,7 @@
     </parameters>
     <process_variables>
         <process_variable>
-            <name>concentration</name>
+            <name>Si</name>
             <components>1</components>
             <order>1</order>
             <initial_condition>c0</initial_condition>

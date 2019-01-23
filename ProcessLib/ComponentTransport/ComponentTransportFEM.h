@@ -14,6 +14,9 @@
 
 #include "ComponentTransportProcessData.h"
 #include "MaterialLib/Fluid/FluidProperties/FluidProperties.h"
+#include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
+#include "MaterialLib/MPL/Medium.h"
+#include "MaterialLib/MPL/Property.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
@@ -22,6 +25,7 @@
 #include "NumLib/Function/Interpolation.h"
 #include "ProcessLib/LocalAssemblerInterface.h"
 #include "ProcessLib/Parameter/Parameter.h"
+#include "ProcessLib/ProcessVariable.h"
 #include "ProcessLib/Utils/InitShapeMatrices.h"
 
 namespace ProcessLib
@@ -44,8 +48,6 @@ struct IntegrationPointData final
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
 
-const unsigned NUM_NODAL_DOF = 2;
-
 class ComponentTransportLocalAssemblerInterface
     : public ProcessLib::LocalAssemblerInterface,
       public NumLib::ExtrapolatableElement
@@ -62,15 +64,24 @@ template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
 class LocalAssemblerData : public ComponentTransportLocalAssemblerInterface
 {
+    // Pressure always first
+    static const int pressure_index = 0;
+    static const int pressure_size = ShapeFunction::NPOINTS;
+    // Size of concentration to each component
+    static const int concentration_size = ShapeFunction::NPOINTS;
+
     using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction, GlobalDim>;
     using ShapeMatrices = typename ShapeMatricesType::ShapeMatrices;
 
-    using LocalMatrixType = typename ShapeMatricesType::template MatrixType<
-        NUM_NODAL_DOF * ShapeFunction::NPOINTS,
-        NUM_NODAL_DOF * ShapeFunction::NPOINTS>;
-    using LocalVectorType =
-        typename ShapeMatricesType::template VectorType<NUM_NODAL_DOF *
-                                                        ShapeFunction::NPOINTS>;
+    using LocalBlockMatrixType =
+        typename ShapeMatricesType::template MatrixType<pressure_size,
+                                                        pressure_size>;
+    using LocalSegmentVectorType =
+        typename ShapeMatricesType::template VectorType<pressure_size>;
+
+    using LocalMatrixType =
+        Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
+    using LocalVectorType = Eigen::Matrix<double, Eigen::Dynamic, 1>;
 
     using NodalVectorType = typename ShapeMatricesType::NodalVectorType;
     using NodalRowVectorType = typename ShapeMatricesType::NodalRowVectorType;
@@ -81,18 +92,25 @@ class LocalAssemblerData : public ComponentTransportLocalAssemblerInterface
     using GlobalDimMatrixType = typename ShapeMatricesType::GlobalDimMatrixType;
 
 public:
-    LocalAssemblerData(MeshLib::Element const& element,
-                       std::size_t const local_matrix_size,
-                       bool is_axially_symmetric,
-                       unsigned const integration_order,
-                       ComponentTransportProcessData const& process_data)
+    LocalAssemblerData(
+        MeshLib::Element const& element,
+        std::size_t const local_matrix_size,
+        bool is_axially_symmetric,
+        unsigned const integration_order,
+        ComponentTransportProcessData const& process_data,
+        std::vector<std::reference_wrapper<ProcessVariable>> const&
+            per_process_variables)
         : _element(element),
           _process_data(process_data),
-          _integration_method(integration_order)
+          _integration_method(integration_order),
+          _per_process_variables(per_process_variables)
     {
         // This assertion is valid only if all nodal d.o.f. use the same shape
         // matrices.
-        assert(local_matrix_size == ShapeFunction::NPOINTS * NUM_NODAL_DOF);
+        // _per_process_variables.size() can represent number of nodal DOFs
+        // regardless of what scheme is adopted.
+        assert(local_matrix_size ==
+               ShapeFunction::NPOINTS * _per_process_variables.size());
         (void)local_matrix_size;
 
         unsigned const n_integration_points =
@@ -120,9 +138,12 @@ public:
                   std::vector<double>& local_b_data) override
     {
         auto const local_matrix_size = local_x.size();
+
+        int const num_nodal_dof = _per_process_variables.size();
+
         // This assertion is valid only if all nodal d.o.f. use the same shape
         // matrices.
-        assert(local_matrix_size == ShapeFunction::NPOINTS * NUM_NODAL_DOF);
+        assert(local_matrix_size == ShapeFunction::NPOINTS * num_nodal_dof);
 
         auto local_M = MathLib::createZeroedMatrix<LocalMatrixType>(
             local_M_data, local_matrix_size, local_matrix_size);
@@ -131,17 +152,75 @@ public:
         auto local_b = MathLib::createZeroedVector<LocalVectorType>(
             local_b_data, local_matrix_size);
 
+        // Get block matrices
+        auto Kpp = local_K.template block<pressure_size, pressure_size>(
+            pressure_index, pressure_index);
+        auto Mpp = local_M.template block<pressure_size, pressure_size>(
+            pressure_index, pressure_index);
+        auto Bp = local_b.template segment<pressure_size>(pressure_index);
+
+        auto local_p = Eigen::Map<const NodalVectorType>(
+            &local_x[pressure_index], pressure_size);
+
+        // Nodal DOFs include pressure
+        auto const number_of_components = num_nodal_dof - 1;
+        for (int component_id = 0; component_id < number_of_components;
+             ++component_id)
+        {
+            /*  Partitioned assembler matrix
+             *  |  pp | pc1 | pc2 | pc3 |
+             *  |-----|-----|-----|-----|
+             *  | c1p | c1c1|  0  |  0  |
+             *  |-----|-----|-----|-----|
+             *  | c2p |  0  | c2c2|  0  |
+             *  |-----|-----|-----|-----|
+             *  | c3p |  0  |  0  | c3c3|
+             */
+            auto concentration_index =
+                pressure_size + component_id * concentration_size;
+
+            auto KCC =
+                local_K.template block<concentration_size, concentration_size>(
+                    concentration_index, concentration_index);
+            auto MCC =
+                local_M.template block<concentration_size, concentration_size>(
+                    concentration_index, concentration_index);
+            auto MCp =
+                local_M.template block<concentration_size, pressure_size>(
+                    concentration_index, pressure_index);
+            auto MpC =
+                local_M.template block<pressure_size, concentration_size>(
+                    pressure_index, concentration_index);
+
+            auto local_C = Eigen::Map<const NodalVectorType>(
+                &local_x[concentration_index], concentration_size);
+
+            assembleBlockMatrices(component_id, t, local_C, local_p, KCC, MCC,
+                                  MCp, MpC, Kpp, Mpp, Bp);
+        }
+    }
+
+    void assembleBlockMatrices(
+        int const component_id, double const t,
+        Eigen::Ref<const NodalVectorType> const& C_nodal_values,
+        Eigen::Ref<const NodalVectorType> const& p_nodal_values,
+        Eigen::Ref<LocalBlockMatrixType> KCC,
+        Eigen::Ref<LocalBlockMatrixType> MCC,
+        Eigen::Ref<LocalBlockMatrixType> MCp,
+        Eigen::Ref<LocalBlockMatrixType> MpC,
+        Eigen::Ref<LocalBlockMatrixType> Kpp,
+        Eigen::Ref<LocalBlockMatrixType> Mpp,
+        Eigen::Ref<LocalSegmentVectorType> Bp)
+    {
+        assert(component_id <=
+               static_cast<int>(_per_process_variables.size() - 1));
+
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
 
         SpatialPosition pos;
         pos.setElementID(_element.getID());
 
-        auto const num_nodes = ShapeFunction::NPOINTS;
-        auto p_nodal_values =
-            Eigen::Map<const NodalVectorType>(&local_x[num_nodes], num_nodes);
-        auto C_nodal_values =
-            Eigen::Map<const NodalVectorType>(&local_x[0], num_nodes);
         auto const& b = _process_data.specific_body_force;
 
         MaterialLib::Fluid::FluidProperty::ArrayType vars;
@@ -149,20 +228,21 @@ public:
         GlobalDimMatrixType const& I(
             GlobalDimMatrixType::Identity(GlobalDim, GlobalDim));
 
-        auto KCC = local_K.template block<num_nodes, num_nodes>(0, 0);
-        auto MCC = local_M.template block<num_nodes, num_nodes>(0, 0);
-        auto MCp = local_M.template block<num_nodes, num_nodes>(0, num_nodes);
-        auto Kpp =
-            local_K.template block<num_nodes, num_nodes>(num_nodes, num_nodes);
-        auto Mpp =
-            local_M.template block<num_nodes, num_nodes>(num_nodes, num_nodes);
-        auto MpC = local_M.template block<num_nodes, num_nodes>(num_nodes, 0);
-        auto Bp = local_b.template block<num_nodes, 1>(num_nodes, 0);
+        // Get material properties
+        auto const& medium =
+            *_process_data.media_map->getMedium(_element.getID());
+        // Select the only valid for component transport liquid phase.
+        auto const& phase = medium.phase("AqueousLiquid");
+
+        // Assume that the component name is the same as the process variable
+        // name. Components are shifted by one because the first one is always
+        // pressure.
+        auto const& component = phase.component(
+            _per_process_variables[component_id + 1].get().getName());
 
         for (std::size_t ip(0); ip < n_integration_points; ++ip)
         {
             pos.setIntegrationPoint(ip);
-
 
             auto const& ip_data = _ip_data[ip];
             auto const& N = ip_data.N;
@@ -171,8 +251,9 @@ public:
 
             double C_int_pt = 0.0;
             double p_int_pt = 0.0;
-            // Order matters: First C, then p!
-            NumLib::shapeFunctionInterpolate(local_x, N, C_int_pt, p_int_pt);
+
+            NumLib::shapeFunctionInterpolate(C_nodal_values, N, C_int_pt);
+            NumLib::shapeFunctionInterpolate(p_nodal_values, N, p_int_pt);
 
             // porosity model
             auto const porosity =
@@ -183,11 +264,16 @@ public:
                 _process_data.retardation_factor(t, pos)[0];
 
             auto const& solute_dispersivity_transverse =
-                _process_data.solute_dispersivity_transverse(t, pos)[0];
+                medium.template value<double>(
+                    MaterialPropertyLib::transversal_dispersivity);
+
             auto const& solute_dispersivity_longitudinal =
-                _process_data.solute_dispersivity_longitudinal(t, pos)[0];
+                medium.template value<double>(
+                    MaterialPropertyLib::longitudinal_dispersivity);
 
             // Use the fluid density model to compute the density
+            // TODO (renchao): concentration of which component as the argument
+            // for calculation of fluid density
             vars[static_cast<int>(
                 MaterialLib::Fluid::PropertyVariableType::C)] = C_int_pt;
             vars[static_cast<int>(
@@ -195,8 +281,10 @@ public:
             auto const density = _process_data.fluid_properties->getValue(
                 MaterialLib::Fluid::FluidPropertyType::Density, vars);
             auto const& decay_rate = _process_data.decay_rate(t, pos)[0];
+
             auto const& molecular_diffusion_coefficient =
-                _process_data.molecular_diffusion_coefficient(t, pos)[0];
+                component.template value<double>(
+                    MaterialPropertyLib::molecular_diffusion);
 
             auto const& K =
                 _process_data.porous_media_properties.getIntrinsicPermeability(
@@ -254,11 +342,19 @@ public:
                      density * N) *
                 w;
 
-            Mpp.noalias() += w * N.transpose() * porosity * drho_dp * N;
             MpC.noalias() += w * N.transpose() * porosity * drho_dC * N;
-            Kpp.noalias() += w * dNdx.transpose() * density * K_over_mu * dNdx;
-            if (_process_data.has_gravity)
-                Bp += w * density * density * dNdx.transpose() * K_over_mu * b;
+
+            // Calculate Mpp, Kpp, and bp in the first loop over components
+            if (component_id == 0)
+            {
+                Mpp.noalias() += w * N.transpose() * porosity * drho_dp * N;
+                Kpp.noalias() +=
+                    w * dNdx.transpose() * density * K_over_mu * dNdx;
+
+                if (_process_data.has_gravity)
+                    Bp += w * density * density * dNdx.transpose() * K_over_mu *
+                          b;
+            }
         }
     }
 
@@ -275,6 +371,15 @@ public:
         assert(!indices.empty());
         auto const local_x = current_solution.get(indices);
 
+        // Assuming that fluid density always depends on the concentration of
+        // the component placed at the first.
+        auto const concentration_index = 1 * ShapeFunction::NPOINTS;
+        // get local_C and local_p
+        auto const C_nodal_values = Eigen::Map<const NodalVectorType>(
+            &local_x[concentration_index], concentration_size);
+        auto const p_nodal_values = Eigen::Map<const NodalVectorType>(
+            &local_x[pressure_index], pressure_size);
+
         cache.clear();
         auto cache_mat = MathLib::createZeroedMatrix<
             Eigen::Matrix<double, GlobalDim, Eigen::Dynamic, Eigen::RowMajor>>(
@@ -284,9 +389,6 @@ public:
         pos.setElementID(_element.getID());
 
         MaterialLib::Fluid::FluidProperty::ArrayType vars;
-        auto const num_nodes = ShapeFunction::NPOINTS;
-        auto const p_nodal_values =
-            Eigen::Map<const NodalVectorType>(&local_x[num_nodes], num_nodes);
 
         for (unsigned ip = 0; ip < n_integration_points; ++ip)
         {
@@ -308,8 +410,10 @@ public:
             {
                 double C_int_pt = 0.0;
                 double p_int_pt = 0.0;
-                NumLib::shapeFunctionInterpolate(local_x, N, C_int_pt,
-                                                 p_int_pt);
+
+                NumLib::shapeFunctionInterpolate(C_nodal_values, N, C_int_pt);
+                NumLib::shapeFunctionInterpolate(p_nodal_values, N, p_int_pt);
+
                 vars[static_cast<int>(
                     MaterialLib::Fluid::PropertyVariableType::C)] = C_int_pt;
                 vars[static_cast<int>(
@@ -359,6 +463,12 @@ public:
             return shape_matrices;
         }();
 
+        auto const concentration_index = 1 * ShapeFunction::NPOINTS;
+        auto const C_nodal_values = Eigen::Map<const NodalVectorType>(
+            &local_x[concentration_index], concentration_size);
+        auto const p_nodal_values = Eigen::Map<const NodalVectorType>(
+            &local_x[pressure_index], pressure_size);
+
         SpatialPosition pos;
         pos.setElementID(_element.getID());
 
@@ -366,8 +476,11 @@ public:
 
         // local_x contains the local concentration and pressure values
         NumLib::shapeFunctionInterpolate(
-            local_x, shape_matrices.N,
-            vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::C)],
+            C_nodal_values, shape_matrices.N,
+            vars[static_cast<int>(
+                MaterialLib::Fluid::PropertyVariableType::C)]);
+        NumLib::shapeFunctionInterpolate(
+            p_nodal_values, shape_matrices.N,
             vars[static_cast<int>(
                 MaterialLib::Fluid::PropertyVariableType::p)]);
 
@@ -382,8 +495,6 @@ public:
             MaterialLib::Fluid::FluidPropertyType::Viscosity, vars);
         GlobalDimMatrixType const K_over_mu = K / mu;
 
-        auto const p_nodal_values = Eigen::Map<const NodalVectorType>(
-            &local_x[local_x.size()/2], ShapeFunction::NPOINTS);
         GlobalDimVectorType q =
             -K_over_mu * shape_matrices.dNdx * p_nodal_values;
 
@@ -405,6 +516,9 @@ private:
     ComponentTransportProcessData const& _process_data;
 
     IntegrationMethod const _integration_method;
+    std::vector<std::reference_wrapper<ProcessVariable>> const&
+        _per_process_variables;
+
     std::vector<
         IntegrationPointData<NodalRowVectorType, GlobalDimNodalMatrixType>,
         Eigen::aligned_allocator<
