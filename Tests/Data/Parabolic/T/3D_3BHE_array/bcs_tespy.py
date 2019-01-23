@@ -52,9 +52,9 @@ class BC(OpenGeoSys.BHENetwork):
         data_col_1 = df['Tin_val'].tolist()#'Tin_val'
         data_col_2 = df['Tout_val'].tolist()#'Tout_val'
         data_col_3 = df['Tout_node_id'].astype(int).tolist()#'Tout_node_id'
-
-        return (True, data_col_1,data_col_2,data_col_3)
-    def tespyThermalSolver(self, Tin_val, Tout_val):
+        t = 0#'initial time'
+        return (True, data_col_1,data_col_2,data_col_3, t)
+    def tespyThermalSolver(self, t, Tin_val, Tout_val):
         #read Tout_val to dataframe
         for i in range(n_BHE):
             df.loc[df.index[i],'Tout_val'] = Tout_val[i]
