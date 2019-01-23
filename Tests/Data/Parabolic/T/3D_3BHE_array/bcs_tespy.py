@@ -20,9 +20,7 @@ def get_hydraulics():
     #refrigerant parameters
     refrig_density = 992.92 #kg/m3
     #solve imported network
-    nw.solve(mode='design',
-             design_file=project_dir + 'pre/tespy_nw/results.csv',
-             init_file=project_dir + 'pre/tespy_nw/results.csv')
+    nw.solve(mode='design')
     #get flowrate #kg/s
     for i in range(n_BHE):
         for c in nw.conns.index:

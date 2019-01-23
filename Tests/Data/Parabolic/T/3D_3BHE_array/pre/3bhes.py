@@ -103,7 +103,7 @@ bhe3.set_attr(D=0.02733,L=100,ks=100)
 
 #consumer
 cons.set_attr(D=0.025,L=100,ks=100)
-
+#cons.set_attr(D=0.025,L=100,ks=100,hydro_group ='HW')
 ##connection parametrization
 #Tin:
 #inflow_enthalpy =42 # 283.15K water's enthalpy,unit:KJ/Kg
