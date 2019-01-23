@@ -44,9 +44,10 @@
         {{ $section := index $segments 1 }}
         <div class="w-3/4 sm:w-1/2 flex justify-center">
           {{ range .Site.Menus.main }}
-          {{ $url_trimmed := trim .URL "/" }}
-          <a href="{{ .URL }}" class="nav-item{{if (eq $section $url_trimmed) }} active{{end}}">{{ .Name }}</a>
-          {{ end }}
+            {{ $url_trimmed := trim .URL "/" }}
+            <a href="{{ .URL }}" class="nav-item{{if (eq $section $url_trimmed) }} active{{end}}">{{ .Name }}</a>
+            {{ end }}
+            <a href="https://discourse.opengeosys.org" class="nav-item">Discourse</a>
         </div>
         <div class="w-1/4">
           {{ partial "site-search.html" . }}
