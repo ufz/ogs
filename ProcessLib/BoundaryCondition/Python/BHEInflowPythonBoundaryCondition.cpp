@@ -62,6 +62,9 @@ void BHEInflowPythonBoundaryCondition::getEssentialBCValues(
             break;
         }
     }
+
+    // store the current time to network dataframe
+    std::get<4>(_py_bc_object.dataframe_network) = t;
 }
 
 std::unique_ptr<BHEInflowPythonBoundaryCondition>

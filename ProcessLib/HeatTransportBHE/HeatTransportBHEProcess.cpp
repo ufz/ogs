@@ -219,6 +219,7 @@ NumLib::IterationResult HeatTransportBHEProcess::postIterationConcreteProcess(
     }
     // Tout transfer to Python
     auto const tespy_result = _process_data.py_bc_object->tespyThermalSolver(
+        std::get<4>(_process_data.py_bc_object->dataframe_network),
         std::get<1>(_process_data.py_bc_object->dataframe_network),
         std::get<2>(_process_data.py_bc_object->dataframe_network));
     auto const cur_Tin = std::get<2>(tespy_result);

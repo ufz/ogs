@@ -25,22 +25,23 @@ public:
     using BHEInflowPythonBoundaryConditionPythonSideInterface::
         BHEInflowPythonBoundaryConditionPythonSideInterface;
 
-    std::tuple<bool, std::vector<double>, std::vector<double>,std::vector<int>>
+    std::tuple<bool, std::vector<double>, std::vector<double>, std::vector<int>, double>
     initializeDataContainer() const override
     {
-        using Ret = std::tuple<bool, std::vector<double>, std::vector<double>,std::vector<int>>;
+        using Ret = std::tuple<bool, std::vector<double>, std::vector<double>, std::vector<int>, double>;
         PYBIND11_OVERLOAD(Ret,
                           BHEInflowPythonBoundaryConditionPythonSideInterface,
                           initializeDataContainer);
     }
 
     std::tuple<bool, bool, std::vector<double>> tespyThermalSolver(
+        double t,
         std::vector<double> const& Tin_val,
         std::vector<double> const& Tout_val) const override
     {
         using Ret = std::tuple<bool, bool, std::vector<double>>;
         PYBIND11_OVERLOAD(Ret, BHEInflowPythonBoundaryConditionPythonSideInterface,
-                          tespyThermalSolver, Tin_val, Tout_val);
+                          tespyThermalSolver, t, Tin_val, Tout_val);
     }
 
     std::tuple<bool, std::vector<double>> tespyHydroSolver() const override
