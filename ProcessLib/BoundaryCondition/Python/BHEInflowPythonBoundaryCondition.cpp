@@ -34,7 +34,7 @@ BHEInflowPythonBoundaryCondition::BHEInflowPythonBoundaryCondition(
 }
 
 void BHEInflowPythonBoundaryCondition::getEssentialBCValues(
-    const double t, GlobalVector const& x,
+    const double t, GlobalVector const& /*x*/,
     NumLib::IndexValueVector<GlobalIndexType>& bc_values) const
 {
     bc_values.ids.resize(1);

@@ -240,7 +240,7 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
                 "The number of BHEs defined in OGS and TESPy are not the "
                 "same!");
 
-        for (auto idx_bhe = 0; idx_bhe < n_bhe; idx_bhe++)
+        for (std::size_t idx_bhe = 0; idx_bhe < n_bhe; idx_bhe++)
         {
             // the flow_rate in OGS should be updated from the flow_rate
             // computed by TESPy.
