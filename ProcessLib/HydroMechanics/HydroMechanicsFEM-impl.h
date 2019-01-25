@@ -288,9 +288,6 @@ HydroMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         double, DisplacementDim, Eigen::Dynamic, Eigen::RowMajor>>(
         cache, DisplacementDim, num_intpts);
 
-    SpatialPosition pos;
-    pos.setElementID(_element.getID());
-
     auto p = Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
         pressure_size> const>(local_x.data() + pressure_index, pressure_size);
 
