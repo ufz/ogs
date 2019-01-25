@@ -63,8 +63,10 @@ TEST(MaterialFluidProperties, checkPrimaryVariableDependentFluidProperties)
     ASSERT_NEAR(mu_expected,
                 fluid_model->getValue(FluidPropertyType::Viscosity, vars),
                 1.e-10);
+    const double dmu_dT_expected =
+        -1.e-3/368 * std::exp(-(vars[0] - 293) / 368);
     ASSERT_NEAR(
-        -mu_expected,
+        dmu_dT_expected,
         fluid_model->getdValue(FluidPropertyType::Viscosity, vars,
                                MaterialLib::Fluid::PropertyVariableType::T),
         1.e-10);
