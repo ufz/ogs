@@ -121,6 +121,7 @@ void Process::setInitialConditions(const int process_id, double const t,
          variable_id < per_process_variables.size();
          variable_id++)
     {
+        MathLib::LinAlg::setLocalAccessibleVector(x);
         SpatialPosition pos;
 
         auto const& pv = per_process_variables[variable_id];
@@ -163,6 +164,7 @@ void Process::setInitialConditions(const int process_id, double const t,
             }
         }
     }
+    setInitialConditionsConcreteProcess(x);
 }
 
 MathLib::MatrixSpecifications Process::getMatrixSpecifications(
