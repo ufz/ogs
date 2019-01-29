@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-@Library('jenkins-pipeline@1.0.15') _
+@Library('jenkins-pipeline@1.0.17') _
 
 def stage_required = [build: false, data: false, full: false, docker: false]
 
@@ -94,7 +94,10 @@ pipeline {
                   '-DOGS_USE_PYTHON=ON ' +
                   '-DOGS_BUILD_UTILS=ON '
               }
-              build { log="build.log" }
+              build {
+                target="package"
+                log="build.log"
+                }
               build { target="tests" }
               build { target="ctest" }
               build { target="doc" }
@@ -157,7 +160,10 @@ pipeline {
                   '-DOGS_BUILD_UTILS=ON ' +
                   '-DOGS_BUILD_TESTS=OFF '
               }
-              build { log="build.log" }
+              build {
+                target="package"
+                log="build.log"
+              }
             }
           }
           post {
@@ -179,7 +185,7 @@ pipeline {
           }
           agent {
             dockerfile {
-              filename 'Dockerfile.gcc.minimal'
+              filename 'Dockerfile.gcc.full'
               dir 'scripts/docker'
               label 'docker'
               args '-v /home/jenkins/cache:/home/jenkins/cache -v /home/jenkins/cache/conan/.conan:/home/jenkins/.conan'
@@ -319,7 +325,10 @@ pipeline {
               }
               build { target="tests" }
               build { target="ctest" }
-              build { log="build.log" }
+              build {
+                target="package"
+                log="build.log"
+              }
             }
           }
           post {
@@ -361,17 +370,11 @@ pipeline {
                   '-DCMAKE_OSX_DEPLOYMENT_TARGET="10.13" '
               }
               build {
+                target="package"
                 log = "build.log"
-                cmd_args = '-j $(( `sysctl -n hw.ncpu` - 2 ))'
               }
-              build {
-                target = 'tests'
-                cmd_args = '-j $(( `sysctl -n hw.ncpu` - 2 ))'
-              }
-              build {
-                target = 'ctest'
-                cmd_args = '-j $(( `sysctl -n hw.ncpu` - 2 ))'
-              }
+              build { target = 'tests' }
+              build { target = 'ctest' }
             }
           }
           post {
@@ -444,7 +447,7 @@ pipeline {
               }
               try {
                 build { target = 'check-header' }
-                build { target = 'all' }
+                build { }
               }
               catch (Exception e) { }
             }
@@ -488,7 +491,7 @@ pipeline {
               build {
                 env = 'envinf1/cli.sh'
                 target = 'install'
-                cmd_args = '-l 30'
+
               }
             }
           }
