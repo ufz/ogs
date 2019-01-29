@@ -14,6 +14,8 @@
 
 #include "HTMaterialProperties.h"
 
+#include "MaterialLib/MPL/Medium.h"
+#include "MaterialLib/MPL/PropertyType.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
@@ -187,8 +189,16 @@ protected:
     {
         auto const thermal_conductivity_solid =
             _material_properties.thermal_conductivity_solid(t, pos)[0];
+
+        auto const& medium =
+            *_material_properties.media_map->getMedium(_element.getID());
+        auto const& liquid_phase = medium.phase("AqueousLiquid");
         auto const thermal_conductivity_fluid =
-            _material_properties.thermal_conductivity_fluid(t, pos)[0];
+            liquid_phase
+                .property(
+                    MaterialPropertyLib::PropertyType::thermal_conductivity)
+                .template value<double>();
+
         double const thermal_conductivity =
             thermal_conductivity_solid * (1 - porosity) +
             thermal_conductivity_fluid * porosity;
