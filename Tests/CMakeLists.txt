@@ -84,7 +84,7 @@ if(OGS_USE_PCH)
 endif()
 
 # Add make-target tests which runs the testrunner
-if(IS_CI)
+if(IS_CI AND NOT OGS_COVERAGE)
     set(TESTRUNNER_ADDITIONAL_ARGUMENTS ${TESTRUNNER_ADDITIONAL_ARGUMENTS}
         --gtest_shuffle --gtest_repeat=3)
 endif()

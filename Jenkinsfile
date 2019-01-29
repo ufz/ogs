@@ -191,18 +191,18 @@ pipeline {
               sh 'git submodule sync'
               configure {
                 cmakeOptions =
-                  '-DOGS_CPU_ARCHITECTURE=generic '
+                  '-DOGS_CPU_ARCHITECTURE=generic ' +
+                  '-DOGS_COVERAGE=ON '
                 config = 'Debug'
               }
               build { }
-              build { target = 'tests' }
+              build { target = 'testrunner_coverage_cobertura' }
             }
           }
           post {
             always {
-              xunit([
-                GoogleTest(pattern: 'build/Tests/testrunner.xml')
-              ])
+              xunit([GoogleTest(pattern: 'build/Tests/testrunner.xml')])
+              cobertura coberturaReportFile: 'build/*_cobertura.xml'
             }
           }
         }

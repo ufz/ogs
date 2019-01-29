@@ -1,39 +1,35 @@
 include(CodeCoverage)
-APPEND_COVERAGE_COMPILER_FLAGS()
+append_coverage_compiler_flags()
 
-set(COVERAGE_EXCLUDES
-    '/gpfs0/*'
-    '/usr/*'
-    '${PROJECT_BINARY_DIR}/*'
-    '${PROJECT_SOURCE_DIR}/Tests/*'
-    '${PROJECT_SOURCE_DIR}/ThirdParty/*'
+set(COVERAGE_GCOVR_EXCLUDES
+    ${PROJECT_BINARY_DIR}/.*
+    Applications/CLI/.*
+    ProcessLib/.*
+    .*Tests/.*
+    ThirdParty/.*
 )
 
 if(LCOV_PATH AND GENHTML_PATH)
-    SETUP_TARGET_FOR_COVERAGE(
+    setup_target_for_coverage_lcov(
         NAME testrunner_coverage
-        EXECUTABLE testrunner -j ${PROCESSOR_COUNT}
-        DEPENDENCIES testrunner
+        EXECUTABLE ${CMAKE_COMMAND} --build . --target tests
     )
-    SETUP_TARGET_FOR_COVERAGE(
+    setup_target_for_coverage_lcov(
         NAME ctest_coverage
-        EXECUTABLE ctest -E LARGE -j ${PROCESSOR_COUNT}
-        DEPENDENCIES ogs
+        EXECUTABLE ${CMAKE_COMMAND} --build . --target ctest-serial
     )
 else()
     message(STATUS "No lcov coverage report generated because lcov or genhtml was not found.")
 endif()
 
 if(PYTHON_EXECUTABLE)
-    SETUP_TARGET_FOR_COVERAGE_COBERTURA(
+    setup_target_for_coverage_gcovr_xml(
         NAME testrunner_coverage_cobertura
-        EXECUTABLE testrunner -j ${PROCESSOR_COUNT}
-        DEPENDENCIES testrunner
+        EXECUTABLE ${CMAKE_COMMAND} --build . --target tests
     )
-    SETUP_TARGET_FOR_COVERAGE_COBERTURA(
+    setup_target_for_coverage_gcovr_xml(
         NAME ctest_coverage_cobertura
-        EXECUTABLE ctest -E LARGE -j ${PROCESSOR_COUNT}
-        DEPENDENCIES ogs
+        EXECUTABLE ${CMAKE_COMMAND} --build . --target ctest-serial
     )
 else()
     message(STATUS "No cobertura coverage report generated because Python executable was not found.")
