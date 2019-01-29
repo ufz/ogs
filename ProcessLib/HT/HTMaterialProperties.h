@@ -22,7 +22,7 @@ struct Parameter;
 
 namespace HT
 {
-struct HTMaterialProperties
+struct HTMaterialProperties final
 {
     HTMaterialProperties(
         MaterialLib::PorousMedium::PorousMediaProperties&&
@@ -59,6 +59,11 @@ struct HTMaterialProperties
           has_gravity(has_gravity_)
     {
     }
+
+    HTMaterialProperties(HTMaterialProperties&&) = delete;
+    HTMaterialProperties(HTMaterialProperties const&) = delete;
+    void operator=(HTMaterialProperties&&) = delete;
+    void operator=(HTMaterialProperties const&) = delete;
 
     MaterialLib::PorousMedium::PorousMediaProperties porous_media_properties;
     ParameterLib::Parameter<double> const& density_solid;
