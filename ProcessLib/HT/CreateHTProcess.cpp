@@ -10,6 +10,7 @@
 #include "CreateHTProcess.h"
 
 #include "MaterialLib/Fluid/FluidProperties/CreateFluidProperties.h"
+#include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
 #include "MaterialLib/PorousMedium/CreatePorousMediaProperties.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "ParameterLib/ConstantParameter.h"
@@ -34,7 +35,8 @@ std::unique_ptr<Process> createHTProcess(
     unsigned const integration_order,
     BaseLib::ConfigTree const& config,
     std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
-    std::string const& output_directory)
+    std::string const& output_directory,
+    std::map<int, std::unique_ptr<MaterialPropertyLib::Medium>> const& media)
 {
     //! \ogs_file_param{prj__processes__process__type}
     config.checkConfigParameter("type", "HT");
@@ -216,11 +218,15 @@ std::unique_ptr<Process> createHTProcess(
                                            output_directory);
     }
 
+    auto media_map =
+        MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
+
     std::unique_ptr<HTMaterialProperties> material_properties =
         std::make_unique<HTMaterialProperties>(
             std::move(porous_media_properties),
             density_solid,
             std::move(fluid_properties),
+            std::move(media_map),
             has_fluid_thermal_dispersivity,
             *thermal_dispersivity_longitudinal,
             *thermal_dispersivity_transversal,

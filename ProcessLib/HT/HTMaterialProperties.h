@@ -13,6 +13,7 @@
 #include <utility>
 
 #include "MaterialLib/Fluid/FluidProperties/FluidProperties.h"
+#include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 #include "MaterialLib/PorousMedium/PorousMediaProperties.h"
 
 namespace ProcessLib
@@ -30,6 +31,8 @@ struct HTMaterialProperties final
         ParameterLib::Parameter<double> const& density_solid_,
         std::unique_ptr<MaterialLib::Fluid::FluidProperties>&&
             fluid_properties_,
+        std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>&&
+            media_map_,
         bool const has_fluid_thermal_dispersivity_,
         ParameterLib::Parameter<double> const&
             thermal_dispersivity_longitudinal_,
@@ -46,6 +49,7 @@ struct HTMaterialProperties final
         : porous_media_properties(std::move(porous_media_properties_)),
           density_solid(density_solid_),
           fluid_properties(std::move(fluid_properties_)),
+          media_map(std::move(media_map_)),
           specific_heat_capacity_solid(specific_heat_capacity_solid_),
           has_fluid_thermal_dispersivity(has_fluid_thermal_dispersivity_),
           thermal_dispersivity_longitudinal(thermal_dispersivity_longitudinal_),
@@ -68,6 +72,8 @@ struct HTMaterialProperties final
     MaterialLib::PorousMedium::PorousMediaProperties porous_media_properties;
     ParameterLib::Parameter<double> const& density_solid;
     std::unique_ptr<MaterialLib::Fluid::FluidProperties> fluid_properties;
+    std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>
+        media_map;
     ParameterLib::Parameter<double> const& specific_heat_capacity_solid;
     bool const has_fluid_thermal_dispersivity;
     ParameterLib::Parameter<double> const& thermal_dispersivity_longitudinal;
