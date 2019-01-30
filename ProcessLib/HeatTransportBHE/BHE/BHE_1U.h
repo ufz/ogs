@@ -46,6 +46,7 @@ public:
            PipeConfiguration1U const& pipes);
 
     static constexpr int number_of_unknowns = 4;
+    static constexpr int number_of_grout_zones = 2;
 
     std::array<double, number_of_unknowns> pipeHeatCapacities() const;
 

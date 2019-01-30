@@ -11,10 +11,10 @@
 
 #pragma once
 
-#include <boost/variant.hpp>
-#include "BHE_1U.h"
-#include "BHE_CXA.h"
-#include "BHE_CXC.h"
+#include <boost/math/constants/constants.hpp>
+
+#include "BaseLib/ConfigTree.h"
+#include "Pipe.h"
 
 namespace ProcessLib
 {
@@ -22,7 +22,13 @@ namespace HeatTransportBHE
 {
 namespace BHE
 {
-using BHETypes = boost::variant<BHE_1U, BHE_CXA, BHE_CXC>;
-}  // end of namespace BHE
-}  // end of namespace HeatTransportBHE
-}  // end of namespace ProcessLib
+struct PipeConfigurationCXC
+{
+    Pipe const inner_inflow_pipe;
+    Pipe const outer_pipe;
+
+    double const longitudinal_dispersion_length;
+};
+}  // namespace BHE
+}  // namespace HeatTransportBHE
+}  // namespace ProcessLib

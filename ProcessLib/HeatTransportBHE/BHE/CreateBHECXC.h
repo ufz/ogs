@@ -1,6 +1,4 @@
 /**
- * \file
- *
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -11,18 +9,23 @@
 
 #pragma once
 
-#include <boost/variant.hpp>
-#include "BHE_1U.h"
-#include "BHE_CXA.h"
 #include "BHE_CXC.h"
 
+namespace BaseLib
+{
+class ConfigTree;
+}
 namespace ProcessLib
 {
 namespace HeatTransportBHE
 {
 namespace BHE
 {
-using BHETypes = boost::variant<BHE_1U, BHE_CXA, BHE_CXC>;
-}  // end of namespace BHE
-}  // end of namespace HeatTransportBHE
-}  // end of namespace ProcessLib
+BHE::BHE_CXC createBHECXC(
+    BaseLib::ConfigTree const& bhe_conf,
+    std::map<std::string,
+             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
+        curves);
+}  // namespace BHE
+}  // namespace HeatTransportBHE
+}  // namespace ProcessLib

@@ -86,6 +86,8 @@ private:
 
     std::size_t const _element_id;
 
+    const int _number_of_grout_zones;
+
     SecondaryData<typename ShapeMatrices::ShapeType> _secondary_data;
 
     typename ShapeMatricesType::template MatrixType<bhe_unknowns_size,

@@ -9,9 +9,9 @@
  *
  */
 
+#include "BaseLib/Algorithm.h"
 #include "BaseLib/ConfigTree.h"
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
-#include "BaseLib/Algorithm.h"
 
 #include "CreateFlowAndTemperatureControl.h"
 #include "RefrigerantProperties.h"
@@ -37,10 +37,10 @@ FlowAndTemperatureControl createFlowAndTemperatureControl(
         double const flow_rate = config.getConfigParameter<double>("flow_rate");
 
         auto const& temperature_curve = *BaseLib::getOrError(
-                    curves,
-                    //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__TemperatureCurveConstantFlow__temperature_curve}
-                    config.getConfigParameter<std::string>("temperature_curve"),
-                    "Required temperature curve not found.");
+            curves,
+            //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__TemperatureCurveConstantFlow__temperature_curve}
+            config.getConfigParameter<std::string>("temperature_curve"),
+            "Required temperature curve not found.");
 
         return TemperatureCurveConstantFlow{flow_rate, temperature_curve};
     }
@@ -59,10 +59,10 @@ FlowAndTemperatureControl createFlowAndTemperatureControl(
     if (type == "FixedPowerFlowCurve")
     {
         auto const& flow_rate_curve = *BaseLib::getOrError(
-                    curves,
-                    //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__FixedPowerFlowCurve__flow_rate_curve}
-                    config.getConfigParameter<std::string>("flow_rate_curve"),
-                    "Required flow rate curve not found.");
+            curves,
+            //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__FixedPowerFlowCurve__flow_rate_curve}
+            config.getConfigParameter<std::string>("flow_rate_curve"),
+            "Required flow rate curve not found.");
 
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__FixedPowerFlowCurve__power}
         double const power = config.getConfigParameter<double>("power");
@@ -70,6 +70,22 @@ FlowAndTemperatureControl createFlowAndTemperatureControl(
         return FixedPowerFlowCurve{flow_rate_curve, power,
                                    refrigerant.specific_heat_capacity,
                                    refrigerant.density};
+    }
+
+    if (type == "PowerCurveConstantFlow")
+    {
+        auto const& power_curve = *BaseLib::getOrError(
+            curves,
+            //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__PowerCurveConstantFlow__power_curve}
+            config.getConfigParameter<std::string>("power_curve"),
+            "Required power curve not found.");
+
+        //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__PowerCurveConstantFlow__flow_rate}
+        double const flow_rate = config.getConfigParameter<double>("flow_rate");
+
+        return PowerCurveConstantFlow{power_curve, flow_rate,
+                                      refrigerant.specific_heat_capacity,
+                                      refrigerant.density};
     }
     OGS_FATAL("FlowAndTemperatureControl type '%s' is not implemented.",
               type.c_str());
