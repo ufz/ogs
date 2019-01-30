@@ -38,12 +38,12 @@ set(DOXYGEN_GENERATE_LATEX NO)
 set(DOXYGEN_PREDEFINED DOXYGEN_DOCU_ONLY)
 set(DOXYGEN_ALIASES
     "per{1} = \\1<sup>-1</sup>"
-    "ogs_file_param{1} = \\xrefitem ogs_file_param \"Input File Parameter\" \"List of all Input File Parameters\" \\ref ogs_file_param__\\1 \"\\1\""
-    "ogs_file_attr{1} = \\xrefitem ogs_file_param \"Input File Parameter\" \"List of all Input File Parameters\" \\ref ogs_file_attr__\\1 \"\\1\""
-    "ogs_file_special = \\xrefitem ogs_file_param \"Input File Parameter\" \"List of all Input File Parameters\" special OGS input file parameter"
-    "ogs_file_param_special{1} = \\xrefitem ogs_file_param \"Input File Parameter\" \"List of all Input File Parameters\" \\ref ogs_file_param__\\1 \"\\1\""
-    "ogs_file_attr_special{1} = \\xrefitem ogs_file_param \"Input File Parameter\" \"List of all Input File Parameters\" \\ref ogs_file_attr__\\1 \"\\1\""
-    "ogs_missing_documentation = \\xrefitem ogs_missing_documentation \"Missing Documentation\" \"OGS Input File Parameters&mdash;List of incomplete documentation pages\" Documentation missing/incomplete")
+    "ogs_file_param{1} = \\xrefitem ogs_file_param \\\"Input File Parameter\\\" \\\"List of all Input File Parameters\\\" \\ref ogs_file_param__\\1 \\\"\\1\\\""
+    "ogs_file_attr{1} = \\xrefitem ogs_file_param \\\"Input File Parameter\\\" \\\"List of all Input File Parameters\\\" \\ref ogs_file_attr__\\1 \\\"\\1\\\""
+    "ogs_file_special = \\xrefitem ogs_file_param \\\"Input File Parameter\\\" \\\"List of all Input File Parameters\\\" special OGS input file parameter"
+    "ogs_file_param_special{1} = \\xrefitem ogs_file_param \\\"Input File Parameter\\\" \\\"List of all Input File Parameters\\\" \\ref ogs_file_param__\\1 \\\"\\1\\\""
+    "ogs_file_attr_special{1} = \\xrefitem ogs_file_param \\\"Input File Parameter\\\" \\\"List of all Input File Parameters\\\" \\ref ogs_file_attr__\\1 \\\"\\1\\\""
+    "ogs_missing_documentation = \\xrefitem ogs_missing_documentation \\\"Missing Documentation\\\" \\\"OGS Input File Parameters&mdash;List of incomplete documentation pages\\\" Documentation missing/incomplete")
 
 doxygen_add_docs(doc
     ${PROJECT_SOURCE_DIR}/
