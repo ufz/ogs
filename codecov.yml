@@ -1,0 +1,8 @@
+codecov:
+  token: 2371d4ae-34d6-4a75-a212-0ecd2ffa2629
+
+ignore:
+  - "Applications/CLI"
+  - "ProcessLib"
+  - "ThirdParty"
+  - "*Tests/**/*"
