@@ -80,12 +80,13 @@ void LocalAssemblerInterface::computeSecondaryVariable(
 
 void LocalAssemblerInterface::setInitialConditions(
     std::size_t const mesh_item_id,
-    NumLib::LocalToGlobalIndexMap const& dof_table, GlobalVector const& x)
+    NumLib::LocalToGlobalIndexMap const& dof_table, GlobalVector const& x,
+    double const t)
 {
     auto const indices = NumLib::getIndices(mesh_item_id, dof_table);
     auto const local_x = x.get(indices);
 
-    setInitialConditionsConcrete(local_x);
+    setInitialConditionsConcrete(local_x, t);
 }
 
 void LocalAssemblerInterface::preTimestep(
