@@ -226,6 +226,25 @@ void RichardsMechanicsProcess<DisplacementDim>::initializeBoundaryConditions()
 }
 
 template <int DisplacementDim>
+void RichardsMechanicsProcess<DisplacementDim>::
+    setInitialConditionsConcreteProcess(const GlobalVector& x,const double t)
+{
+    
+    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>> dof_tables;
+    
+    DBUG("Setting initial conditions for RichardsMechanics.");
+        dof_tables.emplace_back(*_local_to_global_index_map);
+    
+    const int process_id = _use_monolithic_scheme ? 0 
+                            : _coupled_solutions->process_id;
+    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
+
+    GlobalExecutor::executeSelectedMemberOnDereferenced(
+            &LocalAssemblerInterface::setInitialConditions, _local_assemblers,
+            pv.getActiveElementIDs(), *_local_to_global_index_map, x, t);
+}
+
+template <int DisplacementDim>
 void RichardsMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
     const double t, GlobalVector const& x, GlobalMatrix& M, GlobalMatrix& K,
     GlobalVector& b)

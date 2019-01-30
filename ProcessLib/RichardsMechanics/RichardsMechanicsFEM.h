@@ -85,6 +85,9 @@ public:
         std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
         LocalCoupledSolutions const& local_coupled_solutions) override;
 
+    void setInitialConditionsConcrete(const std::vector<double>& local_x,
+                                      double const t) override;
+        
     void preTimestepConcrete(std::vector<double> const& /*local_x*/,
                              double const /*t*/,
                              double const /*delta_t*/) override

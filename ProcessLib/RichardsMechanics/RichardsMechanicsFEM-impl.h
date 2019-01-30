@@ -331,6 +331,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         _integration_method.getNumberOfPoints();
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
+        auto const& ip_data = _ip_data[ip];
         x_position.setIntegrationPoint(ip);
         auto const& w = _ip_data[ip].integration_weight;
 
@@ -746,6 +747,38 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         t, local_xdot, dxdot_dx, dx_dx, local_M_data, local_K_data,
         local_b_data, local_Jac_data, local_coupled_solutions);
 }
+
+
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          typename IntegrationMethod, int DisplacementDim>
+void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
+                                     ShapeFunctionPressure, IntegrationMethod,
+                                     DisplacementDim>::
+    setInitialConditionsConcrete(const std::vector<double>& local_x,
+                                 const double t)
+{
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
+        auto const material_id =
+            _process_data.flow_material->getMaterialID(_element.getID());
+        SpatialPosition x_position;
+        x_position.setElementID(_element.getID());
+        
+        auto p_L =
+        Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
+            pressure_size> const>(local_x.data() + pressure_index,
+                                  pressure_size);
+        for (unsigned ip = 0; ip < n_integration_points; ip++)
+        {
+            auto const temperature = _process_data.temperature(t, x_position)[0];
+            x_position.setIntegrationPoint(ip);
+            double p_int_pt;
+            NumLib::shapeFunctionInterpolate(p_L, _ip_data[ip].N_p, p_int_pt);
+            _ip_data[ip].saturation = _process_data.flow_material->getSaturation(
+            material_id, t , x_position, p_int_pt, temperature, -p_int_pt);
+        }
+    }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           typename IntegrationMethod, int DisplacementDim>
