@@ -11,7 +11,9 @@
 
 #include "GenericNaturalBoundaryConditionLocalAssembler.h"
 #include "NumLib/DOF/DOFTableUtil.h"
+#include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ProcessLib/Parameter/Parameter.h"
+#include "ProcessLib/Utils/InitShapeMatrices.h"
 
 namespace ProcessLib
 {
@@ -23,6 +25,7 @@ class NeumannBoundaryConditionLocalAssembler final
 {
     using Base = GenericNaturalBoundaryConditionLocalAssembler<
         ShapeFunction, IntegrationMethod, GlobalDim>;
+    using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction, GlobalDim>;
 
 public:
     /// The neumann_bc_value factor is directly integrated into the local
@@ -53,11 +56,20 @@ public:
         SpatialPosition pos;
         pos.setElementID(id);
 
+        using FemType =
+            NumLib::TemplateIsoparametric<ShapeFunction, ShapeMatricesType>;
+        FemType fe(
+             static_cast<const typename ShapeFunction::MeshElement&>(Base::_element));
+
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             pos.setIntegrationPoint(ip);
             auto const& sm = Base::_shape_matrices[ip];
             auto const& wp = Base::_integration_method.getWeightedPoint(ip);
+
+            MathLib::TemplatePoint<double, 3> coords_ip(fe.interpolateCoordinates(sm.N));
+            pos.setCoordinates(coords_ip);
+
             _local_rhs.noalias() += sm.N * _neumann_bc_parameter(t, pos)[0] *
                                     sm.detJ * wp.getWeight() *
                                     sm.integralMeasure;
