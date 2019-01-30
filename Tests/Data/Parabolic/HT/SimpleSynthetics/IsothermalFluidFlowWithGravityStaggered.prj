@@ -12,20 +12,6 @@
                 <temperature>T</temperature>
                 <pressure>p</pressure>
             </process_variables>
-            <fluid>
-                <density>
-                    <type>Constant</type>
-                    <value>1.0e-3</value>
-                </density>
-                <viscosity>
-                    <type>Constant</type>
-                    <value>1.0e-3</value>
-                </viscosity>
-                <specific_heat_capacity>
-                    <type>Constant</type>
-                    <value>4200</value>
-                </specific_heat_capacity>
-            </fluid>
             <porous_medium>
                 <porous_medium id="0">
                     <permeability>
@@ -45,17 +31,55 @@
             <density_solid>rho_solid</density_solid>
             <specific_heat_capacity_solid>c_solid</specific_heat_capacity_solid>
             <thermal_conductivity_solid>lambda_solid</thermal_conductivity_solid>
-            <thermal_conductivity_fluid>lambda_fluid</thermal_conductivity_fluid>
-            <thermal_dispersivity>
-                <longitudinal>alpha_l</longitudinal>
-                <transversal>alpha_t</transversal>
-            </thermal_dispersivity>
             <specific_body_force>0 -9.81</specific_body_force>
             <secondary_variables>
                 <secondary_variable type="static" internal_name="darcy_velocity" output_name="darcy_velocity"/>
             </secondary_variables>
         </process>
     </processes>
+    <media>
+        <medium id="0">
+            <phases>
+                <phase>
+                    <type>AqueousLiquid</type>
+                    <properties>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>1.0e-3</value>
+                        </property>
+                        <property>
+                            <name>viscosity</name>
+                            <type>Constant</type>
+                            <value>1.0e-3</value>
+                        </property>
+                        <property>
+                            <name>specific_heat_capacity</name>
+                            <type>Constant</type>
+                            <value>4200</value>
+                        </property>
+                        <property>
+                            <name>thermal_conductivity</name>
+                            <type>Constant</type>
+                            <value>0.65</value>
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+            <properties>
+                <property>
+                    <name>thermal_longitudinal_dispersivity</name>
+                    <type>Constant</type>
+                    <value>0.0</value>
+                </property>
+                <property>
+                    <name>thermal_transversal_dispersivity</name>
+                    <type>Constant</type>
+                    <value>0.0</value>
+                </property>
+            </properties>
+        </medium>
+    </media>
     <time_loop>
         <global_process_coupling>
             <max_iter> 8 </max_iter>
