@@ -15,7 +15,7 @@ project = "Parabolic/T/3D_Beier_sandbox/beier_sandbox.prj"
 
 ## Problem description
 
-The U-type Borehole Heat Exchanger (BHE) is always utilized to extract the shallow geothermal energy all over the world. In this benchmark, the 1-U type BHE numerical model in OGS-6 was verified through comparing with experimental results obtained by Beier et al. (2011). In their experiment, one single U-type BHE was embedded in a sandbox together with some temperature sensors at the specific locations in the sand. Using the pump to circulate the fluid in the U-type pipe, which was heated by a electrical heater. Different from the geothermal enenrgy exploitation, the temperature of the sand will be lifted due to the inflow temperature of BHE is higher than its outflow temperature, which was dynamically monitored as one of the key results in the Thermal Response Test (TRT). 
+The U-type Borehole Heat Exchanger (BHE) is always utilized to extract the shallow geothermal energy all over the world. In this benchmark, the 1-U type BHE numerical model in OGS-6 was verified through comparing with experimental results obtained by Beier et al. (2011). In their experiment, one single U-type BHE was embedded in a sandbox together with some temperature sensors at the specific locations in the sand. Using the pump to circulate the fluid in the U-type pipe, which was heated by a electrical heater. Different from the geothermal energy exploitation, the temperature of the sand will be lifted due to the inflow temperature of BHE is higher than its outflow temperature, which was dynamically monitored as one of the key results in the Thermal Response Test (TRT).
 
 ## Model Setup
 
