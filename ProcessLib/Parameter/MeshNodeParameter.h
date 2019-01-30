@@ -29,8 +29,7 @@ struct MeshNodeParameter final : public Parameter<T> {
     MeshNodeParameter(std::string const& name_,
                       MeshLib::PropertyVector<T> const& property)
         : Parameter<T>(name_),
-          _property(property),
-          _cache(_property.getNumberOfComponents())
+          _property(property)
     {
     }
 
@@ -41,7 +40,7 @@ struct MeshNodeParameter final : public Parameter<T> {
         return _property.getNumberOfComponents();
     }
 
-    std::vector<T> const& operator()(double const /*t*/,
+    std::vector<T> operator()(double const /*t*/,
                                      SpatialPosition const& pos) const override
     {
         auto const n = pos.getNodeID();
@@ -52,11 +51,12 @@ struct MeshNodeParameter final : public Parameter<T> {
                 "specified.");
         }
         auto const num_comp = _property.getNumberOfComponents();
+        std::vector<T> cache(num_comp);
         for (int c = 0; c < num_comp; ++c)
         {
-            _cache[c] = _property.getComponent(*n, c);
+            cache[c] = _property.getComponent(*n, c);
         }
-        return _cache;
+        return cache;
     }
 
     Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> getNodalValuesOnElement(
@@ -82,7 +82,6 @@ struct MeshNodeParameter final : public Parameter<T> {
 
 private:
     MeshLib::PropertyVector<T> const& _property;
-    mutable std::vector<T> _cache;
 };
 
 std::unique_ptr<ParameterBase> createMeshNodeParameter(
