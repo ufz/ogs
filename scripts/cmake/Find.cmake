@@ -148,7 +148,6 @@ find_package(OpenSSL)
 ## Check MPI package
 if(OGS_USE_MPI)
     find_package(MPI REQUIRED)
-    include_directories(SYSTEM ${MPI_CXX_INCLUDE_PATH})
 endif()
 
 find_package(Shapelib)

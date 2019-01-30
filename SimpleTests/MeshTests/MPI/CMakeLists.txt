@@ -13,7 +13,7 @@ if(OGS_USE_PETSC)
 endif()
 
 if(OGS_USE_MPI)
-    target_link_libraries(test_node_partitioned_mesh ${MPI_CXX_LIBRARIES})
+    target_link_libraries(test_node_partitioned_mesh MPI::MPI_CXX)
 endif()
 
 AddTest(
