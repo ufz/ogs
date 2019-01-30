@@ -43,7 +43,7 @@ set(DOXYGEN_ALIASES
     "ogs_file_special = \\xrefitem ogs_file_param \\\"Input File Parameter\\\" \\\"List of all Input File Parameters\\\" special OGS input file parameter"
     "ogs_file_param_special{1} = \\xrefitem ogs_file_param \\\"Input File Parameter\\\" \\\"List of all Input File Parameters\\\" \\ref ogs_file_param__\\1 \\\"\\1\\\""
     "ogs_file_attr_special{1} = \\xrefitem ogs_file_param \\\"Input File Parameter\\\" \\\"List of all Input File Parameters\\\" \\ref ogs_file_attr__\\1 \\\"\\1\\\""
-    "ogs_missing_documentation = \\xrefitem ogs_missing_documentation \\\"Missing Documentation\\\" \\\"OGS Input File Parameters&mdash;List of incomplete documentation pages\\\" Documentation missing/incomplete")
+    "ogs_missing_documentation = \\xrefitem ogs_missing_documentation \\\"Missing Documentation\\\" \\\"OGS Input File Parameters&mdash\;List of incomplete documentation pages\\\" Documentation missing/incomplete")
 
 doxygen_add_docs(doc
     ${PROJECT_SOURCE_DIR}/
