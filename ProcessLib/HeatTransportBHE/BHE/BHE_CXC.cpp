@@ -24,9 +24,9 @@ BHE_CXC::BHE_CXC(BoreholeGeometry const& borehole,
                  RefrigerantProperties const& refrigerant,
                  GroutParameters const& grout,
                  FlowAndTemperatureControl const& flowAndTemperatureControl,
-                 PipeConfigurationCXC const& pipes)
-    : BHECommon{borehole, refrigerant, grout, flowAndTemperatureControl},
-      _pipes(pipes)
+                 PipeConfigurationCoaxial const& pipes)
+    : BHECoaxialCommon{borehole, refrigerant, grout, flowAndTemperatureControl,
+                       pipes}
 {
     // Initialize thermal resistances.
     auto values = apply_visitor(
@@ -97,7 +97,7 @@ void BHE_CXC::updateHeatTransferCoefficients(double const flow_rate)
 
 {
     auto const tm_flow_properties_annulus =
-        calculateThermoMechanicalFlowPropertiesAnnulus(_pipes.inner_inflow_pipe,
+        calculateThermoMechanicalFlowPropertiesAnnulus(_pipes.inner_pipe,
                                                        _pipes.outer_pipe,
                                                        borehole_geometry.length,
                                                        refrigerant,
@@ -105,11 +105,8 @@ void BHE_CXC::updateHeatTransferCoefficients(double const flow_rate)
 
     _flow_velocity_annulus = tm_flow_properties_annulus.velocity;
 
-    auto const tm_flow_properties =
-        calculateThermoMechanicalFlowPropertiesPipe(_pipes.inner_inflow_pipe,
-                                                    borehole_geometry.length,
-                                                    refrigerant,
-                                                    flow_rate);
+    auto const tm_flow_properties = calculateThermoMechanicalFlowPropertiesPipe(
+        _pipes.inner_pipe, borehole_geometry.length, refrigerant, flow_rate);
 
     _flow_velocity = tm_flow_properties.velocity;
     _thermal_resistances =
@@ -122,49 +119,30 @@ void BHE_CXC::updateHeatTransferCoefficients(double const flow_rate)
 std::array<double, BHE_CXC::number_of_unknowns> BHE_CXC::calcThermalResistances(
     double const Nu_annulus, double const Nu_inner_inflow_pipe)
 {
-    static constexpr double pi = boost::math::constants::pi<double>();
-
-    double const& D = borehole_geometry.diameter;
-    double const& lambda_r = refrigerant.thermal_conductivity;
-    double const& lambda_g = grout.lambda_g;
-    double const& d_o = _pipes.outer_pipe.diameter;
-    double const& d_i = _pipes.inner_inflow_pipe.diameter;
-    double const& b_o = _pipes.outer_pipe.wall_thickness;
-    double const& b_i = _pipes.inner_inflow_pipe.wall_thickness;
-    double const& lambda_p_o = _pipes.outer_pipe.wall_thermal_conductivity;
-    double const& lambda_p_i =
-        _pipes.inner_inflow_pipe.wall_thermal_conductivity;
-
-    // thermal resistances due to advective flow of refrigerant in the _pipes
-    // Eq. 73, 74, 75 in Diersch_2011_CG
-    double const d_h = d_o - d_i - 2 * b_i;
-    double const d_i_o = d_i + 2 * b_i;
-    double const d_o_o = d_o + 2 * b_o;
-    double const R_adv_i = 1.0 / (Nu_inner_inflow_pipe * lambda_r * pi);
-    double const R_adv_a_o = 1.0 / (Nu_annulus * lambda_r * pi) * (d_h / d_i_o);
-    double const R_adv_b_o = 1.0 / (Nu_annulus * lambda_r * pi) * (d_h / d_o);
+    // thermal resistances due to advective flow of refrigerant in the pipes
+    auto const R_advective =
+        calculateAdvectiveThermalResistance(_pipes.inner_pipe,
+                                            _pipes.outer_pipe,
+                                            refrigerant,
+                                            Nu_inner_inflow_pipe,
+                                            Nu_annulus);
 
     // thermal resistance due to thermal conductivity of the pipe wall material
-    // Eq. 81
-    double const R_con_o = std::log(d_o_o / d_o) / (2.0 * pi * lambda_p_o);
-    double const R_con_i = std::log(d_i_o / d_i) / (2.0 * pi * lambda_p_i);
+    auto const R_conductive = calculatePipeWallThermalResistance(
+        _pipes.inner_pipe, _pipes.outer_pipe);
 
-    // Eq. 83
-    double const chi =
-        std::log(std::sqrt(D * D + d_o_o * d_o_o) / std::sqrt(2) / d_o_o) /
-        std::log(D / d_o_o);
-    // Eq. 84
-    // thermal resistances of the grout
-    double const R_g = std::log(D / d_o_o) / 2 / pi / lambda_g;
-    // Eq. 82
-    // thermal resistance due to the grout transition.
-    double const R_con_b = chi * R_g;
-    // Eq. 71 and 72
-    double const R_ff = R_adv_i + R_adv_a_o + R_con_i;
-    double const R_fog = R_adv_b_o + R_con_o + R_con_b;
+    // thermal resistance due to the grout transition grout-soil exchange.
+    auto const R = calculateGroutAndGroutSoilExchangeThermalResistance(
+        _pipes.outer_pipe, grout, borehole_geometry.diameter);
 
     // thermal resistance due to grout-soil exchange
-    double const R_gs = (1 - chi) * R_g;
+    double const R_gs = R.grout_soil;
+
+    // Eq. 71 and 72
+    double const R_ff = R_advective.inner_pipe_coaxial + R_advective.a_annulus +
+                        R_conductive.inner_pipe_coaxial;
+    double const R_fog =
+        R_advective.b_annulus + R_conductive.annulus + R.conductive_b;
 
     return {{R_ff, R_fog, R_gs}};
 

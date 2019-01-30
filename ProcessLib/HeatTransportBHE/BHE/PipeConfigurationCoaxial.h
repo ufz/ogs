@@ -22,9 +22,9 @@ namespace HeatTransportBHE
 {
 namespace BHE
 {
-struct PipeConfigurationCXC
+struct PipeConfigurationCoaxial
 {
-    Pipe const inner_inflow_pipe;
+    Pipe const inner_pipe;
     Pipe const outer_pipe;
 
     double const longitudinal_dispersion_length;

@@ -11,6 +11,12 @@
 
 #pragma once
 
+#include <boost/math/constants/constants.hpp>
+
+namespace BaseLib
+{
+class ConfigTree;
+}
 namespace ProcessLib
 {
 namespace HeatTransportBHE
@@ -41,6 +47,10 @@ struct RefrigerantProperties
 
     double const reference_temperature;
 };
+
+RefrigerantProperties createRefrigerantProperties(
+    BaseLib::ConfigTree const& config);
+
 }  // namespace BHE
 }  // namespace HeatTransportBHE
 }  // namespace ProcessLib

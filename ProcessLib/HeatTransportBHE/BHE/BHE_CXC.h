@@ -13,9 +13,9 @@
 
 #include "BaseLib/Error.h"
 
-#include "BHECommon.h"
+#include "BHECommonCoaxial.h"
 #include "FlowAndTemperatureControl.h"
-#include "PipeConfigurationCXC.h"
+#include "PipeConfigurationCoaxial.h"
 
 namespace ProcessLib
 {
@@ -36,17 +36,14 @@ namespace BHE
  * surrounding soil is regulated through the thermal resistance values, which
  * are calculated specifically during the initialization of the class.
  */
-class BHE_CXC final : public BHECommon
+class BHE_CXC final : public BHECoaxialCommon
 {
 public:
     BHE_CXC(BoreholeGeometry const& borehole,
             RefrigerantProperties const& refrigerant,
             GroutParameters const& grout,
             FlowAndTemperatureControl const& flowAndTemperatureControl,
-            PipeConfigurationCXC const& pipes);
-
-    static constexpr int number_of_unknowns = 3;
-    static constexpr int number_of_grout_zones = 1;
+            PipeConfigurationCoaxial const& pipes);
 
     std::array<double, number_of_unknowns> pipeHeatCapacities() const;
 
@@ -118,14 +115,10 @@ public:
     static constexpr std::pair<int, int> inflow_outflow_bc_component_ids[] = {
         {0, 1}};
 
-private:
-    // Placing it here before using it in the cross_section_areas.
-    PipeConfigurationCXC const _pipes;
-
 public:
     std::array<double, number_of_unknowns> const cross_section_areas = {
-        {_pipes.inner_inflow_pipe.area(),
-         _pipes.outer_pipe.area() - _pipes.inner_inflow_pipe.outsideArea(),
+        {_pipes.inner_pipe.area(),
+         _pipes.outer_pipe.area() - _pipes.inner_pipe.outsideArea(),
          borehole_geometry.area() - _pipes.outer_pipe.outsideArea()}};
 
 private:
@@ -133,18 +126,6 @@ private:
 
     std::array<double, number_of_unknowns> calcThermalResistances(
         double const Nu_o, double const Nu_i);
-
-private:
-    /// PHI_ff, PHI_fog, PHI_gs;
-    /// Here we store the thermal resistances needed for computation of the heat
-    /// exchange coefficients in the governing equations of BHE.
-    /// These governing equations can be found in
-    /// 1) Diersch (2013) FEFLOW book on page 958, M.3, or
-    /// 2) Diersch (2011) Comp & Geosci 37:1122-1135, Eq. 90-97.
-    std::array<double, number_of_unknowns> _thermal_resistances;
-
-    /// Flow velocity inside the pipes and annulus. Depends on the flow_rate.
-    double _flow_velocity, _flow_velocity_annulus;
 };
 }  // namespace BHE
 }  // namespace HeatTransportBHE
