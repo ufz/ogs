@@ -330,17 +330,17 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         _integration_method.getNumberOfPoints();
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        auto const& ip_data = _ip_data[ip];
+        auto & ip_data = _ip_data[ip];
         x_position.setIntegrationPoint(ip);
-        auto const& w = _ip_data[ip].integration_weight;
+        auto const& w = ip_data.integration_weight;
 
-        auto const& N_u_op = _ip_data[ip].N_u_op;
+        auto const& N_u_op = ip_data.N_u_op;
 
-        auto const& N_u = _ip_data[ip].N_u;
-        auto const& dNdx_u = _ip_data[ip].dNdx_u;
+        auto const& N_u = ip_data.N_u;
+        auto const& dNdx_u = ip_data.dNdx_u;
 
-        auto const& N_p = _ip_data[ip].N_p;
-        auto const& dNdx_p = _ip_data[ip].dNdx_p;
+        auto const& N_p = ip_data.N_p;
+        auto const& dNdx_p = ip_data.dNdx_p;
 
         auto const x_coord =
             interpolateXCoordinate<ShapeFunctionDisplacement,
@@ -368,20 +368,20 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 N_u, u_ip.coeffRef(i));
         }
 
-        auto& eps = _ip_data[ip].eps;
-        auto const& eps_prev = _ip_data[ip].eps_prev;
+        auto& eps = ip_data.eps;
+        auto const& eps_prev = ip_data.eps_prev;
 
-        auto& eps_m = _ip_data[ip].eps_m;
-        auto const& eps_m_prev = _ip_data[ip].eps_m_prev;
+        auto& eps_m = ip_data.eps_m;
+        auto const& eps_m_prev = ip_data.eps_m_prev;
         
-        auto& S_L = _ip_data[ip].saturation;
-        auto& S_L_prev = _ip_data[ip].saturation_prev;
-        auto const& sigma_eff = _ip_data[ip].sigma_eff;
+        auto& S_L = ip_data.saturation;
+        auto& S_L_prev = ip_data.saturation_prev;
+        auto const& sigma_eff = ip_data.sigma_eff;
         auto const rho_SR = _process_data.solid_density(t, x_position)[0];
         auto const K_SR = _process_data.solid_bulk_modulus(t, x_position)[0];
         auto const K_LR = _process_data.fluid_bulk_modulus(t, x_position)[0];
         double const K_S =
-            _ip_data[ip].solid_material.getBulkModulus(t, x_position);
+            ip_data.solid_material.getBulkModulus(t, x_position);
         auto const temperature = _process_data.temperature(t, x_position)[0];
         auto const alpha = _process_data.biot_coefficient(t,x_position)[0];
 
@@ -423,10 +423,13 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             MathLib::KelvinVector::KelvinVectorDimensions<
                 DisplacementDim>::value>;
 
-        auto const max_swelling_pressure =
-            _process_data.swelling_pressure(t, x_position)[0];
-        auto const exponent_swell =
-            _process_data.swelling_exponent(t, x_position)[0];
+        const bool has_swelling = 
+            _process_data.swelling_pressure.is_initialized() 
+                && _process_data.swelling_exponent.is_initialized();
+        auto const max_swelling_pressure =  has_swelling?
+            _process_data.swelling_pressure->operator()(t, x_position)[0]:0.0;
+        auto const exponent_swell = has_swelling?
+            _process_data.swelling_exponent->operator()(t, x_position)[0]:1.0;
         
         auto const eps_vol_swell_increment = max_swelling_pressure/K_S
                     *(pow(S_L, exponent_swell)-pow(S_L_prev, exponent_swell));

@@ -47,8 +47,8 @@ struct RichardsMechanicsProcessData
         Parameter<double> const& biot_coefficient_,
         Parameter<double> const& solid_density_,
         Parameter<double> const& solid_bulk_modulus_,
-        Parameter<double> const& swelling_pressure_,
-        Parameter<double> const& swelling_exponent_,
+        boost::optional<Parameter<double> const&> swelling_pressure_,
+        boost::optional<Parameter<double> const&> swelling_exponent_,
         Parameter<double> const& temperature_,
         Eigen::Matrix<double, DisplacementDim, 1>
             specific_body_force_)
@@ -98,10 +98,10 @@ struct RichardsMechanicsProcessData
     /// Solid's bulk modulus. A scalar quantity, Parameter<double>.
     Parameter<double> const& solid_bulk_modulus;
     /// Maximum swelling pressure. A scalar quantity, Parameter<double>.
-    Parameter<double> const& swelling_pressure;
+    boost::optional<Parameter<double> const&> swelling_pressure;
     /// exponent for the swelling pressure law. A scalar quantity,
     /// Parameter<double>.
-    Parameter<double> const& swelling_exponent;
+    boost::optional<Parameter<double> const&> swelling_exponent;
     /// Reference temperature for material properties. A scalar quantity,
     /// Parameter<double>.
     Parameter<double> const& temperature;

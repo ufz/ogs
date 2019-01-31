@@ -165,20 +165,22 @@ std::unique_ptr<Process> createRichardsMechanicsProcess(
     }
 
      // maximum swelling pressure
-    auto& swelling_pressure = findParameter<double>(
+    auto swelling_pressure = findParameterOptional<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__RICHARDS_MECHANICS__max_swelling_pressure}
         "swelling_pressure", parameters, 1);
-    DBUG("Use \'%s\' as max. swelling pressure.",
-         swelling_pressure.name.c_str());
+    if(swelling_pressure.is_initialized())
+        DBUG("Use \'%s\' as max. swelling pressure.",
+            swelling_pressure->name.c_str());
 
     // swelling law exponent
-    auto& swelling_exponent = findParameter<double>(
+    auto swelling_exponent = findParameterOptional<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__RICHARDS_MECHANICS__swelling_law_exponent}
         "swelling_exponent", parameters, 1);
-    DBUG("Use \'%s\' as swelling law exponent.",
-         swelling_exponent.name.c_str());
+    if (swelling_exponent.is_initialized())
+        DBUG("Use \'%s\' as swelling law exponent.",
+             swelling_exponent->name.c_str());
 
     auto& temperature = findParameter<double>(
         config,

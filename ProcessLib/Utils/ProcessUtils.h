@@ -124,4 +124,34 @@ Parameter<ParameterDataType>& findParameter(
 
     return findParameter<ParameterDataType>(name, parameters, num_components);
 }
+
+/// Find an parameter of specific type for a name given in the process
+/// configuration under an optional tag.
+/// The parameter must have the specified number of components.
+/// In the process config a parameter is referenced by a name. For example it
+/// will be looking for a parameter named "K" in the list of parameters
+/// when the tag is "hydraulic_conductivity":
+/// \code
+///     <process>
+///         ...
+///         <hydraulic_conductivity>K</hydraulic_conductivity>
+///     </process>
+/// \endcode
+/// and return a reference to that parameter. Additionally it checks for the
+/// type of the found parameter.
+template <typename ParameterDataType>
+boost::optional<const Parameter<ParameterDataType>&> findParameterOptional(
+    BaseLib::ConfigTree const& process_config, std::string const& tag,
+    std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+    int const num_components)
+{
+    // Find parameter name in process config.
+    //! \ogs_file_special
+    auto const name = process_config.getConfigParameterOptional<std::string>(tag);
+
+    if (name.is_initialized())
+        return findParameter<ParameterDataType>(*name, parameters, num_components);
+    
+    return boost::none;
+}
 }  // ProcessLib
