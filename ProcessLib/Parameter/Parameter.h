@@ -77,7 +77,7 @@ struct Parameter : public ParameterBase
     virtual int getNumberOfComponents() const = 0;
 
     //! Returns the parameter value at the given time and position.
-    virtual std::vector<T> const& operator()(
+    virtual std::vector<T> operator()(
         double const t, SpatialPosition const& pos) const = 0;
 
     //! Returns a matrix of values for all nodes of the given element.

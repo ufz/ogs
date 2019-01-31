@@ -35,7 +35,6 @@ struct CurveScaledParameter final : public Parameter<T> {
     {
         _parameter =
             &findParameter<T>(_referenced_parameter_name, parameters, 0);
-        _cache.resize(_parameter->getNumberOfComponents());
     }
 
     int getNumberOfComponents() const override
@@ -43,24 +42,24 @@ struct CurveScaledParameter final : public Parameter<T> {
         return _parameter->getNumberOfComponents();
     }
 
-    std::vector<T> const& operator()(double const t,
+    std::vector<T> operator()(double const t,
                                      SpatialPosition const& pos) const override
     {
         auto const& tup = (*_parameter)(t, pos);
         auto const scaling = _curve.getValue(t);
 
         auto const num_comp = _parameter->getNumberOfComponents();
+        std::vector<T> cache(num_comp);
         for (int c = 0; c < num_comp; ++c)
         {
-            _cache[c] = scaling * tup[c];
+            cache[c] = scaling * tup[c];
         }
-        return _cache;
+        return cache;
     }
 
 private:
     MathLib::PiecewiseLinearInterpolation const& _curve;
     Parameter<T> const* _parameter;
-    mutable std::vector<T> _cache;
     std::string const _referenced_parameter_name;
 };
 

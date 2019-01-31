@@ -40,7 +40,7 @@ struct ConstantParameter final : public Parameter<T>
         return static_cast<int>(_values.size());
     }
 
-    std::vector<T> const& operator()(
+    std::vector<T> operator()(
         double const /*t*/, SpatialPosition const& /*pos*/) const override
     {
         return _values;

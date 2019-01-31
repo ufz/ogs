@@ -58,7 +58,7 @@ struct GroupBasedParameter final
                    : static_cast<int>(_vec_values.front().size());
     }
 
-    std::vector<T> const& operator()(double const /*t*/,
+    std::vector<T> operator()(double const /*t*/,
                                      SpatialPosition const& pos) const override
     {
         auto const item_id = getMeshItemID(pos, type<MeshItemType>());
