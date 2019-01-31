@@ -369,7 +369,13 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         }
 
         auto& eps = _ip_data[ip].eps;
+        auto const& eps_prev = _ip_data[ip].eps_prev;
+
+        auto& eps_m = _ip_data[ip].eps_m;
+        auto const& eps_m_prev = _ip_data[ip].eps_m_prev;
+        
         auto& S_L = _ip_data[ip].saturation;
+        auto& S_L_prev = _ip_data[ip].saturation_prev;
         auto const& sigma_eff = _ip_data[ip].sigma_eff;
         auto const rho_SR = _process_data.solid_density(t, x_position)[0];
         auto const K_SR = _process_data.solid_bulk_modulus(t, x_position)[0];
@@ -421,24 +427,13 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             _process_data.swelling_pressure(t, x_position)[0];
         auto const exponent_swell =
             _process_data.swelling_exponent(t, x_position)[0];
-       
-        auto& eps_tmp = _ip_data[ip].eps;
-        auto const dp_cap = p_cap_dot_ip * dt;
-        auto p_cap_old = p_cap_ip - dp_cap;
-        auto const S_L_old = _process_data.flow_material->getSaturation(
-            material_id, t, x_position, -p_cap_old, temperature, p_cap_old);
-
-        double const S_init = 0.28340161433904271; //@TODO add initial saturation as parameter?
-        auto const delta_S_L = S_L - S_init;
-        auto eps_swell_increment = 0.0;
-
-        if (_process_data.has_swelling)
-        {
-           eps_swell_increment =
-                max_swelling_pressure * pow(delta_S_L, exponent_swell)/(3.0*K_S);
-            eps.noalias() = eps_tmp - eps_swell_increment * identity2;
-        }
         
+        auto const eps_vol_swell_increment = max_swelling_pressure/K_S
+                    *(pow(S_L, exponent_swell)-pow(S_L_prev, exponent_swell));
+
+        eps_m.noalias() =
+                eps_m_prev + eps - eps_prev -
+                eps_vol_swell_increment/3.0 * Invariants::identity2;
 
         auto C = _ip_data[ip].updateConstitutiveRelation(t, x_position, dt, u,
                                                          temperature);
@@ -460,18 +455,18 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         //
         Kup.noalias() += B.transpose() * alpha * identity2 * N_p * w * S_L;
 
-        if (_process_data.has_swelling)
-        {   
+        // swelling contribution
         double const d_eps_swell_dp_cap =
-                max_swelling_pressure * exponent_swell *
-                std::pow(S_L, exponent_swell - 1) * dS_L_dp_cap; // 3.0;
+                max_swelling_pressure/K_S * exponent_swell *
+                std::pow(S_L, exponent_swell - 1) * dS_L_dp_cap/ 3.0;
         local_Jac
             .template block<displacement_size, pressure_size>(
                 displacement_index, pressure_index)
             .noalias() -=
             B.transpose() * d_eps_swell_dp_cap * C  *identity2 * N_p * w;
-        }
-      local_Jac
+        //end swelling contribution
+        
+        local_Jac
             .template block<displacement_size, pressure_size>(
                 displacement_index, pressure_index)
             .noalias() -= B.transpose() * alpha *

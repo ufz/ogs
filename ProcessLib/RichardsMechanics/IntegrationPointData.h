@@ -36,36 +36,46 @@ struct IntegrationPointData final
                 DisplacementDim>::value;
         sigma_eff.setZero(kelvin_vector_size);
         eps.setZero(kelvin_vector_size);
+        eps_m.setZero(kelvin_vector_size);
 
         // Previous time step values are not initialized and are set later.
         eps_prev.resize(kelvin_vector_size);
+        eps_m_prev.resize(kelvin_vector_size);
         sigma_eff_prev.resize(kelvin_vector_size);
     }
 
     typename ShapeMatrixTypeDisplacement::template MatrixType<
         DisplacementDim, NPoints * DisplacementDim>
         N_u_op;
+    
+    // effective stress
     typename BMatricesType::KelvinVectorType sigma_eff, sigma_eff_prev;
+    
+    // total strain
     typename BMatricesType::KelvinVectorType eps, eps_prev;
-    typename BMatricesType::KelvinVectorType eps_m;
-
-    typename ShapeMatrixTypeDisplacement::NodalRowVectorType N_u;
-    typename ShapeMatrixTypeDisplacement::GlobalDimNodalMatrixType dNdx_u;
-
-    typename ShapeMatricesTypePressure::NodalRowVectorType N_p;
-    typename ShapeMatricesTypePressure::GlobalDimNodalMatrixType dNdx_p;
-
-    double saturation,saturation_prev;
+    
+    // mechanical strain
+    typename BMatricesType::KelvinVectorType eps_m, eps_m_prev;
 
     MaterialLib::Solids::MechanicsBase<DisplacementDim> const& solid_material;
     std::unique_ptr<typename MaterialLib::Solids::MechanicsBase<
         DisplacementDim>::MaterialStateVariables>
         material_state_variables;
+    
+    typename ShapeMatrixTypeDisplacement::NodalRowVectorType N_u;
+    typename ShapeMatrixTypeDisplacement::GlobalDimNodalMatrixType dNdx_u;
+
+    typename ShapeMatricesTypePressure::NodalRowVectorType N_p;
+    typename ShapeMatricesTypePressure::GlobalDimNodalMatrixType dNdx_p;
     double integration_weight;
+
+    // fluid saturation
+    double saturation,saturation_prev;
 
     void pushBackState()
     {
         eps_prev = eps;
+        eps_m_prev = eps_m;
         sigma_eff_prev = sigma_eff;
         saturation_prev=saturation;
         material_state_variables->pushBackState();
@@ -80,7 +90,7 @@ struct IntegrationPointData final
         double const temperature)
     {
         auto&& solution = solid_material.integrateStress(
-            t, x_position, dt, eps_prev, eps, sigma_eff_prev,
+            t, x_position, dt, eps_m_prev, eps_m, sigma_eff_prev,
             *material_state_variables, temperature);
 
         if (!solution)

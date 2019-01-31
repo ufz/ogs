@@ -164,12 +164,6 @@ std::unique_ptr<Process> createRichardsMechanicsProcess(
         std::copy_n(b.data(), b.size(), specific_body_force.data());
     }
 
-    // has swelling
-    //! \ogs_file_param{prj__processes__process__RICHARDS_MECHANICS__swelling}
-    auto has_swelling = config.getConfigParameter<bool>("swelling");
-
-    INFO("current process: Richards mechanics with swelling");
-   
      // maximum swelling pressure
     auto& swelling_pressure = findParameter<double>(
         config,
@@ -224,7 +218,6 @@ std::unique_ptr<Process> createRichardsMechanicsProcess(
         biot_coefficient,
         solid_density,
         solid_bulk_modulus,
-        has_swelling,
         swelling_pressure,
         swelling_exponent,
         temperature,

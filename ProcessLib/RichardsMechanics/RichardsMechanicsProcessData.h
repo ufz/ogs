@@ -47,7 +47,6 @@ struct RichardsMechanicsProcessData
         Parameter<double> const& biot_coefficient_,
         Parameter<double> const& solid_density_,
         Parameter<double> const& solid_bulk_modulus_,
-        bool const has_swelling_,
         Parameter<double> const& swelling_pressure_,
         Parameter<double> const& swelling_exponent_,
         Parameter<double> const& temperature_,
@@ -61,7 +60,6 @@ struct RichardsMechanicsProcessData
           biot_coefficient(biot_coefficient_),
           solid_density(solid_density_),
           solid_bulk_modulus(solid_bulk_modulus_),
-          has_swelling(has_swelling_),
           swelling_pressure(swelling_pressure_),
           swelling_exponent(swelling_exponent_),
           temperature(temperature_),
@@ -116,10 +114,6 @@ struct RichardsMechanicsProcessData
 
     MeshLib::PropertyVector<double>* element_saturation = nullptr;
     MeshLib::PropertyVector<double>* pressure_interpolated = nullptr;
-
-    /// Flag for the swelling pressure law. A boolean quantity,
-    /// Parameter<bool>.
-    bool const has_swelling;
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
