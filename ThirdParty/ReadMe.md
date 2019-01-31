@@ -36,3 +36,7 @@ Is integrated as a submodule.
 
 Header only c++ json parser. Directly integrated because the benchmarks and
 tests are too large.
+
+## exprtk ##
+
+Header only c++ mathematical expression parsing and evaluation library
