@@ -88,7 +88,8 @@ public:
      * \param linear_solver the linear solver used by this nonlinear solver.
      * \param maxiter the maximum number of iterations used to solve the
      *                equation.
-     * \param damping \copydoc _damping
+     * \param damping A positive damping factor.
+     * \see _damping
      */
     explicit NonlinearSolver(GlobalLinearSolver& linear_solver,
                              int const maxiter,

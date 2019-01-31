@@ -2,18 +2,7 @@
 ### Find tools     ###
 ######################
 
-# Find doxygen
-if(WIN32)
-    find_program(DOXYGEN_DOT_EXECUTABLE NAMES dot
-        PATHS "$ENV{ProgramFiles}/Graphviz*/bin")
-    find_package(Doxygen QUIET)
-    if(DOXYGEN_DOT_PATH)
-        file(TO_NATIVE_PATH ${DOXYGEN_DOT_PATH} DOXYGEN_DOT_PATH)
-        set(DOXYGEN_DOT_PATH "\"${DOXYGEN_DOT_PATH}\"")
-    endif()
-else()
-    find_package(Doxygen QUIET)
-endif()
+find_package(Doxygen OPTIONAL_COMPONENTS dot)
 
 # Find gnu profiler gprof
 find_program(GPROF_PATH gprof DOC "GNU profiler gprof" QUIET)
@@ -159,7 +148,6 @@ find_package(OpenSSL)
 ## Check MPI package
 if(OGS_USE_MPI)
     find_package(MPI REQUIRED)
-    include_directories(SYSTEM ${MPI_CXX_INCLUDE_PATH})
 endif()
 
 find_package(Shapelib)

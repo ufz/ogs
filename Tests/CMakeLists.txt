@@ -58,7 +58,7 @@ if(OGS_USE_PETSC)
 endif()
 
 if(OGS_USE_MPI)
-    target_link_libraries(testrunner ${MPI_CXX_LIBRARIES})
+    target_link_libraries(testrunner MPI::MPI_CXX)
 endif()
 
 if(OGS_BUILD_SWMM)
