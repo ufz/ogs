@@ -207,8 +207,10 @@ pipeline {
           }
           post {
             always {
+              dir('build') {
+                sh "curl -s https://codecov.io/bash | bash -s - -f *_cobertura.xml"
+              }
               xunit([GoogleTest(pattern: 'build/Tests/testrunner.xml')])
-              cobertura coberturaReportFile: 'build/*_cobertura.xml'
             }
           }
         }
