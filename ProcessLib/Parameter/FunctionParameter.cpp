@@ -24,7 +24,7 @@ std::unique_ptr<ParameterBase> createFunctionParameter(
     std::vector<std::string> vec_expressions;
 
     //! \ogs_file_param{prj__parameters__parameter__Function__expression}
-    for (auto p : config.getConfigSubtreeList("expression"))
+    for (auto const& p : config.getConfigSubtreeList("expression"))
     {
         std::string const expression_str = p.getValue<std::string>();
         vec_expressions.emplace_back(expression_str);

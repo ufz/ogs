@@ -23,7 +23,7 @@
 namespace ProcessLib
 {
 
-/// A parameter class evaluating functons defined by
+/// A parameter class evaluating functions defined by
 /// user-provided mathematical expressions.
 ///
 /// Currently, x, y, and z are supported as variables
@@ -104,7 +104,7 @@ struct FunctionParameter final : public Parameter<T>
 
 private:
     MeshLib::Mesh const& _mesh;
-    std::vector<std::string> _vec_expression_str;
+    std::vector<std::string> const _vec_expression_str;
     symbol_table_t _symbol_table;
     std::vector<expression_t> _vec_expression;
 };
