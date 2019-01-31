@@ -31,3 +31,6 @@
 [submodule "ThirdParty/jedbrown-cmake-modules"]
 	path = ThirdParty/jedbrown-cmake-modules
 	url = https://github.com/jedbrown/cmake-modules.git
+[submodule "ThirdParty/exprtk"]
+	path = ThirdParty/exprtk
+	url = https://github.com/ArashPartow/exprtk.git

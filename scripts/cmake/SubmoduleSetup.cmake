@@ -7,6 +7,7 @@ endif()
 set(REQUIRED_SUBMODULES
     ThirdParty/autocheck
     ThirdParty/cmake-modules
+    ThirdParty/exprtk
     ThirdParty/googletest
     ThirdParty/jedbrown-cmake-modules
     ThirdParty/tclap

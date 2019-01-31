@@ -13,6 +13,7 @@
 
 #include "ConstantParameter.h"
 #include "CurveScaledParameter.h"
+#include "FunctionParameter.h"
 #include "GroupBasedParameter.h"
 #include "MeshElementParameter.h"
 #include "MeshNodeParameter.h"
@@ -43,6 +44,12 @@ std::unique_ptr<ParameterBase> createParameter(
     {
         INFO("CurveScaledParameter: %s", name.c_str());
         auto param = createCurveScaledParameter(name, config, curves);
+        return param;
+    }
+    if (type == "Function")
+    {
+        INFO("FunctionParameter: %s", name.c_str());
+        auto param = createFunctionParameter(name, config, *meshes.front());
         return param;
     }
     if (type == "Group")

@@ -317,6 +317,7 @@ include_directories( SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/googletest/go
 include_directories( SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/autocheck/include )
 include_directories( SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/tclap/include )
 include_directories( SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/json/include )
+include_directories( SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/exprtk )
 
 include(scripts/cmake/CheckHeaderCompilation.cmake)
 
