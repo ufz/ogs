@@ -13,3 +13,4 @@
 #pragma once
 
 #include "Constant.h"
+#include "LinearProperty.h"
