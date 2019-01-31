@@ -34,6 +34,11 @@ class LocalAssemblerInterface
 public:
     virtual ~LocalAssemblerInterface() = default;
 
+    virtual void setInitialConditions(
+        std::size_t const mesh_item_id,
+        NumLib::LocalToGlobalIndexMap const& dof_table, GlobalVector const& x,
+        double const t);
+
     virtual void preAssemble(double const /*t*/,
                              std::vector<double> const& /*local_x*/){};
 
@@ -96,6 +101,11 @@ public:
     }
 
 private:
+    virtual void setInitialConditionsConcrete(
+        std::vector<double> const& /*local_x*/, double const /*t*/)
+    {
+    }
+
     virtual void preTimestepConcrete(std::vector<double> const& /*local_x*/,
                                      double const /*t*/, double const /*dt*/)
     {

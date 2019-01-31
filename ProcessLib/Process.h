@@ -176,6 +176,11 @@ private:
     /// processes. It is called by initialize().
     virtual void initializeBoundaryConditions();
 
+    virtual void setInitialConditionsConcreteProcess(GlobalVector const& /*x*/,
+                                                     double const /*t*/)
+    {
+    }
+
     virtual void preAssembleConcreteProcess(const double /*t*/,
                                             GlobalVector const& /*x*/)
     {
