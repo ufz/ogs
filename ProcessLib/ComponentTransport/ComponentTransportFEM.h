@@ -280,7 +280,7 @@ public:
                 MaterialLib::Fluid::PropertyVariableType::p)] = p_int_pt;
             auto const density = _process_data.fluid_properties->getValue(
                 MaterialLib::Fluid::FluidPropertyType::Density, vars);
-            auto const& decay_rate = _process_data.decay_rate(t, pos)[0];
+            auto const decay_rate = _process_data.decay_rate(t, pos)[0];
 
             auto const& molecular_diffusion_coefficient =
                 component.template value<double>(
