@@ -34,13 +34,8 @@ struct HTMaterialProperties final
         std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>&&
             media_map_,
         bool const has_fluid_thermal_dispersivity_,
-        ParameterLib::Parameter<double> const&
-            thermal_dispersivity_longitudinal_,
-        ParameterLib::Parameter<double> const&
-            thermal_dispersivity_transversal_,
         ParameterLib::Parameter<double> const& specific_heat_capacity_solid_,
         ParameterLib::Parameter<double> const& thermal_conductivity_solid_,
-        ParameterLib::Parameter<double> const& thermal_conductivity_fluid_,
         bool const has_fluid_thermal_expansion_,
         ParameterLib::Parameter<double> const& solid_thermal_expansion_,
         ParameterLib::Parameter<double> const& biot_constant_,
@@ -52,10 +47,7 @@ struct HTMaterialProperties final
           media_map(std::move(media_map_)),
           specific_heat_capacity_solid(specific_heat_capacity_solid_),
           has_fluid_thermal_dispersivity(has_fluid_thermal_dispersivity_),
-          thermal_dispersivity_longitudinal(thermal_dispersivity_longitudinal_),
-          thermal_dispersivity_transversal(thermal_dispersivity_transversal_),
           thermal_conductivity_solid(thermal_conductivity_solid_),
-          thermal_conductivity_fluid(thermal_conductivity_fluid_),
           has_fluid_thermal_expansion(has_fluid_thermal_expansion_),
           solid_thermal_expansion(solid_thermal_expansion_),
           biot_constant(biot_constant_),
@@ -76,10 +68,7 @@ struct HTMaterialProperties final
         media_map;
     ParameterLib::Parameter<double> const& specific_heat_capacity_solid;
     bool const has_fluid_thermal_dispersivity;
-    ParameterLib::Parameter<double> const& thermal_dispersivity_longitudinal;
-    ParameterLib::Parameter<double> const& thermal_dispersivity_transversal;
     ParameterLib::Parameter<double> const& thermal_conductivity_solid;
-    ParameterLib::Parameter<double> const& thermal_conductivity_fluid;
 
     bool const has_fluid_thermal_expansion;
     ParameterLib::Parameter<double> const& solid_thermal_expansion;
