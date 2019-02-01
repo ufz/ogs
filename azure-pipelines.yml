@@ -1,0 +1,23 @@
+jobs:
+- job: Windows
+  pool:
+    vmImage: 'vs2017-win2016'
+  timeoutInMinutes: 0
+  steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '3.7'
+  - script: |
+      pip install conan --upgrade
+  - task: CMake@1
+    inputs:
+      cmakeArgs: ".. -A x64 -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DOGS_EIGEN_DYNAMIC_SHAPE_MATRICES=ON -DOGS_USE_PCH=OFF"
+  - task: MSBuild@1
+    inputs:
+      solution: 'build/ALL_BUILD.vcxproj'
+      maximumCpuCount: true
+      configuration: 'Release'
+  - script: |
+      cd build\bin
+      .\testrunner.exe
+    displayName: 'testrunner'
