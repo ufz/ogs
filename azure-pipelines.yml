@@ -8,6 +8,9 @@ jobs:
     inputs:
       versionSpec: '3.7'
   - script: |
+      git lfs install
+      git lfs fetch
+      git lfs checkout
       pip install conan --upgrade
       conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
       conan install ninja_installer/1.8.2_kitware@bincrafters/stable -r bincrafters -g=virtualenv
