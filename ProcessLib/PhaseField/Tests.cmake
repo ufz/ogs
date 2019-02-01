@@ -42,6 +42,7 @@ AddTest(
 AddTest(
     NAME LARGE_PhaseField_Staggered_square_line
     PATH PhaseField
+    RUNTIME 70
     EXECUTABLE ogs
     EXECUTABLE_ARGS square_line_h_400.prj
     WRAPPER time
@@ -58,6 +59,7 @@ AddTest(
 AddTest(
     NAME LARGE_PhaseField_Staggered_square_shear
     PATH PhaseField
+    RUNTIME 200
     EXECUTABLE ogs
     EXECUTABLE_ARGS square_shear_h_400.prj
     WRAPPER time

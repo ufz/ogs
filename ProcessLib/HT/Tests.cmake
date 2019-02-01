@@ -2,6 +2,7 @@
 AddTest(
     NAME LARGE_2D_ThermalConvection_constviscosityMonolithic
     PATH Parabolic/HT/ConstViscosity
+    RUNTIME 66
     EXECUTABLE ogs
     EXECUTABLE_ARGS square_5500x5500.prj
     WRAPPER time
@@ -162,6 +163,7 @@ AddTest(
 AddTest(
     NAME LARGE_HT_calculatesurfaceflux
     PATH Parabolic/HT/SimpleSynthetics
+    RUNTIME 190
     EXECUTABLE ogs
     EXECUTABLE_ARGS calculatesurfaceflux_ht_cube_1e4.prj
     WRAPPER time

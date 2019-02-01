@@ -14,6 +14,7 @@ AddTest(
 AddTest(
     NAME LARGE_2D_Thermal_TwoPhase_heatpipe
     PATH Parabolic/ThermalTwoPhaseFlowPP/HeatPipe
+    RUNTIME 200
     EXECUTABLE ogs
     EXECUTABLE_ARGS Twophase_HeatPipe_quad_curve_large.prj
     TESTER vtkdiff

@@ -21,6 +21,7 @@ AddTest(
 AddTest(
         NAME LARGE_2D_RichardsFlow_h_us_quad
         PATH Parabolic/Richards
+        RUNTIME 90
         EXECUTABLE ogs
         EXECUTABLE_ARGS RichardsFlow_2d_large.prj
         TESTER vtkdiff

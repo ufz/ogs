@@ -238,6 +238,7 @@ AddTest(
 AddTest(
     NAME LARGE_2D_ComponentTransport_Goswami
     PATH Parabolic/ComponentTransport/goswami
+    RUNTIME 900
     EXECUTABLE ogs
     EXECUTABLE_ARGS goswami_input.prj
     WRAPPER time
@@ -273,6 +274,7 @@ AddTest(
 AddTest(
     NAME LARGE_2D_ComponentTransport_Elder
     PATH Parabolic/ComponentTransport/elder
+    RUNTIME 2700
     EXECUTABLE ogs
     EXECUTABLE_ARGS elder.prj
     WRAPPER time
