@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include "MeshLib/Elements/Element.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ProcessLib/Utils/InitShapeMatrices.h"
@@ -44,7 +45,8 @@ public:
         : _integration_method(integration_order),
           _shape_matrices(initShapeMatrices<ShapeFunction, ShapeMatricesType,
                                             IntegrationMethod, GlobalDim>(
-              e, is_axially_symmetric, _integration_method))
+              e, is_axially_symmetric, _integration_method)),
+          _element(e)
     {
     }
 
@@ -54,6 +56,7 @@ protected:
                 Eigen::aligned_allocator<
                     typename ShapeMatricesType::ShapeMatrices>> const
         _shape_matrices;
+    MeshLib::Element const& _element;
 };
 
 }  // namespace ProcessLib
