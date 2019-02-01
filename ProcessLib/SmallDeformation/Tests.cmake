@@ -87,8 +87,8 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS OGS_USE_MFRONT AND NOT OGS_USE_MPI
     DIFF_DATA
-    ../../ring_plane_strain_1e4_solution.vtu ring_plane_strain_pcs_0_ts_1_t_1.000000.vtu displacement displacement 1e-16 0
-    ../../ring_plane_strain_1e4_solution.vtu ring_plane_strain_pcs_0_ts_1_t_1.000000.vtu sigma sigma 1e-15 0
+    ../../ring_plane_strain_pcs_0_ts_1_t_1.000000.vtu ring_plane_strain_pcs_0_ts_1_t_1.000000.vtu displacement displacement 1e-16 0
+    ../../ring_plane_strain_pcs_0_ts_1_t_1.000000.vtu ring_plane_strain_pcs_0_ts_1_t_1.000000.vtu sigma sigma 1e-15 0
 )
 
 AddTest(
