@@ -9,15 +9,11 @@ jobs:
       versionSpec: '3.7'
   - script: |
       pip install conan --upgrade
-  - task: CMake@1
-    inputs:
-      cmakeArgs: ".. -A x64 -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DOGS_EIGEN_DYNAMIC_SHAPE_MATRICES=ON -DOGS_USE_PCH=OFF"
-  - task: MSBuild@1
-    inputs:
-      solution: 'build/ALL_BUILD.vcxproj'
-      maximumCpuCount: true
-      configuration: 'Release'
-  - script: |
-      cd build\bin
-      .\testrunner.exe
-    displayName: 'testrunner'
+      conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
+      conan install ninja_installer/1.8.2_kitware@bincrafters/stable -r bincrafters -g=virtualenv
+      call activate.bat
+      mkdir build
+      cd build
+      call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\Common7\Tools\vsdevcmd" -arch=x64
+      cmake .. -G Ninja -DCMAKE_C_COMPILER=cl.exe -DCMAKE_CXX_COMPILER=cl.exe -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DOGS_EIGEN_DYNAMIC_SHAPE_MATRICES=ON -DOGS_USE_PCH=OFF
+      ninja tests
