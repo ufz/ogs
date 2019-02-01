@@ -2,7 +2,8 @@ jobs:
 - job: Windows
   pool:
     vmImage: 'vs2017-win2016'
-  timeoutInMinutes: 0
+  variables:
+    NUM_THREADS: 2
   steps:
   - task: UsePythonVersion@0
     inputs:
@@ -20,3 +21,4 @@ jobs:
       call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\Common7\Tools\vsdevcmd" -arch=x64
       cmake .. -G Ninja -DCMAKE_C_COMPILER=cl.exe -DCMAKE_CXX_COMPILER=cl.exe -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DOGS_EIGEN_DYNAMIC_SHAPE_MATRICES=ON -DOGS_USE_PCH=OFF
       ninja tests
+      ninja ctest
