@@ -67,8 +67,7 @@ public:
             return operator=(static_cast<MaterialStateVariables const&>(state));
         }
 
-        // TODO fix: this has to be mutable.
-        mutable mgis::behaviour::BehaviourData _behaviour_data;
+        mgis::behaviour::BehaviourData _behaviour_data;
     };
 
     using KelvinVector =

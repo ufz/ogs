@@ -249,9 +249,10 @@ MFront<DisplacementDim>::integrateStress(
 {
     assert(
         dynamic_cast<MaterialStateVariables const*>(&material_state_variables));
-    auto& behaviour_data =
-        static_cast<MaterialStateVariables const&>(material_state_variables)
-            ._behaviour_data;
+    // New state, copy of current one, packed in unique_ptr for return.
+    auto state = std::make_unique<MaterialStateVariables>(
+        static_cast<MaterialStateVariables const&>(material_state_variables));
+    auto& behaviour_data = state->_behaviour_data;
 
     // TODO add a test of material behaviour where the value of dt matters.
     behaviour_data.dt = dt;
@@ -305,14 +306,14 @@ MFront<DisplacementDim>::integrateStress(
     KelvinMatrix C =
         MFrontToOGS(Eigen::Map<KelvinMatrix>(behaviour_data.K.data()));
 
-    // TODO avoid copying the state
-    auto state_copy = std::make_unique<MaterialStateVariables>(
-        static_cast<MaterialStateVariables const&>(material_state_variables));
-    std::unique_ptr<
-        typename MechanicsBase<DisplacementDim>::MaterialStateVariables>
-        state_upcast(state_copy.release());
-
-    return {std::make_tuple(std::move(sigma), std::move(state_upcast), std::move(C))};
+    return boost::make_optional(
+        std::make_tuple<typename MFront<DisplacementDim>::KelvinVector,
+                        std::unique_ptr<typename MechanicsBase<
+                            DisplacementDim>::MaterialStateVariables>,
+                        typename MFront<DisplacementDim>::KelvinMatrix>(
+            std::move(sigma),
+            std::move(state),
+            std::move(C)));
 }
 
 template <int DisplacementDim>
