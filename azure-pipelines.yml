@@ -2,6 +2,7 @@ jobs:
 - job: Windows
   pool:
     vmImage: 'vs2017-win2016'
+  timeoutInMinutes: 120
   variables:
     NUM_THREADS: 2
   steps:
