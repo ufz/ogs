@@ -249,19 +249,19 @@ MFront<DisplacementDim>::integrateStress(
 {
     assert(
         dynamic_cast<MaterialStateVariables const*>(&material_state_variables));
-    auto& d =
+    auto& behaviour_data =
         static_cast<MaterialStateVariables const&>(material_state_variables)
-            ._data;
+            ._behaviour_data;
 
     // TODO add a test of material behaviour where the value of dt matters.
-    d.dt = dt;
-    d.rdt = 1.0;
-    d.K[0] = 4.0;  // if K[0] is greater than 3.5, the consistent tangent
-                   // operator must be computed.
+    behaviour_data.dt = dt;
+    behaviour_data.rdt = 1.0;
+    behaviour_data.K[0] = 4.0;  // if K[0] is greater than 3.5, the consistent
+                                // tangent operator must be computed.
 
     // evaluate parameters at (t, x)
     {
-        auto out = d.s1.material_properties.begin();
+        auto out = behaviour_data.s1.material_properties.begin();
         for (auto* param : _material_properties)
         {
             auto const& vals = (*param)(t, x);
@@ -269,13 +269,13 @@ MFront<DisplacementDim>::integrateStress(
         }
     }
 
-    if (!d.s1.external_state_variables.empty())
+    if (!behaviour_data.s1.external_state_variables.empty())
     {
         // assuming that there is only temperature
-        d.s1.external_state_variables[0] = T;
+        behaviour_data.s1.external_state_variables[0] = T;
     }
 
-    auto v = mgis::behaviour::make_view(d);
+    auto v = mgis::behaviour::make_view(behaviour_data);
 
     auto const eps_MFront = OGSToMFront(eps);
     for (auto i = 0; i < KelvinVector::SizeAtCompileTime; ++i)
@@ -292,17 +292,18 @@ MFront<DisplacementDim>::integrateStress(
     KelvinVector sigma;
     for (auto i = 0; i < KelvinVector::SizeAtCompileTime; ++i)
     {
-        sigma[i] = d.s1.thermodynamic_forces[i];
+        sigma[i] = behaviour_data.s1.thermodynamic_forces[i];
     }
     sigma = MFrontToOGS(sigma);
 
     // TODO row- vs. column-major storage order. This should only matter for
     // anisotropic materials.
-    if (d.K.size() !=
+    if (behaviour_data.K.size() !=
         KelvinMatrix::RowsAtCompileTime * KelvinMatrix::ColsAtCompileTime)
         OGS_FATAL("Stiffness matrix has wrong size.");
 
-    KelvinMatrix C = MFrontToOGS(Eigen::Map<KelvinMatrix>(d.K.data()));
+    KelvinMatrix C =
+        MFrontToOGS(Eigen::Map<KelvinMatrix>(behaviour_data.K.data()));
 
     // TODO avoid copying the state
     auto state_copy = std::make_unique<MaterialStateVariables>(

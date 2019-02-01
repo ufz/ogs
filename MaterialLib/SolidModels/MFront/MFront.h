@@ -44,16 +44,21 @@ public:
         : public MechanicsBase<DisplacementDim>::MaterialStateVariables
     {
         explicit MaterialStateVariables(mgis::behaviour::Behaviour const& b)
-            : _data{b}
+            : _behaviour_data{b}
         {
         }
 
         MaterialStateVariables(MaterialStateVariables const&) = default;
+        MaterialStateVariables(MaterialStateVariables&&) = delete;
 
-        void pushBackState() override { mgis::behaviour::update(_data); }
+        void pushBackState() override
+        {
+            mgis::behaviour::update(_behaviour_data);
+        }
 
         MaterialStateVariables& operator=(MaterialStateVariables const&) =
             default;
+        MaterialStateVariables& operator=(MaterialStateVariables&&) = delete;
 
         typename MechanicsBase<DisplacementDim>::MaterialStateVariables&
         operator=(typename MechanicsBase<DisplacementDim>::
@@ -63,7 +68,7 @@ public:
         }
 
         // TODO fix: this has to be mutable.
-        mutable mgis::behaviour::BehaviourData _data;
+        mutable mgis::behaviour::BehaviourData _behaviour_data;
     };
 
     using KelvinVector =
