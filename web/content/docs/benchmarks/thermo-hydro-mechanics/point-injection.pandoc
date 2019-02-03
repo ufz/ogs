@@ -1,4 +1,4 @@
-+++
+ll+++
 project = "ThermoHydroMechanics/Linear/Point_injection/square_1e2.prj"
 
 author = "Tianyuan Zheng"
@@ -27,5 +27,5 @@ radius of the domain is 10m and the initial temperature and pore pressure are
 
 ## Results and evaluation
 
-See [this PDF](THM.pdf).
+See [this PDF](../THM.pdf).
 
