@@ -203,13 +203,13 @@ pipeline {
               }
               build { }
               build { target = 'testrunner_coverage_cobertura' }
+              dir('build') {
+                sh "curl -s https://codecov.io/bash | bash -s - -f *_cobertura.xml"
+              }
             }
           }
           post {
             always {
-              dir('build') {
-                sh "curl -s https://codecov.io/bash | bash -s - -f *_cobertura.xml"
-              }
               xunit([GoogleTest(pattern: 'build/Tests/testrunner.xml')])
             }
           }
