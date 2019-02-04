@@ -417,7 +417,7 @@ pipeline {
           }
           post {
             always {
-              publishReports { }
+              xunit([CTest(pattern: 'build/Testing/**/*.xml')])
               dir('build') { deleteDir() }
             }
           }
