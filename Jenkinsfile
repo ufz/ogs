@@ -395,6 +395,11 @@ pipeline {
             }
           }
         }
+      } // end parallel
+    } // end stage Build
+    stage('Master') {
+      when { environment name: 'JOB_NAME', value: 'ufz/ogs/master' }
+      parallel {
         // ************************* Tests-Large *******************************
         stage('Tests-Large') {
           agent {
@@ -422,11 +427,6 @@ pipeline {
             }
           }
         }
-      } // end parallel
-    } // end stage Build
-    stage('Master') {
-      when { environment name: 'JOB_NAME', value: 'ufz/ogs/master' }
-      parallel {
         // ********************* Push Docker Images ****************************
         stage('Push Docker Images') {
           when {
