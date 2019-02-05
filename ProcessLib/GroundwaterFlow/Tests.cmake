@@ -117,8 +117,9 @@ foreach(mesh_size 1e5 1e6)
 endforeach()
 
 AddTest(
-    NAME LARGE_GroundWaterFlowProcess_square_1x1_1e5
+    NAME GroundWaterFlowProcess_square_1x1_1e5
     PATH Elliptic/square_1x1_GroundWaterFlow
+    RUNTIME 2
     EXECUTABLE ogs
     EXECUTABLE_ARGS square_1e5.prj
     TESTER vtkdiff
@@ -131,6 +132,7 @@ AddTest(
 AddTest(
     NAME LARGE_GroundWaterFlowProcess_square_1x1_1e6
     PATH Elliptic/square_1x1_GroundWaterFlow
+    RUNTIME 36
     EXECUTABLE ogs
     EXECUTABLE_ARGS square_1e6.prj
     TESTER vtkdiff

@@ -61,6 +61,7 @@ AddTest(
 AddTest(
     NAME LARGE_LiquidFlow_Anisotropic_GravityDriven3D
     PATH Parabolic/LiquidFlow/GravityDriven3D
+    RUNTIME 70
     EXECUTABLE ogs
     EXECUTABLE_ARGS anisotropic_gravity_driven3D.prj
     WRAPPER time
@@ -73,6 +74,7 @@ AddTest(
 AddTest(
     NAME LARGE_LiquidFlow_Isotropic_GravityDriven3D
     PATH Parabolic/LiquidFlow/GravityDriven3D
+    RUNTIME 70
     EXECUTABLE ogs
     EXECUTABLE_ARGS isotropic_gravity_driven3D.prj
     WRAPPER time

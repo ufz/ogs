@@ -400,6 +400,33 @@ pipeline {
     stage('Master') {
       when { environment name: 'JOB_NAME', value: 'ufz/ogs/master' }
       parallel {
+        // ************************* Tests-Large *******************************
+        stage('Tests-Large') {
+          agent {
+            dockerfile {
+              filename 'Dockerfile.gcc.full'
+              dir 'scripts/docker'
+              label 'envinf11w'
+              args '-v /home/jenkins/cache:/home/jenkins/cache'
+              additionalBuildArgs '--pull'
+            }
+          }
+          environment {
+            OMP_NUM_THREADS = '1'
+          }
+          steps {
+            script {
+              configure { }
+              build { target = 'ctest-large-serial' }
+            }
+          }
+          post {
+            always {
+              xunit([CTest(pattern: 'build/Testing/**/*.xml')])
+              dir('build') { deleteDir() }
+            }
+          }
+        }
         // ********************* Push Docker Images ****************************
         stage('Push Docker Images') {
           when {

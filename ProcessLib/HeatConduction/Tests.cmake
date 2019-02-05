@@ -48,6 +48,7 @@ AddTest(
 AddTest(
     NAME LARGE_BHE_Array_2D
     PATH Parabolic/T/2D_BHE_array
+    RUNTIME 90
     EXECUTABLE ogs
     EXECUTABLE_ARGS bhe2d.prj
     TESTER vtkdiff

@@ -46,11 +46,11 @@
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0</t_initial>
-                    <t_end>1</t_end>
+                    <t_end>400</t_end>
                     <timesteps>
                         <pair>
                             <repeat>10000</repeat>
-                            <delta_t>1e-4</delta_t>
+                            <delta_t>1e-1</delta_t>
                         </pair>
                     </timesteps>
                 </time_stepping>
@@ -61,20 +61,13 @@
             <prefix>square_shear_h_400</prefix>
             <timesteps>
                 <pair>
-                    <repeat>200</repeat>
-                    <each_steps>200</each_steps>
+                    <repeat>1</repeat>
+                    <each_steps>10000</each_steps>
                 </pair>
-                <pair>
-                    <repeat>80</repeat>
-                    <each_steps>1000</each_steps>
-                </pair>
-                <!--<pair><repeat>50</repeat><each_steps>100</each_steps></pair>-->
             </timesteps>
             <variables>
                 <variable>displacement</variable>
                 <variable>phasefield</variable>
-                <variable>sigma</variable>
-                <variable>epsilon</variable>
             </variables>
         </output>
     </time_loop>

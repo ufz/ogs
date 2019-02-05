@@ -14,8 +14,9 @@ AddTest(
    )
 
 AddTest(
-    NAME ThermoMechanicalPhaseField_3D_beam_LARGE
+    NAME ThermoMechanicalPhaseField_3D_beam
     PATH ThermoMechanicalPhaseField
+    RUNTIME 20
     EXECUTABLE ogs
     EXECUTABLE_ARGS beam3d.prj
     WRAPPER time
@@ -30,6 +31,7 @@ AddTest(
 AddTest(
     NAME ThermoMechanicalPhaseField_TES_IGLU_LARGE
     PATH ThermoMechanicalPhaseField
+    RUNTIME 500
     EXECUTABLE ogs
     EXECUTABLE_ARGS tes_hx3_iglu.prj
     WRAPPER time
@@ -43,6 +45,7 @@ AddTest(
 AddTest(
     NAME ThermoMechanicalPhaseField_THERMAL_SHOCK_LARGE
     PATH ThermoMechanicalPhaseField
+    RUNTIME 500
     EXECUTABLE ogs
     EXECUTABLE_ARGS slab_5.prj
     WRAPPER time

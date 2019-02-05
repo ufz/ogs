@@ -2,6 +2,7 @@
 AddTest(
     NAME LARGE_2D_ThermalConvection_constviscosityMonolithic
     PATH Parabolic/HT/ConstViscosity
+    RUNTIME 66
     EXECUTABLE ogs
     EXECUTABLE_ARGS square_5500x5500.prj
     WRAPPER time
@@ -162,6 +163,7 @@ AddTest(
 AddTest(
     NAME LARGE_HT_calculatesurfaceflux
     PATH Parabolic/HT/SimpleSynthetics
+    RUNTIME 190
     EXECUTABLE ogs
     EXECUTABLE_ARGS calculatesurfaceflux_ht_cube_1e4.prj
     WRAPPER time
@@ -178,7 +180,7 @@ AddTest(
 
 # Staggered scheme
 AddTest(
-    NAME LARGE_2D_ThermalConvection_constviscosityStaggeredScheme
+    NAME 2D_ThermalConvection_constviscosityStaggeredScheme
     PATH Parabolic/HT/StaggeredCoupling/ConstViscosity
     EXECUTABLE ogs
     EXECUTABLE_ARGS square_5500x5500_staggered_scheme.prj
@@ -186,14 +188,14 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
     DIFF_DATA
-    square_5500x5500.vtu ConstViscosityThermalConvection_pcs_1_ts_149_t_50000000000.000000.vtu T_ref T 1e-16  1.e-16
-    square_5500x5500.vtu ConstViscosityThermalConvection_pcs_1_ts_149_t_50000000000.000000.vtu p_ref p  1e-16  1.e-16
-    square_5500x5500.vtu ConstViscosityThermalConvection_pcs_1_ts_149_t_50000000000.000000.vtu darcy_velocity_ref darcy_velocity  1e-16  1.e-16
+    square_5500x5500.vtu ConstViscosityThermalConvection_pcs_1_ts_149_t_50000000000.000000.vtu T_ref T 1e-1  1.e-3
+    square_5500x5500.vtu ConstViscosityThermalConvection_pcs_1_ts_149_t_50000000000.000000.vtu p_ref p  1e+4  1.e-2
+    square_5500x5500.vtu ConstViscosityThermalConvection_pcs_1_ts_149_t_50000000000.000000.vtu darcy_velocity_ref darcy_velocity  1e-1  1.e-3
     VIS ConstViscosityThermalConvection_pcs_1_ts_149_t_50000000000.000000.vtu
 )
 
 AddTest(
-    NAME LARGE_2D_Adaptive_dt_ThermalConvection_constviscosityStaggeredScheme
+    NAME 2D_Adaptive_dt_ThermalConvection_constviscosityStaggeredScheme
     PATH Parabolic/HT/StaggeredCoupling/ConstViscosity
     EXECUTABLE ogs
     EXECUTABLE_ARGS square_5500x5500_staggered_scheme_adaptive_dt.prj
