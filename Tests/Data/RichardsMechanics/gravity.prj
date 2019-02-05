@@ -20,7 +20,6 @@
                 <youngs_modulus>E</youngs_modulus>
                 <poissons_ratio>nu</poissons_ratio>
             </constitutive_relation>
-            <intrinsic_permeability>k</intrinsic_permeability>
             <solid_bulk_modulus>K_SR</solid_bulk_modulus>
             <fluid_bulk_modulus>K_LR</fluid_bulk_modulus>
             <biot_coefficient>alpha</biot_coefficient>
@@ -43,7 +42,7 @@
                 <porous_medium>
                     <porous_medium id="0">
                         <permeability>
-                            <permeability_tensor_entries>kappa1</permeability_tensor_entries>
+                            <permeability_tensor_entries>k</permeability_tensor_entries>
                             <type>Constant</type>
                         </permeability>
                         <porosity>
@@ -199,11 +198,6 @@
             <name>temp</name>
             <type>Constant</type>
             <value>293.15</value>
-        </parameter>
-        <parameter>
-            <name>kappa1</name>
-            <type>Constant</type>
-            <values>4.46e-13</values>
         </parameter>
         <parameter>
             <name>displacement0</name>

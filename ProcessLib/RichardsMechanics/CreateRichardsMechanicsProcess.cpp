@@ -105,15 +105,6 @@ std::unique_ptr<Process> createRichardsMechanicsProcess(
         MaterialLib::Solids::createConstitutiveRelations<DisplacementDim>(
             parameters, config);
 
-    // Intrinsic permeability
-    auto& intrinsic_permeability = findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__RICHARDS_MECHANICS__intrinsic_permeability}
-        "intrinsic_permeability", parameters, 1);
-
-    DBUG("Use '%s' as intrinsic conductivity parameter.",
-         intrinsic_permeability.name.c_str());
-
     // Fluid bulk modulus
     auto& fluid_bulk_modulus = findParameter<double>(
         config,
@@ -197,7 +188,6 @@ std::unique_ptr<Process> createRichardsMechanicsProcess(
         material_ids,
         std::move(flow_material),
         std::move(solid_constitutive_relations),
-        intrinsic_permeability,
         fluid_bulk_modulus,
         biot_coefficient,
         solid_density,
