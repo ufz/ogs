@@ -14,6 +14,21 @@ AddTest(
 )
 
 AddTest(
+    NAME 2D_ComponentTransport_StaggeredScheme_ConcentrationDiffusionOnly
+    PATH Parabolic/ComponentTransport/StaggeredScheme
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS ConcentrationDiffusionOnly.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    DiffusionOnly_pcs_1_ts_1_t_1.000000_expected.vtu DiffusionOnly_pcs_1_ts_1_t_1.000000.vtu Si Si 1e-7 1e-10
+    DiffusionOnly_pcs_1_ts_1_t_1.000000_expected.vtu DiffusionOnly_pcs_1_ts_1_t_1.000000.vtu pressure pressure 1e-7 1e-10
+    DiffusionOnly_pcs_1_ts_1_t_1.000000_expected.vtu DiffusionOnly_pcs_1_ts_1_t_1.000000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
+    VIS DiffusionOnly_pcs_1_ts_1_t_1.000000.vtu
+)
+
+AddTest(
     NAME 2D_MultiComponentTransport_ConcentrationDiffusionOnly
     PATH Parabolic/ComponentTransport/SimpleSynthetics
     EXECUTABLE ogs
@@ -46,6 +61,24 @@ AddTest(
     DiffusionAndStorage_pcs_0_ts_134_t_1.500000_expected.vtu DiffusionAndStorage_pcs_0_ts_134_t_1.500000.vtu zero pressure 1e-7 1e-10
     DiffusionAndStorage_pcs_0_ts_134_t_1.500000_expected.vtu DiffusionAndStorage_pcs_0_ts_134_t_1.500000.vtu zero_vector_2d darcy_velocity 1e-7 1e-10
     VIS DiffusionAndStorage_pcs_0_ts_134_t_1.500000.vtu
+)
+
+AddTest(
+    NAME 2D_ComponentTransport_StaggeredScheme_ConcentrationDiffusionAndStorage
+    PATH Parabolic/ComponentTransport/StaggeredScheme
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS ConcentrationDiffusionAndStorage.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    DiffusionAndStorage_pcs_1_ts_100_t_0.150000_expected.vtu DiffusionAndStorage_pcs_1_ts_100_t_0.150000.vtu Si Si 1e-7 1e-10
+    DiffusionAndStorage_pcs_1_ts_100_t_0.150000_expected.vtu DiffusionAndStorage_pcs_1_ts_100_t_0.150000.vtu pressure pressure 1e-7 1e-10
+    DiffusionAndStorage_pcs_1_ts_100_t_0.150000_expected.vtu DiffusionAndStorage_pcs_1_ts_100_t_0.150000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
+    DiffusionAndStorage_pcs_1_ts_134_t_1.500000_expected.vtu DiffusionAndStorage_pcs_1_ts_134_t_1.500000.vtu Si Si 1e-7 1e-10
+    DiffusionAndStorage_pcs_1_ts_134_t_1.500000_expected.vtu DiffusionAndStorage_pcs_1_ts_134_t_1.500000.vtu pressure pressure 1e-7 1e-10
+    DiffusionAndStorage_pcs_1_ts_134_t_1.500000_expected.vtu DiffusionAndStorage_pcs_1_ts_134_t_1.500000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
+    VIS DiffusionAndStorage_pcs_1_ts_134_t_1.500000.vtu
 )
 
 AddTest(
@@ -83,6 +116,40 @@ AddTest(
 )
 
 AddTest(
+    NAME 2D_ComponentTransport_StaggeredScheme_DiffusionAndStorageAndAdvection
+    PATH Parabolic/ComponentTransport/StaggeredScheme
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS DiffusionAndStorageAndAdvection.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    RUNTIME 23
+    DIFF_DATA
+    DiffusionAndStorageAndAdvection_pcs_1_ts_100_t_5.700000_expected.vtu DiffusionAndStorageAndAdvection_pcs_1_ts_100_t_5.700000.vtu Si Si 1e-7 1e-10
+    DiffusionAndStorageAndAdvection_pcs_1_ts_200_t_35.700000_expected.vtu DiffusionAndStorageAndAdvection_pcs_1_ts_200_t_35.700000.vtu Si Si 1e-7 1e-10
+    DiffusionAndStorageAndAdvection_pcs_1_ts_300_t_155.700000_expected.vtu DiffusionAndStorageAndAdvection_pcs_1_ts_300_t_155.700000.vtu Si Si 1e-7 1e-10
+    DiffusionAndStorageAndAdvection_pcs_1_ts_400_t_315.700000_expected.vtu DiffusionAndStorageAndAdvection_pcs_1_ts_400_t_315.700000.vtu Si Si 1e-7 1e-10
+    DiffusionAndStorageAndAdvection_pcs_1_ts_500_t_495.700000_expected.vtu DiffusionAndStorageAndAdvection_pcs_1_ts_500_t_495.700000.vtu Si Si 1e-7 1e-10
+    DiffusionAndStorageAndAdvection_pcs_1_ts_600_t_720.700000_expected.vtu DiffusionAndStorageAndAdvection_pcs_1_ts_600_t_720.700000.vtu Si Si 1e-7 1e-10
+    DiffusionAndStorageAndAdvection_pcs_1_ts_672_t_900.000000_expected.vtu DiffusionAndStorageAndAdvection_pcs_1_ts_672_t_900.000000.vtu Si Si 1e-7 1e-10
+    DiffusionAndStorageAndAdvection_pcs_1_ts_100_t_5.700000_expected.vtu DiffusionAndStorageAndAdvection_pcs_1_ts_100_t_5.700000.vtu pressure pressure 1e-7 1e-10
+    DiffusionAndStorageAndAdvection_pcs_1_ts_200_t_35.700000_expected.vtu DiffusionAndStorageAndAdvection_pcs_1_ts_200_t_35.700000.vtu pressure pressure 1e-7 1e-10
+    DiffusionAndStorageAndAdvection_pcs_1_ts_300_t_155.700000_expected.vtu DiffusionAndStorageAndAdvection_pcs_1_ts_300_t_155.700000.vtu pressure pressure 1e-7 1e-10
+    DiffusionAndStorageAndAdvection_pcs_1_ts_400_t_315.700000_expected.vtu DiffusionAndStorageAndAdvection_pcs_1_ts_400_t_315.700000.vtu pressure pressure 1e-7 1e-10
+    DiffusionAndStorageAndAdvection_pcs_1_ts_500_t_495.700000_expected.vtu DiffusionAndStorageAndAdvection_pcs_1_ts_500_t_495.700000.vtu pressure pressure 1e-7 1e-10
+    DiffusionAndStorageAndAdvection_pcs_1_ts_600_t_720.700000_expected.vtu DiffusionAndStorageAndAdvection_pcs_1_ts_600_t_720.700000.vtu pressure pressure 1e-7 1e-10
+    DiffusionAndStorageAndAdvection_pcs_1_ts_672_t_900.000000_expected.vtu DiffusionAndStorageAndAdvection_pcs_1_ts_672_t_900.000000.vtu pressure pressure 1e-7 1e-10
+    DiffusionAndStorageAndAdvection_pcs_1_ts_100_t_5.700000_expected.vtu DiffusionAndStorageAndAdvection_pcs_1_ts_100_t_5.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
+    DiffusionAndStorageAndAdvection_pcs_1_ts_200_t_35.700000_expected.vtu DiffusionAndStorageAndAdvection_pcs_1_ts_200_t_35.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
+    DiffusionAndStorageAndAdvection_pcs_1_ts_300_t_155.700000_expected.vtu DiffusionAndStorageAndAdvection_pcs_1_ts_300_t_155.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
+    DiffusionAndStorageAndAdvection_pcs_1_ts_400_t_315.700000_expected.vtu DiffusionAndStorageAndAdvection_pcs_1_ts_400_t_315.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
+    DiffusionAndStorageAndAdvection_pcs_1_ts_500_t_495.700000_expected.vtu DiffusionAndStorageAndAdvection_pcs_1_ts_500_t_495.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
+    DiffusionAndStorageAndAdvection_pcs_1_ts_600_t_720.700000_expected.vtu DiffusionAndStorageAndAdvection_pcs_1_ts_600_t_720.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
+    DiffusionAndStorageAndAdvection_pcs_1_ts_672_t_900.000000_expected.vtu DiffusionAndStorageAndAdvection_pcs_1_ts_672_t_900.000000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
+    VIS DiffusionAndStorageAndAdvection_pcs_1_ts_672_t_900.000000.vtu
+)
+
+AddTest(
     NAME 2D_ComponentTransport_DiffusionAndStorageAndGravityAndDispersionHalf
     PATH Parabolic/ComponentTransport/SimpleSynthetics
     EXECUTABLE ogs
@@ -111,6 +178,37 @@ AddTest(
     DiffusionAndStorageAndGravityAndDispersionHalf_pcs_0_ts_1400_t_12500.000000_expected.vtu DiffusionAndStorageAndGravityAndDispersionHalf_pcs_0_ts_1400_t_12500.000000.vtu darcy_velocity darcy_velocity 1e-5 1e-10
     DiffusionAndStorageAndGravityAndDispersionHalf_pcs_0_ts_1500_t_15000.000000_expected.vtu DiffusionAndStorageAndGravityAndDispersionHalf_pcs_0_ts_1500_t_15000.000000.vtu darcy_velocity darcy_velocity 1e-5 1e-10
     VIS DiffusionAndStorageAndGravityAndDispersionHalf_pcs_0_ts_1500_t_15000.000000.vtu
+)
+
+AddTest(
+    NAME 2D_ComponentTransport_StaggeredScheme_DiffusionAndStorageAndGravityAndDispersionHalf
+    PATH Parabolic/ComponentTransport/StaggeredScheme
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS DiffusionAndStorageAndGravityAndDispersionHalf.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    RUNTIME 46
+    DIFF_DATA
+    DiffusionAndStorageAndGravityAndDispersionHalf_pcs_1_ts_1000_t_2500.000000_expected.vtu DiffusionAndStorageAndGravityAndDispersionHalf_pcs_1_ts_1000_t_2500.000000.vtu Si Si 1e-5 1e-10
+    DiffusionAndStorageAndGravityAndDispersionHalf_pcs_1_ts_1100_t_5000.000000_expected.vtu DiffusionAndStorageAndGravityAndDispersionHalf_pcs_1_ts_1100_t_5000.000000.vtu Si Si 1e-5 1e-10
+    DiffusionAndStorageAndGravityAndDispersionHalf_pcs_1_ts_1200_t_7500.000000_expected.vtu DiffusionAndStorageAndGravityAndDispersionHalf_pcs_1_ts_1200_t_7500.000000.vtu Si Si 1e-5 1e-10
+    DiffusionAndStorageAndGravityAndDispersionHalf_pcs_1_ts_1300_t_10000.000000_expected.vtu DiffusionAndStorageAndGravityAndDispersionHalf_pcs_1_ts_1300_t_10000.000000.vtu Si Si 1e-5 1e-10
+    DiffusionAndStorageAndGravityAndDispersionHalf_pcs_1_ts_1400_t_12500.000000_expected.vtu DiffusionAndStorageAndGravityAndDispersionHalf_pcs_1_ts_1400_t_12500.000000.vtu Si Si 1e-5 1e-10
+    DiffusionAndStorageAndGravityAndDispersionHalf_pcs_1_ts_1500_t_15000.000000_expected.vtu DiffusionAndStorageAndGravityAndDispersionHalf_pcs_1_ts_1500_t_15000.000000.vtu Si Si 1e-5 1e-10
+    DiffusionAndStorageAndGravityAndDispersionHalf_pcs_1_ts_1000_t_2500.000000_expected.vtu DiffusionAndStorageAndGravityAndDispersionHalf_pcs_1_ts_1000_t_2500.000000.vtu pressure pressure 1e-5 1e-10
+    DiffusionAndStorageAndGravityAndDispersionHalf_pcs_1_ts_1100_t_5000.000000_expected.vtu DiffusionAndStorageAndGravityAndDispersionHalf_pcs_1_ts_1100_t_5000.000000.vtu pressure pressure 1e-5 1e-10
+    DiffusionAndStorageAndGravityAndDispersionHalf_pcs_1_ts_1200_t_7500.000000_expected.vtu DiffusionAndStorageAndGravityAndDispersionHalf_pcs_1_ts_1200_t_7500.000000.vtu pressure pressure 1e-5 1e-10
+    DiffusionAndStorageAndGravityAndDispersionHalf_pcs_1_ts_1300_t_10000.000000_expected.vtu DiffusionAndStorageAndGravityAndDispersionHalf_pcs_1_ts_1300_t_10000.000000.vtu pressure pressure 1e-5 1e-10
+    DiffusionAndStorageAndGravityAndDispersionHalf_pcs_1_ts_1400_t_12500.000000_expected.vtu DiffusionAndStorageAndGravityAndDispersionHalf_pcs_1_ts_1400_t_12500.000000.vtu pressure pressure 1e-5 1e-10
+    DiffusionAndStorageAndGravityAndDispersionHalf_pcs_1_ts_1500_t_15000.000000_expected.vtu DiffusionAndStorageAndGravityAndDispersionHalf_pcs_1_ts_1500_t_15000.000000.vtu pressure pressure 1e-5 1e-10
+    DiffusionAndStorageAndGravityAndDispersionHalf_pcs_1_ts_1000_t_2500.000000_expected.vtu DiffusionAndStorageAndGravityAndDispersionHalf_pcs_1_ts_1000_t_2500.000000.vtu darcy_velocity darcy_velocity 1e-5 1e-10
+    DiffusionAndStorageAndGravityAndDispersionHalf_pcs_1_ts_1100_t_5000.000000_expected.vtu DiffusionAndStorageAndGravityAndDispersionHalf_pcs_1_ts_1100_t_5000.000000.vtu darcy_velocity darcy_velocity 1e-5 1e-10
+    DiffusionAndStorageAndGravityAndDispersionHalf_pcs_1_ts_1200_t_7500.000000_expected.vtu DiffusionAndStorageAndGravityAndDispersionHalf_pcs_1_ts_1200_t_7500.000000.vtu darcy_velocity darcy_velocity 1e-5 1e-10
+    DiffusionAndStorageAndGravityAndDispersionHalf_pcs_1_ts_1300_t_10000.000000_expected.vtu DiffusionAndStorageAndGravityAndDispersionHalf_pcs_1_ts_1300_t_10000.000000.vtu darcy_velocity darcy_velocity 1e-5 1e-10
+    DiffusionAndStorageAndGravityAndDispersionHalf_pcs_1_ts_1400_t_12500.000000_expected.vtu DiffusionAndStorageAndGravityAndDispersionHalf_pcs_1_ts_1400_t_12500.000000.vtu darcy_velocity darcy_velocity 1e-5 1e-10
+    DiffusionAndStorageAndGravityAndDispersionHalf_pcs_1_ts_1500_t_15000.000000_expected.vtu DiffusionAndStorageAndGravityAndDispersionHalf_pcs_1_ts_1500_t_15000.000000.vtu darcy_velocity darcy_velocity 1e-5 1e-10
+    VIS DiffusionAndStorageAndGravityAndDispersionHalf_pcs_1_ts_1500_t_15000.000000.vtu
 )
 
 AddTest(
@@ -148,6 +246,40 @@ AddTest(
 )
 
 AddTest(
+    NAME 2D_ComponentTransport_StaggeredScheme_DiffusionAndStorageAndAdvectionAndDispersion
+    PATH Parabolic/ComponentTransport/StaggeredScheme
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS DiffusionAndStorageAndAdvectionAndDispersion.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    RUNTIME 26
+    DIFF_DATA
+    DiffusionAndStorageAndAdvectionAndDispersion_pcs_1_ts_100_t_5.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersion_pcs_1_ts_100_t_5.700000.vtu Si Si 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDispersion_pcs_1_ts_200_t_35.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersion_pcs_1_ts_200_t_35.700000.vtu Si Si 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDispersion_pcs_1_ts_300_t_155.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersion_pcs_1_ts_300_t_155.700000.vtu Si Si 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDispersion_pcs_1_ts_400_t_315.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersion_pcs_1_ts_400_t_315.700000.vtu Si Si 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDispersion_pcs_1_ts_500_t_495.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersion_pcs_1_ts_500_t_495.700000.vtu Si Si 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDispersion_pcs_1_ts_600_t_720.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersion_pcs_1_ts_600_t_720.700000.vtu Si Si 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDispersion_pcs_1_ts_672_t_900.000000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersion_pcs_1_ts_672_t_900.000000.vtu Si Si 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDispersion_pcs_1_ts_100_t_5.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersion_pcs_1_ts_100_t_5.700000.vtu pressure pressure 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDispersion_pcs_1_ts_200_t_35.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersion_pcs_1_ts_200_t_35.700000.vtu pressure pressure 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDispersion_pcs_1_ts_300_t_155.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersion_pcs_1_ts_300_t_155.700000.vtu pressure pressure 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDispersion_pcs_1_ts_400_t_315.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersion_pcs_1_ts_400_t_315.700000.vtu pressure pressure 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDispersion_pcs_1_ts_500_t_495.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersion_pcs_1_ts_500_t_495.700000.vtu pressure pressure 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDispersion_pcs_1_ts_600_t_720.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersion_pcs_1_ts_600_t_720.700000.vtu pressure pressure 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDispersion_pcs_1_ts_672_t_900.000000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersion_pcs_1_ts_672_t_900.000000.vtu pressure pressure 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDispersion_pcs_1_ts_100_t_5.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersion_pcs_1_ts_100_t_5.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDispersion_pcs_1_ts_200_t_35.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersion_pcs_1_ts_200_t_35.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDispersion_pcs_1_ts_300_t_155.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersion_pcs_1_ts_300_t_155.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDispersion_pcs_1_ts_400_t_315.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersion_pcs_1_ts_400_t_315.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDispersion_pcs_1_ts_500_t_495.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersion_pcs_1_ts_500_t_495.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDispersion_pcs_1_ts_600_t_720.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersion_pcs_1_ts_600_t_720.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDispersion_pcs_1_ts_672_t_900.000000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersion_pcs_1_ts_672_t_900.000000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
+    VIS DiffusionAndStorageAndAdvectionAndDispersion_pcs_1_ts_672_t_900.000000.vtu
+)
+
+AddTest(
     NAME 2D_ComponentTransport_DiffusionAndStorageAndAdvectionAndDecay
     PATH Parabolic/ComponentTransport/SimpleSynthetics
     EXECUTABLE ogs
@@ -179,6 +311,40 @@ AddTest(
     DiffusionAndStorageAndAdvectionAndDecay_pcs_0_ts_600_t_720.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_pcs_0_ts_600_t_720.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
     DiffusionAndStorageAndAdvectionAndDecay_pcs_0_ts_672_t_900.000000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_pcs_0_ts_672_t_900.000000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
     VIS DiffusionAndStorageAndAdvectionAndDecay_pcs_0_ts_672_t_900.000000.vtu
+)
+
+AddTest(
+    NAME 2D_ComponentTransport_StaggeredScheme_DiffusionAndStorageAndAdvectionAndDecay
+    PATH Parabolic/ComponentTransport/StaggeredScheme
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS DiffusionAndStorageAndAdvectionAndDecay.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    RUNTIME 23
+    DIFF_DATA
+    DiffusionAndStorageAndAdvectionAndDecay_pcs_1_ts_100_t_5.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_pcs_1_ts_100_t_5.700000.vtu Si Si 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDecay_pcs_1_ts_200_t_35.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_pcs_1_ts_200_t_35.700000.vtu Si Si 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDecay_pcs_1_ts_300_t_155.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_pcs_1_ts_300_t_155.700000.vtu Si Si 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDecay_pcs_1_ts_400_t_315.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_pcs_1_ts_400_t_315.700000.vtu Si Si 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDecay_pcs_1_ts_500_t_495.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_pcs_1_ts_500_t_495.700000.vtu Si Si 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDecay_pcs_1_ts_600_t_720.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_pcs_1_ts_600_t_720.700000.vtu Si Si 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDecay_pcs_1_ts_672_t_900.000000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_pcs_1_ts_672_t_900.000000.vtu Si Si 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDecay_pcs_1_ts_100_t_5.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_pcs_1_ts_100_t_5.700000.vtu pressure pressure 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDecay_pcs_1_ts_200_t_35.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_pcs_1_ts_200_t_35.700000.vtu pressure pressure 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDecay_pcs_1_ts_300_t_155.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_pcs_1_ts_300_t_155.700000.vtu pressure pressure 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDecay_pcs_1_ts_400_t_315.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_pcs_1_ts_400_t_315.700000.vtu pressure pressure 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDecay_pcs_1_ts_500_t_495.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_pcs_1_ts_500_t_495.700000.vtu pressure pressure 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDecay_pcs_1_ts_600_t_720.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_pcs_1_ts_600_t_720.700000.vtu pressure pressure 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDecay_pcs_1_ts_672_t_900.000000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_pcs_1_ts_672_t_900.000000.vtu pressure pressure 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDecay_pcs_1_ts_100_t_5.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_pcs_1_ts_100_t_5.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDecay_pcs_1_ts_200_t_35.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_pcs_1_ts_200_t_35.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDecay_pcs_1_ts_300_t_155.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_pcs_1_ts_300_t_155.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDecay_pcs_1_ts_400_t_315.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_pcs_1_ts_400_t_315.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDecay_pcs_1_ts_500_t_495.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_pcs_1_ts_500_t_495.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDecay_pcs_1_ts_600_t_720.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_pcs_1_ts_600_t_720.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDecay_pcs_1_ts_672_t_900.000000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_pcs_1_ts_672_t_900.000000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
+    VIS DiffusionAndStorageAndAdvectionAndDecay_pcs_1_ts_672_t_900.000000.vtu
 )
 
 AddTest(
@@ -216,6 +382,40 @@ AddTest(
 )
 
 AddTest(
+    NAME 2D_ComponentTransport_StaggeredScheme_DiffusionAndStorageAndAdvectionAndDispersionHalf
+    PATH Parabolic/ComponentTransport/StaggeredScheme
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS DiffusionAndStorageAndAdvectionAndDispersionHalf.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    RUNTIME 25
+    DIFF_DATA
+    DiffusionAndStorageAndAdvectionAndDispersionHalf_pcs_1_ts_100_t_5.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersionHalf_pcs_1_ts_100_t_5.700000.vtu Si Si 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDispersionHalf_pcs_1_ts_200_t_35.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersionHalf_pcs_1_ts_200_t_35.700000.vtu Si Si 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDispersionHalf_pcs_1_ts_300_t_155.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersionHalf_pcs_1_ts_300_t_155.700000.vtu Si Si 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDispersionHalf_pcs_1_ts_400_t_315.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersionHalf_pcs_1_ts_400_t_315.700000.vtu Si Si 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDispersionHalf_pcs_1_ts_500_t_495.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersionHalf_pcs_1_ts_500_t_495.700000.vtu Si Si 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDispersionHalf_pcs_1_ts_600_t_720.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersionHalf_pcs_1_ts_600_t_720.700000.vtu Si Si 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDispersionHalf_pcs_1_ts_672_t_900.000000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersionHalf_pcs_1_ts_672_t_900.000000.vtu Si Si 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDispersionHalf_pcs_1_ts_100_t_5.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersionHalf_pcs_1_ts_100_t_5.700000.vtu pressure pressure 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDispersionHalf_pcs_1_ts_200_t_35.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersionHalf_pcs_1_ts_200_t_35.700000.vtu pressure pressure 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDispersionHalf_pcs_1_ts_300_t_155.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersionHalf_pcs_1_ts_300_t_155.700000.vtu pressure pressure 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDispersionHalf_pcs_1_ts_400_t_315.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersionHalf_pcs_1_ts_400_t_315.700000.vtu pressure pressure 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDispersionHalf_pcs_1_ts_500_t_495.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersionHalf_pcs_1_ts_500_t_495.700000.vtu pressure pressure 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDispersionHalf_pcs_1_ts_600_t_720.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersionHalf_pcs_1_ts_600_t_720.700000.vtu pressure pressure 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDispersionHalf_pcs_1_ts_672_t_900.000000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersionHalf_pcs_1_ts_672_t_900.000000.vtu pressure pressure 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDispersionHalf_pcs_1_ts_100_t_5.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersionHalf_pcs_1_ts_100_t_5.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDispersionHalf_pcs_1_ts_200_t_35.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersionHalf_pcs_1_ts_200_t_35.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDispersionHalf_pcs_1_ts_300_t_155.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersionHalf_pcs_1_ts_300_t_155.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDispersionHalf_pcs_1_ts_400_t_315.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersionHalf_pcs_1_ts_400_t_315.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDispersionHalf_pcs_1_ts_500_t_495.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersionHalf_pcs_1_ts_500_t_495.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDispersionHalf_pcs_1_ts_600_t_720.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersionHalf_pcs_1_ts_600_t_720.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDispersionHalf_pcs_1_ts_672_t_900.000000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersionHalf_pcs_1_ts_672_t_900.000000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
+    VIS DiffusionAndStorageAndAdvectionAndDispersionHalf_pcs_1_ts_672_t_900.000000.vtu
+)
+
+AddTest(
     NAME 3D_ComponentTransport_surfaceflux
     PATH Parabolic/ComponentTransport/SimpleSynthetics
     EXECUTABLE ogs
@@ -233,6 +433,22 @@ AddTest(
     cube_1x1x1_hex_1e3_right_pcs_0_ts_1_t_1.000000.vtu cube_1x1x1_hex_1e3_right_pcs_0_ts_1_t_1.000000.vtu concentration Si 1e-10 1e-16
     cube_1x1x1_hex_1e3_right_pcs_0_ts_0_t_0.000000.vtu cube_1x1x1_hex_1e3_right_pcs_0_ts_0_t_0.000000.vtu pressure pressure 1e-10 1e-16
     cube_1x1x1_hex_1e3_right_pcs_0_ts_1_t_1.000000.vtu cube_1x1x1_hex_1e3_right_pcs_0_ts_1_t_1.000000.vtu pressure pressure 1e-10 1e-16
+)
+
+AddTest(
+    NAME 3D_StaggeredScheme_ComponentTransport_surfaceflux
+    PATH Parabolic/ComponentTransport/StaggeredScheme
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS surfaceflux_component-transport_cube_1e3.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    cube_1x1x1_hex_1e3_complete_surface.vtu flux_1e3_t_1.000000.vtu flux flux 1e-10 1e-16
+    cube_1x1x1_hex_1e3_left_pcs_1_ts_0_t_0.000000.vtu cube_1x1x1_hex_1e3_left_pcs_1_ts_0_t_0.000000.vtu Si Si 1e-10 1e-16
+    cube_1x1x1_hex_1e3_left_pcs_1_ts_1_t_1.000000.vtu cube_1x1x1_hex_1e3_left_pcs_1_ts_1_t_1.000000.vtu Si Si 1e-10 1e-16
+    cube_1x1x1_hex_1e3_right_pcs_1_ts_0_t_0.000000.vtu cube_1x1x1_hex_1e3_right_pcs_1_ts_0_t_0.000000.vtu Si Si 1e-10 1e-16
+    cube_1x1x1_hex_1e3_right_pcs_1_ts_1_t_1.000000.vtu cube_1x1x1_hex_1e3_right_pcs_1_ts_1_t_1.000000.vtu Si Si 1e-10 1e-16
 )
 
 AddTest(
