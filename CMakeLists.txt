@@ -48,6 +48,7 @@ set(OGS_CONAN_BUILD "missing" CACHE STRING "Possible values: all, missing, \
 if(OGS_USE_PETSC)
     set(OGS_USE_MPI ON CACHE BOOL "Use MPI" FORCE)
 endif()
+option(OGS_USE_CVODE "Use the Sundials CVODE module?" OFF)
 
 ### CMake includes ###
 include(PreFind)
