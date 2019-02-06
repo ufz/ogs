@@ -92,7 +92,8 @@ pipeline {
                 cmakeOptions =
                   '-DOGS_CPU_ARCHITECTURE=generic ' +
                   '-DOGS_USE_PYTHON=ON ' +
-                  '-DOGS_BUILD_UTILS=ON '
+                  '-DOGS_BUILD_UTILS=ON ' +
+                  '-DOGS_USE_CVODE=ON '
               }
               build {
                 target="package"

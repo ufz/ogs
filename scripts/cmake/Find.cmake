@@ -158,10 +158,10 @@ elseif(OGS_BUILD_GUI)
 endif()
 
 ## Sundials cvode ode-solver library
-find_package(CVODE)
-if(CVODE_FOUND)
+if(OGS_USE_CVODE)
+    find_package(CVODE REQUIRED)
     add_definitions(-DCVODE_FOUND)
-endif() # CVODE_FOUND
+endif()
 
 if(OGS_USE_MFRONT)
     find_package(MGIS REQUIRED)
