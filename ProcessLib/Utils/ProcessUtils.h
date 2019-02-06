@@ -47,7 +47,7 @@ std::vector<std::reference_wrapper<ProcessVariable>> findProcessVariables(
     BaseLib::ConfigTree const& pv_config,
     std::string const& tag);
 
-/// Find a parameter of specific type for a given name.
+/// Find an optional parameter of specific type for a given name.
 ///
 /// \tparam ParameterDataType the data type of the parameter
 /// \param parameter_name name of the requested parameter
@@ -57,7 +57,7 @@ std::vector<std::reference_wrapper<ProcessVariable>> findProcessVariables(
 ///
 /// \see The documentation of the other findParameter() function.
 template <typename ParameterDataType>
-Parameter<ParameterDataType>& findParameter(
+Parameter<ParameterDataType>* findParameterOptional(
     std::string const& parameter_name,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
     int const num_components)
@@ -69,10 +69,9 @@ Parameter<ParameterDataType>& findParameter(
             return p->name == parameter_name;
         });
 
-    if (parameter_it == parameters.end()) {
-        OGS_FATAL(
-            "Could not find parameter `%s' in the provided parameters list.",
-            parameter_name.c_str());
+    if (parameter_it == parameters.end())
+    {
+        return nullptr;
     }
 
     DBUG("Found parameter `%s'.", (*parameter_it)->name.c_str());
@@ -95,6 +94,33 @@ Parameter<ParameterDataType>& findParameter(
             num_components);
     }
 
+    return parameter;
+}
+
+/// Find a parameter of specific type for a given name.
+///
+/// \tparam ParameterDataType the data type of the parameter
+/// \param parameter_name name of the requested parameter
+/// \param parameters list of parameters in which it will be searched
+/// \param num_components the number of components of the parameters or zero if
+/// any number is acceptable
+///
+/// \see The documentation of the other findParameter() function.
+template <typename ParameterDataType>
+Parameter<ParameterDataType>& findParameter(
+    std::string const& parameter_name,
+    std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+    int const num_components)
+{
+    auto* parameter = findParameterOptional<ParameterDataType>(
+        parameter_name, parameters, num_components);
+
+    if (!parameter)
+    {
+        OGS_FATAL(
+            "Could not find parameter `%s' in the provided parameters list.",
+            parameter_name.c_str());
+    }
     return *parameter;
 }
 
