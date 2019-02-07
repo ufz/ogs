@@ -75,6 +75,7 @@ if(OGS_BUILD_GUI)
         Shapelib/1.3.0@bilke/stable
         libgeotiff/1.4.2@bilke/stable
         Qt/5.11.2@bilke/stable
+        lzma/5.2.4@bincrafters/stable # 5.2.3 is not built for Xcode 10
     )
     set(CONAN_OPTIONS ${CONAN_OPTIONS}
         VTK:minimal=False
