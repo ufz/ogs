@@ -63,7 +63,7 @@ struct DeactivatedSubdomain
     std::vector<std::unique_ptr<DeactivetedSubdomainMesh>> const
         deactivated_subdomain_meshes;
 
-    static const std::string name_of_paramater_of_zero;
+    static const std::string zero_parameter_name;
 };
 
 std::vector<std::unique_ptr<DeactivatedSubdomain const>>

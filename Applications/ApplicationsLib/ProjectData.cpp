@@ -307,7 +307,7 @@ void ProjectData::parseParameters(BaseLib::ConfigTree const& parameters_config)
 
     _parameters.push_back(
         std::make_unique<ProcessLib::ConstantParameter<double>>(
-            ProcessLib::DeactivatedSubdomain::name_of_paramater_of_zero, 0.0));
+            ProcessLib::DeactivatedSubdomain::zero_parameter_name, 0.0));
 
     for (auto& parameter : _parameters)
         parameter->initialize(_parameters);

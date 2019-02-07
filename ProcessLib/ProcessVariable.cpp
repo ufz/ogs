@@ -231,7 +231,7 @@ void ProcessVariable::createBoundaryConditionsForDeactivatedSubDomains(
     std::vector<std::unique_ptr<BoundaryCondition>>& bcs)
 {
     auto& parameter = findParameter<double>(
-        DeactivatedSubdomain::name_of_paramater_of_zero, parameters, 1);
+        DeactivatedSubdomain::zero_parameter_name, parameters, 1);
 
     for (auto const& deactivated_subdomain : _deactivated_subdomains)
     {

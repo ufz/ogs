@@ -24,7 +24,7 @@
 
 namespace ProcessLib
 {
-const std::string DeactivatedSubdomain::name_of_paramater_of_zero =
+const std::string DeactivatedSubdomain::zero_parameter_name =
     "zero_for_element_deactivation_approach";
 
 DeactivetedSubdomainMesh::DeactivetedSubdomainMesh(
