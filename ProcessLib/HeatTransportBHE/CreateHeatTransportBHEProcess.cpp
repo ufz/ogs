@@ -16,8 +16,7 @@
 
 #include "BHE/BHETypes.h"
 #include "BHE/CreateBHE1U.h"
-#include "BHE/CreateBHECXA.h"
-#include "BHE/CreateBHECXC.h"
+#include "BHE/CreateBHECoaxial.h"
 #include "HeatTransportBHEProcess.h"
 #include "HeatTransportBHEProcessData.h"
 
@@ -191,13 +190,13 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
 
         if (bhe_type == "CXA")
         {
-            bhes.push_back(BHE::createBHECXA(bhe_config, curves));
+            bhes.push_back(BHE::createBHECoaxial<BHE::BHE_CXA>(bhe_config, curves));
             continue;
         }
 
         if (bhe_type == "CXC")
         {
-            bhes.push_back(BHE::createBHECXC(bhe_config, curves));
+            bhes.push_back(BHE::createBHECoaxial<BHE::BHE_CXC>(bhe_config, curves));
             continue;
         }
         OGS_FATAL("Unknown BHE type '%s'.", bhe_type.c_str());

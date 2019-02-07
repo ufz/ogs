@@ -37,7 +37,7 @@ namespace BHE
  * are calculated specifically during the initialization of the class.
  */
 
-class BHE_CXA final : public BHECoaxialCommon
+class BHE_CXA final : public BHECommonCoaxial
 {
 public:
     BHE_CXA(BoreholeGeometry const& borehole,
@@ -45,13 +45,6 @@ public:
             GroutParameters const& grout,
             FlowAndTemperatureControl const& flowAndTemperatureControl,
             PipeConfigurationCoaxial const& pipes);
-
-    std::array<double, number_of_unknowns> pipeHeatCapacities() const;
-
-    std::array<double, number_of_unknowns> pipeHeatConductions() const;
-
-    std::array<Eigen::Vector3d, number_of_unknowns> pipeAdvectionVectors()
-        const;
 
     template <int NPoints, typename SingleUnknownMatrixType,
               typename RMatrixType, typename RPiSMatrixType,
@@ -105,17 +98,6 @@ public:
         }
     }
 
-    /// Return the inflow temperature for the boundary condition.
-    double updateFlowRateAndTemperature(double T_out, double current_time);
-
-    double thermalResistance(int const unknown_index) const
-    {
-        return _thermal_resistances[unknown_index];
-    }
-
-    static constexpr std::pair<int, int> inflow_outflow_bc_component_ids[] = {
-        {0, 1}};
-
 public:
     std::array<double, number_of_unknowns> const cross_section_areas = {
         {_pipes.outer_pipe.area() - _pipes.inner_pipe.outsideArea(),
@@ -123,10 +105,13 @@ public:
          borehole_geometry.area() - _pipes.outer_pipe.outsideArea()}};
 
 private:
-    void updateHeatTransferCoefficients(double const flow_rate);
-
     std::array<double, number_of_unknowns> calcThermalResistances(
-        double const Nu_o, double const Nu_i);
+        double const Nu_inner_pipe, double const Nu_annulus_pipe) override;
+
+    std::array<double, 2> velocities() const override
+    {
+        return {_flow_velocity_annulus, _flow_velocity_inner};
+    }
 };
 }  // namespace BHE
 }  // namespace HeatTransportBHE

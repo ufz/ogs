@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include "BHECommonCoaxial.h"
+#include "BHE_CXA.h"
 #include "BHE_CXC.h"
 
 namespace BaseLib
@@ -21,8 +23,9 @@ namespace HeatTransportBHE
 {
 namespace BHE
 {
-BHE::BHE_CXC createBHECXC(
-    BaseLib::ConfigTree const& bhe_conf,
+template <typename T_BHE>
+T_BHE createBHECoaxial(
+    BaseLib::ConfigTree const& config,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
         curves);

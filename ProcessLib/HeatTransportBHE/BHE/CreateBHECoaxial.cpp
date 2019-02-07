@@ -9,7 +9,7 @@
  *
  */
 
-#include "CreateBHECXA.h"
+#include "CreateBHECoaxial.h"
 #include "BaseLib/ConfigTree.h"
 #include "CreateFlowAndTemperatureControl.h"
 namespace ProcessLib
@@ -18,7 +18,12 @@ namespace HeatTransportBHE
 {
 namespace BHE
 {
-BHE::BHE_CXA createBHECXA(
+static std::tuple<BoreholeGeometry,
+                  RefrigerantProperties,
+                  GroutParameters,
+                  FlowAndTemperatureControl,
+                  PipeConfigurationCoaxial>
+parseBHECoaxialConfig(
     BaseLib::ConfigTree const& config,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
@@ -58,6 +63,30 @@ BHE::BHE_CXA createBHECXA(
     return {borehole_geometry, refrigerant, grout, flowAndTemperatureControl,
             pipes};
 }
+
+template <typename T_BHE>
+T_BHE createBHECoaxial(
+    BaseLib::ConfigTree const& config,
+    std::map<std::string,
+             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
+        curves)
+{
+    auto coaxial = parseBHECoaxialConfig(config, curves);
+    return {std::get<0>(coaxial), std::get<1>(coaxial), std::get<2>(coaxial),
+            std::get<3>(coaxial), std::get<4>(coaxial)};
+}
+
+template BHE_CXA createBHECoaxial<BHE_CXA>(
+    BaseLib::ConfigTree const& config,
+    std::map<std::string,
+             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
+        curves);
+
+template BHE_CXC createBHECoaxial<BHE_CXC>(
+    BaseLib::ConfigTree const& config,
+    std::map<std::string,
+             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
+        curves);
 }  // namespace BHE
 }  // namespace HeatTransportBHE
 }  // namespace ProcessLib
