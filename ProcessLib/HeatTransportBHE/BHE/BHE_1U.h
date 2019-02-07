@@ -140,10 +140,12 @@ private:
     PipeConfiguration1U const _pipes;
 
 public:
-    std::array<double, number_of_unknowns> const cross_section_areas = {
-        {_pipes.inlet.area(), _pipes.outlet.area(),
-         borehole_geometry.area() / 2 - _pipes.inlet.area(),
-         borehole_geometry.area() / 2 - _pipes.outlet.area()}};
+    std::array<double, number_of_unknowns> CrossSectionAreas() const
+    {
+        return {{_pipes.inlet.area(), _pipes.outlet.area(),
+                 borehole_geometry.area() / 2 - _pipes.inlet.area(),
+                 borehole_geometry.area() / 2 - _pipes.outlet.area()}};
+    }
 
 private:
     void updateHeatTransferCoefficients(double const flow_rate);

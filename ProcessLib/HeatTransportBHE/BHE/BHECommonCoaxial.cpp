@@ -10,8 +10,6 @@
  */
 
 #include "BHECommonCoaxial.h"
-#include "FlowAndTemperatureControl.h"
-#include "ThermoMechanicalFlowProperties.h"
 
 namespace ProcessLib
 {
@@ -81,6 +79,42 @@ BHECommonCoaxial::pipeAdvectionVectors() const
              {0, 0, rho_r * Cp_r * std::abs(v[1])},
              // grout g, Eq. 28 and Eq. 25
              {0, 0, 0}}};
+}
+
+std::array<double, BHECommonCoaxial::number_of_unknowns>
+BHECommonCoaxial::CrossSectionAreas() const
+{
+    auto S = cross_section_areas_coaxial();
+    return {S[0], S[1], S[2]};
+}
+
+std::array<double, BHECommonCoaxial::number_of_unknowns>
+BHECommonCoaxial::calcThermalResistances(double const Nu_inner_pipe,
+                                         double const Nu_annulus_pipe)
+{
+    // thermal resistances due to advective flow of refrigerant in the pipes
+    auto const R_advective = calculateAdvectiveThermalResistance(
+        _pipes.inner_pipe, _pipes.outer_pipe, refrigerant, Nu_inner_pipe,
+        Nu_annulus_pipe);
+
+    // thermal resistance due to thermal conductivity of the pipe wall material
+    auto const R_conductive = calculatePipeWallThermalResistance(
+        _pipes.inner_pipe, _pipes.outer_pipe);
+
+    // thermal resistance due to the grout transition and grout-soil exchange.
+    auto const R = calculateGroutAndGroutSoilExchangeThermalResistance(
+        _pipes.outer_pipe, grout, borehole_geometry.diameter);
+
+    // thermal resistance due to grout-soil exchange
+    double const R_gs = R.grout_soil;
+
+    // Eq. 56 and 57
+    double const R_ff = R_advective.inner_pipe_coaxial + R_advective.a_annulus +
+                        R_conductive.inner_pipe_coaxial;
+    double const R_fg =
+        R_advective.b_annulus + R_conductive.annulus + R.conductive_b;
+
+    return getThermalResistances(R_gs, R_ff, R_fg);
 }
 }  // namespace BHE
 }  // namespace HeatTransportBHE

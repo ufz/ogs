@@ -12,6 +12,7 @@
 #include <Eigen/Eigen>
 #include "BHECommon.h"
 #include "FlowAndTemperatureControl.h"
+#include "Physics.h"
 #include "PipeConfigurationCoaxial.h"
 #include "ThermoMechanicalFlowProperties.h"
 
@@ -34,15 +35,18 @@ public:
     {
     }
 
+    static constexpr int number_of_unknowns = 3;
+    static constexpr int number_of_grout_zones = 1;
+
     double thermalResistance(int const unknown_index) const
     {
         return _thermal_resistances[unknown_index];
-    };
+    }
 
     double updateFlowRateAndTemperature(double T_out, double current_time);
 
-    static constexpr int number_of_unknowns = 3;
-    static constexpr int number_of_grout_zones = 1;
+    std::array<double, number_of_unknowns> calcThermalResistances(
+        double const Nu_inner_pipe, double const Nu_annulus_pipe);
 
     std::array<double, number_of_unknowns> pipeHeatCapacities() const;
 
@@ -53,11 +57,15 @@ public:
 
     std::array<Eigen::Vector3d, number_of_unknowns> pipeAdvectionVectors()
         const;
+    double cross_section_area_inner_pipe, cross_section_area_annulus,
+        cross_section_area_grout;
+
+    std::array<double, number_of_unknowns> CrossSectionAreas() const;
+
+    virtual std::array<double, number_of_unknowns> cross_section_areas_coaxial()
+        const = 0;
 
 protected:
-    virtual std::array<double, number_of_unknowns> calcThermalResistances(
-        double const Nu_inner_pipe, double const Nu_annulus_pipe) = 0;
-
     void updateHeatTransferCoefficients(double const flow_rate)
     {
         auto const tm_flow_properties_annulus =
@@ -78,14 +86,25 @@ protected:
                 flow_rate);
 
         _flow_velocity_inner = tm_flow_properties.velocity;
+
         _thermal_resistances =
             calcThermalResistances(tm_flow_properties.nusselt_number,
                                    tm_flow_properties_annulus.nusselt_number);
+
+        auto const cross_section_area = calculateCrossSectionAreasCoaxial(
+            _pipes.inner_pipe, _pipes.outer_pipe, borehole_geometry.area());
+
+        cross_section_area_inner_pipe = cross_section_area.inner;
+        cross_section_area_annulus = cross_section_area.annulus;
+        cross_section_area_grout = cross_section_area.grout;
     }
 
     PipeConfigurationCoaxial const _pipes;
 
     virtual std::array<double, 2> velocities() const = 0;
+
+    virtual std::array<double, number_of_unknowns> getThermalResistances(
+        double const& R_gs, double const& R_ff, double const& R_fg) const = 0;
 
     /// Here we store the thermal resistances needed for computation of the heat
     /// exchange coefficients in the governing equations of BHE.

@@ -11,6 +11,8 @@
 
 #pragma once
 
+#include "Pipe.h"
+
 namespace ProcessLib
 {
 namespace HeatTransportBHE
@@ -101,6 +103,22 @@ inline double PipeOutsideDiameter(double const pipe_diameter,
                                   double const pipe_wall_thickness)
 {
     return pipe_diameter + 2. * pipe_wall_thickness;
+}
+
+struct CrossSectionAreasCoaxial
+{
+    double const inner;
+    double const annulus;
+    double const grout;
+};
+
+inline CrossSectionAreasCoaxial calculateCrossSectionAreasCoaxial(
+    Pipe const& inner_pipe, Pipe const& outer_pipe, double const borehole_area)
+{
+    double const inner = inner_pipe.area();
+    double const annulus = outer_pipe.area() - inner_pipe.outsideArea();
+    double const grout = borehole_area - outer_pipe.outsideArea();
+    return {inner, annulus, grout};
 }
 }  // end of namespace BHE
 }  // end of namespace HeatTransportBHE

@@ -14,8 +14,6 @@
 #include "BaseLib/Error.h"
 
 #include "BHECommonCoaxial.h"
-#include "FlowAndTemperatureControl.h"
-#include "PipeConfigurationCoaxial.h"
 
 namespace ProcessLib
 {
@@ -43,7 +41,19 @@ public:
             RefrigerantProperties const& refrigerant,
             GroutParameters const& grout,
             FlowAndTemperatureControl const& flowAndTemperatureControl,
-            PipeConfigurationCoaxial const& pipes);
+            PipeConfigurationCoaxial const& pipes)
+        : BHECommonCoaxial{borehole, refrigerant, grout,
+                           flowAndTemperatureControl, pipes}
+    {
+        // Initialize thermal resistances.
+        auto values = apply_visitor(
+            [&](auto const& control) {
+                return control(refrigerant.reference_temperature,
+                               0. /* initial time */);
+            },
+            flowAndTemperatureControl);
+        updateHeatTransferCoefficients(values.flow_rate);
+    }
 
     template <int NPoints, typename SingleUnknownMatrixType,
               typename RMatrixType, typename RPiSMatrixType,
@@ -98,18 +108,24 @@ public:
     }
 
 public:
-    std::array<double, number_of_unknowns> const cross_section_areas = {
-        {_pipes.inner_pipe.area(),
-         _pipes.outer_pipe.area() - _pipes.inner_pipe.outsideArea(),
-         borehole_geometry.area() - _pipes.outer_pipe.outsideArea()}};
+    std::array<double, number_of_unknowns> cross_section_areas_coaxial()
+        const override
+    {
+        return {cross_section_area_inner_pipe, cross_section_area_annulus,
+                cross_section_area_grout};
+    }
 
 private:
-    std::array<double, number_of_unknowns> calcThermalResistances(
-        double const Nu_inner_pipe, double const Nu_annulus_pipe) override;
-
     std::array<double, 2> velocities() const override
     {
         return {_flow_velocity_inner, _flow_velocity_annulus};
+    }
+
+    std::array<double, number_of_unknowns> getThermalResistances(
+        double const& R_gs, double const& R_ff,
+        double const& R_fg) const override
+    {
+        return {R_ff, R_fg, R_gs};
     }
 };
 }  // namespace BHE
