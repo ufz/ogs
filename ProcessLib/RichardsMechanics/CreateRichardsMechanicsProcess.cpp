@@ -182,6 +182,11 @@ std::unique_ptr<Process> createRichardsMechanicsProcess(
         DBUG("Use \'%s\' as swelling law exponent.",
              swelling_exponent->name.c_str());
 
+    if (swelling_pressure.is_initialized() ^ swelling_exponent.is_initialized())
+        OGS_FATAL("Only one of two swelling parameters given."
+            "Swelling only works if both 'swelling_pressure' and"
+            "'swelling_exponent' are given!");
+    
     auto& temperature = findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__RICHARDS_MECHANICS__temperature}
