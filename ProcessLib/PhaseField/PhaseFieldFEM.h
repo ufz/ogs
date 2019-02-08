@@ -200,15 +200,6 @@ public:
             "implemented.");
     }
 
-    void assembleWithJacobian(double const t,
-                              std::vector<double> const& local_x,
-                              std::vector<double> const& local_xdot,
-                              const double /*dxdot_dx*/, const double /*dx_dx*/,
-                              std::vector<double>& /*local_M_data*/,
-                              std::vector<double>& /*local_K_data*/,
-                              std::vector<double>& local_rhs_data,
-                              std::vector<double>& local_Jac_data) override;
-
     void assembleWithJacobianForStaggeredScheme(
         double const t, std::vector<double> const& local_xdot,
         const double dxdot_dx, const double dx_dx,
@@ -235,7 +226,6 @@ public:
             std::reference_wrapper<NumLib::LocalToGlobalIndexMap>> const&
             dof_tables,
         GlobalVector const& x, double const t, double& crack_volume,
-        bool const use_monolithic_scheme,
         CoupledSolutionsForStaggeredScheme const* const cpl_xs) override;
 
     void computeEnergy(
@@ -245,7 +235,6 @@ public:
             dof_tables,
         GlobalVector const& x, double const t, double& elastic_energy,
         double& surface_energy, double& pressure_work,
-        bool const use_monolithic_scheme,
         CoupledSolutionsForStaggeredScheme const* const cpl_xs) override;
 
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
