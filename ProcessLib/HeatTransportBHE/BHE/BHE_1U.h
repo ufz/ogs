@@ -140,7 +140,7 @@ private:
     PipeConfiguration1U const _pipes;
 
 public:
-    std::array<double, number_of_unknowns> CrossSectionAreas() const
+    std::array<double, number_of_unknowns> crossSectionAreas() const
     {
         return {{_pipes.inlet.area(), _pipes.outlet.area(),
                  borehole_geometry.area() / 2 - _pipes.inlet.area(),

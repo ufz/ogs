@@ -82,7 +82,7 @@ BHECommonCoaxial::pipeAdvectionVectors() const
 }
 
 std::array<double, BHECommonCoaxial::number_of_unknowns>
-BHECommonCoaxial::CrossSectionAreas() const
+BHECommonCoaxial::crossSectionAreas() const
 {
     auto S = cross_section_areas_coaxial();
     return {S[0], S[1], S[2]};

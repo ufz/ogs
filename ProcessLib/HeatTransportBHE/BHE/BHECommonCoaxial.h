@@ -14,6 +14,7 @@
 #include "FlowAndTemperatureControl.h"
 #include "Physics.h"
 #include "PipeConfigurationCoaxial.h"
+#include "ThermalResistancesCoaxial.h"
 #include "ThermoMechanicalFlowProperties.h"
 
 namespace ProcessLib
@@ -60,7 +61,7 @@ public:
     double cross_section_area_inner_pipe, cross_section_area_annulus,
         cross_section_area_grout;
 
-    std::array<double, number_of_unknowns> CrossSectionAreas() const;
+    std::array<double, number_of_unknowns> crossSectionAreas() const;
 
     virtual std::array<double, number_of_unknowns> cross_section_areas_coaxial()
         const = 0;
