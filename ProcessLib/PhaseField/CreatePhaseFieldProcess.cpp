@@ -53,15 +53,7 @@ std::unique_ptr<Process> createPhaseFieldProcess(
         process_variables;
     if (use_monolithic_scheme)  // monolithic scheme.
     {
-        auto per_process_variables = findProcessVariables(
-            variables, pv_config,
-            {//! \ogs_file_param_special{prj__processes__process__PHASE_FIELD__process_variables__phasefield}
-             "phasefield",
-             //! \ogs_file_param_special{prj__processes__process__PHASE_FIELD__process_variables__displacement}
-             "displacement"});
-        variable_ph = &per_process_variables[0].get();
-        variable_u = &per_process_variables[1].get();
-        process_variables.push_back(std::move(per_process_variables));
+        OGS_FATAL("Monolithic implementation is not available.");
     }
     else  // staggered scheme.
     {
