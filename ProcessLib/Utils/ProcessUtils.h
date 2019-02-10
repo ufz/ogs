@@ -52,6 +52,15 @@ std::vector<std::reference_wrapper<ProcessVariable>> findProcessVariables(
 /// \tparam ParameterDataType the data type of the parameter
 /// \param parameter_name name of the requested parameter
 /// \param parameters list of parameters in which it will be searched
+ParameterBase* findParameterByName(
+    std::string const& parameter_name,
+    std::vector<std::unique_ptr<ParameterBase>> const& parameters);
+
+/// Find an optional parameter of specific type for a given name.
+///
+/// \tparam ParameterDataType the data type of the parameter
+/// \param parameter_name name of the requested parameter
+/// \param parameters list of parameters in which it will be searched
 /// \param num_components the number of components of the parameters or zero if
 /// any number is acceptable
 ///
@@ -63,22 +72,16 @@ Parameter<ParameterDataType>* findParameterOptional(
     int const num_components)
 {
     // Find corresponding parameter by name.
-    auto const parameter_it = std::find_if(
-        parameters.cbegin(), parameters.cend(),
-        [&parameter_name](std::unique_ptr<ParameterBase> const& p) {
-            return p->name == parameter_name;
-        });
-
-    if (parameter_it == parameters.end())
+    ParameterBase* parameter_ptr =
+        findParameterByName(parameter_name, parameters);
+    if (parameter_ptr == nullptr)
     {
         return nullptr;
     }
 
-    DBUG("Found parameter `%s'.", (*parameter_it)->name.c_str());
-
     // Check the type correctness of the found parameter.
     auto* const parameter =
-        dynamic_cast<Parameter<ParameterDataType>*>(parameter_it->get());
+        dynamic_cast<Parameter<ParameterDataType>*>(parameter_ptr);
     if (!parameter) {
         OGS_FATAL("The read parameter `%s' is of incompatible type.",
                   parameter_name.c_str());
