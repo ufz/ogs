@@ -20,7 +20,8 @@ The following explanation is taken from an [in-depth article](https://www.atlass
 > The main advantage of the Forking Workflow is that contributions can be integrated without the need for everybody to push to a single central repository. Developers push to their own server-side repositories, and only the project maintainer can push to the official repository. This allows the maintainer to accept commits from any developer without giving them write access to the official codebase.
 >
 > The result is a distributed workflow that provides a flexible way for large, organic teams (including untrusted third-parties) to collaborate securely. This also makes it an ideal workflow for open source projects.
-> <cite> https://www.atlassian.com/git/tutorials/comparing-workflows#!workflow-forking </cite>
+> 
+> <cite><a href="https://www.atlassian.com/git/tutorials/comparing-workflows#!workflow-forking">www.atlassian.com/git/tutorials/comparing-workflows#!workflow-forking</a> </cite>
 >
 
 The workflow is summarized in the following image from the [GitHub blog](https://github.com/blog/2042-git-2-5-including-multiple-worktrees-and-triangular-workflows):
