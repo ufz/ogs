@@ -27,6 +27,7 @@ project( OGS-6 )
 
 include(scripts/cmake/CMakeSetup.cmake)
 include(ParseCMakeArgs)
+include(CTest)
 
 ###########################
 ### Preliminary Options ###
@@ -37,7 +38,6 @@ set(CMAKE_LIBRARY_SEARCH_PATH "" CACHE PATH
 set(OGS_CPU_ARCHITECTURE "native" CACHE STRING "Processor architecture, \
     defaults to native (*nix) / blend (MSVC).")
 option(OGS_ENABLE_AVX2 "Enable the use of AVX2 instructions" OFF)
-option(OGS_BUILD_TESTS "Should the test executables be built?" ON)
 option(OGS_USE_PCH "Should pre-compiled headers be used?" ON)
 if(DEFINED CMAKE_CXX_CLANG_TIDY)
     set(OGS_USE_PCH OFF CACHE INTERNAL "")
@@ -329,11 +329,11 @@ add_subdirectory( MathLib )
 add_subdirectory( MeshLib )
 add_subdirectory( MeshGeoToolsLib )
 add_subdirectory( NumLib )
-if(OGS_BUILD_CLI OR OGS_BUILD_UTILS OR OGS_BUILD_TESTS)
+if(OGS_BUILD_CLI OR OGS_BUILD_UTILS OR BUILD_TESTING)
     add_subdirectory( MaterialLib )
     add_subdirectory( ProcessLib )
 endif()
-if( OGS_BUILD_TESTS AND NOT IS_SUBPROJECT )
+if( BUILD_TESTING AND NOT IS_SUBPROJECT )
     add_subdirectory( Tests )
 
     if(OGS_USE_MPI)
@@ -341,7 +341,7 @@ if( OGS_BUILD_TESTS AND NOT IS_SUBPROJECT )
     else()
         add_subdirectory( SimpleTests/MeshTests )
     endif()
-endif() # OGS_BUILD_TESTS
+endif()
 
 # The configuration must be called from the source dir and not BaseLib/.
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/BaseLib/BuildInfo.cpp.in"
