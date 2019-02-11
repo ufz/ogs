@@ -39,7 +39,7 @@
 #         the benchmark output directory.
 
 function (AddTest)
-    if(NOT OGS_BUILD_TESTS)
+    if(NOT BUILD_TESTING)
         return()
     endif()
     # parse arguments
