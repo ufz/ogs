@@ -22,12 +22,6 @@ if(COMPILER_IS_GCC AND CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL 6 AND UBUNTU_VER
 
 endif()
 
-if(DEFINED OGS_LIB_Boost)
-    if(${OGS_LIB_Boost} STREQUAL "Default")
-        cmake_minimum_required(VERSION 3.4) # Conan Boost package requires this
-    endif()
-endif()
-
 include(${PROJECT_SOURCE_DIR}/scripts/cmake/conan/conan.cmake)
 
 set(CONAN_REQUIRES
