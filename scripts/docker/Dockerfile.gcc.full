@@ -1,66 +1,113 @@
 FROM ubuntu:17.10
 
-RUN apt-get update && apt-get install -y curl \
-  && curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash \
-  && apt-get update && apt-get -y install \
-    ccache \
-    g++-6 \
-    git git-lfs \
-    python3-pip \
-    sudo \
-    unzip
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        wget \
+        tar \
+        curl && \
+    rm -rf /var/lib/apt/lists/*
 
-ENV CC=gcc-6
-ENV CXX=g++-6
+# GNU compiler
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends software-properties-common && \
+    apt-add-repository ppa:ubuntu-toolchain-r/test -y && \
+    apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        gcc-6 \
+        g++-6 \
+        gfortran-6 && \
+    rm -rf /var/lib/apt/lists/*
+RUN update-alternatives --install /usr/bin/gcc gcc $(which gcc-6) 30 && \
+    update-alternatives --install /usr/bin/g++ g++ $(which g++-6) 30 && \
+    update-alternatives --install /usr/bin/gfortran gfortran $(which gfortran-6) 30 && \
+    update-alternatives --install /usr/bin/gcov gcov $(which gcov-6) 30
 
-RUN python3 -m pip install --upgrade pip \
-  && python3 -m pip install cmake conan>=1.10.0
+# OGS base building block
+# Python
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        python3 \
+        libpython3-dev && \
+    rm -rf /var/lib/apt/lists/*
+# pip
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        python3-pip \
+        python3-setuptools \
+        python3-wheel && \
+    rm -rf /var/lib/apt/lists/*
+RUN pip3 install --upgrade pip
+# CMake version 3.13.4
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://cmake.org/files/v3.13/cmake-3.13.4-Linux-x86_64.sh && \
+    /bin/sh /var/tmp/cmake-3.13.4-Linux-x86_64.sh --prefix=/usr/local --skip-license && \
+    rm -rf /var/tmp/cmake-3.13.4-Linux-x86_64.sh
+RUN curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends software-properties-common && \
+    apt-add-repository ppa:git-core/ppa -y && \
+    apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        git \
+        git-lfs \
+        make \
+        ninja-build \
+        doxygen && \
+    rm -rf /var/lib/apt/lists/*
+RUN git lfs install && \
+    mkdir -p /apps /scratch /lustre /work /projects
 
-# Ninja
-RUN curl -L -o ninja-linux.zip https://github.com/ninja-build/ninja/releases/download/v1.8.2/ninja-linux.zip \
-  && unzip ninja-linux.zip \
-  && mv ninja /usr/local/bin/ninja \
-  && rm ninja-linux.zip
+# Package manager Conan building block
+# pip
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        python3-pip \
+        python3-setuptools \
+        python3-wheel && \
+    rm -rf /var/lib/apt/lists/*
+RUN pip3 install conan==1.12.2
+RUN mkdir -p /opt/conan && \
+    chmod 777 /opt/conan
+ENV CONAN_USER_HOME=/opt/conan
+LABEL org.opengeosys.pm=conan \
+    org.opengeosys.pm.conan.user_home=/opt/conan \
+    org.opengeosys.pm.conan.version=1.12.2
 
- # Add user jenkins to the image
-RUN adduser --uid 500 --disabled-password --gecos "" jenkins \
-  # Add user jenkins to sudoers with NOPASSWD
-  && echo "jenkins ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers \
-  # Set password for the jenkins user (you may want to alter this).
-  && echo "jenkins:jenkins" | chpasswd
+# CVode version 2.8.2
 
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/ufz/cvode/archive/2.8.2.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/2.8.2.tar.gz -C /var/tmp -z && \
+    mkdir -p /var/tmp/build && cd /var/tmp/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local/cvode -DEXAMPLES_INSTALL=OFF -DBUILD_SHARED_LIBS=OFF /var/tmp/cvode-2.8.2 && \
+    cmake --build /var/tmp/build --target install -- -j$(nproc) && \
+    rm -rf /var/tmp/2.8.2.tar.gz /var/tmp/build /var/tmp/cvode-2.8.2
+ENV CVODE_ROOT=/usr/local/cvode
+
+# cppcheck version 1.83
+
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/danmar/cppcheck/archive/1.83.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/1.83.tar.gz -C /var/tmp -z && \
+    mkdir -p /var/tmp/build && cd /var/tmp/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local/cppcheck -DCMAKE_BUILD_TYPE=RELEASE /var/tmp/cppcheck-1.83 && \
+    cmake --build /var/tmp/build --target install -- -j$(nproc) && \
+    rm -rf /var/tmp/1.83.tar.gz /var/tmp/build /var/tmp/cppcheck-1.83
+ENV PATH=/usr/local/cppcheck/bin:$PATH
+
+# Jenkins node
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        graphviz \
+        texlive-base \
+        sudo && \
+    rm -rf /var/lib/apt/lists/*
+RUN groupadd --gid 1001 jenkins && \
+    adduser --uid 500 --gid 1001 --disabled-password --gecos "" jenkins && \
+    echo "jenkins ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
+    echo "jenkins:jenkins" | chpasswd
 USER jenkins
-ENV CCACHE_DIR=/home/jenkins/cache/ccache
-RUN mkdir -p $CCACHE_DIR
-ENV CCACHE_MAXSIZE=15G
-ENV CCACHE_SLOPPINESS=pch_defines,time_macros
 WORKDIR /home/jenkins
-RUN conan user
-
-### END gcc.minimal ###
-USER root
-
-RUN apt-get update && apt-get install -y \
-    biber \
-    clang-tidy \
-    doxygen \
-    graphviz \
-    libxml2-utils \
-    python-dev
-
-# Include-what-you-use
-RUN curl https://include-what-you-use.org/downloads/include-what-you-use-0.8-x86_64-linux-gnu-ubuntu-16.04.tar.gz -O \
-  && tar xf include-what-you-use-0.8-x86_64-linux-gnu-ubuntu-16.04.tar.gz -C /usr/ --strip-components=1 \
-  && rm include-what-you-use-0.8-x86_64-linux-gnu-ubuntu-16.04.tar.gz
-
-# cppcheck
-RUN curl -L -o 1.86.tar.gz https://github.com/danmar/cppcheck/archive/1.86.tar.gz \
-  && tar xf 1.86.tar.gz \
-  && cd cppcheck-1.86 \
-  && make SRCDIR=build CFGDIR=/usr/share/cppcheck/ CXXFLAGS="-O2 -DNDEBUG -Wall -Wno-sign-compare -Wno-unused-function" \
-  && make install CFGDIR=/usr/share/cppcheck/ \
-  && cd .. && rm -r cppcheck-1.86 1.86.tar.gz
-
-RUN apt-get install -y mesa-common-dev libgl1-mesa-dev libxt-dev wget
-
-USER jenkins
+RUN mkdir -p /home/jenkins/cache/ccache
+ENV CCACHE_DIR=/home/jenkins/cache/ccache \
+    CCACHE_MAXSIZE=15G \
+    CCACHE_SLOPPINESS=pch_defines,time_macros
