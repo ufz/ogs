@@ -113,6 +113,9 @@ public:
     /// Resets the IDs of all mesh-nodes to their position in the node vector
     void resetNodeIDs();
 
+    /// Finds the maximum id among all of the base nodes.
+    void recalculateMaxBaseNodeId();
+
     /// Changes the name of the mesh.
     void setName(const std::string &name) { this->_name = name; }
 
