@@ -113,9 +113,10 @@ pipeline {
                 GoogleTest(pattern: 'build/Tests/testrunner.xml')
               ])
               recordIssues enabledForFailure: true, filters: [
-                excludeFile('.*qrc_icons\\.cpp.*'), excludeFile('.*QVTKWidget.*')],
+                excludeFile('.*qrc_icons\\.cpp.*'), excludeFile('.*QVTKWidget.*'),
+                excludeMessage('.*tmpnam.*')],
                 tools: [gcc4(name: 'GCC', pattern: 'build/build.log')],
-                unstableTotalAll: 3
+                unstableTotalAll: 1
               recordIssues enabledForFailure: true, filters: [
                   excludeFile('-'), excludeFile('.*Functional\\.h'),
                   excludeFile('.*gmock-.*\\.h'), excludeFile('.*gtest-.*\\.h')
@@ -170,10 +171,11 @@ pipeline {
           post {
             always {
               recordIssues enabledForFailure: true, filters: [
-                excludeFile('.*qrc_icons\\.cpp.*'), excludeFile('.*QVTKWidget.*')],
+                excludeFile('.*qrc_icons\\.cpp.*'), excludeFile('.*QVTKWidget.*'),
+                excludeMessage('.*tmpnam.*')],
                 tools: [gcc4(name: 'GCC-GUI', id: 'gcc4-gui',
                              pattern: 'build/build.log')],
-                unstableTotalAll: 4
+                unstableTotalAll: 1
             }
             success { archiveArtifacts 'build/*.tar.gz,build/conaninfo.txt' }
           }
@@ -387,9 +389,10 @@ pipeline {
                 GoogleTest(pattern: 'build/Tests/testrunner.xml')
               ])
               recordIssues enabledForFailure: true, filters: [
-                excludeFile('.*qrc_icons\\.cpp.*'), excludeFile('.*QVTKWidget.*')],
+                excludeFile('.*qrc_icons\\.cpp.*'), excludeFile('.*QVTKWidget.*'),
+                excludeCategory('-Wdeprecated-declarations')],
                 tools: [clang(name: 'Clang (macOS)', pattern: 'build/build.log',
-                  id: 'clang-mac')], unstableTotalAll: 3
+                  id: 'clang-mac')], unstableTotalAll: 1
             }
             success {
               archiveArtifacts 'build/*.tar.gz,build/*.dmg,build/conaninfo.txt'
