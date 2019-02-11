@@ -18,6 +18,7 @@ if(MSVC)
 endif()
 
 set(gtest_force_shared_crt ON CACHE INTERNAL "") # Use dynamic MSVC runtime
+set(INSTALL_GTEST OFF CACHE INTERNAL "")
 add_subdirectory(googletest)
 
 # This is a workaround for Travis builds.
