@@ -691,7 +691,7 @@ void FEFLOWMeshInterface::setMaterialIDs(
         for (std::size_t i = 0; i < vec_elements.size(); i++)
         {
             MeshLib::Element* e = vec_elements[i];
-            unsigned e_min_nodeID = std::numeric_limits<unsigned>::max();
+            std::size_t e_min_nodeID = std::numeric_limits<std::size_t>::max();
             for (std::size_t j = 0; j < e->getNumberOfBaseNodes(); j++)
                 e_min_nodeID = std::min(e_min_nodeID, e->getNodeIndex(j));
             std::size_t layer_id = e_min_nodeID / no_nodes_per_layer;

@@ -120,7 +120,7 @@ public:
      * @return the global index or std::numeric_limits<unsigned>::max()
      * @sa Element::getNode()
      */
-    unsigned getNodeIndex(unsigned i) const;
+    std::size_t getNodeIndex(unsigned i) const;
 
     /**
      * Get the type of the mesh element in geometric context (as a MeshElemType-enum).
