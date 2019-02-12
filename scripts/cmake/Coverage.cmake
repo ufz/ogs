@@ -45,3 +45,7 @@ setup_target_for_coverage_fastcov(
         Applications/CLI/
         Tests/
 )
+
+if(UNIX)
+    add_custom_target(clean_coverage find . -name '*.gcda' -delete)
+endif()
