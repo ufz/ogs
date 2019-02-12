@@ -389,8 +389,8 @@ pipeline {
                 GoogleTest(pattern: 'build/Tests/testrunner.xml')
               ])
               recordIssues enabledForFailure: true, filters: [
-                excludeFile('.*qrc_icons\\.cpp.*'), excludeFile('.*QVTKWidget.*'),
-                excludeCategory('-Wdeprecated-declarations')],
+                excludeFile('.*qrc_icons\\.cpp.*'), excludeMessage('.*QVTKWidget.*'),
+                excludeMessage('.*tmpnam.*')],
                 tools: [clang(name: 'Clang (macOS)', pattern: 'build/build.log',
                   id: 'clang-mac')], unstableTotalAll: 1
             }
