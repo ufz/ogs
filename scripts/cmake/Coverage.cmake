@@ -34,3 +34,7 @@ if(Python_EXECUTABLE)
 else()
     message(STATUS "No cobertura coverage report generated because Python executable was not found.")
 endif()
+
+if(UNIX)
+    add_custom_target(clean_coverage find . -name '*.gcda' -delete)
+endif()
