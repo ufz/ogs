@@ -99,12 +99,6 @@ inline double nusseltNumberAnnulus(double const reynolds_number,
             (1.0 + diameter_ratio));
 }
 
-inline double PipeOutsideDiameter(double const pipe_diameter,
-                                  double const pipe_wall_thickness)
-{
-    return pipe_diameter + 2. * pipe_wall_thickness;
-}
-
 struct CrossSectionAreasCoaxial
 {
     double const inner;

@@ -46,40 +46,25 @@ inline AdvectiveThermalResistanceCoaxial calculateAdvectiveThermalResistance(
     RefrigerantProperties const& fluid, double const Nu_inner_pipe,
     double const Nu_annulus)
 {
-    static constexpr double pi = boost::math::constants::pi<double>();
+    double const hydraulic_diameter =
+        coaxialPipesAnnulusDiameter(inner_pipe, outer_pipe);
 
-    double const hydraulic_diameter_annulus = outer_pipe.diameter -
-                                              inner_pipe.diameter -
-                                              2 * inner_pipe.wall_thickness;
-    double const inner_pipe_outside_diameter =
-        PipeOutsideDiameter(inner_pipe.diameter, inner_pipe.wall_thickness);
-    double const inner_pipe_coaxial =
-        1.0 / (Nu_inner_pipe * fluid.thermal_conductivity * pi);
-    double const a_annulus =
-        1.0 / (Nu_annulus * fluid.thermal_conductivity * pi) *
-        (hydraulic_diameter_annulus / inner_pipe_outside_diameter);
-    double const b_annulus = 1.0 /
-                             (Nu_annulus * fluid.thermal_conductivity * pi) *
-                             (hydraulic_diameter_annulus / outer_pipe.diameter);
-    return {inner_pipe_coaxial, a_annulus, b_annulus};
+    auto advective_thermal_resistance = [&](double Nu, double diameter_ratio) {
+        static constexpr double pi = boost::math::constants::pi<double>();
+        return 1.0 / (Nu * fluid.thermal_conductivity * pi) * diameter_ratio;
+    };
+    return {advective_thermal_resistance(Nu_inner_pipe, 1.),
+            advective_thermal_resistance(
+                Nu_annulus, hydraulic_diameter / inner_pipe.outsideDiameter()),
+            advective_thermal_resistance(
+                Nu_annulus, hydraulic_diameter / outer_pipe.diameter)};
 }
 
 inline PipeWallThermalResistanceCoaxial calculatePipeWallThermalResistance(
     Pipe const& inner_pipe, Pipe const& outer_pipe)
 {
-    static constexpr double pi = boost::math::constants::pi<double>();
-
-    double const inner_pipe_outside_diameter =
-        PipeOutsideDiameter(inner_pipe.diameter, inner_pipe.wall_thickness);
-    double const outer_pipe_outside_diameter =
-        PipeOutsideDiameter(outer_pipe.diameter, outer_pipe.wall_thickness);
-    double const inner_pipe_coaxial =
-        std::log(inner_pipe_outside_diameter / inner_pipe.diameter) /
-        (2.0 * pi * inner_pipe.wall_thermal_conductivity);
-    double const Annulus =
-        std::log(outer_pipe_outside_diameter / outer_pipe.diameter) /
-        (2.0 * pi * outer_pipe.wall_thermal_conductivity);
-    return {inner_pipe_coaxial, Annulus};
+    return {inner_pipe.wallThermalResistance(),
+            outer_pipe.wallThermalResistance()};
 }
 
 inline GroutAndGroutSoilExchangeThermalResistanceCoaxial
@@ -89,8 +74,7 @@ calculateGroutAndGroutSoilExchangeThermalResistance(
 {
     static constexpr double pi = boost::math::constants::pi<double>();
 
-    double const outer_pipe_outside_diameter =
-        PipeOutsideDiameter(outer_pipe.diameter, outer_pipe.wall_thickness);
+    double const outer_pipe_outside_diameter = outer_pipe.outsideDiameter();
     double const chi =
         std::log(std::sqrt(borehole_diameter * borehole_diameter +
                            outer_pipe_outside_diameter *
