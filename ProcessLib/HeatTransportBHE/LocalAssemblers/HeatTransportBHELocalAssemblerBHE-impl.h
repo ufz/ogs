@@ -28,8 +28,7 @@ HeatTransportBHELocalAssemblerBHE<ShapeFunction, IntegrationMethod, BHEType>::
     : _process_data(process_data),
       _integration_method(integration_order),
       _bhe(bhe),
-      _element_id(e.getID()),
-      _number_of_grout_zones(bhe.number_of_grout_zones)
+      _element_id(e.getID())
 {
     // need to make sure that the BHE elements are one-dimensional
     assert(e.getDimension() == 1);
@@ -186,7 +185,7 @@ void HeatTransportBHELocalAssemblerBHE<ShapeFunction, IntegrationMethod,
     local_K
         .template block<temperature_size, temperature_size>(temperature_index,
                                                             temperature_index)
-        .noalias() += _number_of_grout_zones * _R_s_matrix;
+        .noalias() += _bhe.number_of_grout_zones * _R_s_matrix;
 
     // debugging
     // std::string sep =

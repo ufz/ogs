@@ -20,6 +20,8 @@ namespace HeatTransportBHE
 {
 namespace BHE
 {
+constexpr int BHE_1U::number_of_grout_zones;
+
 BHE_1U::BHE_1U(BoreholeGeometry const& borehole,
                RefrigerantProperties const& refrigerant,
                GroutParameters const& grout,
