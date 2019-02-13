@@ -1,6 +1,6 @@
 FROM ubuntu:17.10
 
-# Generated with https://github.com/ufz/ogs-container-maker/commit/c3dc13e
+# Generated with https://github.com/ufz/ogs-container-maker/commit/0930f12
 
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -95,23 +95,6 @@ ENV CCACHE_DIR=/opt/cache \
     CCACHE_SLOPPINESS=pch_defines,time_macros
 LABEL ccache.dir=/opt/cache \
     ccache.size=15G
-
-# pip
-RUN apt-get update -y && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        python3-pip \
-        python3-setuptools \
-        python3-wheel && \
-    rm -rf /var/lib/apt/lists/*
-RUN pip3 install gcovr
-
-RUN apt-get update -y && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        doxygen \
-        graphviz \
-        texlive-base \
-        sudo && \
-    rm -rf /var/lib/apt/lists/*
 
 # Jenkins node
 RUN groupadd --gid 1001 jenkins && \
