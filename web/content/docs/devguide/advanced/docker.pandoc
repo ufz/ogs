@@ -11,19 +11,20 @@ weight = 1034
 
 ## Introduction
 
-> [Docker](https://www.docker.com/whatisdocker) containers wrap up a piece of software in a complete filesystem that contains everything it needs to run: code, runtime, system tools, system libraries – anything you can install on a server. This guarantees that it will always run the same, regardless of the environment it is running in.
+> Docker containers wrap up a piece of software in a complete filesystem that contains everything it needs to run: code, runtime, system tools, system libraries – anything you can install on a server. This guarantees that it will always run the same, regardless of the environment it is running in.
+>
+> <cite>[www.docker.com/whatisdocker](https://www.docker.com/whatisdocker)</cite>
 
 See the [docs](https://docs.docker.com) for installation instructions.
 
 ## Images
 
-Docker images can be created by [Dockerfiles](https://docs.docker.com/reference/builder/) which can be stacked and thus form a directed graph. OGS-6 image definitions can be found at the [ufz/dockerfiles](https://github.com/ufz/dockerfiles)-repo. Built images can be found at [Docker Hub](https://hub.docker.com/u/ogs6/).
+Docker images can be created by [Dockerfiles](https://docs.docker.com/reference/builder/) which can be stacked and thus form a directed graph. OGS-6 image definitions are created with [ufz/ogs-container-maker](https://github.com/ufz/ogs-container-maker). Built images can be found at [Docker Hub](https://hub.docker.com/u/ogs6/).
 
 To build an image by yourself create a Dockerfile:
 
 ```
-FROM ubuntu:14.04
-MAINTAINER Jon Doe <jon.doe@foo.com>
+FROM ubuntu:17.10
 
 RUN ...
 ```
@@ -31,9 +32,10 @@ RUN ...
 Run the `build` command:
 
 ```bash
-$ docker build -t repo/image_name path/to/directory
+$ docker build --rm -t repo/image_name path/to/directory
 ```
 
+- `--rm` Cleans up after exiting the container
 - `-t` specifies a name for the image, can be arbitrary chosen (but should match the corresponding image on Docker Hub if there is one)
 - The path should specify the directory where the Dockerfile is located
 
@@ -44,37 +46,38 @@ Now you can see your build image with `$ docker images`.
 To run commands inside a container:
 
 ```bash
-$ docker run -t image_name command_to_run
+$ docker run --rm -t image_name command_to_run
 ```
 
 To run an interactive shell add the `-i`-switch:
 
 ```bash
-$ docker run -i -t image_name /bin/bash
+$ docker run --rm -i -t image_name
 ```
 
 It is useful to mount folders from the host operating system in the Docker container, e.g. to edit source code on your host with your favorite editor:
 
 ```bash
-$ docker run -i -t -v /host/directory:/container/directory image_name /bin/bash
+$ docker run --rm -i -t -v /host/directory:/container/directory image_name
 ```
 
 ## Prebuilt OGS-6 Docker images
 
 There are docker images provided on [Docker Hub](https://hub.docker.com/u/ogs6/) which include everything necessary to build OGS-6.
 
-There are images for `gcc`, `clang` and `mingw`.
+There are images for `gcc` and `clang`.
 
 E.g. to start developing OGS:
 
 ```bash
 docker pull ogs6/gcc
-docker run -t -i -v /path/to/ogs/source/on/host:/usr/src/ogs ogs6/gcc
+docker run --rm -t -i -v /path/to/ogs/source/on/host:/tmp/ogs ogs6/gcc
 ```
 
 You are now in the Docker container the ogs source code from your host computer mounted at `/usr/src/ogs`. Now you can build and run OGS:
 
 ```bash
+cd /tmp
 mkdir build; cd build
 cmake ../ogs
 make ogs
@@ -86,4 +89,5 @@ make ogs
 The following images are used by Jenkins:
 
 - `ogs6/gcc`, defined in [scripts/docker/Dockerfile.gcc.full](https://github.com/ufz/ogs/blob/master/scripts/docker/Dockerfile.gcc.full)
+- `ogs6/gcc:gui`, defined in [scripts/docker/Dockerfile.gcc.gui](https://github.com/ufz/ogs/blob/master/scripts/docker/Dockerfile.gcc.gui)
 - `ogs6/clang`, defined in [scripts/docker/Dockerfile.clang.full](https://github.com/ufz/ogs/blob/master/scripts/docker/Dockerfile.clang.full)

@@ -61,6 +61,13 @@ RUN apt-get update -y && \
 RUN git lfs install && \
     mkdir -p /apps /scratch /lustre /work /projects
 
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        mesa-common-dev \
+        libgl1-mesa-dev \
+        libxt-dev && \
+    rm -rf /var/lib/apt/lists/*
+
 # Package manager Conan building block
 # pip
 RUN apt-get update -y && \
@@ -76,24 +83,6 @@ ENV CONAN_USER_HOME=/opt/conan
 LABEL org.opengeosys.pm=conan \
     org.opengeosys.pm.conan.user_home=/opt/conan \
     org.opengeosys.pm.conan.version=1.12.2
-
-# CVode version 2.8.2
-
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/ufz/cvode/archive/2.8.2.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/2.8.2.tar.gz -C /var/tmp -z && \
-    mkdir -p /var/tmp/build && cd /var/tmp/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local/cvode -DEXAMPLES_INSTALL=OFF -DBUILD_SHARED_LIBS=OFF /var/tmp/cvode-2.8.2 && \
-    cmake --build /var/tmp/build --target install -- -j$(nproc) && \
-    rm -rf /var/tmp/2.8.2.tar.gz /var/tmp/build /var/tmp/cvode-2.8.2
-ENV CVODE_ROOT=/usr/local/cvode
-
-# cppcheck version 1.83
-
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/danmar/cppcheck/archive/1.83.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/1.83.tar.gz -C /var/tmp -z && \
-    mkdir -p /var/tmp/build && cd /var/tmp/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local/cppcheck -DCMAKE_BUILD_TYPE=RELEASE /var/tmp/cppcheck-1.83 && \
-    cmake --build /var/tmp/build --target install -- -j$(nproc) && \
-    rm -rf /var/tmp/1.83.tar.gz /var/tmp/build /var/tmp/cppcheck-1.83
-ENV PATH=/usr/local/cppcheck/bin:$PATH
 
 # Package manager Conan building block
 RUN apt-get update -y && \

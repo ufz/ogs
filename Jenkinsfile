@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-@Library('jenkins-pipeline@1.0.17') _
+@Library('jenkins-pipeline@1.0.18') _
 
 def stage_required = [build: false, data: false, full: false, docker: false]
 
@@ -78,7 +78,7 @@ pipeline {
               filename 'Dockerfile.gcc.full'
               dir 'scripts/docker'
               label 'docker'
-              args '-v /home/jenkins/cache:/home/jenkins/cache -v /home/jenkins/cache/conan/.conan:/home/jenkins/.conan'
+              args '-v /home/jenkins/cache/ccache:/opt/ccache -v /home/jenkins/cache/conan/.conan:/opt/conan/.conan'
               additionalBuildArgs '--pull'
             }
           }
@@ -143,10 +143,11 @@ pipeline {
           }
           agent {
             dockerfile {
-              filename 'Dockerfile.gcc.full'
+              filename 'Dockerfile.gcc.gui'
               dir 'scripts/docker'
-              label 'docker'
-              args '-v /home/jenkins/cache:/home/jenkins/cache -v /home/jenkins/cache/conan/.conan:/home/jenkins/.conan'
+              // Singularity1 has on old kernel (3.10) which is not compatible with Qt > 5.10 (req. 3.15)
+              label 'docker && !singularity1'
+              args '-v /home/jenkins/cache/ccache:/opt/ccache -v /home/jenkins/cache/conan/.conan:/opt/conan/.conan'
               additionalBuildArgs '--pull'
             }
           }
@@ -191,7 +192,7 @@ pipeline {
               filename 'Dockerfile.gcc.full'
               dir 'scripts/docker'
               label 'docker'
-              args '-v /home/jenkins/cache:/home/jenkins/cache -v /home/jenkins/cache/conan/.conan:/home/jenkins/.conan'
+              args '-v /home/jenkins/cache/ccache:/opt/ccache -v /home/jenkins/cache/conan/.conan:/opt/conan/.conan'
               additionalBuildArgs '--pull'
             }
           }
@@ -411,7 +412,7 @@ pipeline {
               filename 'Dockerfile.gcc.full'
               dir 'scripts/docker'
               label 'envinf11w'
-              args '-v /home/jenkins/cache:/home/jenkins/cache'
+              args '-v /home/jenkins/cache/ccache:/opt/ccache -v /home/jenkins/cache/conan/.conan:/opt/conan/.conan'
               additionalBuildArgs '--pull'
             }
           }
@@ -442,9 +443,11 @@ pipeline {
             script {
               dir('scripts/docker') {
                 def gccImage = docker.build("ogs6/gcc:latest", "-f Dockerfile.gcc.full .")
+                def gccGuiImage = docker.build("ogs6/gcc:gui", "-f Dockerfile.gcc.gui .")
                 def clangImage = docker.build("ogs6/clang:latest", "-f Dockerfile.clang.full .")
                 docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
                   gccImage.push()
+                  gccGuiImage.push()
                   clangImage.push()
                 }
               }

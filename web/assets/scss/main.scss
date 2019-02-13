@@ -72,6 +72,7 @@ pre {
   @apply .-ml-2;
   @apply .pl-2;
   @apply .border-l-8;
+  @apply .rounded
 }
 pre > code {
   @apply .bg-transparent;
@@ -94,6 +95,23 @@ p, ul, pre {
 .inverse a:hover {
   border-color: config('mycolors.text-inverse');
   color: config('mycolors.text-accent');
+}
+
+blockquote {
+  @apply .bg-grey-lighter;
+  @apply .rounded;
+  @apply .border-l-8;
+  @apply .italic;
+  @apply .p-2;
+  @apply .mb-2;
+}
+
+blockquote > p:last-child {
+  @apply .mb-0;
+}
+
+cite::before {
+  content: "— ";
 }
 
 /* -- Navigation -- */

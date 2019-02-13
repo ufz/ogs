@@ -235,6 +235,9 @@ option(OGS_ENABLE_ELEMENT_PYRAMID "Build FEM elements for pyramids." ON)
 option(OGS_CHECK_HEADER_COMPILATION "Check header for standalone compilation." OFF)
 
 option(OGS_USE_PYTHON "Interface with Python" OFF)
+if(OGS_USE_PYTHON AND NOT Python_FOUND)
+    message(FATAL_ERROR "Python not found but required for OGS_USE_PYTHON=ON!")
+endif()
 
 option(OGS_USE_MFRONT "Enable solid material models by MFront (https://tfel.sourceforge.net)" OFF)
 
