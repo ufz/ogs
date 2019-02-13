@@ -71,7 +71,13 @@ struct GroupBasedParameter final
         {
             OGS_FATAL("No data found for the group index %d", index);
         }
-         return values;
+
+        if (!this->_coordinate_system)
+        {
+            return values;
+        }
+
+        return this->rotateWithCoordinateSystem(values, pos);
     }
 
 private:

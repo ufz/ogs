@@ -56,7 +56,13 @@ struct MeshNodeParameter final : public Parameter<T> {
         {
             cache[c] = _property.getComponent(*n, c);
         }
-        return cache;
+
+        if (!this->_coordinate_system)
+        {
+            return cache;
+        }
+
+        return this->rotateWithCoordinateSystem(cache, pos);
     }
 
     Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> getNodalValuesOnElement(

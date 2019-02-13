@@ -40,10 +40,15 @@ struct ConstantParameter final : public Parameter<T>
         return static_cast<int>(_values.size());
     }
 
-    std::vector<T> operator()(
-        double const /*t*/, SpatialPosition const& /*pos*/) const override
+    std::vector<T> operator()(double const /*t*/,
+                              SpatialPosition const& pos) const override
     {
-        return _values;
+        if (!this->_coordinate_system)
+        {
+            return _values;
+        }
+
+        return this->rotateWithCoordinateSystem(_values, pos);
     }
 
     Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> getNodalValuesOnElement(
