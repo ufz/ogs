@@ -11,9 +11,6 @@
 
 #pragma once
 
-#include <boost/math/constants/constants.hpp>
-
-#include "BaseLib/ConfigTree.h"
 #include "Pipe.h"
 
 namespace ProcessLib

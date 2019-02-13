@@ -11,6 +11,10 @@
 
 #include "BHECommonCoaxial.h"
 
+#include "Physics.h"
+#include "ThermalResistancesCoaxial.h"
+#include "ThermoMechanicalFlowProperties.h"
+
 namespace ProcessLib
 {
 namespace HeatTransportBHE
@@ -110,6 +114,27 @@ BHECommonCoaxial::calcThermalResistances(double const Nu_inner_pipe,
         R_advective.b_annulus + R_conductive.annulus + R.conductive_b;
 
     return getThermalResistances(R_gs, R_ff, R_fg);
+}
+
+void BHECommonCoaxial::updateHeatTransferCoefficients(double const flow_rate)
+{
+    auto const tm_flow_properties_annulus =
+        calculateThermoMechanicalFlowPropertiesAnnulus(_pipes.inner_pipe,
+                                                       _pipes.outer_pipe,
+                                                       borehole_geometry.length,
+                                                       refrigerant,
+                                                       flow_rate);
+
+    _flow_velocity_annulus = tm_flow_properties_annulus.velocity;
+
+    auto const tm_flow_properties = calculateThermoMechanicalFlowPropertiesPipe(
+        _pipes.inner_pipe, borehole_geometry.length, refrigerant, flow_rate);
+
+    _flow_velocity_inner = tm_flow_properties.velocity;
+
+    _thermal_resistances =
+        calcThermalResistances(tm_flow_properties.nusselt_number,
+                               tm_flow_properties_annulus.nusselt_number);
 }
 }  // namespace BHE
 }  // namespace HeatTransportBHE

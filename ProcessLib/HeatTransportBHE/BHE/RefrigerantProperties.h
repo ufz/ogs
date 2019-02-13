@@ -11,8 +11,6 @@
 
 #pragma once
 
-#include <boost/math/constants/constants.hpp>
-
 namespace BaseLib
 {
 class ConfigTree;

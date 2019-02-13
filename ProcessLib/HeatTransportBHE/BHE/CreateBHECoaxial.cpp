@@ -11,6 +11,9 @@
 
 #include "CreateBHECoaxial.h"
 #include "BaseLib/ConfigTree.h"
+
+#include "BHE_CXA.h"
+#include "BHE_CXC.h"
 #include "CreateFlowAndTemperatureControl.h"
 namespace ProcessLib
 {

@@ -10,8 +10,6 @@
 #pragma once
 
 #include "BHECommonCoaxial.h"
-#include "BHE_CXA.h"
-#include "BHE_CXC.h"
 
 namespace BaseLib
 {

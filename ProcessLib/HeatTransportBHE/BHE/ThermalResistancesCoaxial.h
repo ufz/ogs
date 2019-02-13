@@ -12,7 +12,6 @@
 #pragma once
 
 #include "GroutParameters.h"
-#include "Physics.h"
 #include "Pipe.h"
 #include "RefrigerantProperties.h"
 
@@ -24,9 +23,9 @@ namespace BHE
 {
 struct AdvectiveThermalResistanceCoaxial
 {
-    double inner_pipe_coaxial;
-    double a_annulus;
-    double b_annulus;
+    double const inner_pipe_coaxial;
+    double const a_annulus;
+    double const b_annulus;
 };
 
 struct PipeWallThermalResistanceCoaxial
@@ -50,7 +49,7 @@ inline AdvectiveThermalResistanceCoaxial calculateAdvectiveThermalResistance(
         coaxialPipesAnnulusDiameter(inner_pipe, outer_pipe);
 
     auto advective_thermal_resistance = [&](double Nu, double diameter_ratio) {
-        static constexpr double pi = boost::math::constants::pi<double>();
+        constexpr double pi = boost::math::constants::pi<double>();
         return 1.0 / (Nu * fluid.thermal_conductivity * pi) * diameter_ratio;
     };
     return {advective_thermal_resistance(Nu_inner_pipe, 1.),
@@ -72,7 +71,7 @@ calculateGroutAndGroutSoilExchangeThermalResistance(
     Pipe const& outer_pipe, GroutParameters const& grout_parameters,
     double const borehole_diameter)
 {
-    static constexpr double pi = boost::math::constants::pi<double>();
+    constexpr double pi = boost::math::constants::pi<double>();
 
     double const outer_pipe_outside_diameter = outer_pipe.outsideDiameter();
     double const chi =

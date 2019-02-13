@@ -11,8 +11,6 @@
 
 #pragma once
 
-#include "Pipe.h"
-
 namespace ProcessLib
 {
 namespace HeatTransportBHE
