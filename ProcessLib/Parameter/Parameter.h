@@ -15,11 +15,13 @@
 #include <vector>
 
 #include <Eigen/Dense>
+#include <boost/optional.hpp>
 
 #include "BaseLib/Error.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Node.h"
 
+#include "CoordinateSystem.h"
 #include "SpatialPosition.h"
 
 namespace BaseLib
@@ -54,6 +56,11 @@ struct ParameterBase
 
     virtual bool isTimeDependent() const = 0;
 
+    void setCoordinateSystem(CoordinateSystem const& coordinate_system)
+    {
+        _coordinate_system = coordinate_system;
+    }
+
     /// Parameters might depend on each other; this method allows to set up the
     /// dependencies between parameters after they have been constructed.
     virtual void initialize(
@@ -67,6 +74,8 @@ struct ParameterBase
     std::string const name;
 
 protected:
+    boost::optional<CoordinateSystem> _coordinate_system;
+
     /// A mesh on which the parameter is defined. Some parameters might be
     /// mesh-independent.
     MeshLib::Mesh const* _mesh;
