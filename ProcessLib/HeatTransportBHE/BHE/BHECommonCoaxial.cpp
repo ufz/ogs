@@ -84,13 +84,6 @@ BHECommonCoaxial::pipeAdvectionVectors() const
 }
 
 std::array<double, BHECommonCoaxial::number_of_unknowns>
-BHECommonCoaxial::crossSectionAreas() const
-{
-    auto S = cross_section_areas_coaxial();
-    return {S[0], S[1], S[2]};
-}
-
-std::array<double, BHECommonCoaxial::number_of_unknowns>
 BHECommonCoaxial::calcThermalResistances(double const Nu_inner_pipe,
                                          double const Nu_annulus_pipe)
 {

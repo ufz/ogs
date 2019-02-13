@@ -34,6 +34,11 @@ public:
         : BHECommon{borehole, refrigerant, grout, flowAndTemperatureControl},
           _pipes(pipes)
     {
+        cross_section_area_inner_pipe = _pipes.inner_pipe.area();
+        cross_section_area_annulus =
+            _pipes.outer_pipe.area() - _pipes.inner_pipe.outsideArea();
+        cross_section_area_grout =
+            borehole_geometry.area() - _pipes.outer_pipe.outsideArea();
     }
 
     static constexpr int number_of_unknowns = 3;
@@ -58,13 +63,9 @@ public:
 
     std::array<Eigen::Vector3d, number_of_unknowns> pipeAdvectionVectors()
         const;
+
     double cross_section_area_inner_pipe, cross_section_area_annulus,
         cross_section_area_grout;
-
-    std::array<double, number_of_unknowns> crossSectionAreas() const;
-
-    virtual std::array<double, number_of_unknowns> cross_section_areas_coaxial()
-        const = 0;
 
 protected:
     void updateHeatTransferCoefficients(double const flow_rate)
@@ -91,13 +92,6 @@ protected:
         _thermal_resistances =
             calcThermalResistances(tm_flow_properties.nusselt_number,
                                    tm_flow_properties_annulus.nusselt_number);
-
-        auto const cross_section_area = calculateCrossSectionAreasCoaxial(
-            _pipes.inner_pipe, _pipes.outer_pipe, borehole_geometry.area());
-
-        cross_section_area_inner_pipe = cross_section_area.inner;
-        cross_section_area_annulus = cross_section_area.annulus;
-        cross_section_area_grout = cross_section_area.grout;
     }
 
     PipeConfigurationCoaxial const _pipes;

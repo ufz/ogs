@@ -98,22 +98,6 @@ inline double nusseltNumberAnnulus(double const reynolds_number,
              0.14 * std::pow(diameter_ratio, 0.6)) /
             (1.0 + diameter_ratio));
 }
-
-struct CrossSectionAreasCoaxial
-{
-    double const inner;
-    double const annulus;
-    double const grout;
-};
-
-inline CrossSectionAreasCoaxial calculateCrossSectionAreasCoaxial(
-    Pipe const& inner_pipe, Pipe const& outer_pipe, double const borehole_area)
-{
-    double const inner = inner_pipe.area();
-    double const annulus = outer_pipe.area() - inner_pipe.outsideArea();
-    double const grout = borehole_area - outer_pipe.outsideArea();
-    return {inner, annulus, grout};
-}
 }  // end of namespace BHE
 }  // end of namespace HeatTransportBHE
 }  // end of namespace ProcessLib

@@ -107,9 +107,7 @@ public:
         }
     }
 
-public:
-    std::array<double, number_of_unknowns> cross_section_areas_coaxial()
-        const override
+    std::array<double, number_of_unknowns> crossSectionAreas() const
     {
         return {cross_section_area_annulus, cross_section_area_inner_pipe,
                 cross_section_area_grout};
