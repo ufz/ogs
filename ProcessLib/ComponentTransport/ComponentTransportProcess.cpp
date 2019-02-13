@@ -63,6 +63,8 @@ void ComponentTransportProcess::initializeConcreteProcess(
              pv_iter != _process_variables.end();
              ++pv_iter)
             transport_process_variables.push_back((*pv_iter)[0]);
+
+        _xs_previous_timestep.resize(_process_variables.size());
     }
 
     ProcessLib::createLocalAssemblers<LocalAssemblerData>(

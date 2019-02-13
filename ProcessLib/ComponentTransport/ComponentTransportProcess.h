@@ -147,7 +147,7 @@ private:
         _local_assemblers;
 
     /// Solutions of the previous time step
-    std::array<std::unique_ptr<GlobalVector>, 2> _xs_previous_timestep;
+    std::vector<std::unique_ptr<GlobalVector>> _xs_previous_timestep;
 
     std::unique_ptr<ProcessLib::SurfaceFluxData> _surfaceflux;
 };
