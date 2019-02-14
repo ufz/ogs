@@ -411,7 +411,7 @@ pipeline {
             dockerfile {
               filename 'Dockerfile.gcc.full'
               dir 'scripts/docker'
-              label 'envinf11w'
+              label 'envinf11w || envinf56'
               args '-v /home/jenkins/cache/ccache:/opt/ccache -v /home/jenkins/cache/conan/.conan:/opt/conan/.conan'
               additionalBuildArgs '--pull'
             }

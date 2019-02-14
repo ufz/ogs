@@ -87,6 +87,7 @@ add_custom_target(
     --output-on-failure --output-log Tests/ctest-large.log
     --tests-regex LARGE
     ${CONFIG_PARAMETER} --parallel ${NUM_CTEST_PROCESSORS}
+    --timeout 3600
     DEPENDS ogs vtkdiff ctest-large-cleanup
     USES_TERMINAL
 )
@@ -101,6 +102,7 @@ add_custom_target(
     --output-on-failure --output-log Tests/ctest-large.log
     --tests-regex LARGE
     ${CONFIG_PARAMETER}
+    --timeout 3600
     DEPENDS ogs vtkdiff ctest-large-cleanup
     USES_TERMINAL
 )
