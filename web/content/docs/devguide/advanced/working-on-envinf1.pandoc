@@ -13,6 +13,15 @@ weight = 1036
 
 Members of the Department Environmental Informatics of the Helmholtz Centre for Environmental Research - UFZ can use the `envinf1`-machine which is tightly connected to the Eve cluster system.
 
+::: {.note}
+On envinf1 the installed git module (2.10) is over 2 years old and we recommend using a newer module (especially when you have problems with fetching or checking out of Git LFS files):
+
+```bash
+ml use /global/apps/modulefiles
+ml git/2.20.1
+```
+:::
+
 ## Build OGS-6
 
 Load required modules by sourcing the environment script:
