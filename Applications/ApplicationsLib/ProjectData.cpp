@@ -42,7 +42,9 @@
 #include "MeshLib/IO/readMeshFromFile.h"
 
 #include "ProcessLib/Parameter/ConstantParameter.h"
+#include "ProcessLib/Parameter/CoordinateSystem.h"
 #include "ProcessLib/UncoupledProcessesTimeLoop.h"
+#include "ProcessLib/Utils/ProcessUtils.h"
 
 #ifdef OGS_BUILD_PROCESS_COMPONENTTRANSPORT
 #include "ProcessLib/ComponentTransport/CreateComponentTransportProcess.h"
@@ -193,6 +195,63 @@ std::vector<std::unique_ptr<MeshLib::Mesh>> readMeshes(
     }
     return meshes;
 }
+
+boost::optional<ProcessLib::CoordinateSystem> parseLocalCoordinateSystem(
+    boost::optional<BaseLib::ConfigTree> const& config,
+    std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters)
+{
+    if (!config)
+    {
+        return {};
+    }
+
+    DBUG("Reading coordinate system configuration.");
+
+    //
+    // Fetch the first basis vector; its length defines the dimension.
+    //
+    auto const& basis_vector_0 = ProcessLib::findParameter<double>(
+        *config,
+        //! \ogs_file_param_special{prj__local_coordinate_system__basis_vector_0}
+        "basis_vector_0", parameters, 0 /* any dimension */);
+    int const dimension = basis_vector_0.getNumberOfComponents();
+
+    // check dimension
+    if (dimension != 2 && dimension != 3)
+    {
+        OGS_FATAL(
+            "Basis vector parameter '%s' must have two or three components, "
+            "but it has %d.",
+            basis_vector_0.name.c_str(), dimension);
+    }
+
+    //
+    // Fetch the second basis vector, which must be of the same dimension as the
+    // first one.
+    //
+    auto const& basis_vector_1 = ProcessLib::findParameter<double>(
+        *config,
+        //! \ogs_file_param_special{prj__local_coordinate_system__basis_vector_1}
+        "basis_vector_1", parameters, dimension);
+
+    //
+    // For two dimensions, we are done; construct coordinate system;
+    //
+    if (dimension == 2)
+    {
+        return ProcessLib::CoordinateSystem{basis_vector_0, basis_vector_1};
+    }
+
+    //
+    // Parse the third vector, for three dimensions.
+    //
+    auto const& basis_vector_2 = ProcessLib::findParameter<double>(
+        *config,
+        //! \ogs_file_param_special{prj__local_coordinate_system__basis_vector_2}
+        "basis_vector_2", parameters, dimension);
+    return ProcessLib::CoordinateSystem{basis_vector_0, basis_vector_1,
+                                        basis_vector_2};
+}
 }  // namespace
 
 ProjectData::ProjectData() = default;
@@ -230,6 +289,11 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
 
     //! \ogs_file_param{prj__parameters}
     parseParameters(project_config.getConfigSubtree("parameters"));
+
+    //! \ogs_file_param{prj__local_coordinate_system}
+    auto const local_coordinate_system = parseLocalCoordinateSystem(
+        project_config.getConfigSubtreeOptional("local_coordinate_system"),
+        _parameters);
 
     //! \ogs_file_param{prj__process_variables}
     parseProcessVariables(project_config.getConfigSubtree("process_variables"));
