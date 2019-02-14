@@ -221,6 +221,19 @@ void HydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
         makeExtrapolator(1, getExtrapolator(), _local_assemblers,
                          &LocalAssemblerInterface::getIntPtEpsilonXY));
 
+    if (DisplacementDim == 3)
+    {
+        _secondary_variables.addSecondaryVariable(
+            "epsilon_xz",
+            makeExtrapolator(1, getExtrapolator(), _local_assemblers,
+                             &LocalAssemblerInterface::getIntPtEpsilonXZ));
+
+        _secondary_variables.addSecondaryVariable(
+            "epsilon_yz",
+            makeExtrapolator(1, getExtrapolator(), _local_assemblers,
+                             &LocalAssemblerInterface::getIntPtEpsilonYZ));
+    }
+    
     _secondary_variables.addSecondaryVariable(
         "velocity",
         makeExtrapolator(mesh.getDimension(), getExtrapolator(),
