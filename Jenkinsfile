@@ -222,7 +222,7 @@ pipeline {
         stage('Envinf1 (serial)') {
           when {
             beforeAgent true
-            expression { return stage_required.build || stage_required.full }
+            expression { return false }
           }
           agent { label "envinf1"}
           environment {
@@ -264,7 +264,7 @@ pipeline {
         stage('Envinf1 (parallel)') {
           when {
             beforeAgent true
-            expression { return stage_required.build || stage_required.full }
+            expression { return false }
           }
           agent { label "envinf1"}
           environment {
@@ -509,7 +509,7 @@ pipeline {
         stage('Deploy envinf1') {
           when {
             beforeAgent true
-            expression { return stage_required.build || stage_required.full }
+            expression { return false }
           }
           agent { label "envinf1"}
           steps {
@@ -536,7 +536,7 @@ pipeline {
         stage('Deploy envinf1 PETSc') {
           when {
             beforeAgent true
-            expression { return stage_required.build || stage_required.full }
+            expression { return false }
           }
           agent { label "envinf1"}
           steps {
