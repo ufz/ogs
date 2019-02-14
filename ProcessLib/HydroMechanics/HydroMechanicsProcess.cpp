@@ -233,7 +233,7 @@ void HydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
             makeExtrapolator(1, getExtrapolator(), _local_assemblers,
                              &LocalAssemblerInterface::getIntPtEpsilonYZ));
     }
-    
+
     _secondary_variables.addSecondaryVariable(
         "velocity",
         makeExtrapolator(mesh.getDimension(), getExtrapolator(),
