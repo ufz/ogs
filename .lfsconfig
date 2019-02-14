@@ -1,2 +1,2 @@
 [lfs]
-    url = https://gitlab.opengeosys.org/ogs/ogs.git/info/lfs
+    url = https://ogs.jfrog.io/ogs/api/lfs/ogs
