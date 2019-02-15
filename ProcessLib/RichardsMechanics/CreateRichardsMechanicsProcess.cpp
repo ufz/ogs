@@ -186,7 +186,7 @@ std::unique_ptr<Process> createRichardsMechanicsProcess(
         OGS_FATAL("Only one of two swelling parameters given."
             "Swelling only works if both 'swelling_pressure' and"
             "'swelling_exponent' are given!");
-    
+
     auto& temperature = findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__RICHARDS_MECHANICS__temperature}

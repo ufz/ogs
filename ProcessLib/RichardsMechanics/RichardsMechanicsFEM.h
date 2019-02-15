@@ -87,7 +87,7 @@ public:
 
     void setInitialConditionsConcrete(const std::vector<double>& local_x,
                                       double const t) override;
-        
+
     void preTimestepConcrete(std::vector<double> const& /*local_x*/,
                              double const /*t*/,
                              double const /*delta_t*/) override
@@ -116,7 +116,7 @@ public:
         // assumes N is stored contiguously in memory
         return Eigen::Map<const Eigen::RowVectorXd>(N_u.data(), N_u.size());
     }
-    
+
     std::vector<double> const& getIntPtDarcyVelocity(
         const double t,
         GlobalVector const& current_solution,

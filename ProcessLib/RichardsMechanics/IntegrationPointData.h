@@ -47,13 +47,13 @@ struct IntegrationPointData final
     typename ShapeMatrixTypeDisplacement::template MatrixType<
         DisplacementDim, NPoints * DisplacementDim>
         N_u_op;
-    
+
     // effective stress
     typename BMatricesType::KelvinVectorType sigma_eff, sigma_eff_prev;
-    
+
     // total strain
     typename BMatricesType::KelvinVectorType eps, eps_prev;
-    
+
     // mechanical strain
     typename BMatricesType::KelvinVectorType eps_m, eps_m_prev;
 
@@ -61,7 +61,7 @@ struct IntegrationPointData final
     std::unique_ptr<typename MaterialLib::Solids::MechanicsBase<
         DisplacementDim>::MaterialStateVariables>
         material_state_variables;
-    
+
     typename ShapeMatrixTypeDisplacement::NodalRowVectorType N_u;
     typename ShapeMatrixTypeDisplacement::GlobalDimNodalMatrixType dNdx_u;
 

@@ -151,7 +151,7 @@ boost::optional<const Parameter<ParameterDataType>&> findParameterOptional(
 
     if (name.is_initialized())
         return findParameter<ParameterDataType>(*name, parameters, num_components);
-    
+
     return boost::none;
 }
 }  // ProcessLib

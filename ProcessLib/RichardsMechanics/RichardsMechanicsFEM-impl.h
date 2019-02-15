@@ -170,7 +170,7 @@ void RichardsMechanicsLocalAssembler<
 
         auto& eps_m = ip_data.eps_m;
         auto const& eps_m_prev = ip_data.eps_m_prev;
-        
+
         auto& S_L = ip_data.saturation;
         auto& S_L_prev = ip_data.saturation_prev;
 
@@ -210,19 +210,19 @@ void RichardsMechanicsLocalAssembler<
         // displacement equation, displacement part
         //
         eps.noalias() = B * u;
-        
-        const bool has_swelling = 
-            _process_data.swelling_pressure.is_initialized() 
+
+        const bool has_swelling =
+            _process_data.swelling_pressure.is_initialized()
                 && _process_data.swelling_exponent.is_initialized();
         auto const max_swelling_pressure =  has_swelling?
             _process_data.swelling_pressure->operator()(t, x_position)[0]:0.0;
         auto const exponent_swell = has_swelling?
             _process_data.swelling_exponent->operator()(t, x_position)[0]:1.0;
-        
+
         auto const eps_vol_swell_increment = max_swelling_pressure/K_S
                     *(pow(S_L, exponent_swell)-pow(S_L_prev, exponent_swell));
 
-        eps_m.noalias() = has_swelling ? 
+        eps_m.noalias() = has_swelling ?
                 eps_m_prev + eps - eps_prev -
                 eps_vol_swell_increment/3.0 * Invariants::identity2:
                 eps;
@@ -267,7 +267,7 @@ void RichardsMechanicsLocalAssembler<
         K.template block<displacement_size, pressure_size>(displacement_index,
                                                            pressure_index)
             .noalias() -= B.transpose() * alpha * S_L * identity2 * N_p * w;
-        
+
         //
         // pressure equation, displacement part.
         //
@@ -398,7 +398,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         auto& eps_m = ip_data.eps_m;
         auto const& eps_m_prev = ip_data.eps_m_prev;
-        
+
         auto& S_L = ip_data.saturation;
         auto& S_L_prev = ip_data.saturation_prev;
         auto const& sigma_eff = ip_data.sigma_eff;
@@ -421,7 +421,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         S_L = _process_data.flow_material->getSaturation(
             material_id, t, x_position, -p_cap_ip, temperature, p_cap_ip);
-        
+
         double const dS_L_dp_cap =
             _process_data.flow_material->getSaturationDerivative(
                 material_id, t, x_position, -p_cap_ip, temperature, S_L);
@@ -448,18 +448,18 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             MathLib::KelvinVector::KelvinVectorDimensions<
                 DisplacementDim>::value>;
 
-        const bool has_swelling = 
-            _process_data.swelling_pressure.is_initialized() 
+        const bool has_swelling =
+            _process_data.swelling_pressure.is_initialized()
                 && _process_data.swelling_exponent.is_initialized();
         auto const max_swelling_pressure =  has_swelling?
             _process_data.swelling_pressure->operator()(t, x_position)[0]:0.0;
         auto const exponent_swell = has_swelling?
             _process_data.swelling_exponent->operator()(t, x_position)[0]:1.0;
-        
+
         auto const eps_vol_swell_increment = max_swelling_pressure/K_S
                     *(pow(S_L, exponent_swell)-pow(S_L_prev, exponent_swell));
 
-        eps_m.noalias() = has_swelling ? 
+        eps_m.noalias() = has_swelling ?
                 eps_m_prev + eps - eps_prev -
                 eps_vol_swell_increment/3.0 * Invariants::identity2:
                         eps;
@@ -496,7 +496,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 .noalias() -=
                 B.transpose() * d_eps_swell_dp_cap * C  *identity2 * N_p * w;
         } //end swelling contribution
-        
+
         local_Jac
             .template block<displacement_size, pressure_size>(
                 displacement_index, pressure_index)
@@ -819,7 +819,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             _process_data.flow_material->getMaterialID(_element.getID());
         SpatialPosition x_position;
         x_position.setElementID(_element.getID());
-        
+
         auto p_L =
         Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
             pressure_size> const>(local_x.data() + pressure_index,

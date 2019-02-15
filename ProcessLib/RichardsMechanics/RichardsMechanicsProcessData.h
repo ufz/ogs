@@ -97,16 +97,16 @@ struct RichardsMechanicsProcessData
     Parameter<double> const& solid_density;
     /// Solid's bulk modulus. A scalar quantity, Parameter<double>.
     Parameter<double> const& solid_bulk_modulus;
-    
+
     /// Maximum swelling pressure. A scalar quantity,
     /// An optional scalar quantity. Parameter<double>.
     boost::optional<Parameter<double> const&> swelling_pressure;
-    
+
     /// Exponent for the swelling pressure law.
     /// An optional scalar quantity
     /// Parameter<double>.
     boost::optional<Parameter<double> const&> swelling_exponent;
-    
+
     /// Reference temperature for material properties. A scalar quantity,
     /// Parameter<double>.
     Parameter<double> const& temperature;
