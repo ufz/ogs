@@ -57,7 +57,7 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
     for (std::string const& pv_name : range)
     {
         if (pv_name != "temperature_soil" &&
-            pv_name.find("temperature_BHE") != 0)
+            pv_name.find("temperature_BHE") == std::string::npos)
         {
             OGS_FATAL(
                 "Found a process variable name '%s'. It should be "
