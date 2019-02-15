@@ -74,6 +74,56 @@ struct ParameterBase
     std::string const name;
 
 protected:
+    std::vector<double> rotateWithCoordinateSystem(
+        std::vector<double> const& values, SpatialPosition const& pos) const
+    {
+        assert(!!_coordinate_system);  // It is checked before calling this
+                                       // function.
+
+        // Don't rotate isotropic/scalar values.
+        if (values.size() == 1)
+        {
+            return values;
+        }
+        if (values.size() == 2)
+        {
+            auto const result =
+                _coordinate_system->rotateDiagonalTensor<2>(values, pos);
+            return {result(0, 0), result(0, 1), result(1, 0), result(1, 1)};
+        }
+        if (values.size() == 3)
+        {
+            auto const result =
+                _coordinate_system->rotateDiagonalTensor<3>(values, pos);
+            return {
+                result(0, 0), result(0, 1), result(0, 2),
+                result(1, 0), result(1, 1), result(1, 2),
+                result(2, 0), result(2, 1), result(2, 2),
+            };
+        }
+        if (values.size() == 4)
+        {
+            auto const result =
+                _coordinate_system->rotateTensor<2>(values, pos);
+            return {result(0, 0), result(0, 1), result(1, 0), result(1, 1)};
+        }
+        if (values.size() == 9)
+        {
+            auto const result =
+                _coordinate_system->rotateTensor<3>(values, pos);
+            return {
+                result(0, 0), result(0, 1), result(0, 2),
+                result(1, 0), result(1, 1), result(1, 2),
+                result(2, 0), result(2, 1), result(2, 2),
+            };
+        }
+        OGS_FATAL(
+            "Coordinate transformation for a %d-component parameter is not "
+            "implemented.",
+            values.size());
+    }
+
+protected:
     boost::optional<CoordinateSystem> _coordinate_system;
 
     /// A mesh on which the parameter is defined. Some parameters might be
