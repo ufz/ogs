@@ -25,12 +25,20 @@ std::unique_ptr<ParameterBase> createConstantParameter(
     // then required tag 'values'.
     {
         //! \ogs_file_param{prj__parameters__parameter__Constant__value}
-        auto const value = config.getConfigParameterOptional<double>("value");
+        auto const value =
+            config.getConfigParameterOptional<std::vector<double>>("value");
 
         if (value)
         {
-            DBUG("Using value %g for constant parameter.", *value);
-            return std::make_unique<ConstantParameter<double>>(name, *value);
+            if (value->size() != 1)
+            {
+                OGS_FATAL(
+                    "Expected to read exactly one value, but %d were given.",
+                    value->size());
+            }
+            DBUG("Using value %g for constant parameter.", (*value)[0]);
+            return std::make_unique<ConstantParameter<double>>(name,
+                                                               (*value)[0]);
         }
     }
 

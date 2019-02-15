@@ -20,7 +20,6 @@
                 <youngs_modulus>E</youngs_modulus>
                 <poissons_ratio>nu</poissons_ratio>
             </constitutive_relation>
-            <intrinsic_permeability>k</intrinsic_permeability>
             <solid_bulk_modulus>K_SR</solid_bulk_modulus>
             <fluid_bulk_modulus>K_LR</fluid_bulk_modulus>
             <biot_coefficient>alpha</biot_coefficient>

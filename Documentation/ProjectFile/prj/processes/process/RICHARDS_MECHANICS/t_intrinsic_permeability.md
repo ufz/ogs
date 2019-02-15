@@ -1,1 +1,0 @@
-\copydoc ProcessLib::RichardsMechanics::RichardsMechanicsProcessData::intrinsic_permeability

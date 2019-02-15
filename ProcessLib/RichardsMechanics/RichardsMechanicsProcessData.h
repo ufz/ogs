@@ -42,7 +42,6 @@ struct RichardsMechanicsProcessData
                  std::unique_ptr<
                      MaterialLib::Solids::MechanicsBase<DisplacementDim>>>&&
             solid_materials_,
-        Parameter<double> const& intrinsic_permeability_,
         Parameter<double> const& fluid_bulk_modulus_,
         Parameter<double> const& biot_coefficient_,
         Parameter<double> const& solid_density_,
@@ -53,7 +52,6 @@ struct RichardsMechanicsProcessData
         : material_ids(material_ids_),
           flow_material{std::move(flow_material_)},
           solid_materials{std::move(solid_materials_)},
-          intrinsic_permeability(intrinsic_permeability_),
           fluid_bulk_modulus(fluid_bulk_modulus_),
           biot_coefficient(biot_coefficient_),
           solid_density(solid_density_),
@@ -83,8 +81,6 @@ struct RichardsMechanicsProcessData
         int,
         std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>>
         solid_materials;
-    /// Permeability of the solid. A scalar quantity, Parameter<double>.
-    Parameter<double> const& intrinsic_permeability;
     /// Fluid's bulk modulus. A scalar quantity, Parameter<double>.
     Parameter<double> const& fluid_bulk_modulus;
     /// Biot coefficient. A scalar quantity, Parameter<double>.
