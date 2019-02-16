@@ -53,8 +53,7 @@ calculateThermoMechanicalFlowPropertiesAnnulus(
         prandtlNumber(fluid.dynamic_viscosity, fluid.specific_heat_capacity,
                       fluid.thermal_conductivity);
 
-    double const inner_pipe_outside_diameter =
-        inner_pipe.diameter + 2. * inner_pipe.wall_thickness;
+    double const inner_pipe_outside_diameter = inner_pipe.outsideDiameter();
 
     // Velocity between the outer pipe and inner pipe.
     double const velocity =

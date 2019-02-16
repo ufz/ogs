@@ -13,6 +13,8 @@
 
 #include <boost/variant.hpp>
 #include "BHE_1U.h"
+#include "BHE_CXA.h"
+#include "BHE_CXC.h"
 
 namespace ProcessLib
 {
@@ -20,7 +22,7 @@ namespace HeatTransportBHE
 {
 namespace BHE
 {
-using BHETypes = boost::variant<BHE_1U>;
+using BHETypes = boost::variant<BHE_1U, BHE_CXA, BHE_CXC>;
 }  // end of namespace BHE
 }  // end of namespace HeatTransportBHE
 }  // end of namespace ProcessLib

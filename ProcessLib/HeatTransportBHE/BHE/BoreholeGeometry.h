@@ -13,6 +13,10 @@
 
 #include <boost/math/constants/constants.hpp>
 
+namespace BaseLib
+{
+class ConfigTree;
+}
 namespace ProcessLib
 {
 namespace HeatTransportBHE
@@ -39,6 +43,9 @@ struct BoreholeGeometry
         return pi * diameter * diameter / 4;
     }
 };
+
+BoreholeGeometry createBoreholeGeometry(BaseLib::ConfigTree const& config);
+
 }  // namespace BHE
 }  // namespace HeatTransportBHE
 }  // namespace ProcessLib

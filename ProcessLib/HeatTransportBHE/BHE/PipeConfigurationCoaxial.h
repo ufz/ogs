@@ -19,13 +19,10 @@ namespace HeatTransportBHE
 {
 namespace BHE
 {
-struct PipeConfiguration1U
+struct PipeConfigurationCoaxial
 {
-    Pipe const inlet;
-    Pipe const outlet;
-
-    /// Distance between pipes.
-    double const distance;
+    Pipe const inner_pipe;
+    Pipe const outer_pipe;
 
     double const longitudinal_dispersion_length;
 };

@@ -11,6 +11,10 @@
 
 #pragma once
 
+namespace BaseLib
+{
+class ConfigTree;
+}
 namespace ProcessLib
 {
 namespace HeatTransportBHE
@@ -43,6 +47,9 @@ struct GroutParameters
      */
     double const lambda_g;
 };
+
+GroutParameters createGroutParameters(BaseLib::ConfigTree const& config);
+
 }  // namespace BHE
 }  // namespace HeatTransportBHE
 }  // namespace ProcessLib

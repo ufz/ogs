@@ -20,6 +20,8 @@ namespace HeatTransportBHE
 {
 namespace BHE
 {
+constexpr int BHE_1U::number_of_grout_zones;
+
 BHE_1U::BHE_1U(BoreholeGeometry const& borehole,
                RefrigerantProperties const& refrigerant,
                GroutParameters const& grout,
@@ -180,7 +182,7 @@ void BHE_1U::updateHeatTransferCoefficients(double const flow_rate)
 std::array<double, BHE_1U::number_of_unknowns> BHE_1U::calcThermalResistances(
     double const Nu)
 {
-    static constexpr double pi = boost::math::constants::pi<double>();
+    constexpr double pi = boost::math::constants::pi<double>();
 
     double const& lambda_r = refrigerant.thermal_conductivity;
     double const& lambda_g = grout.lambda_g;

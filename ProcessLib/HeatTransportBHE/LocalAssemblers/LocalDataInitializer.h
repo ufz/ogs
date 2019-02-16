@@ -261,6 +261,20 @@ private:
                     e, boost::get<BHE::BHE_1U>(bhe),
                     std::forward<ConstructorArgs>(args)...}};
             }
+
+            if (bhe.type() == typeid(BHE::BHE_CXA))
+            {
+                return LADataIntfPtr{new LADataBHE<ShapeFunction, BHE::BHE_CXA>{
+                    e, boost::get<BHE::BHE_CXA>(bhe),
+                    std::forward<ConstructorArgs>(args)...}};
+            }
+
+            if (bhe.type() == typeid(BHE::BHE_CXC))
+            {
+                return LADataIntfPtr{new LADataBHE<ShapeFunction, BHE::BHE_CXC>{
+                    e, boost::get<BHE::BHE_CXC>(bhe),
+                    std::forward<ConstructorArgs>(args)...}};
+            }
             OGS_FATAL(
                 "Trying to create local assembler for an unknown BHE type.");
         };

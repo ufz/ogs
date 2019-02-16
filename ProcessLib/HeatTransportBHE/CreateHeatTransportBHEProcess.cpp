@@ -16,6 +16,7 @@
 
 #include "BHE/BHETypes.h"
 #include "BHE/CreateBHE1U.h"
+#include "BHE/CreateBHECoaxial.h"
 #include "HeatTransportBHEProcess.h"
 #include "HeatTransportBHEProcessData.h"
 
@@ -56,7 +57,7 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
     for (std::string const& pv_name : range)
     {
         if (pv_name != "temperature_soil" &&
-            pv_name.find("temperature_BHE") != 0)
+            pv_name.find("temperature_BHE") == std::string::npos)
         {
             OGS_FATAL(
                 "Found a process variable name '%s'. It should be "
@@ -184,6 +185,18 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
         if (bhe_type == "1U")
         {
             bhes.push_back(BHE::createBHE1U(bhe_config, curves));
+            continue;
+        }
+
+        if (bhe_type == "CXA")
+        {
+            bhes.push_back(BHE::createBHECoaxial<BHE::BHE_CXA>(bhe_config, curves));
+            continue;
+        }
+
+        if (bhe_type == "CXC")
+        {
+            bhes.push_back(BHE::createBHECoaxial<BHE::BHE_CXC>(bhe_config, curves));
             continue;
         }
         OGS_FATAL("Unknown BHE type '%s'.", bhe_type.c_str());

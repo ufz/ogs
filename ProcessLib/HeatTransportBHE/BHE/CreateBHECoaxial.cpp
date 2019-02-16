@@ -9,8 +9,11 @@
  *
  */
 
-#include "CreateBHE1U.h"
+#include "CreateBHECoaxial.h"
 #include "BaseLib/ConfigTree.h"
+
+#include "BHE_CXA.h"
+#include "BHE_CXC.h"
 #include "CreateFlowAndTemperatureControl.h"
 namespace ProcessLib
 {
@@ -18,7 +21,12 @@ namespace HeatTransportBHE
 {
 namespace BHE
 {
-BHE::BHE_1U createBHE1U(
+static std::tuple<BoreholeGeometry,
+                  RefrigerantProperties,
+                  GroutParameters,
+                  FlowAndTemperatureControl,
+                  PipeConfigurationCoaxial>
+parseBHECoaxialConfig(
     BaseLib::ConfigTree const& config,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
@@ -30,20 +38,17 @@ BHE::BHE_1U createBHE1U(
 
     //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__pipes}
     auto const& pipes_config = config.getConfigSubtree("pipes");
-    //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__pipes__inlet}
-    Pipe const inlet_pipe = createPipe(pipes_config.getConfigSubtree("inlet"));
-    Pipe const outlet_pipe =
-        //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__pipes__outlet}
-        createPipe(pipes_config.getConfigSubtree("outlet"));
-    const double pipe_distance =
-        //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__pipes__distance_between_pipes}
-        pipes_config.getConfigParameter<double>("distance_between_pipes");
+    //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__pipes__outer}
+    Pipe const outer_pipe = createPipe(pipes_config.getConfigSubtree("outer"));
+    Pipe const inner_pipe =
+        //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__pipes__inner}
+        createPipe(pipes_config.getConfigSubtree("inner"));
     const double pipe_longitudinal_dispersion_length =
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__pipes__longitudinal_dispersion_length}
         pipes_config.getConfigParameter<double>(
             "longitudinal_dispersion_length");
-    PipeConfiguration1U const pipes{inlet_pipe, outlet_pipe, pipe_distance,
-                                    pipe_longitudinal_dispersion_length};
+    PipeConfigurationCoaxial const pipes{inner_pipe, outer_pipe,
+                                         pipe_longitudinal_dispersion_length};
 
     //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__grout}
     auto const grout = createGroutParameters(config.getConfigSubtree("grout"));
@@ -61,6 +66,30 @@ BHE::BHE_1U createBHE1U(
     return {borehole_geometry, refrigerant, grout, flowAndTemperatureControl,
             pipes};
 }
+
+template <typename T_BHE>
+T_BHE createBHECoaxial(
+    BaseLib::ConfigTree const& config,
+    std::map<std::string,
+             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
+        curves)
+{
+    auto coaxial = parseBHECoaxialConfig(config, curves);
+    return {std::get<0>(coaxial), std::get<1>(coaxial), std::get<2>(coaxial),
+            std::get<3>(coaxial), std::get<4>(coaxial)};
+}
+
+template BHE_CXA createBHECoaxial<BHE_CXA>(
+    BaseLib::ConfigTree const& config,
+    std::map<std::string,
+             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
+        curves);
+
+template BHE_CXC createBHECoaxial<BHE_CXC>(
+    BaseLib::ConfigTree const& config,
+    std::map<std::string,
+             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
+        curves);
 }  // namespace BHE
 }  // namespace HeatTransportBHE
 }  // namespace ProcessLib

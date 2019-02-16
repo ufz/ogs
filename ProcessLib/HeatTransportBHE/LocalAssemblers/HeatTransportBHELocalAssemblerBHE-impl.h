@@ -118,7 +118,7 @@ void HeatTransportBHELocalAssemblerBHE<ShapeFunction, IntegrationMethod,
     auto const& pipe_heat_capacities = _bhe.pipeHeatCapacities();
     auto const& pipe_heat_conductions = _bhe.pipeHeatConductions();
     auto const& pipe_advection_vectors = _bhe.pipeAdvectionVectors();
-    auto const& cross_section_areas = _bhe.cross_section_areas;
+    auto const& cross_section_areas = _bhe.crossSectionAreas();
 
     // the mass and conductance matrix terms
     for (unsigned ip = 0; ip < n_integration_points; ip++)
@@ -185,7 +185,7 @@ void HeatTransportBHELocalAssemblerBHE<ShapeFunction, IntegrationMethod,
     local_K
         .template block<temperature_size, temperature_size>(temperature_index,
                                                             temperature_index)
-        .noalias() += 2.0 * _R_s_matrix;
+        .noalias() += _bhe.number_of_grout_zones * _R_s_matrix;
 
     // debugging
     // std::string sep =
