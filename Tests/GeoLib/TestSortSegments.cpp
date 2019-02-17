@@ -30,13 +30,6 @@ public:
     ac::gtest_reporter gtest_reporter;
 };
 
-#if !defined(_MSC_VER) || (_MSC_VER >= 2000)
-// Compilers of MVS below 2015 do not support unrestricted unions. The
-// unrestricted union is used by autocheck to handle test data. The autocheck
-// workaround for MVS compilers (below version 2015) contains a bug and in the
-// consequence the tests crashes. For this reason the tests are disabled under
-// this environments.
-
 // Use a chord of the unit circle as the original line segment. The line segment
 // will be partitioned into several sub segments. The set of subsegments are
 // given to the algorithm.
@@ -115,5 +108,3 @@ TEST_F(GeoLibSortLineSegments, SortSubSegments)
         ac::make_arbitrary(segment_generator),
         gtest_reporter);
 }
-
-#endif
