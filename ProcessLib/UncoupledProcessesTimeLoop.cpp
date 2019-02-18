@@ -680,6 +680,17 @@ UncoupledProcessesTimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
         }
     };
 
+    // Update solutions of previous time step at once
+    {
+        int process_id = 0;
+        for (auto& process_data : _per_process_data)
+        {
+            auto& x = *_process_solutions[process_id];
+            process_data->process.preTimestep(x, t, dt, process_id);
+            ++process_id;
+        }
+    }
+
     NumLib::NonlinearSolverStatus nonlinear_solver_status{true, 0};
     bool coupling_iteration_converged = true;
     for (int global_coupling_iteration = 0;
@@ -703,14 +714,6 @@ UncoupledProcessesTimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
             time_timestep_process.start();
 
             auto& x = *_process_solutions[process_id];
-            if (global_coupling_iteration == 0)
-            {
-                // Copy the solution of the previous time step to a vector that
-                // belongs to process. For some problems, both of the current
-                // solution and the solution of the previous time step are
-                // required for the coupling computation.
-                process_data->process.preTimestep(x, t, dt, process_id);
-            }
 
             CoupledSolutionsForStaggeredScheme coupled_solutions(
                 _solutions_of_coupled_processes, dt, process_id);
