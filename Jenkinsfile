@@ -2,6 +2,7 @@
 @Library('jenkins-pipeline@1.0.19') _
 
 def stage_required = [build: false, data: false, full: false, docker: false]
+def build_shared = 'ON'
 
 pipeline {
   agent none
@@ -33,6 +34,9 @@ pipeline {
 
         // ********* Check changesets for conditional stage execution **********
         script {
+          if (env.JOB_NAME == 'ufz/ogs/master') {
+            build_shared = 'OFF'
+          }
           if (currentBuild.number == 1) {
             stage_required.full = true
             return true
@@ -103,6 +107,7 @@ pipeline {
               sh 'git submodule sync'
               configure {
                 cmakeOptions =
+                  "-DBUILD_SHARED_LIBS=${build_shared} " +
                   '-DOGS_CPU_ARCHITECTURE=generic ' +
                   '-DOGS_USE_PYTHON=ON ' +
                   '-DOGS_BUILD_UTILS=ON ' +
@@ -169,6 +174,7 @@ pipeline {
               sh 'git submodule sync'
               configure {
                 cmakeOptions =
+                  "-DBUILD_SHARED_LIBS=${build_shared} " +
                   '-DOGS_CPU_ARCHITECTURE=generic ' +
                   '-DOGS_USE_PYTHON=ON ' +
                   '-DOGS_USE_PCH=OFF ' +     // see #1992
@@ -214,6 +220,7 @@ pipeline {
               sh 'git submodule sync'
               configure {
                 cmakeOptions =
+                  "-DBUILD_SHARED_LIBS=${build_shared} " +
                   '-DOGS_CPU_ARCHITECTURE=generic ' +
                   '-DOGS_COVERAGE=ON '
                 config = 'Debug'
@@ -337,6 +344,7 @@ pipeline {
               // CLI + GUI
               configure {
                 cmakeOptions =
+                  "-DBUILD_SHARED_LIBS=OFF " +
                   '-DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON ' +
                   '-DOGS_USE_PYTHON=ON ' +
                   '-DOGS_BUILD_GUI=ON ' +
@@ -384,6 +392,7 @@ pipeline {
               sh 'git submodule sync'
               configure {
                 cmakeOptions =
+                  "-DBUILD_SHARED_LIBS=${build_shared} " +
                   '-DOGS_CPU_ARCHITECTURE=core2 ' +
                   '-DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON ' +
                   '-DOGS_BUILD_GUI=ON ' +
@@ -436,7 +445,8 @@ pipeline {
               sh 'find $CONAN_USER_HOME -name "system_reqs.txt" -exec rm {} \\;'
               configure {
                 cmakeOptions =
-                  '-DBUILD_TESTING=OFF'
+                  "-DBUILD_SHARED_LIBS=${build_shared} " +
+                  '-DBUILD_TESTING=OFF ' +
                   '-DCMAKE_CXX_CLANG_TIDY=clang-tidy-5.0 '
               }
               build { log = 'build.log' }
@@ -530,6 +540,7 @@ pipeline {
               sh 'find $CONAN_USER_HOME -name "system_reqs.txt" -exec rm {} \\;'
               configure {
                 cmakeOptions =
+                  "-DBUILD_SHARED_LIBS=${build_shared} " +
                   '"-DCMAKE_CXX_INCLUDE_WHAT_YOU_USE=include-what-you-use;-Xiwyu;--mapping_file=../scripts/jenkins/iwyu-mappings.imp" ' +
                   '-DCMAKE_LINK_WHAT_YOU_USE=ON '
                 config = 'Release'
