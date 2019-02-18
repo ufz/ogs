@@ -56,6 +56,14 @@ The master-branch of the the UFZ repository as well as all pull requests on that
 
 ![](../Jenkins-PR-Overview.png)
 
+### Skip automatic testing
+
+If you want to skip the Jenkins automatic testing for a specific commit add `[ci skip]` to the commit message. This marks the Jenkins build as not built (shown as a grey icon). Example:
+
+```
+git commit -m "Added feature X [ci skip]"
+```
+
 ### Automatic testing for own repository
 
 This assumes you have your own clone/fork of OGS on GitHub.
