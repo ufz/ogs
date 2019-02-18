@@ -554,9 +554,83 @@ void GEOObjects::renameGeometry(std::string const& old_name,
     }
 }
 
-const GeoLib::GeoObject* GEOObjects::getGeoObject(const std::string &geo_name,
-                                                            GeoLib::GEOTYPE type,
-                                                            const std::string &geo_obj_name) const
+void GEOObjects::markPointsAsUsed(std::string const& geo_name,
+                                  std::vector<bool>& flags)
+{
+    GeoLib::PolylineVec const* const ply_obj(getPolylineVecObj(geo_name));
+    if (ply_obj)
+    {
+        std::vector<GeoLib::Polyline*> const& lines(*ply_obj->getVector());
+        for (auto line : lines)
+        {
+            std::size_t const n_pnts(line->getNumberOfPoints());
+            for (std::size_t i = 0; i < n_pnts; ++i)
+                flags[line->getPointID(i)] = false;
+        }
+    }
+
+    GeoLib::SurfaceVec const* const sfc_obj(getSurfaceVecObj(geo_name));
+    if (sfc_obj)
+    {
+        std::vector<GeoLib::Surface*> const& surfaces = *sfc_obj->getVector();
+        for (auto sfc : surfaces)
+        {
+            std::size_t const n_tri(sfc->getNumberOfTriangles());
+            for (std::size_t i = 0; i < n_tri; ++i)
+            {
+                GeoLib::Triangle const& t = *(*sfc)[i];
+                flags[t[0]] = false;
+                flags[t[1]] = false;
+                flags[t[2]] = false;
+            }
+        }
+    }
+}
+
+void GEOObjects::geoPointsToStation(std::string const& geo_name,
+                                    std::string const& stn_name,
+                                    bool only_unused_pnts)
+{
+    GeoLib::PointVec const* const pnt_obj(getPointVecObj(geo_name));
+    if (pnt_obj == nullptr)
+    {
+        ERR("Point vector %s not found.", geo_name.c_str());
+        return;
+    }
+    std::vector<GeoLib::Point*> const& pnts = *pnt_obj->getVector();
+    if (pnts.empty())
+    {
+        ERR("Point vector %s is empty.", geo_name.c_str());
+        return;
+    }
+    std::size_t const n_pnts(pnts.size());
+    std::vector<bool> flags(n_pnts, true);
+    if (only_unused_pnts)
+        markPointsAsUsed(geo_name, flags);
+
+    std::unique_ptr<std::vector<GeoLib::Point*>> stations(
+        new std::vector<GeoLib::Point*>);
+    for (std::size_t i = 0; i < n_pnts; ++i)
+    {
+        if (!flags[i])
+            continue;
+        std::string name = pnt_obj->getItemNameByID(i);
+        if (name.empty())
+            name = "Station " + std::to_string(i);
+        stations->push_back(new GeoLib::Station((*pnts[i])[0], (*pnts[i])[1],
+                                                (*pnts[i])[2], name));
+    }
+    std::string vec_name = geo_name + " stations";
+    if (!stations->empty())
+        addStationVec(std::move(stations), vec_name);
+    else
+        WARN("No points found to convert.");
+}
+
+const GeoLib::GeoObject* GEOObjects::getGeoObject(
+    const std::string& geo_name,
+    GeoLib::GEOTYPE type,
+    const std::string& geo_obj_name) const
 {
     GeoLib::GeoObject *geo_obj(nullptr);
     switch (type) {

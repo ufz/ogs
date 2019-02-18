@@ -139,6 +139,8 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
             this, SLOT(mapGeometry(const std::string&)));
     connect(geoTabWidget->treeView, SIGNAL(saveToFileRequested(QString, QString)),
             this, SLOT(writeGeometryToFile(QString, QString))); // save geometry to file
+    connect(geoTabWidget->treeView, SIGNAL(requestPointToStationConversion(std::string const&)), this,
+            SLOT(convertPointsToStations( std::string const&)));
     connect(geoTabWidget->treeView, SIGNAL(requestLineEditDialog(const std::string &)),
             this, SLOT(showLineEditDialog(const std::string &))); // open line edit dialog
     connect(geoTabWidget->treeView, SIGNAL(requestNameChangeDialog(const std::string&, const GeoLib::GEOTYPE, std::size_t)),
@@ -1095,6 +1097,12 @@ void MainWindow::showMeshAnalysisDialog()
 {
     auto* dlg = new MeshAnalysisDialog(this->_project.getMeshObjects());
     dlg->exec();
+}
+
+void MainWindow::convertPointsToStations(std::string const& geo_name)
+{
+    std::string const stn_name = geo_name + "Stations";
+    _project.getGEOObjects().geoPointsToStation(geo_name, stn_name);
 }
 
 void MainWindow::showLineEditDialog(const std::string &geoName)
