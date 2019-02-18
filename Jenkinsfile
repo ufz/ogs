@@ -19,6 +19,7 @@ pipeline {
     booleanParam(name: 'envinf1_parallel', defaultValue: true)
     booleanParam(name: 'win', defaultValue: true)
     booleanParam(name: 'mac', defaultValue: true)
+    booleanParam(name: 'clang_analyzer', defaultValue: true)
   }
   stages {
      // *************************** Git Check **********************************
@@ -414,6 +415,42 @@ pipeline {
             }
           }
         }
+        // ************************* Clang-Analyzer *********************************
+        stage('Clang-Analyzer') {
+          when {
+            beforeAgent true
+            expression { return params.clang_analyzer && (stage_required.build || stage_required.full) }
+          }
+          agent {
+            dockerfile {
+              filename 'Dockerfile.clang.full'
+              dir 'scripts/docker'
+              label 'docker'
+              args '-v /home/jenkins/cache/ccache:/opt/ccache -v /home/jenkins/cache/conan/.conan:/opt/conan/.conan'
+              additionalBuildArgs '--pull'
+            }
+          }
+          steps {
+            script {
+              sh 'git submodule sync'
+              sh 'find $CONAN_USER_HOME -name "system_reqs.txt" -exec rm {} \\;'
+              configure {
+                cmakeOptions =
+                  '-DBUILD_TESTING=OFF'
+                  '-DCMAKE_CXX_CLANG_TIDY=clang-tidy-5.0 '
+              }
+              build { log = 'build.log' }
+            }
+          }
+          post {
+            always {
+              recordIssues enabledForFailure: true, filters: [
+                excludeFile('.*\\.conan.*')],
+                tools: [clangTidy(name: 'Clang-Tidy', pattern: 'build/build.log')],
+                qualityGates: [[threshold: 59, type: 'TOTAL', unstable: true]]
+            }
+          }
+        }
       } // end parallel
     } // end stage Build
     stage('Master') {
@@ -483,7 +520,7 @@ pipeline {
               filename 'Dockerfile.clang.full'
               dir 'scripts/docker'
               label 'docker'
-              args '-v /home/jenkins/cache:/home/jenkins/cache -v /home/jenkins/cache/conan/.conan:/home/jenkins/.conan'
+              args '-v /home/jenkins/cache/ccache:/opt/ccache -v /home/jenkins/cache/conan/.conan:/opt/conan/.conan'
               additionalBuildArgs '--pull'
             }
           }
@@ -494,16 +531,10 @@ pipeline {
               configure {
                 cmakeOptions =
                   '"-DCMAKE_CXX_INCLUDE_WHAT_YOU_USE=include-what-you-use;-Xiwyu;--mapping_file=../scripts/jenkins/iwyu-mappings.imp" ' +
-                  '-DCMAKE_LINK_WHAT_YOU_USE=ON ' +
-                  '"-DCMAKE_CXX_CPPCHECK=cppcheck;--std=c++11;--language=c++;--suppress=syntaxError;--suppress=preprocessorErrorDirective:*/ThirdParty/*;--suppress=preprocessorErrorDirective:*conan*/package/*" ' +
-                  '-DCMAKE_CXX_CLANG_TIDY=clang-tidy-5.0 '
+                  '-DCMAKE_LINK_WHAT_YOU_USE=ON '
                 config = 'Release'
               }
-              try {
-                build { target = 'check-header' }
-                build { }
-              }
-              catch (Exception e) { }
+              build { target = 'check-header' }
             }
           }
         }
@@ -589,7 +620,7 @@ pipeline {
               filename 'Dockerfile.clang.minimal'
               dir 'scripts/docker'
               label 'docker'
-              args '-v /home/jenkins/cache:/home/jenkins/cache -v /home/jenkins/cache/conan/.conan:/home/jenkins/.conan'
+              args '-v /home/jenkins/cache/ccache:/opt/ccache -v /home/jenkins/cache/conan/.conan:/opt/conan/.conan'
               additionalBuildArgs '--pull'
             }
           }
