@@ -295,6 +295,11 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
         project_config.getConfigSubtreeOptional("local_coordinate_system"),
         _parameters);
 
+    for (auto& parameter : _parameters)
+    {
+        parameter->initialize(_parameters);
+    }
+
     //! \ogs_file_param{prj__process_variables}
     parseProcessVariables(project_config.getConfigSubtree("process_variables"));
 
@@ -377,10 +382,7 @@ void ProjectData::parseParameters(BaseLib::ConfigTree const& parameters_config)
         std::make_unique<ProcessLib::ConstantParameter<double>>(
             ProcessLib::DeactivatedSubdomain::zero_parameter_name, 0.0));
 
-    for (auto& parameter : _parameters)
-    {
-        parameter->initialize(_parameters);
-    }
+    return parameter_names_for_transformation;
 }
 
 void ProjectData::parseMedia(
