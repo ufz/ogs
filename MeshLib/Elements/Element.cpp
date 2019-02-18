@@ -161,7 +161,7 @@ void Element::setNode(unsigned idx, Node* node)
         _nodes[idx] = node;
 }
 
-unsigned Element::getNodeIndex(unsigned i) const
+std::size_t Element::getNodeIndex(unsigned i) const
 {
 #ifndef NDEBUG
     if (i<getNumberOfNodes())
@@ -169,7 +169,7 @@ unsigned Element::getNodeIndex(unsigned i) const
         return _nodes[i]->getID();
 #ifndef NDEBUG
     ERR("Error in MeshLib::Element::getNodeIndex() - Index does not exist.");
-    return std::numeric_limits<unsigned>::max();
+    return std::numeric_limits<std::size_t>::max();
 #endif
 }
 

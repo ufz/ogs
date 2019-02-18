@@ -50,6 +50,10 @@ Mesh::Mesh(std::string name,
     assert(_n_base_nodes <= _nodes.size());
     this->resetNodeIDs();
     this->resetElementIDs();
+    if (_n_base_nodes == 0)
+    {
+        recalculateMaxBaseNodeId();
+    }
     if ((_n_base_nodes == 0 && hasNonlinearElement()) || isNonlinear())
         this->checkNonlinearNodeIDs();
     this->setDimension();
@@ -119,18 +123,24 @@ void Mesh::addElement(Element* elem)
 
 void Mesh::resetNodeIDs()
 {
-    const std::size_t nNodes (this->_nodes.size());
-    for (unsigned i=0; i<nNodes; ++i)
-        _nodes[i]->setID(i);
-
-    if (_n_base_nodes==0)
+    const std::size_t nNodes(_nodes.size());
+    for (std::size_t i = 0; i < nNodes; ++i)
     {
-        unsigned max_basenode_ID = 0;
-        for (Element const* e : _elements)
-            for (unsigned i=0; i<e->getNumberOfBaseNodes(); i++)
-                max_basenode_ID = std::max(max_basenode_ID, e->getNodeIndex(i));
-        _n_base_nodes = max_basenode_ID + 1;
+        _nodes[i]->setID(i);
     }
+}
+
+void Mesh::recalculateMaxBaseNodeId()
+{
+    std::size_t max_basenode_ID = 0;
+    for (Element const* e : _elements)
+    {
+        for (std::size_t i = 0; i < e->getNumberOfBaseNodes(); i++)
+        {
+            max_basenode_ID = std::max(max_basenode_ID, e->getNodeIndex(i));
+        }
+    }
+    _n_base_nodes = max_basenode_ID + 1;
 }
 
 void Mesh::resetElementIDs()
