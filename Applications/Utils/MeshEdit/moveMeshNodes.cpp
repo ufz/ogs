@@ -21,43 +21,26 @@
 #include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
+#include "MeshLib/MeshEditing/ProjectPointOnMesh.h"
 
-int find_closest_point(MeshLib::Node const*const point, std::vector<MeshLib::Node*> const& nodes, double const& max_dist)
+bool setClosestPointElevation(MeshLib::Node& p,
+                              std::vector<MeshLib::Node*> const& nodes,
+                              double const& max_dist)
 {
-    const std::size_t nNodes (nodes.size());
-    double sqr_shortest_dist (max_dist*2);
-    int idx = (sqr_shortest_dist<max_dist) ? 0 : -1;
-    const MeshLib::Node p (*point);
-
-    for (unsigned i=0; i<nNodes; i++)
+    double sqr_shortest_dist (max_dist);
+    bool pnt_found (false);
+    for (MeshLib::Node* node : nodes)
     {
-        double sqr_dist ((p[0]-(*nodes[i])[0])*(p[0]-(*nodes[i])[0]));
-        if (sqr_dist < max_dist)
+        double sqr_dist = (p[0] - (*node)[0]) * (p[0] - (*node)[0]) +
+                          (p[1] - (*node)[1]) * (p[1] - (*node)[1]);
+        if (sqr_dist < sqr_shortest_dist)
         {
-            sqr_dist += ((p[1]-(*nodes[i])[1])*(p[1]-(*nodes[i])[1]));
-            if (sqr_dist < max_dist && sqr_dist < sqr_shortest_dist)
-            {
-                sqr_shortest_dist = sqr_dist;
-                idx = i;
-            }
+            sqr_shortest_dist = sqr_dist;
+            p[2] = (*node)[2];
+            pnt_found = true;
         }
     }
-
-    return idx;
-}
-
-bool containsPoint(MeshLib::Node const& pnt, MathLib::Point3d const& min,
-    MathLib::Point3d const& max)
-{
-    if (pnt[0] < min[0] || max[0] < pnt[0])
-    {
-        return false;
-    }
-    if (pnt[1] < min[1] || max[1] < pnt[1])
-    {
-        return false;
-    }
-    return true;
+    return pnt_found;
 }
 
 int main (int argc, char* argv[])
@@ -151,7 +134,7 @@ int main (int argc, char* argv[])
     // maps the elevation of mesh nodes according to a ground truth mesh whenever nodes exist within max_dist
     if (current_key == "-MESH")
     {
-        if (argc < 5)
+        if (argc < 4)
         {
             ERR("Missing parameter...");
             return EXIT_FAILURE;
@@ -166,26 +149,20 @@ int main (int argc, char* argv[])
             return EXIT_FAILURE;
         }
 
-        const std::vector<MeshLib::Node*>& ground_truth_nodes (ground_truth->getNodes());
-        GeoLib::AABB bounding_box(ground_truth_nodes.begin(), ground_truth_nodes.end());
-        MathLib::Point3d const& min(bounding_box.getMinPoint());
-        MathLib::Point3d const& max(bounding_box.getMaxPoint());
-
-        const std::size_t nNodes(mesh->getNumberOfNodes());
-        std::vector<MeshLib::Node*> nodes (mesh->getNodes());
-
-        for (std::size_t i=0; i<nNodes; i++)
+        std::vector<MeshLib::Node*> const& nodes = mesh->getNodes();
+        MeshLib::ProjectPointOnMesh::project(
+            *ground_truth, nodes, std::numeric_limits<double>::max());
+        std::size_t pnts_not_found (0);
+        for (MeshLib::Node* node : nodes)
         {
-            bool is_inside (containsPoint(*nodes[i], min, max));
-            if (is_inside)
+            if ((*node)[2] == std::numeric_limits<double>::max())
             {
-                int idx = find_closest_point(nodes[i], ground_truth_nodes, max_dist);
-                if (idx >= 0)
-                {
-                    (*nodes[i])[2] = (*(ground_truth_nodes[idx]))[2] - offset;
-                }
+                if (!setClosestPointElevation(*node, ground_truth->getNodes(), max_dist))
+                    pnts_not_found++;
             }
         }
+        if (pnts_not_found > 0)
+            WARN ("For %d points no corresponding elevation found.", pnts_not_found);
     }
 
     // a simple lowpass filter for the elevation of mesh nodes using the elevation of each node

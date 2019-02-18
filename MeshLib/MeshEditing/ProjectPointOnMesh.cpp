@@ -70,6 +70,28 @@ double getElevation(MeshLib::Element const& element,
     return node[2] - scalarProduct(n, v) * n[2];
 }
 
+void project(MeshLib::Mesh const& mesh,
+             std::vector<MeshLib::Node*> const& nodes,
+             double const default_value = 0)
+{
+    MeshLib::MeshElementGrid const grid(mesh);
+    double const max_edge(mesh.getMaxEdgeLength());
+
+    for (MeshLib::Node* node : nodes)
+    {
+        MathLib::Point3d min_vol{{(*node)[0] - max_edge, (*node)[1] - max_edge,
+                                  -std::numeric_limits<double>::max()}};
+        MathLib::Point3d max_vol{{(*node)[0] + max_edge, (*node)[1] + max_edge,
+                                  std::numeric_limits<double>::max()}};
+        std::vector<const MeshLib::Element*> const& elems =
+            grid.getElementsInVolume(min_vol, max_vol);
+        auto const* element = getProjectedElement(elems, *node);
+        // centre of the pixel is located within a mesh element
+        (*node)[2] =
+            (element != nullptr) ? getElevation(*element, *node) : default_value;
+    }
+}
+
 }  // namespace ProjectPointOnMesh
 
 }  // end namespace MeshLib

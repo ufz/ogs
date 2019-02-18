@@ -29,6 +29,12 @@ namespace ProjectPointOnMesh
 double getElevation(MeshLib::Element const& element,
                     MeshLib::Node const& node);
 
+/// Projects a vector of nodes onto the given mesh. Nodes for which no
+/// corresponding element can be found are assigned a default elevation.
+void project(MeshLib::Mesh const& mesh,
+             std::vector<MeshLib::Node*> const& nodes,
+             double const default_value = 0);
+
 }  // namespace ProjectPointOnMesh
 
 }  // end namespace MeshLib
