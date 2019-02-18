@@ -1,6 +1,6 @@
 FROM ubuntu:17.10
 
-# Generated with https://github.com/ufz/ogs-container-maker/commit/0930f12
+# Generated with https://github.com/ufz/ogs-container-maker/commit/9f130d9
 
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -95,6 +95,11 @@ ENV CCACHE_DIR=/opt/cache \
     CCACHE_SLOPPINESS=pch_defines,time_macros
 LABEL ccache.dir=/opt/cache \
     ccache.size=15G
+
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        sudo && \
+    rm -rf /var/lib/apt/lists/*
 
 # Jenkins node
 RUN groupadd --gid 1001 jenkins && \
