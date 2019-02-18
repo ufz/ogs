@@ -11,6 +11,15 @@ pipeline {
     buildDiscarder(logRotator(numToKeepStr: '30', artifactNumToKeepStr: '10'))
     timeout(time: 6, unit: 'HOURS')
   }
+  parameters {
+    booleanParam(name: 'docker_conan', defaultValue: true)
+    booleanParam(name: 'docker_conan_debug', defaultValue: true)
+    booleanParam(name: 'docker_conan_gui', defaultValue: true)
+    booleanParam(name: 'envinf1_serial', defaultValue: true)
+    booleanParam(name: 'envinf1_parallel', defaultValue: true)
+    booleanParam(name: 'win', defaultValue: true)
+    booleanParam(name: 'mac', defaultValue: true)
+  }
   stages {
      // *************************** Git Check **********************************
     stage('Git Check') {
@@ -74,7 +83,7 @@ pipeline {
         stage('Docker-Conan') {
           when {
             beforeAgent true
-            expression { return stage_required.build || stage_required.full }
+            expression { return params.docker_conan && (stage_required.build || stage_required.full) }
           }
           agent {
             dockerfile {
@@ -142,7 +151,7 @@ pipeline {
         stage('Docker-Conan-GUI') {
           when {
             beforeAgent true
-            expression { return stage_required.build || stage_required.full }
+            expression { return params.docker_conan_gui && (stage_required.build || stage_required.full) }
           }
           agent {
             dockerfile {
@@ -188,7 +197,7 @@ pipeline {
         stage('Docker-Conan-Debug') {
           when {
             beforeAgent true
-            expression { return stage_required.build || stage_required.full }
+            expression { return params.docker_conan_debug && (stage_required.build || stage_required.full) }
           }
           agent {
             dockerfile {
@@ -311,7 +320,7 @@ pipeline {
         stage('Win') {
           when {
             beforeAgent true
-            expression { return stage_required.build || stage_required.full }
+            expression { return params.win && (stage_required.build || stage_required.full) }
           }
           agent {label 'win && conan' }
           environment {
@@ -363,7 +372,7 @@ pipeline {
         stage('Mac') {
           when {
             beforeAgent true
-            expression { return stage_required.build || stage_required.full }
+            expression { return params.mac && (stage_required.build || stage_required.full) }
           }
           agent { label "mac"}
           environment {
