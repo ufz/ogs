@@ -30,6 +30,7 @@
 #include "MathLib/GeometricBasics.h"
 
 extern double orient2d(double *, double *, double *);
+extern double orient2dfast(double*, double*, double*);
 
 namespace ExactPredicates
 {
@@ -40,6 +41,15 @@ double getOrientation2d(MathLib::Point3d const& a,
         const_cast<double*>(b.getCoords()),
         const_cast<double*>(c.getCoords()));
 }
+
+double getOrientation2dFast(MathLib::Point3d const& a,
+                            MathLib::Point3d const& b,
+                            MathLib::Point3d const& c)
+{
+    return orient2dfast(const_cast<double*>(a.getCoords()),
+                        const_cast<double*>(b.getCoords()),
+                        const_cast<double*>(c.getCoords()));
+}
 }
 
 namespace GeoLib
@@ -49,6 +59,19 @@ Orientation getOrientation(MathLib::Point3d const& p0,
                            MathLib::Point3d const& p2)
 {
     double const orientation = ExactPredicates::getOrientation2d(p0, p1, p2);
+    if (orientation > 0)
+        return CCW;
+    if (orientation < 0)
+        return CW;
+    return COLLINEAR;
+}
+
+Orientation getOrientationFast(MathLib::Point3d const& p0,
+                               MathLib::Point3d const& p1,
+                               MathLib::Point3d const& p2)
+{
+    double const orientation =
+        ExactPredicates::getOrientation2dFast(p0, p1, p2);
     if (orientation > 0)
         return CCW;
     if (orientation < 0)

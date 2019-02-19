@@ -39,13 +39,21 @@ enum Orientation
 };
 
 /**
- * Computes the orientation of the three 2D-Points.
+ * Computes the orientation of the three 2D-Points. This is a robust method.
  * \returns CW (clockwise), CCW (counterclockwise) or COLLINEAR (points are on a
  * line)
  */
 Orientation getOrientation(MathLib::Point3d const& p0,
                            MathLib::Point3d const& p1,
                            MathLib::Point3d const& p2);
+/**
+ * Computes the orientation of the three 2D-Points. This is a non-robust method.
+ * \returns CW (clockwise), CCW (counterclockwise) or COLLINEAR (points are on a
+ * line)
+ */
+Orientation getOrientationFast(MathLib::Point3d const& p0,
+                               MathLib::Point3d const& p1,
+                               MathLib::Point3d const& p2);
 /**
  * compute a supporting plane (represented by plane_normal and the value d) for the polygon
  * Let \f$n\f$ be the plane normal and \f$d\f$ a parameter. Then for all points \f$p \in R^3\f$ of the plane
