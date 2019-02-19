@@ -37,20 +37,13 @@ enum Orientation
 };
 
 /**
- * computes the orientation of the three 2D-Points given by their coordinates
- * p0_x, p0_y, p1_x, p1_y, p2_x and p2_y
- * \returns CW (clockwise), CCW (counterclockwise) or COLLINEAR (points are on a line)
+ * Computes the orientation of the three 2D-Points.
+ * \returns CW (clockwise), CCW (counterclockwise) or COLLINEAR (points are on a
+ * line)
  */
-Orientation getOrientation (const double& p0_x, const double& p0_y,
-    const double& p1_x, const double& p1_y,
-    const double& p2_x, const double& p2_y);
-
-/**
- * wrapper for getOrientation ()
- */
-Orientation getOrientation (const GeoLib::Point* p0,
-                            const GeoLib::Point* p1,
-                            const GeoLib::Point* p2);
+Orientation getOrientation(const GeoLib::Point* p0,
+                           const GeoLib::Point* p1,
+                           const GeoLib::Point* p2);
 
 /**
  * compute a supporting plane (represented by plane_normal and the value d) for the polygon
