@@ -13,8 +13,7 @@
 
 #include <tclap/CmdLine.h>
 
-#include <Applications/ApplicationsLib/LogogSetup.h>
-
+#include "Applications/ApplicationsLib/LogogSetup.h"
 #include "BaseLib/BuildInfo.h"
 #include "GeoLib/AABB.h"
 #include "GeoLib/AnalyticalGeometry.h"
@@ -25,10 +24,10 @@
 #include "MeshLib/MeshSearch/MeshElementGrid.h"
 #include "MeshLib/Node.h"
 
-/// Returns the index of the element the given node is located in when projected
-/// onto a mesh.
-std::size_t getProjectedElementIndex(
-    std::vector<const MeshLib::Element*> const& elems,
+/// Returns the element in which the given node is located when projected onto a
+/// mesh, or nullptr if no such element was found.
+static MeshLib::Element const* getProjectedElement(
+    std::vector<const MeshLib::Element*> const& elements,
     MeshLib::Node const& node)
 {
     auto is_right_of = [&node](MeshLib::Node const& a, MeshLib::Node const& b) {
@@ -36,59 +35,44 @@ std::size_t getProjectedElementIndex(
                GeoLib::Orientation::CW;
     };
 
-    std::size_t const n_elems = elems.size();
-    for (std::size_t i = 0; i < n_elems; ++i)
+    for (auto const* e : elements)
     {
-        if (elems[i]->getGeomType() == MeshLib::MeshElemType::LINE)
+        auto const* nodes = e->getNodes();
+        if (e->getGeomType() == MeshLib::MeshElemType::TRIANGLE)
         {
-            continue;
-        }
-        auto const& a = *elems[i]->getNode(0);
-        auto const& b = *elems[i]->getNode(1);
-        if (is_right_of(a, b))
-        {
-            continue;
-        }
-        auto const& c = *elems[i]->getNode(2);
-        if (is_right_of(b, c))
-        {
-            continue;
-        }
-        if (elems[i]->getGeomType() == MeshLib::MeshElemType::TRIANGLE)
-        {
-            if (is_right_of(c, a))
+            auto const& a = *nodes[0];
+            auto const& b = *nodes[1];
+            auto const& c = *nodes[2];
+            if (!is_right_of(a, b) && !is_right_of(b, c) && !is_right_of(c, a))
             {
-                continue;
+                return e;
             }
         }
-        if (elems[i]->getGeomType() == MeshLib::MeshElemType::QUAD)
+        else if (e->getGeomType() == MeshLib::MeshElemType::QUAD)
         {
-            auto const& d = *elems[i]->getNode(3);
-            if (is_right_of(c, d))
+            auto const& a = *nodes[0];
+            auto const& b = *nodes[1];
+            auto const& c = *nodes[2];
+            auto const& d = *nodes[3];
+            if (!is_right_of(a, b) && !is_right_of(b, c) &&
+                !is_right_of(c, d) && !is_right_of(d, a))
             {
-                continue;
-            }
-            if (is_right_of(d, a))
-            {
-                continue;
+                return e;
             }
         }
-        return elems[i]->getID();
     }
-    return std::numeric_limits<size_t>::max();
+    return nullptr;
 }
 
 /// Returns the z-coordinate of a point projected onto the plane defined by a
 /// mesh element.
-double getElevation(MeshLib::Element const& elem, MeshLib::Node const& node)
+static double getElevation(MeshLib::Element const& element,
+                           MeshLib::Node const& node)
 {
+    MathLib::Vector3 const v = node - *element.getNode(0);
     MathLib::Vector3 const n =
-        MeshLib::FaceRule::getSurfaceNormal(&elem).getNormalizedVector();
-    MeshLib::Node const& orig = *elem.getNode(0);
-    MathLib::Point3d const v{
-        {node[0] - orig[0], node[1] - orig[1], node[2] - orig[2]}};
-    double const dist = n[0] * v[0] + n[1] * v[1] + n[2] * v[2];
-    return node[2] - dist * n[2];
+        MeshLib::FaceRule::getSurfaceNormal(&element).getNormalizedVector();
+    return node[2] - scalarProduct(n, v) * n[2];
 }
 
 int main(int argc, char* argv[])
@@ -143,17 +127,18 @@ int main(int argc, char* argv[])
     GeoLib::AABB const bounding_box(nodes_vec.begin(), nodes_vec.end());
     MathLib::Point3d const& min(bounding_box.getMinPoint());
     MathLib::Point3d const& max(bounding_box.getMaxPoint());
-    std::size_t const n_cols =
+    auto const n_cols =
         static_cast<std::size_t>(std::ceil((max[0] - min[0]) / cellsize));
-    std::size_t const n_rows =
+    auto const n_rows =
         static_cast<std::size_t>(std::ceil((max[1] - min[1]) / cellsize));
+    double const half_cell = cellsize / 2.0;
 
     // raster header
     std::ofstream out(output_arg.getValue());
     out << "ncols         " << n_cols + 1 << "\n";
     out << "nrows         " << n_rows + 1 << "\n";
-    out << std::fixed << "xllcorner     " << (min[0] - cellsize / 2.0) << "\n";
-    out << std::fixed << "yllcorner     " << (min[1] - cellsize / 2.0) << "\n";
+    out << std::fixed << "xllcorner     " << (min[0] - half_cell) << "\n";
+    out << std::fixed << "yllcorner     " << (min[1] - half_cell) << "\n";
     out << std::fixed << "cellsize      " << cellsize << "\n";
     out << "NODATA_value  "
         << "-9999\n";
@@ -162,26 +147,26 @@ int main(int argc, char* argv[])
     MeshLib::MeshElementGrid const grid(*mesh);
     double const max_edge(mesh->getMaxEdgeLength() + cellsize);
 
-    // pixel values
-    double x = min[0];
-    double y = max[1];
-    double const half_cell = cellsize / 2.0;
     for (std::size_t j = 0; j <= n_rows; ++j)
     {
+        double const y = max[1] - j * cellsize;
         for (std::size_t i = 0; i <= n_cols; ++i)
         {
+            // pixel values
+            double const x = min[0] + i * cellsize;
             MeshLib::Node const node(x, y, 0);
             MathLib::Point3d min_vol{{x - max_edge, y - max_edge,
                                       -std::numeric_limits<double>::max()}};
             MathLib::Point3d max_vol{{x + max_edge, y + max_edge,
                                       std::numeric_limits<double>::max()}};
-            std::vector<const MeshLib::Element*> const elems =
+            std::vector<const MeshLib::Element*> const& elems =
                 grid.getElementsInVolume(min_vol, max_vol);
-            std::size_t const elem_idx = getProjectedElementIndex(elems, node);
+            auto const* element = getProjectedElement(elems, node);
             // centre of the pixel is located within a mesh element
-            if (elem_idx != std::numeric_limits<std::size_t>::max())
-                out << getElevation(*(mesh->getElement(elem_idx)), node) << " ";
-            // centre of the pixel isn't located within a mesh element
+            if (element != nullptr)
+            {
+                out << getElevation(*element, node) << " ";
+            }
             else
             {
                 std::array<double, 4> const x_off{
@@ -190,31 +175,31 @@ int main(int argc, char* argv[])
                     {-half_cell, -half_cell, half_cell, half_cell}};
                 double sum(0);
                 std::size_t nonzero_count(0);
-                // test for all of the pixel's corner if any are within an
+                // test all of the pixel's corners if there are any within an
                 // element
                 for (std::size_t i = 0; i < 4; ++i)
                 {
                     MeshLib::Node const node(x + x_off[i], y + y_off[i], 0);
-                    std::size_t const corner_idx =
-                        getProjectedElementIndex(elems, node);
-                    if (corner_idx != std::numeric_limits<std::size_t>::max())
+                    auto const* corner_element =
+                        getProjectedElement(elems, node);
+                    if (corner_element != nullptr)
                     {
-                        sum +=
-                            getElevation(*(mesh->getElement(corner_idx)), node);
+                        sum += getElevation(*corner_element, node);
                         nonzero_count++;
                     }
                 }
-                // calculate pixel value as average of corner values
                 if (nonzero_count > 0)
+                {
+                    // calculate pixel value as average of corner values
                     out << sum / nonzero_count << " ";
-                // if none of the corners give a value, set pixel to NODATA
+                }
                 else
+                {
+                    // if none of the corners give a value, set pixel to NODATA
                     out << "-9999 ";
+                }
             }
-            x += cellsize;
         }
-        x = min[0];
-        y -= cellsize;
         out << "\n";
     }
     out.close();
