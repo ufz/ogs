@@ -194,3 +194,12 @@ AddTest(
     EXECUTABLE_ARGS -p -v TaskB_mesh.vtu
     REQUIREMENTS NOT OGS_USE_MPI
 )
+
+AddTest(
+    NAME mesh2raster_test
+    PATH MeshGeoToolsLib/Hamburg
+    EXECUTABLE Mesh2Raster
+    EXECUTABLE_ARGS -i 00-surface.vtu -o ${Data_BINARY_DIR}/MeshGeoToolsLib/Hamburg/00-raster.asc -c 25
+    TESTER diff
+    DIFF_DATA 00-raster.asc
+)
