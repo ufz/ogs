@@ -33,7 +33,6 @@ struct HTMaterialProperties final
             fluid_properties_,
         std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>&&
             media_map_,
-        bool const has_fluid_thermal_dispersivity_,
         ParameterLib::Parameter<double> const& specific_heat_capacity_solid_,
         ParameterLib::Parameter<double> const& thermal_conductivity_solid_,
         bool const has_fluid_thermal_expansion_,
@@ -46,7 +45,6 @@ struct HTMaterialProperties final
           fluid_properties(std::move(fluid_properties_)),
           media_map(std::move(media_map_)),
           specific_heat_capacity_solid(specific_heat_capacity_solid_),
-          has_fluid_thermal_dispersivity(has_fluid_thermal_dispersivity_),
           thermal_conductivity_solid(thermal_conductivity_solid_),
           has_fluid_thermal_expansion(has_fluid_thermal_expansion_),
           solid_thermal_expansion(solid_thermal_expansion_),
@@ -67,7 +65,6 @@ struct HTMaterialProperties final
     std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>
         media_map;
     ParameterLib::Parameter<double> const& specific_heat_capacity_solid;
-    bool const has_fluid_thermal_dispersivity;
     ParameterLib::Parameter<double> const& thermal_conductivity_solid;
 
     bool const has_fluid_thermal_expansion;

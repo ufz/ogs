@@ -116,36 +116,45 @@ public:
         ParameterLib::SpatialPosition pos;
         pos.setElementID(this->_element.getID());
 
-        MaterialLib::Fluid::FluidProperty::ArrayType vars;
+        MaterialPropertyLib::VariableArray vars;
 
         // local_x contains the local temperature and pressure values
+        double T_int_pt = 0.0;
+        double p_int_pt = 0.0;
         NumLib::shapeFunctionInterpolate(
-            local_x, shape_matrices.N,
-            vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::T)],
-            vars[static_cast<int>(
-                MaterialLib::Fluid::PropertyVariableType::p)]);
+            local_x, shape_matrices.N, T_int_pt, p_int_pt);
+
+        vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
+            T_int_pt;
+        vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
+            p_int_pt;
 
         auto const K =
             this->_material_properties.porous_media_properties
                 .getIntrinsicPermeability(t, pos)
                 .getValue(t, pos, 0.0,
-                          vars[static_cast<int>(
-                              MaterialLib::Fluid::PropertyVariableType::T)]);
+                          boost::get<double>(vars[static_cast<int>(
+                              MaterialPropertyLib::Variable::temperature)]));
 
-        auto const mu = this->_material_properties.fluid_properties->getValue(
-            MaterialLib::Fluid::FluidPropertyType::Viscosity, vars);
+        auto const& medium =
+            *_material_properties.media_map->getMedium(_element.getID());
+        auto const& liquid_phase = medium.phase("AqueousLiquid");
+        auto const mu =
+            liquid_phase.property(MaterialPropertyLib::PropertyType::viscosity)
+                .template value<double>(vars);
         GlobalDimMatrixType const K_over_mu = K / mu;
 
         auto const p_nodal_values = Eigen::Map<const NodalVectorType>(
-            &local_x[local_x.size()/2], ShapeFunction::NPOINTS);
+            &local_x[local_x.size() / 2], ShapeFunction::NPOINTS);
         GlobalDimVectorType q =
             -K_over_mu * shape_matrices.dNdx * p_nodal_values;
 
         if (this->_material_properties.has_gravity)
         {
             auto const rho_w =
-                this->_material_properties.fluid_properties->getValue(
-                    MaterialLib::Fluid::FluidPropertyType::Density, vars);
+                liquid_phase
+                    .property(MaterialPropertyLib::PropertyType::density)
+                    .template value<double>(vars);
             auto const b = this->_material_properties.specific_body_force;
             q += K_over_mu * rho_w * b;
         }
@@ -203,11 +212,6 @@ protected:
             thermal_conductivity_solid * (1 - porosity) +
             thermal_conductivity_fluid * porosity;
 
-        if (!_material_properties.has_fluid_thermal_dispersivity)
-        {
-            return thermal_conductivity * I;
-        }
-
         auto const thermal_dispersivity_longitudinal =
             medium
                 .property(MaterialPropertyLib::PropertyType::
@@ -250,10 +254,14 @@ protected:
         ParameterLib::SpatialPosition pos;
         pos.setElementID(_element.getID());
 
-        MaterialLib::Fluid::FluidProperty::ArrayType vars;
+        MaterialPropertyLib::VariableArray vars;
 
         auto const p_nodal_values = Eigen::Map<const NodalVectorType>(
             &local_p[0], ShapeFunction::NPOINTS);
+
+        auto const& medium =
+            *_material_properties.media_map->getMedium(_element.getID());
+        auto const& liquid_phase = medium.phase("AqueousLiquid");
 
         for (unsigned ip = 0; ip < n_integration_points; ++ip)
         {
@@ -267,17 +275,20 @@ protected:
             double p_int_pt = 0.0;
             NumLib::shapeFunctionInterpolate(local_p, N, p_int_pt);
             NumLib::shapeFunctionInterpolate(local_T, N, T_int_pt);
+
+            vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
+                T_int_pt;
             vars[static_cast<int>(
-                MaterialLib::Fluid::PropertyVariableType::T)] = T_int_pt;
-            vars[static_cast<int>(
-                MaterialLib::Fluid::PropertyVariableType::p)] = p_int_pt;
+                MaterialPropertyLib::Variable::phase_pressure)] = p_int_pt;
 
             auto const K = _material_properties.porous_media_properties
                                .getIntrinsicPermeability(t, pos)
                                .getValue(t, pos, 0.0, T_int_pt);
 
-            auto const mu = _material_properties.fluid_properties->getValue(
-                MaterialLib::Fluid::FluidPropertyType::Viscosity, vars);
+            auto const mu =
+                liquid_phase
+                    .property(MaterialPropertyLib::PropertyType::viscosity)
+                    .template value<double>(vars);
             GlobalDimMatrixType const K_over_mu = K / mu;
 
             cache_mat.col(ip).noalias() = -K_over_mu * dNdx * p_nodal_values;
@@ -285,8 +296,9 @@ protected:
             if (_material_properties.has_gravity)
             {
                 auto const rho_w =
-                    _material_properties.fluid_properties->getValue(
-                        MaterialLib::Fluid::FluidPropertyType::Density, vars);
+                    liquid_phase
+                        .property(MaterialPropertyLib::PropertyType::density)
+                        .template value<double>(vars);
                 auto const b = _material_properties.specific_body_force;
                 // here it is assumed that the vector b is directed 'downwards'
                 cache_mat.col(ip).noalias() += K_over_mu * rho_w * b;

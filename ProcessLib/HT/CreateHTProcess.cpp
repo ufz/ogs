@@ -107,22 +107,6 @@ std::unique_ptr<Process> createHTProcess(
 
     // Parameter for the thermal conductivity of the solid (only one scalar per
     // element, i.e., the isotropic case is handled at the moment)
-
-    ParameterLib::ConstantParameter<double>
-        default_thermal_dispersivity_longitudinal(
-            "default thermal dispersivity longitudinal", 0.);
-    ParameterLib::ConstantParameter<double>
-        default_thermal_dispersivity_transversal(
-            "default thermal dispersivity transversal", 0.);
-
-    ParameterLib::Parameter<double>* thermal_dispersivity_longitudinal =
-        &default_thermal_dispersivity_longitudinal;
-    ParameterLib::Parameter<double>* thermal_dispersivity_transversal =
-        &default_thermal_dispersivity_transversal;
-    bool const has_fluid_thermal_dispersivity = true;
-
-    // Parameter for the thermal conductivity of the solid (only one scalar per
-    // element, i.e., the isotropic case is handled at the moment)
     auto& thermal_conductivity_solid = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__HT__thermal_conductivity_solid}
@@ -195,7 +179,6 @@ std::unique_ptr<Process> createHTProcess(
             density_solid,
             std::move(fluid_properties),
             std::move(media_map),
-            has_fluid_thermal_dispersivity,
             specific_heat_capacity_solid,
             thermal_conductivity_solid,
             has_fluid_thermal_expansion,

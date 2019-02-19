@@ -15,6 +15,7 @@
 #include <vector>
 
 #include "HTMaterialProperties.h"
+#include "MaterialLib/MPL/Medium.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
@@ -97,13 +98,16 @@ public:
             Eigen::Map<const NodalVectorType>(&local_x[num_nodes], num_nodes);
 
         auto const& process_data = this->_material_properties;
+        auto const& medium =
+            *process_data.media_map->getMedium(this->_element.getID());
+        auto const& liquid_phase = medium.phase("AqueousLiquid");
 
         auto const& b = process_data.specific_body_force;
 
         GlobalDimMatrixType const& I(
             GlobalDimMatrixType::Identity(GlobalDim, GlobalDim));
 
-        MaterialLib::Fluid::FluidProperty::ArrayType vars;
+        MaterialPropertyLib::VariableArray vars;
 
         unsigned const n_integration_points =
             this->_integration_method.getNumberOfPoints();
@@ -137,21 +141,26 @@ public:
                 process_data.porous_media_properties.getIntrinsicPermeability(
                     t, pos).getValue(t, pos, 0.0, T_int_pt);
 
+            vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
+                T_int_pt;
             vars[static_cast<int>(
-                MaterialLib::Fluid::PropertyVariableType::T)] = T_int_pt;
-            vars[static_cast<int>(
-                MaterialLib::Fluid::PropertyVariableType::p)] = p_int_pt;
+                MaterialPropertyLib::Variable::phase_pressure)] = p_int_pt;
+
             auto const specific_heat_capacity_fluid =
-                process_data.fluid_properties->getValue(
-                    MaterialLib::Fluid::FluidPropertyType::HeatCapacity, vars);
+                liquid_phase
+                    .property(MaterialPropertyLib::specific_heat_capacity)
+                    .template value<double>(vars);
 
             // Use the fluid density model to compute the density
-            auto const fluid_density = process_data.fluid_properties->getValue(
-                MaterialLib::Fluid::FluidPropertyType::Density, vars);
+            auto const fluid_density =
+                liquid_phase
+                    .property(MaterialPropertyLib::PropertyType::density)
+                    .template value<double>(vars);
 
             // Use the viscosity model to compute the viscosity
-            auto const viscosity = process_data.fluid_properties->getValue(
-                MaterialLib::Fluid::FluidPropertyType::Viscosity, vars);
+            auto const viscosity = liquid_phase
+                    .property(MaterialPropertyLib::PropertyType::viscosity)
+                    .template value<double>(vars);
             GlobalDimMatrixType K_over_mu = intrinsic_permeability / viscosity;
 
             GlobalDimVectorType const velocity =
