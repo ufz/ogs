@@ -142,7 +142,7 @@
         <parameter>
             <name>k</name>
             <type>Constant</type>
-            <values>7.75e-13 3.89711e-13 3.89711e-13 3.25e-13</values>
+            <values>7.75e-13 3.8971143170299739104e-13 3.8971143170299739104e-13 3.25e-13</values>
         </parameter>
         <parameter>
             <name>mu</name>
