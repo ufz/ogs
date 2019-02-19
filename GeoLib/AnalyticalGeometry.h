@@ -33,7 +33,9 @@ class LineSegment;
 
 enum Orientation
 {
-    CW = 1, CCW = 2, COLLINEAR = 3
+    CW = -1,
+    COLLINEAR = 0,
+    CCW = 1
 };
 
 /**
