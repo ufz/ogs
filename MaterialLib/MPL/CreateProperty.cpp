@@ -99,6 +99,40 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
     // Note that most property constructors (only those that request material
     // pointers) must be overloaded for any type of material.
 
+    if (property_type == "Linear")
+    {
+        double const reference_value =
+            //! \ogs_file_param{properties__property__LinearProperty__reference_value}
+            config.getConfigParameter<double>("reference_value");
+
+        auto const& independent_variable_config =
+            //! \ogs_file_param{properties__property__LinearProperty__independent_variable}
+            config.getConfigSubtree("independent_variable");
+
+        auto const& variable_name =
+            //! \ogs_file_param{properties__property__LinearProperty__independent_variable__variable_name}
+            independent_variable_config.getConfigParameter<std::string>(
+                "variable_name");
+        double const reference_condition =
+            //! \ogs_file_param{properties__property__LinearProperty__independent_variable__reference_condition}
+            independent_variable_config.getConfigParameter<double>(
+                "reference_condition");
+        double const slope =
+            //! \ogs_file_param{properties__property__LinearProperty__independent_variable__slope}
+            independent_variable_config.getConfigParameter<double>("slope");
+
+        MaterialPropertyLib::Variables ivt =
+            MaterialPropertyLib::convertStringToVariable(variable_name);
+
+        MaterialPropertyLib::IndependentVariable const iv{
+            ivt, reference_condition, slope};
+        MaterialPropertyLib::LinearProperty linear_property{reference_value,
+                                                            iv};
+
+        return std::make_unique<MaterialPropertyLib::LinearProperty>(
+            reference_value, iv);
+    }
+
     /* TODO Additional properties go here, for example:
     if (boost::iequals(property_type, "BilinearTemperaturePressure"))
     {
