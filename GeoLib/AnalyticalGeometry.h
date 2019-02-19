@@ -41,10 +41,9 @@ enum Orientation
  * \returns CW (clockwise), CCW (counterclockwise) or COLLINEAR (points are on a
  * line)
  */
-Orientation getOrientation(GeoLib::Point const& p0,
-                           GeoLib::Point const& p1,
-                           GeoLib::Point const& p2);
-
+Orientation getOrientation(MathLib::Point3d const& p0,
+                           MathLib::Point3d const& p1,
+                           MathLib::Point3d const& p2);
 /**
  * compute a supporting plane (represented by plane_normal and the value d) for the polygon
  * Let \f$n\f$ be the plane normal and \f$d\f$ a parameter. Then for all points \f$p \in R^3\f$ of the plane

@@ -44,9 +44,9 @@ double getOrientation2d(MathLib::Point3d const& a,
 
 namespace GeoLib
 {
-Orientation getOrientation(GeoLib::Point const& p0,
-                           GeoLib::Point const& p1,
-                           GeoLib::Point const& p2)
+Orientation getOrientation(MathLib::Point3d const& p0,
+                           MathLib::Point3d const& p1,
+                           MathLib::Point3d const& p2)
 {
     double const orientation = ExactPredicates::getOrientation2d(p0, p1, p2);
     if (orientation > 0)
