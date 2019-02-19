@@ -44,10 +44,11 @@ double getOrientation2d(MathLib::Point3d const& a,
 
 namespace GeoLib
 {
-Orientation getOrientation(const GeoLib::Point* p0, const GeoLib::Point* p1,
-                           const GeoLib::Point* p2)
+Orientation getOrientation(GeoLib::Point const& p0,
+                           GeoLib::Point const& p1,
+                           GeoLib::Point const& p2)
 {
-    double const orientation = ExactPredicates::getOrientation2d(*p0, *p1, *p2);
+    double const orientation = ExactPredicates::getOrientation2d(p0, p1, p2);
     if (orientation > 0)
         return CCW;
     if (orientation < 0)

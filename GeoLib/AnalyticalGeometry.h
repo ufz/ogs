@@ -41,9 +41,9 @@ enum Orientation
  * \returns CW (clockwise), CCW (counterclockwise) or COLLINEAR (points are on a
  * line)
  */
-Orientation getOrientation(const GeoLib::Point* p0,
-                           const GeoLib::Point* p1,
-                           const GeoLib::Point* p2);
+Orientation getOrientation(GeoLib::Point const& p0,
+                           GeoLib::Point const& p1,
+                           GeoLib::Point const& p2);
 
 /**
  * compute a supporting plane (represented by plane_normal and the value d) for the polygon

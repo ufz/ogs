@@ -320,22 +320,25 @@ void Polygon::ensureCCWOrientation ()
     // *** determine orientation
     GeoLib::Orientation orient;
     if (0 < min_x_max_y_idx && min_x_max_y_idx < n_pnts - 2)
-        orient = GeoLib::getOrientation (
-                tmp_polygon_pnts[min_x_max_y_idx - 1],
-                tmp_polygon_pnts[min_x_max_y_idx],
-                tmp_polygon_pnts[min_x_max_y_idx + 1]);
+    {
+        orient = GeoLib::getOrientation(*tmp_polygon_pnts[min_x_max_y_idx - 1],
+                                        *tmp_polygon_pnts[min_x_max_y_idx],
+                                        *tmp_polygon_pnts[min_x_max_y_idx + 1]);
+    }
     else
     {
         if (0 == min_x_max_y_idx)
-            orient = GeoLib::getOrientation (
-                    tmp_polygon_pnts[n_pnts - 1],
-                    tmp_polygon_pnts[0],
-                    tmp_polygon_pnts[1]);
+        {
+            orient = GeoLib::getOrientation(*tmp_polygon_pnts[n_pnts - 1],
+                                            *tmp_polygon_pnts[0],
+                                            *tmp_polygon_pnts[1]);
+        }
         else
-            orient = GeoLib::getOrientation (
-                    tmp_polygon_pnts[n_pnts - 2],
-                    tmp_polygon_pnts[n_pnts - 1],
-                    tmp_polygon_pnts[0]);
+        {
+            orient = GeoLib::getOrientation(*tmp_polygon_pnts[n_pnts - 2],
+                                            *tmp_polygon_pnts[n_pnts - 1],
+                                            *tmp_polygon_pnts[0]);
+        }
     }
 
     if (orient != GeoLib::CCW)
