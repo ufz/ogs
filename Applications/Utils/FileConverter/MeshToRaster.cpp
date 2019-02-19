@@ -31,33 +31,47 @@ std::size_t getProjectedElementIndex(
     std::vector<const MeshLib::Element*> const& elems,
     MeshLib::Node const& node)
 {
+    auto is_right_of = [&node](MeshLib::Node const& a, MeshLib::Node const& b) {
+        return GeoLib::getOrientationFast(node, a, b) ==
+               GeoLib::Orientation::CW;
+    };
+
     std::size_t const n_elems = elems.size();
     for (std::size_t i = 0; i < n_elems; ++i)
     {
         if (elems[i]->getGeomType() == MeshLib::MeshElemType::LINE)
+        {
             continue;
-        MeshLib::Node const* const a = elems[i]->getNode(0);
-        MeshLib::Node const* const b = elems[i]->getNode(1);
-        if (GeoLib::getOrientationFast(node, *a, *b) == GeoLib::Orientation::CW)
+        }
+        auto const& a = *elems[i]->getNode(0);
+        auto const& b = *elems[i]->getNode(1);
+        if (is_right_of(a, b))
+        {
             continue;
-        MeshLib::Node const* const c = elems[i]->getNode(2);
-        if (GeoLib::getOrientationFast(node, *b, *c) == GeoLib::Orientation::CW)
+        }
+        auto const& c = *elems[i]->getNode(2);
+        if (is_right_of(b, c))
+        {
             continue;
+        }
         if (elems[i]->getGeomType() == MeshLib::MeshElemType::TRIANGLE)
         {
-            if (GeoLib::getOrientationFast(node, *c, *a) ==
-                GeoLib::Orientation::CW)
+            if (is_right_of(c, a))
+            {
                 continue;
+            }
         }
         if (elems[i]->getGeomType() == MeshLib::MeshElemType::QUAD)
         {
-            MeshLib::Node const* const d = elems[i]->getNode(3);
-            if (GeoLib::getOrientationFast(node, *c, *d) ==
-                GeoLib::Orientation::CW)
+            auto const& d = *elems[i]->getNode(3);
+            if (is_right_of(c, d))
+            {
                 continue;
-            if (GeoLib::getOrientationFast(node, *d, *a) ==
-                GeoLib::Orientation::CW)
+            }
+            if (is_right_of(d, a))
+            {
                 continue;
+            }
         }
         return elems[i]->getID();
     }
