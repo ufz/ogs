@@ -63,4 +63,6 @@ inline double getScalar(VariableType pv)
 {
     return boost::get<double>(pv);
 }
+
+Variables convertStringToVariable(std::string const& input);
 }  // namespace MaterialPropertyLib
