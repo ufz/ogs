@@ -118,6 +118,10 @@
         <output>
             <type>VTK</type>
             <prefix>RichardsFlow_2d_small</prefix>
+            <meshes>
+                <mesh>Richards_2d</mesh>
+                <mesh>Richards_2d_geometry_OBSERVATION_POINT</mesh>
+            </meshes>
             <timesteps>
                 <pair>
                     <repeat>9</repeat>
