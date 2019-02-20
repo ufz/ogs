@@ -332,12 +332,12 @@ pipeline {
                   '-DOGS_BUILD_UTILS=ON ' +
                   '-DOGS_BUILD_SWMM=ON '
               }
-              build { target="tests" }
-              build { target="ctest" }
               build {
                 target="package"
                 log="build.log"
               }
+              build { target="tests" }
+              build { target="ctest" }
             }
           }
           post {
