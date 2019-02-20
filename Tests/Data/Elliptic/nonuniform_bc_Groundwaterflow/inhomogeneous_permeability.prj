@@ -61,6 +61,12 @@
             <type>Constant</type>
             <value>0</value>
         </parameter>
+        <parameter>
+            <name>mass_flux</name>
+            <type>MeshNode</type>
+            <mesh>inhomogeneous_permeability_top</mesh>
+            <field_name>mass_flux</field_name>
+        </parameter>
     </parameters>
     <process_variables>
         <process_variable>
@@ -72,8 +78,8 @@
             <boundary_conditions>
                 <boundary_condition>
                     <mesh>inhomogeneous_permeability_top</mesh>
-                    <type>NonuniformNeumann</type>
-                    <field_name>mass_flux</field_name>
+                    <type>Neumann</type>
+                    <parameter>mass_flux</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <mesh>inhomogeneous_permeability_bottom</mesh>

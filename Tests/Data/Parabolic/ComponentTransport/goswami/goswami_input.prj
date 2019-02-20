@@ -181,6 +181,30 @@
             <type>Constant</type>
             <values>1.2388e-9 0 0 1.2388e-9</values>
         </parameter>
+        <parameter>
+            <name>concentration_left</name>
+            <type>MeshNode</type>
+            <mesh>goswami_input_leftBoundary</mesh>
+            <field_name>c_ini</field_name>
+        </parameter>
+        <parameter>
+            <name>concentration_right</name>
+            <type>MeshNode</type>
+            <mesh>goswami_input_rightBoundary</mesh>
+            <field_name>c_ini</field_name>
+        </parameter>
+        <parameter>
+            <name>pressure_left</name>
+            <type>MeshNode</type>
+            <mesh>goswami_input_leftBoundary</mesh>
+            <field_name>p_ini</field_name>
+        </parameter>
+        <parameter>
+            <name>pressure_right</name>
+            <type>MeshNode</type>
+            <mesh>goswami_input_rightBoundary</mesh>
+            <field_name>p_ini</field_name>
+        </parameter>
     </parameters>
     <process_variables>
         <process_variable>
@@ -190,14 +214,14 @@
             <initial_condition>c_ini</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <type>NonuniformDirichlet</type>
+                    <type>Dirichlet</type>
                     <mesh>goswami_input_leftBoundary</mesh>
-                    <field_name>c_ini</field_name>
+                    <parameter>concentration_left</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <type>NonuniformDirichlet</type>
+                    <type>Dirichlet</type>
                     <mesh>goswami_input_rightBoundary</mesh>
-                    <field_name>c_ini</field_name>
+                    <parameter>concentration_right</parameter>
                 </boundary_condition>
             </boundary_conditions>
         </process_variable>
@@ -208,14 +232,14 @@
             <initial_condition>p_ini</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <type>NonuniformDirichlet</type>
+                    <type>Dirichlet</type>
                     <mesh>goswami_input_leftBoundary</mesh>
-                    <field_name>p_ini</field_name>
+                    <parameter>pressure_left</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <type>NonuniformDirichlet</type>
+                    <type>Dirichlet</type>
                     <mesh>goswami_input_rightBoundary</mesh>
-                    <field_name>p_ini</field_name>
+                    <parameter>pressure_right</parameter>
                 </boundary_condition>
             </boundary_conditions>
         </process_variable>

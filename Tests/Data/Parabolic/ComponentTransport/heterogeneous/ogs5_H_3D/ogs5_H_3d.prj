@@ -181,6 +181,18 @@
             <!--type>Constant</type>
             <values>1.239e-7 0 0 1.239e-7</values-->
         </parameter>
+        <parameter>
+            <name>bc_left</name>
+            <type>MeshNode</type>
+            <mesh>3D_HGW_1_l</mesh>
+            <field_name>p_bc</field_name>
+        </parameter>
+        <parameter>
+            <name>bc_right</name>
+            <type>MeshNode</type>
+            <mesh>3D_HGW_1_r</mesh>
+            <field_name>p_bc</field_name>
+        </parameter>
     </parameters>
     <process_variables>
         <process_variable>
@@ -208,14 +220,14 @@
             <initial_condition>p_ini</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <type>NonuniformDirichlet</type>
+                    <type>Dirichlet</type>
                     <mesh>3D_HGW_1_l</mesh>
-                    <field_name>p_bc</field_name>
+                    <parameter>bc_left</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <type>NonuniformDirichlet</type>
+                    <type>Dirichlet</type>
                     <mesh>3D_HGW_1_r</mesh>
-                    <field_name>p_bc</field_name>
+                    <parameter>bc_right</parameter>
                 </boundary_condition>
             </boundary_conditions>
         </process_variable>

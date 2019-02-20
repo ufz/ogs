@@ -61,6 +61,12 @@
             <type>Constant</type>
             <value>-1</value>
         </parameter>
+        <parameter>
+            <name>p_Neumann_left</name>
+            <type>MeshNode</type>
+            <mesh>square_1x1_left</mesh>
+            <field_name>cosY</field_name>
+        </parameter>
     </parameters>
     <process_variables>
         <process_variable>
@@ -71,9 +77,9 @@
             <initial_condition>p0</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <type>NonuniformNeumann</type>
+                    <type>Neumann</type>
                     <mesh>square_1x1_left</mesh>
-                    <field_name>cosY</field_name>
+                    <parameter>p_Neumann_left</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <type>Dirichlet</type>
