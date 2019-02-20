@@ -23,9 +23,9 @@ namespace ProcessLib
 template <typename T>
 struct MeshElementParameter final : public Parameter<T> {
     MeshElementParameter(std::string const& name_,
+                         MeshLib::Mesh const& mesh,
                          MeshLib::PropertyVector<T> const& property)
-        : Parameter<T>(name_),
-          _property(property)
+        : Parameter<T>(name_, &mesh), _property(property)
     {
     }
 

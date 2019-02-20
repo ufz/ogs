@@ -36,14 +36,16 @@ struct GroupBasedParameter final
      * Constructing from a property vector of index and corresponding values
      *
      * @param name_       the parameter's name
+     * @param mesh        the parameter's domain of definition.
      * @param property    a property vector of index for mesh items
      * @param vec_values  a vector of values for each index
      */
     GroupBasedParameter(std::string const& name_,
+                        MeshLib::Mesh const& mesh,
                         MeshLib::PropertyVector<int> const& property,
                         std::vector<std::vector<double>>
                             vec_values)
-        : Parameter<T>(name_),
+        : Parameter<T>(name_, &mesh),
           _property_index(property),
           _vec_values(std::move(vec_values))
     {

@@ -44,7 +44,12 @@ namespace ProcessLib
 /// Its property name helps addressing the right parameter.
 struct ParameterBase
 {
-    ParameterBase(std::string name_) : name(std::move(name_)) {}
+    explicit ParameterBase(std::string name_,
+                           MeshLib::Mesh const* mesh = nullptr)
+        : name(std::move(name_)), _mesh(mesh)
+    {
+    }
+
     virtual ~ParameterBase() = default;
 
     virtual bool isTimeDependent() const = 0;
@@ -57,7 +62,14 @@ struct ParameterBase
     {
     }
 
+    MeshLib::Mesh const* mesh() const { return _mesh; }
+
     std::string const name;
+
+protected:
+    /// A mesh on which the parameter is defined. Some parameters might be
+    /// mesh-independent.
+    MeshLib::Mesh const* _mesh;
 };
 
 /*! A Parameter is a function \f$ (t, x) \mapsto f(t, x) \in T^n \f$.
@@ -69,7 +81,8 @@ struct ParameterBase
 template <typename T>
 struct Parameter : public ParameterBase
 {
-    Parameter(std::string const& name_) : ParameterBase(name_) {}
+    using ParameterBase::ParameterBase;
+
     ~Parameter() override = default;
 
     //! Returns the number of components this Parameter has at every position and

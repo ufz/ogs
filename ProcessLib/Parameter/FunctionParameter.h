@@ -39,15 +39,15 @@ struct FunctionParameter final : public Parameter<T>
     /**
      * Constructing from a vector of expressions
      *
-     * @param name_       the parameter's name
-     * @param mesh_       a mesh object
-     * @param vec_expression_str_  a vector of mathematical expressions
+     * @param name        the parameter's name
+     * @param mesh        the parameter's domain of definition.
+     * @param vec_expression_str  a vector of mathematical expressions
      * The vector size specifies the number of components of the parameter.
      */
-    FunctionParameter(std::string const& name_,
-                      MeshLib::Mesh const& mesh_,
-                      std::vector<std::string> const& vec_expression_str_)
-        : Parameter<T>(name_), _mesh(mesh_), _vec_expression_str(vec_expression_str_)
+    FunctionParameter(std::string const& name,
+                      MeshLib::Mesh const& mesh,
+                      std::vector<std::string> const& vec_expression_str)
+        : Parameter<T>(name, &mesh), _vec_expression_str(vec_expression_str)
     {
         _symbol_table.add_constants();
         _symbol_table.create_variable("x");
@@ -90,7 +90,8 @@ struct FunctionParameter final : public Parameter<T>
         }
         else if (pos.getNodeID())
         {
-            auto const& node = *_mesh.getNode(pos.getNodeID().get());
+            auto const& node =
+                *ParameterBase::_mesh->getNode(pos.getNodeID().get());
             x = node[0];
             y = node[1];
             z = node[2];
@@ -105,7 +106,6 @@ struct FunctionParameter final : public Parameter<T>
     }
 
 private:
-    MeshLib::Mesh const& _mesh;
     std::vector<std::string> const _vec_expression_str;
     symbol_table_t _symbol_table;
     std::vector<expression_t> _vec_expression;
