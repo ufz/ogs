@@ -15,8 +15,6 @@
 #include "DirichletBoundaryCondition.h"
 #include "DirichletBoundaryConditionWithinTimeInterval.h"
 #include "NeumannBoundaryCondition.h"
-#include "NonuniformDirichletBoundaryCondition.h"
-#include "NonuniformNeumannBoundaryCondition.h"
 #include "NonuniformVariableDependentNeumannBoundaryCondition.h"
 #include "NormalTractionBoundaryCondition.h"
 #include "PhaseFieldIrreversibleDamageOracleBoundaryCondition.h"
@@ -78,20 +76,6 @@ std::unique_ptr<BoundaryCondition> createBoundaryCondition(
             *config.component_id, integration_order, shapefunction_order,
             bulk_mesh.getDimension(), parameters);
     }
-    if (type == "NonuniformDirichlet")
-    {
-        return ProcessLib::createNonuniformDirichletBoundaryCondition(
-            config.config, config.boundary_mesh, dof_table, variable_id,
-            *config.component_id);
-    }
-    if (type == "NonuniformNeumann")
-    {
-        return ProcessLib::createNonuniformNeumannBoundaryCondition(
-            config.config, config.boundary_mesh, dof_table, variable_id,
-            *config.component_id, integration_order, shapefunction_order,
-            bulk_mesh);
-    }
-
     if (type == "NonuniformVariableDependentNeumann")
     {
         return ProcessLib::

@@ -26,6 +26,7 @@ class NeumannBoundaryConditionLocalAssembler final
     using Base = GenericNaturalBoundaryConditionLocalAssembler<
         ShapeFunction, IntegrationMethod, GlobalDim>;
     using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction, GlobalDim>;
+    using NodalVectorType = typename Base::NodalVectorType;
 
 public:
     /// The neumann_bc_value factor is directly integrated into the local
@@ -61,6 +62,11 @@ public:
         FemType fe(
              static_cast<const typename ShapeFunction::MeshElement&>(Base::_element));
 
+        // Get element nodes for the interpolation from nodes to
+        // integration point.
+        NodalVectorType parameter_node_values =
+            _neumann_bc_parameter.getNodalValuesOnElement(Base::_element, t);
+
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             pos.setIntegrationPoint(ip);
@@ -70,7 +76,7 @@ public:
             MathLib::TemplatePoint<double, 3> coords_ip(fe.interpolateCoordinates(sm.N));
             pos.setCoordinates(coords_ip);
 
-            _local_rhs.noalias() += sm.N * _neumann_bc_parameter(t, pos)[0] *
+            _local_rhs.noalias() += sm.N * parameter_node_values.dot(sm.N) *
                                     sm.detJ * wp.getWeight() *
                                     sm.integralMeasure;
         }
@@ -81,7 +87,7 @@ public:
 
 private:
     Parameter<double> const& _neumann_bc_parameter;
-    typename Base::NodalVectorType _local_rhs;
+    NodalVectorType _local_rhs;
 
 public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
