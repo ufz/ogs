@@ -30,6 +30,7 @@
 #include "MathLib/GeometricBasics.h"
 
 extern double orient2d(double *, double *, double *);
+extern double orient2dfast(double*, double*, double*);
 
 namespace ExactPredicates
 {
@@ -40,29 +41,42 @@ double getOrientation2d(MathLib::Point3d const& a,
         const_cast<double*>(b.getCoords()),
         const_cast<double*>(c.getCoords()));
 }
+
+double getOrientation2dFast(MathLib::Point3d const& a,
+                            MathLib::Point3d const& b,
+                            MathLib::Point3d const& c)
+{
+    return orient2dfast(const_cast<double*>(a.getCoords()),
+                        const_cast<double*>(b.getCoords()),
+                        const_cast<double*>(c.getCoords()));
+}
 }
 
 namespace GeoLib
 {
-Orientation getOrientation(const double& p0_x, const double& p0_y, const double& p1_x,
-                           const double& p1_y, const double& p2_x, const double& p2_y)
+Orientation getOrientation(MathLib::Point3d const& p0,
+                           MathLib::Point3d const& p1,
+                           MathLib::Point3d const& p2)
 {
-    double h1((p1_x - p0_x) * (p2_y - p0_y));
-    double h2((p2_x - p0_x) * (p1_y - p0_y));
-
-    double tol(std::numeric_limits<double>::epsilon());
-    if (fabs(h1 - h2) <= tol * std::max(fabs(h1), fabs(h2)))
-        return COLLINEAR;
-    if (h1 - h2 > 0.0)
+    double const orientation = ExactPredicates::getOrientation2d(p0, p1, p2);
+    if (orientation > 0)
         return CCW;
-
-    return CW;
+    if (orientation < 0)
+        return CW;
+    return COLLINEAR;
 }
 
-Orientation getOrientation(const GeoLib::Point* p0, const GeoLib::Point* p1,
-                           const GeoLib::Point* p2)
+Orientation getOrientationFast(MathLib::Point3d const& p0,
+                               MathLib::Point3d const& p1,
+                               MathLib::Point3d const& p2)
 {
-    return getOrientation((*p0)[0], (*p0)[1], (*p1)[0], (*p1)[1], (*p2)[0], (*p2)[1]);
+    double const orientation =
+        ExactPredicates::getOrientation2dFast(p0, p1, p2);
+    if (orientation > 0)
+        return CCW;
+    if (orientation < 0)
+        return CW;
+    return COLLINEAR;
 }
 
 bool parallel(MathLib::Vector3 v, MathLib::Vector3 w)
@@ -380,8 +394,8 @@ std::vector<MathLib::Point3d> lineSegmentIntersect2d(
     GeoLib::Point const& c{cd.getBeginPoint()};
     GeoLib::Point const& d{cd.getEndPoint()};
 
-    double const orient_abc(ExactPredicates::getOrientation2d(a, b, c));
-    double const orient_abd(ExactPredicates::getOrientation2d(a, b, d));
+    double const orient_abc(getOrientation(a, b, c));
+    double const orient_abd(getOrientation(a, b, d));
 
     // check if the segment (cd) lies on the left or on the right of (ab)
     if ((orient_abc > 0 && orient_abd > 0) || (orient_abc < 0 && orient_abd < 0)) {
@@ -497,8 +511,8 @@ std::vector<MathLib::Point3d> lineSegmentIntersect2d(
     }
 
     // check if the segment (ab) lies on the left or on the right of (cd)
-    double const orient_cda(ExactPredicates::getOrientation2d(c, d, a));
-    double const orient_cdb(ExactPredicates::getOrientation2d(c, d, b));
+    double const orient_cda(getOrientation(c, d, a));
+    double const orient_cdb(getOrientation(c, d, b));
     if ((orient_cda > 0 && orient_cdb > 0) || (orient_cda < 0 && orient_cdb < 0)) {
         return std::vector<MathLib::Point3d>();
     }

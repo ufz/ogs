@@ -33,25 +33,27 @@ class LineSegment;
 
 enum Orientation
 {
-    CW = 1, CCW = 2, COLLINEAR = 3
+    CW = -1,
+    COLLINEAR = 0,
+    CCW = 1
 };
 
 /**
- * computes the orientation of the three 2D-Points given by their coordinates
- * p0_x, p0_y, p1_x, p1_y, p2_x and p2_y
- * \returns CW (clockwise), CCW (counterclockwise) or COLLINEAR (points are on a line)
+ * Computes the orientation of the three 2D-Points. This is a robust method.
+ * \returns CW (clockwise), CCW (counterclockwise) or COLLINEAR (points are on a
+ * line)
  */
-Orientation getOrientation (const double& p0_x, const double& p0_y,
-    const double& p1_x, const double& p1_y,
-    const double& p2_x, const double& p2_y);
-
+Orientation getOrientation(MathLib::Point3d const& p0,
+                           MathLib::Point3d const& p1,
+                           MathLib::Point3d const& p2);
 /**
- * wrapper for getOrientation ()
+ * Computes the orientation of the three 2D-Points. This is a non-robust method.
+ * \returns CW (clockwise), CCW (counterclockwise) or COLLINEAR (points are on a
+ * line)
  */
-Orientation getOrientation (const GeoLib::Point* p0,
-                            const GeoLib::Point* p1,
-                            const GeoLib::Point* p2);
-
+Orientation getOrientationFast(MathLib::Point3d const& p0,
+                               MathLib::Point3d const& p1,
+                               MathLib::Point3d const& p2);
 /**
  * compute a supporting plane (represented by plane_normal and the value d) for the polygon
  * Let \f$n\f$ be the plane normal and \f$d\f$ a parameter. Then for all points \f$p \in R^3\f$ of the plane
