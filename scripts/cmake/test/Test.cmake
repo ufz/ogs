@@ -45,6 +45,12 @@ else()
     set(NUM_CTEST_PROCESSORS 3)
 endif()
 
+if(DEFINED ENV{CTEST_LARGE_NUM_THREADS})
+    set(NUM_CTEST_LARGE_PROCESSORS $ENV{CTEST_LARGE_NUM_THREADS})
+else()
+    set(NUM_CTEST_LARGE_PROCESSORS ${NUM_CTEST_PROCESSORS})
+endif()
+
 if(CMAKE_CONFIGURATION_TYPES)
     set(CONFIG_PARAMETER --build-config "$<CONFIGURATION>")
 endif()
@@ -86,7 +92,7 @@ add_custom_target(
     --force-new-ctest-process
     --output-on-failure --output-log Tests/ctest-large.log
     --tests-regex LARGE
-    ${CONFIG_PARAMETER} --parallel ${NUM_CTEST_PROCESSORS}
+    ${CONFIG_PARAMETER} --parallel ${NUM_CTEST_LARGE_PROCESSORS}
     --timeout 3600
     DEPENDS ogs vtkdiff ctest-large-cleanup
     USES_TERMINAL
