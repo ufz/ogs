@@ -139,7 +139,8 @@ ProcessVariable::ProcessVariable(
     }
     else
     {
-        INFO("No boundary conditions found.");
+        INFO("No boundary conditions for process variable '%s' found.",
+             _name.c_str());
     }
 
     // Source terms
@@ -166,7 +167,7 @@ ProcessVariable::ProcessVariable(
     }
     else
     {
-        INFO("No source terms found.");
+        INFO("No source terms for process variable '%s' found.", _name.c_str());
     }
 }
 
