@@ -17,7 +17,7 @@ pipeline {
       agent { label "master"}
       steps {
         sh "git config core.whitespace -blank-at-eof"
-        sh "git diff --check `git merge-base origin/master HEAD` HEAD -- . ':!*.md' ':!*.pandoc'"
+        sh "git diff --check `git merge-base origin/master HEAD` HEAD -- . ':!*.md' ':!*.pandoc' ':!*.asc'"
         dir('scripts/jenkins') { stash(name: 'known_hosts', includes: 'known_hosts') }
         ciSkip action: 'check' // Check for [ci skip] commit message.
 

@@ -1,0 +1,208 @@
+/**
+ * \file
+ *
+ * \copyright
+ * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.org/LICENSE.txt
+ */
+
+#include <memory>
+#include <string>
+
+#include <tclap/CmdLine.h>
+
+#include "Applications/ApplicationsLib/LogogSetup.h"
+#include "BaseLib/BuildInfo.h"
+#include "GeoLib/AABB.h"
+#include "GeoLib/AnalyticalGeometry.h"
+#include "MeshLib/Elements/Quad.h"
+#include "MeshLib/Elements/Tri.h"
+#include "MeshLib/IO/readMeshFromFile.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/MeshSearch/MeshElementGrid.h"
+#include "MeshLib/Node.h"
+
+/// Returns the element in which the given node is located when projected onto a
+/// mesh, or nullptr if no such element was found.
+static MeshLib::Element const* getProjectedElement(
+    std::vector<const MeshLib::Element*> const& elements,
+    MeshLib::Node const& node)
+{
+    auto is_right_of = [&node](MeshLib::Node const& a, MeshLib::Node const& b) {
+        return GeoLib::getOrientationFast(node, a, b) ==
+               GeoLib::Orientation::CW;
+    };
+
+    for (auto const* e : elements)
+    {
+        auto const* nodes = e->getNodes();
+        if (e->getGeomType() == MeshLib::MeshElemType::TRIANGLE)
+        {
+            auto const& a = *nodes[0];
+            auto const& b = *nodes[1];
+            auto const& c = *nodes[2];
+            if (!is_right_of(a, b) && !is_right_of(b, c) && !is_right_of(c, a))
+            {
+                return e;
+            }
+        }
+        else if (e->getGeomType() == MeshLib::MeshElemType::QUAD)
+        {
+            auto const& a = *nodes[0];
+            auto const& b = *nodes[1];
+            auto const& c = *nodes[2];
+            auto const& d = *nodes[3];
+            if (!is_right_of(a, b) && !is_right_of(b, c) &&
+                !is_right_of(c, d) && !is_right_of(d, a))
+            {
+                return e;
+            }
+        }
+    }
+    return nullptr;
+}
+
+/// Returns the z-coordinate of a point projected onto the plane defined by a
+/// mesh element.
+static double getElevation(MeshLib::Element const& element,
+                           MeshLib::Node const& node)
+{
+    MathLib::Vector3 const v = node - *element.getNode(0);
+    MathLib::Vector3 const n =
+        MeshLib::FaceRule::getSurfaceNormal(&element).getNormalizedVector();
+    return node[2] - scalarProduct(n, v) * n[2];
+}
+
+int main(int argc, char* argv[])
+{
+    ApplicationsLib::LogogSetup logog_setup;
+
+    TCLAP::CmdLine cmd(
+        "Mesh to raster converter.\n"
+        "Rasterises a 2D mesh, pixel values are set to the elevation of a "
+        "regular grid superimposed on the mesh. If no mesh element is located "
+        "beneath  a pixel it is set to NODATA.\n\n"
+        "OpenGeoSys-6 software, version " +
+            BaseLib::BuildInfo::git_describe +
+            ".\n"
+            "Copyright (c) 2012-2019, OpenGeoSys Community "
+            "(http://www.opengeosys.org)",
+        ' ', BaseLib::BuildInfo::git_describe);
+    TCLAP::ValueArg<std::string> input_arg("i", "input-file",
+                                           "Mesh input file (*.vtu, *.msh)",
+                                           true, "", "string");
+    cmd.add(input_arg);
+    TCLAP::ValueArg<std::string> output_arg(
+        "o", "output-file", "Raster output file (*.asc)", true, "", "string");
+    cmd.add(output_arg);
+    TCLAP::ValueArg<double> cell_arg("c", "cellsize",
+                                     "edge length of raster cells in result",
+                                     false, 1, "real");
+    cmd.add(cell_arg);
+
+    cmd.parse(argc, argv);
+
+    INFO("Rasterising mesh...");
+    std::unique_ptr<MeshLib::Mesh> const mesh(
+        MeshLib::IO::readMeshFromFile(input_arg.getValue()));
+    if (mesh == nullptr)
+    {
+        ERR("Error reading mesh file.");
+        return 1;
+    }
+    if (mesh->getDimension() != 2)
+    {
+        ERR("The programme requires a mesh containing two-dimensional elements "
+            "(i.e. triangles or quadrilaterals.");
+        return 2;
+    }
+
+    double const cellsize =
+        (cell_arg.isSet()) ? cell_arg.getValue() : mesh->getMinEdgeLength();
+    INFO("Cellsize set to %f", cellsize);
+
+    std::vector<MeshLib::Node*> const& nodes_vec(mesh->getNodes());
+    GeoLib::AABB const bounding_box(nodes_vec.begin(), nodes_vec.end());
+    MathLib::Point3d const& min(bounding_box.getMinPoint());
+    MathLib::Point3d const& max(bounding_box.getMaxPoint());
+    auto const n_cols =
+        static_cast<std::size_t>(std::ceil((max[0] - min[0]) / cellsize));
+    auto const n_rows =
+        static_cast<std::size_t>(std::ceil((max[1] - min[1]) / cellsize));
+    double const half_cell = cellsize / 2.0;
+
+    // raster header
+    std::ofstream out(output_arg.getValue());
+    out << "ncols         " << n_cols + 1 << "\n";
+    out << "nrows         " << n_rows + 1 << "\n";
+    out << std::fixed << "xllcorner     " << (min[0] - half_cell) << "\n";
+    out << std::fixed << "yllcorner     " << (min[1] - half_cell) << "\n";
+    out << std::fixed << "cellsize      " << cellsize << "\n";
+    out << "NODATA_value  "
+        << "-9999\n";
+    INFO("Writing raster with %d x %d pixels.", n_cols, n_rows);
+
+    MeshLib::MeshElementGrid const grid(*mesh);
+    double const max_edge(mesh->getMaxEdgeLength() + cellsize);
+
+    for (std::size_t j = 0; j <= n_rows; ++j)
+    {
+        double const y = max[1] - j * cellsize;
+        for (std::size_t i = 0; i <= n_cols; ++i)
+        {
+            // pixel values
+            double const x = min[0] + i * cellsize;
+            MeshLib::Node const node(x, y, 0);
+            MathLib::Point3d min_vol{{x - max_edge, y - max_edge,
+                                      -std::numeric_limits<double>::max()}};
+            MathLib::Point3d max_vol{{x + max_edge, y + max_edge,
+                                      std::numeric_limits<double>::max()}};
+            std::vector<const MeshLib::Element*> const& elems =
+                grid.getElementsInVolume(min_vol, max_vol);
+            auto const* element = getProjectedElement(elems, node);
+            // centre of the pixel is located within a mesh element
+            if (element != nullptr)
+            {
+                out << getElevation(*element, node) << " ";
+            }
+            else
+            {
+                std::array<double, 4> const x_off{
+                    {-half_cell, half_cell, -half_cell, half_cell}};
+                std::array<double, 4> const y_off{
+                    {-half_cell, -half_cell, half_cell, half_cell}};
+                double sum(0);
+                std::size_t nonzero_count(0);
+                // test all of the pixel's corners if there are any within an
+                // element
+                for (std::size_t i = 0; i < 4; ++i)
+                {
+                    MeshLib::Node const node(x + x_off[i], y + y_off[i], 0);
+                    auto const* corner_element =
+                        getProjectedElement(elems, node);
+                    if (corner_element != nullptr)
+                    {
+                        sum += getElevation(*corner_element, node);
+                        nonzero_count++;
+                    }
+                }
+                if (nonzero_count > 0)
+                {
+                    // calculate pixel value as average of corner values
+                    out << sum / nonzero_count << " ";
+                }
+                else
+                {
+                    // if none of the corners give a value, set pixel to NODATA
+                    out << "-9999 ";
+                }
+            }
+        }
+        out << "\n";
+    }
+    out.close();
+    INFO("Result written to %s", output_arg.getValue().c_str());
+    return 0;
+}

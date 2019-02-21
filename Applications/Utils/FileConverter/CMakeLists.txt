@@ -52,6 +52,11 @@ target_link_libraries(GocadSGridReader
     ${Boost_LIBRARIES}
 )
 
+add_executable(Mesh2Raster MeshToRaster.cpp)
+set_target_properties(Mesh2Raster PROPERTIES FOLDER Utilities)
+target_link_libraries(Mesh2Raster MeshLib)
+
+
 ####################
 ### Installation ###
 ####################
