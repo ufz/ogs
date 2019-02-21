@@ -101,8 +101,11 @@ private:
                                     double const dt,
                                     const int process_id) override;
 
+    void setCoupledSolutionsOfPreviousTimeStepPerProcess(const int process_id);
+
     /// Set the solutions of the previous time step to the coupled term.
-    /// It only performs for the staggered scheme.
+    /// It is only for the staggered scheme, and it must be called within
+    /// the coupling loop because that the coupling term is only created there.
     void setCoupledSolutionsOfPreviousTimeStep();
 
     /**
