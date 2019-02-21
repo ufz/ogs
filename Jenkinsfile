@@ -352,7 +352,7 @@ pipeline {
                 excludeFile('.*\\.conan.*'), excludeFile('.*ThirdParty.*'),
                 excludeFile('.*thread.hpp')],
                 tools: [msBuild(name: 'MSVC', pattern: 'build/build.log')],
-                unstableTotalAll: 1
+                qualityGates: [[threshold: 10, type: 'TOTAL', unstable: true]]
             }
             success {
               archiveArtifacts 'build/*.zip,build/conaninfo.txt'
