@@ -45,7 +45,7 @@ enum Variable : int
     liquid_density,
     temperature,
     liquid_saturation,
-    u,
+    displacement,
     number_of_variables
 };
 

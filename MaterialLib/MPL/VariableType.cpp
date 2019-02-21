@@ -41,9 +41,9 @@ Variable convertStringToVariable(std::string const& input)
     {
         return Variable::liquid_saturation;
     }
-    if (boost::iequals(input, "u"))
+    if (boost::iequals(input, "displacement"))
     {
-        return Variable::u;
+        return Variable::displacement;
     }
 
     OGS_FATAL(
