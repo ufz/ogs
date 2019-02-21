@@ -25,13 +25,9 @@ Variable convertStringToVariable(std::string const& input)
     {
         return Variable::capillary_pressure;
     }
-    if (boost::iequals(input, "gas_density"))
+    if (boost::iequals(input, "density"))
     {
-        return Variable::gas_density;
-    }
-    if (boost::iequals(input, "liquid_density"))
-    {
-        return Variable::liquid_density;
+        return Variable::density;
     }
     if (boost::iequals(input, "temperature"))
     {

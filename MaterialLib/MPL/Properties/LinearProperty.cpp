@@ -25,7 +25,8 @@ PropertyDataType LinearProperty::value(
 {
     return boost::get<double>(_value) +
            boost::get<double>(_independent_variable.slope) *
-               (boost::get<double>(variable_array[_independent_variable.type]) -
+               (boost::get<double>(variable_array[static_cast<int>(
+                    _independent_variable.type)]) -
                 boost::get<double>(_independent_variable.reference_condition));
 }
 

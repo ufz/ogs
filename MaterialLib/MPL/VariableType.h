@@ -37,12 +37,11 @@ using Tensor = std::array<double, 9>;
 /// Enum Variable is simply a list of all commonly used variables that are used
 /// to determine the size of the VariableArray. If the variable of your choice
 /// is missing, simply add it somewhere at the list, but above the last entry.
-enum Variable : int
+enum class Variable : int
 {
     phase_pressure,
     capillary_pressure,
-    gas_density,
-    liquid_density,
+    density,
     temperature,
     liquid_saturation,
     displacement,
@@ -56,7 +55,8 @@ using VariableType = boost::variant<double, Vector>;
 /// The VariableArray is a std::array of fixed size. Its size is determined by
 /// the Variable enumerator list. Data type of that array is defined by the
 /// VariableType definition.
-using VariableArray = std::array<VariableType, Variable::number_of_variables>;
+using VariableArray =
+    std::array<VariableType, static_cast<int>(Variable::number_of_variables)>;
 
 /// This method returns a value of type double from the variables array
 inline double getScalar(VariableType pv)
