@@ -321,6 +321,7 @@ pipeline {
           }
           steps {
             script {
+              def num_threads = env.NUM_THREADS
               bat 'git submodule sync'
               bat 'conan remove --locks'
               // CLI + GUI
@@ -335,6 +336,7 @@ pipeline {
               build {
                 target="package"
                 log="build.log"
+                cmd_args="-l ${num_threads}"
               }
               build { target="tests" }
               build { target="ctest" }
