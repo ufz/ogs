@@ -75,6 +75,10 @@ std::unique_ptr<Process> createHTProcess(
             process_variables.push_back(std::move(per_process_variables));
         }
     }
+    // Process IDs, which are set according to the appearance order of the
+    // process variables.
+    const int _heat_transport_process_id = 0;
+    const int _hydraulic_process_id = 1;
 
     MaterialLib::PorousMedium::PorousMediaProperties porous_media_properties{
         MaterialLib::PorousMedium::createPorousMediaProperties(mesh, config,
@@ -239,7 +243,8 @@ std::unique_ptr<Process> createHTProcess(
         mesh, std::move(jacobian_assembler), parameters, integration_order,
         std::move(process_variables), std::move(material_properties),
         std::move(secondary_variables), std::move(named_function_caller),
-        use_monolithic_scheme, std::move(surfaceflux));
+        use_monolithic_scheme, std::move(surfaceflux),
+        _heat_transport_process_id, _hydraulic_process_id);
 }
 
 }  // namespace HT

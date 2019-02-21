@@ -35,13 +35,17 @@ HTProcess::HTProcess(
     SecondaryVariableCollection&& secondary_variables,
     NumLib::NamedFunctionCaller&& named_function_caller,
     bool const use_monolithic_scheme,
-    std::unique_ptr<ProcessLib::SurfaceFluxData>&& surfaceflux)
+    std::unique_ptr<ProcessLib::SurfaceFluxData>&& surfaceflux,
+    const int heat_transport_process_id,
+    const int hydraulic_process_id)
     : Process(mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables), std::move(named_function_caller),
               use_monolithic_scheme),
       _material_properties(std::move(material_properties)),
-      _surfaceflux(std::move(surfaceflux))
+      _surfaceflux(std::move(surfaceflux)),
+      _heat_transport_process_id(heat_transport_process_id),
+      _hydraulic_process_id(hydraulic_process_id)
 {
 }
 
@@ -67,14 +71,11 @@ void HTProcess::initializeConcreteProcess(
     }
     else
     {
-        const int heat_transport_process_id = 0;
-        const int hydraulic_process_id = 1;
-
         ProcessLib::createLocalAssemblers<StaggeredHTFEM>(
             mesh.getDimension(), mesh.getElements(), dof_table,
             pv.getShapeFunctionOrder(), _local_assemblers,
             mesh.isAxiallySymmetric(), integration_order, *_material_properties,
-            heat_transport_process_id, hydraulic_process_id);
+            _heat_transport_process_id, _hydraulic_process_id);
     }
 
     _secondary_variables.addSecondaryVariable(
@@ -99,7 +100,7 @@ void HTProcess::assembleConcreteProcess(const double t,
     }
     else
     {
-        if (_coupled_solutions->process_id == 0)
+        if (_coupled_solutions->process_id == _heat_transport_process_id)
         {
             DBUG(
                 "Assemble the equations of heat transport process within "
@@ -259,7 +260,7 @@ Eigen::Vector3d HTProcess::getFlux(std::size_t element_id,
     return _local_assemblers[element_id]->getFlux(p, t, local_x);
 }
 
-// this is almost a copy of the implemention in the GroundwaterFlow
+// this is almost a copy of the implementation in the GroundwaterFlow
 void HTProcess::postTimestepConcreteProcess(GlobalVector const& x,
                                             const double t,
                                             const double /*delta_t*/,
@@ -272,7 +273,7 @@ void HTProcess::postTimestepConcreteProcess(GlobalVector const& x,
             "The condition of process_id = 0 must be satisfied for "
             "monolithic HTProcess, which is a single process.");
     }
-    if (!_use_monolithic_scheme && process_id != 1)
+    if (!_use_monolithic_scheme && process_id != _hydraulic_process_id)
     {
         DBUG("This is the thermal part of the staggered HTProcess.");
         return;
