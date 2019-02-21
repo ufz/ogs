@@ -27,7 +27,7 @@ endif()
 
 if (OGS_USE_PYTHON)
     OgsTest(PROJECTFILE Mechanics/Linear/PythonPiston/piston.prj)
-    OgsTest(PROJECTFILE Mechanics/Linear/PythonHertzContact/hertz_contact.prj)
+    OgsTest(PROJECTFILE Mechanics/Linear/PythonHertzContact/hertz_contact.prj RUNTIME 45)
 endif()
 
 if (OGS_USE_MPI)

@@ -78,12 +78,6 @@ if(OGS_BUILD_GUI)
 endif()
 
 conan_check(VERSION 1.3.0)
-conan_add_remote(NAME ogs INDEX 0
-    URL https://ogs.jfrog.io/ogs/api/conan/conan)
-conan_add_remote(NAME conan-community INDEX 1
-    URL https://api.bintray.com/conan/conan-community/conan)
-conan_add_remote(NAME bincrafters INDEX 2
-    URL https://api.bintray.com/conan/bincrafters/public-conan)
 
 message(STATUS "Third-party libraries:")
 foreach(LIB ${OGS_LIBS})
@@ -112,6 +106,12 @@ string(TIMESTAMP timestamp "%Y.%m.%d")
 if("${file_timestamp}" VERSION_LESS ${timestamp} OR IS_CI)
     file(WRITE ${PROJECT_BINARY_DIR}/conan_install_timestamp.txt "${timestamp}\n")
     set(CONAN_UPDATE UPDATE)
+    conan_add_remote(NAME ogs INDEX 0
+        URL https://ogs.jfrog.io/ogs/api/conan/conan)
+    conan_add_remote(NAME conan-community INDEX 1
+        URL https://api.bintray.com/conan/conan-community/conan)
+    conan_add_remote(NAME bincrafters INDEX 2
+        URL https://api.bintray.com/conan/bincrafters/public-conan)
 else()
     message(STATUS "Conan: Skipping update step.")
 endif()

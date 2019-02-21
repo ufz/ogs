@@ -321,6 +321,7 @@ pipeline {
           }
           steps {
             script {
+              def num_threads = env.NUM_THREADS
               bat 'git submodule sync'
               bat 'conan remove --locks'
               // CLI + GUI
@@ -332,12 +333,13 @@ pipeline {
                   '-DOGS_BUILD_UTILS=ON ' +
                   '-DOGS_BUILD_SWMM=ON '
               }
-              build { target="tests" }
-              build { target="ctest" }
               build {
                 target="package"
                 log="build.log"
+                cmd_args="-l ${num_threads}"
               }
+              build { target="tests" }
+              build { target="ctest" }
             }
           }
           post {
@@ -350,7 +352,7 @@ pipeline {
                 excludeFile('.*\\.conan.*'), excludeFile('.*ThirdParty.*'),
                 excludeFile('.*thread.hpp')],
                 tools: [msBuild(name: 'MSVC', pattern: 'build/build.log')],
-                unstableTotalAll: 1
+                qualityGates: [[threshold: 10, type: 'TOTAL', unstable: true]]
             }
             success {
               archiveArtifacts 'build/*.zip,build/conaninfo.txt'

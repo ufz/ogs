@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 # This script takes the output of get-project-params.sh on stdin
 # and transforms it into a tabular representation for further
