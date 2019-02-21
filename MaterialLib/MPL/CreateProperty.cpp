@@ -121,7 +121,7 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
             //! \ogs_file_param{properties__property__LinearProperty__independent_variable__slope}
             independent_variable_config.getConfigParameter<double>("slope");
 
-        MaterialPropertyLib::Variables ivt =
+        MaterialPropertyLib::Variable ivt =
             MaterialPropertyLib::convertStringToVariable(variable_name);
 
         MaterialPropertyLib::IndependentVariable const iv{

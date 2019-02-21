@@ -18,7 +18,7 @@ namespace MaterialPropertyLib
 
 struct IndependentVariable
 {
-    Variables type;
+    Variable type;
     VariableType reference_condition; // scalar or vector
     VariableType slope; // scalar or matrix
 };
@@ -40,12 +40,12 @@ public:
     /// This method will compute the derivative of a property with respect to
     /// the given primary variable.
     PropertyDataType dValue(VariableArray const& variable_array,
-                            Variables const primary_variable) const override;
+                            Variable const primary_variable) const override;
     /// This method will compute the second derivative of a
     /// property with respect to the given primary variables pv1 and pv2.
     PropertyDataType d2Value(VariableArray const& variable_array,
-                             Variables const pv1,
-                             Variables const pv2) const override;
+                             Variable const pv1,
+                             Variable const pv2) const override;
 
 private:
     IndependentVariable const _independent_variable;

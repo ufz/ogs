@@ -34,10 +34,10 @@ using SymmTensor = std::array<double, 6>;
 /// tensor components.
 using Tensor = std::array<double, 9>;
 
-/// Variables is simply a list of all commonly used variables that are used to
-/// determine the size of the VariableArray. If the variable of your choice is
-/// missing, simply add it somewhere at the list, but above the last entry.
-enum Variables : int
+/// Enum Variable is simply a list of all commonly used variables that are used
+/// to determine the size of the VariableArray. If the variable of your choice
+/// is missing, simply add it somewhere at the list, but above the last entry.
+enum Variable : int
 {
     phase_pressure,
     capillary_pressure,
@@ -54,9 +54,9 @@ enum Variables : int
 using VariableType = boost::variant<double, Vector>;
 
 /// The VariableArray is a std::array of fixed size. Its size is determined by
-/// the Variables enumerator list. Data type of that array is defined by the
+/// the Variable enumerator list. Data type of that array is defined by the
 /// VariableType definition.
-using VariableArray = std::array<VariableType, Variables::number_of_variables>;
+using VariableArray = std::array<VariableType, Variable::number_of_variables>;
 
 /// This method returns a value of type double from the variables array
 inline double getScalar(VariableType pv)
@@ -64,5 +64,5 @@ inline double getScalar(VariableType pv)
     return boost::get<double>(pv);
 }
 
-Variables convertStringToVariable(std::string const& input);
+Variable convertStringToVariable(std::string const& input);
 }  // namespace MaterialPropertyLib

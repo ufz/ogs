@@ -62,19 +62,19 @@ public:
     template <typename T>
     T dValue(PropertyType const p,
              VariableArray const& variable_array,
-             Variables const variables) const
+             Variable const variable) const
     {
-        return property(p).template dValue<T>(variable_array, variables);
+        return property(p).template dValue<T>(variable_array, variable);
     }
 
     template <typename T>
     T d2Value(PropertyType const p,
               VariableArray const& variable_array,
-              Variables const variables1,
-              Variables const variables2) const
+              Variable const variable1,
+              Variable const variable2) const
     {
-        return property(p).template d2Value<T>(variable_array, variables1,
-                                               variables2);
+        return property(p).template d2Value<T>(variable_array, variable1,
+                                               variable2);
     }
 
 private:

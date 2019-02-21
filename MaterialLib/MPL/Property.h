@@ -55,14 +55,14 @@ public:
     /// variables that are passed as arguments.
     virtual PropertyDataType value(VariableArray const& variable_array) const;
     /// This virtual method will compute the derivative of a property
-    /// with respect to the given variables pv.
+    /// with respect to the given variable pv.
     virtual PropertyDataType dValue(VariableArray const& variable_array,
-                                    Variables const variables) const;
+                                    Variable const variable) const;
     /// This virtual method will compute the second derivative of a
     /// property with respect to the given variables pv1 and pv2.
     virtual PropertyDataType d2Value(VariableArray const& variable_array,
-                                     Variables const variables1,
-                                     Variables const variables2) const;
+                                     Variable const variable1,
+                                     Variable const variable2) const;
 
     template <typename T>
     T value() const
@@ -76,16 +76,16 @@ public:
     }
     template <typename T>
     T dValue(VariableArray const& variable_array,
-             Variables const variables) const
+             Variable const variable) const
     {
-        return boost::get<T>(dValue(variable_array, variables));
+        return boost::get<T>(dValue(variable_array, variable));
     }
     template <typename T>
     T d2Value(VariableArray const& variable_array,
-              Variables const& variables1,
-              Variables const& variables2) const
+              Variable const& variable1,
+              Variable const& variable2) const
     {
-        return boost::get<T>(d2Value(variable_array, variables1, variables2));
+        return boost::get<T>(d2Value(variable_array, variable1, variable2));
     }
 
 protected:

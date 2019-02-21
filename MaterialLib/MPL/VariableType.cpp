@@ -15,41 +15,41 @@
 
 namespace MaterialPropertyLib
 {
-Variables convertStringToVariable(std::string const& input)
+Variable convertStringToVariable(std::string const& input)
 {
     if (boost::iequals(input, "phase_pressure"))
     {
-        return Variables::phase_pressure;
+        return Variable::phase_pressure;
     }
     if (boost::iequals(input, "capillary_pressure"))
     {
-        return Variables::capillary_pressure;
+        return Variable::capillary_pressure;
     }
     if (boost::iequals(input, "gas_density"))
     {
-        return Variables::gas_density;
+        return Variable::gas_density;
     }
     if (boost::iequals(input, "liquid_density"))
     {
-        return Variables::liquid_density;
+        return Variable::liquid_density;
     }
     if (boost::iequals(input, "temperature"))
     {
-        return Variables::temperature;
+        return Variable::temperature;
     }
     if (boost::iequals(input, "liquid_saturation"))
     {
-        return Variables::liquid_saturation;
+        return Variable::liquid_saturation;
     }
     if (boost::iequals(input, "u"))
     {
-        return Variables::u;
+        return Variable::u;
     }
 
     OGS_FATAL(
         "The variable name '%s' does not correspond to any known variable",
         input.c_str());
 
-    return Variables::number_of_variables;  // to avoid the 'no return' warning
+    return Variable::number_of_variables;  // to avoid the 'no return' warning
 }
 }  // namespace MaterialPropertyLib
