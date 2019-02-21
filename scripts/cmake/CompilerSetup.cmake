@@ -3,11 +3,16 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-if(MSVC_VERSION LESS 1910 OR APPLE) # < VS 15.0; macOS: https://github.com/sakra/cotire/issues/139
+# < VS 15.0; macOS: https://github.com/sakra/cotire/issues/139
+if(MSVC_VERSION LESS 1910 OR APPLE OR ${CMAKE_CXX_COMPILER} MATCHES "clcache")
     set(OGS_USE_PCH OFF CACHE INTERNAL "")
 endif()
 if(OGS_USE_PCH)
     include(cotire) # compile time reducer
+endif()
+
+if(${CMAKE_CXX_COMPILER} MATCHES "clcache" AND CMAKE_BUILD_TYPE STREQUAL "Debug")
+    message(WARNING "clcache does not cache in Debug config!")
 endif()
 
 # Set compiler helper variables
