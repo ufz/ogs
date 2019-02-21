@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 # This script actually generates the QA page.
 # For its usage see generate-project-file-doc-qa.sh

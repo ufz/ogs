@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 # This script augments the parameter documentation pages by information
 # such as if they are required/optional, their data typ and in which

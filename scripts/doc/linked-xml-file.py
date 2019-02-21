@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 # This script traverses the DATADIR (where the ctest input data is) and creates
 # out of every prj file found a file in a subdirectory of DOCAUXDIR.
