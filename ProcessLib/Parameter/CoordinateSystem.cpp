@@ -105,6 +105,15 @@ Eigen::Matrix<double, 3, 3> CoordinateSystem::transformation<3>(
     Eigen::Matrix<double, 3, 3> t;
     t << e0[0], e1[0], e2[0], e0[1], e1[1], e2[1], e0[2], e1[2], e2[2];
 
+#ifndef NDEBUG
+    if (std::abs(t.determinant() - 1) > std::numeric_limits<double>::epsilon())
+    {
+        OGS_FATAL(
+            "The determinant of the coordinate system transformation matrix is "
+            "'%g', which is not sufficiently close to unity.",
+            t.determinant());
+    }
+#endif  // NDEBUG
     return t;
 }
 }  // namespace ProcessLib
