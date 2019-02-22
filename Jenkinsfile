@@ -412,6 +412,10 @@ pipeline {
       parallel {
         // ************************* Tests-Large *******************************
         stage('Tests-Large') {
+          when {
+            beforeAgent true
+            expression { return stage_required.build || stage_required.full }
+          }
           agent {
             dockerfile {
               filename 'Dockerfile.gcc.full'
