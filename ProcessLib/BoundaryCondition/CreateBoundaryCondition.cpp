@@ -15,10 +15,10 @@
 #include "DirichletBoundaryCondition.h"
 #include "DirichletBoundaryConditionWithinTimeInterval.h"
 #include "NeumannBoundaryCondition.h"
-#include "NonuniformVariableDependentNeumannBoundaryCondition.h"
 #include "NormalTractionBoundaryCondition.h"
 #include "PhaseFieldIrreversibleDamageOracleBoundaryCondition.h"
 #include "RobinBoundaryCondition.h"
+#include "VariableDependentNeumannBoundaryCondition.h"
 
 #include "BaseLib/TimeInterval.h"
 
@@ -76,13 +76,12 @@ std::unique_ptr<BoundaryCondition> createBoundaryCondition(
             *config.component_id, integration_order, shapefunction_order,
             bulk_mesh.getDimension(), parameters);
     }
-    if (type == "NonuniformVariableDependentNeumann")
+    if (type == "VariableDependentNeumann")
     {
-        return ProcessLib::
-            createNonuniformVariableDependentNeumannBoundaryCondition(
-                config.config, config.boundary_mesh, dof_table, variable_id,
-                *config.component_id, integration_order, shapefunction_order,
-                bulk_mesh);
+        return ProcessLib::createVariableDependentNeumannBoundaryCondition(
+            config.config, config.boundary_mesh, dof_table, variable_id,
+            *config.component_id, integration_order, shapefunction_order,
+            bulk_mesh.getDimension(), parameters);
     }
 
     if (type == "Python")
