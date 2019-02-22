@@ -74,7 +74,8 @@ public:
         NodalVectorType const coefficient_mixed_variables_node_values =
             _data.coefficient_mixed_variables.getNodalValuesOnElement(
                 Base::_element, t);
-        unsigned const n_integration_points = _local_matrix_size;
+        unsigned const n_integration_points =
+            Base::_integration_method.getNumberOfPoints();
 
         auto const indices_current_variable =
             NumLib::getIndices(mesh_item_id, dof_table_boundary);

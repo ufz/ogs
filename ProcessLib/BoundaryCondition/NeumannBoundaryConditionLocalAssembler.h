@@ -54,28 +54,14 @@ public:
         unsigned const n_integration_points =
             Base::_integration_method.getNumberOfPoints();
 
-        SpatialPosition pos;
-        pos.setElementID(id);
-
-        using FemType =
-            NumLib::TemplateIsoparametric<ShapeFunction, ShapeMatricesType>;
-        FemType fe(
-             static_cast<const typename ShapeFunction::MeshElement&>(Base::_element));
-
-        // Get element nodes for the interpolation from nodes to
-        // integration point.
+        // Get element nodes for the interpolation from nodes to integration
+        // point.
         NodalVectorType parameter_node_values =
             _neumann_bc_parameter.getNodalValuesOnElement(Base::_element, t);
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            pos.setIntegrationPoint(ip);
             auto const& ip_data = Base::_ns_and_weights[ip];
-            auto const& wp = Base::_integration_method.getWeightedPoint(ip);
-
-            MathLib::TemplatePoint<double, 3> coords_ip(
-                fe.interpolateCoordinates(ip_data.N));
-            pos.setCoordinates(coords_ip);
 
             _local_rhs.noalias() += ip_data.N *
                                     parameter_node_values.dot(ip_data.N) *
