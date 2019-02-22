@@ -1,0 +1,1 @@
+A linear constitutive property.
