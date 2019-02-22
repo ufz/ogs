@@ -197,45 +197,51 @@ $ brew install cmake
 ```
 :::
 
+## Step: Install Python 3
+
+::: {.win}
+
+- [Download the Python 3 installer](https://www.python.org/ftp/python/3.7.2/python-3.7.2-amd64-webinstall.exe)
+- Install with the following options
+  - Check *Add Python 3.X to PATH*
+  - *Customize installation*
+  - Make sure to have `pip` enabled (you may uncheck *Documentation*, *tcl/tk*, *Python test suite*)
+  - You may check *Install for all users*
+  - Check *Add Python to environment variables*!
+
+:::
+
+::: {.linux}
+
+Install Python 3 and pip:
+
+```bash
+sudo apt-get install python3 python3-pip
+```
+
+:::
+
+::: {.mac}
+Install Python 3 with Homebrew:
+
+```bash
+brew install python
+```
+:::
+
 ## Step: Install Conan package manager
 
 The [Conan package manager](https://www.conan.io) helps to install all required libraries in a convenient way on every platform. If you prefer you can also [install libraries manually]({{< ref "third-party-libraries.pandoc" >}}) instead.
 
-Go to [Conans download page](https://www.conan.io/downloads) and see platform-specific instructions:
-
-::: {.win}
-Just use the provided Windows installer and make sure to add conan to your path environment as asked by the installer.
-
-Check on a newly opened command line if Conan was installed successfully:
+Install Conan with Python's pip:
 
 ```bash
-$ conan --version
-Conan version 1.0.4
-```
-:::
-
-::: {.linux}
-Use either the provided deb-package or install via Pythons `pip`.
-
-Check on a newly opened command line if Conan was installed successfully:
-
-```bash
-$ conan --version
-Conan version 1.0.4
-```
-:::
-
-::: {.mac}
-Use Homebrew:
-
-```bash
-brew install conan
+pip3 install --user conan
 ```
 
 Check on a newly opened command line if Conan was installed successfully:
 
 ```bash
 $ conan --version
-Conan version 1.0.4
+Conan version 1.12.3
 ```
-:::
