@@ -60,8 +60,7 @@ public:
         for (unsigned ip = 0; ip < n_integration_points; ++ip)
         {
             pos.setIntegrationPoint(ip);
-            auto const& sm = Base::_shape_matrices[ip];
-            auto const& wp = Base::_integration_method.getWeightedPoint(ip);
+            auto const& ip_data = Base::_ns_and_weights[ip];
 
             double const alpha = _data.alpha(t, pos)[0];
             double const u_0 = _data.u_0(t, pos)[0];
@@ -69,10 +68,8 @@ public:
             // flux = alpha * ( u_0 - u )
             // adding a alpha term to the diagonal of the stiffness matrix
             // and a alpha * u_0 term to the rhs vector
-            _local_K.diagonal().noalias() +=
-                sm.N * alpha * sm.detJ * wp.getWeight() * sm.integralMeasure;
-            _local_rhs.noalias() += sm.N * alpha * u_0 * sm.detJ *
-                                    wp.getWeight() * sm.integralMeasure;
+            _local_K.diagonal().noalias() += ip_data.N * alpha * ip_data.weight;
+            _local_rhs.noalias() += ip_data.N * alpha * u_0 * ip_data.weight;
         }
 
         auto const indices = NumLib::getIndices(id, dof_table_boundary);

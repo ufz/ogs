@@ -9,14 +9,14 @@
 
 #pragma once
 
-#include "GenericNonuniformNaturalBoundaryCondition.h"
+#include "GenericNaturalBoundaryCondition.h"
 #include "MeshLib/PropertyVector.h"
 #include "VariableDependentNeumannBoundaryConditionLocalAssembler.h"
 
 namespace ProcessLib
 {
 using VariableDependentNeumannBoundaryCondition =
-    GenericNonuniformNaturalBoundaryCondition<
+    GenericNaturalBoundaryCondition<
         VariableDependentNeumannBoundaryConditionData,
         VariableDependentNeumannBoundaryConditionLocalAssembler>;
 

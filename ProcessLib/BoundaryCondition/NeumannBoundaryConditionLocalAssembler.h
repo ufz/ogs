@@ -70,15 +70,16 @@ public:
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             pos.setIntegrationPoint(ip);
-            auto const& sm = Base::_shape_matrices[ip];
+            auto const& ip_data = Base::_ns_and_weights[ip];
             auto const& wp = Base::_integration_method.getWeightedPoint(ip);
 
-            MathLib::TemplatePoint<double, 3> coords_ip(fe.interpolateCoordinates(sm.N));
+            MathLib::TemplatePoint<double, 3> coords_ip(
+                fe.interpolateCoordinates(ip_data.N));
             pos.setCoordinates(coords_ip);
 
-            _local_rhs.noalias() += sm.N * parameter_node_values.dot(sm.N) *
-                                    sm.detJ * wp.getWeight() *
-                                    sm.integralMeasure;
+            _local_rhs.noalias() += ip_data.N *
+                                    parameter_node_values.dot(ip_data.N) *
+                                    ip_data.weight;
         }
 
         auto const indices = NumLib::getIndices(id, dof_table_boundary);

@@ -14,7 +14,7 @@
 #include "NumLib/Function/Interpolation.h"
 #include "ProcessLib/Parameter/MeshNodeParameter.h"
 
-#include "GenericNonuniformNaturalBoundaryConditionLocalAssembler.h"
+#include "GenericNaturalBoundaryConditionLocalAssembler.h"
 
 namespace ProcessLib
 {
@@ -31,10 +31,10 @@ struct VariableDependentNeumannBoundaryConditionData
 template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
 class VariableDependentNeumannBoundaryConditionLocalAssembler final
-    : public GenericNonuniformNaturalBoundaryConditionLocalAssembler<
+    : public GenericNaturalBoundaryConditionLocalAssembler<
           ShapeFunction, IntegrationMethod, GlobalDim>
 {
-    using Base = GenericNonuniformNaturalBoundaryConditionLocalAssembler<
+    using Base = GenericNaturalBoundaryConditionLocalAssembler<
         ShapeFunction, IntegrationMethod, GlobalDim>;
     using NodalVectorType = typename Base::NodalVectorType;
     using NodalMatrixType = typename Base::NodalMatrixType;
