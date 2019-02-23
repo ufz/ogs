@@ -25,15 +25,25 @@ BoundaryCondition::ConditionType BoundaryCondition::convertStringToType(
     std::string const& str)
 {
     if (str == "Dirichlet")
+    {
         return ConditionType::DIRICHLET;
+    }
     else if (str == "NonuniformDirichlet")
+    {
         return ConditionType::NONUNIFORMDIRICHLET;
+    }
     else if (str == "Neumann")
+    {
         return ConditionType::NEUMANN;
+    }
     else if (str == "NonuniformNeumann")
+    {
         return ConditionType::NONUNIFORMNEUMANN;
+    }
     else if (str == "Robin")
+    {
         return ConditionType::ROBIN;
+    }
 
     return ConditionType::NONE;
 }
@@ -41,15 +51,25 @@ BoundaryCondition::ConditionType BoundaryCondition::convertStringToType(
 std::string BoundaryCondition::convertTypeToString(ConditionType type)
 {
     if (type == ConditionType::DIRICHLET)
+    {
         return "Dirichlet";
+    }
     else if (type == ConditionType::NONUNIFORMDIRICHLET)
+    {
         return "NonuniformDirichlet";
+    }
     else if (type == ConditionType::NEUMANN)
+    {
         return "Neumann";
+    }
     else if (type == ConditionType::NONUNIFORMNEUMANN)
+    {
         return "NonuniformNeumann";
+    }
     else if (type == ConditionType::ROBIN)
+    {
         return "Robin";
+    }
 
     return "";
 }

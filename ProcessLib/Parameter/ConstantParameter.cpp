@@ -48,7 +48,9 @@ std::unique_ptr<ParameterBase> createConstantParameter(
         config.getConfigParameter<std::vector<double>>("values");
 
     if (values.empty())
+    {
         OGS_FATAL("No value available for constant parameter.");
+    }
 
     DBUG("Using following values for the constant parameter:");
     for (double const v : values)

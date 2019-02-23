@@ -96,7 +96,9 @@ TEST_F(NumLibLocalToGlobalIndexMapTest, DISABLED_SubsetByComponent)
     std::array<std::size_t, 3> const ids = {{ 0, 5, 8 }};
     std::vector<MeshLib::Element*> some_elements;
     for (std::size_t id : ids)
+    {
         some_elements.push_back(mesh->getElement(id)->clone());
+    }
 
     auto boundary_mesh =
         MeshLib::createMeshFromElementSelection("boundary_mesh", some_elements);

@@ -27,15 +27,25 @@ EigenOption::EigenOption()
 EigenOption::SolverType EigenOption::getSolverType(const std::string &solver_name)
 {
     if (solver_name == "CG")
+    {
         return SolverType::CG;
+    }
     if (solver_name == "BiCGSTAB")
+    {
         return SolverType::BiCGSTAB;
+    }
     if (solver_name == "SparseLU")
+    {
         return SolverType::SparseLU;
+    }
     if (solver_name == "PardisoLU")
+    {
         return SolverType::PardisoLU;
+    }
     if (solver_name == "GMRES")
+    {
         return SolverType::GMRES;
+    }
 
     OGS_FATAL("Unknown Eigen solver type `%s'", solver_name.c_str());
 }
@@ -43,11 +53,17 @@ EigenOption::SolverType EigenOption::getSolverType(const std::string &solver_nam
 EigenOption::PreconType EigenOption::getPreconType(const std::string &precon_name)
 {
     if (precon_name == "NONE")
+    {
         return PreconType::NONE;
+    }
     if (precon_name == "DIAGONAL")
+    {
         return PreconType::DIAGONAL;
+    }
     if (precon_name == "ILUT")
+    {
         return PreconType::ILUT;
+    }
 
     OGS_FATAL("Unknown Eigen preconditioner type `%s'", precon_name.c_str());
 }

@@ -64,7 +64,9 @@ public:
             _residual_update(residual);
 
             if (residual.squaredNorm() < _tolerance_squared)
+            {
                 break;  // convergence criteria fulfilled.
+            }
 
             increment.noalias() =
                 _linear_solver.compute(jacobian).solve(-residual);

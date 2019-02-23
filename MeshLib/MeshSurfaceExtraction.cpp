@@ -90,7 +90,9 @@ MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(
                          subsfc_mesh.getDimension());
 
     if (sfc_elements.empty())
+    {
         return nullptr;
+    }
 
     std::vector<MeshLib::Node*> sfc_nodes;
     std::vector<std::size_t> node_id_map(subsfc_mesh.getNumberOfNodes());
@@ -104,12 +106,17 @@ MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(
     {
         unsigned const n_elem_nodes(sfc_element->getNumberOfBaseNodes());
         auto** new_nodes = new MeshLib::Node*[n_elem_nodes];
-        for (unsigned k(0); k<n_elem_nodes; k++)
+        for (unsigned k(0); k < n_elem_nodes; k++)
+        {
             new_nodes[k] =
                 sfc_nodes[node_id_map[sfc_element->getNode(k)->getID()]];
+        }
         if (sfc_element->getGeomType() == MeshElemType::TRIANGLE)
+        {
             new_elements.push_back(new MeshLib::Tri(new_nodes));
-        else {
+        }
+        else
+        {
             assert(sfc_element->getGeomType() == MeshElemType::QUAD);
             new_elements.push_back(new MeshLib::Quad(new_nodes));
         }
@@ -121,7 +128,9 @@ MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(
     {
         id_map.reserve(sfc_nodes.size());
         for (auto const* node : sfc_nodes)
+        {
             id_map.push_back(node->getID());
+        }
     }
     MeshLib::Mesh* result(
         new Mesh(subsfc_mesh.getName() + "-Surface", sfc_nodes, new_elements));
@@ -152,8 +161,10 @@ MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(
 
 MeshLib::Mesh* MeshSurfaceExtraction::getMeshBoundary(const MeshLib::Mesh &mesh)
 {
-    if (mesh.getDimension()==1)
+    if (mesh.getDimension() == 1)
+    {
         return nullptr;
+    }
 
     // For 3D meshes return the 2D surface
     if (mesh.getDimension()==3)
@@ -170,13 +181,15 @@ MeshLib::Mesh* MeshSurfaceExtraction::getMeshBoundary(const MeshLib::Mesh &mesh)
     for (auto elem : org_elems)
     {
         std::size_t const n_edges (elem->getNumberOfEdges());
-        for (std::size_t i=0; i<n_edges; ++i)
+        for (std::size_t i = 0; i < n_edges; ++i)
+        {
             if (elem->getNeighbor(i) == nullptr)
             {
                 MeshLib::Element const*const edge (elem->getEdge(i));
                 boundary_elements.push_back(MeshLib::copyElement(edge, nodes));
                 delete edge;
             }
+        }
     }
     MeshLib::Mesh* result = new MeshLib::Mesh("Boundary Mesh", nodes, boundary_elements);
     MeshLib::NodeSearch ns(*result);
@@ -209,7 +222,9 @@ void MeshSurfaceExtraction::get2DSurfaceElements(
     {
         const unsigned element_dimension(elem->getDimension());
         if (element_dimension < mesh_dimension)
+        {
             continue;
+        }
 
         if (element_dimension == 2)
         {
@@ -219,7 +234,9 @@ void MeshSurfaceExtraction::get2DSurfaceElements(
                 if (MathLib::scalarProduct(
                         FaceRule::getSurfaceNormal(face).getNormalizedVector(),
                         norm_dir) > cos_theta)
+                {
                     continue;
+                }
             }
             sfc_elements.push_back(elem->clone());
             element_to_bulk_element_id_map.push_back(elem->getID());
@@ -228,12 +245,16 @@ void MeshSurfaceExtraction::get2DSurfaceElements(
         else
         {
             if (!elem->isBoundaryElement())
+            {
                 continue;
+            }
             const unsigned nFaces(elem->getNumberOfFaces());
             for (unsigned j = 0; j < nFaces; ++j)
             {
                 if (elem->getNeighbor(j) != nullptr)
+                {
                     continue;
+                }
 
                 auto const face =
                     std::unique_ptr<MeshLib::Element const>{elem->getFace(j)};
@@ -248,11 +269,15 @@ void MeshSurfaceExtraction::get2DSurfaceElements(
                     }
                 }
                 if (face->getGeomType() == MeshElemType::TRIANGLE)
+                {
                     sfc_elements.push_back(new MeshLib::Tri(
                         *static_cast<const MeshLib::Tri*>(face.get())));
+                }
                 else
+                {
                     sfc_elements.push_back(new MeshLib::Quad(
                         *static_cast<const MeshLib::Quad*>(face.get())));
+                }
                 element_to_bulk_element_id_map.push_back(elem->getID());
                 element_to_bulk_face_id_map.push_back(j);
             }
@@ -302,7 +327,9 @@ std::vector<MeshLib::Node*> MeshSurfaceExtraction::getSurfaceNodes(
                       node_id_map);
 
     for (auto e : sfc_elements)
+    {
         delete e;
+    }
 
     return sfc_nodes;
 }

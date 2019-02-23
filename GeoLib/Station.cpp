@@ -61,7 +61,10 @@ Station* Station::createStation(const std::string & line)
         (*station)[0] = std::strtod((BaseLib::replaceString(",", ".", *(++it))).c_str(), nullptr);
         (*station)[1] = std::strtod((BaseLib::replaceString(",", ".", *(++it))).c_str(), nullptr);
         if (++it != fields.end())
-            (*station)[2] = std::strtod((BaseLib::replaceString(",", ".", *it)).c_str(), nullptr);
+        {
+            (*station)[2] = std::strtod(
+                (BaseLib::replaceString(",", ".", *it)).c_str(), nullptr);
+        }
     }
     else
     {

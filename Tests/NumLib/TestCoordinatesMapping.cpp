@@ -77,16 +77,24 @@ public:
         vec_eles.push_back(clockwiseEle);
         vec_eles.push_back(zeroVolumeEle);
         for (auto e : vec_eles)
+        {
             for (unsigned i = 0; i < e->getNumberOfNodes(); i++)
+            {
                 vec_nodes.push_back(e->getNode(i));
+            }
+        }
     }
 
     ~NumLibFemNaturalCoordinatesMappingTest() override
     {
         for (auto itr = vec_nodes.begin(); itr != vec_nodes.end(); ++itr)
+        {
             delete *itr;
+        }
         for (auto itr = vec_eles.begin(); itr != vec_eles.end(); ++itr)
+        {
             delete *itr;
+        }
     }
 
     const double eps;
@@ -227,7 +235,9 @@ TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckNaturalShape)
                                                    shape, this->global_dim);
     double exp_J[TestFixture::dim * TestFixture::dim] = {0.0};
     for (unsigned i = 0; i < this->dim; i++)
+    {
         exp_J[i + this->dim * i] = 1.0;
+    }
 
     ASSERT_ARRAY_NEAR(this->nat_exp_N, shape.N.data(), shape.N.size(),
                       this->eps);
@@ -310,7 +320,9 @@ TEST(NumLib, FemNaturalCoordinatesMappingLineY)
 
     double exp_J[dim * dim] = {0.0};
     for (unsigned i = 0; i < dim; i++)
+    {
         exp_J[i + dim * i] = 1.0;
+    }
 
     const double eps(std::numeric_limits<double>::epsilon());
     ASSERT_ARRAY_NEAR(TestLine2::nat_exp_N, shape.N.data(), shape.N.size(),
@@ -324,6 +336,8 @@ TEST(NumLib, FemNaturalCoordinatesMappingLineY)
     ASSERT_ARRAY_NEAR(exp_dNdx, shape.dNdx.data(), shape.dNdx.size(), eps);
 
     for (auto n = 0u; n < line->getNumberOfNodes(); ++n)
+    {
         delete line->getNode(n);
+    }
     delete line;
 }

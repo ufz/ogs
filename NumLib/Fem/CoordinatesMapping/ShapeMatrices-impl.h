@@ -25,8 +25,10 @@ void setMatrixZero(T &mat)
     //mat.setZero();
     const std::size_t n = mat.rows()*mat.cols();
     auto* v = mat.data();
-    for (std::size_t i=0; i<n; i++)
+    for (std::size_t i = 0; i < n; i++)
+    {
         v[i] = .0;
+    }
 }
 
 template<class T>
@@ -35,8 +37,10 @@ void setVectorZero(T &vec)
     //vec.setZero();
     const std::size_t n = vec.size();
     auto* v = vec.data();
-    for (std::size_t i=0; i<n; i++)
+    for (std::size_t i = 0; i < n; i++)
+    {
         v[i] = .0;
+    }
 }
 
 /*

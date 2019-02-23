@@ -39,14 +39,18 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     //  _element->getDimension()
     assert(permeability.rows() == GlobalDim || permeability.rows() == 1);
 
-    if (permeability.size() == 1)  // isotropic or 1D problem.
+    if (permeability.size() == 1)
+    {  // isotropic or 1D problem.
         assembleMatrixAndVector<IsotropicCalculator>(
             material_id, t, local_x, local_M_data, local_K_data, local_b_data,
             pos, permeability);
+    }
     else
+    {
         assembleMatrixAndVector<AnisotropicCalculator>(
             material_id, t, local_x, local_M_data, local_K_data, local_b_data,
             pos, permeability);
+    }
 }
 
 template <typename ShapeFunction, typename IntegrationMethod,
@@ -134,12 +138,16 @@ LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     //  the assert must be changed to perm.rows() == _element->getDimension()
     assert(permeability.rows() == GlobalDim || permeability.rows() == 1);
 
-    if (permeability.size() == 1)  // isotropic or 1D problem.
+    if (permeability.size() == 1)
+    {  // isotropic or 1D problem.
         computeDarcyVelocityLocal<IsotropicCalculator>(local_x, permeability,
                                                        velocity_cache_vectors);
+    }
     else
+    {
         computeDarcyVelocityLocal<AnisotropicCalculator>(
             local_x, permeability, velocity_cache_vectors);
+    }
     return velocity_cache;
 }
 
@@ -222,7 +230,9 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     darcy_velocity_at_ips.col(ip).noalias() = -K * ip_data.dNdx * local_p;
     // gravity term
     if (gravitational_axis_id >= 0)
+    {
         darcy_velocity_at_ips.col(ip)[gravitational_axis_id] -= K * rho_g;
+    }
 }
 
 template <typename ShapeFunction, typename IntegrationMethod,

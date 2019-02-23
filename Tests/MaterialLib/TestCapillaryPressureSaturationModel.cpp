@@ -126,9 +126,13 @@ TEST(MaterialPorousMedium, checkCapillaryPressureCurve)
         ASSERT_NEAR(dpc_dS[i], pc_model->getdPcdS(S[i]), 1.e-5);
 
         if (i == S.size() - 1)
+        {
             // Minimum Pc to maximum saturation
             ASSERT_NEAR(0.9, pc_model->getSaturation(pc[i]), 1.e-5);
+        }
         else
+        {
             ASSERT_NEAR(S[i], pc_model->getSaturation(pc[i]), 1.e-5);
+        }
     }
 }

@@ -39,12 +39,16 @@ void ogs5OutMat(const Mat& mat)
         {
             case MatOutType::OGS5:
                 if (r != 0)
+                {
                     std::printf("\n");
+                }
                 std::printf("|");
                 break;
             case MatOutType::PYTHON:
                 if (r != 0)
+                {
                     std::printf(",\n");
+                }
                 std::printf("[");
                 break;
         }
@@ -58,7 +62,9 @@ void ogs5OutMat(const Mat& mat)
                     break;
                 case MatOutType::PYTHON:
                     if (c != 0)
+                    {
                         std::printf(",");
+                    }
                     std::printf(" %23.16g", mat(r, c));
                     break;
             }
@@ -86,12 +92,16 @@ void ogs5OutVec(const Vec& vec)
         {
             case MatOutType::OGS5:
                 if (r != 0)
+                {
                     std::printf("\n");
+                }
                 std::printf("| %.16e | ", vec[r]);
                 break;
             case MatOutType::PYTHON:
                 if (r != 0)
+                {
                     std::printf(",\n");
+                }
                 std::printf("[ %23.16g ]", vec[r]);
                 break;
         }

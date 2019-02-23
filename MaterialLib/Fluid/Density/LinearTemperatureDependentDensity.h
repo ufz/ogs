@@ -62,7 +62,9 @@ public:
     {
         (void)var_vals;
         if (var != PropertyVariableType::T)
+        {
             return 0.0;
+        }
         return -_rho0 * _beta;
     }
 

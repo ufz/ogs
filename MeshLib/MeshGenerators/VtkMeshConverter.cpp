@@ -48,7 +48,9 @@ MeshLib::Element* createElementWithSameNodeOrder(
 {
     auto** ele_nodes = new MeshLib::Node*[T_ELEMENT::n_all_nodes];
     for (unsigned k(0); k < T_ELEMENT::n_all_nodes; k++)
+    {
         ele_nodes[k] = nodes[node_ids->GetId(k)];
+    }
     return new T_ELEMENT(ele_nodes, element_id);
 }
 }  // namespace detail
@@ -57,7 +59,9 @@ MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(
     vtkUnstructuredGrid* grid, std::string const& mesh_name)
 {
     if (!grid)
+    {
         return nullptr;
+    }
 
     // set mesh nodes
     const std::size_t nNodes = grid->GetPoints()->GetNumberOfPoints();
@@ -210,12 +214,16 @@ MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(
                     prism_nodes[i + 3] = nodes[node_ids->GetId(i)];
                 }
                 for (unsigned i = 0; i < 3; ++i)
+                {
                     prism_nodes[6 + i] = nodes[node_ids->GetId(8 - i)];
+                }
                 prism_nodes[9] = nodes[node_ids->GetId(12)];
                 prism_nodes[10] = nodes[node_ids->GetId(14)];
                 prism_nodes[11] = nodes[node_ids->GetId(13)];
                 for (unsigned i = 0; i < 3; ++i)
+                {
                     prism_nodes[12 + i] = nodes[node_ids->GetId(11 - i)];
+                }
                 elem = new MeshLib::Prism15(prism_nodes, i);
                 break;
             }
@@ -242,26 +250,32 @@ void VtkMeshConverter::convertScalarArrays(vtkUnstructuredGrid& grid,
     auto const n_point_arrays =
         static_cast<unsigned>(point_data->GetNumberOfArrays());
     for (unsigned i = 0; i < n_point_arrays; ++i)
+    {
         convertArray(*point_data->GetArray(i),
                      mesh.getProperties(),
                      MeshLib::MeshItemType::Node);
+    }
 
     vtkCellData* cell_data = grid.GetCellData();
     auto const n_cell_arrays =
         static_cast<unsigned>(cell_data->GetNumberOfArrays());
     for (unsigned i = 0; i < n_cell_arrays; ++i)
+    {
         convertArray(*cell_data->GetArray(i),
                      mesh.getProperties(),
                      MeshLib::MeshItemType::Cell);
+    }
 
     vtkFieldData* field_data = grid.GetFieldData();
     auto const n_field_arrays =
         static_cast<unsigned>(field_data->GetNumberOfArrays());
     for (unsigned i = 0; i < n_field_arrays; ++i)
+    {
         convertArray(
             *vtkDataArray::SafeDownCast(field_data->GetAbstractArray(i)),
             mesh.getProperties(),
             MeshLib::MeshItemType::IntegrationPoint);
+    }
 }
 
 void VtkMeshConverter::convertArray(vtkDataArray& array,
@@ -316,10 +330,14 @@ void VtkMeshConverter::convertArray(vtkDataArray& array,
     {
         // MaterialIDs are assumed to be integers
         if (std::strncmp(array.GetName(), "MaterialIDs", 11) == 0)
+        {
             VtkMeshConverter::convertTypedArray<int>(array, properties, type);
+        }
         else
-            VtkMeshConverter::convertTypedArray<unsigned>(
-                array, properties, type);
+        {
+            VtkMeshConverter::convertTypedArray<unsigned>(array, properties,
+                                                          type);
+        }
 
         return;
     }

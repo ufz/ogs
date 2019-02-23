@@ -65,7 +65,9 @@ std::unique_ptr<Process> createTwoPhaseFlowWithPrhoProcess(
     Eigen::VectorXd specific_body_force(b.size());
     bool const has_gravity = MathLib::toVector(b).norm() > 0;
     if (has_gravity)
+    {
         std::copy_n(b.data(), b.size(), specific_body_force.data());
+    }
 
     //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_PRHO__mass_lumping}
     auto const mass_lumping = config.getConfigParameter<bool>("mass_lumping");

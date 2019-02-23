@@ -82,7 +82,9 @@ struct IntegrationPointData final
             *material_state_variables, temperature);
 
         if (!solution)
+        {
             OGS_FATAL("Computation of local constitutive relation failed.");
+        }
 
         MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> C;
         std::tie(sigma_eff, material_state_variables, C) = std::move(*solution);

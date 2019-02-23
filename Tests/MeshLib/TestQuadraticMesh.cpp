@@ -38,10 +38,15 @@ TEST(MeshLib, QuadraticOrderMesh_Line)
         ASSERT_EQ(2u, e->getNumberOfBaseNodes());
         ASSERT_EQ(3u, e->getNumberOfNodes());
 
-        for (unsigned i=0; i<e->getNumberOfBaseNodes(); i++)
+        for (unsigned i = 0; i < e->getNumberOfBaseNodes(); i++)
+        {
             ASSERT_TRUE(mesh->isBaseNode(e->getNodeIndex(i)));
-        for (unsigned i=e->getNumberOfBaseNodes(); i<e->getNumberOfNodes(); i++)
+        }
+        for (unsigned i = e->getNumberOfBaseNodes(); i < e->getNumberOfNodes();
+             i++)
+        {
             ASSERT_FALSE(mesh->isBaseNode(e->getNodeIndex(i)));
+        }
     }
 
     for (MeshLib::Node const* node : mesh->getNodes())
@@ -76,10 +81,15 @@ TEST(MeshLib, QuadraticOrderMesh_Quad)
         ASSERT_EQ(4u, e->getNumberOfBaseNodes());
         ASSERT_EQ(8u, e->getNumberOfNodes());
 
-        for (unsigned i=0; i<e->getNumberOfBaseNodes(); i++)
+        for (unsigned i = 0; i < e->getNumberOfBaseNodes(); i++)
+        {
             ASSERT_TRUE(mesh->isBaseNode(e->getNodeIndex(i)));
-        for (unsigned i=e->getNumberOfBaseNodes(); i<e->getNumberOfNodes(); i++)
+        }
+        for (unsigned i = e->getNumberOfBaseNodes(); i < e->getNumberOfNodes();
+             i++)
+        {
             ASSERT_FALSE(mesh->isBaseNode(e->getNodeIndex(i)));
+        }
     }
 
     auto const& mesh_nodes = mesh->getNodes();
@@ -131,7 +141,9 @@ TEST(MeshLib, QuadraticOrderMesh_LineQuad)
         linear_mesh = MeshGeoToolsLib::appendLinesAlongPolylines(*linear_quad_mesh.get(), ply_vec);
 
         for (auto p : pnts)
+        {
             delete p;
+        }
     }
     ASSERT_EQ(6u, linear_mesh->getNumberOfElements());
 
@@ -155,10 +167,15 @@ TEST(MeshLib, QuadraticOrderMesh_LineQuad)
             ASSERT_EQ(3u, e->getNumberOfNodes());
         }
 
-        for (unsigned i=0; i<e->getNumberOfBaseNodes(); i++)
+        for (unsigned i = 0; i < e->getNumberOfBaseNodes(); i++)
+        {
             ASSERT_TRUE(mesh->isBaseNode(e->getNodeIndex(i)));
-        for (unsigned i=e->getNumberOfBaseNodes(); i<e->getNumberOfNodes(); i++)
+        }
+        for (unsigned i = e->getNumberOfBaseNodes(); i < e->getNumberOfNodes();
+             i++)
+        {
             ASSERT_FALSE(mesh->isBaseNode(e->getNodeIndex(i)));
+        }
     }
 
     auto const& mesh_nodes = mesh->getNodes();

@@ -60,7 +60,9 @@ TEST_F(BaseLibQuicksort, SortsAsSTLSort)
     {
         std::vector<std::size_t> perm(xs.size());
         if (!xs.empty())
+        {
             BaseLib::quicksort(xs, 0, xs.size(), perm);
+        }
         return std::is_sorted(xs.begin(), xs.end());
     };
 
@@ -100,11 +102,13 @@ TEST_F(BaseLibQuicksort, ReportCorrectPermutations)
         BaseLib::quicksort(xs, 0, xs.size(), perm);
 
         for (std::size_t i = 0; i < perm.size(); ++i)
+        {
             if (perm[i] != i)
             {
                 std::cerr << i << " " << perm[i] << "\n";
                 return false;
             }
+        }
         return true;
     };
 
@@ -127,17 +131,21 @@ TEST_F(BaseLibQuicksort, ReportCorrectPermutationsWithPointer)
         std::iota(perm.begin(), perm.end(), 0);
 
         std::vector<int*> p_xs;
-        for (int & x : xs)
+        for (int& x : xs)
+        {
             p_xs.push_back(&x);
+        }
 
         BaseLib::quicksort(p_xs, 0, p_xs.size(), perm);
 
         for (std::size_t i = 0; i < perm.size(); ++i)
+        {
             if (perm[i] != i)
             {
                 std::cerr << i << " " << perm[i] << "\n";
                 return false;
             }
+        }
         return true;
     };
 
@@ -169,7 +177,12 @@ TEST_F(BaseLibQuicksort, ReportCorrectPermutationsReverse)
         BaseLib::quicksort(xs, 0, xs.size(), perm);
 
         for (std::size_t i = 0; i < perm.size(); ++i)
-            if (perm[i] != perm.size() - i - 1) return false;
+        {
+            if (perm[i] != perm.size() - i - 1)
+            {
+                return false;
+            }
+        }
         return true;
     };
 
@@ -199,13 +212,20 @@ TEST_F(BaseLibQuicksort, ReportCorrectPermutationsReverseWithPointer)
         std::iota(perm.begin(), perm.end(), 0);
 
         std::vector<int*> p_xs;
-        for (int & x : xs)
+        for (int& x : xs)
+        {
             p_xs.push_back(&x);
+        }
 
         BaseLib::quicksort(p_xs, 0, p_xs.size(), perm);
 
         for (std::size_t i = 0; i < perm.size(); ++i)
-            if (perm[i] != perm.size() - i - 1) return false;
+        {
+            if (perm[i] != perm.size() - i - 1)
+            {
+                return false;
+            }
+        }
         return true;
     };
 
@@ -227,7 +247,9 @@ struct randomSortedPairGenerator
     {
         auto p = std::make_tuple(source(), source());
         if (std::get<0>(p) > std::get<1>(p))
+        {
             std::swap(std::get<0>(p), std::get<1>(p));
+        }
 
         return p;
     }
@@ -235,11 +257,13 @@ struct randomSortedPairGenerator
 
 TEST_F(BaseLibQuicksort, SortsRangeAsSTLSort)
 {
-    auto quicksortSortsRangeAsSTLSort = [](std::vector<int>& xs,
-        std::tuple<std::size_t, std::size_t> const& range) -> bool
-    {
+    auto quicksortSortsRangeAsSTLSort =
+        [](std::vector<int>& xs,
+           std::tuple<std::size_t, std::size_t> const& range) -> bool {
         if (xs.empty())
+        {
             return true;
+        }
 
         std::vector<std::size_t> perm(xs.size());
         std::iota(perm.begin(), perm.end(), 0);

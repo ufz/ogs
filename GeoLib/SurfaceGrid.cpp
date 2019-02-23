@@ -64,9 +64,13 @@ SurfaceGrid::SurfaceGrid(Surface const*const sfc) :
     const std::size_t n_tris_per_cell(5);
 
     std::bitset<3> dim; // all bits are set to zero.
-    for (std::size_t k(0); k<3; ++k)
+    for (std::size_t k(0); k < 3; ++k)
+    {
         if (std::abs(delta[k]) >= std::numeric_limits<double>::epsilon())
+        {
             dim[k] = true;
+        }
+    }
 
     // *** condition: n_tris / n_cells < n_tris_per_cell
     //                where n_cells = _n_steps[0] * _n_steps[1] * _n_steps[2]
@@ -137,15 +141,21 @@ bool SurfaceGrid::sortTriangleInGridCells(Triangle const*const triangle)
     boost::optional<std::array<std::size_t, 3> const> c_p0(
         getGridCellCoordinates(*(triangle->getPoint(0))));
     if (!c_p0)
+    {
         return false;
+    }
     boost::optional<std::array<std::size_t, 3> const> c_p1(
         getGridCellCoordinates(*(triangle->getPoint(1))));
     if (!c_p1)
+    {
         return false;
+    }
     boost::optional<std::array<std::size_t, 3> const> c_p2(
         getGridCellCoordinates(*(triangle->getPoint(2))));
     if (!c_p2)
+    {
         return false;
+    }
 
     // determine interval in grid (grid cells the triangle will be inserted)
     std::size_t const i_min(std::min(std::min((*c_p0)[0], (*c_p1)[0]), (*c_p2)[0]));

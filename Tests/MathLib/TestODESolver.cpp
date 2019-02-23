@@ -20,7 +20,10 @@ bool f(const double,
        MathLib::ODE::MappedConstVector<1> const& y,
        MathLib::ODE::MappedVector<1>& ydot)
 {
-    if (y[0] <= 0.0) return false;
+    if (y[0] <= 0.0)
+    {
+        return false;
+    }
 
     ydot[0] = -15.0 * y[0];
     return true;
@@ -31,7 +34,10 @@ bool df(const double /*t*/,
         MathLib::ODE::MappedConstVector<1> const& /*ydot*/,
         MathLib::ODE::MappedMatrix<1, 1>& jac)
 {
-    if (y[0] <= 0.0) return false;
+    if (y[0] <= 0.0)
+    {
+        return false;
+    }
 
     jac(0, 0) = -15.0;
     return true;
@@ -47,7 +53,10 @@ bool f_extra(const double,
              MathLib::ODE::MappedVector<1>& ydot,
              ExtraData& data)
 {
-    if (y[0] <= 0.0) return false;
+    if (y[0] <= 0.0)
+    {
+        return false;
+    }
 
     ydot[0] = -data.value * y[0];
     return true;
@@ -121,7 +130,10 @@ TEST(MathLibCVodeTest, Exponential)
 
     ASSERT_EQ(any_ode_solver_libs_available(), !!ode_solver);
     // Don't run the test if the ODE solver could not be constructed.
-    if (!ode_solver) return;
+    if (!ode_solver)
+    {
+        return;
+    }
 
     ode_solver->setFunction(f, nullptr);
     ode_solver->setTolerance(abs_tol, rel_tol);
@@ -160,7 +172,10 @@ TEST(MathLibCVodeTest, ExponentialExtraData)
 
     ASSERT_EQ(any_ode_solver_libs_available(), !!ode_solver);
     // Don't run the test if the ODE solver could not be constructed.
-    if (!ode_solver) return;
+    if (!ode_solver)
+    {
+        return;
+    }
 
     ExtraData data;
     auto f_lambda = [&](double t,
@@ -224,7 +239,10 @@ TEST(MathLibCVodeTest, ExponentialWithJacobian)
 
     ASSERT_EQ(any_ode_solver_libs_available(), !!ode_solver);
     // Don't run the test if the ODE solver could not be constructed.
-    if (!ode_solver) return;
+    if (!ode_solver)
+    {
+        return;
+    }
 
     ode_solver->setFunction(f, df);
     ode_solver->setTolerance(abs_tol, rel_tol);
@@ -265,7 +283,10 @@ TEST(MathLibCVodeTest, ExponentialWithJacobianNewton)
 
     ASSERT_EQ(any_ode_solver_libs_available(), !!ode_solver);
     // Don't run the test if the ODE solver could not be constructed.
-    if (!ode_solver) return;
+    if (!ode_solver)
+    {
+        return;
+    }
 
     ode_solver->setFunction(f, df);
     ode_solver->setTolerance(abs_tol, rel_tol);

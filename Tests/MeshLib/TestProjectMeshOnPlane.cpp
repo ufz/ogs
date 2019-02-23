@@ -29,12 +29,18 @@ public:
     {
         std::size_t const n_nodes (100);
         std::vector<MeshLib::Node*> nodes;
-        for (std::size_t i=1; i<=n_nodes; i++)
-            nodes.push_back(new MeshLib::Node(static_cast<double>(i), static_cast<double>(i), i*0.5));
+        for (std::size_t i = 1; i <= n_nodes; i++)
+        {
+            nodes.push_back(new MeshLib::Node(static_cast<double>(i),
+                                              static_cast<double>(i), i * 0.5));
+        }
 
         std::vector<MeshLib::Element*> elements;
-        for (std::size_t i=0; i<n_nodes-1; i++)
-            elements.push_back(new MeshLib::Line(std::array<MeshLib::Node*,2>{{nodes[i], nodes[i+1]}}));
+        for (std::size_t i = 0; i < n_nodes - 1; i++)
+        {
+            elements.push_back(new MeshLib::Line(
+                std::array<MeshLib::Node*, 2>{{nodes[i], nodes[i + 1]}}));
+        }
 
         _mesh = std::make_unique<MeshLib::Mesh>("TestMesh", nodes, elements);
     }
@@ -51,8 +57,11 @@ TEST_F(ProjectionTest, ProjectToXY)
     {
         MathLib::Point3d origin (std::array<double,3>{{0,0,static_cast<double>(p)}});
         MeshLib::Mesh* result = MeshLib::projectMeshOntoPlane(*_mesh, origin, normal);
-        for (std::size_t i=0; i<n_nodes; i++)
-            ASSERT_NEAR(static_cast<double>(p), (*result->getNode(i))[2], std::numeric_limits<double>::epsilon());
+        for (std::size_t i = 0; i < n_nodes; i++)
+        {
+            ASSERT_NEAR(static_cast<double>(p), (*result->getNode(i))[2],
+                        std::numeric_limits<double>::epsilon());
+        }
         delete result;
     }
 }
@@ -66,8 +75,11 @@ TEST_F(ProjectionTest, ProjectToXZ)
     {
         MathLib::Point3d origin (std::array<double,3>{{0,static_cast<double>(p),0}});
         MeshLib::Mesh* result = MeshLib::projectMeshOntoPlane(*_mesh, origin, normal);
-        for (std::size_t i=0; i<n_nodes; i++)
-            ASSERT_NEAR(static_cast<double>(p), (*result->getNode(i))[1], std::numeric_limits<double>::epsilon());
+        for (std::size_t i = 0; i < n_nodes; i++)
+        {
+            ASSERT_NEAR(static_cast<double>(p), (*result->getNode(i))[1],
+                        std::numeric_limits<double>::epsilon());
+        }
         delete result;
     }
 }
@@ -81,8 +93,11 @@ TEST_F(ProjectionTest, ProjectToYZ)
     {
         MathLib::Point3d origin (std::array<double,3>{{static_cast<double>(p),0,0}});
         MeshLib::Mesh* result = MeshLib::projectMeshOntoPlane(*_mesh, origin, normal);
-        for (std::size_t i=0; i<n_nodes; i++)
-            ASSERT_NEAR(static_cast<double>(p), (*result->getNode(i))[0], std::numeric_limits<double>::epsilon());
+        for (std::size_t i = 0; i < n_nodes; i++)
+        {
+            ASSERT_NEAR(static_cast<double>(p), (*result->getNode(i))[0],
+                        std::numeric_limits<double>::epsilon());
+        }
         delete result;
     }
 }
@@ -96,8 +111,10 @@ TEST_F(ProjectionTest, NormalDirection)
     MathLib::Point3d origin (std::array<double,3>{{0,0,0}});
     MeshLib::Mesh* result_p = MeshLib::projectMeshOntoPlane(*_mesh, origin, normal_p);
     MeshLib::Mesh* result_n = MeshLib::projectMeshOntoPlane(*_mesh, origin, normal_n);
-    for (std::size_t i=0; i<n_nodes; i++)
+    for (std::size_t i = 0; i < n_nodes; i++)
+    {
         ASSERT_EQ((*result_p->getNode(i))[2], (*result_n->getNode(i))[2]);
+    }
     delete result_p;
     delete result_n;
 }
@@ -113,8 +130,10 @@ TEST_F(ProjectionTest, NormalLength)
     {
         normal[2] = static_cast<double>(p);
         MeshLib::Mesh* result_p = MeshLib::projectMeshOntoPlane(*_mesh, origin, normal);
-        for (std::size_t i=0; i<n_nodes; i++)
+        for (std::size_t i = 0; i < n_nodes; i++)
+        {
             ASSERT_EQ((*result->getNode(i))[2], (*result_p->getNode(i))[2]);
+        }
         delete result_p;
     }
     delete result;

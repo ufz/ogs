@@ -47,11 +47,17 @@ MeshNodeSearcher::MeshNodeSearcher(
 MeshNodeSearcher::~MeshNodeSearcher()
 {
     for (auto pointer : _mesh_nodes_on_points)
+    {
         delete pointer;
+    }
     for (auto pointer : _mesh_nodes_along_polylines)
+    {
         delete pointer;
+    }
     for (auto pointer : _mesh_nodes_along_surfaces)
+    {
         delete pointer;
+    }
 }
 
 std::vector<std::size_t> MeshNodeSearcher::getMeshNodeIDs(
@@ -191,8 +197,10 @@ MeshNodeSearcher const& MeshNodeSearcher::getMeshNodeSearcher(
     std::unique_ptr<MeshGeoToolsLib::SearchLength>&& search_length_algorithm)
 {
     std::size_t const mesh_id = mesh.getID();
-    if (_mesh_node_searchers.size() < mesh_id+1)
-        _mesh_node_searchers.resize(mesh_id+1);
+    if (_mesh_node_searchers.size() < mesh_id + 1)
+    {
+        _mesh_node_searchers.resize(mesh_id + 1);
+    }
 
     if (_mesh_node_searchers[mesh_id])
     {

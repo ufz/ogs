@@ -99,7 +99,9 @@ std::unique_ptr<DeactivatedSubdomain const> createDeactivatedSubdomain(
         for (std::size_t i = 0; i < mesh.getNumberOfElements(); i++)
         {
             if (ids != (*material_ids)[i])
+            {
                 continue;
+            }
 
             auto* element = mesh.getElement(i);
             deactivated_elements.push_back(
@@ -111,7 +113,9 @@ std::unique_ptr<DeactivatedSubdomain const> createDeactivatedSubdomain(
                 const auto& connected_elements = node->getElements();
 
                 if (deactivation_flag_of_nodes[node->getID()])
+                {
                     continue;
+                }
 
                 // Check whether this node is in an activated element.
                 if (std::find_if(
@@ -121,7 +125,9 @@ std::unique_ptr<DeactivatedSubdomain const> createDeactivatedSubdomain(
                             return ids !=
                                    (*material_ids)[connected_elem->getID()];
                         }) != connected_elements.end())
+                {
                     continue;
+                }
 
                 deactivated_nodes.push_back(const_cast<MeshLib::Node*>(node));
                 deactivation_flag_of_nodes[node->getID()] = true;

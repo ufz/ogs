@@ -27,7 +27,9 @@ double calcProjPntToLineAndDists(const double p[3], const double a[3],
     // compute projected point
     double proj_pnt[3];
     for (std::size_t k(0); k < 3; k++)
+    {
         proj_pnt[k] = a[k] + lambda * v[k];
+    }
 
     d0 = std::sqrt (sqrDist (proj_pnt, a));
 

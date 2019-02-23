@@ -44,7 +44,10 @@ TYPED_TEST(MathLibRegulaFalsi, QuadraticFunction)
         old_range = range;
         DBUG("%2i -- x ~ %23.16g, range = %23.16g", n+1, rf.getResult(), range);
 
-        if (range < std::numeric_limits<double>::epsilon()) break;
+        if (range < std::numeric_limits<double>::epsilon())
+        {
+            break;
+        }
     }
 
     auto const error = std::abs(f(rf.getResult()));

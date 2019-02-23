@@ -199,11 +199,13 @@ std::unique_ptr<Process> createThermoMechanicalPhaseFieldProcess(
             config.getConfigParameter<std::vector<double>>(
                 "specific_body_force");
         if (specific_body_force.size() != DisplacementDim)
+        {
             OGS_FATAL(
                 "The size of the specific body force vector does not match the "
                 "displacement dimension. Vector size is %d, displacement "
                 "dimension is %d",
                 specific_body_force.size(), DisplacementDim);
+        }
 
         std::copy_n(b.data(), b.size(), specific_body_force.data());
     }

@@ -38,7 +38,9 @@ std::vector<std::string> Properties::getPropertyVectorNames() const
 {
     std::vector<std::string> names;
     for (auto p : _properties)
+    {
         names.push_back(p.first);
+    }
     return names;
 }
 
@@ -49,7 +51,9 @@ std::vector<std::string> Properties::getPropertyVectorNames(
     for (auto p : _properties)
     {
         if (p.second->getMeshItemType() == t)
+        {
             names.push_back(p.first);
+        }
     }
     return names;
 }
@@ -88,7 +92,9 @@ Properties Properties::excludeCopyProperties(
                       exclude_mesh_item_types.end(),
                       name_vector_pair.second->getMeshItemType()) !=
             exclude_mesh_item_types.end())
+        {
             continue;
+        }
 
         std::vector<std::size_t> const exclude_positions{};
         new_properties._properties.insert(

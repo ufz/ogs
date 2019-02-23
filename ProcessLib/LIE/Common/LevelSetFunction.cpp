@@ -51,7 +51,9 @@ std::vector<double> uGlobalEnrichments(
     // pre-calculate levelsets for all fractures
     std::vector<double> levelsets(frac_props.size());
     for (std::size_t i = 0; i < frac_props.size(); i++)
+    {
         levelsets[i] = Heaviside(levelsetFracture(*frac_props[i], x));
+    }
 
     std::vector<double> enrichments(frac_props.size() + junction_props.size());
     // fractures possibly with branches
@@ -60,7 +62,9 @@ std::vector<double> uGlobalEnrichments(
         auto const* frac = frac_props[i];
         double enrich = levelsets[i];
         for (std::size_t j = 0; j < frac->branches_slave.size(); j++)
+        {
             enrich *= Heaviside(levelsetBranch(frac->branches_slave[j], x));
+        }
         enrichments[i] = enrich;
     }
 
@@ -89,7 +93,9 @@ std::vector<double> duGlobalEnrichments(
     // pre-calculate levelsets for all fractures
     std::vector<double> levelsets(frac_props.size());
     for (std::size_t i = 0; i < frac_props.size(); i++)
+    {
         levelsets[i] = Heaviside(levelsetFracture(*frac_props[i], x));
+    }
 
     std::vector<double> enrichments(frac_props.size() + junction_props.size());
     enrichments[this_frac_local_index] = 1.0;
@@ -100,11 +106,15 @@ std::vector<double> duGlobalEnrichments(
         for (auto const& branch : this_frac.branches_master)
         {
             if (branch.master_fracture_id != this_frac.fracture_id)
+            {
                 continue;
+            }
 
             if (fracID_to_local.find(branch.slave_fracture_id) ==
                 fracID_to_local.end())
+            {
                 continue;
+            }
 
             double singned = boost::math::sign(
                 this_frac.normal_vector.dot(branch.normal_vector_branch));
@@ -119,7 +129,9 @@ std::vector<double> duGlobalEnrichments(
     {
         auto const* junction = junction_props[i];
         if (!BaseLib::contains(junction->fracture_ids, this_frac.fracture_id))
+        {
             continue;
+        }
 
         auto another_frac_id =
             (junction->fracture_ids[0] == this_frac.fracture_id)

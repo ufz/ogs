@@ -53,7 +53,9 @@ struct SerialExecutor
 #endif
     {
         for (std::size_t i = 0; i < c.size(); i++)
+        {
             f(i, *c[i], std::forward<Args_>(args)...);
+        }
     }
 
     /// Executes the given \c method of the given \c object for each element
@@ -199,7 +201,9 @@ struct SerialExecutor
         assert(c.size() == data.size());
 
         for (std::size_t i = 0; i < c.size(); i++)
+        {
             f(i, *c[i], data[i], std::forward<Args_>(args)...);
+        }
     }
 };
 

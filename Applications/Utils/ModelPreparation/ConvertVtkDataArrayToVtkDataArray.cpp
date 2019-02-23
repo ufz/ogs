@@ -33,15 +33,19 @@ std::pair<bool, std::string> castPropertyVectorToPropertyVector(
     auto const* const orig_pv = properties.getPropertyVector<T1>(
         property_vector_name_in, MeshLib::MeshItemType::Cell, 1);
     if (!orig_pv)
+    {
         return std::make_pair(false,
                               "Original property vector '" +
                                   property_vector_name_in + "' not found.");
+    }
     auto* new_pv = properties.createNewPropertyVector<T2>(
         property_vector_name_out, MeshLib::MeshItemType::Cell, 1);
     if (!new_pv)
+    {
         return std::make_pair(false,
                               "Could not create new property vector '" +
                                   property_vector_name_in + "' not found.");
+    }
     new_pv->resize(orig_pv->getNumberOfTuples());
     for (std::size_t i(0); i < new_pv->getNumberOfTuples(); ++i)
     {
@@ -129,21 +133,25 @@ int main(int argc, char* argv[])
 
         if (mesh->getProperties().existsPropertyVector<float>(
                 property_arg.getValue(), MeshLib::MeshItemType::Cell, 1))
+        {
             std::tie(success, err_msg) =
                 castPropertyVectorToPropertyVector<float, int>(
                     mesh->getProperties(),
                     property_arg.getValue(),
                     new_property_arg.getValue());
+        }
     }
     if (new_property_data_type_arg.getValue() == "double")
     {
         if (mesh->getProperties().existsPropertyVector<float>(
                 property_arg.getValue(), MeshLib::MeshItemType::Cell, 1))
+        {
             std::tie(success, err_msg) =
                 castPropertyVectorToPropertyVector<float, double>(
                     mesh->getProperties(),
                     property_arg.getValue(),
                     new_property_arg.getValue());
+        }
     }
 
     if (!success)

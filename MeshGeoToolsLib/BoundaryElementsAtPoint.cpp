@@ -26,16 +26,20 @@ BoundaryElementsAtPoint::BoundaryElementsAtPoint(
 {
     auto const node_ids = mshNodeSearcher.getMeshNodeIDs(_point);
     if (node_ids.empty())
+    {
         OGS_FATAL(
             "BoundaryElementsAtPoint: the mesh node searcher was unable to "
             "locate the point (%f, %f, %f) in the mesh.",
             _point[0], _point[1], _point[2]);
+    }
     if (node_ids.size() > 1)
+    {
         OGS_FATAL(
             "BoundaryElementsAtPoint: the mesh node searcher found %d points "
             "near the requested point (%f, %f, %f) in the mesh, while exactly "
             "one is expected.",
             node_ids.size(), _point[0], _point[1], _point[2]);
+    }
 
     std::array<MeshLib::Node*, 1> const nodes = {{
         const_cast<MeshLib::Node*>(_mesh.getNode(node_ids[0]))}};
@@ -46,6 +50,8 @@ BoundaryElementsAtPoint::BoundaryElementsAtPoint(
 BoundaryElementsAtPoint::~BoundaryElementsAtPoint()
 {
     for (auto p : _boundary_elements)
+    {
         delete p;
+    }
 }
 }  // namespace MeshGeoToolsLib

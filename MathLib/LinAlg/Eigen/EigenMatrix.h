@@ -65,8 +65,10 @@ public:
     void setZero()
     {
         auto const N = _mat.nonZeros();
-        for (auto i = decltype(N){0}; i<N; i++)
+        for (auto i = decltype(N){0}; i < N; i++)
+        {
             _mat.valuePtr()[i] = 0;
+        }
         // don't use _mat.setZero(). it makes a matrix uncompressed
     }
 
@@ -151,15 +153,21 @@ public:
     {
         std::ofstream of(filename);
         if (of)
+        {
             write(of);
+        }
     }
 
     /// printout this matrix for debugging
     void write(std::ostream &os) const
     {
-        for (int k=0; k<_mat.outerSize(); ++k)
-          for (RawMatrixType::InnerIterator it(_mat,k); it; ++it)
-              os << it.row() << " " << it.col() << ": " << it.value() << "\n";
+        for (int k = 0; k < _mat.outerSize(); ++k)
+        {
+            for (RawMatrixType::InnerIterator it(_mat, k); it; ++it)
+            {
+                os << it.row() << " " << it.col() << ": " << it.value() << "\n";
+            }
+        }
         os << std::endl;
     }
 

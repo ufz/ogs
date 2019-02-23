@@ -31,18 +31,26 @@ FileFinder::FileFinder(std::initializer_list<std::string> dirs)
 {
     addDirectory(".");
     for (auto const& dir : dirs)
+    {
         addDirectory(dir);
+    }
 }
 
 void FileFinder::addDirectory(std::string const& dir)
 {
     if (dir.empty())
+    {
         return;
+    }
 
     if (dir[dir.size() - 1] != '/')
+    {
         _directories.emplace_back(dir + "/");
+    }
     else
+    {
         _directories.push_back(dir);
+    }
 }
 
 std::string FileFinder::getPath(std::string const& filename) const

@@ -228,7 +228,9 @@ public:
                 for (int ip = 0; ip < static_cast<int>(distances.size()); ++ip)
                 {
                     if (distances[ip] >= _process_data.internal_length_squared)
+                    {
                         continue;
+                    }
                     // save into current ip_k
                     _ip_data[k].non_local_assemblers.push_back(
                         {la->getIPDataPtr(ip),
@@ -371,7 +373,9 @@ public:
                 *state, _process_data.reference_temperature);
 
             if (!solution)
+            {
                 OGS_FATAL("Computation of local constitutive relation failed.");
+            }
 
             std::tie(sigma, state, C) = std::move(*solution);
 
@@ -815,10 +819,14 @@ private:
 
         for (auto const& ip_data : _ip_data)
         {
-            if (component < 3)  // xx, yy, zz components
+            if (component < 3)
+            {  // xx, yy, zz components
                 cache.push_back(ip_data.sigma[component]);
-            else  // mixed xy, yz, xz components
+            }
+            else
+            {  // mixed xy, yz, xz components
                 cache.push_back(ip_data.sigma[component] / std::sqrt(2));
+            }
         }
 
         return cache;

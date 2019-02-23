@@ -52,8 +52,10 @@ const Element* HexRule8::getFace(const Element* e, unsigned i)
     if (i < n_faces)
     {
         std::array<Node*, 4> nodes;
-        for (unsigned j=0; j<4; j++)
+        for (unsigned j = 0; j < 4; j++)
+        {
             nodes[j] = const_cast<Node*>(e->getNode(face_nodes[i][j]));
+        }
         return new Quad(nodes, e->getID());
     }
     ERR("Error in MeshLib::Element::getFace() - Index %d does not exist.", i);
@@ -93,12 +95,20 @@ unsigned HexRule8::identifyFace(Node const* const* _nodes, Node* nodes[3])
     for (unsigned i=0; i<6; i++)
     {
         unsigned flag(0);
-        for (unsigned j=0; j<4; j++)
-            for (unsigned k=0; k<3; k++)
+        for (unsigned j = 0; j < 4; j++)
+        {
+            for (unsigned k = 0; k < 3; k++)
+            {
                 if (_nodes[face_nodes[i][j]] == nodes[k])
+                {
                     flag++;
-        if (flag==3)
+                }
+            }
+        }
+        if (flag == 3)
+        {
             return i;
+        }
     }
     return std::numeric_limits<unsigned>::max();
 }
@@ -111,7 +121,9 @@ ElementErrorCode HexRule8::validate(const Element* e)
     for (unsigned i=0; i<6; ++i)
     {
         if (error_code.all())
+        {
             break;
+        }
 
         const MeshLib::Element* quad (e->getFace(i));
         error_code |= quad->validate();

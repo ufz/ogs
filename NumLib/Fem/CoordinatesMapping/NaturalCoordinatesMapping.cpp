@@ -102,8 +102,10 @@ computeMappingMatrices(
 static void checkJacobianDeterminant(const double detJ,
                                      MeshLib::Element const& element)
 {
-    if (detJ > 0)  // The usual case
+    if (detJ > 0)
+    {  // The usual case
         return;
+    }
 
     if (detJ < 0)
     {

@@ -197,7 +197,9 @@ void TESProcess::initializeSecondaryVariables()
         _secondary_variable_context);
 
     for (auto&& fct : solid_density->getNamedFunctions())
+    {
         _named_function_caller.addNamedFunction(std::move(fct));
+    }
 
     add2nd("solid_density", solid_density->getExtrapolator());
 
@@ -310,7 +312,9 @@ NumLib::IterationResult TESProcess::postIterationConcreteProcess(
             local_x_prev_ts_cache = _x_previous_timestep->get(r_c_indices.rows);
 
             if (!loc_asm.checkBounds(local_x_cache, local_x_prev_ts_cache))
+            {
                 check_passed = false;
+            }
         };
 
         GlobalExecutor::executeDereferenced(check_variable_bounds,
@@ -318,7 +322,9 @@ NumLib::IterationResult TESProcess::postIterationConcreteProcess(
     }
 
     if (!check_passed)
+    {
         return NumLib::IterationResult::REPEAT_ITERATION;
+    }
 
     // TODO remove
     DBUG("ts %lu iteration %lu (in current ts: %lu) try %u accepted",

@@ -161,7 +161,9 @@ void ConstraintDirichletBoundaryCondition::getEssentialBCValues(
             const auto g_idx = _dof_table_boundary->getGlobalIndex(
                 l, _variable_id, _component_id);
             if (g_idx == NumLib::MeshComponentMap::nop)
+            {
                 continue;
+            }
             // For the DDC approach (e.g. with PETSc option), the negative
             // index of g_idx means that the entry by that index is a ghost one,
             // which should be dropped. Especially for PETSc routines

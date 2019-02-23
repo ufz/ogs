@@ -26,19 +26,25 @@ ConvergenceCriterionPerComponentDeltaX::ConvergenceCriterionPerComponentDeltaX(
       _reltols(std::move(relative_tolerances))
 {
     if (_abstols.size() != _reltols.size())
+    {
         OGS_FATAL(
             "The number of absolute and relative tolerances given must be the "
             "same.");
+    }
 
     if (_abstols.empty())
+    {
         OGS_FATAL("The given tolerances vector is empty.");
+    }
 }
 
 void ConvergenceCriterionPerComponentDeltaX::checkDeltaX(
     const GlobalVector& minus_delta_x, GlobalVector const& x)
 {
     if ((!_dof_table) || (!_mesh))
+    {
         OGS_FATAL("D.o.f. table or mesh have not been set.");
+    }
 
     bool satisfied_abs = true;
     bool satisfied_rel = true;
@@ -76,9 +82,11 @@ void ConvergenceCriterionPerComponentDeltaX::setDOFTable(
 
     if (_dof_table->getNumberOfComponents() !=
         static_cast<int>(_abstols.size()))
+    {
         OGS_FATAL(
             "The number of components in the DOF table and the number of "
             "tolerances given do not match.");
+    }
 }
 
 std::unique_ptr<ConvergenceCriterionPerComponentDeltaX>
@@ -98,9 +106,11 @@ createConvergenceCriterionPerComponentDeltaX(const BaseLib::ConfigTree& config)
         config.getConfigParameter<std::string>("norm_type");
 
     if ((!abstols) && (!reltols))
+    {
         OGS_FATAL(
             "At least one of absolute or relative tolerance has to be "
             "specified.");
+    }
     if (!abstols) {
         abstols = std::vector<double>(reltols->size());
     } else if (!reltols) {
@@ -110,7 +120,9 @@ createConvergenceCriterionPerComponentDeltaX(const BaseLib::ConfigTree& config)
     auto const norm_type = MathLib::convertStringToVecNormType(norm_type_str);
 
     if (norm_type == MathLib::VecNormType::INVALID)
+    {
         OGS_FATAL("Unknown vector norm type `%s'.", norm_type_str.c_str());
+    }
 
     return std::make_unique<ConvergenceCriterionPerComponentDeltaX>(
         std::move(*abstols), std::move(*reltols), norm_type);

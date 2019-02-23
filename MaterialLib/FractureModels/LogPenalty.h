@@ -25,7 +25,9 @@ inline double logPenaltyDerivative(double const aperture0,
                                    double const aperture_cutoff)
 {
     if (aperture >= aperture0)
+    {
         return 1;
+    }
 
     // Logarithmic penalty
     if (aperture > aperture_cutoff)
@@ -49,7 +51,9 @@ inline double logPenalty(double const aperture0,
                          double const aperture_cutoff)
 {
     if (aperture >= aperture0)
+    {
         return 1;
+    }
 
     // Logarithmic penalty
     if (aperture > aperture_cutoff)

@@ -24,9 +24,11 @@ ConvergenceCriterionDeltaX::ConvergenceCriterionDeltaX(
       _reltol(std::move(relative_tolerance))
 {
     if ((!_abstol) && (!_reltol))
+    {
         OGS_FATAL(
             "At least one of absolute or relative tolerance has to be "
             "specified.");
+    }
 }
 
 void ConvergenceCriterionDeltaX::checkDeltaX(const GlobalVector& minus_delta_x,
@@ -69,7 +71,9 @@ std::unique_ptr<ConvergenceCriterionDeltaX> createConvergenceCriterionDeltaX(
     auto const norm_type = MathLib::convertStringToVecNormType(norm_type_str);
 
     if (norm_type == MathLib::VecNormType::INVALID)
+    {
         OGS_FATAL("Unknown vector norm type `%s'.", norm_type_str.c_str());
+    }
 
     return std::make_unique<ConvergenceCriterionDeltaX>(
         std::move(abstol), std::move(reltol), norm_type);

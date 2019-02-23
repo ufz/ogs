@@ -110,7 +110,9 @@ newInstance(MatrixSpecifications const& spec)
     auto A = std::make_unique<EigenMatrix>(spec.nrows);
 
     if (spec.sparsity_pattern)
+    {
         setMatrixSparsity(*A, *spec.sparsity_pattern);
+    }
 
     return A;
 }

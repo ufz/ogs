@@ -76,8 +76,10 @@ TemplateLogogFormatterSuppressedGCC<T_SUPPPRESS_TOPIC_FLAG>
         m_sMessageBuffer.append( (LOGOG_CHAR)'\n' );
     }
 
-    if ( target.GetNullTerminatesStrings() )
+    if (target.GetNullTerminatesStrings())
+    {
         m_sMessageBuffer.append((LOGOG_CHAR)'\0');
+    }
 
     return m_sMessageBuffer;
 }

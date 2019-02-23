@@ -61,7 +61,9 @@ int main (int argc, char* argv[])
     std::unique_ptr<GeoLib::Surface> sfc(
         GeoLib::IO::TINInterface::readTIN(tinFileName, point_vec));
     if (!sfc)
+    {
         return EXIT_FAILURE;
+    }
     INFO("TIN read:  %d points, %d triangles", point_vec.size(),
          sfc->getNumberOfTriangles());
 

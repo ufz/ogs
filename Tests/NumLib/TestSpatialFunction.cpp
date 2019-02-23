@@ -36,7 +36,9 @@ TEST(NumLib, SpatialFunctionLinear)
     {
         GeoLib::Point pt(0, 0, 0);
         for (unsigned i = 0; i < 3; ++i)
-            pt[i] = (double) rand() - (RAND_MAX / 2.0);
+        {
+            pt[i] = (double)rand() - (RAND_MAX / 2.0);
+        }
         double expected = 1+2*pt[0]+3*pt[1]+4*pt[2];
         ASSERT_DOUBLE_EQ(expected, f(pt));
     }
@@ -59,8 +61,10 @@ TEST(NumLib, SpatialFunctionInterpolationPolyline)
             ply0, vec_point_ids, vec_point_values, std::numeric_limits<double>::epsilon(), std::numeric_limits<double>::max());
 
     // normal
-    for (unsigned k=0; k<10; k++)
-        ASSERT_DOUBLE_EQ(k*10., interpolate(GeoLib::Point(k,0,0)));
+    for (unsigned k = 0; k < 10; k++)
+    {
+        ASSERT_DOUBLE_EQ(k * 10., interpolate(GeoLib::Point(k, 0, 0)));
+    }
 
     // failure
     // x

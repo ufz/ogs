@@ -57,7 +57,9 @@ int main(int argc, char *argv[])
     std::unique_ptr<MeshLib::Mesh> org_mesh(
         MeshLib::IO::readMeshFromFile(input_arg.getValue()));
     if (!org_mesh)
+    {
         return EXIT_FAILURE;
+    }
     INFO("Mesh read: %d nodes, %d elements.", org_mesh->getNumberOfNodes(), org_mesh->getNumberOfElements());
 
     // revise the mesh

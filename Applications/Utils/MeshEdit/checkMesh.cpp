@@ -58,7 +58,9 @@ int main(int argc, char *argv[])
     std::unique_ptr<MeshLib::Mesh> mesh(
         MeshLib::IO::readMeshFromFile(mesh_arg.getValue()));
     if (!mesh)
+    {
         return EXIT_FAILURE;
+    }
 
     const unsigned long mem_with_mesh (mem_watch.getVirtMemUsage());
     if (mem_with_mesh>0)

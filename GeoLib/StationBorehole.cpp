@@ -45,15 +45,21 @@ StationBorehole::~StationBorehole(void)
     // deletes profile vector of borehole, starting at layer 1
     // the first point is NOT deleted as it points to the station object itself
     for (std::size_t k(1); k < _profilePntVec.size(); k++)
+    {
         delete _profilePntVec[k];
+    }
 }
 
 int StationBorehole::find(const std::string &str)
 {
     std::size_t size = _soilName.size();
     for (std::size_t i = 0; i < size; i++)
+    {
         if (_soilName[i].find(str) == 0)
+        {
             return 1;
+        }
+    }
     return 0;
 }
 
@@ -87,7 +93,9 @@ int StationBorehole::addStratigraphy(const std::string &path, StationBorehole* b
     {
         std::size_t size = data.size();
         for (std::size_t i = 0; i < size; i++)
+        {
             addLayer(data[i], borehole);
+        }
 
         // check if a layer is missing
         // size = borehole->_soilName.size();
@@ -106,7 +114,9 @@ int StationBorehole::addStratigraphy(const std::string &path, StationBorehole* b
         //    }
     }
     else
+    {
         borehole->addSoilLayer(borehole->getDepth(), "depth");
+    }
 
     return 1;
 }
@@ -176,8 +186,12 @@ int StationBorehole::addStratigraphies(const std::string &path, std::vector<Poin
             {
                 name = static_cast<StationBorehole*>((*boreholes)[it])->_name;
                 if (fields.front() != name)
+                {
                     if (it < boreholes->size() - 1)
+                    {
                         it++;
+                    }
+                }
 
                 fields.pop_front();
                 //the method just assumes that layers are read in correct order
@@ -198,7 +212,9 @@ int StationBorehole::addStratigraphies(const std::string &path, std::vector<Poin
         }
     }
     else
+    {
         createSurrogateStratigraphies(boreholes);
+    }
 
     return 1;
 }
@@ -221,7 +237,9 @@ StationBorehole* StationBorehole::createStation(const std::string &line)
         borehole->_depth = strtod(BaseLib::replaceString(",", ".", fields.front()).c_str(), nullptr);
         fields.pop_front();
         if (fields.empty())
+        {
             borehole->_date = 0;
+        }
         else
         {
             borehole->_date = BaseLib::strDate2int(fields.front());
@@ -251,7 +269,9 @@ StationBorehole* StationBorehole::createStation(const std::string &name,
     (*station)[2]   = z;
     station->_depth = depth;
     if (date != "0000-00-00")
-        station->_date  = BaseLib::xmlDate2int(date);
+    {
+        station->_date = BaseLib::xmlDate2int(date);
+    }
     return station;
 }
 
@@ -283,7 +303,9 @@ void StationBorehole::addSoilLayer ( double thickness, const std::string &soil_n
 
     // KR - Bode
     if (_profilePntVec.empty())
-        addSoilLayer ((*this)[0], (*this)[1], (*this)[2], "");
+    {
+        addSoilLayer((*this)[0], (*this)[1], (*this)[2], "");
+    }
 
     std::size_t idx (_profilePntVec.size());
     double x((*_profilePntVec[idx - 1])[0]);

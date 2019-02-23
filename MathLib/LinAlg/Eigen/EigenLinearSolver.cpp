@@ -56,7 +56,10 @@ public:
     {
         INFO("-> solve with %s",
              EigenOption::getSolverName(opt.solver_type).c_str());
-        if (!A.isCompressed()) A.makeCompressed();
+        if (!A.isCompressed())
+        {
+            A.makeCompressed();
+        }
 
         _solver.compute(A);
         if(_solver.info()!=Eigen::Success) {
@@ -91,7 +94,9 @@ public:
         _solver.setMaxIterations(opt.max_iterations);
 
         if (!A.isCompressed())
+        {
             A.makeCompressed();
+        }
 
         _solver.compute(A);
         if(_solver.info()!=Eigen::Success) {
@@ -180,7 +185,9 @@ EigenLinearSolver::EigenLinearSolver(
     using Matrix = EigenMatrix::RawMatrixType;
 
     if (option)
+    {
         setOption(*option);
+    }
 
     // TODO for my taste it is much too unobvious that the default solver type
     //      currently is SparseLU.
@@ -222,7 +229,9 @@ void EigenLinearSolver::setOption(BaseLib::ConfigTree const& option)
     //! \ogs_file_param{prj__linear_solvers__linear_solver__eigen}
     auto const ptSolver = option.getConfigSubtreeOptional("eigen");
     if (!ptSolver)
+    {
         return;
+    }
 
     if (auto solver_type =
             //! \ogs_file_param{prj__linear_solvers__linear_solver__eigen__solver_type}
@@ -277,7 +286,9 @@ bool EigenLinearSolver::solve(EigenMatrix &A, EigenVector& b, EigenVector &x)
                                         x.getRawVector(), _option);
 #ifdef USE_EIGEN_UNSUPPORTED
     if (scal)
+    {
         x.getRawVector() = scal->RightScaling().cwiseProduct(x.getRawVector());
+    }
 #endif
 
     INFO("------------------------------------------------------------------");

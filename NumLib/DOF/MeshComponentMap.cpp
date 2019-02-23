@@ -102,15 +102,19 @@ MeshComponentMap::MeshComponentMap(
         std::size_t const mesh_id = c.getMeshID();
         // mesh items are ordered first by node, cell, ....
         for (std::size_t j = 0; j < c.getNumberOfNodes(); j++)
+        {
             _dict.insert(Line(
                 Location(mesh_id, MeshLib::MeshItemType::Node, c.getNodeID(j)),
                 comp_id, global_index++));
+        }
         comp_id++;
     }
     _num_local_dof = _dict.size();
 
     if (order == ComponentOrder::BY_LOCATION)
+    {
         renumberByLocation();
+    }
 }
 #endif // end of USE_PETSC
 
@@ -217,8 +221,10 @@ std::vector<int> MeshComponentMap::getComponentIDs(const Location& l) const
     auto const &m = _dict.get<ByLocation>();
     auto const p = m.equal_range(Line(l));
     std::vector<int> vec_compID;
-    for (auto itr=p.first; itr!=p.second; ++itr)
+    for (auto itr = p.first; itr != p.second; ++itr)
+    {
         vec_compID.push_back(itr->comp_id);
+    }
     return vec_compID;
 }
 
@@ -243,8 +249,10 @@ std::vector<GlobalIndexType> MeshComponentMap::getGlobalIndices(const Location &
     auto const &m = _dict.get<ByLocation>();
     auto const p = m.equal_range(Line(l));
     std::vector<GlobalIndexType> global_indices;
-    for (auto itr=p.first; itr!=p.second; ++itr)
+    for (auto itr = p.first; itr != p.second; ++itr)
+    {
         global_indices.push_back(itr->global_index);
+    }
     return global_indices;
 }
 
@@ -262,7 +270,9 @@ std::vector<GlobalIndexType> MeshComponentMap::getGlobalIndicesByLocation(
     {
         auto const p = m.equal_range(Line(l));
         for (auto itr = p.first; itr != p.second; ++itr)
+        {
             global_indices.push_back(itr->global_index);
+        }
     }
 
     return global_indices;
@@ -282,7 +292,9 @@ std::vector<GlobalIndexType> MeshComponentMap::getGlobalIndicesByComponent(
     {
         auto const p = m.equal_range(Line(l));
         for (auto itr = p.first; itr != p.second; ++itr)
+        {
             pairs.emplace_back(itr->comp_id, itr->global_index);
+        }
     }
 
     auto CIPairLess = [](CIPair const& a, CIPair const& b)
@@ -292,12 +304,16 @@ std::vector<GlobalIndexType> MeshComponentMap::getGlobalIndicesByComponent(
 
     // Create vector of global indices from sub dictionary sorting by component.
     if (!std::is_sorted(pairs.begin(), pairs.end(), CIPairLess))
+    {
         std::stable_sort(pairs.begin(), pairs.end(), CIPairLess);
+    }
 
     std::vector<GlobalIndexType> global_indices;
     global_indices.reserve(pairs.size());
     for (const auto& pair : pairs)
+    {
         global_indices.push_back(pair.second);
+    }
 
     return global_indices;
 }

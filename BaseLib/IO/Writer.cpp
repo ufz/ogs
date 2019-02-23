@@ -36,7 +36,9 @@ std::string Writer::writeToString()
     _out.clear();
 
     if (this->write())
+    {
         return _out.str();
+    }
 
     return std::string("");
 }

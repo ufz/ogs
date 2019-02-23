@@ -83,7 +83,9 @@ std::vector<Node const*> findNodesWithinRadius(Mesh const& mesh,
         auto const* n = mesh.getNode(i);
         auto const distance_squared = MathLib::sqrDist(node, *n);
         if (distance_squared > radius * radius)
+        {
             continue;
+        }
 
         nodes.push_back(n);
     }

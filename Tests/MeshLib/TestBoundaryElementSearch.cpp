@@ -37,7 +37,9 @@ public:
     ~MeshLibBoundaryElementSearchInSimpleQuadMesh() override
     {
         for (auto p : _pnts)
+        {
             delete p;
+        }
     }
 
 protected:
@@ -68,7 +70,9 @@ public:
     ~MeshLibBoundaryElementSearchInSimpleHexMesh() override
     {
         for (auto p : _pnts)
+        {
             delete p;
+        }
     }
 
     void TestHexSurfacesBoundaryElementSearcher(
@@ -170,7 +174,9 @@ void MeshLibBoundaryElementSearchInSimpleHexMesh::
     auto connected_nodes_b = MeshLib::getUniqueNodes(found_faces_sfc_b);
     ASSERT_EQ(n_nodes_2d, connected_nodes_b.size());
     for (auto node : connected_nodes_b)
+    {
         ASSERT_EQ(0.0, (*node)[2]);  // check z coordinates
+    }
 
     // perform search on the front surface
     GeoLib::Surface sfc_front(_pnts);
@@ -186,7 +192,9 @@ void MeshLibBoundaryElementSearchInSimpleHexMesh::
     auto connected_nodes_f = MeshLib::getUniqueNodes(found_faces_sfc_f);
     ASSERT_EQ(n_nodes_2d, connected_nodes_f.size());
     for (auto node : connected_nodes_f)
+    {
         ASSERT_EQ(0.0, (*node)[1]);  // check y coordinates
+    }
 }
 
 TEST_F(MeshLibBoundaryElementSearchInSimpleHexMesh, SurfaceSearch)

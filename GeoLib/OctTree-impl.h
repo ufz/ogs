@@ -40,7 +40,9 @@ OctTree<POINT, MAX_POINTS>* OctTree<POINT, MAX_POINTS>::createOctTree(T ll, T ur
         }
     }
     if (eps == 0.0)
+    {
         eps = std::numeric_limits<double>::epsilon();
+    }
     for (std::size_t k(0); k<3; ++k) {
         if (ur[k] - ll[k] > 0.0) {
             ur[k] += (ur[k] - ll[k]) * 1e-6;
@@ -55,7 +57,9 @@ template <typename POINT, std::size_t MAX_POINTS>
 OctTree<POINT, MAX_POINTS>::~OctTree()
 {
     for (auto c : _children)
+    {
         delete c;
+    }
 }
 
 template <typename POINT, std::size_t MAX_POINTS>
@@ -91,7 +95,9 @@ bool OctTree<POINT, MAX_POINTS>::addPoint(POINT * pnt, POINT *& ret_pnt)
                 return true;
             }
             if (ret_pnt != nullptr)
+            {
                 return false;
+            }
         }
     }
 
@@ -112,17 +118,22 @@ void OctTree<POINT, MAX_POINTS>::getPointsInRange(T const& min, T const& max,
     std::vector<POINT*> &pnts) const
 {
     if (_ur[0] < min[0] || _ur[1] < min[1] || _ur[2] < min[2])
+    {
         return;
+    }
 
     if (max[0] < _ll[0] || max[1] < _ll[1] || max[2] < _ll[2])
+    {
         return;
+    }
 
     if (_is_leaf) {
         for (auto p : _pnts) {
-            if (min[0] <= (*p)[0] && (*p)[0] < max[0]
-                && min[1] <= (*p)[1] && (*p)[1] < max[1]
-                && min[2] <= (*p)[2] && (*p)[2] < max[2])
+            if (min[0] <= (*p)[0] && (*p)[0] < max[0] && min[1] <= (*p)[1] &&
+                (*p)[1] < max[1] && min[2] <= (*p)[2] && (*p)[2] < max[2])
+            {
                 pnts.push_back(p);
+            }
         }
     } else {
         for (std::size_t k(0); k<8; k++) {
@@ -154,7 +165,9 @@ bool OctTree<POINT, MAX_POINTS>::addPoint_(POINT * pnt, POINT *& ret_pnt)
                 return true;
             }
             if (ret_pnt != nullptr)
+            {
                 return false;
+            }
         }
     }
 
@@ -172,7 +185,9 @@ template <typename POINT, std::size_t MAX_POINTS>
 bool OctTree<POINT, MAX_POINTS>::addPointToChild(POINT * pnt)
 {
     if (isOutside(pnt))
+    {
         return false;
+    }
 
     if (_pnts.size() < MAX_POINTS) {
         _pnts.push_back(pnt);
@@ -245,7 +260,9 @@ void OctTree<POINT, MAX_POINTS>::splitNode(POINT * pnt)
     // add the passed point pnt to the childs at first
     for (std::size_t k(0); k < 8; k++) {
         if (_children[k]->addPointToChild(pnt))
+        {
             break;
+        }
     }
 
     // distribute points to sub quadtrees
@@ -264,9 +281,13 @@ template <typename POINT, std::size_t MAX_POINTS>
 bool OctTree<POINT, MAX_POINTS>::isOutside(POINT * pnt) const
 {
     if ((*pnt)[0] < _ll[0] || (*pnt)[1] < _ll[1] || (*pnt)[2] < _ll[2])
+    {
         return true;
+    }
     if ((*pnt)[0] >= _ur[0] || (*pnt)[1] >= _ur[1] || (*pnt)[2] >= _ur[2])
+    {
         return true;
+    }
     return false;
 }
 } // end namespace GeoLib

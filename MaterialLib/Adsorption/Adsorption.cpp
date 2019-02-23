@@ -49,16 +49,20 @@ double AdsorptionReaction::getEvaporationEnthalpy(double T_Ads) // in kJ/kg
     if (T_Ads <= 10.){
         const double c[] = {2.50052e3,-2.1068,-3.57500e-1,1.905843e-1,-5.11041e-2,7.52511e-3,-6.14313e-4,2.59674e-5,-4.421e-7};
         double hv = 0.;
-        for (size_t i=0; i< sizeof(c)/sizeof(c[0]);i++)
-            hv += c[i] * pow(T_Ads,i);
+        for (size_t i = 0; i < sizeof(c) / sizeof(c[0]); i++)
+        {
+            hv += c[i] * pow(T_Ads, i);
+        }
         return hv;
     }
     if (T_Ads <= 300.)
     {
         const double c[] = {2.50043e3,-2.35209,1.91685e-4,-1.94824e-5,2.89539e-7,-3.51199e-9,2.06926e-11,-6.4067e-14,8.518e-17,1.558e-20,-1.122e-22};
         double hv = 0.;
-        for (size_t i=0; i< sizeof(c)/sizeof(c[0]);i++)
-            hv += c[i] * pow(T_Ads,i);
+        for (size_t i = 0; i < sizeof(c) / sizeof(c[0]); i++)
+        {
+            hv += c[i] * pow(T_Ads, i);
+        }
         return hv;
     }
     const double c[] = {2.99866e3, -3.1837e-3,  -1.566964e1,
@@ -73,8 +77,10 @@ double AdsorptionReaction::getSpecificHeatCapacity(const double T_Ads)
 {
     const double c[] = {4.224,-3.716e-3,9.351e-5,-7.1786e-7,-9.1266e-9,2.69247e-10,-2.773104e-12,1.553177e-14,-4.982795e-17,8.578e-20,-6.12423e-23};
     double cp = 0.;
-    for (unsigned i=0; i< sizeof(c)/sizeof(c[0]);i++)
-        cp += c[i] * pow(T_Ads,i);
+    for (unsigned i = 0; i < sizeof(c) / sizeof(c[0]); i++)
+    {
+        cp += c[i] * pow(T_Ads, i);
+    }
     return cp; // kJ/(kg*K)
 }
 
@@ -103,7 +109,10 @@ double AdsorptionReaction::getReactionRate(const double p_Ads, const double T_Ad
 {
     const double A = getPotential(p_Ads, T_Ads, M_Ads);
     double C_eq = getAdsorbateDensity(T_Ads) * characteristicCurve(A);
-    if (C_eq < 0.0) C_eq = 0.0;
+    if (C_eq < 0.0)
+    {
+        C_eq = 0.0;
+    }
 
     return k_rate * (C_eq - loading); // scaled with mass fraction
                                       // this the rate in terms of loading!

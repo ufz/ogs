@@ -48,8 +48,10 @@ const Element* HexRule20::getFace(const Element* e, unsigned i)
     if (i < n_faces)
     {
         std::array<Node*, 8> nodes;
-        for (unsigned j=0; j<8; j++)
+        for (unsigned j = 0; j < 8; j++)
+        {
             nodes[j] = const_cast<Node*>(e->getNode(face_nodes[i][j]));
+        }
         return new Quad8(nodes, e->getID());
     }
     ERR("Error in MeshLib::Element::getFace() - Index %d does not exist.", i);

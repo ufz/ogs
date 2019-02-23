@@ -96,8 +96,10 @@ struct FunctionParameter final : public Parameter<T>
             z = node[2];
         }
 
-        for (unsigned i=0; i<_vec_expression.size(); i++)
+        for (unsigned i = 0; i < _vec_expression.size(); i++)
+        {
             cache[i] = _vec_expression[i].value();
+        }
 
         return cache;
     }

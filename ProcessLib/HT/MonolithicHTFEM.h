@@ -178,7 +178,9 @@ public:
                 N.transpose() * N;
             Mpp.noalias() += w * N.transpose() * specific_storage * N;
             if (process_data.has_gravity)
+            {
                 Bp += w * fluid_density * dNdx.transpose() * K_over_mu * b;
+            }
             /* with Oberbeck-Boussing assumption density difference only exists
              * in buoyancy effects */
         }

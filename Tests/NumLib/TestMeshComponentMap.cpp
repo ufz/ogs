@@ -267,8 +267,10 @@ TEST_F(NumLibMeshComponentMapTest, DISABLED_MulticomponentVariable)
         Location const l_boundary(boundary_mesh.getID(), MeshItemType::Node,
                                   id);
         for (auto const& c : selected_component_ids)
+        {
             EXPECT_EQ(cmap->getGlobalIndex(l_bulk, c),
                       cmap_subset.getGlobalIndex(l_boundary, c));
+        }
     }
 }
 
@@ -307,7 +309,9 @@ TEST_F(NumLibMeshComponentMapTest,
         Location const l_boundary(boundary_mesh.getID(), MeshItemType::Node,
                                   id);
         for (auto const& c : selected_component_ids)
+        {
             EXPECT_EQ(cmap->getGlobalIndex(l_bulk, c),
                       cmap_subset.getGlobalIndex(l_boundary, c));
+        }
     }
 }

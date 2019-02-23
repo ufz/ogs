@@ -80,20 +80,28 @@ public:
 
     TemplateVector3& operator+=(TemplateVector3 const& v)
     {
-        for (std::size_t i(0); i < 3; i++) this->_x[i] += v[i];
+        for (std::size_t i(0); i < 3; i++)
+        {
+            this->_x[i] += v[i];
+        }
         return *this;
     }
 
     TemplateVector3& operator-=(const TemplateVector3 & pV)
     {
-        for (std::size_t i(0); i < 3; i++) this->_x[i] -= pV[i];
+        for (std::size_t i(0); i < 3; i++)
+        {
+            this->_x[i] -= pV[i];
+        }
         return *this;
     }
 
     TemplateVector3& operator*=(double s)
     {
         for (std::size_t i(0); i < 3; i++)
+        {
             this->_x[i] *= s;
+        }
         return *this;
     }
 
@@ -104,14 +112,18 @@ public:
     {
         const double s(1/getLength());
         for (std::size_t i(0); i < 3; i++)
+        {
             this->_x[i] *= s;
+        }
     }
 
     /// Returns a normalized version of this vector
     TemplateVector3<double> getNormalizedVector() const
     {
         if (getSqrLength() == 0)
-            return TemplateVector3<double>(0,0,0);
+        {
+            return TemplateVector3<double>(0, 0, 0);
+        }
         TemplateVector3<double> norm_vec (this->_x[0], this->_x[1], this->_x[2]);
         norm_vec.normalize();
         return norm_vec;

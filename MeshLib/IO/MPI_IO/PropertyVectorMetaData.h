@@ -84,12 +84,16 @@ inline boost::optional<PropertyVectorMetaData> readPropertyVectorMetaData(
     // read the size of the name of the PropertyVector
     std::string::size_type s = 0;
     if (!is.read(reinterpret_cast<char*>(&s), sizeof(std::string::size_type)))
+    {
         return boost::optional<PropertyVectorMetaData>();
+    }
 
     PropertyVectorMetaData pvmd;
     char *dummy = new char[s];
     if (!is.read(dummy, s))
+    {
         return boost::none;
+    }
     pvmd.property_name = std::string(dummy, s);
     delete [] dummy;
 
@@ -132,12 +136,15 @@ inline boost::optional<PropertyVectorPartitionMetaData>
 readPropertyVectorPartitionMetaData(std::istream& is)
 {
     PropertyVectorPartitionMetaData pvpmd;
-    if (!is.read(reinterpret_cast<char*>(&pvpmd.offset),
-                 sizeof(unsigned long)))
+    if (!is.read(reinterpret_cast<char*>(&pvpmd.offset), sizeof(unsigned long)))
+    {
         return boost::optional<PropertyVectorPartitionMetaData>();
+    }
     if (!is.read(reinterpret_cast<char*>(&pvpmd.number_of_tuples),
                  sizeof(unsigned long)))
+    {
         return boost::optional<PropertyVectorPartitionMetaData>();
+    }
     return boost::optional<PropertyVectorPartitionMetaData>(pvpmd);
 }
 }  // namespace IO

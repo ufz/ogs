@@ -55,7 +55,9 @@ Mesh::Mesh(std::string name,
         recalculateMaxBaseNodeId();
     }
     if ((_n_base_nodes == 0 && hasNonlinearElement()) || isNonlinear())
+    {
         this->checkNonlinearNodeIDs();
+    }
     this->setDimension();
     this->setElementsConnectedToNodes();
     //this->setNodesConnectedByEdges();
@@ -75,8 +77,10 @@ Mesh::Mesh(const Mesh &mesh)
 {
     const std::vector<Node*>& nodes (mesh.getNodes());
     const std::size_t nNodes (nodes.size());
-    for (unsigned i=0; i<nNodes; ++i)
+    for (unsigned i = 0; i < nNodes; ++i)
+    {
         _nodes[i] = new Node(*nodes[i]);
+    }
 
     const std::vector<Element*>& elements (mesh.getElements());
     const std::size_t nElements (elements.size());
@@ -84,11 +88,16 @@ Mesh::Mesh(const Mesh &mesh)
     {
         const std::size_t nElemNodes = elements[i]->getNumberOfNodes();
         _elements[i] = elements[i]->clone();
-        for (unsigned j=0; j<nElemNodes; ++j)
+        for (unsigned j = 0; j < nElemNodes; ++j)
+        {
             _elements[i]->_nodes[j] = _nodes[elements[i]->getNode(j)->getID()];
+        }
     }
 
-    if (_mesh_dimension==0) this->setDimension();
+    if (_mesh_dimension == 0)
+    {
+        this->setDimension();
+    }
     this->setElementsConnectedToNodes();
     //this->setNodesConnectedByEdges();
     //this->setNodesConnectedByElements();
@@ -98,12 +107,16 @@ Mesh::Mesh(const Mesh &mesh)
 Mesh::~Mesh()
 {
     const std::size_t nElements (_elements.size());
-    for (std::size_t i=0; i<nElements; ++i)
+    for (std::size_t i = 0; i < nElements; ++i)
+    {
         delete _elements[i];
+    }
 
     const std::size_t nNodes (_nodes.size());
-    for (std::size_t i=0; i<nNodes; ++i)
+    for (std::size_t i = 0; i < nNodes; ++i)
+    {
         delete _nodes[i];
+    }
 }
 
 void Mesh::addNode(Node* node)
@@ -117,8 +130,10 @@ void Mesh::addElement(Element* elem)
 
     // add element information to nodes
     unsigned nNodes (elem->getNumberOfNodes());
-    for (unsigned i=0; i<nNodes; ++i)
+    for (unsigned i = 0; i < nNodes; ++i)
+    {
         elem->_nodes[i]->addElement(elem);
+    }
 }
 
 void Mesh::resetNodeIDs()
@@ -146,16 +161,22 @@ void Mesh::recalculateMaxBaseNodeId()
 void Mesh::resetElementIDs()
 {
     const std::size_t nElements (this->_elements.size());
-    for (unsigned i=0; i<nElements; ++i)
+    for (unsigned i = 0; i < nElements; ++i)
+    {
         _elements[i]->setID(i);
+    }
 }
 
 void Mesh::setDimension()
 {
     const std::size_t nElements (_elements.size());
-    for (unsigned i=0; i<nElements; ++i)
+    for (unsigned i = 0; i < nElements; ++i)
+    {
         if (_elements[i]->getDimension() > _mesh_dimension)
+        {
             _mesh_dimension = _elements[i]->getDimension();
+        }
+    }
 }
 
 void Mesh::setElementsConnectedToNodes()
@@ -163,16 +184,22 @@ void Mesh::setElementsConnectedToNodes()
     for (auto& element : _elements)
     {
         const unsigned nNodes(element->getNumberOfNodes());
-        for (unsigned j=0; j<nNodes; ++j)
+        for (unsigned j = 0; j < nNodes; ++j)
+        {
             element->_nodes[j]->addElement(element);
+        }
     }
 }
 
 void Mesh::resetElementsConnectedToNodes()
 {
     for (auto& node : _nodes)
+    {
         if (node)
+        {
             node->clearElements();
+        }
+    }
     this->setElementsConnectedToNodes();
 }
 
@@ -239,15 +266,24 @@ void Mesh::setNodesConnectedByEdges()
                 MeshLib::Node const* node_k = conn_ele->getNode(k);
                 bool is_in_vector (false);
                 const std::size_t nConnNodes (conn_set.size());
-                for (unsigned l(0); l<nConnNodes; ++l)
+                for (unsigned l(0); l < nConnNodes; ++l)
+                {
                     if (node_k == conn_set[l])
+                    {
                         is_in_vector = true;
-                if (is_in_vector) continue;
+                    }
+                }
+                if (is_in_vector)
+                {
+                    continue;
+                }
 
                 if (conn_ele->getNumberOfBaseNodes() == conn_ele->getNumberOfNodes())
                 {
                     if (conn_ele->isEdge(idx, k))
+                    {
                         conn_set.push_back(const_cast<MeshLib::Node*>(node_k));
+                    }
                 }
                 else
                 {
@@ -259,13 +295,22 @@ void Mesh::setNodesConnectedByEdges()
                         {
                             auto edge_node = edge->getNode(m);
                             if (edge_node == node || edge_node == node_k)
+                            {
                                 match++;
+                            }
                         }
                         if (match != 2)
+                        {
                             continue;
+                        }
                         conn_set.push_back(const_cast<MeshLib::Node*>(node_k));
-                        for (unsigned m=edge->getNumberOfBaseNodes(); m<edge->getNumberOfNodes(); m++)
-                            conn_set.push_back(const_cast<MeshLib::Node*>(edge->getNode(m)));
+                        for (unsigned m = edge->getNumberOfBaseNodes();
+                             m < edge->getNumberOfNodes();
+                             m++)
+                        {
+                            conn_set.push_back(
+                                const_cast<MeshLib::Node*>(edge->getNode(m)));
+                        }
                         break;
                     }
                 }
@@ -293,7 +338,9 @@ void Mesh::setNodesConnectedByElements()
             Node* const* const single_elem_nodes = element->getNodes();
             std::size_t const nnodes = element->getNumberOfNodes();
             for (std::size_t n = 0; n < nnodes; n++)
+            {
                 adjacent_nodes.push_back(single_elem_nodes[n]);
+            }
         }
 
         // Make nodes unique and sorted by their ids.
@@ -314,7 +361,9 @@ void Mesh::checkNonlinearNodeIDs() const
         for (unsigned i=e->getNumberOfBaseNodes(); i<e->getNumberOfNodes(); i++)
         {
             if (e->getNodeIndex(i) >= getNumberOfBaseNodes())
+            {
                 continue;
+            }
 
             WARN(
                 "Found a nonlinear node whose ID (%d) is smaller than the "
@@ -346,7 +395,9 @@ void scaleMeshPropertyVector(MeshLib::Mesh & mesh,
     }
     for (auto& v :
          *mesh.getProperties().getPropertyVector<double>(property_name))
+    {
         v *= factor;
+    }
 }
 
 PropertyVector<int> const* materialIDs(Mesh const& mesh)

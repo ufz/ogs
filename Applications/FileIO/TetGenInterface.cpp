@@ -59,8 +59,10 @@ bool TetGenInterface::readTetGenGeometry (std::string const& geo_fname,
     if (!readNodesFromStream (poly_stream, nodes))
     {
         // remove nodes read until now
-        for (auto & node : nodes)
+        for (auto& node : nodes)
+        {
             delete node;
+        }
         return false;
     }
     const std::size_t nNodes (nodes.size());
@@ -79,8 +81,10 @@ bool TetGenInterface::readTetGenGeometry (std::string const& geo_fname,
     if (!parseSmeshFacets(poly_stream, *surfaces, *geo_objects.getPointVec(geo_name), id_map))
     {
         // remove surfaces read until now but keep the points
-        for (std::size_t k=0; k<surfaces->size(); k++)
+        for (std::size_t k = 0; k < surfaces->size(); k++)
+        {
             delete (*surfaces)[k];
+        }
     }
     geo_objects.addSurfaceVec(std::move(surfaces), geo_name);
 
@@ -100,14 +104,18 @@ std::size_t TetGenInterface::getNFacets(std::ifstream &input)
         }
 
         BaseLib::simplify(line);
-        if (line.empty() || line.compare(0,1,"#") == 0)
+        if (line.empty() || line.compare(0, 1, "#") == 0)
+        {
             continue;
+        }
 
         const std::list<std::string> fields = BaseLib::splitString(line, ' ');
         auto it = fields.begin();
         const auto nFacets(BaseLib::str2number<std::size_t>(*it));
         if (fields.size() > 1)
+        {
             _boundary_markers = BaseLib::str2number<std::size_t>(*(++it)) != 0;
+        }
         return nFacets;
     }
     return 0;
@@ -155,8 +163,12 @@ bool TetGenInterface::parseSmeshFacets(std::ifstream &input,
         const std::size_t point_field_size = (_boundary_markers) ? nPoints+1 : nPoints;
         if (point_fields.size() > point_field_size)
         {
-            for (std::size_t j(0); j<nPoints; ++j)
-                point_ids.push_back(pnt_id_map[BaseLib::str2number<std::size_t>(*(++it))-offset]);
+            for (std::size_t j(0); j < nPoints; ++j)
+            {
+                point_ids.push_back(
+                    pnt_id_map[BaseLib::str2number<std::size_t>(*(++it)) -
+                               offset]);
+            }
 
             const std::size_t sfc_marker = (_boundary_markers) ? BaseLib::str2number<std::size_t>(*(++it)) : 0;
             const std::size_t idx = std::find(idx_map.begin(), idx_map.end(), sfc_marker) - idx_map.begin();
@@ -178,10 +190,14 @@ bool TetGenInterface::parseSmeshFacets(std::ifstream &input,
     // here the poly-file potentially defines a number of region attributes, these are ignored for now
 
     std::size_t nTotalTriangles (0);
-    for (auto & surface : surfaces)
+    for (auto& surface : surfaces)
+    {
         nTotalTriangles += surface->getNumberOfTriangles();
+    }
     if (nTotalTriangles == nFacets)
+    {
         return true;
+    }
 
     ERR ("TetGenInterface::parseFacets(): Number of expected total triangles (%d) does not match number of found triangles (%d).", surfaces.size(), nTotalTriangles);
     return false;
@@ -261,9 +277,13 @@ bool TetGenInterface::readNodesFromStream (std::ifstream &ins,
         // read header line
         bool header_okay = parseNodesFileHeader(line, n_nodes, dim, n_attributes, boundary_markers);
         if (!header_okay)
+        {
             return false;
+        }
         if (!parseNodes(ins, nodes, n_nodes, dim))
+        {
             return false;
+        }
         return true;
     }
     return false;
@@ -330,7 +350,9 @@ bool TetGenInterface::parseNodes(std::ifstream &ins,
         if (pos_beg != std::string::npos && pos_end != std::string::npos) {
             id = BaseLib::str2number<std::size_t> (line.substr(pos_beg, pos_end - pos_beg));
             if (k == 0 && id == 0)
+            {
                 _zero_based_idx = true;
+            }
         } else {
             ERR("TetGenInterface::parseNodes(): Error reading ID of node %d.", k);
             delete [] coordinates;
@@ -341,10 +363,16 @@ bool TetGenInterface::parseNodes(std::ifstream &ins,
         for (std::size_t i(0); i < dim; i++) {
             pos_beg = line.find_first_not_of(' ', pos_end);
             pos_end = line.find_first_of(" \n", pos_beg);
-            if (pos_end == std::string::npos) pos_end = line.size();
+            if (pos_end == std::string::npos)
+            {
+                pos_end = line.size();
+            }
             if (pos_beg != std::string::npos)
+            {
                 coordinates[i] = BaseLib::str2number<double>(line.substr(pos_beg, pos_end-pos_beg));
-            else {
+            }
+            else
+            {
                 ERR("TetGenInterface::parseNodes(): error reading coordinate %d of node %d.", i, k);
                 delete [] coordinates;
                 return false;
@@ -383,9 +411,19 @@ bool TetGenInterface::readElementsFromStream(std::ifstream &ins,
         // read header line
         bool header_okay = parseElementsFileHeader(line, n_tets, n_nodes_per_tet, region_attributes);
         if (!header_okay)
+        {
             return false;
-        if (!parseElements(ins, elements, materials, nodes, n_tets, n_nodes_per_tet, region_attributes))
+        }
+        if (!parseElements(ins,
+                           elements,
+                           materials,
+                           nodes,
+                           n_tets,
+                           n_nodes_per_tet,
+                           region_attributes))
+        {
             return false;
+        }
         return true;
     }
     return false;
@@ -402,8 +440,11 @@ bool TetGenInterface::parseElementsFileHeader(std::string &line,
     pos_beg = line.find_first_not_of (' ');
     pos_end = line.find_first_of(' ', pos_beg);
     if (pos_beg != std::string::npos && pos_end != std::string::npos)
+    {
         n_tets = BaseLib::str2number<std::size_t> (line.substr(pos_beg, pos_end - pos_beg));
-    else {
+    }
+    else
+    {
         ERR("TetGenInterface::parseElementsFileHeader(): Could not read number of tetrahedra specified in header.");
         return false;
     }
@@ -415,7 +456,9 @@ bool TetGenInterface::parseElementsFileHeader(std::string &line,
     pos_beg = line.find_first_not_of (" \t", pos_end);
     pos_end = line.find_first_of(" \t\n", pos_beg);
     if (pos_end == std::string::npos)
+    {
         pos_end = line.size();
+    }
     region_attribute = line.substr(pos_beg, pos_end - pos_beg) == "1";
 
     return true;
@@ -467,9 +510,13 @@ bool TetGenInterface::parseElements(std::ifstream& ins,
             pos_beg = line.find_first_not_of(' ', pos_end);
             pos_end = line.find_first_of(' ', pos_beg);
             if (pos_end == std::string::npos)
+            {
                 pos_end = line.size();
+            }
             if (pos_beg != std::string::npos && pos_end != std::string::npos)
+            {
                 ids[i] = BaseLib::str2number<std::size_t>(line.substr(pos_beg, pos_end - pos_beg)) - offset;
+            }
             else
             {
                 ERR("TetGenInterface::parseElements(): Error reading node %d of tetrahedron %d.", i, k);
@@ -482,10 +529,16 @@ bool TetGenInterface::parseElements(std::ifstream& ins,
         if (region_attribute) {
             pos_beg = line.find_first_not_of(' ', pos_end);
             pos_end = line.find_first_of(' ', pos_beg);
-            if (pos_end == std::string::npos) pos_end = line.size();
+            if (pos_end == std::string::npos)
+            {
+                pos_end = line.size();
+            }
             if (pos_beg != std::string::npos && pos_end != std::string::npos)
+            {
                 region = BaseLib::str2number<int> (line.substr(pos_beg, pos_end - pos_beg));
-            else {
+            }
+            else
+            {
                 ERR("TetGenInterface::parseElements(): Error reading region attribute of tetrahedron %d.", k);
                 return false;
             }
@@ -525,13 +578,18 @@ bool TetGenInterface::writeTetGenSmesh(const std::string &file_name,
     const std::size_t nPoints (points->size());
     out << nPoints << " 3\n";
     // the point list
-    for (std::size_t i=0; i<nPoints; ++i)
-        out << i << "  " << (*(*points)[i])[0] << " " << (*(*points)[i])[1] << " " << (*(*points)[i])[2] << "\n";
+    for (std::size_t i = 0; i < nPoints; ++i)
+    {
+        out << i << "  " << (*(*points)[i])[0] << " " << (*(*points)[i])[1]
+            << " " << (*(*points)[i])[2] << "\n";
+    }
     // the surfaces header
     const std::size_t nSurfaces = (surfaces) ? surfaces->size() : 0;
     std::size_t nTotalTriangles (0);
-    for (std::size_t i=0; i<nSurfaces; ++i)
+    for (std::size_t i = 0; i < nSurfaces; ++i)
+    {
         nTotalTriangles += (*surfaces)[i]->getNumberOfTriangles();
+    }
     out << nTotalTriangles << " 1\n";
 
     for (std::size_t i=0; i<nSurfaces; ++i)
@@ -548,13 +606,19 @@ bool TetGenInterface::writeTetGenSmesh(const std::string &file_name,
     out << "0\n"; // the polygon holes list
     // the region attributes list
     if (attribute_points.empty())
+    {
         out << "0\n";
+    }
     else
     {
         const std::size_t nAttributePoints (attribute_points.size());
         out << nAttributePoints << "\n";
-        for (std::size_t i=0; i<nAttributePoints; ++i)
-            out << i+1 << " " << attribute_points[i][0] << " " << attribute_points[i][1] << " " << attribute_points[i][2] << " " << 10*attribute_points[i].getID() << "\n";
+        for (std::size_t i = 0; i < nAttributePoints; ++i)
+        {
+            out << i + 1 << " " << attribute_points[i][0] << " "
+                << attribute_points[i][1] << " " << attribute_points[i][2]
+                << " " << 10 * attribute_points[i].getID() << "\n";
+        }
     }
     INFO ("TetGenInterface::writeTetGenSmesh() - %d points and %d surfaces successfully written.", nPoints, nSurfaces);
     out.close();
@@ -566,7 +630,9 @@ bool TetGenInterface::writeTetGenSmesh(const std::string &file_name,
                                        std::vector<MeshLib::Node> &attribute_points) const
 {
     if (mesh.getDimension() == 1)
+    {
         return false;
+    }
 
     const std::vector<MeshLib::Node*> &nodes = mesh.getNodes();
 
@@ -576,25 +642,38 @@ bool TetGenInterface::writeTetGenSmesh(const std::string &file_name,
     const std::size_t nPoints (nodes.size());
     out << nPoints << " 3\n";
     // the point list
-    for (std::size_t i=0; i<nPoints; ++i)
-        out << i << "  " << (*nodes[i])[0] << " " << (*nodes[i])[1] << " " << (*nodes[i])[2] << "\n";
+    for (std::size_t i = 0; i < nPoints; ++i)
+    {
+        out << i << "  " << (*nodes[i])[0] << " " << (*nodes[i])[1] << " "
+            << (*nodes[i])[2] << "\n";
+    }
 
     if (mesh.getDimension() == 2)
+    {
         write2dElements(out, mesh);
+    }
     else
+    {
         write3dElements(out, mesh, attribute_points);
+    }
 
     out << "0\n"; // the polygon holes list
 
     // the region attributes list
     if (attribute_points.empty())
+    {
         out << "0\n";
+    }
     else
     {
         const std::size_t nAttributePoints (attribute_points.size());
         out << nAttributePoints << "\n";
-        for (std::size_t i=0; i<nAttributePoints; ++i)
-            out << i+1 << " " << attribute_points[i][0] << " " << attribute_points[i][1] << " " << attribute_points[i][2] << " " << 10*attribute_points[i].getID() << "\n";
+        for (std::size_t i = 0; i < nAttributePoints; ++i)
+        {
+            out << i + 1 << " " << attribute_points[i][0] << " "
+                << attribute_points[i][1] << " " << attribute_points[i][2]
+                << " " << 10 * attribute_points[i].getID() << "\n";
+        }
     }
 
     INFO ("TetGenInterface::writeTetGenPoly() - %d points and %d surfaces successfully written.", nPoints, mesh.getNumberOfElements());
@@ -631,7 +710,9 @@ void TetGenInterface::write3dElements(std::ofstream &out,
     const std::vector<MeshLib::Element*> &elements = mesh.getElements();
     const std::size_t nElements (elements.size());
     if (!attribute_points.empty())
+    {
         attribute_points.clear();
+    }
 
     // get position where number of facets need to be written and figure out worst case of chars that are needed
     const std::streamoff before_elems_pos (out.tellp());
@@ -643,7 +724,9 @@ void TetGenInterface::write3dElements(std::ofstream &out,
     for (std::size_t i=0; i<nElements; ++i)
     {
         if (elements[i]->getDimension() < 3)
+        {
             continue;
+        }
 
         const unsigned nFaces (elements[i]->getNumberOfNeighbors());
         std::string const mat_id_str =
@@ -652,16 +735,21 @@ void TetGenInterface::write3dElements(std::ofstream &out,
         {
             MeshLib::Element const*const neighbor ( elements[i]->getNeighbor(j) );
 
-            if (neighbor && materialIds && (*materialIds)[i] <= (*materialIds)[neighbor->getID()])
+            if (neighbor && materialIds &&
+                (*materialIds)[i] <= (*materialIds)[neighbor->getID()])
+            {
                 continue;
+            }
 
             std::unique_ptr<MeshLib::Element const> const face (elements[i]->getFace(j));
             this->writeElementToFacets(out, *face, element_count, mat_id_str);
         }
         if (materialIds)
+        {
             attribute_points.emplace_back(
                 elements[i]->getCenterOfGravity().getCoords(),
                 (*materialIds)[i]);
+        }
     }
     // add number of facets at correct position and jump back
     const std::streamoff after_elems_pos (out.tellp());
@@ -674,7 +762,9 @@ void TetGenInterface::writeElementToFacets(std::ofstream &out, const MeshLib::El
 {
     element_count++;
     if (element.getGeomType() == MeshLib::MeshElemType::TRIANGLE)
+    {
         out << "3  " << element.getNodeIndex(0) << " " << element.getNodeIndex(1) << " " << element.getNodeIndex(2) << " " << matId << " # " << element_count << "\n";
+    }
     else if (element.getGeomType() == MeshLib::MeshElemType::QUAD)
     {
         out << "3  " << element.getNodeIndex(0) << " " << element.getNodeIndex(1) << " " << element.getNodeIndex(2) << " " << matId << " # " << element_count << "\n";

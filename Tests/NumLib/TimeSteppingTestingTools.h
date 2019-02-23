@@ -44,7 +44,9 @@ std::vector<double> timeStepping(T_TIME_STEPPING& algorithm,
         NumLib::TimeStep t = algorithm.getTimeStep();
         //INFO("t: n=%d,t=%g,dt=%g", t.steps(), t.current(), t.dt());
         if (obj)
-            (*obj)(algorithm); // do something
+        {
+            (*obj)(algorithm);  // do something
+        }
         if (algorithm.accepted()) {
             vec_t.push_back(t.current());
         } else {

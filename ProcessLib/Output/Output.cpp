@@ -77,7 +77,9 @@ bool Output::shallDoOutput(unsigned timestep, double const t)
     bool make_output = timestep % each_steps == 0;
 
     if (_fixed_output_times.empty())
+    {
         return make_output;
+    }
 
     const double specific_time = _fixed_output_times.back();
     const double zero_threshold = std::numeric_limits<double>::min();
@@ -170,7 +172,9 @@ void Output::doOutputAlways(Process const& process,
     // output.
     if (!(process_id == static_cast<int>(_process_to_process_data.size()) - 1 ||
           process.isMonolithicSchemeUsed()))
+    {
         return;
+    }
 
     std::string const output_file_name =
         constructFileName(_output_file_prefix, process_id, timestep, t) +
@@ -189,7 +193,9 @@ void Output::doOutputAlways(Process const& process,
     for (auto const& mesh_output_name : _mesh_names_for_output)
     {
         if (process.getMesh().getName() == mesh_output_name)
+        {
             continue;
+        }
         auto& mesh = *BaseLib::findElementOrError(
             begin(_meshes), end(_meshes),
             [&mesh_output_name](auto const& m) {
@@ -290,7 +296,9 @@ void Output::doOutputNonlinearIteration(Process const& process,
     // output.
     if (!(process_id == static_cast<int>(_process_to_process_data.size()) - 1 ||
           process.isMonolithicSchemeUsed()))
+    {
         return;
+    }
 
     // Only check whether a process data is available for output.
     findProcessData(process, process_id);

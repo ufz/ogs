@@ -69,7 +69,9 @@ public:
         }
 
         if (!_name_id_map)
+        {
             _name_id_map = std::make_unique<NameIdMap>();
+        }
     }
 
     /**
@@ -77,7 +79,10 @@ public:
      */
     virtual ~TemplateVec ()
     {
-        for (std::size_t k(0); k < size(); k++) delete (*_data_vec)[k];
+        for (std::size_t k(0); k < size(); k++)
+        {
+            delete (*_data_vec)[k];
+        }
     }
 
     /** sets the name of the vector of geometric objects
@@ -130,7 +135,9 @@ public:
         std::size_t id;
         bool ret (getElementIDByName (name, id));
         if (ret)
+        {
             return (*_data_vec)[id];
+        }
 
         return nullptr;
     }
@@ -172,8 +179,12 @@ public:
     bool getNameOfElement (const T* data, std::string& name) const
     {
         for (std::size_t k(0); k < _data_vec->size(); k++)
+        {
             if ((*_data_vec)[k] == data)
-                return getNameOfElementByID (k, name);
+            {
+                return getNameOfElementByID(k, name);
+            }
+        }
 
         return false;
     }
@@ -183,7 +194,9 @@ public:
     {
         _data_vec->push_back (data_element);
         if (!name || name->empty())
+        {
             return;
+        }
 
         std::map<std::string, std::size_t>::const_iterator it(
             _name_id_map->find(*name)
@@ -204,7 +217,9 @@ public:
         // Erase id if found in map.
         auto it = findFirstElementByID(id);
         if (it != _name_id_map->end())
+        {
             _name_id_map->erase(it);
+        }
 
         if (!name.empty()) {
             //insert new or revised name

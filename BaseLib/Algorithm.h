@@ -215,7 +215,9 @@ void uniquePushBack(Container& container,
 {
     if (std::find(container.begin(), container.end(), element) ==
         container.end())
+    {
         container.push_back(element);
+    }
 }
 
 template <typename Container>

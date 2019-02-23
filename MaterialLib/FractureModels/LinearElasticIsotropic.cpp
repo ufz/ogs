@@ -40,7 +40,9 @@ void LinearElasticIsotropic<DisplacementDim>::computeConstitutiveRelation(
     const int index_ns = DisplacementDim - 1;
     C.setZero();
     for (int i = 0; i < index_ns; i++)
+    {
         C(i, i) = _mp.shear_stiffness(t, x)[0];
+    }
 
     sigma.noalias() = C * w;
 

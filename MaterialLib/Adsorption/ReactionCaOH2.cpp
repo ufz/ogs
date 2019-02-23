@@ -109,11 +109,18 @@ double ReactionCaOH2::CaHydration()
         dXdt = -1.0*(1.0-X_H) * (T_s - T_eq) / T_eq * 0.2 * conversion_rate::x_react;
 #else //this is from Schaube
         if (_X_H == _tol_u || _rho_s == rho_up)
+        {
             dXdt = 0.0;
-        else if ( (_T_eq-_T_s) >= 50.0)
+        }
+        else if ((_T_eq - _T_s) >= 50.0)
+        {
             dXdt = 13945.0 * exp(-89486.0/R/_T_s) * std::pow(_p_r_g/_p_eq - 1.0,0.83) * 3.0 * (_X_D) * std::pow(-1.0*log(_X_D),0.666);
+        }
         else
-            dXdt = 1.0004e-34 * exp(5.3332e4/_T_s) * std::pow(_p_r_g, 6.0) * (_X_D);
+        {
+            dXdt = 1.0004e-34 * exp(5.3332e4 / _T_s) * std::pow(_p_r_g, 6.0) *
+                   (_X_D);
+        }
 #endif
     }
     else // dehydration
@@ -123,11 +130,19 @@ double ReactionCaOH2::CaHydration()
         dXdt = -1.0* (1.0-X_D) * (T_s - T_eq) / T_eq * 0.05;
 #else
         if (_X_D == _tol_u || _rho_s == rho_low)
+        {
             dXdt = 0.0;
+        }
         else if (_X_D < 0.2)
+        {
             dXdt = -1.9425e12 * exp( -1.8788e5/R/_T_s ) * std::pow(1.0-_p_r_g/_p_eq,3.0)*(_X_H);
+        }
         else
-            dXdt = -8.9588e9 * exp( -1.6262e5/R/_T_s ) * std::pow(1.0-_p_r_g/_p_eq,3.0)*2.0 * std::pow(_X_H, 0.5);
+        {
+            dXdt = -8.9588e9 * exp(-1.6262e5 / R / _T_s) *
+                   std::pow(1.0 - _p_r_g / _p_eq, 3.0) * 2.0 *
+                   std::pow(_X_H, 0.5);
+        }
 #endif
     }
     return dXdt;

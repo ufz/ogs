@@ -126,7 +126,9 @@ int main (int argc, char* argv[])
     // generate file names for output
     std::string path(out_base_fname.getValue());
     if (path.empty())
+    {
         path = BaseLib::dropFileExtension(mesh_in.getValue());
+    }
     std::string const id_and_area_fname(path+".txt");
     std::string const csv_fname(path+".csv");
 

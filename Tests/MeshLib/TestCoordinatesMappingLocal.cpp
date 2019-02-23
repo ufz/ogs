@@ -169,7 +169,9 @@ TEST(MeshLib, CoordinatesMappingLocalLowerDimLineY)
     CHECK_COORDS(ele,mapping);
 
     for (std::size_t n = 0; n < ele->getNumberOfNodes(); ++n)
+    {
         delete ele->getNode(n);
+    }
 }
 
 TEST(MeshLib, CoordinatesMappingLocalLowerDimLineZ)
@@ -188,7 +190,9 @@ TEST(MeshLib, CoordinatesMappingLocalLowerDimLineZ)
     CHECK_COORDS(ele,mapping);
 
     for (std::size_t n = 0; n < ele->getNumberOfNodes(); ++n)
+    {
         delete ele->getNode(n);
+    }
 }
 
 TEST(MeshLib, CoordinatesMappingLocalLowerDimLineXY)
@@ -207,7 +211,9 @@ TEST(MeshLib, CoordinatesMappingLocalLowerDimLineXY)
     CHECK_COORDS(ele,mapping);
 
     for (std::size_t n = 0; n < ele->getNumberOfNodes(); ++n)
+    {
         delete ele->getNode(n);
+    }
 }
 
 TEST(MeshLib, CoordinatesMappingLocalLowerDimLineXYZ)
@@ -226,7 +232,9 @@ TEST(MeshLib, CoordinatesMappingLocalLowerDimLineXYZ)
     CHECK_COORDS(ele,mapping);
 
     for (std::size_t n = 0; n < ele->getNumberOfNodes(); ++n)
+    {
         delete ele->getNode(n);
+    }
 }
 
 TEST(MeshLib, CoordinatesMappingLocalLowerDimQuadXZ)
@@ -247,7 +255,9 @@ TEST(MeshLib, CoordinatesMappingLocalLowerDimQuadXZ)
     CHECK_COORDS(ele,mapping);
 
     for (std::size_t n = 0; n < ele->getNumberOfNodes(); ++n)
+    {
         delete ele->getNode(n);
+    }
 }
 
 TEST(MeshLib, CoordinatesMappingLocalLowerDimQuadYZ)
@@ -268,7 +278,9 @@ TEST(MeshLib, CoordinatesMappingLocalLowerDimQuadYZ)
     CHECK_COORDS(ele,mapping);
 
     for (std::size_t n = 0; n < ele->getNumberOfNodes(); ++n)
+    {
         delete ele->getNode(n);
+    }
 }
 
 TEST(MeshLib, CoordinatesMappingLocalLowerDimQuadXYZ)
@@ -289,6 +301,8 @@ TEST(MeshLib, CoordinatesMappingLocalLowerDimQuadXYZ)
     CHECK_COORDS(ele,mapping);
 
     for (std::size_t n = 0; n < ele->getNumberOfNodes(); ++n)
+    {
         delete ele->getNode(n);
+    }
 }
 

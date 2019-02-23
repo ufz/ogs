@@ -38,11 +38,15 @@ TemplateElement<ELEMENT_RULE>::TemplateElement(const TemplateElement &e)
 : Element(e.getID())
 {
     this->_nodes = new Node*[n_all_nodes];
-    for (unsigned i=0; i<n_all_nodes; i++)
+    for (unsigned i = 0; i < n_all_nodes; i++)
+    {
         this->_nodes[i] = e._nodes[i];
+    }
     this->_neighbors = new Element*[getNumberOfNeighbors()];
-    for (unsigned i=0; i<getNumberOfNeighbors(); i++)
+    for (unsigned i = 0; i < getNumberOfNeighbors(); i++)
+    {
         this->_neighbors[i] = e._neighbors[i];
+    }
     this->_content = e.getContent();
 }
 
@@ -53,9 +57,14 @@ namespace detail
 template<unsigned N>
 bool isEdge(unsigned const (&edge_nodes)[N], unsigned idx1, unsigned idx2)
 {
-
-    if (edge_nodes[0]==idx1 && edge_nodes[1]==idx2) return true;
-    if (edge_nodes[1]==idx1 && edge_nodes[0]==idx2) return true;
+    if (edge_nodes[0] == idx1 && edge_nodes[1] == idx2)
+    {
+        return true;
+    }
+    if (edge_nodes[1] == idx1 && edge_nodes[0] == idx2)
+    {
+        return true;
+    }
 
     return false;
 }
@@ -74,7 +83,10 @@ bool TemplateElement<ELEMENT_RULE>::isEdge(unsigned idx1, unsigned idx2) const
 {
     for (unsigned i(0); i<getNumberOfEdges(); i++)
     {
-        if (detail::isEdge(ELEMENT_RULE::edge_nodes[i], idx1, idx2)) return true;
+        if (detail::isEdge(ELEMENT_RULE::edge_nodes[i], idx1, idx2))
+        {
+            return true;
+        }
     }
     return false;
 }

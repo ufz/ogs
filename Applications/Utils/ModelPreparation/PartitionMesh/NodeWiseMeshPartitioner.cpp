@@ -381,7 +381,9 @@ bool copyPropertyVector(MeshLib::Properties const& original_properties,
                         std::size_t const total_number_of_tuples)
 {
     if (!original_properties.existsPropertyVector<T>(name))
+    {
         return false;
+    }
 
     auto const& pv = original_properties.getPropertyVector<T>(name);
     auto partitioned_pv = partitioned_properties.createNewPropertyVector<T>(
@@ -708,7 +710,9 @@ bool writePropertyVectorBinary(
     std::ostream& out_val, std::ostream& out_meta)
 {
     if (!partitioned_properties.existsPropertyVector<T>(name))
+    {
         return false;
+    }
 
     MeshLib::IO::PropertyVectorMetaData pvmd;
     pvmd.property_name = name;

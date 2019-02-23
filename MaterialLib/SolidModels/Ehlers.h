@@ -44,11 +44,17 @@ enum class TangentType
 inline TangentType makeTangentType(std::string const& s)
 {
     if (s == "Elastic")
+    {
         return TangentType::Elastic;
+    }
     if (s == "PlasticDamageSecant")
+    {
         return TangentType::PlasticDamageSecant;
+    }
     if (s == "Plastic")
+    {
         return TangentType::Plastic;
+    }
     OGS_FATAL("Not valid string '%s' to create a tangent type from.",
               s.c_str());
 }

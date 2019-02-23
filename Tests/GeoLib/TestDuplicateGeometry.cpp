@@ -73,8 +73,10 @@ TEST(GeoLib, DuplicateGeometry)
     {
         int n_ply_pnts (rand() % 100 + 2);
         auto* line = new GeoLib::Polyline(*geo.getPointVec(input_name));
-        for (std::size_t j=0; j<static_cast<std::size_t>(n_ply_pnts); ++j)
+        for (std::size_t j = 0; j < static_cast<std::size_t>(n_ply_pnts); ++j)
+        {
             line->addPoint(rand() % n_pnts);
+        }
         plys->push_back(line);
     }
     geo.addPolylineVec(std::move(plys), input_name);
@@ -94,8 +96,11 @@ TEST(GeoLib, DuplicateGeometry)
             std::size_t const n_ply_pnts ((*new_plys)[i]->getNumberOfPoints());
             ASSERT_EQ(n_ply_pnts, (*plys)[i]->getNumberOfPoints());
             ASSERT_EQ((*new_plys)[i]->getNumberOfSegments(), (*plys)[i]->getNumberOfSegments());
-            for (std::size_t j=0; j<n_ply_pnts; ++j)
-                ASSERT_EQ((*plys)[i]->getPointID(j), (*new_plys)[i]->getPointID(j));
+            for (std::size_t j = 0; j < n_ply_pnts; ++j)
+            {
+                ASSERT_EQ((*plys)[i]->getPointID(j),
+                          (*new_plys)[i]->getPointID(j));
+            }
         }
 
         std::vector<GeoLib::Polyline*>& mod_plys (dup.getPolylineVectorCopy());
@@ -111,12 +116,18 @@ TEST(GeoLib, DuplicateGeometry)
     {
         int n_tris (rand() % 10);
         auto* sfc = new GeoLib::Surface(*geo.getPointVec(input_name));
-        for (std::size_t j=0; j<static_cast<std::size_t>(n_tris); ++j)
+        for (std::size_t j = 0; j < static_cast<std::size_t>(n_tris); ++j)
+        {
             sfc->addTriangle(rand() % n_pnts, rand() % n_pnts, rand() % n_pnts);
+        }
         if (sfc->getNumberOfTriangles() > 0)
+        {
             sfcs->push_back(sfc);
+        }
         else
+        {
             delete sfc;
+        }
     }
     n_sfcs = sfcs->size();
     geo.addSurfaceVec(std::move(sfcs), input_name);
@@ -135,9 +146,14 @@ TEST(GeoLib, DuplicateGeometry)
         {
             std::size_t const n_tris ((*new_sfcs)[i]->getNumberOfTriangles());
             ASSERT_EQ(n_tris, (*sfcs)[i]->getNumberOfTriangles());
-            for (std::size_t j=0; j<n_tris; ++j)
-                for (std::size_t k=0; k<3; ++k)
-                    ASSERT_EQ((*(*(*sfcs)[i])[j])[k], (*(*(*new_sfcs)[i])[j])[k]);
+            for (std::size_t j = 0; j < n_tris; ++j)
+            {
+                for (std::size_t k = 0; k < 3; ++k)
+                {
+                    ASSERT_EQ((*(*(*sfcs)[i])[j])[k],
+                              (*(*(*new_sfcs)[i])[j])[k]);
+                }
+            }
         }
 
         std::vector<GeoLib::Point*>& mod_pnts (dup.getPointVectorCopy());

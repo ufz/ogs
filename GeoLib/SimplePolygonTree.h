@@ -95,7 +95,9 @@ void createPolygonTrees (std::list<POLYGONTREETYPE*>& list_of_simple_polygon_hie
                 ++it1;
                 // skip test if it1 points to the end after increment
                 if (it1 == list_of_simple_polygon_hierarchies.end())
+                {
                     break;
+                }
             }
             if ((*it0)->isPolygonInside(*it1)) {
                 (*it0)->insertSimplePolygonTree(*it1);

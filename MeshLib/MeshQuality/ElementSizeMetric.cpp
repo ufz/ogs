@@ -26,11 +26,17 @@ void ElementSizeMetric::calculateQuality()
 {
     std::size_t error_count(0);
     if (_mesh.getDimension() == 1)
+    {
         error_count = calc1dQuality();
+    }
     else if (_mesh.getDimension() == 2)
+    {
         error_count = calc2dQuality();
+    }
     else if (_mesh.getDimension() == 3)
+    {
         error_count = calc3dQuality();
+    }
 
     INFO ("ElementSizeMetric::calculateQuality() minimum: %f, max_volume: %f", _min, _max);
     if (error_count > 0)
@@ -47,12 +53,21 @@ std::size_t ElementSizeMetric::calc1dQuality()
     {
         double area(std::numeric_limits<double>::max());
         _element_quality_metric[k] = elements[k]->getContent();
-        if (_element_quality_metric[k] < sqrt(fabs(std::numeric_limits<double>::epsilon())))
+        if (_element_quality_metric[k] <
+            sqrt(fabs(std::numeric_limits<double>::epsilon())))
+        {
             error_count++;
+        }
 
         // update _min and _max values
-        if (_min > area) _min = area;
-        if (_max < area) _max = area;
+        if (_min > area)
+        {
+            _min = area;
+        }
+        if (_max < area)
+        {
+            _max = area;
+        }
     }
     return error_count;
 }
@@ -74,11 +89,19 @@ std::size_t ElementSizeMetric::calc2dQuality()
         }
         double const area = elem.getContent();
         if (area < sqrt(fabs(std::numeric_limits<double>::epsilon())))
+        {
             error_count++;
+        }
 
         // update _min and _max values
-        if (_min > area) _min = area;
-        if (_max < area) _max = area;
+        if (_min > area)
+        {
+            _min = area;
+        }
+        if (_max < area)
+        {
+            _max = area;
+        }
         _element_quality_metric[k] = area;
     }
     return error_count;
@@ -101,10 +124,18 @@ std::size_t ElementSizeMetric::calc3dQuality()
 
         double const volume (elem.getContent());
         if (volume < sqrt(fabs(std::numeric_limits<double>::epsilon())))
+        {
             error_count++;
+        }
 
-        if (_min > volume) _min = volume;
-        if (_max < volume) _max = volume;
+        if (_min > volume)
+        {
+            _min = volume;
+        }
+        if (_max < volume)
+        {
+            _max = volume;
+        }
         _element_quality_metric[k] = volume;
     }
     return error_count;

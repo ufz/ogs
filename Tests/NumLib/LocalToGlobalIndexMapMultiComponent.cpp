@@ -337,9 +337,12 @@ TEST_F(NumLibLocalToGlobalIndexMapMultiDOFTest, DISABLED_TestMultiCompByComponen
 {
     int const num_components = 5;
     for (int c = 0; c < num_components; ++c)
+    {
         test<NL::ComponentOrder::BY_COMPONENT>(
-            num_components, c, ComputeGlobalIndexByComponent{
-                                   (mesh_subdivs + 1) * (mesh_subdivs + 1)});
+            num_components, c,
+            ComputeGlobalIndexByComponent{(mesh_subdivs + 1) *
+                                          (mesh_subdivs + 1)});
+    }
 }
 
 #ifndef USE_PETSC
@@ -350,8 +353,10 @@ TEST_F(NumLibLocalToGlobalIndexMapMultiDOFTest, DISABLED_TestMultiCompByLocation
 {
     int const num_components = 5;
     for (int c = 0; c < num_components; ++c)
+    {
         test<NL::ComponentOrder::BY_LOCATION>(
             num_components, c, ComputeGlobalIndexByLocation{num_components});
+    }
 }
 
 #ifndef USE_PETSC

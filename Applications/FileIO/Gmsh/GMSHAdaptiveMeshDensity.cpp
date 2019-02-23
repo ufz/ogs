@@ -54,11 +54,19 @@ void GMSHAdaptiveMeshDensity::initialize(std::vector<GeoLib::Point const*> const
     std::size_t n_pnts(pnts.size());
     for (std::size_t k(1); k<n_pnts; k++) {
         for (std::size_t j(0); j < 2; j++)
+        {
             if ((*(pnts[k]))[j] < min[j])
+            {
                 min[j] = (*(pnts[k]))[j];
+            }
+        }
         for (std::size_t j(0); j < 2; j++)
+        {
             if ((*(pnts[k]))[j] > max[j])
+            {
                 max[j] = (*(pnts[k]))[j];
+            }
+        }
     }
     min[2] = 0.0;
     max[2] = 0.0;
@@ -79,7 +87,9 @@ void GMSHAdaptiveMeshDensity::addPoints(std::vector<GeoLib::Point const*> const&
     const std::size_t n_pnts(pnts.size());
     DBUG("GMSHAdaptiveMeshDensity::addPoints(): Inserting %d points into quadtree.", n_pnts);
     for (std::size_t k(0); k < n_pnts; k++)
+    {
         _quad_tree->addPoint(pnts[k]);
+    }
     DBUG("GMSHAdaptiveMeshDensity::addPoints(): \tok.");
     _quad_tree->balance();
 }

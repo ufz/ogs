@@ -31,7 +31,9 @@ T scalarProduct(T const * const v0, T const * const v1)
 
 #pragma omp parallel for reduction (+:res)
     for (int k = 1; k < N; k++)
+    {
         res += v0[k] * v1[k];
+    }
     return res;
 }
 
@@ -40,7 +42,9 @@ double scalarProduct<double,3>(double const * const v0, double const * const v1)
 {
     double res (v0[0] * v1[0]);
     for (std::size_t k(1); k < 3; k++)
+    {
         res += v0[k] * v1[k];
+    }
     return res;
 }
 
@@ -51,7 +55,9 @@ inline T scalarProduct(T const* const v0, T const* const v1, int const n)
 
 #pragma omp parallel for reduction (+:res)
     for (int k = 1; k < n; k++)
+    {
         res += v0[k] * v1[k];
+    }
     return res;
 }
 
@@ -100,9 +106,13 @@ template<typename Type> Type limitValueInInterval(const Type variable,
                                                   const Type upper_bound)
 {
     if (variable < lower_bound)
+    {
         return lower_bound;
+    }
     if (variable > upper_bound)
+    {
         return upper_bound;
+    }
     return variable;
 }
 }  // namespace MathLib

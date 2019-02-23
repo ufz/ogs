@@ -36,8 +36,10 @@ void searchByPropertyValue(std::string const& property_name,
         std::size_t n_marked_elements = searcher.searchByPropertyValue<double>(
             property_name, property_value);
         if (n_marked_elements == 0)
+        {
             n_marked_elements = searcher.searchByPropertyValue<int>(
                 property_name, property_value);
+        }
 
         INFO("%d elements with property value %s found.", n_marked_elements,
              std::to_string(property_value).c_str());
@@ -53,9 +55,11 @@ void searchByPropertyRange(std::string const& property_name,
         property_name, min_value, max_value, outside);
 
     if (n_marked_elements == 0)
+    {
         n_marked_elements = searcher.searchByPropertyValueRange<int>(
             property_name, static_cast<int>(min_value),
             static_cast<int>(max_value), outside);
+    }
 
     // add checks for other data types here (if n_marked_elements remains 0)
 
@@ -145,7 +149,9 @@ int main (int argc, char* argv[])
     std::unique_ptr<MeshLib::Mesh const> mesh(
         MeshLib::IO::readMeshFromFile(mesh_in.getValue()));
     if (mesh == nullptr)
+    {
         return EXIT_FAILURE;
+    }
 
     INFO("Mesh read: %d nodes, %d elements.", mesh->getNumberOfNodes(), mesh->getNumberOfElements());
     MeshLib::ElementSearch searcher(*mesh);
@@ -158,7 +164,10 @@ int main (int argc, char* argv[])
         const std::vector<std::string> eleTypeNames = eleTypeArg.getValue();
         for (const auto& typeName : eleTypeNames) {
             const MeshLib::MeshElemType type = MeshLib::String2MeshElemType(typeName);
-            if (type == MeshLib::MeshElemType::INVALID) continue;
+            if (type == MeshLib::MeshElemType::INVALID)
+            {
+                continue;
+            }
             INFO("%d %s elements found.", searcher.searchByElementType(type),
                  typeName.c_str());
         }
@@ -230,7 +239,9 @@ int main (int argc, char* argv[])
             aabb_error = true;
         }
         if (aabb_error)
+        {
             return EXIT_FAILURE;
+        }
 
         std::array<MathLib::Point3d, 2> extent({{
             MathLib::Point3d(std::array<double,3>{{xSmallArg.getValue(),
@@ -246,7 +257,9 @@ int main (int argc, char* argv[])
         *mesh, searcher.getSearchedElementIDs(), mesh->getName()));
 
     if (new_mesh == nullptr)
+    {
         return EXIT_FAILURE;
+    }
 
     // write into a file
     MeshLib::IO::writeMeshToFile(*new_mesh, mesh_out.getValue());

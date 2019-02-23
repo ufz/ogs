@@ -23,7 +23,9 @@ std::vector<NumLib::NamedFunction> CachedSecondaryVariable::getNamedFunctions()
 double CachedSecondaryVariable::getValue() const
 {
     if (_needs_recomputation)
+    {
         evalFieldNoArgs();
+    }
     return _cached_nodal_values.get(_context.index);
 }
 

@@ -120,7 +120,9 @@ public:
     {
         cache.clear();
         for (auto value : _int_pt_values)
+        {
             cache.push_back(2.0 * value);
+        }
         return cache;
     }
 

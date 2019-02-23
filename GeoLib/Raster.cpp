@@ -142,15 +142,18 @@ double Raster::interpolateValueAtPoint(MathLib::Point3d const& pnt) const
     {
         // check if neighbour pixel is still on the raster, otherwise substitute
         // a no data value. This also allows the cast to unsigned type.
-        if ( (xIdx + x_nb[j]) < 0 ||
-             (yIdx + y_nb[j]) < 0 ||
-             (xIdx + x_nb[j]) > (_header.n_cols-1) ||
-             (yIdx + y_nb[j]) > (_header.n_rows-1) )
+        if ((xIdx + x_nb[j]) < 0 || (yIdx + y_nb[j]) < 0 ||
+            (xIdx + x_nb[j]) > (_header.n_cols - 1) ||
+            (yIdx + y_nb[j]) > (_header.n_rows - 1))
+        {
             pix_val[j] = _header.no_data;
+        }
         else
-            pix_val[j] = _raster_data[
-                static_cast<std::size_t>(yIdx + y_nb[j]) * _header.n_cols +
-                static_cast<std::size_t>(xIdx + x_nb[j])];
+        {
+            pix_val[j] = _raster_data[static_cast<std::size_t>(yIdx + y_nb[j]) *
+                                          _header.n_cols +
+                                      static_cast<std::size_t>(xIdx + x_nb[j])];
+        }
 
         // remove no data values
         if (std::fabs(pix_val[j] - _header.no_data) < std::numeric_limits<double>::epsilon())
@@ -163,8 +166,10 @@ double Raster::interpolateValueAtPoint(MathLib::Point3d const& pnt) const
     // adjust weights if necessary
     if (no_data_count > 0)
     {
-        if (no_data_count == 4) // if there is absolutely no data just use the default value
+        if (no_data_count == 4)
+        {  // if there is absolutely no data just use the default value
             return _header.no_data;
+        }
 
         const double norm = 1.0 / (weight[0]+weight[1]+weight[2]+weight[3]);
         std::for_each(weight.begin(), weight.end(), [&norm](double &val){val*=norm;});

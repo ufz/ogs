@@ -52,7 +52,9 @@ T swapEndianness(T const& v)
 
     a.v = v;
     for (unsigned short i = 0; i < sizeof(T); i++)
+    {
         b.c[i] = a.c[sizeof(T) - i - 1];
+    }
 
     return b.v;
 }
@@ -84,10 +86,14 @@ std::vector<T> readBinaryArray(std::string const& filename, std::size_t const n)
     result.reserve(n);
 
     for (std::size_t p = 0; in && !in.eof() && p < n; ++p)
+    {
         result.push_back(BaseLib::readBinaryValue<T>(in));
+    }
 
     if (result.size() == n)
+    {
         return result;
+    }
 
     ERR("readBinaryArray(): Error while reading from file '%s'.",
         filename.c_str());

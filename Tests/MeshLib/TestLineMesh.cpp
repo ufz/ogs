@@ -42,7 +42,9 @@ TEST_F(MeshLibLineMesh, Construction)
     // All elements have maximum two neighbors.
     std::vector<MeshLib::Element*> const& elements = mesh->getElements();
     for (auto e : elements)
+    {
         ASSERT_EQ(2u, e->getNumberOfNeighbors());
+    }
 
     ASSERT_NEAR(extent/mesh_size, mesh->getMinEdgeLength(),std::numeric_limits<double>::epsilon());
     ASSERT_NEAR(extent/mesh_size, mesh->getMaxEdgeLength(),std::numeric_limits<double>::epsilon());
@@ -54,8 +56,12 @@ TEST_F(MeshLibLineMesh, ElementNeigbors)
         {
             unsigned count = 0;
             for (int i = 0; i < 2; i++)
+            {
                 if (e->getNeighbor(i) != nullptr)
+                {
                     count++;
+                }
+            }
             return count;
         };
 

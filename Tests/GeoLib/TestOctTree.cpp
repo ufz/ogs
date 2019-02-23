@@ -184,16 +184,20 @@ TEST_F(GeoLibOctTree, TestWithEquidistantPoints3d)
     ASSERT_EQ(static_cast<std::size_t>(3), result.size());
 
     // insert some points not resulting in a further refinement of SWL
-    for (std::size_t k(4); k<11; ++k)
+    for (std::size_t k(4); k < 11; ++k)
+    {
         ASSERT_TRUE(oct_tree->addPoint(ps_ptr[k], ret_pnt));
+    }
 
     result.clear();
     oct_tree->getPointsInRange(range_query_ll, range_query_ur, result);
     ASSERT_EQ(static_cast<std::size_t>(3), result.size());
 
     // insert some points *resulting* in a further refinement of SWL
-    for (std::size_t k(11); k<25; ++k)
+    for (std::size_t k(11); k < 25; ++k)
+    {
         ASSERT_TRUE(oct_tree->addPoint(ps_ptr[k], ret_pnt));
+    }
 
     result.clear();
     oct_tree->getPointsInRange(range_query_ll, range_query_ur, result);
@@ -201,8 +205,10 @@ TEST_F(GeoLibOctTree, TestWithEquidistantPoints3d)
 
     // insert all points with z = -5.0 - this does not result in a further
     // refinement of SWL
-    for (std::size_t k(25); k<121; ++k)
+    for (std::size_t k(25); k < 121; ++k)
+    {
         ASSERT_TRUE(oct_tree->addPoint(ps_ptr[k], ret_pnt));
+    }
 
     result.clear();
     oct_tree->getPointsInRange(range_query_ll, range_query_ur, result);
@@ -228,7 +234,9 @@ TEST_F(GeoLibOctTree, TestWithEquidistantPoints3d)
     range_query_ll[2] = -4.75;
     oct_tree->getPointsInRange(range_query_ll, range_query_ur, result);
     for (auto p : result)
+    {
         std::cout << *p << "\n";
+    }
     ASSERT_EQ(static_cast<std::size_t>(0), result.size());
 
     result.clear();

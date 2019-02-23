@@ -76,6 +76,7 @@ private:
                                    MeshElemType elem_type)
     {
         for (std::size_t i = 0; i < imgHeight; i++)
+        {
             for (std::size_t j = 0; j < imgWidth; j++)
             {
                 if (!pix_vis[i * imgWidth + j])
@@ -89,6 +90,7 @@ private:
                 else if (elem_type == MeshElemType::QUAD)
                     prop_vec.push_back(val);
             }
+        }
     }
 
     static void convertArray(vtkDataArray& array,

@@ -49,7 +49,9 @@ std::size_t NodeSearch::searchNodesConnectedToOnlyGivenElements(
     for (std::size_t i=0; i<node_marked_counts.size(); i++)
     {
         if (node_marked_counts[i] == _mesh.getNode(i)->getElements().size())
+        {
             connected_nodes.push_back(i);
+        }
     }
 
     this->updateUnion(connected_nodes);
@@ -62,9 +64,13 @@ std::size_t NodeSearch::searchUnused()
     const std::vector<MeshLib::Node*> &nodes (_mesh.getNodes());
     std::vector<std::size_t> del_node_idx;
 
-    for (unsigned i=0; i<nNodes; ++i)
+    for (unsigned i = 0; i < nNodes; ++i)
+    {
         if (nodes[i]->getNumberOfElements() == 0)
+        {
             del_node_idx.push_back(i);
+        }
+    }
 
     this->updateUnion(del_node_idx);
     return del_node_idx.size();
@@ -76,26 +82,38 @@ std::size_t NodeSearch::searchBoundaryNodes()
     if (_mesh.getDimension() == 1)
     {
         for (MeshLib::Node const* n : _mesh.getNodes())
+        {
             if (n->getElements().size() == 1)
+            {
                 vec_boundary_nodes.push_back(n->getID());
+            }
+        }
     }
     else if (_mesh.getDimension() == 2)
     {
         for (MeshLib::Element const* elem : _mesh.getElements())
         {
             if (elem->getDimension() < _mesh.getDimension())
+            {
                 continue;
+            }
             if (!elem->isBoundaryElement())
+            {
                 continue;
+            }
 
             std::size_t const n_edges (elem->getNumberOfEdges());
             for (std::size_t i=0; i<n_edges; ++i)
             {
                 if (elem->getNeighbor(i) != nullptr)
+                {
                     continue;
+                }
                 std::unique_ptr<MeshLib::Element const> edge(elem->getEdge(i));
-                for (unsigned j=0; j<edge->getNumberOfNodes(); j++)
+                for (unsigned j = 0; j < edge->getNumberOfNodes(); j++)
+                {
                     vec_boundary_nodes.push_back(edge->getNode(j)->getID());
+                }
             }
         }
     }
@@ -104,18 +122,26 @@ std::size_t NodeSearch::searchBoundaryNodes()
         for (MeshLib::Element const* elem : _mesh.getElements())
         {
             if (elem->getDimension() < _mesh.getDimension())
+            {
                 continue;
+            }
             if (!elem->isBoundaryElement())
+            {
                 continue;
+            }
 
             std::size_t const n_faces (elem->getNumberOfFaces());
             for (std::size_t i=0; i<n_faces; ++i)
             {
                 if (elem->getNeighbor(i) != nullptr)
+                {
                     continue;
+                }
                 std::unique_ptr<MeshLib::Element const> face(elem->getFace(i));
-                for (unsigned j=0; j<face->getNumberOfNodes(); j++)
+                for (unsigned j = 0; j < face->getNumberOfNodes(); j++)
+                {
                     vec_boundary_nodes.push_back(face->getNode(j)->getID());
+                }
             }
         }
     }

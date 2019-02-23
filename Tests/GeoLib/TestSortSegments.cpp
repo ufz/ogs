@@ -71,15 +71,21 @@ TEST_F(GeoLibSortLineSegments, SortSubSegments)
         double eps(std::numeric_limits<double>::epsilon());
         if (MathLib::sqrDist(s0.getBeginPoint(),
                              sub_segments.front().getBeginPoint()) >= eps)
+        {
             return false;
+        }
         if (MathLib::sqrDist(s0.getEndPoint(),
                              sub_segments.back().getEndPoint()) >= eps)
+        {
             return false;
+        }
         for (std::size_t k(0); k < sub_segments.size() - 1; ++k)
         {
             if (MathLib::sqrDist(sub_segments[k].getEndPoint(),
                                  sub_segments[k + 1].getBeginPoint()) >= eps)
+            {
                 return false;
+            }
         }
         return true;
     };
@@ -96,7 +102,10 @@ TEST_F(GeoLibSortLineSegments, SortSubSegments)
             std::vector<GeoLib::LineSegment> sub_segments;
             partitionSegment(s0, sub_seg_ids, dt, sub_segments);
             GeoLib::sortSegments(s0.getBeginPoint(), sub_segments);
-            if (!checkSortedSubSegments(s0, sub_segments)) return false;
+            if (!checkSortedSubSegments(s0, sub_segments))
+            {
+                return false;
+            }
         } while (std::next_permutation(sub_seg_ids.begin(), sub_seg_ids.end()));
         return true;
     };

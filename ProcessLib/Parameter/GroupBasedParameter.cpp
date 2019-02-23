@@ -56,7 +56,9 @@ std::unique_ptr<ParameterBase> createGroupBasedParameter(
         Values const values = p.getConfigParameter<Values>("values");
 
         if (values.empty())
+        {
             OGS_FATAL("No value available for constant parameter.");
+        }
 
         vec_index_values.emplace_back(index, values);
     }
@@ -67,13 +69,21 @@ std::unique_ptr<ParameterBase> createGroupBasedParameter(
     {
         auto itr = std::find(group_id_property->begin(), group_id_property->end(), p.first);
         if (itr == group_id_property->end())
-            OGS_FATAL("Specified property index %d does not exist in the property vector %s",
-                      p.first, group_id_property_name.c_str());
+        {
+            OGS_FATAL(
+                "Specified property index %d does not exist in the property "
+                "vector %s",
+                p.first, group_id_property_name.c_str());
+        }
 
         if (p.second.size() != n_values)
-            OGS_FATAL("The length of some values (%d) is different from the first one (%d). "
-                      "The length should be same for all index_values.",
-                      p.second.size(),  n_values);
+        {
+            OGS_FATAL(
+                "The length of some values (%d) is different from the first "
+                "one (%d). "
+                "The length should be same for all index_values.",
+                p.second.size(), n_values);
+        }
     }
 
     // create a mapping table
@@ -81,16 +91,22 @@ std::unique_ptr<ParameterBase> createGroupBasedParameter(
         *std::max_element(group_id_property->begin(), group_id_property->end());
     std::vector<Values> vec_values(max_index + 1);
     for (auto p : vec_index_values)
+    {
         vec_values[p.first] = p.second;
+    }
 
     if (group_id_property->getMeshItemType() == MeshLib::MeshItemType::Node)
+    {
         return std::make_unique<
             GroupBasedParameter<double, MeshLib::MeshItemType::Node>>(
             name, *group_id_property, vec_values);
+    }
     if (group_id_property->getMeshItemType() == MeshLib::MeshItemType::Cell)
+    {
         return std::make_unique<
             GroupBasedParameter<double, MeshLib::MeshItemType::Cell>>(
             name, *group_id_property, vec_values);
+    }
 
     OGS_FATAL("Mesh item type of the specified property is not supported.");
 }

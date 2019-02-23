@@ -60,9 +60,13 @@ Orientation getOrientation(MathLib::Point3d const& p0,
 {
     double const orientation = ExactPredicates::getOrientation2d(p0, p1, p2);
     if (orientation > 0)
+    {
         return CCW;
+    }
     if (orientation < 0)
+    {
         return CW;
+    }
     return COLLINEAR;
 }
 
@@ -73,9 +77,13 @@ Orientation getOrientationFast(MathLib::Point3d const& p0,
     double const orientation =
         ExactPredicates::getOrientation2dFast(p0, p1, p2);
     if (orientation > 0)
+    {
         return CCW;
+    }
     if (orientation < 0)
+    {
         return CW;
+    }
     return COLLINEAR;
 }
 
@@ -85,33 +93,49 @@ bool parallel(MathLib::Vector3 v, MathLib::Vector3 w)
 
     // check degenerated cases
     if (v.getLength() < eps)
+    {
         return false;
+    }
 
     if (w.getLength() < eps)
+    {
         return false;
+    }
 
     v.normalize();
     w.normalize();
 
     bool parallel(true);
-    if (std::abs(v[0]-w[0]) > eps)
+    if (std::abs(v[0] - w[0]) > eps)
+    {
         parallel = false;
-    if (std::abs(v[1]-w[1]) > eps)
+    }
+    if (std::abs(v[1] - w[1]) > eps)
+    {
         parallel = false;
-    if (std::abs(v[2]-w[2]) > eps)
+    }
+    if (std::abs(v[2] - w[2]) > eps)
+    {
         parallel = false;
+    }
 
     if (! parallel) {
         parallel = true;
         // change sense of direction of v_normalised
         v *= -1.0;
         // check again
-        if (std::abs(v[0]-w[0]) > eps)
+        if (std::abs(v[0] - w[0]) > eps)
+        {
             parallel = false;
-        if (std::abs(v[1]-w[1]) > eps)
+        }
+        if (std::abs(v[1] - w[1]) > eps)
+        {
             parallel = false;
-        if (std::abs(v[2]-w[2]) > eps)
+        }
+        if (std::abs(v[2] - w[2]) > eps)
+        {
             parallel = false;
+        }
     }
 
     return parallel;
@@ -127,7 +151,9 @@ bool lineSegmentIntersect(GeoLib::LineSegment const& s0,
     GeoLib::Point const& d{s1.getEndPoint()};
 
     if (!isCoplanar(a, b, c, d))
+    {
         return false;
+    }
 
     // handle special cases here to avoid computing intersection numerical
     if (MathLib::sqrDist(a, c) < std::numeric_limits<double>::epsilon() ||
@@ -297,8 +323,10 @@ void rotatePointsToXZ(std::vector<GeoLib::Point*> &pnts)
         rotatePoints(rot_mat, pnts);
     }
 
-    for (auto & pnt : pnts)
-        (*pnt)[1] = 0.0; // should be -= d but there are numerical errors
+    for (auto& pnt : pnts)
+    {
+        (*pnt)[1] = 0.0;  // should be -= d but there are numerical errors
+    }
 }
 
 std::unique_ptr<GeoLib::Point> triangleLineIntersection(
@@ -312,11 +340,20 @@ std::unique_ptr<GeoLib::Point> triangleLineIntersection(
     const MathLib::Vector3 pc(p, c);
 
     double u (MathLib::scalarTriple(pq, pc, pb));
-    if (u<0) return nullptr;
+    if (u < 0)
+    {
+        return nullptr;
+    }
     double v (MathLib::scalarTriple(pq, pa, pc));
-    if (v<0) return nullptr;
+    if (v < 0)
+    {
+        return nullptr;
+    }
     double w (MathLib::scalarTriple(pq, pb, pa));
-    if (w<0) return nullptr;
+    if (w < 0)
+    {
+        return nullptr;
+    }
 
     const double denom (1.0/(u+v+w));
     u*=denom;
@@ -364,7 +401,9 @@ GeoLib::Polygon rotatePolygonToXY(GeoLib::Polygon const& polygon_in,
     // 1 copy all points
     auto* polygon_pnts(new std::vector<GeoLib::Point*>);
     for (std::size_t k(0); k < polygon_in.getNumberOfPoints(); k++)
-        polygon_pnts->push_back (new GeoLib::Point (*(polygon_in.getPoint(k))));
+    {
+        polygon_pnts->push_back(new GeoLib::Point(*(polygon_in.getPoint(k))));
+    }
 
     // 2 rotate points
     double d_polygon (0.0);
@@ -381,7 +420,9 @@ GeoLib::Polygon rotatePolygonToXY(GeoLib::Polygon const& polygon_in,
     // 4 create new polygon
     GeoLib::Polyline rot_polyline(*polygon_pnts);
     for (std::size_t k(0); k < polygon_in.getNumberOfPoints(); k++)
+    {
         rot_polyline.addPoint(k);
+    }
     rot_polyline.addPoint(0);
     return GeoLib::Polygon(rot_polyline);
 }
@@ -405,10 +446,14 @@ std::vector<MathLib::Point3d> lineSegmentIntersect2d(
     // check: (cd) and (ab) are on the same line
     if (orient_abc == 0.0 && orient_abd == 0.0) {
         double const eps(std::numeric_limits<double>::epsilon());
-        if (MathLib::sqrDist2d(a,c) < eps && MathLib::sqrDist2d(b,d) < eps)
-            return {{ a, b }};
-        if (MathLib::sqrDist2d(a,d) < eps && MathLib::sqrDist2d(b,c) < eps)
-            return {{ a, b }};
+        if (MathLib::sqrDist2d(a, c) < eps && MathLib::sqrDist2d(b, d) < eps)
+        {
+            return {{a, b}};
+        }
+        if (MathLib::sqrDist2d(a, d) < eps && MathLib::sqrDist2d(b, c) < eps)
+        {
+            return {{a, b}};
+        }
 
         // Since orient_ab and orient_abd vanish, a, b, c, d are on the same
         // line and for this reason it is enough to check the x-component.
@@ -499,14 +544,18 @@ std::vector<MathLib::Point3d> lineSegmentIntersect2d(
     };
 
     if (orient_abc == 0.0) {
-        if (isCollinearPointOntoLineSegment(a,b,c))
+        if (isCollinearPointOntoLineSegment(a, b, c))
+        {
             return {{c}};
+        }
         return std::vector<MathLib::Point3d>();
     }
 
     if (orient_abd == 0.0) {
-        if (isCollinearPointOntoLineSegment(a,b,d))
+        if (isCollinearPointOntoLineSegment(a, b, d))
+        {
             return {{d}};
+        }
         return std::vector<MathLib::Point3d>();
     }
 
@@ -545,12 +594,14 @@ void sortSegments(
     double const eps(std::numeric_limits<double>::epsilon());
 
     auto findNextSegment = [&eps](
-        MathLib::Point3d const& seg_beg_pnt,
-        std::vector<GeoLib::LineSegment>& sub_segments,
-        std::vector<GeoLib::LineSegment>::iterator& sub_seg_it)
-    {
+                               MathLib::Point3d const& seg_beg_pnt,
+                               std::vector<GeoLib::LineSegment>& sub_segments,
+                               std::vector<GeoLib::LineSegment>::iterator&
+                                   sub_seg_it) {
         if (sub_seg_it == sub_segments.end())
+        {
             return;
+        }
         // find appropriate segment for the given segment begin point
         auto act_beg_seg_it = std::find_if(
             sub_seg_it, sub_segments.end(),
@@ -560,16 +611,22 @@ void sortSegments(
                        MathLib::sqrDist(seg_beg_pnt, seg.getEndPoint()) < eps;
             });
         if (act_beg_seg_it == sub_segments.end())
+        {
             return;
+        }
         // if necessary correct orientation of segment, i.e. swap beg and end
         if (MathLib::sqrDist(seg_beg_pnt, act_beg_seg_it->getEndPoint()) <
             MathLib::sqrDist(seg_beg_pnt, act_beg_seg_it->getBeginPoint()))
+        {
             std::swap(act_beg_seg_it->getBeginPoint(),
                       act_beg_seg_it->getEndPoint());
+        }
         assert(sub_seg_it != sub_segments.end());
         // exchange segments within the container
         if (sub_seg_it != act_beg_seg_it)
+        {
             std::swap(*sub_seg_it, *act_beg_seg_it);
+        }
     };
 
     // find start segment
@@ -581,7 +638,9 @@ void sortSegments(
         MathLib::Point3d & new_seg_beg_pnt(seg_it->getEndPoint());
         seg_it++;
         if (seg_it != sub_segments.end())
+        {
             findNextSegment(new_seg_beg_pnt, sub_segments, seg_it);
+        }
     }
 }
 

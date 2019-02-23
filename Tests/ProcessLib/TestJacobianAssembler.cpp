@@ -168,8 +168,10 @@ struct MatDiagXSquared
         auto mat =
             MathLib::createZeroedMatrix(mat_data, x_data.size(), x_data.size());
 
-        for (std::size_t i=0; i<x_data.size(); ++i)
+        for (std::size_t i = 0; i < x_data.size(); ++i)
+        {
             mat(i, i) = x_data[i] * x_data[i];
+        }
     }
 
     // dM/dx * y = diag(2*x*X, 2*y*Y, 2*z*Z, ...)
@@ -180,8 +182,10 @@ struct MatDiagXSquared
         auto dMdxTy =
             MathLib::createZeroedMatrix(dMdxTy_data, x_data.size(), x_data.size());
 
-        for (std::size_t i=0; i<x_data.size(); ++i)
+        for (std::size_t i = 0; i < x_data.size(); ++i)
+        {
             dMdxTy(i, i) = 2.0 * x_data[i] * y_data[i];
+        }
     }
 };
 
@@ -193,7 +197,9 @@ struct VecXSquared
     {
         vec_data = x_data;
         for (auto& v : vec_data)
+        {
             v *= v;
+        }
     }
 
     // dv/dx = diag(2x, 2y, 2z, ...)
@@ -521,22 +527,28 @@ private:
         if (LocAsm::asmM) {
             ASSERT_EQ(x.size()*x.size(), M_data_cd.size());
             ASSERT_EQ(x.size()*x.size(), M_data_ana.size());
-            for (std::size_t i=0; i<x.size()*x.size(); ++i)
+            for (std::size_t i = 0; i < x.size() * x.size(); ++i)
+            {
                 EXPECT_NEAR(M_data_ana[i], M_data_cd[i], eps);
+            }
         }
 
         if (LocAsm::asmK) {
             ASSERT_EQ(x.size()*x.size(), K_data_cd.size());
             ASSERT_EQ(x.size()*x.size(), K_data_ana.size());
-            for (std::size_t i=0; i<x.size()*x.size(); ++i)
+            for (std::size_t i = 0; i < x.size() * x.size(); ++i)
+            {
                 EXPECT_NEAR(K_data_ana[i], K_data_cd[i], eps);
+            }
         }
 
         if (LocAsm::asmb) {
             ASSERT_EQ(x.size(), b_data_cd.size());
             ASSERT_EQ(x.size(), b_data_ana.size());
-            for (std::size_t i=0; i<x.size(); ++i)
+            for (std::size_t i = 0; i < x.size(); ++i)
+            {
                 EXPECT_NEAR(b_data_ana[i], b_data_cd[i], eps);
+            }
         }
 
         ASSERT_EQ(x.size()*x.size(), Jac_data_cd.size());

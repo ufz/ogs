@@ -76,7 +76,9 @@ public:
         pointIds->SetNumberOfComponents(1);
         pointIds->SetName("PointIDs");
         for (int i = 0; i < 12; ++i)
+        {
             pointIds->InsertNextTuple1(i);
+        }
         vtu->GetPointData()->AddArray(pointIds);
 
         auto materialIds = vtkSmartPointer<vtkUnsignedIntArray>::New();
@@ -107,6 +109,8 @@ TEST_F(TestVtkMeshConverter, Conversion)
     ASSERT_NE(nullptr, materialIds);
     auto vtkMaterialIds = vtu->GetCellData()->GetArray("MaterialIDs");
     ASSERT_EQ(materialIds->size(), vtkMaterialIds->GetNumberOfTuples());
-    for(std::size_t i = 0; i < materialIds->size(); i++)
+    for (std::size_t i = 0; i < materialIds->size(); i++)
+    {
         ASSERT_EQ((*materialIds)[i], vtkMaterialIds->GetTuple1(i));
+    }
 }

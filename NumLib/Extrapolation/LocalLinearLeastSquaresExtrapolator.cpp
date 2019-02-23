@@ -33,9 +33,11 @@ LocalLinearLeastSquaresExtrapolator::LocalLinearLeastSquaresExtrapolator(
      * some more advanced process, like the TES process.
      */
     if (dof_table.getNumberOfComponents() != 1)
+    {
         OGS_FATAL(
             "The d.o.f. table passed must be for one variable that has "
             "only one component!");
+    }
 }
 
 void LocalLinearLeastSquaresExtrapolator::extrapolate(
@@ -154,19 +156,23 @@ void LocalLinearLeastSquaresExtrapolator::extrapolateElement(
         static_cast<unsigned>(integration_point_values.size());
 
     if (num_values % num_components != 0)
+    {
         OGS_FATAL(
             "The number of computed integration point values is not divisable "
             "by the number of num_components. Maybe the computed property is "
             "not a %d-component vector for each integration point.",
             num_components);
+    }
 
     // number of integration points in the element
     const auto num_int_pts = num_values / num_components;
 
     if (num_int_pts < num_nodes)
+    {
         OGS_FATAL(
             "Least squares is not possible if there are more nodes than"
             "integration points.");
+    }
 
     auto const pair_it_inserted = _qr_decomposition_cache.emplace(
         std::make_pair(num_nodes, num_int_pts), CachedData{});
@@ -280,11 +286,13 @@ void LocalLinearLeastSquaresExtrapolator::calculateResidualElement(
 
     auto const num_values = static_cast<unsigned>(int_pt_vals.size());
     if (num_values % num_components != 0)
+    {
         OGS_FATAL(
             "The number of computed integration point values is not divisable "
             "by the number of num_components. Maybe the computed property is "
             "not a %d-component vector for each integration point.",
             num_components);
+    }
 
     // number of integration points in the element
     const auto num_int_pts = num_values / num_components;

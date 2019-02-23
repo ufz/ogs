@@ -192,7 +192,9 @@ protected:
             thermal_conductivity_fluid * porosity;
 
         if (!_material_properties.has_fluid_thermal_dispersivity)
+        {
             return thermal_conductivity * I;
+        }
 
         double const thermal_dispersivity_longitudinal =
             _material_properties.thermal_dispersivity_longitudinal(t, pos)[0];

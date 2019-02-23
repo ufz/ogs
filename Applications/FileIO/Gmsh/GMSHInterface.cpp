@@ -62,10 +62,14 @@ GMSHInterface::GMSHInterface(
 
 GMSHInterface::~GMSHInterface()
 {
-    for (auto * gmsh_pnt : _gmsh_pnts)
+    for (auto* gmsh_pnt : _gmsh_pnts)
+    {
         delete gmsh_pnt;
-    for (auto * polygon_tree : _polygon_tree_list)
+    }
+    for (auto* polygon_tree : _polygon_tree_list)
+    {
         delete polygon_tree;
+    }
 }
 
 bool GMSHInterface::write()
@@ -84,13 +88,17 @@ int GMSHInterface::writeGMSHInputFile(std::ostream& out)
     DBUG("GMSHInterface::writeGMSHInputFile(): get data from GEOObjects.");
 
     if (_selected_geometries.empty())
+    {
         return 1;
+    }
 
     // *** get and merge data from _geo_objs
     if (_selected_geometries.size() > 1) {
         _gmsh_geo_name = "GMSHGeometry";
         if (_geo_objs.mergeGeometries(_selected_geometries, _gmsh_geo_name))
+        {
             return 2;
+        }
     } else {
         _gmsh_geo_name = _selected_geometries[0];
         _keep_preprocessed_geometry = true;
@@ -114,7 +122,9 @@ int GMSHInterface::writeGMSHInputFile(std::ostream& out)
         _inverse_rot_mat(1,1) = 1.0;
         _inverse_rot_mat(2,2) = 1.0;
         for (auto pnt : *merged_pnts)
+        {
             (*pnt)[2] = 0.0;
+        }
     }
 
     std::vector<GeoLib::Polyline*> const* merged_plys(

@@ -31,13 +31,34 @@ const std::array<unsigned, 7> MeshInformation::getNumberOfElementTypes(const Mes
     for (auto element : elements)
     {
         MeshElemType t = element->getGeomType();
-        if (t == MeshElemType::LINE) n_element_types[0]++;
-        if (t == MeshElemType::TRIANGLE) n_element_types[1]++;
-        if (t == MeshElemType::QUAD) n_element_types[2]++;
-        if (t == MeshElemType::TETRAHEDRON) n_element_types[3]++;
-        if (t == MeshElemType::HEXAHEDRON) n_element_types[4]++;
-        if (t == MeshElemType::PYRAMID) n_element_types[5]++;
-        if (t == MeshElemType::PRISM) n_element_types[6]++;
+        if (t == MeshElemType::LINE)
+        {
+            n_element_types[0]++;
+        }
+        if (t == MeshElemType::TRIANGLE)
+        {
+            n_element_types[1]++;
+        }
+        if (t == MeshElemType::QUAD)
+        {
+            n_element_types[2]++;
+        }
+        if (t == MeshElemType::TETRAHEDRON)
+        {
+            n_element_types[3]++;
+        }
+        if (t == MeshElemType::HEXAHEDRON)
+        {
+            n_element_types[4]++;
+        }
+        if (t == MeshElemType::PYRAMID)
+        {
+            n_element_types[5]++;
+        }
+        if (t == MeshElemType::PRISM)
+        {
+            n_element_types[6]++;
+        }
     }
     return n_element_types;
 }

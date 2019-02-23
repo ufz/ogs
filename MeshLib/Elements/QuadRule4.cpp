@@ -45,12 +45,20 @@ unsigned QuadRule4::identifyFace(Node const* const* _nodes, Node* nodes[3])
     for (unsigned i=0; i<4; i++)
     {
         unsigned flag(0);
-        for (unsigned j=0; j<2; j++)
-            for (unsigned k=0; k<2; k++)
+        for (unsigned j = 0; j < 2; j++)
+        {
+            for (unsigned k = 0; k < 2; k++)
+            {
                 if (_nodes[edge_nodes[i][j]] == nodes[k])
+                {
                     flag++;
-        if (flag==2)
+                }
+            }
+        }
+        if (flag == 2)
+        {
             return i;
+        }
     }
     return std::numeric_limits<unsigned>::max();
 }
@@ -65,11 +73,13 @@ ElementErrorCode QuadRule4::validate(const Element* e)
     // for collapsed quads (i.e. reduced to a line) this test might result
     // "false" as all four points are actually located on a line.
     if (!error_code[ElementErrorFlag::ZeroVolume])
+    {
         error_code[ElementErrorFlag::NonConvex] =
             (!(MathLib::dividedByPlane(
                    *_nodes[0], *_nodes[2], *_nodes[1], *_nodes[3]) &&
                MathLib::dividedByPlane(
                    *_nodes[1], *_nodes[3], *_nodes[0], *_nodes[2])));
+    }
     error_code[ElementErrorFlag::NodeOrder] = !e->testElementNodeOrder();
     return error_code;
 }

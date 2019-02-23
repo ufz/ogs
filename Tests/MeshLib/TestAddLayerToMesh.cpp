@@ -33,8 +33,12 @@ namespace AddLayerValidation
         ElementErrorFlag::NonCoplanar, ElementErrorFlag::NonConvex,  ElementErrorFlag::NodeOrder};
         std::vector<ElementErrorCode> const codes (MeshLib::MeshValidation::testElementGeometry(mesh));
         for (auto code : codes)
-            for (std::size_t j=0; j<nErrorFlags-reduce_tests; ++j)
+        {
+            for (std::size_t j = 0; j < nErrorFlags - reduce_tests; ++j)
+            {
                 ASSERT_FALSE(code[flags[j]]);
+            }
+        }
     }
 
     void testZCoords2D(MeshLib::Mesh const& input, MeshLib::Mesh const& output, double height)
@@ -50,8 +54,10 @@ namespace AddLayerValidation
     void testZCoords3D(MeshLib::Mesh const& input, MeshLib::Mesh const& output, double height)
     {
         std::size_t const nNodes (input.getNumberOfNodes());
-        for (std::size_t i=0; i<nNodes; ++i)
+        for (std::size_t i = 0; i < nNodes; ++i)
+        {
             ASSERT_EQ((*input.getNode(i))[2] + height, (*output.getNode(i))[2]);
+        }
     }
     }  // namespace AddLayerValidation
 

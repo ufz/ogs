@@ -113,7 +113,9 @@ void setVector(EigenVector& v_,
     assert((std::size_t)v.size() == values.size());
     auto it = values.begin();
     for (std::size_t i = 0; i < values.size(); ++i)
+    {
         v[i] = *(it++);
+    }
 }
 
 void setVector(EigenVector& v, MatrixVectorTraits<EigenVector>::Index const index,

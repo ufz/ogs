@@ -28,7 +28,9 @@ std::unique_ptr<ParameterBase> createCurveScaledParameter(
 
     auto const curve_it = curves.find(curve_name);
     if (curve_it == curves.end())
+    {
         OGS_FATAL("Curve `%s' does not exists.", curve_name.c_str());
+    }
 
     auto referenced_parameter_name =
         //! \ogs_file_param{prj__parameters__parameter__CurveScaled__parameter}

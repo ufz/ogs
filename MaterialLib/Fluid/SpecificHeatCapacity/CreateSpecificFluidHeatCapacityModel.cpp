@@ -30,9 +30,11 @@ std::unique_ptr<FluidProperty> createSpecificFluidHeatCapacityModel(
     auto const type = config.getConfigParameter<std::string>("type");
 
     if (type == "Constant")
+    {
         return std::make_unique<ConstantFluidProperty>(
             //! \ogs_file_param{material__fluid__specific_heat_capacity__Constant__value}
             config.getConfigParameter<double>("value"));
+    }
     // TODO: add more models
 
     OGS_FATAL(

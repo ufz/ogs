@@ -27,7 +27,9 @@ ElementStatus::ElementStatus(Mesh const* const mesh, bool hasAnyInactive)
 {
     const std::vector<MeshLib::Node*>& nodes(_mesh->getNodes());
     for (auto node : nodes)
+    {
         _active_nodes.push_back(node->getNumberOfElements());
+    }
 }
 
 ElementStatus::ElementStatus(Mesh const* const mesh,
@@ -49,15 +51,25 @@ ElementStatus::ElementStatus(Mesh const* const mesh,
 
     _vec_active_eles.reserve(getNumberOfActiveElements());
     const std::size_t nElems (_mesh->getNumberOfElements());
-    for (std::size_t i=0; i<nElems; ++i)
+    for (std::size_t i = 0; i < nElems; ++i)
+    {
         if (_element_status[i])
-            _vec_active_eles.push_back(const_cast<MeshLib::Element*>(_mesh->getElement(i)));
+        {
+            _vec_active_eles.push_back(
+                const_cast<MeshLib::Element*>(_mesh->getElement(i)));
+        }
+    }
 
     _vec_active_nodes.reserve(this->getNumberOfActiveNodes());
     const std::size_t nNodes (_mesh->getNumberOfNodes());
-    for (std::size_t i=0; i<nNodes; ++i)
-        if (_active_nodes[i]>0)
-            _vec_active_nodes.push_back(const_cast<MeshLib::Node*>(_mesh->getNode(i)));
+    for (std::size_t i = 0; i < nNodes; ++i)
+    {
+        if (_active_nodes[i] > 0)
+        {
+            _vec_active_nodes.push_back(
+                const_cast<MeshLib::Node*>(_mesh->getNode(i)));
+        }
+    }
 
     DBUG(
         "Deactivated %d materials and resulting active %d nodes and %d "
@@ -70,7 +82,9 @@ ElementStatus::ElementStatus(Mesh const* const mesh,
 std::vector<MeshLib::Element*> const& ElementStatus::getActiveElements() const
 {
     if (_hasAnyInactive)
+    {
         return _vec_active_eles;
+    }
 
     return _mesh->getElements();
 }
@@ -78,7 +92,9 @@ std::vector<MeshLib::Element*> const& ElementStatus::getActiveElements() const
 std::vector<MeshLib::Node*> const& ElementStatus::getActiveNodes() const
 {
     if (_hasAnyInactive)
+    {
         return _vec_active_nodes;
+    }
 
     return _mesh->getNodes();
 }
@@ -91,9 +107,13 @@ std::vector<MeshLib::Element*> ElementStatus::getActiveElementsAtNode(std::size_
     for (auto elem : _mesh->getNode(node_id)->getElements())
     {
         if (active_elements.size() == nActiveElements)
+        {
             return active_elements;
+        }
         if (_element_status[elem->getID()])
+        {
             active_elements.push_back(elem);
+        }
     }
     return active_elements;
 }

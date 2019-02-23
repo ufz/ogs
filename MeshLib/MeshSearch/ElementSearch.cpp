@@ -29,7 +29,9 @@ std::vector<std::size_t> filter(Container const& container, Predicate const& p)
     std::size_t i = 0;
     for (auto value : container) {
         if (p(value))
+        {
             matchedIDs.push_back(i);
+        }
         i++;
     }
     return matchedIDs;
@@ -59,9 +61,13 @@ std::size_t ElementSearch::searchByBoundingBox(
     auto matchedIDs = filter(_mesh.getElements(),
         [&aabb](MeshLib::Element* e) {
             std::size_t const nElemNodes (e->getNumberOfBaseNodes());
-            for (std::size_t n=0; n < nElemNodes; ++n)
+            for (std::size_t n = 0; n < nElemNodes; ++n)
+            {
                 if (aabb.containsPoint(*e->getNode(n), 0))
-                    return true;    // any node of element is in aabb.
+                {
+                    return true;  // any node of element is in aabb.
+                }
+            }
             return false;    // no nodes of element are in aabb.
         });
 

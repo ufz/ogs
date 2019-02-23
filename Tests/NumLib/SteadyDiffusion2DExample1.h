@@ -89,7 +89,9 @@ template<typename IndexType>struct SteadyDiffusion2DExample1
     {
         msh = MeshLib::MeshGenerator::generateRegularQuadMesh(2.0, mesh_subdivs);
         for (auto* node : msh->getNodes())
+        {
             vec_nodeIDs.push_back(node->getID());
+        }
         vec_DirichletBC_id.resize(2 * mesh_stride);
         for (std::size_t i = 0; i < mesh_stride; i++)
         {
@@ -109,17 +111,27 @@ template<typename IndexType>struct SteadyDiffusion2DExample1
 
             // copy upper triangle to lower to localA for symmetry
             for (std::size_t i = 0; i < 4; i++)
+            {
                 for (std::size_t j = 0; j < i; j++)
-                    _localA(i,j) = _localA(j,i);
+                {
+                    _localA(i, j) = _localA(j, i);
+                }
+            }
 
             //_localA *= 1.e-11/6.0;
             for (std::size_t i = 0; i < 4; i++)
+            {
                 for (std::size_t j = 0; j < 4; j++)
-                    _localA(i,j) *= 1.e-11 / 6.0;
+                {
+                    _localA(i, j) *= 1.e-11 / 6.0;
+                }
+            }
 
             // Fill rhs with zero;
             for (std::size_t i = 0; i < 4; i++)
+            {
                 _localRhs[i] = 0;
+            }
         }
 
         vec_DirichletBC_value.resize(2 * mesh_stride);
@@ -127,8 +139,12 @@ template<typename IndexType>struct SteadyDiffusion2DExample1
         std::fill_n(vec_DirichletBC_value.begin() + mesh_stride, mesh_stride, 1);
         exact_solutions.resize(dim_eqs);
         for (std::size_t i = 0; i < mesh_stride; i++)
+        {
             for (std::size_t j = 0; j < mesh_stride; j++)
-                exact_solutions[i*mesh_stride + j] = j * 1./mesh_subdivs;
+            {
+                exact_solutions[i * mesh_stride + j] = j * 1. / mesh_subdivs;
+            }
+        }
     }
 
     ~SteadyDiffusion2DExample1()

@@ -42,7 +42,9 @@ int readRasterPaths(std::string const& raster_list_file, std::vector<std::string
     while (getline(in, line))
     {
         if (line.empty())
+        {
             continue;
+        }
         raster_path_vec.push_back(line);
     }
     if (raster_path_vec.size()<2)
@@ -115,20 +117,28 @@ int main (int argc, char* argv[])
 
     std::vector<std::string> raster_paths;
     if (readRasterPaths(raster_path_arg.getValue(), raster_paths) != 0)
+    {
         return EXIT_FAILURE;
+    }
 
     MeshLib::MeshLayerMapper mapper;
     if (auto rasters = FileIO::readRasters(raster_paths))
     {
         if (!mapper.createLayers(*sfc_mesh, *rasters, min_thickness))
+        {
             return EXIT_FAILURE;
+        }
     }
     else
+    {
         return EXIT_FAILURE;
+    }
 
     std::string output_name (mesh_out_arg.getValue());
     if (!BaseLib::hasFileExtension("vtu", output_name))
+    {
         output_name.append(".vtu");
+    }
     INFO("Writing mesh '%s' ... ", output_name.c_str());
     MeshLib::IO::writeMeshToFile(*(mapper.getMesh("SubsurfaceMesh").release()), output_name);
     INFO("done.");

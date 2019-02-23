@@ -28,9 +28,11 @@ std::unique_ptr<Storage> createStorageModel(BaseLib::ConfigTree const& config)
     auto const type = config.getConfigParameter<std::string>("type");
 
     if (type == "Constant")
+    {
         return std::make_unique<ConstantStorage>(
             //! \ogs_file_param{material__porous_medium__storage__Constant__value}
             config.getConfigParameter<double>("value"));
+    }
 
     OGS_FATAL("The storage type %s is unavailable.\n", type.data(),
               "The available type is Constant.");

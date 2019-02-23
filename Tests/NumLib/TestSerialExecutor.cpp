@@ -33,7 +33,10 @@ public:
 
         PtrContainer container;
         container.reserve(size);
-        for (auto& el : container_back) container.push_back(&el);
+        for (auto& el : container_back)
+        {
+            container.push_back(&el);
+        }
 
         cb(container, reference);
 

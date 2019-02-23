@@ -35,8 +35,11 @@ T_ELEMENT* createLinearElement(MeshLib::Element const* e,
 {
     auto const n_base_nodes = T_ELEMENT::n_base_nodes;
     auto** nodes = new MeshLib::Node*[n_base_nodes];
-    for (unsigned i=0; i<e->getNumberOfBaseNodes(); i++)
-        nodes[i] = const_cast<MeshLib::Node*>(vec_new_nodes[e->getNode(i)->getID()]);
+    for (unsigned i = 0; i < e->getNumberOfBaseNodes(); i++)
+    {
+        nodes[i] =
+            const_cast<MeshLib::Node*>(vec_new_nodes[e->getNode(i)->getID()]);
+    }
     return new T_ELEMENT(nodes);
 }
 
@@ -93,10 +96,14 @@ std::unique_ptr<MeshLib::Mesh> convertToLinearMesh(MeshLib::Mesh const& org_mesh
     for (auto name : src_properties.getPropertyVectorNames())
     {
         if (!src_properties.existsPropertyVector<double>(name))
+        {
             continue;
+        }
         auto const* src_prop = src_properties.getPropertyVector<double>(name);
         if (src_prop->getMeshItemType() != MeshLib::MeshItemType::Node)
+        {
             continue;
+        }
 
         auto const n_src_comp = src_prop->getNumberOfComponents();
         auto new_prop =
@@ -108,7 +115,10 @@ std::unique_ptr<MeshLib::Mesh> convertToLinearMesh(MeshLib::Mesh const& org_mesh
         for (unsigned i=0; i<org_mesh.getNumberOfBaseNodes(); i++)
         {
             for (int j = 0; j < n_src_comp; j++)
-                (*new_prop)[i*n_src_comp+j] = (*src_prop)[i*n_src_comp+j];
+            {
+                (*new_prop)[i * n_src_comp + j] =
+                    (*src_prop)[i * n_src_comp + j];
+            }
         }
     }
 

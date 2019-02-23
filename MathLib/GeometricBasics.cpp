@@ -61,16 +61,22 @@ bool isPointInTetrahedron(MathLib::Point3d const& p, MathLib::Point3d const& a,
         bool const d0_sign (d0>0);
         // if p is on the same side of bcd as a
         double const d1 (MathLib::orientation3d(d, p, b, c));
-        if (!(d0_sign == (d1>=0) || std::abs(d1) < eps))
+        if (!(d0_sign == (d1 >= 0) || std::abs(d1) < eps))
+        {
             return false;
+        }
         // if p is on the same side of acd as b
         double const d2 (MathLib::orientation3d(d, a, p, c));
-        if (!(d0_sign == (d2>=0) || std::abs(d2) < eps))
+        if (!(d0_sign == (d2 >= 0) || std::abs(d2) < eps))
+        {
             return false;
+        }
         // if p is on the same side of abd as c
         double const d3 (MathLib::orientation3d(d, a, b, p));
-        if (!(d0_sign == (d3>=0) || std::abs(d3) < eps))
+        if (!(d0_sign == (d3 >= 0) || std::abs(d3) < eps))
+        {
             return false;
+        }
         // if p is on the same side of abc as d
         double const d4 (MathLib::orientation3d(p, a, b, c));
         return d0_sign == (d4 >= 0) || std::abs(d4) < eps;
@@ -133,7 +139,9 @@ bool gaussPointInTriangle(MathLib::Point3d const& q,
             {a[0] + y[0] * v[0] + y[1] * w[0], a[1] + y[0] * v[1] + y[1] * w[1],
              a[2] + y[0] * v[2] + y[1] * w[2]}});
         if (MathLib::sqrDist(q, q_projected) <= eps_pnt_out_of_plane)
+        {
             return true;
+        }
     }
 
     return false;
@@ -147,7 +155,9 @@ bool barycentricPointInTriangle(MathLib::Point3d const& p,
                                 double eps_pnt_out_of_tri)
 {
     if (std::abs(MathLib::orientation3d(p, a, b, c)) > eps_pnt_out_of_plane)
+    {
         return false;
+    }
 
     MathLib::Vector3 const pa(p, a);
     MathLib::Vector3 const pb(p, b);
@@ -156,10 +166,14 @@ bool barycentricPointInTriangle(MathLib::Point3d const& p,
 
     double const alpha((MathLib::crossProduct(pb, pc).getLength()) / area_x_2);
     if (alpha < -eps_pnt_out_of_tri || alpha > 1 + eps_pnt_out_of_tri)
+    {
         return false;
+    }
     double const beta((MathLib::crossProduct(pc, pa).getLength()) / area_x_2);
     if (beta < -eps_pnt_out_of_tri || beta > 1 + eps_pnt_out_of_tri)
+    {
         return false;
+    }
     double const gamma(1 - alpha - beta);
     return !(gamma < -eps_pnt_out_of_tri || gamma > 1 + eps_pnt_out_of_tri);
 }
@@ -196,7 +210,9 @@ bool dividedByPlane(const MathLib::Point3d& a, const MathLib::Point3d& b,
             (b[x] - a[x]) * (d[y] - a[y]) - (b[y] - a[y]) * (d[x] - a[x]);
 
         if ((abc > 0 && abd < 0) || (abc < 0 && abd > 0))
+        {
             return true;
+        }
     }
     return false;
 }

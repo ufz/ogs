@@ -55,9 +55,13 @@ GlobalSparsityPattern computeSparsityPatternNonPETSc(
     {
         unsigned n_connected_dof = 0;
         for (auto an : node_adjacency_table.getAdjacentNodes(n))
+        {
             n_connected_dof += global_idcs[an].size();
+        }
         for (auto global_index : global_idcs[n])
+        {
             sparsity_pattern[global_index] = n_connected_dof;
+        }
     }
 
     return sparsity_pattern;

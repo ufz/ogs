@@ -50,8 +50,14 @@ struct Location
 inline
 bool operator<(const Location& left, const Location& right)
 {
-    if (left.mesh_id != right.mesh_id) return left.mesh_id < right.mesh_id;
-    if (left.item_type != right.item_type) return left.item_type < right.item_type;
+    if (left.mesh_id != right.mesh_id)
+    {
+        return left.mesh_id < right.mesh_id;
+    }
+    if (left.item_type != right.item_type)
+    {
+        return left.item_type < right.item_type;
+    }
     return left.item_id < right.item_id;
 }
 

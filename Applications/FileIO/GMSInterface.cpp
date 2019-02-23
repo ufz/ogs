@@ -117,7 +117,9 @@ int GMSInterface::readBoreholesFromGMS(std::vector<GeoLib::Point*>* boreholes,
     in.close();
 
     if (boreholes->empty())
+    {
         return 0;
+    }
     return 1;
 }
 
@@ -154,7 +156,9 @@ void GMSInterface::writeBoreholesToGMS(const std::vector<GeoLib::Point*>* statio
         for (std::size_t i = 1; i < nLayers; i++)
         {
             if ((i > 1) && (soilNames[i] == soilNames[i - 1]))
+            {
                 continue;
+            }
             // idx = getSoilID(soilID, soilNames[i]);
             current_soil_name = soilNames[i];
 
@@ -177,8 +181,12 @@ void GMSInterface::writeBoreholesToGMS(const std::vector<GeoLib::Point*>* statio
 std::size_t GMSInterface::getSoilID(std::vector<std::string> &soilID, std::string &soilName)
 {
     for (std::size_t j = 0; j < soilID.size(); j++)
+    {
         if (soilID[j] == soilName)
+        {
             return j;
+        }
+    }
     soilID.push_back(soilName);
     return soilID.size() - 1;
 }
@@ -194,7 +202,10 @@ int GMSInterface::writeSoilIDTable(const std::vector<std::string> &soilID,
     // write table
     std::size_t nIDs = soilID.size();
     for (std::size_t i = 0; i < nIDs; i++)
-        out << i << "\t" << std::fixed << soilID[i] << "\t" << "\n";
+    {
+        out << i << "\t" << std::fixed << soilID[i] << "\t"
+            << "\n";
+    }
     out.close();
 
     return 1;
@@ -208,11 +219,13 @@ std::vector<std::string> GMSInterface::readSoilIDfromFile(const std::string &fil
     std::ifstream in( filename.c_str() );
 
     if (in.is_open())
+    {
         while ( getline(in, line) )
         {
             BaseLib::trim(line);
             soilID.push_back(line);
         }
+    }
     in.close();
 
     return soilID;
@@ -309,10 +322,12 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string &filename)
             elements.push_back(new MeshLib::Pyramid(pyramid_nodes));
             mat_ids.push_back(mat_id);
         }
-        else if (element_id == "ND ")  // Node
+        else if (element_id == "ND ")
+        {  // Node
 
             continue; // skip because nodes have already been read
-        else //default
+        }
+        else  // default
         {
             WARN(
                 "GMSInterface::readGMS3DMMesh() - Element type '%s' not "
@@ -335,9 +350,13 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string &filename)
         {
             ERR("Could not create PropertyVector for material ids.");
             for (auto element : elements)
+            {
                 delete element;
+            }
             for (auto node : nodes)
+            {
                 delete node;
+            }
             return nullptr;
         }
         opt_pv->reserve(mat_ids.size());

@@ -33,7 +33,9 @@ void reorderNodes(std::vector<MeshLib::Element*> &elements)
     for (std::size_t i=0; i<nElements; ++i)
     {
         if (elements[i]->testElementNodeOrder())
+        {
             continue;
+        }
         n_corrected_elements++;
 
         const unsigned nElemNodes (elements[i]->getNumberOfBaseNodes());
@@ -42,12 +44,16 @@ void reorderNodes(std::vector<MeshLib::Element*> &elements)
         switch (elements[i]->getGeomType())
         {
             case MeshLib::MeshElemType::TETRAHEDRON:
-                for(std::size_t j = 0; j < 4; ++j)
-                    elements[i]->setNode(j, nodes[(j+1)%4]);
+                for (std::size_t j = 0; j < 4; ++j)
+                {
+                    elements[i]->setNode(j, nodes[(j + 1) % 4]);
+                }
                 break;
             case MeshLib::MeshElemType::PYRAMID:
-                for(std::size_t j = 0; j < 5; ++j)
-                    elements[i]->setNode(j, nodes[(j+1)%5]);
+                for (std::size_t j = 0; j < 5; ++j)
+                {
+                    elements[i]->setNode(j, nodes[(j + 1) % 5]);
+                }
                 break;
             case MeshLib::MeshElemType::PRISM:
                 for(std::size_t j = 0; j < 3; ++j)
@@ -64,8 +70,10 @@ void reorderNodes(std::vector<MeshLib::Element*> &elements)
                 }
                 break;
             default:
-                for(std::size_t j = 0; j < nElemNodes; ++j)
+                for (std::size_t j = 0; j < nElemNodes; ++j)
+                {
                     elements[i]->setNode(j, nodes[nElemNodes - j - 1]);
+                }
         }
     }
 
@@ -81,7 +89,8 @@ void reorderNodes2(std::vector<MeshLib::Element*> &elements)
         const unsigned nElemNodes (elements[i]->getNumberOfBaseNodes());
         std::vector<MeshLib::Node*> nodes(elements[i]->getNodes(), elements[i]->getNodes() + nElemNodes);
 
-        for(std::size_t j = 0; j < nElemNodes; ++j)
+        for (std::size_t j = 0; j < nElemNodes; ++j)
+        {
             if (elements[i]->getGeomType() == MeshLib::MeshElemType::PRISM)
             {
                 for(std::size_t j = 0; j < 3; ++j)
@@ -91,6 +100,7 @@ void reorderNodes2(std::vector<MeshLib::Element*> &elements)
                 }
                 break;
             }
+        }
     }
 }
 
@@ -100,10 +110,16 @@ void reorderNonlinearNodes(MeshLib::Mesh &mesh)
     std::vector<MeshLib::Node*> nonlinear_nodes;
     for (MeshLib::Element const* e : mesh.getElements())
     {
-        for (unsigned i=0; i<e->getNumberOfBaseNodes(); i++)
+        for (unsigned i = 0; i < e->getNumberOfBaseNodes(); i++)
+        {
             base_nodes.push_back(const_cast<MeshLib::Node*>(e->getNode(i)));
-        for (unsigned i=e->getNumberOfBaseNodes(); i<e->getNumberOfNodes(); i++)
-            nonlinear_nodes.push_back(const_cast<MeshLib::Node*>(e->getNode(i)));
+        }
+        for (unsigned i = e->getNumberOfBaseNodes(); i < e->getNumberOfNodes();
+             i++)
+        {
+            nonlinear_nodes.push_back(
+                const_cast<MeshLib::Node*>(e->getNode(i)));
+        }
     }
 
     BaseLib::makeVectorUnique(base_nodes,
@@ -159,11 +175,17 @@ int main (int argc, char* argv[])
 
     INFO("Reordering nodes... ");
     if (!method_arg.isSet() || method_arg.getValue() == 1)
+    {
         reorderNodes(const_cast<std::vector<MeshLib::Element*>&>(mesh->getElements()));
+    }
     else if (method_arg.getValue() == 2)
+    {
         reorderNodes2(const_cast<std::vector<MeshLib::Element*>&>(mesh->getElements()));
+    }
     else if (method_arg.getValue() == 3)
+    {
         reorderNonlinearNodes(*mesh);
+    }
     else
     {
         ERR ("Unknown re-ordering method. Exit program...");

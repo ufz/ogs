@@ -140,7 +140,9 @@ TEST_F(RasterToMeshTest, convertRasterToTriMeshValue)
 
     std::vector<MeshLib::Node*> const& nodes = mesh->getNodes();
     for (MeshLib::Node* n : nodes)
+    {
         ASSERT_NEAR(0, (*n)[2], std::numeric_limits<double>::epsilon());
+    }
 
     std::array<unsigned, 7> n_types =
         MeshLib::MeshInformation::getNumberOfElementTypes(*mesh);
@@ -171,7 +173,9 @@ TEST_F(RasterToMeshTest, convertRasterToQuadMeshValue)
 
     std::vector<MeshLib::Node*> const& nodes = mesh->getNodes();
     for (MeshLib::Node* n : nodes)
+    {
         ASSERT_TRUE((*n)[2] == 0);
+    }
 
     std::array<unsigned, 7> n_types =
         MeshLib::MeshInformation::getNumberOfElementTypes(*mesh);
@@ -202,7 +206,9 @@ TEST_F(RasterToMeshTest, convertRasterToPrismMeshValue)
 
     std::vector<MeshLib::Node*> const& nodes = mesh->getNodes();
     for (MeshLib::Node* n : nodes)
+    {
         ASSERT_TRUE(((*n)[2] == 0) || ((*n)[2] == _spacing));
+    }
 
     std::array<unsigned, 7> n_types =
         MeshLib::MeshInformation::getNumberOfElementTypes(*mesh);
@@ -233,7 +239,9 @@ TEST_F(RasterToMeshTest, convertRasterToHexMeshValue)
 
     std::vector<MeshLib::Node*> const& nodes = mesh->getNodes();
     for (MeshLib::Node* n : nodes)
+    {
         ASSERT_TRUE(((*n)[2] == 0) || ((*n)[2] == _spacing));
+    }
 
     std::array<unsigned, 7> n_types =
         MeshLib::MeshInformation::getNumberOfElementTypes(*mesh);
@@ -255,7 +263,9 @@ TEST_F(RasterToMeshTest, convertRasterToQuadMeshNone)
 
     std::vector<MeshLib::Node*> const& nodes = mesh->getNodes();
     for (MeshLib::Node* n : nodes)
+    {
         ASSERT_TRUE((*n)[2] == 0);
+    }
 
     std::array<unsigned, 7> n_types =
         MeshLib::MeshInformation::getNumberOfElementTypes(*mesh);

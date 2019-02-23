@@ -66,7 +66,9 @@ struct GroupBasedParameter final
         int const index = _property_index[item_id.get()];
         auto const& values = _vec_values[index];
         if (values.empty())
+        {
             OGS_FATAL("No data found for the group index %d", index);
+        }
          return values;
     }
 

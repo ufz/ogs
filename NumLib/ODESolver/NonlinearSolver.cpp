@@ -94,7 +94,9 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
         else
         {
             if (postIterationCallback)
+            {
                 postIterationCallback(iteration, x_new);
+            }
 
             switch (sys.postIteration(x_new))
             {
@@ -147,12 +149,16 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
              time_iteration.elapsed());
 
         if (error_norms_met)
+        {
             break;
+        }
 
         // Avoid increment of the 'iteration' if the error norms are not met,
         // but maximum number of iterations is reached.
         if (iteration >= _maxiter)
+        {
             break;
+        }
     }
 
     if (iteration > _maxiter)
@@ -234,7 +240,9 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
         INFO("[time] Applying Dirichlet BCs took %g s.", time_dirichlet);
 
         if (!sys.isLinear() && _convergence_criterion->hasResidualCheck())
+        {
             _convergence_criterion->checkResidual(res);
+        }
 
         BaseLib::RunTime time_linear_solver;
         time_linear_solver.start();
@@ -255,7 +263,9 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
             LinAlg::axpy(x_new, -_damping, minus_delta_x);
 
             if (postIterationCallback)
+            {
                 postIterationCallback(iteration, x_new);
+            }
 
             switch(sys.postIteration(x_new))
             {
@@ -302,12 +312,16 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
              time_iteration.elapsed());
 
         if (error_norms_met)
+        {
             break;
+        }
 
         // Avoid increment of the 'iteration' if the error norms are not met,
         // but maximum number of iterations is reached.
         if (iteration >= _maxiter)
+        {
             break;
+        }
     }
 
     if (iteration > _maxiter)

@@ -75,8 +75,11 @@ TEST(FileIO, DISABLED_TetGenSmeshInterface)
     std::vector<GeoLib::Surface*> const& new_sfc (*geo_objects.getSurfaceVec(tg_new_name));
     ASSERT_EQ(ref_sfc.size(), new_sfc.size());
 
-    for (std::size_t i=0; i<ref_sfc.size(); ++i)
-        ASSERT_EQ(ref_sfc[i]->getNumberOfTriangles(), new_sfc[i]->getNumberOfTriangles());
+    for (std::size_t i = 0; i < ref_sfc.size(); ++i)
+    {
+        ASSERT_EQ(ref_sfc[i]->getNumberOfTriangles(),
+                  new_sfc[i]->getNumberOfTriangles());
+    }
 
     std::remove(output_name.c_str());
 }

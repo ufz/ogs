@@ -147,7 +147,9 @@ int main(int argc, char* argv[])
         }
     }();
     if (!node_id_pv)
+    {
         return EXIT_FAILURE;
+    }
 
     std::vector<double> integrated_values = getSurfaceIntegratedValuesForNodes(
         *surface_mesh, property_in_arg.getValue());
@@ -176,7 +178,9 @@ int main(int argc, char* argv[])
     std::ofstream result_out(result_file.getValue() + ".txt");
     result_out.precision(std::numeric_limits<double>::digits10);
     for (auto const& p : direct_values)
+    {
         result_out << p.first << " " << p.second << "\n";
+    }
 
     return EXIT_SUCCESS;
 }

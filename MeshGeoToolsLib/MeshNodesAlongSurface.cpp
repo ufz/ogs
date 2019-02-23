@@ -36,7 +36,9 @@ MeshNodesAlongSurface::MeshNodesAlongSurface(MeshLib::Mesh const& mesh,
     for (std::size_t i = 0; i < n_nodes; i++) {
         auto* node = mesh_nodes[i];
         if (!sfc.isPntInBoundingVolume(*node, epsilon_radius))
+        {
             continue;
+        }
         if (sfc.isPntInSfc(*node, epsilon_radius)) {
             _msh_node_ids.push_back(node->getID());
         }

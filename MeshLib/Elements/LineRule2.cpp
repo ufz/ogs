@@ -39,9 +39,13 @@ bool LineRule2::isPntInElement(Node const* const* nodes,
 unsigned LineRule2::identifyFace(Node const* const* _nodes, Node* nodes[1])
 {
     if (nodes[0] == _nodes[0])
+    {
         return 0;
+    }
     if (nodes[0] == _nodes[1])
+    {
         return 1;
+    }
     return std::numeric_limits<unsigned>::max();
 }
 

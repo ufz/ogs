@@ -75,9 +75,13 @@ struct LineByLocationAndComponentComparator
     bool operator()(Line const& a, Line const& b) const
     {
         if (a.location < b.location)
+        {
             return true;
+        }
         if (b.location < a.location)
+        {
             return false;
+        }
 
         // a.loc == b.loc
         return a.comp_id < b.comp_id;

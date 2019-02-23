@@ -21,12 +21,18 @@ CoordinateSystem::CoordinateSystem(const Element &ele)
     if (bboxCoordSys.getDimension() >= ele.getDimension()) {
         _type = bboxCoordSys.getType();
     } else { // e.g. zero volume elements
-        if (ele.getDimension()>=1)
+        if (ele.getDimension() >= 1)
+        {
             _type = CoordinateSystemType::X;
-        if (ele.getDimension()>=2)
+        }
+        if (ele.getDimension() >= 2)
+        {
             _type |= CoordinateSystemType::Y;
-        if (ele.getDimension()==3)
+        }
+        if (ele.getDimension() == 3)
+        {
             _type |= CoordinateSystemType::Z;
+        }
     }
 }
 
@@ -40,11 +46,17 @@ unsigned char CoordinateSystem::getCoordinateSystem(const GeoLib::AABB &bbox) co
     // Therefore, the difference between the particular coordinates of the
     // points is modified by the unit in the last place towards zero.
     if (std::nexttoward(std::abs(pt_diff[0]), 0.0) > .0)
+    {
         coords |= CoordinateSystemType::X;
+    }
     if (std::nexttoward(std::abs(pt_diff[1]), 0.0) > .0)
+    {
         coords |= CoordinateSystemType::Y;
+    }
     if (std::nexttoward(std::abs(pt_diff[2]), 0.0) > .0)
+    {
         coords |= CoordinateSystemType::Z;
+    }
 
     return coords;
 }

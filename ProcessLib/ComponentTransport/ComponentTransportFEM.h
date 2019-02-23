@@ -362,8 +362,10 @@ public:
                     w * dNdx.transpose() * density * K_over_mu * dNdx;
 
                 if (_process_data.has_gravity)
+                {
                     Bp += w * density * density * dNdx.transpose() * K_over_mu *
                           b;
+                }
             }
         }
     }

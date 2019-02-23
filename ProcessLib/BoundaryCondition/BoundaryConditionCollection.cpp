@@ -18,7 +18,9 @@ void BoundaryConditionCollection::applyNaturalBC(const double t,
                                                  GlobalMatrix* Jac)
 {
     for (auto const& bc : _boundary_conditions)
+    {
         bc->applyNaturalBC(t, x, K, b, Jac);
+    }
 }
 
 void BoundaryConditionCollection::addBCsForProcessVariables(
