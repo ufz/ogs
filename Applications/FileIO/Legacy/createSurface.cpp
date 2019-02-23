@@ -82,11 +82,12 @@ bool createSurface(GeoLib::Polyline const& ply,
     std::string gmsh_command =
         "gmsh -2 -algo meshadapt \"" + file_base_name + ".geo\"";
     gmsh_command += " -o \"" + file_base_name + ".msh\"";
-    // Temporarilly disable unused result warning
-    #pragma GCC diagnostic push
-    #pragma GCC diagnostic ignored "-Wunused-result"
-    std::system(gmsh_command.c_str());
-    #pragma GCC diagnostic pop
+    int const gmsh_return_value = std::system(gmsh_command.c_str());
+    if (gmsh_return_value != 0)
+    {
+        WARN("Call to '%s' returned non-zero value %d.", gmsh_command.c_str(),
+             gmsh_return_value);
+    }
     auto surface_mesh =
         FileIO::GMSH::readGMSHMesh("\"" + file_base_name + ".msh\"");
     if (!surface_mesh)
