@@ -24,8 +24,8 @@ std::unique_ptr<ParameterBase> createConstantParameter(
     // If the 'value' tag is found, use it and return. Otherwise continue with
     // then required tag 'values'.
     {
-        //! \ogs_file_param{prj__parameters__parameter__Constant__value}
         auto const value =
+            //! \ogs_file_param{prj__parameters__parameter__Constant__value}
             config.getConfigParameterOptional<std::vector<double>>("value");
 
         if (value)

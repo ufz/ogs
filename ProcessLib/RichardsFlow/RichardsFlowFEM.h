@@ -13,7 +13,6 @@
 
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
-#include "MeshLib/CoordinateSystem.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"

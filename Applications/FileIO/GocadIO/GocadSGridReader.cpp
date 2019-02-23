@@ -350,7 +350,8 @@ void GocadSGridReader::parseFaceSet(std::string& line, std::istream& in)
                     ERR("****** k coord %d to big for id %d.", c[2], id);
                 std::size_t const cell_id(
                     _index_calculator.getCellIdx(c[0], c[1], c[2]));
-                face_set_property._property_data[cell_id] = face_indicator;
+                face_set_property._property_data[cell_id] =
+                    static_cast<double>(face_indicator);
             }
             face_set_id_cnt++;
         }
