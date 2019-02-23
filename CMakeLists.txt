@@ -32,6 +32,7 @@ include(CTest)
 ###########################
 ### Preliminary Options ###
 ###########################
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 option(BUILD_SHARED_LIBS "Create shared libraries?" OFF)
 set(CMAKE_LIBRARY_SEARCH_PATH "" CACHE PATH
     "Additional library installation path, e.g. /opt/local or C:/libs")
