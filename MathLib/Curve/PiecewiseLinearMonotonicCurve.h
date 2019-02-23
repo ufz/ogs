@@ -44,4 +44,4 @@ private:
      */
     bool isStrongMonotonic() const;
 };
-}  // namespace
+}  // namespace MathLib

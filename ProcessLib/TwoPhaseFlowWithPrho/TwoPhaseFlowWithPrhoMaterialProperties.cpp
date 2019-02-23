@@ -383,5 +383,5 @@ double TwoPhaseFlowWithPrhoMaterialProperties::calculatedXmdP(
         return 0.0;
     return HenryConstantH2 * H2 * (1 + dPC_dSw * dSwdP);
 }
-}  // end of namespace
-}  // end of namespace
+}  // namespace TwoPhaseFlowWithPrho
+}  // namespace ProcessLib

@@ -62,7 +62,4 @@ void applyKnownSolution(EigenMatrix &A_, EigenVector &b_, EigenVector &/*x*/,
     A = AT.transpose();
 }
 
-} // MathLib
-
-
-
+}  // namespace MathLib

@@ -33,4 +33,4 @@ std::vector<double> generateNodeValueDistribution(
     return vec_values;
 }
 
-} //NumLib
+}  // namespace NumLib

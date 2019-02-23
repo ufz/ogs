@@ -122,4 +122,4 @@ const Triangle* Surface::findTriangle(MathLib::Point3d const& pnt) const
     return nullptr;
 }
 
-} // end namespace
+}  // namespace GeoLib

@@ -37,4 +37,4 @@ std::unique_ptr<MeshLib::Element> createFlippedElement(MeshLib::Element const& e
  */
 std::unique_ptr<MeshLib::Mesh> createFlippedMesh(MeshLib::Mesh const& mesh);
 
-}
+}  // namespace MeshLib

@@ -24,7 +24,7 @@ const double c[] = {
     -1.0300151379421499e-10    /* a6 */
 };
 
-}
+}  // namespace
 
 namespace Adsorption
 {
@@ -60,4 +60,4 @@ double DensityHauer::dCharacteristicCurve(const double A) const
     return dCurvePolyfrac(c, A);
 }
 
-}
+}  // namespace Adsorption

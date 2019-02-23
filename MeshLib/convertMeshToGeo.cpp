@@ -112,5 +112,4 @@ MeshLib::Mesh* convertSurfaceToMesh(const GeoLib::Surface &sfc, const std::strin
     return rev.simplifyMesh(mesh_with_duplicated_nodes.getName(), eps);
 }
 
-}
-
+}  // namespace MeshLib

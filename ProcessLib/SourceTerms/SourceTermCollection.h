@@ -37,4 +37,4 @@ private:
     std::vector<std::unique_ptr<ParameterBase>> const& _parameters;
 };
 
-}  // ProcessLib
+}  // namespace ProcessLib

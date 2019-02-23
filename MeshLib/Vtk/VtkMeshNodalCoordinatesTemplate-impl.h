@@ -478,4 +478,4 @@ template <class Scalar> vtkIdType VtkMeshNodalCoordinatesTemplate<Scalar>
 }
 
 #endif  // vtk version
-} // end namespace
+}  // namespace MeshLib

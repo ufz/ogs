@@ -95,4 +95,4 @@ std::unique_ptr<ParameterBase> createGroupBasedParameter(
     OGS_FATAL("Mesh item type of the specified property is not supported.");
 }
 
-}  // ProcessLib
+}  // namespace ProcessLib

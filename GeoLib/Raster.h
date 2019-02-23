@@ -108,4 +108,4 @@ private:
     double* _raster_data;
 };
 
-}
+}  // namespace GeoLib

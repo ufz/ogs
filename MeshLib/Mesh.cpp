@@ -421,4 +421,4 @@ std::unique_ptr<MeshLib::Mesh> createMeshFromElementSelection(
 
     return mesh;
 }
-}
+}  // namespace MeshLib

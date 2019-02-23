@@ -380,4 +380,4 @@ private:
     void markUnusedPoints(std::string const& geo_name,
                           std::vector<bool>& transfer_pnts) const;
 };
-} // end namespace
+}  // namespace GeoLib

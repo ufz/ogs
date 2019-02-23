@@ -131,4 +131,4 @@ double PiecewiseLinearInterpolation::getSupportMin() const
     assert(!_supp_pnts.empty());
     return _supp_pnts.front();
 }
-}  // end MathLib
+}  // namespace MathLib

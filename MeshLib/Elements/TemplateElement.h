@@ -159,6 +159,6 @@ public:
 
 };
 
-} // MeshLib
+}  // namespace MeshLib
 
 #include "TemplateElement-impl.h"

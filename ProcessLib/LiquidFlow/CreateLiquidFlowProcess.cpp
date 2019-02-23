@@ -108,5 +108,5 @@ std::unique_ptr<Process> createLiquidFlowProcess(
         reference_temperature, mat_config}};
 }
 
-}  // end of namespace
-}  // end of namespace
+}  // namespace LiquidFlow
+}  // namespace ProcessLib

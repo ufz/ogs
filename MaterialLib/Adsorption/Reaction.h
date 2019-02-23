@@ -33,4 +33,4 @@ public:
     virtual ~Reaction() = default;
 };
 
-}
+}  // namespace Adsorption

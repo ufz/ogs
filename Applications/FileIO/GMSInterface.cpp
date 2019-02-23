@@ -349,4 +349,4 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string &filename)
     return new MeshLib::Mesh(mesh_name, nodes, elements, properties);
 }
 
-}
+}  // namespace FileIO

@@ -30,5 +30,5 @@ private:
     double _mesh_density;
 };
 
-}
+}  // namespace GMSH
 } // end namespace FileIO

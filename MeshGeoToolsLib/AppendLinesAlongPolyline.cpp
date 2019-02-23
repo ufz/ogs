@@ -93,5 +93,4 @@ std::unique_ptr<MeshLib::Mesh> appendLinesAlongPolylines(
     return new_mesh;
 }
 
-} // MeshGeoToolsLib
-
+}  // namespace MeshGeoToolsLib

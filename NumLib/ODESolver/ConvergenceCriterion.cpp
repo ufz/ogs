@@ -51,4 +51,4 @@ bool checkRelativeTolerance(const double reltol, const double numerator,
            std::abs(reltol) * (std::abs(denominator) + eps);
 }
 
-}  // NumLib
+}  // namespace NumLib

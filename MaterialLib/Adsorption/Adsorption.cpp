@@ -184,6 +184,4 @@ double AdsorptionReaction::getEquilibriumLoading(
     return getAdsorbateDensity(T_Ads) * characteristicCurve(A);
 }
 
-
-
-} // namespace Ads
+}  // namespace Adsorption

@@ -24,4 +24,4 @@ XMLInterface::XMLInterface() :
 {}
 
 }
-}
+}  // namespace BaseLib

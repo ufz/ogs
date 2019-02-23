@@ -44,4 +44,4 @@ private:
     double _enthalpy;
 };
 
-}
+}  // namespace Adsorption

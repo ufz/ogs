@@ -112,4 +112,4 @@ private:
     const double _multiplier;
 };
 
-} // BaseLib
+}  // namespace BaseLib

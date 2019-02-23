@@ -58,4 +58,4 @@ std::ostream& operator<<(std::ostream& os,
 ///  of double.
 bool operator==(LineSegment const& s0, LineSegment const& s1);
 
-}
+}  // namespace GeoLib

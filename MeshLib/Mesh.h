@@ -303,4 +303,4 @@ PropertyVector<int> const* materialIDs(Mesh const& mesh);
 std::unique_ptr<MeshLib::Mesh> createMeshFromElementSelection(
     std::string mesh_name, std::vector<MeshLib::Element*> const& elements);
 
-} /* namespace */
+}  // namespace MeshLib

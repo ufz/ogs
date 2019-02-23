@@ -122,4 +122,4 @@ private:
     std::size_t _steps;
 };
 
-}  // NumLib
+}  // namespace NumLib

@@ -116,4 +116,4 @@ createConvergenceCriterionPerComponentDeltaX(const BaseLib::ConfigTree& config)
         std::move(*abstols), std::move(*reltols), norm_type);
 }
 
-}  // NumLib
+}  // namespace NumLib

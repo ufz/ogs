@@ -37,4 +37,4 @@ public:
     using EdgeReturn = MeshLib::QuadraticEdgeReturn;
 }; /* class */
 
-} /* namespace */
+}  // namespace MeshLib

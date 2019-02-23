@@ -131,5 +131,5 @@ void LiquidFlowProcess::computeSecondaryVariableConcrete(const double t,
         getDOFTable(process_id), t, x, _coupled_solutions);
 }
 
-}  // end of namespace
-}  // end of namespace
+}  // namespace LiquidFlow
+}  // namespace ProcessLib

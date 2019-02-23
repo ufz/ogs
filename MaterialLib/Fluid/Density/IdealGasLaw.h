@@ -87,5 +87,5 @@ private:
         return _molar_mass / (PhysicalConstant::IdealGasConstant * T);
     }
 };
-}  // end namespace
-}  // end namespace
+}  // namespace Fluid
+}  // namespace MaterialLib

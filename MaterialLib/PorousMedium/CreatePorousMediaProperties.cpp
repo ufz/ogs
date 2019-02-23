@@ -107,5 +107,5 @@ PorousMediaProperties createPorousMediaProperties(
                                  std::move(storage_models), material_ids};
 }
 
-}  // namespace ComponentTransport
-}  // namespace ProcessLib
+}  // namespace PorousMedium
+}  // namespace MaterialLib

@@ -697,5 +697,5 @@ void writeAllDataToGLIFileV4 (const std::string& fname, const GeoLib::GEOObjects
     os.close ();
 }
 
-}
+}  // namespace Legacy
 } // end namespace FileIO

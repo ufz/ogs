@@ -31,5 +31,5 @@ const double FluidViscosityN2::C[5] = {-20.09997, 3.4376416, -1.4470051,
 const double FluidHeatConductivityH2O::a[4] = {0.0102811, 0.0299621, 0.0156146,
                                                -0.00422464};
 
-}  // TES
-}  // ProcessLib
+}  // namespace TES
+}  // namespace ProcessLib

@@ -36,4 +36,4 @@ std::unique_ptr<RobinBoundaryCondition> createRobinBoundaryCondition(
     unsigned const shapefunction_order, unsigned const global_dim,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters);
 
-}  // ProcessLib
+}  // namespace ProcessLib

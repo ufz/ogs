@@ -31,4 +31,4 @@ public:
 
     void calculateQuality() override;
 };
-}
+}  // namespace MeshLib

@@ -29,5 +29,5 @@ enum class PropertyVariableType
 const unsigned PropertyVariableNumber =
     static_cast<unsigned>(PropertyVariableType::number_of_variables);
 
-}  // end namespace
-}  // end namespace
+}  // namespace Fluid
+}  // namespace MaterialLib

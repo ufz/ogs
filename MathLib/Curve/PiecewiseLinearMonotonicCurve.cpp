@@ -93,4 +93,4 @@ double PiecewiseLinearMonotonicCurve::getInverseVariable(const double y) const
     return m * (y - yi) + xi;
 }
 
-}  // namespace
+}  // namespace MathLib

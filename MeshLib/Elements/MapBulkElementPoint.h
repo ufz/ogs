@@ -63,4 +63,4 @@ MathLib::Point3d getBulkElementPoint(MeshLib::Mesh const& mesh,
                                      std::size_t bulk_element_id,
                                      std::size_t bulk_face_id,
                                      MathLib::WeightedPoint3D const& wp);
-}  // end namespace ProcessLib
+}  // namespace MeshLib

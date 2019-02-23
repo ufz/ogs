@@ -253,5 +253,5 @@ void RapidStnInterface::readStratigraphy( const rapidxml::xml_node<>* strat_root
     }
 }
 
-} // IO
-} // GeoLib
+}  // namespace IO
+}  // namespace GeoLib

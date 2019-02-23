@@ -248,4 +248,4 @@ markVisited(std::string const& key, Attr const is_attr,
     return p.first->second;
 }
 
-}
+}  // namespace BaseLib

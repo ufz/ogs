@@ -47,7 +47,7 @@ namespace detail
         using type = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>;
     };
 
-}   // detail
+    }  // namespace detail
 
 /// An implementation of ShapeMatrixPolicy using fixed size (compile-time) eigen
 /// matrices and vectors.

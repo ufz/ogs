@@ -57,4 +57,4 @@ double const GaussLegendrePyramid<3>::W[13] = {
                                            0.419515737191525950
                                            };
 
-}
+}  // namespace MathLib

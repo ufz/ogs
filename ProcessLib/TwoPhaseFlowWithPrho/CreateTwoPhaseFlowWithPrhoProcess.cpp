@@ -114,5 +114,5 @@ std::unique_ptr<Process> createTwoPhaseFlowWithPrhoProcess(
         mat_config, curves);
 }
 
-}  // end of namespace
-}  // end of namespace
+}  // namespace TwoPhaseFlowWithPrho
+}  // namespace ProcessLib

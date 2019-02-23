@@ -117,4 +117,4 @@ std::vector<GeoLib::Surface*>& DuplicateGeometry::getSurfaceVectorCopy()
     return const_cast<std::vector<GeoLib::Surface*>&>(*_geo_objects.getSurfaceVec(_output_name));
 }
 
-}
+}  // namespace GeoLib

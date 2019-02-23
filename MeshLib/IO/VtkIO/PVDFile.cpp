@@ -42,5 +42,5 @@ void PVDFile::addVTUFile(const std::string &vtu_fname, double timestep)
     fh << "  </Collection>\n</VTKFile>\n";
 }
 
-} // IO
-} // MeshLib
+}  // namespace IO
+}  // namespace MeshLib

@@ -233,4 +233,4 @@ static_assert(OGS_EIGEN_DYNAMIC_SHAPE_MATRICES_FLAG == 1,
         " Maybe you forgot to include some header file.");
 #endif
 
-}
+}  // namespace ProcessLib

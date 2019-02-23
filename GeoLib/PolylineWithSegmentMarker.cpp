@@ -49,4 +49,4 @@ bool PolylineWithSegmentMarker::insertPoint(std::size_t pos, std::size_t pnt_id)
     return false;
 }
 
-} // end GeoLib
+}  // namespace GeoLib

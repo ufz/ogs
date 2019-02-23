@@ -203,5 +203,5 @@ void TwoPhaseFlowWithPPLocalAssembler<
     }  // end of mass-lumping
 }
 
-}  // end of namespace
-}  // end of namespace
+}  // namespace TwoPhaseFlowWithPP
+}  // namespace ProcessLib

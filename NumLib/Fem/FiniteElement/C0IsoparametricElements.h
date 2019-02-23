@@ -145,4 +145,4 @@ struct FePYRA13
         TemplateIsoparametric<ShapePyra13, T_SHAPE_MATRIX_POLICY<ShapePyra13>>;
 };
 
-} // NumLib
+}  // namespace NumLib

@@ -230,4 +230,4 @@ protected:
 /// @return true if the \f$p' \in e'\f$ and false if \f$p' \notin e'\f$
 bool isPointInElementXY(MathLib::Point3d const& p, Element const& e);
 
-} /* namespace */
+}  // namespace MeshLib

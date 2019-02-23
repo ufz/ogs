@@ -62,5 +62,4 @@ bool isBaseNode(Node const& node)
     auto const local_index = e->getNodeIDinElement(&node);
     return local_index < n_base_nodes;
 }
-}
-
+}  // namespace MeshLib

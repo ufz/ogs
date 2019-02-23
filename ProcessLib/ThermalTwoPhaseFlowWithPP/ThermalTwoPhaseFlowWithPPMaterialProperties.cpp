@@ -204,5 +204,5 @@ ThermalTwoPhaseFlowWithPPMaterialProperties::getLiquidWaterEnthalpySimple(
     return heat_capacity_liquid_water * (temperature - CelsiusZeroInKelvin);
 }
 
-}  // end of namespace
-}  // end of namespace
+}  // namespace ThermalTwoPhaseFlowWithPP
+}  // namespace ProcessLib

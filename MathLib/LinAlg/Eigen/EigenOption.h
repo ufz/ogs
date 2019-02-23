@@ -79,4 +79,4 @@ struct EigenOption final
 
 };
 
-}
+}  // namespace MathLib

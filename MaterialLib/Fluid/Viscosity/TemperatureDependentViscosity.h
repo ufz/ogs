@@ -91,5 +91,5 @@ private:
     const double _temperature_v;  ///<  Reference temperature 2.
 };
 
-}  // end namespace
-}  // end namespace
+}  // namespace Fluid
+}  // namespace MaterialLib

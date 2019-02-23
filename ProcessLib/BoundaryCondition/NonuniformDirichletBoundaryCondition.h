@@ -124,4 +124,4 @@ createNonuniformDirichletBoundaryCondition(
     NumLib::LocalToGlobalIndexMap const& dof_table, int const variable_id,
     int const component_id);
 
-}  // ProcessLib
+}  // namespace ProcessLib

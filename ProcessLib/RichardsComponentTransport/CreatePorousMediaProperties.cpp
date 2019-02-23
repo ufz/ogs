@@ -111,5 +111,5 @@ PorousMediaProperties createPorousMediaProperties(
                                  std::move(material_ids)};
 }
 
-}  // namespace ComponentTransport
+}  // namespace RichardsComponentTransport
 }  // namespace ProcessLib

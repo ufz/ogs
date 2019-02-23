@@ -22,7 +22,7 @@ const double c[] = { 0.34102920966608297,
                      -7.610441241719489e-11
                    };
 
-}
+}  // namespace
 
 namespace Adsorption
 {
@@ -61,4 +61,4 @@ double DensityLegacy::dCharacteristicCurve(const double A) const
     return dCurvePolyfrac(c, A);
 }
 
-}
+}  // namespace Adsorption

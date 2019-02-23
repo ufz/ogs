@@ -47,4 +47,4 @@ public:
         LocalCoupledSolutions const& local_coupled_solutions) override;
 };
 
-}  // ProcessLib
+}  // namespace ProcessLib

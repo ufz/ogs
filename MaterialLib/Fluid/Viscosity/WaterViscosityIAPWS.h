@@ -82,5 +82,5 @@ private:
     // Coefficients Hi and Hij are given in two static arrays in the cpp file.
 };
 
-}  // end namespace
-}  // end namespace
+}  // namespace Fluid
+}  // namespace MaterialLib

@@ -163,5 +163,5 @@ std::unique_ptr<CapillaryPressureSaturation> createCapillaryPressureModel(
         type.data());
 }
 
-}  // end namespace
-}  // end namespace
+}  // namespace PorousMedium
+}  // namespace MaterialLib

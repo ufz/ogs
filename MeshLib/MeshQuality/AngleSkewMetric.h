@@ -43,4 +43,4 @@ private:
                                     double const* const n1, double const* const n2,
                                     double &min_angle, double &max_angle) const;
 };
-}
+}  // namespace MeshLib

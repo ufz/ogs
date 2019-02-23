@@ -101,4 +101,4 @@ std::vector<std::size_t> findElementsWithinRadius(Element const& start_element,
 
     return {std::begin(found_elements), std::end(found_elements)};
 }
-}
+}  // namespace MeshLib

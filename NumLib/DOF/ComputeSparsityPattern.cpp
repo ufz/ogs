@@ -76,4 +76,4 @@ GlobalSparsityPattern computeSparsityPattern(
 #endif
 }
 
-}
+}  // namespace NumLib

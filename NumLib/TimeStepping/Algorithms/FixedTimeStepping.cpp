@@ -62,4 +62,4 @@ double FixedTimeStepping::computeEnd(double t_initial,
     return std::min(t_end, t_sum);
 }
 
-}  // NumLib
+}  // namespace NumLib

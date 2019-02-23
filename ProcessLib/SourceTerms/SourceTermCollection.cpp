@@ -36,4 +36,4 @@ void SourceTermCollection::integrate(const double t, GlobalVector const& x,
         st->integrate(t, x, b, jac);
 }
 
-}
+}  // namespace ProcessLib

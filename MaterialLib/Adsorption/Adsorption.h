@@ -82,4 +82,4 @@ inline double dCurvePolyfrac(const double* coeffs, const double x)
     return (du*v - u*dv) / v / v;
 }
 
-}
+}  // namespace Adsorption

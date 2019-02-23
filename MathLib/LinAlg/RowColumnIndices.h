@@ -26,4 +26,4 @@ struct RowColumnIndices
     LineIndex const& columns;
 };
 
-} // MathLib
+}  // namespace MathLib

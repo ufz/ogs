@@ -36,5 +36,5 @@ std::unique_ptr<Storage> createStorageModel(BaseLib::ConfigTree const& config)
               "The available type is Constant.");
 }
 
-}  // end namespace
-}  // end namespace
+}  // namespace PorousMedium
+}  // namespace MaterialLib

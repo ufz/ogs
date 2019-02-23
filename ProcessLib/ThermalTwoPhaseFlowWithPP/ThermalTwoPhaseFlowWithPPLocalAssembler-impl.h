@@ -466,5 +466,5 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
     }  // end of mass-lumping
 }
 
-}  // end of namespace
-}  // end of namespace
+}  // namespace ThermalTwoPhaseFlowWithPP
+}  // namespace ProcessLib

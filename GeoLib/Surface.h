@@ -99,4 +99,4 @@ protected:
     /// called and a valid surface grid is not existing.
     mutable std::unique_ptr<SurfaceGrid> _surface_grid;
 };
-}
+}  // namespace GeoLib

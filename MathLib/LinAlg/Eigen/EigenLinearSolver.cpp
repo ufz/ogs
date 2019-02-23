@@ -171,7 +171,7 @@ std::unique_ptr<EigenLinearSolverBase> createIterativeSolver(
     }
 }
 
-} // details
+}  // namespace details
 
 EigenLinearSolver::EigenLinearSolver(
                             const std::string& /*solver_name*/,
@@ -285,4 +285,4 @@ bool EigenLinearSolver::solve(EigenMatrix &A, EigenVector& b, EigenVector &x)
     return success;
 }
 
-} //MathLib
+}  // namespace MathLib

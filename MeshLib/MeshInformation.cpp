@@ -42,4 +42,4 @@ const std::array<unsigned, 7> MeshInformation::getNumberOfElementTypes(const Mes
     return n_element_types;
 }
 
-} //end MeshLib
+}  // namespace MeshLib

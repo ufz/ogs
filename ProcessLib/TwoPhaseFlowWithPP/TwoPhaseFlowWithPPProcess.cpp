@@ -109,5 +109,5 @@ void TwoPhaseFlowWithPPProcess::assembleWithJacobianConcreteProcess(
         xdot, dxdot_dx, dx_dx, M, K, b, Jac, _coupled_solutions);
 }
 
-}  // end of namespace
-}  // end of namespace
+}  // namespace TwoPhaseFlowWithPP
+}  // namespace ProcessLib

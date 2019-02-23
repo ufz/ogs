@@ -146,5 +146,5 @@ std::unique_ptr<FluidProperty> createViscosityModel(
         type.data());
 }
 
-}  // end namespace
-}  // end namespace
+}  // namespace Fluid
+}  // namespace MaterialLib

@@ -26,5 +26,5 @@ std::unique_ptr<Process> createTwoPhaseFlowWithPrhoProcess(
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
         curves);
-}  // end of namespace
-}  // end of namespace
+}  // namespace TwoPhaseFlowWithPrho
+}  // namespace ProcessLib

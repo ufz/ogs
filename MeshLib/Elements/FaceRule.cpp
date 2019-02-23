@@ -39,5 +39,4 @@ MathLib::Vector3 FaceRule::getSurfaceNormal(const Element* e)
     return MathLib::crossProduct(u, v);
 }
 
-} /* namespace */
-
+}  // namespace MeshLib

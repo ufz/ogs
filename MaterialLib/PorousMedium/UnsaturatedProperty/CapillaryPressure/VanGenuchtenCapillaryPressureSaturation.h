@@ -114,5 +114,5 @@ private:
     double getdPcdSvG(const double Sg) const;
 };
 
-}  // end namespace
-}  // end namespace
+}  // namespace PorousMedium
+}  // namespace MaterialLib

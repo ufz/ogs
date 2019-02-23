@@ -54,5 +54,5 @@ private:
     const double _value;
 };
 
-}  // end namespace
-}  // end namespace
+}  // namespace Fluid
+}  // namespace MaterialLib

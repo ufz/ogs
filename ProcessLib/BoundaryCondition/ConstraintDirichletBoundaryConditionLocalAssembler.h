@@ -170,4 +170,4 @@ private:
     MathLib::Vector3 const _surface_element_normal;
 };
 
-}  // ProcessLib
+}  // namespace ProcessLib

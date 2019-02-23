@@ -45,5 +45,5 @@ public:
                              const PropertyVariableType /* var */) const = 0;
 };
 
-}  // end namespace
-}  // end namespace
+}  // namespace Fluid
+}  // namespace MaterialLib

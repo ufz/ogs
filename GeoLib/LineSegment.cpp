@@ -101,4 +101,4 @@ bool operator==(LineSegment const& s0, LineSegment const& s1)
         (MathLib::sqrDist(s0.getBeginPoint(), s1.getEndPoint()) < tol &&
          MathLib::sqrDist(s0.getEndPoint(), s1.getBeginPoint()) < tol);
 }
-}
+}  // namespace GeoLib

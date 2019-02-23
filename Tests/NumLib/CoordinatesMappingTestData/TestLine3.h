@@ -100,4 +100,4 @@ const double TestLine3::ir_exp_dNdx[dim * e_nnodes] = {0, 0.5, -0.5};
 const double TestLine3::cl_exp_J[dim * dim] = {-1.};
 const double TestLine3::cl_exp_detJ = -1;
 const double TestLine3::ze_exp_J[dim * dim] = {0.0};
-}
+}  // namespace CoordinatesMappingTestData

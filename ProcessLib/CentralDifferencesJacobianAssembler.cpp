@@ -170,4 +170,4 @@ createCentralDifferencesJacobianAssembler(BaseLib::ConfigTree const& config)
         std::move(abs_eps));
 }
 
-}  // ProcessLib
+}  // namespace ProcessLib

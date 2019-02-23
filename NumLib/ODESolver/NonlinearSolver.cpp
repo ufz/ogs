@@ -359,4 +359,4 @@ createNonlinearSolver(GlobalLinearSolver& linear_solver,
     }
     OGS_FATAL("Unsupported nonlinear solver type");
 }
-}
+}  // namespace NumLib

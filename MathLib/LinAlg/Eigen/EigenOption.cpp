@@ -82,4 +82,4 @@ std::string EigenOption::getPreconName(PreconType const precon_type)
     return "Invalid";
 }
 
-} //MathLib
+}  // namespace MathLib

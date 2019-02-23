@@ -505,4 +505,4 @@ private:
      */
     const std::size_t _max_points_per_leaf;
 };
-}
+}  // namespace GeoLib

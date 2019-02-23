@@ -157,4 +157,4 @@ private:
     double _rel_eps;
     std::unique_ptr<GeoLib::OctTree<GeoLib::Point, 16>> _oct_tree;
 };
-} // end namespace
+}  // namespace GeoLib

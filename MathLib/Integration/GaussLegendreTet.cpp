@@ -63,4 +63,4 @@ static const double r = 0.0425460207770812 / 6.;
 
 double const GaussLegendreTet<3>::W[GaussLegendreTet<3>::NPoints] = {
     p, p, p, p, q, q, q, q, r, r, r, r, r, r};
-}
+}  // namespace MathLib

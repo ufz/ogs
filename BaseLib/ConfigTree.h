@@ -643,6 +643,6 @@ private:
     friend void checkAndInvalidate(std::unique_ptr<ConfigTree> const& conf);
 };
 
-}
+}  // namespace BaseLib
 
 #include "ConfigTree-impl.h"

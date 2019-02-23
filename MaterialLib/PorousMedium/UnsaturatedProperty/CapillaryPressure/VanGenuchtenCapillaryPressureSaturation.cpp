@@ -158,5 +158,5 @@ double VanGenuchtenCapillaryPressureSaturation::getdPcdSvG(
            std::pow(S_le, (-1 / _m)) / S_le;
 }
 
-}  // end namespace
-}  // end namespace
+}  // namespace PorousMedium
+}  // namespace MaterialLib

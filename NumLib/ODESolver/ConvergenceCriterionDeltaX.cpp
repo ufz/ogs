@@ -75,4 +75,4 @@ std::unique_ptr<ConvergenceCriterionDeltaX> createConvergenceCriterionDeltaX(
         std::move(abstol), std::move(reltol), norm_type);
 }
 
-}  // NumLib
+}  // namespace NumLib

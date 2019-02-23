@@ -94,4 +94,4 @@ std::unique_ptr<ParameterBase> createGroupBasedParameter(
     BaseLib::ConfigTree const& config,
     MeshLib::Mesh const& mesh);
 
-}  // ProcessLib
+}  // namespace ProcessLib

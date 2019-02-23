@@ -123,4 +123,4 @@ bool createSurface(GeoLib::Polyline const& ply,
     return true;
 }
 
-} // end namespace
+}  // namespace FileIO

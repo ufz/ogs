@@ -22,4 +22,4 @@ ignoreOtherLinearSolvers(const BaseLib::ConfigTree &config,
     }
 }
 
-}
+}  // namespace MathLib

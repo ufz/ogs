@@ -279,4 +279,4 @@ bool SHPInterface::write2dMeshToSHP(const std::string &file_name, const MeshLib:
     return true;
 }
 
-}
+}  // namespace FileIO

@@ -110,5 +110,4 @@ double LinearInterpolationOnSurface::interpolateInTri(
     return val;
 }
 
-} // NumLib
-
+}  // namespace NumLib

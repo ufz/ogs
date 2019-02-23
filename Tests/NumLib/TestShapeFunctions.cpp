@@ -83,7 +83,7 @@ struct NaturalPointGenerator
     }
 };
 
-}
+}  // namespace autocheck
 
 namespace ac = autocheck;
 using namespace NumLib;

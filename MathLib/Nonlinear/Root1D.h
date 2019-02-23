@@ -38,8 +38,7 @@ inline bool almost_zero(double a)
     return std::abs(a) <= std::numeric_limits<double>::epsilon();
 }
 
-}
-
+}  // namespace detail
 
 //! Use the regula falsi method to find the root of some scalar function of one
 //! variable.
@@ -159,6 +158,6 @@ struct AndersonBjorck
     }
 };
 
-}
+}  // namespace Nonlinear
 
 } // namespace MathLib

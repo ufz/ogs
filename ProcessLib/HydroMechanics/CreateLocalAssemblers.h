@@ -81,6 +81,6 @@ void createLocalAssemblers(
         dof_table, shapefunction_order, mesh_elements, local_assemblers,
         std::forward<ExtraCtorArgs>(extra_ctor_args)...);
 }
-}  // HydroMechanics
+}  // namespace HydroMechanics
 
-}  // ProcessLib
+}  // namespace ProcessLib

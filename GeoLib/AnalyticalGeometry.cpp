@@ -50,7 +50,7 @@ double getOrientation2dFast(MathLib::Point3d const& a,
                         const_cast<double*>(b.getCoords()),
                         const_cast<double*>(c.getCoords()));
 }
-}
+}  // namespace ExactPredicates
 
 namespace GeoLib
 {

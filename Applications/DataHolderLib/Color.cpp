@@ -55,4 +55,4 @@ Color const getColor(const std::string &id, std::map<std::string, Color> &colors
     return c;
 }
 
-}
+}  // namespace DataHolderLib

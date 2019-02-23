@@ -23,4 +23,4 @@ public:
     double dCharacteristicCurve(const double A) const override;
 };
 
-}
+}  // namespace Adsorption

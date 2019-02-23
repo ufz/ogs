@@ -48,4 +48,4 @@ private:
     const T_FUNCTION _f;
 };
 
-}
+}  // namespace NumLib

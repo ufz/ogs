@@ -67,7 +67,7 @@ std::unique_ptr<MeshLib::Line> createLine(std::array<double, 3> const& a,
         return createLine({{0.0, 0.0, 0.0}}, {{2./sqrt(3), 2./sqrt(3), 2./sqrt(3)}});
     }
 
-};
+    }  // namespace TestLine2
 
 namespace TestQuad4
 {
@@ -118,7 +118,7 @@ std::unique_ptr<MeshLib::Quad> createQuad(std::array<double, 3> const& a,
             {{0.0, -1.0, -1.0}},
             {{0.0,  1.0, -1.0}});
     }
-};
+    }  // namespace TestQuad4
 
 #if 0
 // keep this function for debugging

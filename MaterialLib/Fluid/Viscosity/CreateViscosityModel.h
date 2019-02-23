@@ -29,4 +29,4 @@ std::unique_ptr<FluidProperty> createViscosityModel(
     BaseLib::ConfigTree const& config);
 
 }  // end namespace
-}  // end namespace
+}  // namespace MaterialLib

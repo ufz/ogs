@@ -48,4 +48,4 @@ std::unique_ptr<NeumannBoundaryCondition> createNeumannBoundaryCondition(
         component_id, global_dim, bc_mesh, param);
 }
 
-}  // ProcessLib
+}  // namespace ProcessLib

@@ -78,4 +78,4 @@ private:
     static std::size_t getSoilID(std::vector<std::string> &soilID, std::string &soilName);
 };
 
-}
+}  // namespace FileIO

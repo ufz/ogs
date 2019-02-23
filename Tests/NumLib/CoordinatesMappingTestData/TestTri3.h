@@ -94,4 +94,4 @@ const double TestTri3::cl_exp_J[dim*dim] = {0.0, 1.0, 1.0, 0.0};
 const double TestTri3::cl_exp_detJ = -1.;
 const double TestTri3::ze_exp_J[dim*dim] = {1.0, 0.0, 1.0, 0.0};
 
-}
+}  // namespace CoordinatesMappingTestData

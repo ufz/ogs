@@ -43,6 +43,4 @@ double getAngle (const double p0[3], const double p1[3], const double p2[3])
     return std::acos (scalarProduct<double,3> (v0,v1) / (std::sqrt(scalarProduct<double,3>(v0,v0)) * sqrt(scalarProduct<double,3>(v1,v1))));
 }
 
-
-
-} // namespace
+}  // namespace MathLib

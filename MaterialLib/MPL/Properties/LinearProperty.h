@@ -50,4 +50,4 @@ public:
 private:
     IndependentVariable const _independent_variable;
 };
-}
+}  // namespace MaterialPropertyLib

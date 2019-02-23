@@ -239,4 +239,4 @@ bool isPointInElementXY(MathLib::Point3d const& p, Element const& e)
          MeshLib::MeshElemType2String(e.getGeomType()).c_str());
     return false;
 }
-}
+}  // namespace MeshLib

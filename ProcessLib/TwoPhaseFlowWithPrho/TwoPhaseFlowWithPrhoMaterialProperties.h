@@ -188,5 +188,5 @@ private:
                           int current_material_id) const;
 };
 
-}  // end of namespace
-}  // end of namespace
+}  // namespace TwoPhaseFlowWithPrho
+}  // namespace ProcessLib

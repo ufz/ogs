@@ -126,5 +126,5 @@ protected:
         _relative_permeability_models;
 };
 
-}  // end of namespace
-}  // end of namespace
+}  // namespace TwoPhaseFlowWithPP
+}  // namespace ProcessLib

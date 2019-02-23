@@ -166,5 +166,5 @@ double TwoPhaseFlowWithPPMaterialProperties::getSaturationDerivative(
         _capillary_pressure_models[material_id]->getdPcdS(saturation);
     return 1 / dpcdsw;
 }
-}  // end of namespace
-}  // end of namespace
+}  // namespace TwoPhaseFlowWithPP
+}  // namespace ProcessLib

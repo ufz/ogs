@@ -399,5 +399,5 @@ inline double fluid_heat_conductivity(const double p,
     return k0 * x0 / (x0 + x1 * phi_12) + k1 * x1 / (x1 + x0 * phi_21);
 }
 
-}  // TES
-}  // ProcessLib
+}  // namespace TES
+}  // namespace ProcessLib

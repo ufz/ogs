@@ -342,4 +342,4 @@ std::string MeshIO::ElemType2StringOutput(const MeshLib::MeshElemType t) const
 
 } // end namespace Legacy
 } // end namespace IO
-} // end namespace MeshLin
+}  // namespace MeshLib

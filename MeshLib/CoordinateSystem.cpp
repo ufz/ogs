@@ -49,4 +49,4 @@ unsigned char CoordinateSystem::getCoordinateSystem(const GeoLib::AABB &bbox) co
     return coords;
 }
 
-} // end
+}  // namespace MeshLib

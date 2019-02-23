@@ -53,5 +53,4 @@ void ShapeQuad8::computeGradShapeFunction(const T_X &rs, T_N &dNdr)
     dNdr[15] = -(1 + r) * s;
 }
 
-}
-
+}  // namespace NumLib

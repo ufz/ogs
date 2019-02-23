@@ -102,5 +102,5 @@ Eigen::MatrixXd const& LiquidFlowMaterialProperties::getPermeability(
                                                                  0.0);
 }
 
-}  // end of namespace
-}  // end of namespace
+}  // namespace LiquidFlow
+}  // namespace ProcessLib

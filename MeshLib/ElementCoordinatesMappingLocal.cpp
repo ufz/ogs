@@ -87,4 +87,4 @@ ElementCoordinatesMappingLocal::ElementCoordinatesMappingLocal(
     detail::rotateToLocal(_matR2global.transpose(), _points);
 }
 
-} // MeshLib
+}  // namespace MeshLib

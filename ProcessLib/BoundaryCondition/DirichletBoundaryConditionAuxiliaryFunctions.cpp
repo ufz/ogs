@@ -95,4 +95,4 @@ void getEssentialBCValuesLocal(
         }
     }
 }
-}  // end of name space
+}  // namespace ProcessLib

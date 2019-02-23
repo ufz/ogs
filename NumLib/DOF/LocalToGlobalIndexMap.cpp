@@ -29,7 +29,7 @@ std::vector<T> to_cumulative(std::vector<T> const& vec)
     return result;
 }
 
-} // no named namespace
+}  // namespace
 
 int LocalToGlobalIndexMap::getGlobalComponent(int const variable_id,
                                               int const component_id) const

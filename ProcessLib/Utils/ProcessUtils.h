@@ -124,4 +124,4 @@ Parameter<ParameterDataType>& findParameter(
 
     return findParameter<ParameterDataType>(name, parameters, num_components);
 }
-}  // ProcessLib
+}  // namespace ProcessLib

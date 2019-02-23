@@ -182,5 +182,5 @@ double TwoPhaseFlowWithPPMaterialProperties::getWetRelativePermeability(
         return 1.0;
     return boost::math::pow<3>(saturation);
 }
-}  // end of namespace
-}  // end of namespace
+}  // namespace TwoPhaseFlowWithPP
+}  // namespace MaterialLib

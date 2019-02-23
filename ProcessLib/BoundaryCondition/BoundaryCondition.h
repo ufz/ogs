@@ -59,4 +59,4 @@ public:
     virtual ~BoundaryCondition() = default;
 };
 
-}  // ProcessLib
+}  // namespace ProcessLib

@@ -518,4 +518,4 @@ private:
 };
 
 //! @}
-}
+}  // namespace NumLib

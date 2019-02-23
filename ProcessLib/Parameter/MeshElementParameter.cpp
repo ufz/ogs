@@ -35,4 +35,4 @@ std::unique_ptr<ParameterBase> createMeshElementParameter(
     return std::make_unique<MeshElementParameter<double>>(name, *property);
 }
 
-}  // ProcessLib
+}  // namespace ProcessLib

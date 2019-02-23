@@ -27,4 +27,4 @@ std::unique_ptr<Process> createLiquidFlowProcess(
     unsigned const integration_order,
     BaseLib::ConfigTree const& config);
 }  // end of namespace
-}  // end of namespace
+}  // namespace ProcessLib

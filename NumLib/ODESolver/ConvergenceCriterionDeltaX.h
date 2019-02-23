@@ -44,4 +44,4 @@ private:
 std::unique_ptr<ConvergenceCriterionDeltaX> createConvergenceCriterionDeltaX(
     BaseLib::ConfigTree const& config);
 
-}  // NumLib
+}  // namespace NumLib

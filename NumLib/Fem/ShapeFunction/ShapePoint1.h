@@ -28,6 +28,6 @@ public:
     static const unsigned DIM = MeshElement::dimension;
     static const unsigned NPOINTS = MeshElement::n_all_nodes;
 };
-}
+}  // namespace NumLib
 
 #include "ShapePoint1-impl.h"

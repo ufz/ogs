@@ -38,6 +38,4 @@ void ColorLookupTable::setColor(std::string const& name, DataHolderLib::Color co
     _lut.emplace_back(0, color, name);
 }
 
-
-
-} // namespace
+}  // namespace DataHolderLib

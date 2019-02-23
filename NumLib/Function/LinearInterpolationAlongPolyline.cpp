@@ -65,5 +65,4 @@ double LinearInterpolationAlongPolyline::operator()(const MathLib::Point3d& pnt)
     return dist>=0 ? _interpolation.getValue(dist) : _default_value;
 }
 
-} // NumLib
-
+}  // namespace NumLib

@@ -36,5 +36,4 @@ void ShapeTri3::computeGradShapeFunction(const T_X &/*r*/, T_N &dN)
     dN[5] = 1.0;
 }
 
-}
-
+}  // namespace NumLib

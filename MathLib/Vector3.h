@@ -191,4 +191,4 @@ using Vector3 = TemplateVector3<double>;
 double scalarTriple(MathLib::Vector3 const& u, MathLib::Vector3 const& v,
                     MathLib::Vector3 const& w);
 
-}
+}  // namespace MathLib

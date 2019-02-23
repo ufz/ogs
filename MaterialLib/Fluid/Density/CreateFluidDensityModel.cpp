@@ -167,5 +167,5 @@ std::unique_ptr<FluidProperty> createFluidDensityModel(
         type.data());
 }
 
-}  // end namespace
-}  // end namespace
+}  // namespace Fluid
+}  // namespace MaterialLib

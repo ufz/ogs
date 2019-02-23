@@ -107,7 +107,7 @@ const double BDF_Coeffs[6][7] = {
     // coefficient of (for BDF(6), the oldest state, x_n, is always rightmost)
     //        x_+6, x_+5, x_+4,       x_+3,  x_+2, x_+1,     x_n
 };
-}
+}  // namespace detail
 
 double BackwardDifferentiationFormula::getNewXWeight() const
 {

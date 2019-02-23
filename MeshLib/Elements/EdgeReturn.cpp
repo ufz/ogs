@@ -45,5 +45,4 @@ const Element* QuadraticEdgeReturn::getEdge(const Element* e, unsigned i)
     return nullptr;
 }
 
-} // end MeshLib
-
+}  // namespace MeshLib

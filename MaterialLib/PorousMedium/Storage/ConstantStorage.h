@@ -40,5 +40,5 @@ private:
     const double _value;
 };
 
-}  // end of namespace
-}  // end of namespace
+}  // namespace PorousMedium
+}  // namespace MaterialLib

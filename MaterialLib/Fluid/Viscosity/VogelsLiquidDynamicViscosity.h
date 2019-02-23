@@ -110,5 +110,5 @@ struct VogelsViscosityConstantsCH4
     const double C = 969.306;
 };
 
-}  // end namespace
-}  // end namespace
+}  // namespace Fluid
+}  // namespace MaterialLib

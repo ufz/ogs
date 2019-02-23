@@ -94,4 +94,4 @@ std::vector<std::vector<double>> getPreviousLocalSolutions(
 std::vector<std::vector<double>> getCurrentLocalSolutions(
     const CoupledSolutionsForStaggeredScheme& cpl_xs,
     const std::vector<std::vector<GlobalIndexType>>& indices);
-}  // end of ProcessLib
+}  // namespace ProcessLib

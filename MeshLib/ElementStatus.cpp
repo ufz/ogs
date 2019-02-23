@@ -132,4 +132,4 @@ bool ElementStatus::isActiveNode(MeshLib::Node const* node) const
     return _active_nodes[node->getID()]>0;
 }
 
-}
+}  // namespace MeshLib

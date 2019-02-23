@@ -84,4 +84,4 @@ struct NaturalCoordinatesMapping
     }
 };
 
-} // NumLib
+}  // namespace NumLib

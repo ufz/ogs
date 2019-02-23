@@ -140,5 +140,5 @@ readPropertyVectorPartitionMetaData(std::istream& is)
         return boost::optional<PropertyVectorPartitionMetaData>();
     return boost::optional<PropertyVectorPartitionMetaData>(pvpmd);
 }
-}
-}
+}  // namespace IO
+}  // namespace MeshLib

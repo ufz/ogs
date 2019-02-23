@@ -27,4 +27,4 @@ struct GlobalMatrixProvider
 
 void cleanupGlobalMatrixProviders();
 
-} // MathLib
+}  // namespace NumLib

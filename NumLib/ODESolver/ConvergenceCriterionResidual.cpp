@@ -109,4 +109,4 @@ createConvergenceCriterionResidual(const BaseLib::ConfigTree& config)
         std::move(abstol), std::move(reltol), norm_type);
 }
 
-}  // NumLib
+}  // namespace NumLib

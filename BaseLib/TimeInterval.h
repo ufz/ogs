@@ -47,4 +47,4 @@ private:
 std::unique_ptr<TimeInterval> createTimeInterval(
     BaseLib::ConfigTree const& config);
 
-}  // end of namespace
+}  // namespace BaseLib

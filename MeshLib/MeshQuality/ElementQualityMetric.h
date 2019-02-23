@@ -60,4 +60,4 @@ protected:
     Mesh const& _mesh;
     std::vector<double> _element_quality_metric;
 };
-}
+}  // namespace MeshLib

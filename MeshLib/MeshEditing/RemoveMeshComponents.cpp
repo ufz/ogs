@@ -39,7 +39,7 @@ std::vector<MeshLib::Element*> excludeElementCopy(
     return vec_dest_eles;
 }
 
-} // details
+}  // namespace details
 
 MeshLib::Mesh* removeElements(const MeshLib::Mesh& mesh, const std::vector<std::size_t> &removed_element_ids, const std::string &new_mesh_name)
 {

@@ -206,4 +206,4 @@ std::vector<MathLib::Point3d*>* MinimalBoundingSphere::getRandomSpherePoints(std
     return pnts;
 }
 
-}
+}  // namespace GeoLib

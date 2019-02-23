@@ -704,5 +704,4 @@ std::size_t GEOObjects::exists(const std::string &geometry_name) const
     return std::numeric_limits<std::size_t>::max();
 }
 
-
-} // namespace
+}  // namespace GeoLib

@@ -155,5 +155,5 @@ double RichardsFlowMaterialProperties::getSaturationDerivative2(
         _capillary_pressure_models[material_id]->getd2PcdS2(saturation);
     return -d2pcdsw2 / boost::math::pow<3>(dpcdsw);
 }
-}  // end of namespace
-}  // end of namespace
+}  // namespace RichardsFlow
+}  // namespace ProcessLib

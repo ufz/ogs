@@ -105,4 +105,4 @@ template<typename Type> Type limitValueInInterval(const Type variable,
         return upper_bound;
     return variable;
 }
-} // namespace
+}  // namespace MathLib

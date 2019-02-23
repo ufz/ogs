@@ -30,4 +30,4 @@ class Storage;
 std::unique_ptr<Storage> createStorageModel(BaseLib::ConfigTree const& config);
 
 }  // end namespace
-}  // end namespace
+}  // namespace MaterialLib

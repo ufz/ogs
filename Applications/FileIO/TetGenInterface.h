@@ -214,4 +214,4 @@ private:
     /// true if boundary markers are set, false otherwise
     bool _boundary_markers;
 };
-}
+}  // namespace FileIO

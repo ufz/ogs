@@ -80,4 +80,4 @@ private:
     std::unique_ptr<logog::Cout> logog_cout;
 };
 
-}    // ApplicationsLib
+}  // namespace ApplicationsLib

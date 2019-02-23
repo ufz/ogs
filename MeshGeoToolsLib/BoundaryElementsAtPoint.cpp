@@ -48,4 +48,4 @@ BoundaryElementsAtPoint::~BoundaryElementsAtPoint()
     for (auto p : _boundary_elements)
         delete p;
 }
-}  // MeshGeoToolsLib
+}  // namespace MeshGeoToolsLib

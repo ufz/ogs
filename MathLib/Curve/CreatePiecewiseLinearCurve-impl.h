@@ -40,4 +40,4 @@ std::unique_ptr<CurveType> createPiecewiseLinearCurve(
     }
     return std::make_unique<CurveType>(std::move(x), std::move(y));
 }
-}
+}  // namespace MathLib

@@ -39,5 +39,5 @@ double WettingPhaseBrooksCoreyOilGas::getdValue(const double saturation) const
     return ((3.0 + 2.0 / _m) * std::pow(Se, 2.0 + 2.0 / _m)) /
            (_saturation_max - _saturation_r);
 }
-}  // end namespace
-}  // end namespace
+}  // namespace PorousMedium
+}  // namespace MaterialLib

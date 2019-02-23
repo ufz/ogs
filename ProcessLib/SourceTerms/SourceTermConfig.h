@@ -35,4 +35,4 @@ struct SourceTermConfig final
     boost::optional<int> const component_id;
 };
 
-}  // ProcessLib
+}  // namespace ProcessLib

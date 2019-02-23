@@ -99,4 +99,4 @@ void createLocalAssemblers(
     }
 }
 
-}  // ProcessLib
+}  // namespace ProcessLib

@@ -51,7 +51,7 @@ std::unique_ptr<MeshLib::Mesh> createLine(
 
 const double eps = std::numeric_limits<double>::epsilon();
 
-}
+}  // namespace
 
 TEST(LIE, rotationMatrixXYTriangle)
 {

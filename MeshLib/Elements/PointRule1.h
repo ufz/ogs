@@ -60,4 +60,4 @@ public:
     /// Calculates the length of a line
     static double computeVolume(Node const* const* _nodes);
 };
-}
+}  // namespace MeshLib

@@ -53,7 +53,7 @@ namespace AddLayerValidation
         for (std::size_t i=0; i<nNodes; ++i)
             ASSERT_EQ((*input.getNode(i))[2] + height, (*output.getNode(i))[2]);
     }
-};
+    }  // namespace AddLayerValidation
 
 TEST(MeshLib, AddTopLayerToLineMesh)
 {

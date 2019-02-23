@@ -106,4 +106,4 @@ protected:
 /// is not connected to any element i.e. an unconnected node.
 bool isBaseNode(Node const& node);
 
-} /* namespace */
+}  // namespace MeshLib

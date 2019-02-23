@@ -71,5 +71,5 @@ struct LinearSolverLibrarySetup final
         NumLib::cleanupGlobalMatrixProviders();
     }
 };
-}    // ApplicationsLib
+}  // namespace ApplicationsLib
 #endif

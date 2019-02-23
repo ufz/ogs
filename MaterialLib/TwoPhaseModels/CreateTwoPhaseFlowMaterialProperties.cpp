@@ -140,5 +140,5 @@ createTwoPhaseFlowMaterialProperties(
         std::move(fluid_config));
 }
 
-}  // end namespace
-}  // end namespace
+}  // namespace TwoPhaseFlowWithPP
+}  // namespace MaterialLib

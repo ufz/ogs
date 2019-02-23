@@ -133,4 +133,4 @@ double ReactionCaOH2::CaHydration()
     return dXdt;
 }
 
-}
+}  // namespace Adsorption

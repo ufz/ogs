@@ -90,5 +90,5 @@ private:
     const double _sR = 461.526;
 };
 
-}  // end of namespace
-}  // end of namespace
+}  // namespace Fluid
+}  // namespace MaterialLib

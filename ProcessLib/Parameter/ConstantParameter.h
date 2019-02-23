@@ -71,4 +71,4 @@ private:
 std::unique_ptr<ParameterBase> createConstantParameter(
     std::string const& name, BaseLib::ConfigTree const& config);
 
-}  // ProcessLib
+}  // namespace ProcessLib

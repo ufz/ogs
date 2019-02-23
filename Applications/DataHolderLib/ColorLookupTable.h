@@ -65,4 +65,4 @@ private:
     std::pair<double, double> _range;
 };
 
-} // namespace
+}  // namespace DataHolderLib

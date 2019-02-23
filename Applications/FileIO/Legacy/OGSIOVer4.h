@@ -42,5 +42,5 @@ void writeGLIFileV4 (const std::string& fname,
 /** Writes all geometric information to a gli-file */
 void writeAllDataToGLIFileV4 (const std::string& fname, const GeoLib::GEOObjects& geo);
 
-}
+}  // namespace Legacy
 } // end namespace FileIO

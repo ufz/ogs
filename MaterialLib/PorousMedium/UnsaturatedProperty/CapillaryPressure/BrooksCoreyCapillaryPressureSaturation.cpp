@@ -53,5 +53,5 @@ double BrooksCoreyCapillaryPressureSaturation::getdPcdS(
     return (_pb * val) / (_m * (_saturation_r - S));
 }
 
-}  // end namespace
-}  // end namespace
+}  // namespace PorousMedium
+}  // namespace MaterialLib

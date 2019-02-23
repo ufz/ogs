@@ -37,4 +37,4 @@ bool CellRule::testElementNodeOrder(const Element* e)
     return true;
 }
 
-} /* namespace */
+}  // namespace MeshLib

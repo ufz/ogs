@@ -88,5 +88,4 @@ bool isStation(GeoLib::Point const* pnt)
     return bh != nullptr;
 }
 
-} // namespace
-
+}  // namespace GeoLib

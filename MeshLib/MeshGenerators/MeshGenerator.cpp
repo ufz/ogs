@@ -636,4 +636,4 @@ MeshGenerator::createSurfaceMesh(std::string const& mesh_name,
     return new MeshLib::Mesh(mesh_name, nodes, sfc_eles);
 }
 
-}
+}  // namespace MeshLib

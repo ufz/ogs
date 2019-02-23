@@ -89,5 +89,5 @@ std::unique_ptr<FluidProperties> createFluidProperties(
         std::move(specific_heat_capacity), std::move(thermal_conductivity));
 }
 
-}  // end namespace
-}  // end namespace
+}  // namespace Fluid
+}  // namespace MaterialLib

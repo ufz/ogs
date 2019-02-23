@@ -268,4 +268,4 @@ void PointVec::resetInternalDataStructures()
     }
 }
 
-}  // end namespace
+}  // namespace GeoLib

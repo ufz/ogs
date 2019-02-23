@@ -75,5 +75,5 @@ struct ThermalTwoPhaseFlowWithPPProcessData
     std::unique_ptr<ThermalTwoPhaseFlowWithPPMaterialProperties> material;
 };
 
-}  // namespace TwoPhaseFlowWithPP
+}  // namespace ThermalTwoPhaseFlowWithPP
 }  // namespace ProcessLib

@@ -46,5 +46,5 @@ double NonWettingPhaseVanGenuchten::getdValue(const double saturation_w) const
                 std::pow(Se, (1. - _m) / _m)) /
            (_saturation_max - _saturation_r);
 }
-}  // end namespace
-}  // end namespace
+}  // namespace PorousMedium
+}  // namespace MaterialLib

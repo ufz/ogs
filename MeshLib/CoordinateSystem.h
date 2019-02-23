@@ -76,4 +76,4 @@ private:
     unsigned char _type;
 };
 
-} // MeshLib
+}  // namespace MeshLib

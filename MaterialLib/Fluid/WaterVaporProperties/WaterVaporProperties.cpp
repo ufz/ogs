@@ -83,5 +83,5 @@ double WaterVaporProperties::getWaterVaporEnthalpySimple(const double temperatur
         h_wg;
 }
 
-}  // end namespace
-}  // end namespace
+}  // namespace Fluid
+}  // namespace MaterialLib

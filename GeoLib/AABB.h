@@ -240,4 +240,4 @@ private:
         update(*pnt);
     }
 };
-} // end namespace
+}  // namespace GeoLib

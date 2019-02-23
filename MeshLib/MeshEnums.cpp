@@ -145,4 +145,4 @@ const std::string MeshQualityType2String(const MeshQualityType t)
     return "none";
 }
 
-}
+}  // namespace MeshLib

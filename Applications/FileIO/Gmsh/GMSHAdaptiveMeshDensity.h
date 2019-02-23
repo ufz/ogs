@@ -52,5 +52,5 @@ private:
     GeoLib::QuadTree<GeoLib::Point> *_quad_tree;
 };
 
-}
+}  // namespace GMSH
 } // end namespace FileIO

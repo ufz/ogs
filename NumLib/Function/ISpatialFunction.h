@@ -35,4 +35,4 @@ public:
     virtual double operator()(const MathLib::Point3d& pnt) const = 0;
 };
 
-} // NumLib
+}  // namespace NumLib

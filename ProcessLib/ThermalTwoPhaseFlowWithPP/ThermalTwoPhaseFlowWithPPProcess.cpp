@@ -124,5 +124,5 @@ void ThermalTwoPhaseFlowWithPPProcess::preTimestepConcreteProcess(
         delta_t);
 }
 
-}  // end of namespace
-}  // end of namespace
+}  // namespace ThermalTwoPhaseFlowWithPP
+}  // namespace ProcessLib

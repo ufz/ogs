@@ -32,4 +32,4 @@ private:
     unsigned long _cmem_size = 0;
 };
 
-}
+}  // namespace BaseLib

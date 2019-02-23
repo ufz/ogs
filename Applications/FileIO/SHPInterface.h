@@ -83,4 +83,4 @@ private:
     GeoLib::GEOObjects& _geoObjects;
 };
 
-}
+}  // namespace FileIO

@@ -158,6 +158,6 @@ void GMSHAdaptiveMeshDensity::getQuadTreeGeometry(std::vector<GeoLib::Point*> &p
     }
 }
 #endif
-}
+}  // namespace GMSH
 
 } // end namespace FileIO

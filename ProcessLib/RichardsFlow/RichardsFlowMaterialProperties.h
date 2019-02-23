@@ -127,5 +127,5 @@ private:
         _relative_permeability_models;
 };
 
-}  // end of namespace
-}  // end of namespace
+}  // namespace RichardsFlow
+}  // namespace ProcessLib

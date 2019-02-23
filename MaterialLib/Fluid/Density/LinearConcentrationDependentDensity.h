@@ -82,5 +82,5 @@ private:
     const double _fluid_density_difference_ratio;
 };
 
-}  // end namespace
-}  // end namespace
+}  // namespace Fluid
+}  // namespace MaterialLib

@@ -261,4 +261,4 @@ bool operator==(Polyline const& lhs, Polyline const& rhs);
 
 bool pointsAreIdentical(const std::vector<Point*> &pnt_vec, std::size_t i, std::size_t j,
                         double prox);
-} // end namespace
+}  // namespace GeoLib

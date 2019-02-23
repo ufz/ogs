@@ -41,4 +41,4 @@ public:
     static const Element* getEdge(const Element* e, unsigned i);
 };
 
-} // end MeshLib
+}  // namespace MeshLib

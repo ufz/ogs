@@ -123,5 +123,5 @@ double FluidPropertiesWithDensityDependentModels::compute_df_drho_drho_dp(
            drho_dp;
 }
 
-}  // end namespace
-}  // end namespace
+}  // namespace Fluid
+}  // namespace MaterialLib

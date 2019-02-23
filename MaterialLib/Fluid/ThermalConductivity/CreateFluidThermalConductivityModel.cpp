@@ -41,5 +41,5 @@ std::unique_ptr<FluidProperty> createFluidThermalConductivityModel(
         type.data());
 }
 
-}  // end namespace
-}  // end namespace
+}  // namespace Fluid
+}  // namespace MaterialLib

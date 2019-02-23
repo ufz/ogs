@@ -51,4 +51,4 @@ std::unique_ptr<RobinBoundaryCondition> createRobinBoundaryCondition(
         RobinBoundaryConditionData{alpha, u_0});
 }
 
-}  // ProcessLib
+}  // namespace ProcessLib

@@ -94,5 +94,5 @@ public:
     double get_dgamma_dtau_dpi(const double tau, const double pi) const;
 };
 
-}  // end namespace
-}  // end namespace
+}  // namespace Fluid
+}  // namespace MaterialLib

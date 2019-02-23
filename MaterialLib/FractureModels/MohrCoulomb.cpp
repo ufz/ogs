@@ -43,7 +43,7 @@ struct MaterialPropertyValues
     }
 };
 
-} // no namespace
+}  // namespace
 
 template <int DisplacementDim>
 void MohrCoulomb<DisplacementDim>::computeConstitutiveRelation(

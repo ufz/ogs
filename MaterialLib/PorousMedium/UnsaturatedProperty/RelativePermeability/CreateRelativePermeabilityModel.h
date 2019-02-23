@@ -29,4 +29,4 @@ class RelativePermeability;
 std::unique_ptr<RelativePermeability> createRelativePermeabilityModel(
     BaseLib::ConfigTree const& config);
 }
-}  // end namespace
+}  // namespace MaterialLib

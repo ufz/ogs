@@ -72,5 +72,5 @@ private:
     const double _beta;          ///<  Parameter.
 };
 
-}  // end namespace
-}  // end namespace
+}  // namespace Fluid
+}  // namespace MaterialLib

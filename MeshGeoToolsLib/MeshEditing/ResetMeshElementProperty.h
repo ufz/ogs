@@ -84,4 +84,4 @@ void resetMeshElementProperty(MeshLib::Mesh& mesh,
     }
 }
 
-}  // end namespace
+}  // namespace MeshGeoToolsLib

@@ -57,4 +57,4 @@ private:
     std::vector<bool> _marker;
 };
 
-}
+}  // namespace GeoLib

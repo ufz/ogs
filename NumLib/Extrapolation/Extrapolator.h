@@ -56,4 +56,4 @@ public:
     virtual ~Extrapolator() = default;
 };
 
-} // namespace ProcessLib
+}  // namespace NumLib

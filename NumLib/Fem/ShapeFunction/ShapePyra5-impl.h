@@ -50,5 +50,4 @@ void ShapePyra5::computeGradShapeFunction(const T_X &x, T_N &dN)
     dN[14] = 0.5;
 }
 
-}
-
+}  // namespace NumLib

@@ -40,4 +40,4 @@ std::unique_ptr<ParameterBase> createCurveScaledParameter(
         name, *curve_it->second, referenced_parameter_name);
 }
 
-}  // ProcessLib
+}  // namespace ProcessLib

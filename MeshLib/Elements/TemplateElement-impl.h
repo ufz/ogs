@@ -79,6 +79,4 @@ bool TemplateElement<ELEMENT_RULE>::isEdge(unsigned idx1, unsigned idx2) const
     return false;
 }
 
-
-} // MeshLib
-
+}  // namespace MeshLib

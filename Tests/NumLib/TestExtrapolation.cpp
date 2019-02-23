@@ -243,7 +243,7 @@ void extrapolate(ExtrapolationTestProcess const& pcs,
     EXPECT_GT(tolerance_dx, dx_norm);
 }
 
-}  // anonymous namespace
+}  // namespace ExtrapolationTest
 
 #ifndef USE_PETSC
 TEST(NumLib, Extrapolation)

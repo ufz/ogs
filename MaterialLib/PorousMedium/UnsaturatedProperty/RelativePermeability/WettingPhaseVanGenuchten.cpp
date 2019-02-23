@@ -48,5 +48,5 @@ double WettingPhaseVanGenuchten::getdValue(const double saturation) const
            (_saturation_max - _saturation_r);
 }
 
-}  // end namespace
-}  // end namespace
+}  // namespace PorousMedium
+}  // namespace MaterialLib

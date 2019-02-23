@@ -66,4 +66,4 @@ protected:
     std::size_t _id;
 };
 
-}
+}  // namespace MathLib

@@ -117,4 +117,4 @@ private:
 
 bool isBorehole(GeoLib::Point const* pnt);
 
-} // namespace
+}  // namespace GeoLib

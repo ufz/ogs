@@ -71,4 +71,4 @@ private:
 std::unique_ptr<CentralDifferencesJacobianAssembler>
 createCentralDifferencesJacobianAssembler(BaseLib::ConfigTree const& config);
 
-}  // ProcessLib
+}  // namespace ProcessLib

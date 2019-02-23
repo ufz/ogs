@@ -145,4 +145,4 @@ void Project::removeSourceTerm(std::string const& primary_var_name,
     }
 }
 
-} //namespace
+}  // namespace DataHolderLib

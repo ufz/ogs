@@ -30,7 +30,7 @@ void fillBMatrix2DCartesianPart(DNDX_Type const& dNdx, BMatrixType& B)
         B(0, i) = dNdx(0, i);
     }
 }
-}  // detail
+}  // namespace detail
 
 /// Fills a B-matrix based on given shape function dN/dx values.
 template <int DisplacementDim,

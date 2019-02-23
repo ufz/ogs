@@ -438,4 +438,4 @@ void checkAndInvalidate(std::unique_ptr<ConfigTree> const& conf)
     if (conf) conf->checkAndInvalidate();
 }
 
-}
+}  // namespace BaseLib

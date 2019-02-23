@@ -94,5 +94,5 @@ protected:
         _property_models;
 };
 
-}  // end namespace
-}  // end namespace
+}  // namespace Fluid
+}  // namespace MaterialLib

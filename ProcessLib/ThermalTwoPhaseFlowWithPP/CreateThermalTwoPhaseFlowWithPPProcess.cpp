@@ -141,5 +141,5 @@ std::unique_ptr<Process> createThermalTwoPhaseFlowWithPPProcess(
         mat_config, curves);
 }
 
-}  // end of namespace
-}  // end of namespace
+}  // namespace ThermalTwoPhaseFlowWithPP
+}  // namespace ProcessLib

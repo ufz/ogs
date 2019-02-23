@@ -63,5 +63,5 @@ public:
 private:
     std::unique_ptr<MathLib::PiecewiseLinearInterpolation> _curve_data;
 };
-}  // end namespace
-}  // end namespace
+}  // namespace PorousMedium
+}  // namespace MaterialLib

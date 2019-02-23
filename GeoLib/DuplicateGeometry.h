@@ -63,4 +63,4 @@ private:
 
 }; // class
 
-} // namespace
+}  // namespace GeoLib

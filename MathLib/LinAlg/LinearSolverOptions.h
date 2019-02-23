@@ -35,4 +35,4 @@ namespace MathLib
 void ignoreOtherLinearSolvers(BaseLib::ConfigTree const& config,
                               std::string const& solver_name);
 
-}
+}  // namespace MathLib

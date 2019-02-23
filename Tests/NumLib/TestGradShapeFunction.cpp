@@ -98,7 +98,7 @@ using TestTypes =
                      TestCase<TestFeTET10, EigenFixedShapeMatrixPolicy>,
                      TestCase<TestFeTRI3, EigenFixedShapeMatrixPolicy>,
                      TestCase<TestFeTRI6, EigenFixedShapeMatrixPolicy>>;
-}
+}  // namespace
 
 template <class T>
 class GradShapeFunctionTest : public ::testing::Test, public T::TestFeType

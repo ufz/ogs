@@ -84,4 +84,4 @@ private:
 };
 
 using Trafo = ProcessLib::TrafoScale;
-}
+}  // namespace ProcessLib

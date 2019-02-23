@@ -51,8 +51,7 @@ transfer(std::map<MatVec*, std::size_t>& from_used,
     from_used.erase(it);
 }
 
-} // detail
-
+}  // namespace detail
 
 namespace NumLib
 {
@@ -257,4 +256,4 @@ SimpleMatrixVectorProvider::
         delete ptr_id.first;
 }
 
-} // MathLib
+}  // namespace NumLib

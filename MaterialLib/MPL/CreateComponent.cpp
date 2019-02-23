@@ -59,7 +59,7 @@ std::unique_ptr<MaterialPropertyLib::Component> createComponent(
 
     return std::make_unique<Component>(component_name, std::move(properties));
 }
-}
+}  // namespace
 
 namespace MaterialPropertyLib
 {

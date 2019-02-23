@@ -60,4 +60,4 @@ std::unique_ptr<ParameterBase> createConstantParameter(
     return std::make_unique<ConstantParameter<double>>(name, values);
 }
 
-}  // ProcessLib
+}  // namespace ProcessLib

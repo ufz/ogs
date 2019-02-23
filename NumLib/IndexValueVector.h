@@ -21,4 +21,4 @@ struct IndexValueVector final
     std::vector<double> values;
 };
 
-}
+}  // namespace NumLib

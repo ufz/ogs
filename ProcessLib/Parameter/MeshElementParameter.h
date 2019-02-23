@@ -84,4 +84,4 @@ std::unique_ptr<ParameterBase> createMeshElementParameter(
     std::string const& name, BaseLib::ConfigTree const& config,
     MeshLib::Mesh const& mesh);
 
-}  // ProcessLib
+}  // namespace ProcessLib

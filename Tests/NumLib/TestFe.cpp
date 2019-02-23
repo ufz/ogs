@@ -71,7 +71,7 @@ using TestTypes =
                      TestCase<TestFeQUAD4, EigenFixedShapeMatrixPolicy>,
                      TestCase<TestFeTET4, EigenFixedShapeMatrixPolicy>,
                      TestCase<TestFeTRI3, EigenFixedShapeMatrixPolicy>>;
-}
+}  // namespace
 
 template <class T>
 class NumLibFemIsoTest : public ::testing::Test, public T::TestFeType

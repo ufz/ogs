@@ -27,4 +27,4 @@ createNonuniformNeumannBoundaryCondition(
     int const component_id, unsigned const integration_order,
     unsigned const shapefunction_order, const MeshLib::Mesh& bulk_mesh);
 
-}  // ProcessLib
+}  // namespace ProcessLib
