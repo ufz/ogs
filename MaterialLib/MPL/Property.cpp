@@ -32,15 +32,15 @@ PropertyDataType Property::value(VariableArray const& /*variable_array*/) const
 /// The default implementation of this method only returns the
 /// property value derivative without altering it.
 PropertyDataType Property::dValue(VariableArray const& /*variable_array*/,
-                                  Variables const /*variables*/) const
+                                  Variable const /*variable*/) const
 {
     return _dvalue;
 }
 
 /// Default implementation: 2nd derivative of any constant property is zero.
 PropertyDataType Property::d2Value(VariableArray const& /*variable_array*/,
-                                   Variables const /*variables*/,
-                                   Variables const /*variables*/) const
+                                   Variable const /*variable*/,
+                                   Variable const /*variable*/) const
 {
     return 0.0;
 }

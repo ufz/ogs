@@ -25,12 +25,13 @@ PropertyDataType LinearProperty::value(
 {
     return boost::get<double>(_value) +
            boost::get<double>(_independent_variable.slope) *
-               (boost::get<double>(variable_array[_independent_variable.type]) -
+               (boost::get<double>(variable_array[static_cast<int>(
+                    _independent_variable.type)]) -
                 boost::get<double>(_independent_variable.reference_condition));
 }
 
 PropertyDataType LinearProperty::dValue(VariableArray const& /*variable_array*/,
-                                        Variables const primary_variable) const
+                                        Variable const primary_variable) const
 {
     return _independent_variable.type == primary_variable
                ? _independent_variable.slope
@@ -39,8 +40,8 @@ PropertyDataType LinearProperty::dValue(VariableArray const& /*variable_array*/,
 
 PropertyDataType LinearProperty::d2Value(
     VariableArray const& /*variable_array*/,
-    Variables const /*pv1*/,
-    Variables const /*pv2*/) const
+    Variable const /*pv1*/,
+    Variable const /*pv2*/) const
 {
     return decltype(_value){};
 }
