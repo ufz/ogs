@@ -21,9 +21,7 @@ public:
     {
         NONE,
         DIRICHLET,
-        NONUNIFORMDIRICHLET,
         NEUMANN,
-        NONUNIFORMNEUMANN,
         ROBIN
     };
 
