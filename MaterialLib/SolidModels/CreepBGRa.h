@@ -40,8 +40,7 @@ template <int DisplacementDim>
 class CreepBGRa final : public LinearElasticIsotropic<DisplacementDim>
 {
 public:
-    static int const KelvinVectorSize =
-        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
+    using LinearElasticIsotropic<DisplacementDim>::KelvinVectorSize;
     using ResidualVectorType = Eigen::Matrix<double, KelvinVectorSize, 1>;
     using JacobianMatrix = Eigen::Matrix<double, KelvinVectorSize,
                                          KelvinVectorSize, Eigen::RowMajor>;
