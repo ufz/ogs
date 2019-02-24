@@ -56,13 +56,14 @@ int main (int argc, char* argv[])
 
     INFO("reading the TIN file...");
     const std::string tinFileName(inArg.getValue());
-    auto pnt_vec = std::make_unique<std::vector<GeoLib::Point*>>();
-    GeoLib::PointVec point_vec("SurfacePoints", std::move(pnt_vec));
+    GeoLib::PointVec point_vec("SurfacePoints",
+                               std::make_unique<std::vector<GeoLib::Point*>>());
     std::unique_ptr<GeoLib::Surface> sfc(
         GeoLib::IO::TINInterface::readTIN(tinFileName, point_vec));
     if (!sfc)
         return EXIT_FAILURE;
-    INFO("TIN read:  %d points, %d triangles", pnt_vec->size(), sfc->getNumberOfTriangles());
+    INFO("TIN read:  %d points, %d triangles", point_vec.size(),
+         sfc->getNumberOfTriangles());
 
     INFO("converting to mesh data");
     std::unique_ptr<MeshLib::Mesh> mesh(MeshLib::convertSurfaceToMesh(*sfc, BaseLib::extractBaseNameWithoutExtension(tinFileName), std::numeric_limits<double>::epsilon()));
