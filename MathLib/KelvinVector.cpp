@@ -169,7 +169,7 @@ kelvinVectorToSymmetricTensor(Eigen::Matrix<double,
     {
         return kelvinVectorToSymmetricTensor<4>(v);
     }
-    else if (v.size() == 6)
+    if (v.size() == 6)
     {
         return kelvinVectorToSymmetricTensor<6>(v);
     }

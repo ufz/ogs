@@ -207,8 +207,7 @@ protected:
         {
             return thermal_conductivity * I;
         }
-        else
-        {
+
             GlobalDimMatrixType const thermal_dispersivity =
                 fluid_density * specific_heat_capacity_fluid *
                 (thermal_dispersivity_transversal * velocity_magnitude * I +
@@ -216,7 +215,6 @@ protected:
                   thermal_dispersivity_transversal) /
                      velocity_magnitude * velocity * velocity.transpose());
             return thermal_conductivity * I + thermal_dispersivity;
-        }
     }
 
     std::vector<double> const& getIntPtDarcyVelocityLocal(

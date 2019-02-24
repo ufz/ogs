@@ -258,7 +258,7 @@ int splitFile(std::ifstream& in, std::string file_name)
             out << line << "\n";
             continue;
         }
-        else if (line.find("VARIABLES") != std::string::npos)
+        if (line.find("VARIABLES") != std::string::npos)
         {
             if (dataCountError(out, name, val_count, val_total))
             {
@@ -268,7 +268,7 @@ int splitFile(std::ifstream& in, std::string file_name)
             out << line << "\n";
             continue;
         }
-        else if (line.find("ZONE") != std::string::npos)
+        if (line.find("ZONE") != std::string::npos)
         {
             if (dataCountError(out, name, val_count, val_total))
             {
@@ -316,7 +316,7 @@ int convertFile(std::ifstream& in, std::string file_name)
         {
             continue;
         }
-        else if (line.find("TITLE") != std::string::npos)
+        if (line.find("TITLE") != std::string::npos)
         {
             if (dataCountError(name, val_count, val_total))
             {

@@ -88,7 +88,7 @@ public:
             return _reference_density *
                    _fluid_density_concentration_difference_ratio;
         }
-        else if (var == PropertyVariableType::p)
+        if (var == PropertyVariableType::p)
         {
             return _reference_density *
                    _fluid_density_pressure_difference_ratio;

@@ -28,7 +28,7 @@ BoundaryCondition::ConditionType BoundaryCondition::convertStringToType(
     {
         return ConditionType::DIRICHLET;
     }
-    else if (str == "NonuniformDirichlet")
+    if (str == "NonuniformDirichlet")
     {
         return ConditionType::NONUNIFORMDIRICHLET;
     }
@@ -54,7 +54,7 @@ std::string BoundaryCondition::convertTypeToString(ConditionType type)
     {
         return "Dirichlet";
     }
-    else if (type == ConditionType::NONUNIFORMDIRICHLET)
+    if (type == ConditionType::NONUNIFORMDIRICHLET)
     {
         return "NonuniformDirichlet";
     }

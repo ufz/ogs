@@ -186,7 +186,7 @@ public:
         {
             return setSigma(values);
         }
-        else if (name == "epsilon_ip")
+        if (name == "epsilon_ip")
         {
             return setEpsilon(values);
         }
