@@ -24,8 +24,8 @@ BHE::BHE_1U createBHE1U(
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
         curves)
 {
-    //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__borehole}
     auto const borehole_geometry =
+        //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__borehole}
         createBoreholeGeometry(config.getConfigSubtree("borehole"));
 
     //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__pipes}
@@ -48,8 +48,8 @@ BHE::BHE_1U createBHE1U(
     //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__grout}
     auto const grout = createGroutParameters(config.getConfigSubtree("grout"));
 
-    //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__refrigerant}
     auto const refrigerant =
+        //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__refrigerant}
         createRefrigerantProperties(config.getConfigSubtree("refrigerant"));
 
     auto const flowAndTemperatureControl = createFlowAndTemperatureControl(
