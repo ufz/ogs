@@ -219,7 +219,10 @@ void GEOObjects::addSurfaceVec(
 {
     _sfc_vecs.push_back(
         new SurfaceVec(name, std::move(sfc), std::move(sfc_names)));
-    if (!sfc || !sfc->empty()) _callbacks->addSurfaceVec(name);
+    if (_sfc_vecs.back()->size() == 0)
+    {
+        _callbacks->addSurfaceVec(name);
+    }
 }
 
 bool GEOObjects::appendSurfaceVec(const std::vector<Surface*>& surfaces,

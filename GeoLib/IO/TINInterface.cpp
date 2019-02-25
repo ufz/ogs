@@ -112,7 +112,8 @@ GeoLib::Surface* TINInterface::readTIN(std::string const& fname,
         // create new Triangle
         if (pnt_pos_0 != std::numeric_limits<std::size_t>::max() &&
             pnt_pos_1 != std::numeric_limits<std::size_t>::max() &&
-            pnt_pos_1 != std::numeric_limits<std::size_t>::max()) {
+            pnt_pos_2 != std::numeric_limits<std::size_t>::max())
+        {
             sfc->addTriangle(pnt_pos_0, pnt_pos_1, pnt_pos_2);
         }
     }
