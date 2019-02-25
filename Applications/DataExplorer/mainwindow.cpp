@@ -73,7 +73,9 @@
 #include "MeshAnalysisDialog.h"
 #include "MeshElementRemovalDialog.h"
 #include "MeshQualitySelectionDialog.h"
+#ifdef OGS_USE_NETCDF
 #include "NetCdfDialog/NetCdfConfigureDialog.h"
+#endif  // OGS_USE_NETCDF
 #include "SHPImportDialog.h"
 #include "SetNameDialog.h"
 #include "VtkAddFilterDialog.h"
@@ -609,6 +611,7 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
         }
         settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
     }
+#ifdef OGS_USE_NETCDF
     else if (t == ImportFileType::NETCDF)    // CH  01.2012
     {
 
@@ -625,6 +628,7 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 
         settings.setValue("lastOpenedRasterFileDirectory", dir.absolutePath());
     }
+#endif  // OGS_USE_NETCDF
     else if (t == ImportFileType::RASTER)
     {
         VtkGeoImageSource* geoImage = VtkGeoImageSource::New();
@@ -748,9 +752,11 @@ QMenu* MainWindow::createImportFilesMenu()
     QAction* gmshFiles = importFiles->addAction("&GMSH Files...");
     connect(gmshFiles, SIGNAL(triggered()), signal_mapper, SLOT(map()));
     signal_mapper->setMapping(gmshFiles, ImportFileType::GMSH);
+#ifdef OGS_USE_NETCDF
     QAction* netcdfFiles = importFiles->addAction("&NetCDF Files...");
     connect(netcdfFiles, SIGNAL(triggered()), signal_mapper, SLOT(map()));
     signal_mapper->setMapping(netcdfFiles, ImportFileType::NETCDF);
+#endif  // OGS_USE_NETCDF
     QAction* petrelFiles = importFiles->addAction("&Petrel Files...");
     connect(petrelFiles, SIGNAL(triggered()), this, SLOT(loadPetrelFiles()));
     QAction* rasterFiles = importFiles->addAction("&Raster Files...");

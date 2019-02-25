@@ -37,7 +37,6 @@ target_link_libraries(DataExplorer
     MeshLib
     ApplicationsFileIO
     DataHolderLib
-    NetCdfDialogLib
     OGSFileConverterLib
     QtBase
     QtDataView
@@ -52,6 +51,13 @@ target_link_libraries(DataExplorer
     logog
     ${VTK_LIBRARIES}
 )
+
+
+if(OGS_USE_NETCDF)
+    add_definitions(-DOGS_USE_NETCDF)
+    add_subdirectory(NetCdfDialog)
+    target_link_libraries(DataExplorer NetCdfDialogLib)
+endif()
 
 if(NOT APPLE AND OGS_USE_CONAN)
     # HACK for unresolved external

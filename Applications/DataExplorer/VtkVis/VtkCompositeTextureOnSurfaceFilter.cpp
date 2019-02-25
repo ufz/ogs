@@ -23,7 +23,9 @@
 #include <vtkUnstructuredGrid.h>
 #include "VtkGeoImageSource.h"
 #include "VtkRaster.h"
+#ifdef OGS_USE_NETCDF
 #include "NetCdfDialog/NetCdfConfigureDialog.h"
+#endif  // OGS_USE_NETCDF
 
 #include <QFileDialog>
 #include <QFileInfo>
@@ -61,9 +63,14 @@ void VtkCompositeTextureOnSurfaceFilter::init()
 
     QWidget* parent = nullptr;
     QSettings settings;
-    QString fileName = QFileDialog::getOpenFileName(parent, "Select raster file to apply as texture",
-                                                    settings.value("lastOpenedTextureFileDirectory").toString(),
-                                                    "Raster files (*.asc *.grd *.bmp *.jpg *.png *.tif);;NetCDF files (*.nc);;");
+    QString fileName = QFileDialog::getOpenFileName(
+        parent, "Select raster file to apply as texture",
+        settings.value("lastOpenedTextureFileDirectory").toString(),
+        "Raster files (*.asc *.grd *.bmp *.jpg *.png *.tif);;"
+#ifdef OGS_USE_NETCDF
+        "NetCDF files (*.nc);;"
+#endif  // OGS_USE_NETCDF
+    );
     QFileInfo fi(fileName);
 
     if ((fi.suffix().toLower() == "asc") || (fi.suffix().toLower() == "tif") ||
@@ -79,6 +86,7 @@ void VtkCompositeTextureOnSurfaceFilter::init()
         QDir dir = QDir(fileName);
         settings.setValue("lastOpenedTextureFileDirectory", dir.absolutePath());
     }
+#ifdef OGS_USE_NETCDF
     else if (fi.suffix().toLower() == "nc")
     {
         NetCdfConfigureDialog dlg(fileName.toStdString().c_str());
@@ -94,6 +102,7 @@ void VtkCompositeTextureOnSurfaceFilter::init()
             surface->Update();
         }
     }
+#endif  // OGS_USE_NETCDF
     else
         ERR("VtkCompositeTextureOnSurfaceFilter::init(): Error reading texture file.");
 
