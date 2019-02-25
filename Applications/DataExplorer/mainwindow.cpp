@@ -23,6 +23,9 @@
 #include <QObject>
 #include <QSettings>
 #include <QSignalMapper>
+#ifndef NDEBUG
+#include <QTime>
+#endif  // NDEBUG
 
 // VTK includes
 #include <vtkOBJExporter.h>
