@@ -125,6 +125,13 @@ void GeoTreeView::contextMenuEvent( QContextMenuEvent* event )
     // The current index is a list of points/polylines/surfaces
     if (list != nullptr)
     {
+        QAction* convertToStationAction(nullptr);
+        if (list->getType() == GeoLib::GEOTYPE::POINT)
+        {
+            convertToStationAction = menu.addAction("Convert to Stations");
+            connect(convertToStationAction, SIGNAL(triggered()),
+                    this, SLOT(convertPointsToStations()));
+        }
         QAction* connectPlyAction(nullptr);
         if (list->getType() == GeoLib::GEOTYPE::POLYLINE)
         {
@@ -181,6 +188,14 @@ void GeoTreeView::contextMenuEvent( QContextMenuEvent* event )
     }
 
     menu.exec(event->globalPos());
+}
+
+void GeoTreeView::convertPointsToStations()
+{
+    TreeItem const*const item = static_cast<GeoTreeModel*>(model())
+                         ->getItem(this->selectionModel()->currentIndex())
+                         ->parentItem();
+    emit requestPointToStationConversion(item->data(0).toString().toStdString());
 }
 
 void GeoTreeView::connectPolylines()

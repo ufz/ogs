@@ -58,6 +58,7 @@ private slots:
     void on_Clicked(QModelIndex idx);
     /// Calls a LineEditDialog.
     void connectPolylines();
+    void convertPointsToStations();
     void mapGeometry();
     /// Calls a SetNameDialog.
     void setNameForElement();
@@ -84,5 +85,6 @@ signals:
     void requestCondSetupDialog(const std::string&, const GeoLib::GEOTYPE, const std::size_t, bool on_points);
     void requestLineEditDialog(const std::string&);
     void requestNameChangeDialog(const std::string&, const GeoLib::GEOTYPE, const std::size_t);
+    void requestPointToStationConversion(std::string const&);
     //void saveFEMConditionsRequested(QString, QString);
 };
