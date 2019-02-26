@@ -215,9 +215,9 @@ void XmlGmlInterface::readPolylines(
                 ply_names->insert(std::pair<std::string, std::size_t>(ply_name, idx));
             } else {
                 WARN(
-                    "Polyline '%s' exists already. The polyline will be "
+                    "Polyline '%s' exists already. Polyline %d will be "
                     "inserted without a name.",
-                    ply_name.c_str());
+                    ply_name.c_str(), idx);
             }
         }
 
@@ -232,8 +232,8 @@ void XmlGmlInterface::readPolylines(
                         polyline_name =
                             polyline.attribute("name").toStdString();
                     OGS_FATAL(
-                        "Polyline `%s' contains the point id `%d', but the "
-                        "id is not in the point list.",
+                        "Polyline `%s' contains the point id `%d' which is "
+                        "not in the point list.",
                         polyline_name.c_str(), pt_idx);
                 }
                 return search->second;
@@ -276,8 +276,8 @@ void XmlGmlInterface::readSurfaces(
                         surface_name =
                             surface.attribute("name").toStdString();
                     OGS_FATAL(
-                        "Surface `%s' contains the point id `%d', but the "
-                        "id is not in the point list.",
+                        "Surface `%s' contains the point id `%d', which is "
+                        "not in the point list.",
                         surface_name.c_str(), pt_idx);
                 }
                 return search->second;
@@ -363,13 +363,13 @@ bool XmlGmlInterface::write()
         }
         else
         {
-            ERR("XmlGmlInterface::write(): Point vector empty, abort writing geometry.");
+            ERR("XmlGmlInterface::write(): Point vector is empty, abort writing geometry.");
             return 0;
         }
     }
     else
     {
-        ERR("XmlGmlInterface::write(): Did not found any point vector, abort writing geometry.");
+        ERR("XmlGmlInterface::write(): No point vector found, abort writing geometry.");
         return 0;
     }
 
@@ -412,11 +412,11 @@ bool XmlGmlInterface::write()
                 }
             }
             else
-                INFO("XmlGmlInterface::write(): Polyline vector empty, no polylines written to file.");
+                INFO("XmlGmlInterface::write(): Polyline vector is empty, no polylines written to file.");
         }
     }
     else
-        INFO("XmlGmlInterface::write(): Did not found any polyline vector, no polylines written to file.");
+        INFO("XmlGmlInterface::write(): Polyline vector is empty, no polylines written to file.");
 
 
     // SURFACES
@@ -458,11 +458,11 @@ bool XmlGmlInterface::write()
                 }
             }
             else
-                INFO("XmlGmlInterface::write(): Surface vector empty, no surfaces written to file.");
+                INFO("XmlGmlInterface::write(): Surface vector is empty, no surfaces written to file.");
         }
     }
     else
-        INFO("XmlGmlInterface::write(): Did not found any surface vector, no surfaces written to file.");
+        INFO("XmlGmlInterface::write(): Surface vector is empty, no surfaces written to file.");
 
 
     //insertStyleFileDefinition(filename);
