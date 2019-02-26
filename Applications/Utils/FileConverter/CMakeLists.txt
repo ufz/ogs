@@ -60,7 +60,14 @@ target_link_libraries(Mesh2Raster MeshLib)
 ####################
 ### Installation ###
 ####################
-install(TARGETS generateMatPropsFromMatID GMSH2OGS OGS2VTK VTK2OGS VTK2TIN GocadSGridReader
+install(TARGETS
+    generateMatPropsFromMatID
+    GMSH2OGS
+    OGS2VTK
+    VTK2OGS
+    VTK2TIN
+    GocadSGridReader
+    Mesh2Raster
     RUNTIME DESTINATION bin COMPONENT ogs_converter)
 
 if(Qt5XmlPatterns_FOUND)
