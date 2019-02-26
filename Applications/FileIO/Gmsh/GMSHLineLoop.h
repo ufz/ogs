@@ -20,9 +20,10 @@ namespace GMSH
 
 class GMSHLine;
 
-class GMSHLineLoop {
+class GMSHLineLoop final
+{
 public:
-    GMSHLineLoop(bool is_sfc=false);
+    explicit GMSHLineLoop(bool is_sfc=false);
     virtual ~GMSHLineLoop();
     bool isSurface() const { return _is_sfc; }
     void setSurface(bool is_sfc) { _is_sfc = is_sfc; }
