@@ -254,9 +254,9 @@ public:
     // @param stn_name name of the new station vector
     // @param only_usused_pnts if true only points not in a line or surface are
     // transferred, otherwise all points
-    int geoPointsToStation(std::string const& geo_name,
-                           std::string const& stn_name,
-                           bool const only_unused_pnts = true);
+    int geoPointsToStations(std::string const& geo_name,
+                            std::string& stn_name,
+                            bool const only_unused_pnts = true);
 
     /// Returns the geo object for a geometric item of the given name and type for the associated geometry.
     const GeoLib::GeoObject* getGeoObject(const std::string &geo_name,

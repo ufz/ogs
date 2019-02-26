@@ -587,8 +587,8 @@ void GEOObjects::markUnusedPoints(std::string const& geo_name,
     }
 }
 
-int GEOObjects::geoPointsToStation(std::string const& geo_name,
-                                    std::string const& stn_name,
+int GEOObjects::geoPointsToStations(std::string const& geo_name,
+                                    std::string& stn_name,
                                     bool const only_unused_pnts)
 {
     GeoLib::PointVec const* const pnt_obj(getPointVecObj(geo_name));
@@ -618,9 +618,8 @@ int GEOObjects::geoPointsToStation(std::string const& geo_name,
             name = "Station " + std::to_string(i);
         stations->push_back(new GeoLib::Station(pnts[i], name));
     }
-    std::string vec_name = geo_name + " stations";
     if (!stations->empty())
-        addStationVec(std::move(stations), vec_name);
+        addStationVec(std::move(stations), stn_name);
     else
     {
         WARN("No points found to convert.");

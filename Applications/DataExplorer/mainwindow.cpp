@@ -1101,8 +1101,8 @@ void MainWindow::showMeshAnalysisDialog()
 
 void MainWindow::convertPointsToStations(std::string const& geo_name)
 {
-    std::string const stn_name = geo_name + "Stations";
-    int ret = _project.getGEOObjects().geoPointsToStation(geo_name, stn_name);
+    std::string stn_name = geo_name + " Stations";
+    int ret = _project.getGEOObjects().geoPointsToStations(geo_name, stn_name);
     if (ret == 1)
         OGSError::box("No points found to convert.");
 }
