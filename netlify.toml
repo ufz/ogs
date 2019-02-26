@@ -6,7 +6,6 @@
     git lfs pull
     yarn --ignore-engines --ignore-optional --non-interactive
     pandoc-citeproc --bib2json ../Documentation/bibliography.bib > data/bibliography.json
-    rm -rf $TMPDIR/hugo_cache/web/filecache/getjson
     hugo
     node_modules/.bin/hugo-algolia --toml -s"""
 
@@ -24,7 +23,6 @@
     git lfs pull
     yarn --ignore-engines --ignore-optional --non-interactive
     pandoc-citeproc --bib2json ../Documentation/bibliography.bib > data/bibliography.json
-    rm -rf $TMPDIR/hugo_cache/web/filecache/getjson
     hugo -b $DEPLOY_PRIME_URL"""
 
 [context.branch-deploy]
@@ -33,5 +31,4 @@
     git lfs pull
     yarn --ignore-engines --ignore-optional --non-interactive
     pandoc-citeproc --bib2json ../Documentation/bibliography.bib > data/bibliography.json
-    rm -rf $TMPDIR/hugo_cache/web/filecache/getjson
     hugo -b $DEPLOY_PRIME_URL"""

@@ -9,6 +9,10 @@ enableGitInfo = true
 canonifyURLs = true
 staticDir = ["dist", "static"]
 
+[caches]
+[caches.getJSON]
+ttl=600
+
 [params]
   alert = ""
 
