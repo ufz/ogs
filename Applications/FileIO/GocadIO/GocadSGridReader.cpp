@@ -151,7 +151,6 @@ GocadSGridReader::GocadSGridReader(std::string const& fname)
     if (!pnts_read)
     {
         readNodesBinary();
-        pnts_read = true;
     }
     readElementPropertiesBinary();
     std::vector<Bitset> region_flags = readRegionFlagsBinary();
