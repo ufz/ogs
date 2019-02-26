@@ -30,11 +30,6 @@ GMSHLineLoop::~GMSHLineLoop()
     }
 }
 
-void GMSHLineLoop::addLine(GMSHLine* line)
-{
-    _lines.push_back(line);
-}
-
 void GMSHLineLoop::write(std::ostream &os, std::size_t line_offset, std::size_t sfc_offset) const
 {
     const std::size_t n_lines (_lines.size());
