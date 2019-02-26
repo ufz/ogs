@@ -457,7 +457,7 @@ pipeline {
               recordIssues enabledForFailure: true, filters: [
                 excludeFile('.*\\.conan.*')],
                 tools: [clangTidy(name: 'Clang-Tidy', pattern: 'build/build.log')],
-                qualityGates: [[threshold: 59, type: 'TOTAL', unstable: true]]
+                qualityGates: [[threshold: 513, type: 'TOTAL', unstable: true]]
             }
           }
         }
