@@ -204,3 +204,44 @@ AddTest(
     TESTER diff
     DIFF_DATA 00-raster.asc
 )
+
+AddTest(
+    NAME ExtractSurfaceLeft
+    PATH MeshLib/
+    EXECUTABLE ExtractSurface
+    EXECUTABLE_ARGS -i cube_1x1x1_hex_1e3_layers_10.vtu -o ${Data_BINARY_DIR}/MeshLib/Left.vtu -x 1 -y 0 -z 0 -a 25
+    REQUIREMENTS NOT OGS_USE_MPI
+    TESTER diff
+    DIFF_DATA Left.vtu
+)
+
+AddTest(
+    NAME ExtractSurfaceRight
+    PATH MeshLib/
+    EXECUTABLE ExtractSurface
+    EXECUTABLE_ARGS -i cube_1x1x1_hex_1e3_layers_10.vtu -o ${Data_BINARY_DIR}/MeshLib/Right.vtu -x -1 -y 0 -z 0 -a 25
+    REQUIREMENTS NOT OGS_USE_MPI
+    TESTER diff
+    DIFF_DATA Right.vtu
+)
+
+AddTest(
+    NAME ExtractSurfaceFront
+    PATH MeshLib/
+    EXECUTABLE ExtractSurface
+    EXECUTABLE_ARGS -i cube_1x1x1_hex_1e3_layers_10.vtu -o ${Data_BINARY_DIR}/MeshLib/Front.vtu -x 0 -y 1 -z 0 -a 25
+    REQUIREMENTS NOT OGS_USE_MPI
+    TESTER diff
+    DIFF_DATA Front.vtu
+)
+
+AddTest(
+    NAME ExtractSurfaceBack
+    PATH MeshLib/
+    EXECUTABLE ExtractSurface
+    EXECUTABLE_ARGS -i cube_1x1x1_hex_1e3_layers_10.vtu -o ${Data_BINARY_DIR}/MeshLib/Back.vtu -x 0 -y -1 -z 0 -a 25
+    REQUIREMENTS NOT OGS_USE_MPI
+    TESTER diff
+    TESTER diff
+    DIFF_DATA Back.vtu
+)
