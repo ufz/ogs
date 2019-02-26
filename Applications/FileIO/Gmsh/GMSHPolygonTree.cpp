@@ -204,7 +204,6 @@ void GMSHPolygonTree::checkIntersectionsSegmentExistingPolylines(
 {
     std::size_t const ply_segment_number(seg_it.getSegmentNumber());
     for(GeoLib::PolylineWithSegmentMarker *const p : _plys) {
-        std::size_t n_segments(p->getNumberOfSegments());
         GeoLib::PointVec & pnt_vec(*(_geo_objs.getPointVecObj(_geo_name)));
         for (auto seg_it_p(p->begin()); seg_it_p != p->end(); ++seg_it_p) {
             GeoLib::Point s; // intersection point
@@ -216,7 +215,6 @@ void GMSHPolygonTree::checkIntersectionsSegmentExistingPolylines(
                 if (pnt_vec_size < pnt_vec.size()) { // case: new point
                     // modify polyline already in this node
                     p->insertPoint(seg_it_p.getSegmentNumber()+1, pnt_id);
-                    n_segments++;
                     // modify polyline
                     ply->insertPoint(ply_segment_number+1, pnt_id);
                 } else { // case: point exists already in geometry
@@ -224,7 +222,6 @@ void GMSHPolygonTree::checkIntersectionsSegmentExistingPolylines(
                     std::size_t const k(seg_it_p.getSegmentNumber());
                     if (p->getPointID(k) != pnt_id && p->getPointID(k+1) != pnt_id) {
                         p->insertPoint(k+1, pnt_id);
-                        n_segments++;
                     }
                     // check if point is not already in polyline ply
                     if (ply->getPointID(ply_segment_number) != pnt_id
