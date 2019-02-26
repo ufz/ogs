@@ -17,10 +17,10 @@ namespace FileIO
 namespace GMSH
 {
 
-class GMSHFixedMeshDensity : public GMSHMeshDensityStrategy
+class GMSHFixedMeshDensity final : public GMSHMeshDensityStrategy
 {
 public:
-    GMSHFixedMeshDensity(double mesh_density);
+    explicit GMSHFixedMeshDensity(double mesh_density);
     void initialize(std::vector<GeoLib::Point const*> const& vec) override;
     double getMeshDensityAtPoint(GeoLib::Point const* const) const override;
     double getMeshDensityAtStation(GeoLib::Point const* const) const override;
