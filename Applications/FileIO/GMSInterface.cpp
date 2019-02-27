@@ -53,10 +53,10 @@ int GMSInterface::readBoreholesFromGMS(std::vector<GeoLib::Point*>* boreholes,
     GeoLib::StationBorehole* newBorehole = nullptr;
 
     /* skipping first line because it contains field names */
-    getline(in, line);
+    std::getline(in, line);
 
     /* read all stations */
-    while ( getline(in, line) )
+    while ( std::getline(in, line) )
     {
         std::list<std::string> fields = BaseLib::splitString(line, '\t');
 
@@ -221,7 +221,7 @@ std::vector<std::string> GMSInterface::readSoilIDfromFile(const std::string &fil
 
     if (in.is_open())
     {
-        while ( getline(in, line) )
+        while ( std::getline(in, line) )
         {
             BaseLib::trim(line);
             soilID.push_back(line);
@@ -244,7 +244,7 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string &filename)
     }
 
     // Read data from file
-    getline(in, line); // "MESH3D"
+    std::getline(in, line); // "MESH3D"
     if (line != "MESH3D")
     {
         ERR("GMSInterface::readGMS3DMMesh(): Could not read expected file header.");
@@ -263,7 +263,7 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string &filename)
     unsigned id(0), count(0);
     double x[3];
     // read nodes
-    while ( getline(in, line) )
+    while ( std::getline(in, line) )
     {
         if (line[0] == 'N') // "ND" for Node
         {
@@ -279,10 +279,10 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string &filename)
     // NOTE: Element types E8H (Hex), E4Q (Quad), E3T (Tri) are not implemented yet
     // read elements
     in.open(filename.c_str());
-    getline(in, line); // "MESH3D"
+    std::getline(in, line); // "MESH3D"
     unsigned node_idx[6];
     int mat_id(0);
-    while ( getline(in, line) )
+    while ( std::getline(in, line) )
     {
         std::string element_id(line.substr(0,3));
         std::stringstream str(line);
