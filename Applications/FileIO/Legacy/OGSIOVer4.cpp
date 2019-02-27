@@ -169,7 +169,7 @@ std::string readPolyline(std::istream &in,
         if (line.find("$NAME") != std::string::npos) // subkeyword found
         {
             in >> line;
-            name_of_ply = line.substr(0); // read value
+            name_of_ply = line; // read value
         }
         //....................................................................
         if (line.find("$TYPE") != std::string::npos) // subkeyword found
@@ -315,7 +315,7 @@ std::string readSurface(std::istream& in,
         if (line.find("$NAME") != std::string::npos) // subkeyword found
         {
             in >> line; // read value
-            name = line.substr(0);
+            name = line;
         }
         //....................................................................
         if (line.find("$TYPE") != std::string::npos) // subkeyword found
@@ -550,21 +550,22 @@ bool readGLIFileV4(const std::string& fname,
     {
         INFO("GeoLib::readGLIFile(): read surfaces from stream.");
 
-        tag = readSurfaces(in,
-                           *sfc_vec,
-                           *sfc_names,
-                           *geo.getPolylineVec(unique_name),
-                           ply_names_copy,
-                           point_vec,
-                           path,
-                           errors,
-                           geo,
-                           unique_name);
+        readSurfaces(in,
+                     *sfc_vec,
+                     *sfc_names,
+                     *geo.getPolylineVec(unique_name),
+                     ply_names_copy,
+                     point_vec,
+                     path,
+                     errors,
+                     geo,
+                     unique_name);
         INFO("GeoLib::readGLIFile(): \tok, %d surfaces read.", sfc_vec->size());
     }
     else
+    {
         INFO("GeoLib::readGLIFile(): tag #SURFACE not found.");
-
+    }
     in.close();
 
     if (!sfc_vec->empty())
@@ -676,7 +677,6 @@ void writeAllDataToGLIFileV4 (const std::string& fname, const GeoLib::GEOObjects
         GeoLib::PointVec const* const pnt_vec(geo.getPointVecObj(geo_name));
         std::vector<GeoLib::Point*> const* const pnts (pnt_vec->getVector());
         if (pnts) {
-            std::string pnt_name;
             const std::size_t n_pnts(pnts->size());
             for (std::size_t k(0); k < n_pnts; k++) {
                 os << pnts_offset + k << " " << *((*pnts)[k]);
