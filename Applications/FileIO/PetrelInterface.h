@@ -39,6 +39,11 @@ public:
                     std::string &unique_model_name,
                     GeoLib::GEOObjects* obj);
 
+    PetrelInterface(PetrelInterface const& other) = delete;
+    PetrelInterface(PetrelInterface&& other) = delete;
+    PetrelInterface& operator=(PetrelInterface const&) = delete;
+    PetrelInterface& operator=(PetrelInterface&&) = delete;
+
 private:
     void readPetrelSurface (std::istream &in);
     void readPetrelWellTrace (std::istream &in);
