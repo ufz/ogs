@@ -200,6 +200,7 @@ AddTest(
     PATH MeshGeoToolsLib/Hamburg
     EXECUTABLE Mesh2Raster
     EXECUTABLE_ARGS -i 00-surface.vtu -o ${Data_BINARY_DIR}/MeshGeoToolsLib/Hamburg/00-raster.asc -c 25
+    REQUIREMENTS NOT OGS_USE_MPI
     TESTER diff
     DIFF_DATA 00-raster.asc
 )
