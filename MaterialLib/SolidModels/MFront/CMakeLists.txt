@@ -1,8 +1,6 @@
 set(SOURCES CreateMFront.cpp CreateMFront.h)
 
-if(OGS_USE_MFRONT)
-    list(APPEND SOURCES MFront.cpp MFront.h)
-endif()
+list(APPEND SOURCES MFront.cpp MFront.h)
 
 add_library(MaterialLib_SolidModels_MFront ${SOURCES})
 
@@ -12,13 +10,17 @@ if(BUILD_SHARED_LIBS)
 endif()
 
 target_link_libraries(MaterialLib_SolidModels_MFront
-                      PUBLIC BaseLib NumLib logog
+                      PUBLIC BaseLib NumLib logog OgsMFrontBehaviour
                       PRIVATE MathLib MeshLib)
 
-if(OGS_USE_MFRONT)
-    target_include_directories(MaterialLib_SolidModels_MFront
-                               PUBLIC ${MGIS_INCLUDE_DIR})
-    target_link_libraries(MaterialLib_SolidModels_MFront PUBLIC ${MGIS_LIBRARY})
-    target_compile_definitions(MaterialLib_SolidModels_MFront PRIVATE
-                               OGS_USE_MFRONT)
-endif()
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
+                      "${PROJECT_SOURCE_DIR}/ThirdParty/MGIS")
+include(cmake/modules/tfel)
+mfront_behaviours_check_library(OgsMFrontBehaviour Elasticity)
+
+target_include_directories(MaterialLib_SolidModels_MFront
+                           PUBLIC ThirdParty/MGIS/include)
+target_link_libraries(MaterialLib_SolidModels_MFront
+                      PUBLIC MFrontGenericInterface)
+target_compile_definitions(MaterialLib_SolidModels_MFront PRIVATE
+                           OGS_USE_MFRONT)
