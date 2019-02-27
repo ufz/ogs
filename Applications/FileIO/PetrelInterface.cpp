@@ -92,10 +92,8 @@ void PetrelInterface::readPetrelSurface(std::istream &in)
         // read header
         // read Version string
         in.getline(buffer, MAX_COLS_PER_ROW);
-        line = buffer;
         // read string BEGIN HEADER
         in.getline(buffer, MAX_COLS_PER_ROW);
-        line = buffer;
 
         in.getline(buffer, MAX_COLS_PER_ROW);
         line = buffer;
