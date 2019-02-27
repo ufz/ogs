@@ -5,4 +5,4 @@ else
 fi
 
 source $DIR/cli.sh
-module load vtk/8.1.1_gcc-6.2.0_openmpi-1.8.8
+module load vtk/8.2.0/openmpi-1.8.8

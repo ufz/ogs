@@ -4,5 +4,5 @@ else
     DIR=$( cd $(dirname "${BASH_SOURCE[0]}") ; pwd -P )
 fi
 
-source $DIR/cli.sh
-module load vtk/8.1.1_gcc-6.2.0_openmpi-1.8.8
+source $DIR/mpi.sh
+module load petsc/3.7.6_maint_gcc6.2.0_openmpi_gcc_1.8.8-1
