@@ -499,6 +499,7 @@ public:
         std::vector<double>& /*local_b_data*/,
         LocalCoupledSolutions const& coupled_xs)
     {
+        auto const& transport_process_id = coupled_xs.process_id;
         auto local_C = Eigen::Map<const NodalVectorType>(
             coupled_xs.local_coupled_xs[transport_process_id].data(),
             concentration_size);
