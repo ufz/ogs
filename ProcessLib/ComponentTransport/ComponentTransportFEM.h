@@ -80,7 +80,12 @@ class LocalAssemblerData : public ComponentTransportLocalAssemblerInterface
     // When staggered scheme is adopted, nodal pressure and nodal concentration
     // are accessed by process id.
     static const int hydraulic_process_id = 0;
-    static const int transport_process_id = 1;
+    // TODO (renchao-lu): This variable is used in the calculation of the
+    // fluid's density and flux, indicating the transport process id. For now it
+    // is assumed that these quantities depend on the first occurring transport
+    // process only. The density and flux calculations have to be extended to
+    // all processes.
+    static const int first_transport_process_id = 1;
 
     // When monolithic scheme is adopted, nodal pressure and nodal concentration
     // are accessed by vector index.
@@ -400,10 +405,10 @@ public:
             coupled_xs.local_coupled_xs[hydraulic_process_id].data(),
             pressure_size);
         auto local_C = Eigen::Map<const NodalVectorType>(
-            coupled_xs.local_coupled_xs[transport_process_id].data(),
+            coupled_xs.local_coupled_xs[first_transport_process_id].data(),
             concentration_size);
         auto local_C0 = Eigen::Map<const NodalVectorType>(
-            coupled_xs.local_coupled_xs0[transport_process_id].data(),
+            coupled_xs.local_coupled_xs0[first_transport_process_id].data(),
             concentration_size);
 
         auto const dt = coupled_xs.dt;
@@ -681,7 +686,7 @@ public:
 
             auto const local_p = MathLib::toVector(local_xs[hydraulic_process_id]);
             auto const local_C =
-                MathLib::toVector(local_xs[transport_process_id]);
+                MathLib::toVector(local_xs[first_transport_process_id]);
 
             return calculateIntPtDarcyVelocity(t, local_p, local_C, cache);
         }
@@ -773,7 +778,8 @@ public:
         std::vector<std::vector<double>> const& local_xs) const override
     {
         auto const local_p = MathLib::toVector(local_xs[hydraulic_process_id]);
-        auto const local_C = MathLib::toVector(local_xs[transport_process_id]);
+        auto const local_C =
+            MathLib::toVector(local_xs[first_transport_process_id]);
 
         return calculateFlux(pnt_local_coords, t, local_p, local_C);
     }
