@@ -38,18 +38,19 @@ namespace FileIO
 int GMSInterface::readBoreholesFromGMS(std::vector<GeoLib::Point*>* boreholes,
                                        const std::string &filename)
 {
+    std::ifstream in(filename.c_str());
+    if (!in.is_open())
+    {
+        ERR("GMSInterface::readBoreholeFromGMS(): Could not open file %s.",
+            filename.c_str());
+        return 0;
+    }
+
     double depth(-9999.0);
     std::string line(""), cName(""), sName("");
     std::list<std::string>::const_iterator it;
     auto* pnt = new GeoLib::Point();
     GeoLib::StationBorehole* newBorehole = nullptr;
-    std::ifstream in( filename.c_str() );
-
-    if (!in.is_open())
-    {
-        ERR("GMSInterface::readBoreholeFromGMS(): Could not open file %s.", filename.c_str());
-        return 0;
-    }
 
     /* skipping first line because it contains field names */
     getline(in, line);
