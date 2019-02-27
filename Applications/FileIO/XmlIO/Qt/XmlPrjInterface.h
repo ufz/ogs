@@ -33,7 +33,7 @@ class XmlPrjInterface final : public BaseLib::IO::XMLInterface,
                               public BaseLib::IO::XMLQtInterface
 {
 public:
-    XmlPrjInterface(DataHolderLib::Project& project);
+    explicit XmlPrjInterface(DataHolderLib::Project& project);
 
     ~XmlPrjInterface() override = default;
 
