@@ -16,64 +16,11 @@
 #include "Applications/ApplicationsLib/LogogSetup.h"
 #include "BaseLib/BuildInfo.h"
 #include "GeoLib/AABB.h"
-#include "GeoLib/AnalyticalGeometry.h"
-#include "MeshLib/Elements/Quad.h"
-#include "MeshLib/Elements/Tri.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshSearch/MeshElementGrid.h"
 #include "MeshLib/Node.h"
-
-/// Returns the element in which the given node is located when projected onto a
-/// mesh, or nullptr if no such element was found.
-static MeshLib::Element const* getProjectedElement(
-    std::vector<const MeshLib::Element*> const& elements,
-    MeshLib::Node const& node)
-{
-    auto is_right_of = [&node](MeshLib::Node const& a, MeshLib::Node const& b) {
-        return GeoLib::getOrientationFast(node, a, b) ==
-               GeoLib::Orientation::CW;
-    };
-
-    for (auto const* e : elements)
-    {
-        auto const* nodes = e->getNodes();
-        if (e->getGeomType() == MeshLib::MeshElemType::TRIANGLE)
-        {
-            auto const& a = *nodes[0];
-            auto const& b = *nodes[1];
-            auto const& c = *nodes[2];
-            if (!is_right_of(a, b) && !is_right_of(b, c) && !is_right_of(c, a))
-            {
-                return e;
-            }
-        }
-        else if (e->getGeomType() == MeshLib::MeshElemType::QUAD)
-        {
-            auto const& a = *nodes[0];
-            auto const& b = *nodes[1];
-            auto const& c = *nodes[2];
-            auto const& d = *nodes[3];
-            if (!is_right_of(a, b) && !is_right_of(b, c) &&
-                !is_right_of(c, d) && !is_right_of(d, a))
-            {
-                return e;
-            }
-        }
-    }
-    return nullptr;
-}
-
-/// Returns the z-coordinate of a point projected onto the plane defined by a
-/// mesh element.
-static double getElevation(MeshLib::Element const& element,
-                           MeshLib::Node const& node)
-{
-    MathLib::Vector3 const v{*element.getNode(0), node};
-    MathLib::Vector3 const n =
-        MeshLib::FaceRule::getSurfaceNormal(&element).getNormalizedVector();
-    return node[2] - scalarProduct(n, v) * n[2];
-}
+#include "MeshLib/MeshEditing/ProjectPointOnMesh.h"
 
 int main(int argc, char* argv[])
 {
@@ -161,11 +108,12 @@ int main(int argc, char* argv[])
                                       std::numeric_limits<double>::max()}};
             std::vector<const MeshLib::Element*> const& elems =
                 grid.getElementsInVolume(min_vol, max_vol);
-            auto const* element = getProjectedElement(elems, node);
+            auto const* element =
+                MeshLib::ProjectPointOnMesh::getProjectedElement(elems, node);
             // centre of the pixel is located within a mesh element
             if (element != nullptr)
             {
-                out << getElevation(*element, node) << " ";
+                out << MeshLib::ProjectPointOnMesh::getElevation(*element, node) << " ";
             }
             else
             {
@@ -181,10 +129,10 @@ int main(int argc, char* argv[])
                 {
                     MeshLib::Node const node(x + x_off[i], y + y_off[i], 0);
                     auto const* corner_element =
-                        getProjectedElement(elems, node);
+                        MeshLib::ProjectPointOnMesh::getProjectedElement(elems, node);
                     if (corner_element != nullptr)
                     {
-                        sum += getElevation(*corner_element, node);
+                        sum += MeshLib::ProjectPointOnMesh::getElevation( *corner_element, node);
                         nonzero_count++;
                     }
                 }
