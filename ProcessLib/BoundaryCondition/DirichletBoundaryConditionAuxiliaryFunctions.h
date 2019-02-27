@@ -51,4 +51,4 @@ void getEssentialBCValuesLocal(
     int const variable_id, int const component_id, const double t,
     GlobalVector const& x,
     NumLib::IndexValueVector<GlobalIndexType>& bc_values);
-}  // end of name space
+}  // namespace ProcessLib

@@ -26,7 +26,9 @@ void rotateToLocal(const MeshLib::RotationMatrix& matR2local,
                    std::vector<MathLib::Point3d>& points)
 {
     for (auto& p : points)
+    {
         p = matR2local * p;
+    }
 }
 
 /// get a rotation matrix to the global coordinates
@@ -44,9 +46,13 @@ void getRotationMatrixToGlobal(const unsigned element_dimension,
         MathLib::Vector3 xx(points[0], points[1]);
         xx.normalize();
         if (global_dim == 2)
+        {
             GeoLib::compute2DRotationMatrixToX(xx, matR);
+        }
         else
+        {
             GeoLib::compute3DRotationMatrixToX(xx, matR);
+        }
         matR.transposeInPlace();
     }
     else if (global_dim == 3 && element_dimension == 2)
@@ -72,8 +78,10 @@ ElementCoordinatesMappingLocal::ElementCoordinatesMappingLocal(
 {
     assert(e.getDimension() <= global_dim);
     _points.reserve(e.getNumberOfNodes());
-    for(unsigned i = 0; i < e.getNumberOfNodes(); i++)
+    for (unsigned i = 0; i < e.getNumberOfNodes(); i++)
+    {
         _points.emplace_back(*(e.getNode(i)));
+    }
 
     auto const element_dim = e.getDimension();
 
@@ -87,4 +95,4 @@ ElementCoordinatesMappingLocal::ElementCoordinatesMappingLocal(
     detail::rotateToLocal(_matR2global.transpose(), _points);
 }
 
-} // MeshLib
+}  // namespace MeshLib

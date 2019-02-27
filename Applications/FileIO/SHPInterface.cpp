@@ -39,7 +39,9 @@ bool SHPInterface::readSHPInfo(const std::string &filename, int &shapeType, int 
 {
     SHPHandle hSHP = SHPOpen(filename.c_str(), "rb");
     if (!hSHP)
+    {
         return false;
+    }
 
     double padfMinBound[4], padfMaxBound[4];
 
@@ -60,15 +62,24 @@ void SHPInterface::readSHPFile(const std::string &filename, OGSType choice, cons
     SHPGetInfo(hSHP, &numberOfElements, &shapeType, padfMinBound, padfMaxBound);
 
     if (((shapeType - 1) % 10 == 0) && (choice == SHPInterface::OGSType::POINT))
+    {
         readPoints(hSHP, numberOfElements, listName);
-    if (((shapeType - 1) % 10 == 0) && (choice == SHPInterface::OGSType::STATION))
+    }
+    if (((shapeType - 1) % 10 == 0) &&
+        (choice == SHPInterface::OGSType::STATION))
+    {
         readStations(hSHP, numberOfElements, listName);
-    if (((shapeType - 3) % 10 == 0 || (shapeType - 5) % 10 == 0) && (choice
-                    == SHPInterface::OGSType::POLYLINE))
+    }
+    if (((shapeType - 3) % 10 == 0 || (shapeType - 5) % 10 == 0) &&
+        (choice == SHPInterface::OGSType::POLYLINE))
+    {
         readPolylines(hSHP, numberOfElements, listName);
-    if (((shapeType - 3) % 10 == 0 || (shapeType - 5) % 10 == 0) && (choice
-                    == SHPInterface::OGSType::POLYGON))
+    }
+    if (((shapeType - 3) % 10 == 0 || (shapeType - 5) % 10 == 0) &&
+        (choice == SHPInterface::OGSType::POLYGON))
+    {
         readPolygons(hSHP, numberOfElements, listName);
+    }
 }
 
 void SHPInterface::readPoints(const SHPHandle &hSHP, int numberOfElements, std::string listName)
@@ -115,7 +126,9 @@ void SHPInterface::readStations(const SHPHandle &hSHP, int numberOfElements, std
 void SHPInterface::readPolylines(const SHPHandle &hSHP, int numberOfElements, std::string listName)
 {
     if (numberOfElements <= 0)
+    {
         return;
+    }
     auto pnts = std::make_unique<std::vector<GeoLib::Point*>>();
     auto lines = std::make_unique<std::vector<GeoLib::Polyline*>>();
 
@@ -279,4 +292,4 @@ bool SHPInterface::write2dMeshToSHP(const std::string &file_name, const MeshLib:
     return true;
 }
 
-}
+}  // namespace FileIO

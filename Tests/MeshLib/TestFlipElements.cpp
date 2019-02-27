@@ -80,12 +80,16 @@ TEST(MeshLib, FlipHexMesh)
 
     ASSERT_EQ(nullptr, result);
     std::vector<MeshLib::Node*> nodes;
-    for (std::size_t i=0; i<mesh->getNumberOfNodes(); ++i)
+    for (std::size_t i = 0; i < mesh->getNumberOfNodes(); ++i)
+    {
         nodes.push_back(new MeshLib::Node(*mesh->getNode(i)));
+    }
     std::unique_ptr<MeshLib::Element> elem (MeshLib::createFlippedElement(*mesh->getElement(0), nodes));
     ASSERT_EQ(nullptr, elem);
     for (MeshLib::Node* n : nodes)
+    {
         delete n;
+    }
 }
 
 TEST(MeshLib, DoubleFlipQuadMesh)
@@ -96,9 +100,13 @@ TEST(MeshLib, DoubleFlipQuadMesh)
 
     ASSERT_EQ(mesh->getNumberOfNodes(), result2->getNumberOfNodes());
     ASSERT_EQ(mesh->getNumberOfElements(), result2->getNumberOfElements());
-    for (std::size_t i=0; i<result2->getNumberOfElements(); ++i)
-        for (std::size_t j=0; j<4; ++j)
+    for (std::size_t i = 0; i < result2->getNumberOfElements(); ++i)
+    {
+        for (std::size_t j = 0; j < 4; ++j)
+        {
             ASSERT_EQ(mesh->getElement(i)->getNode(j)->getID(),
                       result2->getElement(i)->getNode(j)->getID());
+        }
+    }
 }
 

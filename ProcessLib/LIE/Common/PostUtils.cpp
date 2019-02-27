@@ -105,12 +105,16 @@ PostProcessTool::PostProcessTool(
         {
             // only matrix elements
             if (org_e->getDimension() != org_mesh.getDimension())
+            {
                 continue;
+            }
 
             auto const eid = org_e->getID();
             // keep original if the element has levelset=0
             if ((*prop_levelset)[eid] == 0)
+            {
                 continue;
+            }
 
             // replace fracture nodes with duplicated ones
             MeshLib::Element* e = new_eles[eid];
@@ -118,12 +122,16 @@ PostProcessTool::PostProcessTool(
             {
                 const auto node_id = e->getNodeIndex(i);
                 if (!includesNodeID(vec_fracture_nodes, node_id))
+                {
                     continue;
+                }
 
                 // list of duplicated node IDs
                 auto itr = _map_dup_newNodeIDs.find(node_id);
                 if (itr == _map_dup_newNodeIDs.end())
+                {
                     continue;
+                }
                 const auto& dup_newNodeIDs = itr->second;
 
                 // choose new node id
@@ -216,7 +224,9 @@ void PostProcessTool::createProperties()
     for (auto name : src_properties.getPropertyVectorNames())
     {
         if (!src_properties.existsPropertyVector<T>(name))
+        {
             continue;
+        }
         auto const* src_prop = src_properties.getPropertyVector<T>(name);
 
         auto const n_src_comp = src_prop->getNumberOfComponents();
@@ -255,7 +265,9 @@ void PostProcessTool::copyProperties()
     for (auto name : src_properties.getPropertyVectorNames())
     {
         if (!src_properties.existsPropertyVector<T>(name))
+        {
             continue;
+        }
         auto const* src_prop = src_properties.getPropertyVector<T>(name);
         auto* dest_prop =
             _output_mesh->getProperties().getPropertyVector<T>(name);
@@ -268,19 +280,27 @@ void PostProcessTool::copyProperties()
             for (unsigned i = 0; i < _org_mesh.getNumberOfNodes(); i++)
             {
                 for (int j = 0; j < n_src_comp; j++)
+                {
                     (*dest_prop)[i * n_dest_comp + j] =
                         (*src_prop)[i * n_src_comp + j];
+                }
                 // set zero for components not existing in the original
                 for (int j = n_src_comp; j < n_dest_comp; j++)
+                {
                     (*dest_prop)[i * n_dest_comp + j] = 0;
+                }
             }
             // copy duplicated
             for (auto itr : _map_dup_newNodeIDs)
             {
                 for (int j = 0; j < n_dest_comp; j++)
+                {
                     for (unsigned k = 0; k < itr.second.size(); k++)
+                    {
                         (*dest_prop)[itr.second[k] * n_dest_comp + j] =
                             (*dest_prop)[itr.first * n_dest_comp + j];
+                    }
+                }
             }
         }
         else if (src_prop->getMeshItemType() == MeshLib::MeshItemType::Cell)
@@ -311,7 +331,9 @@ void PostProcessTool::calculateTotalDisplacement(unsigned const n_fractures,
     for (unsigned i = 0; i < _output_mesh->getNodes().size(); i++)
     {
         for (int j = 0; j < n_u_comp; j++)
+        {
             total_u[i * n_u_comp + j] = u[i * n_u_comp + j];
+        }
     }
 
     for (unsigned enrich_id = 0; enrich_id < n_fractures + n_junctions;
@@ -326,13 +348,19 @@ void PostProcessTool::calculateTotalDisplacement(unsigned const n_fractures,
         for (MeshLib::Element const* e : _output_mesh->getElements())
         {
             if (e->getDimension() != _output_mesh->getDimension())
+            {
                 continue;
+            }
             const double e_levelset = ele_levelset[e->getID()];
             if (e_levelset == 0)
+            {
                 continue;
+            }
 
             for (unsigned i = 0; i < e->getNumberOfNodes(); i++)
+            {
                 nodal_levelset[e->getNodeIndex(i)] = e_levelset;
+            }
         }
 
         // update total displacements
@@ -342,8 +370,10 @@ void PostProcessTool::calculateTotalDisplacement(unsigned const n_fractures,
         for (unsigned i = 0; i < _output_mesh->getNodes().size(); i++)
         {
             for (int j = 0; j < n_u_comp; j++)
+            {
                 total_u[i * n_u_comp + j] +=
                     nodal_levelset[i] * g[i * n_u_comp + j];
+            }
         }
     }
 }

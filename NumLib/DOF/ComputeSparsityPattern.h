@@ -32,4 +32,4 @@ class LocalToGlobalIndexMap;
  */
 GlobalSparsityPattern computeSparsityPattern(
     LocalToGlobalIndexMap const& dof_table, MeshLib::Mesh const& mesh);
-}
+}  // namespace NumLib

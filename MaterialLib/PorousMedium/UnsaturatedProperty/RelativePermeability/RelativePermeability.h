@@ -51,5 +51,5 @@ protected:
     const double _saturation_max;  ///< Maximum saturation.
 };
 
-}  // end namespace
-}  // end namespace
+}  // namespace PorousMedium
+}  // namespace MaterialLib

@@ -23,14 +23,18 @@ ColorLookupTable::ColorLookupTable()
 
 void ColorLookupTable::setTableRange(double min, double max)
 {
-    if (min<max)
+    if (min < max)
+    {
         _range = std::make_pair(min, max);
+    }
 }
 
 void ColorLookupTable::setColor(double id, DataHolderLib::Color const& color)
 {
-    if ((id>_range.first) && (id<_range.second))
+    if ((id > _range.first) && (id < _range.second))
+    {
         _lut.emplace_back(id, color, "");
+    }
 }
 
 void ColorLookupTable::setColor(std::string const& name, DataHolderLib::Color const& color)
@@ -38,6 +42,4 @@ void ColorLookupTable::setColor(std::string const& name, DataHolderLib::Color co
     _lut.emplace_back(0, color, name);
 }
 
-
-
-} // namespace
+}  // namespace DataHolderLib

@@ -37,10 +37,14 @@ int main(int argc, char* argv[])
 #endif
     for (int i = 1; i < argc; i++)
     {
-        if(i + 1 == argc)
+        if (i + 1 == argc)
+        {
             break;
-        if(std::strcmp(argv[i], "-l") == 0)
+        }
+        if (std::strcmp(argv[i], "-l") == 0)
+        {
             logLevel = argv[i + 1];
+        }
     }
 
     setlocale(LC_ALL, "C");

@@ -60,4 +60,4 @@ protected:
     std::unique_ptr<EigenLinearSolverBase> _solver;
 };
 
-} // MathLib
+}  // namespace MathLib

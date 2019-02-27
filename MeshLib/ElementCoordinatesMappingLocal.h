@@ -52,4 +52,4 @@ private:
     RotationMatrix _matR2global;
 };
 
-}
+}  // namespace MeshLib

@@ -76,4 +76,4 @@ public:
         return 1;
     }
 };
-}
+}  // namespace NumLib

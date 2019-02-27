@@ -23,9 +23,13 @@ SourceTerm::ConditionType SourceTerm::convertStringToType(
     std::string const& str)
 {
     if (str == "Nodal")
+    {
         return ConditionType::NODAL;
-    else if (str == "Volume")
+    }
+    if (str == "Volume")
+    {
         return ConditionType::VOLUME;
+    }
 
     return ConditionType::NONE;
 }
@@ -33,9 +37,13 @@ SourceTerm::ConditionType SourceTerm::convertStringToType(
 std::string SourceTerm::convertTypeToString(ConditionType type)
 {
     if (type == ConditionType::NODAL)
+    {
         return "Nodal";
-    else if (type == ConditionType::VOLUME)
+    }
+    if (type == ConditionType::VOLUME)
+    {
         return "Volume";
+    }
 
     return "";
 }

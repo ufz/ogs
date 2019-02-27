@@ -220,7 +220,7 @@ private:
     const LiquidFlowMaterialProperties& _material_properties;
 };
 
-}  // end of namespace
-}  // end of namespace
+}  // namespace LiquidFlow
+}  // namespace ProcessLib
 
 #include "LiquidFlowLocalAssembler-impl.h"

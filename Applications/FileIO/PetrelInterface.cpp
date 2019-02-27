@@ -68,13 +68,17 @@ PetrelInterface::PetrelInterface(std::list<std::string> &sfc_fnames,
     geo_obj->addPointVec(std::unique_ptr<std::vector<GeoLib::Point*>>(pnt_vec),
                          _unique_name);
     if (!well_vec->empty())
+    {
         geo_obj->addStationVec(
             std::unique_ptr<std::vector<GeoLib::Point*>>(well_vec),
             _unique_name);
+    }
     if (!ply_vec->empty())
+    {
         geo_obj->addPolylineVec(
             std::unique_ptr<std::vector<GeoLib::Polyline*>>(ply_vec),
             _unique_name);
+    }
 }
 
 void PetrelInterface::readPetrelSurface(std::istream &in)
@@ -113,7 +117,9 @@ void PetrelInterface::readPetrelSurface(std::istream &in)
                 pnt_vec->pop_back();
             }
             else
+            {
                 idx++;
+            }
         }
     } else
         WARN(

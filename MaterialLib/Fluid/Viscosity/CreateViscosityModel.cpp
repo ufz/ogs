@@ -86,9 +86,13 @@ std::unique_ptr<FluidProperty> createViscosityModel(
             config.getConfigParameter<double>("value"));
     }
     if (type == "LinearPressure")
+    {
         return createLinearPressureDependentViscosity(config);
+    }
     if (type == "TemperatureDependent")
+    {
         return createTemperatureDependentViscosity(config);
+    }
     if (type == "Vogels")
     {
         //! \ogs_file_param{material__fluid__viscosity__type}
@@ -146,5 +150,5 @@ std::unique_ptr<FluidProperty> createViscosityModel(
         type.data());
 }
 
-}  // end namespace
-}  // end namespace
+}  // namespace Fluid
+}  // namespace MaterialLib

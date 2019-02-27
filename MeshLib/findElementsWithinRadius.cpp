@@ -26,7 +26,9 @@ std::vector<std::size_t> findElementsWithinRadius(Element const& start_element,
     // Special case for 0 radius. All other radii will include at least one
     // neighbor of the start element.
     if (radius_squared == 0.)
+    {
         return {start_element.getID()};
+    }
 
     // Collect start element node coordinates into local contigiuos memory.
     std::vector<MathLib::Point3d> start_element_nodes;
@@ -34,7 +36,9 @@ std::vector<std::size_t> findElementsWithinRadius(Element const& start_element,
         auto const start_element_n_nodes = start_element.getNumberOfNodes();
         start_element_nodes.reserve(start_element_n_nodes);
         for (unsigned n = 0; n < start_element_n_nodes; ++n)
+        {
             start_element_nodes.push_back(*start_element.getNode(n));
+        }
     }
 
     // Returns true if the test node is inside the radius of any of the
@@ -44,7 +48,9 @@ std::vector<std::size_t> findElementsWithinRadius(Element const& start_element,
         for (auto const& n : start_element_nodes)
         {
             if (MathLib::sqrDist(*test_node, n) <= radius_squared)
+            {
                 return true;
+            }
         }
         return false;
     };
@@ -56,7 +62,9 @@ std::vector<std::size_t> findElementsWithinRadius(Element const& start_element,
         for (unsigned i = 0; i < n_nodes; ++i)
         {
             if (node_inside_radius(element.getNode(i)))
+            {
                 return true;
+            }
         }
         return false;
     };
@@ -75,10 +83,14 @@ std::vector<std::size_t> findElementsWithinRadius(Element const& start_element,
             {
                 auto neighbor = element.getNeighbor(n);
                 if (neighbor == nullptr)
+                {
                     continue;
+                }
                 auto x = visited_elements.find(neighbor->getID());
                 if (x != visited_elements.end())
+                {
                     continue;
+                }
 
                 neighbors_to_visit.push_back(neighbor);
 
@@ -96,9 +108,11 @@ std::vector<std::size_t> findElementsWithinRadius(Element const& start_element,
 
         // If any node is inside the radius, all neighbors are visited.
         if (element_in_radius(current_element))
+        {
             mark_visited_and_add_neighbors(current_element);
+        }
     }
 
     return {std::begin(found_elements), std::end(found_elements)};
 }
-}
+}  // namespace MeshLib

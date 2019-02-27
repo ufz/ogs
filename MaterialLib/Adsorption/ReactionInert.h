@@ -32,4 +32,4 @@ public:
     }
 };
 
-}
+}  // namespace Adsorption

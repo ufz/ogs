@@ -26,4 +26,4 @@ createRichardsFlowMaterialProperties(
     std::vector<std::unique_ptr<ParameterBase>> const& parameters);
 
 }  // end namespace
-}  // end namespace
+}  // namespace ProcessLib

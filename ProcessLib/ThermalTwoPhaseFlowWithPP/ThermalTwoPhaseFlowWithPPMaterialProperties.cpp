@@ -134,9 +134,13 @@ ThermalTwoPhaseFlowWithPPMaterialProperties::calculateUnsatHeatConductivity(
     double lambda_pm =
         lambda_pm_dry + std::sqrt(Sw) * (lambda_pm_wet - lambda_pm_dry);
     if (Sw > 1)
+    {
         lambda_pm = lambda_pm_wet;
+    }
     else if (Sw < 0)
+    {
         lambda_pm = lambda_pm_dry;
+    }
     return lambda_pm;
 }
 
@@ -204,5 +208,5 @@ ThermalTwoPhaseFlowWithPPMaterialProperties::getLiquidWaterEnthalpySimple(
     return heat_capacity_liquid_water * (temperature - CelsiusZeroInKelvin);
 }
 
-}  // end of namespace
-}  // end of namespace
+}  // namespace ThermalTwoPhaseFlowWithPP
+}  // namespace ProcessLib

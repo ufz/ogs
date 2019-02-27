@@ -43,7 +43,9 @@ void GMSHLineLoop::write(std::ostream &os, std::size_t line_offset, std::size_t 
     }
     os << "Line Loop(" << line_offset+n_lines << ") = {";
     for (std::size_t k(0); k < n_lines - 1; k++)
+    {
         os << line_offset + k << ",";
+    }
     os << line_offset + n_lines - 1 << "};\n";
 
     if (_is_sfc) {

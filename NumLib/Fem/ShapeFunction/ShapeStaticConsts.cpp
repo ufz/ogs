@@ -88,4 +88,4 @@ const unsigned ShapeTri3::NPOINTS;
 const unsigned ShapeTri6::DIM;
 const unsigned ShapeTri6::NPOINTS;
 
-}
+}  // namespace NumLib

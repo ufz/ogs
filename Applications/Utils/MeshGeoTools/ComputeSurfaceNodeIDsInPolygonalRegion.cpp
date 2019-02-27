@@ -135,7 +135,9 @@ int main (int argc, char* argv[])
         std::string polygon_name;
         ply_vec->getNameOfElement(plys[j], polygon_name);
         if (polygon_name.empty())
+        {
             polygon_name = "Polygon-" + std::to_string(j);
+        }
         // create Polygon from Polyline
         GeoLib::Polygon const& polygon(*(plys[j]));
         // ids of mesh nodes on surface that are within the given polygon

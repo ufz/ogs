@@ -338,9 +338,13 @@ struct FluidHeatConductivityH2O
         Q = 2 + (C[4] / dT_pow_3_5);
 
         if (T >= 1)
+        {
             S = 1 / dT;
+        }
         else
+        {
             S = C[5] / dT_pow_3_5;
+        }
 
         const double rho_pow_9_5 = std::pow(rho, 9. / 5.);
         const double rho_pow_Q = std::pow(rho, Q);
@@ -399,5 +403,5 @@ inline double fluid_heat_conductivity(const double p,
     return k0 * x0 / (x0 + x1 * phi_12) + k1 * x1 / (x1 + x0 * phi_21);
 }
 
-}  // TES
-}  // ProcessLib
+}  // namespace TES
+}  // namespace ProcessLib

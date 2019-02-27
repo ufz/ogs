@@ -87,5 +87,5 @@ private:
     const double _m;   ///< Exponent m, m>1.
 };
 
-}  // end namespace
-}  // end namespace
+}  // namespace PorousMedium
+}  // namespace MaterialLib

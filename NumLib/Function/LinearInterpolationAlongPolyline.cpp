@@ -42,7 +42,9 @@ MathLib::PiecewiseLinearInterpolation LinearInterpolationAlongPolyline::createIn
     {
         const std::size_t pnt_id = vec_interpolate_point_ids[i];
         if (!ply.isPointIDInPolyline(pnt_id))
+        {
             continue;
+        }
 
         for (std::size_t j=0; j<ply.getNumberOfPoints(); j++)
         {
@@ -65,5 +67,4 @@ double LinearInterpolationAlongPolyline::operator()(const MathLib::Point3d& pnt)
     return dist>=0 ? _interpolation.getValue(dist) : _default_value;
 }
 
-} // NumLib
-
+}  // namespace NumLib

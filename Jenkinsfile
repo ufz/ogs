@@ -2,6 +2,7 @@
 @Library('jenkins-pipeline@1.0.19') _
 
 def stage_required = [build: false, data: false, full: false, docker: false]
+def build_shared = 'ON'
 
 pipeline {
   agent none
@@ -10,6 +11,16 @@ pipeline {
     timestamps()
     buildDiscarder(logRotator(numToKeepStr: '30', artifactNumToKeepStr: '10'))
     timeout(time: 6, unit: 'HOURS')
+  }
+  parameters {
+    booleanParam(name: 'docker_conan', defaultValue: true)
+    booleanParam(name: 'docker_conan_debug', defaultValue: true)
+    booleanParam(name: 'docker_conan_gui', defaultValue: true)
+    booleanParam(name: 'envinf1_serial', defaultValue: true)
+    booleanParam(name: 'envinf1_parallel', defaultValue: true)
+    booleanParam(name: 'win', defaultValue: true)
+    booleanParam(name: 'mac', defaultValue: true)
+    booleanParam(name: 'clang_analyzer', defaultValue: true)
   }
   stages {
      // *************************** Git Check **********************************
@@ -23,6 +34,9 @@ pipeline {
 
         // ********* Check changesets for conditional stage execution **********
         script {
+          if (env.JOB_NAME == 'ufz/ogs/master') {
+            build_shared = 'OFF'
+          }
           if (currentBuild.number == 1) {
             stage_required.full = true
             return true
@@ -74,7 +88,7 @@ pipeline {
         stage('Docker-Conan') {
           when {
             beforeAgent true
-            expression { return stage_required.build || stage_required.full }
+            expression { return params.docker_conan && (stage_required.build || stage_required.full) }
           }
           agent {
             dockerfile {
@@ -93,6 +107,7 @@ pipeline {
               sh 'git submodule sync'
               configure {
                 cmakeOptions =
+                  "-DBUILD_SHARED_LIBS=${build_shared} " +
                   '-DOGS_CPU_ARCHITECTURE=generic ' +
                   '-DOGS_USE_PYTHON=ON ' +
                   '-DOGS_BUILD_UTILS=ON ' +
@@ -142,7 +157,7 @@ pipeline {
         stage('Docker-Conan-GUI') {
           when {
             beforeAgent true
-            expression { return stage_required.build || stage_required.full }
+            expression { return params.docker_conan_gui && (stage_required.build || stage_required.full) }
           }
           agent {
             dockerfile {
@@ -159,6 +174,7 @@ pipeline {
               sh 'git submodule sync'
               configure {
                 cmakeOptions =
+                  "-DBUILD_SHARED_LIBS=${build_shared} " +
                   '-DOGS_CPU_ARCHITECTURE=generic ' +
                   '-DOGS_USE_PYTHON=ON ' +
                   '-DOGS_USE_PCH=OFF ' +     // see #1992
@@ -188,7 +204,7 @@ pipeline {
         stage('Docker-Conan-Debug') {
           when {
             beforeAgent true
-            expression { return stage_required.build || stage_required.full }
+            expression { return params.docker_conan_debug && (stage_required.build || stage_required.full) }
           }
           agent {
             dockerfile {
@@ -204,6 +220,7 @@ pipeline {
               sh 'git submodule sync'
               configure {
                 cmakeOptions =
+                  "-DBUILD_SHARED_LIBS=${build_shared} " +
                   '-DOGS_CPU_ARCHITECTURE=generic ' +
                   '-DOGS_COVERAGE=ON '
                 config = 'Debug'
@@ -311,7 +328,7 @@ pipeline {
         stage('Win') {
           when {
             beforeAgent true
-            expression { return stage_required.build || stage_required.full }
+            expression { return params.win && (stage_required.build || stage_required.full) }
           }
           agent {label 'win && conan' }
           environment {
@@ -327,6 +344,7 @@ pipeline {
               // CLI + GUI
               configure {
                 cmakeOptions =
+                  "-DBUILD_SHARED_LIBS=OFF " +
                   '-DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON ' +
                   '-DOGS_USE_PYTHON=ON ' +
                   '-DOGS_BUILD_GUI=ON ' +
@@ -363,7 +381,7 @@ pipeline {
         stage('Mac') {
           when {
             beforeAgent true
-            expression { return stage_required.build || stage_required.full }
+            expression { return params.mac && (stage_required.build || stage_required.full) }
           }
           agent { label "mac"}
           environment {
@@ -374,6 +392,7 @@ pipeline {
               sh 'git submodule sync'
               configure {
                 cmakeOptions =
+                  "-DBUILD_SHARED_LIBS=${build_shared} " +
                   '-DOGS_CPU_ARCHITECTURE=core2 ' +
                   '-DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON ' +
                   '-DOGS_BUILD_GUI=ON ' +
@@ -402,6 +421,43 @@ pipeline {
             }
             success {
               archiveArtifacts 'build/*.tar.gz,build/*.dmg,build/conaninfo.txt'
+            }
+          }
+        }
+        // ************************* Clang-Analyzer *********************************
+        stage('Clang-Analyzer') {
+          when {
+            beforeAgent true
+            expression { return params.clang_analyzer && (stage_required.build || stage_required.full) }
+          }
+          agent {
+            dockerfile {
+              filename 'Dockerfile.clang.full'
+              dir 'scripts/docker'
+              label 'docker'
+              args '-v /home/jenkins/cache/ccache:/opt/ccache -v /home/jenkins/cache/conan/.conan:/opt/conan/.conan'
+              additionalBuildArgs '--pull'
+            }
+          }
+          steps {
+            script {
+              sh 'git submodule sync'
+              sh 'find $CONAN_USER_HOME -name "system_reqs.txt" -exec rm {} \\;'
+              configure {
+                cmakeOptions =
+                  "-DBUILD_SHARED_LIBS=${build_shared} " +
+                  '-DBUILD_TESTING=OFF ' +
+                  '-DCMAKE_CXX_CLANG_TIDY=clang-tidy-7 '
+              }
+              build { log = 'build.log' }
+            }
+          }
+          post {
+            always {
+              recordIssues enabledForFailure: true, filters: [
+                excludeFile('.*\\.conan.*')],
+                tools: [clangTidy(name: 'Clang-Tidy', pattern: 'build/build.log')],
+                qualityGates: [[threshold: 513, type: 'TOTAL', unstable: true]]
             }
           }
         }
@@ -474,7 +530,7 @@ pipeline {
               filename 'Dockerfile.clang.full'
               dir 'scripts/docker'
               label 'docker'
-              args '-v /home/jenkins/cache:/home/jenkins/cache -v /home/jenkins/cache/conan/.conan:/home/jenkins/.conan'
+              args '-v /home/jenkins/cache/ccache:/opt/ccache -v /home/jenkins/cache/conan/.conan:/opt/conan/.conan'
               additionalBuildArgs '--pull'
             }
           }
@@ -484,17 +540,12 @@ pipeline {
               sh 'find $CONAN_USER_HOME -name "system_reqs.txt" -exec rm {} \\;'
               configure {
                 cmakeOptions =
+                  "-DBUILD_SHARED_LIBS=${build_shared} " +
                   '"-DCMAKE_CXX_INCLUDE_WHAT_YOU_USE=include-what-you-use;-Xiwyu;--mapping_file=../scripts/jenkins/iwyu-mappings.imp" ' +
-                  '-DCMAKE_LINK_WHAT_YOU_USE=ON ' +
-                  '"-DCMAKE_CXX_CPPCHECK=cppcheck;--std=c++11;--language=c++;--suppress=syntaxError;--suppress=preprocessorErrorDirective:*/ThirdParty/*;--suppress=preprocessorErrorDirective:*conan*/package/*" ' +
-                  '-DCMAKE_CXX_CLANG_TIDY=clang-tidy-3.9 '
+                  '-DCMAKE_LINK_WHAT_YOU_USE=ON '
                 config = 'Release'
               }
-              try {
-                build { target = 'check-header' }
-                build { }
-              }
-              catch (Exception e) { }
+              build { target = 'check-header' }
             }
           }
         }
@@ -580,7 +631,7 @@ pipeline {
               filename 'Dockerfile.clang.minimal'
               dir 'scripts/docker'
               label 'docker'
-              args '-v /home/jenkins/cache:/home/jenkins/cache -v /home/jenkins/cache/conan/.conan:/home/jenkins/.conan'
+              args '-v /home/jenkins/cache/ccache:/opt/ccache -v /home/jenkins/cache/conan/.conan:/opt/conan/.conan'
               additionalBuildArgs '--pull'
             }
           }

@@ -40,5 +40,5 @@ PorousMediaProperties::getSpecificStorage(
 {
     return *_specific_storage_models[getMaterialID(pos)];
 }
-}
-}
+}  // namespace PorousMedium
+}  // namespace MaterialLib

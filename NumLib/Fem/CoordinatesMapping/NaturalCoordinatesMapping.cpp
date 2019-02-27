@@ -102,8 +102,10 @@ computeMappingMatrices(
 static void checkJacobianDeterminant(const double detJ,
                                      MeshLib::Element const& element)
 {
-    if (detJ > 0)  // The usual case
+    if (detJ > 0)
+    {  // The usual case
         return;
+    }
 
     if (detJ < 0)
     {
@@ -379,6 +381,6 @@ OGS_INSTANTIATE_NATURAL_COORDINATES_MAPPING_FIX(TetRule4, ShapeTet4, 3);
 OGS_INSTANTIATE_NATURAL_COORDINATES_MAPPING_FIX(TriRule3, ShapeTri3, 3);
 OGS_INSTANTIATE_NATURAL_COORDINATES_MAPPING_FIX(TriRule6, ShapeTri6, 3);
 
-} // detail
+}  // namespace detail
 
-} // NumLib
+}  // namespace NumLib

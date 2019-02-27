@@ -104,7 +104,9 @@ int main (int argc, char* argv[])
 
     std::string out_fname(mesh_out.getValue());
     if (out_fname.empty())
+    {
         out_fname = BaseLib::dropFileExtension(mesh_in.getValue()) + "_sfc.vtu";
+    }
     MeshLib::IO::writeMeshToFile(*surface_mesh, out_fname);
 
     return EXIT_SUCCESS;

@@ -48,6 +48,6 @@ public:
     static const unsigned NPOINTS = MeshElement::n_all_nodes;
 };
 
-}
+}  // namespace NumLib
 
 #include "ShapeLine2-impl.h"

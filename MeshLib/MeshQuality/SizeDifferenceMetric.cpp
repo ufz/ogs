@@ -46,11 +46,15 @@ void SizeDifferenceMetric::calculateQuality()
         {
             MeshLib::Element const*const neighbor (elem.getNeighbor(i));
             if (neighbor == nullptr)
+            {
                 continue;
+            }
             double const vol_b (neighbor->getContent());
             double const ratio = (vol_a > vol_b) ? vol_b / vol_a : vol_a / vol_b;
             if (ratio < worst_ratio)
+            {
                 worst_ratio = ratio;
+            }
         }
         _element_quality_metric[k] = worst_ratio;
     }

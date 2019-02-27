@@ -68,4 +68,4 @@ private:
                              const std::vector<double>& dt_vector);
 };
 
-}  // NumLib
+}  // namespace NumLib

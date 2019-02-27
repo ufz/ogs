@@ -54,6 +54,6 @@ private:
         _local_assemblers;
 };
 
-}  // ProcessLib
+}  // namespace ProcessLib
 
 #include "GenericNonuniformNaturalBoundaryCondition-impl.h"

@@ -27,5 +27,5 @@ std::unique_ptr<Process> createThermalTwoPhaseFlowWithPPProcess(
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
         curves);
-}  // end of namespace
-}  // end of namespace
+}  // namespace ThermalTwoPhaseFlowWithPP
+}  // namespace ProcessLib

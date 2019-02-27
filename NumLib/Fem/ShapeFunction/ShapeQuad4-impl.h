@@ -35,5 +35,4 @@ void ShapeQuad4::computeGradShapeFunction(const T_X &r, T_N &dN)
     dN[7] = -(1.0 + r[0]) / 4;
 }
 
-}
-
+}  // namespace NumLib

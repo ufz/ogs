@@ -47,5 +47,5 @@ createLiquidFlowMaterialProperties(
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
     MeshLib::PropertyVector<int> const* const material_ids);
 
-}  // end of namespace
-}  // end of namespace
+}  // namespace LiquidFlow
+}  // namespace ProcessLib

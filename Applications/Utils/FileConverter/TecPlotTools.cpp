@@ -142,7 +142,9 @@ void resetDataStructures(std::size_t const& n_scalars,
     scalars.clear();
     scalars.reserve(n_scalars);
     for (std::size_t i = 0; i < n_scalars; ++i)
+    {
         scalars.push_back(std::vector<double>(0));
+    }
     val_count = 0;
 }
 
@@ -231,7 +233,9 @@ void skipGeometrySection(std::ifstream& in, std::string& line)
         if ((line.find("TITLE") != std::string::npos) ||
             (line.find("VARIABLES") != std::string::npos) ||
             (line.find("ZONE") != std::string::npos))
+        {
             return;
+        }
     }
 }
 
@@ -247,23 +251,29 @@ int splitFile(std::ifstream& in, std::string file_name)
         if (line.find("TITLE") != std::string::npos)
         {
             if (dataCountError(out, name, val_count, val_total))
+            {
                 return -3;
+            }
             writeTecPlotSection(out, file_name, write_count, val_count, val_total);
             out << line << "\n";
             continue;
         }
-        else if (line.find("VARIABLES") != std::string::npos)
+        if (line.find("VARIABLES") != std::string::npos)
         {
             if (dataCountError(out, name, val_count, val_total))
+            {
                 return -3;
+            }
             writeTecPlotSection(out, file_name, write_count, val_count, val_total);
             out << line << "\n";
             continue;
         }
-        else if (line.find("ZONE") != std::string::npos)
+        if (line.find("ZONE") != std::string::npos)
         {
             if (dataCountError(out, name, val_count, val_total))
+            {
                 return -3;
+            }
             writeTecPlotSection(out, file_name, write_count, val_count, val_total);
             out << line << "\n";
             name = getName(line);
@@ -277,7 +287,9 @@ int splitFile(std::ifstream& in, std::string file_name)
         val_count++;
     }
     if (dataCountError(out, name, val_count, val_total))
+    {
         return -3;
+    }
     INFO("Writing time step #%i", write_count);
     out.close();
     INFO("Finished split.");
@@ -296,14 +308,20 @@ int convertFile(std::ifstream& in, std::string file_name)
     while (std::getline(in, line))
     {
         if (line.find("GEOMETRY") != std::string::npos)
+        {
             skipGeometrySection(in, line);
+        }
 
         if (line.empty())
+        {
             continue;
-        else if (line.find("TITLE") != std::string::npos)
+        }
+        if (line.find("TITLE") != std::string::npos)
         {
             if (dataCountError(name, val_count, val_total))
+            {
                 return -3;
+            }
             if (val_count != 0)
             {
                 writeDataToMesh(file_name, write_count, var_names, scalars, dims);
@@ -316,7 +334,9 @@ int convertFile(std::ifstream& in, std::string file_name)
             if (val_count != 0)
             {
                 if (dataCountError(name, val_count, val_total))
+                {
                     return -3;
+                }
                 writeDataToMesh(file_name, write_count, var_names, scalars, dims);
             }
             var_names.clear();
@@ -329,7 +349,9 @@ int convertFile(std::ifstream& in, std::string file_name)
             if (val_count != 0)
             {
                 if (dataCountError(name, val_count, val_total))
+                {
                     return -3;
+                }
                 writeDataToMesh(file_name, write_count, var_names, scalars, dims);
                 resetDataStructures(var_names.size(), scalars, val_count);
             }
@@ -361,7 +383,9 @@ int convertFile(std::ifstream& in, std::string file_name)
         val_count++;
     }
     if (dataCountError(name, val_count, val_total))
+    {
         return -3;
+    }
     writeDataToMesh(file_name, write_count, var_names, scalars, dims);
     INFO("Finished conversion.");
     return 0;
@@ -429,9 +453,13 @@ int main(int argc, char* argv[])
         output_arg.getValue() : input_arg.getValue();
     int return_val(0);
     if (split_arg.getValue())
+    {
         return_val = splitFile(in, filename);
+    }
     else if (convert_arg.getValue())
+    {
         return_val = convertFile(in, filename);
+    }
 
     in.close();
     return return_val;

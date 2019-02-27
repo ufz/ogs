@@ -44,6 +44,6 @@ public:
     static const unsigned NPOINTS = MeshElement::n_all_nodes;
 };
 
-}
+}  // namespace NumLib
 
 #include "ShapePyra5-impl.h"

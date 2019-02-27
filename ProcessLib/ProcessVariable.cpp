@@ -112,8 +112,10 @@ ProcessVariable::ProcessVariable(
     DBUG("Constructing process variable %s", _name.c_str());
 
     if (_shapefunction_order < 1 || 2 < _shapefunction_order)
+    {
         OGS_FATAL("The given shape function order %d is not supported",
                   _shapefunction_order);
+    }
 
     // Boundary conditions
     if (auto bcs_config =
@@ -131,8 +133,10 @@ ProcessVariable::ProcessVariable(
                 bc_config.getConfigParameterOptional<int>("component");
 
             if (!component_id && _n_components == 1)
+            {
                 // default value for single component vars.
                 component_id = 0;
+            }
 
             _bc_configs.emplace_back(std::move(bc_config), mesh, component_id);
         }
@@ -158,8 +162,10 @@ ProcessVariable::ProcessVariable(
                 st_config.getConfigParameterOptional<int>("component");
 
             if (!component_id && _n_components == 1)
+            {
                 // default value for single component vars.
                 component_id = 0;
+            }
 
             _source_term_configs.emplace_back(std::move(st_config), mesh,
                                               component_id);
@@ -219,7 +225,9 @@ ProcessVariable::createBoundaryConditions(
     }
 
     if (_deactivated_subdomains.empty())
+    {
         return bcs;
+    }
 
     createBoundaryConditionsForDeactivatedSubDomains(dof_table, variable_id,
                                                      parameters, bcs);
@@ -293,7 +301,9 @@ void ProcessVariable::updateDeactivatedSubdomains(double const time)
 
     // Already initialized.
     if (!_ids_of_active_elements.empty())
+    {
         return;
+    }
 
     auto const& deactivated_materialIDs = (*found_a_set)->materialIDs;
 
@@ -306,7 +316,9 @@ void ProcessVariable::updateDeactivatedSubdomains(double const time)
         if (std::binary_search(deactivated_materialIDs.begin(),
                                deactivated_materialIDs.end(),
                                (*material_ids)[i]))
+        {
             continue;
+        }
         _ids_of_active_elements.push_back(_mesh.getElement(i)->getID());
     }
 }
@@ -320,9 +332,11 @@ std::vector<std::unique_ptr<SourceTerm>> ProcessVariable::createSourceTerms(
     std::vector<std::unique_ptr<SourceTerm>> source_terms;
 
     for (auto& config : _source_term_configs)
+    {
         source_terms.emplace_back(createSourceTerm(
             config, dof_table, config.mesh, variable_id, integration_order,
             _shapefunction_order, parameters));
+    }
 
     return source_terms;
 }

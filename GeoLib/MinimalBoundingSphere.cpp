@@ -68,9 +68,13 @@ MinimalBoundingSphere::MinimalBoundingSphere(MathLib::Point3d const& p,
     {
         MinimalBoundingSphere two_pnts_sphere;
         if (a.getLength() > b.getLength())
+        {
             two_pnts_sphere = MinimalBoundingSphere(p,r);
+        }
         else
-            two_pnts_sphere = MinimalBoundingSphere(p,q);
+        {
+            two_pnts_sphere = MinimalBoundingSphere(p, q);
+        }
         _radius = two_pnts_sphere.getRadius();
         _center = two_pnts_sphere.getCenter();
     }
@@ -206,4 +210,4 @@ std::vector<MathLib::Point3d*>* MinimalBoundingSphere::getRandomSpherePoints(std
     return pnts;
 }
 
-}
+}  // namespace GeoLib

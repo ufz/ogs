@@ -32,4 +32,4 @@ inline double rhoWaterHauer(const double T_Ads)
     return rho0 * (1. - alpha0 * (T_Ads-T0)); // in kg/m^3
 }
 
-}
+}  // namespace Adsorption

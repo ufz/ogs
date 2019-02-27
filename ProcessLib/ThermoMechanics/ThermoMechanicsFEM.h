@@ -186,7 +186,7 @@ public:
         {
             return setSigma(values);
         }
-        else if (name == "epsilon_ip")
+        if (name == "epsilon_ip")
         {
             return setEpsilon(values);
         }
@@ -310,7 +310,9 @@ public:
                 t, x_position, dt, eps_m_prev, eps_m, sigma_prev, *state, T_ip);
 
             if (!solution)
+            {
                 OGS_FATAL("Computation of local constitutive relation failed.");
+            }
 
             MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> C;
             std::tie(sigma, state, C) = std::move(*solution);
@@ -328,9 +330,11 @@ public:
                                              displacement_size);
 
             for (int i = 0; i < DisplacementDim; ++i)
+            {
                 N_u.template block<1, displacement_size / DisplacementDim>(
                        i, i * displacement_size / DisplacementDim)
                     .noalias() = N;
+            }
 
             // calculate real density
             // rho_s_{n+1} * (V_{n} + dV) = rho_s_n * V_n

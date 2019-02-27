@@ -70,4 +70,4 @@ std::unique_ptr<ParameterBase> createCurveScaledParameter(
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
         curves);
 
-}  // ProcessLib
+}  // namespace ProcessLib

@@ -26,4 +26,4 @@ double const GaussLegendreTri<2>::W[3] = {1./3., 1./3., 1./3.};
 const std::array<std::array<double, 2>, GaussLegendreTri<3>::NPoints> GaussLegendreTri<3>::X = {{{{1./3., 1./3.}}, {{1./5., 3./5.}}, {{1./5., 1./5.}}, {{3./5., 1./5.}}}};
 double const GaussLegendreTri<3>::W[4] = {-27./48., 25./48., 25./48., 25./48.};
 
-}
+}  // namespace MathLib

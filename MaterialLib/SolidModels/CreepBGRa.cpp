@@ -118,7 +118,9 @@ CreepBGRa<DisplacementDim>::integrateStress(
     auto const success_iterations = newton_solver.solve(jacobian);
 
     if (!success_iterations)
+    {
         return {};
+    }
 
     // If *success_iterations>0, tangentStiffness = J_(sigma)^{-1}C
     // where J_(sigma) is the Jacobian of the last local Newton-Raphson

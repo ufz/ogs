@@ -31,4 +31,4 @@ public:
     static bool testElementNodeOrder(const Element* /*e*/);
 }; /* class */
 
-} /* namespace */
+}  // namespace MeshLib

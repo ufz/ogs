@@ -72,5 +72,5 @@ private:
         _local_assemblers;
 };
 
-}  // end of namespace
-}  // end of namespace
+}  // namespace TwoPhaseFlowWithPP
+}  // namespace ProcessLib

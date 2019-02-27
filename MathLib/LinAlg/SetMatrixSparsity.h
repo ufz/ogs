@@ -31,7 +31,7 @@ void setMatrixSparsity(MATRIX& matrix, SPARSITY_PATTERN const& sparsity_pattern)
     set_sparsity(matrix, sparsity_pattern);
 }
 
-} // MathLib
+}  // namespace MathLib
 
 #ifdef USE_LIS
 #include "Lis/LisMatrix.h"

@@ -27,5 +27,5 @@ TESLocalAssemblerData::TESLocalAssemblerData(AssemblyParams const& ap_,
 }
 
 TESLocalAssemblerData::~TESLocalAssemblerData() = default;
-}
-}  // namespaces
+}  // namespace TES
+}  // namespace ProcessLib

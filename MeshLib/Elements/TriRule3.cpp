@@ -41,12 +41,20 @@ unsigned TriRule3::identifyFace(Node const* const* _nodes, Node* nodes[3])
     for (unsigned i=0; i<3; i++)
     {
         unsigned flag(0);
-        for (unsigned j=0; j<2; j++)
-            for (unsigned k=0; k<2; k++)
+        for (unsigned j = 0; j < 2; j++)
+        {
+            for (unsigned k = 0; k < 2; k++)
+            {
                 if (_nodes[edge_nodes[i][j]] == nodes[k])
+                {
                     flag++;
-        if (flag==2)
+                }
+            }
+        }
+        if (flag == 2)
+        {
             return i;
+        }
     }
     return std::numeric_limits<unsigned>::max();
 }

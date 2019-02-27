@@ -29,9 +29,14 @@ void applyKnownSolution(EigenMatrix &A_, EigenVector &b_, EigenVector &/*x*/,
     // A(k, j) = 0.
     // set row to zero
     for (auto row_id : vec_knownX_id)
+    {
         for (SpMat::InnerIterator it(A,row_id); it; ++it) {
-            if (it.col() != decltype(it.col())(row_id)) it.valueRef() = 0.0;
+            if (it.col() != decltype(it.col())(row_id))
+            {
+                it.valueRef() = 0.0;
+            }
         }
+    }
 
     SpMat AT = A.transpose();
 
@@ -44,7 +49,10 @@ void applyKnownSolution(EigenMatrix &A_, EigenVector &b_, EigenVector &/*x*/,
         // set column to zero, subtract from rhs
         for (SpMat::InnerIterator it(AT, row_id); it; ++it)
         {
-            if (it.col() == row_id) continue;
+            if (it.col() == row_id)
+            {
+                continue;
+            }
 
             b[it.col()] -= it.value()*x;
             it.valueRef() = 0.0;
@@ -62,7 +70,4 @@ void applyKnownSolution(EigenMatrix &A_, EigenVector &b_, EigenVector &/*x*/,
     A = AT.transpose();
 }
 
-} // MathLib
-
-
-
+}  // namespace MathLib

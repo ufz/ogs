@@ -49,11 +49,15 @@ const Element* PrismRule6::getFace(const Element* e, unsigned i)
     {
         unsigned nFaceNodes(PrismRule6::n_face_nodes[i]);
         auto** nodes = new Node*[nFaceNodes];
-        for (unsigned j=0; j<nFaceNodes; j++)
+        for (unsigned j = 0; j < nFaceNodes; j++)
+        {
             nodes[j] = const_cast<Node*>(e->getNode(face_nodes[i][j]));
+        }
 
         if (i == 0 || i == 4)
+        {
             return new Tri(nodes, e->getID());
+        }
 
         return new Quad(nodes);
     }
@@ -85,12 +89,21 @@ unsigned PrismRule6::identifyFace(Node const* const* _nodes, Node* nodes[3])
     for (unsigned i=0; i<5; i++)
     {
         unsigned flag(0);
-        for (unsigned j=0; j<4; j++)
-            for (unsigned k=0; k<3; k++)
-                if (face_nodes[i][j] != 99 && _nodes[face_nodes[i][j]] == nodes[k])
+        for (unsigned j = 0; j < 4; j++)
+        {
+            for (unsigned k = 0; k < 3; k++)
+            {
+                if (face_nodes[i][j] != 99 &&
+                    _nodes[face_nodes[i][j]] == nodes[k])
+                {
                     flag++;
-        if (flag==3)
+                }
+            }
+        }
+        if (flag == 3)
+        {
             return i;
+        }
     }
     return std::numeric_limits<unsigned>::max();
 }
@@ -104,9 +117,13 @@ ElementErrorCode PrismRule6::validate(const Element* e)
     {
         const auto* quad(dynamic_cast<const MeshLib::Quad*>(e->getFace(i)));
         if (quad)
+        {
             error_code |= quad->validate();
+        }
         else
+        {
             error_code.set(ElementErrorFlag::NodeOrder);
+        }
         delete quad;
     }
     error_code[ElementErrorFlag::NodeOrder] = !e->testElementNodeOrder();

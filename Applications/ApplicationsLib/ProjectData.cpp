@@ -278,8 +278,10 @@ void ProjectData::parseProcessVariables(
         auto pv = ProcessLib::ProcessVariable{var_config, mesh, _mesh_vec,
                                               _parameters};
         if (!names.insert(pv.getName()).second)
+        {
             OGS_FATAL("A process variable with name `%s' already exists.",
                       pv.getName().c_str());
+        }
 
         _process_variables.push_back(std::move(pv));
     }
@@ -299,8 +301,10 @@ void ProjectData::parseParameters(BaseLib::ConfigTree const& parameters_config)
         auto p =
             ProcessLib::createParameter(parameter_config, _mesh_vec, _curves);
         if (!names.insert(p->name).second)
+        {
             OGS_FATAL("A parameter with name `%s' already exists.",
                       p->name.c_str());
+        }
 
         _parameters.push_back(std::move(p));
     }
@@ -310,14 +314,18 @@ void ProjectData::parseParameters(BaseLib::ConfigTree const& parameters_config)
             ProcessLib::DeactivatedSubdomain::zero_parameter_name, 0.0));
 
     for (auto& parameter : _parameters)
+    {
         parameter->initialize(_parameters);
+    }
 }
 
 void ProjectData::parseMedia(
         boost::optional<BaseLib::ConfigTree> const& media_config)
 {
     if (!media_config)
+    {
         return;
+    }
 
     DBUG("Reading media:");
 
@@ -821,7 +829,9 @@ void ProjectData::parseCurves(
     boost::optional<BaseLib::ConfigTree> const& config)
 {
     if (!config)
+    {
         return;
+    }
 
     DBUG("Reading curves configuration.");
 

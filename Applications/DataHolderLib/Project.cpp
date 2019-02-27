@@ -80,11 +80,17 @@ bool Project::getUniqueName(std::string &name) const
         // If the original name already exists we start to add numbers to name for
         // as long as it takes to make the name unique.
         if (count > 1)
+        {
             cpName = cpName + "-" + std::to_string(count);
+        }
 
-        for (auto & mesh : _mesh_vec)
-            if ( cpName == mesh->getName())
+        for (auto& mesh : _mesh_vec)
+        {
+            if (cpName == mesh->getName())
+            {
                 isUnique = false;
+            }
+        }
     }
 
     // At this point cpName is a unique name and isUnique is true.
@@ -102,15 +108,23 @@ void Project::removePrimaryVariable(std::string const primary_var_name)
 {
     std::size_t const n_bc(_boundary_conditions.size());
     for (int i = n_bc - 1; i >= 0; --i)
+    {
         if (_boundary_conditions[i]->getProcessVarName() == primary_var_name)
+        {
             removeBoundaryCondition(primary_var_name,
                                     _boundary_conditions[i]->getParamName());
+        }
+    }
 
     std::size_t const n_st(_source_terms.size());
     for (int i = n_st - 1; i >= 0; --i)
+    {
         if (_source_terms[i]->getProcessVarName() == primary_var_name)
+        {
             removeSourceTerm(primary_var_name,
                              _source_terms[i]->getParamName());
+        }
+    }
 }
 
 void Project::removeBoundaryCondition(std::string const& primary_var_name,
@@ -145,4 +159,4 @@ void Project::removeSourceTerm(std::string const& primary_var_name,
     }
 }
 
-} //namespace
+}  // namespace DataHolderLib

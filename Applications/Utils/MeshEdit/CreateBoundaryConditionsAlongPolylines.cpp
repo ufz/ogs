@@ -97,8 +97,9 @@ void writeBCsAndGeometry(GeoLib::GEOObjects& geometry_sets,
 
     bool liquid_flow(false);
     if (bc_type == "LIQUID_FLOW")
+    {
         liquid_flow = true;
-
+    }
 
     GeoLib::PointVec const* pnt_vec_objs(geometry_sets.getPointVecObj(geo_name));
     std::vector<GeoLib::Point*> const& pnts(*(pnt_vec_objs->getVector()));
@@ -107,9 +108,13 @@ void writeBCsAndGeometry(GeoLib::GEOObjects& geometry_sets,
         std::string const& pnt_name(pnt_vec_objs->getItemNameByID(k));
         if (!pnt_name.empty()) {
             if (liquid_flow)
+            {
                 writeLiquidFlowPointBC(bc_out, pnt_name);
+            }
             else
+            {
                 writeGroundwaterFlowPointBC(bc_out, pnt_name, (*pnts[k])[2]);
+            }
         }
     }
     bc_out << "#STOP\n";
@@ -217,7 +222,9 @@ int main (int argc, char* argv[])
         std::vector<std::size_t> ids
             (mesh_searcher.getMeshNodeIDsAlongPolyline(*((*plys)[k])));
         if (ids.empty())
+        {
             continue;
+        }
         std::string geo_name("Polyline-"+std::to_string(k));
         convertMeshNodesToGeometry(surface_mesh->getNodes(), ids, geo_name,
             geometry_sets);
@@ -233,7 +240,9 @@ int main (int argc, char* argv[])
 
     std::string merge_name("AllMeshNodesAlongPolylines");
     if (geometry_sets.mergeGeometries(geo_names, merge_name) == 2)
+    {
         merge_name = geo_names[0];
+    }
 
     GeoLib::PointVec const* pnt_vec(geometry_sets.getPointVecObj(merge_name));
     std::vector<GeoLib::Point*> const* merged_pnts(pnt_vec->getVector());

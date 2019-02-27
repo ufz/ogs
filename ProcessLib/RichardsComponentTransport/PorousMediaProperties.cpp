@@ -54,5 +54,5 @@ PorousMediaProperties::getRelativePermeability(
 {
     return *_relative_permeability_models[getMaterialID(pos)];
 }
-}
-}
+}  // namespace RichardsComponentTransport
+}  // namespace ProcessLib

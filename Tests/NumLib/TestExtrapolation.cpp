@@ -120,7 +120,9 @@ public:
     {
         cache.clear();
         for (auto value : _int_pt_values)
+        {
             cache.push_back(2.0 * value);
+        }
         return cache;
     }
 
@@ -243,7 +245,7 @@ void extrapolate(ExtrapolationTestProcess const& pcs,
     EXPECT_GT(tolerance_dx, dx_norm);
 }
 
-}  // anonymous namespace
+}  // namespace ExtrapolationTest
 
 #ifndef USE_PETSC
 TEST(NumLib, Extrapolation)

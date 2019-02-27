@@ -44,6 +44,6 @@ public:
     static const unsigned NPOINTS = MeshElement::n_all_nodes;
 };
 
-}
+}  // namespace NumLib
 
 #include "ShapePrism6-impl.h"

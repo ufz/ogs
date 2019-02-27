@@ -80,7 +80,9 @@ void getEssentialBCValuesLocal(
             {bc_mesh.getID(), MeshLib::MeshItemType::Node, id}, variable_id,
             component_id);
         if (global_index == NumLib::MeshComponentMap::nop)
+        {
             continue;
+        }
         // For the DDC approach (e.g. with PETSc option), the negative
         // index of global_index means that the entry by that index is a ghost
         // one, which should be dropped. Especially for PETSc routines
@@ -95,4 +97,4 @@ void getEssentialBCValuesLocal(
         }
     }
 }
-}  // end of name space
+}  // namespace ProcessLib

@@ -77,5 +77,5 @@ private:
     std::array<bool, FluidPropertyTypeNumber> _is_density_dependent;
 };
 
-}  // end namespace
-}  // end namespace
+}  // namespace Fluid
+}  // namespace MaterialLib

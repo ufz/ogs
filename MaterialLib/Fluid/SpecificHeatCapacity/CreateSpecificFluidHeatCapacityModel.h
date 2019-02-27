@@ -33,5 +33,5 @@ class FluidProperty;
 std::unique_ptr<FluidProperty> createSpecificFluidHeatCapacityModel(
     BaseLib::ConfigTree const& config);
 
-}  // end namespace
-}  // end namespace
+}  // namespace Fluid
+}  // namespace MaterialLib

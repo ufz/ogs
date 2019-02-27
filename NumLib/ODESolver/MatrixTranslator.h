@@ -308,4 +308,4 @@ std::unique_ptr<MatrixTranslator<ODETag>> createMatrixTranslator(
 }
 
 //! @}
-}
+}  // namespace NumLib

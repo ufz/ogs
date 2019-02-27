@@ -20,7 +20,9 @@ std::unique_ptr<AbstractJacobianAssembler> createJacobianAssembler(
     boost::optional<BaseLib::ConfigTree> const& config)
 {
     if (!config)
+    {
         return std::make_unique<AnalyticalJacobianAssembler>();
+    }
 
     //! \ogs_file_param{prj__processes__process__jacobian_assembler__type}
     auto const type = config->peekConfigParameter<std::string>("type");
@@ -40,4 +42,4 @@ std::unique_ptr<AbstractJacobianAssembler> createJacobianAssembler(
 
     OGS_FATAL("Unknown Jacobian assembler type: `%s'.", type.c_str());
 }
-}  // ProcessLib
+}  // namespace ProcessLib

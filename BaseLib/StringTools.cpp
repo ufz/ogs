@@ -40,8 +40,10 @@ std::list<std::string> splitString(const std::string &str, char delim)
     std::list<std::string> strList;
     std::stringstream ss(str);
     std::string item;
-    while(getline(ss, item, delim))
+    while (getline(ss, item, delim))
+    {
         strList.push_back(item);
+    }
     return strList;
 }
 
@@ -60,11 +62,15 @@ void trim(std::string &str, char ch)
     {
         str.erase(pos + 1);
         pos = str.find_first_not_of(ch);
-        if(pos != std::string::npos)
+        if (pos != std::string::npos)
+        {
             str.erase(0, pos);
+        }
     }
     else
+    {
         str.erase(str.begin(), str.end());
+    }
 }
 
 void simplify(std::string &str)

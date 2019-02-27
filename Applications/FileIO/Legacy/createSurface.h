@@ -27,4 +27,4 @@ namespace FileIO
 bool createSurface(GeoLib::Polyline const& polyline,
                    GeoLib::GEOObjects& geometries,
                    std::string const& geometry_name);
-}
+}  // namespace FileIO

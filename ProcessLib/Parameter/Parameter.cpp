@@ -74,4 +74,4 @@ std::unique_ptr<ParameterBase> createParameter(
     OGS_FATAL("Cannot construct a parameter of given type '%s'.", type.c_str());
 }
 
-}  // ProcessLib
+}  // namespace ProcessLib

@@ -69,5 +69,5 @@ protected:
     const double _minor_offset = std::numeric_limits<double>::epsilon();
 };
 
-}  // end namespace
-}  // end namespace
+}  // namespace PorousMedium
+}  // namespace MaterialLib

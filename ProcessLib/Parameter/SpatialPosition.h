@@ -86,4 +86,4 @@ private:
     boost::optional<MathLib::TemplatePoint<double, 3>> _coordinates;
 };
 
-}  // ProcessLib
+}  // namespace ProcessLib

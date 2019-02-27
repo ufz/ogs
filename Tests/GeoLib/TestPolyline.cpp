@@ -109,6 +109,8 @@ TEST(GeoLib, PolylineTest)
     }
     ASSERT_EQ(ply.getNumberOfSegments(), segment_cnt);
 
-    for (auto & ply_pnt : ply_pnts)
+    for (auto& ply_pnt : ply_pnts)
+    {
         delete ply_pnt;
+    }
 }

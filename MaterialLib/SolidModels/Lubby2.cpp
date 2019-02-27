@@ -165,13 +165,17 @@ Lubby2<DisplacementDim>::integrateStress(
         auto const success_iterations = newton_solver.solve(K_loc);
 
         if (!success_iterations)
+        {
             return {};
+        }
 
         // If the Newton loop didn't run, the linear solver will not be
         // initialized.
         // This happens usually for the first iteration of the first timestep.
         if (*success_iterations == 0)
+        {
             linear_solver.compute(K_loc);
+        }
     }
 
     KelvinMatrix C =

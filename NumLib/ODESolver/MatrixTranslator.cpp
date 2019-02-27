@@ -222,4 +222,4 @@ void MatrixTranslatorCrankNicolson<
     LinAlg::scale(_b_bar, 1.0 - theta);
 }
 
-}  // NumLib
+}  // namespace NumLib

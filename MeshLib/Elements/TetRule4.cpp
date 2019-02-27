@@ -44,8 +44,10 @@ const Element* TetRule4::getFace(const Element* e, unsigned i)
     if (i<n_faces)
     {
         std::array<Node*,3> nodes;
-        for (unsigned j=0; j<3; j++)
+        for (unsigned j = 0; j < 3; j++)
+        {
             nodes[j] = const_cast<Node*>(e->getNode(face_nodes[i][j]));
+        }
         return new Tri(nodes, e->getID());
     }
     ERR("Error in MeshLib::Element::getFace() - Index %d does not exist.", i);
@@ -69,12 +71,20 @@ unsigned TetRule4::identifyFace(Node const* const* _nodes, Node* nodes[3])
     for (unsigned i=0; i<4; i++)
     {
         unsigned flag(0);
-        for (unsigned j=0; j<3; j++)
-            for (unsigned k=0; k<3; k++)
+        for (unsigned j = 0; j < 3; j++)
+        {
+            for (unsigned k = 0; k < 3; k++)
+            {
                 if (_nodes[face_nodes[i][j]] == nodes[k])
+                {
                     flag++;
-        if (flag==3)
+                }
+            }
+        }
+        if (flag == 3)
+        {
             return i;
+        }
     }
     return std::numeric_limits<unsigned>::max();
 }

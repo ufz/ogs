@@ -92,4 +92,4 @@ void GenericNaturalBoundaryCondition<
         _local_assemblers, *_dof_table_boundary, t, x, K, b, Jac);
 }
 
-}  // ProcessLib
+}  // namespace ProcessLib

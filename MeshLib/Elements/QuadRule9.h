@@ -41,4 +41,4 @@ public:
     static const CellType cell_type = CellType::QUAD9;
 }; /* class */
 
-} /* namespace */
+}  // namespace MeshLib

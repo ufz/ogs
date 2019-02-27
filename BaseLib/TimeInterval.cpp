@@ -33,4 +33,4 @@ std::unique_ptr<TimeInterval> createTimeInterval(
 
     return std::make_unique<BaseLib::TimeInterval>(start_time, end_time);
 }
-}  // end of namespace
+}  // namespace BaseLib

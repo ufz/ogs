@@ -19,7 +19,9 @@ CentralDifferencesJacobianAssembler::CentralDifferencesJacobianAssembler(
     : _absolute_epsilons(std::move(absolute_epsilons))
 {
     if (_absolute_epsilons.empty())
+    {
         OGS_FATAL("No values for the absolute epsilons have been given.");
+    }
 }
 
 void CentralDifferencesJacobianAssembler::assembleWithJacobian(
@@ -170,4 +172,4 @@ createCentralDifferencesJacobianAssembler(BaseLib::ConfigTree const& config)
         std::move(abs_eps));
 }
 
-}  // ProcessLib
+}  // namespace ProcessLib

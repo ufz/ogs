@@ -138,5 +138,5 @@ private:
     }
 };
 
-}  // end of namespace
-}  // end of namespace
+}  // namespace Fluid
+}  // namespace MaterialLib

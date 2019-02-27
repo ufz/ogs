@@ -26,7 +26,9 @@ double TimeDiscretization::computeRelativeChangeFromPreviousTimestep(
     }
 
     if (!_dx)
+    {
         _dx = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(x);
+    }
 
     auto& dx = *_dx;
     MathLib::LinAlg::copy(x, dx);  // copy x to dx.
@@ -37,11 +39,15 @@ double TimeDiscretization::computeRelativeChangeFromPreviousTimestep(
 
     const double norm_x = MathLib::LinAlg::norm(x, norm_type);
     if (norm_x > std::numeric_limits<double>::epsilon())
+    {
         return norm_dx / norm_x;
+    }
 
     // Both of norm_x and norm_dx are close to zero
     if (norm_dx < std::numeric_limits<double>::epsilon())
+    {
         return 1.0;
+    }
 
     // Only norm_x is close to zero
     return norm_dx / std::numeric_limits<double>::epsilon();
@@ -107,7 +113,7 @@ const double BDF_Coeffs[6][7] = {
     // coefficient of (for BDF(6), the oldest state, x_n, is always rightmost)
     //        x_+6, x_+5, x_+4,       x_+3,  x_+2, x_+1,     x_n
 };
-}
+}  // namespace detail
 
 double BackwardDifferentiationFormula::getNewXWeight() const
 {

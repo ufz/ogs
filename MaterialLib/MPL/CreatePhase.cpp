@@ -75,7 +75,7 @@ std::unique_ptr<MaterialPropertyLib::Phase> createPhase(
     return std::make_unique<Phase>(
         std::move(phase_type), std::move(components), std::move(properties));
 }
-}
+}  // namespace
 
 namespace MaterialPropertyLib
 {

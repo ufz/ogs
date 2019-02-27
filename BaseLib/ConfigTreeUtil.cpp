@@ -75,4 +75,4 @@ makeConfigTree(const std::string& filepath, const bool be_ruthless,
               filepath.c_str());
 }
 
-}
+}  // namespace BaseLib

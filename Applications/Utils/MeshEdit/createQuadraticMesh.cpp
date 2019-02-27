@@ -45,7 +45,9 @@ int main(int argc, char *argv[])
     std::unique_ptr<MeshLib::Mesh> mesh(
         MeshLib::IO::readMeshFromFile(input_arg.getValue()));
     if (!mesh)
+    {
         return EXIT_FAILURE;
+    }
 
     INFO("Create a quadratic order mesh");
     auto new_mesh(MeshLib::createQuadraticOrderMesh(*mesh));

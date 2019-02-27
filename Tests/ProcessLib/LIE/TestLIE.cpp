@@ -28,7 +28,9 @@ std::unique_ptr<MeshLib::Mesh> createTriangle(
 {
     auto** nodes = new MeshLib::Node*[3];
     for (std::size_t i = 0; i < points.size(); ++i)
+    {
         nodes[i] = new MeshLib::Node(points[i]);
+    }
     MeshLib::Element* e = new MeshLib::Tri(nodes);
 
     return std::make_unique<MeshLib::Mesh>(
@@ -41,7 +43,9 @@ std::unique_ptr<MeshLib::Mesh> createLine(
 {
     auto** nodes = new MeshLib::Node*[2];
     for (std::size_t i = 0; i < points.size(); ++i)
+    {
         nodes[i] = new MeshLib::Node(points[i]);
+    }
     MeshLib::Element* e = new MeshLib::Line(nodes);
 
     return std::make_unique<MeshLib::Mesh>(
@@ -51,7 +55,7 @@ std::unique_ptr<MeshLib::Mesh> createLine(
 
 const double eps = std::numeric_limits<double>::epsilon();
 
-}
+}  // namespace
 
 TEST(LIE, rotationMatrixXYTriangle)
 {

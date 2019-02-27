@@ -60,4 +60,4 @@ createNonuniformDirichletBoundaryCondition(
         boundary_mesh, *property, dof_table, variable_id, component_id);
 }
 
-}  // ProcessLib
+}  // namespace ProcessLib

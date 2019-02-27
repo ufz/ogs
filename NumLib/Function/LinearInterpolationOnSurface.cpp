@@ -43,10 +43,14 @@ LinearInterpolationOnSurface::LinearInterpolationOnSurface(
 double LinearInterpolationOnSurface::operator()(const MathLib::Point3d& pnt) const
 {
     if (!_sfc.isPntInBoundingVolume(pnt, 0))
+    {
         return _default_value;
+    }
     auto* tri = _sfc.findTriangle(pnt);
     if (tri == nullptr)
+    {
         return _default_value;
+    }
 
     std::array<double, 3> pnt_values;
     for (unsigned j=0; j<3; j++) {
@@ -68,8 +72,10 @@ double LinearInterpolationOnSurface::interpolateInTri(
     MathLib::Point3d const& pnt) const
 {
     std::vector<GeoLib::Point> pnts;
-    for (unsigned i=0; i<3; i++)
+    for (unsigned i = 0; i < 3; i++)
+    {
         pnts.emplace_back(*tri.getPoint(i));
+    }
     pnts.emplace_back(pnt, -1);
     std::vector<GeoLib::Point*> p_pnts = {{&pnts[0], &pnts[1], &pnts[2], &pnts[3]}};
     GeoLib::rotatePointsToXY(p_pnts.begin(), p_pnts.begin()+3, p_pnts.begin(), p_pnts.end());
@@ -104,11 +110,12 @@ double LinearInterpolationOnSurface::interpolateInTri(
     c[2] = 0.5/area*(v2[0]-v1[0]);
 
     double val = .0;
-    for (unsigned i=0; i<3; i++)
-        val += (a[i]+b[i]*v_pnt[0]+c[i]*v_pnt[1]) * vertex_values[i];
+    for (unsigned i = 0; i < 3; i++)
+    {
+        val += (a[i] + b[i] * v_pnt[0] + c[i] * v_pnt[1]) * vertex_values[i];
+    }
 
     return val;
 }
 
-} // NumLib
-
+}  // namespace NumLib

@@ -89,13 +89,17 @@ TEST_F(MeshLibProperties, PropertyVectorTestIntegrationPoint)
         std::size_t const size = offsets[i + 1] - offsets[i];
         ASSERT_EQ(n_integration_points, size);
         for (int ip = 0; ip < n_integration_points; ++ip)
+        {
             ASSERT_EQ(i + ip * 0.01, p[offsets[i] + ip]);
+        }
     }
     {  // Last element
         std::size_t const size = p.size() - offsets[i];
         ASSERT_EQ(n_integration_points, size);
         for (int ip = 0; ip < n_integration_points; ++ip)
+        {
             ASSERT_EQ(i + ip * 0.01, p[offsets[i] + ip]);
+        }
     }
 }
 

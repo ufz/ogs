@@ -53,8 +53,10 @@ std::vector<MeshLib::Node*> MeshGenerator::generateRegularNodes(
     std::vector<const std::vector<double>*> vec_xyz_coords;
     vec_xyz_coords.push_back(&vec_x_coords);
     std::vector<double> dummy(1,0.0);
-    for (unsigned i=vec_xyz_coords.size()-1; i<3u; i++)
+    for (unsigned i = vec_xyz_coords.size() - 1; i < 3u; i++)
+    {
         vec_xyz_coords.push_back(&dummy);
+    }
     return generateRegularNodes(vec_xyz_coords, origin);
 }
 
@@ -67,8 +69,10 @@ std::vector<MeshLib::Node*> MeshGenerator::generateRegularNodes(
     vec_xyz_coords.push_back(&vec_x_coords);
     vec_xyz_coords.push_back(&vec_y_coords);
     std::vector<double> dummy(1,0.0);
-    for (unsigned i=vec_xyz_coords.size()-1; i<3u; i++)
+    for (unsigned i = vec_xyz_coords.size() - 1; i < 3u; i++)
+    {
         vec_xyz_coords.push_back(&dummy);
+    }
     return generateRegularNodes(vec_xyz_coords, origin);
 }
 
@@ -454,8 +458,10 @@ Mesh* MeshGenerator::generateRegularPrismMesh(
     std::unique_ptr<MeshLib::Mesh> mesh (
         generateRegularTriMesh(n_x_cells, n_y_cells, cell_size_x, cell_size_y, origin, mesh_name));
     std::size_t const n_tris (mesh->getNumberOfElements());
-    for (std::size_t i=0; i<n_z_cells; ++i)
+    for (std::size_t i = 0; i < n_z_cells; ++i)
+    {
         mesh.reset(MeshLib::addTopLayerToMesh(*mesh, cell_size_z, mesh_name));
+    }
     std::vector<std::size_t> elem_ids (n_tris);
     std::iota(elem_ids.begin(), elem_ids.end(), 0);
     return MeshLib::removeElements(*mesh, elem_ids, mesh_name);
@@ -636,4 +642,4 @@ MeshGenerator::createSurfaceMesh(std::string const& mesh_name,
     return new MeshLib::Mesh(mesh_name, nodes, sfc_eles);
 }
 
-}
+}  // namespace MeshLib

@@ -130,19 +130,31 @@ public:
     bool containsPoint(T const & pnt, double eps) const
     {
         if (pnt[0] < _min_pnt[0] - eps || _max_pnt[0] + eps <= pnt[0])
+        {
             return false;
+        }
         if (pnt[1] < _min_pnt[1] - eps || _max_pnt[1] + eps <= pnt[1])
+        {
             return false;
+        }
         if (pnt[2] < _min_pnt[2] - eps || _max_pnt[2] + eps <= pnt[2])
+        {
             return false;
+        }
         return true;
     }
 
     template <typename T>
     bool containsPointXY(T const & pnt) const
     {
-        if (pnt[0] < _min_pnt[0] || _max_pnt[0] <= pnt[0]) return false;
-        if (pnt[1] < _min_pnt[1] || _max_pnt[1] <= pnt[1]) return false;
+        if (pnt[0] < _min_pnt[0] || _max_pnt[0] <= pnt[0])
+        {
+            return false;
+        }
+        if (pnt[1] < _min_pnt[1] || _max_pnt[1] <= pnt[1])
+        {
+            return false;
+        }
         return true;
     }
 
@@ -240,4 +252,4 @@ private:
         update(*pnt);
     }
 };
-} // end namespace
+}  // namespace GeoLib

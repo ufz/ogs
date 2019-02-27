@@ -142,7 +142,9 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
         }
 
         if (!material_properties.has_fluid_thermal_expansion)
+        {
             return;
+        }
 
         // Add the thermal expansion term
         {

@@ -54,4 +54,4 @@ inline double alphaTWaterDean(const double T_Ads)
     return aT_100 / (1. - aT_100 * (Tcel - 100.));
 }
 
-}
+}  // namespace Adsorption

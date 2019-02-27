@@ -98,13 +98,17 @@ PointVec::PointVec(
         std::size_t cnt(0);
         for (cnt = 0;
              cnt < rm_pos.size() && _pnt_id_map[rm_pos[k]] > rm_pos[cnt];)
+        {
             cnt++;
+        }
         _pnt_id_map[rm_pos[k]] -= cnt;
     }
 
     // set value of the point id to the position of the point within _data_vec
     for (std::size_t k(0); k < _data_vec->size(); ++k)
+    {
         (*_data_vec)[k]->setID(k);
+    }
 
     if (number_of_all_input_pnts > _data_vec->size())
         WARN("PointVec::PointVec(): there are %d double points.",
@@ -116,7 +120,10 @@ PointVec::PointVec(
     // fetch the names from the name id map
     for (auto p : *_name_id_map)
     {
-        if (p.second >= _id_to_name_map.size()) continue;
+        if (p.second >= _id_to_name_map.size())
+        {
+            continue;
+        }
         _id_to_name_map[p.second] = p.first;
     }
 }
@@ -268,4 +275,4 @@ void PointVec::resetInternalDataStructures()
     }
 }
 
-}  // end namespace
+}  // namespace GeoLib

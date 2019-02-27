@@ -25,8 +25,10 @@ void setMatrixZero(T &mat)
     //mat.setZero();
     const std::size_t n = mat.rows()*mat.cols();
     auto* v = mat.data();
-    for (std::size_t i=0; i<n; i++)
+    for (std::size_t i = 0; i < n; i++)
+    {
         v[i] = .0;
+    }
 }
 
 template<class T>
@@ -35,8 +37,10 @@ void setVectorZero(T &vec)
     //vec.setZero();
     const std::size_t n = vec.size();
     auto* v = vec.data();
-    for (std::size_t i=0; i<n; i++)
+    for (std::size_t i = 0; i < n; i++)
+    {
         v[i] = .0;
+    }
 }
 
 /*
@@ -88,7 +92,7 @@ inline void setZero(ShapeMatrices<T_N, T_DNDR, T_J, T_DNDX> &shape, ShapeDataFie
     setZero(shape, ShapeDataFieldType<ShapeMatrixType::DNDX>());
 }
 
-} //detail
+}  // namespace detail
 
 template <class T_N, class T_DNDR, class T_J, class T_DNDX>
 inline void ShapeMatrices<T_N, T_DNDR, T_J, T_DNDX>::setZero()
@@ -121,5 +125,4 @@ std::ostream& operator<< (std::ostream &os, const ShapeMatrices<T_N, T_DNDR, T_J
     return os;
 }
 
-} // NumLib
-
+}  // namespace NumLib

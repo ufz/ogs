@@ -135,5 +135,5 @@ createTwoPhaseFlowWithPPMaterialProperties(
         std::move(relative_permeability_models));
 }
 
-}  // end namespace
-}  // end namespace
+}  // namespace TwoPhaseFlowWithPP
+}  // namespace ProcessLib

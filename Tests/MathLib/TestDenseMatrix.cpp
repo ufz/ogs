@@ -20,9 +20,13 @@ TEST(MathLib, DenseMatrixTransposeInPlace)
     // square matrix
     DenseMatrix<double> m1(3,3);
     unsigned cnt = 0;
-    for (unsigned i=0; i<m1.getNumberOfRows(); i++)
-        for (unsigned j=0; j<m1.getNumberOfColumns(); j++)
-            m1(i,j) = cnt++;
+    for (unsigned i = 0; i < m1.getNumberOfRows(); i++)
+    {
+        for (unsigned j = 0; j < m1.getNumberOfColumns(); j++)
+        {
+            m1(i, j) = cnt++;
+        }
+    }
     double expected_m1[] = {0, 1, 2, 3, 4, 5, 6, 7, 8};
     ASSERT_EQ(3u, m1.getNumberOfRows());
     ASSERT_EQ(3u, m1.getNumberOfColumns());
@@ -36,9 +40,13 @@ TEST(MathLib, DenseMatrixTransposeInPlace)
     // non-square matrix 1
     DenseMatrix<double> m2(2,3);
     cnt = 0;
-    for (unsigned i=0; i<m2.getNumberOfRows(); i++)
-        for (unsigned j=0; j<m2.getNumberOfColumns(); j++)
-            m2(i,j) = cnt++;
+    for (unsigned i = 0; i < m2.getNumberOfRows(); i++)
+    {
+        for (unsigned j = 0; j < m2.getNumberOfColumns(); j++)
+        {
+            m2(i, j) = cnt++;
+        }
+    }
     ASSERT_EQ(2u, m2.getNumberOfRows());
     ASSERT_EQ(3u, m2.getNumberOfColumns());
     double expected_m2[] = {0, 1, 2, 3, 4, 5};
@@ -52,9 +60,13 @@ TEST(MathLib, DenseMatrixTransposeInPlace)
     // non-square matrix 2
     DenseMatrix<double> m3(3,2);
     cnt = 0;
-    for (unsigned i=0; i<m3.getNumberOfRows(); i++)
-        for (unsigned j=0; j<m3.getNumberOfColumns(); j++)
-            m3(i,j) = cnt++;
+    for (unsigned i = 0; i < m3.getNumberOfRows(); i++)
+    {
+        for (unsigned j = 0; j < m3.getNumberOfColumns(); j++)
+        {
+            m3(i, j) = cnt++;
+        }
+    }
     ASSERT_EQ(3u, m3.getNumberOfRows());
     ASSERT_EQ(2u, m3.getNumberOfColumns());
     double expected_m3[] = {0, 1, 2, 3, 4, 5};

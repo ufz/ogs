@@ -66,7 +66,9 @@ std::unique_ptr<Process> createRichardsFlowProcess(
     Eigen::VectorXd specific_body_force(b.size());
     bool const has_gravity = MathLib::toVector(b).norm() > 0;
     if (has_gravity)
+    {
         std::copy_n(b.data(), b.size(), specific_body_force.data());
+    }
 
     // has mass lumping
     //! \ogs_file_param{prj__processes__process__RICHARDS_FLOW__mass_lumping}

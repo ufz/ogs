@@ -47,13 +47,21 @@ public:
     static std::string toString(const ElementErrorFlag e)
     {
         if (e == ElementErrorFlag::ZeroVolume)
+        {
             return "zero volume";
+        }
         if (e == ElementErrorFlag::NonCoplanar)
+        {
             return "non coplanar nodes";
+        }
         if (e == ElementErrorFlag::NonConvex)
+        {
             return "non-convex geometry";
+        }
         if (e == ElementErrorFlag::NodeOrder)
+        {
             return "wrong node order";
+        }
         return "nonspecified error";
     }
 

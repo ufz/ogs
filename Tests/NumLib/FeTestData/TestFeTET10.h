@@ -60,4 +60,4 @@ public:
     double getVolume() const { return 1.0 / 6.; }
 };
 
-}  // namespace
+}  // namespace FeTestData

@@ -52,8 +52,10 @@ TEST(GeoLib, TestComputeAndInsertAllIntersectionPoints)
     ply0->addPoint(0);
     ply0->addPoint(1);
     auto* ply1(new GeoLib::Polyline(pnts));
-    for (std::size_t k(2); k<pnts.size(); ++k)
+    for (std::size_t k(2); k < pnts.size(); ++k)
+    {
         ply1->addPoint(k);
+    }
     auto* plys(new std::vector<GeoLib::Polyline*>);
     plys->push_back(ply0);
     plys->push_back(ply1);

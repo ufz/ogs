@@ -51,4 +51,4 @@ const std::array<std::array<double, 3>, GaussLegendreTet<1>::NPoints>
 template <>
 double const GaussLegendreTet<1>::W[1];
 #endif
-}
+}  // namespace MathLib

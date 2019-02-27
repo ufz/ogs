@@ -25,7 +25,9 @@ void createSecondaryVariables(
         //! \ogs_file_param{prj__processes__process__secondary_variables}
         config.getConfigSubtreeOptional("secondary_variables");
     if (!sec_vars_config)
+    {
         return;
+    }
 
     for (
         auto sec_var_config :

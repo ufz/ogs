@@ -124,5 +124,5 @@ private:
     // Such property vectors will be added here if they are needed.
 };
 
-}  // end of namespace
-}  // end of namespace
+}  // namespace LiquidFlow
+}  // namespace ProcessLib

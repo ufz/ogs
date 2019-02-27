@@ -53,5 +53,4 @@ void ShapePrism6::computeGradShapeFunction(const T_X &x, T_N &dN)
     dN[17] = -dN[14];
 }
 
-}
-
+}  // namespace NumLib

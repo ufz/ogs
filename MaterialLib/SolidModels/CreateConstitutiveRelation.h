@@ -50,5 +50,5 @@ extern template std::map<int,
 createConstitutiveRelations<3>(
     std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config);
-}
-}
+}  // namespace Solids
+}  // namespace MaterialLib

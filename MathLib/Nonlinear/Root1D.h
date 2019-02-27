@@ -38,8 +38,7 @@ inline bool almost_zero(double a)
     return std::abs(a) <= std::numeric_limits<double>::epsilon();
 }
 
-}
-
+}  // namespace detail
 
 //! Use the regula falsi method to find the root of some scalar function of one
 //! variable.
@@ -72,7 +71,10 @@ public:
     {
         for (unsigned i=0; i<num_steps; ++i)
         {
-            if (_a == _b) return;
+            if (_a == _b)
+            {
+                return;
+            }
 
             const double s = (_fb - _fa)/(_b - _a);
             const double c = _a - _fa/s;
@@ -98,7 +100,10 @@ public:
     //! Returns the current estimate of the root.
     double getResult() const
     {
-        if (_a == _b) return _a;
+        if (_a == _b)
+        {
+            return _a;
+        }
 
         const double s = (_fb - _fa)/(_b - _a);
         const double c = _a - _fa/s;
@@ -159,6 +164,6 @@ struct AndersonBjorck
     }
 };
 
-}
+}  // namespace Nonlinear
 
 } // namespace MathLib

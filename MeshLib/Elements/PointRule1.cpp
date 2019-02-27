@@ -34,7 +34,9 @@ bool PointRule1::isPntInElement(Node const* const* nodes,
 unsigned PointRule1::identifyFace(Node const* const* _nodes, Node* nodes[1])
 {
     if (nodes[0] == _nodes[0])
+    {
         return 0;
+    }
     return std::numeric_limits<unsigned>::max();
 }
 

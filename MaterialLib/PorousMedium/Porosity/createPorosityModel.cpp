@@ -44,5 +44,5 @@ std::unique_ptr<Porosity> createPorosityModel(BaseLib::ConfigTree const& config,
               type.data());
 }
 
-}  // end namespace
-}  // end namespace
+}  // namespace PorousMedium
+}  // namespace MaterialLib

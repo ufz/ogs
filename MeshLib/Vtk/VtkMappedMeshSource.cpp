@@ -48,10 +48,14 @@ int VtkMappedMeshSource::ProcessRequest(vtkInformation* request,
                                         vtkInformationVector* outputVector)
 {
     if (request->Has(vtkDemandDrivenPipeline::REQUEST_DATA()))
+    {
         return this->RequestData(request, inputVector, outputVector);
+    }
 
     if (request->Has(vtkDemandDrivenPipeline::REQUEST_INFORMATION()))
+    {
         return this->RequestInformation(request, inputVector, outputVector);
+    }
 
     return this->Superclass::ProcessRequest(request, inputVector, outputVector);
 }
@@ -68,7 +72,9 @@ int VtkMappedMeshSource::RequestData(vtkInformation*,
 
     if (outInfo->Get(vtkStreamingDemandDrivenPipeline::UPDATE_PIECE_NUMBER()) >
         0)
+    {
         return 1;
+    }
 
     // Points
     this->Points->Reset();
@@ -92,7 +98,9 @@ int VtkMappedMeshSource::RequestData(vtkInformation*,
         ptIds->SetNumberOfIds(numNodes);
 
         for (unsigned i = 0; i < numNodes; ++i)
+        {
             ptIds->SetId(i, nodes[i]->getID());
+        }
 
         if (cellType == VTK_WEDGE)
         {
@@ -107,16 +115,22 @@ int VtkMappedMeshSource::RequestData(vtkInformation*,
         {
             std::array<vtkIdType, 15> ogs_nodeIds;
             for (unsigned i = 0; i < 15; ++i)
+            {
                 ogs_nodeIds[i] = ptIds->GetId(i);
+            }
             for (unsigned i = 0; i < 3; ++i)
             {
                 ptIds->SetId(i, ogs_nodeIds[i + 3]);
                 ptIds->SetId(i + 3, ogs_nodeIds[i]);
             }
             for (unsigned i = 0; i < 3; ++i)
+            {
                 ptIds->SetId(6 + i, ogs_nodeIds[8 - i]);
+            }
             for (unsigned i = 0; i < 3; ++i)
+            {
                 ptIds->SetId(9 + i, ogs_nodeIds[14 - i]);
+            }
             ptIds->SetId(12, ogs_nodeIds[9]);
             ptIds->SetId(13, ogs_nodeIds[11]);
             ptIds->SetId(14, ogs_nodeIds[10]);
@@ -134,17 +148,29 @@ int VtkMappedMeshSource::RequestData(vtkInformation*,
          ++name)
     {
         if (addProperty<double>(properties, *name))
+        {
             continue;
+        }
         if (addProperty<float>(properties, *name))
+        {
             continue;
+        }
         if (addProperty<int>(properties, *name))
+        {
             continue;
+        }
         if (addProperty<unsigned>(properties, *name))
+        {
             continue;
+        }
         if (addProperty<std::size_t>(properties, *name))
+        {
             continue;
+        }
         if (addProperty<char>(properties, *name))
+        {
             continue;
+        }
 
         DBUG("Mesh property '%s' with unknown data type.", *name->c_str());
     }
@@ -170,12 +196,16 @@ bool VtkMappedMeshSource::addProperty(MeshLib::Properties const& properties,
                                       std::string const& prop_name) const
 {
     if (!properties.existsPropertyVector<T>(prop_name))
+    {
         return false;
+    }
     // TODO: Hack removing const
     auto* propertyVector = const_cast<MeshLib::PropertyVector<T>*>(
         properties.getPropertyVector<T>(prop_name));
     if (!propertyVector)
+    {
         return false;
+    }
 
     vtkNew<vtkAOSDataArrayTemplate<T>> dataArray;
     const bool hasArrayOwnership = false;
@@ -186,12 +216,18 @@ bool VtkMappedMeshSource::addProperty(MeshLib::Properties const& properties,
     dataArray->SetName(prop_name.c_str());
 
     if (propertyVector->getMeshItemType() == MeshLib::MeshItemType::Node)
+    {
         this->PointData->AddArray(dataArray.GetPointer());
+    }
     else if (propertyVector->getMeshItemType() == MeshLib::MeshItemType::Cell)
+    {
         this->CellData->AddArray(dataArray.GetPointer());
+    }
     else if (propertyVector->getMeshItemType() ==
              MeshLib::MeshItemType::IntegrationPoint)
+    {
         this->FieldData->AddArray(dataArray.GetPointer());
+    }
 
     return true;
 }

@@ -474,7 +474,9 @@ public:
     ~BackwardDifferentiationFormula() override
     {
         for (auto* x : _xs_old)
+        {
             NumLib::GlobalVectorProvider::provider.releaseVector(*x);
+        }
     }
 
     void setInitialState(const double t0, GlobalVector const& x0) override
@@ -518,4 +520,4 @@ private:
 };
 
 //! @}
-}
+}  // namespace NumLib

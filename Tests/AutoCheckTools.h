@@ -27,7 +27,7 @@ std::ostream& operator<<(std::ostream& os, std::array<T, N> const& array)
     os << "]";
     return os;
 }
-}
+}  // namespace std
 
 namespace autocheck
 {

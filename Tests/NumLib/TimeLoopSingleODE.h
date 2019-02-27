@@ -115,7 +115,9 @@ NumLib::NonlinearSolverStatus TimeLoopSingleODE<NLTag>::loop(
 
         nonlinear_solver_status = _nonlinear_solver->solve(x, nullptr);
         if (!nonlinear_solver_status.error_norms_met)
+        {
             break;
+        }
 
         time_disc.pushState(t, x, _ode_sys);
 

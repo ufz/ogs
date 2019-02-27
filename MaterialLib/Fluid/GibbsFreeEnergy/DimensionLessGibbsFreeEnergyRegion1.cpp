@@ -119,5 +119,5 @@ double DimensionLessGibbsFreeEnergyRegion1::get_dgamma_dtau_dpi(
     return val;
 }
 
-}  // end namespace
-}  // end namespace
+}  // namespace Fluid
+}  // namespace MaterialLib

@@ -46,4 +46,4 @@ namespace MeshLib
      */
     MeshLib::Mesh* convertSurfaceToMesh(const GeoLib::Surface &sfc, const std::string &mesh_name, double eps = std::numeric_limits<double>::epsilon());
 
-} // namespace
+    }  // namespace MeshLib

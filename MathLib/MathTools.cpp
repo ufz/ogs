@@ -27,7 +27,9 @@ double calcProjPntToLineAndDists(const double p[3], const double a[3],
     // compute projected point
     double proj_pnt[3];
     for (std::size_t k(0); k < 3; k++)
+    {
         proj_pnt[k] = a[k] + lambda * v[k];
+    }
 
     d0 = std::sqrt (sqrDist (proj_pnt, a));
 
@@ -43,6 +45,4 @@ double getAngle (const double p0[3], const double p1[3], const double p2[3])
     return std::acos (scalarProduct<double,3> (v0,v1) / (std::sqrt(scalarProduct<double,3>(v0,v0)) * sqrt(scalarProduct<double,3>(v1,v1))));
 }
 
-
-
-} // namespace
+}  // namespace MathLib

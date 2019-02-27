@@ -127,7 +127,9 @@ TEST(MaterialPorousMedium, checkWettingPhaseBrooksCoreyOilGas)
         // i ==  S.size() -1, S(=0.85) is limited to 0.8, and the numerical
         // derivative of krel is unavailable.
         if (i == S.size() - 1)
+        {
             continue;
+        }
         // Compare the derivative with numerical one.
         ASSERT_NEAR((perm_model->getValue(S[i] + perturbation) -
                      perm_model->getValue(S[i])) /

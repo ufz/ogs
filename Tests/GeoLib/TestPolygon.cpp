@@ -67,8 +67,10 @@ public:
     ~PolygonTest() override
     {
         delete _polygon;
-        for (auto & _pnt : _pnts)
+        for (auto& _pnt : _pnts)
+        {
             delete _pnt;
+        }
     }
 
 protected:
@@ -78,8 +80,10 @@ protected:
 
 TEST_F(PolygonTest, isPntInPolygonCheckCorners)
 {
-    for (auto & _pnt : _pnts)
+    for (auto& _pnt : _pnts)
+    {
         EXPECT_TRUE(_polygon->isPntInPolygon(*_pnt));
+    }
 }
 
 TEST_F(PolygonTest, isPntInPolygonCheckPointsRestOnPolygonEdges)
@@ -190,8 +194,10 @@ TEST_F(PolygonTest, isPolylineInPolygon)
     outer_ply.addPoint(0);
     outer_ply.addPoint(1);
     ASSERT_FALSE(_polygon->isPolylineInPolygon(outer_ply));
-    for (auto & pnt : pnts)
+    for (auto& pnt : pnts)
+    {
         delete pnt;
+    }
     pnts.clear();
 
     pnts.push_back(new GeoLib::Point(-1.0,2.0,0.0)); // 3
@@ -200,8 +206,10 @@ TEST_F(PolygonTest, isPolylineInPolygon)
     inner_ply.addPoint(0);
     inner_ply.addPoint(1);
     ASSERT_TRUE(_polygon->isPolylineInPolygon(inner_ply));
-    for (auto & pnt : pnts)
+    for (auto& pnt : pnts)
+    {
         delete pnt;
+    }
 }
 
 TEST_F(PolygonTest, CopyConstructor)
@@ -212,5 +220,7 @@ TEST_F(PolygonTest, CopyConstructor)
     // Check if all line segments of the original polygon are contained in the
     // copy
     for (auto const& segment : *_polygon)
+    {
         ASSERT_TRUE(polygon_copy.containsSegment(segment));
+    }
 }

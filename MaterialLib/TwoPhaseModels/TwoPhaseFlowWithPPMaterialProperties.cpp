@@ -166,9 +166,13 @@ double TwoPhaseFlowWithPPMaterialProperties::getNonwetRelativePermeability(
     const double /*p*/, const double /*T*/, const double saturation) const
 {
     if (saturation < 0.)
+    {
         return 1.0;
+    }
     if (saturation > 1)
+    {
         return 0.0;
+    }
     return boost::math::pow<3>(1 - saturation);
 }
 
@@ -177,10 +181,14 @@ double TwoPhaseFlowWithPPMaterialProperties::getWetRelativePermeability(
     const double /*p*/, const double /*T*/, const double saturation) const
 {
     if (saturation < 0)
+    {
         return 0.0;
+    }
     if (saturation > 1)
+    {
         return 1.0;
+    }
     return boost::math::pow<3>(saturation);
 }
-}  // end of namespace
-}  // end of namespace
+}  // namespace TwoPhaseFlowWithPP
+}  // namespace MaterialLib

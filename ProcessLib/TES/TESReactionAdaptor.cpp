@@ -232,9 +232,13 @@ bool TESFEMReactionAdaptorAdsorption::checkBounds(
     if (alpha != 1.0)
     {
         if (alpha > 0.5)
+        {
             alpha = 0.5;
+        }
         if (alpha < 0.05)
+        {
             alpha = 0.05;
+        }
 
         if (_d.ap.number_of_try_of_iteration <= 3)
         {
@@ -252,7 +256,9 @@ bool TESFEMReactionAdaptorAdsorption::checkBounds(
 void TESFEMReactionAdaptorAdsorption::preZerothTryAssemble()
 {
     if (_reaction_damping_factor < 1e-3)
+    {
         _reaction_damping_factor = 1e-3;
+    }
 
     _reaction_damping_factor = std::min(std::sqrt(_reaction_damping_factor),
                                         10.0 * _reaction_damping_factor);
@@ -356,11 +362,17 @@ ReactionRate TESFEMReactionAdaptorCaOH2::initReaction(const unsigned int int_pt)
 
     // cut off when limits are reached
     if (y_new[0] < _react.rho_low)
+    {
         rho_react = _react.rho_low;
+    }
     else if (y_new[0] > _react.rho_up)
+    {
         rho_react = _react.rho_up;
+    }
     else
+    {
         rho_react = y_new[0];
+    }
 
     return {y_dot_new[0] * (1.0 - xv_NR),
             (1.0 - xv_NR) * rho_react + xv_NR * rho_NR};

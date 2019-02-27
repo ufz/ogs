@@ -47,4 +47,4 @@ private:
     double checkPyramid (std::vector<const MathLib::Point3d*> const& pnts) const;
     double checkHexahedron (std::vector<const MathLib::Point3d*> const& pnts) const;
 };
-}
+}  // namespace MeshLib

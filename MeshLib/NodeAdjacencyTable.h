@@ -61,7 +61,9 @@ public:
     void createTable(std::vector<Node*> const& nodes)
     {
         if (_data.size() != nodes.size())
+        {
             _data.resize(nodes.size());
+        }
 
         for (auto n_ptr : nodes)
         {

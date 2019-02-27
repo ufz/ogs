@@ -60,4 +60,4 @@ double interpolateXCoordinate(
     return fe.interpolateZerothCoordinate(N);
 }
 
-} // ProcessLib
+}  // namespace ProcessLib

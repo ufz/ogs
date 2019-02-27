@@ -225,7 +225,9 @@ TEST(GeoLib, AABBAllPointsWithNegativeCoordinatesI)
     ASSERT_NEAR(-1.0, max_pnt[2], std::numeric_limits<double>::epsilon());
 
     for (auto p : pnts)
+    {
         delete p;
+    }
 }
 
 TEST(GeoLib, AABBAllPointsWithNegativeCoordinatesII)
@@ -270,23 +272,54 @@ TEST(GeoLib, AABBSinglePoint)
     // points around the aabb are also checked.
     for (int i(-1); i<2; ++i) {
         // Modify the first coordinate of p.
-        if (i==-1) p[0] = std::nextafter(pnts.front()[0], to_lowest);
-        else if (i==0) p[0] = pnts.front()[0];
-        else p[0] = std::nextafter(pnts.front()[0], to_max);
+        if (i == -1)
+        {
+            p[0] = std::nextafter(pnts.front()[0], to_lowest);
+        }
+        else if (i == 0)
+        {
+            p[0] = pnts.front()[0];
+        }
+        else
+        {
+            p[0] = std::nextafter(pnts.front()[0], to_max);
+        }
         for (int j(-1); j<2; ++j) {
             // Modify the second coordinate of p.
-            if (j==-1) p[1] = std::nextafter(pnts.front()[1], to_lowest);
-            else if (j==0) p[1] = pnts.front()[1];
-            else p[1] = std::nextafter(pnts.front()[1], to_max);
+            if (j == -1)
+            {
+                p[1] = std::nextafter(pnts.front()[1], to_lowest);
+            }
+            else if (j == 0)
+            {
+                p[1] = pnts.front()[1];
+            }
+            else
+            {
+                p[1] = std::nextafter(pnts.front()[1], to_max);
+            }
             for (int k(-1); k<2; ++k) {
                 // Modify the third coordinate of p.
-                if (k==-1) p[2] = std::nextafter(pnts.front()[2], to_lowest);
-                else if (k==0) p[2] = pnts.front()[2];
-                else p[2] = std::nextafter(pnts.front()[2], to_max);
-                if (i == 0 && j == 0 && k == 0)
-                    ASSERT_TRUE(aabb.containsPoint(p, 0));
+                if (k == -1)
+                {
+                    p[2] = std::nextafter(pnts.front()[2], to_lowest);
+                }
+                else if (k == 0)
+                {
+                    p[2] = pnts.front()[2];
+                }
                 else
+                {
+                    p[2] = std::nextafter(pnts.front()[2], to_max);
+                }
+                if (i == 0 && j == 0 && k == 0)
+                {
+                    ASSERT_TRUE(aabb.containsPoint(p, 0));
+                }
+                else
+                {
                     ASSERT_FALSE(aabb.containsPoint(p, 0));
+                }
             }
         }
     }

@@ -82,7 +82,9 @@ static void addSecondaryVariableResiduals(
     MeshLib::Mesh& mesh)
 {
     if (!var.fcts.eval_residuals)
+    {
         return;
+    }
 
     DBUG("  secondary variable %s residual", output_name.c_str());
     auto const& property_name_res = output_name + "_residual";

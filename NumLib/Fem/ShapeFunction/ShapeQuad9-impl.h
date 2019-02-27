@@ -46,5 +46,4 @@ void ShapeQuad9::computeGradShapeFunction(const T_X& r, T_N& dNdr)
     dNdr[17] = 2 * r[1] * (r[0] * r[0] - 1);
     dNdr[9] = (r[1] + 0.5) * r[0] * (r[0] + 1) / 2;
 }
-}
-
+}  // namespace NumLib

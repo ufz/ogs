@@ -106,4 +106,4 @@ public:
 };
 
 //! @}
-}
+}  // namespace NumLib

@@ -35,8 +35,10 @@ MeshElementGrid::MeshElementGrid(MeshLib::Mesh const& sfc_mesh) :
         for (std::size_t k(0); k < 3; ++k) {
             double const tolerance(
                 std::nexttoward(max[k],std::numeric_limits<double>::max())-max[k]);
-            if (std::abs(max[k]-min[k]) > tolerance)
+            if (std::abs(max[k] - min[k]) > tolerance)
+            {
                 dim[k] = true;
+            }
         }
         return dim;
     };
@@ -138,14 +140,20 @@ bool MeshElementGrid::sortElementInGridCells(MeshLib::Element const& element)
         // compute coordinates of the grid for each node of the element
         c = getGridCellCoordinates(*(static_cast<MathLib::Point3d const*>(element.getNode(k))));
         if (!c.first)
+        {
             return false;
+        }
 
         for (std::size_t j(0); j < 3; ++j)
         {
             if (min[j] > c.second[j])
+            {
                 min[j] = c.second[j];
+            }
             if (max[j] < c.second[j])
+            {
                 max[j] = c.second[j];
+            }
         }
     }
 
@@ -155,8 +163,10 @@ bool MeshElementGrid::sortElementInGridCells(MeshLib::Element const& element)
     // AABB the grid cell coordinates computed by getGridCellCoordintes() could
     // be to large (due to numerical errors). The following lines ensure that
     // the grid cell coordinates are in the valid range.
-    for (std::size_t k(0); k<3; ++k)
-        max[k] = std::min(_n_steps[k]-1, max[k]);
+    for (std::size_t k(0); k < 3; ++k)
+    {
+        max[k] = std::min(_n_steps[k] - 1, max[k]);
+    }
 
     // insert the element into the grid cells
     for (std::size_t i(min[0]); i<=max[0]; i++) {

@@ -136,5 +136,5 @@ createTwoPhaseFlowPrhoMaterialProperties(
         std::move(_relative_permeability_models));
 }
 
-}  // end namespace
-}  // end namespace
+}  // namespace TwoPhaseFlowWithPrho
+}  // namespace ProcessLib

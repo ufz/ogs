@@ -29,4 +29,4 @@ class CapillaryPressureSaturation;
 std::unique_ptr<CapillaryPressureSaturation> createCapillaryPressureModel(
     BaseLib::ConfigTree const& config);
 }
-}  // end namespace
+}  // namespace MaterialLib

@@ -62,5 +62,4 @@ void ShapeTet10::computeGradShapeFunction(const T_X &r, T_N &dNdr)
     dNdr[29] = 4.0 * r[1];
 }
 
-}
-
+}  // namespace NumLib

@@ -72,7 +72,9 @@ public:
     {
         (void)var_vals;
         if (var != PropertyVariableType::C)
+        {
             return 0.0;
+        }
         return _reference_density * _fluid_density_difference_ratio;
     }
 
@@ -82,5 +84,5 @@ private:
     const double _fluid_density_difference_ratio;
 };
 
-}  // end namespace
-}  // end namespace
+}  // namespace Fluid
+}  // namespace MaterialLib

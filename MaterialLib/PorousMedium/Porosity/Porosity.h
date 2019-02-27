@@ -51,5 +51,5 @@ private:
     ProcessLib::Parameter<double> const& _parameter;
 };
 
-}  // end of namespace
-}  // end of namespace
+}  // namespace PorousMedium
+}  // namespace MaterialLib

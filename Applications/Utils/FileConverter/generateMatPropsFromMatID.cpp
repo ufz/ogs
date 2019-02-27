@@ -79,7 +79,9 @@ int main (int argc, char* argv[])
     if (out_prop.is_open())
     {
         for (std::size_t i = 0; i < n_properties; ++i)
+        {
             out_prop << i << "\t" << (*materialIds)[i] << "\n";
+        }
         out_prop.close();
     }
     else

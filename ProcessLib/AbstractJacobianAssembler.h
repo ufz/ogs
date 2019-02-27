@@ -49,4 +49,4 @@ public:
     virtual ~AbstractJacobianAssembler() = default;
 };
 
-}  // ProcessLib
+}  // namespace ProcessLib

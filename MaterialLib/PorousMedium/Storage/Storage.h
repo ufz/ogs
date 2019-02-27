@@ -32,5 +32,5 @@ public:
     virtual double getValue(const double variable) const = 0;
 };
 
-}  // end of namespace
-}  // end of namespace
+}  // namespace PorousMedium
+}  // namespace MaterialLib

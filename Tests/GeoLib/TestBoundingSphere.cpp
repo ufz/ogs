@@ -117,7 +117,9 @@ TEST(GeoLib, TestBoundingSphere)
         std::vector<MathLib::Point3d*>>(s.getRandomSpherePoints(1000));
     GeoLib::MinimalBoundingSphere t(*sphere_points);
     for (auto p : *sphere_points)
+    {
         delete p;
+    }
     MathLib::Point3d center = s.getCenter();
     ASSERT_NEAR(0.5, center[0], std::numeric_limits<double>::epsilon());
     ASSERT_NEAR(0.5, center[1], std::numeric_limits<double>::epsilon());

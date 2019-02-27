@@ -139,13 +139,21 @@ std::unique_ptr<FluidProperty> createFluidDensityModel(
             config.getConfigParameter<double>("value"));
     }
     if (type == "LiquidDensity")
+    {
         return createLiquidDensity(config);
+    }
     if (type == "TemperatureDependent")
+    {
         return createLinearTemperatureDependentDensity(config);
+    }
     if (type == "ConcentrationDependent")
+    {
         return createLinearConcentrationDependentDensity(config);
+    }
     if (type == "ConcentrationAndPressureDependent")
+    {
         return createLinearConcentrationAndPressureDependentDensity(config);
+    }
     if (type == "IdealGasLaw")
     {
         //! \ogs_file_param{material__fluid__density__type}
@@ -167,5 +175,5 @@ std::unique_ptr<FluidProperty> createFluidDensityModel(
         type.data());
 }
 
-}  // end namespace
-}  // end namespace
+}  // namespace Fluid
+}  // namespace MaterialLib

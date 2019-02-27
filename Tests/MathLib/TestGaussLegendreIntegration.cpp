@@ -77,7 +77,9 @@ public:
         : _e(e)
     {
         if (is_axially_symmetric)
+        {
             OGS_FATAL("Only testing Cartesian meshes!");
+        }
     }
 
     double integrate(const Function& f,
@@ -457,7 +459,9 @@ OGS_DONT_TEST_THIS_IF_PETSC(MathLib, IntegrationGaussLegendreTet)
         for (unsigned polynomial_order : {0, 1, 2})
         {
             if (polynomial_order > 2 * integration_order - 1)
+            {
                 break;
+            }
 
             DBUG("  == polynomial order: %u.", polynomial_order);
             auto f = GaussLegendreTest::getF(polynomial_order);
@@ -484,7 +488,9 @@ OGS_DONT_TEST_THIS_IF_PETSC(MathLib, IntegrationGaussLegendreHex)
         for (unsigned polynomial_order : {0, 1, 2})
         {
             if (polynomial_order > 2 * integration_order - 1)
+            {
                 break;
+            }
 
             DBUG("  == polynomial order: %u.", polynomial_order);
             auto f = GaussLegendreTest::getF(polynomial_order);

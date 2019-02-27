@@ -143,5 +143,5 @@ private:
         _water_vapor_properties;
 };
 
-}  // end of namespace
-}  // end of namespace
+}  // namespace ThermalTwoPhaseFlowWithPP
+}  // namespace ProcessLib

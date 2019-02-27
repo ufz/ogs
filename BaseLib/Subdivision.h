@@ -46,8 +46,10 @@ public:
         std::vector<double> x;
         x.reserve(_n_subdivision+1);
         const double dL = _length/static_cast<double>(_n_subdivision);
-        for (std::size_t i=0; i<_n_subdivision+1; i++)
-            x.push_back(i*dL);
+        for (std::size_t i = 0; i < _n_subdivision + 1; i++)
+        {
+            x.push_back(i * dL);
+        }
         return x;
     }
 
@@ -112,4 +114,4 @@ private:
     const double _multiplier;
 };
 
-} // BaseLib
+}  // namespace BaseLib

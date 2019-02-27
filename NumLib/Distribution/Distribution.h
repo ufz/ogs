@@ -33,4 +33,4 @@ std::vector<double> generateNodeValueDistribution(
     const MeshLib::Mesh &msh,
     const std::vector<std::size_t> &vec_node_ids);
 
-} // NumLib
+}  // namespace NumLib

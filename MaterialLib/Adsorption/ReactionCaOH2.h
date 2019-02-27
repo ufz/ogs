@@ -84,4 +84,4 @@ public:
     static MATERIALLIB_EXPORT const double rho_up;  //! upper density limit
 };
 
-}
+}  // namespace Adsorption

@@ -34,7 +34,9 @@ void postVTU(std::string const& int_vtu_filename,
     std::unique_ptr<MeshLib::Mesh const> mesh(
         MeshLib::IO::readMeshFromFile(int_vtu_filename));
     if (mesh->isNonlinear())
+    {
         mesh = MeshLib::convertToLinearMesh(*mesh, mesh->getName());
+    }
 
     // post-process
     std::vector<MeshLib::Element*> vec_matrix_elements;
@@ -76,7 +78,9 @@ void postPVD(std::string const& in_pvd_filename,
     for (auto& dataset : pt.get_child("VTKFile.Collection"))
     {
         if (dataset.first != "DataSet")
+        {
             continue;
+        }
 
         // get VTU file name
         auto const org_vtu_filename =
@@ -85,7 +89,9 @@ void postPVD(std::string const& in_pvd_filename,
             BaseLib::extractBaseName(org_vtu_filename);
         auto org_vtu_dir = BaseLib::extractPath(org_vtu_filename);
         if (org_vtu_dir.empty())
+        {
             org_vtu_dir = in_pvd_file_dir;
+        }
         auto const org_vtu_filepath =
             BaseLib::joinPaths(org_vtu_dir, org_vtu_filebasename);
         INFO("processing %s...", org_vtu_filepath.c_str());
@@ -133,12 +139,18 @@ int main(int argc, char* argv[])
 
     auto const in_file_ext = BaseLib::getFileExtension(arg_in_file.getValue());
     if (in_file_ext == "pvd")
+    {
         postPVD(arg_in_file.getValue(), arg_out_file.getValue());
+    }
     else if (in_file_ext == "vtu")
+    {
         postVTU(arg_in_file.getValue(), arg_out_file.getValue());
+    }
     else
+    {
         OGS_FATAL("The given file type (%s) is not supported.",
                   in_file_ext.c_str());
+    }
 
     return EXIT_SUCCESS;
 }

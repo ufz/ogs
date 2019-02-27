@@ -62,5 +62,5 @@ private:
     const double& _air_mol_mass = PhysicalConstant::MolarMass::Air;
 };
 
-}  // end namespace
-}  // end namespace
+}  // namespace Fluid
+}  // namespace MaterialLib

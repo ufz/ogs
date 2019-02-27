@@ -73,11 +73,13 @@ std::unique_ptr<Process> createComponentTransportProcess(
         });
 
     if (it != collected_process_variables.end())
+    {
         OGS_FATAL(
             "Number of components for process variable '%s' should be 1 rather "
             "than %d.",
             it->get().getName().c_str(),
             it->get().getNumberOfComponents());
+    }
 
     // Allocate the collected process variables into a two-dimensional vector,
     // depending on what scheme is adopted
@@ -134,10 +136,12 @@ std::unique_ptr<Process> createComponentTransportProcess(
         config.getConfigParameter<std::vector<double>>("specific_body_force");
     assert(b.size() > 0 && b.size() < 4);
     if (b.size() < mesh.getDimension())
+    {
         OGS_FATAL(
             "specific body force (gravity vector) has %d components, mesh "
             "dimension is %d",
             b.size(), mesh.getDimension());
+    }
     bool const has_gravity = MathLib::toVector(b).norm() > 0;
     if (has_gravity)
     {

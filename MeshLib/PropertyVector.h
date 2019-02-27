@@ -146,7 +146,9 @@ public:
     ~PropertyVector() override
     {
         for (auto v : _values)
-            delete [] v;
+        {
+            delete[] v;
+        }
     }
 
     /// The operator[] uses the item to group property map to access to the
@@ -164,8 +166,11 @@ public:
     void initPropertyValue(std::size_t group_id, T const& value)
     {
         if (_n_components != 1)
-            OGS_FATAL("Single-component version of initPropertyValue() is called "
-                      "for a multi-components PropertyVector<T*>");
+        {
+            OGS_FATAL(
+                "Single-component version of initPropertyValue() is called "
+                "for a multi-components PropertyVector<T*>");
+        }
         auto* p = new T[1];
         p[0] = value;
         _values[group_id] = p;
@@ -174,12 +179,17 @@ public:
     void initPropertyValue(std::size_t group_id, std::vector<T> const& values)
     {
         if (_n_components != static_cast<int>(values.size()))
-            OGS_FATAL("The size of provided values in initPropertyValue() is "
-                      "not same as the number of components in PropertyVector<T*>");
+        {
+            OGS_FATAL(
+                "The size of provided values in initPropertyValue() is "
+                "not same as the number of components in PropertyVector<T*>");
+        }
 
         auto* p = new T[values.size()];
-        for (unsigned i=0; i<values.size(); i++)
+        for (unsigned i = 0; i < values.size(); i++)
+        {
             p[i] = values[i];
+        }
         _values[group_id] = p;
     }
 
@@ -220,9 +230,12 @@ public:
         assert(tuple_index < getNumberOfTuples());
         const double* p = this->operator[](tuple_index);
         if (p == nullptr)
-            OGS_FATAL("No data found in the property vector %s "
-                      "for the tuple index %d and component %d",
-                      getPropertyName().c_str(), tuple_index, component);
+        {
+            OGS_FATAL(
+                "No data found in the property vector %s "
+                "for the tuple index %d and component %d",
+                getPropertyName().c_str(), tuple_index, component);
+        }
         return p[component];
     }
 

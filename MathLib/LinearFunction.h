@@ -55,4 +55,4 @@ private:
     const std::array<T_TYPE, N_VARS+1> _coefficients;
 };
 
-} // MathLib
+}  // namespace MathLib

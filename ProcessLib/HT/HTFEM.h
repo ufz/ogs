@@ -192,7 +192,9 @@ protected:
             thermal_conductivity_fluid * porosity;
 
         if (!_material_properties.has_fluid_thermal_dispersivity)
+        {
             return thermal_conductivity * I;
+        }
 
         double const thermal_dispersivity_longitudinal =
             _material_properties.thermal_dispersivity_longitudinal(t, pos)[0];
@@ -205,8 +207,7 @@ protected:
         {
             return thermal_conductivity * I;
         }
-        else
-        {
+
             GlobalDimMatrixType const thermal_dispersivity =
                 fluid_density * specific_heat_capacity_fluid *
                 (thermal_dispersivity_transversal * velocity_magnitude * I +
@@ -214,7 +215,6 @@ protected:
                   thermal_dispersivity_transversal) /
                      velocity_magnitude * velocity * velocity.transpose());
             return thermal_conductivity * I + thermal_dispersivity;
-        }
     }
 
     std::vector<double> const& getIntPtDarcyVelocityLocal(

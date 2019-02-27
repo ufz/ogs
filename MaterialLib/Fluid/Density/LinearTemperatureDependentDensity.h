@@ -62,7 +62,9 @@ public:
     {
         (void)var_vals;
         if (var != PropertyVariableType::T)
+        {
             return 0.0;
+        }
         return -_rho0 * _beta;
     }
 
@@ -72,5 +74,5 @@ private:
     const double _beta;          ///<  Parameter.
 };
 
-}  // end namespace
-}  // end namespace
+}  // namespace Fluid
+}  // namespace MaterialLib

@@ -107,8 +107,10 @@ public:
             EXPECT_TRUE(loop.loop(t0, x0, t_end, delta_t, cb).error_norms_met);
         }
 
-        for (auto& x :  sol.solutions)
+        for (auto& x : sol.solutions)
+        {
             MathLib::LinAlg::setLocalAccessibleVector(x);
+        }
 
         return sol;
     }

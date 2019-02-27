@@ -84,5 +84,4 @@ void ShapePyra13::computeGradShapeFunction(const T_X &x, T_N &dN)
     dN[38] = -0.5 * (1.0 - r) * (1.0 + s) * t;
 }
 
-}
-
+}  // namespace NumLib

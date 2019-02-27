@@ -37,17 +37,23 @@ bool FixedTimeStepping::next(double const /*solution_error*/,
     if (_ts_current.steps() == _dt_vector.size() ||
         std::abs(_ts_current.current() - _t_end) <
             std::numeric_limits<double>::epsilon())
+    {
         return false;
+    }
 
     // confirm current time and move to the next if accepted
     if (accepted())
+    {
         _ts_prev = _ts_current;
+    }
 
     // prepare the next time step info
     _ts_current = _ts_prev;
     double dt = _dt_vector[_ts_prev.steps()];
-    if (_ts_prev.current() + dt > _t_end)  // upper bound by t_end
+    if (_ts_prev.current() + dt > _t_end)
+    {  // upper bound by t_end
         dt = _t_end - _ts_prev.current();
+    }
     _ts_current += dt;
 
     return true;
@@ -62,4 +68,4 @@ double FixedTimeStepping::computeEnd(double t_initial,
     return std::min(t_end, t_sum);
 }
 
-}  // NumLib
+}  // namespace NumLib

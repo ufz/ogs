@@ -98,7 +98,7 @@ struct LocalLubby2Properties
     double etaK;
     double etaM;
 };
-}
+}  // namespace detail
 
 template <int DisplacementDim>
 class Lubby2 final : public MechanicsBase<DisplacementDim>

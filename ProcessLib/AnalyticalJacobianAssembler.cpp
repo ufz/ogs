@@ -38,4 +38,4 @@ void AnalyticalJacobianAssembler::assembleWithJacobianForStaggeredScheme(
         local_b_data, local_Jac_data, local_coupled_solutions);
 }
 
-}  // ProcessLib
+}  // namespace ProcessLib

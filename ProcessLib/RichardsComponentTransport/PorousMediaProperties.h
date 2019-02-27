@@ -104,5 +104,5 @@ private:
     std::vector<int> _material_ids;
 };
 
-}
-}
+}  // namespace RichardsComponentTransport
+}  // namespace ProcessLib

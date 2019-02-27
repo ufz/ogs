@@ -82,5 +82,5 @@ private:
     const double _gamma;  ///<  Parameter.
 };
 
-}  // end namespace
-}  // end namespace
+}  // namespace Fluid
+}  // namespace MaterialLib

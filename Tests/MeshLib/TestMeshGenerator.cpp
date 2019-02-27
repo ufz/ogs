@@ -126,8 +126,10 @@ TEST(MeshLib, MeshGeneratorRegularPrism)
     ASSERT_EQ((n_x+1) * (n_y+1) * (n_z+1), mesh->getNumberOfNodes());
 
     std::size_t count (0);
-    for (std::size_t k=0; k<(n_z+1); ++k)
-        for (std::size_t j=0; j<(n_y+1); ++j)
+    for (std::size_t k = 0; k < (n_z + 1); ++k)
+    {
+        for (std::size_t j = 0; j < (n_y + 1); ++j)
+        {
             for (std::size_t i=0; i<(n_x+1); ++i)
             {
                 const MeshLib::Node* node (mesh->getNode(count++));
@@ -135,4 +137,6 @@ TEST(MeshLib, MeshGeneratorRegularPrism)
                 ASSERT_DOUBLE_EQ(static_cast<double>(j*2), (*node)[1]);
                 ASSERT_DOUBLE_EQ(static_cast<double>(k*2), (*node)[2]);
             }
+        }
+    }
 }

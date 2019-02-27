@@ -71,4 +71,4 @@ protected:
 
 }; /* class */
 
-} /* namespace */
+}  // namespace MeshLib

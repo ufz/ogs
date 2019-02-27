@@ -96,9 +96,13 @@ TEST(GeoLib, SurfaceIsPointInSurface)
             normal_dist_ur(random_engine_mt19937),
             normal_dist_ur(random_engine_mt19937),
             0.0}}));
-        for (std::size_t k(0); k<3; ++k)
+        for (std::size_t k(0); k < 3; ++k)
+        {
             if (ll[k] > ur[k])
+            {
                 std::swap(ll[k], ur[k]);
+            }
+        }
 
         // random discretization of the domain
         std::default_random_engine re(rd());
@@ -144,8 +148,10 @@ TEST(GeoLib, SurfaceIsPointInSurface)
         for (auto const p : pnts) {
             EXPECT_TRUE(sfc->isPntInSfc(*p, eps));
             MathLib::Point3d q(*p);
-            for (std::size_t k(0); k<3; ++k)
+            for (std::size_t k(0); k < 3; ++k)
+            {
                 q[k] += displacement[k];
+            }
             EXPECT_FALSE(sfc->isPntInSfc(q, eps));
         }
         // test edge middle points of the triangles

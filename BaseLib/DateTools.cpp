@@ -48,10 +48,14 @@ std::string int2date(int date)
         int d = date - (y * 10000) - (m * 100);
         std::stringstream ss;
         if (d < 10)
+        {
             ss << "0";
+        }
         ss << d << ".";
         if (m < 10)
+        {
             ss << "0";
+        }
         ss << m << "." << y;
         return ss.str();
     }
@@ -79,10 +83,14 @@ std::string date2string(double ddate)
 
     std::string day = std::to_string(d);
     if (d < 10)
+    {
         day = "0" + day;
+    }
     std::string month = std::to_string(m);
     if (m < 10)
+    {
         month = "0" + month;
+    }
     std::string s =  std::to_string(y) + "-" + month + "-" + day;
     return s;
 }
@@ -91,7 +99,9 @@ int strDate2int(const std::string &s)
 {
     std::string str(s);
     if (s.length() > 10)
-        str = s.substr(0,10);
+    {
+        str = s.substr(0, 10);
+    }
     std::size_t sep ( str.find('.',0) );
     int d ( atoi(str.substr(0, sep).c_str()) );
     std::size_t sep2 ( str.find('.', sep + 1) );

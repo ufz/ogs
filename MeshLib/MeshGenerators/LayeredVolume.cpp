@@ -33,27 +33,37 @@ bool LayeredVolume::createRasterLayers(const MeshLib::Mesh &mesh,
                                        double noDataReplacementValue)
 {
     if (mesh.getDimension() != 2)
+    {
         return false;
+    }
 
     _elevation_epsilon = calcEpsilon(*rasters[0], *rasters.back());
     if (_elevation_epsilon <= 0)
+    {
         return false;
+    }
 
     // remove line elements, only tri + quad remain
     MeshLib::ElementSearch ex(mesh);
     ex.searchByElementType(MeshLib::MeshElemType::LINE);
     std::unique_ptr<MeshLib::Mesh> top(
         removeElements(mesh, ex.getSearchedElementIDs(), "MeshLayer"));
-    if (top==nullptr)
+    if (top == nullptr)
+    {
         top = std::make_unique<MeshLib::Mesh>(mesh);
+    }
 
     if (!MeshLib::MeshLayerMapper::layerMapping(
             *top, *rasters.back(), noDataReplacementValue))
+    {
         return false;
+    }
 
     std::unique_ptr<MeshLib::Mesh> bottom(new MeshLib::Mesh(*top));
     if (!MeshLib::MeshLayerMapper::layerMapping(*bottom, *rasters[0], 0))
+    {
         return false;
+    }
 
     this->_minimum_thickness = minimum_thickness;
     _nodes = MeshLib::copyNodeVector(bottom->getNodes());
@@ -67,8 +77,10 @@ bool LayeredVolume::createRasterLayers(const MeshLib::Mesh &mesh,
 
     // map each layer and attach to subsurface mesh
     const std::size_t nRasters (rasters.size());
-    for (std::size_t i=1; i<nRasters; ++i)
+    for (std::size_t i = 1; i < nRasters; ++i)
+    {
         this->addLayerToMesh(*top, i, *rasters[i]);
+    }
 
     // close boundaries between layers
     this->addLayerBoundaries(*top, nRasters);
@@ -84,8 +96,13 @@ void LayeredVolume::addLayerToMesh(const MeshLib::Mesh &dem_mesh, unsigned layer
     const std::size_t node_id_offset (_nodes.size());
     const std::size_t last_layer_node_offset (node_id_offset-nNodes);
 
-    for (std::size_t i=0; i<nNodes; ++i)
-        _nodes.push_back(getNewLayerNode(*nodes[i], *_nodes[last_layer_node_offset + i], raster, _nodes.size()));
+    for (std::size_t i = 0; i < nNodes; ++i)
+    {
+        _nodes.push_back(getNewLayerNode(*nodes[i],
+                                         *_nodes[last_layer_node_offset + i],
+                                         raster,
+                                         _nodes.size()));
+    }
 
     const std::vector<MeshLib::Element*> &layer_elements (dem_mesh.getElements());
     for (MeshLib::Element* elem : layer_elements)
@@ -118,8 +135,10 @@ void LayeredVolume::addLayerBoundaries(const MeshLib::Mesh &layer, std::size_t n
     for (MeshLib::Element* elem : layer_elements)
     {
         const std::size_t nElemNodes (elem->getNumberOfBaseNodes());
-        for (unsigned i=0; i<nElemNodes; ++i)
+        for (unsigned i = 0; i < nElemNodes; ++i)
+        {
             if (elem->getNeighbor(i) == nullptr)
+            {
                 for (unsigned j=0; j<nLayerBoundaries; ++j)
                 {
                     const std::size_t offset (j*nNodes);
@@ -141,6 +160,8 @@ void LayeredVolume::addLayerBoundaries(const MeshLib::Mesh &layer, std::size_t n
                         _materials.push_back(nLayers+j);
                     }
                 }
+            }
+        }
     }
 }
 
@@ -157,12 +178,14 @@ void LayeredVolume::removeCongruentElements(std::size_t nLayers, std::size_t nEl
 
             unsigned count(0);
             const std::size_t nElemNodes (low->getNumberOfBaseNodes());
-            for (std::size_t k=0; k<nElemNodes; ++k)
+            for (std::size_t k = 0; k < nElemNodes; ++k)
+            {
                 if (high->getNodeIndex(k) == low->getNodeIndex(k))
                 {
                     low->setNode(k, _nodes[high->getNodeIndex(k)]);
                     count++;
                 }
+            }
 
             if (count == nElemNodes)
             {

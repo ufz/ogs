@@ -87,4 +87,4 @@ ConfigTreeTopLevel
 makeConfigTree(std::string const& filepath, bool const be_ruthless,
                std::string const& toplevel_tag);
 
-}
+}  // namespace BaseLib

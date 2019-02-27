@@ -20,11 +20,18 @@ MeshNodesOnPoint::MeshNodesOnPoint(
 {
     std::vector<std::size_t> vec_ids(mesh_grid.getPointsInEpsilonEnvironment(pnt, epsilon_radius));
     if (search_all_nodes == SearchAllNodes::Yes)
+    {
         _msh_node_ids = vec_ids;
-    else {
+    }
+    else
+    {
         for (auto id : vec_ids)
+        {
             if (mesh.isBaseNode(id))
+            {
                 _msh_node_ids.push_back(id);
+            }
+        }
     }
 }
 

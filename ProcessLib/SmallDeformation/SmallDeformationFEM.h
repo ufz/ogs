@@ -229,10 +229,12 @@ public:
                     displacement_size>::Zero(DisplacementDim,
                                              displacement_size);
             for (int i = 0; i < DisplacementDim; ++i)
+            {
                 N_u_op
                     .template block<1, displacement_size / DisplacementDim>(
                         i, i * displacement_size / DisplacementDim)
                     .noalias() = N;
+            }
 
             auto const x_coord =
                 interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(
@@ -259,7 +261,9 @@ public:
                 *state, _process_data.reference_temperature);
 
             if (!solution)
+            {
                 OGS_FATAL("Computation of local constitutive relation failed.");
+            }
 
             MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> C;
             std::tie(sigma, state, C) = std::move(*solution);

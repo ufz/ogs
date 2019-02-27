@@ -38,5 +38,5 @@ namespace BuildInfo
     extern BASELIB_EXPORT const std::string data_path;
     extern BASELIB_EXPORT const std::string data_binary_path;
     extern BASELIB_EXPORT const std::string tests_tmp_path;
-}
-}
+    }  // namespace BuildInfo
+    }  // namespace BaseLib

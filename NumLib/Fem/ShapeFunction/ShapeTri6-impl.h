@@ -43,5 +43,4 @@ void ShapeTri6::computeGradShapeFunction(const T_X &r, T_N &dNdr)
     dNdr[11] = 4. * (1 - r[0] - 2. * r[1]); // dN6/dL2
 }
 
-}
-
+}  // namespace NumLib

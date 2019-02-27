@@ -128,4 +128,4 @@ MathLib::Point3d getBulkElementPoint(MeshLib::Mesh const& /*mesh*/,
 {
     return MathLib::ORIGIN;
 }
-}  // end namespace ProcessLib
+}  // namespace MeshLib

@@ -40,8 +40,10 @@ GMSHPolygonTree::~GMSHPolygonTree()
     // the polylines are processed also by the children, but the root is
     // responsible to cleanup up
     if (_parent == nullptr) { // root
-        for (auto * polyline : _plys)
+        for (auto* polyline : _plys)
+        {
             delete polyline;
+        }
     }
     // member of GeoLib::SimplePolygonTree, but the ownership is not transmitted
     delete _node_polygon;
@@ -50,19 +52,26 @@ GMSHPolygonTree::~GMSHPolygonTree()
 void GMSHPolygonTree::markSharedSegments()
 {
     if (_children.empty())
+    {
         return;
+    }
 
     if (_parent == nullptr)
+    {
         return;
+    }
 
     for (auto& child : _children)
     {
         std::size_t const n_pnts(child->getPolygon()->getNumberOfPoints());
         for (std::size_t k(1); k<n_pnts; k++) {
             if (GeoLib::containsEdge(*(_parent->getPolygon()),
-                _node_polygon->getPointID(k-1),
-                _node_polygon->getPointID(k)))
-            static_cast<GeoLib::PolygonWithSegmentMarker*>(_node_polygon)->markSegment(k, true);
+                                     _node_polygon->getPointID(k - 1),
+                                     _node_polygon->getPointID(k)))
+            {
+                static_cast<GeoLib::PolygonWithSegmentMarker*>(_node_polygon)
+                    ->markSegment(k, true);
+            }
         }
     }
 }
@@ -77,7 +86,9 @@ bool GMSHPolygonTree::insertStation(GeoLib::Point const* station)
                 bool rval(dynamic_cast<GMSHPolygonTree*>((*it))->insertStation (station));
                 // stop recursion if sub SimplePolygonTree is a leaf
                 if (rval && (*it)->getNumberOfChildren() == 0)
-                    _stations.push_back (station);
+                {
+                    _stations.push_back(station);
+                }
                 return rval;
             }
         }
@@ -91,7 +102,9 @@ bool GMSHPolygonTree::insertStation(GeoLib::Point const* station)
 void GMSHPolygonTree::insertPolyline(GeoLib::PolylineWithSegmentMarker * ply)
 {
     if (!_node_polygon->isPartOfPolylineInPolygon(*ply))
+    {
         return;
+    }
 
     // check if polyline segments are inside of the polygon, intersect the
     // polygon or are part of the boundary of the polygon
@@ -108,7 +121,9 @@ void GMSHPolygonTree::insertPolyline(GeoLib::PolylineWithSegmentMarker * ply)
          ++segment_it)
     {
         if (ply->isSegmentMarked(segment_it.getSegmentNumber()))
+        {
             continue;
+        }
 
         if (_node_polygon->containsSegment(*segment_it)) {
             ply->markSegment(segment_it.getSegmentNumber(), true);
@@ -261,7 +276,9 @@ void GMSHPolygonTree::createGMSHPoints(std::vector<GMSHPoint*> & gmsh_pnts) cons
         GeoLib::Point const*const pnt(_node_polygon->getPoint(k));
         // if this point was already part of another polyline
         if (gmsh_pnts[id] != nullptr)
+        {
             continue;
+        }
         gmsh_pnts[id] = new GMSHPoint(
             *pnt, id, _mesh_density_strategy.getMeshDensityAtPoint(pnt));
     }
@@ -274,7 +291,9 @@ void GMSHPolygonTree::createGMSHPoints(std::vector<GMSHPoint*> & gmsh_pnts) cons
                 const std::size_t id (_plys[k]->getPointID(j));
                 // if this point was already part of another polyline
                 if (gmsh_pnts[id] != nullptr)
+                {
                     continue;
+                }
                 GeoLib::Point const*const pnt(_plys[k]->getPoint(j));
                 gmsh_pnts[id] = new GMSHPoint(
                     *pnt, id,

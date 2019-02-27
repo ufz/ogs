@@ -36,5 +36,5 @@ double GMSHFixedMeshDensity::getMeshDensityAtStation(GeoLib::Point const*const) 
     return _mesh_density;
 }
 
-}
+}  // namespace GMSH
 } // end namespace FileIO

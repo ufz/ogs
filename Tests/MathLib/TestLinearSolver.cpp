@@ -62,8 +62,12 @@ void setMatrix9x9(T_Mat &mat)
         0, 0, 0, 0, -3.33333e-012, -1.66667e-012, 0, -1.66667e-012, 6.66667e-012
     };
     for (unsigned i = 0; i < 9; i++)
+    {
         for (unsigned j = 0; j < 9; j++)
-            mat.setValue(i, j, d_mat[i*9+j]);
+        {
+            mat.setValue(i, j, d_mat[i * 9 + j]);
+        }
+    }
 }
 
 template<typename IntType> struct Example1
@@ -85,9 +89,18 @@ template<typename IntType> struct Example1
         std::fill(vec_dirichlet_bc_value.begin()+3, vec_dirichlet_bc_value.end(), 1.0);
         for (std::size_t i=0; i<9; i++)
         {
-            if (i%3==0) exH[i] = 1.0;
-            if (i%3==1) exH[i] = 0.5;
-            if (i%3==2) exH[i] = 0.;
+            if (i % 3 == 0)
+            {
+                exH[i] = 1.0;
+            }
+            if (i % 3 == 1)
+            {
+                exH[i] = 0.5;
+            }
+            if (i % 3 == 2)
+            {
+                exH[i] = 0.;
+            }
         }
     }
 
@@ -109,8 +122,10 @@ void checkLinearSolverInterface(T_MATRIX &A, BaseLib::ConfigTree const& ls_optio
         for (std::size_t j=0; j<ex1.dim_eqs; j++)
         {
             double v = ex1.mat.get(i, j);
-            if (v!=.0)
+            if (v != .0)
+            {
                 A.add(i, j, v);
+            }
         }
     }
 

@@ -52,7 +52,9 @@ struct NaturalPointGenerator
             std::is_same<ShapeFunction, NumLib::ShapeQuad9>::value ||
             std::is_same<ShapeFunction, NumLib::ShapeHex8>::value ||
             std::is_same<ShapeFunction, NumLib::ShapeHex20>::value)
+        {
             return tuple;
+        }
         if (std::is_same<ShapeFunction, NumLib::ShapeTri3>::value ||
             std::is_same<ShapeFunction, NumLib::ShapeTri6>::value ||
             std::is_same<ShapeFunction, NumLib::ShapeTet4>::value ||
@@ -69,9 +71,11 @@ struct NaturalPointGenerator
             if (std::accumulate(std::begin(mapped_tuple),
                                 std::end(mapped_tuple),
                                 0.) > ShapeFunction::DIM / 2.)
+            {
                 std::transform(std::begin(mapped_tuple), std::end(mapped_tuple),
                                std::begin(mapped_tuple),
                                [](double const& v) { return 1. - v; });
+            }
             return mapped_tuple;
         }
         OGS_FATAL("NaturalPointGenerator: Unknown shape function type.");
@@ -83,7 +87,7 @@ struct NaturalPointGenerator
     }
 };
 
-}
+}  // namespace autocheck
 
 namespace ac = autocheck;
 using namespace NumLib;

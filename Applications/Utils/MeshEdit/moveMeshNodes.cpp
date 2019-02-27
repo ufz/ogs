@@ -49,8 +49,14 @@ int find_closest_point(MeshLib::Node const*const point, std::vector<MeshLib::Nod
 bool containsPoint(MeshLib::Node const& pnt, MathLib::Point3d const& min,
     MathLib::Point3d const& max)
 {
-    if (pnt[0] < min[0] || max[0] < pnt[0]) return false;
-    if (pnt[1] < min[1] || max[1] < pnt[1]) return false;
+    if (pnt[0] < min[0] || max[0] < pnt[0])
+    {
+        return false;
+    }
+    if (pnt[1] < min[1] || max[1] < pnt[1])
+    {
+        return false;
+    }
     return true;
 }
 
@@ -94,12 +100,14 @@ int main (int argc, char* argv[])
     }
 
     bool is_keyword(false);
-    for (auto & keyword : keywords)
+    for (auto& keyword : keywords)
+    {
         if (current_key == keyword)
         {
             is_keyword = true;
             break;
         }
+    }
 
     if (!is_keyword)
     {
@@ -172,8 +180,10 @@ int main (int argc, char* argv[])
             if (is_inside)
             {
                 int idx = find_closest_point(nodes[i], ground_truth_nodes, max_dist);
-                if (idx>=0)
-                    (*nodes[i])[2] = (*(ground_truth_nodes[idx]))[2]-offset;
+                if (idx >= 0)
+                {
+                    (*nodes[i])[2] = (*(ground_truth_nodes[idx]))[2] - offset;
+                }
             }
         }
     }
@@ -186,27 +196,35 @@ int main (int argc, char* argv[])
         std::vector<MeshLib::Node*> nodes (mesh->getNodes());
 
         std::vector<double> elevation(nNodes);
-        for (std::size_t i=0; i<nNodes; i++)
+        for (std::size_t i = 0; i < nNodes; i++)
+        {
             elevation[i] = (*nodes[i])[2];
+        }
 
         for (std::size_t i=0; i<nNodes; i++)
         {
             const std::vector<MeshLib::Node*> conn_nodes (nodes[i]->getConnectedNodes());
             const unsigned nConnNodes (conn_nodes.size());
             elevation[i] = (2*(*nodes[i])[2]);
-            for (std::size_t j=0; j<nConnNodes; ++j)
+            for (std::size_t j = 0; j < nConnNodes; ++j)
+            {
                 elevation[i] += (*conn_nodes[j])[2];
+            }
             elevation[i] /= (nConnNodes+2);
         }
 
-        for (std::size_t i=0; i<nNodes; i++)
+        for (std::size_t i = 0; i < nNodes; i++)
+        {
             (*nodes[i])[2] = elevation[i];
+        }
     }
     /**** add other keywords here ****/
 
     std::string const new_mesh_name (msh_name.substr(0, msh_name.length() - 4) + "_new.vtu");
     if (MeshLib::IO::writeMeshToFile(*mesh, new_mesh_name) != 0)
+    {
         return EXIT_FAILURE;
+    }
 
     INFO("Result successfully written.");
     return EXIT_SUCCESS;

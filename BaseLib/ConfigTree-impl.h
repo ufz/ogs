@@ -40,7 +40,9 @@ ConfigTree::
 getConfigParameter(std::string const& param) const
 {
     if (auto p = getConfigParameterOptional<T>(param))
+    {
         return *p;
+    }
 
     error("Key <" + param + "> has not been found");
 }
@@ -51,7 +53,9 @@ ConfigTree::
 getConfigParameter(std::string const& param, T const& default_value) const
 {
     if (auto p = getConfigParameterOptional<T>(param))
+    {
         return *p;
+    }
 
     return default_value;
 }
@@ -69,7 +73,10 @@ template <typename T>
 boost::optional<T> ConfigTree::getConfigParameterOptionalImpl(
     std::string const& param, T*) const
 {
-    if (auto p = getConfigSubtreeOptional(param)) return p->getValue<T>();
+    if (auto p = getConfigSubtreeOptional(param))
+    {
+        return p->getValue<T>();
+    }
 
     return boost::none;
 }
@@ -84,7 +91,9 @@ boost::optional<std::vector<T>> ConfigTree::getConfigParameterOptionalImpl(
         std::vector<T> result;
         T value;
         while (sstr >> value)
+        {
             result.push_back(value);
+        }
         if (!sstr.eof())  // The stream is not read until the end, must be an
                         // error. result contains number of read values.
         {
@@ -185,7 +194,9 @@ ConfigTree::
 getConfigAttribute(std::string const& attr) const
 {
     if (auto a = getConfigAttributeOptional<T>(attr))
+    {
         return *a;
+    }
 
     error("Did not find XML attribute with name '" + attr + "'.");
 }
@@ -195,7 +206,9 @@ T ConfigTree::getConfigAttribute(std::string const& attr,
                                  T const& default_value) const
 {
     if (auto a = getConfigAttributeOptional<T>(attr))
+    {
         return *a;
+    }
 
     return default_value;
 }
@@ -237,7 +250,10 @@ markVisited(std::string const& key, Attr const is_attr,
     if (!p.second) { // no insertion happened
         auto& v = p.first->second;
         if (v.type == type) {
-            if (!peek_only) ++v.count;
+            if (!peek_only)
+            {
+                ++v.count;
+            }
         } else {
             error("There already was an attempt to obtain key <" + key +
                   "> with type '" + v.type.name() + "' (now: '" + type.name() +
@@ -248,4 +264,4 @@ markVisited(std::string const& key, Attr const is_attr,
     return p.first->second;
 }
 
-}
+}  // namespace BaseLib

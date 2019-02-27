@@ -26,5 +26,4 @@ void ShapeLine3::computeGradShapeFunction(const T_X &r, T_N &dN)
     dN[2] = -2.0 * r[0];
 }
 
-}
-
+}  // namespace NumLib

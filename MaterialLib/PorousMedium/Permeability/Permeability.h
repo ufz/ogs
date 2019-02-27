@@ -77,5 +77,5 @@ private:
     mutable Eigen::MatrixXd _intrinsic_permeability_tensor;
 };
 
-}  // end of namespace
-}  // end of namespace
+}  // namespace PorousMedium
+}  // namespace MaterialLib

@@ -51,8 +51,7 @@ transfer(std::map<MatVec*, std::size_t>& from_used,
     from_used.erase(it);
 }
 
-} // detail
-
+}  // namespace detail
 
 namespace NumLib
 {
@@ -75,8 +74,10 @@ get_(std::size_t& id,
     if (do_search)
     {
         auto it = unused_map.find(id);
-        if (it != unused_map.end()) // unused matrix/vector found
-            return { ::detail::transfer(unused_map, used_map, it), false };
+        if (it != unused_map.end())
+        {  // unused matrix/vector found
+            return {::detail::transfer(unused_map, used_map, it), false};
+        }
     }
 
     // not searched or not found, so create a new one
@@ -135,8 +136,10 @@ getMatrix(GlobalMatrix const& A)
 {
     std::size_t id = 0u;
     auto const& res = getMatrix_<false>(id, A);
-    if (!res.second) // no new object has been created
+    if (!res.second)
+    {  // no new object has been created
         LinAlg::copy(A, *res.first);
+    }
     return *res.first;
 }
 
@@ -145,8 +148,10 @@ SimpleMatrixVectorProvider::
 getMatrix(GlobalMatrix const& A, std::size_t& id)
 {
     auto const& res = getMatrix_<true>(id, A);
-    if (!res.second) // no new object has been created
+    if (!res.second)
+    {  // no new object has been created
         LinAlg::copy(A, *res.first);
+    }
     return *res.first;
 }
 
@@ -209,8 +214,10 @@ getVector(GlobalVector const& x)
 {
     std::size_t id = 0u;
     auto const& res = getVector_<false>(id, x);
-    if (!res.second) // no new object has been created
+    if (!res.second)
+    {  // no new object has been created
         LinAlg::copy(x, *res.first);
+    }
     return *res.first;
 }
 
@@ -219,8 +226,10 @@ SimpleMatrixVectorProvider::
 getVector(GlobalVector const& x, std::size_t& id)
 {
     auto const& res = getVector_<true>(id, x);
-    if (!res.second) // no new object has been created
+    if (!res.second)
+    {  // no new object has been created
         LinAlg::copy(x, *res.first);
+    }
     return *res.first;
 }
 
@@ -245,16 +254,24 @@ SimpleMatrixVectorProvider::
     }
 
     for (auto& id_ptr : _unused_matrices)
+    {
         delete id_ptr.second;
+    }
 
     for (auto& ptr_id : _used_matrices)
+    {
         delete ptr_id.first;
+    }
 
     for (auto& id_ptr : _unused_vectors)
+    {
         delete id_ptr.second;
+    }
 
     for (auto& ptr_id : _used_vectors)
+    {
         delete ptr_id.first;
+    }
 }
 
-} // MathLib
+}  // namespace NumLib

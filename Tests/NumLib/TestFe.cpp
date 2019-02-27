@@ -71,7 +71,7 @@ using TestTypes =
                      TestCase<TestFeQUAD4, EigenFixedShapeMatrixPolicy>,
                      TestCase<TestFeTET4, EigenFixedShapeMatrixPolicy>,
                      TestCase<TestFeTRI3, EigenFixedShapeMatrixPolicy>>;
-}
+}  // namespace
 
 template <class T>
 class NumLibFemIsoTest : public ::testing::Test, public T::TestFeType
@@ -131,16 +131,24 @@ class NumLibFemIsoTest : public ::testing::Test, public T::TestFeType
          // for destructor
          vec_eles.push_back(mesh_element);
          for (auto e : vec_eles)
+         {
              for (unsigned i = 0; i < e->getNumberOfNodes(); i++)
+             {
                  vec_nodes.push_back(e->getNode(i));
+             }
+         }
     }
 
     ~NumLibFemIsoTest() override
     {
         for (auto itr = vec_nodes.begin(); itr != vec_nodes.end(); ++itr)
+        {
             delete *itr;
+        }
         for (auto itr = vec_eles.begin(); itr != vec_eles.end(); ++itr)
+        {
             delete *itr;
+        }
     }
 
 

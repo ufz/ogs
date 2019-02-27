@@ -158,8 +158,10 @@ public:
         ConfigTree operator*() {
             auto st = SubtreeIterator::operator*();
             if (st.hasChildren())
-                _parent.error("The requested parameter <" + _tagname + ">"
-                              " has child elements.");
+            {
+                _parent.error("The requested parameter <" + _tagname +
+                              "> has child elements.");
+            }
             return st;
         }
     };
@@ -643,6 +645,6 @@ private:
     friend void checkAndInvalidate(std::unique_ptr<ConfigTree> const& conf);
 };
 
-}
+}  // namespace BaseLib
 
 #include "ConfigTree-impl.h"

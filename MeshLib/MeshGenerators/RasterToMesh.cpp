@@ -89,11 +89,15 @@ MeshLib::Mesh* RasterToMesh::convert(
                 double* colour = pixelData->GetTuple(idx + j);
                 bool const visible = (nTuple == 2 || nTuple == 4) ? (colour[nTuple - 1] != 0) : true;
                 if (!visible)
+                {
                     pix[idx + j] = header.no_data;
+                }
                 else
-                    pix[idx + j] = (nTuple < 3) ?
-                        colour[0] : // grey (+ alpha)
-                        (0.3 * colour[0] + 0.6 * colour[1] + 0.1 * colour[2]); // rgb(a)
+                {
+                    pix[idx + j] = (nTuple < 3) ? colour[0] :  // grey (+ alpha)
+                                       (0.3 * colour[0] + 0.6 * colour[1] +
+                                        0.1 * colour[2]);  // rgb(a)
+                }
             }
         }
     }
@@ -137,20 +141,25 @@ MeshLib::Mesh* RasterToMesh::convert(
          header.origin[1] - (header.cell_size / 2.0), header.origin[2]}});
     std::unique_ptr<MeshLib::Mesh> mesh (nullptr);
     if (elem_type == MeshElemType::TRIANGLE)
+    {
         mesh.reset(
             MeshLib::MeshGenerator::generateRegularTriMesh(header.n_cols,
                                                            header.n_rows,
                                                            header.cell_size,
                                                            mesh_origin,
                                                            "RasterDataMesh"));
+    }
     else if (elem_type == MeshElemType::QUAD)
+    {
         mesh.reset(
             MeshLib::MeshGenerator::generateRegularQuadMesh(header.n_cols,
                                                             header.n_rows,
                                                             header.cell_size,
                                                             mesh_origin,
                                                             "RasterDataMesh"));
+    }
     else if (elem_type == MeshElemType::PRISM)
+    {
         mesh.reset(
             MeshLib::MeshGenerator::generateRegularPrismMesh(header.n_cols,
                                                              header.n_rows,
@@ -158,7 +167,9 @@ MeshLib::Mesh* RasterToMesh::convert(
                                                              header.cell_size,
                                                              mesh_origin,
                                                              "RasterDataMesh"));
+    }
     else if (elem_type == MeshElemType::HEXAHEDRON)
+    {
         mesh.reset(
             MeshLib::MeshGenerator::generateRegularHexMesh(header.n_cols,
                                                            header.n_rows,
@@ -166,6 +177,7 @@ MeshLib::Mesh* RasterToMesh::convert(
                                                            header.cell_size,
                                                            mesh_origin,
                                                            "RasterDataMesh"));
+    }
 
     MeshLib::Mesh* new_mesh(nullptr);
     std::vector<std::size_t> elements_to_remove;
@@ -189,14 +201,19 @@ MeshLib::Mesh* RasterToMesh::convert(
                     {
                         elements_to_remove.push_back(m * (idx + j));
                         if (double_idx)
+                        {
                             elements_to_remove.push_back(m * (idx + j) + 1);
+                        }
                         continue;
                     }
                     for (std::size_t n = 0; n < n_nodes; ++n)
                     {
                         (*(nodes[elems[m * (idx + j)]->getNodeIndex(n)]))[2] = val;
                         if (double_idx)
-                            (*(nodes[elems[m * (idx + j) + 1]->getNodeIndex(n)]))[2] = val;
+                        {
+                            (*(nodes[elems[m * (idx + j) + 1]->getNodeIndex(
+                                n)]))[2] = val;
+                        }
                     }
                 }
             }
@@ -223,12 +240,18 @@ MeshLib::Mesh* RasterToMesh::convert(
         elements_to_remove = ex.getSearchedElementIDs();
     }
     if (!elements_to_remove.empty())
+    {
         new_mesh = MeshLib::removeElements(*mesh, elements_to_remove, mesh->getName());
+    }
     else
+    {
         new_mesh = mesh.release();
+    }
 
     if (intensity_type == UseIntensityAs::NONE)
+    {
         new_mesh->getProperties().removePropertyVector(array_name);
+    }
 
     return new_mesh;
 }

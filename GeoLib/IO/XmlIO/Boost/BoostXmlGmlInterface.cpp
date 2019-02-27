@@ -299,7 +299,9 @@ bool BoostXmlGmlInterface::write()
         pnt_tag.put("<xmlattr>.z", (*((*pnts)[k]))[2]);
         std::string const& point_name(pnt_vec->getItemNameByID(k));
         if (!point_name.empty())
+        {
             pnt_tag.put("<xmlattr>.name", point_name);
+        }
     }
 
     addPolylinesToPropertyTree(geometry_set);
@@ -341,7 +343,9 @@ void BoostXmlGmlInterface::addSurfacesToPropertyTree(
         auto& surface_tag = surfaces_tag.add("surface", "");
         surface_tag.put("<xmlattr>.id", i);
         if (!sfc_name.empty())
+        {
             surface_tag.put("<xmlattr>.name", sfc_name);
+        }
         for (std::size_t j=0; j<surface->getNumberOfTriangles(); ++j) {
             auto& element_tag = surface_tag.add("element", "");
             element_tag.put("<xmlattr>.p1", (*(*surface)[j])[0]);
@@ -381,7 +385,9 @@ void BoostXmlGmlInterface::addPolylinesToPropertyTree(
         auto& polyline_tag = polylines_tag.add("polyline", "");
         polyline_tag.put("<xmlattr>.id", i);
         if (!ply_name.empty())
+        {
             polyline_tag.put("<xmlattr>.name", ply_name);
+        }
         for (std::size_t j=0; j<polyline->getNumberOfPoints(); ++j) {
             polyline_tag.add("pnt", polyline->getPointID(j));
         }

@@ -34,4 +34,4 @@ void writeGeometryToFile(std::string const& geo_name,
             " the required format from file extension.");
     }
 }
-}
+}  // namespace FileIO

@@ -42,4 +42,4 @@ readGeometryFromFile(std::string const& fname, GeoLib::GEOObjects & geo_objs)
                   "Something is wrong in the reading function.");
     }
 }
-}
+}  // namespace FileIO

@@ -33,7 +33,9 @@ void getNewellPlane (InputIterator pnts_begin, InputIterator pnts_end,
     auto n_pnts(std::distance(pnts_begin, pnts_end));
     assert(n_pnts > 2);
     if (n_pnts > 0)
+    {
         d = MathLib::scalarProduct(centroid, plane_normal) / n_pnts;
+    }
 }
 
 template <class T_POINT>
@@ -154,14 +156,22 @@ void computeRotationMatrixToXY(MathLib::Vector3 const& n,
         rot_mat(1,0) = 0.0;
         rot_mat(1,1) = 0.0;
         if (n[1] > 0)
+        {
             rot_mat(1,2) = -1.0;
+        }
         else
-            rot_mat(1,2) = 1.0;
+        {
+            rot_mat(1, 2) = 1.0;
+        }
         rot_mat(2,0) = 0.0;
         if (n[1] > 0)
+        {
             rot_mat(2,1) = 1.0;
+        }
         else
-            rot_mat(2,1) = -1.0;
+        {
+            rot_mat(2, 1) = -1.0;
+        }
         rot_mat(2,2) = 0.0;
         return;
     }
@@ -189,7 +199,9 @@ void rotatePoints(
     for (auto it=pnts_begin; it!=pnts_end; ++it) {
         tmp = rot_mat * (*it)->getCoords();
         for (std::size_t j(0); j < 3; j++)
+        {
             (*(*it))[j] = tmp[j];
+        }
         delete [] tmp;
     }
 }
@@ -213,8 +225,10 @@ MathLib::DenseMatrix<double> rotatePointsToXY(InputIterator1 p_pnts_begin,
     computeRotationMatrixToXY(plane_normal, rot_mat);
     rotatePoints(rot_mat, r_pnts_begin, r_pnts_end);
 
-    for (auto it=r_pnts_begin; it!=r_pnts_end; ++it)
-        (*(*it))[2] = 0.0; // should be -= d but there are numerical errors
+    for (auto it = r_pnts_begin; it != r_pnts_end; ++it)
+    {
+        (*(*it))[2] = 0.0;  // should be -= d but there are numerical errors
+    }
 
     return rot_mat;
 }

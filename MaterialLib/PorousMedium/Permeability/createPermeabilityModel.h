@@ -35,5 +35,5 @@ std::unique_ptr<Permeability> createPermeabilityModel(
     BaseLib::ConfigTree const& config,
     std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters);
 
-}  // end of namespace
-}  // end of namespace
+}  // namespace PorousMedium
+}  // namespace MaterialLib

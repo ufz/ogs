@@ -94,4 +94,4 @@ private:
     const double _default_value;
 };
 
-} // NumLib
+}  // namespace NumLib

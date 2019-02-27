@@ -131,6 +131,6 @@ private:
     double *TempDoubleArray;
 };
 
-} // end namespace
+}  // namespace MeshLib
 
 #include "VtkMeshNodalCoordinatesTemplate-impl.h"

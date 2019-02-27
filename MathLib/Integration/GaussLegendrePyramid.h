@@ -51,4 +51,4 @@ const std::array<std::array<double, 3>, GaussLegendrePyramid<1>::NPoints>
 template <>
 double const GaussLegendrePyramid<1>::W[1];
 #endif
-}
+}  // namespace MathLib

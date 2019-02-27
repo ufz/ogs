@@ -48,11 +48,15 @@ double swapEndianness(double const& v)
     } a {}, b {};
 
     a.v = v;
-    for (unsigned short i = 0; i < sizeof(double)/2; i++)
-        b.c[i] = a.c[sizeof(double)/2 - i - 1];
+    for (unsigned short i = 0; i < sizeof(double) / 2; i++)
+    {
+        b.c[i] = a.c[sizeof(double) / 2 - i - 1];
+    }
 
-    for (unsigned short i = sizeof(double)/2; i < sizeof(double); i++)
-        b.c[i] = a.c[sizeof(double)+sizeof(double)/2 - i - 1];
+    for (unsigned short i = sizeof(double) / 2; i < sizeof(double); i++)
+    {
+        b.c[i] = a.c[sizeof(double) + sizeof(double) / 2 - i - 1];
+    }
 
     return b.v;
 }
@@ -95,12 +99,16 @@ std::string dropFileExtension(std::string const& filename)
     // Look for dots in filename.
     auto const p = findLastDot(filename);
     if (p == std::string::npos)
+    {
         return filename;
+    }
 
     // Check position of the last path separator.
     auto const s = findLastPathSeparator(filename);
     if (s != std::string::npos && p < s)
+    {
         return filename;
+    }
 
     return filename.substr(0, p);
 }
@@ -109,7 +117,9 @@ std::string extractBaseName(std::string const& pathname)
 {
     auto const p = findLastPathSeparator(pathname);
     if (p == std::string::npos)
+    {
         return pathname;
+    }
     return pathname.substr(p + 1);
 }
 
@@ -124,7 +134,9 @@ std::string getFileExtension(const std::string &path)
     const std::string str = extractBaseName(path);
     auto const p = findLastDot(str);
     if (p == std::string::npos)
+    {
         return std::string();
+    }
     return str.substr(p + 1);
 }
 
@@ -146,12 +158,18 @@ std::string copyPathToFileName(const std::string &file_name,
     // check if file_name already contains a full path
     auto const pos = findLastPathSeparator(file_name);
     if (pos != std::string::npos)
+    {
         return file_name;
+    }
 
     if (source.empty())
+    {
         return file_name;
+    }
     if (source.back() != pathSeparator)
+    {
         return BaseLib::extractPath(source + pathSeparator).append(file_name);
+    }
     return BaseLib::extractPath(source).append(file_name);
 }
 
@@ -159,24 +177,32 @@ std::string extractPath(std::string const& pathname)
 {
     auto const pos = findLastPathSeparator(pathname);
     if (pos == std::string::npos)
+    {
         return "";
+    }
     return pathname.substr(0, pos + 1);
 }
 
 std::string appendPathSeparator(std::string const& path)
 {
-    if(findLastPathSeparator(path) == path.length() - 1)
+    if (findLastPathSeparator(path) == path.length() - 1)
+    {
         return path;
+    }
     return path + pathSeparator;
 }
 
 std::string joinPaths(std::string const& pathA, std::string const& pathB)
 {
     if (pathA.empty())
+    {
         return pathB;
+    }
 
     if (pathB.empty())
+    {
         return pathA;
+    }
 
     if (pathB.front() == pathSeparator) {
         auto const tmpB = pathB.substr(1);

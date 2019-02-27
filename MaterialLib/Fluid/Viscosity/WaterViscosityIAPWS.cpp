@@ -195,5 +195,5 @@ double computedBarMu_dbarRho(const double barT, double bar_rho)
            (mu1_factor + bar_rho * dmu1_factor_dbar_rho);
 }
 
-}  // end namespace
-}  // end namespace
+}  // namespace Fluid
+}  // namespace MaterialLib

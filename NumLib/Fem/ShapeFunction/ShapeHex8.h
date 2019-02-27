@@ -62,6 +62,6 @@ public:
     static const unsigned NPOINTS = MeshElement::n_all_nodes;
 };
 
-}
+}  // namespace NumLib
 
 #include "ShapeHex8-impl.h"

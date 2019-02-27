@@ -37,10 +37,13 @@ void PVDFile::addVTUFile(const std::string &vtu_fname, double timestep)
            "  <Collection>\n";
 
     for (auto const& pair : _datasets)
-        fh << "    <DataSet timestep=\"" << pair.first << "\" group=\"\" part=\"0\" file=\"" << pair.second << "\"/>\n";
+    {
+        fh << "    <DataSet timestep=\"" << pair.first
+           << "\" group=\"\" part=\"0\" file=\"" << pair.second << "\"/>\n";
+    }
 
     fh << "  </Collection>\n</VTKFile>\n";
 }
 
-} // IO
-} // MeshLib
+}  // namespace IO
+}  // namespace MeshLib

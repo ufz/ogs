@@ -104,4 +104,4 @@ private:
 };
 
 bool isStation(GeoLib::Point const* pnt);
-} // namespace
+}  // namespace GeoLib

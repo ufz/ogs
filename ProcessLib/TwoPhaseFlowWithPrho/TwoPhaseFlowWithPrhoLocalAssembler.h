@@ -189,7 +189,7 @@ private:
     static const int cap_pressure_size = ShapeFunction::NPOINTS;
 };
 
-}  // end of namespace
-}  // end of namespace
+}  // namespace TwoPhaseFlowWithPrho
+}  // namespace ProcessLib
 
 #include "TwoPhaseFlowWithPrhoLocalAssembler-impl.h"

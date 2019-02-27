@@ -83,7 +83,9 @@ std::pair<MeshLib::Element*, int> readElement(
 
     // skip tags
     for (std::size_t j = 2; j < n_tags; j++)
+    {
         in >> dummy;
+    }
 
     switch (type)
     {
@@ -107,35 +109,45 @@ std::pair<MeshLib::Element*, int> readElement(
         readNodeIDs(in, 4, node_ids, id_map);
         auto quad_nodes = new MeshLib::Node*[4];
         for (unsigned k(0); k < 4; k++)
+        {
             quad_nodes[k] = nodes[node_ids[k]];
+        }
         return std::make_pair(new MeshLib::Quad(quad_nodes), mat_id);
     }
     case 4: {
         readNodeIDs(in, 4, node_ids, id_map);
         auto tet_nodes = new MeshLib::Node*[5];
         for (unsigned k(0); k < 4; k++)
+        {
             tet_nodes[k] = nodes[node_ids[k]];
+        }
         return std::make_pair(new MeshLib::Tet(tet_nodes), mat_id);
     }
     case 5: {
         readNodeIDs(in, 8, node_ids, id_map);
         auto hex_nodes = new MeshLib::Node*[8];
         for (unsigned k(0); k < 8; k++)
+        {
             hex_nodes[k] = nodes[node_ids[k]];
+        }
         return std::make_pair(new MeshLib::Hex(hex_nodes), mat_id);
     }
     case 6: {
         readNodeIDs(in, 6, node_ids, id_map);
         auto prism_nodes = new MeshLib::Node*[6];
         for (unsigned k(0); k < 6; k++)
+        {
             prism_nodes[k] = nodes[node_ids[k]];
+        }
         return std::make_pair(new MeshLib::Prism(prism_nodes), mat_id);
     }
     case 7: {
         readNodeIDs(in, 5, node_ids, id_map);
         auto pyramid_nodes = new MeshLib::Node*[5];
         for (unsigned k(0); k < 5; k++)
+        {
             pyramid_nodes[k] = nodes[node_ids[k]];
+        }
         return std::make_pair(new MeshLib::Pyramid(pyramid_nodes), mat_id);
     }
     case 15:
@@ -231,7 +243,9 @@ MeshLib::Mesh* readGMSHMesh(std::string const& fname)
             std::size_t n_lines(0);
             in >> n_lines >> std::ws; // number-of-lines
             for (std::size_t i = 0; i < n_lines; i++)
+            {
                 getline(in, line);
+            }
             getline(in, line); // END keyword
         }
     }

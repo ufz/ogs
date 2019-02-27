@@ -48,8 +48,10 @@ Surface::Surface(Surface const& src)
 
 Surface::~Surface()
 {
-    for (auto & _sfc_triangle : _sfc_triangles)
+    for (auto& _sfc_triangle : _sfc_triangles)
+    {
         delete _sfc_triangle;
+    }
 }
 
 void Surface::addTriangle(std::size_t pnt_a,
@@ -61,7 +63,9 @@ void Surface::addTriangle(std::size_t pnt_a,
 
     // Check if two points of the triangle have identical IDs
     if (pnt_a == pnt_b || pnt_a == pnt_c || pnt_b == pnt_c)
+    {
         return;
+    }
 
     // Adding a new triangle invalides the surface grid.
     _surface_grid.reset();
@@ -122,4 +126,4 @@ const Triangle* Surface::findTriangle(MathLib::Point3d const& pnt) const
     return nullptr;
 }
 
-} // end namespace
+}  // namespace GeoLib

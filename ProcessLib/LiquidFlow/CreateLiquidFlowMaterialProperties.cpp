@@ -101,5 +101,5 @@ createLiquidFlowMaterialProperties(
         std::move(porosity_models), std::move(storage_models), material_ids);
 }
 
-}  // end of namespace
-}  // end of namespace
+}  // namespace LiquidFlow
+}  // namespace ProcessLib

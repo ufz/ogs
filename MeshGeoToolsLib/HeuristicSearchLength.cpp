@@ -59,10 +59,14 @@ HeuristicSearchLength::HeuristicSearchLength(MeshLib::Mesh const& mesh, LengthTy
     _search_length = mean/2;
 
     if (variance > 0) {
-        if (variance < mean*mean/4)
+        if (variance < mean * mean / 4)
+        {
             _search_length -= std::sqrt(variance);
+        }
         else
+        {
             _search_length = std::numeric_limits<double>::epsilon();
+        }
     }
 
     DBUG(

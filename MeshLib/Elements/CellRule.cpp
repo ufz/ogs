@@ -32,9 +32,11 @@ bool CellRule::testElementNodeOrder(const Element* e)
         const double s = MathLib::scalarProduct(FaceRule::getSurfaceNormal(face), cx);
         delete face;
         if (s >= 0)
+        {
             return false;
+        }
     }
     return true;
 }
 
-} /* namespace */
+}  // namespace MeshLib

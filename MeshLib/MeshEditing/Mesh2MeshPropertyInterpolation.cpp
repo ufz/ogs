@@ -74,7 +74,9 @@ bool Mesh2MeshPropertyInterpolation::setPropertiesForMesh(Mesh& dest_mesh) const
         }
     }
     if (dest_properties->size() != dest_mesh.getNumberOfElements())
+    {
         dest_properties->resize(dest_mesh.getNumberOfElements());
+    }
 
     interpolatePropertiesForMesh(dest_mesh, *dest_properties);
 
@@ -102,7 +104,9 @@ void Mesh2MeshPropertyInterpolation::interpolatePropertiesForMesh(
     {
         MeshLib::Element& dest_element(*dest_elements[k]);
         if (dest_element.getGeomType() == MeshElemType::LINE)
+        {
             continue;
+        }
 
         // compute axis aligned bounding box around the current element
         const GeoLib::AABB elem_aabb(
@@ -132,10 +136,12 @@ void Mesh2MeshPropertyInterpolation::interpolatePropertiesForMesh(
         }
 
         if (cnt == 0)
+        {
             OGS_FATAL(
                 "Mesh2MeshInterpolation: Could not find values in source mesh "
                 "for the element %d.",
                 k);
+        }
         dest_properties[k] = average_value / cnt;
     }
 }

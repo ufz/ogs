@@ -33,7 +33,9 @@ void SourceTermCollection::integrate(const double t, GlobalVector const& x,
                                      GlobalVector& b, GlobalMatrix* jac) const
 {
     for (auto const& st : _source_terms)
+    {
         st->integrate(t, x, b, jac);
+    }
 }
 
-}
+}  // namespace ProcessLib

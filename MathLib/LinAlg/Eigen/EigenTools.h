@@ -44,4 +44,4 @@ void applyKnownSolution(Eigen::MatrixXd &A, Eigen::VectorXd &b, Eigen::VectorXd 
     OGS_FATAL("Method not implemented."); // TODO implement
 }
 
-} // MathLib
+}  // namespace MathLib

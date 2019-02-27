@@ -38,5 +38,5 @@ protected:
     std::string _exportName;
 };
 
-}
-}
+}  // namespace IO
+}  // namespace BaseLib

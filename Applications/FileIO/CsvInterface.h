@@ -238,4 +238,4 @@ private:
     std::vector< boost::any > _data;
 };
 
-} // FileIO
+}  // namespace FileIO

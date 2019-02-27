@@ -29,4 +29,4 @@ class FluidProperties;
 std::unique_ptr<FluidProperties> createFluidProperties(
     BaseLib::ConfigTree const& config);
 }  // end namespace
-}  // end namespace
+}  // namespace MaterialLib

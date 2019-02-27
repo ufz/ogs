@@ -209,5 +209,5 @@ std::unique_ptr<RelativePermeability> createRelativePermeabilityModel(
         type.data());
 }
 
-}  // end namespace
-}  // end namespace
+}  // namespace PorousMedium
+}  // namespace MaterialLib

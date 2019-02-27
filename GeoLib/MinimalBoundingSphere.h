@@ -84,4 +84,4 @@ private:
     MathLib::Vector3 _center;
 };
 
-} // namespace
+}  // namespace GeoLib

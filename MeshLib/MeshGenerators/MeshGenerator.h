@@ -505,5 +505,5 @@ createSurfaceMesh(std::string const& mesh_name,
     std::array<std::size_t, 2> const& n_steps,
     const std::function<double(double,double)>& f);
 
-}  //MeshGenerator
-} //MeshLib
+}  // namespace MeshGenerator
+}  // namespace MeshLib

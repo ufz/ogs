@@ -97,8 +97,10 @@ inline void TCLAPCustomOutput::failure( TCLAP::CmdLineInterface& _cmd,
                       << std::endl << "   " << progName << " --help"
                       << std::endl << std::endl;
         }
-    else
-        usage(_cmd);
+        else
+        {
+            usage(_cmd);
+        }
 
     throw TCLAP::ExitException(1);
 }
@@ -118,22 +120,31 @@ TCLAPCustomOutput::_shortUsage( TCLAP::CmdLineInterface& _cmd,
     for ( int i = 0; static_cast<unsigned int>(i) < xorList.size(); i++ )
         {
             s += " {";
-            for ( TCLAP::ArgVectorIterator it = xorList[i].begin();
-                  it != xorList[i].end(); it++ )
+            for (TCLAP::ArgVectorIterator it = xorList[i].begin();
+                 it != xorList[i].end();
+                 it++)
+            {
                 s += (*it)->shortID() + "|";
+            }
 
             s[s.length()-1] = '}';
         }
 
     // then the rest
-    for (auto it = argList.rbegin(); it != argList.rend(); ++it) // here modified
-        if ( !xorHandler.contains( (*it) ) )
-            s += " " + (*it)->shortID();
+        for (auto it = argList.rbegin(); it != argList.rend(); ++it)
+        {  // here modified
+            if (!xorHandler.contains((*it)))
+            {
+                s += " " + (*it)->shortID();
+            }
+        }
 
     // if the program name is too long, then adjust the second line offset
     int secondLineOffset = static_cast<int>(progName.length()) + 2;
-    if ( secondLineOffset > 75/2 )
-        secondLineOffset = static_cast<int>(75/2);
+    if (secondLineOffset > 75 / 2)
+    {
+        secondLineOffset = static_cast<int>(75 / 2);
+    }
 
     spacePrint( os, s, 75, 3, secondLineOffset );
 }
@@ -157,20 +168,24 @@ TCLAPCustomOutput::_longUsage( TCLAP::CmdLineInterface& _cmd,
                     this->spacePrint( os, (*it)->longID(), 75, 3, 3 );
                     spacePrint( os, (*it)->getDescription(), 75, 5, 0 );
 
-                    if ( it+1 != xorList[i].end() )
+                    if (it + 1 != xorList[i].end())
+                    {
                         spacePrint(os, "-- OR --", 75, 9, 0);
+                    }
                 }
             os << std::endl << std::endl;
         }
 
     // then the rest
-    for (auto it = argList.rbegin(); it != argList.rend(); it++) // here modified
-        if ( !xorHandler.contains( (*it) ) )
+        for (auto it = argList.rbegin(); it != argList.rend(); it++)
+        {  // here modified
+            if (!xorHandler.contains((*it)))
             {
                 spacePrint( os, (*it)->longID(), 75, 3, 3 );
                 spacePrint( os, (*it)->getDescription(), 75, 5, 0 );
                 os << std::endl;
             }
+        }
 
     os << std::endl;
 

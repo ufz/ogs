@@ -33,8 +33,10 @@ bool hasTopologicalOrdering(std::vector<std::vector<int>> const& graph)
     {
         for (int node_j : node_i_adjacencies)
         {
-            if (node_j >= 0)    // ignore negative indices.
+            if (node_j >= 0)
+            {  // ignore negative indices.
                 ++number_incoming_edges[node_j];
+            }
         }
     }
 
@@ -61,7 +63,9 @@ bool hasTopologicalOrdering(std::vector<std::vector<int>> const& graph)
         for (int node_j : graph[node_i])
         {
             if (node_j < 0)
+            {
                 continue;  // ignore negative indices
+            }
             if (--number_incoming_edges[node_j] == 0)
             {  // Add a node without incoming edges to the queue.
                 q.push_back(node_j);
@@ -89,13 +93,17 @@ void traverse(std::vector<std::vector<int>> const& map_sink_source,
     callback(sink_fct, TraversePosition::StartNode);
 
     if (sink_fct < 0)
+    {
         return;
+    }
 
     auto const& si_so = map_sink_source[sink_fct];
     std::size_t const num_args = si_so.size();
     for (std::size_t sink_arg = 0; sink_arg != num_args; ++sink_arg) {
         if (sink_arg != 0)
+        {
             callback(sink_fct, TraversePosition::BetweenChildren);
+        }
         traverse(map_sink_source, si_so[sink_arg], callback);
     }
 

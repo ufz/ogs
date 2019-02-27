@@ -27,9 +27,18 @@ std::string convertVecNormTypeToString(VecNormType normType)
 
 VecNormType convertStringToVecNormType(const std::string &str)
 {
-    if (str == "NORM1") return VecNormType::NORM1;
-    if (str == "NORM2") return VecNormType::NORM2;
-    if (str == "INFINITY_N") return VecNormType::INFINITY_N;
+    if (str == "NORM1")
+    {
+        return VecNormType::NORM1;
+    }
+    if (str == "NORM2")
+    {
+        return VecNormType::NORM2;
+    }
+    if (str == "INFINITY_N")
+    {
+        return VecNormType::INFINITY_N;
+    }
     return VecNormType::INVALID;
 }
 

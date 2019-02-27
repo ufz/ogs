@@ -79,6 +79,6 @@ void createLocalAssemblers(
         dof_table, mesh_elements, local_assemblers,
         std::forward<ExtraCtorArgs>(extra_ctor_args)...);
 }
-}  // SmallDeformation
+}  // namespace SmallDeformation
 
-}  // ProcessLib
+}  // namespace ProcessLib

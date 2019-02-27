@@ -48,7 +48,7 @@ inline double dShapeFunctionHexHQ_Middle(const double r, const double s, const d
     return 0.0;
 }
 
-}
+}  // namespace
 
 namespace NumLib
 {
@@ -125,5 +125,4 @@ void ShapeHex20::computeGradShapeFunction(const T_X &rst, T_N &dNdr)
     }
 }
 
-}
-
+}  // namespace NumLib

@@ -144,8 +144,10 @@ int main (int argc, char* argv[])
     const unsigned dim = getDimension(eleType);
 
     bool dim_used[3] = {false};
-    for (unsigned i=0; i<dim; i++)
+    for (unsigned i = 0; i < dim; i++)
+    {
         dim_used[i] = true;
+    }
 
     std::vector<TCLAP::ValueArg<double>*> vec_lengthArg = {&lengthXArg, &lengthYArg, &lengthZArg};
     std::vector<TCLAP::ValueArg<unsigned>*> vec_ndivArg = {&nsubdivXArg, &nsubdivYArg, &nsubdivZArg};

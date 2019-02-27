@@ -53,7 +53,9 @@ int main(int argc, char *argv[])
     auto const mesh = std::unique_ptr<MeshLib::Mesh>(
         MeshLib::IO::readMeshFromFile(filename));
     if (!mesh)
+    {
         return EXIT_FAILURE;
+    }
 
     std::vector<std::size_t> selected_node_ids;
     if  (showNodeWithMaxEle_arg.getValue())
@@ -79,18 +81,27 @@ int main(int argc, char *argv[])
         out << "# Element " << ele->getID() << std::endl;
         out << "Type : " << CellType2String(ele->getCellType()) << std::endl;
         if (materialIds)
+        {
             out << "Mat ID : " << (*materialIds)[ele_id] << std::endl;
+        }
         out << "Nodes: " << std::endl;
-        for (unsigned i=0; i<ele->getNumberOfNodes(); i++)
-            out <<  ele->getNode(i)->getID() << " " << *ele->getNode(i) << std::endl;
+        for (unsigned i = 0; i < ele->getNumberOfNodes(); i++)
+        {
+            out << ele->getNode(i)->getID() << " " << *ele->getNode(i)
+                << std::endl;
+        }
         out << "Content: " << ele->getContent() << std::endl;
         out << "Neighbors: ";
         for (unsigned i=0; i<ele->getNumberOfNeighbors(); i++)
         {
             if (ele->getNeighbor(i))
+            {
                 out << ele->getNeighbor(i)->getID() << " ";
+            }
             else
+            {
                 out << "none ";
+            }
         }
         out << std::endl;
         INFO("%s", out.str().c_str());
@@ -107,11 +118,15 @@ int main(int argc, char *argv[])
         out << "Coordinates: " << *node << std::endl;
         out << "Connected elements (" << node->getNumberOfElements() << "): ";
         for (auto ele : node->getElements())
+        {
             out << ele->getID() << " ";
+        }
         out << std::endl;
         out << "Connected nodes (" << node->getConnectedNodes().size() << "): ";
         for (auto nd : node->getConnectedNodes())
+        {
             out << nd->getID() << " ";
+        }
         out << std::endl;
         INFO("%s", out.str().c_str());
     }

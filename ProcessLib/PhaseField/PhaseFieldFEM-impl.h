@@ -87,7 +87,9 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
 
     auto local_pressure = 0.0;
     if (_process_data.crack_pressure)
+    {
         local_pressure = _process_data.unity_pressure;
+    }
 
     int const n_integration_points = _integration_method.getNumberOfPoints();
     for (int ip = 0; ip < n_integration_points; ip++)
@@ -126,9 +128,11 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
                                                           displacement_size);
 
         for (int i = 0; i < DisplacementDim; ++i)
+        {
             N_u.template block<1, displacement_size / DisplacementDim>(
                    i, i * displacement_size / DisplacementDim)
                 .noalias() = N;
+        }
 
         auto const rho_sr = _process_data.solid_density(t, x_position)[0];
         auto const& b = _process_data.specific_body_force;
@@ -185,9 +189,13 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
 
     auto local_pressure = 0.0;
     if (_process_data.crack_pressure)
+    {
         local_pressure = _process_data.unity_pressure;
+    }
     else if (_process_data.propagating_crack)
+    {
         local_pressure = _process_data.pressure;
+    }
 
     int const n_integration_points = _integration_method.getNumberOfPoints();
     for (int ip = 0; ip < n_integration_points; ip++)
@@ -232,9 +240,11 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
                                                           displacement_size);
 
         for (int i = 0; i < DisplacementDim; ++i)
+        {
             N_u.template block<1, displacement_size / DisplacementDim>(
                    i, i * displacement_size / DisplacementDim)
                 .noalias() = N;
+        }
 
         local_Jac.noalias() +=
             (2 * N.transpose() * N * strain_energy_tensile +
@@ -306,9 +316,11 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
                                                           displacement_size);
 
         for (int i = 0; i < DisplacementDim; ++i)
+        {
             N_u.template block<1, displacement_size / DisplacementDim>(
                    i, i * displacement_size / DisplacementDim)
                 .noalias() = N;
+        }
 
         crack_volume += (N_u * u).dot(dNdx * d) * w;
     }
@@ -376,9 +388,11 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
                                                           displacement_size);
 
         for (int i = 0; i < DisplacementDim; ++i)
+        {
             N_u.template block<1, displacement_size / DisplacementDim>(
                    i, i * displacement_size / DisplacementDim)
                 .noalias() = N;
+        }
 
         elastic_energy += _ip_data[ip].elastic_energy * w;
 
@@ -388,8 +402,10 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
             w;
 
         if (_process_data.crack_pressure)
+        {
             pressure_work +=
                 pressure_ip * (N_u * u_corrected).dot(dNdx * d) * w;
+        }
     }
 }
 }  // namespace PhaseField

@@ -203,7 +203,9 @@ void LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::assemble(
                          ip_data.mass_operator;
 
         if (_process_data.has_gravity)
+        {
             Bp += w * density * dNdx.transpose() * K_times_k_rel_over_mu * b;
+        }
         /* with Oberbeck-Boussing assumption density difference only exists
          * in buoyancy effects */
     }

@@ -67,5 +67,5 @@ private:
     const double _krel_min;  ///< Minimum relative permeability
 };
 
-}  // end namespace
-}  // end namespace
+}  // namespace PorousMedium
+}  // namespace MaterialLib

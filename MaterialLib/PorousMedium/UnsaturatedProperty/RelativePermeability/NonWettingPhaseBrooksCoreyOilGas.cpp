@@ -47,5 +47,5 @@ double NonWettingPhaseBrooksCoreyOilGas::getdValue(
            (_saturation_max - _saturation_r);
 }
 
-}  // end namespace
-}  // end namespace
+}  // namespace PorousMedium
+}  // namespace MaterialLib

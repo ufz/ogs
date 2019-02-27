@@ -122,5 +122,5 @@ void TwoPhaseFlowWithPrhoProcess::preTimestepConcreteProcess(
         dt);
 }
 
-}  // end of namespace
-}  // end of namespace
+}  // namespace TwoPhaseFlowWithPrho
+}  // namespace ProcessLib

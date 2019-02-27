@@ -130,10 +130,12 @@ public:
         : _dof_table(dof_table)
     {
         if (shapefunction_order != 2)
+        {
             OGS_FATAL(
                 "The given shape function order %d is not supported.\nOnly "
                 "shape functions of order 2 are supported.",
                 shapefunction_order);
+        }
 // /// Quads and Hexahedra ///////////////////////////////////
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_QUAD) != 0 && \

@@ -122,4 +122,4 @@ private:
     std::vector<std::unique_ptr<SourceTerm>> _source_terms;
 };
 
-} // namespace
+}  // namespace DataHolderLib

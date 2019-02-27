@@ -69,11 +69,15 @@ std::unique_ptr<std::vector<GeoLib::Polyline*>> DuplicateGeometry::copyPolylines
     for (std::size_t i=0; i<n_plys; ++i)
     {
         if (polylines[i] == nullptr)
+        {
             continue;
+        }
         (*new_lines)[i] = new GeoLib::Polyline(*_geo_objects.getPointVec(_output_name));
         std::size_t const nLinePnts (polylines[i]->getNumberOfPoints());
-        for (std::size_t j=0; j<nLinePnts; ++j)
+        for (std::size_t j = 0; j < nLinePnts; ++j)
+        {
             (*new_lines)[i]->addPoint(polylines[i]->getPointID(j));
+        }
     }
     return new_lines;
 }
@@ -88,7 +92,9 @@ std::unique_ptr<std::vector<Surface*>> DuplicateGeometry::copySurfacesVector(
     for (std::size_t i=0; i<n_sfc; ++i)
     {
         if (surfaces[i] == nullptr)
+        {
             continue;
+        }
         (*new_surfaces)[i] = new GeoLib::Surface(*_geo_objects.getPointVec(_output_name));
 
         std::size_t const n_tris (surfaces[i]->getNumberOfTriangles());
@@ -117,4 +123,4 @@ std::vector<GeoLib::Surface*>& DuplicateGeometry::getSurfaceVectorCopy()
     return const_cast<std::vector<GeoLib::Surface*>&>(*_geo_objects.getSurfaceVec(_output_name));
 }
 
-}
+}  // namespace GeoLib

@@ -68,5 +68,5 @@ private:
     MeshLib::PropertyVector<int> const* const _material_ids;
 };
 
-}
-}
+}  // namespace PorousMedium
+}  // namespace MaterialLib

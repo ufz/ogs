@@ -40,4 +40,4 @@ NumLib::NewtonRaphsonSolverParameters createNewtonRaphsonSolverParameters(
 
     return {maximum_iterations, error_tolerance};
 }
-}
+}  // namespace MaterialLib

@@ -87,9 +87,13 @@ void TwoPhaseFlowWithPrhoLocalAssembler<
     GlobalDimMatrixType permeability = GlobalDimMatrixType::Zero(
         _element.getDimension(), _element.getDimension());
     if (perm.rows() == _element.getDimension())
+    {
         permeability = perm;
+    }
     else if (perm.rows() == 1)
+    {
         permeability.diagonal().setConstant(perm(0, 0));
+    }
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
@@ -129,7 +133,9 @@ void TwoPhaseFlowWithPrhoLocalAssembler<
                 dSwdrho,
                 drhoh2wet,
                 drhoh2wet_drho))
+        {
             OGS_FATAL("Computation of local constitutive relation failed.");
+        }
         double const pc = _process_data._material->getCapillaryPressure(
             material_id, t, pos, pl_int_pt, temperature, Sw);
 
@@ -228,5 +234,5 @@ void TwoPhaseFlowWithPrhoLocalAssembler<
     }  // end of mass-lumping
 }
 
-}  // end of namespace
-}  // end of namespace
+}  // namespace TwoPhaseFlowWithPrho
+}  // namespace ProcessLib

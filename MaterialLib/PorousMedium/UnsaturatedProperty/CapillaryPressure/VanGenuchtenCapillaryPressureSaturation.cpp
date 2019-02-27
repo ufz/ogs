@@ -77,9 +77,13 @@ double VanGenuchtenCapillaryPressureSaturation::getdPcdS(
         return -getdPcdSvGBar(1 - _saturation_r);
     }
     if (saturation < _saturation_r)
+    {
         return 0;
+    }
     if (saturation > _saturation_max)
+    {
         return 0;
+    }
 
     const double S =
         MathLib::limitValueInInterval(saturation, _saturation_r + _minor_offset,
@@ -100,9 +104,13 @@ double VanGenuchtenCapillaryPressureSaturation::getd2PcdS2(
             "pressure relation is not implemented.");
     }
     if (saturation < _saturation_r)
+    {
         return 0;
+    }
     if (saturation > _saturation_max)
+    {
         return 0;
+    }
 
     const double S =
         MathLib::limitValueInInterval(saturation, _saturation_r + _minor_offset,
@@ -158,5 +166,5 @@ double VanGenuchtenCapillaryPressureSaturation::getdPcdSvG(
            std::pow(S_le, (-1 / _m)) / S_le;
 }
 
-}  // end namespace
-}  // end namespace
+}  // namespace PorousMedium
+}  // namespace MaterialLib

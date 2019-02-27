@@ -36,7 +36,9 @@ GeoLib::Surface* TINInterface::readTIN(std::string const& fname,
     if (!in) {
         WARN("readTIN(): could not open stream from %s.", fname.c_str());
         if (errors)
-            errors->push_back ("readTINFile error opening stream from " + fname);
+        {
+            errors->push_back("readTINFile error opening stream from " + fname);
+        }
         return nullptr;
     }
 
@@ -48,7 +50,9 @@ GeoLib::Surface* TINInterface::readTIN(std::string const& fname,
     {
         // allow empty lines
         if (line.empty())
+        {
             continue;
+        }
 
         // parse line
         std::stringstream input(line);
@@ -62,9 +66,13 @@ GeoLib::Surface* TINInterface::readTIN(std::string const& fname,
         if (!(input >> p0[0] >> p0[1] >> p0[2])) {
             ERR("Could not read coords of 1st point of triangle %d.", id);
             if (errors)
-                errors->push_back (std::string("readTIN error: ") +
-                    std::string("Could not read coords of 1st point in triangle ") +
+            {
+                errors->push_back(
+                    std::string("readTIN error: ") +
+                    std::string(
+                        "Could not read coords of 1st point in triangle ") +
                     std::to_string(id));
+            }
             in.close();
             delete sfc;
             return nullptr;
@@ -73,9 +81,13 @@ GeoLib::Surface* TINInterface::readTIN(std::string const& fname,
         if (!(input >> p1[0] >> p1[1] >> p1[2])) {
             ERR("Could not read coords of 2nd point of triangle %d.", id);
             if (errors)
-                errors->push_back (std::string("readTIN error: ") +
-                    std::string("Could not read coords of 2nd point in triangle ") +
+            {
+                errors->push_back(
+                    std::string("readTIN error: ") +
+                    std::string(
+                        "Could not read coords of 2nd point in triangle ") +
                     std::to_string(id));
+            }
             in.close();
             delete sfc;
             return nullptr;
@@ -84,9 +96,13 @@ GeoLib::Surface* TINInterface::readTIN(std::string const& fname,
         if (!(input >> p2[0] >> p2[1] >> p2[2])) {
             ERR("Could not read coords of 3rd point of triangle %d.", id);
             if (errors)
-                errors->push_back (std::string("readTIN error: ") +
-                    std::string("Could not read coords of 3rd point in triangle ") +
+            {
+                errors->push_back(
+                    std::string("readTIN error: ") +
+                    std::string(
+                        "Could not read coords of 3rd point in triangle ") +
                     std::to_string(id));
+            }
             in.close();
             delete sfc;
             return nullptr;
@@ -97,8 +113,11 @@ GeoLib::Surface* TINInterface::readTIN(std::string const& fname,
         if (MathLib::calcTriangleArea(p0, p1, p2) < d_eps) {
             ERR("readTIN: Triangle %d has zero area.", id);
             if (errors)
-                errors->push_back (std::string("readTIN: Triangle ")
-                    + std::to_string(id) + std::string(" has zero area."));
+            {
+                errors->push_back(std::string("readTIN: Triangle ") +
+                                  std::to_string(id) +
+                                  std::string(" has zero area."));
+            }
             delete sfc;
             return nullptr;
         }
@@ -121,7 +140,9 @@ GeoLib::Surface* TINInterface::readTIN(std::string const& fname,
     if (sfc->getNumberOfTriangles() == 0) {
         WARN("readTIN(): No triangle found.", fname.c_str());
         if (errors)
-            errors->push_back ("readTIN error because of no triangle found");
+        {
+            errors->push_back("readTIN error because of no triangle found");
+        }
         delete sfc;
         return nullptr;
     }

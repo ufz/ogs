@@ -49,8 +49,12 @@ unsigned MeshRevision::getNumberOfCollapsableNodes(double eps) const
     std::size_t nNodes(id_map.size());
     unsigned count(0);
     for (std::size_t i = 0; i < nNodes; ++i)
+    {
         if (i != id_map[i])
+        {
             count++;
+        }
+    }
     return count;
 }
 
@@ -58,7 +62,9 @@ MeshLib::Mesh* MeshRevision::simplifyMesh(const std::string &new_mesh_name,
     double eps, unsigned min_elem_dim)
 {
     if (this->_mesh.getNumberOfElements() == 0)
+    {
         return nullptr;
+    }
 
     // original data
     std::vector<MeshLib::Element*> const& elements(this->_mesh.getElements());
@@ -96,14 +102,18 @@ MeshLib::Mesh* MeshRevision::simplifyMesh(const std::string &new_mesh_name,
                     return nullptr;
                 }
                 if (material_vec)
+                {
                     new_material_vec->insert(new_material_vec->end(),
                                              n_new_elements,
                                              (*material_vec)[k]);
+                }
             } else {
                 new_elements.push_back(MeshLib::copyElement(elem, new_nodes));
                 // copy material values
                 if (material_vec)
+                {
                     new_material_vec->push_back((*material_vec)[k]);
+                }
             }
         }
         else if (n_unique_nodes < elem->getNumberOfBaseNodes() && n_unique_nodes>1) {
@@ -111,7 +121,9 @@ MeshLib::Mesh* MeshRevision::simplifyMesh(const std::string &new_mesh_name,
                 elem, n_unique_nodes, new_nodes, new_elements, min_elem_dim)
             );
             if (!material_vec)
+            {
                 continue;
+            }
             new_material_vec->insert(new_material_vec->end(),
                 n_new_elements, (*material_vec)[k]);
         } else
@@ -120,8 +132,10 @@ MeshLib::Mesh* MeshRevision::simplifyMesh(const std::string &new_mesh_name,
 
     this->resetNodeIDs();
     if (!new_elements.empty())
-        return new MeshLib::Mesh(
-            new_mesh_name, new_nodes, new_elements, new_properties);
+    {
+        return new MeshLib::Mesh(new_mesh_name, new_nodes, new_elements,
+                                 new_properties);
+    }
 
     this->cleanUp(new_nodes, new_elements);
     return nullptr;
@@ -130,7 +144,9 @@ MeshLib::Mesh* MeshRevision::simplifyMesh(const std::string &new_mesh_name,
 MeshLib::Mesh* MeshRevision::subdivideMesh(const std::string &new_mesh_name) const
 {
     if (this->_mesh.getNumberOfElements() == 0)
+    {
         return nullptr;
+    }
 
     // original data
     std::vector<MeshLib::Element*> const& elements(this->_mesh.getElements());
@@ -163,20 +179,26 @@ MeshLib::Mesh* MeshRevision::subdivideMesh(const std::string &new_mesh_name) con
             }
             // copy material values
             if (!material_vec)
+            {
                 continue;
+            }
             new_material_vec->insert(new_material_vec->end(), n_new_elements,
                 (*material_vec)[k]);
         } else {
             new_elements.push_back(MeshLib::copyElement(elem, new_nodes));
             // copy material values
             if (material_vec)
+            {
                 new_material_vec->push_back((*material_vec)[k]);
+            }
         }
     }
 
     if (!new_elements.empty())
-        return new MeshLib::Mesh(
-            new_mesh_name, new_nodes, new_elements, new_properties);
+    {
+        return new MeshLib::Mesh(new_mesh_name, new_nodes, new_elements,
+                                 new_properties);
+    }
 
     this->cleanUp(new_nodes, new_elements);
     return nullptr;
@@ -197,7 +219,9 @@ std::vector<std::size_t> MeshRevision::collapseNodeIndices(double eps) const
     {
         MeshLib::Node const*const node(nodes[k]);
         if (node->getID() != k)
+        {
             continue;
+        }
         std::vector<std::vector<MeshLib::Node*> const*> node_vectors(
             grid.getPntVecsOfGridCellsIntersectingCube(*node, half_eps));
 
@@ -211,16 +235,23 @@ std::vector<std::size_t> MeshRevision::collapseNodeIndices(double eps) const
                 MeshLib::Node const*const test_node(cell_vector[j]);
                 // are node indices already identical (i.e. nodes will be collapsed)
                 if (id_map[node->getID()] == id_map[test_node->getID()])
+                {
                     continue;
+                }
 
                 // if test_node has already been collapsed to another node x, ignore it
                 // (if the current node would need to be collapsed with x it would already have happened when x was tested)
                 if (test_node->getID() != id_map[test_node->getID()])
+                {
                     continue;
+                }
 
                 // calc distance
-                if (MathLib::sqrDist(node->getCoords(), test_node->getCoords()) < sqr_eps)
+                if (MathLib::sqrDist(node->getCoords(),
+                                     test_node->getCoords()) < sqr_eps)
+                {
                     id_map[test_node->getID()] = node->getID();
+                }
             }
         }
     }
@@ -244,7 +275,9 @@ std::vector<MeshLib::Node*> MeshRevision::constructNewNodesArray(const std::vect
         }
         // the other nodes are not copied and get the index of the nodes they will have been collapsed with
         else
+        {
             nodes[k]->setID(nodes[id_map[k]]->getID());
+        }
     }
     return new_nodes;
 }
@@ -255,12 +288,16 @@ unsigned MeshRevision::getNumberOfUniqueNodes(MeshLib::Element const*const eleme
     unsigned count(nNodes);
 
     for (unsigned i = 0; i < nNodes - 1; ++i)
+    {
         for (unsigned j = i + 1; j < nNodes; ++j)
+        {
             if (element->getNode(i)->getID() == element->getNode(j)->getID())
             {
                 count--;
                 break;
             }
+        }
+    }
     return count;
 }
 
@@ -269,7 +306,9 @@ void MeshRevision::resetNodeIDs()
     const std::size_t nNodes(this->_mesh.getNumberOfNodes());
     const std::vector<MeshLib::Node*> &nodes(_mesh.getNodes());
     for (std::size_t i = 0; i < nNodes; ++i)
+    {
         nodes[i]->setID(i);
+    }
 }
 
 std::size_t MeshRevision::subdivideElement(
@@ -278,13 +317,21 @@ std::size_t MeshRevision::subdivideElement(
     std::vector<MeshLib::Element*> & elements) const
 {
     if (element->getGeomType() == MeshElemType::QUAD)
+    {
         return this->subdivideQuad(element, nodes, elements);
+    }
     if (element->getGeomType() == MeshElemType::HEXAHEDRON)
+    {
         return this->subdivideHex(element, nodes, elements);
+    }
     if (element->getGeomType() == MeshElemType::PYRAMID)
+    {
         return this->subdividePyramid(element, nodes, elements);
+    }
     if (element->getGeomType() == MeshElemType::PRISM)
+    {
         return this->subdividePrism(element, nodes, elements);
+    }
     return 0;
 }
 
@@ -306,9 +353,13 @@ std::size_t MeshRevision::reduceElement(MeshLib::Element const*const element,
         (element->getGeomType() == MeshElemType::TETRAHEDRON))
     {
         if (n_unique_nodes == 3 && min_elem_dim < 3)
+        {
             elements.push_back (this->constructTri(element, nodes));
+        }
         else if (min_elem_dim == 1)
-            elements.push_back (this->constructLine(element, nodes));
+        {
+            elements.push_back(this->constructLine(element, nodes));
+        }
         return 1;
     }
     if (element->getGeomType() == MeshElemType::HEXAHEDRON)
@@ -434,8 +485,10 @@ unsigned MeshRevision::reduceHex(MeshLib::Element const*const org_elem,
     if (n_unique_nodes == 7)
     {
         // reduce to prism + pyramid
-        for (unsigned i=0; i<7; ++i)
-            for (unsigned j=i+1; j<8; ++j)
+        for (unsigned i = 0; i < 7; ++i)
+        {
+            for (unsigned j = i + 1; j < 8; ++j)
+            {
                 if (org_elem->getNode(i)->getID() == org_elem->getNode(j)->getID())
                 {
                     const std::array<unsigned,4> base_nodes (this->lutHexCuttingQuadNodes(i,j));
@@ -447,7 +500,10 @@ unsigned MeshRevision::reduceHex(MeshLib::Element const*const org_elem,
                     pyr_nodes[4] = nodes[org_elem->getNode(i)->getID()];
                     new_elements.push_back (new MeshLib::Pyramid(pyr_nodes));
 
-                    if (i<4 && j>=4) std::swap(i,j);
+                    if (i < 4 && j >= 4)
+                    {
+                        std::swap(i, j);
+                    }
                     auto** prism_nodes = new MeshLib::Node*[6];
                     prism_nodes[0] = nodes[org_elem->getNode(base_nodes[0])->getID()];
                     prism_nodes[1] = nodes[org_elem->getNode(base_nodes[3])->getID()];
@@ -458,6 +514,8 @@ unsigned MeshRevision::reduceHex(MeshLib::Element const*const org_elem,
                     new_elements.push_back (new MeshLib::Prism(prism_nodes));
                     return 2;
                 }
+            }
+        }
     }
     else if (n_unique_nodes == 6)
     {
@@ -494,12 +552,16 @@ unsigned MeshRevision::reduceHex(MeshLib::Element const*const org_elem,
             delete face;
         }
         // reduce to four tets -> divide into 2 prisms such that each has one collapsed node
-        for (unsigned i=0; i<7; ++i)
-            for (unsigned j=i+1; j<8; ++j)
+        for (unsigned i = 0; i < 7; ++i)
+        {
+            for (unsigned j = i + 1; j < 8; ++j)
+            {
                 if (org_elem->getNode(i)->getID() == org_elem->getNode(j)->getID())
                 {
-                    for (unsigned k=i; k<7; ++k)
-                        for (unsigned l=k+1; l<8; ++l)
+                    for (unsigned k = i; k < 7; ++k)
+                    {
+                        for (unsigned l = k + 1; l < 8; ++l)
+                        {
                             if (!(i==k && j==l) && org_elem->isEdge(i,j) && org_elem->isEdge(k,l) &&
                                 org_elem->getNode(k)->getID() == org_elem->getNode(l)->getID())
                             {
@@ -534,7 +596,11 @@ unsigned MeshRevision::reduceHex(MeshLib::Element const*const org_elem,
                                 delete prism2;
                                 return nNewElements;
                             }
+                        }
+                    }
                 }
+            }
+        }
     }
     else if (n_unique_nodes == 5)
     {
@@ -555,7 +621,9 @@ unsigned MeshRevision::reduceHex(MeshLib::Element const*const org_elem,
             new_elements.push_back(new MeshLib::Tet(tet1_nodes));
         }
         else
+        {
             new_elements.push_back(tet1);
+        }
 
         auto** tet2_nodes = new MeshLib::Node*[4];
         tet2_nodes[0] = (tet_changed) ? nodes[first_four_nodes[0]] : nodes[first_four_nodes[1]];
@@ -597,12 +665,18 @@ void MeshRevision::reducePyramid(MeshLib::Element const*const org_elem,
     {
         MeshLib::Element* elem (this->constructFourNodeElement(org_elem, nodes, min_elem_dim));
         if (elem)
-            new_elements.push_back (elem);
+        {
+            new_elements.push_back(elem);
+        }
     }
     else if (n_unique_nodes == 3 && min_elem_dim < 3)
+    {
         new_elements.push_back (this->constructTri(org_elem, nodes));
+    }
     else if (n_unique_nodes == 2 && min_elem_dim == 1)
-        new_elements.push_back (this->constructLine(org_elem, nodes));
+    {
+        new_elements.push_back(this->constructLine(org_elem, nodes));
+    }
     return;
 }
 
@@ -631,8 +705,10 @@ unsigned MeshRevision::reducePrism(MeshLib::Element const*const org_elem,
     // pyramid, otherwise it will be two tets
     if (n_unique_nodes == 5)
     {
-        for (unsigned i=0; i<5; ++i)
-            for (unsigned j=i+1; j<6; ++j)
+        for (unsigned i = 0; i < 5; ++i)
+        {
+            for (unsigned j = i + 1; j < 6; ++j)
+            {
                 if (i!=j && org_elem->getNode(i)->getID() == org_elem->getNode(j)->getID())
                 {
                     // non triangle edge collapsed
@@ -669,17 +745,25 @@ unsigned MeshRevision::reducePrism(MeshLib::Element const*const org_elem,
                     addTetrahedron(l_offset, k_offset, i, k);
                     return 2;
                 }
+            }
+        }
     }
     else if (n_unique_nodes == 4)
     {
         MeshLib::Element* elem (this->constructFourNodeElement(org_elem, nodes, min_elem_dim));
         if (elem)
-            new_elements.push_back (elem);
+        {
+            new_elements.push_back(elem);
+        }
     }
     else if (n_unique_nodes == 3 && min_elem_dim < 3)
+    {
         new_elements.push_back (this->constructTri(org_elem, nodes));
+    }
     else if (n_unique_nodes == 2 && min_elem_dim == 1)
-        new_elements.push_back (this->constructLine(org_elem, nodes));
+    {
+        new_elements.push_back(this->constructLine(org_elem, nodes));
+    }
     return 1;
 }
 
@@ -723,7 +807,10 @@ MeshLib::Element* MeshRevision::constructTri(MeshLib::Element const*const elemen
                     break;
                 }
             }
-            if (tri_nodes[2]) break;
+            if (tri_nodes[2])
+            {
+                break;
+            }
         }
     }
     assert(tri_nodes[2] != nullptr);
@@ -740,8 +827,10 @@ MeshLib::Element* MeshRevision::constructFourNodeElement(
     new_nodes[count++] = nodes[element->getNode(0)->getID()];
     for (unsigned i=1; i<element->getNumberOfBaseNodes(); ++i)
     {
-        if (count>3)
+        if (count > 3)
+        {
             break;
+        }
         bool unique_node (true);
         for (unsigned j=0; j<i; ++j)
         {
@@ -752,7 +841,9 @@ MeshLib::Element* MeshRevision::constructFourNodeElement(
             }
         }
         if (unique_node)
-            new_nodes[count++] = nodes[element->getNode(i)->getID()];;
+        {
+            new_nodes[count++] = nodes[element->getNode(i)->getID()];
+        };
     }
 
     // test if quad or tet
@@ -764,7 +855,9 @@ MeshLib::Element* MeshRevision::constructFourNodeElement(
         for (unsigned i=1; i<3; ++i)
         {
             if (elem->validate().none())
+            {
                 return elem;
+            }
 
             // change node order if not convex
             MeshLib::Node* tmp = new_nodes[i + 1];
@@ -774,7 +867,9 @@ MeshLib::Element* MeshRevision::constructFourNodeElement(
         return elem;
     }
     if (!isQuad)
+    {
         return new MeshLib::Tet(new_nodes);
+    }
     // is quad but min elem dim == 3
     return nullptr;
 }
@@ -786,11 +881,17 @@ unsigned MeshRevision::findPyramidTopNode(MeshLib::Element const& element,
     for (std::size_t i=0; i<nNodes; ++i)
     {
         bool top_node=true;
-        for (unsigned j=0; j<4; ++j)
+        for (unsigned j = 0; j < 4; ++j)
+        {
             if (element.getNode(i)->getID() == base_node_ids[j])
-                top_node=false;
+            {
+                top_node = false;
+            }
+        }
         if (top_node)
+        {
             return i;
+        }
     }
     return std::numeric_limits<unsigned>::max(); // should never be reached if called correctly
 }
@@ -852,27 +953,43 @@ const std::pair<unsigned, unsigned> MeshRevision::lutHexBackNodes(
 unsigned MeshRevision::lutPrismThirdNode(unsigned id1, unsigned id2) const
 {
     if ((id1 == 0 && id2 == 1) || (id1 == 1 && id2 == 2))
+    {
         return 2;
+    }
     if ((id1 == 1 && id2 == 2) || (id1 == 2 && id2 == 1))
+    {
         return 0;
+    }
     if ((id1 == 0 && id2 == 2) || (id1 == 2 && id2 == 0))
+    {
         return 1;
+    }
     if ((id1 == 3 && id2 == 4) || (id1 == 4 && id2 == 3))
+    {
         return 5;
+    }
     if ((id1 == 4 && id2 == 5) || (id1 == 5 && id2 == 4))
+    {
         return 3;
+    }
     if ((id1 == 3 && id2 == 5) || (id1 == 5 && id2 == 3))
+    {
         return 4;
+    }
     return std::numeric_limits<unsigned>::max();
 }
 
 void MeshRevision::cleanUp(std::vector<MeshLib::Node*> &new_nodes, std::vector<MeshLib::Element*> &new_elements) const
 {
     for (auto& new_element : new_elements)
+    {
         delete new_element;
+    }
 
     for (auto& new_node : new_nodes)
+    {
         delete new_node;
+    }
 }
 
 } // end namespace MeshLib

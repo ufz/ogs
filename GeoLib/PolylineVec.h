@@ -28,4 +28,4 @@ namespace GeoLib {
 
 using PolylineVec = TemplateVec<GeoLib::Polyline>;
 
-} // end namespace
+}  // namespace GeoLib

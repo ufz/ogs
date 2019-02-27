@@ -113,7 +113,9 @@ getConfigParameter(std::string const& root) const
 {
     auto ct = getConfigSubtree(root);
     if (ct.hasChildren())
+    {
         error("Requested parameter <" + root + "> actually is a subtree.");
+    }
     return ct;
 }
 
@@ -123,7 +125,9 @@ getConfigParameterOptional(std::string const& root) const
 {
     auto ct = getConfigSubtreeOptional(root);
     if (ct && ct->hasChildren())
+    {
         error("Requested parameter <" + root + "> actually is a subtree.");
+    }
     return ct;
 }
 
@@ -241,7 +245,9 @@ void ConfigTree::onwarning(const std::string& filename, const std::string& path,
 void ConfigTree::assertNoSwallowedErrors()
 {
     if (configtree_destructor_error_messages.empty())
+    {
         return;
+    }
 
     ERR("ConfigTree: There have been errors when parsing the configuration "
         "file(s):");
@@ -257,7 +263,10 @@ std::string ConfigTree::shortString(const std::string &s)
 {
     const std::size_t maxlen = 100;
 
-    if (s.size() < maxlen) return s;
+    if (s.size() < maxlen)
+    {
+        return s;
+    }
 
     return s.substr(0, maxlen-3) + "...";
 }
@@ -287,7 +296,10 @@ joinPaths( const std::string &p1, const std::string &p2) const
         error("Second path to be joined is empty.");
     }
 
-    if (p1.empty()) return p2;
+    if (p1.empty())
+    {
+        return p2;
+    }
 
     return p1 + pathseparator + p2;
 }
@@ -313,7 +325,10 @@ void ConfigTree::checkUniqueAttr(const std::string &attr) const
         auto attr2 = attr;
         do {
             pos = attr2.find_first_of(":ABCDEFGHIJKLMNOPQRSTUVWXYZ", pos);
-            if (pos != attr.npos) attr2[pos] = 'a';
+            if (pos != attr.npos)
+            {
+                attr2[pos] = 'a';
+            }
         } while (pos != attr.npos);
 
         checkKeyname(attr2);
@@ -353,10 +368,13 @@ ConfigTree::hasChildren() const
 {
     auto const& tree = *_tree;
     if (tree.begin() == tree.end())
-        return false; // no children
-    if (tree.front().first == "<xmlattr>"
-        && (++tree.begin()) == tree.end())
-        return false; // only attributes
+    {
+        return false;  // no children
+    }
+    if (tree.front().first == "<xmlattr>" && (++tree.begin()) == tree.end())
+    {
+        return false;  // only attributes
+    }
 
     return true;
 }
@@ -364,7 +382,10 @@ ConfigTree::hasChildren() const
 void
 ConfigTree::checkAndInvalidate()
 {
-    if (!_tree) return;
+    if (!_tree)
+    {
+        return;
+    }
 
     // Note: due to a limitation in boost::property_tree it is not possible
     // to discriminate between <tag></tag> and <tag/> in the input file.
@@ -376,8 +397,10 @@ ConfigTree::checkAndInvalidate()
 
     // iterate over children
     for (auto const& p : *_tree) {
-        if (p.first != "<xmlattr>") // attributes are handled below
+        if (p.first != "<xmlattr>")
+        {  // attributes are handled below
             markVisitedDecrement(Attr::TAG, p.first);
+        }
     }
 
     // iterate over attributes
@@ -430,12 +453,18 @@ void checkAndInvalidate(ConfigTree &conf)
 
 void checkAndInvalidate(ConfigTree* const conf)
 {
-    if (conf) conf->checkAndInvalidate();
+    if (conf)
+    {
+        conf->checkAndInvalidate();
+    }
 }
 
 void checkAndInvalidate(std::unique_ptr<ConfigTree> const& conf)
 {
-    if (conf) conf->checkAndInvalidate();
+    if (conf)
+    {
+        conf->checkAndInvalidate();
+    }
 }
 
-}
+}  // namespace BaseLib

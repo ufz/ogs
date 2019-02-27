@@ -98,7 +98,7 @@ using TestTypes =
                      TestCase<TestFeTET10, EigenFixedShapeMatrixPolicy>,
                      TestCase<TestFeTRI3, EigenFixedShapeMatrixPolicy>,
                      TestCase<TestFeTRI6, EigenFixedShapeMatrixPolicy>>;
-}
+}  // namespace
 
 template <class T>
 class GradShapeFunctionTest : public ::testing::Test, public T::TestFeType
@@ -134,16 +134,24 @@ public:
         // only for destructor because class element has nodes in pointer type.
         vec_eles.push_back(mesh_element);
         for (auto e : vec_eles)
+        {
             for (unsigned i = 0; i < e->getNumberOfNodes(); i++)
+            {
                 vec_nodes.push_back(e->getNode(i));
+            }
+        }
     }
 
     ~GradShapeFunctionTest() override
     {
         for (auto itr = vec_nodes.begin(); itr != vec_nodes.end(); ++itr)
+        {
             delete *itr;
+        }
         for (auto itr = vec_eles.begin(); itr != vec_eles.end(); ++itr)
+        {
             delete *itr;
+        }
     }
 
     IntegrationMethod integration_method;

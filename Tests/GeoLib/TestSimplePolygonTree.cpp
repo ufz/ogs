@@ -92,8 +92,10 @@ public:
         delete _p1;
         delete _p2;
         delete _p3;
-        for (auto & _pnt : _pnts)
+        for (auto& _pnt : _pnts)
+        {
             delete _pnt;
+        }
     }
 
 protected:

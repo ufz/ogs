@@ -154,9 +154,13 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
     GlobalDimMatrixType permeability = GlobalDimMatrixType::Zero(
         _element.getDimension(), _element.getDimension());
     if (perm.rows() == _element.getDimension())
+    {
         permeability = perm;
+    }
     else if (perm.rows() == 1)
+    {
         permeability.diagonal().setConstant(perm(0, 0));
+    }
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
@@ -466,5 +470,5 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
     }  // end of mass-lumping
 }
 
-}  // end of namespace
-}  // end of namespace
+}  // namespace ThermalTwoPhaseFlowWithPP
+}  // namespace ProcessLib

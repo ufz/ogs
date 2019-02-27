@@ -40,4 +40,4 @@ namespace MeshGeoToolsLib
  */
 std::unique_ptr<MeshLib::Mesh> appendLinesAlongPolylines(
     const MeshLib::Mesh& mesh, const GeoLib::PolylineVec& ply_vec);
-}
+}  // namespace MeshGeoToolsLib

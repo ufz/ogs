@@ -50,9 +50,13 @@ std::vector<double> GradualSubdivision::operator()() const
     if (vec_x.back() < _length) {
         double last_dx = vec_x[vec_x.size() - 1] - vec_x[vec_x.size() - 2];
         if (_length - vec_x.back() < last_dx)
+        {
             vec_x[vec_x.size() - 1] = _length;
+        }
         else
+        {
             vec_x.push_back(_length);
+        }
     }
     return vec_x;
 }

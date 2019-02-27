@@ -56,4 +56,4 @@ const std::array<std::array<double, 2>, GaussLegendreTri<1>::NPoints>
 template <>
 double const GaussLegendreTri<1>::W[1];
 #endif
-}
+}  // namespace MathLib

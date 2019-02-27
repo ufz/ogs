@@ -32,4 +32,4 @@ inline void setIdentityMatrix(unsigned dim, T_MATRIX &m)
         m(i,i) = 1.0;
 }
 
-} // namespace
+}  // namespace FeTestData

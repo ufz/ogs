@@ -82,7 +82,9 @@ struct IntegrationPointData final
             *material_state_variables, T);
 
         if (!solution)
+        {
             OGS_FATAL("Computation of local constitutive relation failed.");
+        }
 
         MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> C;
         std::tie(sigma_eff, material_state_variables, C) = std::move(*solution);
@@ -308,10 +310,14 @@ private:
 
         for (auto const& ip_data : _ip_data)
         {
-            if (component < 3)  // xx, yy, zz components
+            if (component < 3)
+            {  // xx, yy, zz components
                 cache.push_back(ip_data.sigma_eff[component]);
-            else  // mixed xy, yz, xz components
+            }
+            else
+            {  // mixed xy, yz, xz components
                 cache.push_back(ip_data.sigma_eff[component] / std::sqrt(2));
+            }
         }
 
         return cache;

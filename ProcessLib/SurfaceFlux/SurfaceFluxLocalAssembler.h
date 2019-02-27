@@ -170,4 +170,4 @@ private:
     std::size_t _bulk_face_id;
 };
 
-}  // ProcessLib
+}  // namespace ProcessLib

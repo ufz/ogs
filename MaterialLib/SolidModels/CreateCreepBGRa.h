@@ -48,6 +48,6 @@ extern template std::unique_ptr<MaterialLib::Solids::MechanicsBase<3>>
 createCreepBGRa<3>(
     std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config);
-}
-}
-}
+}  // namespace Creep
+}  // namespace Solids
+}  // namespace MaterialLib

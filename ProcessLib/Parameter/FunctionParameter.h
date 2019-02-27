@@ -96,8 +96,10 @@ struct FunctionParameter final : public Parameter<T>
             z = node[2];
         }
 
-        for (unsigned i=0; i<_vec_expression.size(); i++)
+        for (unsigned i = 0; i < _vec_expression.size(); i++)
+        {
             cache[i] = _vec_expression[i].value();
+        }
 
         return cache;
     }
@@ -113,4 +115,4 @@ std::unique_ptr<ParameterBase> createFunctionParameter(
     std::string const& name, BaseLib::ConfigTree const& config,
     MeshLib::Mesh const& mesh);
 
-}  // ProcessLib
+}  // namespace ProcessLib

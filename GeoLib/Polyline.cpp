@@ -39,7 +39,9 @@ void Polyline::write(std::ostream &os) const
 {
     std::size_t size(_ply_pnt_ids.size());
     for (std::size_t k(0); k < size; k++)
+    {
         os << *(_ply_pnts[_ply_pnt_ids[k]]) << "\n";
+    }
 }
 
 bool Polyline::addPoint(std::size_t pnt_id)
@@ -49,7 +51,9 @@ bool Polyline::addPoint(std::size_t pnt_id)
 
     // don't insert point if this would result in identical IDs for two adjacent points
     if (n_pnts > 0 && _ply_pnt_ids.back() == pnt_id)
+    {
         return false;
+    }
 
     _ply_pnt_ids.push_back(pnt_id);
 
@@ -59,7 +63,9 @@ bool Polyline::addPoint(std::size_t pnt_id)
             *_ply_pnts[_ply_pnt_ids[n_pnts-1]], *_ply_pnts[pnt_id])));
         double dist_until_now(0.0);
         if (n_pnts > 1)
+        {
             dist_until_now = _length[n_pnts - 1];
+        }
 
         _length.push_back(dist_until_now + act_dist);
     }
@@ -105,7 +111,9 @@ bool Polyline::insertPoint(std::size_t pos, std::size_t pnt_id)
             _length.insert(_length.begin() + 1, act_dist);
             const std::size_t s(_length.size());
             for (std::size_t k(2); k < s; k++)
+            {
                 _length[k] += _length[1];
+            }
         } else {
             if (pos == _ply_pnt_ids.size() - 1) {
                 // insert at last position
@@ -114,7 +122,9 @@ bool Polyline::insertPoint(std::size_t pos, std::size_t pnt_id)
                     *_ply_pnts[pnt_id])));
                 double dist_until_now (0.0);
                 if (_ply_pnt_ids.size() > 2)
+                {
                     dist_until_now = _length[_ply_pnt_ids.size() - 2];
+                }
 
                 _length.insert(_length.begin() + pos_dt,
                                dist_until_now + act_dist);
@@ -122,7 +132,9 @@ bool Polyline::insertPoint(std::size_t pos, std::size_t pnt_id)
                 // insert at arbitrary position within the vector
                 double dist_until_now (0.0);
                 if (pos > 1)
+                {
                     dist_until_now = _length[pos - 1];
+                }
                 double len_seg0(std::sqrt(MathLib::sqrDist(
                                              *_ply_pnts[_ply_pnt_ids[pos - 1]],
                                              *_ply_pnts[pnt_id])));
@@ -136,7 +148,9 @@ bool Polyline::insertPoint(std::size_t pos, std::size_t pnt_id)
                 _length.insert(it1, _length[pos] + len_seg1);
                 for (it1 = _length.begin() + pos_dt + 2; it1 != _length.end();
                      ++it1)
+                {
                     *it1 += update_dist;
+                }
             }
         }
     }
@@ -146,7 +160,9 @@ bool Polyline::insertPoint(std::size_t pos, std::size_t pnt_id)
 void Polyline::removePoint(std::size_t pos)
 {
     if (pos >= _ply_pnt_ids.size())
+    {
         return;
+    }
 
     auto const pos_dt(
         static_cast<std::vector<std::size_t>::difference_type>(pos));
@@ -162,7 +178,9 @@ void Polyline::removePoint(std::size_t pos)
     if (pos == 0) {
         double seg_length(_length[0]);
         for (std::size_t k(0); k < n_ply_pnt_ids; k++)
+        {
             _length[k] = _length[k + 1] - seg_length;
+        }
         _length.pop_back();
     } else {
         const double len_seg0(_length[pos] - _length[pos - 1]);
@@ -173,7 +191,9 @@ void Polyline::removePoint(std::size_t pos)
         double seg_length_diff(len_new_seg - len_seg0 - len_seg1);
 
         for (std::size_t k(pos); k < n_ply_pnt_ids; k++)
+        {
             _length[k] += seg_length_diff;
+        }
     }
 }
 
@@ -190,7 +210,9 @@ std::size_t Polyline::getNumberOfSegments() const
 bool Polyline::isClosed() const
 {
     if (_ply_pnt_ids.size() < 3)
+    {
         return false;
+    }
 
     return _ply_pnt_ids.front() == _ply_pnt_ids.back();
 }
@@ -199,7 +221,9 @@ bool Polyline::isCoplanar() const
 {
     std::size_t const n_points (_ply_pnt_ids.size());
     if (n_points < 4)
+    {
         return true;
+    }
 
     GeoLib::Point const& p0 (*this->getPoint(0));
     GeoLib::Point const& p1 (*this->getPoint(1));
@@ -273,7 +297,9 @@ Polyline* Polyline::constructPolylineFromSegments(const std::vector<Polyline*> &
 
     std::vector<Polyline*> local_ply_vec;
     for (std::size_t i = 1; i < nLines; i++)
+    {
         local_ply_vec.push_back(ply_vec[i]);
+    }
 
     while (!local_ply_vec.empty())
     {
@@ -291,11 +317,15 @@ Polyline* Polyline::constructPolylineFromSegments(const std::vector<Polyline*> &
                 {
                     auto* tmp = new Polyline((*it)->getPointsVec());
                     for (std::size_t k = 0; k < nPoints; k++)
+                    {
                         tmp->addPoint((*it)->getPointID(nPoints - k - 1));
+                    }
 
                     std::size_t new_ply_size(new_ply->getNumberOfPoints());
                     for (std::size_t k = 1; k < new_ply_size; k++)
+                    {
                         tmp->addPoint(new_ply->getPointID(k));
+                    }
                     delete new_ply;
                     new_ply = tmp;
                     ply_found = true;
@@ -307,7 +337,9 @@ Polyline* Polyline::constructPolylineFromSegments(const std::vector<Polyline*> &
                     auto* tmp = new Polyline(**it);
                     std::size_t new_ply_size(new_ply->getNumberOfPoints());
                     for (std::size_t k = 1; k < new_ply_size; k++)
+                    {
                         tmp->addPoint(new_ply->getPointID(k));
+                    }
                     delete new_ply;
                     new_ply = tmp;
                     ply_found = true;
@@ -320,7 +352,9 @@ Polyline* Polyline::constructPolylineFromSegments(const std::vector<Polyline*> &
                                             (*it)->getPointID(0), prox))
                 {
                     for (std::size_t k = 1; k < nPoints; k++)
+                    {
                         new_ply->addPoint((*it)->getPointID(k));
+                    }
                     ply_found = true;
                 }
                 //else if (new_ply->getPointID(new_ply->getNumberOfPoints()-1) == (*it)->getPointID(nPoints-1))
@@ -331,7 +365,9 @@ Polyline* Polyline::constructPolylineFromSegments(const std::vector<Polyline*> &
                                             (*it)->getPointID(nPoints - 1), prox))
                 {
                     for (std::size_t k = 1; k < nPoints; k++)
+                    {
                         new_ply->addPoint((*it)->getPointID(nPoints - k - 1));
+                    }
                     ply_found = true;
                 }
                 if (ply_found)
@@ -377,20 +413,31 @@ Location Polyline::getLocationOfPoint (std::size_t k, GeoLib::Point const & pnt)
     long double det_2x2 (a[0] * b[1] - a[1] * b[0]);
 
     if (det_2x2 > std::numeric_limits<double>::epsilon())
+    {
         return Location::LEFT;
+    }
     if (std::numeric_limits<double>::epsilon() < std::abs(det_2x2))
+    {
         return Location::RIGHT;
+    }
     if (a[0] * b[0] < 0.0 || a[1] * b[1] < 0.0)
+    {
         return Location::BEHIND;
+    }
     if (a[0] * a[0] + a[1] * a[1] < b[0] * b[0] + b[1] * b[1])
+    {
         return Location::BEYOND;
-    if (MathLib::sqrDist (pnt,
-                          *_ply_pnts[_ply_pnt_ids[k]]) < pow(std::numeric_limits<double>::epsilon(),2))
+    }
+    if (MathLib::sqrDist(pnt, *_ply_pnts[_ply_pnt_ids[k]]) <
+        pow(std::numeric_limits<double>::epsilon(), 2))
+    {
         return Location::SOURCE;
-    if (MathLib::sqrDist (pnt,
-                          *_ply_pnts[_ply_pnt_ids[k + 1]]) <
+    }
+    if (MathLib::sqrDist(pnt, *_ply_pnts[_ply_pnt_ids[k + 1]]) <
         std::sqrt(std::numeric_limits<double>::epsilon()))
+    {
         return Location::DESTINATION;
+    }
     return Location::BETWEEN;
 }
 
@@ -400,8 +447,11 @@ void Polyline::updatePointIDs(const std::vector<std::size_t> &pnt_ids)
     {
         if (pnt_ids[*it] != *it)
         {
-            if (it!=this->_ply_pnt_ids.begin() && (pnt_ids[*it] == pnt_ids[*(it-1)]))
+            if (it != this->_ply_pnt_ids.begin() &&
+                (pnt_ids[*it] == pnt_ids[*(it - 1)]))
+            {
                 it = this->_ply_pnt_ids.erase(it);
+            }
             else
             {
                 *it = pnt_ids[*it];
@@ -409,7 +459,9 @@ void Polyline::updatePointIDs(const std::vector<std::size_t> &pnt_ids)
             }
         }
         else
+        {
             ++it;
+        }
     }
 }
 
@@ -440,8 +492,10 @@ double Polyline::getDistanceAlongPolyline(const MathLib::Point3d& pnt,
         }
     } // end line segment loop
 
-    if (! found)
+    if (!found)
+    {
         dist = -1.0;
+    }
     return dist;
 }
 
@@ -460,7 +514,9 @@ Polyline::SegmentIterator& Polyline::SegmentIterator::operator=(
     SegmentIterator const& rhs)
 {
     if (&rhs == this)
+    {
         return *this;
+    }
 
     _polyline = rhs._polyline;
     _segment_number = rhs._segment_number;
@@ -510,7 +566,9 @@ Polyline::SegmentIterator& Polyline::SegmentIterator::operator+=(
             static_cast<std::vector<GeoLib::Point>::size_type>(n);
     }
     if (_segment_number > _polyline->getNumberOfSegments())
+    {
         OGS_FATAL("");
+    }
     return *this;
 }
 
@@ -533,7 +591,9 @@ Polyline::SegmentIterator& Polyline::SegmentIterator::operator-=(
             static_cast<std::vector<GeoLib::Point>::size_type>(-n);
     }
     if (_segment_number > _polyline->getNumberOfSegments())
+    {
         OGS_FATAL("");
+    }
     return *this;
 }
 
@@ -559,16 +619,22 @@ bool containsEdge (const Polyline& ply, std::size_t id0, std::size_t id1)
         return false;
     }
     if (id0 > id1)
-        std::swap (id0,id1);
+    {
+        std::swap(id0, id1);
+    }
     const std::size_t n (ply.getNumberOfPoints() - 1);
     for (std::size_t k(0); k < n; k++)
     {
         std::size_t ply_pnt0 (ply.getPointID (k));
         std::size_t ply_pnt1 (ply.getPointID (k + 1));
         if (ply_pnt0 > ply_pnt1)
-            std::swap (ply_pnt0, ply_pnt1);
+        {
+            std::swap(ply_pnt0, ply_pnt1);
+        }
         if (ply_pnt0 == id0 && ply_pnt1 == id1)
+        {
             return true;
+        }
     }
     return false;
 }
@@ -576,12 +642,18 @@ bool containsEdge (const Polyline& ply, std::size_t id0, std::size_t id1)
 bool operator==(Polyline const& lhs, Polyline const& rhs)
 {
     if (lhs.getNumberOfPoints() != rhs.getNumberOfPoints())
+    {
         return false;
+    }
 
     const std::size_t n(lhs.getNumberOfPoints());
     for (std::size_t k(0); k < n; k++)
+    {
         if (lhs.getPointID(k) != rhs.getPointID(k))
+        {
             return false;
+        }
+    }
 
     return true;
 }
@@ -592,7 +664,9 @@ bool pointsAreIdentical(const std::vector<Point*> &pnt_vec,
                         double prox)
 {
     if (i == j)
+    {
         return true;
+    }
     return MathLib::sqrDist(*pnt_vec[i], *pnt_vec[j]) < prox;
 }
 } // end namespace GeoLib

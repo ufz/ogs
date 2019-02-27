@@ -33,11 +33,17 @@ BoundaryElementsSearcher::BoundaryElementsSearcher(
 BoundaryElementsSearcher::~BoundaryElementsSearcher()
 {
     for (auto p : _boundary_elements_at_point)
+    {
         delete p;
+    }
     for (auto p : _boundary_elements_along_polylines)
+    {
         delete p;
+    }
     for (auto p : _boundary_elements_along_surfaces)
+    {
         delete p;
+    }
 }
 
 std::vector<MeshLib::Element*> const& BoundaryElementsSearcher::getBoundaryElements(GeoLib::GeoObject const& geoObj)
@@ -65,7 +71,9 @@ BoundaryElementsSearcher::getBoundaryElementsAtPoint(GeoLib::Point const& point)
     for (auto const& boundaryElements : _boundary_elements_at_point)
     {
         if (boundaryElements->getPoint() == point)
+        {
             return boundaryElements->getBoundaryElements();
+        }
     }
 
     // create new boundary elements at points.

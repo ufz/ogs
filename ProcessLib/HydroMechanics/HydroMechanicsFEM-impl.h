@@ -83,10 +83,12 @@ HydroMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             DisplacementDim, displacement_size>::Zero(DisplacementDim,
                                                       displacement_size);
         for (int i = 0; i < DisplacementDim; ++i)
+        {
             ip_data.N_u_op
                 .template block<1, displacement_size / DisplacementDim>(
                     i, i * displacement_size / DisplacementDim)
                 .noalias() = sm_u.N;
+        }
 
         ip_data.N_u = sm_u.N;
         ip_data.dNdx_u = sm_u.dNdx;

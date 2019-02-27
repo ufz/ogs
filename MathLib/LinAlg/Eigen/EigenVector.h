@@ -121,4 +121,4 @@ private:
     RawVectorType _vec;
 };
 
-} // MathLib
+}  // namespace MathLib

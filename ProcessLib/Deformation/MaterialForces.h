@@ -141,9 +141,12 @@ std::vector<double> const& getMaterialForces(
             eshelby_stress[4] -= sigma[2] * grad_u[4];
         }
         else
+        {
             OGS_FATAL(
-                "Material forces not implemented for displacement dimension "
+                "Material forces not implemented for displacement "
+                "dimension "
                 "other than 2 and 3.");
+        }
 
         auto const& w = _ip_data[ip].integration_weight;
         local_b += G.transpose() * eshelby_stress * w;

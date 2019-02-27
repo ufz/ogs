@@ -46,11 +46,15 @@ const Element* PyramidRule13::getFace(const Element* e, unsigned i)
     {
         unsigned nFaceNodes(PyramidRule13::n_face_nodes[i]);
         auto** nodes = new Node*[nFaceNodes];
-        for (unsigned j=0; j<nFaceNodes; j++)
+        for (unsigned j = 0; j < nFaceNodes; j++)
+        {
             nodes[j] = const_cast<Node*>(e->getNode(face_nodes[i][j]));
+        }
 
         if (i < 4)
+        {
             return new Tri6(nodes, e->getID());
+        }
 
         return new Quad8(nodes, e->getID());
     }

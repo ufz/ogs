@@ -72,7 +72,9 @@ void LocalAssemblerInterface::computeSecondaryVariable(
     auto const indices = NumLib::getIndices(mesh_item_id, dof_table);
 
     if (coupled_xs != nullptr)
+    {
         return;
+    }
 
     auto const local_x = x.get(indices);
     computeSecondaryVariableConcrete(t, local_x);

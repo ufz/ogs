@@ -57,5 +57,4 @@ void ShapeHex8::computeGradShapeFunction(const T_X &r, T_N &dN)
     dN[23] = -dN[19];
 }
 
-}
-
+}  // namespace NumLib

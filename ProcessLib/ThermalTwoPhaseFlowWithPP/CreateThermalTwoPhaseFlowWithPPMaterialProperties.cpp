@@ -102,5 +102,5 @@ createThermalTwoPhaseFlowWithPPMaterialProperties(
         std::move(vapor_property));
 }
 
-}  // end namespace
-}  // end namespace
+}  // namespace ThermalTwoPhaseFlowWithPP
+}  // namespace ProcessLib

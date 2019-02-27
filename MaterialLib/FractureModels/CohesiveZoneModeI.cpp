@@ -73,7 +73,9 @@ void CohesiveZoneModeI<DisplacementDim>::computeConstitutiveRelation(
     const int index_ns = DisplacementDim - 1;
     double const w_n = w[index_ns];
     for (int i = 0; i < index_ns; i++)
+    {
         C(i, i) = mp.Ks;
+    }
 
     sigma.noalias() = C * w;
 

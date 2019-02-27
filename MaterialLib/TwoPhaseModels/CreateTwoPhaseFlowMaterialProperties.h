@@ -35,4 +35,4 @@ createTwoPhaseFlowMaterialProperties(
     std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters);
 
 }  // end namespace
-}  // end namespace
+}  // namespace MaterialLib

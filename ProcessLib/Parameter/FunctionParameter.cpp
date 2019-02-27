@@ -34,4 +34,4 @@ std::unique_ptr<ParameterBase> createFunctionParameter(
         name, mesh, vec_expressions);
 }
 
-}  // ProcessLib
+}  // namespace ProcessLib

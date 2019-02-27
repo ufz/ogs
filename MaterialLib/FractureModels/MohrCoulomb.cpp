@@ -43,7 +43,7 @@ struct MaterialPropertyValues
     }
 };
 
-} // no namespace
+}  // namespace
 
 template <int DisplacementDim>
 void MohrCoulomb<DisplacementDim>::computeConstitutiveRelation(
@@ -78,7 +78,9 @@ void MohrCoulomb<DisplacementDim>::computeConstitutiveRelation(
     {  // Elastic tangent stiffness
         Ke = Eigen::MatrixXd::Zero(DisplacementDim, DisplacementDim);
         for (int i = 0; i < index_ns; i++)
+        {
             Ke(i, i) = mat.Ks;
+        }
 
         Ke(index_ns, index_ns) =
             mat.Kn *
@@ -89,7 +91,9 @@ void MohrCoulomb<DisplacementDim>::computeConstitutiveRelation(
     {  // Elastic tangent stiffness at w_prev
         Ke_prev = Eigen::MatrixXd::Zero(DisplacementDim, DisplacementDim);
         for (int i = 0; i < index_ns; i++)
+        {
             Ke_prev(i, i) = mat.Ks;
+        }
 
         Ke_prev(index_ns, index_ns) =
             mat.Kn * logPenaltyDerivative(

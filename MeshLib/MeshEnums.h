@@ -106,4 +106,4 @@ const std::string CellType2String(const CellType t);
 
 const std::string MeshQualityType2String(const MeshQualityType t);
 
-}
+}  // namespace MeshLib

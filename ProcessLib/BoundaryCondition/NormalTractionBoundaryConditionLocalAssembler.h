@@ -110,9 +110,11 @@ public:
                     GlobalDim, displacement_size>::Zero(GlobalDim,
                                                         displacement_size);
             for (int i = 0; i < static_cast<int>(GlobalDim); ++i)
+            {
                 N_u.template block<1, displacement_size / GlobalDim>(
                        i, i * displacement_size / GlobalDim)
                     .noalias() = shape_matrices_u[ip].N;
+            }
 
             double const integration_weight =
                 _integration_method.getWeightedPoint(ip).getWeight() *

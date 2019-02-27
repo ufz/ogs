@@ -82,7 +82,9 @@ std::vector<std::reference_wrapper<ProcessVariable>> findProcessVariables(
     auto var_names = pv_config.getConfigParameterList<std::string>(tag);
 
     if (var_names.empty())
+    {
         OGS_FATAL("No entity is found with config tag <%s>.", tag.c_str());
+    }
 
     std::vector<std::string> cached_var_names;
 
@@ -96,7 +98,9 @@ std::vector<std::reference_wrapper<ProcessVariable>> findProcessVariables(
     BaseLib::makeVectorUnique(cached_var_names);
 
     if (cached_var_names.size() != var_names.size())
+    {
         OGS_FATAL("Found duplicates with config tag <%s>.", tag.c_str());
+    }
 
     return vars;
 }

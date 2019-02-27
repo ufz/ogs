@@ -56,6 +56,6 @@ public:
     static const unsigned NPOINTS = MeshElement::n_all_nodes;
 };
 
-}
+}  // namespace NumLib
 
 #include "ShapeQuad4-impl.h"

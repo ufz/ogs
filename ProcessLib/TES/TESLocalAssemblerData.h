@@ -53,5 +53,5 @@ struct TESLocalAssemblerData
     std::vector<double> reaction_rate_prev_ts;  // could also be calculated from
                                                 // solid_density_prev_ts
 };
-}
-}  // namespaces
+}  // namespace TES
+}  // namespace ProcessLib

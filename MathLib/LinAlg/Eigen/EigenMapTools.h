@@ -209,4 +209,4 @@ inline Eigen::Map<Eigen::VectorXd> toVector(
     return {data.data(), static_cast<Eigen::VectorXd::Index>(data.size())};
 }
 
-}  // MathLib
+}  // namespace MathLib

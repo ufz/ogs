@@ -39,8 +39,11 @@ TEST(MeshLib, ElementStatus)
 
     for (unsigned i=0; i<elements_per_side; ++i)
     {
-        for (unsigned j=0; j<elements_per_side; ++j)
-            (*material_id_properties)[elements[i*elements_per_side + j]->getID()] = i;
+        for (unsigned j = 0; j < elements_per_side; ++j)
+        {
+            (*material_id_properties)[elements[i * elements_per_side + j]
+                                          ->getID()] = i;
+        }
     }
 
     {

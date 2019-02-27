@@ -89,4 +89,4 @@ createNonuniformNeumannBoundaryCondition(
             variable_id, component_id});
 }
 
-}  // ProcessLib
+}  // namespace ProcessLib

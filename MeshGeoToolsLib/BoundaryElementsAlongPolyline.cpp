@@ -40,10 +40,14 @@ BoundaryElementsAlongPolyline::BoundaryElementsAlongPolyline(
         auto* e = _mesh.getElement(ele_id);
         // skip line elements
         if (e->getDimension() == 1)
+        {
             continue;
+        }
         // skip internal elements
         if (!e->isBoundaryElement())
+        {
             continue;
+        }
         // find edges on the polyline
         for (unsigned i=0; i<e->getNumberOfEdges(); i++) {
             auto* edge = e->getEdge(i);
@@ -56,7 +60,9 @@ BoundaryElementsAlongPolyline::BoundaryElementsAlongPolyline(
                     *edge, ply, edge_node_distances_along_ply,
                     node_ids_on_poly);
                 if (edge != new_edge)
+                {
                     delete edge;
+                }
                 _boundary_elements.push_back(new_edge);
             } else {
                 delete edge;
@@ -86,7 +92,9 @@ BoundaryElementsAlongPolyline::BoundaryElementsAlongPolyline(
 BoundaryElementsAlongPolyline::~BoundaryElementsAlongPolyline()
 {
     for (auto p : _boundary_elements)
+    {
         delete p;
+    }
 }
 
 bool BoundaryElementsAlongPolyline::includesAllEdgeNodeIDs(const std::vector<std::size_t> &vec_node_ids, const MeshLib::Element &edge, std::vector<std::size_t> &edge_node_distances) const
@@ -95,9 +103,13 @@ bool BoundaryElementsAlongPolyline::includesAllEdgeNodeIDs(const std::vector<std
     for (; j<edge.getNumberOfBaseNodes(); j++) {
         auto itr = std::find(vec_node_ids.begin(), vec_node_ids.end(), edge.getNodeIndex(j));
         if (itr != vec_node_ids.end())
+        {
             edge_node_distances.push_back(std::distance(vec_node_ids.begin(), itr));
+        }
         else
+        {
             break;
+        }
     }
     return (j==edge.getNumberOfBaseNodes());
 }
@@ -127,7 +139,10 @@ MeshLib::Element* BoundaryElementsAlongPolyline::modifyEdgeNodeOrdering(
             new_nodes[2] = const_cast<MeshLib::Node*>(e->getNode(2));
         }
         else
-            OGS_FATAL("Not implemented for element type %s", typeid(edge).name());
+        {
+            OGS_FATAL("Not implemented for element type %s",
+                      typeid(edge).name());
+        }
 
         return edge.clone(new_nodes, edge.getID());
     }

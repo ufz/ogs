@@ -1,6 +1,6 @@
 FROM ubuntu:17.10
 
-# Generated with https://github.com/ufz/ogs-container-maker/commit/0930f12
+# Generated with https://github.com/ufz/ogs-container-maker/commit/1f5dba5
 
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -47,7 +47,8 @@ RUN apt-get update -y && \
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://cmake.org/files/v3.13/cmake-3.13.4-Linux-x86_64.sh && \
     /bin/sh /var/tmp/cmake-3.13.4-Linux-x86_64.sh --prefix=/usr/local --skip-license && \
     rm -rf /var/tmp/cmake-3.13.4-Linux-x86_64.sh
-RUN curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash
+RUN apt-get update && \
+    curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends software-properties-common && \
     apt-add-repository ppa:git-core/ppa -y && \
@@ -95,6 +96,11 @@ ENV CCACHE_DIR=/opt/cache \
     CCACHE_SLOPPINESS=pch_defines,time_macros
 LABEL ccache.dir=/opt/cache \
     ccache.size=15G
+
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        sudo && \
+    rm -rf /var/lib/apt/lists/*
 
 # Jenkins node
 RUN groupadd --gid 1001 jenkins && \

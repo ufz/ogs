@@ -190,7 +190,7 @@ private:
     static const int temperature_size = ShapeFunction::NPOINTS;
 };
 
-}  // end of namespace
-}  // end of namespace
+}  // namespace ThermalTwoPhaseFlowWithPP
+}  // namespace ProcessLib
 
 #include "ThermalTwoPhaseFlowWithPPLocalAssembler-impl.h"

@@ -226,7 +226,9 @@ bool TwoPhaseFlowWithPrhoMaterialProperties::computeConstitutiveRelation(
         auto const success_iterations = newton_solver.solve(J_loc);
 
         if (!success_iterations)
+        {
             return false;
+        }
     }
     dsw_dpg = calculatedSwdP(pg, Sw, X_m, T, material_id);
     dsw_dX = calculatedSwdX(pg, X, Sw, X_m, T, material_id);
@@ -362,7 +364,9 @@ double TwoPhaseFlowWithPrhoMaterialProperties::calculatedXmdX(
     double const dPC_dSw =
         _capillary_pressure_models[current_material_id]->getdPcdS(Sw);
     if ((1 - Sw) < (rho_equilibrium_wet_h2 - rho_wet_h2))
+    {
         return 1.0;
+    }
     return HenryConstantH2 * H2 * dPC_dSw * dSwdX;
 }
 /**
@@ -380,8 +384,10 @@ double TwoPhaseFlowWithPrhoMaterialProperties::calculatedXmdP(
     double const dPC_dSw =
         _capillary_pressure_models[current_material_id]->getdPcdS(Sw);
     if ((1 - Sw) < (rho_equilibrium_wet_h2 - rho_wet_h2))
+    {
         return 0.0;
+    }
     return HenryConstantH2 * H2 * (1 + dPC_dSw * dSwdP);
 }
-}  // end of namespace
-}  // end of namespace
+}  // namespace TwoPhaseFlowWithPrho
+}  // namespace ProcessLib

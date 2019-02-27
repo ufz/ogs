@@ -28,18 +28,26 @@ std::vector<MeshLib::Element*> excludeElementCopy(
     std::vector<MeshLib::Element*> vec_dest_eles(vec_src_eles.size()-vec_removed.size());
 
     unsigned cnt (0);
-    for (std::size_t i=0; i<vec_removed[0]; ++i)
+    for (std::size_t i = 0; i < vec_removed[0]; ++i)
+    {
         vec_dest_eles[cnt++] = vec_src_eles[i];
-    for (std::size_t i=1; i<vec_removed.size(); ++i)
-        for (std::size_t j=vec_removed[i-1]+1; j<vec_removed[i]; ++j)
+    }
+    for (std::size_t i = 1; i < vec_removed.size(); ++i)
+    {
+        for (std::size_t j = vec_removed[i - 1] + 1; j < vec_removed[i]; ++j)
+        {
             vec_dest_eles[cnt++] = vec_src_eles[j];
-    for (std::size_t i=vec_removed.back()+1; i<vec_src_eles.size(); ++i)
+        }
+    }
+    for (std::size_t i = vec_removed.back() + 1; i < vec_src_eles.size(); ++i)
+    {
         vec_dest_eles[cnt++] = vec_src_eles[i];
+    }
 
     return vec_dest_eles;
 }
 
-} // details
+}  // namespace details
 
 MeshLib::Mesh* removeElements(const MeshLib::Mesh& mesh, const std::vector<std::size_t> &removed_element_ids, const std::string &new_mesh_name)
 {
@@ -88,7 +96,9 @@ MeshLib::Mesh* removeElements(const MeshLib::Mesh& mesh, const std::vector<std::
 MeshLib::Mesh* removeNodes(const MeshLib::Mesh &mesh, const std::vector<std::size_t> &del_nodes_idx, const std::string &new_mesh_name)
 {
     if (del_nodes_idx.empty())
+    {
         return nullptr;
+    }
 
     // copy node and element objects
     std::vector<MeshLib::Node*> new_nodes = MeshLib::copyNodeVector(mesh.getNodes());
@@ -108,14 +118,19 @@ MeshLib::Mesh* removeNodes(const MeshLib::Mesh &mesh, const std::vector<std::siz
     // check unused nodes due to element deletion
     std::vector<bool> node_delete_flag(new_nodes.size(), true);
     for (auto e : new_elems) {
-        for (unsigned i=0; i<e->getNumberOfNodes(); i++)
+        for (unsigned i = 0; i < e->getNumberOfNodes(); i++)
+        {
             node_delete_flag[e->getNodeIndex(i)] = false;
+        }
     }
 
     // delete unused nodes
     for (std::size_t i=0; i<new_nodes.size(); i++)
     {
-        if (!node_delete_flag[i]) continue;
+        if (!node_delete_flag[i])
+        {
+            continue;
+        }
         delete new_nodes[i];
         new_nodes[i] = nullptr;
     }

@@ -52,21 +52,27 @@ void EdgeRatioMetric::calculateQuality()
         case MeshElemType::PRISM: {
             std::vector<const MathLib::Point3d*> pnts;
             for (std::size_t j(0); j < 6; j++)
+            {
                 pnts.push_back(elem.getNode(j));
+            }
             _element_quality_metric[k] = checkPrism(pnts);
             break;
         }
         case MeshElemType::PYRAMID: {
             std::vector<const MathLib::Point3d*> pnts;
             for (std::size_t j(0); j < 5; j++)
+            {
                 pnts.push_back(elem.getNode(j));
+            }
             _element_quality_metric[k] = checkPyramid(pnts);
             break;
         }
         case MeshElemType::HEXAHEDRON: {
             std::vector<const MathLib::Point3d*> pnts;
             for (std::size_t j(0); j < 8; j++)
+            {
                 pnts.push_back(elem.getNode(j));
+            }
             _element_quality_metric[k] = checkHexahedron(pnts);
             break;
         }
@@ -88,7 +94,9 @@ double EdgeRatioMetric::checkTriangle (MathLib::Point3d const& a,
     if (len0 < len1 && len0 < len2)
     {
         if (len1 < len2)
+        {
             return len0 / len2;
+        }
 
         return len0 / len1;
     }
@@ -96,13 +104,17 @@ double EdgeRatioMetric::checkTriangle (MathLib::Point3d const& a,
     if (len1 < len2)
     {
         if (len0 < len2)
+        {
             return len1 / len2;
+        }
 
         return len1 / len0;
     }
 
     if (len0 < len1)
+    {
         return len2 / len1;
+    }
 
     return len2 / len0;
 }
@@ -119,9 +131,15 @@ double EdgeRatioMetric::checkQuad (MathLib::Point3d const& a,
 
     // sort lengths - since this is a very small array we use bubble sort
     for (std::size_t i(0); i < 4; i++)
+    {
         for (std::size_t j(i + 1); j < 4; j++)
+        {
             if (sqr_lengths[i] >= sqr_lengths[j])
-                std::swap (sqr_lengths[i], sqr_lengths[j]);
+            {
+                std::swap(sqr_lengths[i], sqr_lengths[j]);
+            }
+        }
+    }
 
     return sqrt(sqr_lengths[0]) / sqrt(sqr_lengths[3]);
 }
@@ -137,9 +155,15 @@ double EdgeRatioMetric::checkTetrahedron (MathLib::Point3d const& a,
 
     // sort lengths - since this is a very small array we use bubble sort
     for (std::size_t i(0); i < 6; i++)
+    {
         for (std::size_t j(i + 1); j < 6; j++)
+        {
             if (sqr_lengths[i] >= sqr_lengths[j])
-                std::swap (sqr_lengths[i], sqr_lengths[j]);
+            {
+                std::swap(sqr_lengths[i], sqr_lengths[j]);
+            }
+        }
+    }
 
     return sqrt(sqr_lengths[0]) / sqrt(sqr_lengths[5]);
 }
@@ -158,9 +182,15 @@ double EdgeRatioMetric::checkPrism (std::vector<const MathLib::Point3d*> const& 
 
     // sort lengths - since this is a very small array we use bubble sort
     for (std::size_t i(0); i < 9; i++)
+    {
         for (std::size_t j(i + 1); j < 9; j++)
+        {
             if (sqr_lengths[i] >= sqr_lengths[j])
-                std::swap (sqr_lengths[i], sqr_lengths[j]);
+            {
+                std::swap(sqr_lengths[i], sqr_lengths[j]);
+            }
+        }
+    }
 
     return sqrt(sqr_lengths[0]) / sqrt(sqr_lengths[8]);
 }
@@ -178,9 +208,15 @@ double EdgeRatioMetric::checkPyramid (std::vector<const MathLib::Point3d*> const
 
     // sort lengths - since this is a very small array we use bubble sort
     for (std::size_t i(0); i < 8; i++)
+    {
         for (std::size_t j(i + 1); j < 8; j++)
+        {
             if (sqr_lengths[i] >= sqr_lengths[j])
-                std::swap (sqr_lengths[i], sqr_lengths[j]);
+            {
+                std::swap(sqr_lengths[i], sqr_lengths[j]);
+            }
+        }
+    }
 
     return sqrt(sqr_lengths[0]) / sqrt(sqr_lengths[7]);
 }
@@ -202,9 +238,15 @@ double EdgeRatioMetric::checkHexahedron (std::vector<const MathLib::Point3d*> co
 
     // sort lengths - since this is a very small array we use bubble sort
     for (std::size_t i(0); i < 12; i++)
+    {
         for (std::size_t j(i + 1); j < 12; j++)
+        {
             if (sqr_lengths[i] >= sqr_lengths[j])
-                std::swap (sqr_lengths[i], sqr_lengths[j]);
+            {
+                std::swap(sqr_lengths[i], sqr_lengths[j]);
+            }
+        }
+    }
 
     return sqrt(sqr_lengths[0]) / sqrt(sqr_lengths[11]);
 }

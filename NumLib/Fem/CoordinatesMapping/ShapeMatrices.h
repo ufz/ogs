@@ -108,7 +108,6 @@ struct ShapeMatrices
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 }; // ShapeMatrices
 
-
-} // NumLib
+}  // namespace NumLib
 
 #include "ShapeMatrices-impl.h"

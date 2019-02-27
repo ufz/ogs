@@ -114,5 +114,5 @@ createRichardsFlowMaterialProperties(
             std::move(relative_permeability_models)}};
 }
 
-}  // end namespace
-}  // end namespace
+}  // namespace RichardsFlow
+}  // namespace ProcessLib

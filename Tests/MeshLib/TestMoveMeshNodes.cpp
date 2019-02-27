@@ -56,8 +56,12 @@ TEST(MeshLib, moveMeshNodes)
     }
 
     for (auto n : nodes)
+    {
         delete n;
+    }
     for (auto n : nodes_copy)
+    {
         delete n;
+    }
 }
 

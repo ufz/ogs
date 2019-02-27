@@ -46,4 +46,4 @@ std::unique_ptr<TimeDiscretization> createTimeDiscretization(
 
     OGS_FATAL("Unrecognized time discretization type `%s'", type.c_str());
 }
-}
+}  // namespace NumLib
