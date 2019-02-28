@@ -15,7 +15,7 @@ AddTest(
 AddTest(
     NAME HeatTransportBHE_1U_beier_sandbox_fixed_power_constant_flow
     PATH Parabolic/T/3D_Beier_sandbox
-    RUNTIME 1
+    RUNTIME 220
     EXECUTABLE ogs
     EXECUTABLE_ARGS fixed_power_constant_flow.prj
     WRAPPER time
