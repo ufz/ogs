@@ -81,10 +81,8 @@ bool Polygon::isPntInPolygon (GeoLib::Point const & pnt) const
         return false;
     }
 
-    std::size_t n_intersections (0);
-    GeoLib::Point s;
-
     if (_simple_polygon_list.size() == 1) {
+        std::size_t n_intersections(0);
         const std::size_t n_nodes (getNumberOfPoints() - 1);
         for (std::size_t k(0); k < n_nodes; k++) {
             if (((*(getPoint(k)))[1] <= pnt[1] && pnt[1] <= (*(getPoint(k + 1)))[1]) ||
