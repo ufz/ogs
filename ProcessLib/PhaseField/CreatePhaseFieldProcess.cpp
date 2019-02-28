@@ -58,7 +58,12 @@ std::unique_ptr<Process> createPhaseFieldProcess(
     else  // staggered scheme.
     {
         using namespace std::string_literals;
-        for (auto const& variable_name : {"displacement"s, "phasefield"s})
+        for (
+            auto const& variable_name :
+            {//! \ogs_file_param_special{prj__processes__process__PHASE_FIELD__process_variables__displacement}
+             "displacement"s,
+             //! \ogs_file_param_special{prj__processes__process__PHASE_FIELD__process_variables__phasefield}
+             "phasefield"s})
         {
             auto per_process_variables =
                 findProcessVariables(variables, pv_config, {variable_name});
