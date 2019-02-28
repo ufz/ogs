@@ -97,9 +97,6 @@ public:
 
     ~Raster();
 
-    /// Creates a Raster based on a GeoLib::Surface
-    static Raster* getRasterFromSurface(Surface const& sfc, double cell_size, double no_data_val = -9999);
-
 private:
     void setCellSize(double cell_size);
     void setNoDataVal (double no_data_val);
