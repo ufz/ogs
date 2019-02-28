@@ -51,10 +51,14 @@ std::unique_ptr<MechanicsBase<DisplacementDim>> createMFront(
     //! \ogs_file_param{material__solid__constitutive_relation__type}
     config.checkConfigParameter("type", "MFront");
 
-    auto const lib_path = BaseLib::joinPaths(
-        BaseLib::getProjectDirectory(),
-        //! \ogs_file_param{material__solid__constitutive_relation__MFront__library}
-        config.getConfigParameter<std::string>("library"));
+    //! \ogs_file_param{material__solid__constitutive_relation__MFront__library}
+    auto const library_name =
+        config.getConfigParameterOptional<std::string>("library");
+    auto const lib_path =
+        library_name
+            ? BaseLib::joinPaths(BaseLib::getProjectDirectory(), *library_name)
+            : "libOgsMFrontBehaviour.so";
+
     auto const behaviour_name =
         //! \ogs_file_param{material__solid__constitutive_relation__MFront__behaviour}
         config.getConfigParameter<std::string>("behaviour");
