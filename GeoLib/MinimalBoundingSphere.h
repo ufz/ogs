@@ -26,7 +26,7 @@ namespace GeoLib
 /**
  * Calculated center and radius of a minimal bounding sphere for a given number of geometric points.
  */
-class MinimalBoundingSphere
+class MinimalBoundingSphere final
 {
 public:
     /// Point-Sphere
