@@ -58,11 +58,7 @@ public:
         : _header(std::move(header)),
           _raster_data(new double[_header.n_cols * _header.n_rows])
     {
-        iterator raster_it(_raster_data);
-        for (InputIterator it(begin); it != end; ++it) {
-            *raster_it = *it;
-            raster_it++;
-        }
+        std::copy(begin, end, _raster_data);
     }
 
     Raster(Raster const&) = delete;
