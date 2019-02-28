@@ -63,7 +63,8 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromASCFile(std::string const& fn
             }
         }
         in.close();
-        GeoLib::Raster *raster(new GeoLib::Raster(header, values, values+header.n_cols*header.n_rows));
+        GeoLib::Raster* raster(new GeoLib::Raster(
+            std::move(header), values, values + header.n_cols * header.n_rows));
         delete [] values;
         return raster;
     }
@@ -183,7 +184,8 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromSurferFile(std::string const&
             }
         }
         in.close();
-        GeoLib::Raster *raster(new GeoLib::Raster(header, values, values+header.n_cols*header.n_rows));
+        GeoLib::Raster* raster(new GeoLib::Raster(
+            std::move(header), values, values + header.n_cols * header.n_rows));
         delete [] values;
         return raster;
     }

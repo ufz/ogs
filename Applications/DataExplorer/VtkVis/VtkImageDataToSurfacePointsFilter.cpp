@@ -80,10 +80,7 @@ int VtkImageDataToSurfacePointsFilter::RequestData(
     double origin[3];
     input->GetOrigin(origin);
     MathLib::Point3d const ll(std::array<double, 3>{{origin[0], origin[1], origin[2]}});
-    GeoLib::RasterHeader const header = {
-        static_cast<std::size_t>(dimensions[0]),
-        static_cast<std::size_t>(dimensions[1]),
-        1, ll, spacing[0], -9999};
+
     std::vector<double> pixels;
     pixels.reserve(n_points);
     for (std::size_t i = 0; i < n_points; ++i)
@@ -94,7 +91,11 @@ int VtkImageDataToSurfacePointsFilter::RequestData(
         else
             pixels.push_back(((float*)pixvals)[i * n_comp]);
     }
-    GeoLib::Raster const* const raster(new GeoLib::Raster(header, pixels.begin(), pixels.end()));
+    GeoLib::Raster const* const raster(new GeoLib::Raster(
+        {static_cast<std::size_t>(dimensions[0]),
+         static_cast<std::size_t>(dimensions[1]), 1, ll, spacing[0], -9999},
+        pixels.begin(),
+        pixels.end()));
 
     vtkSmartPointer<vtkPoints> new_points = vtkSmartPointer<vtkPoints>::New();
     new_points->SetNumberOfPoints(PointsPerPixel * n_points);
