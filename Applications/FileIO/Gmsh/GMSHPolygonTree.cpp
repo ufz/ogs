@@ -204,7 +204,6 @@ void GMSHPolygonTree::checkIntersectionsSegmentExistingPolylines(
 {
     std::size_t const ply_segment_number(seg_it.getSegmentNumber());
     for(GeoLib::PolylineWithSegmentMarker *const p : _plys) {
-        std::size_t n_segments(p->getNumberOfSegments());
         GeoLib::PointVec & pnt_vec(*(_geo_objs.getPointVecObj(_geo_name)));
         for (auto seg_it_p(p->begin()); seg_it_p != p->end(); ++seg_it_p) {
             GeoLib::Point s; // intersection point
@@ -216,7 +215,6 @@ void GMSHPolygonTree::checkIntersectionsSegmentExistingPolylines(
                 if (pnt_vec_size < pnt_vec.size()) { // case: new point
                     // modify polyline already in this node
                     p->insertPoint(seg_it_p.getSegmentNumber()+1, pnt_id);
-                    n_segments++;
                     // modify polyline
                     ply->insertPoint(ply_segment_number+1, pnt_id);
                 } else { // case: point exists already in geometry
@@ -224,7 +222,6 @@ void GMSHPolygonTree::checkIntersectionsSegmentExistingPolylines(
                     std::size_t const k(seg_it_p.getSegmentNumber());
                     if (p->getPointID(k) != pnt_id && p->getPointID(k+1) != pnt_id) {
                         p->insertPoint(k+1, pnt_id);
-                        n_segments++;
                     }
                     // check if point is not already in polyline ply
                     if (ply->getPointID(ply_segment_number) != pnt_id
@@ -309,13 +306,17 @@ void GMSHPolygonTree::createGMSHPoints(std::vector<GMSHPoint*> & gmsh_pnts) cons
     }
 }
 
-void GMSHPolygonTree::writeLineLoop(std::size_t &line_offset, std::size_t &sfc_offset, std::ostream& out) const
+void GMSHPolygonTree::writeLineLoop(std::size_t& line_offset,
+                                    std::size_t& sfc_offset,
+                                    std::ostream& out) const
 {
-    const std::size_t n_pnts (_node_polygon->getNumberOfPoints());
-    std::size_t first_pnt_id(_node_polygon->getPointID(0)), second_pnt_id;
-    for (std::size_t k(1); k<n_pnts; k++) {
-        second_pnt_id = _node_polygon->getPointID(k);
-        out << "Line(" << line_offset + k-1 << ") = {" << first_pnt_id << "," << second_pnt_id << "};\n";
+    const std::size_t n_pnts(_node_polygon->getNumberOfPoints());
+    for (std::size_t k(1), first_pnt_id(_node_polygon->getPointID(0));
+         k < n_pnts; k++)
+    {
+        std::size_t const second_pnt_id = _node_polygon->getPointID(k);
+        out << "Line(" << line_offset + k - 1 << ") = {" << first_pnt_id << ","
+            << second_pnt_id << "};\n";
         first_pnt_id = second_pnt_id;
     }
     out << "Line Loop(" << line_offset + n_pnts-1 << ") = {";
@@ -323,7 +324,8 @@ void GMSHPolygonTree::writeLineLoop(std::size_t &line_offset, std::size_t &sfc_o
         out << line_offset+k << ",";
     }
     out << line_offset+n_pnts-2 << "};\n";
-    out << "Plane Surface(" << sfc_offset << ") = {" << line_offset+n_pnts-1 << "};\n";
+    out << "Plane Surface(" << sfc_offset << ") = {" << line_offset + n_pnts - 1
+        << "};\n";
     line_offset += n_pnts;
     sfc_offset++;
 }
@@ -335,10 +337,10 @@ void GMSHPolygonTree::writeLineConstraints(std::size_t& line_offset,
     for (auto polyline : _plys)
     {
         const std::size_t n_pnts(polyline->getNumberOfPoints());
-        std::size_t first_pnt_id(polyline->getPointID(0)), second_pnt_id;
+        std::size_t first_pnt_id(polyline->getPointID(0));
         for (std::size_t k(1); k < n_pnts; k++)
         {
-            second_pnt_id = polyline->getPointID(k);
+            auto const second_pnt_id = polyline->getPointID(k);
             if (polyline->isSegmentMarked(k - 1) &&
                 _node_polygon->isPntInPolygon(*(polyline->getPoint(k))) &&
                 !GeoLib::containsEdge(*_node_polygon, first_pnt_id, second_pnt_id))
@@ -365,9 +367,9 @@ void GMSHPolygonTree::writeSubPolygonsAsLineConstraints(std::size_t &line_offset
     if (_parent != nullptr)
     {
         const std::size_t n_pnts(_node_polygon->getNumberOfPoints());
-        std::size_t first_pnt_id(_node_polygon->getPointID(0)), second_pnt_id;
+        std::size_t first_pnt_id(_node_polygon->getPointID(0));
         for (std::size_t k(1); k<n_pnts; k++) {
-            second_pnt_id = _node_polygon->getPointID(k);
+            auto const second_pnt_id = _node_polygon->getPointID(k);
             out << "Line(" << line_offset + k-1 << ") = {" << first_pnt_id << "," << second_pnt_id << "};\n";
             first_pnt_id = second_pnt_id;
             out << "Line { " << line_offset+k-1 << " } In Surface { " << sfc_number << " };\n";

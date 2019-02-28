@@ -1105,7 +1105,7 @@ void NodeWiseMeshPartitioner::writeElementsASCII(
         for (const auto* node : partition.nodes)
         {
             nodes_local_ids[node->getID()] = node_local_id_offset;
-            node_local_id_offset++;
+            ++node_local_id_offset;
         }
 
         for (const auto* elem : partition.regular_elements)

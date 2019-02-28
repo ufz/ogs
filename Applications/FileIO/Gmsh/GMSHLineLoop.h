@@ -17,17 +17,17 @@ namespace FileIO
 {
 namespace GMSH
 {
-
 class GMSHLine;
 
-class GMSHLineLoop {
+class GMSHLineLoop final
+{
 public:
-    GMSHLineLoop(bool is_sfc=false);
+    explicit GMSHLineLoop(bool is_sfc = false);
     virtual ~GMSHLineLoop();
-    void addLine(GMSHLine* line);
     bool isSurface() const { return _is_sfc; }
     void setSurface(bool is_sfc) { _is_sfc = is_sfc; }
-    void write(std::ostream &os, std::size_t offset, std::size_t sfc_offset = 0) const;
+    void write(std::ostream& os, std::size_t offset,
+               std::size_t sfc_offset = 0) const;
 
 private:
     std::vector<GMSHLine*> _lines;

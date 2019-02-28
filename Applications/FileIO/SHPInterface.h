@@ -40,7 +40,7 @@ namespace FileIO
 /**
  * \brief Manages the import of ESRI shape files into GeoLib.
  */
-class SHPInterface
+class SHPInterface final
 {
 public:
     /// Connection between ESRI type system for shape files and OGS GeoLib.
@@ -54,7 +54,10 @@ public:
     };
 
     /// Constructor
-    SHPInterface(GeoLib::GEOObjects& geoObjects) : _geoObjects(geoObjects) {}
+    explicit SHPInterface(GeoLib::GEOObjects& geoObjects)
+        : _geoObjects(geoObjects)
+    {
+    }
 
     /// Reads the header of the shape file.
     bool readSHPInfo(const std::string &filename, int &shapeType, int &numberOfEntities);

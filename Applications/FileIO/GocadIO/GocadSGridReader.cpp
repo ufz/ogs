@@ -151,7 +151,6 @@ GocadSGridReader::GocadSGridReader(std::string const& fname)
     if (!pnts_read)
     {
         readNodesBinary();
-        pnts_read = true;
     }
     readElementPropertiesBinary();
     std::vector<Bitset> region_flags = readRegionFlagsBinary();
@@ -516,30 +515,6 @@ void GocadSGridReader::readElementPropertiesBinary()
                 fname.c_str());
         }
     }
-}
-
-std::vector<int> GocadSGridReader::readFlagsBinary() const
-{
-    std::vector<int> result;
-    if (!_double_precision_binary)
-    {
-        result = BaseLib::readBinaryArray<int32_t>(_flags_fname,
-                                                   _index_calculator._n_nodes);
-        std::for_each(result.begin(), result.end(),
-                      [](int32_t& val) { BaseLib::swapEndianness(val); });
-    }
-    else
-    {
-        result = BaseLib::readBinaryArray<int>(_flags_fname,
-                                               _index_calculator._n_nodes);
-        std::for_each(result.begin(), result.end(),
-                      [](int& val) { BaseLib::swapEndianness(val); });
-    }
-
-    if (result.empty())
-        ERR("Reading of flags file '%s' failed.", _flags_fname.c_str());
-
-    return result;
 }
 
 std::vector<Bitset> GocadSGridReader::readRegionFlagsBinary() const

@@ -64,7 +64,6 @@ private:
     void parseFaceSet(std::string& line, std::istream& in);
 
     void readNodesBinary();
-    std::vector<int> readFlagsBinary() const;
     std::vector<Bitset> readRegionFlagsBinary() const;
     void readElementPropertiesBinary();
     void mapRegionFlagsToCellProperties(std::vector<Bitset> const& rf);
