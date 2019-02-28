@@ -19,8 +19,6 @@ namespace MeshLib
 namespace ProjectPointOnMesh
 {
 
-/// Returns the element in which the given node is located when
-/// projected onto a mesh, or nullptr if no such element was found.
 MeshLib::Element const* getProjectedElement(
     std::vector<const MeshLib::Element*> const& elements,
     MeshLib::Node const& node)
@@ -59,8 +57,6 @@ MeshLib::Element const* getProjectedElement(
     return nullptr;
 }
 
-/// Returns the z-coordinate of a point projected onto the plane defined
-/// by a mesh element.
 double getElevation(MeshLib::Element const& element,
                     MeshLib::Node const& node)
 {
