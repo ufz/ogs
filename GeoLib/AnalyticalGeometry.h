@@ -158,14 +158,6 @@ MathLib::DenseMatrix<double> rotatePointsToXY(InputIterator1 p_pnts_begin,
                                               InputIterator2 r_pnts_end);
 
 /**
- * rotate points to X-Z plane
- * @param pnts a vector of points with a minimum length of three.
- * Points are rotated using a rotation matrix computed from the first three points
- * in the vector. Point coordinates are modified as a result of the rotation.
- */
-void rotatePointsToXZ(std::vector<GeoLib::Point*> &pnts);
-
-/**
  * test for intersections of the line segments of the Polyline
  * @param ply the polyline
  * @param seg_it0 iterator pointing to the first segment that has an intersection
