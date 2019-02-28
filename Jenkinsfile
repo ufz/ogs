@@ -77,6 +77,9 @@ pipeline {
               }
             }
           }
+          if(!stage_required.build || !stage_required.full) {
+            currentBuild.result='UNSTABLE'
+          }
         }
       }
       // Mark build as NOT_BUILT when [ci skip] commit message was found
