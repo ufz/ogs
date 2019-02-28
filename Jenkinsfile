@@ -16,8 +16,8 @@ pipeline {
     booleanParam(name: 'docker_conan', defaultValue: true)
     booleanParam(name: 'docker_conan_debug', defaultValue: true)
     booleanParam(name: 'docker_conan_gui', defaultValue: true)
-    booleanParam(name: 'envinf1_serial', defaultValue: true)
-    booleanParam(name: 'envinf1_parallel', defaultValue: true)
+    booleanParam(name: 'frontend1_serial', defaultValue: true)
+    booleanParam(name: 'frontend1_parallel', defaultValue: true)
     booleanParam(name: 'win', defaultValue: true)
     booleanParam(name: 'mac', defaultValue: true)
     booleanParam(name: 'clang_analyzer', defaultValue: true)
@@ -258,13 +258,13 @@ pipeline {
             }
           }
         }
-        // ************************** envinf1 **********************************
-        stage('Envinf1 (serial)') {
+        // ************************* frontend1 *********************************
+        stage('Frontend1 (serial)') {
           when {
             beforeAgent true
-            expression { return params.envinf1_serial && (stage_required.build || stage_required.full) }
+            expression { return params.frontend1_serial && (stage_required.build || stage_required.full) }
           }
-          agent { label "envinf1"}
+          agent { label "frontend1"}
           environment {
             OMP_NUM_THREADS = '1'
           }
@@ -276,18 +276,18 @@ pipeline {
                   '-DOGS_BUILD_UTILS=ON ' +
                   '-DBUILD_SHARED_LIBS=ON ' +
                   '-DOGS_USE_CONAN=OFF '
-                env = 'envinf1/cli.sh'
+                env = 'frontend1/cli.sh'
               }
               build {
-                env = 'envinf1/cli.sh'
+                env = 'frontend1/cli.sh'
                 cmd_args = '-l 30'
               }
               build {
-                env = 'envinf1/cli.sh'
+                env = 'frontend1/cli.sh'
                 target = 'tests'
               }
               build {
-                env = 'envinf1/cli.sh'
+                env = 'frontend1/cli.sh'
                 target = 'ctest'
               }
             }
@@ -301,12 +301,12 @@ pipeline {
             }
           }
         }
-        stage('Envinf1 (parallel)') {
+        stage('Frontend1 (parallel)') {
           when {
             beforeAgent true
-            expression { return params.envinf1_parallel && (stage_required.build || stage_required.full) }
+            expression { return params.frontend1_parallel && (stage_required.build || stage_required.full) }
           }
-          agent { label "envinf1"}
+          agent { label "frontend1"}
           environment {
             OMP_NUM_THREADS = '1'
           }
@@ -318,18 +318,18 @@ pipeline {
                   '-DBUILD_SHARED_LIBS=ON ' +
                   '-DOGS_USE_PETSC=ON ' +
                   '-DOGS_USE_CONAN=OFF '
-                env = 'envinf1/petsc.sh'
+                env = 'frontend1/petsc.sh'
               }
               build {
-                env = 'envinf1/petsc.sh'
+                env = 'frontend1/petsc.sh'
                 cmd_args = '-l 30'
               }
               build {
-                env = 'envinf1/petsc.sh'
+                env = 'frontend1/petsc.sh'
                 target = 'tests'
               }
               build {
-                env = 'envinf1/petsc.sh'
+                env = 'frontend1/petsc.sh'
                 target = 'ctest'
               }
             }
