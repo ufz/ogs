@@ -65,6 +65,11 @@ public:
         }
     }
 
+    Raster(Raster const&) = delete;
+    Raster(Raster&&) = delete;
+    Raster& operator=(Raster const&) = delete;
+    Raster& operator=(Raster&&) = delete;
+
     /// Returns the complete header information
     RasterHeader const& getHeader() const { return _header; }
 
