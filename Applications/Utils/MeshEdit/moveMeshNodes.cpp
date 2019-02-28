@@ -21,14 +21,15 @@
 #include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
+#include "MeshLib/MeshSearch/MeshElementGrid.h"
 #include "MeshLib/MeshEditing/ProjectPointOnMesh.h"
 
-bool setClosestPointElevation(MeshLib::Node& p,
+double getClosestPointElevation(MeshLib::Node const& p,
                               std::vector<MeshLib::Node*> const& nodes,
                               double const& max_dist)
 {
     double sqr_shortest_dist (max_dist);
-    bool pnt_found (false);
+    double elevation (p[2]);
     for (MeshLib::Node* node : nodes)
     {
         double sqr_dist = (p[0] - (*node)[0]) * (p[0] - (*node)[0]) +
@@ -36,11 +37,10 @@ bool setClosestPointElevation(MeshLib::Node& p,
         if (sqr_dist < sqr_shortest_dist)
         {
             sqr_shortest_dist = sqr_dist;
-            p[2] = (*node)[2];
-            pnt_found = true;
+            elevation = (*node)[2];
         }
     }
-    return pnt_found;
+    return elevation;
 }
 
 int main (int argc, char* argv[])
@@ -150,19 +150,25 @@ int main (int argc, char* argv[])
         }
 
         std::vector<MeshLib::Node*> const& nodes = mesh->getNodes();
-        MeshLib::ProjectPointOnMesh::project(
-            *ground_truth, nodes, std::numeric_limits<double>::max());
-        std::size_t pnts_not_found (0);
+        MeshLib::MeshElementGrid const grid(*ground_truth);
+        double const max_edge(mesh->getMaxEdgeLength());
+
         for (MeshLib::Node* node : nodes)
         {
-            if ((*node)[2] == std::numeric_limits<double>::max())
-            {
-                if (!setClosestPointElevation(*node, ground_truth->getNodes(), max_dist))
-                    pnts_not_found++;
-            }
+            MathLib::Point3d min_vol{{(*node)[0] - max_edge,
+                                      (*node)[1] - max_edge,
+                                      -std::numeric_limits<double>::max()}};
+            MathLib::Point3d max_vol{{(*node)[0] + max_edge,
+                                      (*node)[1] + max_edge,
+                                      std::numeric_limits<double>::max()}};
+            std::vector<const MeshLib::Element*> const& elems =
+                grid.getElementsInVolume(min_vol, max_vol);
+            auto const* element =
+                MeshLib::ProjectPointOnMesh::getProjectedElement(elems, *node);
+            (*node)[2] = (element != nullptr)
+                ? MeshLib::ProjectPointOnMesh::getElevation(*element, *node)
+                : getClosestPointElevation( *node, ground_truth->getNodes(), max_dist);
         }
-        if (pnts_not_found > 0)
-            WARN ("For %d points no corresponding elevation found.", pnts_not_found);
     }
 
     // a simple lowpass filter for the elevation of mesh nodes using the elevation of each node
