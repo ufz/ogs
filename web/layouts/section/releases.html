@@ -8,11 +8,36 @@
     {{ $latest := getJSON $urlPre "/repos/ufz/ogs/releases/latest" }}
     {{ $statuses := getJSON $urlPre "/repos/ufz/ogs/commits/" $latest.tag_name "/statuses" }}
 
+    <h2 id="latest"><i class="far fa-wrench"></i> Latest development version</h2>
+    {{ $head := getJSON $urlPre "/repos/ufz/ogs/git/refs/heads/master" }}
+    {{ $head_commit := getJSON $urlPre "/repos/ufz/ogs/commits/" $head.object.sha }}
+    {{ $head_statuses := getJSON $urlPre "/repos/ufz/ogs/commits/" $head.object.sha "/statuses" }}
+
+    <p>
+      Here you can find the latest version of OpenGeoSys. But be warned: although this version was
+      successfully tested by the continuous integration system it may be unstable or incomplete...
+    </p>
+
+    <div class="note">
+      <h3><i class="far fa-download"></i> Download</h3>
+      <!-- <p>{{ dateFormat "Monday, Jan 2, 2006" $head_commit.commit.author.date }} by -->
+        <!-- <a href="{{$head_commit.author.html_url }}">{{ $head_commit.commit.author.name }}</a>: -->
+      <!-- </p> -->
+      <!-- <p class="max-w-md"><i>{{ $head_commit.commit.message }}</i> <a href="{{ $head_commit.html_url }}"><i class="fab fa-github"></i> GitHub Commit Link</a></p> -->
+      <p>
+          <!-- {{ range first 1 (where $head_statuses ".context" "continuous-integration/jenkins/branch") }} -->
+          Downloads for the current version of OpenGeoSys can be found on our continuous integration system:
+      </p>
+      <p>
+          <a href="https://jenkins.opengeosys.org/job/ufz/job/ogs/job/master/lastSuccessfulBuild/artifact/build"><i class="fas fa-arrow-right"></i> Latest successful Jenkins Build with Downloads</a> <span class="text-sm text-grey-dark"></span>
+          <!-- {{ end }} -->
+      </p>
+    </div>
+
     <div class="note float-right border-r-4 border-l-0 ml-2">
       <h3>Content</h3>
       <ul class="list-reset text-sm">
         <li><a href="#current">Current Release: {{ $latest.tag_name }}</a></li>
-        <li><a href="#latest">Latest development version</a></li>
         <li><a href="#old">Older releases & OpenGeoSys-5</a></li>
       </ul>
       <h3 class="border-b"><i class="far fa-download"></i> Downloads</h3>
@@ -42,29 +67,6 @@
         {{ if not (eq $latest.tag_name $latest.name)}}<i>{{ $latest.name }}</i>{{ end }}
       <p>Released on {{ dateFormat "Monday, Jan 2, 2006" $latest.published_at }}</p>
       {{ $latest.body | markdownify }}
-    </div>
-
-    <h2 id="latest"><i class="far fa-wrench"></i> Latest development version</h2>
-    {{ $head := getJSON $urlPre "/repos/ufz/ogs/git/refs/heads/master" }}
-    {{ $head_commit := getJSON $urlPre "/repos/ufz/ogs/commits/" $head.object.sha }}
-    {{ $head_statuses := getJSON $urlPre "/repos/ufz/ogs/commits/" $head.object.sha "/statuses" }}
-
-    <p>
-      Here you can find the latest version of OpenGeoSys. But be warned: although this version was
-      successfully tested by the continuous integration system it may be unstable or incomplete...
-    </p>
-
-    <div class="note">
-      <h3>Commit Info</h3>
-      <p>{{ dateFormat "Monday, Jan 2, 2006" $head_commit.commit.author.date }} by
-        <a href="{{$head_commit.author.html_url }}">{{ $head_commit.commit.author.name }}</a>:
-      </p>
-      <p class="max-w-md"><i>{{ $head_commit.commit.message }}</i> <a href="{{ $head_commit.html_url }}"><i class="fab fa-github"></i> GitHub Commit Link</a></p>
-      <p>
-          {{ range first 1 (where $head_statuses ".context" "continuous-integration/jenkins/branch") }}
-          <a href="{{ .target_url }}"><i class="fab fa-jenkins"></i> Jenkins Build with Downloads</a> <span class="text-sm text-grey-dark">(Select the <i>Artifacts</i>-tab!)</span>
-          {{ end }}
-      </p>
     </div>
 
     <h2 id="old">Older releases</h2>
