@@ -3,7 +3,7 @@ module use /global/apps/modulefiles
 module load cmake
 module load gcc/6.2.0-1
 module load ninja/1.9.0
-module load git
+module load git/2.20.1
 
 # Libraries
 module load boost/1.62.0-1
