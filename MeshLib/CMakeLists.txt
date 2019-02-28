@@ -30,11 +30,5 @@ if(OGS_USE_PCH)
 endif()
 
 target_link_libraries(MeshLib
-    PUBLIC BaseLib GeoLib MathLib logog vtkIOXML
+    PUBLIC BaseLib GeoLib MathLib logog ${VTK_LIBRARIES}
 )
-
-if(OGS_USE_MPI)
-    target_link_libraries(MeshLib
-        PUBLIC vtkIOParallelXML vtkParallelMPI
-    )
-endif()
