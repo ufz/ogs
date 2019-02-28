@@ -9,8 +9,6 @@
 
 #include "CreateMFront.h"
 
-#ifdef OGS_USE_MFRONT
-
 #include "BaseLib/FileTools.h"
 #include "ParameterLib/Utils.h"
 
@@ -181,28 +179,6 @@ std::unique_ptr<MechanicsBase<DisplacementDim>> createMFront(
 }  // namespace MFront
 }  // namespace Solids
 }  // namespace MaterialLib
-
-#else  // OGS_USE_MFRONT
-
-namespace MaterialLib
-{
-namespace Solids
-{
-namespace MFront
-{
-template <int DisplacementDim>
-std::unique_ptr<MechanicsBase<DisplacementDim>> createMFront(
-    std::vector<
-        std::unique_ptr<ParameterLib::ParameterBase>> const& /*parameters*/,
-    BaseLib::ConfigTree const& /*config*/)
-{
-    OGS_FATAL("OpenGeoSys has not been build with MFront support.");
-}
-}  // namespace MFront
-}  // namespace Solids
-}  // namespace MaterialLib
-
-#endif  // OGS_USE_MFRONT
 
 namespace MaterialLib
 {
