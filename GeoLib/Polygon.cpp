@@ -267,22 +267,6 @@ bool Polygon::getNextIntersectionPointPolygonLine(
     return false;
 }
 
-const std::list<Polygon*>& Polygon::getListOfSimplePolygons()
-{
-    return _simple_polygon_list;
-}
-
-void Polygon::computeListOfSimplePolygons ()
-{
-    splitPolygonAtPoint (_simple_polygon_list.begin());
-    splitPolygonAtIntersection (_simple_polygon_list.begin());
-
-    for (auto& polygon : _simple_polygon_list)
-    {
-        polygon->initialise();
-    }
-}
-
 EdgeType Polygon::getEdgeType (std::size_t k, GeoLib::Point const & pnt) const
 {
     switch (getLocationOfPoint(k, pnt))
@@ -520,31 +504,6 @@ void Polygon::splitPolygonAtPoint (const std::list<GeoLib::Polygon*>::iterator& 
             return;
         }
     }
-}
-
-GeoLib::Polygon* createPolygonFromCircle (GeoLib::Point const& middle_pnt, double radius,
-                                          std::vector<GeoLib::Point*> & pnts, std::size_t resolution)
-{
-    const std::size_t off_set (pnts.size());
-    // create points
-    double angle (boost::math::double_constants::two_pi / resolution);
-    for (std::size_t k(0); k < resolution; k++)
-    {
-        auto* pnt(new GeoLib::Point(middle_pnt));
-        (*pnt)[0] += radius * cos (k * angle);
-        (*pnt)[1] += radius * sin (k * angle);
-        pnts.push_back (pnt);
-    }
-
-    // create polygon
-    GeoLib::Polygon* polygon(new GeoLib::Polygon{Polyline{pnts}, false});
-    for (std::size_t k(0); k < resolution; k++)
-    {
-        polygon->addPoint(k + off_set);
-    }
-    polygon->addPoint (off_set);
-
-    return polygon;
 }
 
 bool operator==(Polygon const& lhs, Polygon const& rhs)
