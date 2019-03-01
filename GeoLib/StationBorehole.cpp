@@ -14,6 +14,7 @@
 
 #include "StationBorehole.h"
 
+#include <algorithm>
 #include <cmath>
 #include <cstdlib>
 #include <fstream>
@@ -51,19 +52,6 @@ StationBorehole::~StationBorehole()
     {
         delete _profilePntVec[k];
     }
-}
-
-int StationBorehole::find(const std::string &str)
-{
-    std::size_t size = _soilName.size();
-    for (std::size_t i = 0; i < size; i++)
-    {
-        if (_soilName[i].find(str) == 0)
-        {
-            return 1;
-        }
-    }
-    return 0;
 }
 
 int StationBorehole::readStratigraphyFile(const std::string &path,

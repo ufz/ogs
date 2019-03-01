@@ -63,10 +63,6 @@ public:
      * assumes that everything is in right order and will work out fine!
      */
     static int addStratigraphies(const std::string &path, std::vector<Point*>* boreholes);
-
-    /// Finds the given string in the vector of soil-names
-    int find(const std::string &str);
-
     // Returns the depth of the borehole
     double getDepth() const { return _depth; }
 
