@@ -90,20 +90,6 @@ const std::vector<float>* SensorData::getTimeSeries(SensorDataType time_series_n
     return nullptr;
 }
 
-std::string SensorData::getDataUnit(SensorDataType time_series_name) const
-{
-    for (std::size_t i=0; i<_vec_names.size(); i++)
-    {
-        if (time_series_name == _vec_names[i])
-        {
-            return _data_unit_string[i];
-        }
-    }
-    ERR("Error in SensorData::getDataUnit() - Time series '%d' not found.",
-        time_series_name);
-    return "";
-}
-
 int SensorData::readDataFromFile(const std::string &file_name)
 {
     std::ifstream in( file_name.c_str() );

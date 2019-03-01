@@ -105,9 +105,6 @@ public:
     /// Returns the unit the time steps
     TimeStepType getTimeUnit() const { return _time_unit; }
 
-    /// Returns the data unit of the given time series
-    std::string getDataUnit(SensorDataType t) const;
-
     /// Converts Sensor Data Types to Strings
     static std::string convertSensorDataType2String(SensorDataType t);
 
