@@ -69,7 +69,7 @@ static MeshLib::Element const* getProjectedElement(
 static double getElevation(MeshLib::Element const& element,
                            MeshLib::Node const& node)
 {
-    MathLib::Vector3 const v = node - *element.getNode(0);
+    MathLib::Vector3 const v{*element.getNode(0), node};
     MathLib::Vector3 const n =
         MeshLib::FaceRule::getSurfaceNormal(&element).getNormalizedVector();
     return node[2] - scalarProduct(n, v) * n[2];
