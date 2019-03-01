@@ -19,7 +19,7 @@ namespace ProcessLib
 class BoundaryConditionCollection final
 {
 public:
-    BoundaryConditionCollection(
+    explicit BoundaryConditionCollection(
         std::vector<std::unique_ptr<ParameterBase>> const& parameters)
         : _parameters(parameters)
     {

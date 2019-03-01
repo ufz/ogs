@@ -30,7 +30,9 @@ class MinimalBoundingSphere
 {
 public:
     /// Point-Sphere
-    MinimalBoundingSphere(MathLib::Point3d const& p, double radius = std::numeric_limits<double>::epsilon());
+    explicit MinimalBoundingSphere(
+        MathLib::Point3d const& p,
+        double radius = std::numeric_limits<double>::epsilon());
     /// Bounding sphere using two points
     MinimalBoundingSphere(MathLib::Point3d const& p, MathLib::Point3d const& q);
     /// Bounding sphere using three points
@@ -42,7 +44,8 @@ public:
         MathLib::Point3d const& r,
         MathLib::Point3d const& s);
     /// Bounding sphere of n points
-    MinimalBoundingSphere(std::vector<MathLib::Point3d*> const& points);
+    explicit MinimalBoundingSphere(
+        std::vector<MathLib::Point3d*> const& points);
 
     /// Returns the center point of the sphere
     MathLib::Point3d getCenter() const { return MathLib::Point3d(_center); }

@@ -25,8 +25,9 @@ namespace autocheck
 template <typename Gen = generator<double>>
 struct RandomCirclePointGeneratorXY
 {
-    RandomCirclePointGeneratorXY(
-        MathLib::Point3d const& c = MathLib::Point3d{std::array<double, 3>{{0, 0, 0}}},
+    explicit RandomCirclePointGeneratorXY(
+        MathLib::Point3d const& c = MathLib::Point3d{std::array<double, 3>{
+            {0, 0, 0}}},
         double r = 1.0)
         : center(c), radius(r)
     {}

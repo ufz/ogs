@@ -83,7 +83,9 @@ public:
 private:
     struct ProcessData
     {
-        ProcessData(std::string const& filename) : pvd_file(filename) {}
+        explicit ProcessData(std::string const& filename) : pvd_file(filename)
+        {
+        }
 
         MeshLib::IO::PVDFile pvd_file;
     };

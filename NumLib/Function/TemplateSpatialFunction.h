@@ -32,7 +32,7 @@ public:
      * Constructor
      * @param f  a function object
      */
-    TemplateSpatialFunction(T_FUNCTION f) : _f(std::move(f)) {}
+    explicit TemplateSpatialFunction(T_FUNCTION f) : _f(std::move(f)) {}
     /**
      * evaluate a function
      * @param pnt  a point object

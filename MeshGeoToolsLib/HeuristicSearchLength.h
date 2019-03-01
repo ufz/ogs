@@ -41,8 +41,8 @@ public:
      * @param mesh  mesh object
      * @param length_type  length type to be sampled
      */
-    HeuristicSearchLength(MeshLib::Mesh const& mesh,
-                          LengthType length_type = LengthType::Edge);
+    explicit HeuristicSearchLength(MeshLib::Mesh const& mesh,
+                                   LengthType length_type = LengthType::Edge);
 
 private:
     MeshLib::Mesh const& _mesh;

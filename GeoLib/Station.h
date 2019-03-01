@@ -52,12 +52,12 @@ public:
      * \param z The z-coordinate of the station.
      * \param name The name of the station.
      */
-    Station(double x = 0.0,
-            double y = 0.0,
-            double z = 0.0,
-            std::string name = "");
+    explicit Station(double x = 0.0,
+                     double y = 0.0,
+                     double z = 0.0,
+                     std::string name = "");
 
-    Station(Point* coords, std::string name = "");
+    explicit Station(Point* coords, std::string name = "");
 
     /**
      * Constructor copies the source object

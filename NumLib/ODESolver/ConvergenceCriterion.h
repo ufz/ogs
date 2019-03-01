@@ -28,7 +28,7 @@ namespace NumLib
 class ConvergenceCriterion
 {
 public:
-    ConvergenceCriterion(const MathLib::VecNormType norm_type)
+    explicit ConvergenceCriterion(const MathLib::VecNormType norm_type)
         : _norm_type(norm_type)
     {
     }

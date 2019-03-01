@@ -35,7 +35,7 @@ struct Phase
 {
     std::vector<Component> component;
     std::vector<std::string> property;
-    Phase(std::size_t const componentNumber)
+    explicit Phase(std::size_t const componentNumber)
         : component(componentNumber), property(MPL::number_of_properties)
     {
     }
@@ -47,7 +47,7 @@ struct Medium
 {
     std::vector<Phase> phases;
     std::vector<std::string> property;
-    Medium(std::vector<std::size_t> const& phases_)
+    explicit Medium(std::vector<std::size_t> const& phases_)
         : property(MPL::number_of_properties)
     {
         for (auto p : phases_)

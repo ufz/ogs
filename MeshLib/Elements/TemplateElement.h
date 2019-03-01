@@ -46,7 +46,9 @@ public:
      * @param nodes  an array of pointers of mesh nodes which form this element
      * @param id     element id
      */
-    TemplateElement(Node* nodes[n_all_nodes], std::size_t id = std::numeric_limits<std::size_t>::max());
+    explicit TemplateElement(
+        Node* nodes[n_all_nodes],
+        std::size_t id = std::numeric_limits<std::size_t>::max());
 
     /**
      * Constructor with an array of mesh nodes
@@ -54,7 +56,9 @@ public:
      * @param nodes  an array of pointers of mesh nodes which form this element
      * @param id     element id
      */
-    TemplateElement(std::array<Node*, n_all_nodes> const& nodes, std::size_t id = std::numeric_limits<std::size_t>::max());
+    explicit TemplateElement(
+        std::array<Node*, n_all_nodes> const& nodes,
+        std::size_t id = std::numeric_limits<std::size_t>::max());
 
     /// Copy constructor
     TemplateElement(const TemplateElement &e);

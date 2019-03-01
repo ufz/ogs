@@ -49,7 +49,7 @@ public:
      * @param ply closed Polyline
      * @param init if true, check if polyline is closed, calculate bounding box
      */
-    Polygon(const Polyline &ply, bool init = true);
+    explicit Polygon(const Polyline& ply, bool init = true);
 
     Polygon(Polygon const& other);
     Polygon& operator=(Polygon const& rhs) = delete;

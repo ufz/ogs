@@ -26,7 +26,7 @@ namespace MeshLib
 class RadiusEdgeRatioMetric : public ElementQualityMetric
 {
 public:
-    RadiusEdgeRatioMetric(Mesh const& mesh);
+    explicit RadiusEdgeRatioMetric(Mesh const& mesh);
     ~RadiusEdgeRatioMetric() override = default;
 
     void calculateQuality() override;

@@ -39,7 +39,7 @@ public:
      * Constructor
      * @param mesh The mesh which is being revised. Note that node IDs in mesh are changed during computation but are resetted after the algorithms implemented here are finished
      */
-    MeshRevision(MeshLib::Mesh &mesh);
+    explicit MeshRevision(MeshLib::Mesh& mesh);
 
     virtual ~MeshRevision() = default;
 

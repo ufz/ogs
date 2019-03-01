@@ -32,7 +32,7 @@ namespace MeshLib
 class ElementQualityMetric
 {
 public:
-    ElementQualityMetric(Mesh const& mesh);
+    explicit ElementQualityMetric(Mesh const& mesh);
 
     virtual ~ElementQualityMetric() = default;
 

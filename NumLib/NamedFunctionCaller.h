@@ -22,7 +22,7 @@ class NamedFunctionCaller final
 {
 public:
     //! Constructs an instance whose unbound arguments have the given names.
-    explicit NamedFunctionCaller(
+    NamedFunctionCaller(
         std::initializer_list<std::string> unbound_argument_names);
 
     //! Adds the given named function

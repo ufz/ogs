@@ -143,7 +143,8 @@ struct progressivelySmallerGenerator
 
     using result_type = T;
 
-    progressivelySmallerGenerator(T max_value = T{1}) : _max_value(max_value)
+    explicit progressivelySmallerGenerator(T max_value = T{1})
+        : _max_value(max_value)
     {
     }
 

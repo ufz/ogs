@@ -93,7 +93,7 @@ public:
     /** constructor
      * \param pnt_vec a reference to the point vector
      */
-    Polyline(const std::vector<Point*>& pnt_vec);
+    explicit Polyline(const std::vector<Point*>& pnt_vec);
     /**
      * Copy constructor
      * @param ply Polyline
