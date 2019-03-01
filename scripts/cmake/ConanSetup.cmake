@@ -25,16 +25,14 @@ endif()
 include(${PROJECT_SOURCE_DIR}/scripts/cmake/conan/conan.cmake)
 
 set(CONAN_REQUIRES
-    boost_dynamic_bitset/1.66.0@bincrafters/stable
-    boost_optional/1.66.0@bincrafters/stable
-    boost_property_tree/1.66.0@bincrafters/stable
+    boost/1.66.0@conan/stable
     Eigen3/3.3.4@bilke/stable
     VTK/8.1.1@bilke/stable
     CACHE INTERNAL ""
 )
 
 set(CONAN_OPTIONS
-    Boost:header_only=True
+    boost:header_only=True
     Qt:qtxmlpatterns=True
     VTK:minimal=True
     VTK:ioxml=True
