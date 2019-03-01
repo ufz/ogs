@@ -159,57 +159,6 @@ int StationBorehole::addStratigraphy(const std::vector<Point*> &profile, const s
     return 0;
 }
 
-int StationBorehole::addStratigraphies(const std::string &path, std::vector<Point*>* boreholes)
-{
-    std::vector<std::list<std::string> > data;
-
-    if (readStratigraphyFile(path, data))
-    {
-        std::string name;
-
-        std::size_t it = 0;
-        std::size_t nBoreholes = data.size();
-        for (std::size_t i = 0; i < nBoreholes; i++)
-        {
-            std::list<std::string> fields = data[i];
-
-            if (fields.size() >= 4)
-            {
-                name = static_cast<StationBorehole*>((*boreholes)[it])->_name;
-                if (fields.front() != name)
-                {
-                    if (it < boreholes->size() - 1)
-                    {
-                        it++;
-                    }
-                }
-
-                fields.pop_front();
-                //the method just assumes that layers are read in correct order
-                fields.pop_front();
-                double thickness(strtod(
-                    BaseLib::replaceString(",", ".", fields.front()).c_str(),
-                    nullptr));
-                fields.pop_front();
-                std::string soil_name (fields.front());
-                fields.pop_front();
-                static_cast<StationBorehole*>((*boreholes)[it])->addSoilLayer(
-                        thickness,
-                        soil_name);
-            }
-            else
-                ERR("Error in StationBorehole::addStratigraphies() - Unexpected file format.");
-                //return 0;
-        }
-    }
-    else
-    {
-        createSurrogateStratigraphies(boreholes);
-    }
-
-    return 1;
-}
-
 StationBorehole* StationBorehole::createStation(const std::string &line)
 {
     StationBorehole* borehole = new StationBorehole();

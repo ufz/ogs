@@ -55,14 +55,6 @@ public:
     /// Reads the stratigraphy for a specified station from a file
     static int addStratigraphy(const std::string &path, StationBorehole* borehole);
 
-    /**
-     * \brief Reads all stratigraphy information from a file in one go.
-     *
-     * Reads all stratigraphy information from a file in one go.
-     * Be very careful when using this method -- it is pretty fast but it checks nothing and just
-     * assumes that everything is in right order and will work out fine!
-     */
-    static int addStratigraphies(const std::string &path, std::vector<Point*>* boreholes);
     // Returns the depth of the borehole
     double getDepth() const { return _depth; }
 
