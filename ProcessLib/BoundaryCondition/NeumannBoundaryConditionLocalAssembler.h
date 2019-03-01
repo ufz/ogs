@@ -26,6 +26,7 @@ class NeumannBoundaryConditionLocalAssembler final
     using Base = GenericNaturalBoundaryConditionLocalAssembler<
         ShapeFunction, IntegrationMethod, GlobalDim>;
     using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction, GlobalDim>;
+    using NodalVectorType = typename Base::NodalVectorType;
 
 public:
     /// The neumann_bc_value factor is directly integrated into the local
@@ -53,26 +54,18 @@ public:
         unsigned const n_integration_points =
             Base::_integration_method.getNumberOfPoints();
 
-        SpatialPosition pos;
-        pos.setElementID(id);
-
-        using FemType =
-            NumLib::TemplateIsoparametric<ShapeFunction, ShapeMatricesType>;
-        FemType fe(
-             static_cast<const typename ShapeFunction::MeshElement&>(Base::_element));
+        // Get element nodes for the interpolation from nodes to integration
+        // point.
+        NodalVectorType parameter_node_values =
+            _neumann_bc_parameter.getNodalValuesOnElement(Base::_element, t);
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            pos.setIntegrationPoint(ip);
-            auto const& sm = Base::_shape_matrices[ip];
-            auto const& wp = Base::_integration_method.getWeightedPoint(ip);
+            auto const& ip_data = Base::_ns_and_weights[ip];
 
-            MathLib::TemplatePoint<double, 3> coords_ip(fe.interpolateCoordinates(sm.N));
-            pos.setCoordinates(coords_ip);
-
-            _local_rhs.noalias() += sm.N * _neumann_bc_parameter(t, pos)[0] *
-                                    sm.detJ * wp.getWeight() *
-                                    sm.integralMeasure;
+            _local_rhs.noalias() += ip_data.N *
+                                    parameter_node_values.dot(ip_data.N) *
+                                    ip_data.weight;
         }
 
         auto const indices = NumLib::getIndices(id, dof_table_boundary);
@@ -81,7 +74,7 @@ public:
 
 private:
     Parameter<double> const& _neumann_bc_parameter;
-    typename Base::NodalVectorType _local_rhs;
+    NodalVectorType _local_rhs;
 
 public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;

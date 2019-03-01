@@ -9,22 +9,23 @@
 
 #pragma once
 
-#include "GenericNonuniformNaturalBoundaryCondition.h"
+#include "GenericNaturalBoundaryCondition.h"
 #include "MeshLib/PropertyVector.h"
-#include "NonuniformNeumannBoundaryConditionLocalAssembler.h"
+#include "VariableDependentNeumannBoundaryConditionLocalAssembler.h"
 
 namespace ProcessLib
 {
-using NonuniformNeumannBoundaryCondition =
-    GenericNonuniformNaturalBoundaryCondition<
-        NonuniformNeumannBoundaryConditionData,
-        NonuniformNeumannBoundaryConditionLocalAssembler>;
+using VariableDependentNeumannBoundaryCondition =
+    GenericNaturalBoundaryCondition<
+        VariableDependentNeumannBoundaryConditionData,
+        VariableDependentNeumannBoundaryConditionLocalAssembler>;
 
-std::unique_ptr<NonuniformNeumannBoundaryCondition>
-createNonuniformNeumannBoundaryCondition(
+std::unique_ptr<VariableDependentNeumannBoundaryCondition>
+createVariableDependentNeumannBoundaryCondition(
     BaseLib::ConfigTree const& config, MeshLib::Mesh const& boundary_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table, int const variable_id,
     int const component_id, unsigned const integration_order,
-    unsigned const shapefunction_order, const MeshLib::Mesh& bulk_mesh);
+    unsigned const shapefunction_order, unsigned const global_dim,
+    std::vector<std::unique_ptr<ParameterBase>> const& parameters);
 
 }  // namespace ProcessLib

@@ -33,6 +33,17 @@ std::unique_ptr<ParameterBase> createParameter(
     //! \ogs_file_param{prj__parameters__parameter__type}
     auto const type = config.peekConfigParameter<std::string>("type");
 
+    // Either the mesh name is given, or the first mesh's name will be
+    // taken.
+    auto const mesh_name =
+        //! \ogs_file_param{prj__parameters__parameter__mesh}
+        config.getConfigParameter<std::string>("mesh", meshes[0]->getName());
+
+    auto const& mesh = *BaseLib::findElementOrError(
+        begin(meshes), end(meshes),
+        [&mesh_name](auto const& m) { return m->getName() == mesh_name; },
+        "Expected to find a mesh named " + mesh_name + ".");
+
     // Create parameter based on the provided type.
     if (type == "Constant")
     {
@@ -49,25 +60,25 @@ std::unique_ptr<ParameterBase> createParameter(
     if (type == "Function")
     {
         INFO("FunctionParameter: %s", name.c_str());
-        auto param = createFunctionParameter(name, config, *meshes.front());
+        auto param = createFunctionParameter(name, config, mesh);
         return param;
     }
     if (type == "Group")
     {
         INFO("GroupBasedParameter: %s", name.c_str());
-        auto param = createGroupBasedParameter(name, config, *meshes.front());
+        auto param = createGroupBasedParameter(name, config, mesh);
         return param;
     }
     if (type == "MeshElement")
     {
         INFO("MeshElementParameter: %s", name.c_str());
-        auto param = createMeshElementParameter(name, config, *meshes.front());
+        auto param = createMeshElementParameter(name, config, mesh);
         return param;
     }
     if (type == "MeshNode")
     {
         INFO("MeshNodeParameter: %s", name.c_str());
-        auto param = createMeshNodeParameter(name, config, *meshes.front());
+        auto param = createMeshNodeParameter(name, config, mesh);
         return param;
     }
 

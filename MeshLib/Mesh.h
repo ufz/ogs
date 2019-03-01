@@ -188,6 +188,16 @@ protected:
 }; /* class */
 
 
+/// Meshes are equal if their id's are equal.
+inline bool operator==(Mesh const& a, Mesh const& b)
+{
+    return a.getID() == b.getID();
+}
+
+inline bool operator!=(Mesh const& a, Mesh const& b)
+{
+    return !(a == b);
+}
 
 /// Scales the mesh property with name \c property_name by given \c factor.
 /// \note The property must be a "double" property.

@@ -35,6 +35,7 @@ struct CurveScaledParameter final : public Parameter<T> {
     {
         _parameter =
             &findParameter<T>(_referenced_parameter_name, parameters, 0);
+        ParameterBase::_mesh = _parameter->mesh();
     }
 
     int getNumberOfComponents() const override

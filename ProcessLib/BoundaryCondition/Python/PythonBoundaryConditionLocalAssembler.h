@@ -41,9 +41,7 @@ public:
         bool is_axially_symmetric,
         unsigned const integration_order,
         PythonBoundaryConditionData const& data)
-        : Base(e, is_axially_symmetric, integration_order),
-          _data(data),
-          _element(e)
+        : Base(e, is_axially_symmetric, integration_order), _data(data)
     {
     }
 
@@ -57,12 +55,12 @@ public:
         using FemType =
             NumLib::TemplateIsoparametric<ShapeFunction, ShapeMatricesType>;
         FemType fe(*static_cast<const typename ShapeFunction::MeshElement*>(
-            &_element));
+            &this->_element));
 
         unsigned const num_integration_points =
             Base::_integration_method.getNumberOfPoints();
         auto const num_var = _data.dof_table_bulk.getNumberOfVariables();
-        auto const num_nodes = _element.getNumberOfNodes();
+        auto const num_nodes = Base::_element.getNumberOfNodes();
         auto const num_comp_total =
             _data.dof_table_bulk.getNumberOfComponents();
 
@@ -85,7 +83,8 @@ public:
                 for (unsigned element_node_id = 0; element_node_id < num_nodes;
                      ++element_node_id)
                 {
-                    auto const* const node = _element.getNode(element_node_id);
+                    auto const* const node =
+                        Base::_element.getNode(element_node_id);
                     auto const boundary_node_id = node->getID();
                     auto const bulk_node_id =
                         bulk_node_ids_map[boundary_node_id];
@@ -119,12 +118,12 @@ public:
 
         for (unsigned ip = 0; ip < num_integration_points; ip++)
         {
-            auto const& sm = Base::_shape_matrices[ip];
-            auto const coords = fe.interpolateCoordinates(sm.N);
+            auto const& N = Base::_ns_and_weights[ip].N;
+            auto const& w = Base::_ns_and_weights[ip].weight;
+            auto const coords = fe.interpolateCoordinates(N);
             prim_vars =
-                sm.N *
-                primary_variables_mat;  // Assumption: all primary variables
-                                        // have same shape functions.
+                N * primary_variables_mat;  // Assumption: all primary variables
+                                            // have same shape functions.
             auto const flag_flux_dFlux =
                 _data.bc_object->getFlux(t, coords, prim_vars_data);
             if (!_data.bc_object->isOverriddenNatural())
@@ -143,9 +142,7 @@ public:
             auto const flux = std::get<1>(flag_flux_dFlux);
             auto const& dFlux = std::get<2>(flag_flux_dFlux);
 
-            auto const& wp = Base::_integration_method.getWeightedPoint(ip);
-            auto const w = sm.detJ * wp.getWeight() * sm.integralMeasure;
-            local_rhs.noalias() += sm.N * (flux * w);
+            local_rhs.noalias() += N * (flux * w);
 
             if (static_cast<int>(dFlux.size()) != num_comp_total)
             {
@@ -170,7 +167,7 @@ public:
                     // The assignement -= takes into account the sign convention
                     // of 1st-order in time ODE systems in OpenGeoSys.
                     local_Jac.block(top, left, width, height).noalias() -=
-                        sm.N.transpose() * (dFlux[comp] * w) * sm.N;
+                        N.transpose() * (dFlux[comp] * w) * N;
                 }
             }
         }
@@ -193,7 +190,6 @@ public:
 
 private:
     PythonBoundaryConditionData const& _data;
-    MeshLib::Element const& _element;
 };
 
 }  // namespace ProcessLib

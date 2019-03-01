@@ -170,6 +170,18 @@
             <field_name>p_ini</field_name>
         </parameter>
         <parameter>
+            <name>c_left</name>
+            <mesh>vdbc_input_leftBoundary</mesh>
+            <type>MeshNode</type>
+            <field_name>c_ini</field_name>
+        </parameter>
+        <parameter>
+            <name>p_left</name>
+            <mesh>vdbc_input_leftBoundary</mesh>
+            <type>MeshNode</type>
+            <field_name>p_ini</field_name>
+        </parameter>
+        <parameter>
             <name>constant_porosity_parameter</name>
             <type>Constant</type>
             <value>0.1</value>
@@ -178,6 +190,54 @@
             <name>kappa1</name>
             <type>Constant</type>
             <values>1.e-9 0 0 1.e-9</values>
+        </parameter>
+        <parameter>
+            <name>Cconstant</name>
+            <mesh>vdbc_input_rightBoundary</mesh>
+            <type>MeshNode</type>
+            <field_name>Cconstant</field_name>
+        </parameter>
+        <parameter>
+            <name>Cprefac1</name>
+            <mesh>vdbc_input_rightBoundary</mesh>
+            <type>MeshNode</type>
+            <field_name>Cprefac1</field_name>
+        </parameter>
+        <parameter>
+            <name>Cprefac2</name>
+            <mesh>vdbc_input_rightBoundary</mesh>
+            <type>MeshNode</type>
+            <field_name>Cprefac2</field_name>
+        </parameter>
+        <parameter>
+            <name>Cprefac3</name>
+            <mesh>vdbc_input_rightBoundary</mesh>
+            <type>MeshNode</type>
+            <field_name>Cprefac3</field_name>
+        </parameter>
+        <parameter>
+            <name>Pconstant</name>
+            <mesh>vdbc_input_rightBoundary</mesh>
+            <type>MeshNode</type>
+            <field_name>Pconstant</field_name>
+        </parameter>
+        <parameter>
+            <name>Pprefac1</name>
+            <mesh>vdbc_input_rightBoundary</mesh>
+            <type>MeshNode</type>
+            <field_name>Pprefac1</field_name>
+        </parameter>
+        <parameter>
+            <name>Pprefac2</name>
+            <mesh>vdbc_input_rightBoundary</mesh>
+            <type>MeshNode</type>
+            <field_name>Pprefac2</field_name>
+        </parameter>
+        <parameter>
+            <name>Pprefac3</name>
+            <mesh>vdbc_input_rightBoundary</mesh>
+            <type>MeshNode</type>
+            <field_name>Pprefac3</field_name>
         </parameter>
     </parameters>
     <process_variables>
@@ -188,7 +248,7 @@
             <initial_condition>c_ini</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <type>NonuniformVariableDependentNeumann</type>
+                    <type>VariableDependentNeumann</type>
                     <mesh>vdbc_input_rightBoundary</mesh>
                     <constant_name>Cconstant</constant_name>
                     <coefficient_current_variable_name>Cprefac1</coefficient_current_variable_name>
@@ -196,9 +256,9 @@
                     <coefficient_mixed_variables_name>Cprefac3</coefficient_mixed_variables_name>
                 </boundary_condition>
                 <boundary_condition>
-                    <type>NonuniformDirichlet</type>
+                    <type>Dirichlet</type>
                     <mesh>vdbc_input_leftBoundary</mesh>
-                    <field_name>c_ini</field_name>
+                    <parameter>c_left</parameter>
                 </boundary_condition>
             </boundary_conditions>
         </process_variable>
@@ -209,7 +269,7 @@
             <initial_condition>p_ini</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <type>NonuniformVariableDependentNeumann</type>
+                    <type>VariableDependentNeumann</type>
                     <mesh>vdbc_input_rightBoundary</mesh>
                     <constant_name>Pconstant</constant_name>
                     <coefficient_current_variable_name>Pprefac1</coefficient_current_variable_name>
@@ -217,9 +277,9 @@
                     <coefficient_mixed_variables_name>Pprefac3</coefficient_mixed_variables_name>
                 </boundary_condition>
                 <boundary_condition>
-                    <type>NonuniformDirichlet</type>
+                    <type>Dirichlet</type>
                     <mesh>vdbc_input_leftBoundary</mesh>
-                    <field_name>p_ini</field_name>
+                    <parameter>p_left</parameter>
                 </boundary_condition>
             </boundary_conditions>
         </process_variable>
