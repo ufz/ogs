@@ -522,8 +522,8 @@ pipeline {
             }
           }
         }
-        // ************************* Analyzers *********************************
-        stage('Analyzers') {
+        // ************************* Check headers *********************************
+        stage('Check headers') {
           when {
             beforeAgent true
             expression { return stage_required.build || stage_required.full }
@@ -541,14 +541,16 @@ pipeline {
             script {
               sh 'git submodule sync'
               sh 'find $CONAN_USER_HOME -name "system_reqs.txt" -exec rm {} \\;'
-              configure {
-                cmakeOptions =
-                  "-DBUILD_SHARED_LIBS=${build_shared} " +
-                  '"-DCMAKE_CXX_INCLUDE_WHAT_YOU_USE=include-what-you-use;-Xiwyu;--mapping_file=../scripts/jenkins/iwyu-mappings.imp" ' +
-                  '-DCMAKE_LINK_WHAT_YOU_USE=ON '
-                config = 'Release'
+              try {
+                configure {
+                  cmakeOptions = '-DOGS_CHECK_HEADER_COMPILATION=ON'
+                  dir = 'build-check-header'
+                }
               }
-              build { target = 'check-header' }
+              catch(err) {
+                echo "check-header failed!"
+                sh 'cat build-check-header/CMakeFiles/CMakeError.log'
+              }
             }
           }
         }
