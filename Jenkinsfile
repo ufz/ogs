@@ -77,7 +77,7 @@ pipeline {
               }
             }
           }
-          if(!stage_required.build || !stage_required.full) {
+          if(!(stage_required.build || stage_required.full)) {
             currentBuild.result='UNSTABLE'
           }
         }
