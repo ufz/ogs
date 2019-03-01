@@ -95,6 +95,7 @@ if(MSVC)
 endif()
 if(UNIX AND NOT APPLE)
     set(CONAN_IMPORTS ${CONAN_IMPORTS} "lib, *.so* -> ./lib")
+    set(CONAN_IMPORTS ${CONAN_IMPORTS} "plugins/platforms, *.so* -> ./bin/platforms")
 endif()
 
 file(TIMESTAMP ${PROJECT_BINARY_DIR}/conan_install_timestamp.txt file_timestamp "%Y.%m.%d")
