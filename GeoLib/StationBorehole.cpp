@@ -77,41 +77,6 @@ int StationBorehole::readStratigraphyFile(const std::string &path,
     return 1;
 }
 
-int StationBorehole::addStratigraphy(const std::string &path, StationBorehole* borehole)
-{
-    std::vector<std::list<std::string> > data;
-    if (readStratigraphyFile(path, data))
-    {
-        std::size_t size = data.size();
-        for (std::size_t i = 0; i < size; i++)
-        {
-            addLayer(data[i], borehole);
-        }
-
-        // check if a layer is missing
-        // size = borehole->_soilName.size();
-        INFO("StationBorehole::addStratigraphy ToDo");
-        //    for (std::size_t i=0; i<size; i++)
-        //    {
-        //        if ((borehole->_soilLayerThickness[i] == -1) ||(borehole->_soilName[i].compare("") == 0))
-        //        {
-        //            borehole->_soilLayerThickness.clear();
-        //            borehole->_soilName.clear();
-        //
-        //            WARN("StationBorehole::addStratigraphy() - Profile incomplete (Borehole %s, Layer %d missing)", borehole->_name.c_str(), i+1);
-        //
-        //            return 0;
-        //        }
-        //    }
-    }
-    else
-    {
-        borehole->addSoilLayer(borehole->getDepth(), "depth");
-    }
-
-    return 1;
-}
-
 int StationBorehole::addLayer(std::list<std::string> fields, StationBorehole* borehole)
 {
     if (fields.size() >= 4) /* check if there are enough fields to create a borehole object */
