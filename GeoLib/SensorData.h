@@ -58,7 +58,7 @@ enum class TimeStepType
  *
  * \sa Station
  */
-class SensorData
+class SensorData final
 {
 public:
     /// Constructor using file name (automatically reads the file and fills all data structures)
