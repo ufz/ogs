@@ -59,10 +59,10 @@ public:
         NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& /*cache*/) const = 0;
 
-    virtual Eigen::Vector3d getFlux(
-        MathLib::Point3d const& pnt_local_coords,
-        double const t,
-        std::vector<double> const& local_x) const = 0;
+    Eigen::Vector3d getFlux(MathLib::Point3d const& pnt_local_coords,
+                            double const t,
+                            std::vector<double> const& local_x) const override =
+        0;
 
 protected:
     // TODO: remove _coupled_solutions or move integration point data from

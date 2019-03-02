@@ -61,7 +61,7 @@ public:
 
 protected:
     VtkImageDataToPointCloudFilter();
-    ~VtkImageDataToPointCloudFilter() = default;
+    ~VtkImageDataToPointCloudFilter() override = default;
 
     /// Sets input port to vtkImageData.
     int FillInputPortInformation(int port, vtkInformation* info) override;

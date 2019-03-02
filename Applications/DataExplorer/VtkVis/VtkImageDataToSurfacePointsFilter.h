@@ -36,7 +36,7 @@ public:
 
 protected:
     VtkImageDataToSurfacePointsFilter();
-    ~VtkImageDataToSurfacePointsFilter() = default;
+    ~VtkImageDataToSurfacePointsFilter() override = default;
 
     /// Sets input port to vtkImageData.
     int FillInputPortInformation(int port, vtkInformation* info) override;

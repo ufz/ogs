@@ -17,7 +17,7 @@ class VtkCompositeImageToPointCloudFilter : public VtkCompositeFilter
 {
 public:
     VtkCompositeImageToPointCloudFilter(vtkAlgorithm* inputAlgorithm);
-    ~VtkCompositeImageToPointCloudFilter() = default;
+    ~VtkCompositeImageToPointCloudFilter() override = default;
 
     void init() override;
 

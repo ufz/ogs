@@ -40,12 +40,12 @@ public:
 protected slots:
     /// Instructions if the selection of items in the view has changed.
     void selectionChanged(const QItemSelection& selected,
-                          const QItemSelection& deselected);
+                          const QItemSelection& deselected) override;
 
 private:
     /// Actions to be taken after a right mouse click is performed in the
     /// station view.
-    void contextMenuEvent(QContextMenuEvent* e);
+    void contextMenuEvent(QContextMenuEvent* e) override;
     bool isProcessVarItem(const QModelIndex& idx) const;
     bool isConditionItem(const QModelIndex& idx) const;
 

@@ -39,7 +39,7 @@ class ProcessModel final : public TreeModel
 public:
     ProcessModel(DataHolderLib::Project& project, QObject* parent = nullptr);
 
-    int columnCount(const QModelIndex& parent = QModelIndex()) const;
+    int columnCount(const QModelIndex& parent = QModelIndex()) const override;
 
     /// Returns the vtk source object for the specified subtree of a process
     /// with the given name.

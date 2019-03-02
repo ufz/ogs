@@ -81,7 +81,7 @@ public:
     void setInitialConditions(const int process_id, const double t,
                               GlobalVector& x);
 
-    virtual MathLib::MatrixSpecifications getMatrixSpecifications(
+    MathLib::MatrixSpecifications getMatrixSpecifications(
         const int process_id) const override;
 
     void setCoupledSolutionsForStaggeredScheme(
@@ -94,7 +94,7 @@ public:
 
     bool isMonolithicSchemeUsed() const { return _use_monolithic_scheme; }
     virtual void setCoupledTermForTheStaggeredSchemeToLocalAssemblers() {}
-    void preAssemble(const double t, GlobalVector const& x) override final;
+    void preAssemble(const double t, GlobalVector const& x) final;
     void assemble(const double t, GlobalVector const& x, GlobalMatrix& M,
                   GlobalMatrix& K, GlobalVector& b) final;
 
