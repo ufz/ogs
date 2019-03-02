@@ -20,10 +20,10 @@ namespace BHE
 {
 BoreholeGeometry createBoreholeGeometry(BaseLib::ConfigTree const& config)
 {
-    const double borehole_length =
+    const auto borehole_length =
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__borehole__length}
         config.getConfigParameter<double>("length");
-    const double borehole_diameter =
+    const auto borehole_diameter =
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__borehole__diameter}
         config.getConfigParameter<double>("diameter");
     return {borehole_length, borehole_diameter};

@@ -66,7 +66,7 @@ int VtkImageDataToSurfacePointsFilter::RequestData(
             "RGB colours detected. Using only first channel for computation.");
     }
 
-    std::size_t const n_points = static_cast<std::size_t>(input->GetNumberOfPoints());
+    auto const n_points = static_cast<std::size_t>(input->GetNumberOfPoints());
     if (n_points == 0)
     {
         vtkDebugMacro("No data found!");
@@ -139,7 +139,7 @@ void VtkImageDataToSurfacePointsFilter::createPointSurface(
     MathLib::Point3d const& max_pnt,
     GeoLib::Raster const& raster)
 {
-    std::size_t const n_points(static_cast<std::size_t>(this->GetPointsPerPixel()));
+    auto const n_points(static_cast<std::size_t>(this->GetPointsPerPixel()));
     for (std::size_t i = 0; i < n_points; ++i)
     {
         double p[3];

@@ -155,7 +155,7 @@ void MeshLayerEditDialog::createMeshToolSelection()
     _ogsMeshButton = new QRadioButton("Prisms", meshToolSelectionBox);
     QRadioButton* tetgenMeshButton = new QRadioButton("Tetrahedra", meshToolSelectionBox);
     tetgenMeshButton->setFixedWidth(150);
-    QLabel* minThicknessLabel = new QLabel(meshToolSelectionBox);
+    auto* minThicknessLabel = new QLabel(meshToolSelectionBox);
     minThicknessLabel->setText("Minimum thickness of layers:");
     _minThicknessEdit = new QLineEdit(meshToolSelectionBox);
     _minThicknessEdit->setText("1.0");

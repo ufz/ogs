@@ -43,7 +43,7 @@ parseBHECoaxialConfig(
     Pipe const inner_pipe =
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__pipes__inner}
         createPipe(pipes_config.getConfigSubtree("inner"));
-    const double pipe_longitudinal_dispersion_length =
+    const auto pipe_longitudinal_dispersion_length =
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__pipes__longitudinal_dispersion_length}
         pipes_config.getConfigParameter<double>(
             "longitudinal_dispersion_length");

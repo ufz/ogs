@@ -52,7 +52,7 @@ void ProcessModel::addConditionItem(DataHolderLib::FemCondition* cond,
     item_data << QString::fromStdString(cond->getParamName())
               << QString::fromStdString(cond->getConditionClassStr());
 
-    CondItem* cond_item = new CondItem(item_data, parent, cond);
+    auto* cond_item = new CondItem(item_data, parent, cond);
     parent->appendChild(cond_item);
 }
 
@@ -85,8 +85,7 @@ ProcessVarItem* ProcessModel::addProcessVar(QString const& name)
     beginResetModel();
     QList<QVariant> process_var_data;
     process_var_data << QVariant(name) << "";
-    ProcessVarItem* process_var =
-        new ProcessVarItem(process_var_data, _rootItem);
+    auto* process_var = new ProcessVarItem(process_var_data, _rootItem);
     _rootItem->appendChild(process_var);
     endResetModel();
     return process_var;
@@ -97,8 +96,7 @@ ProcessVarItem* ProcessModel::getProcessVarItem(QString const& name) const
     int const n_children(_rootItem->childCount());
     for (int i = 0; i < n_children; ++i)
     {
-        ProcessVarItem* item(
-            dynamic_cast<ProcessVarItem*>(_rootItem->child(i)));
+        auto* item(dynamic_cast<ProcessVarItem*>(_rootItem->child(i)));
         if (item != nullptr && item->getName() == name)
             return item;
     }
@@ -159,8 +157,7 @@ void ProcessModel::clearModel()
     int const n_process_vars = _rootItem->childCount();
     for (int i = n_process_vars; i >= 0; --i)
     {
-        ProcessVarItem* pv_item =
-            dynamic_cast<ProcessVarItem*>(_rootItem->child(i));
+        auto* pv_item = dynamic_cast<ProcessVarItem*>(_rootItem->child(i));
         removeProcessVariable(pv_item->getName());
     }
 }

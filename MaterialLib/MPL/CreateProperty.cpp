@@ -101,7 +101,7 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
 
     if (property_type == "Linear")
     {
-        double const reference_value =
+        auto const reference_value =
             //! \ogs_file_param{properties__property__LinearProperty__reference_value}
             config.getConfigParameter<double>("reference_value");
 
@@ -113,11 +113,11 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
             //! \ogs_file_param{properties__property__LinearProperty__independent_variable__variable_name}
             independent_variable_config.getConfigParameter<std::string>(
                 "variable_name");
-        double const reference_condition =
+        auto const reference_condition =
             //! \ogs_file_param{properties__property__LinearProperty__independent_variable__reference_condition}
             independent_variable_config.getConfigParameter<double>(
                 "reference_condition");
-        double const slope =
+        auto const slope =
             //! \ogs_file_param{properties__property__LinearProperty__independent_variable__slope}
             independent_variable_config.getConfigParameter<double>("slope");
 

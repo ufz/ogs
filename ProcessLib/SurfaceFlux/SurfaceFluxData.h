@@ -54,14 +54,14 @@ struct SurfaceFluxData
         std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
         std::string const& output_directory)
     {
-        std::string mesh_name =
+        auto mesh_name =
             //! \ogs_file_param{prj__processes__process__calculatesurfaceflux__mesh}
             calculatesurfaceflux_config.getConfigParameter<std::string>("mesh");
-        std::string surfaceflux_pv_name =
+        auto surfaceflux_pv_name =
             //! \ogs_file_param{prj__processes__process__calculatesurfaceflux__property_name}
             calculatesurfaceflux_config.getConfigParameter<std::string>(
                 "property_name");
-        std::string surfaceflux_out_fname =
+        auto surfaceflux_out_fname =
             //! \ogs_file_param{prj__processes__process__calculatesurfaceflux__output_mesh}
             calculatesurfaceflux_config.getConfigParameter<std::string>(
                 "output_mesh");
