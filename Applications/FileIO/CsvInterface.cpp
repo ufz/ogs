@@ -20,11 +20,7 @@
 #include "GeoLib/Point.h"
 
 namespace FileIO {
-
-CsvInterface::CsvInterface()
-{
-}
-
+CsvInterface::CsvInterface() = default;
 
 int CsvInterface::readPoints(std::string const& fname, char delim,
                              std::vector<GeoLib::Point*> &points)

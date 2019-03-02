@@ -26,9 +26,7 @@
 
 vtkStandardNewMacro(VtkImageDataToPointCloudFilter);
 
-VtkImageDataToPointCloudFilter::VtkImageDataToPointCloudFilter()
-{
-}
+VtkImageDataToPointCloudFilter::VtkImageDataToPointCloudFilter() = default;
 
 void VtkImageDataToPointCloudFilter::PrintSelf(ostream& os, vtkIndent indent)
 {

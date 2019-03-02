@@ -25,9 +25,7 @@
 
 vtkStandardNewMacro(VtkColorLookupTable);
 
-VtkColorLookupTable::VtkColorLookupTable()
-{
-}
+VtkColorLookupTable::VtkColorLookupTable() = default;
 
 VtkColorLookupTable::~VtkColorLookupTable()
 {

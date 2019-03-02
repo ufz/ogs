@@ -26,9 +26,8 @@
 
 vtkStandardNewMacro(VtkImageDataToSurfacePointsFilter);
 
-VtkImageDataToSurfacePointsFilter::VtkImageDataToSurfacePointsFilter()
-{
-}
+VtkImageDataToSurfacePointsFilter::VtkImageDataToSurfacePointsFilter() =
+    default;
 
 void VtkImageDataToSurfacePointsFilter::PrintSelf(ostream& os, vtkIndent indent)
 {

@@ -37,10 +37,7 @@ namespace MeshLib
 namespace IO
 {
 namespace Legacy {
-
-MeshIO::MeshIO()
-{
-}
+MeshIO::MeshIO() = default;
 
 MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
 {
