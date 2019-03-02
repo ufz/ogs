@@ -33,9 +33,8 @@ static ProcessLib::IntegrationPointMetaData addIntegrationPointData(
         writer.numberOfComponents());
     field_data.clear();
 
-    for (std::size_t e = 0; e < ip_values.size(); ++e)
+    for (const auto& element_ip_values : ip_values)
     {
-        auto const& element_ip_values = ip_values[e];
         std::copy(element_ip_values.begin(), element_ip_values.end(),
                   std::back_inserter(field_data));
     }

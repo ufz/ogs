@@ -40,21 +40,21 @@ TEST(TestQtPrjInterface, QtXmlPrjReader)
            "/Elliptic/nonuniform_bc_Groundwaterflow/neumann_nonuniform.prj";
     test_files.push_back({name, 0, 3, 2, 0});
 
-    for (std::size_t i = 0; i < test_files.size(); ++i)
+    for (auto& test_file : test_files)
     {
         DataHolderLib::Project project;
         FileIO::XmlPrjInterface xml(project);
-        int result = xml.readFile(test_files[i].file_name);
+        int result = xml.readFile(test_file.file_name);
         EXPECT_EQ(1, result);
 
         std::vector<std::string> geo_names;
         project.getGEOObjects().getGeometryNames(geo_names);
-        EXPECT_EQ(test_files[i].n_geo, geo_names.size());
-        EXPECT_EQ(test_files[i].n_mesh, project.getMeshObjects().size());
+        EXPECT_EQ(test_file.n_geo, geo_names.size());
+        EXPECT_EQ(test_file.n_mesh, project.getMeshObjects().size());
 
         std::vector<std::unique_ptr<DataHolderLib::BoundaryCondition>> const&
             bcs = project.getBoundaryConditions();
-        EXPECT_EQ(test_files[i].n_bc, bcs.size());
+        EXPECT_EQ(test_file.n_bc, bcs.size());
         for (auto& bc : bcs)
         {
             EXPECT_FALSE(bc->getProcessVarName().empty());
@@ -71,7 +71,7 @@ TEST(TestQtPrjInterface, QtXmlPrjReader)
 
         std::vector<std::unique_ptr<DataHolderLib::SourceTerm>> const& sts =
             project.getSourceTerms();
-        EXPECT_EQ(test_files[i].n_st, sts.size());
+        EXPECT_EQ(test_file.n_st, sts.size());
         for (auto& st : sts)
         {
             EXPECT_FALSE(st->getProcessVarName().empty());

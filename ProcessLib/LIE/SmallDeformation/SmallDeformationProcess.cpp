@@ -98,10 +98,10 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
     }
 
     // set branches
-    for (std::size_t i = 0; i < vec_branch_nodeID_matIDs.size(); i++)
+    for (auto& vec_branch_nodeID_matID : vec_branch_nodeID_matIDs)
     {
-        auto master_matId = vec_branch_nodeID_matIDs[i].second[0];
-        auto slave_matId = vec_branch_nodeID_matIDs[i].second[1];
+        auto master_matId = vec_branch_nodeID_matID.second[0];
+        auto slave_matId = vec_branch_nodeID_matID.second[1];
         auto& master_frac =
             _process_data.fracture_properties
                 [_process_data._map_materialID_to_fractureID[master_matId]];
@@ -109,20 +109,20 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
             _process_data.fracture_properties
                 [_process_data._map_materialID_to_fractureID[slave_matId]];
 
-        master_frac.branches_master.push_back(createBranchProperty(
-            *mesh.getNode(vec_branch_nodeID_matIDs[i].first), master_frac,
-            slave_frac));
+        master_frac.branches_master.push_back(
+            createBranchProperty(*mesh.getNode(vec_branch_nodeID_matID.first),
+                                 master_frac, slave_frac));
 
-        slave_frac.branches_slave.push_back(createBranchProperty(
-            *mesh.getNode(vec_branch_nodeID_matIDs[i].first), master_frac,
-            slave_frac));
+        slave_frac.branches_slave.push_back(
+            createBranchProperty(*mesh.getNode(vec_branch_nodeID_matID.first),
+                                 master_frac, slave_frac));
     }
 
     // set junctions
-    for (std::size_t i = 0; i < vec_junction_nodeID_matIDs.size(); i++)
+    for (auto& vec_junction_nodeID_matID : vec_junction_nodeID_matIDs)
     {
         _vec_junction_nodes.push_back(const_cast<MeshLib::Node*>(
-            _mesh.getNode(vec_junction_nodeID_matIDs[i].first)));
+            _mesh.getNode(vec_junction_nodeID_matID.first)));
     }
     for (std::size_t i = 0; i < vec_junction_nodeID_matIDs.size(); i++)
     {
