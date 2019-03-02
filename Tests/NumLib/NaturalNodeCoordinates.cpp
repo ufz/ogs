@@ -19,6 +19,8 @@
 #include "NumLib/Fem/Integration/GaussLegendreIntegrationPolicy.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 
+using Node = MeshLib::Node;
+
 template <typename ShapeFunction, int GlobalDim>
 bool test(MeshLib::Element const& element)
 {
@@ -89,9 +91,8 @@ TEST(NumLibNaturalCoordinates, Line2)
     using MeshElement = ShapeFunction::MeshElement;
 
     auto const& xs = NumLib::NaturalCoordinates<MeshElement>::coordinates;
-    std::array<MeshLib::Node, MeshElement::n_all_nodes> ns{{xs[0], xs[1]}};
-    std::array<MeshLib::Node*, MeshElement::n_all_nodes> nodes{
-        {&ns[0], &ns[1]}};
+    std::array<Node, MeshElement::n_all_nodes> ns{{Node{xs[0]}, Node{xs[1]}}};
+    std::array<Node*, MeshElement::n_all_nodes> nodes{{&ns[0], &ns[1]}};
     MeshElement element(nodes);
 
     bool const test_result1 = test<ShapeFunction, 1>(element);
@@ -110,10 +111,9 @@ TEST(NumLibNaturalCoordinates, Line3)
     using MeshElement = ShapeFunction::MeshElement;
 
     auto const& xs = NumLib::NaturalCoordinates<MeshElement>::coordinates;
-    std::array<MeshLib::Node, MeshElement::n_all_nodes> ns{
-        {xs[0], xs[1], xs[2]}};
-    std::array<MeshLib::Node*, MeshElement::n_all_nodes> nodes{
-        {&ns[0], &ns[1], &ns[2]}};
+    std::array<Node, MeshElement::n_all_nodes> ns{
+        {Node{xs[0]}, Node{xs[1]}, Node{xs[2]}}};
+    std::array<Node*, MeshElement::n_all_nodes> nodes{{&ns[0], &ns[1], &ns[2]}};
     MeshElement element(nodes);
 
     bool const test_result1 = test<ShapeFunction, 1>(element);
@@ -132,10 +132,9 @@ TEST(NumLibNaturalCoordinates, Tri3)
     using MeshElement = ShapeFunction::MeshElement;
 
     auto const& xs = NumLib::NaturalCoordinates<MeshElement>::coordinates;
-    std::array<MeshLib::Node, MeshElement::n_all_nodes> ns{
-        {xs[0], xs[1], xs[2]}};
-    std::array<MeshLib::Node*, MeshElement::n_all_nodes> nodes{
-        {&ns[0], &ns[1], &ns[2]}};
+    std::array<Node, MeshElement::n_all_nodes> ns{
+        {Node{xs[0]}, Node{xs[1]}, Node{xs[2]}}};
+    std::array<Node*, MeshElement::n_all_nodes> nodes{{&ns[0], &ns[1], &ns[2]}};
     MeshElement element(nodes);
 
     bool const test_result2 = test<ShapeFunction, 2>(element);
@@ -151,9 +150,10 @@ TEST(NumLibNaturalCoordinates, Tri6)
     using MeshElement = ShapeFunction::MeshElement;
 
     auto const& xs = NumLib::NaturalCoordinates<MeshElement>::coordinates;
-    std::array<MeshLib::Node, MeshElement::n_all_nodes> ns{
-        {xs[0], xs[1], xs[2], xs[3], xs[4], xs[5]}};
-    std::array<MeshLib::Node*, MeshElement::n_all_nodes> nodes{
+    std::array<Node, MeshElement::n_all_nodes> ns{{Node{xs[0]}, Node{xs[1]},
+                                                   Node{xs[2]}, Node{xs[3]},
+                                                   Node{xs[4]}, Node{xs[5]}}};
+    std::array<Node*, MeshElement::n_all_nodes> nodes{
         {&ns[0], &ns[1], &ns[2], &ns[3], &ns[4], &ns[5]}};
     MeshElement element(nodes);
 
@@ -170,9 +170,9 @@ TEST(NumLibNaturalCoordinates, Quad4)
     using MeshElement = ShapeFunction::MeshElement;
 
     auto const& xs = NumLib::NaturalCoordinates<MeshElement>::coordinates;
-    std::array<MeshLib::Node, MeshElement::n_all_nodes> ns{
-        {xs[0], xs[1], xs[2], xs[3]}};
-    std::array<MeshLib::Node*, MeshElement::n_all_nodes> nodes{
+    std::array<Node, MeshElement::n_all_nodes> ns{
+        {Node{xs[0]}, Node{xs[1]}, Node{xs[2]}, Node{xs[3]}}};
+    std::array<Node*, MeshElement::n_all_nodes> nodes{
         {&ns[0], &ns[1], &ns[2], &ns[3]}};
     MeshElement element(nodes);
 
@@ -189,9 +189,10 @@ TEST(NumLibNaturalCoordinates, Quad8)
     using MeshElement = ShapeFunction::MeshElement;
 
     auto const& xs = NumLib::NaturalCoordinates<MeshElement>::coordinates;
-    std::array<MeshLib::Node, MeshElement::n_all_nodes> ns{
-        {xs[0], xs[1], xs[2], xs[3], xs[4], xs[5], xs[6], xs[7]}};
-    std::array<MeshLib::Node*, MeshElement::n_all_nodes> nodes{
+    std::array<Node, MeshElement::n_all_nodes> ns{
+        {Node{xs[0]}, Node{xs[1]}, Node{xs[2]}, Node{xs[3]}, Node{xs[4]},
+         Node{xs[5]}, Node{xs[6]}, Node{xs[7]}}};
+    std::array<Node*, MeshElement::n_all_nodes> nodes{
         {&ns[0], &ns[1], &ns[2], &ns[3], &ns[4], &ns[5], &ns[6], &ns[7]}};
     MeshElement element(nodes);
 
@@ -208,11 +209,12 @@ TEST(NumLibNaturalCoordinates, Quad9)
     using MeshElement = ShapeFunction::MeshElement;
 
     auto const& xs = NumLib::NaturalCoordinates<MeshElement>::coordinates;
-    std::array<MeshLib::Node, MeshElement::n_all_nodes> ns{
-        {xs[0], xs[1], xs[2], xs[3], xs[4], xs[5], xs[6], xs[7], xs[8]}};
-    std::array<MeshLib::Node*, MeshElement::n_all_nodes> nodes{
-        {&ns[0], &ns[1], &ns[2], &ns[3], &ns[4], &ns[5], &ns[6], &ns[7],
-         &ns[8]}};
+    std::array<Node, MeshElement::n_all_nodes> ns{
+        {Node{xs[0]}, Node{xs[1]}, Node{xs[2]}, Node{xs[3]}, Node{xs[4]},
+         Node{xs[5]}, Node{xs[6]}, Node{xs[7]}, Node{xs[8]}}};
+    std::array<Node*, MeshElement::n_all_nodes> nodes{{&ns[0], &ns[1], &ns[2],
+                                                       &ns[3], &ns[4], &ns[5],
+                                                       &ns[6], &ns[7], &ns[8]}};
     MeshElement element(nodes);
 
     bool const test_result2 = test<ShapeFunction, 2>(element);
@@ -228,9 +230,9 @@ TEST(NumLibNaturalCoordinates, Tet4)
     using MeshElement = ShapeFunction::MeshElement;
 
     auto const& xs = NumLib::NaturalCoordinates<MeshElement>::coordinates;
-    std::array<MeshLib::Node, MeshElement::n_all_nodes> ns{
-        {xs[0], xs[1], xs[2], xs[3]}};
-    std::array<MeshLib::Node*, MeshElement::n_all_nodes> nodes{
+    std::array<Node, MeshElement::n_all_nodes> ns{
+        {Node{xs[0]}, Node{xs[1]}, Node{xs[2]}, Node{xs[3]}}};
+    std::array<Node*, MeshElement::n_all_nodes> nodes{
         {&ns[0], &ns[1], &ns[2], &ns[3]}};
     MeshElement element(nodes);
 
@@ -244,9 +246,10 @@ TEST(NumLibNaturalCoordinates, Tet10)
     using MeshElement = ShapeFunction::MeshElement;
 
     auto const& xs = NumLib::NaturalCoordinates<MeshElement>::coordinates;
-    std::array<MeshLib::Node, MeshElement::n_all_nodes> ns{
-        {xs[0], xs[1], xs[2], xs[3], xs[4], xs[5], xs[6], xs[7], xs[8], xs[9]}};
-    std::array<MeshLib::Node*, MeshElement::n_all_nodes> nodes{
+    std::array<Node, MeshElement::n_all_nodes> ns{
+        {Node{xs[0]}, Node{xs[1]}, Node{xs[2]}, Node{xs[3]}, Node{xs[4]},
+         Node{xs[5]}, Node{xs[6]}, Node{xs[7]}, Node{xs[8]}, Node{xs[9]}}};
+    std::array<Node*, MeshElement::n_all_nodes> nodes{
         {&ns[0], &ns[1], &ns[2], &ns[3], &ns[4], &ns[5], &ns[6], &ns[7], &ns[8],
          &ns[9]}};
     MeshElement element(nodes);
@@ -261,9 +264,10 @@ TEST(NumLibNaturalCoordinates, Prism6)
     using MeshElement = ShapeFunction::MeshElement;
 
     auto const& xs = NumLib::NaturalCoordinates<MeshElement>::coordinates;
-    std::array<MeshLib::Node, MeshElement::n_all_nodes> ns{
-        {xs[0], xs[1], xs[2], xs[3], xs[4], xs[5]}};
-    std::array<MeshLib::Node*, MeshElement::n_all_nodes> nodes{
+    std::array<Node, MeshElement::n_all_nodes> ns{{Node{xs[0]}, Node{xs[1]},
+                                                   Node{xs[2]}, Node{xs[3]},
+                                                   Node{xs[4]}, Node{xs[5]}}};
+    std::array<Node*, MeshElement::n_all_nodes> nodes{
         {&ns[0], &ns[1], &ns[2], &ns[3], &ns[4], &ns[5]}};
     MeshElement element(nodes);
 
@@ -277,10 +281,11 @@ TEST(NumLibNaturalCoordinates, Prism15)
     using MeshElement = ShapeFunction::MeshElement;
 
     auto const& xs = NumLib::NaturalCoordinates<MeshElement>::coordinates;
-    std::array<MeshLib::Node, MeshElement::n_all_nodes> ns{
-        {xs[0], xs[1], xs[2], xs[3], xs[4], xs[5], xs[6], xs[7], xs[8], xs[9],
-         xs[10], xs[11], xs[12], xs[13], xs[14]}};
-    std::array<MeshLib::Node*, MeshElement::n_all_nodes> nodes{
+    std::array<Node, MeshElement::n_all_nodes> ns{
+        {Node{xs[0]}, Node{xs[1]}, Node{xs[2]}, Node{xs[3]}, Node{xs[4]},
+         Node{xs[5]}, Node{xs[6]}, Node{xs[7]}, Node{xs[8]}, Node{xs[9]},
+         Node{xs[10]}, Node{xs[11]}, Node{xs[12]}, Node{xs[13]}, Node{xs[14]}}};
+    std::array<Node*, MeshElement::n_all_nodes> nodes{
         {&ns[0], &ns[1], &ns[2], &ns[3], &ns[4], &ns[5], &ns[6], &ns[7], &ns[8],
          &ns[9], &ns[10], &ns[11], &ns[12], &ns[13], &ns[14]}};
     MeshElement element(nodes);
@@ -295,9 +300,9 @@ TEST(NumLibNaturalCoordinates, Pyramid5)
     using MeshElement = ShapeFunction::MeshElement;
 
     auto const& xs = NumLib::NaturalCoordinates<MeshElement>::coordinates;
-    std::array<MeshLib::Node, MeshElement::n_all_nodes> ns{
-        {xs[0], xs[1], xs[2], xs[3], xs[4]}};
-    std::array<MeshLib::Node*, MeshElement::n_all_nodes> nodes{
+    std::array<Node, MeshElement::n_all_nodes> ns{
+        {Node{xs[0]}, Node{xs[1]}, Node{xs[2]}, Node{xs[3]}, Node{xs[4]}}};
+    std::array<Node*, MeshElement::n_all_nodes> nodes{
         {&ns[0], &ns[1], &ns[2], &ns[3], &ns[4]}};
     MeshElement element(nodes);
 
@@ -311,11 +316,12 @@ TEST(NumLibNaturalCoordinates, Pyramid13)
     using MeshElement = ShapeFunction::MeshElement;
 
     auto const& xs = NumLib::NaturalCoordinates<MeshElement>::coordinates;
-    std::array<MeshLib::Node, MeshElement::n_all_nodes> ns{
-        {xs[0], xs[1], xs[2], xs[3], xs[4], xs[5], xs[6], xs[7], xs[8], xs[9],
-         xs[10], xs[11], xs[12]}};
+    std::array<Node, MeshElement::n_all_nodes> ns{
+        {Node{xs[0]}, Node{xs[1]}, Node{xs[2]}, Node{xs[3]}, Node{xs[4]},
+         Node{xs[5]}, Node{xs[6]}, Node{xs[7]}, Node{xs[8]}, Node{xs[9]},
+         Node{xs[10]}, Node{xs[11]}, Node{xs[12]}}};
 
-    std::array<MeshLib::Node*, MeshElement::n_all_nodes> nodes{
+    std::array<Node*, MeshElement::n_all_nodes> nodes{
         {&ns[0], &ns[1], &ns[2], &ns[3], &ns[4], &ns[5], &ns[6], &ns[7], &ns[8],
          &ns[9], &ns[10], &ns[11], &ns[12]}};
     MeshElement element(nodes);
@@ -330,9 +336,10 @@ TEST(NumLibNaturalCoordinates, Hex8)
     using MeshElement = ShapeFunction::MeshElement;
 
     auto const& xs = NumLib::NaturalCoordinates<MeshElement>::coordinates;
-    std::array<MeshLib::Node, MeshElement::n_all_nodes> ns{
-        {xs[0], xs[1], xs[2], xs[3], xs[4], xs[5], xs[6], xs[7]}};
-    std::array<MeshLib::Node*, MeshElement::n_all_nodes> nodes{
+    std::array<Node, MeshElement::n_all_nodes> ns{
+        {Node{xs[0]}, Node{xs[1]}, Node{xs[2]}, Node{xs[3]}, Node{xs[4]},
+         Node{xs[5]}, Node{xs[6]}, Node{xs[7]}}};
+    std::array<Node*, MeshElement::n_all_nodes> nodes{
         {&ns[0], &ns[1], &ns[2], &ns[3], &ns[4], &ns[5], &ns[6], &ns[7]}};
     MeshElement element(nodes);
 
@@ -346,12 +353,13 @@ TEST(NumLibNaturalCoordinates, Hex20)
     using MeshElement = ShapeFunction::MeshElement;
 
     auto const& xs = NumLib::NaturalCoordinates<MeshElement>::coordinates;
-    std::array<MeshLib::Node, MeshElement::n_all_nodes> ns{
-        {xs[0],  xs[1],  xs[2],  xs[3],  xs[4],  xs[5],  xs[6],
-         xs[7],  xs[8],  xs[9],  xs[10], xs[11], xs[12], xs[13],
-         xs[14], xs[15], xs[16], xs[17], xs[18], xs[19]}};
+    std::array<Node, MeshElement::n_all_nodes> ns{
+        {Node{xs[0]},  Node{xs[1]},  Node{xs[2]},  Node{xs[3]},  Node{xs[4]},
+         Node{xs[5]},  Node{xs[6]},  Node{xs[7]},  Node{xs[8]},  Node{xs[9]},
+         Node{xs[10]}, Node{xs[11]}, Node{xs[12]}, Node{xs[13]}, Node{xs[14]},
+         Node{xs[15]}, Node{xs[16]}, Node{xs[17]}, Node{xs[18]}, Node{xs[19]}}};
 
-    std::array<MeshLib::Node*, MeshElement::n_all_nodes> nodes{
+    std::array<Node*, MeshElement::n_all_nodes> nodes{
         {&ns[0],  &ns[1],  &ns[2],  &ns[3],  &ns[4],  &ns[5],  &ns[6],
          &ns[7],  &ns[8],  &ns[9],  &ns[10], &ns[11], &ns[12], &ns[13],
          &ns[14], &ns[15], &ns[16], &ns[17], &ns[18], &ns[19]}};
