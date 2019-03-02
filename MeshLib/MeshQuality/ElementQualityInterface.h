@@ -65,8 +65,7 @@ public:
         if (_quality_tester)
             return _quality_tester->getHistogram(static_cast<std::size_t>(n_bins));
 
-        std::vector<double> empty_quality_vec(0);
-        return empty_quality_vec;
+        return BaseLib::Histogram<double>{{}};
     }
 
     /// Writes a histogram of the quality vector to a specified file.
