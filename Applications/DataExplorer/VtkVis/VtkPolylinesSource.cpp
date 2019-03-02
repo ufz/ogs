@@ -36,7 +36,7 @@
 
 vtkStandardNewMacro(VtkPolylinesSource);
 
-VtkPolylinesSource::VtkPolylinesSource() : _polylines(nullptr)
+VtkPolylinesSource::VtkPolylinesSource()
 {
     _removable = false; // From VtkAlgorithmProperties
     this->SetNumberOfInputPorts(0);

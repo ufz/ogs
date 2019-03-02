@@ -72,7 +72,7 @@ private:
     VtkGeoImageSource(const VtkGeoImageSource&) = delete;  // Not implemented.
     void operator=(const VtkGeoImageSource&) = delete;     // Not implemented
 
-    vtkImageAlgorithm* _imageSource;
+    vtkImageAlgorithm* _imageSource{nullptr};
 
-    double _x0, _y0, _z0, _spacing;
+    double _x0{0}, _y0{0}, _z0{0}, _spacing{1};
 };

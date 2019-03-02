@@ -29,9 +29,9 @@ using namespace MeshLib;
 class MeshLibBoundaryElementSearchInSimpleQuadMesh : public testing::Test
 {
 public:
-    MeshLibBoundaryElementSearchInSimpleQuadMesh() :
-        _geometric_size(10.0), _number_of_subdivisions_per_direction(10),
-        _quad_mesh(MeshGenerator::generateRegularQuadMesh(_geometric_size, _number_of_subdivisions_per_direction))
+    MeshLibBoundaryElementSearchInSimpleQuadMesh()
+        : _quad_mesh(MeshGenerator::generateRegularQuadMesh(
+              _geometric_size, _number_of_subdivisions_per_direction))
     {}
 
     ~MeshLibBoundaryElementSearchInSimpleQuadMesh() override
@@ -43,8 +43,8 @@ public:
     }
 
 protected:
-    const double _geometric_size;
-    const std::size_t _number_of_subdivisions_per_direction;
+    const double _geometric_size{10.0};
+    const std::size_t _number_of_subdivisions_per_direction{10};
     std::unique_ptr<Mesh> _quad_mesh;
     std::vector<GeoLib::Point*> _pnts;
 };
@@ -52,9 +52,9 @@ protected:
 class MeshLibBoundaryElementSearchInSimpleHexMesh : public testing::Test
 {
 public:
-    MeshLibBoundaryElementSearchInSimpleHexMesh() :
-        _geometric_size(10.0), _number_of_subdivisions_per_direction(10),
-        _hex_mesh(MeshGenerator::generateRegularHexMesh(_geometric_size, _number_of_subdivisions_per_direction))
+    MeshLibBoundaryElementSearchInSimpleHexMesh()
+        : _hex_mesh(MeshGenerator::generateRegularHexMesh(
+              _geometric_size, _number_of_subdivisions_per_direction))
     {
         // Points for the surfaces. Corners of a cube.
         _pnts.push_back(new GeoLib::Point(0.0, 0.0, 0.0));
@@ -81,8 +81,8 @@ public:
         std::size_t const n_eles_2d) const;
 
 protected:
-    const double _geometric_size;
-    const std::size_t _number_of_subdivisions_per_direction;
+    const double _geometric_size{10.0};
+    const std::size_t _number_of_subdivisions_per_direction{10};
     std::unique_ptr<Mesh> _hex_mesh;
     std::vector<GeoLib::Point*> _pnts;
 };

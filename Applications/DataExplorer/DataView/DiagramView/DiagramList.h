@@ -171,10 +171,10 @@ private:
     /// Updates the bounds of the data points contained in the list.
     void update();
 
-    float _maxX;
-    float _maxY;
-    float _minX;
-    float _minY;
+    float _maxX{0};
+    float _maxY{0};
+    float _minX{0};
+    float _minY{0};
     std::vector< std::pair<float, float> > _coords;
     QString _name;
     QString _xLabel;

@@ -48,6 +48,5 @@ public slots:
     void setMesh(MeshLib::Mesh const& mesh);
 
 private:
-    vtkUnstructuredGridAlgorithm const* _mesh_source;
-
+    vtkUnstructuredGridAlgorithm const* _mesh_source{nullptr};
 };

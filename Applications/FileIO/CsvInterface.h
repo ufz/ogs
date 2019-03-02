@@ -233,7 +233,7 @@ private:
      */
     void writeValue(std::size_t vec_idx, std::size_t in_vec_idx);
 
-    bool _writeCsvHeader;
+    bool _writeCsvHeader{true};
     std::vector<std::string> _vec_names;
     std::vector< boost::any > _data;
 };

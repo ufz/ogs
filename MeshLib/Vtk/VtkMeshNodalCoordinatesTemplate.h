@@ -119,7 +119,7 @@ protected:
     VtkMeshNodalCoordinatesTemplate();
     ~VtkMeshNodalCoordinatesTemplate() override;
 
-    const std::vector<MeshLib::Node*>* _nodes;
+    const std::vector<MeshLib::Node*>* _nodes{nullptr};
 
 private:
     // Not implemented
@@ -128,7 +128,7 @@ private:
     void operator=(const VtkMeshNodalCoordinatesTemplate&) = delete;
 
     vtkIdType Lookup(const Scalar &val, vtkIdType startIndex);
-    double *TempDoubleArray;
+    double* TempDoubleArray{nullptr};
 };
 
 }  // namespace MeshLib

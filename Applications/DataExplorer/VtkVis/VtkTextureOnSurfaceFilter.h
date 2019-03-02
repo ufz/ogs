@@ -61,6 +61,6 @@ protected:
                     vtkInformationVector* outputVector) override;
 
 private:
-    std::pair<float, float> _origin;
-    double _scalingFactor;
+    std::pair<float, float> _origin{0, 0};
+    double _scalingFactor{0.};
 };

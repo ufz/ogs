@@ -18,7 +18,6 @@ class MeshLibQuadMesh : public ::testing::Test
 {
     public:
     MeshLibQuadMesh()
-        : mesh(nullptr)
     {
         mesh = MeshLib::MeshGenerator::generateRegularQuadMesh(1.0, n_elements);
     }
@@ -29,9 +28,9 @@ class MeshLibQuadMesh : public ::testing::Test
     static std::size_t const elements_stride = n_elements - 1;
     static std::size_t const nodes_stride = n_nodes - 1;
 
-    MeshLib::Mesh const* mesh;
+    MeshLib::Mesh const* mesh{nullptr};
 
-    public:
+public:
     // Helper functions to access elements and nodes.
 
     MeshLib::Element* getElement(std::size_t const i, std::size_t const j)

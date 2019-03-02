@@ -56,7 +56,6 @@ void vtkSimpleImageFilterExampleExecute(vtkImageData* input,
 }
 
 VtkGeoImageSource::VtkGeoImageSource()
-    : _imageSource(nullptr), _x0(0), _y0(0), _z0(0), _spacing(1)
 {
 }
 

@@ -83,8 +83,8 @@ private:
 
     const MeshLib::Mesh* _mesh;
 
-    int NumberOfDimensions;
-    int NumberOfNodes;
+    int NumberOfDimensions{0};
+    int NumberOfNodes{0};
 
     vtkNew<vtkPoints> Points;
     vtkNew<vtkPointData> PointData;

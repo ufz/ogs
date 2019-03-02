@@ -80,5 +80,5 @@ protected:
     VtkColorLookupTable* ColorLookupTable;
 
     double _tableRange[2];
-    double _tableRangeScaling;
+    double _tableRangeScaling{1.0};
 };

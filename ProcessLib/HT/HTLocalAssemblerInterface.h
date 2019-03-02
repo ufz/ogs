@@ -45,7 +45,7 @@ class HTLocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
                                   public NumLib::ExtrapolatableElement
 {
 public:
-    HTLocalAssemblerInterface() : _coupled_solutions(nullptr) {}
+    HTLocalAssemblerInterface() = default;
     void setStaggeredCoupledSolutions(
         std::size_t const /*mesh_item_id*/,
         CoupledSolutionsForStaggeredScheme* const coupling_term)
@@ -74,7 +74,7 @@ protected:
      * calculate the secondary variables like velocity for coupled
      * processes.
      */
-    CoupledSolutionsForStaggeredScheme* _coupled_solutions;
+    CoupledSolutionsForStaggeredScheme* _coupled_solutions{nullptr};
 };
 
 }  // namespace HT

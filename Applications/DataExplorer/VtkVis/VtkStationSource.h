@@ -65,7 +65,7 @@ protected:
                            vtkInformationVector* outputVector) override;
 
     /// The stations to visualize
-    const std::vector<GeoLib::Point*>* _stations;
+    const std::vector<GeoLib::Point*>* _stations{nullptr};
 
     /// The colour table for stratigraphic data. This table is either set using the setColorLookupTable() method or is generated
     /// automatically with random colours while creating the VtkStationSource-object.

@@ -26,7 +26,6 @@
 vtkStandardNewMacro(VtkColorLookupTable);
 
 VtkColorLookupTable::VtkColorLookupTable()
-: _type(DataHolderLib::LUTType::LINEAR)
 {
 }
 

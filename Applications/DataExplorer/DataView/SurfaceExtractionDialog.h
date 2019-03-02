@@ -45,6 +45,6 @@ private slots:
     void reject() override { this->done(QDialog::Rejected); };
 
 private:
-    int _tolerance;
-    MathLib::Vector3 _dir;
+    int _tolerance{90};
+    MathLib::Vector3 _dir{0, 0, -1};
 };

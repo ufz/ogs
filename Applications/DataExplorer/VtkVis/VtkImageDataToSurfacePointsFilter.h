@@ -57,5 +57,5 @@ private:
     /// Returns a random number in [min, max]
     double getRandomNumber(double const& min, double const& max) const;
 
-    vtkIdType PointsPerPixel;
+    vtkIdType PointsPerPixel{20};
 };

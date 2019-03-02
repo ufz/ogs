@@ -27,7 +27,6 @@
 vtkStandardNewMacro(VtkImageDataToSurfacePointsFilter);
 
 VtkImageDataToSurfacePointsFilter::VtkImageDataToSurfacePointsFilter()
-    : PointsPerPixel(20)
 {
 }
 

@@ -43,8 +43,7 @@ public:
      *
      * @param order     integration order (default 2)
      */
-    explicit IntegrationGaussLegendreTri(unsigned order = 2)
-        : _order(order), _n_sampl_pt(0)
+    explicit IntegrationGaussLegendreTri(unsigned order = 2) : _order(order)
     {
         this->setIntegrationOrder(order);
     }
@@ -122,7 +121,7 @@ public:
 
 private:
     unsigned _order;
-    unsigned _n_sampl_pt;
+    unsigned _n_sampl_pt{0};
 };
 
 }  // namespace NumLib

@@ -39,7 +39,6 @@ namespace IO
 namespace Legacy {
 
 MeshIO::MeshIO()
-    : _mesh(nullptr)
 {
 }
 

@@ -384,11 +384,8 @@ template <class Scalar> void VtkMeshNodalCoordinatesTemplate<Scalar>
 }
 
 template <class Scalar>
-VtkMeshNodalCoordinatesTemplate<Scalar>::VtkMeshNodalCoordinatesTemplate()
-    : _nodes(nullptr), TempDoubleArray(nullptr)
-{
-
-}
+VtkMeshNodalCoordinatesTemplate<Scalar>::VtkMeshNodalCoordinatesTemplate() =
+    default;
 
 template <class Scalar> VtkMeshNodalCoordinatesTemplate<Scalar>
 ::~VtkMeshNodalCoordinatesTemplate()

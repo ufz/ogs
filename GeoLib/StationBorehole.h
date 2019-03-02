@@ -108,8 +108,8 @@ private:
 
     //long profile_type;
     //std::vector<long> _soilType;
-    double _depth; // depth of the borehole
-    int _date; // date when the borehole has been drilled
+    double _depth{0};  // depth of the borehole
+    int _date{0};      // date when the borehole has been drilled
 
     /// Contains the names for all the soil layers
     std::vector<std::string> _soilName;

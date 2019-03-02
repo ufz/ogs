@@ -27,9 +27,8 @@ class NumLibMeshComponentMapTest : public ::testing::Test
         using MeshComponentMap = NumLib::MeshComponentMap;
 
     public:
-        NumLibMeshComponentMapTest() : mesh(nullptr), cmap(nullptr)
+        NumLibMeshComponentMapTest()
         {
-            mesh = MeshLib::MeshGenerator::generateLineMesh(1.0, mesh_size);
             MeshLib::MeshSubset nodesSubset{*mesh, mesh->getNodes()};
 
             // Add two components both based on the same nodesSubset.
@@ -44,13 +43,14 @@ class NumLibMeshComponentMapTest : public ::testing::Test
     }
 
     static std::size_t const mesh_size = 9;
-    MeshLib::Mesh const* mesh;
+    MeshLib::Mesh const* mesh =
+        MeshLib::MeshGenerator::generateLineMesh(1.0, mesh_size);
 
     //data component 0 and 1 are assigned to all nodes in the mesh
     static std::size_t const comp0_id = 0;
     static std::size_t const comp1_id = 1;
     std::vector<MeshLib::MeshSubset> components;
-    MeshComponentMap const* cmap;
+    MeshComponentMap const* cmap{nullptr};
 
     //
     // Functions used for checking.

@@ -21,14 +21,13 @@ class MeshLibProperties : public ::testing::Test
 {
 public:
     MeshLibProperties()
-        : mesh(nullptr)
     {
         mesh = MeshLib::MeshGenerator::generateRegularHexMesh(1.0, mesh_size);
     }
 
     ~MeshLibProperties() override { delete mesh; }
     static std::size_t const mesh_size = 5;
-    MeshLib::Mesh * mesh;
+    MeshLib::Mesh* mesh{nullptr};
 };
 std::size_t const MeshLibProperties::mesh_size;
 

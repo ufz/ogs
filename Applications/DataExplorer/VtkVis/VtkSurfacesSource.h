@@ -59,7 +59,7 @@ protected:
                            vtkInformationVector* outputVector) override;
 
     /// The surfaces to visualize
-    const std::vector<GeoLib::Surface*>* _surfaces;
+    const std::vector<GeoLib::Surface*>* _surfaces{nullptr};
 
 private:
 };

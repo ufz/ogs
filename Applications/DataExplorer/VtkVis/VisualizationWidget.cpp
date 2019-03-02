@@ -44,9 +44,8 @@
 #include <QSettings>
 #include <QString>
 
-VisualizationWidget::VisualizationWidget( QWidget* parent /*= 0*/ )
-: QWidget(parent), _vtkRender(nullptr), _markerWidget(nullptr),
-  _interactorStyle(nullptr), _vtkPickCallback(nullptr)
+VisualizationWidget::VisualizationWidget(QWidget* parent /*= 0*/)
+    : QWidget(parent)
 {
     this->setupUi(this);
 

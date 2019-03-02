@@ -22,7 +22,6 @@
 namespace FileIO {
 
 CsvInterface::CsvInterface()
-: _writeCsvHeader(true)
 {
 }
 

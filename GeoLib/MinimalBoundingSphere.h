@@ -83,8 +83,10 @@ private:
         std::size_t length,
         std::size_t n_boundary_points);
 
-    double _radius;
-    MathLib::Vector3 _center;
+    double _radius{-1};
+    MathLib::Vector3 _center{std::numeric_limits<double>::max(),
+                             std::numeric_limits<double>::max(),
+                             std::numeric_limits<double>::max()};
 };
 
 }  // namespace GeoLib

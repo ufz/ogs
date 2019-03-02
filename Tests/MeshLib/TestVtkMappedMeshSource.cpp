@@ -40,7 +40,6 @@ class InSituMesh : public ::testing::Test
 {
     public:
     InSituMesh()
-     : mesh(nullptr)
     {
         mesh = MeshLib::MeshGenerator::generateRegularHexMesh(
             this->length, this->subdivisions);
@@ -129,7 +128,7 @@ class InSituMesh : public ::testing::Test
     }
 
     ~InSituMesh() override { delete mesh; }
-    MeshLib::Mesh * mesh;
+    MeshLib::Mesh* mesh{nullptr};
     const std::size_t subdivisions = 5;
     const double length = 1.0;
     const double dx = length / subdivisions;

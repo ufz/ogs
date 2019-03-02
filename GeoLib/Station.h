@@ -95,12 +95,11 @@ public:
 
 protected:
     std::string _name;
-    StationType _type; // GeoSys Station Type
+    StationType _type{Station::StationType::STATION};  // GeoSys Station Type
 
 private:
-    double _station_value;
-    SensorData* _sensor_data;
-
+    double _station_value{0.0};
+    SensorData* _sensor_data{nullptr};
 };
 
 bool isStation(GeoLib::Point const* pnt);

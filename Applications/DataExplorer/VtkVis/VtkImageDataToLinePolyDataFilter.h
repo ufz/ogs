@@ -63,7 +63,7 @@ protected:
                     vtkInformationVector* outputVector) override;
 
     /// @brief The spacing of the image
-    double ImageSpacing;
+    double ImageSpacing{0.0};
 
 private:
     VtkImageDataToLinePolyDataFilter(const VtkImageDataToLinePolyDataFilter&) =
