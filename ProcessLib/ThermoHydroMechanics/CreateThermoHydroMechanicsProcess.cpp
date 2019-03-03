@@ -56,7 +56,7 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
     {
         auto per_process_variables = findProcessVariables(
             variables, pv_config,
-            {//! \ogs_file_param_special{prj__processes__process__THERMO_HYDRO_MECHANICS__process_variables__Temperature}
+            {//! \ogs_file_param_special{prj__processes__process__THERMO_HYDRO_MECHANICS__process_variables__temperature}
              "temperature",
              //! \ogs_file_param_special{prj__processes__process__THERMO_HYDRO_MECHANICS__process_variables__pressure}
              "pressure",
