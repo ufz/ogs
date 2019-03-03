@@ -49,7 +49,7 @@ std::unique_ptr<TimeStepAlgorithm> createEvolutionaryPIDcontroller(
     if (!fixed_output_times.empty())
     {
         // Remove possible duplicated elements and sort in descending order.
-        BaseLib::makeVectorUnique(fixed_output_times, std::greater<double>());
+        BaseLib::makeVectorUnique(fixed_output_times, std::greater<>());
     }
 
     //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__EvolutionaryPIDcontroller__tol}
