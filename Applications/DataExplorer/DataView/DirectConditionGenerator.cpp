@@ -53,8 +53,7 @@ DirectConditionGenerator::directToSurfaceNodes(const MeshLib::Mesh& mesh,
         {
             double val(raster->getValueAtPoint(*surface_node));
             val = (val == no_data) ? 0 : val;
-            _direct_values.push_back(
-                std::make_pair(surface_node->getID(), val));
+            _direct_values.emplace_back(surface_node->getID(), val);
         }
         delete raster;
 

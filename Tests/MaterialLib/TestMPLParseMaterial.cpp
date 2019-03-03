@@ -52,7 +52,7 @@ struct Medium
     {
         for (auto p : phases_)
         {
-            phases.push_back(Phase(p));
+            phases.emplace_back(p);
         }
     }
 };

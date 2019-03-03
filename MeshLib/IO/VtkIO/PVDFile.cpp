@@ -22,7 +22,7 @@ namespace IO
 
 void PVDFile::addVTUFile(const std::string &vtu_fname, double timestep)
 {
-    _datasets.push_back(std::make_pair(timestep, vtu_fname));
+    _datasets.emplace_back(timestep, vtu_fname);
 
     std::ofstream fh(_pvd_filename.c_str());
     if (!fh) {
