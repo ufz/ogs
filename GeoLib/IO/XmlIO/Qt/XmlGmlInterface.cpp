@@ -364,13 +364,13 @@ bool XmlGmlInterface::write()
         else
         {
             ERR("XmlGmlInterface::write(): Point vector is empty, abort writing geometry.");
-            return 0;
+            return false;
         }
     }
     else
     {
         ERR("XmlGmlInterface::write(): No point vector found, abort writing geometry.");
-        return 0;
+        return false;
     }
 
     // POLYLINES

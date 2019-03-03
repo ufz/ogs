@@ -200,7 +200,7 @@ bool XmlStnInterface::write()
     if (this->_exportName.empty())
     {
         ERR("XmlStnInterface::write(): No station list specified.");
-        return 0;
+        return false;
     }
 
     _out << "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n"; // xml definition
