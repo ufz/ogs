@@ -33,7 +33,7 @@ class CondFromRasterDialog : public QDialog, private Ui_CondFromRaster
 public:
     CondFromRasterDialog(std::vector<MeshLib::Mesh*> msh_vec,
                          QDialog* parent = nullptr);
-    ~CondFromRasterDialog(void) override;
+    ~CondFromRasterDialog() override;
 
 private:
     const std::vector<MeshLib::Mesh*> _msh_vec;

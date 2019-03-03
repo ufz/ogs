@@ -71,7 +71,7 @@ public:
                        DetailWindow* window = nullptr,
                        QDialog* parent = nullptr);
 
-    ~DiagramPrefsDialog(void) override;
+    ~DiagramPrefsDialog() override;
 
 private:
     /**

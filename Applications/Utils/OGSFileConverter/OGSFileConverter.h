@@ -28,7 +28,7 @@ public:
     /// Constructor
     OGSFileConverter(QWidget* parent = nullptr);
     /// Destructor
-    ~OGSFileConverter(void) override;
+    ~OGSFileConverter() override;
 
 private:
     /// Checks if a given file already exists

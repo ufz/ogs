@@ -37,7 +37,7 @@ public:
     /// Constructor
     FileListDialog(FileType input, FileType output, QWidget* parent = nullptr);
     /// Destructor
-    ~FileListDialog(void) override;
+    ~FileListDialog() override;
 
     /// Returns list of all selected files
     const QStringList getInputFileList() const { return _allFiles.stringList(); };

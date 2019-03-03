@@ -41,7 +41,7 @@ class MeshElementRemovalDialog : public QDialog, private Ui_MeshElementRemoval
 public:
     MeshElementRemovalDialog(DataHolderLib::Project const& project,
                              QDialog* parent = nullptr);
-    ~MeshElementRemovalDialog(void) override;
+    ~MeshElementRemovalDialog() override;
 
 private slots:
     void on_boundingBoxCheckBox_toggled(bool is_checked);

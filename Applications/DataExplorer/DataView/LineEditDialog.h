@@ -33,7 +33,7 @@ class LineEditDialog : public QDialog, private Ui_LineEdit
 public:
     LineEditDialog(const GeoLib::PolylineVec& ply_vec,
                    QDialog* parent = nullptr);
-    ~LineEditDialog(void) override;
+    ~LineEditDialog() override;
 
 private:
     std::vector<std::size_t> getSelectedIndeces(QStringList list);

@@ -35,7 +35,7 @@ class NetCdfConfigureDialog : public QDialog, private Ui_NetCdfConfigure
 public:
     NetCdfConfigureDialog(const std::string& fileName,
                           QDialog* parent = nullptr);
-    ~NetCdfConfigureDialog(void) override;
+    ~NetCdfConfigureDialog() override;
     MeshLib::Mesh* getMesh() { return _currentMesh; };
     std::string getName();
     VtkGeoImageSource* getRaster() { return _currentRaster; };

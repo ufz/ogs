@@ -31,7 +31,7 @@ public:
                      const std::vector<std::size_t>& dis_nodes,
                      const std::vector<double>& dis_values,
                      QDialog* parent = nullptr);
-    ~LinearEditDialog(void) override;
+    ~LinearEditDialog() override;
 
 private:
     void setupDialog(const std::vector<std::size_t> &dis_nodes, const std::vector<double> &dis_values);

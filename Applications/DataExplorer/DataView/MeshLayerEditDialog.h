@@ -41,7 +41,7 @@ class MeshLayerEditDialog : public QDialog, private Ui_MeshLayerEdit
 
 public:
     MeshLayerEditDialog(const MeshLib::Mesh* mesh, QDialog* parent = nullptr);
-    ~MeshLayerEditDialog(void) override;
+    ~MeshLayerEditDialog() override;
 
 private:
     void createMeshToolSelection();

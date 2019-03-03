@@ -43,7 +43,7 @@ StationBorehole::StationBorehole(double x,
     _soilName.emplace_back("");
 }
 
-StationBorehole::~StationBorehole(void)
+StationBorehole::~StationBorehole()
 {
     // deletes profile vector of borehole, starting at layer 1
     // the first point is NOT deleted as it points to the station object itself

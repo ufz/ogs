@@ -36,7 +36,7 @@ public:
                              double y = 0.0,
                              double z = 0.0,
                              const std::string& name = "");
-    ~StationBorehole(void) override;
+    ~StationBorehole() override;
 
     /// Creates a StationBorehole-object from a string (assuming the string has the right format)
     static StationBorehole* createStation(const std::string &line);

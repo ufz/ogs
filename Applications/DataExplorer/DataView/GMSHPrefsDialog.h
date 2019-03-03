@@ -33,7 +33,7 @@ class GMSHPrefsDialog : public QDialog, private Ui_GMSHPrefs
 
 public:
     GMSHPrefsDialog(GeoLib::GEOObjects const& geoObjects, QDialog* parent = nullptr);
-    ~GMSHPrefsDialog(void) override;
+    ~GMSHPrefsDialog() override;
 
 private:
     std::vector<std::string> getSelectedObjects(QStringList list);
