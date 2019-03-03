@@ -21,14 +21,14 @@
 
 TEST(TestQtPrjInterface, QtXmlPrjReader)
 {
-    typedef struct
+    struct TestParams
     {
         std::string const file_name;
         std::size_t n_geo;
         std::size_t n_mesh;
         std::size_t n_bc;
         std::size_t n_st;
-    } TestParams;
+    };
 
     std::vector<TestParams> test_files;
 

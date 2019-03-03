@@ -31,10 +31,10 @@ namespace ProcessLib
 template <typename T>
 struct FunctionParameter final : public Parameter<T>
 {
-    typedef exprtk::symbol_table<T> symbol_table_t;
-    typedef exprtk::expression<T> expression_t;
-    typedef exprtk::parser<T> parser_t;
-    typedef exprtk::parser_error::type error_t;
+    using symbol_table_t = exprtk::symbol_table<T>;
+    using expression_t = exprtk::expression<T>;
+    using parser_t = exprtk::parser<T>;
+    using error_t = exprtk::parser_error::type;
 
     /**
      * Constructing from a vector of expressions
