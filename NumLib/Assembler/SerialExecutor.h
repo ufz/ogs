@@ -46,11 +46,7 @@ struct SerialExecutor
     ///
     template <typename F, typename C, typename... Args_>
     static void
-#if defined(_MSC_VER) && (_MSC_VER >= 1700)
-    executeDereferenced(F& f, C const& c, Args_&&... args)
-#else
     executeDereferenced(F const& f, C const& c, Args_&&... args)
-#endif
     {
         for (std::size_t i = 0; i < c.size(); i++)
         {
@@ -191,12 +187,8 @@ struct SerialExecutor
     ///             size().
     /// \param args additional arguments passed to \c f
     template <typename F, typename C, typename Data, typename... Args_>
-    static void
-#if defined(_MSC_VER) && (_MSC_VER >= 1700)
-    transformDereferenced(F& f, C const& c, Data& data, Args_&&... args)
-#else
-    transformDereferenced(F const& f, C const& c, Data& data, Args_&&... args)
-#endif
+    static void transformDereferenced(F const& f, C const& c, Data& data,
+                                      Args_&&... args)
     {
         assert(c.size() == data.size());
 
