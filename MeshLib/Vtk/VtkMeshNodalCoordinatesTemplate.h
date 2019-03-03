@@ -115,6 +115,10 @@ public:
     vtkIdType InsertNextTupleValue(const Scalar* t) override;
 #endif  // vtk version
 
+    VtkMeshNodalCoordinatesTemplate(const VtkMeshNodalCoordinatesTemplate&) =
+        delete;
+    void operator=(const VtkMeshNodalCoordinatesTemplate&) = delete;
+
 protected:
     VtkMeshNodalCoordinatesTemplate();
     ~VtkMeshNodalCoordinatesTemplate() override;
@@ -122,11 +126,6 @@ protected:
     const std::vector<MeshLib::Node*>* _nodes{nullptr};
 
 private:
-    // Not implemented
-    VtkMeshNodalCoordinatesTemplate(const VtkMeshNodalCoordinatesTemplate&) =
-        delete;
-    void operator=(const VtkMeshNodalCoordinatesTemplate&) = delete;
-
     vtkIdType Lookup(const Scalar &val, vtkIdType startIndex);
     double* TempDoubleArray{nullptr};
 };
