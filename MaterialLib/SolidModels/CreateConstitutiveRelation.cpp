@@ -14,6 +14,7 @@
 #include "CreateCreepBGRa.h"
 #include "CreateEhlers.h"
 #include "CreateLinearElasticIsotropic.h"
+#include "CreateLinearElasticOrthotropic.h"
 #include "CreateLubby2.h"
 #include "MFront/CreateMFront.h"
 
@@ -32,7 +33,8 @@ template <int DisplacementDim>
 std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>
 createConstitutiveRelation(
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
-    ParameterLib::CoordinateSystem const& local_coordinate_system,
+    boost::optional<ParameterLib::CoordinateSystem> const&
+        local_coordinate_system,
     BaseLib::ConfigTree const& config)
 {
     auto const type =
@@ -49,6 +51,13 @@ createConstitutiveRelation(
         const bool skip_type_checking = false;
         return MaterialLib::Solids::createLinearElasticIsotropic<
             DisplacementDim>(parameters, config, skip_type_checking);
+    }
+    if (type == "LinearElasticOrthotropic")
+    {
+        const bool skip_type_checking = false;
+        return MaterialLib::Solids::createLinearElasticOrthotropic<
+            DisplacementDim>(
+            parameters, local_coordinate_system, config, skip_type_checking);
     }
     if (type == "Lubby2")
     {
@@ -74,7 +83,8 @@ std::map<int,
          std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>>
 createConstitutiveRelations(
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
-    ParameterLib::CoordinateSystem const& local_coordinate_system,
+    boost::optional<ParameterLib::CoordinateSystem> const&
+        local_coordinate_system,
     BaseLib::ConfigTree const& config)
 {
     auto const constitutive_relation_configs =
@@ -117,13 +127,15 @@ createConstitutiveRelations(
 template std::map<int, std::unique_ptr<MaterialLib::Solids::MechanicsBase<2>>>
 createConstitutiveRelations<2>(
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
-    ParameterLib::CoordinateSystem const& local_coordinate_system,
+    boost::optional<ParameterLib::CoordinateSystem> const&
+        local_coordinate_system,
     BaseLib::ConfigTree const& config);
 
 template std::map<int, std::unique_ptr<MaterialLib::Solids::MechanicsBase<3>>>
 createConstitutiveRelations<3>(
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
-    ParameterLib::CoordinateSystem const& local_coordinate_system,
+    boost::optional<ParameterLib::CoordinateSystem> const&
+        local_coordinate_system,
     BaseLib::ConfigTree const& config);
 }  // namespace Solids
 }  // namespace MaterialLib
