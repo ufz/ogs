@@ -143,7 +143,8 @@ MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(
     }
 
     // transmit the original subsurface element ids as a property
-    if (!subsfc_element_id_prop_name.empty()) {
+    if (!subsfc_element_id_prop_name.empty())
+    {
         MeshLib::addPropertyToMesh(*result, subsfc_element_id_prop_name,
                                    MeshLib::MeshItemType::Cell, 1,
                                    element_ids_map);
@@ -156,6 +157,19 @@ MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(
                                    face_ids_map);
     }
 
+    auto const* subsurface_material_ids(MeshLib::materialIDs(subsfc_mesh));
+    if (subsurface_material_ids)
+    {
+        std::vector<int> material_ids;
+        material_ids.reserve(sfc_elements.size());
+        for (auto bulk_id : element_ids_map)
+        {
+            material_ids.push_back((*subsurface_material_ids)[bulk_id]);
+        }
+        MeshLib::addPropertyToMesh(*result, "MaterialIDs",
+                                   MeshLib::MeshItemType::Cell, 1,
+                                   material_ids);
+    }
     return result;
 }
 
