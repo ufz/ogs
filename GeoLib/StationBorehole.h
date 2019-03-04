@@ -32,8 +32,11 @@ class StationBorehole : public Station
 {
 public:
     /** constructor initialises the borehole with the given coordinates */
-    StationBorehole(double x = 0.0, double y = 0.0, double z = 0.0, const std::string &name = "");
-    ~StationBorehole(void) override;
+    explicit StationBorehole(double x = 0.0,
+                             double y = 0.0,
+                             double z = 0.0,
+                             const std::string& name = "");
+    ~StationBorehole() override;
 
     /// Creates a StationBorehole-object from a string (assuming the string has the right format)
     static StationBorehole* createStation(const std::string &line);
@@ -105,8 +108,8 @@ private:
 
     //long profile_type;
     //std::vector<long> _soilType;
-    double _depth; // depth of the borehole
-    int _date; // date when the borehole has been drilled
+    double _depth{0};  // depth of the borehole
+    int _date{0};      // date when the borehole has been drilled
 
     /// Contains the names for all the soil layers
     std::vector<std::string> _soilName;

@@ -36,7 +36,7 @@ public:
 
 protected:
     VtkImageDataToSurfacePointsFilter();
-    ~VtkImageDataToSurfacePointsFilter() = default;
+    ~VtkImageDataToSurfacePointsFilter() override = default;
 
     /// Sets input port to vtkImageData.
     int FillInputPortInformation(int port, vtkInformation* info) override;
@@ -57,5 +57,5 @@ private:
     /// Returns a random number in [min, max]
     double getRandomNumber(double const& min, double const& max) const;
 
-    vtkIdType PointsPerPixel;
+    vtkIdType PointsPerPixel{20};
 };

@@ -26,9 +26,8 @@
 #include <vtkSmartPointer.h>
 
 vtkStandardNewMacro(VtkImageDataToLinePolyDataFilter);
+VtkImageDataToLinePolyDataFilter::VtkImageDataToLinePolyDataFilter()
 
-VtkImageDataToLinePolyDataFilter::VtkImageDataToLinePolyDataFilter() :
-        ImageSpacing(0.0)
 {
     this->SetLengthScaleFactor(1.0);
 }

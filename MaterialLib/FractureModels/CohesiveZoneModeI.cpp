@@ -58,9 +58,8 @@ void CohesiveZoneModeI<DisplacementDim>::computeConstitutiveRelation(
     assert(dynamic_cast<StateVariables<DisplacementDim> const*>(
                &material_state_variables) != nullptr);
 
-    StateVariables<DisplacementDim>& state =
-        static_cast<StateVariables<DisplacementDim> &>(
-            material_state_variables);
+    auto& state =
+        static_cast<StateVariables<DisplacementDim>&>(material_state_variables);
     //reset damage in each iteration
     state.setInitialConditions();
 

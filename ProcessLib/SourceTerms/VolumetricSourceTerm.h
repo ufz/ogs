@@ -27,7 +27,7 @@ public:
         Parameter<double> const& volumetric_source_term);
 
     void integrate(const double t, GlobalVector const& x, GlobalVector& b,
-                   GlobalMatrix* jac) const;
+                   GlobalMatrix* jac) const override;
 
 private:
     Parameter<double> const& _volumetric_source_term;

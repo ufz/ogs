@@ -32,7 +32,7 @@
 
 vtkStandardNewMacro(VtkSurfacesSource);
 
-VtkSurfacesSource::VtkSurfacesSource() : _surfaces(nullptr)
+VtkSurfacesSource::VtkSurfacesSource()
 {
     _removable = false; // From VtkAlgorithmProperties
     this->SetNumberOfInputPorts(0);

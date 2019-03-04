@@ -130,16 +130,13 @@ public:
     }
 
     /// Returns the squared length
-    double getSqrLength(void) const
+    double getSqrLength() const
     {
         return this->_x[0]*this->_x[0] + this->_x[1]*this->_x[1] + this->_x[2]*this->_x[2];
     }
 
     /// Returns the length
-    double getLength(void) const
-    {
-        return sqrt(getSqrLength());
-    }
+    double getLength() const { return sqrt(getSqrLength()); }
 
     /** scalarProduct, implementation of scalar product,
      * sometimes called dot or inner product.

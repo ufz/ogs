@@ -24,8 +24,8 @@
 #include <QTextStream>
 #include <limits>
 
-DiagramList::DiagramList() : _maxX(0), _maxY(0), _minX(0), _minY(0), _xLabel(""), _yLabel(""),
-                         _xUnit(""), _yUnit(""), _startDate()
+DiagramList::DiagramList()
+    : _xLabel(""), _yLabel(""), _xUnit(""), _yUnit(""), _startDate()
 {
 }
 
@@ -192,7 +192,7 @@ int DiagramList::readList(const QString &path, std::vector<DiagramList*> &lists)
                     first_loop = false;
                 }
 
-                float const numberOfSecs =
+                auto const numberOfSecs =
                     static_cast<float>(startDate.secsTo(currentDate));
                 for (int i = 0; i < nLists; i++)
                 {
@@ -271,7 +271,7 @@ int DiagramList::readList(const SensorData* data, std::vector<DiagramList*> &lis
             {
                 QDateTime const currentDate(
                     getDateTime(BaseLib::int2date(time_steps[j])));
-                float numberOfSecs =
+                auto numberOfSecs =
                     static_cast<float>(startDate.secsTo(currentDate));
                 lists[i]->addNextPoint(numberOfSecs, (*time_series)[j]);
             }
@@ -292,10 +292,10 @@ int DiagramList::readList(const SensorData* data, std::vector<DiagramList*> &lis
 
 void DiagramList::truncateToRange(QDateTime const& start, QDateTime const& end)
 {
-    float start_secs = static_cast<float>(_startDate.secsTo(start));
+    auto start_secs = static_cast<float>(_startDate.secsTo(start));
     if (start_secs < 0)
         start_secs = 0;
-    float end_secs = static_cast<float>(_startDate.secsTo(end));
+    auto end_secs = static_cast<float>(_startDate.secsTo(end));
     if (end_secs < start_secs)
         end_secs = _coords.back().first;
 

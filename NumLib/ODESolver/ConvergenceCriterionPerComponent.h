@@ -28,7 +28,8 @@ class LocalToGlobalIndexMap;
 class ConvergenceCriterionPerComponent : public ConvergenceCriterion
 {
 public:
-    ConvergenceCriterionPerComponent(const MathLib::VecNormType norm_type)
+    explicit ConvergenceCriterionPerComponent(
+        const MathLib::VecNormType norm_type)
         : ConvergenceCriterion(norm_type)
     {
     }

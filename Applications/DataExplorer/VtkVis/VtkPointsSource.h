@@ -55,7 +55,7 @@ protected:
                            vtkInformationVector* outputVector) override;
 
     /// The points to visualize
-    const std::vector<GeoLib::Point*>* _points;
+    const std::vector<GeoLib::Point*>* _points{nullptr};
 
 private:
 };

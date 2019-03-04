@@ -40,7 +40,8 @@ public:
     /// the provided id.
     /// @param coords coordinates of the point
     /// @param id the id of the object [default: max of std::size_t]
-    Point3dWithID(std::array<double,3> const& coords,
+    explicit Point3dWithID(
+        std::array<double, 3> const& coords,
         std::size_t id = std::numeric_limits<std::size_t>::max())
         : Point3d(coords), _id(id)
     {}

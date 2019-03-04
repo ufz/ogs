@@ -27,7 +27,7 @@ class CapillaryPressureSaturationCurve final
     : public CapillaryPressureSaturation
 {
 public:
-    CapillaryPressureSaturationCurve(
+    explicit CapillaryPressureSaturationCurve(
         std::unique_ptr<MathLib::PiecewiseLinearMonotonicCurve>&& curve_data)
         : CapillaryPressureSaturation(
               curve_data->getSupportMin(),

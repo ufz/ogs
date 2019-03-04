@@ -54,7 +54,7 @@ class ComponentTransportLocalAssemblerInterface
       public NumLib::ExtrapolatableElement
 {
 public:
-    ComponentTransportLocalAssemblerInterface() : _coupled_solutions(nullptr) {}
+    ComponentTransportLocalAssemblerInterface() = default;
 
     void setStaggeredCoupledSolutions(
         std::size_t const /*mesh_item_id*/,
@@ -70,7 +70,7 @@ public:
         std::vector<double>& cache) const = 0;
 
 protected:
-    CoupledSolutionsForStaggeredScheme* _coupled_solutions;
+    CoupledSolutionsForStaggeredScheme* _coupled_solutions{nullptr};
 };
 
 template <typename ShapeFunction, typename IntegrationMethod,

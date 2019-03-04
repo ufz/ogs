@@ -38,7 +38,7 @@ vtkStandardNewMacro(VtkMappedMeshSource)
 }
 
 VtkMappedMeshSource::VtkMappedMeshSource()
-    : NumberOfDimensions(0), NumberOfNodes(0)
+
 {
     this->SetNumberOfInputPorts(0);
 }

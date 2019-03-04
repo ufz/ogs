@@ -21,19 +21,19 @@ namespace BHE
 RefrigerantProperties createRefrigerantProperties(
     BaseLib::ConfigTree const& config)
 {
-    double const refrigerant_density =
+    auto const refrigerant_density =
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__refrigerant__density}
         config.getConfigParameter<double>("density");
-    double const refrigerant_viscosity =
+    auto const refrigerant_viscosity =
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__refrigerant__viscosity}
         config.getConfigParameter<double>("viscosity");
-    double const refrigerant_heat_capacity =
+    auto const refrigerant_heat_capacity =
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__refrigerant__specific_heat_capacity}
         config.getConfigParameter<double>("specific_heat_capacity");
-    double const refrigerant_thermal_conductivity =
+    auto const refrigerant_thermal_conductivity =
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__refrigerant__thermal_conductivity}
         config.getConfigParameter<double>("thermal_conductivity");
-    double const refrigerant_reference_temperature =
+    auto const refrigerant_reference_temperature =
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__refrigerant__reference_temperature}
         config.getConfigParameter<double>("reference_temperature");
     return {refrigerant_viscosity, refrigerant_density,

@@ -40,7 +40,7 @@ public:
         GeoLib::StationBorehole* station,
         std::map<std::string, DataHolderLib::Color>* stratColors = nullptr,
         QWidget* parent = nullptr);
-    ~StratWindow(void) override { this->destroy(); }
+    ~StratWindow() override { this->destroy(); }
 
 private:
     /// Automatically resize window based on the measurements of the borehole.

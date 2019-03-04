@@ -31,7 +31,6 @@ public:
      * @param order     integration order (default 2)
      */
     explicit IntegrationGaussLegendrePrism(unsigned order = 2)
-        : _order(2), _n_sampl_pt(0)
     {
         this->setIntegrationOrder(order);
     }
@@ -90,8 +89,8 @@ public:
     }
 
 private:
-    unsigned _order;
-    unsigned _n_sampl_pt;
+    unsigned _order{2};
+    unsigned _n_sampl_pt{0};
 };
 
 }  // namespace NumLib

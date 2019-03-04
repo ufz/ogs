@@ -124,7 +124,7 @@ std::unique_ptr<Output> createOutput(
     {
         fixed_output_times = std::move(*fixed_output_times_ptr);
         // Remove possible duplicated elements and sort in descending order.
-        BaseLib::makeVectorUnique(fixed_output_times, std::greater<double>());
+        BaseLib::makeVectorUnique(fixed_output_times, std::greater<>());
     }
 
     bool const output_iteration_results =

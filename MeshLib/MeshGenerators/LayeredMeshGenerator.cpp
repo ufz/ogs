@@ -29,11 +29,6 @@
 #include "MeshLib/MeshSearch/NodeSearch.h"
 #include "MeshLib/MeshEditing/RemoveMeshComponents.h"
 
-LayeredMeshGenerator::LayeredMeshGenerator()
-: _elevation_epsilon(0.0001), _minimum_thickness(std::numeric_limits<float>::epsilon())
-{
-}
-
 bool LayeredMeshGenerator::createLayers(
     MeshLib::Mesh const& mesh,
     std::vector<GeoLib::Raster const*> const& rasters,

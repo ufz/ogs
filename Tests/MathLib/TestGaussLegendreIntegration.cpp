@@ -168,7 +168,10 @@ private:
     }
 
 public:
-    FBase(std::size_t const num_coeffs) : coeffs(initCoeffs(num_coeffs)) {}
+    explicit FBase(std::size_t const num_coeffs)
+        : coeffs(initCoeffs(num_coeffs))
+    {
+    }
 
     virtual double operator()(
         std::array<double, 3> const& /*coords*/) const = 0;
@@ -247,7 +250,7 @@ struct FQuad final : FBase
 
 struct F3DSeparablePolynomial final : FBase
 {
-    F3DSeparablePolynomial(unsigned polynomial_degree)
+    explicit F3DSeparablePolynomial(unsigned polynomial_degree)
         : FBase(3 * polynomial_degree + 3), _degree(polynomial_degree)
     {
     }
@@ -324,7 +327,7 @@ struct F3DNonseparablePolynomial final : FBase
     // The number of coefficients/monomials are obtained as follows: Compute the
     // number of combinations with repititions when drawing
     // polynomial_degree times from the set { x, y, z, 1 }
-    F3DNonseparablePolynomial(unsigned polynomial_degree)
+    explicit F3DNonseparablePolynomial(unsigned polynomial_degree)
         : FBase(binomial_coefficient(4 + polynomial_degree - 1, 4 - 1)),
           _degree(polynomial_degree)
     {

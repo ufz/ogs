@@ -33,10 +33,7 @@
 
 namespace FileIO
 {
-TetGenInterface::TetGenInterface() :
-    _zero_based_idx (false), _boundary_markers (false)
-{
-}
+TetGenInterface::TetGenInterface() = default;
 
 bool TetGenInterface::readTetGenGeometry (std::string const& geo_fname,
                                           GeoLib::GEOObjects &geo_objects)

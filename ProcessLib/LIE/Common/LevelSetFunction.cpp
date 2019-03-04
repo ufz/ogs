@@ -61,9 +61,9 @@ std::vector<double> uGlobalEnrichments(
     {
         auto const* frac = frac_props[i];
         double enrich = levelsets[i];
-        for (std::size_t j = 0; j < frac->branches_slave.size(); j++)
+        for (const auto& j : frac->branches_slave)
         {
-            enrich *= Heaviside(levelsetBranch(frac->branches_slave[j], x));
+            enrich *= Heaviside(levelsetBranch(j, x));
         }
         enrichments[i] = enrich;
     }

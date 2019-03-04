@@ -45,7 +45,7 @@ class HTLocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
                                   public NumLib::ExtrapolatableElement
 {
 public:
-    HTLocalAssemblerInterface() : _coupled_solutions(nullptr) {}
+    HTLocalAssemblerInterface() = default;
     void setStaggeredCoupledSolutions(
         std::size_t const /*mesh_item_id*/,
         CoupledSolutionsForStaggeredScheme* const coupling_term)
@@ -59,10 +59,10 @@ public:
         NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& /*cache*/) const = 0;
 
-    virtual Eigen::Vector3d getFlux(
-        MathLib::Point3d const& pnt_local_coords,
-        double const t,
-        std::vector<double> const& local_x) const = 0;
+    Eigen::Vector3d getFlux(MathLib::Point3d const& pnt_local_coords,
+                            double const t,
+                            std::vector<double> const& local_x) const override =
+        0;
 
 protected:
     // TODO: remove _coupled_solutions or move integration point data from
@@ -74,7 +74,7 @@ protected:
      * calculate the secondary variables like velocity for coupled
      * processes.
      */
-    CoupledSolutionsForStaggeredScheme* _coupled_solutions;
+    CoupledSolutionsForStaggeredScheme* _coupled_solutions{nullptr};
 };
 
 }  // namespace HT

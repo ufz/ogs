@@ -16,9 +16,8 @@
 
 #include <QDoubleValidator>
 
-
 SurfaceExtractionDialog::SurfaceExtractionDialog(QDialog* parent)
-    : QDialog(parent), _tolerance(90), _dir(0,0,-1)
+    : QDialog(parent)
 {
     setupUi(this);
     this->xNormalEdit->setValidator(new QDoubleValidator(-1, 1, 3, xNormalEdit));

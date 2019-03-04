@@ -32,7 +32,7 @@ class MeshValidation
 public:
     /// Constructor
     /// \warning This might change the mesh when removing unused mesh nodes.
-    MeshValidation(MeshLib::Mesh &mesh);
+    explicit MeshValidation(MeshLib::Mesh& mesh);
     ~MeshValidation() = default;
 
     /**

@@ -48,6 +48,10 @@ public:
     /// @brief Returns the space between two pixels.
     vtkGetMacro(ImageSpacing,double);
 
+    VtkImageDataToLinePolyDataFilter(const VtkImageDataToLinePolyDataFilter&) =
+        delete;
+    void operator=(const VtkImageDataToLinePolyDataFilter&) = delete;
+
 protected:
     /// @brief Constructor.
     VtkImageDataToLinePolyDataFilter();
@@ -63,11 +67,5 @@ protected:
                     vtkInformationVector* outputVector) override;
 
     /// @brief The spacing of the image
-    double ImageSpacing;
-
-private:
-    VtkImageDataToLinePolyDataFilter(const VtkImageDataToLinePolyDataFilter&) =
-        delete;  // Not implemented.
-    void operator=(const VtkImageDataToLinePolyDataFilter&) =
-        delete;  // Not implemented
+    double ImageSpacing{0.0};
 };

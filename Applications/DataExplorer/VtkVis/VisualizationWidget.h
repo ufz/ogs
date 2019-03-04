@@ -103,9 +103,9 @@ protected slots:
     void on_screenshotPushButton_pressed();
 
 private:
-    vtkRenderer* _vtkRender;
-    vtkOrientationMarkerWidget* _markerWidget;
-    VtkCustomInteractorStyle* _interactorStyle;
-    VtkPickCallback* _vtkPickCallback;
+    vtkRenderer* _vtkRender{nullptr};
+    vtkOrientationMarkerWidget* _markerWidget{nullptr};
+    VtkCustomInteractorStyle* _interactorStyle{nullptr};
+    VtkPickCallback* _vtkPickCallback{nullptr};
     bool _isShowAllOnLoad;
 };

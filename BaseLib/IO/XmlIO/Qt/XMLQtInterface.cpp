@@ -31,8 +31,8 @@ namespace BaseLib
 {
 namespace IO
 {
-XMLQtInterface::XMLQtInterface(const QString &schemaFile)
-    : _schemaFile(schemaFile)
+XMLQtInterface::XMLQtInterface(QString schemaFile)
+    : _schemaFile(std::move(schemaFile))
 {}
 
 int XMLQtInterface::readFile(const QString &fileName)

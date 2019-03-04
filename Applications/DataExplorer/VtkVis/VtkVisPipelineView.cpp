@@ -80,7 +80,7 @@ void VtkVisPipelineView::contextMenuEvent( QContextMenuEvent* event )
         int objectType = item->algorithm()->GetOutputDataObject(0)->GetDataObjectType();
         VtkAlgorithmProperties* vtkProps = item->getVtkProperties();
         bool isSourceItem =
-                (this->selectionModel()->currentIndex().parent().isValid()) ? 0 : 1;
+            !(this->selectionModel()->currentIndex().parent().isValid());
 
         QMenu menu;
         QAction* addFilterAction = menu.addAction("Add filter...");

@@ -26,7 +26,7 @@ class DataExplorerSettingsDialog : public QDialog, private Ui_DataExplorerSettin
 
 public:
     DataExplorerSettingsDialog(QDialog* parent = nullptr);
-    ~DataExplorerSettingsDialog(void) override;
+    ~DataExplorerSettingsDialog() override;
 
 private slots:
     void on_gmshPathButton_clicked();

@@ -33,7 +33,7 @@ public:
     /// Constructor for creating a new FEM condition.
     MeshValueEditDialog(MeshLib::Mesh* mesh, QDialog* parent = nullptr);
 
-    ~MeshValueEditDialog(void) override;
+    ~MeshValueEditDialog() override;
 
 private:
     MeshLib::Mesh* _mesh;

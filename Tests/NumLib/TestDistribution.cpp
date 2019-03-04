@@ -30,15 +30,12 @@ class NumLibDistributionQuad : public testing::Test
 {
 public:
     NumLibDistributionQuad()
-        : _geometric_size(10.0),
-          _number_of_subdivisions_per_direction(10),
-          _msh(MeshLib::MeshGenerator::generateRegularQuadMesh(
+        : _msh(MeshLib::MeshGenerator::generateRegularQuadMesh(
               _geometric_size, _number_of_subdivisions_per_direction)),
           _project_name("test"),
           _mshNodesSearcher(*_msh,
                             std::make_unique<MeshGeoToolsLib::SearchLength>(),
-                            MeshGeoToolsLib::SearchAllNodes::Yes),
-          _ply0(nullptr)
+                            MeshGeoToolsLib::SearchAllNodes::Yes)
     {
         // create geometry
         auto pnts = std::make_unique<std::vector<GeoLib::Point*>>();
@@ -73,13 +70,13 @@ public:
     }
 
 protected:
-    const double _geometric_size;
-    const std::size_t _number_of_subdivisions_per_direction;
+    const double _geometric_size{10.0};
+    const std::size_t _number_of_subdivisions_per_direction{10};
     std::unique_ptr<MeshLib::Mesh> _msh;
     GeoLib::GEOObjects _geo_objs;
     std::string _project_name;
     MeshGeoToolsLib::MeshNodeSearcher _mshNodesSearcher;
-    GeoLib::Polyline* _ply0;
+    GeoLib::Polyline* _ply0{nullptr};
     GeoLib::Surface* _sfc1;
 };
 
@@ -87,15 +84,12 @@ class NumLibDistributionHex : public testing::Test
 {
 public:
     NumLibDistributionHex()
-        : _geometric_size(10.0),
-          _number_of_subdivisions_per_direction(10),
-          _msh(MeshLib::MeshGenerator::generateRegularHexMesh(
+        : _msh(MeshLib::MeshGenerator::generateRegularHexMesh(
               _geometric_size, _number_of_subdivisions_per_direction)),
           _project_name("test"),
           _mshNodesSearcher(*_msh,
                             std::make_unique<MeshGeoToolsLib::SearchLength>(),
-                            MeshGeoToolsLib::SearchAllNodes::Yes),
-          _ply0(nullptr)
+                            MeshGeoToolsLib::SearchAllNodes::Yes)
     {
         // create geometry
         auto pnts = std::make_unique<std::vector<GeoLib::Point*>>();
@@ -133,13 +127,13 @@ public:
     }
 
 protected:
-    const double _geometric_size;
-    const std::size_t _number_of_subdivisions_per_direction;
+    const double _geometric_size{10.0};
+    const std::size_t _number_of_subdivisions_per_direction{10};
     std::unique_ptr<MeshLib::Mesh> _msh;
     GeoLib::GEOObjects _geo_objs;
     std::string _project_name;
     MeshGeoToolsLib::MeshNodeSearcher _mshNodesSearcher;
-    GeoLib::Polyline* _ply0;
+    GeoLib::Polyline* _ply0{nullptr};
     GeoLib::Surface* _sfc1;
 };
 

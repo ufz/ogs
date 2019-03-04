@@ -35,8 +35,7 @@
 class PolygonTest : public testing::Test
 {
 public:
-    PolygonTest() :
-        _polygon(nullptr)
+    PolygonTest()
     {
         // create points and construct polygon
         _pnts.push_back(new GeoLib::Point( 0.0, 0.0,0.0)); // 0
@@ -75,7 +74,7 @@ public:
 
 protected:
     std::vector<GeoLib::Point*> _pnts;
-    GeoLib::Polygon *_polygon;
+    GeoLib::Polygon* _polygon{nullptr};
 };
 
 TEST_F(PolygonTest, isPntInPolygonCheckCorners)

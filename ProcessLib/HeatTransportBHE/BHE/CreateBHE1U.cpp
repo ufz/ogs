@@ -35,10 +35,10 @@ BHE::BHE_1U createBHE1U(
     Pipe const outlet_pipe =
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__pipes__outlet}
         createPipe(pipes_config.getConfigSubtree("outlet"));
-    const double pipe_distance =
+    const auto pipe_distance =
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__pipes__distance_between_pipes}
         pipes_config.getConfigParameter<double>("distance_between_pipes");
-    const double pipe_longitudinal_dispersion_length =
+    const auto pipe_longitudinal_dispersion_length =
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__pipes__longitudinal_dispersion_length}
         pipes_config.getConfigParameter<double>(
             "longitudinal_dispersion_length");

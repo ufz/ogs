@@ -25,7 +25,7 @@ namespace PorousMedium
 class RelativePermeabilityCurve final : public RelativePermeability
 {
 public:
-    RelativePermeabilityCurve(
+    explicit RelativePermeabilityCurve(
         std::unique_ptr<MathLib::PiecewiseLinearInterpolation>&& curve_data)
         : RelativePermeability(curve_data->getSupportMin(),
                                curve_data->getSupportMax()),

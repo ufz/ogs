@@ -30,8 +30,7 @@
 #include <vtkTransform.h>
 #include <vtkTransformFilter.h>
 
-VtkVisTabWidget::VtkVisTabWidget( QWidget* parent /*= 0*/ )
-    : QWidget(parent), _item(nullptr)
+VtkVisTabWidget::VtkVisTabWidget(QWidget* parent /*= 0*/) : QWidget(parent)
 {
     setupUi(this);
 

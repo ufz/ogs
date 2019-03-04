@@ -14,8 +14,7 @@
 namespace DataHolderLib
 {
 ColorLookupTable::ColorLookupTable()
-    : _type(DataHolderLib::LUTType::LINEAR),
-      _range(
+    : _range(
           std::make_pair<double, double>(std::numeric_limits<double>::lowest(),
                                          std::numeric_limits<double>::max()))
 

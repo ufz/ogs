@@ -35,10 +35,7 @@
 
 vtkStandardNewMacro(VtkTextureOnSurfaceFilter);
 
-VtkTextureOnSurfaceFilter::VtkTextureOnSurfaceFilter() : _origin(.0f,.0f), _scalingFactor(.0f)
-{
-}
-
+VtkTextureOnSurfaceFilter::VtkTextureOnSurfaceFilter() = default;
 VtkTextureOnSurfaceFilter::~VtkTextureOnSurfaceFilter() = default;
 
 void VtkTextureOnSurfaceFilter::PrintSelf( ostream& os, vtkIndent indent )

@@ -37,7 +37,9 @@ class VtuInterface final
 {
 public:
     /// Provide the mesh to write and set if compression should be used.
-    VtuInterface(const MeshLib::Mesh* mesh, int dataMode = vtkXMLWriter::Binary, bool compressed = false);
+    explicit VtuInterface(const MeshLib::Mesh* mesh,
+                          int dataMode = vtkXMLWriter::Binary,
+                          bool compressed = false);
 
     /// Read an unstructured grid from a VTU file
     /// \return The converted mesh or a nullptr if reading failed

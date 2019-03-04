@@ -20,16 +20,16 @@ namespace BHE
 {
 GroutParameters createGroutParameters(BaseLib::ConfigTree const& config)
 {
-    const double grout_density =
+    const auto grout_density =
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__grout__density}
         config.getConfigParameter<double>("density");
-    const double grout_porosity =
+    const auto grout_porosity =
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__grout__porosity}
         config.getConfigParameter<double>("porosity");
-    const double grout_heat_capacity =
+    const auto grout_heat_capacity =
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__grout__heat_capacity}
         config.getConfigParameter<double>("heat_capacity");
-    const double grout_thermal_conductivity =
+    const auto grout_thermal_conductivity =
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__grout__thermal_conductivity}
         config.getConfigParameter<double>("thermal_conductivity");
     return {grout_density, grout_porosity, grout_heat_capacity,

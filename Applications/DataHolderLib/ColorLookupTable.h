@@ -61,7 +61,7 @@ public:
 
 private:
     std::vector< std::tuple<double, Color, std::string> > _lut;
-    LUTType _type;
+    LUTType _type{DataHolderLib::LUTType::LINEAR};
     std::pair<double, double> _range;
 };
 

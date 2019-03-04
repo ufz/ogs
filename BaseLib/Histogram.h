@@ -61,8 +61,8 @@ public:
      * \param computeHistogram Compute histogram if set. If not set user must call
      * \c update() before accessing data.
      */
-    Histogram(std::vector<T> data, const unsigned int nr_bins = 16,
-              const bool computeHistogram = true)
+    explicit Histogram(std::vector<T> data, const unsigned int nr_bins = 16,
+                       const bool computeHistogram = true)
         : _data(std::move(data)), _nr_bins(nr_bins)
     {
         init(computeHistogram);

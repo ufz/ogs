@@ -46,9 +46,9 @@ public:
         MathLib::Point3dWithID(x, id), GeoLib::GeoObject()
     {}
 
-    Point(std::array<double,3> const& x,
-        std::size_t id = std::numeric_limits<std::size_t>::max()) :
-        MathLib::Point3dWithID(x, id), GeoLib::GeoObject()
+    explicit Point(std::array<double, 3> const& x,
+                   std::size_t id = std::numeric_limits<std::size_t>::max())
+        : MathLib::Point3dWithID(x, id), GeoLib::GeoObject()
     {}
 
     /// return a geometry type

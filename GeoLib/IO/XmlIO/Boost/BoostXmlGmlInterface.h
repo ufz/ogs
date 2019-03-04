@@ -35,7 +35,7 @@ namespace IO
 class BoostXmlGmlInterface : public BaseLib::IO::XMLInterface
 {
 public:
-    BoostXmlGmlInterface(GeoLib::GEOObjects& geo_objs);
+    explicit BoostXmlGmlInterface(GeoLib::GEOObjects& geo_objs);
     ~BoostXmlGmlInterface() override = default;
 
     /// Reads an xml-file containing OGS geometry

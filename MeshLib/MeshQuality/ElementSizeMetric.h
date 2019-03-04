@@ -25,7 +25,7 @@ namespace MeshLib
 class ElementSizeMetric : public ElementQualityMetric
 {
 public:
-    ElementSizeMetric(Mesh const& mesh);
+    explicit ElementSizeMetric(Mesh const& mesh);
     ~ElementSizeMetric() override = default;
 
     void calculateQuality() override;

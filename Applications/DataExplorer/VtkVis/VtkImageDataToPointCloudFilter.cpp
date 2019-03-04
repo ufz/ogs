@@ -26,16 +26,7 @@
 
 vtkStandardNewMacro(VtkImageDataToPointCloudFilter);
 
-VtkImageDataToPointCloudFilter::VtkImageDataToPointCloudFilter()
-    : Gamma(1.0),
-      PointScaleFactor(1.0),
-      MinHeight(0),
-      MaxHeight(1000),
-      MinNumberOfPointsPerCell(1),
-      MaxNumberOfPointsPerCell(20),
-      IsLinear(true)
-{
-}
+VtkImageDataToPointCloudFilter::VtkImageDataToPointCloudFilter() = default;
 
 void VtkImageDataToPointCloudFilter::PrintSelf(ostream& os, vtkIndent indent)
 {

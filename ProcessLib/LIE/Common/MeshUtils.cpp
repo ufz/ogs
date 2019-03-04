@@ -186,7 +186,7 @@ void findFracutreIntersections(
                     matIDs[1] = matid;  // slave
                 }
             }
-            vec_branch_nodeID_matIDs.push_back(std::make_pair(nodeID, matIDs));
+            vec_branch_nodeID_matIDs.emplace_back(nodeID, matIDs);
         }
         else
         {
@@ -195,8 +195,7 @@ void findFracutreIntersections(
                                  vec_matID_counts.rbegin()->first);
             matIDs[1] = std::max(vec_matID_counts.begin()->first,
                                  vec_matID_counts.rbegin()->first);
-            vec_junction_nodeID_matIDs.push_back(
-                std::make_pair(nodeID, matIDs));
+            vec_junction_nodeID_matIDs.emplace_back(nodeID, matIDs);
         }
     }
 

@@ -308,7 +308,7 @@ void GocadSGridReader::parseFaceSet(std::string& line, std::istream& in)
     ++it;
     face_set_property._property_name += *it;
     ++it;
-    std::size_t const n_of_face_set_ids(
+    auto const n_of_face_set_ids(
         static_cast<std::size_t>(std::atoi(it->c_str())));
     std::size_t face_set_id_cnt(0);
 
@@ -323,10 +323,9 @@ void GocadSGridReader::parseFaceSet(std::string& line, std::istream& in)
 
         for (auto tok_it = tokens.begin(); tok_it != tokens.end();)
         {
-            std::size_t const id(
-                static_cast<std::size_t>(std::atoi(tok_it->c_str())));
+            auto const id(static_cast<std::size_t>(std::atoi(tok_it->c_str())));
             tok_it++;
-            std::size_t const face_indicator(
+            auto const face_indicator(
                 static_cast<std::size_t>(std::atoi(tok_it->c_str())));
             tok_it++;
 
@@ -382,7 +381,7 @@ void GocadSGridReader::parseFaceSet(std::string& line, std::istream& in)
 Bitset readBits(std::ifstream& in, const std::size_t bits)
 {
     using block_t = Bitset::block_type;
-    std::size_t const bytes = static_cast<std::size_t>(std::ceil(bits / 8.));
+    auto const bytes = static_cast<std::size_t>(std::ceil(bits / 8.));
     std::size_t const blocks =
         bytes + 1 < sizeof(block_t) ? 1 : (bytes + 1) / sizeof(block_t);
 

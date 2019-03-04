@@ -34,7 +34,7 @@ class MergeGeometriesDialog : public QDialog, private Ui_MergeGeometries
 public:
     MergeGeometriesDialog(GeoLib::GEOObjects& geoObjects,
                           QDialog* parent = nullptr);
-    ~MergeGeometriesDialog(void) override;
+    ~MergeGeometriesDialog() override;
 
     /// Returns a vector of selected geometries
     std::vector<std::string> const getSelectedGeometries() const;

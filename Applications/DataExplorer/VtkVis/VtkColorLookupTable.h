@@ -92,5 +92,5 @@ private:
     unsigned char expInterpolation(unsigned char a, unsigned char b, double gamma, double p) const;
 
     std::map<double, unsigned char*> _dict;
-    DataHolderLib::LUTType _type;
+    DataHolderLib::LUTType _type{DataHolderLib::LUTType::LINEAR};
 };

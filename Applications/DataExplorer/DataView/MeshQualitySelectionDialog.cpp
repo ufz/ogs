@@ -21,7 +21,7 @@
 
 /// Constructor
 MeshQualitySelectionDialog::MeshQualitySelectionDialog(QDialog* parent)
-: QDialog(parent), _metric (MeshLib::MeshQualityType::EDGERATIO), _histogram_path("")
+    : QDialog(parent), _histogram_path("")
 {
     setupUi(this);
     this->choiceEdges->toggle();

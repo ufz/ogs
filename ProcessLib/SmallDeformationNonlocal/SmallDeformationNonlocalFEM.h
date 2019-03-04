@@ -672,7 +672,7 @@ public:
         return cache;
     }
 
-    virtual std::vector<double> const& getIntPtEpsilon(
+    std::vector<double> const& getIntPtEpsilon(
         const double /*t*/,
         GlobalVector const& /*current_solution*/,
         NumLib::LocalToGlobalIndexMap const& /*dof_table*/,

@@ -24,14 +24,6 @@ StratBar::StratBar(GeoLib::StationBorehole* station,
         _stratColors = *stratColors;
 }
 
-StratBar::~StratBar()
-{
-//    std::map<std::string, GeoLib::Color*>::iterator it;
-//    for (it = _stratColors.begin(); it != _stratColors.end(); it++) {
-//        delete it->second;
-//    }
-}
-
 QRectF StratBar::boundingRect() const
 {
     return QRectF(0, 0, BARWIDTH + 10, totalLogHeight());

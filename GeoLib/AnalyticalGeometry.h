@@ -21,15 +21,8 @@
 
 #include "Polygon.h"
 
-namespace MathLib
-{
-    class PointVec;
-}
-
 namespace GeoLib
 {
-class Polyline;
-class LineSegment;
 
 enum Orientation
 {

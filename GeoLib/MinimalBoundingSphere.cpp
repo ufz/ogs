@@ -21,11 +21,7 @@
 #include "MathLib/Vector3.h"
 
 namespace GeoLib {
-
-MinimalBoundingSphere::MinimalBoundingSphere()
-: _radius(-1), _center(std::numeric_limits<double>::max(), std::numeric_limits<double>::max(), std::numeric_limits<double>::max())
-{
-}
+MinimalBoundingSphere::MinimalBoundingSphere() = default;
 
 MinimalBoundingSphere::MinimalBoundingSphere(
     MathLib::Point3d const& p, double radius)

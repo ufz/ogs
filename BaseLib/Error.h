@@ -56,9 +56,9 @@ template <typename Msg>
 
 #define OGS_STR(x) #x
 #define OGS_STRINGIFY(x) OGS_STR(x)
-#define OGS_LOCATION                              \
-    " at " + BaseLib::extractBaseName(__FILE__) + \
-        ", line " OGS_STRINGIFY(__LINE__)
+#define OGS_LOCATION                               \
+    (" at " + BaseLib::extractBaseName(__FILE__) + \
+     ", line " OGS_STRINGIFY(__LINE__))
 
 #define OGS_FATAL(fmt, ...)                                           \
     BaseLib::detail::error_impl(BaseLib::format(fmt, ##__VA_ARGS__) + \

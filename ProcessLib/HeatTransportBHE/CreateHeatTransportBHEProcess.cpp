@@ -184,19 +184,21 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
 
         if (bhe_type == "1U")
         {
-            bhes.push_back(BHE::createBHE1U(bhe_config, curves));
+            bhes.emplace_back(BHE::createBHE1U(bhe_config, curves));
             continue;
         }
 
         if (bhe_type == "CXA")
         {
-            bhes.push_back(BHE::createBHECoaxial<BHE::BHE_CXA>(bhe_config, curves));
+            bhes.emplace_back(
+                BHE::createBHECoaxial<BHE::BHE_CXA>(bhe_config, curves));
             continue;
         }
 
         if (bhe_type == "CXC")
         {
-            bhes.push_back(BHE::createBHECoaxial<BHE::BHE_CXC>(bhe_config, curves));
+            bhes.emplace_back(
+                BHE::createBHECoaxial<BHE::BHE_CXC>(bhe_config, curves));
             continue;
         }
         OGS_FATAL("Unknown BHE type '%s'.", bhe_type.c_str());

@@ -48,7 +48,7 @@ public:
 class H : public InstanceCounter<H>
 {
 public:
-    H(double const z) : _z(z) {}
+    explicit H(double const z) : _z(z) {}
     double h(double arg_x, double arg_y) { return arg_x * arg_y - _z; }
     double setZ(double const z)
     {

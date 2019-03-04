@@ -104,7 +104,7 @@ public:
 
 private:
     //! Instances of this class shall only be constructed by createODESolver().
-    ConcreteODESolver(BaseLib::ConfigTree const& config)
+    explicit ConcreteODESolver(BaseLib::ConfigTree const& config)
         : Implementation{config, NumEquations}
     {
     }

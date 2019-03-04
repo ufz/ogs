@@ -29,32 +29,32 @@ using namespace MeshLib;
 class MeshLibMeshNodeSearchInSimpleQuadMesh : public testing::Test
 {
 public:
-    MeshLibMeshNodeSearchInSimpleQuadMesh() :
-        _geometric_size(10.0), _number_of_subdivisions_per_direction(99),
-        _quad_mesh(MeshGenerator::generateRegularQuadMesh(_geometric_size, _number_of_subdivisions_per_direction))
+    MeshLibMeshNodeSearchInSimpleQuadMesh()
+        : _quad_mesh(MeshGenerator::generateRegularQuadMesh(
+              _geometric_size, _number_of_subdivisions_per_direction))
     {}
 
     ~MeshLibMeshNodeSearchInSimpleQuadMesh() override { delete _quad_mesh; }
 
 protected:
-    const double _geometric_size;
-    const std::size_t _number_of_subdivisions_per_direction;
+    const double _geometric_size{10.0};
+    const std::size_t _number_of_subdivisions_per_direction{99};
     Mesh* _quad_mesh;
 };
 
 class MeshLibMeshNodeSearchInSimpleHexMesh : public testing::Test
 {
 public:
-    MeshLibMeshNodeSearchInSimpleHexMesh() :
-        _geometric_size(10.0), _number_of_subdivisions_per_direction(10),
-        _hex_mesh(MeshGenerator::generateRegularHexMesh(_geometric_size, _number_of_subdivisions_per_direction))
+    MeshLibMeshNodeSearchInSimpleHexMesh()
+        : _hex_mesh(MeshGenerator::generateRegularHexMesh(
+              _geometric_size, _number_of_subdivisions_per_direction))
     {}
 
     ~MeshLibMeshNodeSearchInSimpleHexMesh() override { delete _hex_mesh; }
 
 protected:
-    const double _geometric_size;
-    const std::size_t _number_of_subdivisions_per_direction;
+    const double _geometric_size{10.0};
+    const std::size_t _number_of_subdivisions_per_direction{10};
     Mesh* _hex_mesh;
 };
 

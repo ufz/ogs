@@ -23,11 +23,11 @@ std::unique_ptr<TimeInterval> createTimeInterval(
     //! \ogs_file_param{prj__time_loop__processes__process__time_interval}
     auto const& time_interval_config = config.getConfigSubtree("time_interval");
 
-    const double start_time =
+    const auto start_time =
         //! \ogs_file_param{prj__time_loop__processes__process__time_interval__start}
         time_interval_config.getConfigParameter<double>("start");
 
-    const double end_time =
+    const auto end_time =
         //! \ogs_file_param{prj__time_loop__processes__process__time_interval__end}
         time_interval_config.getConfigParameter<double>("end");
 

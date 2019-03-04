@@ -25,7 +25,7 @@ namespace MeshLib
 class AngleSkewMetric final : public ElementQualityMetric
 {
 public:
-    AngleSkewMetric(Mesh const& mesh);
+    explicit AngleSkewMetric(Mesh const& mesh);
 
     void calculateQuality() override;
 

@@ -38,6 +38,9 @@ public:
     /// @brief Prints information about itself.
     void PrintSelf(ostream& os, vtkIndent indent) override;
 
+    VtkGeoImageSource(const VtkGeoImageSource&) = delete;
+    void operator=(const VtkGeoImageSource&) = delete;
+
     /// @brief Returns the ImageData object.
     vtkImageData* getImageData();
 
@@ -69,10 +72,7 @@ protected:
     void SimpleExecute(vtkImageData* input, vtkImageData* output) override;
 
 private:
-    VtkGeoImageSource(const VtkGeoImageSource&) = delete;  // Not implemented.
-    void operator=(const VtkGeoImageSource&) = delete;     // Not implemented
+    vtkImageAlgorithm* _imageSource{nullptr};
 
-    vtkImageAlgorithm* _imageSource;
-
-    double _x0, _y0, _z0, _spacing;
+    double _x0{0}, _y0{0}, _z0{0}, _spacing{1};
 };

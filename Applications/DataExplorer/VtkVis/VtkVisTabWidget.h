@@ -69,7 +69,7 @@ private:
 
     void translateItem();
 
-    VtkVisPipelineItem* _item;
+    VtkVisPipelineItem* _item{nullptr};
 
 signals:
     /// Is emitted when a property was changed.

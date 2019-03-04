@@ -44,7 +44,6 @@
 vtkStandardNewMacro(VtkCustomInteractorStyle);
 
 VtkCustomInteractorStyle::VtkCustomInteractorStyle()
-: _data(nullptr), _highlightActor(false), _alternateMouseActions(false)
 {
     _selectedMapper = vtkDataSetMapper::New();
     _selectedActor = vtkActor::New();

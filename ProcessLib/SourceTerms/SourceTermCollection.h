@@ -17,7 +17,7 @@ namespace ProcessLib
 class SourceTermCollection final
 {
 public:
-    SourceTermCollection(
+    explicit SourceTermCollection(
         std::vector<std::unique_ptr<ParameterBase>> const& parameters)
         : _parameters(parameters)
     {

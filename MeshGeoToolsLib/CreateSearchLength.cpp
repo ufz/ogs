@@ -36,7 +36,7 @@ std::unique_ptr<MeshGeoToolsLib::SearchLength> createSearchLengthAlgorithm(
     if (type == "fixed")
     {
         //! \ogs_file_param{prj__search_length_algorithm__fixed__value}
-        double const length = config->getConfigParameter<double>("value");
+        auto const length = config->getConfigParameter<double>("value");
         return std::make_unique<MeshGeoToolsLib::SearchLength>(length);
     }
     if (type == "heuristic")

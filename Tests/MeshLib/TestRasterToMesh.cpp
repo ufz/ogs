@@ -40,7 +40,7 @@ public:
         _raster.reset(FileIO::AsciiRasterInterface::readRaster(_file_name));
     }
 
-    ~RasterToMeshTest() { std::remove(_mesh_name.c_str());  }
+    ~RasterToMeshTest() override { std::remove(_mesh_name.c_str()); }
 
 protected:
     std::size_t const _n_pix = 542;

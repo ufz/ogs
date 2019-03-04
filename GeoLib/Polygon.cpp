@@ -537,7 +537,7 @@ GeoLib::Polygon* createPolygonFromCircle (GeoLib::Point const& middle_pnt, doubl
     }
 
     // create polygon
-    GeoLib::Polygon* polygon (new GeoLib::Polygon (pnts, false));
+    GeoLib::Polygon* polygon(new GeoLib::Polygon{Polyline{pnts}, false});
     for (std::size_t k(0); k < resolution; k++)
     {
         polygon->addPoint(k + off_set);

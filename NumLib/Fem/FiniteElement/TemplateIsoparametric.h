@@ -55,7 +55,7 @@ public:
      *
      * @param e                      Mesh element object
      */
-    TemplateIsoparametric(const MeshElementType& e) : _ele(&e) {}
+    explicit TemplateIsoparametric(const MeshElementType& e) : _ele(&e) {}
     ~TemplateIsoparametric() = default;
 
     /// return current mesh element

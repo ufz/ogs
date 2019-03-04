@@ -17,7 +17,7 @@ namespace ProcessLib
 class BHEBottomDirichletBoundaryCondition final : public BoundaryCondition
 {
 public:
-    BHEBottomDirichletBoundaryCondition(
+    explicit BHEBottomDirichletBoundaryCondition(
         std::pair<GlobalIndexType, GlobalIndexType>&& in_out_global_indices)
         : _in_out_global_indices(std::move(in_out_global_indices))
     {

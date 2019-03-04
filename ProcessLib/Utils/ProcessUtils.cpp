@@ -90,7 +90,7 @@ std::vector<std::reference_wrapper<ProcessVariable>> findProcessVariables(
 
     for (std::string const& var_name : var_names)
     {
-        vars.push_back(findVariableByName(variables, var_name, tag));
+        vars.emplace_back(findVariableByName(variables, var_name, tag));
         cached_var_names.push_back(var_name);
     }
 

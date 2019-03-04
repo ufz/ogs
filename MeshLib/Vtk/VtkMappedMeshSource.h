@@ -48,6 +48,9 @@ public:
     vtkTypeMacro(VtkMappedMeshSource, vtkUnstructuredGridAlgorithm);
     void PrintSelf(std::ostream& os, vtkIndent indent) override;
 
+    VtkMappedMeshSource(const VtkMappedMeshSource&) = delete;
+    void operator=(const VtkMappedMeshSource&) = delete;
+
     /// Sets the mesh. Calling is mandatory
     void SetMesh(const MeshLib::Mesh* mesh)
     {
@@ -70,10 +73,6 @@ protected:
                            vtkInformationVector*) override;
 
 private:
-    VtkMappedMeshSource(const VtkMappedMeshSource&) =
-        delete;                                           // Not implemented.
-    void operator=(const VtkMappedMeshSource&) = delete;  // Not implemented.
-
     /// Adds a zero-copy vtk array wrapper.
     /// \param properties MeshLib::Properties object
     /// \param prop_name The name of the property vector to be mapped
@@ -83,8 +82,8 @@ private:
 
     const MeshLib::Mesh* _mesh;
 
-    int NumberOfDimensions;
-    int NumberOfNodes;
+    int NumberOfDimensions{0};
+    int NumberOfNodes{0};
 
     vtkNew<vtkPoints> Points;
     vtkNew<vtkPointData> PointData;

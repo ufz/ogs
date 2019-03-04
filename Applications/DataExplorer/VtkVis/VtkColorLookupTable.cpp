@@ -25,15 +25,11 @@
 
 vtkStandardNewMacro(VtkColorLookupTable);
 
-VtkColorLookupTable::VtkColorLookupTable()
-: _type(DataHolderLib::LUTType::LINEAR)
-{
-}
+VtkColorLookupTable::VtkColorLookupTable() = default;
 
 VtkColorLookupTable::~VtkColorLookupTable()
 {
-    for (std::map<double, unsigned char*>::const_iterator it = _dict.begin(); it != _dict.end();
-         ++it)
+    for (auto it = _dict.begin(); it != _dict.end(); ++it)
         delete it->second;
 }
 

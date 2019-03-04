@@ -65,7 +65,7 @@ public:
     std::unique_ptr<MeshLib::Mesh> getMesh(std::string const& mesh_name) const;
 
 protected:
-    LayeredMeshGenerator();
+    LayeredMeshGenerator() = default;
     virtual ~LayeredMeshGenerator() = default;
 
     /// Adds another layer to the subsurface mesh
@@ -92,8 +92,8 @@ protected:
     /// Cleans up the already created objects in case of an error
     void cleanUpOnError();
 
-    double _elevation_epsilon;
-    double _minimum_thickness;
+    double _elevation_epsilon{0.0001};
+    double _minimum_thickness{std::numeric_limits<float>::epsilon()};
     std::vector<int> _materials;
     std::vector<MeshLib::Node*> _nodes;
     std::vector<MeshLib::Element*> _elements;

@@ -33,7 +33,7 @@
 vtkStandardNewMacro(VtkColorByHeightFilter);
 
 VtkColorByHeightFilter::VtkColorByHeightFilter()
-:  ColorLookupTable(VtkColorLookupTable::New()), _tableRangeScaling(1.0)
+    : ColorLookupTable(VtkColorLookupTable::New())
 {
 }
 

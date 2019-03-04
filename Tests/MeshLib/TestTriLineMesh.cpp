@@ -19,7 +19,6 @@ class MeshLibTriLineMesh : public ::testing::Test
 {
     public:
     MeshLibTriLineMesh()
-        : mesh(nullptr)
     {
         nodes.push_back(new MeshLib::Node(0, 0, 0));
         nodes.push_back(new MeshLib::Node(1, 0, 0));
@@ -55,7 +54,7 @@ class MeshLibTriLineMesh : public ::testing::Test
         delete mesh;
     }
 
-    MeshLib::Mesh const* mesh;
+    MeshLib::Mesh const* mesh{nullptr};
     std::vector<MeshLib::Node*> nodes;
     std::vector<MeshLib::Element*> elements;
 

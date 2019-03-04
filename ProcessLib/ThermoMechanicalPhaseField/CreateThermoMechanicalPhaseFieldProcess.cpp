@@ -187,7 +187,7 @@ std::unique_ptr<Process> createThermoMechanicalPhaseFieldProcess(
     DBUG("Use '%s' as residual thermal conductivity parameter.",
          residual_thermal_conductivity.name.c_str());
     // Reference temperature
-    const double reference_temperature =
+    const auto reference_temperature =
         //! \ogs_file_param{prj__processes__process__THERMO_MECHANICAL_PHASE_FIELD__reference_temperature}
         config.getConfigParameter<double>("reference_temperature");
 

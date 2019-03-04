@@ -26,12 +26,10 @@ public:
     static VtkConsoleOutputWindow * New();
     void DisplayText(const char*) override;
 
+    VtkConsoleOutputWindow(const VtkConsoleOutputWindow&) = delete;
+    void operator=(const VtkConsoleOutputWindow&) = delete;
+
 protected:
     VtkConsoleOutputWindow();
     ~VtkConsoleOutputWindow() override;
-
-private:
-    VtkConsoleOutputWindow(const VtkConsoleOutputWindow&) =
-        delete;                                              // Not implemented.
-    void operator=(const VtkConsoleOutputWindow&) = delete;  // Not implemented.
 };

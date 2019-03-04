@@ -58,7 +58,7 @@ protected:
                            vtkInformationVector* outputVector) override;
 
     /// The polylines to visualize.
-    const std::vector<GeoLib::Polyline*>* _polylines;
+    const std::vector<GeoLib::Polyline*>* _polylines{nullptr};
 
 private:
 };

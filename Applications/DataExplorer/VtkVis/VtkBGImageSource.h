@@ -43,7 +43,6 @@ protected:
     ~VtkBGImageSource() override;
 
 private:
-
-    std::pair<double, double> _origin;
-    double _cellsize;
+    std::pair<double, double> _origin{0, 0};
+    double _cellsize{1};
 };
