@@ -27,14 +27,6 @@ Triangle::Triangle (std::vector<Point *> const &pnt_vec,
     assert (pnt_a < _pnts.size() && pnt_b < _pnts.size() && pnt_c < _pnts.size());
 }
 
-void Triangle::setTriangle (std::size_t pnt_a, std::size_t pnt_b, std::size_t pnt_c)
-{
-    assert (pnt_a < _pnts.size() && pnt_b < _pnts.size() && pnt_c < _pnts.size());
-    _pnt_ids[0] = pnt_a;
-    _pnt_ids[1] = pnt_b;
-    _pnt_ids[2] = pnt_c;
-}
-
 bool Triangle::containsPoint(MathLib::Point3d const& q, double eps) const
 {
     GeoLib::Point const& a(*(_pnts[_pnt_ids[0]]));
