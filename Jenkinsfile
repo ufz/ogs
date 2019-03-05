@@ -665,13 +665,14 @@ pipeline {
               catch(err) { echo "Clang sanitizer for end-to-end tests failed!" }
             }
           }
-          post {
-            always {
-              recordIssues enabledForFailure : true,
-                filters: [includeCategory('clang-analyzer.*')],
-                tools: [clang(name: 'Clang (StaticAnalyzer)')]
-            }
-          }
+          // Currently disabled because of Java out ouf heap space errors
+          // post {
+            // always {
+              // recordIssues enabledForFailure : true,
+                // filters: [includeCategory('clang-analyzer.*')],
+                // tools: [clang(name: 'Clang (StaticAnalyzer)')]
+            // }
+          // }
         }
         // ********************* Update ufz/ogs-data ***************************
         stage('Update ogs-data') {
