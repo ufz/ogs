@@ -37,7 +37,7 @@ $ brew install ninja
 Run CMake with the ninja-generator:
 
 ```bash
-$ cmake ../source/dir -GNinja
+$ cmake ../source/dir -G Ninja
 $ ninja
 ```
 
