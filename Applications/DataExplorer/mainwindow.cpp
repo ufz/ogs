@@ -445,10 +445,16 @@ void MainWindow::save()
         std::vector<std::string> selected_geometries;
         _project.getGEOObjects().getGeometryNames(selected_geometries);
 
+        // values necessary also for the adaptive meshing
+        const double point_density = 0;
+        const double station_density = point_density;
+        const int max_pnts_per_leaf = 0;
+
         FileIO::GMSH::GMSHInterface gmsh_io(
             _project.getGEOObjects(), true,
-            FileIO::GMSH::MeshDensityAlgorithm::AdaptiveMeshDensity, 0.05,
-            0.5, 2, selected_geometries, false, false);
+            FileIO::GMSH::MeshDensityAlgorithm::FixedMeshDensity, point_density,
+            station_density, max_pnts_per_leaf, selected_geometries, false,
+            false);
         gmsh_io.setPrecision(std::numeric_limits<double>::digits10);
         bool const success = gmsh_io.writeToFile(fileName.toStdString());
 
