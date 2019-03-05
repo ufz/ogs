@@ -306,29 +306,6 @@ MathLib::DenseMatrix<double> rotatePointsToXY(std::vector<GeoLib::Point*>& pnts)
     return rotatePointsToXY(pnts.begin(), pnts.end(), pnts.begin(), pnts.end());
 }
 
-void rotatePointsToXZ(std::vector<GeoLib::Point*> &pnts)
-{
-    assert(pnts.size()>2);
-    // calculate supporting plane
-    MathLib::Vector3 plane_normal;
-    double d;
-    // compute the plane normal
-    GeoLib::getNewellPlane(pnts, plane_normal, d);
-
-    const double tol (std::numeric_limits<double>::epsilon());
-    if (std::abs(plane_normal[0]) > tol || std::abs(plane_normal[1]) > tol) {
-        // rotate copied points into x-z-plane
-        MathLib::DenseMatrix<double> rot_mat(3, 3);
-        computeRotationMatrixToXZ(plane_normal, rot_mat);
-        rotatePoints(rot_mat, pnts);
-    }
-
-    for (auto& pnt : pnts)
-    {
-        (*pnt)[1] = 0.0;  // should be -= d but there are numerical errors
-    }
-}
-
 std::unique_ptr<GeoLib::Point> triangleLineIntersection(
     MathLib::Point3d const& a, MathLib::Point3d const& b,
     MathLib::Point3d const& c, MathLib::Point3d const& p,

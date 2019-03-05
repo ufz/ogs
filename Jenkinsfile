@@ -123,7 +123,6 @@ pipeline {
               build { target="tests" }
               build { target="ctest" }
               build { target="doc" }
-              build { target="cppcheck" }
             }
           }
           post {
@@ -144,8 +143,6 @@ pipeline {
                 ],
                 tools: [doxygen(pattern: 'build/DoxygenWarnings.log')],
                 failedTotalAll: 1
-              recordIssues enabledForFailure: true,
-                tools: [cppCheck(pattern: 'build/cppcheck.log')]
             }
             success {
               publishHTML(target: [allowMissing: false, alwaysLinkToLastBuild: true,
@@ -175,6 +172,8 @@ pipeline {
           steps {
             script {
               sh 'git submodule sync'
+              sh 'conan remove --system-reqs Qt/5.11.2@bilke/stable'
+              sh 'conan remove --system-reqs VTK/8.1.1@bilke/stable'
               configure {
                 cmakeOptions =
                   "-DBUILD_SHARED_LIBS=${build_shared} " +
@@ -189,6 +188,7 @@ pipeline {
                 target="package"
                 log="build.log"
               }
+              build { target="cppcheck" }
             }
           }
           post {
@@ -199,6 +199,8 @@ pipeline {
                 tools: [gcc4(name: 'GCC-GUI', id: 'gcc4-gui',
                              pattern: 'build/build.log')],
                 unstableTotalAll: 1
+              recordIssues enabledForFailure: true,
+                tools: [cppCheck(pattern: 'build/cppcheck.log')]
             }
             success { archiveArtifacts 'build/*.tar.gz,build/conaninfo.txt' }
           }

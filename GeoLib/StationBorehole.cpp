@@ -14,6 +14,7 @@
 
 #include "StationBorehole.h"
 
+#include <algorithm>
 #include <cmath>
 #include <cstdlib>
 #include <fstream>
@@ -53,19 +54,6 @@ StationBorehole::~StationBorehole()
     }
 }
 
-int StationBorehole::find(const std::string &str)
-{
-    std::size_t size = _soilName.size();
-    for (std::size_t i = 0; i < size; i++)
-    {
-        if (_soilName[i].find(str) == 0)
-        {
-            return 1;
-        }
-    }
-    return 0;
-}
-
 int StationBorehole::readStratigraphyFile(const std::string &path,
                                           std::vector<std::list<std::string> > &data)
 {
@@ -85,41 +73,6 @@ int StationBorehole::readStratigraphyFile(const std::string &path,
     }
 
     in.close();
-
-    return 1;
-}
-
-int StationBorehole::addStratigraphy(const std::string &path, StationBorehole* borehole)
-{
-    std::vector<std::list<std::string> > data;
-    if (readStratigraphyFile(path, data))
-    {
-        std::size_t size = data.size();
-        for (std::size_t i = 0; i < size; i++)
-        {
-            addLayer(data[i], borehole);
-        }
-
-        // check if a layer is missing
-        // size = borehole->_soilName.size();
-        INFO("StationBorehole::addStratigraphy ToDo");
-        //    for (std::size_t i=0; i<size; i++)
-        //    {
-        //        if ((borehole->_soilLayerThickness[i] == -1) ||(borehole->_soilName[i].compare("") == 0))
-        //        {
-        //            borehole->_soilLayerThickness.clear();
-        //            borehole->_soilName.clear();
-        //
-        //            WARN("StationBorehole::addStratigraphy() - Profile incomplete (Borehole %s, Layer %d missing)", borehole->_name.c_str(), i+1);
-        //
-        //            return 0;
-        //        }
-        //    }
-    }
-    else
-    {
-        borehole->addSoilLayer(borehole->getDepth(), "depth");
-    }
 
     return 1;
 }
@@ -169,57 +122,6 @@ int StationBorehole::addStratigraphy(const std::vector<Point*> &profile, const s
 
     ERR("Error in StationBorehole::addStratigraphy() - Length of parameter vectors does not match.");
     return 0;
-}
-
-int StationBorehole::addStratigraphies(const std::string &path, std::vector<Point*>* boreholes)
-{
-    std::vector<std::list<std::string> > data;
-
-    if (readStratigraphyFile(path, data))
-    {
-        std::string name;
-
-        std::size_t it = 0;
-        std::size_t nBoreholes = data.size();
-        for (std::size_t i = 0; i < nBoreholes; i++)
-        {
-            std::list<std::string> fields = data[i];
-
-            if (fields.size() >= 4)
-            {
-                name = static_cast<StationBorehole*>((*boreholes)[it])->_name;
-                if (fields.front() != name)
-                {
-                    if (it < boreholes->size() - 1)
-                    {
-                        it++;
-                    }
-                }
-
-                fields.pop_front();
-                //the method just assumes that layers are read in correct order
-                fields.pop_front();
-                double thickness(strtod(
-                    BaseLib::replaceString(",", ".", fields.front()).c_str(),
-                    nullptr));
-                fields.pop_front();
-                std::string soil_name (fields.front());
-                fields.pop_front();
-                static_cast<StationBorehole*>((*boreholes)[it])->addSoilLayer(
-                        thickness,
-                        soil_name);
-            }
-            else
-                ERR("Error in StationBorehole::addStratigraphies() - Unexpected file format.");
-                //return 0;
-        }
-    }
-    else
-    {
-        createSurrogateStratigraphies(boreholes);
-    }
-
-    return 1;
 }
 
 StationBorehole* StationBorehole::createStation(const std::string &line)

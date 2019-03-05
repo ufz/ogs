@@ -35,11 +35,6 @@ public:
              std::size_t pnt_b,
              std::size_t pnt_c);
 
-    /**
-     * saves three indices describing a triangle
-     * */
-    void setTriangle (std::size_t pnt_a, std::size_t pnt_b, std::size_t pnt_c);
-
     /** \brief const access operator to access the index
      * of the i-th triangle point
     */

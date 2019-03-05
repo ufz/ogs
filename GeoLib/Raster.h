@@ -54,16 +54,17 @@ public:
      * @param end input iterator pointing to the last element of the data, end have to be reachable from begin
      */
     template <typename InputIterator>
-    Raster(RasterHeader header, InputIterator begin, InputIterator end)
+    Raster(RasterHeader&& header, InputIterator begin, InputIterator end)
         : _header(std::move(header)),
           _raster_data(new double[_header.n_cols * _header.n_rows])
     {
-        iterator raster_it(_raster_data);
-        for (InputIterator it(begin); it != end; ++it) {
-            *raster_it = *it;
-            raster_it++;
-        }
+        std::copy(begin, end, _raster_data);
     }
+
+    Raster(Raster const&) = delete;
+    Raster(Raster&&) = delete;
+    Raster& operator=(Raster const&) = delete;
+    Raster& operator=(Raster&&) = delete;
 
     /// Returns the complete header information
     RasterHeader const& getHeader() const { return _header; }
@@ -96,9 +97,6 @@ public:
     bool isPntOnRaster(MathLib::Point3d const& node) const;
 
     ~Raster();
-
-    /// Creates a Raster based on a GeoLib::Surface
-    static Raster* getRasterFromSurface(Surface const& sfc, double cell_size, double no_data_val = -9999);
 
 private:
     void setCellSize(double cell_size);

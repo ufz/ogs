@@ -52,21 +52,6 @@ public:
     /// Adds a stratigraphy to a borehole given a vector of points of length "n" and a vector of soil names of length "n-1".
     int addStratigraphy(const std::vector<Point*> &profile, const std::vector<std::string> &soil_names);
 
-    /// Reads the stratigraphy for a specified station from a file
-    static int addStratigraphy(const std::string &path, StationBorehole* borehole);
-
-    /**
-     * \brief Reads all stratigraphy information from a file in one go.
-     *
-     * Reads all stratigraphy information from a file in one go.
-     * Be very careful when using this method -- it is pretty fast but it checks nothing and just
-     * assumes that everything is in right order and will work out fine!
-     */
-    static int addStratigraphies(const std::string &path, std::vector<Point*>* boreholes);
-
-    /// Finds the given string in the vector of soil-names
-    int find(const std::string &str);
-
     // Returns the depth of the borehole
     double getDepth() const { return _depth; }
 

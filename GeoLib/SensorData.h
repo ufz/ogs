@@ -58,7 +58,7 @@ enum class TimeStepType
  *
  * \sa Station
  */
-class SensorData
+class SensorData final
 {
 public:
     /// Constructor using file name (automatically reads the file and fills all data structures)
@@ -104,9 +104,6 @@ public:
 
     /// Returns the unit the time steps
     TimeStepType getTimeUnit() const { return _time_unit; }
-
-    /// Returns the data unit of the given time series
-    std::string getDataUnit(SensorDataType t) const;
 
     /// Converts Sensor Data Types to Strings
     static std::string convertSensorDataType2String(SensorDataType t);
