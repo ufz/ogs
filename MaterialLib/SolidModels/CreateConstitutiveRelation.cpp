@@ -32,6 +32,7 @@ template <int DisplacementDim>
 std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>
 createConstitutiveRelation(
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
+    ParameterLib::CoordinateSystem const& local_coordinate_system,
     BaseLib::ConfigTree const& config)
 {
     auto const type =
@@ -73,6 +74,7 @@ std::map<int,
          std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>>
 createConstitutiveRelations(
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
+    ParameterLib::CoordinateSystem const& local_coordinate_system,
     BaseLib::ConfigTree const& config)
 {
     auto const constitutive_relation_configs =
@@ -102,7 +104,9 @@ createConstitutiveRelations(
         constitutive_relations.emplace(
             material_id,
             createConstitutiveRelation<DisplacementDim>(
-                parameters, constitutive_relation_config));
+                parameters,
+                local_coordinate_system,
+                constitutive_relation_config));
     }
 
     DBUG("Found %d constitutive relations.", constitutive_relations.size());
@@ -113,11 +117,13 @@ createConstitutiveRelations(
 template std::map<int, std::unique_ptr<MaterialLib::Solids::MechanicsBase<2>>>
 createConstitutiveRelations<2>(
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
+    ParameterLib::CoordinateSystem const& local_coordinate_system,
     BaseLib::ConfigTree const& config);
 
 template std::map<int, std::unique_ptr<MaterialLib::Solids::MechanicsBase<3>>>
 createConstitutiveRelations<3>(
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
+    ParameterLib::CoordinateSystem const& local_coordinate_system,
     BaseLib::ConfigTree const& config);
 }  // namespace Solids
 }  // namespace MaterialLib

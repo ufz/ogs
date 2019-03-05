@@ -31,6 +31,8 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
+    boost::optional<ParameterLib::CoordinateSystem> const&
+        local_coordinate_system,
     unsigned const integration_order,
     BaseLib::ConfigTree const& config)
 {
@@ -121,7 +123,7 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
 
     auto solid_constitutive_relations =
         MaterialLib::Solids::createConstitutiveRelations<DisplacementDim>(
-            parameters, config);
+            parameters, local_coordinate_system, config);
 
     // Intrinsic permeability (only one scalar per element, i.e. the isotropic
     // case is handled at the moment)
@@ -297,6 +299,8 @@ template std::unique_ptr<Process> createThermoHydroMechanicsProcess<2>(
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
+    boost::optional<ParameterLib::CoordinateSystem> const&
+        local_coordinate_system,
     unsigned const integration_order,
     BaseLib::ConfigTree const& config);
 
@@ -305,6 +309,8 @@ template std::unique_ptr<Process> createThermoHydroMechanicsProcess<3>(
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
+    boost::optional<ParameterLib::CoordinateSystem> const&
+        local_coordinate_system,
     unsigned const integration_order,
     BaseLib::ConfigTree const& config);
 

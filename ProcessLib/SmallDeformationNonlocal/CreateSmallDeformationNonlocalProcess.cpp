@@ -31,6 +31,8 @@ std::unique_ptr<Process> createSmallDeformationNonlocalProcess(
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
+    boost::optional<ParameterLib::CoordinateSystem> const&
+        local_coordinate_system,
     unsigned const integration_order,
     BaseLib::ConfigTree const& config)
 {
@@ -67,7 +69,7 @@ std::unique_ptr<Process> createSmallDeformationNonlocalProcess(
 
     auto solid_constitutive_relations =
         MaterialLib::Solids::createConstitutiveRelations<DisplacementDim>(
-            parameters, config);
+            parameters, local_coordinate_system, config);
 
     // Solid density
     auto& solid_density = ParameterLib::findParameter<double>(
@@ -129,6 +131,8 @@ template std::unique_ptr<Process> createSmallDeformationNonlocalProcess<2>(
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
+    boost::optional<ParameterLib::CoordinateSystem> const&
+        local_coordinate_system,
     unsigned const integration_order,
     BaseLib::ConfigTree const& config);
 
@@ -137,6 +141,8 @@ template std::unique_ptr<Process> createSmallDeformationNonlocalProcess<3>(
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
+    boost::optional<ParameterLib::CoordinateSystem> const&
+        local_coordinate_system,
     unsigned const integration_order,
     BaseLib::ConfigTree const& config);
 
