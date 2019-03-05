@@ -26,8 +26,9 @@ ProcessLib::ProcessVariable& findVariableByName(
     if (variable == variables.end())
     {
         OGS_FATAL(
-            "Could not find process variable '%s' in the provided variables "
-            "list for config tag <%s>.",
+            "There is no entry of the defined process variable '%s' in the "
+            "provided variables list (see tag <process_variables>). A "
+            "definition is required for config tag <%s>.",
             name.c_str(), tag.c_str());
     }
     DBUG("Found process variable '%s' for config tag <%s>.",
