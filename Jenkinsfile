@@ -245,7 +245,7 @@ pipeline {
         stage('Envinf1 (serial)') {
           when {
             beforeAgent true
-            expression { return stage_required.build || stage_required.full }
+            expression { return params.envinf1_serial && (stage_required.build || stage_required.full) }
           }
           agent { label "envinf1"}
           environment {
@@ -287,7 +287,7 @@ pipeline {
         stage('Envinf1 (parallel)') {
           when {
             beforeAgent true
-            expression { return stage_required.build || stage_required.full }
+            expression { return params.envinf1_parallel && (stage_required.build || stage_required.full) }
           }
           agent { label "envinf1"}
           environment {

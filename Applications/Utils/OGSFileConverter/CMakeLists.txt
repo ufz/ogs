@@ -8,6 +8,9 @@ target_link_libraries(OGSFileConverterLib
     PUBLIC ApplicationsFileIO MathLib QtBase ${VTK_LIBRARIES}
     INTERFACE MeshLib
 )
+if(BUILD_SHARED_LIBS)
+    install(TARGETS OGSFileConverterLib LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+endif()
 
 target_include_directories(OGSFileConverterLib PUBLIC
     ${CMAKE_CURRENT_BINARY_DIR}/OGSFileConverterLib_autogen/include)
