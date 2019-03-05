@@ -42,10 +42,16 @@ int main (int argc, char* argv[])
                                           "the name of the new geometry file whose file format is guessed from its file extension", true,
                                           "", "file name");
     cmd.add(argOutputFileName);
+
+    TCLAP::ValueArg<std::string> gmsh_path_arg("g", "gmsh-path",
+                                          "the path to the gmsh binary", false,
+                                          "", "path as string");
+    cmd.add(gmsh_path_arg);
     cmd.parse(argc, argv);
 
     GeoLib::GEOObjects geoObjects;
-    FileIO::readGeometryFromFile(argInputFileName.getValue(), geoObjects);
+    FileIO::readGeometryFromFile(argInputFileName.getValue(), geoObjects,
+                                 gmsh_path_arg.getValue());
     std::vector<std::string> geo_names;
     geoObjects.getGeometryNames(geo_names);
     assert(geo_names.size() == 1);
