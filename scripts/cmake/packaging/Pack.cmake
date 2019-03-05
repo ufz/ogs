@@ -123,8 +123,15 @@ if(OGS_USE_CONAN)
 endif()
 
 if(OGS_USE_PYTHON)
-    install(FILES ${Python_LIBRARIES} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+    if(WIN32)
+        file(GLOB PYTHON_RUNTIME_LIBS "${Python_RUNTIME_LIBRARY_DIRS}/*.dll")
+        message(STATUS "Install Python: ${PYTHON_RUNTIME_LIBS}")
+        install(FILES ${PYTHON_RUNTIME_LIBS} DESTINATION bin)
+    else()
+        install(FILES ${Python_LIBRARIES} DESTINATION bin)
+    endif()
 endif()
+
 
 configure_file(Documentation/README.txt.in ${PROJECT_BINARY_DIR}/README.txt)
 install(FILES ${PROJECT_BINARY_DIR}/README.txt DESTINATION .)
