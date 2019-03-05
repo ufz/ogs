@@ -1,0 +1,24 @@
+@DSL Implicit;
+@Behaviour StandardElasticityBrick;
+@Author Thomas Nagel;
+@Date 05/02/2019;
+
+@Algorithm NewtonRaphson;
+//@CompareToNumericalJacobian true;
+//@NumericallyComputedJacobianBlocks {dfeel_ddeel};
+// remove the above blocks once an analytical one is provided.
+//@PerturbationValueForNumericalJacobianComputation 1.e-7;
+//@JacobianComparisonCriterion 1.e-6; // adjust to your needs
+
+
+@Brick StandardElasticity;
+
+@Theta 1.;       // time integration scheme
+@Epsilon 1e-14;  // tolerance of local stress integration algorithm
+@ModellingHypotheses{".+"};
+
+@RequireStiffnessTensor<UnAltered>;
+
+@Integrator
+{
+}
