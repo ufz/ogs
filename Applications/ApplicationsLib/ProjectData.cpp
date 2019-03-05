@@ -43,9 +43,8 @@
 #include "MeshLib/IO/readMeshFromFile.h"
 
 #include "ParameterLib/ConstantParameter.h"
-#include "ParameterLib/CoordinateSystem.h"
-#include "ParameterLib/Utils.h"
 #include "ProcessLib/UncoupledProcessesTimeLoop.h"
+#include "ProcessLib/Utils/ProcessUtils.h"
 
 #ifdef OGS_BUILD_PROCESS_COMPONENTTRANSPORT
 #include "ProcessLib/ComponentTransport/CreateComponentTransportProcess.h"
@@ -295,7 +294,7 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
         //! \ogs_file_param{prj__parameters}
         parseParameters(project_config.getConfigSubtree("parameters"));
 
-    auto const local_coordinate_system = parseLocalCoordinateSystem(
+    _local_coordinate_system = parseLocalCoordinateSystem(
         //! \ogs_file_param{prj__local_coordinate_system}
         project_config.getConfigSubtreeOptional("local_coordinate_system"),
         _parameters);
@@ -307,14 +306,14 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
                       parameter->name) !=
             end(parameter_names_for_transformation))
         {
-            if (!local_coordinate_system)
+            if (!_local_coordinate_system)
             {
                 OGS_FATAL(
                     "The parameter '%s' is using the local coordinate system "
                     "but no local coordinate system was provided.",
                     parameter->name.c_str());
             }
-            parameter->setCoordinateSystem(*local_coordinate_system);
+            parameter->setCoordinateSystem(*_local_coordinate_system);
         }
 
         parameter->initialize(_parameters);

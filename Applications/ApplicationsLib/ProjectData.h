@@ -21,6 +21,7 @@
 #include "MaterialLib/MPL/Medium.h"
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 
+#include "ParameterLib/CoordinateSystem.h"
 #include "ParameterLib/Parameter.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/ProcessVariable.h"
@@ -120,6 +121,8 @@ private:
 
     /// Buffer for each parameter config passed to the process.
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> _parameters;
+
+    boost::optional<ParameterLib::CoordinateSystem> _local_coordinate_system;
 
     std::map<int, std::unique_ptr<MaterialPropertyLib::Medium>> _media;
 
