@@ -94,8 +94,8 @@ public slots:
                                  std::vector<std::size_t> const& indexlist,
                                  double const proximity,
                                  std::string const& ply_name,
-                                 bool const closePly,
-                                 bool const triangulatePly);
+                                 bool const closePly, bool const triangulatePly,
+                                 std::string const& gmsh_path);
 
 protected:
     GeoTreeModel* _geoModel;

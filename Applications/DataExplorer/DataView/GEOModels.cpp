@@ -158,12 +158,9 @@ void GEOModels::renameGeometry(std::string const& old_name,
 }
 
 void GEOModels::connectPolylineSegments(
-    const std::string& geoName,
-    std::vector<std::size_t> const& indexlist,
-    double const proximity,
-    std::string const& ply_name,
-    bool const closePly,
-    bool const triangulatePly)
+    const std::string& geoName, std::vector<std::size_t> const& indexlist,
+    double const proximity, std::string const& ply_name, bool const closePly,
+    bool const triangulatePly, std::string const& gmsh_path)
 {
     GeoLib::PolylineVec* plyVec = _geo_objects.getPolylineVecObj(geoName);
 
@@ -196,7 +193,8 @@ void GEOModels::connectPolylineSegments(
                     INFO(
                         "Creating a surface by triangulation of the polyline "
                         "...");
-                    if (FileIO::createSurface(*new_line, _geo_objects, geoName))
+                    if (FileIO::createSurface(*new_line, _geo_objects, geoName,
+                                              gmsh_path))
                     {
                         INFO("\t done");
                     }
