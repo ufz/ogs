@@ -428,7 +428,8 @@ std::string readSurfaces(
     const std::map<std::string, std::size_t>& ply_vec_names,
     GeoLib::PointVec& pnt_vec, const std::string& path,
     std::vector<std::string>& errors, GeoLib::GEOObjects& geo,
-    std::string const& unique_name)
+    std::string const& unique_name,
+    std::string const& gmsh_path)
 {
     if (!in.good())
     {
@@ -449,7 +450,7 @@ std::string readSurfaces(
             INFO("Creating a surface by triangulation of the polyline ...");
             if (FileIO::createSurface(
                     *(dynamic_cast<GeoLib::Polyline*>(polygon_vec.back())), geo,
-                    unique_name))
+                    unique_name, gmsh_path))
             {
                 INFO("\t done");
             }
@@ -472,7 +473,8 @@ std::string readSurfaces(
 bool readGLIFileV4(const std::string& fname,
                    GeoLib::GEOObjects& geo,
                    std::string& unique_name,
-                   std::vector<std::string>& errors)
+                   std::vector<std::string>& errors,
+                   std::string const& gmsh_path)
 {
     INFO("GeoLib::readGLIFile(): open stream from file %s.", fname.c_str());
     std::ifstream in(fname.c_str());
@@ -550,16 +552,9 @@ bool readGLIFileV4(const std::string& fname,
     {
         INFO("GeoLib::readGLIFile(): read surfaces from stream.");
 
-        readSurfaces(in,
-                     *sfc_vec,
-                     *sfc_names,
-                     *geo.getPolylineVec(unique_name),
-                     ply_names_copy,
-                     point_vec,
-                     path,
-                     errors,
-                     geo,
-                     unique_name);
+        readSurfaces(in, *sfc_vec, *sfc_names, *geo.getPolylineVec(unique_name),
+                     ply_names_copy, point_vec, path, errors, geo, unique_name,
+                     gmsh_path);
         INFO("GeoLib::readGLIFile(): \tok, %d surfaces read.", sfc_vec->size());
     }
     else
