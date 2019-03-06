@@ -66,6 +66,7 @@ install(TARGETS
     OGS2VTK
     VTK2OGS
     VTK2TIN
+    TecPlotTools
     GocadSGridReader
     Mesh2Raster
     RUNTIME DESTINATION bin COMPONENT ogs_converter)

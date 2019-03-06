@@ -1,34 +1,14 @@
-add_executable(ComputeNodeAreasFromSurfaceMesh ComputeNodeAreasFromSurfaceMesh.cpp)
-set_target_properties(ComputeNodeAreasFromSurfaceMesh PROPERTIES FOLDER Utilities)
-target_link_libraries(ComputeNodeAreasFromSurfaceMesh
-    MeshLib
-    ${OGS_VTK_REQUIRED_LIBS}
+set(TOOLS
+    ComputeNodeAreasFromSurfaceMesh
+    convertVtkDataArrayToVtkDataArray
+    createNeumannBc
+    scaleProperty
 )
-
-add_executable(scaleProperty scaleProperty.cpp)
-set_target_properties(scaleProperty PROPERTIES FOLDER Utilities)
-target_link_libraries(scaleProperty
-    MeshLib
-    ${OGS_VTK_REQUIRED_LIBS}
-)
-
-add_executable(createNeumannBc createNeumannBc.cpp)
-set_target_properties(createNeumannBc PROPERTIES FOLDER Utilities)
-target_link_libraries(createNeumannBc
-    MeshLib
-    ${OGS_VTK_REQUIRED_LIBS}
-)
-
-add_executable(convertVtkDataArrayToVtkDataArray ConvertVtkDataArrayToVtkDataArray.cpp )
-target_link_libraries(convertVtkDataArrayToVtkDataArray MeshLib)
-set_target_properties(convertVtkDataArrayToVtkDataArray PROPERTIES FOLDER Utilities)
+foreach(TOOL ${TOOLS})
+    add_executable(${TOOL} ${TOOL}.cpp)
+    target_link_libraries(${TOOL} MeshLib)
+endforeach()
+set_target_properties(${TOOLS} PROPERTIES FOLDER Utilities)
+install(TARGETS ${TOOLS} RUNTIME DESTINATION bin COMPONENT Utilities)
 
 add_subdirectory(PartitionMesh)
-
-####################
-### Installation ###
-####################
-install(TARGETS
-    convertVtkDataArrayToVtkDataArray
-    RUNTIME DESTINATION bin COMPONENT Utilities
-)

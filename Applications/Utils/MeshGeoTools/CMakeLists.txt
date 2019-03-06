@@ -1,25 +1,11 @@
-add_executable( ComputeSurfaceNodeIDsInPolygonalRegion ComputeSurfaceNodeIDsInPolygonalRegion.cpp )
-set_target_properties( ComputeSurfaceNodeIDsInPolygonalRegion PROPERTIES FOLDER Utilities)
-target_link_libraries( ComputeSurfaceNodeIDsInPolygonalRegion
-    MeshLib
-    GeoLib
-    MathLib
-    ApplicationsFileIO
-    ${OGS_VTK_REQUIRED_LIBS}
+set(TOOLS
+    computeSurfaceNodeIDsInPolygonalRegion
+    constructMeshesFromGeometry
+    identifySubdomains
 )
-
-add_executable(constructMeshesFromGeometry ConstructMeshesFromGeometry.cpp )
-set_target_properties(constructMeshesFromGeometry PROPERTIES FOLDER Utilities)
-target_link_libraries(constructMeshesFromGeometry
-    MeshGeoToolsLib
-    ApplicationsFileIO
-    ${OGS_VTK_REQUIRED_LIBS}
-)
-
-add_executable(identifySubdomains IdentifySubdomains.cpp )
-set_target_properties(identifySubdomains PROPERTIES FOLDER Utilities)
-target_link_libraries(identifySubdomains
-    MeshGeoToolsLib
-    ApplicationsFileIO
-    ${OGS_VTK_REQUIRED_LIBS}
-)
+foreach(TOOL ${TOOLS})
+    add_executable(${TOOL} ${TOOL}.cpp)
+    target_link_libraries(${TOOL} MeshLib ApplicationsFileIO MeshGeoToolsLib)
+endforeach()
+set_target_properties(${TOOLS} PROPERTIES FOLDER Utilities)
+install(TARGETS ${TOOLS} RUNTIME DESTINATION bin COMPONENT Utilities)

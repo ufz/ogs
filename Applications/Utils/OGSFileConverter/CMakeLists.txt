@@ -27,16 +27,11 @@ target_link_libraries(OGSFileConverter
 )
 
 set_target_properties(OGSFileConverter OGSFileConverterLib
-    PROPERTIES
-    FOLDER "Utilities"
+    PROPERTIES FOLDER "Utilities"
 )
 
 if(OGS_USE_PCH)
-    cotire(OGSFileConverter)
+    cotire(OGSFileConverterLib)
 endif()
 
-####################
-### Installation ###
-####################
-install(TARGETS OGSFileConverter RUNTIME DESTINATION bin COMPONENT ogs_cli)
-set(CPACK_PACKAGE_EXECUTABLES ${CPACK_PACKAGE_EXECUTABLES} "OGSFileConverter" "File Converter")
+install(TARGETS OGSFileConverter RUNTIME DESTINATION bin COMPONENT Utilities)
