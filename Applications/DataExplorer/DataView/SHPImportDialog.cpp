@@ -26,6 +26,7 @@
 
 SHPImportDialog::SHPImportDialog(std::string filename,
                                  GeoLib::GEOObjects& geo_objects,
+                                 std::string const& gmsh_path,
                                  QDialog* parent)
     : QDialog(parent),
       _buttonBox(nullptr),
@@ -37,7 +38,8 @@ SHPImportDialog::SHPImportDialog(std::string filename,
       _choice2(nullptr),
       _filename(std::move(filename)),
       _fileType(0),
-      _shpInterface(new FileIO::SHPInterface(geo_objects))
+      _shpInterface(new FileIO::SHPInterface(geo_objects)),
+      _gmsh_path(gmsh_path)
 {
     setupDialog();
     show();
@@ -140,19 +142,19 @@ void SHPImportDialog::accept()
     if (_fileType == 1 && _choice1->isChecked())
         _shpInterface->readSHPFile(_filename,
                                    FileIO::SHPInterface::OGSType::POINT,
-                                   list_name.toStdString());
+                                   list_name.toStdString(), _gmsh_path);
     if (_fileType == 1 && _choice2->isChecked())
         _shpInterface->readSHPFile(_filename,
                                    FileIO::SHPInterface::OGSType::STATION,
-                                   list_name.toStdString());
+                                   list_name.toStdString(), _gmsh_path);
     if (_fileType == 2 && _choice1->isChecked())
         _shpInterface->readSHPFile(_filename,
                                    FileIO::SHPInterface::OGSType::POLYLINE,
-                                   list_name.toStdString());
+                                   list_name.toStdString(), _gmsh_path);
     if (_fileType == 2 && _choice2->isChecked())
         _shpInterface->readSHPFile(_filename,
                                    FileIO::SHPInterface::OGSType::POLYGON,
-                                   list_name.toStdString());
+                                   list_name.toStdString(), _gmsh_path);
     emit shpLoaded(list_name);
 
     this->done(QDialog::Accepted);

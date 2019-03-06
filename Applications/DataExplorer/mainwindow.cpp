@@ -480,9 +480,11 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
         {
             std::string unique_name;
             std::vector<std::string> errors;
+            std::string const gmsh_path =
+                settings.value("DataExplorerGmshPath").toString().toStdString();
             if (!FileIO::Legacy::readGLIFileV4(fileName.toStdString(),
                                                _project.getGEOObjects(),
-                                               unique_name, errors))
+                                               unique_name, errors, gmsh_path))
             {
                 for (auto& error : errors)
                     OGSError::box(QString::fromStdString(error));
@@ -643,7 +645,9 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
     }
     else if (t == ImportFileType::SHAPE)
     {
-        SHPImportDialog dlg(fileName.toStdString(), _project.getGEOObjects());
+        SHPImportDialog dlg(
+            fileName.toStdString(), _project.getGEOObjects(),
+            settings.value("DataExplorerGmshPath").toString().toStdString());
         dlg.exec();
         QDir dir = QDir(fileName);
         settings.setValue("lastOpenedShapeFileDirectory", dir.absolutePath());
