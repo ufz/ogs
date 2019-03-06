@@ -64,6 +64,9 @@ private:
     bool _use_compressor;
 };
 
+int writeVtu(MeshLib::Mesh const& mesh, std::string const& file_name,
+             int const data_mode = vtkXMLWriter::Binary);
+
 } // end namespace IO
 } // end namespace MeshLib
 
