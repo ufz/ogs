@@ -173,6 +173,11 @@ int main (int argc, char* argv[])
 
     std::unique_ptr<MeshLib::Mesh> mesh(MeshLib::IO::readMeshFromFile(input_mesh_arg.getValue().c_str()));
 
+    if (!mesh)
+    {
+        return EXIT_FAILURE;
+    }
+
     INFO("Reordering nodes... ");
     if (!method_arg.isSet() || method_arg.getValue() == 1)
     {

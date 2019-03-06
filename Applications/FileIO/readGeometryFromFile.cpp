@@ -22,8 +22,9 @@
 
 namespace FileIO
 {
-void
-readGeometryFromFile(std::string const& fname, GeoLib::GEOObjects & geo_objs)
+void readGeometryFromFile(std::string const& fname,
+                          GeoLib::GEOObjects& geo_objs,
+                          std::string const& gmsh_path)
 {
     if (BaseLib::getFileExtension(fname) == "gml")
     {
@@ -32,7 +33,8 @@ readGeometryFromFile(std::string const& fname, GeoLib::GEOObjects & geo_objs)
     } else {
         std::vector<std::string> errors;
         std::string geo_name; // geo_name is output of the reading function
-        FileIO::Legacy::readGLIFileV4(fname, geo_objs, geo_name, errors);
+        FileIO::Legacy::readGLIFileV4(
+            fname, geo_objs, geo_name, errors, gmsh_path);
     }
 
     std::vector<std::string> geo_names;

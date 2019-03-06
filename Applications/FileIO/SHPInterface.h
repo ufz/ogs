@@ -63,7 +63,8 @@ public:
     bool readSHPInfo(const std::string &filename, int &shapeType, int &numberOfEntities);
 
     /// Reads data from the shape file.
-    void readSHPFile(const std::string &filename, OGSType choice, const std::string &listName);
+    void readSHPFile(const std::string& filename, OGSType choice,
+                     const std::string& listName, std::string const& gmsh_path);
 
     /// Writes a 2D mesh into a shapefile using one polygon for every element
     /// (based on request by AS, open for discussion)
@@ -81,7 +82,9 @@ private:
     void readPolylines (const SHPHandle &hSHP, int numberOfElements, std::string listName);
 
     /// Reads lines into a vector of Polyline and Surface objects.
-    void readPolygons  (const SHPHandle &hSHP, int numberOfElements, const std::string& listName);
+    void readPolygons(const SHPHandle& hSHP, int numberOfElements,
+                      const std::string& listName,
+                      std::string const& gmsh_path);
 
     GeoLib::GEOObjects& _geoObjects;
 };

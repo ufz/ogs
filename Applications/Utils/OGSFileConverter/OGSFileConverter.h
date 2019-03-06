@@ -26,13 +26,14 @@ class OGSFileConverter : public QDialog, private Ui_OGSFileConverter
 
 public:
     /// Constructor
-    OGSFileConverter(QWidget* parent = nullptr);
+    OGSFileConverter(std::string const& gmsh_path, QWidget* parent = nullptr);
     /// Destructor
     ~OGSFileConverter() override;
 
 private:
     /// Checks if a given file already exists
     bool fileExists(const std::string &file_name) const;
+    std::string const _gmsh_path;
 
 private slots:
     /// Converts all files in the input list and writes the new files to the output directory with the same file name + updated extension.

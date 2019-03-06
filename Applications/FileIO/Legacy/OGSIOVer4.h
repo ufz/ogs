@@ -32,7 +32,8 @@ namespace Legacy
 bool readGLIFileV4 (const std::string& fname,
                     GeoLib::GEOObjects& geo,
                     std::string& unique_name,
-                    std::vector<std::string>& errors);
+                    std::vector<std::string>& errors,
+                    std::string const& gmsh_path);
 
 /** Writes geometric objects from a specific geometry to a gli-file */
 void writeGLIFileV4 (const std::string& fname,

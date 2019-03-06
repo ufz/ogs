@@ -480,9 +480,11 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
         {
             std::string unique_name;
             std::vector<std::string> errors;
+            std::string const gmsh_path =
+                settings.value("DataExplorerGmshPath").toString().toStdString();
             if (!FileIO::Legacy::readGLIFileV4(fileName.toStdString(),
                                                _project.getGEOObjects(),
-                                               unique_name, errors))
+                                               unique_name, errors, gmsh_path))
             {
                 for (auto& error : errors)
                     OGSError::box(QString::fromStdString(error));
@@ -643,7 +645,9 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
     }
     else if (t == ImportFileType::SHAPE)
     {
-        SHPImportDialog dlg(fileName.toStdString(), _project.getGEOObjects());
+        SHPImportDialog dlg(
+            fileName.toStdString(), _project.getGEOObjects(),
+            settings.value("DataExplorerGmshPath").toString().toStdString());
         dlg.exec();
         QDir dir = QDir(fileName);
         settings.setValue("lastOpenedShapeFileDirectory", dir.absolutePath());
@@ -960,13 +964,14 @@ void MainWindow::callGMSH(std::vector<std::string> & selectedGeometries,
 
                 if (!gmsh_path.empty())
                 {
-                std::string fname (fileName.toStdString());
-                    std::string gmsh_command = "\"" + gmsh_path + "\" -2 -algo meshadapt " + fname;
-                    std::size_t pos (fname.rfind ("."));
+                    std::string fname(fileName.toStdString());
+                    std::string gmsh_command =
+                        "\"" + gmsh_path + "\" -2 -algo meshadapt " + fname;
+                    std::size_t pos(fname.rfind("."));
                     if (pos != std::string::npos)
-                        fname = fname.substr (0, pos);
+                        fname = fname.substr(0, pos);
                     gmsh_command += " -o " + fname + ".msh";
-                    auto const return_value = system(gmsh_command.c_str());
+                    auto const return_value = std::system(gmsh_command.c_str());
                     if (return_value != 0)
                     {
                         QString const message =
@@ -983,7 +988,9 @@ void MainWindow::callGMSH(std::vector<std::string> & selectedGeometries,
                     }
                 }
                 else
+                {
                     OGSError::box("Location of GMSH not specified.", "Error");
+                }
             }
             else
                     OGSError::box("Error executing command gmsh - no command processor available", "Error");
@@ -1015,7 +1022,9 @@ void MainWindow::callGMSH(std::vector<std::string> & selectedGeometries,
 
 void MainWindow::showFileConverter()
 {
-    auto* dlg = new OGSFileConverter(this);
+    QSettings settings;
+    auto* dlg = new OGSFileConverter(
+        settings.value("DataExplorerGmshPath").toString().toStdString(), this);
     dlg->setAttribute(Qt::WA_DeleteOnClose);
     dlg->show();
     dlg->raise();

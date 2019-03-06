@@ -56,7 +56,7 @@ TEST_F(OGSIOVer4InterfaceTest, SimpleTIN)
     std::vector<std::string> errors;
     std::string geometry_name("TestGeometry");
     FileIO::Legacy::readGLIFileV4(_gli_fname, geometries, geometry_name,
-                                  errors);
+                                  errors, "dummy_for_gmsh_path");
 
     std::vector<GeoLib::Surface*> const*
         sfcs(geometries.getSurfaceVec(geometry_name));
@@ -80,7 +80,7 @@ TEST_F(OGSIOVer4InterfaceTest, StillCorrectTINWihtAdditionalValueAtEndOfLine)
     std::vector<std::string> errors;
     std::string geometry_name("TestGeometry");
     FileIO::Legacy::readGLIFileV4(_gli_fname, geometries, geometry_name,
-                                  errors);
+                                  errors, "dummy_for_gmsh_path");
 
     std::vector<GeoLib::Surface*> const*
         sfcs(geometries.getSurfaceVec(geometry_name));
@@ -103,7 +103,7 @@ TEST_F(OGSIOVer4InterfaceTest, InvalidTIN_ZeroAreaTri)
     std::vector<std::string> errors;
     std::string geometry_name("TestGeometry");
     FileIO::Legacy::readGLIFileV4(_gli_fname, geometries, geometry_name,
-                                  errors);
+                                  errors, "dummy_for_gmsh_path");
 
     std::vector<GeoLib::Surface*> const*
         sfcs(geometries.getSurfaceVec(geometry_name));
@@ -127,7 +127,7 @@ TEST_F(OGSIOVer4InterfaceTest, InvalidTIN_LineDoesNotStartWithID)
     std::vector<std::string> errors;
     std::string geometry_name("TestGeometry");
     FileIO::Legacy::readGLIFileV4(_gli_fname, geometries, geometry_name,
-                                  errors);
+                                  errors, "dummy_for_gmsh_path");
 
     std::vector<GeoLib::Surface*> const*
         sfcs(geometries.getSurfaceVec(geometry_name));
@@ -150,7 +150,7 @@ TEST_F(OGSIOVer4InterfaceTest, InvalidTIN_PointIsMissing)
     std::vector<std::string> errors;
     std::string geometry_name("TestGeometry");
     FileIO::Legacy::readGLIFileV4(_gli_fname, geometries, geometry_name,
-                                  errors);
+                                  errors, "dummy_for_gmsh_path");
 
     std::vector<GeoLib::Surface*> const*
         sfcs(geometries.getSurfaceVec(geometry_name));
@@ -172,7 +172,7 @@ TEST_F(OGSIOVer4InterfaceTest, InvalidTIN_CoordOfPointIsMissing)
     std::vector<std::string> errors;
     std::string geometry_name("TestGeometry");
     FileIO::Legacy::readGLIFileV4(_gli_fname, geometries, geometry_name,
-                                  errors);
+                                  errors, "dummy_for_gmsh_path");
 
     std::vector<GeoLib::Surface*> const*
         sfcs(geometries.getSurfaceVec(geometry_name));
@@ -194,7 +194,7 @@ TEST_F(OGSIOVer4InterfaceTest, SimpleTIN_AdditionalEmptyLinesAtEnd)
     std::vector<std::string> errors;
     std::string geometry_name("TestGeometry");
     FileIO::Legacy::readGLIFileV4(_gli_fname, geometries, geometry_name,
-                                  errors);
+                                  errors, "dummy_for_gmsh_path");
 
     std::vector<GeoLib::Surface*> const*
         sfcs(geometries.getSurfaceVec(geometry_name));

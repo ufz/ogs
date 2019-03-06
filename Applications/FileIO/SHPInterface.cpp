@@ -53,7 +53,9 @@ bool SHPInterface::readSHPInfo(const std::string &filename, int &shapeType, int 
     return true;
 }
 
-void SHPInterface::readSHPFile(const std::string &filename, OGSType choice, const std::string &listName)
+void SHPInterface::readSHPFile(const std::string& filename, OGSType choice,
+                               const std::string& listName,
+                               std::string const& gmsh_path)
 {
     int shapeType, numberOfElements;
     double padfMinBound[4], padfMaxBound[4];
@@ -78,7 +80,7 @@ void SHPInterface::readSHPFile(const std::string &filename, OGSType choice, cons
     if (((shapeType - 3) % 10 == 0 || (shapeType - 5) % 10 == 0) &&
         (choice == SHPInterface::OGSType::POLYGON))
     {
-        readPolygons(hSHP, numberOfElements, listName);
+        readPolygons(hSHP, numberOfElements, listName, gmsh_path);
     }
 }
 
@@ -184,7 +186,9 @@ void SHPInterface::readPolylines(const SHPHandle &hSHP, int numberOfElements, st
     _geoObjects.addPolylineVec(std::move(lines), listName);
 }
 
-void SHPInterface::readPolygons(const SHPHandle &hSHP, int numberOfElements, const std::string &listName)
+void SHPInterface::readPolygons(const SHPHandle& hSHP, int numberOfElements,
+                                const std::string& listName,
+                                std::string const& gmsh_path)
 {
     readPolylines(hSHP, numberOfElements, listName);
 
@@ -194,7 +198,7 @@ void SHPInterface::readPolygons(const SHPHandle &hSHP, int numberOfElements, con
     for (auto const* polyline : *polylines)
     {
         INFO("Creating a surface by triangulation of the polyline ...");
-        if (FileIO::createSurface(*polyline, _geoObjects, listName))
+        if (FileIO::createSurface(*polyline, _geoObjects, listName, gmsh_path))
         {
             INFO("\t done");
         }

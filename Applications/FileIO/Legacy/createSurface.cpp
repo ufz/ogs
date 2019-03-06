@@ -32,7 +32,8 @@ namespace FileIO
 {
 bool createSurface(GeoLib::Polyline const& ply,
                    GeoLib::GEOObjects& geometries,
-                   std::string const& geometry_name)
+                   std::string const& geometry_name,
+                   std::string const& gmsh_binary)
 {
     if (!ply.isClosed())
     {
@@ -84,7 +85,7 @@ bool createSurface(GeoLib::Polyline const& ply,
     std::string const file_base_name(file_base_name_c);
     gmsh_io.writeToFile(file_base_name + ".geo");
     std::string gmsh_command =
-        "gmsh -2 -algo meshadapt \"" + file_base_name + ".geo\"";
+        gmsh_binary + " -2 -algo meshadapt \"" + file_base_name + ".geo\"";
     gmsh_command += " -o \"" + file_base_name + ".msh\"";
     int const gmsh_return_value = std::system(gmsh_command.c_str());
     if (gmsh_return_value != 0)

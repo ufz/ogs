@@ -170,6 +170,11 @@ int main (int argc, char* argv[])
         "", "file name");
     cmd.add(mesh_arg);
 
+    TCLAP::ValueArg<std::string> gmsh_path_arg("g", "gmsh-path",
+                                               "the path to the gmsh binary",
+                                               false, "", "path as string");
+    cmd.add(gmsh_path_arg);
+
     cmd.parse(argc, argv);
 
     // *** read mesh
@@ -189,7 +194,8 @@ int main (int argc, char* argv[])
 
     // *** read geometry
     GeoLib::GEOObjects geometries;
-    FileIO::readGeometryFromFile(geometry_fname.getValue(), geometries);
+    FileIO::readGeometryFromFile(geometry_fname.getValue(), geometries,
+                                 gmsh_path_arg.getValue());
 
     std::string geo_name;
     {
