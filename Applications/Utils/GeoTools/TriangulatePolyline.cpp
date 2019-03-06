@@ -53,9 +53,13 @@ int main(int argc, char *argv[])
     TCLAP::ValueArg<std::string>  input_arg("i", "input",  "GML input file (*.gml)", true, "", "string");
     TCLAP::ValueArg<std::string> output_arg("o", "output", "GML output file (*.gml)", true, "", "string");
     TCLAP::ValueArg<std::string>   name_arg("n", "name",   "Name of polyline in given file", true, "", "string");
+    TCLAP::ValueArg<std::string> gmsh_path_arg("g", "gmsh-path",
+                                               "the path to the gmsh binary",
+                                               false, "", "path as string");
     cmd.add( input_arg );
     cmd.add( name_arg );
     cmd.add( output_arg );
+    cmd.add(gmsh_path_arg);
     cmd.parse( argc, argv );
 
     std::string const& file_name(input_arg.getValue());
@@ -114,7 +118,8 @@ int main(int argc, char *argv[])
     }
 
     INFO ("Creating a surface by triangulation of the polyline ...");
-    if (FileIO::createSurface(*line, geo_objects, geo_names[0]))
+    if (FileIO::createSurface(*line, geo_objects, geo_names[0],
+                              gmsh_path_arg.getValue()))
     {
         INFO("\t done");
     }
