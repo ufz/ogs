@@ -23,6 +23,7 @@
 
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
+#include "MeshLib/IO/VtkIO/VtuInterface.h"
 
 #include "MathLib/Vector3.h"
 
@@ -87,10 +88,21 @@ int main (int argc, char* argv[])
         90, "floating point value");
     cmd.add(angle_arg);
 
+    TCLAP::ValueArg<bool> use_ascii_arg(
+        "", "ascii_output", "use ascii format for data in the vtu output ", false,
+        false, "boolean value");
+    cmd.add(use_ascii_arg);
+
     cmd.parse(argc, argv);
 
     std::unique_ptr<MeshLib::Mesh const> mesh(
         MeshLib::IO::readMeshFromFile(mesh_in.getValue()));
+
+    if (!mesh)
+    {
+        return EXIT_FAILURE;
+    }
+
     INFO("Mesh read: %u nodes, %u elements.", mesh->getNumberOfNodes(),
          mesh->getNumberOfElements());
 
@@ -107,7 +119,14 @@ int main (int argc, char* argv[])
     {
         out_fname = BaseLib::dropFileExtension(mesh_in.getValue()) + "_sfc.vtu";
     }
-    MeshLib::IO::writeMeshToFile(*surface_mesh, out_fname);
 
+    if (use_ascii_arg.getValue())
+    {
+        MeshLib::IO::writeVtu(*surface_mesh, out_fname, vtkXMLWriter::Ascii);
+    }
+    else
+    {
+        MeshLib::IO::writeMeshToFile(*surface_mesh, out_fname);
+    }
     return EXIT_SUCCESS;
 }
