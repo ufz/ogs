@@ -47,12 +47,18 @@ int main (int argc, char* argv[])
                                           "the name of the geometry file which contains polylines", true, "", "the name of the geometry file");
     cmd.add(geoFileArg);
 
+    TCLAP::ValueArg<std::string> gmsh_path_arg("g", "gmsh-path",
+                                               "the path to the gmsh binary",
+                                               false, "", "path as string");
+    cmd.add(gmsh_path_arg);
+
     // parse arguments
     cmd.parse(argc, argv);
 
     // read GEO objects
     GeoLib::GEOObjects geo_objs;
-    FileIO::readGeometryFromFile(geoFileArg.getValue(), geo_objs);
+    FileIO::readGeometryFromFile(geoFileArg.getValue(), geo_objs,
+                                 gmsh_path_arg.getValue());
 
     std::vector<std::string> geo_names;
     geo_objs.getGeometryNames (geo_names);
