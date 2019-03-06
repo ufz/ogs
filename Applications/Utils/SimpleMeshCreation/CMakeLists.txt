@@ -6,25 +6,16 @@ if(OGS_BUILD_GUI)
         ApplicationsFileIO
         MeshLib
     )
-endif() # OGS_BUILD_GUI (VtkVis-target is existing)
-
+endif()
 
 add_executable(generateStructuredMesh generateStructuredMesh.cpp)
 target_link_libraries(generateStructuredMesh MeshLib)
 set_target_properties(generateStructuredMesh PROPERTIES FOLDER Utilities)
 
-####################
-### Installation ###
-####################
-install(TARGETS
-    generateStructuredMesh
-    RUNTIME DESTINATION bin
-    COMPONENT Utilities
-)
-if(TARGET VtkVis)
-    install(TARGETS
-        createMeshElemPropertiesFromASCRaster
+install(TARGETS generateStructuredMesh RUNTIME DESTINATION bin
+    COMPONENT Utilities)
+if(OGS_BUILD_GUI)
+    install(TARGETS createMeshElemPropertiesFromASCRaster
         RUNTIME DESTINATION bin
-        COMPONENT Utilities
-    )
+        COMPONENT Utilities)
 endif()
