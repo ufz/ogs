@@ -88,13 +88,18 @@ int main (int argc, char* argv[])
         "", "file name of input geometry");
     cmd.add(geo_in);
 
+    TCLAP::ValueArg<std::string> gmsh_path_arg("g", "gmsh-path",
+                                               "the path to the gmsh binary",
+                                               false, "", "path as string");
+    cmd.add(gmsh_path_arg);
     cmd.parse(argc, argv);
 
     std::unique_ptr<MeshLib::Mesh const> mesh(MeshLib::IO::readMeshFromFile(mesh_in.getValue()));
     INFO("Mesh read: %u nodes, %u elements.", mesh->getNumberOfNodes(), mesh->getNumberOfElements());
 
     GeoLib::GEOObjects geo_objs;
-    FileIO::readGeometryFromFile(geo_in.getValue(), geo_objs);
+    FileIO::readGeometryFromFile(geo_in.getValue(), geo_objs,
+                                 gmsh_path_arg.getValue());
     std::vector<std::string> geo_names;
     geo_objs.getGeometryNames(geo_names);
     INFO("Geometry '%s' read: %u points, %u polylines.",
