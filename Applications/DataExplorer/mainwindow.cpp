@@ -1022,7 +1022,9 @@ void MainWindow::callGMSH(std::vector<std::string> & selectedGeometries,
 
 void MainWindow::showFileConverter()
 {
-    auto* dlg = new OGSFileConverter(this);
+    QSettings settings;
+    auto* dlg = new OGSFileConverter(
+        settings.value("DataExplorerGmshPath").toString().toStdString(), this);
     dlg->setAttribute(Qt::WA_DeleteOnClose);
     dlg->show();
     dlg->raise();
