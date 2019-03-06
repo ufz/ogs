@@ -1,5 +1,5 @@
 /**
- * @file ComputeSurfaceNodeIDsInPolygonalRegion.cpp
+ * @file
  * @brief Computes mesh node ids of mesh nodes within a polygonal region, that
  * resides on the surface.
  *
