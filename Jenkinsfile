@@ -346,12 +346,10 @@ pipeline {
               def num_threads = env.NUM_THREADS
               bat 'git submodule sync'
               bat 'conan remove --locks'
-              // CLI + GUI
-              configure {
+              configure { // CLI + GUI
                 cmakeOptions =
                   "-DBUILD_SHARED_LIBS=OFF " +
                   '-DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON ' +
-                  '-DOGS_USE_PYTHON=ON ' +
                   '-DOGS_BUILD_GUI=ON ' +
                   '-DOGS_BUILD_UTILS=ON ' +
                   '-DOGS_BUILD_SWMM=ON '
@@ -361,6 +359,11 @@ pipeline {
                 log="build.log"
                 cmd_args="-l ${num_threads}"
               }
+              configure { // CLI + GUI + Python
+                cmakeOptions = '-DOGS_USE_PYTHON=ON '
+                keepDir = true
+              }
+              build { target="package" }
               build { target="tests" }
               build { target="ctest" }
             }
