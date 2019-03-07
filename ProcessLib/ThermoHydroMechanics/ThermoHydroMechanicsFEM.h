@@ -1,6 +1,6 @@
 /**
  * \copyright
- * Copyright (c) 2012-2018, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
@@ -123,109 +123,108 @@ public:
 
 private:
     std::size_t setSigma(double const* values)
+    {
+        auto const kelvin_vector_size =
+            MathLib::KelvinVector::KelvinVectorDimensions<
+                DisplacementDim>::value;
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
+
+        std::vector<double> ip_sigma_values;
+        auto sigma_values =
+            Eigen::Map<Eigen::Matrix<double, kelvin_vector_size, Eigen::Dynamic,
+                                     Eigen::ColMajor> const>(
+                values, kelvin_vector_size, n_integration_points);
+
+        for (unsigned ip = 0; ip < n_integration_points; ++ip)
         {
-            auto const kelvin_vector_size =
-                MathLib::KelvinVector::KelvinVectorDimensions<
-                    DisplacementDim>::value;
-            unsigned const n_integration_points =
-                _integration_method.getNumberOfPoints();
-
-            std::vector<double> ip_sigma_values;
-            auto sigma_values =
-                Eigen::Map<Eigen::Matrix<double, kelvin_vector_size, Eigen::Dynamic,
-                                         Eigen::ColMajor> const>(
-                    values, kelvin_vector_size, n_integration_points);
-
-            for (unsigned ip = 0; ip < n_integration_points; ++ip)
-            {
-                _ip_data[ip].sigma =
-                    MathLib::KelvinVector::symmetricTensorToKelvinVector(
-                        sigma_values.col(ip));
-            }
-
-            return n_integration_points;
+            _ip_data[ip].sigma =
+                MathLib::KelvinVector::symmetricTensorToKelvinVector(
+                    sigma_values.col(ip));
         }
 
-        // TODO (naumov) This method is same as getIntPtSigma but for arguments and
-        // the ordering of the cache_mat.
-        // There should be only one.
-        std::vector<double> getSigma() const override
+        return n_integration_points;
+    }
+
+    // TODO (naumov) This method is same as getIntPtSigma but for arguments and
+    // the ordering of the cache_mat.
+    // There should be only one.
+    std::vector<double> getSigma() const override
+    {
+        auto const kelvin_vector_size =
+            MathLib::KelvinVector::KelvinVectorDimensions<
+                DisplacementDim>::value;
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
+
+        std::vector<double> ip_sigma_values;
+        auto cache_mat = MathLib::createZeroedMatrix<Eigen::Matrix<
+            double, Eigen::Dynamic, kelvin_vector_size, Eigen::RowMajor>>(
+            ip_sigma_values, n_integration_points, kelvin_vector_size);
+
+        for (unsigned ip = 0; ip < n_integration_points; ++ip)
         {
-            auto const kelvin_vector_size =
-                MathLib::KelvinVector::KelvinVectorDimensions<
-                    DisplacementDim>::value;
-            unsigned const n_integration_points =
-                _integration_method.getNumberOfPoints();
-
-            std::vector<double> ip_sigma_values;
-            auto cache_mat = MathLib::createZeroedMatrix<Eigen::Matrix<
-                double, Eigen::Dynamic, kelvin_vector_size, Eigen::RowMajor>>(
-                ip_sigma_values, n_integration_points, kelvin_vector_size);
-
-            for (unsigned ip = 0; ip < n_integration_points; ++ip)
-            {
-                auto const& sigma = _ip_data[ip].sigma_eff;
-                cache_mat.row(ip) =
-                    MathLib::KelvinVector::kelvinVectorToSymmetricTensor(sigma);
-            }
-
-            return ip_sigma_values;
+            auto const& sigma = _ip_data[ip].sigma_eff;
+            cache_mat.row(ip) =
+                MathLib::KelvinVector::kelvinVectorToSymmetricTensor(sigma);
         }
 
+        return ip_sigma_values;
+    }
 
-        std::vector<double> const& getIntPtSigma(
-                const double /*t*/,
-                GlobalVector const& /*current_solution*/,
-                NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-                std::vector<double>& cache) const override
-            {
-                static const int kelvin_vector_size =
-                    MathLib::KelvinVector::KelvinVectorDimensions<
-                        DisplacementDim>::value;
-                unsigned const n_integration_points =
-                    _integration_method.getNumberOfPoints();
+    std::vector<double> const& getIntPtSigma(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
+        std::vector<double>& cache) const override
+    {
+        static const int kelvin_vector_size =
+            MathLib::KelvinVector::KelvinVectorDimensions<
+                DisplacementDim>::value;
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
 
-                cache.clear();
-                auto cache_mat = MathLib::createZeroedMatrix<Eigen::Matrix<
-                    double, kelvin_vector_size, Eigen::Dynamic, Eigen::RowMajor>>(
-                    cache, kelvin_vector_size, n_integration_points);
+        cache.clear();
+        auto cache_mat = MathLib::createZeroedMatrix<Eigen::Matrix<
+            double, kelvin_vector_size, Eigen::Dynamic, Eigen::RowMajor>>(
+            cache, kelvin_vector_size, n_integration_points);
 
-                for (unsigned ip = 0; ip < n_integration_points; ++ip)
-                {
-                    auto const& sigma = _ip_data[ip].sigma_eff;
-                    cache_mat.col(ip) =
-                        MathLib::KelvinVector::kelvinVectorToSymmetricTensor(sigma);
-                }
+        for (unsigned ip = 0; ip < n_integration_points; ++ip)
+        {
+            auto const& sigma = _ip_data[ip].sigma_eff;
+            cache_mat.col(ip) =
+                MathLib::KelvinVector::kelvinVectorToSymmetricTensor(sigma);
+        }
 
-                return cache;
-            }
+        return cache;
+    }
 
-            virtual std::vector<double> const& getIntPtEpsilon(
-                const double /*t*/,
-                GlobalVector const& /*current_solution*/,
-                NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-                std::vector<double>& cache) const override
-            {
-                auto const kelvin_vector_size =
-                    MathLib::KelvinVector::KelvinVectorDimensions<
-                        DisplacementDim>::value;
-                unsigned const n_integration_points =
-                    _integration_method.getNumberOfPoints();
+    virtual std::vector<double> const& getIntPtEpsilon(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
+        std::vector<double>& cache) const override
+    {
+        auto const kelvin_vector_size =
+            MathLib::KelvinVector::KelvinVectorDimensions<
+                DisplacementDim>::value;
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
 
-                cache.clear();
-                auto cache_mat = MathLib::createZeroedMatrix<Eigen::Matrix<
-                    double, kelvin_vector_size, Eigen::Dynamic, Eigen::RowMajor>>(
-                    cache, kelvin_vector_size, n_integration_points);
+        cache.clear();
+        auto cache_mat = MathLib::createZeroedMatrix<Eigen::Matrix<
+            double, kelvin_vector_size, Eigen::Dynamic, Eigen::RowMajor>>(
+            cache, kelvin_vector_size, n_integration_points);
 
-                for (unsigned ip = 0; ip < n_integration_points; ++ip)
-                {
-                    auto const& eps = _ip_data[ip].eps;
-                    cache_mat.col(ip) =
-                        MathLib::KelvinVector::kelvinVectorToSymmetricTensor(eps);
-                }
+        for (unsigned ip = 0; ip < n_integration_points; ++ip)
+        {
+            auto const& eps = _ip_data[ip].eps;
+            cache_mat.col(ip) =
+                MathLib::KelvinVector::kelvinVectorToSymmetricTensor(eps);
+        }
 
-                return cache;
-            }
+        return cache;
+    }
 
 private:
     ThermoHydroMechanicsProcessData<DisplacementDim>& _process_data;
@@ -245,6 +244,8 @@ private:
         typename ShapeMatricesTypeDisplacement::ShapeMatrices::ShapeType>
         _secondary_data;
 
+    // The shape function of pressure has the same form with the shape function
+    // of temperature
     static const int temperature_index = 0;
     static const int temperature_size = ShapeFunctionPressure::NPOINTS;
     static const int pressure_index = ShapeFunctionPressure::NPOINTS;

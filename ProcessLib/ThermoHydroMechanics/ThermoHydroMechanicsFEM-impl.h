@@ -1,6 +1,6 @@
 /**
  * \copyright
- * Copyright (c) 2012-2018, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
@@ -15,7 +15,6 @@
 #include "MathLib/KelvinVector.h"
 #include "NumLib/Function/Interpolation.h"
 #include "ProcessLib/CoupledSolutionsForStaggeredScheme.h"
-#include <iostream>
 
 namespace ProcessLib
 {
@@ -64,7 +63,7 @@ ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         _ip_data.emplace_back(solid_material);
         auto& ip_data = _ip_data[ip];
         auto const& sm_u = shape_matrices_u[ip];
-        _ip_data[ip].integration_weight =
+        _ip_data.integration_weight =
             _integration_method.getWeightedPoint(ip).getWeight() *
             sm_u.integralMeasure * sm_u.detJ;
 
@@ -87,6 +86,7 @@ ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     }
 }
 
+//Assembles the local Jacobian matrix. So far, the linearisation of HT part is not considered as that in HT process.
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           typename IntegrationMethod, int DisplacementDim>
 void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
@@ -199,7 +199,6 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const& N_T = N_p;
         auto const& dNdx_T = dNdx_p;
         auto const T_int_pt = N_T * T;
-        // auto const p_int_pt = N_T * p;
 
         auto const x_coord =
             interpolateXCoordinate<ShapeFunctionDisplacement,
@@ -215,6 +214,9 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const& sigma_eff = _ip_data[ip].sigma_eff;
 
         double const S = _process_data.specific_storage(t, x_position)[0];
+        // TODO: change it like auto const K_over_mu
+        // hydraulicConductivity<GlobalDim>(_process_data.intrinsic_permeability(t,
+        // x_position)/...
         double const K_over_mu =
             _process_data.intrinsic_permeability(t, x_position)[0] /
             _process_data.fluid_viscosity(t, x_position)[0];
@@ -224,8 +226,14 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         double const beta_f =
             _process_data.fluid_volumetric_thermal_expansion_coefficient(
                 t, x_position)[0];
+        // TODO: change it like auto const lambda_f =
+        // hydraulicConductivity<GlobalDim>(_process_data.intrinsic_permeability(t,
+        // x_position)/...
         double const lambda_f =
             _process_data.fluid_thermal_conductivity(t, x_position)[0];
+        // TODO: change it like auto const lambda_s =
+        // hydraulicConductivity<GlobalDim>(_process_data.intrinsic_permeability(t,
+        // x_position)/...
         double const lambda_s =
             _process_data.solid_thermal_conductivity(t, x_position)[0];
         double const C_f =
@@ -304,7 +312,7 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         KTT.noalias() += (dNdx_T.transpose() * lambda * dNdx_T +
                           dNdx_T.transpose() * velocity * N_p * rho_f * C_f) *
                          w;
-        // coefficient matrix which is used for caculating the residual
+        // coefficient matrix which is used for calculating the residual
         auto const heat_capacity =
             porosity * C_f * rho_f + (1 - porosity) * C_s * rho_sr;
         MTT.noalias() += N_T.transpose() * heat_capacity * N_T * w;
@@ -502,7 +510,8 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                          *_process_data.pressure_interpolated);
 
     auto T = Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
-        pressure_size> const>(local_x.data() + temperature_index, temperature_size);
+        pressure_size> const>(local_x.data() + temperature_index,
+                              temperature_size);
 
     NumLib::interpolateToHigherOrderNodes<
         ShapeFunctionPressure, typename ShapeFunctionDisplacement::MeshElement,

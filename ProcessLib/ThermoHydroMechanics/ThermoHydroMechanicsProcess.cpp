@@ -1,6 +1,6 @@
 /**
  * \copyright
- * Copyright (c) 2012-2018, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
@@ -173,19 +173,17 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
 
     _secondary_variables.addSecondaryVariable(
         "sigma",
-        makeExtrapolator(
-            MathLib::KelvinVector::KelvinVectorType<
-                DisplacementDim>::RowsAtCompileTime,
-            getExtrapolator(), _local_assemblers,
-            &LocalAssemblerInterface::getIntPtSigma));
+        makeExtrapolator(MathLib::KelvinVector::KelvinVectorType<
+                             DisplacementDim>::RowsAtCompileTime,
+                         getExtrapolator(), _local_assemblers,
+                         &LocalAssemblerInterface::getIntPtSigma));
 
     _secondary_variables.addSecondaryVariable(
         "epsilon",
-        makeExtrapolator(
-            MathLib::KelvinVector::KelvinVectorType<
-                DisplacementDim>::RowsAtCompileTime,
-            getExtrapolator(), _local_assemblers,
-            &LocalAssemblerInterface::getIntPtEpsilon));
+        makeExtrapolator(MathLib::KelvinVector::KelvinVectorType<
+                             DisplacementDim>::RowsAtCompileTime,
+                         getExtrapolator(), _local_assemblers,
+                         &LocalAssemblerInterface::getIntPtEpsilon));
 
     _secondary_variables.addSecondaryVariable(
         "velocity",

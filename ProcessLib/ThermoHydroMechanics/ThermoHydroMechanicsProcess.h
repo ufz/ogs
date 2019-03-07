@@ -1,6 +1,6 @@
 /**
  * \copyright
- * Copyright (c) 2012-2018, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
@@ -19,9 +19,9 @@ namespace ThermoHydroMechanics
 {
 struct LocalAssemblerInterface;
 
-/// Linear kinematics poro-mechanical/biphasic (fluid-solid mixture) model.
+/// Thermally induced deformation process in linear kinematics poro-mechanical/biphasic model.
 ///
-/// The mixture momentum balance and the mixture mass balance are solved under
+/// The mixture momentum balance, the mixture mass balance and the mixture energy balance are solved under
 /// fully saturated conditions.
 template <int DisplacementDim>
 class ThermoHydroMechanicsProcess final : public Process
