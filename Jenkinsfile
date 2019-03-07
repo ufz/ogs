@@ -111,7 +111,9 @@ pipeline {
                   '-DOGS_CPU_ARCHITECTURE=generic ' +
                   '-DOGS_BUILD_UTILS=ON ' +
                   '-DOGS_CONAN_BUILD=outdated ' +
-                  '-DOGS_USE_CVODE=ON '
+                  '-DOGS_USE_CVODE=ON ' +
+                  '-DOGS_USE_MFRONT=ON ' +
+                  '-DOGS_USE_PYTHON=ON '
               }
               build {
                 target="package"
