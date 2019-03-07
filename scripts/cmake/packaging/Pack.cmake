@@ -16,8 +16,11 @@ set(CPACK_RESOURCE_FILE_README "${PROJECT_SOURCE_DIR}/README.md")
 # set(CPACK_RESOURCE_FILE_WELCOME "${PROJECT_SOURCE_DIR}/README.md")
 
 # Package file name
+if(OGS_USE_PYTHON)
+    set(SUFFIX "${SUFFIX}-python-${Python_VERSION}")
+endif()
 if(OGS_BUILD_GUI)
-    set(SUFFIX "-de")
+    set(SUFFIX "${SUFFIX}-de")
 endif()
 if(OGS_BUILD_UTILS)
     set(SUFFIX "${SUFFIX}-utils")
