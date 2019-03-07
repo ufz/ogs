@@ -9,13 +9,13 @@
 
 #pragma once
 
+#include "GenericNaturalBoundaryConditionLocalAssembler.h"
+#include "MeshLib/Elements/MapBulkElementPoint.h"
 #include "MeshLib/PropertyVector.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Function/Interpolation.h"
 #include "ProcessLib/Parameter/MeshNodeParameter.h"
 #include "ProcessLib/Process.h"
-#include "GenericNaturalBoundaryConditionLocalAssembler.h"
-#include "MeshLib/Elements/MapBulkElementPoint.h"
 
 namespace ProcessLib
 {
@@ -25,7 +25,6 @@ struct HCOpenBoundaryConditionData
     MeshLib::PropertyVector<std::size_t> const bulk_face_ids;
     MeshLib::PropertyVector<std::size_t> const bulk_element_ids;
     Process const& process;
-
 };
 
 template <typename ShapeFunction, typename IntegrationMethod,
@@ -64,7 +63,8 @@ public:
         // Get element nodes for the interpolation from nodes to
         // integration point.
         NodalVectorType const boundary_permeability_node_values =
-            _data.boundary_permeability.getNodalValuesOnElement(Base::_element, t);
+            _data.boundary_permeability.getNodalValuesOnElement(Base::_element,
+                                                                t);
         auto surface_element_normal =
             MeshLib::FaceRule::getSurfaceNormal(&(Base::_element));
         surface_element_normal.normalize();
@@ -77,13 +77,13 @@ public:
         auto const indices =
             NumLib::getIndices(mesh_item_id, dof_table_boundary);
 
-        std::vector<double> const local_values =
-            x.get(indices);
+        std::vector<double> const local_values = x.get(indices);
 
-        std::size_t bulk_element_id = _data.bulk_element_ids[Base::_element.getID()];
+        std::size_t bulk_element_id =
+            _data.bulk_element_ids[Base::_element.getID()];
         std::size_t bulk_face_id = _data.bulk_face_ids[Base::_element.getID()];
         for (unsigned ip = 0; ip < n_integration_points; ip++)
-        { 
+        {
             auto const& n_and_weight = Base::_ns_and_weights[ip];
             auto const& N = n_and_weight.N;
             auto const& w = n_and_weight.weight;
@@ -95,11 +95,14 @@ public:
 
             double int_pt_value = 0.0;
 
-            NumLib::shapeFunctionInterpolate(local_values, N,
-                                             int_pt_value);
+            NumLib::shapeFunctionInterpolate(local_values, N, int_pt_value);
 
-            NodalVectorType const neumann_node_values = -boundary_permeability_node_values * int_pt_value *_data.process.getFlux(bulk_element_id, bulk_element_point, t, x).dot(Eigen::Map<Eigen::RowVectorXd const>(
-                            surface_element_normal.getCoords(), _data.process.getMesh().getDimension()));
+            NodalVectorType const neumann_node_values =
+                -boundary_permeability_node_values * int_pt_value *
+                _data.process.getFlux(bulk_element_id, bulk_element_point, t, x)
+                    .dot(Eigen::Map<Eigen::RowVectorXd const>(
+                        surface_element_normal.getCoords(),
+                        _data.process.getMesh().getDimension()));
             _local_rhs.noalias() += N * neumann_node_values.dot(N) * w;
         }
 
