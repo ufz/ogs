@@ -129,6 +129,7 @@ public:
         // for correct results it is necessary to multiply the normal with -1
         surface_element_normal *= -1;
 
+        double element_area = 0.0;
         std::size_t const n_integration_points =
             _integration_method.getNumberOfPoints();
         // specific_flux[id_of_element] +=
@@ -158,6 +159,14 @@ public:
                     bulk_grad_times_normal * _detJ_times_integralMeasure[ip] *
                     wp.getWeight();
             }
+            element_area += _detJ_times_integralMeasure[ip] * wp.getWeight();
+        }
+        for (int component_id(0);
+             component_id < specific_flux.getNumberOfComponents();
+             ++component_id)
+        {
+            specific_flux.getComponent(element_id, component_id) /=
+                element_area;
         }
     }
 
