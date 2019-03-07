@@ -24,10 +24,6 @@ std::unique_ptr<HCOpenBoundaryCondition> createHCOpenBoundaryCondition(
     DBUG(
         "Constructing open boundary for Component Transport process from "
         "config.");
-    //    //! \ogs_file_param{prj__processes__process__type}
-    //    config.checkConfigParameter("type", "ComponentTransport");
-    //    How can I check for process type == Component Transport? The method
-    //    above does not work.
     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__type}
     config.checkConfigParameter("type", "HCOpenBoundary");
 

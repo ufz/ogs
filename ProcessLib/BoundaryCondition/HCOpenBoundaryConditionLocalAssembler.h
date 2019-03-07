@@ -49,8 +49,23 @@ public:
         HCOpenBoundaryConditionData const& data)
         : Base(e, is_axially_symmetric, integration_order),
           _data(data),
-          _local_matrix_size(local_matrix_size)
+          _local_matrix_size(local_matrix_size),
+          _bulk_element_id(data.bulk_element_ids[e.getID()]),
+          _bulk_face_id(data.bulk_face_ids[e.getID()]),
+          _surface_eigenvector(giveEigenvector(e))
     {
+    }
+    Eigen::RowVector3d giveEigenvector(MeshLib::Element const& e)
+    {
+        auto surface_element_normal = MeshLib::FaceRule::getSurfaceNormal(&e);
+        surface_element_normal.normalize();
+        // At the moment (2016-09-28) the surface normal is not oriented
+        // according to the right hand rule
+        // for correct results it is necessary to multiply the normal with -1
+        surface_element_normal *= -1;
+        return Eigen::Map<Eigen::RowVector3d const>(
+            surface_element_normal.getCoords(),
+            _data.process.getMesh().getDimension());
     }
 
     void assemble(std::size_t const mesh_item_id,
@@ -58,51 +73,37 @@ public:
                   double const t, const GlobalVector& x, GlobalMatrix& /*K*/,
                   GlobalVector& b, GlobalMatrix* /*Jac*/) override
     {
-        NodalVectorType _local_rhs(_local_matrix_size);
-        _local_rhs.setZero();
+        NodalVectorType _local_rhs = NodalVectorType::Zero(_local_matrix_size);
         // Get element nodes for the interpolation from nodes to
         // integration point.
         NodalVectorType const boundary_permeability_node_values =
             _data.boundary_permeability.getNodalValuesOnElement(Base::_element,
                                                                 t);
-        auto surface_element_normal =
-            MeshLib::FaceRule::getSurfaceNormal(&(Base::_element));
-        surface_element_normal.normalize();
-        // At the moment (2016-09-28) the surface normal is not oriented
-        // according to the right hand rule
-        // for correct results it is necessary to multiply the normal with -1
-        surface_element_normal *= -1;
         unsigned const n_integration_points =
             Base::_integration_method.getNumberOfPoints();
+
         auto const indices =
             NumLib::getIndices(mesh_item_id, dof_table_boundary);
-
         std::vector<double> const local_values = x.get(indices);
 
-        std::size_t bulk_element_id =
-            _data.bulk_element_ids[Base::_element.getID()];
-        std::size_t bulk_face_id = _data.bulk_face_ids[Base::_element.getID()];
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             auto const& n_and_weight = Base::_ns_and_weights[ip];
             auto const& N = n_and_weight.N;
             auto const& w = n_and_weight.weight;
-
             auto const& wp = Base::_integration_method.getWeightedPoint(ip);
 
             auto const bulk_element_point = MeshLib::getBulkElementPoint(
-                _data.process.getMesh(), bulk_element_id, bulk_face_id, wp);
+                _data.process.getMesh(), _bulk_element_id, _bulk_face_id, wp);
 
             double int_pt_value = 0.0;
-
             NumLib::shapeFunctionInterpolate(local_values, N, int_pt_value);
 
             NodalVectorType const neumann_node_values =
                 -boundary_permeability_node_values * int_pt_value *
-                _data.process.getFlux(bulk_element_id, bulk_element_point, t, x)
-                    .dot(Eigen::Map<Eigen::RowVectorXd const>(
-                        surface_element_normal.getCoords(),
-                        _data.process.getMesh().getDimension()));
+                _data.process
+                    .getFlux(_bulk_element_id, bulk_element_point, t, x)
+                    .dot(_surface_eigenvector);
             _local_rhs.noalias() += N * neumann_node_values.dot(N) * w;
         }
 
@@ -112,6 +113,9 @@ public:
 private:
     HCOpenBoundaryConditionData const& _data;
     std::size_t const _local_matrix_size;
+    std::size_t const _bulk_element_id;
+    std::size_t const _bulk_face_id;
+    Eigen::RowVector3d const _surface_eigenvector;
 };
 
 }  // namespace ProcessLib
