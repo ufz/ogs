@@ -10,3 +10,5 @@ if(NOT OGS_USE_CONAN)
     target_include_directories(NetCdfDialogLib SYSTEM
         PUBLIC ${VTK_INSTALL_PREFIX}/include/vtk/vtknetcdfcpp)
 endif()
+
+add_autogen_include(NetCdfDialogLib)

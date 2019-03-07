@@ -143,6 +143,8 @@ if(GEOTIFF_FOUND)
     target_link_libraries(QtDataView PRIVATE ${GEOTIFF_LIBRARIES})
 endif () # GEOTIFF_FOUND
 
+add_autogen_include(QtDataView)
+
 set_property(TARGET QtDataView PROPERTY FOLDER "DataExplorer")
 
 if(OGS_USE_PCH)

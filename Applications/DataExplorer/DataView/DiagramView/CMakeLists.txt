@@ -46,6 +46,8 @@ target_link_libraries(QtDiagramView
     PRIVATE BaseLib GeoLib QtBase DataHolderLib Qt5::Gui logog
 )
 
+add_autogen_include(QtDiagramView)
+
 set_property(TARGET QtDiagramView PROPERTY FOLDER "DataExplorer")
 
 if(OGS_USE_PCH)
