@@ -28,6 +28,34 @@ namespace GroundwaterFlow
 {
 const unsigned NUM_NODAL_DOF = 1;
 
+template <int GlobalDim>
+Eigen::Matrix<double, GlobalDim, GlobalDim> hydraulicConductivity(
+    std::vector<double> const& values)
+{
+    auto const size{values.size()};
+    if (size == 1)  // This is a duplicate but preferred case for GlobalDim==1.
+    {
+        return Eigen::Matrix<double, GlobalDim, GlobalDim>::Identity() *
+               values[0];
+    }
+    if (size == GlobalDim)
+    {
+        return Eigen::Map<Eigen::Matrix<double, GlobalDim, 1> const>(
+                   values.data(), GlobalDim, 1)
+            .asDiagonal();
+    }
+    if (size == GlobalDim * GlobalDim)
+    {
+        return Eigen::Map<Eigen::Matrix<double, GlobalDim, GlobalDim> const>(
+            values.data(), GlobalDim, GlobalDim);
+    }
+
+    OGS_FATAL(
+        "Hydraulic conductivity parameter values size is neither one nor %d "
+        "nor %d squared, but %d.",
+        GlobalDim, GlobalDim, values.size());
+}
+
 class GroundwaterFlowLocalAssemblerInterface
     : public ProcessLib::LocalAssemblerInterface,
       public NumLib::ExtrapolatableElement
@@ -95,7 +123,8 @@ public:
             pos.setIntegrationPoint(ip);
             auto const& sm = _shape_matrices[ip];
             auto const& wp = _integration_method.getWeightedPoint(ip);
-            auto const k = _process_data.hydraulic_conductivity(t, pos)[0];
+            auto const k = hydraulicConductivity<GlobalDim>(
+                _process_data.hydraulic_conductivity(t, pos));
 
             local_K.noalias() += sm.dNdx.transpose() * k * sm.dNdx * sm.detJ *
                                  sm.integralMeasure * wp.getWeight();
