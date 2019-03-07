@@ -19,6 +19,7 @@
 #include "PhaseFieldIrreversibleDamageOracleBoundaryCondition.h"
 #include "RobinBoundaryCondition.h"
 #include "VariableDependentNeumannBoundaryCondition.h"
+#include "HCOpenBoundaryCondition.h"
 
 #include "BaseLib/TimeInterval.h"
 
@@ -104,6 +105,13 @@ std::unique_ptr<BoundaryCondition> createBoundaryCondition(
         return createConstraintDirichletBoundaryCondition(
             config.config, config.boundary_mesh, dof_table, variable_id,
             integration_order, *config.component_id, parameters, process);
+    }
+     if (type == "HCOpenBoundary")
+    {
+        return createHCOpenBoundaryCondition(
+            config.config, config.boundary_mesh, dof_table, variable_id,
+            *config.component_id, integration_order, parameters, 
+            bulk_mesh.getDimension(), process, shapefunction_order);
     }
     if (type == "NormalTraction")
     {
