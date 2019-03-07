@@ -222,6 +222,18 @@ MFront<DisplacementDim>::MFront(
                 mgis::behaviour::getVariableSize(
                     _behaviour.thermodynamic_forces[0], hypothesis));
     }
+
+    if (_behaviour.mps.size() != _material_properties.size())
+    {
+        ERR("There are %d material properties in the loaded behaviour:",
+            _behaviour.mps.size());
+        for (auto const& mp : _behaviour.mps)
+        {
+            ERR("\t%s", mp.name.c_str());
+        }
+        OGS_FATAL("But the number of passed material properties is %d.",
+                  _material_properties.size());
+    }
 }
 
 template <int DisplacementDim>
@@ -268,6 +280,7 @@ MFront<DisplacementDim>::integrateStress(
             auto const& vals = (*param)(t, x);
             out = std::copy(vals.begin(), vals.end(), out);
         }
+        assert(out == behaviour_data.s1.material_properties.end());
     }
 
     if (!behaviour_data.s1.external_state_variables.empty())
