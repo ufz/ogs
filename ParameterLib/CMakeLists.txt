@@ -3,7 +3,8 @@ get_source_files(SOURCES)
 
 add_library(ParameterLib ${SOURCES})
 if(BUILD_SHARED_LIBS)
-    install(TARGETS ParameterLib LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+    install(TARGETS ParameterLib LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+                                 RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 endif()
 
 include(GenerateExportHeader)

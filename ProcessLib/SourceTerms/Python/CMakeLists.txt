@@ -7,7 +7,8 @@ add_library(ProcessLibSourceTermPython
     PythonSourceTermPythonSideInterface.h)
 if(BUILD_SHARED_LIBS)
     install(TARGETS ProcessLibSourceTermPython
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 endif()
 
 target_compile_definitions(ProcessLibSourceTermPython
@@ -23,7 +24,8 @@ add_library(ProcessLibSourceTermPythonModule
     PythonSourceTermModule.h)
 if(BUILD_SHARED_LIBS)
     install(TARGETS ProcessLibSourceTermPythonModule
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 endif()
 
 target_link_libraries(ProcessLibSourceTermPythonModule

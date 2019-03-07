@@ -27,7 +27,8 @@ if(OPENMP_FOUND)
     target_link_libraries(metis OpenMP::OpenMP_C)
 endif()
 if(BUILD_SHARED_LIBS)
-    install(TARGETS metis LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+    install(TARGETS metis LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+                          RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 endif()
 
 if(UNIX)

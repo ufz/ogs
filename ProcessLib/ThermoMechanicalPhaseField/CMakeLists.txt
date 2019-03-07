@@ -2,7 +2,8 @@ APPEND_SOURCE_FILES(SOURCES)
 
 add_library(ThermoMechanicalPhaseField ${SOURCES})
 if(BUILD_SHARED_LIBS)
-    install(TARGETS ThermoMechanicalPhaseField LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+    install(TARGETS ThermoMechanicalPhaseField LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+                                               RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 endif()
 target_link_libraries(ThermoMechanicalPhaseField
     PUBLIC ProcessLib

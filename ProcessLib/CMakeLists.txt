@@ -20,8 +20,13 @@ APPEND_SOURCE_FILES(SOURCES Utils)
 
 add_library(ProcessLib ${SOURCES})
 if(BUILD_SHARED_LIBS)
-    install(TARGETS ProcessLib LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+    install(TARGETS ProcessLib LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+                               RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 endif()
+
+include(GenerateExportHeader)
+generate_export_header(ProcessLib)
+target_include_directories(ProcessLib PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 
 target_link_libraries(ProcessLib
     PUBLIC

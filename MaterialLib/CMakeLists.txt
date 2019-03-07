@@ -29,7 +29,8 @@ add_subdirectory(SolidModels/MFront)
 
 add_library(MaterialLib ${SOURCES})
 if(BUILD_SHARED_LIBS)
-    install(TARGETS MaterialLib LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+    install(TARGETS MaterialLib LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+                                RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 endif()
 
 include(GenerateExportHeader)

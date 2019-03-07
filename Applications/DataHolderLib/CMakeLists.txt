@@ -4,7 +4,8 @@ GET_SOURCE_FILES(SOURCES_DataHolderLib)
 # Library
 add_library(DataHolderLib ${SOURCES_DataHolderLib})
 if(BUILD_SHARED_LIBS)
-    install(TARGETS DataHolderLib LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+    install(TARGETS DataHolderLib LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}}
+                                  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 endif()
 
 target_link_libraries(DataHolderLib

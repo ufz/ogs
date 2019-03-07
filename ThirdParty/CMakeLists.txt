@@ -5,6 +5,10 @@ elseif(MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W0")
 endif()
 
+if(MSVC)
+    set(BUILD_SHARED_LIBS OFF)
+endif()
+
 # Add logog subdirectory and group its targets in a Visual Studio folder
 add_subdirectory(logog)
 if(BUILD_TESTING)

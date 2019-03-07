@@ -22,6 +22,8 @@
 // definition (see https://stackoverflow.com/a/6089065).
 #include "BaseLib/TimeInterval.h"
 
+#include "processlib_export.h"
+
 namespace BaseLib
 {
 class ConfigTree;
@@ -63,7 +65,7 @@ struct DeactivatedSubdomain
     std::vector<std::unique_ptr<DeactivetedSubdomainMesh>> const
         deactivated_subdomain_meshes;
 
-    static const std::string zero_parameter_name;
+    PROCESSLIB_EXPORT static const std::string zero_parameter_name;
 };
 
 std::vector<std::unique_ptr<DeactivatedSubdomain const>>

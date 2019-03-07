@@ -9,7 +9,8 @@ target_link_libraries(OGSFileConverterLib
     INTERFACE MeshLib
 )
 if(BUILD_SHARED_LIBS)
-    install(TARGETS OGSFileConverterLib LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+    install(TARGETS OGSFileConverterLib LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+                                        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 endif()
 
 set_target_properties(OGSFileConverterLib PROPERTIES

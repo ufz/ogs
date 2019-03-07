@@ -1,4 +1,3 @@
-set(BUILD_SHARED_LIBS_SAVED "${BUILD_SHARED_LIBS}")
 # Always built Data Explorer statically as there are cyclic dependencies
 # between QtDataView and VtkVis
 set(BUILD_SHARED_LIBS OFF)
@@ -27,5 +26,3 @@ add_subdirectory(DataView/DiagramView)
 add_subdirectory(NetCdfDialog)
 add_subdirectory(VtkVis)
 include(DataExplorer.cmake)
-
-set(BUILD_SHARED_LIBS "${BUILD_SHARED_LIBS_SAVED}")

@@ -56,6 +56,7 @@ if (CMAKE_PROJECT_NAME STREQUAL logog)
     endif() # DOXYGEN_FOUND
 else()
     if(BUILD_SHARED_LIBS)
-        install(TARGETS logog LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+        install(TARGETS logog LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+				                      RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
     endif()
 endif () # CMAKE_PROJECT_NAME = logog

@@ -130,7 +130,8 @@ add_library(QtDataView
     ${UIS}
 )
 if(BUILD_SHARED_LIBS)
-    install(TARGETS QtDataView LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+    install(TARGETS QtDataView LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}}
+                               RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 endif()
 
 target_link_libraries(QtDataView

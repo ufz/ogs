@@ -36,7 +36,8 @@ add_library(QtBase
     ${HEADERS}
 )
 if(BUILD_SHARED_LIBS)
-    install(TARGETS QtBase LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+    install(TARGETS QtBase LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}}
+                           RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 endif()
 
 target_link_libraries(QtBase Qt5::Widgets)
@@ -44,5 +45,12 @@ target_link_libraries(QtBase Qt5::Widgets)
 set_property(TARGET QtBase PROPERTY FOLDER "DataExplorer")
 
 if(OGS_USE_PCH)
-    cotire(QtBase)
+    # Workaround for error on MSVC with BUILD_SHARED_LIBS=ON
+    # 1>exports.def : warning LNK4022: cannot find unique match for symbol '__'
+    # 1>exports.def : warning LNK4002: __@@_PchSym_@00@UfhvihUqvmprmhUxlwvUlthGUyfrowRivovzhvUzkkorxzgrlmhUurovrlUzkkorxzgrlmhurovrlOwriUivovzhvUzhxrrizhgvirmgviuzxvOlyq@4B2008FD98C1DD4 defined in ApplicationsFileIO.dir\Release\AsciiRasterInterface.obj
+    # 1>exports.def : warning LNK4002: __@@_PchSym_@00@UfhvihUqvmprmhUxlwvUlthGUyfrowRivovzhvUzkkorxzgrlmhUwzgzvckoliviUyzhvUjgyzhvOwriUivovzhvUlthviiliOlyq@4B2008FD98C1DD4 defined in QtBase.dir\Release\OGSError.obj
+    # 1>exports.def : error LNK2001: unresolved external symbol __
+    if(NOT MSVC)
+        cotire(QtBase)
+    endif()
 endif()

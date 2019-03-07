@@ -6,7 +6,8 @@ APPEND_SOURCE_FILES(SOURCES SmallDeformation/LocalAssembler)
 
 add_library(LIE ${SOURCES})
 if(BUILD_SHARED_LIBS)
-    install(TARGETS LIE LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+    install(TARGETS LIE LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+                        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 endif()
 target_link_libraries(LIE
     PUBLIC ProcessLib LIECommon

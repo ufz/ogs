@@ -17,7 +17,8 @@ APPEND_SOURCE_FILES(SOURCES Extrapolation)
 # Create the library
 add_library(NumLib ${SOURCES})
 if(BUILD_SHARED_LIBS)
-    install(TARGETS NumLib LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+    install(TARGETS NumLib LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+                           RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 endif()
 include(GenerateExportHeader)
 generate_export_header(NumLib)

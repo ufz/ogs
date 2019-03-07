@@ -5,7 +5,8 @@ add_library(ProcessLibBoundaryConditionPython
     PythonBoundaryConditionPythonSideInterface.h)
 if(BUILD_SHARED_LIBS)
     install(TARGETS ProcessLibBoundaryConditionPython
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 endif()
 
 target_compile_definitions(ProcessLibBoundaryConditionPython
@@ -21,7 +22,8 @@ add_library(ProcessLibBoundaryConditionPythonModule
     PythonBoundaryConditionModule.h)
 if(BUILD_SHARED_LIBS)
     install(TARGETS ProcessLibBoundaryConditionPythonModule
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 endif()
 
 target_link_libraries(ProcessLibBoundaryConditionPythonModule
