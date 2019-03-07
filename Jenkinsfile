@@ -348,7 +348,7 @@ pipeline {
               bat 'conan remove --locks'
               configure { // CLI + GUI
                 cmakeOptions =
-                  "-DBUILD_SHARED_LIBS=OFF " +
+                  "-DBUILD_SHARED_LIBS=${build_shared} " +
                   '-DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON ' +
                   '-DOGS_BUILD_GUI=ON ' +
                   '-DOGS_BUILD_UTILS=ON ' +
