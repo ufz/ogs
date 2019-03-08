@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<VTKFile type="Collection" version="0.1" byte_order="LittleEndian" compressor="vtkZLibDataCompressor">
+  <Collection>
+    <DataSet timestep="0" group="" part="0" file="DiffusionAndAdvection_surfaceflux_pcs_0_ts_0_t_0.000000_expected.vtu"/>
+    <DataSet timestep="0.02" group="" part="0" file="DiffusionAndAdvection_surfaceflux_pcs_0_ts_1_t_0.020000_expected.vtu"/>
+    <DataSet timestep="0.04" group="" part="0" file="DiffusionAndAdvection_surfaceflux_pcs_0_ts_2_t_0.040000_expected.vtu"/>
+    <DataSet timestep="0.06" group="" part="0" file="DiffusionAndAdvection_surfaceflux_pcs_0_ts_3_t_0.060000_expected.vtu"/>
+    <DataSet timestep="0.08" group="" part="0" file="DiffusionAndAdvection_surfaceflux_pcs_0_ts_4_t_0.080000_expected.vtu"/>
+    <DataSet timestep="0.1" group="" part="0" file="DiffusionAndAdvection_surfaceflux_pcs_0_ts_5_t_0.100000_expected.vtu"/>
+  </Collection>
+</VTKFile>
