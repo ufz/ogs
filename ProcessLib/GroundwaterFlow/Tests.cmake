@@ -286,7 +286,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    cube_1x1x1_prism_2e3_complete_surface.vtu cube_1x1x1_prism_2e3_complete_surface_left_right_dirichlet_surfaceflux_t_1.000000.vtu surfaceflux_left_right_reference surfaceflux_left_right 1e-15 1e-15
+    cube_1x1x1_prism_2e3_complete_surface_left_right_dirichlet_specific_flux_t_1.000000.vtu cube_1x1x1_prism_2e3_complete_surface_left_right_dirichlet_specific_flux_t_1.000000.vtu specific_flux specific_flux 1e-15 1e-15
 )
 
 AddTest(
