@@ -141,7 +141,6 @@ int main (int argc, char* argv[])
         }
         const std::string value (argv[3]);
         double max_dist(pow(strtod(argv[4],0), 2));
-        double offset (0.0); // additional offset for elevation (should be 0)
         std::unique_ptr<MeshLib::Mesh> ground_truth (MeshLib::IO::readMeshFromFile(value));
         if (ground_truth == nullptr)
         {
