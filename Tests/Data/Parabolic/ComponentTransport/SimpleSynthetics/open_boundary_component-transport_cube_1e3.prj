@@ -195,7 +195,7 @@
                 </boundary_condition>
                 <boundary_condition>
                     <mesh>cube_1x1x1_hex_1e3_right</mesh>
-                    <type>HCOpenBoundary</type>
+                    <type>FreeComponentStreamBoundary</type>
                     <boundary_permeability>c_boundary_permeability</boundary_permeability>
                 </boundary_condition>
             </boundary_conditions>

@@ -7,13 +7,13 @@
  *
  */
 
-#include "HCOpenBoundaryCondition.h"
+#include "FreeComponentStreamBoundaryCondition.h"
 
 #include "ProcessLib/Utils/ProcessUtils.h"
 
 namespace ProcessLib
 {
-std::unique_ptr<HCOpenBoundaryCondition> createHCOpenBoundaryCondition(
+std::unique_ptr<FreeComponentStreamBoundaryCondition> createFreeComponentStreamBoundaryCondition(
     BaseLib::ConfigTree const& config, MeshLib::Mesh const& bc_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table, int const variable_id,
     int const component_id, unsigned const integration_order,
@@ -25,7 +25,7 @@ std::unique_ptr<HCOpenBoundaryCondition> createHCOpenBoundaryCondition(
         "Constructing open boundary for Component Transport process from "
         "config.");
     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__type}
-    config.checkConfigParameter("type", "HCOpenBoundary");
+    config.checkConfigParameter("type", "FreeComponentStreamBoundary");
 
     auto const boundary_permeability_name =
         //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__VariableDependentNeumann__constant_name}
@@ -54,10 +54,10 @@ std::unique_ptr<HCOpenBoundaryCondition> createHCOpenBoundaryCondition(
     }
 #endif  // USE_PETSC
 
-    return std::make_unique<HCOpenBoundaryCondition>(
+    return std::make_unique<FreeComponentStreamBoundaryCondition>(
         integration_order, shapefunction_order, dof_table, variable_id,
         component_id, global_dim, bc_mesh,
-        HCOpenBoundaryConditionData{boundary_permeability, *bulk_face_ids,
+        FreeComponentStreamBoundaryConditionData{boundary_permeability, *bulk_face_ids,
                                     *bulk_element_ids, process});
 }
 

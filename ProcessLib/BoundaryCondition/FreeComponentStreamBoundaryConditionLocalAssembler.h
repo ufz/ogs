@@ -19,7 +19,7 @@
 
 namespace ProcessLib
 {
-struct HCOpenBoundaryConditionData
+struct FreeComponentStreamBoundaryConditionData
 {
     Parameter<double> const& boundary_permeability;
     MeshLib::PropertyVector<std::size_t> const bulk_face_ids;
@@ -29,7 +29,7 @@ struct HCOpenBoundaryConditionData
 
 template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
-class HCOpenBoundaryConditionLocalAssembler final
+class FreeComponentStreamBoundaryConditionLocalAssembler final
     : public GenericNaturalBoundaryConditionLocalAssembler<
           ShapeFunction, IntegrationMethod, GlobalDim>
 {
@@ -41,12 +41,12 @@ class HCOpenBoundaryConditionLocalAssembler final
 public:
     /// The neumann_bc_term factor is directly integrated into the local
     /// element matrix.
-    HCOpenBoundaryConditionLocalAssembler(
+    FreeComponentStreamBoundaryConditionLocalAssembler(
         MeshLib::Element const& e,
         std::size_t const local_matrix_size,
         bool const is_axially_symmetric,
         unsigned const integration_order,
-        HCOpenBoundaryConditionData const& data)
+        FreeComponentStreamBoundaryConditionData const& data)
         : Base(e, is_axially_symmetric, integration_order),
           _data(data),
           _local_matrix_size(local_matrix_size),
@@ -111,7 +111,7 @@ public:
     }
 
 private:
-    HCOpenBoundaryConditionData const& _data;
+    FreeComponentStreamBoundaryConditionData const& _data;
     std::size_t const _local_matrix_size;
     std::size_t const _bulk_element_id;
     std::size_t const _bulk_face_id;

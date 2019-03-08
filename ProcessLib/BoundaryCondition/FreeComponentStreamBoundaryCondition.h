@@ -10,16 +10,16 @@
 #pragma once
 
 #include "GenericNaturalBoundaryCondition.h"
-#include "HCOpenBoundaryConditionLocalAssembler.h"
+#include "FreeComponentStreamBoundaryConditionLocalAssembler.h"
 #include "MeshLib/PropertyVector.h"
 
 namespace ProcessLib
 {
-using HCOpenBoundaryCondition =
-    GenericNaturalBoundaryCondition<HCOpenBoundaryConditionData,
-                                    HCOpenBoundaryConditionLocalAssembler>;
+using FreeComponentStreamBoundaryCondition =
+    GenericNaturalBoundaryCondition<FreeComponentStreamBoundaryConditionData,
+                                    FreeComponentStreamBoundaryConditionLocalAssembler>;
 
-std::unique_ptr<HCOpenBoundaryCondition> createHCOpenBoundaryCondition(
+std::unique_ptr<FreeComponentStreamBoundaryCondition> createFreeComponentStreamBoundaryCondition(
     BaseLib::ConfigTree const& config, MeshLib::Mesh const& boundary_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table, int const variable_id,
     int const component_id, unsigned const integration_order,
