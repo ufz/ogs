@@ -61,7 +61,7 @@
             </secondary_variables>
             <calculatesurfaceflux>
                 <mesh>cube_1x1x1_hex_1e4_complete_surface</mesh>
-                <property_name>flux</property_name>
+                <property_name>specific_flux</property_name>
                 <output_mesh>flux_1e4.vtu</output_mesh>
             </calculatesurfaceflux>
         </process>

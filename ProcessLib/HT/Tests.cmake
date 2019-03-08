@@ -170,12 +170,12 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    flux_1e4_t_0.000000_expected.vtu flux_1e4_t_0.000000.vtu flux flux 1e-10 1e-16
-    flux_1e4_t_0.000010_expected.vtu flux_1e4_t_0.000010.vtu flux flux 1e-10 1e-16
-    flux_1e4_t_0.001010_expected.vtu flux_1e4_t_0.001010.vtu flux flux 1e-10 1e-16
-    flux_1e4_t_0.101010_expected.vtu flux_1e4_t_0.101010.vtu flux flux 1e-10 1e-16
-    flux_1e4_t_1.101010_expected.vtu flux_1e4_t_1.101010.vtu flux flux 1e-10 1e-16
-    flux_1e4_t_10.000000_expected.vtu flux_1e4_t_10.000000.vtu flux flux 1e-10 1e-16
+    flux_1e4_t_0.000000.vtu flux_1e4_t_0.000000.vtu specific_flux specific_flux 1e-10 1e-16
+    flux_1e4_t_0.000010.vtu flux_1e4_t_0.000010.vtu specific_flux specific_flux 1e-10 1e-16
+    flux_1e4_t_0.001010.vtu flux_1e4_t_0.001010.vtu specific_flux specific_flux 1e-10 1e-16
+    flux_1e4_t_0.101010.vtu flux_1e4_t_0.101010.vtu specific_flux specific_flux 1e-10 1e-16
+    flux_1e4_t_1.101010.vtu flux_1e4_t_1.101010.vtu specific_flux specific_flux 1e-10 1e-16
+    flux_1e4_t_10.000000.vtu flux_1e4_t_10.000000.vtu specific_flux specific_flux 1e-10 1e-16
 )
 
 # Staggered scheme
