@@ -18,8 +18,14 @@ APPEND_SOURCE_FILES(SOURCES Output)
 APPEND_SOURCE_FILES(SOURCES SourceTerms)
 APPEND_SOURCE_FILES(SOURCES Utils)
 
-add_library(ProcessLib ${SOURCES})
-if(BUILD_SHARED_LIBS)
+if(MSVC)
+    # Workaround for 65535 objects limit on Win DLLs, see
+    # https://docs.microsoft.com/en-us/cpp/error-messages/tool-errors/linker-tools-error-lnk1189?view=vs-2017
+    set(WIN_STATIC STATIC)
+endif()
+
+add_library(ProcessLib ${WIN_STATIC} ${SOURCES})
+if(BUILD_SHARED_LIBS AND NOT MSVC)
     install(TARGETS ProcessLib LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
                                RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 endif()
