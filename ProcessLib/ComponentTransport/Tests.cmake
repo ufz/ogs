@@ -444,7 +444,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    cube_1x1x1_hex_1e3_complete_surface.vtu flux_1e3_t_1.000000.vtu flux flux 1e-10 1e-16
+    flux_1e3_t_1.000000.vtu flux_1e3_t_1.000000.vtu specific_flux specific_flux 1e-10 1e-16
     cube_1x1x1_hex_1e3_left_pcs_1_ts_0_t_0.000000.vtu cube_1x1x1_hex_1e3_left_pcs_1_ts_0_t_0.000000.vtu Si Si 1e-10 1e-16
     cube_1x1x1_hex_1e3_left_pcs_1_ts_1_t_1.000000.vtu cube_1x1x1_hex_1e3_left_pcs_1_ts_1_t_1.000000.vtu Si Si 1e-10 1e-16
     cube_1x1x1_hex_1e3_right_pcs_1_ts_0_t_0.000000.vtu cube_1x1x1_hex_1e3_right_pcs_1_ts_0_t_0.000000.vtu Si Si 1e-10 1e-16
