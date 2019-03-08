@@ -319,7 +319,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    wedge_1x1x1_1e3_prism_complete_surface.vtu wedge_1x1x1_1e3_prism_complete_surface_surfaceflux_t_1.000000.vtu surfaceflux_reference surfaceflux 1e-15 1e-15
+    wedge_1x1x1_1e3_prism_complete_surface_specific_flux_t_1.000000.vtu wedge_1x1x1_1e3_prism_complete_surface_specific_flux_t_1.000000.vtu specific_flux specific_flux 1e-15 1e-15
 )
 
 # SQUARE 1x1 GROUNDWATER FLOW TEST -- AXIALLY SYMMETRIC
