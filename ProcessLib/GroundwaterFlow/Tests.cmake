@@ -276,7 +276,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    cube_1x1x1_hex_1e3_complete_surface.vtu cube_1x1x1_hex_1e3_complete_surface_neumann_surfaceflux_t_1.000000.vtu surfaceflux_neumann_reference surfaceflux 1e-15 1e-15
+    cube_1x1x1_hex_1e3_complete_surface_neumann_specific_flux_t_1.000000.vtu cube_1x1x1_hex_1e3_complete_surface_neumann_specific_flux_t_1.000000.vtu specific_flux specific_flux 1e-15 1e-15
 )
 AddTest(
     NAME GroundWaterFlowProcess_cube_1x1x1_2e3_prism_surfaceflux_left_right
