@@ -10,23 +10,20 @@
 #include "ProcessVariable.h"
 
 #include <algorithm>
-#include <utility>
-
 #include <logog/include/logog.hpp>
+#include <utility>
 
 #include "BaseLib/Algorithm.h"
 #include "BaseLib/TimeInterval.h"
-
 #include "MeshGeoToolsLib/ConstructMeshesFromGeometries.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
-
+#include "ParameterLib/Utils.h"
 #include "ProcessLib/BoundaryCondition/BoundaryCondition.h"
 #include "ProcessLib/BoundaryCondition/CreateBoundaryCondition.h"
 #include "ProcessLib/BoundaryCondition/DirichletBoundaryConditionWithinTimeInterval.h"
 #include "ProcessLib/SourceTerms/CreateSourceTerm.h"
 #include "ProcessLib/SourceTerms/SourceTerm.h"
-#include "ProcessLib/Utils/ProcessUtils.h"
 
 namespace
 {
@@ -95,7 +92,7 @@ ProcessVariable::ProcessVariable(
     BaseLib::ConfigTree const& config,
     MeshLib::Mesh& mesh,
     std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
-    std::vector<std::unique_ptr<ParameterBase>> const& parameters)
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters)
     :  //! \ogs_file_param{prj__process_variables__process_variable__name}
       _name(config.getConfigParameter<std::string>("name")),
       _mesh(mesh),
@@ -104,7 +101,7 @@ ProcessVariable::ProcessVariable(
       //! \ogs_file_param{prj__process_variables__process_variable__order}
       _shapefunction_order(config.getConfigParameter<unsigned>("order")),
       _deactivated_subdomains(createDeactivatedSubdomains(config, mesh)),
-      _initial_condition(findParameter<double>(
+      _initial_condition(ParameterLib::findParameter<double>(
           //! \ogs_file_param{prj__process_variables__process_variable__initial_condition}
           config.getConfigParameter<std::string>("initial_condition"),
           parameters, _n_components))
@@ -204,7 +201,7 @@ ProcessVariable::createBoundaryConditions(
     const NumLib::LocalToGlobalIndexMap& dof_table,
     const int variable_id,
     unsigned const integration_order,
-    std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     Process const& process)
 {
     std::vector<std::unique_ptr<BoundaryCondition>> bcs;
@@ -236,10 +233,10 @@ ProcessVariable::createBoundaryConditions(
 
 void ProcessVariable::createBoundaryConditionsForDeactivatedSubDomains(
     const NumLib::LocalToGlobalIndexMap& dof_table, const int variable_id,
-    std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     std::vector<std::unique_ptr<BoundaryCondition>>& bcs)
 {
-    auto& parameter = findParameter<double>(
+    auto& parameter = ParameterLib::findParameter<double>(
         DeactivatedSubdomain::zero_parameter_name, parameters, 1);
 
     for (auto const& deactivated_subdomain : _deactivated_subdomains)
@@ -327,7 +324,7 @@ std::vector<std::unique_ptr<SourceTerm>> ProcessVariable::createSourceTerms(
     const NumLib::LocalToGlobalIndexMap& dof_table,
     const int variable_id,
     unsigned const integration_order,
-    std::vector<std::unique_ptr<ParameterBase>> const& parameters)
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters)
 {
     std::vector<std::unique_ptr<SourceTerm>> source_terms;
 

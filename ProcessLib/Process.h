@@ -15,12 +15,12 @@
 #include "NumLib/ODESolver/NonlinearSolver.h"
 #include "NumLib/ODESolver/ODESystem.h"
 #include "NumLib/ODESolver/TimeDiscretization.h"
+#include "ParameterLib/Parameter.h"
 #include "ProcessLib/BoundaryCondition/BoundaryConditionCollection.h"
 #include "ProcessLib/Output/CachedSecondaryVariable.h"
 #include "ProcessLib/Output/ExtrapolatorData.h"
 #include "ProcessLib/Output/IntegrationPointWriter.h"
 #include "ProcessLib/Output/SecondaryVariable.h"
-#include "ProcessLib/Parameter/Parameter.h"
 #include "ProcessLib/SourceTerms/SourceTermCollection.h"
 
 #include "AbstractJacobianAssembler.h"
@@ -47,7 +47,8 @@ public:
 
     Process(MeshLib::Mesh& mesh,
             std::unique_ptr<AbstractJacobianAssembler>&& jacobian_assembler,
-            std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+            std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
+                parameters,
             unsigned const integration_order,
             std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>&&
                 process_variables,

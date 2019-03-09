@@ -13,6 +13,7 @@
 #include "NumLib/DOF/ComputeSparsityPattern.h"
 #include "NumLib/Extrapolation/LocalLinearLeastSquaresExtrapolator.h"
 #include "NumLib/ODESolver/ConvergenceCriterionPerComponent.h"
+#include "ParameterLib/Parameter.h"
 #include "ProcessLib/Output/GlobalVectorFromNamedFunction.h"
 
 #include "ProcessVariable.h"
@@ -23,7 +24,7 @@ namespace ProcessLib
 Process::Process(
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
-    std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     unsigned const integration_order,
     std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>&&
         process_variables,
@@ -122,7 +123,7 @@ void Process::setInitialConditions(const int process_id, double const t,
          variable_id++)
     {
         MathLib::LinAlg::setLocalAccessibleVector(x);
-        SpatialPosition pos;
+        ParameterLib::SpatialPosition pos;
 
         auto const& pv = per_process_variables[variable_id];
         DBUG("Set the initial condition of variable %s of process %d.",
