@@ -21,7 +21,7 @@
 #include "MaterialLib/MPL/Medium.h"
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 
-#include "ProcessLib/Parameter/Parameter.h"
+#include "ParameterLib/Parameter.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/ProcessVariable.h"
 
@@ -119,7 +119,7 @@ private:
     std::vector<ProcessLib::ProcessVariable> _process_variables;
 
     /// Buffer for each parameter config passed to the process.
-    std::vector<std::unique_ptr<ProcessLib::ParameterBase>> _parameters;
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> _parameters;
 
     std::map<int, std::unique_ptr<MaterialPropertyLib::Medium>> _media;
 
