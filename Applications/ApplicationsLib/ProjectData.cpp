@@ -42,7 +42,9 @@
 #include "MeshLib/IO/readMeshFromFile.h"
 
 #include "ProcessLib/Parameter/ConstantParameter.h"
+#include "ProcessLib/Parameter/CoordinateSystem.h"
 #include "ProcessLib/UncoupledProcessesTimeLoop.h"
+#include "ProcessLib/Utils/ProcessUtils.h"
 
 #ifdef OGS_BUILD_PROCESS_COMPONENTTRANSPORT
 #include "ProcessLib/ComponentTransport/CreateComponentTransportProcess.h"
@@ -193,6 +195,63 @@ std::vector<std::unique_ptr<MeshLib::Mesh>> readMeshes(
     }
     return meshes;
 }
+
+boost::optional<ProcessLib::CoordinateSystem> parseLocalCoordinateSystem(
+    boost::optional<BaseLib::ConfigTree> const& config,
+    std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters)
+{
+    if (!config)
+    {
+        return {};
+    }
+
+    DBUG("Reading coordinate system configuration.");
+
+    //
+    // Fetch the first basis vector; its length defines the dimension.
+    //
+    auto const& basis_vector_0 = ProcessLib::findParameter<double>(
+        *config,
+        //! \ogs_file_param_special{prj__local_coordinate_system__basis_vector_0}
+        "basis_vector_0", parameters, 0 /* any dimension */);
+    int const dimension = basis_vector_0.getNumberOfComponents();
+
+    // check dimension
+    if (dimension != 2 && dimension != 3)
+    {
+        OGS_FATAL(
+            "Basis vector parameter '%s' must have two or three components, "
+            "but it has %d.",
+            basis_vector_0.name.c_str(), dimension);
+    }
+
+    //
+    // Fetch the second basis vector, which must be of the same dimension as the
+    // first one.
+    //
+    auto const& basis_vector_1 = ProcessLib::findParameter<double>(
+        *config,
+        //! \ogs_file_param_special{prj__local_coordinate_system__basis_vector_1}
+        "basis_vector_1", parameters, dimension);
+
+    //
+    // For two dimensions, we are done; construct coordinate system;
+    //
+    if (dimension == 2)
+    {
+        return ProcessLib::CoordinateSystem{basis_vector_0, basis_vector_1};
+    }
+
+    //
+    // Parse the third vector, for three dimensions.
+    //
+    auto const& basis_vector_2 = ProcessLib::findParameter<double>(
+        *config,
+        //! \ogs_file_param_special{prj__local_coordinate_system__basis_vector_2}
+        "basis_vector_2", parameters, dimension);
+    return ProcessLib::CoordinateSystem{basis_vector_0, basis_vector_1,
+                                        basis_vector_2};
+}
 }  // namespace
 
 ProjectData::ProjectData() = default;
@@ -228,8 +287,34 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
     //! \ogs_file_param{prj__curves}
     parseCurves(project_config.getConfigSubtreeOptional("curves"));
 
-    //! \ogs_file_param{prj__parameters}
-    parseParameters(project_config.getConfigSubtree("parameters"));
+    auto parameter_names_for_transformation =
+        //! \ogs_file_param{prj__parameters}
+        parseParameters(project_config.getConfigSubtree("parameters"));
+
+    auto const local_coordinate_system = parseLocalCoordinateSystem(
+        //! \ogs_file_param{prj__local_coordinate_system}
+        project_config.getConfigSubtreeOptional("local_coordinate_system"),
+        _parameters);
+
+    for (auto& parameter : _parameters)
+    {
+        if (std::find(begin(parameter_names_for_transformation),
+                      end(parameter_names_for_transformation),
+                      parameter->name) !=
+            end(parameter_names_for_transformation))
+        {
+            if (!local_coordinate_system)
+            {
+                OGS_FATAL(
+                    "The parameter '%s' is using the local coordinate system "
+                    "but no local coordinate system was provided.",
+                    parameter->name.c_str());
+            }
+            parameter->setCoordinateSystem(*local_coordinate_system);
+        }
+
+        parameter->initialize(_parameters);
+    }
 
     //! \ogs_file_param{prj__process_variables}
     parseProcessVariables(project_config.getConfigSubtree("process_variables"));
@@ -287,11 +372,13 @@ void ProjectData::parseProcessVariables(
     }
 }
 
-void ProjectData::parseParameters(BaseLib::ConfigTree const& parameters_config)
+std::vector<std::string> ProjectData::parseParameters(
+    BaseLib::ConfigTree const& parameters_config)
 {
     using namespace ProcessLib;
 
     std::set<std::string> names;
+    std::vector<std::string> parameter_names_for_transformation;
 
     DBUG("Reading parameters:");
     for (auto parameter_config :
@@ -306,6 +393,16 @@ void ProjectData::parseParameters(BaseLib::ConfigTree const& parameters_config)
                       p->name.c_str());
         }
 
+        auto const use_local_coordinate_system =
+            //! \ogs_file_param{prj__parameters__parameter__use_local_coordinate_system}
+            parameter_config.getConfigParameterOptional<bool>(
+                "use_local_coordinate_system");
+        if (!!use_local_coordinate_system &&
+            *use_local_coordinate_system == true)
+        {
+            parameter_names_for_transformation.push_back(p->name);
+        }
+
         _parameters.push_back(std::move(p));
     }
 
@@ -313,10 +410,7 @@ void ProjectData::parseParameters(BaseLib::ConfigTree const& parameters_config)
         std::make_unique<ProcessLib::ConstantParameter<double>>(
             ProcessLib::DeactivatedSubdomain::zero_parameter_name, 0.0));
 
-    for (auto& parameter : _parameters)
-    {
-        parameter->initialize(_parameters);
-    }
+    return parameter_names_for_transformation;
 }
 
 void ProjectData::parseMedia(

@@ -757,3 +757,7 @@ AddTest(
     DIFF_DATA
     square_1x1_quad_1e5.vtu square_1e5_volumetricsourceterm_pcs_0_ts_1_t_1.000000.vtu analytical_solution pressure 0.75e-4 1e-16
 )
+
+if (NOT OGS_USE_MPI)
+    OgsTest(PROJECTFILE "Elliptic/cube_1x1x1_GroundWaterFlow/cube_1e4_anisotropic.prj")
+endif() # OGS_USE_MPI

@@ -102,7 +102,12 @@ struct FunctionParameter final : public Parameter<T>
             cache[i] = _vec_expression[i].value();
         }
 
-        return cache;
+        if (!this->_coordinate_system)
+        {
+            return cache;
+        }
+
+        return this->rotateWithCoordinateSystem(cache, pos);
     }
 
 private:

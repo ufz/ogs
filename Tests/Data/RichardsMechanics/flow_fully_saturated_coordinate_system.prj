@@ -104,7 +104,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>flow_fully_saturated_anisotropic</prefix>
+            <prefix>flow_fully_saturated_coordinate_system</prefix>
             <timesteps>
                 <pair>
                     <repeat>10000</repeat>
@@ -121,7 +121,21 @@
             </variables>
         </output>
     </time_loop>
+    <local_coordinate_system>
+        <basis_vector_0>e0</basis_vector_0>
+        <basis_vector_1>e1</basis_vector_1>
+    </local_coordinate_system>
     <parameters>
+        <parameter>
+            <name>e0</name>
+            <type>Constant</type>
+            <values>0.86602540378443864676 0.5</values>
+        </parameter>
+        <parameter>
+            <name>e1</name>
+            <type>Constant</type>
+            <values>-0.5 0.86602540378443864676</values>
+        </parameter>
         <!-- Mechanics -->
         <parameter>
             <name>K_SR</name>
@@ -142,7 +156,8 @@
         <parameter>
             <name>k</name>
             <type>Constant</type>
-            <values>7.75e-13 3.8971143170299739104e-13 3.8971143170299739104e-13 3.25e-13</values>
+            <values>1e-12 0 0 1e-13</values>
+            <use_local_coordinate_system>true</use_local_coordinate_system>
         </parameter>
         <parameter>
             <name>mu</name>

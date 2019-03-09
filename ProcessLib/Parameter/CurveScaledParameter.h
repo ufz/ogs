@@ -46,6 +46,12 @@ struct CurveScaledParameter final : public Parameter<T> {
     std::vector<T> operator()(double const t,
                                      SpatialPosition const& pos) const override
     {
+        // No local coordinate transformation here, which might happen twice
+        // otherwise.
+        assert(!this->_coordinate_system ||
+               "Coordinate system not expected to be set for curve scaled "
+               "parameters.");
+
         auto const& tup = (*_parameter)(t, pos);
         auto const scaling = _curve.getValue(t);
 

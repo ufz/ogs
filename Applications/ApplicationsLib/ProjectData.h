@@ -87,9 +87,11 @@ private:
     void parseProcessVariables(
         BaseLib::ConfigTree const& process_variables_config);
 
-    /// Parses the parameters configuration and saves them in a list.
-    /// Checks if a parameter has name tag.
-    void parseParameters(BaseLib::ConfigTree const& parameters_config);
+    /// Parses the parameters configuration and saves them.
+    /// Checks for double parameters' names. Returns names of vectors which are
+    /// to be transformed using local coordinate system.
+    std::vector<std::string> parseParameters(
+        BaseLib::ConfigTree const& parameters_config);
 
     /// Parses media configuration and saves them in an object.
     void parseMedia(boost::optional<BaseLib::ConfigTree> const& media_config);
