@@ -16,6 +16,7 @@ APPEND_SOURCE_FILES(TEST_SOURCES MathLib)
 APPEND_SOURCE_FILES(TEST_SOURCES MeshLib)
 APPEND_SOURCE_FILES(TEST_SOURCES MeshGeoToolsLib)
 APPEND_SOURCE_FILES(TEST_SOURCES NumLib)
+APPEND_SOURCE_FILES(TEST_SOURCES ParameterLib)
 APPEND_SOURCE_FILES(TEST_SOURCES ProcessLib)
 
 if(Qt5XmlPatterns_FOUND)
@@ -44,6 +45,7 @@ target_link_libraries(testrunner
     MaterialLib
     MeshLib
     NumLib
+    ParameterLib
     ProcessLib
     Threads::Threads
     ${VTK_LIBRARIES}

@@ -15,7 +15,6 @@ APPEND_SOURCE_FILES(SOURCES)
 APPEND_SOURCE_FILES(SOURCES BoundaryCondition)
 APPEND_SOURCE_FILES(SOURCES SurfaceFlux)
 APPEND_SOURCE_FILES(SOURCES Output)
-APPEND_SOURCE_FILES(SOURCES Parameter)
 APPEND_SOURCE_FILES(SOURCES SourceTerms)
 APPEND_SOURCE_FILES(SOURCES Utils)
 
@@ -25,7 +24,16 @@ if(BUILD_SHARED_LIBS)
 endif()
 
 target_link_libraries(ProcessLib
-    PUBLIC BaseLib MaterialLib MathLib MeshLib NumLib logog MeshGeoToolsLib
+    PUBLIC
+        BaseLib
+        MaterialLib
+        MathLib
+        MeshGeoToolsLib
+        MeshLib
+        NumLib
+        logog
+    PRIVATE
+        ParameterLib
 )
 
 if(OGS_USE_PYTHON)
