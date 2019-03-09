@@ -9,29 +9,29 @@
 
 #include "CreateLinearElasticIsotropic.h"
 
-#include "ProcessLib/Utils/ProcessUtils.h"  // required for findParameter
+#include "ParameterLib/Utils.h"
+
 #include "LinearElasticIsotropic.h"
 
 namespace MaterialLib
 {
 namespace Fracture
 {
-
 template <int DisplacementDim>
 std::unique_ptr<FractureModelBase<DisplacementDim>>
 createLinearElasticIsotropic(
-    std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config)
 {
     //! \ogs_file_param{material__fracture_model__type}
     config.checkConfigParameter("type", "LinearElasticIsotropic");
     DBUG("Create LinearElasticIsotropic material");
 
-    auto& Kn = ProcessLib::findParameter<double>(
+    auto& Kn = ParameterLib::findParameter<double>(
         //! \ogs_file_param_special{material__fracture_model__LinearElasticIsotropic__normal_stiffness}
         config, "normal_stiffness", parameters, 1);
 
-    auto& Ks = ProcessLib::findParameter<double>(
+    auto& Ks = ParameterLib::findParameter<double>(
         //! \ogs_file_param_special{material__fracture_model__LinearElasticIsotropic__shear_stiffness}
         config, "shear_stiffness", parameters, 1);
 
@@ -50,17 +50,12 @@ createLinearElasticIsotropic(
         penalty_aperture_cutoff, tension_cutoff, mp);
 }
 
-
-template
-std::unique_ptr<FractureModelBase<2>>
-createLinearElasticIsotropic(
-    std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters,
+template std::unique_ptr<FractureModelBase<2>> createLinearElasticIsotropic(
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config);
 
-template
-std::unique_ptr<FractureModelBase<3>>
-createLinearElasticIsotropic(
-    std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters,
+template std::unique_ptr<FractureModelBase<3>> createLinearElasticIsotropic(
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config);
 
 }  // namespace Fracture

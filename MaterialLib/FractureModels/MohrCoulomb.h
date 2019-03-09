@@ -12,7 +12,7 @@
 #include <Eigen/Eigen>
 #include <utility>
 
-#include "ProcessLib/Parameter/Parameter.h"
+#include "ParameterLib/Parameter.h"
 
 #include "FractureModelBase.h"
 
@@ -28,8 +28,8 @@ public:
     /// Variables specific to the material model
     struct MaterialProperties
     {
-        using P = ProcessLib::Parameter<double>;
-        using X = ProcessLib::SpatialPosition;
+        using P = ParameterLib::Parameter<double>;
+        using X = ParameterLib::SpatialPosition;
 
         MaterialProperties(
                 P const& normal_stiffness_, P const& shear_stiffness_,
@@ -98,7 +98,7 @@ public:
      */
     void computeConstitutiveRelation(
         double const t,
-        ProcessLib::SpatialPosition const& x,
+        ParameterLib::SpatialPosition const& x,
         double const aperture0,
         Eigen::Ref<Eigen::VectorXd const>
             sigma0,

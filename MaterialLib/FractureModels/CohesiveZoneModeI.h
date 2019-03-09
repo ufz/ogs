@@ -12,7 +12,7 @@
 #include <Eigen/Eigen>
 #include <utility>
 
-#include "ProcessLib/Parameter/Parameter.h"
+#include "ParameterLib/Parameter.h"
 
 #include "FractureModelBase.h"
 
@@ -25,8 +25,8 @@ namespace CohesiveZoneModeI
 /// Variables specific to the material model
 struct MaterialPropertiesParameters
 {
-    using P = ProcessLib::Parameter<double>;
-    using X = ProcessLib::SpatialPosition;
+    using P = ParameterLib::Parameter<double>;
+    using X = ParameterLib::SpatialPosition;
 
     MaterialPropertiesParameters(P const& normal_stiffness_,
                                  P const& shear_stiffness_,
@@ -84,7 +84,7 @@ struct MaterialPropertiesParameters
 /// details.
 struct MaterialProperties final
 {
-    MaterialProperties(double const t, ProcessLib::SpatialPosition const& x,
+    MaterialProperties(double const t, ParameterLib::SpatialPosition const& x,
                        MaterialPropertiesParameters const& mp)
         : Kn(mp.normal_stiffness(t, x)[0]),
           Ks(mp.shear_stiffness(t, x)[0]),
@@ -161,7 +161,7 @@ public:
      */
     void computeConstitutiveRelation(
         double const t,
-        ProcessLib::SpatialPosition const& x,
+        ParameterLib::SpatialPosition const& x,
         double const aperture0,
         Eigen::Ref<Eigen::VectorXd const>
             sigma0,
@@ -179,7 +179,7 @@ public:
             material_state_variables) override;
 
     MaterialProperties evaluatedMaterialProperties(
-        double const t, ProcessLib::SpatialPosition const& x) const
+        double const t, ParameterLib::SpatialPosition const& x) const
     {
         return MaterialProperties(t, x, _mp);
     }

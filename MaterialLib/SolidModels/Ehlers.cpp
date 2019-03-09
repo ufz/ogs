@@ -484,7 +484,7 @@ SolidEhlers<DisplacementDim>::SolidEhlers(
 template <int DisplacementDim>
 double SolidEhlers<DisplacementDim>::computeFreeEnergyDensity(
     double const /*t*/,
-    ProcessLib::SpatialPosition const& /*x*/,
+    ParameterLib::SpatialPosition const& /*x*/,
     double const /*dt*/,
     KelvinVector const& eps,
     KelvinVector const& sigma,
@@ -508,7 +508,7 @@ boost::optional<std::tuple<typename SolidEhlers<DisplacementDim>::KelvinVector,
                                DisplacementDim>::MaterialStateVariables>,
                            typename SolidEhlers<DisplacementDim>::KelvinMatrix>>
 SolidEhlers<DisplacementDim>::integrateStress(
-    double const t, ProcessLib::SpatialPosition const& x, double const dt,
+    double const t, ParameterLib::SpatialPosition const& x, double const dt,
     KelvinVector const& eps_prev, KelvinVector const& eps,
     KelvinVector const& sigma_prev,
     typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&

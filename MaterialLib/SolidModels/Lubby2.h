@@ -11,7 +11,7 @@
 
 #include "MathLib/KelvinVector.h"
 #include "NumLib/NewtonRaphson.h"
-#include "ProcessLib/Parameter/Parameter.h"
+#include "ParameterLib/Parameter.h"
 
 #include "MechanicsBase.h"
 
@@ -26,7 +26,7 @@ namespace Lubby2
 //
 struct Lubby2MaterialProperties
 {
-    using P = ProcessLib::Parameter<double>;
+    using P = ParameterLib::Parameter<double>;
     Lubby2MaterialProperties(P const& GK0_,
                              P const& GM0_,
                              P const& KM0_,
@@ -63,7 +63,7 @@ template <int DisplacementDim>
 struct LocalLubby2Properties
 {
     LocalLubby2Properties(double const t,
-                          ProcessLib::SpatialPosition const& x,
+                          ParameterLib::SpatialPosition const& x,
                           Lubby2MaterialProperties const& mp)
         : GM0(mp.GM0(t, x)[0]),
           KM0(mp.KM0(t, x)[0]),
@@ -192,7 +192,7 @@ public:
 
     double computeFreeEnergyDensity(
         double const t,
-        ProcessLib::SpatialPosition const& x,
+        ParameterLib::SpatialPosition const& x,
         double const dt,
         KelvinVector const& eps,
         KelvinVector const& sigma,
@@ -224,7 +224,7 @@ public:
                                    DisplacementDim>::MaterialStateVariables>,
                                KelvinMatrix>>
     integrateStress(
-        double const t, ProcessLib::SpatialPosition const& x, double const dt,
+        double const t, ParameterLib::SpatialPosition const& x, double const dt,
         KelvinVector const& eps_prev, KelvinVector const& eps,
         KelvinVector const& sigma_prev,
         typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
@@ -247,7 +247,7 @@ private:
     /// Calculates the 18x18 Jacobian.
     void calculateJacobianBurgers(
         double const t,
-        ProcessLib::SpatialPosition const& x,
+        ParameterLib::SpatialPosition const& x,
         double const dt,
         JacobianMatrix& Jac,
         double s_eff,

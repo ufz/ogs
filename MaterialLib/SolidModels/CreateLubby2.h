@@ -10,7 +10,7 @@
 #pragma once
 
 #include "CreateNewtonRaphsonSolverParameters.h"
-#include "ProcessLib/Utils/ProcessUtils.h"  // required for findParameter
+#include "ParameterLib/Utils.h"
 
 #include "Lubby2.h"
 
@@ -22,7 +22,7 @@ namespace Lubby2
 {
 template <int DisplacementDim>
 std::unique_ptr<Lubby2<DisplacementDim>> createLubby2(
-    std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config)
 {
     //! \ogs_file_param{material__solid__constitutive_relation__type}
@@ -30,7 +30,7 @@ std::unique_ptr<Lubby2<DisplacementDim>> createLubby2(
     DBUG("Create Lubby2 material");
 
     // Kelvin shear modulus.
-    auto& kelvin_shear_modulus = ProcessLib::findParameter<double>(
+    auto& kelvin_shear_modulus = ParameterLib::findParameter<double>(
         //! \ogs_file_param_special{material__solid__constitutive_relation__Lubby2__kelvin_shear_modulus}
         config, "kelvin_shear_modulus", parameters, 1);
 
@@ -38,7 +38,7 @@ std::unique_ptr<Lubby2<DisplacementDim>> createLubby2(
          kelvin_shear_modulus.name.c_str());
 
     // Kelvin viscosity.
-    auto& kelvin_viscosity = ProcessLib::findParameter<double>(
+    auto& kelvin_viscosity = ParameterLib::findParameter<double>(
         //! \ogs_file_param_special{material__solid__constitutive_relation__Lubby2__kelvin_viscosity}
         config, "kelvin_viscosity", parameters, 1);
 
@@ -46,7 +46,7 @@ std::unique_ptr<Lubby2<DisplacementDim>> createLubby2(
          kelvin_viscosity.name.c_str());
 
     // Maxwell shear modulus.
-    auto& maxwell_shear_modulus = ProcessLib::findParameter<double>(
+    auto& maxwell_shear_modulus = ParameterLib::findParameter<double>(
         //! \ogs_file_param_special{material__solid__constitutive_relation__Lubby2__maxwell_shear_modulus}
         config, "maxwell_shear_modulus", parameters, 1);
 
@@ -54,7 +54,7 @@ std::unique_ptr<Lubby2<DisplacementDim>> createLubby2(
          maxwell_shear_modulus.name.c_str());
 
     // Maxwell bulk modulus.
-    auto& maxwell_bulk_modulus = ProcessLib::findParameter<double>(
+    auto& maxwell_bulk_modulus = ParameterLib::findParameter<double>(
         //! \ogs_file_param_special{material__solid__constitutive_relation__Lubby2__maxwell_bulk_modulus}
         config, "maxwell_bulk_modulus", parameters, 1);
 
@@ -62,7 +62,7 @@ std::unique_ptr<Lubby2<DisplacementDim>> createLubby2(
          maxwell_bulk_modulus.name.c_str());
 
     // Maxwell viscosity.
-    auto& maxwell_viscosity = ProcessLib::findParameter<double>(
+    auto& maxwell_viscosity = ParameterLib::findParameter<double>(
         //! \ogs_file_param_special{material__solid__constitutive_relation__Lubby2__maxwell_viscosity}
         config, "maxwell_viscosity", parameters, 1);
 
@@ -70,7 +70,7 @@ std::unique_ptr<Lubby2<DisplacementDim>> createLubby2(
          maxwell_viscosity.name.c_str());
 
     // Dependency parameter for mK.
-    auto& dependency_parameter_mK = ProcessLib::findParameter<double>(
+    auto& dependency_parameter_mK = ParameterLib::findParameter<double>(
         //! \ogs_file_param_special{material__solid__constitutive_relation__Lubby2__dependency_parameter_mk}
         config, "dependency_parameter_mk", parameters, 1);
 
@@ -78,7 +78,7 @@ std::unique_ptr<Lubby2<DisplacementDim>> createLubby2(
          dependency_parameter_mK.name.c_str());
 
     // Dependency parameter for mvK.
-    auto& dependency_parameter_mvK = ProcessLib::findParameter<double>(
+    auto& dependency_parameter_mvK = ParameterLib::findParameter<double>(
         //! \ogs_file_param_special{material__solid__constitutive_relation__Lubby2__dependency_parameter_mvk}
         config, "dependency_parameter_mvk", parameters, 1);
 
@@ -86,7 +86,7 @@ std::unique_ptr<Lubby2<DisplacementDim>> createLubby2(
          dependency_parameter_mvK.name.c_str());
 
     // Dependency parameter for mvM.
-    auto& dependency_parameter_mvM = ProcessLib::findParameter<double>(
+    auto& dependency_parameter_mvM = ParameterLib::findParameter<double>(
         //! \ogs_file_param_special{material__solid__constitutive_relation__Lubby2__dependency_parameter_mvm}
         config, "dependency_parameter_mvm", parameters, 1);
 

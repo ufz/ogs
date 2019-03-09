@@ -22,7 +22,7 @@
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
 
-#include "ProcessLib/Parameter/Parameter.h"
+#include "ParameterLib/Parameter.h"
 
 namespace MaterialLib
 {
@@ -31,7 +31,7 @@ namespace Solids
 template <int DisplacementDim>
 std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>
 createConstitutiveRelation(
-    std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config)
 {
     auto const type =
@@ -72,7 +72,7 @@ template <int DisplacementDim>
 std::map<int,
          std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>>
 createConstitutiveRelations(
-    std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config)
 {
     auto const constitutive_relation_configs =
@@ -112,12 +112,12 @@ createConstitutiveRelations(
 
 template std::map<int, std::unique_ptr<MaterialLib::Solids::MechanicsBase<2>>>
 createConstitutiveRelations<2>(
-    std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config);
 
 template std::map<int, std::unique_ptr<MaterialLib::Solids::MechanicsBase<3>>>
 createConstitutiveRelations<3>(
-    std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config);
 }  // namespace Solids
 }  // namespace MaterialLib

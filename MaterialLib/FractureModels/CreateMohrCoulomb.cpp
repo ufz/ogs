@@ -9,41 +9,40 @@
 
 #include "CreateMohrCoulomb.h"
 
-#include "ProcessLib/Utils/ProcessUtils.h"  // required for findParameter
+#include "ParameterLib/Utils.h"
+
 #include "MohrCoulomb.h"
 
 namespace MaterialLib
 {
 namespace Fracture
 {
-
 template <int DisplacementDim>
-std::unique_ptr<FractureModelBase<DisplacementDim>>
-createMohrCoulomb(
-    std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters,
+std::unique_ptr<FractureModelBase<DisplacementDim>> createMohrCoulomb(
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config)
 {
     //! \ogs_file_param{material__fracture_model__type}
     config.checkConfigParameter("type", "MohrCoulomb");
     DBUG("Create MohrCoulomb material");
 
-    auto& Kn = ProcessLib::findParameter<double>(
+    auto& Kn = ParameterLib::findParameter<double>(
         //! \ogs_file_param_special{material__fracture_model__MohrCoulomb__normal_stiffness}
         config, "normal_stiffness", parameters, 1);
 
-    auto& Ks = ProcessLib::findParameter<double>(
+    auto& Ks = ParameterLib::findParameter<double>(
         //! \ogs_file_param_special{material__fracture_model__MohrCoulomb__shear_stiffness}
         config, "shear_stiffness", parameters, 1);
 
-    auto& friction_angle = ProcessLib::findParameter<double>(
+    auto& friction_angle = ParameterLib::findParameter<double>(
         //! \ogs_file_param_special{material__fracture_model__MohrCoulomb__friction_angle}
         config, "friction_angle", parameters, 1);
 
-    auto& dilatancy_angle = ProcessLib::findParameter<double>(
+    auto& dilatancy_angle = ParameterLib::findParameter<double>(
         //! \ogs_file_param_special{material__fracture_model__MohrCoulomb__dilatancy_angle}
         config, "dilatancy_angle", parameters, 1);
 
-    auto& cohesion = ProcessLib::findParameter<double>(
+    auto& cohesion = ParameterLib::findParameter<double>(
         //! \ogs_file_param_special{material__fracture_model__MohrCoulomb__cohesion}
         config, "cohesion", parameters, 1);
 
@@ -62,17 +61,12 @@ createMohrCoulomb(
         penalty_aperture_cutoff, tension_cutoff, mp);
 }
 
-
-template
-std::unique_ptr<FractureModelBase<2>>
-createMohrCoulomb(
-    std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters,
+template std::unique_ptr<FractureModelBase<2>> createMohrCoulomb(
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config);
 
-template
-std::unique_ptr<FractureModelBase<3>>
-createMohrCoulomb(
-    std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters,
+template std::unique_ptr<FractureModelBase<3>> createMohrCoulomb(
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config);
 
 }  // namespace Fracture

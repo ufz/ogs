@@ -14,7 +14,7 @@
 
 #include "BaseLib/ConfigTree.h"
 #include "MaterialLib/SolidModels/MechanicsBase.h"
-#include "ProcessLib/Parameter/Parameter.h"
+#include "ParameterLib/Parameter.h"
 
 namespace MaterialLib
 {
@@ -24,14 +24,14 @@ namespace MFront
 {
 template <int DisplacementDim>
 std::unique_ptr<MechanicsBase<DisplacementDim>> createMFront(
-    std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config);
 
 extern template std::unique_ptr<MechanicsBase<2>> createMFront<2>(
-    std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config);
 extern template std::unique_ptr<MechanicsBase<3>> createMFront<3>(
-    std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config);
 }  // namespace MFront
 }  // namespace Solids

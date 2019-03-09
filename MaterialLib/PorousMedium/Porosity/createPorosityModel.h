@@ -13,7 +13,7 @@
 #pragma once
 
 #include <memory>
-#include "ProcessLib/Parameter/Parameter.h"
+#include "ParameterLib/Parameter.h"
 
 namespace BaseLib
 {
@@ -33,7 +33,8 @@ class Porosity;
  */
 std::unique_ptr<Porosity> createPorosityModel(
     BaseLib::ConfigTree const& config,
-    std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters);
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
+        parameters);
 
 }  // namespace PorousMedium
 }  // namespace MaterialLib

@@ -14,7 +14,7 @@
 #include <MGIS/Behaviour/Behaviour.hxx>
 #include <MGIS/Behaviour/BehaviourData.hxx>
 
-#include "ProcessLib/Parameter/Parameter.h"
+#include "ParameterLib/Parameter.h"
 
 namespace MaterialLib
 {
@@ -72,7 +72,7 @@ public:
         MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>;
 
     MFront(mgis::behaviour::Behaviour&& behaviour,
-           std::vector<ProcessLib::Parameter<double> const*>&&
+           std::vector<ParameterLib::Parameter<double> const*>&&
                material_properties);
 
     std::unique_ptr<
@@ -85,7 +85,7 @@ public:
                                KelvinMatrix>>
     integrateStress(
         double const t,
-        ProcessLib::SpatialPosition const& x,
+        ParameterLib::SpatialPosition const& x,
         double const dt,
         KelvinVector const& eps_prev,
         KelvinVector const& eps,
@@ -96,7 +96,7 @@ public:
 
     double computeFreeEnergyDensity(
         double const t,
-        ProcessLib::SpatialPosition const& x,
+        ParameterLib::SpatialPosition const& x,
         double const dt,
         KelvinVector const& eps,
         KelvinVector const& sigma,
@@ -105,7 +105,7 @@ public:
 
 private:
     mgis::behaviour::Behaviour _behaviour;
-    std::vector<ProcessLib::Parameter<double> const*> _material_properties;
+    std::vector<ParameterLib::Parameter<double> const*> _material_properties;
 };
 
 extern template class MFront<2>;

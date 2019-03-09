@@ -18,7 +18,7 @@
 #include "BaseLib/Error.h"
 #include "ProcessLib/Deformation/BMatrixPolicy.h"
 
-namespace ProcessLib
+namespace ParameterLib
 {
 class SpatialPosition;
 }
@@ -80,7 +80,7 @@ struct MechanicsBase
     boost::optional<std::tuple<
         KelvinVector, std::unique_ptr<MaterialStateVariables>, KelvinMatrix>>
     integrateStress(double const t,
-                    ProcessLib::SpatialPosition const& x,
+                    ParameterLib::SpatialPosition const& x,
                     double const dt,
                     Eigen::Matrix<double, Eigen::Dynamic, 1> const& eps_prev,
                     Eigen::Matrix<double, Eigen::Dynamic, 1> const& eps,
@@ -111,7 +111,7 @@ struct MechanicsBase
     virtual boost::optional<std::tuple<
         KelvinVector, std::unique_ptr<MaterialStateVariables>, KelvinMatrix>>
     integrateStress(double const t,
-                    ProcessLib::SpatialPosition const& x,
+                    ParameterLib::SpatialPosition const& x,
                     double const dt,
                     KelvinVector const& eps_prev,
                     KelvinVector const& eps,
@@ -152,7 +152,7 @@ struct MechanicsBase
     /// one.
     virtual double getTemperatureRelatedCoefficient(
         double const /*t*/, double const /*dt*/,
-        ProcessLib::SpatialPosition const& /*x*/, double const /*T*/,
+        ParameterLib::SpatialPosition const& /*x*/, double const /*T*/,
         double const /*deviatoric_stress_norm*/) const
     {
         return 0.0;
@@ -160,7 +160,7 @@ struct MechanicsBase
 
     virtual double computeFreeEnergyDensity(
         double const t,
-        ProcessLib::SpatialPosition const& x,
+        ParameterLib::SpatialPosition const& x,
         double const dt,
         KelvinVector const& eps,
         KelvinVector const& sigma,

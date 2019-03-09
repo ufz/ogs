@@ -30,10 +30,9 @@ struct MaterialPropertyValues
     double c = 0.0;
 
     template <typename MaterialProperties>
-    MaterialPropertyValues(
-            MaterialProperties const& mp,
-            double const t,
-            ProcessLib::SpatialPosition const& x)
+    MaterialPropertyValues(MaterialProperties const& mp,
+                           double const t,
+                           ParameterLib::SpatialPosition const& x)
     {
         Kn = mp.normal_stiffness(t,x)[0];
         Ks = mp.shear_stiffness(t,x)[0];
@@ -48,7 +47,7 @@ struct MaterialPropertyValues
 template <int DisplacementDim>
 void MohrCoulomb<DisplacementDim>::computeConstitutiveRelation(
     double const t,
-    ProcessLib::SpatialPosition const& x,
+    ParameterLib::SpatialPosition const& x,
     double const aperture0,
     Eigen::Ref<Eigen::VectorXd const>
         sigma0,

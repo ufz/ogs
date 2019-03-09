@@ -20,7 +20,7 @@ boost::optional<
                    DisplacementDim>::MaterialStateVariables>,
                typename LinearElasticIsotropic<DisplacementDim>::KelvinMatrix>>
 LinearElasticIsotropic<DisplacementDim>::integrateStress(
-    double const t, ProcessLib::SpatialPosition const& x, double const /*dt*/,
+    double const t, ParameterLib::SpatialPosition const& x, double const /*dt*/,
     KelvinVector const& eps_prev, KelvinVector const& eps,
     KelvinVector const& sigma_prev,
     typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
@@ -44,7 +44,7 @@ LinearElasticIsotropic<DisplacementDim>::integrateStress(
 template <int DisplacementDim>
 typename LinearElasticIsotropic<DisplacementDim>::KelvinMatrix
 LinearElasticIsotropic<DisplacementDim>::getElasticTensor(
-    double const t, ProcessLib::SpatialPosition const& x,
+    double const t, ParameterLib::SpatialPosition const& x,
     double const /*T*/) const
 {
     return elasticTangentStiffness<DisplacementDim>(_mp.lambda(t, x),

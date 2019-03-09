@@ -73,7 +73,7 @@ boost::optional<std::tuple<typename Lubby2<DisplacementDim>::KelvinVector,
                                DisplacementDim>::MaterialStateVariables>,
                            typename Lubby2<DisplacementDim>::KelvinMatrix>>
 Lubby2<DisplacementDim>::integrateStress(
-    double const t, ProcessLib::SpatialPosition const& x, double const dt,
+    double const t, ParameterLib::SpatialPosition const& x, double const dt,
     KelvinVector const& /*eps_prev*/, KelvinVector const& eps,
     KelvinVector const& /*sigma_prev*/,
     typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
@@ -227,7 +227,7 @@ void Lubby2<DisplacementDim>::calculateResidualBurgers(
 template <int DisplacementDim>
 void Lubby2<DisplacementDim>::calculateJacobianBurgers(
     double const t,
-    ProcessLib::SpatialPosition const& x,
+    ParameterLib::SpatialPosition const& x,
     const double dt,
     JacobianMatrix& Jac,
     double s_eff,

@@ -18,9 +18,9 @@
 
 #include "BaseLib/Error.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
-#include "ProcessLib/Parameter/ConstantParameter.h"
-#include "ProcessLib/Parameter/SpatialPosition.h"
-#include "ProcessLib/Utils/ProcessUtils.h"
+#include "ParameterLib/ConstantParameter.h"
+#include "ParameterLib/SpatialPosition.h"
+#include "ParameterLib/Utils.h"
 
 namespace MaterialLib
 {
@@ -28,14 +28,15 @@ namespace PorousMedium
 {
 std::unique_ptr<Permeability> createPermeabilityModel(
     BaseLib::ConfigTree const& config,
-    std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters)
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters)
 {
     //! \ogs_file_param{material__porous_medium__permeability__type}
     auto const type = config.getConfigParameter<std::string>("type");
 
     if (type == "Constant")
     {
-        auto const& permeability_parameter = ProcessLib::findParameter<double>(
+        auto const& permeability_parameter = ParameterLib::findParameter<
+            double>(
             config,
             //! \ogs_file_param_special{material__porous_medium__permeability__permeability_tensor_entries}
             "permeability_tensor_entries", parameters, 0);

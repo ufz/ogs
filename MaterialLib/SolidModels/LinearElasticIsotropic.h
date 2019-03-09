@@ -10,7 +10,7 @@
 #pragma once
 
 #include "MechanicsBase.h"
-#include "ProcessLib/Parameter/Parameter.h"
+#include "ParameterLib/Parameter.h"
 
 namespace MaterialLib
 {
@@ -23,8 +23,8 @@ public:
     /// Variables specific to the material model
     class MaterialProperties
     {
-        using P = ProcessLib::Parameter<double>;
-        using X = ProcessLib::SpatialPosition;
+        using P = ParameterLib::Parameter<double>;
+        using X = ParameterLib::SpatialPosition;
 
     public:
         MaterialProperties(P const& youngs_modulus, P const& poissons_ratio)
@@ -97,7 +97,7 @@ public:
 
     double computeFreeEnergyDensity(
         double const /*t*/,
-        ProcessLib::SpatialPosition const& /*x*/,
+        ParameterLib::SpatialPosition const& /*x*/,
         double const /*dt*/,
         KelvinVector const& eps,
         KelvinVector const& sigma,
@@ -113,7 +113,7 @@ public:
                                    DisplacementDim>::MaterialStateVariables>,
                                KelvinMatrix>>
     integrateStress(
-        double const t, ProcessLib::SpatialPosition const& x,
+        double const t, ParameterLib::SpatialPosition const& x,
         double const /*dt*/, KelvinVector const& eps_prev,
         KelvinVector const& eps, KelvinVector const& sigma_prev,
         typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
@@ -121,7 +121,7 @@ public:
         double const T) const override;
 
     KelvinMatrix getElasticTensor(double const t,
-                                  ProcessLib::SpatialPosition const& x,
+                                  ParameterLib::SpatialPosition const& x,
                                   double const T) const;
 
     MaterialProperties getMaterialProperties() const { return _mp; }

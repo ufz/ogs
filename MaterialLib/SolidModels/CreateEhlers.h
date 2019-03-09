@@ -10,7 +10,8 @@
 #pragma once
 
 #include "CreateNewtonRaphsonSolverParameters.h"
-#include "ProcessLib/Utils/ProcessUtils.h"  // required for findParameter
+#include "ParameterLib/Utils.h"
+
 #include "Ehlers.h"
 
 namespace MaterialLib
@@ -20,23 +21,24 @@ namespace Solids
 namespace Ehlers
 {
 inline std::unique_ptr<DamagePropertiesParameters> createDamageProperties(
-    std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config)
 {
     //! \ogs_file_param_special{material__solid__constitutive_relation__Ehlers__damage_properties__alpha_d}
     auto& alpha_d =
-        ProcessLib::findParameter<double>(config, "alpha_d", parameters, 1);
+        ParameterLib::findParameter<double>(config, "alpha_d", parameters, 1);
 
     DBUG("Use '%s' as alpha_d.", alpha_d.name.c_str());
 
     //! \ogs_file_param_special{material__solid__constitutive_relation__Ehlers__damage_properties__beta_d}
     auto& beta_d =
-        ProcessLib::findParameter<double>(config, "beta_d", parameters, 1);
+        ParameterLib::findParameter<double>(config, "beta_d", parameters, 1);
 
     DBUG("Use '%s' as beta_d.", beta_d.name.c_str());
 
     //! \ogs_file_param_special{material__solid__constitutive_relation__Ehlers__damage_properties__h_d}
-    auto& h_d = ProcessLib::findParameter<double>(config, "h_d", parameters, 1);
+    auto& h_d =
+        ParameterLib::findParameter<double>(config, "h_d", parameters, 1);
 
     DBUG("Use '%s' as h_d.", h_d.name.c_str());
 
@@ -46,7 +48,7 @@ inline std::unique_ptr<DamagePropertiesParameters> createDamageProperties(
 
 template <int DisplacementDim>
 std::unique_ptr<SolidEhlers<DisplacementDim>> createEhlers(
-    std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config)
 {
     //! \ogs_file_param{material__solid__constitutive_relation__type}
@@ -54,37 +56,37 @@ std::unique_ptr<SolidEhlers<DisplacementDim>> createEhlers(
     DBUG("Create Ehlers material");
 
     //! \ogs_file_param_special{material__solid__constitutive_relation__Ehlers__shear_modulus}
-    auto& shear_modulus = ProcessLib::findParameter<double>(
+    auto& shear_modulus = ParameterLib::findParameter<double>(
         config, "shear_modulus", parameters, 1);
 
     DBUG("Use '%s' as shear modulus parameter.", shear_modulus.name.c_str());
 
     //! \ogs_file_param_special{material__solid__constitutive_relation__Ehlers__bulk_modulus}
-    auto& bulk_modulus = ProcessLib::findParameter<double>(
+    auto& bulk_modulus = ParameterLib::findParameter<double>(
         config, "bulk_modulus", parameters, 1);
 
     DBUG("Use '%s' as bulk modulus parameter.", bulk_modulus.name.c_str());
 
     //! \ogs_file_param_special{material__solid__constitutive_relation__Ehlers__kappa}
     auto& kappa =
-        ProcessLib::findParameter<double>(config, "kappa", parameters, 1);
+        ParameterLib::findParameter<double>(config, "kappa", parameters, 1);
 
     DBUG("Use '%s' as kappa.", kappa.name.c_str());
 
     //! \ogs_file_param_special{material__solid__constitutive_relation__Ehlers__beta}
     auto& beta =
-        ProcessLib::findParameter<double>(config, "beta", parameters, 1);
+        ParameterLib::findParameter<double>(config, "beta", parameters, 1);
 
     DBUG("Use '%s' as beta.", beta.name.c_str());
 
     //! \ogs_file_param_special{material__solid__constitutive_relation__Ehlers__gamma}
     auto& gamma =
-        ProcessLib::findParameter<double>(config, "gamma", parameters, 1);
+        ParameterLib::findParameter<double>(config, "gamma", parameters, 1);
 
     DBUG("Use '%s' as gamma.", gamma.name.c_str());
 
     //! \ogs_file_param_special{material__solid__constitutive_relation__Ehlers__hardening_modulus}
-    auto& hardening_modulus = ProcessLib::findParameter<double>(
+    auto& hardening_modulus = ParameterLib::findParameter<double>(
         config, "hardening_modulus", parameters, 1);
 
     DBUG("Use '%s' as hardening modulus parameter.",
@@ -92,59 +94,60 @@ std::unique_ptr<SolidEhlers<DisplacementDim>> createEhlers(
 
     //! \ogs_file_param_special{material__solid__constitutive_relation__Ehlers__alpha}
     auto& alpha =
-        ProcessLib::findParameter<double>(config, "alpha", parameters, 1);
+        ParameterLib::findParameter<double>(config, "alpha", parameters, 1);
 
     DBUG("Use '%s' as alpha.", alpha.name.c_str());
 
     //! \ogs_file_param_special{material__solid__constitutive_relation__Ehlers__delta}
     auto& delta =
-        ProcessLib::findParameter<double>(config, "delta", parameters, 1);
+        ParameterLib::findParameter<double>(config, "delta", parameters, 1);
 
     DBUG("Use '%s' as delta.", delta.name.c_str());
 
     //! \ogs_file_param_special{material__solid__constitutive_relation__Ehlers__eps}
-    auto& eps = ProcessLib::findParameter<double>(config, "eps", parameters, 1);
+    auto& eps =
+        ParameterLib::findParameter<double>(config, "eps", parameters, 1);
 
     DBUG("Use '%s' as eps.", eps.name.c_str());
 
     //! \ogs_file_param_special{material__solid__constitutive_relation__Ehlers__m}
-    auto& m = ProcessLib::findParameter<double>(config, "m", parameters, 1);
+    auto& m = ParameterLib::findParameter<double>(config, "m", parameters, 1);
 
     DBUG("Use '%s' as m.", m.name.c_str());
 
     //! \ogs_file_param_special{material__solid__constitutive_relation__Ehlers__alphap}
     auto& alphap =
-        ProcessLib::findParameter<double>(config, "alphap", parameters, 1);
+        ParameterLib::findParameter<double>(config, "alphap", parameters, 1);
 
     DBUG("Use '%s' as alphap.", alphap.name.c_str());
 
     //! \ogs_file_param_special{material__solid__constitutive_relation__Ehlers__deltap}
     auto& deltap =
-        ProcessLib::findParameter<double>(config, "deltap", parameters, 1);
+        ParameterLib::findParameter<double>(config, "deltap", parameters, 1);
 
     DBUG("Use '%s' as deltap.", deltap.name.c_str());
 
     //! \ogs_file_param_special{material__solid__constitutive_relation__Ehlers__epsp}
     auto& epsp =
-        ProcessLib::findParameter<double>(config, "epsp", parameters, 1);
+        ParameterLib::findParameter<double>(config, "epsp", parameters, 1);
 
     DBUG("Use '%s' as epsp.", epsp.name.c_str());
 
     //! \ogs_file_param_special{material__solid__constitutive_relation__Ehlers__mp}
     auto& paremeter_mp =
-        ProcessLib::findParameter<double>(config, "mp", parameters, 1);
+        ParameterLib::findParameter<double>(config, "mp", parameters, 1);
 
     DBUG("Use '%s' as mp.", paremeter_mp.name.c_str());
 
     //! \ogs_file_param_special{material__solid__constitutive_relation__Ehlers__betap}
     auto& betap =
-        ProcessLib::findParameter<double>(config, "betap", parameters, 1);
+        ParameterLib::findParameter<double>(config, "betap", parameters, 1);
 
     DBUG("Use '%s' as betap.", betap.name.c_str());
 
     //! \ogs_file_param_special{material__solid__constitutive_relation__Ehlers__gammap}
     auto& gammap =
-        ProcessLib::findParameter<double>(config, "gammap", parameters, 1);
+        ParameterLib::findParameter<double>(config, "gammap", parameters, 1);
 
     DBUG("Use '%s' as gammap.", gammap.name.c_str());
 

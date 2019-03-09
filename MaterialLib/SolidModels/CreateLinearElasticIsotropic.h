@@ -9,7 +9,8 @@
 
 #pragma once
 
-#include "ProcessLib/Utils/ProcessUtils.h"  // required for findParameter
+#include "ParameterLib/Utils.h"
+
 #include "LinearElasticIsotropic.h"
 
 namespace MaterialLib
@@ -19,7 +20,7 @@ namespace Solids
 template <int DisplacementDim>
 std::unique_ptr<LinearElasticIsotropic<DisplacementDim>>
 createLinearElasticIsotropic(
-    std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config, const bool skip_type_checking)
 {
     if (!skip_type_checking)
@@ -30,14 +31,14 @@ createLinearElasticIsotropic(
     }
 
     // Youngs modulus
-    auto& youngs_modulus = ProcessLib::findParameter<double>(
+    auto& youngs_modulus = ParameterLib::findParameter<double>(
         //! \ogs_file_param_special{material__solid__constitutive_relation__LinearElasticIsotropic__youngs_modulus}
         config, "youngs_modulus", parameters, 1);
 
     DBUG("Use '%s' as youngs_modulus parameter.", youngs_modulus.name.c_str());
 
     // Poissons ratio
-    auto& poissons_ratio = ProcessLib::findParameter<double>(
+    auto& poissons_ratio = ParameterLib::findParameter<double>(
         //! \ogs_file_param_special{material__solid__constitutive_relation__LinearElasticIsotropic__poissons_ratio}
         config, "poissons_ratio", parameters, 1);
 
