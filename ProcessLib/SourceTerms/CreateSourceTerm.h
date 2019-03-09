@@ -12,7 +12,7 @@
 #include <vector>
 #include <memory>
 
-#include "ProcessLib/Parameter/Parameter.h"
+#include "ParameterLib/Parameter.h"
 
 namespace MeshLib
 {
@@ -38,6 +38,7 @@ std::unique_ptr<SourceTerm> createSourceTerm(
     const NumLib::LocalToGlobalIndexMap& dof_table, const MeshLib::Mesh& mesh,
     const int variable_id, const unsigned integration_order,
     const unsigned shapefunction_order,
-    std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters);
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
+        parameters);
 
 }  // namespace ProcessLib

@@ -18,7 +18,8 @@ class SourceTermCollection final
 {
 public:
     explicit SourceTermCollection(
-        std::vector<std::unique_ptr<ParameterBase>> const& parameters)
+        std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
+            parameters)
         : _parameters(parameters)
     {
     }
@@ -34,7 +35,8 @@ public:
 
 private:
     std::vector<std::unique_ptr<SourceTerm>> _source_terms;
-    std::vector<std::unique_ptr<ParameterBase>> const& _parameters;
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
+        _parameters;
 };
 
 }  // namespace ProcessLib

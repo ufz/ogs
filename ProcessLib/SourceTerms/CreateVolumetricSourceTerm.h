@@ -27,16 +27,19 @@ namespace NumLib
 class LocalToGlobalIndexMap;
 }
 
-namespace ProcessLib
+namespace ParameterLib
 {
 struct ParameterBase;
+}
+
+namespace ProcessLib
+{
 class SourceTerm;
 
 std::unique_ptr<SourceTerm> createVolumetricSourceTerm(
-    BaseLib::ConfigTree const& config,
-    MeshLib::Mesh const& source_term_mesh,
+    BaseLib::ConfigTree const& config, MeshLib::Mesh const& source_term_mesh,
     std::unique_ptr<NumLib::LocalToGlobalIndexMap> source_term_dof_table,
-    std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     unsigned const integration_order, unsigned const shapefunction_order);
 
 }   // namespace ProcessLib

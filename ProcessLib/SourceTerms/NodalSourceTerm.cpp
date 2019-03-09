@@ -19,7 +19,7 @@ NodalSourceTerm::NodalSourceTerm(
     MeshLib::Mesh const& st_mesh,
     const int variable_id,
     const int component_id,
-    Parameter<double> const& parameter)
+    ParameterLib::Parameter<double> const& parameter)
     : SourceTerm(std::move(source_term_dof_table)),
       _source_term_mesh_id(source_term_mesh_id),
       _st_mesh(st_mesh),
@@ -43,7 +43,7 @@ void NodalSourceTerm::integrate(const double t, GlobalVector const& /*x*/,
         auto const index = _source_term_dof_table->getGlobalIndex(
             l, _variable_id, _component_id);
 
-        SpatialPosition pos;
+        ParameterLib::SpatialPosition pos;
         pos.setNodeID(node_id);
 
         b.add(index, _parameter(t, pos).front());

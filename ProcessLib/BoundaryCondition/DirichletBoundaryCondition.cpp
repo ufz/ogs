@@ -16,15 +16,16 @@
 #include "DirichletBoundaryConditionAuxiliaryFunctions.h"
 
 #include "BaseLib/ConfigTree.h"
-#include "NumLib/IndexValueVector.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
-#include "ProcessLib/Parameter/Parameter.h"
-#include "ProcessLib/Utils/ProcessUtils.h"
+#include "NumLib/IndexValueVector.h"
+#include "ParameterLib/Parameter.h"
+#include "ParameterLib/Utils.h"
 
 namespace ProcessLib
 {
 DirichletBoundaryCondition::DirichletBoundaryCondition(
-    Parameter<double> const& parameter, MeshLib::Mesh const& bc_mesh,
+    ParameterLib::Parameter<double> const& parameter,
+    MeshLib::Mesh const& bc_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table_bulk, int const variable_id,
     int const component_id)
     : _parameter(parameter),
@@ -57,7 +58,7 @@ std::unique_ptr<DirichletBoundaryCondition> createDirichletBoundaryCondition(
     BaseLib::ConfigTree const& config, MeshLib::Mesh const& bc_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table_bulk, int const variable_id,
     int const component_id,
-    const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>& parameters)
+    const std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters)
 {
     DBUG("Constructing DirichletBoundaryCondition from config.");
     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__type}
@@ -67,7 +68,8 @@ std::unique_ptr<DirichletBoundaryCondition> createDirichletBoundaryCondition(
     auto const param_name = config.getConfigParameter<std::string>("parameter");
     DBUG("Using parameter %s", param_name.c_str());
 
-    auto& parameter = findParameter<double>(param_name, parameters, 1);
+    auto& parameter =
+        ParameterLib::findParameter<double>(param_name, parameters, 1);
 
     if (parameter.mesh() && *parameter.mesh() != bc_mesh)
     {

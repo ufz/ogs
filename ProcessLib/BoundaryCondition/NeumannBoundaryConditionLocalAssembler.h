@@ -12,7 +12,7 @@
 #include "GenericNaturalBoundaryConditionLocalAssembler.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
-#include "ProcessLib/Parameter/Parameter.h"
+#include "ParameterLib/Parameter.h"
 #include "ProcessLib/Utils/InitShapeMatrices.h"
 
 namespace ProcessLib
@@ -36,7 +36,7 @@ public:
         std::size_t const local_matrix_size,
         bool const is_axially_symmetric,
         unsigned const integration_order,
-        Parameter<double> const& neumann_bc_parameter)
+        ParameterLib::Parameter<double> const& neumann_bc_parameter)
         : Base(e, is_axially_symmetric, integration_order),
           _neumann_bc_parameter(neumann_bc_parameter),
           _local_rhs(local_matrix_size)
@@ -73,7 +73,7 @@ public:
     }
 
 private:
-    Parameter<double> const& _neumann_bc_parameter;
+    ParameterLib::Parameter<double> const& _neumann_bc_parameter;
     NodalVectorType _local_rhs;
 
 public:

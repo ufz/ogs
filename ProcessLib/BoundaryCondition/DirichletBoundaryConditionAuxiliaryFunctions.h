@@ -33,11 +33,14 @@ template <typename>
 struct IndexValueVector;
 }
 
-namespace ProcessLib
+namespace ParameterLib
 {
 template <typename T>
 struct Parameter;
+}
 
+namespace ProcessLib
+{
 void checkParametersOfDirichletBoundaryCondition(
     MeshLib::Mesh const& bc_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
@@ -45,7 +48,8 @@ void checkParametersOfDirichletBoundaryCondition(
     int const component_id);
 
 void getEssentialBCValuesLocal(
-    Parameter<double> const& parameter, MeshLib::Mesh const& bc_mesh,
+    ParameterLib::Parameter<double> const& parameter,
+    MeshLib::Mesh const& bc_mesh,
     std::vector<MeshLib::Node*> const& nodes_in_bc_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table_boundary,
     int const variable_id, int const component_id, const double t,

@@ -24,11 +24,14 @@ namespace NumLib
 {
 class LocalToGlobalIndexMap;
 }
+namespace ParameterLib
+{
+struct ParameterBase;
+}
 namespace ProcessLib
 {
 class SourceTerm;
-struct ParameterBase;
-}  // namespace ProcessLib
+}
 
 namespace ProcessLib
 {
@@ -36,6 +39,7 @@ std::unique_ptr<SourceTerm> createNodalSourceTerm(
     BaseLib::ConfigTree const& config, MeshLib::Mesh const& st_mesh,
     std::unique_ptr<NumLib::LocalToGlobalIndexMap> dof_table,
     std::size_t mesh_id, const int variable_id, const int component_id,
-    std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters);
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
+        parameters);
 
 }   // namespace ProcessLib

@@ -13,16 +13,15 @@
 #include "BaseLib/FileTools.h"
 #include "MeshLib/Mesh.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
-#include "ProcessLib/Utils/ProcessUtils.h"
+#include "ParameterLib/Utils.h"
 #include "VolumetricSourceTerm.h"
 
 namespace ProcessLib
 {
 std::unique_ptr<SourceTerm> createVolumetricSourceTerm(
-    BaseLib::ConfigTree const& config,
-    MeshLib::Mesh const& source_term_mesh,
+    BaseLib::ConfigTree const& config, MeshLib::Mesh const& source_term_mesh,
     std::unique_ptr<NumLib::LocalToGlobalIndexMap> source_term_dof_table,
-    std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     unsigned const integration_order, unsigned const shapefunction_order)
 {
     //! \ogs_file_param{prj__process_variables__process_variable__source_terms__source_term__type}
@@ -34,7 +33,7 @@ std::unique_ptr<SourceTerm> createVolumetricSourceTerm(
     auto const& volumetric_source_term_parameter_name =
         //! \ogs_file_param{prj__process_variables__process_variable__source_terms__source_term__Volumetric__parameter}
         config.getConfigParameter<std::string>("parameter");
-    auto& volumetric_source_term = findParameter<double>(
+    auto& volumetric_source_term = ParameterLib::findParameter<double>(
         volumetric_source_term_parameter_name, parameters, 1);
 
     DBUG("Using '%s` as volumetric source term parameter.",

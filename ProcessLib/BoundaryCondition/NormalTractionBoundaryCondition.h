@@ -39,7 +39,8 @@ public:
         unsigned const integration_order, unsigned const shapefunction_order,
         NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
         int const variable_id, unsigned const global_dim,
-        MeshLib::Mesh const& bc_mesh, Parameter<double> const& pressure);
+        MeshLib::Mesh const& bc_mesh,
+        ParameterLib::Parameter<double> const& pressure);
 
     /// Calls local assemblers which calculate their contributions to the global
     /// matrix and the right-hand-side.
@@ -67,7 +68,7 @@ private:
         std::unique_ptr<NormalTractionBoundaryConditionLocalAssemblerInterface>>
         _local_assemblers;
 
-    Parameter<double> const& _pressure;
+    ParameterLib::Parameter<double> const& _pressure;
 };
 
 std::unique_ptr<NormalTractionBoundaryCondition<
@@ -77,7 +78,8 @@ createNormalTractionBoundaryCondition(
     NumLib::LocalToGlobalIndexMap const& dof_table, int const variable_id,
     unsigned const integration_order, unsigned const shapefunction_order,
     unsigned const global_dim,
-    std::vector<std::unique_ptr<ParameterBase>> const& parameters);
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
+        parameters);
 
 }  // namespace NormalTractionBoundaryCondition
 }  // namespace ProcessLib

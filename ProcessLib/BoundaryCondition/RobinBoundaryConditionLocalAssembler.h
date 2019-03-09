@@ -9,15 +9,15 @@
 
 #pragma once
 
-#include "NumLib/DOF/DOFTableUtil.h"
-#include "ProcessLib/Parameter/Parameter.h"
 #include "GenericNaturalBoundaryConditionLocalAssembler.h"
+#include "NumLib/DOF/DOFTableUtil.h"
+#include "ParameterLib/Parameter.h"
 
 namespace ProcessLib
 {
 struct RobinBoundaryConditionData final {
-    Parameter<double> const& alpha;
-    Parameter<double> const& u_0;
+    ParameterLib::Parameter<double> const& alpha;
+    ParameterLib::Parameter<double> const& u_0;
 };
 
 template <typename ShapeFunction, typename IntegrationMethod,
