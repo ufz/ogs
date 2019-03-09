@@ -13,12 +13,13 @@
 #include <utility>
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 #include "Parameter.h"
-#include "ProcessLib/Utils/ProcessUtils.h"
+#include "Utils.h"
 
-namespace ProcessLib
+namespace ParameterLib
 {
 template <typename T>
-struct CurveScaledParameter final : public Parameter<T> {
+struct CurveScaledParameter final : public Parameter<T>
+{
     CurveScaledParameter(std::string const& name_,
                          MathLib::PiecewiseLinearInterpolation const& curve,
                          std::string referenced_parameter_name)
@@ -30,8 +31,7 @@ struct CurveScaledParameter final : public Parameter<T> {
 
     bool isTimeDependent() const override { return true; }
     void initialize(
-        std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const&
-            parameters) override
+        std::vector<std::unique_ptr<ParameterBase>> const& parameters) override
     {
         _parameter =
             &findParameter<T>(_referenced_parameter_name, parameters, 0);
@@ -44,7 +44,7 @@ struct CurveScaledParameter final : public Parameter<T> {
     }
 
     std::vector<T> operator()(double const t,
-                                     SpatialPosition const& pos) const override
+                              SpatialPosition const& pos) const override
     {
         // No local coordinate transformation here, which might happen twice
         // otherwise.
@@ -77,4 +77,4 @@ std::unique_ptr<ParameterBase> createCurveScaledParameter(
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
         curves);
 
-}  // namespace ProcessLib
+}  // namespace ParameterLib

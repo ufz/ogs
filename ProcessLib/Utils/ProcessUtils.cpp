@@ -8,7 +8,8 @@
  */
 
 #include "ProcessUtils.h"
-#include <iterator>
+
+#include "BaseLib/ConfigTree.h"
 #include "ProcessLib/ProcessVariable.h"
 
 namespace
@@ -104,25 +105,5 @@ std::vector<std::reference_wrapper<ProcessVariable>> findProcessVariables(
     }
 
     return vars;
-}
-
-ParameterBase* findParameterByName(
-    std::string const& parameter_name,
-    std::vector<std::unique_ptr<ParameterBase>> const& parameters)
-{
-    // Find corresponding parameter by name.
-    auto const it = std::find_if(
-        parameters.cbegin(), parameters.cend(),
-        [&parameter_name](std::unique_ptr<ParameterBase> const& p) {
-            return p->name == parameter_name;
-        });
-
-    if (it == parameters.end())
-    {
-        return nullptr;
-    }
-
-    DBUG("Found parameter `%s'.", (*it)->name.c_str());
-    return it->get();
 }
 }  // namespace ProcessLib

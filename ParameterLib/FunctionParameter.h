@@ -18,11 +18,10 @@
 #include "MeshLib/Node.h"
 
 #include "Parameter.h"
-#include "ProcessLib/Utils/ProcessUtils.h"
+#include "Utils.h"
 
-namespace ProcessLib
+namespace ParameterLib
 {
-
 /// A parameter class evaluating functions defined by
 /// user-provided mathematical expressions.
 ///
@@ -55,14 +54,14 @@ struct FunctionParameter final : public Parameter<T>
         _symbol_table.create_variable("z");
 
         _vec_expression.resize(_vec_expression_str.size());
-        for (unsigned i=0; i<_vec_expression_str.size(); i++)
+        for (unsigned i = 0; i < _vec_expression_str.size(); i++)
         {
             _vec_expression[i].register_symbol_table(_symbol_table);
             parser_t parser;
             if (!parser.compile(_vec_expression_str[i], _vec_expression[i]))
             {
                 OGS_FATAL("Error: %s\tExpression: %s\n", parser.error().c_str(),
-                    _vec_expression_str[i].c_str());
+                          _vec_expression_str[i].c_str());
             }
         }
     }
@@ -75,7 +74,7 @@ struct FunctionParameter final : public Parameter<T>
     }
 
     std::vector<T> operator()(double const /*t*/,
-                                     SpatialPosition const& pos) const override
+                              SpatialPosition const& pos) const override
     {
         std::vector<T> cache(getNumberOfComponents());
         auto& x = _symbol_table.get_variable("x")->ref();
@@ -120,4 +119,4 @@ std::unique_ptr<ParameterBase> createFunctionParameter(
     std::string const& name, BaseLib::ConfigTree const& config,
     MeshLib::Mesh const& mesh);
 
-}  // namespace ProcessLib
+}  // namespace ParameterLib

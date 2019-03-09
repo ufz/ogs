@@ -15,13 +15,14 @@ namespace MeshLib
 {
 template <typename T>
 class PropertyVector;
-}  // MeshLib
+}  // namespace MeshLib
 
-namespace ProcessLib
+namespace ParameterLib
 {
 /// A parameter represented by a mesh property vector.
 template <typename T>
-struct MeshElementParameter final : public Parameter<T> {
+struct MeshElementParameter final : public Parameter<T>
+{
     MeshElementParameter(std::string const& name_,
                          MeshLib::Mesh const& mesh,
                          MeshLib::PropertyVector<T> const& property)
@@ -37,7 +38,7 @@ struct MeshElementParameter final : public Parameter<T> {
     }
 
     std::vector<T> operator()(double const /*t*/,
-                                     SpatialPosition const& pos) const override
+                              SpatialPosition const& pos) const override
     {
         auto const e = pos.getElementID();
         if (!e)
@@ -90,4 +91,4 @@ std::unique_ptr<ParameterBase> createMeshElementParameter(
     std::string const& name, BaseLib::ConfigTree const& config,
     MeshLib::Mesh const& mesh);
 
-}  // namespace ProcessLib
+}  // namespace ParameterLib

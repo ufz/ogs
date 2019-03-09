@@ -16,21 +16,18 @@
 
 #include "Parameter.h"
 
-
 namespace MeshLib
 {
 template <typename T>
 class PropertyVector;
-}  // MeshLib
+}  // namespace MeshLib
 
-namespace ProcessLib
+namespace ParameterLib
 {
-
 /// A parameter class looking for values from indices in a property vector.
 /// This class can be used for material ID dependent parameters.
 template <typename T, MeshLib::MeshItemType MeshItemType>
-struct GroupBasedParameter final
-    : public Parameter<T>
+struct GroupBasedParameter final : public Parameter<T>
 {
     /**
      * Constructing from a property vector of index and corresponding values
@@ -61,7 +58,7 @@ struct GroupBasedParameter final
     }
 
     std::vector<T> operator()(double const /*t*/,
-                                     SpatialPosition const& pos) const override
+                              SpatialPosition const& pos) const override
     {
         auto const item_id = getMeshItemID(pos, type<MeshItemType>());
         assert(item_id);
@@ -81,16 +78,19 @@ struct GroupBasedParameter final
     }
 
 private:
-    template <MeshLib::MeshItemType ITEM_TYPE> struct type {};
+    template <MeshLib::MeshItemType ITEM_TYPE>
+    struct type
+    {
+    };
 
-    static boost::optional<std::size_t>
-    getMeshItemID(SpatialPosition const& pos, type<MeshLib::MeshItemType::Cell>)
+    static boost::optional<std::size_t> getMeshItemID(
+        SpatialPosition const& pos, type<MeshLib::MeshItemType::Cell>)
     {
         return pos.getElementID();
     }
 
-    static boost::optional<std::size_t>
-    getMeshItemID(SpatialPosition const& pos, type<MeshLib::MeshItemType::Node>)
+    static boost::optional<std::size_t> getMeshItemID(
+        SpatialPosition const& pos, type<MeshLib::MeshItemType::Node>)
     {
         return pos.getNodeID();
     }
@@ -104,4 +104,4 @@ std::unique_ptr<ParameterBase> createGroupBasedParameter(
     BaseLib::ConfigTree const& config,
     MeshLib::Mesh const& mesh);
 
-}  // namespace ProcessLib
+}  // namespace ParameterLib

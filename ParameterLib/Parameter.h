@@ -27,19 +27,19 @@
 namespace BaseLib
 {
 class ConfigTree;
-}  // BaseLib
+}  // namespace BaseLib
 
 namespace MathLib
 {
 class PiecewiseLinearInterpolation;
-}  // MathLib
+}  // namespace MathLib
 
 namespace MeshLib
 {
 class Mesh;
-}  // MeshLib
+}  // namespace MeshLib
 
-namespace ProcessLib
+namespace ParameterLib
 {
 /// Base class for all parameters, not an interface class. This avoids using of
 /// void* when storing parameters and convenient destruction.
@@ -64,8 +64,7 @@ struct ParameterBase
     /// Parameters might depend on each other; this method allows to set up the
     /// dependencies between parameters after they have been constructed.
     virtual void initialize(
-        std::vector<
-            std::unique_ptr<ProcessLib::ParameterBase>> const& /*parameters*/)
+        std::vector<std::unique_ptr<ParameterBase>> const& /*parameters*/)
     {
     }
 
@@ -144,13 +143,13 @@ struct Parameter : public ParameterBase
 
     ~Parameter() override = default;
 
-    //! Returns the number of components this Parameter has at every position and
-    //! point in time.
+    //! Returns the number of components this Parameter has at every position
+    //! and point in time.
     virtual int getNumberOfComponents() const = 0;
 
     //! Returns the parameter value at the given time and position.
-    virtual std::vector<T> operator()(
-        double const t, SpatialPosition const& pos) const = 0;
+    virtual std::vector<T> operator()(double const t,
+                                      SpatialPosition const& pos) const = 0;
 
     //! Returns a matrix of values for all nodes of the given element.
     //
@@ -198,4 +197,4 @@ std::unique_ptr<ParameterBase> createParameter(
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
         curves);
 
-}  // namespace ProcessLib
+}  // namespace ParameterLib
