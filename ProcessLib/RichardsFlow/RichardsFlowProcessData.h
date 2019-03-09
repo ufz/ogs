@@ -24,7 +24,7 @@ struct RichardsFlowProcessData
         Eigen::VectorXd const specific_body_force_,
         bool const has_gravity_,
         bool const has_mass_lumping_,
-        Parameter<double> const& temperature_)
+        ParameterLib::Parameter<double> const& temperature_)
         : material(std::move(material_)),
           specific_body_force(specific_body_force_),
           has_gravity(has_gravity_),
@@ -55,7 +55,7 @@ struct RichardsFlowProcessData
     Eigen::VectorXd const specific_body_force;
     bool const has_gravity;
     bool const has_mass_lumping;
-    Parameter<double> const& temperature;
+    ParameterLib::Parameter<double> const& temperature;
 };
 
 }  // namespace RichardsFlow

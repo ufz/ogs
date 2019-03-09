@@ -160,7 +160,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
     double const& dt = _process_data.dt;
 
-    SpatialPosition x_position;
+    ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
 
     unsigned const n_integration_points =
@@ -296,7 +296,7 @@ HydroMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
 
-    SpatialPosition x_position;
+    ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
@@ -341,7 +341,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                         template VectorType<pressure_size>>(
             local_b_data, local_matrix_size);
 
-    SpatialPosition pos;
+    ParameterLib::SpatialPosition pos;
     pos.setElementID(this->_element.getID());
 
     auto p = Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
@@ -368,7 +368,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
     double const& dt = _process_data.dt;
 
-    SpatialPosition x_position;
+    ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
 
     int const n_integration_points = _integration_method.getNumberOfPoints();
@@ -453,7 +453,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
     double const& dt = _process_data.dt;
 
-    SpatialPosition x_position;
+    ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
 
     int const n_integration_points = _integration_method.getNumberOfPoints();
@@ -557,7 +557,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
             displacement_size> const>(local_x.data() + displacement_offset,
                                       displacement_size);
     double const& dt = _process_data.dt;
-    SpatialPosition x_position;
+    ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
 
     int const n_integration_points = _integration_method.getNumberOfPoints();

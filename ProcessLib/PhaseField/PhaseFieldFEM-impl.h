@@ -81,7 +81,7 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
     auto local_rhs = MathLib::createZeroedVector<DeformationVector>(
         local_b_data, local_matrix_size);
 
-    SpatialPosition x_position;
+    ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
     double const& dt = _process_data.dt;
 
@@ -183,7 +183,7 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
     auto local_rhs = MathLib::createZeroedVector<PhaseFieldVector>(
         local_b_data, local_matrix_size);
 
-    SpatialPosition x_position;
+    ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
     double const& dt = _process_data.dt;
 
@@ -298,7 +298,7 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
     auto u = Eigen::Map<typename ShapeMatricesType::template VectorType<
         displacement_size> const>(local_u.data(), displacement_size);
 
-    SpatialPosition x_position;
+    ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
 
     int const n_integration_points = _integration_method.getNumberOfPoints();
@@ -365,7 +365,7 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
     auto u = Eigen::Map<typename ShapeMatricesType::template VectorType<
         displacement_size> const>(local_u.data(), displacement_size);
 
-    SpatialPosition x_position;
+    ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
 
     int const n_integration_points = _integration_method.getNumberOfPoints();

@@ -11,6 +11,7 @@
 
 #include "HeatConductionProcess.h"
 #include "HeatConductionProcessData.h"
+#include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
 
@@ -22,7 +23,7 @@ std::unique_ptr<Process> createHeatConductionProcess(
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
-    std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     unsigned const integration_order,
     BaseLib::ConfigTree const& config)
 {
@@ -45,7 +46,7 @@ std::unique_ptr<Process> createHeatConductionProcess(
     process_variables.push_back(std::move(per_process_variables));
 
     // thermal conductivity parameter.
-    auto& thermal_conductivity = findParameter<double>(
+    auto& thermal_conductivity = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__HEAT_CONDUCTION__thermal_conductivity}
         "thermal_conductivity", parameters, 1);
@@ -54,7 +55,7 @@ std::unique_ptr<Process> createHeatConductionProcess(
          thermal_conductivity.name.c_str());
 
     // heat capacity parameter.
-    auto& heat_capacity = findParameter<double>(
+    auto& heat_capacity = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__HEAT_CONDUCTION__heat_capacity}
         "heat_capacity", parameters, 1);
@@ -62,7 +63,7 @@ std::unique_ptr<Process> createHeatConductionProcess(
     DBUG("Use '%s' as heat capacity parameter.", heat_capacity.name.c_str());
 
     // density parameter.
-    auto& density = findParameter<double>(
+    auto& density = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__HEAT_CONDUCTION__density}
         "density", parameters, 1);

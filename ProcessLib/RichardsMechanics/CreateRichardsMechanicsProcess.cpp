@@ -13,6 +13,7 @@
 
 #include "MaterialLib/SolidModels/CreateConstitutiveRelation.h"
 #include "MaterialLib/SolidModels/MechanicsBase.h"
+#include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/RichardsFlow/CreateRichardsFlowMaterialProperties.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
@@ -29,7 +30,7 @@ std::unique_ptr<Process> createRichardsMechanicsProcess(
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
-    std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     unsigned const integration_order,
     BaseLib::ConfigTree const& config)
 {
@@ -106,7 +107,7 @@ std::unique_ptr<Process> createRichardsMechanicsProcess(
             parameters, config);
 
     // Fluid bulk modulus
-    auto& fluid_bulk_modulus = findParameter<double>(
+    auto& fluid_bulk_modulus = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__RICHARDS_MECHANICS__fluid_bulk_modulus}
         "fluid_bulk_modulus", parameters, 1);
@@ -114,7 +115,7 @@ std::unique_ptr<Process> createRichardsMechanicsProcess(
          fluid_bulk_modulus.name.c_str());
 
     // Biot coefficient
-    auto& biot_coefficient = findParameter<double>(
+    auto& biot_coefficient = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__RICHARDS_MECHANICS__biot_coefficient}
         "biot_coefficient", parameters, 1);
@@ -122,14 +123,14 @@ std::unique_ptr<Process> createRichardsMechanicsProcess(
          biot_coefficient.name.c_str());
 
     // Solid density
-    auto& solid_density = findParameter<double>(
+    auto& solid_density = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__RICHARDS_MECHANICS__solid_density}
         "solid_density", parameters, 1);
     DBUG("Use '%s' as solid density parameter.", solid_density.name.c_str());
 
     // Solid bulk modulus
-    auto& solid_bulk_modulus = findParameter<double>(
+    auto& solid_bulk_modulus = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__RICHARDS_MECHANICS__solid_bulk_modulus}
         "solid_bulk_modulus", parameters, 1);
@@ -155,7 +156,7 @@ std::unique_ptr<Process> createRichardsMechanicsProcess(
         std::copy_n(b.data(), b.size(), specific_body_force.data());
     }
 
-    auto& temperature = findParameter<double>(
+    auto& temperature = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__RICHARDS_MECHANICS__temperature}
         "temperature", parameters, 1);
@@ -214,7 +215,7 @@ template std::unique_ptr<Process> createRichardsMechanicsProcess<2>(
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
-    std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     unsigned const integration_order,
     BaseLib::ConfigTree const& config);
 
@@ -222,7 +223,7 @@ template std::unique_ptr<Process> createRichardsMechanicsProcess<3>(
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
-    std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     unsigned const integration_order,
     BaseLib::ConfigTree const& config);
 

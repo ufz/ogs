@@ -66,7 +66,7 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
     auto local_b = MathLib::createZeroedVector<LocalVectorType>(
         local_b_data, local_matrix_size);
 
-    SpatialPosition pos;
+    ParameterLib::SpatialPosition pos;
     pos.setElementID(this->_element.getID());
 
     auto const& material_properties = this->_material_properties;
@@ -193,7 +193,7 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
     auto local_K = MathLib::createZeroedMatrix<LocalMatrixType>(
         local_K_data, local_matrix_size, local_matrix_size);
 
-    SpatialPosition pos;
+    ParameterLib::SpatialPosition pos;
     pos.setElementID(this->_element.getID());
 
     auto const& material_properties = this->_material_properties;

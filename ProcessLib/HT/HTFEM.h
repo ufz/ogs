@@ -18,7 +18,7 @@
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
-#include "ProcessLib/Parameter/Parameter.h"
+#include "ParameterLib/Parameter.h"
 #include "ProcessLib/Utils/InitShapeMatrices.h"
 
 #include "HTLocalAssemblerInterface.h"
@@ -111,7 +111,7 @@ public:
                                  GlobalDim, false);
 
         // fetch permeability, viscosity, density
-        SpatialPosition pos;
+        ParameterLib::SpatialPosition pos;
         pos.setElementID(this->_element.getID());
 
         MaterialLib::Fluid::FluidProperty::ArrayType vars;
@@ -164,7 +164,8 @@ protected:
             IntegrationPointData<NodalRowVectorType, GlobalDimNodalMatrixType>>>
         _ip_data;
 
-    double getHeatEnergyCoefficient(const double t, const SpatialPosition& pos,
+    double getHeatEnergyCoefficient(const double t,
+                                    const ParameterLib::SpatialPosition& pos,
                                     const double porosity,
                                     const double fluid_density,
                                     const double specific_heat_capacity_fluid)
@@ -179,8 +180,9 @@ protected:
     }
 
     GlobalDimMatrixType getThermalConductivityDispersivity(
-        const double t, const SpatialPosition& pos, const double porosity,
-        const double fluid_density, const double specific_heat_capacity_fluid,
+        const double t, const ParameterLib::SpatialPosition& pos,
+        const double porosity, const double fluid_density,
+        const double specific_heat_capacity_fluid,
         const GlobalDimVectorType& velocity, const GlobalDimMatrixType& I)
     {
         auto const thermal_conductivity_solid =
@@ -229,7 +231,7 @@ protected:
             Eigen::Matrix<double, GlobalDim, Eigen::Dynamic, Eigen::RowMajor>>(
             cache, GlobalDim, n_integration_points);
 
-        SpatialPosition pos;
+        ParameterLib::SpatialPosition pos;
         pos.setElementID(_element.getID());
 
         MaterialLib::Fluid::FluidProperty::ArrayType vars;

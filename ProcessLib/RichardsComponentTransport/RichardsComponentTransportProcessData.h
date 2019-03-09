@@ -28,14 +28,15 @@ struct RichardsComponentTransportProcessData
 {
     RichardsComponentTransportProcessData(
         PorousMediaProperties&& porous_media_properties_,
-        ProcessLib::Parameter<double> const& fluid_reference_density_,
+        ParameterLib::Parameter<double> const& fluid_reference_density_,
         std::unique_ptr<MaterialLib::Fluid::FluidProperties>&&
             fluid_properties_,
-        ProcessLib::Parameter<double> const& molecular_diffusion_coefficient_,
-        ProcessLib::Parameter<double> const& solute_dispersivity_longitudinal_,
-        ProcessLib::Parameter<double> const& solute_dispersivity_transverse_,
-        ProcessLib::Parameter<double> const& retardation_factor_,
-        ProcessLib::Parameter<double> const& decay_rate_,
+        ParameterLib::Parameter<double> const& molecular_diffusion_coefficient_,
+        ParameterLib::Parameter<double> const&
+            solute_dispersivity_longitudinal_,
+        ParameterLib::Parameter<double> const& solute_dispersivity_transverse_,
+        ParameterLib::Parameter<double> const& retardation_factor_,
+        ParameterLib::Parameter<double> const& decay_rate_,
         Eigen::VectorXd const& specific_body_force_,
         bool const has_gravity_)
         : porous_media_properties(std::move(porous_media_properties_)),
@@ -79,13 +80,13 @@ struct RichardsComponentTransportProcessData
     void operator=(RichardsComponentTransportProcessData&&) = delete;
 
     PorousMediaProperties porous_media_properties;
-    Parameter<double> const& fluid_reference_density;
+    ParameterLib::Parameter<double> const& fluid_reference_density;
     std::unique_ptr<MaterialLib::Fluid::FluidProperties> fluid_properties;
-    Parameter<double> const& molecular_diffusion_coefficient;
-    Parameter<double> const& solute_dispersivity_longitudinal;
-    Parameter<double> const& solute_dispersivity_transverse;
-    Parameter<double> const& retardation_factor;
-    Parameter<double> const& decay_rate;
+    ParameterLib::Parameter<double> const& molecular_diffusion_coefficient;
+    ParameterLib::Parameter<double> const& solute_dispersivity_longitudinal;
+    ParameterLib::Parameter<double> const& solute_dispersivity_transverse;
+    ParameterLib::Parameter<double> const& retardation_factor;
+    ParameterLib::Parameter<double> const& decay_rate;
     Eigen::VectorXd const specific_body_force;
     bool const has_gravity;
 };

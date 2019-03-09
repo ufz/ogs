@@ -27,18 +27,20 @@ struct HTMaterialProperties
     HTMaterialProperties(
         MaterialLib::PorousMedium::PorousMediaProperties&&
             porous_media_properties_,
-        ProcessLib::Parameter<double> const& density_solid_,
+        ParameterLib::Parameter<double> const& density_solid_,
         std::unique_ptr<MaterialLib::Fluid::FluidProperties>&&
             fluid_properties_,
         bool const has_fluid_thermal_dispersivity_,
-        ProcessLib::Parameter<double> const& thermal_dispersivity_longitudinal_,
-        ProcessLib::Parameter<double> const& thermal_dispersivity_transversal_,
-        ProcessLib::Parameter<double> const& specific_heat_capacity_solid_,
-        ProcessLib::Parameter<double> const& thermal_conductivity_solid_,
-        ProcessLib::Parameter<double> const& thermal_conductivity_fluid_,
+        ParameterLib::Parameter<double> const&
+            thermal_dispersivity_longitudinal_,
+        ParameterLib::Parameter<double> const&
+            thermal_dispersivity_transversal_,
+        ParameterLib::Parameter<double> const& specific_heat_capacity_solid_,
+        ParameterLib::Parameter<double> const& thermal_conductivity_solid_,
+        ParameterLib::Parameter<double> const& thermal_conductivity_fluid_,
         bool const has_fluid_thermal_expansion_,
-        Parameter<double> const& solid_thermal_expansion_,
-        Parameter<double> const& biot_constant_,
+        ParameterLib::Parameter<double> const& solid_thermal_expansion_,
+        ParameterLib::Parameter<double> const& biot_constant_,
         Eigen::VectorXd specific_body_force_,
         bool const has_gravity_)
         : porous_media_properties(std::move(porous_media_properties_)),
@@ -59,18 +61,18 @@ struct HTMaterialProperties
     }
 
     MaterialLib::PorousMedium::PorousMediaProperties porous_media_properties;
-    Parameter<double> const& density_solid;
+    ParameterLib::Parameter<double> const& density_solid;
     std::unique_ptr<MaterialLib::Fluid::FluidProperties> fluid_properties;
-    Parameter<double> const& specific_heat_capacity_solid;
+    ParameterLib::Parameter<double> const& specific_heat_capacity_solid;
     bool const has_fluid_thermal_dispersivity;
-    Parameter<double> const& thermal_dispersivity_longitudinal;
-    Parameter<double> const& thermal_dispersivity_transversal;
-    Parameter<double> const& thermal_conductivity_solid;
-    Parameter<double> const& thermal_conductivity_fluid;
+    ParameterLib::Parameter<double> const& thermal_dispersivity_longitudinal;
+    ParameterLib::Parameter<double> const& thermal_dispersivity_transversal;
+    ParameterLib::Parameter<double> const& thermal_conductivity_solid;
+    ParameterLib::Parameter<double> const& thermal_conductivity_fluid;
 
     bool const has_fluid_thermal_expansion;
-    Parameter<double> const& solid_thermal_expansion;
-    Parameter<double> const& biot_constant;
+    ParameterLib::Parameter<double> const& solid_thermal_expansion;
+    ParameterLib::Parameter<double> const& biot_constant;
 
     Eigen::VectorXd const specific_body_force;
     bool const has_gravity;

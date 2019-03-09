@@ -28,7 +28,7 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
              std::vector<double>& local_K_data,
              std::vector<double>& local_b_data)
 {
-    SpatialPosition pos;
+    ParameterLib::SpatialPosition pos;
     pos.setElementID(_element.getID());
     const int material_id = _material_properties.getMaterialID(pos);
 
@@ -62,7 +62,7 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
                             std::vector<double>& local_M_data,
                             std::vector<double>& local_K_data,
                             std::vector<double>& local_b_data,
-                            SpatialPosition const& pos,
+                            ParameterLib::SpatialPosition const& pos,
                             Eigen::MatrixXd const& permeability)
 {
     auto const local_matrix_size = local_x.size();
@@ -128,7 +128,7 @@ LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
         Eigen::Matrix<double, GlobalDim, Eigen::Dynamic, Eigen::RowMajor>>(
         velocity_cache, GlobalDim, num_intpts);
 
-    SpatialPosition pos;
+    ParameterLib::SpatialPosition pos;
     pos.setElementID(_element.getID());
     const int material_id = _material_properties.getMaterialID(pos);
     const Eigen::MatrixXd& permeability = _material_properties.getPermeability(

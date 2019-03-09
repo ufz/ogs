@@ -24,9 +24,9 @@ struct TwoPhaseFlowWithPrhoProcessData
         Eigen::VectorXd const specific_body_force_,
         bool const has_gravity_,
         bool const has_mass_lumping_,
-        Parameter<double> const& diffusion_coeff_component_b_,
-        Parameter<double> const& diffusion_coeff_component_a_,
-        Parameter<double> const& temperature_,
+        ParameterLib::Parameter<double> const& diffusion_coeff_component_b_,
+        ParameterLib::Parameter<double> const& diffusion_coeff_component_a_,
+        ParameterLib::Parameter<double> const& temperature_,
         std::unique_ptr<TwoPhaseFlowWithPrhoMaterialProperties>&& material_)
         : _specific_body_force(specific_body_force_),
           _has_gravity(has_gravity_),
@@ -63,9 +63,9 @@ struct TwoPhaseFlowWithPrhoProcessData
 
     bool const _has_gravity;
     bool const _has_mass_lumping;
-    Parameter<double> const& _diffusion_coeff_component_b;
-    Parameter<double> const& _diffusion_coeff_component_a;
-    Parameter<double> const& _temperature;
+    ParameterLib::Parameter<double> const& _diffusion_coeff_component_b;
+    ParameterLib::Parameter<double> const& _diffusion_coeff_component_a;
+    ParameterLib::Parameter<double> const& _temperature;
     std::unique_ptr<TwoPhaseFlowWithPrhoMaterialProperties> _material;
 };
 

@@ -10,8 +10,9 @@
 #include <cassert>
 
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
+#include "ParameterLib/ConstantParameter.h"
+#include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
-#include "ProcessLib/Parameter/ConstantParameter.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
 
 #include "CreateTwoPhaseFlowWithPPMaterialProperties.h"
@@ -26,7 +27,7 @@ std::unique_ptr<Process> createTwoPhaseFlowWithPPProcess(
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
-    std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     unsigned const integration_order,
     BaseLib::ConfigTree const& config,
     std::map<std::string,
@@ -72,7 +73,7 @@ std::unique_ptr<Process> createTwoPhaseFlowWithPPProcess(
     //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_PP__mass_lumping}
     auto const mass_lumping = config.getConfigParameter<bool>("mass_lumping");
 
-    auto& temperature = findParameter<double>(
+    auto& temperature = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__TWOPHASE_FLOW_PP__temperature}
         "temperature", parameters, 1);

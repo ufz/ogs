@@ -38,15 +38,16 @@ struct ThermoMechanicalPhaseFieldProcessData
                  std::unique_ptr<
                      MaterialLib::Solids::MechanicsBase<DisplacementDim>>>&&
             solid_materials_,
-        Parameter<double> const& residual_stiffness_,
-        Parameter<double> const& crack_resistance_,
-        Parameter<double> const& crack_length_scale_,
-        Parameter<double> const& kinetic_coefficient_,
-        Parameter<double> const& solid_density_,
-        Parameter<double> const& linear_thermal_expansion_coefficient_,
-        Parameter<double> const& specific_heat_capacity_,
-        Parameter<double> const& thermal_conductivity_,
-        Parameter<double> const& residual_thermal_conductivity_,
+        ParameterLib::Parameter<double> const& residual_stiffness_,
+        ParameterLib::Parameter<double> const& crack_resistance_,
+        ParameterLib::Parameter<double> const& crack_length_scale_,
+        ParameterLib::Parameter<double> const& kinetic_coefficient_,
+        ParameterLib::Parameter<double> const& solid_density_,
+        ParameterLib::Parameter<double> const&
+            linear_thermal_expansion_coefficient_,
+        ParameterLib::Parameter<double> const& specific_heat_capacity_,
+        ParameterLib::Parameter<double> const& thermal_conductivity_,
+        ParameterLib::Parameter<double> const& residual_thermal_conductivity_,
         double const reference_temperature_,
         Eigen::Matrix<double, DisplacementDim, 1> const& specific_body_force_)
         : material_ids(material_ids_),
@@ -84,15 +85,15 @@ struct ThermoMechanicalPhaseFieldProcessData
     std::map<int, std::unique_ptr<
                       MaterialLib::Solids::MechanicsBase<DisplacementDim>>>
         solid_materials;
-    Parameter<double> const& residual_stiffness;
-    Parameter<double> const& crack_resistance;
-    Parameter<double> const& crack_length_scale;
-    Parameter<double> const& kinetic_coefficient;
-    Parameter<double> const& solid_density;
-    Parameter<double> const& linear_thermal_expansion_coefficient;
-    Parameter<double> const& specific_heat_capacity;
-    Parameter<double> const& thermal_conductivity;
-    Parameter<double> const& residual_thermal_conductivity;
+    ParameterLib::Parameter<double> const& residual_stiffness;
+    ParameterLib::Parameter<double> const& crack_resistance;
+    ParameterLib::Parameter<double> const& crack_length_scale;
+    ParameterLib::Parameter<double> const& kinetic_coefficient;
+    ParameterLib::Parameter<double> const& solid_density;
+    ParameterLib::Parameter<double> const& linear_thermal_expansion_coefficient;
+    ParameterLib::Parameter<double> const& specific_heat_capacity;
+    ParameterLib::Parameter<double> const& thermal_conductivity;
+    ParameterLib::Parameter<double> const& residual_thermal_conductivity;
     double const reference_temperature;
     Eigen::Matrix<double, DisplacementDim, 1> const specific_body_force;
     double dt;

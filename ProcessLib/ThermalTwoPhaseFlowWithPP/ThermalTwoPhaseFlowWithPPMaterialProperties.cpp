@@ -23,8 +23,8 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/PropertyVector.h"
 #include "NumLib/NewtonRaphson.h"
-#include "ProcessLib/Parameter/Parameter.h"
-#include "ProcessLib/Parameter/SpatialPosition.h"
+#include "ParameterLib/Parameter.h"
+#include "ParameterLib/SpatialPosition.h"
 
 namespace ProcessLib
 {
@@ -127,7 +127,7 @@ ThermalTwoPhaseFlowWithPPMaterialProperties::getThermalConductivityWetSolid(
 
 double
 ThermalTwoPhaseFlowWithPPMaterialProperties::calculateUnsatHeatConductivity(
-    double const /*t*/, ProcessLib::SpatialPosition const& /*x*/,
+    double const /*t*/, ParameterLib::SpatialPosition const& /*x*/,
     double const Sw, double const lambda_pm_dry,
     double const lambda_pm_wet) const
 {

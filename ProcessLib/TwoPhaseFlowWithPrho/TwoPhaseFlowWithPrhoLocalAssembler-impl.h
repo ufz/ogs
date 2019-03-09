@@ -76,7 +76,7 @@ void TwoPhaseFlowWithPrhoLocalAssembler<
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
 
-    SpatialPosition pos;
+    ParameterLib::SpatialPosition pos;
     pos.setElementID(_element.getID());
     const int material_id =
         _process_data._material->getMaterialID(pos.getElementID().get());

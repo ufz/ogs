@@ -24,7 +24,8 @@ std::unique_ptr<TwoPhaseFlowWithPPMaterialProperties>
 createTwoPhaseFlowWithPPMaterialProperties(
     BaseLib::ConfigTree const& config,
     MeshLib::PropertyVector<int> const* const material_ids,
-    std::vector<std::unique_ptr<ParameterBase>> const& parameters);
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
+        parameters);
 
 }  // end namespace
 }  // namespace ProcessLib

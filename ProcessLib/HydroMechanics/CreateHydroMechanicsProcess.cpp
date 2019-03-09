@@ -11,8 +11,9 @@
 
 #include <cassert>
 
-#include "MaterialLib/SolidModels/MechanicsBase.h"
 #include "MaterialLib/SolidModels/CreateConstitutiveRelation.h"
+#include "MaterialLib/SolidModels/MechanicsBase.h"
+#include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
 
@@ -23,13 +24,12 @@ namespace ProcessLib
 {
 namespace HydroMechanics
 {
-
 template <int DisplacementDim>
 std::unique_ptr<Process> createHydroMechanicsProcess(
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
-    std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     unsigned const integration_order,
     BaseLib::ConfigTree const& config)
 {
@@ -106,7 +106,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
             parameters, config);
 
     // Intrinsic permeability
-    auto& intrinsic_permeability = findParameter<double>(
+    auto& intrinsic_permeability = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS__intrinsic_permeability}
         "intrinsic_permeability", parameters, 1);
@@ -115,7 +115,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
          intrinsic_permeability.name.c_str());
 
     // Storage coefficient
-    auto& specific_storage = findParameter<double>(
+    auto& specific_storage = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS__specific_storage}
         "specific_storage", parameters, 1);
@@ -124,7 +124,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
          specific_storage.name.c_str());
 
     // Fluid viscosity
-    auto& fluid_viscosity = findParameter<double>(
+    auto& fluid_viscosity = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS__fluid_viscosity}
         "fluid_viscosity", parameters, 1);
@@ -132,14 +132,14 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
          fluid_viscosity.name.c_str());
 
     // Fluid density
-    auto& fluid_density = findParameter<double>(
+    auto& fluid_density = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS__fluid_density}
         "fluid_density", parameters, 1);
     DBUG("Use '%s' as fluid density parameter.", fluid_density.name.c_str());
 
     // Biot coefficient
-    auto& biot_coefficient = findParameter<double>(
+    auto& biot_coefficient = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS__biot_coefficient}
         "biot_coefficient", parameters, 1);
@@ -147,14 +147,14 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
          biot_coefficient.name.c_str());
 
     // Porosity
-    auto& porosity = findParameter<double>(
+    auto& porosity = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS__porosity}
         "porosity", parameters, 1);
     DBUG("Use '%s' as porosity parameter.", porosity.name.c_str());
 
     // Solid density
-    auto& solid_density = findParameter<double>(
+    auto& solid_density = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS__solid_density}
         "solid_density", parameters, 1);
@@ -212,7 +212,7 @@ template std::unique_ptr<Process> createHydroMechanicsProcess<2>(
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
-    std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     unsigned const integration_order,
     BaseLib::ConfigTree const& config);
 
@@ -220,7 +220,7 @@ template std::unique_ptr<Process> createHydroMechanicsProcess<3>(
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
-    std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     unsigned const integration_order,
     BaseLib::ConfigTree const& config);
 

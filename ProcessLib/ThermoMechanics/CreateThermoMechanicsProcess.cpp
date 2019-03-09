@@ -11,8 +11,9 @@
 
 #include <cassert>
 
-#include "MaterialLib/SolidModels/MechanicsBase.h"
 #include "MaterialLib/SolidModels/CreateConstitutiveRelation.h"
+#include "MaterialLib/SolidModels/MechanicsBase.h"
+#include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
 
@@ -28,7 +29,7 @@ std::unique_ptr<Process> createThermoMechanicsProcess(
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
-    std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     unsigned const integration_order,
     BaseLib::ConfigTree const& config)
 {
@@ -107,7 +108,7 @@ std::unique_ptr<Process> createThermoMechanicsProcess(
             parameters, config);
 
     // Reference solid density
-    auto& reference_solid_density = findParameter<double>(
+    auto& reference_solid_density = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICS__reference_solid_density}
         "reference_solid_density", parameters, 1);
@@ -115,21 +116,22 @@ std::unique_ptr<Process> createThermoMechanicsProcess(
          reference_solid_density.name.c_str());
 
     // Linear thermal expansion coefficient
-    auto& linear_thermal_expansion_coefficient = findParameter<double>(
+    auto& linear_thermal_expansion_coefficient = ParameterLib::findParameter<
+        double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICS__linear_thermal_expansion_coefficient}
         "linear_thermal_expansion_coefficient", parameters, 1);
     DBUG("Use '%s' as linear thermal expansion coefficient.",
          linear_thermal_expansion_coefficient.name.c_str());
     // Specific heat capacity
-    auto& specific_heat_capacity = findParameter<double>(
+    auto& specific_heat_capacity = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICS__specific_heat_capacity}
         "specific_heat_capacity", parameters, 1);
     DBUG("Use '%s' as specific heat capacity parameter.",
          specific_heat_capacity.name.c_str());
     // Thermal conductivity // TODO To be changed as tensor input.
-    auto& thermal_conductivity = findParameter<double>(
+    auto& thermal_conductivity = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICS__thermal_conductivity}
         "thermal_conductivity", parameters, 1);
@@ -180,7 +182,7 @@ template std::unique_ptr<Process> createThermoMechanicsProcess<2>(
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
-    std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     unsigned const integration_order,
     BaseLib::ConfigTree const& config);
 
@@ -188,7 +190,7 @@ template std::unique_ptr<Process> createThermoMechanicsProcess<3>(
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
-    std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     unsigned const integration_order,
     BaseLib::ConfigTree const& config);
 

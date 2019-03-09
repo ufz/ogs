@@ -26,7 +26,8 @@ namespace RichardsMechanics
 {
 template <int DisplacementDim>
 Eigen::Matrix<double, DisplacementDim, DisplacementDim> intrinsicPermeability(
-    double const t, SpatialPosition const& x_position, int const material_id,
+    double const t, ParameterLib::SpatialPosition const& x_position,
+    int const material_id,
     RichardsFlow::RichardsFlowMaterialProperties const& material)
 {
     const Eigen::MatrixXd& permeability =
@@ -160,7 +161,7 @@ void RichardsMechanicsLocalAssembler<
     auto const material_id =
         _process_data.flow_material->getMaterialID(_element.getID());
 
-    SpatialPosition x_position;
+    ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
 
     unsigned const n_integration_points =
@@ -352,7 +353,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     auto const material_id =
         _process_data.flow_material->getMaterialID(_element.getID());
 
-    SpatialPosition x_position;
+    ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
 
     unsigned const n_integration_points =
@@ -663,7 +664,7 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
 
-    SpatialPosition x_position;
+    ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
@@ -799,7 +800,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             displacement_size> const>(local_x.data() + displacement_offset,
                                       displacement_size);
     double const& dt = _process_data.dt;
-    SpatialPosition x_position;
+    ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
 
     int const n_integration_points = _integration_method.getNumberOfPoints();
@@ -843,7 +844,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     auto const material_id =
         _process_data.flow_material->getMaterialID(_element.getID());
 
-    SpatialPosition x_position;
+    ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
 
     unsigned const n_integration_points =

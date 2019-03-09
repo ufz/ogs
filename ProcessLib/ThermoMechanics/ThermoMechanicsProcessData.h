@@ -14,7 +14,7 @@
 
 #include <Eigen/Eigen>
 
-#include "ProcessLib/Parameter/Parameter.h"
+#include "ParameterLib/Parameter.h"
 
 namespace MaterialLib
 {
@@ -37,10 +37,11 @@ struct ThermoMechanicsProcessData
                  std::unique_ptr<
                      MaterialLib::Solids::MechanicsBase<DisplacementDim>>>&&
             solid_materials_,
-        Parameter<double> const& reference_solid_density_,
-        Parameter<double> const& linear_thermal_expansion_coefficient_,
-        Parameter<double> const& specific_heat_capacity_,
-        Parameter<double> const& thermal_conductivity_,
+        ParameterLib::Parameter<double> const& reference_solid_density_,
+        ParameterLib::Parameter<double> const&
+            linear_thermal_expansion_coefficient_,
+        ParameterLib::Parameter<double> const& specific_heat_capacity_,
+        ParameterLib::Parameter<double> const& thermal_conductivity_,
         Eigen::Matrix<double, DisplacementDim, 1> const& specific_body_force_)
         : material_ids(material_ids_),
           solid_materials{std::move(solid_materials_)},
@@ -72,10 +73,10 @@ struct ThermoMechanicsProcessData
         std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>>
         solid_materials;
 
-    Parameter<double> const& reference_solid_density;
-    Parameter<double> const& linear_thermal_expansion_coefficient;
-    Parameter<double> const& specific_heat_capacity;
-    Parameter<double> const&
+    ParameterLib::Parameter<double> const& reference_solid_density;
+    ParameterLib::Parameter<double> const& linear_thermal_expansion_coefficient;
+    ParameterLib::Parameter<double> const& specific_heat_capacity;
+    ParameterLib::Parameter<double> const&
         thermal_conductivity;  // TODO To be changed as a matrix type variable.
     Eigen::Matrix<double, DisplacementDim, 1> const specific_body_force;
     double dt = 0;

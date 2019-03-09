@@ -10,8 +10,9 @@
 #include <cassert>
 #include "BaseLib/Functional.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
+#include "ParameterLib/ConstantParameter.h"
+#include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
-#include "ProcessLib/Parameter/ConstantParameter.h"
 #include "ProcessLib/TwoPhaseFlowWithPrho/CreateTwoPhaseFlowPrhoMaterialProperties.h"
 #include "ProcessLib/TwoPhaseFlowWithPrho/TwoPhaseFlowWithPrhoMaterialProperties.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
@@ -26,7 +27,7 @@ std::unique_ptr<Process> createTwoPhaseFlowWithPrhoProcess(
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
-    std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     unsigned const integration_order,
     BaseLib::ConfigTree const& config,
     std::map<std::string,
@@ -72,15 +73,15 @@ std::unique_ptr<Process> createTwoPhaseFlowWithPrhoProcess(
     //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_PRHO__mass_lumping}
     auto const mass_lumping = config.getConfigParameter<bool>("mass_lumping");
     // diffusion coeff
-    auto& diff_coeff_b = findParameter<double>(
+    auto& diff_coeff_b = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__TWOPHASE_FLOW_PRHO__diffusion_coeff_component_b}
         "diffusion_coeff_component_b", parameters, 1);
-    auto& diff_coeff_a = findParameter<double>(
+    auto& diff_coeff_a = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__TWOPHASE_FLOW_PRHO__diffusion_coeff_component_a}
         "diffusion_coeff_component_a", parameters, 1);
-    auto& temperature = findParameter<double>(
+    auto& temperature = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__TWOPHASE_FLOW_PRHO__temperature}
         "temperature", parameters, 1);

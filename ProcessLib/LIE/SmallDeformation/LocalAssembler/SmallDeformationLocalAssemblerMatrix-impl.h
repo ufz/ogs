@@ -119,7 +119,7 @@ void SmallDeformationLocalAssemblerMatrix<ShapeFunction, IntegrationMethod,
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
 
-    SpatialPosition x_position;
+    ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)

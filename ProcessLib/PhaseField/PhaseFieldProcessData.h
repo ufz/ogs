@@ -38,12 +38,12 @@ struct PhaseFieldProcessData
                  std::unique_ptr<
                      MaterialLib::Solids::MechanicsBase<DisplacementDim>>>&&
             solid_materials_,
-        Parameter<double> const& residual_stiffness_,
-        Parameter<double> const& crack_resistance_,
-        Parameter<double> const& crack_length_scale_,
-        Parameter<double> const& kinetic_coefficient_,
-        Parameter<double> const& solid_density_,
-        Parameter<double>& history_field_,
+        ParameterLib::Parameter<double> const& residual_stiffness_,
+        ParameterLib::Parameter<double> const& crack_resistance_,
+        ParameterLib::Parameter<double> const& crack_length_scale_,
+        ParameterLib::Parameter<double> const& kinetic_coefficient_,
+        ParameterLib::Parameter<double> const& solid_density_,
+        ParameterLib::Parameter<double>& history_field_,
         Eigen::Matrix<double, DisplacementDim, 1> const& specific_body_force_,
         bool const propagating_crack_,
         bool const crack_pressure_)
@@ -77,12 +77,12 @@ struct PhaseFieldProcessData
     std::map<int, std::unique_ptr<
                       MaterialLib::Solids::MechanicsBase<DisplacementDim>>>
         solid_materials;
-    Parameter<double> const& residual_stiffness;
-    Parameter<double> const& crack_resistance;
-    Parameter<double> const& crack_length_scale;
-    Parameter<double> const& kinetic_coefficient;
-    Parameter<double> const& solid_density;
-    Parameter<double>& history_field;
+    ParameterLib::Parameter<double> const& residual_stiffness;
+    ParameterLib::Parameter<double> const& crack_resistance;
+    ParameterLib::Parameter<double> const& crack_length_scale;
+    ParameterLib::Parameter<double> const& kinetic_coefficient;
+    ParameterLib::Parameter<double> const& solid_density;
+    ParameterLib::Parameter<double>& history_field;
     Eigen::Matrix<double, DisplacementDim, 1> const specific_body_force;
     double dt = 0.0;
     double t = 0.0;

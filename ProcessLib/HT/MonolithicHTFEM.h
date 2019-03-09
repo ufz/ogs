@@ -19,7 +19,7 @@
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
-#include "ProcessLib/Parameter/Parameter.h"
+#include "ParameterLib/Parameter.h"
 #include "ProcessLib/Utils/InitShapeMatrices.h"
 
 #include "HTFEM.h"
@@ -90,7 +90,7 @@ public:
             local_M.template block<num_nodes, num_nodes>(num_nodes, num_nodes);
         auto Bp = local_b.template block<num_nodes, 1>(num_nodes, 0);
 
-        SpatialPosition pos;
+        ParameterLib::SpatialPosition pos;
         pos.setElementID(this->_element.getID());
 
         auto p_nodal_values =

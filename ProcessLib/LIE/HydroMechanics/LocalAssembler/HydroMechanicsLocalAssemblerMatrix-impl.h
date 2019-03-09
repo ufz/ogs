@@ -65,7 +65,7 @@ HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
     auto& solid_material = MaterialLib::Solids::selectSolidConstitutiveRelation(
         _process_data.solid_materials, _process_data.material_ids, e.getID());
 
-    SpatialPosition x_position;
+    ParameterLib::SpatialPosition x_position;
     x_position.setElementID(e.getID());
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
@@ -194,7 +194,7 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
     double const& dt = _process_data.dt;
     auto const& gravity_vec = _process_data.specific_body_force;
 
-    SpatialPosition x_position;
+    ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
 
     unsigned const n_integration_points = _ip_data.size();
@@ -330,7 +330,7 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
         Eigen::Ref<const Eigen::VectorXd> const& p,
         Eigen::Ref<const Eigen::VectorXd> const& u)
 {
-    SpatialPosition x_position;
+    ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
 
     unsigned const n_integration_points = _ip_data.size();
@@ -446,7 +446,7 @@ void HydroMechanicsLocalAssemblerMatrix<
                                            Eigen::Ref<Eigen::VectorXd>
                                                p)
 {
-    SpatialPosition x_position;
+    ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
     for (unsigned i = 0; i < pressure_size; i++)
     {

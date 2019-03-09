@@ -12,10 +12,10 @@
 #include "BaseLib/FileTools.h"
 #include "GroundwaterFlowProcess.h"
 #include "GroundwaterFlowProcessData.h"
+#include "MeshLib/IO/readMeshFromFile.h"
+#include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
-
-#include "MeshLib/IO/readMeshFromFile.h"
 
 namespace ProcessLib
 {
@@ -25,7 +25,7 @@ std::unique_ptr<Process> createGroundwaterFlowProcess(
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
-    std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     unsigned const integration_order,
     BaseLib::ConfigTree const& config,
     std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
@@ -50,7 +50,7 @@ std::unique_ptr<Process> createGroundwaterFlowProcess(
     process_variables.push_back(std::move(per_process_variables));
 
     // Hydraulic conductivity parameter.
-    auto& hydraulic_conductivity = findParameter<double>(
+    auto& hydraulic_conductivity = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__GROUNDWATER_FLOW__hydraulic_conductivity}
         "hydraulic_conductivity", parameters, 0 /*arbitrary many components*/);

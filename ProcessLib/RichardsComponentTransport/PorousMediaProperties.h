@@ -21,7 +21,10 @@
 #include "MaterialLib/PorousMedium/UnsaturatedProperty/CapillaryPressure/CapillaryPressureSaturation.h"
 #include "MaterialLib/PorousMedium/UnsaturatedProperty/RelativePermeability/RelativePermeability.h"
 
-#include "ProcessLib/Parameter/SpatialPosition.h"
+namespace ParameterLib
+{
+class SpatialPosition;
+}
 
 namespace ProcessLib
 {
@@ -71,23 +74,25 @@ public:
     }
 
     MaterialLib::PorousMedium::Porosity const& getPorosity(
-        double t, SpatialPosition const& pos) const;
+        double t, ParameterLib::SpatialPosition const& pos) const;
 
     MaterialLib::PorousMedium::Permeability const& getIntrinsicPermeability(
-        double t, SpatialPosition const& pos) const;
+        double t, ParameterLib::SpatialPosition const& pos) const;
 
     MaterialLib::PorousMedium::Storage const& getSpecificStorage(
-        double t, SpatialPosition const& pos) const;
+        double t, ParameterLib::SpatialPosition const& pos) const;
 
     MaterialLib::PorousMedium::CapillaryPressureSaturation const&
-    getCapillaryPressureSaturationModel(double t,
-                                        SpatialPosition const& pos) const;
+    getCapillaryPressureSaturationModel(
+        double t, ParameterLib::SpatialPosition const& pos) const;
 
     MaterialLib::PorousMedium::RelativePermeability const&
-    getRelativePermeability(double t, SpatialPosition const& pos) const;
+    getRelativePermeability(double t,
+                            ParameterLib::SpatialPosition const& pos) const;
 
 private:
-    int getMaterialID(SpatialPosition const& pos) const;
+    int getMaterialID(ParameterLib::SpatialPosition const& pos) const;
+
 private:
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Porosity>>
         _porosity_models;

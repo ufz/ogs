@@ -21,8 +21,8 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/PropertyVector.h"
 #include "NumLib/NewtonRaphson.h"
-#include "ProcessLib/Parameter/Parameter.h"
-#include "ProcessLib/Parameter/SpatialPosition.h"
+#include "ParameterLib/Parameter.h"
+#include "ParameterLib/SpatialPosition.h"
 
 using MaterialLib::PhysicalConstant::MolarMass::H2;
 using MaterialLib::PhysicalConstant::IdealGasConstant;
@@ -127,7 +127,7 @@ double TwoPhaseFlowWithPrhoMaterialProperties::getGasViscosity(
 
 Eigen::MatrixXd const& TwoPhaseFlowWithPrhoMaterialProperties::getPermeability(
     const int material_id, const double t,
-    const ProcessLib::SpatialPosition& pos, const int /*dim*/) const
+    const ParameterLib::SpatialPosition& pos, const int /*dim*/) const
 {
     return _intrinsic_permeability_models[material_id]->getValue(t, pos, 0.0,
                                                                  0.0);
@@ -135,7 +135,7 @@ Eigen::MatrixXd const& TwoPhaseFlowWithPrhoMaterialProperties::getPermeability(
 
 double TwoPhaseFlowWithPrhoMaterialProperties::getPorosity(
     const int material_id, const double t,
-    const ProcessLib::SpatialPosition& pos, const double /*p*/,
+    const ParameterLib::SpatialPosition& pos, const double /*p*/,
     const double T, const double porosity_variable) const
 {
     return _porosity_models[material_id]->getValue(t, pos, porosity_variable,
@@ -143,14 +143,14 @@ double TwoPhaseFlowWithPrhoMaterialProperties::getPorosity(
 }
 
 double TwoPhaseFlowWithPrhoMaterialProperties::getNonwetRelativePermeability(
-    const double /*t*/, const ProcessLib::SpatialPosition& /*pos*/,
+    const double /*t*/, const ParameterLib::SpatialPosition& /*pos*/,
     const double /*p*/, const double /*T*/, const double saturation) const
 {
     return _relative_permeability_models[0]->getValue(saturation);
 }
 
 double TwoPhaseFlowWithPrhoMaterialProperties::getWetRelativePermeability(
-    const double /*t*/, const ProcessLib::SpatialPosition& /*pos*/,
+    const double /*t*/, const ParameterLib::SpatialPosition& /*pos*/,
     const double /*p*/, const double /*T*/, const double saturation) const
 {
     return _relative_permeability_models[1]->getValue(saturation);
@@ -158,7 +158,7 @@ double TwoPhaseFlowWithPrhoMaterialProperties::getWetRelativePermeability(
 
 double TwoPhaseFlowWithPrhoMaterialProperties::getCapillaryPressure(
     const int material_id, const double /*t*/,
-    const ProcessLib::SpatialPosition& /*pos*/, const double /*p*/,
+    const ParameterLib::SpatialPosition& /*pos*/, const double /*p*/,
     const double /*T*/, const double saturation) const
 {
     return _capillary_pressure_models[material_id]->getCapillaryPressure(
@@ -167,7 +167,7 @@ double TwoPhaseFlowWithPrhoMaterialProperties::getCapillaryPressure(
 
 double TwoPhaseFlowWithPrhoMaterialProperties::getCapillaryPressureDerivative(
     const int material_id, const double /*t*/,
-    const ProcessLib::SpatialPosition& /*pos*/, const double /*p*/,
+    const ParameterLib::SpatialPosition& /*pos*/, const double /*p*/,
     const double /*T*/, const double saturation) const
 {
     return _capillary_pressure_models[material_id]->getdPcdS(saturation);
@@ -175,7 +175,7 @@ double TwoPhaseFlowWithPrhoMaterialProperties::getCapillaryPressureDerivative(
 
 bool TwoPhaseFlowWithPrhoMaterialProperties::computeConstitutiveRelation(
     double const t,
-    ProcessLib::SpatialPosition const& x,
+    ParameterLib::SpatialPosition const& x,
     int const material_id,
     double const pg,
     double const X,
@@ -251,7 +251,7 @@ void TwoPhaseFlowWithPrhoMaterialProperties::calculateResidual(
 
 void TwoPhaseFlowWithPrhoMaterialProperties::calculateJacobian(
     const int material_id, double const /*t*/,
-    ProcessLib::SpatialPosition const& /*x*/, double const pl,
+    ParameterLib::SpatialPosition const& /*x*/, double const pl,
     double const /*X*/, double const T, JacobianMatrix& Jac, double Sw,
     double rho_h2_wet)
 {
