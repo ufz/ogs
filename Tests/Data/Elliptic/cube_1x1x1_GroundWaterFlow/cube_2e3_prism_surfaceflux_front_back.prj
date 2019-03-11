@@ -20,8 +20,8 @@
             </secondary_variables>
             <calculatesurfaceflux>
                 <mesh>cube_1x1x1_prism_2e3_complete_surface</mesh>
-                <property_name>surfaceflux_front_back</property_name>
-                <output_mesh>cube_1x1x1_prism_2e3_complete_surface_front_back_dirichlet_surfaceflux.vtu</output_mesh>
+                <property_name>specific_flux</property_name>
+                <output_mesh>cube_1x1x1_prism_2e3_complete_surface_front_back_dirichlet_specific_flux.vtu</output_mesh>
             </calculatesurfaceflux>
         </process>
     </processes>

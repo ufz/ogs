@@ -41,15 +41,13 @@ struct SurfaceFluxData
           output_mesh_file_name(std::move(surfaceflux_output_mesh_file_name))
     {
         DBUG(
-            "read surfaceflux meta data:\n\tsurfaceflux "
-            "mesh:'%s'\n\tproperty name: "
-            "'%s'\n\toutput to: '%s'",
+            "read surfaceflux meta data:\n\tsurfaceflux mesh:'%s'\n\tproperty "
+            "name: '%s'\n\toutput to: '%s'",
             mesh_name.c_str(), property_vector_name.c_str(),
             output_mesh_file_name.c_str());
     }
 
-    static std::unique_ptr<ProcessLib::SurfaceFluxData>
-    createSurfaceFluxData(
+    static std::unique_ptr<ProcessLib::SurfaceFluxData> createSurfaceFluxData(
         BaseLib::ConfigTree const& calculatesurfaceflux_config,
         std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
         std::string const& output_directory)
@@ -68,8 +66,7 @@ struct SurfaceFluxData
 
         if (mesh_name.empty())
         {
-            return std::unique_ptr<ProcessLib::SurfaceFluxData>(
-                nullptr);
+            return nullptr;
         }
         surfaceflux_out_fname = BaseLib::copyPathToFileName(
             surfaceflux_out_fname, output_directory);

@@ -21,8 +21,8 @@
             </secondary_variables>
             <calculatesurfaceflux>
                 <mesh>cube_1x1x1_hex_1e3_complete_surface</mesh>
-                <property_name>surfaceflux</property_name>
-                <output_mesh>cube_1x1x1_hex_1e3_complete_surface_neumann_surfaceflux.vtu</output_mesh>
+                <property_name>specific_flux</property_name>
+                <output_mesh>cube_1x1x1_hex_1e3_complete_surface_neumann_specific_flux.vtu</output_mesh>
             </calculatesurfaceflux>
         </process>
     </processes>

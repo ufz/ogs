@@ -30,7 +30,7 @@ public:
 
     virtual void integrate(std::size_t const element_id,
                            GlobalVector const& x,
-                           MeshLib::PropertyVector<double>& balance,
+                           MeshLib::PropertyVector<double>& specific_flux,
                            double const t,
                            MeshLib::Mesh const& bulk_mesh,
                            std::function<Eigen::Vector3d(
@@ -102,9 +102,9 @@ public:
     /// @param element_id id of the element
     /// @param x The global vector containing the values for numerical
     /// integration.
-    /// @param balance PropertyVector the integration result will be stored
-    /// into, where balance has the same number of entries like mesh elements
-    /// exists.
+    /// @param specific_flux PropertyVector the integration result will be
+    /// stored into, where specific_flux has the same number of entries like
+    /// mesh elements exists.
     /// @param t The integration is performed at the time t.
     /// @param bulk_mesh Stores a reference to the bulk mesh that is needed to
     /// fetch the information for the integration over the surface mesh.
@@ -113,7 +113,7 @@ public:
     /// surface.
     void integrate(std::size_t const element_id,
                    GlobalVector const& x,
-                   MeshLib::PropertyVector<double>& balance,
+                   MeshLib::PropertyVector<double>& specific_flux,
                    double const t,
                    MeshLib::Mesh const& bulk_mesh,
                    std::function<Eigen::Vector3d(
@@ -129,10 +129,12 @@ public:
         // for correct results it is necessary to multiply the normal with -1
         surface_element_normal *= -1;
 
+        double element_area = 0.0;
         std::size_t const n_integration_points =
             _integration_method.getNumberOfPoints();
-        // balance[id_of_element] +=
-        //   int_{\Gamma_e} \alpha \cdot flux \cdot normal \d \Gamma
+        // specific_flux[id_of_element] +=
+        //   int_{\Gamma_e} \alpha \cdot flux \cdot normal \d \Gamma /
+        //   element_area
         for (std::size_t ip(0); ip < n_integration_points; ip++)
         {
             auto const& wp = _integration_method.getWeightedPoint(ip);
@@ -143,20 +145,28 @@ public:
                 getFlux(_bulk_element_id, bulk_element_point, t, x);
 
             for (int component_id(0);
-                 component_id < balance.getNumberOfComponents();
+                 component_id < specific_flux.getNumberOfComponents();
                  ++component_id)
             {
                 // TODO find solution for 2d case
                 double const bulk_grad_times_normal(
                     Eigen::Map<Eigen::RowVectorXd const>(bulk_flux.data(),
-                                                   bulk_flux.size())
+                                                         bulk_flux.size())
                         .dot(Eigen::Map<Eigen::RowVectorXd const>(
                             surface_element_normal.getCoords(), 3)));
 
-                balance.getComponent(element_id, component_id) +=
+                specific_flux.getComponent(element_id, component_id) +=
                     bulk_grad_times_normal * _detJ_times_integralMeasure[ip] *
                     wp.getWeight();
             }
+            element_area += _detJ_times_integralMeasure[ip] * wp.getWeight();
+        }
+        for (int component_id(0);
+             component_id < specific_flux.getNumberOfComponents();
+             ++component_id)
+        {
+            specific_flux.getComponent(element_id, component_id) /=
+                element_area;
         }
     }
 
