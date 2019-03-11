@@ -14,14 +14,14 @@
 #include "MeshLib/PropertyVector.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Function/Interpolation.h"
-#include "ProcessLib/Parameter/MeshNodeParameter.h"
+#include "ParameterLib/MeshNodeParameter.h"
 #include "ProcessLib/Process.h"
 
 namespace ProcessLib
 {
 struct FreeComponentStreamBoundaryConditionData
 {
-    Parameter<double> const& boundary_permeability;
+    ParameterLib::Parameter<double> const& boundary_permeability;
     MeshLib::PropertyVector<std::size_t> const bulk_face_ids;
     MeshLib::PropertyVector<std::size_t> const bulk_element_ids;
     Process const& process;

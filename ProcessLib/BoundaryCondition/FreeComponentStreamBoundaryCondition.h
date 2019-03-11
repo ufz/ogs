@@ -13,17 +13,23 @@
 #include "FreeComponentStreamBoundaryConditionLocalAssembler.h"
 #include "MeshLib/PropertyVector.h"
 
+namespace ParameterLib
+{
+struct ParameterBase;
+}
+
 namespace ProcessLib
 {
 using FreeComponentStreamBoundaryCondition =
     GenericNaturalBoundaryCondition<FreeComponentStreamBoundaryConditionData,
                                     FreeComponentStreamBoundaryConditionLocalAssembler>;
 
-std::unique_ptr<FreeComponentStreamBoundaryCondition> createFreeComponentStreamBoundaryCondition(
+std::unique_ptr<FreeComponentStreamBoundaryCondition>
+createFreeComponentStreamBoundaryCondition(
     BaseLib::ConfigTree const& config, MeshLib::Mesh const& boundary_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table, int const variable_id,
     int const component_id, unsigned const integration_order,
-    std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     unsigned const global_dim, Process const& process,
     unsigned const shapefunction_order);
 
