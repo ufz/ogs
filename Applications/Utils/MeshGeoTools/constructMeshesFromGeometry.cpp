@@ -84,6 +84,11 @@ int main(int argc, char* argv[])
 
     for (auto const& m_ptr : extracted_meshes)
     {
+        if (!m_ptr)
+        {
+            ERR("Could not create a mesh for each given geometry.");
+            return EXIT_FAILURE;
+        }
         MeshLib::IO::writeMeshToFile(*m_ptr, m_ptr->getName() + ".vtu");
     }
 
