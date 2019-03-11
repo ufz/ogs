@@ -20,8 +20,8 @@
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/PropertyVector.h"
-#include "ProcessLib/Parameter/Parameter.h"
-#include "ProcessLib/Parameter/SpatialPosition.h"
+#include "ParameterLib/Parameter.h"
+#include "ParameterLib/SpatialPosition.h"
 #include "TwoPhaseFlowWithPPMaterialProperties.h"
 
 namespace ProcessLib
@@ -32,7 +32,7 @@ std::unique_ptr<TwoPhaseFlowWithPPMaterialProperties>
 createTwoPhaseFlowWithPPMaterialProperties(
     BaseLib::ConfigTree const& config,
     MeshLib::PropertyVector<int> const* const material_ids,
-    std::vector<std::unique_ptr<ParameterBase>> const& parameters)
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters)
 {
     DBUG("Reading material properties of two-phase flow process.");
 

@@ -12,7 +12,7 @@
 #include <boost/optional.hpp>
 #include "MathLib/TemplatePoint.h"
 
-namespace ProcessLib
+namespace ParameterLib
 {
 //! Represents a position in space which can be either one of
 //! a node, an element, an integration point or a cartesian coordinates triple.
@@ -86,4 +86,4 @@ private:
     boost::optional<MathLib::TemplatePoint<double, 3>> _coordinates;
 };
 
-}  // namespace ProcessLib
+}  // namespace ParameterLib

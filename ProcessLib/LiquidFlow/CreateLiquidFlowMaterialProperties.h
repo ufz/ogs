@@ -26,11 +26,12 @@ template <typename PROP_VAL_TYPE>
 class PropertyVector;
 }
 
-namespace ProcessLib
+namespace ParameterLib
 {
 struct ParameterBase;
+}
 
-namespace LiquidFlow
+namespace ProcessLib::LiquidFlow
 {
 class LiquidFlowMaterialProperties;
 
@@ -44,8 +45,7 @@ class LiquidFlowMaterialProperties;
 std::unique_ptr<LiquidFlowMaterialProperties>
 createLiquidFlowMaterialProperties(
     BaseLib::ConfigTree const& config,
-    std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     MeshLib::PropertyVector<int> const* const material_ids);
 
-}  // namespace LiquidFlow
-}  // namespace ProcessLib
+}  // namespace ProcessLib::LiquidFlow

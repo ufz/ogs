@@ -23,10 +23,10 @@
 #include "MeshLib/Node.h"
 #include "MeshLib/PropertyVector.h"
 
-#include "ProcessLib/Parameter/GroupBasedParameter.h"
-#include "ProcessLib/Parameter/CurveScaledParameter.h"
+#include "ParameterLib/CurveScaledParameter.h"
+#include "ParameterLib/GroupBasedParameter.h"
 
-using namespace ProcessLib;
+using namespace ParameterLib;
 
 std::unique_ptr<Parameter<double>> constructParameterFromString(
     std::string const& xml,
@@ -43,7 +43,7 @@ std::unique_ptr<Parameter<double>> constructParameterFromString(
         static_cast<Parameter<double>*>(parameter_base.release()));
 }
 
-struct ProcessLibParameter : public ::testing::Test
+struct ParameterLibParameter : public ::testing::Test
 {
     void SetUp() override
     {
@@ -53,7 +53,7 @@ struct ProcessLibParameter : public ::testing::Test
     std::vector<std::unique_ptr<MeshLib::Mesh>> meshes;
 };
 
-TEST_F(ProcessLibParameter, GroupBasedParameterElement)
+TEST_F(ParameterLibParameter, GroupBasedParameterElement)
 {
     std::vector<int> mat_ids({0, 1, 2, 3});
     MeshLib::addPropertyToMesh(*meshes[0], "MaterialIDs",
@@ -69,7 +69,7 @@ TEST_F(ProcessLibParameter, GroupBasedParameterElement)
         meshes);
 
     double t = 0;
-    ProcessLib::SpatialPosition x;
+    ParameterLib::SpatialPosition x;
     x.setElementID(0);
     ASSERT_EQ(0.0, (*parameter)(t, x)[0]);
     x.setElementID(1);
@@ -78,10 +78,9 @@ TEST_F(ProcessLibParameter, GroupBasedParameterElement)
     ASSERT_ANY_THROW((*parameter)(t, x));
     x.setElementID(3);
     ASSERT_EQ(300.0, (*parameter)(t, x)[0]);
-
 }
 
-TEST_F(ProcessLibParameter, GroupBasedParameterNode)
+TEST_F(ParameterLibParameter, GroupBasedParameterNode)
 {
     std::vector<int> group_ids({0, 1, 2, 3, 4});
     MeshLib::addPropertyToMesh(*meshes[0], "PointGroupIDs",
@@ -97,7 +96,7 @@ TEST_F(ProcessLibParameter, GroupBasedParameterNode)
         meshes);
 
     double t = 0;
-    ProcessLib::SpatialPosition x;
+    ParameterLib::SpatialPosition x;
     x.setNodeID(0);
     ASSERT_EQ(0.0, (*parameter)(t, x)[0]);
     x.setNodeID(1);
@@ -150,7 +149,7 @@ bool testNodalValuesOfElement(
 }
 
 // For all elements all nodes have a constant value.
-TEST_F(ProcessLibParameter, GetNodalValuesOnElement_constant)
+TEST_F(ParameterLibParameter, GetNodalValuesOnElement_constant)
 {
     auto const parameter = constructParameterFromString(
         "<name>parameter</name>"
@@ -160,7 +159,7 @@ TEST_F(ProcessLibParameter, GetNodalValuesOnElement_constant)
 
     double const t = 0;
     auto expected_value = [](MeshLib::Element* const /*e*/,
-                              std::size_t const /*local_node_id*/) {
+                             std::size_t const /*local_node_id*/) {
         return 42.23;
     };
 
@@ -168,7 +167,7 @@ TEST_F(ProcessLibParameter, GetNodalValuesOnElement_constant)
                                          expected_value, *parameter, t));
 }
 
-TEST_F(ProcessLibParameter, GetNodalValuesOnElement_node)
+TEST_F(ParameterLibParameter, GetNodalValuesOnElement_node)
 {
     std::vector<double> node_ids({0, 1, 2, 3, 4});
     MeshLib::addPropertyToMesh(*meshes[0], "NodeIDs",
@@ -184,7 +183,7 @@ TEST_F(ProcessLibParameter, GetNodalValuesOnElement_node)
 
     // For all elements all nodes have the value of the node id.
     auto expected_value = [](MeshLib::Element* const e,
-                              std::size_t const local_node_id) {
+                             std::size_t const local_node_id) {
         return static_cast<double>(e->getNode(local_node_id)->getID());
     };
 
@@ -192,7 +191,7 @@ TEST_F(ProcessLibParameter, GetNodalValuesOnElement_node)
                                          expected_value, *parameter, t));
 }
 
-TEST_F(ProcessLibParameter, GetNodalValuesOnElement_element)
+TEST_F(ParameterLibParameter, GetNodalValuesOnElement_element)
 {
     std::vector<double> element_ids({0, 1, 2, 3});
     MeshLib::addPropertyToMesh(*meshes[0], "ElementIDs",
@@ -216,7 +215,7 @@ TEST_F(ProcessLibParameter, GetNodalValuesOnElement_element)
                                          expected_value, *parameter, t));
 }
 
-TEST_F(ProcessLibParameter, GetNodalValuesOnElement_curveScaledNode)
+TEST_F(ParameterLibParameter, GetNodalValuesOnElement_curveScaledNode)
 {
     std::vector<double> node_ids({0, 1, 2, 3, 4});
     MeshLib::addPropertyToMesh(*meshes[0], "NodeIDs",
@@ -249,7 +248,7 @@ TEST_F(ProcessLibParameter, GetNodalValuesOnElement_curveScaledNode)
 
     // For all elements all nodes have the value of the node id times the time.
     auto expected_value = [&t](MeshLib::Element* const e,
-                              std::size_t const local_node_id) {
+                               std::size_t const local_node_id) {
         return static_cast<double>(e->getNode(local_node_id)->getID()) * t;
     };
 

@@ -15,12 +15,14 @@ namespace BaseLib
 {
 class ConfigTree;
 }
-
-namespace ProcessLib
+namespace ParameterLib
 {
 template <typename T>
 struct Parameter;
+}
 
+namespace ProcessLib
+{
 // TODO docu
 /// The DirichletBoundaryCondition class describes a constant in space
 /// and time Dirichlet boundary condition.
@@ -30,7 +32,8 @@ class DirichletBoundaryCondition final : public BoundaryCondition
 {
 public:
     DirichletBoundaryCondition(
-        Parameter<double> const& parameter, MeshLib::Mesh const& bc_mesh,
+        ParameterLib::Parameter<double> const& parameter,
+        MeshLib::Mesh const& bc_mesh,
         NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
         int const variable_id, int const component_id);
 
@@ -39,7 +42,7 @@ public:
         NumLib::IndexValueVector<GlobalIndexType>& bc_values) const override;
 
 private:
-    Parameter<double> const& _parameter;
+    ParameterLib::Parameter<double> const& _parameter;
 
     MeshLib::Mesh const& _bc_mesh;
     std::unique_ptr<NumLib::LocalToGlobalIndexMap const> _dof_table_boundary;
@@ -51,6 +54,7 @@ std::unique_ptr<DirichletBoundaryCondition> createDirichletBoundaryCondition(
     BaseLib::ConfigTree const& config, MeshLib::Mesh const& bc_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table_bulk, int const variable_id,
     int const component_id,
-    const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>& parameters);
+    const std::vector<std::unique_ptr<ParameterLib::ParameterBase>>&
+        parameters);
 
 }  // namespace ProcessLib

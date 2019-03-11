@@ -9,8 +9,9 @@
 
 #include "CreateCohesiveZoneModeI.h"
 
+#include "ParameterLib/Utils.h"
+
 #include "CohesiveZoneModeI.h"
-#include "ProcessLib/Utils/ProcessUtils.h"  // required for findParameter
 
 namespace MaterialLib
 {
@@ -20,26 +21,26 @@ namespace CohesiveZoneModeI
 {
 template <int DisplacementDim>
 std::unique_ptr<FractureModelBase<DisplacementDim>> createCohesiveZoneModeI(
-    std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config)
 {
     //! \ogs_file_param{material__fracture_model__type}
     config.checkConfigParameter("type", "CohesiveZoneModeI");
     DBUG("Create CohesiveZoneModeI material");
 
-    auto& Kn = ProcessLib::findParameter<double>(
+    auto& Kn = ParameterLib::findParameter<double>(
         //! \ogs_file_param_special{material__fracture_model__CohesiveZoneModeI__normal_stiffness}
         config, "normal_stiffness", parameters, 1);
 
-    auto& Ks = ProcessLib::findParameter<double>(
+    auto& Ks = ParameterLib::findParameter<double>(
         //! \ogs_file_param_special{material__fracture_model__CohesiveZoneModeI__shear_stiffness}
         config, "shear_stiffness", parameters, 1);
 
-    auto& Gc = ProcessLib::findParameter<double>(
+    auto& Gc = ParameterLib::findParameter<double>(
         //! \ogs_file_param_special{material__fracture_model__CohesiveZoneModeI__fracture_toughness}
         config, "fracture_toughness", parameters, 1);
 
-    auto& t_np = ProcessLib::findParameter<double>(
+    auto& t_np = ParameterLib::findParameter<double>(
         //! \ogs_file_param_special{material__fracture_model__CohesiveZoneModeI__peak_normal_traction}
         config, "peak_normal_traction", parameters, 1);
 
@@ -58,11 +59,11 @@ std::unique_ptr<FractureModelBase<DisplacementDim>> createCohesiveZoneModeI(
 }
 
 template std::unique_ptr<FractureModelBase<2>> createCohesiveZoneModeI(
-    std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config);
 
 template std::unique_ptr<FractureModelBase<3>> createCohesiveZoneModeI(
-    std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config);
 
 }  // namespace CohesiveZoneModeI

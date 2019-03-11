@@ -14,7 +14,7 @@
 
 #include <string>
 
-#include "ProcessLib/Parameter/Parameter.h"
+#include "ParameterLib/Parameter.h"
 
 namespace MaterialLib
 {
@@ -23,8 +23,7 @@ namespace PorousMedium
 class Porosity
 {
 public:
-    explicit Porosity(
-        ProcessLib::Parameter<double> const& parameter)
+    explicit Porosity(ParameterLib::Parameter<double> const& parameter)
         : _parameter(parameter)
     {
     }
@@ -38,7 +37,7 @@ public:
      *  @param temperature Temperature with any double type value.
      */
     virtual double getValue(const double t,
-                            ProcessLib::SpatialPosition const& pos,
+                            ParameterLib::SpatialPosition const& pos,
                             const double variable,
                             const double temperature) const
     {
@@ -48,7 +47,7 @@ public:
     }
 
 private:
-    ProcessLib::Parameter<double> const& _parameter;
+    ParameterLib::Parameter<double> const& _parameter;
 };
 
 }  // namespace PorousMedium

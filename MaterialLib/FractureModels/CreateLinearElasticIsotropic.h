@@ -15,11 +15,10 @@ namespace  MaterialLib
 {
 namespace Fracture
 {
-
 template <int DisplacementDim>
 std::unique_ptr<FractureModelBase<DisplacementDim>>
 createLinearElasticIsotropic(
-    std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config);
 
 }  // namespace Fracture

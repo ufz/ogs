@@ -69,7 +69,7 @@ SmallDeformationLocalAssemblerFracture<ShapeFunction, IntegrationMethod,
         _junction_props.push_back(&_process_data.junction_properties[jid]);
     }
 
-    SpatialPosition x_position;
+    ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
@@ -172,7 +172,7 @@ void SmallDeformationLocalAssemblerFracture<
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
 
-    SpatialPosition x_position;
+    ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
@@ -264,7 +264,7 @@ void SmallDeformationLocalAssemblerFracture<ShapeFunction, IntegrationMethod,
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
 
-    SpatialPosition x_position;
+    ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
 
     std::vector<Eigen::VectorXd> vec_nodal_g;

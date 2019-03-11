@@ -14,21 +14,21 @@
 
 #include "BaseLib/Algorithm.h"
 #include "BaseLib/ConfigTree.h"
-
-#include "MeshLib/PropertyVector.h"
-
+#include "MaterialLib/Fluid/FluidProperties/CreateFluidProperties.h"
 #include "MaterialLib/Fluid/FluidProperty.h"
+#include "MaterialLib/Fluid/FluidPropertyHeaders.h"
 #include "MaterialLib/PorousMedium/Permeability/Permeability.h"
 #include "MaterialLib/PorousMedium/Porosity/Porosity.h"
-#include "MaterialLib/PorousMedium/Storage/Storage.h"
-#include "MaterialLib/Fluid/FluidProperties/CreateFluidProperties.h"
-
-#include "MaterialLib/Fluid/FluidPropertyHeaders.h"
 #include "MaterialLib/PorousMedium/PorousPropertyHeaders.h"
-
-#include "ProcessLib/Utils/ProcessUtils.h"
+#include "MaterialLib/PorousMedium/Storage/Storage.h"
+#include "MeshLib/PropertyVector.h"
 
 #include "LiquidFlowMaterialProperties.h"
+
+namespace ParameterLib
+{
+struct ParameterBase;
+}
 
 namespace ProcessLib
 {
@@ -39,7 +39,7 @@ class LiquidFlowMaterialProperties;
 std::unique_ptr<LiquidFlowMaterialProperties>
 createLiquidFlowMaterialProperties(
     BaseLib::ConfigTree const& config,
-    std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     MeshLib::PropertyVector<int> const* const material_ids)
 {
     DBUG("Reading material properties of liquid flow process.");

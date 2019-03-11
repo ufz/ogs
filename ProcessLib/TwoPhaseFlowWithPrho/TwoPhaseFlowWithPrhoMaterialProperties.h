@@ -66,29 +66,28 @@ public:
     Eigen::MatrixXd const& getPermeability(
         const int material_id,
         const double t,
-        const ProcessLib::SpatialPosition& pos,
+        const ParameterLib::SpatialPosition& pos,
         const int dim) const;
 
     double getPorosity(const int material_id, const double t,
-                       const ProcessLib::SpatialPosition& pos, const double p,
+                       const ParameterLib::SpatialPosition& pos, const double p,
                        const double T, const double porosity_variable) const;
 
-    double getNonwetRelativePermeability(const double t,
-                                         const ProcessLib::SpatialPosition& pos,
-                                         const double p, const double T,
-                                         const double saturation) const;
+    double getNonwetRelativePermeability(
+        const double t, const ParameterLib::SpatialPosition& pos,
+        const double p, const double T, const double saturation) const;
     double getWetRelativePermeability(const double t,
-                                      const ProcessLib::SpatialPosition& pos,
+                                      const ParameterLib::SpatialPosition& pos,
                                       const double p, const double T,
                                       const double saturation) const;
     double getCapillaryPressure(const int material_id, const double t,
-                                const ProcessLib::SpatialPosition& pos,
+                                const ParameterLib::SpatialPosition& pos,
                                 const double p, const double T,
                                 const double saturation) const;
     double getCapillaryPressureDerivative(
         const int material_id, const double t,
-        const ProcessLib::SpatialPosition& pos, const double p, const double T,
-        const double saturation) const;
+        const ParameterLib::SpatialPosition& pos, const double p,
+        const double T, const double saturation) const;
     double getLiquidDensity(const double p, const double T) const;
     double getGasDensity(const double p, const double T) const;
     double getGasViscosity(const double p, const double T) const;
@@ -96,7 +95,7 @@ public:
     double getDerivGasDensity(double const p, double const T) const;
     bool computeConstitutiveRelation(
         double const t,
-        ProcessLib::SpatialPosition const& x_position,
+        ParameterLib::SpatialPosition const& x_position,
         const int material_id,
         double const pg,
         double const X,
@@ -151,7 +150,7 @@ private:
     * Calculates the Jacobian.
     */
     void calculateJacobian(const int material_id, double const t,
-                           ProcessLib::SpatialPosition const& x,
+                           ParameterLib::SpatialPosition const& x,
                            double const pl, double const X, double const T,
                            JacobianMatrix& Jac, double Sw, double X_m);
     /** Complementary condition 1

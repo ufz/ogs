@@ -135,7 +135,7 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
 
-    SpatialPosition pos;
+    ParameterLib::SpatialPosition pos;
     pos.setElementID(_element.getID());
     auto const& two_phase_material_model =
         _process_data.material->getTwoPhaseMaterialModel();

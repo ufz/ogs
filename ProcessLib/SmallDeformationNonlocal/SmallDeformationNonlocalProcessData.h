@@ -37,7 +37,7 @@ struct SmallDeformationNonlocalProcessData
                  std::unique_ptr<
                      MaterialLib::Solids::MechanicsBase<DisplacementDim>>>&&
             solid_materials_,
-        Parameter<double> const& solid_density_,
+        ParameterLib::Parameter<double> const& solid_density_,
         Eigen::Matrix<double, DisplacementDim, 1>
             specific_body_force_,
         double const reference_temperature_,
@@ -70,8 +70,8 @@ struct SmallDeformationNonlocalProcessData
         int,
         std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>>
         solid_materials;
-    /// Solid's density. A scalar quantity, Parameter<double>.
-    Parameter<double> const& solid_density;
+    /// Solid's density. A scalar quantity, ParameterLib::Parameter<double>.
+    ParameterLib::Parameter<double> const& solid_density;
     /// Specific body forces applied to the solid.
     /// It is usually used to apply gravitational forces.
     /// A vector of displacement dimension's length.

@@ -12,7 +12,7 @@
 #include <memory>
 
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
-#include "ProcessLib/Parameter/Parameter.h"
+#include "ParameterLib/Parameter.h"
 
 namespace ProcessLib
 {

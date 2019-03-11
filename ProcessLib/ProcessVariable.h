@@ -11,8 +11,8 @@
 
 #include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
 
+#include "ParameterLib/Parameter.h"
 #include "ProcessLib/BoundaryCondition/BoundaryConditionConfig.h"
-#include "ProcessLib/Parameter/Parameter.h"
 #include "ProcessLib/SourceTerms/SourceTermConfig.h"
 
 // DeactivatedSubdomain cannot be forwardly declared because that
@@ -48,7 +48,8 @@ public:
     ProcessVariable(
         BaseLib::ConfigTree const& config, MeshLib::Mesh& mesh,
         std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
-        std::vector<std::unique_ptr<ParameterBase>> const& parameters);
+        std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
+            parameters);
 
     ProcessVariable(ProcessVariable&&);
 
@@ -75,15 +76,17 @@ public:
     std::vector<std::unique_ptr<BoundaryCondition>> createBoundaryConditions(
         const NumLib::LocalToGlobalIndexMap& dof_table, const int variable_id,
         unsigned const integration_order,
-        std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+        std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
+            parameters,
         Process const& process);
 
     std::vector<std::unique_ptr<SourceTerm>> createSourceTerms(
         const NumLib::LocalToGlobalIndexMap& dof_table, const int variable_id,
         unsigned const integration_order,
-        std::vector<std::unique_ptr<ParameterBase>> const& parameters);
+        std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
+            parameters);
 
-    Parameter<double> const& getInitialCondition() const
+    ParameterLib::Parameter<double> const& getInitialCondition() const
     {
         return _initial_condition;
     }
@@ -117,10 +120,11 @@ private:
 
     void createBoundaryConditionsForDeactivatedSubDomains(
         const NumLib::LocalToGlobalIndexMap& dof_table, const int variable_id,
-        std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+        std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
+            parameters,
         std::vector<std::unique_ptr<BoundaryCondition>>& bcs);
 
-    Parameter<double> const& _initial_condition;
+    ParameterLib::Parameter<double> const& _initial_condition;
 
     std::vector<BoundaryConditionConfig> _bc_configs;
     std::vector<SourceTermConfig> _source_term_configs;

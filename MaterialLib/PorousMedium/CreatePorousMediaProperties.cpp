@@ -24,7 +24,7 @@ namespace PorousMedium
 {
 PorousMediaProperties createPorousMediaProperties(
     MeshLib::Mesh& mesh, BaseLib::ConfigTree const& configs,
-    std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters)
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters)
 {
     DBUG("Create PorousMediaProperties.");
 

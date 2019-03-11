@@ -12,7 +12,7 @@
 #include "MeshLib/PropertyVector.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Function/Interpolation.h"
-#include "ProcessLib/Parameter/MeshNodeParameter.h"
+#include "ParameterLib/MeshNodeParameter.h"
 
 #include "GenericNaturalBoundaryConditionLocalAssembler.h"
 
@@ -20,10 +20,10 @@ namespace ProcessLib
 {
 struct VariableDependentNeumannBoundaryConditionData
 {
-    Parameter<double> const& constant;
-    Parameter<double> const& coefficient_current_variable;
-    Parameter<double> const& coefficient_other_variable;
-    Parameter<double> const& coefficient_mixed_variables;
+    ParameterLib::Parameter<double> const& constant;
+    ParameterLib::Parameter<double> const& coefficient_current_variable;
+    ParameterLib::Parameter<double> const& coefficient_other_variable;
+    ParameterLib::Parameter<double> const& coefficient_mixed_variables;
     // Used for mapping boundary nodes to bulk nodes.
     NumLib::LocalToGlobalIndexMap const& dof_table_boundary_other_variable;
 };

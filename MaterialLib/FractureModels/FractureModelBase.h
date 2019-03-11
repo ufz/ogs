@@ -11,7 +11,7 @@
 
 #include <Eigen/Eigen>
 
-#include "ProcessLib/Parameter/Parameter.h"
+#include "ParameterLib/Parameter.h"
 
 namespace MaterialLib
 {
@@ -77,7 +77,7 @@ public:
      */
     virtual void computeConstitutiveRelation(
         double const t,
-        ProcessLib::SpatialPosition const& x,
+        ParameterLib::SpatialPosition const& x,
         double const aperture0,
         Eigen::Ref<Eigen::VectorXd const>
             sigma0,

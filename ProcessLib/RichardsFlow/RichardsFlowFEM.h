@@ -18,9 +18,9 @@
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "NumLib/Function/Interpolation.h"
+#include "ParameterLib/Parameter.h"
 #include "ProcessLib/LocalAssemblerInterface.h"
 #include "ProcessLib/LocalAssemblerTraits.h"
-#include "ProcessLib/Parameter/Parameter.h"
 #include "ProcessLib/Utils/InitShapeMatrices.h"
 #include "RichardsFlowProcessData.h"
 
@@ -146,7 +146,7 @@ public:
 
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
-        SpatialPosition pos;
+        ParameterLib::SpatialPosition pos;
         pos.setElementID(_element.getID());
         const int material_id =
             _process_data.material->getMaterialID(_element.getID());
@@ -261,7 +261,7 @@ public:
             Eigen::Matrix<double, GlobalDim, Eigen::Dynamic, Eigen::RowMajor>>(
             cache, GlobalDim, num_intpts);
 
-        SpatialPosition pos;
+        ParameterLib::SpatialPosition pos;
         pos.setElementID(_element.getID());
         const int material_id =
             _process_data.material->getMaterialID(_element.getID());

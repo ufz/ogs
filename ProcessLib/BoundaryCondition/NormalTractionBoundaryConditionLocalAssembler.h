@@ -13,7 +13,7 @@
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "MeshLib/Elements/FaceRule.h"
 #include "NumLib/DOF/DOFTableUtil.h"
-#include "ProcessLib/Parameter/Parameter.h"
+#include "ParameterLib/Parameter.h"
 
 #include "GenericNaturalBoundaryConditionLocalAssembler.h"
 
@@ -64,7 +64,7 @@ public:
         std::size_t const local_matrix_size,
         bool const is_axially_symmetric,
         unsigned const integration_order,
-        Parameter<double> const& pressure)
+        ParameterLib::Parameter<double> const& pressure)
         : _integration_method(integration_order),
           _pressure(pressure),
           _element(e)
@@ -154,7 +154,7 @@ public:
 
 private:
     IntegrationMethod const _integration_method;
-    Parameter<double> const& _pressure;
+    ParameterLib::Parameter<double> const& _pressure;
 
     static const int displacement_size =
         ShapeFunctionDisplacement::NPOINTS * GlobalDim;

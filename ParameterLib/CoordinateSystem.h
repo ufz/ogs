@@ -14,14 +14,14 @@
 #include <array>
 #include <vector>
 
-namespace ProcessLib
+namespace ParameterLib
 {
 template <typename T>
 struct Parameter;
 class SpatialPosition;
-}
+}  // namespace ParameterLib
 
-namespace ProcessLib
+namespace ParameterLib
 {
 struct CoordinateSystem final
 {
@@ -65,4 +65,4 @@ private:
     std::array<Parameter<double> const*, 3> _base;
 };
 
-}  // namespace ProcessLib
+}  // namespace ParameterLib

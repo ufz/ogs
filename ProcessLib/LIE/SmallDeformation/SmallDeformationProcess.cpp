@@ -32,7 +32,7 @@ template <int DisplacementDim>
 SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
-    std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     unsigned const integration_order,
     std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>&&
         process_variables,
@@ -495,7 +495,7 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
             {
                 continue;
             }
-            ProcessLib::SpatialPosition x;
+            ParameterLib::SpatialPosition x;
             x.setElementID(e->getID());
             (*mesh_prop_b)[e->getID()] = fracture_prop.aperture0(0, x)[0];
         }

@@ -13,8 +13,8 @@
 #include <numeric>
 
 #include "MeshLib/MeshSearch/NodeSearch.h"
+#include "ParameterLib/Utils.h"
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
-#include "ProcessLib/Utils/ProcessUtils.h"
 
 #include "NormalTractionBoundaryConditionLocalAssembler.h"
 
@@ -29,7 +29,8 @@ NormalTractionBoundaryCondition<LocalAssemblerImplementation>::
         unsigned const integration_order, unsigned const shapefunction_order,
         NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
         int const variable_id, unsigned const global_dim,
-        MeshLib::Mesh const& bc_mesh, Parameter<double> const& pressure)
+        MeshLib::Mesh const& bc_mesh,
+        ParameterLib::Parameter<double> const& pressure)
     : _bc_mesh(bc_mesh),
       _integration_order(integration_order),
       _pressure(pressure)
@@ -79,7 +80,7 @@ createNormalTractionBoundaryCondition(
     NumLib::LocalToGlobalIndexMap const& dof_table, int const variable_id,
     unsigned const integration_order, unsigned const shapefunction_order,
     unsigned const global_dim,
-    std::vector<std::unique_ptr<ParameterBase>> const& parameters)
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters)
 {
     DBUG("Constructing NormalTractionBoundaryCondition from config.");
     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__type}
@@ -90,7 +91,8 @@ createNormalTractionBoundaryCondition(
         config.getConfigParameter<std::string>("parameter");
     DBUG("Using parameter %s", parameter_name.c_str());
 
-    auto const& pressure = findParameter<double>(parameter_name, parameters, 1);
+    auto const& pressure =
+        ParameterLib::findParameter<double>(parameter_name, parameters, 1);
     return std::make_unique<NormalTractionBoundaryCondition<
         NormalTractionBoundaryConditionLocalAssembler>>(
         integration_order, shapefunction_order, dof_table, variable_id,

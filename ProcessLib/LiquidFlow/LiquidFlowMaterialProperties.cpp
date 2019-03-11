@@ -17,7 +17,7 @@
 
 #include "MeshLib/PropertyVector.h"
 
-#include "ProcessLib/Parameter/SpatialPosition.h"
+#include "ParameterLib/SpatialPosition.h"
 
 #include "MaterialLib/PorousMedium/Permeability/Permeability.h"
 #include "MaterialLib/PorousMedium/Porosity/Porosity.h"
@@ -31,7 +31,7 @@ namespace ProcessLib
 namespace LiquidFlow
 {
 int LiquidFlowMaterialProperties::getMaterialID(
-    const SpatialPosition& pos) const
+    const ParameterLib::SpatialPosition& pos) const
 {
     if (!_material_ids)
     {
@@ -62,20 +62,21 @@ double LiquidFlowMaterialProperties::getViscosity(const double p,
         MaterialLib::Fluid::FluidPropertyType::Viscosity, vars);
 }
 
-double LiquidFlowMaterialProperties::getPorosity(const int material_id,
-                                                 const double t,
-                                                 const SpatialPosition& pos,
-                                                 const double porosity_variable,
-                                                 const double T) const
+double LiquidFlowMaterialProperties::getPorosity(
+    const int material_id,
+    const double t,
+    const ParameterLib::SpatialPosition& pos,
+    const double porosity_variable,
+    const double T) const
 {
     return _porosity_models[material_id]->getValue(t, pos, porosity_variable,
                                                    T);
 }
 
 double LiquidFlowMaterialProperties::getMassCoefficient(
-    const int material_id, const double t, const SpatialPosition& pos,
-    const double p, const double T, const double porosity_variable,
-    const double storage_variable) const
+    const int material_id, const double t,
+    const ParameterLib::SpatialPosition& pos, const double p, const double T,
+    const double porosity_variable, const double storage_variable) const
 {
     ArrayType vars;
     vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::T)] = T;
@@ -95,8 +96,8 @@ double LiquidFlowMaterialProperties::getMassCoefficient(
 }
 
 Eigen::MatrixXd const& LiquidFlowMaterialProperties::getPermeability(
-    const int material_id, const double t, const SpatialPosition& pos,
-    const int /*dim*/) const
+    const int material_id, const double t,
+    const ParameterLib::SpatialPosition& pos, const int /*dim*/) const
 {
     return _intrinsic_permeability_models[material_id]->getValue(t, pos, 0.0,
                                                                  0.0);

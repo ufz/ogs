@@ -20,13 +20,15 @@ class Mesh;
 namespace NumLib
 {
 class LocalToGlobalIndexMap;
-}  // namespace NumLib
-
+}
+namespace ParameterLib
+{
+struct ParameterBase;
+}
 namespace ProcessLib
 {
 class BoundaryCondition;
 struct BoundaryConditionConfig;
-struct ParameterBase;
 class Process;
 
 std::unique_ptr<BoundaryCondition> createBoundaryCondition(
@@ -34,7 +36,7 @@ std::unique_ptr<BoundaryCondition> createBoundaryCondition(
     const NumLib::LocalToGlobalIndexMap& dof_table,
     const MeshLib::Mesh& bulk_mesh, const int variable_id,
     const unsigned integration_order, const unsigned shapefunction_order,
-    const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>& parameters,
+    const std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
     const Process& process);
 
 }  // namespace ProcessLib

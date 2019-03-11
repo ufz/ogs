@@ -18,7 +18,7 @@
 #include "MeshElementParameter.h"
 #include "MeshNodeParameter.h"
 
-namespace ProcessLib
+namespace ParameterLib
 {
 std::unique_ptr<ParameterBase> createParameter(
     BaseLib::ConfigTree const& config,
@@ -27,7 +27,6 @@ std::unique_ptr<ParameterBase> createParameter(
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
         curves)
 {
-
     //! \ogs_file_param{prj__parameters__parameter__name}
     auto const name = config.getConfigParameter<std::string>("name");
     //! \ogs_file_param{prj__parameters__parameter__type}
@@ -85,4 +84,4 @@ std::unique_ptr<ParameterBase> createParameter(
     OGS_FATAL("Cannot construct a parameter of given type '%s'.", type.c_str());
 }
 
-}  // namespace ProcessLib
+}  // namespace ParameterLib

@@ -157,7 +157,7 @@ const char* varTypeToString(int v)
 template <int DisplacementDim>
 MFront<DisplacementDim>::MFront(
     mgis::behaviour::Behaviour&& behaviour,
-    std::vector<ProcessLib::Parameter<double> const*>&& material_properties)
+    std::vector<ParameterLib::Parameter<double> const*>&& material_properties)
     : _behaviour(std::move(behaviour)),
       _material_properties(std::move(material_properties))
 {
@@ -238,7 +238,7 @@ boost::optional<std::tuple<typename MFront<DisplacementDim>::KelvinVector,
                            typename MFront<DisplacementDim>::KelvinMatrix>>
 MFront<DisplacementDim>::integrateStress(
     double const t,
-    ProcessLib::SpatialPosition const& x,
+    ParameterLib::SpatialPosition const& x,
     double const dt,
     KelvinVector const& /*eps_prev*/,
     KelvinVector const& eps,
@@ -317,7 +317,7 @@ MFront<DisplacementDim>::integrateStress(
 template <int DisplacementDim>
 double MFront<DisplacementDim>::computeFreeEnergyDensity(
     double const /*t*/,
-    ProcessLib::SpatialPosition const& /*x*/,
+    ParameterLib::SpatialPosition const& /*x*/,
     double const /*dt*/,
     KelvinVector const& /*eps*/,
     KelvinVector const& /*sigma*/,

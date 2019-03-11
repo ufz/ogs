@@ -10,9 +10,9 @@
 #include "CreateRichardsComponentTransportProcess.h"
 
 #include "MaterialLib/Fluid/FluidProperties/CreateFluidProperties.h"
-
+#include "ParameterLib/ConstantParameter.h"
+#include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
-#include "ProcessLib/Parameter/ConstantParameter.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
 
 #include "CreatePorousMediaProperties.h"
@@ -27,7 +27,7 @@ std::unique_ptr<Process> createRichardsComponentTransportProcess(
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
-    std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     unsigned const integration_order,
     BaseLib::ConfigTree const& config)
 {
@@ -84,7 +84,7 @@ std::unique_ptr<Process> createRichardsComponentTransportProcess(
         MaterialLib::Fluid::createFluidProperties(fluid_config);
 
     // Parameter for the density of the fluid.
-    auto& fluid_reference_density= findParameter<double>(
+    auto& fluid_reference_density = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__RichardsComponentTransport__fluid_reference_density}
         "fluid_reference_density", parameters, 1);
@@ -92,7 +92,8 @@ std::unique_ptr<Process> createRichardsComponentTransportProcess(
          fluid_reference_density.name.c_str());
 
     // Parameter for the longitudinal solute dispersivity.
-    auto const& molecular_diffusion_coefficient = findParameter<double>(
+    auto const& molecular_diffusion_coefficient = ParameterLib::findParameter<
+        double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__RichardsComponentTransport__molecular_diffusion_coefficient}
         "molecular_diffusion_coefficient", parameters, 1);
@@ -100,7 +101,8 @@ std::unique_ptr<Process> createRichardsComponentTransportProcess(
          molecular_diffusion_coefficient.name.c_str());
 
     // Parameter for the longitudinal solute dispersivity.
-    auto const& solute_dispersivity_longitudinal = findParameter<double>(
+    auto const& solute_dispersivity_longitudinal = ParameterLib::findParameter<
+        double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__RichardsComponentTransport__solute_dispersivity_longitudinal}
         "solute_dispersivity_longitudinal", parameters, 1);
@@ -108,7 +110,8 @@ std::unique_ptr<Process> createRichardsComponentTransportProcess(
          solute_dispersivity_longitudinal.name.c_str());
 
     // Parameter for the transverse solute dispersivity.
-    auto const& solute_dispersivity_transverse = findParameter<double>(
+    auto const& solute_dispersivity_transverse = ParameterLib::findParameter<
+        double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__RichardsComponentTransport__solute_dispersivity_transverse}
         "solute_dispersivity_transverse", parameters, 1);
@@ -116,13 +119,13 @@ std::unique_ptr<Process> createRichardsComponentTransportProcess(
          solute_dispersivity_transverse.name.c_str());
 
     // Parameter for the retardation factor.
-    auto const& retardation_factor = findParameter<double>(
+    auto const& retardation_factor = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__RichardsComponentTransport__retardation_factor}
         "retardation_factor", parameters, 1);
 
     // Parameter for the decay rate.
-    auto const& decay_rate = findParameter<double>(
+    auto const& decay_rate = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__RichardsComponentTransport__decay_rate}
         "decay_rate", parameters, 1);

@@ -13,7 +13,7 @@
 #include "BaseLib/Error.h"
 #include "MeshLib/Mesh.h"
 
-namespace ProcessLib
+namespace ParameterLib
 {
 std::unique_ptr<ParameterBase> createGroupBasedParameter(
     std::string const& name, BaseLib::ConfigTree const& config,
@@ -24,7 +24,8 @@ std::unique_ptr<ParameterBase> createGroupBasedParameter(
 
     // get a property vector of group IDs
     //! \ogs_file_param{prj__parameters__parameter__Group__group_id_property}
-    std::string const group_id_property_name = config.getConfigParameter<std::string>("group_id_property");
+    std::string const group_id_property_name =
+        config.getConfigParameter<std::string>("group_id_property");
     DBUG("Using group_id_property %s", group_id_property_name.c_str());
 
     auto const& group_id_property =
@@ -67,7 +68,8 @@ std::unique_ptr<ParameterBase> createGroupBasedParameter(
     unsigned n_values = vec_index_values.front().second.size();
     for (auto p : vec_index_values)
     {
-        auto itr = std::find(group_id_property->begin(), group_id_property->end(), p.first);
+        auto itr = std::find(group_id_property->begin(),
+                             group_id_property->end(), p.first);
         if (itr == group_id_property->end())
         {
             OGS_FATAL(
@@ -111,4 +113,4 @@ std::unique_ptr<ParameterBase> createGroupBasedParameter(
     OGS_FATAL("Mesh item type of the specified property is not supported.");
 }
 
-}  // namespace ProcessLib
+}  // namespace ParameterLib

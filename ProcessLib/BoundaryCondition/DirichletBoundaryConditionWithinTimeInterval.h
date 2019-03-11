@@ -28,24 +28,29 @@ namespace MeshLib
 class Node;
 }
 
-namespace ProcessLib
+namespace ParameterLib
 {
 template <typename T>
 struct Parameter;
+}
 
+namespace ProcessLib
+{
 class DirichletBoundaryConditionWithinTimeInterval final
     : public BoundaryCondition
 {
 public:
     DirichletBoundaryConditionWithinTimeInterval(
         std::unique_ptr<BaseLib::TimeInterval> time_interval,
-        Parameter<double> const& parameter, MeshLib::Mesh const& bc_mesh,
+        ParameterLib::Parameter<double> const& parameter,
+        MeshLib::Mesh const& bc_mesh,
         NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
         int const variable_id, int const component_id);
 
     DirichletBoundaryConditionWithinTimeInterval(
         std::unique_ptr<BaseLib::TimeInterval> time_interval,
-        Parameter<double> const& parameter, MeshLib::Mesh const& bc_mesh,
+        ParameterLib::Parameter<double> const& parameter,
+        MeshLib::Mesh const& bc_mesh,
         std::vector<MeshLib::Node*> const& nodes_in_bc_mesh,
         NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
         int const variable_id, int const component_id);
@@ -55,7 +60,7 @@ public:
         NumLib::IndexValueVector<GlobalIndexType>& bc_values) const override;
 
 private:
-    Parameter<double> const& _parameter;
+    ParameterLib::Parameter<double> const& _parameter;
 
     MeshLib::Mesh const& _bc_mesh;
     /// Some nodes in _bc_mesh
@@ -75,6 +80,7 @@ createDirichletBoundaryConditionWithinTimeInterval(
     BaseLib::ConfigTree const& config, MeshLib::Mesh const& bc_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table_bulk, int const variable_id,
     int const component_id,
-    const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>& parameters);
+    const std::vector<std::unique_ptr<ParameterLib::ParameterBase>>&
+        parameters);
 
 }  // namespace ProcessLib

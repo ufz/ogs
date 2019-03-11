@@ -69,7 +69,7 @@ HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
         aperture0_node_values = frac_prop.aperture0.getNodalValuesOnElement(
             e, /*time independent*/ 0);
 
-    SpatialPosition x_position;
+    ParameterLib::SpatialPosition x_position;
     x_position.setElementID(e.getID());
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
@@ -188,7 +188,7 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
 
     auto const& gravity_vec = _process_data.specific_body_force;
 
-    SpatialPosition x_position;
+    ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
 
     unsigned const n_integration_points = _ip_data.size();
@@ -329,7 +329,7 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
     // in a displacement vector
     auto constexpr index_normal = GlobalDim - 1;
 
-    SpatialPosition x_position;
+    ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
 
     unsigned const n_integration_points = _ip_data.size();

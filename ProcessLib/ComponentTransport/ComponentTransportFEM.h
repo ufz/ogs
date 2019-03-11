@@ -23,9 +23,9 @@
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "NumLib/Function/Interpolation.h"
+#include "ParameterLib/Parameter.h"
 #include "ProcessLib/CoupledSolutionsForStaggeredScheme.h"
 #include "ProcessLib/LocalAssemblerInterface.h"
-#include "ProcessLib/Parameter/Parameter.h"
 #include "ProcessLib/ProcessVariable.h"
 #include "ProcessLib/Utils/InitShapeMatrices.h"
 
@@ -228,7 +228,7 @@ public:
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
 
-        SpatialPosition pos;
+        ParameterLib::SpatialPosition pos;
         pos.setElementID(_element.getID());
 
         auto const& b = _process_data.specific_body_force;
@@ -418,7 +418,7 @@ public:
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
 
-        SpatialPosition pos;
+        ParameterLib::SpatialPosition pos;
         pos.setElementID(_element.getID());
 
         auto const& b = _process_data.specific_body_force;
@@ -519,7 +519,7 @@ public:
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
 
-        SpatialPosition pos;
+        ParameterLib::SpatialPosition pos;
         pos.setElementID(_element.getID());
 
         auto const& b = _process_data.specific_body_force;
@@ -700,7 +700,7 @@ public:
             Eigen::Matrix<double, GlobalDim, Eigen::Dynamic, Eigen::RowMajor>>(
             cache, GlobalDim, n_integration_points);
 
-        SpatialPosition pos;
+        ParameterLib::SpatialPosition pos;
         pos.setElementID(_element.getID());
 
         MaterialLib::Fluid::FluidProperty::ArrayType vars;
@@ -802,7 +802,7 @@ public:
             return shape_matrices;
         }();
 
-        SpatialPosition pos;
+        ParameterLib::SpatialPosition pos;
         pos.setElementID(_element.getID());
 
         MaterialLib::Fluid::FluidProperty::ArrayType vars;

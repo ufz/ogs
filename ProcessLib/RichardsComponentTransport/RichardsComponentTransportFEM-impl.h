@@ -77,7 +77,7 @@ void LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::assemble(
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
 
-    SpatialPosition pos;
+    ParameterLib::SpatialPosition pos;
     pos.setElementID(_element_id);
 
     auto p_nodal_values = Eigen::Map<const NodalVectorType>(
@@ -232,7 +232,7 @@ LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::
         Eigen::Matrix<double, GlobalDim, Eigen::Dynamic, Eigen::RowMajor>>(
         cache, GlobalDim, n_integration_points);
 
-    SpatialPosition pos;
+    ParameterLib::SpatialPosition pos;
     pos.setElementID(_element_id);
 
     MaterialLib::Fluid::FluidProperty::ArrayType vars;
@@ -308,7 +308,7 @@ LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::
                        NumLib::LocalToGlobalIndexMap const& dof_table,
                        std::vector<double>& cache) const
 {
-    SpatialPosition pos;
+    ParameterLib::SpatialPosition pos;
     pos.setElementID(_element_id);
 
     unsigned const n_integration_points =

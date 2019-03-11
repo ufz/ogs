@@ -19,25 +19,26 @@ namespace MeshLib
 class Element;
 }
 
-namespace ProcessLib
+namespace ParameterLib
 {
 template <typename T>
 struct Parameter;
+}
 
-namespace HeatTransportBHE
+namespace ProcessLib::HeatTransportBHE
 {
 struct HeatTransportBHEProcessData
 {
     HeatTransportBHEProcessData(
-        Parameter<double> const& thermal_conductivity_solid_,
-        Parameter<double> const& thermal_conductivity_fluid_,
-        Parameter<double> const& thermal_conductivity_gas_,
-        Parameter<double> const& heat_capacity_solid_,
-        Parameter<double> const& heat_capacity_fluid_,
-        Parameter<double> const& heat_capacity_gas_,
-        Parameter<double> const& density_solid_,
-        Parameter<double> const& density_fluid_,
-        Parameter<double> const& density_gas_,
+        ParameterLib::Parameter<double> const& thermal_conductivity_solid_,
+        ParameterLib::Parameter<double> const& thermal_conductivity_fluid_,
+        ParameterLib::Parameter<double> const& thermal_conductivity_gas_,
+        ParameterLib::Parameter<double> const& heat_capacity_solid_,
+        ParameterLib::Parameter<double> const& heat_capacity_fluid_,
+        ParameterLib::Parameter<double> const& heat_capacity_gas_,
+        ParameterLib::Parameter<double> const& density_solid_,
+        ParameterLib::Parameter<double> const& density_fluid_,
+        ParameterLib::Parameter<double> const& density_gas_,
         std::vector<BHE::BHETypes>&& vec_BHEs_)
         : thermal_conductivity_solid(thermal_conductivity_solid_),
           thermal_conductivity_fluid(thermal_conductivity_fluid_),
@@ -64,24 +65,23 @@ struct HeatTransportBHEProcessData
     void operator=(HeatTransportBHEProcessData&&) = delete;
 
     // ! thermal conductivity values for the three phases
-    Parameter<double> const& thermal_conductivity_solid;
-    Parameter<double> const& thermal_conductivity_fluid;
-    Parameter<double> const& thermal_conductivity_gas;
+    ParameterLib::Parameter<double> const& thermal_conductivity_solid;
+    ParameterLib::Parameter<double> const& thermal_conductivity_fluid;
+    ParameterLib::Parameter<double> const& thermal_conductivity_gas;
 
     // ! heat capacity values for the three phases
-    Parameter<double> const& heat_capacity_solid;
-    Parameter<double> const& heat_capacity_fluid;
-    Parameter<double> const& heat_capacity_gas;
+    ParameterLib::Parameter<double> const& heat_capacity_solid;
+    ParameterLib::Parameter<double> const& heat_capacity_fluid;
+    ParameterLib::Parameter<double> const& heat_capacity_gas;
 
     // ! density values for the three phases
-    Parameter<double> const& density_solid;
-    Parameter<double> const& density_fluid;
-    Parameter<double> const& density_gas;
+    ParameterLib::Parameter<double> const& density_solid;
+    ParameterLib::Parameter<double> const& density_fluid;
+    ParameterLib::Parameter<double> const& density_gas;
 
     MeshLib::PropertyVector<int> const* _mesh_prop_materialIDs = nullptr;
     std::unordered_map<int, int> _map_materialID_to_BHE_ID;
 
     std::vector<BHE::BHETypes> _vec_BHE_property;
 };
-}  // namespace HeatTransportBHE
-}  // namespace ProcessLib
+}  // namespace ProcessLib::HeatTransportBHE

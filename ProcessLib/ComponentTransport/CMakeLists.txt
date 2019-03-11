@@ -7,6 +7,7 @@ endif()
 
 target_link_libraries(ComponentTransport
     PUBLIC ProcessLib
+    PRIVATE ParameterLib
 )
 
 include(Tests.cmake)

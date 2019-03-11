@@ -11,11 +11,10 @@
 
 #ifdef OGS_USE_MFRONT
 
-#include "MFront.h"
-
 #include "BaseLib/FileTools.h"
-#include "ProcessLib/Utils/ProcessUtils.h"
+#include "ParameterLib/Utils.h"
 
+#include "MFront.h"
 namespace
 {
 /// Prints info about MFront variables.
@@ -46,7 +45,7 @@ namespace MFront
 {
 template <int DisplacementDim>
 std::unique_ptr<MechanicsBase<DisplacementDim>> createMFront(
-    std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config)
 {
     INFO("### MFRONT ########################################################");
@@ -102,7 +101,7 @@ std::unique_ptr<MechanicsBase<DisplacementDim>> createMFront(
     // MGIS library.
     varInfo("Parameters", behaviour.parameters, hypothesis);
 
-    std::vector<ProcessLib::Parameter<double> const*> material_properties;
+    std::vector<ParameterLib::Parameter<double> const*> material_properties;
 
     if (!behaviour.mps.empty())
     {
@@ -137,7 +136,7 @@ std::unique_ptr<MechanicsBase<DisplacementDim>> createMFront(
             auto const param_name = it->second;
             auto const num_comp =
                 mgis::behaviour::getVariableSize(mp, hypothesis);
-            auto const* param = &ProcessLib::findParameter<double>(
+            auto const* param = &ParameterLib::findParameter<double>(
                 param_name, parameters, num_comp);
 
             INFO("Using OGS parameter `%s' for material property `%s'.",
@@ -194,7 +193,7 @@ namespace MFront
 template <int DisplacementDim>
 std::unique_ptr<MechanicsBase<DisplacementDim>> createMFront(
     std::vector<
-        std::unique_ptr<ProcessLib::ParameterBase>> const& /*parameters*/,
+        std::unique_ptr<ParameterLib::ParameterBase>> const& /*parameters*/,
     BaseLib::ConfigTree const& /*config*/)
 {
     OGS_FATAL("OpenGeoSys has not been build with MFront support.");
@@ -212,10 +211,10 @@ namespace Solids
 namespace MFront
 {
 template std::unique_ptr<MechanicsBase<2>> createMFront<2>(
-    std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config);
 template std::unique_ptr<MechanicsBase<3>> createMFront<3>(
-    std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config);
 }  // namespace MFront
 }  // namespace Solids

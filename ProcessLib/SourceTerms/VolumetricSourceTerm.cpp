@@ -17,7 +17,7 @@ VolumetricSourceTerm::VolumetricSourceTerm(
     MeshLib::Mesh const& source_term_mesh,
     std::unique_ptr<NumLib::LocalToGlobalIndexMap> source_term_dof_table,
     unsigned const integration_order, unsigned const shapefunction_order,
-    Parameter<double> const& volumetric_source_term)
+    ParameterLib::Parameter<double> const& volumetric_source_term)
     : SourceTerm(std::move(source_term_dof_table)),
       _volumetric_source_term(volumetric_source_term)
 {

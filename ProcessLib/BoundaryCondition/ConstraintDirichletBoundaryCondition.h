@@ -9,10 +9,10 @@
 
 #pragma once
 
+#include "BoundaryCondition.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "NumLib/IndexValueVector.h"
-#include "ProcessLib/Parameter/Parameter.h"
-#include "BoundaryCondition.h"
+#include "ParameterLib/Parameter.h"
 
 #include "ConstraintDirichletBoundaryConditionLocalAssembler.h"
 
@@ -49,7 +49,7 @@ public:
     /// @note The function has to be stored by value, else the process value is
     /// not captured properly.
     ConstraintDirichletBoundaryCondition(
-        Parameter<double> const& parameter,
+        ParameterLib::Parameter<double> const& parameter,
         NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
         int const variable_id, int const component_id,
         MeshLib::Mesh const& bc_mesh, unsigned const integration_order,
@@ -67,7 +67,7 @@ public:
         NumLib::IndexValueVector<GlobalIndexType>& bc_values) const override;
 
 private:
-    Parameter<double> const& _parameter;
+    ParameterLib::Parameter<double> const& _parameter;
 
     /// Local dof table, a subset of the global one restricted to the
     /// participating number of elements of the boundary condition.
@@ -123,6 +123,6 @@ createConstraintDirichletBoundaryCondition(
     BaseLib::ConfigTree const& config, MeshLib::Mesh const& bc_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table_bulk, int const variable_id,
     unsigned const integration_order, int const component_id,
-    std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     Process const& constraining_process);
 }  // namespace ProcessLib

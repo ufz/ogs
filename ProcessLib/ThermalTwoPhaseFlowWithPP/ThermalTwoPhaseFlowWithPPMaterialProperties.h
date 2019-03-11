@@ -77,11 +77,12 @@ public:
     double getThermalConductivityDrySolid(const double p, const double T) const;
     double getThermalConductivityWetSolid(const double p, const double T) const;
     /// Calculates the unsaturated heat conductivity
-    double calculateUnsatHeatConductivity(double const t,
-                                          ProcessLib::SpatialPosition const& x,
-                                          double const Sw,
-                                          double const lambda_pm_dry,
-                                          double const lambda_pm_wet) const;
+    double calculateUnsatHeatConductivity(
+        double const t,
+        ParameterLib::SpatialPosition const& x,
+        double const Sw,
+        double const lambda_pm_dry,
+        double const lambda_pm_wet) const;
     /// water vapor saturation pressure
     double calculateSaturatedVaporPressure(const double T) const;
     /// partial water vapor pressure in nonwetting phase

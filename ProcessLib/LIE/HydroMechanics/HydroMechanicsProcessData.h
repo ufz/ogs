@@ -41,20 +41,21 @@ struct HydroMechanicsProcessData
             int,
             std::unique_ptr<MaterialLib::Solids::MechanicsBase<GlobalDim>>>&&
             solid_materials_,
-        Parameter<double> const& intrinsic_permeability_,
-        Parameter<double> const& specific_storage_,
-        Parameter<double> const& fluid_viscosity_,
-        Parameter<double> const& fluid_density_,
-        Parameter<double> const& biot_coefficient_,
-        Parameter<double> const& porosity_,
-        Parameter<double> const& solid_density_,
+        ParameterLib::Parameter<double> const& intrinsic_permeability_,
+        ParameterLib::Parameter<double> const& specific_storage_,
+        ParameterLib::Parameter<double> const& fluid_viscosity_,
+        ParameterLib::Parameter<double> const& fluid_density_,
+        ParameterLib::Parameter<double> const& biot_coefficient_,
+        ParameterLib::Parameter<double> const& porosity_,
+        ParameterLib::Parameter<double> const& solid_density_,
         Eigen::Matrix<double, GlobalDim, 1>
             specific_body_force_,
         std::unique_ptr<MaterialLib::Fracture::FractureModelBase<GlobalDim>>&&
             fracture_model,
         std::unique_ptr<FracturePropertyHM>&& fracture_prop,
-        Parameter<double> const& initial_effective_stress_,
-        Parameter<double> const& initial_fracture_effective_stress_,
+        ParameterLib::Parameter<double> const& initial_effective_stress_,
+        ParameterLib::Parameter<double> const&
+            initial_fracture_effective_stress_,
         bool const deactivate_matrix_in_flow_,
         double const reference_temperature_)
         : material_ids(material_ids_),
@@ -91,23 +92,23 @@ struct HydroMechanicsProcessData
     std::map<int,
              std::unique_ptr<MaterialLib::Solids::MechanicsBase<GlobalDim>>>
         solid_materials;
-    Parameter<double> const& intrinsic_permeability;
-    Parameter<double> const& specific_storage;
-    Parameter<double> const& fluid_viscosity;
-    Parameter<double> const& fluid_density;
-    Parameter<double> const& biot_coefficient;
-    Parameter<double> const& porosity;
-    Parameter<double> const& solid_density;
+    ParameterLib::Parameter<double> const& intrinsic_permeability;
+    ParameterLib::Parameter<double> const& specific_storage;
+    ParameterLib::Parameter<double> const& fluid_viscosity;
+    ParameterLib::Parameter<double> const& fluid_density;
+    ParameterLib::Parameter<double> const& biot_coefficient;
+    ParameterLib::Parameter<double> const& porosity;
+    ParameterLib::Parameter<double> const& solid_density;
     Eigen::Matrix<double, GlobalDim, 1> const specific_body_force;
     std::unique_ptr<MaterialLib::Fracture::FractureModelBase<GlobalDim>>
         fracture_model;
     std::unique_ptr<FracturePropertyHM> fracture_property;
-    Parameter<double> const& initial_effective_stress;
-    Parameter<double> const& initial_fracture_effective_stress;
+    ParameterLib::Parameter<double> const& initial_effective_stress;
+    ParameterLib::Parameter<double> const& initial_fracture_effective_stress;
 
     bool const deactivate_matrix_in_flow;
     std::unique_ptr<MeshLib::ElementStatus> p_element_status;
-    Parameter<double> const* p0 = nullptr;
+    ParameterLib::Parameter<double> const* p0 = nullptr;
 
     double dt = 0.0;
     double t = 0.0;

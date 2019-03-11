@@ -38,10 +38,10 @@ double computeDamage(double const damage_prev,
 template <int DisplacementDim>
 void CohesiveZoneModeI<DisplacementDim>::computeConstitutiveRelation(
     double const t,
-    ProcessLib::SpatialPosition const& x,
+    ParameterLib::SpatialPosition const& x,
     double const aperture0,
     Eigen::Ref<Eigen::VectorXd const>
-        /*sigma0*/,
+    /*sigma0*/,
     Eigen::Ref<Eigen::VectorXd const>
     /*w_prev*/,
     Eigen::Ref<Eigen::VectorXd const>

@@ -66,7 +66,7 @@ public:
     {
     }
 
-    int getMaterialID(const SpatialPosition& pos) const;
+    int getMaterialID(const ParameterLib::SpatialPosition& pos) const;
 
     /**
      * \brief Compute the coefficient of the mass term by
@@ -86,21 +86,23 @@ public:
      * \param storage_variable   Variable for storage model.
      */
     double getMassCoefficient(const int material_id, const double t,
-                              const SpatialPosition& pos, const double p,
-                              const double T, const double porosity_variable,
+                              const ParameterLib::SpatialPosition& pos,
+                              const double p, const double T,
+                              const double porosity_variable,
                               const double storage_variable) const;
 
-    Eigen::MatrixXd const& getPermeability(const int material_id,
-                                           const double t,
-                                           const SpatialPosition& pos,
-                                           const int dim) const;
+    Eigen::MatrixXd const& getPermeability(
+        const int material_id,
+        const double t,
+        const ParameterLib::SpatialPosition& pos,
+        const int dim) const;
 
     double getLiquidDensity(const double p, const double T) const;
 
     double getViscosity(const double p, const double T) const;
 
     double getPorosity(const int material_id, const double t,
-                       const SpatialPosition& pos,
+                       const ParameterLib::SpatialPosition& pos,
                        const double porosity_variable, const double T) const;
 
 private:

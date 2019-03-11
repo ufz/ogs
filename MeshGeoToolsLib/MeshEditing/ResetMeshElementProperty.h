@@ -13,11 +13,6 @@
 #include <cstdlib>
 #include <vector>
 
-#include <tclap/CmdLine.h>
-
-#include "Applications/ApplicationsLib/LogogSetup.h"
-#include "Applications/FileIO/readGeometryFromFile.h"
-
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
 

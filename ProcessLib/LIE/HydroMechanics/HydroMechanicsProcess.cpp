@@ -19,10 +19,10 @@
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 
+#include "ParameterLib/MeshElementParameter.h"
 #include "ProcessLib/LIE/Common/BranchProperty.h"
 #include "ProcessLib/LIE/Common/JunctionProperty.h"
 #include "ProcessLib/LIE/Common/MeshUtils.h"
-#include "ProcessLib/Parameter/MeshElementParameter.h"
 
 #include "LocalAssembler/CreateLocalAssemblers.h"
 #include "LocalAssembler/HydroMechanicsLocalAssemblerFracture.h"
@@ -39,9 +39,10 @@ template <int GlobalDim>
 HydroMechanicsProcess<GlobalDim>::HydroMechanicsProcess(
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
-    std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     unsigned const integration_order,
-    std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>&& process_variables,
+    std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>&&
+        process_variables,
     HydroMechanicsProcessData<GlobalDim>&& process_data,
     SecondaryVariableCollection&& secondary_variables,
     NumLib::NamedFunctionCaller&& named_function_caller,
@@ -347,7 +348,7 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
             {
                 continue;
             }
-            ProcessLib::SpatialPosition x;
+            ParameterLib::SpatialPosition x;
             x.setElementID(e->getID());
             (*mesh_prop_b)[e->getID()] = frac->aperture0(0, x)[0];
         }
@@ -515,12 +516,13 @@ void HydroMechanicsProcess<GlobalDim>::computeSecondaryVariableConcrete(
                                       double const w_n) {
         // skip aperture computation for element-wise defined b0 because there
         // are jumps on the nodes between the element's values.
-        if (dynamic_cast<MeshElementParameter<double> const*>(&b0))
+        if (dynamic_cast<ParameterLib::MeshElementParameter<double> const*>(
+                &b0))
         {
             return std::numeric_limits<double>::quiet_NaN();
         }
 
-        ProcessLib::SpatialPosition x;
+        ParameterLib::SpatialPosition x;
         x.setNodeID(node_id);
         return w_n + b0(/*time independent*/ 0, x)[0];
     };

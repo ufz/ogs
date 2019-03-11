@@ -21,15 +21,16 @@
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "NumLib/IndexValueVector.h"
 
-#include "ProcessLib/Parameter/Parameter.h"
-#include "ProcessLib/Utils/ProcessUtils.h"
+#include "ParameterLib/Parameter.h"
+#include "ParameterLib/Utils.h"
 
 namespace ProcessLib
 {
 DirichletBoundaryConditionWithinTimeInterval::
     DirichletBoundaryConditionWithinTimeInterval(
         std::unique_ptr<BaseLib::TimeInterval> time_interval,
-        Parameter<double> const& parameter, MeshLib::Mesh const& bc_mesh,
+        ParameterLib::Parameter<double> const& parameter,
+        MeshLib::Mesh const& bc_mesh,
         NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
         int const variable_id, int const component_id)
     : _parameter(parameter),
@@ -45,7 +46,8 @@ DirichletBoundaryConditionWithinTimeInterval::
 DirichletBoundaryConditionWithinTimeInterval::
     DirichletBoundaryConditionWithinTimeInterval(
         std::unique_ptr<BaseLib::TimeInterval> time_interval,
-        Parameter<double> const& parameter, MeshLib::Mesh const& bc_mesh,
+        ParameterLib::Parameter<double> const& parameter,
+        MeshLib::Mesh const& bc_mesh,
         std::vector<MeshLib::Node*> const& nodes_in_bc_mesh,
         NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
         int const variable_id, int const component_id)
@@ -95,7 +97,7 @@ createDirichletBoundaryConditionWithinTimeInterval(
     BaseLib::ConfigTree const& config, MeshLib::Mesh const& bc_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table_bulk, int const variable_id,
     int const component_id,
-    const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>& parameters)
+    const std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters)
 {
     DBUG(
         "Constructing DirichletBoundaryConditionWithinTimeInterval from "
@@ -108,7 +110,8 @@ createDirichletBoundaryConditionWithinTimeInterval(
     auto const param_name = config.getConfigParameter<std::string>("parameter");
     DBUG("Using parameter %s", param_name.c_str());
 
-    auto& param = findParameter<double>(param_name, parameters, 1);
+    auto& param =
+        ParameterLib::findParameter<double>(param_name, parameters, 1);
 
 // In case of partitioned mesh the boundary could be empty, i.e. there is no
 // boundary condition.

@@ -8,11 +8,10 @@
  */
 
 #include "ConstantParameter.h"
-#include <logog/include/logog.hpp>
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
 
-namespace ProcessLib
+namespace ParameterLib
 {
 std::unique_ptr<ParameterBase> createConstantParameter(
     std::string const& name, BaseLib::ConfigTree const& config)
@@ -62,4 +61,4 @@ std::unique_ptr<ParameterBase> createConstantParameter(
     return std::make_unique<ConstantParameter<double>>(name, values);
 }
 
-}  // namespace ProcessLib
+}  // namespace ParameterLib

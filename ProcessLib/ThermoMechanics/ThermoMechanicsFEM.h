@@ -18,9 +18,9 @@
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
+#include "ParameterLib/Parameter.h"
 #include "ProcessLib/Deformation/BMatrixPolicy.h"
 #include "ProcessLib/Deformation/LinearBMatrix.h"
-#include "ProcessLib/Parameter/Parameter.h"
 #include "ProcessLib/Utils/InitShapeMatrices.h"
 
 #include "LocalAssemblerInterface.h"
@@ -154,7 +154,7 @@ public:
             ip_data.eps_m.setZero(kelvin_vector_size);
             ip_data.eps_m_prev.setZero(kelvin_vector_size);
 
-            SpatialPosition x_position;
+            ParameterLib::SpatialPosition x_position;
             x_position.setElementID(_element.getID());
             ip_data.solid_density =
                 _process_data.reference_solid_density(0, x_position)[0];
@@ -254,7 +254,7 @@ public:
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
 
-        SpatialPosition x_position;
+        ParameterLib::SpatialPosition x_position;
         x_position.setElementID(_element.getID());
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)

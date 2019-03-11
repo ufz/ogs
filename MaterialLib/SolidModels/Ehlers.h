@@ -25,7 +25,7 @@
 #include "BaseLib/Error.h"
 #include "MathLib/KelvinVector.h"
 #include "NumLib/NewtonRaphson.h"
-#include "ProcessLib/Parameter/Parameter.h"
+#include "ParameterLib/Parameter.h"
 
 #include "MechanicsBase.h"
 
@@ -64,7 +64,7 @@ inline TangentType makeTangentType(std::string const& s)
 /// \cite Ehlers1995.
 struct MaterialPropertiesParameters
 {
-    using P = ProcessLib::Parameter<double>;
+    using P = ParameterLib::Parameter<double>;
 
     MaterialPropertiesParameters(P const& G_, P const& K_, P const& alpha_,
                                  P const& beta_, P const& gamma_,
@@ -117,7 +117,7 @@ struct MaterialPropertiesParameters
 
 struct DamagePropertiesParameters
 {
-    using P = ProcessLib::Parameter<double>;
+    using P = ParameterLib::Parameter<double>;
     P const& alpha_d;
     P const& beta_d;
     P const& h_d;
@@ -127,7 +127,7 @@ struct DamagePropertiesParameters
 /// details.
 struct MaterialProperties final
 {
-    MaterialProperties(double const t, ProcessLib::SpatialPosition const& x,
+    MaterialProperties(double const t, ParameterLib::SpatialPosition const& x,
                        MaterialPropertiesParameters const& mp)
         : G(mp.G(t, x)[0]),
           K(mp.K(t, x)[0]),
@@ -173,7 +173,7 @@ struct MaterialProperties final
 struct DamageProperties
 {
     DamageProperties(double const t,
-                     ProcessLib::SpatialPosition const& x,
+                     ParameterLib::SpatialPosition const& x,
                      DamagePropertiesParameters const& dp)
         : alpha_d(dp.alpha_d(t, x)[0]),
           beta_d(dp.beta_d(t, x)[0]),
@@ -311,7 +311,7 @@ public:
 
     double computeFreeEnergyDensity(
         double const /*t*/,
-        ProcessLib::SpatialPosition const& /*x*/,
+        ParameterLib::SpatialPosition const& /*x*/,
         double const /*dt*/,
         KelvinVector const& eps,
         KelvinVector const& sigma,
@@ -323,7 +323,7 @@ public:
                                    DisplacementDim>::MaterialStateVariables>,
                                KelvinMatrix>>
     integrateStress(
-        double const t, ProcessLib::SpatialPosition const& x, double const dt,
+        double const t, ParameterLib::SpatialPosition const& x, double const dt,
         KelvinVector const& eps_prev, KelvinVector const& eps,
         KelvinVector const& sigma_prev,
         typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
@@ -334,13 +334,13 @@ public:
     getInternalVariables() const override;
 
     MaterialProperties evaluatedMaterialProperties(
-        double const t, ProcessLib::SpatialPosition const& x) const
+        double const t, ParameterLib::SpatialPosition const& x) const
     {
         return MaterialProperties(t, x, _mp);
     }
 
     DamageProperties evaluatedDamageProperties(
-        double const t, ProcessLib::SpatialPosition const& x) const
+        double const t, ParameterLib::SpatialPosition const& x) const
     {
         return DamageProperties(t, x, *_damage_properties);
     }

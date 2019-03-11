@@ -39,8 +39,8 @@ target_include_directories(MaterialLib
 )
 
 target_link_libraries(MaterialLib
-    PUBLIC MaterialLib_SolidModels_MFront # ProcessLib
-    PRIVATE MathLib MeshLib
+    PUBLIC MaterialLib_SolidModels_MFront
+    PRIVATE MathLib MeshLib ParameterLib
 )
 
 if(OGS_USE_PCH)

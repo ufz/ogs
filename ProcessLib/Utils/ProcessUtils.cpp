@@ -8,7 +8,8 @@
  */
 
 #include "ProcessUtils.h"
-#include <iterator>
+
+#include "BaseLib/ConfigTree.h"
 #include "ProcessLib/ProcessVariable.h"
 
 namespace

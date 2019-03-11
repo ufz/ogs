@@ -12,12 +12,11 @@
 #include "MaterialLib/Fluid/FluidProperties/CreateFluidProperties.h"
 #include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
 #include "MaterialLib/PorousMedium/CreatePorousMediaProperties.h"
-
 #include "MeshLib/IO/readMeshFromFile.h"
-
-#include "ProcessLib/SurfaceFlux/SurfaceFluxData.h"
+#include "ParameterLib/ConstantParameter.h"
+#include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
-#include "ProcessLib/Parameter/ConstantParameter.h"
+#include "ProcessLib/SurfaceFlux/SurfaceFluxData.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
 
 #include "ComponentTransportProcess.h"
@@ -30,7 +29,7 @@ std::unique_ptr<Process> createComponentTransportProcess(
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
-    std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     unsigned const integration_order,
     BaseLib::ConfigTree const& config,
     std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
@@ -110,7 +109,7 @@ std::unique_ptr<Process> createComponentTransportProcess(
         MaterialLib::Fluid::createFluidProperties(fluid_config);
 
     // Parameter for the density of the fluid.
-    auto& fluid_reference_density= findParameter<double>(
+    auto& fluid_reference_density = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__ComponentTransport__fluid_reference_density}
         "fluid_reference_density", parameters, 1);
@@ -118,14 +117,14 @@ std::unique_ptr<Process> createComponentTransportProcess(
          fluid_reference_density.name.c_str());
 
     // Parameter for the retardation factor.
-    auto const& retardation_factor =
-        findParameter<double>(config,
+    auto const& retardation_factor = ParameterLib::findParameter<double>(
+        config,
         //! \ogs_file_param_special{prj__processes__process__ComponentTransport__retardation_factor}
         "retardation_factor", parameters, 1);
 
     // Parameter for the decay rate.
-    auto const& decay_rate =
-        findParameter<double>(config,
+    auto const& decay_rate = ParameterLib::findParameter<double>(
+        config,
         //! \ogs_file_param_special{prj__processes__process__ComponentTransport__decay_rate}
         "decay_rate", parameters, 1);
 

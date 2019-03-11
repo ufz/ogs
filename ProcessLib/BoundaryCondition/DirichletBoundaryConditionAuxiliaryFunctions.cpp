@@ -15,9 +15,9 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 
-#include "NumLib/IndexValueVector.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
-#include "ProcessLib/Parameter/Parameter.h"
+#include "NumLib/IndexValueVector.h"
+#include "ParameterLib/Parameter.h"
 
 namespace ProcessLib
 {
@@ -56,14 +56,15 @@ void checkParametersOfDirichletBoundaryCondition(
 }
 
 void getEssentialBCValuesLocal(
-    Parameter<double> const& parameter, MeshLib::Mesh const& bc_mesh,
+    ParameterLib::Parameter<double> const& parameter,
+    MeshLib::Mesh const& bc_mesh,
     std::vector<MeshLib::Node*> const& nodes_in_bc_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table_boundary,
     int const variable_id, int const component_id, const double t,
     GlobalVector const& /*x*/,
     NumLib::IndexValueVector<GlobalIndexType>& bc_values)
 {
-    SpatialPosition pos;
+    ParameterLib::SpatialPosition pos;
 
     bc_values.ids.clear();
     bc_values.values.clear();

@@ -8,7 +8,7 @@
  */
 
 #include "NeumannBoundaryCondition.h"
-#include "ProcessLib/Utils/ProcessUtils.h"
+#include "ParameterLib/Utils.h"
 
 namespace ProcessLib
 {
@@ -17,7 +17,7 @@ std::unique_ptr<NeumannBoundaryCondition> createNeumannBoundaryCondition(
     NumLib::LocalToGlobalIndexMap const& dof_table, int const variable_id,
     int const component_id, unsigned const integration_order,
     unsigned const shapefunction_order, unsigned const global_dim,
-    std::vector<std::unique_ptr<ParameterBase>> const& parameters)
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters)
 {
     DBUG("Constructing Neumann BC from config.");
     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__type}
@@ -27,7 +27,8 @@ std::unique_ptr<NeumannBoundaryCondition> createNeumannBoundaryCondition(
     auto const param_name = config.getConfigParameter<std::string>("parameter");
     DBUG("Using parameter %s", param_name.c_str());
 
-    auto const& param = findParameter<double>(param_name, parameters, 1);
+    auto const& param =
+        ParameterLib::findParameter<double>(param_name, parameters, 1);
 
     // In case of partitioned mesh the boundary could be empty, i.e. there is no
     // boundary condition.

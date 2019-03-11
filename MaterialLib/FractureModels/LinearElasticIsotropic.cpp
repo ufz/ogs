@@ -18,7 +18,7 @@ namespace Fracture
 template <int DisplacementDim>
 void LinearElasticIsotropic<DisplacementDim>::computeConstitutiveRelation(
     double const t,
-    ProcessLib::SpatialPosition const& x,
+    ParameterLib::SpatialPosition const& x,
     double const aperture0,
     Eigen::Ref<Eigen::VectorXd const>
         sigma0,

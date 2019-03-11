@@ -13,8 +13,8 @@
 
 #include "NumLib/DOF/DOFTableUtil.h"
 
+#include "ParameterLib/Parameter.h"
 #include "ProcessLib/Process.h"
-#include "ProcessLib/Parameter/Parameter.h"
 #include "ProcessLib/Utils/InitShapeMatrices.h"
 
 #include "MeshLib/Elements/MapBulkElementPoint.h"

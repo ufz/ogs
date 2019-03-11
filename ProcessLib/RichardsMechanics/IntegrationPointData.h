@@ -72,7 +72,7 @@ struct IntegrationPointData final
     template <typename DisplacementVectorType>
     typename BMatricesType::KelvinMatrixType updateConstitutiveRelation(
         double const t,
-        SpatialPosition const& x_position,
+        ParameterLib::SpatialPosition const& x_position,
         double const dt,
         DisplacementVectorType const& /*u*/,
         double const temperature)

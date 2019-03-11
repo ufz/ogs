@@ -8,9 +8,9 @@
  */
 
 #include "CurveScaledParameter.h"
-#include "ProcessLib/Utils/ProcessUtils.h"
+#include "Utils.h"
 
-namespace ProcessLib
+namespace ParameterLib
 {
 std::unique_ptr<ParameterBase> createCurveScaledParameter(
     std::string const& name,
@@ -42,4 +42,4 @@ std::unique_ptr<ParameterBase> createCurveScaledParameter(
         name, *curve_it->second, referenced_parameter_name);
 }
 
-}  // namespace ProcessLib
+}  // namespace ParameterLib

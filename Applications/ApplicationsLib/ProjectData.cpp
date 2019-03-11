@@ -23,6 +23,7 @@
 #endif
 
 #include "BaseLib/Algorithm.h"
+#include "BaseLib/ConfigTree.h"
 #include "BaseLib/FileTools.h"
 
 #include "GeoLib/GEOObjects.h"
@@ -41,10 +42,10 @@
 #include "GeoLib/IO/XmlIO/Boost/BoostXmlGmlInterface.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 
-#include "ProcessLib/Parameter/ConstantParameter.h"
-#include "ProcessLib/Parameter/CoordinateSystem.h"
+#include "ParameterLib/ConstantParameter.h"
+#include "ParameterLib/CoordinateSystem.h"
+#include "ParameterLib/Utils.h"
 #include "ProcessLib/UncoupledProcessesTimeLoop.h"
-#include "ProcessLib/Utils/ProcessUtils.h"
 
 #ifdef OGS_BUILD_PROCESS_COMPONENTTRANSPORT
 #include "ProcessLib/ComponentTransport/CreateComponentTransportProcess.h"
@@ -196,9 +197,9 @@ std::vector<std::unique_ptr<MeshLib::Mesh>> readMeshes(
     return meshes;
 }
 
-boost::optional<ProcessLib::CoordinateSystem> parseLocalCoordinateSystem(
+boost::optional<ParameterLib::CoordinateSystem> parseLocalCoordinateSystem(
     boost::optional<BaseLib::ConfigTree> const& config,
-    std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters)
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters)
 {
     if (!config)
     {
@@ -210,7 +211,7 @@ boost::optional<ProcessLib::CoordinateSystem> parseLocalCoordinateSystem(
     //
     // Fetch the first basis vector; its length defines the dimension.
     //
-    auto const& basis_vector_0 = ProcessLib::findParameter<double>(
+    auto const& basis_vector_0 = ParameterLib::findParameter<double>(
         *config,
         //! \ogs_file_param_special{prj__local_coordinate_system__basis_vector_0}
         "basis_vector_0", parameters, 0 /* any dimension */);
@@ -229,7 +230,7 @@ boost::optional<ProcessLib::CoordinateSystem> parseLocalCoordinateSystem(
     // Fetch the second basis vector, which must be of the same dimension as the
     // first one.
     //
-    auto const& basis_vector_1 = ProcessLib::findParameter<double>(
+    auto const& basis_vector_1 = ParameterLib::findParameter<double>(
         *config,
         //! \ogs_file_param_special{prj__local_coordinate_system__basis_vector_1}
         "basis_vector_1", parameters, dimension);
@@ -239,18 +240,18 @@ boost::optional<ProcessLib::CoordinateSystem> parseLocalCoordinateSystem(
     //
     if (dimension == 2)
     {
-        return ProcessLib::CoordinateSystem{basis_vector_0, basis_vector_1};
+        return ParameterLib::CoordinateSystem{basis_vector_0, basis_vector_1};
     }
 
     //
     // Parse the third vector, for three dimensions.
     //
-    auto const& basis_vector_2 = ProcessLib::findParameter<double>(
+    auto const& basis_vector_2 = ParameterLib::findParameter<double>(
         *config,
         //! \ogs_file_param_special{prj__local_coordinate_system__basis_vector_2}
         "basis_vector_2", parameters, dimension);
-    return ProcessLib::CoordinateSystem{basis_vector_0, basis_vector_1,
-                                        basis_vector_2};
+    return ParameterLib::CoordinateSystem{basis_vector_0, basis_vector_1,
+                                          basis_vector_2};
 }
 }  // namespace
 
@@ -386,7 +387,7 @@ std::vector<std::string> ProjectData::parseParameters(
          parameters_config.getConfigSubtreeList("parameter"))
     {
         auto p =
-            ProcessLib::createParameter(parameter_config, _mesh_vec, _curves);
+            ParameterLib::createParameter(parameter_config, _mesh_vec, _curves);
         if (!names.insert(p->name).second)
         {
             OGS_FATAL("A parameter with name `%s' already exists.",
@@ -407,7 +408,7 @@ std::vector<std::string> ProjectData::parseParameters(
     }
 
     _parameters.push_back(
-        std::make_unique<ProcessLib::ConstantParameter<double>>(
+        std::make_unique<ParameterLib::ConstantParameter<double>>(
             ProcessLib::DeactivatedSubdomain::zero_parameter_name, 0.0));
 
     return parameter_names_for_transformation;

@@ -9,8 +9,9 @@
 
 #include "CreateRichardsFlowProcess.h"
 
+#include "ParameterLib/ConstantParameter.h"
+#include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
-#include "ProcessLib/Parameter/ConstantParameter.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
 
 #include "CreateRichardsFlowMaterialProperties.h"
@@ -25,7 +26,7 @@ std::unique_ptr<Process> createRichardsFlowProcess(
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
-    std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     unsigned const integration_order,
     BaseLib::ConfigTree const& config,
     std::map<std::string,
@@ -74,7 +75,7 @@ std::unique_ptr<Process> createRichardsFlowProcess(
     //! \ogs_file_param{prj__processes__process__RICHARDS_FLOW__mass_lumping}
     auto mass_lumping = config.getConfigParameter<bool>("mass_lumping");
 
-    auto& temperature = findParameter<double>(
+    auto& temperature = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__RICHARDS_FLOW__temperature}
         "temperature", parameters, 1);

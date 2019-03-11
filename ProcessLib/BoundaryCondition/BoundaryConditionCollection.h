@@ -20,7 +20,8 @@ class BoundaryConditionCollection final
 {
 public:
     explicit BoundaryConditionCollection(
-        std::vector<std::unique_ptr<ParameterBase>> const& parameters)
+        std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
+            parameters)
         : _parameters(parameters)
     {
     }
@@ -62,7 +63,8 @@ public:
 private:
     mutable std::vector<NumLib::IndexValueVector<GlobalIndexType>> _dirichlet_bcs;
     std::vector<std::unique_ptr<BoundaryCondition>> _boundary_conditions;
-    std::vector<std::unique_ptr<ParameterBase>> const& _parameters;
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
+        _parameters;
 };
 
 }  // namespace ProcessLib

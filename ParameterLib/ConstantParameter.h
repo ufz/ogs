@@ -9,11 +9,9 @@
 
 #pragma once
 
-#include <utility>
-
 #include "Parameter.h"
 
-namespace ProcessLib
+namespace ParameterLib
 {
 /// Single, constant value parameter.
 template <typename T>
@@ -76,4 +74,4 @@ private:
 std::unique_ptr<ParameterBase> createConstantParameter(
     std::string const& name, BaseLib::ConfigTree const& config);
 
-}  // namespace ProcessLib
+}  // namespace ParameterLib

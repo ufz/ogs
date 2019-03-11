@@ -14,7 +14,7 @@
 #include <Eigen/Dense>
 
 #include "BaseLib/Error.h"
-#include "ProcessLib/Parameter/Parameter.h"
+#include "ParameterLib/Parameter.h"
 
 namespace MaterialLib
 {
@@ -27,7 +27,7 @@ class Permeability
 {
 public:
     explicit Permeability(
-        ProcessLib::Parameter<double> const& permeability_parameter,
+        ParameterLib::Parameter<double> const& permeability_parameter,
         int const dimension)
         : _permeability_parameter(permeability_parameter), _dimension(dimension)
     {
@@ -52,11 +52,10 @@ public:
      *  @param variable    A variable with any double type value.
      *  @param temperature Temperature with any double type value.
      */
-    Eigen::MatrixXd const& getValue(
-        const double t,
-        ProcessLib::SpatialPosition const& pos,
-        const double variable,
-        const double temperature) const
+    Eigen::MatrixXd const& getValue(const double t,
+                                    ParameterLib::SpatialPosition const& pos,
+                                    const double variable,
+                                    const double temperature) const
     {
         (void)variable;
         (void)temperature;
@@ -72,7 +71,7 @@ public:
     }
 
 private:
-    ProcessLib::Parameter<double> const& _permeability_parameter;
+    ParameterLib::Parameter<double> const& _permeability_parameter;
     int const _dimension;
     mutable Eigen::MatrixXd _intrinsic_permeability_tensor;
 };

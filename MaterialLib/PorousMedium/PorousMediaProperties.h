@@ -19,7 +19,7 @@
 #include "Porosity/Porosity.h"
 #include "Storage/Storage.h"
 
-#include "ProcessLib/Parameter/SpatialPosition.h"
+#include "ParameterLib/SpatialPosition.h"
 
 namespace MaterialLib
 {
@@ -48,16 +48,17 @@ public:
     PorousMediaProperties(PorousMediaProperties&& other) = default;
 
     MaterialLib::PorousMedium::Porosity const& getPorosity(
-        double t, ProcessLib::SpatialPosition const& pos) const;
+        double t, ParameterLib::SpatialPosition const& pos) const;
 
     MaterialLib::PorousMedium::Permeability const& getIntrinsicPermeability(
-        double t, ProcessLib::SpatialPosition const& pos) const;
+        double t, ParameterLib::SpatialPosition const& pos) const;
 
     MaterialLib::PorousMedium::Storage const& getSpecificStorage(
-        double t, ProcessLib::SpatialPosition const& pos) const;
+        double t, ParameterLib::SpatialPosition const& pos) const;
 
 private:
-    int getMaterialID(ProcessLib::SpatialPosition const& pos) const;
+    int getMaterialID(ParameterLib::SpatialPosition const& pos) const;
+
 private:
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Porosity>>
         _porosity_models;

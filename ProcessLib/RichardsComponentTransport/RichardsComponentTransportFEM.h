@@ -12,7 +12,6 @@
 #include <Eigen/Dense>
 #include <vector>
 
-#include "RichardsComponentTransportProcessData.h"
 #include "MaterialLib/Fluid/FluidProperties/FluidProperties.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/DOF/DOFTableUtil.h"
@@ -20,9 +19,10 @@
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "NumLib/Function/Interpolation.h"
+#include "ParameterLib/Parameter.h"
 #include "ProcessLib/LocalAssemblerInterface.h"
-#include "ProcessLib/Parameter/Parameter.h"
 #include "ProcessLib/Utils/InitShapeMatrices.h"
+#include "RichardsComponentTransportProcessData.h"
 
 namespace ProcessLib
 {

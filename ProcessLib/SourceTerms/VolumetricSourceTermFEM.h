@@ -14,8 +14,8 @@
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
+#include "ParameterLib/Parameter.h"
 #include "ProcessLib/LocalAssemblerTraits.h"
-#include "ProcessLib/Parameter/Parameter.h"
 #include "ProcessLib/Utils/InitShapeMatrices.h"
 
 namespace ProcessLib
@@ -65,7 +65,7 @@ public:
         std::size_t const local_matrix_size,
         bool is_axially_symmetric,
         unsigned const integration_order,
-        Parameter<double> const& volumetric_source_term)
+        ParameterLib::Parameter<double> const& volumetric_source_term)
         : _volumetric_source_term(volumetric_source_term),
           _integration_method(integration_order),
           _local_rhs(local_matrix_size)
@@ -97,7 +97,7 @@ public:
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
 
-        SpatialPosition pos;
+        ParameterLib::SpatialPosition pos;
         pos.setElementID(id);
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
@@ -113,7 +113,7 @@ public:
     }
 
 private:
-    Parameter<double> const& _volumetric_source_term;
+    ParameterLib::Parameter<double> const& _volumetric_source_term;
 
     IntegrationMethod const _integration_method;
     std::vector<

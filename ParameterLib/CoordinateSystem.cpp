@@ -14,7 +14,7 @@
 
 #include "Parameter.h"
 
-namespace ProcessLib
+namespace ParameterLib
 {
 CoordinateSystem::CoordinateSystem(Parameter<double> const& e0,
                                    Parameter<double> const& e1)
@@ -116,4 +116,4 @@ Eigen::Matrix<double, 3, 3> CoordinateSystem::transformation<3>(
 #endif  // NDEBUG
     return t;
 }
-}  // namespace ProcessLib
+}  // namespace ParameterLib

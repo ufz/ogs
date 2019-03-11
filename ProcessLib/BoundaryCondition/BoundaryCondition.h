@@ -22,11 +22,13 @@ class LocalToGlobalIndexMap;
 template <typename>
 struct IndexValueVector;
 }
-
+namespace ParameterLib
+{
+struct ParameterBase;
+}
 namespace ProcessLib
 {
 struct BoundaryConditionConfig;
-struct ParameterBase;
 class Process;
 
 class BoundaryCondition

@@ -13,9 +13,9 @@
 
 #include <algorithm>
 
-#include "MeshLib/MeshGenerators/MeshGenerator.h"
-
 #include "MaterialLib/PhysicalConstant.h"
+#include "MeshLib/MeshGenerators/MeshGenerator.h"
+#include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
 
@@ -29,7 +29,7 @@ std::unique_ptr<Process> createLiquidFlowProcess(
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
-    std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     unsigned const integration_order,
     BaseLib::ConfigTree const& config)
 {

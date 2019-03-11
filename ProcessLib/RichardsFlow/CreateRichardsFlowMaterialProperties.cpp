@@ -11,8 +11,8 @@
 
 #include <logog/include/logog.hpp>
 
-#include "MaterialLib/Fluid/FluidProperty.h"
 #include "MaterialLib/Fluid/FluidProperties/CreateFluidProperties.h"
+#include "MaterialLib/Fluid/FluidProperty.h"
 #include "MaterialLib/PorousMedium/Porosity/Porosity.h"
 #include "MaterialLib/PorousMedium/Storage/Storage.h"
 #include "MaterialLib/PorousMedium/UnsaturatedProperty/CapillaryPressure/CapillaryPressureSaturation.h"
@@ -22,8 +22,8 @@
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/PropertyVector.h"
-#include "ProcessLib/Parameter/Parameter.h"
-#include "ProcessLib/Parameter/SpatialPosition.h"
+#include "ParameterLib/Parameter.h"
+#include "ParameterLib/SpatialPosition.h"
 
 #include "RichardsFlowMaterialProperties.h"
 
@@ -35,7 +35,7 @@ std::unique_ptr<RichardsFlowMaterialProperties>
 createRichardsFlowMaterialProperties(
     BaseLib::ConfigTree const& config,
     MeshLib::PropertyVector<int> const* const material_ids,
-    std::vector<std::unique_ptr<ParameterBase>> const& parameters)
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters)
 {
     DBUG("Reading material properties of Richards flow process.");
 
