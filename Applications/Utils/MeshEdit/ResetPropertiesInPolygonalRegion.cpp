@@ -73,7 +73,7 @@ int main (int argc, char* argv[])
         "the name of the file containing the input mesh", true,
         "", "file name");
     cmd.add(mesh_in);
-    TCLAP::ValueArg<std::string> gmsh_path_arg("g", "gmsh-path",
+    TCLAP::ValueArg<std::string> gmsh_path_arg("", "gmsh-path",
                                                "the path to the gmsh binary",
                                                false, "", "path as string");
     cmd.add(gmsh_path_arg);
@@ -124,6 +124,11 @@ int main (int argc, char* argv[])
     // *** read mesh
     auto mesh = std::unique_ptr<MeshLib::Mesh>(
         MeshLib::IO::readMeshFromFile(mesh_in.getValue()));
+    if (!mesh)
+    {
+        // error message written already by readMeshFromFile
+        return EXIT_FAILURE;
+    }
     std::string const& property_name(property_name_arg.getValue());
 
     if (char_property_arg.isSet()) {
