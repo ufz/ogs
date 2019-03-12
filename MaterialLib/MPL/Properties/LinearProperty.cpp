@@ -23,18 +23,20 @@ LinearProperty::LinearProperty(PropertyDataType const& property_reference_value,
 PropertyDataType LinearProperty::value(
     VariableArray const& variable_array) const
 {
-    return boost::get<double>(_value) +
-           boost::get<double>(_independent_variable.slope) *
-               (boost::get<double>(variable_array[static_cast<int>(
-                    _independent_variable.type)]) -
-                boost::get<double>(_independent_variable.reference_condition));
+    return boost::get<double>(_value) *
+           (1 + boost::get<double>(_independent_variable.slope) *
+                    (boost::get<double>(variable_array[static_cast<int>(
+                         _independent_variable.type)]) -
+                     boost::get<double>(
+                         _independent_variable.reference_condition)));
 }
 
 PropertyDataType LinearProperty::dValue(VariableArray const& /*variable_array*/,
                                         Variable const primary_variable) const
 {
     return _independent_variable.type == primary_variable
-               ? _independent_variable.slope
+               ? boost::get<double>(_value) *
+                     boost::get<double>(_independent_variable.slope)
                : decltype(_value){};
 }
 
