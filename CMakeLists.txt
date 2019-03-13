@@ -46,6 +46,14 @@ endif()
 option(OGS_USE_CONAN "Should Conan package manager be used?" ON)
 set(OGS_CONAN_BUILD "missing" CACHE STRING "Possible values: all, missing, \
     never or list of libs to build" )
+
+# Third-party libraries, names come from Conan package names
+set(OGS_LIBS VTK Boost Eigen3 Qt Shapelib libgeotiff CACHE INTERNAL "")
+foreach(LIB ${OGS_LIBS})
+    set(OGS_LIB_${LIB} "Default" CACHE STRING "Which ${LIB} library should be used?")
+    set_property(CACHE OGS_LIB_${LIB} PROPERTY STRINGS "Default" "System")
+endforeach(LIB)
+
 if(OGS_USE_PETSC)
     set(OGS_USE_MPI ON CACHE BOOL "Use MPI" FORCE)
 endif()
@@ -213,13 +221,6 @@ endif ()
 option(OGS_COVERAGE "Enables code coverage measurements with gcov/lcov." OFF)
 
 option(OGS_SYNC_SUBMODULES "Sync git submodules on CMake run. Overwrites custom URLs!" ON)
-
-# Third-party libraries, names come from Conan package names
-set(OGS_LIBS VTK Boost Eigen3 Qt Shapelib libgeotiff CACHE INTERNAL "")
-foreach(LIB ${OGS_LIBS})
-    set(OGS_LIB_${LIB} "Default" CACHE STRING "Which ${LIB} library should be used?")
-    set_property(CACHE OGS_LIB_${LIB} PROPERTY STRINGS "Default" "System")
-endforeach(LIB)
 
 # Options controlling which FEM elements will be compiled
 set(OGS_MAX_ELEMENT_DIM   3 CACHE STRING "Maximum dimension of FEM elements to be built.")
