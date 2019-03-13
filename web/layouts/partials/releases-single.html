@@ -1,0 +1,97 @@
+{{ $gh_release := print "https://github.com/ufz/ogs/releases/tag/" .Title }}
+{{ $gh_download := print "https://github.com/ufz/ogs/releases/download/" .Title }}
+{{ $file_prefix := print "ogs-" .Title }}
+<p>Released on {{ dateFormat "Monday, Jan 2, 2006" .Params.release_date }}, <a href="{{ $gh_release }}"><i class="fab fa-github"></i> GitHub release</a></p>
+{{ if .Params.downloads }}
+  <div class="note">
+    <h3><i class="fal fa-download"></i> Downloads</h3>
+    <div class="flex">
+      {{ if .Params.downloads.win }}
+        <div class="w-1/2">
+          <h4><i class="fab fa-windows"></i> Windows</h4>
+          <ul class="text-sm">
+            {{ range .Params.downloads.win }}
+              <li>
+                <a href="{{$gh_download}}/{{$file_prefix}}-{{.}}">
+                  OpenGeoSys
+                  {{ if in . "python" }}
+                     ( with Python bindings <i class="fab fa-python"></i>)
+                  {{ end }}
+                  {{ if in . "de" }}
+                     + DataExplorer
+                  {{ end }}
+                  {{ if in . "utils" }}
+                     + Utilities
+                  {{ end }}
+                </a>
+              </li>
+            {{ end }}
+          </ul>
+        </div>
+      {{ end}}
+      {{ if .Params.downloads.osx }}
+        <div class="w-1/2">
+          <h4><i class="fab fa-apple"></i> macOS</h4>
+          <ul class="text-sm">
+            {{ range .Params.downloads.osx }}
+              <li>
+                <a href="{{$gh_download}}/{{$file_prefix}}-{{.}}">
+                  OpenGeoSys
+                  {{ if in . "python" }}
+                     ( with Python bindings <i class="fab fa-python"></i>)
+                  {{ end }}
+                  {{ if in . "de" }}
+                     + DataExplorer
+                  {{ end }}
+                  {{ if in . "utils" }}
+                     + Utilities
+                  {{ end }}
+                </a>
+              </li>
+            {{ end }}
+          </ul>
+        </div>
+      {{ end}}
+    </div>
+    <div class="flex">
+      {{ if .Params.downloads.linux }}
+        <div class="w-1/2">
+          <h4><i class="fab fa-linux"></i> Linux</h4>
+          <ul class="text-sm">
+            {{ range .Params.downloads.linux }}
+              <li>
+                <a href="{{$gh_download}}/{{$file_prefix}}-{{.}}">
+                  OpenGeoSys
+                  {{ if in . "python" }}
+                     ( with Python bindings <i class="fab fa-python"></i>)
+                  {{ end }}
+                  {{ if in . "de" }}
+                     + DataExplorer
+                  {{ end }}
+                  {{ if in . "utils" }}
+                     + Utilities
+                  {{ end }}
+                </a>
+              </li>
+            {{ end }}
+          </ul>
+        </div>
+      {{ end}}
+      {{ if .Params.downloads.container }}
+        <div class="w-1/2">
+          <h4><i class="far fa-container-storage"></i> Singularity container</h4>
+          <ul class="text-sm">
+            {{ range .Params.downloads.container }}
+              <li><a href="{{$gh_download}}/{{$file_prefix}}-{{.}}">{{$file_prefix}}-{{.}}</a></li>
+            {{ end }}
+          </ul>
+        </div>
+      {{ end}}
+    </div>
+    {{ if .Params.downloads.note }}
+      <div class="text-sm">{{ .Params.downloads.note | markdownify }}</div>
+    {{ end }}
+  </div>
+{{ end }}
+
+{{ .Content }}
