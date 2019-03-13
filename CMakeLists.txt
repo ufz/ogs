@@ -46,6 +46,7 @@ set(OGS_LIBS
     petsc
     lis
     cvode
+    tfel
     CACHE INTERNAL "")
 foreach(LIB ${OGS_LIBS})
     set(OGS_LIB_${LIB}
