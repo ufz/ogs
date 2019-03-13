@@ -112,14 +112,21 @@ pipeline {
                 cmakeOptions =
                   "-DBUILD_SHARED_LIBS=${build_shared} " +
                   '-DOGS_CPU_ARCHITECTURE=generic ' +
-                  '-DOGS_USE_PYTHON=ON ' +
                   '-DOGS_BUILD_UTILS=ON ' +
                   '-DOGS_USE_CVODE=ON '
               }
               build {
                 target="package"
-                log="build.log"
-                }
+                log="build1.log"
+              }
+              configure { // CLI + Python
+                cmakeOptions = '-DOGS_USE_PYTHON=ON '
+                keepDir = true
+              }
+              build {
+                target="package"
+                log="build2.log"
+              }
               build { target="tests" }
               build { target="ctest" }
               build { target="doc" }
@@ -135,7 +142,7 @@ pipeline {
               recordIssues enabledForFailure: true, filters: [
                 excludeFile('.*qrc_icons\\.cpp.*'), excludeFile('.*QVTKWidget.*'),
                 excludeMessage('.*tmpnam.*')],
-                tools: [gcc4(name: 'GCC', pattern: 'build/build.log')],
+                tools: [gcc4(name: 'GCC', pattern: 'build/build*.log')],
                 unstableTotalAll: 1
               recordIssues enabledForFailure: true, filters: [
                   excludeFile('-'), excludeFile('.*Functional\\.h'),
@@ -178,7 +185,6 @@ pipeline {
                 cmakeOptions =
                   "-DBUILD_SHARED_LIBS=${build_shared} " +
                   '-DOGS_CPU_ARCHITECTURE=generic ' +
-                  '-DOGS_USE_PYTHON=ON ' +
                   '-DOGS_USE_PCH=OFF ' +     // see #1992
                   '-DOGS_BUILD_GUI=ON ' +
                   '-DOGS_BUILD_UTILS=ON ' +
@@ -186,7 +192,15 @@ pipeline {
               }
               build {
                 target="package"
-                log="build.log"
+                log="build1.log"
+              }
+              configure { // CLI + GUI + Python
+                cmakeOptions = '-DOGS_USE_PYTHON=ON '
+                keepDir = true
+              }
+              build {
+                target="package"
+                log="build2.log"
               }
               build { target="cppcheck" }
             }
@@ -197,7 +211,7 @@ pipeline {
                 excludeFile('.*qrc_icons\\.cpp.*'), excludeMessage('.*QVTKWidget.*'),
                 excludeMessage('.*tmpnam.*')],
                 tools: [gcc4(name: 'GCC-GUI', id: 'gcc4-gui',
-                             pattern: 'build/build.log')],
+                             pattern: 'build/build*.log')],
                 unstableTotalAll: 1
               recordIssues enabledForFailure: true,
                 tools: [cppCheck(pattern: 'build/cppcheck.log')]
@@ -356,14 +370,17 @@ pipeline {
               }
               build {
                 target="package"
-                log="build.log"
+                log="build1.log"
                 cmd_args="-l ${num_threads}"
               }
               configure { // CLI + GUI + Python
                 cmakeOptions = '-DOGS_USE_PYTHON=ON '
                 keepDir = true
               }
-              build { target="package" }
+              build {
+                target="package"
+                log="build2.log"
+              }
               build { target="tests" }
               build { target="ctest" }
             }
@@ -377,7 +394,7 @@ pipeline {
               recordIssues enabledForFailure: true, filters: [
                 excludeFile('.*\\.conan.*'), excludeFile('.*ThirdParty.*'),
                 excludeFile('.*thread.hpp')],
-                tools: [msBuild(name: 'MSVC', pattern: 'build/build.log')],
+                tools: [msBuild(name: 'MSVC', pattern: 'build/build*.log')],
                 qualityGates: [[threshold: 10, type: 'TOTAL', unstable: true]]
             }
             success {
