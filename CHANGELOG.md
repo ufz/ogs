@@ -70,7 +70,7 @@
 - Enable surface flux calculation for HT process. #2132
 - Fixed pvd output. #2036
 
-### Material model changes
+### Material models
 
 - BGRa creep model. #2167
 - New cohesive zone mode I fracture model for LIE processes. #2142, #2157
