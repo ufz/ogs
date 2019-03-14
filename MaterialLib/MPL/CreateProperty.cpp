@@ -62,6 +62,13 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
                     Vector{values[0], values[1], values[2]};
                 return std::make_unique<Constant>(property_value);
             }
+            case 4:
+            {
+                // Tensor
+                PropertyDataType property_value =
+                    Tensor2d{values[0], values[1], values[2], values[3]};
+                return std::make_unique<Constant>(property_value);
+            }
             case 6:
             {
                 // Symmetric Tensor - xx, yy, zz, xy, xz, yz

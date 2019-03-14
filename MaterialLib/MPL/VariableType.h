@@ -30,6 +30,9 @@ using Vector = std::array<double, 3>;
 /// xx, yy, zz, xy, xz, yz tensor components.
 using SymmTensor = std::array<double, 6>;
 
+/// Very simple 2d tensor data type for holding tensor components.
+using Tensor2d = std::array<double, 4>;
+
 /// Very simple tensor data type for holding
 /// tensor components.
 using Tensor = std::array<double, 9>;
