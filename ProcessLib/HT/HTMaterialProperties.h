@@ -29,8 +29,6 @@ struct HTMaterialProperties final
         MaterialLib::PorousMedium::PorousMediaProperties&&
             porous_media_properties_,
         ParameterLib::Parameter<double> const& density_solid_,
-        std::unique_ptr<MaterialLib::Fluid::FluidProperties>&&
-            fluid_properties_,
         std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>&&
             media_map_,
         ParameterLib::Parameter<double> const& specific_heat_capacity_solid_,
@@ -42,7 +40,6 @@ struct HTMaterialProperties final
         bool const has_gravity_)
         : porous_media_properties(std::move(porous_media_properties_)),
           density_solid(density_solid_),
-          fluid_properties(std::move(fluid_properties_)),
           media_map(std::move(media_map_)),
           specific_heat_capacity_solid(specific_heat_capacity_solid_),
           thermal_conductivity_solid(thermal_conductivity_solid_),
@@ -61,7 +58,6 @@ struct HTMaterialProperties final
 
     MaterialLib::PorousMedium::PorousMediaProperties porous_media_properties;
     ParameterLib::Parameter<double> const& density_solid;
-    std::unique_ptr<MaterialLib::Fluid::FluidProperties> fluid_properties;
     std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>
         media_map;
     ParameterLib::Parameter<double> const& specific_heat_capacity_solid;

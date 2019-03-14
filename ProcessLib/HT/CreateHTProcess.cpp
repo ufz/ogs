@@ -85,11 +85,6 @@ std::unique_ptr<Process> createHTProcess(
         MaterialLib::PorousMedium::createPorousMediaProperties(mesh, config,
                                                                parameters)};
 
-    //! \ogs_file_param{prj__processes__process__HT__fluid}
-    auto const& fluid_config = config.getConfigSubtree("fluid");
-    auto fluid_properties =
-        MaterialLib::Fluid::createFluidProperties(fluid_config);
-
     // Parameter for the density of the solid.
     auto& density_solid = ParameterLib::findParameter<double>(
         config,
@@ -177,7 +172,6 @@ std::unique_ptr<Process> createHTProcess(
         std::make_unique<HTMaterialProperties>(
             std::move(porous_media_properties),
             density_solid,
-            std::move(fluid_properties),
             std::move(media_map),
             specific_heat_capacity_solid,
             thermal_conductivity_solid,
