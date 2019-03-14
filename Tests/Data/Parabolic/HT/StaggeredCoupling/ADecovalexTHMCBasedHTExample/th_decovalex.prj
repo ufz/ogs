@@ -85,6 +85,16 @@
                         </property>
                     </properties>
                 </phase>
+                <phase>
+                    <type>Solid</type>
+                    <properties>
+                        <property>
+                            <name>permeability</name>
+                            <type>Constant</type>
+                            <value>6.3072e-14 0. 0. 6.3072e-14</value>
+                        </property>
+                    </properties>
+                </phase>
             </phases>
             <properties>
                 <property>
@@ -129,6 +139,16 @@
                             <type>Constant</type>
                             <!--0.6 * 86400 * 365 with the time unit of year-->
                             <value>18921600.0</value>
+                        </property>
+                    </properties>
+                </phase>
+                <phase>
+                    <type>Solid</type>
+                    <properties>
+                        <property>
+                            <name>permeability</name>
+                            <type>Constant</type>
+                            <value>3.1536e-10 0. 0. 3.1536e-10</value>
                         </property>
                     </properties>
                 </phase>
