@@ -29,6 +29,41 @@ namespace ProcessLib
 {
 namespace HT
 {
+
+template <int GlobalDim>
+Eigen::Matrix<double, GlobalDim, GlobalDim> intrinsicPermeability(
+    MaterialPropertyLib::PropertyDataType const& values)
+{
+    if (boost::get<double>(&values))
+    {
+        return Eigen::Matrix<double, GlobalDim, GlobalDim>::Identity() *
+               boost::get<double>(values);
+    }
+    if (boost::get<MaterialPropertyLib::Vector>(&values))
+    {
+        return Eigen::Map<Eigen::Matrix<double, GlobalDim, 1> const>(
+                   boost::get<MaterialPropertyLib::Vector>(values).data(),
+                   GlobalDim, 1)
+            .asDiagonal();
+    }
+    if (boost::get<MaterialPropertyLib::Tensor2d>(&values))
+    {
+        return Eigen::Map<Eigen::Matrix<double, GlobalDim, GlobalDim> const>(
+            boost::get<MaterialPropertyLib::Tensor2d>(values).data(), GlobalDim,
+            GlobalDim);
+    }
+    if (boost::get<MaterialPropertyLib::Tensor>(&values))
+    {
+        return Eigen::Map<Eigen::Matrix<double, GlobalDim, GlobalDim> const>(
+            boost::get<MaterialPropertyLib::Tensor>(values).data(), GlobalDim,
+            GlobalDim);
+    }
+    OGS_FATAL(
+        "Intrinsic permeability parameter values size is neither one nor %d "
+        "nor %d squared.",
+        GlobalDim, GlobalDim);
+}
+
 template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
 class HTFEM : public HTLocalAssemblerInterface
@@ -93,7 +128,7 @@ public:
     /// Computes the flux in the point \c pnt_local_coords that is given in
     /// local coordinates using the values from \c local_x.
     Eigen::Vector3d getFlux(MathLib::Point3d const& pnt_local_coords,
-                            double const t,
+                            double const /*t*/,
                             std::vector<double> const& local_x) const override
     {
         // eval dNdx and invJ at given point
@@ -128,16 +163,16 @@ public:
         vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
             p_int_pt;
 
-        auto const K =
-            this->_material_properties.porous_media_properties
-                .getIntrinsicPermeability(t, pos)
-                .getValue(t, pos, 0.0,
-                          boost::get<double>(vars[static_cast<int>(
-                              MaterialPropertyLib::Variable::temperature)]));
-
         auto const& medium =
             *_material_properties.media_map->getMedium(_element.getID());
         auto const& liquid_phase = medium.phase("AqueousLiquid");
+        auto const& solid_phase = medium.phase("Solid");
+
+        auto const K = intrinsicPermeability<GlobalDim>(
+            solid_phase
+                .property(MaterialPropertyLib::PropertyType::permeability)
+                .value(vars));
+
         auto const mu =
             liquid_phase.property(MaterialPropertyLib::PropertyType::viscosity)
                 .template value<double>(vars);
@@ -240,7 +275,7 @@ protected:
     }
 
     std::vector<double> const& getIntPtDarcyVelocityLocal(
-        const double t, std::vector<double> const& local_p,
+        const double /*t*/, std::vector<double> const& local_p,
         std::vector<double> const& local_T, std::vector<double>& cache) const
     {
         auto const n_integration_points =
@@ -262,6 +297,7 @@ protected:
         auto const& medium =
             *_material_properties.media_map->getMedium(_element.getID());
         auto const& liquid_phase = medium.phase("AqueousLiquid");
+        auto const& solid_phase = medium.phase("Solid");
 
         for (unsigned ip = 0; ip < n_integration_points; ++ip)
         {
@@ -281,9 +317,10 @@ protected:
             vars[static_cast<int>(
                 MaterialPropertyLib::Variable::phase_pressure)] = p_int_pt;
 
-            auto const K = _material_properties.porous_media_properties
-                               .getIntrinsicPermeability(t, pos)
-                               .getValue(t, pos, 0.0, T_int_pt);
+            auto const K = intrinsicPermeability<GlobalDim>(
+                solid_phase
+                    .property(MaterialPropertyLib::PropertyType::permeability)
+                    .value(vars));
 
             auto const mu =
                 liquid_phase

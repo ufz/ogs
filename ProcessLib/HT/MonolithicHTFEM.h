@@ -101,6 +101,7 @@ public:
         auto const& medium =
             *process_data.media_map->getMedium(this->_element.getID());
         auto const& liquid_phase = medium.phase("AqueousLiquid");
+        auto const& solid_phase = medium.phase("Solid");
 
         auto const& b = process_data.specific_body_force;
 
@@ -137,9 +138,13 @@ public:
             auto const porosity =
                 process_data.porous_media_properties.getPorosity(t, pos)
                     .getValue(t, pos, 0.0, T_int_pt);
+
             auto const intrinsic_permeability =
-                process_data.porous_media_properties.getIntrinsicPermeability(
-                    t, pos).getValue(t, pos, 0.0, T_int_pt);
+                intrinsicPermeability<GlobalDim>(
+                    solid_phase
+                        .property(
+                            MaterialPropertyLib::PropertyType::permeability)
+                        .value(vars));
 
             vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
                 T_int_pt;

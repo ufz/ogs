@@ -128,10 +128,10 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
                 .getSpecificStorage(t, pos)
                 .getValue(0.0);
 
-        auto const intrinsic_permeability =
-            material_properties.porous_media_properties
-                .getIntrinsicPermeability(t, pos)
-                .getValue(t, pos, 0.0, T1_int_pt);
+        auto const intrinsic_permeability = intrinsicPermeability<GlobalDim>(
+            solid_phase
+                .property(MaterialPropertyLib::PropertyType::permeability)
+                .value(vars));
         GlobalDimMatrixType K_over_mu = intrinsic_permeability / viscosity;
 
         // matrix assembly
@@ -208,6 +208,7 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
     auto const& medium =
         *material_properties.media_map->getMedium(this->_element.getID());
     auto const& liquid_phase = medium.phase("AqueousLiquid");
+    auto const& solid_phase = medium.phase("Solid");
 
 
     auto const& b = material_properties.specific_body_force;
@@ -263,10 +264,10 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
             liquid_phase.property(MaterialPropertyLib::PropertyType::viscosity)
                 .template value<double>(vars);
 
-        auto const intrinsic_permeability =
-            material_properties.porous_media_properties
-                .getIntrinsicPermeability(t, pos)
-                .getValue(t, pos, 0.0, T1_at_xi);
+        auto const intrinsic_permeability = intrinsicPermeability<GlobalDim>(
+            solid_phase
+                .property(MaterialPropertyLib::PropertyType::permeability)
+                .value(vars));
 
         GlobalDimMatrixType K_over_mu = intrinsic_permeability / viscosity;
         GlobalDimVectorType const velocity =
