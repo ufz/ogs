@@ -37,7 +37,7 @@ pipeline {
           if (env.JOB_NAME == 'ufz/ogs/master') {
             build_shared = 'OFF'
           }
-          if (currentBuild.number == 1) {
+          if (currentBuild.number == 1 || buildingTag()) {
             stage_required.full = true
             return true
           }
@@ -725,18 +725,11 @@ pipeline {
         }
         // *************************** Post ************************************
         stage('Post') {
-          agent any
+          agent { label "master"}
+          when { buildingTag() }
           steps {
-            script {
-              def helper = new ogs.helper()
-              checkout scm
-              def tag = helper.getTag()
-              if (tag != "") {
-                keepBuild()
-                currentBuild.displayName = tag
-                helper.notification(msg: "Marked build for ${tag}.", script: this)
-              }
-            }
+            keepBuild()
+            script { currentBuild.displayName = tag }
           }
         }
       } // end parallel
