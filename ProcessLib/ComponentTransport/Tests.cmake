@@ -934,3 +934,35 @@ AddTest(
     calcite_pcs_5_ts_210_t_21000.000000_expected.vtu calcite_pcs_5_ts_210_t_21000.000000.vtu Mg Mg 1e-10 1e-16
     VIS calcite_pcs_5_ts_210_t_21000.000000.vtu
 )
+
+AddTest(
+    NAME 1D_ReactiveMassTransport_KineticReactantBlockTest
+    PATH Parabolic/ComponentTransport/ReactiveTransport/KineticReactant
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS 1d_isofrac.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    1d_isofrac_pcs_3_ts_42_t_4200.000000_expected.vtu 1d_isofrac_pcs_3_ts_42_t_4200.000000.vtu pressure pressure 1e-6 1e-10
+    1d_isofrac_pcs_3_ts_84_t_8400.000000_expected.vtu 1d_isofrac_pcs_3_ts_84_t_8400.000000.vtu pressure pressure 1e-6 1e-10
+    1d_isofrac_pcs_3_ts_126_t_12600.000000_expected.vtu 1d_isofrac_pcs_3_ts_126_t_12600.000000.vtu pressure pressure 1e-6 1e-10
+    1d_isofrac_pcs_3_ts_168_t_16800.000000_expected.vtu 1d_isofrac_pcs_3_ts_168_t_16800.000000.vtu pressure pressure 1e-6 1e-10
+    1d_isofrac_pcs_3_ts_210_t_21000.000000_expected.vtu 1d_isofrac_pcs_3_ts_210_t_21000.000000.vtu pressure pressure 1e-6 1e-10
+    1d_isofrac_pcs_3_ts_42_t_4200.000000_expected.vtu 1d_isofrac_pcs_3_ts_42_t_4200.000000.vtu Synthetica Synthetica 1e-10 1e-16
+    1d_isofrac_pcs_3_ts_84_t_8400.000000_expected.vtu 1d_isofrac_pcs_3_ts_84_t_8400.000000.vtu Synthetica Synthetica 1e-10 1e-16
+    1d_isofrac_pcs_3_ts_126_t_12600.000000_expected.vtu 1d_isofrac_pcs_3_ts_126_t_12600.000000.vtu Synthetica Synthetica 1e-10 1e-16
+    1d_isofrac_pcs_3_ts_168_t_16800.000000_expected.vtu 1d_isofrac_pcs_3_ts_168_t_16800.000000.vtu Synthetica Synthetica 1e-10 1e-16
+    1d_isofrac_pcs_3_ts_210_t_21000.000000_expected.vtu 1d_isofrac_pcs_3_ts_210_t_21000.000000.vtu Synthetica Synthetica 1e-10 1e-16
+    1d_isofrac_pcs_3_ts_42_t_4200.000000_expected.vtu 1d_isofrac_pcs_3_ts_42_t_4200.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
+    1d_isofrac_pcs_3_ts_84_t_8400.000000_expected.vtu 1d_isofrac_pcs_3_ts_84_t_8400.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
+    1d_isofrac_pcs_3_ts_126_t_12600.000000_expected.vtu 1d_isofrac_pcs_3_ts_126_t_12600.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
+    1d_isofrac_pcs_3_ts_168_t_16800.000000_expected.vtu 1d_isofrac_pcs_3_ts_168_t_16800.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
+    1d_isofrac_pcs_3_ts_210_t_21000.000000_expected.vtu 1d_isofrac_pcs_3_ts_210_t_21000.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
+    1d_isofrac_pcs_3_ts_42_t_4200.000000_expected.vtu 1d_isofrac_pcs_3_ts_42_t_4200.000000.vtu H H 1e-10 1e-16
+    1d_isofrac_pcs_3_ts_84_t_8400.000000_expected.vtu 1d_isofrac_pcs_3_ts_84_t_8400.000000.vtu H H 1e-10 1e-16
+    1d_isofrac_pcs_3_ts_126_t_12600.000000_expected.vtu 1d_isofrac_pcs_3_ts_126_t_12600.000000.vtu H H 1e-10 1e-16
+    1d_isofrac_pcs_3_ts_168_t_16800.000000_expected.vtu 1d_isofrac_pcs_3_ts_168_t_16800.000000.vtu H H 1e-10 1e-16
+    1d_isofrac_pcs_3_ts_210_t_21000.000000_expected.vtu 1d_isofrac_pcs_3_ts_210_t_21000.000000.vtu H H 1e-10 1e-16
+    VIS 1d_isofrac_pcs_3_ts_210_t_21000.000000.vtu
+)
