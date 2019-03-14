@@ -13,7 +13,17 @@ set(CPACK_DMG_FORMAT "UDBZ")
 set(CPACK_DMG_BACKGROUND_IMAGE ${PROJECT_SOURCE_DIR}/Documentation/OpenGeoSys-Logo.png)
 set(CPACK_DMG_DS_STORE ${PROJECT_SOURCE_DIR}/scripts/packaging/.DS_Store)
 
-SET(CMAKE_INSTALL_RPATH "@executable_path;@executable_path/../${CMAKE_INSTALL_LIBDIR}")
+SET(CMAKE_INSTALL_RPATH "@executable_path/../${CMAKE_INSTALL_LIBDIR}")
+
+if(OGS_USE_CONAN)
+    file(GLOB MATCHED_FILES LIST_DIRECTORIES false "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/*.dylib*")
+    install(FILES ${MATCHED_FILES} DESTINATION lib)
+
+    # macOS frameworks are directories, exclude header files
+    file(GLOB MATCHED_DIRECTORIES "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/*.framework")
+    install(DIRECTORY ${MATCHED_DIRECTORIES} DESTINATION bin
+        PATTERN "Headers" EXCLUDE)
+endif()
 
 if(OGS_BUILD_GUI)
     install_qt5_plugin("Qt5::QCocoaIntegrationPlugin" QT_PLUGINS)

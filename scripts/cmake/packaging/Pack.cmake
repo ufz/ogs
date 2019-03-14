@@ -106,21 +106,6 @@ cpack_add_component(ogs_docs
 )
 
 if(OGS_USE_CONAN)
-    # Install shared libraries, copied to bin-dir
-    file(GLOB MATCHED_FILES "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/*.dll")
-    install(FILES ${MATCHED_FILES} DESTINATION bin)
-    file(GLOB LIST_DIRECTORIES false MATCHED_FILES "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/*.dylib*")
-    install(FILES ${MATCHED_FILES} DESTINATION bin)
-
-    # Install shared libraries, copied to lib-dir
-    file(GLOB MATCHED_FILES "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/*.so*")
-    install(FILES ${MATCHED_FILES} DESTINATION lib)
-
-    # macOS frameworks are directories, exclude header files
-    file(GLOB MATCHED_DIRECTORIES "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/*.framework")
-    install(DIRECTORY ${MATCHED_DIRECTORIES} DESTINATION bin
-        PATTERN "Headers" EXCLUDE)
-
     # Install Qt platform shared libraries
     install(DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/platforms DESTINATION bin OPTIONAL)
 endif()
