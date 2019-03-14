@@ -24,18 +24,20 @@ TEST(MaterialPropertyLib, LinearProperty)
     MaterialPropertyLib::VariableArray variable_array;
     variable_array[static_cast<int>(
         MaterialPropertyLib::Variable::temperature)] = 303.15;
-    ASSERT_NEAR(boost::get<double>(linear_property.value(variable_array)),
-                y_ref + m * (boost::get<double>(variable_array[static_cast<int>(
-                                 MaterialPropertyLib::Variable::temperature)]) -
-                             x_ref),
-                1.e-10);
+    ASSERT_NEAR(
+        boost::get<double>(linear_property.value(variable_array)),
+        y_ref * (1 + m * (boost::get<double>(variable_array[static_cast<int>(
+                              MaterialPropertyLib::Variable::temperature)]) -
+                          x_ref)),
+        1.e-10);
     ASSERT_EQ(
         boost::get<double>(linear_property.dValue(
             variable_array, MaterialPropertyLib::Variable::phase_pressure)),
         0.0);
-    ASSERT_EQ(boost::get<double>(linear_property.dValue(
-                  variable_array, MaterialPropertyLib::Variable::temperature)),
-              m);
+    ASSERT_NEAR(
+        boost::get<double>(linear_property.dValue(
+            variable_array, MaterialPropertyLib::Variable::temperature)),
+        y_ref * m, 1.e-16);
     ASSERT_EQ(boost::get<double>(linear_property.d2Value(
                   variable_array,
                   MaterialPropertyLib::Variable::temperature,
