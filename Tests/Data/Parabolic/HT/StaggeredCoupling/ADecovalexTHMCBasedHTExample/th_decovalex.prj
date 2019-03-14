@@ -93,6 +93,11 @@
                             <type>Constant</type>
                             <value>6.3072e-14 0. 0. 6.3072e-14</value>
                         </property>
+                        <property>
+                            <name>storage</name>
+                            <type>Constant</type>
+                            <value>0.0</value>
+                        </property>
                     </properties>
                 </phase>
             </phases>
@@ -149,6 +154,11 @@
                             <name>permeability</name>
                             <type>Constant</type>
                             <value>3.1536e-10 0. 0. 3.1536e-10</value>
+                        </property>
+                        <property>
+                            <name>storage</name>
+                            <type>Constant</type>
+                            <value>0.0</value>
                         </property>
                     </properties>
                 </phase>
