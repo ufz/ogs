@@ -75,6 +75,7 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
     auto const& medium = *this->_material_properties.media_map->getMedium(
         this->_element.getID());
     auto const& liquid_phase = medium.phase("AqueousLiquid");
+    auto const& solid_phase = medium.phase("Solid");
 
     auto const& b = material_properties.specific_body_force;
 
@@ -103,10 +104,8 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
             p_int_pt;
 
         auto const porosity =
-            material_properties.porous_media_properties.getPorosity(t, pos)
-                .getValue(t, pos, 0.0, T1_int_pt);
-
-        // Use the fluid density model to compute the density
+            solid_phase.property(MaterialPropertyLib::PropertyType::porosity)
+                .template value<double>(vars);
         auto const fluid_density =
             liquid_phase.property(MaterialPropertyLib::PropertyType::density)
                 .template value<double>(vars);
@@ -210,7 +209,6 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
     auto const& liquid_phase = medium.phase("AqueousLiquid");
     auto const& solid_phase = medium.phase("Solid");
 
-
     auto const& b = material_properties.specific_body_force;
 
     GlobalDimMatrixType const& I(
@@ -235,14 +233,14 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
         double T1_at_xi = 0.;
         NumLib::shapeFunctionInterpolate(local_T1, N, T1_at_xi);
 
-        auto const porosity =
-            material_properties.porous_media_properties.getPorosity(t, pos)
-                .getValue(t, pos, 0.0, T1_at_xi);
-
         vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
             T1_at_xi;
         vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
             p_at_xi;
+
+        auto const porosity =
+            solid_phase.property(MaterialPropertyLib::PropertyType::porosity)
+                .template value<double>(vars);
 
         // Use the fluid density model to compute the density
         auto const fluid_density =

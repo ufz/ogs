@@ -133,11 +133,10 @@ public:
             // Order matters: First T, then P!
             NumLib::shapeFunctionInterpolate(local_x, N, T_int_pt, p_int_pt);
 
-            // \todo the first argument has to be changed for non constant
-            // porosity model
             auto const porosity =
-                process_data.porous_media_properties.getPorosity(t, pos)
-                    .getValue(t, pos, 0.0, T_int_pt);
+                solid_phase
+                    .property(MaterialPropertyLib::PropertyType::porosity)
+                    .template value<double>(vars);
 
             auto const intrinsic_permeability =
                 intrinsicPermeability<GlobalDim>(
