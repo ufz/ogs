@@ -77,7 +77,8 @@
 - Add MFront/TFEL solid constitutive relation support via.
   MFrontGenericInterfaceSupport library. CMake option `OGS_USE_MFRONT`. [#2259](https://github.com/ufz/ogs/pull/2259)
 - Infrastructure for multi-phase, multi-component material properties library.
-  [#2303](https://github.com/ufz/ogs/pull/2303)
+  [#2303](https://github.com/ufz/ogs/pull/2303),
+  [#2415](https://github.com/ufz/ogs/pull/2415)
 - Anisotropic tensors may now be given in given local coordinate system. [#2370](https://github.com/ufz/ogs/pull/2370)
 - Non-constant density model implementation in HC process. [#2200](https://github.com/ufz/ogs/pull/2200)
 - Add second derivatives of permeability functions in Richards flow. [#2188](https://github.com/ufz/ogs/pull/2188)
