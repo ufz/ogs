@@ -91,7 +91,7 @@
   Pipelines](https://dev.azure.com/ogsci/ogs/_build). [#2342](https://github.com/ufz/ogs/pull/2342)
 - Added cppcheck, clang-tidy and include-what-you-use. [#2078](https://github.com/ufz/ogs/pull/2078), [#2328](https://github.com/ufz/ogs/pull/2328), [#2377](https://github.com/ufz/ogs/pull/2377)
 - Added check for header standalone compilation, can be enabled with
-  'OGS_CHECK_HEADER_COMPILATION=ON'. [#2043](https://github.com/ufz/ogs/pull/2043)
+  `OGS_CHECK_HEADER_COMPILATION=ON`. [#2043](https://github.com/ufz/ogs/pull/2043)
 - Jenkins shows nice summaries of compiler warnings. [#2206](https://github.com/ufz/ogs/pull/2206)
 - Large tests are fixed and run on Jenkins upon master merge. [#2056](https://github.com/ufz/ogs/pull/2056), [#2155](https://github.com/ufz/ogs/pull/2155)
 - Re-enabled code coverage reports (for the testrunner only) with

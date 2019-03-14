@@ -1,6 +1,6 @@
 set(CPACK_GENERATOR TGZ)
 # Adds the binaries location to the LD_LIBRARY_PATH
-SET(CMAKE_INSTALL_RPATH "$ORIGIN;$ORIGIN/../${CMAKE_INSTALL_LIBDIR}")
+SET(CMAKE_INSTALL_RPATH "$ORIGIN/../${CMAKE_INSTALL_LIBDIR}")
 
 if(MODULE_CMD)
     message(STATUS "Found module cmd -> writing module file.")
@@ -28,3 +28,8 @@ set(README_PLATFORM_INSTRUCTIONS
     "When running the Data Explorer make sure to set the LD_LIBRARY_PATH path to the bin-folder. E.g.: LD_LIBRARY_PATH=$LD_LIBRARY_PATH:./ ./DataExplorer"
     CACHE INTERNAL ""
 )
+
+if(OGS_USE_CONAN)
+    file(GLOB MATCHED_FILES "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/*.so*")
+    install(FILES ${MATCHED_FILES} DESTINATION lib)
+endif()

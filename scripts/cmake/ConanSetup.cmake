@@ -87,7 +87,7 @@ endforeach()
 
 set(CONAN_IMPORTS "")
 if(APPLE)
-    set(CONAN_IMPORTS ${CONAN_IMPORTS} "lib, *.dylib* -> ./bin")
+    set(CONAN_IMPORTS ${CONAN_IMPORTS} "lib, *.dylib* -> ./lib")
 endif()
 if(MSVC)
     set(CONAN_IMPORTS ${CONAN_IMPORTS} "bin, *.dll* -> ./bin")

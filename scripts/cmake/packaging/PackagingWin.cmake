@@ -22,6 +22,11 @@ if(OGS_DOWNLOAD_ADDITIONAL_CONTENT)
     set(CPACK_NSIS_MENU_LINKS ${CPACK_NSIS_MENU_LINKS} "docs" "Documentation folder")
 endif()
 
+if(OGS_USE_CONAN)
+    file(GLOB MATCHED_FILES "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/*.dll")
+    install(FILES ${MATCHED_FILES} DESTINATION bin)
+endif()
+
 if(OGS_BUILD_GUI)
     install_qt5_plugin("Qt5::QWindowsIntegrationPlugin" QT_PLUGINS)
     file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/qt.conf"
