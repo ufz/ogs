@@ -67,6 +67,7 @@ enum PropertyType : int
     residual_liquid_saturation,
     saturation,
     specific_heat_capacity,
+    storage,
     thermal_conductivity,
     thermal_expansivity,
     thermal_longitudinal_dispersivity,
@@ -208,6 +209,10 @@ inline PropertyType convertStringToProperty(std::string const& inString)
     {
         return PropertyType::specific_heat_capacity;
     }
+    if (boost::iequals(inString, "storage"))
+    {
+        return PropertyType::storage;
+    }
     if (boost::iequals(inString, "thermal_conductivity"))
     {
         return PropertyType::thermal_conductivity;
@@ -273,6 +278,7 @@ static const std::array<std::string, PropertyType::number_of_properties>
                              "residual_liquid_saturation",
                              "saturation",
                              "specific_heat_capacity",
+                             "storage",
                              "thermal_conductivity",
                              "thermal_expansivity",
                              "thermal_longitudinal_dispersivity",
