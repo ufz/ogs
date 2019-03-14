@@ -101,7 +101,9 @@ public:
         SecondaryVariableCollection&& secondary_variables,
         NumLib::NamedFunctionCaller&& named_function_caller,
         bool const use_monolithic_scheme,
-        std::unique_ptr<ProcessLib::SurfaceFluxData>&& surfaceflux);
+        std::unique_ptr<ProcessLib::SurfaceFluxData>&& surfaceflux,
+        std::vector<std::pair<int, std::string>>&&
+            process_id_to_component_name_map);
 
     //! \name ODESystem interface
     //! @{
@@ -112,6 +114,12 @@ public:
     Eigen::Vector3d getFlux(std::size_t const element_id,
                             MathLib::Point3d const& p, double const t,
                             GlobalVector const& x) const override;
+
+    std::vector<std::pair<int, std::string>> const&
+    getProcessIDToComponentNameMap() const
+    {
+        return _process_id_to_component_name_map;
+    }
 
     void setCoupledTermForTheStaggeredSchemeToLocalAssemblers() override;
 
@@ -150,6 +158,9 @@ private:
     std::vector<std::unique_ptr<GlobalVector>> _xs_previous_timestep;
 
     std::unique_ptr<ProcessLib::SurfaceFluxData> _surfaceflux;
+
+    std::vector<std::pair<int, std::string>> const
+        _process_id_to_component_name_map;
 };
 
 }  // namespace ComponentTransport
