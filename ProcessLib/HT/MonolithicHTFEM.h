@@ -120,8 +120,8 @@ public:
             // \todo the argument to getValue() has to be changed for non
             // constant storage model
             auto const specific_storage =
-                process_data.porous_media_properties.getSpecificStorage(t, pos)
-                    .getValue(0.0);
+                solid_phase.property(MaterialPropertyLib::PropertyType::storage)
+                    .template value<double>(vars);
 
             auto const& ip_data = this->_ip_data[ip];
             auto const& N = ip_data.N;

@@ -123,9 +123,8 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
         // \todo the argument to getValue() has to be changed for non
         // constant storage model
         auto const specific_storage =
-            material_properties.porous_media_properties
-                .getSpecificStorage(t, pos)
-                .getValue(0.0);
+            solid_phase.property(MaterialPropertyLib::PropertyType::storage)
+                .template value<double>(vars);
 
         auto const intrinsic_permeability = intrinsicPermeability<GlobalDim>(
             solid_phase
