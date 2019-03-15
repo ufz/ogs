@@ -208,10 +208,16 @@ protected:
             return thermal_conductivity * I;
         }
 
-        double const thermal_dispersivity_longitudinal =
-            _material_properties.thermal_dispersivity_longitudinal(t, pos)[0];
+        auto const thermal_dispersivity_longitudinal =
+            medium
+                .property(MaterialPropertyLib::PropertyType::
+                              thermal_longitudinal_dispersivity)
+                .template value<double>();
         auto const thermal_dispersivity_transversal =
-            _material_properties.thermal_dispersivity_transversal(t, pos)[0];
+            medium
+                .property(MaterialPropertyLib::PropertyType::
+                              thermal_transversal_dispersivity)
+                .template value<double>();
 
         double const velocity_magnitude = velocity.norm();
 
