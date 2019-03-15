@@ -12,22 +12,6 @@
                 <temperature>T</temperature>
                 <pressure>p</pressure>
             </process_variables>
-            <porous_medium>
-                <porous_medium id="0">
-                    <permeability>
-                        <permeability_tensor_entries>kappa1</permeability_tensor_entries>
-                        <type>Constant</type>
-                    </permeability>
-                    <porosity>
-                        <type>Constant</type>
-                        <porosity_parameter>constant_porosity_parameter</porosity_parameter>
-                    </porosity>
-                    <storage>
-                        <type>Constant</type>
-                        <value>1e-5</value>
-                    </storage>
-                </porous_medium>
-            </porous_medium>
             <density_solid>rho_solid</density_solid>
             <specific_heat_capacity_solid>c_solid</specific_heat_capacity_solid>
             <thermal_conductivity_solid>lambda_solid</thermal_conductivity_solid>
