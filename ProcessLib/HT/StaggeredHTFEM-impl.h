@@ -132,7 +132,7 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
             solid_phase
                 .property(MaterialPropertyLib::PropertyType::permeability)
                 .value(vars));
-        GlobalDimMatrixType K_over_mu = intrinsic_permeability / viscosity;
+        GlobalDimMatrixType const K_over_mu = intrinsic_permeability / viscosity;
 
         // matrix assembly
         local_M.noalias() +=
@@ -269,7 +269,8 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
                 .property(MaterialPropertyLib::PropertyType::permeability)
                 .value(vars));
 
-        GlobalDimMatrixType K_over_mu = intrinsic_permeability / viscosity;
+        GlobalDimMatrixType const K_over_mu =
+            intrinsic_permeability / viscosity;
         GlobalDimVectorType const velocity =
             material_properties.has_gravity
                 ? GlobalDimVectorType(-K_over_mu * (dNdx * local_p_Eigen_type -
