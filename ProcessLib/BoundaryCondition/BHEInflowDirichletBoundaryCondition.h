@@ -11,18 +11,18 @@
 
 #include "BoundaryCondition.h"
 #include "NumLib/IndexValueVector.h"
-#include "ProcessLib/HeatTransportBHE/BHE/BHETypes.h"
 
 namespace ProcessLib
 {
-template <typename BHEType>
+template <typename BHEUpdateCallback>
 class BHEInflowDirichletBoundaryCondition final : public BoundaryCondition
 {
 public:
     BHEInflowDirichletBoundaryCondition(
         std::pair<GlobalIndexType, GlobalIndexType>&& in_out_global_indices,
-        BHEType& bhe)
-        : _in_out_global_indices(std::move(in_out_global_indices)), _bhe(bhe)
+        BHEUpdateCallback bhe_update_callback)
+        : _in_out_global_indices(std::move(in_out_global_indices)),
+          _bhe_update_callback(bhe_update_callback)
     {
     }
 
@@ -36,19 +36,19 @@ public:
         bc_values.ids[0] = _in_out_global_indices.first;
         // here call the corresponding BHE functions
         auto const T_out = x[_in_out_global_indices.second];
-        bc_values.values[0] = _bhe.updateFlowRateAndTemperature(T_out, t);
+        bc_values.values[0] = _bhe_update_callback(T_out, t);
     }
 
 private:
     std::pair<GlobalIndexType, GlobalIndexType> const _in_out_global_indices;
-    BHEType& _bhe;
+    BHEUpdateCallback _bhe_update_callback;
 };
 
-template <typename BHEType>
-std::unique_ptr<BHEInflowDirichletBoundaryCondition<BHEType>>
+template <typename BHEUpdateCallback>
+std::unique_ptr<BHEInflowDirichletBoundaryCondition<BHEUpdateCallback>>
 createBHEInflowDirichletBoundaryCondition(
     std::pair<GlobalIndexType, GlobalIndexType>&& in_out_global_indices,
-    BHEType& bhe)
+    BHEUpdateCallback bhe_update_callback)
 {
     DBUG("Constructing BHEInflowDirichletBoundaryCondition.");
 
@@ -71,7 +71,8 @@ createBHEInflowDirichletBoundaryCondition(
     }
 #endif  // USE_PETSC
 
-    return std::make_unique<BHEInflowDirichletBoundaryCondition<BHEType>>(
-        std::move(in_out_global_indices), bhe);
+    return std::make_unique<
+        BHEInflowDirichletBoundaryCondition<BHEUpdateCallback>>(
+        std::move(in_out_global_indices), bhe_update_callback);
 }
 }  // namespace ProcessLib

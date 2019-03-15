@@ -244,7 +244,9 @@ void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
                     ProcessLib::createBHEInflowDirichletBoundaryCondition(
                         get_global_bhe_bc_indices(bc_top_node_id,
                                                   in_out_component_id),
-                        bhe));
+                        [&bhe](double const T, double const t) {
+                            return bhe.updateFlowRateAndTemperature(T, t);
+                        }));
 
                 // Bottom, outflow.
                 bcs.addBoundaryCondition(
