@@ -17,6 +17,7 @@
 #include <logog/include/logog.hpp>
 
 // Qt includes
+#include <QDate>
 #include <QDesktopWidget>
 #include <QFileDialog>
 #include <QMessageBox>
