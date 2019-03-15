@@ -12,9 +12,7 @@
 #include <memory>
 #include <utility>
 
-#include "MaterialLib/Fluid/FluidProperties/FluidProperties.h"
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
-#include "MaterialLib/PorousMedium/PorousMediaProperties.h"
 
 namespace ProcessLib
 {
@@ -26,8 +24,6 @@ namespace HT
 struct HTMaterialProperties final
 {
     HTMaterialProperties(
-        MaterialLib::PorousMedium::PorousMediaProperties&&
-            porous_media_properties_,
         ParameterLib::Parameter<double> const& density_solid_,
         std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>&&
             media_map_,
@@ -38,8 +34,7 @@ struct HTMaterialProperties final
         ParameterLib::Parameter<double> const& biot_constant_,
         Eigen::VectorXd specific_body_force_,
         bool const has_gravity_)
-        : porous_media_properties(std::move(porous_media_properties_)),
-          density_solid(density_solid_),
+        : density_solid(density_solid_),
           media_map(std::move(media_map_)),
           specific_heat_capacity_solid(specific_heat_capacity_solid_),
           thermal_conductivity_solid(thermal_conductivity_solid_),
@@ -56,7 +51,6 @@ struct HTMaterialProperties final
     void operator=(HTMaterialProperties&&) = delete;
     void operator=(HTMaterialProperties const&) = delete;
 
-    MaterialLib::PorousMedium::PorousMediaProperties porous_media_properties;
     ParameterLib::Parameter<double> const& density_solid;
     std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>
         media_map;
