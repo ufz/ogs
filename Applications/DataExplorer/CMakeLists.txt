@@ -24,7 +24,6 @@ add_subdirectory(Base)
 add_subdirectory(DataView/StratView)
 add_subdirectory(DataView)
 add_subdirectory(DataView/DiagramView)
-add_subdirectory(NetCdfDialog)
 add_subdirectory(VtkVis)
 include(DataExplorer.cmake)
 

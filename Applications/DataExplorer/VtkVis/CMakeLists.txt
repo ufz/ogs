@@ -138,9 +138,14 @@ if(GEOTIFF_FOUND)
 endif() # GEOTIFF_FOUND
 
 target_link_libraries(VtkVis
-    PUBLIC BaseLib GeoLib MeshLib DataHolderLib QtBase vtkIOImage NetCdfDialogLib
+    PUBLIC BaseLib GeoLib MeshLib DataHolderLib QtBase vtkIOImage
     PRIVATE MathLib ApplicationsFileIO Qt5::Gui logog
 )
+
+if (OGS_USE_NETCDF)
+    target_link_libraries(VtkVis PRIVATE NetCdfDialogLib)
+endif()
+
 if(NOT APPLE AND OGS_USE_CONAN)
     # HACK for unresolved external
     target_link_libraries(VtkVis PUBLIC vtkGUISupportQt-8.1)

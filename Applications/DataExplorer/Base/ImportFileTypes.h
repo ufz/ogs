@@ -22,8 +22,8 @@
 class ImportFileType
 {
 public:
-
-    enum type {
+    enum type
+    {
         OGS = 0,
         OGS_GEO,
         OGS_STN,
@@ -31,7 +31,9 @@ public:
         FEFLOW,
         GMS,
         GMSH,
+#ifdef OGS_USE_NETCDF
         NETCDF,
+#endif  // OGS_USE_NETCDF
         PETREL,
         POLYRASTER,
         RASTER,
@@ -48,8 +50,10 @@ public:
             return "GMS";
         if (t == ImportFileType::GMSH)
             return "GMSH";
+#ifdef OGS_USE_NETCDF
         if (t == ImportFileType::NETCDF)
             return "NetCDF";
+#endif  // OGS_USE_NETCDF
         if (t == ImportFileType::OGS)
             return "OGS";
         if (t == ImportFileType::OGS_GEO)
@@ -80,8 +84,10 @@ public:
             return "GMS files (*.txt *.3dm)";
         if (t == ImportFileType::GMSH)
             return "GMSH mesh files (*.msh)";
+#ifdef OGS_USE_NETCDF
         if (t == ImportFileType::NETCDF)
             return "NetCDF files (*.nc)";
+#endif  // OGS_USE_NETCDF
         if (t == ImportFileType::OGS)
             return "OpenGeosys files (*.prj *.gml *.vtu *.stn);;GeoSys legacy "
                    "files (*.gli *.msh);;All files (* *.*)";

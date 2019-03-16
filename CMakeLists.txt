@@ -94,6 +94,7 @@ option(OGS_BUILD_CLI "Should the OGS simulator be built?" ON)
 option(OGS_BUILD_GUI "Should the Data Explorer be built?" OFF)
 if(OGS_BUILD_GUI)
     add_definitions(-DOGS_BUILD_GUI)
+    option(OGS_USE_NETCDF "Add NetCDF support." ON)
 endif()
 option(OGS_BUILD_UTILS "Should the utilities programms be built?" OFF)
 
