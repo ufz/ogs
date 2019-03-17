@@ -98,6 +98,9 @@ public:
             material_state_variables,
         double const T) const override;
 
+    std::vector<typename MechanicsBase<DisplacementDim>::InternalVariable>
+    getInternalVariables() const override;
+
     double computeFreeEnergyDensity(
         double const t,
         ParameterLib::SpatialPosition const& x,

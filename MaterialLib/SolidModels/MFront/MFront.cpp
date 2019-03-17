@@ -330,6 +330,45 @@ MFront<DisplacementDim>::integrateStress(
 }
 
 template <int DisplacementDim>
+std::vector<typename MechanicsBase<DisplacementDim>::InternalVariable>
+MFront<DisplacementDim>::getInternalVariables() const
+{
+    std::vector<typename MechanicsBase<DisplacementDim>::InternalVariable>
+        internal_variables;
+
+    for (auto const& iv : _behaviour.isvs)
+    {
+        auto const name = iv.name;
+        auto const offset = mgis::behaviour::getVariableOffset(
+            _behaviour.isvs, name, _behaviour.hypothesis);
+        auto const size =
+            mgis::behaviour::getVariableSize(iv, _behaviour.hypothesis);
+
+        typename MechanicsBase<DisplacementDim>::InternalVariable new_variable{
+            name, static_cast<unsigned>(size),
+            [offset, size](
+                typename MechanicsBase<
+                    DisplacementDim>::MaterialStateVariables const& state,
+                std::vector<double>& cache) -> std::vector<double> const& {
+                assert(dynamic_cast<MaterialStateVariables const*>(&state) !=
+                       nullptr);
+                auto const& internal_state_variables =
+                    static_cast<MaterialStateVariables const&>(state)
+                        ._behaviour_data.s1.internal_state_variables;
+
+                cache.resize(size);
+                std::copy_n(internal_state_variables.data() + offset,
+                            size,
+                            begin(cache));
+                return cache;
+            }};
+        internal_variables.push_back(new_variable);
+    }
+
+    return internal_variables;
+}
+
+template <int DisplacementDim>
 double MFront<DisplacementDim>::computeFreeEnergyDensity(
     double const /*t*/,
     ParameterLib::SpatialPosition const& /*x*/,
