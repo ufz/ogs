@@ -148,7 +148,9 @@ pipeline {
                   excludeFile('-'), excludeFile('.*Functional\\.h'),
                   excludeFile('.*gmock-.*\\.h'), excludeFile('.*gtest-.*\\.h')
                 ],
-                tools: [doxygen(pattern: 'build/DoxygenWarnings.log')],
+                // Doxygen is handled by gcc4 parser as well
+                tools: [gcc4(name: 'Doxygen', id: 'doxygen',
+                             pattern: 'build/DoxygenWarnings.log')],
                 failedTotalAll: 1
             }
             success {
