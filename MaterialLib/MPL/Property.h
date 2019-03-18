@@ -33,8 +33,8 @@ enum PropertyDataTypeName
     nTensor
 };
 
-using PropertyDataType =
-    boost::variant<double, Pair, Vector, SymmTensor, Tensor, std::string>;
+using PropertyDataType = boost::
+    variant<double, Pair, Vector, Tensor2d, SymmTensor, Tensor, std::string>;
 
 /// This class is the base class for any material property of any
 /// scale (i.e. components, phases, media, ...). The single value of
