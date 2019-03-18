@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -9,10 +10,10 @@
 
 #pragma once
 
-#include "BoundaryCondition.h"
 #include "NumLib/IndexValueVector.h"
+#include "ProcessLib/BoundaryCondition/BoundaryCondition.h"
 
-namespace ProcessLib
+namespace ProcessLib::HeatTransportBHE
 {
 class BHEBottomDirichletBoundaryCondition final : public BoundaryCondition
 {
@@ -34,4 +35,4 @@ private:
 std::unique_ptr<BHEBottomDirichletBoundaryCondition>
 createBHEBottomDirichletBoundaryCondition(
     std::pair<GlobalIndexType, GlobalIndexType>&& in_out_global_indices);
-}  // namespace ProcessLib
+}  // namespace ProcessLib::HeatTransportBHE
