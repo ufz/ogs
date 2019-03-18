@@ -14,6 +14,7 @@
 #include "MaterialLib/SolidModels/LinearElasticIsotropic.h"
 #include "MathLib/KelvinVector.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
+#include "ParameterLib/Parameter.h"
 
 namespace ProcessLib
 {
@@ -73,7 +74,7 @@ struct IntegrationPointData final
     template <typename DisplacementVectorType>
     typename BMatricesType::KelvinMatrixType updateConstitutiveRelation(
         double const t,
-        SpatialPosition const& x_position,
+        ParameterLib::SpatialPosition const& x_position,
         double const dt,
         DisplacementVectorType const& /*u*/,
         double const T)
@@ -94,7 +95,7 @@ struct IntegrationPointData final
     template <typename DisplacementVectorType>
     typename BMatricesType::KelvinMatrixType updateConstitutiveRelationThermal(
         double const t,
-        SpatialPosition const& x_position,
+        ParameterLib::SpatialPosition const& x_position,
         double const dt,
         DisplacementVectorType const& /*u*/,
         double const T,

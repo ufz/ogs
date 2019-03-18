@@ -19,10 +19,11 @@ namespace ThermoHydroMechanics
 {
 struct LocalAssemblerInterface;
 
-/// Thermally induced deformation process in linear kinematics poro-mechanical/biphasic model.
+/// Thermally induced deformation process in linear kinematics
+/// poro-mechanical/biphasic model.
 ///
-/// The mixture momentum balance, the mixture mass balance and the mixture energy balance are solved under
-/// fully saturated conditions.
+/// The mixture momentum balance, the mixture mass balance and the mixture
+/// energy balance are solved under fully saturated conditions.
 template <int DisplacementDim>
 class ThermoHydroMechanicsProcess final : public Process
 {
@@ -31,7 +32,8 @@ public:
         MeshLib::Mesh& mesh,
         std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&&
             jacobian_assembler,
-        std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+        std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
+            parameters,
         unsigned const integration_order,
         std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>&&
             process_variables,

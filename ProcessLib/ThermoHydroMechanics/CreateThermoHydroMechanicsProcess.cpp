@@ -11,8 +11,9 @@
 
 #include <cassert>
 
-#include "MaterialLib/SolidModels/MechanicsBase.h"
 #include "MaterialLib/SolidModels/CreateConstitutiveRelation.h"
+#include "MaterialLib/SolidModels/MechanicsBase.h"
+#include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
 
@@ -28,7 +29,7 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
-    std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     unsigned const integration_order,
     BaseLib::ConfigTree const& config)
 {
@@ -111,7 +112,8 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
     if (variable_T->getNumberOfComponents() != 1)
     {
         OGS_FATAL(
-            "temperature process variable '%s' is not a scalar variable but has "
+            "temperature process variable '%s' is not a scalar variable but "
+            "has "
             "%d components.",
             variable_T->getName().c_str(),
             variable_T->getNumberOfComponents());
@@ -123,7 +125,7 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
 
     // Intrinsic permeability (only one scalar per element, i.e. the isotropic
     // case is handled at the moment)
-    auto& intrinsic_permeability = findParameter<double>(
+    auto& intrinsic_permeability = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__THERMO_HYDRO_MECHANICS__intrinsic_permeability}
         "intrinsic_permeability", parameters, 1);
@@ -132,7 +134,7 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
          intrinsic_permeability.name.c_str());
 
     // Storage coefficient
-    auto& specific_storage = findParameter<double>(
+    auto& specific_storage = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__THERMO_HYDRO_MECHANICS__specific_storage}
         "specific_storage", parameters, 1);
@@ -141,7 +143,7 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
          specific_storage.name.c_str());
 
     // Fluid viscosity
-    auto& fluid_viscosity = findParameter<double>(
+    auto& fluid_viscosity = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__THERMO_HYDRO_MECHANICS__fluid_viscosity}
         "fluid_viscosity", parameters, 1);
@@ -149,14 +151,14 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
          fluid_viscosity.name.c_str());
 
     // Fluid density
-    auto& fluid_density = findParameter<double>(
+    auto& fluid_density = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__THERMO_HYDRO_MECHANICS__fluid_density}
         "fluid_density", parameters, 1);
     DBUG("Use '%s' as fluid density parameter.", fluid_density.name.c_str());
 
     // Biot coefficient
-    auto& biot_coefficient = findParameter<double>(
+    auto& biot_coefficient = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__THERMO_HYDRO_MECHANICS__biot_coefficient}
         "biot_coefficient", parameters, 1);
@@ -164,41 +166,41 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
          biot_coefficient.name.c_str());
 
     // Porosity
-    auto& porosity = findParameter<double>(
+    auto& porosity = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__THERMO_HYDRO_MECHANICS__porosity}
         "porosity", parameters, 1);
     DBUG("Use '%s' as porosity parameter.", porosity.name.c_str());
 
     // Solid density
-    auto& solid_density = findParameter<double>(
+    auto& solid_density = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__THERMO_HYDRO_MECHANICS__solid_density}
         "solid_density", parameters, 1);
     DBUG("Use '%s' as solid density parameter.", solid_density.name.c_str());
 
     // linear thermal expansion coefficient for solid
-    auto const& solid_linear_thermal_expansion_coefficient = findParameter<
-        double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__THERMO_HYDRO_MECHANICS__solid_linear_thermal_expansion_coefficient}
-        "solid_linear_thermal_expansion_coefficient", parameters, 1);
+    auto const& solid_linear_thermal_expansion_coefficient =
+        ParameterLib::findParameter<double>(
+            config,
+            //! \ogs_file_param_special{prj__processes__process__THERMO_HYDRO_MECHANICS__solid_linear_thermal_expansion_coefficient}
+            "solid_linear_thermal_expansion_coefficient", parameters, 1);
     DBUG("Use '%s' as solid linear thermal expansion coefficient parameter.",
          solid_linear_thermal_expansion_coefficient.name.c_str());
 
     // volumetric thermal expansion coefficient for fluid
-    auto const& fluid_volumetric_thermal_expansion_coefficient = findParameter<
-        double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__THERMO_HYDRO_MECHANICS__fluid_volumetric_thermal_expansion_coefficient}
-        "fluid_volumetric_thermal_expansion_coefficient", parameters, 1);
+    auto const& fluid_volumetric_thermal_expansion_coefficient =
+        ParameterLib::findParameter<double>(
+            config,
+            //! \ogs_file_param_special{prj__processes__process__THERMO_HYDRO_MECHANICS__fluid_volumetric_thermal_expansion_coefficient}
+            "fluid_volumetric_thermal_expansion_coefficient", parameters, 1);
     DBUG(
         "Use '%s' as fluid volumetric thermal expansion coefficient "
         "parameter.",
         fluid_volumetric_thermal_expansion_coefficient.name.c_str());
 
     // specific heat capacity for solid
-    auto& solid_specific_heat_capacity = findParameter<double>(
+    auto& solid_specific_heat_capacity = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__THERMO_HYDRO_MECHANICS__solid_specific_heat_capacity}
         "solid_specific_heat_capacity", parameters, 1);
@@ -206,7 +208,7 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
          solid_specific_heat_capacity.name.c_str());
 
     // specific heat capacity for fluid
-    auto& fluid_specific_heat_capacity = findParameter<double>(
+    auto& fluid_specific_heat_capacity = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__THERMO_HYDRO_MECHANICS__fluid_specific_heat_capacity}
         "fluid_specific_heat_capacity", parameters, 1);
@@ -214,7 +216,7 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
          fluid_specific_heat_capacity.name.c_str());
 
     // thermal conductivity for solid // currently only considers isotropic
-    auto& solid_thermal_conductivity = findParameter<double>(
+    auto& solid_thermal_conductivity = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__THERMO_HYDRO_MECHANICS__solid_thermal_conductivity}
         "solid_thermal_conductivity", parameters, 1);
@@ -222,7 +224,7 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
          solid_thermal_conductivity.name.c_str());
 
     // thermal conductivity for fluid // currently only considers isotropic
-    auto& fluid_thermal_conductivity = findParameter<double>(
+    auto& fluid_thermal_conductivity = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__THERMO_HYDRO_MECHANICS__fluid_thermal_conductivity}
         "fluid_thermal_conductivity", parameters, 1);
@@ -230,7 +232,7 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
          fluid_thermal_conductivity.name.c_str());
 
     // reference temperature
-    auto& reference_temperature = findParameter<double>(
+    auto& reference_temperature = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__THERMO_HYDRO_MECHANICS__reference_temperature}
         "reference_temperature", parameters, 1);
@@ -294,7 +296,7 @@ template std::unique_ptr<Process> createThermoHydroMechanicsProcess<2>(
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
-    std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     unsigned const integration_order,
     BaseLib::ConfigTree const& config);
 
@@ -302,7 +304,7 @@ template std::unique_ptr<Process> createThermoHydroMechanicsProcess<3>(
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
-    std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     unsigned const integration_order,
     BaseLib::ConfigTree const& config);
 

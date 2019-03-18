@@ -63,7 +63,7 @@ ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         _ip_data.emplace_back(solid_material);
         auto& ip_data = _ip_data[ip];
         auto const& sm_u = shape_matrices_u[ip];
-        _ip_data.integration_weight =
+        ip_data.integration_weight =
             _integration_method.getWeightedPoint(ip).getWeight() *
             sm_u.integralMeasure * sm_u.detJ;
 
@@ -86,7 +86,8 @@ ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     }
 }
 
-//Assembles the local Jacobian matrix. So far, the linearisation of HT part is not considered as that in HT process.
+// Assembles the local Jacobian matrix. So far, the linearisation of HT part is
+// not considered as that in HT process.
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           typename IntegrationMethod, int DisplacementDim>
 void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
@@ -176,7 +177,7 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
     double const& dt = _process_data.dt;
 
-    SpatialPosition x_position;
+    ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
 
     unsigned const n_integration_points =
@@ -400,7 +401,7 @@ std::vector<double> const& ThermoHydroMechanicsLocalAssembler<
         double, DisplacementDim, Eigen::Dynamic, Eigen::RowMajor>>(
         cache, DisplacementDim, num_intpts);
 
-    SpatialPosition pos;
+    ParameterLib::SpatialPosition pos;
     pos.setElementID(_element.getID());
 
     auto p = Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
@@ -409,7 +410,7 @@ std::vector<double> const& ThermoHydroMechanicsLocalAssembler<
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
 
-    SpatialPosition x_position;
+    ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
@@ -452,7 +453,7 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                  temperature_size);
 
     double const& dt = _process_data.dt;
-    SpatialPosition x_position;
+    ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
 
     int const n_integration_points = _integration_method.getNumberOfPoints();

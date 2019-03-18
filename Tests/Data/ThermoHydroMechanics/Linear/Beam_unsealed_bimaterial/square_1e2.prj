@@ -71,14 +71,8 @@
                 <variable>displacement</variable>
                 <variable>pressure</variable>
                 <variable>temperature</variable>
-                <variable>sigma_xx</variable>
-                <variable>sigma_yy</variable>
-                <variable>sigma_xy</variable>
-                <variable>sigma_zz</variable>
-                <variable>epsilon_xx</variable>
-                <variable>epsilon_yy</variable>
-                <variable>epsilon_xy</variable>
-                <variable>epsilon_zz</variable>
+                <variable>sigma</variable>
+                <variable>epsilon</variable>
             </variables>
         </output>
     </time_loop>
