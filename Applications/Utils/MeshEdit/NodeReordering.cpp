@@ -153,11 +153,11 @@ int main (int argc, char* argv[])
         "Method 2 is the re-ordering with and without InSitu-Lib in OGS6.\n"
         "Method 3 is the re-ordering of nonlinear nodes.\n\n"
         "OpenGeoSys-6 software, version " +
-            BaseLib::BuildInfo::git_describe +
+            BaseLib::BuildInfo::ogs_version +
             ".\n"
             "Copyright (c) 2012-2019, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
-        ' ', BaseLib::BuildInfo::git_describe);
+        ' ', BaseLib::BuildInfo::ogs_version);
     TCLAP::UnlabeledValueArg<std::string> input_mesh_arg("input_mesh",
                                                          "the name of the input mesh file",
                                                          true, "", "oldmesh.msh");

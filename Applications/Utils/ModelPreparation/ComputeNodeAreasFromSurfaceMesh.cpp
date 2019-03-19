@@ -63,11 +63,11 @@ int main (int argc, char* argv[])
         "The tool computes the area per node of the surface mesh and writes "
         "the information as txt and csv data.\n\n"
         "OpenGeoSys-6 software, version " +
-            BaseLib::BuildInfo::git_describe +
+            BaseLib::BuildInfo::ogs_version +
             ".\n"
             "Copyright (c) 2012-2019, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
-        ' ', BaseLib::BuildInfo::git_describe);
+        ' ', BaseLib::BuildInfo::ogs_version);
     TCLAP::ValueArg<std::string> mesh_in("i", "mesh-input-file",
         "the name of the file containing the input mesh", true,
         "", "file name of input mesh");

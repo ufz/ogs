@@ -48,11 +48,11 @@ int main(int argc, char* argv[])
         "Checks if the subdomain meshes are part of the bulk mesh and writes "
         "the 'bulk_node_ids' and the 'bulk_element_ids' in each of them.\n\n"
         "OpenGeoSys-6 software, version " +
-            BaseLib::BuildInfo::git_describe +
+            BaseLib::BuildInfo::ogs_version +
             ".\n"
             "Copyright (c) 2012-2019, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
-        ' ', BaseLib::BuildInfo::git_describe);
+        ' ', BaseLib::BuildInfo::ogs_version);
 
     TCLAP::ValueArg<bool> force_overwrite_arg(
         "f",

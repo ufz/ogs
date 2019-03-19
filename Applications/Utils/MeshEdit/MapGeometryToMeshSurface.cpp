@@ -32,11 +32,11 @@ int main (int argc, char* argv[])
         "https://docs.opengeosys.org/docs/tools/model-preparation/"
         "map-geometric-object-to-the-surface-of-a-mesh.\n\n"
         "OpenGeoSys-6 software, version " +
-            BaseLib::BuildInfo::git_describe +
+            BaseLib::BuildInfo::ogs_version +
             ".\n"
             "Copyright (c) 2012-2019, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
-        ' ', BaseLib::BuildInfo::git_describe);
+        ' ', BaseLib::BuildInfo::ogs_version);
     TCLAP::ValueArg<std::string> mesh_in("m", "mesh-file",
         "the name of the file containing the mesh", true,
         "", "file name");

@@ -58,11 +58,11 @@ int main(int argc, char* argv[])
         "See accompanying file LICENSE.txt or "
         "http://www.opengeosys.org/project/license\n"
         "version: " +
-            BaseLib::BuildInfo::git_describe + "\n" +
+            BaseLib::BuildInfo::ogs_version + "\n" +
         "CMake arguments: " +
             BaseLib::BuildInfo::cmake_args,
         ' ',
-        BaseLib::BuildInfo::git_describe);
+        BaseLib::BuildInfo::ogs_version);
 
     TCLAP::ValueArg<std::string> reference_path_arg(
         "r", "reference",
@@ -126,7 +126,7 @@ int main(int argc, char* argv[])
     logog_setup.setLevel(log_level_arg.getValue());
 
     INFO("This is OpenGeoSys-6 version %s.",
-         BaseLib::BuildInfo::git_describe.c_str());
+         BaseLib::BuildInfo::ogs_version.c_str());
 
 #ifndef _WIN32  // On windows this command line option is not present.
     // Enable floating point exceptions

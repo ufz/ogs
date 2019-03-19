@@ -65,11 +65,11 @@ int main (int argc, char* argv[])
         "files representing subsurface layers. Supported raster formats are "
         "ArcGIS ascii rasters (*.asc) and Surfer Grids (*.grd).\n\n"
         "OpenGeoSys-6 software, version " +
-            BaseLib::BuildInfo::git_describe +
+            BaseLib::BuildInfo::ogs_version +
             ".\n"
             "Copyright (c) 2012-2019, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
-        ' ', BaseLib::BuildInfo::git_describe);
+        ' ', BaseLib::BuildInfo::ogs_version);
 
     TCLAP::ValueArg<std::string> mesh_arg("i", "input-mesh-file",
         "The name of the file containing the 2D input mesh.", true, "", "input file name");
@@ -80,7 +80,7 @@ int main (int argc, char* argv[])
         true, "", "output file name");
     cmd.add(mesh_out_arg);
 
-    TCLAP::ValueArg<std::string> raster_path_arg("r", "raster-list", 
+    TCLAP::ValueArg<std::string> raster_path_arg("r", "raster-list",
         "An ascii-file containing a list of raster files, starting from top (DEM) to bottom.",
         true, "", "list of raster files");
     cmd.add(raster_path_arg);

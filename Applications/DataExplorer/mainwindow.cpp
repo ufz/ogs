@@ -730,7 +730,7 @@ void MainWindow::about()
 {
     QString about("<a href='http://www.opengeosys.org'>http://www.opengeosys.org</a><br /><br />");
     about.append(QString("Version: <a href='https://github.com/ufz/ogs/releases/tag/%2'>%1</a><br /><br />")
-        .arg(QString::fromStdString(BaseLib::BuildInfo::git_describe))
+        .arg(QString::fromStdString(BaseLib::BuildInfo::ogs_version))
         .arg(QString::fromStdString(BaseLib::BuildInfo::ogs_version)));
 
     about.append(QString("Git commit: <a href='https://github.com/ufz/ogs/commit/%1'>%1</a><br />")

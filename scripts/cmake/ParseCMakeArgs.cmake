@@ -16,9 +16,6 @@
 # - https://github.com/j3lamp/mcl (did not work at all)
 
 if(EXISTS ${PROJECT_BINARY_DIR}/CMakeCache.txt)
-    set(CMAKE_ARGS "Information not available.")
-    set(CMAKE_ARGS_ESCAPED ${CMAKE_ARGS})
-    file(REMOVE ${PROJECT_BINARY_DIR}/cmake-args)
     return()
 endif()
 
@@ -36,6 +33,7 @@ foreach(CACHE_VAR ${CACHE_VARS})
   endif()
 endforeach()
 
-set(CMAKE_ARGS "${CMAKE_ARGS} -DCMAKE_BUILD_TYPE=\"${CMAKE_BUILD_TYPE}\"")
+set(CMAKE_ARGS "${CMAKE_ARGS} -DCMAKE_BUILD_TYPE=\"${CMAKE_BUILD_TYPE}\"" CACHE INTERNAL "")
 string(REPLACE "\"" "\\\"" CMAKE_ARGS_ESCAPED ${CMAKE_ARGS})
+set(CMAKE_ARGS_ESCAPED "${CMAKE_ARGS_ESCAPED}" CACHE INTERNAL "")
 file(WRITE ${PROJECT_BINARY_DIR}/cmake-args "${CMAKE_ARGS}\n")
