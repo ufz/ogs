@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 
 #include <QApplication>
+#include <QSurfaceFormat>
+#include <QVTKOpenGLWidget.h>
 #include <logog/include/logog.hpp>
 #include <memory>
 
@@ -22,6 +24,9 @@ int main(int argc, char* argv[])
 #ifdef VTKFBXCONVERTER_FOUND
     InitializeSdkObjects(lSdkManager, lScene);
 #endif
+
+    // needed to ensure appropriate OpenGL context is created for VTK rendering.
+    QSurfaceFormat::setDefaultFormat(QVTKOpenGLWidget::defaultFormat());
 
     auto myOutputWindow = vtkSmartPointer<VtkConsoleOutputWindow>::New();
     vtkOutputWindow::SetInstance(myOutputWindow);
