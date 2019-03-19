@@ -40,11 +40,11 @@ int main(int argc, char* argv[])
         "Generates properties for mesh elements of an input mesh deploying a "
         "ASC raster file.\n\n"
         "OpenGeoSys-6 software, version " +
-            BaseLib::BuildInfo::git_describe +
+            BaseLib::BuildInfo::ogs_version +
             ".\n"
             "Copyright (c) 2012-2019, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
-        ' ', BaseLib::BuildInfo::git_describe);
+        ' ', BaseLib::BuildInfo::ogs_version);
 
     TCLAP::ValueArg<std::string> out_mesh_arg(
         "o",

@@ -32,11 +32,11 @@ int main(int argc, char* argv[])
         "regular grid superimposed on the mesh. If no mesh element is located "
         "beneath  a pixel it is set to NODATA.\n\n"
         "OpenGeoSys-6 software, version " +
-            BaseLib::BuildInfo::git_describe +
+            BaseLib::BuildInfo::ogs_version +
             ".\n"
             "Copyright (c) 2012-2019, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
-        ' ', BaseLib::BuildInfo::git_describe);
+        ' ', BaseLib::BuildInfo::ogs_version);
     TCLAP::ValueArg<std::string> input_arg("i", "input-file",
                                            "Mesh input file (*.vtu, *.msh)",
                                            true, "", "string");

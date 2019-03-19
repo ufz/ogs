@@ -77,11 +77,11 @@ int main (int argc, char* argv[])
         "https://docs.opengeosys.org/docs/tools/meshing/"
         "remove-mesh-elements.\n\n"
         "OpenGeoSys-6 software, version " +
-            BaseLib::BuildInfo::git_describe +
+            BaseLib::BuildInfo::ogs_version +
             ".\n"
             "Copyright (c) 2012-2019, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
-        ' ', BaseLib::BuildInfo::git_describe);
+        ' ', BaseLib::BuildInfo::ogs_version);
 
     // Bounding box params
     TCLAP::ValueArg<double> zLargeArg("", "z-max", "largest allowed extent in z-dimension",

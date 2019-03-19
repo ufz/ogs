@@ -131,11 +131,11 @@ int main (int argc, char* argv[])
         "https://docs.opengeosys.org/docs/tools/model-preparation/"
         "create-boundary-conditions-along-a-polyline.\n\n"
         "OpenGeoSys-6 software, version " +
-            BaseLib::BuildInfo::git_describe +
+            BaseLib::BuildInfo::ogs_version +
             ".\n"
             "Copyright (c) 2012-2019, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
-        ' ', BaseLib::BuildInfo::git_describe);
+        ' ', BaseLib::BuildInfo::ogs_version);
     TCLAP::ValueArg<bool> gml_arg("", "gml",
         "if switched on write found nodes to file in gml format", false, false, "bool");
     cmd.add(gml_arg);

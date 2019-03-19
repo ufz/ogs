@@ -83,11 +83,11 @@ int main(int argc, char* argv[])
         "mesh node ids. Such surface meshes can be created using the OGS-6 "
         "tool ExtractSurface.\n\n"
         "OpenGeoSys-6 software, version " +
-            BaseLib::BuildInfo::git_describe +
+            BaseLib::BuildInfo::ogs_version +
             ".\n"
             "Copyright (c) 2012-2019, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
-        ' ', BaseLib::BuildInfo::git_describe);
+        ' ', BaseLib::BuildInfo::ogs_version);
 
     TCLAP::ValueArg<std::string> in_mesh("i",
                                          "in-mesh",

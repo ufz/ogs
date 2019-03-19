@@ -190,11 +190,11 @@ int main (int argc, char* argv[])
     TCLAP::CmdLine cmd(
         "Prepares OGS-meshes for use in Unity.\n\n"
         "OpenGeoSys-6 software, version " +
-            BaseLib::BuildInfo::git_describe +
+            BaseLib::BuildInfo::ogs_version +
             ".\n"
             "Copyright (c) 2012-2019, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
-        ' ', BaseLib::BuildInfo::git_describe);
+        ' ', BaseLib::BuildInfo::ogs_version);
 
     TCLAP::ValueArg<std::string> mesh_arg("i", "input",
         "the file containing the original OGS mesh", true,

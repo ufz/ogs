@@ -27,7 +27,6 @@ namespace BuildInfo
     const std::string git_version_sha1("@GIT_SHA1@");
     const std::string git_version_sha1_short("@GIT_SHA1_SHORT@");
 
-    const std::string git_describe("@GIT_DESCRIBE@");
     const std::string ogs_version("@OGS_VERSION@");
     const std::string cmake_args("@CMAKE_ARGS_ESCAPED@");
 

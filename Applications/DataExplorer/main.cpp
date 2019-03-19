@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
     QLocale::setDefault(QLocale::German);
     auto w = std::make_unique<MainWindow>();
     w->setWindowTitle( w->windowTitle() + " - " +
-        QString::fromStdString(BaseLib::BuildInfo::git_describe));
+        QString::fromStdString(BaseLib::BuildInfo::ogs_version));
     if (QCoreApplication::arguments().size()>1) {
         w->loadFileOnStartUp(QCoreApplication::arguments().at(1));
     }

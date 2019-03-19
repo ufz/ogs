@@ -67,11 +67,11 @@ int main (int argc, char* argv[])
         "https://docs.opengeosys.org/docs/tools/meshing/"
         "structured-mesh-generation.\n\n"
         "OpenGeoSys-6 software, version " +
-            BaseLib::BuildInfo::git_describe +
+            BaseLib::BuildInfo::ogs_version +
             ".\n"
             "Copyright (c) 2012-2019, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
-        ' ', BaseLib::BuildInfo::git_describe);
+        ' ', BaseLib::BuildInfo::ogs_version);
 
     auto tclapOutput = std::make_unique<BaseLib::TCLAPCustomOutput>();
     cmd.setOutput(tclapOutput.get());

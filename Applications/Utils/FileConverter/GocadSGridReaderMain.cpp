@@ -32,11 +32,11 @@ int main(int argc, char* argv[])
         "Reads a Gocad stratigraphic grid file (file ending sg) and writes the "
         "data in the vtk unstructured grid file format.\n\n OpenGeoSys-6 "
         "software, version " +
-            BaseLib::BuildInfo::git_describe +
+            BaseLib::BuildInfo::ogs_version +
             ".\n"
             "Copyright (c) 2012-2019, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
-        ' ', BaseLib::BuildInfo::git_describe);
+        ' ', BaseLib::BuildInfo::ogs_version);
 
     TCLAP::ValueArg<bool> face_set_arg(
         "f", "generate-face-sets",
