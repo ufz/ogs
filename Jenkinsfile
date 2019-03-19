@@ -210,7 +210,7 @@ pipeline {
           post {
             always {
               recordIssues enabledForFailure: true, filters: [
-                excludeFile('.*qrc_icons\\.cpp.*'), excludeMessage('.*QVTKWidget.*'),
+                excludeFile('.*qrc_icons\\.cpp.*'),
                 excludeMessage('.*tmpnam.*')],
                 tools: [gcc4(name: 'GCC-GUI', id: 'gcc4-gui',
                              pattern: 'build/build*.log')],

@@ -75,6 +75,7 @@ macro(install_qt5_plugin _qt_plugin_name _qt_plugins_var)
             set(_qt_plugin_dir "plugins")
         endif()
         set(_qt_plugin_dest "${_qt_plugin_dir}/${_qt_plugin_type}")
+        file(COPY "${_qt_plugin_path}" DESTINATION "${_qt_plugin_dest}")
         install(FILES "${_qt_plugin_path}"
             DESTINATION "${_qt_plugin_dest}"
             ${COMPONENT})

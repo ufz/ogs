@@ -141,6 +141,7 @@
 - added custom VTK filter to represent raster data as point clouds. [#2121](https://github.com/ufz/ogs/pull/2121)
 - geometrical points can now be converted into station points. [#2369](https://github.com/ufz/ogs/pull/2369)
 - fixed issue with geometrical surfaces not being loaded correctly. [#2388](https://github.com/ufz/ogs/pull/2388)
+- Replace deprecated QVTKWidget with QVTKOpenGLWidget [#2432](https://github.com/ufz/ogs/pull/2432)
 
 ### Other notable code changes
 
