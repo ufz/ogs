@@ -1,1 +1,0 @@
-Longitudinal thermal dispersivity.
