@@ -23,8 +23,8 @@ std::unique_ptr<ParameterBase> createGroupBasedParameter(
     config.checkConfigParameter("type", "Group");
 
     // get a property vector of group IDs
-    //! \ogs_file_param{prj__parameters__parameter__Group__group_id_property}
     std::string const group_id_property_name =
+        //! \ogs_file_param{prj__parameters__parameter__Group__group_id_property}
         config.getConfigParameter<std::string>("group_id_property");
     DBUG("Using group_id_property %s", group_id_property_name.c_str());
 

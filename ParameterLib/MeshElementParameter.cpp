@@ -19,8 +19,8 @@ std::unique_ptr<ParameterBase> createMeshElementParameter(
 {
     //! \ogs_file_param{prj__parameters__parameter__type}
     config.checkConfigParameter("type", "MeshElement");
-    //! \ogs_file_param{prj__parameters__parameter__MeshElement__field_name}
     auto const field_name =
+        //! \ogs_file_param{prj__parameters__parameter__MeshElement__field_name}
         config.getConfigParameter<std::string>("field_name");
     DBUG("Using field_name %s", field_name.c_str());
 
