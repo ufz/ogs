@@ -69,3 +69,18 @@ if(DESCRIBE_RESULT EQUAL 0)
 else()
     message(WARNING "Git repository contains no tags! Please run: git fetch --tags")
 endif()
+
+# Get git commit
+execute_process(
+    COMMAND ${GIT_EXECUTABLE} log -1 --format=%H
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+    OUTPUT_VARIABLE GIT_SHA1
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+execute_process(
+    COMMAND ${GIT_EXECUTABLE} log -1 --format=%h
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+    OUTPUT_VARIABLE GIT_SHA1_SHORT
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
