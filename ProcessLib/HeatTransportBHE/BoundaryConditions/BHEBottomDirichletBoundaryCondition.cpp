@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -10,7 +11,7 @@
 #include "BHEBottomDirichletBoundaryCondition.h"
 #include "BaseLib/Error.h"
 
-namespace ProcessLib
+namespace ProcessLib::HeatTransportBHE
 {
 void BHEBottomDirichletBoundaryCondition::getEssentialBCValues(
     const double /*t*/, GlobalVector const& x,
@@ -54,4 +55,4 @@ createBHEBottomDirichletBoundaryCondition(
     return std::make_unique<BHEBottomDirichletBoundaryCondition>(
         std::move(in_out_global_indices));
 }
-}  // namespace ProcessLib
+}  // namespace ProcessLib::HeatTransportBHE
