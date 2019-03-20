@@ -1,1 +1,1 @@
-Information about input mesh.
+Path to the `.vtu` (VTK unstructured grid) file to specify the finite element mesh.
