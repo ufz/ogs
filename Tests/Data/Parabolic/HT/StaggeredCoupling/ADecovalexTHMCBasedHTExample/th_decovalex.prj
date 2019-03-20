@@ -12,62 +12,156 @@
                 <temperature>T</temperature>
                 <pressure>p</pressure>
             </process_variables>
-            <fluid>
-                <density>
-                    <type>TemperatureDependent</type>
-                    <temperature0> 293.0 </temperature0>
-                    <beta> 4.3e-4 </beta>
-                    <rho0>1000.</rho0>
-                </density>
-                <viscosity>
-                    <type>Constant</type>
-                    <value> 1.e-3 </value>
-                </viscosity>
-                <specific_heat_capacity>
-                    <type>Constant</type>
-                    <value> 4000. </value>
-                </specific_heat_capacity>
-            </fluid>
-            <porous_medium>
-                <porous_medium id="0">
-                    <permeability>
-                        <permeability_tensor_entries>mu0</permeability_tensor_entries>
-                        <type>Constant</type>
-                    </permeability>
-                    <porosity>
-                        <type>Constant</type>
-                        <porosity_parameter>n0</porosity_parameter>
-                    </porosity>
-                    <storage>
-                        <type>Constant</type>
-                        <value>0.0</value>
-                    </storage>
-                </porous_medium>
-                <porous_medium id="1">
-                    <permeability>
-                        <permeability_tensor_entries>mu1</permeability_tensor_entries>
-                        <type>Constant</type>
-                    </permeability>
-                    <porosity>
-                        <type>Constant</type>
-                        <porosity_parameter>n1</porosity_parameter>
-                    </porosity>
-                    <storage>
-                        <type>Constant</type>
-                        <value>0.0</value>
-                    </storage>
-                </porous_medium>
-            </porous_medium>
             <density_solid>rho_solid</density_solid>
             <specific_heat_capacity_solid>c_p</specific_heat_capacity_solid>
             <thermal_conductivity_solid>lambda</thermal_conductivity_solid>
-            <thermal_conductivity_fluid>lambda_fluid</thermal_conductivity_fluid>
             <specific_body_force>0 -9.81</specific_body_force>
             <secondary_variables>
                 <secondary_variable type="static" internal_name="darcy_velocity" output_name="darcy_velocity"/>
             </secondary_variables>
         </process>
     </processes>
+    <media>
+        <medium id="0">
+            <phases>
+                <phase>
+                    <type>AqueousLiquid</type>
+                    <properties>
+                        <property>
+                            <name>density</name>
+                            <type>Linear</type>
+                            <reference_value>1000.0</reference_value>
+                            <independent_variable>
+                                <variable_name>temperature</variable_name>
+                                <reference_condition>293.0</reference_condition>
+                                <slope>-4.3e-4</slope>
+                            </independent_variable>
+                        </property>
+                        <property>
+                            <name>viscosity</name>
+                            <type>Constant</type>
+                            <value>1.0e-3</value>
+                        </property>
+                        <property>
+                            <name>specific_heat_capacity</name>
+                            <type>Constant</type>
+                            <value>4000</value>
+                        </property>
+                        <property>
+                            <name>thermal_conductivity</name>
+                            <type>Constant</type>
+                            <!--0.6 * 86400 * 365 with the time unit of year-->
+                            <value>18921600.0</value>
+                        </property>
+                    </properties>
+                </phase>
+                <phase>
+                    <type>Solid</type>
+                    <properties>
+                        <property>
+                            <name>permeability</name>
+                            <type>Constant</type>
+                            <value>6.3072e-14 0. 0. 6.3072e-14</value>
+                        </property>
+                        <property>
+                            <name>porosity</name>
+                            <type>Constant</type>
+                            <value>0.01</value>
+                        </property>
+                        <property>
+                            <name>storage</name>
+                            <type>Constant</type>
+                            <value>0.0</value>
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+            <properties>
+                <property>
+                    <name>thermal_longitudinal_dispersivity</name>
+                    <type>Constant</type>
+                    <value>0.0</value>
+                </property>
+                <property>
+                    <name>thermal_transversal_dispersivity</name>
+                    <type>Constant</type>
+                    <value>0.0</value>
+                </property>
+            </properties>
+        </medium>
+        <medium id="1">
+            <phases>
+                <phase>
+                    <type>AqueousLiquid</type>
+                    <properties>
+                        <property>
+                            <name>density</name>
+                            <type>Linear</type>
+                            <reference_value>1000.0</reference_value>
+                            <independent_variable>
+                                <variable_name>temperature</variable_name>
+                                <reference_condition>293.0</reference_condition>
+                                <slope>-4.3e-4</slope>
+                            </independent_variable>
+                        </property>
+                        <property>
+                            <name>viscosity</name>
+                            <type>Constant</type>
+                            <value>1.0e-3</value>
+                        </property>
+                        <property>
+                            <name>specific_heat_capacity</name>
+                            <type>Constant</type>
+                            <value>4000</value>
+                        </property>
+                        <property>
+                            <name>thermal_conductivity</name>
+                            <type>Constant</type>
+                            <!--0.6 * 86400 * 365 with the time unit of year-->
+                            <value>18921600.0</value>
+                        </property>
+                    </properties>
+                </phase>
+                <phase>
+                    <type>Solid</type>
+                    <properties>
+                        <property>
+                            <name>permeability</name>
+                            <type>Constant</type>
+                            <value>3.1536e-10 0. 0. 3.1536e-10</value>
+                        </property>
+                        <property>
+                            <name>porosity</name>
+                            <type>Constant</type>
+                            <value>0.41</value>
+                        </property>
+                        <property>
+                            <name>storage</name>
+                            <type>Constant</type>
+                            <value>0.0</value>
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+            <properties>
+                <property>
+                    <name>thermal_longitudinal_dispersivity</name>
+                    <type>Constant</type>
+                    <value>0.0</value>
+                </property>
+                <property>
+                    <name>thermal_transversal_dispersivity</name>
+                    <type>Constant</type>
+                    <value>0.0</value>
+                </property>
+                <property>
+                    <name>specific_heat_capacity</name>
+                    <type>Constant</type>
+                    <value>4000</value>
+                </property>
+            </properties>
+        </medium>
+    </media>
     <time_loop>
         <global_process_coupling>
             <max_iter> 6 </max_iter>

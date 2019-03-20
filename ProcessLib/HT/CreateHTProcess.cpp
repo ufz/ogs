@@ -9,8 +9,7 @@
 
 #include "CreateHTProcess.h"
 
-#include "MaterialLib/Fluid/FluidProperties/CreateFluidProperties.h"
-#include "MaterialLib/PorousMedium/CreatePorousMediaProperties.h"
+#include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "ParameterLib/ConstantParameter.h"
 #include "ParameterLib/Utils.h"
@@ -34,7 +33,8 @@ std::unique_ptr<Process> createHTProcess(
     unsigned const integration_order,
     BaseLib::ConfigTree const& config,
     std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
-    std::string const& output_directory)
+    std::string const& output_directory,
+    std::map<int, std::unique_ptr<MaterialPropertyLib::Medium>> const& media)
 {
     //! \ogs_file_param{prj__processes__process__type}
     config.checkConfigParameter("type", "HT");
@@ -79,15 +79,6 @@ std::unique_ptr<Process> createHTProcess(
     const int _heat_transport_process_id = 0;
     const int _hydraulic_process_id = 1;
 
-    MaterialLib::PorousMedium::PorousMediaProperties porous_media_properties{
-        MaterialLib::PorousMedium::createPorousMediaProperties(mesh, config,
-                                                               parameters)};
-
-    //! \ogs_file_param{prj__processes__process__HT__fluid}
-    auto const& fluid_config = config.getConfigSubtree("fluid");
-    auto fluid_properties =
-        MaterialLib::Fluid::createFluidProperties(fluid_config);
-
     // Parameter for the density of the solid.
     auto& density_solid = ParameterLib::findParameter<double>(
         config,
@@ -105,60 +96,12 @@ std::unique_ptr<Process> createHTProcess(
 
     // Parameter for the thermal conductivity of the solid (only one scalar per
     // element, i.e., the isotropic case is handled at the moment)
-
-    ParameterLib::ConstantParameter<double>
-        default_thermal_dispersivity_longitudinal(
-            "default thermal dispersivity longitudinal", 0.);
-    ParameterLib::ConstantParameter<double>
-        default_thermal_dispersivity_transversal(
-            "default thermal dispersivity transversal", 0.);
-
-    ParameterLib::Parameter<double>* thermal_dispersivity_longitudinal =
-        &default_thermal_dispersivity_longitudinal;
-    ParameterLib::Parameter<double>* thermal_dispersivity_transversal =
-        &default_thermal_dispersivity_transversal;
-    auto const dispersion_config =
-        //! \ogs_file_param{prj__processes__process__HT__thermal_dispersivity}
-        config.getConfigSubtreeOptional("thermal_dispersivity");
-    bool const has_fluid_thermal_dispersivity =
-        static_cast<bool>(dispersion_config);
-    if (dispersion_config)
-    {
-        thermal_dispersivity_longitudinal = &ParameterLib::findParameter<
-            double>(
-            *dispersion_config,
-            //! \ogs_file_param_special{prj__processes__process__HT__thermal_dispersivity__longitudinal}
-            "longitudinal", parameters, 1);
-        DBUG("Use '%s' as thermal_dispersivity_longitudinal parameter.",
-             thermal_dispersivity_longitudinal->name.c_str());
-
-        // Parameter for the thermal conductivity of the solid (only one scalar
-        // per
-        // element, i.e., the isotropic case is handled at the moment)
-        thermal_dispersivity_transversal = &ParameterLib::findParameter<double>(
-            *dispersion_config,
-            //! \ogs_file_param_special{prj__processes__process__HT__thermal_dispersivity__transversal}
-            "transversal", parameters, 1);
-        DBUG("Use '%s' as thermal_dispersivity_transversal parameter.",
-             thermal_dispersivity_transversal->name.c_str());
-    }
-
-    // Parameter for the thermal conductivity of the solid (only one scalar per
-    // element, i.e., the isotropic case is handled at the moment)
     auto& thermal_conductivity_solid = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__HT__thermal_conductivity_solid}
         "thermal_conductivity_solid", parameters, 1);
     DBUG("Use '%s' as thermal_conductivity_solid parameter.",
          thermal_conductivity_solid.name.c_str());
-
-    // Parameter for the thermal conductivity of the fluid.
-    auto& thermal_conductivity_fluid = ParameterLib::findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__HT__thermal_conductivity_fluid}
-        "thermal_conductivity_fluid", parameters, 1);
-    DBUG("Use '%s' as thermal_conductivity_fluid parameter.",
-         thermal_conductivity_fluid.name.c_str());
 
     // Specific body force parameter.
     Eigen::VectorXd specific_body_force;
@@ -216,17 +159,15 @@ std::unique_ptr<Process> createHTProcess(
                                            output_directory);
     }
 
+    auto media_map =
+        MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
+
     std::unique_ptr<HTMaterialProperties> material_properties =
         std::make_unique<HTMaterialProperties>(
-            std::move(porous_media_properties),
             density_solid,
-            std::move(fluid_properties),
-            has_fluid_thermal_dispersivity,
-            *thermal_dispersivity_longitudinal,
-            *thermal_dispersivity_transversal,
+            std::move(media_map),
             specific_heat_capacity_solid,
             thermal_conductivity_solid,
-            thermal_conductivity_fluid,
             has_fluid_thermal_expansion,
             *solid_thermal_expansion,
             *biot_constant,

@@ -12,8 +12,7 @@
 #include <memory>
 #include <utility>
 
-#include "MaterialLib/Fluid/FluidProperties/FluidProperties.h"
-#include "MaterialLib/PorousMedium/PorousMediaProperties.h"
+#include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 
 namespace ProcessLib
 {
@@ -22,36 +21,23 @@ struct Parameter;
 
 namespace HT
 {
-struct HTMaterialProperties
+struct HTMaterialProperties final
 {
     HTMaterialProperties(
-        MaterialLib::PorousMedium::PorousMediaProperties&&
-            porous_media_properties_,
         ParameterLib::Parameter<double> const& density_solid_,
-        std::unique_ptr<MaterialLib::Fluid::FluidProperties>&&
-            fluid_properties_,
-        bool const has_fluid_thermal_dispersivity_,
-        ParameterLib::Parameter<double> const&
-            thermal_dispersivity_longitudinal_,
-        ParameterLib::Parameter<double> const&
-            thermal_dispersivity_transversal_,
+        std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>&&
+            media_map_,
         ParameterLib::Parameter<double> const& specific_heat_capacity_solid_,
         ParameterLib::Parameter<double> const& thermal_conductivity_solid_,
-        ParameterLib::Parameter<double> const& thermal_conductivity_fluid_,
         bool const has_fluid_thermal_expansion_,
         ParameterLib::Parameter<double> const& solid_thermal_expansion_,
         ParameterLib::Parameter<double> const& biot_constant_,
         Eigen::VectorXd specific_body_force_,
         bool const has_gravity_)
-        : porous_media_properties(std::move(porous_media_properties_)),
-          density_solid(density_solid_),
-          fluid_properties(std::move(fluid_properties_)),
+        : density_solid(density_solid_),
+          media_map(std::move(media_map_)),
           specific_heat_capacity_solid(specific_heat_capacity_solid_),
-          has_fluid_thermal_dispersivity(has_fluid_thermal_dispersivity_),
-          thermal_dispersivity_longitudinal(thermal_dispersivity_longitudinal_),
-          thermal_dispersivity_transversal(thermal_dispersivity_transversal_),
           thermal_conductivity_solid(thermal_conductivity_solid_),
-          thermal_conductivity_fluid(thermal_conductivity_fluid_),
           has_fluid_thermal_expansion(has_fluid_thermal_expansion_),
           solid_thermal_expansion(solid_thermal_expansion_),
           biot_constant(biot_constant_),
@@ -60,15 +46,16 @@ struct HTMaterialProperties
     {
     }
 
-    MaterialLib::PorousMedium::PorousMediaProperties porous_media_properties;
+    HTMaterialProperties(HTMaterialProperties&&) = delete;
+    HTMaterialProperties(HTMaterialProperties const&) = delete;
+    void operator=(HTMaterialProperties&&) = delete;
+    void operator=(HTMaterialProperties const&) = delete;
+
     ParameterLib::Parameter<double> const& density_solid;
-    std::unique_ptr<MaterialLib::Fluid::FluidProperties> fluid_properties;
+    std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>
+        media_map;
     ParameterLib::Parameter<double> const& specific_heat_capacity_solid;
-    bool const has_fluid_thermal_dispersivity;
-    ParameterLib::Parameter<double> const& thermal_dispersivity_longitudinal;
-    ParameterLib::Parameter<double> const& thermal_dispersivity_transversal;
     ParameterLib::Parameter<double> const& thermal_conductivity_solid;
-    ParameterLib::Parameter<double> const& thermal_conductivity_fluid;
 
     bool const has_fluid_thermal_expansion;
     ParameterLib::Parameter<double> const& solid_thermal_expansion;

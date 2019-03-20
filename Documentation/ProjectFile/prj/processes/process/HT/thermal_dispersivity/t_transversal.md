@@ -1,1 +1,0 @@
-Transversal thermal dispersivity.
