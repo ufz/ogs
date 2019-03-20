@@ -17,12 +17,6 @@ waste deposition. OGS is comprised of the THMC-simulator (simply referred to as
 *OGS*) and a visualization tool (*Data Explorer*). OGS is developed by the
 [OpenGeoSys Community][ogs].
 
-## Current status ##
-
-It has to be noticed that the current OGS-6 version is under very heavy development
-and [vivid discussion](https://github.com/ufz/ogs/issues), and does not implement all
-functionality from OGS-5.
-
 ## Software development ##
 
 - Good starting point for users as well as for developers is the [documentation][documentation]
@@ -37,7 +31,7 @@ attribute the work of the OpenGeoSys Community especially in scientific
 publications. See the [LICENSE.txt][license-source] for the license text.
 
 [ogs]: http://www.opengeosys.org
-[documentation]: https://docs.opengeosys.org/docs/
+[documentation]: https://www..opengeosys.org/docs/
 [jenkins-ci]: https://jenkins.opengeosys.org/job/ufz/job/ogs/job/master/
 [docs]: http://doxygen.opengeosys.org
 [license-source]: https://github.com/ufz/ogs/blob/master/LICENSE.txt
