@@ -213,87 +213,110 @@ void SHPInterface::readPolygons(const SHPHandle& hSHP, int numberOfElements,
 
 bool SHPInterface::write2dMeshToSHP(const std::string &file_name, const MeshLib::Mesh &mesh)
 {
-    if (mesh.getDimension()!=2)
+    if (mesh.getDimension() != 2)
     {
-        ERR ("SHPInterface::write2dMeshToSHP(): Mesh to Shape conversion is only working for 2D Meshes.");
+        ERR("SHPInterface::write2dMeshToSHP(): Mesh to Shape conversion is "
+            "only working for 2D Meshes.");
         return false;
     }
 
-    unsigned nElements (mesh.getNumberOfElements());
-    if (nElements<1)
+    std::size_t const n_elements = mesh.getNumberOfElements();
+    if (n_elements < 1)
     {
-        ERR ("SHPInterface::write2dMeshToSHP(): Mesh contains no elements.");
+        ERR("SHPInterface::write2dMeshToSHP(): Mesh contains no elements.");
         return false;
     }
 
-    if (nElements>10E+7) // DBF-export requires a limit, 10 mio seems good for now
+    // DBF-export requires a limit of records because of the limits to the
+    // integer values. The exponent controls maximum number of elements and
+    // the maximum number of digits written in the DBF file.
+    std::size_t const max_exp = 8;
+    if (n_elements >= std::pow(10,max_exp))
     {
-        ERR ("SHPInterface::write2dMeshToSHP(): Mesh contains too many elements for currently implemented DBF-boundaries.");
+        ERR("SHPInterface::write2dMeshToSHP(): Mesh contains too many elements "
+            "for currently implemented DBF-boundaries.");
         return false;
     }
 
     SHPHandle hSHP = SHPCreate(file_name.c_str(), SHPT_POLYGON);
     DBFHandle hDBF = DBFCreate(file_name.c_str());
-    int elem_id_field = DBFAddField(hDBF, "Elem_ID", FTInteger, 7, 0); // allows integers of length "7", i.e. 10mio-1 elements
-    int mat_field = DBFAddField(hDBF, "Material", FTInteger, 7, 0);
-    int node0_field = DBFAddField(hDBF, "Node0", FTInteger, 7, 0);
-    int node1_field = DBFAddField(hDBF, "Node1", FTInteger, 7, 0);
-    int node2_field = DBFAddField(hDBF, "Node2", FTInteger, 7, 0);
+    int const elem_id_field = DBFAddField(hDBF, "Elem_ID", FTInteger, max_exp, 0);
 
-    unsigned polygon_id (0);
-    double* padfX;
-    double* padfY;
-    double* padfZ;
-    for (unsigned i=0; i<nElements; ++i)
+    // Writing mesh elements to shape file
+    std::size_t shp_record(0);
+    std::vector<MeshLib::Element*> const& elems = mesh.getElements();
+    for (MeshLib::Element const* const e : elems)
     {
-        const MeshLib::Element* e (mesh.getElement(i));
-
         // ignore all elements except triangles and quads
         if ((e->getGeomType() == MeshLib::MeshElemType::TRIANGLE) ||
             (e->getGeomType() == MeshLib::MeshElemType::QUAD))
         {
-            // write element ID and material group to DBF-file
-            DBFWriteIntegerAttribute(hDBF, polygon_id, elem_id_field, i);
-            if (mesh.getProperties().existsPropertyVector<int>("MaterialIDs"))
-            {
-                auto const* const materialIds =
-                    mesh.getProperties().getPropertyVector<int>("MaterialIDs");
-                DBFWriteIntegerAttribute(hDBF, polygon_id, mat_field, (*materialIds)[i]);
-            }
-            unsigned nNodes (e->getNumberOfBaseNodes());
-            padfX = new double[nNodes+1];
-            padfY = new double[nNodes+1];
-            padfZ = new double[nNodes+1];
-            for (unsigned j=0; j<nNodes; ++j)
-            {
-                padfX[j]=(*e->getNode(j))[0];
-                padfY[j]=(*e->getNode(j))[1];
-                padfZ[j]=(*e->getNode(j))[2];
-            }
-            // Last node == first node to close the polygon
-            padfX[nNodes]=(*e->getNode(0))[0];
-            padfY[nNodes]=(*e->getNode(0))[1];
-            padfZ[nNodes]=(*e->getNode(0))[2];
-            // write the first three node ids to the dbf-file (this also specifies a QUAD uniquely)
-            DBFWriteIntegerAttribute(hDBF, polygon_id, node0_field, e->getNode(0)->getID());
-            DBFWriteIntegerAttribute(hDBF, polygon_id, node1_field, e->getNode(1)->getID());
-            DBFWriteIntegerAttribute(hDBF, polygon_id, node2_field, e->getNode(2)->getID());
-
-            SHPObject* object =
-                SHPCreateObject(SHPT_POLYGON, polygon_id++, 0, nullptr, nullptr,
-                                ++nNodes, padfX, padfY, padfZ, nullptr);
+            SHPObject* object = createShapeObject(*e, shp_record);
             SHPWriteObject(hSHP, -1, object);
+            SHPDestroyObject(object);
 
-            // Note: cleaning up the coordinate arrays padfX, -Y, -Z results in a crash, I assume that shapelib removes them
-            delete object;
+            // write element ID to DBF-file
+            DBFWriteIntegerAttribute(hDBF, shp_record, elem_id_field, e->getID());
+            shp_record++;
         }
     }
-
     SHPClose(hSHP);
-    DBFClose(hDBF);
-    INFO("Shape export of 2D mesh '%s' successful.", mesh.getName().c_str());
 
+    // Write scalar arrays to database file
+    MeshLib::Properties const& properties = mesh.getProperties();
+    std::vector<std::string> const& array_names =
+        properties.getPropertyVectorNames(MeshLib::MeshItemType::Cell);
+    int const n_recs = DBFGetRecordCount(hDBF);
+
+    for (std::string const& name : array_names)
+    {
+        if (properties.existsPropertyVector<int>(name))
+        {
+            std::vector<int> const& vec = *properties.getPropertyVector<int>(name);
+            int const field = DBFAddField(hDBF, name.c_str(), FTInteger, 16, 0);
+            for (int i = 0; i < n_recs; ++i)
+            {
+                std::size_t const elem_idx = DBFReadIntegerAttribute(hDBF, i, elem_id_field);
+                DBFWriteIntegerAttribute(hDBF, i, field, vec[elem_idx]);
+            }
+        }
+        else if (properties.existsPropertyVector<double>(name))
+        {
+            std::vector<double> const& vec = *properties.getPropertyVector<double>(name);
+            int const field = DBFAddField(hDBF, name.c_str(), FTDouble, 33, 16);
+            for (int i = 0; i < n_recs; ++i)
+            {
+                std::size_t const elem_idx = DBFReadIntegerAttribute(hDBF, i, elem_id_field);
+                DBFWriteDoubleAttribute(hDBF, i, field, vec[elem_idx]);
+            }
+        }
+    }
+    DBFClose(hDBF);
+    INFO("Shape export of 2D mesh '%s' finished.", mesh.getName().c_str());
     return true;
+}
+
+SHPObject* SHPInterface::createShapeObject(MeshLib::Element const& e,
+                                           std::size_t const shp_record)
+{
+    unsigned const nNodes(e.getNumberOfBaseNodes());
+    double* padfX = new double[nNodes + 1];
+    double* padfY = new double[nNodes + 1];
+    double* padfZ = new double[nNodes + 1];
+    for (unsigned j = 0; j < nNodes; ++j)
+    {
+        padfX[j] = (*e.getNode(j))[0];
+        padfY[j] = (*e.getNode(j))[1];
+        padfZ[j] = (*e.getNode(j))[2];
+    }
+    // Last node == first node to close the polygon
+    padfX[nNodes] = (*e.getNode(0))[0];
+    padfY[nNodes] = (*e.getNode(0))[1];
+    padfZ[nNodes] = (*e.getNode(0))[2];
+
+    // the generated shape object now handles the memory for padfX/Y/Z
+    return SHPCreateObject(SHPT_POLYGON, shp_record, 0, nullptr, nullptr,
+                           nNodes + 1, padfX, padfY, padfZ, nullptr);
 }
 
 }  // namespace FileIO

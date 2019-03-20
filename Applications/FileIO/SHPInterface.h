@@ -31,6 +31,7 @@ namespace GeoLib {
 
 namespace MeshLib {
     class Mesh;
+    class Element;
 }
 
 
@@ -70,7 +71,6 @@ public:
     /// (based on request by AS, open for discussion)
     static bool write2dMeshToSHP(const std::string &file_name, const MeshLib::Mesh &mesh);
 
-
 private:
     /// Reads points into a vector of Point objects.
     void readPoints    (const SHPHandle &hSHP, int numberOfElements, std::string listName);
@@ -85,6 +85,10 @@ private:
     void readPolygons(const SHPHandle& hSHP, int numberOfElements,
                       const std::string& listName,
                       std::string const& gmsh_path);
+
+    /// Creates a shape object polygon out of a 2D mesh element
+    static SHPObject* createShapeObject(MeshLib::Element const& e,
+                                        std::size_t const shp_record);
 
     GeoLib::GEOObjects& _geoObjects;
 };
