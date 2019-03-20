@@ -16,7 +16,10 @@ target_link_libraries(MaterialLib_SolidModels_MFront
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
                       "${PROJECT_SOURCE_DIR}/ThirdParty/MGIS")
 include(cmake/modules/tfel)
-mfront_behaviours_check_library(OgsMFrontBehaviour Elasticity
+mfront_behaviours_check_library(OgsMFrontBehaviour
+                                BDT
+                                DruckerPrager
+                                Elasticity
                                 StandardElasticityBrick)
 
 target_include_directories(MaterialLib_SolidModels_MFront
