@@ -537,10 +537,12 @@ pipeline {
                 def gccImage = docker.build("ogs6/gcc:latest", "-f Dockerfile.gcc.full .")
                 def gccGuiImage = docker.build("ogs6/gcc:gui", "-f Dockerfile.gcc.gui .")
                 def clangImage = docker.build("ogs6/clang:latest", "-f Dockerfile.clang.full .")
-                docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
-                  gccImage.push()
-                  gccGuiImage.push()
-                  clangImage.push()
+                withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials',
+                  passwordVariable: 'pw', usernameVariable: 'docker_user')]) {
+                    sh 'echo $pw | docker login -u $docker_user --password-stdin'
+                    gccImage.push()
+                    gccGuiImage.push()
+                    clangImage.push()
                 }
               }
             }
