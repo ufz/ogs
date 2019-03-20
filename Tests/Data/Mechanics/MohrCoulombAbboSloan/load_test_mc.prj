@@ -31,6 +31,8 @@
                 <process_variable>displacement</process_variable>
             </process_variables>
             <secondary_variables>
+                <secondary_variable type="static" internal_name="ElasticStrain" output_name="ElasticStrain"/>
+                <secondary_variable type="static" internal_name="EquivalentPlasticStrain" output_name="EquivalentPlasticStrain"/>
                 <secondary_variable type="static" internal_name="sigma" output_name="sigma"/>
                 <secondary_variable type="static" internal_name="epsilon" output_name="epsilon"/>
             </secondary_variables>
@@ -86,6 +88,8 @@
                 <variable>displacement</variable>
                 <variable>sigma</variable>
                 <variable>epsilon</variable>
+                <variable>ElasticStrain</variable>
+                <variable>EquivalentPlasticStrain</variable>
             </variables>
         </output>
     </time_loop>
