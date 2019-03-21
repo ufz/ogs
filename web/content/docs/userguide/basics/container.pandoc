@@ -13,23 +13,27 @@ weight = 10
 
 ### Prerequisites
 
-* Linux (you may run Singularity with [Vagrant](https://app.vagrantup.com/sylabs) on macOS or Windows as well)
-* A running [installation](https://www.sylabs.io/guides/2.6/user-guide/quick_start.html#quick-installation-steps) of Singularity 2.6
+* Linux or macOS (you may run Singularity with [Vagrant](https://app.vagrantup.com/sylabs) on Windows as well)
+* A running [installation](https://www.sylabs.io/guides/3.0/user-guide/quick_start.html#quick-installation-steps) of Singularity 3.0 or higher
 
 ### Get a container image
 
-TODO: Download prebuilt images
+#### Download a release image
+
+Simply download an image from the [releases]({{< ref "/releases" >}}) page.
+
+#### Create custom image with ogs-container-maker
 
 Build images with [ogs-container-maker](https://github.com/ufz/ogs-container-maker) on [Jenkins](https://jenkins.opengeosys.org/job/ufz/job/ogs-container-maker/job/master/build) (login required, ask Lars Bilke for access):
 
 ![](../ogs-container-maker-params.png){width=450px}
 
-It will build all combinations of `format`, `openmpi_versions` and `pm`. When the build finishes you can download the container (`*.simg` files) at the jobs page under `Build Artifacts`.
+It will build all combinations of `format`, `openmpi_versions` and `pm`. When the build finishes you can download the container (`*.sif` files) at the jobs page under `Build Artifacts`.
 
 ### Run OGS inside a Container (called from outside)
 
 ```bash
-singularity exec ogs-openmpi-2.1.1-conan.simg ogs some/path/project.prj
+singularity exec ogs-6.2.0-serial.sif ogs some/path/project.prj
 ```
 
 This starts the container, mounts your home directory inside the container, passes the current working directory and runs the ogs executable (which is in your home directory which is mounted inside the container) with the passed project file. Everything works as expected and is transparent to the user. When ogs finishes the container stops and you returns to the host system.
@@ -38,27 +42,27 @@ This starts the container, mounts your home directory inside the container, pass
 # Create output directories
 mkdir -p _out _out_mpi
 # Run serial benchmark
-singularity exec ogs-openmpi-2.1.1-conan.simg ogs -o _out [ogs-sources]/Tests/Data/Mechanics/Linear/disc_with_hole.prj
+singularity exec ogs-6.2.0-serial.sif ogs -o _out [ogs-sources]/Tests/Data/Mechanics/Linear/disc_with_hole.prj
 # Run serial benchmark with output validation (via vtkdiff)
-singularity exec ogs-openmpi-2.1.1-conan.simg -o _out -r [ogs-sources]/Tests/Data/Mechanics/Linear [ogs-sources]/Tests/Data/Mechanics/Linear/disc_with_hole.prj
+singularity exec ogs-6.2.0-serial.sif -o _out -r [ogs-sources]/Tests/Data/Mechanics/Linear [ogs-sources]/Tests/Data/Mechanics/Linear/disc_with_hole.prj
 # Run parallel benchmark with MPI
-mpirun -np 4 singularity exec ogs-openmpi-2.1.1-conan.simg -o _out_mpi [ogs-sources]/Tests/Data/Mechanics/Linear/disc_with_hole.prj
+mpirun -np 4 singularity exec ogs-6.2.0-openmpi-2.1.2.sif -o _out_mpi [ogs-sources]/Tests/Data/Mechanics/Linear/disc_with_hole.prj
 ```
 
 You can run other contained executables, e.g. `vtkdiff`:
 
 ```bash
-singularity exec ogs-openmpi-2.1.1-conan.simg vtkdiff --help
+singularity exec ogs-6.2.0-serial.sif vtkdiff --help
 ```
 
 You can interactively explore the container with `singularity shell` (you can see that you are **in** the container because of the `Singularity [container image file]:...>` prefix of the shell):
 
 ```bash
 # Shell into container
-singularity shell ogs-openmpi-2.1.1-conan.simg
+singularity shell ogs-6.2.0-serial.sif
 # List files in the container
-Singularity ogs-openmpi-2.1.1-conan.simg:...> ls /usr/local/ogs/bin
+Singularity ogs-6.2.0-serial.sif:...> ls /usr/local/ogs/bin
 ... ogs tetgen vtkdiff
 # Exit the container and get back to your hosts shell
-Singularity ogs-openmpi-2.1.1-conan.simg:...> exit
+Singularity ogs-6.2.0-serial.sif:...> exit
 ```
