@@ -343,12 +343,6 @@ if(OGS_BUILD_CLI OR OGS_BUILD_UTILS OR BUILD_TESTING)
 endif()
 if( BUILD_TESTING AND NOT IS_SUBPROJECT )
     add_subdirectory( Tests )
-
-    if(OGS_USE_MPI)
-        add_subdirectory( SimpleTests/MeshTests/MPI )
-    else()
-        add_subdirectory( SimpleTests/MeshTests )
-    endif()
 endif()
 
 file(WRITE ${PROJECT_BINARY_DIR}/disabled-tests.log "${DISABLED_TESTS_LOG}")
