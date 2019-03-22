@@ -10,7 +10,7 @@ author = "Marc Walther"
 
 ## Workflow description
 
-This documentation describes an exemplified workflow to create a groundwater flow model based on available data of a digital elevation model (here [SRTM data](https://earthexplorer.usgs.gov/)) and bathymetry data (here [GPDN](https://www.gpdn.de/?pgId=219)). As tools, it uses a GIS (here [QGIS](https://www.qgis.org)), the OGS DataExplorer and several [OGS tools](https://www.opengeosys.org/docs/tools/), as well as the meshing tool [GMSH](http://gmsh.info) and visualization tool [ParaView](www.paraview.org). The first part of this documentation deals with the GIS work, the second with the OGS model setup.
+This documentation describes an exemplified workflow to create a groundwater flow model based on available data of a digital elevation model (here [SRTM data](https://earthexplorer.usgs.gov/)) and bathymetry data (here [GPDN](https://www.gpdn.de/?pgId=219)). As tools, it uses a GIS (here [QGIS](https://www.qgis.org)), the OGS DataExplorer and several [OGS tools](https://www.opengeosys.org/docs/tools/), as well as the meshing tool [GMSH](http://gmsh.info) and visualization tool [ParaView](http://www.paraview.org). The first part of this documentation deals with the GIS work, the second with the OGS model setup.
 
 
 ## GIS data preparation and extraction
@@ -26,7 +26,7 @@ This part will prepare the DGM and bathymetry data as input for the model setup.
 
 2. Merge the images with `Raster` -> `Miscellaneous` -> `Merge...`; select the `Input Layer`s.
 
-	![Merge multiple DGM tifs](02_merg-DEMs.png)
+	![Merge multiple DGM tifs](02_merge-DEMs.png)
 
 3. Extract a subregion of the (merged) DGMs and define the study area through a shape file. One may also use a predefined shape file and continue with step 5. Choose `New Shapefile Layer...` from the toolbar and enter a `File name` and a projection.
 
@@ -81,7 +81,7 @@ This part will prepare the DGM and bathymetry data as input for the model setup.
 
 15. Further, it might be useful to manually remove even more vertices from the polygon; `Toggle Editing` of the simplified shape and select and remove vertices.
 
- 	![Further thinning of simplified coastline](15_delet-unnecessary-vertices.png)
+ 	![Further thinning of simplified coastline](15_delete-unnecessary-vertices.png)
 
 16. The shape file used to clip the study area in step 5 will be used as the boundary of the model setup and be combined with the coastline. Firstly, convert the polygon of the study area to a polyline with `Vector` -> `Geometry Tools` -> `Polygons to Lines`; select the `Input Layer`.
 
