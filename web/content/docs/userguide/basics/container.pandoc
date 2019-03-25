@@ -46,7 +46,7 @@ singularity exec ogs-6.2.0-serial.sif ogs -o _out [ogs-sources]/Tests/Data/Mecha
 # Run serial benchmark with output validation (via vtkdiff)
 singularity exec ogs-6.2.0-serial.sif ogs -o _out -r [ogs-sources]/Tests/Data/Mechanics/Linear [ogs-sources]/Tests/Data/Mechanics/Linear/disc_with_hole.prj
 # Run parallel benchmark with MPI
-mpirun -np 4 singularity exec ogs-6.2.0-openmpi-2.1.2.sif -o _out_mpi [ogs-sources]/Tests/Data/Mechanics/Linear/disc_with_hole.prj
+mpirun -np 4 singularity exec ogs-6.2.0-openmpi-2.1.2.sif ogs -o _out_mpi [ogs-sources]/Tests/Data/Mechanics/Linear/disc_with_hole.prj
 ```
 
 You can run other contained executables, e.g. `vtkdiff`:
