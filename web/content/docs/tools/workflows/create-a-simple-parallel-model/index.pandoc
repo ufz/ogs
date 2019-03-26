@@ -48,7 +48,7 @@ boundary conditions and parallelization boundary mesh files are needed. There
 are two possibilities to create such files:
 
  - If there is a `.gml` file, use [`constructMeshesFromGeometry`
-   tool]({{<ref "../model-preparation/constructMeshesFromGeometry">}})  which
+   tool]({{<ref "../meshing-submeshes/constructMeshesFromGeometry">}})  which
    takes the mesh file and geometry and creates all the boundaries which are
    named in the `.gml` file with the required `bulk_node_ids` and
    `bulk_element_ids` mappings.
