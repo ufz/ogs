@@ -5,7 +5,7 @@ author = "Dmitri Naumov"
 
 [menu]
   [menu.tools]
-    parent = "model-preparation"
+    parent = "meshing-submeshes"
 +++
 
 ## General
