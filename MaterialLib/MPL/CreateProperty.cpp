@@ -133,8 +133,6 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
 
         MaterialPropertyLib::IndependentVariable const iv{
             ivt, reference_condition, slope};
-        MaterialPropertyLib::LinearProperty linear_property{reference_value,
-                                                            iv};
 
         return std::make_unique<MaterialPropertyLib::LinearProperty>(
             reference_value, iv);
