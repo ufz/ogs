@@ -123,16 +123,21 @@ staticDir = ["dist", "static"]
   weight = 1
 
 [[menu.tools]]
-  name = "Meshing"
+  name = "Meshing: Bulk meshes"
   identifier = "meshing"
   weight = 2
 
 [[menu.tools]]
+  name = "Meshing: Subdomains"
+  identifier = "meshing-submeshes"
+  weight = 3
+
+[[menu.tools]]
   name = "Model Preparation"
   identifier = "model-preparation"
-  weight = 3
+  weight = 4
 
 [[menu.tools]]
   name = "Workflows"
   identifier = "workflows"
-  weight = 4
+  weight = 5
