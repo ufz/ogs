@@ -12,6 +12,7 @@
 #include <cassert>
 
 #include "BaseLib/Functional.h"
+#include "NumLib/DOF/DOFTableUtil.h"
 #include "ProcessLib/SmallDeformation/CreateLocalAssemblers.h"
 
 #include "ThermoMechanicsFEM.h"
@@ -38,6 +39,12 @@ ThermoMechanicsProcess<DisplacementDim>::ThermoMechanicsProcess(
               use_monolithic_scheme),
       _process_data(std::move(process_data))
 {
+    _nodal_forces = MeshLib::getOrCreateMeshProperty<double>(
+        mesh, "NodalForces", MeshLib::MeshItemType::Node, DisplacementDim);
+
+    _heat_flux = MeshLib::getOrCreateMeshProperty<double>(
+        mesh, "HeatFlux", MeshLib::MeshItemType::Node, 1);
+
     _integration_point_writer.emplace_back(
         std::make_unique<KelvinVectorIntegrationPointWriter>(
             "sigma_ip",
@@ -235,6 +242,30 @@ void ThermoMechanicsProcess<DisplacementDim>::
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
         _local_assemblers, pv.getActiveElementIDs(), dof_table, t, x,
         xdot, dxdot_dx, dx_dx, M, K, b, Jac, _coupled_solutions);
+
+    // TODO (naumov): Refactor the copy rhs part. This is copy from HM.
+    auto copyRhs = [&](int const variable_id, auto& output_vector) {
+        if (_use_monolithic_scheme)
+        {
+            transformVariableFromGlobalVector(b, variable_id, dof_table[0],
+                                              output_vector,
+                                              std::negate<double>());
+        }
+        else
+        {
+            transformVariableFromGlobalVector(
+                b, 0, dof_table[_coupled_solutions->process_id], output_vector,
+                std::negate<double>());
+        }
+    };
+    if (_use_monolithic_scheme || _coupled_solutions->process_id == 0)
+    {
+        copyRhs(0, *_heat_flux);
+    }
+    if (_use_monolithic_scheme || _coupled_solutions->process_id == 1)
+    {
+        copyRhs(1, *_nodal_forces);
+    }
 }
 
 template <int DisplacementDim>
