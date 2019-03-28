@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-@Library('jenkins-pipeline@1.0.19') _
+@Library('jenkins-pipeline@1.0.21') _
 
 def stage_required = [build: false, data: false, full: false, docker: false]
 def build_shared = 'ON'
@@ -30,7 +30,7 @@ pipeline {
         sh "git config core.whitespace -blank-at-eof"
         sh "git diff --check `git merge-base origin/master HEAD` HEAD -- . ':!*.md' ':!*.pandoc' ':!*.asc'"
         dir('scripts/jenkins') { stash(name: 'known_hosts', includes: 'known_hosts') }
-        ciSkip action: 'check' // Check for [ci skip] commit message.
+        ciSkip action: 'check' // Check for [ci skip] or [web] commit message.
 
         // ********* Check changesets for conditional stage execution **********
         script {

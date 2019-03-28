@@ -16,9 +16,7 @@
       </div>
       <div class="w-full md:w-1/2 md:px-4">
         {{ if .feature.visual }}
-          <a data-fancybox data-caption="{{ .feature.visual.alt | default ""}}" href="{{ .feature.visual.permalink }}">
-            <img class="{{ if .feature.visual.rounded }}rounded shadow-lg{{ end }}" src="{{ .feature.visual.permalink }}" alt="{{ .feature.visual.alt }}">
-          </a>
+          <img class="{{ if .feature.visual.rounded }}rounded shadow-lg{{ end }}" src="{{ .feature.visual.permalink }}" alt="{{ .feature.visual.alt }}">
         {{ end }}
         {{ if .feature.carousel }}
           {{ partial "components/carousel" (dict "carousel" .feature.carousel "page" .page) }}

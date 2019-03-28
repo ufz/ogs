@@ -222,6 +222,19 @@ a.btn-inverse:hover {
   color: config('mycolors.text-accent');
 }
 
+/* -------------------------------- Images ---------------------------------- */
+body {
+  counter-reset: figcaption;
+}
+figcaption::before {
+  counter-increment: figcaption;
+  content: "Fig. " counter(figcaption) ": "
+}
+figcaption {
+  @apply .text-center;
+  @apply .mb-6;
+}
+
 /* ------------------------------- Components ------------------------------- */
 .btn {
   @apply text-grey-darkest;

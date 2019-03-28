@@ -27,7 +27,7 @@ features:
 
     Parametrize the model with material parameters, boundary conditions and source terms.
   visual:
-    permalink: "/docs/tools/meshing/extract-surface/TopBottomSideSurface.png"
+    permalink: "/docs/tools/meshing-submeshes/extract-surface/TopBottomSideSurface.png"
     alt: Extracted surfaces
   links:
     - text: See Docs
