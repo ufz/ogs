@@ -31,7 +31,7 @@ attribute the work of the OpenGeoSys Community especially in scientific
 publications. See the [LICENSE.txt][license-source] for the license text.
 
 [ogs]: http://www.opengeosys.org
-[documentation]: https://www..opengeosys.org/docs/
+[documentation]: https://www.opengeosys.org/docs/
 [jenkins-ci]: https://jenkins.opengeosys.org/job/ufz/job/ogs/job/master/
 [docs]: http://doxygen.opengeosys.org
 [license-source]: https://github.com/ufz/ogs/blob/master/LICENSE.txt
