@@ -93,7 +93,7 @@ int VtkImageDataToPointCloudFilter::RequestData(
         }
         float const val(((float*)pixvals)[i * n_comp]);
         double const calc_gamma = (IsLinear) ? 1 : Gamma;
-        double const pnts_per_cell = interpolate(range[0], range[1], val, calc_gamma);
+        std::size_t const pnts_per_cell = interpolate(range[0], range[1], val, calc_gamma);
         density.push_back(static_cast<std::size_t>(
             std::floor(pnts_per_cell * GetPointScaleFactor())));
     }

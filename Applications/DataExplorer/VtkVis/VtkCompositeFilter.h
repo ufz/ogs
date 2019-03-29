@@ -67,7 +67,7 @@ public:
 
 protected:
     /// Calculates a 1/200th of the largest extension of the bounding box (this is used as default radius for various filters)
-    float GetInitialRadius() const;
+    double GetInitialRadius() const;
 
     /// See [vtkSetGet.h](https://github.com/Kitware/VTK/blob/master/Common/Core/vtkSetGet.h)
     /// for the defines

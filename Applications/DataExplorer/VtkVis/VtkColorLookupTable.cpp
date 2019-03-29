@@ -148,7 +148,7 @@ void VtkColorLookupTable::GetTableValue(vtkIdType idx, unsigned char rgba[4])
     vtkLookupTable::GetTableValue(idx, value);
 
     for (unsigned i=0; i<4; ++i)
-        rgba[i] = value[i]*255.0;
+        rgba[i] = static_cast<unsigned char>(value[i]*255.0);
 }
 
 void VtkColorLookupTable::setColor(double pos, DataHolderLib::Color const& color)

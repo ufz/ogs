@@ -88,7 +88,8 @@ void VtkCompositeGeoObjectFilter::init()
 
 void VtkCompositeGeoObjectFilter::SetIndex(std::size_t idx)
 {
-    _threshold->ThresholdBetween(idx, idx);
+    double const d_idx = static_cast<double>(idx);
+    _threshold->ThresholdBetween(d_idx, d_idx);
 }
 
 

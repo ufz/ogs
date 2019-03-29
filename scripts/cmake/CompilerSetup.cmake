@@ -128,6 +128,9 @@ if(MSVC)
         # std::numeric_limits<T>::min() / max()
         -DNOMINMAX
         -DBOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE # when VC is newer than Boost
+        # Disables all warnings coming from include with <>-syntax
+        # https://devblogs.microsoft.com/cppblog/broken-warnings-theory/
+        /experimental:external /external:anglebrackets /external:W0
     )
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /ignore:4099")
 endif()

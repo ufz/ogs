@@ -228,7 +228,7 @@ MeshLib::Mesh* RasterToMesh::convert(
             auto* const prop_vec = properties.createNewPropertyVector<int>(
                 array_name, MeshLib::MeshItemType::Cell, 1);
             fillPropertyVector<int>(*prop_vec, img, header, elem_type);
-            ex.searchByPropertyValue<int>(array_name, header.no_data);
+            ex.searchByPropertyValue<int>(array_name, static_cast<int>(header.no_data));
         }
         else
         {
