@@ -22,6 +22,39 @@
 namespace FileIO {
 CsvInterface::CsvInterface() = default;
 
+std::vector<std::string> CsvInterface::getColumnNames(std::string const& fname,
+                                                      char const delim)
+{
+    std::ifstream in(fname.c_str());
+
+    if (!in.is_open())
+    {
+        ERR("CsvInterface::readPoints(): Could not open file %s.",
+            fname.c_str());
+        return std::vector<std::string>();
+    }
+    std::string line;
+    if (!getline(in, line))
+        return {};
+
+    std::list<std::string> fields;
+    if (delim != '\n')
+        fields = BaseLib::splitString(line, delim);
+
+    if (fields.size() < 2)
+    {
+        for (char const d : {'\t', ';', ','})
+        {
+            fields = BaseLib::splitString(line, d);
+            if (fields.size() > 1)
+            {
+                break;
+            }
+        }
+    }
+    return {begin(fields), end(fields)};
+}
+
 int CsvInterface::readPoints(std::string const& fname, char delim,
                              std::vector<GeoLib::Point*> &points)
 {
