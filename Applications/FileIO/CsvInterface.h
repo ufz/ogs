@@ -48,6 +48,11 @@ public:
     /// Returns the number of vectors currently staged for writing.
     std::size_t getNArrays() const { return _vec_names.size(); }
 
+    /// Returns a vector containing the names of columns in the file (assuming
+    /// the file *has* a header)
+    static std::vector<std::string> getColumnNames(std::string const& fname,
+                                                   char delim);
+
     /// Adds an index vector of size s to the CSV file
     void addIndexVectorForWriting(std::size_t s);
 

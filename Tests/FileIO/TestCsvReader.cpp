@@ -168,15 +168,20 @@ TEST_F(CsvInterfaceTest, CoordinateOrder)
 /// Getting single columns
 TEST_F(CsvInterfaceTest, GetColumn)
 {
+    std::vector<std::string> columns =
+        FileIO::CsvInterface::getColumnNames(_file_name, '\t');
+    ASSERT_EQ(7, columns.size());
     std::vector<std::string> names;
-    _result = FileIO::CsvInterface::readColumn<std::string>(_file_name, '\t', names, "name");
+    _result = FileIO::CsvInterface::readColumn<std::string>(_file_name, '\t', names, columns[4]);
     ASSERT_EQ(0, _result);
     ASSERT_EQ(10, names.size());
+    ASSERT_EQ("test_j", names[9]);
 
     std::vector<double> values;
-    _result = FileIO::CsvInterface::readColumn<double>(_file_name, '\t', values, "value_two");
+    _result = FileIO::CsvInterface::readColumn<double>(_file_name, '\t', values, columns[6]);
     ASSERT_EQ(2, _result);
     ASSERT_EQ(8, values.size());
+    ASSERT_NEAR(135, values[1], std::numeric_limits<double>::epsilon());
 }
 
 /// Dealing with non-existing column
