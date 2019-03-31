@@ -8,3 +8,5 @@ target_link_libraries(ThermoHydroMechanics
     PUBLIC ProcessLib
     PRIVATE ParameterLib
 )
+
+include(Tests.cmake)
