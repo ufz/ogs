@@ -96,6 +96,9 @@
 #ifdef OGS_BUILD_PROCESS_THERMALTWOPHASEFLOWWITHPP
 #include "ProcessLib/ThermalTwoPhaseFlowWithPP/CreateThermalTwoPhaseFlowWithPPProcess.h"
 #endif
+#ifdef OGS_BUILD_PROCESS_THERMOHYDROMECHANICS
+#include "ProcessLib/ThermoHydroMechanics/CreateThermoHydroMechanicsProcess.h"
+#endif
 #ifdef OGS_BUILD_PROCESS_THERMOMECHANICALPHASEFIELD
 #include "ProcessLib/ThermoMechanicalPhaseField/CreateThermoMechanicalPhaseFieldProcess.h"
 #endif
@@ -737,6 +740,34 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                     OGS_FATAL(
                         "SMALL_DEFORMATION_WITH_LIE process does not support "
                         "given dimension");
+            }
+        }
+        else
+#endif
+#ifdef OGS_BUILD_PROCESS_THERMOHYDROMECHANICS
+            if (type == "THERMO_HYDRO_MECHANICS")
+        {
+            //! \ogs_file_param{prj__processes__process__THERMO_HYDRO_MECHANICS__dimension}
+            switch (process_config.getConfigParameter<int>("dimension"))
+            {
+                case 2:
+                    process = ProcessLib::ThermoHydroMechanics::
+                        createThermoHydroMechanicsProcess<2>(
+                            *_mesh_vec[0], std::move(jacobian_assembler),
+                            _process_variables, _parameters, integration_order,
+                            process_config);
+                    break;
+                case 3:
+                    process = ProcessLib::ThermoHydroMechanics::
+                        createThermoHydroMechanicsProcess<3>(
+                            *_mesh_vec[0], std::move(jacobian_assembler),
+                            _process_variables, _parameters, integration_order,
+                            process_config);
+                    break;
+                default:
+                    OGS_FATAL(
+                        "THERMO_HYDRO_MECHANICS process does not support given "
+                        "dimension");
             }
         }
         else
