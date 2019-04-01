@@ -266,12 +266,12 @@ int NetCdfConfigureDialog::getTimeStep()
 {
     NcVar* timeVar = _currentFile->get_var(comboBoxDim2->currentIndex());
 
-    int const datesToMinutes = convertDateToMinutes(_currentInitialDateTime,dateTimeEditDim3->date(),dateTimeEditDim3->time());
+    double const datesToMinutes = convertDateToMinutes(_currentInitialDateTime,dateTimeEditDim3->date(),dateTimeEditDim3->time());
 
-    int timeArray[1] = {datesToMinutes};
-    int currentTime = timeVar->get_index(timeArray);
+    double timeArray[1] = {datesToMinutes};
+    double currentTime = timeVar->get_index(timeArray);
     if (currentTime < 0) currentTime=0; //if the value isn't found in the array, set it to 0 as default...
-    return currentTime;
+    return static_cast<int>(currentTime);
 }
 
 int NetCdfConfigureDialog::getDim4() const

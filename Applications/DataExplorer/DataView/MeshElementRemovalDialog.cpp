@@ -92,12 +92,20 @@ void MeshElementRemovalDialog::accept()
             min_val = this->insideScalarMinEdit->text().toDouble();
             max_val = this->insideScalarMaxEdit->text().toDouble();
         }
-        std::size_t n_marked_elements =
-            ex.searchByPropertyValueRange<double>(array_name, min_val, max_val, outside);
 
-        if (n_marked_elements == 0)
-            n_marked_elements =
-                ex.searchByPropertyValueRange<int>(array_name, min_val, max_val, outside);
+        std::size_t n_marked_elements(0);
+        if (msh->getProperties().existsPropertyVector<double>(array_name))
+        {
+            n_marked_elements = ex.searchByPropertyValueRange<double>(
+                array_name, min_val, max_val, outside);
+        }
+        if (msh->getProperties().existsPropertyVector<int>(array_name))
+        {
+            int const lbound = static_cast<int>(min_val);
+            int const rbound = static_cast<int>(max_val);
+            n_marked_elements = ex.searchByPropertyValueRange<int>(
+                array_name, lbound, rbound, outside);
+        }
 
         if (n_marked_elements > 0)
             anything_checked = true;

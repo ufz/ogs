@@ -53,7 +53,7 @@ void VtkColorLookupTable::Build()
     double range[2];
     this->GetTableRange(range);
     const double interval = range[1]-range[0];
-    this->SetNumberOfTableValues(ceil(interval)+1);
+    this->SetNumberOfTableValues(static_cast<vtkIdType>(ceil(interval))+1);
 //    const vtkIdType nColours = this->GetNumberOfTableValues();
     if (!_dict.empty())
     {
