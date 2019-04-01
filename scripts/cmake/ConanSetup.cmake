@@ -33,7 +33,7 @@ set(CONAN_REQUIRES
 
 set(CONAN_OPTIONS
     boost:header_only=True
-    Qt:qtxmlpatterns=True
+    qt:qtxmlpatterns=True
     VTK:minimal=True
     VTK:ioxml=True
     CACHE INTERNAL ""
@@ -66,12 +66,15 @@ if(OGS_BUILD_GUI)
     set(CONAN_REQUIRES ${CONAN_REQUIRES}
         Shapelib/1.3.0@bilke/stable
         libgeotiff/1.4.2@bilke/stable
-        Qt/5.11.2@bilke/stable
+        qt/5.12.2@bincrafters/stable
         lzma/5.2.4@bincrafters/stable # 5.2.3 is not built for Xcode 10
     )
     set(CONAN_OPTIONS ${CONAN_OPTIONS}
         VTK:minimal=False
         VTK:qt=True
+        qt:with_sqlite3=False
+        qt:with_mysql=False
+        qt:with_odbc=False
     )
 endif()
 
