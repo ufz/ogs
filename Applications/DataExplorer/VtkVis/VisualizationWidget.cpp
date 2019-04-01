@@ -85,6 +85,9 @@ VisualizationWidget::VisualizationWidget(QWidget* parent /*= 0*/)
     // Set alternate cursor shapes
     connect(_interactorStyle, SIGNAL(cursorChanged(Qt::CursorShape)),
             this, SLOT(setCursorShape(Qt::CursorShape)));
+
+    connect((QObject*)_interactorStyle, SIGNAL(requestViewUpdate()),
+            this, SLOT(updateView()));
 }
 
 VisualizationWidget::~VisualizationWidget()
