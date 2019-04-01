@@ -178,7 +178,7 @@ findNonGhostNodesInPartition(
     return {base_nodes, higher_order_nodes};
 }
 
-int numberOfRegularNodes(
+std::ptrdiff_t numberOfRegularNodes(
     MeshLib::Element const& e, std::size_t const part_id,
     std::vector<std::size_t> const& partition_ids,
     std::vector<std::size_t> const* node_id_mapping = nullptr)
@@ -217,7 +217,8 @@ findElementsInPartition(
             continue;
         }
 
-        if (regular_nodes == static_cast<int>(elem->getNumberOfNodes()))
+        if (regular_nodes ==
+            static_cast<std::ptrdiff_t>(elem->getNumberOfNodes()))
         {
             regular_elements.push_back(elem);
         }
