@@ -11,7 +11,14 @@ aliases = [ "/docs/tools/" ]
     parent = "getting-started"
 +++
 
-Here is an overview of the currently available tools, that might help you to construct your OpenGeoSys model. You'll find examples and applications of the tools. Choose the appropriate tool to the left. Ready to use binaries can be downloaded on the [Releases](/releases)-page. The second possibility to obtain the tools is to check out OGS sources and compile the tools.
+Here is an overview of the currently available command line tools, that might help you to construct your OpenGeoSys model. GUI-based tools are available too:
+
+- OpenGeoSys Data Explorer -- [Manual](https://jenkins.opengeosys.org/job/ufz/job/data_explorer_manual/job/master/lastSuccessfulBuild/artifact/DataExplorer-Manual.pdf) / [Download](/releases)
+- [GINA by BGR](https://teambeam.bgr.de/my/drive/folder/68)
+
+----
+
+You'll find examples and applications of the tools. Choose the appropriate tool to the left. Ready to use binaries can be downloaded on the [Releases](/releases)-page. The second possibility to obtain the tools is to check out OGS sources and compile the tools.
 
 Feel free to get in touch with us if you have any issues with any tool.
 

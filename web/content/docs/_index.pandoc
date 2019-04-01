@@ -20,9 +20,9 @@ text = "Basic benchmarks are explained and input files are provided to get you s
 icon = "fal fa-rabbit-fast"
 
 [[sections]]
-name = "Tools"
+name = "Tools & Workflows"
 url = "/docs/tools"
-text = "Helpful tools for pre- and postprocessing."
+text = "Helpful tools for pre- and postprocessing as well as complete model setup workflows."
 icon = "fal fa-tools"
 
 [[sections]]
