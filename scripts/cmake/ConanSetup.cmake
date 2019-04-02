@@ -26,7 +26,7 @@ include(${PROJECT_SOURCE_DIR}/scripts/cmake/conan/conan.cmake)
 
 set(CONAN_REQUIRES
     boost/1.66.0@conan/stable
-    Eigen3/3.3.4@bilke/stable
+    eigen/3.3.4@conan/stable
     vtk/8.2.0@bilke/stable
     CACHE INTERNAL ""
 )
