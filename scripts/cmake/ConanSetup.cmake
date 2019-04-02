@@ -27,7 +27,7 @@ include(${PROJECT_SOURCE_DIR}/scripts/cmake/conan/conan.cmake)
 set(CONAN_REQUIRES
     boost/1.66.0@conan/stable
     Eigen3/3.3.4@bilke/stable
-    VTK/8.1.1@bilke/stable
+    vtk/8.2.0@bilke/stable
     CACHE INTERNAL ""
 )
 
@@ -39,11 +39,11 @@ set(CONAN_OPTIONS
 )
 
 if((UNIX AND NOT APPLE) AND BUILD_SHARED_LIBS)
-    set(CONAN_OPTIONS ${CONAN_OPTIONS} VTK:fPIC=True)
+    set(CONAN_OPTIONS ${CONAN_OPTIONS} vtk:fPIC=True)
 endif()
 
 if(OGS_USE_MPI)
-    set(CONAN_OPTIONS ${CONAN_OPTIONS} VTK:mpi_minimal=True)
+    set(CONAN_OPTIONS ${CONAN_OPTIONS} vtk:mpi_minimal=True)
 endif()
 
 if(OGS_USE_PETSC)
@@ -68,9 +68,11 @@ if(OGS_BUILD_GUI)
         qt/5.11.3@bincrafters/stable
     )
     set(CONAN_OPTIONS ${CONAN_OPTIONS}
-        VTK:minimal=False
-        VTK:qt=True
-        qt:qtxmlpatterns=True
+        vtk:minimal=False
+        vtk:qt=True
+        qt:with_sqlite3=False
+        qt:with_mysql=False
+        qt:with_odbc=False
     )
 endif()
 
