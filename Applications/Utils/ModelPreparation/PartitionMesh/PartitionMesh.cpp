@@ -174,10 +174,9 @@ int main(int argc, char* argv[])
     {
         std::unique_ptr<MeshLib::Mesh> mesh(
             MeshLib::IO::readMeshFromFile(filename));
-        INFO("Mesh '%s' read: %d nodes, %d elements.",
-             mesh->getName().c_str(),
-             mesh->getNumberOfNodes(),
-             mesh->getNumberOfElements());
+        INFO("Mesh '%s' from file '%s' read: %d nodes, %d elements.",
+             mesh->getName().c_str(), filename.c_str(),
+             mesh->getNumberOfNodes(), mesh->getNumberOfElements());
 
         std::string const other_mesh_output_file_name_wo_extension =
             BaseLib::joinPaths(
