@@ -90,7 +90,7 @@ int VtkSurfacesSource::RequestData( vtkInformation* request,
         newPoints->SetPoint(i, coords);
     }
 
-    vtkIdType count(0);
+    int count(0);
     for (auto surface : *_surfaces)
     {
         const std::size_t nTriangles = surface->getNumberOfTriangles();

@@ -33,8 +33,7 @@ VtkCompositeFilter::~VtkCompositeFilter()
     _outputAlgorithm->Delete();
 }
 
-
-float VtkCompositeFilter::GetInitialRadius() const
+double VtkCompositeFilter::GetInitialRadius() const
 {
     double bounding_box[6];
     static_cast<vtkPolyData*>(this->_inputAlgorithm->GetOutputDataObject(0))->GetBounds(bounding_box);

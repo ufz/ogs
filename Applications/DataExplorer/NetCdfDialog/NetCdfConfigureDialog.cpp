@@ -148,9 +148,9 @@ void NetCdfConfigureDialog::on_comboBoxDim4_currentIndexChanged(int id)
         unsigned size = 0;
         getDimEdges(id,size,firstValue,lastValue);
         // WARNING: Implicit conversion to int in spinBoxDim4->set*()
-        spinBoxDim4->setValue(firstValue);
-        spinBoxDim4->setMinimum(firstValue);
-        spinBoxDim4->setMaximum(lastValue);
+        spinBoxDim4->setValue(static_cast<int>(firstValue));
+        spinBoxDim4->setMinimum(static_cast<int>(firstValue));
+        spinBoxDim4->setMaximum(static_cast<int>(lastValue));
     }
 }
 
@@ -256,7 +256,7 @@ void NetCdfConfigureDialog::getDaysTime(double minSince, QTime &time, int &days)
 
 long NetCdfConfigureDialog::convertDateToMinutes(QDateTime initialDateTime, QDate selectedDate, QTime selectedTime)
 {
-    int tmpInitialToSelectedDate = (selectedDate.daysTo(initialDateTime.date()));
+    long tmpInitialToSelectedDate = static_cast<long>(selectedDate.daysTo(initialDateTime.date()));
     long selectedDays = - tmpInitialToSelectedDate * 24 * 60;
     long selectedMinutes = (selectedTime.hour() * 60) + selectedTime.minute() + selectedDays;
     return selectedMinutes;
@@ -266,19 +266,19 @@ int NetCdfConfigureDialog::getTimeStep()
 {
     NcVar* timeVar = _currentFile->get_var(comboBoxDim2->currentIndex());
 
-    const double datesToMinutes = convertDateToMinutes(_currentInitialDateTime,dateTimeEditDim3->date(),dateTimeEditDim3->time());
+    double const datesToMinutes = convertDateToMinutes(_currentInitialDateTime,dateTimeEditDim3->date(),dateTimeEditDim3->time());
 
     double timeArray[1] = {datesToMinutes};
     double currentTime = timeVar->get_index(timeArray);
     if (currentTime < 0) currentTime=0; //if the value isn't found in the array, set it to 0 as default...
-    return currentTime;
+    return static_cast<int>(currentTime);
 }
 
 int NetCdfConfigureDialog::getDim4() const
 {
     NcVar* dim3Var = _currentFile->get_var(comboBoxDim4->currentIndex());
-    double timeArray[1] = {static_cast<double>(spinBoxDim4->value())};
-    double currentValueDim3 = dim3Var->get_index(timeArray);
+    int timeArray[1] = {spinBoxDim4->value()};
+    int currentValueDim3 = dim3Var->get_index(timeArray);
     if (currentValueDim3 < 0) currentValueDim3=0; //if the value isn't found in the array, set it to 0 as default...
     return currentValueDim3;
 }

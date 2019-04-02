@@ -72,7 +72,7 @@ vtkImageImport* VtkRaster::loadImageFromArray(double const*const data_array, Geo
 {
     const unsigned length = header.n_rows * header.n_cols * header.n_depth;
     auto* data = new float[length * 2];
-    float max_val = *std::max_element(data_array, data_array+length);
+    float max_val = static_cast<float>(*std::max_element(data_array, data_array+length));
     for (unsigned j=0; j<length; ++j)
     {
         data[j*2] = static_cast<float>(data_array[j]);
@@ -180,9 +180,9 @@ vtkImageImport* VtkRaster::loadImageFromTIFF(const std::string &fileName,
                     if (photometric==1 && colormap_used==1)
                     {
                         int idx = TIFFGetR(pixVal[pxl_idx]);
-                        data[pos]   = cmap_red[idx] >> 8;
-                        data[pos+1] = cmap_green[idx] >> 8;
-                        data[pos+2] = cmap_blue[idx] >> 8;
+                        data[pos]   = static_cast<float>(cmap_red[idx] >> 8);
+                        data[pos+1] = static_cast<float>(cmap_green[idx] >> 8);
+                        data[pos+2] = static_cast<float>(cmap_blue[idx] >> 8);
                         data[pos+3] = 1;
                     }
                     else

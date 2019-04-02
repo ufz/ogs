@@ -53,7 +53,7 @@ void VtkColorLookupTable::Build()
     double range[2];
     this->GetTableRange(range);
     const double interval = range[1]-range[0];
-    this->SetNumberOfTableValues(ceil(interval)+1);
+    this->SetNumberOfTableValues(static_cast<vtkIdType>(ceil(interval))+1);
 //    const vtkIdType nColours = this->GetNumberOfTableValues();
     if (!_dict.empty())
     {
@@ -148,7 +148,7 @@ void VtkColorLookupTable::GetTableValue(vtkIdType idx, unsigned char rgba[4])
     vtkLookupTable::GetTableValue(idx, value);
 
     for (unsigned i=0; i<4; ++i)
-        rgba[i] = value[i]*255.0;
+        rgba[i] = static_cast<unsigned char>(value[i]*255.0);
 }
 
 void VtkColorLookupTable::setColor(double pos, DataHolderLib::Color const& color)
