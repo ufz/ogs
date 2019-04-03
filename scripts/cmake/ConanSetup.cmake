@@ -70,9 +70,7 @@ if(OGS_BUILD_GUI)
     set(CONAN_OPTIONS ${CONAN_OPTIONS}
         vtk:minimal=False
         vtk:qt=True
-        qt:with_sqlite3=False
-        qt:with_mysql=False
-        qt:with_odbc=False
+        qt:qtxmlpatterns=True
     )
 endif()
 

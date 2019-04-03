@@ -60,8 +60,6 @@ if(OGS_USE_NETCDF)
 endif()
 
 if(NOT APPLE AND OGS_USE_CONAN)
-    # HACK for unresolved external
-    target_link_libraries(DataExplorer vtkGUISupportQt-8.1)
     if(UNIX)
         target_link_libraries(DataExplorer Qt5::X11Extras)
     endif()
