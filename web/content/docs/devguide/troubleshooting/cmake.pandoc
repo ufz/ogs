@@ -33,4 +33,11 @@ cmake ../ogs -DOGS_USE_PETSC=ON
 make
 ```
 
+The following options are affected by this behavior and **should not be changed** after initially set (this means **do not** use `ccmake` or CMake-GUI for the first CMake run):
+
+- `OGS_BUILD_GUI`
+- `OGS_USE_PETSC`
+- `CMAKE_BUILD_TYPE`
+- `BUILD_SHARED_LIBS`
+
 Check also [Conans troubleshooting page]({{< ref "conan.pandoc" >}}) if you use Conan for dependencies.
