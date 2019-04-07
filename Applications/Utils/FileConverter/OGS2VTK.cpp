@@ -44,6 +44,12 @@ int main (int argc, char* argv[])
         "the name of the file the mesh will be written to", true, "",
         "file name of output mesh");
     cmd.add(mesh_out);
+    TCLAP::ValueArg<bool> use_ascii_arg(
+        "", "ascii_output",
+        "Use ascii format for data in the vtu output. Due to possible rounding "
+        "the ascii output could result in lower accuracy.",
+        false, false, "boolean value");
+    cmd.add(use_ascii_arg);
     cmd.parse(argc, argv);
 
     std::unique_ptr<MeshLib::Mesh const> mesh(
@@ -55,8 +61,10 @@ int main (int argc, char* argv[])
     INFO("Mesh read: %d nodes, %d elements.", mesh->getNumberOfNodes(),
          mesh->getNumberOfElements());
 
-    MeshLib::IO::VtuInterface vtu(mesh.get());
-    vtu.writeToFile(mesh_out.getValue());
+    auto const data_mode =
+        use_ascii_arg.getValue() ? vtkXMLWriter::Ascii : vtkXMLWriter::Binary;
+
+    MeshLib::IO::writeVtu(*mesh, mesh_out.getValue(), data_mode);
 
     return EXIT_SUCCESS;
 }

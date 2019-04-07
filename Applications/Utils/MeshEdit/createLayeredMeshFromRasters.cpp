@@ -24,7 +24,7 @@
 #include "BaseLib/FileTools.h"
 
 #include "MeshLib/IO/readMeshFromFile.h"
-#include "MeshLib/IO/writeMeshToFile.h"
+#include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "Applications/FileIO/AsciiRasterInterface.h"
 
 #include "MeshLib/Mesh.h"
@@ -98,6 +98,13 @@ int main (int argc, char* argv[])
         false, min_thickness, "minimum layer thickness");
     cmd.add(min_thickness_arg);
 
+    TCLAP::ValueArg<bool> use_ascii_arg(
+        "", "ascii_output",
+        "Use ascii format for data in the vtu output. Due to possible rounding "
+        "the ascii output could result in lower accuracy.",
+        false, false, "boolean value");
+    cmd.add(use_ascii_arg);
+
     cmd.parse(argc, argv);
 
     if (min_thickness_arg.isSet())
@@ -149,9 +156,15 @@ int main (int argc, char* argv[])
     {
         output_name.append(".vtu");
     }
+
     INFO("Writing mesh '%s' ... ", output_name.c_str());
-    MeshLib::IO::writeMeshToFile(*(mapper.getMesh("SubsurfaceMesh").release()),
-                                 output_name);
+    auto result_mesh = std::make_unique<MeshLib::Mesh>(
+        *(mapper.getMesh("SubsurfaceMesh").release()));
+
+    auto const data_mode =
+        use_ascii_arg.getValue() ? vtkXMLWriter::Ascii : vtkXMLWriter::Binary;
+
+    MeshLib::IO::writeVtu(*result_mesh, output_name, data_mode);
     INFO("done.");
 
     return EXIT_SUCCESS;
