@@ -271,7 +271,7 @@ bool Polygon::getNextIntersectionPointPolygonLine(
     return false;
 }
 
-EdgeType Polygon::getEdgeType (std::size_t k, GeoLib::Point const & pnt) const
+EdgeType Polygon::getEdgeType(std::size_t k, GeoLib::Point const& pnt) const
 {
     switch (getLocationOfPoint(k, pnt))
     {
