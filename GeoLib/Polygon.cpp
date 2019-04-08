@@ -123,7 +123,6 @@ bool Polygon::isPntInPolygon(GeoLib::Point const& pnt) const
                 return true;
             }
         }
-        return false;
     }
     return false;
 }
