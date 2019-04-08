@@ -68,8 +68,8 @@ void resetMeshElementProperty(MeshLib::Mesh& mesh,
     {
         MeshLib::Element const* const elem(mesh.getElements()[j]);
         if (std::all_of(elem->getNodes(),
-                         elem->getNodes() + elem->getNumberOfNodes(),
-                         is_node_outside))
+                        elem->getNodes() + elem->getNumberOfNodes(),
+                        is_node_outside))
         {
             continue;
         }
