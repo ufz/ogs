@@ -70,7 +70,7 @@ bool Polygon::initialise ()
     return false;
 }
 
-bool Polygon::isPntInPolygon (GeoLib::Point const & pnt) const
+bool Polygon::isPntInPolygon(GeoLib::Point const& pnt) const
 {
     MathLib::Point3d const& min_aabb_pnt(_aabb.getMinPoint());
     MathLib::Point3d const& max_aabb_pnt(_aabb.getMaxPoint());
@@ -81,24 +81,29 @@ bool Polygon::isPntInPolygon (GeoLib::Point const & pnt) const
         return false;
     }
 
-    if (_simple_polygon_list.size() == 1) {
+    if (_simple_polygon_list.size() == 1)
+    {
         std::size_t n_intersections(0);
-        const std::size_t n_nodes (getNumberOfPoints() - 1);
-        for (std::size_t k(0); k < n_nodes; k++) {
-            if (((*(getPoint(k)))[1] <= pnt[1] && pnt[1] <= (*(getPoint(k + 1)))[1]) ||
-                ((*(getPoint(k + 1)))[1] <= pnt[1] && pnt[1] <= (*(getPoint(k)))[1])) {
+        const std::size_t n_nodes(getNumberOfPoints() - 1);
+        for (std::size_t k(0); k < n_nodes; k++)
+        {
+            if (((*(getPoint(k)))[1] <= pnt[1] &&
+                 pnt[1] <= (*(getPoint(k + 1)))[1]) ||
+                ((*(getPoint(k + 1)))[1] <= pnt[1] &&
+                 pnt[1] <= (*(getPoint(k)))[1]))
+            {
                 switch (getEdgeType(k, pnt))
                 {
-                case EdgeType::TOUCHING:
-                    return true;
-                case EdgeType::CROSSING:
-                    n_intersections++;
-                    break;
-                case EdgeType::INESSENTIAL:
-                    break;
-                default:
-                    // do nothing
-                    ;
+                    case EdgeType::TOUCHING:
+                        return true;
+                    case EdgeType::CROSSING:
+                        n_intersections++;
+                        break;
+                    case EdgeType::INESSENTIAL:
+                        break;
+                    default:
+                        // do nothing
+                        ;
                 }
             }
         }
@@ -106,7 +111,9 @@ bool Polygon::isPntInPolygon (GeoLib::Point const & pnt) const
         {
             return true;
         }
-    } else {
+    }
+    else
+    {
         for (auto it(_simple_polygon_list.begin()++);
              it != _simple_polygon_list.end();
              ++it)
@@ -124,7 +131,7 @@ bool Polygon::isPntInPolygon (GeoLib::Point const & pnt) const
 bool Polygon::isPntInPolygon(double x, double y, double z) const
 {
     const GeoLib::Point pnt(x,y,z);
-    return isPntInPolygon (pnt);
+    return isPntInPolygon(pnt);
 }
 
 std::vector<GeoLib::Point> Polygon::getAllIntersectionPoints(
