@@ -10,7 +10,7 @@
     node_modules/.bin/hugo-algolia --toml -s"""
 
 [build.environment] # global variables
-  HUGO_VERSION = "0.53"
+  HUGO_VERSION = "0.54.0"
   GIT_LFS_ENABLED = "true"
 
 [context.production.environment]
