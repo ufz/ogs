@@ -142,13 +142,11 @@ std::vector<std::size_t> const& MeshNodeSearcher::getMeshNodeIDsAlongSurface(
 MeshNodesOnPoint& MeshNodeSearcher::getMeshNodesOnPoint(
     GeoLib::Point const& pnt) const
 {
-    std::vector<MeshNodesOnPoint*>::const_iterator it(
-        _mesh_nodes_on_points.begin());
-    for (; it != _mesh_nodes_on_points.end(); ++it)
+    for (auto const& mesh_nodes_on_point : _mesh_nodes_on_points)
     {
-        if (&(*it)->getPoint() == &pnt)
+        if (&(mesh_nodes_on_point->getPoint()) == &pnt)
         {
-            return *(*it);
+            return *mesh_nodes_on_point;
         }
     }
 
@@ -164,14 +162,11 @@ MeshNodesOnPoint& MeshNodeSearcher::getMeshNodesOnPoint(
 MeshNodesAlongPolyline& MeshNodeSearcher::getMeshNodesAlongPolyline(
     GeoLib::Polyline const& ply) const
 {
-    std::vector<MeshNodesAlongPolyline*>::const_iterator it(
-        _mesh_nodes_along_polylines.begin());
-    for (; it != _mesh_nodes_along_polylines.end(); ++it)
+    for (auto const& mesh_nodes_along_polyline : _mesh_nodes_along_polylines)
     {
-        if (&(*it)->getPolyline() == &ply)
+        if (&(mesh_nodes_along_polyline->getPolyline()) == &ply)
         {
-            // we calculated mesh nodes for this polyline already
-            return *(*it);
+            return *mesh_nodes_along_polyline;
         }
     }
 
@@ -185,14 +180,11 @@ MeshNodesAlongPolyline& MeshNodeSearcher::getMeshNodesAlongPolyline(
 MeshNodesAlongSurface& MeshNodeSearcher::getMeshNodesAlongSurface(
     GeoLib::Surface const& sfc) const
 {
-    std::vector<MeshNodesAlongSurface*>::const_iterator it(
-        _mesh_nodes_along_surfaces.begin());
-    for (; it != _mesh_nodes_along_surfaces.end(); ++it)
+    for (auto const& mesh_nodes_along_surface : _mesh_nodes_along_surfaces)
     {
-        if (&(*it)->getSurface() == &sfc)
+        if (&(mesh_nodes_along_surface->getSurface()) == &sfc)
         {
-            // we calculated mesh nodes on this surface already
-            return *(*it);
+            return *mesh_nodes_along_surface;
         }
     }
 
