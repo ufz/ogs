@@ -17,7 +17,7 @@
 
 /**
  * \brief A validator for an input field which only accepts decimals.
- * Source code adapted from [Qt developer fac](http://developer.qt.nokia.com/faq/answer/i_can_still_insert_numbers_outside_the_range_specified_with_a_qdoublevalida)
+ * Source code adapted from [StackOverflow](https://stackoverflow.com/questions/19571033/allow-entry-in-qlineedit-only-within-range-of-qdoublevalidator)
  */
 class StrictDoubleValidator : public QDoubleValidator
 {
@@ -34,8 +34,20 @@ public:
     {
         if (input.isEmpty() || input == "." || input == "-") return Intermediate;
 
-        if (QDoubleValidator::validate(input, pos) != Acceptable)
-            return Invalid;
-        return Acceptable;
+        QChar const decimalPoint('.');
+        if (input.indexOf(decimalPoint) != -1)
+        {
+            int const charsAfterPoint = input.length() - input.indexOf(decimalPoint) - 1;
+            if (charsAfterPoint > decimals())
+                return QValidator::Invalid;
+        }
+
+        bool ok;
+        double const d = input.toDouble(&ok);
+
+        if (ok && d >= bottom() && d <= top())
+            return QValidator::Acceptable;
+        else
+            return QValidator::Invalid;
     }
 };

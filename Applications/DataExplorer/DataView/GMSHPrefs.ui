@@ -391,6 +391,9 @@
             <property name="text">
              <string/>
             </property>
+            <property name="maxLength">
+             <number>10</number>
+            </property>
             <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
@@ -400,6 +403,9 @@
            <widget class="QLineEdit" name="param2">
             <property name="text">
              <string/>
+            </property>
+            <property name="maxLength">
+             <number>10</number>
             </property>
             <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
