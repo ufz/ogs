@@ -26,6 +26,7 @@
 #include <vtkImageReader2.h>
 #include <vtkJPEGReader.h>
 #include <vtkPNGReader.h>
+#include <vtkTIFFReader.h>
 
 #ifdef GEOTIFF_FOUND
 #include "geo_tiffp.h"
@@ -60,9 +61,9 @@ vtkImageAlgorithm* VtkRaster::loadImage(const std::string &fileName,
         (void)x0;
         (void)y0;
         (void)delta;
-        ERR("VtkRaster::loadImage(): Tiff file format not supported in this "
-            "version!");
-        return nullptr;
+        ERR("VtkRaster::loadImage(): GeoTiff file format not supported in this "
+            "version! Trying to parse as Tiff-file.");
+        return loadImageFromFile(fileName);
 #endif
     }
 
@@ -102,15 +103,22 @@ vtkImageImport* VtkRaster::loadImageFromArray(double const*const data_array, Geo
 }
 
 #ifdef GEOTIFF_FOUND
-vtkImageImport* VtkRaster::loadImageFromTIFF(const std::string& fileName,
-                                             double& x0, double& y0,
-                                             double& cellsize)
+vtkImageAlgorithm* VtkRaster::loadImageFromTIFF(const std::string& fileName,
+                                                double& x0, double& y0,
+                                                double& cellsize)
 {
     TIFF* tiff = XTIFFOpen(fileName.c_str(), "r");
 
     if (tiff)
     {
         GTIF* geoTiff = GTIFNew(tiff);
+
+        int version[3];
+        int count (0);
+        GTIFDirectoryInfo(geoTiff, version, &count);
+
+        if (count == 0)
+            WARN("VtkRaster::loadImageFromTIFF - file is not georeferenced.");
 
         if (geoTiff)
         {
@@ -244,6 +252,9 @@ vtkImageReader2* VtkRaster::loadImageFromFile(const std::string &fileName)
 
     if (fi.suffix().toLower() == "png")
         image = vtkPNGReader::New();
+    else if ((fi.suffix().toLower() == "tif") ||
+             (fi.suffix().toLower() == "tiff"))
+        image = vtkTIFFReader::New();
     else if ((fi.suffix().toLower() == "jpg") ||
              (fi.suffix().toLower() == "jpeg"))
         image = vtkJPEGReader::New();
@@ -252,7 +263,7 @@ vtkImageReader2* VtkRaster::loadImageFromFile(const std::string &fileName)
     else
     {
         ERR("VtkRaster::readImageFromFile(): File format not supported, please "
-            "convert to BMP, JPG or PNG.");
+            "convert to BMP, JPG, PNG or TIFF.");
         return nullptr;
     }
 
@@ -267,9 +278,10 @@ std::string VtkRaster::findWorldFile(std::string const& filename)
 {
     std::string const no_ext = BaseLib::dropFileExtension(filename);
 
-    std::vector<std::string> supported_extensions =
+    std::vector<std::string> const supported_extensions =
     { ".pgw", ".pngw", ".pgwx",
       ".jgw", ".jpgw", ".jgwx",
+      ".tfw", ".tifw", ".tfwx",
       ".bpw", ".bmpw", ".bpwx",
       ".wld" };
 
