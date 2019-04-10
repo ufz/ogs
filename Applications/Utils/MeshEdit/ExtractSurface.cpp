@@ -37,7 +37,8 @@ int main (int argc, char* argv[])
     TCLAP::CmdLine cmd(
         "Tool extracts the surface of the given mesh. The documentation is "
         "available at "
-        "https://docs.opengeosys.org/docs/tools/meshing/extract-surface.\n\n"
+        "https://docs.opengeosys.org/docs/tools/meshing-submeshes/"
+        "extract-surface.\n\n"
         "OpenGeoSys-6 software, version " +
             BaseLib::BuildInfo::ogs_version +
             ".\n"

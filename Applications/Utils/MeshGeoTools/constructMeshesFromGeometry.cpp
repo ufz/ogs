@@ -34,7 +34,10 @@ int main(int argc, char* argv[])
     ApplicationsLib::LogogSetup logo_setup;
 
     TCLAP::CmdLine cmd(
-        "Converts a geometry defined on a given mesh to distinct meshes.\n\n"
+        "Converts a geometry defined on a given mesh to distinct meshes. The "
+        "documentation is available at "
+        "https://www.opengeosys.org/docs/tools/meshing-submeshes/"
+        "constructmeshesfromgeometry/.\n\n"
         "OpenGeoSys-6 software, version " +
             BaseLib::BuildInfo::ogs_version +
             ".\n"
