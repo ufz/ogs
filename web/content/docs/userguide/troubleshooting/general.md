@@ -1,8 +1,8 @@
 +++
 date = "2018-11-14T11:00:13+01`:00"
-title = "Troubleshooting"
+title = "General"
 author = "Lars Bilke"
-weight = 99
+weight = 1
 toc = true
 
 [menu]
