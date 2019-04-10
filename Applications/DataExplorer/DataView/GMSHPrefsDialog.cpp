@@ -43,11 +43,11 @@ GMSHPrefsDialog::GMSHPrefsDialog(GeoLib::GEOObjects const& geoObjects, QDialog* 
     param1->setValidator (max_number_of_points_in_quadtree_leaf_validator);
     // object will be deleted by Qt
     auto* mesh_density_scaling_pnts_validator(
-        new StrictDoubleValidator(1e-10, 1.0, 5, this->param2));
+        new StrictDoubleValidator(0, 1, 5, this->param2));
     param2->setValidator (mesh_density_scaling_pnts_validator);
     // object will be deleted by Qt#
     auto* mesh_density_scaling_stations_validator(
-        new StrictDoubleValidator(1e-10, 1.0, 5, this->param3));
+        new StrictDoubleValidator(0, 1, 5, this->param3));
     param3->setValidator (mesh_density_scaling_stations_validator);
 
     std::vector<std::string> geoNames;
@@ -147,16 +147,17 @@ void GMSHPrefsDialog::accept()
 
     if (this->radioAdaptive->isChecked())
     {
+        double const min_scaling_factor (1e-10);
         max_number_of_points_in_quadtree_leaf = BaseLib::str2number<unsigned> (
                 param1->text().toStdString().c_str());
         if (max_number_of_points_in_quadtree_leaf == 0)
             max_number_of_points_in_quadtree_leaf = 10;
         mesh_density_scaling_pnts = fabs (param2->text().toDouble());
-        if (mesh_density_scaling_pnts < sqrt(std::numeric_limits<double>::epsilon()))
-            mesh_density_scaling_pnts = 0.5;
+        if (mesh_density_scaling_pnts < min_scaling_factor)
+            mesh_density_scaling_pnts = min_scaling_factor;
         mesh_density_scaling_stations = param3->text().toDouble();
-        if (mesh_density_scaling_stations < sqrt(std::numeric_limits<double>::epsilon()))
-            mesh_density_scaling_stations = 0.05;
+        if (mesh_density_scaling_stations < min_scaling_factor)
+            mesh_density_scaling_stations = min_scaling_factor;
     }
     else
         val4 = param4->text().toDouble();
