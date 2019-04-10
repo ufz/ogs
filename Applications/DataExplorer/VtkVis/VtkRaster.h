@@ -58,8 +58,9 @@ private:
      * \param delta The size of each pixel in the image which is needed for correctly displaying the data.
      * \return A vtkImageImport-object (derived from vtkImageAlgorithm).
      */
-    static vtkImageImport* loadImageFromTIFF(const std::string &fileName,
-                                             double& x0, double& y0, double& delta);
+    static vtkImageAlgorithm* loadImageFromTIFF(const std::string& fileName,
+                                                double& x0, double& y0,
+                                                double& delta);
 #endif
 
     /**
@@ -68,6 +69,20 @@ private:
      * \return vtkImageReader2-object containing the image data.
      */
     static vtkImageReader2* loadImageFromFile(const std::string &fileName);
+
+    /**
+     * Tries to find a world file for the image given by the filename.
+     * World files can have a number of extensions depending on the programme
+     * used to write the image and this method just cycles through the
+     * possibilities, returning the first match it finds.
+     */
+    static std::string findWorldFile(const std::string& filename);
+
+    /**
+     * Tries to find and load the world file associated with a
+     * BMP/JPG/PNG-file and create a RasterHeader for the image.
+     */
+    static bool readWorldFile(std::string const& filename, vtkImageReader2* image);
 
     /// Converts an uint32-number into a quadruple representing RGBA-colours for a pixel.
     static void uint32toRGBA(const unsigned int s, int* p);
