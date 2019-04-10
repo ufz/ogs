@@ -32,6 +32,7 @@ public:
 
     QValidator::State validate(QString& input, int& pos) const override
     {
+        Q_UNUSED(pos);
         if (input.isEmpty() || input == "." || input == "-") return Intermediate;
 
         QChar const decimalPoint('.');
