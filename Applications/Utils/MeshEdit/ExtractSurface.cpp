@@ -120,13 +120,9 @@ int main (int argc, char* argv[])
         out_fname = BaseLib::dropFileExtension(mesh_in.getValue()) + "_sfc.vtu";
     }
 
-    if (use_ascii_arg.getValue())
-    {
-        MeshLib::IO::writeVtu(*surface_mesh, out_fname, vtkXMLWriter::Ascii);
-    }
-    else
-    {
-        MeshLib::IO::writeMeshToFile(*surface_mesh, out_fname);
-    }
+    auto const data_mode =
+        use_ascii_arg.getValue() ? vtkXMLWriter::Ascii : vtkXMLWriter::Binary;
+    MeshLib::IO::writeVtu(*surface_mesh, out_fname, data_mode);
+
     return EXIT_SUCCESS;
 }
