@@ -24,9 +24,6 @@ TreeModelIterator::TreeModelIterator(TreeModel* model)
     if (_model->rootItem()->childCount() > 0)
     {
         _current = _model->rootItem();
-        next(_current);
-        //_parentIndex.push(0);
-        //_currentIndex = 0;
     }
 }
 
