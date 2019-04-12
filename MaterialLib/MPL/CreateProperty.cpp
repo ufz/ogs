@@ -133,11 +133,41 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
 
         MaterialPropertyLib::IndependentVariable const iv{
             ivt, reference_condition, slope};
-        MaterialPropertyLib::LinearProperty linear_property{reference_value,
-                                                            iv};
 
         return std::make_unique<MaterialPropertyLib::LinearProperty>(
             reference_value, iv);
+    }
+
+    if (property_type == "Exponential")
+    {
+        auto const reference_value =
+            //! \ogs_file_param{properties__property__ExponentialProperty__reference_value}
+            config.getConfigParameter<double>("reference_value");
+
+        auto const& exponent_data_config =
+            //!  //\ogs_file_param{properties__property__ExponentialProperty__exponent}
+            config.getConfigSubtree("exponent");
+
+        auto const& variable_name =
+            //! \ogs_file_param{properties__property__ExponentialProperty__exponent__variable_name}
+            exponent_data_config.getConfigParameter<std::string>(
+                "variable_name");
+        auto const reference_condition =
+            //! \ogs_file_param{properties__property__ExponentialProperty__exponent__reference_condition}
+            exponent_data_config.getConfigParameter<double>(
+                "reference_condition");
+        auto const factor =
+            //! \ogs_file_param{properties__property__ExponentialProperty__exponent__factor}
+            exponent_data_config.getConfigParameter<double>("factor");
+
+        MaterialPropertyLib::Variable exp_data_type =
+            MaterialPropertyLib::convertStringToVariable(variable_name);
+
+        MaterialPropertyLib::ExponentData const exp_data{
+            exp_data_type, reference_condition, factor};
+
+        return std::make_unique<MaterialPropertyLib::ExponentialProperty>(
+            reference_value, exp_data);
     }
 
     /* TODO Additional properties go here, for example:
