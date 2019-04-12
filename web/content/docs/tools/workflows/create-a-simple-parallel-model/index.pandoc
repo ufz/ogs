@@ -8,6 +8,12 @@ author = "Thomas Fischer"
     parent = "workflows"
 +++
 
+## Unsupported Processes
+So far, HydroMechanics (including that with LIE) and ThermoHydroMechanics, which
+ use linear element for thermal and hydraulic processes and quadratic element
+ for mechanics process, respectively, can not use the parallel model.
+
+
 ## Software Modules and Compilation on EVE
 
 - Checkout the OGS-6 source code
