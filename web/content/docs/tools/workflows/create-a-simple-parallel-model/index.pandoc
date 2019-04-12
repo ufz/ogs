@@ -8,6 +8,14 @@ author = "Thomas Fischer"
     parent = "workflows"
 +++
 
+## Unsupported Processes
+So far, the parallel FEM scheme with PETSc cannot be used by the all processes
+ using linear and quadratic function spaces simultaneously. They are
+
+- HydroMechanics (including that with LIE)
+- ThermoHydroMechanics
+- RichardsMechanics
+
 ## Software Modules and Compilation on EVE
 
 - Checkout the OGS-6 source code
