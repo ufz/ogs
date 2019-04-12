@@ -148,6 +148,10 @@ std::unique_ptr<Process> createComponentTransportProcess(
         std::copy_n(b.data(), b.size(), specific_body_force.data());
     }
 
+    bool const non_advective_form =
+        //! \ogs_file_param{prj__processes__process__ComponentTransport__non_advective_form}
+        config.getConfigParameter<bool>("non_advective_form", false);
+
     auto media_map =
         MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
 
@@ -159,7 +163,8 @@ std::unique_ptr<Process> createComponentTransportProcess(
         retardation_factor,
         decay_rate,
         specific_body_force,
-        has_gravity};
+        has_gravity,
+        non_advective_form};
 
     SecondaryVariableCollection secondary_variables;
 
