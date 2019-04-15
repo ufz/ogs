@@ -1212,24 +1212,25 @@ void MainWindow::on_actionExportVTK_triggered(bool checked /*= false*/)
     Q_UNUSED(checked)
     QSettings settings;
     int count = 0;
-    QString filename = QFileDialog::getSaveFileName(this,
-                                                    "Export object to vtk-files",
-                                                    settings.value("lastExportedFileDirectory").toString(),
-                                                    "VTK files (*.vtp *.vtu)");
+    QString const filename = QFileDialog::getSaveFileName(
+        this,
+        "Export object to vtk-files",
+        settings.value("lastExportedFileDirectory").toString(),
+        "VTK files (*.vtp *.vtu)");
     if (!filename.isEmpty())
     {
-        QDir dir = QDir(filename);
+        QDir const dir = QDir(filename);
         settings.setValue("lastExportedFileDirectory", dir.absolutePath());
 
-        std::string basename = QFileInfo(filename).path().toStdString();
-        basename.append("/" + QFileInfo(filename).baseName().toStdString());
+        std::string const basename = QFileInfo(filename).path().toStdString() + "/" +
+                                     QFileInfo(filename).baseName().toStdString();
         TreeModelIterator it(_vtkVisPipeline.get());
         ++it;
         while (*it)
         {
-            count++;
-            static_cast<VtkVisPipelineItem*> (*it)->writeToFile(basename
-                                                    + std::to_string(count));
+            std::string const name = basename + std::to_string(++count) + "-" +
+                (*it)->data(0).toString().toStdString();
+            static_cast<VtkVisPipelineItem*>(*it)->writeToFile(name);
             ++it;
         }
     }
