@@ -408,7 +408,7 @@ pipeline {
         stage('Mac') {
           when {
             beforeAgent true
-            expression { return false }
+            expression { return params.mac && (stage_required.build || stage_required.full) }
           }
           agent { label "mac"}
           environment {
