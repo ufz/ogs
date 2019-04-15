@@ -46,11 +46,15 @@ BoundaryElementsSearcher::~BoundaryElementsSearcher()
     }
 }
 
-std::vector<MeshLib::Element*> const& BoundaryElementsSearcher::getBoundaryElements(GeoLib::GeoObject const& geoObj)
+std::vector<MeshLib::Element*> const&
+BoundaryElementsSearcher::getBoundaryElements(GeoLib::GeoObject const& geoObj,
+                                              bool const multiple_nodes_allowed)
 {
     switch (geoObj.getGeoType()) {
     case GeoLib::GEOTYPE::POINT:
-        return this->getBoundaryElementsAtPoint(*dynamic_cast<const GeoLib::Point*>(&geoObj));
+        return this->getBoundaryElementsAtPoint(
+            *dynamic_cast<const GeoLib::Point*>(&geoObj),
+            multiple_nodes_allowed);
         break;
     case GeoLib::GEOTYPE::POLYLINE:
         return this->getBoundaryElementsAlongPolyline(*dynamic_cast<const GeoLib::Polyline*>(&geoObj));
@@ -65,7 +69,8 @@ std::vector<MeshLib::Element*> const& BoundaryElementsSearcher::getBoundaryEleme
 }
 
 std::vector<MeshLib::Element*> const&
-BoundaryElementsSearcher::getBoundaryElementsAtPoint(GeoLib::Point const& point)
+BoundaryElementsSearcher::getBoundaryElementsAtPoint(
+    GeoLib::Point const& point, bool const multiple_nodes_allowed)
 {
     // look for already saved points and return if found.
     for (auto const& boundaryElements : _boundary_elements_at_point)
@@ -77,8 +82,8 @@ BoundaryElementsSearcher::getBoundaryElementsAtPoint(GeoLib::Point const& point)
     }
 
     // create new boundary elements at points.
-    _boundary_elements_at_point.push_back(
-        new BoundaryElementsAtPoint(_mesh, _mshNodeSearcher, point));
+    _boundary_elements_at_point.push_back(new BoundaryElementsAtPoint(
+        _mesh, _mshNodeSearcher, point, multiple_nodes_allowed));
     return _boundary_elements_at_point.back()->getBoundaryElements();
 }
 

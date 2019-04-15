@@ -111,7 +111,10 @@ TEST_F(MeshLibBoundaryElementSearchInSimpleQuadMesh, PolylineSearch)
         std::make_unique<MeshGeoToolsLib::HeuristicSearchLength>(*_quad_mesh),
         MeshGeoToolsLib::SearchAllNodes::Yes);
     MeshGeoToolsLib::BoundaryElementsSearcher boundary_element_searcher(*_quad_mesh, mesh_node_searcher);
-    std::vector<MeshLib::Element*> const& found_edges_ply0(boundary_element_searcher.getBoundaryElements(ply0));
+    bool const multiple_nodes_allowed = false;
+    std::vector<MeshLib::Element*> const& found_edges_ply0(
+        boundary_element_searcher.getBoundaryElements(ply0,
+                                                      multiple_nodes_allowed));
 
     // check the total number of found edges
     ASSERT_EQ(n_eles_per_dir*4u, found_edges_ply0.size());
@@ -165,8 +168,10 @@ void MeshLibBoundaryElementSearchInSimpleHexMesh::
     sfc_bottom.addTriangle(0, 1, 2);
     sfc_bottom.addTriangle(0, 2, 3);
 
+    bool const multiple_nodes_allowed = false;
     std::vector<MeshLib::Element*> const& found_faces_sfc_b(
-        boundary_element_searcher.getBoundaryElements(sfc_bottom));
+        boundary_element_searcher.getBoundaryElements(sfc_bottom,
+                                                      multiple_nodes_allowed));
     ASSERT_EQ(n_eles_2d, found_faces_sfc_b.size());
     ASSERT_EQ(_geometric_size * _geometric_size,
               computeAreaOfFaceElements(found_faces_sfc_b.begin(),
@@ -184,7 +189,8 @@ void MeshLibBoundaryElementSearchInSimpleHexMesh::
     sfc_front.addTriangle(0, 4, 5);
 
     std::vector<MeshLib::Element*> const& found_faces_sfc_f(
-        boundary_element_searcher.getBoundaryElements(sfc_front));
+        boundary_element_searcher.getBoundaryElements(sfc_front,
+                                                      multiple_nodes_allowed));
     ASSERT_EQ(n_eles_2d, found_faces_sfc_f.size());
     ASSERT_EQ(_geometric_size * _geometric_size,
               computeAreaOfFaceElements(found_faces_sfc_f.begin(),

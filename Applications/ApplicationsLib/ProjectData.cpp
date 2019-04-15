@@ -189,9 +189,11 @@ std::vector<std::unique_ptr<MeshLib::Mesh>> readMeshes(
 
         std::unique_ptr<MeshGeoToolsLib::SearchLength> search_length_algorithm =
             MeshGeoToolsLib::createSearchLengthAlgorithm(config, *meshes[0]);
+        bool const multiple_nodes_allowed = false;
         auto additional_meshes =
             MeshGeoToolsLib::constructAdditionalMeshesFromGeoObjects(
-                geoObjects, *meshes[0], std::move(search_length_algorithm));
+                geoObjects, *meshes[0], std::move(search_length_algorithm),
+                multiple_nodes_allowed);
 
         std::move(begin(additional_meshes), end(additional_meshes),
                   std::back_inserter(meshes));

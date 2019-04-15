@@ -21,7 +21,7 @@ namespace MeshGeoToolsLib
 {
 BoundaryElementsAtPoint::BoundaryElementsAtPoint(
     MeshLib::Mesh const& mesh, MeshNodeSearcher const& mshNodeSearcher,
-    GeoLib::Point const& point)
+    GeoLib::Point const& point, const bool multiple_nodes_allowed)
     : _mesh(mesh), _point(point)
 {
     auto const node_ids = mshNodeSearcher.getMeshNodeIDs(_point);
@@ -49,7 +49,6 @@ BoundaryElementsAtPoint::BoundaryElementsAtPoint(
                                      MathLib::sqrDist(*mesh_nodes[id1], point);
                           });
 
-    const bool multiple_nodes_allowed = false;
     if (!multiple_nodes_allowed)
     {
         OGS_FATAL(

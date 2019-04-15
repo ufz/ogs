@@ -71,6 +71,17 @@ int main(int argc, char* argv[])
         "",
         "mesh file name");
     cmd.add(mesh_arg);
+
+    TCLAP::ValueArg<bool> multiple_nodes_allowed_arg(
+        "",
+        "multiple-nodes-allowed",
+        "allows that multiple mesh nodes are contained in the eps environment",
+        false, // required argument
+        false, // default value
+        "allows that multiple mesh nodes are contained in the eps environment, "
+        "the nearest node for a point will be returned");
+    cmd.add(multiple_nodes_allowed_arg);
+
     cmd.parse(argc, argv);
 
     std::unique_ptr<MeshLib::Mesh> mesh{
@@ -83,7 +94,8 @@ int main(int argc, char* argv[])
     auto const extracted_meshes = constructAdditionalMeshesFromGeoObjects(
         *geo_objects,
         *mesh,
-        std::make_unique<MeshGeoToolsLib::SearchLength>(search_length));
+        std::make_unique<MeshGeoToolsLib::SearchLength>(search_length),
+        multiple_nodes_allowed_arg.getValue());
 
     for (auto const& m_ptr : extracted_meshes)
     {
@@ -92,7 +104,10 @@ int main(int argc, char* argv[])
             ERR("Could not create a mesh for each given geometry.");
             return EXIT_FAILURE;
         }
-        MeshLib::IO::writeMeshToFile(*m_ptr, m_ptr->getName() + ".vtu");
+        if (!m_ptr->getNodes().empty())
+        {
+            MeshLib::IO::writeMeshToFile(*m_ptr, m_ptr->getName() + ".vtu");
+        }
     }
 
     return EXIT_SUCCESS;

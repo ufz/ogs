@@ -52,17 +52,22 @@ public:
      * generate boundary elements on the given geometric object (point, polyline, surface).
      *
      * @param geoObj a GeoLib::GeoObject where the nearest mesh node is searched for
+     * @param multiple_nodes_allowed allows for finding multiple nodes within
+     * the given search radius for a point
      * @return a vector of boundary element objects
      */
-    std::vector<MeshLib::Element*> const& getBoundaryElements(GeoLib::GeoObject const& geoObj);
+    std::vector<MeshLib::Element*> const& getBoundaryElements(
+        GeoLib::GeoObject const& geoObj, bool const multiple_nodes_allowed);
 
     /**
      * generate boundary elements at the given point.
      * @param point Search the mesh for given point
+     * @param multiple_nodes_allowed allows for finding multiple nodes within
+     * the given search radius
      * @return a vector of boundary elements
      */
     std::vector<MeshLib::Element*> const& getBoundaryElementsAtPoint(
-        GeoLib::Point const& point);
+        GeoLib::Point const& point, bool const multiple_nodes_allowed);
 
     /**
      * generate boundary elements on the given polyline.
