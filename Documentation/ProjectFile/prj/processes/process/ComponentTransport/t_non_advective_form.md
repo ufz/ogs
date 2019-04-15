@@ -1,0 +1,1 @@
+An optional input to select the FEM scheme. If this input is omitted, the assembly of the advective form of the component transport is done. If the parameter is switched to true, the full component mass balance is assembled.
