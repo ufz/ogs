@@ -65,13 +65,13 @@ are two possibilities to create such files:
    tool]({{<ref "../meshing-submeshes/identifySubdomains">}}) to create or
    verify the needed `bulk_node_ids` and `bulk_element_ids` mappings.
 
-## Partition the mesh
+## Partition the mesh with [`partmesh`]({{<ref "../model-preparation/mesh-partition">}})
 
-Convert vtu mesh into metis input mesh
-```bin/partmesh -i cube_1x1x1_hex_axbxc.vtu --ogs2metis```
+1. Convert vtu mesh into metis input mesh <br/>
+```bin/partmesh -i cube_1x1x1_hex_axbxc.vtu --ogs2metis``` <br/>
 => results in a file `cube_1x1x1_hex_axbxc.mesh`
-Then partition the mesh and the corresponding boundaries.
-```bin/partmesh -n number_of_partitions -m -i cube_1x1x1_hex_axbxc.vtu -- boundary_meshes*.vtu```
+2. partition the mesh and the corresponding boundaries. <br/>
+```bin/partmesh -n number_of_partitions -m -i cube_1x1x1_hex_axbxc.vtu -- boundary_meshes*.vtu``` <br/>
 This will result in a bunch of `.bin` files.
 
 ## Deciding the part to benchmark
