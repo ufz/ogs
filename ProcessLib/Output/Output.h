@@ -90,6 +90,13 @@ private:
         MeshLib::IO::PVDFile pvd_file;
     };
 
+    struct OutputFile;
+    void outputBulkMesh(OutputFile const& output_file,
+                        ProcessData* const process_data,
+                        MeshLib::Mesh const& mesh,
+                        double const t) const;
+
+private:
     std::string const _output_directory;
     std::string const _output_file_prefix;
 

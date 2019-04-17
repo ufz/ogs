@@ -150,6 +150,43 @@ Output::ProcessData* Output::findProcessData(Process const& process,
     return process_data;
 }
 
+struct Output::OutputFile
+{
+    OutputFile(std::string const& directory, std::string const& prefix,
+               int const process_id, int const timestep, double const t,
+               int const data_mode_, bool const compression_)
+        : name(constructFileName(prefix, process_id, timestep, t) + ".vtu"),
+          path(BaseLib::joinPaths(directory, name)),
+          data_mode(data_mode_),
+          compression(compression_)
+    {
+    }
+
+    std::string const name;
+    std::string const path;
+    //! Chooses vtk's data mode for output following the enumeration given
+    /// in the vtkXMLWriter: {Ascii, Binary, Appended}.  See vtkXMLWriter
+    /// documentation
+    /// http://www.vtk.org/doc/nightly/html/classvtkXMLWriter.html
+    int const data_mode;
+
+    //! Enables or disables zlib-compression of the output files.
+    bool const compression;
+};
+
+void Output::outputBulkMesh(OutputFile const& output_file,
+                            ProcessData* const process_data,
+                            MeshLib::Mesh const& mesh,
+                            double const t) const
+{
+    DBUG("output to %s", output_file.path.c_str());
+
+    process_data->pvd_file.addVTUFile(output_file.name, t);
+
+    makeOutput(output_file.path, mesh, output_file.compression,
+               output_file.data_mode);
+}
+
 void Output::doOutputAlways(Process const& process,
                             const int process_id,
                             unsigned timestep,
@@ -176,24 +213,25 @@ void Output::doOutputAlways(Process const& process,
         return;
     }
 
-    std::string const output_file_name =
-        constructFileName(_output_file_prefix, process_id, timestep, t) +
-        ".vtu";
-    std::string const output_file_path =
-        BaseLib::joinPaths(_output_directory, output_file_name);
-
-    DBUG("output to %s", output_file_path.c_str());
-
-    ProcessData* process_data = findProcessData(process, process_id);
-    process_data->pvd_file.addVTUFile(output_file_name, t);
-
-    makeOutput(output_file_path, process.getMesh(), _output_file_compression,
-               _output_file_data_mode);
+    auto output_bulk_mesh = [&]() {
+        outputBulkMesh(
+            OutputFile(_output_directory, _output_file_prefix, process_id,
+                       timestep, t, _output_file_data_mode,
+                       _output_file_compression),
+            findProcessData(process, process_id), process.getMesh(), t);
+    };
+    // Write the bulk mesh only if there are no other meshes specified for
+    // output, otherwise only the specified meshes are written.
+    if (_mesh_names_for_output.empty())
+    {
+        output_bulk_mesh();
+    }
 
     for (auto const& mesh_output_name : _mesh_names_for_output)
     {
         if (process.getMesh().getName() == mesh_output_name)
         {
+            output_bulk_mesh();
             continue;
         }
         auto& mesh = *BaseLib::findElementOrError(
@@ -220,19 +258,22 @@ void Output::doOutputAlways(Process const& process,
                           output_secondary_variable,
                           process.getIntegrationPointWriter(), _process_output);
 
-        std::string const mesh_output_file_name =
-            constructFileName(mesh.getName(), process_id, timestep, t) + ".vtu";
-        std::string const mesh_output_file_path =
-            BaseLib::joinPaths(_output_directory, mesh_output_file_name);
-
-        DBUG("output to %s", mesh_output_file_path.c_str());
-
         // TODO (TomFischer): add pvd support here. This can be done if the
         // output is mesh related instead of process related. This would also
         // allow for merging bulk mesh output and arbitrary mesh output.
 
-        makeOutput(mesh_output_file_path, mesh, _output_file_compression,
-                   _output_file_data_mode);
+        OutputFile const output_file{_output_directory,
+                                     mesh.getName(),
+                                     process_id,
+                                     timestep,
+                                     t,
+                                     _output_file_data_mode,
+                                     _output_file_compression};
+
+        DBUG("output to %s", output_file.path.c_str());
+
+        makeOutput(output_file.path, mesh, output_file.compression,
+                   output_file.data_mode);
     }
     INFO("[time] Output of timestep %d took %g s.", timestep,
          time_output.elapsed());
