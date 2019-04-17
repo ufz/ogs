@@ -1064,7 +1064,7 @@ void NodeWiseMeshPartitioner::writeConfigDataASCII(
         "Subdomain mesh ("
         "Number of nodes; Number of base nodes;"
         " Number of regular elements; Number of ghost elements;"
-        " Number of non-ghost base nodes; Number of non-ghost nodes;"
+        " Number of non-ghost base nodes; Number of non-ghost nodes"
         " Number of base nodes of the global mesh;"
         " Number of nodes of the global mesh;"
         " Number of integer variables to define non-ghost elements;"
