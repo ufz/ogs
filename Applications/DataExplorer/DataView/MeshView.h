@@ -2,7 +2,7 @@
  * \file
  * \author Lars Bilke
  * \date   2009-09-24
- * \brief  Definition of the MshView class.
+ * \brief  Definition of the MeshView class.
  *
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
@@ -17,7 +17,7 @@
 #include "GeoLib/GeoType.h"
 #include "GeoLib/Point.h"
 
-class MshModel;
+class MeshModel;
 class vtkUnstructuredGridAlgorithm;
 
 namespace MeshLib {
@@ -32,13 +32,13 @@ namespace MeshLib {
  *    The DataView is table view which acts as a base class for displaying
  *  several OGS data formats.
  */
-class MshView : public QTreeView
+class MeshView : public QTreeView
 {
     Q_OBJECT
 
 public:
-    MshView(QWidget* parent = nullptr);
-    ~MshView() override;
+    MeshView(QWidget* parent = nullptr);
+    ~MeshView() override;
 
 public slots:
     void updateView();

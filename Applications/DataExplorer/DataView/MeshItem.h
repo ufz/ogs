@@ -2,7 +2,7 @@
  * \file
  * \author Karsten Rink
  * \date   2010-05-17
- * \brief  Definition of the MshItem class.
+ * \brief  Definition of the MeshItem class.
  *
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
@@ -26,7 +26,7 @@ namespace MeshLib {
  * \brief A TreeItem containing a mesh and the associated vtk object used in the Mesh Model.
  * \sa TreeItem
  */
-class MshItem : public TreeItem
+class MeshItem : public TreeItem
 {
 public:
     /// Constructor, automatically generates VTK object of the given mesh.
@@ -34,9 +34,9 @@ public:
     /// \param data The data associated with each column
     /// \param parent The parent item in the tree
     /// \param mesh The mesh associated with this item
-    MshItem(const QList<QVariant>& data, TreeItem* parent,
-            const MeshLib::Mesh* mesh);
-    ~MshItem() override;
+    MeshItem(const QList<QVariant>& data, TreeItem* parent,
+             const MeshLib::Mesh* mesh);
+    ~MeshItem() override;
 
     /// Returns the mesh.
     MeshLib::Mesh const* getMesh() const { return _mesh_source->GetMesh(); }

@@ -2,7 +2,7 @@
  * \file
  * \author Lars Bilke
  * \date   2009-11-03
- * \brief  Implementation of the MshTabWidget class.
+ * \brief  Implementation of the MeshTabWidget class.
  *
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
@@ -13,9 +13,9 @@
  */
 
 // ** INCLUDES **
-#include "MshTabWidget.h"
+#include "MeshTabWidget.h"
 
-MshTabWidget::MshTabWidget( QWidget* parent /*= 0*/ )
+MeshTabWidget::MeshTabWidget( QWidget* parent /*= 0*/ )
     : QWidget(parent)
 {
     setupUi(this);

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MshTabWidgetBase</class>
- <widget class="QWidget" name="MshTabWidgetBase">
+ <class>MeshTabWidgetBase</class>
+ <widget class="QWidget" name="MeshTabWidgetBase">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -14,7 +14,16 @@
    <string>Form</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>2</number>
+   </property>
+   <property name="topMargin">
+    <number>2</number>
+   </property>
+   <property name="rightMargin">
+    <number>2</number>
+   </property>
+   <property name="bottomMargin">
     <number>2</number>
    </property>
    <item>
@@ -137,7 +146,7 @@
     </layout>
    </item>
    <item>
-    <widget class="MshView" name="treeView"/>
+    <widget class="MeshView" name="treeView"/>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -176,9 +185,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>MshView</class>
+   <class>MeshView</class>
    <extends>QTreeView</extends>
-   <header>MshView.h</header>
+   <header>MeshView.h</header>
   </customwidget>
   <customwidget>
    <class>ElementTreeView</class>

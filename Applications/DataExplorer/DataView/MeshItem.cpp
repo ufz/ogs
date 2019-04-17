@@ -2,7 +2,7 @@
  * \file
  * \author Karsten Rink
  * \date   2010-05-17
- * \brief  Implementation of the MshItem class.
+ * \brief  Implementation of the MeshItem class.
  *
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
@@ -12,18 +12,18 @@
  *
  */
 
-#include "MshItem.h"
+#include "MeshItem.h"
 #include "MeshLib/Vtk/VtkMappedMeshSource.h"
 
-MshItem::MshItem(const QList<QVariant>& data, TreeItem* parent,
-                 const MeshLib::Mesh* mesh)
+MeshItem::MeshItem(const QList<QVariant>& data, TreeItem* parent,
+                   const MeshLib::Mesh* mesh)
     : TreeItem(data, parent)
 {
     _mesh_source = MeshLib::VtkMappedMeshSource::New();
     static_cast<MeshLib::VtkMappedMeshSource*>(_mesh_source)->SetMesh(mesh);
 }
 
-MshItem::~MshItem()
+MeshItem::~MeshItem()
 {
     _mesh_source->Delete();
 }

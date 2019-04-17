@@ -2,7 +2,7 @@
  * \file
  * \author Lars Bilke
  * \date   2009-11-03
- * \brief  Definition of the MshTabWidget class.
+ * \brief  Definition of the MeshTabWidget class.
  *
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
@@ -15,17 +15,17 @@
 #pragma once
 
 // ** INCLUDES **
-#include "ui_MshTabWidgetBase.h"
+#include "ui_MeshTabWidgetBase.h"
 
 /**
  * \brief Widget for data views of meshes.
  */
-class MshTabWidget : public QWidget, public Ui_MshTabWidgetBase
+class MeshTabWidget : public QWidget, public Ui_MeshTabWidgetBase
 {
     Q_OBJECT
 
 public:
-    MshTabWidget(QWidget* parent = nullptr);
+    MeshTabWidget(QWidget* parent = nullptr);
 
 private slots:
     void enableSaveButton(bool enable) { this->saveMeshPushButton->setEnabled(enable); };

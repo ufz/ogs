@@ -50,8 +50,8 @@
 #include "MeshLib/Vtk/VtkMappedMeshSource.h"
 
 #include "GeoTreeModel.h"
-#include "MshItem.h"
-#include "MshModel.h"
+#include "MeshItem.h"
+#include "MeshModel.h"
 #include "StationTreeModel.h"
 #include "TreeModel.h"
 #include "VtkAlgorithmProperties.h"
@@ -270,9 +270,9 @@ void VtkVisPipeline::addPipelineItem(StationTreeModel* model, const std::string 
     addPipelineItem(model->vtkSource(name));
 }
 
-void VtkVisPipeline::addPipelineItem(MshModel* model, const QModelIndex &idx)
+void VtkVisPipeline::addPipelineItem(MeshModel* model, const QModelIndex &idx)
 {
-    addPipelineItem(static_cast<MshItem*>(model->getItem(idx))->vtkSource());
+    addPipelineItem(static_cast<MeshItem*>(model->getItem(idx))->vtkSource());
 }
 
 QModelIndex VtkVisPipeline::addPipelineItem(VtkVisPipelineItem* item, const QModelIndex &parent)
@@ -374,9 +374,9 @@ void VtkVisPipeline::removeSourceItem(StationTreeModel* model, const std::string
     }
 }
 
-void VtkVisPipeline::removeSourceItem(MshModel* model, const QModelIndex &idx)
+void VtkVisPipeline::removeSourceItem(MeshModel* model, const QModelIndex &idx)
 {
-    auto* sItem = static_cast<MshItem*>(model->getItem(idx));
+    auto* sItem = static_cast<MeshItem*>(model->getItem(idx));
 
     for (int i = 0; i < _rootItem->childCount(); i++)
     {

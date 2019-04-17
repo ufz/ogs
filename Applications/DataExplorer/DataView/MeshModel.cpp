@@ -2,7 +2,7 @@
  * \file
  * \author Lars Bilke
  * \date   2009-10-19
- * \brief  Implementation of the MshModel class.
+ * \brief  Implementation of the MeshModel class.
  *
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
@@ -12,7 +12,7 @@
  *
  */
 
-#include "MshModel.h"
+#include "MeshModel.h"
 
 #include <QFileInfo>
 #include <QString>
@@ -24,14 +24,14 @@
 #include "Elements/Element.h"
 #include "MeshLib/Node.h"
 
-#include "MshItem.h"
+#include "MeshItem.h"
 #include "TreeItem.h"
 
 
-const QVariant MshModel::element_str = "Element";
-const std::map<MeshLib::MeshElemType, QVariant> MshModel::elem_type_map = MshModel::createMeshElemTypeMap();
+const QVariant MeshModel::element_str = "Element";
+const std::map<MeshLib::MeshElemType, QVariant> MeshModel::elem_type_map = MeshModel::createMeshElemTypeMap();
 
-MshModel::MshModel(DataHolderLib::Project &project, QObject* parent /*= 0*/ )
+MeshModel::MeshModel(DataHolderLib::Project &project, QObject* parent /*= 0*/ )
     : TreeModel(parent), _project(project)
 {
     delete _rootItem;
@@ -40,28 +40,28 @@ MshModel::MshModel(DataHolderLib::Project &project, QObject* parent /*= 0*/ )
     _rootItem = new TreeItem(rootData, nullptr);
 }
 
-int MshModel::columnCount( const QModelIndex &parent /*= QModelIndex()*/ ) const
+int MeshModel::columnCount( const QModelIndex &parent /*= QModelIndex()*/ ) const
 {
     Q_UNUSED(parent)
 
     return 3;
 }
 
-void MshModel::addMesh(std::unique_ptr<MeshLib::Mesh> mesh)
+void MeshModel::addMesh(std::unique_ptr<MeshLib::Mesh> mesh)
 {
     _project.addMesh(std::move(mesh));
     auto const& meshes(_project.getMeshObjects());
     this->addMeshObject(meshes.back().get());
 }
 
-void MshModel::addMesh(MeshLib::Mesh* mesh)
+void MeshModel::addMesh(MeshLib::Mesh* mesh)
 {
     _project.addMesh(std::unique_ptr<MeshLib::Mesh>(mesh));
     auto const& meshes(_project.getMeshObjects());
     this->addMeshObject(meshes.back().get());
 }
 
-void MshModel::addMeshObject(const MeshLib::Mesh* mesh)
+void MeshModel::addMeshObject(const MeshLib::Mesh* mesh)
 {
     beginResetModel();
 
@@ -69,7 +69,7 @@ void MshModel::addMeshObject(const MeshLib::Mesh* mesh)
     QVariant const display_name (QString::fromStdString(mesh->getName()));
     QList<QVariant> meshData;
     meshData << display_name << "" << "";
-    auto* const newMesh = new MshItem(meshData, _rootItem, mesh);
+    auto* const newMesh = new MeshItem(meshData, _rootItem, mesh);
     _rootItem->appendChild(newMesh);
 
     // display elements
@@ -88,38 +88,38 @@ void MshModel::addMeshObject(const MeshLib::Mesh* mesh)
     emit meshAdded(this, this->index(_rootItem->childCount() - 1, 0, QModelIndex()));
 }
 
-const MeshLib::Mesh* MshModel::getMesh(const QModelIndex &idx) const
+const MeshLib::Mesh* MeshModel::getMesh(const QModelIndex &idx) const
 {
     if (idx.isValid())
     {
-        auto* item = dynamic_cast<MshItem*>(this->getItem(idx));
+        auto* item = dynamic_cast<MeshItem*>(this->getItem(idx));
         if (item)
             return item->getMesh();
 
         return nullptr;
     }
-    WARN("MshModel::getMesh(): Specified index does not exist.");
+    WARN("MeshModel::getMesh(): Specified index does not exist.");
     return nullptr;
 }
 
-const MeshLib::Mesh* MshModel::getMesh(const std::string &name) const
+const MeshLib::Mesh* MeshModel::getMesh(const std::string &name) const
 {
     for (int i = 0; i < _rootItem->childCount(); i++)
     {
-        auto* item = static_cast<MshItem*>(_rootItem->child(i));
+        auto* item = static_cast<MeshItem*>(_rootItem->child(i));
         if (item->data(0).toString().toStdString() == name)
             return item->getMesh();
     }
 
-    INFO("MshModel::getMesh(): No entry found with name \"%s\".", name.c_str());
+    INFO("MeshModel::getMesh(): No entry found with name \"%s\".", name.c_str());
     return nullptr;
 }
 
-bool MshModel::removeMesh(const QModelIndex &idx)
+bool MeshModel::removeMesh(const QModelIndex &idx)
 {
     if (idx.isValid())
     {
-        auto* item = dynamic_cast<MshItem*>(this->getItem(idx));
+        auto* item = dynamic_cast<MeshItem*>(this->getItem(idx));
         if (item)
             return this->removeMesh(item->getMesh()->getName());
         return false;
@@ -127,7 +127,7 @@ bool MshModel::removeMesh(const QModelIndex &idx)
     return false;
 }
 
-bool MshModel::removeMesh(const std::string &name)
+bool MeshModel::removeMesh(const std::string &name)
 {
     for (int i = 0; i < _rootItem->childCount(); i++)
     {
@@ -142,15 +142,15 @@ bool MshModel::removeMesh(const std::string &name)
         }
     }
 
-    INFO("MshModel::removeMesh(): No entry found with name \"%s\".", name.c_str());
+    INFO("MeshModel::removeMesh(): No entry found with name \"%s\".", name.c_str());
     return false;
 }
 
-void MshModel::updateMesh(MeshLib::Mesh* mesh)
+void MeshModel::updateMesh(MeshLib::Mesh* mesh)
 {
     for (int i = 0; i < _rootItem->childCount(); i++)
     {
-        if (dynamic_cast<MshItem*>(this->_rootItem->child(i))->getMesh() == mesh)
+        if (dynamic_cast<MeshItem*>(this->_rootItem->child(i))->getMesh() == mesh)
         {
             emit meshRemoved(this, this->index(i, 0, QModelIndex()));
             _rootItem->removeChildren(i,1);
@@ -159,7 +159,7 @@ void MshModel::updateMesh(MeshLib::Mesh* mesh)
     this->addMeshObject(mesh);
 }
 
-void MshModel::updateModel()
+void MeshModel::updateModel()
 {
     auto const& mesh_vec = _project.getMeshObjects();
     for (auto const& mesh : mesh_vec)
@@ -167,7 +167,7 @@ void MshModel::updateModel()
             addMeshObject(mesh.get());
 }
 
-std::map<MeshLib::MeshElemType, QVariant> MshModel::createMeshElemTypeMap()
+std::map<MeshLib::MeshElemType, QVariant> MeshModel::createMeshElemTypeMap()
 {
     std::vector<MeshLib::MeshElemType> const& elem_types (MeshLib::getMeshElemTypes());
     std::map<MeshLib::MeshElemType, QVariant> elem_map;
@@ -178,27 +178,27 @@ std::map<MeshLib::MeshElemType, QVariant> MshModel::createMeshElemTypeMap()
     return elem_map;
 }
 
-vtkUnstructuredGridAlgorithm* MshModel::vtkSource(const QModelIndex &idx) const
+vtkUnstructuredGridAlgorithm* MeshModel::vtkSource(const QModelIndex &idx) const
 {
     if (idx.isValid())
     {
-        auto* item = static_cast<MshItem*>(this->getItem(idx));
+        auto* item = static_cast<MeshItem*>(this->getItem(idx));
         return item->vtkSource();
     }
 
-    INFO("MshModel::vtkSource(): Specified index does not exist.");
+    INFO("MeshModel::vtkSource(): Specified index does not exist.");
     return nullptr;
 }
 
-vtkUnstructuredGridAlgorithm* MshModel::vtkSource(const std::string &name) const
+vtkUnstructuredGridAlgorithm* MeshModel::vtkSource(const std::string &name) const
 {
     for (int i = 0; i < _rootItem->childCount(); i++)
     {
-        auto* item = static_cast<MshItem*>(_rootItem->child(i));
+        auto* item = static_cast<MeshItem*>(_rootItem->child(i));
         if (item->data(0).toString().toStdString() == name)
             return item->vtkSource();
     }
 
-    INFO("MshModel::vtkSource(): No entry found with name \"%s\".", name.c_str());
+    INFO("MeshModel::vtkSource(): No entry found with name \"%s\".", name.c_str());
     return nullptr;
 }

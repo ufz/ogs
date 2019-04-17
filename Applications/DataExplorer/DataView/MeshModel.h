@@ -2,7 +2,7 @@
  * \file
  * \author Lars Bilke
  * \date   2009-10-19
- * \brief  Definition of the MshModel class.
+ * \brief  Definition of the MeshModel class.
  *
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
@@ -32,14 +32,14 @@ class Mesh;
 class vtkUnstructuredGridAlgorithm;
 
 /**
- * The MshModel is a Qt model which represents Mesh objects.
+ * The MeshModel is a Qt model which represents Mesh objects.
  */
-class MshModel : public TreeModel
+class MeshModel : public TreeModel
 {
     Q_OBJECT
 
 public:
-    MshModel(DataHolderLib::Project& project, QObject* parent = nullptr);
+    MeshModel(DataHolderLib::Project& project, QObject* parent = nullptr);
 
     /// Adds a new mesh
     void addMesh(std::unique_ptr<MeshLib::Mesh> mesh);
@@ -82,6 +82,6 @@ private:
     static const QVariant element_str;
 
 signals:
-    void meshAdded(MshModel*, const QModelIndex&);
-    void meshRemoved(MshModel*, const QModelIndex&);
+    void meshAdded(MeshModel*, const QModelIndex&);
+    void meshRemoved(MeshModel*, const QModelIndex&);
 };
