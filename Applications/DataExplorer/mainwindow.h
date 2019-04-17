@@ -20,7 +20,7 @@
 #include "ElementTreeModel.h"
 #include "FemConditionModel.h"
 #include "GEOModels.h"
-#include "MshModel.h"
+#include "MeshModel.h"
 #include "ProcessModel.h"
 #include "VisPrefsDialog.h"
 #include "VtkVisPipeline.h"
@@ -124,7 +124,7 @@ private:
     QString getLastUsedDir();
 
     DataHolderLib::Project _project;
-    std::unique_ptr<MshModel> _meshModel;
+    std::unique_ptr<MeshModel> _meshModel;
     std::unique_ptr<ElementTreeModel> _elementModel;
     std::unique_ptr<ProcessModel> _processModel;
     std::unique_ptr<FemConditionModel> _conditionModel;

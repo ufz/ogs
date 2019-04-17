@@ -167,7 +167,7 @@
       <number>1</number>
      </property>
      <item>
-      <widget class="MshTabWidget" name="mshTabWidget" native="true"/>
+      <widget class="MeshTabWidget" name="meshTabWidget" native="true"/>
      </item>
     </layout>
    </widget>
@@ -440,9 +440,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>MshTabWidget</class>
+   <class>MeshTabWidget</class>
    <extends>QWidget</extends>
-   <header>MshTabWidget.h</header>
+   <header>MeshTabWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>

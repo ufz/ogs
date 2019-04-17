@@ -37,7 +37,7 @@ class QString;
 
 class GeoTreeModel;
 class ProcessModel;
-class MshModel;
+class MeshModel;
 class StationTreeModel;
 class TreeModel;
 class VtkVisPipelineItem;
@@ -102,7 +102,7 @@ public:
 
 public slots:
     /// \brief Adds the given Model to the pipeline.
-    void addPipelineItem(MshModel* model, const QModelIndex &idx);
+    void addPipelineItem(MeshModel* model, const QModelIndex &idx);
     void addPipelineItem(GeoTreeModel* model, const std::string &name, GeoLib::GEOTYPE type);
     void addPipelineItem(StationTreeModel* model, const std::string &name);
     QModelIndex addPipelineItem(VtkVisPipelineItem* item, const QModelIndex &parent);
@@ -111,7 +111,7 @@ public slots:
     QModelIndex addPipelineItem(vtkAlgorithm* source, QModelIndex parent = QModelIndex());
 
     /// \brief Removes the given Model (and all attached vtkAlgorithms) from the pipeline.
-    void removeSourceItem(MshModel* model, const QModelIndex &idx);
+    void removeSourceItem(MeshModel* model, const QModelIndex &idx);
     void removeSourceItem(GeoTreeModel* model, const std::string &name, GeoLib::GEOTYPE type);
     void removeSourceItem(StationTreeModel* model, const std::string &name);
 
