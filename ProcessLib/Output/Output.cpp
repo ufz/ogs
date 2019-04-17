@@ -176,19 +176,24 @@ void Output::doOutputAlways(Process const& process,
         return;
     }
 
-    std::string const output_file_name =
-        constructFileName(_output_file_prefix, process_id, timestep, t) +
-        ".vtu";
-    std::string const output_file_path =
-        BaseLib::joinPaths(_output_directory, output_file_name);
+    // Write the bulk mesh only if there are no other meshes specified for
+    // output, otherwise only the specified meshes are written.
+    if (_mesh_names_for_output.empty())
+    {
+        std::string const output_file_name =
+            constructFileName(_output_file_prefix, process_id, timestep, t) +
+            ".vtu";
+        std::string const output_file_path =
+            BaseLib::joinPaths(_output_directory, output_file_name);
 
-    DBUG("output to %s", output_file_path.c_str());
+        DBUG("output to %s", output_file_path.c_str());
 
-    ProcessData* process_data = findProcessData(process, process_id);
-    process_data->pvd_file.addVTUFile(output_file_name, t);
+        ProcessData* process_data = findProcessData(process, process_id);
+        process_data->pvd_file.addVTUFile(output_file_name, t);
 
-    makeOutput(output_file_path, process.getMesh(), _output_file_compression,
-               _output_file_data_mode);
+        makeOutput(output_file_path, process.getMesh(),
+                   _output_file_compression, _output_file_data_mode);
+    }
 
     for (auto const& mesh_output_name : _mesh_names_for_output)
     {
