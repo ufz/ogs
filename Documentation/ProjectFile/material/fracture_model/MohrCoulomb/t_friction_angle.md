@@ -1,1 +1,1 @@
-\copydoc MaterialLib::Fracture::MohrCoulomb::MaterialProperties::friction_angle
+\copydoc MaterialLib::Fracture::MohrCoulomb::MohrCoulomb::MaterialProperties::friction_angle

@@ -62,8 +62,11 @@ createCreepBGRa(
         //! \ogs_file_param_special{material__solid__constitutive_relation__CreepBGRa__q}
         config, "q", parameters, 1);
 
+    auto const& nonlinear_solver_config =
+        //! \ogs_file_param{material__solid__constitutive_relation__CreepBGRa__nonlinear_solver}
+        config.getConfigSubtree("nonlinear_solver");
     auto const nonlinear_solver_parameters =
-        createNewtonRaphsonSolverParameters(config);
+        createNewtonRaphsonSolverParameters(nonlinear_solver_config);
 
     return std::unique_ptr<CreepBGRa<DisplacementDim>>{
         new CreepBGRa<DisplacementDim>{elastic_data->getMaterialProperties(),

@@ -1,1 +1,1 @@
-\copydoc MaterialLib::Fracture::MohrCoulomb::MaterialProperties::normal_stiffness
+\copydoc MaterialLib::Fracture::MohrCoulomb::MohrCoulomb::MaterialProperties::normal_stiffness

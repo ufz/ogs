@@ -81,25 +81,25 @@ SmallDeformationLocalAssemblerFracture<ShapeFunction, IntegrationMethod,
         ip_data.integration_weight =
             _integration_method.getWeightedPoint(ip).getWeight() *
             sm.integralMeasure * sm.detJ;
-        ip_data._h_matrices.setZero(DisplacementDim,
-                                    ShapeFunction::NPOINTS * DisplacementDim);
+        ip_data.h_matrices.setZero(DisplacementDim,
+                                   ShapeFunction::NPOINTS * DisplacementDim);
 
         computeHMatrix<DisplacementDim, ShapeFunction::NPOINTS,
                        typename ShapeMatricesType::NodalRowVectorType,
-                       HMatrixType>(sm.N, ip_data._h_matrices);
+                       HMatrixType>(sm.N, ip_data.h_matrices);
 
         // Initialize current time step values
-        ip_data._w.setZero(DisplacementDim);
-        ip_data._sigma.setZero(DisplacementDim);
+        ip_data.w.setZero(DisplacementDim);
+        ip_data.sigma.setZero(DisplacementDim);
 
         // Previous time step values are not initialized and are set later.
-        ip_data._sigma_prev.resize(DisplacementDim);
-        ip_data._w_prev.resize(DisplacementDim);
+        ip_data.sigma_prev.resize(DisplacementDim);
+        ip_data.w_prev.resize(DisplacementDim);
 
-        ip_data._C.resize(DisplacementDim, DisplacementDim);
+        ip_data.C.resize(DisplacementDim, DisplacementDim);
 
-        ip_data._aperture0 = _fracture_property->aperture0(0, x_position)[0];
-        ip_data._aperture_prev = ip_data._aperture0;
+        ip_data.aperture0 = _fracture_property->aperture0(0, x_position)[0];
+        ip_data.aperture_prev = ip_data.aperture0;
 
         _secondary_data.N[ip] = sm.N;
     }
@@ -181,14 +181,14 @@ void SmallDeformationLocalAssemblerFracture<
 
         auto& ip_data = _ip_data[ip];
         auto const& integration_weight = ip_data.integration_weight;
-        auto const& H = ip_data._h_matrices;
-        auto& mat = ip_data._fracture_material;
-        auto& sigma = ip_data._sigma;
-        auto const& sigma_prev = ip_data._sigma_prev;
-        auto& w = ip_data._w;
-        auto const& w_prev = ip_data._w_prev;
-        auto& C = ip_data._C;
-        auto& state = *ip_data._material_state_variables;
+        auto const& H = ip_data.h_matrices;
+        auto& mat = ip_data.fracture_material;
+        auto& sigma = ip_data.sigma;
+        auto const& sigma_prev = ip_data.sigma_prev;
+        auto& w = ip_data.w;
+        auto const& w_prev = ip_data.w_prev;
+        auto& C = ip_data.C;
+        auto& state = *ip_data.material_state_variables;
         auto& N = _secondary_data.N[ip];
 
         Eigen::Vector3d const ip_physical_coords(
@@ -210,11 +210,11 @@ void SmallDeformationLocalAssemblerFracture<
         w.noalias() = R * H * nodal_gap;
 
         // total aperture
-        ip_data._aperture = ip_data._aperture0 + w[index_normal];
+        ip_data.aperture = ip_data.aperture0 + w[index_normal];
 
         // local C, local stress
         mat.computeConstitutiveRelation(
-            t, x_position, ip_data._aperture0,
+            t, x_position, ip_data.aperture0,
             Eigen::Matrix<double, DisplacementDim, 1>::Zero(),  // TODO (naumov)
                                                                 // Replace with
                                                                 // initial
@@ -280,15 +280,15 @@ void SmallDeformationLocalAssemblerFracture<ShapeFunction, IntegrationMethod,
         x_position.setIntegrationPoint(ip);
 
         auto& ip_data = _ip_data[ip];
-        auto const& H = ip_data._h_matrices;
-        auto& mat = ip_data._fracture_material;
-        auto& sigma = ip_data._sigma;
-        auto const& sigma_prev = ip_data._sigma_prev;
-        auto& w = ip_data._w;
-        auto const& w_prev = ip_data._w_prev;
-        auto& C = ip_data._C;
-        auto& state = *ip_data._material_state_variables;
-        auto& b_m = ip_data._aperture;
+        auto const& H = ip_data.h_matrices;
+        auto& mat = ip_data.fracture_material;
+        auto& sigma = ip_data.sigma;
+        auto const& sigma_prev = ip_data.sigma_prev;
+        auto& w = ip_data.w;
+        auto const& w_prev = ip_data.w_prev;
+        auto& C = ip_data.C;
+        auto& state = *ip_data.material_state_variables;
+        auto& b_m = ip_data.aperture;
         auto& N = _secondary_data.N[ip];
 
         Eigen::Vector3d const ip_physical_coords(
@@ -310,7 +310,7 @@ void SmallDeformationLocalAssemblerFracture<ShapeFunction, IntegrationMethod,
         w.noalias() = R * H * nodal_gap;
 
         // aperture
-        b_m = ip_data._aperture0 + w[index_normal];
+        b_m = ip_data.aperture0 + w[index_normal];
         if (b_m < 0.0)
         {
             OGS_FATAL(
@@ -321,7 +321,7 @@ void SmallDeformationLocalAssemblerFracture<ShapeFunction, IntegrationMethod,
 
         // local C, local stress
         mat.computeConstitutiveRelation(
-            t, x_position, ip_data._aperture0,
+            t, x_position, ip_data.aperture0,
             Eigen::Matrix<double, DisplacementDim, 1>::Zero(),  // TODO (naumov)
                                                                 // Replace with
                                                                 // initial
@@ -337,9 +337,10 @@ void SmallDeformationLocalAssemblerFracture<ShapeFunction, IntegrationMethod,
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        ele_b += _ip_data[ip]._aperture;
-        ele_w += _ip_data[ip]._w;
-        ele_sigma += _ip_data[ip]._sigma;
+        auto& ip_data = _ip_data[ip];
+        ele_b += ip_data.aperture;
+        ele_w += ip_data.w;
+        ele_sigma += ip_data.sigma;
     }
     ele_b /= n_integration_points;
     ele_w /= n_integration_points;

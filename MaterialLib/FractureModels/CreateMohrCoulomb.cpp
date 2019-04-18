@@ -54,10 +54,10 @@ std::unique_ptr<FractureModelBase<DisplacementDim>> createMohrCoulomb(
         //! \ogs_file_param{material__fracture_model__MohrCoulomb__tension_cutoff}
         config.getConfigParameter<bool>("tension_cutoff");
 
-    typename MohrCoulomb<DisplacementDim>::MaterialProperties mp{
+    typename MohrCoulomb::MohrCoulomb<DisplacementDim>::MaterialProperties mp{
         Kn, Ks, friction_angle, dilatancy_angle, cohesion};
 
-    return std::make_unique<MohrCoulomb<DisplacementDim>>(
+    return std::make_unique<MohrCoulomb::MohrCoulomb<DisplacementDim>>(
         penalty_aperture_cutoff, tension_cutoff, mp);
 }
 

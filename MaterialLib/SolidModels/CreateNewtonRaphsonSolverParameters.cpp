@@ -22,19 +22,15 @@ NumLib::NewtonRaphsonSolverParameters createNewtonRaphsonSolverParameters(
     BaseLib::ConfigTree const& config)
 {
     DBUG("Create local nonlinear solver parameters.");
-    auto const& nonlinear_solver_config =
-        //! \ogs_file_param{material__solid__constitutive_relation__nonlinear_solver}
-        config.getConfigSubtree("nonlinear_solver");
-
     auto const maximum_iterations =
-        //! \ogs_file_param{material__solid__constitutive_relation__nonlinear_solver__maximum_iterations}
-        nonlinear_solver_config.getConfigParameter<int>("maximum_iterations");
+        //! \ogs_file_param{nonlinear_solver__maximum_iterations}
+        config.getConfigParameter<int>("maximum_iterations");
 
     DBUG("\tmaximum_iterations: %d.", maximum_iterations);
 
     auto const error_tolerance =
-        //! \ogs_file_param{material__solid__constitutive_relation__nonlinear_solver__error_tolerance}
-        nonlinear_solver_config.getConfigParameter<double>("error_tolerance");
+        //! \ogs_file_param{nonlinear_solver__error_tolerance}
+        config.getConfigParameter<double>("error_tolerance");
 
     DBUG("\terror_tolerance: %g.", error_tolerance);
 
