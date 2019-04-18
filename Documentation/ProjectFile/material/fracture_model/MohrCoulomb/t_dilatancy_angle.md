@@ -1,1 +1,1 @@
-\copydoc MaterialLib::Fracture::MohrCoulomb::MaterialProperties::dilatancy_angle
+\copydoc MaterialLib::Fracture::MohrCoulomb::MohrCoulomb::MaterialProperties::dilatancy_angle

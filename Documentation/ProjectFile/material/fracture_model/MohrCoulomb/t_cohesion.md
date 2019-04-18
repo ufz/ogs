@@ -1,1 +1,1 @@
-\copydoc MaterialLib::Fracture::MohrCoulomb::MaterialProperties::cohesion
+\copydoc MaterialLib::Fracture::MohrCoulomb::MohrCoulomb::MaterialProperties::cohesion
