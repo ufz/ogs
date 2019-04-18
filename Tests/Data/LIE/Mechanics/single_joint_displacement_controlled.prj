@@ -43,9 +43,9 @@
             <process ref="SD">
                 <nonlinear_solver>basic_newton</nonlinear_solver>
                 <convergence_criterion>
-                    <type>Residual</type>
+                    <type>PerComponentDeltaX</type>
                     <norm_type>NORM2</norm_type>
-                    <abstol>1e-11</abstol>
+                    <reltols>1e-15 1e-15 1e-15 1e-15 1e-15 1e-15</reltols>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>
@@ -199,9 +199,7 @@
             <lis>-i bicgstab -p jacobi -tol 1e-16 -maxiter 10000</lis>
             <eigen>
                 <solver_type>SparseLU</solver_type>
-                <precon_type>DIAGONAL</precon_type>
-                <max_iteration_step>10000</max_iteration_step>
-                <error_tolerance>1e-16</error_tolerance>
+                <scaling>1</scaling>
             </eigen>
             <petsc>
                 <prefix>sd</prefix>
