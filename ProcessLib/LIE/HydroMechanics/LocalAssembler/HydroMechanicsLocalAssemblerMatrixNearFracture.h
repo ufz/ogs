@@ -60,6 +60,16 @@ private:
                                       Eigen::VectorXd& local_b,
                                       Eigen::MatrixXd& local_J) override;
 
+    void preTimestepConcrete(std::vector<double> const& /*local_x*/,
+                             double const /*t*/,
+                             double const /*delta_t*/) override
+    {
+        for (auto& ip_data : _ip_data)
+        {
+            ip_data.pushBackState();
+        }
+    }
+
     void computeSecondaryVariableConcreteWithVector(
         double const t, Eigen::VectorXd const& local_x) override;
 
