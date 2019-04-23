@@ -209,14 +209,12 @@ public:
             auto MpC =
                 local_M.template block<pressure_size, concentration_size>(
                     pressure_index, concentration_index);
-            auto BC = local_b.template segment<concentration_size>(
-                concentration_index);
 
             auto local_C = Eigen::Map<const NodalVectorType>(
                 &local_x[concentration_index], concentration_size);
 
             assembleBlockMatrices(component_id, t, local_C, local_p, KCC, MCC,
-                                  MCp, MpC, Kpp, Mpp, BC, Bp);
+                                  MCp, MpC, Kpp, Mpp, Bp);
         }
     }
 
@@ -230,7 +228,6 @@ public:
         Eigen::Ref<LocalBlockMatrixType> MpC,
         Eigen::Ref<LocalBlockMatrixType> Kpp,
         Eigen::Ref<LocalBlockMatrixType> Mpp,
-        Eigen::Ref<LocalSegmentVectorType> BC,
         Eigen::Ref<LocalSegmentVectorType> Bp)
     {
         unsigned const n_integration_points =
@@ -356,9 +353,8 @@ public:
             }
             else
             {
-                BC.noalias() -=
-                    N.transpose() *
-                    (mass_density_flow.dot(dNdx * C_nodal_values) * w);
+                KCC.noalias() +=
+                    N.transpose() * mass_density_flow.transpose() * dNdx * w;
             }
             MCC.noalias() += N_t_N * (R_times_phi * density * w);
             KCC.noalias() += dNdx.transpose() * hydrodynamic_dispersion * dNdx *
@@ -508,7 +504,8 @@ public:
 
     void assembleComponentTransportEquation(
         double const t, std::vector<double>& local_M_data,
-        std::vector<double>& local_K_data, std::vector<double>& local_b_data,
+        std::vector<double>& local_K_data,
+        std::vector<double>& /*local_b_data*/,
         LocalCoupledSolutions const& coupled_xs)
     {
         auto const& transport_process_id = coupled_xs.process_id;
@@ -528,8 +525,6 @@ public:
             local_K_data, concentration_size, concentration_size);
 
         auto const dt = coupled_xs.dt;
-        auto local_b = MathLib::createZeroedVector<LocalSegmentVectorType>(
-            local_b_data, concentration_size);
 
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
@@ -642,12 +637,7 @@ public:
                 local_M.noalias() +=
                     N_t_N * (R_times_phi * C_int_pt * drho_dC * w);
             }
-            else
-            {
-                local_b.noalias() -= N.transpose() *
-                                     velocity.dot(dNdx * local_C) *
-                                     (density * w);
-            }
+
             local_M.noalias() += N_t_N * (R_times_phi * density * w);
 
             // coupling term
@@ -667,6 +657,11 @@ public:
                         ((R_times_phi * drho_dp * (p_int_pt - p0_int_pt) / dt) *
                          w) -
                     dNdx.transpose() * velocity * N * (density * w);
+            }
+            else
+            {
+                local_K.noalias() +=
+                    N.transpose() * velocity.transpose() * dNdx * (density * w);
             }
             local_K.noalias() +=
                 dNdx.transpose() * hydrodynamic_dispersion * dNdx *
