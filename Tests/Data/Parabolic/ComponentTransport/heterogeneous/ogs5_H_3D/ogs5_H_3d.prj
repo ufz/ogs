@@ -101,7 +101,7 @@
                     <timesteps>
                         <pair>
                             <repeat>1</repeat>
-                            <delta_t>1e7</delta_t>
+                            <delta_t>1e6</delta_t>
                         </pair>
                     </timesteps>
                 </time_stepping>

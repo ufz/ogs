@@ -41,8 +41,8 @@ struct ComponentTransportProcessData
             media_map_,
         ParameterLib::Parameter<double> const& retardation_factor_,
         ParameterLib::Parameter<double> const& decay_rate_,
-        Eigen::VectorXd const& specific_body_force_,
-        bool const has_gravity_)
+        Eigen::VectorXd const& specific_body_force_, bool const has_gravity_,
+        bool const non_advective_form_)
         : porous_media_properties(std::move(porous_media_properties_)),
           fluid_reference_density(fluid_reference_density_),
           fluid_properties(std::move(fluid_properties_)),
@@ -50,7 +50,8 @@ struct ComponentTransportProcessData
           retardation_factor(retardation_factor_),
           decay_rate(decay_rate_),
           specific_body_force(specific_body_force_),
-          has_gravity(has_gravity_)
+          has_gravity(has_gravity_),
+          non_advective_form(non_advective_form_)
     {
     }
 
@@ -75,6 +76,7 @@ struct ComponentTransportProcessData
     ParameterLib::Parameter<double> const& decay_rate;
     Eigen::VectorXd const specific_body_force;
     bool const has_gravity;
+    bool const non_advective_form;
 };
 
 }  // namespace ComponentTransport
