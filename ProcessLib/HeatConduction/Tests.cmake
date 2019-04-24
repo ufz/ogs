@@ -81,3 +81,49 @@ AddTest(
     DIFF_DATA
     line_1_line_1e2_pcs_0_ts_500_t_39062500.000000_reference.vtu line_1_line_1e2_pcs_0_ts_500_t_39062500_000000_0.vtu temperature temperature 1e-10 0.0
 )
+
+AddTest(
+        NAME HeatConduction_t1_1Dsource
+        PATH Parabolic/T/t1_1Dsource
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS t1_1Dsource.prj
+        TESTER vtkdiff
+        DIFF_DATA
+        t1_1Dsource_pcs_0_ts_1_t_1.000000.vtu t1_1Dsource_pcs_0_ts_1_t_1.000000.vtu temperature temperature 10e-12 0.0
+        REQUIREMENTS NOT OGS_USE_MPI
+)
+
+AddTest(
+        NAME HeatConduction_t1_1Dsteady
+        PATH Parabolic/T/t1_1Dsteady
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS t1_1Dsteady.prj
+        TESTER vtkdiff
+        DIFF_DATA
+        t1_1Dsteady_pcs_0_ts_1_t_1.000000.vtu t1_1Dsteady_pcs_0_ts_1_t_1.000000.vtu temperature temperature 10e-12 0.0
+        REQUIREMENTS NOT OGS_USE_MPI
+)
+
+AddTest(
+        NAME HeatConduction_t2_1D1bt
+        PATH Parabolic/T/t2_1D1bt
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS t2_1D1bt.prj
+        TESTER vtkdiff
+        DIFF_DATA
+        t2_1D1bt_pcs_0_ts_500_t_21600.000000.vtu t2_1D1bt_pcs_0_ts_500_t_21600.000000.vtu temperature temperature 10e-12 0.0
+        t2_1D1bt_pcs_0_ts_1000_t_43200.000000.vtu t2_1D1bt_pcs_0_ts_1000_t_43200.000000.vtu temperature temperature 10e-12 0.0
+        REQUIREMENTS NOT OGS_USE_MPI
+)
+
+AddTest(
+        NAME HeatConduction_t2_1D2bt
+        PATH Parabolic/T/t2_1D2bt
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS t2_1D2bt.prj
+        TESTER vtkdiff
+        DIFF_DATA
+        t2_1D2bt_pcs_0_ts_3000_t_7776.000000.vtu t2_1D2bt_pcs_0_ts_3000_t_7776.000000.vtu temperature temperature 10e-12 0.0
+        t2_1D2bt_pcs_0_ts_1500_t_3888.000000.vtu t2_1D2bt_pcs_0_ts_1500_t_3888.000000.vtu temperature temperature 10e-12 0.0
+        REQUIREMENTS NOT OGS_USE_MPI
+)

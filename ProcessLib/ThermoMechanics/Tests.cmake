@@ -13,6 +13,165 @@ if (NOT OGS_USE_MPI)
 endif()
 
 AddTest(
+    NAME ThermoMechanics_tm1_1Dbeam
+    PATH ThermoMechanics/tm1_1Dbeam
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS tm1_1Dbeam.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    RUNTIME 17
+    DIFF_DATA
+    tm1_1Dbeam_pcs_0_ts_1_t_1.000000.vtu tm1_1Dbeam_pcs_0_ts_1_t_1.000000.vtu temperature temperature 1e-10 0.0
+    tm1_1Dbeam_pcs_0_ts_1_t_1.000000.vtu tm1_1Dbeam_pcs_0_ts_1_t_1.000000.vtu displacement displacement 1e-11 0.0
+)
+
+AddTest(
+    NAME ThermoMechanics_tm1_1Dfixa
+    PATH ThermoMechanics/tm1_1Dfixa
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS tm1_1Dfixa.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    RUNTIME 17
+    DIFF_DATA
+    tm1_1Dfixa_pcs_0_ts_1_t_1.000000.vtu tm1_1Dfixa_pcs_0_ts_1_t_1.000000.vtu temperature temperature 1e-11 0.0
+    tm1_1Dfixa_pcs_0_ts_1_t_1.000000.vtu tm1_1Dfixa_pcs_0_ts_1_t_1.000000.vtu displacement displacement 1e-11 0.0
+)
+
+AddTest(
+    NAME ThermoMechanics_tm1_1Dfixb
+    PATH ThermoMechanics/tm1_1Dfixb
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS tm1_1Dfixb.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    RUNTIME 17
+    DIFF_DATA
+    tm1_1Dfixb_pcs_0_ts_1_t_1.000000.vtu tm1_1Dfixb_pcs_0_ts_1_t_1.000000.vtu temperature temperature 1e-11 0.0
+    tm1_1Dfixb_pcs_0_ts_1_t_1.000000.vtu tm1_1Dfixb_pcs_0_ts_1_t_1.000000.vtu displacement displacement 1e-11 0.0
+)
+
+AddTest(
+    NAME ThermoMechanics_tm1_2Dbeam
+    PATH ThermoMechanics/tm1_2Dbeam
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS tm1_2Dbeam.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    RUNTIME 17
+    DIFF_DATA
+    tm1_2Dbeam_pcs_0_ts_1_t_1.000000.vtu tm1_2Dbeam_pcs_0_ts_1_t_1.000000.vtu temperature temperature 1e-11 0.0
+    tm1_2Dbeam_pcs_0_ts_1_t_1.000000.vtu tm1_2Dbeam_pcs_0_ts_1_t_1.000000.vtu displacement displacement 1e-11 0.0
+)
+
+AddTest(
+    NAME ThermoMechanics_tm1_2Dsquare
+    PATH ThermoMechanics/tm1_2Dsquare
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS tm1_2Dsquare.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    RUNTIME 17
+    DIFF_DATA
+    tm1_2Dsquare_pcs_0_ts_1_t_1.000000.vtu tm1_2Dsquare_pcs_0_ts_1_t_1.000000.vtu temperature temperature 1e-11 0.0
+    tm1_2Dsquare_pcs_0_ts_1_t_1.000000.vtu tm1_2Dsquare_pcs_0_ts_1_t_1.000000.vtu displacement displacement 1e-11 0.0
+)
+
+AddTest(
+    NAME ThermoMechanics_tm1_3Dcube
+    PATH ThermoMechanics/tm1_3Dcube
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS tm1_3Dcube.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    RUNTIME 17
+    DIFF_DATA
+    tm1_3Dcube_pcs_0_ts_1_t_1.000000.vtu tm1_3Dcube_pcs_0_ts_1_t_1.000000.vtu temperature temperature 5e-11 0.0
+    tm1_3Dcube_pcs_0_ts_1_t_1.000000.vtu tm1_3Dcube_pcs_0_ts_1_t_1.000000.vtu displacement displacement 1e-11 0.0
+)
+
+AddTest(
+    NAME ThermoMechanics_tm1_3Dgravity
+    PATH ThermoMechanics/tm1_3Dgravity
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS tm1_3Dgravity.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    RUNTIME 17
+    DIFF_DATA
+    tm1_3Dgravity_pcs_0_ts_1_t_1.000000.vtu tm1_3Dgravity_pcs_0_ts_1_t_1.000000.vtu temperature temperature 1e-11 0.0
+    tm1_3Dgravity_pcs_0_ts_1_t_1.000000.vtu tm1_3Dgravity_pcs_0_ts_1_t_1.000000.vtu displacement displacement 1e-11 0.0
+)
+
+AddTest(
+    NAME ThermoMechanics_tm1_3Dorigin
+    PATH ThermoMechanics/tm1_3Dorigin
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS tm1_3Dorigin.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    RUNTIME 17
+    DIFF_DATA
+    tm1_3Dorigin_pcs_0_ts_1_t_1.000000.vtu tm1_3Dorigin_pcs_0_ts_1_t_1.000000.vtu temperature temperature 1e-11 0.0
+    tm1_3Dorigin_pcs_0_ts_1_t_1.000000.vtu tm1_3Dorigin_pcs_0_ts_1_t_1.000000.vtu displacement displacement 1e-11 0.0
+)
+
+AddTest(
+    NAME ThermoMechanics_tm1_3Dsquare
+    PATH ThermoMechanics/tm1_3Dsquare
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS tm1_3Dsquare.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    RUNTIME 17
+    DIFF_DATA
+    tm1_3Dsquare_pcs_0_ts_1_t_1.000000.vtu tm1_3Dsquare_pcs_0_ts_1_t_1.000000.vtu temperature temperature 1e-11 0.0
+    tm1_3Dsquare_pcs_0_ts_1_t_1.000000.vtu tm1_3Dsquare_pcs_0_ts_1_t_1.000000.vtu displacement displacement 1e-11 0.0
+)
+
+AddTest(
+    NAME ThermoMechanics_tm2_1D1bt
+    PATH ThermoMechanics/tm2_1D1bt
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS tm2_1D1bt.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    RUNTIME 17
+    DIFF_DATA
+    tm2_1D1bt_pcs_0_ts_50_t_5.000000.vtu tm2_1D1bt_pcs_0_ts_50_t_5.000000.vtu temperature temperature 1e-10 0.0
+    tm2_1D1bt_pcs_0_ts_50_t_5.000000.vtu tm2_1D1bt_pcs_0_ts_50_t_5.000000.vtu displacement displacement 1e-10 0.0
+    tm2_1D1bt_pcs_0_ts_100_t_10.000000.vtu tm2_1D1bt_pcs_0_ts_100_t_10.000000.vtu temperature temperature 1e-10 0.0
+    tm2_1D1bt_pcs_0_ts_100_t_10.000000.vtu tm2_1D1bt_pcs_0_ts_100_t_10.000000.vtu displacement displacement 1e-10 0.0
+)
+
+AddTest(
+    NAME ThermoMechanics_tm2_1Dfixc
+    PATH ThermoMechanics/tm2_1Dfixc
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS tm2_1Dfixc.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    RUNTIME 17
+    DIFF_DATA
+    tm2_1Dfixc_pcs_0_ts_50_t_5.000000.vtu tm2_1Dfixc_pcs_0_ts_50_t_5.000000.vtu temperature temperature 1e-10 0.0
+    tm2_1Dfixc_pcs_0_ts_50_t_5.000000.vtu tm2_1Dfixc_pcs_0_ts_50_t_5.000000.vtu displacement displacement 1e-11 0.0
+    tm2_1Dfixc_pcs_0_ts_100_t_10.000000.vtu tm2_1Dfixc_pcs_0_ts_100_t_10.000000.vtu temperature temperature 1e-10 0.0
+    tm2_1Dfixc_pcs_0_ts_100_t_10.000000.vtu tm2_1Dfixc_pcs_0_ts_100_t_10.000000.vtu displacement displacement 1e-11 0.0
+)
+#--
+
+AddTest(
     NAME ThermoMechanics_3D_ThermoElastic_Stress_Analysis
     PATH ThermoMechanics
     EXECUTABLE ogs
