@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProject>
+  <mesh>m3_3Dshearz_qrot.vtu</mesh>
+  <geometry>m3_3Dshearz_rot.gml</geometry>
+  <processes>
+    <process>
+      <name>SD</name>
+      <type>SMALL_DEFORMATION</type>
+      <integration_order>3</integration_order>
+      <constitutive_relation>
+          <type>LinearElasticOrthotropic</type>
+          <youngs_moduli>E</youngs_moduli>
+          <shear_moduli>G</shear_moduli>
+          <poissons_ratios>nu</poissons_ratios>
+      </constitutive_relation>
+      <solid_density>rho</solid_density>
+      <specific_body_force>0 0 -9.81</specific_body_force>
+      <process_variables>
+        <process_variable>displacement</process_variable>
+      </process_variables>
+      <secondary_variables>
+        <secondary_variable type="static" internal_name="epsilon" output_name="epsilon"/>
+        <secondary_variable type="static" internal_name="sigma" output_name="sigma"/>
+      </secondary_variables>
+    </process>
+  </processes>
+  <time_loop>
+    <processes>
+      <process ref="SD">
+        <nonlinear_solver>basic_newton</nonlinear_solver>
+        <convergence_criterion>
+          <type>PerComponentDeltaX</type>
+          <norm_type>NORM2</norm_type>
+          <reltols> 1.0e-5 1.0e15 1.0e-5 </reltols>
+        </convergence_criterion>
+        <time_discretization>
+          <type>BackwardEuler</type>
+        </time_discretization>
+        <time_stepping>
+          <type>FixedTimeStepping</type>
+          <t_initial> 0.0 </t_initial>
+          <t_end>1</t_end>
+          <timesteps>
+            <pair>
+              <repeat>1</repeat>
+              <delta_t>1</delta_t>
+            </pair>
+          </timesteps>
+        </time_stepping>
+      </process>
+    </processes>
+    <output>
+      <type>VTK</type>
+      <prefix>m3_3Dshearz_rot</prefix>
+      <data_mode>Ascii</data_mode>
+      <compress_output>false</compress_output>
+      <timesteps>
+        <pair>
+          <repeat> 1 </repeat>
+          <each_steps> 1 </each_steps>
+        </pair>
+      </timesteps>
+      <variables>
+        <variable>displacement</variable>
+        <variable>epsilon</variable>
+        <variable>sigma</variable>
+      </variables>
+    </output>
+  </time_loop>
+  <!-- Transversal anisotropic along local z-axis -->
+  <local_coordinate_system>
+    <basis_vector_0>e0</basis_vector_0>
+    <basis_vector_1>e1</basis_vector_1>
+    <basis_vector_2>e2</basis_vector_2>
+  </local_coordinate_system>
+  <parameters>
+    <parameter>
+      <name>e0</name>
+      <type>Constant</type>
+      <values>0.7071067811865476 0 -0.7071067811865476</values>
+    </parameter>
+    <parameter>
+      <name>e1</name>
+      <type>Constant</type>
+      <values>0.5 0.7071067811865476 0.5</values>
+    </parameter>
+    <parameter>
+      <name>e2</name>
+      <type>Constant</type>
+      <values>0.5 -0.7071067811865476 0.5</values>
+    </parameter>
+    <!-- Stresses in Pa -->
+    <parameter>
+      <name>E</name>
+      <type>Constant</type>
+      <!-- E_1 E_2 E_3 -->
+      <!-- E_i E_i E_a -->
+      <values>7.2e9 7.2e9 2.8e9</values>
+    </parameter>
+    <parameter>
+      <name>G</name>
+      <type>Constant</type>
+      <!-- G_{12} G_{23} G_{13} -->
+      <!-- E_i/(2(1+nu)) G_a G_a -->
+      <values>2.70677e9 1.2e9 1.2e9</values>
+    </parameter>
+    <parameter>
+      <name>nu</name>
+      <type>Constant</type>
+      <!-- nu_{12} nu_{23} nu_{13} -->
+      <!-- nu nu_{ia} nu_{ia} -->
+      <values>.33 .24 .24</values>
+    </parameter>
+    <parameter>
+      <name>rho</name>
+      <type>Constant</type>
+      <value>0</value>
+    </parameter>
+    <parameter>
+      <name>zero</name>
+      <type>Constant</type>
+      <value>0.0</value>
+    </parameter>
+    <parameter>
+      <name>initial_displacement</name>
+      <type>Constant</type>
+      <values>0 0 0</values>
+    </parameter>
+    <parameter>
+      <name>sigma0</name>
+      <type>Constant</type>
+      <value>1.e+6</value>
+    </parameter>
+    <parameter>
+      <name>sigma0_sqrt2</name>
+      <type>Constant</type>
+      <value>0.7071067811865476e+6</value>
+    </parameter>
+    <parameter>
+      <name>m_sigma0_sqrt2</name>
+      <type>Constant</type>
+      <value>-0.7071067811865476e+6</value>
+    </parameter>
+  </parameters>
+  <process_variables>
+    <process_variable>
+      <name>displacement</name>
+      <components>3</components>
+      <order>2</order>
+      <initial_condition>initial_displacement</initial_condition>
+      <boundary_conditions>
+        <boundary_condition>
+          <geometrical_set>m3_3Dshearz_rot</geometrical_set>
+          <geometry>SURF_XMIN</geometry>
+          <type>Dirichlet</type>
+          <component>0</component>
+          <parameter>zero</parameter>
+        </boundary_condition>
+        <boundary_condition>
+          <geometrical_set>m3_3Dshearz_rot</geometrical_set>
+          <geometry>SURF_XMIN</geometry>
+          <type>Dirichlet</type>
+          <component>1</component>
+          <parameter>zero</parameter>
+        </boundary_condition>
+        <boundary_condition>
+          <geometrical_set>m3_3Dshearz_rot</geometrical_set>
+          <geometry>SURF_XMIN</geometry>
+          <type>Dirichlet</type>
+          <component>2</component>
+          <parameter>zero</parameter>
+        </boundary_condition>
+        <!--  -->
+        <boundary_condition>
+          <geometrical_set>m3_3Dshearz_rot</geometrical_set>
+          <geometry>SURF_XMAX</geometry>
+          <type>Neumann</type>
+          <component>0</component>
+          <parameter>sigma0</parameter>
+        </boundary_condition>
+        <boundary_condition>
+          <geometrical_set>m3_3Dshearz_rot</geometrical_set>
+          <geometry>SURF_XMAX</geometry>
+          <type>Neumann</type>
+          <component>2</component>
+          <parameter>sigma0</parameter>
+        </boundary_condition>
+        <!--  -->
+        <boundary_condition>
+          <geometrical_set>m3_3Dshearz_rot</geometrical_set>
+          <geometry>SURF_YMIN</geometry>
+          <type>Neumann</type>
+          <component>0</component>
+          <parameter>m_sigma0_sqrt2</parameter>
+        </boundary_condition>
+        <boundary_condition>
+          <geometrical_set>m3_3Dshearz_rot</geometrical_set>
+          <geometry>SURF_YMIN</geometry>
+          <type>Neumann</type>
+          <component>2</component>
+          <parameter>sigma0_sqrt2</parameter>
+        </boundary_condition>
+        <!--  -->
+        <boundary_condition>
+          <geometrical_set>m3_3Dshearz_rot</geometrical_set>
+          <geometry>SURF_YMAX</geometry>
+          <type>Neumann</type>
+          <component>0</component>
+          <parameter>sigma0_sqrt2</parameter>
+        </boundary_condition>
+        <boundary_condition>
+          <geometrical_set>m3_3Dshearz_rot</geometrical_set>
+          <geometry>SURF_YMAX</geometry>
+          <type>Neumann</type>
+          <component>2</component>
+          <parameter>m_sigma0_sqrt2</parameter>
+        </boundary_condition>
+        <!--  -->
+        <boundary_condition>
+          <geometrical_set>m3_3Dshearz_rot</geometrical_set>
+          <geometry>SURF_ZMIN</geometry>
+          <type>Neumann</type>
+          <component>0</component>
+          <parameter>m_sigma0_sqrt2</parameter>
+        </boundary_condition>
+        <boundary_condition>
+          <geometrical_set>m3_3Dshearz_rot</geometrical_set>
+          <geometry>SURF_ZMIN</geometry>
+          <type>Neumann</type>
+          <component>2</component>
+          <parameter>sigma0_sqrt2</parameter>
+        </boundary_condition>
+        <!--  -->
+        <boundary_condition>
+          <geometrical_set>m3_3Dshearz_rot</geometrical_set>
+          <geometry>SURF_ZMAX</geometry>
+          <type>Neumann</type>
+          <component>0</component>
+          <parameter>sigma0_sqrt2</parameter>
+        </boundary_condition>
+        <boundary_condition>
+          <geometrical_set>m3_3Dshearz_rot</geometrical_set>
+          <geometry>SURF_ZMAX</geometry>
+          <type>Neumann</type>
+          <component>2</component>
+          <parameter>m_sigma0_sqrt2</parameter>
+        </boundary_condition>
+      </boundary_conditions>
+    </process_variable>
+  </process_variables>
+  <nonlinear_solvers>
+    <nonlinear_solver>
+      <name>basic_newton</name>
+      <type>Newton</type>
+      <max_iter>10</max_iter>
+      <linear_solver>general_linear_solver</linear_solver>
+    </nonlinear_solver>
+  </nonlinear_solvers>
+  <linear_solvers>
+    <linear_solver>
+      <name>general_linear_solver</name>
+      <lis>-i cg -p jacobi -tol 1e-2 -maxiter 10000</lis>
+      <eigen>
+        <solver_type>CG</solver_type>
+        <precon_type>DIAGONAL</precon_type>
+        <max_iteration_step>10000</max_iteration_step>
+        <error_tolerance>1e-2</error_tolerance>
+      </eigen>
+      <petsc>
+        <prefix>sd</prefix>
+        <parameters>-sd_ksp_type cg -sd_pc_type bjacobi -sd_ksp_rtol 1e-10 -sd_ksp_max_it 10000</parameters>
+      </petsc>
+    </linear_solver>
+  </linear_solvers>
+</OpenGeoSysProject>

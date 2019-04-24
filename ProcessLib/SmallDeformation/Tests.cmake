@@ -90,3 +90,91 @@ AddTest(
     ../../ring_plane_strain_1e4_solution.vtu ring_plane_strain_pcs_0_ts_1_t_1.000000.vtu displacement displacement 1e-16 0
     ../../ring_plane_strain_1e4_solution.vtu ring_plane_strain_pcs_0_ts_1_t_1.000000.vtu sigma sigma 1e-15 0
 )
+
+AddTest(
+    NAME Mechanics_m1_1Dload
+    PATH Mechanics/m1_1Dload
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS m1_1Dload.prj
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    m1_1Dload_pcs_0_ts_1_t_1.000000.vtu m1_1Dload_pcs_0_ts_1_t_1.000000.vtu displacement displacement 10e-12 0.0
+)
+
+AddTest(
+    NAME Mechanics_m1_1Dlozenge
+    PATH Mechanics/m1_1Dlozenge
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS m1_1Dlozenge.prj
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    m1_1Dlozenge_pcs_0_ts_1_t_1.000000.vtu m1_1Dlozenge_pcs_0_ts_1_t_1.000000.vtu displacement displacement 10e-12 0.0
+)
+
+AddTest(
+    NAME Mechanics_m1_2Dload
+    PATH Mechanics/m1_2Dload
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS m1_2Dload.prj
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    m1_2Dload_pcs_0_ts_1_t_1.000000.vtu m1_2Dload_pcs_0_ts_1_t_1.000000.vtu displacement displacement 10e-12 0.0
+)
+
+AddTest(
+    NAME Mechanics_m1_3Dbottom
+    PATH Mechanics/m1_3Dbottom
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS m1_3Dbottom.prj
+    TESTER vtkdiff
+    REQUIREMENTS OGS_USE_MFRONT AND NOT OGS_USE_MPI
+    DIFF_DATA
+    m1_3Dbottom_pcs_0_ts_1_t_1.000000.vtu m1_3Dbottom_pcs_0_ts_1_t_1.000000.vtu displacement displacement 10e-12 0.0
+)
+
+AddTest(
+    NAME Mechanics_m1_3Dgravity
+    PATH Mechanics/m1_3Dgravity
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS m1_3Dgravity.prj
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    m1_3Dgravity_pcs_0_ts_1_t_1.000000.vtu m1_3Dgravity_pcs_0_ts_1_t_1.000000.vtu displacement displacement 10e-12 0.0
+)
+
+AddTest(
+    NAME Mechanics_m1_3Dload
+    PATH Mechanics/m1_3Dload
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS m1_3Dload.prj
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    m1_3Dload_pcs_0_ts_1_t_1.000000.vtu m1_3Dload_pcs_0_ts_1_t_1.000000.vtu displacement displacement 10e-12 0.0
+)
+
+AddTest(
+    NAME Mechanics_m1_3Dsquare
+    PATH Mechanics/m1_3Dsquare
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS m1_3Dsquare.prj
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    m1_3Dsquare_pcs_0_ts_1_t_1.000000.vtu m1_3Dsquare_pcs_0_ts_1_t_1.000000.vtu displacement displacement 10e-12 0.0
+)
+
+AddTest(
+    NAME Mechanics_m1_3Dtopload
+    PATH Mechanics/m1_3Dtopload
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS m1_3Dtopload.prj
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    m1_3Dtopload_pcs_0_ts_1_t_1.000000.vtu m1_3Dtopload_pcs_0_ts_1_t_1.000000.vtu displacement displacement 10e-12 0.0
+)
