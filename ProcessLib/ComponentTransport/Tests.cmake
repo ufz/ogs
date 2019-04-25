@@ -317,6 +317,37 @@ AddTest(
 )
 
 AddTest(
+    NAME 2D_ComponentTransport_Advective_and_NonAdvective_comparison
+    PATH Parabolic/ComponentTransport/SimpleSynthetics
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS open_boundary_component-transport_cube_1e3_advective_form.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    RUNTIME 26
+    DIFF_DATA
+    DiffusionAndAdvection_surfaceflux_pcs_0_ts_0_t_0.000000_expected.vtu DiffusionAndAdvection_surfaceflux_pcs_0_ts_0_t_0.000000.vtu Si Si 5e-6 5e-6
+    DiffusionAndAdvection_surfaceflux_pcs_0_ts_1_t_0.020000_expected.vtu DiffusionAndAdvection_surfaceflux_pcs_0_ts_1_t_0.020000.vtu Si Si 5e-6 5e-6
+    DiffusionAndAdvection_surfaceflux_pcs_0_ts_2_t_0.040000_expected.vtu DiffusionAndAdvection_surfaceflux_pcs_0_ts_2_t_0.040000.vtu Si Si 5e-6 5e-6
+    DiffusionAndAdvection_surfaceflux_pcs_0_ts_3_t_0.060000_expected.vtu DiffusionAndAdvection_surfaceflux_pcs_0_ts_3_t_0.060000.vtu Si Si 5e-6 5e-6
+    DiffusionAndAdvection_surfaceflux_pcs_0_ts_4_t_0.080000_expected.vtu DiffusionAndAdvection_surfaceflux_pcs_0_ts_4_t_0.080000.vtu Si Si 5e-6 5e-6
+    DiffusionAndAdvection_surfaceflux_pcs_0_ts_5_t_0.100000_expected.vtu DiffusionAndAdvection_surfaceflux_pcs_0_ts_5_t_0.100000.vtu Si Si 5e-6 5e-6
+    DiffusionAndAdvection_surfaceflux_pcs_0_ts_0_t_0.000000_expected.vtu DiffusionAndAdvection_surfaceflux_pcs_0_ts_0_t_0.000000.vtu pressure pressure 1e-7 1e-10
+    DiffusionAndAdvection_surfaceflux_pcs_0_ts_1_t_0.020000_expected.vtu DiffusionAndAdvection_surfaceflux_pcs_0_ts_1_t_0.020000.vtu pressure pressure 1e-7 1e-10
+    DiffusionAndAdvection_surfaceflux_pcs_0_ts_2_t_0.040000_expected.vtu DiffusionAndAdvection_surfaceflux_pcs_0_ts_2_t_0.040000.vtu pressure pressure 1e-7 1e-10
+    DiffusionAndAdvection_surfaceflux_pcs_0_ts_3_t_0.060000_expected.vtu DiffusionAndAdvection_surfaceflux_pcs_0_ts_3_t_0.060000.vtu pressure pressure 1e-7 1e-10
+    DiffusionAndAdvection_surfaceflux_pcs_0_ts_4_t_0.080000_expected.vtu DiffusionAndAdvection_surfaceflux_pcs_0_ts_4_t_0.080000.vtu pressure pressure 1e-7 1e-10
+    DiffusionAndAdvection_surfaceflux_pcs_0_ts_5_t_0.100000_expected.vtu DiffusionAndAdvection_surfaceflux_pcs_0_ts_5_t_0.100000.vtu pressure pressure 1e-7 1e-10
+    DiffusionAndAdvection_surfaceflux_pcs_0_ts_0_t_0.000000_expected.vtu DiffusionAndAdvection_surfaceflux_pcs_0_ts_0_t_0.000000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
+    DiffusionAndAdvection_surfaceflux_pcs_0_ts_1_t_0.020000_expected.vtu DiffusionAndAdvection_surfaceflux_pcs_0_ts_1_t_0.020000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
+    DiffusionAndAdvection_surfaceflux_pcs_0_ts_2_t_0.040000_expected.vtu DiffusionAndAdvection_surfaceflux_pcs_0_ts_2_t_0.040000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
+    DiffusionAndAdvection_surfaceflux_pcs_0_ts_3_t_0.060000_expected.vtu DiffusionAndAdvection_surfaceflux_pcs_0_ts_3_t_0.060000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
+    DiffusionAndAdvection_surfaceflux_pcs_0_ts_4_t_0.080000_expected.vtu DiffusionAndAdvection_surfaceflux_pcs_0_ts_4_t_0.080000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
+    DiffusionAndAdvection_surfaceflux_pcs_0_ts_5_t_0.100000_expected.vtu DiffusionAndAdvection_surfaceflux_pcs_0_ts_5_t_0.100000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
+    VIS DiffusionAndAdvection_surfaceflux_pcs_0_ts_5_t_0.100000.vtu
+)
+
+AddTest(
     NAME 2D_ComponentTransport_StaggeredScheme_DiffusionAndStorageAndAdvectionAndDispersion
     PATH Parabolic/ComponentTransport/StaggeredScheme
     EXECUTABLE ogs
