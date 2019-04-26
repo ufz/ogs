@@ -28,7 +28,7 @@ ElementTreeView::ElementTreeView( QWidget* parent)
 void ElementTreeView::updateView()
 {
     setAlternatingRowColors(true);
-    setColumnWidth(0,125);
+    setColumnWidth(0,150);
     std::size_t nColumns =
         (this->model() != nullptr) ? this->model()->columnCount() : 0;
     for (std::size_t i = 1; i < nColumns; i++)

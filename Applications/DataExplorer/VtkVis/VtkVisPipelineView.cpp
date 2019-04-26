@@ -56,7 +56,7 @@ VtkVisPipelineView::VtkVisPipelineView( QWidget* parent /*= 0*/ )
     this->setItemsExpandable(false);
     auto* checkboxDelegate = new CheckboxDelegate(this);
     this->setItemDelegateForColumn(1, checkboxDelegate);
-    this->header()->setStretchLastSection(false);
+    this->header()->setStretchLastSection(true);
     this->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
 }
 

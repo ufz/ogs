@@ -32,10 +32,10 @@ GeoTreeView::GeoTreeView(QWidget* parent) : QTreeView(parent)
 void GeoTreeView::updateView()
 {
     setAlternatingRowColors(true);
-    //resizeColumnToContents(0);
     setColumnWidth(0,150);
-    setColumnWidth(1,50);
-    setColumnWidth(2,50);
+    setColumnWidth(1,75);
+    setColumnWidth(2,75);
+    setColumnWidth(3,75);
 }
 
 void GeoTreeView::on_Clicked(QModelIndex idx)
