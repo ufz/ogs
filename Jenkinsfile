@@ -316,7 +316,6 @@ pipeline {
               configure {
                 sh 'git submodule sync'
                 cmakeOptions =
-                  '-DOGS_BUILD_UTILS=ON ' +
                   '-DBUILD_SHARED_LIBS=ON ' +
                   '-DOGS_USE_PETSC=ON ' +
                   '-DOGS_USE_CONAN=OFF '
