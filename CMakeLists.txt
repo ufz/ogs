@@ -97,6 +97,11 @@ if(OGS_BUILD_GUI)
     option(OGS_USE_NETCDF "Add NetCDF support." ON)
 endif()
 option(OGS_BUILD_UTILS "Should the utilities programms be built?" OFF)
+if(OGS_BUILD_UTILS AND OGS_USE_MPI)
+    message(WARNING "OGS_BUILD_UTILS cannot be used with OGS_USE_MPI "
+        "(OGS_USE_PETSC)! Disabling OGS_BUILD_UTILS.")
+    set(OGS_BUILD_UTILS OFF CACHE BOOL "" FORCE)
+endif()
 
 
 # A list of processes to be build. Also used in the ProcessLib to select
