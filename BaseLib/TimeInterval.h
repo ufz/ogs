@@ -40,8 +40,8 @@ public:
     }
 
 private:
-    const double _start_time;
-    const double _end_time;
+    double _start_time;
+    double _end_time;
 };
 
 std::unique_ptr<TimeInterval> createTimeInterval(
