@@ -46,7 +46,7 @@ int convertVtkDataMode(std::string const& data_mode)
 
 std::string constructFileName(std::string const& prefix,
                               int const process_id,
-                              unsigned const timestep,
+                              int const timestep,
                               double const t)
 {
     return prefix + "_pcs_" + std::to_string(process_id) + "_ts_" +
@@ -56,9 +56,9 @@ std::string constructFileName(std::string const& prefix,
 
 namespace ProcessLib
 {
-bool Output::shallDoOutput(unsigned timestep, double const t)
+bool Output::shallDoOutput(int timestep, double const t)
 {
-    unsigned each_steps = 1;
+    int each_steps = 1;
 
     for (auto const& pair : _repeats_each_steps)
     {
@@ -189,7 +189,7 @@ void Output::outputBulkMesh(OutputFile const& output_file,
 
 void Output::doOutputAlways(Process const& process,
                             const int process_id,
-                            unsigned timestep,
+                            const int timestep,
                             const double t,
                             GlobalVector const& x)
 {
@@ -281,7 +281,7 @@ void Output::doOutputAlways(Process const& process,
 
 void Output::doOutput(Process const& process,
                       const int process_id,
-                      unsigned timestep,
+                      const int timestep,
                       const double t,
                       GlobalVector const& x)
 {
@@ -298,7 +298,7 @@ void Output::doOutput(Process const& process,
 
 void Output::doOutputLastTimestep(Process const& process,
                                   const int process_id,
-                                  unsigned timestep,
+                                  const int timestep,
                                   const double t,
                                   GlobalVector const& x)
 {
@@ -313,9 +313,9 @@ void Output::doOutputLastTimestep(Process const& process,
 
 void Output::doOutputNonlinearIteration(Process const& process,
                                         const int process_id,
-                                        const unsigned timestep, const double t,
+                                        const int timestep, const double t,
                                         GlobalVector const& x,
-                                        const unsigned iteration)
+                                        const int iteration)
 {
     if (!_output_nonlinear_iteration_results)
     {
