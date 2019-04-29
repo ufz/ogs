@@ -45,7 +45,7 @@ void processOutputData(
 ///
 /// See Output::_output_file_data_mode documentation for the data_mode
 /// parameter.
-void makeOutput(std::string const& file_name, MeshLib::Mesh& mesh,
+void makeOutput(std::string const& file_name, MeshLib::Mesh const& mesh,
                 bool const compress_output, int const data_mode);
 
 }  // namespace ProcessLib

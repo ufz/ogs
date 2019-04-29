@@ -239,7 +239,7 @@ void processOutputData(
     addIntegrationPointWriter(mesh, integration_point_writer);
 }
 
-void makeOutput(std::string const& file_name, MeshLib::Mesh& mesh,
+void makeOutput(std::string const& file_name, MeshLib::Mesh const& mesh,
                 bool const compress_output, int const data_mode)
 {
     // Write output file
