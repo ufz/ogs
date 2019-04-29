@@ -635,7 +635,6 @@ pipeline {
               configure {
                 cmakeOptions =
                   '-DOGS_USE_PETSC=ON ' +
-                  '-DOGS_BUILD_UTILS=ON ' +
                   '-DBUILD_SHARED_LIBS=ON ' +
                   '-DCMAKE_INSTALL_PREFIX=/global/apps/ogs/head/petsc ' +
                   '-DOGS_MODULEFILE=/global/apps/modulefiles/ogs/head/petsc ' +
