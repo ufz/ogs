@@ -104,10 +104,15 @@ int main(int argc, char* argv[])
             ERR("Could not create a mesh for each given geometry.");
             return EXIT_FAILURE;
         }
-        if (!m_ptr->getNodes().empty())
+        if (m_ptr->getNodes().empty())
         {
-            MeshLib::IO::writeMeshToFile(*m_ptr, m_ptr->getName() + ".vtu");
+            WARN(
+                "The created mesh '%s' hasn't any nodes or elements and thus "
+                "it isn't written to file.",
+                m_ptr->getName().c_str());
+            continue;
         }
+        MeshLib::IO::writeMeshToFile(*m_ptr, m_ptr->getName() + ".vtu");
     }
 
     return EXIT_SUCCESS;
