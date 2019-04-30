@@ -145,7 +145,7 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
             config.getConfigParameter<double>("reference_value");
 
         auto const& exponent_data_config =
-            //!  //\ogs_file_param{properties__property__ExponentialProperty__exponent}
+            //! \ogs_file_param{properties__property__ExponentialProperty__exponent}
             config.getConfigSubtree("exponent");
 
         auto const& variable_name =
