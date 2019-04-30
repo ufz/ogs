@@ -29,13 +29,10 @@ class Output
 public:
     struct PairRepeatEachSteps
     {
-        explicit PairRepeatEachSteps(unsigned c, unsigned e)
-            : repeat(c), each_steps(e)
-        {
-        }
+        explicit PairRepeatEachSteps(int c, int e) : repeat(c), each_steps(e) {}
 
-        const unsigned repeat;      //!< Apply \c each_steps \c repeat times.
-        const unsigned each_steps;  //!< Do output every \c each_steps timestep.
+        const int repeat;      //!< Apply \c each_steps \c repeat times.
+        const int each_steps;  //!< Do output every \c each_steps timestep.
     };
 
 public:
@@ -54,29 +51,28 @@ public:
     //! Writes output for the given \c process if it should be written in the
     //! given \c timestep.
     void doOutput(Process const& process, const int process_id,
-                  unsigned timestep, const double t, GlobalVector const& x);
+                  const int timestep, const double t, GlobalVector const& x);
 
     //! Writes output for the given \c process if it has not been written yet.
     //! This method is intended for doing output after the last timestep in
     //! order to make sure that its results are written.
     void doOutputLastTimestep(Process const& process, const int process_id,
-                              unsigned timestep, const double t,
+                              const int timestep, const double t,
                               GlobalVector const& x);
 
     //! Writes output for the given \c process.
     //! This method will always write.
     //! It is intended to write output in error handling routines.
     void doOutputAlways(Process const& process, const int process_id,
-                        unsigned timestep, const double t,
+                        const int timestep, const double t,
                         GlobalVector const& x);
 
     //! Writes output for the given \c process.
     //! To be used for debug output after an iteration of the nonlinear solver.
     void doOutputNonlinearIteration(Process const& process,
-                                    const int process_id,
-                                    const unsigned timestep, const double t,
-                                    GlobalVector const& x,
-                                    const unsigned iteration);
+                                    const int process_id, const int timestep,
+                                    const double t, GlobalVector const& x,
+                                    const int iteration);
 
     std::vector<double> getFixedOutputTimes() {return _fixed_output_times;}
 
@@ -90,6 +86,13 @@ private:
         MeshLib::IO::PVDFile pvd_file;
     };
 
+    struct OutputFile;
+    void outputBulkMesh(OutputFile const& output_file,
+                        ProcessData* const process_data,
+                        MeshLib::Mesh const& mesh,
+                        double const t) const;
+
+private:
     std::string const _output_directory;
     std::string const _output_file_prefix;
 
@@ -119,7 +122,7 @@ private:
     ProcessData* findProcessData(Process const& process, const int process_id);
 
     //! Determines if there should be output at the given \c timestep or \c t.
-    bool shallDoOutput(unsigned timestep, double const t);
+    bool shallDoOutput(int timestep, double const t);
 
     ProcessOutput const _process_output;
     std::vector<std::string> const _mesh_names_for_output;

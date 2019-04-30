@@ -40,8 +40,6 @@ struct SecondaryVariableFunctions final
         NumLib::LocalToGlobalIndexMap const& dof_table,
         std::unique_ptr<GlobalVector>& result_cache)>;
 
-    SecondaryVariableFunctions() = default;
-
     template <typename F1, typename F2>
     SecondaryVariableFunctions(const unsigned num_components_, F1&& eval_field_,
                                F2&& eval_residuals_)
