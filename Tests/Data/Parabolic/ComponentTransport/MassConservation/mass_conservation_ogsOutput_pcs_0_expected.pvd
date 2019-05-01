@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<VTKFile type="Collection" version="0.1" byte_order="LittleEndian" compressor="vtkZLibDataCompressor">
+  <Collection>
+    <DataSet timestep="0" group="" part="0" file="mass_conservation_ogsOutput_pcs_0_ts_0_t_0.000000_expected.vtu"/>
+    <DataSet timestep="34895.986246323" group="" part="0" file="mass_conservation_ogsOutput_pcs_0_ts_300_t_34895.986246_expected.vtu"/>
+    <DataSet timestep="81993.3105063162" group="" part="0" file="mass_conservation_ogsOutput_pcs_0_ts_600_t_81993.310506_expected.vtu"/>
+    <DataSet timestep="145558.519328157" group="" part="0" file="mass_conservation_ogsOutput_pcs_0_ts_900_t_145558.519328_expected.vtu"/>
+    <DataSet timestep="231349.715241116" group="" part="0" file="mass_conservation_ogsOutput_pcs_0_ts_1200_t_231349.715241_expected.vtu"/>
+    <DataSet timestep="347138.358629392" group="" part="0" file="mass_conservation_ogsOutput_pcs_0_ts_1500_t_347138.358629_expected.vtu"/>
+    <DataSet timestep="503413.251350302" group="" part="0" file="mass_conservation_ogsOutput_pcs_0_ts_1800_t_503413.251350_expected.vtu"/>
+    <DataSet timestep="714330.672785346" group="" part="0" file="mass_conservation_ogsOutput_pcs_0_ts_2100_t_714330.672785_expected.vtu"/>
+    <DataSet timestep="1000000" group="" part="0" file="mass_conservation_ogsOutput_pcs_0_ts_2323_t_1000000.000000_expected.vtu"/>
+  </Collection>
+</VTKFile>
