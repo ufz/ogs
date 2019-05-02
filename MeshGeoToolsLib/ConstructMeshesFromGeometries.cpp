@@ -30,7 +30,8 @@ template <typename GeometryVec>
 std::vector<std::unique_ptr<MeshLib::Mesh>>
 constructAdditionalMeshesFromGeometries(
     std::vector<GeometryVec*> const& geometries,
-    MeshGeoToolsLib::BoundaryElementsSearcher& boundary_element_searcher)
+    MeshGeoToolsLib::BoundaryElementsSearcher& boundary_element_searcher,
+    bool const multiple_nodes_allowed)
 {
     std::vector<std::unique_ptr<MeshLib::Mesh>> additional_meshes;
 
@@ -63,7 +64,8 @@ constructAdditionalMeshesFromGeometries(
             additional_meshes.emplace_back(createMeshFromElementSelection(
                 meshNameFromGeometry(vec_name, geometry_name),
                 MeshLib::cloneElements(
-                    boundary_element_searcher.getBoundaryElements(geometry))));
+                    boundary_element_searcher.getBoundaryElements(
+                        geometry, multiple_nodes_allowed))));
         }
     }
     return additional_meshes;
@@ -73,7 +75,8 @@ std::vector<std::unique_ptr<MeshLib::Mesh>>
 constructAdditionalMeshesFromGeoObjects(GeoLib::GEOObjects const& geo_objects,
                                         MeshLib::Mesh const& mesh,
                                         std::unique_ptr<SearchLength>
-                                            search_length_algorithm)
+                                            search_length_algorithm,
+                                        bool const multiple_nodes_allowed)
 {
     std::vector<std::unique_ptr<MeshLib::Mesh>> additional_meshes;
 
@@ -89,7 +92,8 @@ constructAdditionalMeshesFromGeoObjects(GeoLib::GEOObjects const& geo_objects,
     //
     {
         auto point_meshes = constructAdditionalMeshesFromGeometries(
-            geo_objects.getPoints(), boundary_element_searcher);
+            geo_objects.getPoints(), boundary_element_searcher,
+            multiple_nodes_allowed);
         std::move(begin(point_meshes), end(point_meshes),
                   std::back_inserter(additional_meshes));
     }
@@ -99,7 +103,8 @@ constructAdditionalMeshesFromGeoObjects(GeoLib::GEOObjects const& geo_objects,
     //
     {
         auto polyline_meshes = constructAdditionalMeshesFromGeometries(
-            geo_objects.getPolylines(), boundary_element_searcher);
+            geo_objects.getPolylines(), boundary_element_searcher,
+            multiple_nodes_allowed);
         std::move(begin(polyline_meshes), end(polyline_meshes),
                   std::back_inserter(additional_meshes));
     }
@@ -107,7 +112,8 @@ constructAdditionalMeshesFromGeoObjects(GeoLib::GEOObjects const& geo_objects,
     // Surfaces
     {
         auto surface_meshes = constructAdditionalMeshesFromGeometries(
-            geo_objects.getSurfaces(), boundary_element_searcher);
+            geo_objects.getSurfaces(), boundary_element_searcher,
+            multiple_nodes_allowed);
         std::move(begin(surface_meshes), end(surface_meshes),
                   std::back_inserter(additional_meshes));
     }

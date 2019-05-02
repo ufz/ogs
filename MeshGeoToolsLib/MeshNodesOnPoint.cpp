@@ -12,13 +12,15 @@
 
 namespace MeshGeoToolsLib
 {
-MeshNodesOnPoint::MeshNodesOnPoint(
-    MeshLib::Mesh const& mesh, GeoLib::Grid<MeshLib::Node> const& mesh_grid,
-    GeoLib::Point const& pnt, double epsilon_radius,
-    SearchAllNodes search_all_nodes)
+MeshNodesOnPoint::MeshNodesOnPoint(MeshLib::Mesh const& mesh,
+                                   GeoLib::Grid<MeshLib::Node> const& mesh_grid,
+                                   GeoLib::Point const& pnt,
+                                   double epsilon_radius,
+                                   SearchAllNodes search_all_nodes)
     : _mesh(mesh), _pnt(pnt)
 {
-    std::vector<std::size_t> vec_ids(mesh_grid.getPointsInEpsilonEnvironment(pnt, epsilon_radius));
+    std::vector<std::size_t> vec_ids(
+        mesh_grid.getPointsInEpsilonEnvironment(pnt, epsilon_radius));
     if (search_all_nodes == SearchAllNodes::Yes)
     {
         _msh_node_ids = vec_ids;
@@ -35,5 +37,5 @@ MeshNodesOnPoint::MeshNodesOnPoint(
     }
 }
 
-} // end namespace MeshGeoToolsLib
+}  // end namespace MeshGeoToolsLib
 

@@ -30,7 +30,8 @@ std::vector<std::unique_ptr<MeshLib::Mesh>>
 constructAdditionalMeshesFromGeoObjects(GeoLib::GEOObjects const& geo_objects,
                                         MeshLib::Mesh const& mesh,
                                         std::unique_ptr<SearchLength>
-                                            search_length_algorithm);
+                                            search_length_algorithm,
+                                        bool const multiple_nodes_allowed);
 
 std::string meshNameFromGeometry(std::string const& geometrical_set_name,
                                  std::string const& geometry_name);

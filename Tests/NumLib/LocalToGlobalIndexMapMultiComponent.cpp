@@ -61,10 +61,11 @@ public:
                 *mesh, std::move(search_length));
         MGTL::BoundaryElementsSearcher searcher_elements(*mesh, searcher_nodes);
 
+        bool const multiple_nodes_allowed = false;
         boundary_mesh = createMeshFromElementSelection(
             "boundary_mesh",
-            MeshLib::cloneElements(
-                searcher_elements.getBoundaryElements(*ply)));
+            MeshLib::cloneElements(searcher_elements.getBoundaryElements(
+                *ply, multiple_nodes_allowed)));
 
         mesh_items_boundary = std::make_unique<MeshLib::MeshSubset>(
             *boundary_mesh, boundary_mesh->getNodes());

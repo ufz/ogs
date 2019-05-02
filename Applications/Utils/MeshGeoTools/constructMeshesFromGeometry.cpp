@@ -34,7 +34,10 @@ int main(int argc, char* argv[])
     ApplicationsLib::LogogSetup logo_setup;
 
     TCLAP::CmdLine cmd(
-        "Converts a geometry defined on a given mesh to distinct meshes.\n\n"
+        "Converts a geometry defined on a given mesh to distinct meshes. The "
+        "documentation is available at "
+        "https://www.opengeosys.org/docs/tools/meshing-submeshes/"
+        "constructmeshesfromgeometry/.\n\n"
         "OpenGeoSys-6 software, version " +
             BaseLib::BuildInfo::ogs_version +
             ".\n"
@@ -68,6 +71,17 @@ int main(int argc, char* argv[])
         "",
         "mesh file name");
     cmd.add(mesh_arg);
+
+    TCLAP::ValueArg<bool> multiple_nodes_allowed_arg(
+        "",
+        "multiple-nodes-allowed",
+        "allows that multiple mesh nodes are contained in the eps environment",
+        false, // required argument
+        false, // default value
+        "allows that multiple mesh nodes are contained in the eps environment, "
+        "the nearest node for a point will be returned");
+    cmd.add(multiple_nodes_allowed_arg);
+
     cmd.parse(argc, argv);
 
     std::unique_ptr<MeshLib::Mesh> mesh{
@@ -80,10 +94,24 @@ int main(int argc, char* argv[])
     auto const extracted_meshes = constructAdditionalMeshesFromGeoObjects(
         *geo_objects,
         *mesh,
-        std::make_unique<MeshGeoToolsLib::SearchLength>(search_length));
+        std::make_unique<MeshGeoToolsLib::SearchLength>(search_length),
+        multiple_nodes_allowed_arg.getValue());
 
     for (auto const& m_ptr : extracted_meshes)
     {
+        if (!m_ptr)
+        {
+            ERR("Could not create a mesh for each given geometry.");
+            return EXIT_FAILURE;
+        }
+        if (m_ptr->getNodes().empty())
+        {
+            WARN(
+                "The created mesh '%s' hasn't any nodes or elements and thus "
+                "it isn't written to file.",
+                m_ptr->getName().c_str());
+            continue;
+        }
         MeshLib::IO::writeMeshToFile(*m_ptr, m_ptr->getName() + ".vtu");
     }
 
