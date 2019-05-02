@@ -33,7 +33,7 @@ createHCNonAdvectiveFreeComponentFlowBoundaryCondition(
         //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__HCNonAdvectiveFreeComponentFlowBoundary__parameter}
         config.getConfigParameter<std::string>("parameter");
     auto const& boundary_permeability = ParameterLib::findParameter<double>(
-        boundary_permeability_name, parameters, 1);
+        boundary_permeability_name, parameters, 1, &bc_mesh);
 
     if (global_dim != 3)
     {

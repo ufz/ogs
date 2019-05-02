@@ -68,17 +68,8 @@ std::unique_ptr<DirichletBoundaryCondition> createDirichletBoundaryCondition(
     auto const param_name = config.getConfigParameter<std::string>("parameter");
     DBUG("Using parameter %s", param_name.c_str());
 
-    auto& parameter =
-        ParameterLib::findParameter<double>(param_name, parameters, 1);
-
-    if (parameter.mesh() && *parameter.mesh() != bc_mesh)
-    {
-        OGS_FATAL(
-            "The boundary condition is defined on a different domain than the "
-            "parameter: boundary condition is defined on mesh '%s', parameter "
-            "is defined on mesh '%s'.",
-            bc_mesh.getName().c_str(), parameter.mesh()->getName().c_str());
-    }
+    auto& parameter = ParameterLib::findParameter<double>(
+        param_name, parameters, 1, &bc_mesh);
 
 // In case of partitioned mesh the boundary could be empty, i.e. there is no
 // boundary condition.

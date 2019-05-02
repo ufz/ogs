@@ -28,10 +28,11 @@ std::unique_ptr<RobinBoundaryCondition> createRobinBoundaryCondition(
     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__Robin__u_0}
     auto const u_0_name = config.getConfigParameter<std::string>("u_0");
 
-    auto const& alpha =
-        ParameterLib::findParameter<double>(alpha_name, parameters, 1);
+    auto const& alpha = ParameterLib::findParameter<double>(
+        alpha_name, parameters, 1, &bc_mesh);
+
     auto const& u_0 =
-        ParameterLib::findParameter<double>(u_0_name, parameters, 1);
+        ParameterLib::findParameter<double>(u_0_name, parameters, 1, &bc_mesh);
 
     // In case of partitioned mesh the boundary could be empty, i.e. there is no
     // boundary condition.
