@@ -60,4 +60,17 @@ double interpolateXCoordinate(
     return fe.interpolateZerothCoordinate(N);
 }
 
+template <typename ShapeFunction, typename ShapeMatricesType>
+std::array<double, 3> interpolateCoordinates(
+    MeshLib::Element const& e,
+    typename ShapeMatricesType::ShapeMatrices::ShapeType const& N)
+{
+    using FemType = NumLib::TemplateIsoparametric<
+        ShapeFunction, ShapeMatricesType>;
+
+    FemType fe(*static_cast<const typename ShapeFunction::MeshElement*>(&e));
+
+    return fe.interpolateCoordinates(N);
+}
+
 }  // namespace ProcessLib
