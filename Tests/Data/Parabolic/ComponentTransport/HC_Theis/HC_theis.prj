@@ -47,9 +47,10 @@
                         <type>Constant</type>
                         <porosity_parameter>porosity1</porosity_parameter>
                     </porosity>
-                    <!-- The implementation of the ComponentTransport process 
-                    is without Boussinesq approximations, thus, 'storage' is not 
-                    used here, but should be set through S = thickness * gravity * porosity * d\rho / dp / rho.  -->
+                    <!-- The implementation of the ComponentTransport process
+                    is without Boussinesq approximations, thus, 'storage' is not
+                    used here, but should be set through S =thickness * gravity
+                    * porosity * d\rho / dp / rho.  -->
                     <storage>
                         <type>Constant</type>
                         <value>0</value>
@@ -182,7 +183,7 @@
     </time_loop>
 
     <parameters>
-    	<parameter>
+        <parameter>
             <name>rho_fluid</name>
             <type>Constant</type>
             <value>1000</value>
@@ -197,7 +198,7 @@
             <type>Constant</type>
             <value>0</value>
         </parameter>
-        
+
         <parameter>
             <name>porosity1</name>
             <type>Constant</type>
