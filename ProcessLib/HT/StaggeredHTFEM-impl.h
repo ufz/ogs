@@ -252,7 +252,7 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
         // Assemble mass matrix
         local_M.noalias() +=
             w *
-            this->getHeatEnergyCoefficient(t, pos, porosity, fluid_density,
+            this->getHeatEnergyCoefficient(vars, porosity, fluid_density,
                                            specific_heat_capacity_fluid) *
             N.transpose() * N;
 
@@ -276,7 +276,7 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
 
         GlobalDimMatrixType const thermal_conductivity_dispersivity =
             this->getThermalConductivityDispersivity(
-                t, pos, porosity, fluid_density, specific_heat_capacity_fluid,
+                vars, porosity, fluid_density, specific_heat_capacity_fluid,
                 velocity, I);
 
         local_K.noalias() +=
