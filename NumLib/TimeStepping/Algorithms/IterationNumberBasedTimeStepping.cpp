@@ -83,7 +83,7 @@ bool IterationNumberBasedTimeStepping::next(double const /*solution_error*/,
 double IterationNumberBasedTimeStepping::findMultiplier(
     int const number_iterations) const
 {
-    double multiplier = std::numeric_limits<double>::quiet_NaN();
+    double multiplier = _multiplier_vector.front();
     for (std::size_t i = 0; i < _iter_times_vector.size(); i++)
     {
         if (number_iterations >= _iter_times_vector[i])
