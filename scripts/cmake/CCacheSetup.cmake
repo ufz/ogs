@@ -28,18 +28,22 @@ if($ENV{TRAVIS})
 endif()
 
 # Check ccache pre-compiled headers config
-execute_process(COMMAND ${CCACHE_TOOL_PATH} --print-config
+execute_process(COMMAND ${CCACHE_TOOL_PATH} -p
     OUTPUT_VARIABLE CCACHE_CONFIG
     ERROR_VARIABLE CCACHE_CONFIG
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    ERROR_STRIP_TRAILING_WHITESPACE
 )
 
-# Regex should be "sloppiness.*time_macros.*pch_defines.*" but due to bug fixed
-# in https://ccache.samba.org/releasenotes.html#_ccache_3_2_5 we have to leave
-# out pch_defines. Ubuntu 16.04 comes with ccache 3.2.4 ...
-string(REGEX MATCH "sloppiness.*time_macros.*"
-    COTIRE_CCACHE_CONFIG ${CCACHE_CONFIG}
+string(REGEX MATCH ".*time_macros.*"
+    COTIRE_CCACHE_CONFIG_TIME_MACROS ${CCACHE_CONFIG}
+)
+string(REGEX MATCH ".*pch_defines.*"
+    COTIRE_CCACHE_CONFIG_PCH_DEFINES ${CCACHE_CONFIG}
 )
 
-if(NOT COTIRE_CCACHE_CONFIG)
-    message(FATAL_ERROR "CCache not configured! You must set sloppiness to pch_defines,time_macros. See https://docs.opengeosys.org/docs/devguide/advanced/using-ccache")
+if(NOT (COTIRE_CCACHE_CONFIG_TIME_MACROS AND COTIRE_CCACHE_CONFIG_PCH_DEFINES))
+    message(FATAL_ERROR "CCache configuration does not set sloppiness to pch_defines,time_macros. \
+    Current options are: '${CCACHE_CONFIG}'. \
+    See https://docs.opengeosys.org/docs/devguide/advanced/using-ccache")
 endif()
