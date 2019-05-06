@@ -28,7 +28,7 @@ if($ENV{TRAVIS})
 endif()
 
 # Check ccache pre-compiled headers config
-execute_process(COMMAND ${CCACHE_TOOL_PATH} --get-config=sloppiness
+execute_process(COMMAND ${CCACHE_TOOL_PATH} -p
     OUTPUT_VARIABLE CCACHE_CONFIG
     ERROR_VARIABLE CCACHE_CONFIG
     OUTPUT_STRIP_TRAILING_WHITESPACE
@@ -44,6 +44,6 @@ string(REGEX MATCH ".*pch_defines.*"
 
 if(NOT (COTIRE_CCACHE_CONFIG_TIME_MACROS AND COTIRE_CCACHE_CONFIG_PCH_DEFINES))
     message(FATAL_ERROR "CCache configuration does not set sloppiness to pch_defines,time_macros. \
-    Current sloppiness option is set to '${CCACHE_CONFIG}'. \
+    Current options are: '${CCACHE_CONFIG}'. \
     See https://docs.opengeosys.org/docs/devguide/advanced/using-ccache")
 endif()
