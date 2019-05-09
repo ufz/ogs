@@ -61,7 +61,7 @@ TEST(ConstructAdditionalMeshesFromGeoObjects, PointMeshLargeSearchRadius)
     GeoLib::Point shift(0.0, 0.0, 0.0);
     std::string geometry_name("AllMeshNodes");
     // all points have a name
-    int const points_per_edge = 10;
+    int const points_per_edge = 2;
     createSetOfTestPointsAndAssociatedNames(geometries, geometry_name,
                                             points_per_edge, shift);
 
