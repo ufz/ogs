@@ -98,13 +98,16 @@ add_custom_target(tests-cleanup ${CMAKE_COMMAND} -E remove -f testrunner.xml)
 set_target_properties(tests-cleanup PROPERTIES FOLDER Testing)
 
 if(OGS_USE_PETSC)
+    if("${HOSTNAME}" STREQUAL "frontend1")
+        set(MPIRUN_ARGS --mca btl_openib_allow_ib 1)
+    endif()
     set(TEST_FILTER_MPI --gtest_filter=-MPITest*)
     add_custom_target(tests
-        mpirun -np 1 $<TARGET_FILE:testrunner> ${TESTRUNNER_ADDITIONAL_ARGUMENTS} ${TEST_FILTER_MPI}
+        mpirun ${MPIRUN_ARGS} -np 1 $<TARGET_FILE:testrunner> ${TESTRUNNER_ADDITIONAL_ARGUMENTS} ${TEST_FILTER_MPI}
         DEPENDS testrunner tests-cleanup
     )
     add_custom_target(tests_mpi
-        mpirun -np 3 $<TARGET_FILE:testrunner> --gtest_filter=MPITest*
+        mpirun ${MPIRUN_ARGS} -np 3 $<TARGET_FILE:testrunner> --gtest_filter=MPITest*
         DEPENDS testrunner
     )
     set_target_properties(tests_mpi PROPERTIES FOLDER Testing)
