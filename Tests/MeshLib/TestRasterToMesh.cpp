@@ -34,20 +34,16 @@ class RasterToMeshTest : public ::testing::Test
 {
 public:
     RasterToMeshTest()
-        : _file_name(BaseLib::BuildInfo::data_path + "/MeshLib/testraster_selke.asc"),
-          _mesh_name(BaseLib::BuildInfo::data_path + "/MeshLib/testraster_selke.vtu")
+        : _file_name(BaseLib::BuildInfo::data_path + "/MeshLib/testraster_selke.asc")
     {
         _raster.reset(FileIO::AsciiRasterInterface::readRaster(_file_name));
     }
-
-    ~RasterToMeshTest() override { std::remove(_mesh_name.c_str()); }
 
 protected:
     std::size_t const _n_pix = 542;
     std::size_t const _n_nodes = 626;
     double _spacing = 1000;
     std::string const _file_name;
-    std::string const _mesh_name;
     std::unique_ptr<GeoLib::Raster> _raster;
 };
 
@@ -57,11 +53,6 @@ TEST_F(RasterToMeshTest, convertRasterToTriMeshElevation)
         *_raster, MeshLib::MeshElemType::TRIANGLE,
         MeshLib::UseIntensityAs::ELEVATION, "test"));
     ASSERT_TRUE(mesh != nullptr);
-
-    MeshLib::IO::VtuInterface vtkio(mesh.get(), 0, false);
-    std::string name(BaseLib::BuildInfo::data_path +
-                     "/MeshLib/testraster_selke.vtu");
-    vtkio.writeToFile(name);
 
     ASSERT_EQ(_n_nodes, mesh->getNodes().size());
     ASSERT_EQ(_n_nodes, mesh->getNumberOfNodes());
