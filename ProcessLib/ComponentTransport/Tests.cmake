@@ -853,3 +853,47 @@ AddTest(
     vdbc_pcs_0_ts_21990_t_210000.000000_expected.vtu vdbc_pcs_0_ts_21990_t_210000.000000.vtu concentration Si 1e-5 1e-4
     vdbc_pcs_0_ts_25990_t_250000.000000_expected.vtu vdbc_pcs_0_ts_25990_t_250000.000000.vtu concentration Si 1e-5 1e-4
 )
+
+AddTest(
+    NAME ComponentTransport_Theis
+    PATH Parabolic/ComponentTransport/Theis
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS theis.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    RUNTIME 90
+    DIFF_DATA
+    theis_pcs_0_ts_0_t_0.000000.vtu
+    theis_pcs_0_ts_0_t_0.000000.vtu pressure pressure 1e-3 1e-6
+    theis_pcs_0_ts_0_t_0.000000.vtu
+    theis_pcs_0_ts_0_t_0.000000.vtu darcy_velocity darcy_velocity 1e-10 1e-6
+    theis_pcs_0_ts_10_t_100.000000.vtu
+    theis_pcs_0_ts_10_t_100.000000.vtu pressure pressure 1e-3 1e-6
+    theis_pcs_0_ts_10_t_100.000000.vtu
+    theis_pcs_0_ts_10_t_100.000000.vtu darcy_velocity darcy_velocity 1e-10 1e-6
+    theis_pcs_0_ts_20_t_400.000000.vtu
+    theis_pcs_0_ts_20_t_400.000000.vtu pressure pressure 1e-3 1e-6
+    theis_pcs_0_ts_20_t_400.000000.vtu
+    theis_pcs_0_ts_20_t_400.000000.vtu darcy_velocity darcy_velocity 1e-10 1e-6
+    theis_pcs_0_ts_30_t_1000.000000.vtu
+    theis_pcs_0_ts_30_t_1000.000000.vtu pressure pressure 1e-3 1e-6
+    theis_pcs_0_ts_30_t_1000.000000.vtu
+    theis_pcs_0_ts_30_t_1000.000000.vtu darcy_velocity darcy_velocity 1e-10 1e-6
+    theis_pcs_0_ts_40_t_2000.000000.vtu
+    theis_pcs_0_ts_40_t_2000.000000.vtu pressure pressure 1e-3 1e-6
+    theis_pcs_0_ts_40_t_2000.000000.vtu
+    theis_pcs_0_ts_40_t_2000.000000.vtu darcy_velocity darcy_velocity 1e-10 1e-6
+    theis_pcs_0_ts_60_t_20000.000000.vtu
+    theis_pcs_0_ts_60_t_20000.000000.vtu pressure pressure 1e-3 1e-6
+    theis_pcs_0_ts_60_t_20000.000000.vtu
+    theis_pcs_0_ts_60_t_20000.000000.vtu darcy_velocity darcy_velocity 1e-10 1e-6
+    theis_pcs_0_ts_70_t_70000.000000.vtu
+    theis_pcs_0_ts_70_t_70000.000000.vtu pressure pressure 1e-3 1e-6
+    theis_pcs_0_ts_70_t_70000.000000.vtu
+    theis_pcs_0_ts_70_t_70000.000000.vtu darcy_velocity darcy_velocity 1e-10 1e-6
+    theis_pcs_0_ts_73_t_100000.000000.vtu
+    theis_pcs_0_ts_73_t_100000.000000.vtu pressure pressure 1e-3 1e-6
+    theis_pcs_0_ts_73_t_100000.000000.vtu
+    theis_pcs_0_ts_73_t_100000.000000.vtu darcy_velocity darcy_velocity 1e-10 1e-6
+)
