@@ -91,6 +91,12 @@ private:
         std::size_t n_all_nodes,
         const std::vector<MeshLib::Element*>& sfc_elements,
         std::vector<std::size_t>& node_id_map);
+
+    static std::vector<MeshLib::Element*> createSfcElementVector(
+        std::vector<MeshLib::Element*> const& sfc_elems,
+        std::vector<MeshLib::Node*> const& sfc_nodes,
+        std::vector<std::size_t> const& node_id_map);
+
 };
 
 } // end namespace MeshLib

@@ -96,32 +96,12 @@ MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(
 
     std::vector<MeshLib::Node*> sfc_nodes;
     std::vector<std::size_t> node_id_map(subsfc_mesh.getNumberOfNodes());
-    get2DSurfaceNodes(sfc_nodes, subsfc_mesh.getNumberOfNodes(), sfc_elements,
-                      node_id_map);
+    get2DSurfaceNodes(sfc_nodes, subsfc_mesh.getNumberOfNodes(), sfc_elements, node_id_map);
 
-    // create new elements vector with newly created nodes
-    std::vector<MeshLib::Element*> new_elements;
-    new_elements.reserve(sfc_elements.size());
-    for (auto sfc_element : sfc_elements)
-    {
-        unsigned const n_elem_nodes(sfc_element->getNumberOfBaseNodes());
-        auto** new_nodes = new MeshLib::Node*[n_elem_nodes];
-        for (unsigned k(0); k < n_elem_nodes; k++)
-        {
-            new_nodes[k] =
-                sfc_nodes[node_id_map[sfc_element->getNode(k)->getID()]];
-        }
-        if (sfc_element->getGeomType() == MeshElemType::TRIANGLE)
-        {
-            new_elements.push_back(new MeshLib::Tri(new_nodes));
-        }
-        else
-        {
-            assert(sfc_element->getGeomType() == MeshElemType::QUAD);
-            new_elements.push_back(new MeshLib::Quad(new_nodes));
-        }
-        delete sfc_element;
-    }
+    // create new elements vector with newly created nodes (and delete temp-elements)
+    std::vector<MeshLib::Element*> new_elements =
+        createSfcElementVector(sfc_elements, sfc_nodes, node_id_map);
+    std::for_each(sfc_elements.begin(), sfc_elements.end(), [](MeshLib::Element* e){ delete e; });
 
     std::vector<std::size_t> id_map;
     if (!subsfc_node_id_prop_name.empty())
@@ -161,7 +141,7 @@ MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(
     if (subsurface_material_ids)
     {
         std::vector<int> material_ids;
-        material_ids.reserve(sfc_elements.size());
+        material_ids.reserve(new_elements.size());
         for (auto bulk_id : element_ids_map)
         {
             material_ids.push_back((*subsurface_material_ids)[bulk_id]);
@@ -346,6 +326,35 @@ std::vector<MeshLib::Node*> MeshSurfaceExtraction::getSurfaceNodes(
     }
 
     return sfc_nodes;
+}
+
+std::vector<MeshLib::Element*> MeshSurfaceExtraction::createSfcElementVector(
+    std::vector<MeshLib::Element*> const& sfc_elements,
+    std::vector<MeshLib::Node*> const& sfc_nodes,
+    std::vector<std::size_t> const& node_id_map)
+{
+    std::vector<MeshLib::Element*> new_elements;
+    new_elements.reserve(sfc_elements.size());
+    for (auto sfc_element : sfc_elements)
+    {
+        unsigned const n_elem_nodes(sfc_element->getNumberOfBaseNodes());
+        auto** new_nodes = new MeshLib::Node*[n_elem_nodes];
+        for (unsigned k(0); k < n_elem_nodes; k++)
+        {
+            new_nodes[k] =
+                sfc_nodes[node_id_map[sfc_element->getNode(k)->getID()]];
+        }
+        if (sfc_element->getGeomType() == MeshElemType::TRIANGLE)
+        {
+            new_elements.push_back(new MeshLib::Tri(new_nodes));
+        }
+        else
+        {
+            assert(sfc_element->getGeomType() == MeshElemType::QUAD);
+            new_elements.push_back(new MeshLib::Quad(new_nodes));
+        }
+    }
+    return new_elements;
 }
 
 } // end namespace MeshLib
