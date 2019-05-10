@@ -20,41 +20,44 @@
 
 #include <logog/include/logog.hpp>
 
-#include "MeshLib/Mesh.h"
 #include "MeshLib/Elements/Line.h"
-#include "MeshLib/Elements/Tri.h"
 #include "MeshLib/Elements/Quad.h"
+#include "MeshLib/Elements/Tri.h"
+#include "MeshLib/Mesh.h"
 #include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
-#include "MeshLib/MeshSearch/NodeSearch.h"
 #include "MeshLib/MeshEditing/RemoveMeshComponents.h"
+#include "MeshLib/MeshSearch/NodeSearch.h"
 
-namespace MeshLib {
-
-std::vector<double> MeshSurfaceExtraction::getSurfaceAreaForNodes(const MeshLib::Mesh &mesh)
+namespace MeshLib
+{
+std::vector<double> MeshSurfaceExtraction::getSurfaceAreaForNodes(
+    const MeshLib::Mesh& mesh)
 {
     std::vector<double> node_area_vec;
     if (mesh.getDimension() != 2)
     {
-        ERR ("Error in MeshSurfaceExtraction::getSurfaceAreaForNodes() - Given mesh is no surface mesh (dimension != 2).");
+        ERR("Error in MeshSurfaceExtraction::getSurfaceAreaForNodes() - Given "
+            "mesh is no surface mesh (dimension != 2).");
         return node_area_vec;
     }
 
-    double total_area (0);
+    double total_area(0);
 
     // for each node, a vector containing all the element idget every element
-    const std::vector<MeshLib::Node*> &nodes = mesh.getNodes();
-    const std::size_t nNodes ( mesh.getNumberOfNodes() );
-    for (std::size_t n=0; n<nNodes; ++n)
+    const std::vector<MeshLib::Node*>& nodes = mesh.getNodes();
+    const std::size_t nNodes(mesh.getNumberOfNodes());
+    for (std::size_t n = 0; n < nNodes; ++n)
     {
-        double node_area (0);
+        double node_area(0);
 
         std::vector<MeshLib::Element*> conn_elems = nodes[n]->getElements();
-        const std::size_t nConnElems (conn_elems.size());
+        const std::size_t nConnElems(conn_elems.size());
 
-        for (std::size_t i=0; i<nConnElems; ++i)
+        for (std::size_t i = 0; i < nConnElems; ++i)
         {
-            const MeshLib::Element* elem (conn_elems[i]);
-            const unsigned nElemParts = (elem->getGeomType() == MeshElemType::TRIANGLE) ? 3 : 4;
+            const MeshLib::Element* elem(conn_elems[i]);
+            const unsigned nElemParts =
+                (elem->getGeomType() == MeshElemType::TRIANGLE) ? 3 : 4;
             const double area = conn_elems[i]->getContent() / nElemParts;
             node_area += area;
             total_area += area;
@@ -63,7 +66,7 @@ std::vector<double> MeshSurfaceExtraction::getSurfaceAreaForNodes(const MeshLib:
         node_area_vec.push_back(node_area);
     }
 
-    INFO ("Total surface Area: %f", total_area);
+    INFO("Total surface Area: %f", total_area);
 
     return node_area_vec;
 }
@@ -77,11 +80,11 @@ MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(
     // allow slightly greater angles than 90 degrees for numerical errors
     if (angle < 0 || angle > 91)
     {
-        ERR ("Supported angle between 0 and 90 degrees only.");
+        ERR("Supported angle between 0 and 90 degrees only.");
         return nullptr;
     }
 
-    INFO ("Extracting mesh surface...");
+    INFO("Extracting mesh surface...");
     std::vector<MeshLib::Element*> sfc_elements;
     std::vector<std::size_t> element_ids_map;
     std::vector<std::size_t> face_ids_map;
@@ -96,12 +99,15 @@ MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(
 
     std::vector<MeshLib::Node*> sfc_nodes;
     std::vector<std::size_t> node_id_map(subsfc_mesh.getNumberOfNodes());
-    get2DSurfaceNodes(sfc_nodes, subsfc_mesh.getNumberOfNodes(), sfc_elements, node_id_map);
+    get2DSurfaceNodes(sfc_nodes, subsfc_mesh.getNumberOfNodes(), sfc_elements,
+                      node_id_map);
 
-    // create new elements vector with newly created nodes (and delete temp-elements)
+    // create new elements vector with newly created nodes (and delete
+    // temp-elements)
     std::vector<MeshLib::Element*> new_elements =
         createSfcElementVector(sfc_elements, sfc_nodes, node_id_map);
-    std::for_each(sfc_elements.begin(), sfc_elements.end(), [](MeshLib::Element* e){ delete e; });
+    std::for_each(sfc_elements.begin(), sfc_elements.end(),
+                  [](MeshLib::Element* e) { delete e; });
 
     std::vector<std::size_t> id_map;
     if (!subsfc_node_id_prop_name.empty())
@@ -131,29 +137,22 @@ MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(
     }
 
     // transmit the face id of the original subsurface element as a property
-    if (!face_id_prop_name.empty()) {
+    if (!face_id_prop_name.empty())
+    {
         MeshLib::addPropertyToMesh(*result, face_id_prop_name,
                                    MeshLib::MeshItemType::Cell, 1,
                                    face_ids_map);
     }
 
-    auto const* subsurface_material_ids(MeshLib::materialIDs(subsfc_mesh));
-    if (subsurface_material_ids)
+    if (!createSfcMeshProperties(*result, subsfc_mesh.getProperties(),
+                                 id_map, element_ids_map))
     {
-        std::vector<int> material_ids;
-        material_ids.reserve(new_elements.size());
-        for (auto bulk_id : element_ids_map)
-        {
-            material_ids.push_back((*subsurface_material_ids)[bulk_id]);
-        }
-        MeshLib::addPropertyToMesh(*result, "MaterialIDs",
-                                   MeshLib::MeshItemType::Cell, 1,
-                                   material_ids);
+        ERR("Transferring subsurface properties incomplete or failed.");
     }
     return result;
 }
 
-MeshLib::Mesh* MeshSurfaceExtraction::getMeshBoundary(const MeshLib::Mesh &mesh)
+MeshLib::Mesh* MeshSurfaceExtraction::getMeshBoundary(const MeshLib::Mesh& mesh)
 {
     if (mesh.getDimension() == 1)
     {
@@ -161,33 +160,36 @@ MeshLib::Mesh* MeshSurfaceExtraction::getMeshBoundary(const MeshLib::Mesh &mesh)
     }
 
     // For 3D meshes return the 2D surface
-    if (mesh.getDimension()==3)
+    if (mesh.getDimension() == 3)
     {
-        MathLib::Vector3 dir(0,0,0);
+        MathLib::Vector3 dir(0, 0, 0);
         return getMeshSurface(mesh, dir, 90);
     }
 
     // For 2D meshes return the boundary lines
-    std::vector<MeshLib::Node*> nodes = MeshLib::copyNodeVector(mesh.getNodes());
+    std::vector<MeshLib::Node*> nodes =
+        MeshLib::copyNodeVector(mesh.getNodes());
     std::vector<MeshLib::Element*> boundary_elements;
 
-    std::vector<MeshLib::Element*> const& org_elems (mesh.getElements());
+    std::vector<MeshLib::Element*> const& org_elems(mesh.getElements());
     for (auto elem : org_elems)
     {
-        std::size_t const n_edges (elem->getNumberOfEdges());
+        std::size_t const n_edges(elem->getNumberOfEdges());
         for (std::size_t i = 0; i < n_edges; ++i)
         {
             if (elem->getNeighbor(i) == nullptr)
             {
-                MeshLib::Element const*const edge (elem->getEdge(i));
+                MeshLib::Element const* const edge(elem->getEdge(i));
                 boundary_elements.push_back(MeshLib::copyElement(edge, nodes));
                 delete edge;
             }
         }
     }
-    MeshLib::Mesh* result = new MeshLib::Mesh("Boundary Mesh", nodes, boundary_elements);
+    MeshLib::Mesh* result =
+        new MeshLib::Mesh("Boundary Mesh", nodes, boundary_elements);
     MeshLib::NodeSearch ns(*result);
-    if (ns.searchUnused() == 0) {
+    if (ns.searchUnused() == 0)
+    {
         return result;
     }
     auto removed = MeshLib::removeNodes(*result, ns.getSearchedNodeIDs(),
@@ -307,7 +309,7 @@ void MeshSurfaceExtraction::get2DSurfaceNodes(
 std::vector<MeshLib::Node*> MeshSurfaceExtraction::getSurfaceNodes(
     const MeshLib::Mesh& mesh, const MathLib::Vector3& dir, double angle)
 {
-    INFO ("Extracting surface nodes...");
+    INFO("Extracting surface nodes...");
     std::vector<MeshLib::Element*> sfc_elements;
     std::vector<std::size_t> element_to_bulk_element_id_map;
     std::vector<std::size_t> element_to_bulk_face_id_map;
@@ -357,4 +359,41 @@ std::vector<MeshLib::Element*> MeshSurfaceExtraction::createSfcElementVector(
     return new_elements;
 }
 
-} // end namespace MeshLib
+bool MeshSurfaceExtraction::createSfcMeshProperties(
+    MeshLib::Mesh& sfc_mesh,
+    MeshLib::Properties const& properties,
+    std::vector<std::size_t> const& node_ids_map,
+    std::vector<std::size_t> const& element_ids_map)
+{
+    if (node_ids_map.size() != sfc_mesh.getNumberOfNodes())
+    {
+        ERR("MeshSurfaceExtraction::createSfcMeshProperties() - Incorrect "
+            "number of node IDs.");
+        return false;
+    }
+
+    if (element_ids_map.size() != sfc_mesh.getNumberOfElements())
+    {
+        ERR("MeshSurfaceExtraction::createSfcMeshProperties() - Incorrect number of element IDs.");
+        return false;
+    }
+
+    std::string const vec_name ("MaterialIDs");
+    if (!properties.existsPropertyVector<int>(vec_name, MeshLib::MeshItemType::Cell, 1))
+    {
+        ERR("MeshSurfaceExtraction::createSfcMeshProperties() - Scalar array \"%s\" not found.", vec_name.c_str());
+        return false;
+    }
+    std::vector<int> const& org_vec =
+        *properties.getPropertyVector<int>( vec_name, MeshLib::MeshItemType::Cell, 1);
+    std::vector<int> sfc_prop;
+    sfc_prop.reserve(sfc_mesh.getNumberOfElements());
+    for (auto bulk_id : element_ids_map)
+    {
+        sfc_prop.push_back(org_vec[bulk_id]);
+    }
+    MeshLib::addPropertyToMesh<int>(sfc_mesh, vec_name, MeshLib::MeshItemType::Cell, 1, sfc_prop);
+    return true;
+}
+
+}  // end namespace MeshLib
