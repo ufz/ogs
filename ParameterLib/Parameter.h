@@ -197,4 +197,13 @@ std::unique_ptr<ParameterBase> createParameter(
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
         curves);
 
+//! Checks whether the parameter can be used on the given mesh. The parameter's
+//! domain of definition can be arbitrary (like for constant parameters), or the
+//! parameter is defined on a mesh. In the latter case that mesh must be equal
+//! to the given mesh.
+//! \returns nothing if the parameter can be used on the given mesh, or an error
+//! string otherwise.
+boost::optional<std::string> isDefinedOnSameMesh(ParameterBase const& parameter,
+                                                 MeshLib::Mesh const& mesh);
+
 }  // namespace ParameterLib

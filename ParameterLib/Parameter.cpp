@@ -84,4 +84,23 @@ std::unique_ptr<ParameterBase> createParameter(
     OGS_FATAL("Cannot construct a parameter of given type '%s'.", type.c_str());
 }
 
+boost::optional<std::string> isDefinedOnSameMesh(ParameterBase const& parameter,
+                                                 MeshLib::Mesh const& mesh)
+{
+    // Arbitrary domain of definition.
+    if (parameter.mesh() == nullptr)
+    {
+        return {};
+    }
+
+    // Equal meshes.
+    if (*parameter.mesh() == mesh)
+    {
+        return {};
+    }
+
+    return "The parameter's domain of definition mesh '" +
+           parameter.mesh()->getName() + "' differs from the used mesh '" +
+           mesh.getName() + "'. Both meshes must be equal.";
+}
 }  // namespace ParameterLib
