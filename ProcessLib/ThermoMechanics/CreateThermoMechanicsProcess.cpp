@@ -113,7 +113,7 @@ std::unique_ptr<Process> createThermoMechanicsProcess(
     auto& reference_solid_density = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICS__reference_solid_density}
-        "reference_solid_density", parameters, 1);
+        "reference_solid_density", parameters, 1, &mesh);
     DBUG("Use '%s' as solid density parameter.",
          reference_solid_density.name.c_str());
 
@@ -122,21 +122,21 @@ std::unique_ptr<Process> createThermoMechanicsProcess(
         double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICS__linear_thermal_expansion_coefficient}
-        "linear_thermal_expansion_coefficient", parameters, 1);
+        "linear_thermal_expansion_coefficient", parameters, 1, &mesh);
     DBUG("Use '%s' as linear thermal expansion coefficient.",
          linear_thermal_expansion_coefficient.name.c_str());
     // Specific heat capacity
     auto& specific_heat_capacity = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICS__specific_heat_capacity}
-        "specific_heat_capacity", parameters, 1);
+        "specific_heat_capacity", parameters, 1, &mesh);
     DBUG("Use '%s' as specific heat capacity parameter.",
          specific_heat_capacity.name.c_str());
     // Thermal conductivity // TODO To be changed as tensor input.
     auto& thermal_conductivity = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICS__thermal_conductivity}
-        "thermal_conductivity", parameters, 1);
+        "thermal_conductivity", parameters, 1, &mesh);
     DBUG("Use '%s' as thermal conductivity parameter.",
          thermal_conductivity.name.c_str());
 

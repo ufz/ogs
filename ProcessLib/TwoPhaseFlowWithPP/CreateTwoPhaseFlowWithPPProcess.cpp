@@ -76,7 +76,7 @@ std::unique_ptr<Process> createTwoPhaseFlowWithPPProcess(
     auto& temperature = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__TWOPHASE_FLOW_PP__temperature}
-        "temperature", parameters, 1);
+        "temperature", parameters, 1, &mesh);
 
     //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_PP__material_property}
     auto const& mat_config = config.getConfigSubtree("material_property");

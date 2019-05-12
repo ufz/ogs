@@ -161,7 +161,8 @@ std::unique_ptr<Process> createSmallDeformationProcess(
             fracture_properties_config.getConfigParameter<int>("material_id"),
             ParameterLib::findParameter<double>(
                 //! \ogs_file_param_special{prj__processes__process__SMALL_DEFORMATION_WITH_LIE__fracture_properties__initial_aperture}
-                fracture_properties_config, "initial_aperture", parameters, 1));
+                fracture_properties_config, "initial_aperture", parameters, 1,
+                &mesh));
     }
 
     if (n_var_du < fracture_properties.size())

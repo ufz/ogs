@@ -53,7 +53,8 @@ std::unique_ptr<Process> createGroundwaterFlowProcess(
     auto& hydraulic_conductivity = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__GROUNDWATER_FLOW__hydraulic_conductivity}
-        "hydraulic_conductivity", parameters, 0 /*arbitrary many components*/);
+        "hydraulic_conductivity", parameters, 0 /*arbitrary many components*/,
+        &mesh);
 
     DBUG("Use '%s' as hydraulic conductivity parameter.",
          hydraulic_conductivity.name.c_str());

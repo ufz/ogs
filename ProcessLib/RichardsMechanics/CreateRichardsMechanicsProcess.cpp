@@ -112,7 +112,7 @@ std::unique_ptr<Process> createRichardsMechanicsProcess(
     auto& fluid_bulk_modulus = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__RICHARDS_MECHANICS__fluid_bulk_modulus}
-        "fluid_bulk_modulus", parameters, 1);
+        "fluid_bulk_modulus", parameters, 1, &mesh);
     DBUG("Use '%s' as fluid bulk modulus parameter.",
          fluid_bulk_modulus.name.c_str());
 
@@ -120,7 +120,7 @@ std::unique_ptr<Process> createRichardsMechanicsProcess(
     auto& biot_coefficient = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__RICHARDS_MECHANICS__biot_coefficient}
-        "biot_coefficient", parameters, 1);
+        "biot_coefficient", parameters, 1, &mesh);
     DBUG("Use '%s' as Biot coefficient parameter.",
          biot_coefficient.name.c_str());
 
@@ -128,14 +128,14 @@ std::unique_ptr<Process> createRichardsMechanicsProcess(
     auto& solid_density = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__RICHARDS_MECHANICS__solid_density}
-        "solid_density", parameters, 1);
+        "solid_density", parameters, 1, &mesh);
     DBUG("Use '%s' as solid density parameter.", solid_density.name.c_str());
 
     // Solid bulk modulus
     auto& solid_bulk_modulus = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__RICHARDS_MECHANICS__solid_bulk_modulus}
-        "solid_bulk_modulus", parameters, 1);
+        "solid_bulk_modulus", parameters, 1, &mesh);
     DBUG("Use '%s' as solid bulk modulus parameter.",
          solid_bulk_modulus.name.c_str());
 
@@ -161,7 +161,7 @@ std::unique_ptr<Process> createRichardsMechanicsProcess(
     auto& temperature = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__RICHARDS_MECHANICS__temperature}
-        "temperature", parameters, 1);
+        "temperature", parameters, 1, &mesh);
 
     auto const& flow_material_config =
         //! \ogs_file_param{prj__processes__process__RICHARDS_MECHANICS__material_property}
