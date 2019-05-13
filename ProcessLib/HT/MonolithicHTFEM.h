@@ -176,8 +176,8 @@ public:
             // matrix assembly
             GlobalDimMatrixType const thermal_conductivity_dispersivity =
                 this->getThermalConductivityDispersivity(
-                    t, pos, porosity, fluid_density,
-                    specific_heat_capacity_fluid, velocity, I);
+                    vars, porosity, fluid_density, specific_heat_capacity_fluid,
+                    velocity, I);
             Ktt.noalias() +=
                 (dNdx.transpose() * thermal_conductivity_dispersivity * dNdx +
                  N.transpose() * velocity.transpose() * dNdx * fluid_density *
@@ -186,7 +186,7 @@ public:
             Kpp.noalias() += w * dNdx.transpose() * K_over_mu * dNdx;
             Mtt.noalias() +=
                 w *
-                this->getHeatEnergyCoefficient(t, pos, porosity, fluid_density,
+                this->getHeatEnergyCoefficient(vars, porosity, fluid_density,
                                                specific_heat_capacity_fluid) *
                 N.transpose() * N;
             Mpp.noalias() += w * N.transpose() * specific_storage * N;

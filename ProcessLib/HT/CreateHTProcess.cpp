@@ -79,30 +79,6 @@ std::unique_ptr<Process> createHTProcess(
     const int _heat_transport_process_id = 0;
     const int _hydraulic_process_id = 1;
 
-    // Parameter for the density of the solid.
-    auto& density_solid = ParameterLib::findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__HT__density_solid}
-        "density_solid", parameters, 1);
-    DBUG("Use '%s' as density_solid parameter.", density_solid.name.c_str());
-
-    // Parameter for the specific heat capacity of the solid.
-    auto& specific_heat_capacity_solid = ParameterLib::findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__HT__specific_heat_capacity_solid}
-        "specific_heat_capacity_solid", parameters, 1);
-    DBUG("Use '%s' as specific_heat_capacity_solid parameter.",
-         specific_heat_capacity_solid.name.c_str());
-
-    // Parameter for the thermal conductivity of the solid (only one scalar per
-    // element, i.e., the isotropic case is handled at the moment)
-    auto& thermal_conductivity_solid = ParameterLib::findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__HT__thermal_conductivity_solid}
-        "thermal_conductivity_solid", parameters, 1);
-    DBUG("Use '%s' as thermal_conductivity_solid parameter.",
-         thermal_conductivity_solid.name.c_str());
-
     // Specific body force parameter.
     Eigen::VectorXd specific_body_force;
     std::vector<double> const b =
@@ -164,10 +140,7 @@ std::unique_ptr<Process> createHTProcess(
 
     std::unique_ptr<HTMaterialProperties> material_properties =
         std::make_unique<HTMaterialProperties>(
-            density_solid,
             std::move(media_map),
-            specific_heat_capacity_solid,
-            thermal_conductivity_solid,
             has_fluid_thermal_expansion,
             *solid_thermal_expansion,
             *biot_constant,

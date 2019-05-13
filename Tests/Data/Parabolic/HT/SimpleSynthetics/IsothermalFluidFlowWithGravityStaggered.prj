@@ -12,9 +12,6 @@
                 <temperature>T</temperature>
                 <pressure>p</pressure>
             </process_variables>
-            <density_solid>rho_solid</density_solid>
-            <specific_heat_capacity_solid>c_solid</specific_heat_capacity_solid>
-            <thermal_conductivity_solid>lambda_solid</thermal_conductivity_solid>
             <specific_body_force>0 -9.81</specific_body_force>
             <secondary_variables>
                 <secondary_variable type="static" internal_name="darcy_velocity" output_name="darcy_velocity"/>
@@ -66,6 +63,21 @@
                             <name>storage</name>
                             <type>Constant</type>
                             <value>0.0</value>
+                        </property>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>0.0</value>
+                        </property>
+                        <property>
+                            <name>thermal_conductivity</name>
+                            <type>Constant</type>
+                            <value>3.0</value>
+                        </property>
+                        <property>
+                            <name>specific_heat_capacity</name>
+                            <type>Constant</type>
+                            <value>0</value>
                         </property>
                     </properties>
                 </phase>
@@ -166,19 +178,9 @@
     </time_loop>
     <parameters>
         <parameter>
-            <name>rho_solid</name>
-            <type>Constant</type>
-            <value>0.0</value>
-        </parameter>
-        <parameter>
             <name>rho_fluid</name>
             <type>Constant</type>
             <value>1000</value>
-        </parameter>
-        <parameter>
-            <name>lambda_solid</name>
-            <type>Constant</type>
-            <value>3.0</value>
         </parameter>
         <parameter>
             <name>lambda_fluid</name>
@@ -194,11 +196,6 @@
             <name>alpha_t</name>
             <type>Constant</type>
             <value>0.0</value>
-        </parameter>
-        <parameter>
-            <name>c_solid</name>
-            <type>Constant</type>
-            <value>0</value>
         </parameter>
         <parameter>
             <name>T0</name>

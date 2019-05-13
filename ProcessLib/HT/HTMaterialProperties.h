@@ -24,20 +24,14 @@ namespace HT
 struct HTMaterialProperties final
 {
     HTMaterialProperties(
-        ParameterLib::Parameter<double> const& density_solid_,
         std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>&&
             media_map_,
-        ParameterLib::Parameter<double> const& specific_heat_capacity_solid_,
-        ParameterLib::Parameter<double> const& thermal_conductivity_solid_,
         bool const has_fluid_thermal_expansion_,
         ParameterLib::Parameter<double> const& solid_thermal_expansion_,
         ParameterLib::Parameter<double> const& biot_constant_,
         Eigen::VectorXd specific_body_force_,
         bool const has_gravity_)
-        : density_solid(density_solid_),
-          media_map(std::move(media_map_)),
-          specific_heat_capacity_solid(specific_heat_capacity_solid_),
-          thermal_conductivity_solid(thermal_conductivity_solid_),
+        : media_map(std::move(media_map_)),
           has_fluid_thermal_expansion(has_fluid_thermal_expansion_),
           solid_thermal_expansion(solid_thermal_expansion_),
           biot_constant(biot_constant_),
@@ -51,11 +45,8 @@ struct HTMaterialProperties final
     void operator=(HTMaterialProperties&&) = delete;
     void operator=(HTMaterialProperties const&) = delete;
 
-    ParameterLib::Parameter<double> const& density_solid;
     std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>
         media_map;
-    ParameterLib::Parameter<double> const& specific_heat_capacity_solid;
-    ParameterLib::Parameter<double> const& thermal_conductivity_solid;
 
     bool const has_fluid_thermal_expansion;
     ParameterLib::Parameter<double> const& solid_thermal_expansion;

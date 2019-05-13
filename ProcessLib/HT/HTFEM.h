@@ -209,39 +209,52 @@ protected:
             IntegrationPointData<NodalRowVectorType, GlobalDimNodalMatrixType>>>
         _ip_data;
 
-    double getHeatEnergyCoefficient(const double t,
-                                    const ParameterLib::SpatialPosition& pos,
-                                    const double porosity,
-                                    const double fluid_density,
-                                    const double specific_heat_capacity_fluid)
+    double getHeatEnergyCoefficient(
+        MaterialPropertyLib::VariableArray const& vars,
+        const double porosity,
+        const double fluid_density,
+        const double specific_heat_capacity_fluid)
     {
+        auto const& medium =
+            *_material_properties.media_map->getMedium(this->_element.getID());
+        auto const& solid_phase = medium.phase("Solid");
+
         auto const specific_heat_capacity_solid =
-            _material_properties.specific_heat_capacity_solid(t, pos)[0];
+            solid_phase
+                .property(
+                    MaterialPropertyLib::PropertyType::specific_heat_capacity)
+                .template value<double>(vars);
 
         auto const solid_density =
-            _material_properties.density_solid(t, pos)[0];
+            solid_phase.property(MaterialPropertyLib::PropertyType::density)
+                .template value<double>(vars);
 
         return solid_density * specific_heat_capacity_solid * (1 - porosity) +
                fluid_density * specific_heat_capacity_fluid * porosity;
     }
 
     GlobalDimMatrixType getThermalConductivityDispersivity(
-        const double t, const ParameterLib::SpatialPosition& pos,
+        MaterialPropertyLib::VariableArray const& vars,
         const double porosity, const double fluid_density,
         const double specific_heat_capacity_fluid,
         const GlobalDimVectorType& velocity, const GlobalDimMatrixType& I)
     {
-        auto const thermal_conductivity_solid =
-            _material_properties.thermal_conductivity_solid(t, pos)[0];
-
         auto const& medium =
             *_material_properties.media_map->getMedium(_element.getID());
+        auto const& solid_phase = medium.phase("Solid");
         auto const& liquid_phase = medium.phase("AqueousLiquid");
+
+        auto const thermal_conductivity_solid =
+            solid_phase
+                .property(
+                    MaterialPropertyLib::PropertyType::thermal_conductivity)
+                .template value<double>(vars);
+
         auto const thermal_conductivity_fluid =
             liquid_phase
                 .property(
                     MaterialPropertyLib::PropertyType::thermal_conductivity)
-                .template value<double>();
+                .template value<double>(vars);
 
         double const thermal_conductivity =
             thermal_conductivity_solid * (1 - porosity) +
