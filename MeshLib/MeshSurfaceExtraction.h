@@ -97,11 +97,13 @@ private:
         const std::vector<MeshLib::Element*>& sfc_elements,
         std::vector<std::size_t>& node_id_map);
 
+    /// Creates the element vector for the 2d surface mesh
     static std::vector<MeshLib::Element*> createSfcElementVector(
         std::vector<MeshLib::Element*> const& sfc_elems,
         std::vector<MeshLib::Node*> const& sfc_nodes,
         std::vector<std::size_t> const& node_id_map);
 
+    /// Copies relevant parts of scalar arrays to the surface mesh
     static bool createSfcMeshProperties(MeshLib::Mesh& sfc_mesh,
                                         MeshLib::Properties const& properties,
                                         std::vector<std::size_t> const& node_ids_map,

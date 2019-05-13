@@ -110,13 +110,10 @@ MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(
                   [](MeshLib::Element* e) { delete e; });
 
     std::vector<std::size_t> id_map;
-    if (!subsfc_node_id_prop_name.empty())
+    id_map.reserve(sfc_nodes.size());
+    for (auto const* node : sfc_nodes)
     {
-        id_map.reserve(sfc_nodes.size());
-        for (auto const* node : sfc_nodes)
-        {
-            id_map.push_back(node->getID());
-        }
+        id_map.push_back(node->getID());
     }
     MeshLib::Mesh* result(
         new Mesh(subsfc_mesh.getName() + "-Surface", sfc_nodes, new_elements));
@@ -147,7 +144,7 @@ MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(
     if (!createSfcMeshProperties(*result, subsfc_mesh.getProperties(),
                                  id_map, element_ids_map))
     {
-        ERR("Transferring subsurface properties incomplete or failed.");
+        ERR("Transferring subsurface properties failed.");
     }
     return result;
 }
@@ -367,8 +364,7 @@ bool MeshSurfaceExtraction::createSfcMeshProperties(
 {
     if (node_ids_map.size() != sfc_mesh.getNumberOfNodes())
     {
-        ERR("MeshSurfaceExtraction::createSfcMeshProperties() - Incorrect "
-            "number of node IDs.");
+        ERR("MeshSurfaceExtraction::createSfcMeshProperties() - Incorrect number of node IDs.");
         return false;
     }
 
@@ -378,21 +374,52 @@ bool MeshSurfaceExtraction::createSfcMeshProperties(
         return false;
     }
 
-    std::string const vec_name ("MaterialIDs");
-    if (!properties.existsPropertyVector<int>(vec_name, MeshLib::MeshItemType::Cell, 1))
+    std::array<MeshLib::MeshItemType, 2> const type{
+        {MeshLib::MeshItemType::Node, MeshLib::MeshItemType::Cell}};
+    std::array<std::vector<std::size_t>, 2> const id_map{
+        {node_ids_map, element_ids_map}};
+    std::array<std::size_t, 2> const vec_size{
+        {sfc_mesh.getNumberOfNodes(), sfc_mesh.getNumberOfElements()}};
+    std::size_t vectors_copied (0), vectors_skipped (0);
+    for (std::size_t i=0; i<type.size(); ++i)
     {
-        ERR("MeshSurfaceExtraction::createSfcMeshProperties() - Scalar array \"%s\" not found.", vec_name.c_str());
-        return false;
+        std::vector<std::string> const& array_names = properties.getPropertyVectorNames(type[i]);
+        for (std::string const& name : array_names)
+        {
+            if (properties.existsPropertyVector<double>(name, type[i], 1))
+            {
+                std::vector<double> const& org_vec =
+                    *properties.getPropertyVector<double>(name, type[i], 1);
+                std::vector<double> sfc_prop;
+                sfc_prop.reserve(vec_size[i]);
+                for (auto bulk_id : id_map[i])
+                {
+                    sfc_prop.push_back(org_vec[bulk_id]);
+                }
+                MeshLib::addPropertyToMesh<double>(sfc_mesh, name, type[i], 1, sfc_prop);
+                vectors_copied++;
+            }
+            else if (properties.existsPropertyVector<int>(name, type[i], 1))
+            {
+                std::vector<int> const& org_vec =
+                    *properties.getPropertyVector<int>(name, type[i], 1);
+                std::vector<int> sfc_prop;
+                sfc_prop.reserve(vec_size[i]);
+                for (auto bulk_id : id_map[i])
+                {
+                    sfc_prop.push_back(org_vec[bulk_id]);
+                }
+                MeshLib::addPropertyToMesh<int>(sfc_mesh, name, type[i], 1, sfc_prop);
+                vectors_copied++;
+            }
+            else
+            {
+                WARN("Skipping property vector \"%s\" - no matching data type found.", name.c_str());
+                vectors_skipped++;
+            }
+        }
     }
-    std::vector<int> const& org_vec =
-        *properties.getPropertyVector<int>( vec_name, MeshLib::MeshItemType::Cell, 1);
-    std::vector<int> sfc_prop;
-    sfc_prop.reserve(sfc_mesh.getNumberOfElements());
-    for (auto bulk_id : element_ids_map)
-    {
-        sfc_prop.push_back(org_vec[bulk_id]);
-    }
-    MeshLib::addPropertyToMesh<int>(sfc_mesh, vec_name, MeshLib::MeshItemType::Cell, 1, sfc_prop);
+    INFO("%d property vectors copied, %d vectors skipped.", vectors_copied, vectors_skipped);
     return true;
 }
 
