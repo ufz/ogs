@@ -420,6 +420,7 @@ AddTest(
     WRAPPER_ARGS -np 1
     TESTER vtkdiff
     REQUIREMENTS OGS_USE_MPI
+    RUNTIME 186
     DIFF_DATA
     th_decovalex.vtu th_decovalex_pcs_1_ts_40_t_18_000000_0.vtu T_ref T 1e-10  1.e-10
     th_decovalex.vtu th_decovalex_pcs_1_ts_40_t_18_000000_0.vtu p_ref p 1e-10  1.e-10

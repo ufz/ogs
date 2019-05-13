@@ -53,6 +53,7 @@ AddTest(
     EXECUTABLE ogs
     EXECUTABLE_ARGS RichardsFlow_2d_small_iteration_adaptive_dt.prj
     REQUIREMENTS NOT OGS_USE_MPI
+    RUNTIME 51
     # No vtkdiff comparison here, because of the different file names for
     # different machines, which again is due to the adaptive time stepping
     # scheme. When the output file format can be specified in the project files,
@@ -69,6 +70,7 @@ AddTest(
     WRAPPER_ARGS -np 1
     TESTER vtkdiff
     REQUIREMENTS OGS_USE_MPI
+    RUNTIME 220
     DIFF_DATA
     ref_t_1600.000000.vtu richards_pcs_0_ts_803_t_1600_000000_0.vtu pressure pressure 1e-8 1e-3
 )

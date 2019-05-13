@@ -47,7 +47,7 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
     _integration_point_writer.emplace_back(
         std::make_unique<SigmaIntegrationPointWriter>(
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
-            2 /*integration order*/, [this]() {
+            integration_order, [this]() {
                 // Result containing integration point data for each local
                 // assembler.
                 std::vector<std::vector<double>> result;
