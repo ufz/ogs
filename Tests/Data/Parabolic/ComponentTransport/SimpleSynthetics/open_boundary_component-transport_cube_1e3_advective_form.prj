@@ -110,7 +110,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>DiffusionAndAdvection_surfaceflux</prefix>
+            <prefix>AdvectiveNonAdvectiveComparison</prefix>
             <timesteps>
                 <pair>
                     <repeat>1</repeat>
