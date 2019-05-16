@@ -11,16 +11,10 @@ RUN apt-get update -y && \
 
 # GNU compiler
 RUN apt-get update -y && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends software-properties-common && \
-    apt-add-repository ppa:ubuntu-toolchain-r/test -y && \
-    apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        gcc-6 \
-        g++-6 && \
+        gcc \
+        g++ && \
     rm -rf /var/lib/apt/lists/*
-RUN update-alternatives --install /usr/bin/gcc gcc $(which gcc-6) 30 && \
-    update-alternatives --install /usr/bin/g++ g++ $(which g++-6) 30 && \
-    update-alternatives --install /usr/bin/gcov gcov $(which gcov-6) 30
 
 # OGS base building block
 # Python
