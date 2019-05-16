@@ -172,8 +172,7 @@ pipeline {
             dockerfile {
               filename 'Dockerfile.gcc.gui'
               dir 'scripts/docker'
-              // Singularity1 has on old kernel (3.10) which is not compatible with Qt > 5.10 (req. 3.15)
-              label 'docker && !singularity1'
+              label 'docker'
               args '-v /home/jenkins/cache/ccache:/opt/ccache -v /home/jenkins/cache/conan/.conan:/opt/conan/.conan'
               additionalBuildArgs '--pull'
             }
