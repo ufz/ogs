@@ -276,18 +276,18 @@ pipeline {
                   '-DOGS_BUILD_UTILS=ON ' +
                   '-DBUILD_SHARED_LIBS=ON ' +
                   '-DOGS_USE_CONAN=OFF '
-                env = 'frontend1/cli.sh'
+                env = 'eve/cli.sh'
               }
               build {
-                env = 'frontend1/cli.sh'
+                env = 'eve/cli.sh'
                 cmd_args = '-l 30'
               }
               build {
-                env = 'frontend1/cli.sh'
+                env = 'eve/cli.sh'
                 target = 'tests'
               }
               build {
-                env = 'frontend1/cli.sh'
+                env = 'eve/cli.sh'
                 target = 'ctest'
               }
             }
@@ -318,18 +318,18 @@ pipeline {
                   '-DBUILD_SHARED_LIBS=ON ' +
                   '-DOGS_USE_PETSC=ON ' +
                   '-DOGS_USE_CONAN=OFF '
-                env = 'frontend1/petsc.sh'
+                env = 'eve/petsc.sh'
               }
               build {
-                env = 'frontend1/petsc.sh'
+                env = 'eve/petsc.sh'
                 cmd_args = '-l 30'
               }
               build {
-                env = 'frontend1/petsc.sh'
+                env = 'eve/petsc.sh'
                 target = 'tests'
               }
               build {
-                env = 'frontend1/petsc.sh'
+                env = 'eve/petsc.sh'
                 target = 'ctest'
               }
             }
