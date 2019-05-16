@@ -38,7 +38,7 @@ class VtuInterface final
 public:
     /// Provide the mesh to write and set if compression should be used.
     explicit VtuInterface(const MeshLib::Mesh* mesh,
-                          int dataMode = vtkXMLWriter::Binary,
+                          int dataMode = vtkXMLWriter::Appended,
                           bool compressed = false);
 
     /// Read an unstructured grid from a VTU file
@@ -65,7 +65,7 @@ private:
 };
 
 int writeVtu(MeshLib::Mesh const& mesh, std::string const& file_name,
-             int const data_mode = vtkXMLWriter::Binary);
+             int const data_mode = vtkXMLWriter::Appended);
 
 } // end namespace IO
 } // end namespace MeshLib

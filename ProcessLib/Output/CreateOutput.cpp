@@ -43,7 +43,7 @@ std::unique_ptr<Output> createOutput(
 
     auto const data_mode =
         //! \ogs_file_param{prj__time_loop__output__data_mode}
-        config.getConfigParameter<std::string>("data_mode", "Binary");
+        config.getConfigParameter<std::string>("data_mode", "Appended");
 
     // Construction of output times
     std::vector<Output::PairRepeatEachSteps> repeats_each_steps;
