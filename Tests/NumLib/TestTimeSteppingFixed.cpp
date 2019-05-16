@@ -40,7 +40,7 @@ TEST(NumLib, TimeSteppingFixed)
     // dt vector (t_end == t0 + sum(dt))
     {
         const std::vector<double> fixed_dt = {10, 10, 10};
-        NumLib::FixedTimeStepping fixed(1, 31, 10);
+        NumLib::FixedTimeStepping fixed(1, 31, fixed_dt);
         const std::vector<double> expected_vec_t = {1, 11, 21, 31};
 
         std::vector<double> vec_t =
