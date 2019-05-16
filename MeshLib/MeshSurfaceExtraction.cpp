@@ -104,8 +104,23 @@ MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(
 
     // create new elements vector with newly created nodes (and delete
     // temp-elements)
-    std::vector<MeshLib::Element*> new_elements =
-        createSfcElementVector(sfc_elements, sfc_nodes, node_id_map);
+    std::vector<MeshLib::Element*> new_elements;
+    try
+    {
+        new_elements =
+            createSfcElementVector(sfc_elements, sfc_nodes, node_id_map);
+    }
+    catch (std::runtime_error const& err)
+    {
+        ERR("MeshSurfaceExtraction; could not create new surface "
+            "elements:\n%s.",
+            err.what());
+        std::for_each(sfc_elements.begin(), sfc_elements.end(),
+                      [](MeshLib::Element* e) { delete e; });
+        std::for_each(sfc_nodes.begin(), sfc_nodes.end(),
+                      [](MeshLib::Node* n) { delete n; });
+        return nullptr;
+    }
     std::for_each(sfc_elements.begin(), sfc_elements.end(),
                   [](MeshLib::Element* e) { delete e; });
 
@@ -348,7 +363,8 @@ std::vector<MeshLib::Element*> MeshSurfaceExtraction::createSfcElementVector(
         }
         else
         {
-            assert(sfc_element->getGeomType() == MeshElemType::QUAD);
+            if (sfc_element->getGeomType() != MeshElemType::QUAD)
+                OGS_FATAL("MeshSurfaceExtraction: Unknown element type.");
             new_elements.push_back(new MeshLib::Quad(new_nodes));
         }
     }
@@ -365,13 +381,17 @@ bool MeshSurfaceExtraction::createSfcMeshProperties(
     std::size_t const n_nodes(sfc_mesh.getNumberOfNodes());
     if (node_ids_map.size() != n_nodes)
     {
-        ERR("MeshSurfaceExtraction::createSfcMeshProperties() - Incorrect number of node IDs.");
+        ERR("MeshSurfaceExtraction::createSfcMeshProperties() - Incorrect "
+            "number of node IDs (%d) compared to actual number of surface nodes "
+            "(%d).", node_ids_map.size(), n_nodes);
         return false;
     }
 
     if (element_ids_map.size() != n_elems)
     {
-        ERR("MeshSurfaceExtraction::createSfcMeshProperties() - Incorrect number of element IDs.");
+        ERR("MeshSurfaceExtraction::createSfcMeshProperties() - Incorrect "
+            "number of element IDs (%d) compared to actual number of surface "
+            "elements (%d).", element_ids_map.size(), n_elems);
         return false;
     }
 
