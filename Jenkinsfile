@@ -258,13 +258,13 @@ pipeline {
             }
           }
         }
-        // ************************* frontend1 *********************************
-        stage('Frontend1 (serial)') {
+        // **************************** eve ************************************
+        stage('Frontend2 (serial)') {
           when {
             beforeAgent true
             expression { return params.frontend1_serial && (stage_required.build || stage_required.full) }
           }
-          agent { label "frontend1"}
+          agent { label "frontend2"}
           environment {
             OMP_NUM_THREADS = '1'
           }
@@ -301,12 +301,12 @@ pipeline {
             }
           }
         }
-        stage('Frontend1 (parallel)') {
+        stage('Frontend2 (parallel)') {
           when {
             beforeAgent true
             expression { return params.frontend1_parallel && (stage_required.build || stage_required.full) }
           }
-          agent { label "frontend1"}
+          agent { label "frontend2"}
           environment {
             OMP_NUM_THREADS = '1'
           }
