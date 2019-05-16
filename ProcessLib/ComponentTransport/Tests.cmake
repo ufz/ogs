@@ -932,7 +932,7 @@ AddTest(
     calcite_pcs_5_ts_126_t_12600.000000_expected.vtu calcite_pcs_5_ts_126_t_12600.000000.vtu Mg Mg 1e-10 1e-16
     calcite_pcs_5_ts_168_t_16800.000000_expected.vtu calcite_pcs_5_ts_168_t_16800.000000.vtu Mg Mg 1e-10 1e-16
     calcite_pcs_5_ts_210_t_21000.000000_expected.vtu calcite_pcs_5_ts_210_t_21000.000000.vtu Mg Mg 1e-10 1e-16
-    VIS calcite_pcs_5_ts_210_t_21000.000000.vtu
+    RUNTIME 25
 )
 
 AddTest(
@@ -964,5 +964,5 @@ AddTest(
     1d_isofrac_pcs_3_ts_126_t_12600.000000_expected.vtu 1d_isofrac_pcs_3_ts_126_t_12600.000000.vtu H H 1e-10 1e-16
     1d_isofrac_pcs_3_ts_168_t_16800.000000_expected.vtu 1d_isofrac_pcs_3_ts_168_t_16800.000000.vtu H H 1e-10 1e-16
     1d_isofrac_pcs_3_ts_210_t_21000.000000_expected.vtu 1d_isofrac_pcs_3_ts_210_t_21000.000000.vtu H H 1e-10 1e-16
-    VIS 1d_isofrac_pcs_3_ts_210_t_21000.000000.vtu
+    RUNTIME 85
 )
