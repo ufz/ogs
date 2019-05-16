@@ -349,6 +349,10 @@ double UncoupledProcessesTimeLoop::computeTimeStepping(
         {
             timestepper->setAcceptedOrNot(false);
         }
+        else
+        {
+            timestepper->setAcceptedOrNot(true);
+        }
 
         if (!timestepper->next(solution_error,
                                ppd.nonlinear_solver_status.number_iterations) &&

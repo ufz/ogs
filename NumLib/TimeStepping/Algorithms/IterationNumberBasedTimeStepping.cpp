@@ -124,6 +124,6 @@ double IterationNumberBasedTimeStepping::getNextTimeStepSize() const
 
 bool IterationNumberBasedTimeStepping::accepted() const
 {
-    return _iter_times <= _max_iter;
+    return _accepted;
 }
 }  // namespace NumLib

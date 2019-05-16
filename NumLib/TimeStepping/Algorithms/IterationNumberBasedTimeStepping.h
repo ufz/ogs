@@ -95,6 +95,7 @@ public:
     bool next(double solution_error, int number_iterations) override;
 
     bool accepted() const override;
+    void setAcceptedOrNot(bool accepted) override { _accepted = accepted; };
 
     bool isSolutionErrorComputationNeeded() override { return true; }
 
@@ -125,6 +126,8 @@ private:
     int _iter_times = 0;
     /// The number of rejected steps.
     int _n_rejected_steps = 0;
+    /// True, if the timestep is accepted.
+    bool _accepted = true;
 };
 
 }  // namespace NumLib
