@@ -90,6 +90,7 @@
         </parameter>
         <parameter>
             <name>volumetric_source_term_parameter</name>
+            <mesh>square_1x1_quad_1e3_volumetricsourcetermdataarray_volumetric_source_term</mesh>
             <type>MeshElement</type>
             <field_name>non-constant-source_term</field_name>
         </parameter>
