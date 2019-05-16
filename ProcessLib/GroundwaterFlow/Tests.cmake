@@ -319,7 +319,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    wedge_1x1x1_1e3_prism_complete_surface_specific_flux_t_1.000000.vtu wedge_1x1x1_1e3_prism_complete_surface_specific_flux_t_1.000000.vtu specific_flux specific_flux 1e-14 1e-14
+    wedge_1x1x1_1e3_prism_complete_surface_specific_flux_t_1.000000.vtu wedge_1x1x1_1e3_prism_complete_surface_specific_flux_t_1.000000.vtu specific_flux specific_flux 2e-14 0
 )
 
 # SQUARE 1x1 GROUNDWATER FLOW TEST -- AXIALLY SYMMETRIC
@@ -574,7 +574,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    expected_neumann_nonuniform_pcs_0_ts_1_t_1.000000.vtu neumann_nonuniform_pcs_0_ts_1_t_1.000000.vtu pressure pressure 1e-14 0
+    expected_neumann_nonuniform_pcs_0_ts_1_t_1.000000.vtu neumann_nonuniform_pcs_0_ts_1_t_1.000000.vtu pressure pressure 2e-14 0
     expected_neumann_nonuniform_pcs_0_ts_1_t_1.000000.vtu neumann_nonuniform_pcs_0_ts_1_t_1.000000.vtu darcy_velocity darcy_velocity 1e-12 0
 )
 
