@@ -68,17 +68,17 @@ TEST(NumLib, TimeSteppingIterationNumberBased1)
 
     ASSERT_TRUE(alg.next(solution_error, 8 /* exceed maximum */));
     ts = alg.getTimeStep();
-    ASSERT_EQ(5u, ts.steps());
-    ASSERT_EQ(7., ts.previous());
-    ASSERT_EQ(8, ts.current());
-    ASSERT_EQ(1., ts.dt());
-    ASSERT_FALSE(alg.accepted());
-
-    ASSERT_TRUE(alg.next(solution_error, 4));
-    ts = alg.getTimeStep();
     ASSERT_EQ(6u, ts.steps());
     ASSERT_EQ(8., ts.previous());
     ASSERT_EQ(9, ts.current());
+    ASSERT_EQ(1., ts.dt());
+    ASSERT_TRUE(alg.accepted());
+
+    ASSERT_TRUE(alg.next(solution_error, 4));
+    ts = alg.getTimeStep();
+    ASSERT_EQ(7u, ts.steps());
+    ASSERT_EQ(9., ts.previous());
+    ASSERT_EQ(10, ts.current());
     ASSERT_EQ(1., ts.dt());
     ASSERT_TRUE(alg.accepted());
 }
@@ -91,13 +91,13 @@ TEST(NumLib, TimeSteppingIterationNumberBased2)
                                                  std::move(iter_times_vector),
                                                  std::move(multiplier_vector));
 
-    std::vector<int> nr_iterations = {0, 2, 2, 2, 4, 6, 8, 4, 4, 2, 2};
+    std::vector<int> nr_iterations = {0, 2, 2, 2, 4, 6, 8, 4, 1};
     const std::vector<double> expected_vec_t = {1,  2,  4,  8,  16,
-                                                24, 28, 28, 30, 31};
+                                                24, 28, 29, 30, 31};
 
     std::vector<double> vec_t = timeStepping(alg, nr_iterations);
 
     ASSERT_EQ(expected_vec_t.size(), vec_t.size());
-    ASSERT_EQ(1u, alg.getNumberOfRepeatedSteps());
+    ASSERT_EQ(0u, alg.getNumberOfRepeatedSteps());
     ASSERT_ARRAY_NEAR(expected_vec_t, vec_t, expected_vec_t.size(), std::numeric_limits<double>::epsilon());
 }
