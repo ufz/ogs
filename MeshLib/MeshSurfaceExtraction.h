@@ -111,20 +111,20 @@ private:
                                       std::vector<std::size_t> const& id_map,
                                       MeshLib::Mesh& sfc_mesh)
     {
-        if (properties.existsPropertyVector<T>(name, type, 1))
+        if (!properties.existsPropertyVector<T>(name, type, 1))
         {
-            std::vector<T> const& org_vec =
-                *properties.getPropertyVector<T>(name, type, 1);
-            std::vector<T> sfc_prop;
-            sfc_prop.reserve(vec_size);
-            for (auto bulk_id : id_map)
-            {
-                sfc_prop.push_back(org_vec[bulk_id]);
-            }
-            MeshLib::addPropertyToMesh<T>(sfc_mesh, name, type, 1, sfc_prop);
-            return true;
+            return false;
         }
-        return false;
+        std::vector<T> const& org_vec =
+            *properties.getPropertyVector<T>(name, type, 1);
+        std::vector<T> sfc_prop;
+        sfc_prop.reserve(vec_size);
+        for (auto bulk_id : id_map)
+        {
+            sfc_prop.push_back(org_vec[bulk_id]);
+        }
+        MeshLib::addPropertyToMesh<T>(sfc_mesh, name, type, 1, sfc_prop);
+        return true;
     }
 
     /// Copies relevant parts of scalar arrays to the surface mesh
