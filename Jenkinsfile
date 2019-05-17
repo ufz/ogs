@@ -34,20 +34,22 @@ pipeline {
 
         // ********* Check changesets for conditional stage execution **********
         script {
+          def causes = currentBuild.rawBuild.getCauses()
+          for(cause in causes) {
+            if (cause.class.toString().contains("UserIdCause")) {
+              echo "Doing full build because job was started by user."
+              stage_required.full = true
+              env.CI_SKIP = "false"
+              return true
+            }
+          }
+
           if (env.JOB_NAME == 'ufz/ogs/master') {
             build_shared = 'OFF'
           }
           if (currentBuild.number == 1 || buildingTag()) {
             stage_required.full = true
             return true
-          }
-          def causes = currentBuild.rawBuild.getCauses()
-          for(cause in causes) {
-            if (cause.class.toString().contains("UserIdCause")) {
-              echo "Doing full build because job was started by user."
-              stage_required.full = true
-              return true
-            }
           }
           def changeLogSets = currentBuild.changeSets
           for (int i = 0; i < changeLogSets.size(); i++) {
