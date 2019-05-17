@@ -16,8 +16,8 @@ pipeline {
     booleanParam(name: 'docker_conan', defaultValue: true)
     booleanParam(name: 'docker_conan_debug', defaultValue: true)
     booleanParam(name: 'docker_conan_gui', defaultValue: true)
-    booleanParam(name: 'frontend1_serial', defaultValue: true)
-    booleanParam(name: 'frontend1_parallel', defaultValue: true)
+    booleanParam(name: 'eve_serial', defaultValue: true)
+    booleanParam(name: 'eve_parallel', defaultValue: true)
     booleanParam(name: 'win', defaultValue: true)
     booleanParam(name: 'mac', defaultValue: true)
     booleanParam(name: 'clang_analyzer', defaultValue: true)
@@ -262,7 +262,7 @@ pipeline {
         stage('Frontend2 (serial)') {
           when {
             beforeAgent true
-            expression { return params.frontend1_serial && (stage_required.build || stage_required.full) }
+            expression { return params.eve_serial && (stage_required.build || stage_required.full) }
           }
           agent { label "frontend2"}
           environment {
@@ -304,7 +304,7 @@ pipeline {
         stage('Frontend2 (parallel)') {
           when {
             beforeAgent true
-            expression { return params.frontend1_parallel && (stage_required.build || stage_required.full) }
+            expression { return params.eve_parallel && (stage_required.build || stage_required.full) }
           }
           agent { label "frontend2"}
           environment {
@@ -594,13 +594,13 @@ pipeline {
             }
           }
         }
-        // *********************** Deploy envinf1 ******************************
-        stage('Deploy envinf1') {
+        // ************************* Deploy eve ********************************
+        stage('Deploy eve') {
           when {
             beforeAgent true
             expression { return stage_required.build || stage_required.full }
           }
-          agent { label "envinf1"}
+          agent { label "frontend2"}
           steps {
             script {
               sh 'rm -rf /global/apps/ogs/head/standard'
@@ -611,10 +611,10 @@ pipeline {
                   '-DCMAKE_INSTALL_PREFIX=/global/apps/ogs/head/standard ' +
                   '-DOGS_MODULEFILE=/global/apps/modulefiles/ogs/head/standard ' +
                   '-DOGS_CPU_ARCHITECTURE=core-avx-i '
-                env = 'envinf1/cli.sh'
+                env = 'eve/cli.sh'
               }
               build {
-                env = 'envinf1/cli.sh'
+                env = 'eve/cli.sh'
                 target = 'install'
 
               }
@@ -622,12 +622,12 @@ pipeline {
           }
         }
         // ******************** Deploy envinf1 PETSc ***************************
-        stage('Deploy envinf1 PETSc') {
+        stage('Deploy eve PETSc') {
           when {
             beforeAgent true
             expression { return stage_required.build || stage_required.full }
           }
-          agent { label "envinf1"}
+          agent { label "frontend2"}
           steps {
             script {
               sh 'rm -rf /global/apps/ogs/head/petsc'
@@ -638,10 +638,10 @@ pipeline {
                   '-DCMAKE_INSTALL_PREFIX=/global/apps/ogs/head/petsc ' +
                   '-DOGS_MODULEFILE=/global/apps/modulefiles/ogs/head/petsc ' +
                   '-DOGS_CPU_ARCHITECTURE=core-avx-i '
-                env = 'envinf1/petsc.sh'
+                env = 'eve/petsc.sh'
               }
               build {
-                env = 'envinf1/petsc.sh'
+                env = 'eve/petsc.sh'
                 target = 'install'
                 cmd_args = '-l 30'
               }
