@@ -358,15 +358,16 @@ std::vector<MeshLib::Element*> MeshSurfaceExtraction::createSfcElementVector(
             new_nodes[k] =
                 sfc_nodes[node_id_map[sfc_element->getNode(k)->getID()]];
         }
-        if (sfc_element->getGeomType() == MeshElemType::TRIANGLE)
+        switch (sfc_element->getGeomType())
         {
-            new_elements.push_back(new MeshLib::Tri(new_nodes));
-        }
-        else
-        {
-            if (sfc_element->getGeomType() != MeshElemType::QUAD)
+            case MeshElemType::TRIANGLE:
+                new_elements.push_back(new MeshLib::Tri(new_nodes));
+                break;
+            case MeshElemType::QUAD:
+                new_elements.push_back(new MeshLib::Quad(new_nodes));
+                break;
+            default:
                 OGS_FATAL("MeshSurfaceExtraction: Unknown element type.");
-            new_elements.push_back(new MeshLib::Quad(new_nodes));
         }
     }
     return new_elements;
