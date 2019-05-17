@@ -126,10 +126,9 @@ MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(
 
     std::vector<std::size_t> id_map;
     id_map.reserve(sfc_nodes.size());
-    for (auto const* node : sfc_nodes)
-    {
-        id_map.push_back(node->getID());
-    }
+    std::transform(begin(sfc_nodes), end(sfc_nodes), std::back_inserter(id_map),
+                   [](MeshLib::Node* const n) { return n->getID(); });
+
     MeshLib::Mesh* result(
         new Mesh(subsfc_mesh.getName() + "-Surface", sfc_nodes, new_elements));
 

@@ -18,6 +18,7 @@
 #include <vector>
 
 #include "MathLib/Vector3.h"
+#include "MeshLib/Mesh.h"
 #include "MeshLib/Properties.h"
 
 namespace MeshLib
@@ -107,7 +108,7 @@ private:
     static bool processPropertyVector(std::string const& name,
                                       MeshLib::MeshItemType const type,
                                       MeshLib::Properties const& properties,
-                                      std::size_t const vec_size,
+                                      std::size_t const /*vec_size*/,
                                       std::vector<std::size_t> const& id_map,
                                       MeshLib::Mesh& sfc_mesh)
     {
@@ -115,15 +116,15 @@ private:
         {
             return false;
         }
-        std::vector<T> const& org_vec =
-            *properties.getPropertyVector<T>(name, type, 1);
-        std::vector<T> sfc_prop;
-        sfc_prop.reserve(vec_size);
-        for (auto bulk_id : id_map)
-        {
-            sfc_prop.push_back(org_vec[bulk_id]);
-        }
-        MeshLib::addPropertyToMesh<T>(sfc_mesh, name, type, 1, sfc_prop);
+        auto sfc_prop = getOrCreateMeshProperty<T>(sfc_mesh, name, type, 1);
+        sfc_prop->clear();
+        sfc_prop->reserve(id_map.size());
+
+        auto const& org_vec = *properties.getPropertyVector<T>(name, type, 1);
+        std::transform(
+            begin(id_map), end(id_map), std::back_inserter(*sfc_prop),
+            [&org_vec](std::size_t const bulk_id) { return org_vec[bulk_id]; });
+
         return true;
     }
 
