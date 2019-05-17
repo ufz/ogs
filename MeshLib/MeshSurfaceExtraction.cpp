@@ -421,10 +421,8 @@ bool MeshSurfaceExtraction::createSfcMeshProperties(
         }
         else
         {
-            WARN(
-                "Skipping property vector \"%s\" - no matching data type "
-                "found.",
-                name.c_str());
+            WARN("Skipping property vector '%s' - no matching data type found.",
+                 name.c_str());
             vectors_skipped++;
         }
     }
