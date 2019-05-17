@@ -39,7 +39,7 @@
 #include "Applications/ApplicationsLib/ProjectData.h"
 #include "Applications/ApplicationsLib/TestDefinition.h"
 #include "Applications/InSituLib/Adaptor.h"
-#include "ProcessLib/UncoupledProcessesTimeLoop.h"
+#include "ProcessLib/TimeLoop.h"
 
 #include "NumLib/NumericsConfig.h"
 

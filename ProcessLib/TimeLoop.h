@@ -9,8 +9,8 @@
 
 #pragma once
 
-#include <memory>
 #include <functional>
+#include <memory>
 
 #include <logog/include/logog.hpp>
 
@@ -30,22 +30,19 @@ namespace ProcessLib
 struct ProcessData;
 
 /// Time loop capable of time-integrating several processes at once.
-/// TODO: Rename to, e.g., TimeLoop, since it is not for purely uncoupled stuff
-/// anymore.
-class UncoupledProcessesTimeLoop
+class TimeLoop
 {
 public:
-    UncoupledProcessesTimeLoop(
-        std::unique_ptr<Output>&& output,
-        std::vector<std::unique_ptr<ProcessData>>&& per_process_data,
-        const int global_coupling_max_iterations,
-        std::vector<std::unique_ptr<NumLib::ConvergenceCriterion>>&&
-            global_coupling_conv_crit,
-        const double start_time, const double end_time);
+    TimeLoop(std::unique_ptr<Output>&& output,
+             std::vector<std::unique_ptr<ProcessData>>&& per_process_data,
+             const int global_coupling_max_iterations,
+             std::vector<std::unique_ptr<NumLib::ConvergenceCriterion>>&&
+                 global_coupling_conv_crit,
+             const double start_time, const double end_time);
 
     bool loop();
 
-    ~UncoupledProcessesTimeLoop();
+    ~TimeLoop();
 
     /**
      *  This function fills the vector of solutions of coupled processes of
@@ -136,8 +133,8 @@ private:
                          OutputClassMember output_class_member) const;
 };
 
-//! Builds an UncoupledProcessesTimeLoop from the given configuration.
-std::unique_ptr<UncoupledProcessesTimeLoop> createUncoupledProcessesTimeLoop(
+//! Builds an TimeLoop from the given configuration.
+std::unique_ptr<TimeLoop> createTimeLoop(
     BaseLib::ConfigTree const& config, std::string const& output_directory,
     std::map<std::string, std::unique_ptr<Process>> const& processes,
     std::map<std::string, std::unique_ptr<NumLib::NonlinearSolverBase>> const&
