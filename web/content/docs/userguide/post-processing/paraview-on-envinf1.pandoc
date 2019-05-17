@@ -3,11 +3,14 @@ date = "2018-11-14T14:00:13+01`:00"
 title = "ParaView on envinf1"
 author = "Lars Bilke"
 weight = 1
+draft = "true"
 
 [menu]
   [menu.userguide]
     parent = "post-processing"
 +++
+
+TODO: rewrite this for the envinf1 setup
 
 Connect to a frontend node and start `pvserver`:
 

@@ -17,7 +17,7 @@
 #                  OGS_USE_PETSC AND (OGS_USE_EIGEN OR OGS_USE_LIS)
 #   VIS <vtu output file(s)> # optional for documentation
 #   RUNTIME <in seconds> # optional for optimizing ctest duration
-#                          values should be taken from envinf1 serial job
+#                          values should be taken from eve serial job
 # )
 #
 # Conditional arguments:
@@ -104,6 +104,9 @@ function (AddTest)
         endif()
     elseif(AddTest_WRAPPER STREQUAL "mpirun")
         if(MPIRUN_TOOL_PATH)
+            if("${HOSTNAME}" MATCHES "frontend.*")
+                set(AddTest_WRAPPER_ARGS ${AddTest_WRAPPER_ARGS} --mca btl_openib_allow_ib 1)
+            endif()
             set(WRAPPER_COMMAND ${MPIRUN_TOOL_PATH})
         else()
             message(STATUS "ERROR: mpirun was not found but is required for ${AddTest_NAME}!")

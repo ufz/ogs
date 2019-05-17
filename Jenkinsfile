@@ -16,8 +16,8 @@ pipeline {
     booleanParam(name: 'docker_conan', defaultValue: true)
     booleanParam(name: 'docker_conan_debug', defaultValue: true)
     booleanParam(name: 'docker_conan_gui', defaultValue: true)
-    booleanParam(name: 'envinf1_serial', defaultValue: true)
-    booleanParam(name: 'envinf1_parallel', defaultValue: true)
+    booleanParam(name: 'eve_serial', defaultValue: true)
+    booleanParam(name: 'eve_parallel', defaultValue: true)
     booleanParam(name: 'win', defaultValue: true)
     booleanParam(name: 'mac', defaultValue: true)
     booleanParam(name: 'clang_analyzer', defaultValue: true)
@@ -34,20 +34,22 @@ pipeline {
 
         // ********* Check changesets for conditional stage execution **********
         script {
+          def causes = currentBuild.rawBuild.getCauses()
+          for(cause in causes) {
+            if (cause.class.toString().contains("UserIdCause")) {
+              echo "Doing full build because job was started by user."
+              stage_required.full = true
+              env.CI_SKIP = "false"
+              return true
+            }
+          }
+
           if (env.JOB_NAME == 'ufz/ogs/master') {
             build_shared = 'OFF'
           }
           if (currentBuild.number == 1 || buildingTag()) {
             stage_required.full = true
             return true
-          }
-          def causes = currentBuild.rawBuild.getCauses()
-          for(cause in causes) {
-            if (cause.class.toString().contains("UserIdCause")) {
-              echo "Doing full build because job was started by user."
-              stage_required.full = true
-              return true
-            }
           }
           def changeLogSets = currentBuild.changeSets
           for (int i = 0; i < changeLogSets.size(); i++) {
@@ -258,13 +260,13 @@ pipeline {
             }
           }
         }
-        // ************************** envinf1 **********************************
-        stage('Envinf1 (serial)') {
+        // **************************** eve ************************************
+        stage('Frontend2 (serial)') {
           when {
             beforeAgent true
-            expression { return params.envinf1_serial && (stage_required.build || stage_required.full) }
+            expression { return params.eve_serial && (stage_required.build || stage_required.full) }
           }
-          agent { label "envinf1"}
+          agent { label "frontend2"}
           environment {
             OMP_NUM_THREADS = '1'
           }
@@ -276,18 +278,18 @@ pipeline {
                   '-DOGS_BUILD_UTILS=ON ' +
                   '-DBUILD_SHARED_LIBS=ON ' +
                   '-DOGS_USE_CONAN=OFF '
-                env = 'envinf1/cli.sh'
+                env = 'eve/cli.sh'
               }
               build {
-                env = 'envinf1/cli.sh'
+                env = 'eve/cli.sh'
                 cmd_args = '-l 30'
               }
               build {
-                env = 'envinf1/cli.sh'
+                env = 'eve/cli.sh'
                 target = 'tests'
               }
               build {
-                env = 'envinf1/cli.sh'
+                env = 'eve/cli.sh'
                 target = 'ctest'
               }
             }
@@ -301,12 +303,12 @@ pipeline {
             }
           }
         }
-        stage('Envinf1 (parallel)') {
+        stage('Frontend2 (parallel)') {
           when {
             beforeAgent true
-            expression { return params.envinf1_parallel && (stage_required.build || stage_required.full) }
+            expression { return params.eve_parallel && (stage_required.build || stage_required.full) }
           }
-          agent { label "envinf1"}
+          agent { label "frontend2"}
           environment {
             OMP_NUM_THREADS = '1'
           }
@@ -318,18 +320,18 @@ pipeline {
                   '-DBUILD_SHARED_LIBS=ON ' +
                   '-DOGS_USE_PETSC=ON ' +
                   '-DOGS_USE_CONAN=OFF '
-                env = 'envinf1/petsc.sh'
+                env = 'eve/petsc.sh'
               }
               build {
-                env = 'envinf1/petsc.sh'
+                env = 'eve/petsc.sh'
                 cmd_args = '-l 30'
               }
               build {
-                env = 'envinf1/petsc.sh'
+                env = 'eve/petsc.sh'
                 target = 'tests'
               }
               build {
-                env = 'envinf1/petsc.sh'
+                env = 'eve/petsc.sh'
                 target = 'ctest'
               }
             }
@@ -594,13 +596,13 @@ pipeline {
             }
           }
         }
-        // *********************** Deploy envinf1 ******************************
-        stage('Deploy envinf1') {
+        // ************************* Deploy eve ********************************
+        stage('Deploy eve') {
           when {
             beforeAgent true
             expression { return stage_required.build || stage_required.full }
           }
-          agent { label "envinf1"}
+          agent { label "frontend2"}
           steps {
             script {
               sh 'rm -rf /global/apps/ogs/head/standard'
@@ -611,10 +613,10 @@ pipeline {
                   '-DCMAKE_INSTALL_PREFIX=/global/apps/ogs/head/standard ' +
                   '-DOGS_MODULEFILE=/global/apps/modulefiles/ogs/head/standard ' +
                   '-DOGS_CPU_ARCHITECTURE=core-avx-i '
-                env = 'envinf1/cli.sh'
+                env = 'eve/cli.sh'
               }
               build {
-                env = 'envinf1/cli.sh'
+                env = 'eve/cli.sh'
                 target = 'install'
 
               }
@@ -622,12 +624,12 @@ pipeline {
           }
         }
         // ******************** Deploy envinf1 PETSc ***************************
-        stage('Deploy envinf1 PETSc') {
+        stage('Deploy eve PETSc') {
           when {
             beforeAgent true
             expression { return stage_required.build || stage_required.full }
           }
-          agent { label "envinf1"}
+          agent { label "frontend2"}
           steps {
             script {
               sh 'rm -rf /global/apps/ogs/head/petsc'
@@ -638,10 +640,10 @@ pipeline {
                   '-DCMAKE_INSTALL_PREFIX=/global/apps/ogs/head/petsc ' +
                   '-DOGS_MODULEFILE=/global/apps/modulefiles/ogs/head/petsc ' +
                   '-DOGS_CPU_ARCHITECTURE=core-avx-i '
-                env = 'envinf1/petsc.sh'
+                env = 'eve/petsc.sh'
               }
               build {
-                env = 'envinf1/petsc.sh'
+                env = 'eve/petsc.sh'
                 target = 'install'
                 cmd_args = '-l 30'
               }

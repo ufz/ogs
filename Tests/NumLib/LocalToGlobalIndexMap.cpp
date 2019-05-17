@@ -28,7 +28,11 @@ public:
         mesh.reset(MeshLib::MeshGenerator::generateLineMesh(1.0, mesh_size));
         nodesSubset =
             std::make_unique<MeshLib::MeshSubset>(*mesh, mesh->getNodes());
+    }
 
+    void SetUp() override
+    {
+        components = std::vector<MeshLib::MeshSubset>{};
         // Add two components both based on the same nodesSubset.
         components.emplace_back(*nodesSubset);
         components.emplace_back(*nodesSubset);

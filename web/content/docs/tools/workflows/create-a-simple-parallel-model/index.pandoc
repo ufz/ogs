@@ -19,13 +19,13 @@ So far, the parallel FEM scheme with PETSc cannot be used by the all processes
 ## Software Modules and Compilation on EVE
 
 - Checkout the OGS-6 source code
-  - Source the environment scripts `scripts/env/envinf1/cli.sh`
+  - Source the environment scripts `scripts/env/eve/cli.sh`
 - Configure with utils enabled to:
   - Create the binary for generation of the structured mesh
   - Create the binary for the mesh partioner tool `partmesh`
   - `cmake <path_to_source> -DOGS_BUILD_UTILS=ON`
 - Configure OGS for parallel usage with PETSc:
-  - Source the environment scripts `scripts/env/envinf1/petsc.sh`
+  - Source the environment scripts `scripts/env/eve/petsc.sh`
   - `cmake <path_to_source> -DOGS_USE_PETSC=ON`
 - Build the source code with `make`
 
