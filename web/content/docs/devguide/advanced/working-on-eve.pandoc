@@ -14,7 +14,13 @@ weight = 1036
 Members of the Department Environmental Informatics of the Helmholtz Centre for Environmental Research - UFZ can use the `frontend1`- and `frontend2`-machines from the Eve cluster system.
 
 ::: {.note}
-On eve the installed git module (2.10) is over 2 years old and we recommend using a newer module (especially when you have problems with fetching or checking out of Git LFS files):
+You need to opt-in to use the [EasyBuild modules](https://wiki.ufz.de/eve/index.php/EasyBuild)! To do so follow these steps:
+
+- Login to `frontend1` or `frontend2`
+- Run `touch ~/.easybuild-yes`
+- `exit` and re-login
+
+Also on eve the installed git module (2.10) is over 2 years old and we recommend using a newer module (especially when you have problems with fetching or checking out of Git LFS files):
 
 ```bash
 ml use /global/apps/modulefiles
