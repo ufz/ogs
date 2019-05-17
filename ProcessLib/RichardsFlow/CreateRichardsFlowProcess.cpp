@@ -78,7 +78,7 @@ std::unique_ptr<Process> createRichardsFlowProcess(
     auto& temperature = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__RICHARDS_FLOW__temperature}
-        "temperature", parameters, 1);
+        "temperature", parameters, 1, &mesh);
 
     //! \ogs_file_param{prj__processes__process__RICHARDS_FLOW__material_property}
     auto const& mat_config = config.getConfigSubtree("material_property");

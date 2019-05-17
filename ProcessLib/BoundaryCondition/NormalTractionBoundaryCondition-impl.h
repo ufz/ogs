@@ -91,8 +91,8 @@ createNormalTractionBoundaryCondition(
         config.getConfigParameter<std::string>("parameter");
     DBUG("Using parameter %s", parameter_name.c_str());
 
-    auto const& pressure =
-        ParameterLib::findParameter<double>(parameter_name, parameters, 1);
+    auto const& pressure = ParameterLib::findParameter<double>(
+        parameter_name, parameters, 1, &bc_mesh);
     return std::make_unique<NormalTractionBoundaryCondition<
         NormalTractionBoundaryConditionLocalAssembler>>(
         integration_order, shapefunction_order, dof_table, variable_id,

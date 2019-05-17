@@ -138,7 +138,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     auto& intrinsic_permeability = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__intrinsic_permeability}
-        "intrinsic_permeability", parameters, 1);
+        "intrinsic_permeability", parameters, 1, &mesh);
 
     DBUG("Use '%s' as intrinsic permeabiltiy parameter.",
          intrinsic_permeability.name.c_str());
@@ -147,7 +147,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     auto& specific_storage = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__specific_storage}
-        "specific_storage", parameters, 1);
+        "specific_storage", parameters, 1, &mesh);
 
     DBUG("Use '%s' as specific storage parameter.",
          specific_storage.name.c_str());
@@ -156,7 +156,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     auto& fluid_viscosity = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__fluid_viscosity}
-        "fluid_viscosity", parameters, 1);
+        "fluid_viscosity", parameters, 1, &mesh);
     DBUG("Use '%s' as fluid viscosity parameter.",
          fluid_viscosity.name.c_str());
 
@@ -164,14 +164,14 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     auto& fluid_density = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__fluid_density}
-        "fluid_density", parameters, 1);
+        "fluid_density", parameters, 1, &mesh);
     DBUG("Use '%s' as fluid density parameter.", fluid_density.name.c_str());
 
     // Biot coefficient
     auto& biot_coefficient = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__biot_coefficient}
-        "biot_coefficient", parameters, 1);
+        "biot_coefficient", parameters, 1, &mesh);
     DBUG("Use '%s' as Biot coefficient parameter.",
          biot_coefficient.name.c_str());
 
@@ -179,14 +179,14 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     auto& porosity = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__porosity}
-        "porosity", parameters, 1);
+        "porosity", parameters, 1, &mesh);
     DBUG("Use '%s' as porosity parameter.", porosity.name.c_str());
 
     // Solid density
     auto& solid_density = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__solid_density}
-        "solid_density", parameters, 1);
+        "solid_density", parameters, 1, &mesh);
     DBUG("Use '%s' as solid density parameter.", solid_density.name.c_str());
 
     // Specific body force
@@ -264,13 +264,16 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
             fracture_properties_config.getConfigParameter<int>("material_id"),
             ParameterLib::findParameter<double>(
                 //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__fracture_properties__initial_aperture}
-                fracture_properties_config, "initial_aperture", parameters, 1),
+                fracture_properties_config, "initial_aperture", parameters, 1,
+                &mesh),
             ParameterLib::findParameter<double>(
                 //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__fracture_properties__specific_storage}
-                fracture_properties_config, "specific_storage", parameters, 1),
+                fracture_properties_config, "specific_storage", parameters, 1,
+                &mesh),
             ParameterLib::findParameter<double>(
                 //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__fracture_properties__biot_coefficient}
-                fracture_properties_config, "biot_coefficient", parameters, 1));
+                fracture_properties_config, "biot_coefficient", parameters, 1,
+                &mesh));
         if (frac_prop->aperture0.isTimeDependent())
         {
             OGS_FATAL(
@@ -285,7 +288,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         config,
         //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__initial_effective_stress}
         "initial_effective_stress", parameters,
-        MathLib::KelvinVector::KelvinVectorDimensions<GlobalDim>::value);
+        MathLib::KelvinVector::KelvinVectorDimensions<GlobalDim>::value, &mesh);
     DBUG("Use '%s' as initial effective stress parameter.",
          initial_effective_stress.name.c_str());
 
@@ -294,7 +297,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__initial_fracture_effective_stress}
-        "initial_fracture_effective_stress", parameters, GlobalDim);
+        "initial_fracture_effective_stress", parameters, GlobalDim, &mesh);
     DBUG("Use '%s' as initial fracture effective stress parameter.",
          initial_fracture_effective_stress.name.c_str());
 

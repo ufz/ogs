@@ -33,13 +33,15 @@ ParameterBase* findParameterByName(
 /// \param parameters list of parameters in which it will be searched
 /// \param num_components the number of components of the parameters or zero if
 /// any number is acceptable
+/// \param mesh an optional mesh pointer used for test whether the parameter is
+/// defined on the given mesh. No test is performed if the pointer is a nullptr.
 ///
 /// \see The documentation of the other findParameter() function.
 template <typename ParameterDataType>
 Parameter<ParameterDataType>* findParameterOptional(
     std::string const& parameter_name,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
-    int const num_components)
+    int const num_components, MeshLib::Mesh const* const mesh = nullptr)
 {
     // Find corresponding parameter by name.
     ParameterBase* parameter_ptr =
@@ -68,6 +70,19 @@ Parameter<ParameterDataType>* findParameterOptional(
             num_components);
     }
 
+    // Test the parameter's mesh only if there is a "test"-mesh provided.
+    if (mesh != nullptr)
+    {
+        if (auto const error = isDefinedOnSameMesh(*parameter, *mesh))
+        {
+            OGS_FATAL(
+                "The found parameter is not suitable for the use on the "
+                "required mesh.\n%s",
+                error->c_str());
+        }
+    }
+
+
     return parameter;
 }
 
@@ -78,16 +93,18 @@ Parameter<ParameterDataType>* findParameterOptional(
 /// \param parameters list of parameters in which it will be searched
 /// \param num_components the number of components of the parameters or zero if
 /// any number is acceptable
+/// \param mesh an optional mesh pointer used for test whether the parameter is
+/// defined on the given mesh. No test is performed if the pointer is a nullptr.
 ///
 /// \see The documentation of the other findParameter() function.
 template <typename ParameterDataType>
 Parameter<ParameterDataType>& findParameter(
     std::string const& parameter_name,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
-    int const num_components)
+    int const num_components, MeshLib::Mesh const* const mesh = nullptr)
 {
     auto* parameter = findParameterOptional<ParameterDataType>(
-        parameter_name, parameters, num_components);
+        parameter_name, parameters, num_components, mesh);
 
     if (!parameter)
     {
@@ -116,12 +133,13 @@ template <typename ParameterDataType>
 Parameter<ParameterDataType>& findParameter(
     BaseLib::ConfigTree const& process_config, std::string const& tag,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
-    int const num_components)
+    int const num_components, MeshLib::Mesh const* const mesh = nullptr)
 {
     // Find parameter name in process config.
     //! \ogs_file_special
     auto const name = process_config.getConfigParameter<std::string>(tag);
 
-    return findParameter<ParameterDataType>(name, parameters, num_components);
+    return findParameter<ParameterDataType>(name, parameters, num_components,
+                                            mesh);
 }
 }  // namespace ParameterLib

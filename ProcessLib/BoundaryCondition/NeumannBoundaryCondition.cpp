@@ -27,8 +27,8 @@ std::unique_ptr<NeumannBoundaryCondition> createNeumannBoundaryCondition(
     auto const param_name = config.getConfigParameter<std::string>("parameter");
     DBUG("Using parameter %s", param_name.c_str());
 
-    auto const& param =
-        ParameterLib::findParameter<double>(param_name, parameters, 1);
+    auto const& param = ParameterLib::findParameter<double>(
+        param_name, parameters, 1, &bc_mesh);
 
     // In case of partitioned mesh the boundary could be empty, i.e. there is no
     // boundary condition.

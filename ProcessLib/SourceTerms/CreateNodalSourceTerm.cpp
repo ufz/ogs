@@ -33,8 +33,8 @@ std::unique_ptr<SourceTerm> createNodalSourceTerm(
     auto const param_name = config.getConfigParameter<std::string>("parameter");
     DBUG("Using parameter %s as nodal source term.", param_name.c_str());
 
-    auto& param =
-        ParameterLib::findParameter<double>(param_name, parameters, 1);
+    auto& param = ParameterLib::findParameter<double>(param_name, parameters, 1,
+                                                      &st_mesh);
 
     return std::make_unique<NodalSourceTerm>(std::move(dof_table),
                                              source_term_mesh_id, st_mesh,

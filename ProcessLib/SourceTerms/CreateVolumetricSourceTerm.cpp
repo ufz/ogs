@@ -34,7 +34,8 @@ std::unique_ptr<SourceTerm> createVolumetricSourceTerm(
         //! \ogs_file_param{prj__process_variables__process_variable__source_terms__source_term__Volumetric__parameter}
         config.getConfigParameter<std::string>("parameter");
     auto& volumetric_source_term = ParameterLib::findParameter<double>(
-        volumetric_source_term_parameter_name, parameters, 1);
+        volumetric_source_term_parameter_name, parameters, 1,
+        &source_term_mesh);
 
     DBUG("Using '%s` as volumetric source term parameter.",
          volumetric_source_term.name.c_str());

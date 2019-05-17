@@ -35,8 +35,8 @@ createVariableDependentNeumannBoundaryCondition(
     auto const constant_name =
         //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__VariableDependentNeumann__constant_name}
         config.getConfigParameter<std::string>("constant_name");
-    auto const& constant =
-        ParameterLib::findParameter<double>(constant_name, parameters, 1);
+    auto const& constant = ParameterLib::findParameter<double>(
+        constant_name, parameters, 1, &bc_mesh);
 
     auto const coefficient_current_variable_name =
         //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__VariableDependentNeumann__coefficient_current_variable_name}
@@ -44,7 +44,7 @@ createVariableDependentNeumannBoundaryCondition(
             "coefficient_current_variable_name");
     auto const& coefficient_current_variable =
         ParameterLib::findParameter<double>(coefficient_current_variable_name,
-                                            parameters, 1);
+                                            parameters, 1, &bc_mesh);
 
     auto const coefficient_other_variable_name =
         //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__VariableDependentNeumann__coefficient_other_variable_name}
@@ -52,7 +52,7 @@ createVariableDependentNeumannBoundaryCondition(
             "coefficient_other_variable_name");
     auto const& coefficient_other_variable =
         ParameterLib::findParameter<double>(coefficient_other_variable_name,
-                                            parameters, 1);
+                                            parameters, 1, &bc_mesh);
 
     auto const coefficient_mixed_variables_name =
         //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__VariableDependentNeumann__coefficient_mixed_variables_name}
@@ -60,7 +60,7 @@ createVariableDependentNeumannBoundaryCondition(
             "coefficient_mixed_variables_name");
     auto const& coefficient_mixed_variables =
         ParameterLib::findParameter<double>(coefficient_mixed_variables_name,
-                                            parameters, 1);
+                                            parameters, 1, &bc_mesh);
 
     std::vector<MeshLib::Node*> const& bc_nodes = bc_mesh.getNodes();
     MeshLib::MeshSubset bc_mesh_subset(bc_mesh, bc_nodes);

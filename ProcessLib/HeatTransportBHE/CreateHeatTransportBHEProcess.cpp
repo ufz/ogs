@@ -90,7 +90,7 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
     auto& thermal_conductivity_solid = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__HEAT_TRANSPORT_BHE__thermal_conductivity_solid}
-        "thermal_conductivity_solid", parameters, 1);
+        "thermal_conductivity_solid", parameters, 1, &mesh);
 
     DBUG("Use '%s' as solid phase thermal conductivity parameter.",
          thermal_conductivity_solid.name.c_str());
@@ -99,7 +99,7 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
     auto& thermal_conductivity_fluid = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__HEAT_TRANSPORT_BHE__thermal_conductivity_fluid}
-        "thermal_conductivity_fluid", parameters, 1);
+        "thermal_conductivity_fluid", parameters, 1, &mesh);
 
     DBUG("Use '%s' as fluid phase thermal conductivity parameter.",
          thermal_conductivity_fluid.name.c_str());
@@ -108,7 +108,7 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
     auto& thermal_conductivity_gas = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__HEAT_TRANSPORT_BHE__thermal_conductivity_gas}
-        "thermal_conductivity_gas", parameters, 1);
+        "thermal_conductivity_gas", parameters, 1, &mesh);
 
     DBUG("Use '%s' as gas phase thermal conductivity parameter.",
          thermal_conductivity_gas.name.c_str());
@@ -117,7 +117,7 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
     auto& heat_capacity_solid = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__HEAT_TRANSPORT_BHE__heat_capacity_solid}
-        "heat_capacity_solid", parameters, 1);
+        "heat_capacity_solid", parameters, 1, &mesh);
 
     DBUG("Use '%s' as solid phase heat capacity parameter.",
          heat_capacity_solid.name.c_str());
@@ -126,7 +126,7 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
     auto& heat_capacity_fluid = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__HEAT_TRANSPORT_BHE__heat_capacity_fluid}
-        "heat_capacity_fluid", parameters, 1);
+        "heat_capacity_fluid", parameters, 1, &mesh);
 
     DBUG("Use '%s' as fluid phase heat capacity parameter.",
          heat_capacity_fluid.name.c_str());
@@ -135,7 +135,7 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
     auto& heat_capacity_gas = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__HEAT_TRANSPORT_BHE__heat_capacity_gas}
-        "heat_capacity_gas", parameters, 1);
+        "heat_capacity_gas", parameters, 1, &mesh);
 
     DBUG("Use '%s' as gas phase heat capacity parameter.",
          heat_capacity_gas.name.c_str());
@@ -144,7 +144,7 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
     auto& density_solid = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__HEAT_TRANSPORT_BHE__density_solid}
-        "density_solid", parameters, 1);
+        "density_solid", parameters, 1, &mesh);
 
     DBUG("Use '%s' as solid phase density parameter.",
          density_solid.name.c_str());
@@ -153,7 +153,7 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
     auto& density_fluid = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__HEAT_TRANSPORT_BHE__density_fluid}
-        "density_fluid", parameters, 1);
+        "density_fluid", parameters, 1, &mesh);
 
     DBUG("Use '%s' as fluid phase density parameter.",
          density_fluid.name.c_str());
@@ -162,7 +162,7 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
     auto& density_gas = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__HEAT_TRANSPORT_BHE__density_gas}
-        "density_gas", parameters, 1);
+        "density_gas", parameters, 1, &mesh);
 
     DBUG("Use '%s' as gas phase density parameter.", density_gas.name.c_str());
 

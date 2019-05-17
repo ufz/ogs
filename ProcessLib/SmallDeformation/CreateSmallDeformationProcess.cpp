@@ -73,7 +73,7 @@ std::unique_ptr<Process> createSmallDeformationProcess(
     auto& solid_density = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__SMALL_DEFORMATION__solid_density}
-        "solid_density", parameters, 1);
+        "solid_density", parameters, 1, &mesh);
     DBUG("Use '%s' as solid density parameter.", solid_density.name.c_str());
 
     // Specific body force

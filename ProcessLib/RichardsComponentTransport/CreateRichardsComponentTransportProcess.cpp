@@ -87,7 +87,7 @@ std::unique_ptr<Process> createRichardsComponentTransportProcess(
     auto& fluid_reference_density = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__RichardsComponentTransport__fluid_reference_density}
-        "fluid_reference_density", parameters, 1);
+        "fluid_reference_density", parameters, 1, &mesh);
     DBUG("Use '%s' as fluid_reference_density parameter.",
          fluid_reference_density.name.c_str());
 
@@ -96,7 +96,7 @@ std::unique_ptr<Process> createRichardsComponentTransportProcess(
         double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__RichardsComponentTransport__molecular_diffusion_coefficient}
-        "molecular_diffusion_coefficient", parameters, 1);
+        "molecular_diffusion_coefficient", parameters, 1, &mesh);
     DBUG("Use '%s' as molecular diffusion coefficient parameter.",
          molecular_diffusion_coefficient.name.c_str());
 
@@ -105,7 +105,7 @@ std::unique_ptr<Process> createRichardsComponentTransportProcess(
         double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__RichardsComponentTransport__solute_dispersivity_longitudinal}
-        "solute_dispersivity_longitudinal", parameters, 1);
+        "solute_dispersivity_longitudinal", parameters, 1, &mesh);
     DBUG("Use '%s' as longitudinal solute dispersivity parameter.",
          solute_dispersivity_longitudinal.name.c_str());
 
@@ -114,7 +114,7 @@ std::unique_ptr<Process> createRichardsComponentTransportProcess(
         double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__RichardsComponentTransport__solute_dispersivity_transverse}
-        "solute_dispersivity_transverse", parameters, 1);
+        "solute_dispersivity_transverse", parameters, 1, &mesh);
     DBUG("Use '%s' as transverse solute dispersivity parameter.",
          solute_dispersivity_transverse.name.c_str());
 
@@ -122,13 +122,13 @@ std::unique_ptr<Process> createRichardsComponentTransportProcess(
     auto const& retardation_factor = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__RichardsComponentTransport__retardation_factor}
-        "retardation_factor", parameters, 1);
+        "retardation_factor", parameters, 1, &mesh);
 
     // Parameter for the decay rate.
     auto const& decay_rate = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__RichardsComponentTransport__decay_rate}
-        "decay_rate", parameters, 1);
+        "decay_rate", parameters, 1, &mesh);
 
     // Specific body force parameter.
     Eigen::VectorXd specific_body_force;
