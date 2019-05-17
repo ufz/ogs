@@ -9,15 +9,18 @@ AddTest(
     DIFF_DATA Ammer-Rivers-Mapped.gml
 )
 
-AddTest(
-    NAME MapGeometryToMeshSurface_Bode
-    PATH MeshGeoToolsLib/Bode
-    EXECUTABLE MapGeometryToMeshSurface
-    EXECUTABLE_ARGS -m BodeComplex.msh -i BodeEZG_Fliessgewaesser.gml -o ${Data_BINARY_DIR}/MeshGeoToolsLib/Bode/BodeEZG_Fliessgewaesser-Mapped.gml
-    REQUIREMENTS NOT OGS_USE_MPI
-    TESTER diff
-    DIFF_DATA BodeEZG_Fliessgewaesser-Mapped.gml
-)
+# Disable test on eve frontends
+if(NOT "${HOSTNAME}" MATCHES "frontend.*")
+    AddTest(
+        NAME MapGeometryToMeshSurface_Bode
+        PATH MeshGeoToolsLib/Bode
+        EXECUTABLE MapGeometryToMeshSurface
+        EXECUTABLE_ARGS -m BodeComplex.msh -i BodeEZG_Fliessgewaesser.gml -o ${Data_BINARY_DIR}/MeshGeoToolsLib/Bode/BodeEZG_Fliessgewaesser-Mapped.gml
+        REQUIREMENTS NOT OGS_USE_MPI
+        TESTER diff
+        DIFF_DATA BodeEZG_Fliessgewaesser-Mapped.gml
+    )
+endif()
 
 AddTest(
     NAME MapGeometryToMeshSurface_Naegelstedt
