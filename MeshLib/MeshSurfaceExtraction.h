@@ -105,32 +105,34 @@ private:
 
     template <typename T>
     static bool processPropertyVector(std::string const& name,
-                               MeshLib::MeshItemType const type,
-                               MeshLib::Properties const& properties,
-                               std::size_t const vec_size,
-                               std::vector<std::size_t> const& id_map,
-                               MeshLib::Mesh& sfc_mesh)
+                                      MeshLib::MeshItemType const type,
+                                      MeshLib::Properties const& properties,
+                                      std::size_t const vec_size,
+                                      std::vector<std::size_t> const& id_map,
+                                      MeshLib::Mesh& sfc_mesh)
     {
         if (properties.existsPropertyVector<T>(name, type, 1))
         {
-            std::vector<T> const& org_vec = *properties.getPropertyVector<T>(name, type, 1);
+            std::vector<T> const& org_vec =
+                *properties.getPropertyVector<T>(name, type, 1);
             std::vector<T> sfc_prop;
             sfc_prop.reserve(vec_size);
             for (auto bulk_id : id_map)
             {
                 sfc_prop.push_back(org_vec[bulk_id]);
             }
-            MeshLib::addPropertyToMesh<T>( sfc_mesh, name, type, 1, sfc_prop);
+            MeshLib::addPropertyToMesh<T>(sfc_mesh, name, type, 1, sfc_prop);
             return true;
         }
         return false;
     }
 
     /// Copies relevant parts of scalar arrays to the surface mesh
-    static bool createSfcMeshProperties(MeshLib::Mesh& sfc_mesh,
-                                        MeshLib::Properties const& properties,
-                                        std::vector<std::size_t> const& node_ids_map,
-                                        std::vector<std::size_t> const& element_ids_map);
+    static bool createSfcMeshProperties(
+        MeshLib::Mesh& sfc_mesh,
+        MeshLib::Properties const& properties,
+        std::vector<std::size_t> const& node_ids_map,
+        std::vector<std::size_t> const& element_ids_map);
 };
 
 }  // end namespace MeshLib

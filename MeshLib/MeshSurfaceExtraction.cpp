@@ -156,8 +156,8 @@ MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(
                                    face_ids_map);
     }
 
-    if (!createSfcMeshProperties(*result, subsfc_mesh.getProperties(),
-                                 id_map, element_ids_map))
+    if (!createSfcMeshProperties(*result, subsfc_mesh.getProperties(), id_map,
+                                 element_ids_map))
     {
         ERR("Transferring subsurface properties failed.");
     }
@@ -355,7 +355,8 @@ std::vector<MeshLib::Element*> MeshSurfaceExtraction::createSfcElementVector(
         auto** new_nodes = new MeshLib::Node*[n_elem_nodes];
         for (unsigned k(0); k < n_elem_nodes; k++)
         {
-            new_nodes[k] = sfc_nodes[node_id_map[sfc_element->getNode(k)->getID()]];
+            new_nodes[k] =
+                sfc_nodes[node_id_map[sfc_element->getNode(k)->getID()]];
         }
         if (sfc_element->getGeomType() == MeshElemType::TRIANGLE)
         {
@@ -382,8 +383,10 @@ bool MeshSurfaceExtraction::createSfcMeshProperties(
     if (node_ids_map.size() != n_nodes)
     {
         ERR("MeshSurfaceExtraction::createSfcMeshProperties() - Incorrect "
-            "number of node IDs (%d) compared to actual number of surface nodes "
-            "(%d).", node_ids_map.size(), n_nodes);
+            "number of node IDs (%d) compared to actual number of surface "
+            "nodes "
+            "(%d).",
+            node_ids_map.size(), n_nodes);
         return false;
     }
 
@@ -391,28 +394,42 @@ bool MeshSurfaceExtraction::createSfcMeshProperties(
     {
         ERR("MeshSurfaceExtraction::createSfcMeshProperties() - Incorrect "
             "number of element IDs (%d) compared to actual number of surface "
-            "elements (%d).", element_ids_map.size(), n_elems);
+            "elements (%d).",
+            element_ids_map.size(), n_elems);
         return false;
     }
 
-    std::size_t vectors_copied (0), vectors_skipped (0);
-    std::vector<std::string> const& array_names = properties.getPropertyVectorNames();
+    std::size_t vectors_copied(0), vectors_skipped(0);
+    std::vector<std::string> const& array_names =
+        properties.getPropertyVectorNames();
     for (std::string const& name : array_names)
     {
-        if (processPropertyVector<double>(name, MeshLib::MeshItemType::Cell, properties, n_elems, element_ids_map, sfc_mesh) ||
-            processPropertyVector<int>(name, MeshLib::MeshItemType::Cell, properties, n_elems, element_ids_map, sfc_mesh) ||
-            processPropertyVector<double>(name, MeshLib::MeshItemType::Node, properties, n_nodes, node_ids_map, sfc_mesh) ||
-            processPropertyVector<int>(name, MeshLib::MeshItemType::Node, properties, n_nodes, node_ids_map, sfc_mesh))
+        if (processPropertyVector<double>(name, MeshLib::MeshItemType::Cell,
+                                          properties, n_elems, element_ids_map,
+                                          sfc_mesh) ||
+            processPropertyVector<int>(name, MeshLib::MeshItemType::Cell,
+                                       properties, n_elems, element_ids_map,
+                                       sfc_mesh) ||
+            processPropertyVector<double>(name, MeshLib::MeshItemType::Node,
+                                          properties, n_nodes, node_ids_map,
+                                          sfc_mesh) ||
+            processPropertyVector<int>(name, MeshLib::MeshItemType::Node,
+                                       properties, n_nodes, node_ids_map,
+                                       sfc_mesh))
         {
             vectors_copied++;
         }
         else
         {
-            WARN("Skipping property vector \"%s\" - no matching data type found.", name.c_str());
+            WARN(
+                "Skipping property vector \"%s\" - no matching data type "
+                "found.",
+                name.c_str());
             vectors_skipped++;
         }
     }
-    INFO("%d property vectors copied, %d vectors skipped.", vectors_copied, vectors_skipped);
+    INFO("%d property vectors copied, %d vectors skipped.", vectors_copied,
+         vectors_skipped);
     return true;
 }
 
