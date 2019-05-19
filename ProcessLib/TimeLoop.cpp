@@ -20,10 +20,12 @@
 #include "CoupledSolutionsForStaggeredScheme.h"
 #include "ProcessData.h"
 
+namespace
+{
 //! Sets the EquationSystem for the given nonlinear solver,
 //! which is Picard or Newton depending on the NLTag.
 template <NumLib::NonlinearSolverTag NLTag>
-static void setEquationSystem(NumLib::NonlinearSolverBase& nonlinear_solver,
+void setEquationSystem(NumLib::NonlinearSolverBase& nonlinear_solver,
                               NumLib::EquationSystem& eq_sys,
                               NumLib::ConvergenceCriterion& conv_crit)
 {
@@ -41,7 +43,7 @@ static void setEquationSystem(NumLib::NonlinearSolverBase& nonlinear_solver,
 
 //! Sets the EquationSystem for the given nonlinear solver,
 //! transparently both for Picard and Newton solvers.
-static void setEquationSystem(NumLib::NonlinearSolverBase& nonlinear_solver,
+void setEquationSystem(NumLib::NonlinearSolverBase& nonlinear_solver,
                               NumLib::EquationSystem& eq_sys,
                               NumLib::ConvergenceCriterion& conv_crit,
                               NumLib::NonlinearSolverTag nl_tag)
@@ -57,6 +59,9 @@ static void setEquationSystem(NumLib::NonlinearSolverBase& nonlinear_solver,
             break;
     }
 }
+
+}  // namespace
+
 
 namespace ProcessLib
 {
