@@ -46,6 +46,8 @@ public:
 
     ~TimeLoop();
 
+private:
+
     /**
      *  This function fills the vector of solutions of coupled processes of
      *  processes, _solutions_of_coupled_processes, and initializes the vector
