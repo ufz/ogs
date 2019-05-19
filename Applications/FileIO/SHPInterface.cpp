@@ -193,7 +193,6 @@ void SHPInterface::readPolygons(const SHPHandle& hSHP, int numberOfElements,
     readPolylines(hSHP, numberOfElements, listName);
 
     auto const polylines = _geoObjects.getPolylineVec(listName);
-    auto sfc_vec = std::make_unique<std::vector<GeoLib::Surface*>>();
 
     for (auto const* polyline : *polylines)
     {

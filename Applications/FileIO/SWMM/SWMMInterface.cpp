@@ -147,7 +147,8 @@ bool SwmmInterface::isSwmmInputFile(std::string const& inp_file_name)
 
     std::string line;
     bool header_found (false);
-    std::size_t pos_beg (0), pos_end (0);
+    std::size_t pos_beg;
+    std::size_t pos_end(0);
     while (!header_found)
     {
         if (!std::getline(in, line))
@@ -1143,7 +1144,6 @@ std::string SwmmInterface::getArrayName(SwmmObject obj_type, std::size_t var_idx
 
 std::string SwmmInterface::getArrayName(SwmmObject obj_type, std::size_t var_idx, std::size_t n_pollutants) const
 {
-    std::size_t const n_vars (0);
     if (obj_type == SwmmObject::SUBCATCHMENT)
     {
         if (var_idx < n_obj_params[0])
