@@ -129,7 +129,6 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
       _variable_component_offsets(to_cumulative(vec_var_n_components))
 {
     // For each element of that MeshSubset save a line of global indices.
-    std::size_t offset = 0;
     for (int variable_id = 0; variable_id < static_cast<int>(vec_var_n_components.size());
          ++variable_id)
     {
@@ -145,8 +144,6 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
             findGlobalIndices(ms.elementsBegin(), ms.elementsEnd(),
                               ms.getNodes(), mesh_id, global_component_id,
                               global_component_id);
-            // increase by number of components of that variable
-            offset += _mesh_subsets.size();
         }
     }
 }
@@ -175,7 +172,6 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
     }
     _rows.resize(max_elem_id + 1, _mesh_subsets.size());
 
-    std::size_t offset = 0;
     for (int variable_id = 0; variable_id < static_cast<int>(vec_var_n_components.size());
          ++variable_id)
     {
@@ -192,8 +188,6 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
             findGlobalIndicesWithElementID(
                 var_elements.cbegin(), var_elements.cend(), ms.getNodes(),
                 mesh_id, global_component_id, global_component_id);
-            // increase by number of components of that variable
-            offset += _mesh_subsets.size();
         }
     }
 }
@@ -475,7 +469,6 @@ std::ostream& operator<<(std::ostream& os, LocalToGlobalIndexMap const& map)
             break;
         }
     }
-    lines_printed = 0;
 
     os << "Mesh component map:\n" << map._mesh_component_map;
     return os;
