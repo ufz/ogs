@@ -60,34 +60,6 @@ private:
      */
     bool setCoupledSolutions();
 
-private:
-    std::vector<GlobalVector*> _process_solutions;
-    std::unique_ptr<Output> _output;
-    std::vector<std::unique_ptr<ProcessData>> _per_process_data;
-
-    bool _last_step_rejected = false;
-    int _repeating_times_of_rejected_step = 0;
-    const double _start_time;
-    const double _end_time;
-
-    /// Maximum iterations of the global coupling.
-    const int _global_coupling_max_iterations;
-    /// Convergence criteria of processes for the global coupling iterations.
-    std::vector<std::unique_ptr<NumLib::ConvergenceCriterion>>
-        _global_coupling_conv_crit;
-
-    /**
-     *  Vector of solutions of the coupled processes.
-     *  Each vector element stores the references of the solution vectors
-     *  (stored in _process_solutions) of the coupled processes of a process.
-     */
-    std::vector<std::reference_wrapper<GlobalVector const>>
-        _solutions_of_coupled_processes;
-
-    /// Solutions of the previous coupling iteration for the convergence
-    /// criteria of the coupling iteration.
-    std::vector<GlobalVector*> _solutions_of_last_cpl_iteration;
-
     /**
      * \brief Member to solver non coupled systems of equations, which can be
      *        a single system of equations, or several systems of equations
@@ -135,5 +107,33 @@ private:
                          bool const is_staggered_coupling, unsigned timestep,
                          const double t, OutputClass& output_object,
                          OutputClassMember output_class_member) const;
+
+private:
+    std::vector<GlobalVector*> _process_solutions;
+    std::unique_ptr<Output> _output;
+    std::vector<std::unique_ptr<ProcessData>> _per_process_data;
+
+    bool _last_step_rejected = false;
+    int _repeating_times_of_rejected_step = 0;
+    const double _start_time;
+    const double _end_time;
+
+    /// Maximum iterations of the global coupling.
+    const int _global_coupling_max_iterations;
+    /// Convergence criteria of processes for the global coupling iterations.
+    std::vector<std::unique_ptr<NumLib::ConvergenceCriterion>>
+        _global_coupling_conv_crit;
+
+    /**
+     *  Vector of solutions of the coupled processes.
+     *  Each vector element stores the references of the solution vectors
+     *  (stored in _process_solutions) of the coupled processes of a process.
+     */
+    std::vector<std::reference_wrapper<GlobalVector const>>
+        _solutions_of_coupled_processes;
+
+    /// Solutions of the previous coupling iteration for the convergence
+    /// criteria of the coupling iteration.
+    std::vector<GlobalVector*> _solutions_of_last_cpl_iteration;
 };
 }  // namespace ProcessLib
