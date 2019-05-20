@@ -218,7 +218,7 @@ public:
 private:
     PythonSourceTermData const& _data;
     MeshLib::Element const& _element;
-    bool _is_axially_symmetric;
+    bool const _is_axially_symmetric;
 
     IntegrationMethod const _integration_method;
     std::vector<
