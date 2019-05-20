@@ -157,4 +157,16 @@ private:
     const MeshElementType* _ele;
 };
 
+/// Creates a TemplateIsoparametric element for the given shape functions and
+/// the underlying mesh element.
+template <typename ShapeFunction, typename ShapeMatricesType>
+NumLib::TemplateIsoparametric<ShapeFunction, ShapeMatricesType>
+createIsoparametricFiniteElement(MeshLib::Element const& e)
+{
+    using FemType =
+        NumLib::TemplateIsoparametric<ShapeFunction, ShapeMatricesType>;
+
+    return FemType{
+        *static_cast<const typename ShapeFunction::MeshElement*>(&e)};
+}
 }  // namespace NumLib

@@ -108,9 +108,10 @@ void interpolateToHigherOrderNodes(
     using SF = LowerOrderShapeFunction;
     using ShapeMatricesType = ShapeMatrixPolicyType<SF, GlobalDim>;
     using ShapeMatrices = typename ShapeMatricesType::ShapeMatrices;
-    using FemType = TemplateIsoparametric<SF, ShapeMatricesType>;
 
-    FemType fe(*static_cast<const typename SF::MeshElement*>(&element));
+    auto const fe =
+        NumLib::createIsoparametricFiniteElement<SF, ShapeMatricesType>(
+            element);
     int const number_base_nodes = element.getNumberOfBaseNodes();
     int const number_all_nodes = element.getNumberOfNodes();
 

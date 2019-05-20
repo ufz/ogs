@@ -89,12 +89,8 @@ public:
     {
         (void)local_matrix_size; // unused, but needed for the interface
 
-
-        using FemType =
-            NumLib::TemplateIsoparametric<ShapeFunction, ShapeMatricesType>;
-
-        FemType fe(*static_cast<const typename ShapeFunction::MeshElement*>(
-            &_surface_element));
+        auto const fe = NumLib::createIsoparametricFiniteElement<
+            ShapeFunction, ShapeMatricesType>(_surface_element);
 
         auto const n_integration_points =
             _integration_method.getNumberOfPoints();
