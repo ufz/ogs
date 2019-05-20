@@ -366,7 +366,10 @@ std::vector<MeshLib::Element*> MeshSurfaceExtraction::createSfcElementVector(
                 new_elements.push_back(new MeshLib::Quad(new_nodes));
                 break;
             default:
-                OGS_FATAL("MeshSurfaceExtraction: Unknown element type.");
+                OGS_FATAL(
+                    "MeshSurfaceExtraction::createSfcElementVector Unknown "
+                    "element type '%s'.",
+                    MeshElemType2String(sfc_element->getGeomType()).c_str());
         }
     }
     return new_elements;
