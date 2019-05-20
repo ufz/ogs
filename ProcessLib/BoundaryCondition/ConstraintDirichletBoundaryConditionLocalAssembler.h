@@ -78,8 +78,9 @@ public:
     /// @param bulk_ids Pairs of bulk element ids and bulk element face ids.
     ConstraintDirichletBoundaryConditionLocalAssembler(
         MeshLib::Element const& surface_element,
-        std::size_t const local_matrix_size, bool const is_axially_symmetric,
-        unsigned const integration_order, MeshLib::Mesh const& bulk_mesh,
+        std::size_t const /* local_matrix_size */,
+        bool const is_axially_symmetric, unsigned const integration_order,
+        MeshLib::Mesh const& bulk_mesh,
         std::vector<std::pair<std::size_t, unsigned>> bulk_ids)
         : _surface_element(surface_element),
           _integration_method(integration_order),
@@ -87,8 +88,6 @@ public:
           _surface_element_normal(MeshLib::calculateNormalizedSurfaceNormal(
               _surface_element, *(bulk_mesh.getElements()[_bulk_element_id])))
     {
-        (void)local_matrix_size; // unused, but needed for the interface
-
         auto const fe = NumLib::createIsoparametricFiniteElement<
             ShapeFunction, ShapeMatricesType>(_surface_element);
 
