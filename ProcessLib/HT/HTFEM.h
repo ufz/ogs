@@ -82,7 +82,7 @@ class HTFEM : public HTLocalAssemblerInterface
 public:
     HTFEM(MeshLib::Element const& element,
           std::size_t const local_matrix_size,
-          bool is_axially_symmetric,
+          bool const is_axially_symmetric,
           unsigned const integration_order,
           HTMaterialProperties const& material_properties,
           const unsigned dof_per_node)
