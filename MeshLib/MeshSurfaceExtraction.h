@@ -18,21 +18,26 @@
 #include <vector>
 
 #include "MathLib/Vector3.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/Properties.h"
 
-namespace MeshLib {
+namespace MeshLib
+{
 // forward declarations
 class Mesh;
 class Element;
 class Node;
 
 /**
- * \brief A set of tools concerned with extracting nodes and elements from a mesh surface
+ * \brief A set of tools concerned with extracting nodes and elements from a
+ * mesh surface
  */
 class MeshSurfaceExtraction
 {
 public:
     /// Returns a vector of the areas assigned to each node on a surface mesh.
-    static std::vector<double> getSurfaceAreaForNodes(const MeshLib::Mesh &mesh);
+    static std::vector<double> getSurfaceAreaForNodes(
+        const MeshLib::Mesh& mesh);
 
     /// Returns the surface nodes of a mesh.
     static std::vector<MeshLib::Node*> getSurfaceNodes(
@@ -66,13 +71,14 @@ public:
         std::string const& face_id_prop_name = "");
 
     /**
-     * Returns the boundary of mesh, i.e. lines for 2D meshes and surfaces for 3D meshes.
-     * Note, that this method also returns inner boundaries and might give unexpected results
-     * when the mesh geometry is not strict (e.g. more than two triangles sharing an edge).
-     * \param mesh The original mesh of dimension d
-     * \return     A mesh of dimension (d-1) representing the boundary of the mesh.
+     * Returns the boundary of mesh, i.e. lines for 2D meshes and surfaces for
+     * 3D meshes. Note, that this method also returns inner boundaries and might
+     * give unexpected results when the mesh geometry is not strict (e.g. more
+     * than two triangles sharing an edge). \param mesh The original mesh of
+     * dimension d \return     A mesh of dimension (d-1) representing the
+     * boundary of the mesh.
      */
-    static MeshLib::Mesh* getMeshBoundary(const MeshLib::Mesh &mesh);
+    static MeshLib::Mesh* getMeshBoundary(const MeshLib::Mesh& mesh);
 
 private:
     /// Functionality needed for getSurfaceNodes() and getMeshSurface()
@@ -91,6 +97,43 @@ private:
         std::size_t n_all_nodes,
         const std::vector<MeshLib::Element*>& sfc_elements,
         std::vector<std::size_t>& node_id_map);
+
+    /// Creates the element vector for the 2d surface mesh
+    static std::vector<MeshLib::Element*> createSfcElementVector(
+        std::vector<MeshLib::Element*> const& sfc_elems,
+        std::vector<MeshLib::Node*> const& sfc_nodes,
+        std::vector<std::size_t> const& node_id_map);
+
+    template <typename T>
+    static bool processPropertyVector(std::string const& name,
+                                      MeshLib::MeshItemType const type,
+                                      MeshLib::Properties const& properties,
+                                      std::size_t const /*vec_size*/,
+                                      std::vector<std::size_t> const& id_map,
+                                      MeshLib::Mesh& sfc_mesh)
+    {
+        if (!properties.existsPropertyVector<T>(name, type, 1))
+        {
+            return false;
+        }
+        auto sfc_prop = getOrCreateMeshProperty<T>(sfc_mesh, name, type, 1);
+        sfc_prop->clear();
+        sfc_prop->reserve(id_map.size());
+
+        auto const& org_vec = *properties.getPropertyVector<T>(name, type, 1);
+        std::transform(
+            begin(id_map), end(id_map), std::back_inserter(*sfc_prop),
+            [&org_vec](std::size_t const bulk_id) { return org_vec[bulk_id]; });
+
+        return true;
+    }
+
+    /// Copies relevant parts of scalar arrays to the surface mesh
+    static bool createSfcMeshProperties(
+        MeshLib::Mesh& sfc_mesh,
+        MeshLib::Properties const& properties,
+        std::vector<std::size_t> const& node_ids_map,
+        std::vector<std::size_t> const& element_ids_map);
 };
 
-} // end namespace MeshLib
+}  // end namespace MeshLib
