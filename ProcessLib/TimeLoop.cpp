@@ -62,8 +62,11 @@ void setEquationSystem(NumLib::NonlinearSolverBase& nonlinear_solver,
     }
 }
 
+bool isMonolithicProcess(ProcessLib::ProcessData const& process_data)
+{
+    return process_data.process.isMonolithicSchemeUsed();
+}
 }  // namespace
-
 
 namespace ProcessLib
 {
@@ -221,16 +224,8 @@ TimeLoop::TimeLoop(std::unique_ptr<Output>&& output,
 {
 }
 
-bool TimeLoop::setCoupledSolutions()
+void TimeLoop::setCoupledSolutions()
 {
-    // All _per_process_data share one process
-    const bool use_monolithic_scheme =
-        _per_process_data[0]->process.isMonolithicSchemeUsed();
-    if (use_monolithic_scheme)
-    {
-        return false;
-    }
-
     _solutions_of_coupled_processes.reserve(_per_process_data.size());
     for (unsigned process_id = 0; process_id < _per_process_data.size();
          process_id++)
@@ -245,8 +240,6 @@ bool TimeLoop::setCoupledSolutions()
         // append a solution vector of suitable size
         _solutions_of_last_cpl_iteration.emplace_back(&x0);
     }
-
-    return true;  // use staggered scheme.
 }
 
 double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
@@ -429,7 +422,14 @@ bool TimeLoop::loop()
     // init solution storage
     _process_solutions = setInitialConditions(_start_time, _per_process_data);
 
-    const bool is_staggered_coupling = setCoupledSolutions();
+    // All _per_process_data share the first process.
+    bool const is_staggered_coupling =
+        !isMonolithicProcess(*_per_process_data[0]);
+
+    if (is_staggered_coupling)
+    {
+        setCoupledSolutions();
+    }
 
     // Output initial conditions
     {
