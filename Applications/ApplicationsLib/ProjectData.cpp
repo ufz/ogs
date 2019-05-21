@@ -44,7 +44,8 @@
 
 #include "ParameterLib/ConstantParameter.h"
 #include "ParameterLib/Utils.h"
-#include "ProcessLib/UncoupledProcessesTimeLoop.h"
+#include "ProcessLib/CreateTimeLoop.h"
+#include "ProcessLib/TimeLoop.h"
 
 #ifdef OGS_BUILD_PROCESS_COMPONENTTRANSPORT
 #include "ProcessLib/ComponentTransport/CreateComponentTransportProcess.h"
@@ -922,7 +923,7 @@ void ProjectData::parseTimeLoop(BaseLib::ConfigTree const& config,
 {
     DBUG("Reading time loop configuration.");
 
-    _time_loop = ProcessLib::createUncoupledProcessesTimeLoop(
+    _time_loop = ProcessLib::createTimeLoop(
         config, output_directory, _processes, _nonlinear_solvers, _mesh_vec);
 
     if (!_time_loop)

@@ -1,4 +1,6 @@
 /**
+ * \file
+ *
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -9,8 +11,8 @@
 
 #pragma once
 
-#include <memory>
 #include <functional>
+#include <memory>
 
 #include <logog/include/logog.hpp>
 
@@ -30,22 +32,21 @@ namespace ProcessLib
 struct ProcessData;
 
 /// Time loop capable of time-integrating several processes at once.
-/// TODO: Rename to, e.g., TimeLoop, since it is not for purely uncoupled stuff
-/// anymore.
-class UncoupledProcessesTimeLoop
+class TimeLoop
 {
 public:
-    UncoupledProcessesTimeLoop(
-        std::unique_ptr<Output>&& output,
-        std::vector<std::unique_ptr<ProcessData>>&& per_process_data,
-        const int global_coupling_max_iterations,
-        std::vector<std::unique_ptr<NumLib::ConvergenceCriterion>>&&
-            global_coupling_conv_crit,
-        const double start_time, const double end_time);
+    TimeLoop(std::unique_ptr<Output>&& output,
+             std::vector<std::unique_ptr<ProcessData>>&& per_process_data,
+             const int global_coupling_max_iterations,
+             std::vector<std::unique_ptr<NumLib::ConvergenceCriterion>>&&
+                 global_coupling_conv_crit,
+             const double start_time, const double end_time);
 
     bool loop();
 
-    ~UncoupledProcessesTimeLoop();
+    ~TimeLoop();
+
+private:
 
     /**
      *  This function fills the vector of solutions of coupled processes of
@@ -58,34 +59,6 @@ public:
      *          among processes or not.
      */
     bool setCoupledSolutions();
-
-private:
-    std::vector<GlobalVector*> _process_solutions;
-    std::unique_ptr<Output> _output;
-    std::vector<std::unique_ptr<ProcessData>> _per_process_data;
-
-    bool _last_step_rejected = false;
-    int _repeating_times_of_rejected_step = 0;
-    const double _start_time;
-    const double _end_time;
-
-    /// Maximum iterations of the global coupling.
-    const int _global_coupling_max_iterations;
-    /// Convergence criteria of processes for the global coupling iterations.
-    std::vector<std::unique_ptr<NumLib::ConvergenceCriterion>>
-        _global_coupling_conv_crit;
-
-    /**
-     *  Vector of solutions of the coupled processes.
-     *  Each vector element stores the references of the solution vectors
-     *  (stored in _process_solutions) of the coupled processes of a process.
-     */
-    std::vector<std::reference_wrapper<GlobalVector const>>
-        _solutions_of_coupled_processes;
-
-    /// Solutions of the previous coupling iteration for the convergence
-    /// criteria of the coupling iteration.
-    std::vector<GlobalVector*> _solutions_of_last_cpl_iteration;
 
     /**
      * \brief Member to solver non coupled systems of equations, which can be
@@ -134,14 +107,33 @@ private:
                          bool const is_staggered_coupling, unsigned timestep,
                          const double t, OutputClass& output_object,
                          OutputClassMember output_class_member) const;
+
+private:
+    std::vector<GlobalVector*> _process_solutions;
+    std::unique_ptr<Output> _output;
+    std::vector<std::unique_ptr<ProcessData>> _per_process_data;
+
+    bool _last_step_rejected = false;
+    int _repeating_times_of_rejected_step = 0;
+    const double _start_time;
+    const double _end_time;
+
+    /// Maximum iterations of the global coupling.
+    const int _global_coupling_max_iterations;
+    /// Convergence criteria of processes for the global coupling iterations.
+    std::vector<std::unique_ptr<NumLib::ConvergenceCriterion>>
+        _global_coupling_conv_crit;
+
+    /**
+     *  Vector of solutions of the coupled processes.
+     *  Each vector element stores the references of the solution vectors
+     *  (stored in _process_solutions) of the coupled processes of a process.
+     */
+    std::vector<std::reference_wrapper<GlobalVector const>>
+        _solutions_of_coupled_processes;
+
+    /// Solutions of the previous coupling iteration for the convergence
+    /// criteria of the coupling iteration.
+    std::vector<GlobalVector*> _solutions_of_last_cpl_iteration;
 };
-
-//! Builds an UncoupledProcessesTimeLoop from the given configuration.
-std::unique_ptr<UncoupledProcessesTimeLoop> createUncoupledProcessesTimeLoop(
-    BaseLib::ConfigTree const& config, std::string const& output_directory,
-    std::map<std::string, std::unique_ptr<Process>> const& processes,
-    std::map<std::string, std::unique_ptr<NumLib::NonlinearSolverBase>> const&
-        nonlinear_solvers,
-    std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes);
-
 }  // namespace ProcessLib

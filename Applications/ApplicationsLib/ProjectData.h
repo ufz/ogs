@@ -38,7 +38,7 @@ class NonlinearSolverBase;
 
 namespace ProcessLib
 {
-class UncoupledProcessesTimeLoop;
+class TimeLoop;
 }
 
 /**
@@ -49,9 +49,6 @@ class UncoupledProcessesTimeLoop;
 class ProjectData final
 {
 public:
-    /// The time loop type used to solve this project's processes.
-    using TimeLoop = ProcessLib::UncoupledProcessesTimeLoop;
-
     /// The empty constructor used in the gui, for example, when the project's
     /// configuration is not loaded yet.
     ProjectData();
@@ -80,7 +77,8 @@ public:
         return _processes;
     }
 
-    TimeLoop& getTimeLoop() { return *_time_loop; }
+    ProcessLib::TimeLoop& getTimeLoop() { return *_time_loop; }
+
 private:
     /// Parses the process variables configuration and creates new variables for
     /// each variable entry passing the corresponding subtree to the process
@@ -127,7 +125,7 @@ private:
     std::map<int, std::unique_ptr<MaterialPropertyLib::Medium>> _media;
 
     /// The time loop used to solve this project's processes.
-    std::unique_ptr<TimeLoop> _time_loop;
+    std::unique_ptr<ProcessLib::TimeLoop> _time_loop;
 
     std::map<std::string, std::unique_ptr<GlobalLinearSolver>> _linear_solvers;
 
