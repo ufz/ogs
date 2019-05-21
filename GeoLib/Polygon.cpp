@@ -443,7 +443,7 @@ void Polygon::splitPolygonAtIntersection(
 
 void Polygon::splitPolygonAtPoint (const std::list<GeoLib::Polygon*>::iterator& polygon_it)
 {
-    std::size_t n((*polygon_it)->getNumberOfPoints() - 1), idx0(0), idx1(0);
+    std::size_t const n((*polygon_it)->getNumberOfPoints() - 1);
     std::vector<std::size_t> id_vec(n);
     std::vector<std::size_t> perm(n);
     for (std::size_t k(0); k < n; k++)
@@ -458,8 +458,8 @@ void Polygon::splitPolygonAtPoint (const std::list<GeoLib::Polygon*>::iterator& 
     {
         if (id_vec[k] == id_vec[k + 1])
         {
-            idx0 = perm[k];
-            idx1 = perm[k + 1];
+            std::size_t idx0 = perm[k];
+            std::size_t idx1 = perm[k + 1];
 
             if (idx0 > idx1)
             {

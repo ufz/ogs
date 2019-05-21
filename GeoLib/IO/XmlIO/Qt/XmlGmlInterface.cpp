@@ -197,11 +197,10 @@ void XmlGmlInterface::readPolylines(
     const std::vector<std::size_t>& pnt_id_map,
     std::map<std::string, std::size_t>* ply_names)
 {
-    std::size_t idx(0);
     QDomElement polyline = polylinesRoot.firstChildElement();
     while (!polyline.isNull())
     {
-        idx = polylines->size();
+        std::size_t const idx = polylines->size();
         polylines->push_back(new GeoLib::Polyline(points));
 
         if (polyline.hasAttribute("name")) {
@@ -307,8 +306,6 @@ bool XmlGmlInterface::write()
         return false;
     }
 
-    std::size_t nPoints = 0, nPolylines = 0, nSurfaces = 0;
-
     _out << "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n"; // xml definition
     //_out << "<?xml-stylesheet type=\"text/xsl\" href=\"OpenGeoSysGLI.xsl\"?>\n\n"; // stylefile definition
 
@@ -335,7 +332,7 @@ bool XmlGmlInterface::write()
 
         if (!points->empty())
         {
-            nPoints = points->size();
+            auto const nPoints = points->size();
             for (std::size_t i = 0; i < nPoints; i++)
             {
                 QDomElement pointTag = doc.createElement("point");
@@ -385,7 +382,7 @@ bool XmlGmlInterface::write()
             {
                 QDomElement plyListTag = doc.createElement("polylines");
                 root.appendChild(plyListTag);
-                nPolylines = polylines->size();
+                auto const nPolylines = polylines->size();
                 for (std::size_t i = 0; i < nPolylines; i++)
                 {
                     QDomElement polylineTag = doc.createElement("polyline");
@@ -401,7 +398,7 @@ bool XmlGmlInterface::write()
 
                     plyListTag.appendChild(polylineTag);
 
-                    nPoints = (*polylines)[i]->getNumberOfPoints();
+                    auto const nPoints = (*polylines)[i]->getNumberOfPoints();
                     for (std::size_t j = 0; j < nPoints; j++)
                     {
                         QDomElement plyPointTag = doc.createElement("pnt");
@@ -431,7 +428,7 @@ bool XmlGmlInterface::write()
             {
                 QDomElement sfcListTag = doc.createElement("surfaces");
                 root.appendChild(sfcListTag);
-                nSurfaces = surfaces->size();
+                auto const nSurfaces = surfaces->size();
                 for (std::size_t i = 0; i < nSurfaces; i++)
                 {
                     QDomElement surfaceTag = doc.createElement("surface");
