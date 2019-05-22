@@ -116,26 +116,25 @@ int main(int argc, char *argv[])
 
     std::vector<std::string> const& vec_names (mesh->getProperties().getPropertyVectorNames());
     INFO("There are %d properties in the mesh:", vec_names.size());
-    for (const auto & vec_name : vec_names)
+    for (const auto& vec_name : vec_names)
     {
-        auto vec_bounds (MeshLib::MeshInformation::getValueBounds<int>(*mesh, vec_name));
-        if (vec_bounds.second != std::numeric_limits<int>::max())
+        if (auto const vec_bounds =
+                MeshLib::MeshInformation::getValueBounds<int>(*mesh, vec_name))
         {
-            INFO("\t%s: [%d, %d]", vec_name.c_str(), vec_bounds.first,
-                 vec_bounds.second);
+            INFO("\t%s: [%d, %d]", vec_name.c_str(), vec_bounds->first,
+                 vec_bounds->second);
+        }
+        else if (auto const vec_bounds =
+                     MeshLib::MeshInformation::getValueBounds<double>(*mesh,
+                                                                      vec_name))
+        {
+            INFO("\t%s: [%g, %g]", vec_name.c_str(), vec_bounds->first,
+                 vec_bounds->second);
         }
         else
         {
-            auto vec_bounds (MeshLib::MeshInformation::getValueBounds<double>(*mesh, vec_name));
-            if (vec_bounds.second != std::numeric_limits<double>::max())
-            {
-                INFO("\t%s: [%g, %g]", vec_name.c_str(), vec_bounds.first,
-                     vec_bounds.second);
-            }
-            else
-            {
-                INFO("\t%s: Unknown properties", vec_name.c_str());
-            }
+            INFO("\t%s: Could not get value bounds for property vector.",
+                 vec_name.c_str());
         }
     }
 
