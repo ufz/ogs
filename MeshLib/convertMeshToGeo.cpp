@@ -55,9 +55,17 @@ bool convertMeshToGeo(const MeshLib::Mesh& mesh,
         geo_objects.getPointVecObj(mesh_name)->getIDMap());
 
     // elements to surface triangles conversion
-    std::string const mat_name("MaterialIDs");
-    auto bounds(MeshInformation::getValueBounds<int>(mesh, mat_name));
-    const unsigned nMatGroups(bounds.second - bounds.first + 1);
+    auto const bounds =
+        MeshInformation::getValueBounds<int>(mesh, "MaterialIDs");
+    if (!bounds)
+    {
+        OGS_FATAL(
+            "Could not get minimum/maximum ranges values for the MaterialIDs "
+            "property in the mesh '%s'.",
+            mesh.getName().c_str());
+    }
+
+    const unsigned nMatGroups(bounds->second - bounds->first + 1);
     auto sfcs = std::make_unique<std::vector<GeoLib::Surface*>>();
     sfcs->reserve(nMatGroups);
     auto const& points = *geo_objects.getPointVec(mesh_name);
@@ -76,7 +84,7 @@ bool convertMeshToGeo(const MeshLib::Mesh& mesh,
 
     for (unsigned i = 0; i < nElems; ++i)
     {
-        auto surfaceId = !materialIds ? 0 : ((*materialIds)[i] - bounds.first);
+        auto surfaceId = !materialIds ? 0 : ((*materialIds)[i] - bounds->first);
         MeshLib::Element* e(elements[i]);
         if (e->getGeomType() == MeshElemType::TRIANGLE)
         {
