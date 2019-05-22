@@ -311,7 +311,7 @@ HydroMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         // Compute the velocity
         auto const& dNdx_p = _ip_data[ip].dNdx_p;
         cache_matrix.col(ip).noalias() =
-            -K_over_mu * dNdx_p * p - K_over_mu * rho_fr * b;
+            -K_over_mu * dNdx_p * p + K_over_mu * rho_fr * b;
     }
 
     return cache;
