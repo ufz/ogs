@@ -34,24 +34,26 @@ public:
     /// Returns the smallest and largest value of a scalar array with the given
     /// name.
     template <typename T>
-    static std::pair<T, T> const getValueBounds(MeshLib::Mesh const& mesh,
-                                                std::string const& name)
+    static boost::optional<std::pair<T, T>> const getValueBounds(
+        MeshLib::Mesh const& mesh, std::string const& name)
     {
         if (!mesh.getProperties().existsPropertyVector<T>(name))
-            return {std::numeric_limits<T>::max(),
-                    std::numeric_limits<T>::max()};
+        {
+            return {};
+        }
+
         auto const* const data_vec =
             mesh.getProperties().getPropertyVector<T>(name);
         if (data_vec->empty())
         {
             INFO("Mesh does not contain values for the property '%s'.",
                  name.c_str());
-            return {std::numeric_limits<T>::max(),
-                    std::numeric_limits<T>::max()};
+            return {};
         }
-        auto vec_bounds =
-            std::minmax_element(data_vec->cbegin(), data_vec->cend());
-        return {*(vec_bounds.first), *(vec_bounds.second)};
+
+        auto const [min, max] =
+            std::minmax_element(begin(*data_vec), end(*data_vec));
+        return {{*min, *max}};
     }
 
     /// Returns the bounding box of the mesh.
