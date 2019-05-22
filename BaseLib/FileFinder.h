@@ -26,7 +26,7 @@ namespace BaseLib
  * for a given filename if the corresponding file is found in any of these
  * directories.
  */
-class FileFinder
+class FileFinder final
 {
 public:
     /// Constructor having current directory (.) as the search-space
@@ -37,7 +37,7 @@ public:
      *
      * @param dirs   an initializer list of additional directory paths to the search-space
      */
-    FileFinder(std::initializer_list<std::string> dirs);
+    explicit FileFinder(std::initializer_list<std::string> dirs);
 
     /**
      * \brief Adds another directory to the search-space.
