@@ -33,11 +33,11 @@ namespace IO
 {
 /// Class for parallel reading of ascii or binary partitioned mesh files into a
 /// NodePartitionedMesh via MPI.
-class NodePartitionedMeshReader
+class NodePartitionedMeshReader final
 {
 public:
     ///  \param comm   MPI communicator.
-    NodePartitionedMeshReader(MPI_Comm comm);
+    explicit NodePartitionedMeshReader(MPI_Comm comm);
 
     ~NodePartitionedMeshReader();
 
