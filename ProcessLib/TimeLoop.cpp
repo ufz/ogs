@@ -527,6 +527,27 @@ bool TimeLoop::loop()
     return nonlinear_solver_status.error_norms_met;
 }
 
+static NumLib::NonlinearSolverStatus solveMonolithicProcess(
+    const double t, const double dt, const std::size_t timestep_id,
+    ProcessData const& process_data, GlobalVector& x, Process& pcs,
+    Output& output)
+{
+    BaseLib::RunTime time_timestep_process;
+    time_timestep_process.start();
+
+    pcs.preTimestep(x, t, dt, process_data.process_id);
+
+    auto const nonlinear_solver_status = solveOneTimeStepOneProcess(
+        process_data.process_id, x, timestep_id, t, dt, process_data, output);
+    pcs.postTimestep(x, t, dt, process_data.process_id);
+    pcs.computeSecondaryVariable(t, x, process_data.process_id);
+
+    INFO("[time] Solving process #%u took %g s in time step #%u ",
+         process_data.process_id, time_timestep_process.elapsed(), timestep_id);
+
+    return nonlinear_solver_status;
+}
+
 static std::string const nonlinear_fixed_dt_fails_info =
     "Nonlinear solver fails. Because the time stepper FixedTimeStepping is "
     "used, the program has to be terminated.";
@@ -535,43 +556,32 @@ NumLib::NonlinearSolverStatus TimeLoop::solveUncoupledEquationSystems(
     const double t, const double dt, const std::size_t timestep_id)
 {
     NumLib::NonlinearSolverStatus nonlinear_solver_status;
-    // TODO(wenqing): use process name
-    unsigned process_id = 0;
     for (auto& process_data : _per_process_data)
     {
-        BaseLib::RunTime time_timestep_process;
-        time_timestep_process.start();
+        nonlinear_solver_status = solveMonolithicProcess(
+            t, dt, timestep_id, *process_data,
+            *_process_solutions[process_data->process_id],
+            process_data->process, *_output);
 
-        auto& x = *_process_solutions[process_id];
-        auto& pcs = process_data->process;
-        pcs.preTimestep(x, t, dt, process_id);
-
-        nonlinear_solver_status = solveOneTimeStepOneProcess(
-            process_id, x, timestep_id, t, dt, *process_data, *_output);
         process_data->nonlinear_solver_status = nonlinear_solver_status;
-        pcs.postTimestep(x, t, dt, process_id);
-        pcs.computeSecondaryVariable(t, x, process_id);
-
-        INFO("[time] Solving process #%u took %g s in time step #%u ",
-             process_id, time_timestep_process.elapsed(), timestep_id);
-
         if (!nonlinear_solver_status.error_norms_met)
         {
             ERR("The nonlinear solver failed in time step #%u at t = %g s for "
                 "process #%u.",
-                timestep_id, t, process_id);
+                timestep_id, t, process_data->process_id);
 
             if (!process_data->timestepper->isSolutionErrorComputationNeeded())
             {
                 // save unsuccessful solution
-                _output->doOutputAlways(pcs, process_id, timestep_id, t, x);
+                _output->doOutputAlways(
+                    process_data->process, process_data->process_id,
+                    timestep_id, t,
+                    *_process_solutions[process_data->process_id]);
                 OGS_FATAL(nonlinear_fixed_dt_fails_info.data());
             }
 
             return nonlinear_solver_status;
         }
-
-        ++process_id;
     }  // end of for (auto& process_data : _per_process_data)
 
     return nonlinear_solver_status;
