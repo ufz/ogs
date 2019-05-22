@@ -32,11 +32,11 @@ namespace IO
 /**
  * \brief Reads and writes Observation Sites to and from XML files.
  */
-class XmlStnInterface : public BaseLib::IO::XMLInterface,
-                        public BaseLib::IO::XMLQtInterface
+class XmlStnInterface final : public BaseLib::IO::XMLInterface,
+                              public BaseLib::IO::XMLQtInterface
 {
 public:
-    XmlStnInterface(GeoLib::GEOObjects& geo_objs);
+    explicit XmlStnInterface(GeoLib::GEOObjects& geo_objs);
 
     /// Reads an xml-file containing station object definitions into the GEOObjects used in the contructor (requires Qt)
     int readFile(const QString& fileName) override;
