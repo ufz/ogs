@@ -17,10 +17,9 @@ struct Parameter;
 
 namespace GroundwaterFlow
 {
-
-struct GroundwaterFlowProcessData
+struct GroundwaterFlowProcessData final
 {
-    GroundwaterFlowProcessData(
+    explicit GroundwaterFlowProcessData(
         ParameterLib::Parameter<double> const& hydraulic_conductivity_)
         : hydraulic_conductivity(hydraulic_conductivity_)
     {}

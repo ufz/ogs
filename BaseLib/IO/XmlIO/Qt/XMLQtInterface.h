@@ -30,7 +30,7 @@ namespace IO
 class XMLQtInterface
 {
 public:
-    XMLQtInterface(QString schemaFile = "");
+    explicit XMLQtInterface(QString schemaFile = "");
     virtual ~XMLQtInterface() = default;
 
     /// As QXMLStreamWriter seems currently unable to include style-file links into xml-files, this method will workaround this issue and include the stylefile link.

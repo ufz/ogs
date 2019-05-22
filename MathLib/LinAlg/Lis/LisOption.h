@@ -37,9 +37,9 @@ namespace MathLib
  * currently (version 1.5.57) only sets the number of threads in
  * \c lis_initialize(). Refer to the Lis source code for details.
  */
-struct LisOption
+struct LisOption final
 {
-    LisOption(BaseLib::ConfigTree const* const options)
+    explicit LisOption(BaseLib::ConfigTree const* const options)
     {
         if (options) {
             ignoreOtherLinearSolvers(*options, "lis");
