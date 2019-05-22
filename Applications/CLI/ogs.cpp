@@ -235,6 +235,7 @@ int main(int argc, char* argv[])
             INFO("Solve processes.");
 
             auto& time_loop = project.getTimeLoop();
+            time_loop.initialize();
             solver_succeeded = time_loop.loop();
 
 #ifdef USE_INSITU

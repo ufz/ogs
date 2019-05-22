@@ -47,6 +47,7 @@ public:
              std::unique_ptr<ChemistryLib::PhreeqcIO>&& chemical_system,
              const double start_time, const double end_time);
 
+    void initialize();
     bool loop();
 
     ~TimeLoop();

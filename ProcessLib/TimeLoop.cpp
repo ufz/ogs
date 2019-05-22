@@ -379,44 +379,33 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
     return dt;
 }
 
-/*
- * TODO:
- * Now we have a structure inside the time loop which is very similar to the
- * nonlinear solver. And admittedly, the control flow inside the nonlinear
- * solver is rather complicated. Maybe in the future con can introduce an
- * abstraction that can do both the convergence checks of the coupling loop and
- * of the nonlinear solver.
- */
-bool TimeLoop::loop()
+/// initialize output, convergence criterion, etc.
+void TimeLoop::initialize()
 {
-    // initialize output, convergence criterion, etc.
+    int process_id = 0;
+    for (auto& process_data : _per_process_data)
     {
-        int process_id = 0;
-        for (auto& process_data : _per_process_data)
+        auto& pcs = process_data->process;
+        _output->addProcess(pcs, process_id);
+
+        process_data->process_id = process_id;
+        setTimeDiscretizedODESystem(*process_data);
+
+        if (auto* conv_crit =
+                dynamic_cast<NumLib::ConvergenceCriterionPerComponent*>(
+                    process_data->conv_crit.get()))
         {
-            auto& pcs = process_data->process;
-            _output->addProcess(pcs, process_id);
-
-            process_data->process_id = process_id;
-            setTimeDiscretizedODESystem(*process_data);
-
-            if (auto* conv_crit =
-                    dynamic_cast<NumLib::ConvergenceCriterionPerComponent*>(
-                        process_data->conv_crit.get()))
-            {
-                conv_crit->setDOFTable(pcs.getDOFTable(process_id),
-                                       pcs.getMesh());
-            }
-
-            // Add the fixed times of output to time stepper in order that
-            // the time stepping is performed and the results are output at
-            // these times. Note: only the adaptive time steppers can have the
-            // the fixed times.
-            auto& timestepper = process_data->timestepper;
-            timestepper->addFixedOutputTimes(_output->getFixedOutputTimes());
-
-            ++process_id;
+            conv_crit->setDOFTable(pcs.getDOFTable(process_id), pcs.getMesh());
         }
+
+        // Add the fixed times of output to time stepper in order that
+        // the time stepping is performed and the results are output at
+        // these times. Note: only the adaptive time steppers can have the
+        // the fixed times.
+        auto& timestepper = process_data->timestepper;
+        timestepper->addFixedOutputTimes(_output->getFixedOutputTimes());
+
+        ++process_id;
     }
 
     // init solution storage
@@ -437,6 +426,22 @@ bool TimeLoop::loop()
         outputSolutions(output_initial_condition, is_staggered_coupling, 0,
                         _start_time, *_output, &Output::doOutput);
     }
+
+}
+
+/*
+ * TODO:
+ * Now we have a structure inside the time loop which is very similar to the
+ * nonlinear solver. And admittedly, the control flow inside the nonlinear
+ * solver is rather complicated. Maybe in the future con can introduce an
+ * abstraction that can do both the convergence checks of the coupling loop and
+ * of the nonlinear solver.
+ */
+bool TimeLoop::loop()
+{
+    // All _per_process_data share the first process.
+    bool const is_staggered_coupling =
+        !isMonolithicProcess(*_per_process_data[0]);
 
     double t = _start_time;
     std::size_t accepted_steps = 0;
