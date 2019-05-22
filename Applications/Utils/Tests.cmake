@@ -101,9 +101,9 @@ AddTest(
 # comparable.
 AddTest(
     NAME partmesh_2Dmesh_3partitions_ascii
-    PATH NodePartitionedMesh/partmesh_2Dmesh_3partitions
+    PATH NodePartitionedMesh/partmesh_2Dmesh_3partitions/ASCII
     EXECUTABLE partmesh
-    EXECUTABLE_ARGS -a -m -n 3 -i 2Dmesh.vtu -o ${Data_BINARY_DIR}/NodePartitionedMesh/partmesh_2Dmesh_3partitions
+    EXECUTABLE_ARGS -a -m -n 3 -i 2Dmesh.vtu -o ${Data_BINARY_DIR}/NodePartitionedMesh/partmesh_2Dmesh_3partitions/ASCII
     REQUIREMENTS NOT (OGS_USE_MPI OR APPLE)
     TESTER diff
     DIFF_DATA 2Dmesh_partitioned_elems_3.msh
@@ -115,10 +115,10 @@ AddTest(
 # comparable.
 AddTest(
     NAME partmesh_2Dmesh_3partitions_binary
-    PATH NodePartitionedMesh/partmesh_2Dmesh_3partitions
+    PATH NodePartitionedMesh/partmesh_2Dmesh_3partitions/Binary
     EXECUTABLE partmesh
     EXECUTABLE_ARGS -m -n 3 -i 2Dmesh.vtu
-                    -o ${Data_BINARY_DIR}/NodePartitionedMesh/partmesh_2Dmesh_3partitions --
+                    -o ${Data_BINARY_DIR}/NodePartitionedMesh/partmesh_2Dmesh_3partitions/Binary --
                     2Dmesh_PLY_EAST.vtu
                     2Dmesh_PLY_WEST.vtu
                     2Dmesh_PLY_NORTH.vtu
