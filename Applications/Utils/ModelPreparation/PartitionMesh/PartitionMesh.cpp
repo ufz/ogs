@@ -101,7 +101,8 @@ int main(int argc, char* argv[])
         BaseLib::dropFileExtension(mesh_input.getValue());
     std::unique_ptr<MeshLib::Mesh> mesh_ptr(
         MeshLib::IO::readMeshFromFile(input_file_name_wo_extension + ".vtu"));
-    INFO("Mesh read: %d nodes, %d elements.",
+    INFO("Mesh '%s' read: %d nodes, %d elements.",
+         mesh_ptr->getName().c_str(),
          mesh_ptr->getNumberOfNodes(),
          mesh_ptr->getNumberOfElements());
 
@@ -173,7 +174,8 @@ int main(int argc, char* argv[])
     {
         std::unique_ptr<MeshLib::Mesh> mesh(
             MeshLib::IO::readMeshFromFile(filename));
-        INFO("Mesh read: %d nodes, %d elements.",
+        INFO("Mesh '%s' read: %d nodes, %d elements.",
+             mesh->getName().c_str(),
              mesh->getNumberOfNodes(),
              mesh->getNumberOfElements());
 
