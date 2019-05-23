@@ -54,18 +54,31 @@ bool convertMeshToGeo(const MeshLib::Mesh& mesh,
     const std::vector<std::size_t> id_map(
         geo_objects.getPointVecObj(mesh_name)->getIDMap());
 
-    // elements to surface triangles conversion
-    auto const bounds =
-        MeshInformation::getValueBounds<int>(mesh, "MaterialIDs");
-    if (!bounds)
-    {
-        OGS_FATAL(
-            "Could not get minimum/maximum ranges values for the MaterialIDs "
-            "property in the mesh '%s'.",
-            mesh.getName().c_str());
-    }
+    // Special handling of the bounds in case there are no materialIDs present.
+    auto get_material_ids_and_bounds =
+        [&]() -> std::tuple<MeshLib::PropertyVector<int> const*,
+                            std::pair<int, int>> {
+        auto const materialIds = materialIDs(mesh);
+        if (!materialIds)
+        {
+            return std::make_tuple(nullptr, std::make_pair(0, 0));
+        }
 
-    const unsigned nMatGroups(bounds->second - bounds->first + 1);
+        auto const bounds =
+            MeshInformation::getValueBounds<int>(mesh, "MaterialIDs");
+        if (!bounds)
+        {
+            OGS_FATAL(
+                "Could not get minimum/maximum ranges values for the "
+                "MaterialIDs property in the mesh '%s'.",
+                mesh.getName().c_str());
+        }
+        return std::make_tuple(materialIds, *bounds);
+    };
+
+    auto const [materialIds, bounds] = get_material_ids_and_bounds();
+    // elements to surface triangles conversion
+    const unsigned nMatGroups(bounds.second - bounds.first + 1);
     auto sfcs = std::make_unique<std::vector<GeoLib::Surface*>>();
     sfcs->reserve(nMatGroups);
     auto const& points = *geo_objects.getPointVec(mesh_name);
@@ -77,11 +90,9 @@ bool convertMeshToGeo(const MeshLib::Mesh& mesh,
     const std::vector<MeshLib::Element*>& elements = mesh.getElements();
     const std::size_t nElems(mesh.getNumberOfElements());
 
-    auto const materialIds = materialIDs(mesh);
-
     for (unsigned i = 0; i < nElems; ++i)
     {
-        auto surfaceId = !materialIds ? 0 : ((*materialIds)[i] - bounds->first);
+        auto surfaceId = !materialIds ? 0 : ((*materialIds)[i] - bounds.first);
         MeshLib::Element* e(elements[i]);
         if (e->getGeomType() == MeshElemType::TRIANGLE)
         {
