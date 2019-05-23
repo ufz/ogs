@@ -51,8 +51,6 @@ bool convertMeshToGeo(const MeshLib::Mesh& mesh,
 
         geo_objects.addPointVec(std::move(points), mesh_name, nullptr, eps);
     }
-    const std::vector<std::size_t> id_map(
-        geo_objects.getPointVecObj(mesh_name)->getIDMap());
 
     // Special handling of the bounds in case there are no materialIDs present.
     auto get_material_ids_and_bounds =
@@ -87,29 +85,37 @@ bool convertMeshToGeo(const MeshLib::Mesh& mesh,
         sfcs->push_back(new GeoLib::Surface(points));
     }
 
+    const std::vector<std::size_t>& id_map(
+        geo_objects.getPointVecObj(mesh_name)->getIDMap());
+    auto add_element_to_surface = [&id_map](MeshLib::Element const& e,
+                                            GeoLib::Surface& surface) {
+        if (e.getGeomType() == MeshElemType::TRIANGLE)
+        {
+            surface.addTriangle(id_map[e.getNodeIndex(0)],
+                                id_map[e.getNodeIndex(1)],
+                                id_map[e.getNodeIndex(2)]);
+            return;
+        }
+        if (e.getGeomType() == MeshElemType::QUAD)
+        {
+            surface.addTriangle(id_map[e.getNodeIndex(0)],
+                                id_map[e.getNodeIndex(1)],
+                                id_map[e.getNodeIndex(2)]);
+            surface.addTriangle(id_map[e.getNodeIndex(0)],
+                                id_map[e.getNodeIndex(2)],
+                                id_map[e.getNodeIndex(3)]);
+            return;
+        }
+        // all other element types are ignored (i.e. lines)
+    };
+
     const std::vector<MeshLib::Element*>& elements = mesh.getElements();
     const std::size_t nElems(mesh.getNumberOfElements());
 
     for (unsigned i = 0; i < nElems; ++i)
     {
         auto surfaceId = !materialIds ? 0 : ((*materialIds)[i] - bounds.first);
-        MeshLib::Element* e(elements[i]);
-        if (e->getGeomType() == MeshElemType::TRIANGLE)
-        {
-            (*sfcs)[surfaceId]->addTriangle(id_map[e->getNodeIndex(0)],
-                                            id_map[e->getNodeIndex(1)],
-                                            id_map[e->getNodeIndex(2)]);
-        }
-        if (e->getGeomType() == MeshElemType::QUAD)
-        {
-            (*sfcs)[surfaceId]->addTriangle(id_map[e->getNodeIndex(0)],
-                                            id_map[e->getNodeIndex(1)],
-                                            id_map[e->getNodeIndex(2)]);
-            (*sfcs)[surfaceId]->addTriangle(id_map[e->getNodeIndex(0)],
-                                            id_map[e->getNodeIndex(2)],
-                                            id_map[e->getNodeIndex(3)]);
-        }
-        // all other element types are ignored (i.e. lines)
+        add_element_to_surface(*elements[i], *(*sfcs)[surfaceId]);
     }
 
     std::for_each(sfcs->begin(), sfcs->end(), [](GeoLib::Surface* sfc) {
