@@ -17,22 +17,24 @@
 #include <logog/include/logog.hpp>
 
 #include "GeoLib/GEOObjects.h"
-#include "GeoLib/Triangle.h"
 #include "GeoLib/Surface.h"
+#include "GeoLib/Triangle.h"
 
-#include "Mesh.h"
-#include "Elements/Tri.h"
 #include "Elements/Quad.h"
-#include "MeshInformation.h"
+#include "Elements/Tri.h"
+#include "Mesh.h"
 #include "MeshEditing/MeshRevision.h"
+#include "MeshInformation.h"
 
-namespace MeshLib {
-
-bool convertMeshToGeo(const MeshLib::Mesh &mesh, GeoLib::GEOObjects &geo_objects, double eps)
+namespace MeshLib
+{
+bool convertMeshToGeo(const MeshLib::Mesh& mesh,
+                      GeoLib::GEOObjects& geo_objects,
+                      double eps)
 {
     if (mesh.getDimension() != 2)
     {
-        ERR ("Mesh to geometry conversion is only working for 2D meshes.");
+        ERR("Mesh to geometry conversion is only working for 2D meshes.");
         return false;
     }
 
@@ -49,12 +51,13 @@ bool convertMeshToGeo(const MeshLib::Mesh &mesh, GeoLib::GEOObjects &geo_objects
 
         geo_objects.addPointVec(std::move(points), mesh_name, nullptr, eps);
     }
-    const std::vector<std::size_t> id_map (geo_objects.getPointVecObj(mesh_name)->getIDMap());
+    const std::vector<std::size_t> id_map(
+        geo_objects.getPointVecObj(mesh_name)->getIDMap());
 
     // elements to surface triangles conversion
-    std::string const mat_name ("MaterialIDs");
-    auto bounds (MeshInformation::getValueBounds<int>(mesh, mat_name));
-    const unsigned nMatGroups(bounds.second-bounds.first+1);
+    std::string const mat_name("MaterialIDs");
+    auto bounds(MeshInformation::getValueBounds<int>(mesh, mat_name));
+    const unsigned nMatGroups(bounds.second - bounds.first + 1);
     auto sfcs = std::make_unique<std::vector<GeoLib::Surface*>>();
     sfcs->reserve(nMatGroups);
     auto const& points = *geo_objects.getPointVec(mesh_name);
@@ -63,18 +66,18 @@ bool convertMeshToGeo(const MeshLib::Mesh &mesh, GeoLib::GEOObjects &geo_objects
         sfcs->push_back(new GeoLib::Surface(points));
     }
 
-    const std::vector<MeshLib::Element*> &elements = mesh.getElements();
-    const std::size_t nElems (mesh.getNumberOfElements());
+    const std::vector<MeshLib::Element*>& elements = mesh.getElements();
+    const std::size_t nElems(mesh.getNumberOfElements());
 
-    MeshLib::PropertyVector<int> const*const materialIds =
+    MeshLib::PropertyVector<int> const* const materialIds =
         mesh.getProperties().existsPropertyVector<int>("MaterialIDs")
             ? mesh.getProperties().getPropertyVector<int>("MaterialIDs")
             : nullptr;
 
-    for (unsigned i=0; i<nElems; ++i)
+    for (unsigned i = 0; i < nElems; ++i)
     {
         auto surfaceId = !materialIds ? 0 : ((*materialIds)[i] - bounds.first);
-        MeshLib::Element* e (elements[i]);
+        MeshLib::Element* e(elements[i]);
         if (e->getGeomType() == MeshElemType::TRIANGLE)
         {
             (*sfcs)[surfaceId]->addTriangle(id_map[e->getNodeIndex(0)],
@@ -83,8 +86,12 @@ bool convertMeshToGeo(const MeshLib::Mesh &mesh, GeoLib::GEOObjects &geo_objects
         }
         if (e->getGeomType() == MeshElemType::QUAD)
         {
-            (*sfcs)[surfaceId]->addTriangle(id_map[e->getNodeIndex(0)], id_map[e->getNodeIndex(1)], id_map[e->getNodeIndex(2)]);
-            (*sfcs)[surfaceId]->addTriangle(id_map[e->getNodeIndex(0)], id_map[e->getNodeIndex(2)], id_map[e->getNodeIndex(3)]);
+            (*sfcs)[surfaceId]->addTriangle(id_map[e->getNodeIndex(0)],
+                                            id_map[e->getNodeIndex(1)],
+                                            id_map[e->getNodeIndex(2)]);
+            (*sfcs)[surfaceId]->addTriangle(id_map[e->getNodeIndex(0)],
+                                            id_map[e->getNodeIndex(2)],
+                                            id_map[e->getNodeIndex(3)]);
         }
         // all other element types are ignored (i.e. lines)
     }
@@ -103,13 +110,15 @@ bool convertMeshToGeo(const MeshLib::Mesh &mesh, GeoLib::GEOObjects &geo_objects
     return true;
 }
 
-MeshLib::Mesh* convertSurfaceToMesh(const GeoLib::Surface &sfc, const std::string &mesh_name, double eps)
+MeshLib::Mesh* convertSurfaceToMesh(const GeoLib::Surface& sfc,
+                                    const std::string& mesh_name,
+                                    double eps)
 {
     // convert to a mesh including duplicated nodes
     std::vector<MeshLib::Node*> nodes;
     std::vector<MeshLib::Element*> elements;
     std::size_t nodeId = 0;
-    for (std::size_t i=0; i<sfc.getNumberOfTriangles(); i++)
+    for (std::size_t i = 0; i < sfc.getNumberOfTriangles(); i++)
     {
         auto* tri = sfc[i];
         auto** tri_nodes = new MeshLib::Node*[3];
