@@ -539,8 +539,6 @@ static NumLib::NonlinearSolverStatus solveMonolithicProcess(
 
     auto const nonlinear_solver_status = solveOneTimeStepOneProcess(
         process_data.process_id, x, timestep_id, t, dt, process_data, output);
-    pcs.postTimestep(x, t, dt, process_data.process_id);
-    pcs.computeSecondaryVariable(t, x, process_data.process_id);
 
     INFO("[time] Solving process #%u took %g s in time step #%u ",
          process_data.process_id, time_timestep_process.elapsed(), timestep_id);
@@ -582,6 +580,14 @@ NumLib::NonlinearSolverStatus TimeLoop::solveUncoupledEquationSystems(
 
             return nonlinear_solver_status;
         }
+    }  // end of for (auto& process_data : _per_process_data)
+
+    for (auto& process_data : _per_process_data)
+    {
+        auto& x = *_process_solutions[process_data->process_id];
+        process_data->process.postTimestep(x, t, dt, process_data->process_id);
+        process_data->process.computeSecondaryVariable(
+            t, x, process_data->process_id);
     }  // end of for (auto& process_data : _per_process_data)
 
     return nonlinear_solver_status;
