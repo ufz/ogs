@@ -81,6 +81,20 @@ AddTest(
     expected_square_1e2_UC_late_pcs_0_ts_10_t_1000.000000.vtu square_1e2_UC_late_pcs_0_ts_10_t_1000.000000.vtu pressure pressure 1e-13 1e-16
 )
 
+AddTest(
+    NAME HydroMechanics_HML_flow_gravity
+    PATH HydroMechanics/Linear/Gravity
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS flow_gravity.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    flow_gravity_pcs_0_ts_16_t_40000000.000000.vtu flow_gravity_pcs_0_ts_16_t_40000000.000000.vtu displacement displacement 1e-14 0
+    flow_gravity_pcs_0_ts_16_t_40000000.000000.vtu flow_gravity_pcs_0_ts_16_t_40000000.000000.vtu pressure pressure 1e-10 0
+    flow_gravity_pcs_0_ts_16_t_40000000.000000.vtu flow_gravity_pcs_0_ts_16_t_40000000.000000.vtu velocity velocity 1e-10 0
+)
+
 ## Test as the reference of InjectionProduction1D
 AddTest(
     NAME MonolithicInjectionProduction1D
