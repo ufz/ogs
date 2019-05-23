@@ -124,10 +124,11 @@ TEST_F(RasterToMeshTest, convertRasterToTriMeshValue)
         mesh->getProperties().getPropertyVector<double>("test");
     ASSERT_EQ(2 * _n_pix, prop->size());
 
-    std::pair<double, double> const& bounds =
+    auto const& bounds =
         MeshLib::MeshInformation::getValueBounds<double>(*mesh, "test");
-    ASSERT_NEAR(0, bounds.first, std::numeric_limits<double>::epsilon());
-    ASSERT_NEAR(0.07, bounds.second, std::numeric_limits<double>::epsilon());
+    ASSERT_TRUE(boost::none != bounds);
+    ASSERT_NEAR(0, bounds->first, std::numeric_limits<double>::epsilon());
+    ASSERT_NEAR(0.07, bounds->second, std::numeric_limits<double>::epsilon());
 
     std::vector<MeshLib::Node*> const& nodes = mesh->getNodes();
     for (MeshLib::Node* n : nodes)
@@ -157,10 +158,11 @@ TEST_F(RasterToMeshTest, convertRasterToQuadMeshValue)
         mesh->getProperties().getPropertyVector<double>("test");
     ASSERT_EQ(_n_pix, prop->size());
 
-    std::pair<double, double> const& bounds =
+    auto const& bounds =
         MeshLib::MeshInformation::getValueBounds<double>(*mesh, "test");
-    ASSERT_NEAR(0, bounds.first, std::numeric_limits<double>::epsilon());
-    ASSERT_NEAR(0.07, bounds.second, std::numeric_limits<double>::epsilon());
+    ASSERT_TRUE(boost::none != bounds);
+    ASSERT_NEAR(0, bounds->first, std::numeric_limits<double>::epsilon());
+    ASSERT_NEAR(0.07, bounds->second, std::numeric_limits<double>::epsilon());
 
     std::vector<MeshLib::Node*> const& nodes = mesh->getNodes();
     for (MeshLib::Node* n : nodes)
@@ -190,10 +192,11 @@ TEST_F(RasterToMeshTest, convertRasterToPrismMeshValue)
         mesh->getProperties().getPropertyVector<double>("test");
     ASSERT_EQ(2 * _n_pix, prop->size());
 
-    std::pair<double, double> const& bounds =
+    auto const& bounds =
         MeshLib::MeshInformation::getValueBounds<double>(*mesh, "test");
-    ASSERT_NEAR(0, bounds.first, std::numeric_limits<double>::epsilon());
-    ASSERT_NEAR(0.07, bounds.second, std::numeric_limits<double>::epsilon());
+    ASSERT_TRUE(boost::none != bounds);
+    ASSERT_NEAR(0, bounds->first, std::numeric_limits<double>::epsilon());
+    ASSERT_NEAR(0.07, bounds->second, std::numeric_limits<double>::epsilon());
 
     std::vector<MeshLib::Node*> const& nodes = mesh->getNodes();
     for (MeshLib::Node* n : nodes)
@@ -223,10 +226,11 @@ TEST_F(RasterToMeshTest, convertRasterToHexMeshValue)
         mesh->getProperties().getPropertyVector<int>("MaterialIDs");
     ASSERT_EQ(_n_pix, prop->size());
 
-    std::pair<int, int> const& bounds =
+    auto const& bounds =
         MeshLib::MeshInformation::getValueBounds<int>(*mesh, "MaterialIDs");
-    ASSERT_NEAR(0, bounds.first, std::numeric_limits<double>::epsilon());
-    ASSERT_NEAR(0, bounds.second, std::numeric_limits<double>::epsilon());
+    ASSERT_TRUE(boost::none != bounds);
+    ASSERT_NEAR(0, bounds->first, std::numeric_limits<double>::epsilon());
+    ASSERT_NEAR(0, bounds->second, std::numeric_limits<double>::epsilon());
 
     std::vector<MeshLib::Node*> const& nodes = mesh->getNodes();
     for (MeshLib::Node* n : nodes)
@@ -287,10 +291,11 @@ TEST_F(RasterToMeshTest, vtkImage)
         mesh->getProperties().getPropertyVector<double>("test");
     ASSERT_EQ(2 * _n_pix, prop->size());
 
-    std::pair<double, double> const& bounds =
+    auto const& bounds =
         MeshLib::MeshInformation::getValueBounds<double>(*mesh, "test");
-    ASSERT_NEAR(0, bounds.first, std::numeric_limits<double>::epsilon());
-    ASSERT_NEAR(0.07, bounds.second, std::numeric_limits<float>::epsilon());
+    ASSERT_TRUE(boost::none != bounds);
+    ASSERT_NEAR(0, bounds->first, std::numeric_limits<double>::epsilon());
+    ASSERT_NEAR(0.07, bounds->second, std::numeric_limits<float>::epsilon());
 
     std::vector<MeshLib::Node*> const& nodes = mesh->getNodes();
     for (MeshLib::Node* n : nodes)
