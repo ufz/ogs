@@ -26,30 +26,40 @@
 #include "MeshEditing/MeshRevision.h"
 #include "MeshInformation.h"
 
+namespace
+{
+/// Convert and add mesh nodes to the geo_objects. A new name of the geo object
+/// is returned.
+std::string convertMeshNodesToGeoPoints(MeshLib::Mesh const& mesh,
+                                        double const eps,
+                                        GeoLib::GEOObjects& geo_objects)
+{
+    auto points = std::make_unique<std::vector<GeoLib::Point*>>();
+    points->reserve(mesh.getNumberOfNodes());
+
+    std::transform(begin(mesh.getNodes()), end(mesh.getNodes()),
+                   std::back_inserter(*points),
+                   [](MeshLib::Node const* node_ptr) {
+                       return new GeoLib::Point(*node_ptr, node_ptr->getID());
+                   });
+
+    auto geoobject_name = mesh.getName();  // Possibly modified when adding
+                                           // points to the geo objects.
+    geo_objects.addPointVec(std::move(points), geoobject_name, nullptr, eps);
+    return geoobject_name;
+}
+}  // namespace
+
 namespace MeshLib
 {
 bool convertMeshToGeo(const MeshLib::Mesh& mesh,
                       GeoLib::GEOObjects& geo_objects,
-                      double eps)
+                      double const eps)
 {
     if (mesh.getDimension() != 2)
     {
         ERR("Mesh to geometry conversion is only working for 2D meshes.");
         return false;
-    }
-
-    // nodes to points conversion
-    std::string mesh_name(mesh.getName());
-    {
-        auto points = std::make_unique<std::vector<GeoLib::Point*>>();
-        points->reserve(mesh.getNumberOfNodes());
-
-        for (auto node_ptr : mesh.getNodes())
-        {
-            points->push_back(new GeoLib::Point(*node_ptr, node_ptr->getID()));
-        }
-
-        geo_objects.addPointVec(std::move(points), mesh_name, nullptr, eps);
     }
 
     // Special handling of the bounds in case there are no materialIDs present.
@@ -79,13 +89,16 @@ bool convertMeshToGeo(const MeshLib::Mesh& mesh,
     const unsigned nMatGroups(bounds.second - bounds.first + 1);
     auto sfcs = std::make_unique<std::vector<GeoLib::Surface*>>();
     sfcs->reserve(nMatGroups);
-    auto const& points = *geo_objects.getPointVec(mesh_name);
+    std::string const geoobject_name =
+        convertMeshNodesToGeoPoints(mesh, eps, geo_objects);
+    auto const& points = *geo_objects.getPointVec(geoobject_name);
     for (unsigned i = 0; i < nMatGroups; ++i)
     {
         sfcs->push_back(new GeoLib::Surface(points));
     }
 
     const std::vector<std::size_t>& id_map(
+        geo_objects.getPointVecObj(geoobject_name)->getIDMap());
         geo_objects.getPointVecObj(mesh_name)->getIDMap());
     auto add_element_to_surface = [&id_map](MeshLib::Element const& e,
                                             GeoLib::Surface& surface) {
@@ -128,7 +141,7 @@ bool convertMeshToGeo(const MeshLib::Mesh& mesh,
     auto sfcs_end = std::remove(sfcs->begin(), sfcs->end(), nullptr);
     sfcs->erase(sfcs_end, sfcs->end());
 
-    geo_objects.addSurfaceVec(std::move(sfcs), mesh_name);
+    geo_objects.addSurfaceVec(std::move(sfcs), geoobject_name);
     return true;
 }
 
