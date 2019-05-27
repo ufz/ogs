@@ -28,10 +28,9 @@ initShapeMatrices(MeshLib::Element const& e, bool is_axially_symmetric,
         Eigen::aligned_allocator<typename ShapeMatricesType::ShapeMatrices>>
         shape_matrices;
 
-    using FemType = NumLib::TemplateIsoparametric<
-        ShapeFunction, ShapeMatricesType>;
-
-    FemType fe(*static_cast<const typename ShapeFunction::MeshElement*>(&e));
+    auto const fe =
+        NumLib::createIsoparametricFiniteElement<ShapeFunction,
+                                                 ShapeMatricesType>(e);
 
     unsigned const n_integration_points = integration_method.getNumberOfPoints();
 
@@ -52,12 +51,23 @@ double interpolateXCoordinate(
     MeshLib::Element const& e,
     typename ShapeMatricesType::ShapeMatrices::ShapeType const& N)
 {
-    using FemType = NumLib::TemplateIsoparametric<
-        ShapeFunction, ShapeMatricesType>;
-
-    FemType fe(*static_cast<const typename ShapeFunction::MeshElement*>(&e));
+    auto const fe =
+        NumLib::createIsoparametricFiniteElement<ShapeFunction,
+                                                 ShapeMatricesType>(e);
 
     return fe.interpolateZerothCoordinate(N);
+}
+
+template <typename ShapeFunction, typename ShapeMatricesType>
+std::array<double, 3> interpolateCoordinates(
+    MeshLib::Element const& e,
+    typename ShapeMatricesType::ShapeMatrices::ShapeType const& N)
+{
+    auto const fe =
+        NumLib::createIsoparametricFiniteElement<ShapeFunction,
+                                                 ShapeMatricesType>(e);
+
+    return fe.interpolateCoordinates(N);
 }
 
 }  // namespace ProcessLib

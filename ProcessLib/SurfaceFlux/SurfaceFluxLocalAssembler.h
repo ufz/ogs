@@ -71,11 +71,8 @@ public:
           _bulk_element_id(bulk_element_ids[surface_element.getID()]),
           _bulk_face_id(bulk_face_ids[surface_element.getID()])
     {
-        using FemType =
-            NumLib::TemplateIsoparametric<ShapeFunction, ShapeMatricesType>;
-
-        FemType fe(*static_cast<const typename ShapeFunction::MeshElement*>(
-            &surface_element));
+        auto const fe = NumLib::createIsoparametricFiniteElement<
+            ShapeFunction, ShapeMatricesType>(_surface_element);
 
         std::size_t const n_integration_points =
             _integration_method.getNumberOfPoints();

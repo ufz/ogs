@@ -809,11 +809,8 @@ public:
     {
         // eval shape matrices at given point
         auto const shape_matrices = [&]() {
-            using FemType =
-                NumLib::TemplateIsoparametric<ShapeFunction, ShapeMatricesType>;
-
-            FemType fe(*static_cast<const typename ShapeFunction::MeshElement*>(
-                &_element));
+            auto const fe = NumLib::createIsoparametricFiniteElement<
+                ShapeFunction, ShapeMatricesType>(_element);
 
             typename ShapeMatricesType::ShapeMatrices shape_matrices(
                 ShapeFunction::DIM, GlobalDim, ShapeFunction::NPOINTS);

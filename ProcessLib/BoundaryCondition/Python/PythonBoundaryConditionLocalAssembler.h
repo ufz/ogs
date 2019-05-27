@@ -52,10 +52,8 @@ public:
     {
         using ShapeMatricesType =
             ShapeMatrixPolicyType<ShapeFunction, GlobalDim>;
-        using FemType =
-            NumLib::TemplateIsoparametric<ShapeFunction, ShapeMatricesType>;
-        FemType fe(*static_cast<const typename ShapeFunction::MeshElement*>(
-            &this->_element));
+        auto const fe = NumLib::createIsoparametricFiniteElement<
+            ShapeFunction, ShapeMatricesType>(Base::_element);
 
         unsigned const num_integration_points =
             Base::_integration_method.getNumberOfPoints();

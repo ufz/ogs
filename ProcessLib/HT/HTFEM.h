@@ -132,11 +132,8 @@ public:
                             std::vector<double> const& local_x) const override
     {
         // eval dNdx and invJ at given point
-        using FemType =
-            NumLib::TemplateIsoparametric<ShapeFunction, ShapeMatricesType>;
-
-        FemType fe(*static_cast<const typename ShapeFunction::MeshElement*>(
-            &this->_element));
+        auto const fe = NumLib::createIsoparametricFiniteElement<
+            ShapeFunction, ShapeMatricesType>(_element);
 
         typename ShapeMatricesType::ShapeMatrices shape_matrices(
             ShapeFunction::DIM, GlobalDim, ShapeFunction::NPOINTS);
