@@ -687,7 +687,7 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
         // Compute the velocity
         auto const& dNdx_p = _ip_data[ip].dNdx_p;
         cache_matrix.col(ip).noalias() =
-            -K_over_mu * dNdx_p * p_L - rho_LR * K_over_mu * b;
+            -K_over_mu * dNdx_p * p_L + rho_LR * K_over_mu * b;
     }
 
     return cache;
