@@ -46,7 +46,9 @@ struct HydroMechanicsProcessData
         ParameterLib::Parameter<double> const& solid_density_,
         Eigen::Matrix<double, DisplacementDim, 1>
             specific_body_force_,
-        double const reference_temperature_)
+        double const reference_temperature_,
+        ParameterLib::Parameter<double> const* const nonequilibrium_stress_,
+        ParameterLib::Parameter<double> const* const nonequilibrium_pressure_)
         : material_ids(material_ids_),
           solid_materials{std::move(solid_materials_)},
           intrinsic_permeability(intrinsic_permeability_),
@@ -56,6 +58,8 @@ struct HydroMechanicsProcessData
           biot_coefficient(biot_coefficient_),
           porosity(porosity_),
           solid_density(solid_density_),
+          nonequilibrium_stress(nonequilibrium_stress_),
+          nonequilibrium_pressure(nonequilibrium_pressure_),
           specific_body_force(std::move(specific_body_force_)),
           reference_temperature(reference_temperature_)
     {
@@ -97,6 +101,12 @@ struct HydroMechanicsProcessData
     ParameterLib::Parameter<double> const& porosity;
     /// Solid's density. A scalar quantity, ParameterLib::Parameter<double>.
     ParameterLib::Parameter<double> const& solid_density;
+
+    /// Optional, non-equilibrium stress parameter.
+    ParameterLib::Parameter<double> const* const nonequilibrium_stress;
+    /// Optional, non-equilibrium pressure parameter.
+    ParameterLib::Parameter<double> const* const nonequilibrium_pressure;
+
     /// Specific body forces applied to solid and fluid.
     /// It is usually used to apply gravitational forces.
     /// A vector of displacement dimension's length.

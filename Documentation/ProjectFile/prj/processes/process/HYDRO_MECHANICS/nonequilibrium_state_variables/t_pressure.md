@@ -1,0 +1,1 @@
+Non-equilibrium pressure parameter.

@@ -188,13 +188,45 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         config.getConfigParameter<double>(
             "reference_temperature", std::numeric_limits<double>::quiet_NaN());
 
+    // Non-equilibrium variables
+    ParameterLib::Parameter<double> const* nonequilibrium_stress = nullptr;
+    ParameterLib::Parameter<double> const* nonequilibrium_pressure = nullptr;
+    const auto& nonequilibrium_state_variables_config =
+        //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS__nonequilibrium_state_variables}
+        config.getConfigSubtreeOptional("nonequilibrium_state_variables");
+    if (nonequilibrium_state_variables_config)
+    {
+        auto const nonequilibrium_stress_parameter_name =
+            nonequilibrium_state_variables_config
+                //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS__nonequilibrium_state_variables__stress}
+                ->getConfigParameterOptional<std::string>("stress");
+        if (nonequilibrium_stress_parameter_name)
+        {
+            nonequilibrium_stress = &ParameterLib::findParameter<double>(
+                *nonequilibrium_stress_parameter_name,
+                parameters,
+                MathLib::KelvinVector::KelvinVectorDimensions<
+                    DisplacementDim>::value);
+        }
+        auto const nonequilibrium_pressure_parameter_name =
+            nonequilibrium_state_variables_config
+                //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS__nonequilibrium_state_variables__pressure}
+                ->getConfigParameterOptional<std::string>("pressure");
+        if (nonequilibrium_pressure_parameter_name)
+        {
+            nonequilibrium_pressure = &ParameterLib::findParameter<double>(
+                *nonequilibrium_pressure_parameter_name, parameters, 1);
+        }
+    }
+
     HydroMechanicsProcessData<DisplacementDim> process_data{
         materialIDs(mesh),      std::move(solid_constitutive_relations),
         intrinsic_permeability, specific_storage,
         fluid_viscosity,        fluid_density,
         biot_coefficient,       porosity,
         solid_density,          specific_body_force,
-        reference_temperature};
+        reference_temperature,  nonequilibrium_stress,
+        nonequilibrium_pressure};
 
     SecondaryVariableCollection secondary_variables;
 
