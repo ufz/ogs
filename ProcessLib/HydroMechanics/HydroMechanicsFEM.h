@@ -50,6 +50,12 @@ struct IntegrationPointData final
     typename BMatricesType::KelvinVectorType sigma_eff, sigma_eff_prev;
     typename BMatricesType::KelvinVectorType eps, eps_prev;
 
+    /// Non-equilibrium initial stress.
+    typename BMatricesType::KelvinVectorType sigma_neq =
+        BMatricesType::KelvinVectorType::Zero(
+            MathLib::KelvinVector::KelvinVectorDimensions<
+                DisplacementDim>::value);
+
     typename ShapeMatrixTypeDisplacement::NodalRowVectorType N_u;
     typename ShapeMatrixTypeDisplacement::GlobalDimNodalMatrixType dNdx_u;
 
@@ -414,6 +420,11 @@ private:
                              ShapeMatricesTypePressure, DisplacementDim,
                              ShapeFunctionDisplacement::NPOINTS>;
     std::vector<IpData, Eigen::aligned_allocator<IpData>> _ip_data;
+
+    // Non-equilibrium pressure values of the element, initialized by default
+    // to zero unless non-equilibrium pressure parameter is present.
+    typename ShapeMatricesTypePressure::NodalVectorType p_neq =
+        ShapeMatricesTypePressure::NodalVectorType::Zero(pressure_size);
 
     IntegrationMethod _integration_method;
     MeshLib::Element const& _element;

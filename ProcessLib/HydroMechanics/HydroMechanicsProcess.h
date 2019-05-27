@@ -71,6 +71,9 @@ private:
 
     void initializeBoundaryConditions() override;
 
+    void setInitialConditionsConcreteProcess(GlobalVector& x,
+                                             double const t) override;
+
     void assembleConcreteProcess(const double t, GlobalVector const& x,
                                  GlobalMatrix& M, GlobalMatrix& K,
                                  GlobalVector& b) override;

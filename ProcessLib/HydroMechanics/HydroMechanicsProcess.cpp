@@ -271,6 +271,61 @@ void HydroMechanicsProcess<DisplacementDim>::initializeBoundaryConditions()
 }
 
 template <int DisplacementDim>
+void HydroMechanicsProcess<
+    DisplacementDim>::setInitialConditionsConcreteProcess(GlobalVector& x,
+                                                          double const t)
+{
+    //
+    // Add non-equilibrium pressure to the process variable.
+    //
+    if (_process_data.nonequilibrium_pressure == nullptr)
+    {
+        return;
+    }
+    auto const& p_neq = *_process_data.nonequilibrium_pressure;
+
+    // Get the pressure nodes.
+    if (_use_monolithic_scheme)
+    {
+        constexpr int pressure_variable_id = 0;
+        constexpr int pressure_component_id = 0;
+
+        auto const pressure_mesh_subset =
+            _local_to_global_index_map->getMeshSubset(pressure_variable_id,
+                                                      pressure_component_id);
+        auto const mesh_id = pressure_mesh_subset.getMeshID();
+
+        ParameterLib::SpatialPosition pos;
+        for (auto const* node : pressure_mesh_subset.getNodes())
+        {
+            MeshLib::Location const l(mesh_id, MeshLib::MeshItemType::Node,
+                                      node->getID());
+            pos.setNodeID(node->getID());
+            double const p_neq_value = p_neq(t, pos)[pressure_component_id];
+
+            auto global_index =
+                std::abs(_local_to_global_index_map->getGlobalIndex(
+                    l, pressure_variable_id, pressure_component_id));
+#ifdef USE_PETSC
+            // The global indices of the ghost entries of the global
+            // matrix or the global vectors need to be set as negative
+            // values for equation assembly, however the global indices
+            // start from zero. Therefore, any ghost entry with zero
+            // index is assigned an negative value of the vector size
+            // or the matrix dimension. To assign the initial value for
+            // the ghost entries, the negative indices of the ghost
+            // entries are restored to zero.
+            if (global_index == x.size())
+            {
+                global_index = 0;
+            }
+#endif
+            x.add(global_index, p_neq_value);
+        }
+    }
+}
+
+template <int DisplacementDim>
 void HydroMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
     const double t, GlobalVector const& x, GlobalMatrix& M, GlobalMatrix& K,
     GlobalVector& b)
