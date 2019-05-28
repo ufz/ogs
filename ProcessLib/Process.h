@@ -178,7 +178,7 @@ private:
     /// processes. It is called by initialize().
     virtual void initializeBoundaryConditions();
 
-    virtual void setInitialConditionsConcreteProcess(GlobalVector const& /*x*/,
+    virtual void setInitialConditionsConcreteProcess(GlobalVector& /*x*/,
                                                      double const /*t*/)
     {
     }
