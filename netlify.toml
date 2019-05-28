@@ -32,3 +32,7 @@
     yarn --ignore-engines --ignore-optional --non-interactive
     pandoc-citeproc --bib2json ../Documentation/bibliography.bib > data/bibliography.json
     hugo -b $DEPLOY_PRIME_URL"""
+
+[[redirects]]
+  from = "/papers"
+  to = "https://www.ufz.de/index.php?en=37204"
