@@ -43,6 +43,8 @@ To speedup the compilation process append the number of cores of your cpu to the
 $ make -j 8
 ```
 
+{{< asciinema url="https://asciinema.org/a/249005" >}}
+
 ### Option: Eclipse
 
 To let CMake generate the Eclipse project files change the generator argument to the CMake run:

@@ -32,17 +32,16 @@ $ git config remote.pushdefault origin
 $ git config push.default current
 ```
 
-**Note:** We use `git lfs clone` instead of the regular `git clone` to significantly speed up the cloning of the repo and its test data files. See [this for more information](https://github.com/ufz/ogs/pull/1978).
-
 This creates a new folder `ogs` in your current working directory with the OGS source code. After this step, the remote called `origin` refers to your fork on GitHub. It also sets the default remote for pushes to be `origin` and the default push behavior to `current`. Together this means that if you just type `git push`, the current branch is pushed to the `origin` remote (git version >= 2.5 required).
 
 Create a second remote called `upstream` that points at the main OGS repository and fetch from it:
 
 ```bash
 $ git remote add upstream https://github.com/ufz/ogs
-$ git [lfs] fetch upstream # The lfs-equivalent of the fetch command is more efficient
+$ git fetch upstream
 ```
 
+{{< asciinema url="https://asciinema.org/a/249002" speed="3" rows="20" >}}
 
 ## Optional: Working on a new feature
 
