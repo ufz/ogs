@@ -6,6 +6,7 @@
     src='{{ .Get "url" }}.js'
     async
     {{ with .Get "autoplay"}} data-autoplay="{{.}}"{{ end }}
+    {{ with .Get "preload"}} data-preload="{{.}}"{{ end }}
     {{ with .Get "loop"}} data-loop="{{.}}"{{ end }}
     {{ with .Get "speed"}} data-speed="{{.}}"{{ end }}
     {{ with .Get "cols"}} data-cols="{{.}}"{{ end }}

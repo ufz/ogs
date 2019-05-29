@@ -43,7 +43,7 @@ To speedup the compilation process append the number of cores of your cpu to the
 $ make -j 8
 ```
 
-{{< asciinema url="https://asciinema.org/a/249005" >}}
+{{< asciinema url="https://asciinema.org/a/249005" preload="1" >}}
 
 ### Option: Eclipse
 
