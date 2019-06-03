@@ -9,6 +9,7 @@ set(REQUIRED_SUBMODULES
     ThirdParty/cmake-modules
     ThirdParty/exprtk
     ThirdParty/googletest
+    ThirdParty/iphreeqc/src
     ThirdParty/jedbrown-cmake-modules
     ThirdParty/tclap
     ThirdParty/tetgen

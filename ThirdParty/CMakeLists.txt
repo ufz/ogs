@@ -24,6 +24,9 @@ add_subdirectory(googletest)
 # This is a workaround for Travis builds.
 option(OGS_USE_OPTIONAL_SUBMODULES "Option for enabling optional submodules" OFF)
 
+#iphreeqc
+add_subdirectory(iphreeqc)
+
 # VtkFbxConverter
 if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/VtkFbxConverter/CMakeLists.txt
     AND OGS_USE_OPTIONAL_SUBMODULES)
