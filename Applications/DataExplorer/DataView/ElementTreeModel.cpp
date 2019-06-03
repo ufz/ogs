@@ -168,17 +168,26 @@ void ElementTreeModel::setMesh(MeshLib::Mesh const& mesh)
     {
         QList<QVariant> array_info;
         array_info << QString::fromStdString(vec_name) + ": ";
-        auto vec_bounds(
-            MeshLib::MeshInformation::getValueBounds<int>(mesh, vec_name));
-        if (vec_bounds.second != std::numeric_limits<int>::max())
-            array_info << "[" + QString::number(vec_bounds.first) + "," << QString::number(vec_bounds.second) + "]" << "";
+        if (auto const vec_bounds =  // test if boost::optional is empty
+            MeshLib::MeshInformation::getValueBounds<int>(mesh, vec_name))
+        {
+            array_info << "[" + QString::number(vec_bounds->first) + ","
+                       << QString::number(vec_bounds->second) + "]";
+        }
+        else if (auto const vec_bounds =  // test if boost::optional is empty
+                 MeshLib::MeshInformation::getValueBounds<double>(mesh,
+                                                                  vec_name))
+        {
+            array_info << "[" + QString::number(vec_bounds->first) + ","
+                       << QString::number(vec_bounds->second) + "]";
+        }
         else
         {
-            auto vec_bounds(MeshLib::MeshInformation::getValueBounds<double>(
-                mesh, vec_name));
-            if (vec_bounds.second != std::numeric_limits<double>::max())
-                array_info  << "[" + QString::number(vec_bounds.first) + "," << QString::number(vec_bounds.second) + "]" << "";
+            // Makeup the same structure of output as in the valid cases above.
+            array_info << "[error,"
+                       << "error]";
         }
+
         if (array_info.size() == 1)
             array_info << "[ ?" << "? ]" << "";
         auto* vec_item = new TreeItem(array_info, _rootItem);

@@ -95,9 +95,11 @@ TEST(FileIO, TetGenMeshReaderWithMaterials)
     ASSERT_EQ(1378, mesh->getNumberOfNodes());
     ASSERT_EQ(5114, mesh->getNumberOfElements());
 
-    std::pair<int, int> bounds (MeshLib::MeshInformation::getValueBounds<int>(*mesh, "MaterialIDs"));
-    ASSERT_EQ(-20, bounds.first);
-    ASSERT_EQ(-10, bounds.second);
+    auto const& bounds =
+        MeshLib::MeshInformation::getValueBounds<int>(*mesh, "MaterialIDs");
+    ASSERT_TRUE(boost::none != bounds);
+    ASSERT_EQ(-20, bounds->first);
+    ASSERT_EQ(-10, bounds->second);
 }
 
 // TetGen mesh without additional information
@@ -111,7 +113,7 @@ TEST(FileIO, TetGenMeshReaderWithoutMaterials)
     ASSERT_EQ(202, mesh->getNumberOfNodes());
     ASSERT_EQ(650, mesh->getNumberOfElements());
 
-    std::pair<int, int> bounds (MeshLib::MeshInformation::getValueBounds<int>(*mesh, "MaterialIDs"));
-    ASSERT_EQ(std::numeric_limits<int>::max(), bounds.first);
-    ASSERT_EQ(std::numeric_limits<int>::max(), bounds.second);
+    auto const& bounds =
+        MeshLib::MeshInformation::getValueBounds<int>(*mesh, "MaterialIDs");
+    ASSERT_TRUE(boost::none == bounds);
 }

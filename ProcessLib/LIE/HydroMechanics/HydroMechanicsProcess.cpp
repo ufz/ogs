@@ -101,10 +101,18 @@ HydroMechanicsProcess<GlobalDim>::HydroMechanicsProcess(
     }
     else
     {
-        auto range =
+        auto const range =
             MeshLib::MeshInformation::getValueBounds<int>(mesh, "MaterialIDs");
+        if (!range)
+        {
+            OGS_FATAL(
+                "Could not get minimum/maximum ranges values for the "
+                "MaterialIDs property in the mesh '%s'.",
+                mesh.getName().c_str());
+        }
+
         std::vector<int> vec_p_inactive_matIDs;
-        for (int matID = range.first; matID <= range.second; matID++)
+        for (int matID = range->first; matID <= range->second; matID++)
         {
             if (std::find(vec_fracture_mat_IDs.begin(),
                           vec_fracture_mat_IDs.end(),
