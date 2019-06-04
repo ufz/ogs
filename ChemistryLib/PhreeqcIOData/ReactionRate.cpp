@@ -7,6 +7,8 @@
  *
  */
 
+#include <fstream>
+
 #include "ReactionRate.h"
 #include "BaseLib/ConfigTreeUtil.h"
 
@@ -42,5 +44,25 @@ std::vector<ReactionRate> createReactionRates(
     }
 
     return reaction_rates;
+}
+
+std::ofstream& operator<<(std::ofstream& out,
+                          std::vector<ReactionRate> const& reaction_rates)
+{
+    for (auto const& reaction_rate : reaction_rates)
+    {
+        out << reaction_rate.kinetic_reactant << "\n";
+        out << "-start" << "\n";
+        int line_number = 1;
+        for (auto const& expression_statement :
+             reaction_rate.expression_statements)
+        {
+            out << line_number << " " << expression_statement << "\n";
+            ++line_number;
+        }
+        out << "-end" << "\n";
+    }
+
+    return out;
 }
 }  // namespace ChemistryLib

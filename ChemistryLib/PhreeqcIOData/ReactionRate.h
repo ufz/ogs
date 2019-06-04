@@ -10,6 +10,7 @@
 #pragma once
 
 #include <boost/optional/optional.hpp>
+#include <iosfwd>
 #include <string>
 #include <vector>
 
@@ -29,6 +30,9 @@ struct ReactionRate
           expression_statements(std::move(expression_statements_))
     {
     }
+
+    friend std::ofstream& operator<<(
+        std::ofstream& out, std::vector<ReactionRate> const& reaction_rate);
 
     std::string const kinetic_reactant;
     std::vector<std::string> const expression_statements;
