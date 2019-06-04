@@ -7,6 +7,8 @@
  *
  */
 
+#include <fstream>
+
 #include "KineticReactant.h"
 #include "BaseLib/ConfigTreeUtil.h"
 
@@ -41,5 +43,26 @@ std::vector<KineticReactant> createKineticReactants(
     }
 
     return kinetic_reactants;
+}
+
+std::ofstream& operator<<(std::ofstream& out,
+                          std::vector<KineticReactant> const& kinetic_reactants)
+{
+    for (auto const& kinetic_reactant : kinetic_reactants)
+    {
+        out << kinetic_reactant.name << "\n";
+
+        out << "-m  " << kinetic_reactant.amount << "\n";
+
+        if (!kinetic_reactant.parameters.empty())
+        {
+            out << "-parms";
+            for (auto const& parameter : kinetic_reactant.parameters)
+                out << " " << parameter;
+            out << "\n";
+        }
+    }
+
+    return out;
 }
 }  // namespace ChemistryLib

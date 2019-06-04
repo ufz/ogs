@@ -10,6 +10,7 @@
 #pragma once
 
 #include <boost/optional/optional.hpp>
+#include <iosfwd>
 #include <string>
 #include <vector>
 
@@ -32,6 +33,10 @@ struct KineticReactant
                                  : std::vector<double>{})
     {
     }
+
+    friend std::ofstream& operator<<(
+        std::ofstream& out,
+        std::vector<KineticReactant> const& kinetic_reactants);
 
     std::string const name;
     double amount;
