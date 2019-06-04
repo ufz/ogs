@@ -55,6 +55,11 @@ public:
 
     void setTimeStep(double const dt) { _dt = dt; }
 
+    void writeInputsToFile();
+
+    friend std::ofstream& operator<<(std::ofstream& out,
+                                     PhreeqcIO const& phreeqc_io);
+
     std::string const _phreeqc_input_file;
 
 private:
