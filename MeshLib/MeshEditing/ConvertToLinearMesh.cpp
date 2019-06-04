@@ -34,8 +34,20 @@ T_ELEMENT* createLinearElement(MeshLib::Element const* e,
     auto** nodes = new MeshLib::Node*[n_base_nodes];
     for (unsigned i = 0; i < e->getNumberOfBaseNodes(); i++)
     {
-        nodes[i] =
-            const_cast<MeshLib::Node*>(vec_new_nodes[e->getNode(i)->getID()]);
+        auto const it = find_if(
+            begin(vec_new_nodes), end(vec_new_nodes),
+            [node_i = e->getNode(i)](Node* const new_node) {
+                return *node_i ==
+                       *new_node;  // coordinate comparison up to epsilon
+            });
+        if (it == end(vec_new_nodes))
+        {
+            OGS_FATAL(
+                "A base node %d (with original global node id %d) not found in "
+                "the list for element %d.",
+                i, e->getNode(i)->getID(), e->getID());
+        }
+        nodes[i] = const_cast<MeshLib::Node*>(*it);
     }
     return new T_ELEMENT(nodes);
 }
