@@ -270,6 +270,9 @@ public:
     //! used anymore!
     ConfigTree& operator=(ConfigTree &&);
 
+    //! Used to get the project file name.
+    std::string const& getProjectFileName() const { return _filename; }
+
     /*! \name Methods for directly accessing parameter values
      *
      */
