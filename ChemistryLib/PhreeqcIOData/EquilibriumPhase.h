@@ -10,6 +10,7 @@
 #pragma once
 
 #include <boost/optional/optional.hpp>
+#include <iosfwd>
 #include <string>
 #include <vector>
 
@@ -30,6 +31,10 @@ struct EquilibriumPhase
           saturation_index(saturation_index_)
     {
     }
+
+    friend std::ofstream& operator<<(
+        std::ofstream& out,
+        std::vector<EquilibriumPhase> const& equilibrium_phases);
 
     std::string const name;
     double amount;

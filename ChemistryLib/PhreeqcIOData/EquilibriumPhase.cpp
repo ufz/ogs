@@ -7,6 +7,8 @@
  *
  */
 
+#include <fstream>
+
 #include "EquilibriumPhase.h"
 #include "BaseLib/ConfigTreeUtil.h"
 
@@ -43,5 +45,20 @@ std::vector<EquilibriumPhase> createEquilibriumPhases(
     }
 
     return equilibrium_phases;
+}
+
+std::ofstream& operator<<(
+    std::ofstream& out, std::vector<EquilibriumPhase> const& equilibrium_phases)
+{
+    for (auto const& equilibrium_phase : equilibrium_phases)
+    {
+        out << equilibrium_phase.name;
+
+        out << " " << equilibrium_phase.saturation_index;
+
+        out << " " << equilibrium_phase.amount << "\n";
+    }
+
+    return out;
 }
 }  // namespace ChemistryLib
