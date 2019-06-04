@@ -1,0 +1,16 @@
+{{ $id := strings.TrimPrefix "https://asciinema.org/a/" (.Get "url") }}
+
+<center>
+  <script
+    id="asciicast-{{ $id }}"
+    src='{{ .Get "url" }}.js'
+    async
+    {{ with .Get "autoplay"}} data-autoplay="{{.}}"{{ end }}
+    {{ with .Get "preload"}} data-preload="{{.}}"{{ end }}
+    {{ with .Get "loop"}} data-loop="{{.}}"{{ end }}
+    {{ with .Get "speed"}} data-speed="{{.}}"{{ end }}
+    {{ with .Get "cols"}} data-cols="{{.}}"{{ end }}
+    {{ with .Get "rows"}} data-rows="{{.}}"{{ end }}
+  >
+  </script>
+</center>

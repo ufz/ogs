@@ -17,6 +17,8 @@ weight = 1021
 
 Googletest is already included in the OGS source code. Running tests is as simple as building the `tests`-target.
 
+{{< asciinema url="https://asciinema.org/a/249006" >}}
+
 ## Writing Tests
 
 All tests are located inside the *Tests*-directory in library-specific subfolders. To write a new test you simply create a new *.cpp*-file and use the googletest macros.

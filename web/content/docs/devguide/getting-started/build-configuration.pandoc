@@ -80,6 +80,8 @@ CMake tries to autodetect your compiler so in most cases this should be enough:
 $ cmake ../ogs
 ```
 
+{{< asciinema url="https://asciinema.org/a/249004" >}}
+
 ::: {.note}
 #### <i class="far fa-check"></i> Pro Tip: Use the Visual Studio command line
 
