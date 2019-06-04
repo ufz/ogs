@@ -725,6 +725,16 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
             timestep_id, t);
     }
 
+    if (_chemical_system != nullptr)
+    {
+        // Sequential non-iterative approach applied here to perform water
+        // chemistry calculation followed by resolving component transport
+        // process.
+        // TODO: move into a global loop to consider both mass balance over
+        // space and localized chemical equilibrium between solutes.
+        _chemical_system->doWaterChemistryCalculation(_process_solutions, dt);
+    }
+
     int process_id = 0;
     for (auto& process_data : _per_process_data)
     {

@@ -19,6 +19,23 @@
 
 namespace ChemistryLib
 {
+void PhreeqcIO::doWaterChemistryCalculation(
+    std::vector<GlobalVector*>& process_solutions, double const dt)
+{
+    setAqueousSolutionsOrUpdateProcessSolutions(
+        process_solutions, Status::SettingAqueousSolutions);
+    setTimeStep(dt);
+
+    writeInputsToFile();
+
+    execute();
+
+    readOutputsFromFile();
+
+    setAqueousSolutionsOrUpdateProcessSolutions(
+        process_solutions, Status::UpdatingProcessSolutions);
+}
+
 void PhreeqcIO::setAqueousSolutionsOrUpdateProcessSolutions(
     std::vector<GlobalVector*> const& process_solutions, Status const status)
 {
