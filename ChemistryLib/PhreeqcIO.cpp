@@ -158,4 +158,134 @@ std::ofstream& operator<<(std::ofstream& out, PhreeqcIO const& phreeqc_io)
 
     return out;
 }
+
+void PhreeqcIO::readOutputsFromFile()
+{
+    auto const& basic_output_setups = _output->basic_output_setups;
+    auto const& phreeqc_result_file = basic_output_setups.output_file;
+    DBUG("Reading phreeqc results from file '%s'.",
+         phreeqc_result_file.c_str());
+    std::ifstream in(phreeqc_result_file);
+
+    if (!in)
+        OGS_FATAL("Could not open phreeqc result file '%s'.",
+                  phreeqc_result_file.c_str());
+
+    in >> *this;
+
+    if (!in)
+        OGS_FATAL("Error when reading phreeqc result file '%s'",
+                  phreeqc_result_file.c_str());
+
+    in.close();
+}
+
+std::ifstream& operator>>(std::ifstream& in, PhreeqcIO& phreeqc_io)
+{
+    // Skip the headline
+    in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+    std::string line;
+    auto const& output = *phreeqc_io._output;
+    auto const& dropped_item_ids = output.dropped_item_ids;
+    std::size_t const num_chemical_systems =
+        phreeqc_io._aqueous_solutions.size();
+    for (std::size_t chemical_system_id = 0;
+         chemical_system_id < num_chemical_systems;
+         ++chemical_system_id)
+    {
+        // Skip equilibrium calculation result of initial solution
+        in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+        // Get calculation result of the solution after the reaction
+        if (!std::getline(in, line))
+            OGS_FATAL(
+                "Error when reading calculation result of Solution %u after "
+                "the reaction.",
+                chemical_system_id);
+
+        std::vector<double> accepted_items;
+        std::vector<std::string> items;
+        boost::trim_if(line, boost::is_any_of("\t "));
+        boost::algorithm::split(items, line, boost::is_any_of("\t "),
+                                boost::token_compress_on);
+        for (int item_id = 0; item_id < static_cast<int>(items.size());
+             ++item_id)
+        {
+            if (std::find(dropped_item_ids.begin(), dropped_item_ids.end(),
+                          item_id) == dropped_item_ids.end())
+                accepted_items.push_back(std::stod(items[item_id]));
+        }
+        assert(accepted_items.size() == output.accepted_items.size());
+
+        auto& aqueous_solution =
+            phreeqc_io._aqueous_solutions[chemical_system_id];
+        auto& components = aqueous_solution.components;
+        auto& equilibrium_phases =
+            phreeqc_io._equilibrium_phases[chemical_system_id];
+        auto& kinetic_reactants =
+            phreeqc_io._kinetic_reactants[chemical_system_id];
+        for (int item_id = 0; item_id < static_cast<int>(accepted_items.size());
+             ++item_id)
+        {
+            auto const& accepted_item = output.accepted_items[item_id];
+            auto const& item_name = accepted_item.name;
+            switch (accepted_item.item_type)
+            {
+                case ItemType::pH:
+                {
+                    // Update pH value
+                    aqueous_solution.pH = accepted_items[item_id];
+                    break;
+                }
+                case ItemType::pe:
+                {
+                    // Update pe value
+                    aqueous_solution.pe = accepted_items[item_id];
+                    break;
+                }
+                case ItemType::Component:
+                {
+                    // Update component concentrations
+                    auto& component = BaseLib::findElementOrError(
+                        components.begin(), components.end(),
+                        [&item_name](Component const& component) {
+                            return component.name == item_name;
+                        },
+                        "Could not find component '" + item_name + "'.");
+                    component.amount = accepted_items[item_id];
+                    break;
+                }
+                case ItemType::EquilibriumPhase:
+                {
+                    // Update amounts of equilibrium phases
+                    auto& equilibrium_phase = BaseLib::findElementOrError(
+                        equilibrium_phases.begin(), equilibrium_phases.end(),
+                        [&item_name](
+                            EquilibriumPhase const& equilibrium_phase) {
+                            return equilibrium_phase.name == item_name;
+                        },
+                        "Could not find equilibrium phase '" + item_name +
+                            "'.");
+                    equilibrium_phase.amount = accepted_items[item_id];
+                    break;
+                }
+                case ItemType::KineticReactant:
+                {
+                    // Update amounts of kinetic reactants
+                    auto& kinetic_reactant = BaseLib::findElementOrError(
+                        kinetic_reactants.begin(), kinetic_reactants.end(),
+                        [&item_name](KineticReactant const& kinetic_reactant) {
+                            return kinetic_reactant.name == item_name;
+                        },
+                        "Could not find kinetic reactant '" + item_name + "'.");
+                    kinetic_reactant.amount = accepted_items[item_id];
+                    break;
+                }
+            }
+        }
+    }
+
+    return in;
+}
 }  // namespace ChemistryLib
