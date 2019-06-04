@@ -57,6 +57,8 @@ public:
 
     void writeInputsToFile();
 
+    void execute();
+
     void readOutputsFromFile();
 
     friend std::ofstream& operator<<(std::ofstream& out,

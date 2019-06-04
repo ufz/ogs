@@ -159,6 +159,34 @@ std::ofstream& operator<<(std::ofstream& out, PhreeqcIO const& phreeqc_io)
     return out;
 }
 
+void PhreeqcIO::execute()
+{
+    auto database_loaded = [&](int instance_id) {
+        return LoadDatabase(instance_id, _database.c_str()) == 0;
+    };
+
+    INFO("Phreeqc: Executing chemical calculation.");
+    // initialize phreeqc configurations
+    auto const instance_id = CreateIPhreeqc();
+
+    // load a specific database in the working directory
+    if (!database_loaded(instance_id))
+        OGS_FATAL(
+            "Failed in loading the specified thermodynamic database file: %s.",
+            _database.c_str());
+
+    SetSelectedOutputFileOn(instance_id, 1);
+
+    if (RunFile(instance_id, _phreeqc_input_file.c_str()) > 0)
+    {
+        OutputErrorString(instance_id);
+        OGS_FATAL(
+            "Failed in performing speciation calculation with the generated "
+            "phreeqc input file '%s'.",
+            _phreeqc_input_file.c_str());
+    }
+}
+
 void PhreeqcIO::readOutputsFromFile()
 {
     auto const& basic_output_setups = _output->basic_output_setups;
