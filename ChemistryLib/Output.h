@@ -10,6 +10,7 @@
 #pragma once
 
 #include <algorithm>
+#include <iosfwd>
 #include <string>
 #include <vector>
 
@@ -35,6 +36,9 @@ public:
         return display_simulation_id + display_state + display_solution_id +
                display_distance + display_current_time + display_time_step;
     }
+
+    friend std::ofstream& operator<<(
+        std::ofstream& out, BasicOutputSetups const& basic_output_setups);
 
     std::string const output_file;
 
@@ -92,6 +96,8 @@ struct Output
                      });
         return matching_items;
     }
+
+    friend std::ofstream& operator<<(std::ofstream& out, Output const& output);
 
     BasicOutputSetups const basic_output_setups;
     std::vector<OutputItem> const accepted_items;
