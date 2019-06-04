@@ -20,6 +20,12 @@
 
 namespace ChemistryLib
 {
+enum class Status
+{
+    SettingAqueousSolutions,
+    UpdatingProcessSolutions
+};
+
 class PhreeqcIO
 {
 public:
@@ -42,6 +48,12 @@ public:
           _process_id_to_component_name_map(process_id_to_component_name_map)
     {
     }
+
+    void setAqueousSolutionsOrUpdateProcessSolutions(
+        std::vector<GlobalVector*> const& process_solutions,
+        Status const status);
+
+    void setTimeStep(double const dt) { _dt = dt; }
 
     std::string const _phreeqc_input_file;
 
