@@ -10,9 +10,9 @@
 #include "ConvertToLinearMesh.h"
 
 #include "MeshLib/Elements/Element.h"
+#include "MeshLib/Elements/Hex.h"
 #include "MeshLib/Elements/Line.h"
 #include "MeshLib/Elements/Quad.h"
-#include "MeshLib/Elements/Hex.h"
 #include "MeshLib/Elements/Tet.h"
 #include "MeshLib/Elements/Tri.h"
 #include "MeshLib/Elements/Utils.h"
@@ -22,16 +22,13 @@
 #include "MeshLib/Properties.h"
 #include "MeshLib/PropertyVector.h"
 
-
 namespace MeshLib
 {
-
 namespace
 {
-
 template <typename T_ELEMENT>
 T_ELEMENT* createLinearElement(MeshLib::Element const* e,
-                  std::vector<MeshLib::Node*> const& vec_new_nodes)
+                               std::vector<MeshLib::Node*> const& vec_new_nodes)
 {
     auto const n_base_nodes = T_ELEMENT::n_base_nodes;
     auto** nodes = new MeshLib::Node*[n_base_nodes];
@@ -43,12 +40,13 @@ T_ELEMENT* createLinearElement(MeshLib::Element const* e,
     return new T_ELEMENT(nodes);
 }
 
-} // unnamed namespace
+}  // unnamed namespace
 
-
-std::unique_ptr<MeshLib::Mesh> convertToLinearMesh(MeshLib::Mesh const& org_mesh, std::string const& new_mesh_name)
+std::unique_ptr<MeshLib::Mesh> convertToLinearMesh(
+    MeshLib::Mesh const& org_mesh, std::string const& new_mesh_name)
 {
-    std::vector<MeshLib::Node*> vec_new_nodes = MeshLib::copyNodeVector(MeshLib::getBaseNodes(org_mesh.getElements()));
+    std::vector<MeshLib::Node*> vec_new_nodes =
+        MeshLib::copyNodeVector(MeshLib::getBaseNodes(org_mesh.getElements()));
 
     // create new elements with the quadratic nodes
     std::vector<MeshLib::Element*> vec_new_eles;
@@ -56,32 +54,33 @@ std::unique_ptr<MeshLib::Mesh> convertToLinearMesh(MeshLib::Mesh const& org_mesh
     {
         if (e->getCellType() == MeshLib::CellType::LINE3)
         {
-            vec_new_eles.push_back(createLinearElement<MeshLib::Line>(
-                e, vec_new_nodes));
+            vec_new_eles.push_back(
+                createLinearElement<MeshLib::Line>(e, vec_new_nodes));
         }
         else if (e->getCellType() == MeshLib::CellType::QUAD8)
         {
-            vec_new_eles.push_back(createLinearElement<MeshLib::Quad>(
-                e, vec_new_nodes));
+            vec_new_eles.push_back(
+                createLinearElement<MeshLib::Quad>(e, vec_new_nodes));
         }
         else if (e->getCellType() == MeshLib::CellType::TRI6)
         {
-            vec_new_eles.push_back(createLinearElement<MeshLib::Tri>(
-                e, vec_new_nodes));
+            vec_new_eles.push_back(
+                createLinearElement<MeshLib::Tri>(e, vec_new_nodes));
         }
         else if (e->getCellType() == MeshLib::CellType::HEX20)
         {
-            vec_new_eles.push_back(createLinearElement<MeshLib::Hex>(
-                e, vec_new_nodes));
+            vec_new_eles.push_back(
+                createLinearElement<MeshLib::Hex>(e, vec_new_nodes));
         }
         else if (e->getCellType() == MeshLib::CellType::TET10)
         {
-            vec_new_eles.push_back(createLinearElement<MeshLib::Tet>(
-                e, vec_new_nodes));
+            vec_new_eles.push_back(
+                createLinearElement<MeshLib::Tet>(e, vec_new_nodes));
         }
         else
         {
-            OGS_FATAL("Mesh element type %s is not supported", MeshLib::CellType2String(e->getCellType()).c_str());
+            OGS_FATAL("Mesh element type %s is not supported",
+                      MeshLib::CellType2String(e->getCellType()).c_str());
         }
     }
 
@@ -112,7 +111,7 @@ std::unique_ptr<MeshLib::Mesh> convertToLinearMesh(MeshLib::Mesh const& org_mesh
         new_prop->resize(new_mesh->getNumberOfNodes() * n_src_comp);
 
         // copy only base node values
-        for (unsigned i=0; i<org_mesh.getNumberOfBaseNodes(); i++)
+        for (unsigned i = 0; i < org_mesh.getNumberOfBaseNodes(); i++)
         {
             for (int j = 0; j < n_src_comp; j++)
             {
@@ -125,5 +124,4 @@ std::unique_ptr<MeshLib::Mesh> convertToLinearMesh(MeshLib::Mesh const& org_mesh
     return new_mesh;
 }
 
-} // end namespace MeshLib
-
+}  // end namespace MeshLib
