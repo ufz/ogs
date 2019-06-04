@@ -13,9 +13,12 @@
 
 #include "BaseLib/Error.h"
 #include "BaseLib/RunTime.h"
+#include "ChemistryLib/CreatePhreeqcIO.h"
 #include "MathLib/LinAlg/LinAlg.h"
 #include "NumLib/ODESolver/ConvergenceCriterionPerComponent.h"
 #include "NumLib/ODESolver/TimeDiscretizedODESystem.h"
+#include "ProcessLib/CreateProcessData.h"
+#include "ProcessLib/Output/CreateOutput.h"
 
 #include "CoupledSolutionsForStaggeredScheme.h"
 #include "ProcessData.h"
@@ -207,13 +210,15 @@ TimeLoop::TimeLoop(std::unique_ptr<Output>&& output,
                    const int global_coupling_max_iterations,
                    std::vector<std::unique_ptr<NumLib::ConvergenceCriterion>>&&
                        global_coupling_conv_crit,
+                   std::unique_ptr<ChemistryLib::PhreeqcIO>&& chemical_system,
                    const double start_time, const double end_time)
     : _output(std::move(output)),
       _per_process_data(std::move(per_process_data)),
       _start_time(start_time),
       _end_time(end_time),
       _global_coupling_max_iterations(global_coupling_max_iterations),
-      _global_coupling_conv_crit(std::move(global_coupling_conv_crit))
+      _global_coupling_conv_crit(std::move(global_coupling_conv_crit)),
+      _chemical_system(std::move(chemical_system))
 {
 }
 

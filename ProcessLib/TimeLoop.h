@@ -27,6 +27,11 @@ namespace NumLib
 class ConvergenceCriterion;
 }
 
+namespace ChemistryLib
+{
+class PhreeqcIO;
+}
+
 namespace ProcessLib
 {
 struct ProcessData;
@@ -40,6 +45,7 @@ public:
              const int global_coupling_max_iterations,
              std::vector<std::unique_ptr<NumLib::ConvergenceCriterion>>&&
                  global_coupling_conv_crit,
+             std::unique_ptr<ChemistryLib::PhreeqcIO>&& chemical_system,
              const double start_time, const double end_time);
 
     bool loop();
@@ -124,6 +130,7 @@ private:
     std::vector<std::unique_ptr<NumLib::ConvergenceCriterion>>
         _global_coupling_conv_crit;
 
+    std::unique_ptr<ChemistryLib::PhreeqcIO> _chemical_system;
     /**
      *  Vector of solutions of the coupled processes.
      *  Each vector element stores the references of the solution vectors

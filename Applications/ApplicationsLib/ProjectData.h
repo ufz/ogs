@@ -21,6 +21,7 @@
 #include "MaterialLib/MPL/Medium.h"
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 
+#include "ChemistryLib/PhreeqcIO.h"
 #include "ParameterLib/CoordinateSystem.h"
 #include "ParameterLib/Parameter.h"
 #include "ProcessLib/Process.h"
@@ -112,6 +113,9 @@ private:
 
     void parseCurves(boost::optional<BaseLib::ConfigTree> const& config);
 
+    void parseChemicalSystem(boost::optional<BaseLib::ConfigTree> const& config,
+                             const std::string& output_directory);
+
     std::unique_ptr<MaterialPropertyLib::Medium> _medium;
     std::vector<std::unique_ptr<MeshLib::Mesh>> _mesh_vec;
     std::map<std::string, std::unique_ptr<ProcessLib::Process>> _processes;
@@ -134,4 +138,6 @@ private:
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>>
         _curves;
+
+    std::unique_ptr<ChemistryLib::PhreeqcIO> _chemical_system;
 };
