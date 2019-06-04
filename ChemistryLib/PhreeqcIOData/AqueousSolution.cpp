@@ -7,6 +7,8 @@
  *
  */
 
+#include <fstream>
+
 #include "AqueousSolution.h"
 #include "BaseLib/ConfigTreeUtil.h"
 
@@ -67,5 +69,38 @@ AqueousSolution createAqueousSolution(BaseLib::ConfigTree const& config)
                                      means_of_adjusting_charge);
 
     return aqueous_solution;
+}
+
+std::ofstream& operator<<(std::ofstream& out,
+                          AqueousSolution const& aqueous_solution)
+{
+    out << "temp " << aqueous_solution.temperature << "\n";
+
+    out << "pressure " << aqueous_solution.pressure << "\n";
+
+    switch (aqueous_solution.means_of_adjusting_charge)
+    {
+        case MeansOfAdjustingCharge::pH:
+            out << "pH " << aqueous_solution.pH << " charge"
+                << "\n";
+            out << "pe " << aqueous_solution.pe << "\n";
+            break;
+        case MeansOfAdjustingCharge::pe:
+            out << "pH " << aqueous_solution.pH << "\n";
+            out << "pe " << aqueous_solution.pe << " charge"
+                << "\n";
+            break;
+        case MeansOfAdjustingCharge::Unspecified:
+            out << "pH " << aqueous_solution.pH << "\n";
+            out << "pe " << aqueous_solution.pe << "\n";
+            break;
+    }
+
+    out << "units mol/kgw\n";
+
+    for (auto const& component : aqueous_solution.components)
+        out << component.name << " " << component.amount << "\n";
+
+    return out;
 }
 }  // namespace ChemistryLib

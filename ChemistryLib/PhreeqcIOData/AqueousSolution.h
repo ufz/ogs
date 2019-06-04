@@ -10,6 +10,7 @@
 #pragma once
 
 #include <boost/optional/optional.hpp>
+#include <iosfwd>
 #include <string>
 #include <vector>
 
@@ -39,8 +40,6 @@ enum class MeansOfAdjustingCharge
 
 struct AqueousSolution
 {
-    static inline const std::string unit = "mol/kgw";
-
     AqueousSolution(double temperature_,
                     double pressure_,
                     double pe_,
@@ -53,6 +52,9 @@ struct AqueousSolution
           means_of_adjusting_charge(means_of_adjusting_charge_)
     {
     }
+
+    friend std::ofstream& operator<<(std::ofstream& out,
+                                     AqueousSolution const& aqueous_solution);
 
     double temperature;
     double pressure;
