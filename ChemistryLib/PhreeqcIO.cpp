@@ -182,16 +182,12 @@ std::ofstream& operator<<(std::ofstream& out, PhreeqcIO const& phreeqc_io)
 
 void PhreeqcIO::execute()
 {
-    auto database_loaded = [&](int instance_id) {
-        return LoadDatabase(instance_id, _database.c_str()) == 0;
-    };
-
     INFO("Phreeqc: Executing chemical calculation.");
     // initialize phreeqc configurations
     auto const instance_id = CreateIPhreeqc();
 
     // load a specific database in the working directory
-    if (!database_loaded(instance_id))
+    if (LoadDatabase(instance_id, _database.c_str()) != 0)
     {
         OGS_FATAL(
             "Failed in loading the specified thermodynamic database file: %s.",
