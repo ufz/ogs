@@ -15,6 +15,7 @@
 #include "CreatePhreeqcIO.h"
 #include "PhreeqcIO.h"
 #include "PhreeqcIOData/AqueousSolution.h"
+#include "PhreeqcIOData/CreateAqueousSolution.h"
 #include "PhreeqcIOData/EquilibriumPhase.h"
 #include "PhreeqcIOData/KineticReactant.h"
 #include "PhreeqcIOData/ReactionRate.h"

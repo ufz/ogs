@@ -9,17 +9,9 @@
 
 #pragma once
 
-#include <boost/optional/optional.hpp>
 #include <iosfwd>
 #include <string>
 #include <vector>
-
-#include "BaseLib/Error.h"
-
-namespace BaseLib
-{
-class ConfigTree;
-}
 
 namespace ChemistryLib
 {
@@ -63,6 +55,4 @@ struct AqueousSolution
     std::vector<Component> components;
     MeansOfAdjustingCharge const means_of_adjusting_charge;
 };
-
-AqueousSolution createAqueousSolution(BaseLib::ConfigTree const& config);
 }  // namespace ChemistryLib
