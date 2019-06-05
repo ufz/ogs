@@ -25,7 +25,7 @@ namespace ChemistryLib
 {
 struct Component
 {
-    Component(std::string name_) : name(std::move(name_)) {}
+    explicit Component(std::string name_) : name(std::move(name_)) {}
 
     std::string const name;
     double amount;

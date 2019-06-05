@@ -19,7 +19,7 @@ namespace ChemistryLib
 class BasicOutputSetups
 {
 public:
-    BasicOutputSetups(std::string const& project_file_name)
+    explicit BasicOutputSetups(std::string const& project_file_name)
         : output_file(project_file_name + "_phreeqc.out")
     {
     }
