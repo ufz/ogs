@@ -14,11 +14,6 @@
 #include <string>
 #include <vector>
 
-namespace BaseLib
-{
-class ConfigTree;
-}
-
 namespace ChemistryLib
 {
 struct KineticReactant
@@ -42,7 +37,4 @@ struct KineticReactant
     double amount;
     std::vector<double> const parameters;
 };
-
-std::vector<KineticReactant> createKineticReactants(
-    boost::optional<BaseLib::ConfigTree> const& config);
 }  // namespace ChemistryLib
