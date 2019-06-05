@@ -9,15 +9,9 @@
 
 #pragma once
 
-#include <boost/optional/optional.hpp>
 #include <iosfwd>
 #include <string>
 #include <vector>
-
-namespace BaseLib
-{
-class ConfigTree;
-}
 
 namespace ChemistryLib
 {
@@ -37,7 +31,4 @@ struct ReactionRate
     std::string const kinetic_reactant;
     std::vector<std::string> const expression_statements;
 };
-
-std::vector<ReactionRate> createReactionRates(
-    boost::optional<BaseLib::ConfigTree> const& config);
 }  // namespace ChemistryLib
