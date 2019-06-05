@@ -29,6 +29,6 @@ std::unique_ptr<PhreeqcIO> createPhreeqcIO(
     std::size_t const num_nodes,
     std::vector<std::pair<int, std::string>> const&
         process_id_to_component_name_map,
-    boost::optional<BaseLib::ConfigTree> const& config,
+    BaseLib::ConfigTree const& config,
     std::string const& output_directory);
 }  // namespace ChemistryLib

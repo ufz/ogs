@@ -25,14 +25,14 @@ std::unique_ptr<PhreeqcIO> createPhreeqcIO(
     std::size_t const num_nodes,
     std::vector<std::pair<int, std::string>> const&
         process_id_to_component_name_map,
-    boost::optional<BaseLib::ConfigTree> const& config,
+    BaseLib::ConfigTree const& config,
     std::string const& output_directory)
 {
     auto const& num_chemical_systems = num_nodes;
 
     // database
     //! \ogs_file_param{prj__chemical_system__database}
-    auto const database = config->getConfigParameter<std::string>("database");
+    auto const database = config.getConfigParameter<std::string>("database");
     auto path_to_database =
         BaseLib::joinPaths(BaseLib::getProjectDirectory(), database);
 
@@ -50,7 +50,7 @@ std::unique_ptr<PhreeqcIO> createPhreeqcIO(
     // solution
     auto const aqueous_solution_per_chem_sys = createAqueousSolution(
         //! \ogs_file_param{prj__chemical_system__solution}
-        config->getConfigSubtree("solution"));
+        config.getConfigSubtree("solution"));
 
     auto const& components_per_chem_sys =
         aqueous_solution_per_chem_sys.components;
@@ -88,26 +88,26 @@ std::unique_ptr<PhreeqcIO> createPhreeqcIO(
     // equilibrium phases
     auto const equilibrium_phases_per_chem_sys = createEquilibriumPhases(
         //! \ogs_file_param{prj__chemical_system__equilibrium_phases}
-        config->getConfigSubtreeOptional("equilibrium_phases"));
+        config.getConfigSubtreeOptional("equilibrium_phases"));
     std::vector<std::vector<EquilibriumPhase>> equilibrium_phases(
         num_chemical_systems, equilibrium_phases_per_chem_sys);
 
     // kinetic reactants
     auto const kinetic_reactants_per_chem_sys = createKineticReactants(
         //! \ogs_file_param{prj__chemical_system__kinetic_reactants}
-        config->getConfigSubtreeOptional("kinetic_reactants"));
+        config.getConfigSubtreeOptional("kinetic_reactants"));
     std::vector<std::vector<KineticReactant>> kinetic_reactants(
         num_chemical_systems, kinetic_reactants_per_chem_sys);
 
     // rates
     auto reaction_rates = createReactionRates(
         //! \ogs_file_param{prj__chemical_system__rates}
-        config->getConfigSubtreeOptional("rates"));
+        config.getConfigSubtreeOptional("rates"));
 
     // output
     auto const project_file_name = BaseLib::joinPaths(
         output_directory,
-        BaseLib::extractBaseNameWithoutExtension(config->getProjectFileName()));
+        BaseLib::extractBaseNameWithoutExtension(config.getProjectFileName()));
     auto output =
         createOutput(components_per_chem_sys, equilibrium_phases_per_chem_sys,
                      kinetic_reactants_per_chem_sys, project_file_name);
