@@ -18,7 +18,9 @@ std::vector<KineticReactant> createKineticReactants(
     boost::optional<BaseLib::ConfigTree> const& config)
 {
     if (!config)
+    {
         return {};
+    }
 
     std::vector<KineticReactant> kinetic_reactants;
     for (
@@ -58,7 +60,9 @@ std::ofstream& operator<<(std::ofstream& out,
         {
             out << "-parms";
             for (auto const& parameter : kinetic_reactant.parameters)
+            {
                 out << " " << parameter;
+            }
             out << "\n";
         }
     }

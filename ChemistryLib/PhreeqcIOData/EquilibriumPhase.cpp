@@ -18,7 +18,9 @@ std::vector<EquilibriumPhase> createEquilibriumPhases(
     boost::optional<BaseLib::ConfigTree> const& config)
 {
     if (!config)
+    {
         return {};
+    }
 
     std::vector<EquilibriumPhase> equilibrium_phases;
     for (

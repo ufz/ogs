@@ -65,18 +65,22 @@ std::unique_ptr<PhreeqcIO> createPhreeqcIO(
 
         if (process_id_to_component_name_map_element ==
             process_id_to_component_name_map.end())
+        {
             OGS_FATAL(
                 "Component %s given in <solution>/<components> is not found in "
                 "specified coupled processes (see "
                 "<process>/<process_variables>/<concentration>).",
                 component.name.c_str());
+        }
     }
     if (components_per_chem_sys.size() + 1 !=
         process_id_to_component_name_map.size())
+    {
         OGS_FATAL(
             "The number of components given in <solution>/<components> is not "
             "in line with the number of transport processes - 1 which stands "
             "for the transport process of hydrogen.");
+    }
 
     std::vector<AqueousSolution> aqueous_solutions(
         num_chemical_systems, aqueous_solution_per_chem_sys);

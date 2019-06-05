@@ -41,7 +41,9 @@ std::ofstream& operator<<(std::ofstream& out, Output const& output)
         output.getOutputItemsByItemType(ItemType::Component);
     out << "-totals";
     for (auto const& component_item : component_items)
+    {
         out << " " << component_item.name;
+    }
     out << "\n";
 
     auto const equilibrium_phase_items =
@@ -50,7 +52,9 @@ std::ofstream& operator<<(std::ofstream& out, Output const& output)
     {
         out << "-equilibrium_phases";
         for (auto const& equilibrium_phase_item : equilibrium_phase_items)
+        {
             out << " " << equilibrium_phase_item.name;
+        }
         out << "\n";
     }
 
@@ -60,7 +64,9 @@ std::ofstream& operator<<(std::ofstream& out, Output const& output)
     {
         out << "-kinetic_reactants";
         for (auto const& kinetic_reactant_item : kinetic_reactant_items)
+        {
             out << " " << kinetic_reactant_item.name;
+        }
         out << "\n";
     }
 

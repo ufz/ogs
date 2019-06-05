@@ -22,13 +22,19 @@ std::unique_ptr<Output> createOutput(
     std::vector<OutputItem> accepted_items{{"pH", ItemType::pH},
                                            {"pe", ItemType::pe}};
     for (auto const& component : components)
+    {
         accepted_items.emplace_back(component.name, ItemType::Component);
+    }
     for (auto const& equilibrium_phase : equilibrium_phases)
+    {
         accepted_items.emplace_back(equilibrium_phase.name,
                                     ItemType::EquilibriumPhase);
+    }
     for (auto const& kinetic_reactant : kinetic_reactants)
+    {
         accepted_items.emplace_back(kinetic_reactant.name,
                                     ItemType::KineticReactant);
+    }
 
     // Record ids of which phreeqc output items will be dropped.
     BasicOutputSetups basic_output_setups(project_file_name);

@@ -118,14 +118,18 @@ void PhreeqcIO::writeInputsToFile()
     std::ofstream out(_phreeqc_input_file, std::ofstream::out);
 
     if (!out)
+    {
         OGS_FATAL("Could not open file '%s' for writing phreeqc inputs.",
                   _phreeqc_input_file.c_str());
+    }
 
     out << *this;
 
     if (!out)
+    {
         OGS_FATAL("Failed in generating phreeqc input file '%s'.",
                   _phreeqc_input_file.c_str());
+    }
 
     out.close();
 }
@@ -188,9 +192,11 @@ void PhreeqcIO::execute()
 
     // load a specific database in the working directory
     if (!database_loaded(instance_id))
+    {
         OGS_FATAL(
             "Failed in loading the specified thermodynamic database file: %s.",
             _database.c_str());
+    }
 
     SetSelectedOutputFileOn(instance_id, 1);
 
@@ -213,14 +219,18 @@ void PhreeqcIO::readOutputsFromFile()
     std::ifstream in(phreeqc_result_file);
 
     if (!in)
+    {
         OGS_FATAL("Could not open phreeqc result file '%s'.",
                   phreeqc_result_file.c_str());
+    }
 
     in >> *this;
 
     if (!in)
+    {
         OGS_FATAL("Error when reading phreeqc result file '%s'",
                   phreeqc_result_file.c_str());
+    }
 
     in.close();
 }
@@ -244,10 +254,12 @@ std::ifstream& operator>>(std::ifstream& in, PhreeqcIO& phreeqc_io)
 
         // Get calculation result of the solution after the reaction
         if (!std::getline(in, line))
+        {
             OGS_FATAL(
                 "Error when reading calculation result of Solution %u after "
                 "the reaction.",
                 chemical_system_id);
+        }
 
         std::vector<double> accepted_items;
         std::vector<std::string> items;
@@ -259,7 +271,9 @@ std::ifstream& operator>>(std::ifstream& in, PhreeqcIO& phreeqc_io)
         {
             if (std::find(dropped_item_ids.begin(), dropped_item_ids.end(),
                           item_id) == dropped_item_ids.end())
+            {
                 accepted_items.push_back(std::stod(items[item_id]));
+            }
         }
         assert(accepted_items.size() == output.accepted_items.size());
 

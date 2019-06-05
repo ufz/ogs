@@ -48,14 +48,20 @@ AqueousSolution createAqueousSolution(BaseLib::ConfigTree const& config)
     if (means_of_adjusting_charge_in_str)
     {
         if (*means_of_adjusting_charge_in_str == "pH")
+        {
             means_of_adjusting_charge = MeansOfAdjustingCharge::pH;
+        }
         else if (*means_of_adjusting_charge_in_str == "pe")
+        {
             means_of_adjusting_charge = MeansOfAdjustingCharge::pe;
+        }
         else
+        {
             OGS_FATAL(
                 "Error in specifying means of adjusting charge. Achieving "
                 "charge balance is currently supported with the way of "
                 "adjusting pH value or pe value.");
+        }
     }
     else
     {
@@ -99,7 +105,9 @@ std::ofstream& operator<<(std::ofstream& out,
     out << "units mol/kgw\n";
 
     for (auto const& component : aqueous_solution.components)
+    {
         out << component.name << " " << component.amount << "\n";
+    }
 
     return out;
 }

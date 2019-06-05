@@ -18,7 +18,9 @@ std::vector<ReactionRate> createReactionRates(
     boost::optional<BaseLib::ConfigTree> const& config)
 {
     if (!config)
+    {
         return {};
+    }
 
     std::vector<ReactionRate> reaction_rates;
     for (auto const& rate_config :
@@ -37,7 +39,9 @@ std::vector<ReactionRate> createReactionRates(
             auto const& expression_statement :
             //! \ogs_file_param{prj__chemical_system__rates__rate__expression__statement}
             expression_config.getConfigParameterList<std::string>("statement"))
+        {
             expression_statements.push_back(expression_statement);
+        }
 
         reaction_rates.emplace_back(std::move(kinetic_reactant),
                                     std::move(expression_statements));
