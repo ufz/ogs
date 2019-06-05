@@ -9,7 +9,6 @@
 
 #pragma once
 
-#include <boost/optional/optional.hpp>
 #include <iosfwd>
 #include <string>
 #include <vector>
@@ -40,7 +39,4 @@ struct EquilibriumPhase
     double amount;
     double const saturation_index;
 };
-
-std::vector<EquilibriumPhase> createEquilibriumPhases(
-    boost::optional<BaseLib::ConfigTree> const& config);
 }  // namespace ChemistryLib
