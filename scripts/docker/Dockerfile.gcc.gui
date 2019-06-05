@@ -4,16 +4,16 @@ FROM ubuntu:18.04
 
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        wget \
+        curl \
         tar \
-        curl && \
+        wget && \
     rm -rf /var/lib/apt/lists/*
 
 # GNU compiler
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        gcc \
-        g++ && \
+        g++ \
+        gcc && \
     rm -rf /var/lib/apt/lists/*
 
 # OGS base building block
@@ -60,9 +60,9 @@ RUN apt-get update && \
 
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        mesa-common-dev \
         libgl1-mesa-dev \
-        libxt-dev && \
+        libxt-dev \
+        mesa-common-dev && \
     rm -rf /var/lib/apt/lists/*
 
 # Package manager Conan building block
@@ -73,12 +73,12 @@ RUN apt-get update -y && \
         python3-setuptools \
         python3-wheel && \
     rm -rf /var/lib/apt/lists/*
-RUN pip3 install conan==1.12.2
+RUN pip3 install conan==1.16.0
 RUN mkdir -p /opt/conan && \
     chmod 777 /opt/conan
 ENV CONAN_USER_HOME=/opt/conan
 LABEL org.opengeosys.pm=conan \
-    org.opengeosys.pm.conan.version=1.12.2
+    org.opengeosys.pm.conan.version=1.16.0
 LABEL org.opengeosys.pm.conan.user_home=/opt/conan
 
 # cppcheck version 1.87
