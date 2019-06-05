@@ -285,6 +285,11 @@ std::ifstream& operator>>(std::ifstream& in, PhreeqcIO& phreeqc_io)
         {
             auto const& accepted_item = output.accepted_items[item_id];
             auto const& item_name = accepted_item.name;
+
+            auto compare_by_name = [&item_name](auto const& item) {
+                return item.name == item_name;
+            };
+
             switch (accepted_item.item_type)
             {
                 case ItemType::pH:
@@ -303,10 +308,7 @@ std::ifstream& operator>>(std::ifstream& in, PhreeqcIO& phreeqc_io)
                 {
                     // Update component concentrations
                     auto& component = BaseLib::findElementOrError(
-                        components.begin(), components.end(),
-                        [&item_name](Component const& component) {
-                            return component.name == item_name;
-                        },
+                        components.begin(), components.end(), compare_by_name,
                         "Could not find component '" + item_name + "'.");
                     component.amount = accepted_items[item_id];
                     break;
@@ -316,10 +318,7 @@ std::ifstream& operator>>(std::ifstream& in, PhreeqcIO& phreeqc_io)
                     // Update amounts of equilibrium phases
                     auto& equilibrium_phase = BaseLib::findElementOrError(
                         equilibrium_phases.begin(), equilibrium_phases.end(),
-                        [&item_name](
-                            EquilibriumPhase const& equilibrium_phase) {
-                            return equilibrium_phase.name == item_name;
-                        },
+                        compare_by_name,
                         "Could not find equilibrium phase '" + item_name +
                             "'.");
                     equilibrium_phase.amount = accepted_items[item_id];
@@ -330,9 +329,7 @@ std::ifstream& operator>>(std::ifstream& in, PhreeqcIO& phreeqc_io)
                     // Update amounts of kinetic reactants
                     auto& kinetic_reactant = BaseLib::findElementOrError(
                         kinetic_reactants.begin(), kinetic_reactants.end(),
-                        [&item_name](KineticReactant const& kinetic_reactant) {
-                            return kinetic_reactant.name == item_name;
-                        },
+                        compare_by_name,
                         "Could not find kinetic reactant '" + item_name + "'.");
                     kinetic_reactant.amount = accepted_items[item_id];
                     break;
