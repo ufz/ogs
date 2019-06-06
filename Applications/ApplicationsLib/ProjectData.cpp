@@ -1014,6 +1014,7 @@ void ProjectData::parseChemicalSystem(
     if (!config)
         return;
 
+#ifdef OGS_BUILD_PROCESS_COMPONENTTRANSPORT
     INFO(
         "Ready for initializing interface to a chemical solver for water "
         "chemistry calculation.");
@@ -1048,6 +1049,7 @@ void ProjectData::parseChemicalSystem(
         }
     }
     else
+#endif
     {
         OGS_FATAL(
             "The specified type of the process to be solved is not component "
