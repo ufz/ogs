@@ -199,7 +199,8 @@ public:
                  N.transpose() * velocity.transpose() * dNdx * fluid_density *
                      specific_heat_capacity_fluid) *
                 w;
-            Kpp.noalias() += w * dNdx.transpose() * K_over_mu * dNdx;
+            Kpp.noalias() +=
+                (w * fluid_density) * dNdx.transpose() * K_over_mu * dNdx;
             MTT.noalias() += w *
                              this->getHeatEnergyCoefficient(
                                  vars, porosity, fluid_density,
