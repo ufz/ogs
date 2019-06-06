@@ -268,7 +268,30 @@ std::ifstream& operator>>(std::ifstream& in, PhreeqcIO& phreeqc_io)
             if (std::find(dropped_item_ids.begin(), dropped_item_ids.end(),
                           item_id) == dropped_item_ids.end())
             {
-                accepted_items.push_back(std::stod(items[item_id]));
+                double value;
+                try
+                {
+                    value = std::stod(items[item_id]);
+                }
+                catch (const std::invalid_argument& e)
+                {
+                    OGS_FATAL(
+                        "Invalid argument. Could not convert string '%s' to "
+                        "double for chemical system %d, column %d. Exception "
+                        "'%s' was thrown.",
+                        items[item_id].c_str(), chemical_system_id, item_id,
+                        e.what());
+                }
+                catch (const std::out_of_range& e)
+                {
+                    OGS_FATAL(
+                        "Out of range error. Could not convert string '%s' to "
+                        "double for chemical system %d, column %d. Exception "
+                        "'%s' was thrown.",
+                        items[item_id].c_str(), chemical_system_id, item_id,
+                        e.what());
+                }
+                accepted_items.push_back(value);
             }
         }
         assert(accepted_items.size() == output.accepted_items.size());
