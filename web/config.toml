@@ -8,6 +8,7 @@ pygmentsstyle = 'friendly'
 enableGitInfo = true
 canonifyURLs = true
 staticDir = ["dist", "static"]
+disableKinds = ["taxonomyTerm"]
 
 [params]
   alert = ""
