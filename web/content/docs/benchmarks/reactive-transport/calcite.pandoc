@@ -1,0 +1,47 @@
++++
+author = "Vanessa Montoya"
+weight = 142
+project = "Parabolic/ReactiveTransport/calcite/"
+date = "2017-09-07T14:41:09+01:00"
+title = "Advective flow and precipitation/dissolution equilibrium reactions"
+
+[menu]
+  [menu.benchmarks]
+    parent = "Reactive transport"
+
++++
+
+{{< data-link >}}
+
+
+## Overview
+
+This benchmark was originally described in Kolditz et al. (2012) as a reactive transport benchmark including precipitation and dissolution reactions along a saturated column of calcite which is fluxed with a diluted solution of MgCl2. Three different codes (OGS.5-ChemApp, OGS.5-iPHREEQC and OGS.5-GEMS) were used in that exercise.
+Kolditz et al. (2012) considered that all reactions occurred at thermodynamic equilibrium. Later on, in He et al. (2015) and Jang et al. (2018), the incorporation of kinetic rates for reaction precipitations in OGS.5-iPHREEQC was investigated and compared with the modelling results obtained with OGS.5-ChemApp and PHREEQC.
+Very briefly, the studied system consists on a column of 0.5 m, initially containing crushed calcite (CaCO3(s)), which is continuously fluxed with a 1 millimolar (mmol/L) magnesium chloride (MgCl2) solution at pH = 7 and 25°C during 350 min (~ 5.8h) at a constant flow rate of 0.18 L/min.
+Previous to the experiment, the column had been packed giving a mean bulk density and porosity of 1.80 Kg/L and 0.32, respectively. The column was saturated and equilibrated by injecting pure water giving a saturated solution with respect calcite and pH = 9.9.
+
+
+## Model setup
+
+The operator-splitting (OS) model formulation (Strang, 1968) with a sequential non-iterative approach (SNIA) has been used to implement the reactive component transport processes in saturated porous media illustrated in this benchmark. In a ﬁrst step, the mass balance equations describing each component transport present in the fluid is solved according to
+
+
+### Model results
+
+A comparison of the numerical data is shown in the figure below. The numerical results of OGS-6 coincide with those of OGS-5.
+
+{{< img src="../gif/elder.gif" title="Results for numerical (OGS-5 - green, OGS-6 - white) results together with concentration distribution in the domain and mesh resolution for different time steps.">}}
+
+{{< data-link >}}
+
+
+## Literature
+
+He, W., Beyer, C., Fleckenstein, J.H., Jang, E., Kolditz, O., Naumov, D., Kalbacher, T., 2015. A parallelization scheme to simulate reactive transport in the subsurface environment with OGS#IPhreeqc 5.5.7-3.1.2. Geosci. Model Dev. 8 (10), 3333 - 3348
+
+Hummel,W., Berner, U., Curti, E., Thoenen, T., Pearson, F.J., 2002. Nagra/PSI Chemical Thermodynamic Data Base Version 01/01 (Nagra/PSI TDB 01/01) NAPSI_290502.DAT. NAGRA Technical Report 02-16, Wettingen, Switzerland.
+
+Jang, E., Boog, J., He, W., Kalbacher, T., 2018. OpenGeoSys Tutorial. Computational hydrology III: OGS#IPhreeqc coupled reactive transport modeling SpringerBriefs in Earth System Sciences. Springer International Publishing, Cham, 103 pp.
+
+Kolditz, O., Görke, U.-J., Shao, H., Wang, W., 2012. Thermo-Hydro-Mechanical-Chemical Processes in Porous Media: Benchmarks and Examples, Lecture notes in computational science and engineering. Springer. ISBN: 3642271766.

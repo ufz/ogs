@@ -31,6 +31,11 @@ namespace NumLib
 class NonlinearSolverBase;
 }
 
+namespace ChemistryLib
+{
+class PhreeqcIO;
+}
+
 namespace ProcessLib
 {
 class TimeLoop;
@@ -45,6 +50,7 @@ std::unique_ptr<TimeLoop> createTimeLoop(
     std::map<std::string, std::unique_ptr<Process>> const& processes,
     std::map<std::string, std::unique_ptr<NumLib::NonlinearSolverBase>> const&
         nonlinear_solvers,
-    std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes);
+    std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
+    std::unique_ptr<ChemistryLib::PhreeqcIO>& phreeqc_io);
 
 }  // namespace ProcessLib

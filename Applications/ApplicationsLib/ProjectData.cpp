@@ -38,6 +38,10 @@
 #include "ProcessLib/CreateJacobianAssembler.h"
 #include "ProcessLib/DeactivatedSubdomain.h"
 
+// PhreeqcIO
+#include "ChemistryLib/CreatePhreeqcIO.h"
+#include "ProcessLib/ComponentTransport/ComponentTransportProcess.h"
+
 // FileIO
 #include "GeoLib/IO/XmlIO/Boost/BoostXmlGmlInterface.h"
 #include "MeshLib/IO/readMeshFromFile.h"
@@ -337,6 +341,11 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
 
     //! \ogs_file_param{prj__nonlinear_solvers}
     parseNonlinearSolvers(project_config.getConfigSubtree("nonlinear_solvers"));
+
+    parseChemicalSystem(
+        //! \ogs_file_param{prj__chemical_system}
+        project_config.getConfigSubtreeOptional("chemical_system"),
+        output_directory);
 
     //! \ogs_file_param{prj__time_loop}
     parseTimeLoop(project_config.getConfigSubtree("time_loop"),
@@ -923,8 +932,9 @@ void ProjectData::parseTimeLoop(BaseLib::ConfigTree const& config,
 {
     DBUG("Reading time loop configuration.");
 
-    _time_loop = ProcessLib::createTimeLoop(
-        config, output_directory, _processes, _nonlinear_solvers, _mesh_vec);
+    _time_loop = ProcessLib::createTimeLoop(config, output_directory,
+                                            _processes, _nonlinear_solvers,
+                                            _mesh_vec, _chemical_system);
 
     if (!_time_loop)
     {
@@ -994,5 +1004,54 @@ void ProjectData::parseCurves(
             MathLib::createPiecewiseLinearCurve<
                 MathLib::PiecewiseLinearInterpolation>(conf),
             "The curve name is not unique.");
+    }
+}
+
+void ProjectData::parseChemicalSystem(
+    boost::optional<BaseLib::ConfigTree> const& config,
+    std::string const& output_directory)
+{
+    if (!config)
+        return;
+
+    INFO(
+        "Ready for initializing interface to a chemical solver for water "
+        "chemistry calculation.");
+
+    auto const& process = _processes.begin()->second;
+    if (auto const* component_transport_process = dynamic_cast<
+            ProcessLib::ComponentTransport::ComponentTransportProcess const*>(
+            process.get()))
+    {
+        auto const chemical_solver =
+            //! \ogs_file_attr{prj__chemical_system__chemical_solver}
+            config->getConfigAttribute<std::string>("chemical_solver");
+
+        if (boost::iequals(chemical_solver, "Phreeqc"))
+        {
+            INFO(
+                "Configuring phreeqc interface for water chemistry "
+                "calculation.");
+
+            auto const& process_id_to_component_name_map =
+                component_transport_process->getProcessIDToComponentNameMap();
+
+            _chemical_system = ChemistryLib::createPhreeqcIO(
+                _mesh_vec[0]->getNumberOfBaseNodes(),
+                process_id_to_component_name_map, *config, output_directory);
+        }
+        else
+        {
+            OGS_FATAL(
+                "Unknown chemical solver. Please specify Phreeqc as the solver "
+                "for water chemistry calculation instead.");
+        }
+    }
+    else
+    {
+        OGS_FATAL(
+            "The specified type of the process to be solved is not component "
+            "transport process so that water chemistry calculation could not "
+            "be activated.");
     }
 }

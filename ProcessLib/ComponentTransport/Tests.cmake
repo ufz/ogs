@@ -897,3 +897,72 @@ AddTest(
     theis_pcs_0_ts_73_t_100000.000000.vtu
     theis_pcs_0_ts_73_t_100000.000000.vtu darcy_velocity darcy_velocity 1e-10 1e-6
 )
+
+AddTest(
+    NAME 1D_ReactiveMassTransport_EquilibriumPhaseBlockTest
+    PATH Parabolic/ComponentTransport/ReactiveTransport/EquilibriumPhase
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS calcite.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    calcite_pcs_5_ts_42_t_4200.000000_expected.vtu calcite_pcs_5_ts_42_t_4200.000000.vtu pressure pressure 1e-6 1e-10
+    calcite_pcs_5_ts_84_t_8400.000000_expected.vtu calcite_pcs_5_ts_84_t_8400.000000.vtu pressure pressure 1e-6 1e-10
+    calcite_pcs_5_ts_126_t_12600.000000_expected.vtu calcite_pcs_5_ts_126_t_12600.000000.vtu pressure pressure 1e-6 1e-10
+    calcite_pcs_5_ts_168_t_16800.000000_expected.vtu calcite_pcs_5_ts_168_t_16800.000000.vtu pressure pressure 1e-6 1e-10
+    calcite_pcs_5_ts_210_t_21000.000000_expected.vtu calcite_pcs_5_ts_210_t_21000.000000.vtu pressure pressure 1e-6 1e-10
+    calcite_pcs_5_ts_42_t_4200.000000_expected.vtu calcite_pcs_5_ts_42_t_4200.000000.vtu Ca Ca 1e-10 1e-16
+    calcite_pcs_5_ts_84_t_8400.000000_expected.vtu calcite_pcs_5_ts_84_t_8400.000000.vtu Ca Ca 1e-10 1e-16
+    calcite_pcs_5_ts_126_t_12600.000000_expected.vtu calcite_pcs_5_ts_126_t_12600.000000.vtu Ca Ca 1e-10 1e-16
+    calcite_pcs_5_ts_168_t_16800.000000_expected.vtu calcite_pcs_5_ts_168_t_16800.000000.vtu Ca Ca 1e-10 1e-16
+    calcite_pcs_5_ts_210_t_21000.000000_expected.vtu calcite_pcs_5_ts_210_t_21000.000000.vtu Ca Ca 1e-10 1e-16
+    calcite_pcs_5_ts_42_t_4200.000000_expected.vtu calcite_pcs_5_ts_42_t_4200.000000.vtu Cl Cl 1e-10 1e-16
+    calcite_pcs_5_ts_84_t_8400.000000_expected.vtu calcite_pcs_5_ts_84_t_8400.000000.vtu Cl Cl 1e-10 1e-16
+    calcite_pcs_5_ts_126_t_12600.000000_expected.vtu calcite_pcs_5_ts_126_t_12600.000000.vtu Cl Cl 1e-10 1e-16
+    calcite_pcs_5_ts_168_t_16800.000000_expected.vtu calcite_pcs_5_ts_168_t_16800.000000.vtu Cl Cl 1e-10 1e-16
+    calcite_pcs_5_ts_210_t_21000.000000_expected.vtu calcite_pcs_5_ts_210_t_21000.000000.vtu Cl Cl 1e-10 1e-16
+    calcite_pcs_5_ts_42_t_4200.000000_expected.vtu calcite_pcs_5_ts_42_t_4200.000000.vtu H H 1e-10 1e-16
+    calcite_pcs_5_ts_84_t_8400.000000_expected.vtu calcite_pcs_5_ts_84_t_8400.000000.vtu H H 1e-10 1e-16
+    calcite_pcs_5_ts_126_t_12600.000000_expected.vtu calcite_pcs_5_ts_126_t_12600.000000.vtu H H 1e-10 1e-16
+    calcite_pcs_5_ts_168_t_16800.000000_expected.vtu calcite_pcs_5_ts_168_t_16800.000000.vtu H H 1e-10 1e-16
+    calcite_pcs_5_ts_210_t_21000.000000_expected.vtu calcite_pcs_5_ts_210_t_21000.000000.vtu H H 1e-10 1e-16
+    calcite_pcs_5_ts_42_t_4200.000000_expected.vtu calcite_pcs_5_ts_42_t_4200.000000.vtu Mg Mg 1e-10 1e-16
+    calcite_pcs_5_ts_84_t_8400.000000_expected.vtu calcite_pcs_5_ts_84_t_8400.000000.vtu Mg Mg 1e-10 1e-16
+    calcite_pcs_5_ts_126_t_12600.000000_expected.vtu calcite_pcs_5_ts_126_t_12600.000000.vtu Mg Mg 1e-10 1e-16
+    calcite_pcs_5_ts_168_t_16800.000000_expected.vtu calcite_pcs_5_ts_168_t_16800.000000.vtu Mg Mg 1e-10 1e-16
+    calcite_pcs_5_ts_210_t_21000.000000_expected.vtu calcite_pcs_5_ts_210_t_21000.000000.vtu Mg Mg 1e-10 1e-16
+    RUNTIME 25
+)
+
+AddTest(
+    NAME 1D_ReactiveMassTransport_KineticReactantBlockTest
+    PATH Parabolic/ComponentTransport/ReactiveTransport/KineticReactant
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS 1d_isofrac.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    1d_isofrac_pcs_3_ts_42_t_4200.000000_expected.vtu 1d_isofrac_pcs_3_ts_42_t_4200.000000.vtu pressure pressure 1e-6 1e-10
+    1d_isofrac_pcs_3_ts_84_t_8400.000000_expected.vtu 1d_isofrac_pcs_3_ts_84_t_8400.000000.vtu pressure pressure 1e-6 1e-10
+    1d_isofrac_pcs_3_ts_126_t_12600.000000_expected.vtu 1d_isofrac_pcs_3_ts_126_t_12600.000000.vtu pressure pressure 1e-6 1e-10
+    1d_isofrac_pcs_3_ts_168_t_16800.000000_expected.vtu 1d_isofrac_pcs_3_ts_168_t_16800.000000.vtu pressure pressure 1e-6 1e-10
+    1d_isofrac_pcs_3_ts_210_t_21000.000000_expected.vtu 1d_isofrac_pcs_3_ts_210_t_21000.000000.vtu pressure pressure 1e-6 1e-10
+    1d_isofrac_pcs_3_ts_42_t_4200.000000_expected.vtu 1d_isofrac_pcs_3_ts_42_t_4200.000000.vtu Synthetica Synthetica 1e-10 1e-16
+    1d_isofrac_pcs_3_ts_84_t_8400.000000_expected.vtu 1d_isofrac_pcs_3_ts_84_t_8400.000000.vtu Synthetica Synthetica 1e-10 1e-16
+    1d_isofrac_pcs_3_ts_126_t_12600.000000_expected.vtu 1d_isofrac_pcs_3_ts_126_t_12600.000000.vtu Synthetica Synthetica 1e-10 1e-16
+    1d_isofrac_pcs_3_ts_168_t_16800.000000_expected.vtu 1d_isofrac_pcs_3_ts_168_t_16800.000000.vtu Synthetica Synthetica 1e-10 1e-16
+    1d_isofrac_pcs_3_ts_210_t_21000.000000_expected.vtu 1d_isofrac_pcs_3_ts_210_t_21000.000000.vtu Synthetica Synthetica 1e-10 1e-16
+    1d_isofrac_pcs_3_ts_42_t_4200.000000_expected.vtu 1d_isofrac_pcs_3_ts_42_t_4200.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
+    1d_isofrac_pcs_3_ts_84_t_8400.000000_expected.vtu 1d_isofrac_pcs_3_ts_84_t_8400.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
+    1d_isofrac_pcs_3_ts_126_t_12600.000000_expected.vtu 1d_isofrac_pcs_3_ts_126_t_12600.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
+    1d_isofrac_pcs_3_ts_168_t_16800.000000_expected.vtu 1d_isofrac_pcs_3_ts_168_t_16800.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
+    1d_isofrac_pcs_3_ts_210_t_21000.000000_expected.vtu 1d_isofrac_pcs_3_ts_210_t_21000.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
+    1d_isofrac_pcs_3_ts_42_t_4200.000000_expected.vtu 1d_isofrac_pcs_3_ts_42_t_4200.000000.vtu H H 1e-10 1e-16
+    1d_isofrac_pcs_3_ts_84_t_8400.000000_expected.vtu 1d_isofrac_pcs_3_ts_84_t_8400.000000.vtu H H 1e-10 1e-16
+    1d_isofrac_pcs_3_ts_126_t_12600.000000_expected.vtu 1d_isofrac_pcs_3_ts_126_t_12600.000000.vtu H H 1e-10 1e-16
+    1d_isofrac_pcs_3_ts_168_t_16800.000000_expected.vtu 1d_isofrac_pcs_3_ts_168_t_16800.000000.vtu H H 1e-10 1e-16
+    1d_isofrac_pcs_3_ts_210_t_21000.000000_expected.vtu 1d_isofrac_pcs_3_ts_210_t_21000.000000.vtu H H 1e-10 1e-16
+    RUNTIME 85
+)

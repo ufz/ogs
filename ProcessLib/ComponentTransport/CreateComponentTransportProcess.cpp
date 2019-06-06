@@ -80,6 +80,7 @@ std::unique_ptr<Process> createComponentTransportProcess(
             it->get().getNumberOfComponents());
     }
 
+    std::vector<std::pair<int, std::string>> process_id_to_component_name_map;
     // Allocate the collected process variables into a two-dimensional vector,
     // depending on what scheme is adopted
     if (use_monolithic_scheme)  // monolithic scheme.
@@ -95,6 +96,16 @@ std::unique_ptr<Process> createComponentTransportProcess(
         {
             per_process_variable.emplace_back(pv);
             process_variables.push_back(std::move(per_process_variable));
+        }
+
+        auto variable_id = 0;
+        for (unsigned process_id = 1; process_id < process_variables.size();
+             process_id++)
+        {
+            auto const& transport_process_variable =
+                process_variables[process_id][variable_id].get().getName();
+            process_id_to_component_name_map.emplace_back(
+                process_id, transport_process_variable);
         }
     }
 
@@ -188,7 +199,8 @@ std::unique_ptr<Process> createComponentTransportProcess(
         mesh, std::move(jacobian_assembler), parameters, integration_order,
         std::move(process_variables), std::move(process_data),
         std::move(secondary_variables), std::move(named_function_caller),
-        use_monolithic_scheme, std::move(surfaceflux));
+        use_monolithic_scheme, std::move(surfaceflux),
+        std::move(process_id_to_component_name_map));
 }
 
 }  // namespace ComponentTransport

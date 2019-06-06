@@ -32,6 +32,7 @@ target_link_libraries(ProcessLib
         MeshLib
         NumLib
         logog
+        ChemistryLib
     PRIVATE
         ParameterLib
 )
