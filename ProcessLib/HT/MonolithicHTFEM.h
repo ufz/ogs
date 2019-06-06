@@ -93,6 +93,8 @@ public:
             pressure_index, pressure_index);
         auto Mpp = local_M.template block<pressure_size, pressure_size>(
             pressure_index, pressure_index);
+        auto MpT = local_M.template block<pressure_size, temperature_size>(
+            pressure_index, temperature_index);
         auto Bp = local_b.template block<pressure_size, 1>(pressure_index, 0);
 
         ParameterLib::SpatialPosition pos;
@@ -207,6 +209,7 @@ public:
                                  specific_heat_capacity_fluid, pos, t, dt) *
                              N.transpose() * N;
             Mpp.noalias() += (w * porosity * drho_dp) * N.transpose() * N;
+            MpT.noalias() += (w * drho_dT) * N.transpose() * porosity * N;
             if (process_data.has_gravity)
             {
                 Bp += w * fluid_density * dNdx.transpose() * K_over_mu * b;
