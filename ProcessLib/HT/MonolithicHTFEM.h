@@ -13,6 +13,7 @@
 
 #include <Eigen/Dense>
 #include <vector>
+#include <boost/math/special_functions/pow.hpp>
 
 #include "HTProcessData.h"
 #include "MaterialLib/MPL/Medium.h"
@@ -212,10 +213,9 @@ public:
             MpT.noalias() += (w * drho_dT) * N.transpose() * porosity * N;
             if (process_data.has_gravity)
             {
-                Bp += w * fluid_density * dNdx.transpose() * K_over_mu * b;
+                Bp += w * boost::math::pow<2>(fluid_density) *
+                      dNdx.transpose() * K_over_mu * b;
             }
-            /* with Oberbeck-Boussing assumption density difference only exists
-             * in buoyancy effects */
         }
     }
 
