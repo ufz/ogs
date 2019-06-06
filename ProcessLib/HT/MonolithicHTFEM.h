@@ -81,9 +81,9 @@ public:
         auto local_b = MathLib::createZeroedVector<LocalVectorType>(
             local_b_data, local_matrix_size);
 
-        auto Ktt = local_K.template block<temperature_size, temperature_size>(
+        auto KTT = local_K.template block<temperature_size, temperature_size>(
             temperature_index, temperature_index);
-        auto Mtt = local_M.template block<temperature_size, temperature_size>(
+        auto MTT = local_M.template block<temperature_size, temperature_size>(
             temperature_index, temperature_index);
         auto Kpp = local_K.template block<pressure_size, pressure_size>(
             pressure_index, pressure_index);
@@ -178,13 +178,13 @@ public:
                 this->getThermalConductivityDispersivity(
                     vars, porosity, fluid_density, specific_heat_capacity_fluid,
                     velocity, I);
-            Ktt.noalias() +=
+            KTT.noalias() +=
                 (dNdx.transpose() * thermal_conductivity_dispersivity * dNdx +
                  N.transpose() * velocity.transpose() * dNdx * fluid_density *
                      specific_heat_capacity_fluid) *
                 w;
             Kpp.noalias() += w * dNdx.transpose() * K_over_mu * dNdx;
-            Mtt.noalias() +=
+            MTT.noalias() +=
                 w *
                 this->getHeatEnergyCoefficient(vars, porosity, fluid_density,
                                                specific_heat_capacity_fluid) *
