@@ -11,7 +11,7 @@
       {{ if eq $subsection "tools"}}Tools{{ end }}
       </span>
     </div>
-    <ul class="list-reset text-sm">
+    <ul class="text-sm">
       {{ $currentPage := . }}
       {{ $currentMenu := index .Site.Menus $subsection }}
       {{ range $currentMenu }}
