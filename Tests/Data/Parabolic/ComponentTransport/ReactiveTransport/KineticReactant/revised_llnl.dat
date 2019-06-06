@@ -1,3 +1,6 @@
+#Revised original llnl.dat file. Added two custom synthetic solution
+#species (synthetica and syntheticb) and one associated mineral
+#precipitate (productc).
 #  $Id: llnl.dat 4023 2010-02-09 21:02:42Z dlpark $
 #Data are from 'thermo.com.V8.R6.230' prepared by Jim Johnson at
 #Lawrence Livermore National Laboratory, in Geochemist's Workbench
@@ -46,6 +49,21 @@ NAMED_EXPRESSIONS
 #	Enthalpy of formation:	-2.9 kcal/mol
 	        -analytic   38.0229    7.99407E-03   -2.7655e+004  -1.4506e+001  199838.45
 #	Range:  0-300
+
+SOLUTION_MASTER_SPECIES
+Synthetica Synthetica+ 0.0 Synthetica 55
+Syntheticb Syntheticb- 0.0 Syntheticb 55
+
+SOLUTION_SPECIES
+Synthetica+ = Synthetica+
+log_k 0.0
+Syntheticb- = Syntheticb-
+log_k 0.0
+
+PHASES
+Productc
+SyntheticaSyntheticb = Synthetica+ + Syntheticb-
+log_k -5
 
 SOLUTION_MASTER_SPECIES
 
