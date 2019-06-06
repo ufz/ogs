@@ -45,6 +45,10 @@ let mycolors = {
 
 module.exports = {
   theme: {
+    container: {
+      center: true,
+      padding: '2rem',
+    },
     mycolors: mycolors,
     fontFamily: {
       'sans': [
