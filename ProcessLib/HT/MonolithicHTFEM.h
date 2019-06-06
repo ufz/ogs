@@ -218,6 +218,12 @@ public:
 
         return this->getIntPtDarcyVelocityLocal(t, local_p, local_x, cache);
     }
+
+private:
+    using HTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::pressure_index;
+    using HTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::pressure_size;
+    using HTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::temperature_index;
+    using HTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::temperature_size;
 };
 
 }  // namespace HT
