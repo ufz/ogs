@@ -1051,6 +1051,8 @@ void ProjectData::parseChemicalSystem(
     else
 #endif
     {
+        (void)output_directory;
+
         OGS_FATAL(
             "The specified type of the process to be solved is not component "
             "transport process so that water chemistry calculation could not "
