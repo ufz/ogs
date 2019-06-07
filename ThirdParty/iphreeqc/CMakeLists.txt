@@ -1,4 +1,4 @@
-project(IPhreeqc)
+project(IPhreeqc CXX C)
 set(IPHREEQC_VERSION 3.5.0)
 
 set(SOURCES
@@ -86,6 +86,9 @@ set(SOURCES
     src/src/phreeqcpp/common/Utils.cxx
     src/src/phreeqcpp/PhreeqcKeywords/Keywords.cpp
 )
+
+# compile Var.c as c++
+SET_SOURCE_FILES_PROPERTIES(src/src/Var.c PROPERTIES LANGUAGE CXX)
 
 add_library(iphreeqc STATIC ${SOURCES})
 target_include_directories(iphreeqc PRIVATE
