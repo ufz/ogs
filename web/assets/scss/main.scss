@@ -1,4 +1,4 @@
-@tailwind preflight;
+@tailwind base;
 
 @tailwind components;
 
@@ -6,27 +6,27 @@
 @import url('https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700');
 
 body {
-  color: config('mycolors.text-default');
+  color: theme('mycolors.text-default');
 }
 /* -- Links -- */
 a {
-  color: config('mycolors.text-primary');
+  color: theme('mycolors.text-primary');
   @apply .no-underline;
 }
 a:hover {
-  color: config('mycolors.text-accent');
+  color: theme('mycolors.text-accent');
 }
 a.active {
-  color: config('mycolors.text-accent');
+  color: theme('mycolors.text-accent');
 }
 nav a {
-  color: config('mycolors.text-default');
+  color: theme('mycolors.text-default');
 }
 nav a.active {
-  color: config('mycolors.text-default');
+  color: theme('mycolors.text-default');
   @apply .border-b-2;
   /* @apply .border-orange; */
-  border-color: config('mycolors.text-accent');
+  border-color: theme('mycolors.text-accent');
 }
 
 /* -- Typography -- */
@@ -35,16 +35,20 @@ h1, h2, h3, h4, h5, h6 {
   @apply .font-medium;
   @apply .mt-6;
   @apply .mb-4;
-
 }
 
 h2, h3 {
-  @apply .border-b .border-grey-dark;
+  @apply .border-b .border-gray-600;
 }
 
 h1 {
   @apply .mt-0;
 }
+
+h1 { @apply .text-3xl; }
+h2 { @apply .text-2xl; }
+h3 { @apply .text-xl; }
+h4 { @apply .text-lg; }
 
 // Anchor links
 h2 > .headerlink,
@@ -64,7 +68,7 @@ h4 > .headerlink {
 // Inline code and blocks
 code {
   @apply .p-px;
-  @apply .bg-grey-lighter;
+  @apply .bg-gray-200;
   @apply .rounded-sm;
 }
 
@@ -83,22 +87,22 @@ p, ul, pre {
 }
 
 .inverse {
-  color: config('mycolors.text-inverse');
-  background-color: config('mycolors.bg-inverse');
+  color: theme('mycolors.text-inverse');
+  background-color: theme('mycolors.bg-inverse');
 }
 
 .inverse a {
-  color: config('mycolors.text-inverse');
+  color: theme('mycolors.text-inverse');
   @apply .border-b;
-  border-color: config('mycolors.text-accent');
+  border-color: theme('mycolors.text-accent');
 }
 .inverse a:hover {
-  border-color: config('mycolors.text-inverse');
-  color: config('mycolors.text-accent');
+  border-color: theme('mycolors.text-inverse');
+  color: theme('mycolors.text-accent');
 }
 
 blockquote {
-  @apply .bg-grey-lighter;
+  @apply .bg-gray-200;
   @apply .rounded;
   @apply .border-l-8;
   @apply .italic;
@@ -134,9 +138,6 @@ cite::before {
 /* -- Table of contents -- */
 #TableOfContents {
   @apply .text-sm;
-  ul:first-child {
-    @apply .list-reset;
-  }
 }
 #TableOfContents>ul:first-child>li>ul>li>a {
   @apply .font-bold;
@@ -152,42 +153,42 @@ cite::before {
 
 .win {
   @apply .os-div;
-  @apply .border-green-lighter;
+  @apply .border-green-200;
 }
 
 .linux {
   @apply .os-div;
-  @apply .border-orange-lighter;
+  @apply .border-orange-200;
 }
 
 .mac {
   @apply .os-div;
-  @apply .border-blue-lighter;
+  @apply .border-blue-200;
 }
 
 #btn-win.active {
-  @apply .text-green;
-  @apply .border-green;
+  @apply .text-green-500;
+  @apply .border-green-500;
 }
 
 #btn-linux.active {
-  @apply .text-orange;
-  @apply .border-orange;
+  @apply .text-orange-500;
+  @apply .border-orange-500;
 }
 
 #btn-mac.active {
-  @apply .text-blue;
-  @apply .border-blue;
+  @apply .text-blue-500;
+  @apply .border-blue-500;
 }
 
 #btn-win:hover {
-  @apply .border-green;
+  @apply .border-green-500;
 }
 #btn-linux:hover {
-  @apply .border-orange;
+  @apply .border-orange-500;
 }
 #btn-mac:hover {
-  @apply .border-blue;
+  @apply .border-blue-500;
 }
 
 /* -- Misc -- */
@@ -205,21 +206,21 @@ table {
 
 /* -- Buttons -- */
 a.button {
-  @apply .bg-white .text-grey-darkest .py-4 .px-8 .border .border-grey-light .shadow .rounded-lg;
+  @apply .bg-white .text-gray-900 .py-4 .px-8 .border .border-gray-300 .shadow .rounded-lg;
   @apply .font-serif .font-medium .uppercase;
-  color: config('mycolors.text-primary');
+  color: theme('mycolors.text-primary');
 }
 a.button:hover {
-  @apply .bg-grey-lightest;
+  @apply .bg-gray-100;
 }
 
 a.btn-inverse {
-  background: config('mycolors.bg-inverse');
-  color: config('mycolors.text-inverse');
+  background: theme('mycolors.bg-inverse');
+  color: theme('mycolors.text-inverse');
 }
 a.btn-inverse:hover {
-  background: config('mycolors.bg-default');
-  color: config('mycolors.text-accent');
+  background: theme('mycolors.bg-default');
+  color: theme('mycolors.text-accent');
 }
 
 /* -------------------------------- Images ---------------------------------- */
@@ -237,7 +238,7 @@ figcaption {
 
 /* ------------------------------- Components ------------------------------- */
 .btn {
-  @apply text-grey-darkest;
+  @apply text-gray-900;
   @apply .px-2;
   @apply .py-1;
   @apply .border-b-2;
@@ -245,21 +246,21 @@ figcaption {
 }
 
 .btn.active {
-  @apply .border-orange;
+  @apply .border-orange-500;
 }
 
 .note {
-  @apply .bg-orange-lightest;
+  @apply .bg-orange-100;
   @apply .px-4;
   @apply .py-1;
   @apply .mb-4;
   @apply .border-l-4;
-  @apply .border-orange;
+  @apply .border-orange-500;
   @apply .-ml-4;
 }
 
 .note h3 {
-  @apply .text-orange;
+  @apply .text-orange-500;
   @apply .mb-2;
 }
 
@@ -269,18 +270,18 @@ figcaption {
 .slick-prev:before,
 .slick-next:before {
   font-size: 24px;
-  color: config('mycolors.text-primary');
+  color: theme('mycolors.text-primary');
 }
 
 .slick-dots li button:before,
 .slick-dots li.slick-active button:before {
   font-size: 8px;
-  color: config('mycolors.text-primary');
+  color: theme('mycolors.text-primary');
 }
 
 .inverse .slick-prev:before,
 .inverse .slick-next:before {
-  color: config('mycolors.text-inverse');
+  color: theme('mycolors.text-inverse');
 }
 
 /* Vertically center images */
@@ -297,7 +298,7 @@ figcaption {
   color: #999;
 }
 .algolia-autocomplete .aa-dropdown-menu {
-  @apply .bg-grey-lightest;
+  @apply .bg-gray-100;
   @apply .border-2;
   @apply .p-1;
   @apply .text-sm;
@@ -307,11 +308,11 @@ figcaption {
   @apply .p-1;
 }
 .algolia-autocomplete .aa-dropdown-menu .aa-suggestion.aa-cursor {
-  @apply .bg-blue-lighter;
+  @apply .bg-blue-200;
 }
 .algolia-autocomplete .aa-dropdown-menu .aa-suggestion em {
   @apply .font-bold;
-  @apply .text-orange;
+  @apply .text-orange-500;
 }
 
 @tailwind utilities;

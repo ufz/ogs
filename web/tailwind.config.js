@@ -24,8 +24,6 @@ View the full documentation at https://tailwindcss.com.
 |
 */
 
-let defaultConfig = require('tailwindcss/defaultConfig')()
-
 let primaryColor = "#104EB2";
 let accentColor = "#f6993f";
 let textColor = "#333333";
@@ -46,53 +44,51 @@ let mycolors = {
 }
 
 module.exports = {
-  mycolors: mycolors,
-
-  fonts: {
-    'sans': [
-      'Open Sans',
-      'system-ui',
-      'BlinkMacSystemFont',
-      '-apple-system',
-      'Segoe UI',
-      'Oxygen',
-      'Ubuntu',
-      'Cantarell',
-      'Fira Sans',
-      'Droid Sans',
-      'Helvetica Neue',
-      'sans-serif',
-    ],
-    'serif': [
-      'Roboto',
-      'Constantia',
-      'Lucida Bright',
-      'Lucidabright',
-      'Lucida Serif',
-      'Lucida',
-      'DejaVu Serif',
-      'Bitstream Vera Serif',
-      'Liberation Serif',
-      'Georgia',
-      'serif',
-    ],
-    'serif-caps': [
-      'serif'
-    ],
-    'mono': [
-      'Menlo',
-      'Monaco',
-      'Consolas',
-      'Liberation Mono',
-      'Courier New',
-      'monospace',
-    ]
-  },
-
-  plugins: [
-    require('tailwindcss/plugins/container')({
+  theme: {
+    container: {
       center: true,
-      // padding: '1rem',
-    }),
-  ],
+      padding: '2rem',
+    },
+    mycolors: mycolors,
+    fontFamily: {
+      'sans': [
+        'Open Sans',
+        'system-ui',
+        'BlinkMacSystemFont',
+        '-apple-system',
+        'Segoe UI',
+        'Oxygen',
+        'Ubuntu',
+        'Cantarell',
+        'Fira Sans',
+        'Droid Sans',
+        'Helvetica Neue',
+        'sans-serif',
+      ],
+      'serif': [
+        'Roboto',
+        'Constantia',
+        'Lucida Bright',
+        'Lucidabright',
+        'Lucida Serif',
+        'Lucida',
+        'DejaVu Serif',
+        'Bitstream Vera Serif',
+        'Liberation Serif',
+        'Georgia',
+        'serif',
+      ],
+      'serif-caps': [
+        'serif'
+      ],
+      'mono': [
+        'Menlo',
+        'Monaco',
+        'Consolas',
+        'Liberation Mono',
+        'Courier New',
+        'monospace',
+      ]
+    },
+  },
 }
