@@ -80,6 +80,6 @@ private:
     std::unique_ptr<Output> const _output;
     std::vector<std::pair<int, std::string>> const&
         _process_id_to_component_name_map;
-    double _dt;
+    double _dt = std::numeric_limits<double>::quiet_NaN();
 };
 }  // namespace ChemistryLib
