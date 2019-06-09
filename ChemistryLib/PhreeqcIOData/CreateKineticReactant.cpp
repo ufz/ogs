@@ -29,6 +29,11 @@ std::vector<KineticReactant> createKineticReactants(
         //! \ogs_file_param{prj__chemical_system__kinetic_reactants__kinetic_reactant__name}
         auto name = reactant_config.getConfigParameter<std::string>("name");
 
+        auto chemical_formula =
+            //! \ogs_file_param{prj__chemical_system__kinetic_reactants__kinetic_reactant__chemical_formula}
+            reactant_config.getConfigParameter<std::string>("chemical_formula",
+                                                            "");
+
         double const initial_amount =
             //! \ogs_file_param{prj__chemical_system__kinetic_reactants__kinetic_reactant__initial_amount}
             reactant_config.getConfigParameter<double>("initial_amount");
@@ -38,8 +43,10 @@ std::vector<KineticReactant> createKineticReactants(
             reactant_config.getConfigParameterOptional<std::vector<double>>(
                 "parameters");
 
-        kinetic_reactants.emplace_back(
-            std::move(name), initial_amount, std::move(parameters));
+        kinetic_reactants.emplace_back(std::move(name),
+                                       std::move(chemical_formula),
+                                       initial_amount,
+                                       std::move(parameters));
     }
 
     return kinetic_reactants;
