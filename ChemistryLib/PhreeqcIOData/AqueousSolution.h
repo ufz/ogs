@@ -13,6 +13,8 @@
 #include <string>
 #include <vector>
 
+#include "ChemistryLib/Output.h"
+
 namespace ChemistryLib
 {
 struct Component
@@ -21,6 +23,7 @@ struct Component
 
     std::string const name;
     double amount;
+    static const ItemType item_type = ItemType::Component;
 };
 
 enum class MeansOfAdjustingCharge
