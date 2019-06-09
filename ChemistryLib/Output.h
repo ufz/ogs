@@ -76,10 +76,10 @@ struct OutputItem
 
 struct Output
 {
-    Output(BasicOutputSetups basic_output_setups_,
+    Output(BasicOutputSetups&& basic_output_setups_,
            std::vector<OutputItem>&& accepted_items_,
            std::vector<int>&& dropped_item_ids_)
-        : basic_output_setups(basic_output_setups_),
+        : basic_output_setups(std::move(basic_output_setups_)),
           accepted_items(std::move(accepted_items_)),
           dropped_item_ids(std::move(dropped_item_ids_))
     {

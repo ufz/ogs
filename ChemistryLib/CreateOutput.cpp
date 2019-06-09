@@ -56,7 +56,7 @@ std::unique_ptr<Output> createOutput(
         dvalue_item_id += 2 * (i + 1);
     }
 
-    return std::make_unique<Output>(basic_output_setups,
+    return std::make_unique<Output>(std::move(basic_output_setups),
                                     std::move(accepted_items),
                                     std::move(dropped_item_ids));
 }
