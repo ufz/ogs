@@ -37,8 +37,8 @@ public:
                display_distance + display_current_time + display_time_step;
     }
 
-    friend std::ofstream& operator<<(
-        std::ofstream& out, BasicOutputSetups const& basic_output_setups);
+    friend std::ostream& operator<<(
+        std::ostream& out, BasicOutputSetups const& basic_output_setups);
 
     std::string const output_file;
 
@@ -97,7 +97,7 @@ struct Output
         return matching_items;
     }
 
-    friend std::ofstream& operator<<(std::ofstream& out, Output const& output);
+    friend std::ostream& operator<<(std::ostream& os, Output const& output);
 
     BasicOutputSetups const basic_output_setups;
     std::vector<OutputItem> const accepted_items;

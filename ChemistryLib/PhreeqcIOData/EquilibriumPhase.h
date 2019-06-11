@@ -33,9 +33,8 @@ struct EquilibriumPhase
     {
     }
 
-    friend std::ofstream& operator<<(
-        std::ofstream& out,
-        std::vector<EquilibriumPhase> const& equilibrium_phases);
+    friend std::ostream& operator<<(std::ostream& os,
+                                    EquilibriumPhase const& equilibrium_phase);
 
     std::string const name;
     double amount;

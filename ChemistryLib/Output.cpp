@@ -7,69 +7,69 @@
  *
  */
 
-#include <fstream>
+#include <ostream>
 
 #include "Output.h"
 
 namespace ChemistryLib
 {
-std::ofstream& operator<<(std::ofstream& out,
-                          BasicOutputSetups const& basic_output_setups)
+std::ostream& operator<<(std::ostream& os,
+                         BasicOutputSetups const& basic_output_setups)
 {
-    out << "-file " << basic_output_setups.output_file << "\n";
-    out << "-high_precision " << std::boolalpha
-        << basic_output_setups.use_high_precision << "\n";
-    out << "-simulation " << std::boolalpha
-        << basic_output_setups.display_simulation_id << "\n";
-    out << "-state " << std::boolalpha << basic_output_setups.display_state
-        << "\n";
-    out << "-distance " << std::boolalpha
-        << basic_output_setups.display_distance << "\n";
-    out << "-time " << std::boolalpha
-        << basic_output_setups.display_current_time << "\n";
-    out << "-step " << std::boolalpha << basic_output_setups.display_time_step
-        << "\n";
+    os << "-file " << basic_output_setups.output_file << "\n";
+    os << "-high_precision " << std::boolalpha
+       << basic_output_setups.use_high_precision << "\n";
+    os << "-simulation " << std::boolalpha
+       << basic_output_setups.display_simulation_id << "\n";
+    os << "-state " << std::boolalpha << basic_output_setups.display_state
+       << "\n";
+    os << "-distance " << std::boolalpha << basic_output_setups.display_distance
+       << "\n";
+    os << "-time " << std::boolalpha << basic_output_setups.display_current_time
+       << "\n";
+    os << "-step " << std::boolalpha << basic_output_setups.display_time_step
+       << "\n";
 
-    return out;
+    return os;
 }
 
-std::ofstream& operator<<(std::ofstream& out, Output const& output)
+std::ostream& operator<<(std::ostream& os, Output const& output)
 {
-    out << output.basic_output_setups;
+    os << output.basic_output_setups;
 
     auto const component_items =
         output.getOutputItemsByItemType(ItemType::Component);
-    out << "-totals";
+    os << "-totals";
     for (auto const& component_item : component_items)
     {
-        out << " " << component_item.name;
+        os << " " << component_item.name;
     }
-    out << "\n";
+    os << "\n";
 
     auto const equilibrium_phase_items =
         output.getOutputItemsByItemType(ItemType::EquilibriumPhase);
     if (!equilibrium_phase_items.empty())
     {
-        out << "-equilibrium_phases";
+        os << "-equilibrium_phases";
         for (auto const& equilibrium_phase_item : equilibrium_phase_items)
         {
-            out << " " << equilibrium_phase_item.name;
+            os << " " << equilibrium_phase_item.name;
         }
-        out << "\n";
+        os << "\n";
     }
 
     auto const kinetic_reactant_items =
         output.getOutputItemsByItemType(ItemType::KineticReactant);
     if (!kinetic_reactant_items.empty())
     {
-        out << "-kinetic_reactants";
+        os << "-kinetic_reactants";
         for (auto const& kinetic_reactant_item : kinetic_reactant_items)
         {
-            out << " " << kinetic_reactant_item.name;
+            os << " " << kinetic_reactant_item.name;
         }
-        out << "\n";
+        os << "\n";
     }
 
-    return out;
+    return os;
 }
 }  // namespace ChemistryLib

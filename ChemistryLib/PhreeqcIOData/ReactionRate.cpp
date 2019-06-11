@@ -7,29 +7,24 @@
  *
  */
 
-#include <fstream>
+#include <ostream>
 
 #include "ReactionRate.h"
 
 namespace ChemistryLib
 {
-std::ofstream& operator<<(std::ofstream& out,
-                          std::vector<ReactionRate> const& reaction_rates)
+std::ostream& operator<<(std::ostream& os, ReactionRate const& reaction_rate)
 {
-    for (auto const& reaction_rate : reaction_rates)
+    os << reaction_rate.kinetic_reactant << "\n";
+    os << "-start" << "\n";
+    int line_number = 1;
+    for (auto const& expression_statement : reaction_rate.expression_statements)
     {
-        out << reaction_rate.kinetic_reactant << "\n";
-        out << "-start" << "\n";
-        int line_number = 1;
-        for (auto const& expression_statement :
-             reaction_rate.expression_statements)
-        {
-            out << line_number << " " << expression_statement << "\n";
-            ++line_number;
-        }
-        out << "-end" << "\n";
+        os << line_number << " " << expression_statement << "\n";
+        ++line_number;
     }
+    os << "-end" << "\n";
 
-    return out;
+    return os;
 }
 }  // namespace ChemistryLib
