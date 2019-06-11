@@ -38,11 +38,13 @@ $ source scripts/env/eve/cli.sh
 
 Then do the [build configuration]({{< ref "build-configuration.pandoc" >}}) and [build]({{< ref "/docs/devguide/getting-started/build.pandoc" >}}) the project.
 
-## Install and use Conan
+## Optional steps
+
+### Install and use Conan
 
 Follow the instructions on using Python's `virtualenv` [on the Eve-wiki](https://wiki.ufz.de/eve/index.php/Python#virtualenv) for setting up a local Python environment. Then you can `pip install conan` and use Conan.
 
-## Additional Features
+### Additional Features
 
 Generating Doxygen documentation:
 
