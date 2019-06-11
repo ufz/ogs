@@ -47,6 +47,19 @@ public:
           _output(std::move(output)),
           _process_id_to_component_name_map(process_id_to_component_name_map)
     {
+        // initialize phreeqc configurations
+        auto const instance_id = CreateIPhreeqc();
+
+        // load a specific database in the working directory
+        if (LoadDatabase(instance_id, _database.c_str()) != 0)
+        {
+            OGS_FATAL(
+                "Failed in loading the specified thermodynamic database file: "
+                "%s.",
+                _database.c_str());
+        }
+
+        SetSelectedOutputFileOn(instance_id, 1);
     }
 
     void doWaterChemistryCalculation(
