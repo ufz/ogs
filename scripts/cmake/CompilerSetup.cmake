@@ -85,8 +85,8 @@ if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR COMPILER_IS_INTEL)
     endif()
 
     if(COMPILER_IS_GCC)
-        if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "6.2")
-            message(FATAL_ERROR "GCC minimum required version is 6.2! You are \
+        if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "7.3")
+            message(FATAL_ERROR "GCC minimum required version is 7.3! You are \
                 using ${CMAKE_CXX_COMPILER_VERSION}.")
         endif()
         add_compile_options(-fext-numeric-literals)

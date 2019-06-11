@@ -22,6 +22,10 @@ if(MODULE_CMD)
         install(FILES ${PROJECT_BINARY_DIR}/module.lua DESTINATION ${MODULE_DIR}
             RENAME ${MODULE_NAME}.lua)
     endif()
+else()
+    if("${HOSTNAME}" MATCHES "frontend.*")
+        message(FATAL_ERROR "MODULE_CMD not found but required on eve frontends!")
+    endif()
 endif()
 
 set(README_PLATFORM_INSTRUCTIONS

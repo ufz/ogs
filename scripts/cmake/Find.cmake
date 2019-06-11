@@ -44,7 +44,7 @@ find_program(PIP pip)
 find_program(PANDOC_CITEPROC pandoc-citeproc)
 
 find_program(MODULE_CMD modulecmd
-    PATHS /usr/local/modules/3.3.4-1/Modules/3.3.4/bin)
+    PATHS /usr/local/modules/3.2.10-1/Modules/3.2.10/bin)
 
 ######################
 ### Find libraries ###
