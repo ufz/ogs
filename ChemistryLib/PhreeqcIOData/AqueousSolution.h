@@ -13,6 +13,8 @@
 #include <string>
 #include <vector>
 
+#include "ChemistryLib/Output.h"
+
 namespace ChemistryLib
 {
 struct Component
@@ -20,7 +22,8 @@ struct Component
     explicit Component(std::string name_) : name(std::move(name_)) {}
 
     std::string const name;
-    double amount;
+    double amount = std::numeric_limits<double>::quiet_NaN();
+    static const ItemType item_type = ItemType::Component;
 };
 
 enum class MeansOfAdjustingCharge
@@ -50,7 +53,7 @@ struct AqueousSolution
 
     double temperature;
     double pressure;
-    double pH;
+    double pH = std::numeric_limits<double>::quiet_NaN();
     double pe;
     std::vector<Component> components;
     MeansOfAdjustingCharge const means_of_adjusting_charge;

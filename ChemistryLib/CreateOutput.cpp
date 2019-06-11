@@ -7,7 +7,9 @@
  *
  */
 
+#include <algorithm>
 #include <numeric>
+
 #include "CreateOutput.h"
 
 namespace ChemistryLib
@@ -21,20 +23,16 @@ std::unique_ptr<Output> createOutput(
     // Mark which phreeqc output items will be held.
     std::vector<OutputItem> accepted_items{{"pH", ItemType::pH},
                                            {"pe", ItemType::pe}};
-    for (auto const& component : components)
-    {
-        accepted_items.emplace_back(component.name, ItemType::Component);
-    }
-    for (auto const& equilibrium_phase : equilibrium_phases)
-    {
-        accepted_items.emplace_back(equilibrium_phase.name,
-                                    ItemType::EquilibriumPhase);
-    }
-    for (auto const& kinetic_reactant : kinetic_reactants)
-    {
-        accepted_items.emplace_back(kinetic_reactant.name,
-                                    ItemType::KineticReactant);
-    }
+
+    auto accepted_item = [](auto const& item) {
+        return OutputItem(item.name, item.item_type);
+    };
+    std::transform(components.begin(), components.end(),
+                   std::back_inserter(accepted_items), accepted_item);
+    std::transform(equilibrium_phases.begin(), equilibrium_phases.end(),
+                   std::back_inserter(accepted_items), accepted_item);
+    std::transform(kinetic_reactants.begin(), kinetic_reactants.end(),
+                   std::back_inserter(accepted_items), accepted_item);
 
     // Record ids of which phreeqc output items will be dropped.
     BasicOutputSetups basic_output_setups(project_file_name);
@@ -58,7 +56,7 @@ std::unique_ptr<Output> createOutput(
         dvalue_item_id += 2 * (i + 1);
     }
 
-    return std::make_unique<Output>(basic_output_setups,
+    return std::make_unique<Output>(std::move(basic_output_setups),
                                     std::move(accepted_items),
                                     std::move(dropped_item_ids));
 }

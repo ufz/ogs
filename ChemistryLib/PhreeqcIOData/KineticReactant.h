@@ -14,6 +14,8 @@
 #include <string>
 #include <vector>
 
+#include "ChemistryLib/Output.h"
+
 namespace ChemistryLib
 {
 struct KineticReactant
@@ -36,5 +38,6 @@ struct KineticReactant
     std::string const name;
     double amount;
     std::vector<double> const parameters;
+    static const ItemType item_type = ItemType::KineticReactant;
 };
 }  // namespace ChemistryLib

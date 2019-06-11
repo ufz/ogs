@@ -13,6 +13,8 @@
 #include <string>
 #include <vector>
 
+#include "ChemistryLib/Output.h"
+
 namespace BaseLib
 {
 class ConfigTree;
@@ -38,5 +40,6 @@ struct EquilibriumPhase
     std::string const name;
     double amount;
     double const saturation_index;
+    static const ItemType item_type = ItemType::EquilibriumPhase;
 };
 }  // namespace ChemistryLib
