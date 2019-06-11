@@ -1,4 +1,4 @@
-project(IPhreeqc)
+project(IPhreeqc CXX C)
 set(IPHREEQC_VERSION 3.5.0)
 
 set(SOURCES
@@ -87,6 +87,9 @@ set(SOURCES
     src/src/phreeqcpp/PhreeqcKeywords/Keywords.cpp
 )
 
+# compile Var.c as c++
+SET_SOURCE_FILES_PROPERTIES(src/src/Var.c PROPERTIES LANGUAGE CXX)
+
 add_library(iphreeqc STATIC ${SOURCES})
 target_include_directories(iphreeqc PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src/src
@@ -95,3 +98,6 @@ target_include_directories(iphreeqc PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src/src/phreeqcpp/PhreeqcKeywords
 )
 set_target_properties(iphreeqc PROPERTIES CXX_STANDARD 14)
+# Exclude iphreeqc target from clang-tidy tests because it handles the above
+# mentioned 'src/src/Var.c' file as c, not c++.
+set_target_properties(iphreeqc PROPERTIES CXX_CLANG_TIDY "")
