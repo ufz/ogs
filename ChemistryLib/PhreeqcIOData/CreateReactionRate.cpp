@@ -29,17 +29,18 @@ std::vector<ReactionRate> createReactionRates(
             //! \ogs_file_param{prj__chemical_system__rates__rate__kinetic_reactant}
             rate_config.getConfigParameter<std::string>("kinetic_reactant");
 
-        std::vector<std::string> expression_statements;
         auto const expression_config =
             //! \ogs_file_param{prj__chemical_system__rates__rate__expression}
             rate_config.getConfigSubtree("expression");
-        for (
-            auto const& expression_statement :
+        auto const& statements =
             //! \ogs_file_param{prj__chemical_system__rates__rate__expression__statement}
-            expression_config.getConfigParameterList<std::string>("statement"))
-        {
-            expression_statements.push_back(expression_statement);
-        }
+            expression_config.getConfigParameterList<std::string>("statement");
+
+        std::vector<std::string> expression_statements;
+        expression_statements.reserve(statements.size());
+        std::copy(begin(statements),
+                  end(statements),
+                  back_inserter(expression_statements));
 
         reaction_rates.emplace_back(std::move(kinetic_reactant),
                                     std::move(expression_statements));
