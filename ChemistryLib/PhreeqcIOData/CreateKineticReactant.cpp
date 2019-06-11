@@ -40,8 +40,8 @@ std::vector<KineticReactant> createKineticReactants(
 
         auto parameters =
             //! \ogs_file_param{prj__chemical_system__kinetic_reactants__kinetic_reactant__parameters}
-            reactant_config.getConfigParameterOptional<std::vector<double>>(
-                "parameters");
+            reactant_config.getConfigParameter<std::vector<double>>(
+                "parameters", {});
 
         kinetic_reactants.emplace_back(std::move(name),
                                        std::move(chemical_formula),
