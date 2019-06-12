@@ -57,7 +57,8 @@ public:
         // Get element nodes for the interpolation from nodes to integration
         // point.
         NodalVectorType parameter_node_values =
-            _neumann_bc_parameter.getNodalValuesOnElement(Base::_element, t);
+            _neumann_bc_parameter.getNodalValuesOnElement(Base::_element, t)
+                .template topRows<ShapeFunction::MeshElement::n_all_nodes>();
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
