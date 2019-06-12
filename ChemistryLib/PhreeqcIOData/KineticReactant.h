@@ -20,14 +20,14 @@ namespace ChemistryLib
 {
 struct KineticReactant
 {
-    KineticReactant(std::string name_,
+    KineticReactant(std::string&& name_,
+                    std::string&& chemical_formula_,
                     double amount_,
-                    boost::optional<std::vector<double>>
-                        parameters_)
+                    std::vector<double>&& parameters_)
         : name(std::move(name_)),
+          chemical_formula(std::move(chemical_formula_)),
           amount(amount_),
-          parameters(parameters_ ? std::move(*parameters_)
-                                 : std::vector<double>{})
+          parameters(std::move(parameters_))
     {
     }
 
@@ -36,6 +36,7 @@ struct KineticReactant
         std::vector<KineticReactant> const& kinetic_reactants);
 
     std::string const name;
+    std::string const chemical_formula;
     double amount;
     std::vector<double> const parameters;
     static const ItemType item_type = ItemType::KineticReactant;

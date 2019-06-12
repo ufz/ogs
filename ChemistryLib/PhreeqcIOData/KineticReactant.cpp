@@ -20,6 +20,11 @@ std::ofstream& operator<<(std::ofstream& out,
     {
         out << kinetic_reactant.name << "\n";
 
+        if (!kinetic_reactant.chemical_formula.empty())
+        {
+            out << "-formula " << kinetic_reactant.chemical_formula << "\n";
+        }
+
         out << "-m  " << kinetic_reactant.amount << "\n";
 
         if (!kinetic_reactant.parameters.empty())
