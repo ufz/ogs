@@ -1,0 +1,60 @@
+{
+   python_read4
+   Memcheck:Addr4
+   ...
+   obj:/usr/lib/libpython*
+   ...
+}
+{
+   python_uninitialized_value8
+   Memcheck:Value8
+   ...
+   obj:/usr/lib/libpython*
+   ...
+}
+{
+   python_cond
+   Memcheck:Cond
+   ...
+   obj:/usr/lib/libpython*
+   ...
+}
+{
+   python_leak
+   Memcheck:Leak
+   ...
+   obj:/usr/lib/libpython*
+   ...
+}
+{
+   omp_sched_setaffinity
+   Memcheck:Param
+   sched_setaffinity(mask)
+   fun:syscall
+   obj:/usr/lib/libomp.so
+   ...
+}
+{
+   omp_init_num_threads_leak
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:gomp_init_num_threads
+   ...
+}
+{
+   ld_dl_init_leak
+   Memcheck:Leak
+   ...
+   fun:_dl_init
+   obj:/usr/lib/ld-*.so
+   ...
+}
+{
+   ld_dl_open_leak
+   Memcheck:Leak
+   ...
+   fun:_dl_open
+   obj:/usr/lib/libdl-*.so
+   ...
+}
