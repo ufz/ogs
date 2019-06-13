@@ -101,6 +101,11 @@ boost::optional<std::string> isDefinedOnSameMesh(ParameterBase const& parameter,
 
     return "The parameter's domain of definition mesh '" +
            parameter.mesh()->getName() + "' differs from the used mesh '" +
-           mesh.getName() + "'. Both meshes must be equal.";
+           mesh.getName() +
+           "'. The same mesh (the same name) has to be referenced in the "
+           "project file. Possible reasons are:\n - the parameter used for the "
+           "initial condition is not defined on the bulk mesh,\n - the "
+           "parameter's domain of definition mesh differs from the boundary "
+           "condition or source term domain of definition mesh.";
 }
 }  // namespace ParameterLib
