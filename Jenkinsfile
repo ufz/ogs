@@ -657,7 +657,7 @@ pipeline {
           }
           agent {
             dockerfile {
-              filename 'Dockerfile.clang.minimal'
+              filename 'Dockerfile.clang.full'
               dir 'scripts/docker'
               label 'docker'
               args '-v /home/jenkins/cache/ccache:/opt/ccache -v /home/jenkins/cache/conan/.conan:/opt/conan/.conan'
