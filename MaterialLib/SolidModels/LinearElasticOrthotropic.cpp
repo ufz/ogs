@@ -17,17 +17,17 @@ namespace MaterialLib
 namespace Solids
 {
 template <int DisplacementDim>
-boost::optional<std::tuple<
-    typename LinearElasticOrthotropic<DisplacementDim>::KelvinVector,
-    std::unique_ptr<
-        typename MechanicsBase<DisplacementDim>::MaterialStateVariables>,
-    typename LinearElasticOrthotropic<DisplacementDim>::KelvinMatrix>>
+boost::optional<
+    std::tuple<typename MechanicsBase<DisplacementDim>::KelvinVector,
+               std::unique_ptr<typename MechanicsBase<
+                   DisplacementDim>::MaterialStateVariables>,
+               typename MechanicsBase<DisplacementDim>::KelvinMatrix>>
 LinearElasticOrthotropic<DisplacementDim>::integrateStress(
     double const t, ParameterLib::SpatialPosition const& x, double const /*dt*/,
     KelvinVector const& eps_prev, KelvinVector const& eps,
     KelvinVector const& sigma_prev,
-    typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
-        material_state_variables,
+    typename MechanicsBase<DisplacementDim>::
+        MaterialStateVariables const& /* material_state_variables */,
     double const T) const
 {
     KelvinMatrix C = getElasticTensor(t, x, T);
@@ -36,11 +36,8 @@ LinearElasticOrthotropic<DisplacementDim>::integrateStress(
 
     return {std::make_tuple(
         sigma,
-        std::unique_ptr<
-            typename MechanicsBase<DisplacementDim>::MaterialStateVariables>{
-            new MaterialStateVariables{
-                static_cast<MaterialStateVariables const&>(
-                    material_state_variables)}},
+        std::make_unique<
+            typename MechanicsBase<DisplacementDim>::MaterialStateVariables>(),
         C)};
 }
 
