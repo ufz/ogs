@@ -126,7 +126,6 @@ public:
     struct MaterialStateVariables
         : public MechanicsBase<DisplacementDim>::MaterialStateVariables
     {
-        void pushBackState() override {}
     };
 
     std::unique_ptr<

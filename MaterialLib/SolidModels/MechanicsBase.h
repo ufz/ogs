@@ -57,7 +57,7 @@ struct MechanicsBase
     struct MaterialStateVariables
     {
         virtual ~MaterialStateVariables() = default;
-        virtual void pushBackState() = 0;
+        virtual void pushBackState(){};
     };
 
     /// Polymorphic creator for MaterialStateVariables objects specific for a
