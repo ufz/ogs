@@ -57,9 +57,6 @@ struct MechanicsBase
     struct MaterialStateVariables
     {
         virtual ~MaterialStateVariables() = default;
-        virtual MaterialStateVariables& operator=(
-            MaterialStateVariables const&) = default;
-
         virtual void pushBackState() = 0;
     };
 
