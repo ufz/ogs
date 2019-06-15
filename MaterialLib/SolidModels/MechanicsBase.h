@@ -63,7 +63,10 @@ struct MechanicsBase
     /// Polymorphic creator for MaterialStateVariables objects specific for a
     /// material model.
     virtual std::unique_ptr<MaterialStateVariables>
-    createMaterialStateVariables() const = 0;
+    createMaterialStateVariables() const
+    {
+        return std::make_unique<MaterialStateVariables>();
+    }
 
     using KelvinVector =
         MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;

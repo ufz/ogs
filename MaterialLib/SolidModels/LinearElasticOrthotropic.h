@@ -128,15 +128,6 @@ public:
     {
     };
 
-    std::unique_ptr<
-        typename MechanicsBase<DisplacementDim>::MaterialStateVariables>
-    createMaterialStateVariables() const override
-    {
-        return std::unique_ptr<
-            typename MechanicsBase<DisplacementDim>::MaterialStateVariables>{
-            new MaterialStateVariables};
-    }
-
 public:
     static int const KelvinVectorSize =
         MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
