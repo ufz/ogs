@@ -354,11 +354,10 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
         }
 
         auto& time_disc = ppd.time_disc;
-        auto& mat_strg = *ppd.mat_strg;
         auto& x = *_process_solutions[i];
         if (all_process_steps_accepted)
         {
-            time_disc->pushState(t, x, mat_strg);
+            time_disc->pushState(t, x, *ppd.mat_strg);
         }
         else
         {

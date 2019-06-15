@@ -147,14 +147,13 @@ bool SwmmInterface::isSwmmInputFile(std::string const& inp_file_name)
 
     std::string line;
     bool header_found (false);
-    std::size_t pos_beg;
     std::size_t pos_end(0);
     while (!header_found)
     {
         if (!std::getline(in, line))
             return false;
 
-        pos_beg = line.find_first_not_of(' ', pos_end);
+        std::size_t const pos_beg = line.find_first_not_of(' ', pos_end);
         pos_end = line.find_first_of(" \n", pos_beg);
 
         // skip empty or comment lines at the beginning of the file

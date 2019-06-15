@@ -155,11 +155,11 @@ int main (int argc, char* argv[])
     std::string fname (shapefile_arg.getValue());
 
     int shape_type, number_of_elements;
-    double padfMinBound[4], padfMaxBound[4];
 
     SHPHandle hSHP = SHPOpen(fname.c_str(),"rb");
     if (hSHP) {
-        SHPGetInfo( hSHP, &number_of_elements, &shape_type, padfMinBound, padfMaxBound );
+        SHPGetInfo(hSHP, &number_of_elements, &shape_type,
+                   nullptr /*padfMinBound*/, nullptr /*padfMinBound*/);
 
         if ((shape_type - 1) % 10 == 0)
             INFO("Shape file contains %d points.", number_of_elements);
