@@ -93,10 +93,10 @@ void reorderNodes2(std::vector<MeshLib::Element*> &elements)
         {
             if (elements[i]->getGeomType() == MeshLib::MeshElemType::PRISM)
             {
-                for(std::size_t j = 0; j < 3; ++j)
+                for (std::size_t k = 0; k < 3; ++k)
                 {
-                    elements[i]->setNode(j, nodes[j+3]);
-                    elements[i]->setNode(j+3, nodes[j]);
+                    elements[i]->setNode(k, nodes[k + 3]);
+                    elements[i]->setNode(k + 3, nodes[k]);
                 }
                 break;
             }

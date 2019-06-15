@@ -94,13 +94,13 @@ int main(int argc, char* argv[])
     MeshLib::MeshElementGrid const grid(*mesh);
     double const max_edge(mesh->getMaxEdgeLength() + cellsize);
 
-    for (std::size_t j = 0; j <= n_rows; ++j)
+    for (std::size_t row = 0; row <= n_rows; ++row)
     {
-        double const y = max[1] - j * cellsize;
-        for (std::size_t i = 0; i <= n_cols; ++i)
+        double const y = max[1] - row * cellsize;
+        for (std::size_t column = 0; column <= n_cols; ++column)
         {
             // pixel values
-            double const x = min[0] + i * cellsize;
+            double const x = min[0] + column * cellsize;
             MeshLib::Node const node(x, y, 0);
             MathLib::Point3d min_vol{{x - max_edge, y - max_edge,
                                       -std::numeric_limits<double>::max()}};
@@ -127,12 +127,15 @@ int main(int argc, char* argv[])
                 // element
                 for (std::size_t i = 0; i < 4; ++i)
                 {
-                    MeshLib::Node const node(x + x_off[i], y + y_off[i], 0);
+                    MeshLib::Node const corner_node(x + x_off[i], y + y_off[i],
+                                                    0);
                     auto const* corner_element =
-                        MeshLib::ProjectPointOnMesh::getProjectedElement(elems, node);
+                        MeshLib::ProjectPointOnMesh::getProjectedElement(
+                            elems, corner_node);
                     if (corner_element != nullptr)
                     {
-                        sum += MeshLib::ProjectPointOnMesh::getElevation( *corner_element, node);
+                        sum += MeshLib::ProjectPointOnMesh::getElevation(
+                            *corner_element, corner_node);
                         nonzero_count++;
                     }
                 }

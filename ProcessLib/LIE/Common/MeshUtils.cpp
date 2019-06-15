@@ -108,11 +108,11 @@ void findFracutreIntersections(
 
     // find branch/junction nodes which connect to multiple fractures
     intersected_fracture_elements.resize(n_fractures);
-    for (auto entry : frac_nodeID_to_matIDs)
+    for (auto frac_nodeID_to_matID : frac_nodeID_to_matIDs)
     {
-        auto nodeID = entry.first;
-        auto const* node = mesh.getNode(entry.first);
-        auto const& matIDs = entry.second;
+        auto nodeID = frac_nodeID_to_matID.first;
+        auto const* node = mesh.getNode(frac_nodeID_to_matID.first);
+        auto const& matIDs = frac_nodeID_to_matID.second;
         if (matIDs.size() < 2)
         {
             continue;  // no intersection
@@ -159,9 +159,9 @@ void findFracutreIntersections(
 
         bool isBranch = false;
         {
-            for (auto entry : vec_matID_counts)
+            for (auto vec_matID_count : vec_matID_counts)
             {
-                auto count = entry.second;
+                auto count = vec_matID_count.second;
                 if (count % 2 == 1)
                 {
                     isBranch = true;
@@ -172,30 +172,30 @@ void findFracutreIntersections(
 
         if (isBranch)
         {
-            std::vector<int> matIDs(2);
-            for (auto entry : vec_matID_counts)
+            std::vector<int> branch_matIDs(2);
+            for (auto vec_matID_count : vec_matID_counts)
             {
-                auto matid = entry.first;
-                auto count = entry.second;
+                auto matid = vec_matID_count.first;
+                auto count = vec_matID_count.second;
                 if (count % 2 == 0)
                 {
-                    matIDs[0] = matid;  // master
+                    branch_matIDs[0] = matid;  // master
                 }
                 else
                 {
-                    matIDs[1] = matid;  // slave
+                    branch_matIDs[1] = matid;  // slave
                 }
             }
-            vec_branch_nodeID_matIDs.emplace_back(nodeID, matIDs);
+            vec_branch_nodeID_matIDs.emplace_back(nodeID, branch_matIDs);
         }
         else
         {
-            std::vector<int> matIDs(2);
-            matIDs[0] = std::min(vec_matID_counts.begin()->first,
-                                 vec_matID_counts.rbegin()->first);
-            matIDs[1] = std::max(vec_matID_counts.begin()->first,
-                                 vec_matID_counts.rbegin()->first);
-            vec_junction_nodeID_matIDs.emplace_back(nodeID, matIDs);
+            std::vector<int> junction_matIDs(2);
+            junction_matIDs[0] = std::min(vec_matID_counts.begin()->first,
+                                          vec_matID_counts.rbegin()->first);
+            junction_matIDs[1] = std::max(vec_matID_counts.begin()->first,
+                                          vec_matID_counts.rbegin()->first);
+            vec_junction_nodeID_matIDs.emplace_back(nodeID, junction_matIDs);
         }
     }
 

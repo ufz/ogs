@@ -231,9 +231,9 @@ int main (int argc, char* argv[])
         {
             continue;
         }
-        std::string geo_name("Polyline-"+std::to_string(k));
-        convertMeshNodesToGeometry(surface_mesh->getNodes(), ids, geo_name,
-            geometry_sets);
+        std::string polyline_name("Polyline-" + std::to_string(k));
+        convertMeshNodesToGeometry(surface_mesh->getNodes(), ids, polyline_name,
+                                   geometry_sets);
     }
 
     // merge all together
@@ -271,11 +271,12 @@ int main (int argc, char* argv[])
     // insert first point
     surface_pnts->push_back(
         new GeoLib::Point(pnts_with_id[0], surface_pnts->size()));
-    std::string element_name;
-    pnt_vec->getNameOfElementByID(0, element_name);
-    name_id_map->insert(
-        std::pair<std::string, std::size_t>(element_name,0)
-    );
+    {
+        std::string element_name;
+        pnt_vec->getNameOfElementByID(0, element_name);
+        name_id_map->insert(
+            std::pair<std::string, std::size_t>(element_name, 0));
+    }
     for (std::size_t k(1); k < n_merged_pnts; ++k) {
         const GeoLib::Point& p0 (pnts_with_id[k-1]);
         const GeoLib::Point& p1 (pnts_with_id[k]);

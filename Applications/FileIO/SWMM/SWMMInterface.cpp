@@ -415,11 +415,13 @@ bool SwmmInterface::convertSwmmInputToGeometry(std::string const& inp_file_name,
     }
 
     auto name_id_map = std::make_unique<std::map<std::string, std::size_t>>();
-    std::size_t const n_names (pnt_names.size());
-    for (std::size_t i=0; i<n_names; ++i)
     {
-        if (!pnt_names[i].empty())
-            name_id_map->insert(std::make_pair(pnt_names[i], i));
+        std::size_t const n_names(pnt_names.size());
+        for (std::size_t i = 0; i < n_names; ++i)
+        {
+            if (!pnt_names[i].empty())
+                name_id_map->insert(std::make_pair(pnt_names[i], i));
+        }
     }
 
     // rewind stream and read links between junctions
@@ -467,9 +469,13 @@ bool SwmmInterface::convertSwmmInputToGeometry(std::string const& inp_file_name,
         }
         auto line_id_map =
             std::make_unique<std::map<std::string, std::size_t>>();
-        std::size_t const n_names (line_names.size());
-        for (std::size_t i=0; i<n_names; ++i)
-            line_id_map->insert(std::make_pair(line_names[i], i));
+        {
+            std::size_t const n_names(line_names.size());
+            for (std::size_t i = 0; i < n_names; ++i)
+            {
+                line_id_map->insert(std::make_pair(line_names[i], i));
+            }
+        }
         std::vector<std::size_t> const& pnt_id_map (geo_objects.getPointVecObj(geo_name)->getIDMap());
         for (GeoLib::Polyline* line : *lines)
         {
