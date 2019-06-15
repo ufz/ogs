@@ -63,7 +63,10 @@ LisMatrix::~LisMatrix()
 {
     int ierr = 0;
     if (_use_external_arrays)
+    {
         ierr = lis_matrix_unset(_AA);
+        checkLisError(ierr);
+    }
     ierr = lis_matrix_destroy(_AA);
     checkLisError(ierr);
     ierr = lis_vector_destroy(_diag);

@@ -617,7 +617,6 @@ bool SwmmInterface::readSubcatchments(std::ifstream &in, std::map< std::string, 
             return false;
         }
 
-        sc.outlet =  std::numeric_limits<std::size_t>::max();
         auto const it = name_id_map.find(split_str[2]);
         if (it == name_id_map.end())
         {
