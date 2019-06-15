@@ -285,10 +285,8 @@ static std::vector<MathLib::Point3d> computeElementSegmentIntersections(
             true};
         std::vector<MathLib::Point3d> const intersections(
             GeoLib::lineSegmentIntersect2d(segment, elem_segment));
-        for (auto const& p : intersections)
-        {
-            element_intersections.push_back(std::move(p));
-        }
+        element_intersections.insert(end(element_intersections),
+                                     begin(intersections), end(intersections));
     }
     return element_intersections;
 }
