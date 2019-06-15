@@ -705,7 +705,6 @@ public:
                 DisplacementDim>::value;
         auto const n_integration_points = _ip_data.size();
 
-        std::vector<double> ip_sigma_values;
         auto sigma_values =
             Eigen::Map<Eigen::Matrix<double, kelvin_vector_size, Eigen::Dynamic,
                                      Eigen::ColMajor> const>(

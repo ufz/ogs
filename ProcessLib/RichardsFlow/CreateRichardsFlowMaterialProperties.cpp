@@ -46,7 +46,6 @@ createRichardsFlowMaterialProperties(
 
     // Get porous properties
     std::vector<int> mat_ids;
-    std::vector<int> mat_krel_ids;
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Permeability>>
         intrinsic_permeability_models;
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Porosity>>
