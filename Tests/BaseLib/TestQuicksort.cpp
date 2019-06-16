@@ -85,7 +85,7 @@ struct OrderedUniqueListGen
         std::sort(xs.begin(), xs.end());
         auto last = std::unique(xs.begin(), xs.end());
         xs.erase(last, xs.end());
-        return std::move(xs);
+        return xs;
     }
 };
 
