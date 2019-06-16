@@ -144,7 +144,7 @@ int main (int argc, char* argv[])
             polygon_name = "Polygon-" + std::to_string(j);
         }
         // create Polygon from Polyline
-        GeoLib::Polygon const& polygon{*plys[j]};
+        GeoLib::Polygon const polygon{*plys[j]};
         // ids of mesh nodes on surface that are within the given polygon
         std::vector<std::pair<std::size_t, double>> ids_and_areas;
         for (std::size_t k(0); k<all_sfc_nodes.size(); k++) {
