@@ -107,9 +107,9 @@ std::unique_ptr<DeactivatedSubdomain const> createDeactivatedSubdomain(
             deactivated_elements.push_back(
                 const_cast<MeshLib::Element*>(element));
 
-            for (unsigned i = 0; i < element->getNumberOfNodes(); i++)
+            for (unsigned j = 0; j < element->getNumberOfNodes(); j++)
             {
-                auto const* const node = element->getNode(i);
+                auto const* const node = element->getNode(j);
                 const auto& connected_elements = node->getElements();
 
                 if (deactivation_flag_of_nodes[node->getID()])

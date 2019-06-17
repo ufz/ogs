@@ -179,9 +179,10 @@ int main(int argc, char* argv[])
              mesh->getNumberOfNodes(),
              mesh->getNumberOfElements());
 
-        std::string const output_file_name_wo_extension = BaseLib::joinPaths(
-            output_directory_arg.getValue(),
-            BaseLib::extractBaseNameWithoutExtension(filename));
+        std::string const other_mesh_output_file_name_wo_extension =
+            BaseLib::joinPaths(
+                output_directory_arg.getValue(),
+                BaseLib::extractBaseNameWithoutExtension(filename));
         auto const partitions = mesh_partitioner.partitionOtherMesh(
             *mesh, is_mixed_high_order_linear_elems);
 
@@ -195,8 +196,9 @@ int main(int argc, char* argv[])
             partitioned_properties.getPropertyVector<std::size_t>(
                 "bulk_element_ids", MeshLib::MeshItemType::Cell, 1),
             partitions);
-        mesh_partitioner.writeOtherMesh(output_file_name_wo_extension,
-                                        partitions, partitioned_properties);
+        mesh_partitioner.writeOtherMesh(
+            other_mesh_output_file_name_wo_extension, partitions,
+            partitioned_properties);
     }
 
     if (ascii_flag.getValue())

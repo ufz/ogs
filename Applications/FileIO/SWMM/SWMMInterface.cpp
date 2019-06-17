@@ -147,14 +147,13 @@ bool SwmmInterface::isSwmmInputFile(std::string const& inp_file_name)
 
     std::string line;
     bool header_found (false);
-    std::size_t pos_beg;
     std::size_t pos_end(0);
     while (!header_found)
     {
         if (!std::getline(in, line))
             return false;
 
-        pos_beg = line.find_first_not_of(' ', pos_end);
+        std::size_t const pos_beg = line.find_first_not_of(' ', pos_end);
         pos_end = line.find_first_of(" \n", pos_beg);
 
         // skip empty or comment lines at the beginning of the file
@@ -416,11 +415,13 @@ bool SwmmInterface::convertSwmmInputToGeometry(std::string const& inp_file_name,
     }
 
     auto name_id_map = std::make_unique<std::map<std::string, std::size_t>>();
-    std::size_t const n_names (pnt_names.size());
-    for (std::size_t i=0; i<n_names; ++i)
     {
-        if (!pnt_names[i].empty())
-            name_id_map->insert(std::make_pair(pnt_names[i], i));
+        std::size_t const n_names(pnt_names.size());
+        for (std::size_t i = 0; i < n_names; ++i)
+        {
+            if (!pnt_names[i].empty())
+                name_id_map->insert(std::make_pair(pnt_names[i], i));
+        }
     }
 
     // rewind stream and read links between junctions
@@ -468,9 +469,13 @@ bool SwmmInterface::convertSwmmInputToGeometry(std::string const& inp_file_name,
         }
         auto line_id_map =
             std::make_unique<std::map<std::string, std::size_t>>();
-        std::size_t const n_names (line_names.size());
-        for (std::size_t i=0; i<n_names; ++i)
-            line_id_map->insert(std::make_pair(line_names[i], i));
+        {
+            std::size_t const n_names(line_names.size());
+            for (std::size_t i = 0; i < n_names; ++i)
+            {
+                line_id_map->insert(std::make_pair(line_names[i], i));
+            }
+        }
         std::vector<std::size_t> const& pnt_id_map (geo_objects.getPointVecObj(geo_name)->getIDMap());
         for (GeoLib::Polyline* line : *lines)
         {
@@ -612,7 +617,6 @@ bool SwmmInterface::readSubcatchments(std::ifstream &in, std::map< std::string, 
             return false;
         }
 
-        sc.outlet =  std::numeric_limits<std::size_t>::max();
         auto const it = name_id_map.find(split_str[2]);
         if (it == name_id_map.end())
         {

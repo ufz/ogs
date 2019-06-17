@@ -78,7 +78,6 @@ std::pair<MeshLib::Element*, int> readElement(
     unsigned idx, type, n_tags, dummy;
     int mat_id;
     std::vector<unsigned> node_ids;
-    std::vector<MeshLib::Node*> elem_nodes;
     in >> idx >> type >> n_tags >> mat_id >> dummy;
 
     // skip tags

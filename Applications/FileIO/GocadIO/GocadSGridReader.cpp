@@ -820,10 +820,8 @@ void GocadSGridReader::addFaceSetQuad(
         default:
             ERR("Could not create face for node with id %d.", id);
     }
-    for (auto quad_node : quad_nodes)
-    {
-        face_set_nodes.push_back(quad_node);
-    }
+    std::copy(begin(quad_nodes), end(quad_nodes),
+              back_inserter(face_set_nodes));
     face_set_elements.push_back(new MeshLib::Quad(quad_nodes));
 }
 

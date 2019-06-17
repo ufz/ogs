@@ -346,7 +346,6 @@ public:
             auto const N_t_N = (N.transpose() * N).eval();
             if (_process_data.non_advective_form)
             {
-                const double C_int_pt(N.dot(C_nodal_values));
                 MCp.noalias() += N_t_N * (C_int_pt * R_times_phi * drho_dp * w);
                 MCC.noalias() += N_t_N * (C_int_pt * R_times_phi * drho_dC * w);
                 KCC.noalias() -= dNdx.transpose() * mass_density_flow * N * w;
@@ -812,15 +811,15 @@ public:
             auto const fe = NumLib::createIsoparametricFiniteElement<
                 ShapeFunction, ShapeMatricesType>(_element);
 
-            typename ShapeMatricesType::ShapeMatrices shape_matrices(
+            typename ShapeMatricesType::ShapeMatrices sm(
                 ShapeFunction::DIM, GlobalDim, ShapeFunction::NPOINTS);
 
             // Note: Axial symmetry is set to false here, because we only need
             // dNdx here, which is not affected by axial symmetry.
             fe.template computeShapeFunctions<NumLib::ShapeMatrixType::DNDX>(
-                pnt_local_coords.getCoords(), shape_matrices, GlobalDim, false);
+                pnt_local_coords.getCoords(), sm, GlobalDim, false);
 
-            return shape_matrices;
+            return sm;
         }();
 
         ParameterLib::SpatialPosition pos;

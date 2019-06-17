@@ -84,8 +84,8 @@ bool fillPropVec(MeshLib::Properties const& props,
         std::size_t const n_nodes (node_map.size());
         for (std::size_t i = 0; i<n_nodes; ++i)
         {
-            std::size_t const n_nodes = node_map[i].size();
-            for (std::size_t j = 0; j < n_nodes; ++j)
+            std::size_t const n_nodes_i = node_map[i].size();
+            for (std::size_t j = 0; j < n_nodes_i; ++j)
             {
                 (*new_vec)[node_map[i][j]] = (*vec)[i];
             }

@@ -80,9 +80,10 @@ std::size_t ElementSearch::searchByNodeIDs(const std::vector<std::size_t> &nodes
     std::vector<std::size_t> connected_elements;
     for (std::size_t node_id : nodes)
     {
-        for (auto* e : _mesh.getNode(node_id)->getElements()) {
-            connected_elements.push_back(e->getID());
-        }
+        auto const& elements = _mesh.getNode(node_id)->getElements();
+        std::transform(begin(elements), end(elements),
+                       back_inserter(connected_elements),
+                       [](Element const* const e) { return e->getID(); });
     }
 
     BaseLib::makeVectorUnique(connected_elements);

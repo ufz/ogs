@@ -120,13 +120,14 @@ void GEOObjects::addStationVec(std::unique_ptr<std::vector<Point*>> stations,
 const std::vector<GeoLib::Point*>* GEOObjects::getStationVec(
     const std::string& name) const
 {
-    for (auto point : _pnt_vecs)
+    auto const it = std::find_if(
+        begin(_pnt_vecs), end(_pnt_vecs), [&name](PointVec const* const p) {
+            return p->getName() == name &&
+                   p->getType() == PointVec::PointType::STATION;
+        });
+    if (it != end(_pnt_vecs))
     {
-        if (point->getName() == name &&
-            point->getType() == PointVec::PointType::STATION)
-        {
-            return point->getVector();
-        }
+        return (*it)->getVector();
     }
     DBUG("GEOObjects::getStationVec() - No entry found with name '%s'.",
          name.c_str());
@@ -283,11 +284,8 @@ bool GEOObjects::appendSurfaceVec(const std::vector<Surface*>& surfaces,
 
     // the copy is needed because addSurfaceVec is passing it to SurfaceVec
     // ctor, which needs write access to the surface vector.
-    auto sfc = std::make_unique<std::vector<GeoLib::Surface*>>();
-    for (auto surface : surfaces)
-    {
-        sfc->push_back(surface);
-    }
+    auto sfc = std::make_unique<std::vector<GeoLib::Surface*>>(begin(surfaces),
+                                                               end(surfaces));
     addSurfaceVec(std::move(sfc), name);
     return false;
 }

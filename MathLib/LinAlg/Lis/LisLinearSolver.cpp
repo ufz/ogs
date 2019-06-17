@@ -55,11 +55,15 @@ bool LisLinearSolver::solve(LisMatrix &A, LisVector &b, LisVector &x)
     {
         int precon;
         ierr = lis_solver_get_precon(solver, &precon);
+        if (!checkLisError(ierr))
+            return false;
         INFO("-> precon: %i", precon);
     }
     {
         int slv;
         ierr = lis_solver_get_solver(solver, &slv);
+        if (!checkLisError(ierr))
+            return false;
         INFO("-> solver: %i", slv);
     }
 
