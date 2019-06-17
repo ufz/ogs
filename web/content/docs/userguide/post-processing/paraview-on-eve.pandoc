@@ -1,26 +1,23 @@
 +++
 date = "2018-11-14T14:00:13+01`:00"
-title = "ParaView on envinf1"
+title = "ParaView on Eve frontends"
 author = "Lars Bilke"
 weight = 1
-draft = "true"
 
 [menu]
   [menu.userguide]
     parent = "post-processing"
+
+aliases = ['paraview-on-envinf1']
 +++
 
-TODO: rewrite this for the envinf1 setup
-
-Connect to a frontend node and start `pvserver`:
+Connect to a frontend node and start `pvserver` via singularity:
 
 ```bash
-ssh envinf1.eve.ufz.de -L 11111:envinf1.eve.ufz.de:11111
+ssh frontend1.eve.ufz.de -L 11111:frontend1.eve.ufz.de:11111
 # OR: ssh frontend2.eve.ufz.de -L 11111:frontend2.eve.ufz.de:11111
-# frontend2 has a NVidia K80 vs a K20 in envinf1
-ml use /global/apps/modulefiles
-ml paraview/egl/5.6.0-1
-pvserver
+# frontend2 has a NVidia K80 vs a P4000 in frontend1
+singularity exec --nv -B /data:/data /data/ogs/images/pv-v5.6.0-egl.sif /opt/paraview/bin/pvserver
 ```
 
 On your local machine:
