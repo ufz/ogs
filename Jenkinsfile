@@ -34,7 +34,7 @@ pipeline {
 
         // ********* Check changesets for conditional stage execution **********
         script {
-          def causes = currentBuild.rawBuild.getCauses()
+          def causes = currentBuild.getBuildCauses()
           for(cause in causes) {
             if (cause.class.toString().contains("UserIdCause")) {
               echo "Doing full build because job was started by user."
