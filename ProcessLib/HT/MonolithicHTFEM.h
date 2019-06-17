@@ -96,7 +96,7 @@ public:
             pressure_index, pressure_index);
         auto MpT = local_M.template block<pressure_size, temperature_size>(
             pressure_index, temperature_index);
-        auto Bp = local_b.template block<pressure_size, 1>(pressure_index, 0);
+        auto Bp = local_b.template segment<pressure_size>(pressure_index);
 
         ParameterLib::SpatialPosition pos;
         pos.setElementID(this->_element.getID());
