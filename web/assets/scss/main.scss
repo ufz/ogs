@@ -223,6 +223,19 @@ a.btn-inverse:hover {
   color: theme('mycolors.text-accent');
 }
 
+/* -- Content --*/
+.content {
+  ul {
+    list-style-type: disc;
+    padding-left: theme('padding.4');
+  }
+
+  ol {
+    list-style-type: decimal;
+    padding-left: theme('padding.4');
+  }
+}
+
 /* -------------------------------- Images ---------------------------------- */
 body {
   counter-reset: figcaption;
