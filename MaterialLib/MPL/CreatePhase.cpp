@@ -88,18 +88,16 @@ std::vector<std::unique_ptr<Phase>> createPhases(
     }
 
     std::vector<std::unique_ptr<Phase>> phases;
-
-    std::set<std::string> phase_names;
-
     //! \ogs_file_param{prj__media__medium__phases__phase}
     for (auto phase_config : config->getConfigSubtreeList("phase"))
     {
         auto phase = createPhase(phase_config);
-        bool new_insertion = false;
-        std::tie(std::ignore, new_insertion) =
-            phase_names.insert(phase->name());
 
-        if (!new_insertion)
+        if (std::find_if(phases.begin(),
+                         phases.end(),
+                         [phase_name = phase->name()](auto const& p) {
+                             return p->name() == phase_name;
+                         }) != phases.end())
         {
             OGS_FATAL("Found duplicates with the same phase name tag '%s'.",
                       phase->name().c_str());
@@ -107,6 +105,7 @@ std::vector<std::unique_ptr<Phase>> createPhases(
 
         phases.push_back(std::move(phase));
     }
+
     return phases;
 }
 }  // namespace MaterialPropertyLib
