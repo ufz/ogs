@@ -133,6 +133,10 @@ public:
             double p_int_pt = 0.0;
             // Order matters: First T, then P!
             NumLib::shapeFunctionInterpolate(local_x, N, T_int_pt, p_int_pt);
+            vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
+                T_int_pt;
+            vars[static_cast<int>(
+                MaterialPropertyLib::Variable::phase_pressure)] = p_int_pt;
 
             vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
                 T_int_pt;
