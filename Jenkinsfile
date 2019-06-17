@@ -242,15 +242,11 @@ pipeline {
               configure {
                 cmakeOptions =
                   "-DBUILD_SHARED_LIBS=${build_shared} " +
-                  '-DOGS_CPU_ARCHITECTURE=generic ' +
-                  '-DOGS_COVERAGE=ON '
+                  '-DOGS_CPU_ARCHITECTURE=generic '
                 config = 'Debug'
               }
               build { }
-              build { target = 'testrunner_coverage_cobertura' }
-              dir('build') {
-                sh "curl -s https://codecov.io/bash | bash -s - -f *_cobertura.xml"
-              }
+              build { target = 'tests' }
             }
           }
           post {
