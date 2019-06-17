@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-@Library('jenkins-pipeline@1.0.21') _
+@Library('jenkins-pipeline@1.0.22') _
 
 def stage_required = [build: false, data: false, full: false, docker: false]
 def build_shared = 'ON'
@@ -730,8 +730,10 @@ pipeline {
           agent { label "master"}
           when { buildingTag() }
           steps {
-            keepBuild()
-            script { currentBuild.displayName = tag }
+            script {
+              currentBuild.keepLog(true)
+              currentBuild.displayName = tag
+            }
           }
         }
       } // end parallel
