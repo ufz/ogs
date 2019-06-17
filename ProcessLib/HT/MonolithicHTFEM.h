@@ -81,21 +81,21 @@ public:
         auto local_b = MathLib::createZeroedVector<LocalVectorType>(
             local_b_data, local_matrix_size);
 
-        auto const num_nodes = ShapeFunction::NPOINTS;
-
-        auto Ktt = local_K.template block<num_nodes, num_nodes>(0, 0);
-        auto Mtt = local_M.template block<num_nodes, num_nodes>(0, 0);
-        auto Kpp =
-            local_K.template block<num_nodes, num_nodes>(num_nodes, num_nodes);
-        auto Mpp =
-            local_M.template block<num_nodes, num_nodes>(num_nodes, num_nodes);
-        auto Bp = local_b.template block<num_nodes, 1>(num_nodes, 0);
+        auto KTT = local_K.template block<temperature_size, temperature_size>(
+            temperature_index, temperature_index);
+        auto MTT = local_M.template block<temperature_size, temperature_size>(
+            temperature_index, temperature_index);
+        auto Kpp = local_K.template block<pressure_size, pressure_size>(
+            pressure_index, pressure_index);
+        auto Mpp = local_M.template block<pressure_size, pressure_size>(
+            pressure_index, pressure_index);
+        auto Bp = local_b.template block<pressure_size, 1>(pressure_index, 0);
 
         ParameterLib::SpatialPosition pos;
         pos.setElementID(this->_element.getID());
 
-        auto p_nodal_values =
-            Eigen::Map<const NodalVectorType>(&local_x[num_nodes], num_nodes);
+        auto p_nodal_values = Eigen::Map<const NodalVectorType>(
+            &local_x[pressure_index], pressure_size);
 
         auto const& process_data = this->_material_properties;
         auto const& medium =
@@ -178,13 +178,13 @@ public:
                 this->getThermalConductivityDispersivity(
                     vars, porosity, fluid_density, specific_heat_capacity_fluid,
                     velocity, I);
-            Ktt.noalias() +=
+            KTT.noalias() +=
                 (dNdx.transpose() * thermal_conductivity_dispersivity * dNdx +
                  N.transpose() * velocity.transpose() * dNdx * fluid_density *
                      specific_heat_capacity_fluid) *
                 w;
             Kpp.noalias() += w * dNdx.transpose() * K_over_mu * dNdx;
-            Mtt.noalias() +=
+            MTT.noalias() +=
                 w *
                 this->getHeatEnergyCoefficient(vars, porosity, fluid_density,
                                                specific_heat_capacity_fluid) *
@@ -218,6 +218,12 @@ public:
 
         return this->getIntPtDarcyVelocityLocal(t, local_p, local_x, cache);
     }
+
+private:
+    using HTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::pressure_index;
+    using HTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::pressure_size;
+    using HTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::temperature_index;
+    using HTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::temperature_size;
 };
 
 }  // namespace HT

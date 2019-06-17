@@ -354,6 +354,12 @@ protected:
 
         return cache;
     }
+
+protected:
+    static const int pressure_index = ShapeFunction::NPOINTS;
+    static const int pressure_size = ShapeFunction::NPOINTS;
+    static const int temperature_index = 0;
+    static const int temperature_size = ShapeFunction::NPOINTS;
 };
 
 }  // namespace HT
