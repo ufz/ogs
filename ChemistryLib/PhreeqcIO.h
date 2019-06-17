@@ -37,30 +37,7 @@ public:
               std::vector<ReactionRate>&& reaction_rates,
               std::unique_ptr<Output>&& output,
               std::vector<std::pair<int, std::string>> const&
-                  process_id_to_component_name_map)
-        : _phreeqc_input_file(project_file_name + "_phreeqc.inp"),
-          _database(std::move(database)),
-          _aqueous_solutions(std::move(aqueous_solutions)),
-          _equilibrium_phases(std::move(equilibrium_phases)),
-          _kinetic_reactants(std::move(kinetic_reactants)),
-          _reaction_rates(std::move(reaction_rates)),
-          _output(std::move(output)),
-          _process_id_to_component_name_map(process_id_to_component_name_map)
-    {
-        // initialize phreeqc configurations
-        auto const instance_id = CreateIPhreeqc();
-
-        // load a specific database in the working directory
-        if (LoadDatabase(instance_id, _database.c_str()) != 0)
-        {
-            OGS_FATAL(
-                "Failed in loading the specified thermodynamic database file: "
-                "%s.",
-                _database.c_str());
-        }
-
-        SetSelectedOutputFileOn(instance_id, 1);
-    }
+                  process_id_to_component_name_map);
 
     void doWaterChemistryCalculation(
         std::vector<GlobalVector*>& process_solutions, double const dt);

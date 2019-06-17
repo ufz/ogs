@@ -29,7 +29,53 @@ std::ostream& operator<<(std::ostream& os,
               std::ostream_iterator<DataBlock>(os));
     return os;
 }
+
+static const int phreeqc_instance_id = 0;
 }  // namespace
+
+PhreeqcIO::PhreeqcIO(
+    std::string const& project_file_name,
+    std::string&& database,
+    std::vector<AqueousSolution>&& aqueous_solutions,
+    std::vector<std::vector<EquilibriumPhase>>&& equilibrium_phases,
+    std::vector<std::vector<KineticReactant>>&& kinetic_reactants,
+    std::vector<ReactionRate>&& reaction_rates,
+    std::unique_ptr<Output>&& output,
+    std::vector<std::pair<int, std::string>> const&
+        process_id_to_component_name_map)
+    : _phreeqc_input_file(project_file_name + "_phreeqc.inp"),
+      _database(std::move(database)),
+      _aqueous_solutions(std::move(aqueous_solutions)),
+      _equilibrium_phases(std::move(equilibrium_phases)),
+      _kinetic_reactants(std::move(kinetic_reactants)),
+      _reaction_rates(std::move(reaction_rates)),
+      _output(std::move(output)),
+      _process_id_to_component_name_map(process_id_to_component_name_map)
+{
+    // initialize phreeqc instance
+    if (CreateIPhreeqc() != phreeqc_instance_id)
+    {
+        OGS_FATAL(
+            "Failed to initialize phreeqc instance, due to lack of memory.");
+    }
+
+    // load specified thermodynamic database
+    if (LoadDatabase(phreeqc_instance_id, _database.c_str()) != IPQ_OK)
+    {
+        OGS_FATAL(
+            "Failed in loading the specified thermodynamic database file: "
+            "%s.",
+            _database.c_str());
+    }
+
+    if (SetSelectedOutputFileOn(phreeqc_instance_id, 1) != IPQ_OK)
+    {
+        OGS_FATAL(
+            "Failed to fly the flag for the specified file %s where phreeqc "
+            "will write output.",
+            _output->basic_output_setups.output_file.c_str());
+    }
+}
 
 void PhreeqcIO::doWaterChemistryCalculation(
     std::vector<GlobalVector*>& process_solutions, double const dt)
@@ -195,9 +241,9 @@ std::ostream& operator<<(std::ostream& os, PhreeqcIO const& phreeqc_io)
 void PhreeqcIO::execute()
 {
     INFO("Phreeqc: Executing chemical calculation.");
-    if (RunFile(instance_id, _phreeqc_input_file.c_str()) > 0)
+    if (RunFile(phreeqc_instance_id, _phreeqc_input_file.c_str()) != IPQ_OK)
     {
-        OutputErrorString(instance_id);
+        OutputErrorString(phreeqc_instance_id);
         OGS_FATAL(
             "Failed in performing speciation calculation with the generated "
             "phreeqc input file '%s'.",
