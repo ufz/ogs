@@ -88,8 +88,10 @@ std::vector<std::unique_ptr<Phase>> createPhases(
     }
 
     std::vector<std::unique_ptr<Phase>> phases;
-    //! \ogs_file_param{prj__media__medium__phases__phase}
-    for (auto phase_config : config->getConfigSubtreeList("phase"))
+
+    for (auto phase_config :
+         //! \ogs_file_param{prj__media__medium__phases__phase}
+         config->getConfigSubtreeList("phase"))
     {
         auto phase = createPhase(phase_config);
 
