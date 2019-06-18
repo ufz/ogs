@@ -72,10 +72,6 @@ std::vector<std::unique_ptr<Component>> createComponents(
     }
 
     std::vector<std::unique_ptr<Component>> components;
-
-    // Collect component's names to avoid duplicate components.
-    std::set<std::string> component_names;
-
     for (
         auto const& component_config :
         //! \ogs_file_param{prj__media__medium__phases__phase__components__component}
@@ -83,10 +79,11 @@ std::vector<std::unique_ptr<Component>> createComponents(
     {
         auto component = createComponent(component_config);
 
-        bool new_insertion = false;
-        std::tie(std::ignore, new_insertion) =
-            component_names.insert(component->name());
-        if (!new_insertion)
+        if (std::find_if(components.begin(),
+                         components.end(),
+                         [component_name = component->name()](auto const& c) {
+                             return c->name() == component_name;
+                         }) != components.end())
         {
             OGS_FATAL("Found duplicates with the same component name tag '%s'.",
                       component->name().c_str());
@@ -94,6 +91,7 @@ std::vector<std::unique_ptr<Component>> createComponents(
 
         components.push_back(std::move(component));
     }
+
     return components;
 }
 }  // namespace MaterialPropertyLib
