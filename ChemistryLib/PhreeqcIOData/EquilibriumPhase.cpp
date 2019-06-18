@@ -7,24 +7,21 @@
  *
  */
 
-#include <fstream>
+#include <ostream>
 
 #include "EquilibriumPhase.h"
 
 namespace ChemistryLib
 {
-std::ofstream& operator<<(
-    std::ofstream& out, std::vector<EquilibriumPhase> const& equilibrium_phases)
+std::ostream& operator<<(std::ostream& os,
+                         EquilibriumPhase const& equilibrium_phase)
 {
-    for (auto const& equilibrium_phase : equilibrium_phases)
-    {
-        out << equilibrium_phase.name;
+    os << equilibrium_phase.name;
 
-        out << " " << equilibrium_phase.saturation_index;
+    os << " " << equilibrium_phase.saturation_index;
 
-        out << " " << equilibrium_phase.amount << "\n";
-    }
+    os << " " << equilibrium_phase.amount << "\n";
 
-    return out;
+    return os;
 }
 }  // namespace ChemistryLib

@@ -25,8 +25,8 @@ struct ReactionRate
     {
     }
 
-    friend std::ofstream& operator<<(
-        std::ofstream& out, std::vector<ReactionRate> const& reaction_rate);
+    friend std::ostream& operator<<(std::ostream& os,
+                                    ReactionRate const& reaction_rate);
 
     std::string const kinetic_reactant;
     std::vector<std::string> const expression_statements;

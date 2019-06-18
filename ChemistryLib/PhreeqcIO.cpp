@@ -9,7 +9,7 @@
 
 #include <boost/algorithm/string.hpp>
 #include <cmath>
-#include <fstream>
+#include <iostream>
 
 #include "BaseLib/Algorithm.h"
 #include "BaseLib/ConfigTreeUtil.h"
@@ -19,6 +19,18 @@
 
 namespace ChemistryLib
 {
+namespace
+{
+template <typename DataBlock>
+std::ostream& operator<<(std::ostream& os,
+                         std::vector<DataBlock> const& data_blocks)
+{
+    std::copy(data_blocks.begin(), data_blocks.end(),
+              std::ostream_iterator<DataBlock>(os));
+    return os;
+}
+}  // namespace
+
 void PhreeqcIO::doWaterChemistryCalculation(
     std::vector<GlobalVector*>& process_solutions, double const dt)
 {
@@ -134,16 +146,16 @@ void PhreeqcIO::writeInputsToFile()
     out.close();
 }
 
-std::ofstream& operator<<(std::ofstream& out, PhreeqcIO const& phreeqc_io)
+std::ostream& operator<<(std::ostream& os, PhreeqcIO const& phreeqc_io)
 {
-    out << "SELECTED_OUTPUT" << "\n";
-    out << *phreeqc_io._output << "\n";
+    os << "SELECTED_OUTPUT" << "\n";
+    os << *phreeqc_io._output << "\n";
 
     auto const& reaction_rates = phreeqc_io._reaction_rates;
     if (!reaction_rates.empty())
     {
-        out << "RATES" << "\n";
-        out << reaction_rates << "\n";
+        os << "RATES" << "\n";
+        os << reaction_rates << "\n";
     }
 
     std::size_t const num_chemical_systems =
@@ -154,30 +166,30 @@ std::ofstream& operator<<(std::ofstream& out, PhreeqcIO const& phreeqc_io)
     {
         auto const& aqueous_solution =
             phreeqc_io._aqueous_solutions[chemical_system_id];
-        out << "SOLUTION " << chemical_system_id + 1 << "\n";
-        out << aqueous_solution << "\n";
+        os << "SOLUTION " << chemical_system_id + 1 << "\n";
+        os << aqueous_solution << "\n";
 
         auto const& equilibrium_phases =
             phreeqc_io._equilibrium_phases[chemical_system_id];
         if (!equilibrium_phases.empty())
         {
-            out << "EQUILIBRIUM_PHASES " << chemical_system_id + 1 << "\n";
-            out << equilibrium_phases << "\n";
+            os << "EQUILIBRIUM_PHASES " << chemical_system_id + 1 << "\n";
+            os << equilibrium_phases << "\n";
         }
 
         auto const& kinetic_reactants =
             phreeqc_io._kinetic_reactants[chemical_system_id];
         if (!kinetic_reactants.empty())
         {
-            out << "KINETICS " << chemical_system_id + 1 << "\n";
-            out << kinetic_reactants;
-            out << "-steps " << phreeqc_io._dt << "\n" << "\n";
+            os << "KINETICS " << chemical_system_id + 1 << "\n";
+            os << kinetic_reactants;
+            os << "-steps " << phreeqc_io._dt << "\n" << "\n";
         }
 
-        out << "END" << "\n" << "\n";
+        os << "END" << "\n" << "\n";
     }
 
-    return out;
+    return os;
 }
 
 void PhreeqcIO::execute()
@@ -231,7 +243,7 @@ void PhreeqcIO::readOutputsFromFile()
     in.close();
 }
 
-std::ifstream& operator>>(std::ifstream& in, PhreeqcIO& phreeqc_io)
+std::istream& operator>>(std::istream& in, PhreeqcIO& phreeqc_io)
 {
     // Skip the headline
     in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');

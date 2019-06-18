@@ -7,37 +7,34 @@
  *
  */
 
-#include <fstream>
+#include <ostream>
 
 #include "KineticReactant.h"
 
 namespace ChemistryLib
 {
-std::ofstream& operator<<(std::ofstream& out,
-                          std::vector<KineticReactant> const& kinetic_reactants)
+std::ostream& operator<<(std::ostream& os,
+                         KineticReactant const& kinetic_reactant)
 {
-    for (auto const& kinetic_reactant : kinetic_reactants)
+    os << kinetic_reactant.name << "\n";
+
+    if (!kinetic_reactant.chemical_formula.empty())
     {
-        out << kinetic_reactant.name << "\n";
-
-        if (!kinetic_reactant.chemical_formula.empty())
-        {
-            out << "-formula " << kinetic_reactant.chemical_formula << "\n";
-        }
-
-        out << "-m  " << kinetic_reactant.amount << "\n";
-
-        if (!kinetic_reactant.parameters.empty())
-        {
-            out << "-parms";
-            for (auto const& parameter : kinetic_reactant.parameters)
-            {
-                out << " " << parameter;
-            }
-            out << "\n";
-        }
+        os << "-formula " << kinetic_reactant.chemical_formula << "\n";
     }
 
-    return out;
+    os << "-m  " << kinetic_reactant.amount << "\n";
+
+    if (!kinetic_reactant.parameters.empty())
+    {
+        os << "-parms";
+        for (auto const& parameter : kinetic_reactant.parameters)
+        {
+            os << " " << parameter;
+        }
+        os << "\n";
+    }
+
+    return os;
 }
 }  // namespace ChemistryLib

@@ -31,9 +31,8 @@ struct KineticReactant
     {
     }
 
-    friend std::ofstream& operator<<(
-        std::ofstream& out,
-        std::vector<KineticReactant> const& kinetic_reactants);
+    friend std::ostream& operator<<(std::ostream& os,
+                                    KineticReactant const& kinetic_reactant);
 
     std::string const name;
     std::string const chemical_formula;

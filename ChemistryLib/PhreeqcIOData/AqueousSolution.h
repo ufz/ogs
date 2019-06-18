@@ -48,8 +48,8 @@ struct AqueousSolution
     {
     }
 
-    friend std::ofstream& operator<<(std::ofstream& out,
-                                     AqueousSolution const& aqueous_solution);
+    friend std::ostream& operator<<(std::ostream& os,
+                                    AqueousSolution const& aqueous_solution);
 
     double temperature;
     double pressure;

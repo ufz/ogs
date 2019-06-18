@@ -64,10 +64,10 @@ public:
 
     void readOutputsFromFile();
 
-    friend std::ofstream& operator<<(std::ofstream& out,
-                                     PhreeqcIO const& phreeqc_io);
+    friend std::ostream& operator<<(std::ostream& os,
+                                    PhreeqcIO const& phreeqc_io);
 
-    friend std::ifstream& operator>>(std::ifstream& in, PhreeqcIO& phreeqc_io);
+    friend std::istream& operator>>(std::istream& in, PhreeqcIO& phreeqc_io);
 
     std::string const _phreeqc_input_file;
 

@@ -7,8 +7,6 @@
  *
  */
 
-#include <fstream>
-
 #include "BaseLib/ConfigTreeUtil.h"
 #include "BaseLib/Error.h"
 #include "CreateOutput.h"
