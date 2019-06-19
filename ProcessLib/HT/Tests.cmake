@@ -208,6 +208,12 @@ AddTest(
     square_5500x5500.vtu ConstViscosityThermalConvectionStaggeredAdaptive_dt_pcs_1_ts_141_t_50000000000.000000.vtu darcy_velocity_ref darcy_velocity  1e-3  1.e-3
     VIS ConstViscosityThermalConvectionStaggeredAdaptive_dt_pcs_1_ts_141_t_50000000000.000000.vtu
 )
+# Workaround sporadic timeouts on macOS
+if(APPLE)
+    set_tests_properties(
+        ogs-2D_Adaptive_dt_ThermalConvection_constviscosityStaggeredScheme-time
+        PROPERTIES TIMEOUT 1800)
+endif()
 
 # 2019-05-09 TF disable the test until the MPL can deal with parameters as properties
 #AddTest(
