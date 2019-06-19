@@ -71,5 +71,6 @@ private:
     std::vector<std::pair<int, std::string>> const&
         _process_id_to_component_name_map;
     double _dt = std::numeric_limits<double>::quiet_NaN();
+    const int phreeqc_instance_id = 0;
 };
 }  // namespace ChemistryLib

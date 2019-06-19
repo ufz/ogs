@@ -29,8 +29,6 @@ std::ostream& operator<<(std::ostream& os,
               std::ostream_iterator<DataBlock>(os));
     return os;
 }
-
-static const int phreeqc_instance_id = 0;
 }  // namespace
 
 PhreeqcIO::PhreeqcIO(
