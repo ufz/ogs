@@ -221,15 +221,6 @@ template <int DisplacementDim>
 struct StateVariables
     : public MechanicsBase<DisplacementDim>::MaterialStateVariables
 {
-    StateVariables& operator=(StateVariables const&) = default;
-    typename MechanicsBase<DisplacementDim>::MaterialStateVariables& operator=(
-        typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
-            state) noexcept override
-    {
-        assert(dynamic_cast<StateVariables const*>(&state) != nullptr);
-        return operator=(static_cast<StateVariables const&>(state));
-    }
-
     void setInitialConditions()
     {
         eps_p = eps_p_prev;

@@ -123,29 +123,6 @@ public:
         P const& poissons_ratios;  // Stored as nu_12, nu_23, nu_13
     };
 
-    struct MaterialStateVariables
-        : public MechanicsBase<DisplacementDim>::MaterialStateVariables
-    {
-        void pushBackState() override {}
-        MaterialStateVariables& operator=(MaterialStateVariables const&) =
-            default;
-        typename MechanicsBase<DisplacementDim>::MaterialStateVariables&
-        operator=(typename MechanicsBase<DisplacementDim>::
-                      MaterialStateVariables const& state) noexcept override
-        {
-            return operator=(static_cast<MaterialStateVariables const&>(state));
-        }
-    };
-
-    std::unique_ptr<
-        typename MechanicsBase<DisplacementDim>::MaterialStateVariables>
-    createMaterialStateVariables() const override
-    {
-        return std::unique_ptr<
-            typename MechanicsBase<DisplacementDim>::MaterialStateVariables>{
-            new MaterialStateVariables};
-    }
-
 public:
     static int const KelvinVectorSize =
         MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
@@ -176,10 +153,11 @@ public:
         return eps.dot(sigma) / 2;
     }
 
-    boost::optional<std::tuple<KelvinVector,
-                               std::unique_ptr<typename MechanicsBase<
-                                   DisplacementDim>::MaterialStateVariables>,
-                               KelvinMatrix>>
+    boost::optional<
+        std::tuple<typename MechanicsBase<DisplacementDim>::KelvinVector,
+                   std::unique_ptr<typename MechanicsBase<
+                       DisplacementDim>::MaterialStateVariables>,
+                   typename MechanicsBase<DisplacementDim>::KelvinMatrix>>
     integrateStress(
         double const t, ParameterLib::SpatialPosition const& x,
         double const /*dt*/, KelvinVector const& eps_prev,
