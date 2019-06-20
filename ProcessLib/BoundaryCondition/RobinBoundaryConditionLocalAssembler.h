@@ -55,9 +55,11 @@ public:
             Base::_integration_method.getNumberOfPoints();
 
         typename Base::NodalVectorType const alpha =
-            _data.alpha.getNodalValuesOnElement(Base::_element, t);
+            _data.alpha.getNodalValuesOnElement(Base::_element, t)
+                .template topRows<ShapeFunction::MeshElement::n_all_nodes>();
         typename Base::NodalVectorType const u_0 =
-            _data.u_0.getNodalValuesOnElement(Base::_element, t);
+            _data.u_0.getNodalValuesOnElement(Base::_element, t)
+                .template topRows<ShapeFunction::MeshElement::n_all_nodes>();
 
         for (unsigned ip = 0; ip < n_integration_points; ++ip)
         {

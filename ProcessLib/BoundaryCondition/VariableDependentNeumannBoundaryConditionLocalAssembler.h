@@ -64,16 +64,20 @@ public:
         // Get element nodes for the interpolation from nodes to
         // integration point.
         NodalVectorType const constant_node_values =
-            _data.constant.getNodalValuesOnElement(Base::_element, t);
+            _data.constant.getNodalValuesOnElement(Base::_element, t)
+                .template topRows<ShapeFunction::MeshElement::n_all_nodes>();
         NodalVectorType const coefficient_current_variable_node_values =
-            _data.coefficient_current_variable.getNodalValuesOnElement(
-                Base::_element, t);
+            _data.coefficient_current_variable
+                .getNodalValuesOnElement(Base::_element, t)
+                .template topRows<ShapeFunction::MeshElement::n_all_nodes>();
         NodalVectorType const coefficient_other_variable_node_values =
-            _data.coefficient_other_variable.getNodalValuesOnElement(
-                Base::_element, t);
+            _data.coefficient_other_variable
+                .getNodalValuesOnElement(Base::_element, t)
+                .template topRows<ShapeFunction::MeshElement::n_all_nodes>();
         NodalVectorType const coefficient_mixed_variables_node_values =
-            _data.coefficient_mixed_variables.getNodalValuesOnElement(
-                Base::_element, t);
+            _data.coefficient_mixed_variables
+                .getNodalValuesOnElement(Base::_element, t)
+                .template topRows<ShapeFunction::MeshElement::n_all_nodes>();
         unsigned const n_integration_points =
             Base::_integration_method.getNumberOfPoints();
 
