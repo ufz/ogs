@@ -14,10 +14,12 @@
 
 #include <memory>
 
+#include "MaterialLib/Fluid/FluidProperties/FluidProperties.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "ProcessLib/Process.h"
 
-#include "MaterialLib/Fluid/FluidProperties/FluidProperties.h"
+#include "LiquidFlowLocalAssembler.h"
+#include "LiquidFlowMaterialProperties.h"
 
 namespace MeshLib
 {
@@ -31,9 +33,6 @@ namespace ProcessLib
 {
 namespace LiquidFlow
 {
-class LiquidFlowLocalAssemblerInterface;
-class LiquidFlowMaterialProperties;
-
 /**
  * \brief A class to simulate the liquid flow process in porous media described
  * by
