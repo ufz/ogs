@@ -344,11 +344,7 @@ private:
 
     bool isChild (QuadTree<POINT> const* const tree, Quadrant quadrant) const
     {
-        if (_children[static_cast<int>(quadrant)] == tree)
-        {
-            return true;
-        }
-        return false;
+        return _children[static_cast<int>(quadrant)] == tree;
     }
 
     QuadTree<POINT>* getNorthNeighbor () const
