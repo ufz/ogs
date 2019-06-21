@@ -17,8 +17,6 @@ namespace ProcessLib
 {
 namespace HydroMechanics
 {
-struct LocalAssemblerInterface;
-
 /// Linear kinematics poro-mechanical/biphasic (fluid-solid mixture) model.
 ///
 /// The mixture momentum balance and the mixture mass balance are solved under
