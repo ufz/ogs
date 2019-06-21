@@ -173,13 +173,10 @@ kelvinVectorToSymmetricTensor(Eigen::Matrix<double,
     {
         return kelvinVectorToSymmetricTensor<6>(v);
     }
-    else
-    {
-        OGS_FATAL(
-            "Kelvin vector to tensor conversion expected an input vector of "
-            "size 4 or 6, but a vector of size %d was given.",
-            v.size());
-    }
+    OGS_FATAL(
+        "Kelvin vector to tensor conversion expected an input vector of size 4 "
+        "or 6, but a vector of size %d was given.",
+        v.size());
 }
 }  // namespace KelvinVector
 }  // namespace MathLib

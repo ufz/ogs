@@ -93,10 +93,7 @@ public:
             return _reference_density *
                    _fluid_density_pressure_difference_ratio;
         }
-        else
-        {
-            return 0;
-        }
+        return 0;
     }
 
 private:

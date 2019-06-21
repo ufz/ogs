@@ -190,7 +190,7 @@ public:
         {
             return setEpsilon(values);
         }
-        else if (name == "epsilon_m_ip")
+        if (name == "epsilon_m_ip")
         {
             return setEpsilonMechanical(values);
         }

@@ -28,11 +28,11 @@ BoundaryCondition::ConditionType BoundaryCondition::convertStringToType(
     {
         return ConditionType::DIRICHLET;
     }
-    else if (str == "Neumann")
+    if (str == "Neumann")
     {
         return ConditionType::NEUMANN;
     }
-    else if (str == "Robin")
+    if (str == "Robin")
     {
         return ConditionType::ROBIN;
     }
@@ -46,11 +46,11 @@ std::string BoundaryCondition::convertTypeToString(ConditionType type)
     {
         return "Dirichlet";
     }
-    else if (type == ConditionType::NEUMANN)
+    if (type == ConditionType::NEUMANN)
     {
         return "Neumann";
     }
-    else if (type == ConditionType::ROBIN)
+    if (type == ConditionType::ROBIN)
     {
         return "Robin";
     }
