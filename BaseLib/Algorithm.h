@@ -171,6 +171,24 @@ typename Map::mapped_type const& getOrError(Map const& map, Key const& key,
     return it->second;
 }
 
+//! Returns the value of from the given \c container if such an entry fulfilling
+//! the \c predicate exists;
+//! otherwise an \c error_message is printed and the program is aborted.
+template <typename Container, typename Predicate>
+typename Container::value_type const& getIfOrError(
+    Container const& container,
+    Predicate&& predicate,
+    std::string const& error_message)
+{
+    auto it = std::find_if(begin(container), end(container), predicate);
+    if (it == end(container))
+    {
+        OGS_FATAL("Could not find element matching the predicate: %s",
+                  error_message.c_str());
+    }
+    return *it;
+}
+
 /// Make the entries of the std::vector \c v unique. The remaining entries will
 /// be sorted.
 template <typename T>
