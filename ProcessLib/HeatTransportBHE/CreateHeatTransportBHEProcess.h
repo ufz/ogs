@@ -17,6 +17,7 @@ namespace ProcessLib
 namespace HeatTransportBHE
 {
 std::unique_ptr<Process> createHeatTransportBHEProcess(
+    std::string name,
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,

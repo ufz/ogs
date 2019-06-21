@@ -27,6 +27,7 @@ namespace RichardsMechanics
 {
 template <int DisplacementDim>
 std::unique_ptr<Process> createRichardsMechanicsProcess(
+    std::string name,
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
@@ -207,13 +208,14 @@ std::unique_ptr<Process> createRichardsMechanicsProcess(
                                          named_function_caller);
 
     return std::make_unique<RichardsMechanicsProcess<DisplacementDim>>(
-        mesh, std::move(jacobian_assembler), parameters, integration_order,
-        std::move(process_variables), std::move(process_data),
-        std::move(secondary_variables), std::move(named_function_caller),
-        use_monolithic_scheme);
+        std::move(name), mesh, std::move(jacobian_assembler), parameters,
+        integration_order, std::move(process_variables),
+        std::move(process_data), std::move(secondary_variables),
+        std::move(named_function_caller), use_monolithic_scheme);
 }
 
 template std::unique_ptr<Process> createRichardsMechanicsProcess<2>(
+    std::string name,
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
@@ -224,6 +226,7 @@ template std::unique_ptr<Process> createRichardsMechanicsProcess<2>(
     BaseLib::ConfigTree const& config);
 
 template std::unique_ptr<Process> createRichardsMechanicsProcess<3>(
+    std::string name,
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,

@@ -34,6 +34,7 @@ class TwoPhaseFlowWithPrhoProcess final : public Process
 {
 public:
     TwoPhaseFlowWithPrhoProcess(
+        std::string name,
         MeshLib::Mesh& mesh,
         std::unique_ptr<AbstractJacobianAssembler>&& jacobian_assembler,
         std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&

@@ -45,7 +45,8 @@ public:
     using NonlinearSolver = NumLib::NonlinearSolverBase;
     using TimeDiscretization = NumLib::TimeDiscretization;
 
-    Process(MeshLib::Mesh& mesh,
+    Process(std::string name_,
+            MeshLib::Mesh& mesh,
             std::unique_ptr<AbstractJacobianAssembler>&& jacobian_assembler,
             std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
                 parameters,

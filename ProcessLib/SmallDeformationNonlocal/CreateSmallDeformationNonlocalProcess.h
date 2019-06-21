@@ -41,6 +41,7 @@ namespace SmallDeformationNonlocal
 {
 template <int DisplacementDim>
 std::unique_ptr<Process> createSmallDeformationNonlocalProcess(
+    std::string name,
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
@@ -52,6 +53,7 @@ std::unique_ptr<Process> createSmallDeformationNonlocalProcess(
 
 extern template std::unique_ptr<Process>
 createSmallDeformationNonlocalProcess<2>(
+    std::string name,
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
@@ -63,6 +65,7 @@ createSmallDeformationNonlocalProcess<2>(
 
 extern template std::unique_ptr<Process>
 createSmallDeformationNonlocalProcess<3>(
+    std::string name,
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,

@@ -26,6 +26,7 @@ namespace ThermoMechanicalPhaseField
 template <int DisplacementDim>
 ThermoMechanicalPhaseFieldProcess<DisplacementDim>::
     ThermoMechanicalPhaseFieldProcess(
+        std::string name,
         MeshLib::Mesh& mesh,
         std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&&
             jacobian_assembler,
@@ -40,7 +41,7 @@ ThermoMechanicalPhaseFieldProcess<DisplacementDim>::
         int const mechanics_related_process_id,
         int const phase_field_process_id,
         int const heat_conduction_process_id)
-    : Process(mesh, std::move(jacobian_assembler), parameters,
+    : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables), std::move(named_function_caller),
               false),

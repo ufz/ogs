@@ -28,6 +28,7 @@ class RichardsMechanicsProcess final : public Process
 {
 public:
     RichardsMechanicsProcess(
+        std::string name,
         MeshLib::Mesh& mesh,
         std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&&
             jacobian_assembler,

@@ -29,6 +29,7 @@ namespace HydroMechanics
 {
 template <unsigned GlobalDim>
 std::unique_ptr<Process> createHydroMechanicsProcess(
+    std::string name,
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
@@ -344,13 +345,14 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
                                          named_function_caller);
 
     return std::make_unique<HydroMechanicsProcess<GlobalDim>>(
-        mesh, std::move(jacobian_assembler), parameters, integration_order,
-        std::move(process_variables), std::move(process_data),
-        std::move(secondary_variables), std::move(named_function_caller),
-        use_monolithic_scheme);
+        std::move(name), mesh, std::move(jacobian_assembler), parameters,
+        integration_order, std::move(process_variables),
+        std::move(process_data), std::move(secondary_variables),
+        std::move(named_function_caller), use_monolithic_scheme);
 }
 
 template std::unique_ptr<Process> createHydroMechanicsProcess<2>(
+    std::string name,
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
@@ -360,6 +362,7 @@ template std::unique_ptr<Process> createHydroMechanicsProcess<2>(
     unsigned const integration_order,
     BaseLib::ConfigTree const& config);
 template std::unique_ptr<Process> createHydroMechanicsProcess<3>(
+    std::string name,
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,

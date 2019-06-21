@@ -26,6 +26,7 @@ class GroundwaterFlowProcess final : public Process
 {
 public:
     GroundwaterFlowProcess(
+        std::string name,
         MeshLib::Mesh& mesh,
         std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&&
             jacobian_assembler,

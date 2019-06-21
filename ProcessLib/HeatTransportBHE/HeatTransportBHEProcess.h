@@ -24,6 +24,7 @@ class HeatTransportBHEProcess final : public Process
 {
 public:
     HeatTransportBHEProcess(
+        std::string name,
         MeshLib::Mesh& mesh,
         std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&&
             jacobian_assembler,
