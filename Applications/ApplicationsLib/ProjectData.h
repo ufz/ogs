@@ -72,8 +72,8 @@ public:
     //
 
     /// Provides read access to the process container.
-    std::map<std::string, std::unique_ptr<ProcessLib::Process>> const&
-    getProcesses() const
+    std::vector<std::unique_ptr<ProcessLib::Process>> const& getProcesses()
+        const
     {
         return _processes;
     }
@@ -118,7 +118,7 @@ private:
 
     std::unique_ptr<MaterialPropertyLib::Medium> _medium;
     std::vector<std::unique_ptr<MeshLib::Mesh>> _mesh_vec;
-    std::map<std::string, std::unique_ptr<ProcessLib::Process>> _processes;
+    std::vector<std::unique_ptr<ProcessLib::Process>> _processes;
     std::vector<ProcessLib::ProcessVariable> _process_variables;
 
     /// Buffer for each parameter config passed to the process.

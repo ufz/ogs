@@ -921,10 +921,15 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
             OGS_FATAL("Unknown process type: %s", type.c_str());
         }
 
-        BaseLib::insertIfKeyUniqueElseError(_processes,
-                                            name,
-                                            std::move(process),
-                                            "The process name is not unique");
+        if (BaseLib::containsIf(
+                _processes,
+                [&name](std::unique_ptr<ProcessLib::Process> const& p) {
+                    return p->name == name;
+                }))
+        {
+            OGS_FATAL("The process name '%s' is not unique.", name.c_str());
+        }
+        _processes.push_back(std::move(process));
     }
 }
 
@@ -1020,10 +1025,9 @@ void ProjectData::parseChemicalSystem(
         "Ready for initializing interface to a chemical solver for water "
         "chemistry calculation.");
 
-    auto const& process = _processes.begin()->second;
     if (auto const* component_transport_process = dynamic_cast<
             ProcessLib::ComponentTransport::ComponentTransportProcess const*>(
-            process.get()))
+            _processes[0].get()))
     {
         auto const chemical_solver =
             //! \ogs_file_attr{prj__chemical_system__chemical_solver}

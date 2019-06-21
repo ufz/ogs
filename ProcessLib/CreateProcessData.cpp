@@ -47,7 +47,7 @@ static std::unique_ptr<ProcessData> makeProcessData(
 
 std::vector<std::unique_ptr<ProcessData>> createPerProcessData(
     BaseLib::ConfigTree const& config,
-    const std::map<std::string, std::unique_ptr<Process>>& processes,
+    std::vector<std::unique_ptr<Process>> const& processes,
     std::map<std::string, std::unique_ptr<NumLib::NonlinearSolverBase>> const&
         nonlinear_solvers)
 {
@@ -58,8 +58,11 @@ std::vector<std::unique_ptr<ProcessData>> createPerProcessData(
     {
         //! \ogs_file_attr{prj__time_loop__processes__process__ref}
         auto const pcs_name = pcs_config.getConfigAttribute<std::string>("ref");
-        auto& pcs = *BaseLib::getOrError(
-            processes, pcs_name,
+        auto& pcs = *BaseLib::getIfOrError(
+            processes,
+            [&pcs_name](std::unique_ptr<Process> const& p) {
+                return p->name == pcs_name;
+            },
             "A process with the given name has not been defined.");
 
         auto const nl_slv_name =

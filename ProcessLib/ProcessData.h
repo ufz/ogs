@@ -15,11 +15,7 @@
 #include "NumLib/TimeStepping/Algorithms/TimeStepAlgorithm.h"
 
 #include "CoupledSolutionsForStaggeredScheme.h"
-
-namespace ProcessLib
-{
-class Process;
-}
+#include "Process.h"
 
 namespace ProcessLib
 {
