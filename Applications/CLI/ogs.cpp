@@ -220,7 +220,7 @@ int main(int argc, char* argv[])
             INFO("Initialize processes.");
             for (auto& p : project.getProcesses())
             {
-                p.second->initialize();
+                p->initialize();
             }
 
             // Check intermediately that config parsing went fine.

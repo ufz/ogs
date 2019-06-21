@@ -15,7 +15,7 @@ namespace ProcessLib
 {
 std::vector<std::unique_ptr<ProcessData>> createPerProcessData(
     BaseLib::ConfigTree const& config,
-    const std::map<std::string, std::unique_ptr<Process>>& processes,
+    std::vector<std::unique_ptr<Process>> const& processes,
     std::map<std::string, std::unique_ptr<NumLib::NonlinearSolverBase>> const&
         nonlinear_solvers);
 
