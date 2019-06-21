@@ -412,8 +412,7 @@ std::vector<std::string> ProjectData::parseParameters(
             //! \ogs_file_param{prj__parameters__parameter__use_local_coordinate_system}
             parameter_config.getConfigParameterOptional<bool>(
                 "use_local_coordinate_system");
-        if (!!use_local_coordinate_system &&
-            *use_local_coordinate_system == true)
+        if (!!use_local_coordinate_system && *use_local_coordinate_system)
         {
             parameter_names_for_transformation.push_back(p->name);
         }
