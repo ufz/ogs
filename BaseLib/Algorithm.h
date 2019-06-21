@@ -228,6 +228,13 @@ bool contains(Container const& container,
            container.end();
 }
 
+template <typename Container, typename Predicate>
+bool containsIf(Container const& container, Predicate&& predicate)
+{
+    return std::find_if(container.begin(), container.end(), predicate) !=
+           container.end();
+}
+
 template <typename Container>
 boost::optional<typename Container::value_type> findFirstNotEqualElement(
     Container const& container, typename Container::value_type const& element)
