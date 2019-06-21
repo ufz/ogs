@@ -24,6 +24,7 @@ namespace ProcessLib
 namespace TwoPhaseFlowWithPrho
 {
 std::unique_ptr<Process> createTwoPhaseFlowWithPrhoProcess(
+    std::string name,
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
@@ -111,10 +112,10 @@ std::unique_ptr<Process> createTwoPhaseFlowWithPrhoProcess(
         diff_coeff_a,        temperature, std::move(material)};
 
     return std::make_unique<TwoPhaseFlowWithPrhoProcess>(
-        mesh, std::move(jacobian_assembler), parameters, integration_order,
-        std::move(process_variables), std::move(process_data),
-        std::move(secondary_variables), std::move(named_function_caller),
-        mat_config, curves);
+        std::move(name), mesh, std::move(jacobian_assembler), parameters,
+        integration_order, std::move(process_variables),
+        std::move(process_data), std::move(secondary_variables),
+        std::move(named_function_caller), mat_config, curves);
 }
 
 }  // namespace TwoPhaseFlowWithPrho

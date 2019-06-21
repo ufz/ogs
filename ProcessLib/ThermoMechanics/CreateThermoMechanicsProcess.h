@@ -39,6 +39,7 @@ namespace ThermoMechanics
 {
 template <int DisplacementDim>
 std::unique_ptr<Process> createThermoMechanicsProcess(
+    std::string name,
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
@@ -49,6 +50,7 @@ std::unique_ptr<Process> createThermoMechanicsProcess(
     BaseLib::ConfigTree const& config);
 
 extern template std::unique_ptr<Process> createThermoMechanicsProcess<2>(
+    std::string name,
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
@@ -59,6 +61,7 @@ extern template std::unique_ptr<Process> createThermoMechanicsProcess<2>(
     BaseLib::ConfigTree const& config);
 
 extern template std::unique_ptr<Process> createThermoMechanicsProcess<3>(
+    std::string name,
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,

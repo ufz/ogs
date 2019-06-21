@@ -26,6 +26,7 @@ namespace ProcessLib
 namespace LiquidFlow
 {
 std::unique_ptr<Process> createLiquidFlowProcess(
+    std::string name,
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
@@ -101,11 +102,11 @@ std::unique_ptr<Process> createLiquidFlowProcess(
         INFO("The liquid flow is in homogeneous porous media.");
     }
 
-    return std::unique_ptr<Process>{new LiquidFlowProcess{
-        mesh, std::move(jacobian_assembler), parameters, integration_order,
-        std::move(process_variables), std::move(secondary_variables),
-        std::move(named_function_caller), material_ids, gravity_axis_id, g,
-        reference_temperature, mat_config}};
+    return std::make_unique<LiquidFlowProcess>(
+        std::move(name), mesh, std::move(jacobian_assembler), parameters,
+        integration_order, std::move(process_variables),
+        std::move(secondary_variables), std::move(named_function_caller),
+        material_ids, gravity_axis_id, g, reference_temperature, mat_config);
 }
 
 }  // namespace LiquidFlow

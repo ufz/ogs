@@ -18,6 +18,7 @@ namespace ProcessLib
 namespace RichardsFlow
 {
 RichardsFlowProcess::RichardsFlowProcess(
+    std::string name,
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
@@ -31,7 +32,7 @@ RichardsFlowProcess::RichardsFlowProcess(
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
     /*curves*/)
-    : Process(mesh, std::move(jacobian_assembler), parameters,
+    : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables), std::move(named_function_caller)),
       _process_data(std::move(process_data))

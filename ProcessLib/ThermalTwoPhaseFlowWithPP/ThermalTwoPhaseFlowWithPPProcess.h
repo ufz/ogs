@@ -38,6 +38,7 @@ class ThermalTwoPhaseFlowWithPPProcess final : public Process
 {
 public:
     ThermalTwoPhaseFlowWithPPProcess(
+        std::string name,
         MeshLib::Mesh& mesh,
         std::unique_ptr<AbstractJacobianAssembler>&& jacobian_assembler,
         std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&

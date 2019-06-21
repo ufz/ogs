@@ -25,6 +25,7 @@ namespace ProcessLib
 namespace HeatTransportBHE
 {
 std::unique_ptr<Process> createHeatTransportBHEProcess(
+    std::string name,
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
@@ -225,9 +226,10 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
                                          named_function_caller);
 
     return std::make_unique<HeatTransportBHEProcess>(
-        mesh, std::move(jacobian_assembler), parameters, integration_order,
-        std::move(process_variables), std::move(process_data),
-        std::move(secondary_variables), std::move(named_function_caller));
+        std::move(name), mesh, std::move(jacobian_assembler), parameters,
+        integration_order, std::move(process_variables),
+        std::move(process_data), std::move(secondary_variables),
+        std::move(named_function_caller));
 }
 }  // namespace HeatTransportBHE
 }  // namespace ProcessLib

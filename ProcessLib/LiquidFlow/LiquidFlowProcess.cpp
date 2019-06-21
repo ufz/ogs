@@ -31,6 +31,7 @@ namespace ProcessLib
 namespace LiquidFlow
 {
 LiquidFlowProcess::LiquidFlowProcess(
+    std::string name,
     MeshLib::Mesh& mesh,
     std::unique_ptr<AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
@@ -44,7 +45,7 @@ LiquidFlowProcess::LiquidFlowProcess(
     double const gravitational_acceleration,
     double const reference_temperature,
     BaseLib::ConfigTree const& config)
-    : Process(mesh, std::move(jacobian_assembler), parameters,
+    : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables), std::move(named_function_caller)),
       _gravitational_axis_id(gravitational_axis_id),

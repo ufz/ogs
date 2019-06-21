@@ -17,6 +17,7 @@ namespace ProcessLib
 namespace TES
 {
 TESProcess::TESProcess(
+    std::string name,
     MeshLib::Mesh& mesh,
     std::unique_ptr<AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
@@ -26,7 +27,7 @@ TESProcess::TESProcess(
     SecondaryVariableCollection&& secondary_variables,
     NumLib::NamedFunctionCaller&& named_function_caller,
     const BaseLib::ConfigTree& config)
-    : Process(mesh, std::move(jacobian_assembler), parameters,
+    : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables), std::move(named_function_caller))
 {

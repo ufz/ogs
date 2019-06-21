@@ -30,6 +30,7 @@ class SmallDeformationNonlocalProcess final : public Process
 {
 public:
     SmallDeformationNonlocalProcess(
+        std::string name,
         MeshLib::Mesh& mesh,
         std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&&
             jacobian_assembler,

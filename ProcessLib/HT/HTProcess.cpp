@@ -25,6 +25,7 @@ namespace ProcessLib
 namespace HT
 {
 HTProcess::HTProcess(
+    std::string name,
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
@@ -38,7 +39,7 @@ HTProcess::HTProcess(
     std::unique_ptr<ProcessLib::SurfaceFluxData>&& surfaceflux,
     const int heat_transport_process_id,
     const int hydraulic_process_id)
-    : Process(mesh, std::move(jacobian_assembler), parameters,
+    : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables), std::move(named_function_caller),
               use_monolithic_scheme),

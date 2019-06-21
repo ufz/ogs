@@ -50,6 +50,7 @@ class HTProcess final : public Process
 {
 public:
     HTProcess(
+        std::string name,
         MeshLib::Mesh& mesh,
         std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&&
             jacobian_assembler,

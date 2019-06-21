@@ -54,6 +54,7 @@ class ThermoMechanicalPhaseFieldProcess final : public Process
 {
 public:
     ThermoMechanicalPhaseFieldProcess(
+        std::string name,
         MeshLib::Mesh& mesh,
         std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&&
             jacobian_assembler,
