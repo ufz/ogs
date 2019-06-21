@@ -37,17 +37,7 @@ public:
               std::vector<ReactionRate>&& reaction_rates,
               std::unique_ptr<Output>&& output,
               std::vector<std::pair<int, std::string>> const&
-                  process_id_to_component_name_map)
-        : _phreeqc_input_file(project_file_name + "_phreeqc.inp"),
-          _database(std::move(database)),
-          _aqueous_solutions(std::move(aqueous_solutions)),
-          _equilibrium_phases(std::move(equilibrium_phases)),
-          _kinetic_reactants(std::move(kinetic_reactants)),
-          _reaction_rates(std::move(reaction_rates)),
-          _output(std::move(output)),
-          _process_id_to_component_name_map(process_id_to_component_name_map)
-    {
-    }
+                  process_id_to_component_name_map);
 
     void doWaterChemistryCalculation(
         std::vector<GlobalVector*>& process_solutions, double const dt);
@@ -81,5 +71,6 @@ private:
     std::vector<std::pair<int, std::string>> const&
         _process_id_to_component_name_map;
     double _dt = std::numeric_limits<double>::quiet_NaN();
+    const int phreeqc_instance_id = 0;
 };
 }  // namespace ChemistryLib
