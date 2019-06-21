@@ -611,7 +611,7 @@ void GocadSGridReader::readSplitInformation()
             {
                 char bit;
                 ss >> bit;
-                affected_cells[ac] = bit == '0' ? false : true;
+                affected_cells[ac] = bit != '0';
             }
             const std::size_t layer_transition_index(
                 _nodes[id]->getLayerTransitionIndex());
