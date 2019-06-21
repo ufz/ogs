@@ -506,7 +506,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
             // several meshes. Then we have to assign the referenced mesh
             // here.
             process = ProcessLib::GroundwaterFlow::createGroundwaterFlowProcess(
-                *_mesh_vec[0], std::move(jacobian_assembler),
+                name, *_mesh_vec[0], std::move(jacobian_assembler),
                 _process_variables, _parameters, integration_order,
                 process_config, _mesh_vec, output_directory);
         }
@@ -516,7 +516,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
             if (type == "LIQUID_FLOW")
         {
             process = ProcessLib::LiquidFlow::createLiquidFlowProcess(
-                *_mesh_vec[0], std::move(jacobian_assembler),
+                name, *_mesh_vec[0], std::move(jacobian_assembler),
                 _process_variables, _parameters, integration_order,
                 process_config);
         }
@@ -526,7 +526,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
             if (type == "TES")
         {
             process = ProcessLib::TES::createTESProcess(
-                *_mesh_vec[0], std::move(jacobian_assembler),
+                name, *_mesh_vec[0], std::move(jacobian_assembler),
                 _process_variables, _parameters, integration_order,
                 process_config);
         }
@@ -536,7 +536,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
             if (type == "HEAT_CONDUCTION")
         {
             process = ProcessLib::HeatConduction::createHeatConductionProcess(
-                *_mesh_vec[0], std::move(jacobian_assembler),
+                name, *_mesh_vec[0], std::move(jacobian_assembler),
                 _process_variables, _parameters, integration_order,
                 process_config);
         }
@@ -554,7 +554,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
 
             process =
                 ProcessLib::HeatTransportBHE::createHeatTransportBHEProcess(
-                    *_mesh_vec[0], std::move(jacobian_assembler),
+                    name, *_mesh_vec[0], std::move(jacobian_assembler),
                     _process_variables, _parameters, integration_order,
                     process_config, _curves);
         }
@@ -569,7 +569,8 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                 case 2:
                     process =
                         ProcessLib::HydroMechanics::createHydroMechanicsProcess<
-                            2>(*_mesh_vec[0], std::move(jacobian_assembler),
+                            2>(name, *_mesh_vec[0],
+                               std::move(jacobian_assembler),
                                _process_variables, _parameters,
                                _local_coordinate_system, integration_order,
                                process_config);
@@ -577,7 +578,8 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                 case 3:
                     process =
                         ProcessLib::HydroMechanics::createHydroMechanicsProcess<
-                            3>(*_mesh_vec[0], std::move(jacobian_assembler),
+                            3>(name, *_mesh_vec[0],
+                               std::move(jacobian_assembler),
                                _process_variables, _parameters,
                                _local_coordinate_system, integration_order,
                                process_config);
@@ -599,7 +601,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                 case 2:
                     process = ProcessLib::LIE::HydroMechanics::
                         createHydroMechanicsProcess<2>(
-                            *_mesh_vec[0], std::move(jacobian_assembler),
+                            name, *_mesh_vec[0], std::move(jacobian_assembler),
                             _process_variables, _parameters,
                             _local_coordinate_system, integration_order,
                             process_config);
@@ -607,7 +609,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                 case 3:
                     process = ProcessLib::LIE::HydroMechanics::
                         createHydroMechanicsProcess<3>(
-                            *_mesh_vec[0], std::move(jacobian_assembler),
+                            name, *_mesh_vec[0], std::move(jacobian_assembler),
                             _process_variables, _parameters,
                             _local_coordinate_system, integration_order,
                             process_config);
@@ -624,7 +626,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
             if (type == "HT")
         {
             process = ProcessLib::HT::createHTProcess(
-                *_mesh_vec[0], std::move(jacobian_assembler),
+                name, *_mesh_vec[0], std::move(jacobian_assembler),
                 _process_variables, _parameters, integration_order,
                 process_config, _mesh_vec, output_directory, _media);
         }
@@ -635,7 +637,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
         {
             process =
                 ProcessLib::ComponentTransport::createComponentTransportProcess(
-                    *_mesh_vec[0], std::move(jacobian_assembler),
+                    name, *_mesh_vec[0], std::move(jacobian_assembler),
                     _process_variables, _parameters, integration_order,
                     process_config, _mesh_vec, output_directory, _media);
         }
@@ -649,7 +651,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                 case 2:
                     process =
                         ProcessLib::PhaseField::createPhaseFieldProcess<2>(
-                            *_mesh_vec[0], std::move(jacobian_assembler),
+                            name, *_mesh_vec[0], std::move(jacobian_assembler),
                             _process_variables, _parameters,
                             _local_coordinate_system, integration_order,
                             process_config);
@@ -657,7 +659,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                 case 3:
                     process =
                         ProcessLib::PhaseField::createPhaseFieldProcess<3>(
-                            *_mesh_vec[0], std::move(jacobian_assembler),
+                            name, *_mesh_vec[0], std::move(jacobian_assembler),
                             _process_variables, _parameters,
                             _local_coordinate_system, integration_order,
                             process_config);
@@ -671,7 +673,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
         {
             process = ProcessLib::RichardsComponentTransport::
                 createRichardsComponentTransportProcess(
-                    *_mesh_vec[0], std::move(jacobian_assembler),
+                    name, *_mesh_vec[0], std::move(jacobian_assembler),
                     _process_variables, _parameters, integration_order,
                     process_config);
         }
@@ -685,7 +687,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                 case 2:
                     process = ProcessLib::SmallDeformation::
                         createSmallDeformationProcess<2>(
-                            *_mesh_vec[0], std::move(jacobian_assembler),
+                            name, *_mesh_vec[0], std::move(jacobian_assembler),
                             _process_variables, _parameters,
                             _local_coordinate_system, integration_order,
                             process_config);
@@ -693,7 +695,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                 case 3:
                     process = ProcessLib::SmallDeformation::
                         createSmallDeformationProcess<3>(
-                            *_mesh_vec[0], std::move(jacobian_assembler),
+                            name, *_mesh_vec[0], std::move(jacobian_assembler),
                             _process_variables, _parameters,
                             _local_coordinate_system, integration_order,
                             process_config);
@@ -714,7 +716,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                 case 2:
                     process = ProcessLib::SmallDeformationNonlocal::
                         createSmallDeformationNonlocalProcess<2>(
-                            *_mesh_vec[0], std::move(jacobian_assembler),
+                            name, *_mesh_vec[0], std::move(jacobian_assembler),
                             _process_variables, _parameters,
                             _local_coordinate_system, integration_order,
                             process_config);
@@ -722,7 +724,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                 case 3:
                     process = ProcessLib::SmallDeformationNonlocal::
                         createSmallDeformationNonlocalProcess<3>(
-                            *_mesh_vec[0], std::move(jacobian_assembler),
+                            name, *_mesh_vec[0], std::move(jacobian_assembler),
                             _process_variables, _parameters,
                             _local_coordinate_system, integration_order,
                             process_config);
@@ -745,7 +747,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                 case 2:
                     process = ProcessLib::LIE::SmallDeformation::
                         createSmallDeformationProcess<2>(
-                            *_mesh_vec[0], std::move(jacobian_assembler),
+                            name, *_mesh_vec[0], std::move(jacobian_assembler),
                             _process_variables, _parameters,
                             _local_coordinate_system, integration_order,
                             process_config);
@@ -753,7 +755,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                 case 3:
                     process = ProcessLib::LIE::SmallDeformation::
                         createSmallDeformationProcess<3>(
-                            *_mesh_vec[0], std::move(jacobian_assembler),
+                            name, *_mesh_vec[0], std::move(jacobian_assembler),
                             _process_variables, _parameters,
                             _local_coordinate_system, integration_order,
                             process_config);
@@ -775,7 +777,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                 case 2:
                     process = ProcessLib::ThermoHydroMechanics::
                         createThermoHydroMechanicsProcess<2>(
-                            *_mesh_vec[0], std::move(jacobian_assembler),
+                            name, *_mesh_vec[0], std::move(jacobian_assembler),
                             _process_variables, _parameters,
                             _local_coordinate_system, integration_order,
                             process_config);
@@ -783,7 +785,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                 case 3:
                     process = ProcessLib::ThermoHydroMechanics::
                         createThermoHydroMechanicsProcess<3>(
-                            *_mesh_vec[0], std::move(jacobian_assembler),
+                            name, *_mesh_vec[0], std::move(jacobian_assembler),
                             _process_variables, _parameters,
                             _local_coordinate_system, integration_order,
                             process_config);
@@ -804,7 +806,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                 case 2:
                     process = ProcessLib::ThermoMechanicalPhaseField::
                         createThermoMechanicalPhaseFieldProcess<2>(
-                            *_mesh_vec[0], std::move(jacobian_assembler),
+                            name, *_mesh_vec[0], std::move(jacobian_assembler),
                             _process_variables, _parameters,
                             _local_coordinate_system, integration_order,
                             process_config);
@@ -812,7 +814,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                 case 3:
                     process = ProcessLib::ThermoMechanicalPhaseField::
                         createThermoMechanicalPhaseFieldProcess<3>(
-                            *_mesh_vec[0], std::move(jacobian_assembler),
+                            name, *_mesh_vec[0], std::move(jacobian_assembler),
                             _process_variables, _parameters,
                             _local_coordinate_system, integration_order,
                             process_config);
@@ -829,7 +831,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                 case 2:
                     process = ProcessLib::ThermoMechanics::
                         createThermoMechanicsProcess<2>(
-                            *_mesh_vec[0], std::move(jacobian_assembler),
+                            name, *_mesh_vec[0], std::move(jacobian_assembler),
                             _process_variables, _parameters,
                             _local_coordinate_system, integration_order,
                             process_config);
@@ -837,7 +839,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                 case 3:
                     process = ProcessLib::ThermoMechanics::
                         createThermoMechanicsProcess<3>(
-                            *_mesh_vec[0], std::move(jacobian_assembler),
+                            name, *_mesh_vec[0], std::move(jacobian_assembler),
                             _process_variables, _parameters,
                             _local_coordinate_system, integration_order,
                             process_config);
@@ -850,7 +852,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
             if (type == "RICHARDS_FLOW")
         {
             process = ProcessLib::RichardsFlow::createRichardsFlowProcess(
-                *_mesh_vec[0], std::move(jacobian_assembler),
+                name, *_mesh_vec[0], std::move(jacobian_assembler),
                 _process_variables, _parameters, integration_order,
                 process_config, _curves);
         }
@@ -865,7 +867,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                 case 2:
                     process = ProcessLib::RichardsMechanics::
                         createRichardsMechanicsProcess<2>(
-                            *_mesh_vec[0], std::move(jacobian_assembler),
+                            name, *_mesh_vec[0], std::move(jacobian_assembler),
                             _process_variables, _parameters,
                             _local_coordinate_system, integration_order,
                             process_config);
@@ -873,7 +875,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                 case 3:
                     process = ProcessLib::RichardsMechanics::
                         createRichardsMechanicsProcess<3>(
-                            *_mesh_vec[0], std::move(jacobian_assembler),
+                            name, *_mesh_vec[0], std::move(jacobian_assembler),
                             _process_variables, _parameters,
                             _local_coordinate_system, integration_order,
                             process_config);
@@ -887,7 +889,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
         {
             process =
                 ProcessLib::TwoPhaseFlowWithPP::createTwoPhaseFlowWithPPProcess(
-                    *_mesh_vec[0], std::move(jacobian_assembler),
+                    name, *_mesh_vec[0], std::move(jacobian_assembler),
                     _process_variables, _parameters, integration_order,
                     process_config, _curves);
         }
@@ -898,7 +900,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
         {
             process = ProcessLib::TwoPhaseFlowWithPrho::
                 createTwoPhaseFlowWithPrhoProcess(
-                    *_mesh_vec[0], std::move(jacobian_assembler),
+                    name, *_mesh_vec[0], std::move(jacobian_assembler),
                     _process_variables, _parameters, integration_order,
                     process_config, _curves);
         }
@@ -909,7 +911,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
         {
             process = ProcessLib::ThermalTwoPhaseFlowWithPP::
                 createThermalTwoPhaseFlowWithPPProcess(
-                    *_mesh_vec[0], std::move(jacobian_assembler),
+                    name, *_mesh_vec[0], std::move(jacobian_assembler),
                     _process_variables, _parameters, integration_order,
                     process_config, _curves);
         }

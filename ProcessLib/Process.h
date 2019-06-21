@@ -258,6 +258,9 @@ private:
     /// DOF-table.
     void computeSparsityPattern();
 
+public:
+    std::string const name;
+
 protected:
     MeshLib::Mesh& _mesh;
     std::unique_ptr<MeshLib::MeshSubset const> _mesh_subset_all_nodes;

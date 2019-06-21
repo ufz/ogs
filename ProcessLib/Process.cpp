@@ -22,6 +22,7 @@
 namespace ProcessLib
 {
 Process::Process(
+    std::string name_,
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
@@ -31,7 +32,8 @@ Process::Process(
     SecondaryVariableCollection&& secondary_variables,
     NumLib::NamedFunctionCaller&& named_function_caller,
     const bool use_monolithic_scheme)
-    : _mesh(mesh),
+    : name(std::move(name_)),
+      _mesh(mesh),
       _secondary_variables(std::move(secondary_variables)),
       _named_function_caller(std::move(named_function_caller)),
       _global_assembler(std::move(jacobian_assembler)),
