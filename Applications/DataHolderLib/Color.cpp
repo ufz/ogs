@@ -25,11 +25,9 @@ Color createColor(unsigned char r, unsigned char g, unsigned char b, unsigned ch
 
 Color getRandomColor()
 {
-    Color col;
-    col[0] = static_cast<unsigned char>((rand()%5)*50);
-    col[1] = static_cast<unsigned char>((rand()%5)*50);
-    col[2] = static_cast<unsigned char>((rand()%5)*50);
-    return col;
+    return createColor(static_cast<unsigned char>((rand() % 5) * 50),
+                       static_cast<unsigned char>((rand() % 5) * 50),
+                       static_cast<unsigned char>((rand() % 5) * 50));
 }
 
 Color const getColor(const std::string &id, std::map<std::string, Color> &colors)
