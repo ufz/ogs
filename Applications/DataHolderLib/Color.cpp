@@ -14,12 +14,7 @@
 
 #include "Color.h"
 
-#include <fstream>
-#include <sstream>
-
 #include <logog/include/logog.hpp>
-
-#include "BaseLib/StringTools.h"
 
 namespace DataHolderLib {
 
