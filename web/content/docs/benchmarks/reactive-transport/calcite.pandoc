@@ -31,7 +31,7 @@ The operator-splitting (OS) model formulation (Strang, 1968) with a sequential n
 
 A comparison of the numerical data is shown in the figure below. The numerical results of OGS-6 coincide with those of OGS-5.
 
-{{< img src="../gif/elder.gif" title="Results for numerical (OGS-5 - green, OGS-6 - white) results together with concentration distribution in the domain and mesh resolution for different time steps.">}}
+{{< img src="../ResultComparison.png" width="80" title="Results for numerical (OGS-5 - with empty cicle marker, OGS-6 - with empty triangle marker) results together with concentration distribution in the domain and mesh resolution for different time steps.">}}
 
 {{< data-link >}}
 
