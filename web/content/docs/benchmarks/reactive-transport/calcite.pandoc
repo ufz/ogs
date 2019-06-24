@@ -1,5 +1,5 @@
 +++
-author = "Vanessa Montoya"
+author = "Vanessa Montoya, Renchao Lu"
 weight = 142
 project = "Parabolic/ComponentTransport/ReactiveTransport/EquilibriumPhase/calcite.prj"
 date = "2017-09-07T14:41:09+01:00"
@@ -16,9 +16,9 @@ title = "Advective flow and precipitation/dissolution equilibrium reactions"
 
 ## Overview
 
-This benchmark was originally described in Kolditz et al. (2012) as a reactive transport benchmark including precipitation and dissolution reactions along a saturated column of calcite which is fluxed with a diluted solution of MgCl2. Three different codes (OGS.5-ChemApp, OGS.5-iPHREEQC and OGS.5-GEMS) were used in that exercise.
+This benchmark was originally described in Kolditz et al. (2012) as a reactive transport benchmark including precipitation and dissolution reactions along a saturated column of calcite which is fluxed with a diluted solution of $\mathrm{MgCl}_2$. Three different codes (OGS.5-ChemApp, OGS.5-iPHREEQC and OGS.5-GEMS) were used in that exercise.
 Kolditz et al. (2012) considered that all reactions occurred at thermodynamic equilibrium. Later on, in He et al. (2015) and Jang et al. (2018), the incorporation of kinetic rates for reaction precipitations in OGS.5-iPHREEQC was investigated and compared with the modelling results obtained with OGS.5-ChemApp and PHREEQC.
-Very briefly, the studied system consists on a column of 0.5 m, initially containing crushed calcite (CaCO3(s)), which is continuously fluxed with a 1 millimolar (mmol/L) magnesium chloride (MgCl2) solution at pH = 7 and 25°C during 350 min (~ 5.8h) at a constant flow rate of 0.18 L/min.
+Very briefly, the studied system consists on a column of 0.5 m, initially containing crushed calcite ($\mathrm{CaCO}_3$(s)), which is continuously fluxed with a 1 millimolar (mmol/L) magnesium chloride ($\mathrm{MgCl}_2$) solution at pH = 7 and 25°C during 350 min (~ 5.8h) at a constant flow rate of 0.18 L/min.
 Previous to the experiment, the column had been packed giving a mean bulk density and porosity of 1.80 Kg/L and 0.32, respectively. The column was saturated and equilibrated by injecting pure water giving a saturated solution with respect calcite and pH = 9.9.
 
 
