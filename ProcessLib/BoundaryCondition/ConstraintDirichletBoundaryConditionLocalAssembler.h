@@ -68,9 +68,6 @@ protected:
 public:
     /// Precomputes the shape matrices for a given surface element.
     /// @param surface_element The surface element used for precomputing the
-    /// @param local_matrix_size Unused parameter, only necessary for the
-    /// creation scheme of local assemblers
-    /// shape matrices used later on for the integration.
     /// @param is_axially_symmetric Corrects integration measure for cylinder
     /// coordinates.
     /// @param integration_order The order of the integration.
@@ -78,7 +75,7 @@ public:
     /// @param bulk_ids Pairs of bulk element ids and bulk element face ids.
     ConstraintDirichletBoundaryConditionLocalAssembler(
         MeshLib::Element const& surface_element,
-        std::size_t const /* local_matrix_size */,
+        std::size_t /* local_matrix_size */,
         bool const is_axially_symmetric, unsigned const integration_order,
         MeshLib::Mesh const& bulk_mesh,
         std::vector<std::pair<std::size_t, unsigned>> bulk_ids)
