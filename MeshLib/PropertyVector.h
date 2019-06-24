@@ -262,7 +262,7 @@ protected:
     /// (Node or Element) to an index (position in the data structure).
     /// The vector item2group_mapping must have the same number of entries as
     /// the above mapping and the values have to be in the range
-    /// \f$[0, \text{n_prop_groups})\f$.
+    /// \f$[0, \text{n\_prop\_groups})\f$.
     /// @param property_name a string describing the property
     /// @param mesh_item_type the values of the property are either assigned to
     /// nodes or cells (see enumeration MeshItemType)
