@@ -1,7 +1,7 @@
 +++
 author = "Vanessa Montoya"
 weight = 142
-project = "Parabolic/ReactiveTransport/calcite/"
+project = "Parabolic/ComponentTransport/ReactiveTransport/EquilibriumPhase/calcite.prj"
 date = "2017-09-07T14:41:09+01:00"
 title = "Advective flow and precipitation/dissolution equilibrium reactions"
 
