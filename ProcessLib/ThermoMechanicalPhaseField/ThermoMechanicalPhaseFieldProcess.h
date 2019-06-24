@@ -42,7 +42,7 @@ struct ThermoMechanicalPhaseFieldLocalAssemblerInterface;
  *       &\varrho:&              \mbox{density,}\\
  *       &g_\mathrm{c}:&         \mbox{fracture energy,}\\
  *       &\varepsilon:&          \mbox{length scale}\\
- *       &\c_\mathrm{p}:&        \mbox{specific heat capacity in constant
+ *       &c_\mathrm{p}:&        \mbox{specific heat capacity in constant
  * pressure}\\
  *       &\kappa_\mathrm{eff}:&  \mbox{effectiev thermal conductivity}\\
  *    \f}

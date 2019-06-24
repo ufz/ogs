@@ -157,7 +157,7 @@ private:
      * @param dxdot_dx        Value of \f$\dot{x} \cdot dx\f$.
      * @param dx_dx           Value of \f$ x \cdot dx\f$.
      * @param local_M_data    Mass matrix of an element, which takes the form of
-     *                        \f$ \inta N^T N\mathrm{d}\Omega\f$. Not used.
+     *                        \f$ \int N^T N\mathrm{d}\Omega\f$. Not used.
      * @param local_K_data    Laplacian matrix of an element, which takes the
      *         form of \f$ \int (\nabla N)^T K \nabla N\mathrm{d}\Omega\f$.
      *                        Not used.
@@ -192,7 +192,7 @@ private:
      * @param dxdot_dx        Value of \f$\dot{x} \cdot dx\f$.
      * @param dx_dx           Value of \f$ x \cdot dx\f$.
      * @param local_M_data    Mass matrix of an element, which takes the form of
-     *                        \f$ \inta N^T N\mathrm{d}\Omega\f$. Not used.
+     *                        \f$ \int N^T N\mathrm{d}\Omega\f$. Not used.
      * @param local_K_data    Laplacian matrix of an element, which takes the
      *         form of \f$ \int (\nabla N)^T K \nabla N\mathrm{d}\Omega\f$.
      *                        Not used.
