@@ -35,6 +35,7 @@ set(DOXYGEN_GENERATE_TREEVIEW YES)
 set(DOXYGEN_USE_MATHAX YES)
 set(DOXYGEN_MATHAX_RELPATH https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1)
 set(DOXYGEN_GENERATE_LATEX NO)
+set(DOXYGEN_EXTRA_PACKAGES amsmath amsfonts)
 set(DOXYGEN_PREDEFINED DOXYGEN_DOCU_ONLY)
 set(DOXYGEN_ALIASES
     "per{1} = \\1<sup>-1</sup>"
