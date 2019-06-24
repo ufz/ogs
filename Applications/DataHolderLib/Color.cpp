@@ -14,19 +14,9 @@
 
 #include "Color.h"
 
-#include <fstream>
-#include <sstream>
-
 #include <logog/include/logog.hpp>
 
-#include "BaseLib/StringTools.h"
-
 namespace DataHolderLib {
-
-Color createColor(unsigned char r, unsigned char g, unsigned char b)
-{
-    return Color{{r,g,b,255}};
-}
 
 Color createColor(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
 {
@@ -35,26 +25,22 @@ Color createColor(unsigned char r, unsigned char g, unsigned char b, unsigned ch
 
 Color getRandomColor()
 {
-    Color col;
-    col[0] = static_cast<unsigned char>((rand()%5)*50);
-    col[1] = static_cast<unsigned char>((rand()%5)*50);
-    col[2] = static_cast<unsigned char>((rand()%5)*50);
-    return col;
+    return createColor(static_cast<unsigned char>((rand() % 5) * 50),
+                       static_cast<unsigned char>((rand() % 5) * 50),
+                       static_cast<unsigned char>((rand() % 5) * 50));
 }
 
 Color const getColor(const std::string &id, std::map<std::string, Color> &colors)
 {
-    for (auto it = colors.begin(); it != colors.end(); ++it)
+    auto it = colors.find(id);
+
+    if (it == end(colors))
     {
-        if (id == it->first)
-        {
-            return it->second;
-        }
+        WARN("Key '%s' not found in color lookup table.", id.c_str());
+        it = colors.insert({id, getRandomColor()}).first;
     }
-    WARN("Key '%s' not found in color lookup table.", id.c_str());
-    Color c = getRandomColor();
-    colors.insert(std::pair<std::string, Color>(id, c));
-    return c;
+
+    return it->second;
 }
 
 }  // namespace DataHolderLib
