@@ -485,6 +485,13 @@ pipeline {
         }
       } // end parallel
     } // end stage Build
+    stage('Master Milestone')
+    {
+      when { environment name: 'JOB_NAME', value: 'ufz/ogs/master' }
+      steps {
+        milestone null
+      }
+    }
     stage('Master') {
       when { environment name: 'JOB_NAME', value: 'ufz/ogs/master' }
       parallel {
