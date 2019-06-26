@@ -31,7 +31,7 @@ The operator-splitting (OS) model formulation (Strang, 1968) with a sequential n
 
 A comparison of the numerical data is shown in the figure below. The numerical results of OGS-6 are in good agreement with those of OGS-5. The maximum number of absolute error in terms of varying element concentrations is $2.15\times10^{-5}$ ($\mathrm{Cl}$), $1.13\times10^{-5}$ ($\mathrm{Mg}$), and $4.57\times10^{-6}$ ($\mathrm{Ca}$).
 
-{{< img src="../ResultComparison.png" width="80" title="Results for numerical (OGS-5 - with empty cicle marker, OGS-6 - with empty triangle marker) results together with concentration distribution in the domain and mesh resolution for different time steps.">}}
+{{< img src="../ResultComparison.png" width="80" title="Results for numerical (OGS-5 - with empty citrcle marker, OGS-6 - with empty triangle marker) results together with concentration distribution in the domain and mesh resolution for different time steps.">}}
 
 {{< data-link >}}
 
