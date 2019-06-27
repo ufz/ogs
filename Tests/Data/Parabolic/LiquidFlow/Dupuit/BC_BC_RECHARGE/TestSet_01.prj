@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProject>
+    <meshes>
+        <mesh>TestSet_01.vtu</mesh>
+        <mesh>BC_BOTTOM.vtu</mesh>
+        <mesh>BC_TOP.vtu</mesh>
+        <mesh>BC_DOMAIN.vtu</mesh>
+    </meshes>
+    <processes>
+        <process>
+            <name>LiquidFlow</name>
+            <type>LIQUID_FLOW</type>
+            <integration_order>2</integration_order>
+            <darcy_gravity>
+                <!-- axis_id: 0, 1, or the dimension of space minus one -->
+                <axis_id>1</axis_id>
+                <!-- g>=0. g=0: non gravity term -->
+                <g>0.</g>
+            </darcy_gravity>
+            <process_variables>
+                <process_variable>pressure</process_variable>
+            </process_variables>
+            <secondary_variables>
+                <secondary_variable type="static" internal_name="darcy_velocity" output_name="v"/>
+            </secondary_variables>
+            <material_property>
+                <fluid>
+                    <density>
+                        <type>Constant</type>
+                        <value> 1 </value>
+                    </density>
+                    <viscosity>
+                        <type>Constant</type>
+                        <value> 1 </value>
+                    </viscosity>
+                </fluid>
+                <porous_medium>
+                    <porous_medium id="0">
+                        <permeability>
+                            <permeability_tensor_entries>kappa1</permeability_tensor_entries>
+                            <type>Dupuit</type>
+                        </permeability>
+                        <porosity>
+                            <type>Constant</type>
+                            <porosity_parameter>constant_porosity_parameter</porosity_parameter>
+                        </porosity>
+                        <storage>
+                            <type>Constant</type>
+                            <value> 0.0 </value>
+                        </storage>
+                    </porous_medium>
+                </porous_medium>
+            </material_property>
+        </process>
+    </processes>
+    <time_loop>
+        <processes>
+            <process ref="LiquidFlow">
+                <nonlinear_solver>basic_picard</nonlinear_solver>
+                <convergence_criterion>
+                    <type>DeltaX</type>
+                    <norm_type>NORM2</norm_type>
+                    <abstol>1.e-6</abstol>
+                </convergence_criterion>
+                <time_discretization>
+                    <type>BackwardEuler</type>
+                </time_discretization>
+                <time_stepping>
+                    <type>FixedTimeStepping</type>
+                    <t_initial> 0.0 </t_initial>
+                    <t_end> 86400 </t_end>
+                    <timesteps>
+                        <pair>
+                            <repeat>10</repeat>
+                            <delta_t>8640</delta_t>
+                        </pair>
+                    </timesteps>
+                </time_stepping>
+            </process>
+        </processes>
+        <output>
+            <type>VTK</type>
+            <prefix>TestSet_01</prefix>
+            <variables>
+                <variable> pressure </variable>
+                <variable> v </variable>
+            </variables>
+            <timesteps>
+                <pair>
+                    <repeat> 10 </repeat>
+                    <each_steps> 1 </each_steps>
+                </pair>
+            </timesteps>
+        </output>
+    </time_loop>
+    <parameters>
+        <parameter>
+            <name>p0</name>
+            <type>Constant</type>
+            <value>16</value>
+        </parameter>
+        <parameter>
+            <name>p_bc0</name>
+            <type>Constant</type>
+            <value>15</value>
+        </parameter>
+        <parameter>
+            <name>p_bc1</name>
+            <type>Constant</type>
+            <value>25</value>
+        </parameter>
+        <parameter>
+            <name>constant_porosity_parameter</name>
+            <type>Constant</type>
+            <value>1.0</value>
+        </parameter>
+        <parameter>
+            <name>kappa1</name>
+            <type>Constant</type>
+            <values>0.00185 0. 0. 0.00185</values>
+        </parameter>
+        <parameter>
+            <name>recharge</name>
+            <type>Constant</type>
+            <value>3.543E-09</value>
+        </parameter>
+    </parameters>
+    <process_variables>
+        <process_variable>
+            <name>pressure</name>
+            <components>1</components>
+            <order>1</order>
+            <initial_condition>p0</initial_condition>
+            <boundary_conditions>
+                <boundary_condition>
+                    <mesh>BC_TOP</mesh>
+                    <type>Dirichlet</type>
+                    <parameter>p_bc0</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <mesh>BC_BOTTOM</mesh>
+                    <type>Dirichlet</type>
+                    <parameter>p_bc1</parameter>
+                </boundary_condition>
+            </boundary_conditions>
+            <source_terms>
+                <source_term>
+                    <mesh>BC_DOMAIN</mesh>
+                    <type>Volumetric</type>
+                    <parameter>recharge</parameter>
+                </source_term>
+            </source_terms>
+        </process_variable>
+    </process_variables>
+    <nonlinear_solvers>
+        <nonlinear_solver>
+            <name>basic_picard</name>
+            <type>Picard</type>
+            <max_iter>10</max_iter>
+            <linear_solver>general_linear_solver</linear_solver>
+        </nonlinear_solver>
+    </nonlinear_solvers>
+    <linear_solvers>
+        <linear_solver>
+            <name>general_linear_solver</name>
+            <lis>-i cg -p jacobi -tol 1e-16 -maxiter 10000</lis>
+            <eigen>
+                <solver_type>CG</solver_type>
+                <precon_type>DIAGONAL</precon_type>
+                <max_iteration_step>10000</max_iteration_step>
+                <error_tolerance>1e-16</error_tolerance>
+            </eigen>
+            <petsc>
+                <prefix>lf</prefix>
+                <parameters>-lf_ksp_type cg -lf_pc_type bjacobi -lf_ksp_rtol 1e-16 -lf_ksp_max_it 10000</parameters>
+            </petsc>
+        </linear_solver>
+    </linear_solvers>
+</OpenGeoSysProject>
