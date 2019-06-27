@@ -12,7 +12,7 @@
                 <concentration>H</concentration>
                 <concentration>Synthetica</concentration>
                 <concentration>Syntheticb</concentration>
-				<concentration>Productd</concentration>
+                <concentration>Productd</concentration>
                 <pressure>pressure</pressure>
             </process_variables>
             <fluid>
@@ -86,7 +86,7 @@
                                 </property>
                             </properties>
                         </component>
-						<component>
+                        <component>
                             <name>Productd</name>
                             <properties>
                                 <property>
@@ -96,8 +96,8 @@
                                 </property>
                             </properties>
                         </component>
-                    </components> 
-			</phase>
+                    </components>
+                </phase>
             </phases>
             <properties>
                 <property>
@@ -141,7 +141,7 @@
                     <norm_type>NORM2</norm_type>
                     <reltol>1e-14</reltol>
                 </convergence_criterion>
-		 <!-- convergence criterion for the second process (Productd) -->
+                <!-- convergence criterion for the second process (Productd) -->
                 <convergence_criterion>
                     <type>DeltaX</type>
                     <norm_type>NORM2</norm_type>
@@ -242,7 +242,7 @@
                     </timesteps>
                 </time_stepping>
             </process>
-	    <!-- convergence criterion for component transport equation (Productd) -->
+            <!-- convergence criterion for component transport equation (Productd) -->
             <process ref="hc">
                 <nonlinear_solver>basic_picard</nonlinear_solver>
                 <convergence_criterion>
@@ -279,7 +279,7 @@
                 <variable>H</variable>
                 <variable>Synthetica</variable>
                 <variable>Syntheticb</variable>
-				<variable>Productd</variable>
+                <variable>Productd</variable>
                 <variable>pressure</variable>
                 <variable>darcy_velocity</variable>
             </variables>
@@ -294,13 +294,13 @@
             <components>
                 <component>Synthetica</component>
                 <component>Syntheticb</component>
-				<component>Productd</component>
+                <component>Productd</component>
             </components>
         </solution>
         <kinetic_reactants>
             <kinetic_reactant>
                 <name>Synthetics_to_Productd</name>
-                <chemical_formula>Productd 1	Synthetica -1 	Syntheticb -0.5</chemical_formula>
+                <chemical_formula>Productd 1    Synthetica -1    Syntheticb -0.5</chemical_formula>
                 <initial_amount>1.0</initial_amount>
             </kinetic_reactant>
         </kinetic_reactants>
@@ -374,12 +374,12 @@
             <type>Constant</type>
             <value>0.5</value>
         </parameter>
-	<parameter>
+        <parameter>
             <name>c0_Productd</name>
             <type>Constant</type>
             <value>0.0</value>
-	    <!--type>Function</type>
-	    <expression>1*x</expression-->
+            <!--type>Function</type>
+            <expression>1*x</expression-->
         </parameter>
         <parameter>
             <name>c_H</name>
@@ -397,7 +397,7 @@
             <type>Constant</type>
             <value>0.5</value>
         </parameter>
-	 <parameter>
+        <parameter>
             <name>c_Productd</name>
             <type>Constant</type>
             <value>0.00</value>
@@ -466,12 +466,12 @@
                 </boundary_condition>
             </boundary_conditions>
         </process_variable>
-	 <process_variable>
+        <process_variable>
             <name>Productd</name>
             <components>1</components>
             <order>1</order>
             <initial_condition>c0_Productd</initial_condition>
-	    <boundary_conditions>
+            <boundary_conditions>
                 <boundary_condition>
                     <geometrical_set>geometry</geometrical_set>
                     <geometry>upstream</geometry>

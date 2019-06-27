@@ -41,8 +41,8 @@ NAMED_EXPRESSIONS
 # 2H2O =  O2 + 4H+ + 4e-
 #
 	Log_K_O2
-	 	log_k      -85.9951
-		-delta_H	559.543	kJ/mol	# Calculated enthalpy of reaction	O2
+        log_k      -85.9951
+	-delta_H	559.543	kJ/mol	# Calculated enthalpy of reaction	O2
 #	Enthalpy of formation:	-2.9 kcal/mol
 	        -analytic   38.0229    7.99407E-03   -2.7655e+004  -1.4506e+001  199838.45
 #	Range:  0-300
@@ -726,7 +726,7 @@ Zr(OH)2+2 =  Zr(OH)2+2
 
 2H2O =  O2 + 4H+ + 4e-
 	-CO2_llnl_gamma
- 	log_k      -85.9951
+	log_k      -85.9951
 	-delta_H	559.543	kJ/mol	# Calculated enthalpy of reaction	O2
 #	Enthalpy of formation:	-2.9 kcal/mol
         -analytic   38.0229    7.99407E-03   -2.7655e+004  -1.4506e+001  199838.45
@@ -2249,19 +2249,19 @@ HAcetate =  Acetate- + H+
  2.0000 Cyanide- + 1.0000 Cd++  =  Cd(Cyanide)2
          -llnl_gamma           3.0
          log_k           +10.3551
- 	-delta_H	0	      	# Not possible to calculate enthalpy of reaction	Cd(Cyanide)2
+         -delta_H	0	      	# Not possible to calculate enthalpy of reaction	Cd(Cyanide)2
  #	Enthalpy of formation:	-0 kcal/mol
 
  3.0000 Cyanide- + 1.0000 Cd++  =  Cd(Cyanide)3-
          -llnl_gamma           4.0
          log_k           +14.8191
- 	-delta_H	0	      	# Not possible to calculate enthalpy of reaction	Cd(Cyanide)3-
+         -delta_H	0	      	# Not possible to calculate enthalpy of reaction	Cd(Cyanide)3-
  #	Enthalpy of formation:	-0 kcal/mol
 
  4.0000 Cyanide- + 1.0000 Cd++  =  Cd(Cyanide)4--
          -llnl_gamma           4.0
          log_k           +18.2670
- 	-delta_H	0	      	# Not possible to calculate enthalpy of reaction	Cd(Cyanide)4-2
+         -delta_H	0	      	# Not possible to calculate enthalpy of reaction	Cd(Cyanide)4-2
  #	Enthalpy of formation:	-0 kcal/mol
 
 
