@@ -36,7 +36,7 @@ bool GocadTSurfaceReader::readFile()
     std::ifstream in(_file_name.c_str());
     if (!in.is_open())
     {
-        ERR("GocadTSurfaceReader::allSfc2Mesh(): Could not open file %s.",
+        ERR("GocadTSurfaceReader::readFile(): Could not open file %s.",
             _file_name.c_str());
         return false;
     }
@@ -171,6 +171,7 @@ void GocadTSurfaceReader::writeData(std::string const& file_name,
     }
     if (idx < _mesh_vec.size())
     {
+        INFO("Writing mesh \"%s\"", file_name.c_str());
         int data_mode = (write_binary) ? 2 : 0;
         bool compressed = (write_binary) ? true : false;
         MeshLib::IO::VtuInterface vtu(_mesh_vec[idx], data_mode, compressed);
@@ -179,6 +180,13 @@ void GocadTSurfaceReader::writeData(std::string const& file_name,
     }
     ERR("Error: Mesh index (%d) out of range (0, %d).", idx, _mesh_vec.size());
     return;
+}
+
+std::string getDelim(std::string const& str)
+{
+    std::size_t const bslash = str.find_first_of('\\');
+    char const delim = (bslash == str.npos) ? '/' : '\\';
+    return (str.back() == delim) ? "" : std::string(1, delim);
 }
 
 void GocadTSurfaceReader::writeData(std::string const& dir,
@@ -190,10 +198,11 @@ void GocadTSurfaceReader::writeData(std::string const& dir,
         return;
     }
     std::size_t const n_meshes(_mesh_vec.size());
+
+    std::string const delim = getDelim(dir);
     for (std::size_t i = 0; i < n_meshes; ++i)
     {
-        std::string const delim = (dir.back() == '/') ? "" : "/";
-        writeData(dir + delim + _mesh_vec[i]->getName(), i, write_binary);
+        writeData(dir + delim + _mesh_vec[i]->getName() + ".vtu", i, write_binary);
     }
 }
 
