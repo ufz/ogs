@@ -275,8 +275,8 @@ public:
                 _process_data.porous_media_properties.getPorosity(t, pos)
                     .getValue(t, pos, 0.0, C_int_pt);
 
-            auto const retardation_factor =
-                _process_data.retardation_factor(t, pos)[0];
+            auto const& retardation_factor = component.template value<double>(
+                MaterialPropertyLib::PropertyType::retardation_factor);
 
             auto const& solute_dispersivity_transverse =
                 medium.template value<double>(
@@ -567,8 +567,8 @@ public:
                 _process_data.porous_media_properties.getPorosity(t, pos)
                     .getValue(t, pos, 0.0, C_int_pt);
 
-            auto const retardation_factor =
-                _process_data.retardation_factor(t, pos)[0];
+            auto const& retardation_factor = component.template value<double>(
+                MaterialPropertyLib::PropertyType::retardation_factor);
 
             auto const& solute_dispersivity_transverse =
                 medium.template value<double>(
