@@ -38,7 +38,6 @@
                 </porous_medium>
             </porous_medium>
             <fluid_reference_density>rho_fluid</fluid_reference_density>
-            <retardation_factor>retardation</retardation_factor>
             <decay_rate>decay</decay_rate>
             <specific_body_force>0 0</specific_body_force>
             <secondary_variables>
@@ -59,6 +58,11 @@
                                     <name>molecular_diffusion</name>
                                     <type>Constant</type>
                                     <value>1e-5</value>
+                                </property>
+                                <property>
+                                    <name>retardation_factor</name>
+                                    <type>Constant</type>
+                                    <value>1</value>
                                 </property>
                             </properties>
                         </component>
@@ -125,11 +129,6 @@
             <name>rho_fluid</name>
             <type>Constant</type>
             <value>1000</value>
-        </parameter>
-        <parameter>
-            <name>retardation</name>
-            <type>Constant</type>
-            <value>1</value>
         </parameter>
         <parameter>
             <name>decay</name>
