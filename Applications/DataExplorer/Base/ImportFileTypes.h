@@ -31,6 +31,7 @@ public:
         FEFLOW,
         GMS,
         GMSH,
+        GOCAD_TSURF,
 #ifdef OGS_USE_NETCDF
         NETCDF,
 #endif  // OGS_USE_NETCDF
@@ -50,6 +51,8 @@ public:
             return "GMS";
         if (t == ImportFileType::GMSH)
             return "GMSH";
+        if (t == ImportFileType::GOCAD_TSURF)
+            return "Gocad TSurface";
 #ifdef OGS_USE_NETCDF
         if (t == ImportFileType::NETCDF)
             return "NetCDF";
@@ -84,6 +87,8 @@ public:
             return "GMS files (*.txt *.3dm)";
         if (t == ImportFileType::GMSH)
             return "GMSH mesh files (*.msh)";
+        if (t == ImportFileType::GOCAD_TSURF)
+            return "Gocad TSurface files (*.ts)";
 #ifdef OGS_USE_NETCDF
         if (t == ImportFileType::NETCDF)
             return "NetCDF files (*.nc)";

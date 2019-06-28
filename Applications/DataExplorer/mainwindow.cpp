@@ -39,6 +39,7 @@
 #include "Applications/FileIO/GMSInterface.h"
 #include "Applications/FileIO/Gmsh/GMSHInterface.h"
 #include "Applications/FileIO/Gmsh/GmshReader.h"
+#include "Applications/FileIO/GocadIO/GocadTSurfaceReader.h"
 #include "Applications/FileIO/Legacy/OGSIOVer4.h"
 #include "Applications/FileIO/PetrelInterface.h"
 #include "Applications/FileIO/TetGenInterface.h"
@@ -611,6 +612,26 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
         }
         settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
     }
+    else if (t == ImportFileType::GOCAD_TSURF)
+    {
+        std::string file_name(fileName.toStdString());
+        FileIO::Gocad::GocadTSurfaceReader gcts (file_name);
+        if (gcts.readFile())
+        {
+            std::vector<MeshLib::Mesh*> meshes = gcts.getData();
+            for (MeshLib::Mesh* m : meshes)
+            {
+                std::unique_ptr<MeshLib::Mesh> mesh(m);
+                if (mesh != nullptr)
+                    _meshModel->addMesh(std::move(mesh));
+            }
+        }
+        else
+        {
+            OGSError::box("Error reading file.");
+        }
+        settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
+    }
 #ifdef OGS_USE_NETCDF
     else if (t == ImportFileType::NETCDF)    // CH  01.2012
     {
@@ -751,6 +772,9 @@ QMenu* MainWindow::createImportFilesMenu()
     QAction* gmshFiles = importFiles->addAction("&GMSH Files...");
     connect(gmshFiles, SIGNAL(triggered()), signal_mapper, SLOT(map()));
     signal_mapper->setMapping(gmshFiles, ImportFileType::GMSH);
+    QAction* gocadTsFiles = importFiles->addAction("&Gocad TSurface...");
+    connect(gocadTsFiles, SIGNAL(triggered()), signal_mapper, SLOT(map()));
+    signal_mapper->setMapping(gocadTsFiles, ImportFileType::GOCAD_TSURF);
 #ifdef OGS_USE_NETCDF
     QAction* netcdfFiles = importFiles->addAction("&NetCDF Files...");
     connect(netcdfFiles, SIGNAL(triggered()), signal_mapper, SLOT(map()));
