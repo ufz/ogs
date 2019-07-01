@@ -40,7 +40,7 @@ std::unique_ptr<Process> createThermoMechanicsProcess(
     config.checkConfigParameter("type", "THERMO_MECHANICS");
     DBUG("Create ThermoMechanicsProcess.");
 
-     auto const staggered_scheme =
+    auto const staggered_scheme =
         //! \ogs_file_param{prj__processes__process__THERMO_MECHANICS__coupling_scheme}
         config.getConfigParameterOptional<std::string>("coupling_scheme");
     const bool use_monolithic_scheme =
@@ -59,9 +59,9 @@ std::unique_ptr<Process> createThermoMechanicsProcess(
     {
         auto per_process_variables = findProcessVariables(
             variables, pv_config,
-          {//! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICS__process_variables__temperature}
+            {//! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICS__process_variables__temperature}
              "temperature",
-            //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICS__process_variables__displacement}
+             //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICS__process_variables__displacement}
              "displacement"});
         variable_T = &per_process_variables[0].get();
         variable_u = &per_process_variables[1].get();
@@ -79,6 +79,11 @@ std::unique_ptr<Process> createThermoMechanicsProcess(
         variable_T = &process_variables[0][0].get();
         variable_u = &process_variables[1][0].get();
     }
+
+    // Process IDs, which are set according to the appearance order of the
+    // process variables. Up to now, the ordering is fixed as:
+    int heat_conduction_process_id = 0;
+    int mechanics_process_id = 1;
 
     DBUG("Associate displacement with process variable '%s'.",
          variable_u->getName().c_str());
@@ -192,7 +197,8 @@ std::unique_ptr<Process> createThermoMechanicsProcess(
         std::move(name), mesh, std::move(jacobian_assembler), parameters,
         integration_order, std::move(process_variables),
         std::move(process_data), std::move(secondary_variables),
-        std::move(named_function_caller), use_monolithic_scheme);
+        std::move(named_function_caller), use_monolithic_scheme,
+        mechanics_process_id, heat_conduction_process_id);
 }
 
 template std::unique_ptr<Process> createThermoMechanicsProcess<2>(

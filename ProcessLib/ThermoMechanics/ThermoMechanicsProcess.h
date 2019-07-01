@@ -37,7 +37,6 @@ struct KelvinVectorIntegrationPointWriter final : public IntegrationPointWriter
 
     int numberOfComponents() const override { return _n_components; }
     int integrationOrder() const override { return _integration_order; }
-
     std::string name() const override
     {
         // TODO (naumov) remove ip suffix. Probably needs modification of the
@@ -75,7 +74,9 @@ public:
         ThermoMechanicsProcessData<DisplacementDim>&& process_data,
         SecondaryVariableCollection&& secondary_variables,
         NumLib::NamedFunctionCaller&& named_function_caller,
-        bool const use_monolithic_scheme);
+        bool const use_monolithic_scheme,
+        int const mechanics_process_id,
+        int const heat_conduction_process_id);
 
     //! \name ODESystem interface
     //! @{
@@ -88,18 +89,18 @@ private:
         MeshLib::Mesh const& mesh,
         unsigned const integration_order) override;
 
-    void assembleConcreteProcess(
-        const double t, GlobalVector const& x, GlobalMatrix& M, GlobalMatrix& K,
-        GlobalVector& b) override;
+    void assembleConcreteProcess(const double t, GlobalVector const& x,
+                                 GlobalMatrix& M, GlobalMatrix& K,
+                                 GlobalVector& b) override;
 
     void assembleWithJacobianConcreteProcess(
         const double t, GlobalVector const& x, GlobalVector const& xdot,
         const double dxdot_dx, const double dx_dx, GlobalMatrix& M,
         GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac) override;
 
-    void preTimestepConcreteProcess(
-        GlobalVector const& x, double const t, double const dt,
-        const int process_id) override;
+    void preTimestepConcreteProcess(GlobalVector const& x, double const t,
+                                    double const dt,
+                                    const int process_id) override;
 
     void postTimestepConcreteProcess(GlobalVector const& x, const double t,
                                      const double delta_t,
@@ -116,6 +117,12 @@ private:
 
     MeshLib::PropertyVector<double>* _nodal_forces = nullptr;
     MeshLib::PropertyVector<double>* _heat_flux = nullptr;
+
+    /// ID of the mechanical process.
+    int const _mechanics_process_id;
+
+    /// ID of heat conduction process.
+    int const _heat_conduction_process_id;
 };
 
 extern template class ThermoMechanicsProcess<2>;

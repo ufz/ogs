@@ -23,8 +23,7 @@ namespace ThermoMechanics
 {
 template <int DisplacementDim>
 ThermoMechanicsProcess<DisplacementDim>::ThermoMechanicsProcess(
-    std::string name,
-    MeshLib::Mesh& mesh,
+    std::string name, MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     unsigned const integration_order,
@@ -33,12 +32,15 @@ ThermoMechanicsProcess<DisplacementDim>::ThermoMechanicsProcess(
     ThermoMechanicsProcessData<DisplacementDim>&& process_data,
     SecondaryVariableCollection&& secondary_variables,
     NumLib::NamedFunctionCaller&& named_function_caller,
-    bool const use_monolithic_scheme)
+    bool const use_monolithic_scheme, int const mechanics_process_id,
+    int const heat_conduction_process_id)
     : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables), std::move(named_function_caller),
               use_monolithic_scheme),
-      _process_data(std::move(process_data))
+      _process_data(std::move(process_data)),
+      _mechanics_process_id(mechanics_process_id),
+      _heat_conduction_process_id(heat_conduction_process_id)
 {
     _nodal_forces = MeshLib::getOrCreateMeshProperty<double>(
         mesh, "NodalForces", MeshLib::MeshItemType::Node, DisplacementDim);
@@ -209,7 +211,7 @@ void ThermoMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
     DBUG("Assemble ThermoMechanicsProcess.");
 
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
-       dof_table = {std::ref(*_local_to_global_index_map)};
+        dof_table = {std::ref(*_local_to_global_index_map)};
     const int process_id =
         _use_monolithic_scheme ? 0 : _coupled_solutions->process_id;
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
@@ -217,8 +219,7 @@ void ThermoMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        pv.getActiveElementIDs(), dof_table, t, x, M, K, b,
-        _coupled_solutions);
+        pv.getActiveElementIDs(), dof_table, t, x, M, K, b, _coupled_solutions);
 }
 
 template <int DisplacementDim>
@@ -233,16 +234,16 @@ void ThermoMechanicsProcess<DisplacementDim>::
     DBUG("AssembleJacobian ThermoMechanicsProcess.");
 
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
-       dof_table = {std::ref(*_local_to_global_index_map)};
-     const int process_id =
+        dof_table = {std::ref(*_local_to_global_index_map)};
+    const int process_id =
         _use_monolithic_scheme ? 0 : _coupled_solutions->process_id;
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, pv.getActiveElementIDs(), dof_table, t, x,
-        xdot, dxdot_dx, dx_dx, M, K, b, Jac, _coupled_solutions);
+        _local_assemblers, pv.getActiveElementIDs(), dof_table, t, x, xdot,
+        dxdot_dx, dx_dx, M, K, b, Jac, _coupled_solutions);
 
     // TODO (naumov): Refactor the copy rhs part. This is copy from HM.
     auto copyRhs = [&](int const variable_id, auto& output_vector) {
@@ -283,8 +284,7 @@ void ThermoMechanicsProcess<DisplacementDim>::preTimestepConcreteProcess(
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &ThermoMechanicsLocalAssemblerInterface::preTimestep, _local_assemblers,
-        pv.getActiveElementIDs(), *_local_to_global_index_map, x, t,
-        dt);
+        pv.getActiveElementIDs(), *_local_to_global_index_map, x, t, dt);
 }
 
 template <int DisplacementDim>
