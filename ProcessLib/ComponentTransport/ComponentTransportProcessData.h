@@ -39,7 +39,6 @@ struct ComponentTransportProcessData
             fluid_properties_,
         std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>&&
             media_map_,
-        ParameterLib::Parameter<double> const& retardation_factor_,
         ParameterLib::Parameter<double> const& decay_rate_,
         Eigen::VectorXd const& specific_body_force_, bool const has_gravity_,
         bool const non_advective_form_)
@@ -47,7 +46,6 @@ struct ComponentTransportProcessData
           fluid_reference_density(fluid_reference_density_),
           fluid_properties(std::move(fluid_properties_)),
           media_map(std::move(media_map_)),
-          retardation_factor(retardation_factor_),
           decay_rate(decay_rate_),
           specific_body_force(specific_body_force_),
           has_gravity(has_gravity_),
@@ -72,7 +70,6 @@ struct ComponentTransportProcessData
     std::unique_ptr<MaterialLib::Fluid::FluidProperties> fluid_properties;
     std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>
         media_map;
-    ParameterLib::Parameter<double> const& retardation_factor;
     ParameterLib::Parameter<double> const& decay_rate;
     Eigen::VectorXd const specific_body_force;
     bool const has_gravity;

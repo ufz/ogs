@@ -65,6 +65,8 @@ enum PropertyType : int
     relative_permeability,
     residual_gas_saturation,
     residual_liquid_saturation,
+    /// specify retardation factor used in component transport process.
+    retardation_factor,
     saturation,
     specific_heat_capacity,
     storage,
@@ -201,6 +203,10 @@ inline PropertyType convertStringToProperty(std::string const& inString)
     {
         return PropertyType::residual_liquid_saturation;
     }
+    if (boost::iequals(inString, "retardation_factor"))
+    {
+        return PropertyType::retardation_factor;
+    }
     if (boost::iequals(inString, "saturation"))
     {
         return PropertyType::saturation;
@@ -276,6 +282,7 @@ static const std::array<std::string, PropertyType::number_of_properties>
                              "relative_permeability",
                              "residual_gas_saturation",
                              "residual_liquid_saturation",
+                             "retardation_factor",
                              "saturation",
                              "specific_heat_capacity",
                              "storage",

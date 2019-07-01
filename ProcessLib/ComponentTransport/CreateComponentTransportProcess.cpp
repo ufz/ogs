@@ -128,12 +128,6 @@ std::unique_ptr<Process> createComponentTransportProcess(
     DBUG("Use '%s' as fluid_reference_density parameter.",
          fluid_reference_density.name.c_str(), &mesh);
 
-    // Parameter for the retardation factor.
-    auto const& retardation_factor = ParameterLib::findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__ComponentTransport__retardation_factor}
-        "retardation_factor", parameters, 1, &mesh);
-
     // Parameter for the decay rate.
     auto const& decay_rate = ParameterLib::findParameter<double>(
         config,
@@ -172,7 +166,6 @@ std::unique_ptr<Process> createComponentTransportProcess(
         fluid_reference_density,
         std::move(fluid_properties),
         std::move(media_map),
-        retardation_factor,
         decay_rate,
         specific_body_force,
         has_gravity,
