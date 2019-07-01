@@ -75,15 +75,18 @@ struct FracturePropertyHM : public FractureProperty
 inline void setFractureProperty(int const dim, MeshLib::Element const& e,
                                 FractureProperty& frac_prop)
 {
+    auto& n = frac_prop.normal_vector;
     // 1st node is used but using other node is also possible, because
     // a fracture is not curving
     for (int j = 0; j < 3; j++)
     {
         frac_prop.point_on_fracture[j] = e.getCenterOfGravity().getCoords()[j];
     }
-    computeNormalVector(e, dim, frac_prop.normal_vector);
+    computeNormalVector(e, dim, n);
     frac_prop.R.resize(dim, dim);
-    computeRotationMatrix(e, frac_prop.normal_vector, dim, frac_prop.R);
+    computeRotationMatrix(e, n, dim, frac_prop.R);
+    DBUG("Normal vector of the fracture element %d: [%g, %g, %g]", e.getID(),
+         n[0], n[1], n[2]);
 }
 
 inline BranchProperty createBranchProperty(MeshLib::Node const& branchNode,
