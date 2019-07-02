@@ -97,6 +97,7 @@
                             </properties>
                         </component>
                     </components>
+                </phase>
             </phases>
             <properties>
                 <property>
@@ -264,7 +265,7 @@
                     </timesteps>
                 </time_stepping>
             </process>
-       </processes>
+        </processes>
         <output>
             <type>VTK</type>
             <prefix>KineticReactant2</prefix>
@@ -470,7 +471,7 @@
             <components>1</components>
             <order>1</order>
             <initial_condition>c0_Productd</initial_condition>
-                <boundary_conditions>
+            <boundary_conditions>
                 <boundary_condition>
                     <geometrical_set>geometry</geometrical_set>
                     <geometry>upstream</geometry>
@@ -479,7 +480,7 @@
                 </boundary_condition>
             </boundary_conditions>
         </process_variable>
-   </process_variables>
+    </process_variables>
     <nonlinear_solvers>
         <nonlinear_solver>
             <name>basic_picard</name>

@@ -30,11 +30,11 @@ The solution by OGS-6--IPhreeqc will be compared to the solution by a coupling o
 
 **1d scenario:**
 The 1d--model domain is 0.5 m long and discretized into 200 line elements.
-The domain is saturated at start--up ($p(t=0)=1.0e^{-5}~\text{Pa}$).
+The domain is saturated at start--up ($p(t=0)=$ 1.0e-5 Pa).
 A constant pressure is defined at the left side boundary ($g_{D,\text{upstream}}^p$) and a Neumann BC for the water mass out-flux at the right side ($g_{N,\text{downstream}}^p$).
 Both solutes, Synthetica and Syntheticb are present at simulation start--up at concentrations of $c_{\text{Synthetica}}(t=0)=c_{\text{Syntheticb}}(t=0)= 0.5$ mol kg^-1^~water~, the influent concentration is 0.5 mol kg^-1^~water~ as well.
 Productd is not present at start--up ($c_{\text{Productd}}(t=0)=0$); neither in the influent.
-The initial concentration of $\text{H}^+$--ions is $1.0e^{-7}$ mol kg^-1^~water~; the concentration at the influent point is the same.
+The initial concentration of $\text{H}^+$--ions is 1.0e-7 mol kg^-1^~water~; the concentration at the influent point is the same.
 Respective material properties, initial and boundary conditions are listed in the tables below.
 
 **2d scenario:**
@@ -78,7 +78,7 @@ Table: Media, material and component properties
 |  $g_{D,upstream}^{Productd}$ | Concentration of Productd |  0.0 | mol kg^-1^~water~ |
 |  $g_{D,upstream}^{\text{H}^+}$ | Concentration of $\text{H}^+$ |  1.0e-7 | mol kg^-1^~water~ |
 
-Table: Initial and boundary conditions for the 1d scenario
+Table: Initial and boundary conditions
 
 
 
@@ -87,6 +87,7 @@ Table: Initial and boundary conditions for the 1d scenario
 The kinetic reaction results in the expected decline of the concentration of Synthetica and Syntheticb, which is super-positioned by the influx of these two educts through the left side.
 By contrast, the concentration of Productd increases in the domain.
 Over time, opposed concentration fronts for educts and Productd evolve.
-Both, OGS-6 and OGS-5 simulation yield the same results in the 1d as well as 2d scenario, which verify the implementation of OGS-6--IPhreeqc.
-The corresponding project files can be found here: ![1d-scenario]()
+Both, OGS-6 and OGS-5 simulations yield the same results in the 1d as well as 2d scenario.
+For instance, the difference between the OGS-6 and the OGS-5 computation for the concentration of Productd expressed as root mean squared error is 1.76e-7 mol kg^-1^~water~ (over all time steps and mesh nodes, 1d scenario); the corresponding median absolute error is 1.0e-7 mol kg^-1^~water~.  
+This verifies the implementation of OGS-6--IPhreeqc.
 {{< img src="../KineticReactant2.gif" title="Simulated component concentrations over domain length for different time steps (1d scenario) .">}}
