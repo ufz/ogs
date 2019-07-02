@@ -106,8 +106,6 @@ private:
                                      int const process_id) override;
 
 private:
-    std::vector<MeshLib::Node*> _base_nodes;
-    std::unique_ptr<MeshLib::MeshSubset const> _mesh_subset_base_nodes;
     ThermoMechanicsProcessData<DisplacementDim> _process_data;
 
     std::vector<std::unique_ptr<ThermoMechanicsLocalAssemblerInterface>>
