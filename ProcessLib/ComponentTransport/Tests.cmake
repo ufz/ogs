@@ -1034,7 +1034,6 @@ AddTest(
 	KineticReactant2_pcs_4_ts_126_t_12600.000000_expected.vtu	KineticReactant2_pcs_4_ts_126_t_12600.000000.vtu	H H 1e-10 1e-16
 	KineticReactant2_pcs_4_ts_168_t_16800.000000_expected.vtu	KineticReactant2_pcs_4_ts_168_t_16800.000000.vtu	H H 1e-10 1e-16
 	KineticReactant2_pcs_4_ts_210_t_21000.000000_expected.vtu	KineticReactant2_pcs_4_ts_210_t_21000.000000.vtu	H H 1e-10 1e-16
-    RUNTIME 200
 )
 
 
@@ -1077,5 +1076,4 @@ KineticReactant2_2d_pcs_4_ts_8_t_800.000000_expected.vtu KineticReactant2_2d_pcs
 KineticReactant2_2d_pcs_4_ts_12_t_1200.000000_expected.vtu KineticReactant2_2d_pcs_4_ts_12_t_1200.000000.vtu H H 1e-10 1e-16
 KineticReactant2_2d_pcs_4_ts_16_t_1600.000000_expected.vtu KineticReactant2_2d_pcs_4_ts_16_t_1600.000000.vtu H H 1e-10 1e-16
 KineticReactant2_2d_pcs_4_ts_20_t_2000.000000_expected.vtu KineticReactant2_2d_pcs_4_ts_20_t_2000.000000.vtu H H 1e-10 1e-16
-RUNTIME 400
 )

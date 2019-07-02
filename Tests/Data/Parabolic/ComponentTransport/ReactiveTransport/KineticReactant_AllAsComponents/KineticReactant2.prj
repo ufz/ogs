@@ -97,7 +97,8 @@
                             </properties>
                         </component>
                     </components>
-            </phases>
+	        </phase>
+	    </phases>
             <properties>
                 <property>
                     <name>longitudinal_dispersivity</name>
