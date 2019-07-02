@@ -211,7 +211,8 @@ void ThermoMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
     ProcessLib::SmallDeformation::createLocalAssemblers<
         DisplacementDim, ThermoMechanicsLocalAssembler>(
         mesh.getElements(), dof_table, _local_assemblers,
-        mesh.isAxiallySymmetric(), integration_order, _process_data);
+        mesh.isAxiallySymmetric(), integration_order, _process_data,
+        _mechanics_process_id, _heat_conduction_process_id);
 
     _secondary_variables.addSecondaryVariable(
         "sigma",
@@ -425,7 +426,6 @@ void ThermoMechanicsProcess<DisplacementDim>::preTimestepConcreteProcess(
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
     assert(process_id < 2);
-
 
     if (_use_monolithic_scheme || process_id == _mechanics_process_id)
     {

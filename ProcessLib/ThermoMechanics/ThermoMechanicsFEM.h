@@ -119,11 +119,15 @@ public:
         std::size_t const /*local_matrix_size*/,
         bool const is_axially_symmetric,
         unsigned const integration_order,
-        ThermoMechanicsProcessData<DisplacementDim>& process_data)
+        ThermoMechanicsProcessData<DisplacementDim>& process_data,
+        int const mechanics_process_id,
+        int const heat_conduction_process_id)
         : _process_data(process_data),
           _integration_method(integration_order),
           _element(e),
-          _is_axially_symmetric(is_axially_symmetric)
+          _is_axially_symmetric(is_axially_symmetric),
+          _mechanics_process_id(mechanics_process_id),
+          _heat_conduction_process_id(heat_conduction_process_id)
     {
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
@@ -373,7 +377,7 @@ public:
             // see reference solid density description for details.
             auto& rho_s = _ip_data[ip].solid_density;
             rho_s = _ip_data[ip].solid_density_prev /
-                                 (1 + 3 * linear_thermal_strain_increment);
+                    (1 + 3 * linear_thermal_strain_increment);
 
             auto const& b = _process_data.specific_body_force;
             local_rhs
@@ -658,6 +662,12 @@ private:
     MeshLib::Element const& _element;
     SecondaryData<typename ShapeMatrices::ShapeType> _secondary_data;
     bool const _is_axially_symmetric;
+
+    /// ID of the mechanical process.
+    int const _mechanics_process_id;
+
+    /// ID of heat conduction process.
+    int const _heat_conduction_process_id;
 
     static const int temperature_index = 0;
     static const int temperature_size = ShapeFunction::NPOINTS;
