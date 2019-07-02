@@ -51,6 +51,10 @@ std::unique_ptr<Process> createThermoMechanicsProcess(
     //! \ogs_file_param{prj__processes__process__THERMO_MECHANICS__process_variables}
     auto const pv_config = config.getConfigSubtree("process_variables");
 
+    // Process IDs, which are set according to the appearance order of the
+    int heat_conduction_process_id = 0;
+    int mechanics_process_id = 0;
+
     ProcessVariable* variable_T;
     ProcessVariable* variable_u;
     std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>
@@ -78,12 +82,10 @@ std::unique_ptr<Process> createThermoMechanicsProcess(
         }
         variable_T = &process_variables[0][0].get();
         variable_u = &process_variables[1][0].get();
+        // process variables. Up to now, the ordering is fixed as:
+        heat_conduction_process_id = 0;
+        mechanics_process_id = 1;
     }
-
-    // Process IDs, which are set according to the appearance order of the
-    // process variables. Up to now, the ordering is fixed as:
-    int heat_conduction_process_id = 0;
-    int mechanics_process_id = 1;
 
     DBUG("Associate displacement with process variable '%s'.",
          variable_u->getName().c_str());

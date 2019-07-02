@@ -83,11 +83,27 @@ public:
     bool isLinear() const override;
     //! @}
 
+    /**
+     * Get the size and the sparse pattern of the global matrix in order to
+     * create the global matrices and vectors for the system equations of this
+     * process.
+     *
+     * @param process_id Process ID. If the monolithic scheme is applied,
+     *                               process_id = 0.
+     * @return Matrix specifications including size and sparse pattern.
+     */
+    MathLib::MatrixSpecifications getMatrixSpecifications(
+        const int process_id) const override;
+
 private:
+    void constructDofTable() override;
+
     void initializeConcreteProcess(
         NumLib::LocalToGlobalIndexMap const& dof_table,
         MeshLib::Mesh const& mesh,
         unsigned const integration_order) override;
+
+    void initializeBoundaryConditions() override;
 
     void assembleConcreteProcess(const double t, GlobalVector const& x,
                                  GlobalMatrix& M, GlobalMatrix& K,
@@ -106,6 +122,9 @@ private:
                                      const double delta_t,
                                      int const process_id) override;
 
+    NumLib::LocalToGlobalIndexMap const& getDOFTable(
+        const int process_id) const override;
+
 private:
     ThermoMechanicsProcessData<DisplacementDim> _process_data;
 
@@ -115,6 +134,10 @@ private:
     std::unique_ptr<NumLib::LocalToGlobalIndexMap>
         _local_to_global_index_map_single_component;
 
+    /// Sparsity pattern for the heat conduction equation, and it is initialized
+    /// only if the staggered scheme is used.
+    GlobalSparsityPattern _sparsity_pattern_with_single_component;
+
     MeshLib::PropertyVector<double>* _nodal_forces = nullptr;
     MeshLib::PropertyVector<double>* _heat_flux = nullptr;
 
@@ -123,6 +146,13 @@ private:
 
     /// ID of heat conduction process.
     int const _heat_conduction_process_id;
+
+    /// Temperature of the previous time step for staggered scheme.
+    std::unique_ptr<GlobalVector> _previous_T;
+
+    /// Set the increment solutions of the present time step to the coupled
+    /// term.
+    void setCoupledSolutionsOfPreviousTimeStep();
 };
 
 extern template class ThermoMechanicsProcess<2>;
