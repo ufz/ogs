@@ -56,17 +56,6 @@ public:
             mgis::behaviour::update(_behaviour_data);
         }
 
-        MaterialStateVariables& operator=(MaterialStateVariables const&) =
-            default;
-        MaterialStateVariables& operator=(MaterialStateVariables&&) = delete;
-
-        typename MechanicsBase<DisplacementDim>::MaterialStateVariables&
-        operator=(typename MechanicsBase<DisplacementDim>::
-                      MaterialStateVariables const& state) noexcept override
-        {
-            return operator=(static_cast<MaterialStateVariables const&>(state));
-        }
-
         mgis::behaviour::BehaviourData _behaviour_data;
     };
 
