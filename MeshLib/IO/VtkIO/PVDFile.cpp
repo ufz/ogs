@@ -14,6 +14,7 @@
 #include <limits>
 #include <logog/include/logog.hpp>
 #include "BaseLib/Error.h"
+#include "MeshLib/IO/VtkIO/VtuInterface.h"
 
 namespace MeshLib
 {
@@ -22,7 +23,14 @@ namespace IO
 
 void PVDFile::addVTUFile(const std::string &vtu_fname, double timestep)
 {
-    _datasets.emplace_back(timestep, vtu_fname);
+    #ifdef USE_PETSC
+        auto const vtu_file_name =
+            getVtuFileNameForPetscOutputWithoutExtension(vtu_fname);
+
+        _datasets.emplace_back(timestep, vtu_file_name + ".pvtu");
+    #else
+        _datasets.emplace_back(timestep, vtu_fname);
+    #endif
 
     std::ofstream fh(_pvd_filename.c_str());
     if (!fh) {

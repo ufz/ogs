@@ -141,7 +141,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__intrinsic_permeability}
         "intrinsic_permeability", parameters, 1, &mesh);
 
-    DBUG("Use '%s' as intrinsic permeabiltiy parameter.",
+    DBUG("Use '%s' as intrinsic permeability parameter.",
          intrinsic_permeability.name.c_str());
 
     // Storage coefficient

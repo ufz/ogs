@@ -44,7 +44,6 @@
             </porous_medium>
             <decay_rate>decay_rate</decay_rate>
             <fluid_reference_density>rho_fluid</fluid_reference_density>
-            <retardation_factor>retardation_factor</retardation_factor>
             <specific_body_force>0 0 -9.81</specific_body_force>
             <secondary_variables>
                 <secondary_variable type="static" internal_name="darcy_velocity" output_name="darcy_velocity"/>
@@ -64,6 +63,11 @@
                                     <name>molecular_diffusion</name>
                                     <type>Constant</type>
                                     <value>3.57e-6</value>
+                                </property>
+                                <property>
+                                    <name>retardation_factor</name>
+                                    <type>Constant</type>
+                                    <value>1</value>
                                 </property>
                             </properties>
                         </component>
@@ -135,11 +139,6 @@
             <name>decay_rate</name>
             <type>Constant</type>
             <value>0.0</value>
-        </parameter>
-        <parameter>
-            <name>retardation_factor</name>
-            <type>Constant</type>
-            <value>1</value>
         </parameter>
         <parameter>
             <name>p_ini</name>

@@ -275,16 +275,17 @@ public:
                 _process_data.porous_media_properties.getPorosity(t, pos)
                     .getValue(t, pos, 0.0, C_int_pt);
 
-            auto const retardation_factor =
-                _process_data.retardation_factor(t, pos)[0];
+            auto const& retardation_factor = component.template value<double>(
+                MaterialPropertyLib::PropertyType::retardation_factor);
 
-            auto const& solute_dispersivity_transverse =
-                medium.template value<double>(
-                    MaterialPropertyLib::transversal_dispersivity);
+            auto const& solute_dispersivity_transverse = medium.template value<
+                double>(
+                MaterialPropertyLib::PropertyType::transversal_dispersivity);
 
             auto const& solute_dispersivity_longitudinal =
                 medium.template value<double>(
-                    MaterialPropertyLib::longitudinal_dispersivity);
+                    MaterialPropertyLib::PropertyType::
+                        longitudinal_dispersivity);
 
             // Use the fluid density model to compute the density
             // TODO (renchao): concentration of which component as the argument
@@ -299,7 +300,7 @@ public:
 
             auto const& molecular_diffusion_coefficient =
                 component.template value<double>(
-                    MaterialPropertyLib::molecular_diffusion);
+                    MaterialPropertyLib::PropertyType::molecular_diffusion);
 
             auto const& K =
                 _process_data.porous_media_properties.getIntrinsicPermeability(
@@ -567,15 +568,16 @@ public:
                 _process_data.porous_media_properties.getPorosity(t, pos)
                     .getValue(t, pos, 0.0, C_int_pt);
 
-            auto const retardation_factor =
-                _process_data.retardation_factor(t, pos)[0];
+            auto const& retardation_factor = component.template value<double>(
+                MaterialPropertyLib::PropertyType::retardation_factor);
 
-            auto const& solute_dispersivity_transverse =
-                medium.template value<double>(
-                    MaterialPropertyLib::transversal_dispersivity);
+            auto const& solute_dispersivity_transverse = medium.template value<
+                double>(
+                MaterialPropertyLib::PropertyType::transversal_dispersivity);
             auto const& solute_dispersivity_longitudinal =
                 medium.template value<double>(
-                    MaterialPropertyLib::longitudinal_dispersivity);
+                    MaterialPropertyLib::PropertyType::
+                        longitudinal_dispersivity);
 
             // Use the fluid density model to compute the density
             vars[static_cast<int>(
@@ -588,7 +590,7 @@ public:
 
             auto const& molecular_diffusion_coefficient =
                 component.template value<double>(
-                    MaterialPropertyLib::molecular_diffusion);
+                    MaterialPropertyLib::PropertyType::molecular_diffusion);
 
             auto const& K =
                 _process_data.porous_media_properties.getIntrinsicPermeability(

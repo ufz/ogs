@@ -23,6 +23,16 @@ namespace LIE
 {
 namespace HydroMechanics
 {
+template <int GlobalDim, typename RotationMatrix>
+Eigen::Matrix<double, GlobalDim, GlobalDim> createRotatedTensor(
+    RotationMatrix const& R, double const value)
+{
+    using M = Eigen::Matrix<double, GlobalDim, GlobalDim>;
+    M tensor = M::Zero();
+    tensor.diagonal().head(GlobalDim - 1).setConstant(value);
+    return (R.transpose() * tensor * R).eval();
+}
+
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           typename IntegrationMethod, int GlobalDim>
 HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
@@ -184,7 +194,6 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
 
     using GlobalDimMatrix = Eigen::Matrix<double, GlobalDim, GlobalDim>;
     using GlobalDimVector = Eigen::Matrix<double, GlobalDim, 1>;
-    GlobalDimMatrix local_dk_db_tensor = GlobalDimMatrix::Zero();
 
     auto const& gravity_vec = _process_data.specific_body_force;
 
@@ -225,10 +234,11 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
         b_m = ip_data.aperture0 + w[index_normal];
         if (b_m < 0.0)
         {
-            OGS_FATAL(
+            DBUG(
                 "Element %d, gp %d: Fracture aperture is %g, but it must be "
-                "non-negative.",
+                "non-negative. Setting it to zero.",
                 _element.getID(), ip, b_m);
+            b_m = 0;
         }
 
         auto const initial_effective_stress =
@@ -244,18 +254,16 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
 
         // permeability
         double const local_k = b_m * b_m / 12;
+        auto& permeability = ip_data.permeability;
         ip_data.permeability = local_k;
-        GlobalDimVector local_k_tensor = GlobalDimVector::Zero();
-        local_k_tensor.head(GlobalDim - 1).setConstant(local_k);
+
         GlobalDimMatrix const k =
-            R.transpose() * local_k_tensor.asDiagonal() * R;
+            createRotatedTensor<GlobalDim>(R, permeability);
 
         // derivative of permeability respect to aperture
         double const local_dk_db = b_m / 6.;
-        local_dk_db_tensor.diagonal()
-            .head(GlobalDim - 1)
-            .setConstant(local_dk_db);
-        GlobalDimMatrix const dk_db = R.transpose() * local_dk_db_tensor * R;
+        GlobalDimMatrix const dk_db =
+            createRotatedTensor<GlobalDim>(R, local_dk_db);
 
         //
         // displacement equation, displacement jump part
@@ -355,9 +363,9 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
         b_m = ip_data.aperture0 + w[index_normal];
         if (b_m < 0.0)
         {
-            OGS_FATAL(
-                "Element %d, gp %d: Fracture aperture is %g, but it must be "
-                "non-negative.",
+            DBUG(
+                "Element %d, gp %d: Fracture aperture is %g, but it is "
+                "expected to be non-negative.",
                 _element.getID(), ip, b_m);
         }
 

@@ -39,7 +39,7 @@ public:
         void reset()
         {
             _is_tensile_stress = false;
-            _shear_yield_function_value = 0.0;
+            _shear_yield_function_value = -1.0;
         }
 
         void setShearYieldFunctionValue(double Fs) { _shear_yield_function_value = Fs; }
@@ -50,7 +50,7 @@ public:
 
     private:
         bool _is_tensile_stress = false;
-        double _shear_yield_function_value = 0.0;
+        double _shear_yield_function_value = -1.0;
     };
 
     /// Polymorphic creator for MaterialStateVariables objects specific for a
