@@ -378,7 +378,7 @@ private:
      *          \alpha_b \nabla \cdot \dot{u}  = Q
      *      \f]
      * where \f$ alpha\f$ is a coefficient may depend on storage or the fluid
-     * density change, \f$ \rho\f$ is the fluid density, \f$\g\f$ is the
+     * density change, \f$ \rho\f$ is the fluid density, \f$g\f$ is the
      * gravitational acceleration, \f$z\f$ is the vertical coordinate, \f$u\f$
      * is the displacement, and \f$Q\f$ is the source/sink term.
      *
