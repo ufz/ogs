@@ -19,7 +19,7 @@ title = "Solute transport including kinetic reaction"
 ## Overview
 
 This scenario describes the transport of two solutes (Snythetica and Syntheticb) through a saturated media.
-Both solutes react to Productc according to $\text{Productd}=\text{Synthetica}+0.5~\text{Syntheticb}$.
+Both solutes react to Productd according to $\text{Productd}=\text{Synthetica}+0.5~\text{Syntheticb}$.
 The speed of the reaction is described with a first--order relationship $\frac{dc}{dt}=U(\frac{c_{\text{Synthetica}}}{K_m+c_{\text{Syntheticb}}})$.
 The coupling of OGS-6 and IPhreeqc used for simulation requires to simulate the transport of H^+^--ions, additionally.
 This is required to adjust the compulsory charge balance computation executed by Phreeqc.
@@ -33,7 +33,7 @@ The 1d--model domain is 0.5 m long and discretized into 200 line elements.
 The domain is saturated at start--up ($p(t=0)=$ 1.0e-5 Pa).
 A constant pressure is defined at the left side boundary ($g_{D,\text{upstream}}^p$) and a Neumann BC for the water mass out-flux at the right side ($g_{N,\text{downstream}}^p$).
 Both solutes, Synthetica and Syntheticb are present at simulation start--up at concentrations of $c_{\text{Synthetica}}(t=0)=c_{\text{Syntheticb}}(t=0)= 0.5$ mol kg^-1^~water~, the influent concentration is 0.5 mol kg^-1^~water~ as well.
-Productc is not present at start--up ($c_{\text{Productd}}(t=0)=0$); neither in the influent.
+Productd is not present at start--up ($c_{\text{Productd}}(t=0)=0$); neither in the influent.
 The initial concentration of $\text{H}^+$--ions is 1.0e-7 mol kg^-1^~water~; the concentration at the influent point is the same.
 Respective material properties, initial and boundary conditions are listed in the tables below.
 
