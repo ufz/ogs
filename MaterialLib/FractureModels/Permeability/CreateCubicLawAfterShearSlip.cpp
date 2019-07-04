@@ -19,19 +19,19 @@ namespace MaterialLib::Fracture::Permeability
 std::unique_ptr<Permeability> createCubicLawAfterShearSlip(
     BaseLib::ConfigTree const& config)
 {
-    //! \ogs_file_param{prj__processes__process__type}
+    //! \ogs_file_param{material__fracture_properties__permeability_model__type}
     config.checkConfigParameter("type", "CubicLawAfterShearSlip");
 
     auto const initial_creation_aperture =
-        //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__fracture_properties__initial_creation_aperture}
+        //! \ogs_file_param{material__fracture_properties__permeability_model__CubicLawAfterShearSlip__initial_creation_aperture}
         config.getConfigParameter<double>("initial_creation_aperture");
 
     auto const minimum_permeability =
-        //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__fracture_properties__minimum_permeability}
+        //! \ogs_file_param{material__fracture_properties__permeability_model__CubicLawAfterShearSlip__minimum_permeability}
         config.getConfigParameter<double>("minimum_permeability");
 
     auto const aperture_threshold =
-        //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__fracture_properties__aperture_threshold}
+        //! \ogs_file_param{material__fracture_properties__permeability_model__CubicLawAfterShearSlip__aperture_threshold}
         config.getConfigParameter<double>("aperture_threshold");
 
     if (minimum_permeability < 0)

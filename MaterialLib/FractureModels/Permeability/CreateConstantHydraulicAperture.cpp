@@ -18,7 +18,7 @@ namespace MaterialLib::Fracture::Permeability
 std::unique_ptr<Permeability> createConstantHydraulicAperture(
     BaseLib::ConfigTree const& config)
 {
-    //! \ogs_file_param{prj__processes__process__type}
+    //! \ogs_file_param{material__fracture_properties__permeability_model__type}
     config.checkConfigParameter("type", "ConstantHydraulicAperture");
 
     return std::make_unique<ConstantHydraulicAperture>();
