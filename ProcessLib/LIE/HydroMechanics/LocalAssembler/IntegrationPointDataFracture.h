@@ -47,6 +47,10 @@ struct IntegrationPointDataFracture final
         GlobalDim>::MaterialStateVariables>
         material_state_variables;
 
+    std::unique_ptr<
+        typename MaterialLib::Fracture::Permeability::PermeabilityState>
+        permeability_state;
+
     Eigen::MatrixXd C;
     double integration_weight;
 

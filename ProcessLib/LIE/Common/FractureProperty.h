@@ -10,8 +10,9 @@
 #pragma once
 
 #include <memory>
-
 #include <Eigen/Eigen>
+
+#include "MaterialLib/FractureModels/Permeability/Permeability.h"
 
 #include "BranchProperty.h"
 #include "JunctionProperty.h"
@@ -68,6 +69,9 @@ struct FracturePropertyHM : public FractureProperty
     }
     ParameterLib::Parameter<double> const& specific_storage;
     ParameterLib::Parameter<double> const& biot_coefficient;
+
+    std::unique_ptr<MaterialLib::Fracture::Permeability::Permeability>
+        permeability_model;
 };
 
 /// configure fracture property based on a fracture element assuming

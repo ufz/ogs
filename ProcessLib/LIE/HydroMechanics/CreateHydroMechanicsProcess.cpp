@@ -14,6 +14,7 @@
 #include "MaterialLib/FractureModels/CreateCohesiveZoneModeI.h"
 #include "MaterialLib/FractureModels/CreateLinearElasticIsotropic.h"
 #include "MaterialLib/FractureModels/CreateMohrCoulomb.h"
+#include "MaterialLib/FractureModels/Permeability/CreatePermeabilityModel.h"
 #include "MaterialLib/SolidModels/CreateConstitutiveRelation.h"
 #include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
@@ -282,6 +283,13 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
                 "time-dependent.",
                 frac_prop->aperture0.name.c_str());
         }
+
+        auto permeability_model_config =
+            //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__fracture_properties__permeability_model}
+            fracture_properties_config.getConfigSubtree("permeability_model");
+        frac_prop->permeability_model =
+            MaterialLib::Fracture::Permeability::createPermeabilityModel(
+                permeability_model_config);
     }
 
     // initial effective stress in matrix

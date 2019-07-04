@@ -115,6 +115,9 @@ HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
         ip_data.aperture0 = aperture0_node_values.dot(sm_u.N);
         ip_data.aperture = ip_data.aperture0;
 
+        ip_data.permeability_state =
+            frac_prop.permeability_model->getNewState();
+
         auto const initial_effective_stress =
             _process_data.initial_fracture_effective_stress(0, x_position);
         for (int i = 0; i < GlobalDim; i++)
@@ -252,16 +255,17 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
             t, x_position, ip_data.aperture0, stress0, w_prev, w,
             effective_stress_prev, effective_stress, C, state);
 
-        // permeability
-        double const local_k = b_m * b_m / 12;
         auto& permeability = ip_data.permeability;
-        ip_data.permeability = local_k;
+        permeability = frac_prop.permeability_model->permeability(
+            ip_data.permeability_state.get(), ip_data.aperture0, b_m);
 
         GlobalDimMatrix const k =
             createRotatedTensor<GlobalDim>(R, permeability);
 
         // derivative of permeability respect to aperture
-        double const local_dk_db = b_m / 6.;
+        double const local_dk_db =
+            frac_prop.permeability_model->dpermeability_daperture(
+                ip_data.permeability_state.get(), ip_data.aperture0, b_m);
         GlobalDimMatrix const dk_db =
             createRotatedTensor<GlobalDim>(R, local_dk_db);
 

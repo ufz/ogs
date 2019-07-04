@@ -41,6 +41,9 @@
                 <initial_aperture>aperture0</initial_aperture>
                 <specific_storage>S_f</specific_storage>
                 <biot_coefficient>biot_f</biot_coefficient>
+                <permeability_model>
+                    <type>CubicLaw</type>
+                </permeability_model>
             </fracture_properties>
             <secondary_variables>
             </secondary_variables>
