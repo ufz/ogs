@@ -11,6 +11,8 @@
 
 #include <logog/include/logog.hpp>
 
+#include <fstream>
+
 #include "Applications/FileIO/GocadIO/CoordinateSystem.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/StringTools.h"
@@ -134,7 +136,7 @@ MeshLib::Mesh* GocadTSurfaceReader::getData(std::size_t const idx) const
     }
     if (idx < _mesh_vec.size())
         return _mesh_vec[idx];
-    ERR("Error: Mesh index (%d) out of range (0, %d).", idx, _mesh_vec.size());
+    ERR("Error: Mesh index (%d) out of range (0, %d).", idx, _mesh_vec.size()-1);
     return nullptr;
 }
 
@@ -156,7 +158,7 @@ std::string GocadTSurfaceReader::getMeshName(std::size_t idx) const
     }
     if (idx < _mesh_vec.size())
         return _mesh_vec[idx]->getName();
-    ERR("Error: Mesh index (%d) out of range (0, %d).", idx, _mesh_vec.size());
+    ERR("Error: Mesh index (%d) out of range (0, %d).", idx, _mesh_vec.size()-1);
     return std::string();
 }
 
@@ -178,7 +180,7 @@ void GocadTSurfaceReader::writeData(std::string const& file_name,
         vtu.writeToFile(file_name);
         return;
     }
-    ERR("Error: Mesh index (%d) out of range (0, %d).", idx, _mesh_vec.size());
+    ERR("Error: Mesh index (%d) out of range (0, %d).", idx, _mesh_vec.size()-1);
     return;
 }
 
@@ -427,7 +429,7 @@ bool GocadTSurfaceReader::parseNodes(
         else if (line.substr(0, 5) == "PVRTX" && t != NODE_TYPE::VRTX)
         {
             nodes.push_back(createNode(sstr));
-            for (std::string name : array_names)
+            for (std::string const& name : array_names)
             {
                 if (name == mat_id_name)
                     continue;
