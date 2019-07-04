@@ -12,6 +12,7 @@
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
 
+#include "CreateConstantHydraulicAperture.h"
 #include "CreateConstantPermeability.h"
 #include "CreateCubicLaw.h"
 
@@ -23,6 +24,11 @@ std::unique_ptr<Permeability> createPermeabilityModel(
     auto const permeability_model_type =
         //! \ogs_file_param{material__fracture_properties__permeability_model__type}
         config.peekConfigParameter<std::string>("type");
+    if (permeability_model_type == "ConstantHydraulicAperture")
+    {
+        return MaterialLib::Fracture::Permeability::
+            createConstantHydraulicAperture(config);
+    }
     if (permeability_model_type == "ConstantPermeability")
     {
         return MaterialLib::Fracture::Permeability::createConstantPermeability(
