@@ -15,6 +15,7 @@
 #include "CreateConstantHydraulicAperture.h"
 #include "CreateConstantPermeability.h"
 #include "CreateCubicLaw.h"
+#include "CreateCubicLawAfterShearSlip.h"
 
 namespace MaterialLib::Fracture::Permeability
 {
@@ -37,6 +38,11 @@ std::unique_ptr<Permeability> createPermeabilityModel(
     if (permeability_model_type == "CubicLaw")
     {
         return MaterialLib::Fracture::Permeability::createCubicLaw(config);
+    }
+    if (permeability_model_type == "CubicLawAfterShearSlip")
+    {
+        return MaterialLib::Fracture::Permeability::
+            createCubicLawAfterShearSlip(config);
     }
     OGS_FATAL("Unknown fracture permeability model type \"%s\".",
               permeability_model_type.c_str());
