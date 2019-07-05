@@ -40,7 +40,7 @@
                 <secondary_variable type="static" internal_name="epsilon_xz" output_name="epsilon_xz"/>
                 <secondary_variable type="static" internal_name="epsilon_yz" output_name="epsilon_yz"/>
             </secondary_variables>
-            <specific_body_force> 0 0 -9.81 </specific_body_force>
+            <specific_body_force> 0 0 0 </specific_body_force>
         </process>
     </processes>
     <time_loop>
@@ -181,7 +181,7 @@
             <group_id_property>MaterialIDs</group_id_property>
             <index_values>
                 <index>0</index>
-                <value>0</value>
+                <value>1</value>
             </index_values>
         </parameter>
         <parameter>
@@ -206,7 +206,7 @@
         <parameter>
             <name>rho_liquid</name>
             <type>Constant</type>
-            <value>0</value>
+            <value>1</value>
         </parameter>
         <parameter>
             <name>zero</name>
