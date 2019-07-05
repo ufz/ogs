@@ -253,7 +253,7 @@
     <linear_solvers>
         <linear_solver>
             <name>general_linear_solver</name>
-            <lis>-i bicg -p jacobi -tol 1e-16 -maxiter 10000</lis>
+            <lis>-i bicg -p ilu -tol 1e-16 -maxiter 10000</lis>
             <eigen>
                 <solver_type>BiCGSTAB</solver_type>
                 <precon_type>ILUT</precon_type>
