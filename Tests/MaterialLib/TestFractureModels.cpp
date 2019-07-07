@@ -21,8 +21,12 @@
 
 using namespace MaterialLib::Fracture;
 
-static const double eps_sigma = 1e6*1e-5;
-static const double eps_C = 1e10*1e-5;
+// For known exact quantities like zero.
+constexpr double eps = std::numeric_limits<double>::epsilon();
+// For numeric in-order-of-sigma comparisons.
+constexpr double eps_sigma = 1e6 * eps;
+// For numeric in-order-of-C comparisons.
+constexpr double eps_C = 2e10 * eps;
 
 static NumLib::NewtonRaphsonSolverParameters const nonlinear_solver_parameters{
     1000, 1e-16};
@@ -57,21 +61,21 @@ TEST(MaterialLib_Fracture, LinearElasticIsotropic)
 
     EXPECT_NEAR(-1e4, sigma[0], eps_sigma);
     EXPECT_NEAR(-1e6, sigma[1], eps_sigma);
-    EXPECT_NEAR(1e9, C(0, 0), eps_C);
-    EXPECT_NEAR(0, C(0, 1), eps_C);
-    EXPECT_NEAR(0, C(1, 0), eps_C);
-    EXPECT_NEAR(1e11, C(1, 1), eps_C);
+    EXPECT_NEAR(1e9, C(0, 0), eps);
+    EXPECT_NEAR(0, C(0, 1), eps);
+    EXPECT_NEAR(0, C(1, 0), eps);
+    EXPECT_NEAR(1e11, C(1, 1), eps);
 
     w << -1e-5, 1e-5;
     fractureModel.computeConstitutiveRelation(0, x, aperture0, sigma0, w_prev,
                                               w, sigma_prev, sigma, C, *state);
 
-    EXPECT_NEAR(0, sigma[0], eps_sigma);
-    EXPECT_NEAR(0, sigma[1], eps_sigma);
-    EXPECT_NEAR(0, C(0, 0), eps_C);
-    EXPECT_NEAR(0, C(0, 1), eps_C);
-    EXPECT_NEAR(0, C(1, 0), eps_C);
-    EXPECT_NEAR(0, C(1, 1), eps_C);
+    EXPECT_NEAR(0, sigma[0], eps);
+    EXPECT_NEAR(0, sigma[1], eps);
+    EXPECT_NEAR(0, C(0, 0), eps);
+    EXPECT_NEAR(0, C(0, 1), eps);
+    EXPECT_NEAR(0, C(1, 0), eps);
+    EXPECT_NEAR(0, C(1, 1), eps);
 }
 
 TEST(MaterialLib_Fracture, MohrCoulomb2D_elastic)
@@ -109,21 +113,21 @@ TEST(MaterialLib_Fracture, MohrCoulomb2D_elastic)
 
     EXPECT_NEAR(-1e4, sigma[0], eps_sigma);
     EXPECT_NEAR(-1e6, sigma[1], eps_sigma);
-    EXPECT_NEAR(1e9, C(0, 0), eps_C);
-    EXPECT_NEAR(0, C(0, 1), eps_C);
-    EXPECT_NEAR(0, C(1, 0), eps_C);
-    EXPECT_NEAR(1e11, C(1, 1), eps_C);
+    EXPECT_NEAR(1e9, C(0, 0), eps);
+    EXPECT_NEAR(0, C(0, 1), eps);
+    EXPECT_NEAR(0, C(1, 0), eps);
+    EXPECT_NEAR(1e11, C(1, 1), eps);
 
     w << -1e-5, 1e-5;
     fractureModel.computeConstitutiveRelation(0, x, aperture0, sigma0, w_prev,
                                               w, sigma_prev, sigma, C, *state);
 
-    EXPECT_NEAR(0, sigma[0], eps_sigma);
-    EXPECT_NEAR(0, sigma[1], eps_sigma);
-    EXPECT_NEAR(0, C(0, 0), eps_C);
-    EXPECT_NEAR(0, C(0, 1), eps_C);
-    EXPECT_NEAR(0, C(1, 0), eps_C);
-    EXPECT_NEAR(0, C(1, 1), eps_C);
+    EXPECT_NEAR(0, sigma[0], eps);
+    EXPECT_NEAR(0, sigma[1], eps);
+    EXPECT_NEAR(0, C(0, 0), eps);
+    EXPECT_NEAR(0, C(0, 1), eps);
+    EXPECT_NEAR(0, C(1, 0), eps);
+    EXPECT_NEAR(0, C(1, 1), eps);
     EXPECT_LE(state->getShearYieldFunctionValue(), 0);
 }
 
@@ -160,13 +164,13 @@ TEST(MaterialLib_Fracture, MohrCoulomb2D_negative_t)
     fractureModel.computeConstitutiveRelation(0, x, aperture0, sigma0, w_prev,
                                               w, sigma_prev, sigma, C, *state);
 
-    EXPECT_NEAR(-3.50360e6, sigma[0], eps_sigma);
-    EXPECT_NEAR(-2.16271e6, sigma[1], eps_sigma);
-    EXPECT_NEAR(1.10723e+09, C(0,0), eps_C);
-    EXPECT_NEAR(1.26558e+10, C(0,1), eps_C);
-    EXPECT_NEAR(4.13226e+09, C(1,0), eps_C);
-    EXPECT_NEAR(4.72319e+10, C(1,1), eps_C);
-    EXPECT_NEAR(0, state->getShearYieldFunctionValue(), eps_sigma);
+    EXPECT_NEAR(-3575294.0369758257, sigma[0], eps_sigma);
+    EXPECT_NEAR(-2147026.5752851903, sigma[1], eps_sigma);
+    EXPECT_NEAR(1107234904.9501991, C(0, 0), eps_C);
+    EXPECT_NEAR(12655752875.023743, C(0, 1), eps_C);
+    EXPECT_NEAR(4132256921.1878347, C(1, 0), eps_C);
+    EXPECT_NEAR(47231912737.624504, C(1, 1), eps_C);
+    EXPECT_NEAR(0, state->getShearYieldFunctionValue(), eps);
 }
 
 
@@ -203,13 +207,13 @@ TEST(MaterialLib_Fracture, MohrCoulomb2D_positive_t)
     fractureModel.computeConstitutiveRelation(0, x, aperture0, sigma0, w_prev,
                                               w, sigma_prev, sigma, C, *state);
 
-    EXPECT_NEAR(253972.0, sigma[0], eps_sigma);
-    EXPECT_NEAR(-2.94784e+06, sigma[1], eps_sigma);
-    EXPECT_NEAR(1.10723e+09, C(0, 0), eps_C);
-    EXPECT_NEAR(-1.26558e+10, C(0, 1), eps_C);
-    EXPECT_NEAR(-4.13226e+09, C(1, 0), eps_C);
-    EXPECT_NEAR(4.72319e+10, C(1, 1), eps_C);
-    EXPECT_NEAR(0, state->getShearYieldFunctionValue(), eps_sigma);
+    EXPECT_NEAR(3594117.0303599793, sigma[0], eps_sigma);
+    EXPECT_NEAR(-2217274.9429453835, sigma[1], eps_sigma);
+    EXPECT_NEAR(1107234904.9501991, C(0, 0), eps_C);
+    EXPECT_NEAR(-12655752875.023743, C(0, 1), eps_C);
+    EXPECT_NEAR(-4132256921.1878347, C(1, 0), eps_C);
+    EXPECT_NEAR(47231912737.624504, C(1, 1), eps_C);
+    EXPECT_NEAR(0, state->getShearYieldFunctionValue(), eps);
 }
 
 TEST(MaterialLib_Fracture, MohrCoulomb3D_negative_t1)
@@ -245,19 +249,19 @@ TEST(MaterialLib_Fracture, MohrCoulomb3D_negative_t1)
     fractureModel.computeConstitutiveRelation(0, x, aperture0, sigma0, w_prev,
                                               w, sigma_prev, sigma, C, *state);
 
-    EXPECT_NEAR(-3.50360e6, sigma[0], eps_sigma);
-    EXPECT_NEAR(0.0, sigma[1], eps_sigma);
-    EXPECT_NEAR(-2.16271e6, sigma[2], eps_sigma);
-    EXPECT_NEAR(1.10723e+09, C(0, 0), eps_C);
-    EXPECT_NEAR(0.0, C(0, 1), eps_C);
-    EXPECT_NEAR(1.26558e+10, C(0, 2), eps_C);
-    EXPECT_NEAR(0.0, C(1, 0), eps_C);
-    EXPECT_NEAR(20.e9, C(1, 1), eps_C);
-    EXPECT_NEAR(0.0, C(1, 2), eps_C);
-    EXPECT_NEAR(4.13226e+09, C(2, 0), eps_C);
-    EXPECT_NEAR(0.0, C(2, 1), eps_C);
-    EXPECT_NEAR(4.72319e+10, C(2, 2), eps_C);
-    EXPECT_NEAR(0, state->getShearYieldFunctionValue(), eps_sigma);
+    EXPECT_NEAR(-3575294.0369758257, sigma[0], eps_sigma);
+    EXPECT_NEAR(0.0, sigma[1], eps);
+    EXPECT_NEAR(-2147026.5752851903, sigma[2], eps_sigma);
+    EXPECT_NEAR(1107234904.9501991, C(0, 0), eps_C);
+    EXPECT_NEAR(0.0, C(0, 1), eps);
+    EXPECT_NEAR(12655752875.023743, C(0, 2), eps_C);
+    EXPECT_NEAR(0.0, C(1, 0), eps);
+    EXPECT_NEAR(20.e9, C(1, 1), eps);
+    EXPECT_NEAR(0.0, C(1, 2), eps);
+    EXPECT_NEAR(4132256921.1878347, C(2, 0), eps_C);
+    EXPECT_NEAR(0.0, C(2, 1), eps);
+    EXPECT_NEAR(47231912737.624504, C(2, 2), eps_C);
+    EXPECT_NEAR(0, state->getShearYieldFunctionValue(), eps);
 }
 
 TEST(MaterialLib_Fracture, MohrCoulomb3D_positive_t1)
@@ -293,19 +297,19 @@ TEST(MaterialLib_Fracture, MohrCoulomb3D_positive_t1)
     fractureModel.computeConstitutiveRelation(0, x, aperture0, sigma0, w_prev,
                                               w, sigma_prev, sigma, C, *state);
 
-    EXPECT_NEAR(253972.0, sigma[0], eps_sigma);
-    EXPECT_NEAR(0.0, sigma[1], eps_sigma);
-    EXPECT_NEAR(-2.94784e+06, sigma[2], eps_sigma);
-    EXPECT_NEAR(1.10723e+09, C(0, 0), eps_C);
-    EXPECT_NEAR(0.0, C(0, 1), eps_C);
-    EXPECT_NEAR(-1.26558e+10, C(0, 2), eps_C);
-    EXPECT_NEAR(0.0, C(1, 0), eps_C);
-    EXPECT_NEAR(20.e9, C(1, 1), eps_C);
-    EXPECT_NEAR(0.0, C(1, 2), eps_C);
-    EXPECT_NEAR(-4.13226e+09, C(2, 0), eps_C);
-    EXPECT_NEAR(0.0, C(2, 1), eps_C);
-    EXPECT_NEAR(4.72319e+10, C(2, 2), eps_C);
-    EXPECT_NEAR(0, state->getShearYieldFunctionValue(), eps_sigma);
+    EXPECT_NEAR(3594117.0303599793, sigma[0], eps_sigma);
+    EXPECT_NEAR(0.0, sigma[1], eps);
+    EXPECT_NEAR(-2217274.9429453835, sigma[2], eps_sigma);
+    EXPECT_NEAR(1107234904.9501991, C(0, 0), eps_C);
+    EXPECT_NEAR(0.0, C(0, 1), eps);
+    EXPECT_NEAR(-12655752875.023743, C(0, 2), eps_C);
+    EXPECT_NEAR(0.0, C(1, 0), eps);
+    EXPECT_NEAR(20.e9, C(1, 1), eps);
+    EXPECT_NEAR(0.0, C(1, 2), eps);
+    EXPECT_NEAR(-4132256921.1878347, C(2, 0), eps_C);
+    EXPECT_NEAR(0.0, C(2, 1), eps);
+    EXPECT_NEAR(47231912737.624504, C(2, 2), eps_C);
+    EXPECT_NEAR(0, state->getShearYieldFunctionValue(), eps);
 }
 
 
@@ -342,19 +346,19 @@ TEST(MaterialLib_Fracture, MohrCoulomb3D_positive_t2)
     fractureModel.computeConstitutiveRelation(0, x, aperture0, sigma0, w_prev,
                                               w, sigma_prev, sigma, C, *state);
 
-    EXPECT_NEAR(0.0, sigma[0], eps_sigma);
-    EXPECT_NEAR(253972.0, sigma[1], eps_sigma);
-    EXPECT_NEAR(-2.94784e+06, sigma[2], eps_sigma);
-    EXPECT_NEAR(20.e9, C(0, 0), eps_C);
-    EXPECT_NEAR(0.0, C(0, 1), eps_C);
-    EXPECT_NEAR(0.0, C(0, 2), eps_C);
-    EXPECT_NEAR(0.0, C(1, 0), eps_C);
-    EXPECT_NEAR(1.10723e+09, C(1, 1), eps_C);
-    EXPECT_NEAR(-1.26558e+10, C(1, 2), eps_C);
-    EXPECT_NEAR(0.0, C(2, 0), eps_C);
-    EXPECT_NEAR(-4.13226e+09, C(2, 1), eps_C);
-    EXPECT_NEAR(4.72319e+10, C(2, 2), eps_C);
-    EXPECT_NEAR(0, state->getShearYieldFunctionValue(), eps_sigma);
+    EXPECT_NEAR(0.0, sigma[0], eps);
+    EXPECT_NEAR(3594117.0303599793, sigma[1], eps_sigma);
+    EXPECT_NEAR(-2217274.9429453835, sigma[2], eps_sigma);
+    EXPECT_NEAR(20.e9, C(0, 0), eps);
+    EXPECT_NEAR(0.0, C(0, 1), eps);
+    EXPECT_NEAR(0.0, C(0, 2), eps);
+    EXPECT_NEAR(0.0, C(1, 0), eps);
+    EXPECT_NEAR(1107234904.9501991, C(1, 1), eps_C);
+    EXPECT_NEAR(-12655752875.023743, C(1, 2), eps_C);
+    EXPECT_NEAR(0.0, C(2, 0), eps);
+    EXPECT_NEAR(-4132256921.1878347, C(2, 1), eps_C);
+    EXPECT_NEAR(47231912737.624504, C(2, 2), eps_C);
+    EXPECT_NEAR(0, state->getShearYieldFunctionValue(), eps);
 }
 
 
@@ -391,19 +395,20 @@ TEST(MaterialLib_Fracture, MohrCoulomb3D_negative_t1t2)
     fractureModel.computeConstitutiveRelation(0, x, aperture0, sigma0, w_prev,
                                               w, sigma_prev, sigma, C, *state);
 
-    EXPECT_NEAR(-3.50360e6 / std::sqrt(2), sigma[0], eps_sigma);
-    EXPECT_NEAR(-3.50360e6 / std::sqrt(2), sigma[1], eps_sigma);
-    EXPECT_NEAR(-2.16271e6, sigma[2], eps_sigma);
-    EXPECT_NEAR(1.05536e+10, C(0, 0), eps_C);
-    EXPECT_NEAR(-9.44638e+09, C(0, 1), eps_C);
-    EXPECT_NEAR(8.94897e+09, C(0, 2), eps_C);
-    EXPECT_NEAR(-9.44638e+09, C(1, 0), eps_C);
-    EXPECT_NEAR(1.05536e+10, C(1, 1), eps_C);
-    EXPECT_NEAR(8.94897e+09, C(1, 2), eps_C);
-    EXPECT_NEAR(2.92195e+09, C(2, 0), eps_C);
-    EXPECT_NEAR(2.92195e+09, C(2, 1), eps_C);
-    EXPECT_NEAR(4.72319e+10, C(2, 2), eps_C);
-    EXPECT_NEAR(0, state->getShearYieldFunctionValue(), eps_sigma);
+    EXPECT_NEAR(-3575294.0369758265 / std::sqrt(2), sigma[0], eps_sigma);
+    EXPECT_NEAR(-3575294.0369758265 / std::sqrt(2), sigma[1], eps_sigma);
+    EXPECT_NEAR(-2147026.5752851903, sigma[2], eps_sigma);
+    EXPECT_NEAR(10553617452.475098, C(0, 0), eps_C);
+    EXPECT_NEAR(-9446382547.5249023, C(0, 1), eps_C);
+    EXPECT_NEAR(8948968678.9504356, C(0, 2), eps_C);
+    EXPECT_NEAR(-9446382547.5249023, C(1, 0), eps_C);
+    EXPECT_NEAR(10553617452.475098, C(1, 1), eps_C);
+    EXPECT_NEAR(8948968678.9504356, C(1, 2), eps_C);
+    EXPECT_NEAR(2921946890.5769634, C(2, 0), eps_C);
+    EXPECT_NEAR(2921946890.5769634, C(2, 1), eps_C);
+    EXPECT_NEAR(47231912737.624504, C(2, 2), eps_C);
+    EXPECT_NEAR(0, state->getShearYieldFunctionValue(),
+                1e-9);  // same as newton tolerance
 }
 
 
@@ -441,18 +446,19 @@ TEST(MaterialLib_Fracture, MohrCoulomb3D_negative_t1_positive_t2)
     fractureModel.computeConstitutiveRelation(0, x, aperture0, sigma0, w_prev,
                                               w, sigma_prev, sigma, C, *state);
 
-    EXPECT_NEAR(-3.50360e6 / std::sqrt(2), sigma[0], eps_sigma);
-    EXPECT_NEAR(3.50360e6 / std::sqrt(2), sigma[1], eps_sigma);
-    EXPECT_NEAR(-2.16271e6, sigma[2], eps_sigma);
-    EXPECT_NEAR(1.05536e+10, C(0, 0), eps_C);
-    EXPECT_NEAR(9.44638e+09, C(0, 1), eps_C);
-    EXPECT_NEAR(8.94897e+09, C(0, 2), eps_C);
-    EXPECT_NEAR(9.44638e+09, C(1, 0), eps_C);
-    EXPECT_NEAR(1.05536e+10, C(1, 1), eps_C);
-    EXPECT_NEAR(-8.94897e+09, C(1, 2), eps_C);
-    EXPECT_NEAR(2.92195e+09, C(2, 0), eps_C);
-    EXPECT_NEAR(-2.92195e+09, C(2, 1), eps_C);
-    EXPECT_NEAR(4.72319e+10, C(2, 2), eps_C);
-    EXPECT_NEAR(0, state->getShearYieldFunctionValue(), eps_sigma);
+    EXPECT_NEAR(-3575294.0369758265 / std::sqrt(2), sigma[0], eps_sigma);
+    EXPECT_NEAR(3575294.0369758265 / std::sqrt(2), sigma[1], eps_sigma);
+    EXPECT_NEAR(-2147026.5752851903, sigma[2], eps_sigma);
+    EXPECT_NEAR(10553617452.475098, C(0, 0), eps_C);
+    EXPECT_NEAR(9446382547.5249023, C(0, 1), eps_C);
+    EXPECT_NEAR(8948968678.9504356, C(0, 2), eps_C);
+    EXPECT_NEAR(9446382547.5249023, C(1, 0), eps_C);
+    EXPECT_NEAR(10553617452.475098, C(1, 1), eps_C);
+    EXPECT_NEAR(-8948968678.9504356, C(1, 2), eps_C);
+    EXPECT_NEAR(2921946890.5769634, C(2, 0), eps_C);
+    EXPECT_NEAR(-2921946890.5769634, C(2, 1), eps_C);
+    EXPECT_NEAR(47231912737.624504, C(2, 2), eps_C);
+    EXPECT_NEAR(0, state->getShearYieldFunctionValue(),
+                1e-9);  // same as newton tolerance
 }
 
