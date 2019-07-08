@@ -314,6 +314,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
+    RUNTIME 166
     DIFF_DATA
     hm2_2Dmandel_pcs_0_ts_40_t_2.000000.vtu hm2_2Dmandel_pcs_0_ts_40_t_2.000000.vtu pressure pressure 1.0e-10 0.0
     hm2_2Dmandel_pcs_0_ts_40_t_2.000000.vtu hm2_2Dmandel_pcs_0_ts_40_t_2.000000.vtu displacement displacement 1.0e-10 0.0
