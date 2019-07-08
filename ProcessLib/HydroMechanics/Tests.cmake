@@ -249,7 +249,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    hm2_1Dcolumn1_pcs_0_ts_120_t_6.000000.vtu hm2_1Dcolumn1_pcs_0_ts_120_t_6.000000.vtu pressure pressure 1.0e-10 0.0
+    hm2_1Dcolumn1_pcs_0_ts_120_t_6.000000.vtu hm2_1Dcolumn1_pcs_0_ts_120_t_6.000000.vtu pressure pressure 5.0e-10 0.0
     hm2_1Dcolumn1_pcs_0_ts_120_t_6.000000.vtu hm2_1Dcolumn1_pcs_0_ts_120_t_6.000000.vtu displacement displacement 1.0e-10 0.0
     hm2_1Dcolumn1_pcs_0_ts_120_t_6.000000.vtu hm2_1Dcolumn1_pcs_0_ts_120_t_6.000000.vtu sigma_xx sigma_xx 1.0e-9 0.0
     hm2_1Dcolumn1_pcs_0_ts_120_t_6.000000.vtu hm2_1Dcolumn1_pcs_0_ts_120_t_6.000000.vtu sigma_yy sigma_yy 1.0e-9 0.0
