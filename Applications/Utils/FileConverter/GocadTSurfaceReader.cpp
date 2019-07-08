@@ -37,10 +37,9 @@ int main(int argc, char* argv[])
         "output dir");
     cmd.add(output_arg);
 
-    TCLAP::ValueArg<bool> write_binary_arg(
+    TCLAP::SwitchArg write_binary_arg(
         "b", "write-binary",
-        "if set, OGS-Meshes will be written in binary format",
-        false, false, "true/false");
+        "if set, OGS-Meshes will be written in binary format");
     cmd.add(write_binary_arg);
 
     cmd.parse(argc, argv);
