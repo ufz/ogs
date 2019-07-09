@@ -63,7 +63,7 @@ RUN apt-get update && \
     apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 6B05F25D762E3157 && \
     curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash && \
     git lfs install && \
-    mkdir -p /apps /scratch /lustre /work /projects
+    mkdir -p /apps /scratch /lustre /work /projects /data
 
 # Package manager Conan building block
 # pip
@@ -114,7 +114,11 @@ RUN apt-get update -y && \
     rm -rf /var/lib/apt/lists/*
 
 # Jenkins node
-RUN groupadd --gid 1001 jenkins && \
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+RUN groupadd --gid 1001 jenkins || true && \
     adduser --uid 500 --gid 1001 --disabled-password --gecos "" jenkins && \
     echo "jenkins ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
     echo "jenkins:jenkins" | chpasswd
