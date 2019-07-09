@@ -18,6 +18,11 @@
 #include "NumLib/Fem/CoordinatesMapping/NaturalCoordinatesMapping.h"
 #include "NumLib/Fem/CoordinatesMapping/ShapeMatrices.h"
 
+namespace MeshLib
+{
+class Element;
+}
+
 namespace NumLib
 {
 /**
