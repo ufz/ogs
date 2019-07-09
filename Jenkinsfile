@@ -169,19 +169,6 @@ pipeline {
                        'known_hosts" build/docs/. ' +
                        'www-data@jenkins:/var/www/doxygen.opengeosys.org'
                   }
-                  // Push Docker Images
-                  dir('scripts/docker') {
-                    def gccImage = docker.build("ogs6/gcc:latest", "-f Dockerfile.gcc.full .")
-                    def gccGuiImage = docker.build("ogs6/gcc:gui", "-f Dockerfile.gcc.gui .")
-                    def clangImage = docker.build("ogs6/clang:latest", "-f Dockerfile.clang.full .")
-                    withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials',
-                      passwordVariable: 'pw', usernameVariable: 'docker_user')]) {
-                        sh 'echo $pw | docker login -u $docker_user --password-stdin'
-                        gccImage.push()
-                        gccGuiImage.push()
-                        clangImage.push()
-                    }
-                  }
                 }
               }
             }
@@ -676,6 +663,30 @@ pipeline {
                   credentialsId: '2719b702-1298-4e87-8464-5dfc62fbd923',
                   passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
                   sh 'git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/ufz/ogs-data HEAD:master'
+                }
+              }
+            }
+          }
+        }
+        // ********************* Push Docker Images ***************************
+        stage('Push Docker Images') {
+          when {
+            beforeAgent true
+            environment name: 'JOB_NAME', value: 'ufz/ogs/master'
+          }
+          agent { label 'docker'}
+          steps {
+            script {
+              dir('scripts/docker') {
+                def gccImage = docker.build("ogs6/gcc:latest", "-f Dockerfile.gcc.full .")
+                def gccGuiImage = docker.build("ogs6/gcc:gui", "-f Dockerfile.gcc.gui .")
+                def clangImage = docker.build("ogs6/clang:latest", "-f Dockerfile.clang.full .")
+                withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials',
+                  passwordVariable: 'pw', usernameVariable: 'docker_user')]) {
+                    sh 'echo $pw | docker login -u $docker_user --password-stdin'
+                    gccImage.push()
+                    gccGuiImage.push()
+                    clangImage.push()
                 }
               }
             }
