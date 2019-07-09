@@ -158,6 +158,12 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
             displacement_size, pressure_size>::Zero(displacement_size,
                                                     pressure_size);
 
+    typename ShapeMatricesTypeDisplacement::template MatrixType<
+        pressure_size, displacement_size>
+        Kpu = ShapeMatricesTypeDisplacement::template MatrixType<
+            pressure_size, displacement_size>::Zero(pressure_size,
+                                                    displacement_size);
+
     double const& dt = _process_data.dt;
 
     ParameterLib::SpatialPosition x_position;
@@ -230,17 +236,18 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         //
         // pressure equation, pressure part.
         //
-        laplace_p.noalias() += dNdx_p.transpose() * K_over_mu * dNdx_p * w;
+        laplace_p.noalias() +=
+            rho_fr * dNdx_p.transpose() * K_over_mu * dNdx_p * w;
 
-        storage_p.noalias() += N_p.transpose() * S * N_p * w;
+        storage_p.noalias() += rho_fr * N_p.transpose() * S * N_p * w;
 
         local_rhs.template segment<pressure_size>(pressure_index).noalias() +=
-            dNdx_p.transpose() * rho_fr * K_over_mu * b * w;
+            dNdx_p.transpose() * rho_fr * rho_fr * K_over_mu * b * w;
 
         //
         // pressure equation, displacement part.
         //
-        // Reusing Kup.transpose().
+        Kpu.noalias() += rho_fr * alpha * N_p.transpose() * identity2.transpose() * B * w;
     }
     // displacement equation, pressure part
     local_Jac
@@ -258,11 +265,11 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     local_Jac
         .template block<pressure_size, displacement_size>(pressure_index,
                                                           displacement_index)
-        .noalias() = Kup.transpose() / dt;
+        .noalias() = Kpu / dt;
 
     // pressure equation
     local_rhs.template segment<pressure_size>(pressure_index).noalias() -=
-        laplace_p * p + storage_p * p_dot + Kup.transpose() * u_dot;
+        laplace_p * p + storage_p * p_dot + Kpu * u_dot;
 
     // displacement equation
     local_rhs.template segment<displacement_size>(displacement_index)
