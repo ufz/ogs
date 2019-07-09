@@ -116,6 +116,7 @@ RUN apt-get update -y && \
 # Jenkins node
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        openssh-client \
         rsync && \
     rm -rf /var/lib/apt/lists/*
 RUN groupadd --gid 1001 jenkins || true && \
