@@ -160,7 +160,30 @@ pipeline {
                   keepAll: true, reportDir: 'build/docs', reportFiles: 'index.html',
                   reportName: 'Doxygen'])
               archiveArtifacts 'build/*.tar.gz,build/conaninfo.txt'
-              dir('build/docs') { stash(name: 'doxygen') }
+              script {
+                if (env.JOB_NAME == 'ufz/ogs/master') {
+                  // Deploy Doxygen
+                  unstash 'known_hosts'
+                  sshagent(credentials: ['www-data_jenkins']) {
+                    sh 'rsync -a --delete --stats -e "ssh -o UserKnownHostsFile=' +
+                       'known_hosts" build/docs/. ' +
+                       'www-data@jenkins:/var/www/doxygen.opengeosys.org'
+                  }
+                  // Push Docker Images
+                  dir('scripts/docker') {
+                    def gccImage = docker.build("ogs6/gcc:latest", "-f Dockerfile.gcc.full .")
+                    def gccGuiImage = docker.build("ogs6/gcc:gui", "-f Dockerfile.gcc.gui .")
+                    def clangImage = docker.build("ogs6/clang:latest", "-f Dockerfile.clang.full .")
+                    withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials',
+                      passwordVariable: 'pw', usernameVariable: 'docker_user')]) {
+                        sh 'echo $pw | docker login -u $docker_user --password-stdin'
+                        gccImage.push()
+                        gccGuiImage.push()
+                        clangImage.push()
+                    }
+                  }
+                }
+              }
             }
           }
         }
@@ -272,7 +295,8 @@ pipeline {
                 cmakeOptions =
                   '-DOGS_BUILD_UTILS=ON ' +
                   '-DBUILD_SHARED_LIBS=ON ' +
-                  '-DOGS_USE_CONAN=OFF '
+                  '-DCMAKE_INSTALL_PREFIX=/global/apps/ogs/head/standard ' +
+                  '-DOGS_MODULEFILE=/global/apps/modulefiles/ogs/head/standard '
                 env = 'eve/cli.sh'
               }
               build {
@@ -295,6 +319,17 @@ pipeline {
                 CTest(pattern: 'build/Testing/**/*.xml'),
                 GoogleTest(pattern: 'build/Tests/testrunner.xml')
               ])
+            }
+            success {
+              script {
+                if (env.JOB_NAME == 'ufz/ogs/master') {
+                  sh 'rm -rf /global/apps/ogs/head/standard'
+                  build {
+                    env = 'eve/cli.sh'
+                    target = 'install'
+                  }
+                }
+              }
             }
           }
         }
@@ -309,12 +344,13 @@ pipeline {
           }
           steps {
             script {
+              sh 'git submodule sync'
               configure {
-                sh 'git submodule sync'
                 cmakeOptions =
-                  '-DBUILD_SHARED_LIBS=ON ' +
                   '-DOGS_USE_PETSC=ON ' +
-                  '-DOGS_USE_CONAN=OFF '
+                  '-DBUILD_SHARED_LIBS=ON ' +
+                  '-DCMAKE_INSTALL_PREFIX=/global/apps/ogs/head/petsc ' +
+                  '-DOGS_MODULEFILE=/global/apps/modulefiles/ogs/head/petsc '
                 env = 'eve/petsc.sh'
               }
               build {
@@ -337,6 +373,17 @@ pipeline {
                 CTest(pattern: 'build/Testing/**/*.xml'),
                 GoogleTest(pattern: 'build/Tests/testrunner.xml')
               ])
+            }
+            success {
+              script {
+                if (env.JOB_NAME == 'ufz/ogs/master') {
+                  sh 'rm -rf /global/apps/ogs/head/petsc'
+                  build {
+                    env = 'eve/petsc.sh'
+                    target = 'install'
+                  }
+                }
+              }
             }
           }
         }
@@ -483,78 +530,14 @@ pipeline {
             }
           }
         }
-      } // end parallel
-    } // end stage Build
-    stage('Master Milestone')
-    {
-      when { environment name: 'JOB_NAME', value: 'ufz/ogs/master' }
-      steps {
-        milestone null
-      }
-    }
-    stage('Master') {
-      when { environment name: 'JOB_NAME', value: 'ufz/ogs/master' }
-      parallel {
-        // ************************* Tests-Large *******************************
-        stage('Tests-Large') {
-          when {
-            beforeAgent true
-            expression { return stage_required.build || stage_required.full }
-          }
-          agent {
-            dockerfile {
-              filename 'Dockerfile.gcc.full'
-              dir 'scripts/docker'
-              label 'envinf11w || envinf56'
-              args '-v /home/jenkins/cache/ccache:/opt/ccache -v /home/jenkins/cache/conan/.conan:/opt/conan/.conan'
-              additionalBuildArgs '--pull'
-            }
-          }
-          environment {
-            OMP_NUM_THREADS = '1'
-          }
-          steps {
-            script {
-              configure { }
-              build { target = 'ctest-large' }
-            }
-          }
-          post {
-            always {
-              xunit([CTest(pattern: 'build/Testing/**/*.xml')])
-              dir('build') { deleteDir() }
-            }
-          }
-        }
-        // ********************* Push Docker Images ****************************
-        stage('Push Docker Images') {
-          when {
-            beforeAgent true
-            expression { return stage_required.docker || stage_required.full }
-          }
-          agent { label 'docker' }
-          steps {
-            script {
-              dir('scripts/docker') {
-                def gccImage = docker.build("ogs6/gcc:latest", "-f Dockerfile.gcc.full .")
-                def gccGuiImage = docker.build("ogs6/gcc:gui", "-f Dockerfile.gcc.gui .")
-                def clangImage = docker.build("ogs6/clang:latest", "-f Dockerfile.clang.full .")
-                withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials',
-                  passwordVariable: 'pw', usernameVariable: 'docker_user')]) {
-                    sh 'echo $pw | docker login -u $docker_user --password-stdin'
-                    gccImage.push()
-                    gccGuiImage.push()
-                    clangImage.push()
-                }
-              }
-            }
-          }
-        }
         // ************************* Check headers *********************************
         stage('Check headers') {
           when {
             beforeAgent true
-            expression { return stage_required.build || stage_required.full }
+            allOf {
+              expression { return stage_required.build || stage_required.full }
+              environment name: 'JOB_NAME', value: 'ufz/ogs/master'
+            }
           }
           agent {
             dockerfile {
@@ -576,79 +559,43 @@ pipeline {
                 }
               }
               catch(err) {
-                echo "check-header failed!"
                 sh 'cat build-check-header/CMakeFiles/CMakeError.log'
+                unstable('check-header failed!')
               }
             }
           }
         }
-        // *********************** Deploy Doxygen ******************************
-        stage('Deploy Doxygen') {
-          when { expression { return stage_required.build || stage_required.full } }
-          agent { label "master" }
-          steps {
-            dir('doxygen') { unstash 'doxygen' }
-            unstash 'known_hosts'
-            script {
-              sshagent(credentials: ['www-data_jenkins']) {
-                sh 'rsync -a --delete --stats -e "ssh -o UserKnownHostsFile=' +
-                   'known_hosts" doxygen/. ' +
-                   'www-data@jenkins:/var/www/doxygen.opengeosys.org'
-              }
-            }
-          }
-        }
-        // ************************* Deploy eve ********************************
-        stage('Deploy eve') {
+        // ************************* Tests-Large *******************************
+        stage('Tests-Large') {
           when {
             beforeAgent true
-            expression { return stage_required.build || stage_required.full }
-          }
-          agent { label "frontend2"}
-          steps {
-            script {
-              sh 'rm -rf /global/apps/ogs/head/standard'
-              configure {
-                cmakeOptions =
-                  '-DOGS_BUILD_UTILS=ON ' +
-                  '-DBUILD_SHARED_LIBS=ON ' +
-                  '-DCMAKE_INSTALL_PREFIX=/global/apps/ogs/head/standard ' +
-                  '-DOGS_MODULEFILE=/global/apps/modulefiles/ogs/head/standard ' +
-                  '-DOGS_CPU_ARCHITECTURE=core-avx-i '
-                env = 'eve/cli.sh'
-              }
-              build {
-                env = 'eve/cli.sh'
-                target = 'install'
-
-              }
+            allOf {
+              expression { return stage_required.build || stage_required.full }
+              environment name: 'JOB_NAME', value: 'ufz/ogs/master'
             }
           }
-        }
-        // ******************** Deploy envinf1 PETSc ***************************
-        stage('Deploy eve PETSc') {
-          when {
-            beforeAgent true
-            expression { return stage_required.build || stage_required.full }
+          agent {
+            dockerfile {
+              filename 'Dockerfile.gcc.full'
+              dir 'scripts/docker'
+              label 'singularity1 || envinf1'
+              args '-v /home/jenkins/cache/ccache:/opt/ccache -v /home/jenkins/cache/conan/.conan:/opt/conan/.conan'
+              additionalBuildArgs '--pull'
+            }
           }
-          agent { label "frontend2"}
+          environment {
+            OMP_NUM_THREADS = '1'
+          }
           steps {
             script {
-              sh 'rm -rf /global/apps/ogs/head/petsc'
-              configure {
-                cmakeOptions =
-                  '-DOGS_USE_PETSC=ON ' +
-                  '-DBUILD_SHARED_LIBS=ON ' +
-                  '-DCMAKE_INSTALL_PREFIX=/global/apps/ogs/head/petsc ' +
-                  '-DOGS_MODULEFILE=/global/apps/modulefiles/ogs/head/petsc ' +
-                  '-DOGS_CPU_ARCHITECTURE=core-avx-i '
-                env = 'eve/petsc.sh'
-              }
-              build {
-                env = 'eve/petsc.sh'
-                target = 'install'
-                cmd_args = '-l 30'
-              }
+              configure { }
+              build { target = 'ctest-large' }
+            }
+          }
+          post {
+            always {
+              xunit([CTest(pattern: 'build/Testing/**/*.xml')])
+              dir('build') { deleteDir() }
             }
           }
         }
@@ -656,7 +603,10 @@ pipeline {
         stage('Sanitizer') {
           when {
             beforeAgent true
-            expression { return stage_required.build || stage_required.full }
+            allOf {
+              expression { return stage_required.build || stage_required.full }
+              environment name: 'JOB_NAME', value: 'ufz/ogs/master'
+            }
           }
           agent {
             dockerfile {
@@ -705,7 +655,10 @@ pipeline {
         stage('Update ogs-data') {
           when {
             beforeAgent true
-            expression { return stage_required.data }
+            allOf {
+              expression { return stage_required.data }
+              environment name: 'JOB_NAME', value: 'ufz/ogs/master'
+            }
           }
           agent { label "master"}
           steps {
@@ -740,6 +693,6 @@ pipeline {
           }
         }
       } // end parallel
-    } // end stage master
+    } // end stage Build
   }
 }
