@@ -33,6 +33,17 @@ void varInfo(std::string const& msg,
              mgis::behaviour::getVariableOffset(vars, var.name, hypothesis));
     }
 }
+
+/// Prints info about MFront parameters.
+void varInfo(std::string const& msg, std::vector<std::string> const& parameters)
+{
+    INFO("#%s: %lu (array size %lu).", msg.c_str(), parameters.size());
+    // mgis::behaviour::getArraySize(vars, hypothesis));
+    for (auto const& parameter : parameters)
+    {
+        INFO("  --> with name `%s'.", parameter.c_str());
+    }
+}
 }  // anonymous namespace
 
 namespace MaterialLib
@@ -101,7 +112,9 @@ std::unique_ptr<MechanicsBase<DisplacementDim>> createMFront(
 
     // TODO read parameters from prj file, not yet (2018-11-05) supported by
     // MGIS library.
-    varInfo("Parameters", behaviour.parameters, hypothesis);
+    varInfo("Real-valued parameters", behaviour.params);
+    varInfo("Integer parameters", behaviour.iparams);
+    varInfo("Unsigned parameters", behaviour.usparams);
 
     std::vector<ParameterLib::Parameter<double> const*> material_properties;
 
