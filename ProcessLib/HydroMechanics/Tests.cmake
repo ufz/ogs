@@ -1,3 +1,10 @@
+if (NOT OGS_USE_MPI)
+    OgsTest(PROJECTFILE HydroMechanics/InitialStates/displacement/into_initial_state.prj)
+    OgsTest(PROJECTFILE HydroMechanics/InitialStates/displacement/non_equilibrium_initial_state.prj)
+    OgsTest(PROJECTFILE HydroMechanics/InitialStates/pressure/into_initial_state.prj)
+    OgsTest(PROJECTFILE HydroMechanics/InitialStates/pressure/non_equilibrium_initial_state.prj)
+endif()
+
 # HydroMechanics; Small deformations, linear poroelastic (HML)
 
 ### With monolithic scheme
