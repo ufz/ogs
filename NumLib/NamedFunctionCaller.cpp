@@ -10,6 +10,7 @@
 #include "NamedFunctionCaller.h"
 
 #include <algorithm>
+#include <limits>
 
 #include "BaseLib/Algorithm.h"
 
@@ -114,8 +115,10 @@ namespace NumLib
 {
 NamedFunctionCaller::NamedFunctionCaller(
     std::initializer_list<std::string> unbound_argument_names)
-    : _uninitialized(-1 - unbound_argument_names.size())
+    : _uninitialized(-1 - static_cast<int>(unbound_argument_names.size()))
 {
+    assert(unbound_argument_names.size() <
+           static_cast<std::size_t>(std::numeric_limits<int>::max()));
     int idx = -1;
     for (auto arg : unbound_argument_names) {
         BaseLib::insertIfKeyUniqueElseError(
