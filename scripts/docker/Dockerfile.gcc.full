@@ -119,7 +119,7 @@ RUN apt-get update -y && \
 # Jenkins node
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        wget && \
+        rsync && \
     rm -rf /var/lib/apt/lists/*
 RUN groupadd --gid 1001 jenkins || true && \
     adduser --uid 500 --gid 1001 --disabled-password --gecos "" jenkins && \
