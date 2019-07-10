@@ -73,12 +73,6 @@ endif()
 
 if(Qt5XmlPatterns_FOUND)
     target_link_libraries(testrunner Qt5::Core Qt5::Gui Qt5::Xml Qt5::Network VtkVis QtDataView)
-    if(CMAKE_CROSSCOMPILING)
-        target_link_libraries(testrunner
-            ${QT_XML_DEPS_LIBRARIES}
-            ${QT_GUI_DEPS_LIBRARIES}
-            ${QT_NETWORK_DEPS_LIBRARIES})
-    endif()
 endif()
 
 if(OGS_USE_PCH)

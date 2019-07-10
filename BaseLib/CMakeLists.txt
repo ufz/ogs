@@ -27,9 +27,6 @@ endif()
 
 if(Qt5XmlPatterns_FOUND)
     target_link_libraries(BaseLib PUBLIC Qt5::Xml Qt5::XmlPatterns)
-    if(WIN32 AND CMAKE_CROSSCOMPILING AND OPENSSL_FOUND)
-        target_link_libraries(BaseLib PUBLIC Qt5::Network ${OPENSSL_LIBRARIES} ws2_32)
-    endif()
 endif()
 
 if(OGS_USE_PCH)

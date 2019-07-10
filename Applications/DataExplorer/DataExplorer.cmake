@@ -71,14 +71,6 @@ if(OGS_USE_CONAN AND WIN32)
     target_link_libraries(DataExplorer ${ZLIB_LIBRARIES})
 endif()
 
-if(CMAKE_CROSSCOMPILING)
-    target_link_libraries(DataExplorer
-        ${QT_XML_DEPS_LIBRARIES}
-        ${QT_GUI_DEPS_LIBRARIES}
-        ${QT_NETWORK_DEPS_LIBRARIES}
-    )
-endif()
-
 if(GEOTIFF_FOUND)
     target_link_libraries(DataExplorer ${GEOTIFF_LIBRARIES} )
 endif()
