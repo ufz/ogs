@@ -1,4 +1,4 @@
-if(NOT Qt5XmlPatterns_FOUND)
+if(NOT OGS_BUILD_GUI)
     return()
 endif()
 
