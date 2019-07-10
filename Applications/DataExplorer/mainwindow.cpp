@@ -616,12 +616,11 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
     {
         std::string file_name(fileName.toStdString());
         FileIO::Gocad::GocadTSurfaceReader gcts;
-        std::vector<MeshLib::Mesh*> meshes;
+        std::vector<std::unique_ptr<MeshLib::Mesh>> meshes;
         if (gcts.readFile(file_name, meshes))
         {
-            for (MeshLib::Mesh* m : meshes)
+            for (auto& mesh : meshes)
             {
-                std::unique_ptr<MeshLib::Mesh> mesh(m);
                 if (mesh != nullptr)
                     _meshModel->addMesh(std::move(mesh));
             }

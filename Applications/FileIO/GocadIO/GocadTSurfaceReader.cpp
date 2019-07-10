@@ -32,7 +32,8 @@ GocadTSurfaceReader::GocadTSurfaceReader()
 }
 
 bool GocadTSurfaceReader::readFile(
-    std::string const& file_name, std::vector<MeshLib::Mesh*>& meshes)
+    std::string const& file_name,
+    std::vector<std::unique_ptr<MeshLib::Mesh>>& meshes)
 {
     std::ifstream in(file_name.c_str());
     if (!in.is_open())
@@ -46,13 +47,13 @@ bool GocadTSurfaceReader::readFile(
     {
         std::string mesh_name = BaseLib::dropFileExtension(file_name) +
                                 std::to_string(meshes.size() + 1);
-        MeshLib::Mesh* mesh = readMesh(in, mesh_name);
+        std::unique_ptr<MeshLib::Mesh> mesh(readMesh(in, mesh_name));
         if (mesh == nullptr)
         {
             ERR("File parsing aborted...")
             return false;
         }
-        meshes.push_back(mesh);
+        meshes.push_back(std::move(mesh));
     }
     return true;
 }
@@ -125,7 +126,7 @@ MeshLib::Mesh* GocadTSurfaceReader::readMesh(std::ifstream& in,
         }
     }
     ERR("%s", eof_error.c_str());
-    return false;
+    return nullptr;
 }
 
 bool GocadTSurfaceReader::TSurfaceFound(std::ifstream& in) const

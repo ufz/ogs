@@ -55,20 +55,21 @@ int main(int argc, char* argv[])
 
     std::string const file_name (input_arg.getValue());
     FileIO::Gocad::GocadTSurfaceReader gcts;
-    std::vector<MeshLib::Mesh*> meshes;
+    std::vector<std::unique_ptr<MeshLib::Mesh>> meshes;
     if (!gcts.readFile(file_name, meshes))
     {
         ERR("Error reading file.");
+        return 1;
     }
     std::string const dir = output_arg.getValue();
     bool const write_binary = write_binary_arg.getValue();
     std::string const delim = getDelim(dir);
-    for (MeshLib::Mesh* mesh : meshes)
+    for (auto& mesh : meshes)
     {
         INFO("Writing mesh \"%s\"", mesh->getName().c_str());
         int data_mode = (write_binary) ? 2 : 0;
         bool compressed = (write_binary) ? true : false;
-        MeshLib::IO::VtuInterface vtu(mesh, data_mode, compressed);
+        MeshLib::IO::VtuInterface vtu(mesh.get(), data_mode, compressed);
         vtu.writeToFile(dir + delim + mesh->getName() + ".vtu");
     }
     return 0;

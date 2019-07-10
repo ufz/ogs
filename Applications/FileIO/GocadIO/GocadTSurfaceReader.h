@@ -41,7 +41,7 @@ public:
     GocadTSurfaceReader& operator=(GocadTSurfaceReader const& rhs) = delete;
 
     /// Reads the specified file and writes data into internal mesh vector
-    bool readFile(std::string const& file_name, std::vector<MeshLib::Mesh*>& meshes);
+    bool readFile(std::string const& file_name, std::vector<std::unique_ptr<MeshLib::Mesh>>& meshes);
 
 private:
     /// Reads one mesh contained in the file (there may be more than one!)
