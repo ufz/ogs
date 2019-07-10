@@ -54,7 +54,7 @@ if(NOT OGS_USE_CONAN OR NOT CONAN_CMD)
     include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 endif()
 
-find_package(VTK 8.1.0 REQUIRED)
+find_package(VTK 8.2.0 REQUIRED)
 include(${VTK_USE_FILE})
 
 find_package(Eigen3 3.3.4 REQUIRED)
