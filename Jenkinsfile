@@ -167,7 +167,7 @@ pipeline {
                   sshagent(credentials: ['www-data_jenkins']) {
                     sh 'rsync -a --delete --stats -e "ssh -o UserKnownHostsFile=' +
                        'known_hosts" build/docs/. ' +
-                       'www-data@jenkins:/var/www/doxygen.opengeosys.org'
+                       'www-data@jenkins.opengeosys.org:/var/www/doxygen.opengeosys.org'
                   }
                 }
               }
