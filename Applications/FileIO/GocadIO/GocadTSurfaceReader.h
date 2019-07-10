@@ -33,39 +33,19 @@ public:
      * Constructor takes as argument the Gocad .sg text file.
      * @param fname file name
      */
-    explicit GocadTSurfaceReader(std::string const& fname);
+    explicit GocadTSurfaceReader();
 
-    GocadTSurfaceReader() = delete;
     GocadTSurfaceReader(GocadTSurfaceReader&& src) = delete;
     GocadTSurfaceReader(GocadTSurfaceReader const& src) = delete;
     GocadTSurfaceReader& operator=(GocadTSurfaceReader&& rhs) = delete;
     GocadTSurfaceReader& operator=(GocadTSurfaceReader const& rhs) = delete;
 
     /// Reads the specified file and writes data into internal mesh vector
-    bool readFile();
-
-    /// Returns the specified mesh from the internal mesh vector
-    MeshLib::Mesh* getData(std::size_t const idx) const;
-
-    /// Returns the complete mesh vector
-    std::vector<MeshLib::Mesh*> getData() const;
-
-    /// Returns the name of the specified mesh
-    std::string getMeshName(std::size_t idx) const;
-
-    /// Returns the number of meshes in the mesh vector
-    std::size_t getNumberOfMeshes() const { return _mesh_vec.size(); };
-
-    /// Writes one mesh to the specified file
-    void writeData(std::string const& file_name, std::size_t const idx,
-                   bool write_binary) const;
-
-    /// Writes all meshes into the specified directory
-    void writeData(std::string const& dir, bool write_binary = false) const;
+    bool readFile(std::string const& file_name, std::vector<MeshLib::Mesh*>& meshes);
 
 private:
     /// Reads one mesh contained in the file (there may be more than one!)
-    bool readMesh(std::ifstream& in);
+    MeshLib::Mesh* readMesh(std::ifstream& in, std::string& mesh_name);
 
     /// Checks if the current line is a comment
     bool isCommentLine(std::string const& str) const;
@@ -116,9 +96,6 @@ private:
         VRTX,
         PVRTX
     };
-
-    std::vector<MeshLib::Mesh*> _mesh_vec;
-    std::string _file_name;
 
 };  // end class GocadTSurfaceReader
 

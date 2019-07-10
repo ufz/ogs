@@ -17,7 +17,6 @@
 #include "BaseLib/FileTools.h"
 #include "BaseLib/StringTools.h"
 #include "MeshLib/Elements/Tri.h"
-#include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 
@@ -28,38 +27,41 @@ namespace Gocad
 const std::string mat_id_name = "MaterialIDs";
 const std::string eof_error = "Error: Unexpected end of file.";
 
-GocadTSurfaceReader::GocadTSurfaceReader(std::string const& filename)
-    : _file_name(filename)
+GocadTSurfaceReader::GocadTSurfaceReader()
 {
 }
 
-bool GocadTSurfaceReader::readFile()
+bool GocadTSurfaceReader::readFile(
+    std::string const& file_name, std::vector<MeshLib::Mesh*>& meshes)
 {
-    std::ifstream in(_file_name.c_str());
+    std::ifstream in(file_name.c_str());
     if (!in.is_open())
     {
         ERR("GocadTSurfaceReader::readFile(): Could not open file %s.",
-            _file_name.c_str());
+            file_name.c_str());
         return false;
     }
 
     while (TSurfaceFound(in))
     {
-        if (!readMesh(in))
+        std::string mesh_name = BaseLib::dropFileExtension(file_name) +
+                                std::to_string(meshes.size() + 1);
+        MeshLib::Mesh* mesh = readMesh(in, mesh_name);
+        if (mesh == nullptr)
         {
             ERR("File parsing aborted...")
             return false;
         }
+        meshes.push_back(mesh);
     }
     return true;
 }
 
-bool GocadTSurfaceReader::readMesh(std::ifstream& in)
+MeshLib::Mesh* GocadTSurfaceReader::readMesh(std::ifstream& in,
+                                             std::string& mesh_name)
 {
-    std::string const mesh_cnt = "-" + std::to_string(_mesh_vec.size() + 1);
-    std::string mesh_name = BaseLib::dropFileExtension(_file_name) + mesh_cnt;
     if (!parseHeader(in, mesh_name))
-        return false;
+        return nullptr;
 
     MeshLib::Properties mesh_prop;
     mesh_prop.createNewPropertyVector<int>(mat_id_name,
@@ -76,7 +78,7 @@ bool GocadTSurfaceReader::readMesh(std::ifstream& in)
             if (!coordinate_system.parse(in))
             {
                 ERR("Error parsing coordinate system.");
-                return false;
+                return nullptr;
             }
         }
         else if (str[0] == "GEOLOGICAL_FEATURE" ||
@@ -90,7 +92,7 @@ bool GocadTSurfaceReader::readMesh(std::ifstream& in)
             if (!parsePropertyClass(in))
             {
                 ERR("Error parsing PROPERTY_CLASS_HEADER.");
-                return false;
+                return nullptr;
             }
         }
         else if (str[0] == "PROPERTIES")
@@ -98,7 +100,7 @@ bool GocadTSurfaceReader::readMesh(std::ifstream& in)
             if (!parseProperties(in, str, mesh_prop))
             {
                 ERR("Error parsing PROPERTIES");
-                return false;
+                return nullptr;
             }
         }
         else if (str[0] == "TFACE")
@@ -111,11 +113,10 @@ bool GocadTSurfaceReader::readMesh(std::ifstream& in)
             {
                 ERR("Error parsing Surface %s.", mesh_name.c_str());
                 clearData(nodes, elems);
-                return false;
+                return nullptr;
             }
-            _mesh_vec.push_back(
-                new MeshLib::Mesh(mesh_name, nodes, elems, mesh_prop));
-            return true;
+
+            return new MeshLib::Mesh(mesh_name, nodes, elems, mesh_prop);
         }
         else
         {
@@ -125,87 +126,6 @@ bool GocadTSurfaceReader::readMesh(std::ifstream& in)
     }
     ERR("%s", eof_error.c_str());
     return false;
-}
-
-MeshLib::Mesh* GocadTSurfaceReader::getData(std::size_t const idx) const
-{
-    if (_mesh_vec.empty())
-    {
-        ERR("Error: No mesh data available.");
-        return nullptr;
-    }
-    if (idx < _mesh_vec.size())
-        return _mesh_vec[idx];
-    ERR("Error: Mesh index (%d) out of range (0, %d).", idx, _mesh_vec.size()-1);
-    return nullptr;
-}
-
-std::vector<MeshLib::Mesh*> GocadTSurfaceReader::getData() const
-{
-    if (_mesh_vec.empty())
-    {
-        ERR("Error: No mesh data available.");
-    }
-    return _mesh_vec;
-}
-
-std::string GocadTSurfaceReader::getMeshName(std::size_t idx) const
-{
-    if (_mesh_vec.empty())
-    {
-        ERR("Error: No mesh data available.");
-        return std::string();
-    }
-    if (idx < _mesh_vec.size())
-        return _mesh_vec[idx]->getName();
-    ERR("Error: Mesh index (%d) out of range (0, %d).", idx, _mesh_vec.size()-1);
-    return std::string();
-}
-
-void GocadTSurfaceReader::writeData(std::string const& file_name,
-                                    std::size_t const idx,
-                                    bool write_binary) const
-{
-    if (_mesh_vec.empty())
-    {
-        ERR("Error: No mesh data available.");
-        return;
-    }
-    if (idx < _mesh_vec.size())
-    {
-        INFO("Writing mesh \"%s\"", file_name.c_str());
-        int data_mode = (write_binary) ? 2 : 0;
-        bool compressed = (write_binary) ? true : false;
-        MeshLib::IO::VtuInterface vtu(_mesh_vec[idx], data_mode, compressed);
-        vtu.writeToFile(file_name);
-        return;
-    }
-    ERR("Error: Mesh index (%d) out of range (0, %d).", idx, _mesh_vec.size()-1);
-    return;
-}
-
-std::string getDelim(std::string const& str)
-{
-    std::size_t const bslash = str.find_first_of('\\');
-    char const delim = (bslash == str.npos) ? '/' : '\\';
-    return (str.back() == delim) ? "" : std::string(1, delim);
-}
-
-void GocadTSurfaceReader::writeData(std::string const& dir,
-                                    bool write_binary) const
-{
-    if (_mesh_vec.empty())
-    {
-        ERR("Error: No mesh data available.");
-        return;
-    }
-    std::size_t const n_meshes(_mesh_vec.size());
-
-    std::string const delim = getDelim(dir);
-    for (std::size_t i = 0; i < n_meshes; ++i)
-    {
-        writeData(dir + delim + _mesh_vec[i]->getName() + ".vtu", i, write_binary);
-    }
 }
 
 bool GocadTSurfaceReader::TSurfaceFound(std::ifstream& in) const
@@ -247,7 +167,10 @@ bool GocadTSurfaceReader::parseHeader(std::ifstream& in, std::string& mesh_name)
     while (std::getline(in, line))
     {
         if (line.substr(0, 5) == "name:")
+        {
             mesh_name = line.substr(5, line.length() - 5);
+            BaseLib::trim(mesh_name, ' ');
+        }
         else if (line.substr(0, 1) == "}")
             return true;
         // ignore all other header parameters

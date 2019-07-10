@@ -615,10 +615,10 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
     else if (t == ImportFileType::GOCAD_TSURF)
     {
         std::string file_name(fileName.toStdString());
-        FileIO::Gocad::GocadTSurfaceReader gcts (file_name);
-        if (gcts.readFile())
+        FileIO::Gocad::GocadTSurfaceReader gcts;
+        std::vector<MeshLib::Mesh*> meshes;
+        if (gcts.readFile(file_name, meshes))
         {
-            std::vector<MeshLib::Mesh*> meshes = gcts.getData();
             for (MeshLib::Mesh* m : meshes)
             {
                 std::unique_ptr<MeshLib::Mesh> mesh(m);
