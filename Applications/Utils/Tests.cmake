@@ -243,3 +243,24 @@ MeshTest(
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA Back.vtu Back.vtu 1e-16
 )
+
+MeshTest(
+    NAME GocadTSurface_Mesh_Test
+    PATH MeshLib/
+    EXECUTABLE GocadTSurfaceReader
+    EXECUTABLE_ARGS -i Top-Lower-Shaly.ts -o ${Data_BINARY_DIR}/MeshLib -b
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA Top-Lower-Shaly.vtu Top-Lower-Shaly.vtu 1e-16
+)
+
+AddTest(
+    NAME GocadTSurface_Array_Test
+    PATH MeshLib/
+    EXECUTABLE GocadTSurfaceReader
+    EXECUTABLE_ARGS -i Top-Lower-Shaly.ts -o ${Data_BINARY_DIR}/MeshLib -b
+    REQUIREMENTS NOT OGS_USE_MPI
+    TESTER vtkdiff
+    DIFF_DATA
+    Top-Lower-Shaly.vtu Top-Lower-Shaly.vtu Reshape_Thickness Reshape_Thickness 1e-16 0
+    Top-Lower-Shaly.vtu Top-Lower-Shaly.vtu Measured_Depth Measured_Depth 1e-16 0
+)

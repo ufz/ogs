@@ -26,6 +26,8 @@ public:
     };
 
     std::string name;
+    std::string projection;
+    std::string datum;
     std::string axis_name_u, axis_name_v, axis_name_w;
     std::string axis_unit_u, axis_unit_v, axis_unit_w;
     ZPOSITIVE z_positive;
