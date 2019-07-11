@@ -54,7 +54,19 @@ if(NOT OGS_USE_CONAN OR NOT CONAN_CMD)
     include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 endif()
 
-find_package(VTK 8.2.0 REQUIRED)
+set(VTK_COMPONENTS vtkIOXML)
+if(OGS_BUILD_GUI)
+    set(VTK_COMPONENTS ${VTK_COMPONENTS}
+        vtkIOImage vtkIOLegacy vtkIOExport vtkIOExportPDF
+        vtkIOExportOpenGL2 vtkInteractionStyle vtkInteractionWidgets
+        vtkGUISupportQt vtkRenderingOpenGL2 vtkRenderingContextOpenGL2
+        vtkFiltersTexture vtkRenderingCore
+    )
+endif()
+if(OGS_USE_MPI)
+    set(VTK_COMPONENTS ${VTK_COMPONENTS} vtkIOParallelXML vtkParallelMPI)
+endif()
+find_package(VTK 8.2.0 REQUIRED COMPONENTS ${VTK_COMPONENTS})
 include(${VTK_USE_FILE})
 
 find_package(Eigen3 3.3.4 REQUIRED)
