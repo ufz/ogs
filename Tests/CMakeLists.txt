@@ -73,6 +73,9 @@ endif()
 
 if(OGS_BUILD_GUI)
     target_link_libraries(testrunner Qt5::Core Qt5::Gui Qt5::Xml Qt5::Network VtkVis QtDataView)
+    if(GEOTIFF_FOUND)
+        target_link_libraries(testrunner ${GEOTIFF_LIBRARIES})
+    endif()
 endif()
 
 if(OGS_USE_PCH)
