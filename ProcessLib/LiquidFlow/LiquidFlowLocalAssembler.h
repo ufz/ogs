@@ -204,14 +204,14 @@ private:
                                  std::vector<double> const& local_x,
                                  std::vector<double>& local_M_data,
                                  std::vector<double>& local_K_data,
-                                 std::vector<double>& local_b_data,
-                                 ParameterLib::SpatialPosition const& pos,
-                                 Eigen::MatrixXd const& permeability);
+                                 std::vector<double>& local_b_data);
 
     template <typename LaplacianGravityVelocityCalculator>
     void computeDarcyVelocityLocal(
+        const int material_id,
+        const double t,
         std::vector<double> const& local_x,
-        Eigen::MatrixXd const& permeability,
+        ParameterLib::SpatialPosition const& pos,
         MatrixOfVelocityAtIntegrationPoints& darcy_velocity_at_ips) const;
 
     const int _gravitational_axis_id;

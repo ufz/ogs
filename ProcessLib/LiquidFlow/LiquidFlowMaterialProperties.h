@@ -91,10 +91,10 @@ public:
                               const double porosity_variable,
                               const double storage_variable) const;
 
-    Eigen::MatrixXd getPermeability(const int material_id,
-                                    const double t,
+    Eigen::MatrixXd getPermeability(const int material_id, const double t,
                                     const ParameterLib::SpatialPosition& pos,
-                                    const int dim) const;
+                                    const int dim, const double p,
+                                    const double T) const;
 
     double getLiquidDensity(const double p, const double T) const;
 
