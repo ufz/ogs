@@ -34,15 +34,12 @@ ThermoMechanicsProcess<DisplacementDim>::ThermoMechanicsProcess(
     ThermoMechanicsProcessData<DisplacementDim>&& process_data,
     SecondaryVariableCollection&& secondary_variables,
     NumLib::NamedFunctionCaller&& named_function_caller,
-    bool const use_monolithic_scheme, int const mechanics_process_id,
-    int const heat_conduction_process_id)
+    bool const use_monolithic_scheme)
     : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables), std::move(named_function_caller),
               use_monolithic_scheme),
-      _process_data(std::move(process_data)),
-      _mechanics_process_id(mechanics_process_id),
-      _heat_conduction_process_id(heat_conduction_process_id)
+      _process_data(std::move(process_data))
 {
     _nodal_forces = MeshLib::getOrCreateMeshProperty<double>(
         mesh, "NodalForces", MeshLib::MeshItemType::Node, DisplacementDim);
@@ -124,7 +121,8 @@ ThermoMechanicsProcess<DisplacementDim>::getMatrixSpecifications(
 {
     // For the monolithic scheme or the M process (deformation) in the staggered
     // scheme.
-    if (_use_monolithic_scheme || process_id == _mechanics_process_id)
+    if (_use_monolithic_scheme ||
+        process_id == _process_data.mechanics_process_id)
     {
         auto const& l = *_local_to_global_index_map;
         return {l.dofSizeWithoutGhosts(), l.dofSizeWithoutGhosts(),
@@ -147,6 +145,8 @@ void ThermoMechanicsProcess<DisplacementDim>::constructDofTable()
     _mesh_subset_all_nodes =
         std::make_unique<MeshLib::MeshSubset>(_mesh, _mesh.getNodes());
 
+    // TODO move the two data members somewhere else.
+    // for extrapolation of secondary variables of stress or strain
     std::vector<MeshLib::MeshSubset> all_mesh_subsets_single_component{
         *_mesh_subset_all_nodes};
     _local_to_global_index_map_single_component.reset(
@@ -180,15 +180,16 @@ void ThermoMechanicsProcess<DisplacementDim>::constructDofTable()
     {
         // Collect the mesh subsets in a vector for each variable components for
         // the mechanical process.
-        std::generate_n(std::back_inserter(all_mesh_subsets),
-                        _process_variables[_mechanics_process_id][0]
-                            .get()
-                            .getNumberOfComponents(),
-                        [&]() { return *_mesh_subset_all_nodes; });
+        std::generate_n(
+            std::back_inserter(all_mesh_subsets),
+            _process_variables[_process_data.mechanics_process_id][0]
+                .get()
+                .getNumberOfComponents(),
+            [&]() { return *_mesh_subset_all_nodes; });
 
         // Create a vector of the number of variable components.
         vec_var_n_components.push_back(
-            _process_variables[_mechanics_process_id][0]
+            _process_variables[_process_data.mechanics_process_id][0]
                 .get()
                 .getNumberOfComponents());
 
@@ -211,8 +212,7 @@ void ThermoMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
     ProcessLib::SmallDeformation::createLocalAssemblers<
         DisplacementDim, ThermoMechanicsLocalAssembler>(
         mesh.getElements(), dof_table, _local_assemblers,
-        mesh.isAxiallySymmetric(), integration_order, _process_data,
-        _mechanics_process_id, _heat_conduction_process_id);
+        mesh.isAxiallySymmetric(), integration_order, _process_data);
 
     _secondary_variables.addSecondaryVariable(
         "sigma",
@@ -296,11 +296,11 @@ void ThermoMechanicsProcess<DisplacementDim>::initializeBoundaryConditions()
     // for the equations of heat conduction
     initializeProcessBoundaryConditionsAndSourceTerms(
         *_local_to_global_index_map_single_component,
-        _heat_conduction_process_id);
+        _process_data.heat_conduction_process_id);
 
     // for the equations of deformation.
     initializeProcessBoundaryConditionsAndSourceTerms(
-        *_local_to_global_index_map, _mechanics_process_id);
+        *_local_to_global_index_map, _process_data.mechanics_process_id);
 }
 
 template <int DisplacementDim>
@@ -346,7 +346,8 @@ void ThermoMechanicsProcess<DisplacementDim>::
     else
     {
         // For the staggered scheme
-        if (_coupled_solutions->process_id == _heat_conduction_process_id)
+        if (_coupled_solutions->process_id ==
+            _process_data.heat_conduction_process_id)
         {
             DBUG(
                 "Assemble the Jacobian equations of heat conduction process in "
@@ -360,7 +361,7 @@ void ThermoMechanicsProcess<DisplacementDim>::
         }
 
         // For the flexible appearance order of processes in the coupling.
-        if (_heat_conduction_process_id ==
+        if (_process_data.heat_conduction_process_id ==
             0)  // First: the heat conduction process
         {
             dof_tables.emplace_back(
@@ -402,12 +403,13 @@ void ThermoMechanicsProcess<DisplacementDim>::
         }
     };
     if (_use_monolithic_scheme ||
-        _coupled_solutions->process_id == _heat_conduction_process_id)
+        _coupled_solutions->process_id ==
+            _process_data.heat_conduction_process_id)
     {
         copyRhs(0, *_heat_flux);
     }
     if (_use_monolithic_scheme ||
-        _coupled_solutions->process_id == _mechanics_process_id)
+        _coupled_solutions->process_id == _process_data.mechanics_process_id)
     {
         copyRhs(1, *_nodal_forces);
     }
@@ -427,7 +429,8 @@ void ThermoMechanicsProcess<DisplacementDim>::preTimestepConcreteProcess(
 
     assert(process_id < 2);
 
-    if (_use_monolithic_scheme || process_id == _mechanics_process_id)
+    if (_use_monolithic_scheme ||
+        process_id == _process_data.mechanics_process_id)
     {
         GlobalExecutor::executeSelectedMemberOnDereferenced(
             &ThermoMechanicsLocalAssemblerInterface::preTimestep,
@@ -456,7 +459,7 @@ void ThermoMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
     GlobalVector const& x, const double /*t*/, const double /*delta_t*/,
     int const process_id)
 {
-    if (process_id == _heat_conduction_process_id)
+    if (process_id != _process_data.mechanics_process_id)
         return;
 
     DBUG("PostTimestep ThermoMechanicsProcess.");
@@ -481,7 +484,7 @@ template <int DisplacementDim>
 NumLib::LocalToGlobalIndexMap const&
 ThermoMechanicsProcess<DisplacementDim>::getDOFTable(const int process_id) const
 {
-    if (_mechanics_process_id == process_id)
+    if (_process_data.mechanics_process_id == process_id)
     {
         return *_local_to_global_index_map;
     }

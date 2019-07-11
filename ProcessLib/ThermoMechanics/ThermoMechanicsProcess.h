@@ -74,9 +74,7 @@ public:
         ThermoMechanicsProcessData<DisplacementDim>&& process_data,
         SecondaryVariableCollection&& secondary_variables,
         NumLib::NamedFunctionCaller&& named_function_caller,
-        bool const use_monolithic_scheme,
-        int const mechanics_process_id,
-        int const heat_conduction_process_id);
+        bool const use_monolithic_scheme);
 
     //! \name ODESystem interface
     //! @{
@@ -140,12 +138,6 @@ private:
 
     MeshLib::PropertyVector<double>* _nodal_forces = nullptr;
     MeshLib::PropertyVector<double>* _heat_flux = nullptr;
-
-    /// ID of the mechanical process.
-    int const _mechanics_process_id;
-
-    /// ID of heat conduction process.
-    int const _heat_conduction_process_id;
 
     /// Temperature of the previous time step for staggered scheme.
     std::unique_ptr<GlobalVector> _previous_T;

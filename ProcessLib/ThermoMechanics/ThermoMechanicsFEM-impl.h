@@ -35,7 +35,8 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
         const LocalCoupledSolutions& local_coupled_solutions)
 {
     // For the equations with pressure
-    if (local_coupled_solutions.process_id == _heat_conduction_process_id)
+    if (local_coupled_solutions.process_id ==
+        _process_data.heat_conduction_process_id)
     {
         assembleWithJacobianForHeatConductionEquations(
             t, local_xdot, dxdot_dx, dx_dx, local_M_data, local_K_data,
@@ -62,7 +63,8 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
         const LocalCoupledSolutions& local_coupled_solutions)
 {
     auto const& local_T_vector =
-        local_coupled_solutions.local_coupled_xs[_heat_conduction_process_id];
+        local_coupled_solutions
+            .local_coupled_xs[_process_data.heat_conduction_process_id];
     assert(local_T_vector.size() == temperature_size);
     auto const local_T =
         Eigen::Map<typename ShapeMatricesType::template VectorType<
@@ -75,7 +77,8 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
             temperature_size> const>(local_T0_vector.data(), temperature_size);
 
     auto const& local_u_vector =
-        local_coupled_solutions.local_coupled_xs[_mechanics_process_id];
+        local_coupled_solutions
+            .local_coupled_xs[_process_data.mechanics_process_id];
     assert(local_u_vector.size() == displacement_size);
     auto const u = Eigen::Map<typename ShapeMatricesType::template VectorType<
         displacement_size> const>(local_u_vector.data(), displacement_size);
@@ -200,7 +203,8 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
         const LocalCoupledSolutions& local_coupled_solutions)
 {
     auto const& local_T_vector =
-        local_coupled_solutions.local_coupled_xs[_heat_conduction_process_id];
+        local_coupled_solutions
+            .local_coupled_xs[_process_data.heat_conduction_process_id];
     assert(local_T_vector.size() == temperature_size);
     auto const local_T =
         Eigen::Map<typename ShapeMatricesType::template VectorType<
@@ -213,16 +217,14 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
         Eigen::Map<typename ShapeMatricesType::template VectorType<
             temperature_size> const>(local_T0_vector.data(), temperature_size);
 
-    auto local_Jac =
-        MathLib::createZeroedMatrix <
+    auto local_Jac = MathLib::createZeroedMatrix<
         typename ShapeMatricesType::template MatrixType<temperature_size,
                                                         temperature_size>>(
-            local_Jac_data, temperature_size, temperature_size);
+        local_Jac_data, temperature_size, temperature_size);
 
-    auto local_rhs =
-        MathLib::createZeroedVector <
+    auto local_rhs = MathLib::createZeroedVector<
         typename ShapeMatricesType::template VectorType<temperature_size>>(
-            local_b_data, temperature_size);
+        local_b_data, temperature_size);
 
     typename ShapeMatricesType::NodalMatrixType mass;
     mass.setZero(temperature_size, temperature_size);

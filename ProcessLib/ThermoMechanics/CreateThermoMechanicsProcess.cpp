@@ -185,7 +185,8 @@ std::unique_ptr<Process> createThermoMechanicsProcess(
         materialIDs(mesh),       std::move(solid_constitutive_relations),
         reference_solid_density, linear_thermal_expansion_coefficient,
         specific_heat_capacity,  thermal_conductivity,
-        specific_body_force,     nonequilibrium_stress};
+        specific_body_force,     nonequilibrium_stress,
+        mechanics_process_id,    heat_conduction_process_id};
 
     SecondaryVariableCollection secondary_variables;
 
@@ -199,8 +200,7 @@ std::unique_ptr<Process> createThermoMechanicsProcess(
         std::move(name), mesh, std::move(jacobian_assembler), parameters,
         integration_order, std::move(process_variables),
         std::move(process_data), std::move(secondary_variables),
-        std::move(named_function_caller), use_monolithic_scheme,
-        mechanics_process_id, heat_conduction_process_id);
+        std::move(named_function_caller), use_monolithic_scheme);
 }
 
 template std::unique_ptr<Process> createThermoMechanicsProcess<2>(
