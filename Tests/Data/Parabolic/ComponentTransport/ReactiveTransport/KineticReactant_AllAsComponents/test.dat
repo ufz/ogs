@@ -1,0 +1,52 @@
+# name: test data base
+# date: 11.07.2019
+# author: Johanns Boog, Vanessa Montoya
+
+SOLUTION_MASTER_SPECIES
+
+#element species       alk     gfw_formula     element_gfw
+
+E       e-             0.0     0.0             0.0
+H       H+             -1.0    H               1.008
+H(0)    H2             0       H
+H(1)    H+             -1.0    0
+O       H2O            0       O               16.0
+O(-2)   H2O            0       0
+O(0)    O2             0       O
+Synthetica Synthetica  0       1               1
+Syntheticb Syntheticb  0       1               1
+Productd    Productd   0       1               1
+
+SOLUTION_SPECIES
+
+### Primary Master Species
+e- =  e-
+    -log_k 0
+
+H+ = H+
+    -log_k 0
+
+H2O =  H2O
+    -log_k   0
+
+Synthetica = Synthetica
+    -log_k 0.0
+
+Syntheticb = Syntheticb
+    -log_k 0.0
+
+Productd = Productd
+    -log_k 0.0
+
+### Secondary Master Species
+
+2 H+ + 2 e- = H2
+    -log_k -3.15
+
+2 H2O - 4 H+ - 4 e- = O2
+    -log_k -86.08
+
+### Aquaeous Species
+
+H2O - H+ =  OH-
+    -log_k -13.9951
