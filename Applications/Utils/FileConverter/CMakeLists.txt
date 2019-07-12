@@ -1,4 +1,4 @@
-if (Qt5XmlPatterns_FOUND)
+if (OGS_BUILD_GUI)
     if (Shapelib_FOUND)
         add_executable(ConvertSHPToGLI ConvertSHPToGLI.cpp)
         set_target_properties(ConvertSHPToGLI PROPERTIES FOLDER Utilities)
@@ -79,7 +79,7 @@ install(TARGETS
     Mesh2Raster
     RUNTIME DESTINATION bin COMPONENT ogs_converter)
 
-if(Qt5XmlPatterns_FOUND)
+if(OGS_BUILD_GUI)
     if(Shapelib_FOUND)
         install(TARGETS ConvertSHPToGLI
             RUNTIME DESTINATION bin COMPONENT ogs_converter)

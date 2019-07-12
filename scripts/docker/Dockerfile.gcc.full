@@ -66,12 +66,12 @@ RUN apt-get update -y && \
         python3-setuptools \
         python3-wheel && \
     rm -rf /var/lib/apt/lists/*
-RUN pip3 install conan==1.16.0
+RUN pip3 install conan==1.17.0
 RUN mkdir -p /opt/conan && \
     chmod 777 /opt/conan
 ENV CONAN_USER_HOME=/opt/conan
 LABEL org.opengeosys.pm=conan \
-    org.opengeosys.pm.conan.version=1.16.0
+    org.opengeosys.pm.conan.version=1.17.0
 LABEL org.opengeosys.pm.conan.user_home=/opt/conan
 
 # cppcheck version 1.87

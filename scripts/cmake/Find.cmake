@@ -54,16 +54,25 @@ if(NOT OGS_USE_CONAN OR NOT CONAN_CMD)
     include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 endif()
 
-find_package(VTK 8.1.0 REQUIRED)
+set(VTK_COMPONENTS vtkIOXML)
+if(OGS_BUILD_GUI)
+    set(VTK_COMPONENTS ${VTK_COMPONENTS}
+        vtkIOImage vtkIOLegacy vtkIOExport vtkIOExportPDF
+        vtkIOExportOpenGL2 vtkInteractionStyle vtkInteractionWidgets
+        vtkGUISupportQt vtkRenderingOpenGL2 vtkRenderingContextOpenGL2
+        vtkFiltersTexture vtkRenderingCore
+    )
+endif()
+if(OGS_USE_MPI)
+    set(VTK_COMPONENTS ${VTK_COMPONENTS} vtkIOParallelXML vtkParallelMPI)
+endif()
+find_package(VTK 8.2.0 REQUIRED COMPONENTS ${VTK_COMPONENTS})
 include(${VTK_USE_FILE})
 
 find_package(Eigen3 3.3.4 REQUIRED)
 include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
 
 ## pthread, is a requirement of logog ##
-if(CMAKE_CROSSCOMPILING)
-    set(THREADS_PTHREAD_ARG 0 CACHE STRING "Result from TRY_RUN" FORCE)
-endif()
 set(CMAKE_THREAD_PREFER_PTHREAD ON)
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
@@ -94,15 +103,12 @@ if(OGS_BUILD_GUI)
     endif()
     find_package(Qt5 5.2 REQUIRED ${QT_MODULES})
     cmake_policy(SET CMP0020 NEW)
-    if(CMAKE_CROSSCOMPILING)
-        find_package(PkgConfig REQUIRED)
-        pkg_check_modules(QT_XML_DEPS REQUIRED Xml)
-        list(REMOVE_ITEM QT_XML_DEPS_LIBRARIES Xml Core)
-        pkg_check_modules(QT_GUI_DEPS REQUIRED Gui)
-        list(REMOVE_ITEM QT_GUI_DEPS_LIBRARIES Gui Core)
-        pkg_check_modules(QT_NETWORK_DEPS REQUIRED Network)
-        list(REMOVE_ITEM QT_NETWORK_DEPS_LIBRARIES Network Core)
-    endif()
+endif()
+
+if(OGS_USE_NETCDF)
+    set(NETCDF_ROOT ${CONAN_NETCDF-C_ROOT})
+    set(NETCDF_CXX_ROOT ${CONAN_NETCDF-CXX_ROOT})
+    find_package(NetCDF REQUIRED)
 endif()
 
 # lapack

@@ -6,7 +6,7 @@ APPEND_SOURCE_FILES(SOURCES IO)
 APPEND_SOURCE_FILES(SOURCES IO/XmlIO/Rapid)
 APPEND_SOURCE_FILES(SOURCES IO/XmlIO/Boost)
 
-if(Qt5XmlPatterns_FOUND)
+if(OGS_BUILD_GUI)
     APPEND_SOURCE_FILES(SOURCES IO/XmlIO/Qt)
 endif()
 
@@ -18,11 +18,8 @@ endif()
 
 target_link_libraries(GeoLib PUBLIC BaseLib MathLib logog PRIVATE tet)
 
-if(Qt5XmlPatterns_FOUND)
+if(OGS_BUILD_GUI)
     target_link_libraries(GeoLib PUBLIC Qt5::Xml Qt5::XmlPatterns)
-    if(WIN32 AND CMAKE_CROSSCOMPILING AND OPENSSL_FOUND)
-        target_link_libraries(GeoLib PUBLIC Qt5::Network ${OPENSSL_LIBRARIES} ws2_32)
-    endif()
 endif()
 
 if(OGS_USE_PCH)

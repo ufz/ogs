@@ -49,7 +49,7 @@ set(OGS_CONAN_BUILD "missing" CACHE STRING "Possible values: all, missing, \
 
 # Third-party libraries, names come from Conan package names
 set(OGS_LIBS
-    VTK Boost Eigen3 Qt Shapelib libgeotiff petsc lis cvode
+    vtk boost eigen qt shapelib libgeotiff petsc lis cvode
     CACHE INTERNAL "")
 foreach(LIB ${OGS_LIBS})
     set(OGS_LIB_${LIB} "Default" CACHE STRING "Which ${LIB} library should be used?")
@@ -94,7 +94,7 @@ option(OGS_BUILD_CLI "Should the OGS simulator be built?" ON)
 option(OGS_BUILD_GUI "Should the Data Explorer be built?" OFF)
 if(OGS_BUILD_GUI)
     add_definitions(-DOGS_BUILD_GUI)
-    option(OGS_USE_NETCDF "Add NetCDF support." ON)
+    option(OGS_USE_NETCDF "Add NetCDF support." OFF)
 endif()
 option(OGS_BUILD_UTILS "Should the utilities programms be built?" OFF)
 if(OGS_BUILD_UTILS AND OGS_USE_MPI)

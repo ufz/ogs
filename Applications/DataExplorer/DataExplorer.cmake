@@ -60,8 +60,6 @@ if(OGS_USE_NETCDF)
 endif()
 
 if(NOT APPLE AND OGS_USE_CONAN)
-    # HACK for unresolved external
-    target_link_libraries(DataExplorer vtkGUISupportQt-8.1)
     if(UNIX)
         target_link_libraries(DataExplorer Qt5::X11Extras)
     endif()
@@ -71,14 +69,6 @@ endif()
 if(OGS_USE_CONAN AND WIN32)
     find_package(ZLIB REQUIRED)
     target_link_libraries(DataExplorer ${ZLIB_LIBRARIES})
-endif()
-
-if(CMAKE_CROSSCOMPILING)
-    target_link_libraries(DataExplorer
-        ${QT_XML_DEPS_LIBRARIES}
-        ${QT_GUI_DEPS_LIBRARIES}
-        ${QT_NETWORK_DEPS_LIBRARIES}
-    )
 endif()
 
 if(GEOTIFF_FOUND)

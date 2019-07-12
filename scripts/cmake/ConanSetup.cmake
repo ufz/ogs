@@ -26,25 +26,24 @@ include(${PROJECT_SOURCE_DIR}/scripts/cmake/conan/conan.cmake)
 
 set(CONAN_REQUIRES
     boost/1.66.0@conan/stable
-    Eigen3/3.3.4@bilke/stable
-    VTK/8.1.1@bilke/stable
+    eigen/3.3.4@conan/stable
+    vtk/8.2.0@bilke/testing
     CACHE INTERNAL ""
 )
 
 set(CONAN_OPTIONS
     boost:header_only=True
-    Qt:qtxmlpatterns=True
-    VTK:minimal=True
-    VTK:ioxml=True
+    vtk:minimal=True
+    vtk:ioxml=True
     CACHE INTERNAL ""
 )
 
 if((UNIX AND NOT APPLE) AND BUILD_SHARED_LIBS)
-    set(CONAN_OPTIONS ${CONAN_OPTIONS} VTK:fPIC=True)
+    set(CONAN_OPTIONS ${CONAN_OPTIONS} vtk:fPIC=True)
 endif()
 
 if(OGS_USE_MPI)
-    set(CONAN_OPTIONS ${CONAN_OPTIONS} VTK:mpi_minimal=True)
+    set(CONAN_OPTIONS ${CONAN_OPTIONS} vtk:mpi_minimal=True)
 endif()
 
 if(OGS_USE_PETSC)
@@ -64,15 +63,19 @@ endif()
 
 if(OGS_BUILD_GUI)
     set(CONAN_REQUIRES ${CONAN_REQUIRES}
-        Shapelib/1.3.0@bilke/stable
+        shapelib/1.3.0@bilke/stable
         libgeotiff/1.4.2@bilke/stable
-        Qt/5.11.2@bilke/stable
-        lzma/5.2.4@bincrafters/stable # 5.2.3 is not built for Xcode 10
+        qt/5.11.3@bincrafters/stable
     )
     set(CONAN_OPTIONS ${CONAN_OPTIONS}
-        VTK:minimal=False
-        VTK:qt=True
+        vtk:minimal=False
+        vtk:qt=True
+        qt:qtxmlpatterns=True
     )
+endif()
+
+if(OGS_USE_NETCDF)
+    set(CONAN_REQUIRES ${CONAN_REQUIRES} netcdf-cxx/4.3.1@bilke/testing)
 endif()
 
 conan_check(VERSION 1.3.0)

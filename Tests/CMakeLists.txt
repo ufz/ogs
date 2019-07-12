@@ -19,7 +19,7 @@ APPEND_SOURCE_FILES(TEST_SOURCES NumLib)
 APPEND_SOURCE_FILES(TEST_SOURCES ParameterLib)
 APPEND_SOURCE_FILES(TEST_SOURCES ProcessLib)
 
-if(Qt5XmlPatterns_FOUND)
+if(OGS_BUILD_GUI)
     APPEND_SOURCE_FILES(TEST_SOURCES FileIO_Qt)
 endif()
 
@@ -71,13 +71,10 @@ if(OGS_INSITU)
     target_link_libraries(testrunner InSituLib)
 endif()
 
-if(Qt5XmlPatterns_FOUND)
+if(OGS_BUILD_GUI)
     target_link_libraries(testrunner Qt5::Core Qt5::Gui Qt5::Xml Qt5::Network VtkVis QtDataView)
-    if(CMAKE_CROSSCOMPILING)
-        target_link_libraries(testrunner
-            ${QT_XML_DEPS_LIBRARIES}
-            ${QT_GUI_DEPS_LIBRARIES}
-            ${QT_NETWORK_DEPS_LIBRARIES})
+    if(GEOTIFF_FOUND)
+        target_link_libraries(testrunner ${GEOTIFF_LIBRARIES})
     endif()
 endif()
 
