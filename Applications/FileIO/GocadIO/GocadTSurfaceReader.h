@@ -31,7 +31,6 @@ class GocadTSurfaceReader final
 public:
     /**
      * Constructor takes as argument the Gocad .sg text file.
-     * @param fname file name
      */
     explicit GocadTSurfaceReader();
 
