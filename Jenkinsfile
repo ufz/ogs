@@ -153,7 +153,7 @@ pipeline {
                 // Doxygen is handled by gcc4 parser as well
                 tools: [gcc4(name: 'Doxygen', id: 'doxygen',
                              pattern: 'build/DoxygenWarnings.log')],
-                failedTotalAll: 1
+                unstableTotalAll: 1
             }
             success {
               publishHTML(target: [allowMissing: false, alwaysLinkToLastBuild: true,
