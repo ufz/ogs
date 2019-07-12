@@ -260,3 +260,24 @@ AddTest(
     Dupuit_TestSet_01_pcs_0_ts_9_t_77760.000000.vtu TestSet_01_pcs_0_ts_9_t_77760.000000.vtu pressure pressure 5e-10 1e-11
     Dupuit_TestSet_01_pcs_0_ts_10_t_86400.000000.vtu TestSet_01_pcs_0_ts_10_t_86400.000000.vtu pressure pressure 5e-10 1e-11
 )
+
+AddTest(
+    NAME LiquidFlow_Dupuit_BC_BC_Recharge
+    PATH Parabolic/LiquidFlow/Dupuit/BC_BC_RECHARGE
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS TestSet_01.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    Dupuit_TestSet_01_pcs_0_ts_1_t_8640.000000.vtu TestSet_01_pcs_0_ts_1_t_8640.000000.vtu pressure pressure 2e-10 1e-11
+    Dupuit_TestSet_01_pcs_0_ts_2_t_17280.000000.vtu TestSet_01_pcs_0_ts_2_t_17280.000000.vtu pressure pressure 2e-10 1e-11
+    Dupuit_TestSet_01_pcs_0_ts_3_t_25920.000000.vtu TestSet_01_pcs_0_ts_3_t_25920.000000.vtu pressure pressure 2e-10 1e-11
+    Dupuit_TestSet_01_pcs_0_ts_4_t_34560.000000.vtu TestSet_01_pcs_0_ts_4_t_34560.000000.vtu pressure pressure 2e-10 1e-11
+    Dupuit_TestSet_01_pcs_0_ts_5_t_43200.000000.vtu TestSet_01_pcs_0_ts_5_t_43200.000000.vtu pressure pressure 2e-10 1e-11
+    Dupuit_TestSet_01_pcs_0_ts_6_t_51840.000000.vtu TestSet_01_pcs_0_ts_6_t_51840.000000.vtu pressure pressure 2e-10 1e-11
+    Dupuit_TestSet_01_pcs_0_ts_7_t_60480.000000.vtu TestSet_01_pcs_0_ts_7_t_60480.000000.vtu pressure pressure 2e-10 1e-11
+    Dupuit_TestSet_01_pcs_0_ts_8_t_69120.000000.vtu TestSet_01_pcs_0_ts_8_t_69120.000000.vtu pressure pressure 2e-10 1e-11
+    Dupuit_TestSet_01_pcs_0_ts_9_t_77760.000000.vtu TestSet_01_pcs_0_ts_9_t_77760.000000.vtu pressure pressure 2e-10 1e-11
+    Dupuit_TestSet_01_pcs_0_ts_10_t_86400.000000.vtu TestSet_01_pcs_0_ts_10_t_86400.000000.vtu pressure pressure 2e-10 1e-11
+)
