@@ -1,67 +1,33 @@
-# test data base for KineticReactant_AllAsComponents
+# name: test data base
+# date: 11.07.2019
+# author: Johanns Boog, Vanessa Montoya
 
 SOLUTION_MASTER_SPECIES
 
 #element species       alk     gfw_formula     element_gfw
 
-Alkalinity HCO3-       1.0     Ca0.5(CO3)0.5   50.05
-C       HCO3-          1.0     HCO3            12.0110
-Ca      Ca+2           0.0     Ca              40.078
 E       e-             0.0     0.0             0.0
 H       H+             -1.0    H               1.008
 H(0)    H2             0       H
 H(1)    H+             -1.0    0
 O       H2O            0       O               16.0
-O(0)    O2             0       O
 O(-2)   H2O            0       0
+O(0)    O2             0       O
 Synthetica Synthetica  0       1               1
 Syntheticb Syntheticb  0       1               1
 Productd    Productd   0       1               1
 
 SOLUTION_SPECIES
 
-Ca+2 =  Ca+2
-    -log_k 0
-
+### Primary Master Species
 e- =  e-
     -log_k 0
 
 H+ = H+
-    -gamma 9.0 0
-    -dw 9.31e-9
+    -log_k 0
 
 H2O =  H2O
     -log_k   0
-
-2 H+ + 2 e- = H2
-    -log_k -3.15
-    -delta_h -1.759 kcal
-    -dw 5.13e-9
-    -Vm 6.52  0.78  0.12 # supcrt
-
-2 H2O = O2 + 4 H+ + 4 e-
-    -log_k -86.08
-    -delta_h 134.79 kcal
-    -dw  2.35e-9
-    -Vm  5.7889  6.3536  3.2528  -3.0417  -0.3943 # supcrt
-
-HCO3- =  HCO3-
-    -log_k 0
-
-1.0000 H2O  =  OH- +1.0000 H+
-    -log_k           -13.9951
-    -delta_H  55.8146 kJ/mol # Calculated enthalpy of reaction OH-
-        -analytic -6.7506e+001 -3.0619e-002 -1.9901e+003 2.8004e+001 -3.1033e+001
-
-1.0000 HCO3- + 1.0000 Ca++  =  CaHCO3+
-    -log_k           +1.0467
-    -delta_H 1.45603 kJ/mol # Calculated enthalpy of reaction CaHCO3+
-        -analytic 5.5985e+001 3.4639e-002 -3.6972e+002 -2.5864e+001 -5.7859e+000
-
-1.0000 HCO3- + 1.0000 Ca++  =  CaCO3 +1.0000 H+
-    -log_k           -7.0017
-    -delta_H 30.5767 kJ/mol # Calculated enthalpy of reaction CaCO3
-        -analytic 2.3045e+002 5.5350e-002 -8.5056e+003 -9.1096e+001 -1.3279e+002
 
 Synthetica = Synthetica
     -log_k 0.0
@@ -71,3 +37,17 @@ Syntheticb = Syntheticb
 
 Productd = Productd
     -log_k 0.0
+
+### Secondary Master Species
+
+2 H+ + 2 e- = H2
+    -log_k -3.15
+
+2 H2O - 4 H+ - 4 e- = O2
+    -log_k -86.08
+
+### Aquaeous Species
+
+H2O - H+ =  OH-
+    -log_k -13.9951
+
