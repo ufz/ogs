@@ -302,3 +302,33 @@ AddTest(
     Dupuit_TestSet_01_pcs_0_ts_9_t_77760.000000.vtu TestSet_01_pcs_0_ts_9_t_77760.000000.vtu pressure pressure 5e-10 1.8e-11
     Dupuit_TestSet_01_pcs_0_ts_10_t_86400.000000.vtu TestSet_01_pcs_0_ts_10_t_86400.000000.vtu pressure pressure 5e-10 1.8e-11
 )
+
+AddTest(
+    NAME LiquidFlow_Dupuit_BC_BC_Storage
+    PATH Parabolic/LiquidFlow/Dupuit/BC_BC_STORAGE
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS TestSet_01.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    Dupuit_TestSet_01_pcs_0_ts_1_t_86400.000000.vtu TestSet_01_pcs_0_ts_1_t_86400.000000.vtu pressure pressure 3e-12 2e-13
+    Dupuit_TestSet_01_pcs_0_ts_2_t_172800.000000.vtu TestSet_01_pcs_0_ts_2_t_172800.000000.vtu pressure pressure 3e-12 2e-13
+    Dupuit_TestSet_01_pcs_0_ts_3_t_259200.000000.vtu TestSet_01_pcs_0_ts_3_t_259200.000000.vtu pressure pressure 3e-12 2e-13
+    Dupuit_TestSet_01_pcs_0_ts_4_t_345600.000000.vtu TestSet_01_pcs_0_ts_4_t_345600.000000.vtu pressure pressure 3e-12 2e-13
+    Dupuit_TestSet_01_pcs_0_ts_5_t_432000.000000.vtu TestSet_01_pcs_0_ts_5_t_432000.000000.vtu pressure pressure 3e-12 2e-13
+    Dupuit_TestSet_01_pcs_0_ts_6_t_518400.000000.vtu TestSet_01_pcs_0_ts_6_t_518400.000000.vtu pressure pressure 3e-12 2e-13
+    Dupuit_TestSet_01_pcs_0_ts_7_t_604800.000000.vtu TestSet_01_pcs_0_ts_7_t_604800.000000.vtu pressure pressure 3e-12 2e-13
+    Dupuit_TestSet_01_pcs_0_ts_8_t_691200.000000.vtu TestSet_01_pcs_0_ts_8_t_691200.000000.vtu pressure pressure 3e-12 2e-13
+    Dupuit_TestSet_01_pcs_0_ts_9_t_777600.000000.vtu TestSet_01_pcs_0_ts_9_t_777600.000000.vtu pressure pressure 3e-12 2e-13
+    Dupuit_TestSet_01_pcs_0_ts_10_t_864000.000000.vtu TestSet_01_pcs_0_ts_10_t_864000.000000.vtu pressure pressure 3e-12 2e-13
+    Dupuit_TestSet_01_pcs_0_ts_20_t_1728000.000000.vtu TestSet_01_pcs_0_ts_20_t_1728000.000000.vtu pressure pressure 3e-12 2e-13
+    Dupuit_TestSet_01_pcs_0_ts_30_t_2592000.000000.vtu TestSet_01_pcs_0_ts_30_t_2592000.000000.vtu pressure pressure 3e-12 2e-13
+    Dupuit_TestSet_01_pcs_0_ts_40_t_3456000.000000.vtu TestSet_01_pcs_0_ts_40_t_3456000.000000.vtu pressure pressure 3e-12 2e-13
+    Dupuit_TestSet_01_pcs_0_ts_50_t_4320000.000000.vtu TestSet_01_pcs_0_ts_50_t_4320000.000000.vtu pressure pressure 3e-12 2e-13
+    Dupuit_TestSet_01_pcs_0_ts_60_t_5184000.000000.vtu TestSet_01_pcs_0_ts_60_t_5184000.000000.vtu pressure pressure 3e-12 2e-13
+    Dupuit_TestSet_01_pcs_0_ts_70_t_6048000.000000.vtu TestSet_01_pcs_0_ts_70_t_6048000.000000.vtu pressure pressure 3e-12 2e-13
+    Dupuit_TestSet_01_pcs_0_ts_80_t_6912000.000000.vtu TestSet_01_pcs_0_ts_80_t_6912000.000000.vtu pressure pressure 3e-12 2e-13
+    Dupuit_TestSet_01_pcs_0_ts_90_t_7776000.000000.vtu TestSet_01_pcs_0_ts_90_t_7776000.000000.vtu pressure pressure 3e-12 2e-13
+    Dupuit_TestSet_01_pcs_0_ts_100_t_8640000.000000.vtu TestSet_01_pcs_0_ts_100_t_8640000.000000.vtu pressure pressure 3e-12 2e-13
+)
