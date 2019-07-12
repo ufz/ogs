@@ -2,7 +2,7 @@
 date = "2018-02-26T11:00:13+01:00"
 title = "Docker"
 author = "Lars Bilke"
-weight = 1034
+weight = 1035
 
 [menu]
   [menu.devguide]
@@ -63,26 +63,11 @@ $ docker run --rm -i -t -v /host/directory:/container/directory image_name
 
 ## Prebuilt OGS-6 Docker images
 
-There are docker images provided on [Docker Hub](https://hub.docker.com/u/ogs6/) which include everything necessary to build OGS-6.
+There are docker images provided on [Docker Hub](https://hub.docker.com/u/ogs6/) which include everything necessary to build OGS-6. They are intended to be used by Jenkins. Do not use them for development as you will run into permission issues (when mounting your source code into the container: in the container you are the `jenkins` user which has other `uid` and `gid`).
+
+Use [Singularity container]({{< relref "singularity.pandoc" >}}) for development instead.
 
 There are images for `gcc` and `clang`.
-
-E.g. to start developing OGS:
-
-```bash
-docker pull ogs6/gcc
-docker run --rm -t -i -v /path/to/ogs/source/on/host:/tmp/ogs ogs6/gcc
-```
-
-You are now in the Docker container the ogs source code from your host computer mounted at `/usr/src/ogs`. Now you can build and run OGS:
-
-```bash
-cd /tmp
-mkdir build; cd build
-cmake ../ogs
-make ogs
-./bin/ogs
-```
 
 ## OGS-6 images used by Jenkins
 
@@ -91,3 +76,4 @@ The following images are used by Jenkins:
 - `ogs6/gcc`, defined in [scripts/docker/Dockerfile.gcc.full](https://github.com/ufz/ogs/blob/master/scripts/docker/Dockerfile.gcc.full)
 - `ogs6/gcc:gui`, defined in [scripts/docker/Dockerfile.gcc.gui](https://github.com/ufz/ogs/blob/master/scripts/docker/Dockerfile.gcc.gui)
 - `ogs6/clang`, defined in [scripts/docker/Dockerfile.clang.full](https://github.com/ufz/ogs/blob/master/scripts/docker/Dockerfile.clang.full)
+- `ogs6/clang:gui`, defined in [scripts/docker/Dockerfile.clang.gui](https://github.com/ufz/ogs/blob/master/scripts/docker/Dockerfile.clang.gui)
