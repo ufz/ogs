@@ -453,7 +453,7 @@ pipeline {
                   '-DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON ' +
                   '-DOGS_BUILD_GUI=ON ' +
                   '-DOGS_BUILD_UTILS=ON ' +
-                  '-DCMAKE_OSX_DEPLOYMENT_TARGET="10.13" '
+                  '-DCMAKE_OSX_DEPLOYMENT_TARGET="10.14" '
               }
               build {
                 target="package"
