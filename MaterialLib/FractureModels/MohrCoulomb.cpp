@@ -53,11 +53,11 @@ void MohrCoulomb<DisplacementDim>::computeConstitutiveRelation(
     Eigen::Ref<Eigen::VectorXd const>
         sigma0,
     Eigen::Ref<Eigen::VectorXd const>
-        w_prev,
+    /*w_prev*/,
     Eigen::Ref<Eigen::VectorXd const>
         w,
     Eigen::Ref<Eigen::VectorXd const>
-        sigma_prev,
+    /*sigma_prev*/,
     Eigen::Ref<Eigen::VectorXd>
         sigma,
     Eigen::Ref<Eigen::MatrixXd>
@@ -65,14 +65,16 @@ void MohrCoulomb<DisplacementDim>::computeConstitutiveRelation(
     typename FractureModelBase<DisplacementDim>::MaterialStateVariables&
         material_state_variables)
 {
-    material_state_variables.reset();
+    assert(dynamic_cast<StateVariables<DisplacementDim> const*>(
+               &material_state_variables) != nullptr);
+
+    StateVariables<DisplacementDim>& state =
+        static_cast<StateVariables<DisplacementDim>&>(material_state_variables);
 
     MaterialPropertyValues const mat(_mp, t, x);
-    Eigen::VectorXd const dw = w - w_prev;
 
     const int index_ns = DisplacementDim - 1;
     double const aperture = w[index_ns] + aperture0;
-    double const aperture_prev = w_prev[index_ns] + aperture0;
 
     Eigen::MatrixXd Ke;
     {  // Elastic tangent stiffness
@@ -82,84 +84,132 @@ void MohrCoulomb<DisplacementDim>::computeConstitutiveRelation(
             Ke(i, i) = mat.Ks;
         }
 
-        Ke(index_ns, index_ns) =
-            mat.Kn *
-            logPenaltyDerivative(aperture0, aperture, _penalty_aperture_cutoff);
-    }
-
-    Eigen::MatrixXd Ke_prev;
-    {  // Elastic tangent stiffness at w_prev
-        Ke_prev = Eigen::MatrixXd::Zero(DisplacementDim, DisplacementDim);
-        for (int i = 0; i < index_ns; i++)
-        {
-            Ke_prev(i, i) = mat.Ks;
-        }
-
-        Ke_prev(index_ns, index_ns) =
-            mat.Kn * logPenaltyDerivative(
-                         aperture0, aperture_prev, _penalty_aperture_cutoff);
+        Ke(index_ns, index_ns) = mat.Kn;
     }
 
     // Total plastic aperture compression
     // NOTE: Initial condition sigma0 seems to be associated with an initial
     // condition of the w0 = 0. Therefore the initial state is not associated
     // with a plastic aperture change.
-    Eigen::VectorXd const w_p_prev =
-        w_prev - Ke_prev.fullPivLu().solve(sigma_prev - sigma0);
-
     {  // Exact elastic predictor
-        sigma.noalias() = Ke * (w - w_p_prev);
+        sigma.noalias() = Ke * (w - state.w_p_prev);
 
-        sigma.coeffRef(index_ns) =
-            mat.Kn * w[index_ns] *
+        sigma.coeffRef(index_ns) *=
             logPenalty(aperture0, aperture, _penalty_aperture_cutoff);
     }
 
     sigma.noalias() += sigma0;
 
-    double const sigma_n = sigma[index_ns];
-
     // correction for an opening fracture
-    if (_tension_cutoff && sigma_n > 0)
+    if (_tension_cutoff && sigma[DisplacementDim - 1] >= 0)
     {
         Kep.setZero();
         sigma.setZero();
         material_state_variables.setTensileStress(true);
         return;
+
+        // TODO (nagel); Update w_p for fracture opening and closing.
     }
 
-    // check shear yield function (Fs)
-    Eigen::VectorXd const sigma_s = sigma.head(DisplacementDim-1);
-    double const mag_tau = sigma_s.norm(); // magnitude
-    double const Fs = mag_tau + sigma_n * std::tan(mat.phi) - mat.c;
+    auto yield_function = [&mat](Eigen::VectorXd const& s) {
+        double const sigma_n = s[DisplacementDim - 1];
+        Eigen::VectorXd const sigma_s = s.head(DisplacementDim - 1);
+        double const mag_tau = sigma_s.norm();  // magnitude
+        return mag_tau + sigma_n * std::tan(mat.phi) - mat.c;
+    };
 
-    material_state_variables.setShearYieldFunctionValue(Fs);
-    if (Fs < .0)
-    {
-        Kep = Ke;
-        return;
+    {  // Exit if still in elastic range by checking the shear yield function.
+        double const Fs = yield_function(sigma);
+        material_state_variables.setShearYieldFunctionValue(Fs);
+        if (Fs < .0)
+        {
+            Kep = Ke;
+            Kep(index_ns, index_ns) *= logPenaltyDerivative(
+                aperture0, aperture, _penalty_aperture_cutoff);
+            return;
+        }
     }
 
-    Eigen::VectorXd dFs_dS(DisplacementDim);
-    dFs_dS.head(DisplacementDim-1).noalias() = sigma_s.normalized();
-    dFs_dS[index_ns] = std::tan(mat.phi);
+    auto yield_function_derivative = [&mat](Eigen::VectorXd const& s) {
+        Eigen::Matrix<double, DisplacementDim, 1> dFs_dS;
+        dFs_dS.template head<DisplacementDim - 1>().noalias() =
+            s.template head<DisplacementDim - 1>().normalized();
+        dFs_dS.coeffRef(DisplacementDim - 1) = std::tan(mat.phi);
+        return dFs_dS;
+    };
 
     // plastic potential function: Qs = |tau| + Sn * tan da
-    Eigen::VectorXd dQs_dS = dFs_dS;
-    dQs_dS[index_ns] = std::tan(mat.psi);
+    auto plastic_potential_derivative = [&mat](Eigen::VectorXd const& s) {
+        Eigen::Matrix<double, DisplacementDim, 1> dQs_dS;
+        dQs_dS.template head<DisplacementDim - 1>().noalias() =
+            s.template head<DisplacementDim - 1>().normalized();
+        dQs_dS.coeffRef(DisplacementDim - 1) = std::tan(mat.psi);
+        return dQs_dS;
+    };
 
-    // plastic multiplier
-    Eigen::RowVectorXd const A = dFs_dS.transpose() * Ke / (dFs_dS.transpose() * Ke * dQs_dS);
-    double const d_eta = A * dw;
+    {  // Newton
 
-    // plastic part of the dispalcement
-    Eigen::VectorXd const dwp = dQs_dS * d_eta;
+        Eigen::FullPivLU<Eigen::Matrix<double, 1, 1, Eigen::RowMajor>>
+            linear_solver;
+        using ResidualVectorType = Eigen::Matrix<double, 1, 1, Eigen::RowMajor>;
+        using JacobianMatrix = Eigen::Matrix<double, 1, 1, Eigen::RowMajor>;
 
-    // correct stress
-    sigma.noalias() = sigma_prev + Ke * (dw - dwp);
+        JacobianMatrix jacobian;
+        ResidualVectorType solution;
+        solution << 0;
 
-    // Kep
-    Kep = Ke - Ke * dQs_dS * A;
+        auto const update_residual = [&](ResidualVectorType& residual) {
+            residual[0] = yield_function(sigma);
+        };
+
+        auto const update_jacobian = [&](JacobianMatrix& jacobian) {
+            jacobian(0, 0) = -yield_function_derivative(sigma).transpose() *
+                             Ke * plastic_potential_derivative(sigma);
+        };
+
+        auto const update_solution = [&](ResidualVectorType const& increment) {
+            solution += increment;
+            /*DBUG("analytical = %g",
+                 Fs / (mat.Ks + mat.Kn * std::tan(mat.psi) * std::tan(mat.phi)))
+                 */
+            state.w_p = state.w_p_prev +
+                        solution[0] * plastic_potential_derivative(sigma);
+            sigma.noalias() = sigma0 + (Ke * (w - state.w_p)) *
+                                           logPenalty(aperture0, aperture,
+                                                      _penalty_aperture_cutoff);
+        };
+
+        auto newton_solver =
+            NumLib::NewtonRaphson<decltype(linear_solver), JacobianMatrix,
+                                  decltype(update_jacobian), ResidualVectorType,
+                                  decltype(update_residual),
+                                  decltype(update_solution)>(
+                linear_solver, update_jacobian, update_residual,
+                update_solution, _nonlinear_solver_parameters);
+
+        auto const success_iterations = newton_solver.solve(jacobian);
+
+        if (!success_iterations)
+        {
+            OGS_FATAL("MohrCoulomb nonlinear solver didn't converge.");
+        }
+
+        // Solution containing lambda is not needed; w_p and sigma already
+        // up to date.
+    }
+
+    {  // Update material state shear yield function value.
+        double const Fs = yield_function(sigma);
+        material_state_variables.setShearYieldFunctionValue(Fs);
+    }
+
+    Ke(index_ns, index_ns) *=
+        logPenaltyDerivative(aperture0, aperture, _penalty_aperture_cutoff);
+    Eigen::RowVectorXd const A = yield_function_derivative(sigma).transpose() *
+                                 Ke /
+                                 (yield_function_derivative(sigma).transpose() *
+                                  Ke * plastic_potential_derivative(sigma));
+    Kep = Ke - Ke * plastic_potential_derivative(sigma) * A;
 }
 
 template class MohrCoulomb<2>;
