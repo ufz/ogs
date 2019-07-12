@@ -21,6 +21,7 @@ pipeline {
     booleanParam(name: 'win', defaultValue: true)
     booleanParam(name: 'mac', defaultValue: true)
     booleanParam(name: 'clang_analyzer', defaultValue: true)
+    booleanParam(name: 'master_jobs', defaultValue: true)
   }
   stages {
      // *************************** Git Check **********************************
@@ -522,7 +523,7 @@ pipeline {
           when {
             beforeAgent true
             allOf {
-              expression { return stage_required.build || stage_required.full }
+              expression { return params.master_jobs && (stage_required.build || stage_required.full) }
               environment name: 'JOB_NAME', value: 'ufz/ogs/master'
             }
           }
@@ -557,7 +558,7 @@ pipeline {
           when {
             beforeAgent true
             allOf {
-              expression { return stage_required.build || stage_required.full }
+              expression { return params.master_jobs && (stage_required.build || stage_required.full) }
               environment name: 'JOB_NAME', value: 'ufz/ogs/master'
             }
           }
@@ -591,7 +592,7 @@ pipeline {
           when {
             beforeAgent true
             allOf {
-              expression { return stage_required.build || stage_required.full }
+              expression { return params.master_jobs && (stage_required.build || stage_required.full)}
               environment name: 'JOB_NAME', value: 'ufz/ogs/master'
             }
           }
@@ -643,7 +644,7 @@ pipeline {
           when {
             beforeAgent true
             allOf {
-              expression { return stage_required.data }
+              expression { return params.master_jobs && stage_required.data }
               environment name: 'JOB_NAME', value: 'ufz/ogs/master'
             }
           }
@@ -672,7 +673,10 @@ pipeline {
         stage('Push Docker Images') {
           when {
             beforeAgent true
-            environment name: 'JOB_NAME', value: 'ufz/ogs/master'
+            allOf {
+              expression { return params.master_jobs }
+              environment name: 'JOB_NAME', value: 'ufz/ogs/master'
+            }
           }
           agent { label 'docker'}
           steps {
