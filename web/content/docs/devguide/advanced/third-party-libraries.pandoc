@@ -2,7 +2,7 @@
 date = "2018-02-26T11:00:13+01:00"
 title = "Third-party libraries"
 author = "Lars Bilke"
-weight = 1049
+weight = 1039
 
 [menu]
   [menu.devguide]

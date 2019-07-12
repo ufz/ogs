@@ -2,7 +2,7 @@
 date = "2018-09-21T11:00:13+01:00"
 title = "Singularity"
 author = "Lars Bilke"
-weight = 1034
+weight = 1036
 
 [menu]
   [menu.devguide]
@@ -22,15 +22,16 @@ Singularity per default mounts your home directory and also passes your current 
 
 ### Prerequisites
 
-- Linux only!
+- Linux and [Mac](https://sylabs.io/singularity-desktop-macos/) only!
 - [Install Git with LFS]({{< ref "prerequisites" >}}/#step-install-git)
-- [Install Singularity](https://www.sylabs.io/guides/2.6/user-guide/quick_start.html#quick-installation-steps)
+- [Install Singularity](https://sylabs.io/guides/3.3/user-guide/quick_start.html#quick-installation-steps)
 
 ### Build OGS inside a container
 
 ```bash
 [git clone ogs]
 singularity pull docker://ogs6/gcc # Downloads the image to gcc.simg
+# OR: Pull the docker://ogs6/gcc:gui image for compiling the Data Explorer
 singularity shell gcc.simg
 [Now inside the container]
 mkdir build; cd build
