@@ -63,7 +63,9 @@ int VtkAppendArrayFilter::RequestData( vtkInformation*,
         WARN("VtkAppendArrayFilter::RequestData(): Number of cells exceeds selection array length. Surplus cells won't be examined.");
 
     for (std::size_t i = 0; i < arrayLength; i++)
+    {
         colors->SetValue(i, _array[i]);
+    }
 
     vtkInformation* outInfo = outputVector->GetInformationObject(0);
     vtkUnstructuredGrid* output =

@@ -47,14 +47,20 @@ QModelIndex StationTreeModel::index( int row, int column,
                                      const QModelIndex &parent /*= QModelIndex()*/ ) const
 {
     if (!hasIndex(row, column, parent))
+    {
         return QModelIndex();
+    }
 
     ModelTreeItem* parentItem;
 
     if (!parent.isValid())
+    {
         parentItem = (ModelTreeItem*)(_rootItem);
+    }
     else
+    {
         parentItem = static_cast<ModelTreeItem*>(parent.internalPointer());
+    }
 
     auto* childItem = (ModelTreeItem*)(parentItem->child(row));
     if (childItem)
@@ -63,7 +69,9 @@ QModelIndex StationTreeModel::index( int row, int column,
         // assign ModelIndex to BaseItem so it can communicate with the model
         BaseItem* item = childItem->getItem();
         if (item != nullptr)
+        {
             item->setModelIndex(newIndex);
+        }
         return newIndex;
     }
 
@@ -94,8 +102,12 @@ vtkPolyDataAlgorithm* StationTreeModel::vtkSource(const std::string &name) const
 {
     std::size_t nLists = _lists.size();
     for (std::size_t i = 0; i < nLists; i++)
+    {
         if (name == _lists[i]->data(0).toString().toStdString())
+        {
             return dynamic_cast<BaseItem*>(_lists[i]->getItem())->vtkSource();
+        }
+    }
     return nullptr;
 }
 
@@ -110,7 +122,9 @@ void StationTreeModel::setNameForItem(const std::string& stn_vec_name,
 
     if (stn_list == _lists.end() ||
         id >= static_cast<std::size_t>((*stn_list)->childCount()))
+    {
         return;
+    }
     TreeItem *const item = (*stn_list)->child(id);
     item->setData(0, QString::fromStdString(item_name));
 }
@@ -166,8 +180,12 @@ void StationTreeModel::removeStationList(QModelIndex index)
 
         // also delete the lists entry in the list directory of the model
         for (std::size_t i = 0; i < _lists.size(); i++)
+        {
             if (item == _lists[i])
+            {
                 _lists.erase(_lists.begin() + i);
+            }
+        }
 
         removeRows(0, item->childCount(), index);
         removeRows(item->row(), 1, parent(index));
@@ -180,6 +198,10 @@ void StationTreeModel::removeStationList(QModelIndex index)
 void StationTreeModel::removeStationList(const std::string &name)
 {
     for (auto& list : _lists)
+    {
         if (name == list->data(0).toString().toStdString())
+        {
             removeStationList(createIndex(list->row(), 0, list));
+        }
+    }
 }

@@ -62,7 +62,9 @@ void MeshView::updateView()
     setColumnWidth(0,150);
     std::size_t nColumns = (this->model() != nullptr) ? this->model()->columnCount() : 0;
     for (std::size_t i = 1; i < nColumns; i++)
+    {
         resizeColumnToContents(i);
+    }
 }
 
 void MeshView::selectionChanged( const QItemSelection &selected, const QItemSelection &deselected )
@@ -99,7 +101,9 @@ void MeshView::removeMesh()
 {
     QModelIndex index (this->selectionModel()->currentIndex());
     if (!index.isValid())
+    {
         OGSError::box("No mesh selected.");
+    }
     else
     {
         emit requestMeshRemoval(index);
@@ -114,7 +118,9 @@ void MeshView::contextMenuEvent( QContextMenuEvent* event )
     MeshItem const*const item = dynamic_cast<MeshItem*>(static_cast<TreeItem*>(index.internalPointer()));
 
     if (item == nullptr)
+    {
         return;
+    }
 
     unsigned const mesh_dim (item->getMesh()->getDimension());
 
@@ -142,7 +148,9 @@ void MeshView::contextMenuEvent( QContextMenuEvent* event )
     for (MeshAction a : actions)
     {
         if (mesh_dim >= a.min_dim && mesh_dim <= a.max_dim)
+        {
             menu.addAction(a.action);
+        }
     }
     menu.exec(event->globalPos());
 }
@@ -153,11 +161,15 @@ void MeshView::openMap2dMeshDialog()
     QModelIndex const index = this->selectionModel()->currentIndex();
     MeshLib::Mesh const*const mesh = model->getMesh(index);
     if (mesh == nullptr)
+    {
         return;
+    }
 
     MeshMapping2DDialog dlg;
     if (dlg.exec() != QDialog::Accepted)
+    {
         return;
+    }
 
     auto result = std::make_unique<MeshLib::Mesh>(*mesh);
     result->setName(dlg.getNewMeshName());
@@ -180,7 +192,10 @@ void MeshView::openMap2dMeshDialog()
         }
     }
     else
-        MeshLib::MeshLayerMapper::mapToStaticValue(*result, dlg.getStaticValue());
+    {
+        MeshLib::MeshLayerMapper::mapToStaticValue(*result,
+                                                   dlg.getStaticValue());
+    }
     static_cast<MeshModel*>(this->model())->addMesh(std::move(result));
 
 }
@@ -213,45 +228,64 @@ void MeshView::openAddLayerDialog()
 {
     QModelIndex const index = this->selectionModel()->currentIndex();
     if (!index.isValid())
+    {
         return;
+    }
 
     MeshLib::Mesh const*const mesh = static_cast<MeshModel*>(this->model())->getMesh(index);
     if (mesh == nullptr)
+    {
         return;
+    }
 
     AddLayerToMeshDialog dlg;
     if (dlg.exec() != QDialog::Accepted)
+    {
         return;
+    }
 
     double const thickness (dlg.getThickness());
     std::unique_ptr<MeshLib::Mesh> result(MeshLib::addLayerToMesh(
         *mesh, thickness, dlg.getName(), dlg.isTopLayer()));
 
     if (result)
+    {
         static_cast<MeshModel*>(model())->addMesh(std::move(result));
+    }
     else
+    {
         OGSError::box("Error adding layer to mesh.");
+    }
 }
 
 void MeshView::extractSurfaceMesh()
 {
     QModelIndex const index = this->selectionModel()->currentIndex();
     if (!index.isValid())
+    {
         return;
+    }
 
     MeshLib::Mesh const*const mesh = static_cast<MeshModel*>(this->model())->getMesh(index);
     SurfaceExtractionDialog dlg;
     if (dlg.exec() != QDialog::Accepted)
+    {
         return;
+    }
 
     MathLib::Vector3 const& dir (dlg.getNormal());
     int const tolerance (dlg.getTolerance());
     std::unique_ptr<MeshLib::Mesh> sfc_mesh(
         MeshLib::MeshSurfaceExtraction::getMeshSurface(*mesh, dir, tolerance));
     if (sfc_mesh)
+    {
         static_cast<MeshModel*>(model())->addMesh(std::move(sfc_mesh));
+    }
     else
-        OGSError::box(" No surfaces found to extract\n using the specified parameters.");
+    {
+        OGSError::box(
+            " No surfaces found to extract\n using the specified parameters.");
+    }
 }
 
 void MeshView::convertMeshToGeometry()
@@ -265,7 +299,9 @@ void MeshView::exportToShapefile() const
 {
     QModelIndex const index = this->selectionModel()->currentIndex();
     if (!index.isValid())
+    {
         return;
+    }
 
     QSettings const settings;
     QFileInfo const fi (settings.value("lastOpenedMeshFileDirectory").toString());
@@ -276,8 +312,11 @@ void MeshView::exportToShapefile() const
     if (!fileName.isEmpty())
     {
         LastSavedFileDirectory::setDir(fileName);
-        if (!FileIO::SHPInterface::write2dMeshToSHP(fileName.toStdString(), *mesh))
+        if (!FileIO::SHPInterface::write2dMeshToSHP(fileName.toStdString(),
+                                                    *mesh))
+        {
             OGSError::box("Error exporting mesh\n to shapefile");
+        }
     }
 }
 
@@ -285,7 +324,9 @@ void MeshView::exportToTetGen()
 {
     QModelIndex const index = this->selectionModel()->currentIndex();
     if (!index.isValid())
+    {
         return;
+    }
 
     MeshLib::Mesh const*const mesh = static_cast<MeshModel*>(this->model())->getMesh(index);
     QSettings const settings;

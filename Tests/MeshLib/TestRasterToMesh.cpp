@@ -299,7 +299,9 @@ TEST_F(RasterToMeshTest, vtkImage)
 
     std::vector<MeshLib::Node*> const& nodes = mesh->getNodes();
     for (MeshLib::Node* n : nodes)
+    {
         ASSERT_TRUE((*n)[2] == 0);
+    }
 
     std::array<unsigned, 7> n_types =
         MeshLib::MeshInformation::getNumberOfElementTypes(*mesh);

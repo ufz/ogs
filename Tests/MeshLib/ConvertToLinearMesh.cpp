@@ -88,7 +88,9 @@ boost::optional<std::string> equal(Element const& a, Element const& b)
     while (first_b_node < nnodes)
     {
         if (*a_nodes[0] == *b_nodes[first_b_node])
+        {
             break;
+        }
         ++first_b_node;
     }
     if (first_b_node == nnodes)

@@ -35,7 +35,9 @@ QVariant ColorTableModel::headerData( int section, Qt::Orientation orientation,
                                       int role /*= Qt::DisplayRole*/ ) const
 {
     if (role != Qt::DisplayRole)
+    {
         return QVariant();
+    }
 
     if (orientation == Qt::Horizontal)
     {
@@ -47,16 +49,22 @@ QVariant ColorTableModel::headerData( int section, Qt::Orientation orientation,
         }
     }
     else
+    {
         return QString("Row %1").arg(section);
+    }
 }
 
 QVariant ColorTableModel::data( const QModelIndex& index, int role ) const
 {
     if (!index.isValid())
+    {
         return QVariant();
+    }
 
     if (index.row() >= _listOfPairs.size() || index.row() < 0)
+    {
         return QVariant();
+    }
 
     if (role == Qt::DisplayRole)
     {

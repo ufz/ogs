@@ -21,7 +21,9 @@ StratBar::StratBar(GeoLib::StationBorehole* station,
     QGraphicsItem(parent), _station(station)
 {
     if (stratColors)
+    {
         _stratColors = *stratColors;
+    }
 }
 
 QRectF StratBar::boundingRect() const
@@ -69,7 +71,9 @@ double StratBar::totalLogHeight() const
     std::vector<GeoLib::Point*> profile = _station->getProfile();
 
     for (std::size_t i = 1; i < profile.size(); i++)
-        height += ( log((*(profile[i - 1]))[2] - (*(profile[i]))[2] + 1) * 100 );
+    {
+        height += (log((*(profile[i - 1]))[2] - (*(profile[i]))[2] + 1) * 100);
+    }
 
     return height;
 }

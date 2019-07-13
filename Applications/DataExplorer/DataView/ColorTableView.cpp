@@ -40,14 +40,18 @@ void ColorTableViewDelegate::paint(QPainter* painter,
         }
     }
     else
+    {
         QItemDelegate::paint(painter, option, index);
+    }
 }
 
 QSize ColorTableViewDelegate::sizeHint( const QStyleOptionViewItem &option,
                                         const QModelIndex &index ) const
 {
     QSize s = QItemDelegate::sizeHint(option, index);
-    if( s.isValid() )
+    if (s.isValid())
+    {
         s.setHeight((int)(0.5 * s.height()));
+    }
     return s;
 }

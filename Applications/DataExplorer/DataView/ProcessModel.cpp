@@ -61,7 +61,9 @@ void ProcessModel::addCondition(DataHolderLib::FemCondition* condition)
     QString const name(QString::fromStdString(condition->getProcessVarName()));
     ProcessVarItem* process_var(getProcessVarItem(name));
     if (process_var == nullptr)
+    {
         process_var = addProcessVar(name);
+    }
     addConditionItem(condition, process_var);
 }
 
@@ -70,14 +72,18 @@ void ProcessModel::addBoundaryConditions(
         conditions)
 {
     for (auto& cond : conditions)
+    {
         addCondition(cond.get());
+    }
 }
 
 void ProcessModel::addSourceTerms(
     std::vector<std::unique_ptr<DataHolderLib::SourceTerm>> const& conditions)
 {
     for (auto& cond : conditions)
+    {
         addCondition(cond.get());
+    }
 }
 
 ProcessVarItem* ProcessModel::addProcessVar(QString const& name)
@@ -98,7 +104,9 @@ ProcessVarItem* ProcessModel::getProcessVarItem(QString const& name) const
     {
         auto* item(dynamic_cast<ProcessVarItem*>(_rootItem->child(i)));
         if (item != nullptr && item->getName() == name)
+        {
             return item;
+        }
     }
     return nullptr;
 }
@@ -112,7 +120,9 @@ void ProcessModel::removeCondition(ProcessVarItem* process_var,
         CondItem const* const cond =
             dynamic_cast<CondItem*>(process_var->child(i));
         if (cond->getCondition()->getParamName() != param_name.toStdString())
+        {
             continue;
+        }
 
         process_var->removeChildren(i, 1);
         return;
@@ -125,7 +135,9 @@ void ProcessModel::removeCondition(QString const& process_var,
     beginResetModel();
     ProcessVarItem* pv_item(getProcessVarItem(process_var));
     if (pv_item == nullptr)
+    {
         return;
+    }
 
     removeCondition(pv_item, param);
     _project.removeBoundaryCondition(process_var.toStdString(),
@@ -139,12 +151,16 @@ void ProcessModel::removeProcessVariable(QString const& name)
     beginResetModel();
     ProcessVarItem* pv_item(getProcessVarItem(name));
     if (pv_item == nullptr)
+    {
         return;
+    }
 
     int const n_conds = pv_item->childCount();
     for (int i = n_conds - 1; i >= 0; --i)
+    {
         removeCondition(pv_item,
                         static_cast<CondItem*>(pv_item->child(i))->getName());
+    }
 
     _project.removePrimaryVariable(name.toStdString());
     int const idx = pv_item->row();

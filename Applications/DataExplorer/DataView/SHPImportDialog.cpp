@@ -68,15 +68,25 @@ void SHPImportDialog::setupDialog()
     if (_shpInterface->readSHPInfo(_filename, shpType, numberOfEntities))
     {
         if ((shpType - 1) % 10 == 0)
+        {
             type = "points";
+        }
         if ((shpType - 3) % 10 == 0)
+        {
             type = "polylines";
+        }
         if ((shpType - 5) % 10 == 0)
+        {
             type = "polygons";
+        }
         if ((shpType - 8) % 10 == 0)
+        {
             type = "multipoints";
+        }
         if (shpType == 31)
+        {
             type = "TIN elements";
+        }
 
         _shpContentLabel =
                 new QLabel("The selected file contains " + QString::number(
@@ -103,7 +113,10 @@ void SHPImportDialog::setupDialog()
             _choice1 = new QRadioButton("Read Polylines only");
             _choice2 = new QRadioButton("Read Polylines/Surfaces");
             if ((shpType - 3) % 10 == 0)
-                _choice2->setDisabled(true);          // disable polygon-choice if file contains only polylines
+            {
+                _choice2->setDisabled(true);  // disable polygon-choice if file
+                                              // contains only polylines
+            }
             _choice1->toggle(); // default choice
             _layout->addWidget( _shpContentLabel );
             _layout->addWidget( _choice1 );
@@ -127,7 +140,9 @@ void SHPImportDialog::setupDialog()
         setLayout(_layout);
     }
     else
+    {
         OGSError::box("Error reading shapefile!");
+    }
 }
 
 void SHPImportDialog::accept()
@@ -140,21 +155,29 @@ void SHPImportDialog::accept()
     }
 
     if (_fileType == 1 && _choice1->isChecked())
+    {
         _shpInterface->readSHPFile(_filename,
                                    FileIO::SHPInterface::OGSType::POINT,
                                    list_name.toStdString(), _gmsh_path);
+    }
     if (_fileType == 1 && _choice2->isChecked())
+    {
         _shpInterface->readSHPFile(_filename,
                                    FileIO::SHPInterface::OGSType::STATION,
                                    list_name.toStdString(), _gmsh_path);
+    }
     if (_fileType == 2 && _choice1->isChecked())
+    {
         _shpInterface->readSHPFile(_filename,
                                    FileIO::SHPInterface::OGSType::POLYLINE,
                                    list_name.toStdString(), _gmsh_path);
+    }
     if (_fileType == 2 && _choice2->isChecked())
+    {
         _shpInterface->readSHPFile(_filename,
                                    FileIO::SHPInterface::OGSType::POLYGON,
                                    list_name.toStdString(), _gmsh_path);
+    }
     emit shpLoaded(list_name);
 
     this->done(QDialog::Accepted);

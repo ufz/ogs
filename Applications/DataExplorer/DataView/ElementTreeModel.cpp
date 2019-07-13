@@ -49,7 +49,9 @@ void ElementTreeModel::setElement(vtkUnstructuredGridAlgorithm const*const grid,
         dynamic_cast<MeshLib::VtkMappedMeshSource const* const>(grid);
 
     if (!source)
+    {
         return;
+    }
 
     const MeshLib::Mesh* mesh = source->GetMesh();
     const MeshLib::Element* elem = mesh->getElement(elem_index);
@@ -189,7 +191,11 @@ void ElementTreeModel::setMesh(MeshLib::Mesh const& mesh)
         }
 
         if (array_info.size() == 1)
-            array_info << "[ ?" << "? ]" << "";
+        {
+            array_info << "[ ?"
+                       << "? ]"
+                       << "";
+        }
         auto* vec_item = new TreeItem(array_info, _rootItem);
         _rootItem->appendChild(vec_item);
     }

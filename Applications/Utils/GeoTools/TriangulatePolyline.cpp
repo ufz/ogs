@@ -106,7 +106,9 @@ int main(int argc, char *argv[])
     {
         std::string input ("");
         while (input != "y" && input != "Y" && input != "n" && input != "N")
+        {
             input = output_question();
+        }
 
         if (input == "y" || input == "Y")
         {
@@ -114,7 +116,9 @@ int main(int argc, char *argv[])
             INFO ("Polyline closed.");
         }
         else
+        {
             return EXIT_FAILURE;
+        }
     }
 
     INFO ("Creating a surface by triangulation of the polyline ...");

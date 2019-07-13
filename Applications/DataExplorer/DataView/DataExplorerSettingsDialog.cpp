@@ -39,7 +39,9 @@ void DataExplorerSettingsDialog::on_gmshPathButton_clicked()
                                                            settings.value("DataExplorerGmshPath").toString(),
                                                            "*gmsh*");
     if (!file_name.isEmpty())
+    {
         this->gmshPathEdit->setText(file_name);
+    }
 }
 
 void DataExplorerSettingsDialog::accept()

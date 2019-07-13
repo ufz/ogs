@@ -36,9 +36,13 @@ void CheckboxDelegate::paint(QPainter* painter, const QStyleOptionViewItem& opti
         QStyleOptionButton styleOptionButton;
         styleOptionButton.state |= QStyle::State_Enabled;
         if (checked)
+        {
             styleOptionButton.state |= QStyle::State_On;
+        }
         else
+        {
             styleOptionButton.state |= QStyle::State_Off;
+        }
 
         styleOptionButton.rect = this->checkboxRect(option);
 
@@ -46,7 +50,9 @@ void CheckboxDelegate::paint(QPainter* painter, const QStyleOptionViewItem& opti
                                            &styleOptionButton, painter);
     }
     else
+    {
         QItemDelegate::paint(painter, option, index);
+    }
 }
 
 bool CheckboxDelegate::editorEvent(QEvent* event, QAbstractItemModel* model,
@@ -60,18 +66,26 @@ bool CheckboxDelegate::editorEvent(QEvent* event, QAbstractItemModel* model,
         auto* mouse_event = static_cast<QMouseEvent*>(event);
         if (mouse_event->button() != Qt::LeftButton ||
             !checkboxRect(option).contains(mouse_event->pos()))
+        {
             return false;
+        }
         if (event->type() == QEvent::MouseButtonDblClick)
+        {
             return true;
+        }
     }
     else if (event->type() == QEvent::KeyPress)
     {
         if (static_cast<QKeyEvent*>(event)->key() != Qt::Key_Space &&
             static_cast<QKeyEvent*>(event)->key() != Qt::Key_Select)
+        {
             return false;
+        }
     }
     else
+    {
         return false;
+    }
 
     bool checked = index.model()->data(index, Qt::DisplayRole).toBool();
     return model->setData(index, !checked, Qt::EditRole);

@@ -31,6 +31,7 @@ vtkImageData* VtkVisHelper::QImageToVtkImageData(QImage &img)
     data->SetNumberOfTuples( imgWidth * imgHeight );
 
     for (std::size_t j = 0; j < imgHeight; j++)
+    {
         for (std::size_t i = 0; i < imgWidth; i++)
         {
             QRgb pix = img.pixel(i,j);
@@ -40,6 +41,7 @@ vtkImageData* VtkVisHelper::QImageToVtkImageData(QImage &img)
                                    };
             data->SetTuple(j * imgWidth + i, color);
         }
+    }
 
     vtkImageData* imgData = vtkImageData::New();
     imgData->SetExtent(0, imgWidth - 1, 0, imgHeight - 1, 0, 0);

@@ -94,7 +94,9 @@ const MeshLib::Mesh* MeshModel::getMesh(const QModelIndex &idx) const
     {
         auto* item = dynamic_cast<MeshItem*>(this->getItem(idx));
         if (item)
+        {
             return item->getMesh();
+        }
 
         return nullptr;
     }
@@ -108,7 +110,9 @@ const MeshLib::Mesh* MeshModel::getMesh(const std::string &name) const
     {
         auto* item = static_cast<MeshItem*>(_rootItem->child(i));
         if (item->data(0).toString().toStdString() == name)
+        {
             return item->getMesh();
+        }
     }
 
     INFO("MeshModel::getMesh(): No entry found with name \"%s\".", name.c_str());
@@ -121,7 +125,9 @@ bool MeshModel::removeMesh(const QModelIndex &idx)
     {
         auto* item = dynamic_cast<MeshItem*>(this->getItem(idx));
         if (item)
+        {
             return this->removeMesh(item->getMesh()->getName());
+        }
         return false;
     }
     return false;
@@ -163,8 +169,12 @@ void MeshModel::updateModel()
 {
     auto const& mesh_vec = _project.getMeshObjects();
     for (auto const& mesh : mesh_vec)
-        if (!getMesh(mesh->getName())) // if Mesh is not yet added to GUI, do it now
+    {
+        if (!getMesh(mesh->getName()))
+        {  // if Mesh is not yet added to GUI, do it now
             addMeshObject(mesh.get());
+        }
+    }
 }
 
 std::map<MeshLib::MeshElemType, QVariant> MeshModel::createMeshElemTypeMap()
@@ -173,7 +183,10 @@ std::map<MeshLib::MeshElemType, QVariant> MeshModel::createMeshElemTypeMap()
     std::map<MeshLib::MeshElemType, QVariant> elem_map;
 
     for (MeshLib::MeshElemType t : elem_types)
-        elem_map[t] = QVariant(QString::fromStdString(MeshLib::MeshElemType2String(t)));
+    {
+        elem_map[t] =
+            QVariant(QString::fromStdString(MeshLib::MeshElemType2String(t)));
+    }
 
     return elem_map;
 }
@@ -196,7 +209,9 @@ vtkUnstructuredGridAlgorithm* MeshModel::vtkSource(const std::string &name) cons
     {
         auto* item = static_cast<MeshItem*>(_rootItem->child(i));
         if (item->data(0).toString().toStdString() == name)
+        {
             return item->vtkSource();
+        }
     }
 
     INFO("MeshModel::vtkSource(): No entry found with name \"%s\".", name.c_str());

@@ -28,7 +28,9 @@ FileListDialog::FileListDialog(FileType input, FileType output, QWidget* parent)
     setupUi(this);
 
     if (_input_file_type == FileType::VTU && _output_file_type == FileType::MSH)
+    {
         displayWarningLabel();
+    }
 
     this->listView->setModel(&_allFiles);
 }
@@ -48,7 +50,9 @@ void FileListDialog::on_addButton_pressed()
         QStringList const file_names = dlg.selectedFiles();
 
         if (file_names.empty())
+        {
             return;
+        }
 
         QStringList list = _allFiles.stringList();
         list.append(file_names);
@@ -62,7 +66,9 @@ void FileListDialog::on_removeButton_pressed()
 {
     QModelIndexList selected = this->listView->selectionModel()->selectedIndexes();
     for (auto& item : selected)
+    {
         this->_allFiles.removeRow(item.row());
+    }
 }
 
 void FileListDialog::on_browseButton_pressed()
@@ -83,9 +89,13 @@ void FileListDialog::accept()
 
     _output_dir = this->outputDirEdit->text();
     if (!this->outputDirEdit->text().isEmpty() && QDir(_output_dir).exists())
+    {
         this->done(QDialog::Accepted);
+    }
     else
+    {
         OGSError::box("Output directory not found.");
+    }
 }
 
 void FileListDialog::reject()
@@ -95,13 +105,22 @@ void FileListDialog::reject()
 
 const QString FileListDialog::getFileTypeString(FileType file_type) const
 {
-    if      (file_type==FileType::GML) return "OpenGeoSys geometry files (*.gml)";
+    if (file_type == FileType::GML)
+    {
+        return "OpenGeoSys geometry files (*.gml)";
+    }
     if (file_type == FileType::VTU)
+    {
         return "OpenGeoSys mesh files (*.vtu)";
+    }
     if (file_type == FileType::GLI)
+    {
         return "GeoSys geometry files (*.gli)";
+    }
     if (file_type == FileType::MSH)
+    {
         return "GeoSys mesh files (*.msh)";
+    }
     return "All files (*.*)";
 }
 

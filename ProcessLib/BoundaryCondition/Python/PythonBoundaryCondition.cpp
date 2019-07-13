@@ -28,7 +28,9 @@ public:
     explicit FlushStdoutGuard(bool const flush) : _flush(flush)
     {
         if (!flush)
+        {
             return;
+        }
 
         LOGOG_COUT << std::flush;
     }
@@ -37,7 +39,9 @@ public:
     ~FlushStdoutGuard()
     {
         if (!_flush)
+        {
             return;
+        }
 
         using namespace pybind11::literals;
         pybind11::print("end"_a = "", "flush"_a = true);
@@ -144,16 +148,20 @@ void PythonBoundaryCondition::getEssentialBCValues(
         }
 
         if (!pair_flag_value.first)
+        {
             continue;
+        }
 
         MeshLib::Location l(_bc_data.bulk_mesh_id, MeshLib::MeshItemType::Node,
                             bulk_node_id);
         const auto dof_idx = _bc_data.dof_table_bulk.getGlobalIndex(
             l, _bc_data.global_component_id);
         if (dof_idx == NumLib::MeshComponentMap::nop)
+        {
             OGS_FATAL(
                 "Logic error. This error should already have occured while "
                 "gathering primary variables. Something nasty is going on!");
+        }
 
         // For the DDC approach (e.g. with PETSc option), the negative
         // index of g_idx means that the entry by that index is a ghost
@@ -209,10 +217,12 @@ std::unique_ptr<PythonBoundaryCondition> createPythonBoundaryCondition(
         pybind11::module::import("__main__").attr("__dict__");
 
     if (!scope.contains(bc_object))
+    {
         OGS_FATAL(
             "Function `%s' is not defined in the python script file, or there "
             "was no python script file specified.",
             bc_object.c_str());
+    }
 
     auto* bc = scope[bc_object.c_str()]
                    .cast<PythonBoundaryConditionPythonSideInterface*>();

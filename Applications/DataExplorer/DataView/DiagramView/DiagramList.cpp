@@ -36,8 +36,12 @@ float DiagramList::calcMinXValue()
     float min = std::numeric_limits<float>::max();
     std::size_t nCoords = _coords.size();
     for (std::size_t i = 0; i < nCoords; i++)
+    {
         if (_coords[i].first < min)
+        {
             min = _coords[i].first;
+        }
+    }
     return min;
 }
 
@@ -46,8 +50,12 @@ float DiagramList::calcMaxXValue()
     float max = std::numeric_limits<float>::lowest();
     std::size_t nCoords = _coords.size();
     for (std::size_t i = 0; i < nCoords; i++)
+    {
         if (_coords[i].first > max)
+        {
             max = _coords[i].first;
+        }
+    }
     return max;
 }
 
@@ -56,8 +64,12 @@ float DiagramList::calcMinYValue()
     float min = std::numeric_limits<float>::max();
     std::size_t nCoords = _coords.size();
     for (std::size_t i = 0; i < nCoords; i++)
+    {
         if (_coords[i].second < min)
+        {
             min = _coords[i].second;
+        }
+    }
     return min;
 }
 
@@ -66,8 +78,12 @@ float DiagramList::calcMaxYValue()
     float max = std::numeric_limits<float>::lowest();
     std::size_t nCoords = _coords.size();
     for (std::size_t i = 0; i < nCoords; i++)
+    {
         if (_coords[i].second > max)
+        {
             max = _coords[i].second;
+        }
+    }
     return max;
 }
 
@@ -188,7 +204,9 @@ int DiagramList::readList(const QString &path, std::vector<DiagramList*> &lists)
                 {
                     startDate = currentDate;
                     for (int i = 0; i < nLists; i++)
+                    {
                         lists[i]->setStartDate(startDate);
+                    }
                     first_loop = false;
                 }
 
@@ -222,7 +240,9 @@ int DiagramList::readList(const QString &path, std::vector<DiagramList*> &lists)
     file.close();
 
     for (int i = 0; i < nLists; i++)
+    {
         lists[i]->update();
+    }
 
     return nLists;
 }
@@ -238,17 +258,22 @@ int DiagramList::readList(const SensorData* data, std::vector<DiagramList*> &lis
         const std::size_t start    = data->getStartTime();
         const std::size_t end      = data->getEndTime();
         const std::size_t stepsize = data->getStepSize();
-        for (std::size_t i = start; i <= end;  i+=stepsize)
+        for (std::size_t i = start; i <= end; i += stepsize)
+        {
             time_steps.push_back(i);
+        }
     }
     else
+    {
         time_steps = data->getTimeSteps();
+    }
 
     bool is_date (false);
 
     if (!(BaseLib::int2date(time_steps[0])).empty())
+    {
         is_date = true;
-
+    }
 
     std::size_t nValues (time_steps.size());
 
@@ -280,8 +305,10 @@ int DiagramList::readList(const SensorData* data, std::vector<DiagramList*> &lis
         {
             l->setXUnit("time step");
             for (std::size_t j = 0; j < nValues; j++)
+            {
                 lists[i]->addNextPoint(static_cast<float>(time_steps[j]),
                                        (*time_series)[j]);
+            }
         }
 
         lists[i]->update();
@@ -294,13 +321,19 @@ void DiagramList::truncateToRange(QDateTime const& start, QDateTime const& end)
 {
     auto start_secs = static_cast<float>(_startDate.secsTo(start));
     if (start_secs < 0)
+    {
         start_secs = 0;
+    }
     auto end_secs = static_cast<float>(_startDate.secsTo(end));
     if (end_secs < start_secs)
+    {
         end_secs = _coords.back().first;
+    }
 
     if (start_secs == 0 && end_secs == _coords.back().first)
+    {
         return;
+    }
 
     _coords.erase(
         std::remove_if(_coords.begin(), _coords.end(),
@@ -310,7 +343,9 @@ void DiagramList::truncateToRange(QDateTime const& start, QDateTime const& end)
         _coords.end());
     _startDate = start;
     for (auto& c : _coords)
+    {
         c.first -= start_secs;
+    }
     update();
 }
 
@@ -318,7 +353,9 @@ void DiagramList::setList(
     std::vector<std::pair<QDateTime, float>> const& coords)
 {
     if (coords.empty())
+    {
         return;
+    }
 
     this->_startDate = coords[0].first;
     _coords.emplace_back(0.0f, coords[0].second);
@@ -337,7 +374,9 @@ void DiagramList::setList(
 void DiagramList::setList(std::vector<std::pair<float, float>> const& coords)
 {
     if (coords.empty())
+    {
         return;
+    }
 
     this->_startDate = QDateTime();
     std::copy(coords.begin(), coords.end(), std::back_inserter(_coords));

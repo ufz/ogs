@@ -30,9 +30,13 @@ VisPrefsDialog::VisPrefsDialog(VtkVisPipeline &pipeline,
 {
     setupUi(this);
     if (_vtkVisPipeline.getLight(_above))
+    {
         lightAboveBox->toggle();
+    }
     if (_vtkVisPipeline.getLight(_below))
+    {
         lightBelowBox->toggle();
+    }
 
     bgColorButton->setColor(_vtkVisPipeline.getBGColor());
 
@@ -53,17 +57,25 @@ void VisPrefsDialog::on_bgColorButton_colorPicked( QColor color )
 void VisPrefsDialog::on_lightAboveBox_clicked()
 {
     if (lightAboveBox->isChecked())
+    {
         _vtkVisPipeline.addLight(_above);
+    }
     else
+    {
         _vtkVisPipeline.removeLight(_above);
+    }
 }
 
 void VisPrefsDialog::on_lightBelowBox_clicked()
 {
     if (lightBelowBox->isChecked())
+    {
         _vtkVisPipeline.addLight(_below);
+    }
     else
+    {
         _vtkVisPipeline.removeLight(_below);
+    }
 }
 
 void VisPrefsDialog::on_superelevationPushButton_pressed()

@@ -96,12 +96,14 @@ void DiagramPrefsDialog::accept()
     }
 
     for (std::size_t i = 0; i < _list.size(); i++)
+    {
         if (_visability[i]->isChecked())
         {
             _list[i]->truncateToRange(start_date, end_date);
             _window->addList(_list[i]);
             window_is_empty = false;
         }
+    }
 
     if (!window_is_empty)
     {
@@ -128,7 +130,9 @@ void DiagramPrefsDialog::on_loadFileButton_clicked()
                                                     "",
                                                     "Time series files (*.stn *.txt)");
     if (!fileName.isEmpty())
+    {
         loadFile(fileName);
+    }
 }
 
 int DiagramPrefsDialog::loadFile(const QString &filename)

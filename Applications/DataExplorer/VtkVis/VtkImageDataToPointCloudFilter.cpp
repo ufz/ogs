@@ -110,7 +110,9 @@ int VtkImageDataToPointCloudFilter::RequestData(
     for (std::size_t i = 0; i < static_cast<std::size_t>(n_points); ++i)
     {
         if (density[i] == 0)
+        {
             continue;
+        }
         double p[3];
         input->GetPoint(i, p);
 

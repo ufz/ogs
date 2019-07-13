@@ -41,7 +41,9 @@ OGSFileConverter::~OGSFileConverter() = default;
 void OGSFileConverter::convertGML2GLI(const QStringList &input, const QString &output) const
 {
     if (input.empty())
+    {
         return;
+    }
 
     GeoLib::GEOObjects geo_objects;
     GeoLib::IO::XmlGmlInterface xml(geo_objects);
@@ -52,7 +54,9 @@ void OGSFileConverter::convertGML2GLI(const QStringList &input, const QString &o
         const std::string output_str = QString(output + "/" + fi.completeBaseName() + ".gli").toStdString();
 
         if (fileExists(output_str))
+        {
             continue;
+        }
 
         try
         {
@@ -82,7 +86,9 @@ void OGSFileConverter::convertGML2GLI(const QStringList &input, const QString &o
 void OGSFileConverter::convertGLI2GML(const QStringList &input, const QString &output) const
 {
     if (input.empty())
+    {
         return;
+    }
 
     GeoLib::GEOObjects geo_objects;
     GeoLib::IO::XmlGmlInterface xml(geo_objects);
@@ -93,7 +99,9 @@ void OGSFileConverter::convertGLI2GML(const QStringList &input, const QString &o
         const std::string output_str = QString(output + "/" + fi.completeBaseName() + ".gml").toStdString();
 
         if (fileExists(output_str))
+        {
             continue;
+        }
 
         std::string unique_name;
         std::vector<std::string> errors;
@@ -113,8 +121,12 @@ void OGSFileConverter::convertGLI2GML(const QStringList &input, const QString &o
             geo_objects.removePointVec(geo_name);
         }
         else
+        {
             for (auto& error : errors)
+            {
                 OGSError::box(QString::fromStdString(error));
+            }
+        }
     }
     OGSError::box("File conversion finished");
 }
@@ -122,7 +134,9 @@ void OGSFileConverter::convertGLI2GML(const QStringList &input, const QString &o
 void OGSFileConverter::convertVTU2MSH(const QStringList &input, const QString &output) const
 {
     if (input.empty())
+    {
         return;
+    }
 
     for (const auto& input_string : input)
     {
@@ -130,7 +144,9 @@ void OGSFileConverter::convertVTU2MSH(const QStringList &input, const QString &o
         const std::string output_str = QString(output + "/" + fi.completeBaseName() + ".msh").toStdString();
 
         if (fileExists(output_str))
+        {
             continue;
+        }
 
         MeshLib::Mesh const* const mesh(MeshLib::IO::VtuInterface::readVTUFile(
             input_string.toStdString().c_str()));
@@ -150,7 +166,9 @@ void OGSFileConverter::convertVTU2MSH(const QStringList &input, const QString &o
 void OGSFileConverter::convertMSH2VTU(const QStringList &input, const QString &output) const
 {
     if (input.empty())
+    {
         return;
+    }
 
     for (const auto& input_string : input)
     {
@@ -158,7 +176,9 @@ void OGSFileConverter::convertMSH2VTU(const QStringList &input, const QString &o
         const std::string output_str = QString(output + "/" + fi.completeBaseName() + ".vtu").toStdString();
 
         if (fileExists(output_str))
+        {
             continue;
+        }
 
         MeshLib::IO::Legacy::MeshIO meshIO;
         MeshLib::Mesh const* const mesh(
@@ -179,28 +199,36 @@ void OGSFileConverter::on_gml2gliButton_pressed() const
 {
     FileListDialog dlg(FileType::GML, FileType::GLI);
     if (dlg.exec())
+    {
         convertGML2GLI(dlg.getInputFileList(), dlg.getOutputDir());
+    }
 }
 
 void OGSFileConverter::on_gli2gmlButton_pressed() const
 {
     FileListDialog dlg(FileType::GLI, FileType::GML);
     if (dlg.exec())
+    {
         convertGLI2GML(dlg.getInputFileList(), dlg.getOutputDir());
+    }
 }
 
 void OGSFileConverter::on_vtu2mshButton_pressed() const
 {
     FileListDialog dlg(FileType::VTU, FileType::MSH);
     if (dlg.exec())
+    {
         convertVTU2MSH(dlg.getInputFileList(), dlg.getOutputDir());
+    }
 }
 
 void OGSFileConverter::on_msh2vtuButton_pressed() const
 {
     FileListDialog dlg(FileType::MSH, FileType::VTU);
     if (dlg.exec())
+    {
         convertMSH2VTU(dlg.getInputFileList(), dlg.getOutputDir());
+    }
 }
 
 void OGSFileConverter::on_closeDialogButton_pressed()

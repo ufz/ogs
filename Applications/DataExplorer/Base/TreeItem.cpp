@@ -52,7 +52,9 @@ void TreeItem::appendChild(TreeItem* item)
 TreeItem* TreeItem::child(int row) const
 {
     if (_childItems.count() > row)
+    {
         return _childItems.value(row);
+    }
 
     return nullptr;
 }
@@ -71,7 +73,9 @@ int TreeItem::childCount() const
 int TreeItem::row() const
 {
     if (_parentItem)
+    {
         return _parentItem->_childItems.indexOf(const_cast<TreeItem*>(this));
+    }
 
     return 0;
 }
@@ -98,7 +102,9 @@ QVariant TreeItem::data(int column) const
 bool TreeItem::setData( int column, const QVariant &value )
 {
     if (column < 0 || column >= _itemData.size())
+    {
         return false;
+    }
 
     _itemData[column] = value;
     return true;
@@ -117,10 +123,14 @@ TreeItem* TreeItem::parentItem() const
 bool TreeItem::removeChildren(int position, int count)
 {
     if (position < 0 || position + count > _childItems.size())
+    {
         return false;
+    }
 
     for (int row = 0; row < count; ++row)
+    {
         delete _childItems.takeAt(position);
+    }
 
     return true;
 }

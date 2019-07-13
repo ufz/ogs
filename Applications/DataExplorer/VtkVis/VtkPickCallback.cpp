@@ -37,7 +37,9 @@ void VtkPickCallback::Execute( vtkObject* caller, unsigned long vtkNotUsed(
     {
         vtkActor* actor = picker->GetActor();
         if (actor)
-            emit actorPicked (actor);
+        {
+            emit actorPicked(actor);
+        }
 
         double* pos = picker->GetPickPosition();
         INFO("Picked cell id is: %d", picker->GetCellId());

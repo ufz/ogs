@@ -59,7 +59,9 @@ void FEFLOWGeoInterface::readFEFLOWFile(const std::string& filename,
             // problem class, time mode, problem orientation, dimension, ...
             unsigned dummy = 0;
             for (int i = 0; i < 3; i++)
+            {
                 line_stream >> dummy;
+            }
             line_stream >> dimension;
             line_stream.clear();
         }
@@ -72,8 +74,10 @@ void FEFLOWGeoInterface::readFEFLOWFile(const std::string& filename,
             double vec[3] = {};
             line_stream >> vec[0] >> vec[1] >> vec[2];
             if (vec[0] == 0.0 && vec[1] == -1.0 && vec[2] == 0.0)
+            {
                 // x-z plane
                 isXZplane = true;
+            }
             line_stream.clear();
         }
         //....................................................................
@@ -89,12 +93,16 @@ void FEFLOWGeoInterface::readFEFLOWFile(const std::string& filename,
     std::string project_name(
         BaseLib::extractBaseNameWithoutExtension(filename));
     if (points)
+    {
         geoObjects.addPointVec(
             std::unique_ptr<std::vector<GeoLib::Point*>>(points), project_name);
+    }
     if (lines)
+    {
         geoObjects.addPolylineVec(
             std::unique_ptr<std::vector<GeoLib::Polyline*>>(lines),
             project_name);
+    }
 
     if (isXZplane && points)
     {
@@ -114,7 +122,9 @@ void FEFLOWGeoInterface::readPoints(QDomElement& nodesEle,
     QDomElement xmlEle =
         nodesEle.firstChildElement(QString::fromStdString(tag));
     if (xmlEle.isNull())
+    {
         return;
+    }
     QString str_pt_list1 = xmlEle.text();
     std::istringstream ss(str_pt_list1.toStdString());
     std::string line_str;
@@ -123,13 +133,17 @@ void FEFLOWGeoInterface::readPoints(QDomElement& nodesEle,
         std::getline(ss, line_str);
         boost::trim_right(line_str);
         if (line_str.empty())
+        {
             continue;
+        }
         std::istringstream line_ss(line_str);
         std::size_t pt_id = 0;
         std::array<double, 3> pt_xyz;
         line_ss >> pt_id;
         for (int i = 0; i < dim; i++)
+        {
             line_ss >> pt_xyz[i];
+        }
         points[pt_id - 1] = new GeoLib::Point(pt_xyz, pt_id);
     }
 }
@@ -148,7 +162,9 @@ void FEFLOWGeoInterface::readSuperMesh(std::ifstream& in,
         BaseLib::trim(line_string);
         oss << line_string << "\n";
         if (line_string.find("</supermesh>") != std::string::npos)
+        {
             break;
+        }
     }
     const QString strXML(oss.str().c_str());
 
@@ -166,7 +182,9 @@ void FEFLOWGeoInterface::readSuperMesh(std::ifstream& in,
     points = new std::vector<GeoLib::Point*>();
     QDomElement nodesEle = docElem.firstChildElement("nodes");
     if (nodesEle.isNull())
+    {
         return;
+    }
 
     {
         const QString str = nodesEle.attribute("count");
@@ -182,7 +200,9 @@ void FEFLOWGeoInterface::readSuperMesh(std::ifstream& in,
     lines = new std::vector<GeoLib::Polyline*>();
     QDomElement polygonsEle = docElem.firstChildElement("polygons");
     if (polygonsEle.isNull())
+    {
         return;
+    }
 
     {
         QDomNode child = polygonsEle.firstChild();
@@ -195,7 +215,9 @@ void FEFLOWGeoInterface::readSuperMesh(std::ifstream& in,
             }
             QDomElement xmlEle = child.firstChildElement("nodes");
             if (xmlEle.isNull())
+            {
                 continue;
+            }
             const QString str = xmlEle.attribute("count");
             const std::size_t n_points = str.toLong();
             QString str_ptId_list = xmlEle.text().simplified();

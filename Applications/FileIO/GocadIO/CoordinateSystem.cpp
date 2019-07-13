@@ -96,7 +96,9 @@ bool CoordinateSystem::parse(std::istream& in)
             datum = parseName(line);
         }
         else if (*it == "END_ORIGINAL_COORDINATE_SYSTEM")
+        {
             return true;
+        }
         else
             WARN("CoordinateSystem::parse() - Unknown keyword found: %s", line.c_str());
     }

@@ -51,19 +51,29 @@ DiagramScene::~DiagramScene()
     delete _xUnit;
     delete _yUnit;
     for (auto& graphCaption : _graphCaptions)
+    {
         delete graphCaption;
+    }
     _graphCaptions.clear();
     for (auto& graph : _graphs)
+    {
         delete graph;
+    }
     _graphs.clear();
     for (auto& text : _xTicksText)
+    {
         delete text;
+    }
     _xTicksText.clear();
     for (auto& text : _yTicksText)
+    {
         delete text;
+    }
     _yTicksText.clear();
     for (auto& list : _lists)
+    {
         delete list;
+    }
     _lists.clear();
 }
 
@@ -106,7 +116,9 @@ void DiagramScene::addGraph(DiagramList* list)
 
     _lists.push_back(list);
     for (auto& list : _lists)
+    {
         drawGraph(list);
+    }
 
     update();
 }
@@ -136,12 +148,18 @@ void DiagramScene::adjustAxis(qreal& min, qreal& max, int& numberOfTicks)
     double grossStep = (max - min) / MinTicks;
     double step = pow(10.0, std::floor(log10(grossStep)));
     if (5 * step < grossStep)
+    {
         step *= 5;
+    }
     else if (2 * step < grossStep)
+    {
         step *= 2;
+    }
     numberOfTicks = int(ceil(max / step) - std::floor(min / step));
     if (numberOfTicks < MinTicks)
+    {
         numberOfTicks = MinTicks;
+    }
     min = std::floor(min / step) * step;
     max = ceil(max / step) * step;
 }
@@ -164,13 +182,21 @@ void DiagramScene::clearGrid()
         removeItem(_grid);
 
         for (auto& text : _xTicksText)
+        {
             removeItem(text);
+        }
         for (auto& text : _yTicksText)
+        {
             removeItem(text);
+        }
         for (auto& graph : _graphs)
+        {
             removeItem(graph);
+        }
         for (auto& graphCaption : _graphCaptions)
+        {
             removeItem(graphCaption);
+        }
 
         _xTicksText.clear();
         _yTicksText.clear();
@@ -306,15 +332,25 @@ void DiagramScene::setDiagramBoundaries(DiagramList* list)
     if (!_lists.isEmpty())
     {
         if (list->minXValue() < _unscaledBounds.left())
+        {
             _unscaledBounds.setLeft(list->minXValue());
+        }
         if (list->minYValue() < _unscaledBounds.top())
+        {
             _unscaledBounds.setTop(list->minYValue());
+        }
         if (list->maxXValue() > _unscaledBounds.right())
+        {
             _unscaledBounds.setRight(list->maxXValue());
+        }
         if (list->maxYValue() > _unscaledBounds.bottom())
+        {
             _unscaledBounds.setBottom(list->maxYValue());
+        }
         if (_startDate > list->getStartDate())
+        {
             _startDate = list->getStartDate();
+        }
     }
     else
     {

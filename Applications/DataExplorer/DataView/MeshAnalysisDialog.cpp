@@ -30,10 +30,14 @@ MeshAnalysisDialog::MeshAnalysisDialog(
     setupUi(this);
 
     if (mesh_vec.empty())
+    {
         this->startButton->setDisabled(true);
+    }
 
     for (const auto& mesh : mesh_vec)
+    {
         this->meshListBox->addItem(QString::fromStdString(mesh->getName()));
+    }
 
     auto* collapse_threshold_validator =
         new StrictDoubleValidator(0, 1000000, 7, this);
@@ -65,8 +69,12 @@ void MeshAnalysisDialog::on_startButton_pressed()
     this->elementsMsgOutput(element_error_codes);
 
     unsigned const n_holes (MeshLib::MeshValidation::detectHoles(mesh));
-    if (n_holes>0)
-        this->meshHoleOutputLabel->setText("<strong>" + QString::number(n_holes) + " hole(s) found within the mesh</strong>");
+    if (n_holes > 0)
+    {
+        this->meshHoleOutputLabel->setText(
+            "<strong>" + QString::number(n_holes) +
+            " hole(s) found within the mesh</strong>");
+    }
 }
 
 void MeshAnalysisDialog::nodesMsgOutput(std::vector<std::size_t> const& node_ids, std::vector<std::size_t> const& collapsibleNodeIds)
@@ -74,12 +82,16 @@ void MeshAnalysisDialog::nodesMsgOutput(std::vector<std::size_t> const& node_ids
     const std::size_t nNodeIds (node_ids.size());
     QString nodes_output("");
     if (node_ids.empty())
+    {
         nodes_output += "No unused nodes found.";
+    }
     else
     {
         nodes_output += (QString::number(nNodeIds) + " nodes are not part of any element:\n");
-        for (std::size_t i=0; i<nNodeIds; ++i)
+        for (std::size_t i = 0; i < nNodeIds; ++i)
+        {
             nodes_output += (QString::number(node_ids[i]) + ", ");
+        }
     }
     this->unusedNodesText->setText(nodes_output);
 
@@ -87,11 +99,13 @@ void MeshAnalysisDialog::nodesMsgOutput(std::vector<std::size_t> const& node_ids
     QString node_ids_str("");
     unsigned count(0);
     for (std::size_t i = 0; i < nNodes; ++i)
+    {
         if (i != collapsibleNodeIds[i])
         {
             node_ids_str.append(QString::number(i) + ", ");
             count++;
         }
+    }
     nodes_output = (count > 0) ? QString::number(count) + " nodes found:\n" : "No nodes found.";
     nodes_output.append(node_ids_str);
     this->collapsibleNodesText->setText(nodes_output);

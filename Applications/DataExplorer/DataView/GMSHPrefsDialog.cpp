@@ -58,13 +58,17 @@ GMSHPrefsDialog::GMSHPrefsDialog(GeoLib::GEOObjects const& geoObjects, QDialog* 
     geoObjects.getStationVectorNames(geo_station_names);
 
     for (auto& geo_station_name : geo_station_names)
+    {
         geoNames.push_back(geo_station_name);
+    }
 
     std::size_t nGeoObjects(geoNames.size());
 
     QStringList list;
     for (unsigned i = 0; i < nGeoObjects; ++i)
+    {
         list.append(QString::fromStdString(geoNames[i]));
+    }
 
     if (list.empty())
     {
@@ -151,16 +155,24 @@ void GMSHPrefsDialog::accept()
         max_number_of_points_in_quadtree_leaf = BaseLib::str2number<unsigned> (
                 param1->text().toStdString().c_str());
         if (max_number_of_points_in_quadtree_leaf == 0)
+        {
             max_number_of_points_in_quadtree_leaf = 10;
+        }
         mesh_density_scaling_pnts = fabs (param2->text().toDouble());
         if (mesh_density_scaling_pnts < min_scaling_factor)
+        {
             mesh_density_scaling_pnts = min_scaling_factor;
+        }
         mesh_density_scaling_stations = param3->text().toDouble();
         if (mesh_density_scaling_stations < min_scaling_factor)
+        {
             mesh_density_scaling_stations = min_scaling_factor;
+        }
     }
     else
+    {
         val4 = param4->text().toDouble();
+    }
 
     bool delete_geo_file = this->geoFileDelete->isChecked();
     emit requestMeshing(selectedObjects,
@@ -181,6 +193,8 @@ std::vector<std::string> GMSHPrefsDialog::getSelectedObjects(QStringList list)
 {
     std::vector<std::string> indexList;
     for (auto& index : list)
+    {
         indexList.push_back(index.toStdString());
+    }
     return indexList;
 }

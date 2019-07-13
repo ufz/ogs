@@ -33,9 +33,13 @@ void MeshFromRasterDialog::on_elevationButton_toggled(bool isChecked)
     if (isChecked)
     {
         if (this->prismButton->isChecked())
+        {
             this->triButton->setChecked(true);
+        }
         if (this->hexButton->isChecked())
+        {
             this->quadButton->setChecked(true);
+        }
     }
 
     this->prismButton->setEnabled(!isChecked);
@@ -52,9 +56,18 @@ void MeshFromRasterDialog::accept()
     _mesh_name = this->mshNameEdit->text().toStdString();
 
     _intensity_selection = MeshLib::UseIntensityAs::ELEVATION;
-    if (this->materialButton->isChecked()) _intensity_selection  = MeshLib::UseIntensityAs::MATERIALS;
-    else if (this->otherButton->isChecked()) _intensity_selection  = MeshLib::UseIntensityAs::DATAVECTOR;
-    else if (this->ignoreButton->isChecked()) _intensity_selection  = MeshLib::UseIntensityAs::NONE;
+    if (this->materialButton->isChecked())
+    {
+        _intensity_selection = MeshLib::UseIntensityAs::MATERIALS;
+    }
+    else if (this->otherButton->isChecked())
+    {
+        _intensity_selection = MeshLib::UseIntensityAs::DATAVECTOR;
+    }
+    else if (this->ignoreButton->isChecked())
+    {
+        _intensity_selection = MeshLib::UseIntensityAs::NONE;
+    }
 
     if (_intensity_selection == MeshLib::UseIntensityAs::DATAVECTOR)
     {
@@ -67,10 +80,18 @@ void MeshFromRasterDialog::accept()
         _array_name = this->arrayNameEdit->text().toStdString();
     }
     _element_selection = MeshLib::MeshElemType::TRIANGLE;
-    if (this->quadButton->isChecked()) _element_selection = MeshLib::MeshElemType::QUAD;
+    if (this->quadButton->isChecked())
+    {
+        _element_selection = MeshLib::MeshElemType::QUAD;
+    }
     else if (this->prismButton->isChecked())
+    {
         _element_selection = MeshLib::MeshElemType::PRISM;
-    else if (this->hexButton->isChecked()) _element_selection = MeshLib::MeshElemType::HEXAHEDRON;
+    }
+    else if (this->hexButton->isChecked())
+    {
+        _element_selection = MeshLib::MeshElemType::HEXAHEDRON;
+    }
 
     this->done(QDialog::Accepted);
 }

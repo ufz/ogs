@@ -33,8 +33,10 @@ XMLInterface(), XMLQtInterface("OpenGeoSysNUM.xsd")
 
 int XmlNumInterface::readFile(QString const& fileName)
 {
-    if(XMLQtInterface::readFile(fileName) == 0)
+    if (XMLQtInterface::readFile(fileName) == 0)
+    {
         return 0;
+    }
 
     QDomDocument doc("OGS-NUM-DOM");
     doc.setContent(_fileData);
@@ -55,11 +57,17 @@ int XmlNumInterface::readFile(QString const& fileName)
             INFO("Non-linear solver type: %s.", solver_type.c_str());
         }
         else if (num_node.nodeName().compare("LinearSolver") == 0)
+        {
             readLinearSolverConfiguration(num_node);
+        }
         else if (num_node.nodeName().compare("IterationScheme") == 0)
+        {
             readIterationScheme(num_node);
+        }
         else if (num_node.nodeName().compare("Convergence") == 0)
+        {
             readConvergenceCriteria(num_node);
+        }
 
         num_node = num_node.nextSiblingElement();
     }
@@ -76,9 +84,14 @@ void XmlNumInterface::readLinearSolverConfiguration(QDomElement const& lin_root)
     while (!linear_solver_node.isNull())
     {
         if (linear_solver_node.nodeName().compare("Type") == 0)
-            lin_solver_type = linear_solver_node.toElement().text().toStdString();
+        {
+            lin_solver_type =
+                linear_solver_node.toElement().text().toStdString();
+        }
         if (linear_solver_node.nodeName().compare("Preconditioner") == 0)
+        {
             precond_type = linear_solver_node.toElement().text().toStdString();
+        }
         linear_solver_node = linear_solver_node.nextSiblingElement();
     }
     INFO("Using %s-library with solver %s and %s preconditioner.", library.c_str(), lin_solver_type.c_str(), precond_type.c_str());
@@ -93,9 +106,13 @@ void XmlNumInterface::readIterationScheme(QDomElement const& iteration_root)
     while (!iteration_node.isNull())
     {
         if (iteration_node.nodeName().compare("MaxIterations") == 0)
+        {
             max_iterations = iteration_node.toElement().text().toInt();
+        }
         if (iteration_node.nodeName().compare("FixedStepSize") == 0)
+        {
             fixed_step_size = iteration_node.toElement().text().toInt();
+        }
 
         iteration_node = iteration_node.nextSiblingElement();
     }
@@ -111,9 +128,13 @@ void XmlNumInterface::readConvergenceCriteria(QDomElement const& convergence_roo
     while (!conv_node.isNull())
     {
         if (conv_node.nodeName().compare("Method") == 0)
+        {
             error_method = conv_node.toElement().text().toStdString();
+        }
         if (conv_node.nodeName().compare("ErrorThreshold") == 0)
+        {
             error_threshold = conv_node.toElement().text().toDouble();
+        }
 
         conv_node = conv_node.nextSiblingElement();
     }

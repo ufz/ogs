@@ -29,12 +29,18 @@ AddLayerToMeshDialog::AddLayerToMeshDialog(QDialog* parent)
 void AddLayerToMeshDialog::accept()
 {
     if (this->nameEdit->text().isEmpty())
+    {
         OGSError::box("Please enter a name for the new Mesh.");
+    }
     else if (this->thicknessEdit->text().isEmpty() ||
-        this->thicknessEdit->text().toDouble() <= 0)
+             this->thicknessEdit->text().toDouble() <= 0)
+    {
         OGSError::box("Thickness needs to be larger 0");
+    }
     else
+    {
         this->done(QDialog::Accepted);
+    }
 }
 
 void AddLayerToMeshDialog::reject()

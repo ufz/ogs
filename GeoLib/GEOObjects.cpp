@@ -634,7 +634,9 @@ void GEOObjects::markUnusedPoints(std::string const& geo_name,
         {
             std::size_t const n_pnts(line->getNumberOfPoints());
             for (std::size_t i = 0; i < n_pnts; ++i)
+            {
                 transfer_pnts[line->getPointID(i)] = false;
+            }
         }
     }
 
@@ -675,20 +677,28 @@ int GEOObjects::geoPointsToStations(std::string const& geo_name,
     std::size_t const n_pnts(pnts.size());
     std::vector<bool> transfer_pnts(n_pnts, true);
     if (only_unused_pnts)
+    {
         markUnusedPoints(geo_name, transfer_pnts);
+    }
 
     auto stations = std::make_unique<std::vector<GeoLib::Point*>>();
     for (std::size_t i = 0; i < n_pnts; ++i)
     {
         if (!transfer_pnts[i])
+        {
             continue;
+        }
         std::string name = pnt_obj->getItemNameByID(i);
         if (name.empty())
+        {
             name = "Station " + std::to_string(i);
+        }
         stations->push_back(new GeoLib::Station(pnts[i], name));
     }
     if (!stations->empty())
+    {
         addStationVec(std::move(stations), stn_name);
+    }
     else
     {
         WARN("No points found to convert.");

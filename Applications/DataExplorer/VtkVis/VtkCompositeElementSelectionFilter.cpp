@@ -51,10 +51,15 @@ void VtkCompositeElementSelectionFilter::init()
     }
 
     vtkSmartPointer<vtkIdFilter> idFilter = vtkSmartPointer<vtkIdFilter>::New();
-        if (_selection.empty()) // if the array is empty it is assumed that an existing array should be used
-            idFilter->SetInputConnection(_inputAlgorithm->GetOutputPort());
-        else
-            idFilter->SetInputConnection(selFilter->GetOutputPort());
+    if (_selection.empty())
+    {  // if the array is empty it is assumed that an existing array should be
+       // used
+        idFilter->SetInputConnection(_inputAlgorithm->GetOutputPort());
+    }
+    else
+    {
+        idFilter->SetInputConnection(selFilter->GetOutputPort());
+    }
         idFilter->PointIdsOn();
         idFilter->CellIdsOn();
         idFilter->FieldDataOn();
@@ -86,8 +91,10 @@ void VtkCompositeElementSelectionFilter::SetUserVectorProperty( QString name, QL
     VtkAlgorithmProperties::SetUserVectorProperty(name, values);
 
     if (name.compare("Threshold Between") == 0)
-        static_cast<vtkThreshold*>(_outputAlgorithm)->ThresholdBetween(
-                values[0].toDouble(), values[1].toDouble());
+    {
+        static_cast<vtkThreshold*>(_outputAlgorithm)
+            ->ThresholdBetween(values[0].toDouble(), values[1].toDouble());
+    }
 }
 
 VtkColorLookupTable* VtkCompositeElementSelectionFilter::GetLookupTable()

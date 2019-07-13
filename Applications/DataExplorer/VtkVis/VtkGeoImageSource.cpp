@@ -51,15 +51,20 @@ void vtkSimpleImageFilterExampleExecute(vtkImageData* input,
     // HACK LB Multiply by number of scalar components due to RGBA values ?????
     int size = dims[0] * dims[1] * dims[2] * input->GetNumberOfScalarComponents();
 
-    for(int i = 0; i < size; i++)
+    for (int i = 0; i < size; i++)
+    {
         outPtr[i] = inPtr[i];
+    }
 }
 
 VtkGeoImageSource::VtkGeoImageSource() = default;
 
 VtkGeoImageSource::~VtkGeoImageSource()
 {
-    if(_imageSource) _imageSource->Delete();
+    if (_imageSource)
+    {
+        _imageSource->Delete();
+    }
 }
 
 void VtkGeoImageSource::PrintSelf(ostream& os, vtkIndent indent)
@@ -71,7 +76,9 @@ bool VtkGeoImageSource::readImage(const QString &filename)
 {
     vtkImageAlgorithm* img (VtkRaster::loadImage(filename.toStdString(), _x0, _y0, _spacing));
     if (img == nullptr)
+    {
         return false;
+    }
     this->setImage(img, filename, _x0, _y0, _spacing);
     return true;
 }

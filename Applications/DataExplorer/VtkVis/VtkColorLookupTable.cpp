@@ -29,8 +29,10 @@ VtkColorLookupTable::VtkColorLookupTable() = default;
 
 VtkColorLookupTable::~VtkColorLookupTable()
 {
-    for (auto it = _dict.begin(); it != _dict.end(); ++it)
-        delete it->second;
+    for (auto& it : _dict)
+    {
+        delete it.second;
+    }
 }
 
 unsigned char VtkColorLookupTable::linInterpolation(unsigned char a, unsigned char b,
@@ -72,6 +74,7 @@ void VtkColorLookupTable::Build()
             this->SetTableValueRGBA(nextIndex, it->second);
 
             if (nextIndex - lastValue.first > 0)
+            {
                 for (std::size_t i = lastValue.first + 1; i < nextIndex; i++)
                 {
                     unsigned char int_rgba[4];
@@ -80,34 +83,51 @@ void VtkColorLookupTable::Build()
                         (static_cast<double>(nextIndex - lastValue.first));
 
                     if (_type == DataHolderLib::LUTType::LINEAR)
+                    {
                         for (std::size_t j = 0; j < 4; j++)
+                        {
                             int_rgba[j] = linInterpolation(
                                 (lastValue.second)[j], (it->second)[j], pos);
+                        }
+                    }
                     else if (_type == DataHolderLib::LUTType::EXPONENTIAL)
+                    {
                         for (std::size_t j = 0; j < 4; j++)
+                        {
                             int_rgba[j] =
                                 expInterpolation((lastValue.second)[j],
                                                  (it->second)[j], 0.2, pos);
-                    else  // no interpolation
+                        }
+                    }
+                    else
+                    {  // no interpolation
                         for (std::size_t j = 0; j < 4; j++)
+                        {
                             int_rgba[j] = (lastValue.second)[j];
+                        }
+                    }
 
                     this->SetTableValueRGBA(i, int_rgba);
                 }
+            }
 
             lastValue.first = nextIndex;
             lastValue.second = it->second;
         }
     }
     else
+    {
         vtkLookupTable::Build();
+    }
 }
 
 void VtkColorLookupTable::setLookupTable(DataHolderLib::ColorLookupTable const& lut)
 {
     std::size_t const n_colors (lut.size());
-    for (std::size_t i=0; i<n_colors; ++i)
+    for (std::size_t i = 0; i < n_colors; ++i)
+    {
         setColor(std::get<0>(lut[i]), std::get<1>(lut[i]));
+    }
     setInterpolationType(lut.getInterpolationType());
     auto const range (lut.getTableRange());
     SetTableRange(range.first, range.second);
@@ -137,8 +157,10 @@ void VtkColorLookupTable::SetTableValueRGBA(vtkIdType idx, unsigned char rgba[4]
 {
     double value[4];
 
-    for (unsigned i=0; i<4; ++i)
-        value[i] = rgba[i]/255.0;
+    for (unsigned i = 0; i < 4; ++i)
+    {
+        value[i] = rgba[i] / 255.0;
+    }
     vtkLookupTable::SetTableValue(idx, value);
 }
 
@@ -147,15 +169,19 @@ void VtkColorLookupTable::GetTableValue(vtkIdType idx, unsigned char rgba[4])
     double value[4];
     vtkLookupTable::GetTableValue(idx, value);
 
-    for (unsigned i=0; i<4; ++i)
-        rgba[i] = static_cast<unsigned char>(value[i]*255.0);
+    for (unsigned i = 0; i < 4; ++i)
+    {
+        rgba[i] = static_cast<unsigned char>(value[i] * 255.0);
+    }
 }
 
 void VtkColorLookupTable::setColor(double pos, DataHolderLib::Color const& color)
 {
     auto* dict_rgba = new unsigned char[4];
     for (std::size_t i = 0; i < 4; i++)
+    {
         dict_rgba[i] = color[i];
+    }
     _dict.insert( std::pair<double, unsigned char*>(pos, dict_rgba) );
 }
 
@@ -172,5 +198,7 @@ void VtkColorLookupTable::getColor(vtkIdType indx, unsigned char rgba[4]) const
     unsigned char* _rgba;
     _rgba = this->Table->GetPointer(indx * 4);
     for (std::size_t i = 0; i < 4; i++)
+    {
         rgba[i] = _rgba[i];
+    }
 }

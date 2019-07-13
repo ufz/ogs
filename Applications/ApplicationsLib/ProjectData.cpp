@@ -1018,7 +1018,9 @@ void ProjectData::parseChemicalSystem(
     std::string const& output_directory)
 {
     if (!config)
+    {
         return;
+    }
 
 #ifdef OGS_BUILD_PROCESS_COMPONENTTRANSPORT
     INFO(

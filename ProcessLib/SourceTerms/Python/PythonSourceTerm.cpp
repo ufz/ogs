@@ -29,7 +29,9 @@ public:
     explicit FlushStdoutGuard(bool const flush) : _flush(flush)
     {
         if (!flush)
+        {
             return;
+        }
 
         LOGOG_COUT << std::flush;
     }
@@ -38,7 +40,9 @@ public:
     ~FlushStdoutGuard()
     {
         if (!_flush)
+        {
             return;
+        }
 
         using namespace pybind11::literals;
         pybind11::print("end"_a = "", "flush"_a = true);

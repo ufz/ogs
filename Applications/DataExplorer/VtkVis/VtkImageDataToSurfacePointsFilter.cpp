@@ -87,9 +87,13 @@ int VtkImageDataToSurfacePointsFilter::RequestData(
     {
         if ((n_comp == 2 || n_comp == 4) &&
             (((float*)pixvals)[(i + 1) * n_comp - 1] < 0.00000001f))
+        {
             pixels.push_back(-9999);
+        }
         else
+        {
             pixels.push_back(((float*)pixvals)[i * n_comp]);
+        }
     }
     GeoLib::Raster const* const raster(new GeoLib::Raster(
         {static_cast<std::size_t>(dimensions[0]),
@@ -110,7 +114,9 @@ int VtkImageDataToSurfacePointsFilter::RequestData(
         if (n_comp == 2 || n_comp == 4)
         {
             if (((float*)pixvals)[(i + 1) * n_comp - 1] < 0.00000001f)
+            {
                 continue;
+            }
         }
 
         double p[3];

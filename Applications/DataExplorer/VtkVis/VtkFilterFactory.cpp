@@ -124,31 +124,57 @@ VtkCompositeFilter* VtkFilterFactory::CreateCompositeFilter( QString type,
                                                              vtkAlgorithm* inputAlgorithm )
 {
     if (type.compare(QString("VtkCompositeImageToCylindersFilter")) == 0)
+    {
         return new VtkCompositeImageToCylindersFilter(inputAlgorithm);
+    }
     if (type.compare(QString("VtkCompositePointToGlyphFilter")) == 0)
+    {
         return new VtkCompositePointToGlyphFilter(inputAlgorithm);
+    }
     if (type.compare(QString("VtkCompositeLineToTubeFilter")) == 0)
+    {
         return new VtkCompositeLineToTubeFilter(inputAlgorithm);
+    }
     if (type.compare(QString("VtkCompositeColormapToImageFilter")) == 0)
+    {
         return new VtkCompositeColormapToImageFilter(inputAlgorithm);
+    }
     if (type.compare(QString("VtkCompositeTextureOnSurfaceFilter")) == 0)
+    {
         return new VtkCompositeTextureOnSurfaceFilter(inputAlgorithm);
+    }
     if (type.compare(QString("VtkCompositeThresholdFilter")) == 0)
+    {
         return new VtkCompositeThresholdFilter(inputAlgorithm);
+    }
     if (type.compare(QString("VtkCompositeColorByHeightFilter")) == 0)
+    {
         return new VtkCompositeColorByHeightFilter(inputAlgorithm);
+    }
     if (type.compare(QString("VtkCompositeElementSelectionFilter")) == 0)
+    {
         return new VtkCompositeElementSelectionFilter(inputAlgorithm);
+    }
     if (type.compare(QString("VtkCompositeNodeSelectionFilter")) == 0)
+    {
         return new VtkCompositeNodeSelectionFilter(inputAlgorithm);
+    }
     if (type.compare(QString("VtkCompositeContourFilter")) == 0)
+    {
         return new VtkCompositeContourFilter(inputAlgorithm);
+    }
     if (type.compare(QString("VtkCompositeGeoObjectFilter")) == 0)
+    {
         return new VtkCompositeGeoObjectFilter(inputAlgorithm);
+    }
     if (type.compare(QString("VtkCompositeImageToPointCloudFilter")) == 0)
+    {
         return new VtkCompositeImageToPointCloudFilter(inputAlgorithm);
+    }
     if (type.compare(QString("VtkCompositeImageToSurfacePointsFilter")) == 0)
+    {
         return new VtkCompositeImageToSurfacePointsFilter(inputAlgorithm);
+    }
 
     return nullptr;
 }
@@ -156,9 +182,13 @@ VtkCompositeFilter* VtkFilterFactory::CreateCompositeFilter( QString type,
 vtkAlgorithm* VtkFilterFactory::CreateSimpleFilter( QString type )
 {
     if (type.compare(QString("VtkImageDataToLinePolyDataFilter")) == 0)
+    {
         return VtkImageDataToLinePolyDataFilter::New();
+    }
     if (type.compare(QString("vtkDataSetSurfaceFilter")) == 0)
+    {
         return vtkDataSetSurfaceFilter::New();
+    }
 
     return nullptr;
 }

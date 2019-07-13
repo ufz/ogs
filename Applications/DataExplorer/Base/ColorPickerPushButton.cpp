@@ -29,7 +29,9 @@ void ColorPickerPushButton::mouseReleaseEvent(QMouseEvent* e)
     Q_UNUSED(e);
     QColor newColor = QColorDialog::getColor(_color, nullptr, "Choose a color");
     if (!newColor.isValid())
+    {
         return;
+    }
 
     setColor(newColor);
 
@@ -65,9 +67,13 @@ void ColorPickerPushButton::setColor( QColor color )
     QColor hsv = _color.toHsv();
     QString textColorStr;
     if (hsv.valueF() < 0.5f)
+    {
         textColorStr = "color: rgb(255, 255, 255);";
+    }
     else
+    {
         textColorStr = "color: rgb(0, 0, 0);";
+    }
 
     QString stylesheetStr = "background-color: ";
     stylesheetStr.append(colorToCss(_color));

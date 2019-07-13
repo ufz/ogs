@@ -157,7 +157,9 @@ void QGraphicsGrid::paint(QPainter* painter,
     Q_UNUSED (widget)
 
     if (!_bounds.isValid())
+    {
         return;
+    }
 
     /* draw outside rectangle */
     QBrush brush(Qt::NoBrush);

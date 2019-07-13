@@ -45,7 +45,9 @@ void SelectMeshDialog::setupDialog(const std::list<std::string> &msh_names)
 
     _msh_names = new QComboBox();
     for (const auto& msh_name : msh_names)
+    {
         _msh_names->addItem(QString::fromStdString(msh_name));
+    }
 
     setWindowTitle("Select Mesh...");
     _layout->addWidget( _txt_label );

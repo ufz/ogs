@@ -55,8 +55,10 @@ VtkVisPipelineItem::VtkVisPipelineItem(
 {
     auto* visParentItem = dynamic_cast<VtkVisPipelineItem*>(parentItem);
     if (parentItem->parentItem())
+    {
         _algorithm->SetInputConnection(
             visParentItem->algorithm()->GetOutputPort());
+    }
 }
 
 VtkVisPipelineItem::VtkVisPipelineItem(
@@ -82,7 +84,9 @@ VtkVisPipelineItem* VtkVisPipelineItem::child( int row ) const
 {
     TreeItem* treeItem = TreeItem::child(row);
     if (treeItem)
+    {
         return dynamic_cast<VtkVisPipelineItem*>(treeItem);
+    }
 
     return nullptr;
 }
@@ -90,7 +94,9 @@ VtkVisPipelineItem* VtkVisPipelineItem::child( int row ) const
 QVariant VtkVisPipelineItem::data( int column ) const
 {
     if (column == 1)
+    {
         return isVisible();
+    }
 
     return TreeItem::data(column);
 }

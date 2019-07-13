@@ -29,13 +29,17 @@ namespace
 void deletePolylines(std::unique_ptr<std::vector<GeoLib::Polyline*>> polylines)
 {
     for (GeoLib::Polyline* line : *polylines)
+    {
         delete line;
+    }
 }
 
 void deleteSurfaces(std::unique_ptr<std::vector<GeoLib::Surface*>> surfaces)
 {
     for (GeoLib::Surface* surface : *surfaces)
+    {
         delete surface;
+    }
 }
 void deleteGeometry(std::unique_ptr<std::vector<GeoLib::Point*>> points,
                     std::unique_ptr<std::vector<GeoLib::Polyline*>>
@@ -44,11 +48,13 @@ void deleteGeometry(std::unique_ptr<std::vector<GeoLib::Point*>> points,
                         surfaces)
 {
     for (GeoLib::Point* point : *points)
+    {
         delete point;
+    }
     deletePolylines(std::move(polylines));
     deleteSurfaces(std::move(surfaces));
 }
-}
+}  // namespace
 
 namespace GeoLib
 {
@@ -61,8 +67,10 @@ XMLInterface(), XMLQtInterface("OpenGeoSysGLI.xsd"), _geo_objs(geo_objs)
 
 int XmlGmlInterface::readFile(const QString &fileName)
 {
-    if(XMLQtInterface::readFile(fileName) == 0)
+    if (XMLQtInterface::readFile(fileName) == 0)
+    {
         return 0;
+    }
 
     QDomDocument doc("OGS-GLI-DOM");
     doc.setContent(_fileData);
@@ -90,6 +98,7 @@ int XmlGmlInterface::readFile(const QString &fileName)
         const QDomNode type_node(geoTypes.at(i));
         const QString nodeName = type_node.nodeName();
         if (nodeName.compare("name") == 0)
+        {
             if (type_node.toElement().text().isEmpty())
             {
                 ERR("XmlGmlInterface::readFile(): <name>-tag is empty.")
@@ -98,7 +107,10 @@ int XmlGmlInterface::readFile(const QString &fileName)
                 return 0;
             }
             else
+            {
                 gliName = type_node.toElement().text().toStdString();
+            }
+        }
         else if (nodeName.compare("points") == 0)
         {
             readPoints(type_node, points.get(), pnt_names.get());
@@ -158,12 +170,16 @@ int XmlGmlInterface::readFile(const QString &fileName)
     }
 
     if (!polylines->empty())
+    {
         _geo_objs.addPolylineVec(std::move(polylines), gliName,
                                  std::move(ply_names));
+    }
 
     if (!surfaces->empty())
+    {
         _geo_objs.addSurfaceVec(std::move(surfaces), gliName,
                                 std::move(sfc_names));
+    }
     return 1;
 }
 
@@ -182,8 +198,10 @@ void XmlGmlInterface::readPoints(const QDomNode& pointsRoot,
                                              point.attribute("z").toDouble(),
                                              point.attribute("id").toInt());
         if (point.hasAttribute("name"))
-            pnt_names->insert( std::pair<std::string, std::size_t>(
-                                        point.attribute("name").toStdString(), points->size()) );
+        {
+            pnt_names->insert(std::pair<std::string, std::size_t>(
+                point.attribute("name").toStdString(), points->size()));
+        }
 
         points->push_back(p);
         point = point.nextSiblingElement();
@@ -228,8 +246,10 @@ void XmlGmlInterface::readPolylines(
                 {
                     std::string polyline_name;
                     if (polyline.hasAttribute("name"))
+                    {
                         polyline_name =
                             polyline.attribute("name").toStdString();
+                    }
                     OGS_FATAL(
                         "Polyline `%s' contains the point id `%d' which is "
                         "not in the point list.",
@@ -262,8 +282,10 @@ void XmlGmlInterface::readSurfaces(
         surfaces->push_back(new GeoLib::Surface(points));
 
         if (surface.hasAttribute("name"))
-            sfc_names->insert( std::pair<std::string, std::size_t>( surface.attribute("name").toStdString(),
-                                                                    surfaces->size()-1) );
+        {
+            sfc_names->insert(std::pair<std::string, std::size_t>(
+                surface.attribute("name").toStdString(), surfaces->size() - 1));
+        }
 
         auto accessOrError =
             [this, &surface](auto pt_idx) {
@@ -272,8 +294,9 @@ void XmlGmlInterface::readSurfaces(
                 {
                     std::string surface_name;
                     if (surface.hasAttribute("name"))
-                        surface_name =
-                            surface.attribute("name").toStdString();
+                    {
+                        surface_name = surface.attribute("name").toStdString();
+                    }
                     OGS_FATAL(
                         "Surface `%s' contains the point id `%d', which is "
                         "not in the point list.",
@@ -352,8 +375,10 @@ bool XmlGmlInterface::write()
 
                 std::string const& point_name(pnt_vec->getItemNameByID(i));
                 if (!point_name.empty())
+                {
                     pointTag.setAttribute("name",
                                           QString::fromStdString(point_name));
+                }
 
                 pointsListTag.appendChild(pointTag);
             }
@@ -436,9 +461,10 @@ bool XmlGmlInterface::write()
 
                     std::string sfc_name("");
                     if (sfc_vec->getNameOfElementByID(i, sfc_name))
-                        surfaceTag.setAttribute("name",
-                                                QString::fromStdString(
-                                                        sfc_name));
+                    {
+                        surfaceTag.setAttribute(
+                            "name", QString::fromStdString(sfc_name));
+                    }
 
                     sfcListTag.appendChild(surfaceTag);
 

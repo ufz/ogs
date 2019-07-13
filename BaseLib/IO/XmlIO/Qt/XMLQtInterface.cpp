@@ -48,7 +48,9 @@ int XMLQtInterface::readFile(const QString &fileName)
     file.close();
 
     if (!checkHash())
+    {
         return 0;
+    }
 
     return 1;
 }
@@ -65,8 +67,10 @@ int XMLQtInterface::isValid() const
     if ( schema.isValid() )
     {
         QXmlSchemaValidator validator( schema );
-        if ( validator.validate( _fileData ) )
+        if (validator.validate(_fileData))
+        {
             return 1;
+        }
 
         INFO(
             "XMLQtInterface::isValid(): XML file %s is invalid (in reference "
@@ -78,8 +82,10 @@ int XMLQtInterface::isValid() const
         // The following validator (without constructor arguments) automatically
         // searches for the xsd given in the xml file.
         QXmlSchemaValidator validator;
-        if ( validator.validate( _fileData ) )
+        if (validator.validate(_fileData))
+        {
             return 1;
+        }
 
         INFO(
             "XMLQtInterface::isValid(): XML file %s is invalid (in reference "
@@ -118,13 +124,17 @@ bool XMLQtInterface::checkHash() const
     {
         QByteArray referenceHash = file.readAll();
         file.close();
-        if(referenceHash == fileHash)
+        if (referenceHash == fileHash)
+        {
             return true;
+        }
         INFO("Hashfile does not match data ... checking file ...");
     }
 
     if (!this->isValid())
+    {
         return false;
+    }
 
     QFile fileMD5(md5FileName);
     if(fileMD5.open(QIODevice::WriteOnly))

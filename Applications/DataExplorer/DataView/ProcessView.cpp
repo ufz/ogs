@@ -48,7 +48,9 @@ void ProcessView::selectionChanged(const QItemSelection& selected,
             CondItem const* const item = dynamic_cast<CondItem*>(
                 static_cast<ProcessModel*>(this->model())->getItem(idx));
             if (item != nullptr)
+            {
                 emit conditionSelected(item->getCondition());
+            }
         }
         else
         {
@@ -57,7 +59,9 @@ void ProcessView::selectionChanged(const QItemSelection& selected,
                     ->getItem(idx)
                     ->child(0));
             if (item != nullptr)
+            {
                 emit processVarSelected(item->getCondition());
+            }
         }
     }
     emit itemSelectionChanged(selected, deselected);

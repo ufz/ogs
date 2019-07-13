@@ -94,7 +94,9 @@ void LineEditDialog::accept()
         this->done(QDialog::Accepted);
     }
     else
+    {
         OGSError::box("No polylines selected", "Error");
+    }
 }
 
 void LineEditDialog::reject()

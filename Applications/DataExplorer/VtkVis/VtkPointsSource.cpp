@@ -46,7 +46,9 @@ void VtkPointsSource::PrintSelf( ostream& os, vtkIndent indent )
     this->Superclass::PrintSelf(os,indent);
 
     if (_points->empty())
+    {
         return;
+    }
 
     os << indent << "== VtkPointsSource ==" << "\n";
 
@@ -68,7 +70,9 @@ int VtkPointsSource::RequestData( vtkInformation* request,
     (void)inputVector;
 
     if (!_points)
+    {
         return 0;
+    }
     int numPoints = _points->size();
     if (numPoints == 0)
     {
@@ -90,8 +94,11 @@ int VtkPointsSource::RequestData( vtkInformation* request,
     pointIDs->SetNumberOfValues(numPoints);
     pointIDs->SetName("PointIDs");
 
-    if (outInfo->Get(vtkStreamingDemandDrivenPipeline::UPDATE_PIECE_NUMBER()) > 0)
+    if (outInfo->Get(vtkStreamingDemandDrivenPipeline::UPDATE_PIECE_NUMBER()) >
+        0)
+    {
         return 1;
+    }
 
     // Generate points and vertices
     unsigned i = 0;

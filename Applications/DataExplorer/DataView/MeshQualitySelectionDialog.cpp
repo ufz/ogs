@@ -49,17 +49,29 @@ void MeshQualitySelectionDialog::on_histogramPathButton_pressed()
 void MeshQualitySelectionDialog::accept()
 {
     if (this->choiceEdges->isChecked())
+    {
         _metric = MeshLib::MeshQualityType::EDGERATIO;
+    }
     else if (this->choiceArea->isChecked())
+    {
         _metric = MeshLib::MeshQualityType::ELEMENTSIZE;
+    }
     else if (this->choiceVolume->isChecked())
+    {
         _metric = MeshLib::MeshQualityType::SIZEDIFFERENCE;
+    }
     else if (this->choiceAngles->isChecked())
+    {
         _metric = MeshLib::MeshQualityType::EQUIANGLESKEW;
+    }
     else if (this->choiceRadius->isChecked())
+    {
         _metric = MeshLib::MeshQualityType::RADIUSEDGERATIO;
+    }
     else
+    {
         _metric = MeshLib::MeshQualityType::INVALID;
+    }
 
     if (this->histogramCheckBox->isChecked())
     {

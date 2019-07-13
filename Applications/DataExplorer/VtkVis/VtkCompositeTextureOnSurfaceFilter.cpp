@@ -59,7 +59,9 @@ void VtkCompositeTextureOnSurfaceFilter::init()
         surface->SetInputConnection(surfaceFilter->GetOutputPort());
     }
     else
+    {
         surface->SetInputConnection(_inputAlgorithm->GetOutputPort());
+    }
 
     QWidget* parent = nullptr;
     QSettings settings;

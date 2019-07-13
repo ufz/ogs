@@ -102,7 +102,9 @@ int VtkImageDataToLinePolyDataFilter::RequestData(vtkInformation*,
         // Skip translucent pixels
         float opacity = ((float*)inScalarPtr)[ptId * numScalarComponents + 1];
         if (opacity < 0.00000001f)
+        {
             continue;
+        }
 
         // Compute length of the new line (scalar * LengthScaleFactor)
         double const length =
@@ -111,7 +113,9 @@ int VtkImageDataToLinePolyDataFilter::RequestData(vtkInformation*,
 
         // Skip this line if length is zero
         if (length < 0.00000001f)
+        {
             continue;
+        }
 
         // Get the old point location
         double p[3];
@@ -119,8 +123,10 @@ int VtkImageDataToLinePolyDataFilter::RequestData(vtkInformation*,
 
         // Compute the new point location
         double newPt[3];
-        for(std::size_t i = 0; i < 3; ++i)
+        for (std::size_t i = 0; i < 3; ++i)
+        {
             newPt[i] = p[i] + dir[i] * length;
+        }
 
         // Copy the old point
         newPts->SetPoint(ptId * 2, p);

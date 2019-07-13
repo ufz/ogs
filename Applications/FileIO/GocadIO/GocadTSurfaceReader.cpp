@@ -62,7 +62,9 @@ MeshLib::Mesh* GocadTSurfaceReader::readMesh(std::ifstream& in,
                                              std::string& mesh_name)
 {
     if (!parseHeader(in, mesh_name))
+    {
         return nullptr;
+    }
 
     MeshLib::Properties mesh_prop;
     mesh_prop.createNewPropertyVector<int>(mat_id_name,
@@ -72,8 +74,10 @@ MeshLib::Mesh* GocadTSurfaceReader::readMesh(std::ifstream& in,
     {
         std::vector<std::string> str = BaseLib::splitString(line);
         if (line.empty() || isCommentLine(line))
+        {
             continue;
-        else if (str[0] == "GOCAD_ORIGINAL_COORDINATE_SYSTEM")
+        }
+        if (str[0] == "GOCAD_ORIGINAL_COORDINATE_SYSTEM")
         {
             Gocad::CoordinateSystem coordinate_system;
             if (!coordinate_system.parse(in))
@@ -135,11 +139,15 @@ bool GocadTSurfaceReader::TSurfaceFound(std::ifstream& in) const
     while (std::getline(in, line))
     {
         if (line.empty() || isCommentLine(line))
+        {
             continue;
-        else if (line.substr(0, 11) == "GOCAD TSurf")
+        }
+        if (line.substr(0, 11) == "GOCAD TSurf")
+        {
             return true;
         // No idea why this is allowed in a *.ts file.
         // It should be a whole different file type.
+        }
         else if (line.substr(0, 13) == "GOCAD Model3d")
         {
             if (!skipModel3d(in))
@@ -173,7 +181,9 @@ bool GocadTSurfaceReader::parseHeader(std::ifstream& in, std::string& mesh_name)
             BaseLib::trim(mesh_name, ' ');
         }
         else if (line.substr(0, 1) == "}")
+        {
             return true;
+        }
         // ignore all other header parameters
     }
     ERR("%s", eof_error.c_str());
@@ -186,7 +196,9 @@ bool GocadTSurfaceReader::parsePropertyClass(std::ifstream& in) const
     while (std::getline(in, line))
     {
         if (line.substr(0, 1) == "}")
+        {
             return true;
+        }
     }
     ERR("%s", eof_error.c_str());
     return false;
@@ -203,7 +215,9 @@ std::string propertyCheck(std::string const& strng)
     for (std::string key : property_keywords)
     {
         if (str[0] == key)
+        {
             return key;
+        }
     }
     return std::string("");
 }
@@ -266,9 +280,13 @@ bool GocadTSurfaceReader::parseSurface(
     MeshLib::Properties& mesh_prop)
 {
     if (!parseNodes(in, nodes, node_id_map, mesh_prop))
+    {
         return false;
+    }
     if (!parseElements(in, nodes, elems, node_id_map, mesh_prop))
+    {
         return false;
+    }
 
     std::string line("");
     while (std::getline(in, line))
@@ -279,7 +297,7 @@ bool GocadTSurfaceReader::parseSurface(
             parseSurface(in, nodes, elems, node_id_map, mesh_prop);
             return true;
         }
-        else if (str[0] == "BSTONE")
+        if (str[0] == "BSTONE")
         {
             // borderstone definition - currently ignored
         }
@@ -334,7 +352,9 @@ bool GocadTSurfaceReader::parseNodes(
         }
 
         if (line.empty() || isCommentLine(line))
+        {
             continue;
+        }
         if (!(line.substr(0, 4) == "VRTX" || line.substr(0, 5) == "PVRTX" ||
               line.substr(0, 4) == "ATOM"))
         {
@@ -355,7 +375,9 @@ bool GocadTSurfaceReader::parseNodes(
             for (std::string const& name : array_names)
             {
                 if (name == mat_id_name)
+                {
                     continue;
+                }
                 sstr >> value;
                 mesh_prop.getPropertyVector<double>(name)->push_back(value);
             }
@@ -387,14 +409,18 @@ bool GocadTSurfaceReader::parseElements(
         *mesh_prop.getPropertyVector<int>(mat_id_name);
     int current_mat_id(0);
     if (!mat_ids.empty())
+    {
         current_mat_id = (*std::max_element(mat_ids.begin(), mat_ids.end()))++;
+    }
     std::streampos pos = in.tellg();
     std::size_t id(0);
     std::string line("");
     while (std::getline(in, line))
     {
         if (line.empty() || isCommentLine(line))
+        {
             continue;
+        }
         if (line.substr(0, 4) == "TRGL")
         {
             std::stringstream sstr(line);
@@ -431,7 +457,9 @@ bool GocadTSurfaceReader::skipModel3d(std::ifstream& in) const
     while (std::getline(in, line))
     {
         if (line == "END")
+        {
             return true;
+        }
     }
     ERR("%s", eof_error.c_str());
     return false;
@@ -441,9 +469,13 @@ void GocadTSurfaceReader::clearData(std::vector<MeshLib::Node*>& nodes,
                                     std::vector<MeshLib::Element*>& elems)
 {
     for (MeshLib::Element* e : elems)
+    {
         delete e;
+    }
     for (MeshLib::Node* n : nodes)
+    {
         delete n;
+    }
 }
 
 }  // end namespace Gocad

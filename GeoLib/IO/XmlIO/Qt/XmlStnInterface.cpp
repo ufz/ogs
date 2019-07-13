@@ -40,8 +40,10 @@ XMLInterface(), XMLQtInterface("OpenGeoSysSTN.xsd"), _geo_objs(geo_objs)
 
 int XmlStnInterface::readFile(const QString &fileName)
 {
-    if(XMLQtInterface::readFile(fileName) == 0)
+    if (XMLQtInterface::readFile(fileName) == 0)
+    {
         return 0;
+    }
 
     QDomDocument doc("OGS-STN-DOM");
     doc.setContent(_fileData);
@@ -65,15 +67,24 @@ int XmlStnInterface::readFile(const QString &fileName)
             const QDomNode station_node(stationList.at(j));
             const QString station_type(station_node.nodeName());
             if (station_type.compare("name") == 0)
+            {
                 stnName = station_node.toElement().text().toStdString();
+            }
             else if (station_type.compare("stations") == 0)
+            {
                 readStations(station_node, stations.get(), fileName.toStdString());
+            }
             else if (station_type.compare("boreholes") == 0)
-                readStations(station_node, stations.get(), fileName.toStdString());
+            {
+                readStations(station_node, stations.get(),
+                             fileName.toStdString());
+            }
         }
 
         if (!stations->empty())
+        {
             _geo_objs.addStationVec(std::move(stations), stnName);
+        }
     }
 
     return 1;
@@ -102,18 +113,28 @@ void XmlStnInterface::readStations( const QDomNode &stationsRoot,
                 const QString feature_name (feature_node.nodeName());
                 const QString element_text (feature_node.toElement().text());
                 if (feature_name.compare("name") == 0)
+                {
                     stationName = element_text.toStdString();
+                }
                 if (feature_name.compare("sensordata") == 0)
+                {
                     sensor_data_file_name = element_text.toStdString();
                 /* add other station features here */
 
                 // check for general borehole features
+                }
                 else if (feature_name.compare("value") == 0)
+                {
                     stationValue = element_text.toDouble();
+                }
                 else if (feature_name.compare("bdepth") == 0)
+                {
                     boreholeDepth = element_text.toDouble();
+                }
                 else if (feature_name.compare("bdate") == 0)
-                    boreholeDate  = element_text.toStdString();
+                {
+                    boreholeDate = element_text.toStdString();
+                }
                 /* add other borehole features here */
             }
 
@@ -127,8 +148,10 @@ void XmlStnInterface::readStations( const QDomNode &stationsRoot,
                                                          stationName);
                 s->setStationValue(stationValue);
                 if (!sensor_data_file_name.empty())
-                    s->addSensorDataFromCSV(BaseLib::copyPathToFileName(sensor_data_file_name,
-                                                                        station_file_name));
+                {
+                    s->addSensorDataFromCSV(BaseLib::copyPathToFileName(
+                        sensor_data_file_name, station_file_name));
+                }
                 stations->push_back(s);
             }
             else if (station.nodeName().compare("borehole") == 0)
@@ -142,9 +165,13 @@ void XmlStnInterface::readStations( const QDomNode &stationsRoot,
                         boreholeDate);
                 s->setStationValue(stationValue);
                 /* add stratigraphy to the borehole */
-                for(int j = 0; j < stationFeatures.count(); j++)
+                for (int j = 0; j < stationFeatures.count(); j++)
+                {
                     if (stationFeatures.at(j).nodeName().compare("strat") == 0)
+                    {
                         this->readStratigraphy(stationFeatures.at(j), s);
+                    }
+                }
 
                 stations->push_back(s);
             }
@@ -169,9 +196,14 @@ void XmlStnInterface::readStratigraphy( const QDomNode &stratRoot,
             std::string horizonName("[NN]");
 
             QDomNodeList horizonFeatures = horizon.childNodes();
-            for(int i = 0; i < horizonFeatures.count(); i++)
+            for (int i = 0; i < horizonFeatures.count(); i++)
+            {
                 if (horizonFeatures.at(i).nodeName().compare("name") == 0)
-                    horizonName = horizonFeatures.at(i).toElement().text().toStdString();
+                {
+                    horizonName =
+                        horizonFeatures.at(i).toElement().text().toStdString();
+                }
+            }
             /* add other horizon features here */
 
             double depth (horizon.attribute("z").toDouble());
@@ -231,12 +263,14 @@ bool XmlStnInterface::write()
     double sValue = static_cast<GeoLib::Station*>((*stations)[0])->getStationValue();
     std::size_t nStations(stations->size());
     for (std::size_t i = 1; i < nStations; i++)
+    {
         if ((static_cast<GeoLib::Station*>((*stations)[i])->getStationValue() - sValue) <
             std::numeric_limits<double>::epsilon())
         {
             useStationValue = true;
             break;
         }
+    }
 
     for (std::size_t i = 0; i < nStations; i++)
     {
@@ -267,8 +301,11 @@ bool XmlStnInterface::write()
         }
 
         if (isBorehole)
-            writeBoreholeData(doc, stationTag,
-                              static_cast<GeoLib::StationBorehole*>((*stations)[i]));
+        {
+            writeBoreholeData(
+                doc, stationTag,
+                static_cast<GeoLib::StationBorehole*>((*stations)[i]));
+        }
     }
 
     std::string xml = doc.toString().toStdString();
@@ -362,13 +399,19 @@ int XmlStnInterface::rapidReadFile(const std::string &fileName)
         {
             std::string b(list_item->name());
             if (b == "stations")
+            {
                 this->rapidReadStations(list_item, stations.get(), fileName);
+            }
             if (b == "boreholes")
+            {
                 this->rapidReadStations(list_item, stations.get(), fileName);
+            }
         }
 
         if (!stations->empty())
+        {
             _geo_objs.addStationVec(std::move(stations), stnName);
+        }
     }
 
     doc.clear();
@@ -389,19 +432,27 @@ void XmlStnInterface::rapidReadStations(const rapidxml::xml_node<>* station_root
         {
             double zVal(0.0);
             if (station_node->first_attribute("z"))
+            {
                 zVal = strtod(station_node->first_attribute("z")->value(),
                               nullptr);
+            }
 
             std::string station_name(""), sensor_data_file_name(""), bdate_str("0000-00-00");
             double station_value(0.0), borehole_depth(0.0);
             if (station_node->first_node("name"))
+            {
                 station_name = station_node->first_node("name")->value();
+            }
             if (station_node->first_node("sensordata"))
+            {
                 sensor_data_file_name =
-                        station_node->first_node("sensordata")->value();
+                    station_node->first_node("sensordata")->value();
+            }
             if (station_node->first_node("value"))
+            {
                 station_value =
                     strtod(station_node->first_node("value")->value(), nullptr);
+            }
             /* add other station features here */
 
             if (std::string(station_node->name()) == "station")
@@ -415,18 +466,23 @@ void XmlStnInterface::rapidReadStations(const rapidxml::xml_node<>* station_root
                     station_name);
                 s->setStationValue(station_value);
                 if (!sensor_data_file_name.empty())
+                {
                     s->addSensorDataFromCSV(BaseLib::copyPathToFileName(
-                                                    sensor_data_file_name,
-                                                    file_name));
+                        sensor_data_file_name, file_name));
+                }
                 stations->push_back(s);
             }
             else if (std::string(station_node->name()) == "borehole")
             {
                 if (station_node->first_node("bdepth"))
+                {
                     borehole_depth = strtod(
                         station_node->first_node("bdepth")->value(), nullptr);
+                }
                 if (station_node->first_node("bdate"))
+                {
                     bdate_str = station_node->first_node("bdate")->value();
+                }
                 /* add other borehole features here */
 
                 GeoLib::StationBorehole* s =
@@ -442,7 +498,10 @@ void XmlStnInterface::rapidReadStations(const rapidxml::xml_node<>* station_root
                 s->setStationValue(station_value);
 
                 if (station_node->first_node("strat"))
-                    this->rapidReadStratigraphy(station_node->first_node("strat"), s);
+                {
+                    this->rapidReadStratigraphy(
+                        station_node->first_node("strat"), s);
+                }
 
                 stations->push_back(s);
             }
@@ -465,7 +524,9 @@ void XmlStnInterface::rapidReadStratigraphy( const rapidxml::xml_node<>* strat_r
         {
             std::string horizon_name("[NN]");
             if (horizon_node->first_node("name"))
+            {
                 horizon_name = horizon_node->first_node("name")->value();
+            }
             /* add other horizon features here */
 
             double depth(

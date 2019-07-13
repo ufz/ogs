@@ -41,11 +41,15 @@ void FemConditionModel::setFemCondition(DataHolderLib::FemCondition* cond)
     QList<QVariant> type_data;
     std::string type_str;
     if (cond->getConditionClassStr() == "Boundary Condition")
+    {
         type_str = DataHolderLib::BoundaryCondition::convertTypeToString(
             static_cast<DataHolderLib::BoundaryCondition*>(cond)->getType());
+    }
     else if (cond->getConditionClassStr() == "Source Term")
+    {
         type_str = DataHolderLib::SourceTerm::convertTypeToString(
             static_cast<DataHolderLib::SourceTerm*>(cond)->getType());
+    }
     type_data << "Type:" << QString::fromStdString(type_str);
     TreeItem* type_item = new TreeItem(type_data, cond_item);
     cond_item->appendChild(type_item);

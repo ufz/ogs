@@ -242,13 +242,17 @@ void getGridGeometry(MeshElementGrid const& grid,
 
                 auto* ply_bottom(new GeoLib::Polyline(points));
                 for (std::size_t l(0); l < 4; ++l)
+                {
                     ply_bottom->addPoint(l);
+                }
                 ply_bottom->addPoint(0); // close to bottom surface
                 plys->push_back(ply_bottom);
 
                 auto* ply_top(new GeoLib::Polyline(points));
-                for (std::size_t l(4); l<8; ++l)
+                for (std::size_t l(4); l < 8; ++l)
+                {
                     ply_top->addPoint(l);
+                }
                 ply_top->addPoint(4); // close to top surface
                 plys->push_back(ply_top);
 
@@ -278,7 +282,9 @@ void getGridGeometry(MeshElementGrid const& grid,
         }
     }
     if (geometries.mergeGeometries(cell_names, geometry_name) == 2)
+    {
         geometry_name = cell_names.front();
+    }
 }
 #endif // NDEBUG
 

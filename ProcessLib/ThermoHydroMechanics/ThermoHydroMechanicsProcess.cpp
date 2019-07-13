@@ -337,9 +337,11 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::preTimestepConcreteProcess(
     _process_data.t = t;
 
     if (hasMechanicalProcess(process_id))
+    {
         GlobalExecutor::executeMemberOnDereferenced(
             &LocalAssemblerInterface::preTimestep, _local_assemblers,
             *_local_to_global_index_map, x, t, dt);
+    }
 }
 
 template <int DisplacementDim>

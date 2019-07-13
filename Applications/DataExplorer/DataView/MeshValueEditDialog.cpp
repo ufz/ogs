@@ -31,7 +31,9 @@ MeshValueEditDialog::~MeshValueEditDialog(void) = default;
 void MeshValueEditDialog::accept()
 {
     if (this->condenseButton->isChecked())
+    {
         MeshLib::ElementValueModification::condense(*_mesh);
+    }
     else
     {
         if (this->edit_old_value->text().isEmpty())

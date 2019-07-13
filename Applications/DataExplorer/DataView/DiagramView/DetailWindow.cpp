@@ -75,7 +75,9 @@ DetailWindow::DetailWindow(QString filename, QWidget* parent) : QWidget(parent)
     DiagramList::readList(filename, lists);
 
     for (auto& list : lists)
+    {
         stationView->addGraph(list);
+    }
 
     resizeWindow();
 }
@@ -94,9 +96,11 @@ DetailWindow::DetailWindow(std::vector<std::size_t> data, QWidget* parent) : QWi
     std::size_t nEntries = data.size();
     std::vector< std::pair<float, float> > list_data(nEntries);
 
-    for (std::size_t i=0; i<nEntries; i++)
+    for (std::size_t i = 0; i < nEntries; i++)
+    {
         list_data.emplace_back(static_cast<float>(i),
                                static_cast<float>(data[i]));
+    }
 
     auto* list = new DiagramList();
     list->setList(list_data);

@@ -45,7 +45,9 @@ void SaveMeshDialog::on_selectDirButton_clicked()
         file_type);
 
     if (!file_name.isEmpty())
+    {
         this->fileNameEdit->setText(file_name);
+    }
 }
 
 void SaveMeshDialog::on_dataModeBox_currentIndexChanged(int index)

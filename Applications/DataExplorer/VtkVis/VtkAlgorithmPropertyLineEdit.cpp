@@ -55,5 +55,7 @@ void VtkAlgorithmPropertyLineEdit::setNewValue()
 {
     QVariant value(this->text());
     if (value.convert(_type))
+    {
         _algProps->SetUserProperty(_name, value);
+    }
 }
