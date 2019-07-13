@@ -7,13 +7,18 @@
  *
  */
 
+#include <boost/optional/optional.hpp>
+
 #include "BaseLib/ConfigTree.h"
+#include "CreateKineticReactant.h"
 #include "KineticReactant.h"
+#include "MeshLib/Mesh.h"
 
 namespace ChemistryLib
 {
 std::vector<KineticReactant> createKineticReactants(
-    boost::optional<BaseLib::ConfigTree> const& config)
+    boost::optional<BaseLib::ConfigTree> const& config,
+    MeshLib::Mesh const& mesh)
 {
     if (!config)
     {
@@ -43,9 +48,16 @@ std::vector<KineticReactant> createKineticReactants(
             reactant_config.getConfigParameter<std::vector<double>>(
                 "parameters", {});
 
+        auto amount = MeshLib::getOrCreateMeshProperty<double>(
+            const_cast<MeshLib::Mesh&>(mesh),
+            name,
+            MeshLib::MeshItemType::Node,
+            1);
+        std::fill(std::begin(*amount), std::end(*amount), initial_amount);
+
         kinetic_reactants.emplace_back(std::move(name),
                                        std::move(chemical_formula),
-                                       initial_amount,
+                                       amount,
                                        std::move(parameters));
     }
 

@@ -15,6 +15,7 @@
 #include <vector>
 
 #include "ChemistryLib/Output.h"
+#include "MeshLib/PropertyVector.h"
 
 namespace ChemistryLib
 {
@@ -22,7 +23,7 @@ struct KineticReactant
 {
     KineticReactant(std::string&& name_,
                     std::string&& chemical_formula_,
-                    double amount_,
+                    MeshLib::PropertyVector<double>* amount_,
                     std::vector<double>&& parameters_)
         : name(std::move(name_)),
           chemical_formula(std::move(chemical_formula_)),
@@ -36,7 +37,7 @@ struct KineticReactant
 
     std::string const name;
     std::string const chemical_formula;
-    double amount;
+    MeshLib::PropertyVector<double>* amount;
     std::vector<double> const parameters;
     static const ItemType item_type = ItemType::KineticReactant;
 };
