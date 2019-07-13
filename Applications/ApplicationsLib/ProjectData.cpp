@@ -1043,8 +1043,8 @@ void ProjectData::parseChemicalSystem(
                 component_transport_process->getProcessIDToComponentNameMap();
 
             _chemical_system = ChemistryLib::createPhreeqcIO(
-                _mesh_vec[0]->getNumberOfBaseNodes(),
-                process_id_to_component_name_map, *config, output_directory);
+                *_mesh_vec[0], process_id_to_component_name_map, *config,
+                output_directory);
         }
         else
         {

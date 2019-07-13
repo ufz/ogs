@@ -11,6 +11,7 @@
 #include "BaseLib/Error.h"
 #include "CreateOutput.h"
 #include "CreatePhreeqcIO.h"
+#include "MeshLib/Mesh.h"
 #include "PhreeqcIO.h"
 #include "PhreeqcIOData/AqueousSolution.h"
 #include "PhreeqcIOData/CreateAqueousSolution.h"
@@ -24,13 +25,13 @@
 namespace ChemistryLib
 {
 std::unique_ptr<PhreeqcIO> createPhreeqcIO(
-    std::size_t const num_nodes,
+    MeshLib::Mesh const& mesh,
     std::vector<std::pair<int, std::string>> const&
         process_id_to_component_name_map,
     BaseLib::ConfigTree const& config,
     std::string const& output_directory)
 {
-    auto const& num_chemical_systems = num_nodes;
+    auto const num_chemical_systems = mesh.getNumberOfBaseNodes();
 
     // database
     //! \ogs_file_param{prj__chemical_system__database}
@@ -88,18 +89,14 @@ std::unique_ptr<PhreeqcIO> createPhreeqcIO(
         num_chemical_systems, aqueous_solution_per_chem_sys);
 
     // equilibrium phases
-    auto const equilibrium_phases_per_chem_sys = createEquilibriumPhases(
+    auto equilibrium_phases = createEquilibriumPhases(
         //! \ogs_file_param{prj__chemical_system__equilibrium_phases}
-        config.getConfigSubtreeOptional("equilibrium_phases"));
-    std::vector<std::vector<EquilibriumPhase>> equilibrium_phases(
-        num_chemical_systems, equilibrium_phases_per_chem_sys);
+        config.getConfigSubtreeOptional("equilibrium_phases"), mesh);
 
     // kinetic reactants
-    auto const kinetic_reactants_per_chem_sys = createKineticReactants(
+    auto kinetic_reactants = createKineticReactants(
         //! \ogs_file_param{prj__chemical_system__kinetic_reactants}
-        config.getConfigSubtreeOptional("kinetic_reactants"));
-    std::vector<std::vector<KineticReactant>> kinetic_reactants(
-        num_chemical_systems, kinetic_reactants_per_chem_sys);
+        config.getConfigSubtreeOptional("kinetic_reactants"), mesh);
 
     // rates
     auto reaction_rates = createReactionRates(
