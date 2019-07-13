@@ -14,6 +14,7 @@
 #include <vector>
 
 #include "ChemistryLib/Output.h"
+#include "MeshLib/PropertyVector.h"
 
 namespace BaseLib
 {
@@ -25,7 +26,7 @@ namespace ChemistryLib
 struct EquilibriumPhase
 {
     EquilibriumPhase(std::string name_,
-                     double amount_,
+                     MeshLib::PropertyVector<double>* amount_,
                      double saturation_index_)
         : name(std::move(name_)),
           amount(amount_),
@@ -37,7 +38,7 @@ struct EquilibriumPhase
                                     EquilibriumPhase const& equilibrium_phase);
 
     std::string const name;
-    double amount;
+    MeshLib::PropertyVector<double>* amount;
     double const saturation_index;
     static const ItemType item_type = ItemType::EquilibriumPhase;
 };

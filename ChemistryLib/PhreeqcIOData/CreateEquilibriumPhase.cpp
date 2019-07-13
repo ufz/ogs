@@ -7,13 +7,18 @@
  *
  */
 
+#include <boost/optional/optional.hpp>
+
 #include "BaseLib/ConfigTree.h"
+#include "CreateEquilibriumPhase.h"
 #include "EquilibriumPhase.h"
+#include "MeshLib/Mesh.h"
 
 namespace ChemistryLib
 {
 std::vector<EquilibriumPhase> createEquilibriumPhases(
-    boost::optional<BaseLib::ConfigTree> const& config)
+    boost::optional<BaseLib::ConfigTree> const& config,
+    MeshLib::Mesh const& mesh)
 {
     if (!config)
     {
@@ -40,8 +45,15 @@ std::vector<EquilibriumPhase> createEquilibriumPhases(
             equilibrium_phase_config.getConfigParameter<double>(
                 "saturation_index");
 
+        auto amount = MeshLib::getOrCreateMeshProperty<double>(
+            const_cast<MeshLib::Mesh&>(mesh),
+            name,
+            MeshLib::MeshItemType::Node,
+            1);
+        std::fill(amount->begin(), amount->end(), initial_amount);
+
         equilibrium_phases.emplace_back(
-            std::move(name), initial_amount, saturation_index);
+            std::move(name), amount, saturation_index);
     }
 
     return equilibrium_phases;
