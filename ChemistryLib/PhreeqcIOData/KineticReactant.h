@@ -32,8 +32,7 @@ struct KineticReactant
     {
     }
 
-    friend std::ostream& operator<<(std::ostream& os,
-                                    KineticReactant const& kinetic_reactant);
+    void print(std::ostream& os, std::size_t const chemical_system_id) const;
 
     std::string const name;
     std::string const chemical_formula;

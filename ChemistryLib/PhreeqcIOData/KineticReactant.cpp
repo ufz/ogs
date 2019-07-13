@@ -13,28 +13,26 @@
 
 namespace ChemistryLib
 {
-std::ostream& operator<<(std::ostream& os,
-                         KineticReactant const& kinetic_reactant)
+void KineticReactant::print(std::ostream& os,
+                            std::size_t const chemical_system_id) const
 {
-    os << kinetic_reactant.name << "\n";
+    os << name << "\n";
 
-    if (!kinetic_reactant.chemical_formula.empty())
+    if (!chemical_formula.empty())
     {
-        os << "-formula " << kinetic_reactant.chemical_formula << "\n";
+        os << "-formula " << chemical_formula << "\n";
     }
 
-    os << "-m  " << kinetic_reactant.amount << "\n";
+    os << "-m  " << (*amount)[chemical_system_id] << "\n";
 
-    if (!kinetic_reactant.parameters.empty())
+    if (!parameters.empty())
     {
         os << "-parms";
-        for (auto const& parameter : kinetic_reactant.parameters)
+        for (auto const& parameter : parameters)
         {
             os << " " << parameter;
         }
         os << "\n";
     }
-
-    return os;
 }
 }  // namespace ChemistryLib

@@ -220,12 +220,14 @@ std::ostream& operator<<(std::ostream& os, PhreeqcIO const& phreeqc_io)
             os << equilibrium_phases << "\n";
         }
 
-        auto const& kinetic_reactants =
-            phreeqc_io._kinetic_reactants[chemical_system_id];
+        auto const& kinetic_reactants = phreeqc_io._kinetic_reactants;
         if (!kinetic_reactants.empty())
         {
             os << "KINETICS " << chemical_system_id + 1 << "\n";
-            os << kinetic_reactants;
+            for (auto const& kinetic_reactant : kinetic_reactants)
+            {
+                kinetic_reactant.print(os, chemical_system_id);
+            }
             os << "-steps " << phreeqc_io._dt << "\n" << "\n";
         }
 
