@@ -146,26 +146,26 @@ private:
      * Reduces a hexahedron element by removing collapsed nodes and constructing one or more new elements from the remaining nodes.
      * @return The number of newly created elements
      */
-    unsigned reduceHex(MeshLib::Element const*const hex,
-        unsigned n_unique_nodes,
-        const std::vector<MeshLib::Node*> &nodes,
-        std::vector<MeshLib::Element*> &new_elements,
-        unsigned min_elem_dim) const;
+    unsigned reduceHex(MeshLib::Element const* const org_elem,
+                       unsigned n_unique_nodes,
+                       const std::vector<MeshLib::Node*>& nodes,
+                       std::vector<MeshLib::Element*>& new_elements,
+                       unsigned min_elem_dim) const;
     /// Reduces a pyramid element by removing collapsed nodes and constructing a new elements from the remaining nodes.
-    void reducePyramid(MeshLib::Element const*const pyramid,
-        unsigned n_unique_nodes,
-        const std::vector<MeshLib::Node*> &nodes,
-        std::vector<MeshLib::Element*> &new_elements,
-        unsigned min_elem_dim) const;
+    void reducePyramid(MeshLib::Element const* const org_elem,
+                       unsigned n_unique_nodes,
+                       const std::vector<MeshLib::Node*>& nodes,
+                       std::vector<MeshLib::Element*>& new_elements,
+                       unsigned min_elem_dim) const;
     /**
      * Reduces a prism element by removing collapsed nodes and constructing one or two new elements from the remaining nodes.
      * @return The number of newly created elements
      */
-    unsigned reducePrism(MeshLib::Element const*const prism,
-        unsigned n_unique_nodes,
-        std::vector<MeshLib::Node*> const& nodes,
-        std::vector<MeshLib::Element*> & new_elements,
-        unsigned min_elem_dim) const;
+    unsigned reducePrism(MeshLib::Element const* const org_elem,
+                         unsigned n_unique_nodes,
+                         std::vector<MeshLib::Node*> const& nodes,
+                         std::vector<MeshLib::Element*>& new_elements,
+                         unsigned min_elem_dim) const;
 
     // In an element with 5 unique nodes, return the node that will be the top of the resulting pyramid
     unsigned findPyramidTopNode(MeshLib::Element const& element,

@@ -86,11 +86,11 @@ public:
      * @param pnt_names vector of the names corresponding to the points
      * @param eps relative tolerance value for testing of point uniqueness
      */
-    void addPointVec(
-        std::unique_ptr<std::vector<Point*>> points,
-        std::string& name,
-        std::unique_ptr<std::map<std::string, std::size_t>> pnt_names = nullptr,
-        double eps = sqrt(std::numeric_limits<double>::epsilon()));
+    void addPointVec(std::unique_ptr<std::vector<Point*>> points,
+                     std::string& name,
+                     std::unique_ptr<std::map<std::string, std::size_t>>
+                         pnt_id_name_map = nullptr,
+                     double eps = sqrt(std::numeric_limits<double>::epsilon()));
 
     /**
      * Returns the point vector with the given name.
@@ -181,7 +181,7 @@ public:
     bool removePolylineVec(const std::string &name);
 
     /** Adds a vector of surfaces with the given name to GEOObjects. */
-    void addSurfaceVec(std::unique_ptr<std::vector<Surface*>> surfaces,
+    void addSurfaceVec(std::unique_ptr<std::vector<Surface*>> sfc,
                        const std::string& name,
                        std::unique_ptr<std::map<std::string, std::size_t>>
                            sfc_names = nullptr);

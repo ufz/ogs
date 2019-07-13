@@ -148,7 +148,7 @@ bool GocadTSurfaceReader::TSurfaceFound(std::ifstream& in) const
         // No idea why this is allowed in a *.ts file.
         // It should be a whole different file type.
         }
-        else if (line.substr(0, 13) == "GOCAD Model3d")
+        if (line.substr(0, 13) == "GOCAD Model3d")
         {
             if (!skipModel3d(in))
             {

@@ -143,7 +143,7 @@ void resetDataStructures(std::size_t const& n_scalars,
     scalars.reserve(n_scalars);
     for (std::size_t i = 0; i < n_scalars; ++i)
     {
-        scalars.push_back(std::vector<double>(0));
+        scalars.emplace_back(0);
     }
     val_count = 0;
 }

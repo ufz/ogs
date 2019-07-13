@@ -121,7 +121,7 @@ public:
     std::size_t searchByBoundingBox(GeoLib::AABB const& aabb);
 
     /// Marks all elements connecting to any of the given nodes
-    std::size_t searchByNodeIDs(const std::vector<std::size_t> &node_ids);
+    std::size_t searchByNodeIDs(const std::vector<std::size_t>& nodes);
 
 private:
     /// Updates the vector of marked elements with values from vec.

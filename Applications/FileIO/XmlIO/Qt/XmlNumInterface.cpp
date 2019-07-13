@@ -26,10 +26,7 @@
 
 namespace FileIO
 {
-XmlNumInterface::XmlNumInterface() :
-XMLInterface(), XMLQtInterface("OpenGeoSysNUM.xsd")
-{
-}
+XmlNumInterface::XmlNumInterface() : XMLQtInterface("OpenGeoSysNUM.xsd") {}
 
 int XmlNumInterface::readFile(QString const& fileName)
 {
@@ -147,4 +144,4 @@ bool XmlNumInterface::write()
     return false;
 }
 
-} //namespace
+}  // namespace FileIO

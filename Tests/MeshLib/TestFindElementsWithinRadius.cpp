@@ -208,8 +208,9 @@ TEST_F(MeshLibFindElementWithinRadius, RandomPositiveRadius2d)
         compare_to_brute_force_search, 100,
         ac::make_arbitrary(ac::generator<std::size_t>(),
                            ac::map(&ac::absoluteValue, ac::generator<double>()))
-            .discard_if(
-                [](std::size_t, double const r) { return (r < 1e-16); }),
+            .discard_if([](std::size_t /*unused*/, double const r) {
+                return (r < 1e-16);
+            }),
         gtest_reporter);
 }
 
@@ -226,7 +227,8 @@ TEST_F(MeshLibFindElementWithinRadius, RandomPositiveRadius3d)
         compare_to_brute_force_search, 100,
         ac::make_arbitrary(ac::generator<std::size_t>(),
                            ac::map(&ac::absoluteValue, ac::generator<double>()))
-            .discard_if(
-                [](std::size_t, double const r) { return (r < 1e-16); }),
+            .discard_if([](std::size_t /*unused*/, double const r) {
+                return (r < 1e-16);
+            }),
         gtest_reporter);
 }

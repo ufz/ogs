@@ -338,8 +338,7 @@ public:
      *
      * \pre \c param must not have been read before from this ConfigTree.
      */
-    ConfigTree
-    getConfigParameter(std::string const& param) const;
+    ConfigTree getConfigParameter(std::string const& root) const;
 
     /*! Get parameter \c param from the configuration tree if present.
      *
@@ -347,8 +346,8 @@ public:
      *
      * \pre \c param must not have been read before from this ConfigTree.
      */
-    boost::optional<ConfigTree>
-    getConfigParameterOptional(std::string const& param) const;
+    boost::optional<ConfigTree> getConfigParameterOptional(
+        std::string const& root) const;
 
     /*! Fetches all parameters with name \c param from the current level of the tree.
      *

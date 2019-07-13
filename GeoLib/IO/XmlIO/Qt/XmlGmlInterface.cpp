@@ -60,8 +60,8 @@ namespace GeoLib
 {
 namespace IO
 {
-XmlGmlInterface::XmlGmlInterface(GeoLib::GEOObjects& geo_objs) :
-XMLInterface(), XMLQtInterface("OpenGeoSysGLI.xsd"), _geo_objs(geo_objs)
+XmlGmlInterface::XmlGmlInterface(GeoLib::GEOObjects& geo_objs)
+    : XMLQtInterface("OpenGeoSysGLI.xsd"), _geo_objs(geo_objs)
 {
 }
 
@@ -106,10 +106,8 @@ int XmlGmlInterface::readFile(const QString &fileName)
                                std::move(surfaces));
                 return 0;
             }
-            else
-            {
+
                 gliName = type_node.toElement().text().toStdString();
-            }
         }
         else if (nodeName.compare("points") == 0)
         {
@@ -495,5 +493,5 @@ bool XmlGmlInterface::write()
     return true;
 }
 
-}
-}
+}  // namespace IO
+}  // namespace GeoLib

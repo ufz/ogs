@@ -39,14 +39,14 @@ public:
      * added
      */
     void readFEFLOWFile(const std::string& filename,
-                        GeoLib::GEOObjects& geo_objects);
+                        GeoLib::GEOObjects& geoObjects);
 
     /// read points and polylines in Supermesh section
     ///
     /// A super mesh is a collection of polygons, lines and points in the 2D
     /// plane and will be used for mesh generation and to define the modeling
     /// region
-    static void readSuperMesh(std::ifstream& feflow_file, unsigned dimension,
+    static void readSuperMesh(std::ifstream& in, unsigned dimension,
                               std::vector<GeoLib::Point*>*& points,
                               std::vector<GeoLib::Polyline*>*& lines);
 

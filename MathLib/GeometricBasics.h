@@ -45,10 +45,10 @@ double orientation3d(MathLib::Point3d const& p,
  * Calculates the volume of a tetrahedron.
  * The formula is V=1/6*|a(b x c)| with a=x1->x2, b=x1->x3 and c=x1->x4.
  */
-double calcTetrahedronVolume(MathLib::Point3d const& x1,
-                             MathLib::Point3d const& x2,
-                             MathLib::Point3d const& x3,
-                             MathLib::Point3d const& x4);
+double calcTetrahedronVolume(MathLib::Point3d const& a,
+                             MathLib::Point3d const& b,
+                             MathLib::Point3d const& c,
+                             MathLib::Point3d const& d);
 
 /**
  * Calculates the area of the triangle defined by its edge nodes a, b and c.
@@ -124,7 +124,7 @@ bool isPointInTriangle(
  * triangle
  */
 bool gaussPointInTriangle(
-    MathLib::Point3d const& p, MathLib::Point3d const& a,
+    MathLib::Point3d const& q, MathLib::Point3d const& a,
     MathLib::Point3d const& b, MathLib::Point3d const& c,
     double eps_pnt_out_of_plane = std::numeric_limits<float>::epsilon(),
     double eps_pnt_out_of_tri = std::numeric_limits<float>::epsilon());

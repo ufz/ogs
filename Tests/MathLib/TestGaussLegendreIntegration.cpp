@@ -193,7 +193,7 @@ struct FConst final : FBase
 {
     FConst() : FBase(1) {}
 
-    double operator()(std::array<double, 3> const&) const override
+    double operator()(std::array<double, 3> const& /*unused*/) const override
     {
         return coeffs[0];
     }

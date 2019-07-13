@@ -34,6 +34,8 @@ MeshLib::Mesh* removeElements(const MeshLib::Mesh& mesh,
  * @param new_mesh_name        a new mesh name
  * @return a new mesh object
  */
-MeshLib::Mesh* removeNodes(const MeshLib::Mesh &mesh, const std::vector<std::size_t> &removed_node_ids, const std::string &new_mesh_name);
+MeshLib::Mesh* removeNodes(const MeshLib::Mesh& mesh,
+                           const std::vector<std::size_t>& del_nodes_idx,
+                           const std::string& new_mesh_name);
 
 } // end namespace MeshLib

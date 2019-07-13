@@ -33,9 +33,9 @@ TEST(TestVtkRaster, TestPNGReader)
     EXPECT_TRUE(img->GetOutput() != nullptr);
     double val[3];
     img->GetOutput()->GetSpacing(val);
-    for (std::size_t i = 0; i < 3; ++i)
+    for (double i : val)
     {
-        EXPECT_NEAR(60, val[i], std::numeric_limits<double>::epsilon());
+        EXPECT_NEAR(60, i, std::numeric_limits<double>::epsilon());
     }
     img->GetOutput()->GetOrigin(val);
     EXPECT_NEAR(5000, val[0], std::numeric_limits<double>::epsilon());
@@ -66,9 +66,9 @@ TEST(TestVtkRaster, TestASCReader)
 
     double val[3];
     img->GetOutput()->GetSpacing(val);
-    for (std::size_t i = 0; i < 3; ++i)
+    for (double i : val)
     {
-        EXPECT_NEAR(raster->getHeader().cell_size, val[i],
+        EXPECT_NEAR(raster->getHeader().cell_size, i,
                     std::numeric_limits<double>::epsilon());
     }
 

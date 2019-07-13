@@ -66,7 +66,7 @@ public:
 
 private:
     /// Adds another layer to a subsurface mesh
-    void addLayerToMesh(const MeshLib::Mesh& mesh_layer,
+    void addLayerToMesh(const MeshLib::Mesh& dem_mesh,
                         unsigned layer_id,
                         GeoLib::Raster const& raster) override;
 };

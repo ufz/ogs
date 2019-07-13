@@ -65,7 +65,7 @@ void dump_py(std::ostream& fh, std::string const& var,
 template <typename Derived>
 void dump_py(std::ostream& fh, std::string const& var,
              Eigen::ArrayBase<Derived> const& val,
-             std::integral_constant<int, 1>)
+             std::integral_constant<int, 1> /*unused*/)
 {
     dump_py_vec(fh, var, val);
 }
@@ -74,7 +74,7 @@ void dump_py(std::ostream& fh, std::string const& var,
 template <typename Derived, int ColsAtCompileTime>
 void dump_py(std::ostream& fh, std::string const& var,
              Eigen::ArrayBase<Derived> const& val,
-             std::integral_constant<int, ColsAtCompileTime>)
+             std::integral_constant<int, ColsAtCompileTime> /*unused*/)
 {
     fh << var << " = np.array([\n";
     for (std::ptrdiff_t r = 0; r < val.rows(); ++r)

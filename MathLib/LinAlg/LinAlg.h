@@ -256,7 +256,7 @@ void matMult(EigenMatrix const& A, EigenVector const& x, EigenVector& y);
 void matMultAdd(EigenMatrix const& A, EigenVector const& v1,
                 EigenVector const& v2, EigenVector& v3);
 
-void finalizeAssembly(EigenMatrix& A);
+void finalizeAssembly(EigenMatrix& x);
 void finalizeAssembly(EigenVector& A);
 
 } // namespace LinAlg

@@ -25,7 +25,7 @@ namespace MaterialLib
 namespace PorousMedium
 {
 PorousMediaProperties createPorousMediaProperties(
-    MeshLib::Mesh& mesh, BaseLib::ConfigTree const& porous_media_config,
+    MeshLib::Mesh& mesh, BaseLib::ConfigTree const& configs,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
         parameters);
 }

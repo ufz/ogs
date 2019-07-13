@@ -174,7 +174,7 @@ public:
         Eigen::Ref<Eigen::VectorXd>
             sigma,
         Eigen::Ref<Eigen::MatrixXd>
-            Kep,
+            C,
         typename FractureModelBase<DisplacementDim>::MaterialStateVariables&
             material_state_variables) override;
 

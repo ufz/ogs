@@ -31,11 +31,7 @@ bool containsCellVecs(MeshLib::Mesh const& mesh)
 {
     MeshLib::Properties const& props (mesh.getProperties());
     std::vector<std::string> const& vec_names(props.getPropertyVectorNames(MeshLib::MeshItemType::Cell));
-    if (vec_names.empty())
-    {
-        return false;
-    }
-    return true;
+    return !vec_names.empty();
 }
 
 template <class T>

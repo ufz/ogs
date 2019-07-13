@@ -75,7 +75,7 @@ public:
      * @return a vector of boundary element objects
      */
     std::vector<MeshLib::Element*> const& getBoundaryElementsAlongPolyline(
-        GeoLib::Polyline const& ply);
+        GeoLib::Polyline const& polyline);
 
     /**
      * generate boundary elements on the given surface.
@@ -83,7 +83,7 @@ public:
      * @return a vector of boundary element objects
      */
     std::vector<MeshLib::Element*> const& getBoundaryElementsOnSurface(
-        GeoLib::Surface const& sfc);
+        GeoLib::Surface const& surface);
 
 private:
     MeshLib::Mesh const& _mesh;

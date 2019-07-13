@@ -33,14 +33,15 @@ void VtkImageDataToPointCloudFilter::PrintSelf(ostream& os, vtkIndent indent)
     this->Superclass::PrintSelf(os, indent);
 }
 
-int VtkImageDataToPointCloudFilter::FillInputPortInformation(int, vtkInformation* info)
+int VtkImageDataToPointCloudFilter::FillInputPortInformation(
+    int /*port*/, vtkInformation* info)
 {
     info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkImageData");
     return 1;
 }
 
 int VtkImageDataToPointCloudFilter::RequestData(
-    vtkInformation*,
+    vtkInformation* /*request*/,
     vtkInformationVector** inputVector,
     vtkInformationVector* outputVector)
 {

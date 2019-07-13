@@ -145,14 +145,14 @@ private:
     */
     void calculateResidual(const int material_id, double const pl,
                            double const X, double const T, double Sw,
-                           double X_m, ResidualVector& res);
+                           double rho_h2_wet, ResidualVector& res);
     /**
     * Calculates the Jacobian.
     */
     void calculateJacobian(const int material_id, double const t,
                            ParameterLib::SpatialPosition const& x,
                            double const pl, double const X, double const T,
-                           JacobianMatrix& Jac, double Sw, double X_m);
+                           JacobianMatrix& Jac, double Sw, double rho_h2_wet);
     /** Complementary condition 1
     * for calculating molar fraction of light component in the liquid phase
     */

@@ -59,7 +59,7 @@ protected slots:
     void showVisDockWidget( bool show );
 
     /// Function calls for opening files.
-    void open(int i = 0);
+    void open(int file_type = 0);
     /// Function calls for saving files.
     void save();
     /// Function calls for generating GMSH files from the GUI
@@ -104,7 +104,7 @@ protected slots:
     void showMeshQualitySelectionDialog(MeshLib::VtkMappedMeshSource* mshSource);
     void showVisalizationPrefsDialog();
     void updateDataViews();
-    void writeGeometryToFile(QString listName, QString fileName);
+    void writeGeometryToFile(QString gliName, QString fileName);
     void writeStationListToFile(QString listName, QString fileName);
 
     void on_actionExportVTK_triggered(bool checked = false);

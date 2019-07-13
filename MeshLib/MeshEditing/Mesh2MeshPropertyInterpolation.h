@@ -36,7 +36,7 @@ public:
      * @param property_name is the name of a PropertyVector in the \c
      * source_mesh
      */
-    Mesh2MeshPropertyInterpolation(Mesh const& source_mesh,
+    Mesh2MeshPropertyInterpolation(Mesh const& src_mesh,
                                    std::string const& property_name);
 
     /**
@@ -62,7 +62,8 @@ private:
      * @param interpolated_node_properties the vector must have the same number of entries as
      * the source mesh has number of nodes, the content of the particular entries will be overwritten
      */
-    void interpolateElementPropertiesToNodeProperties(std::vector<double> &interpolated_node_properties) const;
+    void interpolateElementPropertiesToNodeProperties(
+        std::vector<double>& interpolated_properties) const;
 
     Mesh const& _src_mesh;
     std::string const& _property_name;

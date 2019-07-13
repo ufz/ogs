@@ -33,7 +33,7 @@ public:
         double eps = std::numeric_limits<double>::epsilon()) const;
 
 private:
-    void sortTrianglesInGridCells(GeoLib::Surface const*const surface);
+    void sortTrianglesInGridCells(GeoLib::Surface const* const sfc);
     bool sortTriangleInGridCells(GeoLib::Triangle const*const triangle);
     boost::optional<std::array<std::size_t,3>>
         getGridCellCoordinates(MathLib::Point3d const& p) const;

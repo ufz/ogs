@@ -78,9 +78,10 @@ double BackwardDifferentiationFormula::getRelativeChangeFromPreviousTimestep(
         x, *_xs_old[_offset], norm_type);
 }
 
-void BackwardDifferentiationFormula::pushState(const double,
-                                               GlobalVector const& x,
-                                               InternalMatrixStorage const&)
+void BackwardDifferentiationFormula::pushState(
+    const double /*t*/,
+    GlobalVector const& x,
+    InternalMatrixStorage const& /*strg*/)
 {
     namespace LinAlg = MathLib::LinAlg;
     // TODO use boost circular buffer?

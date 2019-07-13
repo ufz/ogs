@@ -22,7 +22,7 @@ using HCNonAdvectiveFreeComponentFlowBoundaryCondition =
 
 std::unique_ptr<HCNonAdvectiveFreeComponentFlowBoundaryCondition>
 createHCNonAdvectiveFreeComponentFlowBoundaryCondition(
-    BaseLib::ConfigTree const& config, MeshLib::Mesh const& boundary_mesh,
+    BaseLib::ConfigTree const& config, MeshLib::Mesh const& bc_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table, int const variable_id,
     int const component_id, unsigned const integration_order,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,

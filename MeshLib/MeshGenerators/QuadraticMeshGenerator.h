@@ -15,6 +15,6 @@ namespace MeshLib
 {
 
 /// create a quadratic order mesh from the linear order mesh
-std::unique_ptr<Mesh> createQuadraticOrderMesh(Mesh const& linear_order_mesh);
+std::unique_ptr<Mesh> createQuadraticOrderMesh(Mesh const& linear_mesh);
 
 } // namespace MeshLib

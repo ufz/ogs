@@ -19,7 +19,8 @@ namespace Adsorption
 class Reaction
 {
 public:
-    static std::unique_ptr<Reaction> newInstance(BaseLib::ConfigTree const& rsys);
+    static std::unique_ptr<Reaction> newInstance(
+        BaseLib::ConfigTree const& conf);
 
     virtual double getEnthalpy(const double p_Ads, const double T_Ads, const double M_Ads) const = 0;
     virtual double getReactionRate(const double p_Ads, const double T_Ads,

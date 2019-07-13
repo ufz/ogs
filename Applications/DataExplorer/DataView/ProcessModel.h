@@ -83,7 +83,8 @@ private:
     ProcessVarItem* getProcessVarItem(QString const& process_var_name) const;
 
     /// Removes FEMConditions from the the model
-    void removeCondition(ProcessVarItem* parent, QString const& param_name);
+    void removeCondition(ProcessVarItem* process_var,
+                         QString const& param_name);
 
     DataHolderLib::Project& _project;
 

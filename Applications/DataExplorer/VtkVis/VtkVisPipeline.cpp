@@ -63,9 +63,8 @@
 #include "VtkVisPipelineItem.h"
 #include "VtkVisPointSetItem.h"
 
-
-VtkVisPipeline::VtkVisPipeline( vtkRenderer* renderer, QObject* parent /*= 0*/ )
-    : TreeModel(parent), _renderer(renderer), _highlighted_geo_index(QModelIndex()), _highlighted_mesh_component(QModelIndex())
+VtkVisPipeline::VtkVisPipeline(vtkRenderer* renderer, QObject* parent /*= 0*/)
+    : TreeModel(parent), _renderer(renderer)
 {
     QList<QVariant> rootData;
     rootData << "Object name" << "Visible";

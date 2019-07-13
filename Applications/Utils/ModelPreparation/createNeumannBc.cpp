@@ -161,7 +161,7 @@ int main(int argc, char* argv[])
         auto const id(node->getID());
         auto const subsurface_node_id((*node_id_pv)[id]);
         auto const val(integrated_values[id]);
-        direct_values.push_back(std::make_pair(subsurface_node_id, val));
+        direct_values.emplace_back(subsurface_node_id, val);
     }
 
     auto* const pv =

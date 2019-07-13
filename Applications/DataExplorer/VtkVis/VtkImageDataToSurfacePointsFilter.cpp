@@ -34,14 +34,15 @@ void VtkImageDataToSurfacePointsFilter::PrintSelf(ostream& os, vtkIndent indent)
     this->Superclass::PrintSelf(os, indent);
 }
 
-int VtkImageDataToSurfacePointsFilter::FillInputPortInformation(int, vtkInformation* info)
+int VtkImageDataToSurfacePointsFilter::FillInputPortInformation(
+    int /*port*/, vtkInformation* info)
 {
     info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkImageData");
     return 1;
 }
 
 int VtkImageDataToSurfacePointsFilter::RequestData(
-    vtkInformation*,
+    vtkInformation* /*request*/,
     vtkInformationVector** inputVector,
     vtkInformationVector* outputVector)
 {

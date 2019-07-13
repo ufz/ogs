@@ -68,7 +68,7 @@ int main(int argc, char* argv[])
     {
         INFO("Writing mesh \"%s\"", mesh->getName().c_str());
         int data_mode = (write_binary) ? 2 : 0;
-        bool compressed = (write_binary) ? true : false;
+        bool compressed = (write_binary);
         MeshLib::IO::VtuInterface vtu(mesh.get(), data_mode, compressed);
         vtu.writeToFile(dir + delim + mesh->getName() + ".vtu");
     }

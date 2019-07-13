@@ -47,9 +47,9 @@ static bool parseNewOrder(std::string const& str_order, std::array<int, 3> &new_
         return false;
     }
 
-    for (std::size_t i = 0; i < new_axes_indices.size(); i++)
+    for (int& new_axes_indice : new_axes_indices)
     {
-        new_axes_indices[i] = -1;
+        new_axes_indice = -1;
     }
 
     for (int i=0; i<3; i++)
@@ -75,14 +75,14 @@ static bool parseNewOrder(std::string const& str_order, std::array<int, 3> &new_
     }
 
     bool isAxisSet[3] = {false};
-    for (std::size_t i=0; i<new_axes_indices.size(); i++)
+    for (int new_axes_indice : new_axes_indices)
     {
-        if (isAxisSet[new_axes_indices[i]])
+        if (isAxisSet[new_axes_indice])
         {
             ERR("Invalid argument for the new order. The argument contains some character used more than once.");
             return false;
         }
-        isAxisSet[new_axes_indices[i]] = true;
+        isAxisSet[new_axes_indice] = true;
     }
 
     return true;

@@ -42,7 +42,8 @@ public:
         Q_UNUSED(value);
     }
 
-    void SetArray(const std::string &array_name, const std::vector<double> &selection);
+    void SetArray(const std::string& array_name,
+                  const std::vector<double>& new_array);
 
 protected:
     VtkAppendArrayFilter();

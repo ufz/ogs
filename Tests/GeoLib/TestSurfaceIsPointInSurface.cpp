@@ -31,7 +31,7 @@
 #include "MeshLib/convertMeshToGeo.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 
-inline double constant(double , double )
+inline double constant(double /*unused*/, double /*unused*/)
 {
     return 0.0;
 }

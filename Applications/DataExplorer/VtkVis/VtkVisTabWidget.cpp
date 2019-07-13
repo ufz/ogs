@@ -359,17 +359,16 @@ void VtkVisTabWidget::buildScalarArrayComboBox(VtkVisPipelineItem* item)
     {
         int idx(0);
         for (it = dataSetAttributesList.begin();
-             it != dataSetAttributesList.end(); ++it)
+             it != dataSetAttributesList.end();
+             ++it)
         {
             if (active_array_name.compare((*it).right((*it).length()-2))==0)
             {
                 this->activeScalarComboBox->setCurrentIndex(idx);
                 break;
             }
-            else
-            {
-                idx++;
-            }
+
+            idx++;
         }
     }
 }

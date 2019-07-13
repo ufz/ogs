@@ -39,9 +39,9 @@ void VtkAppendArrayFilter::PrintSelf( ostream& os, vtkIndent indent )
     os << indent << "== VtkAppendArrayFilter ==" << endl;
 }
 
-int VtkAppendArrayFilter::RequestData( vtkInformation*,
-                                     vtkInformationVector** inputVector,
-                                     vtkInformationVector* outputVector )
+int VtkAppendArrayFilter::RequestData(vtkInformation* /*request*/,
+                                      vtkInformationVector** inputVector,
+                                      vtkInformationVector* outputVector)
 {
     if (this->_array.empty())
     {

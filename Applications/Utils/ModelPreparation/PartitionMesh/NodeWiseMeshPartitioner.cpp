@@ -205,10 +205,8 @@ findElementsInPartition(
     std::vector<MeshLib::Element const*> regular_elements;
     std::vector<MeshLib::Element const*> ghost_elements;
 
-    for (std::size_t elem_id = 0; elem_id < elements.size(); elem_id++)
+    for (auto elem : elements)
     {
-        const auto* elem = elements[elem_id];
-
         auto const regular_nodes = numberOfRegularNodes(
             *elem, part_id, partition_ids, node_id_mapping);
 

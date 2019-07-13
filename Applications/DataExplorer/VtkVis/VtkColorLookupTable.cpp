@@ -64,14 +64,14 @@ void VtkColorLookupTable::Build()
         std::pair<std::size_t, unsigned char*> lastValue(0, startcolor);
         std::size_t nextIndex(0);
 
-        for (auto it = _dict.begin(); it != _dict.end(); ++it)
+        for (auto& it : _dict)
         {
-            double val = (it->first < range[0])
+            double val = (it.first < range[0])
                              ? range[0]
-                             : ((it->first > range[1]) ? range[1] : it->first);
+                             : ((it.first > range[1]) ? range[1] : it.first);
             nextIndex = static_cast<std::size_t>(std::floor(val - range[0]));
 
-            this->SetTableValueRGBA(nextIndex, it->second);
+            this->SetTableValueRGBA(nextIndex, it.second);
 
             if (nextIndex - lastValue.first > 0)
             {
@@ -87,7 +87,7 @@ void VtkColorLookupTable::Build()
                         for (std::size_t j = 0; j < 4; j++)
                         {
                             int_rgba[j] = linInterpolation(
-                                (lastValue.second)[j], (it->second)[j], pos);
+                                (lastValue.second)[j], (it.second)[j], pos);
                         }
                     }
                     else if (_type == DataHolderLib::LUTType::EXPONENTIAL)
@@ -96,7 +96,7 @@ void VtkColorLookupTable::Build()
                         {
                             int_rgba[j] =
                                 expInterpolation((lastValue.second)[j],
-                                                 (it->second)[j], 0.2, pos);
+                                                 (it.second)[j], 0.2, pos);
                         }
                     }
                     else
@@ -112,7 +112,7 @@ void VtkColorLookupTable::Build()
             }
 
             lastValue.first = nextIndex;
-            lastValue.second = it->second;
+            lastValue.second = it.second;
         }
     }
     else

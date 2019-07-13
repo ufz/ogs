@@ -95,8 +95,7 @@
 
 using namespace FileIO;
 
-MainWindow::MainWindow(QWidget* parent /* = 0*/)
-    : QMainWindow(parent), _project()
+MainWindow::MainWindow(QWidget* parent /* = 0*/) : QMainWindow(parent)
 {
     setupUi(this);
 

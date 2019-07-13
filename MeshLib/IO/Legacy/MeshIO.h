@@ -42,7 +42,7 @@ public:
     ~MeshIO() override = default;
 
     /// Read mesh from file.
-    MeshLib::Mesh* loadMeshFromFile(const std::string& fileName);
+    MeshLib::Mesh* loadMeshFromFile(const std::string& file_name);
 
     /// Set mesh for writing.
     void setMesh(const MeshLib::Mesh*  mesh);
@@ -56,7 +56,8 @@ private:
                        MeshLib::PropertyVector<int> const* const material_ids,
                        std::ostream& out) const;
     std::size_t readMaterialID(std::istream & in) const;
-    MeshLib::Element* readElement(std::istream& line, const std::vector<MeshLib::Node*> &nodes) const;
+    MeshLib::Element* readElement(
+        std::istream& in, const std::vector<MeshLib::Node*>& nodes) const;
     std::string ElemType2StringOutput(const MeshLib::MeshElemType t) const;
 
     const MeshLib::Mesh* _mesh{nullptr};

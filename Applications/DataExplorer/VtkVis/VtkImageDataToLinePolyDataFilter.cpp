@@ -40,15 +40,17 @@ void VtkImageDataToLinePolyDataFilter::PrintSelf(ostream& os, vtkIndent indent)
     os << indent << "LengthScaleFactor: " << this->LengthScaleFactor << "\n";
 }
 
-int VtkImageDataToLinePolyDataFilter::FillInputPortInformation(int, vtkInformation* info)
+int VtkImageDataToLinePolyDataFilter::FillInputPortInformation(
+    int /*port*/, vtkInformation* info)
 {
     info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkImageData");
     return 1;
 }
 
-int VtkImageDataToLinePolyDataFilter::RequestData(vtkInformation*,
-                                                  vtkInformationVector** inputVector,
-                                                  vtkInformationVector* outputVector)
+int VtkImageDataToLinePolyDataFilter::RequestData(
+    vtkInformation* /*request*/,
+    vtkInformationVector** inputVector,
+    vtkInformationVector* outputVector)
 {
     vtkDebugMacro(<< "Executing VtkImageDataToPolyDataFilter");
 

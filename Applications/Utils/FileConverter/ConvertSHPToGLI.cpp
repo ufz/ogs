@@ -56,10 +56,13 @@ void convertPoints (DBFHandle dbf_handle,
 
         name.clear();
         if (!name_component_ids.empty()) {
-            for (std::size_t j(0); j < name_component_ids.size(); j++)
+            for (unsigned long name_component_id : name_component_ids)
             {
-                if (name_component_ids[j] != std::numeric_limits<std::size_t>::max()) {
-                    name += DBFReadStringAttribute(dbf_handle, k, name_component_ids[j]);
+                if (name_component_id !=
+                    std::numeric_limits<std::size_t>::max())
+                {
+                    name += DBFReadStringAttribute(dbf_handle, k,
+                                                   name_component_id);
                     name += " ";
                 }
             }

@@ -24,10 +24,7 @@
 #include <QTextStream>
 #include <limits>
 
-DiagramList::DiagramList()
-    : _xLabel(""), _yLabel(""), _xUnit(""), _yUnit(""), _startDate()
-{
-}
+DiagramList::DiagramList() : _xLabel(""), _yLabel(""), _xUnit(""), _yUnit("") {}
 
 DiagramList::~DiagramList() = default;
 

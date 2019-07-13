@@ -24,7 +24,7 @@ namespace FileIO
 /// Gmsh. Finally, the resulting mesh is converted into a GeoLib::Surface which
 /// is inserted into the \c GeoLib::GEOObjects instance \c geometries using the
 /// name \c geometry_name.
-bool createSurface(GeoLib::Polyline const& polyline,
+bool createSurface(GeoLib::Polyline const& ply,
                    GeoLib::GEOObjects& geometries,
                    std::string const& geometry_name,
                    std::string const& gmsh_binary);

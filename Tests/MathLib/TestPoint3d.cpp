@@ -68,10 +68,8 @@ TEST_F(MathLibPoint3d, ComparisonOperatorLessEqualLargePerturbation)
                            ac::map(&ac::absoluteValue, ac::generator<double>()),
                            coordGenerator)
             .discard_if(
-                [&eps](MathLib::Point3d const&, double const v, unsigned const)
-                {
-                    return !(v > eps);
-                }),
+                [&eps](MathLib::Point3d const& /*unused*/, double const v,
+                       unsigned const /*unused*/) { return !(v > eps); }),
         gtest_reporter);
 }
 
@@ -133,10 +131,8 @@ TEST_F(MathLibPoint3d, ComparisonOperatorEqualLargePerturbation)
         ac::make_arbitrary(pointGenerator, ac::generator<double>(),
                            coordGenerator)
             .discard_if(
-                [&eps](MathLib::Point3d const&, double const v, unsigned const)
-                {
-                    return !(v > eps);
-                }),
+                [&eps](MathLib::Point3d const& /*unused*/, double const v,
+                       unsigned const /*unused*/) { return !(v > eps); }),
         gtest_reporter);
 }
 
@@ -196,11 +192,8 @@ TEST_F(MathLibPoint3d, ComparisonOperatorLessLargePerturbation)
         ac::make_arbitrary(pointGenerator,
                            ac::map(&ac::absoluteValue, ac::generator<double>()),
                            coordGenerator)
-            .discard_if(
-                [](MathLib::Point3d const&, double const eps, unsigned const)
-                {
-                    return eps == 0;
-                }),
+            .discard_if([](MathLib::Point3d const& /*unused*/, double const eps,
+                           unsigned const /*unused*/) { return eps == 0; }),
         gtest_reporter);
 }
 
@@ -221,10 +214,7 @@ TEST_F(MathLibPoint3d, ComparisonOperatorLessSmallPerturbation)
         ac::make_arbitrary(pointGenerator,
                            ac::map(&ac::absoluteValue, ac::generator<double>()),
                            coordGenerator)
-            .discard_if(
-                [](MathLib::Point3d const&, double const eps, unsigned const)
-                {
-                    return eps == 0;
-                }),
+            .discard_if([](MathLib::Point3d const& /*unused*/, double const eps,
+                           unsigned const /*unused*/) { return eps == 0; }),
         gtest_reporter);
 }

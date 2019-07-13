@@ -30,7 +30,7 @@ namespace MeshLib
 /// (an edge or a face) but not the nodes falls inside the search radius.
 ///
 /// \note For radius 0 only the given element's id is returned.
-std::vector<std::size_t> findElementsWithinRadius(Element const& e,
+std::vector<std::size_t> findElementsWithinRadius(Element const& start_element,
                                                   double const radius_squared);
 
 }  // namespace MeshLib

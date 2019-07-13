@@ -49,7 +49,7 @@ public:
      * @param pnt the station point
      * @return true if the station is inside the polygon
      */
-    bool insertStation(GeoLib::Point const* pnt);
+    bool insertStation(GeoLib::Point const* station);
     /**
      * If at least one (end) point (of a line segment) of the polyline is inside the polygon
      * the polyline is inserted to the internal vector of polylines.
@@ -89,7 +89,7 @@ private:
     void getStationsInsideSubPolygons(std::vector<GeoLib::Point const*>& stations);
     void checkIntersectionsSegmentExistingPolylines(
         GeoLib::PolylineWithSegmentMarker* ply,
-        GeoLib::Polyline::SegmentIterator const& segment_iterator);
+        GeoLib::Polyline::SegmentIterator const& seg_it);
 
     GeoLib::GEOObjects & _geo_objs;
     std::string const& _geo_name;

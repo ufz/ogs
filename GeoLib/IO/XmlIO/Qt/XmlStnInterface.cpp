@@ -33,8 +33,8 @@ namespace GeoLib
 {
 namespace IO
 {
-XmlStnInterface::XmlStnInterface(GeoLib::GEOObjects& geo_objs) :
-XMLInterface(), XMLQtInterface("OpenGeoSysSTN.xsd"), _geo_objs(geo_objs)
+XmlStnInterface::XmlStnInterface(GeoLib::GEOObjects& geo_objs)
+    : XMLQtInterface("OpenGeoSysSTN.xsd"), _geo_objs(geo_objs)
 {
 }
 

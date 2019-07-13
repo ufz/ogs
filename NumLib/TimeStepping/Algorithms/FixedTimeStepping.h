@@ -40,7 +40,7 @@ public:
      * @param t_end         finish time
      * @param dt            uniform time step size
      */
-    FixedTimeStepping(double t_initial, double t_end, double dt);
+    FixedTimeStepping(double t0, double tn, double dt);
 
     /**
      * Constructor with user-specified time step sizes
@@ -55,7 +55,7 @@ public:
      * @param t_end         finish time
      * @param vec_all_dt    a vector of all time steps
      */
-    FixedTimeStepping(double t_initial, double t_end,
+    FixedTimeStepping(double t0, double tn,
                       const std::vector<double>& vec_all_dt);
 
     bool next(double solution_error, int number_iterations) override;

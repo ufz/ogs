@@ -16,7 +16,7 @@
 const double abs_tol = 1e-8;
 const double rel_tol = 1e-8;
 
-bool f(const double,
+bool f(const double /*unused*/,
        MathLib::ODE::MappedConstVector<1> const& y,
        MathLib::ODE::MappedVector<1>& ydot)
 {
@@ -48,7 +48,7 @@ struct ExtraData
     double value = 12.5;
 };
 
-bool f_extra(const double,
+bool f_extra(const double /*unused*/,
              MathLib::ODE::MappedConstVector<1> const& y,
              MathLib::ODE::MappedVector<1>& ydot,
              ExtraData& data)

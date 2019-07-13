@@ -38,8 +38,7 @@
 namespace FileIO
 {
 XmlPrjInterface::XmlPrjInterface(DataHolderLib::Project& project)
-    : XMLInterface(),
-      XMLQtInterface("OpenGeoSysProject.xsd"), _filename(""), _project(project)
+    : XMLQtInterface("OpenGeoSysProject.xsd"), _filename(""), _project(project)
 {
 }
 
