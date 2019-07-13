@@ -34,8 +34,7 @@ struct EquilibriumPhase
     {
     }
 
-    friend std::ostream& operator<<(std::ostream& os,
-                                    EquilibriumPhase const& equilibrium_phase);
+    void print(std::ostream& os, std::size_t const chemical_system_id) const;
 
     std::string const name;
     MeshLib::PropertyVector<double>* amount;

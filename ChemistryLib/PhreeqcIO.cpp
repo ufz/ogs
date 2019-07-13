@@ -212,12 +212,14 @@ std::ostream& operator<<(std::ostream& os, PhreeqcIO const& phreeqc_io)
         os << "SOLUTION " << chemical_system_id + 1 << "\n";
         os << aqueous_solution << "\n";
 
-        auto const& equilibrium_phases =
-            phreeqc_io._equilibrium_phases[chemical_system_id];
+        auto const& equilibrium_phases = phreeqc_io._equilibrium_phases;
         if (!equilibrium_phases.empty())
         {
             os << "EQUILIBRIUM_PHASES " << chemical_system_id + 1 << "\n";
-            os << equilibrium_phases << "\n";
+            for (auto const& equilibrium_phase : equilibrium_phases)
+            {
+                equilibrium_phase.print(os, chemical_system_id);
+            }
         }
 
         auto const& kinetic_reactants = phreeqc_io._kinetic_reactants;
