@@ -345,10 +345,8 @@ std::istream& operator>>(std::istream& in, PhreeqcIO& phreeqc_io)
         auto& aqueous_solution =
             phreeqc_io._aqueous_solutions[chemical_system_id];
         auto& components = aqueous_solution.components;
-        auto& equilibrium_phases =
-            phreeqc_io._equilibrium_phases[chemical_system_id];
-        auto& kinetic_reactants =
-            phreeqc_io._kinetic_reactants[chemical_system_id];
+        auto& equilibrium_phases = phreeqc_io._equilibrium_phases;
+        auto& kinetic_reactants = phreeqc_io._kinetic_reactants;
         for (int item_id = 0; item_id < static_cast<int>(accepted_items.size());
              ++item_id)
         {
@@ -390,7 +388,8 @@ std::istream& operator>>(std::istream& in, PhreeqcIO& phreeqc_io)
                         compare_by_name,
                         "Could not find equilibrium phase '" + item_name +
                             "'.");
-                    equilibrium_phase.amount = accepted_items[item_id];
+                    (*equilibrium_phase.amount)[chemical_system_id] =
+                        accepted_items[item_id];
                     break;
                 }
                 case ItemType::KineticReactant:
@@ -400,7 +399,8 @@ std::istream& operator>>(std::istream& in, PhreeqcIO& phreeqc_io)
                         kinetic_reactants.begin(), kinetic_reactants.end(),
                         compare_by_name,
                         "Could not find kinetic reactant '" + item_name + "'.");
-                    kinetic_reactant.amount = accepted_items[item_id];
+                    (*kinetic_reactant.amount)[chemical_system_id] =
+                        accepted_items[item_id];
                     break;
                 }
             }
