@@ -98,13 +98,13 @@ template <class T_MATRIX>
 void compute3DRotationMatrixToX(MathLib::Vector3  const& v, T_MATRIX & rot_mat);
 
 /**
- * Method computes the rotation matrix that rotates the given vector parallel to the \f$z\f$ axis.
- * @param plane_normal the (3d) vector that is rotated parallel to the \f$z\f$ axis
+ * Method computes the rotation matrix that rotates the given vector parallel to
+ * the \f$z\f$ axis.
+ * @param n the (3d) vector that is rotated parallel to the \f$z\f$ axis
  * @param rot_mat 3x3 rotation matrix
  */
 template <class T_MATRIX>
-void computeRotationMatrixToXY(MathLib::Vector3 const& plane_normal,
-                               T_MATRIX & rot_mat);
+void computeRotationMatrixToXY(MathLib::Vector3 const& n, T_MATRIX& rot_mat);
 
 /**
  * Method computes the rotation matrix that rotates the given vector parallel to the \f$y\f$ axis.
