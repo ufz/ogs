@@ -29,7 +29,7 @@
 namespace FileIO
 {
 void FEFLOWGeoInterface::readFEFLOWFile(const std::string& filename,
-                                        GeoLib::GEOObjects& geoObjects)
+                                        GeoLib::GEOObjects& geo_objects)
 {
     std::ifstream in(filename.c_str());
     if (!in)
@@ -94,12 +94,12 @@ void FEFLOWGeoInterface::readFEFLOWFile(const std::string& filename,
         BaseLib::extractBaseNameWithoutExtension(filename));
     if (points)
     {
-        geoObjects.addPointVec(
+        geo_objects.addPointVec(
             std::unique_ptr<std::vector<GeoLib::Point*>>(points), project_name);
     }
     if (lines)
     {
-        geoObjects.addPolylineVec(
+        geo_objects.addPolylineVec(
             std::unique_ptr<std::vector<GeoLib::Polyline*>>(lines),
             project_name);
     }

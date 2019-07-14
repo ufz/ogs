@@ -39,7 +39,7 @@ public:
      * added
      */
     void readFEFLOWFile(const std::string& filename,
-                        GeoLib::GEOObjects& geoObjects);
+                        GeoLib::GEOObjects& geo_objects);
 
     /// read points and polylines in Supermesh section
     ///
