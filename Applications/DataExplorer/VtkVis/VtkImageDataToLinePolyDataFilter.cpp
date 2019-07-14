@@ -102,7 +102,8 @@ int VtkImageDataToLinePolyDataFilter::RequestData(
     for (vtkIdType ptId = 0; ptId < numPts; ++ptId)
     {
         // Skip translucent pixels
-        float opacity = ((float*)inScalarPtr)[ptId * numScalarComponents + 1];
+        float opacity =
+            (static_cast<float*>(inScalarPtr))[ptId * numScalarComponents + 1];
         if (opacity < 0.00000001f)
         {
             continue;
@@ -110,8 +111,8 @@ int VtkImageDataToLinePolyDataFilter::RequestData(
 
         // Compute length of the new line (scalar * LengthScaleFactor)
         double const length =
-            ((float*)inScalarPtr)[ptId * numScalarComponents] * scalingFactor *
-            this->LengthScaleFactor;
+            (static_cast<float*>(inScalarPtr))[ptId * numScalarComponents] *
+            scalingFactor * this->LengthScaleFactor;
 
         // Skip this line if length is zero
         if (length < 0.00000001f)

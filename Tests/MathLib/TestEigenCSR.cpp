@@ -98,7 +98,8 @@ TEST(MathLibEigen, Eigen2CSR)
     int* col = mat.innerIndexPtr();
     double* data = mat.valuePtr();
 
-    for (int r=0; r<(int) nrows; ++r) {
+    for (int r = 0; r < nrows; ++r)
+    {
         EXPECT_EQ(ia[r], ptr[r]);
     }
 

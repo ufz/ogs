@@ -74,7 +74,8 @@ void VtkVisTabWidget::setActiveItem( VtkVisPipelineItem* item )
             diffuseColorPickerButton->setColor(vtkProps->GetDiffuseColor());
             visibleEdgesCheckBox->setChecked(vtkProps->GetEdgeVisibility());
             edgeColorPickerButton->setColor(vtkProps->GetEdgeColor());
-            opacitySlider->setValue((int)(vtkProps->GetOpacity() * 100.0));
+            opacitySlider->setValue(
+                static_cast<int>(vtkProps->GetOpacity() * 100.0));
 
             auto* transform =
                 static_cast<vtkTransform*>(transform_filter->GetTransform());
@@ -218,7 +219,9 @@ void VtkVisTabWidget::on_scaleZ_textChanged(const QString &text)
 
 void VtkVisTabWidget::translateItem()
 {
-    bool okX(true), okY(true), okZ(true);
+    bool okX(true);
+    bool okY(true);
+    bool okZ(true);
     double trans[3];
 
     trans[0] = transX->text().toDouble(&okX);

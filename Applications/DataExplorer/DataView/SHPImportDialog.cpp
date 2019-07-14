@@ -60,7 +60,8 @@ SHPImportDialog::~SHPImportDialog()
 void SHPImportDialog::setupDialog()
 {
     _layout = new QGridLayout(this);
-    int shpType = 0, numberOfEntities = 0;
+    int shpType = 0;
+    int numberOfEntities = 0;
     QString type = "";
 
     setWindowTitle("Import SHP File");

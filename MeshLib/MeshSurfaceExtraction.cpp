@@ -402,7 +402,8 @@ bool MeshSurfaceExtraction::createSfcMeshProperties(
         return false;
     }
 
-    std::size_t vectors_copied(0), vectors_skipped(0);
+    std::size_t vectors_copied(0);
+    std::size_t vectors_skipped(0);
     std::vector<std::string> const& array_names =
         properties.getPropertyVectorNames();
     for (std::string const& name : array_names)

@@ -63,9 +63,11 @@ int VtkTextureOnSurfaceFilter::RequestData( vtkInformation* request,
     std::size_t imgWidth = dims[0];
     std::size_t imgHeight = dims[1];
 
-    std::pair<int, int> min((int)_origin.first, (int)_origin.second);
-    std::pair<int, int> max((int)(_origin.first + (imgWidth * _scalingFactor)),
-                            (int)(_origin.second + (imgHeight * _scalingFactor)));
+    std::pair<int, int> min(static_cast<int>(_origin.first),
+                            static_cast<int>(_origin.second));
+    std::pair<int, int> max(
+        static_cast<int>(_origin.first + (imgWidth * _scalingFactor)),
+        static_cast<int>(_origin.second + (imgHeight * _scalingFactor)));
 
     //calculate texture coordinates
     vtkPoints* points = input->GetPoints();

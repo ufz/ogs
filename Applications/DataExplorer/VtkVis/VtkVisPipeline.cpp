@@ -138,7 +138,7 @@ void VtkVisPipeline::removeLight(const GeoLib::Point &pos)
     }
 }
 
-const QColor VtkVisPipeline::getBGColor() const
+QColor VtkVisPipeline::getBGColor() const
 {
     double* color = _renderer->GetBackground();
     QColor c(static_cast<int>(color[0] * 255),

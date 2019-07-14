@@ -96,7 +96,7 @@ VtkVisPointSetItem::~VtkVisPointSetItem()
     _transformFilter->Delete();
     _mapper->Delete();
 }
-const QString VtkVisPointSetItem::GetActiveAttribute() const
+QString VtkVisPointSetItem::GetActiveAttribute() const
 {
     return _vtkProps->GetActiveAttribute();
 }
@@ -410,7 +410,9 @@ vtkAlgorithm* VtkVisPointSetItem::transformFilter() const
 
 void VtkVisPointSetItem::setBackfaceCulling(bool enable) const
 {
-    static_cast<vtkActor*>(this->_actor)->GetProperty()->SetBackfaceCulling((int)enable);
+    static_cast<vtkActor*>(this->_actor)
+        ->GetProperty()
+        ->SetBackfaceCulling(static_cast<int>(enable));
 }
 
 void VtkVisPointSetItem::GetRangeForActiveAttribute(double range[2]) const

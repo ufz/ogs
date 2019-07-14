@@ -32,7 +32,7 @@ public:
     /// @brief Returns all registered filters.
     /// New VtkCompositeFilter or filter inherited from VtkAlgorithmProperties
     /// must be registered here.
-    static const QVector<VtkFilterInfo> GetFilterList();
+    static QVector<VtkFilterInfo> GetFilterList();
 
     /// @brief Creates a composite filter by name.
     static VtkCompositeFilter* CreateCompositeFilter(QString type, vtkAlgorithm* inputAlgorithm);

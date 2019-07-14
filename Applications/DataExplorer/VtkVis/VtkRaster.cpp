@@ -132,7 +132,10 @@ vtkImageAlgorithm* VtkRaster::loadImageFromTIFF(const std::string& fileName,
 
         if (geoTiff)
         {
-            int imgWidth = 0, imgHeight = 0, nImages = 0, pntCount = 0;
+            int imgWidth = 0;
+            int imgHeight = 0;
+            int nImages = 0;
+            int pntCount = 0;
             double* pnts = nullptr;
 
             // get actual number of images in the tiff file
@@ -163,8 +166,8 @@ vtkImageAlgorithm* VtkRaster::loadImageFromTIFF(const std::string& fileName,
             }
 
             // read pixel values
-            auto* pixVal =
-                (uint32*)_TIFFmalloc(imgWidth * imgHeight * sizeof(uint32));
+            auto* pixVal = static_cast<uint32*>(
+                _TIFFmalloc(imgWidth * imgHeight * sizeof(uint32)));
             if ((imgWidth > 0) && (imgHeight > 0))
             {
                 if (!TIFFReadRGBAImage(tiff, imgWidth, imgHeight, pixVal, 0))
@@ -341,7 +344,7 @@ bool VtkRaster::readWorldFile(std::string const& filename,
         return false;
     }
 
-    std::string line("");
+    std::string line;
     // x-scaling
     if (!std::getline(in, line))
     {

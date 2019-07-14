@@ -82,7 +82,8 @@ void MeshElementRemovalDialog::accept()
     if (this->scalarArrayCheckBox->isChecked())
     {
         std::string const array_name = this->scalarArrayComboBox->currentText().toStdString();
-        double min_val, max_val;
+        double min_val;
+        double max_val;
         bool outside = this->outsideButton->isChecked();
         if (outside)
         {

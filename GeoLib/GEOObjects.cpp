@@ -421,9 +421,11 @@ void GEOObjects::getGeometryNames (std::vector<std::string>& names) const
     }
 }
 
-const std::string GEOObjects::getElementNameByID(const std::string &geometry_name, GeoLib::GEOTYPE type, std::size_t id) const
+std::string GEOObjects::getElementNameByID(const std::string& geometry_name,
+                                           GeoLib::GEOTYPE type,
+                                           std::size_t id) const
 {
-    std::string name("");
+    std::string name;
     switch (type)
     {
         case GeoLib::GEOTYPE::POINT:

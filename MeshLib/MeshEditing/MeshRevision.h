@@ -175,11 +175,12 @@ private:
     unsigned lutHexDiametralNode(unsigned id) const;
 
     /// Lookup-table for returning four nodes connected to the two nodes (id1, id2) forming an edge in a Hex
-    const std::array<unsigned,4> lutHexCuttingQuadNodes(unsigned id1, unsigned id2) const;
+    std::array<unsigned, 4> lutHexCuttingQuadNodes(unsigned id1,
+                                                   unsigned id2) const;
 
     /// When a hex is subdivided into two prisms, this returns the nodes of the hex edge that will serve as the back of one of the prisms.
-    const std::pair<unsigned, unsigned> lutHexBackNodes(
-        unsigned i, unsigned j, unsigned k, unsigned l) const;
+    std::pair<unsigned, unsigned> lutHexBackNodes(unsigned i, unsigned j,
+                                                  unsigned k, unsigned l) const;
 
     /// Lookup-table for returning the third node of bottom or top triangle given the other two
     unsigned lutPrismThirdNode(unsigned id1, unsigned id2) const;

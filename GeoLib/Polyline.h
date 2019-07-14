@@ -68,7 +68,7 @@ public:
 
         SegmentIterator& operator++();
 
-        LineSegment const operator*() const;
+        LineSegment operator*() const;
 
         LineSegment operator*();
 
@@ -239,7 +239,7 @@ protected:
      */
     std::vector<double> _length;
 private:
-    LineSegment const getSegment(std::size_t i) const;
+    LineSegment getSegment(std::size_t i) const;
     LineSegment getSegment(std::size_t i);
 };
 

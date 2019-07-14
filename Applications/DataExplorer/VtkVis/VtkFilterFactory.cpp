@@ -32,7 +32,7 @@
 
 #include <vtkDataSetSurfaceFilter.h>
 
-const QVector<VtkFilterInfo> VtkFilterFactory::GetFilterList()
+QVector<VtkFilterInfo> VtkFilterFactory::GetFilterList()
 {
     QVector<VtkFilterInfo> filterList;
 

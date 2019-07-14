@@ -17,13 +17,13 @@
 
 namespace MeshLib
 {
-const GeoLib::AABB MeshInformation::getBoundingBox(const MeshLib::Mesh& mesh)
+GeoLib::AABB MeshInformation::getBoundingBox(const MeshLib::Mesh& mesh)
 {
     const std::vector<MeshLib::Node*>& nodes(mesh.getNodes());
     return GeoLib::AABB(nodes.begin(), nodes.end());
 }
 
-const std::array<unsigned, 7> MeshInformation::getNumberOfElementTypes(
+std::array<unsigned, 7> MeshInformation::getNumberOfElementTypes(
     const MeshLib::Mesh& mesh)
 {
     std::array<unsigned, 7> n_element_types = {{0, 0, 0, 0, 0, 0, 0}};

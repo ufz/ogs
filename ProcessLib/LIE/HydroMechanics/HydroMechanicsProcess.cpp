@@ -536,7 +536,8 @@ void HydroMechanicsProcess<GlobalDim>::computeSecondaryVariableConcrete(
         return w_n + b0(/*time independent*/ 0, x)[0];
     };
 
-    Eigen::VectorXd g(GlobalDim), w(GlobalDim);
+    Eigen::VectorXd g(GlobalDim);
+    Eigen::VectorXd w(GlobalDim);
     for (MeshLib::Node const* node : _vec_fracture_nodes)
     {
         auto const node_id = node->getID();

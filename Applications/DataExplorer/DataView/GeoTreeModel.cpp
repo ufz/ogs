@@ -376,7 +376,7 @@ void GeoTreeModel::setNameForItem(const std::string &name,
                                   std::size_t id,
                                   std::string item_name)
 {
-    std::string geo_type_str("");
+    std::string geo_type_str;
     int col_idx(1);
 
     switch(type)

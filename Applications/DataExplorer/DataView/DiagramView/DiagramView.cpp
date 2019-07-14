@@ -88,12 +88,12 @@ void DiagramView::initialize()
 
 QSize DiagramView::minimumSizeHint() const
 {
-    return QSize(3 * _scene->MARGIN,2 * _scene->MARGIN);
+    return QSize(3 * DiagramScene::MARGIN, 2 * DiagramScene::MARGIN);
 }
 
 QSize DiagramView::sizeHint() const
 {
-    return QSize(6 * _scene->MARGIN, 4 * _scene->MARGIN);
+    return QSize(6 * DiagramScene::MARGIN, 4 * DiagramScene::MARGIN);
 }
 
 void DiagramView::resizeEvent(QResizeEvent* event)
@@ -114,7 +114,8 @@ void DiagramView::update()
     //setResizeAnchor(QGraphicsView::AnchorViewCenter);
     QRectF viewRect = _scene->itemsBoundingRect();
     _scene->setSceneRect(viewRect);
-    QRectF sceneInView(0 /*_scene->MARGIN*/,_scene->MARGIN / 2,
-                       viewRect.width() /*+_scene->MARGIN*/,viewRect.height() + _scene->MARGIN);
+    QRectF sceneInView(0 /*_scene->MARGIN*/, DiagramScene::MARGIN / 2,
+                       viewRect.width() /*+_scene->MARGIN*/,
+                       viewRect.height() + DiagramScene::MARGIN);
     fitInView(sceneInView, Qt::IgnoreAspectRatio);
 }

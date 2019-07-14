@@ -411,7 +411,7 @@ bool XmlGmlInterface::write()
                     QDomElement polylineTag = doc.createElement("polyline");
                     polylineTag.setAttribute("id", QString::number(i));
 
-                    std::string ply_name("");
+                    std::string ply_name;
                     if (ply_vec->getNameOfElementByID(i, ply_name)) {
                         polylineTag.setAttribute("name", QString::fromStdString(ply_name));
                     } else {
@@ -457,7 +457,7 @@ bool XmlGmlInterface::write()
                     QDomElement surfaceTag = doc.createElement("surface");
                     surfaceTag.setAttribute("id", QString::number(i));
 
-                    std::string sfc_name("");
+                    std::string sfc_name;
                     if (sfc_vec->getNameOfElementByID(i, sfc_name))
                     {
                         surfaceTag.setAttribute(

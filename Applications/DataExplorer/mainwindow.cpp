@@ -184,12 +184,18 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/) : QMainWindow(parent)
             this->_elementModel.get(), SLOT(setElement(vtkUnstructuredGridAlgorithm const*const, unsigned)));
     connect(meshTabWidget->treeView, SIGNAL(elementSelected(vtkUnstructuredGridAlgorithm const*const, unsigned, bool)),
             meshTabWidget->elementView, SLOT(updateView()));
-    connect(meshTabWidget->treeView, SIGNAL(elementSelected(vtkUnstructuredGridAlgorithm const*const, unsigned, bool)),
-            (QObject*) (visualizationWidget->interactorStyle()), SLOT(removeHighlightActor()));
+    connect(meshTabWidget->treeView,
+            SIGNAL(elementSelected(vtkUnstructuredGridAlgorithm const* const,
+                                   unsigned, bool)),
+            reinterpret_cast<QObject*>(visualizationWidget->interactorStyle()),
+            SLOT(removeHighlightActor()));
     connect(meshTabWidget->treeView, SIGNAL(removeSelectedMeshComponent()),
             _vtkVisPipeline.get(), SLOT(removeHighlightedMeshComponent()));
-    connect(meshTabWidget->elementView, SIGNAL(nodeSelected(vtkUnstructuredGridAlgorithm const*const, unsigned, bool)),
-            (QObject*) (visualizationWidget->interactorStyle()), SLOT(removeHighlightActor()));
+    connect(meshTabWidget->elementView,
+            SIGNAL(nodeSelected(vtkUnstructuredGridAlgorithm const* const,
+                                unsigned, bool)),
+            reinterpret_cast<QObject*>(visualizationWidget->interactorStyle()),
+            SLOT(removeHighlightActor()));
     connect(meshTabWidget->elementView, SIGNAL(nodeSelected(vtkUnstructuredGridAlgorithm const*const, unsigned, bool)),
             _vtkVisPipeline.get(), SLOT(highlightMeshComponent(vtkUnstructuredGridAlgorithm const*const, unsigned, bool)));
     connect(meshTabWidget->elementView, SIGNAL(removeSelectedMeshComponent()),
@@ -255,7 +261,7 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/) : QMainWindow(parent)
 
     connect(vtkVisTabWidget->vtkVisPipelineView,
             SIGNAL(actorSelected(vtkProp3D*)),
-            (QObject*) (visualizationWidget->interactorStyle()),
+            reinterpret_cast<QObject*>(visualizationWidget->interactorStyle()),
             SLOT(highlightActor(vtkProp3D*)));
     connect(_vtkVisPipeline.get(), SIGNAL(vtkVisPipelineChanged()),
             visualizationWidget, SLOT(updateView()));
@@ -263,22 +269,29 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/) : QMainWindow(parent)
     // Propagates selected vtk object in the pipeline to the pick interactor
     connect(vtkVisTabWidget->vtkVisPipelineView,
             SIGNAL(dataObjectSelected(vtkDataObject*)),
-            (QObject*) (visualizationWidget->interactorStyle()),
+            reinterpret_cast<QObject*>(visualizationWidget->interactorStyle()),
             SLOT(pickableDataObject(vtkDataObject*)));
-    connect((QObject*) (visualizationWidget->vtkPickCallback()),
+    connect(reinterpret_cast<QObject*>(visualizationWidget->vtkPickCallback()),
             SIGNAL(actorPicked(vtkProp3D*)),
             vtkVisTabWidget->vtkVisPipelineView, SLOT(selectItem(vtkProp3D*)));
-    connect((QObject*) (visualizationWidget->interactorStyle()),
-            SIGNAL(elementPicked(vtkUnstructuredGridAlgorithm const*const, const unsigned)),
-            this->_elementModel.get(), SLOT(setElement(vtkUnstructuredGridAlgorithm const*const, const unsigned)));
-    connect((QObject*) (visualizationWidget->interactorStyle()),
-            SIGNAL(elementPicked(vtkUnstructuredGridAlgorithm const*const, const unsigned)),
+    connect(reinterpret_cast<QObject*>(visualizationWidget->interactorStyle()),
+            SIGNAL(elementPicked(vtkUnstructuredGridAlgorithm const* const,
+                                 const unsigned)),
+            this->_elementModel.get(),
+            SLOT(setElement(vtkUnstructuredGridAlgorithm const* const,
+                            const unsigned)));
+    connect(reinterpret_cast<QObject*>(visualizationWidget->interactorStyle()),
+            SIGNAL(elementPicked(vtkUnstructuredGridAlgorithm const* const,
+                                 const unsigned)),
             meshTabWidget->elementView, SLOT(updateView()));
-    connect((QObject*) (visualizationWidget->interactorStyle()), SIGNAL(clearElementView()),
-            this->_elementModel.get(), SLOT(clearView()));
-    connect((QObject*) (visualizationWidget->interactorStyle()),
-            SIGNAL(elementPicked(vtkUnstructuredGridAlgorithm const*const, const unsigned)),
-            this->_vtkVisPipeline.get(), SLOT(removeHighlightedMeshComponent()));
+    connect(reinterpret_cast<QObject*>(visualizationWidget->interactorStyle()),
+            SIGNAL(clearElementView()), this->_elementModel.get(),
+            SLOT(clearView()));
+    connect(reinterpret_cast<QObject*>(visualizationWidget->interactorStyle()),
+            SIGNAL(elementPicked(vtkUnstructuredGridAlgorithm const* const,
+                                 const unsigned)),
+            this->_vtkVisPipeline.get(),
+            SLOT(removeHighlightedMeshComponent()));
 
     connect(vtkVisTabWidget->vtkVisPipelineView, SIGNAL(meshAdded(MeshLib::Mesh*)),
             _meshModel.get(), SLOT(addMesh(MeshLib::Mesh*)));
@@ -297,7 +310,8 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/) : QMainWindow(parent)
     const unsigned int screenCount = desktopWidget->screenCount();
     for (std::size_t i = 0; i < screenCount; ++i)
     {
-        _screenGeometries.push_back(desktopWidget->availableGeometry((int)i));
+        _screenGeometries.push_back(
+            desktopWidget->availableGeometry(static_cast<int>(i)));
     }
 
     // Setup import files menu
@@ -574,7 +588,8 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
         else if (fi.suffix().toLower() == "msh" || fi.suffix().toLower() == "vtu")
         {
 #ifndef NDEBUG
-            QTime myTimer0, myTimer1;
+            QTime myTimer0;
+            QTime myTimer1;
             myTimer0.start();
 #endif
             std::unique_ptr<MeshLib::Mesh> mesh(

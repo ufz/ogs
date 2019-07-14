@@ -25,7 +25,8 @@
 
 vtkImageData* VtkVisHelper::QImageToVtkImageData(QImage &img)
 {
-    std::size_t imgWidth = img.width(), imgHeight = img.height();
+    std::size_t imgWidth = img.width();
+    std::size_t imgHeight = img.height();
     vtkSmartPointer<vtkUnsignedCharArray> data = vtkSmartPointer<vtkUnsignedCharArray>::New();
     data->SetNumberOfComponents(3);
     data->SetNumberOfTuples( imgWidth * imgHeight );

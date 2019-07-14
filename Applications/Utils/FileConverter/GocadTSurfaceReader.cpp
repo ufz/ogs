@@ -18,7 +18,7 @@
 std::string getDelim(std::string const& str)
 {
     std::size_t const bslash = str.find_first_of('\\');
-    char const delim = (bslash == str.npos) ? '/' : '\\';
+    char const delim = (bslash == std::string::npos) ? '/' : '\\';
     return (str.back() == delim) ? "" : std::string(1, delim);
 }
 

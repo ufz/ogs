@@ -50,7 +50,7 @@ int main(int argc, char* argv[])
         w->loadFileOnStartUp(QCoreApplication::arguments().at(1));
     }
     w->show();
-    int returncode = a.exec();
+    int returncode = QApplication::exec();
     delete formatter;
     delete logogCout;
     LOGOG_SHUTDOWN();

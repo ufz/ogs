@@ -32,6 +32,6 @@ void QVtkDataSetMapper::PrintSelf(ostream& os, vtkIndent indent)
 
 void QVtkDataSetMapper::SetScalarVisibility( bool on )
 {
-    vtkDataSetMapper::SetScalarVisibility((int)on);
+    vtkDataSetMapper::SetScalarVisibility(static_cast<int>(on));
 }
 

@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
     auto* fc = new OGSFileConverter(gmsh_path_arg.getValue());
     fc->setWindowTitle( fc->windowTitle() );
     fc->show();
-    int returncode = app.exec();
+    int returncode = QApplication::exec();
     delete fc;
 
     return returncode;

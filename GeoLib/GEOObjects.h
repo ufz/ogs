@@ -219,7 +219,8 @@ public:
     /// Returns the names of all geometry vectors.
     void getGeometryNames (std::vector<std::string>& names) const;
 
-    const std::string getElementNameByID(const std::string &geometry_name, GeoLib::GEOTYPE type, std::size_t id) const;
+    std::string getElementNameByID(const std::string& geometry_name,
+                                   GeoLib::GEOTYPE type, std::size_t id) const;
 
     /// Returns the names of all station vectors.
     void getStationVectorNames(std::vector<std::string>& names) const;

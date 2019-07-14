@@ -50,7 +50,8 @@ void GMSHAdaptiveMeshDensity::initialize(std::vector<GeoLib::Point const*> const
     // *** QuadTree - determining bounding box
     DBUG("GMSHAdaptiveMeshDensity::init(): computing axis aligned bounding box (2D) for quadtree.");
 
-    GeoLib::Point min(*pnts[0]), max(*pnts[0]);
+    GeoLib::Point min(*pnts[0]);
+    GeoLib::Point max(*pnts[0]);
     std::size_t n_pnts(pnts.size());
     for (std::size_t k(1); k<n_pnts; k++) {
         for (std::size_t j(0); j < 2; j++)
@@ -96,14 +97,16 @@ void GMSHAdaptiveMeshDensity::addPoints(std::vector<GeoLib::Point const*> const&
 
 double GMSHAdaptiveMeshDensity::getMeshDensityAtPoint(GeoLib::Point const* const pnt) const
 {
-    GeoLib::Point ll, ur;
+    GeoLib::Point ll;
+    GeoLib::Point ur;
     _quad_tree->getLeaf(*pnt, ll, ur);
     return _pnt_density * (ur[0] - ll[0]);
 }
 
 double GMSHAdaptiveMeshDensity::getMeshDensityAtStation(GeoLib::Point const* const pnt) const
 {
-    GeoLib::Point ll, ur;
+    GeoLib::Point ll;
+    GeoLib::Point ur;
     _quad_tree->getLeaf(*pnt, ll, ur);
     return _station_density * (ur[0] - ll[0]);
 }
@@ -122,7 +125,8 @@ void GMSHAdaptiveMeshDensity::getSteinerPoints (std::vector<GeoLib::Point*> & pn
                     != leaf_list.end(); ++it) {
         if ((*it)->getPoints().empty()) {
             // compute point from square
-            GeoLib::Point ll, ur;
+            GeoLib::Point ll;
+            GeoLib::Point ur;
             (*it)->getSquarePoints(ll, ur);
             if ((*it)->getDepth() + additional_levels > max_depth) {
                 additional_levels = max_depth - (*it)->getDepth();
@@ -152,7 +156,8 @@ void GMSHAdaptiveMeshDensity::getQuadTreeGeometry(std::vector<GeoLib::Point*> &p
     for (std::list<GeoLib::QuadTree<GeoLib::Point>*>::const_iterator it(leaf_list.begin()); it
         != leaf_list.end(); ++it) {
         // fetch corner points from leaf
-        GeoLib::Point ll, ur;
+        GeoLib::Point ll;
+        GeoLib::Point ur;
         (*it)->getSquarePoints(ll, ur);
         std::size_t const pnt_offset (pnts.size());
         pnts.push_back(new GeoLib::Point(ll, pnt_offset));

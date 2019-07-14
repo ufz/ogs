@@ -248,7 +248,7 @@ std::size_t Polyline::getPointID(std::size_t i) const
     return _ply_pnt_ids[i];
 }
 
-LineSegment const Polyline::getSegment(std::size_t i) const
+LineSegment Polyline::getSegment(std::size_t i) const
 {
     assert(i < getNumberOfSegments());
     return LineSegment(_ply_pnts[_ply_pnt_ids[i]],
@@ -442,7 +442,8 @@ Location Polyline::getLocationOfPoint (std::size_t k, GeoLib::Point const & pnt)
 double Polyline::getDistanceAlongPolyline(const MathLib::Point3d& pnt,
     const double epsilon_radius) const
 {
-    double dist(-1.0), lambda;
+    double dist(-1.0);
+    double lambda;
     bool found = false;
     // loop over all line segments of the polyline
     for (std::size_t k = 0; k < getNumberOfSegments(); k++) {
@@ -508,7 +509,7 @@ Polyline::SegmentIterator& Polyline::SegmentIterator::operator++()
     return *this;
 }
 
-LineSegment const Polyline::SegmentIterator::operator*() const
+LineSegment Polyline::SegmentIterator::operator*() const
 {
     return _polyline->getSegment(_segment_number);
 }

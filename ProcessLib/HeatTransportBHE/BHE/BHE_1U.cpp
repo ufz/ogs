@@ -223,7 +223,8 @@ std::array<double, BHE_1U::number_of_unknowns> BHE_1U::calcThermalResistances(
                    d0) /
         (2.0 * pi * lambda_g);
 
-    double R_gg, R_gs;
+    double R_gg;
+    double R_gs;
     std::tie(R_gg, R_gs) = thermalResistancesGroutSoil(chi, R_ar, R_g);
 
     return {{R_fig, R_fog, R_gg, R_gs}};

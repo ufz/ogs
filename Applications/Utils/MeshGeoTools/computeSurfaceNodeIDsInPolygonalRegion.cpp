@@ -116,7 +116,7 @@ int main (int argc, char* argv[])
         std::unique_ptr<MeshLib::Mesh> surface_mesh(
             MeshLib::MeshSurfaceExtraction::getMeshSurface(mesh, d, angle));
         return MeshLib::MeshSurfaceExtraction::getSurfaceAreaForNodes(
-            *surface_mesh.get());
+            *surface_mesh);
     };
 
     std::vector<double> areas(computeElementTopSurfaceAreas(*mesh, dir, angle));

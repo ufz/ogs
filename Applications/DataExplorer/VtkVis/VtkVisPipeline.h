@@ -73,7 +73,7 @@ public:
     void removeLight(const GeoLib::Point &pos);
 
     /// \brief Returns the background-colour of the scene.
-    const QColor getBGColor() const;
+    QColor getBGColor() const;
 
     /// \brief Sets the background-colour of the scene.
     void setBGColor(const QColor &color);

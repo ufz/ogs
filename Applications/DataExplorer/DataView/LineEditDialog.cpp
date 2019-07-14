@@ -29,7 +29,7 @@ LineEditDialog::LineEditDialog(const GeoLib::PolylineVec &ply_vec, QDialog* pare
     QStringList list;
     for (std::size_t i = 0; i < nPly; i++)
     {
-        std::string ply_name("");
+        std::string ply_name;
         ply_vec.getNameOfElementByID(i, ply_name);
         list.append("Line " + QString::number(i) + "  " + QString::fromStdString(ply_name));
     }

@@ -69,7 +69,7 @@ MeshLib::Mesh* GocadTSurfaceReader::readMesh(std::ifstream& in,
     MeshLib::Properties mesh_prop;
     mesh_prop.createNewPropertyVector<int>(mat_id_name,
                                            MeshLib::MeshItemType::Cell, 1);
-    std::string line("");
+    std::string line;
     while (std::getline(in, line))
     {
         std::vector<std::string> str = BaseLib::splitString(line);
@@ -135,7 +135,7 @@ MeshLib::Mesh* GocadTSurfaceReader::readMesh(std::ifstream& in,
 
 bool GocadTSurfaceReader::TSurfaceFound(std::ifstream& in) const
 {
-    std::string line("");
+    std::string line;
     while (std::getline(in, line))
     {
         if (line.empty() || isCommentLine(line))
@@ -172,7 +172,7 @@ bool GocadTSurfaceReader::isCommentLine(std::string const& str) const
 
 bool GocadTSurfaceReader::parseHeader(std::ifstream& in, std::string& mesh_name)
 {
-    std::string line("");
+    std::string line;
     while (std::getline(in, line))
     {
         if (line.substr(0, 5) == "name:")
@@ -192,7 +192,7 @@ bool GocadTSurfaceReader::parseHeader(std::ifstream& in, std::string& mesh_name)
 
 bool GocadTSurfaceReader::parsePropertyClass(std::ifstream& in) const
 {
-    std::string line("");
+    std::string line;
     while (std::getline(in, line))
     {
         if (line.substr(0, 1) == "}")
@@ -230,7 +230,7 @@ bool GocadTSurfaceReader::parseProperties(std::ifstream& in,
     // stored, so the stream can be set back if none of the allowed property-
     // related keywords is found.
     std::streampos pos = in.tellg();
-    std::string line("");
+    std::string line;
     while (getline(in, line))
     {
         std::string const key = propertyCheck(line);
@@ -288,7 +288,7 @@ bool GocadTSurfaceReader::parseSurface(
         return false;
     }
 
-    std::string line("");
+    std::string line;
     while (std::getline(in, line))
     {
         std::vector<std::string> str = BaseLib::splitString(line);
@@ -341,7 +341,7 @@ bool GocadTSurfaceReader::parseNodes(
     std::vector<std::string> const array_names =
         mesh_prop.getPropertyVectorNames();
     std::streampos pos = in.tellg();
-    std::string line("");
+    std::string line;
     while (std::getline(in, line))
     {
         std::vector<std::string> str = BaseLib::splitString(line);
@@ -384,7 +384,8 @@ bool GocadTSurfaceReader::parseNodes(
         }
         else if (line.substr(0, 4) == "ATOM")
         {
-            std::size_t new_id, ref_id;
+            std::size_t new_id;
+            std::size_t ref_id;
             std::string keyword;
             sstr >> keyword >> new_id >> ref_id;
             nodes.push_back(new MeshLib::Node(nodes[ref_id]->getCoords(), new_id));
@@ -414,7 +415,7 @@ bool GocadTSurfaceReader::parseElements(
     }
     std::streampos pos = in.tellg();
     std::size_t id(0);
-    std::string line("");
+    std::string line;
     while (std::getline(in, line))
     {
         if (line.empty() || isCommentLine(line))
@@ -453,7 +454,7 @@ bool GocadTSurfaceReader::parseElements(
 
 bool GocadTSurfaceReader::skipModel3d(std::ifstream& in) const
 {
-    std::string line("");
+    std::string line;
     while (std::getline(in, line))
     {
         if (line == "END")

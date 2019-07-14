@@ -89,8 +89,8 @@ void VisPrefsDialog::on_superelevationPushButton_pressed()
 
 void VisPrefsDialog::on_loadShowAllCheckBox_stateChanged(int state)
 {
-    _visWidget.setShowAllOnLoad((bool)state);
-    _vtkVisPipeline.resetCameraOnAddOrRemove((bool)state);
+    _visWidget.setShowAllOnLoad(static_cast<bool>(state));
+    _vtkVisPipeline.resetCameraOnAddOrRemove(static_cast<bool>(state));
 
     QSettings settings;
     settings.setValue("resetViewOnLoad", state);
@@ -98,7 +98,7 @@ void VisPrefsDialog::on_loadShowAllCheckBox_stateChanged(int state)
 
 void VisPrefsDialog::on_cullBackfacesCheckBox_stateChanged(int state)
 {
-    _vtkVisPipeline.setGlobalBackfaceCulling((bool)state);
+    _vtkVisPipeline.setGlobalBackfaceCulling(static_cast<bool>(state));
 
     QSettings settings;
     settings.setValue("globalCullBackfaces", state);

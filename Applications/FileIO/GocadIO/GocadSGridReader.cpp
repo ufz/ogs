@@ -245,7 +245,9 @@ void GocadSGridReader::parseHeader(std::istream& in)
 
 void GocadSGridReader::parseDims(std::string const& line)
 {
-    std::size_t x_dim(0), y_dim(0), z_dim(0);
+    std::size_t x_dim(0);
+    std::size_t y_dim(0);
+    std::size_t z_dim(0);
     boost::tokenizer<> tok(line);
     auto it(tok.begin());
     it++;  // overread token "AXIS"

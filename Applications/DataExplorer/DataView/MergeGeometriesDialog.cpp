@@ -111,7 +111,7 @@ void MergeGeometriesDialog::reject()
     this->done(QDialog::Rejected);
 }
 
-std::vector<std::string> const MergeGeometriesDialog::getSelectedGeometries() const
+std::vector<std::string> MergeGeometriesDialog::getSelectedGeometries() const
 {
     std::vector<std::string> indexList;
     QStringList const& list (_selGeo->stringList());

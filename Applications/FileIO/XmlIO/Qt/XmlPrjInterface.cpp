@@ -271,7 +271,9 @@ T* XmlPrjInterface::parseCondition(
     DataHolderLib::BaseObjType base_obj_type =
         DataHolderLib::BaseObjType::GEOMETRY;
     typename T::ConditionType type = T::ConditionType::NONE;
-    std::string base_obj_name(""), obj_name(""), param_name("");
+    std::string base_obj_name;
+    std::string obj_name;
+    std::string param_name;
     QDomNode param_node = QDomNode();
     QDomNodeList nodeList = node.childNodes();
     for (int i = 0; i < nodeList.count(); i++)
@@ -415,8 +417,8 @@ bool XmlPrjInterface::write()
                 name.c_str());
     }
 
-    if (_project.getBoundaryConditions().size() > 0 ||
-        _project.getSourceTerms().size() > 0)
+    if (!_project.getBoundaryConditions().empty() ||
+        !_project.getSourceTerms().empty())
     {
         // parameters
         writeProcessVariables(doc, root);

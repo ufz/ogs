@@ -24,7 +24,7 @@ std::string parseName(std::string const& str)
 {
     std::string name;
     std::size_t const start = str.find_first_of('\"');
-    if (start != str.npos)
+    if (start != std::string::npos)
     {
         std::size_t const end = str.find_last_of('\"');
         name = str.substr(start+1, end-start-1);

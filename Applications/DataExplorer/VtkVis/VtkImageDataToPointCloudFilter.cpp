@@ -86,13 +86,14 @@ int VtkImageDataToPointCloudFilter::RequestData(
         // Skip transparent pixels
         if (n_comp == 2 || n_comp == 4)
         {
-            if (((float*)pixvals)[(i + 1) * n_comp - 1] < 0.00000001f)
+            if ((static_cast<float*>(pixvals))[(i + 1) * n_comp - 1] <
+                0.00000001f)
             {
                 density.push_back(0);
                 continue;
             }
         }
-        float const val(((float*)pixvals)[i * n_comp]);
+        float const val((static_cast<float*>(pixvals))[i * n_comp]);
         double const calc_gamma = (IsLinear) ? 1 : Gamma;
         std::size_t const pnts_per_cell = interpolate(range[0], range[1], val, calc_gamma);
         density.push_back(static_cast<std::size_t>(
@@ -155,7 +156,7 @@ void VtkImageDataToPointCloudFilter::createPoints(
 
 double VtkImageDataToPointCloudFilter::getRandomNumber(double const& min, double const& max) const
 {
-    return ((double)std::rand() / RAND_MAX) * (max - min) + min;
+    return (static_cast<double>(std::rand()) / RAND_MAX) * (max - min) + min;
 }
 
 std::size_t VtkImageDataToPointCloudFilter::interpolate(double low,

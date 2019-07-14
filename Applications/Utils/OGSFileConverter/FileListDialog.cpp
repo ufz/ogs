@@ -103,7 +103,7 @@ void FileListDialog::reject()
     this->done(QDialog::Rejected);
 }
 
-const QString FileListDialog::getFileTypeString(FileType file_type) const
+QString FileListDialog::getFileTypeString(FileType file_type) const
 {
     if (file_type == FileType::GML)
     {

@@ -236,12 +236,12 @@ void EigenLinearSolver::setOption(BaseLib::ConfigTree const& option)
     if (auto solver_type =
             //! \ogs_file_param{prj__linear_solvers__linear_solver__eigen__solver_type}
             ptSolver->getConfigParameterOptional<std::string>("solver_type")) {
-        _option.solver_type = _option.getSolverType(*solver_type);
+        _option.solver_type = MathLib::EigenOption::getSolverType(*solver_type);
     }
     if (auto precon_type =
             //! \ogs_file_param{prj__linear_solvers__linear_solver__eigen__precon_type}
             ptSolver->getConfigParameterOptional<std::string>("precon_type")) {
-        _option.precon_type = _option.getPreconType(*precon_type);
+        _option.precon_type = MathLib::EigenOption::getPreconType(*precon_type);
     }
     if (auto error_tolerance =
             //! \ogs_file_param{prj__linear_solvers__linear_solver__eigen__error_tolerance}

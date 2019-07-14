@@ -46,7 +46,9 @@ TEST(GeoLib, InsertTwoPointsInGrid)
 
 TEST(GeoLib, InsertManyPointsInGrid)
 {
-    const std::size_t i_max(100), j_max(100), k_max(100);
+    const std::size_t i_max(100);
+    const std::size_t j_max(100);
+    const std::size_t k_max(100);
     std::vector<GeoLib::Point*> pnts(i_max*j_max*k_max);
 
     // fill the vector with points
@@ -94,7 +96,9 @@ TEST(GeoLib, SearchNearestPointInGrid)
 
 TEST(GeoLib, SearchNearestPointsInDenseGrid)
 {
-    const std::size_t i_max(50), j_max(50), k_max(50);
+    const std::size_t i_max(50);
+    const std::size_t j_max(50);
+    const std::size_t k_max(50);
     std::vector<GeoLib::Point*> pnts(i_max*j_max*k_max);
 
     // fill the vector with equi-distant points in the

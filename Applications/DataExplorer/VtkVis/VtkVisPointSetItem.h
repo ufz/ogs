@@ -52,7 +52,7 @@ public:
     ~VtkVisPointSetItem() override;
 
     /// @brief Gets the last selected attribute.
-    const QString GetActiveAttribute() const override;
+    QString GetActiveAttribute() const override;
 
     /// @brief Get the scalar range for the active attribute
     void GetRangeForActiveAttribute(double range[2]) const;

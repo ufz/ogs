@@ -185,7 +185,8 @@ int DiagramList::readList(const QString &path, std::vector<DiagramList*> &lists)
         }
 
         bool first_loop(true);
-        QDateTime startDate, currentDate;
+        QDateTime startDate;
+        QDateTime currentDate;
         unsigned line_count (1);
 
         while (!in.atEnd())

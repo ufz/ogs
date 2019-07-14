@@ -221,7 +221,7 @@ MeshLib::Mesh* MeshLayerEditDialog::createPrismMesh()
         layer_thickness.push_back(this->_edits[i]->text().toFloat());
     }
     INFO("Mesh construction time: %d ms.", myTimer0.elapsed());
-    return mapper.createStaticLayers(*_msh, layer_thickness);
+    return MeshLib::MeshLayerMapper::createStaticLayers(*_msh, layer_thickness);
 }
 
 MeshLib::Mesh* MeshLayerEditDialog::createTetMesh()

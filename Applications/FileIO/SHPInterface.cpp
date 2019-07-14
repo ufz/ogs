@@ -43,7 +43,8 @@ bool SHPInterface::readSHPInfo(const std::string &filename, int &shapeType, int 
         return false;
     }
 
-    double padfMinBound[4], padfMaxBound[4];
+    double padfMinBound[4];
+    double padfMaxBound[4];
 
     // The SHPGetInfo() function retrieves various information about shapefile as a whole.
     // The bounds are read from the file header, and may be inaccurate if the file was improperly generated.
@@ -57,8 +58,10 @@ void SHPInterface::readSHPFile(const std::string& filename, OGSType choice,
                                const std::string& listName,
                                std::string const& gmsh_path)
 {
-    int shapeType, numberOfElements;
-    double padfMinBound[4], padfMaxBound[4];
+    int shapeType;
+    int numberOfElements;
+    double padfMinBound[4];
+    double padfMaxBound[4];
 
     SHPHandle hSHP = SHPOpen(filename.c_str(), "rb");
     SHPGetInfo(hSHP, &numberOfElements, &shapeType, padfMinBound, padfMaxBound);

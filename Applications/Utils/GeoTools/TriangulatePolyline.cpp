@@ -104,7 +104,7 @@ int main(int argc, char *argv[])
 
     if (!line->isClosed())
     {
-        std::string input ("");
+        std::string input;
         while (input != "y" && input != "Y" && input != "n" && input != "N")
         {
             input = output_question();

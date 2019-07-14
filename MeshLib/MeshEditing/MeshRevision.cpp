@@ -677,7 +677,6 @@ void MeshRevision::reducePyramid(MeshLib::Element const*const org_elem,
     {
         new_elements.push_back(this->constructLine(org_elem, nodes));
     }
-    return;
 }
 
 unsigned MeshRevision::reducePrism(MeshLib::Element const*const org_elem,
@@ -901,8 +900,8 @@ unsigned MeshRevision::lutHexDiametralNode(unsigned id) const
     return _hex_diametral_nodes[id];
 }
 
-const std::array<unsigned,4> MeshRevision::lutHexCuttingQuadNodes(
-    unsigned id1, unsigned id2) const
+std::array<unsigned, 4> MeshRevision::lutHexCuttingQuadNodes(unsigned id1,
+                                                             unsigned id2) const
 {
     std::array<unsigned,4> nodes;
     if      (id1==0 && id2==1) { nodes[0]=3; nodes[1]=2; nodes[2]=5; nodes[3]=4; }
@@ -933,8 +932,10 @@ const std::array<unsigned,4> MeshRevision::lutHexCuttingQuadNodes(
     return nodes;
 }
 
-const std::pair<unsigned, unsigned> MeshRevision::lutHexBackNodes(
-    unsigned i, unsigned j, unsigned k, unsigned l) const
+std::pair<unsigned, unsigned> MeshRevision::lutHexBackNodes(unsigned i,
+                                                            unsigned j,
+                                                            unsigned k,
+                                                            unsigned l) const
 {
     // collapsed edges are *not* connected
     std::pair<unsigned, unsigned> back(std::numeric_limits<unsigned>::max(), std::numeric_limits<unsigned>::max());

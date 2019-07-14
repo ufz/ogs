@@ -75,7 +75,8 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromASCFile(std::string const& fn
 
 bool AsciiRasterInterface::readASCHeader(std::ifstream &in, GeoLib::RasterHeader &header)
 {
-    std::string tag, value;
+    std::string tag;
+    std::string value;
 
     in >> tag;
     if (tag == "ncols")
@@ -164,7 +165,8 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromSurferFile(std::string const&
 
     // header information
     GeoLib::RasterHeader header;
-    double min(0.0), max(0.0);
+    double min(0.0);
+    double max(0.0);
 
     if (readSurferHeader(in, header, min, max))
     {

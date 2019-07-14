@@ -65,7 +65,7 @@ void RecentFiles::updateRecentFileActions()
     QSettings settings;
     QStringList files = settings.value(_settingsName).toStringList();
 
-    int numFiles = qMin(files.size(), (int)_maxFiles);
+    int numFiles = qMin(files.size(), static_cast<int>(_maxFiles));
 
     for (int i = 0; i < numFiles; ++i)
     {

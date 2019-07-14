@@ -152,8 +152,8 @@ void GMSHPrefsDialog::accept()
     if (this->radioAdaptive->isChecked())
     {
         double const min_scaling_factor (1e-10);
-        max_number_of_points_in_quadtree_leaf = BaseLib::str2number<unsigned> (
-                param1->text().toStdString().c_str());
+        max_number_of_points_in_quadtree_leaf =
+            BaseLib::str2number<unsigned>(param1->text().toStdString());
         if (max_number_of_points_in_quadtree_leaf == 0)
         {
             max_number_of_points_in_quadtree_leaf = 10;

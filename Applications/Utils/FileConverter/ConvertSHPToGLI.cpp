@@ -105,7 +105,8 @@ void convertPoints (DBFHandle dbf_handle,
 void printFieldInformationTable(DBFHandle const& dbf_handle, std::size_t n_fields)
 {
     char* field_name(new char[256]);
-    int width(0), n_decimals(0);
+    int width(0);
+    int n_decimals(0);
     std::stringstream out;
     out << std::endl;
     out << "************************************************" << std::endl;
@@ -122,7 +123,7 @@ void printFieldInformationTable(DBFHandle const& dbf_handle, std::size_t n_field
             out << "       " << field_idx << " |";
         }
         std::string field_name_str(field_name);
-        for (int k(0); k < (14 - (int)field_name_str.size()); k++)
+        for (int k(0); k < (14 - static_cast<int>(field_name_str.size())); k++)
         {
             out << " ";
         }
@@ -173,7 +174,8 @@ int main (int argc, char* argv[])
 
     std::string fname (shapefile_arg.getValue());
 
-    int shape_type, number_of_elements;
+    int shape_type;
+    int number_of_elements;
 
     SHPHandle hSHP = SHPOpen(fname.c_str(),"rb");
     if (hSHP) {
@@ -200,7 +202,9 @@ int main (int argc, char* argv[])
         std::size_t n_fields(DBFGetFieldCount(dbf_handle));
         printFieldInformationTable(dbf_handle, n_fields);
 
-        std::size_t x_id, y_id, z_id;
+        std::size_t x_id;
+        std::size_t y_id;
+        std::size_t z_id;
         INFO("Please give the field idx that should be used for reading the x coordinate: ");
         std::cin >> x_id;
         INFO("Please give the field idx that should be used for reading the y coordinate: ");

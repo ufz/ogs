@@ -98,7 +98,8 @@ void StratScene::addSoilNameLabels(std::vector<std::string> soilNames,
                                    double offset)
 {
     //QRectF textBounds;
-    double vertPos = MARGIN, halfHeight = 0;
+    double vertPos = MARGIN;
+    double halfHeight = 0;
     std::vector<QNonScalableGraphicsTextItem*> soilText;
     soilText.push_back(addNonScalableText(QString::fromStdString(soilNames[0])));
     //textBounds = soilText[0]->boundingRect();

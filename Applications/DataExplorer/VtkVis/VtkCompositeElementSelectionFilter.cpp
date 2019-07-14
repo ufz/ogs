@@ -36,7 +36,8 @@ VtkCompositeElementSelectionFilter::VtkCompositeElementSelectionFilter( vtkAlgor
 
 void VtkCompositeElementSelectionFilter::init()
 {
-    double thresholdLower(_range.first), thresholdUpper(_range.second);
+    double thresholdLower(_range.first);
+    double thresholdUpper(_range.second);
     this->_inputDataObjectType = VTK_UNSTRUCTURED_GRID;
     this->_outputDataObjectType = VTK_UNSTRUCTURED_GRID;
 

@@ -75,7 +75,8 @@ int XmlNumInterface::readFile(QString const& fileName)
 void XmlNumInterface::readLinearSolverConfiguration(QDomElement const& lin_root)
 {
     std::string const library = lin_root.attribute("Library").toStdString();
-    std::string lin_solver_type, precond_type("no");
+    std::string lin_solver_type;
+    std::string precond_type("no");
 
     QDomElement linear_solver_node = lin_root.firstChildElement();
     while (!linear_solver_node.isNull())
@@ -98,7 +99,8 @@ void XmlNumInterface::readLinearSolverConfiguration(QDomElement const& lin_root)
 void XmlNumInterface::readIterationScheme(QDomElement const& iteration_root)
 {
     QDomElement iteration_node = iteration_root.firstChildElement();
-    int max_iterations(0), fixed_step_size(0);
+    int max_iterations(0);
+    int fixed_step_size(0);
 
     while (!iteration_node.isNull())
     {
@@ -120,7 +122,7 @@ void XmlNumInterface::readConvergenceCriteria(QDomElement const& convergence_roo
 {
     QDomElement conv_node = convergence_root.firstChildElement();
     double error_threshold(0);
-    std::string error_method("");
+    std::string error_method;
 
     while (!conv_node.isNull())
     {

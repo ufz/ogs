@@ -33,7 +33,7 @@ TEST(NumLib_SparsityPattern, DISABLED_SingleComponentLinearMesh)
                       std::move(components),
                       NumLib::ComponentOrder::BY_COMPONENT);
 
-    GlobalSparsityPattern sp = NumLib::computeSparsityPattern(dof_map, *mesh.get());
+    GlobalSparsityPattern sp = NumLib::computeSparsityPattern(dof_map, *mesh);
 
     ASSERT_EQ(4u, sp.size());
     EXPECT_EQ(2u, sp[0]);
@@ -60,7 +60,7 @@ TEST(NumLib_SparsityPattern, DISABLED_SingleComponentQuadraticMesh)
                       std::move(components),
                       NumLib::ComponentOrder::BY_COMPONENT);
 
-    GlobalSparsityPattern sp = NumLib::computeSparsityPattern(dof_map, *mesh.get());
+    GlobalSparsityPattern sp = NumLib::computeSparsityPattern(dof_map, *mesh);
 
     ASSERT_EQ(7u, sp.size());
     EXPECT_EQ(3u, sp[0]);
@@ -88,7 +88,7 @@ TEST(NumLib_SparsityPattern, DISABLED_MultipleComponentsLinearMesh)
                       std::move(components),
                       NumLib::ComponentOrder::BY_COMPONENT);
 
-    GlobalSparsityPattern sp = NumLib::computeSparsityPattern(dof_map, *mesh.get());
+    GlobalSparsityPattern sp = NumLib::computeSparsityPattern(dof_map, *mesh);
 
     ASSERT_EQ(8u, sp.size());
     for (int i=0; i<2; i++)
@@ -123,7 +123,7 @@ TEST(NumLib_SparsityPattern, DISABLED_MultipleComponentsLinearQuadraticMesh)
                       std::move(components),
                       NumLib::ComponentOrder::BY_COMPONENT);
 
-    GlobalSparsityPattern sp = NumLib::computeSparsityPattern(dof_map, *mesh.get());
+    GlobalSparsityPattern sp = NumLib::computeSparsityPattern(dof_map, *mesh);
 
     ASSERT_EQ(11u, sp.size());
     // 1st component

@@ -37,7 +37,7 @@ public:
     ~MergeGeometriesDialog() override;
 
     /// Returns a vector of selected geometries
-    std::vector<std::string> const getSelectedGeometries() const;
+    std::vector<std::string> getSelectedGeometries() const;
 
     /// Returns the name of the new merged geometry
     std::string getGeometryName() const;

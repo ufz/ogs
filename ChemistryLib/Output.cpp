@@ -18,17 +18,17 @@ std::ostream& operator<<(std::ostream& os,
 {
     os << "-file " << basic_output_setups.output_file << "\n";
     os << "-high_precision " << std::boolalpha
-       << basic_output_setups.use_high_precision << "\n";
+       << ChemistryLib::BasicOutputSetups::use_high_precision << "\n";
     os << "-simulation " << std::boolalpha
-       << basic_output_setups.display_simulation_id << "\n";
-    os << "-state " << std::boolalpha << basic_output_setups.display_state
-       << "\n";
-    os << "-distance " << std::boolalpha << basic_output_setups.display_distance
-       << "\n";
-    os << "-time " << std::boolalpha << basic_output_setups.display_current_time
-       << "\n";
-    os << "-step " << std::boolalpha << basic_output_setups.display_time_step
-       << "\n";
+       << ChemistryLib::BasicOutputSetups::display_simulation_id << "\n";
+    os << "-state " << std::boolalpha
+       << ChemistryLib::BasicOutputSetups::display_state << "\n";
+    os << "-distance " << std::boolalpha
+       << ChemistryLib::BasicOutputSetups::display_distance << "\n";
+    os << "-time " << std::boolalpha
+       << ChemistryLib::BasicOutputSetups::display_current_time << "\n";
+    os << "-step " << std::boolalpha
+       << ChemistryLib::BasicOutputSetups::display_time_step << "\n";
 
     return os;
 }

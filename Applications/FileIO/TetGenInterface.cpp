@@ -259,7 +259,9 @@ bool TetGenInterface::readNodesFromStream (std::ifstream &ins,
 {
     std::string line;
     getline (ins, line);
-    std::size_t n_nodes, dim, n_attributes;
+    std::size_t n_nodes;
+    std::size_t dim;
+    std::size_t n_attributes;
     bool boundary_markers;
 
     while (!ins.fail())
@@ -392,7 +394,8 @@ bool TetGenInterface::readElementsFromStream(std::ifstream &ins,
 {
     std::string line;
     getline (ins, line);
-    std::size_t n_tets, n_nodes_per_tet;
+    std::size_t n_tets;
+    std::size_t n_nodes_per_tet;
     bool region_attributes;
 
     while (!ins.fail())
@@ -431,7 +434,8 @@ bool TetGenInterface::parseElementsFileHeader(std::string &line,
                                               std::size_t& n_nodes_per_tet,
                                               bool& region_attribute) const
 {
-    std::size_t pos_beg, pos_end;
+    std::size_t pos_beg;
+    std::size_t pos_end;
 
     // number of tetrahedras
     pos_beg = line.find_first_not_of (' ');

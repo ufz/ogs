@@ -100,7 +100,7 @@ int SensorData::readDataFromFile(const std::string &file_name)
         return 0;
     }
 
-    std::string line("");
+    std::string line;
 
     /* first line contains field names */
     getline(in, line);

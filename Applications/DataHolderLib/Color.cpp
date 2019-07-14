@@ -30,7 +30,7 @@ Color getRandomColor()
                        static_cast<unsigned char>((rand() % 5) * 50));
 }
 
-Color const getColor(const std::string &id, std::map<std::string, Color> &colors)
+Color getColor(const std::string& id, std::map<std::string, Color>& colors)
 {
     auto it = colors.find(id);
 

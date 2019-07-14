@@ -25,7 +25,9 @@
 TEST(TestVtkRaster, TestPNGReader)
 {
     std::string name = BaseLib::BuildInfo::data_path + "/FileIO/testraster.png";
-    double x0, y0, delta;
+    double x0;
+    double y0;
+    double delta;
     vtkSmartPointer<vtkImageAlgorithm> img =
         VtkRaster::loadImage(name, x0, y0, delta);
     img->Update();
@@ -52,7 +54,9 @@ TEST(TestVtkRaster, TestASCReader)
 {
     std::string name =
         BaseLib::BuildInfo::data_path + "/MeshGeoToolsLib/Hamburg/00-raster.asc";
-    double x0, y0, delta;
+    double x0;
+    double y0;
+    double delta;
     vtkSmartPointer<vtkImageAlgorithm> img =
         VtkRaster::loadImage(name, x0, y0, delta);
     img->Update();

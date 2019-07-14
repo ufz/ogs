@@ -209,7 +209,8 @@ void DiagramScene::clearGrid()
 void DiagramScene::constructGrid()
 {
     // be very careful with scaling parameters here!
-    int numXTicks, numYTicks;
+    int numXTicks;
+    int numYTicks;
     qreal xMin = _unscaledBounds.left();
     qreal yMin = _unscaledBounds.top();
     qreal xMax = _unscaledBounds.right();
@@ -294,16 +295,18 @@ void DiagramScene::drawGraph(DiagramList* list)
 /// This value is zero if minYValue<0<maxYValue and minYValue otherwise.
 int DiagramScene::getXAxisOffset()
 {
-    return (_bounds.top() <= 0 && _bounds.bottom() > 0) ? (int)(_bounds.bottom() +
-                                                                _bounds.top()) : (int)_bounds.
-           bottom();
+    return (_bounds.top() <= 0 && _bounds.bottom() > 0)
+               ? static_cast<int>(_bounds.bottom() + _bounds.top())
+               : static_cast<int>(_bounds.bottom());
 }
 
 /// Returns the x-value at which the y-axis should cross the x-axis.
 /// This value is zero if minXValue<0<maxXValue and minXValue otherwise.
 int DiagramScene::getYAxisOffset()
 {
-    return (_bounds.left() <= 0 && _bounds.right() > 0) ? 0 : (int)_bounds.left();
+    return (_bounds.left() <= 0 && _bounds.right() > 0)
+               ? 0
+               : static_cast<int>(_bounds.left());
 }
 
 /// Initialises the coordinate axes, adds labels and/or units to the axes,

@@ -44,7 +44,9 @@ GeoLib::Surface* TINInterface::readTIN(std::string const& fname,
 
     auto* sfc = new GeoLib::Surface(*(pnt_vec.getVector()));
     std::size_t id;
-    MathLib::Point3d p0, p1, p2;
+    MathLib::Point3d p0;
+    MathLib::Point3d p1;
+    MathLib::Point3d p2;
     std::string line;
     while (std::getline(in, line).good())
     {

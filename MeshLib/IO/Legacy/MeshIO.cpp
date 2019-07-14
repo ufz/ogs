@@ -50,7 +50,7 @@ MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
         return nullptr;
     }
 
-    std::string line_string ("");
+    std::string line_string;
     getline(in, line_string);
 
     std::vector<MeshLib::Node*> nodes;
@@ -70,7 +70,10 @@ MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
             }
             if (line_string.find("$NODES") != std::string::npos)
             {
-                double x, y, z, double_dummy;
+                double x;
+                double y;
+                double z;
+                double double_dummy;
                 unsigned idx;
                 getline(in, line_string);
                 BaseLib::trim(line_string);
@@ -156,7 +159,8 @@ MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
 
 std::size_t MeshIO::readMaterialID(std::istream & in) const
 {
-    unsigned index, material_id;
+    unsigned index;
+    unsigned material_id;
     if (!(in >> index >> material_id))
     {
         return std::numeric_limits<std::size_t>::max();
@@ -167,7 +171,7 @@ std::size_t MeshIO::readMaterialID(std::istream & in) const
 MeshLib::Element* MeshIO::readElement(std::istream& in,
     const std::vector<MeshLib::Node*> &nodes) const
 {
-    std::string elem_type_str("");
+    std::string elem_type_str;
     MeshLib::MeshElemType elem_type (MeshLib::MeshElemType::INVALID);
 
     do {

@@ -51,7 +51,7 @@ QSize ColorTableViewDelegate::sizeHint( const QStyleOptionViewItem &option,
     QSize s = QItemDelegate::sizeHint(option, index);
     if (s.isValid())
     {
-        s.setHeight((int)(0.5 * s.height()));
+        s.setHeight(static_cast<int>(0.5 * s.height()));
     }
     return s;
 }
