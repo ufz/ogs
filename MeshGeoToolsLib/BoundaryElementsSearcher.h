@@ -71,7 +71,8 @@ public:
 
     /**
      * generate boundary elements on the given polyline.
-     * @param ply the GeoLib::Polyline the nearest mesh nodes are searched for
+     * @param polyline the GeoLib::Polyline the nearest mesh nodes are searched
+     * for
      * @return a vector of boundary element objects
      */
     std::vector<MeshLib::Element*> const& getBoundaryElementsAlongPolyline(
@@ -79,7 +80,8 @@ public:
 
     /**
      * generate boundary elements on the given surface.
-     * @param sfc the GeoLib::Surface the nearest mesh nodes are searched for
+     * @param surface the GeoLib::Surface the nearest mesh nodes are searched
+     * for
      * @return a vector of boundary element objects
      */
     std::vector<MeshLib::Element*> const& getBoundaryElementsOnSurface(

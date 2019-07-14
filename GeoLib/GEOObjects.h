@@ -83,7 +83,7 @@ public:
      * Adds a vector of points with the given name to GEOObjects.
      * @param points vector of pointers to points
      * @param name the project name
-     * @param pnt_names vector of the names corresponding to the points
+     * @param pnt_id_name_map names corresponding to the points
      * @param eps relative tolerance value for testing of point uniqueness
      */
     void addPointVec(std::unique_ptr<std::vector<Point*>> points,

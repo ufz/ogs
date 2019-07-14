@@ -44,9 +44,10 @@ public:
     void markSharedSegments();
 
     /**
-     * If the station point is inside the polygon, the method inserts the station into
-     * the internal vector of stations. This method works recursive!
-     * @param pnt the station point
+     * If the station point is inside the polygon, the method inserts the
+     * station into the internal vector of stations. This method works
+     * recursive!
+     * @param station the station point
      * @return true if the station is inside the polygon
      */
     bool insertStation(GeoLib::Point const* station);

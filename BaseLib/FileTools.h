@@ -105,11 +105,6 @@ std::vector<T> readBinaryArray(std::string const& filename, std::size_t const n)
     return std::vector<T>();
 }
 
-/**
- * \brief truncate a file
- *
- * \param file_path         the file name
- */
 void truncateFile(std::string const& filename);
 
 /**

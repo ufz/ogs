@@ -33,12 +33,12 @@ public:
      * A user provides a single time step size \f$\Delta t\f$. Total number of
      * time steps is calculated by
      * \f[
-     *  n=\frac{t_{\rm end} - t_{\rm initial}}{\Delta t}
+     *  n=\frac{t_{\rm n} - t_0}{\Delta t}
      * \f].
      *
-     * @param t_initial     start time
-     * @param t_end         finish time
-     * @param dt            uniform time step size
+     * @param t0 start time
+     * @param tn finish time
+     * @param dt uniform time step size
      */
     FixedTimeStepping(double t0, double tn, double dt);
 
@@ -48,12 +48,12 @@ public:
      * A user can specify \f$\Delta t\f$ for each time step (i.e. \f$\Delta t_1,
      * \Delta t_2, ..., \Delta t_n\f$). Time at \f$m\f$ th step is given as
      * \f[
-     *  t_{m}=\sum_{i=1}^m \Delta t_i + t_{\rm initial}
+     *  t_{m}=\sum_{i=1}^m \Delta t_i + t_0
      * \f].
      *
-     * @param t_initial     start time
-     * @param t_end         finish time
-     * @param vec_all_dt    a vector of all time steps
+     * @param t0         start time
+     * @param tn         finish time
+     * @param vec_all_dt a vector of all time steps
      */
     FixedTimeStepping(double t0, double tn,
                       const std::vector<double>& vec_all_dt);

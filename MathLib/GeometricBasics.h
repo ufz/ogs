@@ -107,12 +107,12 @@ bool isPointInTriangle(
     MathLib::TriangleTest algorithm = MathLib::GAUSS);
 
 /**
- * Tests if the given point p is within the triangle, defined by its edge nodes
+ * Tests if the given point q is within the triangle, defined by its edge nodes
  * a, b and c.
  * Using two eps-values it is possible to test an 'epsilon' neighbourhood around
  * the triangle
  * as well as an 'epsilon' outside the triangles plane.
- * @param p test point
+ * @param q test point
  * @param a edge node of triangle
  * @param b edge node of triangle
  * @param c edge node of triangle
