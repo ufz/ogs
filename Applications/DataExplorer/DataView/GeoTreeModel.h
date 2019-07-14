@@ -25,7 +25,7 @@
 
 namespace GeoLib
 {
-class GeoObject;
+struct GeoObject;
 }
 
 class QString;

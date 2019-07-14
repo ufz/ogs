@@ -24,7 +24,7 @@ class vtkPolyDataAlgorithm;
 
 namespace GeoLib
 {
-class GeoObject;
+struct GeoObject;
 }
 
 /**
