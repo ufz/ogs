@@ -239,6 +239,8 @@ Install Conan with Python's pip:
 pip3 install --user conan
 ```
 
+This installed `conan` to `.local/bin` in your home directory. Make sure to have this directory in your `PATH`!
+
 Check on a newly opened command line if Conan was installed successfully:
 
 ```bash
