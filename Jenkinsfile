@@ -386,6 +386,8 @@ pipeline {
             MSVC_NUMBER = '15'
             MSVC_VERSION = '2017'
             OMP_NUM_THREADS = '1'
+            CC = 'clcache'
+            CXX = 'clcache'
           }
           steps {
             script {
