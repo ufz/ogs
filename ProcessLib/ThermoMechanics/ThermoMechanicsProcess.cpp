@@ -286,9 +286,9 @@ void ThermoMechanicsProcess<DisplacementDim>::initializeBoundaryConditions()
 {
     if (_use_monolithic_scheme)
     {
-        const int process_id_of_thermomechancs = 0;
+        const int process_id_of_thermomechanics = 0;
         initializeProcessBoundaryConditionsAndSourceTerms(
-            *_local_to_global_index_map, process_id_of_thermomechancs);
+            *_local_to_global_index_map, process_id_of_thermomechanics);
         return;
     }
 
@@ -429,8 +429,7 @@ void ThermoMechanicsProcess<DisplacementDim>::preTimestepConcreteProcess(
 
     assert(process_id < 2);
 
-    if (_use_monolithic_scheme ||
-        process_id == _process_data.mechanics_process_id)
+    if (process_id == _process_data.mechanics_process_id)
     {
         GlobalExecutor::executeSelectedMemberOnDereferenced(
             &ThermoMechanicsLocalAssemblerInterface::preTimestep,

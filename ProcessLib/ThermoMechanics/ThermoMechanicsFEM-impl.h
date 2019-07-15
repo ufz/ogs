@@ -127,13 +127,13 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
 
         auto& state = _ip_data[ip].material_state_variables;
 
-        const double T = N.dot(local_T);  // T at integration point
-        double const dT = T - N.dot(local_T0);
+        const double T_ip = N.dot(local_T);  // T at integration point
+        double const dT_ip = T_ip - N.dot(local_T0);
         // calculate thermally induced strain
         // assume isotropic thermal expansion
         auto const alpha = _process_data.linear_thermal_expansion_coefficient(
             t, x_position)[0];
-        double const linear_thermal_strain_increment = alpha * dT;
+        double const linear_thermal_strain_increment = alpha * dT_ip;
 
         //
         // displacement equation, displacement part
@@ -150,7 +150,7 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
             linear_thermal_strain_increment * Invariants::identity2;
 
         auto&& solution = _ip_data[ip].solid_material.integrateStress(
-            t, x_position, dt, eps_m_prev, eps_m, sigma_prev, *state, T);
+            t, x_position, dt, eps_m_prev, eps_m, sigma_prev, *state, T_ip);
 
         if (!solution)
         {
@@ -258,8 +258,8 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
         auto const alpha = _process_data.linear_thermal_expansion_coefficient(
             t, x_position)[0];
 
-        double const dT = N.dot(local_dT);
-        double const linear_thermal_strain_increment = alpha * dT;
+        double const dT_ip = N.dot(local_dT);
+        double const linear_thermal_strain_increment = alpha * dT_ip;
         rho_s = _ip_data[ip].solid_density_prev /
                 (1 + 3 * linear_thermal_strain_increment);
         auto const c_p = _process_data.specific_heat_capacity(t, x_position)[0];
