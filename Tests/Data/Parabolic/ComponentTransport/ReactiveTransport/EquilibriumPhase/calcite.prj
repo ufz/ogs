@@ -351,7 +351,7 @@
         </output>
     </time_loop>
     <chemical_system chemical_solver="Phreeqc">
-        <database>NAPSI_290502.dat</database>
+        <database>PSINA_12_07_110615_DAV_s.dat</database>
         <solution>
             <temperature>25</temperature>
             <pressure>1</pressure>
