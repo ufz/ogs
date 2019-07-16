@@ -9,12 +9,17 @@
 
 #pragma once
 
-#include <boost/optional/optional.hpp>
+#include <boost/optional/optional_fwd.hpp>
 #include <vector>
 
 namespace BaseLib
 {
 class ConfigTree;
+}
+
+namespace MeshLib
+{
+class Mesh;
 }
 
 namespace ChemistryLib
@@ -25,5 +30,6 @@ struct EquilibriumPhase;
 namespace ChemistryLib
 {
 std::vector<EquilibriumPhase> createEquilibriumPhases(
-    boost::optional<BaseLib::ConfigTree> const& config);
+    boost::optional<BaseLib::ConfigTree> const& config,
+    MeshLib::Mesh const& mesh);
 }  // namespace ChemistryLib

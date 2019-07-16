@@ -13,6 +13,11 @@
 
 #include "PhreeqcIO.h"
 
+namespace MeshLib
+{
+class Mesh;
+}
+
 namespace BaseLib
 {
 class ConfigTree;
@@ -26,7 +31,7 @@ class Process;
 namespace ChemistryLib
 {
 std::unique_ptr<PhreeqcIO> createPhreeqcIO(
-    std::size_t const num_nodes,
+    MeshLib::Mesh const& mesh,
     std::vector<std::pair<int, std::string>> const&
         process_id_to_component_name_map,
     BaseLib::ConfigTree const& config,

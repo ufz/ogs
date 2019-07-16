@@ -13,15 +13,10 @@
 
 namespace ChemistryLib
 {
-std::ostream& operator<<(std::ostream& os,
-                         EquilibriumPhase const& equilibrium_phase)
+void EquilibriumPhase::print(std::ostream& os,
+                             std::size_t const chemical_system_id) const
 {
-    os << equilibrium_phase.name;
-
-    os << " " << equilibrium_phase.saturation_index;
-
-    os << " " << equilibrium_phase.amount << "\n";
-
-    return os;
+    os << name << " " << saturation_index << " "
+       << (*amount)[chemical_system_id] << "\n";
 }
 }  // namespace ChemistryLib
