@@ -2,7 +2,7 @@
 
 - Development related content such as developer guide, benchmark documentation, tools description, ... will be simple Markdown files in e.g. [/web/content/docs](https://github.com/bilke/ogs/blob/web-hugo/web/content/docs/benchmarks/elliptic/groundwater-flow-neumann.md)
 - You can preview documentation locally with [Hugo](https://gohugo.io) – a static site generator
-- You can [mark](https://github.com/bilke/ogs/blob/web-hugo/ProcessLib/GroundwaterFlow/CMakeLists.txt#L80) benchmarks to be automatically and interactively visualized [in the documentation](https://github.com/bilke/ogs/commit/d4fc7d94a3821a6b4483a1d7aeaabd6ee391c449#diff-2f5b1ac2a759aa09b2d3f5cc1ece45ceR108) inside your [browser](https://dev.opengeosys.org/docs/benchmarks/elliptic/groundwater-flow-neumann/#results-and-evaluation) via [vtk.js](https://kitware.github.io/vtk-js/)! 🍻 CURRENTLY DISABLED!
+- You can [mark](https://github.com/bilke/ogs/blob/web-hugo/ProcessLib/GroundwaterFlow/CMakeLists.txt#L80) benchmarks to be automatically and interactively visualized [in the documentation](https://github.com/bilke/ogs/commit/d4fc7d94a3821a6b4483a1d7aeaabd6ee391c449#diff-2f5b1ac2a759aa09b2d3f5cc1ece45ceR108) inside your [browser](https://opengeosys.org/docs/benchmarks/elliptic/groundwater-flow-neumann/#results-and-evaluation) via [vtk.js](https://kitware.github.io/vtk-js/)! 🍻 CURRENTLY DISABLED!
 
 ## Requirements
 
@@ -153,3 +153,11 @@ ALGOLIA_WRITE_KEY=XXX node_modules/.bin/hugo-algolia --toml -s
 - [FontAwesome](https://fontawesome.com) - Icons, see [icon search](https://fontawesome.com/icons?d=gallery)
 - [Slick Carousel](http://kenwheeler.github.io/slick/) & [FancyBox](https://fancyapps.com/fancybox/3/) for image galleries
 - [Algolia](https://github.com/algolia/algoliasearch-client-javascript) for site search
+
+### Link checker
+
+```
+npm install -g @hashicorp/broken-links-checker
+hugo
+broken-links-checker --path ./public --baseUrl https://www.opengeosys.org
+```

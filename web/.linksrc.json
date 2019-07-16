@@ -1,0 +1,7 @@
+{
+  "excludePatterns": [
+    "^https?://.*localhost",
+    "^https?://github.com/ufz/ogs/releases/.*",
+    "https://jenkins.opengeosys.org/job/ufz/job/ogs-container-maker/job/master/build"
+  ]
+}

@@ -698,6 +698,26 @@ pipeline {
             }
           }
         }
+        // *************************** Web *************************************
+        stage('Web') {
+          agent {
+            dockerfile {
+              filename 'Dockerfile.web'
+              dir 'scripts/docker'
+              label 'docker'
+            }
+          }
+          when {
+            beforeAgent true
+            environment name: 'JOB_NAME', value: 'ufz/ogs/master'
+          }
+          steps {
+            dir('web') {
+              sh 'hugo'
+              sh 'broken-links-checker --path ./public --baseUrl https://www.opengeosys.org'
+            }
+          }
+        }
         // *************************** Post ************************************
         stage('Post') {
           agent { label "master"}
