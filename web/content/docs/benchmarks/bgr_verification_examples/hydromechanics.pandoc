@@ -2,7 +2,7 @@
 date = "2019-04-24T15:15:45+01:00"
 title = "Hydromechanics: Verification examples by Vogel, Maßmann"
 weight = 40
-project = "Hydromechanics/Verification"
+project = "HydroMechanics/Verification"
 author = "Johannes Herfurth, Jan Thiedau"
 
 [menu]

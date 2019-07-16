@@ -1,7 +1,7 @@
 +++
 author = "Marc Walther"
 weight = 142
-project = "Parabolic/ComponentTransport/Theis/HC_theis.prj"
+project = "Parabolic/ComponentTransport/Theis/theis.prj"
 date = "2019-05-02T14:41:09+01:00"
 title = "Theis solution for well pumping"
 
@@ -43,8 +43,6 @@ The homogeneous, isotropic domain is defined for the radius $1 < r < 100 m$ and 
 Mass transport properties are irrelevant as no transport processes are calculated.
 
 Initial conditions are $c = 0$ and hydrostatic pressure conditions.
-
-{{< data-link "Link to the HC_theis project file" "Parabolic/ComponentTransport/HC_Theis/HC_theis.prj" >}}
 
 
 ### Results
