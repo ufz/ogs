@@ -646,7 +646,7 @@ pipeline {
           when {
             beforeAgent true
             allOf {
-              expression { return params.master_jobs && stage_required.data }
+              expression { return params.master_jobs }
               environment name: 'JOB_NAME', value: 'ufz/ogs/master'
             }
           }
