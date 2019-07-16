@@ -1,7 +1,7 @@
 #!/usr/bin/env groovy
 @Library('jenkins-pipeline@1.0.22') _
 
-def stage_required = [build: false, data: false, full: false, docker: false]
+def stage_required = [build: false, full: false]
 def build_shared = 'ON'
 
 pipeline {
@@ -68,14 +68,6 @@ pipeline {
                   && !stage_required.build) {
                   stage_required.build = true
                   echo "Doing regular build."
-                }
-                if (path.startsWith("Tests/Data") && !stage_required.data) {
-                  stage_required.data = true
-                  echo "Updating Tests/Data."
-                }
-                if (path.startsWith("scripts/docker") && !stage_required.docker) {
-                  stage_required.docker = true
-                  echo "Doing Docker images build."
                 }
               }
             }
