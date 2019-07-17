@@ -65,12 +65,24 @@ if(OGS_BUILD_GUI)
     set(CONAN_REQUIRES ${CONAN_REQUIRES}
         shapelib/1.3.0@bilke/stable
         libgeotiff/1.4.2@bilke/stable
-        qt/5.11.3@bincrafters/stable
+        qt/5.12.4@bincrafters/stable
     )
     set(CONAN_OPTIONS ${CONAN_OPTIONS}
         vtk:minimal=False
         vtk:qt=True
         qt:qtxmlpatterns=True
+        qt:openssl=False
+        qt:with_harfbuzz=False
+        qt:with_libalsa=False
+        qt:with_libjpeg=False
+        #qt:with_libpng=False
+        qt:with_mysql=False
+        qt:with_odbc=False
+        qt:with_openal=False
+        qt:with_pq=False
+        qt:with_sdl2=False
+        qt:with_sqlite3=False
+        qt:with_freetype=False
     )
 endif()
 
