@@ -56,7 +56,10 @@ void StationTreeView::selectionChanged( const QItemSelection &selected,
         if (list_item->getItem())
         {
             if (list_item)
-                emit geoItemSelected(list_item->getItem()->vtkSource(), tree_item->row());
+            {
+                emit geoItemSelected(list_item->getItem()->vtkSource(),
+                                     tree_item->row());
+            }
             emit enableRemoveButton(false);
             emit enableSaveButton(false);
         }
@@ -89,8 +92,11 @@ void StationTreeView::contextMenuEvent( QContextMenuEvent* event )
     QModelIndex index = this->selectionModel()->currentIndex();
     auto* item = static_cast<ModelTreeItem*>(index.internalPointer());
 
-    if (!item)  // Otherwise sometimes it crashes when (unmotivated ;-) ) clicking in a treeview
+    if (!item)
+    {  // Otherwise sometimes it crashes when (unmotivated ;-) ) clicking in a
+       // treeview
         return;
+    }
 
     // The current index refers to a parent item (e.g. a listname)
     if (item->childCount() > 0)
@@ -167,7 +173,9 @@ void StationTreeView::writeToFile()
 {
     QModelIndex index (this->selectionModel()->currentIndex());
     if (!index.isValid())
+    {
         OGSError::box("No station list selected.");
+    }
     else
     {
         TreeItem* item = static_cast<StationTreeModel*>(model())->getItem(index);
@@ -220,7 +228,9 @@ void StationTreeView::removeStationList()
 {
     QModelIndex index (this->selectionModel()->currentIndex());
     if (!index.isValid())
+    {
         OGSError::box("No station list selected.");
+    }
     else
     {
         TreeItem* item = static_cast<StationTreeModel*>(model())->getItem(index);
@@ -249,8 +259,10 @@ void StationTreeView::writeStratigraphiesAsImages(QString listName)
     std::size_t nLists = lists.size();
     for (std::size_t i = 0; i < nLists; i++)
     {
-        if ( listName.compare( lists[i]->data(0).toString() ) != 0 )
+        if (listName.compare(lists[i]->data(0).toString()) != 0)
+        {
             continue;
+        }
 
         std::vector<GeoLib::Point*> const& stations =
             *dynamic_cast<BaseItem*>(lists[i]->getItem())->getStations();

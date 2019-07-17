@@ -74,7 +74,8 @@ void VtkVisTabWidget::setActiveItem( VtkVisPipelineItem* item )
             diffuseColorPickerButton->setColor(vtkProps->GetDiffuseColor());
             visibleEdgesCheckBox->setChecked(vtkProps->GetEdgeVisibility());
             edgeColorPickerButton->setColor(vtkProps->GetEdgeColor());
-            opacitySlider->setValue((int)(vtkProps->GetOpacity() * 100.0));
+            opacitySlider->setValue(
+                static_cast<int>(vtkProps->GetOpacity() * 100.0));
 
             auto* transform =
                 static_cast<vtkTransform*>(transform_filter->GetTransform());
@@ -105,6 +106,7 @@ void VtkVisTabWidget::setActiveItem( VtkVisPipelineItem* item )
             // Set to last active attribute
             QString activeAttribute = _item->GetActiveAttribute();
             if (activeAttribute.length() > 0)
+            {
                 for (int i = 0; i < this->activeScalarComboBox->count(); i++)
                 {
                     QString itemText = this->activeScalarComboBox->itemText(i);
@@ -114,6 +116,7 @@ void VtkVisTabWidget::setActiveItem( VtkVisPipelineItem* item )
                         break;
                     }
                 }
+            }
         }
         else // if image
         {
@@ -202,9 +205,11 @@ void VtkVisTabWidget::on_scaleZ_textChanged(const QString &text)
                     dynamic_cast<VtkCompositeColorByHeightFilter*>(
                         childItem->compositeFilter());
                 if (colorFilter)
+                {
                     VtkColorByHeightFilter::SafeDownCast(
                         colorFilter->GetOutputAlgorithm())
                         ->SetTableRangeScaling(scale);
+                }
             }
         }
 
@@ -214,7 +219,9 @@ void VtkVisTabWidget::on_scaleZ_textChanged(const QString &text)
 
 void VtkVisTabWidget::translateItem()
 {
-    bool okX(true), okY(true), okZ(true);
+    bool okX(true);
+    bool okY(true);
+    bool okZ(true);
     double trans[3];
 
     trans[0] = transX->text().toDouble(&okX);
@@ -233,7 +240,9 @@ void VtkVisTabWidget::buildProportiesDialog(VtkVisPipelineItem* item)
     auto* layout =
         static_cast<QFormLayout*>(this->scrollAreaWidgetContents->layout());
     while (layout->count())
+    {
         delete layout->takeAt(0)->widget();
+    }
 
     QMap<QString, QVariant>* propMap = nullptr;
     QMap<QString, QList<QVariant>>* propVecMap = nullptr;
@@ -346,17 +355,24 @@ void VtkVisTabWidget::buildScalarArrayComboBox(VtkVisPipelineItem* item)
     QString active_array_name = item->GetActiveAttribute();
     QList<QString>::iterator it = dataSetAttributesList.begin();
     if (active_array_name.length() == 0)
+    {
         item->SetActiveAttribute(*it);
+    }
     else
     {
         int idx(0);
-        for (it=dataSetAttributesList.begin(); it!=dataSetAttributesList.end(); ++it)
+        for (it = dataSetAttributesList.begin();
+             it != dataSetAttributesList.end();
+             ++it)
+        {
             if (active_array_name.compare((*it).right((*it).length()-2))==0)
             {
                 this->activeScalarComboBox->setCurrentIndex(idx);
                 break;
             }
-            else idx++;
+
+            idx++;
+        }
     }
 }
 

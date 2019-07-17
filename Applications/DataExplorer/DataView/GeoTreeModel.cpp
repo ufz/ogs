@@ -70,8 +70,13 @@ void GeoTreeModel::addPointList(QString geoName, GeoLib::PointVec const& pointVe
                                                static_cast<const GeoLib::Point*>(&pnt)));
     }
 
-    for (auto pnt = pointVec.getNameIDMapBegin(); pnt != pointVec.getNameIDMapEnd(); ++pnt)
-        QVariant pnt_data (pointList->child(pnt->second)->setData(4, QString::fromStdString(pnt->first)));
+    for (auto pnt = pointVec.getNameIDMapBegin();
+         pnt != pointVec.getNameIDMapEnd();
+         ++pnt)
+    {
+        QVariant pnt_data(pointList->child(pnt->second)
+                              ->setData(4, QString::fromStdString(pnt->first)));
+    }
 
     INFO("Geometry '%s' built. %d points added.", geoName.toStdString().c_str(),
          nPoints);
@@ -88,7 +93,9 @@ void GeoTreeModel::addPolylineList(QString geoName, GeoLib::PolylineVec const& p
     for (int i = 0; i < nLists; i++)
     {
         if (_rootItem->child(i)->data(0).toString().compare(geoName) == 0)
+        {
             geo = _rootItem->child(i);
+        }
     }
 
     if (geo == nullptr)
@@ -116,6 +123,7 @@ void GeoTreeModel::appendPolylines(const std::string &name, GeoLib::PolylineVec 
     for (auto& list : _lists)
     {
         if (name == list->data(0).toString().toStdString())
+        {
             for (int j = 0; j < list->childCount(); j++)
             {
                 auto* parent = static_cast<GeoObjectListItem*>(list->child(j));
@@ -129,6 +137,7 @@ void GeoTreeModel::appendPolylines(const std::string &name, GeoLib::PolylineVec 
                     return;
                 }
             }
+        }
     }
     OGSError::box("Error adding polyline to geometry.");
 }
@@ -165,8 +174,13 @@ void GeoTreeModel::addChildren(GeoObjectListItem* plyList,
         }
     }
 
-    for (auto pnt = polyline_vec.getNameIDMapBegin(); pnt != polyline_vec.getNameIDMapEnd(); ++pnt)
-        QVariant pnt_data (plyList->child(pnt->second)->setData(1, QString::fromStdString(pnt->first)));
+    for (auto pnt = polyline_vec.getNameIDMapBegin();
+         pnt != polyline_vec.getNameIDMapEnd();
+         ++pnt)
+    {
+        QVariant pnt_data(plyList->child(pnt->second)
+                              ->setData(1, QString::fromStdString(pnt->first)));
+    }
 
     INFO("%d polylines added.", end_index - start_index);
 }
@@ -180,7 +194,9 @@ void GeoTreeModel::addSurfaceList(QString geoName, GeoLib::SurfaceVec const& sur
     for (int i = 0; i < nLists; i++)
     {
         if (_rootItem->child(i)->data(0).toString().compare(geoName) == 0)
+        {
             geo = _rootItem->child(i);
+        }
     }
 
     if (geo == nullptr)
@@ -273,8 +289,13 @@ void GeoTreeModel::addChildren(GeoObjectListItem* sfcList,
         }
     }
 
-    for (auto pnt = surface_vec.getNameIDMapBegin(); pnt != surface_vec.getNameIDMapEnd(); ++pnt)
-        QVariant pnt_data (sfcList->child(pnt->second)->setData(1, QString::fromStdString(pnt->first)));
+    for (auto pnt = surface_vec.getNameIDMapBegin();
+         pnt != surface_vec.getNameIDMapEnd();
+         ++pnt)
+    {
+        QVariant pnt_data(sfcList->child(pnt->second)
+                              ->setData(1, QString::fromStdString(pnt->first)));
+    }
 
     INFO("%d surfaces added.", end_index - start_index);
 }
@@ -306,9 +327,11 @@ void GeoTreeModel::renameGeometry(std::string const& old_name,
 void GeoTreeModel::removeGeoList(const std::string& name, GeoLib::GEOTYPE type)
 {
     for (std::size_t i = 0; i < _lists.size(); i++)
+    {
         if (name == _lists[i]->data(0).toString().toStdString())
         {
             for (int j = 0; j < _lists[i]->childCount(); j++)
+            {
                 if (type ==
                     static_cast<GeoObjectListItem*>(_lists[i]->child(j))->getType())
                 {
@@ -317,12 +340,14 @@ void GeoTreeModel::removeGeoList(const std::string& name, GeoLib::GEOTYPE type)
                     removeRows(j, 1, parent(index));
                     break;
                 }
+            }
             if (_lists[i]->childCount() == 0)
             {
                 _lists.erase(_lists.begin() + i);
                 removeRows(i, 1, QModelIndex());
             }
         }
+    }
 }
 
 vtkPolyDataAlgorithm* GeoTreeModel::vtkSource(const std::string &name, GeoLib::GEOTYPE type) const
@@ -331,13 +356,17 @@ vtkPolyDataAlgorithm* GeoTreeModel::vtkSource(const std::string &name, GeoLib::G
     for (std::size_t i = 0; i < nLists; i++)
     {
         if (name == _lists[i]->data(0).toString().toStdString())
+        {
             for (int j = 0; j < _lists[i]->childCount(); j++)
             {
                 auto* item =
                     dynamic_cast<GeoObjectListItem*>(_lists[i]->child(j));
                 if (item->getType() == type)
+                {
                     return item->vtkSource();
+                }
             }
+        }
     }
     return nullptr;
 }
@@ -347,7 +376,7 @@ void GeoTreeModel::setNameForItem(const std::string &name,
                                   std::size_t id,
                                   std::string item_name)
 {
-    std::string geo_type_str("");
+    std::string geo_type_str;
     int col_idx(1);
 
     switch(type)

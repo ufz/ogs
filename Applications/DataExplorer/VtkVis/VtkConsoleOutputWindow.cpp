@@ -30,15 +30,22 @@ VtkConsoleOutputWindow::~VtkConsoleOutputWindow() = default;
 //
 void VtkConsoleOutputWindow::DisplayText(const char* someText)
 {
-    if(!someText)
+    if (!someText)
+    {
         return;
+    }
 
     // Disable warnings
     std::string someTextString(someText);
-    if((someTextString.find(
-        "This is very expensive for vtkMappedDataArray subclasses, since the scalar array must be generated for each call.") != std::string::npos) ||
-       (someTextString.find("Invalid framebuffer operation") != std::string::npos))
+    if ((someTextString.find(
+             "This is very expensive for vtkMappedDataArray subclasses, since "
+             "the scalar array must be generated for each call.") !=
+         std::string::npos) ||
+        (someTextString.find("Invalid framebuffer operation") !=
+         std::string::npos))
+    {
         return;
+    }
 
 #ifdef WIN32
     OutputDebugString(someTextString.c_str());

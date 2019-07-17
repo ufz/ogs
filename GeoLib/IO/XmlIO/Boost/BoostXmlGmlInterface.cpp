@@ -338,7 +338,7 @@ void BoostXmlGmlInterface::addSurfacesToPropertyTree(
     auto& surfaces_tag = geometry_set.add("surfaces", "");
     for (std::size_t i=0; i<surfaces->size(); ++i) {
         GeoLib::Surface const*const surface((*surfaces)[i]);
-        std::string sfc_name("");
+        std::string sfc_name;
         sfc_vec->getNameOfElement(surface, sfc_name);
         auto& surface_tag = surfaces_tag.add("surface", "");
         surface_tag.put("<xmlattr>.id", i);
@@ -380,7 +380,7 @@ void BoostXmlGmlInterface::addPolylinesToPropertyTree(
     auto& polylines_tag = geometry_set.add("polylines", "");
     for (std::size_t i=0; i<polylines->size(); ++i) {
         GeoLib::Polyline const*const polyline((*polylines)[i]);
-        std::string ply_name("");
+        std::string ply_name;
         vec->getNameOfElement(polyline, ply_name);
         auto& polyline_tag = polylines_tag.add("polyline", "");
         polyline_tag.put("<xmlattr>.id", i);

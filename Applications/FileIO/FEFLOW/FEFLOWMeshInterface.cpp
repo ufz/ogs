@@ -100,21 +100,33 @@ MeshLib::Mesh* FEFLOWMeshInterface::readFEFLOWFile(const std::string& filename)
 
             MeshLib::MeshElemType eleType = MeshLib::MeshElemType::INVALID;
             if (fem_dim.n_nodes_of_element == 2)
+            {
                 eleType = MeshLib::MeshElemType::LINE;
+            }
             else if (fem_dim.n_nodes_of_element == 3)
+            {
                 eleType = MeshLib::MeshElemType::TRIANGLE;
+            }
             else if (fem_dim.n_nodes_of_element == 4 &&
                      fem_class.dimension == 2)
+            {
                 eleType = MeshLib::MeshElemType::QUAD;
+            }
             else if (fem_dim.n_nodes_of_element == 4 &&
                      fem_class.dimension == 3)
+            {
                 eleType = MeshLib::MeshElemType::TETRAHEDRON;
+            }
             else if (fem_dim.n_nodes_of_element == 6 &&
                      fem_class.dimension == 3)
+            {
                 eleType = MeshLib::MeshElemType::PRISM;
+            }
             else if (fem_dim.n_nodes_of_element == 8 &&
                      fem_class.dimension == 3)
+            {
                 eleType = MeshLib::MeshElemType::HEXAHEDRON;
+            }
 
             if (eleType == MeshLib::MeshElemType::INVALID)
             {
@@ -143,7 +155,8 @@ MeshLib::Mesh* FEFLOWMeshInterface::readFEFLOWFile(const std::string& filename)
             assert(!vec_nodes.empty());
 
             vec_elements.reserve(fem_dim.n_elements);
-            if (fem_dim.n_nodes_of_element == 0) // mixed element case
+            if (fem_dim.n_nodes_of_element == 0)
+            {  // mixed element case
                 if (!std::getline(in, line_string))
                 {
                     ERR("FEFLOWInterface::readFEFLOWFile(): read element "
@@ -153,6 +166,7 @@ MeshLib::Mesh* FEFLOWMeshInterface::readFEFLOWFile(const std::string& filename)
                     vec_nodes.clear();
                     return nullptr;
                 }
+            }
 
             for (std::size_t i = 0; i < fem_dim.n_elements; i++)
             {
@@ -175,7 +189,9 @@ MeshLib::Mesh* FEFLOWMeshInterface::readFEFLOWFile(const std::string& filename)
         else if (line_string == "ELEV_I")
         {
             if (fem_class.dimension == 2)
+            {
                 continue;
+            }
             readElevation(in, fem_class, fem_dim, vec_nodes);
         }
         //....................................................................
@@ -187,8 +203,10 @@ MeshLib::Mesh* FEFLOWMeshInterface::readFEFLOWFile(const std::string& filename)
             double vec[3] = {};
             line_stream >> vec[0] >> vec[1] >> vec[2];
             if (vec[0] == 0.0 && vec[1] == -1.0 && vec[2] == 0.0)
+            {
                 // x-z plane
                 isXZplane = true;
+            }
             line_stream.clear();
         }
         //....................................................................
@@ -259,8 +277,10 @@ void FEFLOWMeshInterface::readNodeCoordinates(
         if (!std::getline(in, line_string))
         {
             ERR("Could not read the node '%u'.", k);
-            for (auto * n : vec_nodes)
+            for (auto* n : vec_nodes)
+            {
                 delete n;
+            }
             return;
         }
         std::stringstream line_stream;
@@ -272,14 +292,18 @@ void FEFLOWMeshInterface::readNodeCoordinates(
             {
                 ERR("Could not parse coordinate %u of node '%u'.", i, k);
                 for (auto* n : vec_nodes)
+                {
                     delete n;
+                }
                 return;
             }
             if (!(line_stream >> dummy_char) && i < 2)  // read comma
             {
                 ERR("Could not parse node '%u'.", k);
                 for (auto* n : vec_nodes)
+                {
                     delete n;
+                }
                 return;
             }
         }
@@ -313,16 +337,22 @@ void FEFLOWMeshInterface::readNodeCoordinates(
             for (unsigned j = 0; j < 12; j++)
             {
                 if (i * 12 + j >= no_nodes_per_layer)
+                {
                     break;
+                }
                 line_stream >> x >> dummy_char;
                 for (std::size_t l = 0; l < n_layers; l++)
                 {
                     const std::size_t n = i * 12 + l * no_nodes_per_layer + j;
                     MeshLib::Node* m_nod = vec_nodes[n];
                     if (k == 0)
+                    {
                         (*m_nod)[0] = x;
+                    }
                     else
+                    {
                         (*m_nod)[1] = x;
+                    }
                 }
             }
             line_stream.clear();
@@ -343,7 +373,9 @@ std::vector<std::size_t> FEFLOWMeshInterface::getIndexList(
     for (auto str : splitted_str)
     {
         if (str.empty())
+        {
             continue;
+        }
         if (str[0] == '#')
         {
             is_range = true;
@@ -353,7 +385,9 @@ std::vector<std::size_t> FEFLOWMeshInterface::getIndexList(
             const std::size_t start = vec_node_IDs.back();
             const auto end = BaseLib::str2number<std::size_t>(str);
             for (std::size_t i = start + 1; i < end + 1; i++)
+            {
                 vec_node_IDs.push_back(i);
+            }
             is_range = false;
         }
         else
@@ -390,15 +424,25 @@ void FEFLOWMeshInterface::readElevation(std::ifstream& in,
         // check mode
         auto columns = BaseLib::splitString(line_string, ' ');
         if (!in || std::isalpha(line_string[0]))
+        {
             mode = 0;
+        }
         else if (line_string.empty())
+        {
             continue;
+        }
         else if (line_string[0] == '\t')
+        {
             mode = 3;
+        }
         else if (columns.size() == 1)
+        {
             mode = 1;
-        else  // columns.size()>1
+        }
+        else
+        {  // columns.size()>1
             mode = 2;
+        }
 
         // process stocked data
         if (mode != 3 && !str_nodeList.empty())
@@ -442,7 +486,9 @@ void FEFLOWMeshInterface::readElevation(std::ifstream& in,
 
     // move stream position to previous line
     if (std::isalpha(line_string[0]))
+    {
         in.seekg(pos_prev_line);
+    }
 }
 
 MeshLib::Element* FEFLOWMeshInterface::readElement(
@@ -476,14 +522,18 @@ MeshLib::Element* FEFLOWMeshInterface::readElement(
 
     unsigned idx[8];
     for (std::size_t i = 0; i < n_nodes_of_element; ++i)
+    {
         ss >> idx[i];
+    }
     auto** ele_nodes = new MeshLib::Node*[n_nodes_of_element];
 
     switch (elem_type)
     {
         default:
             for (std::size_t k(0); k < n_nodes_of_element; ++k)
+            {
                 ele_nodes[k] = nodes[idx[k] - 1];
+            }
             break;
         case MeshLib::MeshElemType::HEXAHEDRON:
         case MeshLib::MeshElemType::PRISM:
@@ -517,14 +567,18 @@ MeshLib::Element* FEFLOWMeshInterface::readElement(
 
     unsigned idx[8];
     for (std::size_t i = 0; i < fem_dim.n_nodes_of_element; ++i)
+    {
         ss >> idx[i];
+    }
     auto** ele_nodes = new MeshLib::Node*[fem_dim.n_nodes_of_element];
 
     switch (elem_type)
     {
         default:
             for (unsigned k(0); k < fem_dim.n_nodes_of_element; ++k)
+            {
                 ele_nodes[k] = nodes[idx[k] - 1];
+            }
             break;
         case MeshLib::MeshElemType::HEXAHEDRON:
         case MeshLib::MeshElemType::PRISM:
@@ -583,15 +637,25 @@ void FEFLOWMeshInterface::readELEMENTALSETS(
 
         unsigned mode = 0;
         if (!in)
+        {
             mode = 0;  // reached the end of the file
+        }
         else if (line_string.empty())
+        {
             continue;  // skip and see what comes next
+        }
         else if (std::isalpha(line_string[0]))
+        {
             mode = 0;  // reached the next section
+        }
         else if (line_string[0] == ' ')
+        {
             mode = 1;  // start of the element set definition
+        }
         else if (line_string[0] == '\t')
+        {
             mode = 2;  // continue the definition
+        }
         else
         {
             ERR("Failed during parsing of an ELEMENTALSETS section in a FEFLOW "
@@ -639,7 +703,9 @@ void FEFLOWMeshInterface::readELEMENTALSETS(
     }
     // move stream position to previous line
     if (std::isalpha(line_string[0]))
+    {
         in.seekg(pos_prev_line);
+    }
 }
 
 void FEFLOWMeshInterface::setMaterialIDs(
@@ -657,8 +723,10 @@ void FEFLOWMeshInterface::setMaterialIDs(
         {
             auto& eids = vec_elementsets[matid];
             for (auto eid : eids)
+            {
                 material_ids[eid - 1] =
                     matid;  // Element IDs given by FEFLOW starts from one!
+            }
         }
     }
     else if (lines && !lines->empty())
@@ -672,7 +740,9 @@ void FEFLOWMeshInterface::setMaterialIDs(
             {
                 GeoLib::Polyline* poly = (*lines)[j];
                 if (!poly->isClosed())
+                {
                     continue;
+                }
 
                 GeoLib::Polygon polygon(*poly, true);
                 if (polygon.isPntInPolygon(gpt[0], gpt[1], gpt[2]))
@@ -693,11 +763,13 @@ void FEFLOWMeshInterface::setMaterialIDs(
             MeshLib::Element* e = vec_elements[i];
             std::size_t e_min_nodeID = std::numeric_limits<std::size_t>::max();
             for (std::size_t j = 0; j < e->getNumberOfBaseNodes(); j++)
+            {
                 e_min_nodeID = std::min(e_min_nodeID, e->getNodeIndex(j));
+            }
             std::size_t layer_id = e_min_nodeID / no_nodes_per_layer;
             material_ids[i] = layer_id;
         }
     }
 }
 
-}  // FileIO
+}  // namespace FileIO

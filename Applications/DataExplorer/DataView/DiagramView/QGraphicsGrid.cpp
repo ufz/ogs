@@ -157,7 +157,9 @@ void QGraphicsGrid::paint(QPainter* painter,
     Q_UNUSED (widget)
 
     if (!_bounds.isValid())
+    {
         return;
+    }
 
     /* draw outside rectangle */
     QBrush brush(Qt::NoBrush);
@@ -173,7 +175,8 @@ void QGraphicsGrid::paint(QPainter* painter,
         if (i > 0 && i < _numberOfXCells)
         {
             painter->setPen(_inside);
-            painter->drawLine(x, (int)_bounds.top(), x, (int)_bounds.bottom());
+            painter->drawLine(x, static_cast<int>(_bounds.top()), x,
+                              static_cast<int>(_bounds.bottom()));
         }
 
         /* draw ticks on x-axis */
@@ -181,7 +184,8 @@ void QGraphicsGrid::paint(QPainter* painter,
         {
             //double label = bounds.left() + (i * bounds.width() / numberOfXCells);
             painter->setPen(_outside);
-            painter->drawLine(x, (int)_bounds.bottom(), x, (int)_bounds.bottom() + 5);
+            painter->drawLine(x, static_cast<int>(_bounds.bottom()), x,
+                              static_cast<int>(_bounds.bottom()) + 5);
             //painter->drawText(x - margin, bounds.bottom() + 5, 2*margin, 20,
             //                   Qt::AlignHCenter | Qt::AlignTop, QString::number(label));
         }
@@ -196,7 +200,8 @@ void QGraphicsGrid::paint(QPainter* painter,
         if (j > 0 && j < _numberOfYCells)
         {
             painter->setPen(_inside);
-            painter->drawLine((int)_bounds.left(), y, (int)_bounds.right(), y);
+            painter->drawLine(static_cast<int>(_bounds.left()), y,
+                              static_cast<int>(_bounds.right()), y);
         }
 
         /* draw ticks on y-axis */
@@ -204,7 +209,8 @@ void QGraphicsGrid::paint(QPainter* painter,
         {
             //double label = bounds.top() + (j * bounds.height() / numberOfYCells);
             painter->setPen(_outside);
-            painter->drawLine((int)_bounds.left() - 5, y, (int)_bounds.left(), y);
+            painter->drawLine(static_cast<int>(_bounds.left()) - 5, y,
+                              static_cast<int>(_bounds.left()), y);
             //painter->drawText(bounds.left() - margin, y - 10, margin - 5, 20,
             //                   Qt::AlignRight | Qt::AlignVCenter, QString::number(label));
         }

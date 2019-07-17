@@ -75,7 +75,10 @@ std::pair<MeshLib::Element*, int> readElement(
     std::ifstream& in, std::vector<MeshLib::Node*> const& nodes,
     std::map<unsigned, unsigned> const& id_map)
 {
-    unsigned idx, type, n_tags, dummy;
+    unsigned idx;
+    unsigned type;
+    unsigned n_tags;
+    unsigned dummy;
     int mat_id;
     std::vector<unsigned> node_ids;
     in >> idx >> type >> n_tags >> mat_id >> dummy;
@@ -203,7 +206,9 @@ MeshLib::Mesh* readGMSHMesh(std::string const& fname)
         {
             std::size_t n_nodes(0);
             long id;
-            double x, y, z;
+            double x;
+            double y;
+            double z;
             in >> n_nodes >> std::ws;
             nodes.resize(n_nodes);
             for (std::size_t i = 0; i < n_nodes; i++) {

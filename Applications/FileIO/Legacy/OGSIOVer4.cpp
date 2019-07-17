@@ -63,7 +63,9 @@ std::string readPoints(std::istream &in, std::vector<GeoLib::Point*>* pnt_vec,
         // read id and point coordinates
         std::stringstream inss(line);
         std::size_t id;
-        double x, y, z;
+        double x;
+        double y;
+        double z;
         inss >> id >> x >> y >> z;
         if (!inss.fail ())
         {
@@ -123,7 +125,9 @@ void readPolylinePointVector(const std::string &fname,
         return;
     }
 
-    double x, y, z;
+    double x;
+    double y;
+    double z;
     while (in)
     {
         in >> x >> y >> z;
@@ -154,7 +158,8 @@ std::string readPolyline(std::istream &in,
                          const std::string &path,
                          std::vector<std::string> &errors)
 {
-    std::string line, name_of_ply;
+    std::string line;
+    std::string name_of_ply;
     auto* ply(new GeoLib::Polyline(pnt_vec));
     std::size_t type = 2; // need an initial value
 
@@ -591,7 +596,7 @@ std::size_t writeTINSurfaces(std::ofstream &os, GeoLib::SurfaceVec const* sfcs_v
         os << "\t\t" << sfc_name << "\n";
         // create tin file
         sfc_name = path + sfc_name;
-        GeoLib::IO::TINInterface::writeSurfaceAsTIN(*sfc, sfc_name.c_str());
+        GeoLib::IO::TINInterface::writeSurfaceAsTIN(*sfc, sfc_name);
         sfc_count++;
     }
     return sfc_count;

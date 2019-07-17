@@ -42,7 +42,9 @@ void VtkCompositeColorByHeightFilter::init()
         heightFilter->SetInputConnection(surfaceFilter->GetOutputPort());
     }
     else
+    {
         heightFilter->SetInputConnection(_inputAlgorithm->GetOutputPort());
+    }
 
     DataHolderLib::Color a{{0, 0, 255, 255}};    // blue
     DataHolderLib::Color b{{0, 255, 0, 255}};    // green

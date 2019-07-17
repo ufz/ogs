@@ -60,7 +60,7 @@ private:
      */
     static vtkImageAlgorithm* loadImageFromTIFF(const std::string& fileName,
                                                 double& x0, double& y0,
-                                                double& delta);
+                                                double& cellsize);
 #endif
 
     /**

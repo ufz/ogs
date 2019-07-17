@@ -11,7 +11,7 @@
 
 namespace GeoLib
 {
-class GeoObject;
+struct GeoObject;
 class Point;
 class Polyline;
 class Surface;
@@ -71,19 +71,21 @@ public:
 
     /**
      * generate boundary elements on the given polyline.
-     * @param ply the GeoLib::Polyline the nearest mesh nodes are searched for
+     * @param polyline the GeoLib::Polyline the nearest mesh nodes are searched
+     * for
      * @return a vector of boundary element objects
      */
     std::vector<MeshLib::Element*> const& getBoundaryElementsAlongPolyline(
-        GeoLib::Polyline const& ply);
+        GeoLib::Polyline const& polyline);
 
     /**
      * generate boundary elements on the given surface.
-     * @param sfc the GeoLib::Surface the nearest mesh nodes are searched for
+     * @param surface the GeoLib::Surface the nearest mesh nodes are searched
+     * for
      * @return a vector of boundary element objects
      */
     std::vector<MeshLib::Element*> const& getBoundaryElementsOnSurface(
-        GeoLib::Surface const& sfc);
+        GeoLib::Surface const& surface);
 
 private:
     MeshLib::Mesh const& _mesh;

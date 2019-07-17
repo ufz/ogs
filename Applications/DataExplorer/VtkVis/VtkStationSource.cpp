@@ -49,7 +49,9 @@ void VtkStationSource::PrintSelf( ostream& os, vtkIndent indent )
     this->Superclass::PrintSelf(os,indent);
 
     if (_stations->empty())
+    {
         return;
+    }
 
     os << indent << "== VtkStationSource ==" << "\n";
 
@@ -72,19 +74,25 @@ int VtkStationSource::RequestData( vtkInformation* request,
     (void)inputVector;
 
     if (!_stations)
+    {
         return 0;
+    }
     std::size_t nStations = _stations->size();
     if (nStations == 0)
+    {
         return 0;
+    }
 
     bool useStationValues(false);
     double sValue=static_cast<GeoLib::Station*>((*_stations)[0])->getStationValue();
     for (std::size_t i = 1; i < nStations; i++)
+    {
         if (static_cast<GeoLib::Station*>((*_stations)[i])->getStationValue() != sValue)
         {
             useStationValues = true;
             break;
         }
+    }
 
     bool isBorehole = static_cast<GeoLib::Station*>((*_stations)[0])->type() ==
                       GeoLib::Station::StationType::BOREHOLE;
@@ -100,10 +108,15 @@ int VtkStationSource::RequestData( vtkInformation* request,
     vtkSmartPointer<vtkCellArray> newLines;
 
     if (isBorehole)
+    {
         newLines = vtkSmartPointer<vtkCellArray>::New();
+    }
 
-    if (outInfo->Get(vtkStreamingDemandDrivenPipeline::UPDATE_PIECE_NUMBER()) > 0)
+    if (outInfo->Get(vtkStreamingDemandDrivenPipeline::UPDATE_PIECE_NUMBER()) >
+        0)
+    {
         return 1;
+    }
 
     vtkSmartPointer<vtkIntArray> station_ids = vtkSmartPointer<vtkIntArray>::New();
     station_ids->SetNumberOfComponents(1);
@@ -127,11 +140,15 @@ int VtkStationSource::RequestData( vtkInformation* request,
         vtkIdType sid = newStations->InsertNextPoint(coords);
         station_ids->InsertNextValue(site_count);
         if (useStationValues)
+        {
             station_values->InsertNextValue(
                 static_cast<GeoLib::Station*>(station)->getStationValue());
+        }
 
         if (!isBorehole)
+        {
             newVerts->InsertNextCell(1, &sid);
+        }
         else
         {
             std::vector<GeoLib::Point*> profile =
@@ -153,9 +170,11 @@ int VtkStationSource::RequestData( vtkInformation* request,
                     ++lastMaxIndex);  // end of boreholelayer
                 strat_ids->InsertNextValue(this->GetIndexByName(soilNames[i]));
                 if (useStationValues)
+                {
                     station_values->InsertNextValue(
                         static_cast<GeoLib::Station*>(station)
                             ->getStationValue());
+                }
             }
             lastMaxIndex++;
         }
@@ -178,7 +197,9 @@ int VtkStationSource::RequestData( vtkInformation* request,
         output->GetCellData()->SetActiveAttribute("Stratigraphies", vtkDataSetAttributes::SCALARS);
     }
     if (useStationValues)
+    {
         output->GetPointData()->AddArray(station_values);
+    }
 
     output->Squeeze();
 
@@ -201,12 +222,16 @@ void VtkStationSource::SetUserProperty( QString name, QVariant value )
 std::size_t VtkStationSource::GetIndexByName( std::string const& name )
 {
     vtkIdType max_key(0);
-    for (auto it = _id_map.begin(); it != _id_map.end(); ++it)
+    for (auto& it : _id_map)
     {
-        if (name == it->first)
-            return it->second;
-        if (it->second > max_key)
-            max_key = it->second;
+        if (name == it.first)
+        {
+            return it.second;
+        }
+        if (it.second > max_key)
+        {
+            max_key = it.second;
+        }
     }
 
     vtkIdType new_index = (_id_map.empty()) ? 0 : (max_key+1);

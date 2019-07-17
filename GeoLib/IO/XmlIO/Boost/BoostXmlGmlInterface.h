@@ -65,7 +65,7 @@ private:
                       const std::vector<std::size_t>& pnt_id_map,
                       std::map<std::string, std::size_t>& sfc_names);
 
-    void addSurfacesToPropertyTree(BaseLib::ConfigTree::PTree & pt);
+    void addSurfacesToPropertyTree(BaseLib::ConfigTree::PTree& geometry_set);
     void addPolylinesToPropertyTree(BaseLib::ConfigTree::PTree & geometry_set);
 
     std::map<std::size_t, std::size_t> _idx_map;

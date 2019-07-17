@@ -49,12 +49,14 @@ VtkAddFilterDialog::VtkAddFilterDialog( VtkVisPipeline &pipeline,
         // Check for suitable filters (see vtkDataSet inheritance diagram)
         int inputType = filter.inputDataObjectType;
         if ((inputType == parentDataObjectType) ||
-            (inputType == VTK_POINT_SET && parentDataObjectType != VTK_IMAGE_DATA) ||
+            (inputType == VTK_POINT_SET &&
+             parentDataObjectType != VTK_IMAGE_DATA) ||
             (inputType == VTK_IMAGE_DATA &&
-             (parentDataObjectType == VTK_STRUCTURED_POINTS || parentDataObjectType ==
-              VTK_UNIFORM_GRID)))
-
+             (parentDataObjectType == VTK_STRUCTURED_POINTS ||
+              parentDataObjectType == VTK_UNIFORM_GRID)))
+        {
             new QListWidgetItem(filter.readableName, filterListWidget);
+        }
     }
 
     // On double clicking an item the dialog gets accepted
@@ -81,24 +83,34 @@ void VtkAddFilterDialog::on_buttonBox_accepted()
 
     VtkCompositeFilter* filter;
     if (dynamic_cast<VtkVisImageItem*>(parentItem))
+    {
         filter = VtkFilterFactory::CreateCompositeFilter(filterName, parentItem->algorithm());
+    }
     else
-        filter = VtkFilterFactory::CreateCompositeFilter(filterName,
-                                                         parentItem->transformFilter());
+    {
+        filter = VtkFilterFactory::CreateCompositeFilter(
+            filterName, parentItem->transformFilter());
+    }
 
     VtkVisPipelineItem* item;
     if (filter)
     {
         if (filter->GetOutputDataObjectType() == VTK_IMAGE_DATA)
+        {
             item = new VtkVisImageItem(filter, parentItem, itemData);
+        }
         else
+        {
             item = new VtkVisPointSetItem(filter, parentItem, itemData);
+        }
     }
     else
     {
         vtkAlgorithm* algorithm = VtkFilterFactory::CreateSimpleFilter(filterName);
         if (algorithm)
+        {
             item = new VtkVisPointSetItem(algorithm, parentItem, itemData);
+        }
         else
         {
             ERR("VtkFilterFactory cannot create %s.", filterName.toStdString().c_str());

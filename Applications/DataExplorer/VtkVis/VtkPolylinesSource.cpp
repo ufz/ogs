@@ -52,7 +52,9 @@ void VtkPolylinesSource::PrintSelf( ostream& os, vtkIndent indent )
     this->Superclass::PrintSelf(os,indent);
 
     if (_polylines->empty())
+    {
         return;
+    }
 
     for (auto polyline : *_polylines)
     {
@@ -76,7 +78,9 @@ int VtkPolylinesSource::RequestData( vtkInformation* request,
     (void)inputVector;
 
     if (!_polylines)
+    {
         return 0;
+    }
     if (_polylines->empty())
     {
         ERR("VtkPolylineSource::RequestData(): Size of polyline vector is 0");
@@ -93,8 +97,11 @@ int VtkPolylinesSource::RequestData( vtkInformation* request,
     //newPoints->Allocate(numPoints);
     //newLines->Allocate(newLines->EstimateSize(numLines, 2));
 
-    if (outInfo->Get(vtkStreamingDemandDrivenPipeline::UPDATE_PIECE_NUMBER()) > 0)
+    if (outInfo->Get(vtkStreamingDemandDrivenPipeline::UPDATE_PIECE_NUMBER()) >
+        0)
+    {
         return 1;
+    }
 
     vtkSmartPointer<vtkIntArray> plyIDs = vtkSmartPointer<vtkIntArray>::New();
     plyIDs->SetNumberOfComponents(1);
@@ -120,10 +127,14 @@ int VtkPolylinesSource::RequestData( vtkInformation* request,
         newLines->InsertNextCell(numPoints);
         plyIDs->InsertNextValue(j);
         for (int i = 0; i < numVerts; i++)
-                newLines->InsertCellPoint(i + lastMaxIndex);
+        {
+            newLines->InsertCellPoint(i + lastMaxIndex);
+        }
 
-        if(isClosed)
+        if (isClosed)
+        {
             newLines->InsertCellPoint(lastMaxIndex);
+        }
 
         lastMaxIndex += numVerts;
     }

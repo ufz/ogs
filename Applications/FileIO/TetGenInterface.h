@@ -104,12 +104,13 @@ private:
     /**
      * Method reads the nodes from stream and stores them in a node vector.
      * For this purpose it uses methods parseNodesFileHeader() and parseNodes().
-     * @param input  the input stream
+     * @param ins    the input stream
      * @param nodes  output vector of nodes.
-     * @return true, if all information is read, false if the method detects an error
+     * @return true, if all information is read, false if the method detects an
+     * error
      */
-    bool readNodesFromStream(std::ifstream &input,
-                             std::vector<MeshLib::Node*> &nodes);
+    bool readNodesFromStream(std::ifstream& ins,
+                             std::vector<MeshLib::Node*>& nodes);
 
     /**
      * Method parses the header of the nodes file created by TetGen
@@ -139,18 +140,20 @@ private:
                     std::size_t dim);
 
     /**
-     * Method reads the elements from stream and stores them in an element vector.
-     * For this purpose it uses methods parseElementsFileHeader() and parseElements().
-     * @param input     the input stream
+     * Method reads the elements from stream and stores them in an element
+     * vector. For this purpose it uses methods parseElementsFileHeader() and
+     * parseElements().
+     * @param ins       the input stream
      * @param elements  the elements vector to be filled
      * @param materials the vector containing material ids to be filled
      * @param nodes     the node information needed for creating elements
-     * @return true, if all information is read, false if the method detects an error
+     * @return true, if all information is read, false if the method detects an
+     * error
      */
-    bool readElementsFromStream(std::ifstream &input,
-                                std::vector<MeshLib::Element*> &elements,
-                                std::vector<int> &materials,
-                                const std::vector<MeshLib::Node*> &nodes) const;
+    bool readElementsFromStream(std::ifstream& ins,
+                                std::vector<MeshLib::Element*>& elements,
+                                std::vector<int>& materials,
+                                const std::vector<MeshLib::Node*>& nodes) const;
     /**
      * Method parses the header of the elements file created by TetGen
      * @param line              the header is in this string (input)

@@ -22,7 +22,7 @@
 // forward declaration
 namespace GeoLib
 {
-class GeoObject;
+struct GeoObject;
 class Point;
 class Polyline;
 class Surface;

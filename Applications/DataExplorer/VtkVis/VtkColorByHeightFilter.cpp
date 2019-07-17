@@ -60,9 +60,9 @@ vtkMTimeType VtkColorByHeightFilter::GetMTime()
     }
     return t1;
 }
-int VtkColorByHeightFilter::RequestData( vtkInformation*,
-                                         vtkInformationVector** inputVector,
-                                         vtkInformationVector* outputVector )
+int VtkColorByHeightFilter::RequestData(vtkInformation* /*request*/,
+                                        vtkInformationVector** inputVector,
+                                        vtkInformationVector* outputVector)
 {
     vtkInformation* inInfo = inputVector[0]->GetInformationObject(0);
     vtkPolyData* input = vtkPolyData::SafeDownCast(inInfo->Get(vtkDataObject::DATA_OBJECT()));

@@ -116,7 +116,7 @@ int main (int argc, char* argv[])
         std::unique_ptr<MeshLib::Mesh> surface_mesh(
             MeshLib::MeshSurfaceExtraction::getMeshSurface(mesh, d, angle));
         return MeshLib::MeshSurfaceExtraction::getSurfaceAreaForNodes(
-            *surface_mesh.get());
+            *surface_mesh);
     };
 
     std::vector<double> areas(computeElementTopSurfaceAreas(*mesh, dir, angle));
@@ -150,7 +150,7 @@ int main (int argc, char* argv[])
         for (std::size_t k(0); k<all_sfc_nodes.size(); k++) {
             MeshLib::Node const& pnt(*(all_sfc_nodes[k]));
             if (polygon.isPntInPolygon(pnt[0], pnt[1], pnt[2])) {
-                ids_and_areas.push_back(std::make_pair(pnt.getID(), areas[k]));
+                ids_and_areas.emplace_back(pnt.getID(), areas[k]);
             }
         }
         if (ids_and_areas.empty()) {

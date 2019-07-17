@@ -136,7 +136,7 @@ std::unique_ptr<Process> createRichardsComponentTransportProcess(
     std::vector<double> const b =
         //! \ogs_file_param{prj__processes__process__RichardsComponentTransport__specific_body_force}
         config.getConfigParameter<std::vector<double>>("specific_body_force");
-    assert(b.size() > 0 && b.size() < 4);
+    assert(!b.empty() && b.size() < 4);
     if (b.size() < mesh.getDimension())
     {
         OGS_FATAL(

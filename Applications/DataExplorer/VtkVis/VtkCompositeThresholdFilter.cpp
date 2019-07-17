@@ -47,13 +47,18 @@ void VtkCompositeThresholdFilter::init()
         dataSet->GetAttributes(vtkDataObject::AttributeTypes::POINT);
     vtkDataSetAttributes* cellAttributes =
         dataSet->GetAttributes(vtkDataObject::AttributeTypes::CELL);
-    if(pointAttributes->GetNumberOfArrays() > 0)
+    if (pointAttributes->GetNumberOfArrays() > 0)
+    {
         threshold->SetInputArrayToProcess(0, 0, 0, vtkDataObject::FIELD_ASSOCIATION_POINTS,
             pointAttributes->GetArray(0)->GetName());
-    else if(cellAttributes->GetNumberOfArrays() > 0)
+    }
+    else if (cellAttributes->GetNumberOfArrays() > 0)
+    {
         threshold->SetInputArrayToProcess(0, 0, 0, vtkDataObject::FIELD_ASSOCIATION_CELLS,
             cellAttributes->GetArray(0)->GetName());
-    else {
+    }
+    else
+    {
         WARN("Threshold filter could not find an array on its input object!")
         return;
     }
@@ -92,10 +97,15 @@ void VtkCompositeThresholdFilter::SetUserProperty( QString name, QVariant value 
 
     // Use the same name as in init()
     if (name.compare("Selected Component") == 0)
+    {
         // Set the property on the algorithm
         static_cast<vtkThreshold*>(_outputAlgorithm)->SetSelectedComponent(value.toInt());
+    }
     else if (name.compare("Evaluate all points") == 0)
-        static_cast<vtkThreshold*>(_outputAlgorithm)->SetAllScalars(value.toBool());
+    {
+        static_cast<vtkThreshold*>(_outputAlgorithm)
+            ->SetAllScalars(value.toBool());
+    }
 }
 
 void VtkCompositeThresholdFilter::SetUserVectorProperty( QString name, QList<QVariant> values )
@@ -104,7 +114,9 @@ void VtkCompositeThresholdFilter::SetUserVectorProperty( QString name, QList<QVa
 
     // Use the same name as in init()
     if (name.compare("Range") == 0)
+    {
         // Set the vector property on the algorithm
-        static_cast<vtkThreshold*>(_outputAlgorithm)->ThresholdBetween(
-                values[0].toDouble(), values[1].toDouble());
+        static_cast<vtkThreshold*>(_outputAlgorithm)
+            ->ThresholdBetween(values[0].toDouble(), values[1].toDouble());
+    }
 }

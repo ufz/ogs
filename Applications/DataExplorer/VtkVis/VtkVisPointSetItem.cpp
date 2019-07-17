@@ -67,14 +67,18 @@ VtkVisPointSetItem::VtkVisPointSetItem(
         // special case if parent is image but child is not (e.g.
         // Image2BarChartFilter)
         if (dynamic_cast<vtkImageAlgorithm*>(visParentItem->algorithm()))
+        {
             _algorithm->SetInputConnection(
                 visParentItem->algorithm()->GetOutputPort());
+        }
         else
         {
             auto* pointSetItem = dynamic_cast<VtkVisPointSetItem*>(parentItem);
             if (pointSetItem)
+            {
                 _algorithm->SetInputConnection(
                     pointSetItem->transformFilter()->GetOutputPort());
+            }
         }
     }
 }
@@ -92,7 +96,7 @@ VtkVisPointSetItem::~VtkVisPointSetItem()
     _transformFilter->Delete();
     _mapper->Delete();
 }
-const QString VtkVisPointSetItem::GetActiveAttribute() const
+QString VtkVisPointSetItem::GetActiveAttribute() const
 {
     return _vtkProps->GetActiveAttribute();
 }
@@ -135,8 +139,10 @@ void VtkVisPointSetItem::Initialize(vtkRenderer* renderer)
             {
                 VtkAlgorithmProperties* parentProps = nullptr;
                 if (dynamic_cast<VtkVisPointSetItem*>(parentItem))
+                {
                     parentProps = dynamic_cast<VtkVisPointSetItem*>(parentItem)
                                       ->getVtkProperties();
+                }
                 if (parentProps)
                 {
                     vtkProps =
@@ -149,13 +155,17 @@ void VtkVisPointSetItem::Initialize(vtkRenderer* renderer)
                     parentItem = nullptr;
                 }
                 else
+                {
                     parentItem = dynamic_cast<VtkVisPipelineItem*>(
                         parentItem->parentItem());
+                }
             }
 
             // Has no parents
             if (!vtkProps)
-                vtkProps = new VtkAlgorithmProperties(); // TODO memory leak?
+            {
+                vtkProps = new VtkAlgorithmProperties();  // TODO memory leak?
+            }
         }
     }
     _vtkProps = vtkProps;
@@ -165,9 +175,13 @@ void VtkVisPointSetItem::Initialize(vtkRenderer* renderer)
         // Get first scalar and set it to active
         QStringList arrayNames = this->getScalarArrayNames();
         if (arrayNames.length() > 0)
+        {
             vtkProps->SetActiveAttribute(arrayNames[0]);
+        }
         else
+        {
             vtkProps->SetActiveAttribute("Solid Color");
+        }
     }
     this->setVtkProperties(vtkProps);
     this->SetActiveAttribute(vtkProps->GetActiveAttribute());
@@ -192,7 +206,9 @@ void VtkVisPointSetItem::Initialize(vtkRenderer* renderer)
 
     // Show edges on meshes
     if (dynamic_cast<MeshLib::VtkMappedMeshSource*>(this->_algorithm))
+    {
         _vtkProps->GetProperties()->SetEdgeVisibility(1);
+    }
 }
 
 void VtkVisPointSetItem::SetScalarVisibility( bool on )
@@ -221,7 +237,9 @@ void VtkVisPointSetItem::setVtkProperties(VtkAlgorithmProperties* vtkProps)
         }
 
         if (!vtkProps->GetScalarVisibility())
+        {
             vtkProps->SetScalarVisibility(false);
+        }
     }
 }
 
@@ -235,7 +253,9 @@ int VtkVisPointSetItem::callVTKWriter(vtkAlgorithm* algorithm, const std::string
                 vtkSmartPointer<vtkXMLPolyDataWriter>::New();
         pdWriter->SetInputData(algPD->GetOutputDataObject(0));
         if (BaseLib::getFileExtension(filename) != "vtp")
+        {
             file_name_cpy.append(".vtp");
+        }
         pdWriter->SetFileName(file_name_cpy.c_str());
         return pdWriter->Write();
     }
@@ -247,7 +267,9 @@ int VtkVisPointSetItem::callVTKWriter(vtkAlgorithm* algorithm, const std::string
                 vtkSmartPointer<vtkXMLUnstructuredGridWriter>::New();
         ugWriter->SetInputData(algUG->GetOutputDataObject(0));
         if (BaseLib::getFileExtension(filename) != "vtu")
+        {
             file_name_cpy.append(".vtu");
+        }
         ugWriter->SetFileName(file_name_cpy.c_str());
         return ugWriter->Write();
     }
@@ -260,9 +282,13 @@ void VtkVisPointSetItem::SetActiveAttribute( const QString& name )
 {
     // Get type by identifier
     if (name.contains(QRegExp("^P-")))
+    {
         _onPointData = true;
+    }
     else if (name.contains(QRegExp("^C-")))
+    {
         _onPointData = false;
+    }
     else if (name.contains("Solid Color"))
     {
         _vtkProps->SetActiveAttribute("Solid Color");
@@ -270,14 +296,18 @@ void VtkVisPointSetItem::SetActiveAttribute( const QString& name )
         return;
     }
     else
+    {
         return;
+    }
 
     // Remove type identifier
     _activeArrayName = QString(name).remove(0, 2).toStdString();
 
     vtkDataSet* dataSet = vtkDataSet::SafeDownCast(this->_algorithm->GetOutputDataObject(0));
     if (!dataSet)
+    {
         return;
+    }
 
     double range[2];
     GetRangeForActiveAttribute(range);
@@ -331,7 +361,9 @@ bool VtkVisPointSetItem::activeAttributeExists(vtkDataSetAttributes* data, std::
     {
         std::string arrayName = data->GetArrayName(i);
         if (arrayName == name)
+        {
             arrayFound = true;
+        }
     }
     if (arrayFound)
     {
@@ -378,7 +410,9 @@ vtkAlgorithm* VtkVisPointSetItem::transformFilter() const
 
 void VtkVisPointSetItem::setBackfaceCulling(bool enable) const
 {
-    static_cast<vtkActor*>(this->_actor)->GetProperty()->SetBackfaceCulling((int)enable);
+    static_cast<vtkActor*>(this->_actor)
+        ->GetProperty()
+        ->SetBackfaceCulling(static_cast<int>(enable));
 }
 
 void VtkVisPointSetItem::GetRangeForActiveAttribute(double range[2]) const
@@ -389,8 +423,10 @@ void VtkVisPointSetItem::GetRangeForActiveAttribute(double range[2]) const
         if (_onPointData)
         {
             vtkPointData* pointData = dataSet->GetPointData();
-            if(pointData)
+            if (pointData)
+            {
                 pointData->GetArray(_activeArrayName.c_str())->GetRange(range);
+            }
         }
         else
         {

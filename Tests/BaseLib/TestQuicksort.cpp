@@ -160,8 +160,8 @@ TEST_F(BaseLibQuicksort, ReportCorrectPermutationsWithPointer)
 // Permutations of non-empty, reverse sorted, unique vector is also reversed.
 TEST_F(BaseLibQuicksort, ReportCorrectPermutationsReverse)
 {
-    auto reverse = [](std::vector<int>&& xs, std::size_t) -> std::vector<int>
-    {
+    auto reverse = [](std::vector<int>&& xs,
+                      std::size_t /*unused*/) -> std::vector<int> {
         std::reverse(xs.begin(), xs.end());
         return std::move(xs);
     };
@@ -197,8 +197,8 @@ TEST_F(BaseLibQuicksort, ReportCorrectPermutationsReverse)
 // Permutations of non-empty, reverse sorted, unique vector is also reversed.
 TEST_F(BaseLibQuicksort, ReportCorrectPermutationsReverseWithPointer)
 {
-    auto reverse = [](std::vector<int>&& xs, std::size_t) -> std::vector<int>
-    {
+    auto reverse = [](std::vector<int>&& xs,
+                      std::size_t /*unused*/) -> std::vector<int> {
         std::reverse(xs.begin(), xs.end());
         return std::move(xs);
     };
@@ -243,7 +243,7 @@ struct randomSortedPairGenerator
     Gen source;
     using result_type = std::tuple<T, T>;
 
-    result_type operator()(std::size_t)
+    result_type operator()(std::size_t /*unused*/)
     {
         auto p = std::make_tuple(source(), source());
         if (std::get<0>(p) > std::get<1>(p))

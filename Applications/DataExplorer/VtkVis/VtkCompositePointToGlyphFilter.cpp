@@ -77,19 +77,35 @@ void VtkCompositePointToGlyphFilter::SetUserProperty( QString name, QVariant val
     VtkAlgorithmProperties::SetUserProperty(name, value);
 
     if (name.compare("Radius") == 0)
+    {
         _glyphSource->SetRadius(value.toDouble());
+    }
     else if (name.compare("PhiResolution") == 0)
+    {
         _glyphSource->SetPhiResolution(value.toInt());
+    }
     else if (name.compare("ThetaResolution") == 0)
+    {
         _glyphSource->SetThetaResolution(value.toInt());
+    }
     else if (name.compare("ScaleMode") == 0)
+    {
         static_cast<vtkGlyph3D*>(_outputAlgorithm)->SetScaleMode(value.toInt());
+    }
     else if (name.compare("ScaleFactor") == 0)
+    {
         static_cast<vtkGlyph3D*>(_outputAlgorithm)->SetScaleFactor(value.toDouble());
+    }
     else if (name.compare("ColorMode") == 0)
+    {
         static_cast<vtkGlyph3D*>(_outputAlgorithm)->SetColorMode(value.toInt());
+    }
     else if (name.compare("VectorMode") == 0)
+    {
         static_cast<vtkGlyph3D*>(_outputAlgorithm)->SetVectorMode(value.toInt());
+    }
     else if (name.compare("Orient") == 0)
+    {
         static_cast<vtkGlyph3D*>(_outputAlgorithm)->SetOrient(value.toBool());
+    }
 }

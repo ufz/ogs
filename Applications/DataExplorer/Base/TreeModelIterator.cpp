@@ -35,7 +35,9 @@ TreeItem* TreeModelIterator::operator*() const
 TreeModelIterator& TreeModelIterator::operator++()
 {
     if (_current)
+    {
         _current = next(_current);
+    }
 
     return *this;
 }
@@ -43,7 +45,9 @@ TreeModelIterator& TreeModelIterator::operator++()
 TreeItem* TreeModelIterator::next( const TreeItem* current )
 {
     if (!current)
+    {
         return nullptr;
+    }
 
     TreeItem* next = nullptr;
     if (current->childCount())
@@ -69,7 +73,9 @@ TreeItem* TreeModelIterator::next( const TreeItem* current )
                    : _model->rootItem()->child(_currentIndex + 1);
         }
         if (next)
+        {
             ++(_currentIndex);
+        }
     }
     return next;
 }

@@ -74,7 +74,7 @@ public:
     vtkProp3D* actor() const;
 
     // Dummy for implementation in derived classes
-    virtual const QString GetActiveAttribute() const { return QString(""); }
+    virtual QString GetActiveAttribute() const { return QString(""); }
 
     // Dummy for implementation in derived classes
     virtual void SetActiveAttribute(const QString& str) { (void)str; }

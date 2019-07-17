@@ -23,7 +23,8 @@ TEST(MeshLib, moveMeshNodes)
 
     std::size_t const size (16384);
 
-    std::vector<MeshLib::Node*> nodes, nodes_copy;
+    std::vector<MeshLib::Node*> nodes;
+    std::vector<MeshLib::Node*> nodes_copy;
     nodes.resize(size);
     nodes_copy.resize(size);
 

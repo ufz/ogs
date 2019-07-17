@@ -34,7 +34,9 @@ VtkCompositeNodeSelectionFilter::VtkCompositeNodeSelectionFilter( vtkAlgorithm* 
 VtkCompositeNodeSelectionFilter::~VtkCompositeNodeSelectionFilter()
 {
     for (auto& item : _selection)
+    {
         delete item;
+    }
 }
 
 void VtkCompositeNodeSelectionFilter::init()
@@ -57,7 +59,9 @@ void VtkCompositeNodeSelectionFilter::init()
         _outputAlgorithm = glyphFilter;
     }
     else
+    {
         _outputAlgorithm = nullptr;
+    }
 }
 
 void VtkCompositeNodeSelectionFilter::setSelectionArray(const std::vector<unsigned> &point_indeces)

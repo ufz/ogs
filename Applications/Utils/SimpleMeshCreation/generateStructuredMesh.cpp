@@ -77,11 +77,11 @@ int main (int argc, char* argv[])
     cmd.setOutput(tclapOutput.get());
 
     std::vector<std::string> allowed_ele_types;
-    allowed_ele_types.push_back("line");
-    allowed_ele_types.push_back("tri");
-    allowed_ele_types.push_back("quad");
-    allowed_ele_types.push_back("hex");
-    allowed_ele_types.push_back("tet");
+    allowed_ele_types.emplace_back("line");
+    allowed_ele_types.emplace_back("tri");
+    allowed_ele_types.emplace_back("quad");
+    allowed_ele_types.emplace_back("hex");
+    allowed_ele_types.emplace_back("tet");
     TCLAP::ValuesConstraint<std::string> allowedVals(allowed_ele_types);
     TCLAP::ValueArg<std::string> eleTypeArg("e", "element-type",
                                           "element type to be created: line | tri | quad | hex | tet", true, "line", &allowedVals);

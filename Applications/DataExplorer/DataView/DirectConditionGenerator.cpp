@@ -127,7 +127,9 @@ int DirectConditionGenerator::writeToFile(const std::string &name) const
     if (out)
     {
         for (const auto& direct_value : _direct_values)
+        {
             out << direct_value.first << "\t" << direct_value.second << "\n";
+        }
 
         out.close();
     }

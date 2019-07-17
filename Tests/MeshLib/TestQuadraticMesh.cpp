@@ -27,7 +27,7 @@ TEST(MeshLib, QuadraticOrderMesh_Line)
 
     std::unique_ptr<Mesh> linear_mesh(MeshGenerator::generateLineMesh(
         1, std::size_t(2)));
-    std::unique_ptr<Mesh> mesh(createQuadraticOrderMesh(*linear_mesh.get()));
+    std::unique_ptr<Mesh> mesh(createQuadraticOrderMesh(*linear_mesh));
     ASSERT_EQ(5u, mesh->getNumberOfNodes());
     ASSERT_EQ(3u, mesh->getNumberOfBaseNodes());
     ASSERT_EQ(2u, mesh->getNumberOfElements());
@@ -70,7 +70,7 @@ TEST(MeshLib, QuadraticOrderMesh_Quad)
 
     std::unique_ptr<Mesh> linear_mesh(MeshGenerator::generateRegularQuadMesh(
         1, 1, std::size_t(2), std::size_t(2)));
-    std::unique_ptr<Mesh> mesh(createQuadraticOrderMesh(*linear_mesh.get()));
+    std::unique_ptr<Mesh> mesh(createQuadraticOrderMesh(*linear_mesh));
     ASSERT_EQ(21u, mesh->getNumberOfNodes());
     ASSERT_EQ(9u, mesh->getNumberOfBaseNodes());
     ASSERT_EQ(4u, mesh->getNumberOfElements());
@@ -138,7 +138,8 @@ TEST(MeshLib, QuadraticOrderMesh_LineQuad)
         plys->push_back(ply);
         GeoLib::PolylineVec ply_vec("", std::move(plys));
 
-        linear_mesh = MeshGeoToolsLib::appendLinesAlongPolylines(*linear_quad_mesh.get(), ply_vec);
+        linear_mesh = MeshGeoToolsLib::appendLinesAlongPolylines(
+            *linear_quad_mesh, ply_vec);
 
         for (auto p : pnts)
         {
@@ -147,7 +148,7 @@ TEST(MeshLib, QuadraticOrderMesh_LineQuad)
     }
     ASSERT_EQ(6u, linear_mesh->getNumberOfElements());
 
-    std::unique_ptr<Mesh> mesh(createQuadraticOrderMesh(*linear_mesh.get()));
+    std::unique_ptr<Mesh> mesh(createQuadraticOrderMesh(*linear_mesh));
     ASSERT_EQ(21u, mesh->getNumberOfNodes());
     ASSERT_EQ(9u, mesh->getNumberOfBaseNodes());
     ASSERT_EQ(6u, mesh->getNumberOfElements());

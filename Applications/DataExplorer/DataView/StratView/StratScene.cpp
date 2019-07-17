@@ -59,8 +59,10 @@ StratScene::StratScene(GeoLib::StationBorehole* station,
     addDepthLabels(station->getProfile(), stratBarOffset + stratBarBounds.width());
 
     if (!station->getSoilNames().empty())
-        addSoilNameLabels(station->getSoilNames(), station->getProfile(), stratBarOffset +
-                          (stratBarBounds.width() / 2));
+    {
+        addSoilNameLabels(station->getSoilNames(), station->getProfile(),
+                          stratBarOffset + (stratBarBounds.width() / 2));
+    }
 }
 
 StratScene::~StratScene() = default;
@@ -96,7 +98,8 @@ void StratScene::addSoilNameLabels(std::vector<std::string> soilNames,
                                    double offset)
 {
     //QRectF textBounds;
-    double vertPos = MARGIN, halfHeight = 0;
+    double vertPos = MARGIN;
+    double halfHeight = 0;
     std::vector<QNonScalableGraphicsTextItem*> soilText;
     soilText.push_back(addNonScalableText(QString::fromStdString(soilNames[0])));
     //textBounds = soilText[0]->boundingRect();

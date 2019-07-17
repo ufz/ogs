@@ -73,14 +73,17 @@ void MeshElementRemovalDialog::accept()
     {
         QList<QListWidgetItem*> items = this->elementTypeListWidget->selectedItems();
         for (auto& item : items)
+        {
             ex.searchByElementType(
                 MeshLib::String2MeshElemType(item->text().toStdString()));
+        }
         anything_checked = true;
     }
     if (this->scalarArrayCheckBox->isChecked())
     {
         std::string const array_name = this->scalarArrayComboBox->currentText().toStdString();
-        double min_val, max_val;
+        double min_val;
+        double max_val;
         bool outside = this->outsideButton->isChecked();
         if (outside)
         {
@@ -108,7 +111,9 @@ void MeshElementRemovalDialog::accept()
         }
 
         if (n_marked_elements > 0)
+        {
             anything_checked = true;
+        }
     }
     if (this->boundingBoxCheckBox->isChecked())
     {
@@ -142,13 +147,22 @@ void MeshElementRemovalDialog::accept()
     {
         MeshLib::Mesh* new_mesh = MeshLib::removeElements(*msh, ex.getSearchedElementIDs(), this->newMeshNameEdit->text().toStdString());
         if (new_mesh)
+        {
             emit meshAdded(new_mesh);
+        }
         else
         {
             if (new_mesh == nullptr)
-                OGSError::box("The current selection removes ALL mesh elements.\nPlease change the selection.");
+            {
+                OGSError::box(
+                    "The current selection removes ALL mesh elements.\nPlease "
+                    "change the selection.");
+            }
             if (ex.getSearchedElementIDs().empty())
-                OGSError::box("The current selection removes NO mesh elements.");
+            {
+                OGSError::box(
+                    "The current selection removes NO mesh elements.");
+            }
             delete new_mesh;
             return;
         }
@@ -258,7 +272,9 @@ void MeshElementRemovalDialog::on_scalarArrayCheckBox_toggled(bool is_checked)
     MeshLib::Mesh const* const mesh =
         _project.getMesh(meshNameComboBox->currentText().toStdString());
     if (addScalarArrays(*mesh) > 0)
+    {
         enableScalarArrayWidgets(true);
+    }
     else
     {
         enableScalarArrayWidgets(false);
@@ -287,18 +303,26 @@ void MeshElementRemovalDialog::on_scalarArrayComboBox_currentIndexChanged(int id
     Q_UNUSED(idx);
     std::string const vec_name(scalarArrayComboBox->currentText().toStdString());
     if (vec_name.empty())
+    {
         return;
+    }
 
     MeshLib::Mesh const* const mesh =
         _project.getMesh(meshNameComboBox->currentText().toStdString());
     if (mesh == nullptr)
+    {
         return;
+    }
     MeshLib::Properties const& properties = mesh->getProperties();
 
     if (properties.existsPropertyVector<int>(vec_name))
+    {
         setRangeValues<int>(*properties.getPropertyVector<int>(vec_name));
+    }
     else if (properties.existsPropertyVector<double>(vec_name))
+    {
         setRangeValues<double>(*properties.getPropertyVector<double>(vec_name));
+    }
 }
 
 template <typename T>

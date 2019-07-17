@@ -153,8 +153,11 @@ void RapidStnInterface::readStations(const rapidxml::xml_node<>* station_root, s
                               nullptr);
             }
 
-            std::string station_name(""), sensor_data_file_name(""), bdate_str("0000-00-00");
-            double station_value(0.0), borehole_depth(0.0);
+            std::string station_name;
+            std::string sensor_data_file_name;
+            std::string bdate_str("0000-00-00");
+            double station_value(0.0);
+            double borehole_depth(0.0);
             if (station_node->first_node("name"))
             {
                 station_name = station_node->first_node("name")->value();

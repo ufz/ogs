@@ -27,8 +27,10 @@ GeoOnMeshMappingDialog::GeoOnMeshMappingDialog(
     setupUi(this);
 
     for (const auto& mesh : mesh_vec)
+    {
         this->meshNameComboBox->addItem(
             QString::fromStdString(mesh->getName()));
+    }
 }
 
 GeoOnMeshMappingDialog::~GeoOnMeshMappingDialog() = default;
@@ -41,7 +43,9 @@ int GeoOnMeshMappingDialog::getDataSetChoice() const
 void GeoOnMeshMappingDialog::on_meshNameComboBox_currentIndexChanged(int idx)
 {
     if (idx == 1)
+    {
         this->normalMappingButton->setChecked(true);
+    }
 
     bool is_enabled(idx != 1);
     this->normalMappingButton->setEnabled(is_enabled);

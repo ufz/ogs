@@ -39,10 +39,15 @@ VtkAlgorithmProperties::VtkAlgorithmProperties(QObject* parent /*= nullptr*/)
 VtkAlgorithmProperties::~VtkAlgorithmProperties()
 {
     _property->Delete();
-    if (_texture != nullptr) _texture->Delete();
+    if (_texture != nullptr)
+    {
+        _texture->Delete();
+    }
 
     for (auto& row : _lut)
+    {
         row.second->Delete();
+    }
     delete _algorithmUserProperties;
     delete _algorithmUserVectorProperties;
 }
@@ -51,7 +56,9 @@ vtkLookupTable* VtkAlgorithmProperties::GetLookupTable(const QString& array_name
 {
     auto it = _lut.find(array_name);
     if (it != _lut.end())
+    {
         return it->second;
+    }
 
     return nullptr;
 }
@@ -100,7 +107,9 @@ void VtkAlgorithmProperties::SetScalarVisibility(bool on)
 QVariant VtkAlgorithmProperties::GetUserProperty(QString name) const
 {
     if (this->_algorithmUserProperties->contains(name))
+    {
         return this->_algorithmUserProperties->value(name);
+    }
 
     ERR("Not a valid property: %s", name.toStdString().c_str());
     return QVariant();
@@ -109,7 +118,9 @@ QVariant VtkAlgorithmProperties::GetUserProperty(QString name) const
 QList<QVariant> VtkAlgorithmProperties::GetUserVectorProperty(QString name) const
 {
     if (this->_algorithmUserVectorProperties->contains(name))
+    {
         return this->_algorithmUserVectorProperties->value(name);
+    }
 
     ERR("Not a valid property: %s", name.toStdString().c_str());
     return QList<QVariant>();
@@ -118,8 +129,12 @@ QList<QVariant> VtkAlgorithmProperties::GetUserVectorProperty(QString name) cons
 void VtkAlgorithmProperties::SetActiveAttribute(QString name)
 {
     if (name.contains("Solid Color") || name.contains("P-TextureCoordinates"))
+    {
         SetScalarVisibility(false);
+    }
     else
+    {
         SetScalarVisibility(true);
+    }
     _activeAttributeName = name;
 }

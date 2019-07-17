@@ -34,14 +34,15 @@ void VtkImageDataToSurfacePointsFilter::PrintSelf(ostream& os, vtkIndent indent)
     this->Superclass::PrintSelf(os, indent);
 }
 
-int VtkImageDataToSurfacePointsFilter::FillInputPortInformation(int, vtkInformation* info)
+int VtkImageDataToSurfacePointsFilter::FillInputPortInformation(
+    int /*port*/, vtkInformation* info)
 {
     info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkImageData");
     return 1;
 }
 
 int VtkImageDataToSurfacePointsFilter::RequestData(
-    vtkInformation*,
+    vtkInformation* /*request*/,
     vtkInformationVector** inputVector,
     vtkInformationVector* outputVector)
 {
@@ -86,10 +87,15 @@ int VtkImageDataToSurfacePointsFilter::RequestData(
     for (std::size_t i = 0; i < n_points; ++i)
     {
         if ((n_comp == 2 || n_comp == 4) &&
-            (((float*)pixvals)[(i + 1) * n_comp - 1] < 0.00000001f))
+            ((static_cast<float*>(pixvals))[(i + 1) * n_comp - 1] <
+             0.00000001f))
+        {
             pixels.push_back(-9999);
+        }
         else
-            pixels.push_back(((float*)pixvals)[i * n_comp]);
+        {
+            pixels.push_back((static_cast<float*>(pixvals))[i * n_comp]);
+        }
     }
     GeoLib::Raster const* const raster(new GeoLib::Raster(
         {static_cast<std::size_t>(dimensions[0]),
@@ -109,8 +115,11 @@ int VtkImageDataToSurfacePointsFilter::RequestData(
         // Skip transparent pixels
         if (n_comp == 2 || n_comp == 4)
         {
-            if (((float*)pixvals)[(i + 1) * n_comp - 1] < 0.00000001f)
+            if ((static_cast<float*>(pixvals))[(i + 1) * n_comp - 1] <
+                0.00000001f)
+            {
                 continue;
+            }
         }
 
         double p[3];
@@ -156,5 +165,5 @@ void VtkImageDataToSurfacePointsFilter::createPointSurface(
 
 double VtkImageDataToSurfacePointsFilter::getRandomNumber(double const& min, double const& max) const
 {
-    return ((double)std::rand() / RAND_MAX) * (max - min) + min;
+    return (static_cast<double>(std::rand()) / RAND_MAX) * (max - min) + min;
 }

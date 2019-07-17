@@ -60,8 +60,8 @@ int VtkMappedMeshSource::ProcessRequest(vtkInformation* request,
     return this->Superclass::ProcessRequest(request, inputVector, outputVector);
 }
 
-int VtkMappedMeshSource::RequestData(vtkInformation*,
-                                     vtkInformationVector**,
+int VtkMappedMeshSource::RequestData(vtkInformation* /*request*/,
+                                     vtkInformationVector** /*inputVector*/,
                                      vtkInformationVector* outputVector)
 {
     vtkSmartPointer<vtkInformation> outInfo =
@@ -181,9 +181,10 @@ int VtkMappedMeshSource::RequestData(vtkInformation*,
     return 1;
 }
 
-int VtkMappedMeshSource::RequestInformation(vtkInformation*,
-                                            vtkInformationVector**,
-                                            vtkInformationVector*)
+int VtkMappedMeshSource::RequestInformation(
+    vtkInformation* /*request*/,
+    vtkInformationVector** /*inputVector*/,
+    vtkInformationVector* /*outputVector*/)
 {
     this->NumberOfDimensions = 3;
     this->NumberOfNodes = _mesh->getNumberOfNodes();

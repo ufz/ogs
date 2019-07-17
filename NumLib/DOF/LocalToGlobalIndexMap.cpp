@@ -198,7 +198,7 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
     std::vector<int> const& variable_component_offsets,
     std::vector<MeshLib::Element*> const& elements,
     NumLib::MeshComponentMap&& mesh_component_map,
-    LocalToGlobalIndexMap::ConstructorTag)
+    LocalToGlobalIndexMap::ConstructorTag /*unused*/)
     : _mesh_subsets(std::move(mesh_subsets)),
       _mesh_component_map(std::move(mesh_component_map)),
       _variable_component_offsets(variable_component_offsets)

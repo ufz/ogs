@@ -90,16 +90,24 @@ void VtkCompositeImageToCylindersFilter::SetUserProperty( QString name, QVariant
     if (name.compare("NumberOfColors") == 0)
     {
         vtkLookupTable* lut = this->GetLookupTable("P-Colors");
-        if(lut)
+        if (lut)
+        {
             lut->SetNumberOfTableValues(value.toInt());
+        }
     }
     else if (name.compare("NumberOfSides") == 0)
+    {
         static_cast<vtkTubeFilter*>(_outputAlgorithm)->SetNumberOfSides(value.toInt());
+    }
     else if (name.compare("Capping") == 0)
+    {
         static_cast<vtkTubeFilter*>(_outputAlgorithm)->SetCapping(value.toBool());
+    }
     else if (name.compare("RadiusFactor") == 0)
-        static_cast<vtkTubeFilter*>(_outputAlgorithm)->SetRadius(
-                _lineFilter->GetImageSpacing() * value.toDouble());
+    {
+        static_cast<vtkTubeFilter*>(_outputAlgorithm)
+            ->SetRadius(_lineFilter->GetImageSpacing() * value.toDouble());
+    }
 }
 
 void VtkCompositeImageToCylindersFilter::SetUserVectorProperty( QString name,
@@ -112,14 +120,18 @@ void VtkCompositeImageToCylindersFilter::SetUserVectorProperty( QString name,
     if (name.compare("TableRange") == 0)
     {
         vtkLookupTable* lut = this->GetLookupTable("P-Colors");
-        if(lut)
+        if (lut)
+        {
             lut->SetTableRange(values[0].toDouble(), values[1].toDouble());
+        }
     }
     else if (name.compare("HueRange") == 0)
     {
         vtkLookupTable* lut = this->GetLookupTable("P-Colors");
-        if(lut)
+        if (lut)
+        {
             lut->SetHueRange(values[0].toDouble(), values[1].toDouble());
+        }
     }
 }
 

@@ -15,8 +15,7 @@
 #include "MeshEnums.h"
 
 namespace MeshLib {
-
-const std::string MeshElemType2String(const MeshElemType t)
+std::string MeshElemType2String(const MeshElemType t)
 {
     if (t == MeshElemType::POINT)
     {
@@ -53,7 +52,7 @@ const std::string MeshElemType2String(const MeshElemType t)
     return "none";
 }
 
-const std::string MeshElemType2StringShort(const MeshElemType t)
+std::string MeshElemType2StringShort(const MeshElemType t)
 {
     if (t == MeshElemType::POINT)
     {
@@ -151,7 +150,7 @@ std::vector<std::string> getMeshElemTypeStringsShort()
     return vec;
 }
 
-const std::string CellType2String(const CellType t)
+std::string CellType2String(const CellType t)
 {
 #define RETURN_CELL_TYPE_STR(t, type)\
     if ((t) == CellType::type)\
@@ -180,7 +179,7 @@ const std::string CellType2String(const CellType t)
 #undef RETURN_CELL_TYPE_STR
 }
 
-const std::string MeshQualityType2String(const MeshQualityType t)
+std::string MeshQualityType2String(const MeshQualityType t)
 {
     if (t == MeshQualityType::ELEMENTSIZE)
     {

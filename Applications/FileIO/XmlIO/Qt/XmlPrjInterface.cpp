@@ -38,15 +38,16 @@
 namespace FileIO
 {
 XmlPrjInterface::XmlPrjInterface(DataHolderLib::Project& project)
-    : XMLInterface(),
-      XMLQtInterface("OpenGeoSysProject.xsd"), _filename(""), _project(project)
+    : XMLQtInterface("OpenGeoSysProject.xsd"), _filename(""), _project(project)
 {
 }
 
 int XmlPrjInterface::readFile(const QString& fileName)
 {
     if (XMLQtInterface::readFile(fileName) == 0)
+    {
         return 0;
+    }
 
     QFileInfo fi(fileName);
     QString path =
@@ -80,7 +81,9 @@ int XmlPrjInterface::readFile(const QString& fileName)
         QString const node_name(node.nodeName());
         QString const file_name(node.toElement().text().trimmed());
         if (file_name.isEmpty())
+        {
             continue;
+        }
 
         if (node_name == "geometry")
         {
@@ -140,13 +143,19 @@ int XmlPrjInterface::readFile(const QString& fileName)
         }
 
         else if (node_name == "parameters")
+        {
             param_root = node;
+        }
         else if (node_name == "process_variables")
+        {
             pvar_root = node;
+        }
     }
 
     if (param_root != QDomNode() && pvar_root != QDomNode())
+    {
         readConditions(pvar_root, param_root);
+    }
     else
         INFO("Skipping process variables");
 
@@ -168,7 +177,9 @@ QDomNode XmlPrjInterface::findParam(QDomNode const& param_root,
             // node.toElement().text().toStdString() << std::endl;
             if (node.nodeName() == "name" &&
                 node.toElement().text() == param_name)
+            {
                 return node;
+            }
         }
         param = param.nextSibling();
     }
@@ -188,15 +199,25 @@ void XmlPrjInterface::readConditions(QDomNode const& pvar_root,
             QDomNode const node = nodeList.at(i);
             QString const node_name = node.nodeName();
             if (node_name == "name")
+            {
                 process_var.name = node.toElement().text().toStdString();
+            }
             else if (node_name == "components")
+            {
                 process_var.components = node.toElement().text().toInt();
+            }
             else if (node_name == "order")
+            {
                 process_var.order = node.toElement().text().toInt();
+            }
             else if (node_name == "boundary_conditions")
+            {
                 readBoundaryConditions(node, param_root, process_var);
+            }
             else if (node_name == "source_terms")
+            {
                 readSourceTerms(node, param_root, process_var);
+            }
         }
         pvar = pvar.nextSibling();
     }
@@ -215,7 +236,9 @@ void XmlPrjInterface::readBoundaryConditions(
                                                              pvar));
         if (cond->getType() !=
             DataHolderLib::BoundaryCondition::ConditionType::NONE)
+        {
             _project.addBoundaryCondition(std::move(cond));
+        }
 
         bc = bc.nextSibling();
     }
@@ -232,7 +255,9 @@ void XmlPrjInterface::readSourceTerms(
         std::unique_ptr<DataHolderLib::SourceTerm> cond(
             parseCondition<DataHolderLib::SourceTerm>(st, param_root, pvar));
         if (cond->getType() != DataHolderLib::SourceTerm::ConditionType::NONE)
+        {
             _project.addSourceTerm(std::move(cond));
+        }
         st = st.nextSibling();
     }
 }
@@ -246,7 +271,9 @@ T* XmlPrjInterface::parseCondition(
     DataHolderLib::BaseObjType base_obj_type =
         DataHolderLib::BaseObjType::GEOMETRY;
     typename T::ConditionType type = T::ConditionType::NONE;
-    std::string base_obj_name(""), obj_name(""), param_name("");
+    std::string base_obj_name;
+    std::string obj_name;
+    std::string param_name;
     QDomNode param_node = QDomNode();
     QDomNodeList nodeList = node.childNodes();
     for (int i = 0; i < nodeList.count(); i++)
@@ -255,12 +282,18 @@ T* XmlPrjInterface::parseCondition(
         QString const content = nodeList.at(i).toElement().text().trimmed();
         if (node_name == "geometrical_set" &&
             base_obj_type != DataHolderLib::BaseObjType::MESH)
+        {
             base_obj_name = content.toStdString();
+        }
         else if (node_name == "geometry" &&
                  base_obj_type != DataHolderLib::BaseObjType::MESH)
+        {
             obj_name = content.toStdString();
+        }
         else if (node_name == "type")
+        {
             type = T::convertStringToType(content.toStdString());
+        }
         else if (node_name == "mesh")
         {
             base_obj_type = DataHolderLib::BaseObjType::MESH;
@@ -268,12 +301,16 @@ T* XmlPrjInterface::parseCondition(
             obj_name.clear();
         }
         else if (node_name == "field_name")
+        {
             param_name = content.toStdString();
+        }
         else if (node_name == "parameter")
         {
             QDomNode val = findParam(param_root, content);
             if (val == QDomNode())
+            {
                 continue;
+            }
             param_name = content.toStdString();
             param_node = nodeList.at(i);
         }
@@ -283,9 +320,13 @@ T* XmlPrjInterface::parseCondition(
     {
         T* cond = new T(pvar, param_name, type);
         if (base_obj_type == DataHolderLib::BaseObjType::MESH)
+        {
             cond->setMesh(base_obj_name);
+        }
         else
+        {
             cond->setGeoObject(base_obj_name, obj_name);
+        }
 
         return cond;
     }
@@ -376,8 +417,8 @@ bool XmlPrjInterface::write()
                 name.c_str());
     }
 
-    if (_project.getBoundaryConditions().size() > 0 ||
-        _project.getSourceTerms().size() > 0)
+    if (!_project.getBoundaryConditions().empty() ||
+        !_project.getSourceTerms().empty())
     {
         // parameters
         writeProcessVariables(doc, root);
@@ -419,14 +460,18 @@ XmlPrjInterface::getPrimaryVariableVec() const
     {
         DataHolderLib::ProcessVariable const& pvar(bc->getProcessVar());
         if (!PVarExists(pvar.name, p_vars))
+        {
             p_vars.push_back(pvar);
+        }
     }
 
     for (auto& st : source_terms)
     {
         DataHolderLib::ProcessVariable const& pvar(st->getProcessVar());
         if (!PVarExists(pvar.name, p_vars))
+        {
             p_vars.push_back(pvar);
+        }
     }
     return p_vars;
 }
@@ -478,7 +523,9 @@ void XmlPrjInterface::writeBoundaryConditions(QDomDocument& doc,
     for (auto& bc : boundary_conditions)
     {
         if (bc->getProcessVarName() != name)
+        {
             continue;
+        }
         QDomElement bc_tag = doc.createElement("boundary_condition");
         bc_list_tag.appendChild(bc_tag);
         writeCondition<DataHolderLib::BoundaryCondition>(doc, bc_tag, *bc);
@@ -494,7 +541,9 @@ void XmlPrjInterface::writeSourceTerms(QDomDocument& doc,
     for (auto& st : source_terms)
     {
         if (st->getProcessVarName() != name)
+        {
             continue;
+        }
         QDomElement st_tag = doc.createElement("source_term");
         st_list_tag.appendChild(st_tag);
         writeCondition<DataHolderLib::SourceTerm>(doc, st_tag, *st);

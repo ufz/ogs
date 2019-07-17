@@ -40,9 +40,13 @@ VtkCompositeGeoObjectFilter::VtkCompositeGeoObjectFilter( vtkAlgorithm* inputAlg
         vtkAlgorithm* parentAlg = ao->GetProducer();
 
         if (dynamic_cast<VtkPolylinesSource*>(parentAlg) != nullptr)
+        {
             _type = GeoLib::GEOTYPE::POLYLINE;
+        }
         else if (dynamic_cast<VtkSurfacesSource*>(parentAlg) != nullptr)
+        {
             _type = GeoLib::GEOTYPE::SURFACE;
+        }
         else if (dynamic_cast<VtkStationSource*>(parentAlg) != nullptr)
         {
             /* TODO
@@ -83,7 +87,9 @@ void VtkCompositeGeoObjectFilter::init()
         _outputAlgorithm = composite->GetOutputAlgorithm();
     }
     else
+    {
         _outputAlgorithm = surface;
+    }
 }
 
 void VtkCompositeGeoObjectFilter::SetIndex(std::size_t idx)

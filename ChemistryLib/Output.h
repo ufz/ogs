@@ -38,7 +38,7 @@ public:
     }
 
     friend std::ostream& operator<<(
-        std::ostream& out, BasicOutputSetups const& basic_output_setups);
+        std::ostream& os, BasicOutputSetups const& basic_output_setups);
 
     std::string const output_file;
 

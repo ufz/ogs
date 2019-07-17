@@ -43,7 +43,7 @@ namespace ProcessLib
 /// \return a vector of references to the found variable(s).
 std::vector<std::reference_wrapper<ProcessVariable>> findProcessVariables(
     std::vector<ProcessVariable> const& variables,
-    BaseLib::ConfigTree const& process_config,
+    BaseLib::ConfigTree const& pv_config,
     std::initializer_list<std::string>
         tags);
 

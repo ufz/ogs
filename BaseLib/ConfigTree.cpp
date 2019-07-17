@@ -316,8 +316,9 @@ void ConfigTree::checkUnique(const std::string &key) const
 void ConfigTree::checkUniqueAttr(const std::string &attr) const
 {
     // Workaround for handling attributes with xml namespaces and uppercase letters.
-    if (attr.find(':') != attr.npos) {
-        auto pos = decltype(attr.npos){0};
+    if (attr.find(':') != std::string::npos)
+    {
+        auto pos = decltype(std::string::npos){0};
 
         // Replace colon and uppercase letters with an allowed character 'a'.
         // That means, attributes containing a colon are also allowed to contain
@@ -325,14 +326,16 @@ void ConfigTree::checkUniqueAttr(const std::string &attr) const
         auto attr2 = attr;
         do {
             pos = attr2.find_first_of(":ABCDEFGHIJKLMNOPQRSTUVWXYZ", pos);
-            if (pos != attr.npos)
+            if (pos != std::string::npos)
             {
                 attr2[pos] = 'a';
             }
-        } while (pos != attr.npos);
+        } while (pos != std::string::npos);
 
         checkKeyname(attr2);
-    } else {
+    }
+    else
+    {
         checkKeyname(attr);
     }
 

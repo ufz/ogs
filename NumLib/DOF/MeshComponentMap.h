@@ -173,7 +173,7 @@ private:
     /// \attention The line for the location l and component id must exist,
     /// the behaviour is undefined otherwise.
     /// \return a copy of the line.
-    detail::Line getLine(Location const& l, int const component_id) const;
+    detail::Line getLine(Location const& l, int const comp_id) const;
 
     void renumberByLocation(GlobalIndexType offset=0);
 

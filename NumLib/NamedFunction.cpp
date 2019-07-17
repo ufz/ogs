@@ -38,7 +38,7 @@ using CallerFunction = double (*)(void*, const std::vector<double>&);
 //! Helps instantiating the call_() function.
 template <int... Indices>
 CallerFunction generateCallerFromIntegerSequence(
-    std::integer_sequence<int, Indices...>)
+    std::integer_sequence<int, Indices...> /*unused*/)
 {
     return call_<Indices...>;
 }
@@ -87,7 +87,7 @@ using DeleterFunction = void (*)(void*);
 //! Helps instantiating the delete_() function.
 template <int... Indices>
 DeleterFunction generateDeleterFromIntegerSequence(
-    std::integer_sequence<int, Indices...>)
+    std::integer_sequence<int, Indices...> /*unused*/)
 {
     return delete_<Indices...>;
 }
@@ -136,7 +136,7 @@ using CopierFunction = void* (*)(void*);
 //! Helps instantiating the copy_() function.
 template <int... Indices>
 CopierFunction generateCopierFromIntegerSequence(
-    std::integer_sequence<int, Indices...>)
+    std::integer_sequence<int, Indices...> /*unused*/)
 {
     return copy_<Indices...>;
 }

@@ -30,7 +30,9 @@ QNonScalableGraphicsTextItem::QNonScalableGraphicsTextItem(const QString & text,
     QGraphicsTextItem(parent)
 {
     if (!text.isEmpty())
+    {
         setPlainText(text);
+    }
     setAcceptDrops(true);
     setAcceptHoverEvents(true);
     setFlag(QGraphicsItem::ItemIgnoresTransformations, true);

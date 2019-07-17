@@ -180,7 +180,9 @@ void VtkVisPipelineView::showImageToMeshConversionDialog()
 {
     MeshFromRasterDialog dlg;
     if (dlg.exec() != QDialog::Accepted)
+    {
         return;
+    }
 
     vtkSmartPointer<vtkAlgorithm> algorithm =
         static_cast<VtkVisPipelineItem*>(static_cast<VtkVisPipeline*>(this->model())->
@@ -200,7 +202,9 @@ void VtkVisPipelineView::showImageToMeshConversionDialog()
         emit meshAdded(mesh);
     }
     else
+    {
         OGSError::box("Error creating mesh.");
+    }
 }
 
 void VtkVisPipelineView::convertVTKToOGSMesh()
@@ -212,13 +216,17 @@ void VtkVisPipelineView::convertVTKToOGSMesh()
     vtkUnstructuredGrid* grid(nullptr);
     vtkUnstructuredGridAlgorithm* ugAlg = vtkUnstructuredGridAlgorithm::SafeDownCast(algorithm);
     if (ugAlg)
+    {
         grid = ugAlg->GetOutput();
+    }
     else
     {
         // for old filetypes
         vtkGenericDataObjectReader* dataReader = vtkGenericDataObjectReader::SafeDownCast(algorithm);
         if (dataReader)
+        {
             grid = vtkUnstructuredGrid::SafeDownCast(dataReader->GetOutput());
+        }
         else
         {
             // for new filetypes
@@ -237,7 +245,9 @@ void VtkVisPipelineView::selectionChanged( const QItemSelection &selected,
     QTreeView::selectionChanged(selected, deselected);
 
     if (selected.empty())
+    {
         return;
+    }
 
     QModelIndex index = *selected.indexes().begin();
     if (index.isValid())
@@ -246,8 +256,10 @@ void VtkVisPipelineView::selectionChanged( const QItemSelection &selected,
         emit actorSelected(item->actor());
         emit itemSelected(item);
         if (item->transformFilter())
+        {
             emit dataObjectSelected(vtkDataObject::SafeDownCast(
                 item->transformFilter()->GetOutputDataObject(0)));
+        }
     }
     else
     {
@@ -265,7 +277,9 @@ void VtkVisPipelineView::selectItem(vtkProp3D* actor)
 void VtkVisPipelineView::selectItem(const QModelIndex &index)
 {
     if (!index.isValid())
+    {
         return;
+    }
 
     QItemSelectionModel* selectionModel = this->selectionModel();
     selectionModel->clearSelection();
@@ -299,10 +313,12 @@ void VtkVisPipelineView::addColorTable()
             }
         }
         else
+        {
             QMessageBox::warning(nullptr,
                                  "Color lookup table could not be applied.",
                                  "Color lookup tables can only be applied to "
                                  "VtkVisPointSetItem.");
+        }
         QDir dir = QDir(filename);
         settings.setValue("lastOpenedLutFileDirectory", dir.absolutePath());
     }

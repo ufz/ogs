@@ -47,11 +47,19 @@ vtkImageAlgorithm* VtkRaster::loadImage(const std::string &fileName,
 
     std::unique_ptr<GeoLib::Raster> raster(nullptr);
     if (fileInfo.suffix().toLower() == "asc")
+    {
         raster.reset(FileIO::AsciiRasterInterface::getRasterFromASCFile(fileName));
+    }
     else if (fileInfo.suffix().toLower() == "grd")
-        raster.reset(FileIO::AsciiRasterInterface::getRasterFromSurferFile(fileName));
+    {
+        raster.reset(
+            FileIO::AsciiRasterInterface::getRasterFromSurferFile(fileName));
+    }
     if (raster)
-        return VtkRaster::loadImageFromArray(raster->begin(), raster->getHeader());
+    {
+        return VtkRaster::loadImageFromArray(raster->begin(),
+                                             raster->getHeader());
+    }
     if ((fileInfo.suffix().toLower() == "tif") ||
         (fileInfo.suffix().toLower() == "tiff"))
     {
@@ -83,7 +91,9 @@ vtkImageImport* VtkRaster::loadImageFromArray(double const*const data_array, Geo
             data[j*2+1] = 0;
         }
         else
-            data[j*2+1] = max_val;
+        {
+            data[j * 2 + 1] = max_val;
+        }
     }
 
     vtkImageImport* image = vtkImageImport::New();
@@ -122,7 +132,10 @@ vtkImageAlgorithm* VtkRaster::loadImageFromTIFF(const std::string& fileName,
 
         if (geoTiff)
         {
-            int imgWidth = 0, imgHeight = 0, nImages = 0, pntCount = 0;
+            int imgWidth = 0;
+            int imgHeight = 0;
+            int nImages = 0;
+            int pntCount = 0;
             double* pnts = nullptr;
 
             // get actual number of images in the tiff file
@@ -153,9 +166,10 @@ vtkImageAlgorithm* VtkRaster::loadImageFromTIFF(const std::string& fileName,
             }
 
             // read pixel values
-            auto* pixVal =
-                (uint32*)_TIFFmalloc(imgWidth * imgHeight * sizeof(uint32));
+            auto* pixVal = static_cast<uint32*>(
+                _TIFFmalloc(imgWidth * imgHeight * sizeof(uint32)));
             if ((imgWidth > 0) && (imgHeight > 0))
+            {
                 if (!TIFFReadRGBAImage(tiff, imgWidth, imgHeight, pixVal, 0))
                 {
                     ERR("VtkRaster::loadImageFromTIFF(): reading GeoTIFF file.");
@@ -164,6 +178,7 @@ vtkImageAlgorithm* VtkRaster::loadImageFromTIFF(const std::string& fileName,
                     XTIFFClose(tiff);
                     return nullptr;
                 }
+            }
 
             // check for colormap
             uint16 photometric;
@@ -210,11 +225,17 @@ vtkImageAlgorithm* VtkRaster::loadImageFromTIFF(const std::string& fileName,
                 float max_val(0);
                 unsigned nPixels = 4*imgWidth*imgHeight;
                 for (unsigned j = 0; j < nPixels; ++j)
-                    if (data[j]>max_val)
+                {
+                    if (data[j] > max_val)
+                    {
                         max_val = data[j];
+                    }
+                }
 
-                for (unsigned j = 0; j < nPixels; j+=4)
-                    data[j+3] = max_val;
+                for (unsigned j = 0; j < nPixels; j += 4)
+                {
+                    data[j + 3] = max_val;
+                }
             }
 
             vtkImageImport* image = vtkImageImport::New();
@@ -251,15 +272,23 @@ vtkImageReader2* VtkRaster::loadImageFromFile(const std::string &fileName)
     vtkImageReader2* image(nullptr);
 
     if (fi.suffix().toLower() == "png")
+    {
         image = vtkPNGReader::New();
+    }
     else if ((fi.suffix().toLower() == "tif") ||
              (fi.suffix().toLower() == "tiff"))
+    {
         image = vtkTIFFReader::New();
+    }
     else if ((fi.suffix().toLower() == "jpg") ||
              (fi.suffix().toLower() == "jpeg"))
+    {
         image = vtkJPEGReader::New();
+    }
     else if (fi.suffix().toLower() == "bmp")
+    {
         image = vtkBMPReader::New();
+    }
     else
     {
         ERR("VtkRaster::readImageFromFile(): File format not supported, please "
@@ -288,7 +317,9 @@ std::string VtkRaster::findWorldFile(std::string const& filename)
     for (auto& ext : supported_extensions)
     {
         if (BaseLib::IsFileExisting(no_ext + ext))
+        {
             return no_ext + ext;
+        }
     }
 
     // no world file found
@@ -313,17 +344,23 @@ bool VtkRaster::readWorldFile(std::string const& filename,
         return false;
     }
 
-    std::string line("");
+    std::string line;
     // x-scaling
     if (!std::getline(in, line))
+    {
         return false;
+    }
     double const delta_x = BaseLib::str2number<double>(line);
     // 2x rotation (ignored)
     if (!(std::getline(in, line) && std::getline(in, line)))
+    {
         return false;
+    }
     // negative y-scaling
     if (!std::getline(in, line))
+    {
         return false;
+    }
     double const delta_y = BaseLib::str2number<double>(line);
     if (delta_x != -delta_y)
         WARN("Anisotropic pixel size detected (%f vs %f). An isotropic "
@@ -331,11 +368,15 @@ bool VtkRaster::readWorldFile(std::string const& filename,
             delta_x, delta_y, delta_x)
     // x-translation
     if (!std::getline(in, line))
+    {
         return false;
+    }
     double const x0 = BaseLib::str2number<double>(line);
     // y-translation
     if (!std::getline(in, line))
+    {
         return false;
+    }
     double const y0 = BaseLib::str2number<double>(line);
 
     int extent[3];

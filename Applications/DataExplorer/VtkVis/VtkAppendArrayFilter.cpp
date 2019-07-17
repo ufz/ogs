@@ -39,9 +39,9 @@ void VtkAppendArrayFilter::PrintSelf( ostream& os, vtkIndent indent )
     os << indent << "== VtkAppendArrayFilter ==" << endl;
 }
 
-int VtkAppendArrayFilter::RequestData( vtkInformation*,
-                                     vtkInformationVector** inputVector,
-                                     vtkInformationVector* outputVector )
+int VtkAppendArrayFilter::RequestData(vtkInformation* /*request*/,
+                                      vtkInformationVector** inputVector,
+                                      vtkInformationVector* outputVector)
 {
     if (this->_array.empty())
     {
@@ -63,7 +63,9 @@ int VtkAppendArrayFilter::RequestData( vtkInformation*,
         WARN("VtkAppendArrayFilter::RequestData(): Number of cells exceeds selection array length. Surplus cells won't be examined.");
 
     for (std::size_t i = 0; i < arrayLength; i++)
+    {
         colors->SetValue(i, _array[i]);
+    }
 
     vtkInformation* outInfo = outputVector->GetInformationObject(0);
     vtkUnstructuredGrid* output =

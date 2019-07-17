@@ -46,7 +46,7 @@ public:
 
 private:
     /// Returns a string for the given file type enum
-    const QString getFileTypeString(FileType file_type) const;
+    QString getFileTypeString(FileType file_type) const;
     /// Display a warning for vtu- to msh-conversion
     void displayWarningLabel() const;
 

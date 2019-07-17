@@ -47,9 +47,9 @@ void StratView::update()
 {
     QRectF viewRect = _scene->itemsBoundingRect();
     _scene->setSceneRect(viewRect);
-    QRectF sceneInView(_scene->MARGIN,_scene->MARGIN,
-                       viewRect.width() + 2 * _scene->MARGIN,
-                       viewRect.height() + 2 * _scene->MARGIN);
+    QRectF sceneInView(StratScene::MARGIN, StratScene::MARGIN,
+                       viewRect.width() + 2 * StratScene::MARGIN,
+                       viewRect.height() + 2 * StratScene::MARGIN);
     fitInView(sceneInView, Qt::IgnoreAspectRatio);
 }
 
@@ -58,8 +58,8 @@ void StratView::saveAsImage(QString fileName)
     this->update();
 
     QRectF viewRect = _scene->itemsBoundingRect();
-    QImage img(
-            static_cast<int>(viewRect.width()) + 2 * _scene->MARGIN, 600, QImage::Format_ARGB32);
+    QImage img(static_cast<int>(viewRect.width()) + 2 * StratScene::MARGIN, 600,
+               QImage::Format_ARGB32);
     QPainter painter(&img);
 
     this->render(&painter);

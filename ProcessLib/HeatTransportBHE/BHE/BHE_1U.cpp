@@ -20,8 +20,6 @@ namespace HeatTransportBHE
 {
 namespace BHE
 {
-constexpr int BHE_1U::number_of_grout_zones;
-
 BHE_1U::BHE_1U(BoreholeGeometry const& borehole,
                RefrigerantProperties const& refrigerant,
                GroutParameters const& grout,
@@ -165,8 +163,6 @@ std::pair<double, double> thermalResistancesGroutSoil(double chi,
     return {R_gg, R_gs};
 }
 
-constexpr std::pair<int, int> BHE_1U::inflow_outflow_bc_component_ids[];
-
 void BHE_1U::updateHeatTransferCoefficients(double const flow_rate)
 
 {
@@ -223,7 +219,8 @@ std::array<double, BHE_1U::number_of_unknowns> BHE_1U::calcThermalResistances(
                    d0) /
         (2.0 * pi * lambda_g);
 
-    double R_gg, R_gs;
+    double R_gg;
+    double R_gs;
     std::tie(R_gg, R_gs) = thermalResistancesGroutSoil(chi, R_ar, R_g);
 
     return {{R_fig, R_fog, R_gg, R_gs}};

@@ -217,7 +217,8 @@ void MeshLayerMapper::addLayerToMesh(const MeshLib::Mesh &dem_mesh, unsigned lay
         {
             continue;
         }
-        unsigned node_counter(3), missing_idx(0);
+        unsigned node_counter(3);
+        unsigned missing_idx(0);
         std::array<MeshLib::Node*, 6> new_elem_nodes;
         for (unsigned j=0; j<3; ++j)
         {

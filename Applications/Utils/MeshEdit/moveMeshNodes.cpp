@@ -48,9 +48,9 @@ int main (int argc, char* argv[])
     ApplicationsLib::LogogSetup logog_setup;
 
     std::vector<std::string> keywords;
-    keywords.push_back("-ALL");
-    keywords.push_back("-MESH");
-    keywords.push_back("-LOWPASS");
+    keywords.emplace_back("-ALL");
+    keywords.emplace_back("-MESH");
+    keywords.emplace_back("-LOWPASS");
 
     if (argc < 3)
     {

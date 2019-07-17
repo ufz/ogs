@@ -156,7 +156,7 @@ public:
      * @param w           fracture displacement at current time step
      * @param sigma_prev  stress at previous time step
      * @param sigma       stress at current time step
-     * @param Kep         tangent matrix for stress and fracture displacements
+     * @param C           tangent matrix for stress and fracture displacements
      * @param material_state_variables   material state variables
      */
     void computeConstitutiveRelation(
@@ -174,7 +174,7 @@ public:
         Eigen::Ref<Eigen::VectorXd>
             sigma,
         Eigen::Ref<Eigen::MatrixXd>
-            Kep,
+            C,
         typename FractureModelBase<DisplacementDim>::MaterialStateVariables&
             material_state_variables) override;
 

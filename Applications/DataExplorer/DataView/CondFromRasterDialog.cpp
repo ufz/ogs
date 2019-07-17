@@ -35,7 +35,9 @@ CondFromRasterDialog::CondFromRasterDialog(std::vector<MeshLib::Mesh*> msh_vec,
     this->scalingEdit->setValidator (_scale_validator);
 
     for (auto mesh : _msh_vec)
+    {
         this->meshBox->addItem(QString::fromStdString(mesh->getName()));
+    }
 
     this->directButton->setChecked(true);
 }
@@ -87,12 +89,13 @@ void CondFromRasterDialog::accept()
 
     MeshLib::Mesh* mesh(nullptr);
     for (auto mesh_ : _msh_vec)
+    {
         if (mesh_->getName() == mesh_name)
         {
             mesh = mesh_;
             break;
         }
-
+    }
 
     if (this->directButton->isChecked())
     {

@@ -346,7 +346,6 @@ void VtkMeshConverter::convertArray(vtkDataArray& array,
         "Array '%s' in VTU file uses unsupported data type '%s'. The data "
         "array will not be available.",
         array.GetName(), array.GetDataTypeAsString());
-    return;
 }
 
 }  // end namespace MeshLib

@@ -65,37 +65,35 @@ template <ShapeMatrixType FIELD_TYPE> struct FieldType {};
 
 template <class T_MESH_ELEMENT, class T_SHAPE_FUNC, class T_SHAPE_MATRICES>
 inline void computeMappingMatrices(
-        const T_MESH_ELEMENT &/*ele*/,
-        const double* natural_pt,
-        const MeshLib::ElementCoordinatesMappingLocal &/*ele_local_coord*/,
-        T_SHAPE_MATRICES &shapemat,
-        FieldType<ShapeMatrixType::N>)
+    const T_MESH_ELEMENT& /*ele*/,
+    const double* natural_pt,
+    const MeshLib::ElementCoordinatesMappingLocal& /*ele_local_coord*/,
+    T_SHAPE_MATRICES& shapemat,
+    FieldType<ShapeMatrixType::N> /*unused*/)
 {
     T_SHAPE_FUNC::computeShapeFunction(natural_pt, shapemat.N);
 }
 
 template <class T_MESH_ELEMENT, class T_SHAPE_FUNC, class T_SHAPE_MATRICES>
-inline
-typename std::enable_if<T_SHAPE_FUNC::DIM!=0>::type
+inline typename std::enable_if<T_SHAPE_FUNC::DIM != 0>::type
 computeMappingMatrices(
-        const T_MESH_ELEMENT &/*ele*/,
-        const double* natural_pt,
-        const MeshLib::ElementCoordinatesMappingLocal &/*ele_local_coord*/,
-        T_SHAPE_MATRICES &shapemat,
-        FieldType<ShapeMatrixType::DNDR>)
+    const T_MESH_ELEMENT& /*ele*/,
+    const double* natural_pt,
+    const MeshLib::ElementCoordinatesMappingLocal& /*ele_local_coord*/,
+    T_SHAPE_MATRICES& shapemat,
+    FieldType<ShapeMatrixType::DNDR> /*unused*/)
 {
     double* const dNdr = shapemat.dNdr.data();
     T_SHAPE_FUNC::computeGradShapeFunction(natural_pt, dNdr);
 }
 template <class T_MESH_ELEMENT, class T_SHAPE_FUNC, class T_SHAPE_MATRICES>
-inline
-typename std::enable_if<T_SHAPE_FUNC::DIM==0>::type
+inline typename std::enable_if<T_SHAPE_FUNC::DIM == 0>::type
 computeMappingMatrices(
-        const T_MESH_ELEMENT &/*ele*/,
-        const double* /*natural_pt*/,
-        const MeshLib::ElementCoordinatesMappingLocal &/*ele_local_coord*/,
-        T_SHAPE_MATRICES &/*shapemat*/,
-        FieldType<ShapeMatrixType::DNDR>)
+    const T_MESH_ELEMENT& /*ele*/,
+    const double* /*natural_pt*/,
+    const MeshLib::ElementCoordinatesMappingLocal& /*ele_local_coord*/,
+    T_SHAPE_MATRICES& /*shapemat*/,
+    FieldType<ShapeMatrixType::DNDR> /*unused*/)
 {
 }
 
@@ -131,14 +129,13 @@ static void checkJacobianDeterminant(const double detJ,
 }
 
 template <class T_MESH_ELEMENT, class T_SHAPE_FUNC, class T_SHAPE_MATRICES>
-inline
-typename std::enable_if<T_SHAPE_FUNC::DIM!=0>::type
+inline typename std::enable_if<T_SHAPE_FUNC::DIM != 0>::type
 computeMappingMatrices(
-        const T_MESH_ELEMENT &ele,
-        const double* natural_pt,
-        const MeshLib::ElementCoordinatesMappingLocal &ele_local_coord,
-        T_SHAPE_MATRICES &shapemat,
-        FieldType<ShapeMatrixType::DNDR_J>)
+    const T_MESH_ELEMENT& ele,
+    const double* natural_pt,
+    const MeshLib::ElementCoordinatesMappingLocal& ele_local_coord,
+    T_SHAPE_MATRICES& shapemat,
+    FieldType<ShapeMatrixType::DNDR_J> /*unused*/)
 {
     computeMappingMatrices<T_MESH_ELEMENT, T_SHAPE_FUNC, T_SHAPE_MATRICES>
         (ele, natural_pt, ele_local_coord, shapemat, FieldType<ShapeMatrixType::DNDR>());
@@ -162,25 +159,24 @@ computeMappingMatrices(
 }
 
 template <class T_MESH_ELEMENT, class T_SHAPE_FUNC, class T_SHAPE_MATRICES>
-inline
-typename std::enable_if<T_SHAPE_FUNC::DIM==0>::type
+inline typename std::enable_if<T_SHAPE_FUNC::DIM == 0>::type
 computeMappingMatrices(
-        const T_MESH_ELEMENT &/*ele*/,
-        const double* /*natural_pt*/,
-        const MeshLib::ElementCoordinatesMappingLocal &/*ele_local_coord*/,
-        T_SHAPE_MATRICES &shapemat,
-        FieldType<ShapeMatrixType::DNDR_J>)
+    const T_MESH_ELEMENT& /*ele*/,
+    const double* /*natural_pt*/,
+    const MeshLib::ElementCoordinatesMappingLocal& /*ele_local_coord*/,
+    T_SHAPE_MATRICES& shapemat,
+    FieldType<ShapeMatrixType::DNDR_J> /*unused*/)
 {
     shapemat.detJ = 1.0;
 }
 
 template <class T_MESH_ELEMENT, class T_SHAPE_FUNC, class T_SHAPE_MATRICES>
 inline void computeMappingMatrices(
-        const T_MESH_ELEMENT &ele,
-        const double* natural_pt,
-        const MeshLib::ElementCoordinatesMappingLocal &ele_local_coord,
-        T_SHAPE_MATRICES &shapemat,
-        FieldType<ShapeMatrixType::N_J>)
+    const T_MESH_ELEMENT& ele,
+    const double* natural_pt,
+    const MeshLib::ElementCoordinatesMappingLocal& ele_local_coord,
+    T_SHAPE_MATRICES& shapemat,
+    FieldType<ShapeMatrixType::N_J> /*unused*/)
 {
     computeMappingMatrices<T_MESH_ELEMENT, T_SHAPE_FUNC, T_SHAPE_MATRICES>
         (ele, natural_pt, ele_local_coord, shapemat, FieldType<ShapeMatrixType::N>());
@@ -189,14 +185,13 @@ inline void computeMappingMatrices(
 }
 
 template <class T_MESH_ELEMENT, class T_SHAPE_FUNC, class T_SHAPE_MATRICES>
-inline
-typename std::enable_if<T_SHAPE_FUNC::DIM!=0>::type
+inline typename std::enable_if<T_SHAPE_FUNC::DIM != 0>::type
 computeMappingMatrices(
-        const T_MESH_ELEMENT &ele,
-        const double* natural_pt,
-        const MeshLib::ElementCoordinatesMappingLocal &ele_local_coord,
-        T_SHAPE_MATRICES &shapemat,
-        FieldType<ShapeMatrixType::DNDX>)
+    const T_MESH_ELEMENT& ele,
+    const double* natural_pt,
+    const MeshLib::ElementCoordinatesMappingLocal& ele_local_coord,
+    T_SHAPE_MATRICES& shapemat,
+    FieldType<ShapeMatrixType::DNDX> /*unused*/)
 {
     computeMappingMatrices<T_MESH_ELEMENT, T_SHAPE_FUNC, T_SHAPE_MATRICES>
         (ele, natural_pt, ele_local_coord, shapemat, FieldType<ShapeMatrixType::DNDR_J>());
@@ -221,27 +216,25 @@ computeMappingMatrices(
 }
 
 template <class T_MESH_ELEMENT, class T_SHAPE_FUNC, class T_SHAPE_MATRICES>
-inline
-typename std::enable_if<T_SHAPE_FUNC::DIM==0>::type
+inline typename std::enable_if<T_SHAPE_FUNC::DIM == 0>::type
 computeMappingMatrices(
-       const T_MESH_ELEMENT &ele,
-       const double* natural_pt,
-       const MeshLib::ElementCoordinatesMappingLocal &ele_local_coord,
-       T_SHAPE_MATRICES &shapemat,
-       FieldType<ShapeMatrixType::DNDX>)
+    const T_MESH_ELEMENT& ele,
+    const double* natural_pt,
+    const MeshLib::ElementCoordinatesMappingLocal& ele_local_coord,
+    T_SHAPE_MATRICES& shapemat,
+    FieldType<ShapeMatrixType::DNDX> /*unused*/)
 {
     computeMappingMatrices<T_MESH_ELEMENT, T_SHAPE_FUNC, T_SHAPE_MATRICES>
         (ele, natural_pt, ele_local_coord, shapemat, FieldType<ShapeMatrixType::DNDR_J>());
 }
 
-
 template <class T_MESH_ELEMENT, class T_SHAPE_FUNC, class T_SHAPE_MATRICES>
 inline void computeMappingMatrices(
-        const T_MESH_ELEMENT &ele,
-        const double* natural_pt,
-        const MeshLib::ElementCoordinatesMappingLocal &ele_local_coord,
-        T_SHAPE_MATRICES &shapemat,
-        FieldType<ShapeMatrixType::ALL>)
+    const T_MESH_ELEMENT& ele,
+    const double* natural_pt,
+    const MeshLib::ElementCoordinatesMappingLocal& ele_local_coord,
+    T_SHAPE_MATRICES& shapemat,
+    FieldType<ShapeMatrixType::ALL> /*unused*/)
 {
     computeMappingMatrices<T_MESH_ELEMENT, T_SHAPE_FUNC, T_SHAPE_MATRICES>
         (ele, natural_pt, ele_local_coord, shapemat, FieldType<ShapeMatrixType::N>());

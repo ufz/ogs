@@ -91,9 +91,14 @@ void VtkCompositeColormapToImageFilter::SetUserProperty( QString name, QVariant 
 
     auto* map = static_cast<vtkImageMapToColors*>(_outputAlgorithm);
     if (name.compare("PassAlphaToOutput") == 0)
+    {
         map->SetPassAlphaToOutput(value.toBool());
+    }
     else if (name.compare("NumberOfColors") == 0)
-        static_cast<vtkLookupTable*>(map->GetLookupTable())->SetNumberOfTableValues(value.toInt());
+    {
+        static_cast<vtkLookupTable*>(map->GetLookupTable())
+            ->SetNumberOfTableValues(value.toInt());
+    }
 }
 
 void VtkCompositeColormapToImageFilter::SetUserVectorProperty( QString name, QList<QVariant> values )
@@ -102,9 +107,13 @@ void VtkCompositeColormapToImageFilter::SetUserVectorProperty( QString name, QLi
 
     auto* map = static_cast<vtkImageMapToColors*>(_outputAlgorithm);
     if (name.compare("TableRange") == 0)
+    {
         static_cast<vtkLookupTable*>(map->GetLookupTable())->SetTableRange(
                 values[0].toInt(), values[1].toInt());
+    }
     else if (name.compare("HueRange") == 0)
-        static_cast<vtkLookupTable*>(map->GetLookupTable())->SetHueRange(values[0].toDouble(),
-                                     values[1].toDouble());
+    {
+        static_cast<vtkLookupTable*>(map->GetLookupTable())
+            ->SetHueRange(values[0].toDouble(), values[1].toDouble());
+    }
 }

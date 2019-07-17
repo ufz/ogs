@@ -34,6 +34,6 @@ VtkAlgorithmPropertyCheckbox::~VtkAlgorithmPropertyCheckbox() = default;
 
 void VtkAlgorithmPropertyCheckbox::setNewValue( int state )
 {
-    auto boolState = (bool)state;
+    auto boolState = static_cast<bool>(state);
     _algProps->SetUserProperty(_name, QVariant(boolState));
 }

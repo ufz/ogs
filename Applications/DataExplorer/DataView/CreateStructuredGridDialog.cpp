@@ -162,7 +162,9 @@ bool CreateStructuredGridDialog::inputIsEmpty() const
 void CreateStructuredGridDialog::accept()
 {
     if (inputIsEmpty())
+    {
         return;
+    }
 
     if ((this->xLengthEdit->text().toDouble() <= 0) ||
         (this->yLengthEdit->text().toDouble() <= 0) ||
@@ -186,48 +188,78 @@ void CreateStructuredGridDialog::accept()
     std::string const name (this->meshNameEdit->text().toStdString());
     MeshLib::Mesh* mesh (nullptr);
     if (this->lineButton->isChecked())
+    {
         if (this->meshExtentButton->isChecked())
+        {
             mesh = MeshLib::MeshGenerator::generateLineMesh(
                 this->xLengthEdit->text().toDouble(), this->xElemEdit->text().toInt(), origin, name);
+        }
         else
+        {
             mesh = MeshLib::MeshGenerator::generateLineMesh(
-                this->xElemEdit->text().toInt(), this->xLengthEdit->text().toDouble(), origin, name);
+                this->xElemEdit->text().toInt(),
+                this->xLengthEdit->text().toDouble(), origin, name);
+        }
+    }
     else if (this->triButton->isChecked())
+    {
         if (this->meshExtentButton->isChecked())
+        {
             mesh = MeshLib::MeshGenerator::generateRegularTriMesh(
                 this->xLengthEdit->text().toDouble(), this->yLengthEdit->text().toDouble(),
                 this->xElemEdit->text().toInt(), this->yElemEdit->text().toInt(),
                 origin, name);
+        }
         else
+        {
             mesh = MeshLib::MeshGenerator::generateRegularTriMesh(
-                this->xElemEdit->text().toInt(), this->yElemEdit->text().toInt(),
-                this->xLengthEdit->text().toDouble(), this->yLengthEdit->text().toDouble(),
-                origin, name);
+                this->xElemEdit->text().toInt(),
+                this->yElemEdit->text().toInt(),
+                this->xLengthEdit->text().toDouble(),
+                this->yLengthEdit->text().toDouble(), origin, name);
+        }
+    }
     else if (this->quadButton->isChecked())
+    {
         if (this->meshExtentButton->isChecked())
+        {
             mesh = MeshLib::MeshGenerator::generateRegularQuadMesh(
                 this->xLengthEdit->text().toDouble(), this->yLengthEdit->text().toDouble(),
                 this->xElemEdit->text().toInt(), this->yElemEdit->text().toInt(),
                 origin, name);
+        }
         else
+        {
             mesh = MeshLib::MeshGenerator::generateRegularQuadMesh(
-                this->xElemEdit->text().toInt(), this->yElemEdit->text().toInt(),
-                this->xLengthEdit->text().toDouble(), this->yLengthEdit->text().toDouble(),
-                origin, name);
+                this->xElemEdit->text().toInt(),
+                this->yElemEdit->text().toInt(),
+                this->xLengthEdit->text().toDouble(),
+                this->yLengthEdit->text().toDouble(), origin, name);
+        }
+    }
     else if (this->prismButton->isChecked())
+    {
         if (this->meshExtentButton->isChecked())
+        {
             mesh = MeshLib::MeshGenerator::generateRegularPrismMesh(
                 this->xLengthEdit->text().toDouble(), this->yLengthEdit->text().toDouble(),
                 this->zLengthEdit->text().toDouble(), this->xElemEdit->text().toInt(),
                 this->yElemEdit->text().toInt(), this->zElemEdit->text().toInt(),
                 origin, name);
+        }
         else
+        {
             mesh = MeshLib::MeshGenerator::generateRegularPrismMesh(
-                this->xLengthEdit->text().toDouble(), this->yLengthEdit->text().toDouble(),
-                this->zLengthEdit->text().toDouble(), this->xElemEdit->text().toInt(),
-                this->yElemEdit->text().toInt(), this->zElemEdit->text().toInt(),
-                origin, name);
-    else if (this->hexButton->isChecked()) {
+                this->xLengthEdit->text().toDouble(),
+                this->yLengthEdit->text().toDouble(),
+                this->zLengthEdit->text().toDouble(),
+                this->xElemEdit->text().toInt(),
+                this->yElemEdit->text().toInt(),
+                this->zElemEdit->text().toInt(), origin, name);
+        }
+    }
+    else if (this->hexButton->isChecked())
+    {
         if (this->meshExtentButton->isChecked())
         {
             mesh = MeshLib::MeshGenerator::generateRegularHexMesh(

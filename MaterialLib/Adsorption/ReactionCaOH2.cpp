@@ -31,15 +31,17 @@ const double ReactionCaOH2::_tol_rho = 0.1;
 const double ReactionCaOH2::rho_low = 1656.0;
 const double ReactionCaOH2::rho_up = 2200.0;
 
-
-double
-ReactionCaOH2::getEnthalpy(const double, const double, const double) const
+double ReactionCaOH2::getEnthalpy(const double /*p_Ads*/,
+                                  const double /*T_Ads*/,
+                                  const double /*M_Ads*/) const
 {
     return - _reaction_enthalpy/_M_react;
 }
 
-double
-ReactionCaOH2::getReactionRate(const double, const double, const double, const double) const
+double ReactionCaOH2::getReactionRate(const double /*p_Ads*/,
+                                      const double /*T_Ads*/,
+                                      const double /*M_Ads*/,
+                                      const double /*loading*/) const
 {
     OGS_FATAL("get_reaction_rate do not call directly");
 }

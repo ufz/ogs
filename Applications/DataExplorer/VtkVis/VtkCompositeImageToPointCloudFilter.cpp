@@ -59,17 +59,21 @@ void VtkCompositeImageToPointCloudFilter::SetUserProperty(QString name, QVariant
     }
     if (name == "Logarithmic interpolation")
     {
-        if (value.toBool() == true)
+        if (value.toBool())
         {
             double const gamma =
                 VtkAlgorithmProperties::GetUserProperty("Gamma value").toDouble();
             if (gamma > 0)
+            {
                 static_cast<VtkImageDataToPointCloudFilter*>(_outputAlgorithm)
                     ->useLogarithmicInterpolation(gamma);
+            }
         }
         else
+        {
             static_cast<VtkImageDataToPointCloudFilter*>(_outputAlgorithm)
                 ->useLinearInterpolation();
+        }
     }
 }
 

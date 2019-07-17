@@ -30,7 +30,7 @@ public:
     TreeItem(QList<QVariant> data, TreeItem* parent);
     virtual ~TreeItem();
 
-    void appendChild(TreeItem* child);
+    void appendChild(TreeItem* item);
     TreeItem* child(int row) const;
     virtual int childCount() const;
     virtual int columnCount() const;

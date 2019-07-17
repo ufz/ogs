@@ -56,11 +56,11 @@ public:
 
     /// Constructs project data by parsing provided configuration.
     ///
-    /// \param config_tree Configuration as read from the prj file.
+    /// \param project_config Configuration as read from the prj file.
     /// \param project_directory Where to look for files referenced in the
     ///                          \c config_tree.
     /// \param output_directory  Where to write simulation output files to.
-    ProjectData(BaseLib::ConfigTree const& config_tree,
+    ProjectData(BaseLib::ConfigTree const& project_config,
                 std::string const& project_directory,
                 std::string const& output_directory);
 
@@ -99,7 +99,7 @@ private:
     /// Parses the processes configuration and creates new processes for each
     /// process entry passing the corresponding subtree to the process
     /// constructor.
-    void parseProcesses(BaseLib::ConfigTree const& process_config,
+    void parseProcesses(BaseLib::ConfigTree const& processes_config,
                         std::string const& project_directory,
                         std::string const& output_directory);
 

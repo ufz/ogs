@@ -96,7 +96,9 @@ void VtkVisImageItem::Initialize(vtkRenderer* renderer)
     // Set pre-set properties
     auto* vtkProps = dynamic_cast<VtkAlgorithmProperties*>(_algorithm);
     if (vtkProps)
+    {
         setVtkProperties(vtkProps);
+    }
 
     auto* parentItem = dynamic_cast<VtkVisPipelineItem*>(this->parentItem());
     while (parentItem)
@@ -113,8 +115,10 @@ void VtkVisImageItem::Initialize(vtkRenderer* renderer)
             parentItem = nullptr;
         }
         else
+        {
             parentItem =
                 dynamic_cast<VtkVisPipelineItem*>(parentItem->parentItem());
+        }
     }
 
     // Set active scalar to the desired one from VtkAlgorithmProperties
@@ -122,15 +126,21 @@ void VtkVisImageItem::Initialize(vtkRenderer* renderer)
     if (vtkProps)
     {
         if (vtkProps->GetActiveAttribute().length() > 0)
+        {
             this->SetActiveAttribute(vtkProps->GetActiveAttribute());
+        }
         else
         {
             auto* visParentItem =
                 dynamic_cast<VtkVisPipelineItem*>(this->parentItem());
             if (visParentItem)
+            {
                 this->SetActiveAttribute(visParentItem->GetActiveAttribute());
+            }
             if (vtkProps->GetTexture() != nullptr)
+            {
                 this->SetActiveAttribute("Solid Color");
+            }
         }
     }
 }
@@ -151,7 +161,9 @@ int VtkVisImageItem::callVTKWriter(vtkAlgorithm* algorithm, const std::string &f
                 vtkSmartPointer<vtkXMLImageDataWriter>::New();
         iWriter->SetInputData(algID->GetOutputDataObject(0));
         if (BaseLib::getFileExtension(filename) != "vti")
+        {
             file_name_cpy.append(".vti");
+        }
         iWriter->SetFileName(file_name_cpy.c_str());
         return iWriter->Write();
     }

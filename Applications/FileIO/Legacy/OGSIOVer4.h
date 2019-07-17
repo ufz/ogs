@@ -36,9 +36,9 @@ bool readGLIFileV4 (const std::string& fname,
                     std::string const& gmsh_path);
 
 /** Writes geometric objects from a specific geometry to a gli-file */
-void writeGLIFileV4 (const std::string& fname,
-                     const std::string& proj_name,
-                     const GeoLib::GEOObjects& geo);
+void writeGLIFileV4(const std::string& fname,
+                    const std::string& geo_name,
+                    const GeoLib::GEOObjects& geo);
 
 /** Writes all geometric information to a gli-file */
 void writeAllDataToGLIFileV4 (const std::string& fname, const GeoLib::GEOObjects& geo);

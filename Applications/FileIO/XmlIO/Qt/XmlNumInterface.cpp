@@ -26,15 +26,14 @@
 
 namespace FileIO
 {
-XmlNumInterface::XmlNumInterface() :
-XMLInterface(), XMLQtInterface("OpenGeoSysNUM.xsd")
-{
-}
+XmlNumInterface::XmlNumInterface() : XMLQtInterface("OpenGeoSysNUM.xsd") {}
 
 int XmlNumInterface::readFile(QString const& fileName)
 {
-    if(XMLQtInterface::readFile(fileName) == 0)
+    if (XMLQtInterface::readFile(fileName) == 0)
+    {
         return 0;
+    }
 
     QDomDocument doc("OGS-NUM-DOM");
     doc.setContent(_fileData);
@@ -55,11 +54,17 @@ int XmlNumInterface::readFile(QString const& fileName)
             INFO("Non-linear solver type: %s.", solver_type.c_str());
         }
         else if (num_node.nodeName().compare("LinearSolver") == 0)
+        {
             readLinearSolverConfiguration(num_node);
+        }
         else if (num_node.nodeName().compare("IterationScheme") == 0)
+        {
             readIterationScheme(num_node);
+        }
         else if (num_node.nodeName().compare("Convergence") == 0)
+        {
             readConvergenceCriteria(num_node);
+        }
 
         num_node = num_node.nextSiblingElement();
     }
@@ -70,15 +75,21 @@ int XmlNumInterface::readFile(QString const& fileName)
 void XmlNumInterface::readLinearSolverConfiguration(QDomElement const& lin_root)
 {
     std::string const library = lin_root.attribute("Library").toStdString();
-    std::string lin_solver_type, precond_type("no");
+    std::string lin_solver_type;
+    std::string precond_type("no");
 
     QDomElement linear_solver_node = lin_root.firstChildElement();
     while (!linear_solver_node.isNull())
     {
         if (linear_solver_node.nodeName().compare("Type") == 0)
-            lin_solver_type = linear_solver_node.toElement().text().toStdString();
+        {
+            lin_solver_type =
+                linear_solver_node.toElement().text().toStdString();
+        }
         if (linear_solver_node.nodeName().compare("Preconditioner") == 0)
+        {
             precond_type = linear_solver_node.toElement().text().toStdString();
+        }
         linear_solver_node = linear_solver_node.nextSiblingElement();
     }
     INFO("Using %s-library with solver %s and %s preconditioner.", library.c_str(), lin_solver_type.c_str(), precond_type.c_str());
@@ -88,14 +99,19 @@ void XmlNumInterface::readLinearSolverConfiguration(QDomElement const& lin_root)
 void XmlNumInterface::readIterationScheme(QDomElement const& iteration_root)
 {
     QDomElement iteration_node = iteration_root.firstChildElement();
-    int max_iterations(0), fixed_step_size(0);
+    int max_iterations(0);
+    int fixed_step_size(0);
 
     while (!iteration_node.isNull())
     {
         if (iteration_node.nodeName().compare("MaxIterations") == 0)
+        {
             max_iterations = iteration_node.toElement().text().toInt();
+        }
         if (iteration_node.nodeName().compare("FixedStepSize") == 0)
+        {
             fixed_step_size = iteration_node.toElement().text().toInt();
+        }
 
         iteration_node = iteration_node.nextSiblingElement();
     }
@@ -106,14 +122,18 @@ void XmlNumInterface::readConvergenceCriteria(QDomElement const& convergence_roo
 {
     QDomElement conv_node = convergence_root.firstChildElement();
     double error_threshold(0);
-    std::string error_method("");
+    std::string error_method;
 
     while (!conv_node.isNull())
     {
         if (conv_node.nodeName().compare("Method") == 0)
+        {
             error_method = conv_node.toElement().text().toStdString();
+        }
         if (conv_node.nodeName().compare("ErrorThreshold") == 0)
+        {
             error_threshold = conv_node.toElement().text().toDouble();
+        }
 
         conv_node = conv_node.nextSiblingElement();
     }
@@ -126,4 +146,4 @@ bool XmlNumInterface::write()
     return false;
 }
 
-} //namespace
+}  // namespace FileIO

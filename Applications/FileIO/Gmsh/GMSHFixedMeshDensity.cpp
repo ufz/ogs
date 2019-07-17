@@ -26,12 +26,14 @@ void GMSHFixedMeshDensity::initialize(std::vector<GeoLib::Point const*> const& v
     (void)(vec);
 }
 
-double GMSHFixedMeshDensity::getMeshDensityAtPoint(GeoLib::Point const*const) const
+double GMSHFixedMeshDensity::getMeshDensityAtPoint(
+    GeoLib::Point const* const /*unused*/) const
 {
     return _mesh_density;
 }
 
-double GMSHFixedMeshDensity::getMeshDensityAtStation(GeoLib::Point const*const) const
+double GMSHFixedMeshDensity::getMeshDensityAtStation(
+    GeoLib::Point const* const /*unused*/) const
 {
     return _mesh_density;
 }

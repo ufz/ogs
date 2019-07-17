@@ -26,16 +26,12 @@
 namespace GeoLib
 {
 Surface::Surface(const std::vector<Point*>& pnt_vec)
-    : GeoObject(),
-      _sfc_pnts(pnt_vec),
-      _bounding_volume(nullptr),
-      _surface_grid(nullptr)
+    : _sfc_pnts(pnt_vec), _bounding_volume(nullptr), _surface_grid(nullptr)
 {
 }
 
 Surface::Surface(Surface const& src)
-    : GeoObject(),
-      _sfc_pnts(src._sfc_pnts),
+    : _sfc_pnts(src._sfc_pnts),
       _bounding_volume(new AABB(*(src._bounding_volume))),
       _surface_grid(nullptr)
 {

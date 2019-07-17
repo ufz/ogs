@@ -171,7 +171,8 @@ int main (int argc, char* argv[])
     cmd.add(method_arg);
     cmd.parse(argc, argv);
 
-    std::unique_ptr<MeshLib::Mesh> mesh(MeshLib::IO::readMeshFromFile(input_mesh_arg.getValue().c_str()));
+    std::unique_ptr<MeshLib::Mesh> mesh(
+        MeshLib::IO::readMeshFromFile(input_mesh_arg.getValue()));
 
     if (!mesh)
     {
@@ -197,7 +198,7 @@ int main (int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
-    MeshLib::IO::writeMeshToFile(*mesh, output_mesh_arg.getValue().c_str());
+    MeshLib::IO::writeMeshToFile(*mesh, output_mesh_arg.getValue());
 
     INFO("VTU file written.");
 

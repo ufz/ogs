@@ -105,12 +105,7 @@ std::vector<T> readBinaryArray(std::string const& filename, std::size_t const n)
     return std::vector<T>();
 }
 
-/**
- * \brief truncate a file
- *
- * \param file_path         the file name
- */
-void truncateFile( std::string const& file_path);
+void truncateFile(std::string const& filename);
 
 /**
  * Extracts basename from given pathname with extension.
@@ -131,7 +126,7 @@ std::string extractBaseNameWithoutExtension(std::string const& pathname);
 /**
  * Extract extension from filename
  */
-std::string getFileExtension(std::string const& filename);
+std::string getFileExtension(std::string const& path);
 
 /**
  * Compares filename's extension with query extension. The comparison is case

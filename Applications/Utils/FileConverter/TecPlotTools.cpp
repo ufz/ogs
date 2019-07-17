@@ -143,7 +143,7 @@ void resetDataStructures(std::size_t const& n_scalars,
     scalars.reserve(n_scalars);
     for (std::size_t i = 0; i < n_scalars; ++i)
     {
-        scalars.push_back(std::vector<double>(0));
+        scalars.emplace_back(0);
     }
     val_count = 0;
 }
@@ -243,8 +243,10 @@ void skipGeometrySection(std::ifstream& in, std::string& line)
 int splitFile(std::ifstream& in, std::string file_name)
 {
     std::ofstream out;
-    std::string line, name;
-    std::size_t val_count(0), val_total(0);
+    std::string line;
+    std::string name;
+    std::size_t val_count(0);
+    std::size_t val_total(0);
     std::size_t write_count(0);
     while (std::getline(in, line))
     {
@@ -299,11 +301,13 @@ int splitFile(std::ifstream& in, std::string file_name)
 /// Converts a TecPlot file into one or more OGS-meshes (one mesh per section/zone)
 int convertFile(std::ifstream& in, std::string file_name)
 {
-    std::string line, name;
+    std::string line;
+    std::string name;
     std::pair<std::size_t, std::size_t> dims(0, 0);
     std::vector<std::string> var_names;
     std::vector<std::vector<double>> scalars;
-    std::size_t val_count(0), val_total(0);
+    std::size_t val_count(0);
+    std::size_t val_total(0);
     std::size_t write_count(0);
     while (std::getline(in, line))
     {

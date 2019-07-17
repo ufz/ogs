@@ -41,11 +41,11 @@ public:
     /** Checks if the polygon represented by the given polygon tree node
      * is inside this node polygon.
      */
-    bool isPolygonInside (const SimplePolygonTree* polygon_tree) const;
+    bool isPolygonInside(const SimplePolygonTree* polygon_hierarchy) const;
     /** Either insert the given SimplePolygonTree in one of the existing
      * children or as a new child.
      */
-    void insertSimplePolygonTree (SimplePolygonTree* polygon_tree);
+    void insertSimplePolygonTree(SimplePolygonTree* polygon_hierarchy);
 
     /**
      * get the polygon represented by the tree node

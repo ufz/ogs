@@ -69,7 +69,8 @@ double AngleSkewMetric::checkTriangle (Element const& elem) const
     double const* const node1 (elem.getNode(1)->getCoords());
     double const* const node2 (elem.getNode(2)->getCoords());
 
-    double min_angle (two_pi), max_angle (0.0);
+    double min_angle(two_pi);
+    double max_angle(0.0);
     getMinMaxAngleFromTriangle (node0, node1, node2, min_angle, max_angle);
 
     return 1.0 -

@@ -30,7 +30,9 @@ namespace Adsorption
 double DensityLegacy::getAdsorbateDensity(const double T_Ads) const
 {
     //set reference state for adsorbate EOS in Hauer
-    const double T0 = 293.15, rho0 = 998.084, alpha0 = 2.06508e-4; // K; kg/m^3; 1/K
+    const double T0 = 293.15;
+    const double rho0 = 998.084;
+    const double alpha0 = 2.06508e-4;  // K; kg/m^3; 1/K
 
     return (rho0 * (1. - alpha0 * (T_Ads-T0))); // in kg/m^3
 }
@@ -39,7 +41,8 @@ double DensityLegacy::getAdsorbateDensity(const double T_Ads) const
 double DensityLegacy::getAlphaT(const double T_Ads) const
 {
     //set reference state for adsorbate EOS in Hauer
-    const double T0 = 293.15, alpha0 = 2.06508e-4; // K; 1/K
+    const double T0 = 293.15;
+    const double alpha0 = 2.06508e-4;  // K; 1/K
 
     return (alpha0/(1. - alpha0 * (T_Ads-T0))); // in 1/K
 }

@@ -133,7 +133,9 @@ const Element* Element::getNeighbor(unsigned i) const
 #ifndef NDEBUG
     if (i < getNumberOfNeighbors())
 #endif
+    {
         return _neighbors[i];
+    }
 #ifndef NDEBUG
     ERR("Error in MeshLib::Element::getNeighbor() - Index does not exist.");
     return nullptr;
@@ -158,7 +160,9 @@ const Node* Element::getNode(unsigned i) const
 #ifndef NDEBUG
     if (i < getNumberOfNodes())
 #endif
+    {
         return _nodes[i];
+    }
 #ifndef NDEBUG
     ERR("Error in MeshLib::Element::getNode() - Index %d in %s", i, MeshElemType2String(getGeomType()).c_str());
     return nullptr;
@@ -170,15 +174,19 @@ void Element::setNode(unsigned idx, Node* node)
 #ifndef NDEBUG
     if (idx < getNumberOfNodes())
 #endif
+    {
         _nodes[idx] = node;
+    }
 }
 
 std::size_t Element::getNodeIndex(unsigned i) const
 {
 #ifndef NDEBUG
-    if (i<getNumberOfNodes())
+    if (i < getNumberOfNodes())
 #endif
+    {
         return _nodes[i]->getID();
+    }
 #ifndef NDEBUG
     ERR("Error in MeshLib::Element::getNodeIndex() - Index does not exist.");
     return std::numeric_limits<std::size_t>::max();
@@ -216,7 +224,9 @@ std::ostream& operator<<(std::ostream& os, Element const& e)
         << static_cast<std::underlying_type<MeshElemType>::type>(e.getGeomType())
         << " with " << nnodes << " nodes: { ";
     for (unsigned n = 0; n < nnodes; ++n)
+    {
         os << nodes[n]->getID() << " @ " << nodes[n] << "  ";
+    }
     os << "}\n";
     return os;
 }

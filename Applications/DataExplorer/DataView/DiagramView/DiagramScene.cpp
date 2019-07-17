@@ -51,19 +51,29 @@ DiagramScene::~DiagramScene()
     delete _xUnit;
     delete _yUnit;
     for (auto& graphCaption : _graphCaptions)
+    {
         delete graphCaption;
+    }
     _graphCaptions.clear();
     for (auto& graph : _graphs)
+    {
         delete graph;
+    }
     _graphs.clear();
     for (auto& text : _xTicksText)
+    {
         delete text;
+    }
     _xTicksText.clear();
     for (auto& text : _yTicksText)
+    {
         delete text;
+    }
     _yTicksText.clear();
     for (auto& list : _lists)
+    {
         delete list;
+    }
     _lists.clear();
 }
 
@@ -106,7 +116,9 @@ void DiagramScene::addGraph(DiagramList* list)
 
     _lists.push_back(list);
     for (auto& list : _lists)
+    {
         drawGraph(list);
+    }
 
     update();
 }
@@ -136,12 +148,18 @@ void DiagramScene::adjustAxis(qreal& min, qreal& max, int& numberOfTicks)
     double grossStep = (max - min) / MinTicks;
     double step = pow(10.0, std::floor(log10(grossStep)));
     if (5 * step < grossStep)
+    {
         step *= 5;
+    }
     else if (2 * step < grossStep)
+    {
         step *= 2;
+    }
     numberOfTicks = int(ceil(max / step) - std::floor(min / step));
     if (numberOfTicks < MinTicks)
+    {
         numberOfTicks = MinTicks;
+    }
     min = std::floor(min / step) * step;
     max = ceil(max / step) * step;
 }
@@ -164,13 +182,21 @@ void DiagramScene::clearGrid()
         removeItem(_grid);
 
         for (auto& text : _xTicksText)
+        {
             removeItem(text);
+        }
         for (auto& text : _yTicksText)
+        {
             removeItem(text);
+        }
         for (auto& graph : _graphs)
+        {
             removeItem(graph);
+        }
         for (auto& graphCaption : _graphCaptions)
+        {
             removeItem(graphCaption);
+        }
 
         _xTicksText.clear();
         _yTicksText.clear();
@@ -183,7 +209,8 @@ void DiagramScene::clearGrid()
 void DiagramScene::constructGrid()
 {
     // be very careful with scaling parameters here!
-    int numXTicks, numYTicks;
+    int numXTicks;
+    int numYTicks;
     qreal xMin = _unscaledBounds.left();
     qreal yMin = _unscaledBounds.top();
     qreal xMax = _unscaledBounds.right();
@@ -268,16 +295,18 @@ void DiagramScene::drawGraph(DiagramList* list)
 /// This value is zero if minYValue<0<maxYValue and minYValue otherwise.
 int DiagramScene::getXAxisOffset()
 {
-    return (_bounds.top() <= 0 && _bounds.bottom() > 0) ? (int)(_bounds.bottom() +
-                                                                _bounds.top()) : (int)_bounds.
-           bottom();
+    return (_bounds.top() <= 0 && _bounds.bottom() > 0)
+               ? static_cast<int>(_bounds.bottom() + _bounds.top())
+               : static_cast<int>(_bounds.bottom());
 }
 
 /// Returns the x-value at which the y-axis should cross the x-axis.
 /// This value is zero if minXValue<0<maxXValue and minXValue otherwise.
 int DiagramScene::getYAxisOffset()
 {
-    return (_bounds.left() <= 0 && _bounds.right() > 0) ? 0 : (int)_bounds.left();
+    return (_bounds.left() <= 0 && _bounds.right() > 0)
+               ? 0
+               : static_cast<int>(_bounds.left());
 }
 
 /// Initialises the coordinate axes, adds labels and/or units to the axes,
@@ -306,15 +335,25 @@ void DiagramScene::setDiagramBoundaries(DiagramList* list)
     if (!_lists.isEmpty())
     {
         if (list->minXValue() < _unscaledBounds.left())
+        {
             _unscaledBounds.setLeft(list->minXValue());
+        }
         if (list->minYValue() < _unscaledBounds.top())
+        {
             _unscaledBounds.setTop(list->minYValue());
+        }
         if (list->maxXValue() > _unscaledBounds.right())
+        {
             _unscaledBounds.setRight(list->maxXValue());
+        }
         if (list->maxYValue() > _unscaledBounds.bottom())
+        {
             _unscaledBounds.setBottom(list->maxYValue());
+        }
         if (_startDate > list->getStartDate())
+        {
             _startDate = list->getStartDate();
+        }
     }
     else
     {

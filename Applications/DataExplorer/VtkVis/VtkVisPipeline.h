@@ -73,7 +73,7 @@ public:
     void removeLight(const GeoLib::Point &pos);
 
     /// \brief Returns the background-colour of the scene.
-    const QColor getBGColor() const;
+    QColor getBGColor() const;
 
     /// \brief Sets the background-colour of the scene.
     void setBGColor(const QColor &color);
@@ -98,7 +98,9 @@ public:
     void setGlobalBackfaceCulling(bool enable) const;
 
     /// Checks the quality of mesh elements and adds a filter to highlight deformed elements.
-    void showMeshElementQuality(MeshLib::VtkMappedMeshSource* mesh, MeshLib::MeshQualityType t, std::vector<double> const& quality);
+    void showMeshElementQuality(MeshLib::VtkMappedMeshSource* source,
+                                MeshLib::MeshQualityType t,
+                                std::vector<double> const& quality);
 
 public slots:
     /// \brief Adds the given Model to the pipeline.

@@ -477,8 +477,10 @@ struct ProcessLibCentralDifferencesJacobianAssembler : public ::testing::Test
     static void test()
     {
         // these four local variables will be filled randomly
-        std::vector<double> x, xdot;
-        double dxdot_dx, dx_dx;
+        std::vector<double> x;
+        std::vector<double> xdot;
+        double dxdot_dx;
+        double dx_dx;
 
         std::random_device rd;
         std::mt19937 random_number_generator(rd());
@@ -513,8 +515,14 @@ private:
 
         double const eps = std::numeric_limits<double>::epsilon();
 
-        std::vector<double> M_data_cd, K_data_cd, b_data_cd, Jac_data_cd,
-            M_data_ana, K_data_ana, b_data_ana, Jac_data_ana;
+        std::vector<double> M_data_cd;
+        std::vector<double> K_data_cd;
+        std::vector<double> b_data_cd;
+        std::vector<double> Jac_data_cd;
+        std::vector<double> M_data_ana;
+        std::vector<double> K_data_ana;
+        std::vector<double> b_data_ana;
+        std::vector<double> Jac_data_ana;
         double const t = 0.0;
 
         jac_asm_cd.assembleWithJacobian(loc_asm, t, x, xdot, dxdot_dx, dx_dx, M_data_cd,

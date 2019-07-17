@@ -65,7 +65,7 @@ void dump_py(std::ostream& fh, std::string const& var,
 template <typename Derived>
 void dump_py(std::ostream& fh, std::string const& var,
              Eigen::ArrayBase<Derived> const& val,
-             std::integral_constant<int, 1>)
+             std::integral_constant<int, 1> /*unused*/)
 {
     dump_py_vec(fh, var, val);
 }
@@ -74,7 +74,7 @@ void dump_py(std::ostream& fh, std::string const& var,
 template <typename Derived, int ColsAtCompileTime>
 void dump_py(std::ostream& fh, std::string const& var,
              Eigen::ArrayBase<Derived> const& val,
-             std::integral_constant<int, ColsAtCompileTime>)
+             std::integral_constant<int, ColsAtCompileTime> /*unused*/)
 {
     fh << var << " = np.array([\n";
     for (std::ptrdiff_t r = 0; r < val.rows(); ++r)
@@ -115,7 +115,7 @@ void dump_py(std::ostream& fh, std::string const& var,
 }
 
 //! Will be printed if some consistency error is detected.
-static const std::string msg_fatal =
+const std::string msg_fatal =
     "The local matrices M or K or the local vectors b assembled with the two "
     "different Jacobian assemblers differ.";
 
@@ -154,8 +154,10 @@ void CompareJacobiansJacobianAssembler::assembleWithJacobian(
     auto const local_K1 = to_mat(local_K_data);
     auto const local_b1 = MathLib::toVector(local_b_data);
 
-    std::vector<double> local_M_data2, local_K_data2, local_b_data2,
-        local_Jac_data2;
+    std::vector<double> local_M_data2;
+    std::vector<double> local_K_data2;
+    std::vector<double> local_b_data2;
+    std::vector<double> local_Jac_data2;
 
     // Second assembly -- used for checking only.
     _asm2->assembleWithJacobian(local_assembler, t, local_x, local_xdot,

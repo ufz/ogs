@@ -22,10 +22,10 @@
 namespace
 {
 /// The directory where the prj file resides.
-static std::string project_directory = "";
+std::string project_directory;
 
 /// Whether the project directory has already been set.
-static bool project_directory_is_set = false;
+bool project_directory_is_set = false;
 }  // anonymous namespace
 
 namespace BaseLib
@@ -78,7 +78,7 @@ namespace
  * position of the last one or std::string::npos if no file path separator was
  * found.
  */
-static
+
 std::string::size_type findLastPathSeparator(std::string const& path)
 {
     return path.find_last_of("/\\");
@@ -87,7 +87,7 @@ std::string::size_type findLastPathSeparator(std::string const& path)
 /** Finds the position of last dot.
  * This could be used to extract file extension.
  */
-static
+
 std::string::size_type findLastDot(std::string const& path)
 {
     return path.find_last_of('.');

@@ -46,7 +46,9 @@ int GMSInterface::readBoreholesFromGMS(std::vector<GeoLib::Point*>* boreholes,
     }
 
     double depth(-9999.0);
-    std::string line(""), cName(""), sName("");
+    std::string line;
+    std::string cName;
+    std::string sName;
     std::list<std::string>::const_iterator it;
     auto* pnt = new GeoLib::Point();
     GeoLib::StationBorehole* newBorehole = nullptr;
@@ -158,7 +160,7 @@ void GMSInterface::writeBoreholesToGMS(
         std::vector<GeoLib::Point*> profile = station->getProfile();
         std::vector<std::string> soilNames = station->getSoilNames();
         // std::size_t idx = 0;
-        std::string current_soil_name("");
+        std::string current_soil_name;
 
         std::size_t nLayers = profile.size();
         for (std::size_t i = 1; i < nLayers; i++)
@@ -244,7 +246,7 @@ std::vector<std::string> GMSInterface::readSoilIDfromFile(
 
 MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string& filename)
 {
-    std::string line("");
+    std::string line;
 
     std::ifstream in(filename.c_str());
     if (!in.is_open())
@@ -272,7 +274,8 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string& filename)
     // elements are listed before nodes in 3dm-format, therefore
     // traverse file twice and read first nodes and then elements
     std::string dummy;
-    unsigned id(0), count(0);
+    unsigned id(0);
+    unsigned count(0);
     double x[3];
     // read nodes
     while (std::getline(in, line))

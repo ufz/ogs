@@ -45,8 +45,10 @@ void VtkCompositeImageToSurfacePointsFilter::SetUserProperty(QString name, QVari
 {
     VtkAlgorithmProperties::SetUserProperty(name, value);
     if ((name == "Points per pixel") && (value.toInt() > 0))
+    {
         static_cast<VtkImageDataToSurfacePointsFilter*>(_outputAlgorithm)
             ->SetPointsPerPixel(static_cast<vtkIdType>(value.toInt()));
+    }
 }
 
 void VtkCompositeImageToSurfacePointsFilter::SetUserVectorProperty(

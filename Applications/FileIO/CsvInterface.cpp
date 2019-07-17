@@ -35,11 +35,15 @@ std::vector<std::string> CsvInterface::getColumnNames(std::string const& fname,
     }
     std::string line;
     if (!getline(in, line))
+    {
         return {};
+    }
 
     std::list<std::string> fields;
     if (delim != '\n')
+    {
         fields = BaseLib::splitString(line, delim);
+    }
 
     if (fields.size() < 2)
     {

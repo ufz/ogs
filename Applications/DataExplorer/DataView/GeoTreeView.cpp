@@ -72,24 +72,41 @@ void GeoTreeView::selectionChanged( const QItemSelection &selected,
                 emit enableSaveButton(false);
                 const auto* geo_type =
                     dynamic_cast<const GeoObjectListItem*>(tree_item);
-                if (geo_type) // geometry list item
+                if (geo_type)
+                {  // geometry list item
                     emit enableRemoveButton(true);
+                }
                 else
                 {
                     // highlight a point for an expanded polyline
                     auto* list_item = dynamic_cast<GeoObjectListItem*>(
                         tree_item->parentItem()->parentItem());
-                    if (list_item && list_item->getType() == GeoLib::GEOTYPE::POLYLINE)
-                        geoItemSelected(
-                            dynamic_cast<GeoObjectListItem*>(tree_item->parentItem()->parentItem()->parentItem()->child(0))->vtkSource(),
-                            tree_item->data(0).toInt());
+                    if (list_item &&
+                        list_item->getType() == GeoLib::GEOTYPE::POLYLINE)
+                    {
+                        geoItemSelected(dynamic_cast<GeoObjectListItem*>(
+                                            tree_item->parentItem()
+                                                ->parentItem()
+                                                ->parentItem()
+                                                ->child(0))
+                                            ->vtkSource(),
+                                        tree_item->data(0).toInt());
+                    }
 
                     // highlight a point for an expanded surface
                     list_item = dynamic_cast<GeoObjectListItem*>(tree_item->parentItem()->parentItem()->parentItem());
-                    if (list_item && list_item->getType() == GeoLib::GEOTYPE::SURFACE)
-                        geoItemSelected(
-                            dynamic_cast<GeoObjectListItem*>(tree_item->parentItem()->parentItem()->parentItem()->parentItem()->child(0))->vtkSource(),
-                            tree_item->data(0).toInt());
+                    if (list_item &&
+                        list_item->getType() == GeoLib::GEOTYPE::SURFACE)
+                    {
+                        geoItemSelected(dynamic_cast<GeoObjectListItem*>(
+                                            tree_item->parentItem()
+                                                ->parentItem()
+                                                ->parentItem()
+                                                ->parentItem()
+                                                ->child(0))
+                                            ->vtkSource(),
+                                        tree_item->data(0).toInt());
+                    }
                     emit enableRemoveButton(false);
                 }
             }
@@ -145,8 +162,11 @@ void GeoTreeView::contextMenuEvent( QContextMenuEvent* event )
     }
     else
     {
-        if (!item)  // Otherwise sometimes it crashes when (unmotivated ;-) ) clicking in a treeview
+        if (!item)
+        {  // Otherwise sometimes it crashes when (unmotivated ;-) ) clicking in
+           // a treeview
             return;
+        }
 
         auto* parent = dynamic_cast<GeoObjectListItem*>(item->parentItem());
 
@@ -162,10 +182,14 @@ void GeoTreeView::contextMenuEvent( QContextMenuEvent* event )
             connect(addNameAction, SIGNAL(triggered()), this, SLOT(setNameForElement()));
 
             if (parent->getType() == GeoLib::GEOTYPE::POINT)
+            {
                 addCondPointAction->setEnabled(false);
+            }
             else
-                connect(addCondPointAction, SIGNAL(triggered()), this, SLOT(setObjectPointsAsCondition()));
-
+            {
+                connect(addCondPointAction, SIGNAL(triggered()), this,
+                        SLOT(setObjectPointsAsCondition()));
+            }
         }
         // The current index refers to the name of a geometry-object
         else if (item->childCount() > 0)
@@ -214,7 +238,9 @@ void GeoTreeView::removeGeometry()
 {
     QModelIndex index (this->selectionModel()->currentIndex());
     if (!index.isValid())
+    {
         OGSError::box("No geometry selected.");
+    }
     else
     {
         TreeItem* item = static_cast<GeoTreeModel*>(model())->getItem(index);
@@ -268,7 +294,9 @@ void GeoTreeView::writeToFile() const
 {
     QModelIndex index (this->selectionModel()->currentIndex());
     if (!index.isValid())
+    {
         OGSError::box("No geometry selected.");
+    }
     else
     {
         TreeItem* item = static_cast<GeoTreeModel*>(model())->getItem(index);

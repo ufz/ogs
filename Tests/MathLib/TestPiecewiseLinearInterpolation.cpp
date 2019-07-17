@@ -22,7 +22,8 @@
 TEST(MathLibInterpolationAlgorithms, PiecewiseLinearInterpolation)
 {
     const std::size_t size(1000);
-    std::vector<double> supp_pnts, values;
+    std::vector<double> supp_pnts;
+    std::vector<double> values;
     for (std::size_t k(0); k < size; ++k)
     {
         supp_pnts.push_back(static_cast<double>(k));
@@ -75,7 +76,8 @@ TEST(MathLibInterpolationAlgorithms,
      PiecewiseLinearInterpolationSupportPntsInReverseOrder)
 {
     const std::size_t size(1000);
-    std::vector<double> supp_pnts, values;
+    std::vector<double> supp_pnts;
+    std::vector<double> values;
     for (std::size_t k(0); k < size; ++k)
     {
         supp_pnts.push_back(static_cast<double>(size - 1 - k));
@@ -127,7 +129,8 @@ TEST(MathLibInterpolationAlgorithms,
 TEST(MathLibInterpolationAlgorithms, PiecewiseLinearInterpolationDerivative)
 {
     const std::size_t size(1000);
-    std::vector<double> supp_pnts, values;
+    std::vector<double> supp_pnts;
+    std::vector<double> values;
     for (std::size_t k(0); k < size; ++k)
     {
         supp_pnts.push_back(static_cast<double>(k));

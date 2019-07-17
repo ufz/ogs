@@ -223,7 +223,16 @@ void PetrelInterface::readPetrelWellTraceData(std::istream &in)
     }
 
     // read points
-    double md, x, y, z, tvd, dx, dy, azim, incl, dls;
+    double md;
+    double x;
+    double y;
+    double z;
+    double tvd;
+    double dx;
+    double dy;
+    double azim;
+    double incl;
+    double dls;
     in.getline(buffer, MAX_COLS_PER_ROW);
     line = buffer;
     while (in)

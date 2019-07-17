@@ -25,7 +25,9 @@ void FemConditionView::updateView()
     std::size_t nColumns =
         (this->model() != nullptr) ? this->model()->columnCount() : 0;
     for (std::size_t i = 1; i < nColumns; i++)
+    {
         resizeColumnToContents(i);
+    }
     this->expandAll();
 }
 

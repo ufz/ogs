@@ -48,7 +48,8 @@ public:
     bool readImage(const QString &filename);
 
     /// @brief Imports an existing image object.
-    void setImage(vtkImageAlgorithm* img, const QString &name, double x0, double y0, double spacing);
+    void setImage(vtkImageAlgorithm* image, const QString& name, double x0,
+                  double y0, double spacing);
 
     /// @brief Returns the origin in world coordinates.
     void getOrigin(double origin[3]) const;

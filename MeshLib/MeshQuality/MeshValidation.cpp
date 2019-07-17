@@ -41,8 +41,11 @@ MeshValidation::MeshValidation(MeshLib::Mesh &mesh)
     MeshRevision rev(mesh);
     INFO ("Found %d potentially collapsable nodes.", rev.getNumberOfCollapsableNodes());
 
-    const std::vector<ElementErrorCode> codes (this->testElementGeometry(mesh));
-    std::array<std::string, static_cast<std::size_t>(ElementErrorFlag::MaxValue)> output_str (this->ElementErrorCodeOutput(codes));
+    const std::vector<ElementErrorCode> codes(
+        MeshLib::MeshValidation::testElementGeometry(mesh));
+    std::array<std::string,
+               static_cast<std::size_t>(ElementErrorFlag::MaxValue)>
+        output_str(MeshLib::MeshValidation::ElementErrorCodeOutput(codes));
     for (auto & i : output_str)
         INFO (i.c_str());
 }
@@ -124,7 +127,7 @@ MeshValidation::ElementErrorCodeOutput(const std::vector<ElementErrorCode> &erro
     for (std::size_t i = 0; i < nErrorFlags; ++i)
     {
         unsigned count(0);
-        std::string elementIdStr("");
+        std::string elementIdStr;
 
         for (std::size_t j = 0; j < nElements; ++j)
         {

@@ -21,11 +21,6 @@ namespace HeatTransportBHE
 {
 namespace BHE
 {
-constexpr std::pair<int, int>
-    BHECommonCoaxial::inflow_outflow_bc_component_ids[];
-
-constexpr int BHECommonCoaxial::number_of_grout_zones;
-
 std::array<double, BHECommonCoaxial::number_of_unknowns>
 BHECommonCoaxial::pipeHeatCapacities() const
 {

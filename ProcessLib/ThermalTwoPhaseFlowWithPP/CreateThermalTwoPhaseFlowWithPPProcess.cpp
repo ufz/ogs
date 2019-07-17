@@ -68,7 +68,7 @@ std::unique_ptr<Process> createThermalTwoPhaseFlowWithPPProcess(
     std::vector<double> const b =
         //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_THERMAL__specific_body_force}
         config.getConfigParameter<std::vector<double>>("specific_body_force");
-    assert(b.size() > 0 && b.size() < 4);
+    assert(!b.empty() && b.size() < 4);
     Eigen::VectorXd specific_body_force(b.size());
     bool const has_gravity = MathLib::toVector(b).norm() > 0;
     if (has_gravity)

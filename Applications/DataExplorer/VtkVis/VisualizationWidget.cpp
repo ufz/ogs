@@ -109,8 +109,10 @@ VtkPickCallback* VisualizationWidget::vtkPickCallback() const
 
 void VisualizationWidget::updateView()
 {
-    if(vtkWidget->GetRenderWindow()->IsDrawable())
+    if (vtkWidget->GetRenderWindow()->IsDrawable())
+    {
         vtkWidget->GetRenderWindow()->Render();
+    }
 }
 
 void VisualizationWidget::showAll(int x, int y, int z)
@@ -122,19 +124,27 @@ void VisualizationWidget::showAll(int x, int y, int z)
     double dist = sqrt(vtkMath::Distance2BetweenPoints(p, fp));
     cam->SetPosition(fp[0]+(x*dist), fp[1]+(y*dist), fp[2]+(z*dist));
 
-    if (x!=0 || y!=0)
+    if (x != 0 || y != 0)
+    {
         cam->SetViewUp(0.0, 0.0, 1.0);
+    }
     else
+    {
         cam->SetViewUp(0.0, 1.0, 0.0);
+    }
     this->updateView();
 }
 
 void VisualizationWidget::updateViewOnLoad()
 {
     if (_isShowAllOnLoad)
+    {
         this->showAll(0, 0, 1);
+    }
     else
+    {
         updateView();
+    }
 }
 
 void VisualizationWidget::on_zoomToolButton_toggled( bool checked )

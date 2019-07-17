@@ -31,12 +31,11 @@ class Mesh2MeshPropertyInterpolation final
 public:
     /**
      * Constructor taking the source or input mesh and properties.
-     * @param source_mesh the mesh the given property information is
-     * assigned to.
+     * @param src_mesh the mesh the given property information is assigned to.
      * @param property_name is the name of a PropertyVector in the \c
      * source_mesh
      */
-    Mesh2MeshPropertyInterpolation(Mesh const& source_mesh,
+    Mesh2MeshPropertyInterpolation(Mesh const& src_mesh,
                                    std::string const& property_name);
 
     /**
@@ -58,11 +57,14 @@ private:
         MeshLib::PropertyVector<double>& dest_properties) const;
 
     /**
-     * Method interpolates the element wise given properties to the nodes of the element
-     * @param interpolated_node_properties the vector must have the same number of entries as
-     * the source mesh has number of nodes, the content of the particular entries will be overwritten
+     * Method interpolates the element wise given properties to the nodes of the
+     * element
+     * @param interpolated_properties the vector must have the same number of
+     * entries as the source mesh has number of nodes, the content of the
+     * particular entries will be overwritten
      */
-    void interpolateElementPropertiesToNodeProperties(std::vector<double> &interpolated_node_properties) const;
+    void interpolateElementPropertiesToNodeProperties(
+        std::vector<double>& interpolated_properties) const;
 
     Mesh const& _src_mesh;
     std::string const& _property_name;

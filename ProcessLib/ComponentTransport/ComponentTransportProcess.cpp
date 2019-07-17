@@ -59,14 +59,18 @@ void ComponentTransportProcess::initializeConcreteProcess(
         for (auto pv_iter = std::next(_process_variables[process_id].begin());
              pv_iter != _process_variables[process_id].end();
              ++pv_iter)
+        {
             transport_process_variables.push_back(*pv_iter);
+        }
     }
     else
     {
         for (auto pv_iter = std::next(_process_variables.begin());
              pv_iter != _process_variables.end();
              ++pv_iter)
+        {
             transport_process_variables.push_back((*pv_iter)[0]);
+        }
 
         _xs_previous_timestep.resize(_process_variables.size());
     }
@@ -162,8 +166,7 @@ Eigen::Vector3d ComponentTransportProcess::getFlux(std::size_t const element_id,
 
         return _local_assemblers[element_id]->getFlux(p, t, local_x);
     }
-    else
-    {
+
         std::vector<std::vector<GlobalIndexType>>
             indices_of_all_coupled_processes{
                 _coupled_solutions->coupled_xs.size(), r_c_indices.rows};
@@ -171,7 +174,6 @@ Eigen::Vector3d ComponentTransportProcess::getFlux(std::size_t const element_id,
             *(this->_coupled_solutions), indices_of_all_coupled_processes);
 
         return _local_assemblers[element_id]->getFlux(p, t, local_xs);
-    }
 }
 
 void ComponentTransportProcess::

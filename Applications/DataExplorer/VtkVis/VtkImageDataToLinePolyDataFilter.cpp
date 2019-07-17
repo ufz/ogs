@@ -40,15 +40,17 @@ void VtkImageDataToLinePolyDataFilter::PrintSelf(ostream& os, vtkIndent indent)
     os << indent << "LengthScaleFactor: " << this->LengthScaleFactor << "\n";
 }
 
-int VtkImageDataToLinePolyDataFilter::FillInputPortInformation(int, vtkInformation* info)
+int VtkImageDataToLinePolyDataFilter::FillInputPortInformation(
+    int /*port*/, vtkInformation* info)
 {
     info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkImageData");
     return 1;
 }
 
-int VtkImageDataToLinePolyDataFilter::RequestData(vtkInformation*,
-                                                  vtkInformationVector** inputVector,
-                                                  vtkInformationVector* outputVector)
+int VtkImageDataToLinePolyDataFilter::RequestData(
+    vtkInformation* /*request*/,
+    vtkInformationVector** inputVector,
+    vtkInformationVector* outputVector)
 {
     vtkDebugMacro(<< "Executing VtkImageDataToPolyDataFilter");
 
@@ -100,18 +102,23 @@ int VtkImageDataToLinePolyDataFilter::RequestData(vtkInformation*,
     for (vtkIdType ptId = 0; ptId < numPts; ++ptId)
     {
         // Skip translucent pixels
-        float opacity = ((float*)inScalarPtr)[ptId * numScalarComponents + 1];
+        float opacity =
+            (static_cast<float*>(inScalarPtr))[ptId * numScalarComponents + 1];
         if (opacity < 0.00000001f)
+        {
             continue;
+        }
 
         // Compute length of the new line (scalar * LengthScaleFactor)
         double const length =
-            ((float*)inScalarPtr)[ptId * numScalarComponents] * scalingFactor *
-            this->LengthScaleFactor;
+            (static_cast<float*>(inScalarPtr))[ptId * numScalarComponents] *
+            scalingFactor * this->LengthScaleFactor;
 
         // Skip this line if length is zero
         if (length < 0.00000001f)
+        {
             continue;
+        }
 
         // Get the old point location
         double p[3];
@@ -119,8 +126,10 @@ int VtkImageDataToLinePolyDataFilter::RequestData(vtkInformation*,
 
         // Compute the new point location
         double newPt[3];
-        for(std::size_t i = 0; i < 3; ++i)
+        for (std::size_t i = 0; i < 3; ++i)
+        {
             newPt[i] = p[i] + dir[i] * length;
+        }
 
         // Copy the old point
         newPts->SetPoint(ptId * 2, p);

@@ -47,8 +47,10 @@ void VtkCompositeContourFilter::init()
     if(dataSet)
     {
         vtkPointData* pointData = dataSet->GetPointData();
-        if(pointData)
+        if (pointData)
+        {
             pointData->GetScalars()->GetRange(range);
+        }
     }
     else
     {
@@ -82,7 +84,10 @@ void VtkCompositeContourFilter::SetUserProperty( QString name, QVariant value )
 
     // Use the same name as in init()
     if (name.compare("Number of Contours") == 0)
-        static_cast<vtkContourFilter*>(_outputAlgorithm)->SetNumberOfContours(value.toInt());
+    {
+        static_cast<vtkContourFilter*>(_outputAlgorithm)
+            ->SetNumberOfContours(value.toInt());
+    }
 }
 
 void VtkCompositeContourFilter::SetUserVectorProperty( QString name, QList<QVariant> values )
@@ -91,8 +96,12 @@ void VtkCompositeContourFilter::SetUserVectorProperty( QString name, QList<QVari
 
     // Use the same name as in init()
     if (name.compare("Range") == 0)
-        static_cast<vtkContourFilter*>(_outputAlgorithm)->GenerateValues(
-                VtkAlgorithmProperties::GetUserProperty("Number of Contours").toInt(),
+    {
+        static_cast<vtkContourFilter*>(_outputAlgorithm)
+            ->GenerateValues(
+                VtkAlgorithmProperties::GetUserProperty("Number of Contours")
+                    .toInt(),
                 values[0].toDouble(),
                 values[1].toDouble());
+    }
 }

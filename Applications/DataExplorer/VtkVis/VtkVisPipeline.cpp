@@ -63,9 +63,8 @@
 #include "VtkVisPipelineItem.h"
 #include "VtkVisPointSetItem.h"
 
-
-VtkVisPipeline::VtkVisPipeline( vtkRenderer* renderer, QObject* parent /*= 0*/ )
-    : TreeModel(parent), _renderer(renderer), _highlighted_geo_index(QModelIndex()), _highlighted_mesh_component(QModelIndex())
+VtkVisPipeline::VtkVisPipeline(vtkRenderer* renderer, QObject* parent /*= 0*/)
+    : TreeModel(parent), _renderer(renderer)
 {
     QList<QVariant> rootData;
     rootData << "Object name" << "Visible";
@@ -75,7 +74,9 @@ VtkVisPipeline::VtkVisPipeline( vtkRenderer* renderer, QObject* parent /*= 0*/ )
     QSettings settings;
     QVariant backgroundColorVariant = settings.value("VtkBackgroundColor");
     if (backgroundColorVariant != QVariant())
+    {
         this->setBGColor(backgroundColorVariant.value<QColor>());
+    }
 
     _resetCameraOnAddOrRemove = settings.value("resetViewOnLoad", true).toBool();
 }
@@ -94,8 +95,11 @@ void VtkVisPipeline::addLight(const GeoLib::Point &pos)
     for (auto& light : _lights)
     {
         light->GetPosition(lightPos);
-        if (pos[0] == lightPos[0] && pos[1] == lightPos[1] && pos[2] == lightPos[2])
+        if (pos[0] == lightPos[0] && pos[1] == lightPos[1] &&
+            pos[2] == lightPos[2])
+        {
             return;
+        }
     }
     vtkLight* l = vtkLight::New();
     l->SetPosition(pos[0], pos[1], pos[2]);
@@ -109,8 +113,11 @@ vtkLight* VtkVisPipeline::getLight(const GeoLib::Point &pos) const
     for (auto light : _lights)
     {
         light->GetPosition(lightPos);
-        if (pos[0] == lightPos[0] && pos[1] == lightPos[1] && pos[2] == lightPos[2])
+        if (pos[0] == lightPos[0] && pos[1] == lightPos[1] &&
+            pos[2] == lightPos[2])
+        {
             return light;
+        }
     }
     return nullptr;
 }
@@ -131,7 +138,7 @@ void VtkVisPipeline::removeLight(const GeoLib::Point &pos)
     }
 }
 
-const QColor VtkVisPipeline::getBGColor() const
+QColor VtkVisPipeline::getBGColor() const
 {
     double* color = _renderer->GetBackground();
     QColor c(static_cast<int>(color[0] * 255),
@@ -157,7 +164,9 @@ Qt::ItemFlags VtkVisPipeline::flags( const QModelIndex &index ) const
     Qt::ItemFlags defaultFlags = Qt::ItemIsEnabled | Qt::ItemIsSelectable;
 
     if (!index.isValid())
+    {
         return Qt::ItemIsEnabled;
+    }
 
     //if (index.column() == 1)
     //    defaultFlags |= Qt::ItemIsEditable;
@@ -177,15 +186,25 @@ void VtkVisPipeline::loadFromFile(QString filename)
     {
         vtkSmartPointer<vtkXMLDataReader> reader;
         if (filename.endsWith("vti"))
+        {
             reader = vtkSmartPointer<vtkXMLImageDataReader>::New();
+        }
         else if (filename.endsWith("vtr"))
+        {
             reader = vtkSmartPointer<vtkXMLRectilinearGridReader>::New();
+        }
         else if (filename.endsWith("vts"))
+        {
             reader = vtkSmartPointer<vtkXMLStructuredGridReader>::New();
+        }
         else if (filename.endsWith("vtp"))
+        {
             reader = vtkSmartPointer<vtkXMLPolyDataReader>::New();
+        }
         else if (filename.endsWith("vtu"))
+        {
             reader = vtkSmartPointer<vtkXMLUnstructuredGridReader>::New();
+        }
         else if (filename.endsWith("vtk"))
         {
             vtkGenericDataObjectReader* oldStyleReader =
@@ -205,7 +224,9 @@ void VtkVisPipeline::loadFromFile(QString filename)
             return;
         }
         else
+        {
             return;
+        }
 
         reader->SetFileName(filename.toStdString().c_str());
         // TODO: insert ReadAllScalarsOn()-equivalent for xml-file-reader here, otherwise arrays are not available in GUI!
@@ -286,21 +307,28 @@ QModelIndex VtkVisPipeline::addPipelineItem(VtkVisPipelineItem* item, const QMod
     if (!parent.isValid()) // Set global superelevation on source objects
     {
         QSettings settings;
-        if (dynamic_cast<vtkImageAlgorithm*>(item->algorithm()) ==
-            nullptr)  // if not an image
-            item->setScale(1.0, 1.0, settings.value("globalSuperelevation", 1.0).toDouble());
+        if (dynamic_cast<vtkImageAlgorithm*>(item->algorithm()) == nullptr)
+        {  // if not an image
+            item->setScale(
+                1.0, 1.0,
+                settings.value("globalSuperelevation", 1.0).toDouble());
+        }
     }
 
     int parentChildCount = parentItem->childCount();
     QModelIndex newIndex = index(parentChildCount - 1, 0, parent);
 
     if (_resetCameraOnAddOrRemove || _rootItem->childCount() == 1)
+    {
         _renderer->ResetCamera(_renderer->ComputeVisiblePropBounds());
+    }
     _actorMap.insert(item->actor(), newIndex);
 
     // Do not interpolate images
     if (dynamic_cast<vtkImageAlgorithm*>(item->algorithm()))
+    {
         static_cast<vtkImageActor*>(item->actor())->InterpolateOff();
+    }
 
     endResetModel();
     emit vtkVisPipelineChanged();
@@ -321,28 +349,44 @@ QModelIndex VtkVisPipeline::addPipelineItem( vtkAlgorithm* source, QModelIndex p
         auto* props = dynamic_cast<VtkAlgorithmProperties*>(source);
         auto* meshSource = dynamic_cast<MeshLib::VtkMappedMeshSource*>(source);
         if (old_reader)
+        {
             itemName = old_reader->GetFileName();
+        }
         else if (new_reader)
+        {
             itemName = new_reader->GetFileName();
+        }
         else if (image_reader)
+        {
             itemName = image_reader->GetFileName();
+        }
         else if (props)
+        {
             itemName = props->GetName().toStdString();
+        }
         else if (meshSource)
+        {
             itemName = meshSource->GetMesh()->getName();
+        }
     }
 
     if (itemName.length() == 0)
+    {
         itemName = source->GetClassName();
+    }
 
     QList<QVariant> itemData;
     itemData << QString::fromStdString(itemName) << true;
 
     VtkVisPipelineItem* item(nullptr);
     if (dynamic_cast<vtkImageAlgorithm*>(source))
+    {
         item = new VtkVisImageItem(source, getItem(parent), itemData);
+    }
     else
+    {
         item = new VtkVisPointSetItem(source, getItem(parent), itemData);
+    }
     return this->addPipelineItem(item, parent);
 }
 
@@ -393,7 +437,9 @@ void VtkVisPipeline::removeSourceItem(MeshModel* model, const QModelIndex &idx)
 void VtkVisPipeline::removePipelineItem( QModelIndex index )
 {
     if (!index.isValid())
+    {
         return;
+    }
 
     QMap<vtkProp3D*, QModelIndex>::iterator it = _actorMap.begin();
     while (it != _actorMap.end())
@@ -411,7 +457,9 @@ void VtkVisPipeline::removePipelineItem( QModelIndex index )
     removeRows(index.row(), 1, index.parent());
 
     if (_resetCameraOnAddOrRemove)
+    {
         _renderer->ResetCamera(_renderer->ComputeVisiblePropBounds());
+    }
     emit vtkVisPipelineChanged();
 }
 
@@ -438,7 +486,9 @@ void VtkVisPipeline::showMeshElementQuality(
     MeshLib::MeshQualityType t, std::vector<double> const& quality)
 {
     if (!source || quality.empty())
+    {
         return;
+    }
 
     int const nSources = this->_rootItem->childCount();
     for (int i = 0; i < nSources; i++)
@@ -446,7 +496,9 @@ void VtkVisPipeline::showMeshElementQuality(
         auto* parentItem =
             static_cast<VtkVisPipelineItem*>(_rootItem->child(i));
         if (parentItem->algorithm() != source)
+        {
             continue;
+        }
 
         QList<QVariant> itemData;
         itemData << "MeshQuality: " +

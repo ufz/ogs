@@ -75,10 +75,8 @@ void GeoMapper::mapOnMesh(MeshLib::Mesh const*const mesh)
 
     // the variable _surface_mesh is reused below, so first the existing
     // _surface_mesh has to be cleaned up
-    if (_surface_mesh)
-    {
+
         delete _surface_mesh;
-    }
 
     if (mesh->getDimension() < 3)
     {
@@ -125,7 +123,8 @@ void GeoMapper::mapToConstantValue(double value)
 
 void GeoMapper::mapStationData(std::vector<GeoLib::Point*> const& points)
 {
-    double min_val(0), max_val(0);
+    double min_val(0);
+    double max_val(0);
     if (_surface_mesh)
     {
         GeoLib::AABB bounding_box(
@@ -460,7 +459,8 @@ static bool snapPointToElementNode(MathLib::Point3d& p,
                                    MeshLib::Element const& elem, double rel_eps)
 {
     // values will be initialized within computeSqrNodeDistanceRange
-    double sqr_min, sqr_max;
+    double sqr_min;
+    double sqr_max;
     elem.computeSqrNodeDistanceRange(sqr_min, sqr_max);
 
     double const sqr_eps(rel_eps*rel_eps * sqr_min);
@@ -575,10 +575,9 @@ static void mapPolylineOnSurfaceMesh(
 void GeoMapper::advancedMapOnMesh(MeshLib::Mesh const& mesh)
 {
     // 1. extract surface
-    if (_surface_mesh)
-    {
+
         delete _surface_mesh;
-    }
+
     if (mesh.getDimension()<3) {
         _surface_mesh = new MeshLib::Mesh(mesh);
     } else {

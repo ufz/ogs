@@ -21,7 +21,7 @@ public:
     /// polyline. For this reason the memory is not managed per default. But the
     /// user has the freedom to hand over the responsibility for the mem
     /// managment of the points to the object.
-    LineSegment(GeoLib::Point* const beg, GeoLib::Point* const end,
+    LineSegment(GeoLib::Point* const a, GeoLib::Point* const b,
                 bool point_mem_management_by_line_segment = false);
 
     LineSegment(LineSegment&& line_segment);
@@ -30,7 +30,7 @@ public:
     ~LineSegment();
 
     LineSegment& operator=(LineSegment const& rhs);
-    LineSegment& operator=(LineSegment&& rhs);
+    LineSegment& operator=(LineSegment&& line_segment);
 
     GeoLib::Point const& getBeginPoint() const;
     GeoLib::Point & getBeginPoint();

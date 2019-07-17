@@ -17,7 +17,7 @@
 #include <QDialog>
 
 namespace GeoLib {
-    class GeoObject;
+struct GeoObject;
 }
 
 class QDialogButtonBox;

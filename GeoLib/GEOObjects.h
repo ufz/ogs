@@ -83,14 +83,14 @@ public:
      * Adds a vector of points with the given name to GEOObjects.
      * @param points vector of pointers to points
      * @param name the project name
-     * @param pnt_names vector of the names corresponding to the points
+     * @param pnt_id_name_map names corresponding to the points
      * @param eps relative tolerance value for testing of point uniqueness
      */
-    void addPointVec(
-        std::unique_ptr<std::vector<Point*>> points,
-        std::string& name,
-        std::unique_ptr<std::map<std::string, std::size_t>> pnt_names = nullptr,
-        double eps = sqrt(std::numeric_limits<double>::epsilon()));
+    void addPointVec(std::unique_ptr<std::vector<Point*>> points,
+                     std::string& name,
+                     std::unique_ptr<std::map<std::string, std::size_t>>
+                         pnt_id_name_map = nullptr,
+                     double eps = sqrt(std::numeric_limits<double>::epsilon()));
 
     /**
      * Returns the point vector with the given name.
@@ -181,7 +181,7 @@ public:
     bool removePolylineVec(const std::string &name);
 
     /** Adds a vector of surfaces with the given name to GEOObjects. */
-    void addSurfaceVec(std::unique_ptr<std::vector<Surface*>> surfaces,
+    void addSurfaceVec(std::unique_ptr<std::vector<Surface*>> sfc,
                        const std::string& name,
                        std::unique_ptr<std::map<std::string, std::size_t>>
                            sfc_names = nullptr);
@@ -219,7 +219,8 @@ public:
     /// Returns the names of all geometry vectors.
     void getGeometryNames (std::vector<std::string>& names) const;
 
-    const std::string getElementNameByID(const std::string &geometry_name, GeoLib::GEOTYPE type, std::size_t id) const;
+    std::string getElementNameByID(const std::string& geometry_name,
+                                   GeoLib::GEOTYPE type, std::size_t id) const;
 
     /// Returns the names of all station vectors.
     void getStationVectorNames(std::vector<std::string>& names) const;

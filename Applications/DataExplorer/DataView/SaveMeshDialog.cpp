@@ -45,7 +45,9 @@ void SaveMeshDialog::on_selectDirButton_clicked()
         file_type);
 
     if (!file_name.isEmpty())
+    {
         this->fileNameEdit->setText(file_name);
+    }
 }
 
 void SaveMeshDialog::on_dataModeBox_currentIndexChanged(int index)
@@ -80,13 +82,13 @@ void SaveMeshDialog::accept()
         int dataMode = this->dataModeBox->currentIndex();
         bool compress (this->compressionCheckBox->isChecked());
         MeshLib::IO::VtuInterface vtkIO(&_mesh, dataMode, compress);
-        vtkIO.writeToFile(file_name.toStdString().c_str());
+        vtkIO.writeToFile(file_name.toStdString());
     }
     if (fi.suffix().toLower() == "msh")
     {
         MeshLib::IO::Legacy::MeshIO meshIO;
         meshIO.setMesh(&_mesh);
-        meshIO.writeToFile(file_name.toStdString().c_str());
+        meshIO.writeToFile(file_name.toStdString());
     }
     LastSavedFileDirectory::setDir(file_name);
 

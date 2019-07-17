@@ -30,7 +30,8 @@ public:
 
     /// Marks all nodes connected to any of the given elements ids.
     /// \return number of connected nodes.
-    std::size_t searchNodesConnectedToOnlyGivenElements(const std::vector<std::size_t> &element_ids);
+    std::size_t searchNodesConnectedToOnlyGivenElements(
+        const std::vector<std::size_t>& elements);
 
     /// Marks all unused nodes
     std::size_t searchUnused();

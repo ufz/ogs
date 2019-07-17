@@ -23,7 +23,7 @@ namespace LIE
 /// element such that computeRotationMatrix() returns the indentity matrix for
 /// line elements parallel to a vector (1,0,0)
 void computeNormalVector(MeshLib::Element const& e, unsigned const global_dim,
-                         Eigen::Vector3d& normal_vector);
+                         Eigen::Vector3d& element_normal);
 
 /// Compute a rotation matrix from global to local coordinates using the given
 /// elements' normal vector and based on the two vectors forming the element's

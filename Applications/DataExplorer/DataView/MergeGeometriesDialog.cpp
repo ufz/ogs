@@ -40,7 +40,9 @@ MergeGeometriesDialog::MergeGeometriesDialog(GeoLib::GEOObjects& geoObjects, QDi
 
     QStringList list;
     for (unsigned i = 0; i < nGeoObjects; ++i)
+    {
         list.append(QString::fromStdString(geoNames[i]));
+    }
 
     if (list.empty())
     {
@@ -94,9 +96,14 @@ void MergeGeometriesDialog::on_deselectGeoButton_pressed()
 void MergeGeometriesDialog::accept()
 {
     if (_selGeo->stringList().size() > 1)
+    {
         this->done(QDialog::Accepted);
+    }
     else
-        OGSError::box("At least two geometries need\n to be selected for merging.");
+    {
+        OGSError::box(
+            "At least two geometries need\n to be selected for merging.");
+    }
 }
 
 void MergeGeometriesDialog::reject()
@@ -104,12 +111,14 @@ void MergeGeometriesDialog::reject()
     this->done(QDialog::Rejected);
 }
 
-std::vector<std::string> const MergeGeometriesDialog::getSelectedGeometries() const
+std::vector<std::string> MergeGeometriesDialog::getSelectedGeometries() const
 {
     std::vector<std::string> indexList;
     QStringList const& list (_selGeo->stringList());
     for (const auto& index : list)
+    {
         indexList.push_back(index.toStdString());
+    }
     return indexList;
 }
 

@@ -56,7 +56,7 @@ public:
     void OnRightButtonDown() override;
 
 public slots:
-    void highlightActor(vtkProp3D* prop);
+    void highlightActor(vtkProp3D* actor);
 
     /// @brief Removes the highlight actor from the visible scene.
     void removeHighlightActor();

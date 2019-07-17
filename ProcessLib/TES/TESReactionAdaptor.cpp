@@ -361,13 +361,14 @@ ReactionRate TESFEMReactionAdaptorCaOH2::initReaction(const unsigned int int_pt)
     double rho_react;
 
     // cut off when limits are reached
-    if (y_new[0] < _react.rho_low)
+    if (y_new[0] < ProcessLib::TES::TESFEMReactionAdaptorCaOH2::React::rho_low)
     {
-        rho_react = _react.rho_low;
+        rho_react = ProcessLib::TES::TESFEMReactionAdaptorCaOH2::React::rho_low;
     }
-    else if (y_new[0] > _react.rho_up)
+    else if (y_new[0] >
+             ProcessLib::TES::TESFEMReactionAdaptorCaOH2::React::rho_up)
     {
-        rho_react = _react.rho_up;
+        rho_react = ProcessLib::TES::TESFEMReactionAdaptorCaOH2::React::rho_up;
     }
     else
     {

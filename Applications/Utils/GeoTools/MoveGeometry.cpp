@@ -71,20 +71,30 @@ int main(int argc, char *argv[])
 
     MathLib::Vector3 displacement(0.0, 0.0, 0.0);
     if (x_arg.isSet())
+    {
         displacement[0] = x_arg.getValue();
+    }
     if (y_arg.isSet())
+    {
         displacement[1] = y_arg.getValue();
+    }
     if (z_arg.isSet())
+    {
         displacement[2] = z_arg.getValue();
+    }
 
     std::vector<std::string> geo_names;
     geo_objects.getGeometryNames(geo_names);
 
     std::vector<GeoLib::Point*> const* point_vec = geo_objects.getPointVec(geo_names[0]);
     std::size_t const n_points = point_vec->size();
-    for (std::size_t i=0; i<n_points; ++i)
-        for (std::size_t c=0; c<3; ++c)
+    for (std::size_t i = 0; i < n_points; ++i)
+    {
+        for (std::size_t c = 0; c < 3; ++c)
+        {
             (*(*point_vec)[i])[c] += displacement[c];
+        }
+    }
 
     xml.setNameForExport(geo_names[0]);
     xml.writeToFile(geo_output_arg.getValue());

@@ -106,9 +106,18 @@ void MeshLayerEditDialog::createWithRasters()
     for (unsigned i = 0; i <= _n_layers; ++i)
     {
         QString text("");
-        if (i==0) text = "Surface";
-        else if (i == _n_layers) text = "Layer" + QString::number(_n_layers) + "-Bottom";
-        else text="Layer" + QString::number(i+1) + "-Top";
+        if (i == 0)
+        {
+            text = "Surface";
+        }
+        else if (i == _n_layers)
+        {
+            text = "Layer" + QString::number(_n_layers) + "-Bottom";
+        }
+        else
+        {
+            text = "Layer" + QString::number(i + 1) + "-Top";
+        }
         auto* edit(new QLineEdit(this));
         QPushButton* button (new QPushButton("...", _layerBox));
 
@@ -123,7 +132,9 @@ void MeshLayerEditDialog::createWithRasters()
     this->_layerBox->setLayout(this->_layerSelectionLayout);
     this->gridLayoutLayerMapping->addWidget(_layerBox, 4, 0, 1, 3);
     if (this->_n_layers > 0)
+    {
         this->createMeshToolSelection();
+    }
 }
 
 void MeshLayerEditDialog::createStatic()
@@ -185,10 +196,15 @@ MeshLib::Mesh* MeshLayerEditDialog::createPrismMesh()
     if (_use_rasters)
     {
         float minimum_thickness (_minThicknessEdit->text().toFloat());
-        if (minimum_thickness <= 0) minimum_thickness = std::numeric_limits<float>::epsilon();
+        if (minimum_thickness <= 0)
+        {
+            minimum_thickness = std::numeric_limits<float>::epsilon();
+        }
         std::vector<std::string> raster_paths;
-        for (int i=nLayers; i>=0; --i)
+        for (int i = nLayers; i >= 0; --i)
+        {
             raster_paths.push_back(this->_edits[i]->text().toStdString());
+        }
 
         auto const rasters = FileIO::readRasters(raster_paths);
         if (rasters && mapper.createLayers(*_msh, *rasters, minimum_thickness))
@@ -201,9 +217,11 @@ MeshLib::Mesh* MeshLayerEditDialog::createPrismMesh()
 
     std::vector<float> layer_thickness;
     for (unsigned i = 0; i < nLayers; ++i)
+    {
         layer_thickness.push_back(this->_edits[i]->text().toFloat());
+    }
     INFO("Mesh construction time: %d ms.", myTimer0.elapsed());
-    return mapper.createStaticLayers(*_msh, layer_thickness);
+    return MeshLib::MeshLayerMapper::createStaticLayers(*_msh, layer_thickness);
 }
 
 MeshLib::Mesh* MeshLayerEditDialog::createTetMesh()
@@ -213,7 +231,9 @@ MeshLib::Mesh* MeshLayerEditDialog::createTetMesh()
                                                     settings.value("lastOpenedTetgenFileDirectory").toString(),
                                                     "TetGen Geometry (*.smesh)");
     if (filename.isEmpty())
+    {
         return nullptr;
+    }
 
     const unsigned nLayers = _layerEdit->text().toInt();
     MeshLib::Mesh* tg_mesh(nullptr);
@@ -223,15 +243,22 @@ MeshLib::Mesh* MeshLayerEditDialog::createTetMesh()
     if (_use_rasters)
     {
         float minimum_thickness (_minThicknessEdit->text().toFloat());
-        if (minimum_thickness <= 0) minimum_thickness = std::numeric_limits<float>::epsilon();
+        if (minimum_thickness <= 0)
+        {
+            minimum_thickness = std::numeric_limits<float>::epsilon();
+        }
         std::vector<std::string> raster_paths;
-        for (int i=nLayers; i>=0; --i)
+        for (int i = nLayers; i >= 0; --i)
+        {
             raster_paths.push_back(this->_edits[i]->text().toStdString());
+        }
         LayeredVolume lv;
 
         auto const rasters = FileIO::readRasters(raster_paths);
         if (rasters && lv.createLayers(*_msh, *rasters, minimum_thickness))
+        {
             tg_mesh = lv.getMesh("SubsurfaceMesh").release();
+        }
 
         if (tg_mesh)
         {
@@ -243,8 +270,10 @@ MeshLib::Mesh* MeshLayerEditDialog::createTetMesh()
     else
     {
         std::vector<float> layer_thickness;
-        for (unsigned i=0; i<nLayers; ++i)
+        for (unsigned i = 0; i < nLayers; ++i)
+        {
             layer_thickness.push_back(this->_edits[i]->text().toFloat());
+        }
         tg_mesh = MeshLib::MeshLayerMapper::createStaticLayers(*_msh, layer_thickness);
         std::vector<MeshLib::Node> tg_attr;
         FileIO::TetGenInterface tetgen_interface;
@@ -268,14 +297,20 @@ void MeshLayerEditDialog::accept()
     if (_n_layers==0)
     {
         if (_edits[0]->text().isEmpty())
+        {
             all_paths_set = false;
+        }
     }
     else
     {
         int start_idx = (_use_rasters) ? 1:0;
-        for (int i=start_idx; i<_edits.size(); ++i)
+        for (int i = start_idx; i < _edits.size(); ++i)
+        {
             if (_edits[i]->text().isEmpty())
+            {
                 all_paths_set = false;
+            }
+        }
     }
 
     if (!all_paths_set)
@@ -286,14 +321,22 @@ void MeshLayerEditDialog::accept()
 
     MeshLib::Mesh* new_mesh (nullptr);
     if (_ogsMeshButton->isChecked())
+    {
         new_mesh = createPrismMesh();
+    }
     else
+    {
         new_mesh = createTetMesh();
+    }
 
     if (new_mesh)
+    {
         emit mshEditFinished(new_mesh);
+    }
     else
+    {
         OGSError::box("Error creating mesh");
+    }
 
     this->done(QDialog::Accepted);
 }

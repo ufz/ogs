@@ -38,7 +38,8 @@ double DensityHauer::getAdsorbateDensity(const double T_Ads) const
 double DensityHauer::getAlphaT(const double T_Ads) const
 {
     // data like in python script
-    const double T0 = 283.15, alpha0 = 3.781e-4; //K; 1/K
+    const double T0 = 283.15;
+    const double alpha0 = 3.781e-4;  // K; 1/K
 
     return alpha0/(1. - alpha0 * (T_Ads-T0)); //in 1/K
 }

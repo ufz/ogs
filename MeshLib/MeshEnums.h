@@ -87,10 +87,10 @@ enum class UseIntensityAs
 };
 
 /// Given a MeshElemType this returns the appropriate string.
-const std::string MeshElemType2String(const MeshElemType t);
+std::string MeshElemType2String(const MeshElemType t);
 
 /// Given a MeshElemType this returns the appropriate string with a short name.
-const std::string MeshElemType2StringShort(const MeshElemType t);
+std::string MeshElemType2StringShort(const MeshElemType t);
 
 /// Given a string of the shortened name of the element type, this returns the corresponding MeshElemType.
 MeshElemType String2MeshElemType(const std::string &s);
@@ -102,8 +102,8 @@ std::vector<MeshElemType> getMeshElemTypes();
 std::vector<std::string> getMeshElemTypeStringsShort();
 
 /// Given a MeshElemType this returns the appropriate string.
-const std::string CellType2String(const CellType t);
+std::string CellType2String(const CellType t);
 
-const std::string MeshQualityType2String(const MeshQualityType t);
+std::string MeshQualityType2String(const MeshQualityType t);
 
 }  // namespace MeshLib

@@ -30,14 +30,12 @@ TEST(NumLib, FemIntegrationGaussLegendreRegular)
         std::size_t expected[1] = { 0u };
         ASSERT_ARRAY_EQ(expected,
                         IntegrationGaussLegendreRegular<1>::getPositionIndices(
-                            integrationOrder, 0)
-                            .data(),
+                            integrationOrder, 0),
                         1u);
         expected[0] = 1u;
         ASSERT_ARRAY_EQ(expected,
                         IntegrationGaussLegendreRegular<1>::getPositionIndices(
-                            integrationOrder, 1)
-                            .data(),
+                            integrationOrder, 1),
                         1u);
     }
     // dim = 2
@@ -45,28 +43,24 @@ TEST(NumLib, FemIntegrationGaussLegendreRegular)
         std::size_t expected[2] = { 0u, 0u };
         ASSERT_ARRAY_EQ(expected,
                         IntegrationGaussLegendreRegular<2>::getPositionIndices(
-                            integrationOrder, 0)
-                            .data(),
+                            integrationOrder, 0),
                         2);
         expected[1] = 1u;
         ASSERT_ARRAY_EQ(expected,
                         IntegrationGaussLegendreRegular<2>::getPositionIndices(
-                            integrationOrder, 1)
-                            .data(),
+                            integrationOrder, 1),
                         2);
         expected[0] = 1u;
         expected[1] = 0u;
         ASSERT_ARRAY_EQ(expected,
                         IntegrationGaussLegendreRegular<2>::getPositionIndices(
-                            integrationOrder, 2)
-                            .data(),
+                            integrationOrder, 2),
                         2);
         expected[0] = 1u;
         expected[1] = 1u;
         ASSERT_ARRAY_EQ(expected,
                         IntegrationGaussLegendreRegular<2>::getPositionIndices(
-                            integrationOrder, 3)
-                            .data(),
+                            integrationOrder, 3),
                         2);
     }
     // dim = 3
@@ -82,8 +76,7 @@ TEST(NumLib, FemIntegrationGaussLegendreRegular)
                     ASSERT_ARRAY_EQ(
                         expected,
                         IntegrationGaussLegendreRegular<3>::getPositionIndices(
-                            integrationOrder, l)
-                            .data(),
+                            integrationOrder, l),
                         3);
                 }
             }

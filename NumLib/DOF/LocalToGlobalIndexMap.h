@@ -180,14 +180,14 @@ private:
     template <typename ElementIterator>
     void findGlobalIndices(ElementIterator first, ElementIterator last,
                            std::vector<MeshLib::Node*> const& nodes,
-                           std::size_t const mesh_id, const int component_id,
+                           std::size_t const mesh_id, const int comp_id,
                            const int comp_id_write);
 
     template <typename ElementIterator>
     void findGlobalIndicesWithElementID(
         ElementIterator first, ElementIterator last,
         std::vector<MeshLib::Node*> const& nodes, std::size_t const mesh_id,
-        const int component_id, const int comp_id_write);
+        const int comp_id, const int comp_id_write);
 
     /// A vector of mesh subsets for each process variables' components.
     std::vector<MeshLib::MeshSubset> _mesh_subsets;

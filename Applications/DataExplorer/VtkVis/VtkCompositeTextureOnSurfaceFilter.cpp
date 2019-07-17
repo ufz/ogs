@@ -59,7 +59,9 @@ void VtkCompositeTextureOnSurfaceFilter::init()
         surface->SetInputConnection(surfaceFilter->GetOutputPort());
     }
     else
+    {
         surface->SetInputConnection(_inputAlgorithm->GetOutputPort());
+    }
 
     QWidget* parent = nullptr;
     QSettings settings;
@@ -77,7 +79,9 @@ void VtkCompositeTextureOnSurfaceFilter::init()
         (fi.suffix().toLower() == "png") || (fi.suffix().toLower() == "grd") ||
         (fi.suffix().toLower() == "jpg") || (fi.suffix().toLower() == "bmp"))
     {
-        double x0(0), y0(0), scalingFactor(1);
+        double x0(0);
+        double y0(0);
+        double scalingFactor(1);
         std::string name = fileName.toStdString();
         vtkImageAlgorithm* image = VtkRaster::loadImage(name, x0, y0, scalingFactor);
         surface->SetRaster(image, x0, y0, scalingFactor);

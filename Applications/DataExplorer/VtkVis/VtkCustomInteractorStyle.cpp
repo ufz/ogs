@@ -102,7 +102,9 @@ void VtkCustomInteractorStyle::OnKeyUp()
 void VtkCustomInteractorStyle::highlightActor( vtkProp3D* actor )
 {
     if (_highlightActor)
+    {
         HighlightProp((vtkProp*)actor);
+    }
 }
 
 void VtkCustomInteractorStyle::removeHighlightActor()
@@ -115,7 +117,9 @@ void VtkCustomInteractorStyle::setHighlightActor(bool on)
 {
     _highlightActor = on;
     if (!on)
+    {
         HighlightProp((vtkProp*)nullptr);
+    }
 }
 
 void VtkCustomInteractorStyle::pickableDataObject(vtkDataObject* object)
@@ -133,7 +137,9 @@ void VtkCustomInteractorStyle::pickableDataObject(vtkDataObject* object)
 void VtkCustomInteractorStyle::OnLeftButtonDown()
 {
     if (!_data)
+    {
         return vtkInteractorStyleTrackballCamera::OnLeftButtonDown();
+    }
 
     if (_alternateMouseActions)
     {
@@ -188,9 +194,13 @@ void VtkCustomInteractorStyle::OnLeftButtonDown()
             auto* source =
                 dynamic_cast<vtkUnstructuredGridAlgorithm*>(data_set);
             if (source)
+            {
                 emit elementPicked(source, static_cast<unsigned>(picker->GetCellId()));
+            }
             else
+            {
                 emit clearElementView();
+            }
             _selectedMapper->SetInputData(selected);
 
             this->Interactor->GetRenderWindow()->GetRenderers()->GetFirstRenderer()->
@@ -198,19 +208,27 @@ void VtkCustomInteractorStyle::OnLeftButtonDown()
             //_highlightActor = true;
         }
         else
-            this->Interactor->GetRenderWindow()->GetRenderers()->GetFirstRenderer()->
-            RemoveActor(_selectedActor);
+        {
+            this->Interactor->GetRenderWindow()
+                ->GetRenderers()
+                ->GetFirstRenderer()
+                ->RemoveActor(_selectedActor);
+        }
         emit requestViewUpdate();
     }
     else
+    {
         // Forward events
         vtkInteractorStyleTrackballCamera::OnLeftButtonDown();
+    }
 }
 
 void VtkCustomInteractorStyle::OnRightButtonDown()
 {
     if (!_data)
+    {
         return vtkInteractorStyleTrackballCamera::OnRightButtonDown();
+    }
 
     if (_alternateMouseActions)
     {
@@ -238,6 +256,8 @@ void VtkCustomInteractorStyle::OnRightButtonDown()
         }
     }
     else
+    {
         // Forward events
         vtkInteractorStyleTrackballCamera::OnRightButtonDown();
+    }
 }

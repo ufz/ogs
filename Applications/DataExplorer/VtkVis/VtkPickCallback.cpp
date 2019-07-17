@@ -25,8 +25,9 @@ VtkPickCallback* VtkPickCallback::New()
     return new VtkPickCallback();
 }
 
-void VtkPickCallback::Execute( vtkObject* caller, unsigned long vtkNotUsed(
-                                       eventId), void* vtkNotUsed(callData) )
+void VtkPickCallback::Execute(vtkObject* caller,
+                              unsigned long vtkNotUsed(eventId) /*eventId*/,
+                              void* vtkNotUsed(callData) /*callData*/)
 {
     auto* picker = static_cast<vtkCellPicker*>(caller);
     if (picker->GetCellId() < 0)
@@ -37,7 +38,9 @@ void VtkPickCallback::Execute( vtkObject* caller, unsigned long vtkNotUsed(
     {
         vtkActor* actor = picker->GetActor();
         if (actor)
-            emit actorPicked (actor);
+        {
+            emit actorPicked(actor);
+        }
 
         double* pos = picker->GetPickPosition();
         INFO("Picked cell id is: %d", picker->GetCellId());
@@ -45,7 +48,4 @@ void VtkPickCallback::Execute( vtkObject* caller, unsigned long vtkNotUsed(
     }
 }
 
-VtkPickCallback::VtkPickCallback()
-    : QObject()
-{
-}
+VtkPickCallback::VtkPickCallback() {}

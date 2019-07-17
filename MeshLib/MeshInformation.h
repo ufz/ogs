@@ -57,7 +57,7 @@ public:
     }
 
     /// Returns the bounding box of the mesh.
-    static const GeoLib::AABB getBoundingBox(const MeshLib::Mesh& mesh);
+    static GeoLib::AABB getBoundingBox(const MeshLib::Mesh& mesh);
 
     /**
      * Returns an array with the number of elements of each type in the given
@@ -68,7 +68,7 @@ public:
      *        5: \#pyramids
      *        6: \#prisms
      */
-    static const std::array<unsigned, 7> getNumberOfElementTypes(
+    static std::array<unsigned, 7> getNumberOfElementTypes(
         const MeshLib::Mesh& mesh);
 };
 

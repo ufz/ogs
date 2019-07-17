@@ -100,7 +100,7 @@ private:
 
     /// Creates the element vector for the 2d surface mesh
     static std::vector<MeshLib::Element*> createSfcElementVector(
-        std::vector<MeshLib::Element*> const& sfc_elems,
+        std::vector<MeshLib::Element*> const& sfc_elements,
         std::vector<MeshLib::Node*> const& sfc_nodes,
         std::vector<std::size_t> const& node_id_map);
 

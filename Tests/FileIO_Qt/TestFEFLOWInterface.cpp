@@ -53,9 +53,11 @@ TEST(FileIO, TestFEFLOWReadHexMesh)
 
    EXPECT_EQ(12, mesh->getNumberOfNodes());
    EXPECT_EQ(2, mesh->getNumberOfElements());
-   for (std::size_t k(0); k<mesh->getNumberOfElements(); ++k)
+   for (std::size_t k(0); k < mesh->getNumberOfElements(); ++k)
+   {
        EXPECT_EQ(MeshLib::MeshElemType::HEXAHEDRON,
                  mesh->getElement(k)->getGeomType());
+   }
 }
 
 TEST(FileIO, TestFEFLOWReadPrismMesh)
@@ -68,9 +70,11 @@ TEST(FileIO, TestFEFLOWReadPrismMesh)
 
    EXPECT_EQ(12, mesh->getNumberOfNodes());
    EXPECT_EQ(4, mesh->getNumberOfElements());
-   for (std::size_t k(0); k<mesh->getNumberOfElements(); ++k)
+   for (std::size_t k(0); k < mesh->getNumberOfElements(); ++k)
+   {
        EXPECT_EQ(MeshLib::MeshElemType::PRISM,
                  mesh->getElement(k)->getGeomType());
+   }
 }
 
 TEST(FileIO, TestFEFLOWReadHexPrismMesh)
@@ -83,9 +87,11 @@ TEST(FileIO, TestFEFLOWReadHexPrismMesh)
 
    EXPECT_EQ(12, mesh->getNumberOfNodes());
    EXPECT_EQ(3, mesh->getNumberOfElements());
-   for (std::size_t k(0); k<2; ++k)
+   for (std::size_t k(0); k < 2; ++k)
+   {
        EXPECT_EQ(MeshLib::MeshElemType::PRISM,
                  mesh->getElement(k)->getGeomType());
+   }
    EXPECT_EQ(MeshLib::MeshElemType::HEXAHEDRON,
              mesh->getElement(2)->getGeomType());
 }
@@ -100,9 +106,11 @@ TEST(FileIO, TestFEFLOWReadTetMesh)
 
    EXPECT_EQ(13, mesh->getNumberOfNodes());
    EXPECT_EQ(22, mesh->getNumberOfElements());
-   for (std::size_t k(0); k<mesh->getNumberOfElements(); ++k)
+   for (std::size_t k(0); k < mesh->getNumberOfElements(); ++k)
+   {
        EXPECT_EQ(MeshLib::MeshElemType::TETRAHEDRON,
                  mesh->getElement(k)->getGeomType());
+   }
 }
 
 TEST(FileIO, TestFEFLOWReadPrismTetMesh)
@@ -115,10 +123,14 @@ TEST(FileIO, TestFEFLOWReadPrismTetMesh)
 
    EXPECT_EQ(16, mesh->getNumberOfNodes());
    EXPECT_EQ(20, mesh->getNumberOfElements());
-   for (std::size_t k(0); k<4; ++k)
+   for (std::size_t k(0); k < 4; ++k)
+   {
        EXPECT_EQ(MeshLib::MeshElemType::PRISM,
                  mesh->getElement(k)->getGeomType());
-   for (std::size_t k(4); k<mesh->getNumberOfElements(); ++k)
+   }
+   for (std::size_t k(4); k < mesh->getNumberOfElements(); ++k)
+   {
        EXPECT_EQ(MeshLib::MeshElemType::TETRAHEDRON,
                  mesh->getElement(k)->getGeomType());
+   }
 }

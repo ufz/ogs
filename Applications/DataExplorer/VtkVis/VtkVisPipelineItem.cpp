@@ -55,8 +55,10 @@ VtkVisPipelineItem::VtkVisPipelineItem(
 {
     auto* visParentItem = dynamic_cast<VtkVisPipelineItem*>(parentItem);
     if (parentItem->parentItem())
+    {
         _algorithm->SetInputConnection(
             visParentItem->algorithm()->GetOutputPort());
+    }
 }
 
 VtkVisPipelineItem::VtkVisPipelineItem(
@@ -82,7 +84,9 @@ VtkVisPipelineItem* VtkVisPipelineItem::child( int row ) const
 {
     TreeItem* treeItem = TreeItem::child(row);
     if (treeItem)
+    {
         return dynamic_cast<VtkVisPipelineItem*>(treeItem);
+    }
 
     return nullptr;
 }
@@ -90,7 +94,9 @@ VtkVisPipelineItem* VtkVisPipelineItem::child( int row ) const
 QVariant VtkVisPipelineItem::data( int column ) const
 {
     if (column == 1)
+    {
         return isVisible();
+    }
 
     return TreeItem::data(column);
 }
@@ -107,12 +113,12 @@ bool VtkVisPipelineItem::setData( int column, const QVariant &value )
 }
 bool VtkVisPipelineItem::isVisible() const
 {
-    return (bool)_actor->GetVisibility();
+    return static_cast<bool>(_actor->GetVisibility());
 }
 
 void VtkVisPipelineItem::setVisible( bool visible )
 {
-    _actor->SetVisibility((int)visible);
+    _actor->SetVisibility(static_cast<int>(visible));
     _actor->Modified();
     _renderer->Render();
 }
@@ -204,8 +210,8 @@ void VtkVisPipelineItem::setBackfaceCullingOnChildren(bool enable) const
     for (int i = 0; i < this->childCount(); ++i)
     {
         VtkVisPipelineItem* child = this->child(i);
-        child->setBackfaceCulling((int)enable);
-        child->setBackfaceCullingOnChildren((int)enable);
+        child->setBackfaceCulling(static_cast<int>(enable));
+        child->setBackfaceCullingOnChildren(static_cast<int>(enable));
     }
 }
 

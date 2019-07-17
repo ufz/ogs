@@ -54,10 +54,11 @@ protected:
 
 private:
     /// Tests if a given parameter exists within the file
-    QDomNode findParam(QDomNode const& node, QString const& param_name) const;
+    QDomNode findParam(QDomNode const& param_root,
+                       QString const& param_name) const;
 
     /// Manages reading all kinds of conditions
-    void readConditions(QDomNode const& node, QDomNode const& param_root);
+    void readConditions(QDomNode const& pvar_root, QDomNode const& param_root);
 
     /// Reading all boundary conditions
     void readBoundaryConditions(QDomNode const& bc_root,
@@ -84,12 +85,12 @@ private:
                                  std::string const& name) const;
 
     /// Writes a list of source terms
-    void writeSourceTerms(QDomDocument& doc, QDomElement& bc_list_tag,
+    void writeSourceTerms(QDomDocument& doc, QDomElement& st_list_tag,
                           std::string const& name) const;
 
     /// Parsing one specific condition
     template <typename T>
-    T* parseCondition(QDomNode const& st_root, QDomNode const& param_root,
+    T* parseCondition(QDomNode const& node, QDomNode const& param_root,
                       DataHolderLib::ProcessVariable const& pvar) const;
 
     std::string _filename;

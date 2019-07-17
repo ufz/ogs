@@ -270,7 +270,9 @@ TEST_F(RasterToMeshTest, convertRasterToQuadMeshNone)
 #ifdef OGS_BUILD_GUI
 TEST_F(RasterToMeshTest, vtkImage)
 {
-    double x0, y0, spacing;
+    double x0;
+    double y0;
+    double spacing;
     vtkImageAlgorithm* raster =
         VtkRaster::loadImage(_file_name, x0, y0, spacing);
     double origin[3];
@@ -299,7 +301,9 @@ TEST_F(RasterToMeshTest, vtkImage)
 
     std::vector<MeshLib::Node*> const& nodes = mesh->getNodes();
     for (MeshLib::Node* n : nodes)
+    {
         ASSERT_TRUE((*n)[2] == 0);
+    }
 
     std::array<unsigned, 7> n_types =
         MeshLib::MeshInformation::getNumberOfElementTypes(*mesh);

@@ -40,7 +40,7 @@ std::vector<double> uGlobalEnrichments(
 /// Remarks:
 /// * branch/junction intersections of two fractures are supported in 2D
 ///
-/// @param this_fracID the fracture ID
+/// @param this_frac_id the fracture ID
 /// @param frac_props fracture properties
 /// @param junction_props junction properties
 /// @param fracID_to_local a mapping table from a fracture ID to a local index
@@ -48,7 +48,7 @@ std::vector<double> uGlobalEnrichments(
 /// @param x evaluating point coordiates
 /// @return a vector of enrichment values for fracture relative displacements
 std::vector<double> duGlobalEnrichments(
-    std::size_t this_fracID,
+    std::size_t this_frac_id,
     std::vector<FractureProperty*> const& frac_props,
     std::vector<JunctionProperty*> const& junction_props,
     std::unordered_map<int, int> const& fracID_to_local,

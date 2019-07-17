@@ -41,10 +41,12 @@ std::unique_ptr<SourceTerm> createPythonSourceTerm(
         pybind11::module::import("__main__").attr("__dict__");
 
     if (!scope.contains(source_term_object))
+    {
         OGS_FATAL(
             "Function `%s' is not defined in the python script file, or there "
             "was no python script file specified.",
             source_term_object.c_str());
+    }
 
     auto* source_term = scope[source_term_object.c_str()]
                             .cast<ProcessLib::SourceTerms::Python::

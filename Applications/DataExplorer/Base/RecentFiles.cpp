@@ -52,7 +52,9 @@ void RecentFiles::setCurrentFile( const QString& filename )
     files.removeAll(filename);
     files.prepend(filename);
     while (files.size() > _maxFiles)
+    {
         files.removeLast();
+    }
 
     settings.setValue("recentFileList", files);
 
@@ -63,7 +65,7 @@ void RecentFiles::updateRecentFileActions()
     QSettings settings;
     QStringList files = settings.value(_settingsName).toStringList();
 
-    int numFiles = qMin(files.size(), (int)_maxFiles);
+    int numFiles = qMin(files.size(), static_cast<int>(_maxFiles));
 
     for (int i = 0; i < numFiles; ++i)
     {
@@ -74,7 +76,9 @@ void RecentFiles::updateRecentFileActions()
     }
 
     for (int i = numFiles; i < _maxFiles; ++i)
+    {
         _fileActions[i]->setVisible(false);
+    }
 }
 
 QString RecentFiles::strippedName( const QString& fullFileName )
