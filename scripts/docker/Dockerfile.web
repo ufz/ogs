@@ -1,0 +1,7 @@
+FROM node
+RUN npm install -g @hashicorp/broken-links-checker
+RUN wget https://github.com/gohugoio/hugo/releases/download/v0.55.6/hugo_0.55.6_Linux-64bit.deb \
+    && dpkg -i hugo_0.55.6_Linux-64bit.deb && rm hugo_0.55.6_Linux-64bit.deb
+RUN apt-get update -y && apt-get install -y --no-install-recommends pandoc \
+    && rm -rf /var/lib/apt/lists/*
+ENTRYPOINT /bin/bash
