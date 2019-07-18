@@ -108,6 +108,8 @@ pipeline {
                   "-DBUILD_SHARED_LIBS=${build_shared} " +
                   '-DOGS_CPU_ARCHITECTURE=generic ' +
                   '-DOGS_BUILD_UTILS=ON ' +
+                  '-DOGS_BUILD_UTILS=ON ' +
+                  '-DOGS_CONAN_BUILD=outdated ' +
                   '-DOGS_USE_CVODE=ON '
               }
               build {
@@ -193,6 +195,7 @@ pipeline {
                   '-DOGS_USE_PCH=OFF ' +     // see #1992
                   '-DOGS_BUILD_GUI=ON ' +
                   '-DOGS_BUILD_UTILS=ON ' +
+                  '-DOGS_CONAN_BUILD=outdated ' +
                   '-DOGS_BUILD_TESTS=OFF '
               }
               build {
@@ -245,6 +248,7 @@ pipeline {
               configure {
                 cmakeOptions =
                   "-DBUILD_SHARED_LIBS=${build_shared} " +
+                  '-DOGS_CONAN_BUILD=outdated ' +
                   '-DOGS_CPU_ARCHITECTURE=generic '
                 config = 'Debug'
               }
@@ -392,6 +396,7 @@ pipeline {
                   '-DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON ' +
                   '-DOGS_BUILD_GUI=ON ' +
                   '-DOGS_BUILD_UTILS=ON ' +
+                  '-DOGS_CONAN_BUILD=outdated ' +
                   '-DOGS_BUILD_SWMM=ON '
               }
               build {
@@ -448,6 +453,7 @@ pipeline {
                   '-DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON ' +
                   '-DOGS_BUILD_GUI=ON ' +
                   '-DOGS_BUILD_UTILS=ON ' +
+                  '-DOGS_CONAN_BUILD=outdated ' +
                   '-DCMAKE_OSX_DEPLOYMENT_TARGET="10.14" '
               }
               build {
