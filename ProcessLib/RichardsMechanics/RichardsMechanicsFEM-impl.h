@@ -243,7 +243,7 @@ void RichardsMechanicsLocalAssembler<
              displacement_index, displacement_index)
             .noalias() += B.transpose() * C * B * w;
 
-        double const rho = rho_SR * (1 - porosity) + porosity * rho_LR;
+        double const rho = rho_SR * (1 - porosity) + S_L * porosity * rho_LR;
         rhs.template segment<displacement_size>(displacement_index).noalias() +=
             N_u_op.transpose() * rho * b * w;
 
@@ -452,7 +452,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 displacement_index, displacement_index)
             .noalias() += B.transpose() * C * B * w;
 
-        double const rho = rho_SR * (1 - porosity) + porosity * rho_LR;
+        double const rho = rho_SR * (1 - porosity) + S_L * porosity * rho_LR;
         local_rhs.template segment<displacement_size>(displacement_index)
             .noalias() -=
             (B.transpose() * sigma_eff - N_u_op.transpose() * rho * b) * w;
