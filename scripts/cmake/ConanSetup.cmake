@@ -72,7 +72,6 @@ if(OGS_BUILD_GUI)
         vtk:qt=True
         qt:qtxmlpatterns=True
         qt:openssl=False
-        qt:with_harfbuzz=False
         qt:with_libalsa=False
         qt:with_libjpeg=False
         #qt:with_libpng=False
@@ -82,7 +81,6 @@ if(OGS_BUILD_GUI)
         qt:with_pq=False
         qt:with_sdl2=False
         qt:with_sqlite3=False
-        qt:with_freetype=False
     )
 endif()
 
