@@ -237,6 +237,13 @@ public:
             "implemented.");
     }
 
+    void assembleWithJacobianForStaggeredScheme(
+        double const t, std::vector<double> const& local_xdot,
+        const double dxdot_dx, const double dx_dx,
+        std::vector<double>& local_M_data, std::vector<double>& local_K_data,
+        std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
+        LocalCoupledSolutions const& local_coupled_solutions) override;
+
     void assembleWithJacobian(double const t,
                               std::vector<double> const& local_x,
                               std::vector<double> const& local_xdot,
@@ -373,7 +380,7 @@ public:
             // see reference solid density description for details.
             auto& rho_s = _ip_data[ip].solid_density;
             rho_s = _ip_data[ip].solid_density_prev /
-                                 (1 + 3 * linear_thermal_strain_increment);
+                    (1 + 3 * linear_thermal_strain_increment);
 
             auto const& b = _process_data.specific_body_force;
             local_rhs
@@ -451,6 +458,72 @@ public:
     }
 
 private:
+    /**
+     * Assemble local matrices and vectors arise from the linearized discretized
+     * weak form of the residual of the momentum balance equation,
+     *      \f[
+     *            \nabla (\sigma - \mathbf{D} \alpha_T (T-T_0) \mathrm{I}) = f
+     *      \f]
+     * where \f$ \sigma\f$ is the effective stress tensor, \f$\mathbf{D}\f$ is
+     * the tangential operator, \f$T\f$ is the  temperature, \f$T_0\f$ is the
+     * initial temperature, \f$\alpha_T\f$ is the linear thermal expansion,
+     * \f$\mathrm{I}\f$ is the identity tensor, and \f$f\f$ is the body force.
+     *
+     * @param t               Time
+     * @param local_xdot      Nodal values of \f$\dot{x}\f$ of an element.
+     * @param dxdot_dx        Value of \f$\dot{x} \cdot dx\f$.
+     * @param dx_dx           Value of \f$ x \cdot dx\f$.
+     * @param local_M_data    Mass matrix of an element, which takes the form of
+     *                        \f$ \int N^T N\mathrm{d}\Omega\f$. Not used.
+     * @param local_K_data    Laplacian matrix of an element, which takes the
+     *         form of \f$ \int (\nabla N)^T K \nabla N\mathrm{d}\Omega\f$.
+     *                        Not used.
+     * @param local_b_data    Right hand side vector of an element.
+     * @param local_Jac_data  Element Jacobian matrix for the Newton-Raphson
+     *                        method.
+     * @param local_coupled_solutions Nodal values of solutions of the coupled
+     *                                temperature of an element.
+     */
+
+    void assembleWithJacobianForDeformationEquations(
+        double const t, std::vector<double> const& local_xdot,
+        const double dxdot_dx, const double dx_dx,
+        std::vector<double>& local_M_data, std::vector<double>& local_K_data,
+        std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
+        LocalCoupledSolutions const& local_coupled_solutions);
+
+    /**
+     * Assemble local matrices and vectors arise from the linearized discretized
+     * weak form of the residual of the energy balance equation,
+     *      \f[
+     *          \rho c_p \cdot{T} - \nabla (\mathbf{K} (\nabla T) = Q_T
+     *      \f]
+     * where \f$ rho\f$ is the solid density, \f$ c_p\f$ is the spefific heat
+     * capacity, \f$ \mathbf{K} \f$ is the thermal conductivity, and \f$ Q_T\f$
+     * is the source/sink term.
+     *
+     * @param t               Time
+     * @param local_xdot      Nodal values of \f$\dot{x}\f$ of an element.
+     * @param dxdot_dx        Value of \f$\dot{x} \cdot dx\f$.
+     * @param dx_dx           Value of \f$ x \cdot dx\f$.
+     * @param local_M_data    Mass matrix of an element, which takes the form of
+     *                        \f$ \int N^T N\mathrm{d}\Omega\f$. Not used.
+     * @param local_K_data    Laplacian matrix of an element, which takes the
+     *         form of \f$ \int (\nabla N)^T K \nabla N\mathrm{d}\Omega\f$.
+     *                        Not used.
+     * @param local_b_data    Right hand side vector of an element.
+     * @param local_Jac_data  Element Jacobian matrix for the Newton-Raphson
+     *                        method.
+     * @param local_coupled_solutions Nodal values of solutions of the coupled
+     *                                displacement of an element.
+     */
+    void assembleWithJacobianForHeatConductionEquations(
+        double const t, std::vector<double> const& local_xdot,
+        const double dxdot_dx, const double dx_dx,
+        std::vector<double>& local_M_data, std::vector<double>& local_K_data,
+        std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
+        LocalCoupledSolutions const& local_coupled_solutions);
+
     std::size_t setSigma(double const* values)
     {
         auto const kelvin_vector_size =
@@ -668,3 +741,5 @@ private:
 
 }  // namespace ThermoMechanics
 }  // namespace ProcessLib
+
+#include "ThermoMechanicsFEM-impl.h"

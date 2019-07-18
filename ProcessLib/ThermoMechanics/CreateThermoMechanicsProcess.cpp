@@ -40,7 +40,7 @@ std::unique_ptr<Process> createThermoMechanicsProcess(
     config.checkConfigParameter("type", "THERMO_MECHANICS");
     DBUG("Create ThermoMechanicsProcess.");
 
-     auto const staggered_scheme =
+    auto const staggered_scheme =
         //! \ogs_file_param{prj__processes__process__THERMO_MECHANICS__coupling_scheme}
         config.getConfigParameterOptional<std::string>("coupling_scheme");
     const bool use_monolithic_scheme =
@@ -51,6 +51,10 @@ std::unique_ptr<Process> createThermoMechanicsProcess(
     //! \ogs_file_param{prj__processes__process__THERMO_MECHANICS__process_variables}
     auto const pv_config = config.getConfigSubtree("process_variables");
 
+    // Process IDs, which are set according to the appearance order of the
+    int heat_conduction_process_id = 0;
+    int mechanics_process_id = 0;
+
     ProcessVariable* variable_T;
     ProcessVariable* variable_u;
     std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>
@@ -59,9 +63,9 @@ std::unique_ptr<Process> createThermoMechanicsProcess(
     {
         auto per_process_variables = findProcessVariables(
             variables, pv_config,
-          {//! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICS__process_variables__temperature}
+            {//! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICS__process_variables__temperature}
              "temperature",
-            //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICS__process_variables__displacement}
+             //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICS__process_variables__displacement}
              "displacement"});
         variable_T = &per_process_variables[0].get();
         variable_u = &per_process_variables[1].get();
@@ -78,6 +82,9 @@ std::unique_ptr<Process> createThermoMechanicsProcess(
         }
         variable_T = &process_variables[0][0].get();
         variable_u = &process_variables[1][0].get();
+        // process variables. Up to now, the ordering is fixed as:
+        heat_conduction_process_id = 0;
+        mechanics_process_id = 1;
     }
 
     DBUG("Associate displacement with process variable '%s'.",
@@ -178,7 +185,8 @@ std::unique_ptr<Process> createThermoMechanicsProcess(
         materialIDs(mesh),       std::move(solid_constitutive_relations),
         reference_solid_density, linear_thermal_expansion_coefficient,
         specific_heat_capacity,  thermal_conductivity,
-        specific_body_force,     nonequilibrium_stress};
+        specific_body_force,     nonequilibrium_stress,
+        mechanics_process_id,    heat_conduction_process_id};
 
     SecondaryVariableCollection secondary_variables;
 

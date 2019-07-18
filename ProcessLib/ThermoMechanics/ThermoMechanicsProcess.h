@@ -37,7 +37,6 @@ struct KelvinVectorIntegrationPointWriter final : public IntegrationPointWriter
 
     int numberOfComponents() const override { return _n_components; }
     int integrationOrder() const override { return _integration_order; }
-
     std::string name() const override
     {
         // TODO (naumov) remove ip suffix. Probably needs modification of the
@@ -82,32 +81,49 @@ public:
     bool isLinear() const override;
     //! @}
 
+    /**
+     * Get the size and the sparse pattern of the global matrix in order to
+     * create the global matrices and vectors for the system equations of this
+     * process.
+     *
+     * @param process_id Process ID. If the monolithic scheme is applied,
+     *                               process_id = 0.
+     * @return Matrix specifications including size and sparse pattern.
+     */
+    MathLib::MatrixSpecifications getMatrixSpecifications(
+        const int process_id) const override;
+
 private:
+    void constructDofTable() override;
+
     void initializeConcreteProcess(
         NumLib::LocalToGlobalIndexMap const& dof_table,
         MeshLib::Mesh const& mesh,
         unsigned const integration_order) override;
 
-    void assembleConcreteProcess(
-        const double t, GlobalVector const& x, GlobalMatrix& M, GlobalMatrix& K,
-        GlobalVector& b) override;
+    void initializeBoundaryConditions() override;
+
+    void assembleConcreteProcess(const double t, GlobalVector const& x,
+                                 GlobalMatrix& M, GlobalMatrix& K,
+                                 GlobalVector& b) override;
 
     void assembleWithJacobianConcreteProcess(
         const double t, GlobalVector const& x, GlobalVector const& xdot,
         const double dxdot_dx, const double dx_dx, GlobalMatrix& M,
         GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac) override;
 
-    void preTimestepConcreteProcess(
-        GlobalVector const& x, double const t, double const dt,
-        const int process_id) override;
+    void preTimestepConcreteProcess(GlobalVector const& x, double const t,
+                                    double const dt,
+                                    const int process_id) override;
 
     void postTimestepConcreteProcess(GlobalVector const& x, const double t,
                                      const double delta_t,
                                      int const process_id) override;
 
+    NumLib::LocalToGlobalIndexMap const& getDOFTable(
+        const int process_id) const override;
+
 private:
-    std::vector<MeshLib::Node*> _base_nodes;
-    std::unique_ptr<MeshLib::MeshSubset const> _mesh_subset_base_nodes;
     ThermoMechanicsProcessData<DisplacementDim> _process_data;
 
     std::vector<std::unique_ptr<ThermoMechanicsLocalAssemblerInterface>>
@@ -116,8 +132,19 @@ private:
     std::unique_ptr<NumLib::LocalToGlobalIndexMap>
         _local_to_global_index_map_single_component;
 
+    /// Sparsity pattern for the heat conduction equation, and it is initialized
+    /// only if the staggered scheme is used.
+    GlobalSparsityPattern _sparsity_pattern_with_single_component;
+
     MeshLib::PropertyVector<double>* _nodal_forces = nullptr;
     MeshLib::PropertyVector<double>* _heat_flux = nullptr;
+
+    /// Temperature of the previous time step for staggered scheme.
+    std::unique_ptr<GlobalVector> _previous_T;
+
+    /// Set the increment solutions of the present time step to the coupled
+    /// term.
+    void setCoupledSolutionsOfPreviousTimeStep();
 };
 
 extern template class ThermoMechanicsProcess<2>;
