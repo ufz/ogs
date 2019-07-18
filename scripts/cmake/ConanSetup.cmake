@@ -129,6 +129,12 @@ else()
     message(STATUS "Conan: Skipping update step.")
 endif()
 
+if(MSVC)
+    set(CC_CACHE $ENV{CC})
+    set(CXX_CACHE $ENV{CXX})
+    unset(ENV{CC}) # Disable clcache, e.g. for building qt
+    unset(ENV{CXX})
+endif()
 conan_cmake_run(
     BASIC_SETUP
     ${CONAN_UPDATE}
@@ -139,6 +145,10 @@ conan_cmake_run(
     IMPORTS ${CONAN_IMPORTS}
     GENERATORS virtualrunenv
 )
+if(MSVC)
+    set(ENV{CC} ${CC_CACHE}) # Restore vars
+    set(ENV{CXX} ${CXX_CACHE})
+endif()
 
 if(NOT ${OGS_CONAN_BUILD} MATCHES "never|always|missing|outdated")
     message(STATUS "Warning: Resetting CMake variable OGS_CONAN_BUILD to its default value of 'missing'")
