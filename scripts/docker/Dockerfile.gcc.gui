@@ -114,7 +114,7 @@ LABEL ccache.dir=/opt/cache \
 
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        sudo && \
+        sudo pkg-config && \
     rm -rf /var/lib/apt/lists/*
 
 # Jenkins node
