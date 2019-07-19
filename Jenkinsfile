@@ -204,7 +204,8 @@ pipeline {
                   '-DOGS_BUILD_GUI=ON ' +
                   '-DOGS_BUILD_UTILS=ON ' +
                   '-DOGS_CONAN_BUILD=missing ' +
-                  '-DOGS_BUILD_TESTS=OFF '
+                  '-DOGS_BUILD_TESTS=OFF ' +
+                  '-DOGS_USE_NETCDF=ON '
               }
               build {
                 target="package"
@@ -406,7 +407,8 @@ pipeline {
                   '-DOGS_BUILD_GUI=ON ' +
                   '-DOGS_BUILD_UTILS=ON ' +
                   '-DOGS_CONAN_BUILD=missing ' +
-                  '-DOGS_BUILD_SWMM=ON '
+                  '-DOGS_BUILD_SWMM=ON ' +
+                  '-DOGS_USE_NETCDF=ON '
               }
               build {
                 target="package"
@@ -463,7 +465,8 @@ pipeline {
                   '-DOGS_BUILD_GUI=OFF ' + // Temp. disabled
                   '-DOGS_BUILD_UTILS=ON ' +
                   '-DOGS_CONAN_BUILD=missing ' +
-                  '-DCMAKE_OSX_DEPLOYMENT_TARGET="10.14" '
+                  '-DCMAKE_OSX_DEPLOYMENT_TARGET="10.14" ' +
+                  '-DOGS_USE_NETCDF=ON '
               }
               build {
                 target="package"
