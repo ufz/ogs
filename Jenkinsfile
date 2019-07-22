@@ -108,7 +108,6 @@ pipeline {
                   "-DBUILD_SHARED_LIBS=${build_shared} " +
                   '-DOGS_CPU_ARCHITECTURE=generic ' +
                   '-DOGS_BUILD_UTILS=ON ' +
-                  '-DOGS_BUILD_UTILS=ON ' +
                   '-DOGS_CONAN_BUILD=outdated ' +
                   '-DOGS_USE_CVODE=ON '
               }
