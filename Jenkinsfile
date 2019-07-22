@@ -248,6 +248,7 @@ pipeline {
                 cmakeOptions =
                   "-DBUILD_SHARED_LIBS=${build_shared} " +
                   '-DOGS_CONAN_BUILD=outdated ' +
+                  '-DOGS_CONAN_BUILD_TYPE=Release ' +
                   '-DOGS_CPU_ARCHITECTURE=generic '
                 config = 'Debug'
               }

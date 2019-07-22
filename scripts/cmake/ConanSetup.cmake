@@ -27,7 +27,7 @@ include(${PROJECT_SOURCE_DIR}/scripts/cmake/conan/conan.cmake)
 set(CONAN_REQUIRES
     boost/1.66.0@conan/stable
     eigen/3.3.4@conan/stable
-    vtk/8.2.0@bilke/testing
+    vtk/8.2.0@bilke/stable
     CACHE INTERNAL ""
 )
 
@@ -127,6 +127,12 @@ else()
     message(STATUS "Conan: Skipping update step.")
 endif()
 
+if(DEFINED OGS_CONAN_BUILD_TYPE)
+    set(CONAN_BUILD_TYPE ${OGS_CONAN_BUILD_TYPE})
+else()
+    set(CONAN_BUILD_TYPE ${CMAKE_BUILD_TYPE})
+endif()
+
 if(MSVC)
     set(CC_CACHE $ENV{CC})
     set(CXX_CACHE $ENV{CXX})
@@ -142,6 +148,7 @@ conan_cmake_run(
     BUILD ${OGS_CONAN_BUILD}
     IMPORTS ${CONAN_IMPORTS}
     GENERATORS virtualrunenv
+    BUILD_TYPE ${CONAN_BUILD_TYPE}
 )
 if(MSVC)
     set(ENV{CC} ${CC_CACHE}) # Restore vars
