@@ -240,7 +240,9 @@ private:
     void calculateResidualBurgers(
         double const dt,
         const KelvinVector& strain_curr,
+        const KelvinVector& strain_t,
         const KelvinVector& stress_curr,
+        const KelvinVector& stress_t,
         KelvinVector& strain_Kel_curr,
         const KelvinVector& strain_Kel_t,
         KelvinVector& strain_Max_curr,
