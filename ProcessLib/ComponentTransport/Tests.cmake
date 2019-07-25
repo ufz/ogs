@@ -899,6 +899,38 @@ AddTest(
 )
 
 AddTest(
+    NAME ComponentTransport_ConTracer_1d
+    PATH Parabolic/ComponentTransport/ConTracer
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS ConTracer_1d.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    RUNTIME 10
+    DIFF_DATA
+    ConTracer_1d_pcs_1_ts_33_t_118800.000000_expected.vtu ConTracer_1d_pcs_1_ts_33_t_118800.000000.vtu pressure pressure 1e-6 1e-10
+    ConTracer_1d_pcs_1_ts_66_t_237600.000000_expected.vtu ConTracer_1d_pcs_1_ts_66_t_237600.000000.vtu pressure pressure 1e-6 1e-10
+    ConTracer_1d_pcs_1_ts_99_t_356400.000000_expected.vtu ConTracer_1d_pcs_1_ts_99_t_356400.000000.vtu pressure pressure 1e-6 1e-10
+    ConTracer_1d_pcs_1_ts_132_t_475200.000000_expected.vtu ConTracer_1d_pcs_1_ts_132_t_475200.000000.vtu pressure pressure 1e-6 1e-10
+    ConTracer_1d_pcs_1_ts_165_t_594000.000000_expected.vtu ConTracer_1d_pcs_1_ts_165_t_594000.000000.vtu pressure pressure 1e-6 1e-10
+    ConTracer_1d_pcs_1_ts_198_t_712800.000000_expected.vtu ConTracer_1d_pcs_1_ts_198_t_712800.000000.vtu pressure pressure 1e-6 1e-10
+    ConTracer_1d_pcs_1_ts_231_t_831600.000000_expected.vtu ConTracer_1d_pcs_1_ts_231_t_831600.000000.vtu pressure pressure 1e-6 1e-10
+    ConTracer_1d_pcs_1_ts_264_t_950400.000000_expected.vtu ConTracer_1d_pcs_1_ts_264_t_950400.000000.vtu pressure pressure 1e-6 1e-10
+    ConTracer_1d_pcs_1_ts_297_t_1069200.000000_expected.vtu ConTracer_1d_pcs_1_ts_297_t_1069200.000000.vtu pressure pressure 1e-6 1e-10
+    ConTracer_1d_pcs_1_ts_329_t_1184400.000000_expected.vtu ConTracer_1d_pcs_1_ts_329_t_1184400.000000.vtu pressure pressure 1e-6 1e-10
+    ConTracer_1d_pcs_1_ts_33_t_118800.000000_expected.vtu ConTracer_1d_pcs_1_ts_33_t_118800.000000.vtu Cs Cs 1e-10 1e-16
+    ConTracer_1d_pcs_1_ts_66_t_237600.000000_expected.vtu ConTracer_1d_pcs_1_ts_66_t_237600.000000.vtu Cs Cs 1e-10 1e-16
+    ConTracer_1d_pcs_1_ts_99_t_356400.000000_expected.vtu ConTracer_1d_pcs_1_ts_99_t_356400.000000.vtu Cs Cs 1e-10 1e-16
+    ConTracer_1d_pcs_1_ts_132_t_475200.000000_expected.vtu ConTracer_1d_pcs_1_ts_132_t_475200.000000.vtu Cs Cs 1e-10 1e-16
+    ConTracer_1d_pcs_1_ts_165_t_594000.000000_expected.vtu ConTracer_1d_pcs_1_ts_165_t_594000.000000.vtu Cs Cs 1e-10 1e-16
+    ConTracer_1d_pcs_1_ts_198_t_712800.000000_expected.vtu ConTracer_1d_pcs_1_ts_198_t_712800.000000.vtu Cs Cs 1e-10 1e-16
+    ConTracer_1d_pcs_1_ts_231_t_831600.000000_expected.vtu ConTracer_1d_pcs_1_ts_231_t_831600.000000.vtu Cs Cs 1e-10 1e-16
+    ConTracer_1d_pcs_1_ts_264_t_950400.000000_expected.vtu ConTracer_1d_pcs_1_ts_264_t_950400.000000.vtu Cs Cs 1e-10 1e-16
+    ConTracer_1d_pcs_1_ts_297_t_1069200.000000_expected.vtu ConTracer_1d_pcs_1_ts_297_t_1069200.000000.vtu Cs Cs 1e-10 1e-16
+    ConTracer_1d_pcs_1_ts_329_t_1184400.000000_expected.vtu ConTracer_1d_pcs_1_ts_329_t_1184400.000000.vtu Cs Cs 1e-10 1e-16
+)
+
+AddTest(
     NAME 1D_ReactiveMassTransport_EquilibriumPhaseBlockTest
     PATH Parabolic/ComponentTransport/ReactiveTransport/EquilibriumPhase
     EXECUTABLE ogs
