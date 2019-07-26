@@ -95,9 +95,9 @@ PhaseFieldProcess<DisplacementDim>::getDOFTable(const int process_id) const
 template <int DisplacementDim>
 void PhaseFieldProcess<DisplacementDim>::constructDofTable()
 {
-    // Create single component dof in every of the mesh's nodes.
-    _mesh_subset_all_nodes =
-        std::make_unique<MeshLib::MeshSubset>(_mesh, _mesh.getNodes());
+    // For displacement equation.
+    const int mechanics_process_id = 0;
+    constructDofTableOfSpecifiedProsessStaggerdScheme(mechanics_process_id);
 
     // TODO move the two data members somewhere else.
     // for extrapolation of secondary variables of stress or strain
@@ -110,20 +110,6 @@ void PhaseFieldProcess<DisplacementDim>::constructDofTable()
             NumLib::ComponentOrder::BY_LOCATION);
 
     assert(_local_to_global_index_map_single_component);
-
-    // For displacement equation.
-    const int process_id = 0;
-    std::vector<MeshLib::MeshSubset> all_mesh_subsets;
-    std::generate_n(
-        std::back_inserter(all_mesh_subsets),
-        getProcessVariables(process_id)[0].get().getNumberOfComponents(),
-        [&]() { return *_mesh_subset_all_nodes; });
-
-    std::vector<int> const vec_n_components{DisplacementDim};
-    _local_to_global_index_map =
-        std::make_unique<NumLib::LocalToGlobalIndexMap>(
-            std::move(all_mesh_subsets), vec_n_components,
-            NumLib::ComponentOrder::BY_LOCATION);
 
     // For phase field equation.
     _sparsity_pattern_with_single_component = NumLib::computeSparsityPattern(
@@ -237,8 +223,8 @@ void PhaseFieldProcess<DisplacementDim>::assembleWithJacobianConcreteProcess(
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, pv.getActiveElementIDs(), dof_tables, t,
-        x, xdot, dxdot_dx, dx_dx, M, K, b, Jac, _coupled_solutions);
+        _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, x, xdot,
+        dxdot_dx, dx_dx, M, K, b, Jac, _coupled_solutions);
 
     if (_coupled_solutions->process_id == 0)
     {
@@ -285,8 +271,8 @@ void PhaseFieldProcess<DisplacementDim>::postTimestepConcreteProcess(
         dof_tables.emplace_back(*_local_to_global_index_map);
         dof_tables.emplace_back(*_local_to_global_index_map_single_component);
 
-        ProcessLib::ProcessVariable const& pv
-            = getProcessVariables(process_id)[0];
+        ProcessLib::ProcessVariable const& pv =
+            getProcessVariables(process_id)[0];
 
         GlobalExecutor::executeSelectedMemberOnDereferenced(
             &LocalAssemblerInterface::computeEnergy, _local_assemblers,
@@ -316,8 +302,8 @@ void PhaseFieldProcess<DisplacementDim>::postNonLinearSolverConcreteProcess(
 
         DBUG("PostNonLinearSolver crack volume computation.");
 
-        ProcessLib::ProcessVariable const& pv
-            = getProcessVariables(process_id)[0];
+        ProcessLib::ProcessVariable const& pv =
+            getProcessVariables(process_id)[0];
         GlobalExecutor::executeSelectedMemberOnDereferenced(
             &LocalAssemblerInterface::computeCrackIntegral, _local_assemblers,
             pv.getActiveElementIDs(), dof_tables, x, t,
