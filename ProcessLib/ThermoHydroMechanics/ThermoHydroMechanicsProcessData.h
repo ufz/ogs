@@ -45,31 +45,6 @@ struct ThermoHydroMechanicsProcessData
         int,
         std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>>
         solid_materials;
-    /// Permeability of the solid. A scalar quantity,
-    ///	ParameterLib::Parameter<double>.
-    ParameterLib::Parameter<double> const& intrinsic_permeability;
-    /// Volumetric average specific storage of the solid and fluid phases.
-    /// A scalar quantity, ParameterLib::Parameter<double>.
-    ParameterLib::Parameter<double> const& specific_storage;
-    /// Fluid's viscosity. A scalar quantity, ParameterLib::Parameter<double>.
-    ParameterLib::Parameter<double> const& fluid_viscosity;
-    /// Fluid's density. A scalar quantity, ParameterLib::Parameter<double>.
-    ParameterLib::Parameter<double> const& fluid_density;
-    /// Biot coefficient. A scalar quantity, ParameterLib::Parameter<double>.
-    ParameterLib::Parameter<double> const& biot_coefficient;
-    /// Porosity of the solid. A scalar quantity,
-    /// ParameterLib::Parameter<double>.
-    ParameterLib::Parameter<double> const& porosity;
-    /// Solid's density. A scalar quantity, ParameterLib::Parameter<double>.
-    ParameterLib::Parameter<double> const& solid_density;
-    ParameterLib::Parameter<double> const&
-        solid_linear_thermal_expansion_coefficient;
-    ParameterLib::Parameter<double> const&
-        fluid_volumetric_thermal_expansion_coefficient;
-    ParameterLib::Parameter<double> const& solid_specific_heat_capacity;
-    ParameterLib::Parameter<double> const& fluid_specific_heat_capacity;
-    ParameterLib::Parameter<double> const& solid_thermal_conductivity;
-    ParameterLib::Parameter<double> const& fluid_thermal_conductivity;
     ParameterLib::Parameter<double> const& reference_temperature;
     /// Specific body forces applied to solid and fluid.
     /// It is usually used to apply gravitational forces.
