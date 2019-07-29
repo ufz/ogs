@@ -17,6 +17,8 @@
 
 #include <Eigen/Dense>
 
+#include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
+
 namespace MaterialLib
 {
 namespace Solids
@@ -33,6 +35,9 @@ template <int DisplacementDim>
 struct ThermoHydroMechanicsProcessData
 {
     MeshLib::PropertyVector<int> const* const material_ids = nullptr;
+
+    std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>
+        media_map = nullptr;
 
     /// The constitutive relation for the mechanical part.
     /// \note Linear elasticity is the only supported one in the moment.

@@ -12,6 +12,9 @@
 
 #include <cassert>
 
+#include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
+#include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
+
 #include "MaterialLib/SolidModels/CreateConstitutiveRelation.h"
 #include "MaterialLib/SolidModels/MechanicsBase.h"
 #include "ParameterLib/Utils.h"
@@ -27,15 +30,14 @@ namespace ThermoHydroMechanics
 {
 template <int DisplacementDim>
 std::unique_ptr<Process> createThermoHydroMechanicsProcess(
-    std::string name,
-    MeshLib::Mesh& mesh,
+    std::string name, MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     boost::optional<ParameterLib::CoordinateSystem> const&
         local_coordinate_system,
-    unsigned const integration_order,
-    BaseLib::ConfigTree const& config)
+    unsigned const integration_order, BaseLib::ConfigTree const& config,
+    std::map<int, std::unique_ptr<MaterialPropertyLib::Medium>> const& media)
 {
     //! \ogs_file_param{prj__processes__process__type}
     config.checkConfigParameter("type", "THERMO_HYDRO_MECHANICS");
@@ -262,8 +264,12 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
         std::copy_n(b.data(), b.size(), specific_body_force.data());
     }
 
+    auto media_map =
+        MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
+
     ThermoHydroMechanicsProcessData<DisplacementDim> process_data{
         materialIDs(mesh),
+        std::move(media_map),
         std::move(solid_constitutive_relations),
         intrinsic_permeability,
         specific_storage,
@@ -305,7 +311,8 @@ template std::unique_ptr<Process> createThermoHydroMechanicsProcess<2>(
     boost::optional<ParameterLib::CoordinateSystem> const&
         local_coordinate_system,
     unsigned const integration_order,
-    BaseLib::ConfigTree const& config);
+    BaseLib::ConfigTree const& config,
+    std::map<int, std::unique_ptr<MaterialPropertyLib::Medium>> const& media);
 
 template std::unique_ptr<Process> createThermoHydroMechanicsProcess<3>(
     std::string name,
@@ -316,7 +323,7 @@ template std::unique_ptr<Process> createThermoHydroMechanicsProcess<3>(
     boost::optional<ParameterLib::CoordinateSystem> const&
         local_coordinate_system,
     unsigned const integration_order,
-    BaseLib::ConfigTree const& config);
-
+    BaseLib::ConfigTree const& config,
+    std::map<int, std::unique_ptr<MaterialPropertyLib::Medium>> const& media);
 }  // namespace ThermoHydroMechanics
 }  // namespace ProcessLib
