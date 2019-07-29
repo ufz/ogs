@@ -42,7 +42,7 @@ public:
     virtual ~Permeability() = default;
 
     /**
-     *  Get property value.
+     *  Get the intrinsic permeability tensor.
      *  @param t point in time
      *  @param pos spatial position
      *  @param variable    A variable with any double type value.
