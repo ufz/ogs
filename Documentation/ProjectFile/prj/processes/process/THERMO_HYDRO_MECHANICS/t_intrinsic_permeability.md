@@ -1,1 +1,0 @@
-Permeability of porous medium.
