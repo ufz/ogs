@@ -37,8 +37,6 @@ public:
                 "tensor is defined for a %d dimensional problem.",
                 permeability_parameter.getNumberOfComponents(), _dimension);
         }
-        _intrinsic_permeability_tensor =
-            Eigen::MatrixXd(_dimension, _dimension);
     }
 
     ~Permeability() = default;
@@ -58,20 +56,14 @@ public:
         (void)variable;
         (void)temperature;
 
-        _intrinsic_permeability_tensor =
-            Eigen::Map<Eigen::Matrix<double,
-                                     Eigen::Dynamic,
-                                     Eigen::Dynamic,
-                                     Eigen::RowMajor> const>(
-                _permeability_parameter(t, pos).data(), _dimension, _dimension);
-
-        return _intrinsic_permeability_tensor;
+        return Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic,
+                                        Eigen::RowMajor> const>(
+            _permeability_parameter(t, pos).data(), _dimension, _dimension);
     }
 
 private:
     ParameterLib::Parameter<double> const& _permeability_parameter;
     int const _dimension;
-    mutable Eigen::MatrixXd _intrinsic_permeability_tensor;
 };
 
 }  // namespace PorousMedium
