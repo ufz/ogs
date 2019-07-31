@@ -71,6 +71,10 @@ bool IterationNumberBasedTimeStepping::next(double const /*solution_error*/,
     else
     {
         ++_n_rejected_steps;
+        // time step was rejected, keep dt for the next dt computation.
+        _ts_prev =  // essentially equal to _ts_prev.dt = _ts_current.dt.
+            TimeStep{_ts_prev.previous(),
+                     _ts_prev.previous() + _ts_current.dt(), _ts_prev.steps()};
     }
 
     // prepare the next time step info
