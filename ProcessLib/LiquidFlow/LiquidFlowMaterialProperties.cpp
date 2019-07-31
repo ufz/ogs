@@ -95,7 +95,7 @@ double LiquidFlowMaterialProperties::getMassCoefficient(
     return porosity * drho_dp / rho + storage;
 }
 
-Eigen::MatrixXd const& LiquidFlowMaterialProperties::getPermeability(
+Eigen::MatrixXd LiquidFlowMaterialProperties::getPermeability(
     const int material_id, const double t,
     const ParameterLib::SpatialPosition& pos, const int /*dim*/) const
 {

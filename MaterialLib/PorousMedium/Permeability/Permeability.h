@@ -50,10 +50,10 @@ public:
      *  @param variable    A variable with any double type value.
      *  @param temperature Temperature with any double type value.
      */
-    Eigen::MatrixXd const& getValue(const double t,
-                                    ParameterLib::SpatialPosition const& pos,
-                                    const double variable,
-                                    const double temperature) const
+    Eigen::MatrixXd getValue(const double t,
+                             ParameterLib::SpatialPosition const& pos,
+                             const double variable,
+                             const double temperature) const
     {
         (void)variable;
         (void)temperature;

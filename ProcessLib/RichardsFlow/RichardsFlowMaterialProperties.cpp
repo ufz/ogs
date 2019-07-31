@@ -85,7 +85,7 @@ double RichardsFlowMaterialProperties::getFluidViscosity(const double p,
         MaterialLib::Fluid::FluidPropertyType::Viscosity, vars);
 }
 
-Eigen::MatrixXd const& RichardsFlowMaterialProperties::getPermeability(
+Eigen::MatrixXd RichardsFlowMaterialProperties::getPermeability(
     const int material_id, const double t,
     const ParameterLib::SpatialPosition& pos, const int /*dim*/) const
 {
