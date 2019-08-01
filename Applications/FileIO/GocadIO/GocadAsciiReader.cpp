@@ -13,6 +13,10 @@
 
 #include <fstream>
 
+#include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_generators.hpp>
+#include <boost/uuid/uuid_io.hpp>
+
 #include "Applications/FileIO/GocadIO/CoordinateSystem.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/StringTools.h"
@@ -35,6 +39,29 @@ GocadAsciiReader::GocadAsciiReader()
 GocadAsciiReader::GocadAsciiReader(GOCAD_DATA_TYPE const t)
 : _export_type(t)
 {}
+
+/// A GoCAD file may contain multiple datasets with the same name. To avoid
+/// conflicts when writing meshes, a unique id is appended to the mesh name if
+/// another dataset with the same name exists.
+void checkMeshNames(std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes)
+{
+    boost::uuids::random_generator generator;
+    std::size_t const n_meshes = meshes.size();
+    for (std::size_t i=0; i<n_meshes; ++i)
+    {
+        std::string name = meshes[i]->getName();
+        for (std::size_t j=i+1; j<n_meshes; ++j)
+        {
+            if (meshes[j]->getName() == name)
+            {
+                boost::uuids::uuid mesh_id = generator();
+                std::string id_str = boost::lexical_cast<std::string>(mesh_id);
+                meshes[i]->setName(name + "--" + id_str);
+                break;
+            }
+        }
+    }
+}
 
 bool GocadAsciiReader::readFile(
     std::string const& file_name,
@@ -78,6 +105,7 @@ bool GocadAsciiReader::readFile(
         }
         meshes.push_back(std::move(mesh));
     }
+    checkMeshNames(meshes);
     return true;
 }
 
