@@ -332,3 +332,19 @@ AddTest(
     Dupuit_TestSet_01_pcs_0_ts_90_t_7776000.000000.vtu TestSet_01_pcs_0_ts_90_t_7776000.000000.vtu pressure pressure 3e-12 2e-13
     Dupuit_TestSet_01_pcs_0_ts_100_t_8640000.000000.vtu TestSet_01_pcs_0_ts_100_t_8640000.000000.vtu pressure pressure 3e-12 2e-13
 )
+
+AddTest(
+    NAME LiquidFlow_TimeDependentHeterogeneousDirichletBCs
+    PATH Parabolic/LiquidFlow/TimeDependentHeterogeneousBoundaryConditions
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS TimeDependentHeterogeneousBoundaryConditions.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    time_dependent_heterogeneous_bcs_pcs_0_ts_1_t_10.000000.vtu time_dependent_heterogeneous_bcs_pcs_0_ts_1_t_10.000000.vtu pressure pressure 1e-7 1e-13
+    time_dependent_heterogeneous_bcs_pcs_0_ts_118_t_1180.000000.vtu time_dependent_heterogeneous_bcs_pcs_0_ts_118_t_1180.000000.vtu pressure pressure 1e-7 1e-13
+    time_dependent_heterogeneous_bcs_pcs_0_ts_119_t_1190.000000.vtu time_dependent_heterogeneous_bcs_pcs_0_ts_119_t_1190.000000.vtu pressure pressure 1e-7 1e-13
+    time_dependent_heterogeneous_bcs_pcs_0_ts_120_t_1200.000000.vtu time_dependent_heterogeneous_bcs_pcs_0_ts_120_t_1200.000000.vtu pressure pressure 1e-7 1e-13
+    time_dependent_heterogeneous_bcs_pcs_0_ts_200_t_2000.000000.vtu time_dependent_heterogeneous_bcs_pcs_0_ts_200_t_2000.000000.vtu pressure pressure 1e-7 1e-13
+)
