@@ -259,7 +259,7 @@
         </output>
     </time_loop>
     <chemical_system chemical_solver="Phreeqc">
-        <database>revised_llnl.dat</database>
+        <database>1d_isofrac_database.dat</database>
         <solution>
             <temperature>25</temperature>
             <pressure>1</pressure>
@@ -274,6 +274,14 @@
                 <name>Productc</name>
                 <initial_amount>1e-6</initial_amount>
             </kinetic_reactant>
+            <kinetic_reactant>
+                <name>Productd</name>
+                <initial_amount>1e-6</initial_amount>
+            </kinetic_reactant>
+            <kinetic_reactant>
+                <name>Producte</name>
+                <initial_amount>1e-6</initial_amount>
+            </kinetic_reactant>
         </kinetic_reactants>
         <rates>
             <rate>
@@ -282,6 +290,22 @@
                     <statement>Km = 10</statement>
                     <statement>U = 1e-3</statement>
                     <statement>rate = U * TOT("Synthetica") / (Km + TOT("Syntheticb"))</statement>
+                    <statement>moles = - rate * TIME</statement>
+                    <statement>save moles</statement>
+                </expression>
+            </rate>
+            <rate>
+                <kinetic_reactant>Productd</kinetic_reactant>
+                <expression>
+                    <statement>rate = 0</statement>
+                    <statement>moles = - rate * TIME</statement>
+                    <statement>save moles</statement>
+                </expression>
+            </rate>
+            <rate>
+                <kinetic_reactant>Producte</kinetic_reactant>
+                <expression>
+                    <statement>rate = 0</statement>
                     <statement>moles = - rate * TIME</statement>
                     <statement>save moles</statement>
                 </expression>

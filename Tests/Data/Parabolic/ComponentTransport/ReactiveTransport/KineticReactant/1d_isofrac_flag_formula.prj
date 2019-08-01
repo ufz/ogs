@@ -259,7 +259,7 @@
         </output>
     </time_loop>
     <chemical_system chemical_solver="Phreeqc">
-        <database>revised_llnl.dat</database>
+        <database>1d_isofrac_database.dat</database>
         <solution>
             <temperature>25</temperature>
             <pressure>1</pressure>
