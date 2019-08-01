@@ -28,7 +28,13 @@ namespace Gocad
 const std::string mat_id_name = "MaterialIDs";
 const std::string eof_error = "Error: Unexpected end of file.";
 
-GocadAsciiReader::GocadAsciiReader() {}
+GocadAsciiReader::GocadAsciiReader()
+: _export_type(GOCAD_DATA_TYPE::ALL)
+{}
+
+GocadAsciiReader::GocadAsciiReader(GOCAD_DATA_TYPE const t)
+: _export_type(t)
+{}
 
 bool GocadAsciiReader::readFile(
     std::string const& file_name,
@@ -45,6 +51,12 @@ bool GocadAsciiReader::readFile(
     GOCAD_DATA_TYPE type;
     while ((type = datasetFound(in)) != GOCAD_DATA_TYPE::UNDEFINED)
     {
+        if (_export_type != GOCAD_DATA_TYPE::ALL && type != _export_type)
+        {
+            skipToEND(in);
+            continue;
+        }
+
         if (type == GOCAD_DATA_TYPE::VSET || type == GOCAD_DATA_TYPE::MODEL3D)
         {
             if (!skipToEND(in))

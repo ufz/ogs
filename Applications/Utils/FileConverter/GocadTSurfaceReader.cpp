@@ -51,10 +51,32 @@ int main(int argc, char* argv[])
         "if set, OGS-Meshes will be written in binary format");
     cmd.add(write_binary_arg);
 
+    TCLAP::SwitchArg export_lines_arg(
+        "l", "lines-only",
+        "if set, only PLine datasets will be parsed from the input file");
+    cmd.add(export_lines_arg);
+
+    TCLAP::SwitchArg export_surfaces_arg(
+        "s", "surfaces-only",
+        "if set, only TSurf datasets will be parsed from the input file");
+    cmd.add(export_surfaces_arg);
+
     cmd.parse(argc, argv);
 
+    if (export_lines_arg.isSet() && export_surfaces_arg.isSet())
+    {
+        ERR("Both the 'lines-only'-flag and 'surfaces-only'-flag are set. Only one is allowed at a time.")
+        return 2;
+    }
+
     std::string const file_name (input_arg.getValue());
-    FileIO::Gocad::GocadAsciiReader gcts;
+
+    FileIO::Gocad::GOCAD_DATA_TYPE t (FileIO::Gocad::GOCAD_DATA_TYPE::ALL);
+    if (export_lines_arg.isSet())
+        t = FileIO::Gocad::GOCAD_DATA_TYPE::PLINE;
+    if (export_surfaces_arg.isSet())
+        t = FileIO::Gocad::GOCAD_DATA_TYPE::TSURF;
+    FileIO::Gocad::GocadAsciiReader gcts(t);
     std::vector<std::unique_ptr<MeshLib::Mesh>> meshes;
     if (!gcts.readFile(file_name, meshes))
     {

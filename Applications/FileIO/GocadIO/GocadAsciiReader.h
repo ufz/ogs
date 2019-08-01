@@ -33,7 +33,8 @@ enum class GOCAD_DATA_TYPE
     VSET,
     PLINE,
     TSURF,
-    MODEL3D
+    MODEL3D,
+    ALL
 };
 
 class GocadAsciiReader final
@@ -43,6 +44,8 @@ public:
      * Constructor takes as argument the Gocad .sg text file.
      */
     explicit GocadAsciiReader();
+
+    explicit GocadAsciiReader(GOCAD_DATA_TYPE const t);
 
     GocadAsciiReader(GocadAsciiReader&& src) = delete;
     GocadAsciiReader(GocadAsciiReader const& src) = delete;
@@ -117,6 +120,8 @@ private:
         VRTX,
         PVRTX
     };
+
+    GOCAD_DATA_TYPE _export_type;
 };  // end class GocadTSurfaceReader
 
 }  // end namespace Gocad
