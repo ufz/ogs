@@ -16,6 +16,8 @@
 
 #include "HTMaterialProperties.h"
 #include "MaterialLib/MPL/Medium.h"
+#include "MaterialLib/MPL/Utils/FormEigenTensor.h"
+
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
@@ -139,7 +141,7 @@ public:
                     .template value<double>(vars);
 
             auto const intrinsic_permeability =
-                intrinsicPermeability<GlobalDim>(
+                MaterialPropertyLib::formEigenTensor<GlobalDim>(
                     solid_phase
                         .property(
                             MaterialPropertyLib::PropertyType::permeability)
@@ -162,7 +164,8 @@ public:
                     .template value<double>(vars);
 
             // Use the viscosity model to compute the viscosity
-            auto const viscosity = liquid_phase
+            auto const viscosity =
+                liquid_phase
                     .property(MaterialPropertyLib::PropertyType::viscosity)
                     .template value<double>(vars);
             GlobalDimMatrixType K_over_mu = intrinsic_permeability / viscosity;
