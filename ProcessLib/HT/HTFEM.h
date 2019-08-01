@@ -15,7 +15,8 @@
 #include "HTMaterialProperties.h"
 
 #include "MaterialLib/MPL/Medium.h"
-#include "MaterialLib/MPL/PropertyType.h"
+#include "MaterialLib/MPL/Utils/FormEigenTensor.h"
+
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
@@ -29,41 +30,6 @@ namespace ProcessLib
 {
 namespace HT
 {
-
-template <int GlobalDim>
-Eigen::Matrix<double, GlobalDim, GlobalDim> intrinsicPermeability(
-    MaterialPropertyLib::PropertyDataType const& values)
-{
-    if (boost::get<double>(&values))
-    {
-        return Eigen::Matrix<double, GlobalDim, GlobalDim>::Identity() *
-               boost::get<double>(values);
-    }
-    if (boost::get<MaterialPropertyLib::Vector>(&values))
-    {
-        return Eigen::Map<Eigen::Matrix<double, GlobalDim, 1> const>(
-                   boost::get<MaterialPropertyLib::Vector>(values).data(),
-                   GlobalDim, 1)
-            .asDiagonal();
-    }
-    if (boost::get<MaterialPropertyLib::Tensor2d>(&values))
-    {
-        return Eigen::Map<Eigen::Matrix<double, GlobalDim, GlobalDim> const>(
-            boost::get<MaterialPropertyLib::Tensor2d>(values).data(), GlobalDim,
-            GlobalDim);
-    }
-    if (boost::get<MaterialPropertyLib::Tensor>(&values))
-    {
-        return Eigen::Map<Eigen::Matrix<double, GlobalDim, GlobalDim> const>(
-            boost::get<MaterialPropertyLib::Tensor>(values).data(), GlobalDim,
-            GlobalDim);
-    }
-    OGS_FATAL(
-        "Intrinsic permeability parameter values size is neither one nor %d "
-        "nor %d squared.",
-        GlobalDim, GlobalDim);
-}
-
 template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
 class HTFEM : public HTLocalAssemblerInterface
@@ -165,7 +131,7 @@ public:
         auto const& liquid_phase = medium.phase("AqueousLiquid");
         auto const& solid_phase = medium.phase("Solid");
 
-        auto const K = intrinsicPermeability<GlobalDim>(
+        auto const K = MaterialPropertyLib::formEigenTensor<GlobalDim>(
             solid_phase
                 .property(MaterialPropertyLib::PropertyType::permeability)
                 .value(vars));
@@ -231,9 +197,8 @@ protected:
     }
 
     GlobalDimMatrixType getThermalConductivityDispersivity(
-        MaterialPropertyLib::VariableArray const& vars,
-        const double porosity, const double fluid_density,
-        const double specific_heat_capacity_fluid,
+        MaterialPropertyLib::VariableArray const& vars, const double porosity,
+        const double fluid_density, const double specific_heat_capacity_fluid,
         const GlobalDimVectorType& velocity, const GlobalDimMatrixType& I)
     {
         auto const& medium =
@@ -327,7 +292,7 @@ protected:
             vars[static_cast<int>(
                 MaterialPropertyLib::Variable::phase_pressure)] = p_int_pt;
 
-            auto const K = intrinsicPermeability<GlobalDim>(
+            auto const K = MaterialPropertyLib::formEigenTensor<GlobalDim>(
                 solid_phase
                     .property(MaterialPropertyLib::PropertyType::permeability)
                     .value(vars));

@@ -14,7 +14,7 @@
 #include "StaggeredHTFEM.h"
 
 #include "MaterialLib/MPL/Medium.h"
-#include "MaterialLib/MPL/PropertyType.h"
+#include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "ProcessLib/CoupledSolutionsForStaggeredScheme.h"
 
 namespace ProcessLib
@@ -126,11 +126,13 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
             solid_phase.property(MaterialPropertyLib::PropertyType::storage)
                 .template value<double>(vars);
 
-        auto const intrinsic_permeability = intrinsicPermeability<GlobalDim>(
-            solid_phase
-                .property(MaterialPropertyLib::PropertyType::permeability)
-                .value(vars));
-        GlobalDimMatrixType const K_over_mu = intrinsic_permeability / viscosity;
+        auto const intrinsic_permeability =
+            MaterialPropertyLib::formEigenTensor<GlobalDim>(
+                solid_phase
+                    .property(MaterialPropertyLib::PropertyType::permeability)
+                    .value(vars));
+        GlobalDimMatrixType const K_over_mu =
+            intrinsic_permeability / viscosity;
 
         // matrix assembly
         local_M.noalias() +=
@@ -261,10 +263,11 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
             liquid_phase.property(MaterialPropertyLib::PropertyType::viscosity)
                 .template value<double>(vars);
 
-        auto const intrinsic_permeability = intrinsicPermeability<GlobalDim>(
-            solid_phase
-                .property(MaterialPropertyLib::PropertyType::permeability)
-                .value(vars));
+        auto const intrinsic_permeability =
+            MaterialPropertyLib::formEigenTensor<GlobalDim>(
+                solid_phase
+                    .property(MaterialPropertyLib::PropertyType::permeability)
+                    .value(vars));
 
         GlobalDimMatrixType const K_over_mu =
             intrinsic_permeability / viscosity;
