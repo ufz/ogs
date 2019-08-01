@@ -39,7 +39,7 @@
 #include "Applications/FileIO/GMSInterface.h"
 #include "Applications/FileIO/Gmsh/GMSHInterface.h"
 #include "Applications/FileIO/Gmsh/GmshReader.h"
-#include "Applications/FileIO/GocadIO/GocadTSurfaceReader.h"
+#include "Applications/FileIO/GocadIO/GocadAsciiReader.h"
 #include "Applications/FileIO/Legacy/OGSIOVer4.h"
 #include "Applications/FileIO/PetrelInterface.h"
 #include "Applications/FileIO/TetGenInterface.h"
@@ -687,7 +687,7 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
     else if (t == ImportFileType::GOCAD_TSURF)
     {
         std::string file_name(fileName.toStdString());
-        FileIO::Gocad::GocadTSurfaceReader gcts;
+        FileIO::Gocad::GocadAsciiReader gcts;
         std::vector<std::unique_ptr<MeshLib::Mesh>> meshes;
         if (gcts.readFile(file_name, meshes))
         {
