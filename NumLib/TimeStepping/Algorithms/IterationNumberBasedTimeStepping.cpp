@@ -55,13 +55,6 @@ bool IterationNumberBasedTimeStepping::next(double const /*solution_error*/,
 {
     _iter_times = number_iterations;
 
-    // check current time step
-    if (std::abs(_ts_current.current() - end()) <
-        std::numeric_limits<double>::epsilon())
-    {
-        return false;
-    }
-
     // confirm current time and move to the next if accepted
     if (accepted())
     {
