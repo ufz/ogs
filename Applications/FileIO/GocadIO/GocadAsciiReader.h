@@ -45,11 +45,6 @@ public:
     /// Constructor taking a specific data type (will only export that type)
     explicit GocadAsciiReader(GocadDataType const t);
 
-    GocadAsciiReader(GocadAsciiReader&& src) = delete;
-    GocadAsciiReader(GocadAsciiReader const& src) = delete;
-    GocadAsciiReader& operator=(GocadAsciiReader&& rhs) = delete;
-    GocadAsciiReader& operator=(GocadAsciiReader const& rhs) = delete;
-
     /// Reads the specified file and writes data into internal mesh vector
     bool readFile(std::string const& file_name, std::vector<std::unique_ptr<MeshLib::Mesh>>& meshes);
 
