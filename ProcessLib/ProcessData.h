@@ -53,11 +53,6 @@ struct ProcessData
 
     std::unique_ptr<NumLib::TimeStepAlgorithm> timestepper;
 
-    //! Flag of skiping time stepping. It is used in the modelling of
-    //! coupled processes. If the stepping of any process reaches a steady state
-    //! or the ending time, the flag is set to true.
-    bool skip_time_stepping = false;
-
     //! Tag containing the missing type information necessary to cast the
     //! other members of this struct to their concrety types.
     NumLib::NonlinearSolverTag const nonlinear_solver_tag;

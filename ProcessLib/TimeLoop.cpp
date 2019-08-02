@@ -313,15 +313,6 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
                 dt = timestepper->getTimeStep().dt();
             }
         }
-        else
-        {
-            // dt being close to 0 only happens when
-            // t_n + dt > t_s, and dt is forced to be zero. Where t_n the time
-            // of previous time step, and t_s is the specified time taken from
-            // input or the end time. Under this condition, the time stepping
-            // is skipped.
-            ppd.skip_time_stepping = true;
-        }
     }
 
     if (all_process_steps_accepted)
@@ -341,11 +332,6 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
         const auto& ppd = *_per_process_data[i];
         auto& timestepper = ppd.timestepper;
         timestepper->resetCurrentTimeStep(dt);
-
-        if (ppd.skip_time_stepping)
-        {
-            continue;
-        }
 
         if (t == timestepper->begin())
         {
@@ -550,13 +536,6 @@ NumLib::NonlinearSolverStatus TimeLoop::solveUncoupledEquationSystems(
     unsigned process_id = 0;
     for (auto& process_data : _per_process_data)
     {
-        if (process_data->skip_time_stepping)
-        {
-            INFO("Process %u is skipped in the time stepping.", process_id);
-            ++process_id;
-            continue;
-        }
-
         BaseLib::RunTime time_timestep_process;
         time_timestep_process.start();
 
@@ -638,13 +617,6 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
         int const last_process_id = _per_process_data.size() - 1;
         for (auto& process_data : _per_process_data)
         {
-            if (process_data->skip_time_stepping)
-            {
-                INFO("Process %u is skipped in the time stepping.", process_id);
-                ++process_id;
-                continue;
-            }
-
             BaseLib::RunTime time_timestep_process;
             time_timestep_process.start();
 
@@ -737,11 +709,6 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
     int process_id = 0;
     for (auto& process_data : _per_process_data)
     {
-        if (process_data->skip_time_stepping)
-        {
-            ++process_id;
-            continue;
-        }
         CoupledSolutionsForStaggeredScheme coupled_solutions(
             _solutions_of_coupled_processes, dt, process_id);
 
@@ -772,8 +739,7 @@ void TimeLoop::outputSolutions(bool const output_initial_condition,
         auto& pcs = process_data->process;
         // If nonlinear solver diverged, the solution has already been
         // saved.
-        if ((!process_data->nonlinear_solver_status.error_norms_met) ||
-            process_data->skip_time_stepping)
+        if (!process_data->nonlinear_solver_status.error_norms_met)
         {
             ++process_id;
             continue;
