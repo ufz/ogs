@@ -70,7 +70,7 @@ bool GocadAsciiReader::readFile(
     std::ifstream in(file_name.c_str());
     if (!in.is_open())
     {
-        ERR("GocadTSurfaceReader::readFile(): Could not open file %s.",
+        ERR("GocadAsciiReader::readFile(): Could not open file %s.",
             file_name.c_str());
         return false;
     }
@@ -190,7 +190,7 @@ MeshLib::Mesh* GocadAsciiReader::readData(std::ifstream& in,
         }
         else
         {
-            WARN("GocadTSurfaceReader::readMesh() - Unknown keyword found: %s",
+            WARN("GocadAsciiReader::readMesh() - Unknown keyword found: %s",
                  line.c_str());
         }
     }
@@ -371,7 +371,7 @@ bool GocadAsciiReader::parseLine(
         }
         else
         {
-            WARN("GocadTSurfaceReader::parseLine() - Unknown keyword found: %s", line.c_str());
+            WARN("GocadAsciiReader::parseLine() - Unknown keyword found: %s", line.c_str());
         }
     }
     ERR("%s", eof_error.c_str());
@@ -417,7 +417,7 @@ bool GocadAsciiReader::parseSurface(
         }
         else
         {
-            WARN("GocadTSurfaceReader::parseSurface() - Unknown keyword found: %s", line.c_str());
+            WARN("GocadAsciiReader::parseSurface() - Unknown keyword found: %s", line.c_str());
         }
     }
     ERR("%s", eof_error.c_str());
@@ -467,7 +467,7 @@ bool GocadAsciiReader::parseNodes(
         if (!(line.substr(0, 4) == "VRTX" || line.substr(0, 5) == "PVRTX" ||
               line.substr(0, 4) == "ATOM"))
         {
-            WARN("GocadTSurfaceReader::parseNodes() - Unknown keyword found: %s", line.c_str());
+            WARN("GocadAsciiReader::parseNodes() - Unknown keyword found: %s", line.c_str());
             continue;
         }
 

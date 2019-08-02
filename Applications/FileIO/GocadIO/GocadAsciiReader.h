@@ -40,11 +40,9 @@ enum class GOCAD_DATA_TYPE
 class GocadAsciiReader final
 {
 public:
-    /**
-     * Constructor takes as argument the Gocad .sg text file.
-     */
     explicit GocadAsciiReader();
 
+    /// Constructor taking a specific data type (will only export that type)
     explicit GocadAsciiReader(GOCAD_DATA_TYPE const t);
 
     GocadAsciiReader(GocadAsciiReader&& src) = delete;
@@ -62,7 +60,7 @@ private:
     /// Checks if the current line is a comment
     bool isCommentLine(std::string const& str) const;
 
-    /// Checks if a TSurf identifier is found at the current stream position.
+    /// Checks if a GoCAD identifier is found at the current stream position.
     GOCAD_DATA_TYPE datasetFound(std::ifstream& in) const;
 
     /// Parses the HEADER section (everything except the name is ignored right now)
@@ -122,7 +120,7 @@ private:
     };
 
     GOCAD_DATA_TYPE _export_type;
-};  // end class GocadTSurfaceReader
+};  // end class GocadAsciiReader
 
 }  // end namespace Gocad
 }  // end namespace FileIO
