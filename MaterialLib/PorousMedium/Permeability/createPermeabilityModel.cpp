@@ -17,6 +17,7 @@
 #include "BaseLib/ConfigTree.h"
 
 #include "BaseLib/Error.h"
+#include "MaterialLib/PorousMedium/Permeability/DupuitPermeability.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "ParameterLib/ConstantParameter.h"
 #include "ParameterLib/SpatialPosition.h"
@@ -54,6 +55,29 @@ std::unique_ptr<Permeability> createPermeabilityModel(
 
         return std::make_unique<Permeability>(
             permeability_parameter, dimension);
+    }
+
+    if (type == "Dupuit")
+    {
+        auto const& permeability_parameter = ParameterLib::findParameter<
+            double>(
+            config,
+            //! \ogs_file_param_special{material__porous_medium__permeability__permeability_tensor_entries}
+            "permeability_tensor_entries", parameters, 0);
+
+        int dimension = static_cast<int>(
+            std::sqrt(permeability_parameter.getNumberOfComponents()));
+        if (permeability_parameter.getNumberOfComponents() !=
+            dimension * dimension)
+        {
+            OGS_FATAL(
+                "The given parameter has %d components, but the permeability "
+                "tensor is defined for a %d dimensional problem.",
+                permeability_parameter.getNumberOfComponents(), dimension);
+        }
+
+        return std::make_unique<DupuitPermeability>(permeability_parameter,
+                                                    dimension);
     }
     OGS_FATAL("The permeability type '%s' is unavailable.\n",
               "The available types are \n\tConstant.",

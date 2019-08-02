@@ -37,41 +37,33 @@ public:
                 "tensor is defined for a %d dimensional problem.",
                 permeability_parameter.getNumberOfComponents(), _dimension);
         }
-        _intrinsic_permeability_tensor =
-            Eigen::MatrixXd(_dimension, _dimension);
     }
 
-    ~Permeability() = default;
+    virtual ~Permeability() = default;
 
     /**
-     *  Get property value.
+     *  Get the intrinsic permeability tensor.
      *  @param t point in time
      *  @param pos spatial position
      *  @param variable    A variable with any double type value.
      *  @param temperature Temperature with any double type value.
      */
-    Eigen::MatrixXd const& getValue(const double t,
-                                    ParameterLib::SpatialPosition const& pos,
-                                    const double variable,
-                                    const double temperature) const
+    virtual Eigen::MatrixXd getValue(const double t,
+                                     ParameterLib::SpatialPosition const& pos,
+                                     const double variable,
+                                     const double temperature) const
     {
         (void)variable;
         (void)temperature;
 
-        _intrinsic_permeability_tensor =
-            Eigen::Map<Eigen::Matrix<double,
-                                     Eigen::Dynamic,
-                                     Eigen::Dynamic,
-                                     Eigen::RowMajor> const>(
-                _permeability_parameter(t, pos).data(), _dimension, _dimension);
-
-        return _intrinsic_permeability_tensor;
+        return Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic,
+                                        Eigen::RowMajor> const>(
+            _permeability_parameter(t, pos).data(), _dimension, _dimension);
     }
 
 private:
     ParameterLib::Parameter<double> const& _permeability_parameter;
     int const _dimension;
-    mutable Eigen::MatrixXd _intrinsic_permeability_tensor;
 };
 
 }  // namespace PorousMedium

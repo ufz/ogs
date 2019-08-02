@@ -63,11 +63,10 @@ public:
 
     int getMaterialID(const std::size_t element_id);
 
-    Eigen::MatrixXd const& getPermeability(
-        const int material_id,
-        const double t,
-        const ParameterLib::SpatialPosition& pos,
-        const int dim) const;
+    Eigen::MatrixXd getPermeability(const int material_id,
+                                    const double t,
+                                    const ParameterLib::SpatialPosition& pos,
+                                    const int dim) const;
 
     double getPorosity(const int material_id, const double t,
                        const ParameterLib::SpatialPosition& pos, const double p,

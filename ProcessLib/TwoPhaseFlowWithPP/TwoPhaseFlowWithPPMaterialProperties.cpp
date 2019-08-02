@@ -120,7 +120,7 @@ double TwoPhaseFlowWithPPMaterialProperties::getGasViscosity(
     return _gas_viscosity->getValue(vars);
 }
 
-Eigen::MatrixXd const& TwoPhaseFlowWithPPMaterialProperties::getPermeability(
+Eigen::MatrixXd TwoPhaseFlowWithPPMaterialProperties::getPermeability(
     const int material_id, const double t,
     const ParameterLib::SpatialPosition& pos, const int /*dim*/) const
 {
