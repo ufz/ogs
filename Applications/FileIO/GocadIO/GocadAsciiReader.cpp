@@ -33,10 +33,9 @@ const std::string mat_id_name = "MaterialIDs";
 const std::string eof_error = "Error: Unexpected end of file.";
 
 GocadAsciiReader::GocadAsciiReader()
-: _export_type(GOCAD_DATA_TYPE::ALL)
-{}
+: _export_type(GocadDataType::ALL) {}
 
-GocadAsciiReader::GocadAsciiReader(GOCAD_DATA_TYPE const t)
+GocadAsciiReader::GocadAsciiReader(GocadDataType const t)
 : _export_type(t)
 {}
 
@@ -75,20 +74,20 @@ bool GocadAsciiReader::readFile(
         return false;
     }
 
-    GOCAD_DATA_TYPE type;
-    while ((type = datasetFound(in)) != GOCAD_DATA_TYPE::UNDEFINED)
+    GocadDataType type;
+    while ((type = datasetFound(in)) != GocadDataType::UNDEFINED)
     {
-        if (_export_type != GOCAD_DATA_TYPE::ALL && type != _export_type)
+        if (_export_type != GocadDataType::ALL && type != _export_type)
         {
             skipToEND(in);
             continue;
         }
 
-        if (type == GOCAD_DATA_TYPE::VSET || type == GOCAD_DATA_TYPE::MODEL3D)
+        if (type == GocadDataType::VSET || type == GocadDataType::MODEL3D)
         {
             if (!skipToEND(in))
             {
-                std::string const t = (type == GOCAD_DATA_TYPE::VSET) ? "VSet" : "Model3D";
+                std::string const t = (type == GocadDataType::VSET) ? "VSet" : "Model3D";
                 ERR("Parsing of type %s is not implemented. Skipping section.", t);
                 return false;
             }
@@ -110,7 +109,7 @@ bool GocadAsciiReader::readFile(
 }
 
 MeshLib::Mesh* GocadAsciiReader::readData(std::ifstream& in,
-                                          GOCAD_DATA_TYPE const& type,
+                                          GocadDataType const& type,
                                           std::string& mesh_name)
 {
     if (!parseHeader(in, mesh_name))
@@ -160,7 +159,7 @@ MeshLib::Mesh* GocadAsciiReader::readData(std::ifstream& in,
                 return nullptr;
             }
         }
-        else if (type == GOCAD_DATA_TYPE::PLINE && str[0] == "ILINE")
+        else if (type == GocadDataType::PLINE && str[0] == "ILINE")
         {
             std::vector<MeshLib::Node*> nodes;
             std::vector<MeshLib::Element*> elems;
@@ -174,7 +173,7 @@ MeshLib::Mesh* GocadAsciiReader::readData(std::ifstream& in,
             }
             return new MeshLib::Mesh(mesh_name, nodes, elems, mesh_prop);
         }
-        else if (type == GOCAD_DATA_TYPE::TSURF && str[0] == "TFACE")
+        else if (type == GocadDataType::TSURF && str[0] == "TFACE")
         {
             std::vector<MeshLib::Node*> nodes;
             std::vector<MeshLib::Element*> elems;
@@ -198,7 +197,7 @@ MeshLib::Mesh* GocadAsciiReader::readData(std::ifstream& in,
     return nullptr;
 }
 
-GOCAD_DATA_TYPE GocadAsciiReader::datasetFound(std::ifstream& in) const
+GocadDataType GocadAsciiReader::datasetFound(std::ifstream& in) const
 {
     std::string line;
     while (std::getline(in, line))
@@ -210,27 +209,27 @@ GOCAD_DATA_TYPE GocadAsciiReader::datasetFound(std::ifstream& in) const
 
         if (line.substr(0, 10) == "GOCAD VSet")
         {
-            return GOCAD_DATA_TYPE::VSET;
+            return GocadDataType::VSET;
         }
         else if (line.substr(0, 11) == "GOCAD PLine")
         {
-            return GOCAD_DATA_TYPE::PLINE;
+            return GocadDataType::PLINE;
         }
         else if (line.substr(0, 11) == "GOCAD TSurf")
         {
-            return GOCAD_DATA_TYPE::TSURF;
+            return GocadDataType::TSURF;
         }
         else if (line.substr(0, 13) == "GOCAD Model3d")
         {
-            return GOCAD_DATA_TYPE::MODEL3D;
+            return GocadDataType::MODEL3D;
         }
         else
         {
             ERR("No known identifier found...");
-            return GOCAD_DATA_TYPE::UNDEFINED;
+            return GocadDataType::UNDEFINED;
         }
     }
-    return GOCAD_DATA_TYPE::UNDEFINED;
+    return GocadDataType::UNDEFINED;
 }
 
 bool GocadAsciiReader::isCommentLine(std::string const& str) const
@@ -439,7 +438,7 @@ bool GocadAsciiReader::parseNodes(
     std::map<std::size_t, std::size_t>& node_id_map,
     MeshLib::Properties& mesh_prop)
 {
-    NODE_TYPE t = NODE_TYPE::UNSPECIFIED;
+    NodeType t = NodeType::UNSPECIFIED;
     double value;
     std::vector<std::string> const array_names =
         mesh_prop.getPropertyVectorNames();
@@ -472,11 +471,11 @@ bool GocadAsciiReader::parseNodes(
         }
 
         std::stringstream sstr(line);
-        if (line.substr(0, 4) == "VRTX" && t != NODE_TYPE::PVRTX)
+        if (line.substr(0, 4) == "VRTX" && t != NodeType::PVRTX)
         {
             nodes.push_back(createNode(sstr));
         }
-        else if (line.substr(0, 5) == "PVRTX" && t != NODE_TYPE::VRTX)
+        else if (line.substr(0, 5) == "PVRTX" && t != NodeType::VRTX)
         {
             nodes.push_back(createNode(sstr));
             for (std::string const& name : array_names)

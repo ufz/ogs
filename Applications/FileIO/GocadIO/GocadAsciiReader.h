@@ -27,7 +27,7 @@ namespace FileIO
 namespace Gocad
 {
 
-enum class GOCAD_DATA_TYPE
+enum class GocadDataType
 {
     UNDEFINED,
     VSET,
@@ -43,7 +43,7 @@ public:
     explicit GocadAsciiReader();
 
     /// Constructor taking a specific data type (will only export that type)
-    explicit GocadAsciiReader(GOCAD_DATA_TYPE const t);
+    explicit GocadAsciiReader(GocadDataType const t);
 
     GocadAsciiReader(GocadAsciiReader&& src) = delete;
     GocadAsciiReader(GocadAsciiReader const& src) = delete;
@@ -55,13 +55,14 @@ public:
 
 private:
     /// Reads one mesh contained in the file (there may be more than one!)
-    MeshLib::Mesh* readData(std::ifstream& in, GOCAD_DATA_TYPE const& type, std::string& mesh_name);
+    MeshLib::Mesh* readData(std::ifstream& in, GocadDataType const& type,
+                            std::string& mesh_name);
 
     /// Checks if the current line is a comment
     bool isCommentLine(std::string const& str) const;
 
     /// Checks if a GoCAD identifier is found at the current stream position.
-    GOCAD_DATA_TYPE datasetFound(std::ifstream& in) const;
+    GocadDataType datasetFound(std::ifstream& in) const;
 
     /// Parses the HEADER section (everything except the name is ignored right now)
     bool parseHeader(std::ifstream& in, std::string& mesh_name);
@@ -112,14 +113,14 @@ private:
     void clearData(std::vector<MeshLib::Node*>& nodes,
                    std::vector<MeshLib::Element*>& elems);
 
-    enum class NODE_TYPE
+    enum class NodeType
     {
         UNSPECIFIED,
         VRTX,
         PVRTX
     };
 
-    GOCAD_DATA_TYPE _export_type;
+    GocadDataType _export_type;
 };  // end class GocadAsciiReader
 
 }  // end namespace Gocad
