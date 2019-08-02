@@ -13,19 +13,6 @@
                 <youngs_modulus>E</youngs_modulus>
                 <poissons_ratio>nu</poissons_ratio>
             </constitutive_relation>
-            <intrinsic_permeability>k</intrinsic_permeability>
-            <specific_storage>S</specific_storage>
-            <biot_coefficient>alpha</biot_coefficient>
-            <porosity>phi</porosity>
-            <solid_density>rho_sr</solid_density>
-            <fluid_density>rho_fr</fluid_density>
-            <fluid_viscosity>mu</fluid_viscosity>
-            <fluid_volumetric_thermal_expansion_coefficient>beta_f</fluid_volumetric_thermal_expansion_coefficient>
-            <solid_linear_thermal_expansion_coefficient>alpha_s</solid_linear_thermal_expansion_coefficient>
-            <solid_specific_heat_capacity>C_s</solid_specific_heat_capacity>
-            <solid_thermal_conductivity>lambda_s</solid_thermal_conductivity>
-            <fluid_specific_heat_capacity>C_f</fluid_specific_heat_capacity>
-            <fluid_thermal_conductivity>lambda_f</fluid_thermal_conductivity>
             <reference_temperature>T0</reference_temperature>
             <process_variables>
                 <displacement>displacement</displacement>
@@ -39,6 +26,94 @@
             <specific_body_force>0 0</specific_body_force>
         </process>
     </processes>
+
+    <media>
+        <medium id="0">
+            <phases>
+                <phase>
+                    <type>AqueousLiquid</type>
+                    <properties>
+                        <property>
+                            <name>specific_heat_capacity</name>
+                            <type>Constant</type>
+                            <value>4280.0</value>
+                        </property>
+                        <property>
+                            <name>thermal_conductivity</name>
+                            <type>Constant</type>
+                            <value>0.6</value>
+                        </property>
+                        <property>
+                            <name>density</name>
+                            <type>Linear</type>
+                            <reference_value>999.1</reference_value>
+                            <independent_variable>
+                                <variable_name>temperature</variable_name>
+                                <reference_condition>273.15</reference_condition>
+                                <slope>-4e-4</slope>
+                            </independent_variable>
+                        </property>
+                        <property>
+                            <name>thermal_expansivity</name>
+                            <type>Constant</type>
+                            <value>4.0e-4</value>
+                        </property>
+                        <property>
+                            <name>viscosity</name>
+                            <type>Constant</type>
+                            <value>1.e-3</value>
+                        </property>
+                    </properties>
+                </phase>
+                <phase>
+                    <type>Solid</type>
+                    <properties>
+                        <property>
+                            <name>permeability</name>
+                            <type>Constant</type>
+                            <value>2e-20 0 0 2e-20</value>
+                        </property>
+                        <property>
+                            <name>porosity</name>
+                            <type>Constant</type>
+                            <value>0.16</value>
+                        </property>
+                        <property>
+                            <name>storage</name>
+                            <type>Constant</type>
+                            <value>0.0</value>
+                        </property>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>2290</value>
+                        </property>
+                        <property>
+                            <name>thermal_conductivity</name>
+                            <type>Constant</type>
+                            <value>1.838</value>
+                        </property>
+                        <property>
+                            <name>specific_heat_capacity</name>
+                            <type>Constant</type>
+                            <value>917.654</value>
+                        </property>
+                        <property>
+                            <name>biot_coefficient</name>
+                            <type>Constant</type>
+                            <value>1.0</value>
+                        </property>
+                        <property>
+                            <name>thermal_expansivity</name>
+                            <type>Constant</type>
+                            <value>1.5e-5</value>
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+        </medium>
+    </media>
+
     <time_loop>
         <processes>
             <process ref="THERMO_HYDRO_MECHANICS">
@@ -94,51 +169,6 @@
             <value>0.3</value>
         </parameter>
         <parameter>
-            <name>k</name>
-            <type>Constant</type>
-            <value>2e-20</value>
-        </parameter>
-        <parameter>
-            <name>S</name>
-            <type>Constant</type>
-            <value>0</value>
-        </parameter>
-        <parameter>
-            <name>alpha</name>
-            <type>Constant</type>
-            <value>1</value>
-        </parameter>
-        <parameter>
-            <name>phi</name>
-            <type>Constant</type>
-            <value>0.16</value>
-        </parameter>
-        <parameter>
-            <name>rho_sr</name>
-            <type>Constant</type>
-            <value>2290</value>
-        </parameter>
-        <parameter>
-            <name>alpha_s</name>
-            <type>Constant</type>
-            <value>1.5e-5</value>
-        </parameter>
-        <parameter>
-            <name>beta_f</name>
-            <type>Constant</type>
-            <value>4e-4</value>
-        </parameter>
-        <parameter>
-            <name>lambda_s</name>
-            <type>Constant</type>
-            <value>1.838</value>
-        </parameter>
-        <parameter>
-            <name>C_s</name>
-            <type>Constant</type>
-            <value>917.654</value>
-        </parameter>
-        <parameter>
             <name>T0</name>
             <type>Constant</type>
             <value>273.15</value>
@@ -182,26 +212,6 @@
             <name>temperature_source_term</name>
             <type>Constant</type>
             <value>150</value>
-        </parameter>
-        <parameter>
-            <name>rho_fr</name>
-            <type>Constant</type>
-            <value>999.1</value>
-        </parameter>
-        <parameter>
-            <name>mu</name>
-            <type>Constant</type>
-            <value>1e-3</value>
-        </parameter>
-        <parameter>
-            <name>C_f</name>
-            <type>Constant</type>
-            <value>4280</value>
-        </parameter>
-        <parameter>
-            <name>lambda_f</name>
-            <type>Constant</type>
-            <value>0.6</value>
         </parameter>
     </parameters>
     <process_variables>
