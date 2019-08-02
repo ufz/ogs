@@ -348,3 +348,19 @@ AddTest(
     time_dependent_heterogeneous_bcs_pcs_0_ts_120_t_1200.000000.vtu time_dependent_heterogeneous_bcs_pcs_0_ts_120_t_1200.000000.vtu pressure pressure 1e-7 1e-13
     time_dependent_heterogeneous_bcs_pcs_0_ts_200_t_2000.000000.vtu time_dependent_heterogeneous_bcs_pcs_0_ts_200_t_2000.000000.vtu pressure pressure 1e-7 1e-13
 )
+
+AddTest(
+    NAME LiquidFlow_TimeDependentHeterogeneousSourceTerm
+    PATH Parabolic/LiquidFlow/TimeDependentHeterogeneousSourceTerm
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS TimeDependentHeterogeneousSourceTerm.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    time_dependent_heterogeneous_source_term_pcs_0_ts_1_t_10.000000.vtu time_dependent_heterogeneous_source_term_pcs_0_ts_1_t_10.000000.vtu pressure pressure 1e-7 1e-13
+    time_dependent_heterogeneous_source_term_pcs_0_ts_118_t_1180.000000.vtu time_dependent_heterogeneous_source_term_pcs_0_ts_118_t_1180.000000.vtu pressure pressure 1e-7 1e-13
+    time_dependent_heterogeneous_source_term_pcs_0_ts_119_t_1190.000000.vtu time_dependent_heterogeneous_source_term_pcs_0_ts_119_t_1190.000000.vtu pressure pressure 1e-7 1e-13
+    time_dependent_heterogeneous_source_term_pcs_0_ts_120_t_1200.000000.vtu time_dependent_heterogeneous_source_term_pcs_0_ts_120_t_1200.000000.vtu pressure pressure 1e-7 1e-13
+    time_dependent_heterogeneous_source_term_pcs_0_ts_200_t_2000.000000.vtu time_dependent_heterogeneous_source_term_pcs_0_ts_200_t_2000.000000.vtu pressure pressure 1e-7 1e-13
+)
