@@ -65,7 +65,8 @@ int main(int argc, char* argv[])
 
     if (export_lines_arg.isSet() && export_surfaces_arg.isSet())
     {
-        ERR("Both the 'lines-only'-flag and 'surfaces-only'-flag are set. Only one is allowed at a time.")
+        ERR("Both the 'lines-only'-flag and 'surfaces-only'-flag are set. Only "
+            "one is allowed at a time.")
         return 2;
     }
 

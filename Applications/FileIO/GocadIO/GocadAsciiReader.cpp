@@ -112,8 +112,7 @@ MeshLib::Mesh* GocadAsciiReader::readData(std::ifstream& in,
     }
 
     MeshLib::Properties mesh_prop;
-    mesh_prop.createNewPropertyVector<int>(mat_id_name,
-                                           MeshLib::MeshItemType::Cell, 1);
+    mesh_prop.createNewPropertyVector<int>(mat_id_name, MeshLib::MeshItemType::Cell, 1);
     std::string line;
     while (std::getline(in, line))
     {
@@ -153,29 +152,21 @@ MeshLib::Mesh* GocadAsciiReader::readData(std::ifstream& in,
                 return nullptr;
             }
         }
-        else if (type == GocadDataType::PLINE && str[0] == "ILINE")
+        else if ((type == GocadDataType::PLINE && str[0] == "ILINE") ||
+                 (type == GocadDataType::TSURF && str[0] == "TFACE"))
         {
             std::vector<MeshLib::Node*> nodes;
             std::vector<MeshLib::Element*> elems;
             std::map<std::size_t, std::size_t> node_id_map;
-            INFO("Parsing line %s", mesh_name.c_str());
-            if (!parseLine(in, nodes, elems, node_id_map, mesh_prop))
+            std::string const data_str =
+                (str[0] == "ILINE") ? "line" : "surface";
+            INFO("Parsing %s %s", data_str.c_str(), mesh_name.c_str());
+            bool ret = (type == GocadDataType::PLINE)
+                    ? parseLine(in, nodes, elems, node_id_map, mesh_prop)
+                    : parseSurface(in, nodes, elems, node_id_map, mesh_prop);
+            if (ret == false)
             {
-                ERR("Error parsing Line %s.", mesh_name.c_str());
-                clearData(nodes, elems);
-                return nullptr;
-            }
-            return new MeshLib::Mesh(mesh_name, nodes, elems, mesh_prop);
-        }
-        else if (type == GocadDataType::TSURF && str[0] == "TFACE")
-        {
-            std::vector<MeshLib::Node*> nodes;
-            std::vector<MeshLib::Element*> elems;
-            std::map<std::size_t, std::size_t> node_id_map;
-            INFO ("Parsing surface %s", mesh_name.c_str());
-            if (!parseSurface(in, nodes, elems, node_id_map, mesh_prop))
-            {
-                ERR("Error parsing Surface %s.", mesh_name.c_str());
+                ERR("Error parsing %s %s.", data_str.c_str(), mesh_name.c_str());
                 clearData(nodes, elems);
                 return nullptr;
             }
@@ -183,7 +174,7 @@ MeshLib::Mesh* GocadAsciiReader::readData(std::ifstream& in,
         }
         else
         {
-            WARN("GocadAsciiReader::readMesh() - Unknown keyword found: %s",
+            WARN("GocadAsciiReader::readData() - Unknown keyword found: %s",
                  line.c_str());
         }
     }
@@ -358,14 +349,11 @@ bool GocadAsciiReader::parseLine(
             parseLine(in, nodes, elems, node_id_map, mesh_prop);
             return true;
         }
-        else if (line == "END")
+        if (line == "END")
         {
             return true;
         }
-        else
-        {
-            WARN("GocadAsciiReader::parseLine() - Unknown keyword found: %s", line.c_str());
-        }
+        WARN("GocadAsciiReader::parseLine() - Unknown keyword found: %s", line.c_str());
     }
     ERR("%s", eof_error.c_str());
     return false;
@@ -504,7 +492,6 @@ bool GocadAsciiReader::parseLineSegments(
     std::map<std::size_t, std::size_t> const& node_id_map,
     MeshLib::Properties& mesh_prop)
 {
-    std::string keyword;
     std::array<std::size_t, 3> data;
     MeshLib::PropertyVector<int>& mat_ids =
         *mesh_prop.getPropertyVector<int>(mat_id_name);
@@ -525,6 +512,7 @@ bool GocadAsciiReader::parseLineSegments(
         if (line.substr(0, 3) == "SEG")
         {
             std::stringstream sstr(line);
+            std::string keyword;
             sstr >> keyword >> data[0] >> data[1];
             std::array<MeshLib::Node*, 2> elem_nodes;
             for (std::size_t i = 0; i < 2; ++i)
@@ -559,7 +547,6 @@ bool GocadAsciiReader::parseElements(
     std::map<std::size_t, std::size_t> const& node_id_map,
     MeshLib::Properties& mesh_prop)
 {
-    std::string keyword;
     std::array<std::size_t, 3> data;
     MeshLib::PropertyVector<int>& mat_ids =
         *mesh_prop.getPropertyVector<int>(mat_id_name);
@@ -580,6 +567,7 @@ bool GocadAsciiReader::parseElements(
         if (line.substr(0, 4) == "TRGL")
         {
             std::stringstream sstr(line);
+            std::string keyword;
             sstr >> keyword >> data[0] >> data[1] >> data[2];
             std::array<MeshLib::Node*, 3> elem_nodes;
             for (std::size_t i = 0; i < 3; ++i)
