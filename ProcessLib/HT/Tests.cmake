@@ -431,10 +431,10 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    ThermalConvection_pcs_0_ts_1_t_0.000000_expected.vtu ThermalConvection_pcs_0_ts_1_t_0.000000.vtu T T 1e-10 1e-16
-    ThermalConvection_pcs_0_ts_1_t_0.000000_expected.vtu ThermalConvection_pcs_0_ts_1_t_0.000000.vtu p p 7e-7 1e-12
-    ThermalConvection_pcs_0_ts_1_t_0.000000_expected.vtu ThermalConvection_pcs_0_ts_1_t_0.000000.vtu darcy_velocity darcy_velocity 1e-8 1e-13
-    VIS ThermalConvection_pcs_0_ts_1_t_0.000000.vtu
+    ThermalConvection_pcs_0_ts_1_t_100.000000_expected.vtu ThermalConvection_pcs_0_ts_1_t_100.000000.vtu T T 4e-3 5e-2
+    ThermalConvection_pcs_0_ts_1_t_100.000000_expected.vtu ThermalConvection_pcs_0_ts_1_t_100.000000.vtu p p 7e-7 1e-12
+    ThermalConvection_pcs_0_ts_1_t_100.000000_expected.vtu ThermalConvection_pcs_0_ts_1_t_100.000000.vtu darcy_velocity darcy_velocity 1e-8 1e-13
+    VIS ThermalConvection_pcs_0_ts_1_t_100.000000.vtu
 )
 
 if(NOT OGS_USE_MPI AND BUILD_TESTING AND Python3_FOUND)

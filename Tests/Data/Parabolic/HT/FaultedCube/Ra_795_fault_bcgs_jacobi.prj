@@ -66,11 +66,6 @@
                     <type>Solid</type>
                     <properties>
                         <property>
-                            <name>storage</name>
-                            <type>Constant</type>
-                            <value>0.0</value>
-                        </property>
-                        <property>
                             <name>density</name>
                             <type>Constant</type>
                             <value>0.0</value>
@@ -214,11 +209,11 @@
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial> 0.0 </t_initial>
-                    <t_end> 1e-7 </t_end>
+                    <t_end> 100 </t_end>
                     <timesteps>
                         <pair>
                             <repeat>1</repeat>
-                            <delta_t>1e-7</delta_t>
+                            <delta_t>100</delta_t>
                         </pair>
                         <pair>
                             <repeat>1</repeat>
@@ -409,16 +404,16 @@
             <type>Constant</type>
             <value>20</value>
         </parameter>
-        <parameter>
+          <parameter>
             <name>kappa1</name>
             <type>Constant</type>
             <values>1.0e-18 0 0 0 1.0e-18 0 0 0 1.0e-18</values>
-        </parameter>
-        <parameter>
+          </parameter>
+          <parameter>
             <name>kappa2</name>
             <type>Constant</type>
             <values>1.7e-13 0 0 0 1.7e-13 0 0 0 1.7e-13</values>
-        </parameter>
+          </parameter>
         <parameter>
             <name>constant_porosity_parameter</name>
             <type>Constant</type>
