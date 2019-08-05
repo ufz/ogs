@@ -48,38 +48,32 @@ std::unique_ptr<ParameterBase> createParameter(
     if (type == "Constant")
     {
         INFO("ConstantParameter: %s", name.c_str());
-        auto param = createConstantParameter(name, config);
-        return param;
+        return createConstantParameter(name, config);
     }
     if (type == "CurveScaled")
     {
         INFO("CurveScaledParameter: %s", name.c_str());
-        auto param = createCurveScaledParameter(name, config, curves);
-        return param;
+        return createCurveScaledParameter(name, config, curves);
     }
     if (type == "Function")
     {
         INFO("FunctionParameter: %s", name.c_str());
-        auto param = createFunctionParameter(name, config, mesh);
-        return param;
+        return createFunctionParameter(name, config, mesh);
     }
     if (type == "Group")
     {
         INFO("GroupBasedParameter: %s", name.c_str());
-        auto param = createGroupBasedParameter(name, config, mesh);
-        return param;
+        return createGroupBasedParameter(name, config, mesh);
     }
     if (type == "MeshElement")
     {
         INFO("MeshElementParameter: %s", name.c_str());
-        auto param = createMeshElementParameter(name, config, mesh);
-        return param;
+        return createMeshElementParameter(name, config, mesh);
     }
     if (type == "MeshNode")
     {
         INFO("MeshNodeParameter: %s", name.c_str());
-        auto param = createMeshNodeParameter(name, config, mesh);
-        return param;
+        return createMeshNodeParameter(name, config, mesh);
     }
     if (type == "TimeDependentHeterogeneousParameter")
     {
