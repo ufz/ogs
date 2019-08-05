@@ -25,8 +25,13 @@
                     <properties>
                         <property>
                             <name>density</name>
-                            <type>Constant</type>
-                            <value>1e-3</value>
+                            <type>Linear</type>
+                            <reference_value>1e-3</reference_value>
+                            <independent_variable>
+                                <variable_name>phase_pressure</variable_name>
+                                <reference_condition>1</reference_condition>
+                                <slope>1e-2</slope>
+                            </independent_variable>
                         </property>
                         <property>
                             <name>viscosity</name>
@@ -49,9 +54,9 @@
                     <type>Solid</type>
                     <properties>
                         <property>
-                            <name>storage</name>
+                            <name>permeability</name>
                             <type>Constant</type>
-                            <value>1e-5</value>
+                            <value>1.e-8 0 0 1.e-8</value>
                         </property>
                         <property>
                             <name>density</name>
