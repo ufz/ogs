@@ -8,7 +8,7 @@ weight = 70
 
 [menu]
   [menu.benchmarks]
-    parent = "Thermo-Hydro-Mechanics"
+    parent = "thermo-hydro-mechanics"
 
 +++
 
