@@ -1,0 +1,117 @@
+# extracted from original llnl.dat file. Added two custom synthetic solution
+#species (synthetica and syntheticb) and one associated mineral
+#precipitate (productc).
+
+#  $Id: llnl.dat 4023 2010-02-09 21:02:42Z dlpark $
+#Data are from 'thermo.com.V8.R6.230' prepared by Jim Johnson at
+#Lawrence Livermore National Laboratory, in Geochemist's Workbench
+#format. Converted to Phreeqc format by Greg Anderson with help from
+#David Parkhurst. A few organic species have been omitted.
+
+#Delta H of reaction calculated from Delta H of formations given in
+#thermo.com.V8.R6.230 (8 Mar 2000).
+
+#Note that species have various valid temperature ranges, noted in
+#the Range parameter. However, Phreeqc at present makes no use of
+#this parameter, so it is the user's responsibility to remain in the
+#valid temperature range for all the data used.
+
+#This version is relatively untested. Kindly send comments or
+#corrections to Greg Anderson at greg@geology.utoronto.ca.
+
+LLNL_AQUEOUS_MODEL_PARAMETERS
+-temperatures
+         0.0100   25.0000   60.0000  100.0000
+       150.0000  200.0000  250.0000  300.0000
+#debye huckel a (adh)
+-dh_a
+         0.4939    0.5114    0.5465    0.5995
+         0.6855    0.7994    0.9593    1.2180
+#debye huckel b (bdh)
+-dh_b
+         0.3253    0.3288    0.3346    0.3421
+         0.3525    0.3639    0.3766    0.3925
+-bdot
+         0.0374    0.0410    0.0438    0.0460
+         0.0470    0.0470    0.0340    0.0000
+#cco2   (coefficients for the Drummond (1981) polynomial)
+-co2_coefs
+        -1.0312              0.0012806
+          255.9                 0.4445
+      -0.001606
+
+SOLUTION_MASTER_SPECIES
+
+#element species        alk     gfw_formula     element_gfw
+E        e-             0.0     0.0             0.0
+H        H+             -1.     H               1.0079
+H(0)     H2             0.0     H
+H(+1)    H+             -1.     0.0
+O        H2O            0.0     O               15.994
+O(-2)    H2O            0.0     0.0
+O(0)     O2             0.0     O
+Synthetica Synthetica+ 0.0 Synthetica 55
+Syntheticb Syntheticb- 0.0 Syntheticb 55
+
+SOLUTION_SPECIES
+e- =  e-
+	log_k 0
+	-delta_H	0	kJ/mol	# Calculated enthalpy of reaction	e-
+#	Enthalpy of formation:	-0 kJ/mol
+
+H+ =  H+
+	-llnl_gamma	9.0000
+	log_k 0
+	-delta_H	0	kJ/mol	# Calculated enthalpy of reaction	H+
+#	Enthalpy of formation:	-0 kJ/mol
+
+H2O =  H2O
+	-llnl_gamma	3.0000
+        log_k   0
+	-delta_H	0	kJ/mol	# Calculated enthalpy of reaction	H2O
+#	Enthalpy of formation:	-68.317 kcal/mol
+
+2H2O =  O2 + 4H+ + 4e-
+	-CO2_llnl_gamma
+	log_k      -85.9951
+	-delta_H	559.543	kJ/mol	# Calculated enthalpy of reaction	O2
+#	Enthalpy of formation:	-2.9 kcal/mol
+        -analytic   38.0229    7.99407E-03   -2.7655e+004  -1.4506e+001  199838.45
+#	Range:  0-300
+
+1.0000 H2O  =  H2 +0.5000 O2
+	-CO2_llnl_gamma
+        log_k           -46.1066
+	-delta_H	275.588	kJ/mol	# Calculated enthalpy of reaction	H2
+#	Enthalpy of formation:	-1 kcal/mol
+        -analytic 6.6835e+001 1.7172e-002 -1.8849e+004 -2.4092e+001 4.2501e+005
+#       -Range:  0-300
+
+1.0000 H2O  =  OH- +1.0000 H+
+        -llnl_gamma           3.5
+        log_k           -13.9951
+	-delta_H	55.8146	kJ/mol	# Calculated enthalpy of reaction	OH-
+#	Enthalpy of formation:	-54.977 kcal/mol
+        -analytic -6.7506e+001 -3.0619e-002 -1.9901e+003 2.8004e+001 -3.1033e+001
+#       -Range:  0-300
+
+Synthetica+ = Synthetica+
+log_k 0.0
+
+Syntheticb- = Syntheticb-
+log_k 0.0
+
+PHASES
+Productc
+SyntheticaSyntheticb = Synthetica+ + Syntheticb-
+log_k -5
+
+Productd
+SyntheticaSyntheticb = Synthetica+ + Syntheticb-
+log_k 0
+
+Producte
+SyntheticaSyntheticb = Synthetica+ + Syntheticb-
+log_k 0
+
+END

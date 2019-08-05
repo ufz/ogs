@@ -53,7 +53,7 @@ std::unique_ptr<Output> createOutput(
     for (int i = 0; i < num_dvalue_items; ++i)
     {
         dropped_item_ids.push_back(dvalue_item_id);
-        dvalue_item_id += 2 * (i + 1);
+        dvalue_item_id += 2;
     }
 
     return std::make_unique<Output>(std::move(basic_output_setups),
