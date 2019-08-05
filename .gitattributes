@@ -1,3 +1,6 @@
+# Set the default behavior, in case people don't have core.autocrlf set.
+* text=auto
+
 # Enable style checks on source files
 *.h   hooks.style=uncrustify
 *.cpp hooks.style=uncrustify
