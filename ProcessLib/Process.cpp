@@ -232,7 +232,21 @@ void Process::assembleWithJacobian(const double t, GlobalVector const& x,
 
 void Process::constructDofTable()
 {
-    // Create single component dof in every of the mesh's nodes.
+    if (_use_monolithic_scheme)
+    {
+        constructMonolithicProcessDofTable();
+
+        return;
+    }
+
+    // For staggered scheme:
+    const int specified_prosess_id = 0;
+    constructDofTableOfSpecifiedProsessStaggerdScheme(specified_prosess_id);
+}
+
+void Process::constructMonolithicProcessDofTable()
+{
+    // Create single component dof in every of the mesh nodes.
     _mesh_subset_all_nodes =
         std::make_unique<MeshLib::MeshSubset>(_mesh, _mesh.getNodes());
 
@@ -241,41 +255,58 @@ void Process::constructDofTable()
 
     // Vector of the number of variable components
     std::vector<int> vec_var_n_components;
-    if (_use_monolithic_scheme)
+    // Collect the mesh subsets in a vector for the components of each
+    // variables.
+    for (ProcessVariable const& pv : _process_variables[0])
     {
-        // Collect the mesh subsets in a vector for each variables' components.
-        for (ProcessVariable const& pv : _process_variables[0])
-        {
-            std::generate_n(std::back_inserter(all_mesh_subsets),
-                            pv.getNumberOfComponents(),
-                            [&]() { return *_mesh_subset_all_nodes; });
-        }
-
-        // Create a vector of the number of variable components
-        for (ProcessVariable const& pv : _process_variables[0])
-        {
-            vec_var_n_components.push_back(pv.getNumberOfComponents());
-        }
-    }
-    else  // for staggered scheme
-    {
-        // Assuming that all equations of the coupled process use the same
-        // element order. Other cases can be considered by overloading this
-        // member function in the derived class.
-
-        // Collect the mesh subsets in a vector for each variables' components.
         std::generate_n(std::back_inserter(all_mesh_subsets),
-                        _process_variables[0][0].get().getNumberOfComponents(),
+                        pv.getNumberOfComponents(),
                         [&]() { return *_mesh_subset_all_nodes; });
-
-        // Create a vector of the number of variable components.
-        vec_var_n_components.push_back(
-            _process_variables[0][0].get().getNumberOfComponents());
     }
+
+    // Create a vector of the number of variable components
+    for (ProcessVariable const& pv : _process_variables[0])
+    {
+        vec_var_n_components.push_back(pv.getNumberOfComponents());
+    }
+
     _local_to_global_index_map =
         std::make_unique<NumLib::LocalToGlobalIndexMap>(
             std::move(all_mesh_subsets), vec_var_n_components,
             NumLib::ComponentOrder::BY_LOCATION);
+
+    assert(_local_to_global_index_map);
+}
+
+void Process::constructDofTableOfSpecifiedProsessStaggerdScheme(
+    const int specified_prosess_id)
+{
+    // Create single component dof in every of the mesh nodes.
+    _mesh_subset_all_nodes =
+        std::make_unique<MeshLib::MeshSubset>(_mesh, _mesh.getNodes());
+
+    // Vector of mesh subsets.
+    std::vector<MeshLib::MeshSubset> all_mesh_subsets;
+
+    // Vector of the number of variable components
+    std::vector<int> vec_var_n_components;
+    // Collect the mesh subsets in a vector for each variables' components.
+    std::generate_n(std::back_inserter(all_mesh_subsets),
+                    _process_variables[specified_prosess_id][0]
+                        .get()
+                        .getNumberOfComponents(),
+                    [&]() { return *_mesh_subset_all_nodes; });
+
+    // Create a vector of the number of variable components.
+    vec_var_n_components.push_back(_process_variables[specified_prosess_id][0]
+                                       .get()
+                                       .getNumberOfComponents());
+    _local_to_global_index_map =
+        std::make_unique<NumLib::LocalToGlobalIndexMap>(
+            std::move(all_mesh_subsets), vec_var_n_components,
+            NumLib::ComponentOrder::BY_LOCATION);
+
+    assert(_local_to_global_index_map);
 }
 
 std::tuple<NumLib::LocalToGlobalIndexMap*, bool>
