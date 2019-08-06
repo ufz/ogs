@@ -54,6 +54,16 @@ if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR COMPILER_IS_INTEL)
         -Wextra
     )
 
+    # Coloring output
+    option (FORCE_COLORED_OUTPUT "Always produce ANSI-colored output (GNU/Clang only)." ON)
+    if (${FORCE_COLORED_OUTPUT})
+        if (COMPILER_IS_GCC)
+            add_compile_options (-fdiagnostics-color=always)
+        elseif (COMPILER_IS_CLANG)
+            add_compile_options (-fcolor-diagnostics)
+        endif ()
+    endif()
+
     # Profiling
     if(OGS_PROFILE)
         if(NOT CMAKE_BUILD_TYPE STREQUAL "Release")
