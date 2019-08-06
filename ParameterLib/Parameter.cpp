@@ -17,6 +17,7 @@
 #include "GroupBasedParameter.h"
 #include "MeshElementParameter.h"
 #include "MeshNodeParameter.h"
+#include "TimeDependentHeterogeneousParameter.h"
 
 namespace ParameterLib
 {
@@ -79,6 +80,11 @@ std::unique_ptr<ParameterBase> createParameter(
         INFO("MeshNodeParameter: %s", name.c_str());
         auto param = createMeshNodeParameter(name, config, mesh);
         return param;
+    }
+    if (type == "TimeDependentHeterogeneousParameter")
+    {
+        INFO("TimeDependentHeterogeneousParameter: %s", name.c_str());
+        return createTimeDependentHeterogeneousParameter(name, config);
     }
 
     OGS_FATAL("Cannot construct a parameter of given type '%s'.", type.c_str());
