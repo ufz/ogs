@@ -61,5 +61,5 @@ error: undefined reference to `getrandom'
 If you still want to use your OS / compiler combination you can build the VTK Conan package on your machine. Run this one time:
 
 ```
-cmake . -DOGS_CONAN_BUILD=VTK
+cmake . -DOGS_CONAN_BUILD=vtk
 ```
