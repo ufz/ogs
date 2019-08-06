@@ -89,19 +89,15 @@ For the stress components the corrected expressions can be found in the work of 
 
 ## Results and evaluation
 
-In the pictures below, the analytical and numerical results for temperature, pressure, displacement and stress are plotted versus time as well as versus radial distance from the point heat source.
+The analytical expressions (12-16) together with the numerical model can now be evaluated at different points as function of time or for a given time as function of their spatial coordinates.
 
-{{< img src="../images/temp_vs_t_square.png" >}}
-{{< img src="../images/press_vs_t_square.png" >}}
+{{< img src="../images/resp_vs_t_square.png" >}}
 
-{{< img src="../images/displ_vs_t_square.png" >}}
-{{< img src="../images/stress_vs_t_square.png" >}}
 
-{{< img src="../images/temp_vs_x_square.png" >}}
-{{< img src="../images/press_vs_x_square.png" >}}
+In the pictures above, the analytical and numerical results for temperature ($T$), pressure ($p$), displacement ($u_i$) and stress ($\sigma_{ij}$) are plotted as function of time ($t$) at point $P=(1.3,0.682,0.0)$ and along the radial coordinate ($r$ ) at time $t=5\cdot 10^5$ (below).
 
-{{< img src="../images/displ_vs_x_square.png" >}}
-{{< img src="../images/stress_vs_x_square.png" >}}
+
+{{< img src="../images/resp_vs_x_square.png" >}}
 
 (Figures were taken from Chaudhry et al. (2019).)
 
