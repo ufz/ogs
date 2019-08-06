@@ -48,7 +48,8 @@ struct RichardsMechanicsProcessData
         ParameterLib::Parameter<double> const& solid_bulk_modulus_,
         ParameterLib::Parameter<double> const& temperature_,
         Eigen::Matrix<double, DisplacementDim, 1>
-            specific_body_force_)
+            specific_body_force_,
+        bool const apply_mass_lumping_)
         : material_ids(material_ids_),
           flow_material{std::move(flow_material_)},
           solid_materials{std::move(solid_materials_)},
@@ -57,7 +58,8 @@ struct RichardsMechanicsProcessData
           solid_density(solid_density_),
           solid_bulk_modulus(solid_bulk_modulus_),
           temperature(temperature_),
-          specific_body_force(std::move(specific_body_force_))
+          specific_body_force(std::move(specific_body_force_)),
+          apply_mass_lumping(apply_mass_lumping_)
     {
     }
 
@@ -104,6 +106,8 @@ struct RichardsMechanicsProcessData
 
     MeshLib::PropertyVector<double>* element_saturation = nullptr;
     MeshLib::PropertyVector<double>* pressure_interpolated = nullptr;
+
+    bool const apply_mass_lumping;
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };

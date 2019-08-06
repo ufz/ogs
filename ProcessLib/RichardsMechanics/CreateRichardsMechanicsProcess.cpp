@@ -188,6 +188,10 @@ std::unique_ptr<Process> createRichardsMechanicsProcess(
         ProcessLib::RichardsFlow::createRichardsFlowMaterialProperties(
             flow_material_config, material_ids, parameters);
 
+    auto const mass_lumping =
+        //! \ogs_file_param{prj__processes__process__RICHARDS_MECHANICS__mass_lumping}
+        config.getConfigParameter<bool>("mass_lumping", false);
+
     RichardsMechanicsProcessData<DisplacementDim> process_data{
         material_ids,
         std::move(flow_material),
@@ -197,7 +201,8 @@ std::unique_ptr<Process> createRichardsMechanicsProcess(
         solid_density,
         solid_bulk_modulus,
         temperature,
-        specific_body_force};
+        specific_body_force,
+        mass_lumping};
 
     SecondaryVariableCollection secondary_variables;
 
