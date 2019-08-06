@@ -90,6 +90,7 @@ For the stress components the corrected expressions can be found in the work of 
 ## Results and evaluation
 
 The analytical expressions (12-16) together with the numerical model can now be evaluated at different points as function of time or for a given time as function of their spatial coordinates.
+The results below were taken from the benchmark published in Chaudhry et al. (2019) and might slightly differ from the benchmark in the OGS6 repo.
 
 {{< img src="../images/resp_vs_t_square.png" >}}
 
@@ -98,6 +99,12 @@ In the pictures above, the analytical and numerical results for temperature ($T$
 
 
 {{< img src="../images/resp_vs_x_square.png" >}}
+
+The absolute errors between OGS6 and the analytical solution for temperature, pressure and displacement are depicted below. For all three response variables one observes that the error reaches it's maximum around the same time, when also the slope of the response variable is maximal.
+
+{{< img src="../images/errorpT_vs_t.png" >}}
+
+{{< img src="../images/errordispl_vs_t.png" >}}
 
 (Figures were taken from Chaudhry et al. (2019).)
 
