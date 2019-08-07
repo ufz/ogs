@@ -100,7 +100,7 @@ source_group("Dialog Header Files" REGULAR_EXPRESSION "[.]*Dialog.h")
 source_group("Dialog Source Files" REGULAR_EXPRESSION "[.]*Dialog.cpp")
 source_group("Data Model Header Files" REGULAR_EXPRESSION "[.]*Item.h|[.]*Model.h|[.]*View.h")
 source_group("Data Model Source Files" REGULAR_EXPRESSION "[.]*Item.cpp|[.]*Model.cpp|[.]*View.cpp")
-file(GLOB UIS *.ui)
+file(GLOB UIS CONFIGURE_DEPENDS *.ui)
 source_group("UI Files" FILES ${UIS})
 
 set(SOURCE_DIR_REL ${CMAKE_CURRENT_SOURCE_DIR}/../../..)

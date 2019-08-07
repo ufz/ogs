@@ -22,7 +22,7 @@ include_directories(
     ${GUI_SOURCE_DIR_REL}/Base
 )
 
-file(GLOB_RECURSE UI_FILES *.ui)
+file(GLOB_RECURSE UI_FILES CONFIGURE_DEPENDS *.ui)
 source_group("UI Files" FILES ${UI_FILES})
 
 add_library(QtStratView

@@ -30,7 +30,7 @@ include_directories(
     ${GUI_SOURCE_DIR_REL}/DataView
 )
 
-file(GLOB_RECURSE UIS *.ui)
+file(GLOB_RECURSE UIS CONFIGURE_DEPENDS *.ui)
 source_group("UI Files" FILES ${UIS})
 
 add_library(QtDiagramView

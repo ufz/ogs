@@ -105,7 +105,7 @@ source_group("Filter Header Files" REGULAR_EXPRESSION "[.]*Filter.h")
 source_group("Filter Source Files" REGULAR_EXPRESSION "[.]*Filter.cpp")
 source_group("Source Header Files" REGULAR_EXPRESSION "[.]*Source.h")
 source_group("Source Source Files" REGULAR_EXPRESSION "[.]*Source.cpp")
-file(GLOB_RECURSE UIS *.ui)
+file(GLOB_RECURSE UIS CONFIGURE_DEPENDS *.ui)
 source_group("UI Files" FILES ${UIS})
 
 set(SOURCE_DIR_REL ${CMAKE_CURRENT_SOURCE_DIR}/../../..)

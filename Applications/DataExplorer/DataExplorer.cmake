@@ -16,7 +16,7 @@ include_directories(
 
 # Put moc files in a project folder
 source_group("Moc Files" REGULAR_EXPRESSION "moc_.*")
-file(GLOB UIS *.ui)
+file(GLOB UIS CONFIGURE_DEPENDS *.ui)
 source_group("UI Files" FILES ${UIS})
 
 # Application icon
