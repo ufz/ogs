@@ -33,7 +33,7 @@ public:
 
     bool isTimeDependent() const override;
 
-    /// @copydoc Parameter::operator()
+    /// @copydoc Parameter::operator()()
     std::vector<double> operator()(double const t,
                                    SpatialPosition const& pos) const override;
 

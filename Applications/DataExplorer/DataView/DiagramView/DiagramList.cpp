@@ -30,16 +30,12 @@ DiagramList::~DiagramList() = default;
 
 float DiagramList::calcMinXValue()
 {
-    float min = std::numeric_limits<float>::max();
-    std::size_t nCoords = _coords.size();
-    for (std::size_t i = 0; i < nCoords; i++)
-    {
-        if (_coords[i].first < min)
-        {
-            min = _coords[i].first;
-        }
-    }
-    return min;
+    auto min = std::min_element(
+        _coords.begin(), _coords.end(),
+        [](auto const& c0, auto const& c1) { return c0.first < c1.first; });
+    if (min != _coords.end())
+        return min->first;
+    return std::numeric_limits<float>::max();
 }
 
 float DiagramList::calcMaxXValue()
@@ -355,16 +351,13 @@ void DiagramList::setList(
         return;
     }
 
-    this->_startDate = coords[0].first;
-    _coords.emplace_back(0.0f, coords[0].second);
-
-    std::size_t nCoords = coords.size();
-    for (std::size_t i = 1; i < nCoords; i++)
-    {
-        _coords.emplace_back(
-            static_cast<float>(_startDate.daysTo(coords[i].first)),
-            coords[i].second);
-    }
+    _startDate = coords[0].first;
+    std::transform(coords.begin(), coords.end(), std::back_inserter(_coords),
+                   [this](auto const& p) {
+                       return std::make_pair(
+                           static_cast<float>(_startDate.daysTo(p.first)),
+                           p.second);
+                   });
 
     update();
 }

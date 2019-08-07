@@ -24,8 +24,10 @@ struct ExponentData
 };
 
 /// The exponential property class. This property calculates the exponential
-/// relationship. The current implementation accepts only the double datatype
-/// defined in PropertyDataType.
+/// relationship \f$ \alpha(\beta) =
+/// \alpha_{\mathrm{ref}} \cdot \exp (-s (\beta - \beta_{\mathrm{ref}})\f$.
+/// The current implementation accepts only the double datatype defined in
+/// PropertyDataType.
 class ExponentialProperty final : public Property
 {
 public:
@@ -34,8 +36,8 @@ public:
     /// of the base class Property to that value.
     ExponentialProperty(PropertyDataType const& property_reference_value,
                         ExponentData const& v);
-    /// This method computes the value of a property depending linearly on
-    /// the value of the given primary variable.
+    /// This method computes the value of a property \f$\alpha\f$ depending
+    /// exponentialy on the value of the given primary variable \f$\beta\f$.
     PropertyDataType value(VariableArray const& variable_array) const override;
     /// This method will compute the derivative of a property with respect to
     /// the given primary variable.
