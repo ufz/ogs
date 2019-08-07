@@ -16,5 +16,10 @@ repos:
         entry: git diff --check --cached -- ':!*.md' ':!*.pandoc' ':!*.asc' ':!*.dat' ':!*.ts'
         language: system
         stages: [commit, manual]
+    -   id: git-lfs
+        name: Check git lfs files
+        entry: scripts/hooks/pre-commit-git-lfs.sh
+        language: system
+        stages: [commit, manual]
 
 exclude: 'ThirdParty/*|Tests/Data/*'
