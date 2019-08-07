@@ -31,7 +31,7 @@ Often, the mesh resolution and the resolution of the geometric objects like poly
 ![](MapGeometryToMeshSurface-before.png)
 ![](MapGeometryToMeshSurface-result.png)
 
-In the first figure such a situation is depicted. In the second figure the result of the application of the algorithm is shown.	
+In the first figure such a situation is depicted. In the second figure the result of the application of the algorithm is shown.
 
 Usage for the example:
 ```

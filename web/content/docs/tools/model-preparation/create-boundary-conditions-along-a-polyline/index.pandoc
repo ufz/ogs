@@ -10,7 +10,7 @@ author = "Thomas Fischer"
 
 ## General
 
-The tool `CreateBoundaryConditionsAlongPolylines` searches for mesh nodes that are near to polylines and generates for each found node an OGS-5 boundary condition at a point. 
+The tool `CreateBoundaryConditionsAlongPolylines` searches for mesh nodes that are near to polylines and generates for each found node an OGS-5 boundary condition at a point.
 
 The user has to provide the input mesh `mesh` and the geometry `geometry` that must contain at least one polyline. Possible input formats for the mesh are the legacy OGS-5 mesh format or the vtu format. The geometry can be provided in the legacy OGS-5 gli format as well as in the gml format. The user can specify an environment via a search radius around the polyline. For all nodes within this environment boundary conditions are generated. Furthermore the type of the process the boundary condition is belonging to should be given. At the moment there are boundary condition output for LIQUID_FLOW (primary variable PRESSURE1) and GROUNDWATER_FLOW (primary variable HEAD) process avaible.
 
@@ -27,7 +27,7 @@ The polylines should be in the vicinity of the mesh nodes, where the user wants 
 ![](CreateBCFromPolyline-before_1.png)
 ![](CreateBCFromPolyline-result_1.png)
 
-The first figure shows a mesh of the example domain. Furthermore, a river is depicted (blue color). These data (mesh and geometric description of the river) is given to the tool. 
+The first figure shows a mesh of the example domain. Furthermore, a river is depicted (blue color). These data (mesh and geometric description of the river) is given to the tool.
 
 The found nodes will be written to a geometry file which may be useful for visual inspection. The found mesh nodes of the example are sketched as small red squares in the second figure.
 

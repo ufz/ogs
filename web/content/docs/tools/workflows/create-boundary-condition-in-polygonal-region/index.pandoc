@@ -13,7 +13,7 @@ author = "Thomas Fischer"
 In order to create boundary conditions in a polygonal region the following workflow can be used:
 
 1. Extract surface using [ExtractSurface]({{< ref "extract-surface" >}}) (a: Original subsurface mesh; b: Extracted surface)
-    
+
     ![](01-SubSurfaceMesh_web.png)
     ![](02-ExtractSurface_Web.png)
 

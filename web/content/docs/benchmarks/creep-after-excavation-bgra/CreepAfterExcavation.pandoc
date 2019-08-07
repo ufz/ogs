@@ -14,8 +14,8 @@ author = "Wenqing Wang"
 {{< data-link >}}
 
 -------------------------------------------------------------------------
-Following up the benchmark about the BGRa creep model described on the 
-[this page](https://www.opengeosys.org/docs/benchmarks/creepbgra/creepbrga/), 
+Following up the benchmark about the BGRa creep model described on the
+[this page](https://www.opengeosys.org/docs/benchmarks/creepbgra/creepbrga/),
 this example represents the creep in the near field of
 drift in the deep rock salt after excavation. The domain and the
 geometry are shown in the following figure:
@@ -75,9 +75,9 @@ distributed from top to bottom with the boundary values of temperature.
 The time step sizes of the simulation are: One step of 0.001 day, 10 steps of 0.1 day, and the
 remaining steps of 1 day.
 
-The following three figures are plotted by using the results of the simulation of 1000 days creep. 
+The following three figures are plotted by using the results of the simulation of 1000 days creep.
 The three figures display the distribution of horizontal and vertical stresses at times of
-108 days, 409 days and 1000 days, respectively. 
+108 days, 409 days and 1000 days, respectively.
 
 In theses three figures,
 the left sub-figure show the time variations of horizontal and vertical stresses

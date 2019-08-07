@@ -103,7 +103,7 @@ The next steps will use the OGS DataExplorer, GMSH, and ParaView to prepare the 
 
 ### 3D Mesh creation
 
-19. Load the merged boundary-coastline shape into the DataExplorer (`File` -> `Import` -> `Shape Files`). Creation of the 2D mesh can be done in two ways: 
+19. Load the merged boundary-coastline shape into the DataExplorer (`File` -> `Import` -> `Shape Files`). Creation of the 2D mesh can be done in two ways:
 
     a) Either use GMSH: Save the geometry as a `.geo` file for usage in GMSH by choosing the tab `Geometry` and clicking the save icon. Afterwards, use GMSH to generate a 2D mesh to your liking and import it with `File` -> `Import Files` -> `GMSH files...`.
 
@@ -116,14 +116,14 @@ The next steps will use the OGS DataExplorer, GMSH, and ParaView to prepare the 
     From the dialogue, select the geometry which should be used and let it show up on the right side (`Employed information`).
 
   	![Select geometry](19c_create-2d-mesh.png)
-  
+
     Select the `Advanced` tab, choose `Adaptive meshing`, and remove the tick at `Delete GMSH geo-file after generating mesh` (in case you still want to manipulate the `.geo` file); click `OK`.
 
   	![Advanced meshing settings](19d_create-2d-mesh.png)
 
 20. To create a 3D mesh, the previously defined elevation data and subsurface layer data will be used to define multiple layers of the model. In the left-side tab `Meshes`, right-click the newly created (or imported) mesh, and choose `Edit mesh...`
 
-  	![Start creation of 3D mesh](20_create-3d-mesh.png) 
+  	![Start creation of 3D mesh](20_create-3d-mesh.png)
 
 21. In the new dialogue, `Specify the number of layers to add` (here 10), click `Add layers based on raster files`, and load all `.asc` files that define the different layers into the interface. Also, define a `Minimum thickness of layers` (here 5 height units).
 
@@ -141,7 +141,7 @@ For the creation of the boundary conditions, use the following workflow.
 23. To define water level and groundwater recharge, the top surface of the mesh will be used. Extract the surface with the tool [`ExtractSurface`]({{< ref "extract-surface" >}}). The following command is an example:
   `ExtractSurface -i SubsurfaceMesh.vtu -o exSurf.vtu -x 0 -y 0 -z -1 -a 30`
 
-24. ParaView will be used to define boundary and initial condition values. 
+24. ParaView will be used to define boundary and initial condition values.
 For boundary conditions, a separation of the water level (Dirichlet) and recharge (Neumann) boundary condition is required. Load the extracted top surface into ParaView and apply the following filter pipeline:
     a) Apply a `Calculator` with the operation `coordsZ` to get a new parameter field with elevation data.
     b) Apply a `Threshold` and define the value range from the lowest to the water level (here -35 to 0.01 height units); this will be the input file for the Dirichlet boundary condition.

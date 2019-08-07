@@ -70,7 +70,7 @@ This assumes you have your own clone/fork of OGS on GitHub.
 
 - Tell me your GitHub user name
 - I setup a *multibranch* project on Jenkins
- 
+
 This project will test all branches ending with `_j` on your repository and will be available at `jenkins.opengeosys.org/job/User/job/[your account name]`
 
 To automatically trigger new Jenkins builds when you push changes to your repository you have to setup a GitHub trigger:
