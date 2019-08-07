@@ -195,7 +195,7 @@ public:
         // /// Lines ///////////////////////////////////
 
 // /// Lines ///////////////////////////////////
-#if OGS_MAX_ELEMENT_DIM >= 3 && OGS_MAX_ELEMENT_ORDER >= 2
+#if OGS_MAX_ELEMENT_DIM >= 2 && OGS_MAX_ELEMENT_ORDER >= 2
         _builder[std::type_index(typeid(MeshLib::Line3))] =
             makeLocalAssemblerBuilder<NumLib::ShapeLine3>();
 #endif
