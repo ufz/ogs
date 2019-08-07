@@ -72,14 +72,13 @@ int main(int argc, char* argv[])
 
     std::string const file_name (input_arg.getValue());
 
-    FileIO::Gocad::GocadDataType t(FileIO::Gocad::GocadDataType::ALL);
+    FileIO::Gocad::DataType t(FileIO::Gocad::DataType::ALL);
     if (export_lines_arg.isSet())
-        t = FileIO::Gocad::GocadDataType::PLINE;
+        t = FileIO::Gocad::DataType::PLINE;
     if (export_surfaces_arg.isSet())
-        t = FileIO::Gocad::GocadDataType::TSURF;
-    FileIO::Gocad::GocadAsciiReader gcts(t);
+        t = FileIO::Gocad::DataType::TSURF;
     std::vector<std::unique_ptr<MeshLib::Mesh>> meshes;
-    if (!gcts.readFile(file_name, meshes))
+    if (!FileIO::Gocad::GocadAsciiReader::readFile(file_name, meshes))
     {
         ERR("Error reading file.");
         return 1;

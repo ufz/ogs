@@ -687,9 +687,8 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
     else if (t == ImportFileType::GOCAD_TSURF)
     {
         std::string file_name(fileName.toStdString());
-        FileIO::Gocad::GocadAsciiReader gcts;
         std::vector<std::unique_ptr<MeshLib::Mesh>> meshes;
-        if (gcts.readFile(file_name, meshes))
+        if (FileIO::Gocad::GocadAsciiReader::readFile(file_name, meshes))
         {
             for (auto& mesh : meshes)
             {
