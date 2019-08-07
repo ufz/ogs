@@ -43,6 +43,23 @@ $ git fetch upstream
 
 {{< asciinema url="https://asciinema.org/a/249002" speed="3" rows="20" >}}
 
+## Enable git commit hooks
+
+[Git hooks](https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks) help to check for several issues before doing commits or pushes and it is highly recommended to enable these checks.
+
+Install [pre-commit](https://pre-commit.com/) (a git hook manager) via Pythons `pip`:
+
+```bash
+pip3 install --user pre-commit
+```
+
+Enable the hooks in the source code with:
+
+```bash
+cd ogs
+pre-commit install
+```
+
 ## Optional: Working on a new feature
 
 You only have to follow the above steps once. From then on, whenever you want to work on a new feature, you can more easily interact with the remote repositories.
