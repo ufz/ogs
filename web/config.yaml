@@ -5,4 +5,3 @@ algolia:
   index: "docs.opengeosys.org"
   # key supplied via $ALGOLIA_WRITE_KEY
   appID: "4AHEU3QJQG"
----
