@@ -25,9 +25,11 @@ pipeline {
   }
   stages {
      // *************************** Git Check **********************************
-    stage('Git Check') {
+    stage('Pre-checks') {
       agent { label "master"}
       steps {
+        sh "pre-commit install"
+        sh "pre-commit run --all-files"
         sh "git config core.whitespace -blank-at-eof"
         sh "git diff --check `git merge-base origin/master HEAD` HEAD -- . ':!*.md' ':!*.pandoc' ':!*.asc' ':!*.dat' ':!*.ts'"
         dir('scripts/jenkins') { stash(name: 'known_hosts', includes: 'known_hosts') }
