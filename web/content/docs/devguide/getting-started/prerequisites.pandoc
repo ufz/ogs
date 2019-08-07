@@ -174,29 +174,6 @@ If you do not have rights to install a system package (e.g. on cluster systems) 
 :::
 
 
-## Step: Install CMake
-
-::: {.win}
-- Download the installer, at the [CMake download page](http://www.cmake.org/cmake/resources/software.html) choose the **Windows (Win32 Installer)**.
-- Execute the installer, please check the **Add CMake to the system path for all users**-option
-:::
-
-::: {.linux}
-Install CMake with your favourite package manager (the two graphical user interfaces are optional):
-
-```bash
-$ sudo apt-get install cmake cmake-qt-gui cmake-curses-gui
-```
-:::
-
-::: {.mac}
-Install CMake with Homebrew:
-
-```bash
-$ brew install cmake
-```
-:::
-
 ## Step: Install Python 3
 
 ::: {.win}
@@ -226,6 +203,31 @@ Install Python 3 with Homebrew:
 
 ```bash
 brew install python
+```
+:::
+
+## Step: Install CMake
+
+::: {.win}
+- Download the installer, at the [CMake download page](http://www.cmake.org/cmake/resources/software.html) choose the **Windows (Win32 Installer)**.
+- Execute the installer, please check the **Add CMake to the system path for all users**-option
+:::
+
+::: {.linux}
+Install CMake with Pythons package manager `pip` (you may get a more recent version than using your systems package manager):
+
+```bash
+$ pip3 install --user cmake
+```
+
+This installed `cmake` and `ccmake` to `.local/bin` in your home directory. Make sure to have this directory in your `PATH`!
+:::
+
+::: {.mac}
+Install CMake with Homebrew:
+
+```bash
+$ brew install cmake
 ```
 :::
 
