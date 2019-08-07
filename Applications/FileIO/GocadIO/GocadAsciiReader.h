@@ -40,10 +40,8 @@ enum class GocadDataType
 class GocadAsciiReader final
 {
 public:
-    explicit GocadAsciiReader();
-
-    /// Constructor taking a specific data type (will only export that type)
-    explicit GocadAsciiReader(GocadDataType const t);
+    /// Constructor
+    explicit GocadAsciiReader(GocadDataType const t = GocadDataType::ALL);
 
     /// Reads the specified file and writes data into internal mesh vector
     bool readFile(std::string const& file_name,

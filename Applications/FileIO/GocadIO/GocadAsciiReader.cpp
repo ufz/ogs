@@ -28,9 +28,6 @@ namespace Gocad
 const std::string mat_id_name = "MaterialIDs";
 const std::string eof_error = "Error: Unexpected end of file.";
 
-GocadAsciiReader::GocadAsciiReader()
-: _export_type(GocadDataType::ALL) {}
-
 GocadAsciiReader::GocadAsciiReader(GocadDataType const t)
 : _export_type(t)
 {}
@@ -63,8 +60,7 @@ bool GocadAsciiReader::readFile(
     std::ifstream in(file_name.c_str());
     if (!in.is_open())
     {
-        ERR("GocadAsciiReader::readFile(): Could not open file %s.",
-            file_name.c_str());
+        ERR("GocadAsciiReader::readFile(): Could not open file %s.", file_name.c_str());
         return false;
     }
 
@@ -82,7 +78,7 @@ bool GocadAsciiReader::readFile(
             if (!skipToEND(in))
             {
                 std::string const t = (type == GocadDataType::VSET) ? "VSet" : "Model3D";
-                ERR("Parsing of type %s is not implemented. Skipping section.", t);
+                ERR("Parsing of type %s is not implemented. Skipping section.", t.c_str());
                 return false;
             }
             continue;
@@ -174,8 +170,7 @@ MeshLib::Mesh* GocadAsciiReader::readData(std::ifstream& in,
         }
         else
         {
-            WARN("GocadAsciiReader::readData() - Unknown keyword found: %s",
-                 line.c_str());
+            WARN("GocadAsciiReader::readData() - Unknown keyword found: %s", line.c_str());
         }
     }
     ERR("%s", eof_error.c_str());
@@ -492,7 +487,6 @@ bool GocadAsciiReader::parseLineSegments(
     std::map<std::size_t, std::size_t> const& node_id_map,
     MeshLib::Properties& mesh_prop)
 {
-    std::array<std::size_t, 3> data;
     MeshLib::PropertyVector<int>& mat_ids =
         *mesh_prop.getPropertyVector<int>(mat_id_name);
     int current_mat_id(0);
@@ -513,6 +507,7 @@ bool GocadAsciiReader::parseLineSegments(
         {
             std::stringstream sstr(line);
             std::string keyword;
+            std::array<std::size_t, 2> data;
             sstr >> keyword >> data[0] >> data[1];
             std::array<MeshLib::Node*, 2> elem_nodes;
             for (std::size_t i = 0; i < 2; ++i)
@@ -547,7 +542,6 @@ bool GocadAsciiReader::parseElements(
     std::map<std::size_t, std::size_t> const& node_id_map,
     MeshLib::Properties& mesh_prop)
 {
-    std::array<std::size_t, 3> data;
     MeshLib::PropertyVector<int>& mat_ids =
         *mesh_prop.getPropertyVector<int>(mat_id_name);
     int current_mat_id(0);
@@ -568,6 +562,7 @@ bool GocadAsciiReader::parseElements(
         {
             std::stringstream sstr(line);
             std::string keyword;
+            std::array<std::size_t, 3> data;
             sstr >> keyword >> data[0] >> data[1] >> data[2];
             std::array<MeshLib::Node*, 3> elem_nodes;
             for (std::size_t i = 0; i < 3; ++i)
