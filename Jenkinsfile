@@ -194,7 +194,7 @@ pipeline {
                   '-DOGS_USE_PCH=OFF ' +     // see #1992
                   '-DOGS_BUILD_GUI=ON ' +
                   '-DOGS_BUILD_UTILS=ON ' +
-                  '-DOGS_CONAN_BUILD=outdated ' +
+                  '-DOGS_CONAN_BUILD=missing ' +
                   '-DOGS_BUILD_TESTS=OFF '
               }
               build {
@@ -396,7 +396,7 @@ pipeline {
                   '-DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON ' +
                   '-DOGS_BUILD_GUI=ON ' +
                   '-DOGS_BUILD_UTILS=ON ' +
-                  '-DOGS_CONAN_BUILD=outdated ' +
+                  '-DOGS_CONAN_BUILD=missing ' +
                   '-DOGS_BUILD_SWMM=ON '
               }
               build {
@@ -453,7 +453,7 @@ pipeline {
                   '-DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON ' +
                   '-DOGS_BUILD_GUI=ON ' +
                   '-DOGS_BUILD_UTILS=ON ' +
-                  '-DOGS_CONAN_BUILD=outdated ' +
+                  '-DOGS_CONAN_BUILD=missing ' +
                   '-DCMAKE_OSX_DEPLOYMENT_TARGET="10.14" '
               }
               build {
