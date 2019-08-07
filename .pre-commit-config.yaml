@@ -4,5 +4,12 @@ repos:
     hooks:
     -   id: trailing-whitespace
         args: [--markdown-linebreak-ext=md, --markdown-linebreak-ext=pandoc]
+-   repo: local
+    hooks:
+    -   id: git-diff-check
+        name: git-diff-check
+        entry: git diff --check --cached -- ':!*.md' ':!*.pandoc' ':!*.asc' ':!*.dat' ':!*.ts'
+        language: system
+        stages: [commit, manual]
 
 exclude: 'ThirdParty/*|Tests/Data/*'
