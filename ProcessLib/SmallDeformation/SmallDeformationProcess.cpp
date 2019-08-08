@@ -13,6 +13,7 @@
 #include <nlohmann/json.hpp>
 
 #include "BaseLib/Functional.h"
+#include "ProcessLib/Output/IntegrationPointWriter.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/SmallDeformation/CreateLocalAssemblers.h"
 
@@ -45,8 +46,12 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
     _material_forces = MeshLib::getOrCreateMeshProperty<double>(
         mesh, "MaterialForces", MeshLib::MeshItemType::Node, DisplacementDim);
 
+    // TODO (naumov) remove ip suffix. Probably needs modification of the mesh
+    // properties, s.t. there is no "overlapping" with cell/point data.
+    // See getOrCreateMeshProperty.
     _integration_point_writer.emplace_back(
-        std::make_unique<SigmaIntegrationPointWriter>(
+        std::make_unique<IntegrationPointWriter>(
+            "sigma_ip",
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
             integration_order, [this]() {
                 // Result containing integration point data for each local

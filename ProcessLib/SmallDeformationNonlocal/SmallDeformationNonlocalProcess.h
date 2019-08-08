@@ -17,7 +17,6 @@
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "ProcessLib/Process.h"
 
-#include "IntegrationPointWriter.h"
 #include "SmallDeformationNonlocalFEM.h"
 #include "SmallDeformationNonlocalProcessData.h"
 

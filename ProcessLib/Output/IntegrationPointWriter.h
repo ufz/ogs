@@ -21,14 +21,30 @@ class Mesh;
 
 namespace ProcessLib
 {
-struct IntegrationPointWriter
+struct IntegrationPointWriter final
 {
-    virtual ~IntegrationPointWriter() = default;
+    IntegrationPointWriter(std::string const& name,
+                           int const n_components,
+                           int const integration_order,
+                           std::function<std::vector<std::vector<double>>()>
+                               callback)
+        : _name(name),
+          _n_components(n_components),
+          _integration_order(integration_order),
+          _callback(callback)
+    {
+    }
 
-    virtual int numberOfComponents() const = 0;
-    virtual int integrationOrder() const = 0;
-    virtual std::string name() const = 0;
-    virtual std::vector<std::vector<double>> values() const = 0;
+    int numberOfComponents() const { return _n_components; }
+    int integrationOrder() const { return _integration_order; }
+    std::string name() const { return _name; }
+    std::vector<std::vector<double>> values() const { return _callback(); }
+
+private:
+    std::string const _name;
+    int const _n_components;
+    int const _integration_order;
+    std::function<std::vector<std::vector<double>>()> _callback;
 };
 
 /// Add integration point data the the mesh's properties.

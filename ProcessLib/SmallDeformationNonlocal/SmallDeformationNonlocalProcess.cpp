@@ -14,6 +14,8 @@
 #include <nlohmann/json.hpp>
 #include <iostream>
 
+#include "ProcessLib/Output/IntegrationPointWriter.h"
+
 // Reusing local assembler creation code.
 #include "ProcessLib/SmallDeformation/CreateLocalAssemblers.h"
 
@@ -45,7 +47,8 @@ SmallDeformationNonlocalProcess<DisplacementDim>::
         mesh, "NodalForces", MeshLib::MeshItemType::Node, DisplacementDim);
 
     _integration_point_writer.emplace_back(
-        std::make_unique<SigmaIntegrationPointWriter>(
+        std::make_unique<IntegrationPointWriter>(
+            "sigma_ip",
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
             integration_order, [this]() {
                 // Result containing integration point data for each local
@@ -64,8 +67,8 @@ SmallDeformationNonlocalProcess<DisplacementDim>::
             }));
 
     _integration_point_writer.emplace_back(
-        std::make_unique<KappaDIntegrationPointWriter>(
-            integration_order, [this]() {
+        std::make_unique<IntegrationPointWriter>(
+            "kappa_d_ip", 1 /*n_components*/, integration_order, [this]() {
                 // Result containing integration point data for each local
                 // assembler.
                 std::vector<std::vector<double>> result;

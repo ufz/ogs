@@ -14,7 +14,7 @@
 #include "BaseLib/Functional.h"
 #include "NumLib/DOF/ComputeSparsityPattern.h"
 #include "NumLib/DOF/DOFTableUtil.h"
-
+#include "ProcessLib/Output/IntegrationPointWriter.h"
 #include "ProcessLib/SmallDeformation/CreateLocalAssemblers.h"
 
 #include "ThermoMechanicsFEM.h"
@@ -48,7 +48,7 @@ ThermoMechanicsProcess<DisplacementDim>::ThermoMechanicsProcess(
         mesh, "HeatFlux", MeshLib::MeshItemType::Node, 1);
 
     _integration_point_writer.emplace_back(
-        std::make_unique<KelvinVectorIntegrationPointWriter>(
+        std::make_unique<IntegrationPointWriter>(
             "sigma_ip",
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
             2 /*integration order*/, [this]() {
@@ -68,7 +68,7 @@ ThermoMechanicsProcess<DisplacementDim>::ThermoMechanicsProcess(
             }));
 
     _integration_point_writer.emplace_back(
-        std::make_unique<KelvinVectorIntegrationPointWriter>(
+        std::make_unique<IntegrationPointWriter>(
             "epsilon_ip",
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
             2 /*integration order*/, [this]() {
@@ -88,7 +88,7 @@ ThermoMechanicsProcess<DisplacementDim>::ThermoMechanicsProcess(
             }));
 
     _integration_point_writer.emplace_back(
-        std::make_unique<KelvinVectorIntegrationPointWriter>(
+        std::make_unique<IntegrationPointWriter>(
             "epsilon_m_ip",
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
             2 /*integration order*/, [this]() {
