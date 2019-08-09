@@ -687,10 +687,12 @@ pipeline {
                 def clangImage = docker.build("ogs6/clang:latest", "-f Dockerfile.clang.full .")
                 withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials',
                   passwordVariable: 'pw', usernameVariable: 'docker_user')]) {
-                    sh 'echo $pw | docker login -u $docker_user --password-stdin'
+                  sh 'echo $pw | docker login -u $docker_user --password-stdin'
+                  retry(3) {
                     gccImage.push()
                     gccGuiImage.push()
                     clangImage.push()
+                  }
                 }
               }
             }
