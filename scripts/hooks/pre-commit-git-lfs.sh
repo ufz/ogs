@@ -3,17 +3,28 @@
 set -e
 
 BINARY_FILES=""
-CHANGED_FILES=$(git diff --cached --name-only --diff-filter=ACM)
-LFS_FILES=$(echo $CHANGED_FILES | xargs -I{lin} git check-attr filter "{lin}" | grep 'filter: lfs$' | sed -e 's/: filter: lfs//')
+LFS_FILES=""
+CHANGED_FILES=$(git diff --cached --name-only --diff-filter=ACMRTXBU)
 
-for FILE in $LFS_FILES; do
-    SOFT_SHA=$(git hash-object -w $FILE)
-    RAW_SHA=$(git hash-object -w --no-filters $FILE)
+while read -r FILE; do
+    LFS_FILE=$(git check-attr filter "$FILE" | grep 'filter: lfs$' | sed -e 's/: filter: lfs//')
+    if [ ! -z "$LFS_FILE" ]; then
+        LFS_FILES="$LFS_FILES $LFS_FILE"
+    fi
+done <<< "$CHANGED_FILES"
+
+if [ -z "$LFS_FILES" ]; then
+    exit 0
+fi
+
+while read -r FILE; do
+    SOFT_SHA=$(git hash-object -w "$FILE")
+    RAW_SHA=$(git hash-object -w --no-filters "$FILE")
 
     if [ $SOFT_SHA == $RAW_SHA ]; then
         BINARY_FILES="$FILE\n$BINARY_FILES"
     fi
-done
+done <<< "$LFS_FILES"
 
 if [[ -n "$BINARY_FILES" ]]; then
     echo "Attention!"
