@@ -78,7 +78,7 @@ int main(int argc, char* argv[])
     if (export_surfaces_arg.isSet())
         t = FileIO::Gocad::DataType::TSURF;
     std::vector<std::unique_ptr<MeshLib::Mesh>> meshes;
-    if (!FileIO::Gocad::GocadAsciiReader::readFile(file_name, meshes))
+    if (!FileIO::Gocad::GocadAsciiReader::readFile(file_name, meshes, t))
     {
         ERR("Error reading file.");
         return 1;
