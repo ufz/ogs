@@ -11,6 +11,7 @@
 
 #include <memory>
 #include <string>
+#include <vector>
 
 #include "Applications/FileIO/GocadIO/GocadEnums.h"
 
