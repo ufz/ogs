@@ -602,10 +602,9 @@ MeshLib::Mesh* readData(std::ifstream& in,
     return nullptr;
 }
 
-bool GocadAsciiReader::readFile(
-    std::string const& file_name,
-    std::vector<std::unique_ptr<MeshLib::Mesh>>& meshes,
-    DataType const export_type)
+bool readFile(std::string const& file_name,
+              std::vector<std::unique_ptr<MeshLib::Mesh>>& meshes,
+              DataType const export_type)
 {
     std::ifstream in(file_name.c_str());
     if (!in.is_open())
