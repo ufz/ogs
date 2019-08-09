@@ -27,4 +27,4 @@ repos:
         language: system
         stages: [commit, manual]
 
-exclude: 'ThirdParty/*|Tests/Data/*'
+exclude: 'ThirdParty/*|Tests/Data/*|web/static/images/xsd'
