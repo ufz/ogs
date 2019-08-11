@@ -187,6 +187,8 @@ public:
             ip_data.eps_prev.resize(kelvin_vector_size);
 
             _secondary_data.N[ip] = shape_matrices[ip].N;
+
+            _ip_data[ip].pushBackState();
         }
     }
 
@@ -309,9 +311,7 @@ public:
         }
     }
 
-    void preTimestepConcrete(std::vector<double> const& /*local_x*/,
-                             double const /*t*/,
-                             double const /*delta_t*/) override
+    void postTimestepConcrete(std::vector<double> const& /*local_x*/) override
     {
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
@@ -320,12 +320,6 @@ public:
         {
             _ip_data[ip].pushBackState();
         }
-    }
-
-    void postTimestepConcrete(std::vector<double> const& /*local_x*/) override
-    {
-        unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
 
         ParameterLib::SpatialPosition x_position;
         x_position.setElementID(_element.getID());
