@@ -20,6 +20,12 @@ repos:
         name: Check file extensions
         entry: scripts/hooks/pre-commit-file-extensions.sh
         language: system
+        files: '.*\.cpp'
+        stages: [commit, manual]
+    -   id: file-names
+        name: Check file names
+        entry: scripts/hooks/pre-commit-file-names.sh
+        language: system
         stages: [commit, manual]
     -   id: git-lfs
         name: Check git lfs files

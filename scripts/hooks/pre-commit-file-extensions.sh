@@ -4,8 +4,7 @@
 
 # Check for uppercase letters in filename extensions
 pattern=".*\.\w*([A-Z]+)\w*$"
-files=$(git diff --cached --find-copies --find-renames --name-only --diff-filter=ACMRTXBU |
-        grep -E  "$pattern" )
+files=$(echo $@ | grep -E "$pattern")
 
 if [[ -n $files ]];
 then

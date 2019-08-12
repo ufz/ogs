@@ -4,27 +4,30 @@ set -e
 
 BINARY_FILES=""
 LFS_FILES=""
-CHANGED_FILES=$(git diff --cached --name-only --diff-filter=ACMRTXBU)
 
-while read -r FILE; do
+LFS_FILES=()
+for FILE in "$@"
+do
+    echo FILE: $FILE
     LFS_FILE=$(git check-attr filter "$FILE" | grep 'filter: lfs$' | sed -e 's/: filter: lfs//')
     if [ ! -z "$LFS_FILE" ]; then
-        LFS_FILES="$LFS_FILES $LFS_FILE"
+        LFS_FILES+=("$LFS_FILE")
     fi
-done <<< "$CHANGED_FILES"
+done
 
 if [ -z "$LFS_FILES" ]; then
     exit 0
 fi
 
-while read -r FILE; do
+for FILE in ${LFS_FILES[@]}
+do
     SOFT_SHA=$(git hash-object -w "$FILE")
     RAW_SHA=$(git hash-object -w --no-filters "$FILE")
 
     if [ $SOFT_SHA == $RAW_SHA ]; then
         BINARY_FILES="$FILE\n$BINARY_FILES"
     fi
-done <<< "$LFS_FILES"
+done
 
 if [[ -n "$BINARY_FILES" ]]; then
     echo "Attention!"
