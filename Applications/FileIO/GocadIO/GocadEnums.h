@@ -15,7 +15,6 @@ namespace FileIO
 {
 namespace Gocad
 {
-
 enum class DataType
 {
     UNDEFINED,
@@ -32,6 +31,6 @@ std::string dataType2String(DataType const t);
 /// Given a Gocad DataType this returns the appropriate short form.
 std::string dataType2ShortString(DataType const t);
 
-}  // namespace GocadIO
+}  // namespace Gocad
 
 }  // namespace FileIO

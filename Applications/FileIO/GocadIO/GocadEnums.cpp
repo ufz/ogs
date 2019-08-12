@@ -13,7 +13,6 @@ namespace FileIO
 {
 namespace Gocad
 {
-
 std::string dataType2String(DataType const t)
 {
     if (t == DataType::UNDEFINED)
