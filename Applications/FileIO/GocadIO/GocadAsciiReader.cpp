@@ -627,7 +627,7 @@ bool readFile(std::string const& file_name,
             if (!skipToEND(in))
             {
                 ERR("Parsing of type %s is not implemented. Skipping section.",
-                    DataType2Str(type).c_str());
+                    dataType2String(type).c_str());
                 return false;
             }
             continue;

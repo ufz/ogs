@@ -14,7 +14,7 @@ namespace FileIO
 namespace Gocad
 {
 
-std::string DataType2Str(DataType const t)
+std::string dataType2String(DataType const t)
 {
     if (t == DataType::UNDEFINED)
     {
@@ -39,7 +39,7 @@ std::string DataType2Str(DataType const t)
     return "[all types]";
 }
 
-std::string DataType2ShortStr(DataType const t)
+std::string dataType2ShortString(DataType const t)
 {
     if (t == DataType::UNDEFINED)
     {

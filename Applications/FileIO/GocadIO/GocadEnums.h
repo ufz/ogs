@@ -27,10 +27,10 @@ enum class DataType
 };
 
 /// Given a Gocad DataType this returns the appropriate string.
-std::string DataType2Str(DataType const t);
+std::string dataType2String(DataType const t);
 
 /// Given a Gocad DataType this returns the appropriate short form.
-std::string DataType2ShortStr(DataType const t);
+std::string dataType2ShortString(DataType const t);
 
 }  // namespace GocadIO
 
