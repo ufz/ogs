@@ -13,7 +13,7 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "Applications/ApplicationsLib/LogogSetup.h"
-#include "Applications/FileIO/GocadIO/GocadTSurfaceReader.h"
+#include "Applications/FileIO/GocadIO/GocadAsciiReader.h"
 
 std::string getDelim(std::string const& str)
 {
@@ -27,7 +27,7 @@ int main(int argc, char* argv[])
     ApplicationsLib::LogogSetup logog_setup;
 
     TCLAP::CmdLine cmd(
-        "Reads a Gocad triangular surfaces file (*.ts) and writes the "
+        "Reads Gocad ascii files (*.ts, *.pl, *.mx) and writes TSurf- and PLine"
         "data into one or more VTU unstructured grids.\n\n"
         "OpenGeoSys-6 software, version " +
             BaseLib::BuildInfo::ogs_version +
@@ -51,21 +51,46 @@ int main(int argc, char* argv[])
         "if set, OGS-Meshes will be written in binary format");
     cmd.add(write_binary_arg);
 
+    TCLAP::SwitchArg export_lines_arg(
+        "l", "lines-only",
+        "if set, only PLine datasets will be parsed from the input file");
+    cmd.add(export_lines_arg);
+
+    TCLAP::SwitchArg export_surfaces_arg(
+        "s", "surfaces-only",
+        "if set, only TSurf datasets will be parsed from the input file");
+    cmd.add(export_surfaces_arg);
+
     cmd.parse(argc, argv);
 
+    if (export_lines_arg.isSet() && export_surfaces_arg.isSet())
+    {
+        ERR("Both the 'lines-only'-flag and 'surfaces-only'-flag are set. Only "
+            "one is allowed at a time.")
+        return 2;
+    }
+
     std::string const file_name (input_arg.getValue());
-    FileIO::Gocad::GocadTSurfaceReader gcts;
+
+    FileIO::Gocad::DataType t(FileIO::Gocad::DataType::ALL);
+    if (export_lines_arg.isSet())
+        t = FileIO::Gocad::DataType::PLINE;
+    if (export_surfaces_arg.isSet())
+        t = FileIO::Gocad::DataType::TSURF;
     std::vector<std::unique_ptr<MeshLib::Mesh>> meshes;
-    if (!gcts.readFile(file_name, meshes))
+    if (!FileIO::Gocad::GocadAsciiReader::readFile(file_name, meshes, t))
     {
         ERR("Error reading file.");
         return 1;
     }
+    INFO("%d meshes found.", meshes.size());
     std::string const dir = output_arg.getValue();
     bool const write_binary = write_binary_arg.getValue();
     std::string const delim = getDelim(dir);
     for (auto& mesh : meshes)
     {
+        if (mesh == nullptr)
+            continue;
         INFO("Writing mesh \"%s\"", mesh->getName().c_str());
         int data_mode = (write_binary) ? 2 : 0;
         bool compressed = (write_binary);
