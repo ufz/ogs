@@ -10,9 +10,9 @@ author = "Thomas Fischer"
 
 ## General
 
-The tool `ResetPropertiesInPolygonalRegion` changes the property values of all elements of a mesh `mesh` in which at least one node of the element lies within the cylindrical volume defined through a given polygon `polygon_name` within the geometry `geometry` to a new value. 
+The tool `ResetPropertiesInPolygonalRegion` changes the property values of all elements of a mesh `mesh` in which at least one node of the element lies within the cylindrical volume defined through a given polygon `polygon_name` within the geometry `geometry` to a new value.
 
-The new value must be of one of the data types, either [integer](https://en.wikipedia.org/wiki/Integer_(computer_science)) {1, 2, 3, ...} (`new_int_value`), character {'a', 'b', 'c', ...} (`new_character_value`), or [boolean](https://en.wikipedia.org/wiki/Boolean_data_type) {true,false} (`new_boolean_value`). The new value must fit the the chosen property type of `name_of_property`. 
+The new value must be of one of the data types, either [integer](https://en.wikipedia.org/wiki/Integer_(computer_science)) {1, 2, 3, ...} (`new_int_value`), character {'a', 'b', 'c', ...} (`new_character_value`), or [boolean](https://en.wikipedia.org/wiki/Boolean_data_type) {true,false} (`new_boolean_value`). The new value must fit the the chosen property type of `name_of_property`.
 
 The polygon must be located within a plane. A node is located in the cylindrical volume iff (ie. if and only if) the node's orthogonal projection to the plane of the polygon lies in the polygon, ie. the plane can be defined in any arbitrary direction in 3d space.
 

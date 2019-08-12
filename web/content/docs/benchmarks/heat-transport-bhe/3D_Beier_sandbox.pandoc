@@ -19,7 +19,7 @@ The U-type Borehole Heat Exchanger (BHE) is always utilized to extract the shall
 
 ## Model Setup
 
-The numerical model was established using dual continuum method Diersch et al. (2011), in which the BHE is represented by the line element and 3D prism stands for the sand part. The numerical geometry model can be visualized as shown in Figure 1. Thus, there are two material groups in the model distinguishing the soil part and the BHE part. The length of the whole box is 18.5 m with a square cross section of 5 m per side to avoid the impact of boundary conditions on the soil temperature. Detailed parameters for the model configuration are listed in the follwoing table. 
+The numerical model was established using dual continuum method Diersch et al. (2011), in which the BHE is represented by the line element and 3D prism stands for the sand part. The numerical geometry model can be visualized as shown in Figure 1. Thus, there are two material groups in the model distinguishing the soil part and the BHE part. The length of the whole box is 18.5 m with a square cross section of 5 m per side to avoid the impact of boundary conditions on the soil temperature. Detailed parameters for the model configuration are listed in the follwoing table.
 
 | Parameter                          | Symbol             |  Value              | Unit                        |
 | ---------------------------------- |:------------------ | -------------------:| --------------------------: |
@@ -43,7 +43,7 @@ In Beier's experiment, the inner diameter of aluminum pipe is 12.6 $\mathrm{cm}$
 
 ## OGS-6 Input Files
 
-The detailed input file can be seen from the .prj file. The inflow temperature of the BHE, which was imposed as boundary condition of the BHE can be shown in Figure 2. Initial conditions of inflow and outflow temperature for the BHE were directly obtained from the measurements at t=0. For the initial soil temperature, the average value of all sensors placed in the sand and the borehole wall was set in the numerical model. 
+The detailed input file can be seen from the .prj file. The inflow temperature of the BHE, which was imposed as boundary condition of the BHE can be shown in Figure 2. Initial conditions of inflow and outflow temperature for the BHE were directly obtained from the measurements at t=0. For the initial soil temperature, the average value of all sensors placed in the sand and the borehole wall was set in the numerical model.
 
 {{< img src="../3D_Beier_sandbox_figures/Inflow_temp.png" width="200">}}
 

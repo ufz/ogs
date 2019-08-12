@@ -82,7 +82,7 @@ The material properties are shown in the following table.
 </tbody>
 </table>
 
-The time duration is 8.64 <span class="math inline">⋅10<sup>6</sup></span> s, 
+The time duration is 8.64 <span class="math inline">⋅10<sup>6</sup></span> s,
 and the time step size is 8.64 <span class="math inline">⋅10<sup>4</sup></span> s.
  For the verification the example is also solved by the monolithic
 scheme. The displacement solution at the last

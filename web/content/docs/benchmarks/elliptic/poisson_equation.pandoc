@@ -166,7 +166,7 @@ info:    residual: 5.974447e-17
 info: ------------------------------------------------------------------
 info: [time] Linear solver took 0.00145817 s.
 info: [time] Iteration #1 took 0.0116439 s.
-info: [time] Solving process #0 took 0.011662 s in time step #1 
+info: [time] Solving process #0 took 0.011662 s in time step #1
 info: [time] Time step #1 took 0.0116858 s.
 info: [time] Output of timestep 1 took 0.000671864 s.
 info: The whole computation of the time stepping took 1 steps, in which

@@ -29,7 +29,7 @@ Results show phase-field evolution in the thermo-mechanical case can follow the 
 {{< img src="../t_pf.png" >}}
 
 The analytical solution is: $$d = \dfrac{G\textrm{c}}{G\textrm{c}+4\epsilon \psi_\textrm{e}^+}$$
-where due to negative (elastic) volume strains only the deviatoric energy drives the phase field. 
+where due to negative (elastic) volume strains only the deviatoric energy drives the phase field.
 
 $$
 \begin{equation}
@@ -46,7 +46,7 @@ $$
 $$
 
 for thermo-mechanical case.
-Where the Poisson's ratio is evolving with the degradation of the shear modulus 
+Where the Poisson's ratio is evolving with the degradation of the shear modulus
 
 $$
 \begin{equation}

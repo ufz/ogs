@@ -208,7 +208,7 @@ void checkGlobalVectorInterfacePETSc()
     /*
          Assume there is a vector distributed over three processes as
           -- rank0 --    --- rank1 ---   -- rank2 --
-           0  1  2  3    4  5  6  7  8   9   10   11 
+           0  1  2  3    4  5  6  7  8   9   10   11
          where the numbers are the global entry indices.
          In each trunk of entries of a rank, there are ghost entries in
          other ranks attached and their global entry indices are:
@@ -224,7 +224,7 @@ void checkGlobalVectorInterfacePETSc()
 
          The above ghost entry embedded vector is realized by the following
          test.
-    */    
+    */
     std::size_t local_vec_size = 4;
     if (mrank == 1)
         local_vec_size = 5;
@@ -234,7 +234,7 @@ void checkGlobalVectorInterfacePETSc()
     std::vector<double> non_ghost_vals(local_vec_size);
     std::size_t nghosts = 3;
     if (mrank)
-        nghosts = 2;    
+        nghosts = 2;
     std::vector<GlobalIndexType> ghost_ids(nghosts);
     std::vector<double> expected;
     switch (mrank)
