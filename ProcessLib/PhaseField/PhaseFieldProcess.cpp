@@ -140,6 +140,14 @@ void PhaseFieldProcess<DisplacementDim>::initializeConcreteProcess(
                              DisplacementDim>::RowsAtCompileTime,
                          getExtrapolator(), _local_assemblers,
                          &LocalAssemblerInterface::getIntPtEpsilon));
+
+    // Initialize local assemblers after all variables have been set.
+    const int process_id = 0;
+    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
+
+    GlobalExecutor::executeSelectedMemberOnDereferenced(
+        &LocalAssemblerInterface::initialize, _local_assemblers,
+        pv.getActiveElementIDs(), *_local_to_global_index_map);
 }
 
 template <int DisplacementDim>
