@@ -2,9 +2,13 @@ From 6.1.0 onwards the changelog is part of the web site under `web/content/rele
 
 # Unreleased
 
-[Please see the wiki-page](https://github.com/ufz/ogs/wiki/Release-notes-6.2.1)
+[Please see the wiki-page](https://github.com/ufz/ogs/wiki/Release-notes-6.2.2)
 
 ----
+
+# 6.2.1
+
+[Changelog for OpenGeoSys 6.2.0](https://github.com/ufz/ogs/blob/master/web/content/releases/6.2.1.md)
 
 # 6.2.0
 
