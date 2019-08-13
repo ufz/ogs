@@ -21,7 +21,9 @@ LinearProperty::LinearProperty(PropertyDataType const& property_reference_value,
 }
 
 PropertyDataType LinearProperty::value(
-    VariableArray const& variable_array) const
+    VariableArray const& variable_array,
+    ParameterLib::SpatialPosition const& /*pos*/,
+    double const /*t*/) const
 {
     return std::get<double>(_value) *
            (1 +
@@ -30,6 +32,7 @@ PropertyDataType LinearProperty::value(
                      _independent_variable.type)]) -
                  std::get<double>(_independent_variable.reference_condition)));
 }
+
 
 PropertyDataType LinearProperty::dValue(VariableArray const& /*variable_array*/,
                                         Variable const primary_variable) const

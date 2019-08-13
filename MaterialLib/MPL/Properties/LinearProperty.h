@@ -34,9 +34,13 @@ public:
     /// of the base class Property to that value.
     LinearProperty(PropertyDataType const& property_reference_value,
                    IndependentVariable const& v);
+
     /// This method computes the value of a property depending linearly on
     /// the value of the given primary variable.
-    PropertyDataType value(VariableArray const& variable_array) const override;
+    PropertyDataType value(VariableArray const& variable_array,
+                           ParameterLib::SpatialPosition const& pos,
+                           double const t) const override;
+
     /// This method will compute the derivative of a property with respect to
     /// the given primary variable.
     PropertyDataType dValue(VariableArray const& variable_array,

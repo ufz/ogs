@@ -22,9 +22,12 @@ PropertyDataType Property::value() const
 {
     return _value;
 }
+
 /// The default implementation of this method only returns the property value
 /// without altering it.
-PropertyDataType Property::value(VariableArray const& /*variable_array*/) const
+PropertyDataType Property::value(VariableArray const& /*variable_array*/,
+                                 ParameterLib::SpatialPosition const& /*pos*/,
+                                 double const /*t*/) const
 {
     return _value;
 }

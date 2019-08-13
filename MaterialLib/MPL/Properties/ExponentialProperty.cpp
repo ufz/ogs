@@ -25,7 +25,9 @@ ExponentialProperty::ExponentialProperty(
 }
 
 PropertyDataType ExponentialProperty::value(
-    VariableArray const& variable_array) const
+    VariableArray const& variable_array,
+    ParameterLib::SpatialPosition const& /*pos*/,
+    double const /*t*/) const
 {
     return std::get<double>(_value) *
            std::exp(
