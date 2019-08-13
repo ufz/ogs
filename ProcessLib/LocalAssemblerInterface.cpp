@@ -91,6 +91,13 @@ void LocalAssemblerInterface::setInitialConditions(
     setInitialConditionsConcrete(local_x, t);
 }
 
+void LocalAssemblerInterface::initialize(
+    std::size_t const /*mesh_item_id*/,
+    NumLib::LocalToGlobalIndexMap const& /*dof_table*/)
+{
+    initializeConcrete();
+}
+
 void LocalAssemblerInterface::preTimestep(
     std::size_t const mesh_item_id,
     NumLib::LocalToGlobalIndexMap const& dof_table, GlobalVector const& x,

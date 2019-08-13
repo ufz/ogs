@@ -39,6 +39,9 @@ public:
         NumLib::LocalToGlobalIndexMap const& dof_table, GlobalVector const& x,
         double const t);
 
+    virtual void initialize(std::size_t const mesh_item_id,
+                            NumLib::LocalToGlobalIndexMap const& dof_table);
+
     virtual void preAssemble(double const /*t*/,
                              std::vector<double> const& /*local_x*/){};
 
@@ -115,6 +118,8 @@ private:
         std::vector<double> const& /*local_x*/, double const /*t*/)
     {
     }
+
+    virtual void initializeConcrete() {}
 
     virtual void preTimestepConcrete(std::vector<double> const& /*local_x*/,
                                      double const /*t*/, double const /*dt*/)
