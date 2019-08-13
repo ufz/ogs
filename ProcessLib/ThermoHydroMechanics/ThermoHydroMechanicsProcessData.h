@@ -32,65 +32,6 @@ namespace ThermoHydroMechanics
 template <int DisplacementDim>
 struct ThermoHydroMechanicsProcessData
 {
-    ThermoHydroMechanicsProcessData(
-        MeshLib::PropertyVector<int> const* const material_ids_,
-        std::map<int,
-                 std::unique_ptr<
-                     MaterialLib::Solids::MechanicsBase<DisplacementDim>>>&&
-            solid_materials_,
-        ParameterLib::Parameter<double> const& intrinsic_permeability_,
-        ParameterLib::Parameter<double> const& specific_storage_,
-        ParameterLib::Parameter<double> const& fluid_viscosity_,
-        ParameterLib::Parameter<double> const& fluid_density_,
-        ParameterLib::Parameter<double> const& biot_coefficient_,
-        ParameterLib::Parameter<double> const& porosity_,
-        ParameterLib::Parameter<double> const& solid_density_,
-        ParameterLib::Parameter<double> const&
-            solid_linear_thermal_expansion_coefficient_,
-        ParameterLib::Parameter<double> const&
-            fluid_volumetric_thermal_expansion_coefficient_,
-        ParameterLib::Parameter<double> const& solid_specific_heat_capacity_,
-        ParameterLib::Parameter<double> const& fluid_specific_heat_capacity_,
-        ParameterLib::Parameter<double> const& solid_thermal_conductivity_,
-        ParameterLib::Parameter<double> const& fluid_thermal_conductivity_,
-        ParameterLib::Parameter<double> const& reference_temperature_,
-        Eigen::Matrix<double, DisplacementDim, 1>
-            specific_body_force_)
-        : material_ids(material_ids_),
-          solid_materials{std::move(solid_materials_)},
-          intrinsic_permeability(intrinsic_permeability_),
-          specific_storage(specific_storage_),
-          fluid_viscosity(fluid_viscosity_),
-          fluid_density(fluid_density_),
-          biot_coefficient(biot_coefficient_),
-          porosity(porosity_),
-          solid_density(solid_density_),
-          solid_linear_thermal_expansion_coefficient(
-              solid_linear_thermal_expansion_coefficient_),
-          fluid_volumetric_thermal_expansion_coefficient(
-              fluid_volumetric_thermal_expansion_coefficient_),
-          solid_specific_heat_capacity(solid_specific_heat_capacity_),
-          solid_thermal_conductivity(solid_thermal_conductivity_),
-          fluid_specific_heat_capacity(fluid_specific_heat_capacity_),
-          fluid_thermal_conductivity(fluid_thermal_conductivity_),
-          reference_temperature(reference_temperature_),
-          specific_body_force(std::move(specific_body_force_))
-    {
-    }
-
-    ThermoHydroMechanicsProcessData(ThermoHydroMechanicsProcessData&& other) =
-        default;
-
-    //! Copies are forbidden.
-    ThermoHydroMechanicsProcessData(ThermoHydroMechanicsProcessData const&) =
-        delete;
-
-    //! Assignments are not needed.
-    void operator=(ThermoHydroMechanicsProcessData const&) = delete;
-
-    //! Assignments are not needed.
-    void operator=(ThermoHydroMechanicsProcessData&&) = delete;
-
     MeshLib::PropertyVector<int> const* const material_ids;
 
     /// The constitutive relation for the mechanical part.

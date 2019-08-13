@@ -31,37 +31,6 @@ namespace SmallDeformation
 template <int DisplacementDim>
 struct SmallDeformationProcessData
 {
-    SmallDeformationProcessData(
-        MeshLib::PropertyVector<int> const* const material_ids_,
-        std::map<int,
-                 std::unique_ptr<
-                     MaterialLib::Solids::MechanicsBase<DisplacementDim>>>&&
-            solid_materials_,
-        ParameterLib::Parameter<double> const& solid_density_,
-        Eigen::Matrix<double, DisplacementDim, 1>
-            specific_body_force_,
-        double const reference_temperature_,
-        ParameterLib::Parameter<double> const* const nonequilibrium_stress_)
-        : material_ids(material_ids_),
-          solid_materials{std::move(solid_materials_)},
-          solid_density(solid_density_),
-          nonequilibrium_stress(nonequilibrium_stress_),
-          specific_body_force(std::move(specific_body_force_)),
-          reference_temperature(reference_temperature_)
-    {
-    }
-
-    SmallDeformationProcessData(SmallDeformationProcessData&& other) = default;
-
-    //! Copies are forbidden.
-    SmallDeformationProcessData(SmallDeformationProcessData const&) = delete;
-
-    //! Assignments are not needed.
-    void operator=(SmallDeformationProcessData const&) = delete;
-
-    //! Assignments are not needed.
-    void operator=(SmallDeformationProcessData&&) = delete;
-
     MeshLib::PropertyVector<int> const* const material_ids;
 
     std::map<

@@ -19,24 +19,6 @@ namespace GroundwaterFlow
 {
 struct GroundwaterFlowProcessData final
 {
-    explicit GroundwaterFlowProcessData(
-        ParameterLib::Parameter<double> const& hydraulic_conductivity_)
-        : hydraulic_conductivity(hydraulic_conductivity_)
-    {}
-
-    GroundwaterFlowProcessData(GroundwaterFlowProcessData&& other)
-        : hydraulic_conductivity(other.hydraulic_conductivity)
-    {}
-
-    //! Copies are forbidden.
-    GroundwaterFlowProcessData(GroundwaterFlowProcessData const&) = delete;
-
-    //! Assignments are not needed.
-    void operator=(GroundwaterFlowProcessData const&) = delete;
-
-    //! Assignments are not needed.
-    void operator=(GroundwaterFlowProcessData&&) = delete;
-
     ParameterLib::Parameter<double> const& hydraulic_conductivity;
 };
 

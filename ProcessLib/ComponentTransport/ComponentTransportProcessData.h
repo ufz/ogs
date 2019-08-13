@@ -53,18 +53,6 @@ struct ComponentTransportProcessData
     {
     }
 
-    ComponentTransportProcessData(ComponentTransportProcessData&&) = default;
-
-    //! Copies are forbidden.
-    ComponentTransportProcessData(ComponentTransportProcessData const&) =
-        delete;
-
-    //! Assignments are not needed.
-    void operator=(ComponentTransportProcessData const&) = delete;
-
-    //! Assignments are not needed.
-    void operator=(ComponentTransportProcessData&&) = delete;
-
     MaterialLib::PorousMedium::PorousMediaProperties porous_media_properties;
     ParameterLib::Parameter<double> const& fluid_reference_density;
     std::unique_ptr<MaterialLib::Fluid::FluidProperties> fluid_properties;
