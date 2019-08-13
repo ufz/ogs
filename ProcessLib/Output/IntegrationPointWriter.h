@@ -8,6 +8,7 @@
  *              http://www.opengeosys.org/project/license
  *
  */
+#include <functional>
 #include <memory>
 #include <nlohmann/json_fwd.hpp>
 #include <vector>
