@@ -187,8 +187,6 @@ public:
             ip_data.eps_prev.resize(kelvin_vector_size);
 
             _secondary_data.N[ip] = shape_matrices[ip].N;
-
-            _ip_data[ip].pushBackState();
         }
     }
 
@@ -213,6 +211,17 @@ public:
         }
 
         return 0;
+    }
+
+    void initializeConcrete() override
+    {
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
+
+        for (unsigned ip = 0; ip < n_integration_points; ip++)
+        {
+            _ip_data[ip].pushBackState();
+        }
     }
 
     void assemble(double const /*t*/, std::vector<double> const& /*local_x*/,
