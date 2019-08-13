@@ -245,6 +245,14 @@ void HydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
         MeshLib::getOrCreateMeshProperty<double>(
             const_cast<MeshLib::Mesh&>(mesh), "pressure_interpolated",
             MeshLib::MeshItemType::Node, 1);
+
+    // Initialize local assemblers after all variables have been set.
+    const int process_id = 0;
+    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
+
+    GlobalExecutor::executeSelectedMemberOnDereferenced(
+        &LocalAssemblerInterface::initialize, _local_assemblers,
+        pv.getActiveElementIDs(), *_local_to_global_index_map);
 }
 
 template <int DisplacementDim>
