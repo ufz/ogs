@@ -63,7 +63,11 @@ The Homebrew package manager is needed for installing other libraries and packag
 Git is a powerful and distributed version control system. OGS source code is hosted on [GitHub](https://github.com/ufz/ogs). See the developer guide page on [Code Reviews]({{< ref "code-reviews" >}}) for more info on how OGS uses GitHub for collaborative development.
 
 ::: {.win}
-Download and install git from the [git homepage](http://git-scm.com/download/win). The default installer options are fine. This install a new command line called *Git Bash* which should be used for all git operations.
+Download and install git from the [git homepage](http://git-scm.com/download/win). Use the default installer options but also enable `Enable symbolic links` under the *Configuring extra options* page.
+
+![Enable symbolic links option](../git-installer-win.png)
+
+This install a new command line called *Git Bash* which should be used for all git operations.
 
 Let Git know who you are:
 
@@ -241,7 +245,7 @@ Install Conan with Python's pip:
 pip3 install --user conan
 ```
 
-This installed `conan` to `.local/bin` in your home directory. Make sure to have this directory in your `PATH`!
+This installed `conan` to `.local/bin` (or `C:\Users\[username]\AppData\Roaming\Python\Python37\Scripts` on Windows) in your home directory. Make sure to have this directory in your `PATH`!
 
 Check on a newly opened command line if Conan was installed successfully:
 

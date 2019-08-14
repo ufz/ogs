@@ -32,7 +32,7 @@ RUN apt-get update -y && \
         python3-setuptools \
         python3-wheel && \
     rm -rf /var/lib/apt/lists/*
-RUN pip3 install virtualenv pre-commit
+RUN pip3 install virtualenv pre-commit cmake-format
 # CMake version 3.12.4
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \

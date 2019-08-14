@@ -1,4 +1,4 @@
-#Source files grouped by a directory
+# Source files grouped by a directory
 get_source_files(SOURCES)
 append_source_files(SOURCES PhreeqcIOData)
 
@@ -11,10 +11,7 @@ endif()
 include(GenerateExportHeader)
 generate_export_header(ChemistryLib)
 
-target_link_libraries(ChemistryLib
-    PUBLIC iphreeqc
-    PRIVATE NumLib
-)
+target_link_libraries(ChemistryLib PUBLIC iphreeqc PRIVATE NumLib)
 
 if(OGS_USE_PCH)
     cotire(ChemistryLib)

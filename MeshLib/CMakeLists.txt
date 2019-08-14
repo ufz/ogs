@@ -1,23 +1,23 @@
-GET_SOURCE_FILES(SOURCES)
+get_source_files(SOURCES)
 
 # It should be removed too for other MPI based DDC approach in future.
 if(NOT OGS_USE_PETSC)
     list(REMOVE_ITEM SOURCES NodePartitionedMesh.h)
 endif()
 
-APPEND_SOURCE_FILES(SOURCES MeshEditing)
-APPEND_SOURCE_FILES(SOURCES MeshGenerators)
-APPEND_SOURCE_FILES(SOURCES MeshSearch)
-APPEND_SOURCE_FILES(SOURCES Elements)
-APPEND_SOURCE_FILES(SOURCES IO)
-APPEND_SOURCE_FILES(SOURCES IO/Legacy)
-APPEND_SOURCE_FILES(SOURCES IO/VtkIO)
-APPEND_SOURCE_FILES(SOURCES MeshQuality)
-APPEND_SOURCE_FILES(SOURCES Vtk)
+append_source_files(SOURCES MeshEditing)
+append_source_files(SOURCES MeshGenerators)
+append_source_files(SOURCES MeshSearch)
+append_source_files(SOURCES Elements)
+append_source_files(SOURCES IO)
+append_source_files(SOURCES IO/Legacy)
+append_source_files(SOURCES IO/VtkIO)
+append_source_files(SOURCES MeshQuality)
+append_source_files(SOURCES Vtk)
 
 # It could be used for other MPI based DDC approach in future.
 if(OGS_USE_PETSC)
-    APPEND_SOURCE_FILES(SOURCES IO/MPI_IO)
+    append_source_files(SOURCES IO/MPI_IO)
 endif()
 
 # Create the library
@@ -30,5 +30,8 @@ if(OGS_USE_PCH)
 endif()
 
 target_link_libraries(MeshLib
-    PUBLIC BaseLib GeoLib MathLib logog ${VTK_LIBRARIES}
-)
+                      PUBLIC BaseLib
+                             GeoLib
+                             MathLib
+                             logog
+                             ${VTK_LIBRARIES})

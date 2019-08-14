@@ -1,14 +1,11 @@
 #!/usr/bin/env bash
 
-set -e
-
 BINARY_FILES=""
 LFS_FILES=""
 
 LFS_FILES=()
 for FILE in "$@"
 do
-    echo FILE: $FILE
     LFS_FILE=$(git check-attr filter "$FILE" | grep 'filter: lfs$' | sed -e 's/: filter: lfs//')
     if [ ! -z "$LFS_FILE" ]; then
         LFS_FILES+=("$LFS_FILE")

@@ -1,9 +1,5 @@
-set(TOOLS
-    ComputeNodeAreasFromSurfaceMesh
-    convertVtkDataArrayToVtkDataArray
-    createNeumannBc
-    scaleProperty
-)
+set(TOOLS ComputeNodeAreasFromSurfaceMesh convertVtkDataArrayToVtkDataArray
+          createNeumannBc scaleProperty)
 foreach(TOOL ${TOOLS})
     add_executable(${TOOL} ${TOOL}.cpp)
     target_link_libraries(${TOOL} MeshLib)

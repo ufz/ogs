@@ -1,4 +1,3 @@
-
 if(OGS_BUILD_PROCESS_LIE)
     add_executable(postLIE postLIE.cpp)
     target_link_libraries(postLIE LIECommon)

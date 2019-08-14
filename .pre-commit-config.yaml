@@ -32,5 +32,11 @@ repos:
         entry: scripts/hooks/pre-commit-git-lfs.sh
         language: system
         stages: [commit, manual]
+    -   id: cmake-format
+        name: Format CMake files
+        entry: scripts/hooks/pre-commit-cmake-format.sh
+        language: system
+        files: 'CMakeLists.txt'
+        stages: [commit, manual]
 
 exclude: 'ThirdParty/*|Tests/Data/*|web/static/images/xsd'

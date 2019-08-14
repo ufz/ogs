@@ -24,7 +24,8 @@ append_source_files(SOURCES PorousMedium/Porosity)
 append_source_files(SOURCES PorousMedium/Storage)
 append_source_files(SOURCES PorousMedium/Permeability)
 append_source_files(SOURCES PorousMedium/UnsaturatedProperty/CapillaryPressure)
-append_source_files(SOURCES PorousMedium/UnsaturatedProperty/RelativePermeability)
+append_source_files(SOURCES
+                    PorousMedium/UnsaturatedProperty/RelativePermeability)
 append_source_files(SOURCES TwoPhaseModels)
 
 add_subdirectory(SolidModels/MFront)
@@ -36,14 +37,11 @@ endif()
 
 include(GenerateExportHeader)
 generate_export_header(MaterialLib)
-target_include_directories(MaterialLib
-    PUBLIC ${CMAKE_CURRENT_BINARY_DIR}
-)
+target_include_directories(MaterialLib PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 
 target_link_libraries(MaterialLib
-    PUBLIC MaterialLib_SolidModels_MFront
-    PRIVATE MathLib MeshLib ParameterLib
-)
+                      PUBLIC MaterialLib_SolidModels_MFront
+                      PRIVATE MathLib MeshLib ParameterLib)
 
 if(OGS_USE_PCH)
     cotire(MaterialLib)

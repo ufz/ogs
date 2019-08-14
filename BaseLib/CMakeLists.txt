@@ -1,10 +1,10 @@
-GET_SOURCE_FILES(SOURCES)
-APPEND_SOURCE_FILES(SOURCES IO)
+get_source_files(SOURCES)
+append_source_files(SOURCES IO)
 
-APPEND_SOURCE_FILES(SOURCES IO/XmlIO)
+append_source_files(SOURCES IO/XmlIO)
 
 if(OGS_BUILD_GUI)
-    APPEND_SOURCE_FILES(SOURCES IO/XmlIO/Qt)
+    append_source_files(SOURCES IO/XmlIO/Qt)
 endif()
 
 list(APPEND SOURCES "${CMAKE_CURRENT_BINARY_DIR}/BuildInfo.cpp" BuildInfo.h)

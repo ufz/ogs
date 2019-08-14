@@ -8,8 +8,7 @@ set(SOURCES
     ColorPickerPushButton.cpp
     TreeModelIterator.cpp
     CheckboxDelegate.cpp
-    QValueTooltipSlider.cpp
-)
+    QValueTooltipSlider.cpp)
 
 # Header files
 set(HEADERS
@@ -23,18 +22,14 @@ set(HEADERS
     TreeModel.h
     ColorPickerPushButton.h
     CheckboxDelegate.h
-    QValueTooltipSlider.h
-)
+    QValueTooltipSlider.h)
 
 # Put moc files in a project folder
 source_group("UI Files" REGULAR_EXPRESSION "\\w*\\.ui")
 source_group("Moc Files" REGULAR_EXPRESSION "moc_.*")
 
 # Create the library
-add_library(QtBase
-    ${SOURCES}
-    ${HEADERS}
-)
+add_library(QtBase ${SOURCES} ${HEADERS})
 if(BUILD_SHARED_LIBS)
     install(TARGETS QtBase LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 endif()
