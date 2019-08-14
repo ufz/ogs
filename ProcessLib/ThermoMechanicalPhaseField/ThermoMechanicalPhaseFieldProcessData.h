@@ -46,10 +46,11 @@ struct ThermoMechanicalPhaseFieldProcessData
     ParameterLib::Parameter<double> const& specific_heat_capacity;
     ParameterLib::Parameter<double> const& thermal_conductivity;
     ParameterLib::Parameter<double> const& residual_thermal_conductivity;
-    double const reference_temperature;
     Eigen::Matrix<double, DisplacementDim, 1> const specific_body_force;
-    double dt;
-    double t;
+    double const reference_temperature;
+
+    double dt = std::numeric_limits<double>::quiet_NaN();
+    double t = std::numeric_limits<double>::quiet_NaN();
 };
 
 }  // namespace ThermoMechanicalPhaseField

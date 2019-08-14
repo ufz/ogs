@@ -62,14 +62,15 @@ struct ThermoHydroMechanicsProcessData
     ParameterLib::Parameter<double> const&
         fluid_volumetric_thermal_expansion_coefficient;
     ParameterLib::Parameter<double> const& solid_specific_heat_capacity;
-    ParameterLib::Parameter<double> const& solid_thermal_conductivity;
     ParameterLib::Parameter<double> const& fluid_specific_heat_capacity;
+    ParameterLib::Parameter<double> const& solid_thermal_conductivity;
     ParameterLib::Parameter<double> const& fluid_thermal_conductivity;
     ParameterLib::Parameter<double> const& reference_temperature;
     /// Specific body forces applied to solid and fluid.
     /// It is usually used to apply gravitational forces.
     /// A vector of displacement dimension's length.
     Eigen::Matrix<double, DisplacementDim, 1> const specific_body_force;
+
     double dt = 0.0;
     double t = 0.0;
 

@@ -60,12 +60,11 @@ struct HydroMechanicsProcessData
     /// It is usually used to apply gravitational forces.
     /// A vector of displacement dimension's length.
     Eigen::Matrix<double, DisplacementDim, 1> const specific_body_force;
-    double dt = 0.0;
-    double t = 0.0;
-
     double const reference_temperature;
 
     MeshLib::PropertyVector<double>* pressure_interpolated = nullptr;
+    double dt = 0.0;
+    double t = 0.0;
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };

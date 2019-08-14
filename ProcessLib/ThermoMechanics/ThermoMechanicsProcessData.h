@@ -45,14 +45,15 @@ struct ThermoMechanicsProcessData
         thermal_conductivity;  // TODO To be changed as a matrix type variable.
     Eigen::Matrix<double, DisplacementDim, 1> const specific_body_force;
     ParameterLib::Parameter<double> const* const nonequilibrium_stress;
-    double dt = 0;
-    double t = 0;
 
     /// ID of the mechanical process.
     int const mechanics_process_id;
 
     /// ID of heat conduction process.
     int const heat_conduction_process_id;
+
+    double dt = 0;
+    double t = 0;
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };

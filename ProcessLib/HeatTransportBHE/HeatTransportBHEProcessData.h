@@ -44,9 +44,9 @@ struct HeatTransportBHEProcessData
     ParameterLib::Parameter<double> const& density_fluid;
     ParameterLib::Parameter<double> const& density_gas;
 
-    MeshLib::PropertyVector<int> const* _mesh_prop_materialIDs = nullptr;
-    std::unordered_map<int, int> _map_materialID_to_BHE_ID;
-
     std::vector<BHE::BHETypes> _vec_BHE_property;
+
+    MeshLib::PropertyVector<int> const* _mesh_prop_materialIDs = nullptr;
+    std::unordered_map<int, int> _map_materialID_to_BHE_ID{};
 };
 }  // namespace ProcessLib::HeatTransportBHE

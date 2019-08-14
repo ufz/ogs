@@ -61,13 +61,14 @@ struct RichardsMechanicsProcessData
     /// It is usually used to apply gravitational forces.
     /// A vector of displacement dimension's length.
     Eigen::Matrix<double, DisplacementDim, 1> const specific_body_force;
-    double dt = 0.0;
-    double t = 0.0;
+
+    bool const apply_mass_lumping;
 
     MeshLib::PropertyVector<double>* element_saturation = nullptr;
     MeshLib::PropertyVector<double>* pressure_interpolated = nullptr;
 
-    bool const apply_mass_lumping;
+    double dt = 0.0;
+    double t = 0.0;
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };

@@ -40,14 +40,16 @@ struct SmallDeformationProcessData
     /// Solid's density. A scalar quantity, ParameterLib::Parameter<double>.
     ParameterLib::Parameter<double> const& solid_density;
 
-    ParameterLib::Parameter<double> const* const nonequilibrium_stress;
     /// Specific body forces applied to the solid.
     /// It is usually used to apply gravitational forces.
     /// A vector of displacement dimension's length.
     Eigen::Matrix<double, DisplacementDim, 1> const specific_body_force;
+
+    ParameterLib::Parameter<double> const* const nonequilibrium_stress;
+    double const reference_temperature;
+
     double dt = 0;
     double t = 0;
-    double const reference_temperature;
 };
 
 }  // namespace SmallDeformation

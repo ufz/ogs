@@ -44,6 +44,9 @@ struct PhaseFieldProcessData
     ParameterLib::Parameter<double> const& solid_density;
     ParameterLib::Parameter<double>& history_field;
     Eigen::Matrix<double, DisplacementDim, 1> const specific_body_force;
+    bool propagating_crack = false;
+    bool crack_pressure = false;
+
     double dt = 0.0;
     double t = 0.0;
     double const unity_pressure = 1.0;
@@ -55,8 +58,6 @@ struct PhaseFieldProcessData
     double elastic_energy = 0.0;
     double surface_energy = 0.0;
     double pressure_work = 0.0;
-    bool propagating_crack = false;
-    bool crack_pressure = false;
 };
 
 }  // namespace PhaseField
