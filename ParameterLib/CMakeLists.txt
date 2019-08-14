@@ -8,9 +8,7 @@ endif()
 
 include(GenerateExportHeader)
 generate_export_header(ParameterLib)
-target_include_directories(ParameterLib
-    PUBLIC ${CMAKE_CURRENT_BINARY_DIR}
-)
+target_include_directories(ParameterLib PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 
 target_link_libraries(ParameterLib PRIVATE BaseLib MeshLib)
 

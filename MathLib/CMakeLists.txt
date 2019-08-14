@@ -1,27 +1,27 @@
-#Source files grouped by a directory
-GET_SOURCE_FILES(SOURCES)
+# Source files grouped by a directory
+get_source_files(SOURCES)
 
-APPEND_SOURCE_FILES(SOURCES Curve)
-APPEND_SOURCE_FILES(SOURCES InterpolationAlgorithms)
-APPEND_SOURCE_FILES(SOURCES Integration)
-APPEND_SOURCE_FILES(SOURCES LinAlg)
-APPEND_SOURCE_FILES(SOURCES LinAlg/Dense)
+append_source_files(SOURCES Curve)
+append_source_files(SOURCES InterpolationAlgorithms)
+append_source_files(SOURCES Integration)
+append_source_files(SOURCES LinAlg)
+append_source_files(SOURCES LinAlg/Dense)
 if(CVODE_FOUND)
-    APPEND_SOURCE_FILES(SOURCES ODE)
+    append_source_files(SOURCES ODE)
 endif()
-APPEND_SOURCE_FILES(SOURCES Nonlinear)
+append_source_files(SOURCES Nonlinear)
 
 if(OGS_USE_EIGEN)
-    APPEND_SOURCE_FILES(SOURCES LinAlg/Eigen)
+    append_source_files(SOURCES LinAlg/Eigen)
 endif()
 
 if(OGS_USE_LIS)
-    APPEND_SOURCE_FILES(SOURCES LinAlg/Lis)
-    APPEND_SOURCE_FILES(SOURCES LinAlg/EigenLis)
+    append_source_files(SOURCES LinAlg/Lis)
+    append_source_files(SOURCES LinAlg/EigenLis)
 endif()
 
 if(OGS_USE_PETSC)
-    APPEND_SOURCE_FILES(SOURCES LinAlg/PETSc)
+    append_source_files(SOURCES LinAlg/PETSc)
 endif()
 
 # Create the library
@@ -38,7 +38,7 @@ set_target_properties(MathLib PROPERTIES LINKER_LANGUAGE CXX)
 
 target_link_libraries(MathLib PUBLIC BaseLib logog ${OpenMP_CXX_LIBRARIES})
 
-if (CVODE_FOUND)
+if(CVODE_FOUND)
     target_include_directories(MathLib PRIVATE ${CVODE_INCLUDE_DIRS})
     target_link_libraries(MathLib PUBLIC ${CVODE_LIBRARIES})
 endif()
@@ -47,15 +47,15 @@ if(LAPACK_FOUND)
     target_link_libraries(MathLib PUBLIC ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
 endif()
 
-if (OGS_USE_LIS)
+if(OGS_USE_LIS)
     target_link_libraries(MathLib PUBLIC ${LIS_LIBRARIES})
 endif()
 
-if (OGS_USE_MKL)
+if(OGS_USE_MKL)
     target_link_libraries(MathLib PUBLIC ${MKL_LIBRARIES})
 endif()
 
-if (OGS_USE_PETSC)
+if(OGS_USE_PETSC)
     target_include_directories(MathLib PUBLIC ${PETSC_INCLUDE_DIRS})
     target_link_libraries(MathLib PUBLIC ${PETSC_LIBRARIES})
 endif()
