@@ -181,10 +181,7 @@ set(OGS_EIGEN_DYNAMIC_SHAPE_MATRICES
     "Default"
     CACHE STRING "Use dynamically allocated shape matrices")
 set_property(CACHE OGS_EIGEN_DYNAMIC_SHAPE_MATRICES
-             PROPERTY STRINGS
-                      "Default"
-                      "ON"
-                      "OFF")
+             PROPERTY STRINGS "Default" "ON" "OFF")
 
 if(OGS_EIGEN_DYNAMIC_SHAPE_MATRICES STREQUAL "Default")
     if(CMAKE_BUILD_TYPE STREQUAL "Release"
