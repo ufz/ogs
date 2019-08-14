@@ -1,26 +1,16 @@
 # ---- OGS-6 Project ----
-
-# Specify minimum CMake version
 cmake_minimum_required(VERSION 3.12)
 
 # Set CMake policies
-cmake_policy(SET CMP0011 NEW)
 cmake_policy(SET CMP0054 NEW)
-if(POLICY CMP0071)
-    cmake_policy(SET CMP0071 NEW)
-endif()
-if(POLICY CMP0074)
-    cmake_policy(SET CMP0074 NEW)
-endif()
+cmake_policy(SET CMP0071 NEW)
+cmake_policy(SET CMP0074 NEW)
 
-if(WIN32
-   AND NOT ${CMAKE_GENERATOR} STREQUAL Ninja
-   AND NOT ${CMAKE_GENERATOR} MATCHES 2015) # does not work on 2015 Force 64-bit
-                                            # VS compiler
+if(WIN32 AND NOT ${CMAKE_GENERATOR} STREQUAL Ninja)
+    # Force 64-bit VS compiler
     set(CMAKE_GENERATOR_TOOLSET host=x64)
 endif()
 
-# Project name
 project(OGS-6)
 
 include(scripts/cmake/CMakeSetup.cmake)
@@ -93,9 +83,6 @@ if((CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC) AND GPROF_PATH)
     option(OGS_PROFILE
            "Enables compiling with flags set for profiling with gprof." OFF)
 endif() # GCC AND GPROF_PATH
-
-# Enable / Disable parts
-option(OGS_DONT_USE_QT "Disables all Qt specific code." OFF)
 
 option(OGS_BUILD_CLI "Should the OGS simulator be built?" ON)
 option(OGS_BUILD_GUI "Should the Data Explorer be built?" OFF)
@@ -173,13 +160,8 @@ if(NOT WIN32 AND OGS_BUILD_SWMM)
 endif()
 
 option(OGS_NO_EXTERNAL_LIBS "Builds OGS without any external dependencies." OFF)
-
 option(OGS_INSITU "Builds OGS with insitu visualization capabilities." OFF)
-
-# Linear solvers
 option(OGS_USE_LIS "Use Lis" OFF)
-
-# Parallel computing: vector and matrix algebraic caculation, solvers
 option(OGS_USE_PETSC "Use PETSc routines" OFF)
 
 # Eigen
@@ -215,8 +197,8 @@ else()
     set(OGS_EIGEN_DYNAMIC_SHAPE_MATRICES_INTERNAL
         ${OGS_EIGEN_DYNAMIC_SHAPE_MATRICES})
 endif()
+# Eigen End
 
-# MKL
 option(OGS_USE_MKL "Use Intel MKL" OFF)
 
 # Logging
@@ -293,7 +275,6 @@ if(OGS_USE_PETSC)
     add_definitions(-DUSE_PETSC)
 endif()
 
-# Use MPI
 if(OGS_USE_MPI)
     add_definitions(-DUSE_MPI)
 endif()
@@ -333,7 +314,6 @@ if(OGS_FATAL_ABORT)
     add_definitions(-DOGS_FATAL_ABORT)
 endif()
 
-# Logging level
 add_definitions(-DLOGOG_LEVEL=${OGS_LOG_LEVEL})
 
 # Packaging
@@ -349,8 +329,6 @@ if(OGS_INSITU)
     include("${PARAVIEW_USE_FILE}")
     add_definitions(-DUSE_INSITU)
 endif()
-
-# Add subdirectories with the projects
 add_subdirectory(ThirdParty)
 include_directories(
     SYSTEM
@@ -383,7 +361,6 @@ endif()
 file(WRITE ${PROJECT_BINARY_DIR}/disabled-tests.log "${DISABLED_TESTS_LOG}")
 unset(DISABLED_TESTS_LOG CACHE) # Don't write to CMakeCache.txt
 
-# The configuration must be called from the source dir and not BaseLib/.
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/BaseLib/BuildInfo.cpp.in"
                "${CMAKE_CURRENT_BINARY_DIR}/BaseLib/BuildInfo.cpp" @ONLY)
 
