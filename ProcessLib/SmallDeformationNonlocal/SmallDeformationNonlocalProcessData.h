@@ -31,7 +31,7 @@ namespace SmallDeformationNonlocal
 template <int DisplacementDim>
 struct SmallDeformationNonlocalProcessData
 {
-    MeshLib::PropertyVector<int> const* const material_ids;
+    MeshLib::PropertyVector<int> const* const material_ids = nullptr;
 
     std::map<
         int,

@@ -31,7 +31,7 @@ namespace SmallDeformation
 template <int DisplacementDim>
 struct SmallDeformationProcessData
 {
-    MeshLib::PropertyVector<int> const* const material_ids;
+    MeshLib::PropertyVector<int> const* const material_ids = nullptr;
 
     std::map<
         int,
@@ -45,7 +45,8 @@ struct SmallDeformationProcessData
     /// A vector of displacement dimension's length.
     Eigen::Matrix<double, DisplacementDim, 1> const specific_body_force;
 
-    ParameterLib::Parameter<double> const* const nonequilibrium_stress;
+    ParameterLib::Parameter<double> const* const nonequilibrium_stress =
+        nullptr;
     double const reference_temperature =
         std::numeric_limits<double>::quiet_NaN();
 

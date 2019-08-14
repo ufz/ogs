@@ -31,7 +31,7 @@ namespace ThermoMechanics
 template <int DisplacementDim>
 struct ThermoMechanicsProcessData
 {
-    MeshLib::PropertyVector<int> const* const material_ids;
+    MeshLib::PropertyVector<int> const* const material_ids = nullptr;
 
     /// The constitutive relation for the mechanical part.
     std::map<int, std::unique_ptr<

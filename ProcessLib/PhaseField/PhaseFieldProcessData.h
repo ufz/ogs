@@ -32,7 +32,7 @@ namespace PhaseField
 template <int DisplacementDim>
 struct PhaseFieldProcessData
 {
-    MeshLib::PropertyVector<int> const* const material_ids;
+    MeshLib::PropertyVector<int> const* const material_ids = nullptr;
 
     std::map<int, std::unique_ptr<
                       MaterialLib::Solids::MechanicsBase<DisplacementDim>>>

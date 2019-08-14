@@ -33,7 +33,7 @@ namespace RichardsMechanics
 template <int DisplacementDim>
 struct RichardsMechanicsProcessData
 {
-    MeshLib::PropertyVector<int> const* const material_ids;
+    MeshLib::PropertyVector<int> const* const material_ids = nullptr;
 
     std::unique_ptr<ProcessLib::RichardsFlow::RichardsFlowMaterialProperties>
         flow_material;
