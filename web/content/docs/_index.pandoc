@@ -43,10 +43,4 @@ url = "https://ufz.github.io/styleguide/cppguide.xml"
 text = "OpenGeoSys C++ Style Guide"
 icon = "fal fa-file-check"
 
-[[sections]]
-name = "Mailing List"
-url = "https://groups.google.com/forum/#!forum/ogs-users"
-text = "The mailing lists for OpenGeoSys users and developers are a good place to ask question related to anything OGS."
-icon = "fal fa-mail-bulk"
-
 +++
