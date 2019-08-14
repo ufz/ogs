@@ -1,5 +1,5 @@
 # Source files
-GET_SOURCE_FILES(SOURCES)
+get_source_files(SOURCES)
 
 # Library
 add_library(InSituLib ${SOURCES})

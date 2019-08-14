@@ -2,10 +2,7 @@ if(NOT OGS_BUILD_GUI)
     return()
 endif()
 
-set(TOOLS
-    MoveGeometry
-    TriangulatePolyline
-)
+set(TOOLS MoveGeometry TriangulatePolyline)
 foreach(TOOL ${TOOLS})
     add_executable(${TOOL} ${TOOL}.cpp)
     target_link_libraries(${TOOL} GeoLib ApplicationsFileIO Qt5::Core)

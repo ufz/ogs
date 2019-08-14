@@ -46,8 +46,7 @@ set(SOURCES
     VtkVisPipelineItem.cpp
     VtkVisPipelineView.cpp
     VtkVisPointSetItem.cpp
-    VtkVisTabWidget.cpp
-)
+    VtkVisTabWidget.cpp)
 
 set(HEADERS
     MeshFromRasterDialog.h
@@ -97,8 +96,7 @@ set(HEADERS
     VtkVisPipelineItem.h
     VtkVisPipelineView.h
     VtkVisPointSetItem.h
-    VtkVisTabWidget.h
-)
+    VtkVisTabWidget.h)
 
 # Visual Studio folder
 source_group("Filter Header Files" REGULAR_EXPRESSION "[.]*Filter.h")
@@ -110,24 +108,18 @@ source_group("UI Files" FILES ${UIS})
 
 set(SOURCE_DIR_REL ${CMAKE_CURRENT_SOURCE_DIR}/../../..)
 set(GUI_SOURCE_DIR_REL ${CMAKE_CURRENT_SOURCE_DIR}/..)
-include_directories(
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_BINARY_DIR}
-    ${SOURCE_DIR_REL}/Applications/FileIO
-    ${SOURCE_DIR_REL}/BaseLib
-    ${SOURCE_DIR_REL}/GeoLib
-    ${SOURCE_DIR_REL}/MathLib
-    ${SOURCE_DIR_REL}/MeshLib
-    ${GUI_SOURCE_DIR_REL}/Base
-    ${GUI_SOURCE_DIR_REL}/DataView
-    ${GUI_SOURCE_DIR_REL}/VtkModules/Qt
-)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}
+                    ${CMAKE_CURRENT_BINARY_DIR}
+                    ${SOURCE_DIR_REL}/Applications/FileIO
+                    ${SOURCE_DIR_REL}/BaseLib
+                    ${SOURCE_DIR_REL}/GeoLib
+                    ${SOURCE_DIR_REL}/MathLib
+                    ${SOURCE_DIR_REL}/MeshLib
+                    ${GUI_SOURCE_DIR_REL}/Base
+                    ${GUI_SOURCE_DIR_REL}/DataView
+                    ${GUI_SOURCE_DIR_REL}/VtkModules/Qt)
 
-add_library(VtkVis
-    ${SOURCES}
-    ${HEADERS}
-    ${UIS}
-)
+add_library(VtkVis ${SOURCES} ${HEADERS} ${UIS})
 if(BUILD_SHARED_LIBS)
     install(TARGETS VtkVis LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 endif()
@@ -138,11 +130,15 @@ if(GEOTIFF_FOUND)
 endif() # GEOTIFF_FOUND
 
 target_link_libraries(VtkVis
-    PUBLIC BaseLib GeoLib MeshLib DataHolderLib QtBase vtkIOImage
-    PRIVATE MathLib ApplicationsFileIO Qt5::Gui logog
-)
+                      PUBLIC BaseLib
+                             GeoLib
+                             MeshLib
+                             DataHolderLib
+                             QtBase
+                             vtkIOImage
+                      PRIVATE MathLib ApplicationsFileIO Qt5::Gui logog)
 
-if (OGS_USE_NETCDF)
+if(OGS_USE_NETCDF)
     target_link_libraries(VtkVis PRIVATE NetCdfDialogLib)
 endif()
 

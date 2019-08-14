@@ -1,6 +1,6 @@
 set(BUILD_SHARED_LIBS_SAVED "${BUILD_SHARED_LIBS}")
-# Always built Data Explorer statically as there are cyclic dependencies
-# between QtDataView and VtkVis
+# Always built Data Explorer statically as there are cyclic dependencies between
+# QtDataView and VtkVis
 set(BUILD_SHARED_LIBS OFF)
 
 if(MSVC)
@@ -11,9 +11,7 @@ if(VTKFBXCONVERTER_FOUND)
     add_definitions(-DVTKFBXCONVERTER_FOUND)
 endif()
 
-include_directories(
-    ${CMAKE_CURRENT_SOURCE_DIR}
-)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 set(CMAKE_AUTOMOC TRUE)
 set(CMAKE_AUTOUIC TRUE)

@@ -91,9 +91,7 @@ if(OGS_USE_PCH)
     cotire(DataExplorer)
 endif()
 
-####################
-### Installation ###
-####################
+# ---- Installation ----
 install(TARGETS DataExplorer RUNTIME DESTINATION bin COMPONENT ogs_gui)
 
 cpack_add_component(ogs_gui
