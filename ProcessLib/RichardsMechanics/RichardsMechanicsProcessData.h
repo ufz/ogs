@@ -67,8 +67,8 @@ struct RichardsMechanicsProcessData
     MeshLib::PropertyVector<double>* element_saturation = nullptr;
     MeshLib::PropertyVector<double>* pressure_interpolated = nullptr;
 
-    double dt = 0.0;
-    double t = 0.0;
+    double dt = std::numeric_limits<double>::quiet_NaN();
+    double t = std::numeric_limits<double>::quiet_NaN();
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };

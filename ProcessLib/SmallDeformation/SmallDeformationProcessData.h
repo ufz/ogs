@@ -46,10 +46,11 @@ struct SmallDeformationProcessData
     Eigen::Matrix<double, DisplacementDim, 1> const specific_body_force;
 
     ParameterLib::Parameter<double> const* const nonequilibrium_stress;
-    double const reference_temperature;
+    double const reference_temperature =
+        std::numeric_limits<double>::quiet_NaN();
 
-    double dt = 0;
-    double t = 0;
+    double dt = std::numeric_limits<double>::quiet_NaN();
+    double t = std::numeric_limits<double>::quiet_NaN();
 };
 
 }  // namespace SmallDeformation
