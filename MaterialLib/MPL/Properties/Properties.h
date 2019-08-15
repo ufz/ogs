@@ -15,3 +15,4 @@
 #include "Constant.h"
 #include "LinearProperty.h"
 #include "ExponentialProperty.h"
+#include "ParameterProperty.h"
