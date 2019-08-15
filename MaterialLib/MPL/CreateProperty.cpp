@@ -58,6 +58,12 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
     {
         return createIdealGasLaw(config);
     }
+
+    if (boost::iequals(property_type, "SaturationBrooksCorey"))
+    {
+        return createSaturationBrooksCorey(config);
+    }
+
     /* TODO Additional properties go here, for example:
     if (boost::iequals(property_type, "BilinearTemperaturePressure"))
     {
