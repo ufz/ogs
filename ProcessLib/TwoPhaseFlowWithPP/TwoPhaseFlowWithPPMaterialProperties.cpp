@@ -134,7 +134,8 @@ double TwoPhaseFlowWithPPMaterialProperties::getPorosity(
     const ParameterLib::SpatialPosition& pos, const double /*p*/,
     const double T, const double porosity_variable) const
 {
-    return _porosity_models[material_id]->getValue(t, pos, porosity_variable, T);
+    return _porosity_models[material_id]->getValue(t, pos, porosity_variable,
+                                                   T);
 }
 
 double TwoPhaseFlowWithPPMaterialProperties::getNonwetRelativePermeability(

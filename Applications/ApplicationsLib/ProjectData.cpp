@@ -892,7 +892,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                 ProcessLib::TwoPhaseFlowWithPP::createTwoPhaseFlowWithPPProcess(
                     name, *_mesh_vec[0], std::move(jacobian_assembler),
                     _process_variables, _parameters, integration_order,
-                    process_config, _curves);
+                    process_config, _curves, _media);
         }
         else
 #endif

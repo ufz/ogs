@@ -9,30 +9,32 @@
  */
 
 /**
-* common nomenclature
-* --------------primary variable----------------------
-* pn_int_pt    pressure for nonwetting phase at each integration point
-* pc_int_pt    capillary pressure at each integration point
-* --------------secondary variable--------------------
-* temperature              capillary pressure
-* Sw wetting               phase saturation
-* dSw_dpc                  derivative of wetting phase saturation with respect
-* to capillary pressure
-* rho_nonwet               density of nonwetting phase
-* drhononwet_dpn           derivative of nonwetting phase density with respect
-*to nonwetting phase pressure
-* rho_wet                  density of wetting phase
-* k_rel_nonwet             relative permeability of nonwetting phase
-* mu_nonwet                viscosity of nonwetting phase
-* lambda_nonwet            mobility of nonwetting phase
-* k_rel_wet                relative permeability of wetting phase
-* mu_wet                   viscosity of wetting phase
-* lambda_wet               mobility of wetting phase
-*/
+ * common nomenclature
+ * --------------primary variable----------------------
+ * pn_int_pt    pressure for nonwetting phase at each integration point
+ * pc_int_pt    capillary pressure at each integration point
+ * --------------secondary variable--------------------
+ * temperature              capillary pressure
+ * Sw wetting               phase saturation
+ * dSw_dpc                  derivative of wetting phase saturation with respect
+ * to capillary pressure
+ * rho_nonwet               density of nonwetting phase
+ * drhononwet_dpn           derivative of nonwetting phase density with respect
+ *to nonwetting phase pressure
+ * rho_wet                  density of wetting phase
+ * k_rel_nonwet             relative permeability of nonwetting phase
+ * mu_nonwet                viscosity of nonwetting phase
+ * lambda_nonwet            mobility of nonwetting phase
+ * k_rel_wet                relative permeability of wetting phase
+ * mu_wet                   viscosity of wetting phase
+ * lambda_wet               mobility of wetting phase
+ */
 #pragma once
 
+#include "MaterialLib/MPL/Medium.h"
 #include "TwoPhaseFlowWithPPLocalAssembler.h"
 
+#include <iostream>
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 #include "NumLib/Function/Interpolation.h"
 #include "TwoPhaseFlowWithPPProcessData.h"
@@ -122,6 +124,31 @@ void TwoPhaseFlowWithPPLocalAssembler<
         _pressure_wet[ip] = pn_int_pt - pc_int_pt;
 
         const double temperature = _process_data.temperature(t, pos)[0];
+
+        auto const& medium =
+            *_process_data.media_map->getMedium(_element.getID());
+        auto const& solid_phase = medium.phase("solid");
+        auto const& liquid_phase = medium.phase("liquid");
+        auto const& gas_phase = medium.phase("gas");
+
+        MaterialPropertyLib::VariableArray variables;
+
+        variables[static_cast<int>(
+            MaterialPropertyLib::Variable::phase_pressure)] = pn_int_pt;
+        variables[static_cast<int>(
+            MaterialPropertyLib::Variable::temperature)] = temperature;
+
+        // just for testing purposes
+        auto const rho_LR =
+            liquid_phase.property(MaterialPropertyLib::PropertyType::density)
+                .template value<double>(variables);
+        auto const rho_GR =
+            gas_phase.property(MaterialPropertyLib::PropertyType::density)
+                .template value<double>(variables);
+        
+        std::cout << rho_LR << " " << rho_GR << "\n";
+        //
+
         double const rho_nonwet =
             _process_data.material->getGasDensity(pn_int_pt, temperature);
         double const rho_wet = _process_data.material->getLiquidDensity(

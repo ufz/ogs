@@ -10,7 +10,6 @@
 
 #pragma once
 
-
 #include "TwoPhaseFlowWithPPMaterialProperties.h"
 namespace BaseLib
 {
@@ -28,5 +27,5 @@ createTwoPhaseFlowWithPPMaterialProperties(
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
         parameters);
 
-}  // end namespace
+}  // namespace TwoPhaseFlowWithPP
 }  // namespace ProcessLib

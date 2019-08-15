@@ -30,13 +30,14 @@ class PropertyVector;
 
 namespace ProcessLib::TwoPhaseFlowWithPP
 {
-    /** This class has a collection of material properties for two-phase flow with PP model
-    *  and it makes description of the material properties for two-phase condition,
-    *  i.e. the gas/liquid density and viscosity models, respectively,
-    *  the relative permeability models with respect to two phases,
-    *  the capillary pressure-saturation relationships.
-    *  It generally provides the computation of the PDE coefficients for two-phase flow.
-    */
+/** This class has a collection of material properties for two-phase flow with
+ * PP model and it makes description of the material properties for two-phase
+ * condition, i.e. the gas/liquid density and viscosity models, respectively,
+ *  the relative permeability models with respect to two phases,
+ *  the capillary pressure-saturation relationships.
+ *  It generally provides the computation of the PDE coefficients for two-phase
+ * flow.
+ */
 
 class TwoPhaseFlowWithPPMaterialProperties
 {
@@ -104,8 +105,8 @@ protected:
     std::unique_ptr<MaterialLib::Fluid::FluidProperty> _gas_viscosity;
 
     /** Use two phase models for different material zones.
-    *  Material IDs must be given as mesh element properties.
-    */
+     *  Material IDs must be given as mesh element properties.
+     */
     MeshLib::PropertyVector<int> const* const _material_ids;
 
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Permeability>>

@@ -10,6 +10,9 @@
 #include "CreateTwoPhaseFlowWithPPProcess.h"
 #include <cassert>
 
+#include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
+#include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
+
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "ParameterLib/ConstantParameter.h"
 #include "ParameterLib/Utils.h"
@@ -34,7 +37,8 @@ std::unique_ptr<Process> createTwoPhaseFlowWithPPProcess(
     BaseLib::ConfigTree const& config,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves)
+        curves,
+    std::map<int, std::unique_ptr<MaterialPropertyLib::Medium>> const& media)
 {
     //! \ogs_file_param{prj__processes__process__type}
     config.checkConfigParameter("type", "TWOPHASE_FLOW_PP");
@@ -92,12 +96,17 @@ std::unique_ptr<Process> createTwoPhaseFlowWithPPProcess(
     {
         INFO("The twophase flow is in homogeneous porous media.");
     }
+
+    auto media_map =
+        MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
+
     std::unique_ptr<TwoPhaseFlowWithPPMaterialProperties> material =
         createTwoPhaseFlowWithPPMaterialProperties(mat_config, material_ids,
                                                    parameters);
 
     TwoPhaseFlowWithPPProcessData process_data{
-        specific_body_force, has_gravity, mass_lumping, temperature, std::move(material)};
+        specific_body_force, has_gravity,         mass_lumping,
+        temperature,         std::move(material), std::move(media_map)};
 
     return std::make_unique<TwoPhaseFlowWithPPProcess>(
         std::move(name), mesh, std::move(jacobian_assembler), parameters,
