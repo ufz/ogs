@@ -13,8 +13,8 @@
 #pragma once
 
 #include <array>
-#include <boost/variant.hpp>
 #include <string>
+#include <variant>
 
 #include "PropertyType.h"
 #include "VariableType.h"
@@ -22,7 +22,7 @@
 namespace MaterialPropertyLib
 {
 /// This is a custom data type for arbitrary properties, based on the
-/// boost::variant container. It can hold scalars, vectors, tensors, and so
+/// std::variant container. It can hold scalars, vectors, tensors, and so
 /// forth.
 enum PropertyDataTypeName
 {
@@ -33,7 +33,7 @@ enum PropertyDataTypeName
     nTensor
 };
 
-using PropertyDataType = boost::
+using PropertyDataType = std::
     variant<double, Pair, Vector, Tensor2d, SymmTensor, Tensor, std::string>;
 
 /// This class is the base class for any material property of any
@@ -67,25 +67,25 @@ public:
     template <typename T>
     T value() const
     {
-        return boost::get<T>(value());
+        return std::get<T>(value());
     }
     template <typename T>
     T value(VariableArray const& variable_array) const
     {
-        return boost::get<T>(value(variable_array));
+        return std::get<T>(value(variable_array));
     }
     template <typename T>
     T dValue(VariableArray const& variable_array,
              Variable const variable) const
     {
-        return boost::get<T>(dValue(variable_array, variable));
+        return std::get<T>(dValue(variable_array, variable));
     }
     template <typename T>
     T d2Value(VariableArray const& variable_array,
               Variable const& variable1,
               Variable const& variable2) const
     {
-        return boost::get<T>(d2Value(variable_array, variable1, variable2));
+        return std::get<T>(d2Value(variable_array, variable1, variable2));
     }
 
 protected:
@@ -98,7 +98,7 @@ protected:
 /// enhanced by using enums.
 inline std::size_t getType(Property const& p)
 {
-    return p.value().which();
+    return p.value().index();
 }
 
 inline void overwriteExistingProperties(PropertyArray& properties,
