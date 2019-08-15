@@ -10,9 +10,9 @@
 
 #include <gtest/gtest.h>
 #include <algorithm>
-#include <boost/variant.hpp>
 #include <numeric>
 #include <random>
+#include <variant>
 
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
@@ -42,7 +42,7 @@ public:
 
 // Returns the (inverse) permutation vector of b_nodes to a_nodes, or an error
 // message.
-boost::variant<std::vector<std::size_t>, std::string> compareNodes(
+std::variant<std::vector<std::size_t>, std::string> compareNodes(
     std::vector<Node*> const& a_nodes, std::vector<Node*> const& b_nodes)
 {
     // For each 'a' mesh node find a corresponding 'b' mesh node, not checking
@@ -167,7 +167,7 @@ std::vector<Node*> permuteNodes(std::vector<std::size_t> const& permutation,
 
 // Tests the nodes of two meshes and returns a string in case of error with
 // message, otherwise a permutation vector as in compareNodes().
-boost::variant<std::vector<std::size_t>, std::string> compareNodeVectors(
+std::variant<std::vector<std::size_t>, std::string> compareNodeVectors(
     std::vector<Node*> const& a, std::vector<Node*> const& b)
 {
     if (a.size() != b.size())
@@ -178,13 +178,13 @@ boost::variant<std::vector<std::size_t>, std::string> compareNodeVectors(
     }
 
     auto const compare_nodes_result = compareNodes(a, b);
-    if (compare_nodes_result.type() == typeid(std::string))
+    if (std::holds_alternative<std::string>(compare_nodes_result))
     {
         return "Node comparison failed: " +
-               boost::get<std::string>(compare_nodes_result);
+               std::get<std::string>(compare_nodes_result);
     }
 
-    return boost::get<std::vector<std::size_t>>(compare_nodes_result);
+    return std::get<std::vector<std::size_t>>(compare_nodes_result);
 }
 
 TEST_F(ConvertToLinearMesh, GeneratedHexMeshRandomizedNodes)
@@ -204,13 +204,13 @@ TEST_F(ConvertToLinearMesh, GeneratedHexMeshRandomizedNodes)
     //
     auto const compare_nodes_result = compareNodeVectors(
         quadratic_mesh->getNodes(), permuted_quadratic_nodes);
-    ASSERT_FALSE(compare_nodes_result.type() == typeid(std::string))
+    ASSERT_FALSE(std::holds_alternative<std::string>(compare_nodes_result))
         << "Quadratic mesh nodes comparison with permuted quadratic nodes "
            "failed.\n"
-        << boost::get<std::string>(compare_nodes_result);
+        << std::get<std::string>(compare_nodes_result);
 
     auto const& inverse_permutation =
-        boost::get<std::vector<std::size_t>>(compare_nodes_result);
+        std::get<std::vector<std::size_t>>(compare_nodes_result);
     {
         auto const result =
             inversePermutationIdentityTest(permutation, inverse_permutation);
@@ -268,10 +268,10 @@ TEST_F(ConvertToLinearMesh, GeneratedHexMeshRandomizedNodes)
         //
         auto const compare_nodes_result = compareNodeVectors(
             linear_mesh->getNodes(), converted_mesh->getNodes());
-        ASSERT_FALSE(compare_nodes_result.type() == typeid(std::string))
+        ASSERT_FALSE(std::holds_alternative<std::string>(compare_nodes_result))
             << "Linear mesh nodes comparison with converted linear mesh nodes "
                "failed.\n"
-            << boost::get<std::string>(compare_nodes_result);
+            << std::get<std::string>(compare_nodes_result);
         // TODO (naumov) check inverse permutation, but it requires the reduced
         // to base nodes forward permutation vector first.
 
@@ -304,10 +304,10 @@ TEST_F(ConvertToLinearMesh, GeneratedHexMeshBackToLinear)
     //
     auto const compare_nodes_result =
         compareNodeVectors(linear_mesh->getNodes(), converted_mesh->getNodes());
-    ASSERT_FALSE(compare_nodes_result.type() == typeid(std::string))
+    ASSERT_FALSE(std::holds_alternative<std::string>(compare_nodes_result))
         << "Linear mesh nodes comparison with converted linear mesh nodes "
            "failed.\n"
-        << boost::get<std::string>(compare_nodes_result);
+        << std::get<std::string>(compare_nodes_result);
 
     // Two meshes are equal if their elements share same nodes.
     ASSERT_EQ(linear_mesh->getNumberOfElements(),
