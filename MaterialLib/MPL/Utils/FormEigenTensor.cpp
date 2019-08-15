@@ -11,15 +11,12 @@
 
 #include "FormEigenTensor.h"
 
-#include <boost/variant/static_visitor.hpp>
-
 #include "MaterialLib/MPL/PropertyType.h"
 
 namespace MaterialPropertyLib
 {
 template <int GlobalDim>
 struct FormEigenTensor
-    : boost::static_visitor<Eigen::Matrix<double, GlobalDim, GlobalDim>>
 {
     Eigen::Matrix<double, GlobalDim, GlobalDim> operator()(
         double const& value) const
@@ -74,7 +71,7 @@ template <int GlobalDim>
 Eigen::Matrix<double, GlobalDim, GlobalDim> formEigenTensor(
     MaterialPropertyLib::PropertyDataType const& values)
 {
-    return boost::apply_visitor(FormEigenTensor<GlobalDim>(), values);
+    return std::visit(FormEigenTensor<GlobalDim>(), values);
 }
 
 template Eigen::Matrix<double, 1, 1> formEigenTensor<1>(

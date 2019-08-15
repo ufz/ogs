@@ -46,7 +46,7 @@ public:
                            flowAndTemperatureControl, pipes}
     {
         // Initialize thermal resistances.
-        auto values = apply_visitor(
+        auto values = visit(
             [&](auto const& control) {
                 return control(refrigerant.reference_temperature,
                                0. /* initial time */);

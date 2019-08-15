@@ -255,24 +255,24 @@ private:
                   ConstructorArgs&&... args) -> LADataIntfPtr {
             auto& bhe = *element_to_bhe_map.at(e.getID());
 
-            if (bhe.type() == typeid(BHE::BHE_1U))
+            if (std::holds_alternative<BHE::BHE_1U>(bhe))
             {
                 return LADataIntfPtr{new LADataBHE<ShapeFunction, BHE::BHE_1U>{
-                    e, boost::get<BHE::BHE_1U>(bhe),
+                    e, std::get<BHE::BHE_1U>(bhe),
                     std::forward<ConstructorArgs>(args)...}};
             }
 
-            if (bhe.type() == typeid(BHE::BHE_CXA))
+            if (std::holds_alternative<BHE::BHE_CXA>(bhe))
             {
                 return LADataIntfPtr{new LADataBHE<ShapeFunction, BHE::BHE_CXA>{
-                    e, boost::get<BHE::BHE_CXA>(bhe),
+                    e, std::get<BHE::BHE_CXA>(bhe),
                     std::forward<ConstructorArgs>(args)...}};
             }
 
-            if (bhe.type() == typeid(BHE::BHE_CXC))
+            if (std::holds_alternative<BHE::BHE_CXC>(bhe))
             {
                 return LADataIntfPtr{new LADataBHE<ShapeFunction, BHE::BHE_CXC>{
-                    e, boost::get<BHE::BHE_CXC>(bhe),
+                    e, std::get<BHE::BHE_CXC>(bhe),
                     std::forward<ConstructorArgs>(args)...}};
             }
             OGS_FATAL(

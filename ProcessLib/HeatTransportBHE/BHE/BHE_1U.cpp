@@ -29,7 +29,7 @@ BHE_1U::BHE_1U(BoreholeGeometry const& borehole,
       _pipes(pipes)
 {
     // Initialize thermal resistances.
-    auto values = apply_visitor(
+    auto values = visit(
         [&](auto const& control) {
             return control(refrigerant.reference_temperature,
                            0. /* initial time */);
@@ -239,9 +239,9 @@ std::array<double, BHE_1U::number_of_unknowns> BHE_1U::calcThermalResistances(
 double BHE_1U::updateFlowRateAndTemperature(double const T_out,
                                             double const current_time)
 {
-    auto values = apply_visitor(
-        [&](auto const& control) { return control(T_out, current_time); },
-        flowAndTemperatureControl);
+    auto values =
+        visit([&](auto const& control) { return control(T_out, current_time); },
+              flowAndTemperatureControl);
     updateHeatTransferCoefficients(values.flow_rate);
     return values.temperature;
 }

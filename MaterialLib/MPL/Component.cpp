@@ -43,6 +43,6 @@ Property const& Component::property(PropertyType const& p) const
 
 std::string Component::name() const
 {
-    return boost::get<std::string>(_properties[PropertyType::name]->value());
+    return std::get<std::string>(_properties[PropertyType::name]->value());
 }
 }  // namespace MaterialPropertyLib

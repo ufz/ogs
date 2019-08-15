@@ -59,6 +59,6 @@ std::size_t Phase::numberOfComponents() const
 
 std::string Phase::name() const
 {
-    return boost::get<std::string>(_properties[PropertyType::name]->value());
+    return std::get<std::string>(_properties[PropertyType::name]->value());
 }
 }  // namespace MaterialPropertyLib

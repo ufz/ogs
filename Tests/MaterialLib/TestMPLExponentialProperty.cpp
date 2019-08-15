@@ -27,33 +27,33 @@ TEST(MaterialPropertyLib, ExponentialProperty)
     variable_array[static_cast<int>(
         MaterialPropertyLib::Variable::temperature)] = 20;
     ASSERT_NEAR(
-        boost::get<double>(exp_property.value(variable_array)),
+        std::get<double>(exp_property.value(variable_array)),
         y_ref * (std::exp(-factor *
-                          (boost::get<double>(variable_array[static_cast<int>(
+                          (std::get<double>(variable_array[static_cast<int>(
                                MaterialPropertyLib::Variable::temperature)]) -
                            reference_condition))),
         1.e-10);
     ASSERT_EQ(
-        boost::get<double>(exp_property.dValue(
+        std::get<double>(exp_property.dValue(
             variable_array, MaterialPropertyLib::Variable::phase_pressure)),
         0.0);
     ASSERT_NEAR(
-        boost::get<double>(exp_property.dValue(
+        std::get<double>(exp_property.dValue(
             variable_array, MaterialPropertyLib::Variable::temperature)),
         -y_ref * factor *
             std::exp(-factor *
-                     (boost::get<double>(variable_array[static_cast<int>(
+                     (std::get<double>(variable_array[static_cast<int>(
                           MaterialPropertyLib::Variable::temperature)]) -
                       reference_condition)),
         1.e-16);
     ASSERT_NEAR(
-        boost::get<double>(
+        std::get<double>(
             exp_property.d2Value(variable_array,
                                  MaterialPropertyLib::Variable::temperature,
                                  MaterialPropertyLib::Variable::temperature)),
         y_ref * std::pow(factor, 2) *
             std::exp(-factor *
-                     (boost::get<double>(variable_array[static_cast<int>(
+                     (std::get<double>(variable_array[static_cast<int>(
                           MaterialPropertyLib::Variable::temperature)]) -
                       reference_condition)),
         1.e-16);
