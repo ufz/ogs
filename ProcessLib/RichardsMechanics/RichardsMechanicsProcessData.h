@@ -33,47 +33,7 @@ namespace RichardsMechanics
 template <int DisplacementDim>
 struct RichardsMechanicsProcessData
 {
-    RichardsMechanicsProcessData(
-        MeshLib::PropertyVector<int> const* const material_ids_,
-        std::unique_ptr<
-            ProcessLib::RichardsFlow::RichardsFlowMaterialProperties>&&
-            flow_material_,
-        std::map<int,
-                 std::unique_ptr<
-                     MaterialLib::Solids::MechanicsBase<DisplacementDim>>>&&
-            solid_materials_,
-        ParameterLib::Parameter<double> const& fluid_bulk_modulus_,
-        ParameterLib::Parameter<double> const& biot_coefficient_,
-        ParameterLib::Parameter<double> const& solid_density_,
-        ParameterLib::Parameter<double> const& solid_bulk_modulus_,
-        ParameterLib::Parameter<double> const& temperature_,
-        Eigen::Matrix<double, DisplacementDim, 1>
-            specific_body_force_,
-        bool const apply_mass_lumping_)
-        : material_ids(material_ids_),
-          flow_material{std::move(flow_material_)},
-          solid_materials{std::move(solid_materials_)},
-          fluid_bulk_modulus(fluid_bulk_modulus_),
-          biot_coefficient(biot_coefficient_),
-          solid_density(solid_density_),
-          solid_bulk_modulus(solid_bulk_modulus_),
-          temperature(temperature_),
-          specific_body_force(std::move(specific_body_force_)),
-          apply_mass_lumping(apply_mass_lumping_)
-    {
-    }
-
-    RichardsMechanicsProcessData(RichardsMechanicsProcessData&& other) =
-        default;
-
-    //! Copies are forbidden.
-    RichardsMechanicsProcessData(RichardsMechanicsProcessData const&) = delete;
-
-    //! Assignments are not needed.
-    void operator=(RichardsMechanicsProcessData const&) = delete;
-    void operator=(RichardsMechanicsProcessData&&) = delete;
-
-    MeshLib::PropertyVector<int> const* const material_ids;
+    MeshLib::PropertyVector<int> const* const material_ids = nullptr;
 
     std::unique_ptr<ProcessLib::RichardsFlow::RichardsFlowMaterialProperties>
         flow_material;
@@ -101,13 +61,14 @@ struct RichardsMechanicsProcessData
     /// It is usually used to apply gravitational forces.
     /// A vector of displacement dimension's length.
     Eigen::Matrix<double, DisplacementDim, 1> const specific_body_force;
-    double dt = 0.0;
-    double t = 0.0;
+
+    bool const apply_mass_lumping;
 
     MeshLib::PropertyVector<double>* element_saturation = nullptr;
     MeshLib::PropertyVector<double>* pressure_interpolated = nullptr;
 
-    bool const apply_mass_lumping;
+    double dt = std::numeric_limits<double>::quiet_NaN();
+    double t = std::numeric_limits<double>::quiet_NaN();
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };

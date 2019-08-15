@@ -111,7 +111,7 @@ std::unique_ptr<Process> createSmallDeformationNonlocalProcess(
     SmallDeformationNonlocalProcessData<DisplacementDim> process_data{
         materialIDs(mesh),     std::move(solid_constitutive_relations),
         solid_density,         specific_body_force,
-        reference_temperature, internal_length};
+        reference_temperature, internal_length * internal_length};
 
     SecondaryVariableCollection secondary_variables;
 

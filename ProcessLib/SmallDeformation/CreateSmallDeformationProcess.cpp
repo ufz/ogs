@@ -120,7 +120,7 @@ std::unique_ptr<Process> createSmallDeformationProcess(
     SmallDeformationProcessData<DisplacementDim> process_data{
         materialIDs(mesh),     std::move(solid_constitutive_relations),
         solid_density,         specific_body_force,
-        reference_temperature, nonequilibrium_stress};
+        nonequilibrium_stress, reference_temperature};
 
     SecondaryVariableCollection secondary_variables;
 

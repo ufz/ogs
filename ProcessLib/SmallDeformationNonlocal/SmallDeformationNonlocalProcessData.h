@@ -31,40 +31,7 @@ namespace SmallDeformationNonlocal
 template <int DisplacementDim>
 struct SmallDeformationNonlocalProcessData
 {
-    SmallDeformationNonlocalProcessData(
-        MeshLib::PropertyVector<int> const* const material_ids_,
-        std::map<int,
-                 std::unique_ptr<
-                     MaterialLib::Solids::MechanicsBase<DisplacementDim>>>&&
-            solid_materials_,
-        ParameterLib::Parameter<double> const& solid_density_,
-        Eigen::Matrix<double, DisplacementDim, 1>
-            specific_body_force_,
-        double const reference_temperature_,
-        double const internal_length_)
-        : material_ids(material_ids_),
-          solid_materials{std::move(solid_materials_)},
-          solid_density(solid_density_),
-          specific_body_force(std::move(specific_body_force_)),
-          reference_temperature(reference_temperature_),
-          internal_length_squared(internal_length_ * internal_length_)
-    {
-    }
-
-    SmallDeformationNonlocalProcessData(
-        SmallDeformationNonlocalProcessData&& other) = default;
-
-    //! Copies are forbidden.
-    SmallDeformationNonlocalProcessData(
-        SmallDeformationNonlocalProcessData const&) = delete;
-
-    //! Assignments are not needed.
-    void operator=(SmallDeformationNonlocalProcessData const&) = delete;
-
-    //! Assignments are not needed.
-    void operator=(SmallDeformationNonlocalProcessData&&) = delete;
-
-    MeshLib::PropertyVector<int> const* const material_ids;
+    MeshLib::PropertyVector<int> const* const material_ids = nullptr;
 
     std::map<
         int,
@@ -77,13 +44,16 @@ struct SmallDeformationNonlocalProcessData
     /// A vector of displacement dimension's length.
     Eigen::Matrix<double, DisplacementDim, 1> const specific_body_force;
 
+    double const reference_temperature =
+        std::numeric_limits<double>::quiet_NaN();
+    double const internal_length_squared =
+        std::numeric_limits<double>::quiet_NaN();
+
     double crack_volume_old = 0.0;
     double crack_volume = 0.0;
 
-    double dt = 0;
-    double t = 0;
-    double const reference_temperature;
-    double const internal_length_squared;
+    double dt = std::numeric_limits<double>::quiet_NaN();
+    double t = std::numeric_limits<double>::quiet_NaN();
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
