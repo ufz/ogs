@@ -297,8 +297,9 @@ public:
     }
 
 private:
-    double _t;        //!< \f$ t_C \f$
-    double _delta_t;  //!< the timestep size
+    double _t = std::numeric_limits<double>::quiet_NaN();  //!< \f$ t_C \f$
+    double _delta_t =
+        std::numeric_limits<double>::quiet_NaN();  //!< the timestep size
     GlobalVector& _x_old;   //!< the solution from the preceding timestep
 };
 
@@ -369,9 +370,12 @@ public:
     //! Returns the solution from the preceding timestep.
     GlobalVector const& getXOld() const { return _x_old; }
 private:
-    double _t;        //!< \f$ t_C \f$
-    double _t_old;    //!< the time of the preceding timestep
-    double _delta_t;  //!< the timestep size
+    double _t = std::numeric_limits<double>::quiet_NaN();  //!< \f$ t_C \f$
+    double _t_old =
+        std::numeric_limits<double>::quiet_NaN();  //!< the time of the
+                                                   //!< preceding timestep
+    double _delta_t =
+        std::numeric_limits<double>::quiet_NaN();  //!< the timestep size
     GlobalVector& _x_old;   //!< the solution from the preceding timestep
 };
 
@@ -443,8 +447,9 @@ public:
     GlobalVector const& getXOld() const { return _x_old; }
 private:
     const double _theta;  //!< the implicitness parameter \f$ \theta \f$
-    double _t;            //!< \f$ t_C \f$
-    double _delta_t;      //!< the timestep size
+    double _t = std::numeric_limits<double>::quiet_NaN();  //!< \f$ t_C \f$
+    double _delta_t =
+        std::numeric_limits<double>::quiet_NaN();  //!< the timestep size
     GlobalVector& _x_old;       //!< the solution from the preceding timestep
 };
 
@@ -512,8 +517,9 @@ public:
 private:
     std::size_t eff_num_steps() const { return _xs_old.size(); }
     const unsigned _num_steps;  //!< The order of the BDF method
-    double _t;                  //!< \f$ t_C \f$
-    double _delta_t;            //!< the timestep size
+    double _t = std::numeric_limits<double>::quiet_NaN();  //!< \f$ t_C \f$
+    double _delta_t =
+        std::numeric_limits<double>::quiet_NaN();  //!< the timestep size
 
     std::vector<GlobalVector*> _xs_old;  //!< solutions from the preceding timesteps
     unsigned _offset = 0;  //!< allows treating \c _xs_old as circular buffer
