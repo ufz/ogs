@@ -97,9 +97,9 @@ void HeatTransportBHEProcess::constructDofTable()
     // the BHE nodes need to be cherry-picked from the vector
     for (int i = 0; i < n_BHEs; i++)
     {
-        auto const number_of_unknowns = apply_visitor(
-            [](auto const& bhe) { return bhe.number_of_unknowns; },
-            _process_data._vec_BHE_property[i]);
+        auto const number_of_unknowns =
+            visit([](auto const& bhe) { return bhe.number_of_unknowns; },
+                  _process_data._vec_BHE_property[i]);
         auto const& bhe_nodes = _bheMeshData.BHE_nodes[i];
         auto const& bhe_elements = _bheMeshData.BHE_elements[i];
 
@@ -256,7 +256,7 @@ void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
                                                   in_out_component_id)));
             }
         };
-        apply_visitor(createBCs, _process_data._vec_BHE_property[bhe_i]);
+        visit(createBCs, _process_data._vec_BHE_property[bhe_i]);
     }
 }
 }  // namespace HeatTransportBHE
