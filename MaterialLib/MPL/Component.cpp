@@ -32,7 +32,7 @@ Component::Component(std::string const& component_name,
 
     if (properties)
     {
-        overwriteExistingProperties(_properties, *properties);
+        overwriteExistingProperties(_properties, *properties, this);
     }
 }
 

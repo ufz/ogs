@@ -23,6 +23,10 @@
 
 namespace MaterialPropertyLib
 {
+class Medium;
+class Phase;
+class Component;
+
 /// This is a custom data type for arbitrary properties, based on the
 /// std::variant container. It can hold scalars, vectors, tensors, and so
 /// forth.
@@ -67,6 +71,8 @@ public:
     virtual PropertyDataType d2Value(VariableArray const& variable_array,
                                      Variable const variable1,
                                      Variable const variable2) const;
+    virtual void setScale(
+        std::variant<Medium*, Phase*, Component*> /*scale_pointer*/){};
 
     template <typename T>
     T value() const
@@ -83,8 +89,7 @@ public:
     }
 
     template <typename T>
-    T dValue(VariableArray const& variable_array,
-             Variable const variable) const
+    T dValue(VariableArray const& variable_array, Variable const variable) const
     {
         return std::get<T>(dValue(variable_array, variable));
     }
@@ -102,14 +107,18 @@ protected:
     PropertyDataType _dvalue;
 };
 
-inline void overwriteExistingProperties(PropertyArray& properties,
-                                        PropertyArray& new_properties)
+inline void overwriteExistingProperties(
+    PropertyArray& properties,
+    PropertyArray& new_properties,
+    std::variant<Medium*, Phase*, Component*>
+        scale_pointer)
 {
     for (std::size_t i = 0; i < properties.size(); ++i)
     {
         if (new_properties[i] != nullptr)
         {
             properties[i] = std::move(new_properties[i]);
+            properties[i]->setScale(scale_pointer);
         }
     }
 }
