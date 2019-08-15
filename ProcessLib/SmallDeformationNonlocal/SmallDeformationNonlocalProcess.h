@@ -70,6 +70,10 @@ private:
                                     double const dt,
                                     int const /*process_id*/) override;
 
+    void postTimestepConcreteProcess(GlobalVector const& x, double const t,
+                                     double const dt,
+                                     int const process_id) override;
+
     NumLib::IterationResult postIterationConcreteProcess(
         GlobalVector const& x) override;
 

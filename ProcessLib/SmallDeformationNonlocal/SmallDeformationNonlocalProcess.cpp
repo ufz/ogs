@@ -223,6 +223,11 @@ void SmallDeformationNonlocalProcess<DisplacementDim>::
             }
         }
     }
+
+    // Initialize local assemblers after all variables have been set.
+    GlobalExecutor::executeMemberOnDereferenced(
+        &LocalAssemblerInterface::initialize, _local_assemblers,
+        *_local_to_global_index_map);
 }
 
 template <int DisplacementDim>
@@ -291,7 +296,7 @@ void SmallDeformationNonlocalProcess<DisplacementDim>::
 
 template <int DisplacementDim>
 void SmallDeformationNonlocalProcess<
-    DisplacementDim>::preTimestepConcreteProcess(GlobalVector const& x,
+    DisplacementDim>::preTimestepConcreteProcess(GlobalVector const& /*x*/,
                                                  double const t,
                                                  double const dt,
                                                  int const /*process_id*/)
@@ -300,13 +305,22 @@ void SmallDeformationNonlocalProcess<
 
     _process_data.dt = dt;
     _process_data.t = t;
+}
 
-    const int process_id = 0;
+template <int DisplacementDim>
+void SmallDeformationNonlocalProcess<
+    DisplacementDim>::postTimestepConcreteProcess(GlobalVector const& x,
+                                                  double const /*t*/,
+                                                  double const /*dt*/,
+                                                  int const process_id)
+{
+    DBUG("PostTimestep SmallDeformationNonlocalProcess.");
+
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
-        &LocalAssemblerInterface::preTimestep, _local_assemblers,
-        pv.getActiveElementIDs(), *_local_to_global_index_map, x, t, dt);
+        &LocalAssemblerInterface::postTimestep, _local_assemblers,
+        pv.getActiveElementIDs(), *_local_to_global_index_map, x);
 }
 
 template <int DisplacementDim>

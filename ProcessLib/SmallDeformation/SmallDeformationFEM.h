@@ -213,6 +213,17 @@ public:
         return 0;
     }
 
+    void initializeConcrete() override
+    {
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
+
+        for (unsigned ip = 0; ip < n_integration_points; ip++)
+        {
+            _ip_data[ip].pushBackState();
+        }
+    }
+
     void assemble(double const /*t*/, std::vector<double> const& /*local_x*/,
                   std::vector<double>& /*local_M_data*/,
                   std::vector<double>& /*local_K_data*/,
@@ -309,9 +320,7 @@ public:
         }
     }
 
-    void preTimestepConcrete(std::vector<double> const& /*local_x*/,
-                             double const /*t*/,
-                             double const /*delta_t*/) override
+    void postTimestepConcrete(std::vector<double> const& /*local_x*/) override
     {
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
@@ -320,12 +329,6 @@ public:
         {
             _ip_data[ip].pushBackState();
         }
-    }
-
-    void postTimestepConcrete(std::vector<double> const& /*local_x*/) override
-    {
-        unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
 
         ParameterLib::SpatialPosition x_position;
         x_position.setElementID(_element.getID());

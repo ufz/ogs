@@ -514,9 +514,18 @@ public:
         }
     }
 
-    void preTimestepConcrete(std::vector<double> const& /*local_x*/,
-                             double const /*t*/,
-                             double const /*delta_t*/) override
+    void initializeConcrete() override
+    {
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
+
+        for (unsigned ip = 0; ip < n_integration_points; ip++)
+        {
+            _ip_data[ip].pushBackState();
+        }
+    }
+
+    void postTimestepConcrete(std::vector<double> const& /*local_x*/) override
     {
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
