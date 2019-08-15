@@ -19,6 +19,10 @@ namespace BaseLib
 {
 class ConfigTree;
 }
+namespace ParameterLib
+{
+struct ParameterBase;
+}
 namespace MaterialPropertyLib
 {
 class Phase;
@@ -37,5 +41,7 @@ namespace MaterialPropertyLib
 /// assigned. These default properties average the component properties,
 /// weighted by mole fraction.
 std::vector<std::unique_ptr<Phase>> createPhases(
-    boost::optional<BaseLib::ConfigTree> const& config);
+    boost::optional<BaseLib::ConfigTree> const& config,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
+        parameters);
 }  // namespace MaterialPropertyLib

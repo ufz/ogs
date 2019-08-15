@@ -459,7 +459,8 @@ void ProjectData::parseMedia(
                 material_id);
         }
 
-        _media[material_id] = MaterialPropertyLib::createMedium(medium_config);
+        _media[material_id] =
+            MaterialPropertyLib::createMedium(medium_config, _parameters);
     }
 
     if (_media.empty())

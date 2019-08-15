@@ -15,6 +15,7 @@
 
 #include <string>
 #include "BaseLib/ConfigTree.h"
+#include "ParameterLib/Parameter.h"
 
 #include "Properties/Properties.h"
 
@@ -23,17 +24,21 @@
 
 namespace MaterialPropertyLib
 {
-std::unique_ptr<Medium> createMedium(BaseLib::ConfigTree const& config)
+std::unique_ptr<Medium> createMedium(
+    BaseLib::ConfigTree const& config,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters)
 {
     // Parsing the phases
     // Properties of phases may be not required in all the cases.
     //! \ogs_file_param{prj__media__medium__phases}
-    auto&& phases = createPhases(config.getConfigSubtreeOptional("phases"));
+    auto&& phases =
+        createPhases(config.getConfigSubtreeOptional("phases"), parameters);
 
     // Parsing medium properties, overwriting the defaults.
     auto&& properties =
         //! \ogs_file_param{prj__media__medium__properties}
-        createProperties(config.getConfigSubtreeOptional("properties"));
+        createProperties(config.getConfigSubtreeOptional("properties"),
+                         parameters);
 
     if (phases.empty() && !properties)
     {
