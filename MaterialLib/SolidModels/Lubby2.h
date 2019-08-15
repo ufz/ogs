@@ -155,6 +155,12 @@ public:
             new MaterialStateVariables};
     }
 
+    double getBulkModulus(double const t,
+                          ParameterLib::SpatialPosition const& x) const override
+    {
+        return _mp.KM0(t, x)[0];
+    }
+
 public:
     static int const KelvinVectorSize =
         MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;

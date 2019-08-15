@@ -104,6 +104,14 @@ public:
 
     MaterialProperties getMaterialProperties() const { return _mp; }
 
+    double getBulkModulus(double const t,
+                          ParameterLib::SpatialPosition const& x) const override
+    {
+        return _mp.bulk_modulus(t, x);
+    }
+
+
+
 protected:
     MaterialProperties _mp;
 };
