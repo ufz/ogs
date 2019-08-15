@@ -63,7 +63,7 @@ endif()
 if(OGS_USE_MPI)
     set(VTK_COMPONENTS ${VTK_COMPONENTS} vtkIOParallelXML vtkParallelMPI)
 endif()
-find_package(VTK 8.2.0 REQUIRED COMPONENTS ${VTK_COMPONENTS})
+find_package(VTK 8.1.2 REQUIRED COMPONENTS ${VTK_COMPONENTS})
 include(${VTK_USE_FILE})
 
 find_package(Eigen3 3.3.4 REQUIRED)
