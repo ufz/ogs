@@ -59,7 +59,7 @@ public slots:
     /// Removes the mesh with the given name.
     bool removeMesh(const std::string &name);
     /// Updates the model/view for a mesh.
-    void updateMesh(MeshLib::Mesh*);
+    void updateMesh(MeshLib::Mesh* /*mesh*/);
     /// Updates the model based on the ProjectData-object
     void updateModel();
     /// Returns the VTK source item for the mesh with the given index.

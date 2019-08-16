@@ -24,7 +24,7 @@ public:
     void PrintSelf(ostream& os, vtkIndent indent) override;
 
     static VtkConsoleOutputWindow * New();
-    void DisplayText(const char*) override;
+    void DisplayText(const char* /*unused*/) override;
 
     VtkConsoleOutputWindow(const VtkConsoleOutputWindow&) = delete;
     void operator=(const VtkConsoleOutputWindow&) = delete;

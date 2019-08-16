@@ -51,7 +51,7 @@ public:
         std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
             parameters);
 
-    ProcessVariable(ProcessVariable&&);
+    ProcessVariable(ProcessVariable&& other);
 
     std::string const& getName() const;
 

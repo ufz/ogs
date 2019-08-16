@@ -84,13 +84,15 @@ private:
     };
 
     static boost::optional<std::size_t> getMeshItemID(
-        SpatialPosition const& pos, type<MeshLib::MeshItemType::Cell>)
+        SpatialPosition const& pos,
+        type<MeshLib::MeshItemType::Cell> /*unused*/)
     {
         return pos.getElementID();
     }
 
     static boost::optional<std::size_t> getMeshItemID(
-        SpatialPosition const& pos, type<MeshLib::MeshItemType::Node>)
+        SpatialPosition const& pos,
+        type<MeshLib::MeshItemType::Node> /*unused*/)
     {
         return pos.getNodeID();
     }

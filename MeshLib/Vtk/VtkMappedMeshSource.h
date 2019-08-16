@@ -67,10 +67,12 @@ protected:
     int ProcessRequest(vtkInformation* request,
                        vtkInformationVector** inputVector,
                        vtkInformationVector* outputVector) override;
-    int RequestData(vtkInformation*, vtkInformationVector**,
-                    vtkInformationVector*) override;
-    int RequestInformation(vtkInformation*, vtkInformationVector**,
-                           vtkInformationVector*) override;
+    int RequestData(vtkInformation* /*request*/,
+                    vtkInformationVector** /*inputVector*/,
+                    vtkInformationVector* /*outputVector*/) override;
+    int RequestInformation(vtkInformation* /*request*/,
+                           vtkInformationVector** /*inputVector*/,
+                           vtkInformationVector* /*outputVector*/) override;
 
 private:
     /// Adds a zero-copy vtk array wrapper.

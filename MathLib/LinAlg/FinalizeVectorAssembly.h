@@ -17,7 +17,7 @@ namespace MathLib
 {
 /// General function to finalize the vector assembly
 template <typename VEC_T>
-void finalizeVectorAssembly(VEC_T &)
+void finalizeVectorAssembly(VEC_T& /*unused*/)
 {
 }
 

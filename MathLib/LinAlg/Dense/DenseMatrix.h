@@ -33,7 +33,7 @@ public:
 
    /// Dense rectangular matrix constructor.
    DenseMatrix (IDX_TYPE rows, IDX_TYPE cols);
-   DenseMatrix (IDX_TYPE rows, IDX_TYPE cols, const FP_TYPE& val);
+   DenseMatrix(IDX_TYPE rows, IDX_TYPE cols, const FP_TYPE& initial_value);
    DenseMatrix (const DenseMatrix &src);
    /**
     * Move constructor.

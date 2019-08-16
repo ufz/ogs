@@ -55,8 +55,8 @@ public:
 
 private:
     void assembleWithJacobianConcrete(double const t,
-                                      Eigen::VectorXd const& local_u,
-                                      Eigen::VectorXd const& local_udot,
+                                      Eigen::VectorXd const& local_x,
+                                      Eigen::VectorXd const& local_x_dot,
                                       Eigen::VectorXd& local_b,
                                       Eigen::MatrixXd& local_J) override;
 

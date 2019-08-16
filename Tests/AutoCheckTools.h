@@ -122,13 +122,10 @@ struct randomCoordinateIndexGenerator
     Gen source;
     using result_type = T;
 
-    result_type operator()(std::size_t)
-    {
-        return source() % DIM;
-    }
+    result_type operator()(std::size_t /*unused*/) { return source() % DIM; }
 };
 
-inline double absoluteValue(double&& v, std::size_t)
+inline double absoluteValue(double&& v, std::size_t /*unused*/)
 {
     return std::abs(v);
 }

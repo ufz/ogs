@@ -50,19 +50,22 @@ void setVectorZero(T &vec)
 template <ShapeMatrixType FIELD_TYPE> struct ShapeDataFieldType {};
 
 template <class T_N, class T_DNDR, class T_J, class T_DNDX>
-inline void setZero(ShapeMatrices<T_N, T_DNDR, T_J, T_DNDX> &shape, ShapeDataFieldType<ShapeMatrixType::N>)
+inline void setZero(ShapeMatrices<T_N, T_DNDR, T_J, T_DNDX>& shape,
+                    ShapeDataFieldType<ShapeMatrixType::N> /*unused*/)
 {
     setVectorZero(shape.N);
 }
 
 template <class T_N, class T_DNDR, class T_J, class T_DNDX>
-inline void setZero(ShapeMatrices<T_N, T_DNDR, T_J, T_DNDX> &shape, ShapeDataFieldType<ShapeMatrixType::DNDR>)
+inline void setZero(ShapeMatrices<T_N, T_DNDR, T_J, T_DNDX>& shape,
+                    ShapeDataFieldType<ShapeMatrixType::DNDR> /*unused*/)
 {
     setMatrixZero(shape.dNdr);
 }
 
 template <class T_N, class T_DNDR, class T_J, class T_DNDX>
-inline void setZero(ShapeMatrices<T_N, T_DNDR, T_J, T_DNDX> &shape, ShapeDataFieldType<ShapeMatrixType::DNDR_J>)
+inline void setZero(ShapeMatrices<T_N, T_DNDR, T_J, T_DNDX>& shape,
+                    ShapeDataFieldType<ShapeMatrixType::DNDR_J> /*unused*/)
 {
     setZero(shape, ShapeDataFieldType<ShapeMatrixType::DNDR>());
     setMatrixZero(shape.J);
@@ -71,14 +74,16 @@ inline void setZero(ShapeMatrices<T_N, T_DNDR, T_J, T_DNDX> &shape, ShapeDataFie
 }
 
 template <class T_N, class T_DNDR, class T_J, class T_DNDX>
-inline void setZero(ShapeMatrices<T_N, T_DNDR, T_J, T_DNDX> &shape, ShapeDataFieldType<ShapeMatrixType::N_J>)
+inline void setZero(ShapeMatrices<T_N, T_DNDR, T_J, T_DNDX>& shape,
+                    ShapeDataFieldType<ShapeMatrixType::N_J> /*unused*/)
 {
     setZero(shape, ShapeDataFieldType<ShapeMatrixType::N>());
     setZero(shape, ShapeDataFieldType<ShapeMatrixType::DNDR_J>());
 }
 
 template <class T_N, class T_DNDR, class T_J, class T_DNDX>
-inline void setZero(ShapeMatrices<T_N, T_DNDR, T_J, T_DNDX> &shape, ShapeDataFieldType<ShapeMatrixType::DNDX>)
+inline void setZero(ShapeMatrices<T_N, T_DNDR, T_J, T_DNDX>& shape,
+                    ShapeDataFieldType<ShapeMatrixType::DNDX> /*unused*/)
 {
     setZero(shape, ShapeDataFieldType<ShapeMatrixType::DNDR_J>());
     setMatrixZero(shape.invJ);
@@ -86,7 +91,8 @@ inline void setZero(ShapeMatrices<T_N, T_DNDR, T_J, T_DNDX> &shape, ShapeDataFie
 }
 
 template <class T_N, class T_DNDR, class T_J, class T_DNDX>
-inline void setZero(ShapeMatrices<T_N, T_DNDR, T_J, T_DNDX> &shape, ShapeDataFieldType<ShapeMatrixType::ALL>)
+inline void setZero(ShapeMatrices<T_N, T_DNDR, T_J, T_DNDX>& shape,
+                    ShapeDataFieldType<ShapeMatrixType::ALL> /*unused*/)
 {
     setZero(shape, ShapeDataFieldType<ShapeMatrixType::N>());
     setZero(shape, ShapeDataFieldType<ShapeMatrixType::DNDX>());

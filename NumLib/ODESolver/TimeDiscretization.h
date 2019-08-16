@@ -269,7 +269,7 @@ public:
         GlobalVector const& x, MathLib::VecNormType norm_type) override;
 
     void pushState(const double /*t*/, GlobalVector const& x,
-                   InternalMatrixStorage const&) override
+                   InternalMatrixStorage const& /*strg*/) override
     {
         MathLib::LinAlg::copy(x, _x_old);
     }
@@ -327,7 +327,7 @@ public:
         GlobalVector const& x, MathLib::VecNormType norm_type) override;
 
     void pushState(const double /*t*/, GlobalVector const& x,
-                   InternalMatrixStorage const&) override
+                   InternalMatrixStorage const& /*strg*/) override
     {
         MathLib::LinAlg::copy(x, _x_old);
     }
@@ -411,7 +411,7 @@ public:
     double getRelativeChangeFromPreviousTimestep(
         GlobalVector const& x, MathLib::VecNormType norm_type) override;
 
-    void pushState(const double, GlobalVector const& x,
+    void pushState(const double /*t*/, GlobalVector const& x,
                    InternalMatrixStorage const& strg) override
     {
         MathLib::LinAlg::copy(x, _x_old);
@@ -494,8 +494,8 @@ public:
     double getRelativeChangeFromPreviousTimestep(
         GlobalVector const& x, MathLib::VecNormType norm_type) override;
 
-    void pushState(const double, GlobalVector const& x,
-                   InternalMatrixStorage const&) override;
+    void pushState(const double /*t*/, GlobalVector const& x,
+                   InternalMatrixStorage const& /*strg*/) override;
 
     void popState(GlobalVector& x) override
     {

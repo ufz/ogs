@@ -32,9 +32,7 @@ template <typename Method>
 struct SUM<0, Method>
 {
     template <typename F>
-    static
-    double
-    add(F const&)
+    static double add(F const& /*unused*/)
     {
         return 0;
     }
