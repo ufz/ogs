@@ -19,7 +19,7 @@ include(GenerateExportHeader)
 generate_export_header(BaseLib)
 target_include_directories(BaseLib PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 
-target_link_libraries(BaseLib PUBLIC logog)
+target_link_libraries(BaseLib PUBLIC logog Boost::boost)
 
 if(MSVC)
     target_link_libraries(BaseLib PUBLIC WinMM) # needed for timeGetTime

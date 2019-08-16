@@ -45,16 +45,11 @@ target_link_libraries(TecPlotTools GeoLib MeshLib)
 
 add_executable(GocadSGridReader GocadSGridReaderMain.cpp)
 set_target_properties(GocadSGridReader PROPERTIES FOLDER Utilities)
-target_link_libraries(GocadSGridReader
-                      GeoLib
-                      MeshLib
-                      ApplicationsFileIO
-                      ${Boost_LIBRARIES})
+target_link_libraries(GocadSGridReader GeoLib MeshLib ApplicationsFileIO)
 
 add_executable(GocadTSurfaceReader GocadTSurfaceReader.cpp)
 set_target_properties(GocadTSurfaceReader PROPERTIES FOLDER Utilities)
-target_link_libraries(GocadTSurfaceReader MeshLib ApplicationsFileIO
-                      ${Boost_LIBRARIES})
+target_link_libraries(GocadTSurfaceReader MeshLib ApplicationsFileIO)
 
 add_executable(Mesh2Raster MeshToRaster.cpp)
 set_target_properties(Mesh2Raster PROPERTIES FOLDER Utilities)
