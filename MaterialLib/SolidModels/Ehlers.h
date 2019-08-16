@@ -330,6 +330,12 @@ public:
         return MaterialProperties(t, x, _mp);
     }
 
+    double getBulkModulus(double const t,
+                          ParameterLib::SpatialPosition const& x) const override
+    {
+        return _mp.K(t, x)[0];
+    }
+
     DamageProperties evaluatedDamageProperties(
         double const t, ParameterLib::SpatialPosition const& x) const
     {
