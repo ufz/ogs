@@ -3,7 +3,6 @@ get_source_files(SOURCES)
 
 append_source_files(SOURCES IO)
 
-append_source_files(SOURCES IO/XmlIO/Rapid)
 append_source_files(SOURCES IO/XmlIO/Boost)
 
 if(OGS_BUILD_GUI)
