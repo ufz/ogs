@@ -215,20 +215,19 @@ if(APPLE)
         PROPERTIES TIMEOUT 1800)
 endif()
 
-# 2019-05-09 TF disable the test until the MPL can deal with parameters as properties
-#AddTest(
-#    NAME HT_a_DECOVALEX_THMC_based_Example
-#    PATH Parabolic/HT/StaggeredCoupling/ADecovalexTHMCBasedHTExample
-#    EXECUTABLE ogs
-#    EXECUTABLE_ARGS th_decovalex.prj
-#    WRAPPER time
-#    TESTER vtkdiff
-#    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-#    DIFF_DATA
-#    th_decovalex.vtu th_decovalex_pcs_1_ts_40_t_18.000000.vtu T_ref T 6e-12 1.e-14
-#    th_decovalex.vtu th_decovalex_pcs_1_ts_40_t_18.000000.vtu p_ref p 1e-7 1.e-14
-#    VIS th_decovalex_pcs_1_ts_78_t_1000.000000.vtu
-#)
+AddTest(
+    NAME HT_a_DECOVALEX_THMC_based_Example
+    PATH Parabolic/HT/StaggeredCoupling/ADecovalexTHMCBasedHTExample
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS th_decovalex.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    DIFF_DATA
+    th_decovalex.vtu th_decovalex_pcs_1_ts_40_t_18.000000.vtu T_ref T 6e-12 1.e-14
+    th_decovalex.vtu th_decovalex_pcs_1_ts_40_t_18.000000.vtu p_ref p 1e-7 1.e-14
+    VIS th_decovalex_pcs_1_ts_78_t_1000.000000.vtu
+)
 
 AddTest(
     NAME HT_SimpleSynthetics_IsothermalFluidFlowStaggered
