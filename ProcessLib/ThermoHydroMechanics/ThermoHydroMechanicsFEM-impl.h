@@ -13,6 +13,8 @@
 #include "ThermoHydroMechanicsFEM.h"
 
 #include "MaterialLib/SolidModels/SelectSolidConstitutiveRelation.h"
+
+#include "MaterialLib/MPL/Components/GetThermalExpansivity.h"
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/MPL/Property.h"
 #include "MaterialLib/MPL/Utils/FormEffectiveThermalConductivity.h"
@@ -256,22 +258,9 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
             liquid_phase.property(MaterialPropertyLib::PropertyType::density)
                 .template value<double>(vars);
 
-        auto const fluid_thermal_expansivity_ptr = &liquid_phase.property(
-            MaterialPropertyLib::PropertyType::thermal_expansivity);
-
         double const fluid_volumetric_thermal_expansion_coefficient =
-            fluid_thermal_expansivity_ptr
-                ? (*fluid_thermal_expansivity_ptr).template value<double>(vars)
-                : (fluid_density == 0.0)
-                      ? 0.0
-                      : -liquid_phase
-                                .property(
-                                    MaterialPropertyLib::PropertyType::density)
-                                .template dValue<double>(
-                                    vars,
-                                    MaterialPropertyLib::Variable::
-                                        temperature) /
-                            fluid_density;
+            MaterialPropertyLib::getThermalExpansivity(liquid_phase, vars,
+                                                       fluid_density);
 
         // Use the viscosity model to compute the viscosity
         auto const viscosity =
@@ -286,7 +275,7 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
             MathLib::KelvinVector::KelvinVectorDimensions<
                 DisplacementDim>::value>::identity2;
 
-         //TODO: Change dT to time step wise increment
+        // TODO (Wenqing) : Change dT to time step wise increment
         double const delta_T(T_int_pt - T0);
         double const thermal_strain =
             solid_linear_thermal_expansion_coefficient * delta_T;
