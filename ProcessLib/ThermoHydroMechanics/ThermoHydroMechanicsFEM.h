@@ -53,6 +53,12 @@ public:
     using ShapeMatricesTypePressure =
         ShapeMatrixPolicyType<ShapeFunctionPressure, DisplacementDim>;
 
+    using GlobalDimMatrixType =
+        typename ShapeMatricesTypePressure::GlobalDimMatrixType;
+
+    using GlobalDimVectorType =
+        typename ShapeMatricesTypePressure::GlobalDimVectorType;
+
     static int const KelvinVectorSize =
         MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
     using Invariants = MathLib::KelvinVector::Invariants<KelvinVectorSize>;
