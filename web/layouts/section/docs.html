@@ -2,7 +2,16 @@
   <div class="container">
     <h1>OpenGeoSys Documentation</h1>
     {{ .Content }}
+
+    <!-- /docs/[subsection]/ -->
+    <h2>{{ .CurrentSection.Title }}</h2>
+    <ul>
+      {{ range .Pages }}
+        <li><a href="{{ .URL }}">{{ .Title }}</a></li>
+      {{ end }}
+    </ul>
     <div class="flex flex-wrap">
+    <!-- /docs -->
     {{ range .Params.sections }}
       <div class="w-full sm:w-1/2 lg:w-1/3 p-3 my-3">
         <h2 class="mb-2 text-center text-base md:text-lg lg:text-xl xl:text-2xl">
