@@ -140,7 +140,7 @@ class VtkAlgorithmProperties : public QObject
 
 public:
     /// Constructor (sets default values)
-    VtkAlgorithmProperties(QObject* parent = nullptr);
+    explicit VtkAlgorithmProperties(QObject* parent = nullptr);
 
     ~VtkAlgorithmProperties() override;
 

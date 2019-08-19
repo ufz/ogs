@@ -30,7 +30,7 @@ class ColorPickerPushButton : public QPushButton
     Q_OBJECT
 
 public:
-    ColorPickerPushButton(QWidget* parent = nullptr);
+    explicit ColorPickerPushButton(QWidget* parent = nullptr);
 
 public slots:
     /// Calls the QColorDialog

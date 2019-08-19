@@ -31,8 +31,8 @@ class CondFromRasterDialog : public QDialog, private Ui_CondFromRaster
     Q_OBJECT
 
 public:
-    CondFromRasterDialog(std::vector<MeshLib::Mesh*> msh_vec,
-                         QDialog* parent = nullptr);
+    explicit CondFromRasterDialog(std::vector<MeshLib::Mesh*> msh_vec,
+                                  QDialog* parent = nullptr);
     ~CondFromRasterDialog() override;
 
 private:

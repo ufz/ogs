@@ -27,7 +27,7 @@ class ColorTableModel : public QAbstractTableModel
     Q_OBJECT
 
 public:
-    ColorTableModel(
+    explicit ColorTableModel(
         const std::map<std::string, DataHolderLib::Color*>& colorLookupTable,
         QObject* parent = nullptr);
     ~ColorTableModel() override;

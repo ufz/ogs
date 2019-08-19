@@ -23,7 +23,7 @@
 class VtkCompositeNodeSelectionFilter : public VtkCompositeFilter
 {
 public:
-    VtkCompositeNodeSelectionFilter(vtkAlgorithm* inputAlgorithm);
+    explicit VtkCompositeNodeSelectionFilter(vtkAlgorithm* inputAlgorithm);
     ~VtkCompositeNodeSelectionFilter() override;
 
     void init() override;

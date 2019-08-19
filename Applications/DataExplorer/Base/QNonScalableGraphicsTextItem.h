@@ -24,9 +24,9 @@
 class QNonScalableGraphicsTextItem : public QGraphicsTextItem
 {
 public:
-    QNonScalableGraphicsTextItem(QGraphicsItem* parent = nullptr);
-    QNonScalableGraphicsTextItem(const QString& text,
-                                 QGraphicsItem* parent = nullptr);
+    explicit QNonScalableGraphicsTextItem(QGraphicsItem* parent = nullptr);
+    explicit QNonScalableGraphicsTextItem(const QString& text,
+                                          QGraphicsItem* parent = nullptr);
     ~QNonScalableGraphicsTextItem() override;
 
     void paint(QPainter* painter,

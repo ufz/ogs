@@ -65,7 +65,7 @@ struct TrafoTanh
 
 struct TrafoScale
 {
-    TrafoScale(const double factor) : _factor{factor} {}
+    explicit TrafoScale(const double factor) : _factor{factor} {}
 
     static const bool constrained = false;
 

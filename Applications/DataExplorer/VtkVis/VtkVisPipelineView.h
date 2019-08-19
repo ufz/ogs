@@ -40,7 +40,7 @@ class VtkVisPipelineView : public QTreeView
 
 public:
     /// @brief Constructor.
-    VtkVisPipelineView(QWidget* parent = nullptr);
+    explicit VtkVisPipelineView(QWidget* parent = nullptr);
 
     /// @brief Overridden to set model specific header properties.
     void setModel(QAbstractItemModel* model) override;

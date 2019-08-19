@@ -27,22 +27,23 @@ class DetailWindow : public QWidget, private Ui_DetailWindow
 
 public:
     /// Creates an empty diagram window.
-    DetailWindow(QWidget* parent = nullptr);
+    explicit DetailWindow(QWidget* parent = nullptr);
     /**
      * Creates a window containing a diagram.
      * \param filename ASCII file containing x and y values for the graph to be displayed.
      * \param parent The parent QWidget.
      */
-    DetailWindow(QString filename, QWidget* parent = nullptr);
+    explicit DetailWindow(QString filename, QWidget* parent = nullptr);
 
     /**
      * Creates a window containing a diagram
      * \param list A QDiagramList containing all the data points and necessary metainformation for a graph to be displayed
      * \param parent The parent QWidget.
      */
-    DetailWindow(DiagramList* list, QWidget* parent = nullptr);
+    explicit DetailWindow(DiagramList* list, QWidget* parent = nullptr);
 
-    DetailWindow(std::vector<std::size_t> data, QWidget* parent = nullptr);
+    explicit DetailWindow(std::vector<std::size_t> data,
+                          QWidget* parent = nullptr);
 
     ~DetailWindow() override;
 

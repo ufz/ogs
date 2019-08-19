@@ -26,8 +26,8 @@ public:
         QDoubleValidator( min, max, decimals, parent)
     {}
 
-    StrictDoubleValidator ( QObject* parent = nullptr) :
-        QDoubleValidator( parent)
+    explicit StrictDoubleValidator(QObject* parent = nullptr)
+        : QDoubleValidator(parent)
     {}
 
     QValidator::State validate(QString& input, int& pos) const override

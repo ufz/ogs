@@ -22,7 +22,7 @@ class vtkSphereSource;
 class VtkCompositePointToGlyphFilter : public VtkCompositeFilter
 {
 public:
-    VtkCompositePointToGlyphFilter(vtkAlgorithm* inputAlgorithm);
+    explicit VtkCompositePointToGlyphFilter(vtkAlgorithm* inputAlgorithm);
     ~VtkCompositePointToGlyphFilter() override;
 
     void init() override;

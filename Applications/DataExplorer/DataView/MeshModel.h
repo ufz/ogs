@@ -39,7 +39,8 @@ class MeshModel : public TreeModel
     Q_OBJECT
 
 public:
-    MeshModel(DataHolderLib::Project& project, QObject* parent = nullptr);
+    explicit MeshModel(DataHolderLib::Project& project,
+                       QObject* parent = nullptr);
 
     /// Adds a new mesh
     void addMesh(std::unique_ptr<MeshLib::Mesh> mesh);

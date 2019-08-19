@@ -18,7 +18,7 @@ namespace MaterialLib::Fracture::Permeability
 class ConstantPermeability final : public Permeability
 {
 public:
-    ConstantPermeability(double const permeability);
+    explicit ConstantPermeability(double const permeability);
 
 private:
     double permeability(PermeabilityState const* const /*state*/,

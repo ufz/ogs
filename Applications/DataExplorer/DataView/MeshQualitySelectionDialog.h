@@ -29,7 +29,7 @@ class MeshQualitySelectionDialog : public QDialog, private Ui_MeshQualitySelecti
     Q_OBJECT
 
 public:
-    MeshQualitySelectionDialog(QDialog* parent = nullptr);
+    explicit MeshQualitySelectionDialog(QDialog* parent = nullptr);
     ~MeshQualitySelectionDialog() override;
 
     /// Returns selected metric

@@ -31,8 +31,8 @@ class LineEditDialog : public QDialog, private Ui_LineEdit
     Q_OBJECT
 
 public:
-    LineEditDialog(const GeoLib::PolylineVec& ply_vec,
-                   QDialog* parent = nullptr);
+    explicit LineEditDialog(const GeoLib::PolylineVec& ply_vec,
+                            QDialog* parent = nullptr);
     ~LineEditDialog() override;
 
 private:

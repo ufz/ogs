@@ -43,7 +43,7 @@ class VtkCompositeFilter : public VtkAlgorithmProperties
 public:
     /// @brief Constructor.
     /// @param inputAlgorithm The algorithm to attach this filter to.
-    VtkCompositeFilter(vtkAlgorithm* inputAlgorithm);
+    explicit VtkCompositeFilter(vtkAlgorithm* inputAlgorithm);
 
     /// @brief Destructor.
     ~VtkCompositeFilter() override;

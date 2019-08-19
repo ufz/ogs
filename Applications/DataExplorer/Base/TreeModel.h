@@ -31,7 +31,7 @@ class TreeModel : public QAbstractItemModel
     Q_OBJECT
 
 public:
-    TreeModel(QObject* parent = nullptr);
+    explicit TreeModel(QObject* parent = nullptr);
     ~TreeModel() override;
 
     QVariant data(const QModelIndex& index, int role) const override;

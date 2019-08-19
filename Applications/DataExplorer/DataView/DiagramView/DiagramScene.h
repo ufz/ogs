@@ -28,8 +28,8 @@ class QDateTime;
 class DiagramScene : public QGraphicsScene
 {
 public:
-    DiagramScene(QObject* parent = nullptr);
-    DiagramScene(DiagramList* list, QObject* parent = nullptr);
+    explicit DiagramScene(QObject* parent = nullptr);
+    explicit DiagramScene(DiagramList* list, QObject* parent = nullptr);
     ~DiagramScene() override;
 
     QArrow* addArrow(qreal length, qreal angle, QPen& pen);

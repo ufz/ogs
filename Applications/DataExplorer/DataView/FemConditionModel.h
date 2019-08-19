@@ -22,7 +22,7 @@ class FemConditionModel : public TreeModel
     Q_OBJECT
 
 public:
-    FemConditionModel(QObject* parent = nullptr);
+    explicit FemConditionModel(QObject* parent = nullptr);
 
     int columnCount(
         const QModelIndex& /*parent*/ = QModelIndex()) const override
