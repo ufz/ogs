@@ -28,5 +28,5 @@ createTwoPhaseFlowPrhoMaterialProperties(
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
         parameters);
 
-}  // end namespace
+}  // namespace TwoPhaseFlowWithPrho
 }  // namespace ProcessLib

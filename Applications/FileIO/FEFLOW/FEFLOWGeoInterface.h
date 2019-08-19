@@ -55,4 +55,4 @@ private:
     static void readPoints(QDomElement& nodesEle, const std::string& tag,
                            int dim, std::vector<GeoLib::Point*>& points);
 };
-}  // FileIO
+}  // namespace FileIO

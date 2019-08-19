@@ -41,4 +41,4 @@ protected:
     bool write() override;
 };
 
-}
+}  // namespace FileIO

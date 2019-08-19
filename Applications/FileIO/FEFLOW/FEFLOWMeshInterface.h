@@ -123,4 +123,4 @@ private:
         std::vector<MeshLib::Element*> const& vec_elements,
         std::vector<int>& material_ids);
 };
-}  // FileIO
+}  // namespace FileIO

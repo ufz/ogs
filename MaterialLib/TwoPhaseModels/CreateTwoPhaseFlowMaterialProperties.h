@@ -35,5 +35,5 @@ createTwoPhaseFlowMaterialProperties(
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
         parameters);
 
-}  // end namespace
+}  // namespace TwoPhaseFlowWithPP
 }  // namespace MaterialLib

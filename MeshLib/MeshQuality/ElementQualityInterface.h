@@ -106,4 +106,4 @@ private:
     MeshLib::ElementQualityMetric* _quality_tester;
 };
 
-}
+}  // namespace MeshLib
