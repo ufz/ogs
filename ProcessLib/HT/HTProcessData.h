@@ -19,12 +19,9 @@
 
 namespace ProcessLib
 {
-template <typename ReturnType>
-struct Parameter;
-
 namespace HT
 {
-struct HTMaterialProperties final
+struct HTProcessData final
 {
     std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>
         media_map;

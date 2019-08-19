@@ -11,7 +11,7 @@
 
 #include <array>
 
-#include "HTMaterialProperties.h"
+#include "HTProcessData.h"
 #include "ProcessLib/Process.h"
 
 namespace NumLib
@@ -59,7 +59,7 @@ public:
         unsigned const integration_order,
         std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>&&
             process_variables,
-        HTMaterialProperties&& material_properties,
+        HTProcessData&& process_data,
         SecondaryVariableCollection&& secondary_variables,
         NumLib::NamedFunctionCaller&& named_function_caller,
         bool const use_monolithic_scheme,
@@ -116,7 +116,7 @@ private:
     std::tuple<NumLib::LocalToGlobalIndexMap*, bool>
         getDOFTableForExtrapolatorData() const override;
 
-    HTMaterialProperties _material_properties;
+    HTProcessData _process_data;
 
     std::vector<std::unique_ptr<HTLocalAssemblerInterface>> _local_assemblers;
 
