@@ -26,8 +26,10 @@ TEST(MaterialPropertyLib, ExponentialProperty)
     MaterialPropertyLib::VariableArray variable_array;
     variable_array[static_cast<int>(
         MaterialPropertyLib::Variable::temperature)] = 20;
+    ParameterLib::SpatialPosition const pos;
+    double const time = std::numeric_limits<double>::quiet_NaN();
     ASSERT_NEAR(
-        std::get<double>(exp_property.value(variable_array)),
+        std::get<double>(exp_property.value(variable_array, pos, time)),
         y_ref * (std::exp(-factor *
                           (std::get<double>(variable_array[static_cast<int>(
                                MaterialPropertyLib::Variable::temperature)]) -
