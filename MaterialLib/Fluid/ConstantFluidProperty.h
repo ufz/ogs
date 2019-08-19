@@ -22,10 +22,7 @@ namespace Fluid
 class ConstantFluidProperty final : public FluidProperty
 {
 public:
-    explicit ConstantFluidProperty(const double value)
-        : FluidProperty(), _value(value)
-    {
-    }
+    explicit ConstantFluidProperty(const double value) : _value(value) {}
 
     /// Get model name.
     std::string getName() const override { return "Constant"; }

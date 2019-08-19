@@ -57,9 +57,7 @@ public:
 
     /// Default constructor that initializes the id with max of std::size_t
     /// the default constructor of class Point3d.
-    Point3dWithID() :
-        Point3d(), _id(std::numeric_limits<std::size_t>::max())
-    {}
+    Point3dWithID() : _id(std::numeric_limits<std::size_t>::max()) {}
 
     std::size_t getID() const { return _id; }
 
