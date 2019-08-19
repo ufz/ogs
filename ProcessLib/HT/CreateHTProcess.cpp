@@ -139,14 +139,10 @@ std::unique_ptr<Process> createHTProcess(
     auto media_map =
         MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
 
-    std::unique_ptr<HTMaterialProperties> material_properties =
-        std::make_unique<HTMaterialProperties>(
-            std::move(media_map),
-            has_fluid_thermal_expansion,
-            *solid_thermal_expansion,
-            *biot_constant,
-            specific_body_force,
-            has_gravity);
+    HTMaterialProperties material_properties{
+        std::move(media_map),     has_fluid_thermal_expansion,
+        *solid_thermal_expansion, *biot_constant,
+        specific_body_force,      has_gravity};
 
     SecondaryVariableCollection secondary_variables;
 

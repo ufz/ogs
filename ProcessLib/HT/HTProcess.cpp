@@ -16,7 +16,6 @@
 #include "ProcessLib/SurfaceFlux/SurfaceFluxData.h"
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
 
-#include "HTMaterialProperties.h"
 #include "MonolithicHTFEM.h"
 #include "StaggeredHTFEM.h"
 
@@ -32,7 +31,7 @@ HTProcess::HTProcess(
     unsigned const integration_order,
     std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>&&
         process_variables,
-    std::unique_ptr<HTMaterialProperties>&& material_properties,
+    HTMaterialProperties&& material_properties,
     SecondaryVariableCollection&& secondary_variables,
     NumLib::NamedFunctionCaller&& named_function_caller,
     bool const use_monolithic_scheme,
@@ -68,14 +67,14 @@ void HTProcess::initializeConcreteProcess(
             mesh.getDimension(), mesh.getElements(), dof_table,
             pv.getShapeFunctionOrder(), _local_assemblers,
             mesh.isAxiallySymmetric(), integration_order,
-            *_material_properties);
+            _material_properties);
     }
     else
     {
         ProcessLib::createLocalAssemblers<StaggeredHTFEM>(
             mesh.getDimension(), mesh.getElements(), dof_table,
             pv.getShapeFunctionOrder(), _local_assemblers,
-            mesh.isAxiallySymmetric(), integration_order, *_material_properties,
+            mesh.isAxiallySymmetric(), integration_order, _material_properties,
             _heat_transport_process_id, _hydraulic_process_id);
     }
 

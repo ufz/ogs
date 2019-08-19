@@ -11,6 +11,7 @@
 
 #include <array>
 
+#include "HTMaterialProperties.h"
 #include "ProcessLib/Process.h"
 
 namespace NumLib
@@ -25,7 +26,6 @@ struct SurfaceFluxData;
 namespace HT
 {
 class HTLocalAssemblerInterface;
-struct HTMaterialProperties;
 
 /**
  * # HT process
@@ -59,7 +59,7 @@ public:
         unsigned const integration_order,
         std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>&&
             process_variables,
-        std::unique_ptr<HTMaterialProperties>&& material_properties,
+        HTMaterialProperties&& material_properties,
         SecondaryVariableCollection&& secondary_variables,
         NumLib::NamedFunctionCaller&& named_function_caller,
         bool const use_monolithic_scheme,
@@ -116,7 +116,7 @@ private:
     std::tuple<NumLib::LocalToGlobalIndexMap*, bool>
         getDOFTableForExtrapolatorData() const override;
 
-    const std::unique_ptr<HTMaterialProperties> _material_properties;
+    HTMaterialProperties _material_properties;
 
     std::vector<std::unique_ptr<HTLocalAssemblerInterface>> _local_assemblers;
 
