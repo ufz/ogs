@@ -135,6 +135,23 @@ cite::before {
   }
 }
 
+ol.breadcrumb {
+  @apply py-2;
+}
+
+ol.breadcrumb li {
+  display: inline;
+}
+
+ol.breadcrumb li+li:before {
+  @apply px-1;
+  content: "/\00a0";
+}
+
+ol.breadcrumb li.active a {
+  color: theme('mycolors.text-accent');
+}
+
 /* -- Table of contents -- */
 #TableOfContents {
   @apply .text-sm;

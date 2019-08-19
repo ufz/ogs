@@ -14,8 +14,8 @@ text = "You want to contribute to the OpenGeoSys project or implement a custom f
 icon = "fal fa-laptop-code"
 
 [[sections]]
-name = "Selected Benchmarks"
-url = "/docs/benchmarks"
+name = "Benchmarks"
+url = "/docs/benchmarks/elliptic/groundwater-flow-dirichlet/"
 text = "Basic benchmarks are explained and input files are provided to get you started in using OGS."
 icon = "fal fa-rabbit-fast"
 

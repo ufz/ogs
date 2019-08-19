@@ -3,14 +3,6 @@
   <nav class="w-1/4">
     {{ $segments := split .RelPermalink "/" }}
     {{ $subsection := index $segments 2 }}
-    <div class="text-xs">
-      <a href="/docs/">Docs</a> / <span class="text-orange">
-      {{ if eq $subsection "devguide"}}Developer Guide{{ end }}
-      {{ if eq $subsection "benchmarks"}}Benchmarks{{ end }}
-      {{ if eq $subsection "userguide"}}User Guide{{ end }}
-      {{ if eq $subsection "tools"}}Tools{{ end }}
-      </span>
-    </div>
     <ul class="text-sm">
       {{ $currentPage := . }}
       {{ $currentMenu := index .Site.Menus $subsection }}
