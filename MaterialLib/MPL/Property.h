@@ -102,13 +102,6 @@ protected:
     PropertyDataType _dvalue;
 };
 
-/// This method returns the 0-based index of the variant data types. Can be
-/// enhanced by using enums.
-inline std::size_t getType(Property const& p)
-{
-    return p.value().index();
-}
-
 inline void overwriteExistingProperties(PropertyArray& properties,
                                         PropertyArray& new_properties)
 {
