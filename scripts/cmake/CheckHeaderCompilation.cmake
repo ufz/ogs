@@ -30,7 +30,9 @@ function(_check_header_compilation TARGET)
     get_target_property(INCLUDE_DIRS ${TARGET} INCLUDE_DIRECTORIES)
     get_target_property(LINK_LIBS ${TARGET} LINK_LIBRARIES)
     foreach(LIB ${LINK_LIBS})
-        if(NOT TARGET ${LIB}) # Ignore non-existing targets
+        # Ignore non-existing targets or interface libs
+        get_target_property(LIB_TYPE ${LIB} TYPE)
+        if(NOT TARGET ${LIB} OR LIB_TYPE STREQUAL "INTERFACE_LIBRARY")
             continue()
         endif()
         get_target_property(TARGET_INCLUDE_DIRS ${LIB} INCLUDE_DIRECTORIES)
