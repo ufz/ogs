@@ -71,13 +71,13 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
     ParameterLib::SpatialPosition pos;
     pos.setElementID(this->_element.getID());
 
-    auto const& material_properties = this->_material_properties;
-    auto const& medium = *this->_material_properties.media_map->getMedium(
+    auto const& process_data = this->_process_data;
+    auto const& medium = *this->_process_data.media_map->getMedium(
         this->_element.getID());
     auto const& liquid_phase = medium.phase("AqueousLiquid");
     auto const& solid_phase = medium.phase("Solid");
 
-    auto const& b = material_properties.specific_body_force;
+    auto const& b = process_data.specific_body_force;
 
     MaterialPropertyLib::VariableArray vars;
 
@@ -142,13 +142,13 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
 
         local_K.noalias() += w * dNdx.transpose() * K_over_mu * dNdx;
 
-        if (material_properties.has_gravity)
+        if (process_data.has_gravity)
         {
             local_b.noalias() +=
                 w * fluid_density * dNdx.transpose() * K_over_mu * b;
         }
 
-        if (!material_properties.has_fluid_thermal_expansion)
+        if (!process_data.has_fluid_thermal_expansion)
         {
             return;
         }
@@ -156,7 +156,7 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
         // Add the thermal expansion term
         {
             auto const solid_thermal_expansion =
-                material_properties.solid_thermal_expansion(t, pos)[0];
+                process_data.solid_thermal_expansion(t, pos)[0];
             const double dfluid_density_dT =
                 liquid_phase
                     .property(MaterialPropertyLib::PropertyType::density)
@@ -165,7 +165,7 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
             double T0_int_pt = 0.;
             NumLib::shapeFunctionInterpolate(local_T0, N, T0_int_pt);
             auto const biot_constant =
-                material_properties.biot_constant(t, pos)[0];
+                process_data.biot_constant(t, pos)[0];
             const double eff_thermal_expansion =
                 3.0 * (biot_constant - porosity) * solid_thermal_expansion -
                 porosity * dfluid_density_dT / fluid_density;
@@ -204,13 +204,13 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
     ParameterLib::SpatialPosition pos;
     pos.setElementID(this->_element.getID());
 
-    auto const& material_properties = this->_material_properties;
+    auto const& process_data = this->_process_data;
     auto const& medium =
-        *material_properties.media_map->getMedium(this->_element.getID());
+        *process_data.media_map->getMedium(this->_element.getID());
     auto const& liquid_phase = medium.phase("AqueousLiquid");
     auto const& solid_phase = medium.phase("Solid");
 
-    auto const& b = material_properties.specific_body_force;
+    auto const& b = process_data.specific_body_force;
 
     GlobalDimMatrixType const& I(
         GlobalDimMatrixType::Identity(GlobalDim, GlobalDim));
@@ -272,7 +272,7 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
         GlobalDimMatrixType const K_over_mu =
             intrinsic_permeability / viscosity;
         GlobalDimVectorType const velocity =
-            material_properties.has_gravity
+            process_data.has_gravity
                 ? GlobalDimVectorType(-K_over_mu * (dNdx * local_p_Eigen_type -
                                                     fluid_density * b))
                 : GlobalDimVectorType(-K_over_mu * dNdx * local_p_Eigen_type);

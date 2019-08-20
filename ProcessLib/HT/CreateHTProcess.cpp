@@ -18,7 +18,7 @@
 #include "ProcessLib/Utils/ProcessUtils.h"
 
 #include "HTProcess.h"
-#include "HTMaterialProperties.h"
+#include "HTProcessData.h"
 #include "HTLocalAssemblerInterface.h"
 
 namespace ProcessLib
@@ -139,14 +139,10 @@ std::unique_ptr<Process> createHTProcess(
     auto media_map =
         MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
 
-    std::unique_ptr<HTMaterialProperties> material_properties =
-        std::make_unique<HTMaterialProperties>(
-            std::move(media_map),
-            has_fluid_thermal_expansion,
-            *solid_thermal_expansion,
-            *biot_constant,
-            specific_body_force,
-            has_gravity);
+    HTProcessData process_data{
+        std::move(media_map),     has_fluid_thermal_expansion,
+        *solid_thermal_expansion, *biot_constant,
+        specific_body_force,      has_gravity};
 
     SecondaryVariableCollection secondary_variables;
 
@@ -159,7 +155,7 @@ std::unique_ptr<Process> createHTProcess(
     return std::make_unique<HTProcess>(
         std::move(name), mesh, std::move(jacobian_assembler), parameters,
         integration_order, std::move(process_variables),
-        std::move(material_properties), std::move(secondary_variables),
+        std::move(process_data), std::move(secondary_variables),
         std::move(named_function_caller), use_monolithic_scheme,
         std::move(surfaceflux), _heat_transport_process_id,
         _hydraulic_process_id);

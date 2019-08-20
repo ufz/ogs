@@ -12,7 +12,7 @@
 #include <Eigen/Dense>
 #include <vector>
 
-#include "HTMaterialProperties.h"
+#include "HTProcessData.h"
 
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
@@ -50,11 +50,11 @@ public:
           std::size_t const local_matrix_size,
           bool const is_axially_symmetric,
           unsigned const integration_order,
-          HTMaterialProperties const& material_properties,
+          HTProcessData const& process_data,
           const unsigned dof_per_node)
         : HTLocalAssemblerInterface(),
           _element(element),
-          _material_properties(material_properties),
+          _process_data(process_data),
           _integration_method(integration_order)
     {
         // This assertion is valid only if all nodal d.o.f. use the same shape
@@ -127,7 +127,7 @@ public:
             p_int_pt;
 
         auto const& medium =
-            *_material_properties.media_map->getMedium(_element.getID());
+            *_process_data.media_map->getMedium(_element.getID());
         auto const& liquid_phase = medium.phase("AqueousLiquid");
         auto const& solid_phase = medium.phase("Solid");
 
@@ -146,13 +146,13 @@ public:
         GlobalDimVectorType q =
             -K_over_mu * shape_matrices.dNdx * p_nodal_values;
 
-        if (this->_material_properties.has_gravity)
+        if (this->_process_data.has_gravity)
         {
             auto const rho_w =
                 liquid_phase
                     .property(MaterialPropertyLib::PropertyType::density)
                     .template value<double>(vars);
-            auto const b = this->_material_properties.specific_body_force;
+            auto const b = this->_process_data.specific_body_force;
             q += K_over_mu * rho_w * b;
         }
 
@@ -163,7 +163,7 @@ public:
 
 protected:
     MeshLib::Element const& _element;
-    HTMaterialProperties const& _material_properties;
+    HTProcessData const& _process_data;
 
     IntegrationMethod const _integration_method;
     std::vector<
@@ -179,7 +179,7 @@ protected:
         const double specific_heat_capacity_fluid)
     {
         auto const& medium =
-            *_material_properties.media_map->getMedium(this->_element.getID());
+            *_process_data.media_map->getMedium(this->_element.getID());
         auto const& solid_phase = medium.phase("Solid");
 
         auto const specific_heat_capacity_solid =
@@ -202,7 +202,7 @@ protected:
         const GlobalDimVectorType& velocity, const GlobalDimMatrixType& I)
     {
         auto const& medium =
-            *_material_properties.media_map->getMedium(_element.getID());
+            *_process_data.media_map->getMedium(_element.getID());
         auto const& solid_phase = medium.phase("Solid");
         auto const& liquid_phase = medium.phase("AqueousLiquid");
 
@@ -270,7 +270,7 @@ protected:
             &local_p[0], ShapeFunction::NPOINTS);
 
         auto const& medium =
-            *_material_properties.media_map->getMedium(_element.getID());
+            *_process_data.media_map->getMedium(_element.getID());
         auto const& liquid_phase = medium.phase("AqueousLiquid");
         auto const& solid_phase = medium.phase("Solid");
 
@@ -305,13 +305,13 @@ protected:
 
             cache_mat.col(ip).noalias() = -K_over_mu * dNdx * p_nodal_values;
 
-            if (_material_properties.has_gravity)
+            if (_process_data.has_gravity)
             {
                 auto const rho_w =
                     liquid_phase
                         .property(MaterialPropertyLib::PropertyType::density)
                         .template value<double>(vars);
-                auto const b = _material_properties.specific_body_force;
+                auto const b = _process_data.specific_body_force;
                 // here it is assumed that the vector b is directed 'downwards'
                 cache_mat.col(ip).noalias() += K_over_mu * rho_w * b;
             }

@@ -14,7 +14,7 @@
 #include <Eigen/Dense>
 #include <vector>
 
-#include "HTMaterialProperties.h"
+#include "HTProcessData.h"
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 
@@ -59,10 +59,10 @@ public:
                     std::size_t const local_matrix_size,
                     bool is_axially_symmetric,
                     unsigned const integration_order,
-                    HTMaterialProperties const& material_properties)
+                    HTProcessData const& process_data)
         : HTFEM<ShapeFunction, IntegrationMethod, GlobalDim>(
               element, local_matrix_size, is_axially_symmetric,
-              integration_order, material_properties, NUM_NODAL_DOF)
+              integration_order, process_data, NUM_NODAL_DOF)
     {
     }
 
@@ -99,7 +99,7 @@ public:
         auto p_nodal_values = Eigen::Map<const NodalVectorType>(
             &local_x[pressure_index], pressure_size);
 
-        auto const& process_data = this->_material_properties;
+        auto const& process_data = this->_process_data;
         auto const& medium =
             *process_data.media_map->getMedium(this->_element.getID());
         auto const& liquid_phase = medium.phase("AqueousLiquid");
