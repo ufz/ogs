@@ -71,4 +71,4 @@ private:
 };
 
 } // end namespace IO
-} // end namespace BaseLib
+}  // namespace GeoLib

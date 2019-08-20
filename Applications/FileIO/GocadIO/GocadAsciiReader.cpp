@@ -261,7 +261,6 @@ bool parseNodes(std::ifstream& in,
                 MeshLib::Properties& mesh_prop)
 {
     NodeType t = NodeType::UNSPECIFIED;
-    double value;
     std::vector<std::string> const array_names =
         mesh_prop.getPropertyVectorNames();
     std::streampos pos = in.tellg();
@@ -307,6 +306,7 @@ bool parseNodes(std::ifstream& in,
                 {
                     continue;
                 }
+                double value;
                 sstr >> value;
                 mesh_prop.getPropertyVector<double>(name)->push_back(value);
             }

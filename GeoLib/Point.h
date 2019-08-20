@@ -32,24 +32,24 @@ class PointVec;
 class Point : public MathLib::Point3dWithID, public GeoLib::GeoObject
 {
 public:
+    Point() = default;
+
     Point(double x1, double x2, double x3,
-        std::size_t id = std::numeric_limits<std::size_t>::max()) :
-        MathLib::Point3dWithID(std::array<double,3>({{x1, x2, x3}}), id),
-        GeoLib::GeoObject()
-    {}
+          std::size_t id = std::numeric_limits<std::size_t>::max())
+        : MathLib::Point3dWithID(std::array<double, 3>({{x1, x2, x3}}), id)
+    {
+    }
 
-    Point() :
-        MathLib::Point3dWithID(), GeoLib::GeoObject()
-    {}
-
-    Point(MathLib::Point3d const& x, std::size_t id) :
-        MathLib::Point3dWithID(x, id), GeoLib::GeoObject()
-    {}
+    Point(MathLib::Point3d const& x, std::size_t id)
+        : MathLib::Point3dWithID(x, id)
+    {
+    }
 
     explicit Point(std::array<double, 3> const& x,
                    std::size_t id = std::numeric_limits<std::size_t>::max())
-        : MathLib::Point3dWithID(x, id), GeoLib::GeoObject()
-    {}
+        : MathLib::Point3dWithID(x, id)
+    {
+    }
 
     /// return a geometry type
     GEOTYPE getGeoType() const override { return GEOTYPE::POINT; }
