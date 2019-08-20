@@ -43,6 +43,8 @@ namespace ProcessLib
 {
 namespace TwoPhaseFlowWithPP
 {
+namespace MPL = MaterialPropertyLib;
+
 template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
 void TwoPhaseFlowWithPPLocalAssembler<
@@ -127,49 +129,56 @@ void TwoPhaseFlowWithPPLocalAssembler<
 
         auto const& medium =
             *_process_data.media_map->getMedium(_element.getID());
-        auto const& solid_phase = medium.phase("solid");
         auto const& liquid_phase = medium.phase("liquid");
         auto const& gas_phase = medium.phase("gas");
 
-        MaterialPropertyLib::VariableArray variables;
+        MPL::VariableArray variables;
 
-        variables[static_cast<int>(
-            MaterialPropertyLib::Variable::phase_pressure)] = pn_int_pt;
-        variables[static_cast<int>(
-            MaterialPropertyLib::Variable::temperature)] = temperature;
+        variables[static_cast<int>(MPL::Variable::phase_pressure)] = pn_int_pt;
+        variables[static_cast<int>(MPL::Variable::capillary_pressure)] =
+            pc_int_pt;
+        variables[static_cast<int>(MPL::Variable::temperature)] = temperature;
 
-        // just for testing purposes
-        auto const rho_LR =
-            liquid_phase.property(MaterialPropertyLib::PropertyType::density)
-                .template value<double>(variables);
-        auto const rho_GR =
-            gas_phase.property(MaterialPropertyLib::PropertyType::density)
-                .template value<double>(variables);
-        
-        std::cout << rho_LR << " " << rho_GR << "\n";
-        //
+        auto const rho_nonwet = gas_phase.property(MPL::PropertyType::density)
+                                    .template value<double>(variables, pos, t);
 
-        double const rho_nonwet =
-            _process_data.material->getGasDensity(pn_int_pt, temperature);
-        double const rho_wet = _process_data.material->getLiquidDensity(
-            _pressure_wet[ip], temperature);
+        auto const rho_wet = liquid_phase.property(MPL::PropertyType::density)
+                                 .template value<double>(variables, pos, t);
 
-        double const Sw = _process_data.material->getSaturation(
-            material_id, t, pos, pn_int_pt, temperature, pc_int_pt);
+        auto const Sw = medium.property(MPL::PropertyType::saturation)
+                            .template value<double>(variables, pos, t);
 
         _saturation[ip] = Sw;
 
-        double dSw_dpc = _process_data.material->getSaturationDerivative(
-            material_id, t, pos, pn_int_pt, temperature, Sw);
+        auto const dSw_dpc =
+            medium.property(MPL::PropertyType::saturation)
+                .template dValue<double>(
+                    variables, MPL::Variable::capillary_pressure, pos, t);
 
-        double const porosity = _process_data.material->getPorosity(
-            material_id, t, pos, pn_int_pt, temperature, 0);
+        auto const porosity = medium.property(MPL::PropertyType::porosity)
+                                  .template value<double>(variables, pos, t);
 
-        // Assemble M matrix
-        // nonwetting
-        double const drhononwet_dpn =
-            _process_data.material->getGasDensityDerivative(pn_int_pt,
-                                                            temperature);
+        auto const drhononwet_dpn =
+            gas_phase.property(MPL::PropertyType::density)
+                .template dValue<double>(variables,
+                                         MPL::Variable::phase_pressure, pos, t);
+
+        auto const k_rel =
+            medium.property(MPL::PropertyType::relative_permeability)
+                .template value<MPL::Pair>(variables, pos, t);
+
+        auto const k_rel_wet = k_rel[0];
+        auto const k_rel_nonwet = k_rel[1];
+
+        auto const mu_nonwet = gas_phase.property(MPL::PropertyType::viscosity)
+                                   .template value<double>(variables, pos, t);
+
+        auto const lambda_nonwet = k_rel_nonwet / mu_nonwet;
+
+        auto const mu_wet = liquid_phase.property(MPL::PropertyType::viscosity)
+                                .template value<double>(variables, pos, t);
+
+        auto const lambda_wet = k_rel_wet / mu_wet;
 
         Mgp.noalias() +=
             porosity * (1 - Sw) * drhononwet_dpn * _ip_data[ip].massOperator;
@@ -178,22 +187,6 @@ void TwoPhaseFlowWithPPLocalAssembler<
 
         Mlpc.noalias() +=
             porosity * dSw_dpc * rho_wet * _ip_data[ip].massOperator;
-
-        // nonwet
-        double const k_rel_nonwet =
-            _process_data.material->getNonwetRelativePermeability(
-                t, pos, pn_int_pt, temperature, Sw);
-        double const mu_nonwet =
-            _process_data.material->getGasViscosity(pn_int_pt, temperature);
-        double const lambda_nonwet = k_rel_nonwet / mu_nonwet;
-
-        // wet
-        double const k_rel_wet =
-            _process_data.material->getWetRelativePermeability(
-                t, pos, _pressure_wet[ip], temperature, Sw);
-        double const mu_wet = _process_data.material->getLiquidViscosity(
-            _pressure_wet[ip], temperature);
-        double const lambda_wet = k_rel_wet / mu_wet;
 
         laplace_operator.noalias() = _ip_data[ip].dNdx.transpose() *
                                      permeability * _ip_data[ip].dNdx *
