@@ -295,10 +295,12 @@ bool parseNodes(std::ifstream& in,
         std::stringstream sstr(line);
         if (line.substr(0, 4) == "VRTX" && t != NodeType::PVRTX)
         {
+            t = NodeType::VRTX;
             nodes.push_back(createNode(sstr));
         }
         else if (line.substr(0, 5) == "PVRTX" && t != NodeType::VRTX)
         {
+            t = NodeType::PVRTX;
             nodes.push_back(createNode(sstr));
             for (std::string const& name : array_names)
             {
