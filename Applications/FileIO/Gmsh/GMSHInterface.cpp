@@ -75,9 +75,6 @@ GMSHInterface::~GMSHInterface()
 bool GMSHInterface::write()
 {
     _out << "// GMSH input file created by OpenGeoSys " << BaseLib::BuildInfo::ogs_version;
-#ifdef BUILD_TIMESTAMP
-    _out << " built on " << BaseLib::BuildInfo::build_timestamp;
-#endif
     _out << "\n\n";
 
     return writeGMSHInputFile(_out) <= 0;

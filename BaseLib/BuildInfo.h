@@ -20,8 +20,6 @@ namespace BaseLib
 
 namespace BuildInfo
 {
-    extern BASELIB_EXPORT const std::string build_timestamp;
-
     extern BASELIB_EXPORT const std::string cmake_cxx_compiler;
     extern BASELIB_EXPORT const std::string cmake_cxx_flags;
     extern BASELIB_EXPORT const std::string cmake_cxx_flags_release;
