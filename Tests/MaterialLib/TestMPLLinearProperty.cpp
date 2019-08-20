@@ -24,8 +24,10 @@ TEST(MaterialPropertyLib, LinearProperty)
     MaterialPropertyLib::VariableArray variable_array;
     variable_array[static_cast<int>(
         MaterialPropertyLib::Variable::temperature)] = 303.15;
+    ParameterLib::SpatialPosition const pos;
+    double const time = std::numeric_limits<double>::quiet_NaN();
     ASSERT_NEAR(
-        std::get<double>(linear_property.value(variable_array)),
+        std::get<double>(linear_property.value(variable_array, pos, time)),
         y_ref * (1 + m * (std::get<double>(variable_array[static_cast<int>(
                               MaterialPropertyLib::Variable::temperature)]) -
                           x_ref)),

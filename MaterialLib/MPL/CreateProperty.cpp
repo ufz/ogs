@@ -16,6 +16,8 @@
 #include <string>
 #include <vector>
 #include "BaseLib/ConfigTree.h"
+#include "ParameterLib/Parameter.h"
+#include "ParameterLib/Utils.h"
 
 #include "Properties/Properties.h"
 
@@ -26,7 +28,8 @@
 namespace
 {
 std::unique_ptr<MaterialPropertyLib::Property> createProperty(
-    BaseLib::ConfigTree const& config)
+    BaseLib::ConfigTree const& config,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters)
 {
     using namespace MaterialPropertyLib;
     // Parsing the property type:
@@ -170,6 +173,17 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
             reference_value, exp_data);
     }
 
+    if (property_type == "Parameter")
+    {
+        std::string const& parameter_name =
+            //! \ogs_file_param{properties__property__Parameter__parameter_name}
+            config.getConfigParameter<std::string>("parameter_name");
+        auto const& parameter = ParameterLib::findParameter<double>(
+            parameter_name, parameters, 1, nullptr);
+        return std::make_unique<MaterialPropertyLib::ParameterProperty>(
+            parameter);
+    }
+
     /* TODO Additional properties go here, for example:
     if (boost::iequals(property_type, "BilinearTemperaturePressure"))
     {
@@ -186,7 +200,8 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
 namespace MaterialPropertyLib
 {
 std::unique_ptr<PropertyArray> createProperties(
-    boost::optional<BaseLib::ConfigTree> const& config)
+    boost::optional<BaseLib::ConfigTree> const& config,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters)
 {
     if (!config)
     {
@@ -209,7 +224,7 @@ std::unique_ptr<PropertyArray> createProperties(
             //! \ogs_file_param{properties__property__name}
             property_config.getConfigParameter<std::string>("name");
         // Create a new property based on the configuration subtree:
-        auto property = createProperty(property_config);
+        auto property = createProperty(property_config, parameters);
 
         // Insert the new property at the right position into the components
         // private PropertyArray:

@@ -14,14 +14,16 @@
 #include "GetThermalExpansivity.h"
 
 #include "MaterialLib/MPL/Phase.h"
+#include "MaterialLib/MPL/Phase.h"
 
 namespace MaterialPropertyLib
 {
 class Phase;
 
-double getThermalExpansivity(Phase const& phase,
-                             VariableArray const& vars,
-                             const double density)
+double getThermalExpansivity(Phase const& phase, VariableArray const& vars,
+                             const double density,
+                             ParameterLib::SpatialPosition const& pos,
+                             double const t)
 {
     auto const thermal_expansivity_ptr =
         &phase.property(MaterialPropertyLib::PropertyType::thermal_expansivity);
@@ -29,7 +31,7 @@ double getThermalExpansivity(Phase const& phase,
     // The thermal expansivity is explicitly given in the project file.
     if (thermal_expansivity_ptr)
     {
-        return (*thermal_expansivity_ptr).template value<double>(vars);
+        return (*thermal_expansivity_ptr).template value<double>(vars, pos, t);
     }
 
     // The thermal expansivity calculated by the density model directly.

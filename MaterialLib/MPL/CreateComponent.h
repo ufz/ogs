@@ -20,6 +20,11 @@ namespace BaseLib
 {
 class ConfigTree;
 }
+namespace ParameterLib
+{
+struct ParameterBase;
+}
+
 
 namespace MaterialPropertyLib
 {
@@ -32,6 +37,8 @@ namespace MaterialPropertyLib
 /// Assigning a name is optional; If no name is given, a custom component
 /// without predefined properties is created.
 std::vector<std::unique_ptr<Component>> createComponents(
-    boost::optional<BaseLib::ConfigTree> const& config);
+    boost::optional<BaseLib::ConfigTree> const& config,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
+        parameters);
 
 }  // namespace MaterialPropertyLib

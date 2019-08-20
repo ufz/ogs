@@ -12,9 +12,6 @@
                 <temperature>T</temperature>
                 <pressure>p</pressure>
             </process_variables>
-            <density_solid>rho_solid</density_solid>
-            <specific_heat_capacity_solid>c_p</specific_heat_capacity_solid>
-            <thermal_conductivity_solid>lambda</thermal_conductivity_solid>
             <specific_body_force>0 -9.81</specific_body_force>
             <secondary_variables>
                 <secondary_variable type="static" internal_name="darcy_velocity" output_name="darcy_velocity"/>
@@ -72,6 +69,21 @@
                             <name>storage</name>
                             <type>Constant</type>
                             <value>0.0</value>
+                        </property>
+                        <property>
+                            <name>density</name>
+                            <type>Parameter</type>
+                            <parameter_name>rho_solid</parameter_name>
+                        </property>
+                        <property>
+                            <name>thermal_conductivity</name>
+                            <type>Parameter</type>
+                            <parameter_name>lambda</parameter_name>
+                        </property>
+                        <property>
+                            <name>specific_heat_capacity</name>
+                            <type>Parameter</type>
+                            <parameter_name>c_p</parameter_name>
                         </property>
                     </properties>
                 </phase>
@@ -136,9 +148,24 @@
                             <value>0.41</value>
                         </property>
                         <property>
+                            <name>density</name>
+                            <type>Parameter</type>
+                            <parameter_name>rho_solid</parameter_name>
+                        </property>
+                        <property>
                             <name>storage</name>
                             <type>Constant</type>
                             <value>0.0</value>
+                        </property>
+                        <property>
+                            <name>thermal_conductivity</name>
+                            <type>Parameter</type>
+                            <parameter_name>lambda</parameter_name>
+                        </property>
+                        <property>
+                            <name>specific_heat_capacity</name>
+                            <type>Parameter</type>
+                            <parameter_name>c_p</parameter_name>
                         </property>
                     </properties>
                 </phase>

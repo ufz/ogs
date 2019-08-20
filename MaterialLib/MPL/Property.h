@@ -19,6 +19,8 @@
 #include "PropertyType.h"
 #include "VariableType.h"
 
+#include "ParameterLib/SpatialPosition.h"
+
 namespace MaterialPropertyLib
 {
 /// This is a custom data type for arbitrary properties, based on the
@@ -53,7 +55,9 @@ public:
     virtual PropertyDataType value() const;
     /// This virtual method will compute the property value based on the primary
     /// variables that are passed as arguments.
-    virtual PropertyDataType value(VariableArray const& variable_array) const;
+    virtual PropertyDataType value(VariableArray const& variable_array,
+                                   ParameterLib::SpatialPosition const& pos,
+                                   double const t) const;
     /// This virtual method will compute the derivative of a property
     /// with respect to the given variable pv.
     virtual PropertyDataType dValue(VariableArray const& variable_array,
@@ -69,11 +73,15 @@ public:
     {
         return std::get<T>(value());
     }
+
     template <typename T>
-    T value(VariableArray const& variable_array) const
+    T value(VariableArray const& variable_array,
+            ParameterLib::SpatialPosition const& pos,
+            double const t) const
     {
-        return std::get<T>(value(variable_array));
+        return std::get<T>(value(variable_array, pos, t));
     }
+
     template <typename T>
     T dValue(VariableArray const& variable_array,
              Variable const variable) const
@@ -93,13 +101,6 @@ protected:
     PropertyDataType _value;
     PropertyDataType _dvalue;
 };
-
-/// This method returns the 0-based index of the variant data types. Can be
-/// enhanced by using enums.
-inline std::size_t getType(Property const& p)
-{
-    return p.value().index();
-}
 
 inline void overwriteExistingProperties(PropertyArray& properties,
                                         PropertyArray& new_properties)

@@ -14,6 +14,7 @@
 #pragma once
 
 #include "MaterialLib/MPL/VariableType.h"  // for VariableArray
+#include "ParameterLib/SpatialPosition.h"
 
 namespace MaterialPropertyLib
 {
@@ -38,7 +39,8 @@ class Phase;
  * \f]
  * where \f$\rho\f$ is the density, \f$T\f$ is the temperature.
  */
-double getThermalExpansivity(Phase const& phase,
-                             VariableArray const& vars,
-                             const double density);
+double getThermalExpansivity(Phase const& phase, VariableArray const& vars,
+                             const double density,
+                             ParameterLib::SpatialPosition const& pos,
+                             double const t);
 }  // namespace MaterialPropertyLib
