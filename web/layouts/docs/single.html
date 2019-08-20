@@ -18,7 +18,8 @@
   </nav>
   <div class="w-3/4 ml-4">
     <h1>{{ .Title }}</h1>
-    {{ if or (eq $subsection "devguide") (eq $subsection "userguide") }}
+
+    {{ if .CurrentSection.Params.os_selector }}
     <div class="invisible mb-4" id="os-selector">Select OS:
       <a class="btn mx-1" id="btn-win"><i class="fab fa-windows"></i> Windows</a>
       <a class="btn mx-1" id="btn-linux"><i class="fab fa-linux"></i> Linux</a>
