@@ -18,14 +18,16 @@ function newsEntry(element, i) {
   return string;
 }
 
-$.getJSON(announcementsurl, function(data) {
-  data.topics.slice(0,3).forEach(function (element, i) {
-    $("#news").append(newsEntry(element, i));
+if(location.pathname == "/") {
+  $.getJSON(announcementsurl, function(data) {
+    data.topics.slice(0,3).forEach(function (element, i) {
+      $("#news").append(newsEntry(element, i));
+    });
   });
-});
 
-$.getJSON(usabilityurl, function(data) {
-  data.topics.slice(0,3).forEach(function (element, i) {
-    $("#discussions").append(newsEntry(element, i));
+  $.getJSON(usabilityurl, function(data) {
+    data.topics.slice(0,3).forEach(function (element, i) {
+      $("#discussions").append(newsEntry(element, i));
+    });
   });
-});
+}

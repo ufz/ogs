@@ -1,31 +1,31 @@
 {{ define "main" }}
   <div class="container">
-    <h1>OpenGeoSys Documentation</h1>
     {{ .Content }}
-
-    <!-- /docs/[subsection]/ -->
-    <h2>{{ .CurrentSection.Title }}</h2>
+    {{ if ne .CurrentSection.RelPermalink "/docs/" }}
+    <h2>{{ .CurrentSection.Title }} - All pages</h2>
     <ul>
       {{ range .Pages }}
-        <li><a href="{{ .URL }}">{{ .Title }}</a></li>
+        <li><a href="{{ .Permalink }}">{{ .Title }}</a></li>
       {{ end }}
     </ul>
-    <div class="flex flex-wrap">
-    <!-- /docs -->
-    {{ range .Params.sections }}
-      <div class="w-full sm:w-1/2 lg:w-1/3 p-3 my-3">
-        <h2 class="mb-2 text-center text-base md:text-lg lg:text-xl xl:text-2xl">
-          <a href="{{ .url }}">
-            {{ .name }}
-            {{ $url_first_char := substr .url 0 1 }}
-            {{ if not (eq $url_first_char "/") }}
-              <i class="text-xs align-top fas fa-external-link-alt"></i>
-            {{ end }}
-          </a>
-        </h2>
-        <p>{{ .text }}</p>
+    {{ else }}
+      <!-- /docs -->
+      <div class="flex flex-wrap">
+      {{ range .Params.sections }}
+        <div class="w-full sm:w-1/2 lg:w-1/3 p-3 my-3">
+          <h2 class="mb-2 text-center text-base md:text-lg lg:text-xl xl:text-2xl">
+            <a href="{{ .url }}">
+              {{ .name }}
+              {{ $url_first_char := substr .url 0 1 }}
+              {{ if not (eq $url_first_char "/") }}
+                <i class="text-xs align-top fas fa-external-link-alt"></i>
+              {{ end }}
+            </a>
+          </h2>
+          <p>{{ .text }}</p>
+        </div>
+      {{ end }}
       </div>
     {{ end }}
-    </div>
   </div>
 {{ end }}

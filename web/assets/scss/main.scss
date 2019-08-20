@@ -152,6 +152,13 @@ ol.breadcrumb li.active a {
   color: theme('mycolors.text-accent');
 }
 
+/* The sticky class is added to the header with JS when it reaches its scroll position */
+#theHeader.sticky {
+  position: fixed;
+  top: 0;
+  background-color: white;
+}
+
 /* -- Table of contents -- */
 #TableOfContents {
   @apply .text-sm;

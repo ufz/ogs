@@ -60,9 +60,9 @@
       </div>
       {{ end }}
     </div>
-    <div class="container">
+    <div class="container {{if .IsHome}} hidden{{end}}">
       <div class="w-auto">
-          <div class="text-xs">
+          <div class="text-xs header w-full" id="theHeader">
               {{ partial "breadcrumb" . }}
             </div>
       </div>

@@ -6,12 +6,7 @@
   <script src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.3.5/jquery.fancybox.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
 
-  {{ if .IsHome }}
-  {{ $scripts_news := resources.Get "js/discourse-news.js" | minify | fingerprint }}
-  <script type="text/javascript" src="{{ $scripts_news.Permalink }}" integrity="{{ $scripts_news.Data.Integrity }}" media="screen"></script>
-  {{ end }}
-
-  {{ $scripts := slice (resources.Get "js/header-anchor.js") (resources.Get "js/osselector.js") (resources.Get "js/sitesearch.js") (resources.Get "js/fancybox.js") | resources.Concat "bundle.js" | minify | fingerprint }}
+  {{ $scripts := resources.Match "js/*.js" | resources.Concat "bundle.js" | minify | fingerprint }}
   <script type="text/javascript" src="{{ $scripts.Permalink }}" integrity="{{ $scripts.Data.Integrity }}" media="screen"></script>
 </body>
 </html>
