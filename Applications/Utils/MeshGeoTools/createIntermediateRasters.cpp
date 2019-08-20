@@ -58,34 +58,34 @@ int main(int argc, char* argv[])
     GeoLib::RasterHeader const h1 = dem1->getHeader();
     GeoLib::RasterHeader const h2 = dem2->getHeader();
 
-    std::size_t errors_found(0);
+    bool errors_found(false);
     if (h1.origin[0] != h2.origin[0])
     {
         ERR("Origin x-coordinate is not the same in both raster files.\n");
-        errors_found++;
+        errors_found = true;
     }
     if (h1.origin[1] != h2.origin[1])
     {
         ERR("Origin y-coordinate is not the same in both raster files.\n");
-        errors_found++;
+        errors_found = true;
     }
     if (h1.cell_size != h2.cell_size)
     {
         ERR("Cellsize is not the same in both raster files.\n");
-        errors_found++;
+        errors_found = true;
     }
     if (h1.n_cols != h2.n_cols)
     {
         ERR("Raster width is not the same in both raster files.\n");
-        errors_found++;
+        errors_found = true;
     }
     if (h1.n_rows != h2.n_rows)
     {
         ERR("Raster height is not the same in both raster files.\n")
-        errors_found++;
+        errors_found = true;
     }
 
-    if (errors_found > 0)
+    if (errors_found)
         return 2;
 
     std::size_t const n = number_arg.getValue();
@@ -126,7 +126,7 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    std::string filename = output_arg.getValue();
+    std::string const filename = output_arg.getValue();
     for (std::size_t i = 0; i < n; ++i)
     {
         std::string const basename = BaseLib::dropFileExtension(filename);
