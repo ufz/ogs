@@ -248,7 +248,7 @@ MeshTest(
     NAME GocadTSurface_Mesh_Test
     PATH MeshLib/
     EXECUTABLE GocadTSurfaceReader
-    EXECUTABLE_ARGS -i Top-Lower-Shaly.ts -o ${Data_BINARY_DIR}/MeshLib -b
+    EXECUTABLE_ARGS -i Top-Lower-Shaly.ts -o ${Data_BINARY_DIR}/MeshLib -b 
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA Top-Lower-Shaly.vtu Top-Lower-Shaly.vtu 1e-16
 )
@@ -263,4 +263,14 @@ AddTest(
     DIFF_DATA
     Top-Lower-Shaly.vtu Top-Lower-Shaly.vtu Reshape_Thickness Reshape_Thickness 1e-16 0
     Top-Lower-Shaly.vtu Top-Lower-Shaly.vtu Measured_Depth Measured_Depth 1e-16 0
+)
+
+AddTest(
+    NAME createIntermediateRasters_test
+    PATH MeshGeoToolsLib/Hamburg
+    EXECUTABLE createIntermediateRasters
+    EXECUTABLE_ARGS --file1 layer04.asc --file2 layer17.asc -o ${Data_BINARY_DIR}/MeshGeoToolsLib/Hamburg/output.asc
+    REQUIREMENTS NOT OGS_USE_MPI
+    TESTER diff
+    DIFF_DATA output0.asc
 )
