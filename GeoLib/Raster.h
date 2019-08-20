@@ -54,7 +54,7 @@ public:
      * @param end input iterator pointing to the last element of the data, end have to be reachable from begin
      */
     template <typename InputIterator>
-    Raster(RasterHeader&& header, InputIterator begin, InputIterator end)
+    Raster(RasterHeader header, InputIterator begin, InputIterator end)
         : _header(std::move(header)),
           _raster_data(new double[_header.n_cols * _header.n_rows])
     {

@@ -132,8 +132,7 @@ int main(int argc, char* argv[])
         std::string const basename = BaseLib::dropFileExtension(filename);
         std::string const ext = BaseLib::getFileExtension(filename);
 
-        GeoLib::RasterHeader h (h1);
-        GeoLib::Raster r(std::move(h), raster[i].begin(), raster[i].end());
+        GeoLib::Raster r(h1, raster[i].begin(), raster[i].end());
         FileIO::AsciiRasterInterface::writeRasterAsASC(r, basename + std::to_string(i) + "." + ext);
         INFO("Layer %d written.", i+1);
     }
