@@ -110,12 +110,12 @@ public:
         MaterialStateVariables()
         {
             // Previous time step values are not initialized and are set later.
-            eps_K_t.resize(KelvinVectorSize);
-            eps_M_t.resize(KelvinVectorSize);
+            eps_K_t.resize(kelvin_vector_size);
+            eps_M_t.resize(kelvin_vector_size);
 
             // Initialize current time step values
-            eps_K_j.setZero(KelvinVectorSize);
-            eps_M_j.setZero(KelvinVectorSize);
+            eps_K_j.setZero(kelvin_vector_size);
+            eps_M_j.setZero(kelvin_vector_size);
         }
 
         void setInitialConditions()
@@ -162,7 +162,7 @@ public:
     }
 
 public:
-    static int const KelvinVectorSize =
+    static int const kelvin_vector_size =
         MathLib::KelvinVector::size<DisplacementDim>();
     using KelvinVector =
         MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
@@ -170,8 +170,8 @@ public:
         MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>;
 
     static int const JacobianResidualSize =
-        3 * KelvinVectorSize;  // Three is the number of components in the
-                               // jacobian/residual, not the space dimension.
+        3 * kelvin_vector_size;  // Three is the number of components in the
+                                 // jacobian/residual, not the space dimension.
     using ResidualVector = Eigen::Matrix<double, JacobianResidualSize, 1>;
     using JacobianMatrix = Eigen::Matrix<double,
                                          JacobianResidualSize,
@@ -210,7 +210,8 @@ public:
             detail::LocalLubby2Properties<DisplacementDim>{t, x, _mp};
 
         // calculation of deviatoric parts
-        using Invariants = MathLib::KelvinVector::Invariants<KelvinVectorSize>;
+        using Invariants =
+            MathLib::KelvinVector::Invariants<kelvin_vector_size>;
         auto const& P_dev = Invariants::deviatoric_projection;
         KelvinVector const epsd_i = P_dev * eps;
 

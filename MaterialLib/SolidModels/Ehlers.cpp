@@ -57,9 +57,9 @@ MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> sOdotS(
 template <int DisplacementDim>
 struct PhysicalStressWithInvariants final
 {
-    static int const KelvinVectorSize =
+    static int const kelvin_vector_size =
         MathLib::KelvinVector::size<DisplacementDim>();
-    using Invariants = MathLib::KelvinVector::Invariants<KelvinVectorSize>;
+    using Invariants = MathLib::KelvinVector::Invariants<kelvin_vector_size>;
     using KelvinVector =
         MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
 
@@ -154,9 +154,9 @@ calculatePlasticResidual(
     double const k,
     MaterialProperties const& mp)
 {
-    static int const KelvinVectorSize =
+    static int const kelvin_vector_size =
         MathLib::KelvinVector::size<DisplacementDim>();
-    using Invariants = MathLib::KelvinVector::Invariants<KelvinVectorSize>;
+    using Invariants = MathLib::KelvinVector::Invariants<kelvin_vector_size>;
     using KelvinVector =
         MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
 
@@ -167,7 +167,7 @@ calculatePlasticResidual(
 
     typename SolidEhlers<DisplacementDim>::ResidualVectorType residual;
     // calculate stress residual
-    residual.template segment<KelvinVectorSize>(0).noalias() =
+    residual.template segment<kelvin_vector_size>(0).noalias() =
         s.value / mp.G - 2 * (eps_D - eps_p_D) -
         mp.K / mp.G * (eps_V - eps_p_V) * identity2;
 
@@ -185,23 +185,23 @@ calculatePlasticResidual(
         s, one_gt, sqrtPhi, dtheta_dsigma, mp.gamma_p, mp.m_p);
     KelvinVector const lambda_flow_D = lambda * flow_D;
 
-    residual.template segment<KelvinVectorSize>(KelvinVectorSize).noalias() =
-        eps_p_D_dot - lambda_flow_D;
+    residual.template segment<kelvin_vector_size>(kelvin_vector_size)
+        .noalias() = eps_p_D_dot - lambda_flow_D;
 
     // plastic volume strain
     {
         double const flow_V = plasticFlowVolumetricPart<DisplacementDim>(
             s, sqrtPhi, mp.alpha_p, mp.beta_p, mp.delta_p, mp.epsilon_p);
-        residual(2 * KelvinVectorSize, 0) = eps_p_V_dot - lambda * flow_V;
+        residual(2 * kelvin_vector_size, 0) = eps_p_V_dot - lambda * flow_V;
     }
 
     // evolution of plastic equivalent strain
-    residual(2 * KelvinVectorSize + 1) =
+    residual(2 * kelvin_vector_size + 1) =
         eps_p_eff_dot -
         std::sqrt(2. / 3. * lambda_flow_D.transpose() * lambda_flow_D);
 
     // yield function (for plastic multiplier)
-    residual(2 * KelvinVectorSize + 2) = yieldFunction(mp, s, k) / mp.G;
+    residual(2 * kelvin_vector_size + 2) = yieldFunction(mp, s, k) / mp.G;
     return residual;
 }
 
@@ -212,9 +212,9 @@ typename SolidEhlers<DisplacementDim>::JacobianMatrix calculatePlasticJacobian(
     double const lambda,
     MaterialProperties const& mp)
 {
-    static int const KelvinVectorSize =
+    static int const kelvin_vector_size =
         MathLib::KelvinVector::size<DisplacementDim>();
-    using Invariants = MathLib::KelvinVector::Invariants<KelvinVectorSize>;
+    using Invariants = MathLib::KelvinVector::Invariants<kelvin_vector_size>;
     using KelvinVector =
         MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
     using KelvinMatrix =
@@ -250,16 +250,17 @@ typename SolidEhlers<DisplacementDim>::JacobianMatrix calculatePlasticJacobian(
         SolidEhlers<DisplacementDim>::JacobianMatrix::Zero();
 
     // G_11
-    jacobian.template block<KelvinVectorSize, KelvinVectorSize>(0, 0)
+    jacobian.template block<kelvin_vector_size, kelvin_vector_size>(0, 0)
         .noalias() = KelvinMatrix::Identity();
 
     // G_12
     jacobian
-        .template block<KelvinVectorSize, KelvinVectorSize>(0, KelvinVectorSize)
+        .template block<kelvin_vector_size, kelvin_vector_size>(
+            0, kelvin_vector_size)
         .noalias() = 2 * KelvinMatrix::Identity();
 
     // G_13
-    jacobian.template block<KelvinVectorSize, 1>(0, 2 * KelvinVectorSize)
+    jacobian.template block<kelvin_vector_size, 1>(0, 2 * kelvin_vector_size)
         .noalias() = mp.K / mp.G * identity2;
 
     // G_14 and G_15 are zero
@@ -302,21 +303,22 @@ typename SolidEhlers<DisplacementDim>::JacobianMatrix calculatePlasticJacobian(
         (-M1 / (4 * boost::math::pow<3>(sqrtPhi)) + (M2 + M3) / (2 * sqrtPhi)) *
         mp.G;
     jacobian
-        .template block<KelvinVectorSize, KelvinVectorSize>(KelvinVectorSize, 0)
+        .template block<kelvin_vector_size, kelvin_vector_size>(
+            kelvin_vector_size, 0)
         .noalias() = -lambda * dflow_D_dsigma;
 
     // G_22
     jacobian
-        .template block<KelvinVectorSize, KelvinVectorSize>(KelvinVectorSize,
-                                                            KelvinVectorSize)
+        .template block<kelvin_vector_size, kelvin_vector_size>(
+            kelvin_vector_size, kelvin_vector_size)
         .noalias() = KelvinMatrix::Identity() / dt;
 
     // G_23 and G_24 are zero
 
     // G_25
     jacobian
-        .template block<KelvinVectorSize, 1>(KelvinVectorSize,
-                                             2 * KelvinVectorSize + 2)
+        .template block<kelvin_vector_size, 1>(kelvin_vector_size,
+                                               2 * kelvin_vector_size + 2)
         .noalias() = -flow_D;
 
     // G_31
@@ -333,14 +335,15 @@ typename SolidEhlers<DisplacementDim>::JacobianMatrix calculatePlasticJacobian(
                  (2 * sqrtPhi) +
              2 * mp.epsilon_p * identity2);
 
-        jacobian.template block<1, KelvinVectorSize>(2 * KelvinVectorSize, 0)
+        jacobian
+            .template block<1, kelvin_vector_size>(2 * kelvin_vector_size, 0)
             .noalias() = -lambda * dflow_V_dsigma.transpose();
     }
 
     // G_32 is zero
 
     // G_33
-    jacobian(2 * KelvinVectorSize, 2 * KelvinVectorSize) = 1. / dt;
+    jacobian(2 * kelvin_vector_size, 2 * kelvin_vector_size) = 1. / dt;
 
     // G_34 is zero
 
@@ -348,7 +351,7 @@ typename SolidEhlers<DisplacementDim>::JacobianMatrix calculatePlasticJacobian(
     {
         double const flow_V = plasticFlowVolumetricPart<DisplacementDim>(
             s, sqrtPhi, mp.alpha_p, mp.beta_p, mp.delta_p, mp.epsilon_p);
-        jacobian(2 * KelvinVectorSize, 2 * KelvinVectorSize + 2) = -flow_V;
+        jacobian(2 * kelvin_vector_size, 2 * kelvin_vector_size + 2) = -flow_V;
     }
 
     // increment of effectiv plastic strain
@@ -362,17 +365,18 @@ typename SolidEhlers<DisplacementDim>::JacobianMatrix calculatePlasticJacobian(
             -2 / 3. / eff_flow * lambda_flow_D;
         // G_41
         jacobian
-            .template block<1, KelvinVectorSize>(2 * KelvinVectorSize + 1, 0)
+            .template block<1, kelvin_vector_size>(2 * kelvin_vector_size + 1,
+                                                   0)
             .noalias() = lambda * dflow_D_dsigma * eff_flow23_lambda_flow_D;
         // G_45
-        jacobian(2 * KelvinVectorSize + 1, 2 * KelvinVectorSize + 2) =
+        jacobian(2 * kelvin_vector_size + 1, 2 * kelvin_vector_size + 2) =
             eff_flow23_lambda_flow_D.transpose() * flow_D;
     }
 
     // G_42 and G_43 are zero
 
     // G_44
-    jacobian(2 * KelvinVectorSize + 1, 2 * KelvinVectorSize + 1) = 1. / dt;
+    jacobian(2 * kelvin_vector_size + 1, 2 * kelvin_vector_size + 1) = 1. / dt;
 
     // G_51
     {
@@ -389,12 +393,13 @@ typename SolidEhlers<DisplacementDim>::JacobianMatrix calculatePlasticJacobian(
             mp.G * (mp.beta + 2 * mp.epsilon_p * s.I_1) * identity2;
 
         jacobian
-            .template block<1, KelvinVectorSize>(2 * KelvinVectorSize + 2, 0)
+            .template block<1, kelvin_vector_size>(2 * kelvin_vector_size + 2,
+                                                   0)
             .noalias() = dF_dsigma.transpose() / mp.G;
     }
 
     // G_54
-    jacobian(2 * KelvinVectorSize + 2, 2 * KelvinVectorSize + 1) =
+    jacobian(2 * kelvin_vector_size + 2, 2 * kelvin_vector_size + 1) =
         -mp.kappa * mp.hardening_coefficient / mp.G;
 
     // G_52, G_53, G_55 are zero
@@ -407,9 +412,9 @@ template <int DisplacementDim>
 MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> calculateDResidualDEps(
     double const K, double const G)
 {
-    static int const KelvinVectorSize =
+    static int const kelvin_vector_size =
         MathLib::KelvinVector::size<DisplacementDim>();
-    using Invariants = MathLib::KelvinVector::Invariants<KelvinVectorSize>;
+    using Invariants = MathLib::KelvinVector::Invariants<kelvin_vector_size>;
 
     auto const& P_dev = Invariants::deviatoric_projection;
     auto const& P_sph = Invariants::spherical_projection;
@@ -434,9 +439,9 @@ typename SolidEhlers<DisplacementDim>::KelvinVector predict_sigma(
     typename SolidEhlers<DisplacementDim>::KelvinVector const& eps_prev,
     double const eps_V)
 {
-    static int const KelvinVectorSize =
+    static int const kelvin_vector_size =
         MathLib::KelvinVector::size<DisplacementDim>();
-    using Invariants = MathLib::KelvinVector::Invariants<KelvinVectorSize>;
+    using Invariants = MathLib::KelvinVector::Invariants<kelvin_vector_size>;
     auto const& P_dev = Invariants::deviatoric_projection;
 
     // dimensionless initial hydrostatic pressure
@@ -497,7 +502,7 @@ double SolidEhlers<DisplacementDim>::computeFreeEnergyDensity(
     auto const& eps_p = static_cast<StateVariables<DisplacementDim> const&>(
                             material_state_variables)
                             .eps_p;
-    using Invariants = MathLib::KelvinVector::Invariants<KelvinVectorSize>;
+    using Invariants = MathLib::KelvinVector::Invariants<kelvin_vector_size>;
     auto const& identity2 = Invariants::identity2;
     return (eps - eps_p.D - eps_p.V / 3 * identity2).dot(sigma) / 2;
 }
@@ -523,7 +528,7 @@ SolidEhlers<DisplacementDim>::integrateStress(
             material_state_variables);
     state.setInitialConditions();
 
-    using Invariants = MathLib::KelvinVector::Invariants<KelvinVectorSize>;
+    using Invariants = MathLib::KelvinVector::Invariants<kelvin_vector_size>;
 
     // volumetric strain
     double const eps_V = Invariants::trace(eps);
@@ -561,7 +566,7 @@ SolidEhlers<DisplacementDim>::integrateStress(
             linear_solver;
 
         {
-            static int const KelvinVectorSize =
+            static int const kelvin_vector_size =
                 MathLib::KelvinVector::size<DisplacementDim>();
             using KelvinVector =
                 MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
@@ -579,43 +584,43 @@ SolidEhlers<DisplacementDim>::integrateStress(
             solution << sigma, state.eps_p.D, state.eps_p.V, state.eps_p.eff, 0;
 
             auto const update_residual = [&](ResidualVectorType& residual) {
-
                 auto const& eps_p_D =
-                    solution.template segment<KelvinVectorSize>(
-                        KelvinVectorSize);
+                    solution.template segment<kelvin_vector_size>(
+                        kelvin_vector_size);
                 KelvinVector const eps_p_D_dot =
                     (eps_p_D - state.eps_p_prev.D) / dt;
 
-                double const& eps_p_V = solution[KelvinVectorSize * 2];
+                double const& eps_p_V = solution[kelvin_vector_size * 2];
                 double const eps_p_V_dot =
                     (eps_p_V - state.eps_p_prev.V) / dt;
 
-                double const& eps_p_eff = solution[KelvinVectorSize * 2 + 1];
+                double const& eps_p_eff = solution[kelvin_vector_size * 2 + 1];
                 double const eps_p_eff_dot =
                     (eps_p_eff - state.eps_p_prev.eff) / dt;
 
                 double const k_hardening = calculateIsotropicHardening(
                     mp.kappa, mp.hardening_coefficient,
-                    solution[KelvinVectorSize * 2 + 1]);
+                    solution[kelvin_vector_size * 2 + 1]);
                 residual = calculatePlasticResidual<DisplacementDim>(
                     eps_D, eps_V, s,
-                    solution.template segment<KelvinVectorSize>(
-                        KelvinVectorSize),
-                    eps_p_D_dot, solution[KelvinVectorSize * 2], eps_p_V_dot,
-                    eps_p_eff_dot, solution[KelvinVectorSize * 2 + 2],
+                    solution.template segment<kelvin_vector_size>(
+                        kelvin_vector_size),
+                    eps_p_D_dot, solution[kelvin_vector_size * 2], eps_p_V_dot,
+                    eps_p_eff_dot, solution[kelvin_vector_size * 2 + 2],
                     k_hardening, mp);
             };
 
             auto const update_jacobian = [&](JacobianMatrix& jacobian) {
                 jacobian = calculatePlasticJacobian<DisplacementDim>(
-                    dt, s, solution[KelvinVectorSize * 2 + 2], mp);
+                    dt, s, solution[kelvin_vector_size * 2 + 2], mp);
             };
 
             auto const update_solution =
                 [&](ResidualVectorType const& increment) {
                     solution += increment;
                     s = PhysicalStressWithInvariants<DisplacementDim>{
-                        mp.G * solution.template segment<KelvinVectorSize>(0)};
+                        mp.G *
+                        solution.template segment<kelvin_vector_size>(0)};
                 };
 
             auto newton_solver = NumLib::NewtonRaphson<
@@ -646,12 +651,13 @@ SolidEhlers<DisplacementDim>::integrateStress(
         }
 
         // Calculate residual derivative w.r.t. strain
-        Eigen::Matrix<double, JacobianResidualSize, KelvinVectorSize,
+        Eigen::Matrix<double, JacobianResidualSize, kelvin_vector_size,
                       Eigen::RowMajor>
             dresidual_deps =
-                Eigen::Matrix<double, JacobianResidualSize, KelvinVectorSize,
+                Eigen::Matrix<double, JacobianResidualSize, kelvin_vector_size,
                               Eigen::RowMajor>::Zero();
-        dresidual_deps.template block<KelvinVectorSize, KelvinVectorSize>(0, 0)
+        dresidual_deps
+            .template block<kelvin_vector_size, kelvin_vector_size>(0, 0)
             .noalias() = calculateDResidualDEps<DisplacementDim>(mp.K, mp.G);
 
         if (_tangent_type == TangentType::Elastic)
@@ -665,7 +671,8 @@ SolidEhlers<DisplacementDim>::integrateStress(
             tangentStiffness =
                 mp.G *
                 linear_solver.solve(-dresidual_deps)
-                    .template block<KelvinVectorSize, KelvinVectorSize>(0, 0);
+                    .template block<kelvin_vector_size, kelvin_vector_size>(0,
+                                                                            0);
             if (_tangent_type == TangentType::PlasticDamageSecant)
             {
                 tangentStiffness *= 1 - state.damage.value();

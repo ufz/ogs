@@ -59,9 +59,9 @@ public:
     using GlobalDimVectorType =
         typename ShapeMatricesTypePressure::GlobalDimVectorType;
 
-    static int const KelvinVectorSize =
+    static int const kelvin_vector_size =
         MathLib::KelvinVector::size<DisplacementDim>();
-    using Invariants = MathLib::KelvinVector::Invariants<KelvinVectorSize>;
+    using Invariants = MathLib::KelvinVector::Invariants<kelvin_vector_size>;
 
     ThermoHydroMechanicsLocalAssembler(
         ThermoHydroMechanicsLocalAssembler const&) = delete;

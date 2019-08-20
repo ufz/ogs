@@ -60,7 +60,7 @@ public:
     };
 
 public:
-    static int const KelvinVectorSize =
+    static int const kelvin_vector_size =
         MathLib::KelvinVector::size<DisplacementDim>();
     using KelvinVector =
         MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;

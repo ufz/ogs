@@ -52,9 +52,9 @@ public:
     using GlobalDimMatrixType =
         typename ShapeMatricesTypePressure::GlobalDimMatrixType;
 
-    static int const KelvinVectorSize =
+    static int const kelvin_vector_size =
         MathLib::KelvinVector::size<DisplacementDim>();
-    using Invariants = MathLib::KelvinVector::Invariants<KelvinVectorSize>;
+    using Invariants = MathLib::KelvinVector::Invariants<kelvin_vector_size>;
 
     RichardsMechanicsLocalAssembler(RichardsMechanicsLocalAssembler const&) =
         delete;

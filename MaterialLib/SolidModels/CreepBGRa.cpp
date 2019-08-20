@@ -41,10 +41,10 @@ CreepBGRa<DisplacementDim>::integrateStress(
     /*material_state_variables*/,
     double const T) const
 {
-    using Invariants = MathLib::KelvinVector::Invariants<KelvinVectorSize>;
+    using Invariants = MathLib::KelvinVector::Invariants<kelvin_vector_size>;
 
-    Eigen::FullPivLU<Eigen::Matrix<double, KelvinVectorSize, KelvinVectorSize,
-                                   Eigen::RowMajor>>
+    Eigen::FullPivLU<Eigen::Matrix<double, kelvin_vector_size,
+                                   kelvin_vector_size, Eigen::RowMajor>>
         linear_solver;
 
     const auto C = this->getElasticTensor(t, x, T);

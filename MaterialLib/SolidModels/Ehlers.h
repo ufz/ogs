@@ -268,13 +268,13 @@ template <int DisplacementDim>
 class SolidEhlers final : public MechanicsBase<DisplacementDim>
 {
 public:
-    static int const KelvinVectorSize =
+    static int const kelvin_vector_size =
         MathLib::KelvinVector::size<DisplacementDim>();
     static int const JacobianResidualSize =
-        2 * KelvinVectorSize + 3;  // 2 is the number of components in the
-                                   // jacobian/residual, not the space
-                                   // dimension. And 3 is for additional
-                                   // variables.
+        2 * kelvin_vector_size + 3;  // 2 is the number of components in the
+                                     // jacobian/residual, not the space
+                                     // dimension. And 3 is for additional
+                                     // variables.
     using ResidualVectorType = Eigen::Matrix<double, JacobianResidualSize, 1>;
     using JacobianMatrix = Eigen::Matrix<double, JacobianResidualSize,
                                          JacobianResidualSize, Eigen::RowMajor>;

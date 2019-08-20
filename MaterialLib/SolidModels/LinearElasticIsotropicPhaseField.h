@@ -41,13 +41,13 @@ calculateDegradedStress(
     double const mu,
     MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const& eps)
 {
-    static int const KelvinVectorSize =
+    static int const kelvin_vector_size =
         MathLib::KelvinVector::size<DisplacementDim>();
     using KelvinVector =
         MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
     using KelvinMatrix =
         MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>;
-    using Invariants = MathLib::KelvinVector::Invariants<KelvinVectorSize>;
+    using Invariants = MathLib::KelvinVector::Invariants<kelvin_vector_size>;
     // calculation of deviatoric parts
     auto const& P_dev = Invariants::deviatoric_projection;
     KelvinVector const epsd_curr = P_dev * eps;

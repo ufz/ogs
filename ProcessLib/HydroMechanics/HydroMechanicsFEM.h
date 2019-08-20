@@ -115,9 +115,9 @@ public:
     using ShapeMatricesTypePressure =
         ShapeMatrixPolicyType<ShapeFunctionPressure, DisplacementDim>;
 
-    static int const KelvinVectorSize =
+    static int const kelvin_vector_size =
         MathLib::KelvinVector::size<DisplacementDim>();
-    using Invariants = MathLib::KelvinVector::Invariants<KelvinVectorSize>;
+    using Invariants = MathLib::KelvinVector::Invariants<kelvin_vector_size>;
 
     HydroMechanicsLocalAssembler(HydroMechanicsLocalAssembler const&) = delete;
     HydroMechanicsLocalAssembler(HydroMechanicsLocalAssembler&&) = delete;
