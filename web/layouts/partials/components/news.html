@@ -32,11 +32,11 @@
   <li>
     <!-- Two weeks -->
     <a href="{{ .Permalink }}">
-      {{ if lt (sub now.Unix .Lastmod.Unix) 1209600 }}
-      <i class='fas fa-plus-circle'></i>
-      {{ else }}
-      <i class='fal fa-plus-circle'></i>
-      {{ end }}
+
+      <span class="fa-layers fa-fw{{if gt (sub now.Unix .Lastmod.Unix) 1209600}} invisible{{end}}">
+        <i class="fas fa-certificate"></i>
+        <span class="fa-layers-text fa-inverse" data-fa-transform="shrink-11.5 rotate--30" style="font-weight:900">NEW</span>
+      </span>
       {{ .Title }}
     </a>
   </li>
