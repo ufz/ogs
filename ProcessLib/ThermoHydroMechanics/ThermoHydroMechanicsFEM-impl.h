@@ -272,8 +272,7 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         auto const& b = _process_data.specific_body_force;
         auto const& identity2 = MathLib::KelvinVector::Invariants<
-            MathLib::KelvinVector::KelvinVectorDimensions<
-                DisplacementDim>::value>::identity2;
+            MathLib::KelvinVector::size<DisplacementDim>()>::identity2;
 
         // TODO (Wenqing) : Change dT to time step wise increment
         double const delta_T(T_int_pt - T0);

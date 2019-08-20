@@ -52,8 +52,7 @@ struct IntegrationPointData final
     /// Non-equilibrium initial stress.
     typename BMatricesType::KelvinVectorType sigma_neq =
         BMatricesType::KelvinVectorType::Zero(
-            MathLib::KelvinVector::KelvinVectorDimensions<
-                DisplacementDim>::value);
+            MathLib::KelvinVector::size<DisplacementDim>());
 
     double free_energy_density = 0;
 
@@ -154,8 +153,7 @@ public:
             ip_data.dNdx = sm.dNdx;
 
             static const int kelvin_vector_size =
-                MathLib::KelvinVector::KelvinVectorDimensions<
-                    DisplacementDim>::value;
+                MathLib::KelvinVector::size<DisplacementDim>();
 
             // Initialize current time step values
             if (_process_data.nonequilibrium_stress)
@@ -172,8 +170,7 @@ public:
                 ip_data.sigma_neq =
                     Eigen::Map<typename BMatricesType::KelvinVectorType>(
                         sigma_neq_data.data(),
-                        MathLib::KelvinVector::KelvinVectorDimensions<
-                            DisplacementDim>::value,
+                        MathLib::KelvinVector::size<DisplacementDim>(),
                         1);
             }
             // Initialization from non-equilibrium sigma, which is zero by
@@ -388,8 +385,7 @@ public:
     std::size_t setSigma(double const* values)
     {
         auto const kelvin_vector_size =
-            MathLib::KelvinVector::KelvinVectorDimensions<
-                DisplacementDim>::value;
+            MathLib::KelvinVector::size<DisplacementDim>();
         auto const n_integration_points = _ip_data.size();
 
         auto sigma_values =
@@ -413,8 +409,7 @@ public:
     std::vector<double> getSigma() const override
     {
         auto const kelvin_vector_size =
-            MathLib::KelvinVector::KelvinVectorDimensions<
-                DisplacementDim>::value;
+            MathLib::KelvinVector::size<DisplacementDim>();
         auto const n_integration_points = _ip_data.size();
 
         std::vector<double> ip_sigma_values;
@@ -439,8 +434,7 @@ public:
         std::vector<double>& cache) const override
     {
         static const int kelvin_vector_size =
-            MathLib::KelvinVector::KelvinVectorDimensions<
-                DisplacementDim>::value;
+            MathLib::KelvinVector::size<DisplacementDim>();
         auto const num_intpts = _ip_data.size();
 
         cache.clear();
@@ -465,8 +459,7 @@ public:
         std::vector<double>& cache) const override
     {
         auto const kelvin_vector_size =
-            MathLib::KelvinVector::KelvinVectorDimensions<
-                DisplacementDim>::value;
+            MathLib::KelvinVector::size<DisplacementDim>();
         auto const num_intpts = _ip_data.size();
 
         cache.clear();

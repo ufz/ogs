@@ -34,7 +34,7 @@ private:
     // Dimensions of specific b-matrix for n-points and displacement dimension.
     static int const _number_of_dof = ShapeFunction::NPOINTS * DisplacementDim;
     static int const _kelvin_vector_size =
-        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
+        MathLib::KelvinVector::size<DisplacementDim>();
 
 public:
     using StiffnessMatrixType = MatrixType<_number_of_dof, _number_of_dof>;

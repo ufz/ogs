@@ -177,8 +177,7 @@ std::unique_ptr<Process> createThermoMechanicsProcess(
             *nonequilibrium_state_variables_config,
             //! \ogs_file_param_special{prj__processes__process__SMALL_DEFORMATION__nonequilibrium_state_variables__stress}
             "stress", parameters,
-            MathLib::KelvinVector::KelvinVectorDimensions<
-                DisplacementDim>::value);
+            MathLib::KelvinVector::size<DisplacementDim>());
     }
 
     ThermoMechanicsProcessData<DisplacementDim> process_data{

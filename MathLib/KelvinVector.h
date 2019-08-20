@@ -18,21 +18,19 @@ namespace MathLib
 /// Implementations of Deformation Processes" \cite Nagel2016.
 namespace KelvinVector
 {
-/// Kelvin vector dimensions for given displacement dimension.
+/// Kelvin vector size for given spatial dimension.
 template <int DisplacementDim>
-struct KelvinVectorDimensions;
-
-template <>
-struct KelvinVectorDimensions<2>
+constexpr int size()
 {
-    static int const value = 4;
-};
-
-template <>
-struct KelvinVectorDimensions<3>
-{
-    static int const value = 6;
-};
+    if (DisplacementDim == 2)
+    {
+        return 4;
+    }
+    if (DisplacementDim == 3)
+    {
+        return 6;
+    }
+}
 
 //
 // Kelvin vector and matrix templates for given displacement dimension.
@@ -43,20 +41,16 @@ struct KelvinVectorDimensions<3>
 /// matrix policy types like BMatrixPolicyType::KelvinVectorType.
 template <int DisplacementDim>
 using KelvinVectorType =
-    Eigen::Matrix<double,
-                  KelvinVectorDimensions<DisplacementDim>::value,
-                  1,
-                  Eigen::ColMajor>;
+    Eigen::Matrix<double, size<DisplacementDim>(), 1, Eigen::ColMajor>;
 
 /// Kelvin matrix type for given displacement dimension.
 /// \note The Eigen matrix is always a fixed size vector in contrast to a shape
 /// matrix policy types like BMatrixPolicyType::KelvinMatrixType.
 template <int DisplacementDim>
-using KelvinMatrixType =
-    Eigen::Matrix<double,
-                  KelvinVectorDimensions<DisplacementDim>::value,
-                  KelvinVectorDimensions<DisplacementDim>::value,
-                  Eigen::RowMajor>;
+using KelvinMatrixType = Eigen::Matrix<double,
+                                       size<DisplacementDim>(),
+                                       size<DisplacementDim>(),
+                                       Eigen::RowMajor>;
 
 /// Invariants used in mechanics, based on Kelvin representation of the vectors
 /// and matrices.

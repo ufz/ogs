@@ -34,8 +34,7 @@ struct IntegrationPointData final
     {
         // Initialize current time step values
         static const int kelvin_vector_size =
-            MathLib::KelvinVector::KelvinVectorDimensions<
-                DisplacementDim>::value;
+            MathLib::KelvinVector::size<DisplacementDim>();
         sigma_eff.setZero(kelvin_vector_size);
         eps.setZero(kelvin_vector_size);
         eps_m.setZero(kelvin_vector_size);
@@ -103,8 +102,7 @@ struct IntegrationPointData final
         double const thermal_strain)
     {
         auto const& identity2 = MathLib::KelvinVector::Invariants<
-            MathLib::KelvinVector::KelvinVectorDimensions<
-                DisplacementDim>::value>::identity2;
+            MathLib::KelvinVector::size<DisplacementDim>()>::identity2;
 
         // assume isotropic thermal expansion
         eps_m.noalias() = eps - thermal_strain * identity2;

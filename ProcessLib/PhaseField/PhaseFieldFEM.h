@@ -91,7 +91,7 @@ struct IntegrationPointData final
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 
     static constexpr int kelvin_vector_size =
-        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
+        MathLib::KelvinVector::size<DisplacementDim>();
 };
 
 /// Used for the extrapolation of the integration point values. It is ordered
@@ -166,8 +166,7 @@ public:
                 shape_matrices[ip].integralMeasure * shape_matrices[ip].detJ;
 
             static const int kelvin_vector_size =
-                MathLib::KelvinVector::KelvinVectorDimensions<
-                    DisplacementDim>::value;
+                MathLib::KelvinVector::size<DisplacementDim>();
             ip_data.eps.setZero(kelvin_vector_size);
             ip_data.eps_prev.resize(kelvin_vector_size);
             ip_data.C_tensile.setZero(kelvin_vector_size, kelvin_vector_size);
@@ -264,8 +263,7 @@ private:
         std::vector<double>& cache) const override
     {
         static const int kelvin_vector_size =
-            MathLib::KelvinVector::KelvinVectorDimensions<
-                DisplacementDim>::value;
+            MathLib::KelvinVector::size<DisplacementDim>();
         auto const num_intpts = _ip_data.size();
 
         cache.clear();
@@ -290,8 +288,7 @@ private:
         std::vector<double>& cache) const override
     {
         auto const kelvin_vector_size =
-            MathLib::KelvinVector::KelvinVectorDimensions<
-                DisplacementDim>::value;
+            MathLib::KelvinVector::size<DisplacementDim>();
         auto const num_intpts = _ip_data.size();
 
         cache.clear();

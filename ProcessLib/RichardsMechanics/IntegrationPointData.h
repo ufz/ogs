@@ -32,8 +32,7 @@ struct IntegrationPointData final
     {
         // Initialize current time step values
         static const int kelvin_vector_size =
-            MathLib::KelvinVector::KelvinVectorDimensions<
-                DisplacementDim>::value;
+            MathLib::KelvinVector::size<DisplacementDim>();
         sigma_eff.setZero(kelvin_vector_size);
         eps.setZero(kelvin_vector_size);
 

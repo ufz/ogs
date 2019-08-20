@@ -70,8 +70,7 @@ HydroMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         // Initialize current time step values
         static const int kelvin_vector_size =
-            MathLib::KelvinVector::KelvinVectorDimensions<
-                DisplacementDim>::value;
+            MathLib::KelvinVector::size<DisplacementDim>();
         ip_data.sigma_eff.setZero(kelvin_vector_size);
         ip_data.eps.setZero(kelvin_vector_size);
 
@@ -207,8 +206,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const porosity = _process_data.porosity(t, x_position)[0];
         auto const& b = _process_data.specific_body_force;
         auto const& identity2 = MathLib::KelvinVector::Invariants<
-            MathLib::KelvinVector::KelvinVectorDimensions<
-                DisplacementDim>::value>::identity2;
+            MathLib::KelvinVector::size<DisplacementDim>()>::identity2;
 
         //
         // displacement equation, displacement part
@@ -495,8 +493,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const porosity = _process_data.porosity(t, x_position)[0];
         auto const& b = _process_data.specific_body_force;
         auto const& identity2 = MathLib::KelvinVector::Invariants<
-            MathLib::KelvinVector::KelvinVectorDimensions<
-                DisplacementDim>::value>::identity2;
+            MathLib::KelvinVector::size<DisplacementDim>()>::identity2;
 
         eps.noalias() = B * u;
 

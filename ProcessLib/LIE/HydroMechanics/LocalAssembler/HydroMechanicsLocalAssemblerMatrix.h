@@ -133,7 +133,7 @@ protected:
     static const int displacement_size =
         ShapeFunctionDisplacement::NPOINTS * GlobalDim;
     static const int kelvin_vector_size =
-        MathLib::KelvinVector::KelvinVectorDimensions<GlobalDim>::value;
+        MathLib::KelvinVector::size<GlobalDim>();
 };
 
 }  // namespace HydroMechanics

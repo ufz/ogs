@@ -79,8 +79,7 @@ SmallDeformationLocalAssemblerMatrix<ShapeFunction, IntegrationMethod,
 
         // Initialize current time step values
         static const int kelvin_vector_size =
-            MathLib::KelvinVector::KelvinVectorDimensions<
-                DisplacementDim>::value;
+            MathLib::KelvinVector::size<DisplacementDim>();
         ip_data._sigma.setZero(kelvin_vector_size);
         ip_data._eps.setZero(kelvin_vector_size);
 

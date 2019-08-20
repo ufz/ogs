@@ -269,7 +269,7 @@ class SolidEhlers final : public MechanicsBase<DisplacementDim>
 {
 public:
     static int const KelvinVectorSize =
-        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
+        MathLib::KelvinVector::size<DisplacementDim>();
     static int const JacobianResidualSize =
         2 * KelvinVectorSize + 3;  // 2 is the number of components in the
                                    // jacobian/residual, not the space
