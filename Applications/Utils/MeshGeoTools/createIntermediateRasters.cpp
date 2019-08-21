@@ -55,8 +55,11 @@ int main(int argc, char* argv[])
     std::unique_ptr<GeoLib::Raster> dem2(
         FileIO::AsciiRasterInterface::readRaster(input2_arg.getValue()));
 
-    GeoLib::RasterHeader const h1 = dem1->getHeader();
-    GeoLib::RasterHeader const h2 = dem2->getHeader();
+    if (dem1 == nullptr || dem2 == nullptr)
+        return 1;
+
+    GeoLib::RasterHeader const& h1 = dem1->getHeader();
+    GeoLib::RasterHeader const& h2 = dem2->getHeader();
 
     bool errors_found(false);
     if (h1.origin[0] != h2.origin[0])
@@ -103,7 +106,7 @@ int main(int argc, char* argv[])
         if (it2 == dem2->end())
         {
             ERR("Error: File 2 is shorter than File 1.");
-            return 1;
+            return 3;
         }
         if (*it1 == h1.no_data || *it2 == h2.no_data)
         {
@@ -123,7 +126,7 @@ int main(int argc, char* argv[])
     if (it2 != dem2->end())
     {
         ERR("Error: File 1 is shorter than File 2.");
-        return 1;
+        return 3;
     }
 
     std::string const filename = output_arg.getValue();
@@ -136,5 +139,5 @@ int main(int argc, char* argv[])
         FileIO::AsciiRasterInterface::writeRasterAsASC(r, basename + std::to_string(i) + "." + ext);
         INFO("Layer %d written.", i+1);
     }
-    return 0;
+    return EXIT_SUCCESS;
 }

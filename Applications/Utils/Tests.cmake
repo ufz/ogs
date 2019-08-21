@@ -248,7 +248,7 @@ MeshTest(
     NAME GocadTSurface_Mesh_Test
     PATH MeshLib/
     EXECUTABLE GocadTSurfaceReader
-    EXECUTABLE_ARGS -i Top-Lower-Shaly.ts -o ${Data_BINARY_DIR}/MeshLib -b 
+    EXECUTABLE_ARGS -i Top-Lower-Shaly.ts -o ${Data_BINARY_DIR}/MeshLib -b
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA Top-Lower-Shaly.vtu Top-Lower-Shaly.vtu 1e-16
 )
