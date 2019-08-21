@@ -20,9 +20,7 @@ namespace TestInfoLib
 
 namespace TestInfo
 {
-    // extern INFOLIB_EXPORT const std::string source_path; // not used
     extern TESTINFOLIB_EXPORT const std::string data_path;
-    // extern INFOLIB_EXPORT const std::string data_binary_path; // not used
     extern TESTINFOLIB_EXPORT const std::string tests_tmp_path;
 }  // namespace
 }  // namespace

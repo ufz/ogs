@@ -16,9 +16,7 @@ namespace TestInfoLib
 
 namespace TestInfo
 {
-    // const std::string source_path("@CMAKE_CURRENT_SOURCE_DIR@");
     const std::string data_path("@Data_SOURCE_DIR@");
-    // const std::string data_binary_path("@Data_BINARY_DIR@");
     const std::string tests_tmp_path("@PROJECT_BINARY_DIR@/Tests/");
 }
 }
