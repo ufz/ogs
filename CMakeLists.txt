@@ -341,6 +341,7 @@ include(scripts/cmake/CheckHeaderCompilation.cmake)
 add_subdirectory(Applications)
 add_subdirectory(BaseLib)
 add_subdirectory(GeoLib)
+add_subdirectory(InfoLib)
 add_subdirectory(MathLib)
 add_subdirectory(MeshLib)
 add_subdirectory(MeshGeoToolsLib)
@@ -357,9 +358,6 @@ endif()
 
 file(WRITE ${PROJECT_BINARY_DIR}/disabled-tests.log "${DISABLED_TESTS_LOG}")
 unset(DISABLED_TESTS_LOG CACHE) # Don't write to CMakeCache.txt
-
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/BaseLib/BuildInfo.cpp.in"
-               "${CMAKE_CURRENT_BINARY_DIR}/BaseLib/BuildInfo.cpp" @ONLY)
 
 check_header_compilation()
 
