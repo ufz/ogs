@@ -16,7 +16,7 @@
 
 #include "gtest/gtest.h"
 
-#include "BaseLib/BuildInfo.h"
+#include "InfoLib/TestInfo.h"
 #include "Applications/FileIO/CsvInterface.h"
 #include "GeoLib/Point.h"
 
@@ -24,7 +24,7 @@ class CsvInterfaceTest : public ::testing::Test
 {
 public:
     CsvInterfaceTest()
-        : _file_name(BaseLib::BuildInfo::tests_tmp_path+"test.csv")
+        : _file_name(TestInfoLib::TestInfo::tests_tmp_path+"test.csv")
     {
         std::ofstream out(_file_name);
         out << "id\tx\ty\tz\tname\tvalue1\tvalue_two\n";

@@ -47,6 +47,7 @@ target_link_libraries(testrunner
                       NumLib
                       ParameterLib
                       ProcessLib
+                      TestInfoLib
                       Threads::Threads
                       ${VTK_LIBRARIES})
 
@@ -72,6 +73,7 @@ endif()
 
 if(OGS_BUILD_GUI)
     target_link_libraries(testrunner
+                          GitInfoLib
                           Qt5::Core
                           Qt5::Gui
                           Qt5::Xml

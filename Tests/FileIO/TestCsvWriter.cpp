@@ -15,12 +15,12 @@
 #include <string>
 #include <vector>
 
-#include "BaseLib/BuildInfo.h"
+#include "InfoLib/TestInfo.h"
 #include "Applications/FileIO/CsvInterface.h"
 
 TEST(CsvWriter, WriteReadTest)
 {
-    std::string test_file(BaseLib::BuildInfo::tests_tmp_path + "TestData.csv");
+    std::string test_file(TestInfoLib::TestInfo::tests_tmp_path + "TestData.csv");
 
     std::vector<std::string> str_vec {"Red", "Orange", "Yellow", "Green", "Blue", "Indigo", "Violet" };
     std::vector<int> int_vec { 1, 2, 4, 8, 16, 32, 64 };

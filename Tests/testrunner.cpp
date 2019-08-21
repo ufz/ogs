@@ -20,7 +20,6 @@
 #include "Applications/ApplicationsLib/LogogSetup.h"
 #include "Applications/ApplicationsLib/LinearSolverLibrarySetup.h"
 #include "NumLib/DOF/GlobalMatrixProviders.h"
-#include "BaseLib/BuildInfo.h"
 #include "BaseLib/TemplateLogogFormatterSuppressedGCC.h"
 
 #ifdef OGS_BUILD_GUI

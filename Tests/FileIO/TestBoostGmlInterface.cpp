@@ -18,14 +18,14 @@
 
 #include "Tests/FileIO/TestGmlInterface.h"
 
-#include "BaseLib/BuildInfo.h"
+#include "InfoLib/TestInfo.h"
 #include "GeoLib/IO/XmlIO/Boost/BoostXmlGmlInterface.h"
 #include "GeoLib/GEOObjects.h"
 
 TEST_F(TestGmlInterface, BoostXmlGmlWriterReaderTest)
 {
     // Writer test
-    std::string test_data_file(BaseLib::BuildInfo::tests_tmp_path
+    std::string test_data_file(TestInfoLib::TestInfo::tests_tmp_path
         + "TestXmlGmlReader.gml");
 
     GeoLib::IO::BoostXmlGmlInterface xml(geo_objects);

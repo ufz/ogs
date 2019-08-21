@@ -16,7 +16,7 @@
 #include "Applications/DataHolderLib/Project.h"
 #include "Applications/DataHolderLib/SourceTerm.h"
 #include "Applications/FileIO/XmlIO/Qt/XmlPrjInterface.h"
-#include "BaseLib/BuildInfo.h"
+#include "InfoLib/TestInfo.h"
 #include "GeoLib/GEOObjects.h"
 
 TEST(TestQtPrjInterface, QtXmlPrjReader)
@@ -33,10 +33,10 @@ TEST(TestQtPrjInterface, QtXmlPrjReader)
     std::vector<TestParams> test_files;
 
     std::string name =
-        BaseLib::BuildInfo::data_path +
+        TestInfoLib::TestInfo::data_path +
         "/Elliptic/nonuniform_bc_Groundwaterflow/neumann_nonuniform.prj";
     test_files.push_back({name, 0, 3, 2, 0});
-    name = BaseLib::BuildInfo::data_path +
+    name = TestInfoLib::TestInfo::data_path +
            "/Elliptic/nonuniform_bc_Groundwaterflow/neumann_nonuniform.prj";
     test_files.push_back({name, 0, 3, 2, 0});
 
