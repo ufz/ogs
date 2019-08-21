@@ -178,5 +178,37 @@ kelvinVectorToSymmetricTensor(Eigen::Matrix<double,
         "or 6, but a vector of size %d was given.",
         v.size());
 }
+
+KelvinMatrixType<3> fourthOrderRotationMatrix(
+    Eigen::Matrix3d const& transformation)
+{
+    // 1-based index access for convenience.
+    auto Q = [&](int const i, int const j) {
+        return transformation(i - 1, j - 1);
+    };
+
+    MathLib::KelvinVector::KelvinMatrixType<3> R;
+    R << Q(1, 1) * Q(1, 1), Q(1, 2) * Q(1, 2), Q(1, 3) * Q(1, 3),
+        std::sqrt(2) * Q(1, 1) * Q(1, 2), std::sqrt(2) * Q(1, 2) * Q(1, 3),
+        std::sqrt(2) * Q(1, 1) * Q(1, 3), Q(2, 1) * Q(2, 1), Q(2, 2) * Q(2, 2),
+        Q(2, 3) * Q(2, 3), std::sqrt(2) * Q(2, 1) * Q(2, 2),
+        std::sqrt(2) * Q(2, 2) * Q(2, 3), std::sqrt(2) * Q(2, 1) * Q(2, 3),
+        Q(3, 1) * Q(3, 1), Q(3, 2) * Q(3, 2), Q(3, 3) * Q(3, 3),
+        std::sqrt(2) * Q(3, 1) * Q(3, 2), std::sqrt(2) * Q(3, 2) * Q(3, 3),
+        std::sqrt(2) * Q(3, 1) * Q(3, 3), std::sqrt(2) * Q(1, 1) * Q(2, 1),
+        std::sqrt(2) * Q(1, 2) * Q(2, 2), std::sqrt(2) * Q(1, 3) * Q(2, 3),
+        Q(1, 1) * Q(2, 2) + Q(1, 2) * Q(2, 1),
+        Q(1, 2) * Q(2, 3) + Q(1, 3) * Q(2, 2),
+        Q(1, 1) * Q(2, 3) + Q(1, 3) * Q(2, 1), std::sqrt(2) * Q(2, 1) * Q(3, 1),
+        std::sqrt(2) * Q(2, 2) * Q(3, 2), std::sqrt(2) * Q(2, 3) * Q(3, 3),
+        Q(2, 1) * Q(3, 2) + Q(2, 2) * Q(3, 1),
+        Q(2, 2) * Q(3, 3) + Q(2, 3) * Q(3, 2),
+        Q(2, 1) * Q(3, 3) + Q(2, 3) * Q(3, 1), std::sqrt(2) * Q(1, 1) * Q(3, 1),
+        std::sqrt(2) * Q(1, 2) * Q(3, 2), std::sqrt(2) * Q(1, 3) * Q(3, 3),
+        Q(1, 1) * Q(3, 2) + Q(1, 2) * Q(3, 1),
+        Q(1, 2) * Q(3, 3) + Q(1, 3) * Q(3, 2),
+        Q(1, 1) * Q(3, 3) + Q(1, 3) * Q(3, 1);
+    return R;
+}
 }  // namespace KelvinVector
 }  // namespace MathLib

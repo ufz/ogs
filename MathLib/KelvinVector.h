@@ -205,6 +205,13 @@ symmetricTensorToKelvinVector(Eigen::MatrixBase<Derived> const& v)
     }
     return result;
 }
+
+/// Rotation tensor for Kelvin mapped vectors and tensors. It is meant to be
+/// used for rotation of stress/strain tensors epsilon:Q and tangent stiffness
+/// tensors Q*C*Q^t.
+KelvinMatrixType<3> fourthOrderRotationMatrix(
+    Eigen::Matrix3d const& transformation);
+
 }  // namespace KelvinVector
 }  // namespace MathLib
 
