@@ -33,14 +33,14 @@ endif()
 # Sync submodules, which is required when a submodule changed its URL
 if(OGS_SYNC_SUBMODULES)
     execute_process(
-        COMMAND ${GIT_TOOL_PATH} submodule sync
+        COMMAND ${GIT_EXECUTABLE} submodule sync
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         OUTPUT_QUIET
     )
 endif()
 foreach(SUBMODULE ${REQUIRED_SUBMODULES})
     execute_process(
-        COMMAND ${GIT_TOOL_PATH} submodule status ${SUBMODULE}
+        COMMAND ${GIT_EXECUTABLE} submodule status ${SUBMODULE}
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         OUTPUT_VARIABLE SUBMODULE_STATE
     )
@@ -50,7 +50,7 @@ foreach(SUBMODULE ${REQUIRED_SUBMODULES})
     if(IS_CI)
         # Always set submodule to the given state
         execute_process(
-            COMMAND ${GIT_TOOL_PATH} submodule update --init --force
+            COMMAND ${GIT_EXECUTABLE} submodule update --init --force
                 --recursive ${DEPTH} ${SUBMODULE}
             WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
             RESULT_VARIABLE RESULT
@@ -60,7 +60,7 @@ foreach(SUBMODULE ${REQUIRED_SUBMODULES})
         if(UNINITIALIZED)
             message(STATUS "Initializing submodule ${SUBMODULE}")
             execute_process(
-                COMMAND ${GIT_TOOL_PATH} submodule update --init
+                COMMAND ${GIT_EXECUTABLE} submodule update --init
                     --recursive ${DEPTH} ${SUBMODULE}
                 WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
                 RESULT_VARIABLE RESULT
@@ -69,7 +69,7 @@ foreach(SUBMODULE ${REQUIRED_SUBMODULES})
         elseif(MISMATCH)
             message(STATUS "Updating submodule ${SUBMODULE}")
             execute_process(
-                COMMAND ${GIT_TOOL_PATH} submodule update
+                COMMAND ${GIT_EXECUTABLE} submodule update
                     --recursive ${SUBMODULE}
                 WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
                 RESULT_VARIABLE RESULT

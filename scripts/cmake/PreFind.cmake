@@ -9,7 +9,6 @@ find_program(GIT_EXECUTABLE
 
 find_package(Git REQUIRED)
 string(REPLACE "mingw64/" "" GIT_EXECUTABLE ${GIT_EXECUTABLE}) # Windows git submodule fix
-set(GIT_TOOL_PATH ${GIT_EXECUTABLE} CACHE FILEPATH "The git command line interface" FORCE)
 ### End Find Git
 
 execute_process(COMMAND ${GIT_EXECUTABLE} status
