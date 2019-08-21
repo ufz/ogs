@@ -34,7 +34,7 @@ target_link_libraries(ApplicationsFileIO
                              GeoLib
                              MathLib
                              logog
-                      PRIVATE MeshLib)
+                      PRIVATE MeshLib GitInfoLib)
 
 if(OGS_BUILD_GUI)
     # Needed for the XmlPrjInterface, which links the DE/Base/OGSError.h.

@@ -12,7 +12,7 @@
 
 #include <tclap/CmdLine.h>
 
-#include "BaseLib/BuildInfo.h"
+#include "InfoLib/GitInfo.h"
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
 #include "Applications/FileIO/readGeometryFromFile.h"
@@ -29,11 +29,11 @@ int main (int argc, char* argv[])
         "Currently *.gml (OGS6 XML-based format) and *.gli (OGS5 format) "
         "formats are supported.\n\n"
         "OpenGeoSys-6 software, version " +
-            BaseLib::BuildInfo::ogs_version +
+            GitInfoLib::GitInfo::ogs_version +
             ".\n"
             "Copyright (c) 2012-2019, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
-        ' ', BaseLib::BuildInfo::ogs_version);
+        ' ', GitInfoLib::GitInfo::ogs_version);
     TCLAP::ValueArg<std::string> argInputFileName("i", "input-file",
                                          "the name of the geometry file to be converted", true,
                                          "", "file name");

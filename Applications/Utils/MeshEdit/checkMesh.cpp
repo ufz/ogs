@@ -13,7 +13,7 @@
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
 
-#include "BaseLib/BuildInfo.h"
+#include "InfoLib/GitInfo.h"
 #include "BaseLib/StringTools.h"
 #include "BaseLib/MemWatch.h"
 #include "BaseLib/RunTime.h"
@@ -36,11 +36,11 @@ int main(int argc, char *argv[])
     TCLAP::CmdLine cmd(
         "Checks mesh properties.\n\n"
         "OpenGeoSys-6 software, version " +
-            BaseLib::BuildInfo::ogs_version +
+            GitInfoLib::GitInfo::ogs_version +
             ".\n"
             "Copyright (c) 2012-2019, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
-        ' ', BaseLib::BuildInfo::ogs_version);
+        ' ', GitInfoLib::GitInfo::ogs_version);
     TCLAP::UnlabeledValueArg<std::string> mesh_arg("mesh-file","input mesh file",true,"","string");
     cmd.add( mesh_arg );
     TCLAP::SwitchArg valid_arg("v","validation","validate the mesh");

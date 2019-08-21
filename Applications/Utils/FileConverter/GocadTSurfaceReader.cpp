@@ -9,7 +9,7 @@
 
 #include <tclap/CmdLine.h>
 
-#include "BaseLib/BuildInfo.h"
+#include "InfoLib/GitInfo.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "Applications/ApplicationsLib/LogogSetup.h"
@@ -30,11 +30,11 @@ int main(int argc, char* argv[])
         "Reads Gocad ascii files (*.ts, *.pl, *.mx) and writes TSurf- and PLine"
         "data into one or more VTU unstructured grids.\n\n"
         "OpenGeoSys-6 software, version " +
-            BaseLib::BuildInfo::ogs_version +
+            GitInfoLib::GitInfo::ogs_version +
             ".\n"
             "Copyright (c) 2012-2019, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
-        ' ', BaseLib::BuildInfo::ogs_version);
+        ' ', GitInfoLib::GitInfo::ogs_version);
 
     TCLAP::ValueArg<std::string> input_arg(
         "i", "input-file", "Gocad triangular surfaces file (*.ts)", true, "",

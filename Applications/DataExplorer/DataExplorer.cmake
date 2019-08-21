@@ -34,6 +34,7 @@ add_executable(DataExplorer
 target_link_libraries(DataExplorer
     BaseLib
     GeoLib
+    GitInfoLib
     MeshLib
     ApplicationsFileIO
     DataHolderLib

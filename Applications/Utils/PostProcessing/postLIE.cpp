@@ -16,7 +16,7 @@
 #include <boost/property_tree/xml_parser.hpp>
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
-#include "BaseLib/BuildInfo.h"
+#include "InfoLib/GitInfo.h"
 #include "BaseLib/FileTools.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
@@ -121,11 +121,11 @@ int main(int argc, char* argv[])
     TCLAP::CmdLine cmd(
         "Post-process results of the LIE approach.\n\n"
         "OpenGeoSys-6 software, version " +
-            BaseLib::BuildInfo::ogs_version +
+            GitInfoLib::GitInfo::ogs_version +
             ".\n"
             "Copyright (c) 2012-2019, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
-        ' ', BaseLib::BuildInfo::ogs_version);
+        ' ', GitInfoLib::GitInfo::ogs_version);
     TCLAP::ValueArg<std::string> arg_out_file(
         "o", "output-file", "the name of the new PVD or VTU file", true, "",
         "path");
