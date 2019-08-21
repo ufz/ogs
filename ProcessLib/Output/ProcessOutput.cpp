@@ -9,7 +9,7 @@
 
 #include "ProcessOutput.h"
 
-#include "BaseLib/BuildInfo.h"
+#include "InfoLib/GitInfo.h"
 #include "MathLib/LinAlg/LinAlg.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
@@ -24,8 +24,8 @@ static void addOgsVersion(MeshLib::Mesh& mesh)
     auto& ogs_version_field = *MeshLib::getOrCreateMeshProperty<char>(
         mesh, "OGS_VERSION", MeshLib::MeshItemType::IntegrationPoint, 1);
 
-    ogs_version_field.assign(BaseLib::BuildInfo::ogs_version.begin(),
-                             BaseLib::BuildInfo::ogs_version.end());
+    ogs_version_field.assign(GitInfoLib::GitInfo::ogs_version.begin(),
+                             GitInfoLib::GitInfo::ogs_version.end());
 }
 
 static void addSecondaryVariableNodes(

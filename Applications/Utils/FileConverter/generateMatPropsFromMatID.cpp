@@ -18,7 +18,7 @@
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
 
-#include "BaseLib/BuildInfo.h"
+#include "InfoLib/GitInfo.h"
 #include "BaseLib/FileTools.h"
 
 #include "MeshLib/IO/readMeshFromFile.h"
@@ -35,11 +35,11 @@ int main (int argc, char* argv[])
         "Creates a new file for material properties and sets the material ids "
         "in the msh-file to 0\n\n"
         "OpenGeoSys-6 software, version " +
-            BaseLib::BuildInfo::ogs_version +
+            GitInfoLib::GitInfo::ogs_version +
             ".\n"
             "Copyright (c) 2012-2019, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
-        ' ', BaseLib::BuildInfo::ogs_version);
+        ' ', GitInfoLib::GitInfo::ogs_version);
 
     TCLAP::ValueArg<std::string> mesh_arg("m",
                                               "mesh",

@@ -12,7 +12,7 @@
 
 #include "gtest/gtest.h"
 
-#include "BaseLib/BuildInfo.h"
+#include "InfoLib/TestInfo.h"
 #include "Applications/FileIO/SWMM/SwmmInterface.h"
 #include "GeoLib/GeoObjects.h"
 #include "MeshLib/Mesh.h"
@@ -21,7 +21,7 @@
 TEST(FileIO, TestSwmmInterface)
 {
     std::string const base_name ("swmm_input_example");
-    std::string const file_name (BaseLib::BuildInfo::data_path + "/FileIO/" + base_name + ".inp");
+    std::string const file_name (TestInfoLib::TestInfo::data_path + "/FileIO/" + base_name + ".inp");
 
     // testing geo conversion
     GeoLib::GEOObjects geo_objects;

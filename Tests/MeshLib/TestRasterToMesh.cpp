@@ -13,7 +13,7 @@
 
 #include "gtest/gtest.h"
 
-#include "BaseLib/BuildInfo.h"
+#include "InfoLib/TestInfo.h"
 
 #include "Applications/FileIO/AsciiRasterInterface.h"
 #include "GeoLib/Raster.h"
@@ -34,7 +34,7 @@ class RasterToMeshTest : public ::testing::Test
 {
 public:
     RasterToMeshTest()
-        : _file_name(BaseLib::BuildInfo::data_path + "/MeshLib/testraster_selke.asc")
+        : _file_name(TestInfoLib::TestInfo::data_path + "/MeshLib/testraster_selke.asc")
     {
         _raster.reset(FileIO::AsciiRasterInterface::readRaster(_file_name));
     }

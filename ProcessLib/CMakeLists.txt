@@ -31,7 +31,7 @@ target_link_libraries(ProcessLib
                              NumLib
                              logog
                              ChemistryLib
-                      PRIVATE ParameterLib)
+                      PRIVATE ParameterLib GitInfoLib)
 
 if(OGS_USE_PYTHON)
     add_subdirectory(BoundaryCondition/Python)

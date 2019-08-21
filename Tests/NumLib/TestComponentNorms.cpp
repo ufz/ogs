@@ -12,7 +12,7 @@
 #include <logog/include/logog.hpp>
 
 #ifdef USE_PETSC
-#include "BaseLib/BuildInfo.h"
+#include "InfoLib/TestInfo.h"
 #endif
 #include "MathLib/LinAlg/LinAlg.h"
 #include "MathLib/LinAlg/MatrixSpecifications.h"
@@ -45,7 +45,7 @@ struct DOFTableData
                  NumLib::ComponentOrder const order)
 #ifdef USE_PETSC
         : mesh(MeshLib::IO::readMeshFromFile(
-              BaseLib::BuildInfo::data_path +
+              TestInfoLib::TestInfo::data_path +
               "/EllipticPETSc/quad_20x10_GroundWaterFlow.")),
 #else
         : mesh(MeshLib::MeshGenerator::generateRegularHexMesh(

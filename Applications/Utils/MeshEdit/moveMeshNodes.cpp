@@ -13,7 +13,7 @@
 #include <string>
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
-#include "BaseLib/BuildInfo.h"
+#include "InfoLib/GitInfo.h"
 #include "BaseLib/FileTools.h"
 #include "GeoLib/AABB.h"
 #include "MathLib/MathTools.h"

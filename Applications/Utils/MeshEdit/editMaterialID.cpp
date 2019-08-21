@@ -11,7 +11,7 @@
 #include <tclap/CmdLine.h>
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
-#include "BaseLib/BuildInfo.h"
+#include "InfoLib/GitInfo.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
@@ -25,11 +25,11 @@ int main (int argc, char* argv[])
     TCLAP::CmdLine cmd(
         "Edit material IDs of mesh elements.\n\n"
         "OpenGeoSys-6 software, version " +
-            BaseLib::BuildInfo::ogs_version +
+            GitInfoLib::GitInfo::ogs_version +
             ".\n"
             "Copyright (c) 2012-2019, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
-        ' ', BaseLib::BuildInfo::ogs_version);
+        ' ', GitInfoLib::GitInfo::ogs_version);
     TCLAP::SwitchArg replaceArg("r", "replace", "replace material IDs", false);
     TCLAP::SwitchArg condenseArg("c", "condense", "condense material IDs", false);
     TCLAP::SwitchArg specifyArg("s", "specify", "specify material IDs by element types (-e)", false);

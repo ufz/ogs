@@ -19,8 +19,6 @@
 #include <QString>
 #include <QVariant>
 
-#include "BaseLib/BuildInfo.h"
-
 #include "TreeItem.h"
 
 class QStringList;

@@ -11,7 +11,7 @@
 #include <cmath>
 #include <limits>
 
-#include "BaseLib/BuildInfo.h"
+#include "InfoLib/TestInfo.h"
 
 #include "MathLib/Integration/GaussLegendreTet.h"
 
@@ -450,7 +450,7 @@ static double const eps = 10 * std::numeric_limits<double>::epsilon();
 OGS_DONT_TEST_THIS_IF_PETSC(MathLib, IntegrationGaussLegendreTet)
 {
     std::unique_ptr<MeshLib::Mesh> mesh_tet(
-        MeshLib::IO::VtuInterface::readVTUFile(BaseLib::BuildInfo::data_path +
+        MeshLib::IO::VtuInterface::readVTUFile(TestInfoLib::TestInfo::data_path +
                                                "/MathLib/unit_cube_tet.vtu"));
 
     for (unsigned integration_order : {1, 2, 3})
@@ -479,7 +479,7 @@ OGS_DONT_TEST_THIS_IF_PETSC(MathLib, IntegrationGaussLegendreTet)
 OGS_DONT_TEST_THIS_IF_PETSC(MathLib, IntegrationGaussLegendreHex)
 {
     std::unique_ptr<MeshLib::Mesh> mesh_hex(
-        MeshLib::IO::VtuInterface::readVTUFile(BaseLib::BuildInfo::data_path +
+        MeshLib::IO::VtuInterface::readVTUFile(TestInfoLib::TestInfo::data_path +
                                                "/MathLib/unit_cube_hex.vtu"));
 
     for (unsigned integration_order : {1, 2, 3})
@@ -511,7 +511,7 @@ OGS_DONT_TEST_THIS_IF_PETSC(
     MathLib, DISABLED_IntegrationGaussLegendreTetSeparablePolynomial)
 {
     std::unique_ptr<MeshLib::Mesh> mesh_tet(
-        MeshLib::IO::VtuInterface::readVTUFile(BaseLib::BuildInfo::data_path +
+        MeshLib::IO::VtuInterface::readVTUFile(TestInfoLib::TestInfo::data_path +
                                                "/MathLib/unit_cube_tet.vtu"));
 
     for (unsigned integration_order : {1, 2, 3})
@@ -539,7 +539,7 @@ OGS_DONT_TEST_THIS_IF_PETSC(MathLib,
                             IntegrationGaussLegendreHexSeparablePolynomial)
 {
     std::unique_ptr<MeshLib::Mesh> mesh_hex(
-        MeshLib::IO::VtuInterface::readVTUFile(BaseLib::BuildInfo::data_path +
+        MeshLib::IO::VtuInterface::readVTUFile(TestInfoLib::TestInfo::data_path +
                                                "/MathLib/unit_cube_hex.vtu"));
 
     for (unsigned integration_order : {1, 2, 3, 4})
@@ -567,7 +567,7 @@ OGS_DONT_TEST_THIS_IF_PETSC(MathLib,
                             IntegrationGaussLegendreTetNonSeparablePolynomial)
 {
     std::unique_ptr<MeshLib::Mesh> mesh_tet(
-        MeshLib::IO::VtuInterface::readVTUFile(BaseLib::BuildInfo::data_path +
+        MeshLib::IO::VtuInterface::readVTUFile(TestInfoLib::TestInfo::data_path +
                                                "/MathLib/unit_cube_tet.vtu"));
 
     for (unsigned integration_order : {1, 2, 3})
@@ -595,7 +595,7 @@ OGS_DONT_TEST_THIS_IF_PETSC(MathLib,
                             IntegrationGaussLegendreHexNonSeparablePolynomial)
 {
     std::unique_ptr<MeshLib::Mesh> mesh_hex(
-        MeshLib::IO::VtuInterface::readVTUFile(BaseLib::BuildInfo::data_path +
+        MeshLib::IO::VtuInterface::readVTUFile(TestInfoLib::TestInfo::data_path +
                                                "/MathLib/unit_cube_hex.vtu"));
 
     for (unsigned integration_order : {1, 2, 3, 4})

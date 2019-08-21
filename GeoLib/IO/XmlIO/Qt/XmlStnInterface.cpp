@@ -21,7 +21,6 @@
 #include <RapidXML/rapidxml.hpp>
 #include <logog/include/logog.hpp>
 
-#include "BaseLib/BuildInfo.h"
 #include "BaseLib/DateTools.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/FileFinder.h"

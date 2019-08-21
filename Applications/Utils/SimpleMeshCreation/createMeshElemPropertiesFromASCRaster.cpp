@@ -18,7 +18,7 @@
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
 #include "Applications/FileIO/AsciiRasterInterface.h"
-#include "BaseLib/BuildInfo.h"
+#include "InfoLib/GitInfo.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/quicksort.h"
 #include "GeoLib/Raster.h"
@@ -40,11 +40,11 @@ int main(int argc, char* argv[])
         "Generates properties for mesh elements of an input mesh deploying a "
         "ASC raster file.\n\n"
         "OpenGeoSys-6 software, version " +
-            BaseLib::BuildInfo::ogs_version +
+            GitInfoLib::GitInfo::ogs_version +
             ".\n"
             "Copyright (c) 2012-2019, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
-        ' ', BaseLib::BuildInfo::ogs_version);
+        ' ', GitInfoLib::GitInfo::ogs_version);
 
     TCLAP::ValueArg<std::string> out_mesh_arg(
         "o",

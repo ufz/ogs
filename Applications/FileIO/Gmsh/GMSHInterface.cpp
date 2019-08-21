@@ -13,7 +13,7 @@
 
 #include <logog/include/logog.hpp>
 
-#include "BaseLib/BuildInfo.h"
+#include "InfoLib/GitInfo.h"
 #include "BaseLib/FileTools.h"
 
 #include "Applications/FileIO/Gmsh/GMSHInterface.h"
@@ -74,10 +74,7 @@ GMSHInterface::~GMSHInterface()
 
 bool GMSHInterface::write()
 {
-    _out << "// GMSH input file created by OpenGeoSys " << BaseLib::BuildInfo::ogs_version;
-#ifdef BUILD_TIMESTAMP
-    _out << " built on " << BaseLib::BuildInfo::build_timestamp;
-#endif
+    _out << "// GMSH input file created by OpenGeoSys " << GitInfoLib::GitInfo::ogs_version;
     _out << "\n\n";
 
     return writeGMSHInputFile(_out) <= 0;

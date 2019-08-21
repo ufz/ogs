@@ -16,8 +16,6 @@
 
 #include "gtest/gtest.h"
 
-#include "BaseLib/BuildInfo.h"
-
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Polyline.h"
 #include "GeoLib/Triangle.h"

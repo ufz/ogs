@@ -45,7 +45,7 @@
 #include "Applications/FileIO/TetGenInterface.h"
 #include "Applications/FileIO/XmlIO/Qt/XmlPrjInterface.h"
 #include "Applications/Utils/OGSFileConverter/OGSFileConverter.h"
-#include "BaseLib/BuildInfo.h"
+#include "InfoLib/GitInfo.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/Histogram.h"
 #include "GeoLib/DuplicateGeometry.h"
@@ -828,10 +828,10 @@ void MainWindow::about()
 {
     QString about("<a href='https://www.opengeosys.org'>www.opengeosys.org</a><br /><br />");
     about.append(QString("Version: %1<br />")
-        .arg(QString::fromStdString(BaseLib::BuildInfo::ogs_version)));
+        .arg(QString::fromStdString(GitInfoLib::GitInfo::ogs_version)));
 
     about.append(QString("Git commit: <a href='https://github.com/ufz/ogs/commit/%1'>%1</a><br />")
-        .arg(QString::fromStdString(BaseLib::BuildInfo::git_version_sha1_short)));
+        .arg(QString::fromStdString(GitInfoLib::GitInfo::git_version_sha1_short)));
     about.append(QString("Built date: %1<br />").arg(QDate::currentDate().toString(Qt::ISODate)));
 
     QMessageBox::about(this, "About OpenGeoSys 6", about);

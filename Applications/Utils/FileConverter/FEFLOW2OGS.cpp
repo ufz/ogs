@@ -16,7 +16,7 @@
 #include "Applications/ApplicationsLib/LogogSetup.h"
 
 // BaseLib
-#include "BaseLib/BuildInfo.h"
+#include "InfoLib/GitInfo.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/RunTime.h"
 #ifndef WIN32
@@ -40,11 +40,11 @@ int main (int argc, char* argv[])
         "unstructured grid file (new OGS file format) or to the old OGS file "
         "format - see options.\n\n"
         "OpenGeoSys-6 software, version " +
-            BaseLib::BuildInfo::ogs_version +
+            GitInfoLib::GitInfo::ogs_version +
             ".\n"
             "Copyright (c) 2012-2019, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
-        ' ', BaseLib::BuildInfo::ogs_version);
+        ' ', GitInfoLib::GitInfo::ogs_version);
 
     TCLAP::ValueArg<std::string> ogs_mesh_arg(
         "o",

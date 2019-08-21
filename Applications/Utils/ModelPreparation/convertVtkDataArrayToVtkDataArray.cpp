@@ -17,7 +17,7 @@
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
 
-#include "BaseLib/BuildInfo.h"
+#include "InfoLib/GitInfo.h"
 
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
@@ -62,11 +62,11 @@ int main(int argc, char* argv[])
         "Converts a double or floating point cell data array of a vtk "
         "unstructured grid into a int or double cell data array.\n\n"
         "OpenGeoSys-6 software, version " +
-            BaseLib::BuildInfo::ogs_version +
+            GitInfoLib::GitInfo::ogs_version +
             ".\n"
             "Copyright (c) 2012-2019, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
-        ' ', BaseLib::BuildInfo::ogs_version);
+        ' ', GitInfoLib::GitInfo::ogs_version);
 
     TCLAP::ValueArg<std::string> new_property_data_type_arg(
         "t",

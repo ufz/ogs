@@ -19,7 +19,7 @@
 #include "gtest/gtest.h"
 
 #include "Applications/FileIO/TetGenInterface.h"
-#include "BaseLib/BuildInfo.h"
+#include "InfoLib/TestInfo.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "GeoLib/GEOObjects.h"
 #include "MeshLib/Mesh.h"
@@ -29,7 +29,7 @@
 // read TetGen geometry
 TEST(FileIO, TetGenSmeshReader)
 {
-    std::string const file_name (BaseLib::BuildInfo::data_path + "/FileIO/twolayermdl.smesh");
+    std::string const file_name (TestInfoLib::TestInfo::data_path + "/FileIO/twolayermdl.smesh");
     GeoLib::GEOObjects geo_objects;
     FileIO::TetGenInterface tgi;
     bool const result (tgi.readTetGenGeometry(file_name, geo_objects));
@@ -50,11 +50,11 @@ TEST(FileIO, TetGenSmeshInterface)
 TEST(FileIO, DISABLED_TetGenSmeshInterface)
 #endif
 {
-    std::string const file_name (BaseLib::BuildInfo::data_path + "/FileIO/AmmerSubsurfaceCoarse.vtu");
+    std::string const file_name (TestInfoLib::TestInfo::data_path + "/FileIO/AmmerSubsurfaceCoarse.vtu");
     std::unique_ptr<MeshLib::Mesh const> const mesh (MeshLib::IO::readMeshFromFile(file_name));
 
     std::string const tg_new_name ("TestSmeshWriter");
-    std::string const output_name(BaseLib::BuildInfo::tests_tmp_path + tg_new_name + ".smesh");
+    std::string const output_name(TestInfoLib::TestInfo::tests_tmp_path + tg_new_name + ".smesh");
     std::vector<MeshLib::Node> attr_pnts;
     FileIO::TetGenInterface tgi;
     bool result (tgi.writeTetGenSmesh(output_name, *mesh, attr_pnts));
@@ -63,7 +63,7 @@ TEST(FileIO, DISABLED_TetGenSmeshInterface)
     GeoLib::GEOObjects geo_objects;
     result = tgi.readTetGenGeometry(output_name, geo_objects);
     ASSERT_TRUE(result);
-    std::string const ref_name(BaseLib::BuildInfo::data_path + "/FileIO/AmmerSubsurfaceCoarse.smesh");
+    std::string const ref_name(TestInfoLib::TestInfo::data_path + "/FileIO/AmmerSubsurfaceCoarse.smesh");
     result = tgi.readTetGenGeometry(ref_name, geo_objects);
     ASSERT_TRUE(result);
 
@@ -87,8 +87,8 @@ TEST(FileIO, DISABLED_TetGenSmeshInterface)
 // TetGen mesh with material array
 TEST(FileIO, TetGenMeshReaderWithMaterials)
 {
-    std::string const node_name (BaseLib::BuildInfo::data_path + "/FileIO/twolayermdl.node");
-    std::string const ele_name  (BaseLib::BuildInfo::data_path + "/FileIO/twolayermdl.ele");
+    std::string const node_name (TestInfoLib::TestInfo::data_path + "/FileIO/twolayermdl.node");
+    std::string const ele_name  (TestInfoLib::TestInfo::data_path + "/FileIO/twolayermdl.ele");
     FileIO::TetGenInterface tgi;
     std::unique_ptr<MeshLib::Mesh> mesh (tgi.readTetGenMesh(node_name, ele_name));
     ASSERT_TRUE(mesh != nullptr);
@@ -105,8 +105,8 @@ TEST(FileIO, TetGenMeshReaderWithMaterials)
 // TetGen mesh without additional information
 TEST(FileIO, TetGenMeshReaderWithoutMaterials)
 {
-    std::string const node_name (BaseLib::BuildInfo::data_path + "/FileIO/tetgen_example.node");
-    std::string const ele_name  (BaseLib::BuildInfo::data_path + "/FileIO/tetgen_example.ele");
+    std::string const node_name (TestInfoLib::TestInfo::data_path + "/FileIO/tetgen_example.node");
+    std::string const ele_name  (TestInfoLib::TestInfo::data_path + "/FileIO/tetgen_example.ele");
     FileIO::TetGenInterface tgi;
     std::unique_ptr<MeshLib::Mesh> mesh (tgi.readTetGenMesh(node_name, ele_name));
     ASSERT_TRUE(mesh != nullptr);
