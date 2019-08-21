@@ -1,0 +1,24 @@
+/**
+ * \brief  Build information.
+ *
+ * \copyright
+ * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.org/project/license
+ *
+ */
+
+#include "InfoLib/CompilerInfo.h"
+
+namespace CompilerInfoLib
+{
+
+namespace CompilerInfo
+{
+    const std::string cmake_cxx_compiler("@CMAKE_CXX_COMPILER@");
+    const std::string cmake_cxx_flags("@CMAKE_CXX_FLAGS@");
+    const std::string cmake_cxx_flags_release("@CMAKE_CXX_FLAGS_RELEASE@");
+    const std::string cmake_cxx_flags_debug("@CMAKE_CXX_FLAGS_DEBUG@");
+}
+}
