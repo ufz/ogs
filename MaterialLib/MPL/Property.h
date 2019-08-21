@@ -65,7 +65,9 @@ public:
     /// This virtual method will compute the derivative of a property
     /// with respect to the given variable pv.
     virtual PropertyDataType dValue(VariableArray const& variable_array,
-                                    Variable const variable) const;
+                                    Variable const variable,
+                                   ParameterLib::SpatialPosition const& pos,
+                                   double const t) const;
     /// This virtual method will compute the second derivative of a
     /// property with respect to the given variables pv1 and pv2.
     virtual PropertyDataType d2Value(VariableArray const& variable_array,
@@ -89,9 +91,11 @@ public:
     }
 
     template <typename T>
-    T dValue(VariableArray const& variable_array, Variable const variable) const
+    T dValue(VariableArray const& variable_array, Variable const variable,
+            ParameterLib::SpatialPosition const& pos,
+            double const t) const
     {
-        return std::get<T>(dValue(variable_array, variable));
+        return std::get<T>(dValue(variable_array, variable, pos, t));
     }
     template <typename T>
     T d2Value(VariableArray const& variable_array,

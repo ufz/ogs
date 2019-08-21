@@ -29,7 +29,9 @@ PropertyDataType ParameterProperty::value(
 
 PropertyDataType ParameterProperty::dValue(
     VariableArray const& /*variable_array*/,
-    Variable const /*primary_variable*/) const
+    Variable const /*primary_variable*/,
+    ParameterLib::SpatialPosition const& /*pos*/,
+    double const /*t*/) const
 {
     return double{};
 }

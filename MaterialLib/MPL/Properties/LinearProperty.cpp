@@ -33,9 +33,11 @@ PropertyDataType LinearProperty::value(
                  std::get<double>(_independent_variable.reference_condition)));
 }
 
-
-PropertyDataType LinearProperty::dValue(VariableArray const& /*variable_array*/,
-                                        Variable const primary_variable) const
+PropertyDataType LinearProperty::dValue(
+    VariableArray const& /*variable_array*/,
+    Variable const primary_variable,
+    ParameterLib::SpatialPosition const& /*pos*/,
+    double const /*t*/) const
 {
     return _independent_variable.type == primary_variable
                ? std::get<double>(_value) *

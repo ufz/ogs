@@ -35,7 +35,9 @@ PropertyDataType Property::value(VariableArray const& /*variable_array*/,
 /// The default implementation of this method only returns the
 /// property value derivative without altering it.
 PropertyDataType Property::dValue(VariableArray const& /*variable_array*/,
-                                  Variable const /*variable*/) const
+                                  Variable const /*variable*/,
+                                   ParameterLib::SpatialPosition const& /*pos*/,
+                                   double const /*t*/) const
 {
     return _dvalue;
 }

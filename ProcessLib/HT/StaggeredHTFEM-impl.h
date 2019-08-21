@@ -113,7 +113,8 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
         const double dfluid_density_dp =
             liquid_phase.property(MaterialPropertyLib::PropertyType::density)
                 .template dValue<double>(
-                    vars, MaterialPropertyLib::Variable::phase_pressure);
+                    vars, MaterialPropertyLib::Variable::phase_pressure, pos,
+                    t);
 
         // Use the viscosity model to compute the viscosity
         auto const viscosity =
@@ -161,7 +162,8 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
                 liquid_phase
                     .property(MaterialPropertyLib::PropertyType::density)
                     .template dValue<double>(
-                        vars, MaterialPropertyLib::Variable::temperature);
+                        vars, MaterialPropertyLib::Variable::temperature, pos,
+                        t);
             double T0_int_pt = 0.;
             NumLib::shapeFunctionInterpolate(local_T0, N, T0_int_pt);
             auto const biot_constant =
