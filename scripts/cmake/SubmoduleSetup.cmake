@@ -1,3 +1,7 @@
+if(NOT IS_GIT_REPO)
+    return()
+endif()
+
 # This file initializes the required submodules
 set(OGS_ADDITIONAL_SUBMODULES_TO_CHECKOUT "" CACHE STRING
     "User given submodules which should be checked out by CMake.")
