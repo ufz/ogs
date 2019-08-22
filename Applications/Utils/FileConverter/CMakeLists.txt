@@ -18,6 +18,10 @@ if(OGS_BUILD_GUI)
     list(APPEND TOOLS FEFLOW2OGS)
 endif()
 
+if(Shapelib_FOUND)
+    list(APPEND TOOLS Mesh2Shape)
+endif()
+
 foreach(TOOL ${TOOLS})
     add_executable(${TOOL} ${TOOL}.cpp)
     target_link_libraries(${TOOL} ApplicationsFileIO GitInfoLib MeshLib)
@@ -28,3 +32,8 @@ install(TARGETS ${TOOLS} RUNTIME DESTINATION bin COMPONENT Utilities)
 if(TARGET ConvertSHPToGLI)
     target_link_libraries(ConvertSHPToGLI GeoLib Qt5::Xml ${Shapelib_LIBRARIES})
 endif()
+
+if(TARGET Mesh2Shape)
+    target_link_libraries(Mesh2Shape ${Shapelib_LIBRARIES})
+endif()
+
