@@ -25,7 +25,7 @@ class GeoTabWidget : public QWidget, public Ui_GeoTabWidgetBase
     Q_OBJECT
 
 public:
-    GeoTabWidget(QWidget* parent = nullptr);
+    explicit GeoTabWidget(QWidget* parent = nullptr);
 
 private:
 

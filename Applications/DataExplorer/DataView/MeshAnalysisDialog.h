@@ -33,7 +33,7 @@ class MeshAnalysisDialog : public QDialog, private Ui_MeshAnalysis
     Q_OBJECT
 
 public:
-    MeshAnalysisDialog(
+    explicit MeshAnalysisDialog(
         std::vector<std::unique_ptr<MeshLib::Mesh>> const& mesh_vec,
         QDialog* parent = nullptr);
     ~MeshAnalysisDialog() override;

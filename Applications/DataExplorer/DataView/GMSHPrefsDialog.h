@@ -32,7 +32,8 @@ class GMSHPrefsDialog : public QDialog, private Ui_GMSHPrefs
     Q_OBJECT
 
 public:
-    GMSHPrefsDialog(GeoLib::GEOObjects const& geoObjects, QDialog* parent = nullptr);
+    explicit GMSHPrefsDialog(GeoLib::GEOObjects const& geoObjects,
+                             QDialog* parent = nullptr);
     ~GMSHPrefsDialog() override;
 
 private:

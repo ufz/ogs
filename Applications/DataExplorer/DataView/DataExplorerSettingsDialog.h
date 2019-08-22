@@ -25,7 +25,7 @@ class DataExplorerSettingsDialog : public QDialog, private Ui_DataExplorerSettin
     Q_OBJECT
 
 public:
-    DataExplorerSettingsDialog(QDialog* parent = nullptr);
+    explicit DataExplorerSettingsDialog(QDialog* parent = nullptr);
     ~DataExplorerSettingsDialog() override;
 
 private slots:

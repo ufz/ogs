@@ -35,7 +35,7 @@ class TreeModelIterator
 {
 public:
     /// \brief Constructor. Provide a tree model to iterate over.
-    TreeModelIterator(TreeModel* model);
+    explicit TreeModelIterator(TreeModel* model);
 
     /// \brief Dereferencing the iterator to retrieve the current TreeItem.
     /// Returns nullptr if the iterator is at the end.

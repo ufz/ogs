@@ -24,7 +24,7 @@ class VtkImageDataToLinePolyDataFilter;
 class VtkCompositeImageToCylindersFilter : public VtkCompositeFilter
 {
 public:
-    VtkCompositeImageToCylindersFilter(vtkAlgorithm* inputAlgorithm);
+    explicit VtkCompositeImageToCylindersFilter(vtkAlgorithm* inputAlgorithm);
     ~VtkCompositeImageToCylindersFilter() override;
 
     void init() override;

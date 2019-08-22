@@ -29,7 +29,7 @@ class StratScene : public QGraphicsScene
 {
 public:
     /// Constructor
-    StratScene(
+    explicit StratScene(
         GeoLib::StationBorehole* station,
         std::map<std::string, DataHolderLib::Color>* stratColors = nullptr,
         QObject* parent = nullptr);

@@ -26,7 +26,8 @@ class OGSFileConverter : public QDialog, private Ui_OGSFileConverter
 
 public:
     /// Constructor
-    OGSFileConverter(std::string const& gmsh_path, QWidget* parent = nullptr);
+    explicit OGSFileConverter(std::string const& gmsh_path,
+                              QWidget* parent = nullptr);
     /// Destructor
     ~OGSFileConverter() override;
 

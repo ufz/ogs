@@ -37,7 +37,8 @@ public:
     void initialize(std::vector<GeoLib::Point const*> const& pnts) override;
     double getMeshDensityAtPoint(GeoLib::Point const* const pnt) const override;
     void addPoints(std::vector<GeoLib::Point const*> const& pnts);
-    double getMeshDensityAtStation(GeoLib::Point const* const) const override;
+    double getMeshDensityAtStation(
+        GeoLib::Point const* const /*unused*/) const override;
     void getSteinerPoints (std::vector<GeoLib::Point*> & pnts,
                            std::size_t additional_levels = 0) const;
 #ifndef NDEBUG

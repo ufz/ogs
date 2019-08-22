@@ -86,7 +86,7 @@ private:
 class TESFEMReactionAdaptorInert final : public TESFEMReactionAdaptor
 {
 public:
-    explicit TESFEMReactionAdaptorInert(TESLocalAssemblerData const&);
+    explicit TESFEMReactionAdaptorInert(TESLocalAssemblerData const& /*data*/);
 
     ReactionRate initReaction(const unsigned int_pt) override;
 
@@ -99,7 +99,7 @@ class TESFEMReactionAdaptorSinusoidal final : public TESFEMReactionAdaptor
 public:
     explicit TESFEMReactionAdaptorSinusoidal(TESLocalAssemblerData const& data);
 
-    ReactionRate initReaction(const unsigned) override;
+    ReactionRate initReaction(const unsigned /*int_pt*/) override;
 
 private:
     TESLocalAssemblerData const& _d;
@@ -110,7 +110,7 @@ class TESFEMReactionAdaptorCaOH2 final : public TESFEMReactionAdaptor
 public:
     explicit TESFEMReactionAdaptorCaOH2(TESLocalAssemblerData const& data);
 
-    ReactionRate initReaction(const unsigned) override;
+    ReactionRate initReaction(const unsigned /*int_pt*/) override;
 
 private:
     using Data = TESLocalAssemblerData;

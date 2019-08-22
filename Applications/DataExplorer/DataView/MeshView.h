@@ -37,7 +37,7 @@ class MeshView : public QTreeView
     Q_OBJECT
 
 public:
-    MeshView(QWidget* parent = nullptr);
+    explicit MeshView(QWidget* parent = nullptr);
     ~MeshView() override;
 
 public slots:

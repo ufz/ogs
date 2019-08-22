@@ -37,7 +37,7 @@ public:
      *
      * @param dirs   an initializer list of additional directory paths to the search-space
      */
-    explicit FileFinder(std::initializer_list<std::string> dirs);
+    FileFinder(std::initializer_list<std::string> dirs);
 
     /**
      * \brief Adds another directory to the search-space.

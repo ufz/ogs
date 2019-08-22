@@ -81,7 +81,9 @@ public:
     void InsertTuple(vtkIdType i, const double *source) override;
     void InsertTuples(vtkIdList *dstIds, vtkIdList *srcIds,
                       vtkAbstractArray *source) override;
-    void InsertTuples(vtkIdType, vtkIdType, vtkIdType, vtkAbstractArray*) override;
+    void InsertTuples(vtkIdType /*unused*/, vtkIdType /*unused*/,
+                      vtkIdType /*unused*/,
+                      vtkAbstractArray* /*unused*/) override;
     vtkIdType InsertNextTuple(vtkIdType j, vtkAbstractArray *source) override;
     vtkIdType InsertNextTuple(const float *source) override;
     vtkIdType InsertNextTuple(const double *source) override;
@@ -103,7 +105,7 @@ public:
 #if !(VTK_MAJOR_VERSION < 7 || VTK_MAJOR_VERSION == 7 && VTK_MINOR_VERSION < 1)
     Scalar& GetValueReference(vtkIdType idx) const;
     Scalar GetValue(vtkIdType idx) const override;
-    void GetTypedTuple(vtkIdType idx, Scalar* t) const override;
+    void GetTypedTuple(vtkIdType tupleId, Scalar* t) const override;
     void SetTypedTuple(vtkIdType i, const Scalar* t) override;
     void InsertTypedTuple(vtkIdType i, const Scalar* t) override;
     vtkIdType InsertNextTypedTuple(const Scalar* t) override;

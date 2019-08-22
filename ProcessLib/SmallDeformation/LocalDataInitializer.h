@@ -274,7 +274,7 @@ private:
     /// combinations of shape functions and global dimensions: (Line2, 1),
     /// (Line2, 2), (Line2, 3), (Hex20, 3) but not (Hex20, 2) or (Hex20, 1).
     template <typename ShapeFunction>
-    static LADataBuilder makeLocalAssemblerBuilder(std::true_type*)
+    static LADataBuilder makeLocalAssemblerBuilder(std::true_type* /*unused*/)
     {
         return [](MeshLib::Element const& e,
                   std::size_t const local_matrix_size,
@@ -287,7 +287,7 @@ private:
     /// Returns nullptr for shape functions whose dimensions are less than the
     /// global dimension.
     template <typename ShapeFunction>
-    static LADataBuilder makeLocalAssemblerBuilder(std::false_type*)
+    static LADataBuilder makeLocalAssemblerBuilder(std::false_type* /*unused*/)
     {
         return nullptr;
     }

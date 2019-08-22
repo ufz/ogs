@@ -16,12 +16,8 @@ public:
     InstanceCounter() {
         ++_num_constructed;
     }
-    InstanceCounter(InstanceCounter<T> const&) {
-        ++_num_copied;
-    }
-    InstanceCounter(InstanceCounter<T>&&) {
-        ++_num_moved;
-    }
+    InstanceCounter(InstanceCounter<T> const& /*unused*/) { ++_num_copied; }
+    InstanceCounter(InstanceCounter<T>&& /*unused*/) { ++_num_moved; }
     virtual ~InstanceCounter() {
         ++_num_destroyed;
     }

@@ -27,7 +27,10 @@ public:
                                      const double M_Ads, const double loading) const = 0;
 
     // TODO get rid of
-    virtual double getEquilibriumLoading(const double, const double, const double) const {
+    virtual double getEquilibriumLoading(const double /*unused*/,
+                                         const double /*unused*/,
+                                         const double /*unused*/) const
+    {
         return -1.0;
     }
 

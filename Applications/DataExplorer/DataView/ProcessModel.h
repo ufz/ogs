@@ -37,7 +37,8 @@ class ProcessModel final : public TreeModel
     Q_OBJECT
 
 public:
-    ProcessModel(DataHolderLib::Project& project, QObject* parent = nullptr);
+    explicit ProcessModel(DataHolderLib::Project& project,
+                          QObject* parent = nullptr);
 
     int columnCount(const QModelIndex& parent = QModelIndex()) const override;
 

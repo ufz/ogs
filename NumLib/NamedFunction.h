@@ -63,7 +63,7 @@ public:
                   std::function<ReturnType(Arguments...)>&& function);
 
     NamedFunction(NamedFunction&& other);
-    NamedFunction(NamedFunction const&);
+    NamedFunction(NamedFunction const& other);
 
     ~NamedFunction();
 

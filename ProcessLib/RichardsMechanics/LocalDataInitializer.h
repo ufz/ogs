@@ -255,7 +255,7 @@ private:
     /// 1),
     /// (Line2, 2), (Line2, 3), (Hex20, 3) but not (Hex20, 2) or (Hex20, 1).
     template <typename ShapeFunctionDisplacement>
-    static LADataBuilder makeLocalAssemblerBuilder(std::true_type*)
+    static LADataBuilder makeLocalAssemblerBuilder(std::true_type* /*unused*/)
     {
         // (Lower order elements = Order(ShapeFunctionDisplacement) - 1).
         using ShapeFunctionPressure =
@@ -273,7 +273,7 @@ private:
     /// Returns nullptr for shape functions whose dimensions are less than the
     /// global dimension.
     template <typename ShapeFunctionDisplacement>
-    static LADataBuilder makeLocalAssemblerBuilder(std::false_type*)
+    static LADataBuilder makeLocalAssemblerBuilder(std::false_type* /*unused*/)
     {
         return nullptr;
     }

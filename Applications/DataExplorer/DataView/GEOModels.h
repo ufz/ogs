@@ -38,7 +38,8 @@ class GEOModels : public QObject
     Q_OBJECT
 
 public:
-    GEOModels(GeoLib::GEOObjects& geo_objects, QObject* parent = nullptr);
+    explicit GEOModels(GeoLib::GEOObjects& geo_objects,
+                       QObject* parent = nullptr);
     ~GEOModels() override;
 
     GeoTreeModel* getGeoModel() { return _geoModel; }

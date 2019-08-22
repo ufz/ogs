@@ -23,7 +23,7 @@ class vtkThreshold;
 class VtkCompositeGeoObjectFilter : public VtkCompositeFilter
 {
 public:
-    VtkCompositeGeoObjectFilter(vtkAlgorithm* inputAlgorithm);
+    explicit VtkCompositeGeoObjectFilter(vtkAlgorithm* inputAlgorithm);
     ~VtkCompositeGeoObjectFilter() override;
 
     void init() override;

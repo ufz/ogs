@@ -268,7 +268,7 @@ public:
 
     //! After being moved from, \c other is in an undefined state and must not be
     //! used anymore!
-    ConfigTree& operator=(ConfigTree &&);
+    ConfigTree& operator=(ConfigTree&& other);
 
     //! Used to get the project file name.
     std::string const& getProjectFileName() const { return _filename; }
@@ -520,12 +520,14 @@ public:
 
 private:
     //! Default implementation of reading a value of type T.
-    template<typename T> boost::optional<T>
-    getConfigParameterOptionalImpl(std::string const& param, T*) const;
+    template <typename T>
+    boost::optional<T> getConfigParameterOptionalImpl(std::string const& param,
+                                                      T* /*unused*/) const;
 
     //! Implementation of reading a vector of values of type T.
-    template<typename T> boost::optional<std::vector<T>>
-    getConfigParameterOptionalImpl(std::string const& param, std::vector<T>*) const;
+    template <typename T>
+    boost::optional<std::vector<T>> getConfigParameterOptionalImpl(
+        std::string const& param, std::vector<T>* /*unused*/) const;
 
     struct CountType
     {

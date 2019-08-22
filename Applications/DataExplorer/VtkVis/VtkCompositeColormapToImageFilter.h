@@ -20,7 +20,7 @@
 class VtkCompositeColormapToImageFilter : public VtkCompositeFilter
 {
 public:
-    VtkCompositeColormapToImageFilter(vtkAlgorithm* inputAlgorithm);
+    explicit VtkCompositeColormapToImageFilter(vtkAlgorithm* inputAlgorithm);
     ~VtkCompositeColormapToImageFilter() override;
 
     void init() override;

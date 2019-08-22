@@ -35,9 +35,10 @@ public:
      * \param stratColors A color map.
      * \param parent The parent QGraphicsItem.
      */
-    StratBar(GeoLib::StationBorehole* station,
-             std::map<std::string, DataHolderLib::Color>* stratColors = nullptr,
-             QGraphicsItem* parent = nullptr);
+    explicit StratBar(
+        GeoLib::StationBorehole* station,
+        std::map<std::string, DataHolderLib::Color>* stratColors = nullptr,
+        QGraphicsItem* parent = nullptr);
     ~StratBar() override = default;
 
     /// Returns the bounding rectangle of the bar.

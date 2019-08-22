@@ -57,7 +57,7 @@ class VtkVisPipeline : public TreeModel
     Q_OBJECT
 
 public:
-    VtkVisPipeline(vtkRenderer* renderer, QObject* parent = nullptr);
+    explicit VtkVisPipeline(vtkRenderer* renderer, QObject* parent = nullptr);
 
     /// \brief Emits vtkVisPipelineChanged() and calls base class method.
     bool setData(const QModelIndex& index, const QVariant& value,

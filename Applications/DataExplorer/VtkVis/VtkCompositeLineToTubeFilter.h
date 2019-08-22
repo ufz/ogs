@@ -20,7 +20,7 @@
 class VtkCompositeLineToTubeFilter : public VtkCompositeFilter
 {
 public:
-    VtkCompositeLineToTubeFilter(vtkAlgorithm* inputAlgorithm);
+    explicit VtkCompositeLineToTubeFilter(vtkAlgorithm* inputAlgorithm);
     ~VtkCompositeLineToTubeFilter() override;
 
     void init() override;

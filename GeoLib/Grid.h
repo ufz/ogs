@@ -49,7 +49,8 @@ public:
      *
      */
     template <typename InputIterator>
-    Grid(InputIterator first, InputIterator last, std::size_t items_per_cell = 512);
+    Grid(InputIterator first, InputIterator last,
+         std::size_t max_num_per_grid_cell = 512);
 
     /**
      * This is the destructor of the class. It deletes the internal data structures *not*
@@ -165,7 +166,7 @@ private:
      */
     template <typename P>
     std::array<double, 6> getPointCellBorderDistances(
-        P const& pnt, std::array<std::size_t,3> const& coordinates) const;
+        P const& pnt, std::array<std::size_t, 3> const& coords) const;
 
     template <typename P>
     bool calcNearestPointInGridCell(P const& pnt,

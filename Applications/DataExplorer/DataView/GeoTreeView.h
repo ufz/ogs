@@ -31,7 +31,7 @@ class GeoTreeView : public QTreeView
 
 public:
     /// Constructor
-    GeoTreeView(QWidget* parent = nullptr);
+    explicit GeoTreeView(QWidget* parent = nullptr);
 
     /// Update the view to visualise changes made to the underlying data
     void updateView();

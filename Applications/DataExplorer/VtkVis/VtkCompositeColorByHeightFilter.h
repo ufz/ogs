@@ -22,7 +22,7 @@ class vtkSphereSource;
 class VtkCompositeColorByHeightFilter : public VtkCompositeFilter
 {
 public:
-    VtkCompositeColorByHeightFilter(vtkAlgorithm* inputAlgorithm);
+    explicit VtkCompositeColorByHeightFilter(vtkAlgorithm* inputAlgorithm);
     ~VtkCompositeColorByHeightFilter() override = default;
 
     void init() override;
