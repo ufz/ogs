@@ -48,13 +48,6 @@ struct IntegrationPointData final
 
     typename BMatricesType::KelvinVectorType sigma, sigma_prev;
     typename BMatricesType::KelvinVectorType eps, eps_prev;
-
-    /// Non-equilibrium initial stress.
-    typename BMatricesType::KelvinVectorType sigma_neq =
-        BMatricesType::KelvinVectorType::Zero(
-            MathLib::KelvinVector::KelvinVectorDimensions<
-                DisplacementDim>::value);
-
     double free_energy_density = 0;
 
     MaterialLib::Solids::MechanicsBase<DisplacementDim> const& solid_material;
@@ -139,8 +132,6 @@ public:
                 _process_data.material_ids,
                 e.getID());
 
-        ParameterLib::SpatialPosition x_position;
-
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             _ip_data.emplace_back(solid_material);
@@ -156,30 +147,8 @@ public:
             static const int kelvin_vector_size =
                 MathLib::KelvinVector::KelvinVectorDimensions<
                     DisplacementDim>::value;
-
             // Initialize current time step values
-            if (_process_data.nonequilibrium_stress)
-            {
-                // Computation of non-equilibrium stress.
-                x_position.setCoordinates(MathLib::Point3d(
-                    interpolateCoordinates<ShapeFunction, ShapeMatricesType>(
-                        e, ip_data.N)));
-                std::vector<double> sigma_neq_data =
-                    (*_process_data.nonequilibrium_stress)(
-                        std::numeric_limits<
-                            double>::quiet_NaN() /* time independent */,
-                        x_position);
-                ip_data.sigma_neq =
-                    Eigen::Map<typename BMatricesType::KelvinVectorType>(
-                        sigma_neq_data.data(),
-                        MathLib::KelvinVector::KelvinVectorDimensions<
-                            DisplacementDim>::value,
-                        1);
-            }
-            // Initialization from non-equilibrium sigma, which is zero by
-            // default, or is set to some value.
-            ip_data.sigma = ip_data.sigma_neq;
-
+            ip_data.sigma.setZero(kelvin_vector_size);
             ip_data.eps.setZero(kelvin_vector_size);
 
             // Previous time step values are not initialized and are set later.
@@ -288,7 +257,6 @@ public:
 
             auto const& eps_prev = _ip_data[ip].eps_prev;
             auto const& sigma_prev = _ip_data[ip].sigma_prev;
-            auto const& sigma_neq = _ip_data[ip].sigma_neq;
 
             auto& eps = _ip_data[ip].eps;
             auto& sigma = _ip_data[ip].sigma;
@@ -313,9 +281,8 @@ public:
 
             auto const rho = _process_data.solid_density(t, x_position)[0];
             auto const& b = _process_data.specific_body_force;
-            local_b.noalias() -= (B.transpose() * (sigma - sigma_neq) -
-                                  N_u_op.transpose() * rho * b) *
-                                 w;
+            local_b.noalias() -=
+                (B.transpose() * sigma - N_u_op.transpose() * rho * b) * w;
             local_Jac.noalias() += B.transpose() * C * B * w;
         }
     }
