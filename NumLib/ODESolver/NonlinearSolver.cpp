@@ -191,6 +191,17 @@ void NonlinearSolver<NonlinearSolverTag::Newton>::assemble(
     //      equation every time and could not forget it.
 }
 
+void NonlinearSolver<NonlinearSolverTag::Newton>::calculateOutOfBalanceForces(
+    std::vector<GlobalVector*> const& x, int const process_id)
+{
+    if (!_compensate_initial_out_of_balance_forces)
+        return;
+
+    _equation_system->assemble(x, process_id);
+    _f_oob = &NumLib::GlobalVectorProvider::provider.getVector();
+    _equation_system->getResidual(*x[process_id], *_f_oob);
+}
+
 NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
     std::vector<GlobalVector*>& x,
     std::function<void(int, GlobalVector const&)> const& postIterationCallback,
@@ -238,6 +249,10 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
         sys.getResidual(*x[process_id], res);
         sys.getJacobian(J);
         INFO("[time] Assembly took %g s.", time_assembly.elapsed());
+
+        // Apply out-of-balance forces if set.
+        if (_f_oob != nullptr)
+            LinAlg::axpy(res, -1, *_f_oob);
 
         minus_delta_x.setZero();
 
