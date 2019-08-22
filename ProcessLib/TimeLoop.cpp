@@ -135,7 +135,6 @@ std::vector<GlobalVector*> setInitialConditions(
         auto& time_disc = *process_data->time_disc;
 
         auto& ode_sys = *process_data->tdisc_ode_sys;
-        auto const nl_tag = process_data->nonlinear_solver_tag;
 
         // append a solution vector of suitable size
         process_solutions.emplace_back(
@@ -154,6 +153,7 @@ std::vector<GlobalVector*> setInitialConditions(
             auto& mat_strg = *process_data->mat_strg;
             auto& conv_crit = *process_data->conv_crit;
 
+            auto const nl_tag = process_data->nonlinear_solver_tag;
             setEquationSystem(nonlinear_solver, ode_sys, conv_crit, nl_tag);
             nonlinear_solver.assemble(x0);
             time_disc.pushState(
