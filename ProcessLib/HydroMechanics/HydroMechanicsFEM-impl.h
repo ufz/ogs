@@ -173,6 +173,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
     double const& dt = _process_data.dt;
     double const T_ref = _process_data.reference_temperature;
+    auto const& b = _process_data.specific_body_force;
 
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
@@ -219,7 +220,6 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         double const rho_fr = _process_data.getFluidDensity(t, x_position, p_fr);
         double const beta_p = _process_data.getFluidCompressibility(p_fr);
         auto const porosity = _process_data.porosity(t, x_position)[0];
-        auto const& b = _process_data.specific_body_force;
         auto const& identity2 = MathLib::KelvinVector::Invariants<
             MathLib::KelvinVector::KelvinVectorDimensions<
                 DisplacementDim>::value>::identity2;
@@ -266,7 +266,8 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         //
         // pressure equation, displacement part.
         //
-        Kpu.noalias() += rho_fr * alpha * N_p.transpose() * identity2.transpose() * B * w;
+        Kpu.noalias() +=
+            rho_fr * alpha * N_p.transpose() * identity2.transpose() * B * w;
     }
     // displacement equation, pressure part
     local_Jac
