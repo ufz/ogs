@@ -152,6 +152,10 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         ShapeMatricesTypePressure::NodalMatrixType::Zero(pressure_size,
                                                          pressure_size);
 
+    typename ShapeMatricesTypePressure::NodalMatrixType add_p_derivative =
+        ShapeMatricesTypePressure::NodalMatrixType::Zero(pressure_size,
+                                                         pressure_size);
+
     typename ShapeMatricesTypeDisplacement::template MatrixType<
         displacement_size, pressure_size>
         Kup = ShapeMatricesTypeDisplacement::template MatrixType<
@@ -253,6 +257,9 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
             rho_fr * N_p.transpose() * N_p * w *
             ((alpha - porosity) * (1.0 - alpha) / K_S + porosity * beta_p);
 
+        add_p_derivative.noalias() += rho_fr * beta_p * dNdx_p.transpose() *
+            K_over_mu * (dNdx_p * p - 2.0 * rho_fr * b) * N_p * w;
+
         local_rhs.template segment<pressure_size>(pressure_index).noalias() +=
             dNdx_p.transpose() * rho_fr * rho_fr * K_over_mu * b * w;
 
@@ -271,7 +278,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     local_Jac
         .template block<pressure_size, pressure_size>(pressure_index,
                                                       pressure_index)
-        .noalias() = laplace_p + storage_p / dt;
+        .noalias() = laplace_p + storage_p / dt + add_p_derivative;
 
     // pressure equation, displacement part.
     local_Jac
