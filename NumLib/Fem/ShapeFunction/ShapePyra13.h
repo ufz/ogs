@@ -24,7 +24,7 @@ public:
     /**
      * Evaluate the shape function at the given point
      *
-     * @param [in]  r   natural coordinates (r,s,t)
+     * @param [in]  x   natural coordinates (r,s,t)
      * @param [out] N   a vector of calculated shape functions
      */
     template <class T_X, class T_N>
@@ -33,7 +33,7 @@ public:
     /**
      * Evaluate derivatives of the shape function at the given point
      *
-     * @param [in]  r   natural coordinates (r,s,t)
+     * @param [in]  x   natural coordinates (r,s,t)
      * @param [out] dN  a matrix of the derivatives
      */
     template <class T_X, class T_N>

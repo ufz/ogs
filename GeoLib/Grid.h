@@ -34,18 +34,20 @@ class Grid : public GeoLib::AABB
 {
 public:
     /**
-     * @brief The constructor of the grid object takes a vector of points or nodes. Furthermore the
-     * user can specify the *average* maximum number of points per grid cell.
+     * @brief The constructor of the grid object takes a vector of points or
+     * nodes. Furthermore the user can specify the *average* maximum number of
+     * points per grid cell.
      *
      * The number of grid cells are computed with the following formula
      * \f$\frac{n_{points}}{n_{cells}} \le n_{max\_per\_cell}\f$
      *
-     * In order to limit the memory wasting the maximum number of points per grid cell
-     * (in the average) should be a power of two (since std::vector objects resize itself
-     * with this step size).
+     * In order to limit the memory wasting the maximum number of points per
+     * grid cell (in the average) should be a power of two (since std::vector
+     * objects resize itself with this step size).
      *
      * @param first, last the range of elements to examine
-     * @param items_per_cell (input) max number per grid cell in the average (default 512)
+     * @param max_num_per_grid_cell (input) max number per grid cell in the
+     * average
      *
      */
     template <typename InputIterator>
@@ -160,7 +162,7 @@ private:
      *    4        3,0,4,7 left
      *    5        4,5,6,7 top
      * @param pnt (input) coordinates of the point
-     * @param coordinates of the grid cell
+     * @param coords of the grid cell
      * @return squared distances of the point to the faces of the grid cell
      * ordered in the same sequence as above described
      */

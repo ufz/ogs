@@ -166,10 +166,11 @@ public:
     }
 
     /*!
-      \brief         Add a submatrix to this.
-      \param row_pos The row indices of the entries of the submatrix.
-      \param col_pos The column indices of the entries of the submatrix.
-      \param sub_mat A dense matrix to be added on.
+        \brief          Add a dense sub-matrix to a PETSc matrix.
+        \param row_pos  The global indices of the rows of the dense sub-matrix.
+        \param col_pos  The global indices of the colums of the dense
+                        sub-matrix.
+       \param sub_mat  A dense sub-matrix to be added.
     */
     template <class T_DENSE_MATRIX>
     void add(std::vector<PetscInt> const& row_pos,
@@ -251,12 +252,6 @@ private:
                                        const MatAssemblyType asm_type);
 };
 
-/*!
-    \brief          Add a dense sub-matrix to a PETSc matrix.
-    \param row_pos  The global indices of the rows of the dense sub-matrix.
-    \param col_pos  The global indices of the colums of the dense sub-matrix.
-    \param sub_mat  A dense sub-matrix to be added.
-*/
 template <class T_DENSE_MATRIX>
 void PETScMatrix::add(std::vector<PetscInt> const& row_pos,
                       std::vector<PetscInt> const& col_pos,
