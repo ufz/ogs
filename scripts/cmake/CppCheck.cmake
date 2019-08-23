@@ -8,7 +8,7 @@ endif()
 
 add_custom_target(cppcheck
     COMMAND ${CPPCHECK_TOOL_PATH}
-        # --force
+        --force
         --enable=all
         # --inconclusive
         ${CPPCHECK_THREADS}
