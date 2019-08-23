@@ -30,8 +30,8 @@ std::unique_ptr<Medium> createMedium(
 {
     // Parsing the phases
     // Properties of phases may be not required in all the cases.
-    //! \ogs_file_param{prj__media__medium__phases}
     auto&& phases =
+        //! \ogs_file_param{prj__media__medium__phases}
         createPhases(config.getConfigSubtreeOptional("phases"), parameters);
 
     // Parsing medium properties, overwriting the defaults.
