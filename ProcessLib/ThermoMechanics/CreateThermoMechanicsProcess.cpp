@@ -169,13 +169,13 @@ std::unique_ptr<Process> createThermoMechanicsProcess(
     // Non-equilibrium variables
     ParameterLib::Parameter<double> const* nonequilibrium_stress = nullptr;
     const auto& nonequilibrium_state_variables_config =
-        //! \ogs_file_param{prj__processes__process__SMALL_DEFORMATION__nonequilibrium_state_variables}
+        //! \ogs_file_param{prj__processes__process__THERMO_MECHANICS__nonequilibrium_state_variables}
         config.getConfigSubtreeOptional("nonequilibrium_state_variables");
     if (nonequilibrium_state_variables_config)
     {
         nonequilibrium_stress = &ParameterLib::findParameter<double>(
             *nonequilibrium_state_variables_config,
-            //! \ogs_file_param_special{prj__processes__process__SMALL_DEFORMATION__nonequilibrium_state_variables__stress}
+            //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICS__nonequilibrium_state_variables__stress}
             "stress", parameters,
             MathLib::KelvinVector::KelvinVectorDimensions<
                 DisplacementDim>::value);
