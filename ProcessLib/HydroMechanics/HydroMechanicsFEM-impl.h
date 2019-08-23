@@ -164,7 +164,11 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
             pressure_size, displacement_size>::Zero(pressure_size,
                                                     displacement_size);
 
+    MaterialLib::Solids::MechanicsBase<DisplacementDim> const& solid_material =
+        *_process_data.solid_materials[0];
+
     double const& dt = _process_data.dt;
+    double const T_ref = _process_data.reference_temperature;
 
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
@@ -197,13 +201,19 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto& eps = _ip_data[ip].eps;
         auto const& sigma_eff = _ip_data[ip].sigma_eff;
 
-        double const S = _process_data.specific_storage(t, x_position)[0];
         double const K_over_mu =
             _process_data.intrinsic_permeability(t, x_position)[0] /
             _process_data.fluid_viscosity(t, x_position)[0];
         auto const alpha = _process_data.biot_coefficient(t, x_position)[0];
+        auto const K_S = solid_material.getBulkModulus(t, x_position);
         auto const rho_sr = _process_data.solid_density(t, x_position)[0];
-        auto const rho_fr = _process_data.fluid_density(t, x_position)[0];
+        // TODO (FZill) get fluid properties from GPML
+        double const p_fr =
+            (_process_data.fluid_type == FluidType::Fluid_Type::IDEAL_GAS)
+                ? N_p.dot(p)
+                : std::numeric_limits<double>::quiet_NaN();
+        double const rho_fr = _process_data.getFluidDensity(t, x_position, p_fr);
+        double const beta_p = _process_data.getFluidCompressibility(p_fr);
         auto const porosity = _process_data.porosity(t, x_position)[0];
         auto const& b = _process_data.specific_body_force;
         auto const& identity2 = MathLib::KelvinVector::Invariants<
@@ -215,8 +225,8 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         //
         eps.noalias() = B * u;
 
-        auto C = _ip_data[ip].updateConstitutiveRelation(
-            t, x_position, dt, u, _process_data.reference_temperature);
+        auto C =
+            _ip_data[ip].updateConstitutiveRelation(t, x_position, dt, u, T_ref);
 
         local_Jac
             .template block<displacement_size, displacement_size>(
@@ -239,7 +249,9 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         laplace_p.noalias() +=
             rho_fr * dNdx_p.transpose() * K_over_mu * dNdx_p * w;
 
-        storage_p.noalias() += rho_fr * N_p.transpose() * S * N_p * w;
+        storage_p.noalias() +=
+            rho_fr * N_p.transpose() * N_p * w *
+            ((alpha - porosity) * (1.0 - alpha) / K_S + porosity * beta_p);
 
         local_rhs.template segment<pressure_size>(pressure_index).noalias() +=
             dNdx_p.transpose() * rho_fr * rho_fr * K_over_mu * b * w;
@@ -373,6 +385,9 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         ShapeMatricesTypePressure::NodalMatrixType::Zero(pressure_size,
                                                          pressure_size);
 
+    MaterialLib::Solids::MechanicsBase<DisplacementDim> const& solid_material =
+        *_process_data.solid_materials[0];
+
     double const& dt = _process_data.dt;
 
     ParameterLib::SpatialPosition x_position;
@@ -390,16 +405,25 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const& N_p = _ip_data[ip].N_p;
         auto const& dNdx_p = _ip_data[ip].dNdx_p;
 
-        double const S = _process_data.specific_storage(t, x_position)[0];
         double const K_over_mu =
             _process_data.intrinsic_permeability(t, x_position)[0] /
             _process_data.fluid_viscosity(t, x_position)[0];
         auto const alpha_b = _process_data.biot_coefficient(t, x_position)[0];
-        auto const rho_fr = _process_data.fluid_density(t, x_position)[0];
+        // TODO (FZill) get fluid properties from GPML
+        double const p_fr =
+            (_process_data.fluid_type == FluidType::Fluid_Type::IDEAL_GAS)
+                ? N_p.dot(p)
+                : std::numeric_limits<double>::quiet_NaN();
+        double const rho_fr = _process_data.getFluidDensity(t, x_position, p_fr);
+        double const beta_p = _process_data.getFluidCompressibility(p_fr);
+        auto const porosity = _process_data.porosity(t, x_position)[0];
+        auto const K_S = solid_material.getBulkModulus(t, x_position);
 
         laplace.noalias() += dNdx_p.transpose() * K_over_mu * dNdx_p * w;
 
-        mass.noalias() += N_p.transpose() * S * N_p * w;
+        mass.noalias() +=
+            N_p.transpose() * N_p * w *
+            ((alpha_b - porosity) * (1.0 - alpha_b) / K_S + porosity * beta_p);
 
         auto const& b = _process_data.specific_body_force;
         local_rhs.noalias() += dNdx_p.transpose() * rho_fr * K_over_mu * b * w;

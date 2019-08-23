@@ -10,6 +10,7 @@
 #pragma once
 
 #include "ParameterLib/Parameter.h"
+#include "MaterialLib/Fluid/FluidType/FluidType.h"
 
 #include <memory>
 #include <utility>
@@ -42,9 +43,6 @@ struct HydroMechanicsProcessData
     /// Permeability of the solid. A scalar quantity,
     /// ParameterLib::Parameter<double>.
     ParameterLib::Parameter<double> const& intrinsic_permeability;
-    /// Volumetric average specific storage of the solid and fluid phases.
-    /// A scalar quantity, ParameterLib::Parameter<double>.
-    ParameterLib::Parameter<double> const& specific_storage;
     /// Fluid's viscosity. A scalar quantity, ParameterLib::Parameter<double>.
     ParameterLib::Parameter<double> const& fluid_viscosity;
     /// Fluid's density. A scalar quantity, ParameterLib::Parameter<double>.
@@ -60,8 +58,60 @@ struct HydroMechanicsProcessData
     /// It is usually used to apply gravitational forces.
     /// A vector of displacement dimension's length.
     Eigen::Matrix<double, DisplacementDim, 1> const specific_body_force;
+
+    /// Fluid's compressibility. A scalar quantity.
+    /// Only used for compressible_fluid fluid_type
+    double const fluid_compressibility =
+        std::numeric_limits<double>::quiet_NaN();
+
+    /// Reference Temperature. A scalar quantity.
+    /// Only used for ideal_gas fluid_type
     double const reference_temperature =
         std::numeric_limits<double>::quiet_NaN();
+
+    /// Specific gas constant. A scalar quantity.
+    /// Only used for ideal_gas fluid_type
+    double const specific_gas_constant =
+        std::numeric_limits<double>::quiet_NaN();
+
+    /// Fluid type. Enumerator with possible values:
+    /// incompressible_fluid, compressible_fluid, ideal_gas
+    FluidType::Fluid_Type const fluid_type;
+
+    /// will be removed after linking with MPL
+    double getFluidDensity(
+        double const& t, ParameterLib::SpatialPosition const& x_position,
+        double const& p_fr)
+    {
+        if (fluid_type == FluidType::Fluid_Type::INCOMPRESSIBLE_FLUID ||
+            fluid_type == FluidType::Fluid_Type::COMPRESSIBLE_FLUID)
+        {
+            return fluid_density(t, x_position)[0];
+        }
+        if (fluid_type == FluidType::Fluid_Type::IDEAL_GAS)
+        {
+            return p_fr / (specific_gas_constant * reference_temperature);
+        }
+        OGS_FATAL("unknown fluid type %d", static_cast<int> (fluid_type));
+    }
+
+    /// will be removed after linking with MPL
+    double getFluidCompressibility(double const& p_fr)
+    {
+        if (fluid_type == FluidType::Fluid_Type::INCOMPRESSIBLE_FLUID)
+        {
+            return 0.0;
+        }
+        if (fluid_type == FluidType::Fluid_Type::COMPRESSIBLE_FLUID)
+        {
+            return fluid_compressibility;
+        }
+        if (fluid_type == FluidType::Fluid_Type::IDEAL_GAS)
+        {
+            return 1.0 / p_fr;
+        }
+        OGS_FATAL("unknown fluid type %d", static_cast<int> (fluid_type));
+    }
 
     MeshLib::PropertyVector<double>* pressure_interpolated = nullptr;
     double dt = std::numeric_limits<double>::quiet_NaN();
