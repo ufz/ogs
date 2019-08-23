@@ -9,11 +9,11 @@
 
 #include <tclap/CmdLine.h>
 
-#include "InfoLib/GitInfo.h"
-#include "MeshLib/Mesh.h"
-#include "MeshLib/IO/readMeshFromFile.h"
 #include "Applications/ApplicationsLib/LogogSetup.h"
 #include "Applications/FileIO/SHPInterface.h"
+#include "InfoLib/GitInfo.h"
+#include "MeshLib/IO/readMeshFromFile.h"
+#include "MeshLib/Mesh.h"
 
 int main(int argc, char* argv[])
 {
@@ -30,18 +30,21 @@ int main(int argc, char* argv[])
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
 
-    TCLAP::ValueArg<std::string> output_arg(
-        "o", "output-file", "Esri Shapefile (*.shp)", true, "", "output_file.shp");
+    TCLAP::ValueArg<std::string> output_arg("o", "output-file",
+                                            "Esri Shapefile (*.shp)", true, "",
+                                            "output_file.shp");
     cmd.add(output_arg);
 
-    TCLAP::ValueArg<std::string> input_arg(
-        "i", "input-file", "OGS mesh file (*.vtu, *.msh)", true, "", "input_file.vtu");
+    TCLAP::ValueArg<std::string> input_arg("i", "input-file",
+                                           "OGS mesh file (*.vtu, *.msh)", true,
+                                           "", "input_file.vtu");
     cmd.add(input_arg);
 
     cmd.parse(argc, argv);
 
-    std::string const file_name (input_arg.getValue());
-    std::unique_ptr<MeshLib::Mesh> const mesh (MeshLib::IO::readMeshFromFile(file_name));
+    std::string const file_name(input_arg.getValue());
+    std::unique_ptr<MeshLib::Mesh> const mesh(
+        MeshLib::IO::readMeshFromFile(file_name));
     if (FileIO::SHPInterface::write2dMeshToSHP(output_arg.getValue(), *mesh))
         return EXIT_SUCCESS;
     return EXIT_FAILURE;
