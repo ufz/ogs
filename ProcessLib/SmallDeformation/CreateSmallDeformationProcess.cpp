@@ -12,6 +12,7 @@
 #include <cassert>
 
 #include "MaterialLib/SolidModels/CreateConstitutiveRelation.h"
+#include "MathLib/KelvinVector.h"
 #include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
@@ -102,9 +103,30 @@ std::unique_ptr<Process> createSmallDeformationProcess(
         config.getConfigParameter<double>(
             "reference_temperature", std::numeric_limits<double>::quiet_NaN());
 
+    // Initial stress conditions
+    ParameterLib::Parameter<double> const* initial_stress = nullptr;
+    auto const initial_stress_parameter_name =
+        //! \ogs_file_param{prj__processes__process__SMALL_DEFORMATION__initial_stress}
+        config.getConfigParameterOptional<std::string>("initial_stress");
+    if (initial_stress_parameter_name)
+    {
+        initial_stress = ParameterLib::findParameterOptional<double>(
+            *initial_stress_parameter_name, parameters,
+            // Symmetric tensor size, 4 or 6, not a Kelvin vector.
+            MathLib::KelvinVector::KelvinVectorDimensions<
+                DisplacementDim>::value,
+            &mesh);
+    }
+    if (initial_stress != nullptr)
+    {
+        DBUG("Use '%s' as initial stress parameter.",
+             initial_stress->name.c_str());
+    }
+
     SmallDeformationProcessData<DisplacementDim> process_data{
-        materialIDs(mesh), std::move(solid_constitutive_relations),
-        solid_density, specific_body_force, reference_temperature};
+        materialIDs(mesh),   std::move(solid_constitutive_relations),
+        initial_stress,      solid_density,
+        specific_body_force, reference_temperature};
 
     SecondaryVariableCollection secondary_variables;
 

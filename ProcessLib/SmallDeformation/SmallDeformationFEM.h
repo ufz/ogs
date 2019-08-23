@@ -176,6 +176,14 @@ public:
 
         if (name == "sigma_ip")
         {
+            if (_process_data.initial_stress != nullptr)
+            {
+                OGS_FATAL(
+                    "Setting initial conditions for stress from integration "
+                    "point data and from a parameter '%s' is not possible "
+                    "simultaneously.",
+                    _process_data.initial_stress->name.c_str());
+            }
             return setSigma(values);
         }
 
@@ -186,10 +194,28 @@ public:
     {
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
-
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            _ip_data[ip].pushBackState();
+            auto& ip_data = _ip_data[ip];
+
+            /// Set initial stress from parameter.
+            if (_process_data.initial_stress != nullptr)
+            {
+                ParameterLib::SpatialPosition const x_position{
+                    boost::none, _element.getID(), ip,
+                    MathLib::Point3d(interpolateCoordinates<ShapeFunction,
+                                                            ShapeMatricesType>(
+                        _element, ip_data.N))};
+
+                ip_data.sigma =
+                    MathLib::KelvinVector::symmetricTensorToKelvinVector<
+                        DisplacementDim>((*_process_data.initial_stress)(
+                        std::numeric_limits<
+                            double>::quiet_NaN() /* time independent */,
+                        x_position));
+            }
+
+            ip_data.pushBackState();
         }
     }
 
