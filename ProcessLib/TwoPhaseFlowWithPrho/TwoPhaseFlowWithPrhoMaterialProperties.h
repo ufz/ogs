@@ -28,10 +28,7 @@ template <typename PROP_VAL_TYPE>
 class PropertyVector;
 }
 
-namespace ProcessLib
-{
-class SpatialPosition;
-namespace TwoPhaseFlowWithPrho
+namespace ProcessLib::TwoPhaseFlowWithPrho
 {
 class TwoPhaseFlowWithPrhoMaterialProperties
 {
@@ -186,5 +183,4 @@ private:
                           int current_material_id) const;
 };
 
-}  // namespace TwoPhaseFlowWithPrho
-}  // namespace ProcessLib
+}  // namespace ProcessLib::TwoPhaseFlowWithPrho

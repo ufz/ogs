@@ -25,10 +25,6 @@
 // TODO
 // The matereial properties for two phase flow process need to be restructured
 // and moved to a better place.
-namespace ProcessLib
-{
-class SpatialPosition;
-}
 
 namespace MeshLib
 {
