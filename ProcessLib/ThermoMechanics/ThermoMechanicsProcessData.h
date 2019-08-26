@@ -38,6 +38,10 @@ struct ThermoMechanicsProcessData
                       MaterialLib::Solids::MechanicsBase<DisplacementDim>>>
         solid_materials;
 
+    /// Optional, initial stress field. A symmetric tensor, short vector
+    /// representation of length 4 or 6, ParameterLib::Parameter<double>.
+    ParameterLib::Parameter<double> const* const initial_stress;
+
     ParameterLib::Parameter<double> const& reference_solid_density;
     ParameterLib::Parameter<double> const& linear_thermal_expansion_coefficient;
     ParameterLib::Parameter<double> const& specific_heat_capacity;
