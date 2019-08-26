@@ -166,27 +166,13 @@ std::unique_ptr<Process> createThermoMechanicsProcess(
 
         std::copy_n(b.data(), b.size(), specific_body_force.data());
     }
-    // Non-equilibrium variables
-    ParameterLib::Parameter<double> const* nonequilibrium_stress = nullptr;
-    const auto& nonequilibrium_state_variables_config =
-        //! \ogs_file_param{prj__processes__process__THERMO_MECHANICS__nonequilibrium_state_variables}
-        config.getConfigSubtreeOptional("nonequilibrium_state_variables");
-    if (nonequilibrium_state_variables_config)
-    {
-        nonequilibrium_stress = &ParameterLib::findParameter<double>(
-            *nonequilibrium_state_variables_config,
-            //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICS__nonequilibrium_state_variables__stress}
-            "stress", parameters,
-            MathLib::KelvinVector::KelvinVectorDimensions<
-                DisplacementDim>::value);
-    }
 
     ThermoMechanicsProcessData<DisplacementDim> process_data{
-        materialIDs(mesh),       std::move(solid_constitutive_relations),
-        reference_solid_density, linear_thermal_expansion_coefficient,
-        specific_heat_capacity,  thermal_conductivity,
-        specific_body_force,     nonequilibrium_stress,
-        mechanics_process_id,    heat_conduction_process_id};
+        materialIDs(mesh),         std::move(solid_constitutive_relations),
+        reference_solid_density,   linear_thermal_expansion_coefficient,
+        specific_heat_capacity,    thermal_conductivity,
+        specific_body_force,       mechanics_process_id,
+        heat_conduction_process_id};
 
     SecondaryVariableCollection secondary_variables;
 

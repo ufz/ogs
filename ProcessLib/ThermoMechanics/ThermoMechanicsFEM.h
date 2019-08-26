@@ -52,12 +52,6 @@ struct IntegrationPointData final
     // mechanical strain
     typename BMatricesType::KelvinVectorType eps_m, eps_m_prev;
 
-    // Non-equilibrium initial stress.
-    typename BMatricesType::KelvinVectorType sigma_neq =
-        BMatricesType::KelvinVectorType::Zero(
-            MathLib::KelvinVector::KelvinVectorDimensions<
-                DisplacementDim>::value);
-
     MaterialLib::Solids::MechanicsBase<DisplacementDim> const& solid_material;
     std::unique_ptr<typename MaterialLib::Solids::MechanicsBase<
         DisplacementDim>::MaterialStateVariables>
