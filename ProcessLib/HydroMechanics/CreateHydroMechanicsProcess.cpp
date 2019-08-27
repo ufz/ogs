@@ -200,8 +200,9 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
             config.getConfigParameter<std::string>("fluid_type"));
     DBUG("Use 'fluid_type' as fluid type parameter.");
 
-    if (FluidType::checkRequiredParams(fluid_type, fluid_compressibility,
-        reference_temperature, specific_gas_constant) == false)
+    if (!FluidType::checkRequiredParams(fluid_type, fluid_compressibility,
+                                        reference_temperature,
+                                        specific_gas_constant))
     {
         OGS_FATAL(FluidType::getErrorMsg(fluid_type));
     }
