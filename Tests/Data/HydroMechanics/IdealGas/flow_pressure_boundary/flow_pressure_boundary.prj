@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
-    <mesh axially_symmetric="true">square_1x1_quad8_1e2.vtu</mesh>
-    <geometry>square_1x1.gml</geometry>
+    <mesh>quad_1x10.vtu</mesh>
+    <geometry>quad_1x10.gml</geometry>
     <processes>
         <process>
             <name>HM</name>
@@ -15,18 +15,29 @@
             </constitutive_relation>
             <intrinsic_permeability>k</intrinsic_permeability>
             <fluid_viscosity>mu</fluid_viscosity>
+            <fluid_density>rho_fr</fluid_density>
             <biot_coefficient>alpha</biot_coefficient>
             <porosity>phi</porosity>
             <solid_density>rho_sr</solid_density>
-            <fluid_density>rho_fr</fluid_density>
             <process_variables>
                 <displacement>displacement</displacement>
                 <pressure>pressure</pressure>
             </process_variables>
             <secondary_variables>
+                <secondary_variable type="static" internal_name="sigma_xx" output_name="sigma_xx"/>
+                <secondary_variable type="static" internal_name="sigma_yy" output_name="sigma_yy"/>
+                <secondary_variable type="static" internal_name="sigma_zz" output_name="sigma_zz"/>
+                <secondary_variable type="static" internal_name="sigma_xy" output_name="sigma_xy"/>
+                <secondary_variable type="static" internal_name="epsilon_xx" output_name="epsilon_xx"/>
+                <secondary_variable type="static" internal_name="epsilon_yy" output_name="epsilon_yy"/>
+                <secondary_variable type="static" internal_name="epsilon_zz" output_name="epsilon_zz"/>
+                <secondary_variable type="static" internal_name="epsilon_xy" output_name="epsilon_xy"/>
+                <secondary_variable type="static" internal_name="velocity" output_name="velocity"/>
             </secondary_variables>
             <specific_body_force>0 0</specific_body_force>
-            <fluid_type>incompressible_fluid</fluid_type>
+            <fluid_type>ideal_gas</fluid_type>
+            <reference_temperature>293.15</reference_temperature>
+            <specific_gas_constant>287.058</specific_gas_constant>
         </process>
     </processes>
     <time_loop>
@@ -34,9 +45,9 @@
             <process ref="HM">
                 <nonlinear_solver>basic_newton</nonlinear_solver>
                 <convergence_criterion>
-                    <type>DeltaX</type>
+                    <type>PerComponentDeltaX</type>
                     <norm_type>NORM2</norm_type>
-                    <abstol>1e-8</abstol>
+                    <reltols>1e-10 1e10 1e10</reltols>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>
@@ -44,11 +55,11 @@
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0</t_initial>
-                    <t_end>1000</t_end>
+                    <t_end>4000</t_end>
                     <timesteps>
                         <pair>
-                            <repeat>10</repeat>
-                            <delta_t>100</delta_t>
+                            <repeat>100</repeat>
+                            <delta_t>40</delta_t>
                         </pair>
                     </timesteps>
                 </time_stepping>
@@ -56,16 +67,25 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>square_1e2_UC_late</prefix>
+            <prefix>flow_pressure_boundary</prefix>
             <timesteps>
                 <pair>
                     <repeat>1</repeat>
-                    <each_steps>10</each_steps>
+                    <each_steps>10000</each_steps>
                 </pair>
             </timesteps>
             <variables>
                 <variable>displacement</variable>
                 <variable>pressure</variable>
+                <variable>sigma_xx</variable>
+                <variable>sigma_yy</variable>
+                <variable>sigma_zz</variable>
+                <variable>sigma_xy</variable>
+                <variable>epsilon_xx</variable>
+                <variable>epsilon_yy</variable>
+                <variable>epsilon_zz</variable>
+                <variable>epsilon_xy</variable>
+                <variable>velocity</variable>
             </variables>
         </output>
     </time_loop>
@@ -74,43 +94,43 @@
         <parameter>
             <name>E</name>
             <type>Constant</type>
-            <value>30000.0</value>
+            <value>1e9</value>
         </parameter>
         <parameter>
             <name>nu</name>
             <type>Constant</type>
-            <value>0.2</value>
+            <value>.3</value>
         </parameter>
         <!-- Model parameters -->
         <parameter>
             <name>k</name>
             <type>Constant</type>
-            <value>1e-10</value>
+            <value>1e-12</value>
         </parameter>
         <parameter>
             <name>mu</name>
             <type>Constant</type>
-            <value>1e-3</value>
+            <value>1e-5</value>
         </parameter>
         <parameter>
             <name>alpha</name>
             <type>Constant</type>
-            <value>1</value>
+            <value>1.0</value>
         </parameter>
         <parameter>
             <name>phi</name>
             <type>Constant</type>
-            <value>0</value>
+            <value>0.1</value>
         </parameter>
         <parameter>
             <name>rho_sr</name>
             <type>Constant</type>
-            <value>1.2e-6</value>
+            <value>2.2e3</value>
         </parameter>
         <parameter>
             <name>rho_fr</name>
             <type>Constant</type>
-            <value>1.0e-6</value>
+            <value>1.0</value>
         </parameter>
         <parameter>
             <name>displacement0</name>
@@ -118,19 +138,19 @@
             <values>0 0</values>
         </parameter>
         <parameter>
-            <name>pressure_ic</name>
+            <name>pressure0</name>
             <type>Constant</type>
-            <values>0</values>
+            <values>1e5</values>
         </parameter>
         <parameter>
-            <name>dirichlet0</name>
+            <name>zero</name>
             <type>Constant</type>
             <value>0</value>
         </parameter>
-        <parameter>
-            <name>displacementTop</name>
+		<parameter>
+            <name>flux_in</name>
             <type>Constant</type>
-            <value>-0.05</value>
+            <value>1e-2</value>
         </parameter>
     </parameters>
     <process_variables>
@@ -145,21 +165,28 @@
                     <geometry>left</geometry>
                     <type>Dirichlet</type>
                     <component>0</component>
-                    <parameter>dirichlet0</parameter>
+                    <parameter>zero</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <geometrical_set>square_1x1_geometry</geometrical_set>
                     <geometry>bottom</geometry>
                     <type>Dirichlet</type>
                     <component>1</component>
-                    <parameter>dirichlet0</parameter>
+                    <parameter>zero</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <geometrical_set>square_1x1_geometry</geometrical_set>
+                    <geometry>right</geometry>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>zero</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <geometrical_set>square_1x1_geometry</geometrical_set>
                     <geometry>top</geometry>
                     <type>Dirichlet</type>
                     <component>1</component>
-                    <parameter>displacementTop</parameter>
+                    <parameter>zero</parameter>
                 </boundary_condition>
             </boundary_conditions>
         </process_variable>
@@ -167,14 +194,21 @@
             <name>pressure</name>
             <components>1</components>
             <order>1</order>
-            <initial_condition>pressure_ic</initial_condition>
+            <initial_condition>pressure0</initial_condition>
             <boundary_conditions>
+                <boundary_condition>
+                    <geometrical_set>square_1x1_geometry</geometrical_set>
+                    <geometry>left</geometry>
+                    <type>Neumann</type>
+                    <component>0</component>
+                    <parameter>flux_in</parameter>
+                </boundary_condition>
                 <boundary_condition>
                     <geometrical_set>square_1x1_geometry</geometrical_set>
                     <geometry>right</geometry>
                     <type>Dirichlet</type>
                     <component>0</component>
-                    <parameter>dirichlet0</parameter>
+                    <parameter>pressure0</parameter>
                 </boundary_condition>
             </boundary_conditions>
         </process_variable>
@@ -197,10 +231,6 @@
                 <max_iteration_step>10000</max_iteration_step>
                 <error_tolerance>1e-16</error_tolerance>
             </eigen>
-            <petsc>
-                <prefix>sd</prefix>
-                <parameters>-sd_ksp_type cg -sd_pc_type bjacobi -sd_ksp_rtol 1e-16 -sd_ksp_max_it 10000</parameters>
-            </petsc>
         </linear_solver>
     </linear_solvers>
 </OpenGeoSysProject>

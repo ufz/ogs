@@ -15,7 +15,6 @@
                 <poissons_ratio>nu</poissons_ratio>
             </constitutive_relation>
             <intrinsic_permeability>k</intrinsic_permeability>
-            <specific_storage>S</specific_storage>
             <fluid_viscosity>mu</fluid_viscosity>
             <fluid_density>rho_liquid</fluid_density>
             <biot_coefficient>alpha</biot_coefficient>
@@ -41,6 +40,7 @@
                 <secondary_variable type="static" internal_name="epsilon_yz" output_name="epsilon_yz"/>
             </secondary_variables>
             <specific_body_force> 0 0 0 </specific_body_force>
+            <fluid_type>incompressible_fluid</fluid_type>
         </process>
     </processes>
     <time_loop>
@@ -197,11 +197,6 @@
             <name>mu</name>
             <type>Constant</type>
             <value>1e-3</value>
-        </parameter>
-        <parameter>
-            <name>S</name>
-            <type>Constant</type>
-            <value>0</value>
         </parameter>
         <parameter>
             <name>rho_liquid</name>
