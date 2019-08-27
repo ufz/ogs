@@ -101,6 +101,7 @@ pipeline {
           }
           environment {
             OMP_NUM_THREADS = '1'
+            LD_LIBRARY_PATH = "$WORKSPACE/build/lib"
           }
           steps {
             script {
