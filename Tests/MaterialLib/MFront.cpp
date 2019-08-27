@@ -79,6 +79,40 @@ struct ElasticBehaviour
     }
 };
 
+template <int Dim>
+struct MohrCoulombAbboSloanBehaviour
+{
+    static std::unique_ptr<MFront::MFront<Dim>> createConstitutiveRelation()
+    {
+        auto behaviour =
+            mgis::behaviour::load("libOgsMFrontBehaviour.so",
+                                  "MohrCoulombAbboSloan", hypothesis(Dim));
+
+        using P = ParameterLib::ConstantParameter<double>;
+        // Parameters used by mfront model in the order of appearence in the
+        // .mfront file.
+        static P const young_modulus("", 1e11);
+        static P const poisson_ratio("", 1e9);
+        static P const cohesion("", 0);
+        static P const friction_angle("", 10);
+        static P const dilatancy_angle("", 10);
+        static P const transition_angle("", 10);
+        static P const tension_cut_off_parameter("", 0.5);
+        std::vector<ParameterLib::Parameter<double> const*> parameters{
+            &young_modulus,
+            &poisson_ratio,
+            &cohesion,
+            &friction_angle,
+            &dilatancy_angle,
+            &transition_angle,
+            &tension_cut_off_parameter};
+
+        auto result = std::make_unique<MFront::MFront<Dim>>(
+            std::move(behaviour), std::move(parameters));
+        return result;
+    }
+};
+
 template <int Dim, typename TestBehaviour>
 struct MaterialLib_SolidModelsMFront : public testing::Test
 {
@@ -110,7 +144,7 @@ using MaterialLib_SolidModelsMFront3 =
 template <int Dim>
 using TestBehaviourTypes =
     ::testing::Types<StandardElasticityBrickBehaviour<Dim>,
-                     ElasticBehaviour<Dim>>;
+                     ElasticBehaviour<Dim>, MohrCoulombAbboSloanBehaviour<Dim>>;
 
 TYPED_TEST_CASE(MaterialLib_SolidModelsMFront2, TestBehaviourTypes<2>);
 TYPED_TEST_CASE(MaterialLib_SolidModelsMFront3, TestBehaviourTypes<3>);
