@@ -195,8 +195,8 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     DBUG("Use 'fluid_compressibility' as fluid compressibility parameter.");
 
     auto const fluid_type =
-        //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS__fluid_type}
         FluidType::strToFluidType(
+            //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS__fluid_type}
             config.getConfigParameter<std::string>("fluid_type"));
     DBUG("Use 'fluid_type' as fluid type parameter.");
 
