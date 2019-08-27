@@ -51,7 +51,9 @@ public:
     /// property with respect to the given primary variables pv1 and pv2.
     PropertyDataType d2Value(VariableArray const& variable_array,
                              Variable const pv1,
-                             Variable const pv2) const override;
+                             Variable const pv2,
+                             ParameterLib::SpatialPosition const& /*pos*/,
+                             double const /*t*/) const override;
 
 private:
     ExponentData const _exponent_data;

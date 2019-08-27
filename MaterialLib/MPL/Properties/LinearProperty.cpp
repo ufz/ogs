@@ -48,7 +48,9 @@ PropertyDataType LinearProperty::dValue(
 PropertyDataType LinearProperty::d2Value(
     VariableArray const& /*variable_array*/,
     Variable const /*pv1*/,
-    Variable const /*pv2*/) const
+    Variable const /*pv2*/,
+    ParameterLib::SpatialPosition const& /*pos*/,
+    double const /*t*/) const
 {
     return decltype(_value){};
 }

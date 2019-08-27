@@ -39,8 +39,8 @@ enum PropertyDataTypeName
     nTensor
 };
 
-using PropertyDataType = std::
-    variant<double, Pair, Vector, Tensor2d, SymmTensor, Tensor, std::string>;
+using PropertyDataType = std::variant<double, Pair, Vector, Tensor2d,
+                                      SymmTensor, Tensor, std::string>;
 
 /// This class is the base class for any material property of any
 /// scale (i.e. components, phases, media, ...). The single value of
@@ -66,13 +66,15 @@ public:
     /// with respect to the given variable pv.
     virtual PropertyDataType dValue(VariableArray const& variable_array,
                                     Variable const variable,
-                                   ParameterLib::SpatialPosition const& pos,
-                                   double const t) const;
+                                    ParameterLib::SpatialPosition const& pos,
+                                    double const t) const;
     /// This virtual method will compute the second derivative of a
     /// property with respect to the given variables pv1 and pv2.
     virtual PropertyDataType d2Value(VariableArray const& variable_array,
                                      Variable const variable1,
-                                     Variable const variable2) const;
+                                     Variable const variable2,
+                                     ParameterLib::SpatialPosition const& pos,
+                                     double const t) const;
     virtual void setScale(
         std::variant<Medium*, Phase*, Component*> /*scale_pointer*/){};
 
@@ -92,17 +94,17 @@ public:
 
     template <typename T>
     T dValue(VariableArray const& variable_array, Variable const variable,
-            ParameterLib::SpatialPosition const& pos,
-            double const t) const
+             ParameterLib::SpatialPosition const& pos, double const t) const
     {
         return std::get<T>(dValue(variable_array, variable, pos, t));
     }
     template <typename T>
-    T d2Value(VariableArray const& variable_array,
-              Variable const& variable1,
-              Variable const& variable2) const
+    T d2Value(VariableArray const& variable_array, Variable const& variable1,
+              Variable const& variable2,
+              ParameterLib::SpatialPosition const& pos, double const t) const
     {
-        return std::get<T>(d2Value(variable_array, variable1, variable2));
+        return std::get<T>(
+            d2Value(variable_array, variable1, variable2, pos, t));
     }
 
 protected:

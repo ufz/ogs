@@ -52,9 +52,8 @@ PropertyDataType ExponentialProperty::dValue(
 }
 
 PropertyDataType ExponentialProperty::d2Value(
-    VariableArray const& variable_array,
-    Variable const pv1,
-    Variable const pv2) const
+    VariableArray const& variable_array, Variable const pv1, Variable const pv2,
+    ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/) const
 {
     return _exponent_data.type == pv1 && _exponent_data.type == pv2
                ? std::get<double>(_value) *

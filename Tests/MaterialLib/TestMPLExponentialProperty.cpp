@@ -49,10 +49,9 @@ TEST(MaterialPropertyLib, ExponentialProperty)
                       reference_condition)),
         1.e-16);
     ASSERT_NEAR(
-        std::get<double>(
-            exp_property.d2Value(variable_array,
-                                 MaterialPropertyLib::Variable::temperature,
-                                 MaterialPropertyLib::Variable::temperature)),
+        std::get<double>(exp_property.d2Value(
+            variable_array, MaterialPropertyLib::Variable::temperature,
+            MaterialPropertyLib::Variable::temperature, pos, time)),
         y_ref * std::pow(factor, 2) *
             std::exp(-factor *
                      (std::get<double>(variable_array[static_cast<int>(

@@ -41,9 +41,8 @@ TEST(MaterialPropertyLib, LinearProperty)
                     pos, time)),
                 y_ref * m, 1.e-16);
     ASSERT_EQ(std::get<double>(linear_property.d2Value(
-                  variable_array,
-                  MaterialPropertyLib::Variable::temperature,
-                  MaterialPropertyLib::Variable::temperature)),
+                  variable_array, MaterialPropertyLib::Variable::temperature,
+                  MaterialPropertyLib::Variable::temperature, pos, time)),
               0.0);
 }
 
