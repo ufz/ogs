@@ -20,6 +20,8 @@ mfront_behaviours_check_library(OgsMFrontBehaviour
                                 BDT
                                 DruckerPrager
                                 Elasticity
+                                MohrCoulombAbboSloan
+                                MohrCoulombAbboSloanOrtho
                                 StandardElasticityBrick)
 
 target_include_directories(MaterialLib_SolidModels_MFront
