@@ -94,7 +94,6 @@ alpha.setGlossaryName("ThermalExpansion");
 
     if (Fel > 0)
     {
-        const real pla_mult_ = pla_mult + theta * dpla_mult;
         Stensor nq = s_dev;
         Stensor np = 1.0 * Stensor::Id();
         const auto aux = (seq + trace(sig / (1 - dam))) / (3. * f_c);
@@ -102,11 +101,9 @@ alpha.setGlossaryName("ThermalExpansion");
         const auto aux_ex = (1. - 1. / n_exp_T);
         const auto aux_arg = 1 + pow(alpha_p * (T_Celsius - 10), n_exp_T);
         real a_;
-        real dam_;
         real vp_;
 
         a_ = a + theta * da;
-        dam_ = dam + theta * ddam;
         vp_ = vp + theta * dvp;
         Rv = max(at_1 * T_Celsius + at_2 * trace(sig / (1 - dam)) / 3. + at_3,
                  1.0e-4);
