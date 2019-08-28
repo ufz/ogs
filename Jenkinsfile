@@ -142,6 +142,9 @@ pipeline {
               ])
               recordIssues enabledForFailure: true, filters: [
                 excludeFile('.*qrc_icons\\.cpp.*'), excludeFile('.*QVTKWidget.*'),
+                excludeFile('.*\\.conan.*/TFEL/.*'),
+                excludeFile('.*ThirdParty/MGIS/src.*'),
+                excludeFile('.*MaterialLib/SolidModels/MFront/.*\\.mfront'),
                 excludeMessage('.*tmpnam.*')],
                 tools: [gcc4(name: 'GCC', pattern: 'build/build*.log')],
                 unstableTotalAll: 1
