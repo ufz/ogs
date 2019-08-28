@@ -145,6 +145,7 @@ pipeline {
                 excludeFile('.*\\.conan.*/TFEL/.*'),
                 excludeFile('.*ThirdParty/MGIS/src.*'),
                 excludeFile('.*MaterialLib/SolidModels/MFront/.*\\.mfront'),
+                excludeFile('.*MaterialLib/SolidModels/MFront/.*\\.hxx'),
                 excludeMessage('.*tmpnam.*')],
                 tools: [gcc4(name: 'GCC', pattern: 'build/build*.log')],
                 unstableTotalAll: 1
