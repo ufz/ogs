@@ -168,24 +168,12 @@ std::unique_ptr<Process> createThermoMechanicsProcess(
     }
 
     // Initial stress conditions
-    ParameterLib::Parameter<double> const* initial_stress = nullptr;
-    auto const initial_stress_parameter_name =
-        //! \ogs_file_param{prj__processes__process__THERMO_MECHANICS__initial_stress}
-        config.getConfigParameterOptional<std::string>("initial_stress");
-    if (initial_stress_parameter_name)
-    {
-        initial_stress = ParameterLib::findParameterOptional<double>(
-            *initial_stress_parameter_name, parameters,
-            // Symmetric tensor size, 4 or 6, not a Kelvin vector.
-            MathLib::KelvinVector::KelvinVectorDimensions<
-                DisplacementDim>::value,
-            &mesh);
-    }
-    if (initial_stress != nullptr)
-    {
-        DBUG("Use '%s' as initial stress parameter.",
-             initial_stress->name.c_str());
-    }
+    auto const initial_stress = ParameterLib::findOptionalTagParameter<double>(
+        //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICS__initial_stress}
+        config, "initial_stress", parameters,
+        // Symmetric tensor size, 4 or 6, not a Kelvin vector.
+        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value,
+        &mesh);
 
     ThermoMechanicsProcessData<DisplacementDim> process_data{
         materialIDs(mesh),
