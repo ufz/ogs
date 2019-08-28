@@ -38,12 +38,11 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/test/AddTest.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/test/MeshTest.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/test/OgsTest.cmake)
 
+set(NUM_CTEST_PROCESSORS 3)
 if(DEFINED ENV{CTEST_NUM_THREADS})
     set(NUM_CTEST_PROCESSORS $ENV{CTEST_NUM_THREADS})
 elseif(DEFINED ENV{NUM_THREADS})
     set(NUM_CTEST_PROCESSORS $ENV{NUM_THREADS})
-else()
-    set(NUM_CTEST_PROCESSORS 3)
 endif()
 
 if(DEFINED ENV{CTEST_LARGE_NUM_THREADS})
