@@ -91,13 +91,13 @@ struct MohrCoulombAbboSloanBehaviour
         using P = ParameterLib::ConstantParameter<double>;
         // Parameters used by mfront model in the order of appearence in the
         // .mfront file.
-        static P const young_modulus("", 1e11);
-        static P const poisson_ratio("", 1e9);
-        static P const cohesion("", 0);
-        static P const friction_angle("", 10);
+        static P const young_modulus("", 150e3);
+        static P const poisson_ratio("", 0.3);
+        static P const cohesion("", 3e1);
+        static P const friction_angle("", 30);
         static P const dilatancy_angle("", 10);
-        static P const transition_angle("", 10);
-        static P const tension_cut_off_parameter("", 0.5);
+        static P const transition_angle("", 29);
+        static P const tension_cut_off_parameter("", 1e1);
         std::vector<ParameterLib::Parameter<double> const*> parameters{
             &young_modulus,
             &poisson_ratio,
