@@ -27,6 +27,15 @@ option(OGS_USE_OPTIONAL_SUBMODULES "Option for enabling optional submodules" OFF
 #iphreeqc
 add_subdirectory(iphreeqc)
 
+# MFrontGenericInterfaceSupport
+if (OGS_USE_MFRONT)
+    set(enable-doxygen-doc OFF CACHE INTERNAL "")
+    set(enable-fortran-bindings OFF CACHE INTERNAL "")
+    set(CMAKE_CXX_STANDARD 11)
+    add_subdirectory(MGIS)
+    set(CMAKE_CXX_STANDARD 17)
+endif()
+
 # VtkFbxConverter
 if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/VtkFbxConverter/CMakeLists.txt
     AND OGS_USE_OPTIONAL_SUBMODULES)

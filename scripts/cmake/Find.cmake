@@ -165,7 +165,3 @@ if(OGS_USE_CVODE)
     find_package(CVODE REQUIRED)
     add_definitions(-DCVODE_FOUND)
 endif()
-
-if(OGS_USE_MFRONT)
-    find_package(MGIS REQUIRED)
-endif()

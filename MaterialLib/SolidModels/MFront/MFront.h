@@ -44,26 +44,19 @@ public:
         : public MechanicsBase<DisplacementDim>::MaterialStateVariables
     {
         explicit MaterialStateVariables(mgis::behaviour::Behaviour const& b)
-            : _data{b}
+            : _behaviour_data{b}
         {
         }
 
         MaterialStateVariables(MaterialStateVariables const&) = default;
+        MaterialStateVariables(MaterialStateVariables&&) = delete;
 
-        void pushBackState() override { mgis::behaviour::update(_data); }
-
-        MaterialStateVariables& operator=(MaterialStateVariables const&) =
-            default;
-
-        typename MechanicsBase<DisplacementDim>::MaterialStateVariables&
-        operator=(typename MechanicsBase<DisplacementDim>::
-                      MaterialStateVariables const& state) noexcept override
+        void pushBackState() override
         {
-            return operator=(static_cast<MaterialStateVariables const&>(state));
+            mgis::behaviour::update(_behaviour_data);
         }
 
-        // TODO fix: this has to be mutable.
-        mutable mgis::behaviour::BehaviourData _data;
+        mgis::behaviour::BehaviourData _behaviour_data;
     };
 
     using KelvinVector =
@@ -93,6 +86,9 @@ public:
         typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
             material_state_variables,
         double const T) const override;
+
+    std::vector<typename MechanicsBase<DisplacementDim>::InternalVariable>
+    getInternalVariables() const override;
 
     double computeFreeEnergyDensity(
         double const t,

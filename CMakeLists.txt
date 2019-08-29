@@ -46,6 +46,7 @@ set(OGS_LIBS
     petsc
     lis
     cvode
+    tfel
     CACHE INTERNAL "")
 foreach(LIB ${OGS_LIBS})
     set(OGS_LIB_${LIB}
@@ -255,7 +256,9 @@ endif()
 option(OGS_USE_MFRONT
        "Enable solid material models by MFront (https://tfel.sourceforge.net)"
        OFF)
-
+if(OGS_USE_MFRONT)
+    add_definitions(-DOGS_USE_MFRONT)
+endif()
 # ---- Definitions ----
 if(OGS_USE_LIS)
     add_definitions(-DUSE_LIS)

@@ -270,7 +270,7 @@
         <vtkdiff>
             <file>m2_2Dload_pcs_0_ts_6_t_0.500000.vtu</file>
             <field>sigma</field>
-            <absolute_tolerance>1e-11</absolute_tolerance>
+            <absolute_tolerance>2e-11</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>

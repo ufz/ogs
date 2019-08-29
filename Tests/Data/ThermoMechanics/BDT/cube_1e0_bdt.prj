@@ -9,7 +9,6 @@
             <integration_order>2</integration_order>
             <constitutive_relation>
                 <type>MFront</type>
-                <library>libBehaviour.so</library>
                 <behaviour>BDT</behaviour>
                 <material_properties>
                     <material_property name="YoungModulus" parameter="E"/>
@@ -54,9 +53,9 @@
             <process ref="SD">
                 <nonlinear_solver>basic_newton</nonlinear_solver>
                 <convergence_criterion>
-                    <type>DeltaX</type>
+                    <type>PerComponentDeltaX</type>
                     <norm_type>NORM2</norm_type>
-                    <abstol>1e-14</abstol>
+                    <abstols>1e-16 1e-3 1e-16 1e-3</abstols>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>

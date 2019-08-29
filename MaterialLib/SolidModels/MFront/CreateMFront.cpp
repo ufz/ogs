@@ -9,8 +9,6 @@
 
 #include "CreateMFront.h"
 
-#ifdef OGS_USE_MFRONT
-
 #include "BaseLib/FileTools.h"
 #include "ParameterLib/Utils.h"
 
@@ -35,6 +33,17 @@ void varInfo(std::string const& msg,
              mgis::behaviour::getVariableOffset(vars, var.name, hypothesis));
     }
 }
+
+/// Prints info about MFront parameters.
+void varInfo(std::string const& msg, std::vector<std::string> const& parameters)
+{
+    INFO("#%s: %lu (array size %lu).", msg.c_str(), parameters.size());
+    // mgis::behaviour::getArraySize(vars, hypothesis));
+    for (auto const& parameter : parameters)
+    {
+        INFO("  --> with name `%s'.", parameter.c_str());
+    }
+}
 }  // anonymous namespace
 
 namespace MaterialLib
@@ -53,10 +62,14 @@ std::unique_ptr<MechanicsBase<DisplacementDim>> createMFront(
     //! \ogs_file_param{material__solid__constitutive_relation__type}
     config.checkConfigParameter("type", "MFront");
 
-    auto const lib_path = BaseLib::joinPaths(
-        BaseLib::getProjectDirectory(),
-        //! \ogs_file_param{material__solid__constitutive_relation__MFront__library}
-        config.getConfigParameter<std::string>("library"));
+    //! \ogs_file_param{material__solid__constitutive_relation__MFront__library}
+    auto const library_name =
+        config.getConfigParameterOptional<std::string>("library");
+    auto const lib_path =
+        library_name
+            ? BaseLib::joinPaths(BaseLib::getProjectDirectory(), *library_name)
+            : "libOgsMFrontBehaviour.so";
+
     auto const behaviour_name =
         //! \ogs_file_param{material__solid__constitutive_relation__MFront__behaviour}
         config.getConfigParameter<std::string>("behaviour");
@@ -99,7 +112,9 @@ std::unique_ptr<MechanicsBase<DisplacementDim>> createMFront(
 
     // TODO read parameters from prj file, not yet (2018-11-05) supported by
     // MGIS library.
-    varInfo("Parameters", behaviour.parameters, hypothesis);
+    varInfo("Real-valued parameters", behaviour.params);
+    varInfo("Integer parameters", behaviour.iparams);
+    varInfo("Unsigned parameters", behaviour.usparams);
 
     std::vector<ParameterLib::Parameter<double> const*> material_properties;
 
@@ -181,28 +196,6 @@ std::unique_ptr<MechanicsBase<DisplacementDim>> createMFront(
 }  // namespace MFront
 }  // namespace Solids
 }  // namespace MaterialLib
-
-#else  // OGS_USE_MFRONT
-
-namespace MaterialLib
-{
-namespace Solids
-{
-namespace MFront
-{
-template <int DisplacementDim>
-std::unique_ptr<MechanicsBase<DisplacementDim>> createMFront(
-    std::vector<
-        std::unique_ptr<ParameterLib::ParameterBase>> const& /*parameters*/,
-    BaseLib::ConfigTree const& /*config*/)
-{
-    OGS_FATAL("OpenGeoSys has not been build with MFront support.");
-}
-}  // namespace MFront
-}  // namespace Solids
-}  // namespace MaterialLib
-
-#endif  // OGS_USE_MFRONT
 
 namespace MaterialLib
 {

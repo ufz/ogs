@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
-    <mesh>disc_with_hole.vtu</mesh>
-    <geometry>disc_with_hole.gml</geometry>
+    <mesh>cube_1x1x1_hex_1e0.vtu</mesh>
+    <geometry>cube_1x1x1.gml</geometry>
     <processes>
         <process>
             <name>SD</name>
@@ -9,14 +9,15 @@
             <integration_order>2</integration_order>
             <constitutive_relation>
                 <type>MFront</type>
-                <behaviour>Elasticity</behaviour>
+                <behaviour>StandardElasticityBrick</behaviour>
                 <material_properties>
                     <material_property name="YoungModulus" parameter="E"/>
                     <material_property name="PoissonRatio" parameter="nu"/>
                 </material_properties>
             </constitutive_relation>
             <solid_density>rho_sr</solid_density>
-            <specific_body_force>0 0</specific_body_force>
+            <specific_body_force>0 0 0</specific_body_force>
+            <reference_temperature>293.15</reference_temperature>
             <process_variables>
                 <process_variable>displacement</process_variable>
             </process_variables>
@@ -32,7 +33,7 @@
                 <convergence_criterion>
                     <type>DeltaX</type>
                     <norm_type>NORM2</norm_type>
-                    <abstol>1e-15</abstol>
+                    <abstol>1e-14</abstol>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>
@@ -52,7 +53,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>disc_with_hole</prefix>
+            <prefix>cube_1e0</prefix>
             <timesteps>
                 <pair>
                     <repeat>1</repeat>
@@ -77,6 +78,31 @@
             <value>.3</value>
         </parameter>
         <parameter>
+            <name>Cohesion</name>
+            <type>Constant</type>
+            <value>1</value>
+        </parameter>
+        <parameter>
+            <name>FrictionAngle</name>
+            <type>Constant</type>
+            <value>1</value>
+        </parameter>
+        <parameter>
+            <name>DilatancyAngle</name>
+            <type>Constant</type>
+            <value>1</value>
+        </parameter>
+        <parameter>
+            <name>TransitionAngle</name>
+            <type>Constant</type>
+            <value>1</value>
+        </parameter>
+        <parameter>
+            <name>TensionCutOffParameter</name>
+            <type>Constant</type>
+            <value>0</value>
+        </parameter>
+        <parameter>
             <name>rho_sr</name>
             <type>Constant</type>
             <value>1</value>
@@ -84,7 +110,7 @@
         <parameter>
             <name>displacement0</name>
             <type>Constant</type>
-            <values>0 0</values>
+            <values>0 0 0</values>
         </parameter>
         <parameter>
             <name>dirichlet0</name>
@@ -105,29 +131,36 @@
     <process_variables>
         <process_variable>
             <name>displacement</name>
-            <components>2</components>
+            <components>3</components>
             <order>1</order>
             <initial_condition>displacement0</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>disc_with_hole</geometrical_set>
-                    <geometry>LEFT</geometry>
+                    <geometrical_set>cube_1x1x1_geometry</geometrical_set>
+                    <geometry>left</geometry>
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>dirichlet0</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <geometrical_set>disc_with_hole</geometrical_set>
-                    <geometry>BOTTOM</geometry>
+                    <geometrical_set>cube_1x1x1_geometry</geometrical_set>
+                    <geometry>front</geometry>
                     <type>Dirichlet</type>
                     <component>1</component>
-                    <parameter>dirichlet1</parameter>
+                    <parameter>dirichlet0</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <geometrical_set>disc_with_hole</geometrical_set>
-                    <geometry>TOP</geometry>
+                    <geometrical_set>cube_1x1x1_geometry</geometrical_set>
+                    <geometry>bottom</geometry>
+                    <type>Dirichlet</type>
+                    <component>2</component>
+                    <parameter>dirichlet0</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <geometrical_set>cube_1x1x1_geometry</geometrical_set>
+                    <geometry>top</geometry>
                     <type>Neumann</type>
-                    <component>1</component>
+                    <component>2</component>
                     <parameter>neumann_force</parameter>
                 </boundary_condition>
             </boundary_conditions>
@@ -146,7 +179,7 @@
             <name>general_linear_solver</name>
             <lis>-i cg -p jacobi -tol 1e-16 -maxiter 10000</lis>
             <eigen>
-                <solver_type>CG</solver_type>
+                <solver_type>SparseLU</solver_type>
                 <precon_type>DIAGONAL</precon_type>
                 <max_iteration_step>10000</max_iteration_step>
                 <error_tolerance>1e-16</error_tolerance>

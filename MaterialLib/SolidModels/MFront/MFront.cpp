@@ -222,6 +222,18 @@ MFront<DisplacementDim>::MFront(
                 mgis::behaviour::getVariableSize(
                     _behaviour.thermodynamic_forces[0], hypothesis));
     }
+
+    if (_behaviour.mps.size() != _material_properties.size())
+    {
+        ERR("There are %d material properties in the loaded behaviour:",
+            _behaviour.mps.size());
+        for (auto const& mp : _behaviour.mps)
+        {
+            ERR("\t%s", mp.name.c_str());
+        }
+        OGS_FATAL("But the number of passed material properties is %d.",
+                  _material_properties.size());
+    }
 }
 
 template <int DisplacementDim>
@@ -249,33 +261,35 @@ MFront<DisplacementDim>::integrateStress(
 {
     assert(
         dynamic_cast<MaterialStateVariables const*>(&material_state_variables));
-    auto& d =
-        static_cast<MaterialStateVariables const&>(material_state_variables)
-            ._data;
+    // New state, copy of current one, packed in unique_ptr for return.
+    auto state = std::make_unique<MaterialStateVariables>(
+        static_cast<MaterialStateVariables const&>(material_state_variables));
+    auto& behaviour_data = state->_behaviour_data;
 
     // TODO add a test of material behaviour where the value of dt matters.
-    d.dt = dt;
-    d.rdt = 1.0;
-    d.K[0] = 4.0;  // if K[0] is greater than 3.5, the consistent tangent
-                   // operator must be computed.
+    behaviour_data.dt = dt;
+    behaviour_data.rdt = 1.0;
+    behaviour_data.K[0] = 4.0;  // if K[0] is greater than 3.5, the consistent
+                                // tangent operator must be computed.
 
     // evaluate parameters at (t, x)
     {
-        auto out = d.s1.material_properties.begin();
+        auto out = behaviour_data.s1.material_properties.begin();
         for (auto* param : _material_properties)
         {
             auto const& vals = (*param)(t, x);
             out = std::copy(vals.begin(), vals.end(), out);
         }
+        assert(out == behaviour_data.s1.material_properties.end());
     }
 
-    if (!d.s1.external_state_variables.empty())
+    if (!behaviour_data.s1.external_state_variables.empty())
     {
         // assuming that there is only temperature
-        d.s1.external_state_variables[0] = T;
+        behaviour_data.s1.external_state_variables[0] = T;
     }
 
-    auto v = mgis::behaviour::make_view(d);
+    auto v = mgis::behaviour::make_view(behaviour_data);
 
     auto const eps_MFront = OGSToMFront(eps);
     for (auto i = 0; i < KelvinVector::SizeAtCompileTime; ++i)
@@ -292,26 +306,66 @@ MFront<DisplacementDim>::integrateStress(
     KelvinVector sigma;
     for (auto i = 0; i < KelvinVector::SizeAtCompileTime; ++i)
     {
-        sigma[i] = d.s1.thermodynamic_forces[i];
+        sigma[i] = behaviour_data.s1.thermodynamic_forces[i];
     }
     sigma = MFrontToOGS(sigma);
 
     // TODO row- vs. column-major storage order. This should only matter for
     // anisotropic materials.
-    if (d.K.size() !=
+    if (behaviour_data.K.size() !=
         KelvinMatrix::RowsAtCompileTime * KelvinMatrix::ColsAtCompileTime)
         OGS_FATAL("Stiffness matrix has wrong size.");
 
-    KelvinMatrix C = MFrontToOGS(Eigen::Map<KelvinMatrix>(d.K.data()));
+    KelvinMatrix C =
+        MFrontToOGS(Eigen::Map<KelvinMatrix>(behaviour_data.K.data()));
 
-    // TODO avoid copying the state
-    auto state_copy = std::make_unique<MaterialStateVariables>(
-        static_cast<MaterialStateVariables const&>(material_state_variables));
-    std::unique_ptr<
-        typename MechanicsBase<DisplacementDim>::MaterialStateVariables>
-        state_upcast(state_copy.release());
+    return boost::make_optional(
+        std::make_tuple<typename MFront<DisplacementDim>::KelvinVector,
+                        std::unique_ptr<typename MechanicsBase<
+                            DisplacementDim>::MaterialStateVariables>,
+                        typename MFront<DisplacementDim>::KelvinMatrix>(
+            std::move(sigma),
+            std::move(state),
+            std::move(C)));
+}
 
-    return {std::make_tuple(std::move(sigma), std::move(state_upcast), std::move(C))};
+template <int DisplacementDim>
+std::vector<typename MechanicsBase<DisplacementDim>::InternalVariable>
+MFront<DisplacementDim>::getInternalVariables() const
+{
+    std::vector<typename MechanicsBase<DisplacementDim>::InternalVariable>
+        internal_variables;
+
+    for (auto const& iv : _behaviour.isvs)
+    {
+        auto const name = iv.name;
+        auto const offset = mgis::behaviour::getVariableOffset(
+            _behaviour.isvs, name, _behaviour.hypothesis);
+        auto const size =
+            mgis::behaviour::getVariableSize(iv, _behaviour.hypothesis);
+
+        typename MechanicsBase<DisplacementDim>::InternalVariable new_variable{
+            name, static_cast<unsigned>(size),
+            [offset, size](
+                typename MechanicsBase<
+                    DisplacementDim>::MaterialStateVariables const& state,
+                std::vector<double>& cache) -> std::vector<double> const& {
+                assert(dynamic_cast<MaterialStateVariables const*>(&state) !=
+                       nullptr);
+                auto const& internal_state_variables =
+                    static_cast<MaterialStateVariables const&>(state)
+                        ._behaviour_data.s1.internal_state_variables;
+
+                cache.resize(size);
+                std::copy_n(internal_state_variables.data() + offset,
+                            size,
+                            begin(cache));
+                return cache;
+            }};
+        internal_variables.push_back(new_variable);
+    }
+
+    return internal_variables;
 }
 
 template <int DisplacementDim>

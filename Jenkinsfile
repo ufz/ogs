@@ -101,6 +101,7 @@ pipeline {
           }
           environment {
             OMP_NUM_THREADS = '1'
+            LD_LIBRARY_PATH = "$WORKSPACE/build/lib"
           }
           steps {
             script {
@@ -111,7 +112,9 @@ pipeline {
                   '-DOGS_CPU_ARCHITECTURE=generic ' +
                   '-DOGS_BUILD_UTILS=ON ' +
                   '-DOGS_CONAN_BUILD=outdated ' +
-                  '-DOGS_USE_CVODE=ON '
+                  '-DOGS_USE_CVODE=ON ' +
+                  '-DOGS_USE_MFRONT=ON ' +
+                  '-DOGS_USE_PYTHON=ON '
               }
               build {
                 target="package"
@@ -139,6 +142,10 @@ pipeline {
               ])
               recordIssues enabledForFailure: true, filters: [
                 excludeFile('.*qrc_icons\\.cpp.*'), excludeFile('.*QVTKWidget.*'),
+                excludeFile('.*\\.conan.*/TFEL/.*'),
+                excludeFile('.*ThirdParty/MGIS/src.*'),
+                excludeFile('.*MaterialLib/SolidModels/MFront/.*\\.mfront'),
+                excludeFile('.*MaterialLib/SolidModels/MFront/.*\\.hxx'),
                 excludeMessage('.*tmpnam.*')],
                 tools: [gcc4(name: 'GCC', pattern: 'build/build*.log')],
                 unstableTotalAll: 1

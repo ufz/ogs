@@ -29,7 +29,9 @@ append_source_files(SOURCES
                     PorousMedium/UnsaturatedProperty/RelativePermeability)
 append_source_files(SOURCES TwoPhaseModels)
 
-add_subdirectory(SolidModels/MFront)
+if(OGS_USE_MFRONT)
+    add_subdirectory(SolidModels/MFront)
+endif()
 
 add_library(MaterialLib ${SOURCES})
 if(BUILD_SHARED_LIBS)
@@ -40,9 +42,11 @@ include(GenerateExportHeader)
 generate_export_header(MaterialLib)
 target_include_directories(MaterialLib PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 
-target_link_libraries(MaterialLib
-                      PUBLIC MaterialLib_SolidModels_MFront
-                      PRIVATE MathLib MeshLib ParameterLib)
+target_link_libraries(MaterialLib PRIVATE MathLib MeshLib ParameterLib)
+
+if(OGS_USE_MFRONT)
+    target_link_libraries(MaterialLib PUBLIC MaterialLib_SolidModels_MFront)
+endif()
 
 if(OGS_USE_PCH)
     cotire(MaterialLib)
