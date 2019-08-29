@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include <netcdfcpp.h>
+#include <netcdf>
 
 #include <QDialog>
 #include "ui_NetCdfConfigure.h"
@@ -65,8 +65,8 @@ private:
     QString setName();
     void reverseNorthSouth(double* data, std::size_t width, std::size_t height);
 
-    NcFile *_currentFile;
-    NcVar *_currentVar;
+    netCDF::NcFile _currentFile;
+    netCDF::NcVar _currentVar;
     QDateTime _currentInitialDateTime;
     MeshLib::Mesh* _currentMesh;
     VtkGeoImageSource* _currentRaster;
