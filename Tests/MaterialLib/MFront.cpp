@@ -48,7 +48,7 @@ struct StandardElasticityBrickBehaviour
         // Parameters used by mfront model in the order of appearence in the
         // .mfront file.
         static P const young_modulus("", 1e11);
-        static P const poisson_ratio("", 1e9);
+        static P const poisson_ratio("", 0.3);
         std::vector<ParameterLib::Parameter<double> const*> parameters{
             &young_modulus, &poisson_ratio};
 
@@ -69,7 +69,7 @@ struct ElasticBehaviour
         // Parameters used by mfront model in the order of appearence in the
         // .mfront file.
         static P const young_modulus("", 1e11);
-        static P const poisson_ratio("", 1e9);
+        static P const poisson_ratio("", 0.3);
         std::vector<ParameterLib::Parameter<double> const*> parameters{
             &young_modulus, &poisson_ratio};
 
