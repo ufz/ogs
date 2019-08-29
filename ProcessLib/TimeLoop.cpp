@@ -491,7 +491,7 @@ bool TimeLoop::loop()
                             timesteps, t, *_output, &Output::doOutput);
         }
 
-        if (t + dt > _end_time ||
+        if (t == _end_time || t + dt > _end_time ||
             t + std::numeric_limits<double>::epsilon() > _end_time)
         {
             break;
