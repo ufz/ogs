@@ -1,0 +1,222 @@
+/**
+ * \copyright
+ * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.org/project/license
+ *
+ */
+
+#include <cmath>
+
+#include "BaseLib/Error.h"
+#include "PhreeqcKernel.h"
+
+#include "ThirdParty/iphreeqc/src/src/phreeqcpp/cxxKinetics.h"
+
+namespace ChemistryLib
+{
+namespace PhreeqcKernelData
+{
+PhreeqcKernel::PhreeqcKernel(
+    std::size_t const num_chemical_systems,
+    std::vector<std::pair<int, std::string>> const&
+        process_id_to_component_name_map,
+    std::string const& database,
+    PhreeqcKernelData::AqueousSolution& aqueous_solution,
+    cxxKinetics& kinetic_reactants,
+    std::tuple<rate*, int> const& reaction_rates)
+    : Phreeqc()
+{
+    do_initialize();
+
+    // load database
+    std::ifstream in(database);
+    if (!in)
+    {
+        OGS_FATAL("Unable to open database file '%s'.", database.c_str());
+    }
+    assert(phrq_io->get_istream() == nullptr);
+    phrq_io->push_istream(&in, false);
+    read_database();
+
+    // solution
+    for (std::size_t chemical_system_id = 0;
+         chemical_system_id < num_chemical_systems;
+         ++chemical_system_id)
+    {
+        aqueous_solution.Set_n_user_both(chemical_system_id);
+        Rxn_solution_map.emplace(chemical_system_id, aqueous_solution);
+    }
+    use.Set_solution_in(true);
+
+    // kinetics
+    if (!kinetic_reactants.Get_kinetics_comps().empty())
+    {
+        for (std::size_t chemical_system_id = 0;
+             chemical_system_id < num_chemical_systems;
+             ++chemical_system_id)
+        {
+            kinetic_reactants.Set_n_user_both(chemical_system_id);
+            Rxn_kinetics_map.emplace(chemical_system_id, kinetic_reactants);
+        }
+        use.Set_kinetics_in(true);
+    }
+
+    // rates
+    std::tie(rates, count_rates) = reaction_rates;
+
+    // set a strict convergence tolerance
+    convergence_tolerance = 1e-12;
+
+    _templated_initial_aqueous_solution = *aqueous_solution.Get_initial_data();
+
+    for (auto const& process_id_to_component_name_map_element :
+         process_id_to_component_name_map)
+    {
+        auto const transport_process_id =
+            process_id_to_component_name_map_element.first;
+
+        auto const& transport_process_variable =
+            process_id_to_component_name_map_element.second;
+        auto master_species =
+            master_bsearch(transport_process_variable.c_str());
+
+        _process_id_to_master_map[transport_process_id] = master_species;
+    }
+}
+
+void PhreeqcKernel::doWaterChemistryCalculation(
+    std::vector<GlobalVector*>& process_solutions, double const dt)
+{
+    setAqueousSolutions(process_solutions);
+    setTimeStep(dt);
+
+    execute(process_solutions);
+}
+
+void PhreeqcKernel::setAqueousSolutions(
+    std::vector<GlobalVector*> const& process_solutions)
+{
+    // Loop over chemical systems
+    std::size_t const num_chemical_systems = process_solutions[0]->size();
+    for (std::size_t chemical_system_id = 0;
+         chemical_system_id < num_chemical_systems;
+         ++chemical_system_id)
+    {
+        auto& aqueous_solution = Rxn_solution_map[chemical_system_id];
+
+        // Get or create initial aqueous solution
+        if (!aqueous_solution.Get_initial_data())
+        {
+            aqueous_solution.Set_initial_data(
+                &_templated_initial_aqueous_solution);
+            aqueous_solution.Set_new_def(true);
+        }
+        auto initial_aqueous_solution = aqueous_solution.Get_initial_data();
+
+        auto& components = initial_aqueous_solution->Get_comps();
+        // Loop over transport process id map to retrieve component
+        // concentrations from process solutions or to update process
+        // solutions after chemical calculation by Phreeqc
+        for (auto const& process_id_to_master_pair : _process_id_to_master_map)
+        {
+            auto& transport_process_id = process_id_to_master_pair.first;
+            auto& transport_process_solution =
+                process_solutions[transport_process_id];
+
+            auto& master_species = process_id_to_master_pair.second;
+            auto& element_name = master_species->elt->name;
+            if (strcmp(element_name, "H") == 0)
+            {
+                // Set pH value by hydrogen concentration.
+                double const pH = -std::log10(
+                    transport_process_solution->get(chemical_system_id));
+                aqueous_solution.Set_ph(pH);
+            }
+            else
+            {
+                // Set component concentrations.
+                auto const concentration =
+                    transport_process_solution->get(chemical_system_id);
+                components[element_name].Set_input_conc(concentration);
+            }
+        }
+    }
+}
+
+void PhreeqcKernel::setTimeStep(double const dt)
+{
+    // Loop over rxn kinetics map
+    for (auto& [chemical_system_id, kinetics] : Rxn_kinetics_map)
+    {
+        (void)chemical_system_id;
+        kinetics.Get_steps().push_back(dt);
+    }
+}
+
+void PhreeqcKernel::execute(std::vector<GlobalVector*>& process_solutions)
+{
+    std::size_t const num_chemical_systems = process_solutions[0]->size();
+    for (std::size_t chemical_system_id = 0;
+         chemical_system_id < num_chemical_systems;
+         ++chemical_system_id)
+    {
+        Rxn_new_solution.insert(chemical_system_id);
+        new_solution = 1;
+        use.Set_n_solution_user(chemical_system_id);
+
+        if (!Rxn_kinetics_map.empty())
+        {
+            use.Set_kinetics_in(true);
+            use.Set_n_kinetics_user(chemical_system_id);
+        }
+
+        pr.all = false;
+
+        initial_solutions(false);
+
+        reactions();
+
+        updateNodalProcessSolutions(process_solutions, chemical_system_id);
+
+        // Clean up
+        Rxn_new_solution.clear();
+        Rxn_solution_map[chemical_system_id].Get_totals().clear();
+
+        if (!Rxn_kinetics_map.empty())
+        {
+            Rxn_kinetics_map[chemical_system_id].Get_steps().clear();
+        }
+    }
+}
+
+void PhreeqcKernel::updateNodalProcessSolutions(
+    std::vector<GlobalVector*> const& process_solutions,
+    std::size_t const node_id)
+{
+    for (auto const& process_id_to_master_pair : _process_id_to_master_map)
+    {
+        auto const transport_process_id = process_id_to_master_pair.first;
+        auto& transport_process_solution =
+            process_solutions[transport_process_id];
+
+        auto const& master_species = process_id_to_master_pair.second;
+        auto const& element_name = master_species->elt->name;
+        if (strcmp(element_name, "H") == 0)
+        {
+            // Update hydrogen concentration by pH value.
+            auto const hydrogen_concentration = std::pow(10, s_hplus->la);
+            transport_process_solution->set(node_id, hydrogen_concentration);
+        }
+        else
+        {
+            // Update solutions of component transport processes.
+            auto const concentration =
+                master_species->total_primary / mass_water_aq_x;
+            transport_process_solution->set(node_id, concentration);
+        }
+    }
+}
+}  // namespace PhreeqcKernelData
+}  // namespace ChemistryLib
