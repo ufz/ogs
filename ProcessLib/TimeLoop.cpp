@@ -723,7 +723,10 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
         // process.
         // TODO: move into a global loop to consider both mass balance over
         // space and localized chemical equilibrium between solutes.
+        BaseLib::RunTime time_phreeqc;
+        time_phreeqc.start();
         _chemical_system->doWaterChemistryCalculation(_process_solutions, dt);
+        INFO("[time] Phreeqc took %g s.", time_phreeqc.elapsed());
     }
 
     int process_id = 0;
