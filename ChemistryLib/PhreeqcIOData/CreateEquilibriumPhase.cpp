@@ -17,6 +17,8 @@
 
 namespace ChemistryLib
 {
+namespace PhreeqcIOData
+{
 std::vector<EquilibriumPhase> createEquilibriumPhases(
     boost::optional<BaseLib::ConfigTree> const& config,
     MeshLib::Mesh const& mesh)
@@ -59,4 +61,5 @@ std::vector<EquilibriumPhase> createEquilibriumPhases(
 
     return equilibrium_phases;
 }
+}  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

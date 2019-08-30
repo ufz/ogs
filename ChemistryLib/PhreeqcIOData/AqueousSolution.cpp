@@ -14,6 +14,8 @@
 
 namespace ChemistryLib
 {
+namespace PhreeqcIOData
+{
 std::ostream& operator<<(std::ostream& os,
                          AqueousSolution const& aqueous_solution)
 {
@@ -48,4 +50,5 @@ std::ostream& operator<<(std::ostream& os,
 
     return os;
 }
+}  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

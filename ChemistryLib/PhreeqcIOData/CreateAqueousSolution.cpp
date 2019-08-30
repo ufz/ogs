@@ -14,6 +14,8 @@
 
 namespace ChemistryLib
 {
+namespace PhreeqcIOData
+{
 AqueousSolution createAqueousSolution(BaseLib::ConfigTree const& config)
 {
     //! \ogs_file_param{prj__chemical_system__solution__temperature}
@@ -71,4 +73,5 @@ AqueousSolution createAqueousSolution(BaseLib::ConfigTree const& config)
     return {temperature, pressure, pe, std::move(components),
             means_of_adjusting_charge};
 }
+}  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

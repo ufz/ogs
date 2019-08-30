@@ -13,6 +13,8 @@
 
 namespace ChemistryLib
 {
+namespace PhreeqcIOData
+{
 std::vector<ReactionRate> createReactionRates(
     boost::optional<BaseLib::ConfigTree> const& config)
 {
@@ -49,4 +51,5 @@ std::vector<ReactionRate> createReactionRates(
 
     return reaction_rates;
 }
+}  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

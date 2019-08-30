@@ -21,6 +21,8 @@
 
 namespace ChemistryLib
 {
+namespace PhreeqcIOData
+{
 enum class Status
 {
     SettingAqueousSolutions,
@@ -74,4 +76,5 @@ private:
     double _dt = std::numeric_limits<double>::quiet_NaN();
     const int phreeqc_instance_id = 0;
 };
+}  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

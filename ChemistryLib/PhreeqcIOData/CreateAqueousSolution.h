@@ -17,10 +17,10 @@ class ConfigTree;
 
 namespace ChemistryLib
 {
-struct AqueousSolution;
-}
-
-namespace ChemistryLib
+namespace PhreeqcIOData
 {
+struct AqueousSolution;
+
 AqueousSolution createAqueousSolution(BaseLib::ConfigTree const& config);
+}  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

@@ -25,12 +25,12 @@ class Mesh;
 
 namespace ChemistryLib
 {
-struct EquilibriumPhase;
-}
-
-namespace ChemistryLib
+namespace PhreeqcIOData
 {
+struct EquilibriumPhase;
+
 std::vector<EquilibriumPhase> createEquilibriumPhases(
     boost::optional<BaseLib::ConfigTree> const& config,
     MeshLib::Mesh const& mesh);
+}  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

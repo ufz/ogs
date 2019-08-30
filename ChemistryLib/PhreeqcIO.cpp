@@ -20,6 +20,8 @@
 
 namespace ChemistryLib
 {
+namespace PhreeqcIOData
+{
 namespace
 {
 template <typename DataBlock>
@@ -410,4 +412,5 @@ std::istream& operator>>(std::istream& in, PhreeqcIO& phreeqc_io)
 
     return in;
 }
+}  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

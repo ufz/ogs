@@ -14,6 +14,8 @@
 
 namespace ChemistryLib
 {
+namespace PhreeqcIOData
+{
 std::ostream& operator<<(std::ostream& os, ReactionRate const& reaction_rate)
 {
     os << reaction_rate.kinetic_reactant << "\n";
@@ -28,4 +30,5 @@ std::ostream& operator<<(std::ostream& os, ReactionRate const& reaction_rate)
 
     return os;
 }
+}  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

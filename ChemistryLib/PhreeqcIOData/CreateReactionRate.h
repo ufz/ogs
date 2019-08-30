@@ -20,11 +20,11 @@ class ConfigTree;
 
 namespace ChemistryLib
 {
-struct ReactionRate;
-}
-
-namespace ChemistryLib
+namespace PhreeqcIOData
 {
+struct ReactionRate;
+
 std::vector<ReactionRate> createReactionRates(
     boost::optional<BaseLib::ConfigTree> const& config);
+}  // namespace PhreeqcIOData
 }  // namespace ChemistryLib
