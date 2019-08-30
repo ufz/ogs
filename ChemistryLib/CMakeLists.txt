@@ -1,6 +1,7 @@
 # Source files grouped by a directory
 get_source_files(SOURCES)
 append_source_files(SOURCES PhreeqcIOData)
+append_source_files(SOURCES PhreeqcKernelData)
 
 # Create the library
 add_library(ChemistryLib ${SOURCES})
