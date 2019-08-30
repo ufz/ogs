@@ -12,7 +12,7 @@
 
 #include <memory>
 
-#include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
+#include "ChemicalSolverInterface.h"
 #include "PhreeqcIOData/AqueousSolution.h"
 #include "PhreeqcIOData/EquilibriumPhase.h"
 #include "PhreeqcIOData/KineticReactant.h"
@@ -29,7 +29,7 @@ enum class Status
     UpdatingProcessSolutions
 };
 
-class PhreeqcIO
+class PhreeqcIO final : public ChemicalSolverInterface
 {
 public:
     PhreeqcIO(std::string const& project_file_name,
@@ -43,13 +43,14 @@ public:
                   process_id_to_component_name_map);
 
     void doWaterChemistryCalculation(
-        std::vector<GlobalVector*>& process_solutions, double const dt);
+        std::vector<GlobalVector*>& process_solutions,
+        double const dt) override;
 
     void setAqueousSolutionsOrUpdateProcessSolutions(
         std::vector<GlobalVector*> const& process_solutions,
         Status const status);
 
-    void setTimeStep(double const dt) { _dt = dt; }
+    void setTimeStep(double const dt) override { _dt = dt; }
 
     void writeInputsToFile();
 
