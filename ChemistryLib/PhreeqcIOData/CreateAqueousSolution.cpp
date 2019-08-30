@@ -11,12 +11,45 @@
 #include "AqueousSolution.h"
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
+#include "CreateSolutionComponent.h"
 
 namespace ChemistryLib
 {
 namespace PhreeqcIOData
 {
-AqueousSolution createAqueousSolution(BaseLib::ConfigTree const& config)
+namespace
+{
+MeansOfAdjustingCharge parseMeansOfAdjustingCharge(
+    BaseLib::ConfigTree const& config)
+{
+    auto const means_of_adjusting_charge_in_str =
+        //! \ogs_file_param{prj__chemical_system__solution__means_of_adjusting_charge}
+        config.getConfigParameter<std::string>("means_of_adjusting_charge", "");
+
+    if (means_of_adjusting_charge_in_str.empty())
+    {
+        return MeansOfAdjustingCharge::Unspecified;
+    }
+    if (means_of_adjusting_charge_in_str == "pH")
+    {
+        return MeansOfAdjustingCharge::pH;
+    }
+    if (means_of_adjusting_charge_in_str == "pe")
+    {
+        return MeansOfAdjustingCharge::pe;
+    }
+
+    OGS_FATAL(
+        "Error in specifying means of adjusting charge. Achieving charge "
+        "balance is currently supported with the way of adjusting pH value or "
+        "pe value.");
+}
+}  // namespace
+
+AqueousSolution createAqueousSolution(
+    BaseLib::ConfigTree const& config,
+    std::vector<std::pair<int, std::string>> const&
+        process_id_to_component_name_map)
 {
     //! \ogs_file_param{prj__chemical_system__solution__temperature}
     auto const temperature = config.getConfigParameter<double>("temperature");
@@ -27,48 +60,10 @@ AqueousSolution createAqueousSolution(BaseLib::ConfigTree const& config)
     //! \ogs_file_param{prj__chemical_system__solution__pe}
     auto const pe = config.getConfigParameter<double>("pe");
 
-    //! \ogs_file_param{prj__chemical_system__solution__components}
-    auto comp_config = config.getConfigSubtree("components");
+    auto components =
+        createSolutionComponents(config, process_id_to_component_name_map);
 
-    std::vector<Component> components;
-    for (
-        auto const& component_name :
-        //! \ogs_file_param{prj__chemical_system__solution__components__component}
-        comp_config.getConfigParameterList<std::string>("component"))
-    {
-        components.emplace_back(component_name);
-    }
-
-    // conversion the variable 'means_of_adjusting_charge' from std::string to
-    // enumerate class.
-    auto const means_of_adjusting_charge_in_str =
-        //! \ogs_file_param{prj__chemical_system__solution__means_of_adjusting_charge}
-        config.getConfigParameterOptional<std::string>(
-            "means_of_adjusting_charge");
-
-    MeansOfAdjustingCharge means_of_adjusting_charge;
-    if (means_of_adjusting_charge_in_str)
-    {
-        if (*means_of_adjusting_charge_in_str == "pH")
-        {
-            means_of_adjusting_charge = MeansOfAdjustingCharge::pH;
-        }
-        else if (*means_of_adjusting_charge_in_str == "pe")
-        {
-            means_of_adjusting_charge = MeansOfAdjustingCharge::pe;
-        }
-        else
-        {
-            OGS_FATAL(
-                "Error in specifying means of adjusting charge. Achieving "
-                "charge balance is currently supported with the way of "
-                "adjusting pH value or pe value.");
-        }
-    }
-    else
-    {
-        means_of_adjusting_charge = MeansOfAdjustingCharge::Unspecified;
-    }
+    auto means_of_adjusting_charge = parseMeansOfAdjustingCharge(config);
 
     return {temperature, pressure, pe, std::move(components),
             means_of_adjusting_charge};
