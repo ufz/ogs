@@ -59,10 +59,14 @@ ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
         static const int kelvin_vector_size =
             MathLib::KelvinVector::KelvinVectorDimensions<
                 DisplacementDim>::value;
+        // Initialize current time step values
         ip_data.sigma.setZero(kelvin_vector_size);
-        ip_data.sigma_prev.setZero(kelvin_vector_size);
         ip_data.eps.setZero(kelvin_vector_size);
-        ip_data.eps_prev.setZero(kelvin_vector_size);
+
+        // Previous time step values are not initialized and are set later.
+        ip_data.sigma_prev.resize(kelvin_vector_size);
+        ip_data.eps_prev.resize(kelvin_vector_size);
+
         ip_data.eps_m.setZero(kelvin_vector_size);
         ip_data.eps_m_prev.setZero(kelvin_vector_size);
         ParameterLib::SpatialPosition x_position;
@@ -74,28 +78,6 @@ ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
         ip_data.dNdx = shape_matrices[ip].dNdx;
 
         _secondary_data.N[ip] = shape_matrices[ip].N;
-
-        // Initialize current time step values
-        if (_process_data.nonequilibrium_stress)
-        {
-            // Computation of non-equilibrium stress.
-            x_position.setCoordinates(MathLib::Point3d(
-                interpolateCoordinates<ShapeFunction, ShapeMatricesType>(
-                    e, ip_data.N)));
-            std::vector<double> sigma_neq_data = (*_process_data
-                                                       .nonequilibrium_stress)(
-                std::numeric_limits<double>::quiet_NaN() /* time independent */,
-                x_position);
-            ip_data.sigma_neq =
-                Eigen::Map<typename BMatricesType::KelvinVectorType>(
-                    sigma_neq_data.data(),
-                    MathLib::KelvinVector::KelvinVectorDimensions<
-                        DisplacementDim>::value,
-                    1);
-        }
-        // Initialization from non-equilibrium sigma, which is zero by
-        // default, or is set to some value.
-        ip_data.sigma = ip_data.sigma_neq;
     }
 }
 
@@ -203,7 +185,6 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
 
         auto& sigma = _ip_data[ip].sigma;
         auto const& sigma_prev = _ip_data[ip].sigma_prev;
-        auto const& sigma_neq = _ip_data[ip].sigma_neq;
 
         auto& eps = _ip_data[ip].eps;
         auto const& eps_prev = _ip_data[ip].eps_prev;
@@ -275,9 +256,8 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
 
         auto const& b = _process_data.specific_body_force;
         local_rhs.template block<displacement_size, 1>(displacement_index, 0)
-            .noalias() -= (B.transpose() * (sigma - sigma_neq) -
-                           N_u.transpose() * rho_s * b) *
-                          w;
+            .noalias() -=
+            (B.transpose() * sigma - N_u.transpose() * rho_s * b) * w;
 
         //
         // displacement equation, temperature part
@@ -287,8 +267,7 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
         if (_ip_data[ip].solid_material.getConstitutiveModel() ==
             MaterialLib::Solids::ConstitutiveModel::CreepBGRa)
         {
-            auto const s =
-                Invariants::deviatoric_projection * (sigma - sigma_neq);
+            auto const s = Invariants::deviatoric_projection * sigma;
             double const norm_s = Invariants::FrobeniusNorm(s);
             const double creep_coefficient =
                 _ip_data[ip].solid_material.getTemperatureRelatedCoefficient(

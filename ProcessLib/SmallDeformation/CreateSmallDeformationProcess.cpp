@@ -102,25 +102,18 @@ std::unique_ptr<Process> createSmallDeformationProcess(
         config.getConfigParameter<double>(
             "reference_temperature", std::numeric_limits<double>::quiet_NaN());
 
-    // Non-equilibrium variables
-    ParameterLib::Parameter<double> const* nonequilibrium_stress = nullptr;
-    const auto& nonequilibrium_state_variables_config =
-        //! \ogs_file_param{prj__processes__process__SMALL_DEFORMATION__nonequilibrium_state_variables}
-        config.getConfigSubtreeOptional("nonequilibrium_state_variables");
-    if (nonequilibrium_state_variables_config)
-    {
-        nonequilibrium_stress = &ParameterLib::findParameter<double>(
-            *nonequilibrium_state_variables_config,
-            //! \ogs_file_param_special{prj__processes__process__SMALL_DEFORMATION__nonequilibrium_state_variables__stress}
-            "stress", parameters,
-            MathLib::KelvinVector::KelvinVectorDimensions<
-                DisplacementDim>::value);
-    }
+    // Initial stress conditions
+    auto const initial_stress = ParameterLib::findOptionalTagParameter<double>(
+        //! \ogs_file_param_special{prj__processes__process__SMALL_DEFORMATION__initial_stress}
+        config, "initial_stress", parameters,
+        // Symmetric tensor size, 4 or 6, not a Kelvin vector.
+        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value,
+        &mesh);
 
     SmallDeformationProcessData<DisplacementDim> process_data{
-        materialIDs(mesh),     std::move(solid_constitutive_relations),
-        solid_density,         specific_body_force,
-        nonequilibrium_stress, reference_temperature};
+        materialIDs(mesh),   std::move(solid_constitutive_relations),
+        initial_stress,      solid_density,
+        specific_body_force, reference_temperature};
 
     SecondaryVariableCollection secondary_variables;
 

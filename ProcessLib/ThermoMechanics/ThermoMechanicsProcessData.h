@@ -38,13 +38,16 @@ struct ThermoMechanicsProcessData
                       MaterialLib::Solids::MechanicsBase<DisplacementDim>>>
         solid_materials;
 
+    /// Optional, initial stress field. A symmetric tensor, short vector
+    /// representation of length 4 or 6, ParameterLib::Parameter<double>.
+    ParameterLib::Parameter<double> const* const initial_stress;
+
     ParameterLib::Parameter<double> const& reference_solid_density;
     ParameterLib::Parameter<double> const& linear_thermal_expansion_coefficient;
     ParameterLib::Parameter<double> const& specific_heat_capacity;
     ParameterLib::Parameter<double> const&
         thermal_conductivity;  // TODO To be changed as a matrix type variable.
     Eigen::Matrix<double, DisplacementDim, 1> const specific_body_force;
-    ParameterLib::Parameter<double> const* const nonequilibrium_stress;
 
     /// ID of the mechanical process.
     int const mechanics_process_id;

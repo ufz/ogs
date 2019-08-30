@@ -24,6 +24,20 @@ namespace ParameterLib
 class SpatialPosition
 {
 public:
+    SpatialPosition() = default;
+
+    SpatialPosition(
+        boost::optional<std::size_t> const& node_id,
+        boost::optional<std::size_t> const& element_id,
+        boost::optional<unsigned> const& integration_point,
+        boost::optional<MathLib::TemplatePoint<double, 3>> const& coordinates)
+        : _node_id(node_id),
+          _element_id(element_id),
+          _integration_point(integration_point),
+          _coordinates(coordinates)
+    {
+    }
+
     boost::optional<std::size_t> getNodeID() const { return _node_id; }
     boost::optional<std::size_t> getElementID() const { return _element_id; }
     boost::optional<unsigned> getIntegrationPoint() const

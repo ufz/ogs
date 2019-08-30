@@ -206,6 +206,34 @@ symmetricTensorToKelvinVector(Eigen::MatrixBase<Derived> const& v)
     return result;
 }
 
+/// Conversion of a short vector representation of a symmetric 3x3 matrix to a
+/// Kelvin vector.
+///
+/// This overload takes a std::vector for the tensor values.
+template <int DisplacementDim>
+KelvinVectorType<DisplacementDim> symmetricTensorToKelvinVector(
+    std::vector<double> const& values)
+{
+    constexpr int kelvin_vector_size =
+        KelvinVectorDimensions<DisplacementDim>::value;
+
+    if (values.size() != kelvin_vector_size)
+    {
+        OGS_FATAL(
+            "Symmetric tensor to Kelvin vector conversion expected an input "
+            "vector of size %d, but a vector of size %d was given.",
+            kelvin_vector_size, values.size());
+    }
+
+    return symmetricTensorToKelvinVector(
+        Eigen::Map<typename MathLib::KelvinVector::KelvinVectorType<
+            DisplacementDim> const>(
+            values.data(),
+            MathLib::KelvinVector::KelvinVectorDimensions<
+                DisplacementDim>::value,
+            1));
+}
+
 /// Rotation tensor for Kelvin mapped vectors and tensors. It is meant to be
 /// used for rotation of stress/strain tensors epsilon:Q and tangent stiffness
 /// tensors Q*C*Q^t.

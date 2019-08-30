@@ -173,6 +173,14 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         std::copy_n(b.data(), b.size(), specific_body_force.data());
     }
 
+    // Initial stress conditions
+    auto const initial_stress = ParameterLib::findOptionalTagParameter<double>(
+        //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS__initial_stress}
+        config, "initial_stress", parameters,
+        // Symmetric tensor size, 4 or 6, not a Kelvin vector.
+        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value,
+        &mesh);
+
     // Reference temperature
     double const reference_temperature =
         //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS__reference_temperature}
@@ -208,13 +216,13 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     }
 
     HydroMechanicsProcessData<DisplacementDim> process_data{
-        materialIDs(mesh),      std::move(solid_constitutive_relations),
-        intrinsic_permeability, fluid_viscosity,
-        fluid_density,          biot_coefficient,
-        porosity,               solid_density,
-        specific_body_force,    fluid_compressibility,
-        reference_temperature,  specific_gas_constant,
-        fluid_type};
+        materialIDs(mesh),     std::move(solid_constitutive_relations),
+        initial_stress,        intrinsic_permeability,
+        fluid_viscosity,       fluid_density,
+        biot_coefficient,      porosity,
+        solid_density,         specific_body_force,
+        fluid_compressibility, reference_temperature,
+        specific_gas_constant, fluid_type};
 
     SecondaryVariableCollection secondary_variables;
 

@@ -37,6 +37,11 @@ struct SmallDeformationProcessData
         int,
         std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>>
         solid_materials;
+
+    /// Optional, initial stress field. A symmetric tensor, short vector
+    /// representation of length 4 or 6, ParameterLib::Parameter<double>.
+    ParameterLib::Parameter<double> const* const initial_stress;
+
     /// Solid's density. A scalar quantity, ParameterLib::Parameter<double>.
     ParameterLib::Parameter<double> const& solid_density;
 
@@ -45,8 +50,6 @@ struct SmallDeformationProcessData
     /// A vector of displacement dimension's length.
     Eigen::Matrix<double, DisplacementDim, 1> const specific_body_force;
 
-    ParameterLib::Parameter<double> const* const nonequilibrium_stress =
-        nullptr;
     double const reference_temperature =
         std::numeric_limits<double>::quiet_NaN();
 
