@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProject>
+    <meshes>
+        <mesh axially_symmetric="true">model_bias.vtu</mesh>
+        <mesh axially_symmetric="true">geometry_left.vtu</mesh>
+        <mesh axially_symmetric="true">geometry_right.vtu</mesh>
+        <mesh axially_symmetric="true">geometry_top.vtu</mesh>
+        <mesh axially_symmetric="true">geometry_bottom.vtu</mesh>
+    </meshes>
+    <processes>
+        <process>
+            <name>SD</name>
+            <type>SMALL_DEFORMATION</type>
+            <integration_order>2</integration_order>
+            <constitutive_relation>
+                <type>MFront</type>
+                <behaviour>MohrCoulombAbboSloan</behaviour>
+                <material_properties>
+                    <material_property name="YoungModulus" parameter="YoungModulus"/>
+                    <material_property name="PoissonRatio" parameter="PoissonRatio"/>
+                    <material_property name="Cohesion" parameter="Cohesion"/>
+                    <material_property name="FrictionAngle" parameter="FrictionAngle"/>
+                    <material_property name="DilatancyAngle" parameter="DilatancyAngle"/>
+                    <material_property name="TransitionAngle" parameter="TransitionAngle"/>
+                    <material_property name="TensionCutOffParameter" parameter="TensionCutOffParameter"/>
+                </material_properties>
+            </constitutive_relation>
+            <solid_density>rho_sr</solid_density>
+            <specific_body_force>0 0</specific_body_force>
+            <process_variables>
+                <process_variable>displacement</process_variable>
+            </process_variables>
+            <secondary_variables>
+                <secondary_variable type="static" internal_name="ElasticStrain" output_name="ElasticStrain"/>
+                <secondary_variable type="static" internal_name="EquivalentPlasticStrain" output_name="EquivalentPlasticStrain"/>
+                <secondary_variable type="static" internal_name="sigma" output_name="sigma"/>
+                <secondary_variable type="static" internal_name="epsilon" output_name="epsilon"/>
+            </secondary_variables>
+        </process>
+    </processes>
+    <time_loop>
+        <processes>
+            <process ref="SD">
+                <nonlinear_solver>basic_newton</nonlinear_solver>
+                <convergence_criterion>
+                    <type>DeltaX</type>
+                    <norm_type>NORM2</norm_type>
+                    <abstol>1e-12</abstol>
+                </convergence_criterion>
+                <time_discretization>
+                    <type>BackwardEuler</type>
+                </time_discretization>
+                <time_stepping>
+                    <type>FixedTimeStepping</type>
+                    <t_initial>0</t_initial>
+                    <t_end>10</t_end>
+                    <timesteps>
+                        <pair>
+                            <repeat>10</repeat>
+                            <delta_t>1</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>10</repeat>
+                            <delta_t>1</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>10</repeat>
+                            <delta_t>1</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>10</repeat>
+                            <delta_t>1</delta_t>
+                        </pair>
+                    </timesteps>
+                </time_stepping>
+            </process>
+        </processes>
+        <output>
+            <type>VTK</type>
+            <prefix>load_test_mc</prefix>
+            <timesteps>
+                <pair>
+                    <repeat>40</repeat>
+                    <each_steps>1</each_steps>
+                </pair>
+            </timesteps>
+            <variables>
+                <variable>displacement</variable>
+                <variable>sigma</variable>
+                <variable>epsilon</variable>
+                <variable>ElasticStrain</variable>
+                <variable>EquivalentPlasticStrain</variable>
+            </variables>
+        </output>
+    </time_loop>
+    <parameters>
+        <parameter>
+            <name>YoungModulus</name>
+            <type>Constant</type>
+            <value>6778</value>
+        </parameter>
+        <parameter>
+            <name>PoissonRatio</name>
+            <type>Constant</type>
+            <value>.21</value>
+        </parameter>
+        <parameter>
+            <name>Cohesion</name>
+            <type>Constant</type>
+            <value>3.45</value>
+        </parameter>
+        <parameter>
+            <name>FrictionAngle</name>
+            <type>Constant</type>
+            <value>30</value>
+        </parameter>
+        <parameter>
+            <name>DilatancyAngle</name>
+            <type>Constant</type>
+            <value>0</value>
+        </parameter>
+        <parameter>
+            <name>TransitionAngle</name>
+            <type>Constant</type>
+            <value>29</value>
+        </parameter>
+        <parameter>
+            <name>TensionCutOffParameter</name>
+            <type>Constant</type>
+            <value>1</value>
+        </parameter>
+        <parameter>
+            <name>rho_sr</name>
+            <type>Constant</type>
+            <value>2300.0</value>
+        </parameter>
+        <parameter>
+            <name>displacement0</name>
+            <type>Constant</type>
+            <values>0 0</values>
+        </parameter>
+        <parameter>
+            <name>Dirichlet_left</name>
+            <type>Constant</type>
+            <value>0.</value>
+        </parameter>
+        <parameter>
+            <name>Dirichlet_bottom</name>
+            <type>Constant</type>
+            <value>0.</value>
+        </parameter>
+        <parameter>
+            <name>Dirichlet_right</name>
+            <type>Constant</type>
+            <value>0.</value>
+        </parameter>
+        <parameter>
+            <name>Dirichlet_top</name>
+            <type>Constant</type>
+            <value>0.</value>
+        </parameter>
+        <parameter>
+            <name>internal_pressure_value</name>
+            <type>Constant</type>
+            <value>-1.0</value>
+        </parameter>
+        <parameter>
+            <name>internal_pressure</name>
+            <type>CurveScaled</type>
+            <curve>internal_pressure_curve</curve>
+            <parameter>internal_pressure_value</parameter>
+        </parameter>
+    </parameters>
+    <curves>
+        <curve>
+            <name>internal_pressure_curve</name>
+            <coords>0.0 10.0  20.0 30.0 40.0</coords>
+            <values>0.0 15.0 0.0  15.0 20.0</values>
+        </curve>
+    </curves>
+    <process_variables>
+        <process_variable>
+            <name>displacement</name>
+            <components>2</components>
+            <order>1</order>
+            <initial_condition>displacement0</initial_condition>
+            <boundary_conditions>
+                <!-- fixed boundaries -->
+                <boundary_condition>
+                    <mesh>geometry_bottom</mesh>
+                    <type>Dirichlet</type>
+                    <component>1</component>
+                    <parameter>Dirichlet_bottom</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <mesh>geometry_top</mesh>
+                    <type>Dirichlet</type>
+                    <component>1</component>
+                    <parameter>Dirichlet_top</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <mesh>geometry_right</mesh>
+                    <type>NormalTraction</type>
+                    <parameter>internal_pressure</parameter>
+                </boundary_condition>
+            </boundary_conditions>
+        </process_variable>
+    </process_variables>
+    <nonlinear_solvers>
+        <nonlinear_solver>
+            <name>basic_newton</name>
+            <type>Newton</type>
+            <max_iter>100</max_iter>
+            <linear_solver>general_linear_solver</linear_solver>
+        </nonlinear_solver>
+    </nonlinear_solvers>
+    <linear_solvers>
+        <linear_solver>
+            <name>general_linear_solver</name>
+            <lis>-i cg -p jacobi -tol 1e-16 -maxiter 10000</lis>
+            <eigen>
+                <solver_type>SparseLU</solver_type>
+                <precon_type>DIAGONAL</precon_type>
+                <!--max_iteration_step>10000</max_iteration_step>
+                <error_tolerance>1e-16</error_tolerance-->
+            </eigen>
+            <petsc>
+                <prefix>sd</prefix>
+                <parameters>-sd_ksp_type cg -sd_pc_type bjacobi -sd_ksp_rtol 1e-16 -sd_ksp_max_it 10000</parameters>
+            </petsc>
+        </linear_solver>
+    </linear_solvers>
+</OpenGeoSysProject>

@@ -48,7 +48,7 @@ struct StandardElasticityBrickBehaviour
         // Parameters used by mfront model in the order of appearence in the
         // .mfront file.
         static P const young_modulus("", 1e11);
-        static P const poisson_ratio("", 1e9);
+        static P const poisson_ratio("", 0.3);
         std::vector<ParameterLib::Parameter<double> const*> parameters{
             &young_modulus, &poisson_ratio};
 
@@ -69,9 +69,43 @@ struct ElasticBehaviour
         // Parameters used by mfront model in the order of appearence in the
         // .mfront file.
         static P const young_modulus("", 1e11);
-        static P const poisson_ratio("", 1e9);
+        static P const poisson_ratio("", 0.3);
         std::vector<ParameterLib::Parameter<double> const*> parameters{
             &young_modulus, &poisson_ratio};
+
+        auto result = std::make_unique<MFront::MFront<Dim>>(
+            std::move(behaviour), std::move(parameters));
+        return result;
+    }
+};
+
+template <int Dim>
+struct MohrCoulombAbboSloanBehaviour
+{
+    static std::unique_ptr<MFront::MFront<Dim>> createConstitutiveRelation()
+    {
+        auto behaviour =
+            mgis::behaviour::load("libOgsMFrontBehaviour.so",
+                                  "MohrCoulombAbboSloan", hypothesis(Dim));
+
+        using P = ParameterLib::ConstantParameter<double>;
+        // Parameters used by mfront model in the order of appearence in the
+        // .mfront file.
+        static P const young_modulus("", 150e3);
+        static P const poisson_ratio("", 0.3);
+        static P const cohesion("", 3e1);
+        static P const friction_angle("", 30);
+        static P const dilatancy_angle("", 10);
+        static P const transition_angle("", 29);
+        static P const tension_cut_off_parameter("", 1e1);
+        std::vector<ParameterLib::Parameter<double> const*> parameters{
+            &young_modulus,
+            &poisson_ratio,
+            &cohesion,
+            &friction_angle,
+            &dilatancy_angle,
+            &transition_angle,
+            &tension_cut_off_parameter};
 
         auto result = std::make_unique<MFront::MFront<Dim>>(
             std::move(behaviour), std::move(parameters));
@@ -110,7 +144,7 @@ using MaterialLib_SolidModelsMFront3 =
 template <int Dim>
 using TestBehaviourTypes =
     ::testing::Types<StandardElasticityBrickBehaviour<Dim>,
-                     ElasticBehaviour<Dim>>;
+                     ElasticBehaviour<Dim>, MohrCoulombAbboSloanBehaviour<Dim>>;
 
 TYPED_TEST_CASE(MaterialLib_SolidModelsMFront2, TestBehaviourTypes<2>);
 TYPED_TEST_CASE(MaterialLib_SolidModelsMFront3, TestBehaviourTypes<3>);
