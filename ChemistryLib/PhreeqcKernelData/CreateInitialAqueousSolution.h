@@ -7,22 +7,25 @@
  *
  */
 
-#include "AqueousSolution.h"
+#pragma once
+
+#include <string>
+#include <vector>
+
+namespace BaseLib
+{
+class ConfigTree;
+}
 
 namespace ChemistryLib
 {
 namespace PhreeqcKernelData
 {
-AqueousSolution::AqueousSolution(double const temperature,
-                                 double const pressure, double const pe_value,
-                                 cxxISolution const& initial_aqueous_solution)
-{
-    new_def = true;
-    tc = temperature;
-    patm = pressure;
-    pe = pe_value;
+class InitialAqueousSolution;
 
-    Set_initial_data(&initial_aqueous_solution);
-}
+InitialAqueousSolution createInitialAqueousSolution(
+    BaseLib::ConfigTree const& config,
+    std::vector<std::pair<int, std::string>> const&
+        process_id_to_component_name_map);
 }  // namespace PhreeqcKernelData
 }  // namespace ChemistryLib

@@ -7,22 +7,25 @@
  *
  */
 
-#include "AqueousSolution.h"
+#pragma once
+
+#include "ThirdParty/iphreeqc/src/src/phreeqcpp/ISolution.h"
 
 namespace ChemistryLib
 {
 namespace PhreeqcKernelData
 {
-AqueousSolution::AqueousSolution(double const temperature,
-                                 double const pressure, double const pe_value,
-                                 cxxISolution const& initial_aqueous_solution)
+class Component final : public cxxISolutionComp
 {
-    new_def = true;
-    tc = temperature;
-    patm = pressure;
-    pe = pe_value;
+public:
+    explicit Component(std::string const& name) { description = name; }
+};
 
-    Set_initial_data(&initial_aqueous_solution);
-}
+class InitialAqueousSolution final : public cxxISolution
+{
+public:
+    explicit InitialAqueousSolution(
+        std::map<std::string, cxxISolutionComp>& components);
+};
 }  // namespace PhreeqcKernelData
 }  // namespace ChemistryLib

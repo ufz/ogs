@@ -7,22 +7,25 @@
  *
  */
 
-#include "AqueousSolution.h"
+#include "InitialAqueousSolution.h"
 
 namespace ChemistryLib
 {
 namespace PhreeqcKernelData
 {
-AqueousSolution::AqueousSolution(double const temperature,
-                                 double const pressure, double const pe_value,
-                                 cxxISolution const& initial_aqueous_solution)
+InitialAqueousSolution::InitialAqueousSolution(
+    std::map<std::string, cxxISolutionComp>& components)
 {
-    new_def = true;
-    tc = temperature;
-    patm = pressure;
-    pe = pe_value;
+    units = "Mol/kgw";
 
-    Set_initial_data(&initial_aqueous_solution);
+    for (auto& [name, component] : components)
+    {
+        (void)name;
+        component.Set_units(units.c_str());
+        component.Set_pe_reaction(default_pe);
+    }
+
+    comps = components;
 }
 }  // namespace PhreeqcKernelData
 }  // namespace ChemistryLib
