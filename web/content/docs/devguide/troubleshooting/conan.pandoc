@@ -43,6 +43,22 @@ In `~/.conan/settings.yml` it is defined which compiler versions are supported b
 
 See also: http://docs.conan.io/en/latest/faq/troubleshooting.html#error-invalid-setting
 
+### ERROR: Error in system requirements
+
+When your `cmake`-run output looks similar to this:
+
+```
+$ cmake ..
+...
+Running: sudo -A yum update -y
+sudo: no askpass program specified, try setting SUDO_ASKPASS
+...
+ERROR: Error in system requirements
+...
+```
+
+Please run `sudo -v` before your `cmake`-command. This will ask you for your password to let Conan install some system packages during the `cmake`-run.
+
 ## Something went wrong during building
 
 On Ubuntu always use the system default gcc version! Otherwise if you use a newer compiler
