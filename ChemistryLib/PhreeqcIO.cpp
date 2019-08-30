@@ -14,8 +14,8 @@
 
 #include "BaseLib/Algorithm.h"
 #include "BaseLib/ConfigTreeUtil.h"
-#include "Output.h"
 #include "PhreeqcIO.h"
+#include "PhreeqcIOData/Output.h"
 #include "ThirdParty/iphreeqc/src/src/IPhreeqc.h"
 
 namespace ChemistryLib

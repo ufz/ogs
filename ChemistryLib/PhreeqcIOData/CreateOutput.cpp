@@ -15,6 +15,8 @@
 
 namespace ChemistryLib
 {
+namespace PhreeqcIOData
+{
 std::unique_ptr<Output> createOutput(
     std::vector<Component> const& components,
     std::vector<EquilibriumPhase> const& equilibrium_phases,
@@ -69,4 +71,5 @@ std::unique_ptr<Output> createOutput(
                                     std::move(accepted_items),
                                     std::move(dropped_item_ids));
 }
+}  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

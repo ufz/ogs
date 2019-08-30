@@ -14,22 +14,24 @@
 
 namespace ChemistryLib
 {
+namespace PhreeqcIOData
+{
 std::ostream& operator<<(std::ostream& os,
                          BasicOutputSetups const& basic_output_setups)
 {
     os << "-file " << basic_output_setups.output_file << "\n";
     os << "-high_precision " << std::boolalpha
-       << ChemistryLib::BasicOutputSetups::use_high_precision << "\n";
+       << BasicOutputSetups::use_high_precision << "\n";
     os << "-simulation " << std::boolalpha
-       << ChemistryLib::BasicOutputSetups::display_simulation_id << "\n";
-    os << "-state " << std::boolalpha
-       << ChemistryLib::BasicOutputSetups::display_state << "\n";
-    os << "-distance " << std::boolalpha
-       << ChemistryLib::BasicOutputSetups::display_distance << "\n";
-    os << "-time " << std::boolalpha
-       << ChemistryLib::BasicOutputSetups::display_current_time << "\n";
-    os << "-step " << std::boolalpha
-       << ChemistryLib::BasicOutputSetups::display_time_step << "\n";
+       << BasicOutputSetups::display_simulation_id << "\n";
+    os << "-state " << std::boolalpha << BasicOutputSetups::display_state
+       << "\n";
+    os << "-distance " << std::boolalpha << BasicOutputSetups::display_distance
+       << "\n";
+    os << "-time " << std::boolalpha << BasicOutputSetups::display_current_time
+       << "\n";
+    os << "-step " << std::boolalpha << BasicOutputSetups::display_time_step
+       << "\n";
 
     return os;
 }
@@ -73,4 +75,5 @@ std::ostream& operator<<(std::ostream& os, Output const& output)
 
     return os;
 }
+}  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

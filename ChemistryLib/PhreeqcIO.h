@@ -13,10 +13,10 @@
 #include <memory>
 
 #include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
-#include "Output.h"
 #include "PhreeqcIOData/AqueousSolution.h"
 #include "PhreeqcIOData/EquilibriumPhase.h"
 #include "PhreeqcIOData/KineticReactant.h"
+#include "PhreeqcIOData/Output.h"
 #include "PhreeqcIOData/ReactionRate.h"
 
 namespace ChemistryLib

@@ -12,16 +12,19 @@
 
 #include <memory>
 
+#include "AqueousSolution.h"
+#include "EquilibriumPhase.h"
+#include "KineticReactant.h"
 #include "Output.h"
-#include "PhreeqcIOData/AqueousSolution.h"
-#include "PhreeqcIOData/EquilibriumPhase.h"
-#include "PhreeqcIOData/KineticReactant.h"
 
 namespace ChemistryLib
+{
+namespace PhreeqcIOData
 {
 std::unique_ptr<Output> createOutput(
     std::vector<Component> const& components,
     std::vector<EquilibriumPhase> const& equilibrium_phases,
     std::vector<KineticReactant> const& kinetic_reactants,
     std::string const& project_file_name);
+}  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

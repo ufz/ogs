@@ -17,6 +17,8 @@
 
 namespace ChemistryLib
 {
+namespace PhreeqcIOData
+{
 class BasicOutputSetups
 {
 public:
@@ -104,4 +106,5 @@ struct Output
     std::vector<OutputItem> const accepted_items;
     std::vector<int> const dropped_item_ids;
 };
+}  // namespace PhreeqcIOData
 }  // namespace ChemistryLib
