@@ -11,30 +11,28 @@
 #pragma once
 
 #include <memory>
+#include <vector>
 
-#include "PhreeqcIO.h"
-
-namespace MeshLib
-{
-class Mesh;
-}
+#include "ChemicalSolverType.h"
 
 namespace BaseLib
 {
 class ConfigTree;
 }
 
-namespace ProcessLib
+namespace MeshLib
 {
-class Process;
+class Mesh;
 }
 
 namespace ChemistryLib
 {
-std::unique_ptr<PhreeqcIO> createPhreeqcIO(
+class ChemicalSolverInterface;
+
+template <ChemicalSolver chemical_solver>
+std::unique_ptr<ChemicalSolverInterface> createChemicalSolverInterface(
     MeshLib::Mesh const& mesh,
     std::vector<std::pair<int, std::string>> const&
         process_id_to_component_name_map,
-    BaseLib::ConfigTree const& config,
-    std::string const& output_directory);
+    BaseLib::ConfigTree const& config, std::string const& output_directory);
 }  // namespace ChemistryLib
