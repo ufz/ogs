@@ -193,13 +193,8 @@ public:
     void assemble(std::vector<GlobalVector*> const& x,
                   int const process_id) const override;
 
-    void calculateOutOfBalanceForces(GlobalVector const& /*x*/) override
-    {
-        if (!_compensate_initial_out_of_balance_forces)
-            return;
-
-        OGS_FATAL("Calculation of out-of-balance forces is not implemented.");
-    }
+    void calculateOutOfBalanceForces(std::vector<GlobalVector*> const& x,
+                                     int const process_id) override;
 
     NonlinearSolverStatus solve(
         std::vector<GlobalVector*>& x,
@@ -220,6 +215,7 @@ private:
     ConvergenceCriterion* _convergence_criterion = nullptr;
     const int _maxiter;  //!< maximum number of iterations
 
+    GlobalVector* _f_oob = nullptr;  //!< Out-of-balance forces vector.
     std::size_t _A_id = 0u;      //!< ID of the \f$ A \f$ matrix.
     std::size_t _rhs_id = 0u;    //!< ID of the right-hand side vector.
     std::size_t _x_new_id = 0u;  //!< ID of the vector storing the solution of

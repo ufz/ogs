@@ -27,6 +27,24 @@ void NonlinearSolver<NonlinearSolverTag::Picard>::assemble(
     _equation_system->assemble(x, process_id);
 }
 
+void NonlinearSolver<NonlinearSolverTag::Picard>::calculateOutOfBalanceForces(
+    std::vector<GlobalVector*> const& x, int const process_id)
+{
+    if (!_compensate_initial_out_of_balance_forces)
+        return;
+
+    auto& A = NumLib::GlobalMatrixProvider::provider.getMatrix(_A_id);
+    auto& rhs = NumLib::GlobalVectorProvider::provider.getVector(_rhs_id);
+    _equation_system->assemble(x, process_id);
+    _equation_system->getA(A);
+    _equation_system->getRhs(rhs);
+
+    // F_oob = A * x - rhs
+    _f_oob = &NumLib::GlobalVectorProvider::provider.getVector();
+    MathLib::LinAlg::matMult(A, *x[process_id], *_f_oob);
+    MathLib::LinAlg::axpy(*_f_oob, -1.0, rhs);  // res -= rhs
+}
+
 NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
     std::vector<GlobalVector*>& x,
     std::function<void(int, GlobalVector const&)> const& postIterationCallback,
@@ -72,6 +90,11 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
         sys.getA(A);
         sys.getRhs(rhs);
         INFO("[time] Assembly took %g s.", time_assembly.elapsed());
+
+
+        // Apply out-of-balance forces if set.
+        if (_f_oob != nullptr)
+            LinAlg::axpy(rhs, -1, *_f_oob);
 
         timer_dirichlet.start();
         sys.applyKnownSolutionsPicard(A, rhs, *x_new[process_id]);
