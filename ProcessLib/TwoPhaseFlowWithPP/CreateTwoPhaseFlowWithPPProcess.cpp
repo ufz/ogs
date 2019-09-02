@@ -19,8 +19,6 @@
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
 
-#include "CreateTwoPhaseFlowWithPPMaterialProperties.h"
-#include "TwoPhaseFlowWithPPMaterialProperties.h"
 #include "TwoPhaseFlowWithPPProcess.h"
 #include "TwoPhaseFlowWithPPProcessData.h"
 namespace ProcessLib
@@ -84,9 +82,6 @@ std::unique_ptr<Process> createTwoPhaseFlowWithPPProcess(
         //! \ogs_file_param_special{prj__processes__process__TWOPHASE_FLOW_PP__temperature}
         "temperature", parameters, 1, &mesh);
 
-    //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_PP__material_property}
-    auto const& mat_config = config.getConfigSubtree("material_property");
-
     auto const material_ids = materialIDs(mesh);
     if (material_ids)
     {
@@ -100,19 +95,15 @@ std::unique_ptr<Process> createTwoPhaseFlowWithPPProcess(
     auto media_map =
         MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
 
-    std::unique_ptr<TwoPhaseFlowWithPPMaterialProperties> material =
-        createTwoPhaseFlowWithPPMaterialProperties(mat_config, material_ids,
-                                                   parameters);
-
-    TwoPhaseFlowWithPPProcessData process_data{
-        specific_body_force, has_gravity,         mass_lumping,
-        temperature,         std::move(material), std::move(media_map)};
+    TwoPhaseFlowWithPPProcessData process_data{specific_body_force, has_gravity,
+                                               mass_lumping, temperature,
+                                               std::move(media_map)};
 
     return std::make_unique<TwoPhaseFlowWithPPProcess>(
         std::move(name), mesh, std::move(jacobian_assembler), parameters,
         integration_order, std::move(process_variables),
         std::move(process_data), std::move(secondary_variables),
-        std::move(named_function_caller), mat_config, curves);
+        std::move(named_function_caller), curves);
 }
 
 }  // namespace TwoPhaseFlowWithPP

@@ -21,7 +21,6 @@
 #include "ProcessLib/LocalAssemblerTraits.h"
 #include "ProcessLib/Utils/InitShapeMatrices.h"
 
-#include "TwoPhaseFlowWithPPMaterialProperties.h"
 #include "TwoPhaseFlowWithPPProcessData.h"
 
 namespace ProcessLib
@@ -32,13 +31,12 @@ template <typename NodalRowVectorType, typename GlobalDimNodalMatrixType,
           typename NodalMatrixType>
 struct IntegrationPointData final
 {
-    explicit IntegrationPointData(
-        NodalRowVectorType N_, GlobalDimNodalMatrixType dNdx_,
-        TwoPhaseFlowWithPPMaterialProperties& material_property_,
-        double const& integration_weight_, NodalMatrixType const massOperator_)
+    explicit IntegrationPointData(NodalRowVectorType N_,
+                                  GlobalDimNodalMatrixType dNdx_,
+                                  double const& integration_weight_,
+                                  NodalMatrixType const massOperator_)
         : N(std::move(N_)),
           dNdx(std::move(dNdx_)),
-          mat_property(material_property_),
           integration_weight(integration_weight_),
           massOperator(massOperator_)
 
@@ -46,7 +44,6 @@ struct IntegrationPointData final
     }
     NodalRowVectorType const N;
     GlobalDimNodalMatrixType const dNdx;
-    TwoPhaseFlowWithPPMaterialProperties const& mat_property;
     const double integration_weight;
     NodalMatrixType const massOperator;
 
@@ -119,7 +116,7 @@ public:
         {
             auto const& sm = shape_matrices[ip];
             _ip_data.emplace_back(
-                sm.N, sm.dNdx, *_process_data.material,
+                sm.N, sm.dNdx,
                 sm.integralMeasure * sm.detJ *
                     _integration_method.getWeightedPoint(ip).getWeight(),
                 sm.N.transpose() * sm.N * sm.integralMeasure * sm.detJ *

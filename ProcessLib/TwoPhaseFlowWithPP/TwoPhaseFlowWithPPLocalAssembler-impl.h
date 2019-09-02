@@ -34,7 +34,6 @@
 #include "MaterialLib/MPL/Medium.h"
 #include "TwoPhaseFlowWithPPLocalAssembler.h"
 
-#include <iostream>
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 #include "NumLib/Function/Interpolation.h"
 #include "TwoPhaseFlowWithPPProcessData.h"
@@ -99,22 +98,6 @@ void TwoPhaseFlowWithPPLocalAssembler<
 
     ParameterLib::SpatialPosition pos;
     pos.setElementID(_element.getID());
-    const int material_id =
-        _process_data.material->getMaterialID(pos.getElementID().get());
-
-    const Eigen::MatrixXd& perm = _process_data.material->getPermeability(
-        material_id, t, pos, _element.getDimension());
-    assert(perm.rows() == _element.getDimension() || perm.rows() == 1);
-    GlobalDimMatrixType permeability = GlobalDimMatrixType::Zero(
-        _element.getDimension(), _element.getDimension());
-    if (perm.rows() == _element.getDimension())
-    {
-        permeability = perm;
-    }
-    else if (perm.rows() == 1)
-    {
-        permeability.diagonal().setConstant(perm(0, 0));
-    }
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
@@ -129,8 +112,8 @@ void TwoPhaseFlowWithPPLocalAssembler<
 
         auto const& medium =
             *_process_data.media_map->getMedium(_element.getID());
-        auto const& liquid_phase = medium.phase("liquid");
-        auto const& gas_phase = medium.phase("gas");
+        auto const& liquid_phase = medium.phase("AqueousLiquid");
+        auto const& gas_phase = medium.phase("Gas");
 
         MPL::VariableArray variables;
 
@@ -179,6 +162,14 @@ void TwoPhaseFlowWithPPLocalAssembler<
                                 .template value<double>(variables, pos, t);
 
         auto const lambda_wet = k_rel_wet / mu_wet;
+
+        auto const perm = medium.property(MPL::PropertyType::permeability)
+                              .template value<double>(variables, pos, t);
+
+        GlobalDimMatrixType permeability = GlobalDimMatrixType::Zero(
+            _element.getDimension(), _element.getDimension());
+
+        permeability.diagonal().setConstant(perm);
 
         Mgp.noalias() +=
             porosity * (1 - Sw) * drhononwet_dpn * _ip_data[ip].massOperator;
