@@ -17,5 +17,6 @@
 #include "LinearProperty.h"
 #include "ParameterProperty.h"
 #include "RelPermBrooksCorey.h"
+#include "RelPermLiakopoulos.h"
 #include "SaturationBrooksCorey.h"
 #include "SaturationLiakopoulos.h"
