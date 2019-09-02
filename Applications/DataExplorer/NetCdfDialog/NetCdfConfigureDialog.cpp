@@ -139,12 +139,12 @@ int NetCdfConfigureDialog::setVariableSelect()
     int max_dim = 0;
     int max_dim_idx = 0;
     auto const& names =_currentFile.getVars();
-    for (auto it = names.cbegin(); it != names.cend(); ++it)
+    for (auto [name, var] : names)
     {
-        int const var_dim_count = it->second.getDimCount();
+        int const var_dim_count = var.getDimCount();
         if (var_dim_count > 1)
         {
-            comboBoxVariable->addItem(QString::fromStdString(it->first));
+            comboBoxVariable->addItem(QString::fromStdString(name));
             if (var_dim_count > max_dim)
             {
                 max_dim = var_dim_count;
@@ -223,8 +223,6 @@ void NetCdfConfigureDialog::getDimEdges(std::string const& name, unsigned& size,
 
 int NetCdfConfigureDialog::getTimeStep() const
 {
-    NcVar const& time_var =
-        _currentFile.getVar(comboBoxDim3->currentText().toStdString());
     return dateTimeEditDim3->value();
 }
 
