@@ -55,11 +55,12 @@ private:
     /// returns the index of the first variable with the highest dimension.
     int setVariableSelect();
     void setDimensionSelect();
-    void getDimEdges(int dimId, unsigned &size, double &firstValue, double &lastValue);
-    void getDaysTime(double minSince, QTime &time, int &days);
-    long convertDateToMinutes(QDateTime initialDateTime,QDate selectedDate, QTime selectedTime);
+    void getDimEdges(std::string const& name,
+                     unsigned& size,
+                     double& firstValue,
+                     double& lastValue);
     void createDataObject();
-    int getTimeStep();
+    int getTimeStep() const;
     int getDim4() const;
     double getResolution();
     QString setName();
@@ -67,9 +68,7 @@ private:
 
     netCDF::NcFile _currentFile;
     netCDF::NcVar _currentVar;
-    QDateTime _currentInitialDateTime;
     MeshLib::Mesh* _currentMesh;
     VtkGeoImageSource* _currentRaster;
     std::string _currentPath;
-    std::vector<int> _id_map;
 };
