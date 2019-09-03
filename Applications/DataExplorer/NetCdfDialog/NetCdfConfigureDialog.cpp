@@ -73,6 +73,7 @@ void NetCdfConfigureDialog::reject()
 
 void NetCdfConfigureDialog::on_comboBoxVariable_currentIndexChanged(int id)
 {
+    Q_UNUSED(id);
     std::string const var_name = comboBoxVariable->currentText().toStdString();
     _currentVar = _currentFile.getVar(var_name);
     setDimensionSelect();
@@ -213,11 +214,8 @@ void NetCdfConfigureDialog::getDimEdges(std::string const& name, unsigned& size,
     if ((tmpVarOfDim.getDimCount()) == 1)
     {
         size = tmpVarOfDim.getDim(0).getSize();
-        std::vector<std::size_t> start_val{{0}};
-        std::vector<std::size_t> length{{1}};
-        tmpVarOfDim.getVar(start_val, length, &firstValue);
-        start_val[0] = size-1;
-        tmpVarOfDim.getVar(start_val, length, &lastValue);
+        tmpVarOfDim.getVar({0}, {1}, &firstValue);
+        tmpVarOfDim.getVar({size - 1}, {1}, &lastValue);
     }
 }
 
@@ -231,9 +229,8 @@ int NetCdfConfigureDialog::getDim4() const
     NcVar const& dim3Var =
         _currentFile.getVar(comboBoxDim4->currentText().toStdString());
     std::vector<std::size_t> start{{static_cast<std::size_t>(spinBoxDim4->value())}};
-    std::vector<std::size_t> length{{1}};
     int value(0);
-    dim3Var.getVar(start, length, &value);
+    dim3Var.getVar(start, {1}, &value);
     if (value < 0)
         value = 0; //if the value isn't found in the array, set it to 0 as default...
     return value;
@@ -347,7 +344,7 @@ QString NetCdfConfigureDialog::setName()
 std::string NetCdfConfigureDialog::getName()
 {
     std::string name = (lineEditName->text()).toStdString();
-    QString date = dateTimeEditDim3->value();
+    QString const date = dateTimeEditDim3->value();
     name.append(" - ").append(date.toStdString());
     return name;
 }
