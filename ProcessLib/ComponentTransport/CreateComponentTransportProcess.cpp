@@ -110,16 +110,6 @@ std::unique_ptr<Process> createComponentTransportProcess(
         }
     }
 
-    MaterialLib::PorousMedium::PorousMediaProperties porous_media_properties{
-        MaterialLib::PorousMedium::createPorousMediaProperties(
-            mesh, config, parameters)};
-
-    //! \ogs_file_param{prj__processes__process__ComponentTransport__fluid}
-    auto const& fluid_config = config.getConfigSubtree("fluid");
-
-    auto fluid_properties =
-        MaterialLib::Fluid::createFluidProperties(fluid_config);
-
     // Parameter for the density of the fluid.
     auto& fluid_reference_density = ParameterLib::findParameter<double>(
         config,
@@ -162,9 +152,7 @@ std::unique_ptr<Process> createComponentTransportProcess(
         MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
 
     ComponentTransportProcessData process_data{
-        std::move(porous_media_properties),
         fluid_reference_density,
-        std::move(fluid_properties),
         std::move(media_map),
         decay_rate,
         specific_body_force,
