@@ -111,7 +111,7 @@ pipeline {
                   "-DBUILD_SHARED_LIBS=${build_shared} " +
                   '-DOGS_CPU_ARCHITECTURE=generic ' +
                   '-DOGS_BUILD_UTILS=ON ' +
-                  '-DOGS_CONAN_BUILD=outdated ' +
+                  '-DOGS_CONAN_BUILD=missing ' +
                   '-DOGS_USE_CVODE=ON ' +
                   '-DOGS_USE_MFRONT=ON ' +
                   '-DOGS_USE_PYTHON=ON '
@@ -256,7 +256,7 @@ pipeline {
               configure {
                 cmakeOptions =
                   "-DBUILD_SHARED_LIBS=${build_shared} " +
-                  '-DOGS_CONAN_BUILD=outdated ' +
+                  '-DOGS_CONAN_BUILD=missing ' +
                   '-DOGS_CONAN_BUILD_TYPE=Release ' +
                   '-DOGS_CPU_ARCHITECTURE=generic '
                 config = 'Debug'
@@ -675,6 +675,34 @@ pipeline {
                   sh 'git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/ufz/ogs-data HEAD:master'
                 }
               }
+            }
+          }
+        }
+        // ******************** Container Maker Images *************************
+        stage('Container Maker Images') {
+          when {
+            beforeAgent true
+            allOf {
+              expression { return params.master_jobs }
+              environment name: 'JOB_NAME', value: 'ufz/ogs/master'
+            }
+          }
+          agent { label 'docker'}
+          steps {
+            script {
+              sh '''git submodule update --init ThirdParty/container-maker
+                virtualenv .venv
+                source .venv/bin/activate
+                pip install -r ThirdParty/container-maker/requirements.txt
+                export PYTHONPATH="${PYTHONPATH}:${PWD}/ThirdParty/container-maker"
+                python ThirdParty/container-maker/ogscm/cli.py -B -C -R --ogs . --pm system --cvode --ompi off 2.1.6 3.1.4 4.0.1
+              '''.stripIndent()
+            }
+          }
+          post {
+            success {
+              archiveArtifacts('_out/images/*.sif')
+              dir('_out') { deleteDir() } // Cleanup
             }
           }
         }

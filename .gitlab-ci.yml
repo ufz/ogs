@@ -1,19 +1,18 @@
-image: alpine:3.4
+variables:
+  GIT_STRATEGY: fetch
+  OPENMPI_VERSIONS: 'off 2.1.6 3.1.4 4.0.1'
 
-before_script:
-  - apk update && apk add openssl
-  - wget https://github.com/spf13/hugo/releases/download/v0.18.1/hugo_0.18.1_Linux-64bit.tar.gz
-  - tar xf hugo_0.18.1_Linux-64bit.tar.gz && cp ./hugo_0.18.1_linux_amd64/hugo_0.18.1_linux_amd64 /usr/bin/hugo
-  - hugo version
-
-pages:
+build-container:
+  tags:
+    - docker-shell
+  stage: build
   script:
-  - cd web
-  - (cd import; python import.py)
-  - gulp build
-  - hugo
+    - git submodule update --init ThirdParty/container-maker
+    - virtualenv .venv
+    - source .venv/bin/activate
+    - pip install -r ThirdParty/container-maker/requirements.txt
+    - export PYTHONPATH="${PYTHONPATH}:${PWD}/ThirdParty/container-maker"
+    - python ThirdParty/container-maker/ogscm/cli.py -B -C -R --ogs . --pm system --cvode --ompi $OPENMPI_VERSIONS
   artifacts:
     paths:
-    - web/public
-  only:
-  - web-hugo
+      - _out/images/*.sif

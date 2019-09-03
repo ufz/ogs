@@ -21,7 +21,6 @@ mark_as_advanced(
     DIFF_TOOL_PATH
     EIGEN_NO_DEBUG
     EIGEN3_FOUND
-    GIT_TOOL_PATH
     GPROF_PATH
     GREP_TOOL_PATH
     HOSTNAME

@@ -1,5 +1,5 @@
 *.bak*
-build*/
+/build*/
 *.sw[op]
 tags
 .ExternalData_*
