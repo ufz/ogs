@@ -678,6 +678,34 @@ pipeline {
             }
           }
         }
+        // ******************** Container Maker Images *************************
+        stage('Container Maker Images') {
+          when {
+            beforeAgent true
+            allOf {
+              expression { return params.master_jobs }
+              environment name: 'JOB_NAME', value: 'ufz/ogs/master'
+            }
+          }
+          agent { label 'docker'}
+          steps {
+            script {
+              sh '''git submodule update --init ThirdParty/container-maker
+                virtualenv .venv
+                source .venv/bin/activate
+                pip install -r ThirdParty/container-maker/requirements.txt
+                export PYTHONPATH="${PYTHONPATH}:${PWD}/ThirdParty/container-maker"
+                python ThirdParty/container-maker/ogscm/cli.py -B -C -R --ogs . --pm system --cvode --ompi off 2.1.6 3.1.4 4.0.1
+              '''.stripIndent()
+            }
+          }
+          post {
+            success {
+              archiveArtifacts('_out/images/*.sif')
+              dir('_out') { deleteDir() } // Cleanup
+            }
+          }
+        }
         // ********************* Push Docker Images ***************************
         stage('Push Docker Images') {
           when {
