@@ -11,34 +11,6 @@
                 <concentration>Si</concentration>
                 <pressure>pressure</pressure>
             </process_variables>
-            <fluid>
-                <density>
-                    <type>Constant</type>
-                    <value>1e3</value>
-                </density>
-                <viscosity>
-                    <type>Constant</type>
-                    <value>1.0e-3</value>
-                </viscosity>
-            </fluid>
-            <porous_medium>
-                <porous_medium id="0">
-                    <permeability>
-                        <permeability_tensor_entries>kappa1</permeability_tensor_entries>
-                        <type>Constant</type>
-                    </permeability>
-                    <porosity>
-                        <type>Constant</type>
-                        <porosity_parameter>constant_porosity_parameter</porosity_parameter>
-                    </porosity>
-                    <storage>
-                        <type>Constant</type>
-                        <value>0</value>
-                    </storage>
-                </porous_medium>
-            </porous_medium>
-            <fluid_reference_density>rho_fluid</fluid_reference_density>
-            <decay_rate>decay</decay_rate>
             <specific_body_force>0 0</specific_body_force>
             <secondary_variables>
                 <secondary_variable type="static" internal_name="darcy_velocity" output_name="darcy_velocity"/>
@@ -64,12 +36,39 @@
                                     <type>Constant</type>
                                     <value>1</value>
                                 </property>
+                                <property>
+                                    <name>decay_rate</name>
+                                    <type>Parameter</type>
+                                    <parameter_name>decay</parameter_name>
+                                </property>
                             </properties>
                         </component>
                     </components>
+                    <properties>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>1e3</value>
+                        </property>
+                        <property>
+                            <name>viscosity</name>
+                            <type>Constant</type>
+                            <value>1e-3</value>
+                        </property>
+                    </properties>
                 </phase>
             </phases>
             <properties>
+                <property>
+                    <name>permeability</name>
+                    <type>Parameter</type>
+                    <parameter_name>kappa1</parameter_name>
+                </property>
+                <property>
+                    <name>porosity</name>
+                    <type>Parameter</type>
+                    <parameter_name>constant_porosity_parameter</parameter_name>
+                </property>
                 <property>
                     <name>longitudinal_dispersivity</name>
                     <type>Constant</type>
@@ -125,11 +124,6 @@
         </output>
     </time_loop>
     <parameters>
-        <parameter>
-            <name>rho_fluid</name>
-            <type>Constant</type>
-            <value>1000</value>
-        </parameter>
         <parameter>
             <name>decay</name>
             <type>Constant</type>

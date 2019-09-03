@@ -22,42 +22,6 @@
                 <property_name>flux</property_name>
                 <output_mesh>out_abstraction_whole_surf_flux.vtu</output_mesh>
             </calculatesurfaceflux> -->
-            <fluid>
-                <density>
-                    <type>ConcentrationAndPressureDependent</type>
-                    <fluid_density_concentration_difference_ratio>0</fluid_density_concentration_difference_ratio>
-                    <fluid_density_pressure_difference_ratio>5.0968E-08</fluid_density_pressure_difference_ratio>
-                    <reference_concentration>0</reference_concentration>
-                    <reference_pressure>0</reference_pressure>
-                    <reference_density>1000</reference_density>
-                </density>
-                <viscosity>
-                    <type>Constant</type>
-                    <value>1.0e-3</value>
-                </viscosity>
-            </fluid>
-            <porous_medium>
-                <porous_medium id="0">
-                    <permeability>
-                        <type>Constant</type>
-                        <permeability_tensor_entries>kappa1</permeability_tensor_entries>
-                    </permeability>
-                    <porosity>
-                        <type>Constant</type>
-                        <porosity_parameter>porosity1</porosity_parameter>
-                    </porosity>
-                    <!-- The implementation of the ComponentTransport process
-                    is without Boussinesq approximations, thus, 'storage' is not
-                    used here, but should be set through S =thickness * gravity
-                    * porosity * d\rho / dp / rho.  -->
-                    <storage>
-                        <type>Constant</type>
-                        <value>0</value>
-                    </storage>
-                </porous_medium>
-            </porous_medium>
-            <fluid_reference_density>rho_fluid</fluid_reference_density>
-            <decay_rate>decay</decay_rate>
             <specific_body_force>0 0 -9.81</specific_body_force>
         </process>
     </processes>
@@ -80,12 +44,60 @@
                                     <type>Constant</type>
                                     <value>1</value>
                                 </property>
+                                <property>
+                                    <name>decay_rate</name>
+                                    <type>Parameter</type>
+                                    <parameter_name>decay</parameter_name>
+                                </property>
                             </properties>
                         </component>
                     </components>
+                    <properties>
+                        <property>
+                            <name>density</name>
+                            <type>Linear</type>
+                            <reference_value>1000</reference_value>
+                            <independent_variables>
+                                <independent_variable>
+                                    <variable_name>concentration</variable_name>
+                                    <reference_condition>0</reference_condition>
+                                    <slope>0</slope>
+                                </independent_variable>
+                                <independent_variable>
+                                    <variable_name>phase_pressure</variable_name>
+                                    <reference_condition>0</reference_condition>
+                                    <slope>5.0968E-08</slope>
+                                </independent_variable>
+                            </independent_variables>
+                        </property>
+                        <property>
+                            <name>viscosity</name>
+                            <type>Constant</type>
+                            <value>1e-3</value>
+                        </property>
+                    </properties>
                 </phase>
             </phases>
             <properties>
+                <property>
+                    <name>permeability</name>
+                    <type>Parameter</type>
+                    <parameter_name>kappa1</parameter_name>
+                </property>
+                <property>
+                    <name>porosity</name>
+                    <type>Parameter</type>
+                    <parameter_name>porosity1</parameter_name>
+                </property>
+                <!-- The implementation of the ComponentTransport process
+                is without Boussinesq approximations, thus, 'storage' is not
+                used here, but should be set through S =thickness * gravity
+                * porosity * d\rho / dp / rho.  -->
+                <!--property>
+                    <name>storage</name>
+                    <type>Constant</type>
+                    <value>0</value>
+                </property-->
                 <property>
                     <name>longitudinal_dispersivity</name>
                     <type>Constant</type>
@@ -185,11 +197,6 @@
         </output>
     </time_loop>
     <parameters>
-        <parameter>
-            <name>rho_fluid</name>
-            <type>Constant</type>
-            <value>1000</value>
-        </parameter>
         <parameter>
             <name>decay</name>
             <type>Constant</type>

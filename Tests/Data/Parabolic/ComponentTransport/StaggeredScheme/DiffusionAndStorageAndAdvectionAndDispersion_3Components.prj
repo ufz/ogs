@@ -14,38 +14,6 @@
                 <concentration>Cl</concentration>
                 <pressure>pressure</pressure>
             </process_variables>
-            <fluid>
-                <density>
-                    <type>ConcentrationAndPressureDependent</type>
-                    <reference_density>1</reference_density>
-                    <reference_concentration>0</reference_concentration>
-                    <fluid_density_concentration_difference_ratio>0.026</fluid_density_concentration_difference_ratio>
-                    <reference_pressure>0.5</reference_pressure>
-                    <fluid_density_pressure_difference_ratio>2e-5</fluid_density_pressure_difference_ratio>
-                </density>
-                <viscosity>
-                    <type>Constant</type>
-                    <value>1.0e-3</value>
-                </viscosity>
-            </fluid>
-            <porous_medium>
-                <porous_medium id="0">
-                    <permeability>
-                        <permeability_tensor_entries>kappa1</permeability_tensor_entries>
-                        <type>Constant</type>
-                    </permeability>
-                    <porosity>
-                        <type>Constant</type>
-                        <porosity_parameter>constant_porosity_parameter</porosity_parameter>
-                    </porosity>
-                    <storage>
-                        <type>Constant</type>
-                        <value>1e-5</value>
-                    </storage>
-                </porous_medium>
-            </porous_medium>
-            <fluid_reference_density>rho_fluid</fluid_reference_density>
-            <decay_rate>decay</decay_rate>
             <specific_body_force>0 0</specific_body_force>
             <secondary_variables>
                 <secondary_variable type="static" internal_name="darcy_velocity" output_name="darcy_velocity"/>
@@ -71,6 +39,11 @@
                                     <type>Constant</type>
                                     <value>1</value>
                                 </property>
+                                <property>
+                                    <name>decay_rate</name>
+                                    <type>Parameter</type>
+                                    <parameter_name>decay</parameter_name>
+                                </property>
                             </properties>
                         </component>
                         <component>
@@ -85,6 +58,11 @@
                                     <name>retardation_factor</name>
                                     <type>Constant</type>
                                     <value>1</value>
+                                </property>
+                                <property>
+                                    <name>decay_rate</name>
+                                    <type>Parameter</type>
+                                    <parameter_name>decay</parameter_name>
                                 </property>
                             </properties>
                         </component>
@@ -101,12 +79,51 @@
                                     <type>Constant</type>
                                     <value>1</value>
                                 </property>
+                                <property>
+                                    <name>decay_rate</name>
+                                    <type>Parameter</type>
+                                    <parameter_name>decay</parameter_name>
+                                </property>
                             </properties>
                         </component>
                     </components>
+                    <properties>
+                        <property>
+                            <name>density</name>
+                            <type>Linear</type>
+                            <reference_value>1</reference_value>
+                            <independent_variables>
+                                <independent_variable>
+                                    <variable_name>concentration</variable_name>
+                                    <reference_condition>0</reference_condition>
+                                    <slope>0.026</slope>
+                                </independent_variable>
+                                <independent_variable>
+                                    <variable_name>phase_pressure</variable_name>
+                                    <reference_condition>0.5</reference_condition>
+                                    <slope>2e-5</slope>
+                                </independent_variable>
+                            </independent_variables>
+                        </property>
+                        <property>
+                            <name>viscosity</name>
+                            <type>Constant</type>
+                            <value>1e-3</value>
+                        </property>
+                    </properties>
                 </phase>
             </phases>
             <properties>
+                <property>
+                    <name>permeability</name>
+                    <type>Parameter</type>
+                    <parameter_name>kappa1</parameter_name>
+                </property>
+                <property>
+                    <name>porosity</name>
+                    <type>Parameter</type>
+                    <parameter_name>constant_porosity_parameter</parameter_name>
+                </property>
                 <property>
                     <name>longitudinal_dispersivity</name>
                     <type>Constant</type>
@@ -391,11 +408,6 @@
         </output>
     </time_loop>
     <parameters>
-        <parameter>
-            <name>rho_fluid</name>
-            <type>Constant</type>
-            <value>1000</value>
-        </parameter>
         <parameter>
             <name>decay</name>
             <type>Constant</type>
