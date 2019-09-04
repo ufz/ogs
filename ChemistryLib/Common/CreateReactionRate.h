@@ -10,9 +10,7 @@
 #pragma once
 
 #include <boost/optional/optional_fwd.hpp>
-#include <tuple>
-
-struct rate;
+#include <vector>
 
 namespace BaseLib
 {
@@ -21,9 +19,7 @@ class ConfigTree;
 
 namespace ChemistryLib
 {
-namespace PhreeqcKernelData
-{
-std::tuple<rate*, int> createReactionRates(
+template <typename ReactionRate>
+std::vector<ReactionRate> createReactionRates(
     boost::optional<BaseLib::ConfigTree> const& config);
-}
 }  // namespace ChemistryLib

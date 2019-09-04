@@ -8,17 +8,16 @@
  */
 
 #include "CreateChemicalSolverInterface.h"
+#include "Common/CreateReactionRate.h"
 #include "MeshLib/Mesh.h"
 #include "PhreeqcIO.h"
 #include "PhreeqcIOData/CreateAqueousSolution.h"
 #include "PhreeqcIOData/CreateEquilibriumPhase.h"
 #include "PhreeqcIOData/CreateKineticReactant.h"
 #include "PhreeqcIOData/CreateOutput.h"
-#include "PhreeqcIOData/CreateReactionRate.h"
 #include "PhreeqcKernel.h"
 #include "PhreeqcKernelData/CreateAqueousSolution.h"
 #include "PhreeqcKernelData/CreateKineticReactant.h"
-#include "PhreeqcKernelData/CreateReactionRate.h"
 
 #include "ThirdParty/iphreeqc/src/src/phreeqcpp/cxxKinetics.h"
 
@@ -61,7 +60,7 @@ createChemicalSolverInterface<ChemicalSolver::Phreeqc>(
         config.getConfigSubtreeOptional("kinetic_reactants"), mesh);
 
     // rates
-    auto reaction_rates = PhreeqcIOData::createReactionRates(
+    auto reaction_rates = createReactionRates<PhreeqcIOData::ReactionRate>(
         //! \ogs_file_param{prj__chemical_system__rates}
         config.getConfigSubtreeOptional("rates"));
 
@@ -126,7 +125,7 @@ createChemicalSolverInterface<ChemicalSolver::PhreeqcKernel>(
         config.getConfigSubtreeOptional("kinetic_reactants"), mesh);
 
     // rates
-    auto reaction_rates = PhreeqcKernelData::createReactionRates(
+    auto reaction_rates = createReactionRates<PhreeqcKernelData::ReactionRate>(
         //! \ogs_file_param{prj__chemical_system__rates}
         config.getConfigSubtreeOptional("rates"));
 
