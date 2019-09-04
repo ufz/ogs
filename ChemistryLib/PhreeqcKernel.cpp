@@ -28,6 +28,7 @@ PhreeqcKernel::PhreeqcKernel(
     cxxKinetics& kinetic_reactants,
     std::vector<ReactionRate>&& reaction_rates)
     : Phreeqc(),
+      _templated_initial_aqueous_solution(*aqueous_solution.Get_initial_data()),
       _reaction_rates(std::move(reaction_rates))
 {
     do_initialize();
@@ -81,8 +82,6 @@ PhreeqcKernel::PhreeqcKernel(
 
     // set a strict convergence tolerance
     convergence_tolerance = 1e-12;
-
-    _templated_initial_aqueous_solution = *aqueous_solution.Get_initial_data();
 
     for (auto const& process_id_to_component_name_map_element :
          process_id_to_component_name_map)
