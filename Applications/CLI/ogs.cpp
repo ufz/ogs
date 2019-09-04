@@ -289,5 +289,6 @@ int main(int argc, char* argv[])
         ERR("One of the tests failed.");
         return EXIT_FAILURE;
     }
+    INFO("All tests passed!")
     return EXIT_SUCCESS;
 }
