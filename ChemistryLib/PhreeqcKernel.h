@@ -52,6 +52,20 @@ public:
         std::size_t const node_id);
 
 private:
+    void reinitializeRates();
+
+    void setConvergenceTolerance() { convergence_tolerance = 1e-12; }
+
+    void configureOutputSettings() { pr.all = false; }
+
+    cxxISolution* getOrCreateInitialAqueousSolution(
+        cxxSolution& aqueous_solution);
+
+    bool isHydrogen(char const* element) const
+    {
+        return strcmp(element, "H") == 0 ? true : false;
+    }
+
     std::map<int, struct master*> _process_id_to_master_map;
     cxxISolution _templated_initial_aqueous_solution;
     std::vector<ReactionRate> const _reaction_rates;

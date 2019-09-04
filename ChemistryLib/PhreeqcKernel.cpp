@@ -66,7 +66,24 @@ PhreeqcKernel::PhreeqcKernel(
         use.Set_kinetics_in(true);
     }
 
-    // Initialize array of struct rates
+    reinitializeRates();
+
+    setConvergenceTolerance();
+
+    configureOutputSettings();
+
+    for (auto const& [transport_process_id, transport_process_variable] :
+         process_id_to_component_name_map)
+    {
+        auto master_species =
+            master_bsearch(transport_process_variable.c_str());
+
+        _process_id_to_master_map[transport_process_id] = master_species;
+    }
+}
+
+void PhreeqcKernel::reinitializeRates()
+{
     count_rates = _reaction_rates.size();
     rates = (struct rate*)realloc(
         rates, (std::size_t)(count_rates) * sizeof(struct rate));
@@ -79,23 +96,6 @@ PhreeqcKernel::PhreeqcKernel(
         rates[rate_id].new_def = 1;
         ++rate_id;
     };
-
-    // set a strict convergence tolerance
-    convergence_tolerance = 1e-12;
-
-    for (auto const& process_id_to_component_name_map_element :
-         process_id_to_component_name_map)
-    {
-        auto const transport_process_id =
-            process_id_to_component_name_map_element.first;
-
-        auto const& transport_process_variable =
-            process_id_to_component_name_map_element.second;
-        auto master_species =
-            master_bsearch(transport_process_variable.c_str());
-
-        _process_id_to_master_map[transport_process_id] = master_species;
-    }
 }
 
 void PhreeqcKernel::doWaterChemistryCalculation(
@@ -119,28 +119,20 @@ void PhreeqcKernel::setAqueousSolutions(
     {
         auto& aqueous_solution = Rxn_solution_map[chemical_system_id];
 
-        // Get or create initial aqueous solution
-        if (!aqueous_solution.Get_initial_data())
-        {
-            aqueous_solution.Set_initial_data(
-                &_templated_initial_aqueous_solution);
-            aqueous_solution.Set_new_def(true);
-        }
-        auto initial_aqueous_solution = aqueous_solution.Get_initial_data();
+        auto initial_aqueous_solution =
+            getOrCreateInitialAqueousSolution(aqueous_solution);
 
         auto& components = initial_aqueous_solution->Get_comps();
         // Loop over transport process id map to retrieve component
-        // concentrations from process solutions or to update process
-        // solutions after chemical calculation by Phreeqc
-        for (auto const& process_id_to_master_pair : _process_id_to_master_map)
+        // concentrations from process solutions
+        for (auto const& [transport_process_id, master_species] :
+             _process_id_to_master_map)
         {
-            auto& transport_process_id = process_id_to_master_pair.first;
             auto& transport_process_solution =
                 process_solutions[transport_process_id];
 
-            auto& master_species = process_id_to_master_pair.second;
             auto& element_name = master_species->elt->name;
-            if (strcmp(element_name, "H") == 0)
+            if (isHydrogen(element_name))
             {
                 // Set pH value by hydrogen concentration.
                 double const pH = -std::log10(
@@ -156,6 +148,18 @@ void PhreeqcKernel::setAqueousSolutions(
             }
         }
     }
+}
+
+cxxISolution* PhreeqcKernel::getOrCreateInitialAqueousSolution(
+    cxxSolution& aqueous_solution)
+{
+    if (!aqueous_solution.Get_initial_data())
+    {
+        aqueous_solution.Set_initial_data(&_templated_initial_aqueous_solution);
+        aqueous_solution.Set_new_def(true);
+    }
+
+    return aqueous_solution.Get_initial_data();
 }
 
 void PhreeqcKernel::setTimeStepSize(double const dt)
@@ -185,8 +189,6 @@ void PhreeqcKernel::execute(std::vector<GlobalVector*>& process_solutions)
             use.Set_n_kinetics_user(chemical_system_id);
         }
 
-        pr.all = false;
-
         initial_solutions(false);
 
         reactions();
@@ -208,15 +210,14 @@ void PhreeqcKernel::updateNodalProcessSolutions(
     std::vector<GlobalVector*> const& process_solutions,
     std::size_t const node_id)
 {
-    for (auto const& process_id_to_master_pair : _process_id_to_master_map)
+    for (auto const& [transport_process_id, master_species] :
+         _process_id_to_master_map)
     {
-        auto const transport_process_id = process_id_to_master_pair.first;
         auto& transport_process_solution =
             process_solutions[transport_process_id];
 
-        auto const& master_species = process_id_to_master_pair.second;
         auto const& element_name = master_species->elt->name;
-        if (strcmp(element_name, "H") == 0)
+        if (isHydrogen(element_name))
         {
             // Update hydrogen concentration by pH value.
             auto const hydrogen_concentration = std::pow(10, s_hplus->la);
