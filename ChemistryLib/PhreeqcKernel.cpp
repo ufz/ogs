@@ -11,6 +11,7 @@
 
 #include "BaseLib/Error.h"
 #include "PhreeqcKernel.h"
+#include "PhreeqcKernelData/ReactionRate.h"
 
 #include "ThirdParty/iphreeqc/src/src/phreeqcpp/cxxKinetics.h"
 
@@ -25,8 +26,9 @@ PhreeqcKernel::PhreeqcKernel(
     std::string const& database,
     PhreeqcKernelData::AqueousSolution& aqueous_solution,
     cxxKinetics& kinetic_reactants,
-    std::tuple<rate*, int> const& reaction_rates)
-    : Phreeqc()
+    std::vector<ReactionRate>&& reaction_rates)
+    : Phreeqc(),
+      _reaction_rates(std::move(reaction_rates))
 {
     do_initialize();
 
@@ -63,8 +65,19 @@ PhreeqcKernel::PhreeqcKernel(
         use.Set_kinetics_in(true);
     }
 
-    // rates
-    std::tie(rates, count_rates) = reaction_rates;
+    // Initialize array of struct rates
+    count_rates = _reaction_rates.size();
+    rates = (struct rate*)realloc(
+        rates, (std::size_t)(count_rates) * sizeof(struct rate));
+    int rate_id = 0;
+    for (auto const& reaction_rate : _reaction_rates)
+    {
+        rates[rate_id].name = reaction_rate.kinetic_reactant.data();
+        rates[rate_id].commands =
+            const_cast<char*>(reaction_rate.commands().data());
+        rates[rate_id].new_def = 1;
+        ++rate_id;
+    };
 
     // set a strict convergence tolerance
     convergence_tolerance = 1e-12;

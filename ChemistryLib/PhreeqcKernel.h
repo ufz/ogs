@@ -23,6 +23,7 @@ namespace ChemistryLib
 {
 namespace PhreeqcKernelData
 {
+class ReactionRate;
 
 class PhreeqcKernel final : public ChemicalSolverInterface, private Phreeqc
 {
@@ -33,7 +34,7 @@ public:
                   std::string const& database,
                   AqueousSolution& aqueous_solution,
                   cxxKinetics& kinetic_reactants,
-                  std::tuple<rate*, int> const& reaction_rates);
+                  std::vector<ReactionRate>&& reaction_rates);
 
     void doWaterChemistryCalculation(
         std::vector<GlobalVector*>& process_solutions,
@@ -53,6 +54,7 @@ public:
 private:
     std::map<int, struct master*> _process_id_to_master_map;
     cxxISolution _templated_initial_aqueous_solution;
+    std::vector<ReactionRate> const _reaction_rates;
 };
 }  // namespace PhreeqcKernelData
 }  // namespace ChemistryLib

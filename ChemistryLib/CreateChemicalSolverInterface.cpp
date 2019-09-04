@@ -11,13 +11,19 @@
 #include "Common/CreateReactionRate.h"
 #include "MeshLib/Mesh.h"
 #include "PhreeqcIO.h"
+#include "PhreeqcIOData/AqueousSolution.h"
 #include "PhreeqcIOData/CreateAqueousSolution.h"
 #include "PhreeqcIOData/CreateEquilibriumPhase.h"
 #include "PhreeqcIOData/CreateKineticReactant.h"
 #include "PhreeqcIOData/CreateOutput.h"
+#include "PhreeqcIOData/EquilibriumPhase.h"
+#include "PhreeqcIOData/KineticReactant.h"
+#include "PhreeqcIOData/ReactionRate.h"
 #include "PhreeqcKernel.h"
+#include "PhreeqcKernelData/AqueousSolution.h"
 #include "PhreeqcKernelData/CreateAqueousSolution.h"
 #include "PhreeqcKernelData/CreateKineticReactant.h"
+#include "PhreeqcKernelData/ReactionRate.h"
 
 #include "ThirdParty/iphreeqc/src/src/phreeqcpp/cxxKinetics.h"
 
@@ -131,6 +137,7 @@ createChemicalSolverInterface<ChemicalSolver::PhreeqcKernel>(
 
     return std::make_unique<PhreeqcKernelData::PhreeqcKernel>(
         mesh.getNumberOfBaseNodes(), process_id_to_component_name_map,
-        path_to_database, aqueous_solution, kinetic_reactants, reaction_rates);
+        path_to_database, aqueous_solution, kinetic_reactants,
+        std::move(reaction_rates));
 }
 }  // namespace ChemistryLib
