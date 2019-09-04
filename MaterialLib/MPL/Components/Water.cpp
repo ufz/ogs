@@ -22,7 +22,7 @@ Water::Water(std::unique_ptr<PropertyArray>&& properties)
 
     if (properties)
     {
-        overwriteExistingProperties(_properties, *properties);
+        overwriteExistingProperties(_properties, *properties, this);
     }
 }
 }  // namespace MaterialPropertyLib

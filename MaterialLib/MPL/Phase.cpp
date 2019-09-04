@@ -28,7 +28,7 @@ Phase::Phase(std::string&& phase_name,
 
     if (properties)
     {
-        overwriteExistingProperties(_properties, *properties);
+        overwriteExistingProperties(_properties, *properties, this);
     }
 }
 

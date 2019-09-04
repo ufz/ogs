@@ -24,7 +24,7 @@ Medium::Medium(std::vector<std::unique_ptr<Phase>>&& phases,
 {
     if (properties)
     {
-        overwriteExistingProperties(_properties, *properties);
+        overwriteExistingProperties(_properties, *properties, this);
     }
 }
 
