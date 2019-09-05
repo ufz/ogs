@@ -17,7 +17,6 @@
 
 namespace MaterialPropertyLib
 {
-
 /// The parameter property class. The property reads the value from a parameter.
 /// The current implementation accepts only the double datatype defined in
 /// PropertyDataType.
@@ -36,12 +35,16 @@ public:
     /// This method will compute the derivative of a property with respect to
     /// the given primary variable.
     PropertyDataType dValue(VariableArray const& variable_array,
-                            Variable const primary_variable) const override;
+                            Variable const primary_variable,
+                            ParameterLib::SpatialPosition const& /*pos*/,
+                            double const /*t*/) const override;
     /// This method will compute the second derivative of a
     /// property with respect to the given primary variables pv1 and pv2.
     PropertyDataType d2Value(VariableArray const& variable_array,
                              Variable const pv1,
-                             Variable const pv2) const override;
+                             Variable const pv2,
+                             ParameterLib::SpatialPosition const& /*pos*/,
+                             double const /*t*/) const override;
 
 private:
     ParameterLib::Parameter<double> const& _parameter;

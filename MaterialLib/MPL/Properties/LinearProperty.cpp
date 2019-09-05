@@ -33,9 +33,11 @@ PropertyDataType LinearProperty::value(
                  std::get<double>(_independent_variable.reference_condition)));
 }
 
-
-PropertyDataType LinearProperty::dValue(VariableArray const& /*variable_array*/,
-                                        Variable const primary_variable) const
+PropertyDataType LinearProperty::dValue(
+    VariableArray const& /*variable_array*/,
+    Variable const primary_variable,
+    ParameterLib::SpatialPosition const& /*pos*/,
+    double const /*t*/) const
 {
     return _independent_variable.type == primary_variable
                ? std::get<double>(_value) *
@@ -46,7 +48,9 @@ PropertyDataType LinearProperty::dValue(VariableArray const& /*variable_array*/,
 PropertyDataType LinearProperty::d2Value(
     VariableArray const& /*variable_array*/,
     Variable const /*pv1*/,
-    Variable const /*pv2*/) const
+    Variable const /*pv2*/,
+    ParameterLib::SpatialPosition const& /*pos*/,
+    double const /*t*/) const
 {
     return decltype(_value){};
 }

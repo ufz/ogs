@@ -39,7 +39,8 @@ double getThermalExpansivity(Phase const& phase, VariableArray const& vars,
                ? 0.0
                : -phase.property(MaterialPropertyLib::PropertyType::density)
                          .template dValue<double>(
-                             vars, MaterialPropertyLib::Variable::temperature) /
+                             vars, MaterialPropertyLib::Variable::temperature,
+                             pos, t) /
                      density;
 }
 }  // namespace MaterialPropertyLib
