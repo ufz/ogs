@@ -34,7 +34,6 @@ private:
     Component* _component;
 
 public:
-    IdealGasLaw();
     /// This method assigns a pointer to the material object that is the owner
     /// of this property
     void setScale(

@@ -17,10 +17,6 @@
 
 namespace MaterialPropertyLib
 {
-IdealGasLaw::IdealGasLaw(){};
-
-/**
- */
 PropertyDataType IdealGasLaw::value(VariableArray const& variable_array,
                                     ParameterLib::SpatialPosition const& pos,
                                     double const t) const
