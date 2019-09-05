@@ -110,14 +110,6 @@ std::unique_ptr<Process> createComponentTransportProcess(
         }
     }
 
-    // Parameter for the density of the fluid.
-    auto& fluid_reference_density = ParameterLib::findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__ComponentTransport__fluid_reference_density}
-        "fluid_reference_density", parameters, 1);
-    DBUG("Use '%s' as fluid_reference_density parameter.",
-         fluid_reference_density.name.c_str(), &mesh);
-
     // Parameter for the decay rate.
     auto const& decay_rate = ParameterLib::findParameter<double>(
         config,
@@ -152,7 +144,6 @@ std::unique_ptr<Process> createComponentTransportProcess(
         MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
 
     ComponentTransportProcessData process_data{
-        fluid_reference_density,
         std::move(media_map),
         decay_rate,
         specific_body_force,

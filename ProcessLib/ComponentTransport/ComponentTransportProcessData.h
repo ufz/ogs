@@ -31,14 +31,12 @@ namespace ComponentTransport
 struct ComponentTransportProcessData
 {
     ComponentTransportProcessData(
-        ParameterLib::Parameter<double> const& fluid_reference_density_,
         std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>&&
             media_map_,
         ParameterLib::Parameter<double> const& decay_rate_,
         Eigen::VectorXd const& specific_body_force_, bool const has_gravity_,
         bool const non_advective_form_)
-        : fluid_reference_density(fluid_reference_density_),
-          media_map(std::move(media_map_)),
+        : media_map(std::move(media_map_)),
           decay_rate(decay_rate_),
           specific_body_force(specific_body_force_),
           has_gravity(has_gravity_),
@@ -46,7 +44,6 @@ struct ComponentTransportProcessData
     {
     }
 
-    ParameterLib::Parameter<double> const& fluid_reference_density;
     std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>
         media_map;
     ParameterLib::Parameter<double> const& decay_rate;
