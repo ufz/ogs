@@ -124,6 +124,7 @@ void NetCdfConfigureDialog::on_comboBoxDim3_currentIndexChanged(int id)
 //set up additional dimension
 void NetCdfConfigureDialog::on_comboBoxDim4_currentIndexChanged(int id)
 {
+    Q_UNUSED(id);
     if (_currentVar.getDimCount() > 3)
     {
         double firstValue=0, lastValue=0;
@@ -228,7 +229,7 @@ int NetCdfConfigureDialog::getDim4() const
 {
     NcVar const& dim3Var =
         _currentFile.getVar(comboBoxDim4->currentText().toStdString());
-    std::vector<std::size_t> start{{static_cast<std::size_t>(spinBoxDim4->value())}};
+    std::vector<std::size_t> start{static_cast<std::size_t>(spinBoxDim4->value())};
     int value(0);
     dim3Var.getVar(start, {1}, &value);
     if (value < 0)
@@ -344,7 +345,7 @@ QString NetCdfConfigureDialog::setName()
 std::string NetCdfConfigureDialog::getName()
 {
     std::string name = (lineEditName->text()).toStdString();
-    QString const date = dateTimeEditDim3->value();
+    QString const date = QString::number(dateTimeEditDim3->value());
     name.append(" - ").append(date.toStdString());
     return name;
 }
