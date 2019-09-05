@@ -13,7 +13,7 @@
 
 #include <tclap/CmdLine.h>
 
-#include "BaseLib/BuildInfo.h"
+#include "InfoLib/GitInfo.h"
 #include "BaseLib/FileTools.h"
 #include "Applications/ApplicationsLib/LogogSetup.h"
 #include "Applications/FileIO/AsciiRasterInterface.h"
@@ -29,11 +29,11 @@ int main(int argc, char* argv[])
         "equidistant intervals between them (i.e. for n=1, one new raster "
         "located precisely in the middle will be created).\n\n"
         "OpenGeoSys-6 software, version " +
-            BaseLib::BuildInfo::ogs_version +
+            GitInfoLib::GitInfo::ogs_version +
             ".\n"
             "Copyright (c) 2012-2019, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
-        ' ', BaseLib::BuildInfo::ogs_version);
+        ' ', GitInfoLib::GitInfo::ogs_version);
     TCLAP::ValueArg<std::string> input1_arg(
         "", "file1", "First DEM-raster file", true, "", "file1.asc");
     cmd.add(input1_arg);
