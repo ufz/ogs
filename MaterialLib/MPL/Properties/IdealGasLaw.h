@@ -29,10 +29,6 @@ class Component;
  */
 class IdealGasLaw final : public Property
 {
-private:
-    Phase* _phase;
-    Component* _component;
-
 public:
     /// This method assigns a pointer to the material object that is the owner
     /// of this property
@@ -69,6 +65,10 @@ public:
                              Variable const variable2,
                              ParameterLib::SpatialPosition const& pos,
                              double const t) const override;
+
+private:
+    Phase* _phase;
+    Component* _component;
 };
 
 inline std::unique_ptr<IdealGasLaw> createIdealGasLaw(
