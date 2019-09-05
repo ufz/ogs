@@ -21,24 +21,6 @@ namespace HeatTransportBHE
 {
 namespace BHE
 {
-BHE_1U::BHE_1U(BoreholeGeometry const& borehole,
-               RefrigerantProperties const& refrigerant,
-               GroutParameters const& grout,
-               FlowAndTemperatureControl const& flowAndTemperatureControl,
-               PipeConfiguration1U const& pipes)
-    : BHECommon{borehole, refrigerant, grout, flowAndTemperatureControl},
-      _pipes(pipes)
-{
-    // Initialize thermal resistances.
-    auto values = visit(
-        [&](auto const& control) {
-            return control(refrigerant.reference_temperature,
-                           0. /* initial time */);
-        },
-        flowAndTemperatureControl);
-    updateHeatTransferCoefficients(values.flow_rate);
-}
-
 std::array<double, BHE_1U::number_of_unknowns> BHE_1U::pipeHeatCapacities()
     const
 {

@@ -8,8 +8,11 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#include "CreateBHE1U.h"
+#include "CreateBHEUType.h"
 #include "BaseLib/ConfigTree.h"
+
+#include "BHE_1U.h"
+#include "BHE_2U.h"
 #include "CreateFlowAndTemperatureControl.h"
 namespace ProcessLib
 {
@@ -17,7 +20,12 @@ namespace HeatTransportBHE
 {
 namespace BHE
 {
-BHE::BHE_1U createBHE1U(
+static std::tuple<BoreholeGeometry,
+                  RefrigerantProperties,
+                  GroutParameters,
+                  FlowAndTemperatureControl,
+                  PipeConfigurationUType>
+parseBHEUTypeConfig(
     BaseLib::ConfigTree const& config,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
@@ -41,8 +49,8 @@ BHE::BHE_1U createBHE1U(
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__pipes__longitudinal_dispersion_length}
         pipes_config.getConfigParameter<double>(
             "longitudinal_dispersion_length");
-    PipeConfiguration1U const pipes{inlet_pipe, outlet_pipe, pipe_distance,
-                                    pipe_longitudinal_dispersion_length};
+    PipeConfigurationUType const pipes{inlet_pipe, outlet_pipe, pipe_distance,
+                                       pipe_longitudinal_dispersion_length};
 
     //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__grout}
     auto const grout = createGroutParameters(config.getConfigSubtree("grout"));
@@ -60,6 +68,30 @@ BHE::BHE_1U createBHE1U(
     return {borehole_geometry, refrigerant, grout, flowAndTemperatureControl,
             pipes};
 }
+
+template <typename T_BHE>
+T_BHE createBHEUType(
+    BaseLib::ConfigTree const& config,
+    std::map<std::string,
+             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
+        curves)
+{
+    auto UType = parseBHEUTypeConfig(config, curves);
+    return {std::get<0>(UType), std::get<1>(UType), std::get<2>(UType),
+            std::get<3>(UType), std::get<4>(UType)};
+}
+
+template BHE_1U createBHEUType<BHE_1U>(
+    BaseLib::ConfigTree const& config,
+    std::map<std::string,
+             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
+        curves);
+
+template BHE_2U createBHEUType<BHE_2U>(
+    BaseLib::ConfigTree const& config,
+    std::map<std::string,
+             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
+        curves);
 }  // namespace BHE
 }  // namespace HeatTransportBHE
 }  // namespace ProcessLib
