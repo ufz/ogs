@@ -117,22 +117,22 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
 
         std::vector<MaterialPropertyLib::IndependentVariable> ivs;
         auto const& independent_variables_config =
-            //! \ogs_file_param{properties__property__LinearProperty__independent_variable}
+            //! \ogs_file_param{properties__property__LinearProperty__independent_variables}
             config.getConfigSubtree("independent_variables");
         for (auto const& independent_variable_config :
              independent_variables_config.getConfigSubtreeList(
                  "independent_variable"))
         {
             auto const& variable_name =
-                //! \ogs_file_param{properties__property__LinearProperty__independent_variable__variable_name}
+                //! \ogs_file_param{properties__property__LinearProperty__independent_variables__independent_variable__variable_name}
                 independent_variable_config.getConfigParameter<std::string>(
                     "variable_name");
             auto const reference_condition =
-                //! \ogs_file_param{properties__property__LinearProperty__independent_variable__reference_condition}
+                //! \ogs_file_param{properties__property__LinearProperty__independent_variables__independent_variable__reference_condition}
                 independent_variable_config.getConfigParameter<double>(
                     "reference_condition");
             auto const slope =
-                //! \ogs_file_param{properties__property__LinearProperty__independent_variable__slope}
+                //! \ogs_file_param{properties__property__LinearProperty__independent_variables__independent_variable__slope}
                 independent_variable_config.getConfigParameter<double>("slope");
 
             MaterialPropertyLib::Variable ivt =
