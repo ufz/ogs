@@ -110,12 +110,6 @@ std::unique_ptr<Process> createComponentTransportProcess(
         }
     }
 
-    // Parameter for the decay rate.
-    auto const& decay_rate = ParameterLib::findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__ComponentTransport__decay_rate}
-        "decay_rate", parameters, 1, &mesh);
-
     // Specific body force parameter.
     Eigen::VectorXd specific_body_force;
     std::vector<double> const b =
@@ -145,7 +139,6 @@ std::unique_ptr<Process> createComponentTransportProcess(
 
     ComponentTransportProcessData process_data{
         std::move(media_map),
-        decay_rate,
         specific_body_force,
         has_gravity,
         non_advective_form};
