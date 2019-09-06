@@ -13,8 +13,9 @@
                 <material_properties>
                     <material_property name="YoungModulus" parameter="E"/>
                     <material_property name="PoissonRatio" parameter="nu"/>
-                    <material_property name="beta" parameter="beta"/>
-                    <material_property name="kappa" parameter="kappa"/>
+                    <material_property name="Cohesion" parameter="kappa"/>
+                    <material_property name="FrictionParameter" parameter="beta"/>
+                    <material_property name="DilatancyParameter" parameter="beta"/>
                 </material_properties>
             </constitutive_relation>
             <!-- Configuration of the Ehlers model used to compute the reference solution.
