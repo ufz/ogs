@@ -264,3 +264,13 @@ AddTest(
     Top-Lower-Shaly.vtu Top-Lower-Shaly.vtu Reshape_Thickness Reshape_Thickness 1e-16 0
     Top-Lower-Shaly.vtu Top-Lower-Shaly.vtu Measured_Depth Measured_Depth 1e-16 0
 )
+
+AddTest(
+    NAME createIntermediateRasters_test
+    PATH MeshGeoToolsLib/Hamburg
+    EXECUTABLE createIntermediateRasters
+    EXECUTABLE_ARGS --file1 layer04.asc --file2 layer17.asc -o ${Data_BINARY_DIR}/MeshGeoToolsLib/Hamburg/output.asc
+    REQUIREMENTS NOT OGS_USE_MPI
+    TESTER diff
+    DIFF_DATA output0.asc
+)

@@ -1,5 +1,9 @@
-set(TOOLS computeSurfaceNodeIDsInPolygonalRegion constructMeshesFromGeometry
-          identifySubdomains)
+set(TOOLS
+    computeSurfaceNodeIDsInPolygonalRegion
+    constructMeshesFromGeometry
+    createIntermediateRasters
+    identifySubdomains
+)
 foreach(TOOL ${TOOLS})
     add_executable(${TOOL} ${TOOL}.cpp)
     target_link_libraries(${TOOL}
