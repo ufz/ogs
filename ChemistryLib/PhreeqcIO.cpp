@@ -15,7 +15,12 @@
 #include "BaseLib/Algorithm.h"
 #include "BaseLib/ConfigTreeUtil.h"
 #include "PhreeqcIO.h"
+#include "PhreeqcIOData/AqueousSolution.h"
+#include "PhreeqcIOData/EquilibriumPhase.h"
+#include "PhreeqcIOData/KineticReactant.h"
 #include "PhreeqcIOData/Output.h"
+#include "PhreeqcIOData/ReactionRate.h"
+
 #include "ThirdParty/iphreeqc/src/src/IPhreeqc.h"
 
 namespace ChemistryLib

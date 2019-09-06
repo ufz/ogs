@@ -7,9 +7,10 @@
  *
  */
 
+#include "CreateSolutionComponent.h"
+#include "AqueousSolution.h"
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
-#include "ChemistryLib/PhreeqcIOData/AqueousSolution.h"
 
 namespace ChemistryLib
 {

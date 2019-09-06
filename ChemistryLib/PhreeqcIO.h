@@ -13,16 +13,17 @@
 #include <memory>
 
 #include "ChemicalSolverInterface.h"
-#include "PhreeqcIOData/AqueousSolution.h"
-#include "PhreeqcIOData/EquilibriumPhase.h"
-#include "PhreeqcIOData/KineticReactant.h"
-#include "PhreeqcIOData/Output.h"
-#include "PhreeqcIOData/ReactionRate.h"
 
 namespace ChemistryLib
 {
 namespace PhreeqcIOData
 {
+struct AqueousSolution;
+struct EquilibriumPhase;
+struct KineticReactant;
+struct ReactionRate;
+struct Output;
+
 enum class Status
 {
     SettingAqueousSolutions,

@@ -11,7 +11,10 @@
 #include <algorithm>
 #include <numeric>
 
+#include "AqueousSolution.h"
 #include "CreateOutput.h"
+#include "EquilibriumPhase.h"
+#include "KineticReactant.h"
 
 namespace ChemistryLib
 {
