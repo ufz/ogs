@@ -32,7 +32,7 @@ public:
     /// the PropertyDataType definition and sets the protected attribute _value
     /// of the base class Property to that value.
     LinearProperty(PropertyDataType const& property_reference_value,
-                   IndependentVariable const& v);
+                   std::vector<IndependentVariable> const& vs);
 
     /// This method computes the value of a property depending linearly on
     /// the value of the given primary variable.
@@ -56,6 +56,6 @@ public:
                              double const /*t*/) const override;
 
 private:
-    IndependentVariable const _independent_variable;
+    std::vector<IndependentVariable> const _independent_variables;
 };
 }  // namespace MaterialPropertyLib

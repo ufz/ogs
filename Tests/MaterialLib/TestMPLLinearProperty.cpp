@@ -19,7 +19,9 @@ TEST(MaterialPropertyLib, LinearProperty)
     double const x_ref = 293.15;
     MaterialPropertyLib::IndependentVariable const iv{
         MaterialPropertyLib::Variable::temperature, x_ref, m};
-    MaterialPropertyLib::LinearProperty linear_property{y_ref, iv};
+
+    std::vector<MaterialPropertyLib::IndependentVariable> ivs{iv};
+    MaterialPropertyLib::LinearProperty linear_property{y_ref, ivs};
 
     MaterialPropertyLib::VariableArray variable_array;
     variable_array[static_cast<int>(
