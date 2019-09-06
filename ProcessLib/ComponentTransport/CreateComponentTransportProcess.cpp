@@ -9,12 +9,8 @@
 
 #include "CreateComponentTransportProcess.h"
 
-#include "MaterialLib/Fluid/FluidProperties/CreateFluidProperties.h"
 #include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
-#include "MaterialLib/PorousMedium/CreatePorousMediaProperties.h"
 #include "MeshLib/IO/readMeshFromFile.h"
-#include "ParameterLib/ConstantParameter.h"
-#include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/SurfaceFlux/SurfaceFluxData.h"
 #include "ProcessLib/Utils/ProcessUtils.h"

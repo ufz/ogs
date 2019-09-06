@@ -12,9 +12,7 @@
 #include <memory>
 
 #include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
-#include "MaterialLib/PorousMedium/Porosity/Porosity.h"
-#include "MaterialLib/PorousMedium/Storage/Storage.h"
-#include "MaterialLib/PorousMedium/PorousMediaProperties.h"
+#include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 
 namespace MaterialPropertyLib
 {
