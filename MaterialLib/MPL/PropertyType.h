@@ -43,6 +43,8 @@ enum PropertyType : int
     critical_pressure,
     critical_temperature,
     compressibility,
+    /// used to specify decay rate of a substance.
+    decay_rate,
     density,
     drhodT,
     effective_stress,
@@ -122,6 +124,10 @@ inline PropertyType convertStringToProperty(std::string const& inString)
     if (boost::iequals(inString, "compressibility"))
     {
         return PropertyType::compressibility;
+    }
+    if (boost::iequals(inString, "decay_rate"))
+    {
+        return PropertyType::decay_rate;
     }
     if (boost::iequals(inString, "density"))
     {
