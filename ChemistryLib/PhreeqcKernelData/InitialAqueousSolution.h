@@ -9,6 +9,9 @@
 
 #pragma once
 
+#include <map>
+#include <string>
+
 #include "ThirdParty/iphreeqc/src/src/phreeqcpp/ISolution.h"
 
 namespace ChemistryLib

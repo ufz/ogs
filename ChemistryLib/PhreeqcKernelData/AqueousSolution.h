@@ -12,8 +12,6 @@
 #include "ThirdParty/iphreeqc/src/src/phreeqcpp/common/phrqtype.h"
 #include "ThirdParty/iphreeqc/src/src/phreeqcpp/Solution.h"
 
-class cxxISolution;
-
 namespace ChemistryLib
 {
 namespace PhreeqcKernelData

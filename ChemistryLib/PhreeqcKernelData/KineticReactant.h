@@ -9,6 +9,9 @@
 
 #pragma once
 
+#include <string>
+#include <vector>
+
 #include "ThirdParty/iphreeqc/src/src/phreeqcpp/cxxKinetics.h"
 
 namespace ChemistryLib

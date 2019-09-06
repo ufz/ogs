@@ -13,16 +13,17 @@
 #include <vector>
 
 #include "ChemicalSolverInterface.h"
-#include "PhreeqcKernelData/AqueousSolution.h"
+#include "PhreeqcKernelData/InitialAqueousSolution.h"
 
 #include "ThirdParty/iphreeqc/src/src/phreeqcpp/Phreeqc.h"
 
-class cxxISolution;
+class cxxSolution;
 
 namespace ChemistryLib
 {
 namespace PhreeqcKernelData
 {
+class AqueousSolution;
 class ReactionRate;
 
 class PhreeqcKernel final : public ChemicalSolverInterface, private Phreeqc
