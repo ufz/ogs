@@ -17,27 +17,37 @@
 
 namespace MaterialPropertyLib
 {
+double molarMass(Phase* _phase, Component* _component,
+                 VariableArray const& variable_array,
+                 ParameterLib::SpatialPosition const& pos, double const t)
+{
+    if (_phase)  // IdealGasLaw of an entire phase
+    {
+        return _phase->property(PropertyType::molar_mass)
+            .template value<double>(variable_array, pos, t);
+    }
+    if (_component)  // IdealGasLaw of a single component
+    {
+        return _component->property(PropertyType::molar_mass)
+            .template value<double>(variable_array, pos, t);
+    }
+    OGS_FATAL(
+        "Neither a phase nor a component are set for retrieving molar "
+        "mass.");
+
+    return 0.;
+}
+
 PropertyDataType IdealGasLaw::value(VariableArray const& variable_array,
                                     ParameterLib::SpatialPosition const& pos,
                                     double const t) const
 {
-    double molar_mass = 0.0;
-    if (_phase)  // IdealGasLaw of an entire phase
-    {
-        molar_mass = _phase->property(PropertyType::molar_mass)
-                         .template value<double>(variable_array, pos, t);
-    }
-    else  // IdealGasLaw of a single component
-    {
-        molar_mass = _component->property(PropertyType::molar_mass)
-                         .template value<double>(variable_array, pos, t);
-    }
-
     const double gas_constant = MaterialLib::PhysicalConstant::IdealGasConstant;
     const double pressure = std::get<double>(
         variable_array[static_cast<int>(Variable::phase_pressure)]);
     const double temperature = std::get<double>(
         variable_array[static_cast<int>(Variable::temperature)]);
+    double molar_mass = molarMass(_phase, _component, variable_array, pos, t);
 
     const double density = pressure * molar_mass / gas_constant / temperature;
 
@@ -49,23 +59,12 @@ PropertyDataType IdealGasLaw::dValue(VariableArray const& variable_array,
                                      ParameterLib::SpatialPosition const& pos,
                                      double const t) const
 {
-    double molar_mass = 0.0;
-    if (_phase)  // IdealGasLaw of an entire phase
-    {
-        molar_mass = _phase->property(PropertyType::molar_mass)
-                         .template value<double>(variable_array, pos, t);
-    }
-    else  // IdealGasLaw of a single component
-    {
-        molar_mass = _component->property(PropertyType::molar_mass)
-                         .template value<double>(variable_array, pos, t);
-    }
-
     const double gas_constant = MaterialLib::PhysicalConstant::IdealGasConstant;
     const double pressure = std::get<double>(
         variable_array[static_cast<int>(Variable::phase_pressure)]);
     const double temperature = std::get<double>(
         variable_array[static_cast<int>(Variable::temperature)]);
+    double molar_mass = molarMass(_phase, _component, variable_array, pos, t);
 
     if (primary_variable == Variable::temperature)
     {
@@ -92,23 +91,12 @@ PropertyDataType IdealGasLaw::d2Value(VariableArray const& variable_array,
                                       ParameterLib::SpatialPosition const& pos,
                                       double const t) const
 {
-    double molar_mass = 0.0;
-    if (_phase)  // IdealGasLaw of an entire phase
-    {
-        molar_mass = _phase->property(PropertyType::molar_mass)
-                         .template value<double>(variable_array, pos, t);
-    }
-    else  // IdealGasLaw of a single component
-    {
-        molar_mass = _component->property(PropertyType::molar_mass)
-                         .template value<double>(variable_array, pos, t);
-    }
-
     const double gas_constant = MaterialLib::PhysicalConstant::IdealGasConstant;
     const double pressure = std::get<double>(
         variable_array[static_cast<int>(Variable::phase_pressure)]);
     const double temperature = std::get<double>(
         variable_array[static_cast<int>(Variable::temperature)]);
+    double molar_mass = molarMass(_phase, _component, variable_array, pos, t);
 
     if ((primary_variable1 == Variable::phase_pressure) &&
         (primary_variable2 == Variable::phase_pressure))
