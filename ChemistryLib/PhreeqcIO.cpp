@@ -82,7 +82,7 @@ void PhreeqcIO::doWaterChemistryCalculation(
 {
     setAqueousSolutionsOrUpdateProcessSolutions(
         process_solutions, Status::SettingAqueousSolutions);
-    setTimeStep(dt);
+    setTimeStepSize(dt);
 
     writeInputsToFile();
 

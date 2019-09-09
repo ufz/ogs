@@ -50,7 +50,7 @@ public:
         std::vector<GlobalVector*> const& process_solutions,
         Status const status);
 
-    void setTimeStep(double const dt) override { _dt = dt; }
+    void setTimeStepSize(double const dt) override { _dt = dt; }
 
     void writeInputsToFile();
 

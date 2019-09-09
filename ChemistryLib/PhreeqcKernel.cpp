@@ -102,7 +102,8 @@ void PhreeqcKernel::doWaterChemistryCalculation(
     std::vector<GlobalVector*>& process_solutions, double const dt)
 {
     setAqueousSolutions(process_solutions);
-    setTimeStep(dt);
+
+    setTimeStepSize(dt);
 
     execute(process_solutions);
 }
@@ -157,7 +158,7 @@ void PhreeqcKernel::setAqueousSolutions(
     }
 }
 
-void PhreeqcKernel::setTimeStep(double const dt)
+void PhreeqcKernel::setTimeStepSize(double const dt)
 {
     // Loop over rxn kinetics map
     for (auto& [chemical_system_id, kinetics] : Rxn_kinetics_map)

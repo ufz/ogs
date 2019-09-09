@@ -43,7 +43,7 @@ public:
     void setAqueousSolutions(
         std::vector<GlobalVector*> const& process_solutions);
 
-    void setTimeStep(double const dt) override;
+    void setTimeStepSize(double const dt) override;
 
     void execute(std::vector<GlobalVector*>& process_solutions);
 
