@@ -1,8 +1,5 @@
 /**
  * \file
- * \author Norbert Grunwald
- * \date   Sep 10, 2019
- *
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -10,11 +7,21 @@
  *              http://www.opengeosys.org/project/license
  *
  */
+
 #pragma once
 
-#include "CreateConstant.h"
-#include "CreateExponentialProperty.h"
-#include "CreateIdealGasLaw.h"
-#include "CreateLinearProperty.h"
-#include "CreateParameterProperty.h"
-#include "CreateSaturationBrooksCorey.h"
+namespace BaseLib
+{
+class ConfigTree;
+}
+
+namespace MaterialPropertyLib
+{
+class SaturationBrooksCorey;
+}
+
+namespace MaterialPropertyLib
+{
+std::unique_ptr<SaturationBrooksCorey> createSaturationBrooksCorey(
+    BaseLib::ConfigTree const& config);
+}  // namespace MaterialPropertyLib

@@ -18,6 +18,7 @@
 #include "BaseLib/ConfigTree.h"
 
 #include "Properties/CreateProperties.h"
+
 #include "Properties/Properties.h"
 
 #include "Component.h"
