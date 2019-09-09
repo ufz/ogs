@@ -135,38 +135,35 @@ std::pair<double, double> getBoundaries(NcVar const& var)
     return std::make_pair(0, 0);
 }
 
-MathLib::Point3d getOrigin(NcFile const& dataset, NcVar const& var)
+MathLib::Point3d getOrigin(NcFile const& dataset, NcVar const& var,
+                           std::array<std::size_t, 4> const& dim_idx_map,
+                           bool is_time_dep)
 {
+    std::size_t const temp_offset = (is_time_dep) ? 1 : 0;
     MathLib::Point3d origin(std::array<double, 3>{ {0, 0, 0}});
     std::size_t const n_dims = var.getDimCount();
-    for (std::size_t i=1; i<n_dims; ++i)
+    for (std::size_t i = temp_offset; i < n_dims; ++i)
     {
-        NcVar const& dim = getDimVar(dataset, var, var.getDimCount() - i);
+        NcVar const& dim = getDimVar(dataset, var, dim_idx_map[i]);
         auto const bounds = getBoundaries(dim);
-        origin[n_dims - i] = (bounds.first < bounds.second) ? bounds.first : bounds.second;
+        origin[i-temp_offset] = (bounds.first < bounds.second) ? bounds.first : bounds.second;
     }
     return origin;
 }
 
-void reverseNorthSouth(double* data, std::size_t width, std::size_t height)
+void flipRaster(std::vector<double>& data, std::size_t width, std::size_t height)
 {
-    std::size_t const total_length (width * height);
-    double* cp_array = new double[total_length];
-
+    std::size_t const length (data.size());
+    std::vector<double> tmp_vec (length);
     for (std::size_t i=0; i<height; i++)
     {
+        std::size_t const line_idx(length - (width * (i + 1)));
         for (std::size_t j=0; j<width; j++)
         {
-            std::size_t const old_index (total_length - (width*(i+1)));
-            std::size_t const new_index (width*i);
-            cp_array[new_index+j] = data[old_index+j];
+            tmp_vec.push_back(data[line_idx + j]);
         }
     }
-
-    for (std::size_t i=0; i<total_length; i++)
-        data[i] = cp_array[i];
-
-    delete[] cp_array;
+    std::copy(tmp_vec.cbegin(), tmp_vec.cend(), data.begin());
 }
 
 bool canConvert(NcVar const& var)
@@ -290,8 +287,8 @@ MeshLib::MeshElemType elemSelectionLoop(std::size_t const dim)
 
         if (dim==3)
         {
-            if (type != "p" || type != "h" ||
-                type != "prism" || type != "hex" ||
+            if (type != "p" && type != "h" &&
+                type != "prism" && type != "hex" &&
                 type != "hexahedron")
                 continue;
             if (type == "p" || type == "prism")
@@ -332,12 +329,47 @@ GeoLib::RasterHeader createRasterHeader(
     std::array<std::size_t, 4> const& dim_idx_map,
     std::vector<std::size_t> const& length, bool is_time_dep)
 {
-    MathLib::Point3d origin = getOrigin(dataset, var);
+    MathLib::Point3d origin = getOrigin(dataset, var, dim_idx_map, is_time_dep);
     double const res = getResolution(dataset, var);
     std::size_t n_dims = var.getDimCount();
     std::size_t temp_offset = (is_time_dep) ? 1 : 0;
     std::size_t z_length = (n_dims - temp_offset == 3) ? length[dim_idx_map.back()] : 1;
     return {length[dim_idx_map[0 + temp_offset]], length[dim_idx_map[1 + temp_offset]], z_length, origin, res, -9999};
+}
+
+std::size_t getLength(NcVar const& var, bool const is_time_dep, std::vector<std::size_t> &length)
+{
+    std::size_t const temp_offset = (is_time_dep) ? 1 : 0;
+    std::size_t const n_dims = (var.getDimCount());
+    length.resize(4, 1);
+    std::size_t array_length = 1;
+    for (std::size_t i = temp_offset; i < n_dims; ++i)
+    {
+        length[i] = var.getDim(i).getSize();
+        array_length *= length[i];
+    }
+    return array_length;
+}
+
+std::vector<double> getData(NcFile const& dataset, NcVar const& var,
+                            std::size_t total_length,
+                            std::size_t const time_step,
+                            std::vector<std::size_t> const& length)
+{
+    std::size_t const n_dims (var.getDimCount());
+    std::vector<std::size_t> offset(n_dims, 0);
+    offset[0] = time_step;
+    std::vector<double> data_vec(total_length, 0);
+    var.getVar(offset, length, data_vec.data());
+    std::replace_if(data_vec.begin(), data_vec.end(),
+                    [](double& x) { return x <= -9999; }, -9999);
+
+    // reverse lines in vertical direction if the original file has its origin in the northwest corner
+    NcVar const& dim_var = getDimVar(dataset, var, n_dims - 1);
+    auto const bounds = getBoundaries(dim_var);
+    if (bounds.first > bounds.second)
+        flipRaster(data_vec, length[n_dims - 2], length[n_dims - 1]);
+    return data_vec;
 }
 
 int main (int argc, char* argv[])
@@ -382,20 +414,6 @@ int main (int argc, char* argv[])
     std::array<std::size_t, 4> dim_idx_map;
     bool const is_time_dep = dimensionSelectionLoop(var, dim_idx_map);
 
-    std::size_t const temp_offset = (is_time_dep) ? 1 : 0;
-    std::size_t const n_dims = (var.getDimCount());
-    std::vector<std::size_t> offset(n_dims, 0);
-    std::vector<std::size_t> length(n_dims, 1);
-    std::size_t array_length = 1;
-    for (std::size_t i=temp_offset; i<n_dims; ++i)
-    {
-        length[i] = var.getDim(i).getSize();
-        array_length *= length[i];
-    }
-
-    GeoLib::RasterHeader header =
-        createRasterHeader(dataset, var, dim_idx_map, length, is_time_dep);
-
     std::pair<std::size_t, std::size_t> time_bounds(0,0);
     if (is_time_dep)
         time_bounds = timestepSelectionLoop(dataset, var, dim_idx_map[0]);
@@ -405,26 +423,23 @@ int main (int argc, char* argv[])
         mult_files = multFilesSelectionLoop(time_bounds);
 
     std::unique_ptr<MeshLib::Mesh> mesh;
+    std::size_t const temp_offset = (is_time_dep) ? 1 : 0;
+    std::size_t const n_dims = (var.getDimCount());
+    std::vector<std::size_t> length;
+    std::size_t const array_length = getLength(var, is_time_dep, length);
+
     MeshLib::MeshElemType const meshElemType = elemSelectionLoop(n_dims - temp_offset);
     for (std::size_t i=time_bounds.first; i<=time_bounds.second; ++i)
     {
         std::cout << "Converting time step " << i << "...\n";
-        offset[0] = i;
-        std::vector<double> data_array(array_length,0);
-        var.getVar(offset, length, data_array.data());
-        std::replace_if(data_array.begin(), data_array.end(),
-                        [](double& x) { return x <= -9999; }, -9999);
+        std::vector<double> data_vec = getData(dataset, var, array_length, i, length);
 
-        // reverse lines in vertical direction if the original file has its origin in the northwest corner
-        NcVar const& dim_var = getDimVar(dataset, var, n_dims - 1);
-        auto const bounds = getBoundaries(dim_var);
-        if (bounds.first > bounds.second)
-            reverseNorthSouth(data_array.data(), length[n_dims-2], length[n_dims-1]);
-
+        GeoLib::RasterHeader header =
+            createRasterHeader(dataset, var, dim_idx_map, length, is_time_dep);
         MeshLib::UseIntensityAs const useIntensity = MeshLib::UseIntensityAs::DATAVECTOR;
         if (mult_files)
         {
-            mesh.reset(MeshLib::RasterToMesh::convert(data_array.data(), header, meshElemType, useIntensity, var.getName()));
+            mesh.reset(MeshLib::RasterToMesh::convert(data_vec.data(), header, meshElemType, useIntensity, var.getName()));
             std::string const output_file_name (BaseLib::dropFileExtension(output_name) + getIterationString(i, time_bounds.second) + ".vtu");
             MeshLib::IO::VtuInterface vtu(mesh.get());
             vtu.writeToFile(output_file_name);
@@ -435,10 +450,10 @@ int main (int argc, char* argv[])
             if (time_bounds.first != time_bounds.second)
                 array_name.append(getIterationString(i, time_bounds.second));
             if (i==time_bounds.first) // create persistent mesh
-                mesh.reset(MeshLib::RasterToMesh::convert(data_array.data(), header, meshElemType, useIntensity, array_name));
+                mesh.reset(MeshLib::RasterToMesh::convert(data_vec.data(), header, meshElemType, useIntensity, array_name));
             else // copy array to mesh
             {
-                std::unique_ptr<MeshLib::Mesh> temp (MeshLib::RasterToMesh::convert(data_array.data(), header, meshElemType, useIntensity, array_name));
+                std::unique_ptr<MeshLib::Mesh> temp (MeshLib::RasterToMesh::convert(data_vec.data(), header, meshElemType, useIntensity, array_name));
                 MeshLib::PropertyVector<double> const*const vec = temp->getProperties().getPropertyVector<double>(array_name);
                 if (vec == nullptr)
                     return EXIT_FAILURE;
