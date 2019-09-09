@@ -26,9 +26,12 @@ KineticReactant::KineticReactant(std::string const& name,
 
 Kinetics::Kinetics(std::vector<KineticReactant> const& kinetic_reactants)
 {
-    std::copy(kinetic_reactants.begin(),
-              kinetic_reactants.end(),
-              std::back_inserter(kinetics_comps));
+    std::transform(kinetic_reactants.begin(),
+                   kinetic_reactants.end(),
+                   std::back_inserter(kinetics_comps),
+                   [](KineticReactant const& kinetic_reactant) {
+                       return *kinetic_reactant.castToBaseClass();
+                   });
 }
 }  // namespace PhreeqcKernelData
 }  // namespace ChemistryLib

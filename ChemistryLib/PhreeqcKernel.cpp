@@ -55,14 +55,15 @@ PhreeqcKernel::PhreeqcKernel(
     use.Set_solution_in(true);
 
     // kinetics
-    if (!kinetic_reactants.Get_kinetics_comps().empty())
+    if (kinetic_reactants->isKineticReactantDefined())
     {
         for (std::size_t chemical_system_id = 0;
              chemical_system_id < num_chemical_systems;
              ++chemical_system_id)
         {
-            kinetic_reactants.Set_n_user_both(chemical_system_id);
-            Rxn_kinetics_map.emplace(chemical_system_id, kinetic_reactants);
+            kinetic_reactants->setChemicalSystemID(chemical_system_id);
+            Rxn_kinetics_map.emplace(chemical_system_id,
+                                     *kinetic_reactants->castToBaseClass());
         }
         use.Set_kinetics_in(true);
     }
