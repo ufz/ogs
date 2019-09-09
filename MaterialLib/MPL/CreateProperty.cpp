@@ -65,13 +65,6 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
         return createSaturationBrooksCorey(config);
     }
 
-    /* TODO Additional properties go here, for example:
-    if (boost::iequals(property_type, "BilinearTemperaturePressure"))
-    {
-        return createBilinearTemperaturePressure(config, material_type);
-    }
-    */
-
     // If none of the above property types are found, OGS throws an error.
     OGS_FATAL("The specified component property type '%s' was not recognized",
               property_type.c_str());
