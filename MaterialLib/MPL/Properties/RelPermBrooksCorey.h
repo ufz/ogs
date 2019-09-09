@@ -95,6 +95,10 @@ inline std::unique_ptr<RelPermBrooksCorey> createRelPermBrooksCorey(
     auto const exponent =
         //! \ogs_file_param{prj__media__medium__properties__property__RelPermBrooksCorey__lambda}
         config.getConfigParameter<double>("lambda");
+    if (exponent == 0.)
+    {
+        OGS_FATAL("Exponent 'lambda' must be positive.");
+    }
 
     return std::make_unique<RelPermBrooksCorey>(
         residual_liquid_saturation,
