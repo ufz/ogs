@@ -34,7 +34,7 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
     using namespace MaterialPropertyLib;
     // Parsing the property type:
     //! \ogs_file_param{properties__property__type}
-    auto const property_type = config.getConfigParameter<std::string>("type");
+    auto const property_type = config.peekConfigParameter<std::string>("type");
 
     // If (and only if) the given property type is 'constant', a corresponding
     // value is needed.
