@@ -91,6 +91,10 @@ inline std::unique_ptr<SaturationBrooksCorey> createSaturationBrooksCorey(
     auto const entry_pressure =
         //! \ogs_file_param{prj__media__medium__properties__property__SaturationBrooksCorey__entry_pressure}
         config.getConfigParameter<double>("entry_pressure");
+    if (entry_pressure < 0.)
+    {
+        OGS_FATAL("Paramater 'entry_pressure' must be positive.");
+    }
 
     return std::make_unique<SaturationBrooksCorey>(residual_liquid_saturation,
                                                    residual_gas_saturation,
