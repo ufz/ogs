@@ -71,16 +71,15 @@ PropertyDataType IdealGasLaw::dValue(VariableArray const& variable_array,
         return -pressure * molar_mass / gas_constant / temperature /
                temperature;
     }
-    else if (primary_variable == Variable::phase_pressure)
+
+    if (primary_variable == Variable::phase_pressure)
     {
         return molar_mass / gas_constant / temperature;
     }
-    else
-    {
-        OGS_FATAL(
-            "IdealGasLaw::dValue is implemented for derivatives "
-            "with respect to phase pressure or temperature only.");
-    }
+
+    OGS_FATAL(
+        "IdealGasLaw::dValue is implemented for derivatives "
+        "with respect to phase pressure or temperature only.");
 
     return 0.;
 }
@@ -104,27 +103,25 @@ PropertyDataType IdealGasLaw::d2Value(VariableArray const& variable_array,
         // d2rho_dp2
         return 0.;
     }
-    else if ((primary_variable1 == Variable::temperature) &&
-             (primary_variable2 == Variable::temperature))
+    if ((primary_variable1 == Variable::temperature) &&
+        (primary_variable2 == Variable::temperature))
     {
         // d2rho_dT2
         return 2. * molar_mass * pressure / gas_constant / temperature /
                temperature / temperature;
     }
-    else if (((primary_variable1 == Variable::phase_pressure) &&
-              (primary_variable2 == Variable::temperature)) ||
-             ((primary_variable1 == Variable::temperature) &&
-              (primary_variable2 == Variable::phase_pressure)))
+    if (((primary_variable1 == Variable::phase_pressure) &&
+         (primary_variable2 == Variable::temperature)) ||
+        ((primary_variable1 == Variable::temperature) &&
+         (primary_variable2 == Variable::phase_pressure)))
     {
         // d2rho_dpdT or d2rho_dTdp
         return -molar_mass / gas_constant / temperature / temperature;
     }
-    else
-    {
-        OGS_FATAL(
-            "IdealGasLaw::d2Value is implemented for derivatives "
-            "with respect to phase pressure and temperature only.");
-    }
+
+    OGS_FATAL(
+        "IdealGasLaw::d2Value is implemented for derivatives "
+        "with respect to phase pressure and temperature only.");
 
     return 0.;
 }
