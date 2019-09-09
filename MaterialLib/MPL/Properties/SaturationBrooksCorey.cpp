@@ -37,10 +37,8 @@ PropertyDataType SaturationBrooksCorey::value(
     ParameterLib::SpatialPosition const& /*pos*/,
     double const /*t*/) const
 {
-    const double p_cap = std::max(
-        std::numeric_limits<double>::min(),
-        std::get<double>(
-            variable_array[static_cast<int>(Variable::capillary_pressure)]));
+    const double p_cap = std::get<double>(
+        variable_array[static_cast<int>(Variable::capillary_pressure)]);
 
     const double s_L_res = _residual_liquid_saturation;
     const double s_L_max = 1.0 - _residual_gas_saturation;
@@ -51,10 +49,7 @@ PropertyDataType SaturationBrooksCorey::value(
         return s_L_max;
 
     const double s_eff = std::pow(p_b / p_cap, lambda);
-    const double s = s_eff * (s_L_max - s_L_res) + s_L_res;
-
-    return MathLib::limitValueInInterval(s, s_L_res + _minor_offset,
-                                         s_L_max - _minor_offset);
+    return s_eff * (s_L_max - s_L_res) + s_L_res;
 }
 
 PropertyDataType SaturationBrooksCorey::dValue(
@@ -67,10 +62,11 @@ PropertyDataType SaturationBrooksCorey::dValue(
            " derivatives with respect to capillary pressure only.");
 
     const double p_b = _entry_pressure;
-    const double p_cap = std::max(
-        p_b,
-        std::get<double>(
-            variable_array[static_cast<int>(Variable::capillary_pressure)]));
+    const double p_cap = std::get<double>(
+        variable_array[static_cast<int>(Variable::capillary_pressure)]);
+
+    if (p_cap <= p_b)
+        return 0.;
 
     auto const s_L = _medium->property(PropertyType::saturation)
                          .template value<double>(variable_array, pos, t);
@@ -82,8 +78,8 @@ PropertyDataType SaturationBrooksCorey::dValue(
 
 PropertyDataType SaturationBrooksCorey::d2Value(
     VariableArray const& variable_array, Variable const primary_variable1,
-    Variable const primary_variable2, ParameterLib::SpatialPosition const& /*pos*/,
-    double const /*t*/) const
+    Variable const primary_variable2,
+    ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/) const
 {
     (void)primary_variable1;
     (void)primary_variable2;
