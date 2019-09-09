@@ -17,6 +17,10 @@ namespace MaterialPropertyLib
 {
 Variable convertStringToVariable(std::string const& input)
 {
+    if (boost::iequals(input, "concentration"))
+    {
+        return Variable::concentration;
+    }
     if (boost::iequals(input, "phase_pressure"))
     {
         return Variable::phase_pressure;

@@ -186,7 +186,7 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
             //! \ogs_file_param{properties__property__Parameter__parameter_name}
             config.getConfigParameter<std::string>("parameter_name");
         auto const& parameter = ParameterLib::findParameter<double>(
-            parameter_name, parameters, 1, nullptr);
+            parameter_name, parameters, 0, nullptr);
         return std::make_unique<MaterialPropertyLib::ParameterProperty>(
             parameter);
     }
