@@ -26,7 +26,8 @@ PhreeqcKernel::PhreeqcKernel(
         process_id_to_component_name_map,
     std::string const& database,
     PhreeqcKernelData::AqueousSolution& aqueous_solution,
-    cxxKinetics& kinetic_reactants,
+    std::unique_ptr<Kinetics>
+        kinetic_reactants,
     std::vector<ReactionRate>&& reaction_rates)
     : Phreeqc(),
       _templated_initial_aqueous_solution(

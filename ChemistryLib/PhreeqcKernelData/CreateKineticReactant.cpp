@@ -19,13 +19,13 @@ namespace ChemistryLib
 {
 namespace PhreeqcKernelData
 {
-cxxKinetics createKineticReactants(
+std::unique_ptr<Kinetics> createKineticReactants(
     boost::optional<BaseLib::ConfigTree> const& config,
     MeshLib::Mesh const& mesh)
 {
     if (!config)
     {
-        return {};
+        return nullptr;
     }
 
     std::vector<KineticReactant> kinetic_reactants;
@@ -51,7 +51,7 @@ cxxKinetics createKineticReactants(
         kinetic_reactants.emplace_back(name, initial_amount);
     }
 
-    return Kinetics(kinetic_reactants);
+    return std::make_unique<Kinetics>(kinetic_reactants);
 }
 }  // namespace PhreeqcKernelData
 }  // namespace ChemistryLib

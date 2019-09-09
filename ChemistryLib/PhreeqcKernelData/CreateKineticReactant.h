@@ -10,8 +10,9 @@
 #pragma once
 
 #include <boost/optional/optional_fwd.hpp>
+#include <memory>
 
-class cxxKinetics;
+#include "KineticReactant.h"
 
 namespace BaseLib
 {
@@ -27,7 +28,7 @@ namespace ChemistryLib
 {
 namespace PhreeqcKernelData
 {
-cxxKinetics createKineticReactants(
+std::unique_ptr<Kinetics> createKineticReactants(
     boost::optional<BaseLib::ConfigTree> const& config,
     MeshLib::Mesh const& mesh);
 }

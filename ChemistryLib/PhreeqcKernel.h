@@ -14,6 +14,7 @@
 
 #include "ChemicalSolverInterface.h"
 #include "PhreeqcKernelData/InitialAqueousSolution.h"
+#include "PhreeqcKernelData/KineticReactant.h"
 
 #include "ThirdParty/iphreeqc/src/src/phreeqcpp/Phreeqc.h"
 
@@ -34,7 +35,8 @@ public:
                       process_id_to_component_name_map,
                   std::string const& database,
                   AqueousSolution& aqueous_solution,
-                  cxxKinetics& kinetic_reactants,
+                  std::unique_ptr<Kinetics>
+                      kinetic_reactants,
                   std::vector<ReactionRate>&& reaction_rates);
 
     void doWaterChemistryCalculation(

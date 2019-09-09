@@ -130,7 +130,7 @@ createChemicalSolverInterface<ChemicalSolver::PhreeqcKernel>(
 
     return std::make_unique<PhreeqcKernelData::PhreeqcKernel>(
         mesh.getNumberOfBaseNodes(), process_id_to_component_name_map,
-        path_to_database, aqueous_solution, kinetic_reactants,
+        path_to_database, aqueous_solution, std::move(kinetic_reactants),
         std::move(reaction_rates));
 }
 }  // namespace ChemistryLib
