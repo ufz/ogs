@@ -191,6 +191,10 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
             parameter);
     }
 
+    if (boost::iequals(property_type, "IdealGasLaw"))
+    {
+        return createIdealGasLaw(config);
+    }
     /* TODO Additional properties go here, for example:
     if (boost::iequals(property_type, "BilinearTemperaturePressure"))
     {

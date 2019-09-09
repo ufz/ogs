@@ -13,6 +13,7 @@
 #pragma once
 
 #include "Constant.h"
+#include "IdealGasLaw.h"
 #include "LinearProperty.h"
 #include "ExponentialProperty.h"
 #include "ParameterProperty.h"
