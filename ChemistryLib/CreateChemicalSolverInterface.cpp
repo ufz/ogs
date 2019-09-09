@@ -29,6 +29,29 @@
 
 namespace ChemistryLib
 {
+namespace
+{
+std::string parseDatabasePath(BaseLib::ConfigTree const& config)
+{
+    // database
+    //! \ogs_file_param{prj__chemical_system__database}
+    auto const database = config.getConfigParameter<std::string>("database");
+    auto path_to_database =
+        BaseLib::joinPaths(BaseLib::getProjectDirectory(), database);
+
+    if (!BaseLib::IsFileExisting(path_to_database))
+    {
+        OGS_FATAL("Not found the specified thermodynamicdatabase: %s",
+                  path_to_database.c_str());
+    }
+
+    INFO("Found the specified thermodynamic database: %s",
+         path_to_database.c_str());
+
+    return path_to_database;
+}
+}  // namespace
+
 template <>
 std::unique_ptr<ChemicalSolverInterface>
 createChemicalSolverInterface<ChemicalSolver::Phreeqc>(
@@ -37,22 +60,7 @@ createChemicalSolverInterface<ChemicalSolver::Phreeqc>(
         process_id_to_component_name_map,
     BaseLib::ConfigTree const& config, std::string const& output_directory)
 {
-    // database
-    //! \ogs_file_param{prj__chemical_system__database}
-    auto const database = config.getConfigParameter<std::string>("database");
-    auto path_to_database =
-        BaseLib::joinPaths(BaseLib::getProjectDirectory(), database);
-
-    if (BaseLib::IsFileExisting(path_to_database))
-    {
-        INFO("Found the specified thermodynamic database: %s",
-             path_to_database.c_str());
-    }
-    else
-    {
-        OGS_FATAL("Not found the specified thermodynamicdatabase: %s",
-                  path_to_database.c_str());
-    }
+    auto path_to_database = parseDatabasePath(config);
 
     // solution
     auto aqueous_solution = PhreeqcIOData::createAqueousSolution(
@@ -102,22 +110,7 @@ createChemicalSolverInterface<ChemicalSolver::PhreeqcKernel>(
         process_id_to_component_name_map,
     BaseLib::ConfigTree const& config, std::string const& /*output_directory*/)
 {
-    // database
-    //! \ogs_file_param{prj__chemical_system__database}
-    auto const database = config.getConfigParameter<std::string>("database");
-    auto path_to_database =
-        BaseLib::joinPaths(BaseLib::getProjectDirectory(), database);
-
-    if (BaseLib::IsFileExisting(path_to_database))
-    {
-        INFO("Found the specified thermodynamic database: %s",
-             path_to_database.c_str());
-    }
-    else
-    {
-        OGS_FATAL("Not found the specified thermodynamicdatabase: %s",
-                  path_to_database.c_str());
-    }
+    auto path_to_database = parseDatabasePath(config);
 
     // solution
     auto aqueous_solution = PhreeqcKernelData::createAqueousSolution(
