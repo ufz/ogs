@@ -16,3 +16,4 @@
 #include "CreateExponentialProperty.h"
 #include "CreateIdealGasLaw.h"
 #include "CreateLinearProperty.h"
+#include "CreateParameterProperty.h"

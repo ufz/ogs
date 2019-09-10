@@ -16,8 +16,6 @@
 #include <string>
 #include <vector>
 #include "BaseLib/ConfigTree.h"
-#include "ParameterLib/Parameter.h"
-#include "ParameterLib/Utils.h"
 
 #include "Properties/CreateProperties.h"
 #include "Properties/Properties.h"
@@ -53,13 +51,7 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
 
     if (property_type == "Parameter")
     {
-        std::string const& parameter_name =
-            //! \ogs_file_param{properties__property__Parameter__parameter_name}
-            config.getConfigParameter<std::string>("parameter_name");
-        auto const& parameter = ParameterLib::findParameter<double>(
-            parameter_name, parameters, 0, nullptr);
-        return std::make_unique<MaterialPropertyLib::ParameterProperty>(
-            parameter);
+        return createParameterProperty(config, parameters);
     }
 
     if (boost::iequals(property_type, "IdealGasLaw"))
