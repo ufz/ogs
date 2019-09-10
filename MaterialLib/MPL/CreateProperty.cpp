@@ -37,8 +37,6 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
     //! \ogs_file_param{properties__property__type}
     auto const property_type = config.peekConfigParameter<std::string>("type");
 
-    // If (and only if) the given property type is 'constant', a corresponding
-    // value is needed.
     if (property_type == "Constant")
     {
         std::vector<double> const values =
@@ -102,14 +100,6 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
         PropertyDataType property_value;
         return std::make_unique<Constant>(property_value);
     }
-    // Properties can be medium, phase, or component properties.
-    // Some of them require information about the respective material.
-    // Thus, we pass a pointer to the material that requests the property.
-    // In this method, this pointer is realized via typename MaterialType, which
-    // replaces either Medium*, Phase*, or Component*.
-    // Note that most property constructors (only those that request material
-    // pointers) must be overloaded for any type of material.
-
     if (property_type == "Linear")
     {
         auto const reference_value =
