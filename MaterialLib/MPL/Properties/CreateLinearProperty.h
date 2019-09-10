@@ -10,8 +10,21 @@
  *              http://www.opengeosys.org/project/license
  *
  */
+
 #pragma once
 
-#include "CreateConstant.h"
-#include "CreateIdealGasLaw.h"
-#include "CreateLinearProperty.h"
+namespace BaseLib
+{
+class ConfigTree;
+}
+
+namespace MaterialPropertyLib
+{
+class LinearProperty;
+}
+
+namespace MaterialPropertyLib
+{
+std::unique_ptr<LinearProperty> createLinearProperty(
+    BaseLib::ConfigTree const& config);
+}  // namespace MaterialPropertyLib
