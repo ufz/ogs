@@ -50,7 +50,6 @@ int GMSInterface::readBoreholesFromGMS(std::vector<GeoLib::Point*>* boreholes,
     std::string cName;
     std::string sName;
     std::list<std::string>::const_iterator it;
-    auto* pnt = new GeoLib::Point();
     GeoLib::StationBorehole* newBorehole = nullptr;
 
     /* skipping first line because it contains field names */
@@ -59,6 +58,7 @@ int GMSInterface::readBoreholesFromGMS(std::vector<GeoLib::Point*>* boreholes,
     /* read all stations */
     while (std::getline(in, line))
     {
+        std::array<double, 3> pnt;
         std::list<std::string> fields = BaseLib::splitString(line, '\t');
 
         if (fields.size() >= 5)
@@ -66,19 +66,18 @@ int GMSInterface::readBoreholesFromGMS(std::vector<GeoLib::Point*>* boreholes,
             if (*fields.begin() == cName)  // add new layer
             {
                 it = fields.begin();
-                (*pnt)[0] = strtod((++it)->c_str(), nullptr);
-                (*pnt)[1] = strtod((++it)->c_str(), nullptr);
-                (*pnt)[2] = strtod((++it)->c_str(), nullptr);
+                pnt[0] = strtod((++it)->c_str(), nullptr);
+                pnt[1] = strtod((++it)->c_str(), nullptr);
+                pnt[2] = strtod((++it)->c_str(), nullptr);
 
                 // check if current layer has a thickness of 0.0.
                 // if so skip it since it will mess with the vtk-visualisation
                 // later on!
-                if ((*pnt)[2] != depth)
+                if (pnt[2] != depth)
                 {
-                    newBorehole->addSoilLayer(
-                        (*pnt)[0], (*pnt)[1], (*pnt)[2], sName);
+                    newBorehole->addSoilLayer(pnt[0], pnt[1], pnt[2], sName);
                     sName = (*(++it));
-                    depth = (*pnt)[2];
+                    depth = pnt[2];
                 }
                 else
                     WARN(
@@ -95,13 +94,13 @@ int GMSInterface::readBoreholesFromGMS(std::vector<GeoLib::Point*>* boreholes,
                 }
                 cName = *fields.begin();
                 it = fields.begin();
-                (*pnt)[0] = strtod((++it)->c_str(), nullptr);
-                (*pnt)[1] = strtod((++it)->c_str(), nullptr);
-                (*pnt)[2] = strtod((++it)->c_str(), nullptr);
+                pnt[0] = strtod((++it)->c_str(), nullptr);
+                pnt[1] = strtod((++it)->c_str(), nullptr);
+                pnt[2] = strtod((++it)->c_str(), nullptr);
                 sName = (*(++it));
                 newBorehole = GeoLib::StationBorehole::createStation(
-                    cName, (*pnt)[0], (*pnt)[1], (*pnt)[2], 0);
-                depth = (*pnt)[2];
+                    cName, pnt[0], pnt[1], pnt[2], 0);
+                depth = pnt[2];
             }
         }
         else
