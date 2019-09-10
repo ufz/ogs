@@ -70,14 +70,10 @@ Station* Station::createStation(const std::string & line)
     return station;
 }
 
-Station* Station::createStation(const std::string &name, double x, double y, double z)
+Station* Station::createStation(const std::string& name, double x, double y,
+                                double z)
 {
-    Station* station = new Station();
-    station->_name = name;
-    (*station)[0] = x;
-    (*station)[1] = y;
-    (*station)[2] = z;
-    return station;
+    return new Station(x, y, z, name);
 }
 
 bool isStation(GeoLib::Point const* pnt)
