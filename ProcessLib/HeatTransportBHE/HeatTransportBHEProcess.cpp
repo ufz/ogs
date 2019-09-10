@@ -11,14 +11,14 @@
 #include "HeatTransportBHEProcess.h"
 
 #include <cassert>
+
+#include "ProcessLib/BoundaryCondition/BHEBottomDirichletBoundaryCondition.h"
+#include "ProcessLib/BoundaryCondition/BHEInflowDirichletBoundaryCondition.h"
+#include "ProcessLib/BoundaryCondition/Python/BHEInflowPythonBoundaryCondition.h"
 #include "ProcessLib/HeatTransportBHE/BHE/MeshUtils.h"
 #include "ProcessLib/HeatTransportBHE/LocalAssemblers/CreateLocalAssemblers.h"
-
 #include "ProcessLib/HeatTransportBHE/LocalAssemblers/HeatTransportBHELocalAssemblerBHE.h"
 #include "ProcessLib/HeatTransportBHE/LocalAssemblers/HeatTransportBHELocalAssemblerSoil.h"
-
-#include "BoundaryConditions/BHEBottomDirichletBoundaryCondition.h"
-#include "BoundaryConditions/BHEInflowDirichletBoundaryCondition.h"
 
 namespace ProcessLib
 {
@@ -197,6 +197,62 @@ void HeatTransportBHEProcess::computeSecondaryVariableConcrete(
         getDOFTable(process_id), t, x, _coupled_solutions);
 }
 
+#ifdef OGS_USE_PYTHON
+NumLib::IterationResult HeatTransportBHEProcess::postIterationConcreteProcess(
+    GlobalVector const& x)
+{
+    // if the process use python boundary conditon
+    if (_process_data.if_bhe_network_exist_python_bc == false)
+        return NumLib::IterationResult::SUCCESS;
+
+    // Here the task is to get current time flowrate and flow temperature from
+    // TESPy
+    auto const Tout_nodes_id =
+        std::get<4>(_process_data.py_bc_object->dataframe_network);
+    const std::size_t n_bc_nodes = Tout_nodes_id.size();
+
+    // update flowrate in network if network exist a dynamic flowrate in time
+    auto const cur_time =
+        std::get<1>(_process_data.py_bc_object->dataframe_network);
+    if (std::get<0>(_process_data.py_bc_object->tespyHydroSolver(cur_time)))
+    {
+        // calculate the current flowrate in each BHE from TESPy
+        auto const cur_flowrate =
+            std::get<1>(_process_data.py_bc_object->tespyHydroSolver(cur_time));
+        for (std::size_t i = 0; i < n_bc_nodes; i++)
+            std::get<5>(_process_data.py_bc_object->dataframe_network)[i] =
+                cur_flowrate[i];
+    }
+
+    // get the outflow temperature,
+    // transfer it to TESPy and to get inflow temperature,
+    // and determine whether it converges.
+    for (std::size_t i = 0; i < n_bc_nodes; i++)
+    {
+        // read the T_out and store them in dataframe
+        std::get<3>(_process_data.py_bc_object->dataframe_network)[i] =
+            x[Tout_nodes_id[i]];
+    }
+    // Tout transfer to Python
+    auto const tespy_result = _process_data.py_bc_object->tespyThermalSolver(
+        std::get<1>(_process_data.py_bc_object->dataframe_network),
+        std::get<2>(_process_data.py_bc_object->dataframe_network),
+        std::get<3>(_process_data.py_bc_object->dataframe_network));
+    auto const cur_Tin = std::get<2>(tespy_result);
+
+    // update the T_in
+    for (std::size_t i = 0; i < n_bc_nodes; i++)
+        std::get<2>(_process_data.py_bc_object->dataframe_network)[i] =
+            cur_Tin[i];
+
+    auto const if_convergence = std::get<1>(tespy_result);
+    if (if_convergence == true)
+        return NumLib::IterationResult::SUCCESS;
+
+    return NumLib::IterationResult::REPEAT_ITERATION;
+}
+#endif  // OGS_USE_PYTHON
+
 void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
     std::vector<std::vector<MeshLib::Node*>> const& all_bhe_nodes)
 {
@@ -239,18 +295,49 @@ void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
             for (auto const& in_out_component_id :
                  bhe.inflow_outflow_bc_component_ids)
             {
-                // Top, inflow.
+                if (bhe.ifUsePythonBC == true)
+                // call BHEPythonBoundarycondition
+                {
+#ifdef OGS_USE_PYTHON
+                    if (_process_data.py_bc_object)  // the bc object exist
+                    {
+                        // apply the customized top, inflow BC.
+                        bcs.addBoundaryCondition(
+                            ProcessLib::createBHEInflowPythonBoundaryCondition(
+                                get_global_bhe_bc_indices(bc_top_node_id,
+                                                          in_out_component_id),
+                                [&bhe](double const T, double const t) {
+                                    return bhe.updateFlowRateAndTemperature(T,
+                                                                            t);
+                                },
+                                *(_process_data.py_bc_object)));
+                    }
+                    else
+                    {
+                        OGS_FATAL(
+                            "The Python Boundary Condition was switched on, "
+                            "but the data object does not exist! ");
+                    }
+#else
+                    OGS_FATAL(
+                        "The Python Boundary Condition was switched off! "
+                        "Not able to create Boundary Condtion for BHE! ");
+#endif  // OGS_USE_PYTHON
+                }
+                else
+                {
+                    // Top, inflow, normal case
+                    bcs.addBoundaryCondition(
+                        ProcessLib::createBHEInflowDirichletBoundaryCondition(
+                            get_global_bhe_bc_indices(bc_top_node_id,
+                                                      in_out_component_id),
+                            [&bhe](double const T, double const t) {
+                                return bhe.updateFlowRateAndTemperature(T, t);
+                            }));
+                }
+                // Bottom, outflow, all cases
                 bcs.addBoundaryCondition(
-                    createBHEInflowDirichletBoundaryCondition(
-                        get_global_bhe_bc_indices(bc_top_node_id,
-                                                  in_out_component_id),
-                        [&bhe](double const T, double const t) {
-                            return bhe.updateFlowRateAndTemperature(T, t);
-                        }));
-
-                // Bottom, outflow.
-                bcs.addBoundaryCondition(
-                    createBHEBottomDirichletBoundaryCondition(
+                    ProcessLib::createBHEBottomDirichletBoundaryCondition(
                         get_global_bhe_bc_indices(bc_bottom_node_id,
                                                   in_out_component_id)));
             }
