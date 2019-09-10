@@ -384,10 +384,11 @@ bool TetGenInterface::parseNodes(std::ifstream &ins,
     return true;
 }
 
-bool TetGenInterface::readElementsFromStream(std::ifstream &ins,
-                                             std::vector<MeshLib::Element*> &elements,
-                                             std::vector<int> &materials,
-                                             const std::vector<MeshLib::Node*> &nodes) const
+bool TetGenInterface::readElementsFromStream(
+    std::ifstream& ins,
+    std::vector<MeshLib::Element*>& elements,
+    std::vector<int>& materials,
+    const std::vector<MeshLib::Node*>& nodes) const
 {
     std::string line;
     std::getline(ins, line);
@@ -398,7 +399,7 @@ bool TetGenInterface::readElementsFromStream(std::ifstream &ins,
     while (!ins.fail())
     {
         BaseLib::simplify(line);
-        if (line.empty() || line.compare(0,1,"#") == 0)
+        if (line.empty() || line.compare(0, 1, "#") == 0)
         {
             // this line is a comment - skip
             std::getline(ins, line);
@@ -406,7 +407,8 @@ bool TetGenInterface::readElementsFromStream(std::ifstream &ins,
         }
 
         // read header line
-        bool header_okay = parseElementsFileHeader(line, n_tets, n_nodes_per_tet, region_attributes);
+        bool header_okay = parseElementsFileHeader(
+            line, n_tets, n_nodes_per_tet, region_attributes);
         if (!header_okay)
         {
             return false;
