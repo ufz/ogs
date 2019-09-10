@@ -31,8 +31,7 @@ PhreeqcKernel::PhreeqcKernel(
         kinetic_reactants,
     std::vector<ReactionRate>&& reaction_rates)
     : Phreeqc(),
-      _templated_initial_aqueous_solution(
-          aqueous_solution.getInitialAqueousSolution()),
+      _initial_aqueous_solution(aqueous_solution.getInitialAqueousSolution()),
       _reaction_rates(std::move(reaction_rates))
 {
     do_initialize();
@@ -174,7 +173,7 @@ cxxISolution* PhreeqcKernel::getOrCreateInitialAqueousSolution(
 {
     if (!aqueous_solution.Get_initial_data())
     {
-        aqueous_solution.Set_initial_data(&_templated_initial_aqueous_solution);
+        aqueous_solution.Set_initial_data(&_initial_aqueous_solution);
         aqueous_solution.Set_new_def(true);
     }
 

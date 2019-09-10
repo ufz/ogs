@@ -70,7 +70,7 @@ private:
     }
 
     std::map<int, struct master*> _process_id_to_master_map;
-    cxxISolution _templated_initial_aqueous_solution;
+    cxxISolution _initial_aqueous_solution;
     std::vector<ReactionRate> const _reaction_rates;
 };
 }  // namespace PhreeqcKernelData
