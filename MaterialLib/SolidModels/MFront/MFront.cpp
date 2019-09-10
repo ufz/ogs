@@ -252,9 +252,9 @@ MFront<DisplacementDim>::integrateStress(
     double const t,
     ParameterLib::SpatialPosition const& x,
     double const dt,
-    KelvinVector const& /*eps_prev*/,
+    KelvinVector const& eps_prev,
     KelvinVector const& eps,
-    KelvinVector const& /*sigma_prev*/,
+    KelvinVector const& sigma_prev,
     typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
         material_state_variables,
     double const T) const
@@ -291,10 +291,23 @@ MFront<DisplacementDim>::integrateStress(
 
     auto v = mgis::behaviour::make_view(behaviour_data);
 
+    auto const eps_prev_MFront = OGSToMFront(eps_prev);
+    for (auto i = 0; i < KelvinVector::SizeAtCompileTime; ++i)
+    {
+        v.s0.gradients[i] = eps_prev_MFront[i];
+    }
+
     auto const eps_MFront = OGSToMFront(eps);
     for (auto i = 0; i < KelvinVector::SizeAtCompileTime; ++i)
     {
         v.s1.gradients[i] = eps_MFront[i];
+    }
+
+    auto const sigma_prev_MFront = OGSToMFront(sigma_prev);
+    for (auto i = 0; i < KelvinVector::SizeAtCompileTime; ++i)
+    {
+        v.s0.thermodynamic_forces[i] = sigma_prev_MFront[i];
+        v.s1.thermodynamic_forces[i] = sigma_prev_MFront[i];
     }
 
     auto const status = mgis::behaviour::integrate(v, _behaviour);

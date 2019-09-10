@@ -265,7 +265,7 @@
         <vtkdiff>
             <file>load_test_mc_pcs_0_ts_20_t_20.000000.vtu</file>
             <field>NodalForces</field>
-            <absolute_tolerance>1e-5</absolute_tolerance>
+            <absolute_tolerance>2e-5</absolute_tolerance>
             <relative_tolerance>1e-9</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
@@ -296,7 +296,7 @@
         <vtkdiff>
             <file>load_test_mc_pcs_0_ts_30_t_30.000000.vtu</file>
             <field>displacement</field>
-            <absolute_tolerance>1e-13</absolute_tolerance>
+            <absolute_tolerance>2e-13</absolute_tolerance>
             <relative_tolerance>1e-14</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
