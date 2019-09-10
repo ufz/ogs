@@ -76,7 +76,7 @@ std::size_t parseInput(std::string const& request_str, std::size_t max_val,
         std::stringstream str_stream(str);
         if (!(str_stream >> val))
         {
-            std::size_t error_val = (has_info) ? 2 : 0;
+            std::size_t const error_val = (has_info) ? 2 : 0;
             showErrorMessage(error_val);
             continue;
         }
@@ -132,7 +132,7 @@ std::pair<double, double> getBoundaries(NcVar const& var)
     if ((var.getDimCount()) == 1)
     {
         double start, end;
-        std::size_t size = var.getDim(0).getSize();
+        std::size_t const size = var.getDim(0).getSize();
         var.getVar({0}, {1}, &start);
         var.getVar({size - 1}, {1}, &end);
         return std::make_pair(start, end);
@@ -177,15 +177,14 @@ bool canConvert(NcVar const& var)
 {
     bool ret(true);
     if (ret = (var.getDimCount() < 2))
-        ERR("Only 2+ dimensional variables can be converted into OGS "
-            "Meshes.\n");
+        ERR("Only 2+ dimensional variables can be converted into OGS Meshes.\n");
     return !ret;
 }
 
 std::string arraySelectionLoop(NcFile const& dataset)
 {
     std::vector<std::string> const& names = showArrays(dataset);
-    std::size_t idx =
+    std::size_t const idx =
         parseInput("Enter data array index: ", dataset.getVarCount(), true);
 
     if (idx == dataset.getVarCount() || !canConvert(dataset.getVar(names[idx])))
@@ -236,16 +235,16 @@ bool dimensionSelectionLoop(NcVar const& var,
 
     // get spatial dimension(s)
     std::size_t const start_idx = (is_time_dep) ? 1 : 0;
-    std::array<std::string, 4> dim_comment{
+    std::array<std::string, 4> const dim_comment{
         "(x / longitude)", "(y / latitude)", "(z / height / depth)",
         "[Error: 4-dimensional non-temporal arrays are not supported]"};
     for (std::size_t i = start_idx; i < n_dims; ++i)
     {
         dim_idx_map[i] = std::numeric_limits<std::size_t>::max();
 
-        std::string request_str("Enter ID for dimension " + std::to_string(i) +
+        std::string const request_str("Enter ID for dimension " + std::to_string(i) +
                                 " " + dim_comment[i - start_idx] + ": ");
-        std::size_t idx = parseInput(request_str, var.getDimCount(), true);
+        std::size_t const idx = parseInput(request_str, var.getDimCount(), true);
 
         if (idx == var.getDimCount())
         {
@@ -322,7 +321,7 @@ MeshLib::MeshElemType elemSelectionLoop(std::size_t const dim)
 bool multFilesSelectionLoop(
     std::pair<std::size_t, std::size_t> const& time_bounds)
 {
-    std::size_t n_time_steps(time_bounds.second - time_bounds.first + 1);
+    std::size_t const n_time_steps(time_bounds.second - time_bounds.first + 1);
     std::cout << "\nThe selection includes " << n_time_steps
               << " time steps.\n";
     std::cout << "0. Save data in " << n_time_steps
@@ -342,7 +341,7 @@ std::string getIterationString(std::size_t i, std::size_t max)
 
 double getResolution(NcFile const& dataset, NcVar const& var)
 {
-    std::size_t dim_idx = var.getDimCount() - 1;
+    std::size_t const dim_idx = var.getDimCount() - 1;
     auto const bounds = getBoundaries(getDimVar(dataset, var, dim_idx));
     return fabs(bounds.second - bounds.first) /
            static_cast<double>(var.getDim(dim_idx).getSize());
@@ -353,7 +352,7 @@ GeoLib::RasterHeader createRasterHeader(
     std::array<std::size_t, 4> const& dim_idx_map,
     std::vector<std::size_t> const& length, bool is_time_dep)
 {
-    MathLib::Point3d origin = getOrigin(dataset, var, dim_idx_map, is_time_dep);
+    MathLib::Point3d const origin = getOrigin(dataset, var, dim_idx_map, is_time_dep);
     double const res = getResolution(dataset, var);
     std::size_t n_dims = var.getDimCount();
     std::size_t temp_offset = (is_time_dep) ? 1 : 0;
@@ -361,10 +360,7 @@ GeoLib::RasterHeader createRasterHeader(
         (n_dims - temp_offset == 3) ? length[dim_idx_map.back()] : 1;
     return {length[dim_idx_map[0 + temp_offset]],
             length[dim_idx_map[1 + temp_offset]],
-            z_length,
-            origin,
-            res,
-            -9999};
+            z_length, origin, res, -9999};
 }
 
 std::size_t getLength(NcVar const& var, bool const is_time_dep,
@@ -397,8 +393,7 @@ std::vector<double> getData(NcFile const& dataset, NcVar const& var,
 
     // reverse lines in vertical direction if the original file has its origin
     // in the northwest corner
-    NcVar const& dim_var = getDimVar(dataset, var, n_dims - 1);
-    auto const bounds = getBoundaries(dim_var);
+    auto const bounds = getBoundaries(getDimVar(dataset, var, n_dims - 1));
     if (bounds.first > bounds.second)
         flipRaster(data_vec, length[n_dims - 2], length[n_dims - 1]);
     return data_vec;
@@ -430,7 +425,7 @@ bool assignDimParams(NcVar const& var,
         return false;
     }
 
-    bool is_time_dep = arg_dim_time.isSet();
+    bool const is_time_dep = arg_dim_time.isSet();
     if (is_time_dep)
         dim_idx_map[0] = arg_dim_time.getValue();
     std::size_t const temp_offset = (is_time_dep) ? 1 : 0;
@@ -485,12 +480,77 @@ MeshLib::MeshElemType assignElemType(TCLAP::ValueArg<std::string>& arg_elem_type
     return MeshLib::MeshElemType::INVALID;
 }
 
+bool convert(NcFile const& dataset, NcVar const& var,
+             std::string const& output_name,
+             std::array<std::size_t, 4> const& dim_idx_map,
+             bool const is_time_dep,
+             std::pair<std::size_t, std::size_t> const& time_bounds,
+             bool const use_single_file, MeshLib::MeshElemType const elem_type)
+{
+    std::unique_ptr<MeshLib::Mesh> mesh;
+    std::size_t const temp_offset = (is_time_dep) ? 1 : 0;
+    std::size_t const n_dims = (var.getDimCount());
+    std::vector<std::size_t> length;
+    std::size_t const array_length = getLength(var, is_time_dep, length);
+    for (std::size_t i = time_bounds.first; i <= time_bounds.second; ++i)
+    {
+        std::cout << "Converting time step " << i << "...\n";
+        std::vector<double> const data_vec =
+            getData(dataset, var, array_length, i, length);
+
+        GeoLib::RasterHeader const header =
+            createRasterHeader(dataset, var, dim_idx_map, length, is_time_dep);
+        MeshLib::UseIntensityAs const useIntensity =
+            MeshLib::UseIntensityAs::DATAVECTOR;
+        if (!use_single_file)
+        {
+            mesh.reset(MeshLib::RasterToMesh::convert(
+                data_vec.data(), header, elem_type, useIntensity,
+                var.getName()));
+            std::string const output_file_name(
+                BaseLib::dropFileExtension(output_name) +
+                getIterationString(i, time_bounds.second) + ".vtu");
+            MeshLib::IO::VtuInterface vtu(mesh.get());
+            vtu.writeToFile(output_file_name);
+        }
+        else
+        {
+            std::string array_name(var.getName());
+            if (time_bounds.first != time_bounds.second)
+                array_name.append(getIterationString(i, time_bounds.second));
+            if (i == time_bounds.first)  // create persistent mesh
+                mesh.reset(MeshLib::RasterToMesh::convert(
+                    data_vec.data(), header, elem_type, useIntensity,
+                    array_name));
+            else  // copy array to mesh
+            {
+                std::unique_ptr<MeshLib::Mesh> const temp(
+                    MeshLib::RasterToMesh::convert(data_vec.data(), header,
+                                                   elem_type, useIntensity,
+                                                   array_name));
+                MeshLib::PropertyVector<double> const* const vec =
+                    temp->getProperties().getPropertyVector<double>(array_name);
+                if (vec == nullptr)
+                    return false;
+                MeshLib::addPropertyToMesh<double>(
+                    *mesh, array_name, MeshLib::MeshItemType::Cell, 1, *vec);
+            }
+            if (i == time_bounds.second)
+            {
+                MeshLib::IO::VtuInterface vtu(mesh.get());
+                vtu.writeToFile(output_name);
+            }
+        }
+    }
+    return true;
+}
+
 int main(int argc, char* argv[])
 {
     ApplicationsLib::LogogSetup logog_setup;
 
     TCLAP::CmdLine cmd(
-        "Converts NetCDF into mesh file(s).\n\n "
+        "Converts NetCDF data into mesh file(s).\n\n "
         "OpenGeoSys-6 software, version " +
             GitInfoLib::GitInfo::ogs_version +
             ".\n"
@@ -551,7 +611,7 @@ int main(int argc, char* argv[])
     cmd.add(arg_dim_time);
 
     TCLAP::ValueArg<std::string> arg_varname(
-        "v", "var", "variable from the netCDF file", false, "",
+        "v", "var", "variable included in the the netCDF file", false, "",
         "string containing the variable name");
     cmd.add(arg_varname);
 
@@ -581,7 +641,7 @@ int main(int argc, char* argv[])
         std::cin.ignore();
     }
 
-    std::string const output_name(arg_output.getValue());
+    std::string const& output_name(arg_output.getValue());
     std::string const& var_name = (arg_varname.isSet())
                                       ? arg_varname.getValue()
                                       : arraySelectionLoop(dataset);
@@ -623,65 +683,15 @@ int main(int argc, char* argv[])
             use_single_file = multFilesSelectionLoop(time_bounds);
     }
 
-    std::unique_ptr<MeshLib::Mesh> mesh;
     std::size_t const temp_offset = (is_time_dep) ? 1 : 0;
     std::size_t const n_dims = (var.getDimCount());
-    std::vector<std::size_t> length;
-    std::size_t const array_length = getLength(var, is_time_dep, length);
+    MeshLib::MeshElemType const elem_type = (arg_elem_type.isSet())
+                            ? assignElemType(arg_elem_type)
+                            : elemSelectionLoop(n_dims - temp_offset);
 
-    MeshLib::MeshElemType const meshElemType = (arg_elem_type.isSet())
-        ? assignElemType(arg_elem_type)
-        : elemSelectionLoop(n_dims - temp_offset);
-    for (std::size_t i = time_bounds.first; i <= time_bounds.second; ++i)
-    {
-        std::cout << "Converting time step " << i << "...\n";
-        std::vector<double> data_vec =
-            getData(dataset, var, array_length, i, length);
-
-        GeoLib::RasterHeader header =
-            createRasterHeader(dataset, var, dim_idx_map, length, is_time_dep);
-        MeshLib::UseIntensityAs const useIntensity =
-            MeshLib::UseIntensityAs::DATAVECTOR;
-        if (!use_single_file)
-        {
-            mesh.reset(MeshLib::RasterToMesh::convert(
-                data_vec.data(), header, meshElemType, useIntensity,
-                var.getName()));
-            std::string const output_file_name(
-                BaseLib::dropFileExtension(output_name) +
-                getIterationString(i, time_bounds.second) + ".vtu");
-            MeshLib::IO::VtuInterface vtu(mesh.get());
-            vtu.writeToFile(output_file_name);
-        }
-        else
-        {
-            std::string array_name(var.getName());
-            if (time_bounds.first != time_bounds.second)
-                array_name.append(getIterationString(i, time_bounds.second));
-            if (i == time_bounds.first)  // create persistent mesh
-                mesh.reset(MeshLib::RasterToMesh::convert(
-                    data_vec.data(), header, meshElemType, useIntensity,
-                    array_name));
-            else  // copy array to mesh
-            {
-                std::unique_ptr<MeshLib::Mesh> temp(
-                    MeshLib::RasterToMesh::convert(data_vec.data(), header,
-                                                   meshElemType, useIntensity,
-                                                   array_name));
-                MeshLib::PropertyVector<double> const* const vec =
-                    temp->getProperties().getPropertyVector<double>(array_name);
-                if (vec == nullptr)
-                    return EXIT_FAILURE;
-                MeshLib::addPropertyToMesh<double>(
-                    *mesh, array_name, MeshLib::MeshItemType::Cell, 1, *vec);
-            }
-            if (i == time_bounds.second)
-            {
-                MeshLib::IO::VtuInterface vtu(mesh.get());
-                vtu.writeToFile(output_name);
-            }
-        }
-    }
+    if (!convert(dataset, var, output_name, dim_idx_map, is_time_dep,
+                 time_bounds, use_single_file, elem_type))
+        return EXIT_FAILURE;
 
     std::cout << "Conversion finished successfully.\n";
     return EXIT_SUCCESS;
