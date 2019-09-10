@@ -116,23 +116,20 @@ DataType datasetFound(std::ifstream& in)
         {
             return DataType::VSET;
         }
-        else if (isKeyword(DataType::PLINE, line))
+        if (isKeyword(DataType::PLINE, line))
         {
             return DataType::PLINE;
         }
-        else if (isKeyword(DataType::TSURF, line))
+        if (isKeyword(DataType::TSURF, line))
         {
             return DataType::TSURF;
         }
-        else if (isKeyword(DataType::MODEL3D, line))
+        if (isKeyword(DataType::MODEL3D, line))
         {
             return DataType::MODEL3D;
         }
-        else
-        {
-            ERR("No known identifier found...");
-            return DataType::UNDEFINED;
-        }
+        ERR("No known identifier found...");
+        return DataType::UNDEFINED;
     }
     return DataType::UNDEFINED;
 }
@@ -274,7 +271,7 @@ bool parseNodes(std::ifstream& in,
             return true;
         }
 
-        else if (line.substr(0, 4) == "TRGL")
+        if (line.substr(0, 4) == "TRGL")
         {
             in.seekg(pos);
             return true;

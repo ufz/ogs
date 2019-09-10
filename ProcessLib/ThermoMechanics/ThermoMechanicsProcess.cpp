@@ -148,11 +148,8 @@ void ThermoMechanicsProcess<DisplacementDim>::constructDofTable()
         constructMonolithicProcessDofTable();
         return;
     }
-    else
-    {
-        constructDofTableOfSpecifiedProsessStaggerdScheme(
-            _process_data.mechanics_process_id);
-    }
+    constructDofTableOfSpecifiedProsessStaggerdScheme(
+        _process_data.mechanics_process_id);
 
     // TODO move the two data members somewhere else.
     // for extrapolation of secondary variables of stress or strain
