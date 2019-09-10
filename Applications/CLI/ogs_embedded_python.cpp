@@ -7,11 +7,13 @@
  *
  */
 
-#include <pybind11/embed.h>
-#include <logog/include/logog.hpp>
-
 #include "ogs_embedded_python.h"
 
+#include <pybind11/embed.h>
+
+#include <logog/include/logog.hpp>
+
+#include "ProcessLib/BoundaryCondition/Python/BHEInflowPythonBoundaryConditionModule.h"
 #include "ProcessLib/BoundaryCondition/Python/PythonBoundaryConditionModule.h"
 #include "ProcessLib/SourceTerms/Python/PythonSourceTermModule.h"
 
@@ -20,6 +22,7 @@ PYBIND11_EMBEDDED_MODULE(OpenGeoSys, m)
     DBUG("Binding Python module OpenGeoSys.");
 
     ProcessLib::pythonBindBoundaryCondition(m);
+    ProcessLib::bheInflowpythonBindBoundaryCondition(m);
     ProcessLib::SourceTerms::Python::pythonBindSourceTerm(m);
 }
 
