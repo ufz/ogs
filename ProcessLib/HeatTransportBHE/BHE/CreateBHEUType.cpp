@@ -24,7 +24,8 @@ static std::tuple<BoreholeGeometry,
                   RefrigerantProperties,
                   GroutParameters,
                   FlowAndTemperatureControl,
-                  PipeConfigurationUType>
+                  PipeConfigurationUType,
+                  bool>
 parseBHEUTypeConfig(
     BaseLib::ConfigTree const& config,
     std::map<std::string,
