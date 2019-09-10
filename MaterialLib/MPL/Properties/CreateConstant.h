@@ -10,7 +10,21 @@
  *              http://www.opengeosys.org/project/license
  *
  */
+
 #pragma once
 
-#include "CreateConstant.h"
-#include "CreateIdealGasLaw.h"
+namespace BaseLib
+{
+class ConfigTree;
+}
+
+namespace MaterialPropertyLib
+{
+class Constant;
+}
+
+namespace MaterialPropertyLib
+{
+std::unique_ptr<Constant> createConstant(
+    BaseLib::ConfigTree const& config);
+}  // namespace MaterialPropertyLib
