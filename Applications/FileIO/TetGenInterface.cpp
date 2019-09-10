@@ -329,7 +329,7 @@ bool TetGenInterface::parseNodes(std::ifstream &ins,
     while (k < n_nodes && !ins.fail())
     {
         std::vector<double> coordinates(dim);
-        getline(ins, line);
+        std::getline(ins, line);
         if (ins.fail())
         {
             ERR("TetGenInterface::parseNodes(): Error reading node %d.", k);
@@ -390,7 +390,7 @@ bool TetGenInterface::readElementsFromStream(std::ifstream &ins,
                                              const std::vector<MeshLib::Node*> &nodes) const
 {
     std::string line;
-    getline (ins, line);
+    std::getline(ins, line);
     std::size_t n_tets;
     std::size_t n_nodes_per_tet;
     bool region_attributes;
@@ -401,7 +401,7 @@ bool TetGenInterface::readElementsFromStream(std::ifstream &ins,
         if (line.empty() || line.compare(0,1,"#") == 0)
         {
             // this line is a comment - skip
-            getline (ins, line);
+            std::getline(ins, line);
             continue;
         }
 
