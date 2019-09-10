@@ -323,12 +323,12 @@ bool TetGenInterface::parseNodes(std::ifstream &ins,
                                  std::size_t dim)
 {
     std::string line;
-    auto* coordinates(new double[dim]);
     nodes.reserve(n_nodes);
 
     std::size_t k(0);
     while (k < n_nodes && !ins.fail())
     {
+        std::vector<double> coordinates(dim);
         getline(ins, line);
         if (ins.fail())
         {
@@ -354,7 +354,6 @@ bool TetGenInterface::parseNodes(std::ifstream &ins,
             }
         } else {
             ERR("TetGenInterface::parseNodes(): Error reading ID of node %d.", k);
-            delete [] coordinates;
             return false;
         }
         // read coordinates
@@ -373,17 +372,15 @@ bool TetGenInterface::parseNodes(std::ifstream &ins,
             else
             {
                 ERR("TetGenInterface::parseNodes(): error reading coordinate %d of node %d.", i, k);
-                delete [] coordinates;
                 return false;
             }
         }
 
-        nodes.push_back(new MeshLib::Node(coordinates, id-offset));
+        nodes.push_back(new MeshLib::Node(coordinates.data(), id-offset));
         // read attributes and boundary markers ... - at the moment we do not use this information
         ++k;
     }
 
-    delete [] coordinates;
     return true;
 }
 
