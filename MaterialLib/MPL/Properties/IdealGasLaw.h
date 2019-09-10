@@ -67,8 +67,8 @@ public:
                              double const t) const override;
 
 private:
-    Phase* _phase;
-    Component* _component;
+    Phase* _phase = nullptr;
+    Component* _component = nullptr;
 };
 
 }  // namespace MaterialPropertyLib
