@@ -1,5 +1,5 @@
 /**
- * \file   AddLayerToMesh.cpp
+ * \file
  * \date   2016-01-18
  * \brief  Implementation of AddLayerToMesh class.
  *

@@ -5,7 +5,7 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- * \file   CapillaryPressureSaturationCurve.h
+ * \file
  *
  * Created on November 3, 2016, 9:50 AM
  */

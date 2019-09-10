@@ -1,5 +1,5 @@
 /**
- * \file moveMeshNodes.cpp
+ * \file
  * 2012/03/07 KR Initial implementation
  *
  * \copyright

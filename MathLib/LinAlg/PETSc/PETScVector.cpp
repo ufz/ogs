@@ -1,5 +1,5 @@
 /**
- * \file  PETScVector.cpp
+ * \file
  * \brief Definition of member functions of class PETScVector,
  *        which provides an interface to PETSc vector routines.
  *

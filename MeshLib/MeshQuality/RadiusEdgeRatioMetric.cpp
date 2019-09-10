@@ -1,5 +1,5 @@
 /**
- * \file   RadiusEdgeRatioMetric.cpp
+ * \file
  * \author Karsten Rink
  * \date   2014-09-02
  * \brief  Implementation of the RadiusEdgeRadioMetric class.

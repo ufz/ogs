@@ -1,5 +1,5 @@
 /**
- * \file   TestTetGenInterface.cpp
+ * \file
  * \author Karsten Rink
  * \date   2016-02-19
  *

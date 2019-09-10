@@ -1,5 +1,5 @@
 /**
- * \file   MeshRevision.cpp
+ * \file
  * \author Karsten Rink
  * \date   2014-02-14
  * \brief  Implementation of the MeshRevision class.

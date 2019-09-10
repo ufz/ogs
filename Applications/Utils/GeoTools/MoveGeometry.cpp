@@ -1,5 +1,5 @@
 /**
- * \file MoveGeometry.cpp
+ * \file
  * \author Karsten Rink
  * \date   2015-08-04
  * \brief  A small tool to translate geometries.

@@ -1,5 +1,5 @@
 /*!
-  \file NodePartitionedMeshReader.cpp
+  \file
   \author Wenqing Wang
   \date   2014.08
   \brief  Define members of class NodePartitionedMeshReader to read node-wise

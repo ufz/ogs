@@ -5,7 +5,7 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- * \file   CreateLiquidFlowMaterialProperties.cpp
+ * \file
  *
  *   Created on December 14, 2016, 1:20 PM
  */

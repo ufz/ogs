@@ -1,5 +1,5 @@
 /**
- * \file   OGSFileConverter.cpp
+ * \file
  * \author Karsten Rink
  * \date   2012-04-04
  * \brief  Implementation of OGSFileConverter class.

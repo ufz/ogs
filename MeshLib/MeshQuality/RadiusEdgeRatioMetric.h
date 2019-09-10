@@ -1,5 +1,5 @@
 /**
- * \file   RadiusEdgeRatioMetric.h
+ * \file
  * \author Karsten Rink
  * \date   2014-09-02
  * \brief  Definition of the RadiusEdgeRatioMetric class.

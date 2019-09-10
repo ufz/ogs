@@ -8,7 +8,7 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *  \file   TestGradShapeFunction.cpp
+ *  \file
  *  Created on July 14, 2017, 10:08 AM
  */
 

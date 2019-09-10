@@ -7,7 +7,7 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *   \file  LinearPressureDependentViscosity.h
+ *   \file
  */
 #pragma once
 

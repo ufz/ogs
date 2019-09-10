@@ -1,5 +1,5 @@
 /**
- * \file   SizeDifferenceMetric.cpp
+ * \file
  * \author Karsten Rink
  * \date   2015-03-24
  * \brief  Implementation of the SizeDifferenceMetric class.

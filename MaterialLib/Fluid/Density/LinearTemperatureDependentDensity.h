@@ -5,7 +5,7 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- * \file:   LinearTemperatureDependentDensity.h
+ * \file
  * \author: wenqing
  *
  * Created on August 10, 2016, 11:34 AM

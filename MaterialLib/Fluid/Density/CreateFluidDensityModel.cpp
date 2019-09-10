@@ -1,5 +1,5 @@
 /*!
-   \file  CreateFluidDensityModel.cpp
+   \file
    \brief create an instance of a fluid density class.
 
    \copyright

@@ -5,7 +5,7 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *  \file   TestTimeSteppingEvolutionaryPIDcontroller.cpp
+ *  \file
  *  Created on April 5, 2017, 12:09 PM
  */
 

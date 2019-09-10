@@ -5,7 +5,7 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- * \file   CreateCapillaryPressureModel.h
+ * \file
  *
  * Created on November 1, 2016, 10:06 AM
  */

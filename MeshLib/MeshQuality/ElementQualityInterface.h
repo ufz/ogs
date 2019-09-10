@@ -1,5 +1,5 @@
 /**
- * \file   ElementQualityInterface.h
+ * \file
  * \author Karsten Rink
  * \date   2015-03-24
  * \brief  Definition of the ElementQualityInterface class.

@@ -1,5 +1,5 @@
 /*!
-   \file  TestFluidDensity.cpp
+   \file
    \brief Test classes for fluid density models.
 
    \author Wenqing Wang

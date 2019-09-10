@@ -1,5 +1,5 @@
 /**
- * \file VtuInterface-impl.h
+ * \file
  * \author Lars Bilke
  * \date   2014-09-25
  * \brief  Implementation of the VtuInterface class.

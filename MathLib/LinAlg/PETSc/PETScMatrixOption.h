@@ -1,5 +1,5 @@
 /*!
-   \file  PETScMatrixOption.h
+   \file
    \brief Define data for the configuration of PETSc matrix and linear solver.
 
    \author Wenqing Wang

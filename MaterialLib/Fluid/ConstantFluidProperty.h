@@ -5,7 +5,7 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- * \file:   ConstantFluidProperty.h
+ * \file
  *
  * Created on August 15, 2016, 12:11 PM
  */

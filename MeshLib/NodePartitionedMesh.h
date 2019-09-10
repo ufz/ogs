@@ -1,5 +1,5 @@
 /*!
-  \file NodePartitionedMesh.h
+  \file
   \author Wenqing Wang
   \date   2014.06
   \brief  Definition of mesh class for partitioned mesh (by node) for parallel

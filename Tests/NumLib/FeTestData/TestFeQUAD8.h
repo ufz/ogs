@@ -5,7 +5,7 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *  \file   TestFeQUAD8.h
+ *  \file
  *  Created on July 13, 2017, 3:00 PM
  */
 

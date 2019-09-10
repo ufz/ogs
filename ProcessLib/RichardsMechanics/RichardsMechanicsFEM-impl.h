@@ -5,7 +5,7 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *  \file   RichardsMechanicsFEM-impl.h
+ *  \file
  *  Created on November 29, 2017, 2:03 PM
  */
 

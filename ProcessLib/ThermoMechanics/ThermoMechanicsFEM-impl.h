@@ -5,7 +5,7 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- * \file ThermoMechanicsFEM-impl.h
+ * \file
  *
  * Created on July 2, 2019, 2:12 PM
  *

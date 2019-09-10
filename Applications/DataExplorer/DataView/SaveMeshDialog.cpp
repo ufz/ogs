@@ -1,5 +1,5 @@
 /**
- * \file   SaveMeshDialog.cpp
+ * \file
  * \author Karsten Rink
  * \date   2014-10-27
  * \brief  Implementation of the SaveMeshDialog class.

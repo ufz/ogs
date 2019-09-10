@@ -1,5 +1,5 @@
 /**
- * \file   XmlNumInterface.cpp
+ * \file
  * \author Karsten Rink
  * \date   2014-08-05
  * \brief  Implementation of the XmlNumInterface class.

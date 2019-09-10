@@ -1,5 +1,5 @@
 /**
- * \file   TestBoundingSphere.cpp
+ * \file
  * \author Karsten Rink
  * \date   2014-08-29
  *

@@ -5,7 +5,7 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- * \file   TestRelativePermeabilityModel.cpp
+ * \file
  *
  * Created on November 2, 2016, 3:09 PM
  */

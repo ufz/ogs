@@ -1,5 +1,5 @@
 /**
- * \file   OGSFileConverter.h
+ * \file
  * \author Karsten Rink
  * \date   2012-04-04
  * \brief  Definition of OGSFileConverter class.

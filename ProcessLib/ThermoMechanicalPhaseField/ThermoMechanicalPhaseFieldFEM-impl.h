@@ -5,7 +5,7 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *  \file   ThermoMechanicalPhaseFieldFEM-impl.h
+ *  \file
  *  Created on January 8, 2018, 3:00 PM
  */
 #pragma once

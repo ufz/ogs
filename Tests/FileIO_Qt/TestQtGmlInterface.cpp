@@ -1,5 +1,5 @@
 /**
- * \file   TestQtGmlInterface.cpp
+ * \file
  * \author Karsten Rink
  * \date   2013-03-20
  *

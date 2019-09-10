@@ -1,5 +1,5 @@
 /**
- * \file   AngleSkewMetric.cpp
+ * \file
  * \author Thomas Fischer
  * \date   2011-03-17
  * \brief  Implementation of the AngleSkewMetric class.
