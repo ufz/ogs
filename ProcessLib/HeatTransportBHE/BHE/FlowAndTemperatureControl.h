@@ -68,7 +68,11 @@ struct PowerCurveConstantFlow
     FlowAndTemperature operator()(double const T_out, double const time) const
     {
         double const power = power_curve.getValue(time);
-        return {flow_rate, power / flow_rate / heat_capacity / density + T_out};
+        if (power == 0)
+            return {0.0, T_out};
+        else
+            return {flow_rate,
+                    power / flow_rate / heat_capacity / density + T_out};
     }
     MathLib::PiecewiseLinearInterpolation const& power_curve;
 

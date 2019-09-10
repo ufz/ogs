@@ -24,13 +24,25 @@ static std::tuple<BoreholeGeometry,
                   RefrigerantProperties,
                   GroutParameters,
                   FlowAndTemperatureControl,
-                  PipeConfigurationCoaxial>
+                  PipeConfigurationCoaxial,
+                  bool>
 parseBHECoaxialConfig(
     BaseLib::ConfigTree const& config,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
         curves)
 {
+    // if the BHE is using python boundary condition
+    bool bhe_if_use_python_bc = false;
+    if (auto const bhe_if_use_python_bc_conf =
+            config.getConfigParameterOptional<bool>("bhe_if_use_python_bc"))
+    {
+        DBUG("If  using python boundary condition : %s",
+             (*bhe_if_use_python_bc_conf) ? "true" : "false");
+        bhe_if_use_python_bc = *bhe_if_use_python_bc_conf;
+    }
+
+    //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__borehole}
     auto const borehole_geometry =
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__borehole}
         createBoreholeGeometry(config.getConfigSubtree("borehole"));
@@ -62,8 +74,8 @@ parseBHECoaxialConfig(
         curves,
         refrigerant);
 
-    return {borehole_geometry, refrigerant, grout, flowAndTemperatureControl,
-            pipes};
+    return {borehole_geometry,         refrigerant, grout,
+            flowAndTemperatureControl, pipes,       bhe_if_use_python_bc};
 }
 
 template <typename T_BHE>
@@ -75,7 +87,7 @@ T_BHE createBHECoaxial(
 {
     auto coaxial = parseBHECoaxialConfig(config, curves);
     return {std::get<0>(coaxial), std::get<1>(coaxial), std::get<2>(coaxial),
-            std::get<3>(coaxial), std::get<4>(coaxial)};
+            std::get<3>(coaxial), std::get<4>(coaxial), std::get<5>(coaxial)};
 }
 
 template BHE_CXA createBHECoaxial<BHE_CXA>(

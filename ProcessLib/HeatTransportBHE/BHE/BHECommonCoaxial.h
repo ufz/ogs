@@ -27,8 +27,10 @@ public:
                      RefrigerantProperties const& refrigerant,
                      GroutParameters const& grout,
                      FlowAndTemperatureControl const& flowAndTemperatureControl,
-                     PipeConfigurationCoaxial const& pipes)
-        : BHECommon{borehole, refrigerant, grout, flowAndTemperatureControl},
+                     PipeConfigurationCoaxial const& pipes,
+                     bool const ifUsePythonBC)
+        : BHECommon{borehole, refrigerant, grout, flowAndTemperatureControl,
+                    ifUsePythonBC},
           _pipes(pipes)
     {
         cross_section_area_inner_pipe = _pipes.inner_pipe.area();
