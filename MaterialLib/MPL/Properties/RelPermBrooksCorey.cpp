@@ -87,8 +87,10 @@ PropertyDataType RelPermBrooksCorey::dValue(
     auto const lambda = _exponent;
 
     auto const s_eff = (s_L - s_L_res) / (s_L_max - s_L_res);
-    auto const d_se_d_sL = 1. / (s_L_max - s_L_res);
+    if ((s_eff < 0.) || (s_eff > 1.))
+        return Pair{0., 0.};
 
+    auto const d_se_d_sL = 1. / (s_L_max - s_L_res);
     auto const dk_rel_LRdse =
         (3 * lambda + 2.) / lambda * std::pow(s_eff, 2. / lambda + 2.);
 
@@ -98,8 +100,8 @@ PropertyDataType RelPermBrooksCorey::dValue(
     auto const dk_rel_GRdse =
         -2. * (1 - s_eff) * (1. - std::pow(s_eff, _2L_L)) -
         _2L_L * std::pow(s_eff, _2L_L - 1.) * (1. - s_eff) * (1. - s_eff);
-    auto const dk_rel_GRdsL = dk_rel_GRdse * d_se_d_sL;
 
+    auto const dk_rel_GRdsL = dk_rel_GRdse * d_se_d_sL;
     const Pair dkReldsL = {{dk_rel_LRdsL, dk_rel_GRdsL}};
 
     return dkReldsL;
