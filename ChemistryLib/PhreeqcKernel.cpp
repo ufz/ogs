@@ -8,6 +8,7 @@
  */
 
 #include <cmath>
+#include <cstdlib>
 
 #include "BaseLib/Error.h"
 #include "PhreeqcKernel.h"
@@ -96,9 +97,22 @@ void PhreeqcKernel::reinitializeRates()
     for (auto const& reaction_rate : _reaction_rates)
     {
         rates[rate_id].name = reaction_rate.kinetic_reactant.data();
-        rates[rate_id].commands =
-            const_cast<char*>(reaction_rate.commands().data());
+
+        // Commands' strings are freed by Phreeqc dtor.
+        rates[rate_id].commands = static_cast<char*>(
+            malloc(sizeof(char) * reaction_rate.commands().size() + 1));
+        if (rates[rate_id].commands == nullptr)
+            OGS_FATAL("Could not allocate memory for rate[%d] commands.",
+                      rate_id);
+        reaction_rate.commands().copy(rates[rate_id].commands,
+                                      std::string::npos);
+        rates[rate_id].commands[reaction_rate.commands().size()] = '\0';
+
         rates[rate_id].new_def = 1;
+        rates[rate_id].linebase = nullptr;
+        rates[rate_id].varbase = nullptr;
+        rates[rate_id].loopbase = nullptr;
+
         ++rate_id;
     };
 }
