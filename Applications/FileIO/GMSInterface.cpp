@@ -75,6 +75,8 @@ int GMSInterface::readBoreholesFromGMS(std::vector<GeoLib::Point*>* boreholes,
                 // later on!
                 if (pnt[2] != depth)
                 {
+                    if (newBorehole == nullptr)
+                        OGS_FATAL("Trying to access a nullptr.");
                     newBorehole->addSoilLayer(
                         pnt[0], pnt[1], pnt[2], sName);
                     sName = (*(++it));
