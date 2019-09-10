@@ -29,16 +29,16 @@
 namespace ProcessLib
 {
 //! A boundary condition whose values are computed by a Python script.
-template <typename BHEType>
+template <typename BHEUpdateCallback>
 class BHEInflowPythonBoundaryCondition final : public BoundaryCondition
 {
 public:
     BHEInflowPythonBoundaryCondition(
         std::pair<GlobalIndexType, GlobalIndexType>&& in_out_global_indices,
-        BHEType& bhe,
+        BHEUpdateCallback bhe_update_callback,
         BHEInflowPythonBoundaryConditionPythonSideInterface& py_bc_object)
         : _in_out_global_indices(std::move(in_out_global_indices)),
-          _bhe(bhe),
+          _bhe_update_callback(bhe_update_callback),
           _py_bc_object(py_bc_object)
     {
         const auto g_idx_T_out = in_out_global_indices.second;
@@ -86,15 +86,15 @@ public:
 
 private:
     std::pair<GlobalIndexType, GlobalIndexType> const _in_out_global_indices;
-    BHEType& _bhe;
+    BHEUpdateCallback _bhe_update_callback;
     BHEInflowPythonBoundaryConditionPythonSideInterface& _py_bc_object;
 };
 
-template <typename BHEType>
-std::unique_ptr<BHEInflowPythonBoundaryCondition<BHEType>>
+template <typename BHEUpdateCallback>
+std::unique_ptr<BHEInflowPythonBoundaryCondition<BHEUpdateCallback>>
 createBHEInflowPythonBoundaryCondition(
     std::pair<GlobalIndexType, GlobalIndexType>&& in_out_global_indices,
-    BHEType& bhe,
+    BHEUpdateCallback bhe_update_callback,
     BHEInflowPythonBoundaryConditionPythonSideInterface& py_bc_object)
 
 {
@@ -118,7 +118,8 @@ createBHEInflowPythonBoundaryCondition(
             "behaviour is not implemented.");
     }
 #endif  // USE_PETSC
-    return std::make_unique<BHEInflowPythonBoundaryCondition<BHEType>>(
-        std::move(in_out_global_indices), bhe, py_bc_object);
+    return std::make_unique<
+        BHEInflowPythonBoundaryCondition<BHEUpdateCallback>>(
+        std::move(in_out_global_indices), bhe_update_callback, py_bc_object);
 }
 }  // namespace ProcessLib
