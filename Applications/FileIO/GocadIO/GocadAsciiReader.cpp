@@ -537,7 +537,9 @@ MeshLib::Mesh* createMesh(std::ifstream& in, DataType type,
     return_val = parser(in, nodes, elems, node_id_map, mesh_prop);
 
     if (return_val)
+    {
         return new MeshLib::Mesh(mesh_name, nodes, elems, mesh_prop);
+    }
     ERR("Error parsing %s %s.", dataType2ShortString(type).c_str(),
         mesh_name.c_str());
     clearData(nodes, elems);

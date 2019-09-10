@@ -433,7 +433,9 @@ void ThermoMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
     int const process_id)
 {
     if (process_id != _process_data.mechanics_process_id)
+    {
         return;
+    }
 
     DBUG("PostTimestep ThermoMechanicsProcess.");
 

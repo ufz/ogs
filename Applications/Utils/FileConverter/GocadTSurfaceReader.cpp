@@ -74,9 +74,13 @@ int main(int argc, char* argv[])
 
     FileIO::Gocad::DataType t(FileIO::Gocad::DataType::ALL);
     if (export_lines_arg.isSet())
+    {
         t = FileIO::Gocad::DataType::PLINE;
+    }
     if (export_surfaces_arg.isSet())
+    {
         t = FileIO::Gocad::DataType::TSURF;
+    }
     std::vector<std::unique_ptr<MeshLib::Mesh>> meshes;
     if (!FileIO::Gocad::GocadAsciiReader::readFile(file_name, meshes, t))
     {
@@ -90,7 +94,9 @@ int main(int argc, char* argv[])
     for (auto& mesh : meshes)
     {
         if (mesh == nullptr)
+        {
             continue;
+        }
         INFO("Writing mesh \"%s\"", mesh->getName().c_str());
         int data_mode = (write_binary) ? 2 : 0;
         bool compressed = (write_binary);
