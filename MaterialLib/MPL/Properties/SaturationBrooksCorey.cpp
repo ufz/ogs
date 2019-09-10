@@ -61,6 +61,8 @@ PropertyDataType SaturationBrooksCorey::dValue(
            "SaturationBrooksCorey::dValue is implemented for "
            " derivatives with respect to capillary pressure only.");
 
+    const double s_L_res = _residual_liquid_saturation;
+    const double s_L_max = 1.0 - _residual_gas_saturation;
     const double p_b = _entry_pressure;
     const double p_cap = std::get<double>(
         variable_array[static_cast<int>(Variable::capillary_pressure)]);
@@ -72,8 +74,9 @@ PropertyDataType SaturationBrooksCorey::dValue(
                          .template value<double>(variable_array, pos, t);
 
     const double lambda = _exponent;
+    const double ds_L_d_s_eff = 1. / (s_L_max - s_L_res);
 
-    return -lambda / p_cap * s_L;
+    return -lambda / p_cap * s_L * ds_L_d_s_eff;
 }
 
 PropertyDataType SaturationBrooksCorey::d2Value(

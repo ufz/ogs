@@ -86,10 +86,12 @@ TEST(MaterialPropertyLib, SaturationBrooksCorey)
         const double s_ref =
             s_eff * (max_saturation - ref_residual_liquid_saturation) +
             ref_residual_liquid_saturation;
-        const double ds_dpc =
+        const double ds_eff_dpc =
             (p_cap <= ref_entry_pressure) ? 0. : -ref_lambda / p_cap * s_ref;
+            const double ds_L_ds_eff = 1. / (max_saturation - ref_residual_liquid_saturation);
+            const double ds_L_dpc = ds_L_ds_eff * ds_eff_dpc;
 
         ASSERT_NEAR(s_L, s_ref, 1.e-10);
-        ASSERT_NEAR(ds_L_dp_cap, ds_dpc, 1.e-10);
+        ASSERT_NEAR(ds_L_dp_cap, ds_L_dpc, 1.e-10);
     }
 }
