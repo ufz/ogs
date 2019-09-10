@@ -67,15 +67,8 @@ public:
                              double const t) const override;
 
 private:
-    Phase* _phase;
-    Component* _component;
+    Phase* _phase = nullptr;
+    Component* _component = nullptr;
 };
-
-inline std::unique_ptr<IdealGasLaw> createIdealGasLaw(
-    BaseLib::ConfigTree const& /*config*/)
-{
-    DBUG("Create IdealGasLaw medium property");
-    return std::make_unique<IdealGasLaw>();
-}
 
 }  // namespace MaterialPropertyLib
