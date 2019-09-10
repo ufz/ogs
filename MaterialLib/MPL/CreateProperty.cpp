@@ -19,6 +19,7 @@
 #include "ParameterLib/Parameter.h"
 #include "ParameterLib/Utils.h"
 
+#include "Properties/CreateProperties.h"
 #include "Properties/Properties.h"
 
 #include "Component.h"

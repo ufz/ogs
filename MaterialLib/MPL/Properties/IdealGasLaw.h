@@ -71,11 +71,4 @@ private:
     Component* _component;
 };
 
-inline std::unique_ptr<IdealGasLaw> createIdealGasLaw(
-    BaseLib::ConfigTree const& /*config*/)
-{
-    DBUG("Create IdealGasLaw medium property");
-    return std::make_unique<IdealGasLaw>();
-}
-
 }  // namespace MaterialPropertyLib

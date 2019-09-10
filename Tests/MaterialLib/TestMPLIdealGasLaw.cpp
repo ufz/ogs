@@ -44,7 +44,7 @@ TEST(MaterialPropertyLib, IdealGasLawOfPurePhase)
     m << "  <properties>\n";
     m << "    <property>\n";
     m << "      <name>density</name>\n";
-    m << "      <type>IdealGaslaw</type>\n";
+    m << "      <type>IdealGasLaw</type>\n";
     m << "    </property>\n";
     m << "    <property>\n";
     m << "      <name>molar_mass</name>\n";
