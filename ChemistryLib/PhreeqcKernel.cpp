@@ -29,7 +29,8 @@ PhreeqcKernel::PhreeqcKernel(
     cxxKinetics& kinetic_reactants,
     std::vector<ReactionRate>&& reaction_rates)
     : Phreeqc(),
-      _templated_initial_aqueous_solution(*aqueous_solution.Get_initial_data()),
+      _templated_initial_aqueous_solution(
+          aqueous_solution.getInitialAqueousSolution()),
       _reaction_rates(std::move(reaction_rates))
 {
     do_initialize();
@@ -49,8 +50,9 @@ PhreeqcKernel::PhreeqcKernel(
          chemical_system_id < num_chemical_systems;
          ++chemical_system_id)
     {
-        aqueous_solution.Set_n_user_both(chemical_system_id);
-        Rxn_solution_map.emplace(chemical_system_id, aqueous_solution);
+        aqueous_solution.setChemicalSystemID(chemical_system_id);
+        Rxn_solution_map.emplace(chemical_system_id,
+                                 *aqueous_solution.castToBaseClass());
     }
     use.Set_solution_in(true);
 
