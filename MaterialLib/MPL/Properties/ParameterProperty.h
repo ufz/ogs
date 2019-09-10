@@ -24,7 +24,8 @@ class ParameterProperty final : public Property
 {
 public:
     /// This constructor accepts a Parameter.
-    ParameterProperty(ParameterLib::Parameter<double> const& parameter);
+    explicit ParameterProperty(
+        ParameterLib::Parameter<double> const& parameter);
 
     /// This method computes the value of a property depending linearly on
     /// the value of the given primary variable.
