@@ -80,15 +80,4 @@ public:
                              double const /*t*/) const override;
 };
 
-inline std::unique_ptr<SaturationLiakopoulos> createSaturationLiakopoulos(
-    BaseLib::ConfigTree const& /*config*/)
-{
-    // check is reading the parameter, not peeking it...
-    //! \ogs_file_param{prj__media__medium__properties__property__SaturationLiakopoulos}
-    // config.checkConfigParameter("type", "SaturationLiakopoulos");
-    DBUG("Create SaturationLiakopoulos medium property");
-
-    return std::make_unique<SaturationLiakopoulos>();
-}
-
 }  // namespace MaterialPropertyLib
