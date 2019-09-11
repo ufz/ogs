@@ -25,6 +25,5 @@ class Constant;
 
 namespace MaterialPropertyLib
 {
-std::unique_ptr<Constant> createConstant(
-    BaseLib::ConfigTree const& config);
+std::unique_ptr<Constant> createConstant(BaseLib::ConfigTree const& config);
 }  // namespace MaterialPropertyLib

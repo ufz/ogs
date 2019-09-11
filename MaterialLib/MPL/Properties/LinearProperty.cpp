@@ -27,15 +27,15 @@ PropertyDataType LinearProperty::value(
     ParameterLib::SpatialPosition const& /*pos*/,
     double const /*t*/) const
 {
-    auto calculate_linearized_ratio =
-        [&variable_array](double const initial_linearized_ratio,
-                          auto const& iv) {
-            return initial_linearized_ratio +
-                   std::get<double>(iv.slope) *
-                       (std::get<double>(
-                            variable_array[static_cast<int>(iv.type)]) -
-                        std::get<double>(iv.reference_condition));
-        };
+    auto calculate_linearized_ratio = [&variable_array](
+                                          double const initial_linearized_ratio,
+                                          auto const& iv) {
+        return initial_linearized_ratio +
+               std::get<double>(iv.slope) *
+                   (std::get<double>(
+                        variable_array[static_cast<int>(iv.type)]) -
+                    std::get<double>(iv.reference_condition));
+    };
 
     double const linearized_ratio_to_reference_value =
         std::accumulate(_independent_variables.begin(),

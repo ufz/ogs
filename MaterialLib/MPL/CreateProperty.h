@@ -25,7 +25,6 @@ namespace ParameterLib
 struct ParameterBase;
 }
 
-
 namespace MaterialPropertyLib
 {
 class Property;

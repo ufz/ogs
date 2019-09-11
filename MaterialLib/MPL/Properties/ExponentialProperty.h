@@ -15,7 +15,6 @@
 
 namespace MaterialPropertyLib
 {
-
 struct ExponentData
 {
     Variable type;

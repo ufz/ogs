@@ -25,7 +25,6 @@ namespace ParameterLib
 struct ParameterBase;
 }
 
-
 namespace MaterialPropertyLib
 {
 /// The method creates components based on config subtree.

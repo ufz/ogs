@@ -35,5 +35,6 @@ namespace MaterialPropertyLib
 /// assigned.
 std::unique_ptr<Medium> createMedium(
     BaseLib::ConfigTree const& config,
-    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters);
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
+        parameters);
 }  // namespace MaterialPropertyLib

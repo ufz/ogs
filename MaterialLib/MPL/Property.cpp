@@ -17,7 +17,6 @@
 
 namespace MaterialPropertyLib
 {
-
 PropertyDataType Property::value() const
 {
     return _value;
