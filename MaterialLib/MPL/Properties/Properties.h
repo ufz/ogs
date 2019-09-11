@@ -17,3 +17,4 @@
 #include "IdealGasLaw.h"
 #include "LinearProperty.h"
 #include "ParameterProperty.h"
+#include "SaturationBrooksCorey.h"

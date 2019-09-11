@@ -18,6 +18,7 @@
 #include "BaseLib/ConfigTree.h"
 
 #include "Properties/CreateProperties.h"
+
 #include "Properties/Properties.h"
 
 #include "Component.h"
@@ -58,12 +59,11 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
     {
         return createIdealGasLaw(config);
     }
-    /* TODO Additional properties go here, for example:
-    if (boost::iequals(property_type, "BilinearTemperaturePressure"))
+
+    if (boost::iequals(property_type, "SaturationBrooksCorey"))
     {
-        return createBilinearTemperaturePressure(config, material_type);
+        return createSaturationBrooksCorey(config);
     }
-    */
 
     // If none of the above property types are found, OGS throws an error.
     OGS_FATAL("The specified component property type '%s' was not recognized",
