@@ -32,6 +32,17 @@
 #include "MeshLib/MeshEnums.h"
 #include "MeshLib/Node.h"
 
+namespace
+{
+template <typename It>
+std::array<double, 3> parsePointCoordinates(It& it)
+{
+    return {std::strtod((++it)->c_str(), nullptr),
+            std::strtod((++it)->c_str(), nullptr),
+            std::strtod((++it)->c_str(), nullptr)};
+}
+}  // namespace
+
 namespace FileIO
 {
 int GMSInterface::readBoreholesFromGMS(std::vector<GeoLib::Point*>* boreholes,
@@ -58,7 +69,6 @@ int GMSInterface::readBoreholesFromGMS(std::vector<GeoLib::Point*>* boreholes,
     /* read all stations */
     while (std::getline(in, line))
     {
-        std::array<double, 3> pnt;
         std::list<std::string> fields = BaseLib::splitString(line, '\t');
 
         if (fields.size() >= 5)
@@ -66,9 +76,7 @@ int GMSInterface::readBoreholesFromGMS(std::vector<GeoLib::Point*>* boreholes,
             if (*fields.begin() == cName)  // add new layer
             {
                 it = fields.begin();
-                pnt[0] = strtod((++it)->c_str(), nullptr);
-                pnt[1] = strtod((++it)->c_str(), nullptr);
-                pnt[2] = strtod((++it)->c_str(), nullptr);
+                auto const pnt = parsePointCoordinates(it);
 
                 // check if current layer has a thickness of 0.0.
                 // if so skip it since it will mess with the vtk-visualisation
@@ -97,9 +105,7 @@ int GMSInterface::readBoreholesFromGMS(std::vector<GeoLib::Point*>* boreholes,
                 }
                 cName = *fields.begin();
                 it = fields.begin();
-                pnt[0] = strtod((++it)->c_str(), nullptr);
-                pnt[1] = strtod((++it)->c_str(), nullptr);
-                pnt[2] = strtod((++it)->c_str(), nullptr);
+                auto const pnt = parsePointCoordinates(it);
                 sName = (*(++it));
                 newBorehole = GeoLib::StationBorehole::createStation(
                     cName, pnt[0], pnt[1], pnt[2], 0);
