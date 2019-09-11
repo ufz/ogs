@@ -30,9 +30,11 @@ std::unique_ptr<LinearProperty> createLinearProperty(
     auto const& independent_variables_config =
         //! \ogs_file_param{properties__property__LinearProperty__independent_variables}
         config.getConfigSubtree("independent_variables");
-    for (auto const& independent_variable_config :
-         independent_variables_config.getConfigSubtreeList(
-             "independent_variable"))
+    for (
+        auto const& independent_variable_config :
+        //! \ogs_file_param{properties__property__LinearProperty__independent_variables__independent_variable}
+        independent_variables_config.getConfigSubtreeList(
+            "independent_variable"))
     {
         auto const& variable_name =
             //! \ogs_file_param{properties__property__LinearProperty__independent_variables__independent_variable__variable_name}
