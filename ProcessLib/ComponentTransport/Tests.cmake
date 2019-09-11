@@ -1146,3 +1146,27 @@ AddTest(
     KineticReactant2_2d_pcs_4_ts_16_t_1600.000000_expected.vtu KineticReactant2_2d_pcs_4_ts_16_t_1600.000000.vtu H H 1e-10 1e-16
     KineticReactant2_2d_pcs_4_ts_20_t_2000.000000_expected.vtu KineticReactant2_2d_pcs_4_ts_20_t_2000.000000.vtu H H 1e-10 1e-16
 )
+
+AddTest(
+    NAME 1D_ReactiveMassTransport_Wetland
+    PATH Parabolic/ComponentTransport/ReactiveTransport/Wetland
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS Wetland_1d.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    Wetland_1d_pcs_11_ts_4_t_28800.000000_expected.vtu Wetland_1d_pcs_11_ts_4_t_28800.000000.vtu pressure pressure 1e-6 1e-10
+    Wetland_1d_pcs_11_ts_4_t_28800.000000_expected.vtu Wetland_1d_pcs_11_ts_4_t_28800.000000.vtu H H 1e-10 1e-16
+    Wetland_1d_pcs_11_ts_4_t_28800.000000_expected.vtu Wetland_1d_pcs_11_ts_4_t_28800.000000.vtu Do Do 1e-10 1e-16
+    Wetland_1d_pcs_11_ts_4_t_28800.000000_expected.vtu Wetland_1d_pcs_11_ts_4_t_28800.000000.vtu Sf Sf 1e-10 1e-16
+    Wetland_1d_pcs_11_ts_4_t_28800.000000_expected.vtu Wetland_1d_pcs_11_ts_4_t_28800.000000.vtu Sa Sa 1e-10 1e-16
+    Wetland_1d_pcs_11_ts_4_t_28800.000000_expected.vtu Wetland_1d_pcs_11_ts_4_t_28800.000000.vtu Sin Sin 1e-10 1e-16
+    Wetland_1d_pcs_11_ts_4_t_28800.000000_expected.vtu Wetland_1d_pcs_11_ts_4_t_28800.000000.vtu Xs_m Xs_m 1e-10 1e-16
+    Wetland_1d_pcs_11_ts_4_t_28800.000000_expected.vtu Wetland_1d_pcs_11_ts_4_t_28800.000000.vtu Xi_m Xi_m 1e-10 1e-16
+    Wetland_1d_pcs_11_ts_4_t_28800.000000_expected.vtu Wetland_1d_pcs_11_ts_4_t_28800.000000.vtu Snh Snh 1e-10 1e-16
+    Wetland_1d_pcs_11_ts_4_t_28800.000000_expected.vtu Wetland_1d_pcs_11_ts_4_t_28800.000000.vtu Sno Sno 1e-10 1e-16
+    Wetland_1d_pcs_11_ts_4_t_28800.000000_expected.vtu Wetland_1d_pcs_11_ts_4_t_28800.000000.vtu Sso Sso 1e-10 1e-16
+    Wetland_1d_pcs_11_ts_4_t_28800.000000_expected.vtu Wetland_1d_pcs_11_ts_4_t_28800.000000.vtu Sulphide Sulphide 1e-10 1e-16
+    RUNTIME 140
+)
