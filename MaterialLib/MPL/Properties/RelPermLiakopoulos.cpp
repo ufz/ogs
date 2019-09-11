@@ -31,9 +31,19 @@ PropertyDataType RelPermLiakopoulos::value(
     /// FEM assembly.
     auto const s_L = _medium->property(PropertyType::saturation)
                          .template value<double>(variable_array, pos, t);
-
     auto const s_L_res = _residual_liquid_saturation;
     auto const k_rel_min_GR = _min_relative_permeability_gas;
+
+    if (s_L <= s_L_res)
+    {
+        return Pair{0., 1.};
+    }
+
+    if (s_L >= 1.)
+    {
+        return Pair{1., k_rel_min_GR};
+    }
+
     auto const a = _parameter_a;
     auto const b = _parameter_b;
     auto const lambda = _exponent;
@@ -53,13 +63,23 @@ PropertyDataType RelPermLiakopoulos::dValue(
     VariableArray const& variable_array, Variable const primary_variable,
     ParameterLib::SpatialPosition const& pos, double const t) const
 {
+    (void)primary_variable;
     assert((primary_variable == Variable::liquid_saturation) &&
            "RelPermLiakopoulos::dValue is implemented for "
            " derivatives with respect to liquid saturation only.");
     auto const s_L = _medium->property(PropertyType::saturation)
                          .template value<double>(variable_array, pos, t);
-
     auto const s_L_res = _residual_liquid_saturation;
+    if (s_L < s_L_res)
+    {
+        return Pair{0., 0.};
+    }
+
+    if (s_L >= 1.)
+    {
+        return Pair{0., 0.};
+    }
+
     auto const s_L_max = 1.;
     auto const lambda = _exponent;
     auto const a = _parameter_a;
