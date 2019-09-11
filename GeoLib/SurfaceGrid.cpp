@@ -2,6 +2,7 @@
  * \date 2012-09-22
  * \brief Definition of the SurfaceGrid class.
  *
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
