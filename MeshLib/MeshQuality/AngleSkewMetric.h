@@ -1,5 +1,5 @@
 /**
- * \file   AngleSkewMetric.h
+ * \file
  * \author Thomas Fischer
  * \date   2011-03-17
  * \brief  Definition of the AngleSkewMetric class.

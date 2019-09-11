@@ -46,6 +46,8 @@ int main(int argc, char* argv[])
     std::unique_ptr<MeshLib::Mesh> const mesh(
         MeshLib::IO::readMeshFromFile(file_name));
     if (FileIO::SHPInterface::write2dMeshToSHP(output_arg.getValue(), *mesh))
+    {
         return EXIT_SUCCESS;
+    }
     return EXIT_FAILURE;
 }

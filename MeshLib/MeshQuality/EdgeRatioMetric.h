@@ -1,5 +1,5 @@
 /**
- * \file   EdgeRatioMetric.h
+ * \file
  * \author Thomas Fischer
  * \date   2011-03-03
  * \brief  Definition of the AreaMetric class.

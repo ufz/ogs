@@ -5,7 +5,7 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *  \file   TimeDiscretization.cpp
+ *  \file
  *  Created on March 31, 2017, 10:30 AM
  */
 

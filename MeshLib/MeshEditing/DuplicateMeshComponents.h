@@ -1,5 +1,5 @@
 /**
- * \file   DuplicateMeshComponents.h
+ * \file
  * \author Karsten Rink
  * \date   2014-03-25
  * \brief  Definition of Duplicate functions

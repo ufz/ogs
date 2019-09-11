@@ -13,7 +13,6 @@
 
 namespace FluidType
 {
-
 enum class Fluid_Type
 {
     INCOMPRESSIBLE_FLUID,
@@ -30,4 +29,4 @@ bool checkRequiredParams(Fluid_Type const& f_type,
 
 const char* getErrorMsg(Fluid_Type const& f_type);
 
-}  // namespace FluidTypeLib
+}  // namespace FluidType

@@ -1,5 +1,5 @@
 /*!
-   \file  PETScMatrix.h
+   \file
    \brief Declaration of class PETScMatrix, which provides an interface to
           PETSc matrix routines.
 

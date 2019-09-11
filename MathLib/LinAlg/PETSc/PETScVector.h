@@ -1,5 +1,5 @@
 /**
- * \file  PETScVector.h
+ * \file
  * \brief Declaration of class PETScVector, which provides an interface to
  *        PETSc vector routines.
  *

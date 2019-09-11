@@ -5,7 +5,7 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- * \file   CreatePiecewiseLinearCurve.h
+ * \file
  *
  * Created on November 11, 2016, 10:49 AM
  */

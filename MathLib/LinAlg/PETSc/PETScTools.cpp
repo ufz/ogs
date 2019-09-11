@@ -1,5 +1,5 @@
 /*!
-   \file  PETScTools.cpp
+   \file
    \brief Definition of a function related to PETSc solver interface to assign
          the Dirichlet boundary conditions.
 

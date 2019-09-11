@@ -1,5 +1,5 @@
 /*!
-   \file  IdealGasLaw.h
+   \file
    \brief Declaration of class IdealGasLow for fluid density by the ideal gas
           law depending on one variable linearly.
 

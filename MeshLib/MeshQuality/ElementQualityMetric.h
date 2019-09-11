@@ -1,5 +1,5 @@
 /**
- * \file   ElementQualityMetric.h
+ * \file
  * \author Thomas Fischer
  * \date   2010-12-08
  * \brief  Definition of the ElementQualityMetricBase class.

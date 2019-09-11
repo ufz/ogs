@@ -1,5 +1,5 @@
 /*!
-   \file  PETScMatrix.cpp
+   \file
    \brief Definition of member functions of class PETScMatrix, which provides an
    interface to
           PETSc matrix routines.

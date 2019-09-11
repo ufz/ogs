@@ -1,5 +1,5 @@
 /*!
-   \file  PETScLinearSolver.h
+   \file
    \brief Declaration of class PETScLinearSolver, which defines a solver object
          based on PETSc routines.
 

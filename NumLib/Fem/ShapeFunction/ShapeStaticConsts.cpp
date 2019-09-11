@@ -1,5 +1,5 @@
 /**
- * \file ShapeStaticConsts.cpp
+ * \file
  *
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)

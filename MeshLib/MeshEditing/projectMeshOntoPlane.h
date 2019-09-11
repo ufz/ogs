@@ -1,5 +1,5 @@
 /**
- * \file   projectMeshOntoPlane.h
+ * \file
  * \author Karsten Rink
  * \date   2015-04-10
  * \brief  Definition of the projectMeshOntoPlane

@@ -56,7 +56,9 @@ int main(int argc, char* argv[])
         FileIO::AsciiRasterInterface::readRaster(input2_arg.getValue()));
 
     if (dem1 == nullptr || dem2 == nullptr)
+    {
         return 1;
+    }
 
     GeoLib::RasterHeader const& h1 = dem1->getHeader();
     GeoLib::RasterHeader const& h2 = dem2->getHeader();
@@ -89,7 +91,9 @@ int main(int argc, char* argv[])
     }
 
     if (errors_found)
+    {
         return 2;
+    }
 
     std::size_t const n = number_arg.getValue();
     std::vector<std::vector<double>> raster;
@@ -111,7 +115,9 @@ int main(int argc, char* argv[])
         if (*it1 == h1.no_data || *it2 == h2.no_data)
         {
             for (std::size_t i = 0; i < n; ++i)
+            {
                 raster[i].push_back(h1.no_data);
+            }
         }
         else
         {
@@ -119,7 +125,9 @@ int main(int argc, char* argv[])
             double const max = std::max(*it1, *it2);
             double const step = (max - min) / static_cast<double>(n + 1);
             for (std::size_t i = 0; i < n; ++i)
+            {
                 raster[i].push_back(min + ((i+1) * step));
+            }
         }
         it2++;
     }

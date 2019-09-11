@@ -1,5 +1,5 @@
 /**
- * \file   EdgeRatioMetric.cpp
+ * \file
  * \author Thomas Fischer
  * \date   2011-03-03
  * \brief  Implementation of the EdgeRatioMetric class.

@@ -1,5 +1,5 @@
 /**
- * \file   LayeredVolume.h
+ * \file
  * \author Karsten Rink
  * \date   2014-04-11
  * \brief  Definition of the LayeredVolume class

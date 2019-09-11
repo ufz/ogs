@@ -5,7 +5,7 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- * \file:   FluidProperty.h
+ * \file
  *
  * Created on August 12, 2016, 3:34 PM
  */

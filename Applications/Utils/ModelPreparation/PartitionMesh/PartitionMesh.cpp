@@ -1,5 +1,5 @@
 /*!
-  \file PartitionMesh.cpp
+  \file
   \date   2016.05
 
   \brief  A tool for mesh partitioning.

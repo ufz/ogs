@@ -5,7 +5,7 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- * \file:   createStorageModel.h
+ * \file
  *
  * Created on August 16, 2016, 1:16 PM
  */

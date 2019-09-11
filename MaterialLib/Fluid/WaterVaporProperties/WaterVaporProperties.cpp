@@ -5,7 +5,7 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- * \file   WaterVaporProperties.cpp
+ * \file
  *
  */
 

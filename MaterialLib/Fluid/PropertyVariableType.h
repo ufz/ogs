@@ -5,7 +5,7 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- * \file   PropertyVariableType.h
+ * \file
  *
  * Created on November 29, 2016, 2:28 PM
  */

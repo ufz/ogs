@@ -1,5 +1,5 @@
 /**
- * \file   MeshValidation.cpp
+ * \file
  * \author Karsten Rink
  * \date   2013-04-04
  * \brief  Implementation of the MeshValidation class.

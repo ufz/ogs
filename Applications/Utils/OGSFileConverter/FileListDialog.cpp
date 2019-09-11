@@ -1,5 +1,5 @@
 /**
- * \file   FileListDialog.cpp
+ * \file
  * \author Karsten Rink
  * \date   2012-04-04
  * \brief  Implementation of FileListDialog class.

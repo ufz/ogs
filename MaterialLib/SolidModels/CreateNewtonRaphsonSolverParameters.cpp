@@ -5,7 +5,7 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *  \file   CreateNewtonRaphsonSolverParameters.cpp
+ *  \file
  *  Created on July 10, 2018, 11:32 AM
  */
 

@@ -1,5 +1,5 @@
 /**
- * \file   MeshSurfaceExtraction.h
+ * \file
  * \author Karsten Rink
  * \date   2013-04-04
  * \brief  Definition of the MeshSurfaceExtraction class

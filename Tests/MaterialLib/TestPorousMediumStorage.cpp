@@ -1,5 +1,5 @@
 /*!
-   \file  TestPorousMediumStorage.cpp
+   \file
    \brief Test the classes for storage models.
 
    \copyright

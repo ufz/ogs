@@ -1,5 +1,5 @@
 /*!
-  \file NodePartitionedMeshReader.h
+  \file
   \author Wenqing Wang
   \date   2014.08
   \brief  Declare a class to read node-wise partitioned mesh with MPI functions.

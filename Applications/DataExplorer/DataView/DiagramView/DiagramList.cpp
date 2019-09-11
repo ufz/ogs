@@ -34,7 +34,9 @@ float DiagramList::calcMinXValue()
         _coords.begin(), _coords.end(),
         [](auto const& c0, auto const& c1) { return c0.first < c1.first; });
     if (min != _coords.end())
+    {
         return min->first;
+    }
     return std::numeric_limits<float>::max();
 }
 

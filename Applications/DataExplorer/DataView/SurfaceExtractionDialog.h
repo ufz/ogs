@@ -1,5 +1,5 @@
 /**
- * \file   SurfaceExtractionDialog.h
+ * \file
  * \author Karsten Rink
  * \date   2015-01-29
  * \brief  Definition of the SurfaceExtractionDialog class.

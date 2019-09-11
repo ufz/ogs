@@ -1,5 +1,5 @@
 /**
- * \file   LayeredVolume.cpp
+ * \file
  * \author Karsten Rink
  * \date   2014-04-11
  * \brief  Implementation of the LayeredVolume class.

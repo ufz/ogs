@@ -5,7 +5,7 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- * \file   TestPiecewiseLinearCurve.cpp
+ * \file
  *
  * Created on November 11, 2016, 10:58 AM
  */

@@ -1,5 +1,5 @@
 /**
- * \file   TestPointsOnAPlane.cpp
+ * \file
  * \author Karsten Rink
  * \date   2014-02-26
  *

@@ -1,5 +1,5 @@
 /**
- * \file   TestCsvReader.cpp
+ * \file
  * \author Karsten Rink
  * \date   2015-04-09
  *

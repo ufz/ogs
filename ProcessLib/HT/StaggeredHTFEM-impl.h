@@ -5,7 +5,7 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *  \file   StaggeredHTFEM-impl.h
+ *  \file
  *  Created on October 13, 2017, 3:52 PM
  */
 

@@ -5,7 +5,7 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- * \file   VanGenuchtenCapillaryPressureSaturation.cpp
+ * \file
  *
  *  Created on October 28, 2016, 6:05 PM
  */

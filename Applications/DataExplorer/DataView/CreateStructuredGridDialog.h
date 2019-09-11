@@ -1,5 +1,5 @@
 /**
- * \file   CreateStructuredGridDialog.h
+ * \file
  * \author Karsten Rink
  * \date   2016-02-04
  * \brief  Definition of the CreateStructuredGridDialog class.

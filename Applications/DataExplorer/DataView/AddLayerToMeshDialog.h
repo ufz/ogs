@@ -1,5 +1,5 @@
 /**
- * \file   AddLayerToMeshDialog.h
+ * \file
  * \author Karsten Rink
  * \date   2016-01-18
  * \brief  Definition of the AddLayerToMeshDialog class.

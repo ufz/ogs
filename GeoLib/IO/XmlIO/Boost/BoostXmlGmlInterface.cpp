@@ -1,5 +1,5 @@
 /**
- * \file   BoostXmlGmlInterface.cpp
+ * \file
  * \author Karsten Rink
  * \date   2014-01-31
  * \brief  Implementation of the BoostXmlGmlInterface class.

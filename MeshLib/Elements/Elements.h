@@ -1,5 +1,5 @@
 /*
- * \file Elements.h
+ * \file
  * \brief Cumulative include for all available mesh element types.
  *
  * \copyright

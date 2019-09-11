@@ -1,5 +1,5 @@
 /**
- * \file FinalizeVectorAssembly.h
+ * \file
  * \author Wenqing Wang
  * \date Oct, 2013
  *

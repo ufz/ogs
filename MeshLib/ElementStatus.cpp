@@ -1,5 +1,5 @@
 /**
- * \file   ElementStatus.cpp
+ * \file
  * \author Karsten Rink
  * \date   2012-12-18
  * \brief  Implementation of the ElementStatus class.

@@ -1,5 +1,5 @@
 /**
- * \file   MeshLayerMapper.cpp
+ * \file
  * \author Karsten Rink
  * \date   2010-11-01
  * \brief  Implementation of the MeshLayerMapper class.
