@@ -14,7 +14,6 @@
 #include "GetThermalExpansivity.h"
 
 #include "MaterialLib/MPL/Phase.h"
-#include "MaterialLib/MPL/Phase.h"
 
 namespace MaterialPropertyLib
 {
