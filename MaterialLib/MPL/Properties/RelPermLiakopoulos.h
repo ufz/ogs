@@ -73,15 +73,4 @@ public:
                             double const t) const override;
 };
 
-inline std::unique_ptr<RelPermLiakopoulos> createRelPermLiakopoulos(
-    BaseLib::ConfigTree const& /*config*/)
-{
-    // check is reading the parameter, not peeking it...
-    //! \ogs_file_param{prj__media__medium__properties__property__RelPermLiakopoulos}
-    // config.checkConfigParameter("type", "RelPermLiakopoulos");
-    DBUG("Create RelPermLiakopoulos medium property");
-
-    return std::make_unique<RelPermLiakopoulos>();
-}
-
 }  // namespace MaterialPropertyLib
