@@ -9,8 +9,11 @@ set(TOOLS
     TecPlotTools
     GocadSGridReader
     GocadTSurfaceReader
-    Mesh2Raster
-    NetCdfConverter)
+    Mesh2Raster)
+
+if(OGS_USE_NETCDF)
+    list(APPEND TOOLS NetCdfConverter)
+endif()
 
 if(OGS_BUILD_GUI)
     if(Shapelib_FOUND)

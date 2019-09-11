@@ -175,8 +175,8 @@ void flipRaster(std::vector<double>& data, std::size_t width,
 
 bool canConvert(NcVar const& var)
 {
-    bool ret(true);
-    if (ret = (var.getDimCount() < 2))
+    bool ret(var.getDimCount() < 2);
+    if (ret)
         ERR("Only 2+ dimensional variables can be converted into OGS Meshes.\n");
     return !ret;
 }
@@ -187,7 +187,8 @@ std::string arraySelectionLoop(NcFile const& dataset)
     std::size_t const idx =
         parseInput("Enter data array index: ", dataset.getVarCount(), true);
 
-    if (idx == dataset.getVarCount() || !canConvert(dataset.getVar(names[idx])))
+    if (static_cast<int>(idx) == dataset.getVarCount() ||
+        !canConvert(dataset.getVar(names[idx])))
         return arraySelectionLoop(dataset);
 
     return names[idx];
@@ -246,7 +247,7 @@ bool dimensionSelectionLoop(NcVar const& var,
                                 " " + dim_comment[i - start_idx] + ": ");
         std::size_t const idx = parseInput(request_str, var.getDimCount(), true);
 
-        if (idx == var.getDimCount())
+        if (static_cast<int>(idx) == var.getDimCount())
         {
             showArraysDims(var);
             i--;
@@ -262,7 +263,6 @@ std::pair<std::size_t, std::size_t> timestepSelectionLoop(NcFile const& dataset,
                                                           NcVar const& var,
                                                           std::size_t dim_idx)
 {
-    NcVar const& dim_var = getDimVar(dataset, var, dim_idx);
     std::size_t const n_time_steps = var.getDim(dim_idx).getSize();
     std::pair<std::size_t, std::size_t> bounds(
         std::numeric_limits<std::size_t>::max(),
@@ -488,8 +488,6 @@ bool convert(NcFile const& dataset, NcVar const& var,
              bool const use_single_file, MeshLib::MeshElemType const elem_type)
 {
     std::unique_ptr<MeshLib::Mesh> mesh;
-    std::size_t const temp_offset = (is_time_dep) ? 1 : 0;
-    std::size_t const n_dims = (var.getDimCount());
     std::vector<std::size_t> length;
     std::size_t const array_length = getLength(var, is_time_dep, length);
     for (std::size_t i = time_bounds.first; i <= time_bounds.second; ++i)
