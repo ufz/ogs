@@ -6,7 +6,6 @@
  *              http://www.opengeosys.org/project/license
  *
  * \file
- *
  */
 
 #pragma once

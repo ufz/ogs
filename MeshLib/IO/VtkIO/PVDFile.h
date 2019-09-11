@@ -20,7 +20,6 @@ namespace IO
 {
 
 /*! Writes a basic PVD file for use with Paraview.
- *
  */
 class PVDFile
 {

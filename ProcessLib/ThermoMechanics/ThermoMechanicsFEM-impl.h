@@ -8,7 +8,6 @@
  * \file
  *
  * Created on July 2, 2019, 2:12 PM
- *
  */
 
 #pragma once

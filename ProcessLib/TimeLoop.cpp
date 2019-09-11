@@ -6,7 +6,6 @@
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
- *
  */
 
 #include "TimeLoop.h"
@@ -394,7 +393,6 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
  * solver is rather complicated. Maybe in the future con can introduce an
  * abstraction that can do both the convergence checks of the coupling loop and
  * of the nonlinear solver.
- *
  */
 bool TimeLoop::loop()
 {

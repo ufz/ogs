@@ -48,7 +48,6 @@ public:
      * @param first, last the range of elements to examine
      * @param max_num_per_grid_cell (input) max number per grid cell in the
      * average
-     *
      */
     template <typename InputIterator>
     Grid(InputIterator first, InputIterator last,

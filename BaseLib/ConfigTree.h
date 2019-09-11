@@ -438,7 +438,6 @@ public:
     //!\}
 
     /*! \name Methods for accessing subtrees
-     *
      */
     //!\{
 
@@ -470,7 +469,6 @@ public:
     //!\}
 
     /*! \name Methods for ignoring parameters
-     *
      */
     //!\{
 

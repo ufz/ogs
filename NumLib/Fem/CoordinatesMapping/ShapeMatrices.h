@@ -8,7 +8,6 @@
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
- *
  */
 
 #pragma once
@@ -22,7 +21,6 @@ namespace NumLib
 
 /**
   * \brief Shape matrix type to be calculated
-  *
   */
 enum class ShapeMatrixType
 {

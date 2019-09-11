@@ -26,7 +26,6 @@ enum class IterationResult : char
 };
 
 /*! Collection of basic methods every equation system must provide.
- *
  */
 class EquationSystem : public NumLib::MatrixSpecificationsProvider
 {

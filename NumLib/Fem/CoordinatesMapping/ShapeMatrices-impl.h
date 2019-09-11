@@ -8,7 +8,6 @@
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
- *
  */
 
 namespace NumLib
@@ -18,7 +17,6 @@ namespace detail
 {
 /*
  * zero reset functions for Eigen
- *
  */
 template<class T>
 void setMatrixZero(T &mat)
