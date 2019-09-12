@@ -423,8 +423,8 @@ void TimeLoop::initialize()
     // Output initial conditions
     {
         const bool output_initial_condition = true;
-        outputSolutions(output_initial_condition, is_staggered_coupling, 0,
-                        _start_time, *_output, &Output::doOutput);
+        outputSolutions(output_initial_condition, 0, _start_time, *_output,
+                        &Output::doOutput);
     }
 
 }
@@ -490,8 +490,8 @@ bool TimeLoop::loop()
         if (!_last_step_rejected)
         {
             const bool output_initial_condition = false;
-            outputSolutions(output_initial_condition, is_staggered_coupling,
-                            timesteps, t, *_output, &Output::doOutput);
+            outputSolutions(output_initial_condition, timesteps, t, *_output,
+                            &Output::doOutput);
         }
 
         if (t == _end_time || t + dt > _end_time ||
@@ -519,7 +519,7 @@ bool TimeLoop::loop()
     if (nonlinear_solver_status.error_norms_met)
     {
         const bool output_initial_condition = false;
-        outputSolutions(output_initial_condition, is_staggered_coupling,
+        outputSolutions(output_initial_condition,
                         accepted_steps + rejected_steps, t, *_output,
                         &Output::doOutputLastTimestep);
     }
@@ -747,11 +747,14 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
 
 template <typename OutputClass, typename OutputClassMember>
 void TimeLoop::outputSolutions(bool const output_initial_condition,
-                               bool const is_staggered_coupling,
                                unsigned timestep, const double t,
                                OutputClass& output_object,
                                OutputClassMember output_class_member) const
 {
+    // All _per_process_data share the first process.
+    bool const is_staggered_coupling =
+        !isMonolithicProcess(*_per_process_data[0]);
+
     unsigned process_id = 0;
     for (auto& process_data : _per_process_data)
     {

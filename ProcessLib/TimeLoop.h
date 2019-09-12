@@ -104,8 +104,7 @@ private:
                                std::size_t& rejected_steps);
 
     template <typename OutputClass, typename OutputClassMember>
-    void outputSolutions(bool const output_initial_condition,
-                         bool const is_staggered_coupling, unsigned timestep,
+    void outputSolutions(bool const output_initial_condition, unsigned timestep,
                          const double t, OutputClass& output_object,
                          OutputClassMember output_class_member) const;
 
