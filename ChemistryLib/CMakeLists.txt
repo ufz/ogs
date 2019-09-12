@@ -15,6 +15,8 @@ generate_export_header(ChemistryLib)
 
 target_link_libraries(ChemistryLib PUBLIC iphreeqc PRIVATE NumLib)
 
+set_target_properties(ChemistryLib PROPERTIES CXX_STANDARD 14)
+
 if(OGS_USE_PCH)
     cotire(ChemistryLib)
 endif()
