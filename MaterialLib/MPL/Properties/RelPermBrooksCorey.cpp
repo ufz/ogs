@@ -26,7 +26,6 @@ RelPermBrooksCorey::RelPermBrooksCorey(
     const double min_relative_permeability_liquid,
     const double min_relative_permeability_gas,
     const double exponent)
-
     : _residual_liquid_saturation(residual_liquid_saturation),
       _residual_gas_saturation(residual_gas_saturation),
       _min_relative_permeability_liquid(min_relative_permeability_liquid),

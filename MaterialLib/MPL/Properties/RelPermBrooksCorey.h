@@ -45,7 +45,7 @@ public:
                        const double /*_min_relative_permeability_gas*/,
                        const double /*exponent*/
     );
-    /// This method assigns a pointer to the meterial object that is the owner
+    /// This method assigns a pointer to the material object that is the owner
     /// of this property
     void setScale(
         std::variant<Medium*, Phase*, Component*> scale_pointer) override
