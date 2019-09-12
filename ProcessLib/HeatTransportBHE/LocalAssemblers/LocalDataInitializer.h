@@ -276,6 +276,13 @@ private:
                     e, std::get<BHE::BHE_CXC>(bhe),
                     std::forward<ConstructorArgs>(args)...}};
             }
+
+            if (std::holds_alternative<BHE::BHE_2U>(bhe))
+            {
+                return LADataIntfPtr{new LADataBHE<ShapeFunction, BHE::BHE_2U>{
+                    e, std::get<BHE::BHE_2U>(bhe),
+                    std::forward<ConstructorArgs>(args)...}};
+            }
             OGS_FATAL(
                 "Trying to create local assembler for an unknown BHE type.");
         };

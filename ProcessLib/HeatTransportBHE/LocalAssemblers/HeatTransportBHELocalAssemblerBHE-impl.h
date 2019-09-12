@@ -11,7 +11,6 @@
 #pragma once
 
 #include "HeatTransportBHELocalAssemblerBHE.h"
-
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "ProcessLib/Utils/InitShapeMatrices.h"
 
@@ -61,6 +60,7 @@ HeatTransportBHELocalAssemblerBHE<ShapeFunction, IntegrationMethod, BHEType>::
     _R_matrix.setZero(bhe_unknowns_size, bhe_unknowns_size);
     _R_pi_s_matrix.setZero(bhe_unknowns_size, temperature_size);
     _R_s_matrix.setZero(temperature_size, temperature_size);
+    static constexpr int max_num_thermal_exchange_terms = 5;
     // formulate the local BHE R matrix
     for (int idx_bhe_unknowns = 0; idx_bhe_unknowns < bhe_unknowns;
          idx_bhe_unknowns++)
@@ -84,13 +84,22 @@ HeatTransportBHELocalAssemblerBHE<ShapeFunction, IntegrationMethod, BHEType>::
 
         // The following assembly action is according to Diersch (2013) FEFLOW
         // book please refer to M.127 and M.128 on page 955 and 956
-        _bhe.template assembleRMatrices<ShapeFunction::NPOINTS>(
-            idx_bhe_unknowns, matBHE_loc_R, _R_matrix, _R_pi_s_matrix,
-            _R_s_matrix);
+        // The if check is absolutely necessary because
+        // (i) In the CXA and CXC case, there are 3 exchange terms,
+        // and it is the same as the number of unknowns;
+        // (ii) In the 1U case, there are 4 exchange terms,
+        // and it is again same as the number of unknowns;
+        // (iii) In the 2U case, there are 5 exchange terms,
+        // and it is less than the number of unknowns (8).
+        if (idx_bhe_unknowns < max_num_thermal_exchange_terms)
+            _bhe.template assembleRMatrices<ShapeFunction::NPOINTS>(
+                idx_bhe_unknowns, matBHE_loc_R, _R_matrix, _R_pi_s_matrix,
+                _R_s_matrix);
     }  // end of loop over BHE unknowns
 
     // debugging
-    // std::string sep = "\n----------------------------------------\n";
+    // std::string sep =
+    //     "\n----------------------------------------\n";
     // Eigen::IOFormat CleanFmt(4, 0, ", ", "\n", "[", "]");
     // std::cout << "_R_matrix: \n" << sep;
     // std::cout << _R_matrix.format(CleanFmt) << sep;
@@ -189,8 +198,7 @@ void HeatTransportBHELocalAssemblerBHE<ShapeFunction, IntegrationMethod,
         .noalias() += _bhe.number_of_grout_zones * _R_s_matrix;
 
     // debugging
-    // std::string sep =
-    //     "\n----------------------------------------\n";
+    // std::string sep = "\n----------------------------------------\n";
     // Eigen::IOFormat CleanFmt(4, 0, ", ", "\n", "[", "]");
     // std::cout << local_K.format(CleanFmt) << sep;
     // std::cout << local_M.format(CleanFmt) << sep;
