@@ -23,11 +23,11 @@ namespace BHE
 std::array<double, BHE_2U::number_of_unknowns> BHE_2U::pipeHeatCapacities()
     const
 {
-    double const& rho_r = refrigerant.density;
-    double const& specific_heat_capacity = refrigerant.specific_heat_capacity;
-    double const& rho_g = grout.rho_g;
-    double const& porosity_g = grout.porosity_g;
-    double const& heat_cap_g = grout.heat_cap_g;
+    double const rho_r = refrigerant.density;
+    double const specific_heat_capacity = refrigerant.specific_heat_capacity;
+    double const rho_g = grout.rho_g;
+    double const porosity_g = grout.porosity_g;
+    double const heat_cap_g = grout.heat_cap_g;
 
     return {{/*i1*/ rho_r * specific_heat_capacity,
              /*i2*/ rho_r * specific_heat_capacity,
@@ -42,12 +42,12 @@ std::array<double, BHE_2U::number_of_unknowns> BHE_2U::pipeHeatCapacities()
 std::array<double, BHE_2U::number_of_unknowns> BHE_2U::pipeHeatConductions()
     const
 {
-    double const& lambda_r = refrigerant.thermal_conductivity;
-    double const& rho_r = refrigerant.density;
-    double const& Cp_r = refrigerant.specific_heat_capacity;
-    double const& alpha_L = _pipes.longitudinal_dispersion_length;
-    double const& porosity_g = grout.porosity_g;
-    double const& lambda_g = grout.lambda_g;
+    double const lambda_r = refrigerant.thermal_conductivity;
+    double const rho_r = refrigerant.density;
+    double const Cp_r = refrigerant.specific_heat_capacity;
+    double const alpha_L = _pipes.longitudinal_dispersion_length;
+    double const porosity_g = grout.porosity_g;
+    double const lambda_g = grout.lambda_g;
 
     // Here we calculate the laplace coefficients in the governing
     // equations of BHE. These governing equations can be found in
@@ -74,8 +74,8 @@ std::array<double, BHE_2U::number_of_unknowns> BHE_2U::pipeHeatConductions()
 std::array<Eigen::Vector3d, BHE_2U::number_of_unknowns>
 BHE_2U::pipeAdvectionVectors() const
 {
-    double const& rho_r = refrigerant.density;
-    double const& Cp_r = refrigerant.specific_heat_capacity;
+    double const rho_r = refrigerant.density;
+    double const Cp_r = refrigerant.specific_heat_capacity;
 
     return {{// pipe i1
              {0, 0, -rho_r * Cp_r * _flow_velocity},
@@ -185,9 +185,9 @@ std::array<double, BHE_2U::number_of_unknowns> BHE_2U::calcThermalResistances(
 {
     constexpr double pi = boost::math::constants::pi<double>();
 
-    double const& lambda_r = refrigerant.thermal_conductivity;
-    double const& lambda_g = grout.lambda_g;
-    double const& lambda_p = _pipes.inlet.wall_thermal_conductivity;
+    double const lambda_r = refrigerant.thermal_conductivity;
+    double const lambda_g = grout.lambda_g;
+    double const lambda_p = _pipes.inlet.wall_thermal_conductivity;
 
     // thermal resistances due to advective flow of refrigerant in the _pipes
     // Eq. 36 in Diersch_2011_CG
@@ -201,8 +201,8 @@ std::array<double, BHE_2U::number_of_unknowns> BHE_2U::calcThermalResistances(
         (2.0 * pi * lambda_p);
 
     // the average outer diameter of the _pipes
-    double const& d0 = _pipes.outlet.outsideDiameter();
-    double const& D = borehole_geometry.diameter;
+    double const d0 = _pipes.outlet.outsideDiameter();
+    double const D = borehole_geometry.diameter;
     // Eq. 38
     double const chi =
         std::log(std::sqrt(D * D + 4 * d0 * d0) / 2 / std::sqrt(2) / d0) /
