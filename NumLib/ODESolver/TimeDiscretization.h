@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -109,7 +110,6 @@ public:
  *
  * The other backward differentiation formulas of orders 1 to 6 are also implemented, but only
  * BDF(2) has bee given here for brevity.
- *
  */
 class TimeDiscretization
 {

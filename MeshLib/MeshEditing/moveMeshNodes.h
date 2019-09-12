@@ -4,6 +4,7 @@
  * @date Feb 03, 2014
  * @brief Functionality to move mesh nodes using a given displacement vec.
  *
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.

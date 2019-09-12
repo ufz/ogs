@@ -8,7 +8,6 @@
  *              http://www.opengeosys.org/project/license
  *
  *   \file
- *
  */
 
 #include "CreateFluidThermalConductivityModel.h"

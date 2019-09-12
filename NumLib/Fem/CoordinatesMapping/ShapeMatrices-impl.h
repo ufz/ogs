@@ -2,12 +2,12 @@
  * \author Norihiro Watanabe
  * \date   2013-08-13
  *
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
- *
  */
 
 namespace NumLib
@@ -17,7 +17,6 @@ namespace detail
 {
 /*
  * zero reset functions for Eigen
- *
  */
 template<class T>
 void setMatrixZero(T &mat)

@@ -46,7 +46,6 @@ public:
     LisVector(LisVector const& src);
 
     /**
-     *
      */
     virtual ~LisVector();
 

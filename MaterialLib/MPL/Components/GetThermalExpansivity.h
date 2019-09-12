@@ -7,7 +7,6 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *
  * Created on August 16, 2019, 3:40 PM
  */
 
