@@ -1,4 +1,5 @@
 /**
+ * \file
  * \author Norbert Grunwald
  * \date   27.06.2018
  * \brief
