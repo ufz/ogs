@@ -17,4 +17,5 @@
 #include "CreateIdealGasLaw.h"
 #include "CreateLinearProperty.h"
 #include "CreateParameterProperty.h"
+#include "CreateRelPermBrooksCorey.h"
 #include "CreateSaturationBrooksCorey.h"
