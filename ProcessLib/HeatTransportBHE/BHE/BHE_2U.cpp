@@ -134,37 +134,20 @@ std::vector<double> thermalResistancesGroutSoil2U(double chi,
         return 1.0 / ((1.0 / R_gg_1) + (1.0 / (2.0 * R_gs)));
     };
 
-    int count = 0;
-    while (constraint() < 0.0)
+    std::array<double, 3> const multiplier{chi * 0.66, chi * 0.5 * 0.66, 0.0};
+    for (double m_chi : multiplier)
     {
-        if (count == 0)
-        {
-            chi *= 0.66;
-            R_gs = compute_R_gs_2U(chi, R_g);
-            R_gg_1 = compute_R_gg_2U(chi, R_gs, R_ar_1, R_g);
-            R_gg_2 = compute_R_gg_2U(chi, R_gs, R_ar_2, R_g);
-        }
-        if (count == 1)
-        {
-            chi *= 0.5;
-            R_gs = compute_R_gs_2U(chi, R_g);
-            R_gg_1 = compute_R_gg_2U(chi, R_gs, R_ar_1, R_g);
-            R_gg_2 = compute_R_gg_2U(chi, R_gs, R_ar_2, R_g);
-        }
-        if (count == 2)
-        {
-            chi = 0.0;
-            R_gs = compute_R_gs_2U(chi, R_g);
-            R_gg_1 = compute_R_gg_2U(chi, R_gs, R_ar_1, R_g);
-            R_gg_2 = compute_R_gg_2U(chi, R_gs, R_ar_2, R_g);
+        if (constraint() >= 0)
             break;
-        }
         DBUG(
             "Warning! Correction procedure was applied due to negative thermal "
-            "resistance! Correction step #%d.\n",
-            count);
-        count++;
+            "resistance! Chi = %f.\n",
+            m_chi);
+        R_gs = compute_R_gs_2U(m_chi, R_g);
+        R_gg_1 = compute_R_gg_2U(m_chi, R_gs, R_ar_1, R_g);
+        R_gg_2 = compute_R_gg_2U(m_chi, R_gs, R_ar_2, R_g);
     }
+
     return {R_gg_1, R_gg_2, R_gs};
 }
 

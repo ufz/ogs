@@ -115,34 +115,19 @@ std::pair<double, double> thermalResistancesGroutSoil(double chi,
         return 1.0 / ((1.0 / R_gg) + (1.0 / (2.0 * R_gs)));
     };
 
-    int count = 0;
-    while (constraint() < 0.0)
+    std::array<double, 3> const multiplier{chi * 0.66, chi * 0.5 * 0.66, 0.0};
+    for (double m_chi : multiplier)
     {
-        if (count == 0)
-        {
-            chi *= 0.66;
-            R_gs = compute_R_gs(chi, R_g);
-            R_gg = compute_R_gg(chi, R_gs, R_ar, R_g);
-        }
-        if (count == 1)
-        {
-            chi *= 0.5;
-            R_gs = compute_R_gs(chi, R_g);
-            R_gg = compute_R_gg(chi, R_gs, R_ar, R_g);
-        }
-        if (count == 2)
-        {
-            chi = 0.0;
-            R_gs = compute_R_gs(chi, R_g);
-            R_gg = compute_R_gg(chi, R_gs, R_ar, R_g);
+        if (constraint() >= 0)
             break;
-        }
         DBUG(
             "Warning! Correction procedure was applied due to negative thermal "
-            "resistance! Correction step #%d.\n",
-            count);
-        count++;
+            "resistance! Chi = %f.\n",
+            m_chi);
+        R_gs = compute_R_gs(m_chi, R_g);
+        R_gg = compute_R_gg(m_chi, R_gs, R_ar, R_g);
     }
+
     return {R_gg, R_gs};
 }
 
