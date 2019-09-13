@@ -77,9 +77,11 @@ PhreeqcKernel::PhreeqcKernel(
 
     configureOutputSettings();
 
-    for (auto const& [transport_process_id, transport_process_variable] :
-         process_id_to_component_name_map)
+    for (auto const& map_pair : process_id_to_component_name_map)
     {
+        auto const& transport_process_id = map_pair.first;
+        auto const& transport_process_variable = map_pair.second;
+
         auto master_species =
             master_bsearch(transport_process_variable.c_str());
 
@@ -143,9 +145,11 @@ void PhreeqcKernel::setAqueousSolutions(
         auto& components = initial_aqueous_solution->Get_comps();
         // Loop over transport process id map to retrieve component
         // concentrations from process solutions
-        for (auto const& [transport_process_id, master_species] :
-             _process_id_to_master_map)
+        for (auto const& map_pair : _process_id_to_master_map)
         {
+            auto const& transport_process_id = map_pair.first;
+            auto const& master_species = map_pair.second;
+
             auto& transport_process_solution =
                 process_solutions[transport_process_id];
 
@@ -183,9 +187,9 @@ cxxISolution* PhreeqcKernel::getOrCreateInitialAqueousSolution(
 void PhreeqcKernel::setTimeStepSize(double const dt)
 {
     // Loop over rxn kinetics map
-    for (auto& [chemical_system_id, kinetics] : Rxn_kinetics_map)
+    for (auto& map_pair : Rxn_kinetics_map)
     {
-        (void)chemical_system_id;
+        auto& kinetics = map_pair.second;
         kinetics.Get_steps().push_back(dt);
     }
 }
@@ -228,9 +232,11 @@ void PhreeqcKernel::updateNodalProcessSolutions(
     std::vector<GlobalVector*> const& process_solutions,
     std::size_t const node_id)
 {
-    for (auto const& [transport_process_id, master_species] :
-         _process_id_to_master_map)
+    for (auto const& map_pair : _process_id_to_master_map)
     {
+        auto const& transport_process_id = map_pair.first;
+        auto const& master_species = map_pair.second;
+
         auto& transport_process_solution =
             process_solutions[transport_process_id];
 

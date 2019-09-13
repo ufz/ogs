@@ -18,9 +18,9 @@ InitialAqueousSolution::InitialAqueousSolution(
 {
     units = "Mol/kgw";
 
-    for (auto& [name, component] : components)
+    for (auto& map_pair : components)
     {
-        (void)name;
+        auto& component = map_pair.second;
         component.Set_units(units.c_str());
         component.Set_pe_reaction(default_pe);
     }
