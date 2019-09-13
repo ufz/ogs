@@ -190,6 +190,25 @@ AddTest(
 )
 
 AddTest(
+    NAME 2D_ComponentTransport_NonAdvective_OpenBoundary
+    PATH Parabolic/ComponentTransport/OpenBoundaryWithTets
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS box_flow.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    RUNTIME 900
+    DIFF_DATA
+    box_ogsOutput_pcs_0_ts_0_t_0.000000_expected.vtu box_ogsOutput_pcs_0_ts_0_t_0.000000.vtu concentration concentration 5e-7 5e-10
+    box_ogsOutput_pcs_0_ts_20_t_100000.000000_expected.vtu box_ogsOutput_pcs_0_ts_20_t_100000.000000.vtu concentration concentration 5e-7 5e-10
+    box_ogsOutput_pcs_0_ts_0_t_0.000000_expected.vtu box_ogsOutput_pcs_0_ts_0_t_0.000000.vtu pressure pressure 5e-7 5e-10
+    box_ogsOutput_pcs_0_ts_20_t_100000.000000_expected.vtu box_ogsOutput_pcs_0_ts_20_t_100000.000000.vtu pressure pressure 5e-7 5e-10
+    box_ogsOutput_pcs_0_ts_0_t_0.000000_expected.vtu box_ogsOutput_pcs_0_ts_0_t_0.000000.vtu darcy_velocity darcy_velocity 5e-7 5e-10
+    box_ogsOutput_pcs_0_ts_20_t_100000.000000_expected.vtu box_ogsOutput_pcs_0_ts_20_t_100000.000000.vtu darcy_velocity darcy_velocity 5e-7 5e-10
+    VIS box_ogsOutput_pcs_0_ts_20_t_100000.000000.vtu
+)
+
+AddTest(
     NAME 2D_ComponentTransport_DiffusionAndStorageAndGravityAndDispersionHalf
     PATH Parabolic/ComponentTransport/SimpleSynthetics
     EXECUTABLE ogs
