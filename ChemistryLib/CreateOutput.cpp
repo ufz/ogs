@@ -32,8 +32,16 @@ std::unique_ptr<Output> createOutput(
                    std::back_inserter(accepted_items), accepted_item);
     std::transform(equilibrium_phases.begin(), equilibrium_phases.end(),
                    std::back_inserter(accepted_items), accepted_item);
-    std::transform(kinetic_reactants.begin(), kinetic_reactants.end(),
-                   std::back_inserter(accepted_items), accepted_item);
+
+    for (auto const& kinetic_reactant : kinetic_reactants)
+    {
+        if (kinetic_reactant.item_type == ItemType::KineticReactant &&
+            kinetic_reactant.fix_amount)
+            continue;
+
+        accepted_items.push_back(
+                    OutputItem(kinetic_reactant.name, kinetic_reactant.item_type));
+    }
 
     // Record ids of which phreeqc output items will be dropped.
     BasicOutputSetups basic_output_setups(project_file_name);

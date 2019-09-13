@@ -1,0 +1,2145 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProject>
+    <mesh>Wetland_1d.vtu</mesh>
+    <geometry>Wetland_1d.gml</geometry>
+    <processes>
+        <process>
+            <name>hc</name>
+            <type>ComponentTransport</type>
+            <integration_order>2</integration_order>
+            <coupling_scheme>staggered</coupling_scheme>
+            <process_variables>
+                <pressure>pressure</pressure>
+                <concentration>H</concentration>
+                <concentration>Do</concentration>
+                <concentration>Sf</concentration>
+                <concentration>Sa</concentration>
+                <concentration>Sin</concentration>
+                <concentration>Snh</concentration>
+                <concentration>Sno</concentration>
+                <concentration>Sulphide</concentration>
+                <concentration>Sso</concentration>
+                <concentration>Xs_m</concentration>
+                <concentration>Xi_m</concentration>
+            </process_variables>
+            <specific_body_force>0 0</specific_body_force>
+            <secondary_variables>
+                <secondary_variable type="static" internal_name="darcy_velocity" output_name="darcy_velocity"/>
+            </secondary_variables>
+        </process>
+    </processes>
+    <media>
+        <medium id="0">
+            <phases>
+                <phase>
+                    <type>AqueousLiquid</type>
+                    <components>
+                        <component>
+                            <name>H</name>
+                            <properties>
+                                <property>
+                                    <name>molecular_diffusion</name>
+                                    <type>Constant</type>
+                                    <value>0.0e-9</value>
+                                </property>
+                                <property>
+                                    <name>retardation_factor</name>
+                                    <type>Constant</type>
+                                    <value>1</value>
+                                </property>
+                                <property>
+                                    <name>decay_rate</name>
+                                    <type>Parameter</type>
+                                    <parameter_name>decay</parameter_name>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Do</name>
+                            <properties>
+                                <property>
+                                    <name>molecular_diffusion</name>
+                                    <type>Constant</type>
+                                    <value>0.0e-9</value>
+                                </property>
+                                <property>
+                                    <name>retardation_factor</name>
+                                    <type>Constant</type>
+                                    <value>1</value>
+                                </property>
+                                <property>
+                                    <name>decay_rate</name>
+                                    <type>Parameter</type>
+                                    <parameter_name>decay</parameter_name>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Sf</name>
+                            <properties>
+                                <property>
+                                    <name>molecular_diffusion</name>
+                                    <type>Constant</type>
+                                    <value>0.0e-9</value>
+                                </property>
+                                <property>
+                                    <name>retardation_factor</name>
+                                    <type>Constant</type>
+                                    <value>1</value>
+                                </property>
+                                <property>
+                                    <name>decay_rate</name>
+                                    <type>Parameter</type>
+                                    <parameter_name>decay</parameter_name>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Sa</name>
+                            <properties>
+                                <property>
+                                    <name>molecular_diffusion</name>
+                                    <type>Constant</type>
+                                    <value>0.0e-9</value>
+                                </property>
+                                <property>
+                                    <name>retardation_factor</name>
+                                    <type>Constant</type>
+                                    <value>1</value>
+                                </property>
+                                <property>
+                                    <name>decay_rate</name>
+                                    <type>Parameter</type>
+                                    <parameter_name>decay</parameter_name>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Sin</name>
+                            <properties>
+                                <property>
+                                    <name>molecular_diffusion</name>
+                                    <type>Constant</type>
+                                    <value>0.0e-9</value>
+                                </property>
+                                <property>
+                                    <name>retardation_factor</name>
+                                    <type>Constant</type>
+                                    <value>1</value>
+                                </property>
+                                <property>
+                                    <name>decay_rate</name>
+                                    <type>Parameter</type>
+                                    <parameter_name>decay</parameter_name>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Snh</name>
+                            <properties>
+                                <property>
+                                    <name>molecular_diffusion</name>
+                                    <type>Constant</type>
+                                    <value>0.0e-9</value>
+                                </property>
+                                <property>
+                                    <name>retardation_factor</name>
+                                    <type>Constant</type>
+                                    <value>1</value>
+                                </property>
+                                <property>
+                                    <name>decay_rate</name>
+                                    <type>Parameter</type>
+                                    <parameter_name>decay</parameter_name>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Sno</name>
+                            <properties>
+                                <property>
+                                    <name>molecular_diffusion</name>
+                                    <type>Constant</type>
+                                    <value>0.0e-9</value>
+                                </property>
+                                <property>
+                                    <name>retardation_factor</name>
+                                    <type>Constant</type>
+                                    <value>1</value>
+                                </property>
+                                <property>
+                                    <name>decay_rate</name>
+                                    <type>Parameter</type>
+                                    <parameter_name>decay</parameter_name>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Sulphide</name>
+                            <properties>
+                                <property>
+                                    <name>molecular_diffusion</name>
+                                    <type>Constant</type>
+                                    <value>0.0e-9</value>
+                                </property>
+                                <property>
+                                    <name>retardation_factor</name>
+                                    <type>Constant</type>
+                                    <value>1</value>
+                                </property>
+                                <property>
+                                    <name>decay_rate</name>
+                                    <type>Parameter</type>
+                                    <parameter_name>decay</parameter_name>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Sso</name>
+                            <properties>
+                                <property>
+                                    <name>molecular_diffusion</name>
+                                    <type>Constant</type>
+                                    <value>0.0e-9</value>
+                                </property>
+                                <property>
+                                    <name>retardation_factor</name>
+                                    <type>Constant</type>
+                                    <value>1</value>
+                                </property>
+                                <property>
+                                    <name>decay_rate</name>
+                                    <type>Parameter</type>
+                                    <parameter_name>decay</parameter_name>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Xs_m</name>
+                            <properties>
+                                <property>
+                                    <name>molecular_diffusion</name>
+                                    <type>Constant</type>
+                                    <value>0.0e-9</value>
+                                </property>
+                                <property>
+                                    <name>retardation_factor</name>
+                                    <type>Constant</type>
+                                    <value>1</value>
+                                </property>
+                                <property>
+                                    <name>decay_rate</name>
+                                    <type>Parameter</type>
+                                    <parameter_name>decay</parameter_name>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Xi_m</name>
+                            <properties>
+                                <property>
+                                    <name>molecular_diffusion</name>
+                                    <type>Constant</type>
+                                    <value>0.0e-9</value>
+                                </property>
+                                <property>
+                                    <name>retardation_factor</name>
+                                    <type>Constant</type>
+                                    <value>1</value>
+                                </property>
+                                <property>
+                                    <name>decay_rate</name>
+                                    <type>Parameter</type>
+                                    <parameter_name>decay</parameter_name>
+                                </property>
+                            </properties>
+                        </component>
+                    </components>
+                    <properties>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>1e3</value>
+                        </property>
+                        <property>
+                            <name>viscosity</name>
+                            <type>Constant</type>
+                            <value>1e-3</value>
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+            <properties>
+                <property>
+                    <name>permeability</name>
+                    <type>Parameter</type>
+                    <parameter_name>kappa0</parameter_name>
+                </property>
+                <property>
+                    <name>porosity</name>
+                    <type>Parameter</type>
+                    <parameter_name>porosity</parameter_name>
+                </property>
+                <property>
+                    <name>longitudinal_dispersivity</name>
+                    <type>Constant</type>
+                    <value>0.45</value>
+                </property>
+                <property>
+                    <name>transversal_dispersivity</name>
+                    <type>Constant</type>
+                    <value>0.00</value>
+                </property>
+            </properties>
+        </medium>
+        <medium id="1">
+            <phases>
+                <phase>
+                    <type>AqueousLiquid</type>
+                    <components>
+                        <component>
+                            <name>H</name>
+                            <properties>
+                                <property>
+                                    <name>molecular_diffusion</name>
+                                    <type>Constant</type>
+                                    <value>0.0e-9</value>
+                                </property>
+                                <property>
+                                    <name>retardation_factor</name>
+                                    <type>Constant</type>
+                                    <value>1</value>
+                                </property>
+                                <property>
+                                    <name>decay_rate</name>
+                                    <type>Parameter</type>
+                                    <parameter_name>decay</parameter_name>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Do</name>
+                            <properties>
+                                <property>
+                                    <name>molecular_diffusion</name>
+                                    <type>Constant</type>
+                                    <value>0.0e-9</value>
+                                </property>
+                                <property>
+                                    <name>retardation_factor</name>
+                                    <type>Constant</type>
+                                    <value>1</value>
+                                </property>
+                                <property>
+                                    <name>decay_rate</name>
+                                    <type>Parameter</type>
+                                    <parameter_name>decay</parameter_name>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Sf</name>
+                            <properties>
+                                <property>
+                                    <name>molecular_diffusion</name>
+                                    <type>Constant</type>
+                                    <value>0.0e-9</value>
+                                </property>
+                                <property>
+                                    <name>retardation_factor</name>
+                                    <type>Constant</type>
+                                    <value>1</value>
+                                </property>
+                                <property>
+                                    <name>decay_rate</name>
+                                    <type>Parameter</type>
+                                    <parameter_name>decay</parameter_name>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Sa</name>
+                            <properties>
+                                <property>
+                                    <name>molecular_diffusion</name>
+                                    <type>Constant</type>
+                                    <value>0.0e-9</value>
+                                </property>
+                                <property>
+                                    <name>retardation_factor</name>
+                                    <type>Constant</type>
+                                    <value>1</value>
+                                </property>
+                                <property>
+                                    <name>decay_rate</name>
+                                    <type>Parameter</type>
+                                    <parameter_name>decay</parameter_name>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Sin</name>
+                            <properties>
+                                <property>
+                                    <name>molecular_diffusion</name>
+                                    <type>Constant</type>
+                                    <value>0.0e-9</value>
+                                </property>
+                                <property>
+                                    <name>retardation_factor</name>
+                                    <type>Constant</type>
+                                    <value>1</value>
+                                </property>
+                                <property>
+                                    <name>decay_rate</name>
+                                    <type>Parameter</type>
+                                    <parameter_name>decay</parameter_name>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Snh</name>
+                            <properties>
+                                <property>
+                                    <name>molecular_diffusion</name>
+                                    <type>Constant</type>
+                                    <value>0.0e-9</value>
+                                </property>
+                                <property>
+                                    <name>retardation_factor</name>
+                                    <type>Constant</type>
+                                    <value>1</value>
+                                </property>
+                                <property>
+                                    <name>decay_rate</name>
+                                    <type>Parameter</type>
+                                    <parameter_name>decay</parameter_name>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Sno</name>
+                            <properties>
+                                <property>
+                                    <name>molecular_diffusion</name>
+                                    <type>Constant</type>
+                                    <value>0.0e-9</value>
+                                </property>
+                                <property>
+                                    <name>retardation_factor</name>
+                                    <type>Constant</type>
+                                    <value>1</value>
+                                </property>
+                                <property>
+                                    <name>decay_rate</name>
+                                    <type>Parameter</type>
+                                    <parameter_name>decay</parameter_name>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Sulphide</name>
+                            <properties>
+                                <property>
+                                    <name>molecular_diffusion</name>
+                                    <type>Constant</type>
+                                    <value>0.0e-9</value>
+                                </property>
+                                <property>
+                                    <name>retardation_factor</name>
+                                    <type>Constant</type>
+                                    <value>1</value>
+                                </property>
+                                <property>
+                                    <name>decay_rate</name>
+                                    <type>Parameter</type>
+                                    <parameter_name>decay</parameter_name>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Sso</name>
+                            <properties>
+                                <property>
+                                    <name>molecular_diffusion</name>
+                                    <type>Constant</type>
+                                    <value>0.0e-9</value>
+                                </property>
+                                <property>
+                                    <name>retardation_factor</name>
+                                    <type>Constant</type>
+                                    <value>1</value>
+                                </property>
+                                <property>
+                                    <name>decay_rate</name>
+                                    <type>Parameter</type>
+                                    <parameter_name>decay</parameter_name>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Xs_m</name>
+                            <properties>
+                                <property>
+                                    <name>molecular_diffusion</name>
+                                    <type>Constant</type>
+                                    <value>0.0e-9</value>
+                                </property>
+                                <property>
+                                    <name>retardation_factor</name>
+                                    <type>Constant</type>
+                                    <value>1</value>
+                                </property>
+                                <property>
+                                    <name>decay_rate</name>
+                                    <type>Parameter</type>
+                                    <parameter_name>decay</parameter_name>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Xi_m</name>
+                            <properties>
+                                <property>
+                                    <name>molecular_diffusion</name>
+                                    <type>Constant</type>
+                                    <value>0.0e-9</value>
+                                </property>
+                                <property>
+                                    <name>retardation_factor</name>
+                                    <type>Constant</type>
+                                    <value>1</value>
+                                </property>
+                                <property>
+                                    <name>decay_rate</name>
+                                    <type>Parameter</type>
+                                    <parameter_name>decay</parameter_name>
+                                </property>
+                            </properties>
+                        </component>
+                    </components>
+                    <properties>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>1e3</value>
+                        </property>
+                        <property>
+                            <name>viscosity</name>
+                            <type>Constant</type>
+                            <value>1e-3</value>
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+            <properties>
+                <property>
+                    <name>permeability</name>
+                    <type>Parameter</type>
+                    <parameter_name>kappa1</parameter_name>
+                </property>
+                <property>
+                    <name>porosity</name>
+                    <type>Parameter</type>
+                    <parameter_name>porosity</parameter_name>
+                </property>
+                <property>
+                    <name>longitudinal_dispersivity</name>
+                    <type>Constant</type>
+                    <value>0.4</value>
+                </property>
+                <property>
+                    <name>transversal_dispersivity</name>
+                    <type>Constant</type>
+                    <value>0.00</value>
+                </property>
+            </properties>
+        </medium>
+        <medium id="2">
+            <phases>
+                <phase>
+                    <type>AqueousLiquid</type>
+                    <components>
+                        <component>
+                            <name>H</name>
+                            <properties>
+                                <property>
+                                    <name>molecular_diffusion</name>
+                                    <type>Constant</type>
+                                    <value>0.0e-9</value>
+                                </property>
+                                <property>
+                                    <name>retardation_factor</name>
+                                    <type>Constant</type>
+                                    <value>1</value>
+                                </property>
+                                <property>
+                                    <name>decay_rate</name>
+                                    <type>Parameter</type>
+                                    <parameter_name>decay</parameter_name>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Do</name>
+                            <properties>
+                                <property>
+                                    <name>molecular_diffusion</name>
+                                    <type>Constant</type>
+                                    <value>0.0e-9</value>
+                                </property>
+                                <property>
+                                    <name>retardation_factor</name>
+                                    <type>Constant</type>
+                                    <value>1</value>
+                                </property>
+                                <property>
+                                    <name>decay_rate</name>
+                                    <type>Parameter</type>
+                                    <parameter_name>decay</parameter_name>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Sf</name>
+                            <properties>
+                                <property>
+                                    <name>molecular_diffusion</name>
+                                    <type>Constant</type>
+                                    <value>0.0e-9</value>
+                                </property>
+                                <property>
+                                    <name>retardation_factor</name>
+                                    <type>Constant</type>
+                                    <value>1</value>
+                                </property>
+                                <property>
+                                    <name>decay_rate</name>
+                                    <type>Parameter</type>
+                                    <parameter_name>decay</parameter_name>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Sa</name>
+                            <properties>
+                                <property>
+                                    <name>molecular_diffusion</name>
+                                    <type>Constant</type>
+                                    <value>0.0e-9</value>
+                                </property>
+                                <property>
+                                    <name>retardation_factor</name>
+                                    <type>Constant</type>
+                                    <value>1</value>
+                                </property>
+                                <property>
+                                    <name>decay_rate</name>
+                                    <type>Parameter</type>
+                                    <parameter_name>decay</parameter_name>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Sin</name>
+                            <properties>
+                                <property>
+                                    <name>molecular_diffusion</name>
+                                    <type>Constant</type>
+                                    <value>0.0e-9</value>
+                                </property>
+                                <property>
+                                    <name>retardation_factor</name>
+                                    <type>Constant</type>
+                                    <value>1</value>
+                                </property>
+                                <property>
+                                    <name>decay_rate</name>
+                                    <type>Parameter</type>
+                                    <parameter_name>decay</parameter_name>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Snh</name>
+                            <properties>
+                                <property>
+                                    <name>molecular_diffusion</name>
+                                    <type>Constant</type>
+                                    <value>0.0e-9</value>
+                                </property>
+                                <property>
+                                    <name>retardation_factor</name>
+                                    <type>Constant</type>
+                                    <value>1</value>
+                                </property>
+                                <property>
+                                    <name>decay_rate</name>
+                                    <type>Parameter</type>
+                                    <parameter_name>decay</parameter_name>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Sno</name>
+                            <properties>
+                                <property>
+                                    <name>molecular_diffusion</name>
+                                    <type>Constant</type>
+                                    <value>0.0e-9</value>
+                                </property>
+                                <property>
+                                    <name>retardation_factor</name>
+                                    <type>Constant</type>
+                                    <value>1</value>
+                                </property>
+                                <property>
+                                    <name>decay_rate</name>
+                                    <type>Parameter</type>
+                                    <parameter_name>decay</parameter_name>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Sulphide</name>
+                            <properties>
+                                <property>
+                                    <name>molecular_diffusion</name>
+                                    <type>Constant</type>
+                                    <value>0.0e-9</value>
+                                </property>
+                                <property>
+                                    <name>retardation_factor</name>
+                                    <type>Constant</type>
+                                    <value>1</value>
+                                </property>
+                                <property>
+                                    <name>decay_rate</name>
+                                    <type>Parameter</type>
+                                    <parameter_name>decay</parameter_name>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Sso</name>
+                            <properties>
+                                <property>
+                                    <name>molecular_diffusion</name>
+                                    <type>Constant</type>
+                                    <value>0.0e-9</value>
+                                </property>
+                                <property>
+                                    <name>retardation_factor</name>
+                                    <type>Constant</type>
+                                    <value>1</value>
+                                </property>
+                                <property>
+                                    <name>decay_rate</name>
+                                    <type>Parameter</type>
+                                    <parameter_name>decay</parameter_name>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Xs_m</name>
+                            <properties>
+                                <property>
+                                    <name>molecular_diffusion</name>
+                                    <type>Constant</type>
+                                    <value>0.0e-9</value>
+                                </property>
+                                <property>
+                                    <name>retardation_factor</name>
+                                    <type>Constant</type>
+                                    <value>1</value>
+                                </property>
+                                <property>
+                                    <name>decay_rate</name>
+                                    <type>Parameter</type>
+                                    <parameter_name>decay</parameter_name>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Xi_m</name>
+                            <properties>
+                                <property>
+                                    <name>molecular_diffusion</name>
+                                    <type>Constant</type>
+                                    <value>0.0e-9</value>
+                                </property>
+                                <property>
+                                    <name>retardation_factor</name>
+                                    <type>Constant</type>
+                                    <value>1</value>
+                                </property>
+                                <property>
+                                    <name>decay_rate</name>
+                                    <type>Parameter</type>
+                                    <parameter_name>decay</parameter_name>
+                                </property>
+                            </properties>
+                        </component>
+                    </components>
+                    <properties>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>1e3</value>
+                        </property>
+                        <property>
+                            <name>viscosity</name>
+                            <type>Constant</type>
+                            <value>1e-3</value>
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+            <properties>
+                <property>
+                    <name>permeability</name>
+                    <type>Parameter</type>
+                    <parameter_name>kappa0</parameter_name>
+                </property>
+                <property>
+                    <name>porosity</name>
+                    <type>Parameter</type>
+                    <parameter_name>porosity</parameter_name>
+                </property>
+                <property>
+                    <name>longitudinal_dispersivity</name>
+                    <type>Constant</type>
+                    <value>0.45</value>
+                </property>
+                <property>
+                    <name>transversal_dispersivity</name>
+                    <type>Constant</type>
+                    <value>0.00</value>
+                </property>
+            </properties>
+        </medium>
+    </media>
+    <time_loop>
+        <global_process_coupling>
+            <max_iter>6</max_iter>
+            <convergence_criteria>
+                <!-- convergence criterion for the first process (p) -->
+                <convergence_criterion>
+                    <type>DeltaX</type>
+                    <norm_type>NORM2</norm_type>
+                    <reltol>1e-14</reltol>
+                </convergence_criterion>
+                <convergence_criterion>
+                    <type>DeltaX</type>
+                    <norm_type>NORM2</norm_type>
+                    <reltol>1e-14</reltol>
+                </convergence_criterion>
+                <convergence_criterion>
+                    <type>DeltaX</type>
+                    <norm_type>NORM2</norm_type>
+                    <reltol>1e-14</reltol>
+                </convergence_criterion>
+                <convergence_criterion>
+                    <type>DeltaX</type>
+                    <norm_type>NORM2</norm_type>
+                    <reltol>1e-14</reltol>
+                </convergence_criterion>
+                <convergence_criterion>
+                    <type>DeltaX</type>
+                    <norm_type>NORM2</norm_type>
+                    <reltol>1e-14</reltol>
+                </convergence_criterion>
+                <convergence_criterion>
+                    <type>DeltaX</type>
+                    <norm_type>NORM2</norm_type>
+                    <reltol>1e-14</reltol>
+                </convergence_criterion>
+                <convergence_criterion>
+                    <type>DeltaX</type>
+                    <norm_type>NORM2</norm_type>
+                    <reltol>1e-14</reltol>
+                </convergence_criterion>
+                <convergence_criterion>
+                    <type>DeltaX</type>
+                    <norm_type>NORM2</norm_type>
+                    <reltol>1e-14</reltol>
+                </convergence_criterion>
+                <convergence_criterion>
+                    <type>DeltaX</type>
+                    <norm_type>NORM2</norm_type>
+                    <reltol>1e-14</reltol>
+                </convergence_criterion>
+                <convergence_criterion>
+                    <type>DeltaX</type>
+                    <norm_type>NORM2</norm_type>
+                    <reltol>1e-14</reltol>
+                </convergence_criterion>
+                <convergence_criterion>
+                    <type>DeltaX</type>
+                    <norm_type>NORM2</norm_type>
+                    <reltol>1e-14</reltol>
+                </convergence_criterion>
+                <convergence_criterion>
+                    <type>DeltaX</type>
+                    <norm_type>NORM2</norm_type>
+                    <reltol>1e-14</reltol>
+                </convergence_criterion>
+            </convergence_criteria>
+        </global_process_coupling>
+        <processes>
+            <!-- convergence criterion for hydraulic equation -->
+             <process ref="hc">
+                <nonlinear_solver>basic_picard</nonlinear_solver>
+                <convergence_criterion>
+                    <type>DeltaX</type>
+                    <norm_type>NORM2</norm_type>
+                    <reltol>1e-14</reltol>
+                </convergence_criterion>
+                <time_discretization>
+                    <type>BackwardEuler</type>
+                </time_discretization>
+                <time_stepping>
+                    <type>FixedTimeStepping</type>
+                    <t_initial>0.0</t_initial>
+                    <t_end>28800</t_end>
+                    <timesteps>
+                        <pair>
+                            <repeat>4</repeat>
+                            <delta_t>7200</delta_t>
+                        </pair>
+                    </timesteps>
+                </time_stepping>
+            </process>
+            <process ref="hc">
+                <nonlinear_solver>basic_picard</nonlinear_solver>
+                <convergence_criterion>
+                    <type>DeltaX</type>
+                    <norm_type>NORM2</norm_type>
+                    <reltol>1e-14</reltol>
+                </convergence_criterion>
+                <time_discretization>
+                    <type>BackwardEuler</type>
+                </time_discretization>
+                <time_stepping>
+                    <type>FixedTimeStepping</type>
+                    <t_initial>0.0</t_initial>
+                    <t_end>28800</t_end>
+                    <timesteps>
+                        <pair>
+                            <repeat>4</repeat>
+                            <delta_t>7200</delta_t>
+                        </pair>
+                    </timesteps>
+                </time_stepping>
+            </process>
+            <process ref="hc">
+                <nonlinear_solver>basic_picard</nonlinear_solver>
+                <convergence_criterion>
+                    <type>DeltaX</type>
+                    <norm_type>NORM2</norm_type>
+                    <reltol>1e-14</reltol>
+                </convergence_criterion>
+                <time_discretization>
+                    <type>BackwardEuler</type>
+                </time_discretization>
+                <time_stepping>
+                    <type>FixedTimeStepping</type>
+                    <t_initial>0.0</t_initial>
+                    <t_end>28800</t_end>
+                    <timesteps>
+                        <pair>
+                            <repeat>4</repeat>
+                            <delta_t>7200</delta_t>
+                        </pair>
+                    </timesteps>
+                </time_stepping>
+            </process>
+            <process ref="hc">
+                <nonlinear_solver>basic_picard</nonlinear_solver>
+                <convergence_criterion>
+                    <type>DeltaX</type>
+                    <norm_type>NORM2</norm_type>
+                    <reltol>1e-14</reltol>
+                </convergence_criterion>
+                <time_discretization>
+                    <type>BackwardEuler</type>
+                </time_discretization>
+                <time_stepping>
+                    <type>FixedTimeStepping</type>
+                    <t_initial>0.0</t_initial>
+                    <t_end>28800</t_end>
+                    <timesteps>
+                        <pair>
+                            <repeat>4</repeat>
+                            <delta_t>7200</delta_t>
+                        </pair>
+                    </timesteps>
+                </time_stepping>
+            </process>
+            <process ref="hc">
+                <nonlinear_solver>basic_picard</nonlinear_solver>
+                <convergence_criterion>
+                    <type>DeltaX</type>
+                    <norm_type>NORM2</norm_type>
+                    <reltol>1e-14</reltol>
+                </convergence_criterion>
+                <time_discretization>
+                    <type>BackwardEuler</type>
+                </time_discretization>
+                <time_stepping>
+                    <type>FixedTimeStepping</type>
+                    <t_initial>0.0</t_initial>
+                    <t_end>28800</t_end>
+                    <timesteps>
+                        <pair>
+                            <repeat>4</repeat>
+                            <delta_t>7200</delta_t>
+                        </pair>
+                    </timesteps>
+                </time_stepping>
+            </process>
+            <process ref="hc">
+                <nonlinear_solver>basic_picard</nonlinear_solver>
+                <convergence_criterion>
+                    <type>DeltaX</type>
+                    <norm_type>NORM2</norm_type>
+                    <reltol>1e-14</reltol>
+                </convergence_criterion>
+                <time_discretization>
+                    <type>BackwardEuler</type>
+                </time_discretization>
+                <time_stepping>
+                    <type>FixedTimeStepping</type>
+                    <t_initial>0.0</t_initial>
+                    <t_end>28800</t_end>
+                    <timesteps>
+                        <pair>
+                            <repeat>4</repeat>
+                            <delta_t>7200</delta_t>
+                        </pair>
+                    </timesteps>
+                </time_stepping>
+            </process>
+            <process ref="hc">
+                <nonlinear_solver>basic_picard</nonlinear_solver>
+                <convergence_criterion>
+                    <type>DeltaX</type>
+                    <norm_type>NORM2</norm_type>
+                    <reltol>1e-14</reltol>
+                </convergence_criterion>
+                <time_discretization>
+                    <type>BackwardEuler</type>
+                </time_discretization>
+                <time_stepping>
+                    <type>FixedTimeStepping</type>
+                    <t_initial>0.0</t_initial>
+                    <t_end>28800</t_end>
+                    <timesteps>
+                        <pair>
+                            <repeat>4</repeat>
+                            <delta_t>7200</delta_t>
+                        </pair>
+                    </timesteps>
+                </time_stepping>
+            </process>
+            <process ref="hc">
+                <nonlinear_solver>basic_picard</nonlinear_solver>
+                <convergence_criterion>
+                    <type>DeltaX</type>
+                    <norm_type>NORM2</norm_type>
+                    <reltol>1e-14</reltol>
+                </convergence_criterion>
+                <time_discretization>
+                    <type>BackwardEuler</type>
+                </time_discretization>
+                <time_stepping>
+                    <type>FixedTimeStepping</type>
+                    <t_initial>0.0</t_initial>
+                    <t_end>28800</t_end>
+                    <timesteps>
+                        <pair>
+                            <repeat>4</repeat>
+                            <delta_t>7200</delta_t>
+                        </pair>
+                    </timesteps>
+                </time_stepping>
+            </process>
+            <process ref="hc">
+                <nonlinear_solver>basic_picard</nonlinear_solver>
+                <convergence_criterion>
+                    <type>DeltaX</type>
+                    <norm_type>NORM2</norm_type>
+                    <reltol>1e-14</reltol>
+                </convergence_criterion>
+                <time_discretization>
+                    <type>BackwardEuler</type>
+                </time_discretization>
+                <time_stepping>
+                    <type>FixedTimeStepping</type>
+                    <t_initial>0.0</t_initial>
+                    <t_end>28800</t_end>
+                    <timesteps>
+                        <pair>
+                            <repeat>4</repeat>
+                            <delta_t>7200</delta_t>
+                        </pair>
+                    </timesteps>
+                </time_stepping>
+            </process>
+            <process ref="hc">
+                <nonlinear_solver>basic_picard</nonlinear_solver>
+                <convergence_criterion>
+                    <type>DeltaX</type>
+                    <norm_type>NORM2</norm_type>
+                    <reltol>1e-14</reltol>
+                </convergence_criterion>
+                <time_discretization>
+                    <type>BackwardEuler</type>
+                </time_discretization>
+                <time_stepping>
+                    <type>FixedTimeStepping</type>
+                    <t_initial>0.0</t_initial>
+                    <t_end>28800</t_end>
+                    <timesteps>
+                        <pair>
+                            <repeat>4</repeat>
+                            <delta_t>7200</delta_t>
+                        </pair>
+                    </timesteps>
+                </time_stepping>
+            </process>
+            <process ref="hc">
+                <nonlinear_solver>basic_picard</nonlinear_solver>
+                <convergence_criterion>
+                    <type>DeltaX</type>
+                    <norm_type>NORM2</norm_type>
+                    <reltol>1e-14</reltol>
+                </convergence_criterion>
+                <time_discretization>
+                    <type>BackwardEuler</type>
+                </time_discretization>
+                <time_stepping>
+                    <type>FixedTimeStepping</type>
+                    <t_initial>0.0</t_initial>
+                    <t_end>28800</t_end>
+                    <timesteps>
+                        <pair>
+                            <repeat>4</repeat>
+                            <delta_t>7200</delta_t>
+                        </pair>
+                    </timesteps>
+                </time_stepping>
+            </process>
+            <process ref="hc">
+                <nonlinear_solver>basic_picard</nonlinear_solver>
+                <convergence_criterion>
+                    <type>DeltaX</type>
+                    <norm_type>NORM2</norm_type>
+                    <reltol>1e-14</reltol>
+                </convergence_criterion>
+                <time_discretization>
+                    <type>BackwardEuler</type>
+                </time_discretization>
+                <time_stepping>
+                    <type>FixedTimeStepping</type>
+                    <t_initial>0.0</t_initial>
+                    <t_end>28800</t_end>
+                    <timesteps>
+                        <pair>
+                            <repeat>4</repeat>
+                            <delta_t>7200</delta_t>
+                        </pair>
+                    </timesteps>
+                </time_stepping>
+            </process>
+        </processes>
+        <output>
+            <type>VTK</type>
+            <prefix>Wetland_1d</prefix>
+            <timesteps>
+                <pair>
+                    <repeat>1</repeat>
+                    <each_steps>4</each_steps>
+                </pair>
+            </timesteps>
+            <variables>
+                <variable>pressure</variable>
+                <variable>darcy_velocity</variable>
+                <variable>H</variable>
+                <variable>Do</variable>
+                <variable>Sf</variable>
+                <variable>Sa</variable>
+                <variable>Sin</variable>
+                <variable>Snh</variable>
+                <variable>Sno</variable>
+                <variable>Sulphide</variable>
+                <variable>Sso</variable>
+                <variable>Xs_m</variable>
+                <variable>Xi_m</variable>
+            </variables>
+        </output>
+    </time_loop>
+        <chemical_system chemical_solver="Phreeqc">
+        <database>cwm1.dat</database>
+        <solution>
+            <temperature>10</temperature>
+            <pressure>1</pressure>
+            <pe>4</pe>
+            <means_of_adjusting_charge>pH</means_of_adjusting_charge>
+            <components>
+                <component>Do</component>
+                <component>Sf</component>
+                <component>Sa</component>
+                <component>Sin</component>
+                <component>Snh</component>
+                <component>Sno</component>
+                <component>Sulphide</component>
+                <component>Sso</component>
+                <component>Xs_m</component>
+                <component>Xi_m</component>
+            </components>
+        </solution>
+                <kinetic_reactants>
+                    <kinetic_reactant>
+                        <name>Aeration</name>
+                        <chemical_formula>Do 1</chemical_formula>
+                        <initial_amount>1.0</initial_amount>
+                        <fix_amount>true</fix_amount>
+                    </kinetic_reactant>
+                    <kinetic_reactant>
+                        <name>AttDetachment_Xi</name>
+                        <chemical_formula>Xi_m -1</chemical_formula>
+                        <initial_amount>1.0</initial_amount>
+                        <fix_amount>true</fix_amount>
+                    </kinetic_reactant>
+                    <kinetic_reactant>
+                        <name>AttDetachment_Xs</name>
+                        <chemical_formula>Xs_m -1</chemical_formula>
+                        <initial_amount>1.0</initial_amount>
+                        <fix_amount>true</fix_amount>
+                    </kinetic_reactant>
+                    <kinetic_reactant>
+                        <name>Hydrolysis_Xs_m</name>
+                        <chemical_formula>Sf 1 Sin 0  Snh 0.01  Xs_m -1</chemical_formula>
+                        <initial_amount>1.0</initial_amount>
+                        <fix_amount>true</fix_amount>
+                    </kinetic_reactant>
+                    <kinetic_reactant>
+                        <name>Hydrolysis_Xs_im</name>
+                        <chemical_formula>Sf  1  Sin    0  Snh 0.01</chemical_formula>
+                        <initial_amount>1.0</initial_amount>
+                        <fix_amount>true</fix_amount>
+                    </kinetic_reactant>
+                    <kinetic_reactant>
+                        <name>Aerobic_Growth_Xh_on_Sf</name>
+                        <chemical_formula>Do -0.587301587301587  Sf -1.58730158730159  Snh -0.022380952</chemical_formula>
+                        <initial_amount>1.0</initial_amount>
+                        <fix_amount>true</fix_amount>
+                    </kinetic_reactant>
+                    <kinetic_reactant>
+                        <name>Anoxic_Growth_Xh_on_Sf</name>
+                        <chemical_formula>Sf  -1.58730158730159  Sno -0.205350205  Snh -0.02238095</chemical_formula>
+                        <initial_amount>1.0</initial_amount>
+                        <fix_amount>true</fix_amount>
+                    </kinetic_reactant>
+                    <kinetic_reactant>
+                        <name>Aerobic_Growth_Xh_on_Sa</name>
+                        <chemical_formula>Do  -0.587301587301587  Sa -1.58730158730159  Snh -0.07</chemical_formula>
+                        <initial_amount>1.0</initial_amount>
+                        <fix_amount>true</fix_amount>
+                    </kinetic_reactant>
+                    <kinetic_reactant>
+                        <name>Anoxic_Growth_Xh_on_Sa</name>
+                        <chemical_formula>Sa -1.58730158730159  Sno -0.205350205  Snh -0.07</chemical_formula>
+                        <initial_amount>1.0</initial_amount>
+                        <fix_amount>true</fix_amount>
+                    </kinetic_reactant>
+                    <kinetic_reactant>
+                        <name>Lysis_Xh</name>
+                        <chemical_formula>Sf 0.05  Snh 0.0315</chemical_formula>
+                        <initial_amount>1.0</initial_amount>
+                        <fix_amount>true</fix_amount>
+                    </kinetic_reactant>
+                    <kinetic_reactant>
+                        <name>Aerobic_Growth_Xa_on_Snh</name>
+                        <chemical_formula>Do -18.04166667  Sno 4.166666667  Snh -4.236666667</chemical_formula>
+                        <initial_amount>1.0</initial_amount>
+                        <fix_amount>true</fix_amount>
+                    </kinetic_reactant>
+                    <kinetic_reactant>
+                        <name>Lysis_Xa</name>
+                <chemical_formula>Sf 0.05  Snh 0.0315</chemical_formula>
+                        <initial_amount>1.0</initial_amount>
+                        <fix_amount>true</fix_amount>
+                    </kinetic_reactant>
+                    <kinetic_reactant>
+                        <name>Growth_Xfb</name>
+                        <chemical_formula>Sf -18.86792453  Sa 17.86792453  Snh 0.496037736</chemical_formula>
+                        <initial_amount>1.0</initial_amount>
+                        <fix_amount>true</fix_amount>
+                    </kinetic_reactant>
+                    <kinetic_reactant>
+                        <name>Lysis_Xfb</name>
+                        <chemical_formula>Sf 0.05  Snh 0.0315</chemical_formula>
+                        <initial_amount>1.0</initial_amount>
+                        <fix_amount>true</fix_amount>
+                    </kinetic_reactant>
+                    <kinetic_reactant>
+                        <name>Growth_Xamb</name>
+                        <chemical_formula>Sa -31.25 Snh -0.07</chemical_formula>
+                        <initial_amount>1.0</initial_amount>
+                        <fix_amount>true</fix_amount>
+                    </kinetic_reactant>
+                    <kinetic_reactant>
+                        <name>Lysis_Xamb</name>
+                        <chemical_formula>Sf 0.05   Snh 0.0315</chemical_formula>
+                        <initial_amount>1.0</initial_amount>
+                        <fix_amount>true</fix_amount>
+                    </kinetic_reactant>
+                    <kinetic_reactant>
+                        <name>Growth_Xasrb</name>
+                        <chemical_formula>Sa -20  Sso -9.5  Sulphide 9.5  Snh   -0.07</chemical_formula>
+                        <initial_amount>1.0</initial_amount>
+                        <fix_amount>true</fix_amount>
+                    </kinetic_reactant>
+                    <kinetic_reactant>
+                        <name>Lysis_Xasrb</name>
+                        <chemical_formula>Sf 0.05   Snh 0.0315</chemical_formula>
+                        <initial_amount>1.0</initial_amount>
+                        <fix_amount>true</fix_amount>
+                    </kinetic_reactant>
+                    <kinetic_reactant>
+                        <name>Aerobic_Growth_Xsob</name>
+                        <chemical_formula>Do    -15.66666667  Sso 8.333333333       Sulphide -8.333333333   Snh -0.07</chemical_formula>
+                        <initial_amount>1.0</initial_amount>
+                        <fix_amount>true</fix_amount>
+                    </kinetic_reactant>
+                    <kinetic_reactant>
+                        <name>Anoxic_Growth_Xsob</name>
+                        <chemical_formula>Sno -8.380952381  Sso 8.333333333     Sulphide -8.333333333   Snh -0.07</chemical_formula>
+                        <initial_amount>1.0</initial_amount>
+                        <fix_amount>true</fix_amount>
+                    </kinetic_reactant>
+                    <kinetic_reactant>
+                        <name>Lysis_Xsob</name>
+                        <chemical_formula>Sf 0.05   Snh 0.0315</chemical_formula>
+                        <initial_amount>1.0</initial_amount>
+                        <fix_amount>true</fix_amount>
+                    </kinetic_reactant>
+                    <kinetic_reactant>
+                        <name>Xh</name>
+                        <chemical_formula>Do 0</chemical_formula>
+                        <initial_amount>1.0e-3</initial_amount>
+                    </kinetic_reactant>
+                    <kinetic_reactant>
+                        <name>Xa</name>
+                        <chemical_formula>Do 0</chemical_formula>
+                        <initial_amount>1.0e-3</initial_amount>
+                    </kinetic_reactant>
+                    <kinetic_reactant>
+                        <name>Xfb</name>
+                        <chemical_formula>Do 0</chemical_formula>
+                        <initial_amount>1.0e-3</initial_amount>
+                    </kinetic_reactant>
+                    <kinetic_reactant>
+                        <name>Xamb</name>
+                        <chemical_formula>Do 0</chemical_formula>
+                        <initial_amount>1.0e-3</initial_amount>
+                    </kinetic_reactant>
+                    <kinetic_reactant>
+                        <name>Xasrb</name>
+                        <chemical_formula>Do 0</chemical_formula>
+                        <initial_amount>1.0e-3</initial_amount>
+                    </kinetic_reactant>
+                    <kinetic_reactant>
+                        <name>Xsob</name>
+                        <chemical_formula>Do 0</chemical_formula>
+                        <initial_amount>1.0e-3</initial_amount>
+                    </kinetic_reactant>
+                    <kinetic_reactant>
+                        <name>Xs_im</name>
+                        <chemical_formula>Do 0</chemical_formula>
+                        <initial_amount>1.0e-4</initial_amount>
+                    </kinetic_reactant>
+                    <kinetic_reactant>
+                        <name>Xi_im</name>
+                        <chemical_formula>Do 0</chemical_formula>
+                        <initial_amount>1.0e-4</initial_amount>
+                    </kinetic_reactant>
+                </kinetic_reactants>
+        <rates>
+            <rate>
+                <kinetic_reactant>Aeration</kinetic_reactant>
+                <expression>
+                    <statement>So2 = MOL("Do")</statement>
+                    <statement>So2_sat = CALC_VALUE("So_sat")</statement>
+                    <statement>if So2 > So2_sat then goto 8</statement>
+                    <statement>kLa = 2 / 3600</statement>
+                    <statement>r_So2 = So2_sat - So2</statement>
+                    <statement>rates = CALC_VALUE("kLa_theta") * kLa * r_So2</statement>
+                    <statement>dGrowth= rates*time</statement>
+                    <statement>SAVE dGrowth</statement>
+                </expression>
+            </rate>
+                        <rate>
+                <kinetic_reactant>AttDetachment_Xi</kinetic_reactant>
+                <expression>
+                    <statement>Xi_mob = MOL("Xi_m")</statement>
+                    <statement>Xi_immob = KIN("Xi_im")</statement>
+                    <statement>IF Xi_immob >= 30.0 THEN GOTO 10</statement>
+                    <statement>k_att = 0.1 /3600</statement>
+                    <statement>k_det = 0</statement>
+                    <statement>r_Att = k_att * Xi_mob</statement>
+                    <statement>r_Det = k_det * Xi_immob</statement>
+                    <statement>rates = r_Att - r_Det</statement>
+                    <statement>dGrowth= rates*time</statement>
+                    <statement>SAVE dGrowth</statement>
+                </expression>
+            </rate>
+                        <rate>
+                <kinetic_reactant>AttDetachment_Xs</kinetic_reactant>
+                <expression>
+                    <statement>Xs_mob = MOL("Xs_m")</statement>
+                    <statement>Xs_immob = KIN("Xs_im")</statement>
+                    <statement>k_att = 0.1 /3600</statement>
+                    <statement>k_det = 0</statement>
+                    <statement>r_Att = k_att * Xs_mob</statement>
+                    <statement>r_Det = k_det * Xs_immob</statement>
+                    <statement>rates = r_Att - r_Det</statement>
+                    <statement>dGrowth= rates*time</statement>
+                    <statement>SAVE dGrowth</statement>
+                </expression>
+            </rate>
+            <rate>
+                <kinetic_reactant>Hydrolysis_Xs_m</kinetic_reactant>
+                <expression>
+                    <statement>Xs_m = MOL("Xs_m")</statement>
+                    <statement>Xfb = KIN("Xfb")</statement>
+                    <statement>Xh = KIN("Xh")</statement>
+                    <statement>r_Xs = (Xs_m/(Xh+Xfb))</statement>
+                    <statement>r_Xs = r_Xs / (CALC_VALUE("Kx") + r_Xs)</statement>
+                    <statement>rates = CALC_VALUE("Kh") * r_Xs * (Xh + CALC_VALUE("eta_h") * Xfb)</statement>
+                    <statement>dHydrolysis = rates * time</statement>
+                    <statement>dHydrolysis = dHydrolysis</statement>
+                    <statement>SAVE dHydrolysis</statement>
+                </expression>
+            </rate>
+                        <rate>
+                <kinetic_reactant>Hydrolysis_Xs_im</kinetic_reactant>
+                <expression>
+                    <statement>Xs_im = KIN("Xs_im")</statement>
+                    <statement>Xfb = KIN("Xfb")</statement>
+                    <statement>Xh = KIN("Xh")</statement>
+                    <statement>r_Xs = (Xs_im/(Xh+Xfb))</statement>
+                    <statement>r_Xs = r_Xs / (CALC_VALUE("Kx") + r_Xs)</statement>
+                    <statement>rates = CALC_VALUE("Kh") * r_Xs * (Xh + CALC_VALUE("eta_h") * Xfb)</statement>
+                    <statement>dHydrolysis = rates * time</statement>
+                    <statement>dHydrolysis = dHydrolysis</statement>
+                    <statement>SAVE dHydrolysis</statement>
+                </expression>
+            </rate>
+            <rate>
+                <kinetic_reactant>Aerobic_Growth_Xh_on_Sf</kinetic_reactant>
+                <expression>
+                    <statement>Sf = MOL("Sf")</statement>
+                    <statement>So2 = MOL("Do")</statement>
+                    <statement>Sa = MOL("Sa")</statement>
+                    <statement>Snh = MOL("Snh")</statement>
+                    <statement>Sh2S = MOL("Sulphide")</statement>
+                    <statement>Xh = KIN("Xh")</statement>
+                    <statement>r_Sf = Sf/(CALC_VALUE("Ksf")+ Sf)</statement>
+                    <statement>r_So2 = So2/(CALC_VALUE("Koh")+ So2)</statement>
+                    <statement>r_Sa = Sf/(Sf + Sa)</statement>
+                    <statement>r_Snh = Snh /(CALC_VALUE("Knhh")+ Snh)</statement>
+                    <statement>r_Sh2s = CALC_VALUE("Kh2s_h") / (CALC_VALUE("Kh2s_h") + Sh2S )</statement>
+                    <statement>rates = CALC_VALUE("muh") * r_Sf * r_So2 * r_Sa * r_Snh *  r_Sh2s * Xh * CALC_VALUE("bac_growth_limit")</statement>
+                    <statement>dGrowth= rates*time</statement>
+                    <statement>dGrowth = dGrowth</statement>
+                    <statement>SAVE dGrowth</statement>
+                </expression>
+            </rate>
+                        <rate>
+                <kinetic_reactant>Anoxic_Growth_Xh_on_Sf</kinetic_reactant>
+                <expression>
+                    <statement>Sf = MOL("Sf")</statement>
+                    <statement>So2 = MOL("Do")</statement>
+                    <statement>Sa = MOL("Sa")</statement>
+                    <statement>Snh = MOL("Snh")</statement>
+                    <statement>Sno = MOL("Sno")</statement>
+                    <statement>Sh2S = MOL("Sulphide")</statement>
+                    <statement>Xh = KIN("Xh")</statement>
+                    <statement>r_Sf = Sf/(CALC_VALUE("Ksf")+ Sf)</statement>
+                    <statement>r_Koh = CALC_VALUE("Koh")/(CALC_VALUE("Koh")+ So2)</statement>
+                    <statement>r_Sa = Sf/(Sf + Sa)</statement>
+                    <statement>r_Snh = Snh /(CALC_VALUE("Knhh")+ Snh)</statement>
+                    <statement>r_Sno = Sno /(CALC_VALUE("Knoh")+ Sno)</statement>
+                    <statement>r_Sh2s = CALC_VALUE("Kh2s_h") / (CALC_VALUE("Kh2s_h") + Sh2S)</statement>
+                    <statement>rates = CALC_VALUE("eta_g") * CALC_VALUE("muh") * r_Sf * r_Sa * r_Koh * r_Snh * r_Sno * r_Sh2s * Xh * CALC_VALUE("bac_growth_limit")</statement>
+                    <statement>dGrowth= rates*time</statement>
+                    <statement>dGrowth = dGrowth</statement>
+                    <statement>SAVE dGrowth</statement>
+                </expression>
+            </rate>
+            <rate>
+                <kinetic_reactant>Aerobic_Growth_Xh_on_Sa</kinetic_reactant>
+                <expression>
+                    <statement>Sf = MOL("Sf")</statement>
+                    <statement>So2 = MOL("Do")</statement>
+                    <statement>Sa = MOL("Sa")</statement>
+                    <statement>Snh = MOL("Snh")</statement>
+                    <statement>Sh2S = MOL("Sulphide")</statement>
+                    <statement>Xh = KIN("Xh")</statement>
+                    <statement>r_Sa1 = Sa /(CALC_VALUE("Ksa")+ Sa)</statement>
+                    <statement>r_Sa2 = Sa /(Sf + Sa)</statement>
+                    <statement>r_So2 = So2/(CALC_VALUE("Koh")+ So2)</statement>
+                    <statement>r_Snh = Snh /(CALC_VALUE("Knhh")+ Snh)</statement>
+                    <statement>r_Sh2s = CALC_VALUE("Kh2s_h") / (CALC_VALUE("Kh2s_h") + Sh2S)</statement>
+                    <statement>rates = CALC_VALUE("muh") * r_Sa1 * r_Sa2 * r_So2 * r_Snh *  r_Sh2s * Xh * CALC_VALUE("bac_growth_limit")</statement>
+                    <statement>dGrowth= rates * time</statement>
+                    <statement>dGrowth = dGrowth</statement>
+                    <statement>SAVE dGrowth</statement>
+                </expression>
+            </rate>
+                        <rate>
+                <kinetic_reactant>Anoxic_Growth_Xh_on_Sa</kinetic_reactant>
+                <expression>
+                    <statement>Sf = MOL("Sf")</statement>
+                    <statement>So2 = MOL("Do")</statement>
+                    <statement>Sa = MOL("Sa")</statement>
+                    <statement>Snh = MOL("Snh")</statement>
+                    <statement>Sno = MOL("Sno")</statement>
+                    <statement>Sh2S = MOL("Sulphide")</statement>
+                    <statement>Xh = KIN("Xh")</statement>
+                    <statement>r_Sa1 = Sa/(CALC_VALUE("Ksa")+ Sa)</statement>
+                    <statement>r_Sa2 = Sa/(Sf + Sa)</statement>
+                    <statement>r_Koh = CALC_VALUE("Koh")/(CALC_VALUE("Koh")+ So2)</statement>
+                    <statement>r_Snh = Snh /(CALC_VALUE("Knhh")+ Snh)</statement>
+                    <statement>r_Sno = Sno /(CALC_VALUE("Knoh")+ Sno)</statement>
+                    <statement>r_Sh2s = CALC_VALUE("Kh2s_h") / (CALC_VALUE("Kh2s_h") + Sh2S)</statement>
+                    <statement>rates = CALC_VALUE("eta_g") * CALC_VALUE("muh") * r_Sa1 * r_Sa2 * r_Koh * r_Sno * r_Snh * r_Sh2s * Xh * CALC_VALUE("bac_growth_limit")</statement>
+                    <statement>dGrowth= rates*time</statement>
+                    <statement>dGrowth = dGrowth</statement>
+                    <statement>SAVE dGrowth</statement>
+                </expression>
+            </rate>
+            <rate>
+                <kinetic_reactant>Lysis_Xh</kinetic_reactant>
+                <expression>
+                    <statement>Xh = KIN("Xh")</statement>
+                    <statement>rates = CALC_VALUE("bh") * Xh</statement>
+                    <statement>dLysis = rates * time</statement>
+                    <statement>dLysis = dLysis</statement>
+                    <statement>SAVE dLysis</statement>
+                </expression>
+            </rate>
+                        <rate>
+                <kinetic_reactant>Aerobic_Growth_Xa_on_Snh</kinetic_reactant>
+                <expression>
+                    <statement>So2 = MOL("Do")</statement>
+                    <statement>Snh = MOL("Snh")</statement>
+                    <statement>Sh2S = MOL("Sulphide")</statement>
+                    <statement>Xa = KIN("Xa")</statement>
+                    <statement>r_So2_a = So2 /(CALC_VALUE("Koa")+ So2)</statement>
+                    <statement>r_Snh_a = Snh /(CALC_VALUE("Knha")+ Snh)</statement>
+                    <statement>r_Sh2s_a = CALC_VALUE("Kh2s_a") / (CALC_VALUE("Kh2s_a") + Sh2S)</statement>
+                    <statement>rates = CALC_VALUE("mu_a") * r_So2_a * r_Snh_a *  r_Sh2s_a * Xa * CALC_VALUE("bac_growth_limit")</statement>
+                    <statement>dGrowth= rates*time</statement>
+                    <statement>dGrowth = dGrowth</statement>
+                    <statement>SAVE dGrowth</statement>
+                </expression>
+            </rate>
+            <rate>
+                <kinetic_reactant>Lysis_Xa</kinetic_reactant>
+                <expression>
+                    <statement>Xa = KIN("Xa")</statement>
+                    <statement>rates = CALC_VALUE("ba") * Xa</statement>
+                    <statement>dLysis = rates * time</statement>
+                    <statement>dLysis = dLysis</statement>
+                    <statement>SAVE dLysis</statement>
+                </expression>
+            </rate>
+                        <rate>
+                <kinetic_reactant>Growth_Xfb</kinetic_reactant>
+                <expression>
+                    <statement>Sf = MOL("Sf")</statement>
+                    <statement>So2 = MOL("Do")</statement>
+                    <statement>Snh = MOL("Snh")</statement>
+                    <statement>Sno = MOL("Sno")</statement>
+                    <statement>Sh2S = MOL("Sulphide")</statement>
+                    <statement>Xfb = KIN("Xfb")</statement>
+                    <statement>r_Sf_fb = Sf/(CALC_VALUE("Ksfb")+ Sf)</statement>
+                    <statement>r_Ko_fb = CALC_VALUE("Kofb")/(CALC_VALUE("Kofb")+ So2)</statement>
+                    <statement>r_Snh_fb = Snh /(CALC_VALUE("Knhfb")+ Snh)</statement>
+                    <statement>r_Kno_fb = CALC_VALUE("Knofb")/(CALC_VALUE("Knofb")+ Sno)</statement>
+                    <statement>r_Sh2s_fb = CALC_VALUE("Kh2s_fb") / (CALC_VALUE("Kh2s_fb") + Sh2S)</statement>
+                    <statement>rates = CALC_VALUE("mu_fb") * r_Sf_fb * r_Ko_fb * r_Snh_fb * r_Kno_fb * r_Sh2s_fb * Xfb * CALC_VALUE("bac_growth_limit")</statement>
+                    <statement>dGrowth= rates*time</statement>
+                    <statement>dGrowth = dGrowth</statement>
+                    <statement>SAVE dGrowth</statement>
+                </expression>
+            </rate>
+                        <rate>
+                <kinetic_reactant>Lysis_Xfb</kinetic_reactant>
+                <expression>
+                    <statement>Xfb = KIN("Xfb")</statement>
+                    <statement>rates = CALC_VALUE("b_fb") * Xfb</statement>
+                    <statement>dLysis = rates * time</statement>
+                    <statement>dLysis = dLysis</statement>
+                    <statement>SAVE dLysis</statement>
+                </expression>
+            </rate>
+            <rate>
+                <kinetic_reactant>Growth_Xamb</kinetic_reactant>
+                <expression>
+                    <statement>Sa = MOL("Sa")</statement>
+                    <statement>So2 = MOL("Do")</statement>
+                    <statement>Snh = MOL("Snh")</statement>
+                    <statement>Sno = MOL("Sno")</statement>
+                    <statement>Sh2S = MOL("Sulphide")</statement>
+                    <statement>Xamb = KIN("Xamb")</statement>
+                    <statement>r_Sa_amb = Sa/(CALC_VALUE("Ksamb")+ Sa)</statement>
+                    <statement>r_Ko_amb = CALC_VALUE("Koamb")/(CALC_VALUE("Koamb")+ So2)</statement>
+                    <statement>r_Snh_amb = Snh /(CALC_VALUE("Knhamb")+ Snh)</statement>
+                    <statement>r_Kno_amb = CALC_VALUE("Knoamb") /(CALC_VALUE("Knoamb")+ Sno)</statement>
+                    <statement>r_Sh2s_amb = CALC_VALUE("Kh2s_amb") / (CALC_VALUE("Kh2s_amb") + Sh2S)</statement>
+                    <statement>rates = CALC_VALUE("mu_amb") * r_Sa_amb * r_Ko_amb * r_Snh_amb * r_Kno_amb * r_Sh2s_amb * Xamb * CALC_VALUE("bac_growth_limit")</statement>
+                    <statement>dGrowth= rates*time</statement>
+                    <statement>dGrowth = dGrowth</statement>
+                    <statement>SAVE dGrowth</statement>
+                </expression>
+            </rate>
+            <rate>
+                <kinetic_reactant>Lysis_Xamb</kinetic_reactant>
+                <expression>
+                    <statement>Xamb = KIN("Xamb")</statement>
+                    <statement>rates = CALC_VALUE("b_amb") * Xamb</statement>
+                    <statement>dLysis = rates * time</statement>
+                    <statement>dLysis = dLysis</statement>
+                    <statement>SAVE dLysis</statement>
+                </expression>
+            </rate>
+                        <rate>
+                <kinetic_reactant>Growth_Xasrb</kinetic_reactant>
+                <expression>
+                    <statement>Sa = MOL("Sa")</statement>
+                    <statement>So2 = MOL("Do")</statement>
+                    <statement>Snh = MOL("Snh")</statement>
+                    <statement>Sno = MOL("Sno")</statement>
+                    <statement>Sh2S = MOL("Sulphide")</statement>
+                    <statement>Sso4 = MOL("Sso")</statement>
+                    <statement>Xasrb = KIN("Xasrb")</statement>
+                    <statement>r_Sa_asrb = Sa/(CALC_VALUE("Ks_asrb")+ Sa)</statement>
+                    <statement>r_Ko_asrb = CALC_VALUE("Ko_asrb")/(CALC_VALUE("Ko_asrb")+ So2)</statement>
+                    <statement>r_Snh_asrb = Snh /(CALC_VALUE("Knh_asrb")+ Snh)</statement>
+                    <statement>r_Kno_asrb = CALC_VALUE("Kno_asrb") /(CALC_VALUE("Kno_asrb")+ Sno)</statement>
+                    <statement>r_Sh2s_asrb = CALC_VALUE("Kh2s_asrb") / (CALC_VALUE("Kh2s_asrb") + Sh2S)</statement>
+                    <statement>r_Sso4_asrb = Sso4 / (CALC_VALUE("Kso_asrb") + Sso4)</statement>
+                    <statement>rates = CALC_VALUE("mu_asrb") * r_Sa_asrb * r_Ko_asrb * r_Snh_asrb * r_Kno_asrb * r_Sh2s_asrb * r_Sso4_asrb * Xasrb * CALC_VALUE("bac_growth_limit")</statement>
+                    <statement>dGrowth= rates*time</statement>
+                    <statement>dGrowth = dGrowth</statement>
+                    <statement>SAVE dGrowth</statement>
+                </expression>
+            </rate>
+            <rate>
+                <kinetic_reactant>Lysis_Xasrb</kinetic_reactant>
+                <expression>
+                    <statement>Xasrb = KIN("Xasrb")</statement>
+                    <statement>rates = CALC_VALUE("b_asrb") * Xasrb</statement>
+                    <statement>dLysis = rates * time</statement>
+                    <statement>dLysis = dLysis</statement>
+                    <statement>SAVE dLysis</statement>
+                </expression>
+            </rate>
+                        <rate>
+                <kinetic_reactant>Aerobic_Growth_Xsob</kinetic_reactant>
+                <expression>
+                    <statement>So2 = MOL("Do")</statement>
+                    <statement>Snh = MOL("Snh")</statement>
+                    <statement>Sh2S = MOL("Sulphide")</statement>
+                    <statement>Xsob = KIN("Xsob")</statement>
+                    <statement>r_So2_sob = So2 /(CALC_VALUE("Ko_sob")+ So2)</statement>
+                    <statement>r_Snh_sob = Snh /(CALC_VALUE("Knh_sob")+ Snh)</statement>
+                    <statement>r_Sh2s_sob = Sh2s / (CALC_VALUE("Kh2s_sob") + Sh2S)</statement>
+                    <statement>rates = CALC_VALUE("mu_sob") * r_So2_sob * r_Sh2s_sob * r_Snh_sob * Xsob * CALC_VALUE("bac_growth_limit")</statement>
+                    <statement>dGrowth= rates*time</statement>
+                    <statement>dGrowth = dGrowth</statement>
+                    <statement>SAVE dGrowth</statement>
+                </expression>
+            </rate>
+            <rate>
+                <kinetic_reactant>Anoxic_Growth_Xsob</kinetic_reactant>
+                <expression>
+                    <statement>So2 = MOL("Do")</statement>
+                    <statement>Snh = MOL("Snh")</statement>
+                    <statement>Sno = MOL("Sno")</statement>
+                    <statement>Sh2S = MOL("Sulphide")</statement>
+                    <statement>Xsob = KIN("Xsob")</statement>
+                    <statement>r_Ko2_sob = CALC_VALUE("Ko_sob") /(CALC_VALUE("Ko_sob")+ So2)</statement>
+                    <statement>r_Snh_sob = Snh /(CALC_VALUE("Knh_sob")+ Snh)</statement>
+                    <statement>r_Sh2s_sob = Sh2s / (CALC_VALUE("Kh2s_sob") + Sh2S)</statement>
+                    <statement>r_Sno_sob = Sno / (CALC_VALUE("Kno_sob") + Sno)</statement>
+                    <statement>rates = CALC_VALUE("mu_sob") * CALC_VALUE("eta_sob") * r_Ko2_sob * r_Sh2s_sob * r_Snh_sob * r_Sno_sob * Xsob * CALC_VALUE("bac_growth_limit")</statement>
+                    <statement>dGrowth= rates*time</statement>
+                    <statement>dGrowth = dGrowth</statement>
+                    <statement>SAVE dGrowth</statement>
+                </expression>
+            </rate>
+            <rate>
+                <kinetic_reactant>Lysis_Xsob</kinetic_reactant>
+                <expression>
+                    <statement>Xsob = KIN("Xsob")</statement>
+                    <statement>rates = CALC_VALUE("b_sob") * Xsob</statement>
+                    <statement>dLysis = rates * time</statement>
+                    <statement>dLysis = dLysis</statement>
+                    <statement>SAVE dLysis</statement>
+                </expression>
+            </rate>
+                        <rate>
+                <kinetic_reactant>Xs_im</kinetic_reactant>
+                <expression>
+                    <statement>dGrowth = KIN_DELTA("AttDetachment_Xs")</statement>
+                    <statement>dGrowth = dGrowth - KIN_DELTA("Hydrolysis_Xs_im")</statement>
+                    <statement>dGrowth = dGrowth + 0.85*KIN_DELTA("Lysis_Xh")</statement>
+                    <statement>dGrowth = dGrowth + 0.85*KIN_DELTA("Lysis_Xa")</statement>
+                    <statement>dGrowth = dGrowth + 0.85*KIN_DELTA("Lysis_Xfb")</statement>
+                    <statement>dGrowth = dGrowth + 0.85*KIN_DELTA("Lysis_Xamb")</statement>
+                    <statement>dGrowth = dGrowth + 0.85*KIN_DELTA("Lysis_Xasrb")</statement>
+                    <statement>dGrowth = dGrowth + 0.85*KIN_DELTA("Lysis_Xsob")</statement>
+                    <statement>SAVE dGrowth</statement>
+                </expression>
+            </rate>
+            <rate>
+                <kinetic_reactant>Xi_im</kinetic_reactant>
+                <expression>
+                    <statement>dGrowth = KIN_DELTA("AttDetachment_Xi")</statement>
+                    <statement>dGrowth = dGrowth + 0.1*KIN_DELTA("Lysis_Xh")</statement>
+                    <statement>dGrowth = dGrowth + 0.1*KIN_DELTA("Lysis_Xa")</statement>
+                    <statement>dGrowth = dGrowth + 0.1*KIN_DELTA("Lysis_Xfb")</statement>
+                    <statement>dGrowth = dGrowth + 0.1*KIN_DELTA("Lysis_Xamb")</statement>
+                    <statement>dGrowth = dGrowth + 0.1*KIN_DELTA("Lysis_Xasrb")</statement>
+                    <statement>dGrowth = dGrowth + 0.1*KIN_DELTA("Lysis_Xsob")</statement>
+                    <statement>SAVE dGrowth</statement>
+                </expression>
+            </rate>
+            <rate>
+                <kinetic_reactant>Xh</kinetic_reactant>
+                <expression>
+                    <statement>dGrowth = KIN_DELTA("Aerobic_Growth_Xh_on_Sf")</statement>
+                    <statement>dGrowth = dGrowth + KIN_DELTA("Anoxic_Growth_Xh_on_Sf")</statement>
+                    <statement>dGrowth = dGrowth + KIN_DELTA("Aerobic_Growth_Xh_on_Sa")</statement>
+                    <statement>dGrowth = dGrowth + KIN_DELTA("Anoxic_Growth_Xh_on_Sa")</statement>
+                    <statement>dGrowth = dGrowth - KIN_DELTA("Lysis_Xh")</statement>
+                    <statement>SAVE dGrowth</statement>
+                </expression>
+            </rate>
+            <rate>
+                <kinetic_reactant>Xa</kinetic_reactant>
+                <expression>
+                    <statement>dGrowth = KIN_DELTA("Aerobic_Growth_Xa_on_Snh")</statement>
+                    <statement>dGrowth = dGrowth - KIN_DELTA("Lysis_Xa")</statement>
+                    <statement>SAVE dGrowth</statement>
+                </expression>
+            </rate>
+            <rate>
+                <kinetic_reactant>Xfb</kinetic_reactant>
+                <expression>
+                    <statement>dGrowth = KIN_DELTA("Growth_Xfb")</statement>
+                    <statement>dGrowth = dGrowth - KIN_DELTA("Lysis_Xfb")</statement>
+                    <statement>SAVE dGrowth</statement>
+                </expression>
+            </rate>
+            <rate>
+                <kinetic_reactant>Xamb</kinetic_reactant>
+                <expression>
+                    <statement>dGrowth = KIN_DELTA("Growth_Xamb")</statement>
+                    <statement>dGrowth = dGrowth - KIN_DELTA("Lysis_Xamb")</statement>
+                    <statement>SAVE dGrowth</statement>
+                </expression>
+            </rate>
+            <rate>
+                <kinetic_reactant>Xasrb</kinetic_reactant>
+                <expression>
+                    <statement>dGrowth = KIN_DELTA("Growth_Xasrb")</statement>
+                    <statement>dGrowth = dGrowth - KIN_DELTA("Lysis_Xasrb")</statement>
+                    <statement>SAVE dGrowth</statement>
+                </expression>
+            </rate>
+            <rate>
+                <kinetic_reactant>Xsob</kinetic_reactant>
+                <expression>
+                    <statement>dGrowth = KIN_DELTA("Aerobic_Growth_Xsob")</statement>
+                    <statement>dGrowth = dGrowth + KIN_DELTA("Anoxic_Growth_Xsob")</statement>
+                    <statement>dGrowth = dGrowth - KIN_DELTA("Lysis_Xsob")</statement>
+                    <statement>SAVE dGrowth</statement>
+                </expression>
+            </rate>
+                </rates>
+    </chemical_system>
+    <parameters>
+        <parameter>
+            <name>kappa0</name>
+            <type>Constant</type>
+            <values>1.0e-7</values>
+        </parameter>
+        <parameter>
+            <name>kappa1</name>
+            <type>Constant</type>
+            <values>1.0e-8</values>
+        </parameter>
+        <parameter>
+            <name>porosity</name>
+            <type>Constant</type>
+            <value>0.38</value>
+        </parameter>
+        <parameter>
+            <name>decay</name>
+            <type>Constant</type>
+            <value>0</value>
+        </parameter>
+        <!-- pressure related -->
+        <parameter>
+            <name>p0</name>
+            <type>Constant</type>
+            <value>8829</value>
+        </parameter>
+        <parameter>
+            <name>p_Neumann_inlet</name>
+            <type>Constant</type>
+            <!--6.666e-3/1.2m ogs6 does not account for DOMAIN thickness -->
+            <value>5.555e-3</value>
+        </parameter>
+        <parameter>
+            <name>p_Dirichlet_right</name>
+            <type>Constant</type>
+            <value>8829</value>
+        </parameter>
+        <!-- components related -->
+         <parameter>
+            <name>c_CurveScaled</name>
+            <type>Constant</type>
+            <value>1.0</value>
+        </parameter>
+        <parameter>
+            <name>c_H</name>
+            <type>Constant</type>
+            <!--pH=7-->
+            <value>1e-7</value>
+        </parameter>
+        <parameter>
+            <name>c0_CWM1</name>
+            <type>Constant</type>
+            <value>1e-4</value>
+        </parameter>
+        <parameter>
+            <name>c_Do_inlet</name>
+            <type>CurveScaled</type>
+            <curve>c_t_Do</curve>
+            <parameter>c_CurveScaled</parameter>
+        </parameter>
+        <parameter>
+            <name>c_Sf_inlet</name>
+            <type>CurveScaled</type>
+            <curve>c_t_Sf</curve>
+            <parameter>c_CurveScaled</parameter>
+        </parameter>
+        <parameter>
+            <name>c_Sa_inlet</name>
+            <type>CurveScaled</type>
+            <curve>c_t_Sa</curve>
+            <parameter>c_CurveScaled</parameter>
+        </parameter>
+        <parameter>
+            <name>c_Sin_inlet</name>
+            <type>CurveScaled</type>
+            <curve>c_t_Sin</curve>
+            <parameter>c_CurveScaled</parameter>
+        </parameter>
+        <parameter>
+            <name>c_Xsm_inlet</name>
+            <type>CurveScaled</type>
+            <curve>c_t_Xsm</curve>
+            <parameter>c_CurveScaled</parameter>
+        </parameter>
+        <parameter>
+            <name>c_Xim_inlet</name>
+            <type>CurveScaled</type>
+            <curve>c_t_Xim</curve>
+            <parameter>c_CurveScaled</parameter>
+        </parameter>
+        <parameter>
+            <name>c_Snh_inlet</name>
+            <type>CurveScaled</type>
+            <curve>c_t_Snh</curve>
+            <parameter>c_CurveScaled</parameter>
+        </parameter>
+        <parameter>
+            <name>c_Sno_inlet</name>
+            <type>CurveScaled</type>
+            <curve>c_t_Sno</curve>
+            <parameter>c_CurveScaled</parameter>
+        </parameter>
+        <parameter>
+            <name>c_Sso_inlet</name>
+            <type>Constant</type>
+            <value>5.66e-2</value>
+        </parameter>
+        <parameter>
+            <name>c_Sulphide_inlet</name>
+            <type>Constant</type>
+            <value>8.6e-3</value>
+        </parameter>
+    </parameters>
+    <curves>
+        <curve>
+            <name>c_t_Do</name>
+            <coords>0   604800  1209600 1814400 2419200 3024000 3628800 4233600 4838400 5529600 6048000 6652800 7257600 8470800 9075600 10198800    10890000    11667600    12099600    13914000    14518800    15210000    15814800    16333200    16938000    17542800    18147600    18752400    19357200    19962000    20563200    21168000    21772800    22377600    22896000
+</coords>
+            <values>9.00E-04    2.00E-04    0.00018 0.00021 0.00055 0.00074 0.00054 0.00093 0.00085 0.00055 0.00038 0.00034 0.00037 0.00049 0.00062 4.00E-04    0.00072 0.00031 0.00078 0.00061 0.00072 0.00089 0.00054 0.00125 0.00083 0.00052 0.00064 0.00071 0.00087 0.00059 0.00101 0.00097 0.00063 0.00043 0.00068
+</values>
+        </curve>
+        <curve>
+            <name>c_t_Sf</name>
+            <coords>0   604800  1209600 1814400 2419200 3024000 3628800 4233600 4838400 5529600 6048000 6652800 7257600 8470800 9075600 10198800    10890000    11667600    12099600    13914000    14518800    15210000    15814800    16333200    16938000    17542800    18147600    18752400    19357200    19962000    20563200    21168000    21772800    22377600    22896000
+</coords>
+            <values>2.29E-01    1.92E-01    0.187574    0.2529343   0.2244159   0.2772126   0.2811686   0.2861437   0.209862    0.1226828   0.3143407   0.3353002   0.3534289   0.103283    0.0971518   5.82E-02    0.1027765   0.1537516   0.1811263   0.0806371   0.1088622   0.1340445   0.1565852   0.1631798   0.1713685   0.1830446   0.1945754   0.1854146   0.1791338   0.1705848   0.1620868   0.154141    0.1461953   0.1365357   0.0911085
+</values>
+        </curve>
+        <curve>
+            <name>c_t_Sa</name>
+            <coords>0   604800  1209600 1814400 2419200 3024000 3628800 4233600 4838400 5529600 6048000 6652800 7257600 8470800 9075600 10198800    10890000    11667600    12099600    13914000    14518800    15210000    15814800    16333200    16938000    17542800    18147600    18752400    19357200    19962000    20563200    21168000    21772800    22377600    22896000
+</coords>
+            <values>1.53E-01    1.28E-01    0.1250493   0.1686229   0.1496106   0.1848084   0.1874457   0.1907625   0.139908    0.0817885   0.2095605   0.2235335   0.2356192   0.0688553   0.0647679   3.88E-02    0.0685177   0.1025011   0.1207509   0.053758    0.0725748   0.089363    0.1043901   0.1087865   0.1142457   0.1220298   0.129717    0.1236097   0.1194225   0.1137232   0.1080579   0.1027607   0.0974635   0.0910238   0.060739
+</values>
+        </curve>
+        <curve>
+            <name>c_t_Sin</name>
+            <coords>0   604800  1209600 1814400 2419200 3024000 3628800 4233600 4838400 5529600 6048000 6652800 7257600 8470800 9075600 10198800    10890000    11667600    12099600    13914000    14518800    15210000    15814800    16333200    16938000    17542800    18147600    18752400    19357200    19962000    20563200    21168000    21772800    22377600    22896000
+</coords>
+            <values>1.48E-02    1.64E-02    0.0179034   0.0192179   0.0208604   0.0176998   0.0205697   0.0217411   0.0229125   0.0242513   0.0198148   0.0220722   0.023953    0.0227709   0.022143    2.19E-02    0.0230327   0.0214195   0.022098    0.0226606   0.0236999   0.0245914   0.0245276   0.0241703   0.0229284   0.024961    0.0272358   0.0285153   0.0249947   0.0252544   0.0255125   0.0247668   0.0240212   0.0261319   0.0236982
+</values>
+        </curve>
+        <curve>
+            <name>c_t_Xsm</name>
+            <coords>0   604800  1209600 1814400 2419200 3024000 3628800 4233600 4838400 5529600 6048000 6652800 7257600 8470800 9075600 10198800    10890000    11667600    12099600    13914000    14518800    15210000    15814800    16333200    16938000    17542800    18147600    18752400    19357200    19962000    20563200    21168000    21772800    22377600    22896000
+</coords>
+            <values>8.98E-02    8.83E-02    0.1103771   0.0021094   7.69E-05    0.0305699   0.0307991   0.0920976   0.1937629   0.3099518   0.0143083   0.001983    0.0161316   0.0884845   0.0836935   9.82E-02    0.1125255   0.0328301   0.0345647   0.1685278   0.2101795   0.1536543   0.1033509   0.0664341   0.078712    0.0885889   0.0987081   0.105789    0.0698635   0.0227084   0.0682557   0.0432921   0.1179384   0.1872539   0.3011724
+</values>
+        </curve>
+        <curve>
+            <name>c_t_Xim</name>
+            <coords>0   604800  1209600 1814400 2419200 3024000 3628800 4233600 4838400 5529600 6048000 6652800 7257600 8470800 9075600 10198800    10890000    11667600    12099600    13914000    14518800    15210000    15814800    16333200    16938000    17542800    18147600    18752400    19357200    19962000    20563200    21168000    21772800    22377600    22896000
+</coords>
+            <values>6.93E-04    2.89E-02    0   0.0021094   2.07E-02    0   0.0117404   0   0.0220868   0.0576956   0.0143083   0.0415899   0.0161316   0.0783689   0.0690938   3.78E-02    0.063681    0.1475792   0.0345647   0.1729577   0.0701732   0.0845583   0.0979891   0.1074293   0.1642352   0.1330902   0.1520012   0.1076714   0.1255855   0.1067292   0.0690872   0.0740393   0.0953817   0.1854669   0.0673989
+</values>
+        </curve>
+        <curve>
+            <name>c_t_Snh</name>
+            <coords>0   604800  1209600 1814400 2419200 3024000 3628800 4233600 4838400 5529600 6048000 6652800 7257600 8470800 9075600 10198800    10890000    11667600    12099600    13914000    14518800    15210000    15814800    16333200    16938000    17542800    18147600    18752400    19357200    19962000    20563200    21168000    21772800    22377600    22896000
+</coords>
+            <values>7.96E-02    7.96E-02    0.0699766   0.0750936   7.94E-02    0.0759865   0.0828972   0.0836815   0.0661563   0.0523349   0.0631047   0.0659777   0.072438    0.0523659   0.0526066   4.36E-02    0.0624447   0.0511158   0.0494541   0.0462939   0.053686    0.050184    0.0545944   0.0602861   0.0600376   0.0635007   0.0505101   0.0696194   0.0513876   0.0511003   0.0441663   0.0596649   0.0537869   0.0509217   0.0561862
+</values>
+        </curve>
+        <curve>
+            <name>c_t_Sno</name>
+            <coords>0   604800  1209600 1814400 2419200 3024000 3628800 4233600 4838400 5529600 6048000 6652800 7257600 8470800 9075600 10198800    10890000    11667600    12099600    13914000    14518800    15210000    15814800    16333200    16938000    17542800    18147600    18752400    19357200    19962000    20563200    21168000    21772800    22377600    22896000
+</coords>
+            <values>7.39E-05    7.39E-05    9.64E-05    9.64E-05    9.64E-05    7.39E-05    7.39E-05    7.39E-05    8.30E-05    7.39E-05    7.39E-05    7.39E-05    7.39E-05    7.39E-05    9.64E-05    7.39E-05    7.39E-05    7.39E-05    7.39E-05    7.39E-05    7.39E-05    7.39E-05    7.39E-05    7.39E-05    7.39E-05    7.39E-05    7.39E-05    7.39E-05    7.39E-05    7.39E-05    7.39E-05    7.39E-05    7.39E-05    7.39E-05    7.39E-05
+</values>
+        </curve>
+    </curves>
+    <process_variables>
+        <process_variable>
+            <name>pressure</name>
+            <components>1</components>
+            <order>1</order>
+            <initial_condition>p0</initial_condition>
+            <boundary_conditions>
+                <boundary_condition>
+                    <geometrical_set>geometry</geometrical_set>
+                    <geometry>outlet</geometry>
+                    <type>Dirichlet</type>
+                    <parameter>p_Dirichlet_right</parameter>
+                </boundary_condition>
+        <boundary_condition>
+            <geometrical_set>geometry</geometrical_set>
+            <geometry>inlet</geometry>
+            <type>Neumann</type>
+            <parameter>p_Neumann_inlet</parameter>
+         </boundary_condition>
+            </boundary_conditions>
+        </process_variable>
+        <process_variable>
+            <name>H</name>
+            <components>1</components>
+            <order>1</order>
+            <initial_condition>c_H</initial_condition>
+            <boundary_conditions>
+                <boundary_condition>
+                    <geometrical_set>geometry</geometrical_set>
+                    <geometry>inlet</geometry>
+                    <type>Dirichlet</type>
+                    <parameter>c_H</parameter>
+                </boundary_condition>
+            </boundary_conditions>
+        </process_variable>
+        <process_variable>
+            <name>Do</name>
+            <components>1</components>
+            <order>1</order>
+            <initial_condition>c0_CWM1</initial_condition>
+            <boundary_conditions>
+                <boundary_condition>
+                    <geometrical_set>geometry</geometrical_set>
+                    <geometry>inlet</geometry>
+                    <type>Dirichlet</type>
+                    <parameter>c_Do_inlet</parameter>
+                </boundary_condition>
+            </boundary_conditions>
+        </process_variable>
+        <process_variable>
+            <name>Sf</name>
+            <components>1</components>
+            <order>1</order>
+            <initial_condition>c0_CWM1</initial_condition>
+            <boundary_conditions>
+                <boundary_condition>
+                    <geometrical_set>geometry</geometrical_set>
+                    <geometry>inlet</geometry>
+                    <type>Dirichlet</type>
+                    <parameter>c_Sf_inlet</parameter>
+                </boundary_condition>
+            </boundary_conditions>
+        </process_variable>
+        <process_variable>
+            <name>Sa</name>
+            <components>1</components>
+            <order>1</order>
+            <initial_condition>c0_CWM1</initial_condition>
+            <boundary_conditions>
+                <boundary_condition>
+                    <geometrical_set>geometry</geometrical_set>
+                    <geometry>inlet</geometry>
+                    <type>Dirichlet</type>
+                    <parameter>c_Sa_inlet</parameter>
+                </boundary_condition>
+            </boundary_conditions>
+        </process_variable>
+        <process_variable>
+            <name>Sin</name>
+            <components>1</components>
+            <order>1</order>
+            <initial_condition>c0_CWM1</initial_condition>
+            <boundary_conditions>
+                <boundary_condition>
+                    <geometrical_set>geometry</geometrical_set>
+                    <geometry>inlet</geometry>
+                    <type>Dirichlet</type>
+                    <parameter>c_Sin_inlet</parameter>
+                </boundary_condition>
+            </boundary_conditions>
+        </process_variable>
+        <process_variable>
+            <name>Xs_m</name>
+            <components>1</components>
+            <order>1</order>
+            <initial_condition>c0_CWM1</initial_condition>
+            <boundary_conditions>
+                <boundary_condition>
+                    <geometrical_set>geometry</geometrical_set>
+                    <geometry>inlet</geometry>
+                    <type>Dirichlet</type>
+                    <parameter>c_Xsm_inlet</parameter>
+                </boundary_condition>
+            </boundary_conditions>
+        </process_variable>
+        <process_variable>
+            <name>Xi_m</name>
+            <components>1</components>
+            <order>1</order>
+            <initial_condition>c0_CWM1</initial_condition>
+            <boundary_conditions>
+                <boundary_condition>
+                    <geometrical_set>geometry</geometrical_set>
+                    <geometry>inlet</geometry>
+                    <type>Dirichlet</type>
+                    <parameter>c_Xim_inlet</parameter>
+                </boundary_condition>
+            </boundary_conditions>
+        </process_variable>
+        <process_variable>
+            <name>Snh</name>
+            <components>1</components>
+            <order>1</order>
+            <initial_condition>c0_CWM1</initial_condition>
+            <boundary_conditions>
+                <boundary_condition>
+                    <geometrical_set>geometry</geometrical_set>
+                    <geometry>inlet</geometry>
+                    <type>Dirichlet</type>
+                    <parameter>c_Snh_inlet</parameter>
+                </boundary_condition>
+            </boundary_conditions>
+        </process_variable>
+        <process_variable>
+            <name>Sno</name>
+            <components>1</components>
+            <order>1</order>
+            <initial_condition>c0_CWM1</initial_condition>
+            <boundary_conditions>
+                <boundary_condition>
+                    <geometrical_set>geometry</geometrical_set>
+                    <geometry>inlet</geometry>
+                    <type>Dirichlet</type>
+                    <parameter>c_Sno_inlet</parameter>
+                </boundary_condition>
+            </boundary_conditions>
+        </process_variable>
+        <process_variable>
+            <name>Sso</name>
+            <components>1</components>
+            <order>1</order>
+            <initial_condition>c0_CWM1</initial_condition>
+            <boundary_conditions>
+                <boundary_condition>
+                    <geometrical_set>geometry</geometrical_set>
+                    <geometry>inlet</geometry>
+                    <type>Dirichlet</type>
+                    <parameter>c_Sso_inlet</parameter>
+                </boundary_condition>
+            </boundary_conditions>
+        </process_variable>
+        <process_variable>
+            <name>Sulphide</name>
+            <components>1</components>
+            <order>1</order>
+            <initial_condition>c0_CWM1</initial_condition>
+            <boundary_conditions>
+                <boundary_condition>
+                    <geometrical_set>geometry</geometrical_set>
+                    <geometry>inlet</geometry>
+                    <type>Dirichlet</type>
+                    <parameter>c_Sulphide_inlet</parameter>
+                </boundary_condition>
+            </boundary_conditions>
+        </process_variable>
+    </process_variables>
+    <nonlinear_solvers>
+        <nonlinear_solver>
+            <name>basic_picard</name>
+            <type>Picard</type>
+            <max_iter>10</max_iter>
+            <linear_solver>general_linear_solver</linear_solver>
+        </nonlinear_solver>
+    </nonlinear_solvers>
+    <linear_solvers>
+        <linear_solver>
+            <name>general_linear_solver</name>
+            <eigen>
+                <solver_type>BiCGSTAB</solver_type>
+                <precon_type>ILUT</precon_type>
+                <max_iteration_step>1000</max_iteration_step>
+                <error_tolerance>1e-14</error_tolerance>
+            </eigen>
+        </linear_solver>
+    </linear_solvers>
+</OpenGeoSysProject>
