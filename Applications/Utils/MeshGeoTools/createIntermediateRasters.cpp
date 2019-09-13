@@ -126,7 +126,7 @@ int main(int argc, char* argv[])
             double const step = (max - min) / static_cast<double>(n + 1);
             for (std::size_t i = 0; i < n; ++i)
             {
-                raster[i].push_back(min + ((i+1) * step));
+                raster[i].push_back(max - ((i+1) * step));
             }
         }
         it2++;
