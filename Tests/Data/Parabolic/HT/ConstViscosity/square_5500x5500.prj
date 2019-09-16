@@ -37,13 +37,11 @@
                             <name>density</name>
                             <type>Linear</type>
                             <reference_value>1000</reference_value>
-                            <independent_variables>
                                 <independent_variable>
                                     <variable_name>temperature</variable_name>
                                     <slope>-4.3e-4</slope>
                                     <reference_condition>20</reference_condition>
                                 </independent_variable>
-                            </independent_variables>
                         </property>
                         <property>
                             <name>viscosity</name>

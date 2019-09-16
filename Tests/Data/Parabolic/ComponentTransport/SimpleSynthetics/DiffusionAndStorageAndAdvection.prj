@@ -49,7 +49,6 @@
                             <name>density</name>
                             <type>Linear</type>
                             <reference_value>1</reference_value>
-                            <independent_variables>
                                 <independent_variable>
                                     <variable_name>concentration</variable_name>
                                     <reference_condition>0</reference_condition>
@@ -60,7 +59,6 @@
                                     <reference_condition>0.5</reference_condition>
                                     <slope>5e-5</slope>
                                 </independent_variable>
-                            </independent_variables>
                         </property>
                         <property>
                             <name>viscosity</name>
