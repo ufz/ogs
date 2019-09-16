@@ -54,6 +54,8 @@ public:
         std::size_t const node_id);
 
 private:
+    void loadDatabase(std::string const database);
+
     void reinitializeRates();
 
     void setConvergenceTolerance() { convergence_tolerance = 1e-12; }

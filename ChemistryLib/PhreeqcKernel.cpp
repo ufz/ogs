@@ -37,15 +37,7 @@ PhreeqcKernel::PhreeqcKernel(
 {
     do_initialize();
 
-    // load database
-    std::ifstream in(database);
-    if (!in)
-    {
-        OGS_FATAL("Unable to open database file '%s'.", database.c_str());
-    }
-    assert(phrq_io->get_istream() == nullptr);
-    phrq_io->push_istream(&in, false);
-    read_database();
+    loadDatabase(database);
 
     // solution
     for (std::size_t chemical_system_id = 0;
@@ -88,6 +80,18 @@ PhreeqcKernel::PhreeqcKernel(
 
         _process_id_to_master_map[transport_process_id] = master_species;
     }
+}
+
+void PhreeqcKernel::loadDatabase(std::string const database)
+{
+    std::ifstream in(database);
+    if (!in)
+    {
+        OGS_FATAL("Unable to open database file '%s'.", database.c_str());
+    }
+    assert(phrq_io->get_istream() == nullptr);
+    phrq_io->push_istream(&in, false);
+    read_database();
 }
 
 void PhreeqcKernel::reinitializeRates()
