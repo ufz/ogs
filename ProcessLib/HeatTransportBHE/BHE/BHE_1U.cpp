@@ -126,6 +126,7 @@ std::pair<double, double> thermalResistancesGroutSoil(double chi,
             "Warning! Correction procedure was applied due to negative thermal "
             "resistance! Chi = %f.\n",
             m_chi);
+
         R_gs = compute_R_gs(m_chi, R_g);
         R_gg = compute_R_gg(m_chi, R_gs, R_ar, R_g);
     }

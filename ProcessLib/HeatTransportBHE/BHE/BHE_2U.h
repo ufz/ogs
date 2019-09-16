@@ -49,6 +49,8 @@ public:
         : BHECommonUType{borehole, refrigerant, grout,
                          flowAndTemperatureControl, pipes}
     {
+        _thermal_resistances.fill(std::numeric_limits<double>::quiet_NaN());
+
         // Initialize thermal resistances.
         auto values = visit(
             [&](auto const& control) {
