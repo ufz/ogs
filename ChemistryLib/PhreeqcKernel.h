@@ -47,8 +47,6 @@ public:
     void setAqueousSolutions(
         std::vector<GlobalVector*> const& process_solutions);
 
-    void setTimeStepSize(double const dt) override;
-
     void execute(std::vector<GlobalVector*>& process_solutions);
 
     void updateNodalProcessSolutions(
@@ -69,6 +67,8 @@ private:
     {
         return strcmp(element, "H") == 0 ? true : false;
     }
+
+    void setTimeStepSize(double const dt);
 
     std::map<int, struct master*> _process_id_to_master_map;
     cxxISolution _initial_aqueous_solution;

@@ -20,8 +20,6 @@ public:
     virtual void doWaterChemistryCalculation(
         std::vector<GlobalVector*>& process_solutions, double const dt) = 0;
 
-    virtual void setTimeStepSize(double const dt) = 0;
-
     virtual ~ChemicalSolverInterface() = default;
 };
 }  // namespace ChemistryLib

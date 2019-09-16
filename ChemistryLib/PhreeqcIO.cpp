@@ -87,9 +87,8 @@ void PhreeqcIO::doWaterChemistryCalculation(
 {
     setAqueousSolutionsOrUpdateProcessSolutions(
         process_solutions, Status::SettingAqueousSolutions);
-    setTimeStepSize(dt);
 
-    writeInputsToFile();
+    writeInputsToFile(dt);
 
     execute();
 
@@ -175,7 +174,7 @@ void PhreeqcIO::setAqueousSolutionsOrUpdateProcessSolutions(
     }
 }
 
-void PhreeqcIO::writeInputsToFile()
+void PhreeqcIO::writeInputsToFile(double const dt)
 {
     DBUG("Writing phreeqc inputs into file '%s'.", _phreeqc_input_file.c_str());
     std::ofstream out(_phreeqc_input_file, std::ofstream::out);
@@ -186,7 +185,7 @@ void PhreeqcIO::writeInputsToFile()
                   _phreeqc_input_file.c_str());
     }
 
-    out << *this;
+    out << (*this << dt);
 
     if (!out)
     {

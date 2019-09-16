@@ -51,9 +51,7 @@ public:
         std::vector<GlobalVector*> const& process_solutions,
         Status const status);
 
-    void setTimeStepSize(double const dt) override { _dt = dt; }
-
-    void writeInputsToFile();
+    void writeInputsToFile(double const dt);
 
     void execute();
 
@@ -67,6 +65,12 @@ public:
     std::string const _phreeqc_input_file;
 
 private:
+    PhreeqcIO& operator<<(int dt)
+    {
+        _dt = dt;
+        return *this;
+    }
+
     std::string const _database;
     std::vector<AqueousSolution> _aqueous_solutions;
     std::vector<EquilibriumPhase> _equilibrium_phases;
