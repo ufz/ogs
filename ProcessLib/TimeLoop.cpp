@@ -787,14 +787,8 @@ void TimeLoop::outputSolutions(bool const output_initial_condition,
                 &coupled_solutions);
             process_data->process
                 .setCoupledTermForTheStaggeredSchemeToLocalAssemblers();
-            (output_object.*output_class_member)(pcs, process_id, timestep, t,
-                                                 x);
         }
-        else
-        {
-            (output_object.*output_class_member)(pcs, process_id, timestep, t,
-                                                 x);
-        }
+        (output_object.*output_class_member)(pcs, process_id, timestep, t, x);
 
         ++process_id;
     }
