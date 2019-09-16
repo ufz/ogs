@@ -16,8 +16,8 @@
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 
 #include "BHE/BHETypes.h"
-#include "BHE/CreateBHE1U.h"
 #include "BHE/CreateBHECoaxial.h"
+#include "BHE/CreateBHEUType.h"
 #include "HeatTransportBHEProcess.h"
 #include "HeatTransportBHEProcessData.h"
 
@@ -186,7 +186,8 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
 
         if (bhe_type == "1U")
         {
-            bhes.emplace_back(BHE::createBHE1U(bhe_config, curves));
+            bhes.emplace_back(
+                BHE::createBHEUType<BHE::BHE_1U>(bhe_config, curves));
             continue;
         }
 
@@ -201,6 +202,13 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
         {
             bhes.emplace_back(
                 BHE::createBHECoaxial<BHE::BHE_CXC>(bhe_config, curves));
+            continue;
+        }
+
+        if (bhe_type == "2U")
+        {
+            bhes.emplace_back(
+                BHE::createBHEUType<BHE::BHE_2U>(bhe_config, curves));
             continue;
         }
         OGS_FATAL("Unknown BHE type '%s'.", bhe_type.c_str());

@@ -51,3 +51,16 @@ AddTest(
     3D_deep_BHE_CXC_pcs_0_ts_10_t_600.000000.vtu 3D_deep_BHE_CXC_pcs_0_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 0 5e-15
     3D_deep_BHE_CXC_pcs_0_ts_10_t_600.000000.vtu 3D_deep_BHE_CXC_pcs_0_ts_10_t_600.000000.vtu temperature_soil temperature_soil 0 1e-13
 )
+
+AddTest(
+    NAME HeatTransportBHE_3D_2U_BHE
+    PATH Parabolic/T/3D_2U_BHE
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS 3D_2U_BHE.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    3D_2U_BHE_pcs_0_ts_10_t_600.000000.vtu 3D_2U_BHE_pcs_0_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 1e-12 1e-14
+    3D_2U_BHE_pcs_0_ts_10_t_600.000000.vtu 3D_2U_BHE_pcs_0_ts_10_t_600.000000.vtu temperature_soil temperature_soil 1e-12 1e-13
+)
