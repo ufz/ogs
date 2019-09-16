@@ -35,7 +35,7 @@ PhreeqcKernel::PhreeqcKernel(
       _initial_aqueous_solution(aqueous_solution.getInitialAqueousSolution()),
       _reaction_rates(std::move(reaction_rates))
 {
-    do_initialize();
+    initializePhreeqcGeneralSettings();
 
     loadDatabase(database);
 

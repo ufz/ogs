@@ -54,6 +54,8 @@ public:
         std::size_t const node_id);
 
 private:
+    void initializePhreeqcGeneralSettings() { do_initialize(); }
+
     void loadDatabase(std::string const database);
 
     void reinitializeRates();
