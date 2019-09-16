@@ -119,7 +119,9 @@ std::pair<double, double> thermalResistancesGroutSoil(double chi,
     for (double m_chi : multiplier)
     {
         if (constraint() >= 0)
+        {
             break;
+        }
         DBUG(
             "Warning! Correction procedure was applied due to negative thermal "
             "resistance! Chi = %f.\n",

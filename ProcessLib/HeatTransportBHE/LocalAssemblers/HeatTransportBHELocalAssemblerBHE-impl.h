@@ -92,9 +92,11 @@ HeatTransportBHELocalAssemblerBHE<ShapeFunction, IntegrationMethod, BHEType>::
         // (iii) In the 2U case, there are 5 exchange terms,
         // and it is less than the number of unknowns (8).
         if (idx_bhe_unknowns < max_num_thermal_exchange_terms)
+        {
             _bhe.template assembleRMatrices<ShapeFunction::NPOINTS>(
                 idx_bhe_unknowns, matBHE_loc_R, _R_matrix, _R_pi_s_matrix,
                 _R_s_matrix);
+        }
     }  // end of loop over BHE unknowns
 
     // debugging
@@ -203,6 +205,5 @@ void HeatTransportBHELocalAssemblerBHE<ShapeFunction, IntegrationMethod,
     // std::cout << local_K.format(CleanFmt) << sep;
     // std::cout << local_M.format(CleanFmt) << sep;
 }
-
 }  // namespace HeatTransportBHE
 }  // namespace ProcessLib
