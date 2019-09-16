@@ -33,7 +33,7 @@ enum class Status
 class PhreeqcIO final : public ChemicalSolverInterface
 {
 public:
-    PhreeqcIO(std::string const& project_file_name,
+    PhreeqcIO(std::string const project_file_name,
               std::string&& database,
               std::vector<AqueousSolution>&& aqueous_solutions,
               std::vector<EquilibriumPhase>&& equilibrium_phases,
@@ -65,7 +65,7 @@ public:
     std::string const _phreeqc_input_file;
 
 private:
-    PhreeqcIO& operator<<(int dt)
+    PhreeqcIO& operator<<(double const dt)
     {
         _dt = dt;
         return *this;

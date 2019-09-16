@@ -38,5 +38,6 @@ void KineticReactant::print(std::ostream& os,
         os << "\n";
     }
 }
+const ItemType KineticReactant::item_type;
 }  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

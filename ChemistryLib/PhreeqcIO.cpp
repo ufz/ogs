@@ -39,7 +39,7 @@ std::ostream& operator<<(std::ostream& os,
 }
 }  // namespace
 
-PhreeqcIO::PhreeqcIO(std::string const& project_file_name,
+PhreeqcIO::PhreeqcIO(std::string const project_file_name,
                      std::string&& database,
                      std::vector<AqueousSolution>&& aqueous_solutions,
                      std::vector<EquilibriumPhase>&& equilibrium_phases,

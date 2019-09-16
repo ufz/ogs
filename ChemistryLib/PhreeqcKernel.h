@@ -34,8 +34,8 @@ public:
     PhreeqcKernel(std::size_t const num_chemical_systems,
                   std::vector<std::pair<int, std::string>> const&
                       process_id_to_component_name_map,
-                  std::string const& database,
-                  AqueousSolution& aqueous_solution,
+                  std::string const database,
+                  AqueousSolution aqueous_solution,
                   std::unique_ptr<Kinetics>
                       kinetic_reactants,
                   std::vector<ReactionRate>&& reaction_rates);
@@ -56,7 +56,7 @@ public:
 private:
     void initializePhreeqcGeneralSettings() { do_initialize(); }
 
-    void loadDatabase(std::string const database);
+    void loadDatabase(std::string const& database);
 
     void reinitializeRates();
 
@@ -69,7 +69,7 @@ private:
 
     bool isHydrogen(char const* element) const
     {
-        return strcmp(element, "H") == 0 ? true : false;
+        return strcmp(element, "H") == 0;
     }
 
     void setTimeStepSize(double const dt);

@@ -22,17 +22,15 @@ namespace ChemistryLib
 {
 namespace PhreeqcKernelData
 {
-PhreeqcKernel::PhreeqcKernel(
-    std::size_t const num_chemical_systems,
-    std::vector<std::pair<int, std::string>> const&
-        process_id_to_component_name_map,
-    std::string const& database,
-    PhreeqcKernelData::AqueousSolution& aqueous_solution,
-    std::unique_ptr<Kinetics>
-        kinetic_reactants,
-    std::vector<ReactionRate>&& reaction_rates)
-    : Phreeqc(),
-      _initial_aqueous_solution(aqueous_solution.getInitialAqueousSolution()),
+PhreeqcKernel::PhreeqcKernel(std::size_t const num_chemical_systems,
+                             std::vector<std::pair<int, std::string>> const&
+                                 process_id_to_component_name_map,
+                             std::string const database,
+                             AqueousSolution aqueous_solution,
+                             std::unique_ptr<Kinetics>
+                                 kinetic_reactants,
+                             std::vector<ReactionRate>&& reaction_rates)
+    : _initial_aqueous_solution(aqueous_solution.getInitialAqueousSolution()),
       _reaction_rates(std::move(reaction_rates))
 {
     initializePhreeqcGeneralSettings();
@@ -72,7 +70,7 @@ PhreeqcKernel::PhreeqcKernel(
 
     for (auto const& map_pair : process_id_to_component_name_map)
     {
-        auto const& transport_process_id = map_pair.first;
+        auto const transport_process_id = map_pair.first;
         auto const& transport_process_variable = map_pair.second;
 
         auto master_species =
@@ -82,7 +80,7 @@ PhreeqcKernel::PhreeqcKernel(
     }
 }
 
-void PhreeqcKernel::loadDatabase(std::string const database)
+void PhreeqcKernel::loadDatabase(std::string const& database)
 {
     std::ifstream in(database);
     if (!in)
@@ -108,8 +106,10 @@ void PhreeqcKernel::reinitializeRates()
         rates[rate_id].commands = static_cast<char*>(
             malloc(sizeof(char) * reaction_rate.commands().size() + 1));
         if (rates[rate_id].commands == nullptr)
+        {
             OGS_FATAL("Could not allocate memory for rate[%d] commands.",
                       rate_id);
+        }
         reaction_rate.commands().copy(rates[rate_id].commands,
                                       std::string::npos);
         rates[rate_id].commands[reaction_rate.commands().size()] = '\0';
@@ -152,25 +152,24 @@ void PhreeqcKernel::setAqueousSolutions(
         // concentrations from process solutions
         for (auto const& map_pair : _process_id_to_master_map)
         {
-            auto const& transport_process_id = map_pair.first;
+            auto const transport_process_id = map_pair.first;
             auto const& master_species = map_pair.second;
 
             auto& transport_process_solution =
                 process_solutions[transport_process_id];
 
             auto& element_name = master_species->elt->name;
+            auto const concentration =
+                transport_process_solution->get(chemical_system_id);
             if (isHydrogen(element_name))
             {
                 // Set pH value by hydrogen concentration.
-                double const pH = -std::log10(
-                    transport_process_solution->get(chemical_system_id));
+                double const pH = -std::log10(concentration);
                 aqueous_solution.Set_ph(pH);
             }
             else
             {
                 // Set component concentrations.
-                auto const concentration =
-                    transport_process_solution->get(chemical_system_id);
                 components[element_name].Set_input_conc(concentration);
             }
         }
@@ -239,7 +238,7 @@ void PhreeqcKernel::updateNodalProcessSolutions(
 {
     for (auto const& map_pair : _process_id_to_master_map)
     {
-        auto const& transport_process_id = map_pair.first;
+        auto const transport_process_id = map_pair.first;
         auto const& master_species = map_pair.second;
 
         auto& transport_process_solution =
