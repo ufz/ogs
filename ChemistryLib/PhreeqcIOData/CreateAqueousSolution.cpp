@@ -14,13 +14,9 @@
 #include "BaseLib/Error.h"
 #include "CreateSolutionComponent.h"
 
-namespace ChemistryLib
-{
-namespace PhreeqcIOData
-{
 namespace
 {
-MeansOfAdjustingCharge parseMeansOfAdjustingCharge(
+ChemistryLib::PhreeqcIOData::MeansOfAdjustingCharge parseMeansOfAdjustingCharge(
     BaseLib::ConfigTree const& config)
 {
     auto const means_of_adjusting_charge_in_str =
@@ -29,15 +25,15 @@ MeansOfAdjustingCharge parseMeansOfAdjustingCharge(
 
     if (means_of_adjusting_charge_in_str.empty())
     {
-        return MeansOfAdjustingCharge::Unspecified;
+        return ChemistryLib::PhreeqcIOData::MeansOfAdjustingCharge::Unspecified;
     }
     if (means_of_adjusting_charge_in_str == "pH")
     {
-        return MeansOfAdjustingCharge::pH;
+        return ChemistryLib::PhreeqcIOData::MeansOfAdjustingCharge::pH;
     }
     if (means_of_adjusting_charge_in_str == "pe")
     {
-        return MeansOfAdjustingCharge::pe;
+        return ChemistryLib::PhreeqcIOData::MeansOfAdjustingCharge::pe;
     }
 
     OGS_FATAL(
@@ -47,6 +43,10 @@ MeansOfAdjustingCharge parseMeansOfAdjustingCharge(
 }
 }  // namespace
 
+namespace ChemistryLib
+{
+namespace PhreeqcIOData
+{
 AqueousSolution createAqueousSolution(
     BaseLib::ConfigTree const& config,
     std::vector<std::pair<int, std::string>> const&

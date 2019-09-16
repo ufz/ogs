@@ -28,8 +28,6 @@
 
 #include "ThirdParty/iphreeqc/src/src/phreeqcpp/cxxKinetics.h"
 
-namespace ChemistryLib
-{
 namespace
 {
 std::string parseDatabasePath(BaseLib::ConfigTree const& config)
@@ -53,6 +51,8 @@ std::string parseDatabasePath(BaseLib::ConfigTree const& config)
 }
 }  // namespace
 
+namespace ChemistryLib
+{
 template <>
 std::unique_ptr<ChemicalSolverInterface>
 createChemicalSolverInterface<ChemicalSolver::Phreeqc>(
