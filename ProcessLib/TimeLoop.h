@@ -47,23 +47,19 @@ public:
              std::unique_ptr<ChemistryLib::PhreeqcIO>&& chemical_system,
              const double start_time, const double end_time);
 
+    void initialize();
     bool loop();
 
     ~TimeLoop();
 
 private:
-
     /**
-     *  This function fills the vector of solutions of coupled processes of
-     *  processes, _solutions_of_coupled_processes, and initializes the vector
-     * of
-     *  solutions of the previous coupling iteration,
-     *  _solutions_of_last_cpl_iteration.
-     *
-     *  \return a boolean value as a flag to indicate there should be a coupling
-     *          among processes or not.
+     * This function fills the vector of solutions of coupled processes of
+     * processes, _solutions_of_coupled_processes, and initializes the vector
+     * of solutions of the previous coupling iteration,
+     * _solutions_of_last_cpl_iteration.
      */
-    bool setCoupledSolutions();
+    void setCoupledSolutions();
 
     /**
      * \brief Member to solver non coupled systems of equations, which can be
@@ -108,8 +104,7 @@ private:
                                std::size_t& rejected_steps);
 
     template <typename OutputClass, typename OutputClassMember>
-    void outputSolutions(bool const output_initial_condition,
-                         bool const is_staggered_coupling, unsigned timestep,
+    void outputSolutions(bool const output_initial_condition, unsigned timestep,
                          const double t, OutputClass& output_object,
                          OutputClassMember output_class_member) const;
 
