@@ -433,7 +433,7 @@ void TimeLoop::initialize()
  * TODO:
  * Now we have a structure inside the time loop which is very similar to the
  * nonlinear solver. And admittedly, the control flow inside the nonlinear
- * solver is rather complicated. Maybe in the future con can introduce an
+ * solver is rather complicated. Maybe in the future one can introduce an
  * abstraction that can do both the convergence checks of the coupling loop and
  * of the nonlinear solver.
  */
