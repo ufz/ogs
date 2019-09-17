@@ -528,15 +528,26 @@ bool TimeLoop::loop()
     return nonlinear_solver_status.error_norms_met;
 }
 
+void preTimestepForAllProcesses(
+    double const t, double const dt,
+    std::vector<std::unique_ptr<ProcessData>> const& per_process_data,
+    std::vector<GlobalVector*> const& _process_solutions)
+{
+    for (auto& process_data : per_process_data)
+    {
+        auto const process_id = process_data->process_id;
+        auto& x = *_process_solutions[process_id];
+        auto& pcs = process_data->process;
+        pcs.preTimestep(x, t, dt, process_id);
+    }
+}
+
 static NumLib::NonlinearSolverStatus solveMonolithicProcess(
     const double t, const double dt, const std::size_t timestep_id,
-    ProcessData const& process_data, GlobalVector& x, Process& pcs,
-    Output& output)
+    ProcessData const& process_data, GlobalVector& x, Output& output)
 {
     BaseLib::RunTime time_timestep_process;
     time_timestep_process.start();
-
-    pcs.preTimestep(x, t, dt, process_data.process_id);
 
     auto const nonlinear_solver_status = solveOneTimeStepOneProcess(
         process_data.process_id, x, timestep_id, t, dt, process_data, output);
@@ -582,13 +593,14 @@ void postTimestepForAllProcesses(
 NumLib::NonlinearSolverStatus TimeLoop::solveUncoupledEquationSystems(
     const double t, const double dt, const std::size_t timestep_id)
 {
+    preTimestepForAllProcesses(t, dt, _per_process_data, _process_solutions);
+
     NumLib::NonlinearSolverStatus nonlinear_solver_status;
     for (auto& process_data : _per_process_data)
     {
         nonlinear_solver_status = solveMonolithicProcess(
             t, dt, timestep_id, *process_data,
-            *_process_solutions[process_data->process_id],
-            process_data->process, *_output);
+            *_process_solutions[process_data->process_id], *_output);
 
         process_data->nonlinear_solver_status = nonlinear_solver_status;
         if (!nonlinear_solver_status.error_norms_met)
@@ -637,16 +649,7 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
         }
     };
 
-    // Update solutions of previous time step at once
-    {
-        int process_id = 0;
-        for (auto& process_data : _per_process_data)
-        {
-            auto& x = *_process_solutions[process_id];
-            process_data->process.preTimestep(x, t, dt, process_id);
-            ++process_id;
-        }
-    }
+    preTimestepForAllProcesses(t, dt, _per_process_data, _process_solutions);
 
     NumLib::NonlinearSolverStatus nonlinear_solver_status{true, 0};
     bool coupling_iteration_converged = true;
