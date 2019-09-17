@@ -18,6 +18,7 @@ namespace MaterialPropertyLib
 std::unique_ptr<IdealGasLaw> createIdealGasLaw(
     BaseLib::ConfigTree const& config)
 {
+    //! \ogs_file_param{properties__property__type}
     config.checkConfigParameter("type", "IdealGasLaw");
     DBUG("Create IdealGasLaw medium property");
     return std::make_unique<IdealGasLaw>();

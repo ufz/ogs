@@ -18,6 +18,7 @@ namespace MaterialPropertyLib
 std::unique_ptr<LinearProperty> createLinearProperty(
     BaseLib::ConfigTree const& config)
 {
+    //! \ogs_file_param{properties__property__type}
     config.checkConfigParameter("type", "Linear");
     DBUG("Create Linear property");
 

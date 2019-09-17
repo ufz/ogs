@@ -18,6 +18,7 @@ namespace MaterialPropertyLib
 std::unique_ptr<ExponentialProperty> createExponentialProperty(
     BaseLib::ConfigTree const& config)
 {
+    //! \ogs_file_param{properties__property__type}
     config.checkConfigParameter("type", "Exponential");
     DBUG("Create Exponential property");
     auto const reference_value =

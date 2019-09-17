@@ -16,23 +16,22 @@ namespace MaterialPropertyLib
 std::unique_ptr<SaturationBrooksCorey> createSaturationBrooksCorey(
     BaseLib::ConfigTree const& config)
 {
-    // check is reading the parameter, not peeking it...
-    //! \ogs_file_param{prj__media__medium__properties__property__SaturationBrooksCorey}
+    //! \ogs_file_param{properties__property__type}
     config.checkConfigParameter("type", "SaturationBrooksCorey");
 
     DBUG("Create SaturationBrooksCorey medium property");
 
     auto const residual_liquid_saturation =
-        //! \ogs_file_param{prj__media__medium__properties__property__SaturationBrooksCorey__residual_liquid_saturation}
+        //! \ogs_file_param{properties__property__SaturationBrooksCorey__residual_liquid_saturation}
         config.getConfigParameter<double>("residual_liquid_saturation");
     auto const residual_gas_saturation =
-        //! \ogs_file_param{prj__media__medium__properties__property__SaturationBrooksCorey__residual_gas_saturation}
+        //! \ogs_file_param{properties__property__SaturationBrooksCorey__residual_gas_saturation}
         config.getConfigParameter<double>("residual_gas_saturation");
     auto const exponent =
-        //! \ogs_file_param{prj__media__medium__properties__property__SaturationBrooksCorey__lambda}
+        //! \ogs_file_param{properties__property__SaturationBrooksCorey__lambda}
         config.getConfigParameter<double>("lambda");
     auto const entry_pressure =
-        //! \ogs_file_param{prj__media__medium__properties__property__SaturationBrooksCorey__entry_pressure}
+        //! \ogs_file_param{properties__property__SaturationBrooksCorey__entry_pressure}
         config.getConfigParameter<double>("entry_pressure");
 
     return std::make_unique<SaturationBrooksCorey>(residual_liquid_saturation,

@@ -17,6 +17,7 @@ namespace MaterialPropertyLib
 {
 std::unique_ptr<Constant> createConstant(BaseLib::ConfigTree const& config)
 {
+    //! \ogs_file_param{properties__property__type}
     config.checkConfigParameter("type", "Constant");
     DBUG("Create Constant property");
     std::vector<double> const values =

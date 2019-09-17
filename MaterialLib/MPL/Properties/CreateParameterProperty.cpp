@@ -22,6 +22,7 @@ std::unique_ptr<ParameterProperty> createParameterProperty(
     BaseLib::ConfigTree const& config,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters)
 {
+    //! \ogs_file_param{properties__property__type}
     config.checkConfigParameter("type", "Parameter");
     DBUG("Create Parameter property");
 
