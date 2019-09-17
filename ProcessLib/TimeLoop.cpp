@@ -551,6 +551,34 @@ static std::string const nonlinear_fixed_dt_fails_info =
     "Nonlinear solver fails. Because the time stepper FixedTimeStepping is "
     "used, the program has to be terminated.";
 
+void postTimestepForAllProcesses(
+    double const t, double const dt,
+    std::vector<std::unique_ptr<ProcessData>> const& per_process_data,
+    std::vector<GlobalVector*> const& _process_solutions,
+    std::vector<std::reference_wrapper<GlobalVector const>> const&
+        solutions_of_coupled_processes)
+{
+    // All _per_process_data share the first process.
+    bool const is_staggered_coupling =
+        !isMonolithicProcess(*per_process_data[0]);
+
+    for (auto& process_data : per_process_data)
+    {
+        auto const process_id = process_data->process_id;
+        auto& pcs = process_data->process;
+
+        if (is_staggered_coupling)
+        {
+            CoupledSolutionsForStaggeredScheme coupled_solutions(
+                solutions_of_coupled_processes, dt, process_id);
+            pcs.setCoupledSolutionsForStaggeredScheme(&coupled_solutions);
+        }
+        auto& x = *_process_solutions[process_id];
+        pcs.postTimestep(x, t, dt, process_id);
+        pcs.computeSecondaryVariable(t, x, process_id);
+    }
+}
+
 NumLib::NonlinearSolverStatus TimeLoop::solveUncoupledEquationSystems(
     const double t, const double dt, const std::size_t timestep_id)
 {
@@ -581,15 +609,10 @@ NumLib::NonlinearSolverStatus TimeLoop::solveUncoupledEquationSystems(
 
             return nonlinear_solver_status;
         }
-    }  // end of for (auto& process_data : _per_process_data)
+    }
 
-    for (auto& process_data : _per_process_data)
-    {
-        auto& x = *_process_solutions[process_data->process_id];
-        process_data->process.postTimestep(x, t, dt, process_data->process_id);
-        process_data->process.computeSecondaryVariable(
-            t, x, process_data->process_id);
-    }  // end of for (auto& process_data : _per_process_data)
+    postTimestepForAllProcesses(t, dt, _per_process_data, _process_solutions,
+                                _solutions_of_coupled_processes);
 
     return nonlinear_solver_status;
 }
@@ -729,22 +752,8 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
         INFO("[time] Phreeqc took %g s.", time_phreeqc.elapsed());
     }
 
-    int process_id = 0;
-    for (auto& process_data : _per_process_data)
-    {
-        CoupledSolutionsForStaggeredScheme coupled_solutions(
-            _solutions_of_coupled_processes, dt, process_id);
-
-        process_data->process.setCoupledSolutionsForStaggeredScheme(
-            &coupled_solutions);
-
-        auto& pcs = process_data->process;
-        auto& x = *_process_solutions[process_id];
-        pcs.postTimestep(x, t, dt, process_id);
-        pcs.computeSecondaryVariable(t, x, process_id);
-
-        ++process_id;
-    }
+    postTimestepForAllProcesses(t, dt, _per_process_data, _process_solutions,
+                                _solutions_of_coupled_processes);
 
     return nonlinear_solver_status;
 }
