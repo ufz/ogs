@@ -595,7 +595,7 @@ NumLib::NonlinearSolverStatus TimeLoop::solveUncoupledEquationSystems(
 {
     preTimestepForAllProcesses(t, dt, _per_process_data, _process_solutions);
 
-    NumLib::NonlinearSolverStatus nonlinear_solver_status;
+    NumLib::NonlinearSolverStatus nonlinear_solver_status{false, -1};
     for (auto& process_data : _per_process_data)
     {
         nonlinear_solver_status = solveMonolithicProcess(
@@ -651,7 +651,7 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
 
     preTimestepForAllProcesses(t, dt, _per_process_data, _process_solutions);
 
-    NumLib::NonlinearSolverStatus nonlinear_solver_status{true, 0};
+    NumLib::NonlinearSolverStatus nonlinear_solver_status{false, -1};
     bool coupling_iteration_converged = true;
     for (int global_coupling_iteration = 0;
          global_coupling_iteration < _global_coupling_max_iterations;
