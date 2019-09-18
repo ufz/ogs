@@ -11,9 +11,14 @@
 #include <algorithm>
 #include <numeric>
 
+#include "AqueousSolution.h"
 #include "CreateOutput.h"
+#include "EquilibriumPhase.h"
+#include "KineticReactant.h"
 
 namespace ChemistryLib
+{
+namespace PhreeqcIOData
 {
 std::unique_ptr<Output> createOutput(
     std::vector<Component> const& components,
@@ -35,12 +40,12 @@ std::unique_ptr<Output> createOutput(
 
     for (auto const& kinetic_reactant : kinetic_reactants)
     {
-        if (kinetic_reactant.item_type == ItemType::KineticReactant &&
-            kinetic_reactant.fix_amount)
+        if (kinetic_reactant.fix_amount)
+        {
             continue;
-
-        accepted_items.push_back(
-                    OutputItem(kinetic_reactant.name, kinetic_reactant.item_type));
+        }
+        accepted_items.emplace_back(kinetic_reactant.name,
+                                    kinetic_reactant.item_type);
     }
 
     // Record ids of which phreeqc output items will be dropped.
@@ -69,4 +74,5 @@ std::unique_ptr<Output> createOutput(
                                     std::move(accepted_items),
                                     std::move(dropped_item_ids));
 }
+}  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

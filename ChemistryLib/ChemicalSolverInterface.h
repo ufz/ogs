@@ -10,23 +10,16 @@
 
 #pragma once
 
-#include <string>
-#include <vector>
-
-namespace BaseLib
-{
-class ConfigTree;
-}
+#include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
 
 namespace ChemistryLib
 {
-namespace PhreeqcIOData
+class ChemicalSolverInterface
 {
-struct AqueousSolution;
+public:
+    virtual void doWaterChemistryCalculation(
+        std::vector<GlobalVector*>& process_solutions, double const dt) = 0;
 
-AqueousSolution createAqueousSolution(
-    BaseLib::ConfigTree const& config,
-    std::vector<std::pair<int, std::string>> const&
-        process_id_to_component_name_map);
-}  // namespace PhreeqcIOData
+    virtual ~ChemicalSolverInterface() = default;
+};
 }  // namespace ChemistryLib

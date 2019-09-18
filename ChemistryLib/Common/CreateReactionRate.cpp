@@ -8,11 +8,15 @@
  *
  */
 
+#include <boost/optional/optional.hpp>
+
 #include "BaseLib/ConfigTree.h"
-#include "ReactionRate.h"
+#include "ChemistryLib/PhreeqcIOData/ReactionRate.h"
+#include "ChemistryLib/PhreeqcKernelData/ReactionRate.h"
 
 namespace ChemistryLib
 {
+template <typename ReactionRate>
 std::vector<ReactionRate> createReactionRates(
     boost::optional<BaseLib::ConfigTree> const& config)
 {
@@ -49,4 +53,12 @@ std::vector<ReactionRate> createReactionRates(
 
     return reaction_rates;
 }
+
+template std::vector<PhreeqcIOData::ReactionRate>
+createReactionRates<PhreeqcIOData::ReactionRate>(
+    boost::optional<BaseLib::ConfigTree> const& config);
+
+template std::vector<PhreeqcKernelData::ReactionRate>
+createReactionRates<PhreeqcKernelData::ReactionRate>(
+    boost::optional<BaseLib::ConfigTree> const& config);
 }  // namespace ChemistryLib

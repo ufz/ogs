@@ -8,27 +8,22 @@
  *
  */
 
-#include <ostream>
-
 #include "ReactionRate.h"
 
 namespace ChemistryLib
 {
-namespace PhreeqcIOData
+namespace PhreeqcKernelData
 {
-std::ostream& operator<<(std::ostream& os, ReactionRate const& reaction_rate)
+ReactionRate::ReactionRate(std::string kinetic_reactant_,
+                           std::vector<std::string> statements)
+    : kinetic_reactant(std::move(kinetic_reactant_))
 {
-    os << reaction_rate.kinetic_reactant << "\n";
-    os << "-start" << "\n";
     int line_number = 1;
-    for (auto const& expression_statement : reaction_rate.expression_statements)
+    for (auto const& statement : statements)
     {
-        os << line_number << " " << expression_statement << "\n";
+        _commands += std::to_string(line_number) + " " + statement + "; ";
         ++line_number;
     }
-    os << "-end" << "\n";
-
-    return os;
 }
-}  // namespace PhreeqcIOData
+}  // namespace PhreeqcKernelData
 }  // namespace ChemistryLib

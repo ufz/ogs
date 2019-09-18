@@ -14,9 +14,11 @@
 #include <string>
 #include <vector>
 
-#include "ChemistryLib/Output.h"
+#include "Output.h"
 
 namespace ChemistryLib
+{
+namespace PhreeqcIOData
 {
 struct Component
 {
@@ -59,4 +61,5 @@ struct AqueousSolution
     std::vector<Component> components;
     MeansOfAdjustingCharge const means_of_adjusting_charge;
 };
+}  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

@@ -11,17 +11,21 @@
 #pragma once
 
 #include <memory>
-
-#include "Output.h"
-#include "PhreeqcIOData/AqueousSolution.h"
-#include "PhreeqcIOData/EquilibriumPhase.h"
-#include "PhreeqcIOData/KineticReactant.h"
+#include <vector>
 
 namespace ChemistryLib
 {
+namespace PhreeqcIOData
+{
+struct Output;
+struct Component;
+struct EquilibriumPhase;
+struct KineticReactant;
+
 std::unique_ptr<Output> createOutput(
     std::vector<Component> const& components,
     std::vector<EquilibriumPhase> const& equilibrium_phases,
     std::vector<KineticReactant> const& kinetic_reactants,
     std::string const& project_file_name);
+}  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

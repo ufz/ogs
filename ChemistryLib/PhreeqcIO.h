@@ -12,25 +12,28 @@
 
 #include <memory>
 
-#include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
-#include "Output.h"
-#include "PhreeqcIOData/AqueousSolution.h"
-#include "PhreeqcIOData/EquilibriumPhase.h"
-#include "PhreeqcIOData/KineticReactant.h"
-#include "PhreeqcIOData/ReactionRate.h"
+#include "ChemicalSolverInterface.h"
 
 namespace ChemistryLib
 {
+namespace PhreeqcIOData
+{
+struct AqueousSolution;
+struct EquilibriumPhase;
+struct KineticReactant;
+struct ReactionRate;
+struct Output;
+
 enum class Status
 {
     SettingAqueousSolutions,
     UpdatingProcessSolutions
 };
 
-class PhreeqcIO
+class PhreeqcIO final : public ChemicalSolverInterface
 {
 public:
-    PhreeqcIO(std::string const& project_file_name,
+    PhreeqcIO(std::string const project_file_name,
               std::string&& database,
               std::vector<AqueousSolution>&& aqueous_solutions,
               std::vector<EquilibriumPhase>&& equilibrium_phases,
@@ -41,15 +44,14 @@ public:
                   process_id_to_component_name_map);
 
     void doWaterChemistryCalculation(
-        std::vector<GlobalVector*>& process_solutions, double const dt);
+        std::vector<GlobalVector*>& process_solutions,
+        double const dt) override;
 
     void setAqueousSolutionsOrUpdateProcessSolutions(
         std::vector<GlobalVector*> const& process_solutions,
         Status const status);
 
-    void setTimeStep(double const dt) { _dt = dt; }
-
-    void writeInputsToFile();
+    void writeInputsToFile(double const dt);
 
     void execute();
 
@@ -63,6 +65,12 @@ public:
     std::string const _phreeqc_input_file;
 
 private:
+    PhreeqcIO& operator<<(double const dt)
+    {
+        _dt = dt;
+        return *this;
+    }
+
     std::string const _database;
     std::vector<AqueousSolution> _aqueous_solutions;
     std::vector<EquilibriumPhase> _equilibrium_phases;
@@ -74,4 +82,5 @@ private:
     double _dt = std::numeric_limits<double>::quiet_NaN();
     const int phreeqc_instance_id = 0;
 };
+}  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

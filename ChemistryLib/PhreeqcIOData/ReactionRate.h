@@ -16,6 +16,8 @@
 
 namespace ChemistryLib
 {
+namespace PhreeqcIOData
+{
 struct ReactionRate
 {
     ReactionRate(std::string kinetic_reactant_,
@@ -32,4 +34,5 @@ struct ReactionRate
     std::string const kinetic_reactant;
     std::vector<std::string> const expression_statements;
 };
+}  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

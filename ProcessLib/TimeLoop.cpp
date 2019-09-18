@@ -12,7 +12,7 @@
 
 #include "BaseLib/Error.h"
 #include "BaseLib/RunTime.h"
-#include "ChemistryLib/CreatePhreeqcIO.h"
+#include "ChemistryLib/ChemicalSolverInterface.h"
 #include "MathLib/LinAlg/LinAlg.h"
 #include "NumLib/ODESolver/ConvergenceCriterionPerComponent.h"
 #include "NumLib/ODESolver/TimeDiscretizedODESystem.h"
@@ -207,13 +207,14 @@ NumLib::NonlinearSolverStatus solveOneTimeStepOneProcess(
     return nonlinear_solver_status;
 }
 
-TimeLoop::TimeLoop(std::unique_ptr<Output>&& output,
-                   std::vector<std::unique_ptr<ProcessData>>&& per_process_data,
-                   const int global_coupling_max_iterations,
-                   std::vector<std::unique_ptr<NumLib::ConvergenceCriterion>>&&
-                       global_coupling_conv_crit,
-                   std::unique_ptr<ChemistryLib::PhreeqcIO>&& chemical_system,
-                   const double start_time, const double end_time)
+TimeLoop::TimeLoop(
+    std::unique_ptr<Output>&& output,
+    std::vector<std::unique_ptr<ProcessData>>&& per_process_data,
+    const int global_coupling_max_iterations,
+    std::vector<std::unique_ptr<NumLib::ConvergenceCriterion>>&&
+        global_coupling_conv_crit,
+    std::unique_ptr<ChemistryLib::ChemicalSolverInterface>&& chemical_system,
+    const double start_time, const double end_time)
     : _output(std::move(output)),
       _per_process_data(std::move(per_process_data)),
       _start_time(start_time),
@@ -722,7 +723,10 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
         // process.
         // TODO: move into a global loop to consider both mass balance over
         // space and localized chemical equilibrium between solutes.
+        BaseLib::RunTime time_phreeqc;
+        time_phreeqc.start();
         _chemical_system->doWaterChemistryCalculation(_process_solutions, dt);
+        INFO("[time] Phreeqc took %g s.", time_phreeqc.elapsed());
     }
 
     int process_id = 0;

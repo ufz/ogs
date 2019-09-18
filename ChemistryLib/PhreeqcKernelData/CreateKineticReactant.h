@@ -11,7 +11,9 @@
 #pragma once
 
 #include <boost/optional/optional_fwd.hpp>
-#include <vector>
+#include <memory>
+
+#include "KineticReactant.h"
 
 namespace BaseLib
 {
@@ -25,12 +27,10 @@ class Mesh;
 
 namespace ChemistryLib
 {
-namespace PhreeqcIOData
+namespace PhreeqcKernelData
 {
-struct EquilibriumPhase;
-
-std::vector<EquilibriumPhase> createEquilibriumPhases(
+std::unique_ptr<Kinetics> createKineticReactants(
     boost::optional<BaseLib::ConfigTree> const& config,
     MeshLib::Mesh const& mesh);
-}  // namespace PhreeqcIOData
+}
 }  // namespace ChemistryLib

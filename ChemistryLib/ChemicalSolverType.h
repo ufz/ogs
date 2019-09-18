@@ -10,23 +10,11 @@
 
 #pragma once
 
-#include <string>
-#include <vector>
-
-namespace BaseLib
-{
-class ConfigTree;
-}
-
 namespace ChemistryLib
 {
-namespace PhreeqcIOData
+enum class ChemicalSolver
 {
-struct AqueousSolution;
-
-AqueousSolution createAqueousSolution(
-    BaseLib::ConfigTree const& config,
-    std::vector<std::pair<int, std::string>> const&
-        process_id_to_component_name_map);
-}  // namespace PhreeqcIOData
+    Phreeqc,
+    PhreeqcKernel
+};
 }  // namespace ChemistryLib

@@ -10,31 +10,17 @@
 
 #pragma once
 
-#include <memory>
-
-#include "PhreeqcIO.h"
-
-namespace MeshLib
-{
-class Mesh;
-}
+#include <boost/optional/optional_fwd.hpp>
+#include <vector>
 
 namespace BaseLib
 {
 class ConfigTree;
 }
 
-namespace ProcessLib
-{
-class Process;
-}
-
 namespace ChemistryLib
 {
-std::unique_ptr<PhreeqcIO> createPhreeqcIO(
-    MeshLib::Mesh const& mesh,
-    std::vector<std::pair<int, std::string>> const&
-        process_id_to_component_name_map,
-    BaseLib::ConfigTree const& config,
-    std::string const& output_directory);
+template <typename ReactionRate>
+std::vector<ReactionRate> createReactionRates(
+    boost::optional<BaseLib::ConfigTree> const& config);
 }  // namespace ChemistryLib

@@ -10,27 +10,26 @@
 
 #pragma once
 
-#include <boost/optional/optional_fwd.hpp>
+#include <string>
 #include <vector>
-
-namespace BaseLib
-{
-class ConfigTree;
-}
-
-namespace MeshLib
-{
-class Mesh;
-}
 
 namespace ChemistryLib
 {
-namespace PhreeqcIOData
+namespace PhreeqcKernelData
 {
-struct EquilibriumPhase;
+class ReactionRate
+{
+public:
+    ReactionRate(std::string kinetic_reactant_,
+                 std::vector<std::string> statements);
 
-std::vector<EquilibriumPhase> createEquilibriumPhases(
-    boost::optional<BaseLib::ConfigTree> const& config,
-    MeshLib::Mesh const& mesh);
-}  // namespace PhreeqcIOData
+    std::string const& commands() const { return _commands; }
+
+public:
+    std::string const kinetic_reactant;
+
+private:
+    std::string _commands;
+};
+}  // namespace PhreeqcKernelData
 }  // namespace ChemistryLib

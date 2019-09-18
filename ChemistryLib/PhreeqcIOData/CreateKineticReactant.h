@@ -25,12 +25,12 @@ class Mesh;
 
 namespace ChemistryLib
 {
-struct KineticReactant;
-}
-
-namespace ChemistryLib
+namespace PhreeqcIOData
 {
+struct KineticReactant;
+
 std::vector<KineticReactant> createKineticReactants(
     boost::optional<BaseLib::ConfigTree> const& config,
     MeshLib::Mesh const& mesh);
+}  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

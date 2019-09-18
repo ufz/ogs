@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include <boost/optional/optional_fwd.hpp>
+#include <string>
 #include <vector>
 
 namespace BaseLib
@@ -18,19 +18,15 @@ namespace BaseLib
 class ConfigTree;
 }
 
-namespace MeshLib
-{
-class Mesh;
-}
-
 namespace ChemistryLib
 {
-namespace PhreeqcIOData
+namespace PhreeqcKernelData
 {
-struct EquilibriumPhase;
+class InitialAqueousSolution;
 
-std::vector<EquilibriumPhase> createEquilibriumPhases(
-    boost::optional<BaseLib::ConfigTree> const& config,
-    MeshLib::Mesh const& mesh);
-}  // namespace PhreeqcIOData
+InitialAqueousSolution createInitialAqueousSolution(
+    BaseLib::ConfigTree const& config,
+    std::vector<std::pair<int, std::string>> const&
+        process_id_to_component_name_map);
+}  // namespace PhreeqcKernelData
 }  // namespace ChemistryLib

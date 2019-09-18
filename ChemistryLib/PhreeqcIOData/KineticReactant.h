@@ -15,10 +15,12 @@
 #include <string>
 #include <vector>
 
-#include "ChemistryLib/Output.h"
 #include "MeshLib/PropertyVector.h"
+#include "Output.h"
 
 namespace ChemistryLib
+{
+namespace PhreeqcIOData
 {
 struct KineticReactant
 {
@@ -44,4 +46,5 @@ struct KineticReactant
     bool const fix_amount;
     static const ItemType item_type = ItemType::KineticReactant;
 };
+}  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

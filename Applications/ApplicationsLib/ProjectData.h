@@ -139,5 +139,5 @@ private:
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>>
         _curves;
 
-    std::unique_ptr<ChemistryLib::PhreeqcIO> _chemical_system;
+    std::unique_ptr<ChemistryLib::ChemicalSolverInterface> _chemical_system;
 };

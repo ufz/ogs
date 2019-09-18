@@ -10,8 +10,11 @@
 
 #pragma once
 
-#include <boost/optional/optional_fwd.hpp>
+#include <memory>
+#include <string>
 #include <vector>
+
+#include "ChemicalSolverType.h"
 
 namespace BaseLib
 {
@@ -25,12 +28,12 @@ class Mesh;
 
 namespace ChemistryLib
 {
-namespace PhreeqcIOData
-{
-struct EquilibriumPhase;
+class ChemicalSolverInterface;
 
-std::vector<EquilibriumPhase> createEquilibriumPhases(
-    boost::optional<BaseLib::ConfigTree> const& config,
-    MeshLib::Mesh const& mesh);
-}  // namespace PhreeqcIOData
+template <ChemicalSolver chemical_solver>
+std::unique_ptr<ChemicalSolverInterface> createChemicalSolverInterface(
+    MeshLib::Mesh const& mesh,
+    std::vector<std::pair<int, std::string>> const&
+        process_id_to_component_name_map,
+    BaseLib::ConfigTree const& config, std::string const& output_directory);
 }  // namespace ChemistryLib
