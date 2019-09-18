@@ -395,7 +395,6 @@ void ThermoMechanicsProcess<DisplacementDim>::preTimestepConcreteProcess(
     DBUG("PreTimestep ThermoMechanicsProcess.");
 
     _process_data.dt = dt;
-    _process_data.t = t;
 
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
@@ -427,7 +426,7 @@ void ThermoMechanicsProcess<DisplacementDim>::preTimestepConcreteProcess(
 
 template <int DisplacementDim>
 void ThermoMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
-    GlobalVector const& x, const double /*t*/, const double /*delta_t*/,
+    GlobalVector const& x, double const t, double const dt,
     int const process_id)
 {
     if (process_id != _process_data.mechanics_process_id)
@@ -442,7 +441,7 @@ void ThermoMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &ThermoMechanicsLocalAssemblerInterface::postTimestep,
         _local_assemblers, pv.getActiveElementIDs(),
-        *_local_to_global_index_map, x);
+        *_local_to_global_index_map, x, t, dt);
 }
 
 template <int DisplacementDim>

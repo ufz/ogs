@@ -120,8 +120,9 @@ public:
         }
     }
 
-    void postTimestepConcrete(std::vector<double> const& /*local_x*/
-                              ) override
+    void postTimestepConcrete(std::vector<double> const& /*local_x*/,
+                              double const /*t*/,
+                              double const /*dt*/) override
     {
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();

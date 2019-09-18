@@ -296,21 +296,20 @@ void SmallDeformationNonlocalProcess<DisplacementDim>::
 template <int DisplacementDim>
 void SmallDeformationNonlocalProcess<
     DisplacementDim>::preTimestepConcreteProcess(GlobalVector const& /*x*/,
-                                                 double const t,
+                                                 double const /*t*/,
                                                  double const dt,
                                                  int const /*process_id*/)
 {
     DBUG("PreTimestep SmallDeformationNonlocalProcess.");
 
     _process_data.dt = dt;
-    _process_data.t = t;
 }
 
 template <int DisplacementDim>
 void SmallDeformationNonlocalProcess<
     DisplacementDim>::postTimestepConcreteProcess(GlobalVector const& x,
-                                                  double const /*t*/,
-                                                  double const /*dt*/,
+                                                  double const t,
+                                                  double const dt,
                                                   int const process_id)
 {
     DBUG("PostTimestep SmallDeformationNonlocalProcess.");
@@ -319,7 +318,7 @@ void SmallDeformationNonlocalProcess<
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerInterface::postTimestep, _local_assemblers,
-        pv.getActiveElementIDs(), *_local_to_global_index_map, x);
+        pv.getActiveElementIDs(), *_local_to_global_index_map, x, t, dt);
 }
 
 template <int DisplacementDim>

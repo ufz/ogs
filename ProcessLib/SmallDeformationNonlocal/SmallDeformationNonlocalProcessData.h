@@ -52,7 +52,6 @@ struct SmallDeformationNonlocalProcessData
     double crack_volume = 0.0;
 
     double dt = std::numeric_limits<double>::quiet_NaN();
-    double t = std::numeric_limits<double>::quiet_NaN();
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };

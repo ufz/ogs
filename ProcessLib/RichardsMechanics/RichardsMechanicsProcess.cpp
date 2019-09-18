@@ -335,7 +335,6 @@ void RichardsMechanicsProcess<DisplacementDim>::preTimestepConcreteProcess(
     DBUG("PreTimestep RichardsMechanicsProcess.");
 
     _process_data.dt = dt;
-    _process_data.t = t;
 
     if (hasMechanicalProcess(process_id))
     {

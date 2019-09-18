@@ -272,7 +272,6 @@ void ThermoMechanicalPhaseFieldProcess<
     DBUG("PreTimestep ThermoMechanicalPhaseFieldProcess.");
 
     _process_data.dt = dt;
-    _process_data.t = t;
 
     if (process_id != _mechanics_related_process_id)
     {
@@ -290,8 +289,8 @@ void ThermoMechanicalPhaseFieldProcess<
 template <int DisplacementDim>
 void ThermoMechanicalPhaseFieldProcess<
     DisplacementDim>::postTimestepConcreteProcess(GlobalVector const& x,
-                                                  double const /*t*/,
-                                                  double const /*dt*/,
+                                                  double const t,
+                                                  double const dt,
                                                   int const process_id)
 {
     DBUG("PostTimestep ThermoMechanicalPhaseFieldProcess.");
@@ -300,8 +299,8 @@ void ThermoMechanicalPhaseFieldProcess<
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &ThermoMechanicalPhaseFieldLocalAssemblerInterface::postTimestep,
-        _local_assemblers, pv.getActiveElementIDs(), getDOFTable(process_id),
-        x);
+        _local_assemblers, pv.getActiveElementIDs(), getDOFTable(process_id), x,
+        t, dt);
 }
 
 template <int DisplacementDim>
