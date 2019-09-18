@@ -26,7 +26,7 @@ CentralDifferencesJacobianAssembler::CentralDifferencesJacobianAssembler(
 }
 
 void CentralDifferencesJacobianAssembler::assembleWithJacobian(
-    LocalAssemblerInterface& local_assembler, const double t,
+    LocalAssemblerInterface& local_assembler, const double t, double const dt,
     const std::vector<double>& local_x_data,
     const std::vector<double>& local_xdot_data, const double dxdot_dx,
     const double dx_dx, std::vector<double>& local_M_data,

@@ -125,7 +125,8 @@ public:
      * \mathtt{Jac} \f$.
      * \endparblock
      */
-    virtual void assembleWithJacobian(const double t, GlobalVector const& x,
+    virtual void assembleWithJacobian(const double t, double const dt,
+                                      GlobalVector const& x,
                                       GlobalVector const& xdot,
                                       const double dxdot_dx, const double dx_dx,
                                       GlobalMatrix& M, GlobalMatrix& K,

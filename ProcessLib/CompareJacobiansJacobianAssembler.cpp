@@ -125,7 +125,7 @@ const std::string msg_fatal =
 namespace ProcessLib
 {
 void CompareJacobiansJacobianAssembler::assembleWithJacobian(
-    LocalAssemblerInterface& local_assembler, double const t,
+    LocalAssemblerInterface& local_assembler, double const t, double const dt,
     std::vector<double> const& local_x, std::vector<double> const& local_xdot,
     const double dxdot_dx, const double dx_dx,
     std::vector<double>& local_M_data, std::vector<double>& local_K_data,
@@ -147,7 +147,7 @@ void CompareJacobiansJacobianAssembler::assembleWithJacobian(
 
     // First assembly -- the one whose results will be added to the global
     // equation system finally.
-    _asm1->assembleWithJacobian(local_assembler, t, local_x, local_xdot,
+    _asm1->assembleWithJacobian(local_assembler, t, dt, local_x, local_xdot,
                                 dxdot_dx, dx_dx, local_M_data, local_K_data,
                                 local_b_data, local_Jac_data);
 
@@ -161,7 +161,7 @@ void CompareJacobiansJacobianAssembler::assembleWithJacobian(
     std::vector<double> local_Jac_data2;
 
     // Second assembly -- used for checking only.
-    _asm2->assembleWithJacobian(local_assembler, t, local_x, local_xdot,
+    _asm2->assembleWithJacobian(local_assembler, t, dt, local_x, local_xdot,
                                 dxdot_dx, dx_dx, local_M_data2, local_K_data2,
                                 local_b_data2, local_Jac_data2);
 

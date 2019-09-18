@@ -59,9 +59,9 @@ public:
         std::vector<
             std::reference_wrapper<NumLib::LocalToGlobalIndexMap>> const&
             dof_tables,
-        const double t, GlobalVector const& x, GlobalVector const& xdot,
-        const double dxdot_dx, const double dx_dx, GlobalMatrix& M,
-        GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac,
+        const double t, double const dt, GlobalVector const& x,
+        GlobalVector const& xdot, const double dxdot_dx, const double dx_dx,
+        GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac,
         CoupledSolutionsForStaggeredScheme const* const cpl_xs);
 
 private:

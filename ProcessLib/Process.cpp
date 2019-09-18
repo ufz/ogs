@@ -210,7 +210,8 @@ void Process::assemble(const double t, GlobalVector const& x, GlobalMatrix& M,
     _source_term_collections[pcs_id].integrate(t, x, b, nullptr);
 }
 
-void Process::assembleWithJacobian(const double t, GlobalVector const& x,
+void Process::assembleWithJacobian(const double t, double const dt,
+                                   GlobalVector const& x,
                                    GlobalVector const& xdot,
                                    const double dxdot_dx, const double dx_dx,
                                    GlobalMatrix& M, GlobalMatrix& K,
@@ -219,8 +220,8 @@ void Process::assembleWithJacobian(const double t, GlobalVector const& x,
     MathLib::LinAlg::setLocalAccessibleVector(x);
     MathLib::LinAlg::setLocalAccessibleVector(xdot);
 
-    assembleWithJacobianConcreteProcess(t, x, xdot, dxdot_dx, dx_dx, M, K, b,
-                                        Jac);
+    assembleWithJacobianConcreteProcess(t, dt, x, xdot, dxdot_dx, dx_dx, M, K,
+                                        b, Jac);
 
     // TODO: apply BCs to Jacobian.
     const auto pcs_id =

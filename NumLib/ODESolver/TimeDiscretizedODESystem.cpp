@@ -76,6 +76,7 @@ void TimeDiscretizedODESystem<
     namespace LinAlg = MathLib::LinAlg;
 
     auto const t = _time_disc.getCurrentTime();
+    auto const dt = _time_disc.getCurrentTimeIncrement();
     auto const& x_curr = _time_disc.getCurrentX(x_new_timestep);
     auto const dxdot_dx = _time_disc.getNewXWeight();
     auto const dx_dx = _time_disc.getDxDx();
@@ -89,8 +90,8 @@ void TimeDiscretizedODESystem<
     _Jac->setZero();
 
     _ode.preAssemble(t, x_curr);
-    _ode.assembleWithJacobian(t, x_curr, xdot, dxdot_dx, dx_dx, *_M, *_K, *_b,
-                              *_Jac);
+    _ode.assembleWithJacobian(t, dt, x_curr, xdot, dxdot_dx, dx_dx, *_M, *_K,
+                              *_b, *_Jac);
 
     LinAlg::finalizeAssembly(*_M);
     LinAlg::finalizeAssembly(*_K);

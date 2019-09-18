@@ -108,9 +108,9 @@ void VectorMatrixAssembler::assembleWithJacobian(
     std::size_t const mesh_item_id, LocalAssemblerInterface& local_assembler,
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>> const&
         dof_tables,
-    const double t, GlobalVector const& x, GlobalVector const& xdot,
-    const double dxdot_dx, const double dx_dx, GlobalMatrix& M, GlobalMatrix& K,
-    GlobalVector& b, GlobalMatrix& Jac,
+    const double t, double const dt, GlobalVector const& x,
+    GlobalVector const& xdot, const double dxdot_dx, const double dx_dx,
+    GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac,
     CoupledSolutionsForStaggeredScheme const* const cpl_xs)
 {
     std::vector<std::vector<GlobalIndexType>> indices_of_processes;
@@ -135,7 +135,7 @@ void VectorMatrixAssembler::assembleWithJacobian(
     {
         auto const local_x = x.get(indices);
         _jacobian_assembler->assembleWithJacobian(
-            local_assembler, t, local_x, local_xdot, dxdot_dx, dx_dx,
+            local_assembler, t, dt, local_x, local_xdot, dxdot_dx, dx_dx,
             _local_M_data, _local_K_data, _local_b_data, _local_Jac_data);
     }
     else

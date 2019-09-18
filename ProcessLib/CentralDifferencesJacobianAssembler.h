@@ -50,13 +50,15 @@ public:
     //!
     //! \attention It is assumed that the local vectors and matrices are ordered
     //! by component.
-    void assembleWithJacobian(
-        LocalAssemblerInterface& local_assembler, double const t,
-        std::vector<double> const& local_x,
-        std::vector<double> const& local_xdot, const double dxdot_dx,
-        const double dx_dx, std::vector<double>& local_M_data,
-        std::vector<double>& local_K_data, std::vector<double>& local_b_data,
-        std::vector<double>& local_Jac_data) override;
+    void assembleWithJacobian(LocalAssemblerInterface& local_assembler,
+                              double const t, double const dt,
+                              std::vector<double> const& local_x,
+                              std::vector<double> const& local_xdot,
+                              const double dxdot_dx, const double dx_dx,
+                              std::vector<double>& local_M_data,
+                              std::vector<double>& local_K_data,
+                              std::vector<double>& local_b_data,
+                              std::vector<double>& local_Jac_data) override;
 
 private:
     std::vector<double> const _absolute_epsilons;

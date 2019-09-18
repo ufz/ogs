@@ -230,7 +230,7 @@ public:
             "implemented.");
     }
 
-    void assembleWithJacobian(double const t,
+    void assembleWithJacobian(double const t, double const dt,
                               std::vector<double> const& local_x,
                               std::vector<double> const& /*local_xdot*/,
                               const double /*dxdot_dx*/, const double /*dx_dx*/,
@@ -295,8 +295,8 @@ public:
                     local_x.data(), ShapeFunction::NPOINTS * DisplacementDim);
 
             auto&& solution = _ip_data[ip].solid_material.integrateStress(
-                t, x_position, _process_data.dt, eps_prev, eps, sigma_prev,
-                *state, _process_data.reference_temperature);
+                t, x_position, dt, eps_prev, eps, sigma_prev, *state,
+                _process_data.reference_temperature);
 
             if (!solution)
             {

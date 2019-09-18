@@ -58,7 +58,7 @@ public:
         std::vector<double>& local_b_data,
         LocalCoupledSolutions const& coupled_solutions);
 
-    virtual void assembleWithJacobian(double const t,
+    virtual void assembleWithJacobian(double const t, double const dt,
                                       std::vector<double> const& local_x,
                                       std::vector<double> const& local_xdot,
                                       const double dxdot_dx, const double dx_dx,

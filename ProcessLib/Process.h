@@ -101,10 +101,10 @@ public:
     void assemble(const double t, GlobalVector const& x, GlobalMatrix& M,
                   GlobalMatrix& K, GlobalVector& b) final;
 
-    void assembleWithJacobian(const double t, GlobalVector const& x,
-                              GlobalVector const& xdot, const double dxdot_dx,
-                              const double dx_dx, GlobalMatrix& M,
-                              GlobalMatrix& K, GlobalVector& b,
+    void assembleWithJacobian(const double t, double const dt,
+                              GlobalVector const& x, GlobalVector const& xdot,
+                              const double dxdot_dx, const double dx_dx,
+                              GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
                               GlobalMatrix& Jac) final;
 
     std::vector<NumLib::IndexValueVector<GlobalIndexType>> const*
@@ -194,9 +194,10 @@ private:
                                          GlobalVector& b) = 0;
 
     virtual void assembleWithJacobianConcreteProcess(
-        const double t, GlobalVector const& x, GlobalVector const& xdot,
-        const double dxdot_dx, const double dx_dx, GlobalMatrix& M,
-        GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac) = 0;
+        const double t, double const dt, GlobalVector const& x,
+        GlobalVector const& xdot, const double dxdot_dx, const double dx_dx,
+        GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
+        GlobalMatrix& Jac) = 0;
 
     virtual void preTimestepConcreteProcess(GlobalVector const& /*x*/,
                                             const double /*t*/,
