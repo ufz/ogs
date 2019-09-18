@@ -12,6 +12,9 @@
 
 #pragma once
 
+#include <memory>
+#include <vector>
+
 namespace BaseLib
 {
 class ConfigTree;
