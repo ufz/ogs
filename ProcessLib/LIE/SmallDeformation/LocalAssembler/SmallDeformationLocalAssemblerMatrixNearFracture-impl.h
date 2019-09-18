@@ -124,13 +124,11 @@ SmallDeformationLocalAssemblerMatrixNearFracture<ShapeFunction,
     }
 }
 
-template <typename ShapeFunction,
-          typename IntegrationMethod,
+template <typename ShapeFunction, typename IntegrationMethod,
           int DisplacementDim>
 void SmallDeformationLocalAssemblerMatrixNearFracture<
-    ShapeFunction,
-    IntegrationMethod,
-    DisplacementDim>::assembleWithJacobian(double const t,
+    ShapeFunction, IntegrationMethod,
+    DisplacementDim>::assembleWithJacobian(double const t, double const dt,
                                            Eigen::VectorXd const& local_u,
                                            Eigen::VectorXd& local_b,
                                            Eigen::MatrixXd& local_J)
@@ -255,7 +253,7 @@ void SmallDeformationLocalAssemblerMatrixNearFracture<
         eps.noalias() = B * nodal_total_u;
 
         auto&& solution = _ip_data[ip]._solid_material.integrateStress(
-            t, x_position, _process_data.dt, eps_prev, eps, sigma_prev, *state,
+            t, x_position, dt, eps_prev, eps, sigma_prev, *state,
             _process_data._reference_temperature);
 
         if (!solution)

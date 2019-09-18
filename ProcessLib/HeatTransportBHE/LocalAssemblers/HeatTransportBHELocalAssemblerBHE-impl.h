@@ -115,7 +115,8 @@ template <typename ShapeFunction, typename IntegrationMethod, typename BHEType>
 void HeatTransportBHELocalAssemblerBHE<ShapeFunction, IntegrationMethod,
                                        BHEType>::
     assemble(
-        double const /*t*/, std::vector<double> const& /*local_x*/,
+        double const /*t*/, double const /*dt*/,
+        std::vector<double> const& /*local_x*/,
         std::vector<double>& local_M_data, std::vector<double>& local_K_data,
         std::vector<double>& /*local_b_data*/)  // local b vector is not touched
 {

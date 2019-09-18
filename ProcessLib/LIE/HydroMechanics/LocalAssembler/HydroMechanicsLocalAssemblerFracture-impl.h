@@ -133,7 +133,7 @@ template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           typename IntegrationMethod, int GlobalDim>
 void HydroMechanicsLocalAssemblerFracture<
     ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
-    GlobalDim>::assembleWithJacobianConcrete(double const t,
+    GlobalDim>::assembleWithJacobianConcrete(double const t, double const dt,
                                              Eigen::VectorXd const& local_x,
                                              Eigen::VectorXd const& local_xdot,
                                              Eigen::VectorXd& local_b,
@@ -156,8 +156,8 @@ void HydroMechanicsLocalAssemblerFracture<
     auto J_gg = local_J.block(displacement_index, displacement_index,
                               displacement_size, displacement_size);
 
-    assembleBlockMatricesWithJacobian(t, p, p_dot, g, g_dot, rhs_p, rhs_g, J_pp,
-                                      J_pg, J_gg, J_gp);
+    assembleBlockMatricesWithJacobian(t, dt, p, p_dot, g, g_dot, rhs_p, rhs_g,
+                                      J_pp, J_pg, J_gg, J_gp);
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
@@ -166,7 +166,8 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
                                           ShapeFunctionPressure,
                                           IntegrationMethod, GlobalDim>::
     assembleBlockMatricesWithJacobian(
-        double const t, Eigen::Ref<const Eigen::VectorXd> const& p,
+        double const t, double const dt,
+        Eigen::Ref<const Eigen::VectorXd> const& p,
         Eigen::Ref<const Eigen::VectorXd> const& p_dot,
         Eigen::Ref<const Eigen::VectorXd> const& g,
         Eigen::Ref<const Eigen::VectorXd> const& g_dot,
@@ -176,7 +177,6 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
 {
     auto const& frac_prop = *_process_data.fracture_property;
     auto const& R = frac_prop.R;
-    double const& dt = _process_data.dt;
 
     // the index of a normal (normal to a fracture plane) component
     // in a displacement vector

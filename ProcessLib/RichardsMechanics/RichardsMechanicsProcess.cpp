@@ -234,8 +234,8 @@ void RichardsMechanicsProcess<DisplacementDim>::initializeBoundaryConditions()
 
 template <int DisplacementDim>
 void RichardsMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
-    const double t, GlobalVector const& x, GlobalMatrix& M, GlobalMatrix& K,
-    GlobalVector& b)
+    const double t, double const dt, GlobalVector const& x, GlobalMatrix& M,
+    GlobalMatrix& K, GlobalVector& b)
 {
     DBUG("Assemble the equations for RichardsMechanics");
 
@@ -252,18 +252,16 @@ void RichardsMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        pv.getActiveElementIDs(), dof_table, t, x, M, K, b,
+        pv.getActiveElementIDs(), dof_table, t, dt, x, M, K, b,
         _coupled_solutions);
 }
 
 template <int DisplacementDim>
 void RichardsMechanicsProcess<DisplacementDim>::
-    assembleWithJacobianConcreteProcess(const double t, GlobalVector const& x,
-                                        GlobalVector const& xdot,
-                                        const double dxdot_dx,
-                                        const double dx_dx, GlobalMatrix& M,
-                                        GlobalMatrix& K, GlobalVector& b,
-                                        GlobalMatrix& Jac)
+    assembleWithJacobianConcreteProcess(
+        const double t, double const dt, GlobalVector const& x,
+        GlobalVector const& xdot, const double dxdot_dx, const double dx_dx,
+        GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac)
 {
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
         dof_tables;
@@ -300,8 +298,8 @@ void RichardsMechanicsProcess<DisplacementDim>::
 
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, x,
-        xdot, dxdot_dx, dx_dx, M, K, b, Jac, _coupled_solutions);
+        _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x, xdot,
+        dxdot_dx, dx_dx, M, K, b, Jac, _coupled_solutions);
 
     auto copyRhs = [&](int const variable_id, auto& output_vector) {
         if (_use_monolithic_scheme)
@@ -333,8 +331,6 @@ void RichardsMechanicsProcess<DisplacementDim>::preTimestepConcreteProcess(
     const int process_id)
 {
     DBUG("PreTimestep RichardsMechanicsProcess.");
-
-    _process_data.dt = dt;
 
     if (hasMechanicalProcess(process_id))
     {

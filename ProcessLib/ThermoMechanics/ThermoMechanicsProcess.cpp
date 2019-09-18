@@ -277,8 +277,8 @@ void ThermoMechanicsProcess<DisplacementDim>::initializeBoundaryConditions()
 
 template <int DisplacementDim>
 void ThermoMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
-    const double t, GlobalVector const& x, GlobalMatrix& M, GlobalMatrix& K,
-    GlobalVector& b)
+    const double t, double const dt, GlobalVector const& x, GlobalMatrix& M,
+    GlobalMatrix& K, GlobalVector& b)
 {
     DBUG("Assemble ThermoMechanicsProcess.");
 
@@ -291,17 +291,16 @@ void ThermoMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        pv.getActiveElementIDs(), dof_table, t, x, M, K, b, _coupled_solutions);
+        pv.getActiveElementIDs(), dof_table, t, dt, x, M, K, b,
+        _coupled_solutions);
 }
 
 template <int DisplacementDim>
 void ThermoMechanicsProcess<DisplacementDim>::
-    assembleWithJacobianConcreteProcess(const double t, GlobalVector const& x,
-                                        GlobalVector const& xdot,
-                                        const double dxdot_dx,
-                                        const double dx_dx, GlobalMatrix& M,
-                                        GlobalMatrix& K, GlobalVector& b,
-                                        GlobalMatrix& Jac)
+    assembleWithJacobianConcreteProcess(
+        const double t, double const dt, GlobalVector const& x,
+        GlobalVector const& xdot, const double dxdot_dx, const double dx_dx,
+        GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac)
 {
     DBUG("AssembleJacobian ThermoMechanicsProcess.");
 
@@ -356,7 +355,7 @@ void ThermoMechanicsProcess<DisplacementDim>::
 
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, x, xdot,
+        _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x, xdot,
         dxdot_dx, dx_dx, M, K, b, Jac, _coupled_solutions);
 
     // TODO (naumov): Refactor the copy rhs part. This is copy from HM.
@@ -393,8 +392,6 @@ void ThermoMechanicsProcess<DisplacementDim>::preTimestepConcreteProcess(
     const int process_id)
 {
     DBUG("PreTimestep ThermoMechanicsProcess.");
-
-    _process_data.dt = dt;
 
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 

@@ -118,7 +118,8 @@ template <typename ShapeFunction, typename IntegrationMethod,
           int DisplacementDim>
 void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
                                    DisplacementDim>::
-    assembleWithJacobian(double const t, std::vector<double> const& local_x,
+    assembleWithJacobian(double const t, double const dt,
+                         std::vector<double> const& local_x,
                          std::vector<double> const& local_xdot,
                          const double /*dxdot_dx*/, const double /*dx_dx*/,
                          std::vector<double>& /*local_M_data*/,
@@ -157,8 +158,6 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
 
     typename ShapeMatricesType::NodalMatrixType DTT;
     DTT.setZero(temperature_size, temperature_size);
-
-    double const& dt = _process_data.dt;
 
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
@@ -306,14 +305,10 @@ template <typename ShapeFunction, typename IntegrationMethod,
 void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
                                    DisplacementDim>::
     assembleWithJacobianForStaggeredScheme(
-        const double t,
-        const std::vector<double>& local_xdot,
-        const double dxdot_dx,
-        const double dx_dx,
-        std::vector<double>& local_M_data,
-        std::vector<double>& local_K_data,
-        std::vector<double>& local_b_data,
-        std::vector<double>& local_Jac_data,
+        const double t, double const dt, const std::vector<double>& local_xdot,
+        const double dxdot_dx, const double dx_dx,
+        std::vector<double>& local_M_data, std::vector<double>& local_K_data,
+        std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
         const LocalCoupledSolutions& local_coupled_solutions)
 {
     // For the equations with pressure
@@ -321,14 +316,14 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
         _process_data.heat_conduction_process_id)
     {
         assembleWithJacobianForHeatConductionEquations(
-            t, local_xdot, dxdot_dx, dx_dx, local_M_data, local_K_data,
+            t, dt, local_xdot, dxdot_dx, dx_dx, local_M_data, local_K_data,
             local_b_data, local_Jac_data, local_coupled_solutions);
         return;
     }
 
     // For the equations with deformation
     assembleWithJacobianForDeformationEquations(
-        t, local_xdot, dxdot_dx, dx_dx, local_M_data, local_K_data,
+        t, dt, local_xdot, dxdot_dx, dx_dx, local_M_data, local_K_data,
         local_b_data, local_Jac_data, local_coupled_solutions);
 }
 
@@ -337,9 +332,9 @@ template <typename ShapeFunction, typename IntegrationMethod,
 void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
                                    DisplacementDim>::
     assembleWithJacobianForDeformationEquations(
-        const double t, const std::vector<double>& /*local_xdot*/,
-        const double /*dxdot_dx*/, const double /*dx_dx*/,
-        std::vector<double>& /*local_M_data*/,
+        const double t, double const dt,
+        const std::vector<double>& /*local_xdot*/, const double /*dxdot_dx*/,
+        const double /*dx_dx*/, std::vector<double>& /*local_M_data*/,
         std::vector<double>& /*local_K_data*/,
         std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
         const LocalCoupledSolutions& local_coupled_solutions)
@@ -373,8 +368,6 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
     auto local_rhs = MathLib::createZeroedVector<
         typename ShapeMatricesType::template VectorType<displacement_size>>(
         local_b_data, displacement_size);
-
-    double const& dt = _process_data.dt;
 
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
@@ -477,9 +470,9 @@ template <typename ShapeFunction, typename IntegrationMethod,
 void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
                                    DisplacementDim>::
     assembleWithJacobianForHeatConductionEquations(
-        const double t, const std::vector<double>& /*local_xdot*/,
-        const double /*dxdot_dx*/, const double /*dx_dx*/,
-        std::vector<double>& /*local_M_data*/,
+        const double t, double const dt,
+        const std::vector<double>& /*local_xdot*/, const double /*dxdot_dx*/,
+        const double /*dx_dx*/, std::vector<double>& /*local_M_data*/,
         std::vector<double>& /*local_K_data*/,
         std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
         const LocalCoupledSolutions& local_coupled_solutions)
@@ -513,8 +506,6 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
 
     typename ShapeMatricesType::NodalMatrixType laplace;
     laplace.setZero(temperature_size, temperature_size);
-
-    double const& dt = _process_data.dt;
 
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();

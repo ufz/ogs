@@ -47,7 +47,7 @@ template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           typename IntegrationMethod, int GlobalDim>
 void HydroMechanicsLocalAssemblerMatrixNearFracture<
     ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
-    GlobalDim>::assembleWithJacobianConcrete(double const t,
+    GlobalDim>::assembleWithJacobianConcrete(double const t, double const dt,
                                              Eigen::VectorXd const& local_x,
                                              Eigen::VectorXd const& local_x_dot,
                                              Eigen::VectorXd& local_b,
@@ -87,8 +87,8 @@ void HydroMechanicsLocalAssemblerMatrixNearFracture<
     if (ele_levelset == 0)
     {
         // no DoF exists for displacement jumps. do the normal assembly
-        Base::assembleBlockMatricesWithJacobian(t, p, p_dot, u, u_dot, rhs_p,
-                                                rhs_u, J_pp, J_pu, J_uu, J_up);
+        Base::assembleBlockMatricesWithJacobian(
+            t, dt, p, p_dot, u, u_dot, rhs_p, rhs_u, J_pp, J_pu, J_uu, J_up);
         return;
     }
 
@@ -102,9 +102,9 @@ void HydroMechanicsLocalAssemblerMatrixNearFracture<
     Eigen::VectorXd const total_u_dot = u_dot + ele_levelset * g_dot;
 
     // evaluate residuals and Jacobians for pressure and displacements
-    Base::assembleBlockMatricesWithJacobian(t, p, p_dot, total_u, total_u_dot,
-                                            rhs_p, rhs_u, J_pp, J_pu, J_uu,
-                                            J_up);
+    Base::assembleBlockMatricesWithJacobian(t, dt, p, p_dot, total_u,
+                                            total_u_dot, rhs_p, rhs_u, J_pp,
+                                            J_pu, J_uu, J_up);
 
     // compute residuals and Jacobians for displacement jumps
     auto rhs_g = local_b.segment(displacement_jump_index, displacement_size);

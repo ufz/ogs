@@ -50,9 +50,9 @@ private:
         MeshLib::Mesh const& mesh,
         unsigned const integration_order) override;
 
-    void assembleConcreteProcess(
-        const double t, GlobalVector const& x, GlobalMatrix& M, GlobalMatrix& K,
-        GlobalVector& b) override;
+    void assembleConcreteProcess(const double t, double const dt,
+                                 GlobalVector const& x, GlobalMatrix& M,
+                                 GlobalMatrix& K, GlobalVector& b) override;
 
     void assembleWithJacobianConcreteProcess(
         const double t, double const dt, GlobalVector const& x,

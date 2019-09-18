@@ -70,30 +70,21 @@ public:
     }
 
 private:
-    void assembleWithJacobianConcrete(double const t,
+    void assembleWithJacobianConcrete(double const t, double const dt,
                                       Eigen::VectorXd const& local_x,
                                       Eigen::VectorXd const& local_xdot,
                                       Eigen::VectorXd& local_b,
                                       Eigen::MatrixXd& local_J) override;
 
     void assembleBlockMatricesWithJacobian(
-        double const t,
+        double const t, double const dt,
         Eigen::Ref<const Eigen::VectorXd> const& p,
         Eigen::Ref<const Eigen::VectorXd> const& p_dot,
         Eigen::Ref<const Eigen::VectorXd> const& g,
         Eigen::Ref<const Eigen::VectorXd> const& g_dot,
-        Eigen::Ref<Eigen::VectorXd>
-            rhs_p,
-        Eigen::Ref<Eigen::VectorXd>
-            rhs_g,
-        Eigen::Ref<Eigen::MatrixXd>
-            J_pp,
-        Eigen::Ref<Eigen::MatrixXd>
-            J_pg,
-        Eigen::Ref<Eigen::MatrixXd>
-            J_gg,
-        Eigen::Ref<Eigen::MatrixXd>
-            J_gp);
+        Eigen::Ref<Eigen::VectorXd> rhs_p, Eigen::Ref<Eigen::VectorXd> rhs_g,
+        Eigen::Ref<Eigen::MatrixXd> J_pp, Eigen::Ref<Eigen::MatrixXd> J_pg,
+        Eigen::Ref<Eigen::MatrixXd> J_gg, Eigen::Ref<Eigen::MatrixXd> J_gp);
 
     // Types for displacement.
     using ShapeMatricesTypeDisplacement =

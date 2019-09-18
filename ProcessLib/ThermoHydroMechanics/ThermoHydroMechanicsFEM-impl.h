@@ -101,7 +101,8 @@ template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
 void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                         ShapeFunctionPressure,
                                         IntegrationMethod, DisplacementDim>::
-    assembleWithJacobian(double const t, std::vector<double> const& local_x,
+    assembleWithJacobian(double const t, double const dt,
+                         std::vector<double> const& local_x,
                          std::vector<double> const& local_xdot,
                          const double /*dxdot_dx*/, const double /*dx_dx*/,
                          std::vector<double>& /*local_M_data*/,
@@ -182,8 +183,6 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         displacement_size, temperature_size>
         KuT;
     KuT.setZero(displacement_size, temperature_size);
-
-    double const& dt = _process_data.dt;
 
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());

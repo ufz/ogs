@@ -46,7 +46,8 @@ public:
         _local_J.resize(_local_u.size(), _local_u.size());
     }
 
-    void assemble(double const /*t*/, std::vector<double> const& /*local_x*/,
+    void assemble(double const /*t*/, double const /*dt*/,
+                  std::vector<double> const& /*local_x*/,
                   std::vector<double>& /*local_M_data*/,
                   std::vector<double>& /*local_K_data*/,
                   std::vector<double>& /*local_rhs_data*/) override
@@ -56,7 +57,7 @@ public:
             "implemented.");
     }
 
-    void assembleWithJacobian(double const t,
+    void assembleWithJacobian(double const t, double const dt,
                               std::vector<double> const& local_x_,
                               std::vector<double> const& local_xdot_,
                               const double /*dxdot_dx*/, const double /*dx_dx*/,
@@ -80,7 +81,7 @@ public:
         _local_b.setZero();
         _local_J.setZero();
 
-        assembleWithJacobianConcrete(t, _local_u, _local_udot, _local_b,
+        assembleWithJacobianConcrete(t, dt, _local_u, _local_udot, _local_b,
                                      _local_J);
 
         local_b_data.resize(local_dof_size);
@@ -115,7 +116,7 @@ public:
     }
 
 protected:
-    virtual void assembleWithJacobianConcrete(double const t,
+    virtual void assembleWithJacobianConcrete(double const t, double const dt,
                                               Eigen::VectorXd const& local_u,
                                               Eigen::VectorXd const& local_udot,
                                               Eigen::VectorXd& local_b,

@@ -57,11 +57,9 @@ void GroundwaterFlowProcess::initializeConcreteProcess(
             &GroundwaterFlowLocalAssemblerInterface::getIntPtDarcyVelocity));
 }
 
-void GroundwaterFlowProcess::assembleConcreteProcess(const double t,
-                                                     GlobalVector const& x,
-                                                     GlobalMatrix& M,
-                                                     GlobalMatrix& K,
-                                                     GlobalVector& b)
+void GroundwaterFlowProcess::assembleConcreteProcess(
+    const double t, double const dt, GlobalVector const& x, GlobalMatrix& M,
+    GlobalMatrix& K, GlobalVector& b)
 {
     DBUG("Assemble GroundwaterFlowProcess.");
 
@@ -72,14 +70,14 @@ void GroundwaterFlowProcess::assembleConcreteProcess(const double t,
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        pv.getActiveElementIDs(), dof_table, t, x, M, K, b,
+        pv.getActiveElementIDs(), dof_table, t, dt, x, M, K, b,
         _coupled_solutions);
 }
 
 void GroundwaterFlowProcess::assembleWithJacobianConcreteProcess(
-    const double t, GlobalVector const& x, GlobalVector const& xdot,
-    const double dxdot_dx, const double dx_dx, GlobalMatrix& M, GlobalMatrix& K,
-    GlobalVector& b, GlobalMatrix& Jac)
+    const double t, double const dt, GlobalVector const& x,
+    GlobalVector const& xdot, const double dxdot_dx, const double dx_dx,
+    GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac)
 {
     DBUG("AssembleWithJacobian GroundwaterFlowProcess.");
 
@@ -90,7 +88,7 @@ void GroundwaterFlowProcess::assembleWithJacobianConcreteProcess(
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, pv.getActiveElementIDs(), dof_table, t, x, xdot,
+        _local_assemblers, pv.getActiveElementIDs(), dof_table, t, dt, x, xdot,
         dxdot_dx, dx_dx, M, K, b, Jac, _coupled_solutions);
 }
 

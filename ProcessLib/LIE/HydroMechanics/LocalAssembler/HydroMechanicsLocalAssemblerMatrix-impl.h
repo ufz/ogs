@@ -115,7 +115,7 @@ template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           typename IntegrationMethod, int GlobalDim>
 void HydroMechanicsLocalAssemblerMatrix<
     ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
-    GlobalDim>::assembleWithJacobianConcrete(double const t,
+    GlobalDim>::assembleWithJacobianConcrete(double const t, double const dt,
                                              Eigen::VectorXd const& local_x,
                                              Eigen::VectorXd const& local_x_dot,
                                              Eigen::VectorXd& local_rhs,
@@ -148,8 +148,8 @@ void HydroMechanicsLocalAssemblerMatrix<
     auto J_up = local_Jac.template block<displacement_size, pressure_size>(
         displacement_index, pressure_index);
 
-    assembleBlockMatricesWithJacobian(t, p, p_dot, u, u_dot, rhs_p, rhs_u, J_pp,
-                                      J_pu, J_uu, J_up);
+    assembleBlockMatricesWithJacobian(t, dt, p, p_dot, u, u_dot, rhs_p, rhs_u,
+                                      J_pp, J_pu, J_uu, J_up);
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
@@ -158,23 +158,14 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
                                         ShapeFunctionPressure,
                                         IntegrationMethod, GlobalDim>::
     assembleBlockMatricesWithJacobian(
-        double const t,
+        double const t, double const dt,
         Eigen::Ref<const Eigen::VectorXd> const& p,
         Eigen::Ref<const Eigen::VectorXd> const& p_dot,
         Eigen::Ref<const Eigen::VectorXd> const& u,
         Eigen::Ref<const Eigen::VectorXd> const& u_dot,
-        Eigen::Ref<Eigen::VectorXd>
-            rhs_p,
-        Eigen::Ref<Eigen::VectorXd>
-            rhs_u,
-        Eigen::Ref<Eigen::MatrixXd>
-            J_pp,
-        Eigen::Ref<Eigen::MatrixXd>
-            J_pu,
-        Eigen::Ref<Eigen::MatrixXd>
-            J_uu,
-        Eigen::Ref<Eigen::MatrixXd>
-            J_up)
+        Eigen::Ref<Eigen::VectorXd> rhs_p, Eigen::Ref<Eigen::VectorXd> rhs_u,
+        Eigen::Ref<Eigen::MatrixXd> J_pp, Eigen::Ref<Eigen::MatrixXd> J_pu,
+        Eigen::Ref<Eigen::MatrixXd> J_uu, Eigen::Ref<Eigen::MatrixXd> J_up)
 {
     assert(this->_element.getDimension() == GlobalDim);
 
@@ -192,7 +183,6 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
             displacement_size, pressure_size>::Zero(displacement_size,
                                                     pressure_size);
 
-    double const& dt = _process_data.dt;
     auto const& gravity_vec = _process_data.specific_body_force;
 
     ParameterLib::SpatialPosition x_position;
@@ -242,8 +232,8 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
         eps.noalias() = B * u;
 
         auto&& solution = _ip_data[ip].solid_material.integrateStress(
-            t, x_position, _process_data.dt, eps_prev, eps, sigma_eff_prev,
-            *state, _process_data.reference_temperature);
+            t, x_position, dt, eps_prev, eps, sigma_eff_prev, *state,
+            _process_data.reference_temperature);
 
         if (!solution)
         {

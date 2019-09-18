@@ -241,8 +241,8 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
 
 template <int DisplacementDim>
 void SmallDeformationProcess<DisplacementDim>::assembleConcreteProcess(
-    const double t, GlobalVector const& x, GlobalMatrix& M, GlobalMatrix& K,
-    GlobalVector& b)
+    const double t, double const dt, GlobalVector const& x, GlobalMatrix& M,
+    GlobalMatrix& K, GlobalVector& b)
 {
     DBUG("Assemble SmallDeformationProcess.");
 
@@ -254,7 +254,7 @@ void SmallDeformationProcess<DisplacementDim>::assembleConcreteProcess(
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        pv.getActiveElementIDs(), dof_table, t, x, M, K, b,
+        pv.getActiveElementIDs(), dof_table, t, dt, x, M, K, b,
         _coupled_solutions);
 }
 

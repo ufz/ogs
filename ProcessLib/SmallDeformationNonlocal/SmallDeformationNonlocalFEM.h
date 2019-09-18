@@ -304,7 +304,8 @@ public:
         }
     }
 
-    void assemble(double const /*t*/, std::vector<double> const& /*local_x*/,
+    void assemble(double const /*t*/, double const /*dt*/,
+                  std::vector<double> const& /*local_x*/,
                   std::vector<double>& /*local_M_data*/,
                   std::vector<double>& /*local_K_data*/,
                   std::vector<double>& /*local_b_data*/) override
@@ -418,7 +419,7 @@ public:
         }
     }
 
-    void assembleWithJacobian(double const t,
+    void assembleWithJacobian(double const t, double const /*dt*/,
                               std::vector<double> const& local_x,
                               std::vector<double> const& /*local_xdot*/,
                               const double /*dxdot_dx*/, const double /*dx_dx*/,

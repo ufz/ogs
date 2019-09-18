@@ -72,14 +72,15 @@ private:
 
     void initializeBoundaryConditions() override;
 
-    void assembleConcreteProcess(const double t, GlobalVector const& x,
-                                 GlobalMatrix& M, GlobalMatrix& K,
-                                 GlobalVector& b) override;
+    void assembleConcreteProcess(const double t, double const /*dt*/,
+                                 GlobalVector const& x, GlobalMatrix& M,
+                                 GlobalMatrix& K, GlobalVector& b) override;
 
     void assembleWithJacobianConcreteProcess(
-        const double t, GlobalVector const& x, GlobalVector const& xdot,
-        const double dxdot_dx, const double dx_dx, GlobalMatrix& M,
-        GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac) override;
+        const double t, double const /*dt*/, GlobalVector const& x,
+        GlobalVector const& xdot, const double dxdot_dx, const double dx_dx,
+        GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
+        GlobalMatrix& Jac) override;
 
     void preTimestepConcreteProcess(GlobalVector const& x, double const t,
                                     double const dt,

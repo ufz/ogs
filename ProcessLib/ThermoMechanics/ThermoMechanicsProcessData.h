@@ -56,8 +56,6 @@ struct ThermoMechanicsProcessData
     /// ID of heat conduction process.
     int const heat_conduction_process_id;
 
-    double dt = std::numeric_limits<double>::quiet_NaN();
-
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
 

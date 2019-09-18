@@ -24,7 +24,7 @@ namespace HT
 template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
 void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
-    assembleForStaggeredScheme(double const t,
+    assembleForStaggeredScheme(double const t, double const dt,
                                std::vector<double>& local_M_data,
                                std::vector<double>& local_K_data,
                                std::vector<double>& local_b_data,
@@ -37,14 +37,15 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
         return;
     }
 
-    assembleHydraulicEquation(t, local_M_data, local_K_data, local_b_data,
+    assembleHydraulicEquation(t, dt, local_M_data, local_K_data, local_b_data,
                               coupled_xs);
 }
 
 template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
 void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
-    assembleHydraulicEquation(double const t, std::vector<double>& local_M_data,
+    assembleHydraulicEquation(double const t, double const dt,
+                              std::vector<double>& local_M_data,
                               std::vector<double>& local_K_data,
                               std::vector<double>& local_b_data,
                               LocalCoupledSolutions const& coupled_xs)
@@ -59,7 +60,6 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
         coupled_xs.local_coupled_xs[_heat_transport_process_id];
     auto const& local_T0 =
         coupled_xs.local_coupled_xs0[_heat_transport_process_id];
-    const double dt = coupled_xs.dt;
 
     auto local_M = MathLib::createZeroedMatrix<LocalMatrixType>(
         local_M_data, local_matrix_size, local_matrix_size);

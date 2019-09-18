@@ -39,7 +39,7 @@ public:
         _local_J.resize(_local_u.size(), _local_u.size());
     }
 
-    void assembleWithJacobian(double const t,
+    void assembleWithJacobian(double const t, double const dt,
                               std::vector<double> const& local_x_,
                               std::vector<double> const& /*local_xdot*/,
                               const double /*dxdot_dx*/, const double /*dx_dx*/,
@@ -58,7 +58,7 @@ public:
         _local_b.setZero();
         _local_J.setZero();
 
-        assembleWithJacobian(t, _local_u, _local_b, _local_J);
+        assembleWithJacobian(t, dt, _local_u, _local_b, _local_J);
 
         local_b_data.resize(local_dof_size);
         for (unsigned i = 0; i < local_dof_size; i++)
@@ -77,15 +77,11 @@ public:
         }
     }
 
-    virtual void assembleWithJacobian(double const t,
-                                      Eigen::VectorXd const& local_u,
-                                      Eigen::VectorXd& local_b,
-                                      Eigen::MatrixXd& local_J)
+    virtual void assembleWithJacobian(double const /*t*/, double const /*dt*/,
+                                      Eigen::VectorXd const& /*local_u*/,
+                                      Eigen::VectorXd& /*local_b*/,
+                                      Eigen::MatrixXd& /*local_J*/)
     {
-        (void)t;
-        (void)local_u;
-        (void)local_b;
-        (void)local_J;
         OGS_FATAL(
             "SmallDeformationLocalAssemblerInterface::assembleWithJacobian() "
             "is not implemented");
