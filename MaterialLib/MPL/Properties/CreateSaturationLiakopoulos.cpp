@@ -16,7 +16,7 @@ namespace MaterialPropertyLib
 std::unique_ptr<SaturationLiakopoulos> createSaturationLiakopoulos(
     BaseLib::ConfigTree const& config)
 {
-    //! \ogs_file_param{prj__media__medium__properties__property__SaturationLiakopoulos}
+    //! \ogs_file_param{properties__property__type}
     config.checkConfigParameter("type", "SaturationLiakopoulos");
     DBUG("Create SaturationLiakopoulos medium property");
 
