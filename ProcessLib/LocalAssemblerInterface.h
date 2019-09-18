@@ -87,7 +87,8 @@ public:
 
     virtual void postTimestep(std::size_t const mesh_item_id,
                               NumLib::LocalToGlobalIndexMap const& dof_table,
-                              GlobalVector const& x);
+                              GlobalVector const& x, double const t,
+                              double const dt);
 
     void postNonLinearSolver(std::size_t const mesh_item_id,
                              NumLib::LocalToGlobalIndexMap const& dof_table,
@@ -127,7 +128,10 @@ private:
     {
     }
 
-    virtual void postTimestepConcrete(std::vector<double> const& /*local_x*/) {}
+    virtual void postTimestepConcrete(std::vector<double> const& /*local_x*/,
+                                      double const /*t*/, double const /*dt*/)
+    {
+    }
 
     virtual void postNonLinearSolverConcrete(
         std::vector<double> const& /*local_x*/, double const /*t*/,

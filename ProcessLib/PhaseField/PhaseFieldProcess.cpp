@@ -246,8 +246,7 @@ void PhaseFieldProcess<DisplacementDim>::preTimestepConcreteProcess(
     DBUG("PreTimestep PhaseFieldProcess %d.", process_id);
 
     _process_data.dt = dt;
-    _process_data.t = t;
-    _process_data.injected_volume = _process_data.t;
+    _process_data.injected_volume = t;
 
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
@@ -258,7 +257,7 @@ void PhaseFieldProcess<DisplacementDim>::preTimestepConcreteProcess(
 
 template <int DisplacementDim>
 void PhaseFieldProcess<DisplacementDim>::postTimestepConcreteProcess(
-    GlobalVector const& x, const double /*t*/, const double /*delta_t*/,
+    GlobalVector const& x, const double t, const double /*delta_t*/,
     int const process_id)
 {
     if (isPhaseFieldProcess(process_id))
@@ -280,7 +279,7 @@ void PhaseFieldProcess<DisplacementDim>::postTimestepConcreteProcess(
 
         GlobalExecutor::executeSelectedMemberOnDereferenced(
             &LocalAssemblerInterface::computeEnergy, _local_assemblers,
-            pv.getActiveElementIDs(), dof_tables, x, _process_data.t,
+            pv.getActiveElementIDs(), dof_tables, x, t,
             _process_data.elastic_energy, _process_data.surface_energy,
             _process_data.pressure_work, _coupled_solutions);
 

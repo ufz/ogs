@@ -314,7 +314,8 @@ public:
         }
     }
 
-    void postTimestepConcrete(std::vector<double> const& /*local_x*/) override
+    void postTimestepConcrete(std::vector<double> const& /*local_x*/,
+                              double const t, double const dt) override
     {
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
@@ -336,8 +337,8 @@ public:
             // Update free energy density needed for material forces.
             ip_data.free_energy_density =
                 ip_data.solid_material.computeFreeEnergyDensity(
-                    _process_data.t, x_position, _process_data.dt, ip_data.eps,
-                    ip_data.sigma, *ip_data.material_state_variables);
+                    t, x_position, dt, ip_data.eps, ip_data.sigma,
+                    *ip_data.material_state_variables);
         }
     }
 
