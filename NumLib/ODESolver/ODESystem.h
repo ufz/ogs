@@ -49,9 +49,9 @@ public:
     virtual void preAssemble(const double t, GlobalVector const& x) = 0;
 
     //! Assemble \c M, \c K and \c b at the provided state (\c t, \c x).
-    virtual void assemble(const double t, GlobalVector const& x,
-                          GlobalMatrix& M, GlobalMatrix& K,
-                          GlobalVector& b) = 0;
+    virtual void assemble(const double t, double const dt,
+                          GlobalVector const& x, GlobalMatrix& M,
+                          GlobalMatrix& K, GlobalVector& b) = 0;
 
     using Index = MathLib::MatrixVectorTraits<GlobalMatrix>::Index;
 

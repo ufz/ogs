@@ -194,12 +194,12 @@ void Process::preAssemble(const double t, GlobalVector const& x)
     preAssembleConcreteProcess(t, x);
 }
 
-void Process::assemble(const double t, GlobalVector const& x, GlobalMatrix& M,
-                       GlobalMatrix& K, GlobalVector& b)
+void Process::assemble(const double t, double const dt, GlobalVector const& x,
+                       GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
 {
     MathLib::LinAlg::setLocalAccessibleVector(x);
 
-    assembleConcreteProcess(t, x, M, K, b);
+    assembleConcreteProcess(t, dt, x, M, K, b);
 
     const auto pcs_id =
         (_coupled_solutions) != nullptr ? _coupled_solutions->process_id : 0;

@@ -46,16 +46,15 @@ public:
     virtual void preAssemble(double const /*t*/,
                              std::vector<double> const& /*local_x*/){};
 
-    virtual void assemble(double const t, std::vector<double> const& local_x,
+    virtual void assemble(double const t, double const dt,
+                          std::vector<double> const& local_x,
                           std::vector<double>& local_M_data,
                           std::vector<double>& local_K_data,
                           std::vector<double>& local_b_data);
 
     virtual void assembleForStaggeredScheme(
-        double const t,
-        std::vector<double>& local_M_data,
-        std::vector<double>& local_K_data,
-        std::vector<double>& local_b_data,
+        double const t, double const dt, std::vector<double>& local_M_data,
+        std::vector<double>& local_K_data, std::vector<double>& local_b_data,
         LocalCoupledSolutions const& coupled_solutions);
 
     virtual void assembleWithJacobian(double const t, double const dt,
@@ -68,7 +67,7 @@ public:
                                       std::vector<double>& local_Jac_data);
 
     virtual void assembleWithJacobianForStaggeredScheme(
-        double const t, std::vector<double> const& local_xdot,
+        double const t, double const dt, std::vector<double> const& local_xdot,
         const double dxdot_dx, const double dx_dx,
         std::vector<double>& local_M_data, std::vector<double>& local_K_data,
         std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,

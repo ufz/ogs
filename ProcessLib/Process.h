@@ -98,8 +98,8 @@ public:
     bool isMonolithicSchemeUsed() const { return _use_monolithic_scheme; }
     virtual void setCoupledTermForTheStaggeredSchemeToLocalAssemblers() {}
     void preAssemble(const double t, GlobalVector const& x) final;
-    void assemble(const double t, GlobalVector const& x, GlobalMatrix& M,
-                  GlobalMatrix& K, GlobalVector& b) final;
+    void assemble(const double t, double const dt, GlobalVector const& x,
+                  GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) final;
 
     void assembleWithJacobian(const double t, double const dt,
                               GlobalVector const& x, GlobalVector const& xdot,
@@ -189,9 +189,9 @@ private:
     {
     }
 
-    virtual void assembleConcreteProcess(const double t, GlobalVector const& x,
-                                         GlobalMatrix& M, GlobalMatrix& K,
-                                         GlobalVector& b) = 0;
+    virtual void assembleConcreteProcess(const double t, double const dt,
+                                         GlobalVector const& x, GlobalMatrix& M,
+                                         GlobalMatrix& K, GlobalVector& b) = 0;
 
     virtual void assembleWithJacobianConcreteProcess(
         const double t, double const dt, GlobalVector const& x,

@@ -43,8 +43,9 @@ void VectorMatrixAssembler::assemble(
     const std::size_t mesh_item_id, LocalAssemblerInterface& local_assembler,
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>> const&
         dof_tables,
-    const double t, const GlobalVector& x, GlobalMatrix& M, GlobalMatrix& K,
-    GlobalVector& b, CoupledSolutionsForStaggeredScheme const* const cpl_xs)
+    const double t, double const dt, const GlobalVector& x, GlobalMatrix& M,
+    GlobalMatrix& K, GlobalVector& b,
+    CoupledSolutionsForStaggeredScheme const* const cpl_xs)
 {
     std::vector<std::vector<GlobalIndexType>> indices_of_processes;
     indices_of_processes.reserve(dof_tables.size());
@@ -64,7 +65,7 @@ void VectorMatrixAssembler::assemble(
     if (cpl_xs == nullptr)
     {
         auto const local_x = x.get(indices);
-        local_assembler.assemble(t, local_x, _local_M_data, _local_K_data,
+        local_assembler.assemble(t, dt, local_x, _local_M_data, _local_K_data,
                                  _local_b_data);
     }
     else
@@ -78,7 +79,7 @@ void VectorMatrixAssembler::assemble(
             cpl_xs->dt, cpl_xs->process_id, std::move(local_coupled_xs0),
             std::move(local_coupled_xs));
 
-        local_assembler.assembleForStaggeredScheme(t, _local_M_data,
+        local_assembler.assembleForStaggeredScheme(t, dt, _local_M_data,
                                                    _local_K_data, _local_b_data,
                                                    local_coupled_solutions);
     }
@@ -150,7 +151,7 @@ void VectorMatrixAssembler::assembleWithJacobian(
             std::move(local_coupled_xs));
 
         _jacobian_assembler->assembleWithJacobianForStaggeredScheme(
-            local_assembler, t, local_xdot, dxdot_dx, dx_dx, _local_M_data,
+            local_assembler, t, dt, local_xdot, dxdot_dx, dx_dx, _local_M_data,
             _local_K_data, _local_b_data, _local_Jac_data,
             local_coupled_solutions);
     }

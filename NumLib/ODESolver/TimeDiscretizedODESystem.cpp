@@ -192,6 +192,7 @@ void TimeDiscretizedODESystem<
     namespace LinAlg = MathLib::LinAlg;
 
     auto const t = _time_disc.getCurrentTime();
+    auto const dt = _time_disc.getCurrentTimeIncrement();
     auto const& x_curr = _time_disc.getCurrentX(x_new_timestep);
 
     _M->setZero();
@@ -199,7 +200,7 @@ void TimeDiscretizedODESystem<
     _b->setZero();
 
     _ode.preAssemble(t, x_curr);
-    _ode.assemble(t, x_curr, *_M, *_K, *_b);
+    _ode.assemble(t, dt, x_curr, *_M, *_K, *_b);
 
     LinAlg::finalizeAssembly(*_M);
     LinAlg::finalizeAssembly(*_K);
