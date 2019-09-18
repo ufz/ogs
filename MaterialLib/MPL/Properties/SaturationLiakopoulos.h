@@ -32,7 +32,7 @@ class Component;
 class SaturationLiakopoulos final : public Property
 {
 private:
-    Medium* _medium;
+    Medium* _medium = nullptr;
     /**
   Parameters for Liakopoulos saturation curve taken from:
   Asadi, R., Ataie-Ashtiani, B. (2015): A Comparison of finite volume

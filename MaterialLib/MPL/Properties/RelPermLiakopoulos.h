@@ -30,7 +30,7 @@ class Component;
 class RelPermLiakopoulos final : public Property
 {
 private:
-    Medium* _medium;
+    Medium* _medium = nullptr;
     /**
 Parameters for Liakopoulos relative permeability:
 Asadi, R., Ataie-Ashtiani, B. (2015): A Comparison of finite volume
