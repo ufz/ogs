@@ -38,10 +38,6 @@
 #include "ProcessLib/CreateJacobianAssembler.h"
 #include "ProcessLib/DeactivatedSubdomain.h"
 
-// PhreeqcIO
-#include "ChemistryLib/CreateChemicalSolverInterface.h"
-#include "ProcessLib/ComponentTransport/ComponentTransportProcess.h"
-
 // FileIO
 #include "GeoLib/IO/XmlIO/Boost/BoostXmlGmlInterface.h"
 #include "MeshLib/IO/readMeshFromFile.h"
@@ -52,6 +48,10 @@
 #include "ProcessLib/TimeLoop.h"
 
 #ifdef OGS_BUILD_PROCESS_COMPONENTTRANSPORT
+#include "ChemistryLib/CreateChemicalSolverInterface.h"
+// The ComponenTransportProcess is needed for the instantiation of the chemical
+// solver.
+#include "ProcessLib/ComponentTransport/ComponentTransportProcess.h"
 #include "ProcessLib/ComponentTransport/CreateComponentTransportProcess.h"
 #endif
 #ifdef OGS_BUILD_PROCESS_GROUNDWATERFLOW
