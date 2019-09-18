@@ -47,38 +47,23 @@ TEST(MaterialPropertyLib, SaturationBrooksCorey)
 
     MaterialPropertyLib::VariableArray variable_array;
     ParameterLib::SpatialPosition const pos;
-    double const time = std::numeric_limits<double>::quiet_NaN();
-
-    variable_array[static_cast<int>(
-        MaterialPropertyLib::Variable::capillary_pressure)] = 0.0;
-
-    auto s_L = medium->property(MaterialPropertyLib::PropertyType::saturation)
-                   .template value<double>(variable_array, pos, time);
-    auto ds_L_dp_cap =
-        medium->property(MaterialPropertyLib::PropertyType::saturation)
-            .template dValue<double>(
-                variable_array,
-                MaterialPropertyLib::Variable::capillary_pressure,
-                pos,
-                time);
-
-    ASSERT_EQ(s_L, max_saturation);
-    ASSERT_EQ(ds_L_dp_cap, 0.);
+    double const t = std::numeric_limits<double>::quiet_NaN();
 
     for (double p_cap = 1.0; p_cap < 1.0e10; p_cap *= 1.5)
     {
         variable_array[static_cast<int>(
             MaterialPropertyLib::Variable::capillary_pressure)] = p_cap;
 
-        s_L = medium->property(MaterialPropertyLib::PropertyType::saturation)
-                  .template value<double>(variable_array, pos, time);
-        ds_L_dp_cap =
+        auto s_L =
+            medium->property(MaterialPropertyLib::PropertyType::saturation)
+                .template value<double>(variable_array, pos, t);
+        auto ds_L_dp_cap =
             medium->property(MaterialPropertyLib::PropertyType::saturation)
                 .template dValue<double>(
                     variable_array,
                     MaterialPropertyLib::Variable::capillary_pressure,
                     pos,
-                    time);
+                    t);
 
         const double s_eff =
             std::pow(ref_entry_pressure / std::max(p_cap, ref_entry_pressure),
@@ -87,9 +72,10 @@ TEST(MaterialPropertyLib, SaturationBrooksCorey)
             s_eff * (max_saturation - ref_residual_liquid_saturation) +
             ref_residual_liquid_saturation;
         const double ds_eff_dpc =
-            (p_cap <= ref_entry_pressure) ? 0. : -ref_lambda / p_cap * s_ref;
-            const double ds_L_ds_eff = 1. / (max_saturation - ref_residual_liquid_saturation);
-            const double ds_L_dpc = ds_L_ds_eff * ds_eff_dpc;
+            -ref_lambda / std::max(p_cap, ref_entry_pressure) * s_ref;
+        const double ds_L_ds_eff =
+            1. / (max_saturation - ref_residual_liquid_saturation);
+        const double ds_L_dpc = ds_L_ds_eff * ds_eff_dpc;
 
         ASSERT_NEAR(s_L, s_ref, 1.e-10);
         ASSERT_NEAR(ds_L_dp_cap, ds_L_dpc, 1.e-10);
