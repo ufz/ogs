@@ -28,7 +28,7 @@ createMaterialSpatialDistributionMap(
 
     if (max_material_id > static_cast<int>(media.size() - 1))
     {
-        OGS_FATAL(
+        WARN(
             "The maximum value of MaterialIDs in mesh is %d. As the given "
             "number of porous media definitions in the project file is %d, the "
             "maximum value of MaterialIDs in mesh must be %d (index starts "
