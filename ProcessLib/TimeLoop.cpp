@@ -447,7 +447,7 @@ bool TimeLoop::loop()
     double t = _start_time;
     std::size_t accepted_steps = 0;
     std::size_t rejected_steps = 0;
-    NumLib::NonlinearSolverStatus nonlinear_solver_status{true, 0};
+    NumLib::NonlinearSolverStatus nonlinear_solver_status;
 
     double dt = computeTimeStepping(0.0, t, accepted_steps, rejected_steps);
 
@@ -595,7 +595,7 @@ NumLib::NonlinearSolverStatus TimeLoop::solveUncoupledEquationSystems(
 {
     preTimestepForAllProcesses(t, dt, _per_process_data, _process_solutions);
 
-    NumLib::NonlinearSolverStatus nonlinear_solver_status{false, -1};
+    NumLib::NonlinearSolverStatus nonlinear_solver_status;
     for (auto& process_data : _per_process_data)
     {
         nonlinear_solver_status = solveMonolithicProcess(
