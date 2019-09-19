@@ -71,31 +71,24 @@ PropertyDataType RelPermLiakopoulos::dValue(
     auto const s_L = _medium->property(PropertyType::saturation)
                          .template value<double>(variable_array, pos, t);
     auto const s_L_res = _residual_liquid_saturation;
-    if (s_L < s_L_res)
-    {
-        return Pair{0., 0.};
-    }
+    auto const s_L_max = _maximal_liquid_saturation;
 
-    if (s_L >= 1.)
-    {
-        return Pair{0., 0.};
-    }
+    const double s_L_within_range = std::min(std::max(s_L_res, s_L), s_L_max);
 
-    auto const s_L_max = 1.;
     auto const lambda = _exponent;
     auto const a = _parameter_a;
     auto const b = _parameter_b;
 
-    auto const s_eff = (s_L - s_L_res) / (s_L_max - s_L_res);
-    auto const d_se_d_sL = 1. / (s_L_max - s_L_res);
+    auto const s_eff = (s_L_within_range - s_L_res) / (s_L_max - s_L_res);
 
-    auto const dk_rel_LRdsL = a * b * std::pow(1. - s_L, b - 1.);
+    auto const dk_rel_LRdsL = a * b * std::pow(1. - s_L_within_range, b - 1.);
 
     auto const _2L_L = (2. + lambda) / lambda;
+    auto const s_G_eff = 1. - s_eff;
     auto const dk_rel_GRdse =
-        -2. * (1 - s_eff) * (1. - std::pow(s_eff, _2L_L)) -
-        _2L_L * std::pow(s_eff, _2L_L - 1.) * (1. - s_eff) * (1. - s_eff);
-    auto const dk_rel_GRdsL = dk_rel_GRdse * d_se_d_sL;
+        -2. * s_G_eff * (1. - std::pow(s_eff, _2L_L)) -
+        _2L_L * std::pow(s_eff, _2L_L - 1.) * s_G_eff * s_G_eff;
+    auto const dk_rel_GRdsL = dk_rel_GRdse * _dse_dsL;
 
     const Pair dkReldsL = {{dk_rel_LRdsL, dk_rel_GRdsL}};
 

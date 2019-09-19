@@ -57,10 +57,13 @@ porous media. Comput. Geosci., p. 24ff.
 Those parameters are fixed for that particular model, no need to change them.
 */
     const double _residual_liquid_saturation = 0.2;
+    const double _maximal_liquid_saturation = 1.;
     const double _parameter_a = 2.207;
     const double _parameter_b = 1.0121;
     const double _exponent = 3.;
     const double _min_relative_permeability_gas = 1.0e-4;
+    const double _dse_dsL =
+        1. / (_maximal_liquid_saturation - _residual_liquid_saturation);
 
 public:
     /// This method assigns a pointer to the meterial object that is the owner
