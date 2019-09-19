@@ -49,12 +49,14 @@ PropertyDataType SaturationLiakopoulos::dValue(
 
     const double p_cap = std::get<double>(
         variable_array[static_cast<int>(Variable::capillary_pressure)]);
-
-    if ((p_cap < 0.) || (p_cap >= _p_cap_max))
+    if (p_cap <= 0.)
     {
         return 0.;
     }
-    return -_parameter_a * _parameter_b * std::pow(p_cap, _parameter_b - 1.);
+    const double p_cap_restricted = std::min(p_cap, _p_cap_max);
+
+    return -_parameter_a * _parameter_b *
+           std::pow(p_cap_restricted, _parameter_b - 1.);
 }
 
 PropertyDataType SaturationLiakopoulos::d2Value(
@@ -72,13 +74,13 @@ PropertyDataType SaturationLiakopoulos::d2Value(
     const double p_cap = std::get<double>(
         variable_array[static_cast<int>(Variable::capillary_pressure)]);
 
-    if ((p_cap < 0.) || (p_cap >= _p_cap_max))
+    if (p_cap < 0.)
     {
         return 0.;
     }
-
+    const double p_cap_restricted = std::min(p_cap, _p_cap_max);
     return -_parameter_a * (_parameter_b - 1.) * _parameter_b *
-           std::pow(p_cap, _parameter_b - 2.);
+           std::pow(p_cap_restricted, _parameter_b - 2.);
 }
 
 }  // namespace MaterialPropertyLib
