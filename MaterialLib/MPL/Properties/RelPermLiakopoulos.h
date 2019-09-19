@@ -26,6 +26,23 @@ class Component;
  * \details This property must be a medium property, it
  * computes the permeability reduction due to saturation as function
  * of capillary pressure.
+ *
+ * Wetting (liquid) phase erlative permeability is given by the empirical
+ * formula
+ * \f[k^{\mathrm{rel}}_{\mathrm{L}}=1 - 2.207(1 - s_L)^{1.0121}\f]
+ *
+ * Non-wetting (gas) phase permeability is computed using the Brooks-Corey
+ * model
+ * \f[k^{\mathrm{rel}}_{\mathrm{G}}=(1 -
+s_{\mathrm{e}})^2\left(1-s_{\mathrm{e}}^{\frac{\left(2+\lambda\right)}{\lambda}}\right)\f]
+ *
+ * with effective saturation
+ * \f[s_{\mathrm{e}}=\frac{s_{\mathrm{L}}-s^{\mathrm{r}}_{\mathrm{L}}}{1 -
+s^{\mathrm{r}}_{\mathrm{L}}}\f]
+ *
+ * where
+ * \f[\lambda=3.0\f]
+ * \f[s^{\mathrm{r}}_{\mathrm{L}=0.2\f]
  */
 class RelPermLiakopoulos final : public Property
 {

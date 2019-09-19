@@ -28,6 +28,10 @@ class Component;
  * \details This property must be a medium property, it
  * computes the saturation of the wetting phase as function
  * of capillary pressure.
+ *
+ * Wetting (liquid) phase saturation is given by the empirical relation
+ * \f[s^\mathrm{r}_\mathrm{L}=1 - 1.9722\cdot10^{-11}p_\mathrm{cap}^{2.4279}\f]
+ *
  */
 class SaturationLiakopoulos final : public Property
 {
