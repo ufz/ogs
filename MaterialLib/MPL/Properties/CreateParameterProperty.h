@@ -25,6 +25,11 @@ namespace MaterialPropertyLib
 class ParameterProperty;
 }
 
+namespace ParameterLib
+{
+struct ParameterBase;
+}
+
 namespace MaterialPropertyLib
 {
 std::unique_ptr<ParameterProperty> createParameterProperty(
