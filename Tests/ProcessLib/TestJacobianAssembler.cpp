@@ -293,7 +293,8 @@ template <typename MatVec>
 class LocalAssemblerM final : public ProcessLib::LocalAssemblerInterface
 {
 public:
-    void assemble(double const /*t*/, std::vector<double> const& local_x,
+    void assemble(double const /*t*/, double const /*dt*/,
+                  std::vector<double> const& local_x,
                   std::vector<double>& local_M_data,
                   std::vector<double>& /*local_K_data*/,
                   std::vector<double>& /*local_b_data*/) override
@@ -301,7 +302,7 @@ public:
         MatVec::Mat::getMat(local_x, local_M_data);
     }
 
-    void assembleWithJacobian(double const t,
+    void assembleWithJacobian(double const t, double const dt,
                               std::vector<double> const& local_x,
                               std::vector<double> const& local_xdot,
                               const double dxdot_dx, const double /*dx_dx*/,
@@ -310,7 +311,7 @@ public:
                               std::vector<double>& local_b_data,
                               std::vector<double>& local_Jac_data) override
     {
-        assemble(t, local_x, local_M_data, local_K_data, local_b_data);
+        assemble(t, dt, local_x, local_M_data, local_K_data, local_b_data);
 
         // dM/dx * xdot
         MatVec::Mat::getDMatDxTimesY(local_x, local_xdot, local_Jac_data);
@@ -333,7 +334,8 @@ template <typename MatVec>
 class LocalAssemblerK final : public ProcessLib::LocalAssemblerInterface
 {
 public:
-    void assemble(double const /*t*/, std::vector<double> const& local_x,
+    void assemble(double const /*t*/, double const /*dt*/,
+                  std::vector<double> const& local_x,
                   std::vector<double>& /*local_M_data*/,
                   std::vector<double>& local_K_data,
                   std::vector<double>& /*local_b_data*/) override
@@ -341,7 +343,7 @@ public:
         MatVec::Mat::getMat(local_x, local_K_data);
     }
 
-    void assembleWithJacobian(double const t,
+    void assembleWithJacobian(double const t, double const dt,
                               std::vector<double> const& local_x,
                               std::vector<double> const& /*local_xdot*/,
                               const double /*dxdot_dx*/, const double dx_dx,
@@ -350,7 +352,7 @@ public:
                               std::vector<double>& local_b_data,
                               std::vector<double>& local_Jac_data) override
     {
-        assemble(t, local_x, local_M_data, local_K_data, local_b_data);
+        assemble(t, dt, local_x, local_M_data, local_K_data, local_b_data);
 
         // dK/dx * x
         MatVec::Mat::getDMatDxTimesY(local_x, local_x, local_Jac_data);
@@ -373,7 +375,8 @@ template <typename MatVec>
 class LocalAssemblerB final : public ProcessLib::LocalAssemblerInterface
 {
 public:
-    void assemble(double const /*t*/, std::vector<double> const& local_x,
+    void assemble(double const /*t*/, double const /*dt*/,
+                  std::vector<double> const& local_x,
                   std::vector<double>& /*local_M_data*/,
                   std::vector<double>& /*local_K_data*/,
                   std::vector<double>& local_b_data) override
@@ -381,7 +384,7 @@ public:
         MatVec::Vec::getVec(local_x, local_b_data);
     }
 
-    void assembleWithJacobian(double const t,
+    void assembleWithJacobian(double const t, double const dt,
                               std::vector<double> const& local_x,
                               std::vector<double> const& /*local_xdot*/,
                               const double /*dxdot_dx*/, const double /*dx_dx*/,
@@ -390,7 +393,7 @@ public:
                               std::vector<double>& local_b_data,
                               std::vector<double>& local_Jac_data) override
     {
-        assemble(t, local_x, local_M_data, local_K_data, local_b_data);
+        assemble(t, dt, local_x, local_M_data, local_K_data, local_b_data);
 
         // db/dx
         MatVec::Vec::getDVecDx(local_x, local_Jac_data);
@@ -412,7 +415,8 @@ template <typename MatVecM, typename MatVecK, typename MatVecB>
 class LocalAssemblerMKb final : public ProcessLib::LocalAssemblerInterface
 {
 public:
-    void assemble(double const /*t*/, std::vector<double> const& local_x,
+    void assemble(double const /*t*/, double const /*dt*/,
+                  std::vector<double> const& local_x,
                   std::vector<double>& local_M_data,
                   std::vector<double>& local_K_data,
                   std::vector<double>& local_b_data) override
@@ -422,7 +426,7 @@ public:
         MatVecB::Vec::getVec(local_x, local_b_data);
     }
 
-    void assembleWithJacobian(double const t,
+    void assembleWithJacobian(double const t, double const dt,
                               std::vector<double> const& local_x,
                               std::vector<double> const& local_xdot,
                               const double dxdot_dx, const double dx_dx,
@@ -431,7 +435,7 @@ public:
                               std::vector<double>& local_b_data,
                               std::vector<double>& local_Jac_data) override
     {
-        assemble(t, local_x, local_M_data, local_K_data, local_b_data);
+        assemble(t, dt, local_x, local_M_data, local_K_data, local_b_data);
 
         std::vector<double> local_JacM_data;
         // dM/dx * xdot
@@ -524,13 +528,15 @@ private:
         std::vector<double> b_data_ana;
         std::vector<double> Jac_data_ana;
         double const t = 0.0;
+        double const dt = 0.0;
 
-        jac_asm_cd.assembleWithJacobian(loc_asm, t, x, xdot, dxdot_dx, dx_dx, M_data_cd,
-                                     K_data_cd, b_data_cd, Jac_data_cd);
+        jac_asm_cd.assembleWithJacobian(loc_asm, t, dt, x, xdot, dxdot_dx,
+                                        dx_dx, M_data_cd, K_data_cd, b_data_cd,
+                                        Jac_data_cd);
 
-        jac_asm_ana.assembleWithJacobian(loc_asm, t, x, xdot, dxdot_dx, dx_dx,
-                                         M_data_ana, K_data_ana, b_data_ana,
-                                         Jac_data_ana);
+        jac_asm_ana.assembleWithJacobian(loc_asm, t, dt, x, xdot, dxdot_dx,
+                                         dx_dx, M_data_ana, K_data_ana,
+                                         b_data_ana, Jac_data_ana);
 
         if (LocAsm::asmM) {
             ASSERT_EQ(x.size()*x.size(), M_data_cd.size());
