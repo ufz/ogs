@@ -56,11 +56,6 @@
                     <type>Solid</type>
                     <properties>
                         <property>
-                            <name>permeability</name>
-                            <type>Constant</type>
-                            <value>6.3072e-14 0. 0. 6.3072e-14</value>
-                        </property>
-                        <property>
                             <name>porosity</name>
                             <type>Constant</type>
                             <value>0.01</value>
@@ -98,6 +93,11 @@
                     <name>thermal_transversal_dispersivity</name>
                     <type>Constant</type>
                     <value>0.0</value>
+                </property>
+                <property>
+                    <name>permeability</name>
+                    <type>Constant</type>
+                    <value>6.3072e-14 0. 0. 6.3072e-14</value>
                 </property>
             </properties>
         </medium>
@@ -137,11 +137,6 @@
                 <phase>
                     <type>Solid</type>
                     <properties>
-                        <property>
-                            <name>permeability</name>
-                            <type>Constant</type>
-                            <value>3.1536e-10 0. 0. 3.1536e-10</value>
-                        </property>
                         <property>
                             <name>porosity</name>
                             <type>Constant</type>
@@ -185,6 +180,11 @@
                     <name>specific_heat_capacity</name>
                     <type>Constant</type>
                     <value>4000</value>
+                </property>
+                <property>
+                    <name>permeability</name>
+                    <type>Constant</type>
+                    <value>3.1536e-10 0. 0. 3.1536e-10</value>
                 </property>
             </properties>
         </medium>

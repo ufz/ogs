@@ -50,11 +50,6 @@
                     <type>Solid</type>
                     <properties>
                         <property>
-                            <name>permeability</name>
-                            <type>Constant</type>
-                            <value>1.e-8 0 0 1.e-8</value>
-                        </property>
-                        <property>
                             <name>porosity</name>
                             <type>Constant</type>
                             <value>0.001</value>
@@ -92,6 +87,11 @@
                     <name>thermal_transversal_dispersivity</name>
                     <type>Constant</type>
                     <value>0.0</value>
+                </property>
+                <property>
+                    <name>permeability</name>
+                    <type>Constant</type>
+                    <value>1.e-8 0 0 1.e-8</value>
                 </property>
             </properties>
         </medium>
