@@ -130,11 +130,9 @@ public:
         auto const& medium =
             *_process_data.media_map->getMedium(_element.getID());
         auto const& liquid_phase = medium.phase("AqueousLiquid");
-        auto const& solid_phase = medium.phase("Solid");
 
         auto const K = MaterialPropertyLib::formEigenTensor<GlobalDim>(
-            solid_phase
-                .property(MaterialPropertyLib::PropertyType::permeability)
+            medium.property(MaterialPropertyLib::PropertyType::permeability)
                 .value(vars, pos, t));
 
         auto const mu =
@@ -273,7 +271,6 @@ protected:
         auto const& medium =
             *_process_data.media_map->getMedium(_element.getID());
         auto const& liquid_phase = medium.phase("AqueousLiquid");
-        auto const& solid_phase = medium.phase("Solid");
 
         for (unsigned ip = 0; ip < n_integration_points; ++ip)
         {
@@ -294,8 +291,7 @@ protected:
                 MaterialPropertyLib::Variable::phase_pressure)] = p_int_pt;
 
             auto const K = MaterialPropertyLib::formEigenTensor<GlobalDim>(
-                solid_phase
-                    .property(MaterialPropertyLib::PropertyType::permeability)
+                medium.property(MaterialPropertyLib::PropertyType::permeability)
                     .value(vars, pos, t));
 
             auto const mu =

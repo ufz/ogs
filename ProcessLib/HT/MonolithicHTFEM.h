@@ -143,7 +143,7 @@ public:
 
             auto const intrinsic_permeability =
                 MaterialPropertyLib::formEigenTensor<GlobalDim>(
-                    solid_phase
+                    medium
                         .property(
                             MaterialPropertyLib::PropertyType::permeability)
                         .value(vars, pos, t));

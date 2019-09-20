@@ -129,8 +129,7 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
 
         auto const intrinsic_permeability =
             MaterialPropertyLib::formEigenTensor<GlobalDim>(
-                solid_phase
-                    .property(MaterialPropertyLib::PropertyType::permeability)
+                medium.property(MaterialPropertyLib::PropertyType::permeability)
                     .value(vars, pos, t));
         GlobalDimMatrixType const K_over_mu =
             intrinsic_permeability / viscosity;
@@ -267,7 +266,7 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
 
         auto const intrinsic_permeability =
             MaterialPropertyLib::formEigenTensor<GlobalDim>(
-                solid_phase
+                medium
                     .property(MaterialPropertyLib::PropertyType::permeability)
                     .value(vars, pos, t));
 
