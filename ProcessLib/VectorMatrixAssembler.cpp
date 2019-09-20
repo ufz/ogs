@@ -76,7 +76,7 @@ void VectorMatrixAssembler::assemble(
             getCurrentLocalSolutions(*cpl_xs, indices_of_processes);
 
         ProcessLib::LocalCoupledSolutions local_coupled_solutions(
-            cpl_xs->dt, cpl_xs->process_id, std::move(local_coupled_xs0),
+            cpl_xs->process_id, std::move(local_coupled_xs0),
             std::move(local_coupled_xs));
 
         local_assembler.assembleForStaggeredScheme(t, dt, _local_M_data,
@@ -147,7 +147,7 @@ void VectorMatrixAssembler::assembleWithJacobian(
             getCurrentLocalSolutions(*cpl_xs, indices_of_processes);
 
         ProcessLib::LocalCoupledSolutions local_coupled_solutions(
-            cpl_xs->dt, cpl_xs->process_id, std::move(local_coupled_xs0),
+            cpl_xs->process_id, std::move(local_coupled_xs0),
             std::move(local_coupled_xs));
 
         _jacobian_assembler->assembleWithJacobianForStaggeredScheme(

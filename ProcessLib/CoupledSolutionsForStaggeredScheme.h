@@ -32,7 +32,7 @@ struct CoupledSolutionsForStaggeredScheme
     CoupledSolutionsForStaggeredScheme(
         std::vector<std::reference_wrapper<GlobalVector const>> const&
             coupled_xs_,
-        const double dt_, const int process_id_);
+        const int process_id_);
 
     /// References to the current solutions of the coupled processes.
     std::vector<std::reference_wrapper<GlobalVector const>> const& coupled_xs;
@@ -40,7 +40,6 @@ struct CoupledSolutionsForStaggeredScheme
     /// Pointers to the vector of the solutions of the previous time step.
     std::vector<GlobalVector*> coupled_xs_t0;
 
-    const double dt;  ///< Time step size.
     const int process_id;
 };
 
@@ -54,17 +53,15 @@ struct CoupledSolutionsForStaggeredScheme
  */
 struct LocalCoupledSolutions
 {
-    LocalCoupledSolutions(const double dt_, const int process_id_,
+    LocalCoupledSolutions(const int process_id_,
                           std::vector<std::vector<double>>&& local_coupled_xs0_,
                           std::vector<std::vector<double>>&& local_coupled_xs_)
-        : dt(dt_),
-          process_id(process_id_),
+        : process_id(process_id_),
           local_coupled_xs0(std::move(local_coupled_xs0_)),
           local_coupled_xs(std::move(local_coupled_xs_))
     {
     }
 
-    const double dt;  ///< Time step size.
     const int process_id;
 
     /// Local solutions of the previous time step.
