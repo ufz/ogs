@@ -131,8 +131,7 @@ template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           typename IntegrationMethod, int GlobalDim>
 void HydroMechanicsLocalAssemblerMatrixNearFracture<
     ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
-    GlobalDim>::
-    computeSecondaryVariableConcreteWithVector(double const t,
+    GlobalDim>::postTimestepConcreteWithVector(double const t, double const dt,
                                                Eigen::VectorXd const& local_x)
 {
     auto p = const_cast<Eigen::VectorXd&>(local_x).segment(pressure_index,
@@ -152,7 +151,7 @@ void HydroMechanicsLocalAssemblerMatrixNearFracture<
     if (ele_levelset == 0)
     {
         // no DoF exists for displacement jumps. do the normal assembly
-        Base::computeSecondaryVariableConcreteWithBlockVectors(t, p, u);
+        Base::postTimestepConcreteWithBlockVectors(t, dt, p, u);
         return;
     }
 
@@ -163,7 +162,7 @@ void HydroMechanicsLocalAssemblerMatrixNearFracture<
     Eigen::VectorXd const total_u = u + ele_levelset * g;
 
     // evaluate residuals and Jacobians for pressure and displacements
-    Base::computeSecondaryVariableConcreteWithBlockVectors(t, p, total_u);
+    Base::postTimestepConcreteWithBlockVectors(t, dt, p, total_u);
 }
 
 }  // namespace HydroMechanics

@@ -57,8 +57,9 @@ public:
         }
     }
 
-    void computeSecondaryVariableConcreteWithVector(
-        const double t, Eigen::VectorXd const& local_x) override;
+    void postTimestepConcreteWithVector(
+        const double t, double const dt,
+        Eigen::VectorXd const& local_x) override;
 
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override

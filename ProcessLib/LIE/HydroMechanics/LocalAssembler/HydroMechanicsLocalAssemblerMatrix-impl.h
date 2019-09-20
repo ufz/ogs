@@ -294,10 +294,9 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           typename IntegrationMethod, int GlobalDim>
-void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
-                                        ShapeFunctionPressure,
-                                        IntegrationMethod, GlobalDim>::
-    computeSecondaryVariableConcreteWithVector(double const t,
+void HydroMechanicsLocalAssemblerMatrix<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    GlobalDim>::postTimestepConcreteWithVector(double const t, double const dt,
                                                Eigen::VectorXd const& local_x)
 {
     auto p = const_cast<Eigen::VectorXd&>(local_x).segment(pressure_index,
@@ -308,7 +307,7 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
     }
     auto u = local_x.segment(displacement_index, displacement_size);
 
-    computeSecondaryVariableConcreteWithBlockVectors(t, p, u);
+    postTimestepConcreteWithBlockVectors(t, dt, p, u);
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
@@ -316,8 +315,8 @@ template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
 void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
                                         ShapeFunctionPressure,
                                         IntegrationMethod, GlobalDim>::
-    computeSecondaryVariableConcreteWithBlockVectors(
-        double const t,
+    postTimestepConcreteWithBlockVectors(
+        double const t, double const dt,
         Eigen::Ref<const Eigen::VectorXd> const& p,
         Eigen::Ref<const Eigen::VectorXd> const& u)
 {
@@ -354,8 +353,8 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
         eps.noalias() = B * u;
 
         auto&& solution = _ip_data[ip].solid_material.integrateStress(
-            t, x_position, _process_data.dt, eps_prev, eps, sigma_eff_prev,
-            *state, _process_data.reference_temperature);
+            t, x_position, dt, eps_prev, eps, sigma_eff_prev, *state,
+            _process_data.reference_temperature);
 
         if (!solution)
         {

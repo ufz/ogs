@@ -101,8 +101,8 @@ public:
         }
     }
 
-    void computeSecondaryVariableConcrete(
-        const double t, std::vector<double> const& local_x_) override
+    void postTimestepConcrete(std::vector<double> const& local_x_,
+                              const double t, double const dt) override
     {
         auto const local_dof_size = local_x_.size();
 
@@ -112,7 +112,7 @@ public:
             _local_u[_dofIndex_to_localIndex[i]] = local_x_[i];
         }
 
-        computeSecondaryVariableConcreteWithVector(t, _local_u);
+        postTimestepConcreteWithVector(t, dt, _local_u);
     }
 
 protected:
@@ -122,8 +122,8 @@ protected:
                                               Eigen::VectorXd& local_b,
                                               Eigen::MatrixXd& local_J) = 0;
 
-    virtual void computeSecondaryVariableConcreteWithVector(
-        double const t, Eigen::VectorXd const& local_u) = 0;
+    virtual void postTimestepConcreteWithVector(
+        double const t, double const dt, Eigen::VectorXd const& local_u) = 0;
 
     MeshLib::Element const& _element;
     bool const _is_axially_symmetric;

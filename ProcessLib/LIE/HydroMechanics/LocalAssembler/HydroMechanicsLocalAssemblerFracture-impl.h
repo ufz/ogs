@@ -328,10 +328,10 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           typename IntegrationMethod, int GlobalDim>
-void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
-                                          ShapeFunctionPressure,
-                                          IntegrationMethod, GlobalDim>::
-    computeSecondaryVariableConcreteWithVector(const double t,
+void HydroMechanicsLocalAssemblerFracture<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    GlobalDim>::postTimestepConcreteWithVector(const double t,
+                                               double const /*dt*/,
                                                Eigen::VectorXd const& local_x)
 {
     auto const nodal_g = local_x.segment(displacement_index, displacement_size);

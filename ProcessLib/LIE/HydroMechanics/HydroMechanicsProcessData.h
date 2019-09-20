@@ -111,8 +111,6 @@ struct HydroMechanicsProcessData
     std::unique_ptr<MeshLib::ElementStatus> p_element_status;
     ParameterLib::Parameter<double> const* p0 = nullptr;
 
-    double dt = 0.0;
-
     // mesh properties for output
     MeshLib::PropertyVector<double>* mesh_prop_stress_xx = nullptr;
     MeshLib::PropertyVector<double>* mesh_prop_stress_yy = nullptr;

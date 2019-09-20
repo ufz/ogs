@@ -51,9 +51,9 @@ public:
     bool isLinear() const override;
     //! @}
 
-    void computeSecondaryVariableConcrete(double const t,
-                                          GlobalVector const& x,
-                                          int const process_id) override;
+    void postTimestepConcreteProcess(GlobalVector const& x, double const t,
+                                     double const dt,
+                                     int const process_id) override;
 
 private:
     using LocalAssemblerInterface = HydroMechanicsLocalAssemblerInterface;

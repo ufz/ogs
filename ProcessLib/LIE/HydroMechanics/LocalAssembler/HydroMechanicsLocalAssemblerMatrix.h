@@ -84,11 +84,12 @@ protected:
         Eigen::Ref<Eigen::MatrixXd> J_pp, Eigen::Ref<Eigen::MatrixXd> J_pu,
         Eigen::Ref<Eigen::MatrixXd> J_uu, Eigen::Ref<Eigen::MatrixXd> J_up);
 
-    void computeSecondaryVariableConcreteWithVector(
-        double const t, Eigen::VectorXd const& local_x) override;
+    void postTimestepConcreteWithVector(
+        double const t, double const dt,
+        Eigen::VectorXd const& local_x) override;
 
-    void computeSecondaryVariableConcreteWithBlockVectors(
-        double const t,
+    void postTimestepConcreteWithBlockVectors(
+        double const t, double const dt,
         Eigen::Ref<const Eigen::VectorXd> const& p,
         Eigen::Ref<const Eigen::VectorXd> const& u);
 

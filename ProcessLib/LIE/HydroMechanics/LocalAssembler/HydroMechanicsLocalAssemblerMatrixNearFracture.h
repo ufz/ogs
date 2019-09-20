@@ -71,8 +71,9 @@ private:
         }
     }
 
-    void computeSecondaryVariableConcreteWithVector(
-        double const t, Eigen::VectorXd const& local_x) override;
+    void postTimestepConcreteWithVector(
+        double const t, double const dt,
+        Eigen::VectorXd const& local_x) override;
 
     using Base::_element;
     using Base::_ip_data;
