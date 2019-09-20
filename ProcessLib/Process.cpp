@@ -189,9 +189,10 @@ void Process::updateDeactivatedSubdomains(double const time,
     }
 }
 
-void Process::preAssemble(const double t, GlobalVector const& x)
+void Process::preAssemble(const double t, double const dt,
+                          GlobalVector const& x)
 {
-    preAssembleConcreteProcess(t, x);
+    preAssembleConcreteProcess(t, dt, x);
 }
 
 void Process::assemble(const double t, double const dt, GlobalVector const& x,

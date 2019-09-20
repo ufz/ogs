@@ -43,7 +43,7 @@ public:
     virtual void initialize(std::size_t const mesh_item_id,
                             NumLib::LocalToGlobalIndexMap const& dof_table);
 
-    virtual void preAssemble(double const /*t*/,
+    virtual void preAssemble(double const /*t*/, double const /*dt*/,
                              std::vector<double> const& /*local_x*/){};
 
     virtual void assemble(double const t, double const dt,

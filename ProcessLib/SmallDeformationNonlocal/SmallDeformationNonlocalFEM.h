@@ -316,7 +316,7 @@ public:
             "implemented.");
     }
 
-    void preAssemble(double const t,
+    void preAssemble(double const t, double const dt,
                      std::vector<double> const& local_x) override
     {
         auto const n_integration_points =
@@ -369,8 +369,8 @@ public:
                                      // calculateDamage() function.
 
             auto&& solution = _ip_data[ip].solid_material.integrateStress(
-                t, x_position, _process_data.dt, eps_prev, eps, sigma_eff_prev,
-                *state, _process_data.reference_temperature);
+                t, x_position, dt, eps_prev, eps, sigma_eff_prev, *state,
+                _process_data.reference_temperature);
 
             if (!solution)
             {

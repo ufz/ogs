@@ -45,8 +45,9 @@ public:
     static const ODESystemTag ODETag =
         ODESystemTag::FirstOrderImplicitQuasilinear;
 
-    //! Calls process' pre-assembly with the provided state (\c t, \c x).
-    virtual void preAssemble(const double t, GlobalVector const& x) = 0;
+    //! Calls process' pre-assembly with the provided state (\c t, \c dt, \c x).
+    virtual void preAssemble(const double t, double const dt,
+                             GlobalVector const& x) = 0;
 
     //! Assemble \c M, \c K and \c b at the provided state (\c t, \c x).
     virtual void assemble(const double t, double const dt,
@@ -78,8 +79,9 @@ class ODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
                        NonlinearSolverTag::Picard>
 {
 public:
-    //! Calls process' pre-assembly with the provided state (\c t, \c x).
-    void preAssemble(const double t, GlobalVector const& x) override = 0;
+    //! Calls process' pre-assembly with the provided state (\c t, \c dt, \c x).
+    void preAssemble(const double t, double const dt,
+                     GlobalVector const& x) override = 0;
 
     /*! Assemble \c M, \c K, \c b and the Jacobian
      * \f$ \mathtt{Jac} := \partial r/\partial x_N \f$

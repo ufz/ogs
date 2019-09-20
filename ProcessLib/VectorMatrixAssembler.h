@@ -39,7 +39,7 @@ public:
     void preAssemble(const std::size_t mesh_item_id,
                      LocalAssemblerInterface& local_assembler,
                      const NumLib::LocalToGlobalIndexMap& dof_table,
-                     const double t, const GlobalVector& x);
+                     const double t, double const dt, const GlobalVector& x);
 
     //! Assembles\c M, \c K, and \c b.
     //! \remark Jacobian is not assembled here, see assembleWithJacobian().

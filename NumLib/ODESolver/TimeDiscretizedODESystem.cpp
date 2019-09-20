@@ -89,7 +89,7 @@ void TimeDiscretizedODESystem<
     _b->setZero();
     _Jac->setZero();
 
-    _ode.preAssemble(t, x_curr);
+    _ode.preAssemble(t, dt, x_curr);
     _ode.assembleWithJacobian(t, dt, x_curr, xdot, dxdot_dx, dx_dx, *_M, *_K,
                               *_b, *_Jac);
 
@@ -199,7 +199,7 @@ void TimeDiscretizedODESystem<
     _K->setZero();
     _b->setZero();
 
-    _ode.preAssemble(t, x_curr);
+    _ode.preAssemble(t, dt, x_curr);
     _ode.assemble(t, dt, x_curr, *_M, *_K, *_b);
 
     LinAlg::finalizeAssembly(*_M);
