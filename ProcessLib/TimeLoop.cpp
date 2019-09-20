@@ -157,7 +157,7 @@ std::vector<GlobalVector*> setInitialConditions(
 
             auto const nl_tag = process_data->nonlinear_solver_tag;
             setEquationSystem(nonlinear_solver, ode_sys, conv_crit, nl_tag);
-            nonlinear_solver.assemble(x0);
+            nonlinear_solver.assemble(x0, process_id);
             time_disc.pushState(
                 t0, x0,
                 mat_strg);  // TODO: that might do duplicate work
@@ -173,6 +173,7 @@ NumLib::NonlinearSolverStatus solveOneTimeStepOneProcess(
     Output& output_control)
 {
     auto& process = process_data.process;
+    int const process_id = process_data.process_id;
     auto& time_disc = *process_data.time_disc;
     auto& conv_crit = *process_data.conv_crit;
     auto& ode_sys = *process_data.tdisc_ode_sys;
@@ -190,16 +191,16 @@ NumLib::NonlinearSolverStatus solveOneTimeStepOneProcess(
 
     auto const post_iteration_callback = [&](int iteration,
                                              GlobalVector const& x) {
-        output_control.doOutputNonlinearIteration(
-            process, process_data.process_id, timestep, t, x, iteration);
+        output_control.doOutputNonlinearIteration(process, process_id, timestep,
+                                                  t, x, iteration);
     };
 
     auto const nonlinear_solver_status =
-        nonlinear_solver.solve(x, post_iteration_callback);
+        nonlinear_solver.solve(x, post_iteration_callback, process_id);
 
     if (nonlinear_solver_status.error_norms_met)
     {
-        process.postNonLinearSolver(x, t, delta_t, process_data.process_id);
+        process.postNonLinearSolver(x, t, delta_t, process_id);
     }
 
     return nonlinear_solver_status;
@@ -574,7 +575,7 @@ void postTimestepForAllProcesses(
         if (is_staggered_coupling)
         {
             CoupledSolutionsForStaggeredScheme coupled_solutions(
-                solutions_of_coupled_processes, process_id);
+                solutions_of_coupled_processes);
             pcs.setCoupledSolutionsForStaggeredScheme(&coupled_solutions);
         }
         auto& x = *_process_solutions[process_id];
@@ -662,7 +663,7 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
             auto& x = *_process_solutions[process_id];
 
             CoupledSolutionsForStaggeredScheme coupled_solutions(
-                _solutions_of_coupled_processes, process_id);
+                _solutions_of_coupled_processes);
 
             process_data->process.setCoupledSolutionsForStaggeredScheme(
                 &coupled_solutions);
@@ -787,12 +788,13 @@ void TimeLoop::outputSolutions(bool const output_initial_condition,
         if (is_staggered_coupling)
         {
             CoupledSolutionsForStaggeredScheme coupled_solutions(
-                _solutions_of_coupled_processes, process_id);
+                _solutions_of_coupled_processes);
 
             process_data->process.setCoupledSolutionsForStaggeredScheme(
                 &coupled_solutions);
             process_data->process
-                .setCoupledTermForTheStaggeredSchemeToLocalAssemblers();
+                .setCoupledTermForTheStaggeredSchemeToLocalAssemblers(
+                    process_id);
         }
         (output_object.*output_class_member)(pcs, process_id, timestep, t, x);
     }

@@ -96,24 +96,28 @@ public:
     void updateDeactivatedSubdomains(double const time, const int process_id);
 
     bool isMonolithicSchemeUsed() const { return _use_monolithic_scheme; }
-    virtual void setCoupledTermForTheStaggeredSchemeToLocalAssemblers() {}
+    virtual void setCoupledTermForTheStaggeredSchemeToLocalAssemblers(
+        int const /*process_id*/)
+    {
+    }
     void preAssemble(const double t, double const dt,
                      GlobalVector const& x) final;
     void assemble(const double t, double const dt, GlobalVector const& x,
-                  GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) final;
+                  int const process_id, GlobalMatrix& M, GlobalMatrix& K,
+                  GlobalVector& b) final;
 
     void assembleWithJacobian(const double t, double const dt,
                               GlobalVector const& x, GlobalVector const& xdot,
                               const double dxdot_dx, const double dx_dx,
-                              GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
+                              int const process_id, GlobalMatrix& M,
+                              GlobalMatrix& K, GlobalVector& b,
                               GlobalMatrix& Jac) final;
 
     std::vector<NumLib::IndexValueVector<GlobalIndexType>> const*
-    getKnownSolutions(double const t, GlobalVector const& x) const final
+    getKnownSolutions(double const t, GlobalVector const& x,
+                      int const process_id) const final
     {
-        const auto pcs_id =
-            (_coupled_solutions) ? _coupled_solutions->process_id : 0;
-        return _boundary_conditions[pcs_id].getKnownSolutions(t, x);
+        return _boundary_conditions[process_id].getKnownSolutions(t, x);
     }
 
     virtual NumLib::LocalToGlobalIndexMap const& getDOFTable(
@@ -192,13 +196,14 @@ private:
     }
 
     virtual void assembleConcreteProcess(const double t, double const dt,
-                                         GlobalVector const& x, GlobalMatrix& M,
+                                         GlobalVector const& x,
+                                         int const process_id, GlobalMatrix& M,
                                          GlobalMatrix& K, GlobalVector& b) = 0;
 
     virtual void assembleWithJacobianConcreteProcess(
         const double t, double const dt, GlobalVector const& x,
         GlobalVector const& xdot, const double dxdot_dx, const double dx_dx,
-        GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
+        int const process_id, GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
         GlobalMatrix& Jac) = 0;
 
     virtual void preTimestepConcreteProcess(GlobalVector const& /*x*/,

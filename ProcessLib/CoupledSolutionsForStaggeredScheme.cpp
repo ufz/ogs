@@ -18,9 +18,8 @@
 namespace ProcessLib
 {
 CoupledSolutionsForStaggeredScheme::CoupledSolutionsForStaggeredScheme(
-    std::vector<std::reference_wrapper<GlobalVector const>> const& coupled_xs_,
-    const int process_id_)
-    : coupled_xs(coupled_xs_), process_id(process_id_)
+    std::vector<std::reference_wrapper<GlobalVector const>> const& coupled_xs_)
+    : coupled_xs(coupled_xs_)
 {
     for (auto const& coupled_x : coupled_xs)
     {

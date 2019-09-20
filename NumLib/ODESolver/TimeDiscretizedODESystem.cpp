@@ -71,7 +71,8 @@ TimeDiscretizedODESystem<
 
 void TimeDiscretizedODESystem<
     ODESystemTag::FirstOrderImplicitQuasilinear,
-    NonlinearSolverTag::Newton>::assemble(const GlobalVector& x_new_timestep)
+    NonlinearSolverTag::Newton>::assemble(const GlobalVector& x_new_timestep,
+                                          int const process_id)
 {
     namespace LinAlg = MathLib::LinAlg;
 
@@ -90,8 +91,8 @@ void TimeDiscretizedODESystem<
     _Jac->setZero();
 
     _ode.preAssemble(t, dt, x_curr);
-    _ode.assembleWithJacobian(t, dt, x_curr, xdot, dxdot_dx, dx_dx, *_M, *_K,
-                              *_b, *_Jac);
+    _ode.assembleWithJacobian(t, dt, x_curr, xdot, dxdot_dx, dx_dx, process_id,
+                              *_M, *_K, *_b, *_Jac);
 
     LinAlg::finalizeAssembly(*_M);
     LinAlg::finalizeAssembly(*_K);
@@ -126,9 +127,11 @@ void TimeDiscretizedODESystem<
 
 void TimeDiscretizedODESystem<
     ODESystemTag::FirstOrderImplicitQuasilinear,
-    NonlinearSolverTag::Newton>::computeKnownSolutions(GlobalVector const& x)
+    NonlinearSolverTag::Newton>::computeKnownSolutions(GlobalVector const& x,
+                                                       int const process_id)
 {
-    _known_solutions = _ode.getKnownSolutions(_time_disc.getCurrentTime(), x);
+    _known_solutions =
+        _ode.getKnownSolutions(_time_disc.getCurrentTime(), x, process_id);
 }
 
 void TimeDiscretizedODESystem<
@@ -187,7 +190,8 @@ TimeDiscretizedODESystem<
 
 void TimeDiscretizedODESystem<
     ODESystemTag::FirstOrderImplicitQuasilinear,
-    NonlinearSolverTag::Picard>::assemble(const GlobalVector& x_new_timestep)
+    NonlinearSolverTag::Picard>::assemble(const GlobalVector& x_new_timestep,
+                                          int const process_id)
 {
     namespace LinAlg = MathLib::LinAlg;
 
@@ -200,7 +204,7 @@ void TimeDiscretizedODESystem<
     _b->setZero();
 
     _ode.preAssemble(t, dt, x_curr);
-    _ode.assemble(t, dt, x_curr, *_M, *_K, *_b);
+    _ode.assemble(t, dt, x_curr, process_id, *_M, *_K, *_b);
 
     LinAlg::finalizeAssembly(*_M);
     LinAlg::finalizeAssembly(*_K);
@@ -209,9 +213,11 @@ void TimeDiscretizedODESystem<
 
 void TimeDiscretizedODESystem<
     ODESystemTag::FirstOrderImplicitQuasilinear,
-    NonlinearSolverTag::Picard>::computeKnownSolutions(GlobalVector const& x)
+    NonlinearSolverTag::Picard>::computeKnownSolutions(GlobalVector const& x,
+                                                       int const process_id)
 {
-    _known_solutions = _ode.getKnownSolutions(_time_disc.getCurrentTime(), x);
+    _known_solutions =
+        _ode.getKnownSolutions(_time_disc.getCurrentTime(), x, process_id);
 }
 
 void TimeDiscretizedODESystem<

@@ -44,13 +44,16 @@ public:
      *
      * \param x             the state at which the equation system will be
      *                      assembled.
+     * \param process_id    the process' id which will be assembled.
      */
-    virtual void assemble(GlobalVector const& x) const = 0;
+    virtual void assemble(GlobalVector const& x,
+                          int const process_id) const = 0;
 
     /*! Assemble and solve the equation system.
      *
      * \param x   in: the initial guess, out: the solution.
      * \param postIterationCallback called after each iteration if set.
+     * \param process_id usually used in staggered schemes.
      *
      * \retval true if the equation system could be solved
      * \retval false otherwise
@@ -58,7 +61,8 @@ public:
     virtual NonlinearSolverStatus solve(
         GlobalVector& x,
         std::function<void(int, GlobalVector const&)> const&
-            postIterationCallback) = 0;
+            postIterationCallback,
+        int const process_id) = 0;
 
     virtual ~NonlinearSolverBase() = default;
 };
@@ -106,12 +110,13 @@ public:
         _convergence_criterion = &conv_crit;
     }
 
-    void assemble(GlobalVector const& x) const override;
+    void assemble(GlobalVector const& x, int const process_id) const override;
 
     NonlinearSolverStatus solve(
         GlobalVector& x,
         std::function<void(int, GlobalVector const&)> const&
-            postIterationCallback) override;
+            postIterationCallback,
+        int const process_id) override;
 
 private:
     GlobalLinearSolver& _linear_solver;
@@ -166,12 +171,13 @@ public:
         _convergence_criterion = &conv_crit;
     }
 
-    void assemble(GlobalVector const& x) const override;
+    void assemble(GlobalVector const& x, int const process_id) const override;
 
     NonlinearSolverStatus solve(
         GlobalVector& x,
         std::function<void(int, GlobalVector const&)> const&
-            postIterationCallback) override;
+            postIterationCallback,
+        int const process_id) override;
 
 private:
     GlobalLinearSolver& _linear_solver;
