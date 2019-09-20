@@ -519,7 +519,7 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                         ShapeFunctionPressure,
                                         IntegrationMethod, DisplacementDim>::
     postNonLinearSolverConcrete(std::vector<double> const& local_x,
-                                double const t,
+                                double const t, double const dt,
                                 bool const use_monolithic_scheme)
 {
     const int displacement_offset =
@@ -536,7 +536,6 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     auto p = Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
         pressure_size> const>(local_x.data() + pressure_index, pressure_size);
 
-    double const& dt = _process_data.dt;
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
     auto const& medium = _process_data.media_map->getMedium(_element.getID());

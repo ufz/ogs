@@ -201,7 +201,7 @@ NumLib::NonlinearSolverStatus solveOneTimeStepOneProcess(
 
     if (nonlinear_solver_status.error_norms_met)
     {
-        process.postNonLinearSolver(x, t, process_id);
+        process.postNonLinearSolver(x, t, delta_t, process_id);
     }
 
     return nonlinear_solver_status;

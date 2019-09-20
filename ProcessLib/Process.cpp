@@ -402,10 +402,10 @@ void Process::postTimestep(GlobalVector const& x, const double t,
 }
 
 void Process::postNonLinearSolver(GlobalVector const& x, const double t,
-                                  int const process_id)
+                                  double const dt, int const process_id)
 {
     MathLib::LinAlg::setLocalAccessibleVector(x);
-    postNonLinearSolverConcreteProcess(x, t, process_id);
+    postNonLinearSolverConcreteProcess(x, t, dt, process_id);
 }
 
 void Process::computeSecondaryVariable(const double t, GlobalVector const& x,

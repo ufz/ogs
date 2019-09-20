@@ -122,7 +122,7 @@ public:
     void computeSecondaryVariableConcrete(
         double const t, std::vector<double> const& local_x) override;
     void postNonLinearSolverConcrete(std::vector<double> const& local_x,
-                                     double const t,
+                                     double const t, double const dt,
                                      bool const use_monolithic_scheme) override;
 
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(

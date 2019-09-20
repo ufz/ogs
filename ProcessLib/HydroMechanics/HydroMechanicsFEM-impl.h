@@ -577,7 +577,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                   ShapeFunctionPressure, IntegrationMethod,
                                   DisplacementDim>::
     postNonLinearSolverConcrete(std::vector<double> const& local_x,
-                                double const t,
+                                double const t, double const dt,
                                 bool const use_monolithic_scheme)
 {
     const int displacement_offset =
@@ -587,7 +587,6 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         Eigen::Map<typename ShapeMatricesTypeDisplacement::template VectorType<
             displacement_size> const>(local_x.data() + displacement_offset,
                                       displacement_size);
-    double const& dt = _process_data.dt;
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
 

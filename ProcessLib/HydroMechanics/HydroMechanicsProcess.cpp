@@ -371,8 +371,6 @@ void HydroMechanicsProcess<DisplacementDim>::preTimestepConcreteProcess(
 {
     DBUG("PreTimestep HydroMechanicsProcess.");
 
-    _process_data.dt = dt;
-
     if (hasMechanicalProcess(process_id))
     {
         ProcessLib::ProcessVariable const& pv =
@@ -398,7 +396,8 @@ void HydroMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
 
 template <int DisplacementDim>
 void HydroMechanicsProcess<DisplacementDim>::postNonLinearSolverConcreteProcess(
-    GlobalVector const& x, const double t, const int process_id)
+    GlobalVector const& x, const double t, double const dt,
+    const int process_id)
 {
     if (!hasMechanicalProcess(process_id))
     {
@@ -410,7 +409,7 @@ void HydroMechanicsProcess<DisplacementDim>::postNonLinearSolverConcreteProcess(
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerInterface::postNonLinearSolver, _local_assemblers,
-        pv.getActiveElementIDs(), getDOFTable(process_id), x, t,
+        pv.getActiveElementIDs(), getDOFTable(process_id), x, t, dt,
         _use_monolithic_scheme);
 }
 

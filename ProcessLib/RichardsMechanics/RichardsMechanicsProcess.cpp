@@ -347,6 +347,7 @@ template <int DisplacementDim>
 void RichardsMechanicsProcess<
     DisplacementDim>::postNonLinearSolverConcreteProcess(GlobalVector const& x,
                                                          const double t,
+                                                         double const dt,
                                                          const int process_id)
 {
     if (!hasMechanicalProcess(process_id))
@@ -360,7 +361,7 @@ void RichardsMechanicsProcess<
     // Calculate strain, stress or other internal variables of mechanics.
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerInterface::postNonLinearSolver, _local_assemblers,
-        pv.getActiveElementIDs(), getDOFTable(process_id), x, t,
+        pv.getActiveElementIDs(), getDOFTable(process_id), x, t, dt,
         _use_monolithic_scheme);
 }
 
