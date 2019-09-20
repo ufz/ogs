@@ -245,7 +245,6 @@ void PhaseFieldProcess<DisplacementDim>::preTimestepConcreteProcess(
 {
     DBUG("PreTimestep PhaseFieldProcess %d.", process_id);
 
-    _process_data.dt = dt;
     _process_data.injected_volume = t;
 
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];

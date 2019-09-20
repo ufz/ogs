@@ -48,7 +48,6 @@ struct PhaseFieldProcessData
     bool propagating_crack = false;
     bool crack_pressure = false;
 
-    double dt = std::numeric_limits<double>::quiet_NaN();
     double const unity_pressure = 1.0;
     double pressure = 0.0;
     double pressure_old = 0.0;

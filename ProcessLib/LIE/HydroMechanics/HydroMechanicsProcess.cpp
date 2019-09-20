@@ -617,7 +617,6 @@ void HydroMechanicsProcess<GlobalDim>::preTimestepConcreteProcess(
     DBUG("PreTimestep HydroMechanicsProcess.");
 
     _process_data.dt = dt;
-    _process_data.t = t;
 
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 

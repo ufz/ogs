@@ -585,9 +585,6 @@ void SmallDeformationProcess<DisplacementDim>::preTimestepConcreteProcess(
 {
     DBUG("PreTimestep SmallDeformationProcess.");
 
-    _process_data.dt = dt;
-    _process_data.t = t;
-
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &SmallDeformationLocalAssemblerInterface::preTimestep,

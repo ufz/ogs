@@ -112,7 +112,6 @@ struct HydroMechanicsProcessData
     ParameterLib::Parameter<double> const* p0 = nullptr;
 
     double dt = 0.0;
-    double t = 0.0;
 
     // mesh properties for output
     MeshLib::PropertyVector<double>* mesh_prop_stress_xx = nullptr;
