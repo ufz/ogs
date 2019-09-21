@@ -28,6 +28,7 @@ std::unique_ptr<Output> createOutput(
     std::vector<EquilibriumPhase> const& equilibrium_phases,
     std::vector<KineticReactant> const& kinetic_reactants,
     std::unique_ptr<UserPunch> const& user_punch,
+    bool const use_high_precision,
     std::string const& project_file_name);
 }  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

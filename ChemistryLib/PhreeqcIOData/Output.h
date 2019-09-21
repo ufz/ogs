@@ -22,8 +22,10 @@ namespace PhreeqcIOData
 class BasicOutputSetups
 {
 public:
-    explicit BasicOutputSetups(std::string const& project_file_name)
-        : output_file(project_file_name + "_phreeqc.out")
+    explicit BasicOutputSetups(std::string const& project_file_name,
+                               bool const use_high_precision_)
+        : output_file(project_file_name + "_phreeqc.out"),
+          use_high_precision(use_high_precision_)
     {
     }
 
@@ -54,7 +56,7 @@ private:
     static const bool display_time_step = false;
     static const bool display_pH = true;
     static const bool display_pe = true;
-    static const bool use_high_precision = true;
+    bool const use_high_precision;
 };
 
 enum class ItemType

@@ -26,6 +26,7 @@ std::unique_ptr<Output> createOutput(
     std::vector<EquilibriumPhase> const& equilibrium_phases,
     std::vector<KineticReactant> const& kinetic_reactants,
     std::unique_ptr<UserPunch> const& user_punch,
+    bool const use_high_precision,
     std::string const& project_file_name)
 {
     // Mark which phreeqc output items will be held.
@@ -39,7 +40,6 @@ std::unique_ptr<Output> createOutput(
                    std::back_inserter(accepted_items), accepted_item);
     std::transform(equilibrium_phases.begin(), equilibrium_phases.end(),
                    std::back_inserter(accepted_items), accepted_item);
-
     for (auto const& kinetic_reactant : kinetic_reactants)
     {
         if (kinetic_reactant.fix_amount)
@@ -58,7 +58,8 @@ std::unique_ptr<Output> createOutput(
     }
 
     // Record ids of which phreeqc output items will be dropped.
-    BasicOutputSetups basic_output_setups(project_file_name);
+    BasicOutputSetups basic_output_setups(project_file_name,
+                                          use_high_precision);
     auto const num_dropped_basic_items =
         basic_output_setups.getNumberOfDroppedItems();
     std::vector<int> dropped_item_ids(num_dropped_basic_items);
