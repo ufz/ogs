@@ -405,6 +405,14 @@ void TimeLoop::initialize()
     // init solution storage
     _process_solutions = setInitialConditions(_start_time, _per_process_data);
 
+    if (_chemical_system != nullptr)
+    {
+        BaseLib::RunTime time_phreeqc;
+        time_phreeqc.start();
+        _chemical_system->executeInitialCalculation(_process_solutions);
+        INFO("[time] Phreeqc took %g s.", time_phreeqc.elapsed());
+    }
+
     // All _per_process_data share the first process.
     bool const is_staggered_coupling =
         !isMonolithicProcess(*_per_process_data[0]);
