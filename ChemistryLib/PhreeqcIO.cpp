@@ -259,8 +259,19 @@ void PhreeqcIO::writeInputsToFile(double const dt)
 
 std::ostream& operator<<(std::ostream& os, PhreeqcIO const& phreeqc_io)
 {
-    os << "SELECTED_OUTPUT" << "\n";
+    auto const& knobs = phreeqc_io._knobs;
+    if (knobs)
+    {
+        os << *knobs << "\n";
+    }
+
     os << *phreeqc_io._output << "\n";
+
+    auto const& user_punch = phreeqc_io._user_punch;
+    if (user_punch)
+    {
+        os << *user_punch << "\n";
+    }
 
     auto const& reaction_rates = phreeqc_io._reaction_rates;
     if (!reaction_rates.empty())
@@ -280,6 +291,16 @@ std::ostream& operator<<(std::ostream& os, PhreeqcIO const& phreeqc_io)
         os << "SOLUTION " << chemical_system_id + 1 << "\n";
         os << aqueous_solution << "\n";
 
+        auto const& dump = phreeqc_io._dump;
+        if (dump)
+        {
+            auto const& aqueous_solutions_prev = dump->aqueous_solutions_prev;
+            if (!aqueous_solutions_prev.empty())
+            {
+                os << aqueous_solutions_prev[chemical_system_id] << "\n" << "\n";
+            }
+        }
+
         auto const& equilibrium_phases = phreeqc_io._equilibrium_phases;
         if (!equilibrium_phases.empty())
         {
@@ -288,6 +309,7 @@ std::ostream& operator<<(std::ostream& os, PhreeqcIO const& phreeqc_io)
             {
                 equilibrium_phase.print(os, chemical_system_id);
             }
+            os << "\n";
         }
 
         auto const& kinetic_reactants = phreeqc_io._kinetic_reactants;
@@ -299,6 +321,41 @@ std::ostream& operator<<(std::ostream& os, PhreeqcIO const& phreeqc_io)
                 kinetic_reactant.print(os, chemical_system_id);
             }
             os << "-steps " << phreeqc_io._dt << "\n" << "\n";
+        }
+
+        os << "USE solution none" << "\n";
+        os << "END" << "\n" << "\n";
+
+        auto const& surface = phreeqc_io._surface;
+        if (!surface.empty())
+        {
+                os << "SURFACE " << chemical_system_id + 1 << "\n";
+                std::size_t aqueous_solution_id =
+                    dump->aqueous_solutions_prev.empty()
+                        ? chemical_system_id + 1
+                        : num_chemical_systems + chemical_system_id + 1;
+                os << "-equilibrate with solution " << aqueous_solution_id << "\n";
+                os << "-sites_units DENSITY" << "\n";
+                os << surface << "\n";
+                os << "END" << "\n" << "\n";
+        }
+
+        os << "USE solution " << chemical_system_id + 1 << "\n";
+
+        if (!equilibrium_phases.empty())
+        {
+            os << "USE equilibrium_phase " << chemical_system_id + 1 << "\n";
+        }
+
+        if (!kinetic_reactants.empty())
+        {
+            os << "USE kinetics " << chemical_system_id + 1 << "\n";
+        }
+
+        if (!surface.empty())
+        {
+            os << "USE surface " << chemical_system_id + 1 << "\n";
+            os << "SAVE solution " << chemical_system_id + 1 << "\n";
         }
 
         os << "END" << "\n" << "\n";
