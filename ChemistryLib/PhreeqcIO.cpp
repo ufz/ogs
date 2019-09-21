@@ -16,10 +16,14 @@
 #include "BaseLib/ConfigTreeUtil.h"
 #include "PhreeqcIO.h"
 #include "PhreeqcIOData/AqueousSolution.h"
+#include "PhreeqcIOData/Dump.h"
 #include "PhreeqcIOData/EquilibriumPhase.h"
 #include "PhreeqcIOData/KineticReactant.h"
+#include "PhreeqcIOData/Knobs.h"
 #include "PhreeqcIOData/Output.h"
 #include "PhreeqcIOData/ReactionRate.h"
+#include "PhreeqcIOData/Surface.h"
+#include "PhreeqcIOData/UserPunch.h"
 
 #include "ThirdParty/iphreeqc/src/src/IPhreeqc.h"
 
@@ -45,7 +49,11 @@ PhreeqcIO::PhreeqcIO(std::string const project_file_name,
                      std::vector<EquilibriumPhase>&& equilibrium_phases,
                      std::vector<KineticReactant>&& kinetic_reactants,
                      std::vector<ReactionRate>&& reaction_rates,
+                     std::vector<SurfaceSite>&& surface,
+                     std::unique_ptr<UserPunch>&& user_punch,
                      std::unique_ptr<Output>&& output,
+                     std::unique_ptr<Dump>&& dump,
+                     std::unique_ptr<Knobs>&& knobs,
                      std::vector<std::pair<int, std::string>> const&
                          process_id_to_component_name_map)
     : _phreeqc_input_file(project_file_name + "_phreeqc.inp"),
@@ -54,7 +62,11 @@ PhreeqcIO::PhreeqcIO(std::string const project_file_name,
       _equilibrium_phases(std::move(equilibrium_phases)),
       _kinetic_reactants(std::move(kinetic_reactants)),
       _reaction_rates(std::move(reaction_rates)),
+      _surface(std::move(surface)),
+      _user_punch(std::move(user_punch)),
       _output(std::move(output)),
+      _dump(std::move(dump)),
+      _knobs(std::move(knobs)),
       _process_id_to_component_name_map(process_id_to_component_name_map)
 {
     // initialize phreeqc instance

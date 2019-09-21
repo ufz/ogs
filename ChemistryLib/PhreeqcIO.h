@@ -23,6 +23,10 @@ struct EquilibriumPhase;
 struct KineticReactant;
 struct ReactionRate;
 struct Output;
+struct SurfaceSite;
+struct Dump;
+struct Knobs;
+struct UserPunch;
 
 enum class Status
 {
@@ -39,7 +43,11 @@ public:
               std::vector<EquilibriumPhase>&& equilibrium_phases,
               std::vector<KineticReactant>&& kinetic_reactants,
               std::vector<ReactionRate>&& reaction_rates,
+              std::vector<SurfaceSite>&& surface,
+              std::unique_ptr<UserPunch>&& user_punch,
               std::unique_ptr<Output>&& output,
+              std::unique_ptr<Dump>&& dump,
+              std::unique_ptr<Knobs>&& knobs,
               std::vector<std::pair<int, std::string>> const&
                   process_id_to_component_name_map);
 
@@ -79,7 +87,11 @@ private:
     std::vector<EquilibriumPhase> _equilibrium_phases;
     std::vector<KineticReactant> _kinetic_reactants;
     std::vector<ReactionRate> const _reaction_rates;
+    std::vector<SurfaceSite> const _surface;
+    std::unique_ptr<UserPunch> _user_punch;
     std::unique_ptr<Output> const _output;
+    std::unique_ptr<Dump> const _dump;
+    std::unique_ptr<Knobs> const _knobs;
     std::vector<std::pair<int, std::string>> const&
         _process_id_to_component_name_map;
     double _dt = std::numeric_limits<double>::quiet_NaN();

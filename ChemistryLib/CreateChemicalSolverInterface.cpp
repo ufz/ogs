@@ -132,7 +132,8 @@ createChemicalSolverInterface<ChemicalSolver::Phreeqc>(
         std::move(project_file_name), std::move(path_to_database),
         std::move(aqueous_solutions), std::move(equilibrium_phases),
         std::move(kinetic_reactants), std::move(reaction_rates),
-        std::move(output), process_id_to_component_name_map);
+        std::move(surface), std::move(user_punch), std::move(output),
+        std::move(dump), std::move(knobs), process_id_to_component_name_map);
 }
 
 template <>
