@@ -116,6 +116,8 @@ void PhreeqcIO::doWaterChemistryCalculation(
     setAqueousSolutionsOrUpdateProcessSolutions(
         process_solutions, Status::SettingAqueousSolutions);
 
+    setAqueousSolutionsPrevFromDumpFile();
+
     writeInputsToFile(dt);
 
     execute();
@@ -200,6 +202,32 @@ void PhreeqcIO::setAqueousSolutionsOrUpdateProcessSolutions(
             }
         }
     }
+}
+
+void PhreeqcIO::setAqueousSolutionsPrevFromDumpFile()
+{
+    if (!_dump)
+    {
+        return;
+    }
+
+    auto const& dump_file = _dump->dump_file;
+    std::ifstream in(dump_file);
+    if (!in)
+    {
+        OGS_FATAL("Could not open phreeqc dump file '%s'.", dump_file.c_str());
+    }
+
+    std::size_t const num_chemical_systems = _aqueous_solutions.size();
+    _dump->readDumpFile(in, num_chemical_systems);
+
+    if (!in)
+    {
+        OGS_FATAL("Error when reading phreeqc dump file '%s'",
+                  dump_file.c_str());
+    }
+
+    in.close();
 }
 
 void PhreeqcIO::writeInputsToFile(double const dt)

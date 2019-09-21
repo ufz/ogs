@@ -82,6 +82,8 @@ private:
         return *this;
     }
 
+    void setAqueousSolutionsPrevFromDumpFile();
+
     std::string const _database;
     std::vector<AqueousSolution> _aqueous_solutions;
     std::vector<EquilibriumPhase> _equilibrium_phases;
