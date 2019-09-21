@@ -16,11 +16,13 @@
 #include "PhreeqcIOData/CreateAqueousSolution.h"
 #include "PhreeqcIOData/CreateEquilibriumPhase.h"
 #include "PhreeqcIOData/CreateKineticReactant.h"
+#include "PhreeqcIOData/CreateKnobs.h"
 #include "PhreeqcIOData/CreateOutput.h"
 #include "PhreeqcIOData/CreateSurface.h"
 #include "PhreeqcIOData/CreateUserPunch.h"
 #include "PhreeqcIOData/EquilibriumPhase.h"
 #include "PhreeqcIOData/KineticReactant.h"
+#include "PhreeqcIOData/Knobs.h"
 #include "PhreeqcIOData/ReactionRate.h"
 #include "PhreeqcIOData/Surface.h"
 #include "PhreeqcIOData/UserPunch.h"
@@ -102,6 +104,11 @@ createChemicalSolverInterface<ChemicalSolver::Phreeqc>(
     auto const project_file_name = BaseLib::joinPaths(
         output_directory,
         BaseLib::extractBaseNameWithoutExtension(config.getProjectFileName()));
+
+    // knobs
+    auto knobs = PhreeqcIOData::createKnobs(
+        //! \ogs_file_param{prj__chemical_system__knobs}
+        config.getConfigSubtreeOptional("knobs"));
 
     // user punch
     auto user_punch = PhreeqcIOData::createUserPunch(
