@@ -92,6 +92,11 @@ PhreeqcIO::PhreeqcIO(std::string const project_file_name,
             "will write output.",
             _output->basic_output_setups.output_file.c_str());
     }
+
+    if (_dump)
+    {
+        SetDumpFileOn(phreeqc_instance_id, 1);
+    }
 }
 
 void PhreeqcIO::executeInitialCalculation(
@@ -297,6 +302,12 @@ std::ostream& operator<<(std::ostream& os, PhreeqcIO const& phreeqc_io)
         }
 
         os << "END" << "\n" << "\n";
+    }
+
+    auto const& dump = phreeqc_io._dump;
+    if (dump)
+    {
+        dump->print(os, num_chemical_systems);
     }
 
     return os;
