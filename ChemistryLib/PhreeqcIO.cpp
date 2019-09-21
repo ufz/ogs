@@ -370,6 +370,8 @@ std::istream& operator>>(std::istream& in, PhreeqcIO& phreeqc_io)
         auto& components = aqueous_solution.components;
         auto& equilibrium_phases = phreeqc_io._equilibrium_phases;
         auto& kinetic_reactants = phreeqc_io._kinetic_reactants;
+        auto& user_punch = phreeqc_io._user_punch;
+        auto& secondary_variables = user_punch->secondary_variables;
         for (int item_id = 0; item_id < static_cast<int>(accepted_items.size());
              ++item_id)
         {
@@ -423,6 +425,18 @@ std::istream& operator>>(std::istream& in, PhreeqcIO& phreeqc_io)
                         compare_by_name,
                         "Could not find kinetic reactant '" + item_name + "'.");
                     (*kinetic_reactant.amount)[chemical_system_id] =
+                        accepted_items[item_id];
+                    break;
+                }
+                case ItemType::SecondaryVariable:
+                {
+                    // Update values of secondary variables
+                    auto& secondary_variable = BaseLib::findElementOrError(
+                        secondary_variables.begin(), secondary_variables.end(),
+                        compare_by_name,
+                        "Could not find secondary variable'" + item_name +
+                            "'.");
+                    (*secondary_variable.value)[chemical_system_id] =
                         accepted_items[item_id];
                     break;
                 }

@@ -15,6 +15,7 @@
 #include "CreateOutput.h"
 #include "EquilibriumPhase.h"
 #include "KineticReactant.h"
+#include "UserPunch.h"
 
 namespace ChemistryLib
 {
@@ -24,6 +25,7 @@ std::unique_ptr<Output> createOutput(
     std::vector<Component> const& components,
     std::vector<EquilibriumPhase> const& equilibrium_phases,
     std::vector<KineticReactant> const& kinetic_reactants,
+    std::unique_ptr<UserPunch> const& user_punch,
     std::string const& project_file_name)
 {
     // Mark which phreeqc output items will be held.
@@ -46,6 +48,13 @@ std::unique_ptr<Output> createOutput(
         }
         accepted_items.emplace_back(kinetic_reactant.name,
                                     kinetic_reactant.item_type);
+    }
+
+    if (user_punch)
+    {
+        auto const& secondary_variables = user_punch->secondary_variables;
+        std::transform(secondary_variables.begin(), secondary_variables.end(),
+                       std::back_inserter(accepted_items), accepted_item);
     }
 
     // Record ids of which phreeqc output items will be dropped.
