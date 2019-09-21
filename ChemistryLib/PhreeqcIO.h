@@ -43,6 +43,9 @@ public:
               std::vector<std::pair<int, std::string>> const&
                   process_id_to_component_name_map);
 
+    void executeInitialCalculation(
+        std::vector<GlobalVector*>& process_solutions) override;
+
     void doWaterChemistryCalculation(
         std::vector<GlobalVector*>& process_solutions,
         double const dt) override;
@@ -51,7 +54,7 @@ public:
         std::vector<GlobalVector*> const& process_solutions,
         Status const status);
 
-    void writeInputsToFile(double const dt);
+    void writeInputsToFile(double const dt = 0);
 
     void execute();
 

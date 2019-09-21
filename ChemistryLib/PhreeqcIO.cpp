@@ -82,6 +82,22 @@ PhreeqcIO::PhreeqcIO(std::string const project_file_name,
     }
 }
 
+void PhreeqcIO::executeInitialCalculation(
+    std::vector<GlobalVector*>& process_solutions)
+{
+    setAqueousSolutionsOrUpdateProcessSolutions(
+        process_solutions, Status::SettingAqueousSolutions);
+
+    writeInputsToFile();
+
+    execute();
+
+    readOutputsFromFile();
+
+    setAqueousSolutionsOrUpdateProcessSolutions(
+        process_solutions, Status::UpdatingProcessSolutions);
+}
+
 void PhreeqcIO::doWaterChemistryCalculation(
     std::vector<GlobalVector*>& process_solutions, double const dt)
 {

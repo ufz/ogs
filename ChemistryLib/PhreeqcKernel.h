@@ -40,6 +40,11 @@ public:
                       kinetic_reactants,
                   std::vector<ReactionRate>&& reaction_rates);
 
+    void executeInitialCalculation(
+        std::vector<GlobalVector*>& /*process_solutions*/) override
+    {
+    }
+
     void doWaterChemistryCalculation(
         std::vector<GlobalVector*>& process_solutions,
         double const dt) override;
