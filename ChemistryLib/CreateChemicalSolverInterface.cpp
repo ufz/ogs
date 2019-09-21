@@ -17,10 +17,12 @@
 #include "PhreeqcIOData/CreateEquilibriumPhase.h"
 #include "PhreeqcIOData/CreateKineticReactant.h"
 #include "PhreeqcIOData/CreateOutput.h"
+#include "PhreeqcIOData/CreateSurface.h"
 #include "PhreeqcIOData/CreateUserPunch.h"
 #include "PhreeqcIOData/EquilibriumPhase.h"
 #include "PhreeqcIOData/KineticReactant.h"
 #include "PhreeqcIOData/ReactionRate.h"
+#include "PhreeqcIOData/Surface.h"
 #include "PhreeqcIOData/UserPunch.h"
 #include "PhreeqcKernel.h"
 #include "PhreeqcKernelData/AqueousSolution.h"
@@ -89,6 +91,11 @@ createChemicalSolverInterface<ChemicalSolver::Phreeqc>(
     auto equilibrium_phases = PhreeqcIOData::createEquilibriumPhases(
         //! \ogs_file_param{prj__chemical_system__equilibrium_phases}
         config.getConfigSubtreeOptional("equilibrium_phases"), mesh);
+
+    // surface
+    auto surface = PhreeqcIOData::createSurface(
+        //! \ogs_file_param{prj__chemical_system__surface}
+        config.getConfigSubtreeOptional("surface"));
 
     // output
     auto const& components = aqueous_solution.components;
