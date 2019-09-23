@@ -4,7 +4,6 @@
  * \date   27.06.2018
  * \brief
  *
- * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -14,6 +13,7 @@
  */
 #pragma once
 
+#include <limits>
 #include "BaseLib/ConfigTree.h"
 #include "MaterialLib/MPL/Property.h"
 
@@ -23,33 +23,50 @@ class Medium;
 class Phase;
 class Component;
 /**
- * \class IdealGasLaw
- * \brief Density function for ideal gases
- * \details This property must be either a phase or a component property, it
- * computes the density of an ideal gas as function of phase pressure and
- * temperature
+ * \class SaturationLiakopoulos
+ * \brief A well known soil characteristics function
+ * \details This property must be a medium property, it
+ * computes the saturation of the wetting phase as function
+ * of capillary pressure.
+ *
+ * Wetting (liquid) phase saturation is given by the empirical relation
+ * \f[s^\mathrm{r}_\mathrm{L}=1 - 1.9722\cdot10^{-11}p_\mathrm{cap}^{2.4279}\f]
+ *
  */
-class IdealGasLaw final : public Property
+class SaturationLiakopoulos final : public Property
 {
+private:
+    Medium* _medium = nullptr;
+    /**
+      Parameters for Liakopoulos saturation curve taken from:
+      Asadi, R., Ataie-Ashtiani, B. (2015): A Comparison of finite volume
+      formulations and coupling strategies for two-phase flow in deforming
+      porous media. Comput. Geosci., p. 24ff.
+
+      Those parameters are fixed for that particular model, no need to change
+      them.
+    */
+    const double _residual_liquid_saturation = 0.2;
+    const double _parameter_a = 1.9722e-11;
+    const double _parameter_b = 2.4279;
+    const double _p_cap_max = std::pow(
+        (1. - _residual_liquid_saturation) / _parameter_a, (1. / _parameter_b));
+
 public:
     /// This method assigns a pointer to the material object that is the owner
     /// of this property
     void setScale(
         std::variant<Medium*, Phase*, Component*> scale_pointer) override
     {
-        if (std::holds_alternative<Phase*>(scale_pointer))
+        if (std::holds_alternative<Medium*>(scale_pointer))
         {
-            _phase = std::get<Phase*>(scale_pointer);
-        }
-        else if (std::holds_alternative<Component*>(scale_pointer))
-        {
-            _component = std::get<Component*>(scale_pointer);
+            _medium = std::get<Medium*>(scale_pointer);
         }
         else
         {
             OGS_FATAL(
-                "The property 'IdealGasLaw' is implemented on the "
-                "'phase' and 'component' scales only.");
+                "The property 'SaturationLiakopoulos' is implemented on the "
+                "'media' scale only.");
         }
     }
 
@@ -65,12 +82,8 @@ public:
     PropertyDataType d2Value(VariableArray const& variable_array,
                              Variable const variable1,
                              Variable const variable2,
-                             ParameterLib::SpatialPosition const& pos,
-                             double const t) const override;
-
-private:
-    Phase* _phase = nullptr;
-    Component* _component = nullptr;
+                             ParameterLib::SpatialPosition const& /*pos*/,
+                             double const /*t*/) const override;
 };
 
 }  // namespace MaterialPropertyLib
