@@ -20,6 +20,7 @@ namespace ProcessLib
 static std::unique_ptr<ProcessData> makeProcessData(
     std::unique_ptr<NumLib::TimeStepAlgorithm>&& timestepper,
     NumLib::NonlinearSolverBase& nonlinear_solver,
+    int const process_id,
     Process& process,
     std::unique_ptr<NumLib::TimeDiscretization>&& time_disc,
     std::unique_ptr<NumLib::ConvergenceCriterion>&& conv_crit)
@@ -32,7 +33,7 @@ static std::unique_ptr<ProcessData> makeProcessData(
     {
         return std::make_unique<ProcessData>(
             std::move(timestepper), *nonlinear_solver_picard,
-            std::move(conv_crit), std::move(time_disc), process);
+            std::move(conv_crit), std::move(time_disc), process_id, process);
     }
     if (auto* nonlinear_solver_newton =
             dynamic_cast<NumLib::NonlinearSolver<Tag::Newton>*>(
@@ -40,7 +41,7 @@ static std::unique_ptr<ProcessData> makeProcessData(
     {
         return std::make_unique<ProcessData>(
             std::move(timestepper), *nonlinear_solver_newton,
-            std::move(conv_crit), std::move(time_disc), process);
+            std::move(conv_crit), std::move(time_disc), process_id, process);
     }
 
     OGS_FATAL("Encountered unknown nonlinear solver type. Aborting");
@@ -53,6 +54,7 @@ std::vector<std::unique_ptr<ProcessData>> createPerProcessData(
         nonlinear_solvers)
 {
     std::vector<std::unique_ptr<ProcessData>> per_process_data;
+    int process_id = 0;
 
     //! \ogs_file_param{prj__time_loop__processes__process}
     for (auto pcs_config : config.getConfigSubtreeList("process"))
@@ -99,9 +101,10 @@ std::vector<std::unique_ptr<ProcessData>> createPerProcessData(
                 "in the current project file!");
         }
 
-        per_process_data.emplace_back(makeProcessData(
-            std::move(timestepper), nl_slv, pcs, std::move(time_disc),
-            std::move(conv_crit)));
+        per_process_data.emplace_back(
+            makeProcessData(std::move(timestepper), nl_slv, process_id, pcs,
+                            std::move(time_disc), std::move(conv_crit)));
+        ++process_id;
     }
 
     if (per_process_data.size() != processes.size())
