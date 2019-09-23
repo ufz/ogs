@@ -13,7 +13,9 @@
 #include <unordered_map>
 
 #include "MeshLib/PropertyVector.h"
+#include "ParameterLib/Parameter.h"
 #include "ProcessLib/HeatTransportBHE/BHE/BHETypes.h"
+#include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 
 namespace MeshLib
 {
@@ -28,8 +30,10 @@ struct Parameter;
 
 namespace ProcessLib::HeatTransportBHE
 {
-struct HeatTransportBHEProcessData
+struct HeatTransportBHEProcessData final
 {
+    std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>
+        media_map;
     // ! thermal conductivity values for the three phases
     ParameterLib::Parameter<double> const& thermal_conductivity_solid;
     ParameterLib::Parameter<double> const& thermal_conductivity_fluid;

@@ -35,7 +35,8 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
     BaseLib::ConfigTree const& config,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves)
+        curves,
+    std::map<int, std::unique_ptr<MaterialPropertyLib::Medium>> const& media)
 {
     //! \ogs_file_param{prj__processes__process__type}
     config.checkConfigParameter("type", "HEAT_TRANSPORT_BHE");
@@ -215,7 +216,11 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
     }
     // end of reading BHE parameters -------------------------------------------
 
-    HeatTransportBHEProcessData process_data{thermal_conductivity_solid,
+    auto media_map =
+        MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
+
+    HeatTransportBHEProcessData process_data{std::move(media_map),
+                                             thermal_conductivity_solid,
                                              thermal_conductivity_fluid,
                                              thermal_conductivity_gas,
                                              heat_capacity_solid,
