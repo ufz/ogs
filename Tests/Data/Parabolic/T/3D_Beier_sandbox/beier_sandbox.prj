@@ -11,15 +11,6 @@
                 <process_variable>temperature_soil</process_variable>
                 <process_variable>temperature_BHE1</process_variable>
             </process_variables>
-            <thermal_conductivity_solid>K_s</thermal_conductivity_solid>
-            <heat_capacity_solid>Cp_s</heat_capacity_solid>
-            <density_solid>rho_s</density_solid>
-            <thermal_conductivity_fluid>K_f</thermal_conductivity_fluid>
-            <heat_capacity_fluid>Cp_f</heat_capacity_fluid>
-            <density_fluid>rho_f</density_fluid>
-            <thermal_conductivity_gas>K_g</thermal_conductivity_gas>
-            <heat_capacity_gas>Cp_g</heat_capacity_gas>
-            <density_gas>rho_g</density_gas>
             <borehole_heat_exchangers>
                 <borehole_heat_exchanger>
                     <type>1U</type>
@@ -63,6 +54,84 @@
             </borehole_heat_exchangers>
         </process>
     </processes>
+    <media>
+        <medium id="0">
+            <phases>
+                <phase>
+                    <type>AqueousLiquid</type>
+                    <properties>
+                        <property>
+                            <name>specific_heat_capacity</name>
+                            <type>Constant</type>
+                            <value>4068</value>
+                        </property>
+                        <property>
+                            <name>thermal_conductivity</name>
+                            <type>Constant</type>
+                            <value>0.1</value>
+                        </property>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>992.92</value>
+                        </property>
+                    </properties>
+                </phase>
+                <phase>
+                    <type>Solid</type>
+                    <properties>
+                        <property>
+                            <name>specific_heat_capacity</name>
+                            <type>Constant</type>
+                            <value>1778</value>
+                        </property>
+                        <property>
+                            <name>thermal_conductivity</name>
+                            <type>Constant</type>
+                            <value>2.78018</value>
+                        </property>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>1800</value>
+                        </property>
+                    </properties>
+                </phase>
+                <phase>
+                    <type>Gas</type>
+                    <properties>
+                        <property>
+                            <name>specific_heat_capacity</name>
+                            <type>Constant</type>
+                            <value>1000</value>
+                        </property>
+                        <property>
+                            <name>thermal_conductivity</name>
+                            <type>Constant</type>
+                            <value>3.2</value>
+                        </property>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>2500</value>
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+            <properties>
+                <property>
+                    <name>thermal_longitudinal_dispersivity</name>
+                    <type>Constant</type>
+                    <value>0</value>
+                </property>
+                <property>
+                    <name>thermal_transversal_dispersivity</name>
+                    <type>Constant</type>
+                    <value>0</value>
+                </property>
+            </properties>
+        </medium>
+    </media>
     <time_loop>
         <processes>
             <process ref="HeatTransportBHE">
@@ -114,51 +183,6 @@
         </output>
     </time_loop>
     <parameters>
-        <parameter>
-            <name>K_s</name>
-            <type>Constant</type>
-            <value>2.78018</value>
-        </parameter>
-        <parameter>
-            <name>Cp_s</name>
-            <type>Constant</type>
-            <value>1778</value>
-        </parameter>
-        <parameter>
-            <name>rho_s</name>
-            <type>Constant</type>
-            <value>1800</value>
-        </parameter>
-        <parameter>
-            <name>K_f</name>
-            <type>Constant</type>
-            <value>0.1</value>
-        </parameter>
-        <parameter>
-            <name>Cp_f</name>
-            <type>Constant</type>
-            <value>4068</value>
-        </parameter>
-        <parameter>
-            <name>rho_f</name>
-            <type>Constant</type>
-            <value>992.92</value>
-        </parameter>
-        <parameter>
-            <name>K_g</name>
-            <type>Constant</type>
-            <value>3.2</value>
-        </parameter>
-        <parameter>
-            <name>Cp_g</name>
-            <type>Constant</type>
-            <value>1000</value>
-        </parameter>
-        <parameter>
-            <name>rho_g</name>
-            <type>Constant</type>
-            <value>2500</value>
-        </parameter>
         <parameter>
             <name>T0</name>
             <type>Constant</type>
