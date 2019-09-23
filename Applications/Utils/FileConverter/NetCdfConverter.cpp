@@ -12,6 +12,7 @@
 #include <iostream>
 #include <limits>
 #include <memory>
+#include <numeric>
 #include <sstream>
 #include <string>
 #include <utility>
@@ -308,8 +309,7 @@ static MeshLib::MeshElemType elemSelectionLoop(std::size_t const dim)
                 continue;
             if (type == "t" || type == "tri" || type == "triangle")
                 return MeshLib::MeshElemType::TRIANGLE;
-            else
-                return MeshLib::MeshElemType::QUAD;
+            return MeshLib::MeshElemType::QUAD;
         }
 
         if (dim == 3)
@@ -350,8 +350,11 @@ static double getResolution(NcFile const& dataset, NcVar const& var)
 {
     std::size_t const dim_idx = var.getDimCount() - 1;
     auto const bounds = getBoundaries(getDimVar(dataset, var, dim_idx));
-    return std::fabs(bounds.second - bounds.first) /
-           static_cast<double>(var.getDim(dim_idx).getSize());
+    std::size_t const dim_size = var.getDim(dim_idx).getSize();
+    std::string const err_msg("Dimension \"" + var.getDim(dim_idx).getName() +
+                              "\" has size 0. Aborting...");
+    if (dim_size == 0) return OGS_FATAL(err_msg.c_str());
+    return std::fabs(bounds.second - bounds.first) / static_cast<double>(dim_size);
 }
 
 static GeoLib::RasterHeader createRasterHeader(
@@ -370,19 +373,17 @@ static GeoLib::RasterHeader createRasterHeader(
             z_length, origin, res, no_data};
 }
 
-static std::size_t getLength(NcVar const& var, bool const is_time_dep,
-                      std::vector<std::size_t>& length)
+static std::vector<std::size_t> getLength(NcVar const& var, bool const is_time_dep)
 {
     std::size_t const temp_offset = (is_time_dep) ? 1 : 0;
     std::size_t const n_dims = (var.getDimCount());
-    length.resize(n_dims, 1);
+    std::vector<std::size_t> length(n_dims, 1);
     std::size_t array_length = 1;
     for (std::size_t i = temp_offset; i < n_dims; ++i)
     {
         length[i] = var.getDim(i).getSize();
-        array_length *= length[i];
     }
-    return array_length;
+    return length;
 }
 
 static std::vector<double> getData(NcFile const& dataset, NcVar const& var,
@@ -497,8 +498,9 @@ static bool convert(NcFile const& dataset, NcVar const& var,
              bool const use_single_file, MeshLib::MeshElemType const elem_type)
 {
     std::unique_ptr<MeshLib::Mesh> mesh;
-    std::vector<std::size_t> length;
-    std::size_t const array_length = getLength(var, is_time_dep, length);
+    std::vector<std::size_t> const length = getLength(var, is_time_dep);
+    std::size_t const array_length = std::accumulate(
+        length.cbegin(), length.cend(), 1, std::multiplies<std::size_t>());
     for (std::size_t i = time_bounds.first; i <= time_bounds.second; ++i)
     {
         std::cout << "Converting time step " << i << "...\n";
