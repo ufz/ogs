@@ -100,17 +100,19 @@ In the pictures above, the analytical and numerical results for temperature ($T$
 
 {{< img src="../images/resp_vs_x_square.png" >}}
 
+(Figures were taken from Chaudhry et al. (2019).)
+
 The absolute errors between OGS6 and the analytical solution for temperature, pressure and displacement are depicted below. For all three response variables one observes that the error reaches it's maximum around the same time, when also the slope of the response variable is maximal.
 
 {{< img src="../images/errorpT_vs_t.png" >}}
 
 {{< img src="../images/errordispl_vs_t.png" >}}
 
-(Figures were taken from Chaudhry et al. (2019).)
+
 
 ## References
 
 [1] Booker, J. R.; Savvidou, C. (1985), Consolidation around a point heat source. International Journal for Numerical and Analytical Methods in Geomechanics, 1985, 9. Jg., Nr. 2, S. 173-184.
 
-[2] Chaudhry A. A., J. Buchwald, T. Nagel, and O. Kolditz (2019), Consolidation around a point heatsource (correction & verification). International Journal for Numerical and Analytical Methods in Geomechanics, 2019, just accepted.
+[2] Chaudhry, A. A.; Buchwald, J.; Kolditz, O. and Nagel, T. (2019), Consolidation around a point heatsource (correction & verification). International Journal for Numerical and Analytical Methods in Geomechanics, 2019, <https://doi.org/10.1002/nag.2998>.
 
