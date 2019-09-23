@@ -1,6 +1,7 @@
 /**
+ * \file
  * @copyright
- * Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/LICENSE.txt
@@ -21,21 +22,17 @@
 
 #include <netcdf>
 
-// BaseLib
 #include "BaseLib/FileTools.h"
 #include "BaseLib/LogogSimpleFormatter.h"
 #include "InfoLib/GitInfo.h"
-
-// GeoLib
 #include "GeoLib/Raster.h"
-
-// MeshLib
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshGenerators/RasterToMesh.h"
-
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 
 using namespace netCDF;
+
+const double no_data = -9999;
 
 void checkExit(std::string const& str)
 {
@@ -43,7 +40,7 @@ void checkExit(std::string const& str)
         exit(0);
 }
 
-void showErrorMessage(std::size_t error_id, std::size_t max = 0)
+void showErrorMessage(std::size_t const error_id, std::size_t const max = 0)
 {
     if (error_id == 0)
     {
@@ -55,7 +52,7 @@ void showErrorMessage(std::size_t error_id, std::size_t max = 0)
     }
     else if (error_id == 2)
     {
-        showErrorMessage(0);
+        ERR("Input not valid.");
         std::cout << "Type \"info\" to display the available options again. "
                      "\"exit\" will exit the programme.\n";
     }
@@ -115,7 +112,7 @@ std::vector<std::string> showArrays(NcFile const& dataset)
     return var_names;
 }
 
-bool showArraysDims(NcVar const& var)
+void showArraysDims(NcVar const& var)
 {
     std::cout << "Data array \"" << var.getName()
               << "\" contains the following dimensions:\n";
@@ -124,12 +121,11 @@ bool showArraysDims(NcVar const& var)
         std::cout << "\t" << i << "\t" << var.getDim(i).getName() << "\t("
                   << var.getDim(i).getSize() << " values)\n";
     std::cout << "\n";
-    return true;
 }
 
 std::pair<double, double> getBoundaries(NcVar const& var)
 {
-    if ((var.getDimCount()) == 1)
+    if (var.getDimCount() == 1)
     {
         double start, end;
         std::size_t const size = var.getDim(0).getSize();
@@ -145,7 +141,7 @@ MathLib::Point3d getOrigin(NcFile const& dataset, NcVar const& var,
                            bool is_time_dep)
 {
     std::size_t const temp_offset = (is_time_dep) ? 1 : 0;
-    MathLib::Point3d origin(std::array<double, 3>{{0, 0, 0}});
+    MathLib::Point3d origin(MathLib::ORIGIN);
     std::size_t const n_dims = var.getDimCount();
     for (std::size_t i = temp_offset; i < n_dims; ++i)
     {
@@ -311,8 +307,7 @@ MeshLib::MeshElemType elemSelectionLoop(std::size_t const dim)
                 continue;
             if (type == "p" || type == "prism")
                 return MeshLib::MeshElemType::PRISM;
-            else
-                return MeshLib::MeshElemType::HEXAHEDRON;
+            return MeshLib::MeshElemType::HEXAHEDRON;
         }
     }
     return t;
@@ -329,7 +324,7 @@ bool multFilesSelectionLoop(
     std::cout << "1. Save data in one mesh file with " << n_time_steps
               << " scalar arrays.\n";
     std::size_t ret = parseInput("Select preferred method: ", 2, false);
-    return (ret == 0) ? true : false;
+    return (ret == 0);
 }
 
 std::string getIterationString(std::size_t i, std::size_t max)
@@ -343,7 +338,7 @@ double getResolution(NcFile const& dataset, NcVar const& var)
 {
     std::size_t const dim_idx = var.getDimCount() - 1;
     auto const bounds = getBoundaries(getDimVar(dataset, var, dim_idx));
-    return fabs(bounds.second - bounds.first) /
+    return std::fabs(bounds.second - bounds.first) /
            static_cast<double>(var.getDim(dim_idx).getSize());
 }
 
@@ -360,7 +355,7 @@ GeoLib::RasterHeader createRasterHeader(
         (n_dims - temp_offset == 3) ? length[dim_idx_map.back()] : 1;
     return {length[dim_idx_map[0 + temp_offset]],
             length[dim_idx_map[1 + temp_offset]],
-            z_length, origin, res, -9999};
+            z_length, origin, res, no_data};
 }
 
 std::size_t getLength(NcVar const& var, bool const is_time_dep,
@@ -389,7 +384,7 @@ std::vector<double> getData(NcFile const& dataset, NcVar const& var,
     std::vector<double> data_vec(total_length, 0);
     var.getVar(offset, length, data_vec.data());
     std::replace_if(data_vec.begin(), data_vec.end(),
-                    [](double& x) { return x <= -9999; }, -9999);
+                    [](double& x) { return x <= no_data; }, no_data);
 
     // reverse lines in vertical direction if the original file has its origin
     // in the northwest corner
