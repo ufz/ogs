@@ -12,6 +12,7 @@
 
 #include <memory>
 #include "ProcessLib/Process.h"
+#include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
 
 namespace ProcessLib
 {
@@ -27,6 +28,7 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
     BaseLib::ConfigTree const& config,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves);
+        curves,
+    std::map<int, std::unique_ptr<MaterialPropertyLib::Medium>> const& media);
 }  // namespace HeatTransportBHE
 }  // namespace ProcessLib

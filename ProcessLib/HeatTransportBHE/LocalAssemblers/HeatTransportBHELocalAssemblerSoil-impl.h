@@ -13,6 +13,7 @@
 #include <valarray>
 #include <vector>
 
+#include "MaterialLib/MPL/Medium.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ProcessLib/HeatTransportBHE/HeatTransportBHEProcessData.h"
@@ -83,11 +84,16 @@ void HeatTransportBHELocalAssemblerSoil<ShapeFunction, IntegrationMethod>::
     auto local_K = MathLib::createZeroedMatrix<NodalMatrixType>(
         local_K_data, ShapeFunction::NPOINTS, ShapeFunction::NPOINTS);
 
-    unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
-
     ParameterLib::SpatialPosition pos;
     pos.setElementID(_element_id);
+
+    auto const& medium = *_process_data.media_map->getMedium(_element_id);
+    auto const& solid_phase = medium.phase("Solid");
+
+    MaterialPropertyLib::VariableArray vars;
+
+    unsigned const n_integration_points =
+        _integration_method.getNumberOfPoints();
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
@@ -96,20 +102,21 @@ void HeatTransportBHELocalAssemblerSoil<ShapeFunction, IntegrationMethod>::
         auto const& M_ip = ip_data.NTN_product_times_w;
         auto const& K_ip = ip_data.dNdxTdNdx_product_times_w;
 
-        // auto const k_f = _process_data.thermal_conductivity_fluid(t, pos)[0];
-        // auto const k_g = _process_data.thermal_conductivity_gas(t, pos)[0];
-        auto const k_s = _process_data.thermal_conductivity_solid(t, pos)[0];
+        auto const k_s =
+            solid_phase
+                .property(
+                    MaterialPropertyLib::PropertyType::thermal_conductivity)
+                .template value<double>(vars, pos, t);
 
-        // auto const heat_capacity_f = _process_data.heat_capacity_fluid(t,
-        // pos)[0]; auto const heat_capacity_g =
-        // _process_data.heat_capacity_gas(t, pos)[0];
         auto const heat_capacity_s =
-            _process_data.heat_capacity_solid(t, pos)[0];
+            solid_phase
+                .property(
+                    MaterialPropertyLib::PropertyType::specific_heat_capacity)
+                .template value<double>(vars, pos, t);
 
-        // auto const density_f = _process_data.density_fluid(t, pos)[0];
-        // auto const density_g = _process_data.density_gas(t, pos)[0];
-        auto const density_s = _process_data.density_solid(t, pos)[0];
-
+        auto const density_s =
+            solid_phase.property(MaterialPropertyLib::PropertyType::density)
+                .template value<double>(vars, pos, t);
         // for now only using the solid phase parameters
 
         // assemble Conductance matrix
