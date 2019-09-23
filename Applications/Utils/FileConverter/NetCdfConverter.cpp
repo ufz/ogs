@@ -93,7 +93,18 @@ NcVar getDimVar(NcFile const& dataset, NcVar const& var, std::size_t const dim)
     return dataset.getVar(dim_obj.getName());
 }
 
-std::vector<std::string> showArrays(NcFile const& dataset)
+std::vector<std::string> getArrays(NcFile const& dataset)
+{
+    auto const& names = dataset.getVars();
+    std::vector<std::string> var_names;
+    for (auto [name, var] : names)
+    {
+        var_names.push_back(name);
+    }
+    return var_names;
+}
+
+void showArrays(NcFile const& dataset)
 {
     std::size_t const n_vars(dataset.getDimCount());
     std::cout << "The NetCDF file contains the following " << n_vars
@@ -101,15 +112,13 @@ std::vector<std::string> showArrays(NcFile const& dataset)
     std::cout << "\tIndex\tArray Name\t#Dimensions\n";
     std::cout << "-------------------------------------------\n";
     auto const& names = dataset.getVars();
-    std::vector<std::string> var_names;
+    std::size_t count = 0;
     for (auto [name, var] : names)
     {
-        std::cout << "\t" << var_names.size() << "\t" << name << "\t("
+        std::cout << "\t" << count++ << "\t" << name << "\t("
                   << var.getDimCount() << "D array)\n";
-        var_names.push_back(name);
     }
     std::cout << "\n";
-    return var_names;
 }
 
 void showArraysDims(NcVar const& var)
@@ -179,7 +188,8 @@ bool canConvert(NcVar const& var)
 
 std::string arraySelectionLoop(NcFile const& dataset)
 {
-    std::vector<std::string> const& names = showArrays(dataset);
+    std::vector<std::string> const& names = getArrays(dataset);
+    showArrays(dataset);
     std::size_t const idx =
         parseInput("Enter data array index: ", dataset.getVarCount(), true);
 
