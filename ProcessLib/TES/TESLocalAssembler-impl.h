@@ -136,7 +136,7 @@ TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::
 template <typename ShapeFunction_, typename IntegrationMethod_,
           unsigned GlobalDim>
 void TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::assemble(
-    double const /*t*/, std::vector<double> const& local_x,
+    double const /*t*/, double const /*dt*/, std::vector<double> const& local_x,
     std::vector<double>& local_M_data, std::vector<double>& local_K_data,
     std::vector<double>& local_b_data)
 {

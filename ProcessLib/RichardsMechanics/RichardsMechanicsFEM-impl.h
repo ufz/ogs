@@ -120,7 +120,7 @@ template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           typename IntegrationMethod, int DisplacementDim>
 void RichardsMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
-    DisplacementDim>::assemble(double const t,
+    DisplacementDim>::assemble(double const t, double const dt,
                                std::vector<double> const& local_x,
                                std::vector<double>& local_M_data,
                                std::vector<double>& local_K_data,
@@ -157,7 +157,6 @@ void RichardsMechanicsLocalAssembler<
             displacement_size + pressure_size>>(
         local_rhs_data, displacement_size + pressure_size);
 
-    double const& dt = _process_data.dt;
     auto const material_id =
         _process_data.flow_material->getMaterialID(_element.getID());
 
@@ -295,7 +294,8 @@ template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
 void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                      ShapeFunctionPressure, IntegrationMethod,
                                      DisplacementDim>::
-    assembleWithJacobian(double const t, std::vector<double> const& local_x,
+    assembleWithJacobian(double const t, double const dt,
+                         std::vector<double> const& local_x,
                          std::vector<double> const& local_xdot,
                          const double /*dxdot_dx*/, const double /*dx_dx*/,
                          std::vector<double>& /*local_M_data*/,
@@ -356,7 +356,6 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             pressure_size, displacement_size>::Zero(pressure_size,
                                                     displacement_size);
 
-    double const& dt = _process_data.dt;
     auto const material_id =
         _process_data.flow_material->getMaterialID(_element.getID());
 
@@ -736,9 +735,9 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                      ShapeFunctionPressure, IntegrationMethod,
                                      DisplacementDim>::
     assembleWithJacobianForPressureEquations(
-        const double /*t*/, const std::vector<double>& /*local_xdot*/,
-        const double /*dxdot_dx*/, const double /*dx_dx*/,
-        std::vector<double>& /*local_M_data*/,
+        const double /*t*/, double const /*dt*/,
+        const std::vector<double>& /*local_xdot*/, const double /*dxdot_dx*/,
+        const double /*dx_dx*/, std::vector<double>& /*local_M_data*/,
         std::vector<double>& /*local_K_data*/,
         std::vector<double>& /*local_b_data*/,
         std::vector<double>& /*local_Jac_data*/,
@@ -753,9 +752,9 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                      ShapeFunctionPressure, IntegrationMethod,
                                      DisplacementDim>::
     assembleWithJacobianForDeformationEquations(
-        const double /*t*/, const std::vector<double>& /*local_xdot*/,
-        const double /*dxdot_dx*/, const double /*dx_dx*/,
-        std::vector<double>& /*local_M_data*/,
+        const double /*t*/, double const /*dt*/,
+        const std::vector<double>& /*local_xdot*/, const double /*dxdot_dx*/,
+        const double /*dx_dx*/, std::vector<double>& /*local_M_data*/,
         std::vector<double>& /*local_K_data*/,
         std::vector<double>& /*local_b_data*/,
         std::vector<double>& /*local_Jac_data*/,
@@ -770,28 +769,24 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                      ShapeFunctionPressure, IntegrationMethod,
                                      DisplacementDim>::
     assembleWithJacobianForStaggeredScheme(
-        const double t,
-        const std::vector<double>& local_xdot,
-        const double dxdot_dx,
-        const double dx_dx,
-        std::vector<double>& local_M_data,
-        std::vector<double>& local_K_data,
-        std::vector<double>& local_b_data,
-        std::vector<double>& local_Jac_data,
+        const double t, double const dt, const std::vector<double>& local_xdot,
+        const double dxdot_dx, const double dx_dx,
+        std::vector<double>& local_M_data, std::vector<double>& local_K_data,
+        std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
         const LocalCoupledSolutions& local_coupled_solutions)
 {
     // For the equations with pressure
     if (local_coupled_solutions.process_id == 0)
     {
         assembleWithJacobianForPressureEquations(
-            t, local_xdot, dxdot_dx, dx_dx, local_M_data, local_K_data,
+            t, dt, local_xdot, dxdot_dx, dx_dx, local_M_data, local_K_data,
             local_b_data, local_Jac_data, local_coupled_solutions);
         return;
     }
 
     // For the equations with deformation
     assembleWithJacobianForDeformationEquations(
-        t, local_xdot, dxdot_dx, dx_dx, local_M_data, local_K_data,
+        t, dt, local_xdot, dxdot_dx, dx_dx, local_M_data, local_K_data,
         local_b_data, local_Jac_data, local_coupled_solutions);
 }
 
@@ -801,7 +796,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                      ShapeFunctionPressure, IntegrationMethod,
                                      DisplacementDim>::
     postNonLinearSolverConcrete(std::vector<double> const& local_x,
-                                double const t,
+                                double const t, double const dt,
                                 bool const use_monolithic_scheme)
 {
     const int displacement_offset =
@@ -811,7 +806,6 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         Eigen::Map<typename ShapeMatricesTypeDisplacement::template VectorType<
             displacement_size> const>(local_x.data() + displacement_offset,
                                       displacement_size);
-    double const& dt = _process_data.dt;
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
 

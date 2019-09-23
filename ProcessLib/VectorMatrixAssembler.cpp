@@ -31,20 +31,21 @@ VectorMatrixAssembler::VectorMatrixAssembler(
 void VectorMatrixAssembler::preAssemble(
     const std::size_t mesh_item_id, LocalAssemblerInterface& local_assembler,
     const NumLib::LocalToGlobalIndexMap& dof_table, const double t,
-    const GlobalVector& x)
+    double const dt, const GlobalVector& x)
 {
     auto const indices = NumLib::getIndices(mesh_item_id, dof_table);
     auto const local_x = x.get(indices);
 
-    local_assembler.preAssemble(t, local_x);
+    local_assembler.preAssemble(t, dt, local_x);
 }
 
 void VectorMatrixAssembler::assemble(
     const std::size_t mesh_item_id, LocalAssemblerInterface& local_assembler,
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>> const&
         dof_tables,
-    const double t, const GlobalVector& x, GlobalMatrix& M, GlobalMatrix& K,
-    GlobalVector& b, CoupledSolutionsForStaggeredScheme const* const cpl_xs)
+    const double t, double const dt, const GlobalVector& x, GlobalMatrix& M,
+    GlobalMatrix& K, GlobalVector& b,
+    CoupledSolutionsForStaggeredScheme const* const cpl_xs)
 {
     std::vector<std::vector<GlobalIndexType>> indices_of_processes;
     indices_of_processes.reserve(dof_tables.size());
@@ -64,7 +65,7 @@ void VectorMatrixAssembler::assemble(
     if (cpl_xs == nullptr)
     {
         auto const local_x = x.get(indices);
-        local_assembler.assemble(t, local_x, _local_M_data, _local_K_data,
+        local_assembler.assemble(t, dt, local_x, _local_M_data, _local_K_data,
                                  _local_b_data);
     }
     else
@@ -75,10 +76,10 @@ void VectorMatrixAssembler::assemble(
             getCurrentLocalSolutions(*cpl_xs, indices_of_processes);
 
         ProcessLib::LocalCoupledSolutions local_coupled_solutions(
-            cpl_xs->dt, cpl_xs->process_id, std::move(local_coupled_xs0),
+            cpl_xs->process_id, std::move(local_coupled_xs0),
             std::move(local_coupled_xs));
 
-        local_assembler.assembleForStaggeredScheme(t, _local_M_data,
+        local_assembler.assembleForStaggeredScheme(t, dt, _local_M_data,
                                                    _local_K_data, _local_b_data,
                                                    local_coupled_solutions);
     }
@@ -108,9 +109,9 @@ void VectorMatrixAssembler::assembleWithJacobian(
     std::size_t const mesh_item_id, LocalAssemblerInterface& local_assembler,
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>> const&
         dof_tables,
-    const double t, GlobalVector const& x, GlobalVector const& xdot,
-    const double dxdot_dx, const double dx_dx, GlobalMatrix& M, GlobalMatrix& K,
-    GlobalVector& b, GlobalMatrix& Jac,
+    const double t, double const dt, GlobalVector const& x,
+    GlobalVector const& xdot, const double dxdot_dx, const double dx_dx,
+    GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac,
     CoupledSolutionsForStaggeredScheme const* const cpl_xs)
 {
     std::vector<std::vector<GlobalIndexType>> indices_of_processes;
@@ -135,7 +136,7 @@ void VectorMatrixAssembler::assembleWithJacobian(
     {
         auto const local_x = x.get(indices);
         _jacobian_assembler->assembleWithJacobian(
-            local_assembler, t, local_x, local_xdot, dxdot_dx, dx_dx,
+            local_assembler, t, dt, local_x, local_xdot, dxdot_dx, dx_dx,
             _local_M_data, _local_K_data, _local_b_data, _local_Jac_data);
     }
     else
@@ -146,11 +147,11 @@ void VectorMatrixAssembler::assembleWithJacobian(
             getCurrentLocalSolutions(*cpl_xs, indices_of_processes);
 
         ProcessLib::LocalCoupledSolutions local_coupled_solutions(
-            cpl_xs->dt, cpl_xs->process_id, std::move(local_coupled_xs0),
+            cpl_xs->process_id, std::move(local_coupled_xs0),
             std::move(local_coupled_xs));
 
         _jacobian_assembler->assembleWithJacobianForStaggeredScheme(
-            local_assembler, t, local_xdot, dxdot_dx, dx_dx, _local_M_data,
+            local_assembler, t, dt, local_xdot, dxdot_dx, dx_dx, _local_M_data,
             _local_K_data, _local_b_data, _local_Jac_data,
             local_coupled_solutions);
     }

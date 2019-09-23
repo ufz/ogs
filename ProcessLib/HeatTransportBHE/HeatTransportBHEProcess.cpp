@@ -158,11 +158,9 @@ void HeatTransportBHEProcess::initializeConcreteProcess(
     createBHEBoundaryConditionTopBottom(_bheMeshData.BHE_nodes);
 }
 
-void HeatTransportBHEProcess::assembleConcreteProcess(const double t,
-                                                      GlobalVector const& x,
-                                                      GlobalMatrix& M,
-                                                      GlobalMatrix& K,
-                                                      GlobalVector& b)
+void HeatTransportBHEProcess::assembleConcreteProcess(
+    const double t, double const dt, GlobalVector const& x, GlobalMatrix& M,
+    GlobalMatrix& K, GlobalVector& b)
 {
     DBUG("Assemble HeatTransportBHE process.");
 
@@ -174,14 +172,15 @@ void HeatTransportBHEProcess::assembleConcreteProcess(const double t,
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        pv.getActiveElementIDs(), dof_table, t, x, M, K, b,
+        pv.getActiveElementIDs(), dof_table, t, dt, x, M, K, b,
         _coupled_solutions);
 }
 
 void HeatTransportBHEProcess::assembleWithJacobianConcreteProcess(
-    const double /*t*/, GlobalVector const& /*x*/, GlobalVector const& /*xdot*/,
-    const double /*dxdot_dx*/, const double /*dx_dx*/, GlobalMatrix& /*M*/,
-    GlobalMatrix& /*K*/, GlobalVector& /*b*/, GlobalMatrix& /*Jac*/)
+    const double /*t*/, double const /*dt*/, GlobalVector const& /*x*/,
+    GlobalVector const& /*xdot*/, const double /*dxdot_dx*/,
+    const double /*dx_dx*/, GlobalMatrix& /*M*/, GlobalMatrix& /*K*/,
+    GlobalVector& /*b*/, GlobalMatrix& /*Jac*/)
 {
     OGS_FATAL(
         "HeatTransportBHE: analytical Jacobian assembly is not implemented");

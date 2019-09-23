@@ -26,7 +26,7 @@ CentralDifferencesJacobianAssembler::CentralDifferencesJacobianAssembler(
 }
 
 void CentralDifferencesJacobianAssembler::assembleWithJacobian(
-    LocalAssemblerInterface& local_assembler, const double t,
+    LocalAssemblerInterface& local_assembler, const double t, double const dt,
     const std::vector<double>& local_x_data,
     const std::vector<double>& local_xdot_data, const double dxdot_dx,
     const double dx_dx, std::vector<double>& local_M_data,
@@ -71,11 +71,11 @@ void CentralDifferencesJacobianAssembler::assembleWithJacobian(
         auto const eps = _absolute_epsilons[component];
 
         _local_x_perturbed_data[i] += eps;
-        local_assembler.assemble(t, _local_x_perturbed_data, local_M_data,
+        local_assembler.assemble(t, dt, _local_x_perturbed_data, local_M_data,
                                  local_K_data, local_b_data);
 
         _local_x_perturbed_data[i] = local_x_data[i] - eps;
-        local_assembler.assemble(t, _local_x_perturbed_data, _local_M_data,
+        local_assembler.assemble(t, dt, _local_x_perturbed_data, _local_M_data,
                                  _local_K_data, _local_b_data);
 
         _local_x_perturbed_data[i] = local_x_data[i];
@@ -116,7 +116,7 @@ void CentralDifferencesJacobianAssembler::assembleWithJacobian(
     }
 
     // Assemble with unperturbed local x.
-    local_assembler.assemble(t, local_x_data, local_M_data, local_K_data,
+    local_assembler.assemble(t, dt, local_x_data, local_M_data, local_K_data,
                              local_b_data);
 
     // Compute remaining terms of the Jacobian.

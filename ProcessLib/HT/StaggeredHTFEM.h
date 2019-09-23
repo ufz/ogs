@@ -67,7 +67,7 @@ public:
     }
 
     void assembleForStaggeredScheme(
-        double const t, std::vector<double>& local_M_data,
+        double const t, double const dt, std::vector<double>& local_M_data,
         std::vector<double>& local_K_data, std::vector<double>& local_b_data,
         LocalCoupledSolutions const& coupled_xs) override;
 
@@ -78,7 +78,7 @@ public:
         std::vector<double>& cache) const override;
 
 private:
-    void assembleHydraulicEquation(double const t,
+    void assembleHydraulicEquation(double const t, double const dt,
                                    std::vector<double>& local_M_data,
                                    std::vector<double>& local_K_data,
                                    std::vector<double>& local_b_data,

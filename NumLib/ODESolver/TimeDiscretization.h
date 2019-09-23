@@ -166,6 +166,10 @@ public:
     //! assembled.
     virtual double getCurrentTime() const = 0;
 
+    //! Returns \f$ \Delta t_C \f$, i.e., the time at which the equation will be
+    //! assembled.
+    virtual double getCurrentTimeIncrement() const = 0;
+
     //! Returns \f$ \hat x \f$, i.e. the discretized approximation of \f$ \dot x
     //! \f$.
     void getXdot(GlobalVector const& x_at_new_timestep, GlobalVector& xdot) const
@@ -286,6 +290,7 @@ public:
     }
 
     double getCurrentTime() const override { return _t; }
+    double getCurrentTimeIncrement() const override { return _delta_t; }
     double getNewXWeight() const override { return 1.0 / _delta_t; }
     void getWeightedOldX(GlobalVector& y) const override
     {
@@ -348,6 +353,8 @@ public:
     {
         return _t_old;  // forward Euler does assembly at the preceding timestep
     }
+
+    double getCurrentTimeIncrement() const override { return _delta_t; }
 
     GlobalVector const& getCurrentX(
         const GlobalVector& /*x_at_new_timestep*/) const override
@@ -430,6 +437,7 @@ public:
     }
 
     double getCurrentTime() const override { return _t; }
+    double getCurrentTimeIncrement() const override { return _delta_t; }
     double getNewXWeight() const override { return 1.0 / _delta_t; }
     void getWeightedOldX(GlobalVector& y) const override
     {
@@ -509,6 +517,7 @@ public:
     }
 
     double getCurrentTime() const override { return _t; }
+    double getCurrentTimeIncrement() const override { return _delta_t; }
 
     double getNewXWeight() const override;
 

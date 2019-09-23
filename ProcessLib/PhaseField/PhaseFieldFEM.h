@@ -191,7 +191,8 @@ public:
         }
     }
 
-    void assemble(double const /*t*/, std::vector<double> const& /*local_x*/,
+    void assemble(double const /*t*/, double const /*dt*/,
+                  std::vector<double> const& /*local_x*/,
                   std::vector<double>& /*local_M_data*/,
                   std::vector<double>& /*local_K_data*/,
                   std::vector<double>& /*local_rhs_data*/) override
@@ -202,7 +203,7 @@ public:
     }
 
     void assembleWithJacobianForStaggeredScheme(
-        double const t, std::vector<double> const& local_xdot,
+        double const t, double const dt, std::vector<double> const& local_xdot,
         const double dxdot_dx, const double dx_dx,
         std::vector<double>& local_M_data, std::vector<double>& local_K_data,
         std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
@@ -219,8 +220,8 @@ public:
         }
     }
 
-    void postTimestepConcrete(std::vector<double> const& /*local_x*/
-                              ) override
+    void postTimestepConcrete(std::vector<double> const& /*local_x*/,
+                              double const /*t*/, double const /*dt*/) override
     {
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
@@ -311,14 +312,14 @@ private:
     }
 
     void assembleWithJacobianPhaseFiledEquations(
-        double const t, std::vector<double> const& local_xdot,
+        double const t, double const dt, std::vector<double> const& local_xdot,
         const double dxdot_dx, const double dx_dx,
         std::vector<double>& local_M_data, std::vector<double>& local_K_data,
         std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
         LocalCoupledSolutions const& local_coupled_solutions);
 
     void assembleWithJacobianForDeformationEquations(
-        double const t, std::vector<double> const& local_xdot,
+        double const t, double const dt, std::vector<double> const& local_xdot,
         const double dxdot_dx, const double dx_dx,
         std::vector<double>& local_M_data, std::vector<double>& local_K_data,
         std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,

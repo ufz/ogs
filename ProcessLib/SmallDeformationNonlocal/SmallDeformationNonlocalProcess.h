@@ -53,21 +53,18 @@ private:
         MeshLib::Mesh const& mesh,
         unsigned const integration_order) override;
 
-    void assembleConcreteProcess(const double t, GlobalVector const& x,
-                                 GlobalMatrix& M, GlobalMatrix& K,
-                                 GlobalVector& b) override;
+    void assembleConcreteProcess(const double t, double const dt,
+                                 GlobalVector const& x, GlobalMatrix& M,
+                                 GlobalMatrix& K, GlobalVector& b) override;
 
-    void preAssembleConcreteProcess(const double t,
+    void preAssembleConcreteProcess(const double t, double const dt,
                                     GlobalVector const& x) override;
 
     void assembleWithJacobianConcreteProcess(
-        const double t, GlobalVector const& x, GlobalVector const& xdot,
-        const double dxdot_dx, const double dx_dx, GlobalMatrix& M,
-        GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac) override;
-
-    void preTimestepConcreteProcess(GlobalVector const& x, double const t,
-                                    double const dt,
-                                    int const /*process_id*/) override;
+        const double t, double const dt, GlobalVector const& x,
+        GlobalVector const& xdot, const double dxdot_dx, const double dx_dx,
+        GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
+        GlobalMatrix& Jac) override;
 
     void postTimestepConcreteProcess(GlobalVector const& x, double const t,
                                      double const dt,

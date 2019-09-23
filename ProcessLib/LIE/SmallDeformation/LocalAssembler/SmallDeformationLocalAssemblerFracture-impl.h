@@ -110,7 +110,7 @@ template <typename ShapeFunction, typename IntegrationMethod,
           int DisplacementDim>
 void SmallDeformationLocalAssemblerFracture<
     ShapeFunction, IntegrationMethod,
-    DisplacementDim>::assembleWithJacobian(double const t,
+    DisplacementDim>::assembleWithJacobian(double const t, double const /*dt*/,
                                            Eigen::VectorXd const& local_u,
                                            Eigen::VectorXd& local_b,
                                            Eigen::MatrixXd& local_J)

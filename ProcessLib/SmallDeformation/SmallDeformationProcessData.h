@@ -53,9 +53,6 @@ struct SmallDeformationProcessData
 
     double const reference_temperature =
         std::numeric_limits<double>::quiet_NaN();
-
-    double dt = std::numeric_limits<double>::quiet_NaN();
-    double t = std::numeric_limits<double>::quiet_NaN();
 };
 
 }  // namespace SmallDeformation

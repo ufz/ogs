@@ -69,7 +69,7 @@ public:
     /// Calculates secondary variables, e.g. stress and strain for deformation
     /// analysis, only after nonlinear solver being successfully conducted.
     void postNonLinearSolver(GlobalVector const& x, const double t,
-                             int const process_id);
+                             double const dt, int const process_id);
 
     void preIteration(const unsigned iter, GlobalVector const& x) final;
 
@@ -97,14 +97,15 @@ public:
 
     bool isMonolithicSchemeUsed() const { return _use_monolithic_scheme; }
     virtual void setCoupledTermForTheStaggeredSchemeToLocalAssemblers() {}
-    void preAssemble(const double t, GlobalVector const& x) final;
-    void assemble(const double t, GlobalVector const& x, GlobalMatrix& M,
-                  GlobalMatrix& K, GlobalVector& b) final;
+    void preAssemble(const double t, double const dt,
+                     GlobalVector const& x) final;
+    void assemble(const double t, double const dt, GlobalVector const& x,
+                  GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) final;
 
-    void assembleWithJacobian(const double t, GlobalVector const& x,
-                              GlobalVector const& xdot, const double dxdot_dx,
-                              const double dx_dx, GlobalMatrix& M,
-                              GlobalMatrix& K, GlobalVector& b,
+    void assembleWithJacobian(const double t, double const dt,
+                              GlobalVector const& x, GlobalVector const& xdot,
+                              const double dxdot_dx, const double dx_dx,
+                              GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
                               GlobalMatrix& Jac) final;
 
     std::vector<NumLib::IndexValueVector<GlobalIndexType>> const*
@@ -185,18 +186,20 @@ private:
     }
 
     virtual void preAssembleConcreteProcess(const double /*t*/,
+                                            double const /*dt*/,
                                             GlobalVector const& /*x*/)
     {
     }
 
-    virtual void assembleConcreteProcess(const double t, GlobalVector const& x,
-                                         GlobalMatrix& M, GlobalMatrix& K,
-                                         GlobalVector& b) = 0;
+    virtual void assembleConcreteProcess(const double t, double const dt,
+                                         GlobalVector const& x, GlobalMatrix& M,
+                                         GlobalMatrix& K, GlobalVector& b) = 0;
 
     virtual void assembleWithJacobianConcreteProcess(
-        const double t, GlobalVector const& x, GlobalVector const& xdot,
-        const double dxdot_dx, const double dx_dx, GlobalMatrix& M,
-        GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac) = 0;
+        const double t, double const dt, GlobalVector const& x,
+        GlobalVector const& xdot, const double dxdot_dx, const double dx_dx,
+        GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
+        GlobalMatrix& Jac) = 0;
 
     virtual void preTimestepConcreteProcess(GlobalVector const& /*x*/,
                                             const double /*t*/,
@@ -214,6 +217,7 @@ private:
 
     virtual void postNonLinearSolverConcreteProcess(GlobalVector const& /*x*/,
                                                     const double /*t*/,
+                                                    double const /*dt*/,
                                                     int const /*process_id*/)
     {
     }

@@ -304,7 +304,8 @@ public:
         }
     }
 
-    void assemble(double const /*t*/, std::vector<double> const& /*local_x*/,
+    void assemble(double const /*t*/, double const /*dt*/,
+                  std::vector<double> const& /*local_x*/,
                   std::vector<double>& /*local_M_data*/,
                   std::vector<double>& /*local_K_data*/,
                   std::vector<double>& /*local_b_data*/) override
@@ -315,7 +316,7 @@ public:
             "implemented.");
     }
 
-    void preAssemble(double const t,
+    void preAssemble(double const t, double const dt,
                      std::vector<double> const& local_x) override
     {
         auto const n_integration_points =
@@ -368,8 +369,8 @@ public:
                                      // calculateDamage() function.
 
             auto&& solution = _ip_data[ip].solid_material.integrateStress(
-                t, x_position, _process_data.dt, eps_prev, eps, sigma_eff_prev,
-                *state, _process_data.reference_temperature);
+                t, x_position, dt, eps_prev, eps, sigma_eff_prev, *state,
+                _process_data.reference_temperature);
 
             if (!solution)
             {
@@ -418,7 +419,7 @@ public:
         }
     }
 
-    void assembleWithJacobian(double const t,
+    void assembleWithJacobian(double const t, double const /*dt*/,
                               std::vector<double> const& local_x,
                               std::vector<double> const& /*local_xdot*/,
                               const double /*dxdot_dx*/, const double /*dx_dx*/,
@@ -524,7 +525,8 @@ public:
         }
     }
 
-    void postTimestepConcrete(std::vector<double> const& /*local_x*/) override
+    void postTimestepConcrete(std::vector<double> const& /*local_x*/,
+                              double const /*t*/, double const /*dt*/) override
     {
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();

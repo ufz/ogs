@@ -240,8 +240,8 @@ void ThermoHydroMechanicsProcess<
 
 template <int DisplacementDim>
 void ThermoHydroMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
-    const double t, GlobalVector const& x, GlobalMatrix& M, GlobalMatrix& K,
-    GlobalVector& b)
+    const double t, double const dt, GlobalVector const& x, GlobalMatrix& M,
+    GlobalMatrix& K, GlobalVector& b)
 {
     DBUG("Assemble the equations for ThermoHydroMechanics");
 
@@ -254,17 +254,15 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        dof_table, t, x, M, K, b, _coupled_solutions);
+        dof_table, t, dt, x, M, K, b, _coupled_solutions);
 }
 
 template <int DisplacementDim>
 void ThermoHydroMechanicsProcess<DisplacementDim>::
-    assembleWithJacobianConcreteProcess(const double t, GlobalVector const& x,
-                                        GlobalVector const& xdot,
-                                        const double dxdot_dx,
-                                        const double dx_dx, GlobalMatrix& M,
-                                        GlobalMatrix& K, GlobalVector& b,
-                                        GlobalMatrix& Jac)
+    assembleWithJacobianConcreteProcess(
+        const double t, double const dt, GlobalVector const& x,
+        GlobalVector const& xdot, const double dxdot_dx, const double dx_dx,
+        GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac)
 {
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
         dof_tables;
@@ -304,7 +302,7 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::
 
     GlobalExecutor::executeMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, dof_tables, t, x, xdot, dxdot_dx, dx_dx, M, K, b,
+        _local_assemblers, dof_tables, t, dt, x, xdot, dxdot_dx, dx_dx, M, K, b,
         Jac, _coupled_solutions);
 
     auto copyRhs = [&](int const variable_id, auto& output_vector) {
@@ -338,9 +336,6 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::preTimestepConcreteProcess(
 {
     DBUG("PreTimestep ThermoHydroMechanicsProcess.");
 
-    _process_data.dt = dt;
-    _process_data.t = t;
-
     if (hasMechanicalProcess(process_id))
     {
         GlobalExecutor::executeMemberOnDereferenced(
@@ -351,19 +346,20 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::preTimestepConcreteProcess(
 
 template <int DisplacementDim>
 void ThermoHydroMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
-    GlobalVector const& x, const double /*t*/, const double /*delta_t*/,
+    GlobalVector const& x, double const t, double const dt,
     const int process_id)
 {
     DBUG("PostTimestep ThermoHydroMechanicsProcess.");
     GlobalExecutor::executeMemberOnDereferenced(
         &LocalAssemblerInterface::postTimestep, _local_assemblers,
-        getDOFTable(process_id), x);
+        getDOFTable(process_id), x, t, dt);
 }
 
 template <int DisplacementDim>
 void ThermoHydroMechanicsProcess<
     DisplacementDim>::postNonLinearSolverConcreteProcess(GlobalVector const& x,
                                                          const double t,
+                                                         double const dt,
                                                          const int process_id)
 {
     if (!hasMechanicalProcess(process_id))
@@ -375,7 +371,7 @@ void ThermoHydroMechanicsProcess<
     // Calculate strain, stress or other internal variables of mechanics.
     GlobalExecutor::executeMemberOnDereferenced(
         &LocalAssemblerInterface::postNonLinearSolver, _local_assemblers,
-        getDOFTable(process_id), x, t, _use_monolithic_scheme);
+        getDOFTable(process_id), x, t, dt, _use_monolithic_scheme);
 }
 
 template <int DisplacementDim>

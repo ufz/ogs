@@ -17,6 +17,7 @@
 namespace ProcessLib
 {
 void LocalAssemblerInterface::assemble(double const /*t*/,
+                                       double const /*dt*/,
                                        std::vector<double> const& /*local_x*/,
                                        std::vector<double>& /*local_M_data*/,
                                        std::vector<double>& /*local_K_data*/,
@@ -27,7 +28,7 @@ void LocalAssemblerInterface::assemble(double const /*t*/,
 }
 
 void LocalAssemblerInterface::assembleForStaggeredScheme(
-    double const /*t*/,
+    double const /*t*/, double const /*dt*/,
     std::vector<double>& /*local_M_data*/,
     std::vector<double>& /*local_K_data*/,
     std::vector<double>& /*local_b_data*/,
@@ -39,7 +40,8 @@ void LocalAssemblerInterface::assembleForStaggeredScheme(
 }
 
 void LocalAssemblerInterface::assembleWithJacobian(
-    double const /*t*/, std::vector<double> const& /*local_x*/,
+    double const /*t*/, double const /*dt*/,
+    std::vector<double> const& /*local_x*/,
     std::vector<double> const& /*local_xdot*/, const double /*dxdot_dx*/,
     const double /*dx_dx*/, std::vector<double>& /*local_M_data*/,
     std::vector<double>& /*local_K_data*/,
@@ -52,9 +54,9 @@ void LocalAssemblerInterface::assembleWithJacobian(
 }
 
 void LocalAssemblerInterface::assembleWithJacobianForStaggeredScheme(
-    double const /*t*/, std::vector<double> const& /*local_xdot*/,
-    const double /*dxdot_dx*/, const double /*dx_dx*/,
-    std::vector<double>& /*local_M_data*/,
+    double const /*t*/, double const /*dt*/,
+    std::vector<double> const& /*local_xdot*/, const double /*dxdot_dx*/,
+    const double /*dx_dx*/, std::vector<double>& /*local_M_data*/,
     std::vector<double>& /*local_K_data*/,
     std::vector<double>& /*local_b_data*/,
     std::vector<double>& /*local_Jac_data*/,
@@ -112,24 +114,24 @@ void LocalAssemblerInterface::preTimestep(
 
 void LocalAssemblerInterface::postTimestep(
     std::size_t const mesh_item_id,
-    NumLib::LocalToGlobalIndexMap const& dof_table,
-    GlobalVector const& x)
+    NumLib::LocalToGlobalIndexMap const& dof_table, GlobalVector const& x,
+    double const t, double const dt)
 {
     auto const indices = NumLib::getIndices(mesh_item_id, dof_table);
     auto const local_x = x.get(indices);
 
-    postTimestepConcrete(local_x);
+    postTimestepConcrete(local_x, t, dt);
 }
 
 void LocalAssemblerInterface::postNonLinearSolver(
     std::size_t const mesh_item_id,
-    NumLib::LocalToGlobalIndexMap const& dof_table,
-    GlobalVector const& x, double const t, bool const use_monolithic_scheme)
+    NumLib::LocalToGlobalIndexMap const& dof_table, GlobalVector const& x,
+    double const t, double const dt, bool const use_monolithic_scheme)
 {
     auto const indices = NumLib::getIndices(mesh_item_id, dof_table);
     auto const local_x = x.get(indices);
 
-    postNonLinearSolverConcrete(local_x, t, use_monolithic_scheme);
+    postNonLinearSolverConcrete(local_x, t, dt, use_monolithic_scheme);
 }
 
 }  // namespace ProcessLib

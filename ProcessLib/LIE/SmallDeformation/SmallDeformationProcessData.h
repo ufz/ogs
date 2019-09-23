@@ -84,9 +84,6 @@ struct SmallDeformationProcessData
     std::vector<std::vector<int>> _vec_ele_connected_fractureIDs;
     std::vector<std::vector<int>> _vec_ele_connected_junctionIDs;
 
-    double dt = 0.0;
-    double t = 0.0;
-
     // mesh properties to output element's stress.
     MeshLib::PropertyVector<double>* _mesh_prop_stress_xx = nullptr;
     MeshLib::PropertyVector<double>* _mesh_prop_stress_yy = nullptr;

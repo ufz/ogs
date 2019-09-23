@@ -153,7 +153,8 @@ public:
         }
     }
 
-    void assemble(double const t, std::vector<double> const& local_x,
+    void assemble(double const t, double const /*dt*/,
+                  std::vector<double> const& local_x,
                   std::vector<double>& local_M_data,
                   std::vector<double>& local_K_data,
                   std::vector<double>& local_b_data) override
@@ -398,6 +399,7 @@ public:
 
     void assembleForStaggeredScheme(
         double const t,
+        double const dt,
         std::vector<double>& local_M_data,
         std::vector<double>& local_K_data,
         std::vector<double>& local_b_data,
@@ -405,18 +407,19 @@ public:
     {
         if (coupled_xs.process_id == hydraulic_process_id)
         {
-            assembleHydraulicEquation(t, local_M_data, local_K_data,
+            assembleHydraulicEquation(t, dt, local_M_data, local_K_data,
                                       local_b_data, coupled_xs);
         }
         else
         {
             // Go for assembling in an order of transport process id.
-            assembleComponentTransportEquation(t, local_M_data, local_K_data,
-                                               local_b_data, coupled_xs);
+            assembleComponentTransportEquation(
+                t, dt, local_M_data, local_K_data, local_b_data, coupled_xs);
         }
     }
 
     void assembleHydraulicEquation(double const t,
+                                   double const dt,
                                    std::vector<double>& local_M_data,
                                    std::vector<double>& local_K_data,
                                    std::vector<double>& local_b_data,
@@ -431,8 +434,6 @@ public:
         auto local_C0 = Eigen::Map<const NodalVectorType>(
             coupled_xs.local_coupled_xs0[first_transport_process_id].data(),
             concentration_size);
-
-        auto const dt = coupled_xs.dt;
 
         auto local_M = MathLib::createZeroedMatrix<LocalBlockMatrixType>(
             local_M_data, pressure_size, pressure_size);
@@ -530,7 +531,7 @@ public:
     }
 
     void assembleComponentTransportEquation(
-        double const t, std::vector<double>& local_M_data,
+        double const t, double const dt, std::vector<double>& local_M_data,
         std::vector<double>& local_K_data,
         std::vector<double>& /*local_b_data*/,
         LocalCoupledSolutions const& coupled_xs)
@@ -550,8 +551,6 @@ public:
             local_M_data, concentration_size, concentration_size);
         auto local_K = MathLib::createZeroedMatrix<LocalBlockMatrixType>(
             local_K_data, concentration_size, concentration_size);
-
-        auto const dt = coupled_xs.dt;
 
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();

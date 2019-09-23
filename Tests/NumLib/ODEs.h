@@ -26,10 +26,14 @@ class ODE1 final : public NumLib::ODESystem<
                        NumLib::NonlinearSolverTag::Newton>
 {
 public:
-    void preAssemble(const double /*t*/, GlobalVector const& /*x*/) override {}
+    void preAssemble(const double /*t*/, double const /*dt*/,
+                     GlobalVector const& /*x*/) override
+    {
+    }
 
-    void assemble(const double /*t*/, GlobalVector const& /*x*/,
-                  GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) override
+    void assemble(const double /*t*/, double const /*dt*/,
+                  GlobalVector const& /*x*/, GlobalMatrix& M, GlobalMatrix& K,
+                  GlobalVector& b) override
     {
         MathLib::setMatrix(M, { 1.0, 0.0,  0.0, 1.0 });
         MathLib::setMatrix(K, { 0.0, 1.0, -1.0, 0.0 });
@@ -37,7 +41,8 @@ public:
         MathLib::setVector(b, { 0.0, 0.0 });
     }
 
-    void assembleWithJacobian(const double t, GlobalVector const& x_curr,
+    void assembleWithJacobian(const double t, double const dt,
+                              GlobalVector const& x_curr,
                               GlobalVector const& /*xdot*/,
                               const double dxdot_dx, const double dx_dx,
                               GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
@@ -45,7 +50,7 @@ public:
     {
         namespace LinAlg = MathLib::LinAlg;
 
-        assemble(t, x_curr, M, K, b);
+        assemble(t, dt, x_curr, M, K, b);
 
         // compute Jac = M*dxdot_dx + dx_dx*K
         LinAlg::finalizeAssembly(M);
@@ -106,10 +111,14 @@ class ODE2 final : public NumLib::ODESystem<
                        NumLib::NonlinearSolverTag::Newton>
 {
 public:
-    void preAssemble(const double /*t*/, GlobalVector const& /*x*/) override {}
+    void preAssemble(const double /*t*/, double const /*dt*/,
+                     GlobalVector const& /*x*/) override
+    {
+    }
 
-    void assemble(const double /*t*/, GlobalVector const& x, GlobalMatrix& M,
-                  GlobalMatrix& K, GlobalVector& b) override
+    void assemble(const double /*t*/, double const /*dt*/,
+                  GlobalVector const& x, GlobalMatrix& M, GlobalMatrix& K,
+                  GlobalVector& b) override
     {
         MathLib::setMatrix(M, {1.0});
         MathLib::LinAlg::setLocalAccessibleVector(x);
@@ -117,13 +126,14 @@ public:
         MathLib::setVector(b, {0.0});
     }
 
-    void assembleWithJacobian(const double t, GlobalVector const& x,
+    void assembleWithJacobian(const double t, double const dt,
+                              GlobalVector const& x,
                               GlobalVector const& /*xdot*/,
                               const double dxdot_dx, const double dx_dx,
                               GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
                               GlobalMatrix& Jac) override
     {
-        assemble(t, x, M, K, b);
+        assemble(t, dt, x, M, K, b);
 
         namespace LinAlg = MathLib::LinAlg;
 
@@ -194,10 +204,14 @@ class ODE3 final : public NumLib::ODESystem<
                        NumLib::NonlinearSolverTag::Newton>
 {
 public:
-    void preAssemble(const double /*t*/, GlobalVector const& /*x*/) override {}
+    void preAssemble(const double /*t*/, double const /*dt*/,
+                     GlobalVector const& /*x*/) override
+    {
+    }
 
-    void assemble(const double /*t*/, GlobalVector const& x_curr, GlobalMatrix& M,
-                  GlobalMatrix& K, GlobalVector& b) override
+    void assemble(const double /*t*/, double const /*dt*/,
+                  GlobalVector const& x_curr, GlobalMatrix& M, GlobalMatrix& K,
+                  GlobalVector& b) override
     {
         MathLib::LinAlg::setLocalAccessibleVector(x_curr);
         auto const u = x_curr[0];
@@ -209,7 +223,8 @@ public:
             b, {-2 * u + 2.0 * u * v, -2.0 * v * v + 5.0 * v - 4.0});
     }
 
-    void assembleWithJacobian(const double t, GlobalVector const& x_curr,
+    void assembleWithJacobian(const double t, double const dt,
+                              GlobalVector const& x_curr,
                               GlobalVector const& xdot, const double dxdot_dx,
                               const double dx_dx, GlobalMatrix& M,
                               GlobalMatrix& K, GlobalVector& b,
@@ -217,7 +232,7 @@ public:
     {
         MathLib::LinAlg::setLocalAccessibleVector(x_curr);
         MathLib::LinAlg::setLocalAccessibleVector(xdot);
-        assemble(t, x_curr, M, K, b);
+        assemble(t, dt, x_curr, M, K, b);
 
         auto const u = x_curr[0];
         auto const v = x_curr[1];

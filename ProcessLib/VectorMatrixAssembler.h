@@ -39,7 +39,7 @@ public:
     void preAssemble(const std::size_t mesh_item_id,
                      LocalAssemblerInterface& local_assembler,
                      const NumLib::LocalToGlobalIndexMap& dof_table,
-                     const double t, const GlobalVector& x);
+                     const double t, double const dt, const GlobalVector& x);
 
     //! Assembles\c M, \c K, and \c b.
     //! \remark Jacobian is not assembled here, see assembleWithJacobian().
@@ -47,8 +47,8 @@ public:
                   LocalAssemblerInterface& local_assembler,
                   std::vector<std::reference_wrapper<
                       NumLib::LocalToGlobalIndexMap>> const& dof_tables,
-                  double const t, GlobalVector const& x, GlobalMatrix& M,
-                  GlobalMatrix& K, GlobalVector& b,
+                  double const t, double const dt, GlobalVector const& x,
+                  GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
                   CoupledSolutionsForStaggeredScheme const* const cpl_xs);
 
     //! Assembles \c M, \c K, \c b, and the Jacobian \c Jac of the residual.
@@ -59,9 +59,9 @@ public:
         std::vector<
             std::reference_wrapper<NumLib::LocalToGlobalIndexMap>> const&
             dof_tables,
-        const double t, GlobalVector const& x, GlobalVector const& xdot,
-        const double dxdot_dx, const double dx_dx, GlobalMatrix& M,
-        GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac,
+        const double t, double const dt, GlobalVector const& x,
+        GlobalVector const& xdot, const double dxdot_dx, const double dx_dx,
+        GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac,
         CoupledSolutionsForStaggeredScheme const* const cpl_xs);
 
 private:

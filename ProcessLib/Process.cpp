@@ -189,17 +189,18 @@ void Process::updateDeactivatedSubdomains(double const time,
     }
 }
 
-void Process::preAssemble(const double t, GlobalVector const& x)
+void Process::preAssemble(const double t, double const dt,
+                          GlobalVector const& x)
 {
-    preAssembleConcreteProcess(t, x);
+    preAssembleConcreteProcess(t, dt, x);
 }
 
-void Process::assemble(const double t, GlobalVector const& x, GlobalMatrix& M,
-                       GlobalMatrix& K, GlobalVector& b)
+void Process::assemble(const double t, double const dt, GlobalVector const& x,
+                       GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
 {
     MathLib::LinAlg::setLocalAccessibleVector(x);
 
-    assembleConcreteProcess(t, x, M, K, b);
+    assembleConcreteProcess(t, dt, x, M, K, b);
 
     const auto pcs_id =
         (_coupled_solutions) != nullptr ? _coupled_solutions->process_id : 0;
@@ -210,7 +211,8 @@ void Process::assemble(const double t, GlobalVector const& x, GlobalMatrix& M,
     _source_term_collections[pcs_id].integrate(t, x, b, nullptr);
 }
 
-void Process::assembleWithJacobian(const double t, GlobalVector const& x,
+void Process::assembleWithJacobian(const double t, double const dt,
+                                   GlobalVector const& x,
                                    GlobalVector const& xdot,
                                    const double dxdot_dx, const double dx_dx,
                                    GlobalMatrix& M, GlobalMatrix& K,
@@ -219,8 +221,8 @@ void Process::assembleWithJacobian(const double t, GlobalVector const& x,
     MathLib::LinAlg::setLocalAccessibleVector(x);
     MathLib::LinAlg::setLocalAccessibleVector(xdot);
 
-    assembleWithJacobianConcreteProcess(t, x, xdot, dxdot_dx, dx_dx, M, K, b,
-                                        Jac);
+    assembleWithJacobianConcreteProcess(t, dt, x, xdot, dxdot_dx, dx_dx, M, K,
+                                        b, Jac);
 
     // TODO: apply BCs to Jacobian.
     const auto pcs_id =
@@ -400,10 +402,10 @@ void Process::postTimestep(GlobalVector const& x, const double t,
 }
 
 void Process::postNonLinearSolver(GlobalVector const& x, const double t,
-                                  int const process_id)
+                                  double const dt, int const process_id)
 {
     MathLib::LinAlg::setLocalAccessibleVector(x);
-    postNonLinearSolverConcreteProcess(x, t, process_id);
+    postNonLinearSolverConcreteProcess(x, t, dt, process_id);
 }
 
 void Process::computeSecondaryVariable(const double t, GlobalVector const& x,

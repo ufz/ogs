@@ -55,7 +55,7 @@ public:
         HydroMechanicsProcessData<GlobalDim>& process_data);
 
 private:
-    void assembleWithJacobianConcrete(double const t,
+    void assembleWithJacobianConcrete(double const t, double const dt,
                                       Eigen::VectorXd const& local_x,
                                       Eigen::VectorXd const& local_x_dot,
                                       Eigen::VectorXd& local_b,
@@ -71,8 +71,9 @@ private:
         }
     }
 
-    void computeSecondaryVariableConcreteWithVector(
-        double const t, Eigen::VectorXd const& local_x) override;
+    void postTimestepConcreteWithVector(
+        double const t, double const dt,
+        Eigen::VectorXd const& local_x) override;
 
     using Base::_element;
     using Base::_ip_data;

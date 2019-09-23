@@ -278,8 +278,8 @@ void HydroMechanicsProcess<DisplacementDim>::initializeBoundaryConditions()
 
 template <int DisplacementDim>
 void HydroMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
-    const double t, GlobalVector const& x, GlobalMatrix& M, GlobalMatrix& K,
-    GlobalVector& b)
+    const double t, double const dt, GlobalVector const& x, GlobalMatrix& M,
+    GlobalMatrix& K, GlobalVector& b)
 {
     DBUG("Assemble the equations for HydroMechanics");
 
@@ -292,17 +292,15 @@ void HydroMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        dof_table, t, x, M, K, b, _coupled_solutions);
+        dof_table, t, dt, x, M, K, b, _coupled_solutions);
 }
 
 template <int DisplacementDim>
 void HydroMechanicsProcess<DisplacementDim>::
-    assembleWithJacobianConcreteProcess(const double t, GlobalVector const& x,
-                                        GlobalVector const& xdot,
-                                        const double dxdot_dx,
-                                        const double dx_dx, GlobalMatrix& M,
-                                        GlobalMatrix& K, GlobalVector& b,
-                                        GlobalMatrix& Jac)
+    assembleWithJacobianConcreteProcess(
+        const double t, double const dt, GlobalVector const& x,
+        GlobalVector const& xdot, const double dxdot_dx, const double dx_dx,
+        GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac)
 {
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
         dof_tables;
@@ -339,8 +337,8 @@ void HydroMechanicsProcess<DisplacementDim>::
 
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, x,
-        xdot, dxdot_dx, dx_dx, M, K, b, Jac, _coupled_solutions);
+        _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x, xdot,
+        dxdot_dx, dx_dx, M, K, b, Jac, _coupled_solutions);
 
     auto copyRhs = [&](int const variable_id, auto& output_vector) {
         if (_use_monolithic_scheme)
@@ -373,9 +371,6 @@ void HydroMechanicsProcess<DisplacementDim>::preTimestepConcreteProcess(
 {
     DBUG("PreTimestep HydroMechanicsProcess.");
 
-    _process_data.dt = dt;
-    _process_data.t = t;
-
     if (hasMechanicalProcess(process_id))
     {
         ProcessLib::ProcessVariable const& pv =
@@ -389,19 +384,20 @@ void HydroMechanicsProcess<DisplacementDim>::preTimestepConcreteProcess(
 
 template <int DisplacementDim>
 void HydroMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
-    GlobalVector const& x, const double /*t*/, const double /*delta_t*/,
+    GlobalVector const& x, double const t, double const dt,
     const int process_id)
 {
     DBUG("PostTimestep HydroMechanicsProcess.");
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerInterface::postTimestep, _local_assemblers,
-        pv.getActiveElementIDs(), getDOFTable(process_id), x);
+        pv.getActiveElementIDs(), getDOFTable(process_id), x, t, dt);
 }
 
 template <int DisplacementDim>
 void HydroMechanicsProcess<DisplacementDim>::postNonLinearSolverConcreteProcess(
-    GlobalVector const& x, const double t, const int process_id)
+    GlobalVector const& x, const double t, double const dt,
+    const int process_id)
 {
     if (!hasMechanicalProcess(process_id))
     {
@@ -413,7 +409,7 @@ void HydroMechanicsProcess<DisplacementDim>::postNonLinearSolverConcreteProcess(
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerInterface::postNonLinearSolver, _local_assemblers,
-        pv.getActiveElementIDs(), getDOFTable(process_id), x, t,
+        pv.getActiveElementIDs(), getDOFTable(process_id), x, t, dt,
         _use_monolithic_scheme);
 }
 

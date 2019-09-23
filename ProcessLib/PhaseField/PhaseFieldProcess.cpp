@@ -162,8 +162,8 @@ void PhaseFieldProcess<DisplacementDim>::initializeBoundaryConditions()
 
 template <int DisplacementDim>
 void PhaseFieldProcess<DisplacementDim>::assembleConcreteProcess(
-    const double t, GlobalVector const& x, GlobalMatrix& M, GlobalMatrix& K,
-    GlobalVector& b)
+    const double t, double const dt, GlobalVector const& x, GlobalMatrix& M,
+    GlobalMatrix& K, GlobalVector& b)
 {
     DBUG("Assemble PhaseFieldProcess.");
 
@@ -192,15 +192,15 @@ void PhaseFieldProcess<DisplacementDim>::assembleConcreteProcess(
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        pv.getActiveElementIDs(), dof_tables, t, x, M, K, b,
+        pv.getActiveElementIDs(), dof_tables, t, dt, x, M, K, b,
         _coupled_solutions);
 }
 
 template <int DisplacementDim>
 void PhaseFieldProcess<DisplacementDim>::assembleWithJacobianConcreteProcess(
-    const double t, GlobalVector const& x, GlobalVector const& xdot,
-    const double dxdot_dx, const double dx_dx, GlobalMatrix& M, GlobalMatrix& K,
-    GlobalVector& b, GlobalMatrix& Jac)
+    const double t, double const dt, GlobalVector const& x,
+    GlobalVector const& xdot, const double dxdot_dx, const double dx_dx,
+    GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac)
 {
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
         dof_tables;
@@ -227,7 +227,7 @@ void PhaseFieldProcess<DisplacementDim>::assembleWithJacobianConcreteProcess(
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, x, xdot,
+        _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x, xdot,
         dxdot_dx, dx_dx, M, K, b, Jac, _coupled_solutions);
 
     if (_coupled_solutions->process_id == 0)
@@ -245,9 +245,7 @@ void PhaseFieldProcess<DisplacementDim>::preTimestepConcreteProcess(
 {
     DBUG("PreTimestep PhaseFieldProcess %d.", process_id);
 
-    _process_data.dt = dt;
-    _process_data.t = t;
-    _process_data.injected_volume = _process_data.t;
+    _process_data.injected_volume = t;
 
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
@@ -258,7 +256,7 @@ void PhaseFieldProcess<DisplacementDim>::preTimestepConcreteProcess(
 
 template <int DisplacementDim>
 void PhaseFieldProcess<DisplacementDim>::postTimestepConcreteProcess(
-    GlobalVector const& x, const double /*t*/, const double /*delta_t*/,
+    GlobalVector const& x, const double t, const double /*delta_t*/,
     int const process_id)
 {
     if (isPhaseFieldProcess(process_id))
@@ -280,7 +278,7 @@ void PhaseFieldProcess<DisplacementDim>::postTimestepConcreteProcess(
 
         GlobalExecutor::executeSelectedMemberOnDereferenced(
             &LocalAssemblerInterface::computeEnergy, _local_assemblers,
-            pv.getActiveElementIDs(), dof_tables, x, _process_data.t,
+            pv.getActiveElementIDs(), dof_tables, x, t,
             _process_data.elastic_energy, _process_data.surface_energy,
             _process_data.pressure_work, _coupled_solutions);
 
@@ -292,7 +290,8 @@ void PhaseFieldProcess<DisplacementDim>::postTimestepConcreteProcess(
 
 template <int DisplacementDim>
 void PhaseFieldProcess<DisplacementDim>::postNonLinearSolverConcreteProcess(
-    GlobalVector const& x, const double t, const int process_id)
+    GlobalVector const& x, const double t, double const /*dt*/,
+    const int process_id)
 {
     _process_data.crack_volume = 0.0;
 

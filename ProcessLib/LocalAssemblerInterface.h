@@ -43,22 +43,21 @@ public:
     virtual void initialize(std::size_t const mesh_item_id,
                             NumLib::LocalToGlobalIndexMap const& dof_table);
 
-    virtual void preAssemble(double const /*t*/,
+    virtual void preAssemble(double const /*t*/, double const /*dt*/,
                              std::vector<double> const& /*local_x*/){};
 
-    virtual void assemble(double const t, std::vector<double> const& local_x,
+    virtual void assemble(double const t, double const dt,
+                          std::vector<double> const& local_x,
                           std::vector<double>& local_M_data,
                           std::vector<double>& local_K_data,
                           std::vector<double>& local_b_data);
 
     virtual void assembleForStaggeredScheme(
-        double const t,
-        std::vector<double>& local_M_data,
-        std::vector<double>& local_K_data,
-        std::vector<double>& local_b_data,
+        double const t, double const dt, std::vector<double>& local_M_data,
+        std::vector<double>& local_K_data, std::vector<double>& local_b_data,
         LocalCoupledSolutions const& coupled_solutions);
 
-    virtual void assembleWithJacobian(double const t,
+    virtual void assembleWithJacobian(double const t, double const dt,
                                       std::vector<double> const& local_x,
                                       std::vector<double> const& local_xdot,
                                       const double dxdot_dx, const double dx_dx,
@@ -68,7 +67,7 @@ public:
                                       std::vector<double>& local_Jac_data);
 
     virtual void assembleWithJacobianForStaggeredScheme(
-        double const t, std::vector<double> const& local_xdot,
+        double const t, double const dt, std::vector<double> const& local_xdot,
         const double dxdot_dx, const double dx_dx,
         std::vector<double>& local_M_data, std::vector<double>& local_K_data,
         std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
@@ -87,12 +86,13 @@ public:
 
     virtual void postTimestep(std::size_t const mesh_item_id,
                               NumLib::LocalToGlobalIndexMap const& dof_table,
-                              GlobalVector const& x);
+                              GlobalVector const& x, double const t,
+                              double const dt);
 
     void postNonLinearSolver(std::size_t const mesh_item_id,
                              NumLib::LocalToGlobalIndexMap const& dof_table,
                              GlobalVector const& x, double const t,
-                             bool const use_monolithic_scheme);
+                             double const dt, bool const use_monolithic_scheme);
 
     /// Computes the flux in the point \c p_local_coords that is given in local
     /// coordinates using the values from \c local_x.
@@ -127,11 +127,14 @@ private:
     {
     }
 
-    virtual void postTimestepConcrete(std::vector<double> const& /*local_x*/) {}
+    virtual void postTimestepConcrete(std::vector<double> const& /*local_x*/,
+                                      double const /*t*/, double const /*dt*/)
+    {
+    }
 
     virtual void postNonLinearSolverConcrete(
         std::vector<double> const& /*local_x*/, double const /*t*/,
-        bool const /*use_monolithic_scheme*/)
+        double const /*dt*/, bool const /*use_monolithic_scheme*/)
     {
     }
 
