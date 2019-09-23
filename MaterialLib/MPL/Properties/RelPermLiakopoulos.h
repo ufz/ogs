@@ -4,7 +4,7 @@
  * \brief
  *
  * \copyright
- * Copyright (c) 2012-2018, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
@@ -27,7 +27,7 @@ class Component;
  * computes the permeability reduction due to saturation as function
  * of capillary pressure.
  *
- * Wetting (liquid) phase erlative permeability is given by the empirical
+ * Wetting (liquid) phase relative permeability is given by the empirical
  * formula
  * \f[k^{\mathrm{rel}}_{\mathrm{L}}=1 - 2.207(1 - s_L)^{1.0121}\f]
  *
@@ -49,13 +49,14 @@ class RelPermLiakopoulos final : public Property
 private:
     Medium* _medium = nullptr;
     /**
-Parameters for Liakopoulos relative permeability:
-Asadi, R., Ataie-Ashtiani, B. (2015): A Comparison of finite volume
-formulations and coupling strategies for two-phase flow in deforming
-porous media. Comput. Geosci., p. 24ff.
+    Parameters for Liakopoulos relative permeability:
+    Asadi, R., Ataie-Ashtiani, B. (2015): A Comparison of finite volume
+    formulations and coupling strategies for two-phase flow in deforming
+    porous media. Comput. Geosci., p. 24ff.
 
-Those parameters are fixed for that particular model, no need to change them.
-*/
+    Those parameters are fixed for that particular model, no need to change
+    them.
+    */
     const double _residual_liquid_saturation = 0.2;
     const double _maximal_liquid_saturation = 1.;
     const double _parameter_a = 2.207;
