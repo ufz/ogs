@@ -16,7 +16,7 @@
 #include <logog/include/logog.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
-#include "BaseLib/BuildInfo.h"
+#include "InfoLib/TestInfo.h"
 #include "NumLib/NumericsConfig.h"
 #include "NumLib/ODESolver/ConvergenceCriterionDeltaX.h"
 #include "MathLib/LinAlg/LinAlg.h"

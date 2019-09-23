@@ -1,5 +1,5 @@
 /**
- * \file   MeshAnalysisDialog.cpp
+ * \file
  * \author Karsten Rink
  * \date   2014-02-24
  * \brief  Implementation of the MeshAnalysisDialog class.

@@ -22,7 +22,7 @@ class vtkSphereSource;
 class VtkCompositeTextureOnSurfaceFilter : public VtkCompositeFilter
 {
 public:
-    VtkCompositeTextureOnSurfaceFilter(vtkAlgorithm* inputAlgorithm);
+    explicit VtkCompositeTextureOnSurfaceFilter(vtkAlgorithm* inputAlgorithm);
     ~VtkCompositeTextureOnSurfaceFilter() override;
 
     void init() override;

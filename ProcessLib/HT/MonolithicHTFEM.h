@@ -5,7 +5,7 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *  \file   MonolithicHTFEM.h
+ *  \file
  *  Created on October 11, 2017, 2:33 PM
  */
 
@@ -14,7 +14,7 @@
 #include <Eigen/Dense>
 #include <vector>
 
-#include "HTMaterialProperties.h"
+#include "HTProcessData.h"
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 
@@ -59,14 +59,14 @@ public:
                     std::size_t const local_matrix_size,
                     bool is_axially_symmetric,
                     unsigned const integration_order,
-                    HTMaterialProperties const& material_properties)
+                    HTProcessData const& process_data)
         : HTFEM<ShapeFunction, IntegrationMethod, GlobalDim>(
               element, local_matrix_size, is_axially_symmetric,
-              integration_order, material_properties, NUM_NODAL_DOF)
+              integration_order, process_data, NUM_NODAL_DOF)
     {
     }
 
-    void assemble(double const /*t*/, std::vector<double> const& local_x,
+    void assemble(double const t, std::vector<double> const& local_x,
                   std::vector<double>& local_M_data,
                   std::vector<double>& local_K_data,
                   std::vector<double>& local_b_data) override
@@ -99,7 +99,7 @@ public:
         auto p_nodal_values = Eigen::Map<const NodalVectorType>(
             &local_x[pressure_index], pressure_size);
 
-        auto const& process_data = this->_material_properties;
+        auto const& process_data = this->_process_data;
         auto const& medium =
             *process_data.media_map->getMedium(this->_element.getID());
         auto const& liquid_phase = medium.phase("AqueousLiquid");
@@ -123,7 +123,7 @@ public:
             // constant storage model
             auto const specific_storage =
                 solid_phase.property(MaterialPropertyLib::PropertyType::storage)
-                    .template value<double>(vars);
+                    .template value<double>(vars, pos, t);
 
             auto const& ip_data = this->_ip_data[ip];
             auto const& N = ip_data.N;
@@ -138,14 +138,14 @@ public:
             auto const porosity =
                 solid_phase
                     .property(MaterialPropertyLib::PropertyType::porosity)
-                    .template value<double>(vars);
+                    .template value<double>(vars, pos, t);
 
             auto const intrinsic_permeability =
                 MaterialPropertyLib::formEigenTensor<GlobalDim>(
                     solid_phase
                         .property(
                             MaterialPropertyLib::PropertyType::permeability)
-                        .value(vars));
+                        .value(vars, pos, t));
 
             vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
                 T_int_pt;
@@ -155,19 +155,19 @@ public:
             auto const specific_heat_capacity_fluid =
                 liquid_phase
                     .property(MaterialPropertyLib::specific_heat_capacity)
-                    .template value<double>(vars);
+                    .template value<double>(vars, pos, t);
 
             // Use the fluid density model to compute the density
             auto const fluid_density =
                 liquid_phase
                     .property(MaterialPropertyLib::PropertyType::density)
-                    .template value<double>(vars);
+                    .template value<double>(vars, pos, t);
 
             // Use the viscosity model to compute the viscosity
             auto const viscosity =
                 liquid_phase
                     .property(MaterialPropertyLib::PropertyType::viscosity)
-                    .template value<double>(vars);
+                    .template value<double>(vars, pos, t);
             GlobalDimMatrixType K_over_mu = intrinsic_permeability / viscosity;
 
             GlobalDimVectorType const velocity =
@@ -180,18 +180,18 @@ public:
             GlobalDimMatrixType const thermal_conductivity_dispersivity =
                 this->getThermalConductivityDispersivity(
                     vars, porosity, fluid_density, specific_heat_capacity_fluid,
-                    velocity, I);
+                    velocity, I, pos, t);
             KTT.noalias() +=
                 (dNdx.transpose() * thermal_conductivity_dispersivity * dNdx +
                  N.transpose() * velocity.transpose() * dNdx * fluid_density *
                      specific_heat_capacity_fluid) *
                 w;
             Kpp.noalias() += w * dNdx.transpose() * K_over_mu * dNdx;
-            MTT.noalias() +=
-                w *
-                this->getHeatEnergyCoefficient(vars, porosity, fluid_density,
-                                               specific_heat_capacity_fluid) *
-                N.transpose() * N;
+            MTT.noalias() += w *
+                             this->getHeatEnergyCoefficient(
+                                 vars, porosity, fluid_density,
+                                 specific_heat_capacity_fluid, pos, t) *
+                             N.transpose() * N;
             Mpp.noalias() += w * N.transpose() * specific_storage * N;
             if (process_data.has_gravity)
             {

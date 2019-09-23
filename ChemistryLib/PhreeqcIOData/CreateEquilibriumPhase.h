@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -24,12 +25,12 @@ class Mesh;
 
 namespace ChemistryLib
 {
-struct EquilibriumPhase;
-}
-
-namespace ChemistryLib
+namespace PhreeqcIOData
 {
+struct EquilibriumPhase;
+
 std::vector<EquilibriumPhase> createEquilibriumPhases(
     boost::optional<BaseLib::ConfigTree> const& config,
     MeshLib::Mesh const& mesh);
+}  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

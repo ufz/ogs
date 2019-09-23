@@ -1,5 +1,5 @@
 /**
- * \file   TestQtGmlInterface.cpp
+ * \file
  * \author Karsten Rink
  * \date   2013-03-20
  *
@@ -18,14 +18,14 @@
 
 #include "Tests/FileIO/TestGmlInterface.h"
 
-#include "BaseLib/BuildInfo.h"
+#include "InfoLib/TestInfo.h"
 #include "GeoLib/IO/XmlIO/Qt/XmlGmlInterface.h"
 #include "GeoLib/GEOObjects.h"
 
 TEST_F(TestGmlInterface, QtXmlGmlWriterReaderTest)
 {
     // Writer test
-    std::string test_data_file(BaseLib::BuildInfo::tests_tmp_path
+    std::string test_data_file(TestInfoLib::TestInfo::tests_tmp_path
         + "TestXmlGmlReader.gml");
 
     GeoLib::IO::XmlGmlInterface xml(geo_objects);

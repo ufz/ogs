@@ -25,7 +25,7 @@ class LicenseDialog : public QDialog, private Ui_License
     Q_OBJECT
 
 public:
-    LicenseDialog(QDialog* parent = nullptr);
+    explicit LicenseDialog(QDialog* parent = nullptr);
     ~LicenseDialog() override = default;
     ;
 

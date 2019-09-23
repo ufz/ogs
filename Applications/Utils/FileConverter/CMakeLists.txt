@@ -1,95 +1,39 @@
-if (OGS_BUILD_GUI)
-    if (Shapelib_FOUND)
-        add_executable(ConvertSHPToGLI ConvertSHPToGLI.cpp)
-        set_target_properties(ConvertSHPToGLI PROPERTIES FOLDER Utilities)
-        target_link_libraries(ConvertSHPToGLI GeoLib Qt5::Xml ${Shapelib_LIBRARIES})
-    endif()
-
-    add_executable(FEFLOW2OGS FEFLOW2OGS.cpp)
-    set_target_properties(FEFLOW2OGS PROPERTIES FOLDER Utilities)
-    target_link_libraries(FEFLOW2OGS ApplicationsFileIO)
-endif ()
-
-add_executable(convertGEO convertGEO.cpp)
-set_target_properties(convertGEO PROPERTIES FOLDER Utilities)
-target_link_libraries(convertGEO GeoLib ApplicationsFileIO)
-
-add_executable(generateMatPropsFromMatID generateMatPropsFromMatID.cpp )
-target_link_libraries(generateMatPropsFromMatID MeshLib)
-set_target_properties(generateMatPropsFromMatID
-    PROPERTIES FOLDER Utilities)
-
-add_executable(GMSH2OGS GMSH2OGS.cpp)
-set_target_properties(GMSH2OGS PROPERTIES FOLDER Utilities)
-target_link_libraries(GMSH2OGS ApplicationsFileIO)
-
-add_executable(OGS2VTK OGS2VTK.cpp)
-set_target_properties(OGS2VTK PROPERTIES FOLDER Utilities)
-target_link_libraries(OGS2VTK MeshLib)
-
-add_executable(VTK2OGS VTK2OGS.cpp)
-set_target_properties(VTK2OGS PROPERTIES FOLDER Utilities)
-target_link_libraries(VTK2OGS MeshLib)
-
-add_executable(VTK2TIN VTK2TIN.cpp)
-set_target_properties(VTK2TIN PROPERTIES FOLDER Utilities)
-target_link_libraries(VTK2TIN MeshLib)
-
-add_executable(TIN2VTK TIN2VTK.cpp)
-set_target_properties(TIN2VTK PROPERTIES FOLDER Utilities)
-target_link_libraries(TIN2VTK MeshLib)
-
-add_executable(TecPlotTools TecPlotTools.cpp)
-set_target_properties(TecPlotTools PROPERTIES FOLDER Utilities)
-target_link_libraries(TecPlotTools GeoLib MeshLib)
-
-add_executable(GocadSGridReader GocadSGridReaderMain.cpp)
-set_target_properties(GocadSGridReader PROPERTIES FOLDER Utilities)
-target_link_libraries(GocadSGridReader
-    GeoLib
-    MeshLib
-    ApplicationsFileIO
-    ${Boost_LIBRARIES}
-)
-
-add_executable(GocadTSurfaceReader GocadTSurfaceReader.cpp)
-set_target_properties(GocadTSurfaceReader PROPERTIES FOLDER Utilities)
-target_link_libraries(GocadTSurfaceReader
-    MeshLib
-    ApplicationsFileIO
-    ${Boost_LIBRARIES}
-)
-
-add_executable(Mesh2Raster MeshToRaster.cpp)
-set_target_properties(Mesh2Raster PROPERTIES FOLDER Utilities)
-target_link_libraries(Mesh2Raster MeshLib)
-
-
-####################
-### Installation ###
-####################
-install(TARGETS
+set(TOOLS
+    convertGEO
     generateMatPropsFromMatID
     GMSH2OGS
     OGS2VTK
     VTK2OGS
     VTK2TIN
+    TIN2VTK
     TecPlotTools
     GocadSGridReader
-    Mesh2Raster
-    RUNTIME DESTINATION bin COMPONENT ogs_converter)
+    GocadTSurfaceReader
+    Mesh2Raster)
 
 if(OGS_BUILD_GUI)
     if(Shapelib_FOUND)
-        install(TARGETS ConvertSHPToGLI
-            RUNTIME DESTINATION bin COMPONENT ogs_converter)
+        list(APPEND TOOLS ConvertSHPToGLI)
     endif()
-    install(TARGETS  FEFLOW2OGS convertGEO
-        RUNTIME DESTINATION bin COMPONENT ogs_converter)
+    list(APPEND TOOLS FEFLOW2OGS)
 endif()
 
-cpack_add_component(ogs_converter
-    DISPLAY_NAME "File converter"
-    DESCRIPTION "File converter."
-    GROUP Utilities
-)
+if(Shapelib_FOUND)
+    list(APPEND TOOLS Mesh2Shape)
+endif()
+
+foreach(TOOL ${TOOLS})
+    add_executable(${TOOL} ${TOOL}.cpp)
+    target_link_libraries(${TOOL} ApplicationsFileIO GitInfoLib MeshLib)
+endforeach()
+set_target_properties(${TOOLS} PROPERTIES FOLDER Utilities)
+install(TARGETS ${TOOLS} RUNTIME DESTINATION bin COMPONENT Utilities)
+
+if(TARGET ConvertSHPToGLI)
+    target_link_libraries(ConvertSHPToGLI GeoLib Qt5::Xml ${Shapelib_LIBRARIES})
+endif()
+
+if(TARGET Mesh2Shape)
+    target_link_libraries(Mesh2Shape ${Shapelib_LIBRARIES})
+endif()
+

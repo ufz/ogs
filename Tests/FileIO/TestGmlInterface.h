@@ -1,5 +1,5 @@
 /**
- * \file   TestGmlInterface.h
+ * \file
  * \author Karsten Rink
  * \date   2016-02-21
  *
@@ -15,8 +15,6 @@
 #include <cstdio>
 
 #include "gtest/gtest.h"
-
-#include "BaseLib/BuildInfo.h"
 
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Polyline.h"

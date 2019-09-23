@@ -8,7 +8,6 @@
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
- *
  */
 
 #include "Component.h"
@@ -32,7 +31,7 @@ Component::Component(std::string const& component_name,
 
     if (properties)
     {
-        overwriteExistingProperties(_properties, *properties);
+        overwriteExistingProperties(_properties, *properties, this);
     }
 }
 
@@ -43,6 +42,6 @@ Property const& Component::property(PropertyType const& p) const
 
 std::string Component::name() const
 {
-    return boost::get<std::string>(_properties[PropertyType::name]->value());
+    return std::get<std::string>(_properties[PropertyType::name]->value());
 }
 }  // namespace MaterialPropertyLib

@@ -8,7 +8,6 @@
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
- *
  */
 
 #include "Phase.h"
@@ -28,7 +27,7 @@ Phase::Phase(std::string&& phase_name,
 
     if (properties)
     {
-        overwriteExistingProperties(_properties, *properties);
+        overwriteExistingProperties(_properties, *properties, this);
     }
 }
 
@@ -59,6 +58,6 @@ std::size_t Phase::numberOfComponents() const
 
 std::string Phase::name() const
 {
-    return boost::get<std::string>(_properties[PropertyType::name]->value());
+    return std::get<std::string>(_properties[PropertyType::name]->value());
 }
 }  // namespace MaterialPropertyLib

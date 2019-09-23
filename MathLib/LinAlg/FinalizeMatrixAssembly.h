@@ -15,9 +15,8 @@
 
 namespace MathLib
 {
-
 template <typename MAT_T>
-bool finalizeMatrixAssembly(MAT_T &)
+bool finalizeMatrixAssembly(MAT_T& /*unused*/)
 {
     return true;
 }

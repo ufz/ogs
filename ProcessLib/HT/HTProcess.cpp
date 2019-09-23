@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -16,7 +17,6 @@
 #include "ProcessLib/SurfaceFlux/SurfaceFluxData.h"
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
 
-#include "HTMaterialProperties.h"
 #include "MonolithicHTFEM.h"
 #include "StaggeredHTFEM.h"
 
@@ -32,7 +32,7 @@ HTProcess::HTProcess(
     unsigned const integration_order,
     std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>&&
         process_variables,
-    std::unique_ptr<HTMaterialProperties>&& material_properties,
+    HTProcessData&& process_data,
     SecondaryVariableCollection&& secondary_variables,
     NumLib::NamedFunctionCaller&& named_function_caller,
     bool const use_monolithic_scheme,
@@ -43,7 +43,7 @@ HTProcess::HTProcess(
               integration_order, std::move(process_variables),
               std::move(secondary_variables), std::move(named_function_caller),
               use_monolithic_scheme),
-      _material_properties(std::move(material_properties)),
+      _process_data(std::move(process_data)),
       _surfaceflux(std::move(surfaceflux)),
       _heat_transport_process_id(heat_transport_process_id),
       _hydraulic_process_id(hydraulic_process_id)
@@ -68,14 +68,14 @@ void HTProcess::initializeConcreteProcess(
             mesh.getDimension(), mesh.getElements(), dof_table,
             pv.getShapeFunctionOrder(), _local_assemblers,
             mesh.isAxiallySymmetric(), integration_order,
-            *_material_properties);
+            _process_data);
     }
     else
     {
         ProcessLib::createLocalAssemblers<StaggeredHTFEM>(
             mesh.getDimension(), mesh.getElements(), dof_table,
             pv.getShapeFunctionOrder(), _local_assemblers,
-            mesh.isAxiallySymmetric(), integration_order, *_material_properties,
+            mesh.isAxiallySymmetric(), integration_order, _process_data,
             _heat_transport_process_id, _hydraulic_process_id);
     }
 

@@ -58,11 +58,9 @@ TEST_F(PointVecTest, TestPointVecCtorSinglePoint)
 {
     auto ps_ptr = std::make_unique<VectorOfPoints>();
     ps_ptr->push_back(new GeoLib::Point(0,0,0,0));
-    GeoLib::PointVec* point_vec = nullptr;
-    point_vec = new GeoLib::PointVec(name, std::move(ps_ptr));
+    auto point_vec =
+        std::make_unique<GeoLib::PointVec>(name, std::move(ps_ptr));
     ASSERT_EQ(std::size_t(1), point_vec->size());
-
-    delete point_vec;
 }
 
 // Testing input vector with two different points.
@@ -72,11 +70,9 @@ TEST_F(PointVecTest, TestPointVecCtorTwoDiffPoints)
     ps_ptr->push_back(new GeoLib::Point(0,0,0,0));
     ps_ptr->push_back(new GeoLib::Point(1,0,0,1));
 
-    GeoLib::PointVec* point_vec = nullptr;
-    point_vec = new GeoLib::PointVec(name, std::move(ps_ptr));
+    auto point_vec =
+        std::make_unique<GeoLib::PointVec>(name, std::move(ps_ptr));
     ASSERT_EQ(std::size_t(2), point_vec->size());
-
-    delete point_vec;
 }
 
 // Testing input vector with two equal points.
@@ -86,11 +82,9 @@ TEST_F(PointVecTest, TestPointVecCtorTwoEqualPoints)
     ps_ptr->push_back(new GeoLib::Point(0,0,0,0));
     ps_ptr->push_back(new GeoLib::Point(0,0,0,1));
 
-    GeoLib::PointVec* point_vec = nullptr;
-    point_vec = new GeoLib::PointVec(name, std::move(ps_ptr));
+    auto point_vec =
+        std::make_unique<GeoLib::PointVec>(name, std::move(ps_ptr));
     ASSERT_EQ(std::size_t(1), point_vec->size());
-
-    delete point_vec;
 }
 
 // Testing input vector with single point.
@@ -188,19 +182,15 @@ TEST_F(PointVecTest, TestPointVecCtorRandomPoints)
     auto ps_ptr = std::make_unique<VectorOfPoints>();
     generateRandomPoints(*ps_ptr, 10000);
 
-    GeoLib::PointVec* point_vec = nullptr;
-    point_vec = new GeoLib::PointVec(name, std::move(ps_ptr));
-
-    delete point_vec;
+    auto point_vec =
+        std::make_unique<GeoLib::PointVec>(name, std::move(ps_ptr));
 }
 TEST_F(PointVecTest, TestPointVecCtorRandomPointsLargeEps)
 {
     auto ps_ptr = std::make_unique<VectorOfPoints>();
     generateRandomPoints(*ps_ptr, 10000);
 
-    GeoLib::PointVec* point_vec = nullptr;
-    point_vec = new GeoLib::PointVec(name, std::move(ps_ptr),
-                    nullptr, GeoLib::PointVec::PointType::POINT, 1e-2);
-
-    delete point_vec;
+    auto point_vec = std::make_unique<GeoLib::PointVec>(
+        name, std::move(ps_ptr), nullptr, GeoLib::PointVec::PointType::POINT,
+        1e-2);
 }

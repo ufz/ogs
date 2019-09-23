@@ -1,5 +1,5 @@
 /**
- * \file   AddLayerToMeshDialog.h
+ * \file
  * \author Karsten Rink
  * \date   2016-01-18
  * \brief  Definition of the AddLayerToMeshDialog class.
@@ -27,7 +27,7 @@ class AddLayerToMeshDialog : public QDialog, private Ui_AddLayerToMesh
     Q_OBJECT
 
 public:
-    AddLayerToMeshDialog(QDialog* parent = nullptr);
+    explicit AddLayerToMeshDialog(QDialog* parent = nullptr);
 
     /// Returns if the top layer button is selected (if false, bottom is selected).
     bool isTopLayer() const { return this->topButton->isChecked(); };

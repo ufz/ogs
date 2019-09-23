@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -22,7 +23,7 @@ class NamedFunctionCaller final
 {
 public:
     //! Constructs an instance whose unbound arguments have the given names.
-    explicit NamedFunctionCaller(
+    NamedFunctionCaller(
         std::initializer_list<std::string> unbound_argument_names);
 
     //! Adds the given named function

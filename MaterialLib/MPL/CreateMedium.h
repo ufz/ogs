@@ -8,10 +8,10 @@
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
- *
  */
 
 #include <memory>
+#include <vector>
 
 namespace BaseLib
 {
@@ -21,6 +21,10 @@ namespace MaterialPropertyLib
 {
 class Medium;
 }
+namespace ParameterLib
+{
+struct ParameterBase;
+}
 
 namespace MaterialPropertyLib
 {
@@ -28,5 +32,8 @@ namespace MaterialPropertyLib
 /// tree and calls create methods for the phase vector and the properties array.
 /// Medium properties are optional. If not defined, default properties are
 /// assigned.
-std::unique_ptr<Medium> createMedium(BaseLib::ConfigTree const& config);
+std::unique_ptr<Medium> createMedium(
+    BaseLib::ConfigTree const& config,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
+        parameters);
 }  // namespace MaterialPropertyLib

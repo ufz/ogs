@@ -5,7 +5,7 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *  \file   TestDimensionLessGibbsFreeEnergy.cpp
+ *  \file
  *
  * Created on December 9, 2016, 12:31 PM
  */

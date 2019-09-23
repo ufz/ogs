@@ -1,5 +1,5 @@
 /**
- * \file    ElementErrorCode.h
+ * \file
  * \author  Karsten Rink
  * \date    2014-02-21
  * \brief   Definition of ElementErrorCodes.

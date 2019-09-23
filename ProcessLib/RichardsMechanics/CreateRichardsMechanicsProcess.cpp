@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -159,6 +160,14 @@ std::unique_ptr<Process> createRichardsMechanicsProcess(
         std::copy_n(b.data(), b.size(), specific_body_force.data());
     }
 
+    // Initial stress conditions
+    auto const initial_stress = ParameterLib::findOptionalTagParameter<double>(
+        //! \ogs_file_param_special{prj__processes__process__RICHARDS_MECHANICS__initial_stress}
+        config, "initial_stress", parameters,
+        // Symmetric tensor size, 4 or 6, not a Kelvin vector.
+        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value,
+        &mesh);
+
     auto& temperature = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__RICHARDS_MECHANICS__temperature}
@@ -188,16 +197,22 @@ std::unique_ptr<Process> createRichardsMechanicsProcess(
         ProcessLib::RichardsFlow::createRichardsFlowMaterialProperties(
             flow_material_config, material_ids, parameters);
 
+    auto const mass_lumping =
+        //! \ogs_file_param{prj__processes__process__RICHARDS_MECHANICS__mass_lumping}
+        config.getConfigParameter<bool>("mass_lumping", false);
+
     RichardsMechanicsProcessData<DisplacementDim> process_data{
         material_ids,
         std::move(flow_material),
         std::move(solid_constitutive_relations),
+        initial_stress,
         fluid_bulk_modulus,
         biot_coefficient,
         solid_density,
         solid_bulk_modulus,
         temperature,
-        specific_body_force};
+        specific_body_force,
+        mass_lumping};
 
     SecondaryVariableCollection secondary_variables;
 

@@ -1,5 +1,5 @@
 /*!
-   \file  IdealGasLaw.h
+   \file
    \brief Declaration of class IdealGasLow for fluid density by the ideal gas
           law depending on one variable linearly.
 
@@ -29,10 +29,7 @@ class IdealGasLaw final : public FluidProperty
 {
 public:
     ///   \param molar_mass Molar mass of the gas phase.
-    explicit IdealGasLaw(const double molar_mass)
-        : FluidProperty(), _molar_mass(molar_mass)
-    {
-    }
+    explicit IdealGasLaw(const double molar_mass) : _molar_mass(molar_mass) {}
 
     /// Get density model name.
     std::string getName() const override { return "Ideal gas law"; }

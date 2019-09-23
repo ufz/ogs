@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -71,7 +72,7 @@ boost::optional<T> ConfigTree::getConfigParameterOptional(
 
 template <typename T>
 boost::optional<T> ConfigTree::getConfigParameterOptionalImpl(
-    std::string const& param, T*) const
+    std::string const& param, T* /*unused*/) const
 {
     if (auto p = getConfigSubtreeOptional(param))
     {
@@ -83,7 +84,7 @@ boost::optional<T> ConfigTree::getConfigParameterOptionalImpl(
 
 template <typename T>
 boost::optional<std::vector<T>> ConfigTree::getConfigParameterOptionalImpl(
-    std::string const& param, std::vector<T>*) const
+    std::string const& param, std::vector<T>* /*unused*/) const
 {
     if (auto p = getConfigSubtreeOptional(param))
     {

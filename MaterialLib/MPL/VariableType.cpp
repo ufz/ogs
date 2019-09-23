@@ -6,7 +6,6 @@
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
- *
  */
 
 #include "VariableType.h"
@@ -17,6 +16,10 @@ namespace MaterialPropertyLib
 {
 Variable convertStringToVariable(std::string const& input)
 {
+    if (boost::iequals(input, "concentration"))
+    {
+        return Variable::concentration;
+    }
     if (boost::iequals(input, "phase_pressure"))
     {
         return Variable::phase_pressure;

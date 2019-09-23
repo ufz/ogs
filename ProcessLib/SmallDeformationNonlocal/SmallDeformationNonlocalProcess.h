@@ -6,7 +6,6 @@
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
- *
  */
 
 #pragma once
@@ -17,7 +16,6 @@
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "ProcessLib/Process.h"
 
-#include "IntegrationPointWriter.h"
 #include "SmallDeformationNonlocalFEM.h"
 #include "SmallDeformationNonlocalProcessData.h"
 
@@ -70,6 +68,10 @@ private:
     void preTimestepConcreteProcess(GlobalVector const& x, double const t,
                                     double const dt,
                                     int const /*process_id*/) override;
+
+    void postTimestepConcreteProcess(GlobalVector const& x, double const t,
+                                     double const dt,
+                                     int const process_id) override;
 
     NumLib::IterationResult postIterationConcreteProcess(
         GlobalVector const& x) override;

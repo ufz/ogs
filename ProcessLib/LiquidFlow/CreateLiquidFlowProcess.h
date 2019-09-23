@@ -5,7 +5,7 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- * \file   CreateLiquidFlowProcess.h
+ * \file
  *
  * Created on August 19, 2016, 1:30 PM
  */
@@ -27,5 +27,5 @@ std::unique_ptr<Process> createLiquidFlowProcess(
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     unsigned const integration_order,
     BaseLib::ConfigTree const& config);
-}  // end of namespace
+}  // namespace LiquidFlow
 }  // namespace ProcessLib

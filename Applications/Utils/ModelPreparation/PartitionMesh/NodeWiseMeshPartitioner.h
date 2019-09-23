@@ -1,5 +1,5 @@
 /*!
-  \file NodeWiseMeshPartitioner.h
+  \file
   \date   2016.05
 
   \brief  Declare a class to perform node wise mesh partitioning

@@ -1,5 +1,5 @@
 /**
- * \file   AddLayerToMesh.cpp
+ * \file
  * \date   2016-01-18
  * \brief  Implementation of AddLayerToMesh class.
  *
@@ -8,7 +8,6 @@
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
- *
  */
 
 #include "AddLayerToMesh.h"

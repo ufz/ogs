@@ -5,7 +5,7 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *  \file   HTLocalAssemblerInterface.h
+ *  \file
  *  Created on October 11, 2017, 1:35 PM
  */
 

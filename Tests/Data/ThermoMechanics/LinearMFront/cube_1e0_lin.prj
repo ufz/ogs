@@ -9,7 +9,6 @@
             <integration_order>2</integration_order>
             <constitutive_relation>
                 <type>MFront</type>
-                <library>libBehaviour.so</library>
                 <behaviour>Elasticity</behaviour>
                 <material_properties>
                     <material_property name="YoungModulus" parameter="E"/>

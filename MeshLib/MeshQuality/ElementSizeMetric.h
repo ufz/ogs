@@ -1,5 +1,5 @@
 /**
- * \file   ElementSizeMetric.h
+ * \file
  * \author Karsten Rink
  * \date   2011-03-17
  * \brief  Implementation of the AreaMetric class.

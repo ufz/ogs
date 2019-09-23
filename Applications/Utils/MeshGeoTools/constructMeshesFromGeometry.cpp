@@ -10,7 +10,7 @@
 #include <tclap/CmdLine.h>
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
-#include "BaseLib/BuildInfo.h"
+#include "InfoLib/GitInfo.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/IO/XmlIO/Boost/BoostXmlGmlInterface.h"
 #include "MeshGeoToolsLib/ConstructMeshesFromGeometries.h"
@@ -39,11 +39,11 @@ int main(int argc, char* argv[])
         "https://www.opengeosys.org/docs/tools/meshing-submeshes/"
         "constructmeshesfromgeometry/.\n\n"
         "OpenGeoSys-6 software, version " +
-            BaseLib::BuildInfo::ogs_version +
+            GitInfoLib::GitInfo::ogs_version +
             ".\n"
             "Copyright (c) 2012-2019, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
-        ' ', BaseLib::BuildInfo::ogs_version);
+        ' ', GitInfoLib::GitInfo::ogs_version);
 
     TCLAP::ValueArg<double> search_length_arg(
         "s",

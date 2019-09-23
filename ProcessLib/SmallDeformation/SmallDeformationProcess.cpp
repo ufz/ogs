@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -13,6 +14,7 @@
 #include <nlohmann/json.hpp>
 
 #include "BaseLib/Functional.h"
+#include "ProcessLib/Output/IntegrationPointWriter.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/SmallDeformation/CreateLocalAssemblers.h"
 
@@ -45,8 +47,12 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
     _material_forces = MeshLib::getOrCreateMeshProperty<double>(
         mesh, "MaterialForces", MeshLib::MeshItemType::Node, DisplacementDim);
 
+    // TODO (naumov) remove ip suffix. Probably needs modification of the mesh
+    // properties, s.t. there is no "overlapping" with cell/point data.
+    // See getOrCreateMeshProperty.
     _integration_point_writer.emplace_back(
-        std::make_unique<SigmaIntegrationPointWriter>(
+        std::make_unique<IntegrationPointWriter>(
+            "sigma_ip",
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
             integration_order, [this]() {
                 // Result containing integration point data for each local
@@ -226,6 +232,11 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
             position += integration_points_read * ip_meta_data.n_components;
         }
     }
+
+    // Initialize local assemblers after all variables have been set.
+    GlobalExecutor::executeMemberOnDereferenced(
+        &LocalAssemblerInterface::initialize, _local_assemblers,
+        *_local_to_global_index_map);
 }
 
 template <int DisplacementDim>
@@ -275,20 +286,13 @@ void SmallDeformationProcess<DisplacementDim>::
 
 template <int DisplacementDim>
 void SmallDeformationProcess<DisplacementDim>::preTimestepConcreteProcess(
-    GlobalVector const& x, double const t, double const dt,
-    const int process_id)
+    GlobalVector const& /*x*/, double const t, double const dt,
+    const int /*process_id*/)
 {
     DBUG("PreTimestep SmallDeformationProcess.");
 
     _process_data.dt = dt;
     _process_data.t = t;
-
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
-
-    GlobalExecutor::executeSelectedMemberOnDereferenced(
-        &LocalAssemblerInterface::preTimestep, _local_assemblers,
-        pv.getActiveElementIDs(), *_local_to_global_index_map,
-        x, t, dt);
 }
 
 template <int DisplacementDim>

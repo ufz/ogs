@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -174,7 +175,8 @@ public:
         std::vector<int> const& global_component_ids,
         std::vector<int> const& variable_component_offsets,
         std::vector<MeshLib::Element*> const& elements,
-        NumLib::MeshComponentMap&& mesh_component_map, ConstructorTag);
+        NumLib::MeshComponentMap&& mesh_component_map,
+        ConstructorTag /*unused*/);
 
 private:
     template <typename ElementIterator>

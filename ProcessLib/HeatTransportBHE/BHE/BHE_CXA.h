@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -46,7 +47,7 @@ public:
                            flowAndTemperatureControl, pipes}
     {
         // Initialize thermal resistances.
-        auto values = apply_visitor(
+        auto values = visit(
             [&](auto const& control) {
                 return control(refrigerant.reference_temperature,
                                0. /* initial time */);

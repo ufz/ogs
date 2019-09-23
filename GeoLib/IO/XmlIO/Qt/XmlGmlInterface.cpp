@@ -20,7 +20,6 @@
 
 #include <logog/include/logog.hpp>
 
-#include "BaseLib/BuildInfo.h"
 #include "BaseLib/FileFinder.h"
 #include "GeoLib/Triangle.h"
 

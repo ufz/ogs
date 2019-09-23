@@ -13,7 +13,7 @@
 
 #include <gtest/gtest.h>
 
-#include "BaseLib/BuildInfo.h"
+#include "InfoLib/TestInfo.h"
 
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
@@ -23,7 +23,7 @@
 
 TEST(FileIO, TestFEFLOWMeshInterface)
 {
-    std::string const file_name (BaseLib::BuildInfo::data_path + "/FileIO/small_cube_hex.fem");
+    std::string const file_name (TestInfoLib::TestInfo::data_path + "/FileIO/small_cube_hex.fem");
 
     FileIO::FEFLOWMeshInterface feflowIO;
     std::unique_ptr<MeshLib::Mesh const> mesh(feflowIO.readFEFLOWFile(file_name));
@@ -45,7 +45,7 @@ TEST(FileIO, TestFEFLOWMeshInterface)
 
 TEST(FileIO, TestFEFLOWReadHexMesh)
 {
-    std::string const fname(BaseLib::BuildInfo::data_path +
+    std::string const fname(TestInfoLib::TestInfo::data_path +
                             "/FileIO/FEFLOW/hex.fem");
     FileIO::FEFLOWMeshInterface feflowIO;
     std::unique_ptr<MeshLib::Mesh const> mesh(
@@ -62,7 +62,7 @@ TEST(FileIO, TestFEFLOWReadHexMesh)
 
 TEST(FileIO, TestFEFLOWReadPrismMesh)
 {
-    std::string const fname(BaseLib::BuildInfo::data_path +
+    std::string const fname(TestInfoLib::TestInfo::data_path +
                             "/FileIO/FEFLOW/prism.fem");
     FileIO::FEFLOWMeshInterface feflowIO;
     std::unique_ptr<MeshLib::Mesh const> mesh(
@@ -79,7 +79,7 @@ TEST(FileIO, TestFEFLOWReadPrismMesh)
 
 TEST(FileIO, TestFEFLOWReadHexPrismMesh)
 {
-    std::string const fname(BaseLib::BuildInfo::data_path +
+    std::string const fname(TestInfoLib::TestInfo::data_path +
                             "/FileIO/FEFLOW/hex_prism.fem");
     FileIO::FEFLOWMeshInterface feflowIO;
     std::unique_ptr<MeshLib::Mesh const> mesh(
@@ -98,7 +98,7 @@ TEST(FileIO, TestFEFLOWReadHexPrismMesh)
 
 TEST(FileIO, TestFEFLOWReadTetMesh)
 {
-    std::string const fname(BaseLib::BuildInfo::data_path +
+    std::string const fname(TestInfoLib::TestInfo::data_path +
                             "/FileIO/FEFLOW/tet.fem");
     FileIO::FEFLOWMeshInterface feflowIO;
     std::unique_ptr<MeshLib::Mesh const> mesh(
@@ -115,7 +115,7 @@ TEST(FileIO, TestFEFLOWReadTetMesh)
 
 TEST(FileIO, TestFEFLOWReadPrismTetMesh)
 {
-    std::string const fname(BaseLib::BuildInfo::data_path +
+    std::string const fname(TestInfoLib::TestInfo::data_path +
                             "/FileIO/FEFLOW/prism_tet.fem");
     FileIO::FEFLOWMeshInterface feflowIO;
     std::unique_ptr<MeshLib::Mesh const> mesh(

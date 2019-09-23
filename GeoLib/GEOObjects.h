@@ -3,6 +3,7 @@
  * \date   2010-01-21
  * \brief  Definition of the GEOObjects class.
  *
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -64,17 +65,20 @@ class GEOObjects final
 public:
     struct Callbacks
     {
-        virtual void addPointVec(std::string const&){}
-        virtual void removePointVec(std::string const&){}
-        virtual void addStationVec(std::string const&){}
-        virtual void removeStationVec(std::string const&){}
-        virtual void addPolylineVec(std::string const&){}
-        virtual void appendPolylineVec(std::string const&){}
-        virtual void removePolylineVec(std::string const&){}
-        virtual void addSurfaceVec(std::string const&){}
-        virtual void appendSurfaceVec(std::string const&){}
-        virtual void removeSurfaceVec(std::string const&){}
-        virtual void renameGeometry(std::string const&, std::string const&) {}
+        virtual void addPointVec(std::string const& /*unused*/) {}
+        virtual void removePointVec(std::string const& /*unused*/) {}
+        virtual void addStationVec(std::string const& /*unused*/) {}
+        virtual void removeStationVec(std::string const& /*unused*/) {}
+        virtual void addPolylineVec(std::string const& /*unused*/) {}
+        virtual void appendPolylineVec(std::string const& /*unused*/) {}
+        virtual void removePolylineVec(std::string const& /*unused*/) {}
+        virtual void addSurfaceVec(std::string const& /*unused*/) {}
+        virtual void appendSurfaceVec(std::string const& /*unused*/) {}
+        virtual void removeSurfaceVec(std::string const& /*unused*/) {}
+        virtual void renameGeometry(std::string const& /*unused*/,
+                                    std::string const& /*unused*/)
+        {
+        }
         virtual ~Callbacks() = default;
     };
 
@@ -308,34 +312,22 @@ public:
     std::unique_ptr<Callbacks> _callbacks{new Callbacks};
 
     std::function<void(std::string const&)> addPolylineVecCallback =
-        [](std::string const&)
-    {
-    };
+        [](std::string const& /*unused*/) {};
 
     std::function<void(std::string const&)> appendPolylineVecCallback =
-        [](std::string const&)
-    {
-    };
+        [](std::string const& /*unused*/) {};
 
     std::function<void(std::string const&)> removePolylineVecCallback =
-        [](std::string const&)
-    {
-    };
+        [](std::string const& /*unused*/) {};
 
     std::function<void(std::string const&)> addSurfaceVecCallback =
-        [](std::string const&)
-    {
-    };
+        [](std::string const& /*unused*/) {};
 
     std::function<void(std::string const&)> appendSurfaceVecCallback =
-        [](std::string const&)
-    {
-    };
+        [](std::string const& /*unused*/) {};
 
     std::function<void(std::string const&)> removeSurfaceVecCallback =
-        [](std::string const&)
-    {
-    };
+        [](std::string const& /*unused*/) {};
 
 private:
     /**

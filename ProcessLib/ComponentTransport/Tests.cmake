@@ -190,6 +190,25 @@ AddTest(
 )
 
 AddTest(
+    NAME 2D_ComponentTransport_NonAdvective_OpenBoundary
+    PATH Parabolic/ComponentTransport/OpenBoundaryWithTets
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS box_flow.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    RUNTIME 900
+    DIFF_DATA
+    box_ogsOutput_pcs_0_ts_0_t_0.000000_expected.vtu box_ogsOutput_pcs_0_ts_0_t_0.000000.vtu concentration concentration 5e-7 5e-10
+    box_ogsOutput_pcs_0_ts_20_t_100000.000000_expected.vtu box_ogsOutput_pcs_0_ts_20_t_100000.000000.vtu concentration concentration 5e-7 5e-10
+    box_ogsOutput_pcs_0_ts_0_t_0.000000_expected.vtu box_ogsOutput_pcs_0_ts_0_t_0.000000.vtu pressure pressure 5e-7 5e-10
+    box_ogsOutput_pcs_0_ts_20_t_100000.000000_expected.vtu box_ogsOutput_pcs_0_ts_20_t_100000.000000.vtu pressure pressure 5e-7 5e-10
+    box_ogsOutput_pcs_0_ts_0_t_0.000000_expected.vtu box_ogsOutput_pcs_0_ts_0_t_0.000000.vtu darcy_velocity darcy_velocity 5e-7 5e-10
+    box_ogsOutput_pcs_0_ts_20_t_100000.000000_expected.vtu box_ogsOutput_pcs_0_ts_20_t_100000.000000.vtu darcy_velocity darcy_velocity 5e-7 5e-10
+    VIS box_ogsOutput_pcs_0_ts_20_t_100000.000000.vtu
+)
+
+AddTest(
     NAME 2D_ComponentTransport_DiffusionAndStorageAndGravityAndDispersionHalf
     PATH Parabolic/ComponentTransport/SimpleSynthetics
     EXECUTABLE ogs
@@ -1002,7 +1021,7 @@ AddTest(
 )
 
 AddTest(
-    NAME 1D_ReactiveMassTransport_KineticReactantBlockTest
+    NAME 1D_ReactiveMassTransport_IPhreeqc_KineticReactantBlockTest
     PATH Parabolic/ComponentTransport/ReactiveTransport/KineticReactant
     EXECUTABLE ogs
     EXECUTABLE_ARGS 1d_isofrac.prj
@@ -1035,6 +1054,38 @@ AddTest(
     1d_isofrac_pcs_3_ts_126_t_12600.000000_expected.vtu 1d_isofrac_pcs_3_ts_126_t_12600.000000.vtu H H 1e-10 1e-16
     1d_isofrac_pcs_3_ts_168_t_16800.000000_expected.vtu 1d_isofrac_pcs_3_ts_168_t_16800.000000.vtu H H 1e-10 1e-16
     1d_isofrac_pcs_3_ts_210_t_21000.000000_expected.vtu 1d_isofrac_pcs_3_ts_210_t_21000.000000.vtu H H 1e-10 1e-16
+    RUNTIME 85
+)
+
+AddTest(
+    NAME 1D_ReactiveMassTransport_PhreeqcKernel_KineticReactantBlockTest
+    PATH Parabolic/ComponentTransport/ReactiveTransport/KineticReactant
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS 1d_isofrac_phreeqckernel.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    1d_isofrac_phreeqckernel_pcs_3_ts_42_t_4200.000000_expected.vtu 1d_isofrac_phreeqckernel_pcs_3_ts_42_t_4200.000000.vtu pressure pressure 1e-6 1e-10
+    1d_isofrac_phreeqckernel_pcs_3_ts_84_t_8400.000000_expected.vtu 1d_isofrac_phreeqckernel_pcs_3_ts_84_t_8400.000000.vtu pressure pressure 1e-6 1e-10
+    1d_isofrac_phreeqckernel_pcs_3_ts_126_t_12600.000000_expected.vtu 1d_isofrac_phreeqckernel_pcs_3_ts_126_t_12600.000000.vtu pressure pressure 1e-6 1e-10
+    1d_isofrac_phreeqckernel_pcs_3_ts_168_t_16800.000000_expected.vtu 1d_isofrac_phreeqckernel_pcs_3_ts_168_t_16800.000000.vtu pressure pressure 1e-6 1e-10
+    1d_isofrac_phreeqckernel_pcs_3_ts_210_t_21000.000000_expected.vtu 1d_isofrac_phreeqckernel_pcs_3_ts_210_t_21000.000000.vtu pressure pressure 1e-6 1e-10
+    1d_isofrac_phreeqckernel_pcs_3_ts_42_t_4200.000000_expected.vtu 1d_isofrac_phreeqckernel_pcs_3_ts_42_t_4200.000000.vtu Synthetica Synthetica 1e-10 1e-16
+    1d_isofrac_phreeqckernel_pcs_3_ts_84_t_8400.000000_expected.vtu 1d_isofrac_phreeqckernel_pcs_3_ts_84_t_8400.000000.vtu Synthetica Synthetica 1e-10 1e-16
+    1d_isofrac_phreeqckernel_pcs_3_ts_126_t_12600.000000_expected.vtu 1d_isofrac_phreeqckernel_pcs_3_ts_126_t_12600.000000.vtu Synthetica Synthetica 1e-10 1e-16
+    1d_isofrac_phreeqckernel_pcs_3_ts_168_t_16800.000000_expected.vtu 1d_isofrac_phreeqckernel_pcs_3_ts_168_t_16800.000000.vtu Synthetica Synthetica 1e-10 1e-16
+    1d_isofrac_phreeqckernel_pcs_3_ts_210_t_21000.000000_expected.vtu 1d_isofrac_phreeqckernel_pcs_3_ts_210_t_21000.000000.vtu Synthetica Synthetica 1e-10 1e-16
+    1d_isofrac_phreeqckernel_pcs_3_ts_42_t_4200.000000_expected.vtu 1d_isofrac_phreeqckernel_pcs_3_ts_42_t_4200.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
+    1d_isofrac_phreeqckernel_pcs_3_ts_84_t_8400.000000_expected.vtu 1d_isofrac_phreeqckernel_pcs_3_ts_84_t_8400.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
+    1d_isofrac_phreeqckernel_pcs_3_ts_126_t_12600.000000_expected.vtu 1d_isofrac_phreeqckernel_pcs_3_ts_126_t_12600.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
+    1d_isofrac_phreeqckernel_pcs_3_ts_168_t_16800.000000_expected.vtu 1d_isofrac_phreeqckernel_pcs_3_ts_168_t_16800.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
+    1d_isofrac_phreeqckernel_pcs_3_ts_210_t_21000.000000_expected.vtu 1d_isofrac_phreeqckernel_pcs_3_ts_210_t_21000.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
+    1d_isofrac_phreeqckernel_pcs_3_ts_42_t_4200.000000_expected.vtu 1d_isofrac_phreeqckernel_pcs_3_ts_42_t_4200.000000.vtu H H 1e-10 1e-16
+    1d_isofrac_phreeqckernel_pcs_3_ts_84_t_8400.000000_expected.vtu 1d_isofrac_phreeqckernel_pcs_3_ts_84_t_8400.000000.vtu H H 1e-10 1e-16
+    1d_isofrac_phreeqckernel_pcs_3_ts_126_t_12600.000000_expected.vtu 1d_isofrac_phreeqckernel_pcs_3_ts_126_t_12600.000000.vtu H H 1e-10 1e-16
+    1d_isofrac_phreeqckernel_pcs_3_ts_168_t_16800.000000_expected.vtu 1d_isofrac_phreeqckernel_pcs_3_ts_168_t_16800.000000.vtu H H 1e-10 1e-16
+    1d_isofrac_phreeqckernel_pcs_3_ts_210_t_21000.000000_expected.vtu 1d_isofrac_phreeqckernel_pcs_3_ts_210_t_21000.000000.vtu H H 1e-10 1e-16
     RUNTIME 85
 )
 
@@ -1145,4 +1196,28 @@ AddTest(
     KineticReactant2_2d_pcs_4_ts_12_t_1200.000000_expected.vtu KineticReactant2_2d_pcs_4_ts_12_t_1200.000000.vtu H H 1e-10 1e-16
     KineticReactant2_2d_pcs_4_ts_16_t_1600.000000_expected.vtu KineticReactant2_2d_pcs_4_ts_16_t_1600.000000.vtu H H 1e-10 1e-16
     KineticReactant2_2d_pcs_4_ts_20_t_2000.000000_expected.vtu KineticReactant2_2d_pcs_4_ts_20_t_2000.000000.vtu H H 1e-10 1e-16
+)
+
+AddTest(
+    NAME 1D_ReactiveMassTransport_Wetland
+    PATH Parabolic/ComponentTransport/ReactiveTransport/Wetland
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS Wetland_1d.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    Wetland_1d_pcs_11_ts_4_t_28800.000000_expected.vtu Wetland_1d_pcs_11_ts_4_t_28800.000000.vtu pressure pressure 1e-6 1e-10
+    Wetland_1d_pcs_11_ts_4_t_28800.000000_expected.vtu Wetland_1d_pcs_11_ts_4_t_28800.000000.vtu H H 1e-10 1e-16
+    Wetland_1d_pcs_11_ts_4_t_28800.000000_expected.vtu Wetland_1d_pcs_11_ts_4_t_28800.000000.vtu Do Do 1e-10 1e-16
+    Wetland_1d_pcs_11_ts_4_t_28800.000000_expected.vtu Wetland_1d_pcs_11_ts_4_t_28800.000000.vtu Sf Sf 1e-10 1e-16
+    Wetland_1d_pcs_11_ts_4_t_28800.000000_expected.vtu Wetland_1d_pcs_11_ts_4_t_28800.000000.vtu Sa Sa 1e-10 1e-16
+    Wetland_1d_pcs_11_ts_4_t_28800.000000_expected.vtu Wetland_1d_pcs_11_ts_4_t_28800.000000.vtu Sin Sin 1e-10 1e-16
+    Wetland_1d_pcs_11_ts_4_t_28800.000000_expected.vtu Wetland_1d_pcs_11_ts_4_t_28800.000000.vtu Xs_m Xs_m 1e-10 1e-16
+    Wetland_1d_pcs_11_ts_4_t_28800.000000_expected.vtu Wetland_1d_pcs_11_ts_4_t_28800.000000.vtu Xi_m Xi_m 1e-10 1e-16
+    Wetland_1d_pcs_11_ts_4_t_28800.000000_expected.vtu Wetland_1d_pcs_11_ts_4_t_28800.000000.vtu Snh Snh 1e-10 1e-16
+    Wetland_1d_pcs_11_ts_4_t_28800.000000_expected.vtu Wetland_1d_pcs_11_ts_4_t_28800.000000.vtu Sno Sno 1e-10 1e-16
+    Wetland_1d_pcs_11_ts_4_t_28800.000000_expected.vtu Wetland_1d_pcs_11_ts_4_t_28800.000000.vtu Sso Sso 1e-10 1e-16
+    Wetland_1d_pcs_11_ts_4_t_28800.000000_expected.vtu Wetland_1d_pcs_11_ts_4_t_28800.000000.vtu Sulphide Sulphide 1e-10 1e-16
+    RUNTIME 140
 )

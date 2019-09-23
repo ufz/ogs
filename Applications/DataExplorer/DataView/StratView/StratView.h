@@ -34,7 +34,7 @@ public:
     /**
      * Creates an empty view.
      */
-    StratView(QWidget* parent = nullptr) { Q_UNUSED(parent); }
+    explicit StratView(QWidget* parent = nullptr) { Q_UNUSED(parent); }
     ~StratView() override;
 
     /// Sets the Borehole whose data should be visualised.

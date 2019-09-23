@@ -5,7 +5,7 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- * \file   WettingPhaseVanGenuchten.h
+ * \file
  *
  * Created on November 2, 2016, 11:24 AM
  */

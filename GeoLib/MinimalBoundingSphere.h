@@ -1,5 +1,5 @@
 /**
- * \file   MinimalBoundingSphere.h
+ * \file
  * \author Karsten Rink
  * \date   2014-07-11
  * \brief  Calculation of a minimum bounding sphere for a vector of points
@@ -9,7 +9,6 @@
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
- *
  *
  */
 

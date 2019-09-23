@@ -63,7 +63,11 @@ The Homebrew package manager is needed for installing other libraries and packag
 Git is a powerful and distributed version control system. OGS source code is hosted on [GitHub](https://github.com/ufz/ogs). See the developer guide page on [Code Reviews]({{< ref "code-reviews" >}}) for more info on how OGS uses GitHub for collaborative development.
 
 ::: {.win}
-Download and install git from the [git homepage](http://git-scm.com/download/win). The default installer options are fine. This install a new command line called *Git Bash* which should be used for all git operations.
+Download and install git from the [git homepage](http://git-scm.com/download/win). Use the default installer options but also enable `Enable symbolic links` under the *Configuring extra options* page.
+
+![Enable symbolic links option](../git-installer-win.png)
+
+This install a new command line called *Git Bash* which should be used for all git operations.
 
 Let Git know who you are:
 
@@ -174,29 +178,6 @@ If you do not have rights to install a system package (e.g. on cluster systems) 
 :::
 
 
-## Step: Install CMake
-
-::: {.win}
-- Download the installer, at the [CMake download page](http://www.cmake.org/cmake/resources/software.html) choose the **Windows (Win32 Installer)**.
-- Execute the installer, please check the **Add CMake to the system path for all users**-option
-:::
-
-::: {.linux}
-Install CMake with your favourite package manager (the two graphical user interfaces are optional):
-
-```bash
-$ sudo apt-get install cmake cmake-qt-gui cmake-curses-gui
-```
-:::
-
-::: {.mac}
-Install CMake with Homebrew:
-
-```bash
-$ brew install cmake
-```
-:::
-
 ## Step: Install Python 3
 
 ::: {.win}
@@ -229,6 +210,31 @@ brew install python
 ```
 :::
 
+## Step: Install CMake
+
+::: {.win}
+- Download the installer, at the [CMake download page](http://www.cmake.org/cmake/resources/software.html) choose the **Windows (Win32 Installer)**.
+- Execute the installer, please check the **Add CMake to the system path for all users**-option
+:::
+
+::: {.linux}
+Install CMake with Pythons package manager `pip` (you may get a more recent version than using your systems package manager):
+
+```bash
+$ pip3 install --user cmake
+```
+
+This installed `cmake` and `ccmake` to `.local/bin` in your home directory. Make sure to have this directory in your `PATH`!
+:::
+
+::: {.mac}
+Install CMake with Homebrew:
+
+```bash
+$ brew install cmake
+```
+:::
+
 ## Step: Install Conan package manager
 
 The [Conan package manager](https://www.conan.io) helps to install all required libraries in a convenient way on every platform. If you prefer you can also [install libraries manually]({{< ref "third-party-libraries.pandoc" >}}) instead.
@@ -239,7 +245,7 @@ Install Conan with Python's pip:
 pip3 install --user conan
 ```
 
-This installed `conan` to `.local/bin` in your home directory. Make sure to have this directory in your `PATH`!
+This installed `conan` to `.local/bin` (or `C:\Users\[username]\AppData\Roaming\Python\Python37\Scripts` on Windows) in your home directory. Make sure to have this directory in your `PATH`!
 
 Check on a newly opened command line if Conan was installed successfully:
 

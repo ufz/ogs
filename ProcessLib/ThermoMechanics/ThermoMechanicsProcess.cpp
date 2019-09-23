@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -14,7 +15,7 @@
 #include "BaseLib/Functional.h"
 #include "NumLib/DOF/ComputeSparsityPattern.h"
 #include "NumLib/DOF/DOFTableUtil.h"
-
+#include "ProcessLib/Output/IntegrationPointWriter.h"
 #include "ProcessLib/SmallDeformation/CreateLocalAssemblers.h"
 
 #include "ThermoMechanicsFEM.h"
@@ -48,7 +49,7 @@ ThermoMechanicsProcess<DisplacementDim>::ThermoMechanicsProcess(
         mesh, "HeatFlux", MeshLib::MeshItemType::Node, 1);
 
     _integration_point_writer.emplace_back(
-        std::make_unique<KelvinVectorIntegrationPointWriter>(
+        std::make_unique<IntegrationPointWriter>(
             "sigma_ip",
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
             2 /*integration order*/, [this]() {
@@ -68,7 +69,7 @@ ThermoMechanicsProcess<DisplacementDim>::ThermoMechanicsProcess(
             }));
 
     _integration_point_writer.emplace_back(
-        std::make_unique<KelvinVectorIntegrationPointWriter>(
+        std::make_unique<IntegrationPointWriter>(
             "epsilon_ip",
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
             2 /*integration order*/, [this]() {
@@ -88,7 +89,7 @@ ThermoMechanicsProcess<DisplacementDim>::ThermoMechanicsProcess(
             }));
 
     _integration_point_writer.emplace_back(
-        std::make_unique<KelvinVectorIntegrationPointWriter>(
+        std::make_unique<IntegrationPointWriter>(
             "epsilon_m_ip",
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
             2 /*integration order*/, [this]() {
@@ -135,15 +136,21 @@ ThermoMechanicsProcess<DisplacementDim>::getMatrixSpecifications(
             &l.getGhostIndices(), &_sparsity_pattern_with_single_component};
 }
 
+// TODO [WW]: remove if (_use_monolithic_scheme) during the refactoring of the
+// coupling part.
 template <int DisplacementDim>
 void ThermoMechanicsProcess<DisplacementDim>::constructDofTable()
 {
-    // Note: the heat conduction process and the mechnical process use the same
+    // Note: the heat conduction process and the mechanical process use the same
     // order of shape functions.
 
-    // Create single component dof in every of the mesh's nodes.
-    _mesh_subset_all_nodes =
-        std::make_unique<MeshLib::MeshSubset>(_mesh, _mesh.getNodes());
+    if (_use_monolithic_scheme)
+    {
+        constructMonolithicProcessDofTable();
+        return;
+    }
+    constructDofTableOfSpecifiedProsessStaggerdScheme(
+        _process_data.mechanics_process_id);
 
     // TODO move the two data members somewhere else.
     // for extrapolation of secondary variables of stress or strain
@@ -155,52 +162,12 @@ void ThermoMechanicsProcess<DisplacementDim>::constructDofTable()
             // by location order is needed for output
             NumLib::ComponentOrder::BY_LOCATION));
 
-    // Vector of mesh subsets.
-    std::vector<MeshLib::MeshSubset> all_mesh_subsets;
-
-    // Vector of the number of variable components
-    std::vector<int> vec_var_n_components;
-    if (_use_monolithic_scheme)
+    if (!_use_monolithic_scheme)
     {
-        // Collect the mesh subsets in a vector for each variables' components.
-        for (ProcessVariable const& pv : _process_variables[0])
-        {
-            std::generate_n(std::back_inserter(all_mesh_subsets),
-                            pv.getNumberOfComponents(),
-                            [&]() { return *_mesh_subset_all_nodes; });
-        }
-
-        // Create a vector of the number of variable components
-        for (ProcessVariable const& pv : _process_variables[0])
-        {
-            vec_var_n_components.push_back(pv.getNumberOfComponents());
-        }
-    }
-    else  // for staggered scheme
-    {
-        // Collect the mesh subsets in a vector for each variable components for
-        // the mechanical process.
-        std::generate_n(
-            std::back_inserter(all_mesh_subsets),
-            _process_variables[_process_data.mechanics_process_id][0]
-                .get()
-                .getNumberOfComponents(),
-            [&]() { return *_mesh_subset_all_nodes; });
-
-        // Create a vector of the number of variable components.
-        vec_var_n_components.push_back(
-            _process_variables[_process_data.mechanics_process_id][0]
-                .get()
-                .getNumberOfComponents());
-
         _sparsity_pattern_with_single_component =
             NumLib::computeSparsityPattern(
                 *_local_to_global_index_map_single_component, _mesh);
     }
-    _local_to_global_index_map =
-        std::make_unique<NumLib::LocalToGlobalIndexMap>(
-            std::move(all_mesh_subsets), vec_var_n_components,
-            NumLib::ComponentOrder::BY_LOCATION);
 }
 
 template <int DisplacementDim>
@@ -279,6 +246,11 @@ void ThermoMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
             position += integration_points_read * ip_meta_data.n_components;
         }
     }
+
+    // Initialize local assemblers after all variables have been set.
+    GlobalExecutor::executeMemberOnDereferenced(
+        &LocalAssemblerInterface::initialize, _local_assemblers,
+        *_local_to_global_index_map);
 }
 
 template <int DisplacementDim>
@@ -459,7 +431,9 @@ void ThermoMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
     int const process_id)
 {
     if (process_id != _process_data.mechanics_process_id)
+    {
         return;
+    }
 
     DBUG("PostTimestep ThermoMechanicsProcess.");
 

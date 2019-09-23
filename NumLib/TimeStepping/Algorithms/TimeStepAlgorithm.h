@@ -22,7 +22,6 @@ namespace NumLib
 {
 /**
  * \brief Interface of time stepping algorithms
- *
  */
 class TimeStepAlgorithm
 {

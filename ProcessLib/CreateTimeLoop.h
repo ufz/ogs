@@ -6,7 +6,6 @@
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
- *
  */
 
 #pragma once
@@ -33,7 +32,7 @@ class NonlinearSolverBase;
 
 namespace ChemistryLib
 {
-class PhreeqcIO;
+class ChemicalSolverInterface;
 }
 
 namespace ProcessLib
@@ -51,6 +50,6 @@ std::unique_ptr<TimeLoop> createTimeLoop(
     std::map<std::string, std::unique_ptr<NumLib::NonlinearSolverBase>> const&
         nonlinear_solvers,
     std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
-    std::unique_ptr<ChemistryLib::PhreeqcIO>& phreeqc_io);
+    std::unique_ptr<ChemistryLib::ChemicalSolverInterface>& phreeqc_io);
 
 }  // namespace ProcessLib

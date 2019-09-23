@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -9,6 +10,9 @@
 
 #pragma once
 
+#include <string>
+#include <vector>
+
 namespace BaseLib
 {
 class ConfigTree;
@@ -16,10 +20,13 @@ class ConfigTree;
 
 namespace ChemistryLib
 {
-struct AqueousSolution;
-}
-
-namespace ChemistryLib
+namespace PhreeqcIOData
 {
-AqueousSolution createAqueousSolution(BaseLib::ConfigTree const& config);
+struct AqueousSolution;
+
+AqueousSolution createAqueousSolution(
+    BaseLib::ConfigTree const& config,
+    std::vector<std::pair<int, std::string>> const&
+        process_id_to_component_name_map);
+}  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

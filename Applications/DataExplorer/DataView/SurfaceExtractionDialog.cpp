@@ -1,5 +1,5 @@
 /**
- * \file   SurfaceExtractionDialog.cpp
+ * \file
  * \author Karsten Rink
  * \date   2015-01-29
  * \brief  Implementation of the SaveMeshDialog class.

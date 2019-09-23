@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -109,7 +110,6 @@ public:
  *
  * The other backward differentiation formulas of orders 1 to 6 are also implemented, but only
  * BDF(2) has bee given here for brevity.
- *
  */
 class TimeDiscretization
 {
@@ -269,7 +269,7 @@ public:
         GlobalVector const& x, MathLib::VecNormType norm_type) override;
 
     void pushState(const double /*t*/, GlobalVector const& x,
-                   InternalMatrixStorage const&) override
+                   InternalMatrixStorage const& /*strg*/) override
     {
         MathLib::LinAlg::copy(x, _x_old);
     }
@@ -297,8 +297,9 @@ public:
     }
 
 private:
-    double _t;        //!< \f$ t_C \f$
-    double _delta_t;  //!< the timestep size
+    double _t = std::numeric_limits<double>::quiet_NaN();  //!< \f$ t_C \f$
+    double _delta_t =
+        std::numeric_limits<double>::quiet_NaN();  //!< the timestep size
     GlobalVector& _x_old;   //!< the solution from the preceding timestep
 };
 
@@ -326,7 +327,7 @@ public:
         GlobalVector const& x, MathLib::VecNormType norm_type) override;
 
     void pushState(const double /*t*/, GlobalVector const& x,
-                   InternalMatrixStorage const&) override
+                   InternalMatrixStorage const& /*strg*/) override
     {
         MathLib::LinAlg::copy(x, _x_old);
     }
@@ -369,9 +370,12 @@ public:
     //! Returns the solution from the preceding timestep.
     GlobalVector const& getXOld() const { return _x_old; }
 private:
-    double _t;        //!< \f$ t_C \f$
-    double _t_old;    //!< the time of the preceding timestep
-    double _delta_t;  //!< the timestep size
+    double _t = std::numeric_limits<double>::quiet_NaN();  //!< \f$ t_C \f$
+    double _t_old =
+        std::numeric_limits<double>::quiet_NaN();  //!< the time of the
+                                                   //!< preceding timestep
+    double _delta_t =
+        std::numeric_limits<double>::quiet_NaN();  //!< the timestep size
     GlobalVector& _x_old;   //!< the solution from the preceding timestep
 };
 
@@ -407,7 +411,7 @@ public:
     double getRelativeChangeFromPreviousTimestep(
         GlobalVector const& x, MathLib::VecNormType norm_type) override;
 
-    void pushState(const double, GlobalVector const& x,
+    void pushState(const double /*t*/, GlobalVector const& x,
                    InternalMatrixStorage const& strg) override
     {
         MathLib::LinAlg::copy(x, _x_old);
@@ -443,8 +447,9 @@ public:
     GlobalVector const& getXOld() const { return _x_old; }
 private:
     const double _theta;  //!< the implicitness parameter \f$ \theta \f$
-    double _t;            //!< \f$ t_C \f$
-    double _delta_t;      //!< the timestep size
+    double _t = std::numeric_limits<double>::quiet_NaN();  //!< \f$ t_C \f$
+    double _delta_t =
+        std::numeric_limits<double>::quiet_NaN();  //!< the timestep size
     GlobalVector& _x_old;       //!< the solution from the preceding timestep
 };
 
@@ -489,8 +494,8 @@ public:
     double getRelativeChangeFromPreviousTimestep(
         GlobalVector const& x, MathLib::VecNormType norm_type) override;
 
-    void pushState(const double, GlobalVector const& x,
-                   InternalMatrixStorage const&) override;
+    void pushState(const double /*t*/, GlobalVector const& x,
+                   InternalMatrixStorage const& /*strg*/) override;
 
     void popState(GlobalVector& x) override
     {
@@ -512,8 +517,9 @@ public:
 private:
     std::size_t eff_num_steps() const { return _xs_old.size(); }
     const unsigned _num_steps;  //!< The order of the BDF method
-    double _t;                  //!< \f$ t_C \f$
-    double _delta_t;            //!< the timestep size
+    double _t = std::numeric_limits<double>::quiet_NaN();  //!< \f$ t_C \f$
+    double _delta_t =
+        std::numeric_limits<double>::quiet_NaN();  //!< the timestep size
 
     std::vector<GlobalVector*> _xs_old;  //!< solutions from the preceding timesteps
     unsigned _offset = 0;  //!< allows treating \c _xs_old as circular buffer

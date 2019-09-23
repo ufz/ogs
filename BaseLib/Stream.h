@@ -3,6 +3,7 @@
  * \date   2014-03-07
  * \brief  Helper tools for debugging
  *
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.

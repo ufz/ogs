@@ -8,12 +8,12 @@
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
- *
  */
 
 #include "CreateComponent.h"
 
 #include "BaseLib/ConfigTree.h"
+#include "ParameterLib/Parameter.h"
 
 #include "Components/Components.h"
 #include "CreateProperty.h"
@@ -21,7 +21,8 @@
 namespace
 {
 std::unique_ptr<MaterialPropertyLib::Component> createComponent(
-    BaseLib::ConfigTree const& config)
+    BaseLib::ConfigTree const& config,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters)
 {
     using namespace MaterialPropertyLib;
     // Parsing the component name
@@ -40,7 +41,8 @@ std::unique_ptr<MaterialPropertyLib::Component> createComponent(
     // if specified.
     std::unique_ptr<PropertyArray> properties =
         //! \ogs_file_param{prj__media__medium__phases__phase__components__component__properties}
-        createProperties(config.getConfigSubtreeOptional("properties"));
+        createProperties(config.getConfigSubtreeOptional("properties"),
+                         parameters);
 
     // If a name is given, it must conform with one of the derived component
     // names in the following list:
@@ -64,7 +66,8 @@ std::unique_ptr<MaterialPropertyLib::Component> createComponent(
 namespace MaterialPropertyLib
 {
 std::vector<std::unique_ptr<Component>> createComponents(
-    boost::optional<BaseLib::ConfigTree> const& config)
+    boost::optional<BaseLib::ConfigTree> const& config,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters)
 {
     if (!config)
     {
@@ -77,7 +80,7 @@ std::vector<std::unique_ptr<Component>> createComponents(
         //! \ogs_file_param{prj__media__medium__phases__phase__components__component}
         config->getConfigSubtreeList("component"))
     {
-        auto component = createComponent(component_config);
+        auto component = createComponent(component_config, parameters);
 
         if (std::find_if(components.begin(),
                          components.end(),

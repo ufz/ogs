@@ -5,7 +5,7 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- * \file   CoupledSolutionsForStaggeredScheme.h
+ * \file
  *
  * Created on November 7, 2016, 12:14 PM
  */

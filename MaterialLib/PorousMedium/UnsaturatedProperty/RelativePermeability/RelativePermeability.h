@@ -5,8 +5,7 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- * \file:   RelativePermeability.h
- *
+ * \file
  */
 
 #pragma once

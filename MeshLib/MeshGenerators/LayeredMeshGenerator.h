@@ -1,5 +1,5 @@
 /**
- * \file   LayeredMeshGenerator.h
+ * \file
  * \author Karsten Rink
  * \date   2014-09-18
  * \brief  Definition of the SubsurfaceMapper class

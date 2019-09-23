@@ -1,0 +1,89 @@
+/**
+ * \file
+ * \copyright
+ * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.org/project/license
+ */
+
+@DSL Implicit;
+@Behaviour DruckerPrager;
+@Author Thomas Nagel;
+@Description{
+Non-associated DP (perfect plasticity)
+F = alpha * I_1 + sqrt(J_2) - K
+};
+
+@Algorithm NewtonRaphson;
+@MaximumNumberOfIterations 100;
+
+@Brick StandardElasticity;
+
+@Epsilon 1.e-14;
+@Theta 1.0;
+@Parameter local_zero_tolerance = 1.e-14;
+
+@ModellingHypotheses{".+"};
+@RequireStiffnessTensor<UnAltered>;
+
+// Intercept of yield function
+@MaterialProperty real K;
+K.setEntryName("Cohesion");
+// coefficient of I1 in yield function
+@MaterialProperty real alpha_y;
+alpha_y.setEntryName("FrictionParameter");
+// coefficient of I1 in plastic potential
+@MaterialProperty real alpha_g;
+alpha_g.setEntryName("DilatancyParameter");
+
+@StateVariable strain lam;
+lam.setGlossaryName("EquivalentPlasticStrain");
+
+@LocalVariable bool F;
+
+@InitLocalVariables
+{
+    const auto sig_el = computeElasticPrediction();
+    const auto I1_el = trace(sig_el);
+    const auto s_el = deviator(sig_el);
+    const auto J2_el = max((s_el | s_el) / 2., local_zero_tolerance);
+    const auto sqrt_J2_el = sqrt(J2_el);
+    F = alpha_y * I1_el + sqrt_J2_el - K > 0.;
+}
+
+@Integrator
+{
+    constexpr const auto id = Stensor::Id();
+    constexpr const auto id4 = Stensor4::Id();
+    const auto Pdev = id4 - (id ^ id) / 3;
+
+    if (F)
+    {
+        const auto I1 = trace(sig);
+        const auto s = deviator(sig);
+        const auto J2 = max((s | s) / 2., local_zero_tolerance);
+        const auto sqrt_J2 = sqrt(J2);
+        const auto i_sqrt_J2 = 1. / sqrt_J2;
+        // yield function
+        const auto Fy = alpha_y * I1 + sqrt_J2 - K;
+
+        // flow direction
+        const auto n = eval(alpha_g * id + s * i_sqrt_J2 / 2.);
+
+        // yield function gradient
+        const auto nF = eval(alpha_y * id + s * i_sqrt_J2 / 2.);
+        const auto dn_dsig =
+            eval(i_sqrt_J2 / 2. * (id4 - (s ^ s) / (2. * J2)) * Pdev);
+
+        // residuals
+        feel += dlam * n;
+        flam = Fy / D(0, 0);
+        // Jacobian
+        dfeel_ddeel += theta * dlam * (dn_dsig * D);
+        dfeel_ddlam = n;
+        dflam_ddlam = strain(0.);
+        dflam_ddeel = theta * (nF | D) / D(0, 0);
+    }
+}
+

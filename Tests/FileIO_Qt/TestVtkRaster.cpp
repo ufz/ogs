@@ -19,12 +19,12 @@
 
 #include "Applications/DataExplorer/VtkVis/VtkRaster.h"
 #include "Applications/FileIO/AsciiRasterInterface.h"
-#include "BaseLib/BuildInfo.h"
+#include "InfoLib/TestInfo.h"
 #include "GeoLib/Raster.h"
 
 TEST(TestVtkRaster, TestPNGReader)
 {
-    std::string name = BaseLib::BuildInfo::data_path + "/FileIO/testraster.png";
+    std::string name = TestInfoLib::TestInfo::data_path + "/FileIO/testraster.png";
     double x0;
     double y0;
     double delta;
@@ -53,7 +53,7 @@ TEST(TestVtkRaster, TestPNGReader)
 TEST(TestVtkRaster, TestASCReader)
 {
     std::string name =
-        BaseLib::BuildInfo::data_path + "/MeshGeoToolsLib/Hamburg/00-raster.asc";
+        TestInfoLib::TestInfo::data_path + "/MeshGeoToolsLib/Hamburg/00-raster.asc";
     double x0;
     double y0;
     double delta;

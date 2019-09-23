@@ -1,10 +1,10 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
- *
  */
 
 #pragma once
@@ -146,6 +146,13 @@ struct MechanicsBase
     virtual ConstitutiveModel getConstitutiveModel() const
     {
         return ConstitutiveModel::Invalid;
+    }
+
+    virtual double getBulkModulus(double const /*t*/,
+                                  ParameterLib::SpatialPosition const& /*x*/) const
+    {
+        OGS_FATAL(
+            "getBulkModulus is not yet implemented for this Solid Material.");
     }
 
     /// Get temperature related coefficient for the global assembly if there is

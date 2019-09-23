@@ -66,7 +66,7 @@ int StationBorehole::readStratigraphyFile(const std::string &path,
         return 0;
     }
 
-    while ( getline(in, line) )
+    while (std::getline(in, line))
     {
         std::list<std::string> fields = BaseLib::splitString(line, '\t');
         data.push_back(fields);

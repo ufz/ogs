@@ -38,12 +38,11 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/test/AddTest.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/test/MeshTest.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/test/OgsTest.cmake)
 
+set(NUM_CTEST_PROCESSORS 3)
 if(DEFINED ENV{CTEST_NUM_THREADS})
     set(NUM_CTEST_PROCESSORS $ENV{CTEST_NUM_THREADS})
 elseif(DEFINED ENV{NUM_THREADS})
     set(NUM_CTEST_PROCESSORS $ENV{NUM_THREADS})
-else()
-    set(NUM_CTEST_PROCESSORS 3)
 endif()
 
 if(DEFINED ENV{CTEST_LARGE_NUM_THREADS})
@@ -56,6 +55,23 @@ if(CMAKE_CONFIGURATION_TYPES)
     set(CONFIG_PARAMETER --build-config "$<CONFIGURATION>")
 endif()
 add_custom_target(ctest-cleanup ${CMAKE_COMMAND} -E remove -f Tests/ctest.log)
+
+set(test_dependencies ogs vtkdiff)
+if(OGS_BUILD_UTILS)
+    list(APPEND test_dependencies partmesh MapGeometryToMeshSurface)
+endif()
+if(OGS_USE_MFRONT)
+    list(APPEND test_dependencies
+        MFrontGenericBehaviourInterfaceTest
+        MFrontGenericBehaviourInterfaceTest2
+        BoundsCheckTest
+        ParameterTest
+        IntegrateTest
+        IntegrateTest2
+        IntegrateTest3
+        BehaviourTest)
+endif()
+
 add_custom_target(
     ctest
     COMMAND ${CMAKE_CTEST_COMMAND} -T Test
@@ -64,12 +80,9 @@ add_custom_target(
     --exclude-regex LARGE
     ${CONFIG_PARAMETER} --parallel ${NUM_CTEST_PROCESSORS}
     --timeout 900 # 15 minutes
-    DEPENDS ogs vtkdiff ctest-cleanup
+    DEPENDS ${test_dependencies} ctest-cleanup
     USES_TERMINAL
 )
-if(OGS_BUILD_UTILS)
-    add_dependencies(ctest partmesh MapGeometryToMeshSurface)
-endif()
 
 add_custom_target(
     ctest-serial
@@ -79,14 +92,12 @@ add_custom_target(
     --exclude-regex LARGE
     ${CONFIG_PARAMETER}
     --timeout 900 # 15 minutes
-    DEPENDS ogs vtkdiff ctest-cleanup
+    DEPENDS ${test_dependencies} ctest-cleanup
     USES_TERMINAL
 )
-if(OGS_BUILD_UTILS)
-    add_dependencies(ctest-serial partmesh MapGeometryToMeshSurface)
-endif()
 
 add_custom_target(ctest-large-cleanup ${CMAKE_COMMAND} -E remove -f Tests/ctest-large.log)
+
 add_custom_target(
     ctest-large
     COMMAND ${CMAKE_CTEST_COMMAND} -T Test
@@ -95,12 +106,9 @@ add_custom_target(
     --tests-regex LARGE
     ${CONFIG_PARAMETER} --parallel ${NUM_CTEST_LARGE_PROCESSORS}
     --timeout 3600
-    DEPENDS ogs vtkdiff ctest-large-cleanup
+    DEPENDS ${test_dependencies} ctest-large-cleanup
     USES_TERMINAL
 )
-if(OGS_BUILD_UTILS)
-    add_dependencies(ctest-large partmesh MapGeometryToMeshSurface)
-endif()
 
 add_custom_target(
     ctest-large-serial
@@ -110,18 +118,13 @@ add_custom_target(
     --tests-regex LARGE
     ${CONFIG_PARAMETER}
     --timeout 3600
-    DEPENDS ogs vtkdiff ctest-large-cleanup
+    DEPENDS ${test_dependencies} ctest-large-cleanup
     USES_TERMINAL
 )
-if(OGS_BUILD_UTILS)
-    add_dependencies(ctest-large-serial partmesh MapGeometryToMeshSurface)
-endif()
+
 set_directory_properties(PROPERTIES
     ADDITIONAL_MAKE_CLEAN_FILES ${PROJECT_BINARY_DIR}/Tests/Data
 )
 
-set_target_properties(ctest PROPERTIES FOLDER Testing)
-set_target_properties(ctest-large PROPERTIES FOLDER Testing)
-set_target_properties(ctest-large-serial PROPERTIES FOLDER Testing)
-set_target_properties(ctest-cleanup PROPERTIES FOLDER Testing)
-set_target_properties(ctest-large-cleanup PROPERTIES FOLDER Testing)
+set_target_properties(ctest ctest-large ctest-large-serial ctest-cleanup ctest-large-cleanup
+    PROPERTIES FOLDER Testing)

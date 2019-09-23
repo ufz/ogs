@@ -323,13 +323,13 @@ bool TetGenInterface::parseNodes(std::ifstream &ins,
                                  std::size_t dim)
 {
     std::string line;
-    auto* coordinates(new double[dim]);
     nodes.reserve(n_nodes);
 
     std::size_t k(0);
     while (k < n_nodes && !ins.fail())
     {
-        getline(ins, line);
+        std::vector<double> coordinates(dim);
+        std::getline(ins, line);
         if (ins.fail())
         {
             ERR("TetGenInterface::parseNodes(): Error reading node %d.", k);
@@ -354,7 +354,6 @@ bool TetGenInterface::parseNodes(std::ifstream &ins,
             }
         } else {
             ERR("TetGenInterface::parseNodes(): Error reading ID of node %d.", k);
-            delete [] coordinates;
             return false;
         }
         // read coordinates
@@ -373,27 +372,26 @@ bool TetGenInterface::parseNodes(std::ifstream &ins,
             else
             {
                 ERR("TetGenInterface::parseNodes(): error reading coordinate %d of node %d.", i, k);
-                delete [] coordinates;
                 return false;
             }
         }
 
-        nodes.push_back(new MeshLib::Node(coordinates, id-offset));
+        nodes.push_back(new MeshLib::Node(coordinates.data(), id-offset));
         // read attributes and boundary markers ... - at the moment we do not use this information
         ++k;
     }
 
-    delete [] coordinates;
     return true;
 }
 
-bool TetGenInterface::readElementsFromStream(std::ifstream &ins,
-                                             std::vector<MeshLib::Element*> &elements,
-                                             std::vector<int> &materials,
-                                             const std::vector<MeshLib::Node*> &nodes) const
+bool TetGenInterface::readElementsFromStream(
+    std::ifstream& ins,
+    std::vector<MeshLib::Element*>& elements,
+    std::vector<int>& materials,
+    const std::vector<MeshLib::Node*>& nodes) const
 {
     std::string line;
-    getline (ins, line);
+    std::getline(ins, line);
     std::size_t n_tets;
     std::size_t n_nodes_per_tet;
     bool region_attributes;
@@ -401,15 +399,16 @@ bool TetGenInterface::readElementsFromStream(std::ifstream &ins,
     while (!ins.fail())
     {
         BaseLib::simplify(line);
-        if (line.empty() || line.compare(0,1,"#") == 0)
+        if (line.empty() || line.compare(0, 1, "#") == 0)
         {
             // this line is a comment - skip
-            getline (ins, line);
+            std::getline(ins, line);
             continue;
         }
 
         // read header line
-        bool header_okay = parseElementsFileHeader(line, n_tets, n_nodes_per_tet, region_attributes);
+        bool header_okay = parseElementsFileHeader(
+            line, n_tets, n_nodes_per_tet, region_attributes);
         if (!header_okay)
         {
             return false;

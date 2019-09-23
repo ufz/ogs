@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -17,8 +18,7 @@ namespace MathLib
 template <typename MATRIX, typename SPARSITY_PATTERN>
 struct SetMatrixSparsity
 {
-    void operator()(MATRIX&, SPARSITY_PATTERN const&)
-    { }
+    void operator()(MATRIX& /*unused*/, SPARSITY_PATTERN const& /*unused*/) {}
 };
 
 /// Sets the sparsity pattern of the underlying matrix.

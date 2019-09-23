@@ -8,7 +8,6 @@
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
- *
  */
 
 #include "CreatePhase.h"
@@ -17,6 +16,7 @@
 #include <string>
 
 #include "BaseLib/ConfigTree.h"
+#include "ParameterLib/Parameter.h"
 
 #include "CreateComponent.h"
 #include "CreateProperty.h"
@@ -25,7 +25,8 @@
 namespace
 {
 std::unique_ptr<MaterialPropertyLib::Phase> createPhase(
-    BaseLib::ConfigTree const& config)
+    BaseLib::ConfigTree const& config,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters)
 {
     using namespace MaterialPropertyLib;
 
@@ -57,12 +58,14 @@ std::unique_ptr<MaterialPropertyLib::Phase> createPhase(
     // Parsing of optional components.
     auto components =
         //! \ogs_file_param{prj__media__medium__phases__phase__components}
-        createComponents(config.getConfigSubtreeOptional("components"));
+        createComponents(config.getConfigSubtreeOptional("components"),
+                         parameters);
 
     // Properties of optional properties.
     auto properties =
         //! \ogs_file_param{prj__media__medium__phases__phase__properties}
-        createProperties(config.getConfigSubtreeOptional("properties"));
+        createProperties(config.getConfigSubtreeOptional("properties"),
+                         parameters);
 
     if (components.empty() && !properties)
     {
@@ -80,7 +83,8 @@ std::unique_ptr<MaterialPropertyLib::Phase> createPhase(
 namespace MaterialPropertyLib
 {
 std::vector<std::unique_ptr<Phase>> createPhases(
-    boost::optional<BaseLib::ConfigTree> const& config)
+    boost::optional<BaseLib::ConfigTree> const& config,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters)
 {
     if (!config)
     {
@@ -93,7 +97,7 @@ std::vector<std::unique_ptr<Phase>> createPhases(
          //! \ogs_file_param{prj__media__medium__phases__phase}
          config->getConfigSubtreeList("phase"))
     {
-        auto phase = createPhase(phase_config);
+        auto phase = createPhase(phase_config, parameters);
 
         if (std::find_if(phases.begin(),
                          phases.end(),

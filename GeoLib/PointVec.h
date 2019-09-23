@@ -92,7 +92,6 @@ public:
 
     /**
      * get the type of Point, this can be either POINT or STATION
-     *
      */
     PointType getType() const { return _type; }
 

@@ -28,6 +28,10 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 set(CMAKE_MACOSX_RPATH 1)
 
+if(NOT IS_GIT_REPO)
+    return()
+endif()
+
 # Get version info from Git, implementation based on
 # https://github.com/tomtom-international/cpp-dependencies
 execute_process(

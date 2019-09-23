@@ -8,13 +8,12 @@
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
- *
  */
 
 #pragma once
 
 #include <array>
-#include <boost/variant.hpp>
+#include <variant>
 
 namespace MaterialPropertyLib
 {
@@ -42,6 +41,7 @@ using Tensor = std::array<double, 9>;
 /// is missing, simply add it somewhere at the list, but above the last entry.
 enum class Variable : int
 {
+    concentration,
     phase_pressure,
     capillary_pressure,
     density,
@@ -53,7 +53,7 @@ enum class Variable : int
 
 /// Data type for primary variables, designed to contain both scalar and vector
 /// data.
-using VariableType = boost::variant<double, Vector>;
+using VariableType = std::variant<double, Vector>;
 
 /// The VariableArray is a std::array of fixed size. Its size is determined by
 /// the Variable enumerator list. Data type of that array is defined by the
@@ -64,7 +64,7 @@ using VariableArray =
 /// This method returns a value of type double from the variables array
 inline double getScalar(VariableType pv)
 {
-    return boost::get<double>(pv);
+    return std::get<double>(pv);
 }
 
 Variable convertStringToVariable(std::string const& input);

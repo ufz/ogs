@@ -1,5 +1,5 @@
 /**
- * \file   ElementQualityMetric.cpp
+ * \file
  * \author Thomas Fischer
  * \date   2010-12-08
  * \brief  Implementation of the ElementQualityMetricBase class.

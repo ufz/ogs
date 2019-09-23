@@ -38,10 +38,6 @@
 #include "ProcessLib/CreateJacobianAssembler.h"
 #include "ProcessLib/DeactivatedSubdomain.h"
 
-// PhreeqcIO
-#include "ChemistryLib/CreatePhreeqcIO.h"
-#include "ProcessLib/ComponentTransport/ComponentTransportProcess.h"
-
 // FileIO
 #include "GeoLib/IO/XmlIO/Boost/BoostXmlGmlInterface.h"
 #include "MeshLib/IO/readMeshFromFile.h"
@@ -52,6 +48,10 @@
 #include "ProcessLib/TimeLoop.h"
 
 #ifdef OGS_BUILD_PROCESS_COMPONENTTRANSPORT
+#include "ChemistryLib/CreateChemicalSolverInterface.h"
+// The ComponenTransportProcess is needed for the instantiation of the chemical
+// solver.
+#include "ProcessLib/ComponentTransport/ComponentTransportProcess.h"
 #include "ProcessLib/ComponentTransport/CreateComponentTransportProcess.h"
 #endif
 #ifdef OGS_BUILD_PROCESS_GROUNDWATERFLOW
@@ -459,7 +459,8 @@ void ProjectData::parseMedia(
                 material_id);
         }
 
-        _media[material_id] = MaterialPropertyLib::createMedium(medium_config);
+        _media[material_id] =
+            MaterialPropertyLib::createMedium(medium_config, _parameters);
     }
 
     if (_media.empty())
@@ -780,7 +781,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                             name, *_mesh_vec[0], std::move(jacobian_assembler),
                             _process_variables, _parameters,
                             _local_coordinate_system, integration_order,
-                            process_config);
+                            process_config, _media);
                     break;
                 case 3:
                     process = ProcessLib::ThermoHydroMechanics::
@@ -788,7 +789,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                             name, *_mesh_vec[0], std::move(jacobian_assembler),
                             _process_variables, _parameters,
                             _local_coordinate_system, integration_order,
-                            process_config);
+                            process_config, _media);
                     break;
                 default:
                     OGS_FATAL(
@@ -1031,6 +1032,9 @@ void ProjectData::parseChemicalSystem(
             ProcessLib::ComponentTransport::ComponentTransportProcess const*>(
             _processes[0].get()))
     {
+        auto const& process_id_to_component_name_map =
+            component_transport_process->getProcessIDToComponentNameMap();
+
         auto const chemical_solver =
             //! \ogs_file_attr{prj__chemical_system__chemical_solver}
             config->getConfigAttribute<std::string>("chemical_solver");
@@ -1039,20 +1043,30 @@ void ProjectData::parseChemicalSystem(
         {
             INFO(
                 "Configuring phreeqc interface for water chemistry "
-                "calculation.");
+                "calculation using file-based approach.");
 
-            auto const& process_id_to_component_name_map =
-                component_transport_process->getProcessIDToComponentNameMap();
+            _chemical_system = ChemistryLib::createChemicalSolverInterface<
+                ChemistryLib::ChemicalSolver::Phreeqc>(
+                *_mesh_vec[0], process_id_to_component_name_map, *config,
+                output_directory);
+        }
+        else if (boost::iequals(chemical_solver, "PhreeqcKernel"))
+        {
+            INFO(
+                "Configuring phreeqc interface for water chemistry "
+                "calculation by direct memory access.");
 
-            _chemical_system = ChemistryLib::createPhreeqcIO(
+            _chemical_system = ChemistryLib::createChemicalSolverInterface<
+                ChemistryLib::ChemicalSolver::PhreeqcKernel>(
                 *_mesh_vec[0], process_id_to_component_name_map, *config,
                 output_directory);
         }
         else
         {
             OGS_FATAL(
-                "Unknown chemical solver. Please specify Phreeqc as the solver "
-                "for water chemistry calculation instead.");
+                "Unknown chemical solver. Please specify either Phreeqc or "
+                "PhreeqcKernel as the solver for water chemistry calculation "
+                "instead.");
         }
     }
     else

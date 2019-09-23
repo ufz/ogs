@@ -16,7 +16,7 @@ include_directories(
 
 # Put moc files in a project folder
 source_group("Moc Files" REGULAR_EXPRESSION "moc_.*")
-file(GLOB UIS *.ui)
+file(GLOB UIS CONFIGURE_DEPENDS *.ui)
 source_group("UI Files" FILES ${UIS})
 
 # Application icon
@@ -34,6 +34,7 @@ add_executable(DataExplorer
 target_link_libraries(DataExplorer
     BaseLib
     GeoLib
+    GitInfoLib
     MeshLib
     ApplicationsFileIO
     DataHolderLib
@@ -91,9 +92,7 @@ if(OGS_USE_PCH)
     cotire(DataExplorer)
 endif()
 
-####################
-### Installation ###
-####################
+# ---- Installation ----
 install(TARGETS DataExplorer RUNTIME DESTINATION bin COMPONENT ogs_gui)
 
 cpack_add_component(ogs_gui

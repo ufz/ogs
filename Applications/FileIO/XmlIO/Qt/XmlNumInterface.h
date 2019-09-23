@@ -1,5 +1,5 @@
 /**
- * \file   XmlNumInterface.h
+ * \file
  * \author Karsten Rink
  * \date   2014-08-05
  * \brief  Definition of the XmlNumInterface class.
@@ -41,4 +41,4 @@ protected:
     bool write() override;
 };
 
-}
+}  // namespace FileIO

@@ -42,7 +42,7 @@ class GeoTreeModel : public TreeModel
     Q_OBJECT
 
 public:
-    GeoTreeModel(QObject* parent = nullptr);
+    explicit GeoTreeModel(QObject* parent = nullptr);
     ~GeoTreeModel() override;
 
     /**

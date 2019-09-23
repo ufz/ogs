@@ -1,5 +1,5 @@
 /*!
-  \file PartitionMesh.cpp
+  \file
   \date   2016.05
 
   \brief  A tool for mesh partitioning.
@@ -21,7 +21,7 @@
 #endif
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
-#include "BaseLib/BuildInfo.h"
+#include "InfoLib/GitInfo.h"
 #include "BaseLib/CPUTime.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/RunTime.h"
@@ -47,11 +47,11 @@ int main(int argc, char* argv[])
         "Note: If this tool is installed as a system command,\n"
         "\tthe command must be run with its full path.\n\n"
         "OpenGeoSys-6 software, version " +
-            BaseLib::BuildInfo::ogs_version +
+            GitInfoLib::GitInfo::ogs_version +
             ".\n"
             "Copyright (c) 2012-2019, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
-        ' ', BaseLib::BuildInfo::ogs_version);
+        ' ', GitInfoLib::GitInfo::ogs_version);
     TCLAP::ValueArg<std::string> mesh_input(
         "i", "mesh-input-file",
         "the name of the file containing the input mesh", true, "",
@@ -174,10 +174,9 @@ int main(int argc, char* argv[])
     {
         std::unique_ptr<MeshLib::Mesh> mesh(
             MeshLib::IO::readMeshFromFile(filename));
-        INFO("Mesh '%s' read: %d nodes, %d elements.",
-             mesh->getName().c_str(),
-             mesh->getNumberOfNodes(),
-             mesh->getNumberOfElements());
+        INFO("Mesh '%s' from file '%s' read: %d nodes, %d elements.",
+             mesh->getName().c_str(), filename.c_str(),
+             mesh->getNumberOfNodes(), mesh->getNumberOfElements());
 
         std::string const other_mesh_output_file_name_wo_extension =
             BaseLib::joinPaths(

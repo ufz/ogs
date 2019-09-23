@@ -1,5 +1,5 @@
 /**
- * \file   ElementStatus.h
+ * \file
  * \author Karsten Rink
  * \date   2012-12-18
  * \brief  Definition of the ElementStatus class.

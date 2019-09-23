@@ -1,0 +1,23 @@
+/**
+ * \brief  Git information.
+ *
+ * \file
+ * \copyright
+ * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.org/project/license
+ *
+ */
+
+#include "InfoLib/GitInfo.h"
+
+namespace GitInfoLib
+{
+
+namespace GitInfo
+{
+    const std::string git_version_sha1_short("@GIT_SHA1_SHORT@");
+    const std::string ogs_version("@OGS_VERSION@");
+}
+}

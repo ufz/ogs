@@ -83,7 +83,7 @@ The basic scenario for the two-dimensional unconfined aquifer:
 * the Specific Yield is set to _S<sub>y</sub>_ = 0.00
 {{< img src="../Dupuit_Scenario_A.jpg" >}}
 
- 
+
 ### Scenario B:
 * Like scenario A and additionally
 * with an average groundwater recharge rate = 3.54745E-09 m/s
@@ -91,10 +91,10 @@ The basic scenario for the two-dimensional unconfined aquifer:
 
 
 ### Scenario C:
-* like scenario A but 
+* like scenario A but
 * with an inflow rate of 4.62963E-05 m3/s per meter at the southern boundary
 {{< img src="../Dupuit_Scenario_C.jpg" >}}
- 
+
 
 ### Scenario D:
 

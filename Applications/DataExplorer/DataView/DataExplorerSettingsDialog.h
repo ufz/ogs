@@ -1,5 +1,5 @@
 /**
- * \file   DataExplorerSettingsDialog.h
+ * \file
  * \author Karsten Rink
  * \date   2014-02-05
  * \brief  Definition of the DataExplorerSettingsDialog class.
@@ -25,7 +25,7 @@ class DataExplorerSettingsDialog : public QDialog, private Ui_DataExplorerSettin
     Q_OBJECT
 
 public:
-    DataExplorerSettingsDialog(QDialog* parent = nullptr);
+    explicit DataExplorerSettingsDialog(QDialog* parent = nullptr);
     ~DataExplorerSettingsDialog() override;
 
 private slots:

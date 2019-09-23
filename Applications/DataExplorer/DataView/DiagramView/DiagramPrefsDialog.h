@@ -58,7 +58,8 @@ public:
      * \param stn The station object associated the diagram.
      * \param parent The parent QDialog.
      */
-    DiagramPrefsDialog(GeoLib::Station* stn, QDialog* parent = nullptr);
+    explicit DiagramPrefsDialog(GeoLib::Station* stn,
+                                QDialog* parent = nullptr);
 
     /**
      * Opens a new dialog and automatically reads data from the specified file. The diagram is not associated
@@ -67,9 +68,9 @@ public:
      * \param[out] window Returns the created DetailWindow.
      * \param parent The parent QDialog.
      */
-    DiagramPrefsDialog(const QString& filename,
-                       DetailWindow* window = nullptr,
-                       QDialog* parent = nullptr);
+    explicit DiagramPrefsDialog(const QString& filename,
+                                DetailWindow* window = nullptr,
+                                QDialog* parent = nullptr);
 
     ~DiagramPrefsDialog() override;
 

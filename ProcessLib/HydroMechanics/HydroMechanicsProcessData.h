@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -10,6 +11,7 @@
 #pragma once
 
 #include "ParameterLib/Parameter.h"
+#include "MaterialLib/Fluid/FluidType/FluidType.h"
 
 #include <memory>
 #include <utility>
@@ -31,48 +33,7 @@ namespace HydroMechanics
 template <int DisplacementDim>
 struct HydroMechanicsProcessData
 {
-    HydroMechanicsProcessData(
-        MeshLib::PropertyVector<int> const* const material_ids_,
-        std::map<int,
-                 std::unique_ptr<
-                     MaterialLib::Solids::MechanicsBase<DisplacementDim>>>&&
-            solid_materials_,
-        ParameterLib::Parameter<double> const& intrinsic_permeability_,
-        ParameterLib::Parameter<double> const& specific_storage_,
-        ParameterLib::Parameter<double> const& fluid_viscosity_,
-        ParameterLib::Parameter<double> const& fluid_density_,
-        ParameterLib::Parameter<double> const& biot_coefficient_,
-        ParameterLib::Parameter<double> const& porosity_,
-        ParameterLib::Parameter<double> const& solid_density_,
-        Eigen::Matrix<double, DisplacementDim, 1>
-            specific_body_force_,
-        double const reference_temperature_)
-        : material_ids(material_ids_),
-          solid_materials{std::move(solid_materials_)},
-          intrinsic_permeability(intrinsic_permeability_),
-          specific_storage(specific_storage_),
-          fluid_viscosity(fluid_viscosity_),
-          fluid_density(fluid_density_),
-          biot_coefficient(biot_coefficient_),
-          porosity(porosity_),
-          solid_density(solid_density_),
-          specific_body_force(std::move(specific_body_force_)),
-          reference_temperature(reference_temperature_)
-    {
-    }
-
-    HydroMechanicsProcessData(HydroMechanicsProcessData&& other) = default;
-
-    //! Copies are forbidden.
-    HydroMechanicsProcessData(HydroMechanicsProcessData const&) = delete;
-
-    //! Assignments are not needed.
-    void operator=(HydroMechanicsProcessData const&) = delete;
-
-    //! Assignments are not needed.
-    void operator=(HydroMechanicsProcessData&&) = delete;
-
-    MeshLib::PropertyVector<int> const* const material_ids;
+    MeshLib::PropertyVector<int> const* const material_ids = nullptr;
 
     /// The constitutive relation for the mechanical part.
     /// \note Linear elasticity is the only supported one in the moment.
@@ -80,12 +41,14 @@ struct HydroMechanicsProcessData
         int,
         std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>>
         solid_materials;
+
+    /// Optional, initial stress field. A symmetric tensor, short vector
+    /// representation of length 4 or 6, ParameterLib::Parameter<double>.
+    ParameterLib::Parameter<double> const* const initial_stress;
+
     /// Permeability of the solid. A scalar quantity,
     /// ParameterLib::Parameter<double>.
     ParameterLib::Parameter<double> const& intrinsic_permeability;
-    /// Volumetric average specific storage of the solid and fluid phases.
-    /// A scalar quantity, ParameterLib::Parameter<double>.
-    ParameterLib::Parameter<double> const& specific_storage;
     /// Fluid's viscosity. A scalar quantity, ParameterLib::Parameter<double>.
     ParameterLib::Parameter<double> const& fluid_viscosity;
     /// Fluid's density. A scalar quantity, ParameterLib::Parameter<double>.
@@ -101,12 +64,64 @@ struct HydroMechanicsProcessData
     /// It is usually used to apply gravitational forces.
     /// A vector of displacement dimension's length.
     Eigen::Matrix<double, DisplacementDim, 1> const specific_body_force;
-    double dt = 0.0;
-    double t = 0.0;
 
-    double const reference_temperature;
+    /// Fluid's compressibility. A scalar quantity.
+    /// Only used for compressible_fluid fluid_type
+    double const fluid_compressibility =
+        std::numeric_limits<double>::quiet_NaN();
+
+    /// Reference Temperature. A scalar quantity.
+    /// Only used for ideal_gas fluid_type
+    double const reference_temperature =
+        std::numeric_limits<double>::quiet_NaN();
+
+    /// Specific gas constant. A scalar quantity.
+    /// Only used for ideal_gas fluid_type
+    double const specific_gas_constant =
+        std::numeric_limits<double>::quiet_NaN();
+
+    /// Fluid type. Enumerator with possible values:
+    /// incompressible_fluid, compressible_fluid, ideal_gas
+    FluidType::Fluid_Type const fluid_type;
+
+    /// will be removed after linking with MPL
+    double getFluidDensity(
+        double const& t, ParameterLib::SpatialPosition const& x_position,
+        double const& p_fr)
+    {
+        if (fluid_type == FluidType::Fluid_Type::INCOMPRESSIBLE_FLUID ||
+            fluid_type == FluidType::Fluid_Type::COMPRESSIBLE_FLUID)
+        {
+            return fluid_density(t, x_position)[0];
+        }
+        if (fluid_type == FluidType::Fluid_Type::IDEAL_GAS)
+        {
+            return p_fr / (specific_gas_constant * reference_temperature);
+        }
+        OGS_FATAL("unknown fluid type %d", static_cast<int> (fluid_type));
+    }
+
+    /// will be removed after linking with MPL
+    double getFluidCompressibility(double const& p_fr)
+    {
+        if (fluid_type == FluidType::Fluid_Type::INCOMPRESSIBLE_FLUID)
+        {
+            return 0.0;
+        }
+        if (fluid_type == FluidType::Fluid_Type::COMPRESSIBLE_FLUID)
+        {
+            return fluid_compressibility;
+        }
+        if (fluid_type == FluidType::Fluid_Type::IDEAL_GAS)
+        {
+            return 1.0 / p_fr;
+        }
+        OGS_FATAL("unknown fluid type %d", static_cast<int> (fluid_type));
+    }
 
     MeshLib::PropertyVector<double>* pressure_interpolated = nullptr;
+    double dt = std::numeric_limits<double>::quiet_NaN();
+    double t = std::numeric_limits<double>::quiet_NaN();
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };

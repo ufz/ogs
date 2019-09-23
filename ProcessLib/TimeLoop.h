@@ -6,7 +6,6 @@
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
- *
  */
 
 #pragma once
@@ -29,7 +28,7 @@ class ConvergenceCriterion;
 
 namespace ChemistryLib
 {
-class PhreeqcIO;
+class ChemicalSolverInterface;
 }
 
 namespace ProcessLib
@@ -45,26 +44,23 @@ public:
              const int global_coupling_max_iterations,
              std::vector<std::unique_ptr<NumLib::ConvergenceCriterion>>&&
                  global_coupling_conv_crit,
-             std::unique_ptr<ChemistryLib::PhreeqcIO>&& chemical_system,
+             std::unique_ptr<ChemistryLib::ChemicalSolverInterface>&&
+                 chemical_system,
              const double start_time, const double end_time);
 
+    void initialize();
     bool loop();
 
     ~TimeLoop();
 
 private:
-
     /**
-     *  This function fills the vector of solutions of coupled processes of
-     *  processes, _solutions_of_coupled_processes, and initializes the vector
-     * of
-     *  solutions of the previous coupling iteration,
-     *  _solutions_of_last_cpl_iteration.
-     *
-     *  \return a boolean value as a flag to indicate there should be a coupling
-     *          among processes or not.
+     * This function fills the vector of solutions of coupled processes of
+     * processes, _solutions_of_coupled_processes, and initializes the vector
+     * of solutions of the previous coupling iteration,
+     * _solutions_of_last_cpl_iteration.
      */
-    bool setCoupledSolutions();
+    void setCoupledSolutions();
 
     /**
      * \brief Member to solver non coupled systems of equations, which can be
@@ -109,8 +105,7 @@ private:
                                std::size_t& rejected_steps);
 
     template <typename OutputClass, typename OutputClassMember>
-    void outputSolutions(bool const output_initial_condition,
-                         bool const is_staggered_coupling, unsigned timestep,
+    void outputSolutions(bool const output_initial_condition, unsigned timestep,
                          const double t, OutputClass& output_object,
                          OutputClassMember output_class_member) const;
 
@@ -130,7 +125,7 @@ private:
     std::vector<std::unique_ptr<NumLib::ConvergenceCriterion>>
         _global_coupling_conv_crit;
 
-    std::unique_ptr<ChemistryLib::PhreeqcIO> _chemical_system;
+    std::unique_ptr<ChemistryLib::ChemicalSolverInterface> _chemical_system;
     /**
      *  Vector of solutions of the coupled processes.
      *  Each vector element stores the references of the solution vectors

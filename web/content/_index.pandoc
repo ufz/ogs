@@ -1,6 +1,6 @@
 ---
 title: OpenGeoSys
-authors: 
+authors:
   - Lars Bilke
 
 date: 2017-01-13T14:24:23+01:00
@@ -20,7 +20,7 @@ features:
 - headline: Comprehensive Pre-Processing Tools
   textline: |
     A wide range of helper tools exist to get your model up and running with OpenGeoSys.
-    
+
     Convert your existing data sets into appropriate OGS data formats and structures.
 
     Create meshes approximating geometrically the domain of interest. Analyze mesh quality, cleanup the mesh or adding layers to it.
@@ -42,7 +42,7 @@ features:
     permalink: /features/StaggeredCouplingScheme.png
     alt: Staggered coupling scheme
   layout: right
-  
+
 - headline: Data integration
   textline: |
     Integrate and visualize data sets for OpenGeoSys by using the OpenGeoSys Data Explorer. It provides functionality to visually assess the data and see possible artefacts, inconsistencies between data sets or missing information.
@@ -113,7 +113,7 @@ features:
     alt: Dev workflow
   layout: right
 #   class: inverse
-  
+
 - headline: Get started
   textline: |
   subfeatures:
@@ -131,7 +131,7 @@ features:
           url: /docs/devguide
     - headline: Become part of the Community
       textline: |
-        Get in touch with the OpenGeoSys Community via the [Mailing List](https://groups.google.com/forum/#!forum/ogs-users), [GitHub](https://github.com/ufz/ogs) or by [email](mailto:info@opengeosys.org).
+        Get in touch with the OpenGeoSys Community via our [Discussion forum](https://discourse.opengeosys.org), [GitHub](https://github.com/ufz/ogs) or by [email](mailto:info@opengeosys.org).
       links:
         - text: <i class="fab fa-github"></i> GitHub
           url: https://github.com/ufz/ogs

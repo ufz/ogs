@@ -6,7 +6,6 @@
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
- *
  */
 
 #include "CreateTimeLoop.h"
@@ -26,7 +25,7 @@ std::unique_ptr<TimeLoop> createTimeLoop(
     const std::map<std::string, std::unique_ptr<NumLib::NonlinearSolverBase>>&
         nonlinear_solvers,
     std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
-    std::unique_ptr<ChemistryLib::PhreeqcIO>& phreeqc_io)
+    std::unique_ptr<ChemistryLib::ChemicalSolverInterface>& phreeqc_io)
 {
     auto const& coupling_config
         //! \ogs_file_param{prj__time_loop__global_process_coupling}

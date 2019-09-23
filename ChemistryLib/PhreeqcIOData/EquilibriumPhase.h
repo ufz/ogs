@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -13,8 +14,8 @@
 #include <string>
 #include <vector>
 
-#include "ChemistryLib/Output.h"
 #include "MeshLib/PropertyVector.h"
+#include "Output.h"
 
 namespace BaseLib
 {
@@ -22,6 +23,8 @@ class ConfigTree;
 }
 
 namespace ChemistryLib
+{
+namespace PhreeqcIOData
 {
 struct EquilibriumPhase
 {
@@ -41,4 +44,5 @@ struct EquilibriumPhase
     double const saturation_index;
     static const ItemType item_type = ItemType::EquilibriumPhase;
 };
+}  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

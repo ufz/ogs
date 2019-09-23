@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -31,50 +32,16 @@ namespace ThermoMechanics
 template <int DisplacementDim>
 struct ThermoMechanicsProcessData
 {
-    ThermoMechanicsProcessData(
-        MeshLib::PropertyVector<int> const* const material_ids_,
-        std::map<int, std::unique_ptr<MaterialLib::Solids::MechanicsBase<
-                          DisplacementDim>>>&& solid_materials_,
-        ParameterLib::Parameter<double> const& reference_solid_density_,
-        ParameterLib::Parameter<double> const&
-            linear_thermal_expansion_coefficient_,
-        ParameterLib::Parameter<double> const& specific_heat_capacity_,
-        ParameterLib::Parameter<double> const& thermal_conductivity_,
-        Eigen::Matrix<double, DisplacementDim, 1> const& specific_body_force_,
-        ParameterLib::Parameter<double> const* const nonequilibrium_stress_,
-        int const mechanics_process_id_, int const heat_conduction_process_id_)
-        : material_ids(material_ids_),
-          solid_materials{std::move(solid_materials_)},
-          reference_solid_density(reference_solid_density_),
-          linear_thermal_expansion_coefficient(
-              linear_thermal_expansion_coefficient_),
-          specific_heat_capacity(specific_heat_capacity_),
-          thermal_conductivity(thermal_conductivity_),
-          specific_body_force(specific_body_force_),
-          nonequilibrium_stress(nonequilibrium_stress_),
-          mechanics_process_id(mechanics_process_id_),
-          heat_conduction_process_id(heat_conduction_process_id_)
-
-    {
-    }
-
-    ThermoMechanicsProcessData(ThermoMechanicsProcessData&& other) = default;
-
-    //! Copies are forbidden.
-    ThermoMechanicsProcessData(ThermoMechanicsProcessData const&) = delete;
-
-    //! Assignments are not needed.
-    void operator=(ThermoMechanicsProcessData const&) = delete;
-
-    //! Assignments are not needed.
-    void operator=(ThermoMechanicsProcessData&&) = delete;
-
-    MeshLib::PropertyVector<int> const* const material_ids;
+    MeshLib::PropertyVector<int> const* const material_ids = nullptr;
 
     /// The constitutive relation for the mechanical part.
     std::map<int, std::unique_ptr<
                       MaterialLib::Solids::MechanicsBase<DisplacementDim>>>
         solid_materials;
+
+    /// Optional, initial stress field. A symmetric tensor, short vector
+    /// representation of length 4 or 6, ParameterLib::Parameter<double>.
+    ParameterLib::Parameter<double> const* const initial_stress;
 
     ParameterLib::Parameter<double> const& reference_solid_density;
     ParameterLib::Parameter<double> const& linear_thermal_expansion_coefficient;
@@ -82,15 +49,15 @@ struct ThermoMechanicsProcessData
     ParameterLib::Parameter<double> const&
         thermal_conductivity;  // TODO To be changed as a matrix type variable.
     Eigen::Matrix<double, DisplacementDim, 1> const specific_body_force;
-    ParameterLib::Parameter<double> const* const nonequilibrium_stress;
-    double dt = 0;
-    double t = 0;
 
     /// ID of the mechanical process.
     int const mechanics_process_id;
 
     /// ID of heat conduction process.
     int const heat_conduction_process_id;
+
+    double dt = std::numeric_limits<double>::quiet_NaN();
+    double t = std::numeric_limits<double>::quiet_NaN();
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };

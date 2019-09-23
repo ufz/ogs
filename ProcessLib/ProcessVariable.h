@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -51,7 +52,7 @@ public:
         std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
             parameters);
 
-    ProcessVariable(ProcessVariable&&);
+    ProcessVariable(ProcessVariable&& other);
 
     std::string const& getName() const;
 

@@ -49,10 +49,7 @@ find_program(MODULE_CMD modulecmd
 ######################
 ### Find libraries ###
 ######################
-if(NOT OGS_USE_CONAN OR NOT CONAN_CMD)
-    find_package(Boost REQUIRED)
-    include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
-endif()
+find_package(Boost 1.62.0 REQUIRED)
 
 set(VTK_COMPONENTS vtkIOXML)
 if(OGS_BUILD_GUI)
@@ -66,7 +63,7 @@ endif()
 if(OGS_USE_MPI)
     set(VTK_COMPONENTS ${VTK_COMPONENTS} vtkIOParallelXML vtkParallelMPI)
 endif()
-find_package(VTK 8.2.0 REQUIRED COMPONENTS ${VTK_COMPONENTS})
+find_package(VTK 8.1.2 REQUIRED COMPONENTS ${VTK_COMPONENTS})
 include(${VTK_USE_FILE})
 
 find_package(Eigen3 3.3.4 REQUIRED)
@@ -167,8 +164,4 @@ endif()
 if(OGS_USE_CVODE)
     find_package(CVODE REQUIRED)
     add_definitions(-DCVODE_FOUND)
-endif()
-
-if(OGS_USE_MFRONT)
-    find_package(MGIS REQUIRED)
 endif()

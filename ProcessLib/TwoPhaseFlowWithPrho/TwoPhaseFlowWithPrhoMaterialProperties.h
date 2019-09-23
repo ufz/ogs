@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -28,10 +29,7 @@ template <typename PROP_VAL_TYPE>
 class PropertyVector;
 }
 
-namespace ProcessLib
-{
-class SpatialPosition;
-namespace TwoPhaseFlowWithPrho
+namespace ProcessLib::TwoPhaseFlowWithPrho
 {
 class TwoPhaseFlowWithPrhoMaterialProperties
 {
@@ -186,5 +184,4 @@ private:
                           int current_material_id) const;
 };
 
-}  // namespace TwoPhaseFlowWithPrho
-}  // namespace ProcessLib
+}  // namespace ProcessLib::TwoPhaseFlowWithPrho

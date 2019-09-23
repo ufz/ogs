@@ -12,7 +12,7 @@
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
 
-#include "BaseLib/BuildInfo.h"
+#include "InfoLib/GitInfo.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/StringTools.h"
 
@@ -172,11 +172,11 @@ int main(int argc, char* argv[])
         "Read files for the Storm Water Management Model (SWMM) and converts "
         "them into OGS data structures.\n\n"
         "OpenGeoSys-6 software, version " +
-            BaseLib::BuildInfo::ogs_version +
+            GitInfoLib::GitInfo::ogs_version +
             ".\n"
             "Copyright (c) 2012-2019, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
-        ' ', BaseLib::BuildInfo::ogs_version);
+        ' ', GitInfoLib::GitInfo::ogs_version);
     TCLAP::ValueArg<std::string> mesh_output_arg(
         "m", "mesh", "mesh output file (*.vtu)", false, "", "mesh output file");
     cmd.add(mesh_output_arg);

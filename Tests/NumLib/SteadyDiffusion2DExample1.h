@@ -31,10 +31,10 @@ template<typename IndexType>struct SteadyDiffusion2DExample1
     class LocalAssemblerData
     {
     public:
-        void init(MeshLib::Element const&,
-            std::size_t const /*local_matrix_size*/,
-            LocalMatrixType const& localA,
-            LocalVectorType const& localRhs)
+        void init(MeshLib::Element const& /*unused*/,
+                  std::size_t const /*local_matrix_size*/,
+                  LocalMatrixType const& localA,
+                  LocalVectorType const& localRhs)
         {
             _localA = &localA;
             _localRhs = &localRhs;

@@ -19,4 +19,11 @@ weight = 1041
   ![](../gitlab-login.png)
   - You will be redirected to GitHub (please login there) and asked for authorization.
   - Your new user account will be blocked at first, please let us know we will unblock it
-- Once unblocked, on the [ogs group page](https://gitlab.opengeosys.org/ogs) click the button `Request access`. We will then give access to the repo. If the button is not there we already gave you access.
+
+## Setup a password for cloning over https
+
+To clone a repository via `https://`-protocol you need to [set up an account password](https://gitlab.opengeosys.org/profile/password/edit) and use this during `git clone https://...`.
+
+## Upload a SSH key for cloning over SSH
+
+To clone a repository via SSH-protocol (`git clone git@gitlab...`) you need to [upload your SSH pubic key](https://gitlab.opengeosys.org/profile/keys).

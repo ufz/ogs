@@ -3,7 +3,11 @@ with MFront's generic interface.
 
 See http://tfel.sourceforge.net/ https://github.com/thelfer/MFrontGenericInterfaceSupport
 
-This requires MFront 3.2.0 or newer (because of MFront's "generic" interface).
+This requires MFront version 3.2.1 (which must correspond to the MFront's
+"generic" interface), which must be available on your system: see
+http://tfel.sourceforge.net page for download and installation intstructions.
+
+\note The MFront library is distributed under GPL license.
 
 \attention
 OpenGeoSys initializes the internal state of the MFront material model to

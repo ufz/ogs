@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -9,12 +10,8 @@
 
 #include "CreateComponentTransportProcess.h"
 
-#include "MaterialLib/Fluid/FluidProperties/CreateFluidProperties.h"
 #include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
-#include "MaterialLib/PorousMedium/CreatePorousMediaProperties.h"
 #include "MeshLib/IO/readMeshFromFile.h"
-#include "ParameterLib/ConstantParameter.h"
-#include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/SurfaceFlux/SurfaceFluxData.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
@@ -110,30 +107,6 @@ std::unique_ptr<Process> createComponentTransportProcess(
         }
     }
 
-    MaterialLib::PorousMedium::PorousMediaProperties porous_media_properties{
-        MaterialLib::PorousMedium::createPorousMediaProperties(
-            mesh, config, parameters)};
-
-    //! \ogs_file_param{prj__processes__process__ComponentTransport__fluid}
-    auto const& fluid_config = config.getConfigSubtree("fluid");
-
-    auto fluid_properties =
-        MaterialLib::Fluid::createFluidProperties(fluid_config);
-
-    // Parameter for the density of the fluid.
-    auto& fluid_reference_density = ParameterLib::findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__ComponentTransport__fluid_reference_density}
-        "fluid_reference_density", parameters, 1);
-    DBUG("Use '%s' as fluid_reference_density parameter.",
-         fluid_reference_density.name.c_str(), &mesh);
-
-    // Parameter for the decay rate.
-    auto const& decay_rate = ParameterLib::findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__ComponentTransport__decay_rate}
-        "decay_rate", parameters, 1, &mesh);
-
     // Specific body force parameter.
     Eigen::VectorXd specific_body_force;
     std::vector<double> const b =
@@ -162,11 +135,7 @@ std::unique_ptr<Process> createComponentTransportProcess(
         MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
 
     ComponentTransportProcessData process_data{
-        std::move(porous_media_properties),
-        fluid_reference_density,
-        std::move(fluid_properties),
         std::move(media_map),
-        decay_rate,
         specific_body_force,
         has_gravity,
         non_advective_form};

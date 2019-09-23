@@ -381,6 +381,52 @@ AddTest(
     flow_gravity_pcs_0_ts_16_t_40000000.000000.vtu flow_gravity_pcs_0_ts_16_t_40000000.000000.vtu velocity velocity 1e-10 0
 )
 
+## Tests for Ideal gas
+# flow_no_strain
+AddTest(
+    NAME HydroMechanics_IdealGas_flow_no_strain
+    PATH HydroMechanics/IdealGas/flow_no_strain
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS flow_no_strain.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    RUNTIME 40
+    DIFF_DATA
+    # tolerance could be lowered with smaller time steps, gut would increase runtime
+    # TODO (FZill) another solver might provide better results, same goes for "flow_free_expansion"
+    flow_no_strain_pcs_0_ts_1000_t_100.000000.vtu flow_no_strain_pcs_0_ts_1000_t_100.000000.vtu pressure pressure 0 1e-6
+    flow_no_strain_pcs_0_ts_1000_t_100.000000.vtu flow_no_strain_pcs_0_ts_1000_t_100.000000.vtu displacement displacement 1e-12 0
+)
+
+# flow_free_expansion
+AddTest(
+    NAME HydroMechanics_IdealGas_flow_free_expansion
+    PATH HydroMechanics/IdealGas/flow_free_expansion
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS flow_free_expansion.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    flow_free_expansion_pcs_0_ts_1000_t_10000.000000.vtu flow_free_expansion_pcs_0_ts_1000_t_10000.000000.vtu pressure pressure 0 5e-7
+    flow_free_expansion_pcs_0_ts_1000_t_10000.000000.vtu flow_free_expansion_pcs_0_ts_1000_t_10000.000000.vtu displacement displacement 1e-11 0
+)
+
+# flow_pressure_boundary
+AddTest(
+    NAME HydroMechanics_IdealGas_flow_pressure_boundary
+    PATH HydroMechanics/IdealGas/flow_pressure_boundary
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS flow_pressure_boundary.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    flow_pressure_boundary_pcs_0_ts_100_t_4000.000000.vtu flow_pressure_boundary_pcs_0_ts_100_t_4000.000000.vtu pressure pressure 0 1e-14
+    flow_pressure_boundary_pcs_0_ts_100_t_4000.000000.vtu flow_pressure_boundary_pcs_0_ts_100_t_4000.000000.vtu displacement displacement 1e-12 0
+)
+
 ## Test as the reference of InjectionProduction1D
 AddTest(
     NAME MonolithicInjectionProduction1D

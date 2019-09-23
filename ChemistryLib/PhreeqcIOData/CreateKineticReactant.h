@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -24,12 +25,12 @@ class Mesh;
 
 namespace ChemistryLib
 {
-struct KineticReactant;
-}
-
-namespace ChemistryLib
+namespace PhreeqcIOData
 {
+struct KineticReactant;
+
 std::vector<KineticReactant> createKineticReactants(
     boost::optional<BaseLib::ConfigTree> const& config,
     MeshLib::Mesh const& mesh);
+}  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

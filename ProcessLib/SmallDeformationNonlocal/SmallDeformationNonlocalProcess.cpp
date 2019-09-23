@@ -6,13 +6,14 @@
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
- *
  */
 
 #include "SmallDeformationNonlocalProcess.h"
 
 #include <nlohmann/json.hpp>
 #include <iostream>
+
+#include "ProcessLib/Output/IntegrationPointWriter.h"
 
 // Reusing local assembler creation code.
 #include "ProcessLib/SmallDeformation/CreateLocalAssemblers.h"
@@ -45,7 +46,8 @@ SmallDeformationNonlocalProcess<DisplacementDim>::
         mesh, "NodalForces", MeshLib::MeshItemType::Node, DisplacementDim);
 
     _integration_point_writer.emplace_back(
-        std::make_unique<SigmaIntegrationPointWriter>(
+        std::make_unique<IntegrationPointWriter>(
+            "sigma_ip",
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
             integration_order, [this]() {
                 // Result containing integration point data for each local
@@ -64,8 +66,8 @@ SmallDeformationNonlocalProcess<DisplacementDim>::
             }));
 
     _integration_point_writer.emplace_back(
-        std::make_unique<KappaDIntegrationPointWriter>(
-            integration_order, [this]() {
+        std::make_unique<IntegrationPointWriter>(
+            "kappa_d_ip", 1 /*n_components*/, integration_order, [this]() {
                 // Result containing integration point data for each local
                 // assembler.
                 std::vector<std::vector<double>> result;
@@ -220,6 +222,11 @@ void SmallDeformationNonlocalProcess<DisplacementDim>::
             }
         }
     }
+
+    // Initialize local assemblers after all variables have been set.
+    GlobalExecutor::executeMemberOnDereferenced(
+        &LocalAssemblerInterface::initialize, _local_assemblers,
+        *_local_to_global_index_map);
 }
 
 template <int DisplacementDim>
@@ -288,7 +295,7 @@ void SmallDeformationNonlocalProcess<DisplacementDim>::
 
 template <int DisplacementDim>
 void SmallDeformationNonlocalProcess<
-    DisplacementDim>::preTimestepConcreteProcess(GlobalVector const& x,
+    DisplacementDim>::preTimestepConcreteProcess(GlobalVector const& /*x*/,
                                                  double const t,
                                                  double const dt,
                                                  int const /*process_id*/)
@@ -297,13 +304,22 @@ void SmallDeformationNonlocalProcess<
 
     _process_data.dt = dt;
     _process_data.t = t;
+}
 
-    const int process_id = 0;
+template <int DisplacementDim>
+void SmallDeformationNonlocalProcess<
+    DisplacementDim>::postTimestepConcreteProcess(GlobalVector const& x,
+                                                  double const /*t*/,
+                                                  double const /*dt*/,
+                                                  int const process_id)
+{
+    DBUG("PostTimestep SmallDeformationNonlocalProcess.");
+
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
-        &LocalAssemblerInterface::preTimestep, _local_assemblers,
-        pv.getActiveElementIDs(), *_local_to_global_index_map, x, t, dt);
+        &LocalAssemblerInterface::postTimestep, _local_assemblers,
+        pv.getActiveElementIDs(), *_local_to_global_index_map, x);
 }
 
 template <int DisplacementDim>

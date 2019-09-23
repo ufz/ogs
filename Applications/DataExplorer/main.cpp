@@ -15,7 +15,7 @@ FbxScene* lScene = nullptr;
 
 #include <vtkSmartPointer.h>
 
-#include "BaseLib/BuildInfo.h"
+#include "InfoLib/GitInfo.h"
 #include "BaseLib/LogogSimpleFormatter.h"
 #include "VtkVis/VtkConsoleOutputWindow.h"
 
@@ -38,14 +38,14 @@ int main(int argc, char* argv[])
     QApplication a(argc, argv);
     QApplication::setApplicationName("OpenGeoSys - Data Explorer");
     QApplication::setApplicationVersion(QString::fromStdString(
-        BaseLib::BuildInfo::ogs_version));
+        GitInfoLib::GitInfo::ogs_version));
     QApplication::setOrganizationName("OpenGeoSys Community");
     QApplication::setOrganizationDomain("opengeosys.org");
     setlocale(LC_NUMERIC,"C");
     QLocale::setDefault(QLocale::German);
     auto w = std::make_unique<MainWindow>();
     w->setWindowTitle( w->windowTitle() + " - " +
-        QString::fromStdString(BaseLib::BuildInfo::ogs_version));
+        QString::fromStdString(GitInfoLib::GitInfo::ogs_version));
     if (QCoreApplication::arguments().size()>1) {
         w->loadFileOnStartUp(QCoreApplication::arguments().at(1));
     }

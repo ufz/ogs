@@ -1,5 +1,5 @@
 /**
- * \file   LastSavedFileDirectory.h
+ * \file
  * \author Karsten Rink
  * \date   2014-02-04
  * \brief  Manages the last directory used for saving a file

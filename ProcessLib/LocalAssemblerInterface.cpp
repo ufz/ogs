@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -89,6 +90,13 @@ void LocalAssemblerInterface::setInitialConditions(
     auto const local_x = x.get(indices);
 
     setInitialConditionsConcrete(local_x, t);
+}
+
+void LocalAssemblerInterface::initialize(
+    std::size_t const /*mesh_item_id*/,
+    NumLib::LocalToGlobalIndexMap const& /*dof_table*/)
+{
+    initializeConcrete();
 }
 
 void LocalAssemblerInterface::preTimestep(

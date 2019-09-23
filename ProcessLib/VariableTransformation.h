@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -65,7 +66,7 @@ struct TrafoTanh
 
 struct TrafoScale
 {
-    TrafoScale(const double factor) : _factor{factor} {}
+    explicit TrafoScale(const double factor) : _factor{factor} {}
 
     static const bool constrained = false;
 

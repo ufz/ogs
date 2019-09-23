@@ -25,9 +25,11 @@ pipeline {
   }
   stages {
      // *************************** Git Check **********************************
-    stage('Git Check') {
+    stage('Pre-checks') {
       agent { label "master"}
       steps {
+        sh "pre-commit install"
+        sh "pre-commit run --all-files"
         sh "git config core.whitespace -blank-at-eof"
         sh "git diff --check `git merge-base origin/master HEAD` HEAD -- . ':!*.md' ':!*.pandoc' ':!*.asc' ':!*.dat' ':!*.ts'"
         dir('scripts/jenkins') { stash(name: 'known_hosts', includes: 'known_hosts') }
@@ -99,6 +101,7 @@ pipeline {
           }
           environment {
             OMP_NUM_THREADS = '1'
+            LD_LIBRARY_PATH = "$WORKSPACE/build/lib"
           }
           steps {
             script {
@@ -108,8 +111,10 @@ pipeline {
                   "-DBUILD_SHARED_LIBS=${build_shared} " +
                   '-DOGS_CPU_ARCHITECTURE=generic ' +
                   '-DOGS_BUILD_UTILS=ON ' +
-                  '-DOGS_CONAN_BUILD=outdated ' +
-                  '-DOGS_USE_CVODE=ON '
+                  '-DOGS_CONAN_BUILD=missing ' +
+                  '-DOGS_USE_CVODE=ON ' +
+                  '-DOGS_USE_MFRONT=ON ' +
+                  '-DOGS_USE_PYTHON=ON '
               }
               build {
                 target="package"
@@ -137,6 +142,10 @@ pipeline {
               ])
               recordIssues enabledForFailure: true, filters: [
                 excludeFile('.*qrc_icons\\.cpp.*'), excludeFile('.*QVTKWidget.*'),
+                excludeFile('.*\\.conan.*/TFEL/.*'),
+                excludeFile('.*ThirdParty/MGIS/src.*'),
+                excludeFile('.*MaterialLib/SolidModels/MFront/.*\\.mfront'),
+                excludeFile('.*MaterialLib/SolidModels/MFront/.*\\.hxx'),
                 excludeMessage('.*tmpnam.*')],
                 tools: [gcc4(name: 'GCC', pattern: 'build/build*.log')],
                 unstableTotalAll: 1
@@ -194,7 +203,7 @@ pipeline {
                   '-DOGS_USE_PCH=OFF ' +     // see #1992
                   '-DOGS_BUILD_GUI=ON ' +
                   '-DOGS_BUILD_UTILS=ON ' +
-                  '-DOGS_CONAN_BUILD=outdated ' +
+                  '-DOGS_CONAN_BUILD=missing ' +
                   '-DOGS_BUILD_TESTS=OFF '
               }
               build {
@@ -247,7 +256,7 @@ pipeline {
               configure {
                 cmakeOptions =
                   "-DBUILD_SHARED_LIBS=${build_shared} " +
-                  '-DOGS_CONAN_BUILD=outdated ' +
+                  '-DOGS_CONAN_BUILD=missing ' +
                   '-DOGS_CONAN_BUILD_TYPE=Release ' +
                   '-DOGS_CPU_ARCHITECTURE=generic '
                 config = 'Debug'
@@ -396,7 +405,7 @@ pipeline {
                   '-DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON ' +
                   '-DOGS_BUILD_GUI=ON ' +
                   '-DOGS_BUILD_UTILS=ON ' +
-                  '-DOGS_CONAN_BUILD=outdated ' +
+                  '-DOGS_CONAN_BUILD=missing ' +
                   '-DOGS_BUILD_SWMM=ON '
               }
               build {
@@ -426,7 +435,7 @@ pipeline {
                 excludeFile('.*\\.conan.*'), excludeFile('.*ThirdParty.*'),
                 excludeFile('.*thread.hpp')],
                 tools: [msBuild(name: 'MSVC', pattern: 'build/build*.log')],
-                qualityGates: [[threshold: 10, type: 'TOTAL', unstable: true]]
+                qualityGates: [[threshold: 9, type: 'TOTAL', unstable: true]]
             }
             success {
               archiveArtifacts 'build/*.zip,build/conaninfo.txt'
@@ -453,7 +462,7 @@ pipeline {
                   '-DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON ' +
                   '-DOGS_BUILD_GUI=ON ' +
                   '-DOGS_BUILD_UTILS=ON ' +
-                  '-DOGS_CONAN_BUILD=outdated ' +
+                  '-DOGS_CONAN_BUILD=missing ' +
                   '-DCMAKE_OSX_DEPLOYMENT_TARGET="10.14" '
               }
               build {
@@ -514,7 +523,7 @@ pipeline {
               recordIssues enabledForFailure: true, filters: [
                 excludeFile('.*\\.conan.*')],
                 tools: [clangTidy(name: 'Clang-Tidy', pattern: 'build/build.log')],
-                qualityGates: [[threshold: 513, type: 'TOTAL', unstable: true]]
+                qualityGates: [[threshold: 310, type: 'TOTAL', unstable: true]]
             }
           }
         }
@@ -669,6 +678,34 @@ pipeline {
             }
           }
         }
+        // ******************** Container Maker Images *************************
+        stage('Container Maker Images') {
+          when {
+            beforeAgent true
+            allOf {
+              expression { return params.master_jobs }
+              environment name: 'JOB_NAME', value: 'ufz/ogs/master'
+            }
+          }
+          agent { label 'docker'}
+          steps {
+            script {
+              sh '''git submodule update --init ThirdParty/container-maker
+                virtualenv .venv
+                source .venv/bin/activate
+                pip install -r ThirdParty/container-maker/requirements.txt
+                export PYTHONPATH="${PYTHONPATH}:${PWD}/ThirdParty/container-maker"
+                python ThirdParty/container-maker/ogscm/cli.py -B -C -R --ogs . --pm system --cvode --ompi off 2.1.6 3.1.4 4.0.1
+              '''.stripIndent()
+            }
+          }
+          post {
+            success {
+              archiveArtifacts('_out/images/*.sif')
+              dir('_out') { deleteDir() } // Cleanup
+            }
+          }
+        }
         // ********************* Push Docker Images ***************************
         stage('Push Docker Images') {
           when {
@@ -687,10 +724,12 @@ pipeline {
                 def clangImage = docker.build("ogs6/clang:latest", "-f Dockerfile.clang.full .")
                 withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials',
                   passwordVariable: 'pw', usernameVariable: 'docker_user')]) {
-                    sh 'echo $pw | docker login -u $docker_user --password-stdin'
+                  sh 'echo $pw | docker login -u $docker_user --password-stdin'
+                  retry(3) {
                     gccImage.push()
                     gccGuiImage.push()
                     clangImage.push()
+                  }
                 }
               }
             }

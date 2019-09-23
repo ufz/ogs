@@ -10,14 +10,14 @@
 
 #include "gtest/gtest.h"
 
-#include "BaseLib/BuildInfo.h"
+#include "InfoLib/TestInfo.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/IO/XmlIO/Boost/BoostXmlGmlInterface.h"
 
 TEST(GeoLib, PointToStationConversion)
 {
     std::string const file_name(
-        BaseLib::BuildInfo::data_path +
+        TestInfoLib::TestInfo::data_path +
         "/MeshGeoToolsLib/Hamburg/BrunnenGOK_Outline_ModellHH.gml");
     GeoLib::GEOObjects geo_obj;
     GeoLib::IO::BoostXmlGmlInterface io(geo_obj);

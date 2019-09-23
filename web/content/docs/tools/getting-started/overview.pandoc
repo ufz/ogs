@@ -22,7 +22,7 @@ You'll find examples and applications of the tools. Choose the appropriate tool 
 
 Feel free to get in touch with us if you have any issues with any tool.
 
-The tools are ordered similarly to a workflow to setup might look. 
+The tools are ordered similarly to a workflow to setup might look.
 
 At the beginning of the modeling often external data have to be converted into OGS data formats / OGS data structures. Tools helping the modeler are listed in the data conversion tools section.
 

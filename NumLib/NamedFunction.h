@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -63,7 +64,7 @@ public:
                   std::function<ReturnType(Arguments...)>&& function);
 
     NamedFunction(NamedFunction&& other);
-    NamedFunction(NamedFunction const&);
+    NamedFunction(NamedFunction const& other);
 
     ~NamedFunction();
 

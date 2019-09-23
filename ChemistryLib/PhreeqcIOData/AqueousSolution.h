@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -13,9 +14,11 @@
 #include <string>
 #include <vector>
 
-#include "ChemistryLib/Output.h"
+#include "Output.h"
 
 namespace ChemistryLib
+{
+namespace PhreeqcIOData
 {
 struct Component
 {
@@ -58,4 +61,5 @@ struct AqueousSolution
     std::vector<Component> components;
     MeansOfAdjustingCharge const means_of_adjusting_charge;
 };
+}  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

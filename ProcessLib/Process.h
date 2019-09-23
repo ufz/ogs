@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -235,7 +236,28 @@ private:
     }
 
 protected:
+    /** This function is for general cases, in which all equations of the
+     coupled processes have the same number of unknowns. For the general cases
+     with the staggered scheme, all equations of the coupled processes share one
+     DOF table hold by  @c _local_to_global_index_map. Other cases can be
+     considered by overloading this member function in the derived class.
+     */
     virtual void constructDofTable();
+
+    /**
+     * Construct the DOF table for the monolithic scheme,
+     * which is stored in the
+     * member of this class, @c _local_to_global_index_map.
+     */
+    void constructMonolithicProcessDofTable();
+
+    /**
+     * Construct the DOF table for a specified process in the staggered scheme,
+     * which is stored in the
+     * member of this class, @c _local_to_global_index_map.
+     */
+    void constructDofTableOfSpecifiedProsessStaggerdScheme(
+        const int specified_prosess_id);
 
     /**
      * Get the address of a LocalToGlobalIndexMap, and the status of its memory.

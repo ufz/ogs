@@ -31,13 +31,13 @@ public:
     /**
      * Creates an empty view.
      */
-    DiagramView(QWidget* parent = nullptr);
+    explicit DiagramView(QWidget* parent = nullptr);
     /**
      * Creates a view already containing a graph
      * \param list Contains a list of data points and metainformation to be displayed by the scene.
      * \param parent The parent QWidget.
      */
-    DiagramView(DiagramList* list, QWidget* parent = nullptr);
+    explicit DiagramView(DiagramList* list, QWidget* parent = nullptr);
     ~DiagramView() override;
 
     /// Adds a new graph to the scene.

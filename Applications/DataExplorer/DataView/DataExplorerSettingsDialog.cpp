@@ -1,5 +1,5 @@
 /**
- * \file   DataExplorerSettingsDialog.cpp
+ * \file
  * \author Karsten Rink
  * \date   2014-02-05
  * \brief  Implementation of the DataExplorerSettingsDialog class.

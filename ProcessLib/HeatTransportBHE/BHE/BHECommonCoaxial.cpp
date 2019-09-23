@@ -6,7 +6,6 @@
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
- *
  */
 
 #include "BHECommonCoaxial.h"
@@ -24,11 +23,11 @@ namespace BHE
 std::array<double, BHECommonCoaxial::number_of_unknowns>
 BHECommonCoaxial::pipeHeatCapacities() const
 {
-    double const& rho_r = refrigerant.density;
-    double const& specific_heat_capacity = refrigerant.specific_heat_capacity;
-    double const& rho_g = grout.rho_g;
-    double const& porosity_g = grout.porosity_g;
-    double const& heat_cap_g = grout.heat_cap_g;
+    double const rho_r = refrigerant.density;
+    double const specific_heat_capacity = refrigerant.specific_heat_capacity;
+    double const rho_g = grout.rho_g;
+    double const porosity_g = grout.porosity_g;
+    double const heat_cap_g = grout.heat_cap_g;
 
     return {{/*i*/ rho_r * specific_heat_capacity,
              /*o*/ rho_r * specific_heat_capacity,
@@ -38,21 +37,21 @@ BHECommonCoaxial::pipeHeatCapacities() const
 double BHECommonCoaxial::updateFlowRateAndTemperature(double const T_out,
                                              double const current_time)
 {
-    auto values = apply_visitor(
-        [&](auto const& control) { return control(T_out, current_time); },
-        flowAndTemperatureControl);
+    auto values =
+        visit([&](auto const& control) { return control(T_out, current_time); },
+              flowAndTemperatureControl);
     updateHeatTransferCoefficients(values.flow_rate);
     return values.temperature;
 }
 std::array<double, BHECommonCoaxial::number_of_unknowns>
 BHECommonCoaxial::pipeHeatConductions() const
 {
-    double const& lambda_r = refrigerant.thermal_conductivity;
-    double const& rho_r = refrigerant.density;
-    double const& Cp_r = refrigerant.specific_heat_capacity;
-    double const& alpha_L = _pipes.longitudinal_dispersion_length;
-    double const& porosity_g = grout.porosity_g;
-    double const& lambda_g = grout.lambda_g;
+    double const lambda_r = refrigerant.thermal_conductivity;
+    double const rho_r = refrigerant.density;
+    double const Cp_r = refrigerant.specific_heat_capacity;
+    double const alpha_L = _pipes.longitudinal_dispersion_length;
+    double const porosity_g = grout.porosity_g;
+    double const lambda_g = grout.lambda_g;
 
     auto v = velocities();
     // Here we calculate the laplace coefficients in the governing
@@ -70,8 +69,8 @@ BHECommonCoaxial::pipeHeatConductions() const
 std::array<Eigen::Vector3d, BHECommonCoaxial::number_of_unknowns>
 BHECommonCoaxial::pipeAdvectionVectors() const
 {
-    double const& rho_r = refrigerant.density;
-    double const& Cp_r = refrigerant.specific_heat_capacity;
+    double const rho_r = refrigerant.density;
+    double const Cp_r = refrigerant.specific_heat_capacity;
     auto v = velocities();
 
     return {{// pipe i, Eq. 26 and Eq. 23

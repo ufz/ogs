@@ -16,8 +16,6 @@
 
 #include <vector>
 
-#include "RapidXML/rapidxml.hpp"
-
 #include "BaseLib/IO/XmlIO/XMLInterface.h"
 #include "BaseLib/IO/XmlIO/Qt/XMLQtInterface.h"
 
@@ -63,12 +61,6 @@ private:
 
     /// Reads the stratigraphy of a borehole from an xml-file
     void readStratigraphy( const QDomNode &stratRoot, GeoLib::StationBorehole*  borehole );
-
-    /// Reads GeoLib::Station- or StationBorehole-objects from an xml-file using the RapidXML parser
-    void rapidReadStations(const rapidxml::xml_node<>* station_root, std::vector<GeoLib::Point*> *stations, const std::string &file_name);
-
-    /// Reads the stratigraphy of a borehole from an xml-file using the RapidXML parser
-    void rapidReadStratigraphy(const rapidxml::xml_node<>* strat_root, GeoLib::StationBorehole* borehole);
 
     GeoLib::GEOObjects& _geo_objs;
 };

@@ -3,8 +3,8 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-# < VS 15.0; macOS: https://github.com/sakra/cotire/issues/139
-if(MSVC_VERSION LESS 1910 OR APPLE OR ${CMAKE_CXX_COMPILER} MATCHES "clcache")
+# macOS: https://github.com/sakra/cotire/issues/139
+if(APPLE OR ${CMAKE_CXX_COMPILER} MATCHES "clcache")
     set(OGS_USE_PCH OFF CACHE INTERNAL "")
 endif()
 if(OGS_USE_PCH)
@@ -53,6 +53,16 @@ if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR COMPILER_IS_INTEL)
         -Wall
         -Wextra
     )
+
+    # Coloring output
+    option (FORCE_COLORED_OUTPUT "Always produce ANSI-colored output (GNU/Clang only)." ON)
+    if (${FORCE_COLORED_OUTPUT})
+        if (COMPILER_IS_GCC)
+            add_compile_options (-fdiagnostics-color=always)
+        elseif (COMPILER_IS_CLANG)
+            add_compile_options (-fcolor-diagnostics)
+        endif ()
+    endif()
 
     # Profiling
     if(OGS_PROFILE)

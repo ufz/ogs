@@ -5,7 +5,7 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- * \file   createPermeabilityModel.h
+ * \file
  *
  * Created on August 17, 2016, 2:36 PM
  */

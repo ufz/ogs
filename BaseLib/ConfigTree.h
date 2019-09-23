@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -268,7 +269,7 @@ public:
 
     //! After being moved from, \c other is in an undefined state and must not be
     //! used anymore!
-    ConfigTree& operator=(ConfigTree &&);
+    ConfigTree& operator=(ConfigTree&& other);
 
     //! Used to get the project file name.
     std::string const& getProjectFileName() const { return _filename; }
@@ -437,7 +438,6 @@ public:
     //!\}
 
     /*! \name Methods for accessing subtrees
-     *
      */
     //!\{
 
@@ -469,7 +469,6 @@ public:
     //!\}
 
     /*! \name Methods for ignoring parameters
-     *
      */
     //!\{
 
@@ -520,12 +519,14 @@ public:
 
 private:
     //! Default implementation of reading a value of type T.
-    template<typename T> boost::optional<T>
-    getConfigParameterOptionalImpl(std::string const& param, T*) const;
+    template <typename T>
+    boost::optional<T> getConfigParameterOptionalImpl(std::string const& param,
+                                                      T* /*unused*/) const;
 
     //! Implementation of reading a vector of values of type T.
-    template<typename T> boost::optional<std::vector<T>>
-    getConfigParameterOptionalImpl(std::string const& param, std::vector<T>*) const;
+    template <typename T>
+    boost::optional<std::vector<T>> getConfigParameterOptionalImpl(
+        std::string const& param, std::vector<T>* /*unused*/) const;
 
     struct CountType
     {

@@ -5,7 +5,7 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *  \file   CreepBGRa.h
+ *  \file
  *  Created on July 6, 2018, 9:53 AM
  */
 
@@ -34,7 +34,6 @@ namespace Creep
  * \f]
  * where \f$\sigma_{eff}=\sqrt{\frac{3}{2}}||\mathbf{s}||\f$, \f$A, \sigma_0, n,
  * Q\f$ are parameter, and \f$R\f$ is the gas constant.
- *
  */
 template <int DisplacementDim>
 class CreepBGRa final : public LinearElasticIsotropic<DisplacementDim>

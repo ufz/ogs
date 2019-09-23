@@ -17,7 +17,7 @@ title = "Conservative tracer transport with time varying source (1D/2D)"
 
 ## Overview
 This benchmark describes the transport of a conservative tracer through a saturated porous media. Simulations have been performed with OGS-6 and OGS-5 in both, 1D and 2D domains.
-Additionally, simulations have been compared with experimental data obtained from a hydraulic tracer experiment conducted in a pilot--scale horizontal flow constructed wetland (Boog, 2013; Boog *et al.*, 2019) 
+Additionally, simulations have been compared with experimental data obtained from a hydraulic tracer experiment conducted in a pilot--scale horizontal flow constructed wetland (Boog, 2013; Boog *et al.*, 2019)
 
 The experimental system consists of a box of 4.7 m in length, 1.2 m in width and 1.05 m in depth (Nivala *et al.* 2013).
 The box was filled with gravel giving an average porosity of 0.38. The initial water level was at 1.0 meter and the outflow was realized by an overflow pipe of 1.0 m height.
@@ -51,7 +51,7 @@ The boundary condition of the tracer ($g_{D,left}^{c_{tracer}}$) at the inlet wa
 |$g$       | Gravity acceleration in $y$ direction | 9.81 | m s^-2^ |
 
 ---------------------- ---------- ----------- ------------
-	
+
 Table 1: Material Properties
 
 ---------------------- ---------- ----------- ------------
@@ -69,7 +69,7 @@ Table 1: Material Properties
 |$c_{tracer}(t=0)$ | Initial tracer concentration | 0  | g L^-1^ |
 
 ---------------------- ---------- ----------- ------------
-    
+
 Table 2: Initial and boundary conditions for the 1D scenario
 
 

@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -15,6 +16,8 @@
 #include "MeshLib/Mesh.h"
 
 namespace ChemistryLib
+{
+namespace PhreeqcIOData
 {
 std::vector<EquilibriumPhase> createEquilibriumPhases(
     boost::optional<BaseLib::ConfigTree> const& config,
@@ -58,4 +61,5 @@ std::vector<EquilibriumPhase> createEquilibriumPhases(
 
     return equilibrium_phases;
 }
+}  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

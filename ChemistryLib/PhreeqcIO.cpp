@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -13,11 +14,18 @@
 
 #include "BaseLib/Algorithm.h"
 #include "BaseLib/ConfigTreeUtil.h"
-#include "Output.h"
 #include "PhreeqcIO.h"
+#include "PhreeqcIOData/AqueousSolution.h"
+#include "PhreeqcIOData/EquilibriumPhase.h"
+#include "PhreeqcIOData/KineticReactant.h"
+#include "PhreeqcIOData/Output.h"
+#include "PhreeqcIOData/ReactionRate.h"
+
 #include "ThirdParty/iphreeqc/src/src/IPhreeqc.h"
 
 namespace ChemistryLib
+{
+namespace PhreeqcIOData
 {
 namespace
 {
@@ -31,7 +39,7 @@ std::ostream& operator<<(std::ostream& os,
 }
 }  // namespace
 
-PhreeqcIO::PhreeqcIO(std::string const& project_file_name,
+PhreeqcIO::PhreeqcIO(std::string const project_file_name,
                      std::string&& database,
                      std::vector<AqueousSolution>&& aqueous_solutions,
                      std::vector<EquilibriumPhase>&& equilibrium_phases,
@@ -79,9 +87,8 @@ void PhreeqcIO::doWaterChemistryCalculation(
 {
     setAqueousSolutionsOrUpdateProcessSolutions(
         process_solutions, Status::SettingAqueousSolutions);
-    setTimeStep(dt);
 
-    writeInputsToFile();
+    writeInputsToFile(dt);
 
     execute();
 
@@ -167,7 +174,7 @@ void PhreeqcIO::setAqueousSolutionsOrUpdateProcessSolutions(
     }
 }
 
-void PhreeqcIO::writeInputsToFile()
+void PhreeqcIO::writeInputsToFile(double const dt)
 {
     DBUG("Writing phreeqc inputs into file '%s'.", _phreeqc_input_file.c_str());
     std::ofstream out(_phreeqc_input_file, std::ofstream::out);
@@ -178,7 +185,7 @@ void PhreeqcIO::writeInputsToFile()
                   _phreeqc_input_file.c_str());
     }
 
-    out << *this;
+    out << (*this << dt);
 
     if (!out)
     {
@@ -409,4 +416,5 @@ std::istream& operator>>(std::istream& in, PhreeqcIO& phreeqc_io)
 
     return in;
 }
+}  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

@@ -1,5 +1,5 @@
 /**
- * \file FinalizeVectorAssembly.h
+ * \file
  * \author Wenqing Wang
  * \date Oct, 2013
  *
@@ -8,7 +8,6 @@
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
- *
  */
 
 #pragma once
@@ -17,7 +16,7 @@ namespace MathLib
 {
 /// General function to finalize the vector assembly
 template <typename VEC_T>
-void finalizeVectorAssembly(VEC_T &)
+void finalizeVectorAssembly(VEC_T& /*unused*/)
 {
 }
 

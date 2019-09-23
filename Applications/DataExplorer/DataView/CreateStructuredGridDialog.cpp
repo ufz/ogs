@@ -1,5 +1,5 @@
 /**
- * \file   CreateStructuredGridDialog.cpp
+ * \file
  * \author Karsten Rink
  * \date   2016-02-04
  * \brief  Implementation of the CreateStructuredGridDialog class.

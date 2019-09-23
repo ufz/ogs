@@ -26,7 +26,7 @@ class VtkColorLookupTable;
 class VtkCompositeElementSelectionFilter : public VtkCompositeFilter
 {
 public:
-    VtkCompositeElementSelectionFilter(vtkAlgorithm* inputAlgorithm);
+    explicit VtkCompositeElementSelectionFilter(vtkAlgorithm* inputAlgorithm);
     ~VtkCompositeElementSelectionFilter() override = default;
 
     void init() override;

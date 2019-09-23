@@ -1,0 +1,42 @@
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v2.3.0
+    hooks:
+    -   id: trailing-whitespace
+        args: [--markdown-linebreak-ext=md, --markdown-linebreak-ext=pandoc]
+    -   id: check-added-large-files
+        args: [--maxkb 1024]
+    -   id: check-merge-conflict
+    -   id: check-xml
+    -   id: check-yaml
+-   repo: local
+    hooks:
+    -   id: git-diff-check
+        name: Run git diff --check
+        entry: git diff --check --cached -- ':!*.md' ':!*.pandoc' ':!*.asc' ':!*.dat' ':!*.ts'
+        language: system
+        stages: [commit, manual]
+    -   id: file-extensions
+        name: Check file extensions
+        entry: scripts/hooks/pre-commit-file-extensions.sh
+        language: system
+        files: '.*\.cpp'
+        stages: [commit, manual]
+    -   id: file-names
+        name: Check file names
+        entry: scripts/hooks/pre-commit-file-names.sh
+        language: system
+        stages: [commit, manual]
+    -   id: git-lfs
+        name: Check git lfs files
+        entry: scripts/hooks/pre-commit-git-lfs.sh
+        language: system
+        stages: [commit, manual]
+    -   id: cmake-format
+        name: Format CMake files
+        entry: scripts/hooks/pre-commit-cmake-format.sh
+        language: system
+        files: 'CMakeLists.txt'
+        stages: [commit, manual]
+
+exclude: 'ThirdParty/*|Tests/Data/*|web/static/images/xsd'

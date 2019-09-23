@@ -1,12 +1,10 @@
-APPEND_SOURCE_FILES(SOURCES)
+append_source_files(SOURCES)
 
 add_library(TwoPhaseFlowWithPP ${SOURCES})
 if(BUILD_SHARED_LIBS)
-    install(TARGETS TwoPhaseFlowWithPP LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+    install(TARGETS TwoPhaseFlowWithPP
+            LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 endif()
-target_link_libraries(TwoPhaseFlowWithPP
-    PUBLIC ProcessLib
-    PRIVATE ParameterLib
-)
+target_link_libraries(TwoPhaseFlowWithPP PUBLIC ProcessLib PRIVATE ParameterLib)
 
 include(Tests.cmake)

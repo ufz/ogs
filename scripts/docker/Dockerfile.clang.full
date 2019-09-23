@@ -39,15 +39,15 @@ RUN apt-get update -y && \
         python3-setuptools \
         python3-wheel && \
     rm -rf /var/lib/apt/lists/*
-RUN pip3 install virtualenv
-# CMake version 3.13.4
+RUN pip3 install virtualenv pre-commit cmake-format
+# CMake version 3.12.4
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://cmake.org/files/v3.13/cmake-3.13.4-Linux-x86_64.sh && \
-    /bin/sh /var/tmp/cmake-3.13.4-Linux-x86_64.sh --prefix=/usr/local --skip-license && \
-    rm -rf /var/tmp/cmake-3.13.4-Linux-x86_64.sh
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://cmake.org/files/v3.12/cmake-3.12.4-Linux-x86_64.sh && \
+    /bin/sh /var/tmp/cmake-3.12.4-Linux-x86_64.sh --prefix=/usr/local --skip-license && \
+    rm -rf /var/tmp/cmake-3.12.4-Linux-x86_64.sh
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends software-properties-common && \
     apt-add-repository ppa:git-core/ppa -y && \
@@ -66,6 +66,15 @@ RUN apt-get update && \
     mkdir -p /apps /scratch /lustre /work /projects /data
 
 # Package manager Conan building block
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        pkg-config && \
+    rm -rf /var/lib/apt/lists/*
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        autoconf-archive \
+        libtool && \
+    rm -rf /var/lib/apt/lists/*
 # pip
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -73,12 +82,12 @@ RUN apt-get update -y && \
         python3-setuptools \
         python3-wheel && \
     rm -rf /var/lib/apt/lists/*
-RUN pip3 install conan==1.17.0
+RUN pip3 install conan==1.18.0
 RUN mkdir -p /opt/conan && \
     chmod 777 /opt/conan
 ENV CONAN_USER_HOME=/opt/conan
 LABEL org.opengeosys.pm=conan \
-    org.opengeosys.pm.conan.version=1.17.0
+    org.opengeosys.pm.conan.version=1.18.0
 LABEL org.opengeosys.pm.conan.user_home=/opt/conan
 
 # Include-what-you-use for clang version 7
@@ -108,16 +117,12 @@ ENV CCACHE_DIR=/opt/cache \
 LABEL ccache.dir=/opt/cache \
     ccache.size=15G
 
-RUN apt-get update -y && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        sudo && \
-    rm -rf /var/lib/apt/lists/*
-
 # Jenkins node
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         openssh-client \
-        rsync && \
+        rsync \
+        sudo && \
     rm -rf /var/lib/apt/lists/*
 RUN groupadd --gid 1001 jenkins || true && \
     adduser --uid 500 --gid 1001 --disabled-password --gecos "" jenkins && \

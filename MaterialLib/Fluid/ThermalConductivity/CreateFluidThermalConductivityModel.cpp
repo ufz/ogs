@@ -7,8 +7,7 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *   \file CreateFluidThermalConductivityModel.cpp
- *
+ *   \file
  */
 
 #include "CreateFluidThermalConductivityModel.h"

@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -14,8 +15,9 @@
 #include "BaseLib/Error.h"
 
 #include "BHECommon.h"
+#include "BHECommonUType.h"
 #include "FlowAndTemperatureControl.h"
-#include "PipeConfiguration1U.h"
+#include "PipeConfigurationUType.h"
 
 namespace ProcessLib
 {
@@ -36,14 +38,28 @@ namespace BHE
  * through the thermal resistance values, which are calculated specifically
  * during the initialization of the class.
  */
-class BHE_1U final : public BHECommon
+class BHE_1U final : public BHECommonUType
 {
 public:
     BHE_1U(BoreholeGeometry const& borehole,
            RefrigerantProperties const& refrigerant,
            GroutParameters const& grout,
            FlowAndTemperatureControl const& flowAndTemperatureControl,
-           PipeConfiguration1U const& pipes);
+           PipeConfigurationUType const& pipes)
+        : BHECommonUType{borehole, refrigerant, grout,
+                         flowAndTemperatureControl, pipes}
+    {
+        _thermal_resistances.fill(std::numeric_limits<double>::quiet_NaN());
+
+        // Initialize thermal resistances.
+        auto values = visit(
+            [&](auto const& control) {
+                return control(refrigerant.reference_temperature,
+                               0. /* initial time */);
+            },
+            flowAndTemperatureControl);
+        updateHeatTransferCoefficients(values.flow_rate);
+    }
 
     static constexpr int number_of_unknowns = 4;
     static constexpr int number_of_grout_zones = 2;
@@ -135,10 +151,6 @@ public:
     static constexpr std::pair<int, int> inflow_outflow_bc_component_ids[] = {
         {0, 1}};
 
-private:
-    // Placing it here before using it in the cross_section_areas.
-    PipeConfiguration1U const _pipes;
-
 public:
     std::array<double, number_of_unknowns> crossSectionAreas() const
     {
@@ -161,9 +173,6 @@ private:
     /// 1) Diersch (2013) FEFLOW book on page 958, M.3, or
     /// 2) Diersch (2011) Comp & Geosci 37:1122-1135, Eq. 90-97.
     std::array<double, number_of_unknowns> _thermal_resistances;
-
-    /// Flow velocity inside the pipes. Depends on the flow_rate.
-    double _flow_velocity;
 };
 }  // namespace BHE
 }  // namespace HeatTransportBHE

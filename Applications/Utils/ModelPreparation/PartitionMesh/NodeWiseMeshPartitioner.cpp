@@ -1,5 +1,5 @@
 /*!
-  \file NodeWiseMeshPartitioner.cpp
+  \file
   \date   2016.05
 
   \brief  Define the members of class NodeWiseMeshPartitioner

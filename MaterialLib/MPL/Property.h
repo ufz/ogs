@@ -8,21 +8,26 @@
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
- *
  */
 #pragma once
 
 #include <array>
-#include <boost/variant.hpp>
 #include <string>
+#include <variant>
 
 #include "PropertyType.h"
 #include "VariableType.h"
 
+#include "ParameterLib/SpatialPosition.h"
+
 namespace MaterialPropertyLib
 {
+class Medium;
+class Phase;
+class Component;
+
 /// This is a custom data type for arbitrary properties, based on the
-/// boost::variant container. It can hold scalars, vectors, tensors, and so
+/// std::variant container. It can hold scalars, vectors, tensors, and so
 /// forth.
 enum PropertyDataTypeName
 {
@@ -33,8 +38,8 @@ enum PropertyDataTypeName
     nTensor
 };
 
-using PropertyDataType = boost::
-    variant<double, Pair, Vector, Tensor2d, SymmTensor, Tensor, std::string>;
+using PropertyDataType = std::variant<double, Pair, Vector, Tensor2d,
+                                      SymmTensor, Tensor, std::string>;
 
 /// This class is the base class for any material property of any
 /// scale (i.e. components, phases, media, ...). The single value of
@@ -53,39 +58,52 @@ public:
     virtual PropertyDataType value() const;
     /// This virtual method will compute the property value based on the primary
     /// variables that are passed as arguments.
-    virtual PropertyDataType value(VariableArray const& variable_array) const;
+    virtual PropertyDataType value(VariableArray const& variable_array,
+                                   ParameterLib::SpatialPosition const& pos,
+                                   double const t) const;
     /// This virtual method will compute the derivative of a property
     /// with respect to the given variable pv.
     virtual PropertyDataType dValue(VariableArray const& variable_array,
-                                    Variable const variable) const;
+                                    Variable const variable,
+                                    ParameterLib::SpatialPosition const& pos,
+                                    double const t) const;
     /// This virtual method will compute the second derivative of a
     /// property with respect to the given variables pv1 and pv2.
     virtual PropertyDataType d2Value(VariableArray const& variable_array,
                                      Variable const variable1,
-                                     Variable const variable2) const;
+                                     Variable const variable2,
+                                     ParameterLib::SpatialPosition const& pos,
+                                     double const t) const;
+    virtual void setScale(
+        std::variant<Medium*, Phase*, Component*> /*scale_pointer*/){};
 
     template <typename T>
     T value() const
     {
-        return boost::get<T>(value());
+        return std::get<T>(value());
+    }
+
+    template <typename T>
+    T value(VariableArray const& variable_array,
+            ParameterLib::SpatialPosition const& pos,
+            double const t) const
+    {
+        return std::get<T>(value(variable_array, pos, t));
+    }
+
+    template <typename T>
+    T dValue(VariableArray const& variable_array, Variable const variable,
+             ParameterLib::SpatialPosition const& pos, double const t) const
+    {
+        return std::get<T>(dValue(variable_array, variable, pos, t));
     }
     template <typename T>
-    T value(VariableArray const& variable_array) const
+    T d2Value(VariableArray const& variable_array, Variable const& variable1,
+              Variable const& variable2,
+              ParameterLib::SpatialPosition const& pos, double const t) const
     {
-        return boost::get<T>(value(variable_array));
-    }
-    template <typename T>
-    T dValue(VariableArray const& variable_array,
-             Variable const variable) const
-    {
-        return boost::get<T>(dValue(variable_array, variable));
-    }
-    template <typename T>
-    T d2Value(VariableArray const& variable_array,
-              Variable const& variable1,
-              Variable const& variable2) const
-    {
-        return boost::get<T>(d2Value(variable_array, variable1, variable2));
+        return std::get<T>(
+            d2Value(variable_array, variable1, variable2, pos, t));
     }
 
 protected:
@@ -94,21 +112,18 @@ protected:
     PropertyDataType _dvalue;
 };
 
-/// This method returns the 0-based index of the variant data types. Can be
-/// enhanced by using enums.
-inline std::size_t getType(Property const& p)
-{
-    return p.value().which();
-}
-
-inline void overwriteExistingProperties(PropertyArray& properties,
-                                        PropertyArray& new_properties)
+inline void overwriteExistingProperties(
+    PropertyArray& properties,
+    PropertyArray& new_properties,
+    std::variant<Medium*, Phase*, Component*>
+        scale_pointer)
 {
     for (std::size_t i = 0; i < properties.size(); ++i)
     {
         if (new_properties[i] != nullptr)
         {
             properties[i] = std::move(new_properties[i]);
+            properties[i]->setScale(scale_pointer);
         }
     }
 }

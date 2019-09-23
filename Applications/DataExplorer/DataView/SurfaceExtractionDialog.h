@@ -1,5 +1,5 @@
 /**
- * \file   SurfaceExtractionDialog.h
+ * \file
  * \author Karsten Rink
  * \date   2015-01-29
  * \brief  Definition of the SurfaceExtractionDialog class.
@@ -31,7 +31,7 @@ class SurfaceExtractionDialog : public QDialog, private Ui_SurfaceExtraction
     Q_OBJECT
 
 public:
-    SurfaceExtractionDialog(QDialog* parent = nullptr);
+    explicit SurfaceExtractionDialog(QDialog* parent = nullptr);
     ~SurfaceExtractionDialog() override = default;
 
     int getTolerance() const { return _tolerance; }

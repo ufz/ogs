@@ -8,7 +8,6 @@
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
- *
  */
 
 #include "Medium.h"
@@ -24,7 +23,7 @@ Medium::Medium(std::vector<std::unique_ptr<Phase>>&& phases,
 {
     if (properties)
     {
-        overwriteExistingProperties(_properties, *properties);
+        overwriteExistingProperties(_properties, *properties, this);
     }
 }
 

@@ -31,7 +31,7 @@ class GeoOnMeshMappingDialog : public QDialog, private Ui_GeoOnMeshMapping
     Q_OBJECT
 
 public:
-    GeoOnMeshMappingDialog(
+    explicit GeoOnMeshMappingDialog(
         std::vector<std::unique_ptr<MeshLib::Mesh>> const& mesh_vec,
         QDialog* parent = nullptr);
     ~GeoOnMeshMappingDialog() override;

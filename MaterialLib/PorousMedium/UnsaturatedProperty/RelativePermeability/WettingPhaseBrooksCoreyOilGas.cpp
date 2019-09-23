@@ -5,7 +5,7 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- * \file   WettingPhaseBrooksCoreyOilGas.cpp
+ * \file
  *
  * Created on November 1, 2016, 3:37 PM
  */

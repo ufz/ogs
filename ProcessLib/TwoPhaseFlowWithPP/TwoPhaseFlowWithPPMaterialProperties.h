@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -27,10 +28,7 @@ template <typename PROP_VAL_TYPE>
 class PropertyVector;
 }
 
-namespace ProcessLib
-{
-class SpatialPosition;
-namespace TwoPhaseFlowWithPP
+namespace ProcessLib::TwoPhaseFlowWithPP
 {
     /** This class has a collection of material properties for two-phase flow with PP model
     *  and it makes description of the material properties for two-phase condition,
@@ -124,5 +122,4 @@ protected:
         _relative_permeability_models;
 };
 
-}  // namespace TwoPhaseFlowWithPP
-}  // namespace ProcessLib
+}  // namespace ProcessLib::TwoPhaseFlowWithPP

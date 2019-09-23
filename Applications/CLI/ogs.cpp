@@ -27,7 +27,6 @@
 #endif
 
 // BaseLib
-#include "BaseLib/BuildInfo.h"
 #include "BaseLib/ConfigTreeUtil.h"
 #include "BaseLib/DateTools.h"
 #include "BaseLib/FileTools.h"
@@ -39,6 +38,8 @@
 #include "Applications/ApplicationsLib/ProjectData.h"
 #include "Applications/ApplicationsLib/TestDefinition.h"
 #include "Applications/InSituLib/Adaptor.h"
+#include "InfoLib/CMakeInfo.h"
+#include "InfoLib/GitInfo.h"
 #include "ProcessLib/TimeLoop.h"
 
 #include "NumLib/NumericsConfig.h"
@@ -58,11 +59,11 @@ int main(int argc, char* argv[])
         "See accompanying file LICENSE.txt or "
         "http://www.opengeosys.org/project/license\n"
         "version: " +
-            BaseLib::BuildInfo::ogs_version + "\n" +
+            GitInfoLib::GitInfo::ogs_version + "\n" +
         "CMake arguments: " +
-            BaseLib::BuildInfo::cmake_args,
+            CMakeInfoLib::CMakeInfo::cmake_args,
         ' ',
-        BaseLib::BuildInfo::ogs_version);
+        GitInfoLib::GitInfo::ogs_version);
 
     TCLAP::ValueArg<std::string> reference_path_arg(
         "r", "reference",
@@ -126,7 +127,7 @@ int main(int argc, char* argv[])
     logog_setup.setLevel(log_level_arg.getValue());
 
     INFO("This is OpenGeoSys-6 version %s.",
-         BaseLib::BuildInfo::ogs_version.c_str());
+         GitInfoLib::GitInfo::ogs_version.c_str());
 
 #ifndef _WIN32  // On windows this command line option is not present.
     // Enable floating point exceptions
@@ -234,6 +235,7 @@ int main(int argc, char* argv[])
             INFO("Solve processes.");
 
             auto& time_loop = project.getTimeLoop();
+            time_loop.initialize();
             solver_succeeded = time_loop.loop();
 
 #ifdef USE_INSITU

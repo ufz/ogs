@@ -91,11 +91,13 @@ set(SOURCES
 SET_SOURCE_FILES_PROPERTIES(src/src/Var.c PROPERTIES LANGUAGE CXX)
 
 add_library(iphreeqc STATIC ${SOURCES})
-target_include_directories(iphreeqc PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/src
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/src/phreeqcpp
+target_include_directories(iphreeqc
+    PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/src/phreeqcpp/common
     ${CMAKE_CURRENT_SOURCE_DIR}/src/src/phreeqcpp/PhreeqcKeywords
+    PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/src/phreeqcpp
 )
 set_target_properties(iphreeqc PROPERTIES CXX_STANDARD 14)
 # Exclude iphreeqc target from clang-tidy tests because it handles the above

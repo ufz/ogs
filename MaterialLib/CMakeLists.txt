@@ -10,6 +10,7 @@ append_source_files(SOURCES Fluid/Density)
 append_source_files(SOURCES Fluid/Viscosity)
 append_source_files(SOURCES Fluid/GibbsFreeEnergy)
 append_source_files(SOURCES Fluid/FluidProperties)
+append_source_files(SOURCES Fluid/FluidType)
 append_source_files(SOURCES Fluid/SpecificHeatCapacity)
 append_source_files(SOURCES Fluid/ThermalConductivity)
 append_source_files(SOURCES Fluid/WaterVaporProperties)
@@ -24,10 +25,13 @@ append_source_files(SOURCES PorousMedium/Porosity)
 append_source_files(SOURCES PorousMedium/Storage)
 append_source_files(SOURCES PorousMedium/Permeability)
 append_source_files(SOURCES PorousMedium/UnsaturatedProperty/CapillaryPressure)
-append_source_files(SOURCES PorousMedium/UnsaturatedProperty/RelativePermeability)
+append_source_files(SOURCES
+                    PorousMedium/UnsaturatedProperty/RelativePermeability)
 append_source_files(SOURCES TwoPhaseModels)
 
-add_subdirectory(SolidModels/MFront)
+if(OGS_USE_MFRONT)
+    add_subdirectory(SolidModels/MFront)
+endif()
 
 add_library(MaterialLib ${SOURCES})
 if(BUILD_SHARED_LIBS)
@@ -36,14 +40,13 @@ endif()
 
 include(GenerateExportHeader)
 generate_export_header(MaterialLib)
-target_include_directories(MaterialLib
-    PUBLIC ${CMAKE_CURRENT_BINARY_DIR}
-)
+target_include_directories(MaterialLib PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 
-target_link_libraries(MaterialLib
-    PUBLIC MaterialLib_SolidModels_MFront
-    PRIVATE MathLib MeshLib ParameterLib
-)
+target_link_libraries(MaterialLib PRIVATE MathLib MeshLib ParameterLib)
+
+if(OGS_USE_MFRONT)
+    target_link_libraries(MaterialLib PUBLIC MaterialLib_SolidModels_MFront)
+endif()
 
 if(OGS_USE_PCH)
     cotire(MaterialLib)

@@ -16,6 +16,7 @@
 
 #include "BaseLib/ConfigTree.h"
 #include "MaterialLib/MPL/CreateMedium.h"
+#include "ParameterLib/Parameter.h"
 
 std::unique_ptr<MPL::Medium> createTestMaterial(std::string const& xml)
 {
@@ -23,6 +24,7 @@ std::unique_ptr<MPL::Medium> createTestMaterial(std::string const& xml)
     BaseLib::ConfigTree conf(ptree, "", BaseLib::ConfigTree::onerror,
                              BaseLib::ConfigTree::onwarning);
     auto const& config = conf.getConfigSubtree("medium");
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> parameters;
 
-    return MPL::createMedium(config);
+    return MPL::createMedium(config, parameters);
 }

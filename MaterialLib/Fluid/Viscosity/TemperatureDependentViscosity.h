@@ -7,7 +7,7 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- * \file:   TemperatureDependentViscosity.h
+ * \file
  *
  *  Created on August 10, 2016, 10:45 AM
  */

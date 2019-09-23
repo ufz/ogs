@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -12,6 +13,8 @@
 #include "KineticReactant.h"
 
 namespace ChemistryLib
+{
+namespace PhreeqcIOData
 {
 void KineticReactant::print(std::ostream& os,
                             std::size_t const chemical_system_id) const
@@ -35,4 +38,6 @@ void KineticReactant::print(std::ostream& os,
         os << "\n";
     }
 }
+const ItemType KineticReactant::item_type;
+}  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

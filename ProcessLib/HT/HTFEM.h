@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -12,7 +13,7 @@
 #include <Eigen/Dense>
 #include <vector>
 
-#include "HTMaterialProperties.h"
+#include "HTProcessData.h"
 
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
@@ -50,11 +51,11 @@ public:
           std::size_t const local_matrix_size,
           bool const is_axially_symmetric,
           unsigned const integration_order,
-          HTMaterialProperties const& material_properties,
+          HTProcessData const& process_data,
           const unsigned dof_per_node)
         : HTLocalAssemblerInterface(),
           _element(element),
-          _material_properties(material_properties),
+          _process_data(process_data),
           _integration_method(integration_order)
     {
         // This assertion is valid only if all nodal d.o.f. use the same shape
@@ -94,7 +95,7 @@ public:
     /// Computes the flux in the point \c pnt_local_coords that is given in
     /// local coordinates using the values from \c local_x.
     Eigen::Vector3d getFlux(MathLib::Point3d const& pnt_local_coords,
-                            double const /*t*/,
+                            double const t,
                             std::vector<double> const& local_x) const override
     {
         // eval dNdx and invJ at given point
@@ -127,18 +128,18 @@ public:
             p_int_pt;
 
         auto const& medium =
-            *_material_properties.media_map->getMedium(_element.getID());
+            *_process_data.media_map->getMedium(_element.getID());
         auto const& liquid_phase = medium.phase("AqueousLiquid");
         auto const& solid_phase = medium.phase("Solid");
 
         auto const K = MaterialPropertyLib::formEigenTensor<GlobalDim>(
             solid_phase
                 .property(MaterialPropertyLib::PropertyType::permeability)
-                .value(vars));
+                .value(vars, pos, t));
 
         auto const mu =
             liquid_phase.property(MaterialPropertyLib::PropertyType::viscosity)
-                .template value<double>(vars);
+                .template value<double>(vars, pos, t);
         GlobalDimMatrixType const K_over_mu = K / mu;
 
         auto const p_nodal_values = Eigen::Map<const NodalVectorType>(
@@ -146,13 +147,13 @@ public:
         GlobalDimVectorType q =
             -K_over_mu * shape_matrices.dNdx * p_nodal_values;
 
-        if (this->_material_properties.has_gravity)
+        if (this->_process_data.has_gravity)
         {
             auto const rho_w =
                 liquid_phase
                     .property(MaterialPropertyLib::PropertyType::density)
-                    .template value<double>(vars);
-            auto const b = this->_material_properties.specific_body_force;
+                    .template value<double>(vars, pos, t);
+            auto const b = this->_process_data.specific_body_force;
             q += K_over_mu * rho_w * b;
         }
 
@@ -163,7 +164,7 @@ public:
 
 protected:
     MeshLib::Element const& _element;
-    HTMaterialProperties const& _material_properties;
+    HTProcessData const& _process_data;
 
     IntegrationMethod const _integration_method;
     std::vector<
@@ -173,24 +174,23 @@ protected:
         _ip_data;
 
     double getHeatEnergyCoefficient(
-        MaterialPropertyLib::VariableArray const& vars,
-        const double porosity,
-        const double fluid_density,
-        const double specific_heat_capacity_fluid)
+        MaterialPropertyLib::VariableArray const& vars, const double porosity,
+        const double fluid_density, const double specific_heat_capacity_fluid,
+        ParameterLib::SpatialPosition const& pos, double const t)
     {
         auto const& medium =
-            *_material_properties.media_map->getMedium(this->_element.getID());
+            *_process_data.media_map->getMedium(this->_element.getID());
         auto const& solid_phase = medium.phase("Solid");
 
         auto const specific_heat_capacity_solid =
             solid_phase
                 .property(
                     MaterialPropertyLib::PropertyType::specific_heat_capacity)
-                .template value<double>(vars);
+                .template value<double>(vars, pos, t);
 
         auto const solid_density =
             solid_phase.property(MaterialPropertyLib::PropertyType::density)
-                .template value<double>(vars);
+                .template value<double>(vars, pos, t);
 
         return solid_density * specific_heat_capacity_solid * (1 - porosity) +
                fluid_density * specific_heat_capacity_fluid * porosity;
@@ -199,10 +199,11 @@ protected:
     GlobalDimMatrixType getThermalConductivityDispersivity(
         MaterialPropertyLib::VariableArray const& vars, const double porosity,
         const double fluid_density, const double specific_heat_capacity_fluid,
-        const GlobalDimVectorType& velocity, const GlobalDimMatrixType& I)
+        const GlobalDimVectorType& velocity, const GlobalDimMatrixType& I,
+        ParameterLib::SpatialPosition const& pos, double const t)
     {
         auto const& medium =
-            *_material_properties.media_map->getMedium(_element.getID());
+            *_process_data.media_map->getMedium(_element.getID());
         auto const& solid_phase = medium.phase("Solid");
         auto const& liquid_phase = medium.phase("AqueousLiquid");
 
@@ -210,13 +211,13 @@ protected:
             solid_phase
                 .property(
                     MaterialPropertyLib::PropertyType::thermal_conductivity)
-                .template value<double>(vars);
+                .template value<double>(vars, pos, t);
 
         auto const thermal_conductivity_fluid =
             liquid_phase
                 .property(
                     MaterialPropertyLib::PropertyType::thermal_conductivity)
-                .template value<double>(vars);
+                .template value<double>(vars, pos, t);
 
         double const thermal_conductivity =
             thermal_conductivity_solid * (1 - porosity) +
@@ -250,7 +251,7 @@ protected:
     }
 
     std::vector<double> const& getIntPtDarcyVelocityLocal(
-        const double /*t*/, std::vector<double> const& local_p,
+        const double t, std::vector<double> const& local_p,
         std::vector<double> const& local_T, std::vector<double>& cache) const
     {
         auto const n_integration_points =
@@ -270,7 +271,7 @@ protected:
             &local_p[0], ShapeFunction::NPOINTS);
 
         auto const& medium =
-            *_material_properties.media_map->getMedium(_element.getID());
+            *_process_data.media_map->getMedium(_element.getID());
         auto const& liquid_phase = medium.phase("AqueousLiquid");
         auto const& solid_phase = medium.phase("Solid");
 
@@ -295,23 +296,23 @@ protected:
             auto const K = MaterialPropertyLib::formEigenTensor<GlobalDim>(
                 solid_phase
                     .property(MaterialPropertyLib::PropertyType::permeability)
-                    .value(vars));
+                    .value(vars, pos, t));
 
             auto const mu =
                 liquid_phase
                     .property(MaterialPropertyLib::PropertyType::viscosity)
-                    .template value<double>(vars);
+                    .template value<double>(vars, pos, t);
             GlobalDimMatrixType const K_over_mu = K / mu;
 
             cache_mat.col(ip).noalias() = -K_over_mu * dNdx * p_nodal_values;
 
-            if (_material_properties.has_gravity)
+            if (_process_data.has_gravity)
             {
                 auto const rho_w =
                     liquid_phase
                         .property(MaterialPropertyLib::PropertyType::density)
-                        .template value<double>(vars);
-                auto const b = _material_properties.specific_body_force;
+                        .template value<double>(vars, pos, t);
+                auto const b = _process_data.specific_body_force;
                 // here it is assumed that the vector b is directed 'downwards'
                 cache_mat.col(ip).noalias() += K_over_mu * rho_w * b;
             }

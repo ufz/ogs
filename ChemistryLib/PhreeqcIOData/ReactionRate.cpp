@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -12,6 +13,8 @@
 #include "ReactionRate.h"
 
 namespace ChemistryLib
+{
+namespace PhreeqcIOData
 {
 std::ostream& operator<<(std::ostream& os, ReactionRate const& reaction_rate)
 {
@@ -27,4 +30,5 @@ std::ostream& operator<<(std::ostream& os, ReactionRate const& reaction_rate)
 
     return os;
 }
+}  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

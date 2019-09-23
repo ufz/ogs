@@ -37,3 +37,9 @@
 [submodule "ThirdParty/iphreeqc/src"]
 	path = ThirdParty/iphreeqc/src
 	url = https://github.com/ufz/iphreeqc.git
+[submodule "ThirdParty/MGIS"]
+	path = ThirdParty/MGIS
+	url = https://github.com/ufz/MFrontGenericInterfaceSupport.git
+[submodule "ThirdParty/container-maker"]
+	path = ThirdParty/container-maker
+	url = https://github.com/ufz/ogs-container-maker.git

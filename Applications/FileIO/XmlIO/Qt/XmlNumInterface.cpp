@@ -1,5 +1,5 @@
 /**
- * \file   XmlNumInterface.cpp
+ * \file
  * \author Karsten Rink
  * \date   2014-08-05
  * \brief  Implementation of the XmlNumInterface class.
@@ -20,7 +20,6 @@
 
 #include <logog/include/logog.hpp>
 
-#include "BaseLib/BuildInfo.h"
 #include "BaseLib/FileFinder.h"
 
 

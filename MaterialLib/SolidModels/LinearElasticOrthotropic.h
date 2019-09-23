@@ -5,7 +5,6 @@
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
- *
  */
 
 #pragma once
@@ -171,47 +170,6 @@ public:
                                   double const T) const;
 
     MaterialProperties getMaterialProperties() const { return _mp; }
-
-private:
-    /// Rotation matrix of a forth order tensor in 3D.
-    MathLib::KelvinVector::KelvinMatrixType<3> fourthOrderRotationMatrix(
-        ParameterLib::SpatialPosition const& x) const
-    {
-        if (!_local_coordinate_system)
-        {
-            return MathLib::KelvinVector::KelvinMatrixType<3>::Identity();
-        }
-
-        // 1-based index access for convenience.
-        auto Q = [R = _local_coordinate_system->transformation<3>(x)](
-                     int const i, int const j) { return R(i - 1, j - 1); };
-
-        MathLib::KelvinVector::KelvinMatrixType<3> R;
-        R << Q(1, 1) * Q(1, 1), Q(1, 2) * Q(1, 2), Q(1, 3) * Q(1, 3),
-            std::sqrt(2) * Q(1, 1) * Q(1, 2), std::sqrt(2) * Q(1, 2) * Q(1, 3),
-            std::sqrt(2) * Q(1, 1) * Q(1, 3), Q(2, 1) * Q(2, 1),
-            Q(2, 2) * Q(2, 2), Q(2, 3) * Q(2, 3),
-            std::sqrt(2) * Q(2, 1) * Q(2, 2), std::sqrt(2) * Q(2, 2) * Q(2, 3),
-            std::sqrt(2) * Q(2, 1) * Q(2, 3), Q(3, 1) * Q(3, 1),
-            Q(3, 2) * Q(3, 2), Q(3, 3) * Q(3, 3),
-            std::sqrt(2) * Q(3, 1) * Q(3, 2), std::sqrt(2) * Q(3, 2) * Q(3, 3),
-            std::sqrt(2) * Q(3, 1) * Q(3, 3), std::sqrt(2) * Q(1, 1) * Q(2, 1),
-            std::sqrt(2) * Q(1, 2) * Q(2, 2), std::sqrt(2) * Q(1, 3) * Q(2, 3),
-            Q(1, 1) * Q(2, 2) + Q(1, 2) * Q(2, 1),
-            Q(1, 2) * Q(2, 3) + Q(1, 3) * Q(2, 2),
-            Q(1, 1) * Q(2, 3) + Q(1, 3) * Q(2, 1),
-            std::sqrt(2) * Q(2, 1) * Q(3, 1), std::sqrt(2) * Q(2, 2) * Q(3, 2),
-            std::sqrt(2) * Q(2, 3) * Q(3, 3),
-            Q(2, 1) * Q(3, 2) + Q(2, 2) * Q(3, 1),
-            Q(2, 2) * Q(3, 3) + Q(2, 3) * Q(3, 2),
-            Q(2, 1) * Q(3, 3) + Q(2, 3) * Q(3, 1),
-            std::sqrt(2) * Q(1, 1) * Q(3, 1), std::sqrt(2) * Q(1, 2) * Q(3, 2),
-            std::sqrt(2) * Q(1, 3) * Q(3, 3),
-            Q(1, 1) * Q(3, 2) + Q(1, 2) * Q(3, 1),
-            Q(1, 2) * Q(3, 3) + Q(1, 3) * Q(3, 2),
-            Q(1, 1) * Q(3, 3) + Q(1, 3) * Q(3, 1);
-        return R;
-    }
 
 protected:
     MaterialProperties _mp;

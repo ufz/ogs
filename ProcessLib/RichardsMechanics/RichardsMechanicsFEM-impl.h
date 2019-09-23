@@ -5,7 +5,7 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *  \file   RichardsMechanicsFEM-impl.h
+ *  \file
  *  Created on November 29, 2017, 2:03 PM
  */
 
@@ -281,6 +281,13 @@ void RichardsMechanicsLocalAssembler<
             .noalias() += N_p.transpose() * S_L * rho_LR * alpha *
                           identity2.transpose() * B * w;
     }
+
+    if (_process_data.apply_mass_lumping)
+    {
+        auto Mpp = M.template block<pressure_size, pressure_size>(
+            pressure_index, pressure_index);
+        Mpp = Mpp.colwise().sum().eval().asDiagonal();
+    }
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
@@ -551,6 +558,11 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         local_rhs.template segment<pressure_size>(pressure_index).noalias() +=
             dNdx_p.transpose() * rho_LR * k_rel * rho_Ki_over_mu * b * w;
+    }
+
+    if (_process_data.apply_mass_lumping)
+    {
+        storage_p = storage_p.colwise().sum().eval().asDiagonal();
     }
 
     // pressure equation, pressure part.

@@ -10,13 +10,12 @@ foreach(process ${ProcessesList})
     endif()
 endforeach()
 
-
-APPEND_SOURCE_FILES(SOURCES)
-APPEND_SOURCE_FILES(SOURCES BoundaryCondition)
-APPEND_SOURCE_FILES(SOURCES SurfaceFlux)
-APPEND_SOURCE_FILES(SOURCES Output)
-APPEND_SOURCE_FILES(SOURCES SourceTerms)
-APPEND_SOURCE_FILES(SOURCES Utils)
+append_source_files(SOURCES)
+append_source_files(SOURCES BoundaryCondition)
+append_source_files(SOURCES SurfaceFlux)
+append_source_files(SOURCES Output)
+append_source_files(SOURCES SourceTerms)
+append_source_files(SOURCES Utils)
 
 add_library(ProcessLib ${SOURCES})
 if(BUILD_SHARED_LIBS)
@@ -24,27 +23,22 @@ if(BUILD_SHARED_LIBS)
 endif()
 
 target_link_libraries(ProcessLib
-    PUBLIC
-        BaseLib
-        MaterialLib
-        MathLib
-        MeshGeoToolsLib
-        MeshLib
-        NumLib
-        logog
-        ChemistryLib
-    PRIVATE
-        ParameterLib
-)
+                      PUBLIC BaseLib
+                             MaterialLib
+                             MathLib
+                             MeshGeoToolsLib
+                             MeshLib
+                             NumLib
+                             logog
+                             ChemistryLib
+                      PRIVATE ParameterLib GitInfoLib)
 
 if(OGS_USE_PYTHON)
     add_subdirectory(BoundaryCondition/Python)
-    target_link_libraries(ProcessLib
-        PUBLIC ProcessLibBoundaryConditionPython)
+    target_link_libraries(ProcessLib PUBLIC ProcessLibBoundaryConditionPython)
 
     add_subdirectory(SourceTerms/Python)
-    target_link_libraries(ProcessLib
-        PUBLIC ProcessLibSourceTermPython)
+    target_link_libraries(ProcessLib PUBLIC ProcessLibSourceTermPython)
 endif()
 
 if(OGS_INSITU)

@@ -7,8 +7,7 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *   \file  CreateViscosityModel.cpp
- *
+ *   \file
  */
 
 #include "CreateViscosityModel.h"

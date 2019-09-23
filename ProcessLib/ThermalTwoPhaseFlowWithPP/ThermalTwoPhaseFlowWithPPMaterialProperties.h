@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -41,10 +42,7 @@ class PropertyVector;
 * class, also different enthalpy models for different components are need to be
 * implemented.
 */
-namespace ProcessLib
-{
-class SpatialPosition;
-namespace ThermalTwoPhaseFlowWithPP
+namespace ProcessLib::ThermalTwoPhaseFlowWithPP
 {
 class ThermalTwoPhaseFlowWithPPMaterialProperties final
 {
@@ -144,5 +142,4 @@ private:
         _water_vapor_properties;
 };
 
-}  // namespace ThermalTwoPhaseFlowWithPP
-}  // namespace ProcessLib
+}  // namespace ProcessLib::ThermalTwoPhaseFlowWithPP

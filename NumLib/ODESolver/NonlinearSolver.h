@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -73,7 +74,6 @@ template <NonlinearSolverTag NLTag>
 class NonlinearSolver;
 
 /*! Find a solution to a nonlinear equation using the Newton-Raphson method.
- *
  */
 template <>
 class NonlinearSolver<NonlinearSolverTag::Newton> final

@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -117,15 +118,6 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     DBUG("Use '%s' as intrinsic conductivity parameter.",
          intrinsic_permeability.name.c_str());
 
-    // Storage coefficient
-    auto& specific_storage = ParameterLib::findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS__specific_storage}
-        "specific_storage", parameters, 1, &mesh);
-
-    DBUG("Use '%s' as storage coefficient parameter.",
-         specific_storage.name.c_str());
-
     // Fluid viscosity
     auto& fluid_viscosity = ParameterLib::findParameter<double>(
         config,
@@ -182,19 +174,56 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         std::copy_n(b.data(), b.size(), specific_body_force.data());
     }
 
+    // Initial stress conditions
+    auto const initial_stress = ParameterLib::findOptionalTagParameter<double>(
+        //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS__initial_stress}
+        config, "initial_stress", parameters,
+        // Symmetric tensor size, 4 or 6, not a Kelvin vector.
+        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value,
+        &mesh);
+
     // Reference temperature
-    const auto& reference_temperature =
+    double const reference_temperature =
         //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS__reference_temperature}
         config.getConfigParameter<double>(
             "reference_temperature", std::numeric_limits<double>::quiet_NaN());
+    DBUG("Use 'reference_temperature' as reference temperature.");
+
+    //Specific gas constant
+    double const specific_gas_constant =
+        //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS__specific_gas_constant}
+        config.getConfigParameter<double>(
+            "specific_gas_constant", std::numeric_limits<double>::quiet_NaN());
+    DBUG("Use 'specific_gas_constant' as specific gas constant.");
+
+    // Fluid compressibility
+    double const fluid_compressibility =
+        //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS__fluid_compressibility}
+        config.getConfigParameter<double>(
+            "fluid_compressibility", std::numeric_limits<double>::quiet_NaN());
+    DBUG("Use 'fluid_compressibility' as fluid compressibility parameter.");
+
+    auto const fluid_type =
+        FluidType::strToFluidType(
+            //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS__fluid_type}
+            config.getConfigParameter<std::string>("fluid_type"));
+    DBUG("Use 'fluid_type' as fluid type parameter.");
+
+    if (!FluidType::checkRequiredParams(fluid_type, fluid_compressibility,
+                                        reference_temperature,
+                                        specific_gas_constant))
+    {
+        OGS_FATAL(FluidType::getErrorMsg(fluid_type));
+    }
 
     HydroMechanicsProcessData<DisplacementDim> process_data{
-        materialIDs(mesh),      std::move(solid_constitutive_relations),
-        intrinsic_permeability, specific_storage,
-        fluid_viscosity,        fluid_density,
-        biot_coefficient,       porosity,
-        solid_density,          specific_body_force,
-        reference_temperature};
+        materialIDs(mesh),     std::move(solid_constitutive_relations),
+        initial_stress,        intrinsic_permeability,
+        fluid_viscosity,       fluid_density,
+        biot_coefficient,      porosity,
+        solid_density,         specific_body_force,
+        fluid_compressibility, reference_temperature,
+        specific_gas_constant, fluid_type};
 
     SecondaryVariableCollection secondary_variables;
 

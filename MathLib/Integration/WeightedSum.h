@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -32,9 +33,7 @@ template <typename Method>
 struct SUM<0, Method>
 {
     template <typename F>
-    static
-    double
-    add(F const&)
+    static double add(F const& /*unused*/)
     {
         return 0;
     }

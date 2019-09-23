@@ -25,7 +25,7 @@ class ColorTableView : public QTableView
 
 public:
     /// Constructor
-    ColorTableView(QWidget* parent = nullptr);
+    explicit ColorTableView(QWidget* parent = nullptr);
 };
 
 /**
@@ -37,7 +37,10 @@ class ColorTableViewDelegate : public QItemDelegate
 
 public:
     /// Constructor
-    ColorTableViewDelegate(QWidget* parent = nullptr) : QItemDelegate(parent) {}
+    explicit ColorTableViewDelegate(QWidget* parent = nullptr)
+        : QItemDelegate(parent)
+    {
+    }
     /// Overwrites the paint-method to set user-defined properties instead of the default properties.
     void paint(QPainter* painter, const QStyleOptionViewItem& option,
                const QModelIndex& index) const override;

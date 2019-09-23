@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -29,41 +30,6 @@ namespace ProcessLib::HeatTransportBHE
 {
 struct HeatTransportBHEProcessData
 {
-    HeatTransportBHEProcessData(
-        ParameterLib::Parameter<double> const& thermal_conductivity_solid_,
-        ParameterLib::Parameter<double> const& thermal_conductivity_fluid_,
-        ParameterLib::Parameter<double> const& thermal_conductivity_gas_,
-        ParameterLib::Parameter<double> const& heat_capacity_solid_,
-        ParameterLib::Parameter<double> const& heat_capacity_fluid_,
-        ParameterLib::Parameter<double> const& heat_capacity_gas_,
-        ParameterLib::Parameter<double> const& density_solid_,
-        ParameterLib::Parameter<double> const& density_fluid_,
-        ParameterLib::Parameter<double> const& density_gas_,
-        std::vector<BHE::BHETypes>&& vec_BHEs_)
-        : thermal_conductivity_solid(thermal_conductivity_solid_),
-          thermal_conductivity_fluid(thermal_conductivity_fluid_),
-          thermal_conductivity_gas(thermal_conductivity_gas_),
-          heat_capacity_solid(heat_capacity_solid_),
-          heat_capacity_fluid(heat_capacity_fluid_),
-          heat_capacity_gas(heat_capacity_gas_),
-          density_solid(density_solid_),
-          density_fluid(density_fluid_),
-          density_gas(density_gas_),
-          _vec_BHE_property(std::move(vec_BHEs_))
-    {
-    }
-
-    HeatTransportBHEProcessData(HeatTransportBHEProcessData&& other) = default;
-
-    //! Copies are forbidden.
-    HeatTransportBHEProcessData(HeatTransportBHEProcessData const&) = delete;
-
-    //! Assignments are not needed.
-    void operator=(HeatTransportBHEProcessData const&) = delete;
-
-    //! Assignments are not needed.
-    void operator=(HeatTransportBHEProcessData&&) = delete;
-
     // ! thermal conductivity values for the three phases
     ParameterLib::Parameter<double> const& thermal_conductivity_solid;
     ParameterLib::Parameter<double> const& thermal_conductivity_fluid;
@@ -79,9 +45,9 @@ struct HeatTransportBHEProcessData
     ParameterLib::Parameter<double> const& density_fluid;
     ParameterLib::Parameter<double> const& density_gas;
 
-    MeshLib::PropertyVector<int> const* _mesh_prop_materialIDs = nullptr;
-    std::unordered_map<int, int> _map_materialID_to_BHE_ID;
-
     std::vector<BHE::BHETypes> _vec_BHE_property;
+
+    MeshLib::PropertyVector<int> const* _mesh_prop_materialIDs = nullptr;
+    std::unordered_map<int, int> _map_materialID_to_BHE_ID{};
 };
 }  // namespace ProcessLib::HeatTransportBHE

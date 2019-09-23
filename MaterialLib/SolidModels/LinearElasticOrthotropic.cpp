@@ -5,7 +5,6 @@
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
- *
  */
 
 #include <Eigen/LU>
@@ -68,7 +67,14 @@ LinearElasticOrthotropic<DisplacementDim>::getElasticTensor(
     // clang-format on
 
     KelvinMatrixType<3> const C_ortho = S_ortho.inverse();
-    KelvinMatrixType<3> const Q = fourthOrderRotationMatrix(x);
+    auto const Q = [this, &x]() -> KelvinMatrixType<3> {
+        if (!_local_coordinate_system)
+        {
+            return MathLib::KelvinVector::KelvinMatrixType<3>::Identity();
+        }
+        return MathLib::KelvinVector::fourthOrderRotationMatrix(
+            _local_coordinate_system->transformation<3>(x));
+    }();
 
     // Rotate the forth-order tenser in Kelvin mapping with Q*C_ortho*Q^T and
     // return the top left corner block of size 4x4 for two-dimensional case or

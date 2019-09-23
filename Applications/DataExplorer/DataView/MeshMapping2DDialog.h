@@ -23,7 +23,7 @@ class MeshMapping2DDialog : public QDialog, private Ui_MeshMapping2D
     Q_OBJECT
 
 public:
-    MeshMapping2DDialog(QDialog* parent = nullptr);
+    explicit MeshMapping2DDialog(QDialog* parent = nullptr);
 
     bool useRasterMapping() const { return this->rasterValueButton->isChecked(); }
     bool useStaticMapping() const { return this->staticValueButton->isChecked(); }

@@ -20,7 +20,7 @@ The problem describes a heat source embedded in a fluid--saturated porous medium
 The spherical symmetry is modeled using a 10 m x 10 m disc with a point heat source ($Q=150\; \mathrm{W}$) placed at one corner ($r=0$) and a curved boundary at $r=10\; \mathrm{m}$. Applying rotational axial symmetry at one of the linear boundaries, the model region transforms into a half-space configuration of the spherical symmetrical problem.
 The initial temperature and pore pressure are 273.15 K and 0 Pa respectively.
 The axis-normal displacements were set to zero along the symmetry (inner) boundaries, whereas the pore pressure as well as the temperature are set to their initial values along the outer (curved) boundary.
-The heat coming from the point source is propagated through the medium causing it to heat up and expand until equilibrium (consolidation) is reached. 
+The heat coming from the point source is propagated through the medium causing it to heat up and expand until equilibrium (consolidation) is reached.
 The corresponding derivation of the analytical solution can be found in the work cited below.
 The main project input file is `square_1e2.prj`. Geometry and mesh are stored in `square_1x1.gml` and `quarter_002_2nd.vtu`.
 
@@ -58,7 +58,7 @@ The analytical solution of the coupled THM consolidation problem can be expresse
     g^{\ast} = Yg^{\kappa}-Zg^{c}
 \end{equation}
 
-and 
+and
 
 \begin{equation}
     g^{A}_{,\,i}= \dfrac{2x_{i}At}{r^{4}}\left(f^{A}-1+\dfrac{r}{\sqrt{\pi At}}\exp\left(-\dfrac{r^{2}}{4At}\right)\right),\quad i=1,2,3
@@ -69,13 +69,13 @@ and
 
 For the temperature, porepressure and displacements, the correct solution can be found in the original work:
 \begin{equation}
-    \Delta T = \dfrac{Q}{4\pi Kr}f^{\kappa} 
+    \Delta T = \dfrac{Q}{4\pi Kr}f^{\kappa}
 \end{equation}
 \begin{equation}
     p = \dfrac{X\,Q}{\left(1-\dfrac{c}{\kappa}\right)\,4\pi Kr}\left(f^{\kappa}-f^{c}\right)
 \end{equation}
 \begin{equation}
-    u_{i} = \dfrac{Q a_\text{u}x_{i}}{4\pi Kr}\;g^{\ast} 
+    u_{i} = \dfrac{Q a_\text{u}x_{i}}{4\pi Kr}\;g^{\ast}
 \end{equation}
 
 For the stress components the corrected expressions can be found in the work of Chaudhry et al. (2019):
@@ -107,7 +107,6 @@ The absolute errors between OGS6 and the analytical solution for temperature, pr
 {{< img src="../images/errorpT_vs_t.png" >}}
 
 {{< img src="../images/errordispl_vs_t.png" >}}
-
 
 
 ## References

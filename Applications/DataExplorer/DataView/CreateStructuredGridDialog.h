@@ -1,5 +1,5 @@
 /**
- * \file   CreateStructuredGridDialog.h
+ * \file
  * \author Karsten Rink
  * \date   2016-02-04
  * \brief  Definition of the CreateStructuredGridDialog class.
@@ -27,7 +27,7 @@ class CreateStructuredGridDialog : public QDialog, private Ui_CreateStructuredGr
     Q_OBJECT
 
 public:
-    CreateStructuredGridDialog(QDialog* parent = nullptr);
+    explicit CreateStructuredGridDialog(QDialog* parent = nullptr);
 
 private slots:
     void on_lineButton_toggled()  const;

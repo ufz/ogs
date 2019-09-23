@@ -6,12 +6,11 @@
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
- *
  */
 
 #pragma once
 
-#include <boost/variant.hpp>
+#include <variant>
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 
 namespace ProcessLib
@@ -78,10 +77,10 @@ struct PowerCurveConstantFlow
     double density;
 };
 
-using FlowAndTemperatureControl = boost::variant<TemperatureCurveConstantFlow,
-                                                 FixedPowerConstantFlow,
-                                                 FixedPowerFlowCurve,
-                                                 PowerCurveConstantFlow>;
+using FlowAndTemperatureControl = std::variant<TemperatureCurveConstantFlow,
+                                               FixedPowerConstantFlow,
+                                               FixedPowerFlowCurve,
+                                               PowerCurveConstantFlow>;
 
 }  // namespace BHE
 }  // namespace HeatTransportBHE

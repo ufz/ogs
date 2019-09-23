@@ -5,7 +5,7 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- * \file:   ConstantFluidProperty.h
+ * \file
  *
  * Created on August 15, 2016, 12:11 PM
  */
@@ -22,10 +22,7 @@ namespace Fluid
 class ConstantFluidProperty final : public FluidProperty
 {
 public:
-    explicit ConstantFluidProperty(const double value)
-        : FluidProperty(), _value(value)
-    {
-    }
+    explicit ConstantFluidProperty(const double value) : _value(value) {}
 
     /// Get model name.
     std::string getName() const override { return "Constant"; }

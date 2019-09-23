@@ -32,6 +32,17 @@
 #include "MeshLib/MeshEnums.h"
 #include "MeshLib/Node.h"
 
+namespace
+{
+template <typename It>
+std::array<double, 3> parsePointCoordinates(It& it)
+{
+    return {std::strtod((++it)->c_str(), nullptr),
+            std::strtod((++it)->c_str(), nullptr),
+            std::strtod((++it)->c_str(), nullptr)};
+}
+}  // namespace
+
 namespace FileIO
 {
 int GMSInterface::readBoreholesFromGMS(std::vector<GeoLib::Point*>* boreholes,
@@ -50,7 +61,6 @@ int GMSInterface::readBoreholesFromGMS(std::vector<GeoLib::Point*>* boreholes,
     std::string cName;
     std::string sName;
     std::list<std::string>::const_iterator it;
-    auto* pnt = new GeoLib::Point();
     GeoLib::StationBorehole* newBorehole = nullptr;
 
     /* skipping first line because it contains field names */
@@ -66,19 +76,19 @@ int GMSInterface::readBoreholesFromGMS(std::vector<GeoLib::Point*>* boreholes,
             if (*fields.begin() == cName)  // add new layer
             {
                 it = fields.begin();
-                (*pnt)[0] = strtod((++it)->c_str(), nullptr);
-                (*pnt)[1] = strtod((++it)->c_str(), nullptr);
-                (*pnt)[2] = strtod((++it)->c_str(), nullptr);
+                auto const pnt = parsePointCoordinates(it);
 
                 // check if current layer has a thickness of 0.0.
                 // if so skip it since it will mess with the vtk-visualisation
                 // later on!
-                if ((*pnt)[2] != depth)
+                if (pnt[2] != depth)
                 {
+                    if (newBorehole == nullptr)
+                        OGS_FATAL("Trying to access a nullptr.");
                     newBorehole->addSoilLayer(
-                        (*pnt)[0], (*pnt)[1], (*pnt)[2], sName);
+                        pnt[0], pnt[1], pnt[2], sName);
                     sName = (*(++it));
-                    depth = (*pnt)[2];
+                    depth = pnt[2];
                 }
                 else
                     WARN(
@@ -95,13 +105,11 @@ int GMSInterface::readBoreholesFromGMS(std::vector<GeoLib::Point*>* boreholes,
                 }
                 cName = *fields.begin();
                 it = fields.begin();
-                (*pnt)[0] = strtod((++it)->c_str(), nullptr);
-                (*pnt)[1] = strtod((++it)->c_str(), nullptr);
-                (*pnt)[2] = strtod((++it)->c_str(), nullptr);
+                auto const pnt = parsePointCoordinates(it);
                 sName = (*(++it));
                 newBorehole = GeoLib::StationBorehole::createStation(
-                    cName, (*pnt)[0], (*pnt)[1], (*pnt)[2], 0);
-                depth = (*pnt)[2];
+                    cName, pnt[0], pnt[1], pnt[2], 0);
+                depth = pnt[2];
             }
         }
         else

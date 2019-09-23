@@ -14,7 +14,6 @@
                 <poissons_ratio>nu</poissons_ratio>
             </constitutive_relation>
             <intrinsic_permeability>k</intrinsic_permeability>
-            <specific_storage>S</specific_storage>
             <fluid_viscosity>mu</fluid_viscosity>
             <fluid_density>rho_f</fluid_density>
             <biot_coefficient>alpha</biot_coefficient>
@@ -36,6 +35,9 @@
                 <secondary_variable type="static" internal_name="velocity" output_name="velocity"/>
             </secondary_variables>
             <specific_body_force>0 0</specific_body_force>
+            <fluid_type>compressible_fluid</fluid_type>
+            <!--this value creates the same result as a specific storage of S = 1e-5 -->
+            <fluid_compressibility>3.33333333333e-5</fluid_compressibility>
         </process>
     </processes>
     <time_loop>
@@ -113,11 +115,6 @@
             <name>k</name>
             <type>Constant</type>
             <value>4.9346165e-11</value>
-        </parameter>
-        <parameter>
-            <name>S</name>
-            <type>Constant</type>
-            <value>1e-5</value>
         </parameter>
         <parameter>
             <name>mu</name>

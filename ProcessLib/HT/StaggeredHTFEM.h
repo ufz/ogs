@@ -5,7 +5,7 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *  \file   StaggeredHTFEM.h
+ *  \file
  *  Created on October 11, 2017, 1:42 PM
  */
 
@@ -55,12 +55,12 @@ public:
                    std::size_t const local_matrix_size,
                    bool is_axially_symmetric,
                    unsigned const integration_order,
-                   HTMaterialProperties const& material_properties,
+                   HTProcessData const& process_data,
                    const int heat_transport_process_id,
                    const int hydraulic_process_id)
         : HTFEM<ShapeFunction, IntegrationMethod, GlobalDim>(
               element, local_matrix_size, is_axially_symmetric,
-              integration_order, material_properties, 1),
+              integration_order, process_data, 1),
         _heat_transport_process_id(heat_transport_process_id),
         _hydraulic_process_id(hydraulic_process_id)
     {

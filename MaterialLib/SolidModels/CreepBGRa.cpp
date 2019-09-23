@@ -5,7 +5,7 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *  \file   CreepBGRa.cpp
+ *  \file
  *  Created on July 6, 2018, 9:53 AM
  */
 
@@ -74,31 +74,26 @@ CreepBGRa<DisplacementDim>::integrateStress(
         dt * constant_coefficient *
         std::exp(-Q / (MaterialLib::PhysicalConstant::IdealGasConstant * T));
 
-    // In newton_solver.solve(), the Jacobian is calculated first, and then
-    // then comes the assembly of the residue vector. In order to save
-    // computation time, the following two variables are set visible in this
-    // function. The two variables keep the computation results of the
-    // norm of the deviatoric stress and 2bG||s_{n+1}||^{n-1} in
-    // update_jacobian, and then they are directly used in update_residual
-    // without repeating the computation. Of course, update_jacobian is not a
-    // pure function anymore, but has side effects.
-    double pow_norm_s_n1_n_minus_one_2b_G = 0.;
+    double const G2b = 2.0 * b * this->_mp.mu(t, x);
 
-    KelvinVector s_n1;
-    auto const update_jacobian = [&](JacobianMatrix& jacobian) {
-        // side effect
-        s_n1 = deviatoric_matrix * solution;
+    auto const update_jacobian = [&solution, &G2b, &n](JacobianMatrix& jacobian) {
+        auto const& D = Invariants::deviatoric_projection;
+        KelvinVector const s_n1 = D * solution;
         double const norm_s_n1 = Invariants::FrobeniusNorm(s_n1);
-        double const G2b = 2.0 * b * this->_mp.mu(t, x);
-        // side effect
-        pow_norm_s_n1_n_minus_one_2b_G = G2b * std::pow(norm_s_n1, n - 1);
+        double const pow_norm_s_n1_n_minus_one_2b_G =
+            G2b * std::pow(norm_s_n1, n - 1);
         jacobian = KelvinMatrix::Identity() +
-                   (pow_norm_s_n1_n_minus_one_2b_G * deviatoric_matrix +
+                   (pow_norm_s_n1_n_minus_one_2b_G * D +
                     (n - 1) * G2b * std::pow(norm_s_n1, n - 3) * s_n1 *
                         s_n1.transpose());
     };
 
-    auto const update_residual = [&](ResidualVectorType& r) {
+    auto const update_residual = [&solution, &G2b, &n,
+                                  &sigma_try](ResidualVectorType& r) {
+        KelvinVector const s_n1 = Invariants::deviatoric_projection * solution;
+        double const norm_s_n1 = Invariants::FrobeniusNorm(s_n1);
+        double const pow_norm_s_n1_n_minus_one_2b_G =
+            G2b * std::pow(norm_s_n1, n - 1);
         r = solution - sigma_try + pow_norm_s_n1_n_minus_one_2b_G * s_n1;
     };
 

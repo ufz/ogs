@@ -5,7 +5,7 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- * \file:   Porosity.h
+ * \file
  *
  * Created on August 16, 2016, 12:53 PM
  */

@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -32,6 +33,13 @@ MathLib::Point3d getBulkElementPoint(MeshLib::Quad const& quad,
 /// coordinates of the quad, to 3d point existing on a hexahedron face also in
 /// local coordinates.
 MathLib::Point3d getBulkElementPoint(MeshLib::Hex const& hex,
+                                     std::size_t const face_id,
+                                     MathLib::WeightedPoint2D const& wp);
+
+/// Maps the given lower dimensional 2d boundary point \c wp of a quad or
+/// triangle element, given in local coordinates of the quad or triangle, to a
+/// 3d point existing on a tet face also in local coordinates.
+MathLib::Point3d getBulkElementPoint(MeshLib::Tet const& tet,
                                      std::size_t const face_id,
                                      MathLib::WeightedPoint2D const& wp);
 

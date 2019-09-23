@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -224,7 +225,7 @@ public:
             makeLocalAssemblerBuilder<NumLib::ShapeLine2>();
 #endif
 
-#if OGS_MAX_ELEMENT_DIM >= 3 && OGS_MAX_ELEMENT_ORDER >= 2
+#if OGS_MAX_ELEMENT_DIM >= 2 && OGS_MAX_ELEMENT_ORDER >= 2
         _builder[std::type_index(typeid(MeshLib::Line3))] =
             makeLocalAssemblerBuilder<NumLib::ShapeLine3>();
 #endif
@@ -343,7 +344,7 @@ private:
     /// combinations of shape functions and global dimensions: (Line2, 1),
     /// (Line2, 2), (Line2, 3), (Hex20, 3) but not (Hex20, 2) or (Hex20, 1).
     template <typename ShapeFunction>
-    static LADataBuilder makeLocalAssemblerBuilder(std::true_type*)
+    static LADataBuilder makeLocalAssemblerBuilder(std::true_type* /*unused*/)
     {
         return [](MeshLib::Element const& e,
                   std::size_t const n_variables,
@@ -374,7 +375,7 @@ private:
     /// Returns nullptr for shape functions whose dimensions are less than the
     /// global dimension.
     template <typename ShapeFunction>
-    static LADataBuilder makeLocalAssemblerBuilder(std::false_type*)
+    static LADataBuilder makeLocalAssemblerBuilder(std::false_type* /*unused*/)
     {
         return nullptr;
     }

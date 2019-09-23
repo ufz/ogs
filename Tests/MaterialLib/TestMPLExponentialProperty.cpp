@@ -26,34 +26,35 @@ TEST(MaterialPropertyLib, ExponentialProperty)
     MaterialPropertyLib::VariableArray variable_array;
     variable_array[static_cast<int>(
         MaterialPropertyLib::Variable::temperature)] = 20;
+    ParameterLib::SpatialPosition const pos;
+    double const time = std::numeric_limits<double>::quiet_NaN();
     ASSERT_NEAR(
-        boost::get<double>(exp_property.value(variable_array)),
+        std::get<double>(exp_property.value(variable_array, pos, time)),
         y_ref * (std::exp(-factor *
-                          (boost::get<double>(variable_array[static_cast<int>(
+                          (std::get<double>(variable_array[static_cast<int>(
                                MaterialPropertyLib::Variable::temperature)]) -
                            reference_condition))),
         1.e-10);
     ASSERT_EQ(
-        boost::get<double>(exp_property.dValue(
-            variable_array, MaterialPropertyLib::Variable::phase_pressure)),
+        std::get<double>(exp_property.dValue(
+            variable_array, MaterialPropertyLib::Variable::phase_pressure, pos, time)),
         0.0);
     ASSERT_NEAR(
-        boost::get<double>(exp_property.dValue(
-            variable_array, MaterialPropertyLib::Variable::temperature)),
+        std::get<double>(exp_property.dValue(
+            variable_array, MaterialPropertyLib::Variable::temperature, pos, time)),
         -y_ref * factor *
             std::exp(-factor *
-                     (boost::get<double>(variable_array[static_cast<int>(
+                     (std::get<double>(variable_array[static_cast<int>(
                           MaterialPropertyLib::Variable::temperature)]) -
                       reference_condition)),
         1.e-16);
     ASSERT_NEAR(
-        boost::get<double>(
-            exp_property.d2Value(variable_array,
-                                 MaterialPropertyLib::Variable::temperature,
-                                 MaterialPropertyLib::Variable::temperature)),
+        std::get<double>(exp_property.d2Value(
+            variable_array, MaterialPropertyLib::Variable::temperature,
+            MaterialPropertyLib::Variable::temperature, pos, time)),
         y_ref * std::pow(factor, 2) *
             std::exp(-factor *
-                     (boost::get<double>(variable_array[static_cast<int>(
+                     (std::get<double>(variable_array[static_cast<int>(
                           MaterialPropertyLib::Variable::temperature)]) -
                       reference_condition)),
         1.e-16);

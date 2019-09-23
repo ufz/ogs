@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -51,12 +52,6 @@ struct IntegrationPointData final
 
     // mechanical strain
     typename BMatricesType::KelvinVectorType eps_m, eps_m_prev;
-
-    // Non-equilibrium initial stress.
-    typename BMatricesType::KelvinVectorType sigma_neq =
-        BMatricesType::KelvinVectorType::Zero(
-            MathLib::KelvinVector::KelvinVectorDimensions<
-                DisplacementDim>::value);
 
     MaterialLib::Solids::MechanicsBase<DisplacementDim> const& solid_material;
     std::unique_ptr<typename MaterialLib::Solids::MechanicsBase<
@@ -153,9 +148,36 @@ public:
                               std::vector<double>& local_rhs_data,
                               std::vector<double>& local_Jac_data) override;
 
-    void preTimestepConcrete(std::vector<double> const& /*local_x*/,
-                             double const /*t*/,
-                             double const /*delta_t*/) override
+    void initializeConcrete() override
+    {
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
+        for (unsigned ip = 0; ip < n_integration_points; ip++)
+        {
+            auto& ip_data = _ip_data[ip];
+
+            /// Set initial stress from parameter.
+            if (_process_data.initial_stress != nullptr)
+            {
+                ParameterLib::SpatialPosition const x_position{
+                    boost::none, _element.getID(), ip,
+                    MathLib::Point3d(interpolateCoordinates<ShapeFunction,
+                                                            ShapeMatricesType>(
+                        _element, ip_data.N))};
+
+                ip_data.sigma =
+                    MathLib::KelvinVector::symmetricTensorToKelvinVector<
+                        DisplacementDim>((*_process_data.initial_stress)(
+                        std::numeric_limits<
+                            double>::quiet_NaN() /* time independent */,
+                        x_position));
+            }
+
+            ip_data.pushBackState();
+        }
+    }
+
+    void postTimestepConcrete(std::vector<double> const& /*local_x*/) override
     {
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();

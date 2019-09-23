@@ -33,36 +33,33 @@ public:
     /**
      * Prints the usage to stdout.  Can be overridden to
      * produce alternative behavior.
-     * \param c - The CmdLine object the output is generated for.
+     * \param _cmd - The CmdLine object the output is generated for.
      */
-    virtual void usage(TCLAP::CmdLineInterface& c);
+    virtual void usage(TCLAP::CmdLineInterface& _cmd);
 
     /**
      * Prints (to stderr) an error message, short usage
      * Can be overridden to produce alternative behavior.
-     * \param c - The CmdLine object the output is generated for.
+     * \param _cmd - The CmdLine object the output is generated for.
      * \param e - The ArgException that caused the failure.
      */
-    virtual void failure(TCLAP::CmdLineInterface& c,
-            TCLAP::ArgException& e );
+    virtual void failure(TCLAP::CmdLineInterface& _cmd, TCLAP::ArgException& e);
 
 protected:
-
     /**
      * Writes a brief usage message with short args.
-     * \param c - The CmdLine object the output is generated for.
+     * \param _cmd - The CmdLine object the output is generated for.
      * \param os - The stream to write the message to.
      */
-    void _shortUsage( TCLAP::CmdLineInterface& c, std::ostream& os ) const;
+    void _shortUsage(TCLAP::CmdLineInterface& _cmd, std::ostream& os) const;
 
     /**
      * Writes a longer usage message with long and short args,
      * provides descriptions and prints message.
-     * \param c - The CmdLine object the output is generated for.
+     * \param _cmd - The CmdLine object the output is generated for.
      * \param os - The stream to write the message to.
      */
-    void _longUsage( TCLAP::CmdLineInterface& c, std::ostream& os ) const;
-
+    void _longUsage(TCLAP::CmdLineInterface& _cmd, std::ostream& os) const;
 };
 
 inline void TCLAPCustomOutput::usage(TCLAP::CmdLineInterface& _cmd )

@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -141,5 +142,39 @@ Parameter<ParameterDataType>& findParameter(
 
     return findParameter<ParameterDataType>(name, parameters, num_components,
                                             mesh);
+}
+
+/// Find a parameter of specific type for a name given in the process
+/// configuration under the optional tag.
+/// If the tag is not present, a nullptr will be returned.
+/// The parameter must have the specified number of components.
+/// In the process config a parameter is referenced by a name. For example it
+/// will be looking for a parameter named "K" in the list of parameters
+/// when the tag is "hydraulic_conductivity":
+/// \code
+///     <process>
+///         ...
+///         <hydraulic_conductivity>K</hydraulic_conductivity>
+///     </process>
+/// \endcode
+/// and return a pointer to that parameter. Additionally it checks for the
+/// type of the found parameter.
+template <typename ParameterDataType>
+Parameter<ParameterDataType>* findOptionalTagParameter(
+    BaseLib::ConfigTree const& process_config, std::string const& tag,
+    std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+    int const num_components, MeshLib::Mesh const* const mesh = nullptr)
+{
+    // Find parameter name in process config.
+    auto const name =
+        //! \ogs_file_special
+        process_config.getConfigParameterOptional<std::string>(tag);
+
+    if (!name)
+    {
+        return nullptr;
+    }
+    return &findParameter<ParameterDataType>(*name, parameters, num_components,
+                                             mesh);
 }
 }  // namespace ParameterLib

@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -92,7 +93,7 @@ public:
     }
 
     void computeSecondaryVariableConcreteWithVector(
-        const double t, Eigen::VectorXd const& local_x) override;
+        const double t, Eigen::VectorXd const& local_u) override;
 
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override

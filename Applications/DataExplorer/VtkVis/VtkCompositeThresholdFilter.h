@@ -22,7 +22,7 @@
 class VtkCompositeThresholdFilter : public VtkCompositeFilter
 {
 public:
-    VtkCompositeThresholdFilter(vtkAlgorithm* inputAlgorithm);
+    explicit VtkCompositeThresholdFilter(vtkAlgorithm* inputAlgorithm);
     ~VtkCompositeThresholdFilter() override;
 
     void init() override;

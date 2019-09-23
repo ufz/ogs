@@ -15,7 +15,7 @@
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
 
-#include "BaseLib/BuildInfo.h"
+#include "InfoLib/GitInfo.h"
 #include "BaseLib/Error.h"
 #include "BaseLib/Subdivision.h"
 #include "BaseLib/TCLAPCustomOutput.h"
@@ -67,11 +67,11 @@ int main (int argc, char* argv[])
         "https://docs.opengeosys.org/docs/tools/meshing/"
         "structured-mesh-generation.\n\n"
         "OpenGeoSys-6 software, version " +
-            BaseLib::BuildInfo::ogs_version +
+            GitInfoLib::GitInfo::ogs_version +
             ".\n"
             "Copyright (c) 2012-2019, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
-        ' ', BaseLib::BuildInfo::ogs_version);
+        ' ', GitInfoLib::GitInfo::ogs_version);
 
     auto tclapOutput = std::make_unique<BaseLib::TCLAPCustomOutput>();
     cmd.setOutput(tclapOutput.get());

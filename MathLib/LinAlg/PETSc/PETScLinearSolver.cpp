@@ -1,5 +1,5 @@
 /*!
-   \file  PETScLinearSolver.cpp
+   \file
    \brief Definition of class PETScLinearSolver, which defines a solver object
          based on PETSc routines.
 

@@ -8,7 +8,6 @@
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
- *
  */
 
 #include <boost/optional.hpp>
@@ -18,6 +17,10 @@
 namespace BaseLib
 {
 class ConfigTree;
+}
+namespace ParameterLib
+{
+struct ParameterBase;
 }
 namespace MaterialPropertyLib
 {
@@ -37,5 +40,7 @@ namespace MaterialPropertyLib
 /// assigned. These default properties average the component properties,
 /// weighted by mole fraction.
 std::vector<std::unique_ptr<Phase>> createPhases(
-    boost::optional<BaseLib::ConfigTree> const& config);
+    boost::optional<BaseLib::ConfigTree> const& config,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
+        parameters);
 }  // namespace MaterialPropertyLib

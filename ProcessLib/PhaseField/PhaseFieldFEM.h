@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -207,9 +208,19 @@ public:
         std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
         LocalCoupledSolutions const& local_coupled_solutions) override;
 
-    void preTimestepConcrete(std::vector<double> const& /*local_x*/,
-                             double const /*t*/,
-                             double const /*delta_t*/) override
+    void initializeConcrete() override
+    {
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
+
+        for (unsigned ip = 0; ip < n_integration_points; ip++)
+        {
+            _ip_data[ip].pushBackState();
+        }
+    }
+
+    void postTimestepConcrete(std::vector<double> const& /*local_x*/
+                              ) override
     {
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();

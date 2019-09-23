@@ -5,7 +5,6 @@
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
- *
  */
 
 #pragma once
@@ -18,7 +17,7 @@ namespace MaterialLib::Fracture::Permeability
 class ConstantPermeability final : public Permeability
 {
 public:
-    ConstantPermeability(double const permeability);
+    explicit ConstantPermeability(double const permeability);
 
 private:
     double permeability(PermeabilityState const* const /*state*/,

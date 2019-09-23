@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
-    <mesh>mesh2D.vtu</mesh>
-    <geometry>square.gml</geometry>
+    <meshes>
+        <mesh>mesh2D.vtu</mesh>
+        <mesh>top.vtu</mesh>
+        <mesh>bottom.vtu</mesh>
+    </meshes>
     <processes>
         <process>
             <name>LiquidFlow</name>
@@ -124,14 +127,12 @@
             <initial_condition>p0</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>square</geometrical_set>
-                    <geometry>top</geometry>
+                    <mesh>top</mesh>
                     <type>Dirichlet</type>
                     <parameter>bc_top</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <geometrical_set>square</geometrical_set>
-                    <geometry>bottom</geometry>
+                    <mesh>bottom</mesh>
                     <type>DirichletWithinTimeInterval</type>
                     <parameter>bc_bottom</parameter>
                     <time_interval>

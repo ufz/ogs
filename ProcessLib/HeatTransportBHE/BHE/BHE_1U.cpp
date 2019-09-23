@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -20,32 +21,14 @@ namespace HeatTransportBHE
 {
 namespace BHE
 {
-BHE_1U::BHE_1U(BoreholeGeometry const& borehole,
-               RefrigerantProperties const& refrigerant,
-               GroutParameters const& grout,
-               FlowAndTemperatureControl const& flowAndTemperatureControl,
-               PipeConfiguration1U const& pipes)
-    : BHECommon{borehole, refrigerant, grout, flowAndTemperatureControl},
-      _pipes(pipes)
-{
-    // Initialize thermal resistances.
-    auto values = apply_visitor(
-        [&](auto const& control) {
-            return control(refrigerant.reference_temperature,
-                           0. /* initial time */);
-        },
-        flowAndTemperatureControl);
-    updateHeatTransferCoefficients(values.flow_rate);
-}
-
 std::array<double, BHE_1U::number_of_unknowns> BHE_1U::pipeHeatCapacities()
     const
 {
-    double const& rho_r = refrigerant.density;
-    double const& specific_heat_capacity = refrigerant.specific_heat_capacity;
-    double const& rho_g = grout.rho_g;
-    double const& porosity_g = grout.porosity_g;
-    double const& heat_cap_g = grout.heat_cap_g;
+    double const rho_r = refrigerant.density;
+    double const specific_heat_capacity = refrigerant.specific_heat_capacity;
+    double const rho_g = grout.rho_g;
+    double const porosity_g = grout.porosity_g;
+    double const heat_cap_g = grout.heat_cap_g;
 
     return {{/*i1*/ rho_r * specific_heat_capacity,
              /*o1*/ rho_r * specific_heat_capacity,
@@ -56,12 +39,12 @@ std::array<double, BHE_1U::number_of_unknowns> BHE_1U::pipeHeatCapacities()
 std::array<double, BHE_1U::number_of_unknowns> BHE_1U::pipeHeatConductions()
     const
 {
-    double const& lambda_r = refrigerant.thermal_conductivity;
-    double const& rho_r = refrigerant.density;
-    double const& Cp_r = refrigerant.specific_heat_capacity;
-    double const& alpha_L = _pipes.longitudinal_dispersion_length;
-    double const& porosity_g = grout.porosity_g;
-    double const& lambda_g = grout.lambda_g;
+    double const lambda_r = refrigerant.thermal_conductivity;
+    double const rho_r = refrigerant.density;
+    double const Cp_r = refrigerant.specific_heat_capacity;
+    double const alpha_L = _pipes.longitudinal_dispersion_length;
+    double const porosity_g = grout.porosity_g;
+    double const lambda_g = grout.lambda_g;
 
     double const velocity_norm = std::abs(_flow_velocity) * std::sqrt(2);
 
@@ -132,34 +115,22 @@ std::pair<double, double> thermalResistancesGroutSoil(double chi,
         return 1.0 / ((1.0 / R_gg) + (1.0 / (2.0 * R_gs)));
     };
 
-    int count = 0;
-    while (constraint() < 0.0)
+    std::array<double, 3> const multiplier{chi * 0.66, chi * 0.5 * 0.66, 0.0};
+    for (double m_chi : multiplier)
     {
-        if (count == 0)
+        if (constraint() >= 0)
         {
-            chi *= 0.66;
-            R_gs = compute_R_gs(chi, R_g);
-            R_gg = compute_R_gg(chi, R_gs, R_ar, R_g);
-        }
-        if (count == 1)
-        {
-            chi *= 0.5;
-            R_gs = compute_R_gs(chi, R_g);
-            R_gg = compute_R_gg(chi, R_gs, R_ar, R_g);
-        }
-        if (count == 2)
-        {
-            chi = 0.0;
-            R_gs = compute_R_gs(chi, R_g);
-            R_gg = compute_R_gg(chi, R_gs, R_ar, R_g);
             break;
         }
         DBUG(
             "Warning! Correction procedure was applied due to negative thermal "
-            "resistance! Correction step #%d.\n",
-            count);
-        count++;
+            "resistance! Chi = %f.\n",
+            m_chi);
+
+        R_gs = compute_R_gs(m_chi, R_g);
+        R_gg = compute_R_gg(m_chi, R_gs, R_ar, R_g);
     }
+
     return {R_gg, R_gs};
 }
 
@@ -180,9 +151,9 @@ std::array<double, BHE_1U::number_of_unknowns> BHE_1U::calcThermalResistances(
 {
     constexpr double pi = boost::math::constants::pi<double>();
 
-    double const& lambda_r = refrigerant.thermal_conductivity;
-    double const& lambda_g = grout.lambda_g;
-    double const& lambda_p = _pipes.inlet.wall_thermal_conductivity;
+    double const lambda_r = refrigerant.thermal_conductivity;
+    double const lambda_g = grout.lambda_g;
+    double const lambda_p = _pipes.inlet.wall_thermal_conductivity;
 
     // thermal resistances due to advective flow of refrigerant in the _pipes
     // Eq. 36 in Diersch_2011_CG
@@ -196,8 +167,8 @@ std::array<double, BHE_1U::number_of_unknowns> BHE_1U::calcThermalResistances(
         (2.0 * pi * lambda_p);
 
     // the average outer diameter of the _pipes
-    double const& d0 = _pipes.outlet.diameter;
-    double const& D = borehole_geometry.diameter;
+    double const d0 = _pipes.outlet.diameter;
+    double const D = borehole_geometry.diameter;
     // Eq. 51
     double const chi = std::log(std::sqrt(D * D + 2 * d0 * d0) / 2 / d0) /
                        std::log(D / std::sqrt(2) / d0);
@@ -239,9 +210,9 @@ std::array<double, BHE_1U::number_of_unknowns> BHE_1U::calcThermalResistances(
 double BHE_1U::updateFlowRateAndTemperature(double const T_out,
                                             double const current_time)
 {
-    auto values = apply_visitor(
-        [&](auto const& control) { return control(T_out, current_time); },
-        flowAndTemperatureControl);
+    auto values =
+        visit([&](auto const& control) { return control(T_out, current_time); },
+              flowAndTemperatureControl);
     updateHeatTransferCoefficients(values.flow_rate);
     return values.temperature;
 }

@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -227,8 +228,8 @@ std::unique_ptr<Process> createThermoMechanicalPhaseFieldProcess(
         specific_heat_capacity,
         thermal_conductivity,
         residual_thermal_conductivity,
-        reference_temperature,
-        specific_body_force};
+        specific_body_force,
+        reference_temperature};
 
     SecondaryVariableCollection secondary_variables;
 

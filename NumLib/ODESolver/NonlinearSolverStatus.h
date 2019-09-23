@@ -14,7 +14,7 @@ namespace NumLib
 /// Status of the non-linear solver.
 struct NonlinearSolverStatus
 {
-    bool error_norms_met;
-    int number_iterations;
+    bool error_norms_met = false;
+    int number_iterations = -1;
 };
 }  // namespace NumLib

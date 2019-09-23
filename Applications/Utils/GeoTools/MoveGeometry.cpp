@@ -1,5 +1,5 @@
 /**
- * \file MoveGeometry.cpp
+ * \file
  * \author Karsten Rink
  * \date   2015-08-04
  * \brief  A small tool to translate geometries.
@@ -15,7 +15,7 @@
 #include <tclap/CmdLine.h>
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
-#include "BaseLib/BuildInfo.h"
+#include "InfoLib/GitInfo.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/IO/XmlIO/Qt/XmlGmlInterface.h"
 #include "MathLib/Vector3.h"
@@ -31,11 +31,11 @@ int main(int argc, char *argv[])
     TCLAP::CmdLine cmd(
         "Moves the points of a geometry by a given displacement vector\n\n"
         "OpenGeoSys-6 software, version " +
-            BaseLib::BuildInfo::ogs_version +
+            GitInfoLib::GitInfo::ogs_version +
             ".\n"
             "Copyright (c) 2012-2019, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
-        ' ', BaseLib::BuildInfo::ogs_version);
+        ' ', GitInfoLib::GitInfo::ogs_version);
     TCLAP::ValueArg<double> z_arg
         ("z", "z", "displacement in z direction", false, 0.0, "z-displacement");
     cmd.add(z_arg);

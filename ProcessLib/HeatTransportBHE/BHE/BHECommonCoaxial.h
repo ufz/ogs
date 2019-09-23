@@ -1,5 +1,5 @@
 /**
- *
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -36,6 +36,8 @@ public:
             _pipes.outer_pipe.area() - _pipes.inner_pipe.outsideArea();
         cross_section_area_grout =
             borehole_geometry.area() - _pipes.outer_pipe.outsideArea();
+
+        _thermal_resistances.fill(std::numeric_limits<double>::quiet_NaN());
     }
 
     static constexpr int number_of_unknowns = 3;
@@ -82,7 +84,8 @@ protected:
     std::array<double, number_of_unknowns> _thermal_resistances;
 
     /// Flow velocity inside the pipes and annulus. Depends on the flow_rate.
-    double _flow_velocity_inner, _flow_velocity_annulus;
+    double _flow_velocity_inner = std::numeric_limits<double>::quiet_NaN(),
+           _flow_velocity_annulus = std::numeric_limits<double>::quiet_NaN();
 };
 }  // namespace BHE
 }  // namespace HeatTransportBHE

@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -100,7 +101,7 @@ template <int... Indices, typename Object, typename MethodClass,
           typename ReturnType, typename... Args>
 std::function<ReturnType(Args...)> easyBind_inner(
     ReturnType (MethodClass::*method)(Args...), Object&& obj,
-    std::integer_sequence<int, Indices...>)
+    std::integer_sequence<int, Indices...> /*unused*/)
 {
     return easyBind_innermost<Indices...>(method, std::forward<Object>(obj));
 }
@@ -109,7 +110,7 @@ template <int... Indices, typename Object, typename MethodClass,
           typename ReturnType, typename... Args>
 std::function<ReturnType(Args...)> easyBind_inner(
     ReturnType (MethodClass::*method)(Args...) const, Object&& obj,
-    std::integer_sequence<int, Indices...>)
+    std::integer_sequence<int, Indices...> /*unused*/)
 {
     return easyBind_innermost<Indices...>(method, std::forward<Object>(obj));
 }

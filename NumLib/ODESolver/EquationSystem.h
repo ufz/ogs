@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -25,7 +26,6 @@ enum class IterationResult : char
 };
 
 /*! Collection of basic methods every equation system must provide.
- *
  */
 class EquationSystem : public NumLib::MatrixSpecificationsProvider
 {

@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -14,6 +15,8 @@
 #include <vector>
 
 namespace ChemistryLib
+{
+namespace PhreeqcIOData
 {
 struct ReactionRate
 {
@@ -31,4 +34,5 @@ struct ReactionRate
     std::string const kinetic_reactant;
     std::vector<std::string> const expression_statements;
 };
+}  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

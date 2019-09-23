@@ -1,4 +1,4 @@
-APPEND_SOURCE_FILES(SOURCES)
+append_source_files(SOURCES)
 
 add_library(LIECommon ${SOURCES})
 if(BUILD_SHARED_LIBS)

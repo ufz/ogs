@@ -8,7 +8,6 @@
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
- *
  */
 
 #pragma once
@@ -116,7 +115,7 @@ public:
     template <typename T>
     PropertyVector<T>* getPropertyVector(std::string const& name,
                                          MeshItemType const item_type,
-                                         int const number_of_components);
+                                         int const n_components);
 
     void removePropertyVector(std::string const& name);
 

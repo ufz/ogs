@@ -32,7 +32,7 @@ class VisualizationWidget : public QWidget, public Ui_VisualizationWidgetBase
 public:
 
     /// @brief Constructor.
-    VisualizationWidget(QWidget* parent = nullptr);
+    explicit VisualizationWidget(QWidget* parent = nullptr);
 
     /// @brief Destructor.
     ~VisualizationWidget() override;

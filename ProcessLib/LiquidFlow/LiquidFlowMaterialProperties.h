@@ -5,7 +5,7 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- * \file   LiquidFlowMaterialProperties.h
+ * \file
  *
  * Created on August 18, 2016, 11:03 AM
  */
@@ -33,11 +33,7 @@ template <typename PROP_VAL_TYPE>
 class PropertyVector;
 }
 
-namespace ProcessLib
-{
-class SpatialPosition;
-
-namespace LiquidFlow
+namespace ProcessLib::LiquidFlow
 {
 /** This class has a collection of material properties of liquid flow process
  *  and it provides the computation of the coefficients of the PDE of liquid
@@ -125,5 +121,4 @@ private:
     // Such property vectors will be added here if they are needed.
 };
 
-}  // namespace LiquidFlow
-}  // namespace ProcessLib
+}  // namespace ProcessLib::LiquidFlow

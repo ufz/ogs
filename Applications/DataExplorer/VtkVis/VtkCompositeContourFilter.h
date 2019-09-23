@@ -22,7 +22,7 @@
 class VtkCompositeContourFilter : public VtkCompositeFilter
 {
 public:
-    VtkCompositeContourFilter(vtkAlgorithm* inputAlgorithm);
+    explicit VtkCompositeContourFilter(vtkAlgorithm* inputAlgorithm);
     ~VtkCompositeContourFilter() override;
 
     void init() override;

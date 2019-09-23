@@ -30,15 +30,14 @@
                 <secondary_variable type="static" internal_name="sigma" output_name="sigma"/>
                 <secondary_variable type="static" internal_name="epsilon" output_name="epsilon"/>
             </secondary_variables>
-            <nonequilibrium_state_variables>
-                <stress>nonequilibrium_stress</stress>
-            </nonequilibrium_state_variables>
+            <initial_stress>nonequilibrium_stress</initial_stress>
         </process>
     </processes>
     <time_loop>
         <processes>
             <process ref="TM">
                 <nonlinear_solver>basic_newton</nonlinear_solver>
+                <compensate_initial_out_of_balance_forces>true</compensate_initial_out_of_balance_forces>
                 <convergence_criterion>
                     <type>DeltaX</type>
                     <norm_type>NORM2</norm_type>

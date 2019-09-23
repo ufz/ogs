@@ -8,7 +8,6 @@
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
- *
  */
 
 #include "Water.h"
@@ -22,7 +21,7 @@ Water::Water(std::unique_ptr<PropertyArray>&& properties)
 
     if (properties)
     {
-        overwriteExistingProperties(_properties, *properties);
+        overwriteExistingProperties(_properties, *properties, this);
     }
 }
 }  // namespace MaterialPropertyLib
