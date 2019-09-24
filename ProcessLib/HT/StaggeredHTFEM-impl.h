@@ -104,7 +104,7 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
             p_int_pt;
 
         auto const porosity =
-            solid_phase.property(MaterialPropertyLib::PropertyType::porosity)
+            medium.property(MaterialPropertyLib::PropertyType::porosity)
                 .template value<double>(vars, pos, t);
         auto const fluid_density =
             liquid_phase.property(MaterialPropertyLib::PropertyType::density)
@@ -209,7 +209,6 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
     auto const& medium =
         *process_data.media_map->getMedium(this->_element.getID());
     auto const& liquid_phase = medium.phase("AqueousLiquid");
-    auto const& solid_phase = medium.phase("Solid");
 
     auto const& b = process_data.specific_body_force;
 
@@ -241,7 +240,7 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
             p_at_xi;
 
         auto const porosity =
-            solid_phase.property(MaterialPropertyLib::PropertyType::porosity)
+            medium.property(MaterialPropertyLib::PropertyType::porosity)
                 .template value<double>(vars, pos, t);
 
         // Use the fluid density model to compute the density

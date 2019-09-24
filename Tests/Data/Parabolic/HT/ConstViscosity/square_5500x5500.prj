@@ -37,11 +37,11 @@
                             <name>density</name>
                             <type>Linear</type>
                             <reference_value>1000</reference_value>
-                                <independent_variable>
-                                    <variable_name>temperature</variable_name>
-                                    <slope>-4.3e-4</slope>
-                                    <reference_condition>20</reference_condition>
-                                </independent_variable>
+                            <independent_variable>
+                                <variable_name>temperature</variable_name>
+                                <slope>-4.3e-4</slope>
+                                <reference_condition>20</reference_condition>
+                            </independent_variable>
                         </property>
                         <property>
                             <name>viscosity</name>
@@ -53,11 +53,6 @@
                 <phase>
                     <type>Solid</type>
                     <properties>
-                        <property>
-                            <name>porosity</name>
-                            <type>Constant</type>
-                            <value>0.001</value>
-                        </property>
                         <property>
                             <name>storage</name>
                             <type>Constant</type>
@@ -96,6 +91,11 @@
                     <name>permeability</name>
                     <type>Constant</type>
                     <value>1.e-14 0 0 1.e-14</value>
+                </property>
+                <property>
+                    <name>porosity</name>
+                    <type>Constant</type>
+                    <value>0.001</value>
                 </property>
             </properties>
         </medium>
