@@ -137,8 +137,7 @@ public:
             NumLib::shapeFunctionInterpolate(local_x, N, T_int_pt, p_int_pt);
 
             auto const porosity =
-                solid_phase
-                    .property(MaterialPropertyLib::PropertyType::porosity)
+                medium.property(MaterialPropertyLib::PropertyType::porosity)
                     .template value<double>(vars, pos, t);
 
             auto const intrinsic_permeability =
