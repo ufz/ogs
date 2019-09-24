@@ -46,9 +46,9 @@ GenericNaturalBoundaryCondition<BoundaryConditionData,
     if (_bc_mesh.getDimension() + 1 != global_dim)
     {
         OGS_FATAL(
-            "The dimension of the given boundary mesh (%d) is not by one lower "
-            "than the bulk dimension (%d).",
-            _bc_mesh.getDimension(), global_dim);
+            "The dimension (%d) of the given boundary mesh '%s' is not by one "
+            "lower than the bulk dimension (%d).",
+            _bc_mesh.getDimension(), _bc_mesh.getName().c_str(), global_dim);
     }
 
     if (!_bc_mesh.getProperties().template existsPropertyVector<std::size_t>(
