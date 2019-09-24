@@ -398,14 +398,12 @@ public:
     }
 
     void assembleForStaggeredScheme(
-        double const t,
-        double const dt,
-        std::vector<double>& local_M_data,
-        std::vector<double>& local_K_data,
+        double const t, double const dt, int const process_id,
+        std::vector<double>& local_M_data, std::vector<double>& local_K_data,
         std::vector<double>& local_b_data,
         LocalCoupledSolutions const& coupled_xs) override
     {
-        if (coupled_xs.process_id == hydraulic_process_id)
+        if (process_id == hydraulic_process_id)
         {
             assembleHydraulicEquation(t, dt, local_M_data, local_K_data,
                                       local_b_data, coupled_xs);
@@ -413,8 +411,9 @@ public:
         else
         {
             // Go for assembling in an order of transport process id.
-            assembleComponentTransportEquation(
-                t, dt, local_M_data, local_K_data, local_b_data, coupled_xs);
+            assembleComponentTransportEquation(t, dt, local_M_data,
+                                               local_K_data, local_b_data,
+                                               coupled_xs, process_id);
         }
     }
 
@@ -534,9 +533,8 @@ public:
         double const t, double const dt, std::vector<double>& local_M_data,
         std::vector<double>& local_K_data,
         std::vector<double>& /*local_b_data*/,
-        LocalCoupledSolutions const& coupled_xs)
+        LocalCoupledSolutions const& coupled_xs, int const transport_process_id)
     {
-        auto const& transport_process_id = coupled_xs.process_id;
         auto local_C = Eigen::Map<const NodalVectorType>(
             coupled_xs.local_coupled_xs[transport_process_id].data(),
             concentration_size);

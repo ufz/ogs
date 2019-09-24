@@ -32,8 +32,8 @@ public:
     }
 
     void assemble(const double /*t*/, double const /*dt*/,
-                  GlobalVector const& /*x*/, GlobalMatrix& M, GlobalMatrix& K,
-                  GlobalVector& b) override
+                  GlobalVector const& /*x*/, int const /*process_id*/,
+                  GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) override
     {
         MathLib::setMatrix(M, { 1.0, 0.0,  0.0, 1.0 });
         MathLib::setMatrix(K, { 0.0, 1.0, -1.0, 0.0 });
@@ -45,12 +45,13 @@ public:
                               GlobalVector const& x_curr,
                               GlobalVector const& /*xdot*/,
                               const double dxdot_dx, const double dx_dx,
-                              GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
+                              int const process_id, GlobalMatrix& M,
+                              GlobalMatrix& K, GlobalVector& b,
                               GlobalMatrix& Jac) override
     {
         namespace LinAlg = MathLib::LinAlg;
 
-        assemble(t, dt, x_curr, M, K, b);
+        assemble(t, dt, x_curr, process_id, M, K, b);
 
         // compute Jac = M*dxdot_dx + dx_dx*K
         LinAlg::finalizeAssembly(M);
@@ -117,8 +118,8 @@ public:
     }
 
     void assemble(const double /*t*/, double const /*dt*/,
-                  GlobalVector const& x, GlobalMatrix& M, GlobalMatrix& K,
-                  GlobalVector& b) override
+                  GlobalVector const& x, int const /*process_id*/,
+                  GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) override
     {
         MathLib::setMatrix(M, {1.0});
         MathLib::LinAlg::setLocalAccessibleVector(x);
@@ -130,10 +131,11 @@ public:
                               GlobalVector const& x,
                               GlobalVector const& /*xdot*/,
                               const double dxdot_dx, const double dx_dx,
-                              GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
+                              int const process_id, GlobalMatrix& M,
+                              GlobalMatrix& K, GlobalVector& b,
                               GlobalMatrix& Jac) override
     {
-        assemble(t, dt, x, M, K, b);
+        assemble(t, dt, x, process_id, M, K, b);
 
         namespace LinAlg = MathLib::LinAlg;
 
@@ -210,8 +212,8 @@ public:
     }
 
     void assemble(const double /*t*/, double const /*dt*/,
-                  GlobalVector const& x_curr, GlobalMatrix& M, GlobalMatrix& K,
-                  GlobalVector& b) override
+                  GlobalVector const& x_curr, int const /*process_id*/,
+                  GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) override
     {
         MathLib::LinAlg::setLocalAccessibleVector(x_curr);
         auto const u = x_curr[0];
@@ -226,13 +228,13 @@ public:
     void assembleWithJacobian(const double t, double const dt,
                               GlobalVector const& x_curr,
                               GlobalVector const& xdot, const double dxdot_dx,
-                              const double dx_dx, GlobalMatrix& M,
-                              GlobalMatrix& K, GlobalVector& b,
+                              const double dx_dx, int const process_id,
+                              GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
                               GlobalMatrix& Jac) override
     {
         MathLib::LinAlg::setLocalAccessibleVector(x_curr);
         MathLib::LinAlg::setLocalAccessibleVector(xdot);
-        assemble(t, dt, x_curr, M, K, b);
+        assemble(t, dt, x_curr, process_id, M, K, b);
 
         auto const u = x_curr[0];
         auto const v = x_curr[1];

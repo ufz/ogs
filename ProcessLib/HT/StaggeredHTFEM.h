@@ -67,8 +67,9 @@ public:
     }
 
     void assembleForStaggeredScheme(
-        double const t, double const dt, std::vector<double>& local_M_data,
-        std::vector<double>& local_K_data, std::vector<double>& local_b_data,
+        double const t, double const dt, int const process_id,
+        std::vector<double>& local_M_data, std::vector<double>& local_K_data,
+        std::vector<double>& local_b_data,
         LocalCoupledSolutions const& coupled_xs) override;
 
     std::vector<double> const& getIntPtDarcyVelocity(

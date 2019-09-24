@@ -87,7 +87,8 @@ void HTProcess::initializeConcreteProcess(
 }
 
 void HTProcess::assembleConcreteProcess(const double t, double const dt,
-                                        GlobalVector const& x, GlobalMatrix& M,
+                                        GlobalVector const& x,
+                                        int const process_id, GlobalMatrix& M,
                                         GlobalMatrix& K, GlobalVector& b)
 {
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
@@ -99,7 +100,7 @@ void HTProcess::assembleConcreteProcess(const double t, double const dt,
     }
     else
     {
-        if (_coupled_solutions->process_id == _heat_transport_process_id)
+        if (process_id == _heat_transport_process_id)
         {
             DBUG(
                 "Assemble the equations of heat transport process within "
@@ -116,20 +117,19 @@ void HTProcess::assembleConcreteProcess(const double t, double const dt,
         dof_tables.emplace_back(*_local_to_global_index_map);
     }
 
-    const int process_id =
-        _use_monolithic_scheme ? 0 : _coupled_solutions->process_id;
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        pv.getActiveElementIDs(), dof_tables, t, dt, x, M, K, b,
+        pv.getActiveElementIDs(), dof_tables, t, dt, x, process_id, M, K, b,
         _coupled_solutions);
 }
 
 void HTProcess::assembleWithJacobianConcreteProcess(
     const double t, double const dt, GlobalVector const& x,
     GlobalVector const& xdot, const double dxdot_dx, const double dx_dx,
-    GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac)
+    int const process_id, GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
+    GlobalMatrix& Jac)
 {
     DBUG("AssembleWithJacobian HTProcess.");
 
@@ -147,13 +147,11 @@ void HTProcess::assembleWithJacobianConcreteProcess(
     }
 
     // Call global assembler for each local assembly item.
-    const int process_id =
-        _use_monolithic_scheme ? 0 : _coupled_solutions->process_id;
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
         _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x, xdot,
-        dxdot_dx, dx_dx, M, K, b, Jac, _coupled_solutions);
+        dxdot_dx, dx_dx, process_id, M, K, b, Jac, _coupled_solutions);
 }
 
 void HTProcess::preTimestepConcreteProcess(GlobalVector const& x,
@@ -183,12 +181,11 @@ void HTProcess::preTimestepConcreteProcess(GlobalVector const& x,
     MathLib::LinAlg::setLocalAccessibleVector(x0);
 }
 
-void HTProcess::setCoupledTermForTheStaggeredSchemeToLocalAssemblers()
+void HTProcess::setCoupledTermForTheStaggeredSchemeToLocalAssemblers(
+    int const process_id)
 {
     DBUG("Set the coupled term for the staggered scheme to local assembers.");
 
-    const int process_id =
-        _use_monolithic_scheme ? 0 : _coupled_solutions->process_id;
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &HTLocalAssemblerInterface::setStaggeredCoupledSolutions,

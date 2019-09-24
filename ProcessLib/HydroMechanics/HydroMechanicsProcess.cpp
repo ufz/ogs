@@ -278,8 +278,8 @@ void HydroMechanicsProcess<DisplacementDim>::initializeBoundaryConditions()
 
 template <int DisplacementDim>
 void HydroMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
-    const double t, double const dt, GlobalVector const& x, GlobalMatrix& M,
-    GlobalMatrix& K, GlobalVector& b)
+    const double t, double const dt, GlobalVector const& x,
+    int const process_id, GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
 {
     DBUG("Assemble the equations for HydroMechanics");
 
@@ -292,7 +292,7 @@ void HydroMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        dof_table, t, dt, x, M, K, b, _coupled_solutions);
+        dof_table, t, dt, x, process_id, M, K, b, _coupled_solutions);
 }
 
 template <int DisplacementDim>
@@ -300,7 +300,8 @@ void HydroMechanicsProcess<DisplacementDim>::
     assembleWithJacobianConcreteProcess(
         const double t, double const dt, GlobalVector const& x,
         GlobalVector const& xdot, const double dxdot_dx, const double dx_dx,
-        GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac)
+        int const process_id, GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
+        GlobalMatrix& Jac)
 {
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
         dof_tables;
@@ -315,7 +316,7 @@ void HydroMechanicsProcess<DisplacementDim>::
     else
     {
         // For the staggered scheme
-        if (_coupled_solutions->process_id == 0)
+        if (process_id == 0)
         {
             DBUG(
                 "Assemble the Jacobian equations of liquid fluid process in "
@@ -331,14 +332,12 @@ void HydroMechanicsProcess<DisplacementDim>::
         dof_tables.emplace_back(*_local_to_global_index_map);
     }
 
-    const int process_id =
-        _use_monolithic_scheme ? 0 : _coupled_solutions->process_id;
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
         _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x, xdot,
-        dxdot_dx, dx_dx, M, K, b, Jac, _coupled_solutions);
+        dxdot_dx, dx_dx, process_id, M, K, b, Jac, _coupled_solutions);
 
     auto copyRhs = [&](int const variable_id, auto& output_vector) {
         if (_use_monolithic_scheme)
@@ -349,16 +348,16 @@ void HydroMechanicsProcess<DisplacementDim>::
         }
         else
         {
-            transformVariableFromGlobalVector(
-                b, 0, dof_tables[_coupled_solutions->process_id], output_vector,
-                std::negate<double>());
+            transformVariableFromGlobalVector(b, 0, dof_tables[process_id],
+                                              output_vector,
+                                              std::negate<double>());
         }
     };
-    if (_use_monolithic_scheme || _coupled_solutions->process_id == 0)
+    if (_use_monolithic_scheme || process_id == 0)
     {
         copyRhs(0, *_hydraulic_flow);
     }
-    if (_use_monolithic_scheme || _coupled_solutions->process_id == 1)
+    if (_use_monolithic_scheme || process_id == 1)
     {
         copyRhs(1, *_nodal_forces);
     }

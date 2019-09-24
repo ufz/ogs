@@ -58,30 +58,29 @@ void GroundwaterFlowProcess::initializeConcreteProcess(
 }
 
 void GroundwaterFlowProcess::assembleConcreteProcess(
-    const double t, double const dt, GlobalVector const& x, GlobalMatrix& M,
-    GlobalMatrix& K, GlobalVector& b)
+    const double t, double const dt, GlobalVector const& x,
+    int const process_id, GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
 {
     DBUG("Assemble GroundwaterFlowProcess.");
 
-    const int process_id = 0;
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
         dof_table = {std::ref(*_local_to_global_index_map)};
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        pv.getActiveElementIDs(), dof_table, t, dt, x, M, K, b,
+        pv.getActiveElementIDs(), dof_table, t, dt, x, process_id, M, K, b,
         _coupled_solutions);
 }
 
 void GroundwaterFlowProcess::assembleWithJacobianConcreteProcess(
     const double t, double const dt, GlobalVector const& x,
     GlobalVector const& xdot, const double dxdot_dx, const double dx_dx,
-    GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac)
+    int const process_id, GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
+    GlobalMatrix& Jac)
 {
     DBUG("AssembleWithJacobian GroundwaterFlowProcess.");
 
-    const int process_id = 0;
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
         dof_table = {std::ref(*_local_to_global_index_map)};
@@ -89,7 +88,7 @@ void GroundwaterFlowProcess::assembleWithJacobianConcreteProcess(
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
         _local_assemblers, pv.getActiveElementIDs(), dof_table, t, dt, x, xdot,
-        dxdot_dx, dx_dx, M, K, b, Jac, _coupled_solutions);
+        dxdot_dx, dx_dx, process_id, M, K, b, Jac, _coupled_solutions);
 }
 
 }   // namespace GroundwaterFlow
