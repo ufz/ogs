@@ -89,6 +89,7 @@ void HeatTransportBHELocalAssemblerSoil<ShapeFunction, IntegrationMethod>::
 
     auto const& medium = *_process_data.media_map->getMedium(_element_id);
     auto const& solid_phase = medium.phase("Solid");
+    auto const& liquid_phase = medium.phase("AqueousLiquid");
 
     MaterialPropertyLib::VariableArray vars;
 
@@ -114,10 +115,25 @@ void HeatTransportBHELocalAssemblerSoil<ShapeFunction, IntegrationMethod>::
                     MaterialPropertyLib::PropertyType::specific_heat_capacity)
                 .template value<double>(vars, pos, t);
 
+        auto const heat_capacity_f =
+            liquid_phase
+                .property(
+                    MaterialPropertyLib::PropertyType::specific_heat_capacity)
+                .template value<double>(vars, pos, t);
+
         auto const density_s =
             solid_phase.property(MaterialPropertyLib::PropertyType::density)
                 .template value<double>(vars, pos, t);
+
+        auto const density_f =
+            liquid_phase.property(MaterialPropertyLib::PropertyType::density)
+                .template value<double>(vars, pos, t);
         // for now only using the solid phase parameters
+
+        auto const velocity =
+            liquid_phase
+                .property(MaterialPropertyLib::PropertyType::phase_velocity)
+                .value(vars, pos, t);
 
         // assemble Conductance matrix
         local_K.noalias() += K_ip * k_s;
