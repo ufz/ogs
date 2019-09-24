@@ -63,11 +63,6 @@
                     <type>Solid</type>
                     <properties>
                         <property>
-                            <name>porosity</name>
-                            <type>Constant</type>
-                            <value>0.001</value>
-                        </property>
-                        <property>
                             <name>storage</name>
                             <type>Constant</type>
                             <value>0.0</value>
@@ -105,6 +100,11 @@
                     <name>permeability</name>
                     <type>Constant</type>
                     <value>1.e-14 0 0 0 1.e-14 0 0 0 1.e-14</value>
+                </property>
+                <property>
+                    <name>porosity</name>
+                    <type>Constant</type>
+                    <value>0.001</value>
                 </property>
             </properties>
         </medium>
