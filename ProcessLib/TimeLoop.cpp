@@ -226,11 +226,9 @@ TimeLoop::TimeLoop(
 
 void TimeLoop::setCoupledSolutions()
 {
-    _solutions_of_coupled_processes.reserve(_per_process_data.size());
     for (auto& process_data : _per_process_data)
     {
         auto const& x = *_process_solutions[process_data->process_id];
-        _solutions_of_coupled_processes.emplace_back(x);
 
         // Create a vector to store the solution of the last coupling iteration
         auto& x0 = NumLib::GlobalVectorProvider::provider.getVector(x);
@@ -559,9 +557,7 @@ static std::string const nonlinear_fixed_dt_fails_info =
 void postTimestepForAllProcesses(
     double const t, double const dt,
     std::vector<std::unique_ptr<ProcessData>> const& per_process_data,
-    std::vector<GlobalVector*> const& _process_solutions,
-    std::vector<std::reference_wrapper<GlobalVector const>> const&
-        solutions_of_coupled_processes)
+    std::vector<GlobalVector*> const& process_solutions)
 {
     // All _per_process_data share the first process.
     bool const is_staggered_coupling =
@@ -575,10 +571,10 @@ void postTimestepForAllProcesses(
         if (is_staggered_coupling)
         {
             CoupledSolutionsForStaggeredScheme coupled_solutions(
-                _process_solutions);
+                process_solutions);
             pcs.setCoupledSolutionsForStaggeredScheme(&coupled_solutions);
         }
-        auto& x = *_process_solutions[process_id];
+        auto& x = *process_solutions[process_id];
         pcs.postTimestep(x, t, dt, process_id);
         pcs.computeSecondaryVariable(t, x, process_id);
     }
@@ -617,8 +613,7 @@ NumLib::NonlinearSolverStatus TimeLoop::solveUncoupledEquationSystems(
         }
     }
 
-    postTimestepForAllProcesses(t, dt, _per_process_data, _process_solutions,
-                                _solutions_of_coupled_processes);
+    postTimestepForAllProcesses(t, dt, _per_process_data, _process_solutions);
 
     return nonlinear_solver_status;
 }
@@ -747,8 +742,7 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
         INFO("[time] Phreeqc took %g s.", time_phreeqc.elapsed());
     }
 
-    postTimestepForAllProcesses(t, dt, _per_process_data, _process_solutions,
-                                _solutions_of_coupled_processes);
+    postTimestepForAllProcesses(t, dt, _per_process_data, _process_solutions);
 
     return nonlinear_solver_status;
 }
