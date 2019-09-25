@@ -575,7 +575,7 @@ void postTimestepForAllProcesses(
         if (is_staggered_coupling)
         {
             CoupledSolutionsForStaggeredScheme coupled_solutions(
-                solutions_of_coupled_processes);
+                _process_solutions);
             pcs.setCoupledSolutionsForStaggeredScheme(&coupled_solutions);
         }
         auto& x = *_process_solutions[process_id];
@@ -663,7 +663,7 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
             auto& x = *_process_solutions[process_id];
 
             CoupledSolutionsForStaggeredScheme coupled_solutions(
-                _solutions_of_coupled_processes);
+                _process_solutions);
 
             process_data->process.setCoupledSolutionsForStaggeredScheme(
                 &coupled_solutions);
@@ -788,7 +788,7 @@ void TimeLoop::outputSolutions(bool const output_initial_condition,
         if (is_staggered_coupling)
         {
             CoupledSolutionsForStaggeredScheme coupled_solutions(
-                _solutions_of_coupled_processes);
+                _process_solutions);
 
             process_data->process.setCoupledSolutionsForStaggeredScheme(
                 &coupled_solutions);
