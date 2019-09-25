@@ -5,6 +5,7 @@ FROM ubuntu:18.04
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         curl \
+        make \
         tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
@@ -12,16 +13,26 @@ RUN apt-get update -y && \
 # LLVM compiler
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        clang-7 && \
+        clang-8 && \
     rm -rf /var/lib/apt/lists/*
-RUN update-alternatives --install /usr/bin/clang clang $(which clang-7) 30 && \
-    update-alternatives --install /usr/bin/clang++ clang++ $(which clang++-7) 30
+RUN update-alternatives --install /usr/bin/clang clang $(which clang-8) 30 && \
+    update-alternatives --install /usr/bin/clang++ clang++ $(which clang++-8) 30
 
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        clang-format-7 \
-        clang-tidy-7 && \
+        clang-format-8 \
+        clang-tidy-8 && \
     rm -rf /var/lib/apt/lists/*
+
+# CMake version 3.12.4
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        make \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://cmake.org/files/v3.12/cmake-3.12.4-Linux-x86_64.sh && \
+    /bin/sh /var/tmp/cmake-3.12.4-Linux-x86_64.sh --prefix=/usr/local --skip-license && \
+    rm -rf /var/tmp/cmake-3.12.4-Linux-x86_64.sh
 
 # OGS base building block
 # Python
@@ -40,14 +51,6 @@ RUN apt-get update -y && \
         python3-wheel && \
     rm -rf /var/lib/apt/lists/*
 RUN pip3 install virtualenv pre-commit cmake-format
-# CMake version 3.12.4
-RUN apt-get update -y && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        wget && \
-    rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://cmake.org/files/v3.12/cmake-3.12.4-Linux-x86_64.sh && \
-    /bin/sh /var/tmp/cmake-3.12.4-Linux-x86_64.sh --prefix=/usr/local --skip-license && \
-    rm -rf /var/tmp/cmake-3.12.4-Linux-x86_64.sh
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends software-properties-common && \
     apt-add-repository ppa:git-core/ppa -y && \
@@ -55,7 +58,6 @@ RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         git \
         git-lfs \
-        make \
         ninja-build && \
     rm -rf /var/lib/apt/lists/*
 RUN apt-get update && \
@@ -90,19 +92,19 @@ LABEL org.opengeosys.pm=conan \
     org.opengeosys.pm.conan.version=1.18.5
 LABEL org.opengeosys.pm.conan.user_home=/opt/conan
 
-# Include-what-you-use for clang version 7
+# Include-what-you-use for clang version 8
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        libclang-7-dev \
+        libclang-8-dev \
         libncurses5-dev \
-        llvm-7-dev \
+        llvm-8-dev \
         zlib1g-dev && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/include-what-you-use/include-what-you-use/archive/clang_7.0.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/clang_7.0.tar.gz -C /var/tmp -z && \
-    mkdir -p /var/tmp/build && cd /var/tmp/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local/iwyy -DIWYU_LLVM_ROOT_PATH=/usr/lib/llvm-7 /var/tmp/include-what-you-use-clang_7.0 && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/include-what-you-use/include-what-you-use/archive/clang_8.0.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/clang_8.0.tar.gz -C /var/tmp -z && \
+    mkdir -p /var/tmp/build && cd /var/tmp/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local/iwyy -DIWYU_LLVM_ROOT_PATH=/usr/lib/llvm-8 /var/tmp/include-what-you-use-clang_8.0 && \
     cmake --build /var/tmp/build --target install -- -j$(nproc) && \
-    rm -rf /var/tmp/clang_7.0.tar.gz /var/tmp/build /var/tmp/include-what-you-use-clang_7.0
+    rm -rf /var/tmp/clang_8.0.tar.gz /var/tmp/build /var/tmp/include-what-you-use-clang_8.0
 ENV PATH=/usr/local/iwyy/bin:$PATH
 
 # Package manager Conan building block

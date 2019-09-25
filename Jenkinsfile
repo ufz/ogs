@@ -513,7 +513,7 @@ pipeline {
                 cmakeOptions =
                   "-DBUILD_SHARED_LIBS=${build_shared} " +
                   '-DBUILD_TESTING=OFF ' +
-                  '-DCMAKE_CXX_CLANG_TIDY=clang-tidy-7 '
+                  '-DCMAKE_CXX_CLANG_TIDY=clang-tidy-8 '
               }
               build { log = 'build.log' }
             }
