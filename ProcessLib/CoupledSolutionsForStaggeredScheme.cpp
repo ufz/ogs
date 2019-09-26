@@ -59,7 +59,7 @@ std::vector<double> getPreviousLocalSolutions(
     return local_xs_t0;
 }
 
-std::vector<std::vector<double>> getCurrentLocalSolutions(
+std::vector<double> getCurrentLocalSolutions(
     const CoupledSolutionsForStaggeredScheme& cpl_xs,
     const std::vector<std::vector<GlobalIndexType>>& indices)
 {
@@ -68,15 +68,23 @@ std::vector<std::vector<double>> getCurrentLocalSolutions(
         return {};
     }
 
-    const auto number_of_coupled_solutions = cpl_xs.coupled_xs.size();
-    std::vector<std::vector<double>> local_xs_t1;
-    local_xs_t1.reserve(number_of_coupled_solutions);
+    std::size_t const local_solutions_size = std::accumulate(
+        cbegin(indices),
+        cend(indices),
+        std::size_t(0),
+        [](GlobalIndexType const size,
+           std::vector<GlobalIndexType> const& process_indices) {
+            return size + process_indices.size();
+        });
+    std::vector<double> local_xs_t1;
+    local_xs_t1.reserve(local_solutions_size);
 
-    int coupling_id = 0;
-    for (auto const* x_t1 : cpl_xs.coupled_xs)
+    int process_id = 0;
+    for (auto const& x_t1 : cpl_xs.coupled_xs)
     {
-        local_xs_t1.emplace_back(x_t1->get(indices[coupling_id]));
-        coupling_id++;
+        auto const& values = x_t1->get(indices[process_id]);
+        local_xs_t1.insert(cend(local_xs_t1), cbegin(values), cend(values));
+        process_id++;
     }
     return local_xs_t1;
 }
