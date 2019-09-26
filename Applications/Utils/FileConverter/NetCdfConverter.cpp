@@ -280,14 +280,17 @@ static std::pair<std::size_t, std::size_t> timestepSelectionLoop(
     NcVar const& var, std::size_t const dim_idx)
 {
     std::size_t const n_time_steps = var.getDim(dim_idx).getSize();
-    std::pair<std::size_t, std::size_t> bounds(
-        std::numeric_limits<std::size_t>::max(),
-        std::numeric_limits<std::size_t>::max());
+    std::size_t const max_val = std::numeric_limits<std::size_t>::max();
+    std::pair<std::size_t, std::size_t> bounds(max_val, max_val);
     std::cout << "\nThe dataset contains " << n_time_steps << " time steps.\n";
-    bounds.first = parseInput("Specify first time step to export: ", n_time_steps, false);
+    while (bounds.first == max_val)
+    {
+        bounds.first = parseInput("Specify first time step to export: ", n_time_steps, false);
+    }
     while (bounds.first > bounds.second || bounds.second > n_time_steps)
-        bounds.second = parseInput(
-            "Specify last time step to export: ", n_time_steps, false);
+    {
+        bounds.second = parseInput( "Specify last time step to export: ", n_time_steps, false);
+    }
     return bounds;
 }
 
@@ -511,7 +514,9 @@ static bool convert(NcFile const& dataset, NcVar const& var,
         length.cbegin(), length.cend(), 1, std::multiplies<std::size_t>());
     for (std::size_t i = time_bounds.first; i <= time_bounds.second; ++i)
     {
-        std::cout << "Converting time step " << i << "...\n";
+        std::string const step_str = (time_bounds.first != time_bounds.second)
+                ? std::string(" time step " + std::to_string(i)) : "";
+        std::cout << "Converting" << step_str << "...\n";
         std::vector<double> const data_vec =
             getData(dataset, var, array_length, i, length);
 
