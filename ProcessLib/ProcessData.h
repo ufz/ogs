@@ -27,6 +27,7 @@ struct ProcessData
                 NumLib::NonlinearSolver<NLTag>& nonlinear_solver,
                 std::unique_ptr<NumLib::ConvergenceCriterion>&& conv_crit_,
                 std::unique_ptr<NumLib::TimeDiscretization>&& time_disc_,
+                int const process_id_,
                 Process& process_)
         : timestepper(std::move(timestepper_)),
           nonlinear_solver_tag(NLTag),
@@ -34,6 +35,7 @@ struct ProcessData
           nonlinear_solver_status{true, 0},
           conv_crit(std::move(conv_crit_)),
           time_disc(std::move(time_disc_)),
+          process_id(process_id_),
           process(process_)
     {
     }
@@ -47,6 +49,7 @@ struct ProcessData
           time_disc(std::move(pd.time_disc)),
           tdisc_ode_sys(std::move(pd.tdisc_ode_sys)),
           mat_strg(pd.mat_strg),
+          process_id(pd.process_id),
           process(pd.process)
     {
         pd.mat_strg = nullptr;
@@ -67,9 +70,7 @@ struct ProcessData
     //! cast of \c tdisc_ode_sys to NumLib::InternalMatrixStorage
     NumLib::InternalMatrixStorage* mat_strg = nullptr;
 
-    /// Process ID. It is alway 0 when the monolithic scheme is used or
-    /// a single process is modelled.
-    int process_id = 0;
+    int const process_id;
 
     Process& process;
 };

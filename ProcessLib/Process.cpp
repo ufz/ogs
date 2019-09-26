@@ -196,41 +196,39 @@ void Process::preAssemble(const double t, double const dt,
 }
 
 void Process::assemble(const double t, double const dt, GlobalVector const& x,
-                       GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
+                       int const process_id, GlobalMatrix& M, GlobalMatrix& K,
+                       GlobalVector& b)
 {
     MathLib::LinAlg::setLocalAccessibleVector(x);
 
-    assembleConcreteProcess(t, dt, x, M, K, b);
-
-    const auto pcs_id =
-        (_coupled_solutions) != nullptr ? _coupled_solutions->process_id : 0;
-    // the last argument is for the jacobian, nullptr is for a unused jacobian
-    _boundary_conditions[pcs_id].applyNaturalBC(t, x, K, b, nullptr);
+    assembleConcreteProcess(t, dt, x, process_id, M, K, b);
 
     // the last argument is for the jacobian, nullptr is for a unused jacobian
-    _source_term_collections[pcs_id].integrate(t, x, b, nullptr);
+    _boundary_conditions[process_id].applyNaturalBC(t, x, K, b, nullptr);
+
+    // the last argument is for the jacobian, nullptr is for a unused jacobian
+    _source_term_collections[process_id].integrate(t, x, b, nullptr);
 }
 
 void Process::assembleWithJacobian(const double t, double const dt,
                                    GlobalVector const& x,
                                    GlobalVector const& xdot,
                                    const double dxdot_dx, const double dx_dx,
-                                   GlobalMatrix& M, GlobalMatrix& K,
-                                   GlobalVector& b, GlobalMatrix& Jac)
+                                   int const process_id, GlobalMatrix& M,
+                                   GlobalMatrix& K, GlobalVector& b,
+                                   GlobalMatrix& Jac)
 {
     MathLib::LinAlg::setLocalAccessibleVector(x);
     MathLib::LinAlg::setLocalAccessibleVector(xdot);
 
-    assembleWithJacobianConcreteProcess(t, dt, x, xdot, dxdot_dx, dx_dx, M, K,
-                                        b, Jac);
+    assembleWithJacobianConcreteProcess(t, dt, x, xdot, dxdot_dx, dx_dx,
+                                        process_id, M, K, b, Jac);
 
     // TODO: apply BCs to Jacobian.
-    const auto pcs_id =
-        (_coupled_solutions) != nullptr ? _coupled_solutions->process_id : 0;
-    _boundary_conditions[pcs_id].applyNaturalBC(t, x, K, b, &Jac);
+    _boundary_conditions[process_id].applyNaturalBC(t, x, K, b, &Jac);
 
     // the last argument is for the jacobian, nullptr is for a unused jacobian
-    _source_term_collections[pcs_id].integrate(t, x, b, &Jac);
+    _source_term_collections[process_id].integrate(t, x, b, &Jac);
 }
 
 void Process::constructDofTable()

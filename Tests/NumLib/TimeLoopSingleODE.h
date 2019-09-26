@@ -96,8 +96,9 @@ NumLib::NonlinearSolverStatus TimeLoopSingleODE<NLTag>::loop(
 
     if (time_disc.needsPreload())
     {
+        int const process_id = 0;
         MathLib::LinAlg::setLocalAccessibleVector(x);
-        _nonlinear_solver->assemble(x);
+        _nonlinear_solver->assemble(x, process_id);
         time_disc.pushState(t0, x0,
                             _ode_sys);  // TODO: that might do duplicate work
     }
@@ -113,7 +114,9 @@ NumLib::NonlinearSolverStatus TimeLoopSingleODE<NLTag>::loop(
         // INFO("time: %e, delta_t: %e", t, delta_t);
         time_disc.nextTimestep(t, delta_t);
 
-        nonlinear_solver_status = _nonlinear_solver->solve(x, nullptr);
+        int const process_id = 0;
+        nonlinear_solver_status =
+            _nonlinear_solver->solve(x, nullptr, process_id);
         if (!nonlinear_solver_status.error_norms_met)
         {
             break;

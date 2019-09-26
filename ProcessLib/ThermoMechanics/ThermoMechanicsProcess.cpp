@@ -277,21 +277,19 @@ void ThermoMechanicsProcess<DisplacementDim>::initializeBoundaryConditions()
 
 template <int DisplacementDim>
 void ThermoMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
-    const double t, double const dt, GlobalVector const& x, GlobalMatrix& M,
-    GlobalMatrix& K, GlobalVector& b)
+    const double t, double const dt, GlobalVector const& x,
+    int const process_id, GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
 {
     DBUG("Assemble ThermoMechanicsProcess.");
 
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
         dof_table = {std::ref(*_local_to_global_index_map)};
-    const int process_id =
-        _use_monolithic_scheme ? 0 : _coupled_solutions->process_id;
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        pv.getActiveElementIDs(), dof_table, t, dt, x, M, K, b,
+        pv.getActiveElementIDs(), dof_table, t, dt, x, process_id, M, K, b,
         _coupled_solutions);
 }
 
@@ -300,7 +298,8 @@ void ThermoMechanicsProcess<DisplacementDim>::
     assembleWithJacobianConcreteProcess(
         const double t, double const dt, GlobalVector const& x,
         GlobalVector const& xdot, const double dxdot_dx, const double dx_dx,
-        GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac)
+        int const process_id, GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
+        GlobalMatrix& Jac)
 {
     DBUG("AssembleJacobian ThermoMechanicsProcess.");
 
@@ -317,8 +316,7 @@ void ThermoMechanicsProcess<DisplacementDim>::
     else
     {
         // For the staggered scheme
-        if (_coupled_solutions->process_id ==
-            _process_data.heat_conduction_process_id)
+        if (process_id == _process_data.heat_conduction_process_id)
         {
             DBUG(
                 "Assemble the Jacobian equations of heat conduction process in "
@@ -349,14 +347,12 @@ void ThermoMechanicsProcess<DisplacementDim>::
         setCoupledSolutionsOfPreviousTimeStep();
     }
 
-    const int process_id =
-        _use_monolithic_scheme ? 0 : _coupled_solutions->process_id;
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
         _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x, xdot,
-        dxdot_dx, dx_dx, M, K, b, Jac, _coupled_solutions);
+        dxdot_dx, dx_dx, process_id, M, K, b, Jac, _coupled_solutions);
 
     // TODO (naumov): Refactor the copy rhs part. This is copy from HM.
     auto copyRhs = [&](int const variable_id, auto& output_vector) {
@@ -368,19 +364,18 @@ void ThermoMechanicsProcess<DisplacementDim>::
         }
         else
         {
-            transformVariableFromGlobalVector(
-                b, 0, dof_tables[_coupled_solutions->process_id], output_vector,
-                std::negate<double>());
+            transformVariableFromGlobalVector(b, 0, dof_tables[process_id],
+                                              output_vector,
+                                              std::negate<double>());
         }
     };
     if (_use_monolithic_scheme ||
-        _coupled_solutions->process_id ==
-            _process_data.heat_conduction_process_id)
+        process_id == _process_data.heat_conduction_process_id)
     {
         copyRhs(0, *_heat_flux);
     }
     if (_use_monolithic_scheme ||
-        _coupled_solutions->process_id == _process_data.mechanics_process_id)
+        process_id == _process_data.mechanics_process_id)
     {
         copyRhs(1, *_nodal_forces);
     }

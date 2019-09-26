@@ -770,13 +770,13 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                      DisplacementDim>::
     assembleWithJacobianForStaggeredScheme(
         const double t, double const dt, const std::vector<double>& local_xdot,
-        const double dxdot_dx, const double dx_dx,
+        const double dxdot_dx, const double dx_dx, int const process_id,
         std::vector<double>& local_M_data, std::vector<double>& local_K_data,
         std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
         const LocalCoupledSolutions& local_coupled_solutions)
 {
     // For the equations with pressure
-    if (local_coupled_solutions.process_id == 0)
+    if (process_id == 0)
     {
         assembleWithJacobianForPressureEquations(
             t, dt, local_xdot, dxdot_dx, dx_dx, local_M_data, local_K_data,

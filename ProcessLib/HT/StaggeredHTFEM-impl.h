@@ -25,12 +25,13 @@ template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
 void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
     assembleForStaggeredScheme(double const t, double const dt,
+                               int const process_id,
                                std::vector<double>& local_M_data,
                                std::vector<double>& local_K_data,
                                std::vector<double>& local_b_data,
                                LocalCoupledSolutions const& coupled_xs)
 {
-    if (coupled_xs.process_id == _heat_transport_process_id)
+    if (process_id == _heat_transport_process_id)
     {
         assembleHeatTransportEquation(t, local_M_data, local_K_data,
                                       local_b_data, coupled_xs);

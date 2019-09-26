@@ -123,7 +123,8 @@ public:
         return _process_id_to_component_name_map;
     }
 
-    void setCoupledTermForTheStaggeredSchemeToLocalAssemblers() override;
+    void setCoupledTermForTheStaggeredSchemeToLocalAssemblers(
+        int const process_id) override;
 
     void preTimestepConcreteProcess(GlobalVector const& x, const double /*t*/,
                                     const double /*delta_t*/,
@@ -141,13 +142,14 @@ private:
         unsigned const integration_order) override;
 
     void assembleConcreteProcess(const double t, double const dt,
-                                 GlobalVector const& x, GlobalMatrix& M,
-                                 GlobalMatrix& K, GlobalVector& b) override;
+                                 GlobalVector const& x, int const process_id,
+                                 GlobalMatrix& M, GlobalMatrix& K,
+                                 GlobalVector& b) override;
 
     void assembleWithJacobianConcreteProcess(
         const double t, double const dt, GlobalVector const& x,
         GlobalVector const& xdot, const double dxdot_dx, const double dx_dx,
-        GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
+        int const process_id, GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
         GlobalMatrix& Jac) override;
 
     void setCoupledSolutionsOfPreviousTimeStep();

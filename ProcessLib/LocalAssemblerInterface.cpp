@@ -28,7 +28,7 @@ void LocalAssemblerInterface::assemble(double const /*t*/,
 }
 
 void LocalAssemblerInterface::assembleForStaggeredScheme(
-    double const /*t*/, double const /*dt*/,
+    double const /*t*/, double const /*dt*/, int const /*process_id*/,
     std::vector<double>& /*local_M_data*/,
     std::vector<double>& /*local_K_data*/,
     std::vector<double>& /*local_b_data*/,
@@ -56,7 +56,8 @@ void LocalAssemblerInterface::assembleWithJacobian(
 void LocalAssemblerInterface::assembleWithJacobianForStaggeredScheme(
     double const /*t*/, double const /*dt*/,
     std::vector<double> const& /*local_xdot*/, const double /*dxdot_dx*/,
-    const double /*dx_dx*/, std::vector<double>& /*local_M_data*/,
+    const double /*dx_dx*/, int const /*process_id*/,
+    std::vector<double>& /*local_M_data*/,
     std::vector<double>& /*local_K_data*/,
     std::vector<double>& /*local_b_data*/,
     std::vector<double>& /*local_Jac_data*/,

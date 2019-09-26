@@ -566,8 +566,8 @@ bool HydroMechanicsProcess<GlobalDim>::isLinear() const
 
 template <int GlobalDim>
 void HydroMechanicsProcess<GlobalDim>::assembleConcreteProcess(
-    const double t, double const dt, GlobalVector const& x, GlobalMatrix& M,
-    GlobalMatrix& K, GlobalVector& b)
+    const double t, double const dt, GlobalVector const& x,
+    int const process_id, GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
 {
     DBUG("Assemble HydroMechanicsProcess.");
 
@@ -576,19 +576,18 @@ void HydroMechanicsProcess<GlobalDim>::assembleConcreteProcess(
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        dof_table, t, dt, x, M, K, b, _coupled_solutions);
+        dof_table, t, dt, x, process_id, M, K, b, _coupled_solutions);
 }
 
 template <int GlobalDim>
 void HydroMechanicsProcess<GlobalDim>::assembleWithJacobianConcreteProcess(
     const double t, double const dt, GlobalVector const& x,
     GlobalVector const& xdot, const double dxdot_dx, const double dx_dx,
-    GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac)
+    int const process_id, GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
+    GlobalMatrix& Jac)
 {
     DBUG("AssembleWithJacobian HydroMechanicsProcess.");
 
-    const int process_id =
-        _use_monolithic_scheme ? 0 : _coupled_solutions->process_id;
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
     // Call global assembler for each local assembly item.
@@ -597,7 +596,7 @@ void HydroMechanicsProcess<GlobalDim>::assembleWithJacobianConcreteProcess(
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
         _local_assemblers, pv.getActiveElementIDs(), dof_table, t, dt, x, xdot,
-        dxdot_dx, dx_dx, M, K, b, Jac, _coupled_solutions);
+        dxdot_dx, dx_dx, process_id, M, K, b, Jac, _coupled_solutions);
 
     auto copyRhs = [&](int const variable_id, auto& output_vector) {
         transformVariableFromGlobalVector(b, variable_id,

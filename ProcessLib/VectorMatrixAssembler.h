@@ -48,7 +48,8 @@ public:
                   std::vector<std::reference_wrapper<
                       NumLib::LocalToGlobalIndexMap>> const& dof_tables,
                   double const t, double const dt, GlobalVector const& x,
-                  GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
+                  int const process_id, GlobalMatrix& M, GlobalMatrix& K,
+                  GlobalVector& b,
                   CoupledSolutionsForStaggeredScheme const* const cpl_xs);
 
     //! Assembles \c M, \c K, \c b, and the Jacobian \c Jac of the residual.
@@ -61,7 +62,8 @@ public:
             dof_tables,
         const double t, double const dt, GlobalVector const& x,
         GlobalVector const& xdot, const double dxdot_dx, const double dx_dx,
-        GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac,
+        int const process_id, GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
+        GlobalMatrix& Jac,
         CoupledSolutionsForStaggeredScheme const* const cpl_xs);
 
 private:

@@ -25,12 +25,12 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
                                               DisplacementDim>::
     assembleWithJacobianForStaggeredScheme(
         double const t, double const dt, std::vector<double> const& local_xdot,
-        const double dxdot_dx, const double dx_dx,
+        const double dxdot_dx, const double dx_dx, int const process_id,
         std::vector<double>& local_M_data, std::vector<double>& local_K_data,
         std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
         LocalCoupledSolutions const& local_coupled_solutions)
 {
-    if (local_coupled_solutions.process_id == _phase_field_process_id)
+    if (process_id == _phase_field_process_id)
     {
         assembleWithJacobianForPhaseFieldEquations(
             t, local_xdot, dxdot_dx, dx_dx, local_M_data, local_K_data,
@@ -38,7 +38,7 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
         return;
     }
 
-    if (local_coupled_solutions.process_id == _heat_conduction_process_id)
+    if (process_id == _heat_conduction_process_id)
     {
         assembleWithJacobianForHeatConductionEquations(
             t, dt, local_xdot, dxdot_dx, dx_dx, local_M_data, local_K_data,

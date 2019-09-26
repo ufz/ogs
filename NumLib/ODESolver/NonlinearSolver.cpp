@@ -22,15 +22,15 @@
 namespace NumLib
 {
 void NonlinearSolver<NonlinearSolverTag::Picard>::assemble(
-    GlobalVector const& x) const
+    GlobalVector const& x, int const process_id) const
 {
-    _equation_system->assemble(x);
+    _equation_system->assemble(x, process_id);
 }
 
 NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
     GlobalVector& x,
-    std::function<void(int, GlobalVector const&)> const&
-        postIterationCallback)
+    std::function<void(int, GlobalVector const&)> const& postIterationCallback,
+    int const process_id)
 {
     namespace LinAlg = MathLib::LinAlg;
     auto& sys = *_equation_system;
@@ -58,7 +58,7 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
         time_iteration.start();
 
         timer_dirichlet.start();
-        sys.computeKnownSolutions(x_new);
+        sys.computeKnownSolutions(x_new, process_id);
         sys.applyKnownSolutions(x_new);
         time_dirichlet += timer_dirichlet.elapsed();
 
@@ -66,7 +66,7 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
 
         BaseLib::RunTime time_assembly;
         time_assembly.start();
-        sys.assemble(x_new);
+        sys.assemble(x_new, process_id);
         sys.getA(A);
         sys.getRhs(rhs);
         INFO("[time] Assembly took %g s.", time_assembly.elapsed());
@@ -177,9 +177,9 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
 }
 
 void NonlinearSolver<NonlinearSolverTag::Newton>::assemble(
-    GlobalVector const& x) const
+    GlobalVector const& x, int const process_id) const
 {
-    _equation_system->assemble(x);
+    _equation_system->assemble(x, process_id);
     // TODO if the equation system would be reset to nullptr after each
     //      assemble() or solve() call, the user would be forced to set the
     //      equation every time and could not forget it.
@@ -187,8 +187,8 @@ void NonlinearSolver<NonlinearSolverTag::Newton>::assemble(
 
 NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
     GlobalVector& x,
-    std::function<void(int, GlobalVector const&)> const&
-        postIterationCallback)
+    std::function<void(int, GlobalVector const&)> const& postIterationCallback,
+    int const process_id)
 {
     namespace LinAlg = MathLib::LinAlg;
     auto& sys = *_equation_system;
@@ -220,7 +220,7 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
         time_iteration.start();
 
         timer_dirichlet.start();
-        sys.computeKnownSolutions(x);
+        sys.computeKnownSolutions(x, process_id);
         sys.applyKnownSolutions(x);
         time_dirichlet += timer_dirichlet.elapsed();
 
@@ -228,7 +228,7 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
 
         BaseLib::RunTime time_assembly;
         time_assembly.start();
-        sys.assemble(x);
+        sys.assemble(x, process_id);
         sys.getResidual(x, res);
         sys.getJacobian(J);
         INFO("[time] Assembly took %g s.", time_assembly.elapsed());
