@@ -97,6 +97,12 @@ static NcVar getDimVar(NcFile const& dataset, NcVar const& var,
     return dataset.getVar(dim_obj.getName());
 }
 
+static std::pair<double, double> getDimLength(NcVar const& var,
+                                              std::size_t const dim)
+{
+    return std::make_pair(0.0, static_cast<double>(var.getDim(dim).getSize()));
+}
+
 static std::vector<std::string> getArrays(NcFile const& dataset)
 {
     auto const& names = dataset.getVars();
@@ -150,7 +156,7 @@ static std::pair<double, double> getBoundaries(NcVar const& var)
 }
 
 static MathLib::Point3d getOrigin(NcFile const& dataset, NcVar const& var,
-                           std::array<std::size_t, 4> const& dim_idx_map,
+                           std::vector<std::size_t> const& dim_idx_map,
                            bool is_time_dep)
 {
     std::size_t const temp_offset = (is_time_dep) ? 1 : 0;
@@ -159,7 +165,8 @@ static MathLib::Point3d getOrigin(NcFile const& dataset, NcVar const& var,
     for (std::size_t i = temp_offset; i < n_dims; ++i)
     {
         NcVar const& dim = getDimVar(dataset, var, dim_idx_map[i]);
-        auto const bounds = getBoundaries(dim);
+        auto const bounds = (dim.isNull()) ? getDimLength(var, dim_idx_map[i])
+                                           : getBoundaries(dim);
         origin[i - temp_offset] =
             (bounds.first < bounds.second) ? bounds.first : bounds.second;
     }
@@ -205,7 +212,7 @@ static std::string arraySelectionLoop(NcFile const& dataset)
 }
 
 static bool dimensionSelectionLoop(NcVar const& var,
-                            std::array<std::size_t, 4>& dim_idx_map)
+                            std::vector<std::size_t>& dim_idx_map)
 {
     showArraysDims(var);
     std::size_t const n_dims(var.getDimCount());
@@ -270,15 +277,14 @@ static bool dimensionSelectionLoop(NcVar const& var,
 }
 
 static std::pair<std::size_t, std::size_t> timestepSelectionLoop(
-    NcFile const& dataset, NcVar const& var, std::size_t const dim_idx)
+    NcVar const& var, std::size_t const dim_idx)
 {
     std::size_t const n_time_steps = var.getDim(dim_idx).getSize();
     std::pair<std::size_t, std::size_t> bounds(
         std::numeric_limits<std::size_t>::max(),
         std::numeric_limits<std::size_t>::max());
     std::cout << "\nThe dataset contains " << n_time_steps << " time steps.\n";
-    bounds.first =
-        parseInput("Specify first time step to export: ", n_time_steps, false);
+    bounds.first = parseInput("Specify first time step to export: ", n_time_steps, false);
     while (bounds.first > bounds.second || bounds.second > n_time_steps)
         bounds.second = parseInput(
             "Specify last time step to export: ", n_time_steps, false);
@@ -349,7 +355,9 @@ static std::string getIterationString(std::size_t i, std::size_t max)
 static double getResolution(NcFile const& dataset, NcVar const& var)
 {
     std::size_t const dim_idx = var.getDimCount() - 1;
-    auto const bounds = getBoundaries(getDimVar(dataset, var, dim_idx));
+    NcVar const dim_var (getDimVar(dataset, var, dim_idx));
+    auto const bounds = (dim_var.isNull()) ? getDimLength(var, dim_idx)
+                                           : getBoundaries(dim_var);
     std::size_t const dim_size = var.getDim(dim_idx).getSize();
     std::string const err_msg("Dimension \"" + var.getDim(dim_idx).getName() +
                               "\" has size 0. Aborting...");
@@ -359,7 +367,7 @@ static double getResolution(NcFile const& dataset, NcVar const& var)
 
 static GeoLib::RasterHeader createRasterHeader(
     NcFile const& dataset, NcVar const& var,
-    std::array<std::size_t, 4> const& dim_idx_map,
+    std::vector<std::size_t> const& dim_idx_map,
     std::vector<std::size_t> const& length, bool is_time_dep)
 {
     MathLib::Point3d const origin = getOrigin(dataset, var, dim_idx_map, is_time_dep);
@@ -378,7 +386,6 @@ static std::vector<std::size_t> getLength(NcVar const& var, bool const is_time_d
     std::size_t const temp_offset = (is_time_dep) ? 1 : 0;
     std::size_t const n_dims = (var.getDimCount());
     std::vector<std::size_t> length(n_dims, 1);
-    std::size_t array_length = 1;
     for (std::size_t i = temp_offset; i < n_dims; ++i)
     {
         length[i] = var.getDim(i).getSize();
@@ -401,14 +408,16 @@ static std::vector<double> getData(NcFile const& dataset, NcVar const& var,
 
     // reverse lines in vertical direction if the original file has its origin
     // in the northwest corner
-    auto const bounds = getBoundaries(getDimVar(dataset, var, n_dims - 1));
+    NcVar const dim_var (getDimVar(dataset, var, n_dims - 1));
+    auto const bounds = (dim_var.isNull()) ? getDimLength(var, n_dims - 1)
+                                           : getBoundaries(dim_var);
     if (bounds.first > bounds.second)
         flipRaster(data_vec, length[n_dims - 2], length[n_dims - 1]);
     return data_vec;
 }
 
 static bool assignDimParams(NcVar const& var,
-                     std::array<std::size_t, 4>& dim_idx_map,
+                     std::vector<std::size_t>& dim_idx_map,
                      TCLAP::ValueArg<std::size_t>& arg_dim_time,
                      TCLAP::ValueArg<std::size_t>& arg_dim1,
                      TCLAP::ValueArg<std::size_t>& arg_dim2,
@@ -433,10 +442,9 @@ static bool assignDimParams(NcVar const& var,
         return false;
     }
 
-    bool const is_time_dep = arg_dim_time.isSet();
-    if (is_time_dep)
+    if (arg_dim_time.isSet())
         dim_idx_map[0] = arg_dim_time.getValue();
-    std::size_t const temp_offset = (is_time_dep) ? 1 : 0;
+    std::size_t const temp_offset = (arg_dim_time.isSet()) ? 1 : 0;
     dim_idx_map[0 + temp_offset] = arg_dim1.getValue();
     dim_idx_map[1 + temp_offset] = arg_dim2.getValue();
     if (n_dims == (3 + temp_offset))
@@ -492,7 +500,7 @@ static MeshLib::MeshElemType assignElemType(
 
 static bool convert(NcFile const& dataset, NcVar const& var,
              std::string const& output_name,
-             std::array<std::size_t, 4> const& dim_idx_map,
+             std::vector<std::size_t> const& dim_idx_map,
              bool const is_time_dep,
              std::pair<std::size_t, std::size_t> const& time_bounds,
              bool const use_single_file, MeshLib::MeshElemType const elem_type)
@@ -661,7 +669,7 @@ int main(int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
-    std::array<std::size_t, 4> dim_idx_map;
+    std::vector<std::size_t> dim_idx_map(var.getDimCount(), 0);
     bool is_time_dep (false);
     if (arg_dim1.isSet() && arg_dim2.isSet())
     {
@@ -679,7 +687,7 @@ int main(int argc, char* argv[])
         time_bounds = (arg_time_start.isSet())
                 ? assignTimeBounds(getDimVar(dataset, var, dim_idx_map[0]),
                                    arg_time_start, arg_time_end)
-                : timestepSelectionLoop(dataset, var, dim_idx_map[0]);
+                : timestepSelectionLoop(var, dim_idx_map[0]);
 
     bool use_single_file(true);
     if (arg_time_start.isSet())
