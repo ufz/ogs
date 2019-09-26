@@ -12,6 +12,8 @@
 
 #include "CoupledSolutionsForStaggeredScheme.h"
 
+#include <numeric>
+
 #include "MathLib/LinAlg/LinAlg.h"
 #include "Process.h"
 
@@ -27,7 +29,7 @@ CoupledSolutionsForStaggeredScheme::CoupledSolutionsForStaggeredScheme(
     }
 }
 
-std::vector<std::vector<double>> getPreviousLocalSolutions(
+std::vector<double> getPreviousLocalSolutions(
     const CoupledSolutionsForStaggeredScheme& cpl_xs,
     const std::vector<std::vector<GlobalIndexType>>& indices)
 {
@@ -36,15 +38,23 @@ std::vector<std::vector<double>> getPreviousLocalSolutions(
         return {};
     }
 
-    const auto number_of_coupled_solutions = cpl_xs.coupled_xs.size();
-    std::vector<std::vector<double>> local_xs_t0;
-    local_xs_t0.reserve(number_of_coupled_solutions);
+    std::size_t const local_solutions_size = std::accumulate(
+        cbegin(indices),
+        cend(indices),
+        std::size_t(0),
+        [](GlobalIndexType const size,
+           std::vector<GlobalIndexType> const& process_indices) {
+            return size + process_indices.size();
+        });
+    std::vector<double> local_xs_t0;
+    local_xs_t0.reserve(local_solutions_size);
 
-    int coupling_id = 0;
+    int process_id = 0;
     for (auto const& x_t0 : cpl_xs.coupled_xs_t0)
     {
-        local_xs_t0.emplace_back(x_t0->get(indices[coupling_id]));
-        coupling_id++;
+        auto const& values = x_t0->get(indices[process_id]);
+        local_xs_t0.insert(cend(local_xs_t0), cbegin(values), cend(values));
+        process_id++;
     }
     return local_xs_t0;
 }

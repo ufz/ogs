@@ -49,7 +49,7 @@ struct CoupledSolutionsForStaggeredScheme
  */
 struct LocalCoupledSolutions
 {
-    LocalCoupledSolutions(std::vector<std::vector<double>>&& local_coupled_xs0_,
+    LocalCoupledSolutions(std::vector<double>&& local_coupled_xs0_,
                           std::vector<std::vector<double>>&& local_coupled_xs_)
         : local_coupled_xs0(std::move(local_coupled_xs0_)),
           local_coupled_xs(std::move(local_coupled_xs_))
@@ -57,7 +57,7 @@ struct LocalCoupledSolutions
     }
 
     /// Local solutions of the previous time step.
-    std::vector<std::vector<double>> const local_coupled_xs0;
+    std::vector<double> const local_coupled_xs0;
     /// Local solutions of the current time step.
     std::vector<std::vector<double>> const local_coupled_xs;
 };
@@ -69,7 +69,7 @@ struct LocalCoupledSolutions
  * @param indices Nodal indices of an element.
  * @return Nodal solutions of the previous time step of an element
  */
-std::vector<std::vector<double>> getPreviousLocalSolutions(
+std::vector<double> getPreviousLocalSolutions(
     const CoupledSolutionsForStaggeredScheme& cpl_xs,
     const std::vector<std::vector<GlobalIndexType>>& indices);
 
