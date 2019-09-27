@@ -30,11 +30,10 @@ namespace ProcessLib
 struct CoupledSolutionsForStaggeredScheme
 {
     CoupledSolutionsForStaggeredScheme(
-        std::vector<std::reference_wrapper<GlobalVector const>> const&
-            coupled_xs_);
+        std::vector<GlobalVector*> const& coupled_xs_);
 
     /// References to the current solutions of the coupled processes.
-    std::vector<std::reference_wrapper<GlobalVector const>> const& coupled_xs;
+    std::vector<GlobalVector*> const& coupled_xs;
 
     /// Pointers to the vector of the solutions of the previous time step.
     std::vector<GlobalVector*> coupled_xs_t0;

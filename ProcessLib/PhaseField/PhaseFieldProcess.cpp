@@ -323,7 +323,7 @@ void PhaseFieldProcess<DisplacementDim>::postNonLinearSolverConcreteProcess(
                 _process_data.pressure;
             INFO("Internal pressure: %g and Pressure error: %.4e",
                  _process_data.pressure, _process_data.pressure_error);
-            auto& u = _coupled_solutions->coupled_xs[0].get();
+            auto& u = *_coupled_solutions->coupled_xs[0];
             MathLib::LinAlg::scale(const_cast<GlobalVector&>(u),
                                    _process_data.pressure);
         }
@@ -332,7 +332,7 @@ void PhaseFieldProcess<DisplacementDim>::postNonLinearSolverConcreteProcess(
     {
         if (_process_data.propagating_crack)
         {
-            auto& u = _coupled_solutions->coupled_xs[0].get();
+            auto& u = *_coupled_solutions->coupled_xs[0];
             MathLib::LinAlg::scale(const_cast<GlobalVector&>(u),
                                    1 / _process_data.pressure);
         }

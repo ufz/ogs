@@ -18,12 +18,12 @@
 namespace ProcessLib
 {
 CoupledSolutionsForStaggeredScheme::CoupledSolutionsForStaggeredScheme(
-    std::vector<std::reference_wrapper<GlobalVector const>> const& coupled_xs_)
+    std::vector<GlobalVector*> const& coupled_xs_)
     : coupled_xs(coupled_xs_)
 {
-    for (auto const& coupled_x : coupled_xs)
+    for (auto const* coupled_x : coupled_xs)
     {
-        MathLib::LinAlg::setLocalAccessibleVector(coupled_x.get());
+        MathLib::LinAlg::setLocalAccessibleVector(*coupled_x);
     }
 }
 
@@ -63,9 +63,9 @@ std::vector<std::vector<double>> getCurrentLocalSolutions(
     local_xs_t1.reserve(number_of_coupled_solutions);
 
     int coupling_id = 0;
-    for (auto const& x_t1 : cpl_xs.coupled_xs)
+    for (auto const* x_t1 : cpl_xs.coupled_xs)
     {
-        local_xs_t1.emplace_back(x_t1.get().get(indices[coupling_id]));
+        local_xs_t1.emplace_back(x_t1->get(indices[coupling_id]));
         coupling_id++;
     }
     return local_xs_t1;

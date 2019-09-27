@@ -126,13 +126,6 @@ private:
         _global_coupling_conv_crit;
 
     std::unique_ptr<ChemistryLib::ChemicalSolverInterface> _chemical_system;
-    /**
-     *  Vector of solutions of the coupled processes.
-     *  Each vector element stores the references of the solution vectors
-     *  (stored in _process_solutions) of the coupled processes of a process.
-     */
-    std::vector<std::reference_wrapper<GlobalVector const>>
-        _solutions_of_coupled_processes;
 
     /// Solutions of the previous coupling iteration for the convergence
     /// criteria of the coupling iteration.
