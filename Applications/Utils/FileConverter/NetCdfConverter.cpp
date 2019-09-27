@@ -426,18 +426,23 @@ static bool assignDimParams(NcVar const& var,
                      TCLAP::ValueArg<std::size_t>& arg_dim2,
                      TCLAP::ValueArg<std::size_t>& arg_dim3)
 {
-    if (arg_dim3.isSet() && !arg_dim2.isSet())
+    std::size_t dim_param_count = 0;
+    if (arg_dim_time.isSet())
+        dim_param_count++;
+    if (arg_dim1.isSet())
+        dim_param_count++;
+    if (arg_dim2.isSet())
+        dim_param_count++;
+    if (arg_dim3.isSet())
+        dim_param_count++;
+
+    std::size_t const n_dims = var.getDimCount();
+    if (dim_param_count != n_dims)
     {
-        ERR("Parameter for dim2 is not set. Ignoring dimension parameters.");
-        return false;
-    }
-    if (!arg_dim1.isSet() || !arg_dim2.isSet())
-    {
-        ERR("dim1 and dim2 need to be set for extracting mesh.");
+        ERR("Number of parameters set does not fit number of parameters for specified variable.");
         return false;
     }
 
-    std::size_t const n_dims = var.getDimCount();
     if (arg_dim_time.getValue() >= n_dims || arg_dim1.getValue() >= n_dims ||
         arg_dim2.getValue() >= n_dims || arg_dim3.getValue() >= n_dims)
     {
@@ -695,7 +700,7 @@ int main(int argc, char* argv[])
                 : timestepSelectionLoop(var, dim_idx_map[0]);
 
     bool use_single_file(true);
-    if (arg_time_start.isSet())
+    if (arg_time_start.isSet() && time_bounds.first != time_bounds.second)
     {
         use_single_file = arg_single_file.isSet();
     }
