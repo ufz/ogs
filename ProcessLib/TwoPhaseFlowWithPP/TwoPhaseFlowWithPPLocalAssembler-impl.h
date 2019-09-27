@@ -32,8 +32,7 @@
 #pragma once
 
 #include "MaterialLib/MPL/Medium.h"
-#include "TwoPhaseFlowWithPPLocalAssembler.h"
-
+#include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 #include "NumLib/Function/Interpolation.h"
 #include "TwoPhaseFlowWithPPProcessData.h"
@@ -163,13 +162,9 @@ void TwoPhaseFlowWithPPLocalAssembler<
 
         auto const lambda_wet = k_rel_wet / mu_wet;
 
-        auto const perm = medium.property(MPL::PropertyType::permeability)
-                              .template value<double>(variables, pos, t);
-
-        GlobalDimMatrixType permeability = GlobalDimMatrixType::Zero(
-            _element.getDimension(), _element.getDimension());
-
-        permeability.diagonal().setConstant(perm);
+        auto const K = MPL::formEigenTensor<GlobalDim>(
+            medium.property(MPL::PropertyType::permeability)
+                .template value<double>(variables, pos, t));
 
         Mgp.noalias() +=
             porosity * (1 - Sw) * drhononwet_dpn * _ip_data[ip].massOperator;
@@ -179,8 +174,8 @@ void TwoPhaseFlowWithPPLocalAssembler<
         Mlpc.noalias() +=
             porosity * dSw_dpc * rho_wet * _ip_data[ip].massOperator;
 
-        laplace_operator.noalias() = _ip_data[ip].dNdx.transpose() *
-                                     permeability * _ip_data[ip].dNdx *
+        laplace_operator.noalias() = _ip_data[ip].dNdx.transpose() * K *
+                                     _ip_data[ip].dNdx *
                                      _ip_data[ip].integration_weight;
 
         Kgp.noalias() += rho_nonwet * lambda_nonwet * laplace_operator;
@@ -193,7 +188,7 @@ void TwoPhaseFlowWithPPLocalAssembler<
             auto const& b = _process_data.specific_body_force;
 
             NodalVectorType gravity_operator = _ip_data[ip].dNdx.transpose() *
-                                               permeability * b *
+                                               K * b *
                                                _ip_data[ip].integration_weight;
             Bg.noalias() +=
                 rho_nonwet * rho_nonwet * lambda_nonwet * gravity_operator;
