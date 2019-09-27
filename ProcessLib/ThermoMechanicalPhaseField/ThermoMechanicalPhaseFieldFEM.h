@@ -111,6 +111,17 @@ template <typename ShapeFunction, typename IntegrationMethod,
 class ThermoMechanicalPhaseFieldLocalAssembler
     : public ThermoMechanicalPhaseFieldLocalAssemblerInterface
 {
+private:
+    static constexpr int temperature_index = 0;
+    static constexpr int temperature_size = ShapeFunction::NPOINTS;
+    static constexpr int displacement_index =
+        temperature_index + temperature_size;
+    static constexpr int displacement_size =
+        ShapeFunction::NPOINTS * DisplacementDim;
+    static constexpr int phasefield_index =
+        displacement_index + displacement_size;
+    static constexpr int phasefield_size = ShapeFunction::NPOINTS;
+
 public:
     using ShapeMatricesType =
         ShapeMatrixPolicyType<ShapeFunction, DisplacementDim>;
@@ -122,6 +133,13 @@ public:
     using NodalForceVectorType = typename BMatricesType::NodalForceVectorType;
 
     using GlobalDimVectorType = typename ShapeMatricesType::GlobalDimVectorType;
+
+    using TemperatureVector =
+        typename ShapeMatricesType::template VectorType<temperature_size>;
+    using DeformationVector =
+        typename ShapeMatricesType::template VectorType<displacement_size>;
+    using PhaseFieldVector =
+        typename ShapeMatricesType::template VectorType<phasefield_size>;
 
     ThermoMechanicalPhaseFieldLocalAssembler(
         ThermoMechanicalPhaseFieldLocalAssembler const&) = delete;
@@ -370,14 +388,6 @@ private:
     MeshLib::Element const& _element;
     SecondaryData<typename ShapeMatrices::ShapeType> _secondary_data;
     bool const _is_axially_symmetric;
-
-    static const int temperature_index = 0;
-    static const int temperature_size = ShapeFunction::NPOINTS;
-    static const int phasefield_index = ShapeFunction::NPOINTS;
-    static const int phasefield_size = ShapeFunction::NPOINTS;
-    static const int displacement_index = 2 * ShapeFunction::NPOINTS;
-    static const int displacement_size =
-        ShapeFunction::NPOINTS * DisplacementDim;
 
     /// ID of the processes that contains mechanical process.
     int const _mechanics_related_process_id;

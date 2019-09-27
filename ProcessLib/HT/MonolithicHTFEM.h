@@ -211,15 +211,9 @@ public:
         auto const indices =
             NumLib::getIndices(this->_element.getID(), dof_table);
         assert(!indices.empty());
-        auto local_x = current_solution.get(indices);
+        auto const& local_x = current_solution.get(indices);
 
-        std::vector<double> local_p(
-            std::make_move_iterator(local_x.begin() + local_x.size() / 2),
-            std::make_move_iterator(local_x.end()));
-        // only T is kept in local_x
-        local_x.erase(local_x.begin() + local_x.size() / 2, local_x.end());
-
-        return this->getIntPtDarcyVelocityLocal(t, local_p, local_x, cache);
+        return this->getIntPtDarcyVelocityLocal(t, local_x, cache);
     }
 
 private:
