@@ -127,3 +127,66 @@ AddTest(
         t2_1D2bt_pcs_0_ts_1500_t_3888.000000.vtu t2_1D2bt_pcs_0_ts_1500_t_3888.000000.vtu temperature temperature 10e-12 0.0
         REQUIREMENTS NOT OGS_USE_MPI
 )
+
+AddTest(
+        NAME HeatConduction_2D_LineSourceTermLeft
+        PATH Parabolic/T/2D_source_term_tests/line_source_term_left
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS source_term_left.prj
+        TESTER vtkdiff
+        DIFF_DATA
+        source_term_left_pcs_0_ts_1_t_1.000000.vtu source_term_left_pcs_0_ts_1_t_1.000000.vtu temperature temperature 1e-15 0.0
+        source_term_left_pcs_0_ts_1_t_1.000000.vtu source_term_left_pcs_0_ts_1_t_1.000000.vtu heat_flux_x heat_flux_x 1e-15 0.0
+        REQUIREMENTS NOT OGS_USE_MPI
+)
+
+AddTest(
+        NAME HeatConduction_2D_LineSourceTermMiddle
+        PATH Parabolic/T/2D_source_term_tests/line_source_term_x_0.5
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS line_source_term_x_0.5.prj
+        TESTER vtkdiff
+        DIFF_DATA
+        source_term_middle_pcs_0_ts_1_t_1.000000.vtu source_term_middle_pcs_0_ts_1_t_1.000000.vtu temperature temperature 1e-15 0.0
+        source_term_middle_pcs_0_ts_1_t_1.000000.vtu source_term_middle_pcs_0_ts_1_t_1.000000.vtu heat_flux_x heat_flux_x 1e-15 0.0
+        REQUIREMENTS NOT OGS_USE_MPI
+)
+
+AddTest(
+        NAME HeatConduction_2D_LineSourceTermMiddle_Restricted
+        PATH
+        Parabolic/T/2D_source_term_tests/line_source_term_x_0.5_restricted_to_middle
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS line_source_term_x_0.5.prj
+        TESTER vtkdiff
+        DIFF_DATA
+        source_term_middle_restricted_pcs_0_ts_1_t_1.000000.vtu source_term_middle_restricted_pcs_0_ts_1_t_1.000000.vtu temperature temperature 1e-15 0.0
+        source_term_middle_restricted_pcs_0_ts_1_t_1.000000.vtu source_term_middle_restricted_pcs_0_ts_1_t_1.000000.vtu heat_flux_x heat_flux_x 1e-15 0.0
+        REQUIREMENTS NOT OGS_USE_MPI
+)
+
+AddTest(
+        NAME HeatConduction_3D_LineSourceTermMiddle
+        PATH
+        Parabolic/T/3D_line_source_term_tests/3D_line_source_term_middle
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS line_source_term_x_0.5_y_0.5.prj
+        TESTER vtkdiff
+        DIFF_DATA
+        3D_line_source_term_pcs_0_ts_1_t_1.000000.vtu 3D_line_source_term_pcs_0_ts_1_t_1.000000.vtu temperature temperature 1e-15 0.0
+        3D_line_source_term_pcs_0_ts_1_t_1.000000.vtu 3D_line_source_term_pcs_0_ts_1_t_1.000000.vtu heat_flux_x heat_flux_x 1e-15 0.0
+        REQUIREMENTS NOT OGS_USE_MPI
+)
+
+AddTest(
+        NAME HeatConduction_3D_LineSourceTermMiddle_Restricted
+        PATH
+        Parabolic/T/3D_line_source_term_tests/3D_line_source_term_middle_restricted
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS line_source_term_x_0.5_y_0.5_restricted.prj
+        TESTER vtkdiff
+        DIFF_DATA
+        3D_line_source_term_restricted_pcs_0_ts_1_t_1.000000.vtu 3D_line_source_term_restricted_pcs_0_ts_1_t_1.000000.vtu temperature temperature 1e-15 0.0
+        3D_line_source_term_restricted_pcs_0_ts_1_t_1.000000.vtu 3D_line_source_term_restricted_pcs_0_ts_1_t_1.000000.vtu heat_flux_x heat_flux_x 1e-15 0.0
+        REQUIREMENTS NOT OGS_USE_MPI
+)
