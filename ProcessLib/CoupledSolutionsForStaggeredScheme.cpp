@@ -17,6 +17,40 @@
 #include "MathLib/LinAlg/LinAlg.h"
 #include "Process.h"
 
+namespace
+{
+std::vector<double> getLocalSolutions(
+    std::vector<GlobalVector*> const& global_solutions,
+    std::vector<std::vector<GlobalIndexType>> const& indices)
+{
+    if (global_solutions.empty())
+    {
+        return {};
+    }
+
+    std::size_t const local_solutions_size = std::accumulate(
+        cbegin(indices),
+        cend(indices),
+        std::size_t(0),
+        [](GlobalIndexType const size,
+           std::vector<GlobalIndexType> const& process_indices) {
+            return size + process_indices.size();
+        });
+    std::vector<double> local_solutions;
+    local_solutions.reserve(local_solutions_size);
+
+    int number_of_processes = static_cast<int>(global_solutions.size());
+    for (int process_id = 0; process_id < number_of_processes; ++process_id)
+    {
+        auto values = global_solutions[process_id]->get(indices[process_id]);
+        local_solutions.insert(cend(local_solutions),
+                               std::make_move_iterator(begin(values)),
+                               std::make_move_iterator(end(values)));
+    }
+    return local_solutions;
+}
+}  // namespace
+
 namespace ProcessLib
 {
 CoupledSolutionsForStaggeredScheme::CoupledSolutionsForStaggeredScheme(
@@ -33,60 +67,14 @@ std::vector<double> getPreviousLocalSolutions(
     const CoupledSolutionsForStaggeredScheme& cpl_xs,
     const std::vector<std::vector<GlobalIndexType>>& indices)
 {
-    if (cpl_xs.coupled_xs_t0.empty())
-    {
-        return {};
-    }
-
-    std::size_t const local_solutions_size = std::accumulate(
-        cbegin(indices),
-        cend(indices),
-        std::size_t(0),
-        [](GlobalIndexType const size,
-           std::vector<GlobalIndexType> const& process_indices) {
-            return size + process_indices.size();
-        });
-    std::vector<double> local_xs_t0;
-    local_xs_t0.reserve(local_solutions_size);
-
-    int process_id = 0;
-    for (auto const& x_t0 : cpl_xs.coupled_xs_t0)
-    {
-        auto const& values = x_t0->get(indices[process_id]);
-        local_xs_t0.insert(cend(local_xs_t0), cbegin(values), cend(values));
-        process_id++;
-    }
-    return local_xs_t0;
+    return getLocalSolutions(cpl_xs.coupled_xs_t0, indices);
 }
 
 std::vector<double> getCurrentLocalSolutions(
     const CoupledSolutionsForStaggeredScheme& cpl_xs,
     const std::vector<std::vector<GlobalIndexType>>& indices)
 {
-    if (cpl_xs.coupled_xs.empty())
-    {
-        return {};
-    }
-
-    std::size_t const local_solutions_size = std::accumulate(
-        cbegin(indices),
-        cend(indices),
-        std::size_t(0),
-        [](GlobalIndexType const size,
-           std::vector<GlobalIndexType> const& process_indices) {
-            return size + process_indices.size();
-        });
-    std::vector<double> local_xs_t1;
-    local_xs_t1.reserve(local_solutions_size);
-
-    int process_id = 0;
-    for (auto const& x_t1 : cpl_xs.coupled_xs)
-    {
-        auto const& values = x_t1->get(indices[process_id]);
-        local_xs_t1.insert(cend(local_xs_t1), cbegin(values), cend(values));
-        process_id++;
-    }
-    return local_xs_t1;
+    return getLocalSolutions(cpl_xs.coupled_xs, indices);
 }
 
 }  // namespace ProcessLib
