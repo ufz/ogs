@@ -29,7 +29,7 @@ namespace ProcessLib
  */
 struct CoupledSolutionsForStaggeredScheme
 {
-    CoupledSolutionsForStaggeredScheme(
+    explicit CoupledSolutionsForStaggeredScheme(
         std::vector<GlobalVector*> const& coupled_xs_);
 
     /// References to the current solutions of the coupled processes.
