@@ -301,6 +301,11 @@ std::ostream& operator<<(std::ostream& os, PhreeqcIO const& phreeqc_io)
             }
         }
 
+        os << "USE solution none" << "\n";
+        os << "END" << "\n" << "\n";
+
+        os << "USE solution " << chemical_system_id + 1 << "\n" << "\n";
+
         auto const& equilibrium_phases = phreeqc_io._equilibrium_phases;
         if (!equilibrium_phases.empty())
         {
@@ -323,9 +328,6 @@ std::ostream& operator<<(std::ostream& os, PhreeqcIO const& phreeqc_io)
             os << "-steps " << phreeqc_io._dt << "\n" << "\n";
         }
 
-        os << "USE solution none" << "\n";
-        os << "END" << "\n" << "\n";
-
         auto const& surface = phreeqc_io._surface;
         if (!surface.empty())
         {
@@ -337,25 +339,7 @@ std::ostream& operator<<(std::ostream& os, PhreeqcIO const& phreeqc_io)
                 os << "-equilibrate with solution " << aqueous_solution_id << "\n";
                 os << "-sites_units DENSITY" << "\n";
                 os << surface << "\n";
-                os << "END" << "\n" << "\n";
-        }
-
-        os << "USE solution " << chemical_system_id + 1 << "\n";
-
-        if (!equilibrium_phases.empty())
-        {
-            os << "USE equilibrium_phase " << chemical_system_id + 1 << "\n";
-        }
-
-        if (!kinetic_reactants.empty())
-        {
-            os << "USE kinetics " << chemical_system_id + 1 << "\n";
-        }
-
-        if (!surface.empty())
-        {
-            os << "USE surface " << chemical_system_id + 1 << "\n";
-            os << "SAVE solution " << chemical_system_id + 1 << "\n";
+                os << "SAVE solution " << chemical_system_id + 1 << "\n";
         }
 
         os << "END" << "\n" << "\n";
