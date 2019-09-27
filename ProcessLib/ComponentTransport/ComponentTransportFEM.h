@@ -430,7 +430,7 @@ public:
             coupled_xs.local_coupled_xs[first_transport_process_id].data(),
             concentration_size);
         auto local_C0 = Eigen::Map<const NodalVectorType>(
-            coupled_xs.local_coupled_xs0[first_transport_process_id].data(),
+            &coupled_xs.local_coupled_xs0[first_concentration_index],
             concentration_size);
 
         auto local_M = MathLib::createZeroedMatrix<LocalBlockMatrixType>(
@@ -541,8 +541,7 @@ public:
             coupled_xs.local_coupled_xs[hydraulic_process_id].data(),
             pressure_size);
         auto local_p0 = Eigen::Map<const NodalVectorType>(
-            coupled_xs.local_coupled_xs0[hydraulic_process_id].data(),
-            pressure_size);
+            &coupled_xs.local_coupled_xs0[pressure_index], pressure_size);
 
         auto local_M = MathLib::createZeroedMatrix<LocalBlockMatrixType>(
             local_M_data, concentration_size, concentration_size);

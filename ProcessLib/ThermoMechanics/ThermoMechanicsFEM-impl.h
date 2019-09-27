@@ -346,11 +346,11 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
         Eigen::Map<typename ShapeMatricesType::template VectorType<
             temperature_size> const>(local_T_vector.data(), temperature_size);
 
-    auto const& local_T0_vector = local_coupled_solutions.local_coupled_xs0[0];
-    assert(local_T0_vector.size() == temperature_size);
     auto const local_T0 =
         Eigen::Map<typename ShapeMatricesType::template VectorType<
-            temperature_size> const>(local_T0_vector.data(), temperature_size);
+            temperature_size> const>(
+            &local_coupled_solutions.local_coupled_xs0[temperature_index],
+            temperature_size);
 
     auto const& local_u_vector =
         local_coupled_solutions
@@ -484,12 +484,12 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
         Eigen::Map<typename ShapeMatricesType::template VectorType<
             temperature_size> const>(local_T_vector.data(), temperature_size);
 
-    auto const& local_T0_vector = local_coupled_solutions.local_coupled_xs0[0];
-    assert(local_T0_vector.size() == temperature_size);
-    auto const local_dT =
-        local_T -
+    auto const local_T0 =
         Eigen::Map<typename ShapeMatricesType::template VectorType<
-            temperature_size> const>(local_T0_vector.data(), temperature_size);
+            temperature_size> const>(
+            &local_coupled_solutions.local_coupled_xs0[temperature_index],
+            temperature_size);
+    auto const local_dT = local_T - local_T0;
 
     auto local_Jac = MathLib::createZeroedMatrix<
         typename ShapeMatricesType::template MatrixType<temperature_size,

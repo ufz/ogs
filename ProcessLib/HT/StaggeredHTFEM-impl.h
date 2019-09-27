@@ -59,8 +59,10 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
 
     auto const& local_T1 =
         coupled_xs.local_coupled_xs[_heat_transport_process_id];
-    auto const& local_T0 =
-        coupled_xs.local_coupled_xs0[_heat_transport_process_id];
+    auto const local_T0 =
+        Eigen::Map<typename ShapeMatricesType::template VectorType<
+            temperature_size> const>(
+            &coupled_xs.local_coupled_xs0[temperature_index], temperature_size);
 
     auto local_M = MathLib::createZeroedMatrix<LocalMatrixType>(
         local_M_data, local_matrix_size, local_matrix_size);
