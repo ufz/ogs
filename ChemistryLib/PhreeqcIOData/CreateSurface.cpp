@@ -27,8 +27,8 @@ std::vector<SurfaceSite> createSurface(
          //! \ogs_file_param{prj__chemical_system__surface__site}
          config->getConfigSubtreeList("site"))
     {
-        //! \ogs_file_param{prj__chemical_system__surface__site__mineral}
-        auto mineral = site_config.getConfigParameter<std::string>("mineral");
+        //! \ogs_file_param{prj__chemical_system__surface__site__name}
+        auto name = site_config.getConfigParameter<std::string>("name");
 
         auto const site_density =
             //! \ogs_file_param{prj__chemical_system__surface__site__site_density}
@@ -43,7 +43,7 @@ std::vector<SurfaceSite> createSurface(
             site_config.getConfigParameter<double>("mass");
 
         surface.emplace_back(
-            std::move(mineral), site_density, specific_surface_area, mass);
+            std::move(name), site_density, specific_surface_area, mass);
     }
 
     return surface;
