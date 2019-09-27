@@ -186,6 +186,7 @@ private:
      * identity tensor, and \f$f\f$ is the body force.
      *
      * @param t               Time
+     * @param dt              Time increment
      * @param local_xdot      Nodal values of \f$\dot{x}\f$ of an element.
      * @param dxdot_dx        Value of \f$\dot{x} \cdot dx\f$.
      * @param dx_dx           Value of \f$ x \cdot dx\f$.
@@ -221,6 +222,7 @@ private:
      * is the displacement, and \f$Q\f$ is the source/sink term.
      *
      * @param t               Time
+     * @param dt              Time increment
      * @param local_xdot      Nodal values of \f$\dot{x}\f$ of an element.
      * @param dxdot_dx        Value of \f$\dot{x} \cdot dx\f$.
      * @param dx_dx           Value of \f$ x \cdot dx\f$.
