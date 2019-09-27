@@ -66,8 +66,8 @@
                         </property>
                         <property>
                             <name>thermal_conductivity</name>
-                            <type>Constant</type>
-                            <value>3.0</value>
+                            <type>Parameter</type>
+                            <parameter_name>lambda_s</parameter_name>
                         </property>
                         <property>
                             <name>specific_heat_capacity</name>
@@ -378,6 +378,11 @@
             <name>rho_fluid</name>
             <type>Constant</type>
             <value>1000</value>
+        </parameter>
+        <parameter>
+            <name>lambda_s</name>
+            <type>Constant</type>
+            <values>3 0 0 3</values>
         </parameter>
         <parameter>
             <name>alpha_l</name>
