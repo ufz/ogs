@@ -302,8 +302,8 @@ StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
     assert(!indices.empty());
     std::vector<std::vector<GlobalIndexType>> indices_of_all_coupled_processes =
         {indices, indices};
-    auto const& local_xs = getCurrentLocalSolutions(
-        *(this->_coupled_solutions), indices_of_all_coupled_processes);
+    auto const local_xs = getCoupledLocalSolutions(
+        this->_coupled_solutions->coupled_xs, indices_of_all_coupled_processes);
 
     return this->getIntPtDarcyVelocityLocal(t, local_xs, cache);
 }

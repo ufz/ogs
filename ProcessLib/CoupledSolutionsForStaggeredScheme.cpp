@@ -17,9 +17,19 @@
 #include "MathLib/LinAlg/LinAlg.h"
 #include "Process.h"
 
-namespace
+namespace ProcessLib
 {
-std::vector<double> getLocalSolutions(
+CoupledSolutionsForStaggeredScheme::CoupledSolutionsForStaggeredScheme(
+    std::vector<GlobalVector*> const& coupled_xs_)
+    : coupled_xs(coupled_xs_)
+{
+    for (auto const* coupled_x : coupled_xs)
+    {
+        MathLib::LinAlg::setLocalAccessibleVector(*coupled_x);
+    }
+}
+
+std::vector<double> getCoupledLocalSolutions(
     std::vector<GlobalVector*> const& global_solutions,
     std::vector<std::vector<GlobalIndexType>> const& indices)
 {
@@ -49,32 +59,4 @@ std::vector<double> getLocalSolutions(
     }
     return local_solutions;
 }
-}  // namespace
-
-namespace ProcessLib
-{
-CoupledSolutionsForStaggeredScheme::CoupledSolutionsForStaggeredScheme(
-    std::vector<GlobalVector*> const& coupled_xs_)
-    : coupled_xs(coupled_xs_)
-{
-    for (auto const* coupled_x : coupled_xs)
-    {
-        MathLib::LinAlg::setLocalAccessibleVector(*coupled_x);
-    }
-}
-
-std::vector<double> getPreviousLocalSolutions(
-    const CoupledSolutionsForStaggeredScheme& cpl_xs,
-    const std::vector<std::vector<GlobalIndexType>>& indices)
-{
-    return getLocalSolutions(cpl_xs.coupled_xs_t0, indices);
-}
-
-std::vector<double> getCurrentLocalSolutions(
-    const CoupledSolutionsForStaggeredScheme& cpl_xs,
-    const std::vector<std::vector<GlobalIndexType>>& indices)
-{
-    return getLocalSolutions(cpl_xs.coupled_xs, indices);
-}
-
 }  // namespace ProcessLib

@@ -63,24 +63,11 @@ struct LocalCoupledSolutions
 };
 
 /**
- * Fetch the nodal solutions of all coupled processes of the previous time step
- * of an element.
- * @param cpl_xs  Solutions of all coupled equations.
- * @param indices Nodal indices of an element.
- * @return Nodal solutions of the previous time step of an element
+ * Fetch the nodal solutions of all coupled processes from the given vector of
+ * global solutions for each process into a flat vector.
  */
-std::vector<double> getPreviousLocalSolutions(
-    const CoupledSolutionsForStaggeredScheme& cpl_xs,
-    const std::vector<std::vector<GlobalIndexType>>& indices);
+std::vector<double> getCoupledLocalSolutions(
+    std::vector<GlobalVector*> const& global_solutions,
+    std::vector<std::vector<GlobalIndexType>> const& indices);
 
-/**
- * Fetch the nodal solutions of all coupled processes of the current time step
- * of an element.
- * @param cpl_xs  Solutions of all coupled equations.
- * @param indices Nodal indices of an element.
- * @return Nodal solutions of the current time step of an element
- */
-std::vector<double> getCurrentLocalSolutions(
-    const CoupledSolutionsForStaggeredScheme& cpl_xs,
-    const std::vector<std::vector<GlobalIndexType>>& indices);
 }  // namespace ProcessLib

@@ -262,7 +262,7 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
                    });
 
     auto local_coupled_xs =
-        getCurrentLocalSolutions(*cpl_xs, indices_of_processes);
+        getCoupledLocalSolutions(cpl_xs->coupled_xs, indices_of_processes);
     assert(local_coupled_xs.size() == displacement_size + phasefield_size);
 
     auto const d = Eigen::Map<PhaseFieldVector const>(
@@ -321,7 +321,7 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
                    });
 
     auto const local_coupled_xs =
-        getCurrentLocalSolutions(*cpl_xs, indices_of_processes);
+        getCoupledLocalSolutions(cpl_xs->coupled_xs, indices_of_processes);
     assert(local_coupled_xs.size() == displacement_size + phasefield_size);
 
     auto const d = Eigen::Map<PhaseFieldVector const>(

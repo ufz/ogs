@@ -68,10 +68,10 @@ void VectorMatrixAssembler::assemble(
     }
     else
     {
-        auto local_coupled_xs0 =
-            getPreviousLocalSolutions(*cpl_xs, indices_of_processes);
+        auto local_coupled_xs0 = getCoupledLocalSolutions(cpl_xs->coupled_xs_t0,
+                                                          indices_of_processes);
         auto local_coupled_xs =
-            getCurrentLocalSolutions(*cpl_xs, indices_of_processes);
+            getCoupledLocalSolutions(cpl_xs->coupled_xs, indices_of_processes);
 
         ProcessLib::LocalCoupledSolutions local_coupled_solutions(
             std::move(local_coupled_xs0), std::move(local_coupled_xs));
@@ -136,10 +136,10 @@ void VectorMatrixAssembler::assembleWithJacobian(
     }
     else
     {
-        auto local_coupled_xs0 =
-            getPreviousLocalSolutions(*cpl_xs, indices_of_processes);
+        auto local_coupled_xs0 = getCoupledLocalSolutions(cpl_xs->coupled_xs_t0,
+                                                          indices_of_processes);
         auto local_coupled_xs =
-            getCurrentLocalSolutions(*cpl_xs, indices_of_processes);
+            getCoupledLocalSolutions(cpl_xs->coupled_xs, indices_of_processes);
 
         ProcessLib::LocalCoupledSolutions local_coupled_solutions(
             std::move(local_coupled_xs0), std::move(local_coupled_xs));

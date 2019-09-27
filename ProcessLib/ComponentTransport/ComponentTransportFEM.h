@@ -730,8 +730,9 @@ public:
                 indices_of_all_coupled_processes(
                     _coupled_solutions->coupled_xs.size(), indices);
 
-            auto const local_xs = getCurrentLocalSolutions(
-                *(this->_coupled_solutions), indices_of_all_coupled_processes);
+            auto const local_xs =
+                getCoupledLocalSolutions(_coupled_solutions->coupled_xs,
+                                         indices_of_all_coupled_processes);
 
             auto const local_p = Eigen::Map<const NodalVectorType>(
                 &local_xs[pressure_index], pressure_size);
