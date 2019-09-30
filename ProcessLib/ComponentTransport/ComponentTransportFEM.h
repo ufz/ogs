@@ -310,10 +310,11 @@ public:
                     .template value<double>(vars, pos, t);
 
             auto const& molecular_diffusion_coefficient =
-                component
-                    .property(
-                        MaterialPropertyLib::PropertyType::molecular_diffusion)
-                    .template value<double>(vars, pos, t);
+                MaterialPropertyLib::formEigenTensor<GlobalDim>(
+                    component
+                        .property(MaterialPropertyLib::PropertyType::
+                                      molecular_diffusion)
+                        .value(vars, pos, t));
 
             auto const& K = MaterialPropertyLib::formEigenTensor<GlobalDim>(
                 medium.property(MaterialPropertyLib::PropertyType::permeability)
@@ -346,20 +347,18 @@ public:
             double const velocity_magnitude = velocity.norm();
             GlobalDimMatrixType const hydrodynamic_dispersion =
                 velocity_magnitude != 0.0
-                    ? GlobalDimMatrixType(
-                          (porosity * molecular_diffusion_coefficient +
-                           solute_dispersivity_transverse *
-                               velocity_magnitude) *
-                              I +
-                          (solute_dispersivity_longitudinal -
-                           solute_dispersivity_transverse) /
-                              velocity_magnitude * velocity *
-                              velocity.transpose())
-                    : GlobalDimMatrixType(
-                          (porosity * molecular_diffusion_coefficient +
-                           solute_dispersivity_transverse *
-                               velocity_magnitude) *
-                          I);
+                    ? GlobalDimMatrixType(porosity *
+                                              molecular_diffusion_coefficient +
+                                          solute_dispersivity_transverse *
+                                              velocity_magnitude * I +
+                                          (solute_dispersivity_longitudinal -
+                                           solute_dispersivity_transverse) /
+                                              velocity_magnitude * velocity *
+                                              velocity.transpose())
+                    : GlobalDimMatrixType(porosity *
+                                              molecular_diffusion_coefficient +
+                                          solute_dispersivity_transverse *
+                                              velocity_magnitude * I);
             const double R_times_phi(retardation_factor * porosity);
             GlobalDimVectorType const mass_density_flow = velocity * density;
             auto const N_t_N = (N.transpose() * N).eval();
@@ -621,10 +620,11 @@ public:
                     .template value<double>(vars, pos, t);
 
             auto const& molecular_diffusion_coefficient =
-                component
-                    .property(
-                        MaterialPropertyLib::PropertyType::molecular_diffusion)
-                    .template value<double>(vars, pos, t);
+                MaterialPropertyLib::formEigenTensor<GlobalDim>(
+                    component
+                        .property(MaterialPropertyLib::PropertyType::
+                                      molecular_diffusion)
+                        .value(vars, pos, t));
 
             auto const& K = MaterialPropertyLib::formEigenTensor<GlobalDim>(
                 medium.property(MaterialPropertyLib::PropertyType::permeability)
@@ -641,24 +641,21 @@ public:
                                           (dNdx * local_p - density * b))
                     : GlobalDimVectorType(-K_over_mu * dNdx * local_p);
 
-
             double const velocity_magnitude = velocity.norm();
             GlobalDimMatrixType const hydrodynamic_dispersion =
                 velocity_magnitude != 0.0
-                    ? GlobalDimMatrixType(
-                          (porosity * molecular_diffusion_coefficient +
-                           solute_dispersivity_transverse *
-                               velocity_magnitude) *
-                              I +
-                          (solute_dispersivity_longitudinal -
-                           solute_dispersivity_transverse) /
-                              velocity_magnitude * velocity *
-                              velocity.transpose())
-                    : GlobalDimMatrixType(
-                          (porosity * molecular_diffusion_coefficient +
-                           solute_dispersivity_transverse *
-                               velocity_magnitude) *
-                          I);
+                    ? GlobalDimMatrixType(porosity *
+                                              molecular_diffusion_coefficient +
+                                          solute_dispersivity_transverse *
+                                              velocity_magnitude * I +
+                                          (solute_dispersivity_longitudinal -
+                                           solute_dispersivity_transverse) /
+                                              velocity_magnitude * velocity *
+                                              velocity.transpose())
+                    : GlobalDimMatrixType(porosity *
+                                              molecular_diffusion_coefficient +
+                                          solute_dispersivity_transverse *
+                                              velocity_magnitude * I);
 
             double const R_times_phi = retardation_factor * porosity;
             auto const N_t_N = (N.transpose() * N).eval();

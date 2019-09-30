@@ -16,7 +16,7 @@
 #include "HTProcessData.h"
 
 #include "MaterialLib/MPL/Medium.h"
-#include "MaterialLib/MPL/Utils/FormEigenTensor.h"
+#include "MaterialLib/MPL/Utils/FormEffectiveThermalConductivity.h"
 
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
@@ -209,7 +209,7 @@ protected:
             solid_phase
                 .property(
                     MaterialPropertyLib::PropertyType::thermal_conductivity)
-                .template value<double>(vars, pos, t);
+                .value(vars, pos, t);
 
         auto const thermal_conductivity_fluid =
             liquid_phase
@@ -217,9 +217,10 @@ protected:
                     MaterialPropertyLib::PropertyType::thermal_conductivity)
                 .template value<double>(vars, pos, t);
 
-        double const thermal_conductivity =
-            thermal_conductivity_solid * (1 - porosity) +
-            thermal_conductivity_fluid * porosity;
+        auto const thermal_conductivity =
+            MaterialPropertyLib::formEffectiveThermalConductivity<GlobalDim>(
+                thermal_conductivity_solid, thermal_conductivity_fluid,
+                porosity);
 
         auto const thermal_dispersivity_longitudinal =
             medium
@@ -236,7 +237,7 @@ protected:
 
         if (velocity_magnitude < std::numeric_limits<double>::epsilon())
         {
-            return thermal_conductivity * I;
+            return thermal_conductivity;
         }
 
         GlobalDimMatrixType const thermal_dispersivity =
@@ -245,7 +246,8 @@ protected:
              (thermal_dispersivity_longitudinal -
               thermal_dispersivity_transversal) /
                  velocity_magnitude * velocity * velocity.transpose());
-        return thermal_conductivity * I + thermal_dispersivity;
+
+        return thermal_conductivity + thermal_dispersivity;
     }
 
     std::vector<double> const& getIntPtDarcyVelocityLocal(

@@ -29,8 +29,8 @@
                             <properties>
                                 <property>
                                     <name>molecular_diffusion</name>
-                                    <type>Constant</type>
-                                    <value>1e-9</value>
+                                    <type>Parameter</type>
+                                    <parameter_name>Dm</parameter_name>
                                 </property>
                                 <property>
                                     <name>retardation_factor</name>
@@ -170,6 +170,11 @@
             <name>kappa</name>
             <type>Constant</type>
             <values>1.019368e-11 0 0 1.019368e-11</values>
+        </parameter>
+        <parameter>
+            <name>Dm</name>
+            <type>Constant</type>
+            <values>1e-9 0 0 1e-9</values>
         </parameter>
         <parameter>
             <name>porosity</name>
