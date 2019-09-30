@@ -53,9 +53,9 @@ public:
                           std::vector<double>& local_b_data);
 
     virtual void assembleForStaggeredScheme(
-        double const t, double const dt, int const process_id,
-        std::vector<double>& local_M_data, std::vector<double>& local_K_data,
-        std::vector<double>& local_b_data,
+        double const t, double const dt, Eigen::VectorXd const& local_x,
+        int const process_id, std::vector<double>& local_M_data,
+        std::vector<double>& local_K_data, std::vector<double>& local_b_data,
         LocalCoupledSolutions const& coupled_solutions);
 
     virtual void assembleWithJacobian(double const t, double const dt,

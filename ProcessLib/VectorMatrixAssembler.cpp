@@ -73,12 +73,13 @@ void VectorMatrixAssembler::assemble(
         auto local_coupled_xs =
             getCoupledLocalSolutions(x, indices_of_processes);
 
+        auto const local_x = MathLib::toVector(local_coupled_xs);
         ProcessLib::LocalCoupledSolutions local_coupled_solutions(
             std::move(local_coupled_xs0), std::move(local_coupled_xs));
 
         local_assembler.assembleForStaggeredScheme(
-            t, dt, process_id, _local_M_data, _local_K_data, _local_b_data,
-            local_coupled_solutions);
+            t, dt, local_x, process_id, _local_M_data, _local_K_data,
+            _local_b_data, local_coupled_solutions);
     }
 
     auto const num_r_c = indices.size();

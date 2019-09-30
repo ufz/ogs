@@ -25,6 +25,7 @@ template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
 void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
     assembleForStaggeredScheme(double const t, double const dt,
+                               Eigen::VectorXd const& local_x,
                                int const process_id,
                                std::vector<double>& local_M_data,
                                std::vector<double>& local_K_data,
@@ -33,19 +34,20 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
 {
     if (process_id == _heat_transport_process_id)
     {
-        assembleHeatTransportEquation(t, local_M_data, local_K_data,
+        assembleHeatTransportEquation(t, local_x, local_M_data, local_K_data,
                                       local_b_data, coupled_xs);
         return;
     }
 
-    assembleHydraulicEquation(t, dt, local_M_data, local_K_data, local_b_data,
-                              coupled_xs);
+    assembleHydraulicEquation(t, dt, local_x, local_M_data, local_K_data,
+                              local_b_data, coupled_xs);
 }
 
 template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
 void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
     assembleHydraulicEquation(double const t, double const dt,
+                              Eigen::VectorXd const& local_x,
                               std::vector<double>& local_M_data,
                               std::vector<double>& local_K_data,
                               std::vector<double>& local_b_data,
@@ -183,6 +185,7 @@ template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
 void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
     assembleHeatTransportEquation(double const t,
+                                  Eigen::VectorXd const& local_x,
                                   std::vector<double>& local_M_data,
                                   std::vector<double>& local_K_data,
                                   std::vector<double>& /*local_b_data*/,
