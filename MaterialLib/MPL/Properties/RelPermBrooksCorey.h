@@ -31,7 +31,7 @@ class Component;
 class RelPermBrooksCorey final : public Property
 {
 private:
-    Medium* _medium;
+    Medium* _medium = nullptr;
     const double _residual_liquid_saturation;
     const double _residual_gas_saturation;
     const double _min_relative_permeability_liquid;

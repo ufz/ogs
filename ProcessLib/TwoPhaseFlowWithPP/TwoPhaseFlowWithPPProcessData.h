@@ -9,7 +9,7 @@
  */
 
 #pragma once
-#include "TwoPhaseFlowWithPPMaterialProperties.h"
+#include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 
 namespace ProcessLib
 {
@@ -30,7 +30,8 @@ struct TwoPhaseFlowWithPPProcessData
     //! Enables lumping of the mass matrix.
     bool const has_mass_lumping;
     ParameterLib::Parameter<double> const& temperature;
-    std::unique_ptr<TwoPhaseFlowWithPPMaterialProperties> material;
+    std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>
+        media_map;
 };
 
 }  // namespace TwoPhaseFlowWithPP

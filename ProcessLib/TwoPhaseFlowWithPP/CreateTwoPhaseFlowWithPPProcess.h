@@ -13,6 +13,11 @@
 #include <memory>
 #include "ProcessLib/Process.h"
 
+namespace MaterialPropertyLib
+{
+class Medium;
+}
+
 namespace ProcessLib
 {
 namespace TwoPhaseFlowWithPP
@@ -27,6 +32,7 @@ std::unique_ptr<Process> createTwoPhaseFlowWithPPProcess(
     BaseLib::ConfigTree const& config,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves);
+        curves,
+    std::map<int, std::unique_ptr<MaterialPropertyLib::Medium>> const& media);
 }  // namespace TwoPhaseFlowWithPP
 }  // namespace ProcessLib

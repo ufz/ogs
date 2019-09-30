@@ -64,11 +64,10 @@ PropertyDataType SaturationBrooksCorey::dValue(
     const double s_L_res = _residual_liquid_saturation;
     const double s_L_max = 1.0 - _residual_gas_saturation;
     const double p_b = _entry_pressure;
-    const double p_cap = std::get<double>(
-        variable_array[static_cast<int>(Variable::capillary_pressure)]);
-
-    if (p_cap <= p_b)
-        return 0.;
+    const double p_cap = std::max(
+        p_b,
+        std::get<double>(
+            variable_array[static_cast<int>(Variable::capillary_pressure)]));
 
     auto const s_L = _medium->property(PropertyType::saturation)
                          .template value<double>(variable_array, pos, t);

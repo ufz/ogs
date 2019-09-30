@@ -21,7 +21,7 @@ class Element;
 class Mesh;
 template <typename PROP_VAL_TYPE>
 class PropertyVector;
-}
+}  // namespace MeshLib
 
 namespace ProcessLib
 {
@@ -48,7 +48,6 @@ public:
         TwoPhaseFlowWithPPProcessData&& process_data,
         SecondaryVariableCollection&& secondary_variables,
         NumLib::NamedFunctionCaller&& named_function_caller,
-        BaseLib::ConfigTree const& config,
         std::map<std::string,
                  std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
             curves);

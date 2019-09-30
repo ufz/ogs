@@ -16,69 +16,6 @@
                 <gas_pressure>gas_pressure</gas_pressure>
                 <capillary_pressure>capillary_pressure</capillary_pressure>
             </process_variables>
-            <material_property>
-                <fluid>
-                    <liquid_density>
-                        <type>Constant</type>
-                        <value> 1.e3 </value>
-                    </liquid_density>
-                    <gas_density>
-                        <type>IdealGasLaw</type>
-                        <molar_mass> 0.02896 </molar_mass>
-                    </gas_density>
-                    <liquid_viscosity>
-                        <type>Constant</type>
-                        <value> 1.e-3 </value>
-                    </liquid_viscosity>
-                    <gas_viscosity>
-                        <type>Constant</type>
-                        <value> 1.8e-5 </value>
-                    </gas_viscosity>
-                </fluid>
-                <porous_medium>
-                    <porous_medium id="0">
-                        <permeability>
-                            <permeability_tensor_entries>kappa1</permeability_tensor_entries>
-                            <type>Constant</type>
-                        </permeability>
-                        <porosity>
-                            <type>Constant</type>
-                            <porosity_parameter>constant_porosity_parameter</porosity_parameter>
-                        </porosity>
-                        <storage>
-                            <type>Constant</type>
-                            <value> 0.0 </value>
-                        </storage>
-                        <capillary_pressure>
-                            <type>Curve</type>
-                            <curve>
-                                <coords>0.900000007    0.910000009    0.920000003    0.929821599    0.939999996    0.950000006    0.960000005    0.97    0.980000004    0.982500005    0.984999999    0.9875    0.989999997    0.9925    0.995000002    0.997499999    0.99962099    1
-                                </coords>
-                                <values>9938.064    9516.018    9065.393    8589.271    8052.432    7469.886    6813.948    6052.562    5121.663    4847.584    4549.372    4220.252    3849.668    3419.508    2893.579    2174.942    1000    0
-                                </values>
-                            </curve>
-                        </capillary_pressure>
-                        <relative_permeability>
-                            <relative_permeability id="0">
-                                <type>NonWettingPhaseBrooksCoreyOilGas</type>
-                                <sr>  0.2 </sr>
-                                <smax> 1.0</smax>
-                                <m> 3 </m>
-                                <krel_min> 1.e-4 </krel_min>
-                            </relative_permeability>
-                            <relative_permeability id="1">
-                                <type>Curve</type>
-                                <curve>
-                                    <coords>0.575    0.6    0.625    0.65    0.675    0.7    0.725    0.75    0.775    0.8    0.825    0.85    0.875    0.9    0.925    0.95    0.975    1
-                                    </coords>
-                                    <values>0    0.12693    0.18214    0.2373    0.29242    0.34748    0.40248    0.45743    0.51231    0.56711    0.62184    0.67646    0.73098    0.78536    0.83958    0.89358    0.94723    1
-                                    </values>
-                                </curve>
-                            </relative_permeability>
-                        </relative_permeability>
-                    </porous_medium>
-                </porous_medium>
-            </material_property>
             <secondary_variables>
                 <secondary_variable type="static" internal_name="saturation" output_name="saturation"/>
             </secondary_variables>
@@ -87,6 +24,71 @@
             <temperature> temp </temperature>
         </process>
     </processes>
+    <media>
+      <medium id="0">
+         <phases>
+            <phase>
+               <type>AqueousLiquid</type>
+               <properties>
+                  <property>
+                     <name>density</name>
+                     <type>Constant</type>
+                     <value>1.0e3</value>
+                  </property>
+                  <property>
+                     <name>viscosity</name>
+                     <type>Constant</type>
+                     <value>1e-3</value>
+                  </property>
+              </properties>
+            </phase>
+            <phase>
+               <type>Gas</type>
+               <properties>
+                  <property>
+                     <name>density</name>
+                     <type>IdealGasLaw</type>
+                  </property>
+                  <property>
+                     <name>viscosity</name>
+                     <type>Constant</type>
+                     <value>1.8e-5</value>
+                  </property>
+                  <property>
+                     <name>molar_mass</name>
+                     <type>Constant</type>
+                     <value>0.02896</value>
+                  </property>
+               </properties>
+            </phase>
+         </phases>
+         <properties>
+
+            <property>
+               <name>permeability</name>
+               <type>Constant</type>
+               <value>4.5e-13</value>
+            </property>
+
+            <property>
+               <name>saturation</name>
+               <type>SaturationLiakopoulos</type>
+            </property>
+
+            <property>
+               <name>relative_permeability</name>
+               <type>RelPermLiakopoulos</type>
+            </property>
+
+            <property>
+               <name>porosity</name>
+               <type>Constant</type>
+               <value>0.2975</value>
+            </property>
+
+         </properties>
+      </medium>
+   </media>
     <parameters>
         <parameter>
             <name>pc_Dirichlet_bottom</name>
