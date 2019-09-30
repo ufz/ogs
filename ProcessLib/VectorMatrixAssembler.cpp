@@ -153,15 +153,14 @@ void VectorMatrixAssembler::assembleWithJacobian(
         auto local_coupled_xs =
             getCoupledLocalSolutions(x, indices_of_processes);
 
-        auto const local_x = MathLib::toVector(local_coupled_xs);
-
         ProcessLib::LocalCoupledSolutions local_coupled_solutions(
             std::move(local_coupled_xs0));
 
+        auto const x = MathLib::toVector(local_coupled_xs);
         auto const xdot = MathLib::toVector(local_xdot);
 
         _jacobian_assembler->assembleWithJacobianForStaggeredScheme(
-            local_assembler, t, dt, local_x, xdot, dxdot_dx, dx_dx, process_id,
+            local_assembler, t, dt, x, xdot, dxdot_dx, dx_dx, process_id,
             _local_M_data, _local_K_data, _local_b_data, _local_Jac_data,
             local_coupled_solutions);
     }
