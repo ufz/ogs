@@ -25,7 +25,7 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
                                               DisplacementDim>::
     assembleWithJacobianForStaggeredScheme(
         double const t, double const dt, Eigen::VectorXd const& local_x,
-        std::vector<double> const& local_xdot, const double dxdot_dx,
+        Eigen::VectorXd const& local_xdot, const double dxdot_dx,
         const double dx_dx, int const process_id,
         std::vector<double>& local_M_data, std::vector<double>& local_K_data,
         std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
@@ -59,7 +59,7 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
                                               DisplacementDim>::
     assembleWithJacobianForDeformationEquations(
         double const t, double const dt, Eigen::VectorXd const& local_x,
-        std::vector<double> const& /*local_xdot*/, const double /*dxdot_dx*/,
+        Eigen::VectorXd const& /*local_xdot*/, const double /*dxdot_dx*/,
         const double /*dx_dx*/, std::vector<double>& /*local_M_data*/,
         std::vector<double>& /*local_K_data*/,
         std::vector<double>& local_b_data, std::vector<double>& local_Jac_data)
@@ -155,7 +155,7 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
                                               DisplacementDim>::
     assembleWithJacobianForHeatConductionEquations(
         double const t, double const dt, Eigen::VectorXd const& local_x,
-        std::vector<double> const& local_xdot, const double /*dxdot_dx*/,
+        Eigen::VectorXd const& local_xdot, const double /*dxdot_dx*/,
         const double /*dx_dx*/, std::vector<double>& /*local_M_data*/,
         std::vector<double>& /*local_K_data*/,
         std::vector<double>& local_b_data, std::vector<double>& local_Jac_data)
@@ -166,9 +166,8 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
     auto const d = local_x.template segment<phasefield_size>(phasefield_index);
     auto const T =
         local_x.template segment<temperature_size>(temperature_index);
-
-    auto T_dot = Eigen::Map<typename ShapeMatricesType::template VectorType<
-        temperature_size> const>(local_xdot.data(), temperature_size);
+    auto const T_dot =
+        local_xdot.template segment<temperature_size>(temperature_index);
 
     auto local_Jac = MathLib::createZeroedMatrix<
         typename ShapeMatricesType::template MatrixType<temperature_size,
@@ -251,7 +250,7 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
                                               DisplacementDim>::
     assembleWithJacobianForPhaseFieldEquations(
         double const t, Eigen::VectorXd const& local_x,
-        std::vector<double> const& /*local_xdot*/, const double /*dxdot_dx*/,
+        Eigen::VectorXd const& /*local_xdot*/, const double /*dxdot_dx*/,
         const double /*dx_dx*/, std::vector<double>& /*local_M_data*/,
         std::vector<double>& /*local_K_data*/,
         std::vector<double>& local_b_data, std::vector<double>& local_Jac_data)

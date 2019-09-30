@@ -411,7 +411,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                   DisplacementDim>::
     assembleWithJacobianForPressureEquations(
         const double t, double const dt, Eigen::VectorXd const& local_x,
-        const std::vector<double>& local_xdot, const double /*dxdot_dx*/,
+        Eigen::VectorXd const& local_xdot, const double /*dxdot_dx*/,
         const double /*dx_dx*/, std::vector<double>& /*local_M_data*/,
         std::vector<double>& /*local_K_data*/,
         std::vector<double>& local_b_data, std::vector<double>& local_Jac_data)
@@ -428,9 +428,8 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     auto const u =
         local_x.template segment<displacement_size>(displacement_index);
 
-    auto p_dot =
-        Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
-            pressure_size> const>(local_xdot.data(), pressure_size);
+    auto const p_dot =
+        local_xdot.template segment<pressure_size>(pressure_index);
 
     auto local_Jac = MathLib::createZeroedMatrix<
         typename ShapeMatricesTypeDisplacement::template MatrixType<
@@ -536,7 +535,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                   DisplacementDim>::
     assembleWithJacobianForDeformationEquations(
         const double t, double const dt, Eigen::VectorXd const& local_x,
-        const std::vector<double>& /*local_xdot*/, const double /*dxdot_dx*/,
+        Eigen::VectorXd const& /*local_xdot*/, const double /*dxdot_dx*/,
         const double /*dx_dx*/, std::vector<double>& /*local_M_data*/,
         std::vector<double>& /*local_K_data*/,
         std::vector<double>& local_b_data, std::vector<double>& local_Jac_data)
@@ -639,7 +638,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                   DisplacementDim>::
     assembleWithJacobianForStaggeredScheme(
         const double t, double const dt, Eigen::VectorXd const& local_x,
-        const std::vector<double>& local_xdot, const double dxdot_dx,
+        Eigen::VectorXd const& local_xdot, const double dxdot_dx,
         const double dx_dx, int const process_id,
         std::vector<double>& local_M_data, std::vector<double>& local_K_data,
         std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
