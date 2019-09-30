@@ -41,7 +41,7 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
     }
 
     assembleHydraulicEquation(t, dt, local_x, local_xdot, local_M_data,
-                              local_K_data, local_b_data, coupled_xs);
+                              local_K_data, local_b_data);
 }
 
 template <typename ShapeFunction, typename IntegrationMethod,
@@ -52,13 +52,11 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
                               Eigen::VectorXd const& local_xdot,
                               std::vector<double>& local_M_data,
                               std::vector<double>& local_K_data,
-                              std::vector<double>& local_b_data,
-                              LocalCoupledSolutions const& coupled_xs)
+                              std::vector<double>& local_b_data)
 {
     auto const local_p =
         local_x.template segment<pressure_size>(pressure_index);
-
-    auto const local_T1 =
+    auto const local_T =
         local_x.template segment<temperature_size>(temperature_index);
 
     auto const local_Tdot =
@@ -97,12 +95,12 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
         auto const& w = ip_data.integration_weight;
 
         double p_int_pt = 0.0;
-        double T1_int_pt = 0.0;
+        double T_int_pt = 0.0;
         NumLib::shapeFunctionInterpolate(local_p, N, p_int_pt);
-        NumLib::shapeFunctionInterpolate(local_T1, N, T1_int_pt);
+        NumLib::shapeFunctionInterpolate(local_T, N, T_int_pt);
 
         vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
-            T1_int_pt;
+            T_int_pt;
         vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
             p_int_pt;
 
@@ -190,8 +188,7 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
 {
     auto const local_p =
         local_x.template segment<pressure_size>(pressure_index);
-
-    auto const local_T1 =
+    auto const local_T =
         local_x.template segment<temperature_size>(temperature_index);
 
     auto local_M = MathLib::createZeroedMatrix<LocalMatrixType>(
@@ -228,11 +225,11 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
 
         double p_at_xi = 0.;
         NumLib::shapeFunctionInterpolate(local_p, N, p_at_xi);
-        double T1_at_xi = 0.;
-        NumLib::shapeFunctionInterpolate(local_T1, N, T1_at_xi);
+        double T_at_xi = 0.;
+        NumLib::shapeFunctionInterpolate(local_T, N, T_at_xi);
 
         vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
-            T1_at_xi;
+            T_at_xi;
         vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
             p_at_xi;
 

@@ -90,8 +90,7 @@ private:
                                    Eigen::VectorXd const& local_xdot,
                                    std::vector<double>& local_M_data,
                                    std::vector<double>& local_K_data,
-                                   std::vector<double>& local_b_data,
-                                   LocalCoupledSolutions const& coupled_xs);
+                                   std::vector<double>& local_b_data);
 
     void assembleHeatTransportEquation(double const t, double const dt,
                                        Eigen::VectorXd const& local_x,

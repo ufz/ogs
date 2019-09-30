@@ -407,14 +407,14 @@ public:
         if (process_id == hydraulic_process_id)
         {
             assembleHydraulicEquation(t, dt, local_x, local_xdot, local_M_data,
-                                      local_K_data, local_b_data, coupled_xs);
+                                      local_K_data, local_b_data);
         }
         else
         {
             // Go for assembling in an order of transport process id.
-            assembleComponentTransportEquation(
-                t, dt, local_x, local_xdot, local_M_data, local_K_data,
-                local_b_data, coupled_xs, process_id);
+            assembleComponentTransportEquation(t, dt, local_x, local_xdot,
+                                               local_M_data, local_K_data,
+                                               local_b_data, process_id);
         }
     }
 
@@ -423,8 +423,7 @@ public:
                                    Eigen::VectorXd const& local_xdot,
                                    std::vector<double>& local_M_data,
                                    std::vector<double>& local_K_data,
-                                   std::vector<double>& local_b_data,
-                                   LocalCoupledSolutions const& coupled_xs)
+                                   std::vector<double>& local_b_data)
     {
         auto local_p = local_x.template segment<pressure_size>(pressure_index);
         auto local_C = local_x.template segment<concentration_size>(
@@ -530,11 +529,10 @@ public:
     }
 
     void assembleComponentTransportEquation(
-        double const t, double const dt, Eigen::VectorXd const& local_x,
+        double const t, double const /*dt*/, Eigen::VectorXd const& local_x,
         Eigen::VectorXd const& local_xdot, std::vector<double>& local_M_data,
         std::vector<double>& local_K_data,
-        std::vector<double>& /*local_b_data*/,
-        LocalCoupledSolutions const& coupled_xs, int const transport_process_id)
+        std::vector<double>& /*local_b_data*/, int const transport_process_id)
     {
         auto local_p = local_x.template segment<pressure_size>(pressure_index);
         auto local_C = local_x.template segment<concentration_size>(
