@@ -34,8 +34,7 @@ void LocalAssemblerInterface::assembleForStaggeredScheme(
     Eigen::VectorXd const& /*local_xdot*/, int const /*process_id*/,
     std::vector<double>& /*local_M_data*/,
     std::vector<double>& /*local_K_data*/,
-    std::vector<double>& /*local_b_data*/,
-    LocalCoupledSolutions const& /*coupled_solutions*/)
+    std::vector<double>& /*local_b_data*/)
 {
     OGS_FATAL(
         "The assembleForStaggeredScheme() function is not implemented in the "

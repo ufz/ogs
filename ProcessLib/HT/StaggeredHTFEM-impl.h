@@ -30,8 +30,7 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
                                int const process_id,
                                std::vector<double>& local_M_data,
                                std::vector<double>& local_K_data,
-                               std::vector<double>& local_b_data,
-                               LocalCoupledSolutions const& coupled_xs)
+                               std::vector<double>& local_b_data)
 {
     if (process_id == _heat_transport_process_id)
     {

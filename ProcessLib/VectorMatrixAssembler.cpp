@@ -83,13 +83,10 @@ void VectorMatrixAssembler::assemble(
                                   local_coupled_xs0, local_coupled_xs.size())
                             : MathLib::toVector(local_coupled_xs0);
 
-        ProcessLib::LocalCoupledSolutions local_coupled_solutions(
-            std::move(local_coupled_xs0));
-
         Eigen::VectorXd const local_xdot = (x - x0) / dt;
         local_assembler.assembleForStaggeredScheme(
             t, dt, local_x, local_xdot, process_id, _local_M_data,
-            _local_K_data, _local_b_data, local_coupled_solutions);
+            _local_K_data, _local_b_data);
     }
 
     auto const num_r_c = indices.size();
