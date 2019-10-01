@@ -15,9 +15,8 @@
 #include "BaseLib/Error.h"
 
 #include "BHECommon.h"
-#include "BHECommonUType.h"
 #include "FlowAndTemperatureControl.h"
-#include "PipeConfigurationUType.h"
+#include "PipeConfiguration1PType.h"
 
 namespace ProcessLib
 {
@@ -37,16 +36,16 @@ namespace BHE
  * sorrounding soil is regulated through the thermal resistance values, which
  * are calculated specifically during the initialization of the class.
  */
-class BHE_1P final : public BHECommonUType
+class BHE_1P final : public BHECommon
 {
 public:
     BHE_1P(BoreholeGeometry const& borehole,
            RefrigerantProperties const& refrigerant,
            GroutParameters const& grout,
            FlowAndTemperatureControl const& flowAndTemperatureControl,
-           PipeConfigurationUType const& pipes)
-        : BHECommonUType{borehole, refrigerant, grout,
-                         flowAndTemperatureControl, pipes}
+           PipeConfiguration1PType const& pipes)
+        : BHECommon{borehole, refrigerant, grout, flowAndTemperatureControl},
+          _pipe(pipes)
     {
         _thermal_resistances.fill(std::numeric_limits<double>::quiet_NaN());
 
@@ -82,61 +81,35 @@ public:
         Eigen::MatrixBase<RPiSMatrixType>& R_pi_s_matrix,
         Eigen::MatrixBase<RSMatrixType>& R_s_matrix) const
     {
-        // TODO, this needs to be changed.
+        // Here we are looping over two resistance terms
+        // First PHI_fg is the resistance between pipe and grout
+        // Second PHI_gs is the resistance between grout and soil
         switch (idx_bhe_unknowns)
         {
-            case 0:  // PHI_fig
-                R_matrix.block(0, 2 * NPoints, NPoints, NPoints) +=
+            case 0:  // PHI_fg
+                R_matrix.block(0, NPoints, NPoints, NPoints) +=
                     -1.0 * matBHE_loc_R;
-                R_matrix.block(2 * NPoints, 0, NPoints, NPoints) +=
+                R_matrix.block(NPoints, 0, NPoints, NPoints) +=
                     -1.0 * matBHE_loc_R;
 
                 R_matrix.block(0, 0, NPoints, NPoints) +=
-                    1.0 * matBHE_loc_R;  // K_i1
-                R_matrix.block(2 * NPoints, 2 * NPoints, NPoints, NPoints) +=
-                    1.0 * matBHE_loc_R;  // K_ig
+                    matBHE_loc_R;  // K_i/o
+                R_matrix.block(NPoints, NPoints, NPoints, NPoints) +=
+                    matBHE_loc_R;  // K_fg
                 return;
-            case 1:  // PHI_fog
-                R_matrix.block(NPoints, 3 * NPoints, NPoints, NPoints) +=
-                    -1.0 * matBHE_loc_R;
-                R_matrix.block(3 * NPoints, NPoints, NPoints, NPoints) +=
+            case 1:  // PHI_gs
+                R_s_matrix += matBHE_loc_R;
+
+                R_pi_s_matrix.block(NPoints, 0, NPoints, NPoints) +=
                     -1.0 * matBHE_loc_R;
 
                 R_matrix.block(NPoints, NPoints, NPoints, NPoints) +=
-                    1.0 * matBHE_loc_R;  // K_o1
-                R_matrix.block(3 * NPoints, 3 * NPoints, NPoints, NPoints) +=
-                    1.0 * matBHE_loc_R;  // K_og
-                return;
-            case 2:  // PHI_gg
-                R_matrix.block(2 * NPoints, 3 * NPoints, NPoints, NPoints) +=
-                    -1.0 * matBHE_loc_R;
-                R_matrix.block(3 * NPoints, 2 * NPoints, NPoints, NPoints) +=
-                    -1.0 * matBHE_loc_R;
-
-                R_matrix.block(2 * NPoints, 2 * NPoints, NPoints, NPoints) +=
-                    1.0 * matBHE_loc_R;  // K_ig  // notice we only have
-                                         // 1 PHI_gg term here.
-                R_matrix.block(3 * NPoints, 3 * NPoints, NPoints, NPoints) +=
-                    1.0 * matBHE_loc_R;  // K_og  // see Diersch 2013 FEFLOW
-                                         // book page 954 Table M.2
-                return;
-            case 3:  // PHI_gs
-                R_s_matrix.template block<NPoints, NPoints>(0, 0).noalias() +=
-                    1.0 * matBHE_loc_R;
-
-                R_pi_s_matrix.block(2 * NPoints, 0, NPoints, NPoints) +=
-                    -1.0 * matBHE_loc_R;
-                R_pi_s_matrix.block(3 * NPoints, 0, NPoints, NPoints) +=
-                    -1.0 * matBHE_loc_R;
-                R_matrix.block(2 * NPoints, 2 * NPoints, NPoints, NPoints) +=
-                    1.0 * matBHE_loc_R;  // K_ig
-                R_matrix.block(3 * NPoints, 3 * NPoints, NPoints, NPoints) +=
-                    1.0 * matBHE_loc_R;  // K_og
+                    matBHE_loc_R;  // K_fg
                 return;
             default:
                 OGS_FATAL(
-                    "Error!!! In the function BHE_1U::assembleRMatrices, "
-                    "the index of bhe unknowns is out of range! ");
+                    "Error!!! In the function BHE_1P::assembleRMatrices, "
+                    "the index of bhe resistance term is out of range! ");
         }
     }
 
@@ -149,14 +122,20 @@ public:
     }
 
     static constexpr std::pair<int, int> inflow_outflow_bc_component_ids[] = {
-        {0, 1}};
+        {0, 0}};
 
 public:
     std::array<double, number_of_unknowns> crossSectionAreas() const
     {
-        return {{_pipes.inlet.area(),
-                 borehole_geometry.area() - _pipes.inlet.area()}};
+        return {{_pipe.single_pipe.area(),
+                 borehole_geometry.area() - _pipe.single_pipe.outsideArea()}};
     }
+
+protected:
+    PipeConfiguration1PType const _pipe;
+
+    /// Flow velocity inside the pipes. Depends on the flow_rate.
+    double _flow_velocity = std::numeric_limits<double>::quiet_NaN();
 
 private:
     void updateHeatTransferCoefficients(double const flow_rate);
@@ -167,12 +146,9 @@ private:
     double compute_R_gs(double const chi, double const R_g);
 
 private:
-    /// PHI_fig, PHI_gs;
+    /// PHI_fg, PHI_gs;
     /// Here we store the thermal resistances needed for computation of the heat
     /// exchange coefficients in the governing equations of BHE.
-    /// These governing equations can be found in
-    /// 1) Diersch (2013) FEFLOW book on page 958, M.3, or
-    /// 2) Diersch (2011) Comp & Geosci 37:1122-1135, Eq. 90-97.
     std::array<double, number_of_unknowns> _thermal_resistances;
 };
 }  // namespace BHE

@@ -284,6 +284,7 @@ void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
         const int variable_id = bhe_i + 1;
 
         std::vector<MeshLib::Node*> bhe_boundary_nodes;
+
         // cherry-pick the boundary nodes according to
         // the number of connected line elements.
         for (auto const& bhe_node : bhe_nodes)

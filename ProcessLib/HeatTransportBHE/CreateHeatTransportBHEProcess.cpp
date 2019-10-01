@@ -18,6 +18,7 @@
 #include "BHE/BHETypes.h"
 #include "BHE/CreateBHECoaxial.h"
 #include "BHE/CreateBHEUType.h"
+#include "BHE/CreateBHE1PType.h"
 #include "HeatTransportBHEProcess.h"
 #include "HeatTransportBHEProcessData.h"
 #ifdef OGS_USE_PYTHON
@@ -140,7 +141,7 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
         if (bhe_type == "1P")
         {
             bhes.emplace_back(
-                BHE::createBHEUType<BHE::BHE_1P>(bhe_config, curves));
+                BHE::createBHE1PType<BHE::BHE_1P>(bhe_config, curves));
             continue;
         }
         OGS_FATAL("Unknown BHE type '%s'.", bhe_type.c_str());

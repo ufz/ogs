@@ -58,19 +58,19 @@ HeatTransportBHELocalAssemblerBHE<ShapeFunction, IntegrationMethod, BHEType>::
     }
 
     _R_matrix.setZero(bhe_unknowns_size, bhe_unknowns_size);
-    _R_pi_s_matrix.setZero(bhe_unknowns_size, temperature_size);
-    _R_s_matrix.setZero(temperature_size, temperature_size);
+    _R_pi_s_matrix.setZero(bhe_unknowns_size, soil_temperature_size);
+    _R_s_matrix.setZero(soil_temperature_size, soil_temperature_size);
     static constexpr int max_num_thermal_exchange_terms = 5;
     // formulate the local BHE R matrix
     for (int idx_bhe_unknowns = 0; idx_bhe_unknowns < bhe_unknowns;
          idx_bhe_unknowns++)
     {
         typename ShapeMatricesType::template MatrixType<
-            single_bhe_unknowns_size, single_bhe_unknowns_size>
+            n_int_points, n_int_points>
             matBHE_loc_R = ShapeMatricesType::template MatrixType<
-                single_bhe_unknowns_size,
-                single_bhe_unknowns_size>::Zero(single_bhe_unknowns_size,
-                                                single_bhe_unknowns_size);
+                n_int_points,
+                n_int_points>::Zero(n_int_points,
+                                                n_int_points);
         // Loop over Gauss points
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
@@ -156,25 +156,25 @@ void HeatTransportBHELocalAssemblerBHE<ShapeFunction, IntegrationMethod,
 
             int const single_bhe_unknowns_index =
                 bhe_unknowns_index +
-                single_bhe_unknowns_size * idx_bhe_unknowns;
+                n_int_points * idx_bhe_unknowns;
             // local M
             local_M
-                .template block<single_bhe_unknowns_size,
-                                single_bhe_unknowns_size>(
+                .template block<n_int_points,
+                                n_int_points>(
                     single_bhe_unknowns_index, single_bhe_unknowns_index)
                 .noalias() += N.transpose() * N * mass_coeff * A * w;
 
             // local K
             // laplace part
             local_K
-                .template block<single_bhe_unknowns_size,
-                                single_bhe_unknowns_size>(
+                .template block<n_int_points,
+                                n_int_points>(
                     single_bhe_unknowns_index, single_bhe_unknowns_index)
                 .noalias() += dNdx.transpose() * dNdx * lambda * A * w;
             // advection part
             local_K
-                .template block<single_bhe_unknowns_size,
-                                single_bhe_unknowns_size>(
+                .template block<n_int_points,
+                                n_int_points>(
                     single_bhe_unknowns_index, single_bhe_unknowns_index)
                 .noalias() +=
                 N.transpose() * advection_vector.transpose() * dNdx * A * w;
@@ -187,18 +187,18 @@ void HeatTransportBHELocalAssemblerBHE<ShapeFunction, IntegrationMethod,
 
     // add the R_pi_s matrix to local_K
     local_K
-        .template block<bhe_unknowns_size, temperature_size>(bhe_unknowns_index,
-                                                             temperature_index)
+        .template block<bhe_unknowns_size, soil_temperature_size>(
+            bhe_unknowns_index, soil_temperature_index)
         .noalias() += _R_pi_s_matrix;
     local_K
-        .template block<temperature_size, bhe_unknowns_size>(temperature_index,
-                                                             bhe_unknowns_index)
+        .template block<soil_temperature_size, bhe_unknowns_size>(
+            soil_temperature_index, bhe_unknowns_index)
         .noalias() += _R_pi_s_matrix.transpose();
 
     // add the R_s matrix to local_K
     local_K
-        .template block<temperature_size, temperature_size>(temperature_index,
-                                                            temperature_index)
+        .template block<soil_temperature_size, soil_temperature_size>(
+            soil_temperature_index, soil_temperature_index)
         .noalias() += _bhe.number_of_grout_zones * _R_s_matrix;
 
     // debugging
