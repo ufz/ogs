@@ -129,6 +129,18 @@ AddTest(
 )
 
 AddTest(
+        NAME HeatConduction_1D_LineSourceTerm
+        PATH
+        Parabolic/T/1D_line_source_term_tests/
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS line_source_term.prj
+        TESTER vtkdiff
+        DIFF_DATA
+        mesh_1_line_100.vtu source_term_at_entire_line_pcs_0_ts_1_t_1.000000.vtu analytical_temperature temperature 1e-13 1e-13
+        REQUIREMENTS NOT OGS_USE_MPI
+)
+
+AddTest(
         NAME HeatConduction_2D_LineSourceTermLeft
         PATH Parabolic/T/2D_source_term_tests/line_source_term_left
         EXECUTABLE ogs
