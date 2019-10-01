@@ -25,8 +25,6 @@
 
 namespace ProcessLib
 {
-struct LocalCoupledSolutions;
-
 namespace HT
 {
 template <typename ShapeFunction, typename IntegrationMethod,
