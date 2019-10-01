@@ -62,8 +62,7 @@ void LocalAssemblerInterface::assembleWithJacobianForStaggeredScheme(
     std::vector<double>& /*local_M_data*/,
     std::vector<double>& /*local_K_data*/,
     std::vector<double>& /*local_b_data*/,
-    std::vector<double>& /*local_Jac_data*/,
-    LocalCoupledSolutions const& /*local_coupled_solutions*/)
+    std::vector<double>& /*local_Jac_data*/)
 {
     OGS_FATAL(
         "The assembleWithJacobianForStaggeredScheme() function is not implemented in"

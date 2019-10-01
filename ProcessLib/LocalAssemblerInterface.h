@@ -75,8 +75,7 @@ public:
         Eigen::VectorXd const& local_xdot, const double dxdot_dx,
         const double dx_dx, int const process_id,
         std::vector<double>& local_M_data, std::vector<double>& local_K_data,
-        std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
-        LocalCoupledSolutions const& local_coupled_solutions);
+        std::vector<double>& local_b_data, std::vector<double>& local_Jac_data);
 
     virtual void computeSecondaryVariable(
         std::size_t const mesh_item_id,
