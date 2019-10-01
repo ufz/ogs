@@ -26,8 +26,7 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
         Eigen::VectorXd const& local_xdot, const double dxdot_dx,
         const double dx_dx, int const process_id,
         std::vector<double>& local_M_data, std::vector<double>& local_K_data,
-        std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
-        LocalCoupledSolutions const& /*local_coupled_solutions*/)
+        std::vector<double>& local_b_data, std::vector<double>& local_Jac_data)
 {
     // For the equations with phase field.
     if (process_id == 1)
@@ -58,6 +57,8 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
     using DeformationMatrix =
         typename ShapeMatricesType::template MatrixType<displacement_size,
                                                         displacement_size>;
+
+    assert(local_x.size() == phasefield_size + displacement_size);
 
     auto const d = local_x.template segment<phasefield_size>(phasefield_index);
     auto const u =
