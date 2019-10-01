@@ -11,6 +11,7 @@
 #include "CreateBHEUType.h"
 #include "BaseLib/ConfigTree.h"
 
+#include "BHE_1P.h"
 #include "BHE_1U.h"
 #include "BHE_2U.h"
 #include "CreateFlowAndTemperatureControl.h"
@@ -96,6 +97,12 @@ template BHE_1U createBHEUType<BHE_1U>(
         curves);
 
 template BHE_2U createBHEUType<BHE_2U>(
+    BaseLib::ConfigTree const& config,
+    std::map<std::string,
+             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
+        curves);
+
+template BHE_1P createBHEUType<BHE_1P>(
     BaseLib::ConfigTree const& config,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&

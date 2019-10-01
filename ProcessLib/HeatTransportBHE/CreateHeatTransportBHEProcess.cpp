@@ -136,6 +136,13 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
                 BHE::createBHEUType<BHE::BHE_2U>(bhe_config, curves));
             continue;
         }
+
+        if (bhe_type == "1P")
+        {
+            bhes.emplace_back(
+                BHE::createBHEUType<BHE::BHE_1P>(bhe_config, curves));
+            continue;
+        }
         OGS_FATAL("Unknown BHE type '%s'.", bhe_type.c_str());
     }
     // end of reading BHE parameters -------------------------------------------
