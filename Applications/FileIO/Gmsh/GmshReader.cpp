@@ -183,7 +183,7 @@ MeshLib::Mesh* readGMSHMesh(std::string const& fname)
     getline(in, line); // version-number file-type data-size
     if (line.substr(0, 3) != "2.2")
     {
-        WARN("Wrong gmsh file format version.");
+        WARN("Wrong gmsh file format version '%s'.", line.substr(0,3).c_str());
         return nullptr;
     }
 
