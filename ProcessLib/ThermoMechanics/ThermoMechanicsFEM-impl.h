@@ -338,26 +338,22 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
         std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
         const LocalCoupledSolutions& local_coupled_solutions)
 {
-    auto const& local_T_vector =
-        local_coupled_solutions
-            .local_coupled_xs[_process_data.heat_conduction_process_id];
-    assert(local_T_vector.size() == temperature_size);
     auto const local_T =
         Eigen::Map<typename ShapeMatricesType::template VectorType<
-            temperature_size> const>(local_T_vector.data(), temperature_size);
+            temperature_size> const>(
+            &local_coupled_solutions.local_coupled_xs[temperature_index],
+            temperature_size);
 
-    auto const& local_T0_vector = local_coupled_solutions.local_coupled_xs0[0];
-    assert(local_T0_vector.size() == temperature_size);
     auto const local_T0 =
         Eigen::Map<typename ShapeMatricesType::template VectorType<
-            temperature_size> const>(local_T0_vector.data(), temperature_size);
+            temperature_size> const>(
+            &local_coupled_solutions.local_coupled_xs0[temperature_index],
+            temperature_size);
 
-    auto const& local_u_vector =
-        local_coupled_solutions
-            .local_coupled_xs[_process_data.mechanics_process_id];
-    assert(local_u_vector.size() == displacement_size);
     auto const u = Eigen::Map<typename ShapeMatricesType::template VectorType<
-        displacement_size> const>(local_u_vector.data(), displacement_size);
+        displacement_size> const>(
+        &local_coupled_solutions.local_coupled_xs[displacement_index],
+        displacement_size);
 
     auto local_Jac = MathLib::createZeroedMatrix<
         typename ShapeMatricesType::template MatrixType<displacement_size,
@@ -476,20 +472,19 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
         std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
         const LocalCoupledSolutions& local_coupled_solutions)
 {
-    auto const& local_T_vector =
-        local_coupled_solutions
-            .local_coupled_xs[_process_data.heat_conduction_process_id];
-    assert(local_T_vector.size() == temperature_size);
     auto const local_T =
         Eigen::Map<typename ShapeMatricesType::template VectorType<
-            temperature_size> const>(local_T_vector.data(), temperature_size);
+            temperature_size> const>(
+            &local_coupled_solutions.local_coupled_xs[temperature_index],
+            temperature_size);
 
-    auto const& local_T0_vector = local_coupled_solutions.local_coupled_xs0[0];
-    assert(local_T0_vector.size() == temperature_size);
-    auto const local_dT =
-        local_T -
+    auto const local_T0 =
         Eigen::Map<typename ShapeMatricesType::template VectorType<
-            temperature_size> const>(local_T0_vector.data(), temperature_size);
+            temperature_size> const>(
+            &local_coupled_solutions.local_coupled_xs0[temperature_index],
+            temperature_size);
+
+    auto const local_dT = local_T - local_T0;
 
     auto local_Jac = MathLib::createZeroedMatrix<
         typename ShapeMatricesType::template MatrixType<temperature_size,

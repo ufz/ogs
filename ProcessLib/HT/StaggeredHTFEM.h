@@ -50,6 +50,11 @@ class StaggeredHTFEM : public HTFEM<ShapeFunction, IntegrationMethod, GlobalDim>
         typename ShapeMatricesType::GlobalDimNodalMatrixType;
     using GlobalDimMatrixType = typename ShapeMatricesType::GlobalDimMatrixType;
 
+    using HTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::pressure_index;
+    using HTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::pressure_size;
+    using HTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::temperature_index;
+    using HTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::temperature_size;
+
 public:
     StaggeredHTFEM(MeshLib::Element const& element,
                    std::size_t const local_matrix_size,

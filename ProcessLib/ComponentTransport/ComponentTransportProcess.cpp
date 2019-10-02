@@ -167,8 +167,8 @@ Eigen::Vector3d ComponentTransportProcess::getFlux(std::size_t const element_id,
         std::vector<std::vector<GlobalIndexType>>
             indices_of_all_coupled_processes{
                 _coupled_solutions->coupled_xs.size(), r_c_indices.rows};
-        auto const local_xs = getCurrentLocalSolutions(
-            *(this->_coupled_solutions), indices_of_all_coupled_processes);
+        auto const local_xs = getCoupledLocalSolutions(
+            _coupled_solutions->coupled_xs, indices_of_all_coupled_processes);
 
         return _local_assemblers[element_id]->getFlux(p, t, local_xs);
 }

@@ -107,6 +107,14 @@ template <typename ShapeFunction, typename IntegrationMethod,
           int DisplacementDim>
 class PhaseFieldLocalAssembler : public PhaseFieldLocalAssemblerInterface
 {
+private:
+    static constexpr int displacement_index = 0;
+    static constexpr int displacement_size =
+        ShapeFunction::NPOINTS * DisplacementDim;
+    static constexpr int phasefield_index =
+        displacement_index + displacement_size;
+    static constexpr int phasefield_size = ShapeFunction::NPOINTS;
+
 public:
     using ShapeMatricesType =
         ShapeMatrixPolicyType<ShapeFunction, DisplacementDim>;
@@ -116,6 +124,14 @@ public:
     using BMatricesType = BMatrixPolicyType<ShapeFunction, DisplacementDim>;
 
     using NodalForceVectorType = typename BMatricesType::NodalForceVectorType;
+
+    using DeformationVector =
+        typename ShapeMatricesType::template VectorType<displacement_size>;
+    using PhaseFieldVector =
+        typename ShapeMatricesType::template VectorType<phasefield_size>;
+    using PhaseFieldMatrix =
+        typename ShapeMatricesType::template MatrixType<phasefield_size,
+                                                        phasefield_size>;
 
     PhaseFieldLocalAssembler(PhaseFieldLocalAssembler const&) = delete;
     PhaseFieldLocalAssembler(PhaseFieldLocalAssembler&&) = delete;
@@ -337,12 +353,6 @@ private:
     MeshLib::Element const& _element;
     SecondaryData<typename ShapeMatrices::ShapeType> _secondary_data;
     bool const _is_axially_symmetric;
-
-    static const int phasefield_index = 0;
-    static const int phasefield_size = ShapeFunction::NPOINTS;
-    static const int displacement_index = ShapeFunction::NPOINTS;
-    static const int displacement_size =
-        ShapeFunction::NPOINTS * DisplacementDim;
 };
 
 }  // namespace PhaseField

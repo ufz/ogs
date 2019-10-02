@@ -64,25 +64,18 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
         std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
         LocalCoupledSolutions const& local_coupled_solutions)
 {
-    auto const& local_d =
-        local_coupled_solutions.local_coupled_xs[_phase_field_process_id];
-    auto const& local_u =
-        local_coupled_solutions.local_coupled_xs[_mechanics_related_process_id];
-    auto const& local_T =
-        local_coupled_solutions.local_coupled_xs[_heat_conduction_process_id];
-    assert(local_T.size() == temperature_size);
-    assert(local_d.size() == phasefield_size);
-    assert(local_u.size() == displacement_size);
+    assert(local_coupled_solutions.local_coupled_xs.size() ==
+           phasefield_size + displacement_size + temperature_size);
 
-    auto d = Eigen::Map<
-        typename ShapeMatricesType::template VectorType<phasefield_size> const>(
-        local_d.data(), phasefield_size);
-
-    auto u = Eigen::Map<typename ShapeMatricesType::template VectorType<
-        displacement_size> const>(local_u.data(), displacement_size);
-
-    auto T = Eigen::Map<typename ShapeMatricesType::template VectorType<
-        temperature_size> const>(local_T.data(), temperature_size);
+    auto const d = Eigen::Map<PhaseFieldVector const>(
+        &local_coupled_solutions.local_coupled_xs[phasefield_index],
+        phasefield_size);
+    auto const u = Eigen::Map<DeformationVector const>(
+        &local_coupled_solutions.local_coupled_xs[displacement_index],
+        displacement_size);
+    auto const T = Eigen::Map<TemperatureVector const>(
+        &local_coupled_solutions.local_coupled_xs[temperature_index],
+        temperature_size);
 
     auto local_Jac = MathLib::createZeroedMatrix<
         typename ShapeMatricesType::template MatrixType<displacement_size,
@@ -172,19 +165,15 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
         std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
         LocalCoupledSolutions const& local_coupled_solutions)
 {
-    auto const& local_d =
-        local_coupled_solutions.local_coupled_xs[_phase_field_process_id];
-    auto const& local_T =
-        local_coupled_solutions.local_coupled_xs[_heat_conduction_process_id];
-    assert(local_T.size() == temperature_size);
-    assert(local_d.size() == phasefield_size);
+    assert(local_coupled_solutions.local_coupled_xs.size() ==
+           phasefield_size + displacement_size + temperature_size);
 
-    auto d = Eigen::Map<
-        typename ShapeMatricesType::template VectorType<phasefield_size> const>(
-        local_d.data(), phasefield_size);
-
-    auto T = Eigen::Map<typename ShapeMatricesType::template VectorType<
-        temperature_size> const>(local_T.data(), temperature_size);
+    auto const d = Eigen::Map<PhaseFieldVector const>(
+        &local_coupled_solutions.local_coupled_xs[phasefield_index],
+        phasefield_size);
+    auto const T = Eigen::Map<TemperatureVector const>(
+        &local_coupled_solutions.local_coupled_xs[temperature_index],
+        temperature_size);
 
     auto T_dot = Eigen::Map<typename ShapeMatricesType::template VectorType<
         temperature_size> const>(local_xdot.data(), temperature_size);
@@ -276,13 +265,12 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
         std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
         LocalCoupledSolutions const& local_coupled_solutions)
 {
-    auto const& local_d =
-        local_coupled_solutions.local_coupled_xs[_phase_field_process_id];
-    assert(local_d.size() == phasefield_size);
+    assert(local_coupled_solutions.local_coupled_xs.size() ==
+           phasefield_size + displacement_size + temperature_size);
 
-    auto d = Eigen::Map<
-        typename ShapeMatricesType::template VectorType<phasefield_size> const>(
-        local_d.data(), phasefield_size);
+    auto const d = Eigen::Map<PhaseFieldVector const>(
+        &local_coupled_solutions.local_coupled_xs[phasefield_index],
+        phasefield_size);
 
     auto local_Jac = MathLib::createZeroedMatrix<
         typename ShapeMatricesType::template MatrixType<phasefield_size,

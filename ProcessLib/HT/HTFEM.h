@@ -251,9 +251,16 @@ protected:
     }
 
     std::vector<double> const& getIntPtDarcyVelocityLocal(
-        const double t, std::vector<double> const& local_p,
-        std::vector<double> const& local_T, std::vector<double>& cache) const
+        const double t, std::vector<double> const& local_x,
+        std::vector<double>& cache) const
     {
+        std::vector<double> local_p{
+            local_x.data() + pressure_index,
+            local_x.data() + pressure_index + pressure_size};
+        std::vector<double> local_T{
+            local_x.data() + temperature_index,
+            local_x.data() + temperature_index + temperature_size};
+
         auto const n_integration_points =
             _integration_method.getNumberOfPoints();
 

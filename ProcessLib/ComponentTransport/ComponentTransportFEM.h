@@ -424,13 +424,12 @@ public:
                                    LocalCoupledSolutions const& coupled_xs)
     {
         auto local_p = Eigen::Map<const NodalVectorType>(
-            coupled_xs.local_coupled_xs[hydraulic_process_id].data(),
-            pressure_size);
+            &coupled_xs.local_coupled_xs[pressure_index], pressure_size);
         auto local_C = Eigen::Map<const NodalVectorType>(
-            coupled_xs.local_coupled_xs[first_transport_process_id].data(),
+            &coupled_xs.local_coupled_xs[first_concentration_index],
             concentration_size);
         auto local_C0 = Eigen::Map<const NodalVectorType>(
-            coupled_xs.local_coupled_xs0[first_transport_process_id].data(),
+            &coupled_xs.local_coupled_xs0[first_concentration_index],
             concentration_size);
 
         auto local_M = MathLib::createZeroedMatrix<LocalBlockMatrixType>(
@@ -535,14 +534,14 @@ public:
         LocalCoupledSolutions const& coupled_xs, int const transport_process_id)
     {
         auto local_C = Eigen::Map<const NodalVectorType>(
-            coupled_xs.local_coupled_xs[transport_process_id].data(),
+            &coupled_xs.local_coupled_xs[first_concentration_index +
+                                         (transport_process_id - 1) *
+                                             concentration_size],
             concentration_size);
         auto local_p = Eigen::Map<const NodalVectorType>(
-            coupled_xs.local_coupled_xs[hydraulic_process_id].data(),
-            pressure_size);
+            &coupled_xs.local_coupled_xs[pressure_index], pressure_size);
         auto local_p0 = Eigen::Map<const NodalVectorType>(
-            coupled_xs.local_coupled_xs0[hydraulic_process_id].data(),
-            pressure_size);
+            &coupled_xs.local_coupled_xs0[pressure_index], pressure_size);
 
         auto local_M = MathLib::createZeroedMatrix<LocalBlockMatrixType>(
             local_M_data, concentration_size, concentration_size);
@@ -731,12 +730,14 @@ public:
                 indices_of_all_coupled_processes(
                     _coupled_solutions->coupled_xs.size(), indices);
 
-            auto const local_xs = getCurrentLocalSolutions(
-                *(this->_coupled_solutions), indices_of_all_coupled_processes);
+            auto const local_xs =
+                getCoupledLocalSolutions(_coupled_solutions->coupled_xs,
+                                         indices_of_all_coupled_processes);
 
-            auto const local_p = MathLib::toVector(local_xs[hydraulic_process_id]);
-            auto const local_C =
-                MathLib::toVector(local_xs[first_transport_process_id]);
+            auto const local_p = Eigen::Map<const NodalVectorType>(
+                &local_xs[pressure_index], pressure_size);
+            auto const local_C = Eigen::Map<const NodalVectorType>(
+                &local_xs[first_concentration_index], concentration_size);
 
             return calculateIntPtDarcyVelocity(t, local_p, local_C, cache);
         }

@@ -51,23 +51,25 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
                               std::vector<double>& local_b_data,
                               LocalCoupledSolutions const& coupled_xs)
 {
-    auto const& local_p = coupled_xs.local_coupled_xs[_hydraulic_process_id];
-    auto const local_matrix_size = local_p.size();
-    // This assertion is valid only if all nodal d.o.f. use the same shape
-    // matrices.
-    assert(local_matrix_size == ShapeFunction::NPOINTS);
+    auto const local_p = Eigen::Map<
+        typename ShapeMatricesType::template VectorType<pressure_size> const>(
+        &coupled_xs.local_coupled_xs[pressure_index], pressure_size);
 
-    auto const& local_T1 =
-        coupled_xs.local_coupled_xs[_heat_transport_process_id];
-    auto const& local_T0 =
-        coupled_xs.local_coupled_xs0[_heat_transport_process_id];
+    auto const local_T1 =
+        Eigen::Map<typename ShapeMatricesType::template VectorType<
+            temperature_size> const>(
+            &coupled_xs.local_coupled_xs[temperature_index], temperature_size);
+    auto const local_T0 =
+        Eigen::Map<typename ShapeMatricesType::template VectorType<
+            temperature_size> const>(
+            &coupled_xs.local_coupled_xs0[temperature_index], temperature_size);
 
     auto local_M = MathLib::createZeroedMatrix<LocalMatrixType>(
-        local_M_data, local_matrix_size, local_matrix_size);
+        local_M_data, pressure_size, pressure_size);
     auto local_K = MathLib::createZeroedMatrix<LocalMatrixType>(
-        local_K_data, local_matrix_size, local_matrix_size);
-    auto local_b = MathLib::createZeroedVector<LocalVectorType>(
-        local_b_data, local_matrix_size);
+        local_K_data, pressure_size, pressure_size);
+    auto local_b = MathLib::createZeroedVector<LocalVectorType>(local_b_data,
+                                                                pressure_size);
 
     ParameterLib::SpatialPosition pos;
     pos.setElementID(this->_element.getID());
@@ -186,22 +188,19 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
                                   std::vector<double>& /*local_b_data*/,
                                   LocalCoupledSolutions const& coupled_xs)
 {
-    auto const& local_p = coupled_xs.local_coupled_xs[_hydraulic_process_id];
-    auto const local_matrix_size = local_p.size();
-    // This assertion is valid only if all nodal d.o.f. use the same shape
-    // matrices.
-    assert(local_matrix_size == ShapeFunction::NPOINTS);
+    auto const local_p = Eigen::Map<
+        typename ShapeMatricesType::template VectorType<pressure_size> const>(
+        &coupled_xs.local_coupled_xs[pressure_index], pressure_size);
 
-    auto local_p_Eigen_type =
-        Eigen::Map<const NodalVectorType>(&local_p[0], local_matrix_size);
-
-    auto const& local_T1 =
-        coupled_xs.local_coupled_xs[_heat_transport_process_id];
+    auto const local_T1 =
+        Eigen::Map<typename ShapeMatricesType::template VectorType<
+            temperature_size> const>(
+            &coupled_xs.local_coupled_xs[temperature_index], temperature_size);
 
     auto local_M = MathLib::createZeroedMatrix<LocalMatrixType>(
-        local_M_data, local_matrix_size, local_matrix_size);
+        local_M_data, temperature_size, temperature_size);
     auto local_K = MathLib::createZeroedMatrix<LocalMatrixType>(
-        local_K_data, local_matrix_size, local_matrix_size);
+        local_K_data, temperature_size, temperature_size);
 
     ParameterLib::SpatialPosition pos;
     pos.setElementID(this->_element.getID());
@@ -274,9 +273,9 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
             intrinsic_permeability / viscosity;
         GlobalDimVectorType const velocity =
             process_data.has_gravity
-                ? GlobalDimVectorType(-K_over_mu * (dNdx * local_p_Eigen_type -
-                                                    fluid_density * b))
-                : GlobalDimVectorType(-K_over_mu * dNdx * local_p_Eigen_type);
+                ? GlobalDimVectorType(-K_over_mu *
+                                      (dNdx * local_p - fluid_density * b))
+                : GlobalDimVectorType(-K_over_mu * dNdx * local_p);
 
         GlobalDimMatrixType const thermal_conductivity_dispersivity =
             this->getThermalConductivityDispersivity(
@@ -303,12 +302,10 @@ StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
     assert(!indices.empty());
     std::vector<std::vector<GlobalIndexType>> indices_of_all_coupled_processes =
         {indices, indices};
-    auto const local_xs = getCurrentLocalSolutions(
-        *(this->_coupled_solutions), indices_of_all_coupled_processes);
+    auto const local_xs = getCoupledLocalSolutions(
+        this->_coupled_solutions->coupled_xs, indices_of_all_coupled_processes);
 
-    return this->getIntPtDarcyVelocityLocal(
-        t, local_xs[_hydraulic_process_id],
-        local_xs[_heat_transport_process_id], cache);
+    return this->getIntPtDarcyVelocityLocal(t, local_xs, cache);
 }
 }  // namespace HT
 }  // namespace ProcessLib

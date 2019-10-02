@@ -357,25 +357,24 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
         const LocalCoupledSolutions& local_coupled_solutions)
 {
-    auto const& local_p = local_coupled_solutions.local_coupled_xs[0];
-    auto const& local_u = local_coupled_solutions.local_coupled_xs[1];
-    assert(local_p.size() == pressure_size);
-    assert(local_u.size() == displacement_size);
-
-    auto const local_matrix_size = local_p.size();
     auto local_rhs =
         MathLib::createZeroedVector<typename ShapeMatricesTypeDisplacement::
                                         template VectorType<pressure_size>>(
-            local_b_data, local_matrix_size);
+            local_b_data, pressure_size);
 
     ParameterLib::SpatialPosition pos;
     pos.setElementID(this->_element.getID());
 
-    auto p = Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
-        pressure_size> const>(local_p.data(), pressure_size);
-    auto u =
+    auto const p =
+        Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
+            pressure_size> const>(
+            &local_coupled_solutions.local_coupled_xs[pressure_index],
+            pressure_size);
+    auto const u =
         Eigen::Map<typename ShapeMatricesTypeDisplacement::template VectorType<
-            displacement_size> const>(local_u.data(), displacement_size);
+            displacement_size> const>(
+            &local_coupled_solutions.local_coupled_xs[displacement_index],
+            displacement_size);
 
     auto p_dot =
         Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
@@ -469,14 +468,16 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
         const LocalCoupledSolutions& local_coupled_solutions)
 {
-    auto const& local_p = local_coupled_solutions.local_coupled_xs[0];
-    auto const& local_u = local_coupled_solutions.local_coupled_xs[1];
-    assert(local_p.size() == pressure_size);
-    assert(local_u.size() == displacement_size);
-
-    auto u =
+    auto const p =
+        Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
+            pressure_size> const>(
+            &local_coupled_solutions.local_coupled_xs[pressure_index],
+            pressure_size);
+    auto const u =
         Eigen::Map<typename ShapeMatricesTypeDisplacement::template VectorType<
-            displacement_size> const>(local_u.data(), displacement_size);
+            displacement_size> const>(
+            &local_coupled_solutions.local_coupled_xs[displacement_index],
+            displacement_size);
 
     auto local_Jac = MathLib::createZeroedMatrix<
         typename ShapeMatricesTypeDisplacement::template MatrixType<
@@ -534,7 +535,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         local_Jac.noalias() += B.transpose() * C * B * w;
 
         double p_at_xi = 0.;
-        NumLib::shapeFunctionInterpolate(local_p, N_p, p_at_xi);
+        NumLib::shapeFunctionInterpolate(p, N_p, p_at_xi);
 
         double const rho = rho_sr * (1 - porosity) + porosity * rho_fr;
         local_rhs.noalias() -=
