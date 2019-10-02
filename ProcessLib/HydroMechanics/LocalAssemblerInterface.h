@@ -21,6 +21,14 @@ struct LocalAssemblerInterface
     : public ProcessLib::LocalAssemblerInterface,
       public NumLib::ExtrapolatableElement
 {
+    virtual std::size_t setIPDataInitialConditions(
+        std::string const& name, double const* values,
+        int const integration_order) = 0;
+
+    virtual std::vector<double> getSigma() const = 0;
+
+    virtual std::vector<double> getEpsilon() const = 0;
+
     virtual std::vector<double> const& getIntPtSigmaXX(
         const double /*t*/,
         GlobalVector const& /*current_solution*/,
