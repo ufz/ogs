@@ -130,6 +130,12 @@ public:
         unsigned const integration_order,
         HydroMechanicsProcessData<DisplacementDim>& process_data);
 
+    /// Returns number of read integration points.
+    std::size_t setIPDataInitialConditions(
+        std::string const& name,
+        double const* values,
+        int const integration_order) override;
+
     void assemble(double const /*t*/, double const /*dt*/,
                   std::vector<double> const& /*local_x*/,
                   std::vector<double>& /*local_M_data*/,
@@ -195,6 +201,17 @@ public:
         // assumes N is stored contiguously in memory
         return Eigen::Map<const Eigen::RowVectorXd>(N_u.data(), N_u.size());
     }
+
+    std::size_t setSigma(double const* values);
+
+    // TODO (naumov) This method is same as getIntPtSigma but for arguments and
+    // the ordering of the cache_mat.
+    // There should be only one.
+    std::vector<double> getSigma() const override;
+
+    std::size_t setEpsilon(double const* values);
+
+    std::vector<double> getEpsilon() const override;
 
     std::vector<double> const& getIntPtSigmaXX(
         const double /*t*/,
