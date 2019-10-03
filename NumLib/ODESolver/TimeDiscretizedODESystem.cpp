@@ -83,8 +83,12 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
     auto const dxdot_dx = _time_disc.getNewXWeight();
     auto const dx_dx = _time_disc.getDxDx();
 
-    auto& xdot = NumLib::GlobalVectorProvider::provider.getVector(_xdot_id);
-    _time_disc.getXdot(*x_new_timestep[process_id], xdot);
+    std::vector<GlobalVector*> xdot(x_new_timestep.size());
+    for (auto& v : xdot)
+    {
+        v = &NumLib::GlobalVectorProvider::provider.getVector();
+        _time_disc.getXdot(*x_new_timestep[process_id], *v);
+    }
 
     _M->setZero();
     _K->setZero();
@@ -94,12 +98,16 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
     _ode.preAssemble(t, dt, x_curr);
     try
     {
-        _ode.assembleWithJacobian(t, dt, x_new_timestep, xdot, dxdot_dx, dx_dx,
-                                  process_id, *_M, *_K, *_b, *_Jac);
+        _ode.assembleWithJacobian(t, dt, x_new_timestep, *xdot[process_id],
+                                  dxdot_dx, dx_dx, process_id, *_M, *_K, *_b,
+                                  *_Jac);
     }
     catch (AssemblyException const&)
     {
-        NumLib::GlobalVectorProvider::provider.releaseVector(xdot);
+        for (auto& v : xdot)
+        {
+            NumLib::GlobalVectorProvider::provider.releaseVector(*v);
+        }
         throw;
     }
 
@@ -108,7 +116,10 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
     LinAlg::finalizeAssembly(*_b);
     MathLib::LinAlg::finalizeAssembly(*_Jac);
 
-    NumLib::GlobalVectorProvider::provider.releaseVector(xdot);
+    for (auto& v : xdot)
+    {
+        NumLib::GlobalVectorProvider::provider.releaseVector(*v);
+    }
 }
 
 void TimeDiscretizedODESystem<
@@ -207,13 +218,19 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
     auto const t = _time_disc.getCurrentTime();
     auto const dt = _time_disc.getCurrentTimeIncrement();
     auto const& x_curr = _time_disc.getCurrentX(*x_new_timestep[process_id]);
+    std::vector<GlobalVector*> xdot(x_new_timestep.size());
+    for (auto& v : xdot)
+    {
+        v = &NumLib::GlobalVectorProvider::provider.getVector();
+        _time_disc.getXdot(*x_new_timestep[process_id], *v);
+    }
 
     _M->setZero();
     _K->setZero();
     _b->setZero();
 
     _ode.preAssemble(t, dt, x_curr);
-    _ode.assemble(t, dt, x_new_timestep, process_id, *_M, *_K, *_b);
+    _ode.assemble(t, dt, x_new_timestep, xdot, process_id, *_M, *_K, *_b);
 
     LinAlg::finalizeAssembly(*_M);
     LinAlg::finalizeAssembly(*_K);
