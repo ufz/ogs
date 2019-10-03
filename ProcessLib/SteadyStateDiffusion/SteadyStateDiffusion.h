@@ -93,7 +93,7 @@ private:
         unsigned const integration_order) override;
 
     void assembleConcreteProcess(const double t, double const dt,
-                                 std::vector<GlobalVector*> const& x,
+                                 GlobalVector const& x,
                                  std::vector<GlobalVector*> const& xdot,
                                  int const process_id, GlobalMatrix& M,
                                  GlobalMatrix& K, GlobalVector& b) override;
