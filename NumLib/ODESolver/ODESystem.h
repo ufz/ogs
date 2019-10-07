@@ -128,7 +128,7 @@ public:
      * \endparblock
      */
     virtual void assembleWithJacobian(const double t, double const dt,
-                                      GlobalVector const& x,
+                                      std::vector<GlobalVector*> const& x,
                                       GlobalVector const& xdot,
                                       const double dxdot_dx, const double dx_dx,
                                       int const process_id, GlobalMatrix& M,
