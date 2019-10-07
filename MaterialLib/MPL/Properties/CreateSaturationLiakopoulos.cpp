@@ -20,6 +20,7 @@ std::unique_ptr<SaturationLiakopoulos> createSaturationLiakopoulos(
     config.checkConfigParameter("type", "SaturationLiakopoulos");
     DBUG("Create SaturationLiakopoulos medium property");
 
+    //! \ogs_file_param_special{properties__property__SaturationLiakopoulos}
     return std::make_unique<SaturationLiakopoulos>();
 }
 }  // namespace MaterialPropertyLib

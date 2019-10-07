@@ -20,6 +20,7 @@ std::unique_ptr<RelPermLiakopoulos> createRelPermLiakopoulos(
     config.checkConfigParameter("type", "RelPermLiakopoulos");
     DBUG("Create RelPermLiakopoulos medium property");
 
+    //! \ogs_file_param_special{properties__property__RelPermLiakopoulos}
     return std::make_unique<RelPermLiakopoulos>();
 }
 }  // namespace MaterialPropertyLib
