@@ -83,7 +83,7 @@ public:
 
     ~TimeDiscretizedODESystem() override;
 
-    void assemble(const GlobalVector& x_new_timestep,
+    void assemble(std::vector<GlobalVector*> const& x_new_timestep,
                   int const process_id) override;
 
     void getResidual(GlobalVector const& x_new_timestep,
@@ -181,7 +181,7 @@ public:
 
     ~TimeDiscretizedODESystem() override;
 
-    void assemble(const GlobalVector& x_new_timestep,
+    void assemble(std::vector<GlobalVector*> const& x_new_timestep,
                   int const process_id) override;
 
     void getA(GlobalMatrix& A) const override

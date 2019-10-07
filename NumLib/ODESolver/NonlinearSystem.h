@@ -37,7 +37,8 @@ public:
     //! Assembles the linearized equation system at the point \c x.
     //! The linearized system is \f$A(x) \cdot x = b(x)\f$. Here the matrix
     //! \f$A(x)\f$ and the vector \f$b(x)\f$ are assembled.
-    virtual void assemble(GlobalVector const& x, int const process_id) = 0;
+    virtual void assemble(std::vector<GlobalVector*> const& x,
+                          int const process_id) = 0;
 
     /*! Writes the residual at point \c x to \c res.
      *
@@ -83,7 +84,8 @@ public:
     //! Assembles the linearized equation system at the point \c x.
     //! The linearized system is \f$J(x) \cdot \Delta x = (x)\f$. Here the
     //! residual vector \f$r(x)\f$ and its Jacobian \f$J(x)\f$ are assembled.
-    virtual void assemble(GlobalVector const& x, int const process_id) = 0;
+    virtual void assemble(std::vector<GlobalVector*> const& x,
+                          int const process_id) = 0;
 
     //! Writes the linearized equation system matrix to \c A.
     //! \pre assemble() must have been called before.
