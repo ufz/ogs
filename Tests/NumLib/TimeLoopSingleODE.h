@@ -86,7 +86,9 @@ NumLib::NonlinearSolverStatus TimeLoopSingleODE<NLTag>::loop(
     const double delta_t, Callback& post_timestep)
 {
     // solution vector
-    GlobalVector& x = NumLib::GlobalVectorProvider::provider.getVector(x0);
+    std::vector<GlobalVector*> xs;
+    xs.push_back(&NumLib::GlobalVectorProvider::provider.getVector(x0));
+    GlobalVector& x = *xs.back();
 
     auto& time_disc = _ode_sys.getTimeDiscretization();
 
@@ -98,7 +100,7 @@ NumLib::NonlinearSolverStatus TimeLoopSingleODE<NLTag>::loop(
     {
         int const process_id = 0;
         MathLib::LinAlg::setLocalAccessibleVector(x);
-        _nonlinear_solver->assemble(x, process_id);
+        _nonlinear_solver->assemble(xs, process_id);
         time_disc.pushState(t0, x0,
                             _ode_sys);  // TODO: that might do duplicate work
     }
@@ -116,7 +118,7 @@ NumLib::NonlinearSolverStatus TimeLoopSingleODE<NLTag>::loop(
 
         int const process_id = 0;
         nonlinear_solver_status =
-            _nonlinear_solver->solve(x, nullptr, process_id);
+            _nonlinear_solver->solve(xs, nullptr, process_id);
         if (!nonlinear_solver_status.error_norms_met)
         {
             break;
