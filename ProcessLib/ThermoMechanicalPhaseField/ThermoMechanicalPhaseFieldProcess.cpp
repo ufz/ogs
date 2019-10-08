@@ -189,12 +189,11 @@ void ThermoMechanicalPhaseFieldProcess<
 }
 
 template <int DisplacementDim>
-void ThermoMechanicalPhaseFieldProcess<
-    DisplacementDim>::assembleConcreteProcess(const double t, double const dt,
-                                              GlobalVector const& x,
-                                              int const process_id,
-                                              GlobalMatrix& M, GlobalMatrix& K,
-                                              GlobalVector& b)
+void ThermoMechanicalPhaseFieldProcess<DisplacementDim>::
+    assembleConcreteProcess(const double t, double const dt,
+                            std::vector<GlobalVector*> const& x,
+                            int const process_id, GlobalMatrix& M,
+                            GlobalMatrix& K, GlobalVector& b)
 {
     DBUG("Assemble the equations for ThermoMechanicalPhaseFieldProcess.");
 

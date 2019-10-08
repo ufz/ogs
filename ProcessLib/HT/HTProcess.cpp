@@ -87,7 +87,7 @@ void HTProcess::initializeConcreteProcess(
 }
 
 void HTProcess::assembleConcreteProcess(const double t, double const dt,
-                                        GlobalVector const& x,
+                                        std::vector<GlobalVector*> const& x,
                                         int const process_id, GlobalMatrix& M,
                                         GlobalMatrix& K, GlobalVector& b)
 {

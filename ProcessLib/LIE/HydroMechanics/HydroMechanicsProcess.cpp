@@ -567,7 +567,7 @@ bool HydroMechanicsProcess<GlobalDim>::isLinear() const
 
 template <int GlobalDim>
 void HydroMechanicsProcess<GlobalDim>::assembleConcreteProcess(
-    const double t, double const dt, GlobalVector const& x,
+    const double t, double const dt, std::vector<GlobalVector*> const& x,
     int const process_id, GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
 {
     DBUG("Assemble HydroMechanicsProcess.");

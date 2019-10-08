@@ -75,7 +75,7 @@ void ThermalTwoPhaseFlowWithPPProcess::initializeConcreteProcess(
 }
 
 void ThermalTwoPhaseFlowWithPPProcess::assembleConcreteProcess(
-    const double t, double const dt, GlobalVector const& x,
+    const double t, double const dt, std::vector<GlobalVector*> const& x,
     int const process_id, GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
 {
     DBUG("Assemble ThermalTwoPhaseFlowWithPPProcess.");

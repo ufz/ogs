@@ -90,9 +90,9 @@ private:
         MeshLib::Mesh const& mesh, unsigned const integration_order) override;
 
     void assembleConcreteProcess(const double t, double const dt,
-                                 GlobalVector const& x, int const process_id,
-                                 GlobalMatrix& M, GlobalMatrix& K,
-                                 GlobalVector& b) override;
+                                 std::vector<GlobalVector*> const& x,
+                                 int const process_id, GlobalMatrix& M,
+                                 GlobalMatrix& K, GlobalVector& b) override;
 
     void assembleWithJacobianConcreteProcess(
         const double t, double const dt, std::vector<GlobalVector*> const& x,
