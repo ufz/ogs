@@ -80,17 +80,18 @@ GenericNaturalBoundaryCondition<BoundaryConditionData,
 template <typename BoundaryConditionData,
           template <typename, typename, unsigned>
           class LocalAssemblerImplementation>
-void GenericNaturalBoundaryCondition<
-    BoundaryConditionData,
-    LocalAssemblerImplementation>::applyNaturalBC(const double t,
-                                                  const GlobalVector& x,
-                                                  GlobalMatrix& K,
-                                                  GlobalVector& b,
-                                                  GlobalMatrix* Jac)
+void GenericNaturalBoundaryCondition<BoundaryConditionData,
+                                     LocalAssemblerImplementation>::
+    applyNaturalBC(const double t,
+                   std::vector<GlobalVector*> const& x,
+                   int const process_id,
+                   GlobalMatrix& K,
+                   GlobalVector& b,
+                   GlobalMatrix* Jac)
 {
     GlobalExecutor::executeMemberOnDereferenced(
         &GenericNaturalBoundaryConditionLocalAssemblerInterface::assemble,
-        _local_assemblers, *_dof_table_boundary, t, x, K, b, Jac);
+        _local_assemblers, *_dof_table_boundary, t, x, process_id, K, b, Jac);
 }
 
 }  // namespace ProcessLib

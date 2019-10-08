@@ -50,13 +50,13 @@ public:
     Eigen::Vector3d getFlux(std::size_t element_id,
                             MathLib::Point3d const& p,
                             double const t,
-                            GlobalVector const& x) const override
+                            std::vector<GlobalVector*> const& x) const override
     {
         // fetch local_x from primary variable
         std::vector<GlobalIndexType> indices_cache;
         auto const r_c_indices = NumLib::getRowColumnIndices(
             element_id, *_local_to_global_index_map, indices_cache);
-        std::vector<double> local_x(x.get(r_c_indices.rows));
+        std::vector<double> local_x(x[0]->get(r_c_indices.rows));
 
         return _local_assemblers[element_id]->getFlux(p, t, local_x);
     }
@@ -79,9 +79,8 @@ public:
 
         ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
-        _surfaceflux->integrate(*x[process_id], t, *this, process_id,
-                                _integration_order, _mesh,
-                                pv.getActiveElementIDs());
+        _surfaceflux->integrate(x, t, *this, process_id, _integration_order,
+                                _mesh, pv.getActiveElementIDs());
         _surfaceflux->save(t);
     }
 

@@ -37,9 +37,10 @@ class BoundaryCondition
 public:
     //! Applies natural BCs (i.e. non-Dirichlet BCs) to the stiffness matrix
     //! \c K and the vector \c b.
-    virtual void applyNaturalBC(const double /*t*/, GlobalVector const& /*x*/,
-                                GlobalMatrix& /*K*/, GlobalVector& /*b*/,
-                                GlobalMatrix* /*Jac*/)
+    virtual void applyNaturalBC(const double /*t*/,
+                                std::vector<GlobalVector*> const& /*x*/,
+                                int const /*process_id*/, GlobalMatrix& /*K*/,
+                                GlobalVector& /*b*/, GlobalMatrix* /*Jac*/)
     {
         // By default it is assumed that the BC is not a natural BC. Therefore
         // there is nothing to do here.

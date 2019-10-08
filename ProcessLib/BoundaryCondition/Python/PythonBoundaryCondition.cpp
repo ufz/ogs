@@ -179,10 +179,9 @@ void PythonBoundaryCondition::getEssentialBCValues(
     }
 }
 
-void PythonBoundaryCondition::applyNaturalBC(const double t,
-                                             const GlobalVector& x,
-                                             GlobalMatrix& K, GlobalVector& b,
-                                             GlobalMatrix* Jac)
+void PythonBoundaryCondition::applyNaturalBC(
+    const double t, std::vector<GlobalVector*> const& x, int const process_id,
+    GlobalMatrix& K, GlobalVector& b, GlobalMatrix* Jac)
 {
     FlushStdoutGuard guard(_flush_stdout);
 
@@ -190,7 +189,8 @@ void PythonBoundaryCondition::applyNaturalBC(const double t,
     {
         GlobalExecutor::executeMemberOnDereferenced(
             &GenericNaturalBoundaryConditionLocalAssemblerInterface::assemble,
-            _local_assemblers, *_dof_table_boundary, t, x, K, b, Jac);
+            _local_assemblers, *_dof_table_boundary, t, x, process_id, K, b,
+            Jac);
     }
     catch (MethodNotOverriddenInDerivedClassException const& /*e*/)
     {

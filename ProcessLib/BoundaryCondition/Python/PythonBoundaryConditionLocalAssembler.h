@@ -48,8 +48,9 @@ public:
 
     void assemble(std::size_t const boundary_element_id,
                   NumLib::LocalToGlobalIndexMap const& dof_table_boundary,
-                  double const t, const GlobalVector& x, GlobalMatrix& /*K*/,
-                  GlobalVector& b, GlobalMatrix* Jac) override
+                  double const t, std::vector<GlobalVector*> const& x,
+                  int const process_id, GlobalMatrix& /*K*/, GlobalVector& b,
+                  GlobalMatrix* Jac) override
     {
         using ShapeMatricesType =
             ShapeMatrixPolicyType<ShapeFunction, GlobalDim>;
@@ -104,7 +105,7 @@ public:
                             bulk_node_id, var, comp);
                     }
                     primary_variables_mat(element_node_id, global_component) =
-                        x[dof_idx];
+                        (*x[process_id])[dof_idx];
                 }
             }
         }

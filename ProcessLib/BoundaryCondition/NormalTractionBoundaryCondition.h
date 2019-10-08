@@ -44,8 +44,9 @@ public:
 
     /// Calls local assemblers which calculate their contributions to the global
     /// matrix and the right-hand-side.
-    void applyNaturalBC(const double t, GlobalVector const& x, GlobalMatrix& K,
-                        GlobalVector& b, GlobalMatrix* Jac) override;
+    void applyNaturalBC(const double t, std::vector<GlobalVector*> const& x,
+                        int const process_id, GlobalMatrix& K, GlobalVector& b,
+                        GlobalMatrix* Jac) override;
 
 private:
     MeshLib::Mesh const& _bc_mesh;

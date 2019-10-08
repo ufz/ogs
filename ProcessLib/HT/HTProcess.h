@@ -76,7 +76,7 @@ public:
     Eigen::Vector3d getFlux(std::size_t element_id,
                             MathLib::Point3d const& p,
                             double const t,
-                            GlobalVector const& x) const override;
+                            std::vector<GlobalVector*> const& x) const override;
 
     void setCoupledTermForTheStaggeredSchemeToLocalAssemblers(
         int const process_id) override;

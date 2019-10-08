@@ -69,8 +69,9 @@ public:
 
     void assemble(std::size_t const mesh_item_id,
                   NumLib::LocalToGlobalIndexMap const& dof_table_boundary,
-                  double const t, const GlobalVector& x, GlobalMatrix& /*K*/,
-                  GlobalVector& b, GlobalMatrix* /*Jac*/) override
+                  double const t, std::vector<GlobalVector*> const& x,
+                  int const process_id, GlobalMatrix& /*K*/, GlobalVector& b,
+                  GlobalMatrix* /*Jac*/) override
     {
         NodalVectorType _local_rhs = NodalVectorType::Zero(_local_matrix_size);
         // Get element nodes for the interpolation from nodes to
@@ -83,7 +84,7 @@ public:
 
         auto const indices =
             NumLib::getIndices(mesh_item_id, dof_table_boundary);
-        std::vector<double> const local_values = x.get(indices);
+        std::vector<double> const local_values = x[process_id]->get(indices);
         std::size_t const bulk_element_id =
             _data.bulk_element_ids[Base::_element.getID()];
         std::size_t const bulk_face_id =

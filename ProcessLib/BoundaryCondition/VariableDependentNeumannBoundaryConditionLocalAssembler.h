@@ -57,8 +57,9 @@ public:
 
     void assemble(std::size_t const mesh_item_id,
                   NumLib::LocalToGlobalIndexMap const& dof_table_boundary,
-                  double const t, const GlobalVector& x, GlobalMatrix& /*K*/,
-                  GlobalVector& b, GlobalMatrix* /*Jac*/) override
+                  double const t, std::vector<GlobalVector*> const& x,
+                  int const process_id, GlobalMatrix& /*K*/, GlobalVector& b,
+                  GlobalMatrix* /*Jac*/) override
     {
         NodalVectorType _local_rhs(_local_matrix_size);
         _local_rhs.setZero();
@@ -87,9 +88,9 @@ public:
         auto const indices_other_variable = NumLib::getIndices(
             mesh_item_id, _data.dof_table_boundary_other_variable);
         std::vector<double> const local_current_variable =
-            x.get(indices_current_variable);
+            x[process_id]->get(indices_current_variable);
         std::vector<double> const local_other_variable =
-            x.get(indices_other_variable);
+            x[process_id]->get(indices_other_variable);
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {

@@ -148,29 +148,22 @@ void ComponentTransportProcess::assembleWithJacobianConcreteProcess(
         dxdot_dx, dx_dx, process_id, M, K, b, Jac, _coupled_solutions);
 }
 
-Eigen::Vector3d ComponentTransportProcess::getFlux(std::size_t const element_id,
-                                                   MathLib::Point3d const& p,
-                                                   double const t,
-                                                   GlobalVector const& x) const
+Eigen::Vector3d ComponentTransportProcess::getFlux(
+    std::size_t const element_id,
+    MathLib::Point3d const& p,
+    double const t,
+    std::vector<GlobalVector*> const& x) const
 {
     std::vector<GlobalIndexType> indices_cache;
     auto const r_c_indices = NumLib::getRowColumnIndices(
         element_id, *_local_to_global_index_map, indices_cache);
 
-    if (_use_monolithic_scheme)
-    {
-        std::vector<double> local_x(x.get(r_c_indices.rows));
+    std::vector<std::vector<GlobalIndexType>> indices_of_all_coupled_processes{
+        x.size(), r_c_indices.rows};
+    auto const local_xs =
+        getCoupledLocalSolutions(x, indices_of_all_coupled_processes);
 
-        return _local_assemblers[element_id]->getFlux(p, t, local_x);
-    }
-
-        std::vector<std::vector<GlobalIndexType>>
-            indices_of_all_coupled_processes{
-                _coupled_solutions->coupled_xs.size(), r_c_indices.rows};
-        auto const local_xs = getCoupledLocalSolutions(
-            _coupled_solutions->coupled_xs, indices_of_all_coupled_processes);
-
-        return _local_assemblers[element_id]->getFlux(p, t, local_xs);
+    return _local_assemblers[element_id]->getFlux(p, t, local_xs);
 }
 
 void ComponentTransportProcess::
@@ -237,8 +230,7 @@ void ComponentTransportProcess::postTimestepConcreteProcess(
 
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
-    _surfaceflux->integrate(*x[process_id], t, *this, process_id,
-                            _integration_order, _mesh,
+    _surfaceflux->integrate(x, t, *this, process_id, _integration_order, _mesh,
                             pv.getActiveElementIDs());
     _surfaceflux->save(t);
 }

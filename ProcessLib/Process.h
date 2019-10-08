@@ -146,10 +146,11 @@ public:
 
     // Used as a call back for CalculateSurfaceFlux process.
 
-    virtual Eigen::Vector3d getFlux(std::size_t /*element_id*/,
-                                    MathLib::Point3d const& /*p*/,
-                                    double const /*t*/,
-                                    GlobalVector const& /*x*/) const
+    virtual Eigen::Vector3d getFlux(
+        std::size_t /*element_id*/,
+        MathLib::Point3d const& /*p*/,
+        double const /*t*/,
+        std::vector<GlobalVector*> const& /*x*/) const
     {
         return Eigen::Vector3d{};
     }

@@ -243,13 +243,16 @@ void HTProcess::setCoupledSolutionsOfPreviousTimeStep()
 Eigen::Vector3d HTProcess::getFlux(std::size_t element_id,
                                    MathLib::Point3d const& p,
                                    double const t,
-                                   GlobalVector const& x) const
+                                   std::vector<GlobalVector*> const& x) const
 {
     // fetch local_x from primary variable
     std::vector<GlobalIndexType> indices_cache;
     auto const r_c_indices = NumLib::getRowColumnIndices(
         element_id, *_local_to_global_index_map, indices_cache);
-    std::vector<double> local_x(x.get(r_c_indices.rows));
+    std::vector<std::vector<GlobalIndexType>> indices_of_all_coupled_processes{
+        x.size(), r_c_indices.rows};
+    auto const local_x =
+        getCoupledLocalSolutions(x, indices_of_all_coupled_processes);
 
     return _local_assemblers[element_id]->getFlux(p, t, local_x);
 }
@@ -279,8 +282,7 @@ void HTProcess::postTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
 
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
-    _surfaceflux->integrate(*x[process_id], t, *this, process_id,
-                            _integration_order, _mesh,
+    _surfaceflux->integrate(x, t, *this, process_id, _integration_order, _mesh,
                             pv.getActiveElementIDs());
     _surfaceflux->save(t);
 }

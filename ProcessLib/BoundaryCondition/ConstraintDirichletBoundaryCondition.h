@@ -58,10 +58,10 @@ public:
         bool const lower,
         std::function<Eigen::Vector3d(std::size_t const,
                                       MathLib::Point3d const&, double const,
-                                      GlobalVector const&)>
+                                      std::vector<GlobalVector*> const&)>
             getFlux);
 
-    void preTimestep(double t, std::vector<GlobalVector*> const& x,
+    void preTimestep(double const t, std::vector<GlobalVector*> const& x,
                      int const process_id) override;
 
     void getEssentialBCValues(
@@ -113,9 +113,10 @@ private:
     MeshLib::Mesh const& _bulk_mesh;
 
     /// The function _getFlux calculates the flux through the boundary element.
-    std::function<Eigen::Vector3d(
-            std::size_t const, MathLib::Point3d const&, double const,
-            GlobalVector const&)> _getFlux;
+    std::function<Eigen::Vector3d(std::size_t const, MathLib::Point3d const&,
+                                  double const,
+                                  std::vector<GlobalVector*> const&)>
+        _getFlux;
 };
 
 /// The function parses the config tree and creates a

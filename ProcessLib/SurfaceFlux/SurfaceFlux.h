@@ -40,14 +40,14 @@ public:
     /// @param getFlux function that calculates the flux in the integration
     /// points of the face elements of the bulk element that belongs to the
     /// surface.
-    void integrate(GlobalVector const& x,
+    void integrate(std::vector<GlobalVector*> const& x,
                    MeshLib::PropertyVector<double>& balance,
                    double const t,
                    MeshLib::Mesh const& bulk_mesh,
                    std::vector<std::size_t> const& active_element_ids,
                    std::function<Eigen::Vector3d(
                        std::size_t const, MathLib::Point3d const&, double const,
-                       GlobalVector const&)> const& getFlux);
+                       std::vector<GlobalVector*> const&)> const& getFlux);
 
 private:
     // the local assemblers for each element of the mesh

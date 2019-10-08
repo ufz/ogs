@@ -61,12 +61,10 @@ NormalTractionBoundaryCondition<LocalAssemblerImplementation>::
 
 template <template <typename, typename, unsigned>
           class LocalAssemblerImplementation>
-void NormalTractionBoundaryCondition<
-    LocalAssemblerImplementation>::applyNaturalBC(const double t,
-                                                  const GlobalVector& x,
-                                                  GlobalMatrix& K,
-                                                  GlobalVector& b,
-                                                  GlobalMatrix* Jac)
+void NormalTractionBoundaryCondition<LocalAssemblerImplementation>::
+    applyNaturalBC(const double t, std::vector<GlobalVector*> const& x,
+                   int const /*process_id*/, GlobalMatrix& K, GlobalVector& b,
+                   GlobalMatrix* Jac)
 {
     GlobalExecutor::executeMemberOnDereferenced(
         &NormalTractionBoundaryConditionLocalAssemblerInterface::assemble,
