@@ -239,7 +239,7 @@ void PhaseFieldProcess<DisplacementDim>::assembleWithJacobianConcreteProcess(
 
 template <int DisplacementDim>
 void PhaseFieldProcess<DisplacementDim>::preTimestepConcreteProcess(
-    GlobalVector const& x, double const t, double const dt,
+    std::vector<GlobalVector*> const& x, double const t, double const dt,
     const int process_id)
 {
     DBUG("PreTimestep PhaseFieldProcess %d.", process_id);
@@ -250,13 +250,14 @@ void PhaseFieldProcess<DisplacementDim>::preTimestepConcreteProcess(
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerInterface::preTimestep, _local_assemblers,
-        pv.getActiveElementIDs(), getDOFTable(process_id), x, t, dt);
+        pv.getActiveElementIDs(), getDOFTable(process_id), *x[process_id], t,
+        dt);
 }
 
 template <int DisplacementDim>
 void PhaseFieldProcess<DisplacementDim>::postTimestepConcreteProcess(
-    GlobalVector const& x, const double t, const double /*delta_t*/,
-    int const process_id)
+    std::vector<GlobalVector*> const& x, const double t,
+    const double /*delta_t*/, int const process_id)
 {
     if (isPhaseFieldProcess(process_id))
     {
@@ -277,7 +278,7 @@ void PhaseFieldProcess<DisplacementDim>::postTimestepConcreteProcess(
 
         GlobalExecutor::executeSelectedMemberOnDereferenced(
             &LocalAssemblerInterface::computeEnergy, _local_assemblers,
-            pv.getActiveElementIDs(), dof_tables, x, t,
+            pv.getActiveElementIDs(), dof_tables, *x[process_id], t,
             _process_data.elastic_energy, _process_data.surface_energy,
             _process_data.pressure_work, _coupled_solutions);
 

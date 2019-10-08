@@ -53,11 +53,12 @@ public:
         _boundary_conditions.push_back(std::move(bc));
     }
 
-    void preTimestep(const double t, GlobalVector const& x)
+    void preTimestep(const double t, std::vector<GlobalVector*> const& x,
+                     int const process_id)
     {
         for (auto const& bc_ptr : _boundary_conditions)
         {
-            bc_ptr->preTimestep(t, x);
+            bc_ptr->preTimestep(t, x, process_id);
         }
     }
 

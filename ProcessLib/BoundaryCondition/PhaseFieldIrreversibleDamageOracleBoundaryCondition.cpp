@@ -38,7 +38,8 @@ void PhaseFieldIrreversibleDamageOracleBoundaryCondition::getEssentialBCValues(
 
 // update new values and corresponding indices.
 void PhaseFieldIrreversibleDamageOracleBoundaryCondition::preTimestep(
-    const double /*t*/, const GlobalVector& x)
+    const double /*t*/, std::vector<GlobalVector*> const& x,
+    int const process_id)
 {
     // phase-field variable is considered irreversible if it loses more than 95%
     // of the stiffness, which is a widely used threshold.
@@ -56,7 +57,7 @@ void PhaseFieldIrreversibleDamageOracleBoundaryCondition::preTimestep(
         const auto g_idx =
             _dof_table.getGlobalIndex(l, _variable_id, _component_id);
 
-        if (x[node_id] <= irreversibleDamage)
+        if ((*x[process_id])[node_id] <= irreversibleDamage)
         {
             _bc_values.ids.emplace_back(g_idx);
             _bc_values.values.emplace_back(0.0);

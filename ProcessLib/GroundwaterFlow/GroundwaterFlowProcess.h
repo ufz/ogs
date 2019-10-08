@@ -61,7 +61,7 @@ public:
         return _local_assemblers[element_id]->getFlux(p, t, local_x);
     }
 
-    void postTimestepConcreteProcess(GlobalVector const& x,
+    void postTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
                                      const double t,
                                      const double /*delta_t*/,
                                      int const process_id) override
@@ -79,8 +79,9 @@ public:
 
         ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
-        _surfaceflux->integrate(x, t, *this, process_id, _integration_order,
-                                _mesh, pv.getActiveElementIDs());
+        _surfaceflux->integrate(*x[process_id], t, *this, process_id,
+                                _integration_order, _mesh,
+                                pv.getActiveElementIDs());
         _surfaceflux->save(t);
     }
 

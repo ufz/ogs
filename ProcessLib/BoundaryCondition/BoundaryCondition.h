@@ -54,7 +54,9 @@ public:
         // Therefore there is nothing to do here.
     }
 
-    virtual void preTimestep(const double /*t*/, GlobalVector const& /*x*/)
+    virtual void preTimestep(const double /*t*/,
+                             std::vector<GlobalVector*> const& /*x*/,
+                             int const /*process_id*/)
     {
         // A hook added for solution dependent dirichlet
     }

@@ -186,8 +186,8 @@ void ComponentTransportProcess::
 }
 
 void ComponentTransportProcess::preTimestepConcreteProcess(
-    GlobalVector const& x, const double /*t*/, const double /*delta_t*/,
-    int const process_id)
+    std::vector<GlobalVector*> const& x, const double /*t*/,
+    const double /*delta_t*/, int const process_id)
 {
     if (_use_monolithic_scheme)
     {
@@ -197,17 +197,18 @@ void ComponentTransportProcess::preTimestepConcreteProcess(
     if (!_xs_previous_timestep[process_id])
     {
         _xs_previous_timestep[process_id] =
-            MathLib::MatrixVectorTraits<GlobalVector>::newInstance(x);
+            MathLib::MatrixVectorTraits<GlobalVector>::newInstance(
+                *x[process_id]);
     }
     else
     {
         auto& x0 = *_xs_previous_timestep[process_id];
-        MathLib::LinAlg::copy(x, x0);
+        MathLib::LinAlg::copy(*x[process_id], x0);
     }
 }
 
 void ComponentTransportProcess::postTimestepConcreteProcess(
-    GlobalVector const& x,
+    std::vector<GlobalVector*> const& x,
     const double t,
     const double /*delta_t*/,
     int const process_id)
@@ -233,8 +234,9 @@ void ComponentTransportProcess::postTimestepConcreteProcess(
 
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
-    _surfaceflux->integrate(x, t, *this, process_id, _integration_order,
-                            _mesh, pv.getActiveElementIDs());
+    _surfaceflux->integrate(*x[process_id], t, *this, process_id,
+                            _integration_order, _mesh,
+                            pv.getActiveElementIDs());
     _surfaceflux->save(t);
 }
 

@@ -110,7 +110,7 @@ void ThermalTwoPhaseFlowWithPPProcess::assembleWithJacobianConcreteProcess(
         dxdot_dx, dx_dx, process_id, M, K, b, Jac, _coupled_solutions);
 }
 void ThermalTwoPhaseFlowWithPPProcess::preTimestepConcreteProcess(
-    GlobalVector const& x, double const t, double const delta_t,
+    std::vector<GlobalVector*> const& x, double const t, double const delta_t,
     const int process_id)
 {
     DBUG("PreTimestep ThermalTwoPhaseFlowWithPPProcess.");
@@ -118,8 +118,8 @@ void ThermalTwoPhaseFlowWithPPProcess::preTimestepConcreteProcess(
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerInterface::preTimestep, _local_assemblers,
-        pv.getActiveElementIDs(), *_local_to_global_index_map, x, t,
-        delta_t);
+        pv.getActiveElementIDs(), *_local_to_global_index_map, *x[process_id],
+        t, delta_t);
 }
 
 }  // namespace ThermalTwoPhaseFlowWithPP

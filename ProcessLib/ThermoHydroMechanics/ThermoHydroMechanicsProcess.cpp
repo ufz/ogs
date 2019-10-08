@@ -332,7 +332,7 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::
 
 template <int DisplacementDim>
 void ThermoHydroMechanicsProcess<DisplacementDim>::preTimestepConcreteProcess(
-    GlobalVector const& x, double const t, double const dt,
+    std::vector<GlobalVector*> const& x, double const t, double const dt,
     const int process_id)
 {
     DBUG("PreTimestep ThermoHydroMechanicsProcess.");
@@ -341,19 +341,19 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::preTimestepConcreteProcess(
     {
         GlobalExecutor::executeMemberOnDereferenced(
             &LocalAssemblerInterface::preTimestep, _local_assemblers,
-            *_local_to_global_index_map, x, t, dt);
+            *_local_to_global_index_map, *x[process_id], t, dt);
     }
 }
 
 template <int DisplacementDim>
 void ThermoHydroMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
-    GlobalVector const& x, double const t, double const dt,
+    std::vector<GlobalVector*> const& x, double const t, double const dt,
     const int process_id)
 {
     DBUG("PostTimestep ThermoHydroMechanicsProcess.");
     GlobalExecutor::executeMemberOnDereferenced(
         &LocalAssemblerInterface::postTimestep, _local_assemblers,
-        getDOFTable(process_id), x, t, dt);
+        getDOFTable(process_id), *x[process_id], t, dt);
 }
 
 template <int DisplacementDim>

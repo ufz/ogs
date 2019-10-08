@@ -455,7 +455,7 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
 
 template <int GlobalDim>
 void HydroMechanicsProcess<GlobalDim>::postTimestepConcreteProcess(
-    GlobalVector const& x, const double t, double const dt,
+    std::vector<GlobalVector*> const& x, const double t, double const dt,
     int const process_id)
 {
     DBUG("Compute the secondary variables for HydroMechanicsProcess.");
@@ -467,7 +467,8 @@ void HydroMechanicsProcess<GlobalDim>::postTimestepConcreteProcess(
 
         GlobalExecutor::executeSelectedMemberOnDereferenced(
             &HydroMechanicsLocalAssemblerInterface::postTimestep,
-            _local_assemblers, pv.getActiveElementIDs(), dof_table, x, t, dt);
+            _local_assemblers, pv.getActiveElementIDs(), dof_table,
+            *x[process_id], t, dt);
     }
 
     // Copy displacement jumps in a solution vector to mesh property
@@ -491,7 +492,7 @@ void HydroMechanicsProcess<GlobalDim>::postTimestepConcreteProcess(
         g_variable_id = static_cast<int>(std::distance(pvs.begin(), it));
     }
 
-    MathLib::LinAlg::setLocalAccessibleVector(x);
+    MathLib::LinAlg::setLocalAccessibleVector(*x[process_id]);
 
     const int monolithic_process_id = 0;
     ProcessVariable& pv_g =
@@ -512,7 +513,7 @@ void HydroMechanicsProcess<GlobalDim>::postTimestepConcreteProcess(
             auto const global_index =
                 dof_table.getGlobalIndex(l, g_variable_id, component_id);
             mesh_prop_g[node->getID() * num_comp + component_id] =
-                x[global_index];
+                (*x[process_id])[global_index];
         }
     }
 
@@ -610,8 +611,8 @@ void HydroMechanicsProcess<GlobalDim>::assembleWithJacobianConcreteProcess(
 
 template <int GlobalDim>
 void HydroMechanicsProcess<GlobalDim>::preTimestepConcreteProcess(
-    GlobalVector const& x, double const t, double const dt,
-    const int process_id)
+    std::vector<GlobalVector*> const& x, double const t, double const dt,
+    int const process_id)
 {
     DBUG("PreTimestep HydroMechanicsProcess.");
 
@@ -619,8 +620,8 @@ void HydroMechanicsProcess<GlobalDim>::preTimestepConcreteProcess(
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &HydroMechanicsLocalAssemblerInterface::preTimestep, _local_assemblers,
-        pv.getActiveElementIDs(), *_local_to_global_index_map,
-        x, t, dt);
+        pv.getActiveElementIDs(), *_local_to_global_index_map, *x[process_id],
+        t, dt);
 }
 
 // ------------------------------------------------------------------------------------

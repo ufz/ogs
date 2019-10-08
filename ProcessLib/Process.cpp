@@ -378,7 +378,7 @@ void Process::computeSparsityPattern()
         NumLib::computeSparsityPattern(*_local_to_global_index_map, _mesh);
 }
 
-void Process::preTimestep(GlobalVector const& x, const double t,
+void Process::preTimestep(std::vector<GlobalVector*> const& x, const double t,
                           const double delta_t, const int process_id)
 {
     for (auto& cached_var : _cached_secondary_variables)
@@ -386,16 +386,18 @@ void Process::preTimestep(GlobalVector const& x, const double t,
         cached_var->setTime(t);
     }
 
-    MathLib::LinAlg::setLocalAccessibleVector(x);
+    for (auto* const solution : x)
+        MathLib::LinAlg::setLocalAccessibleVector(*solution);
     preTimestepConcreteProcess(x, t, delta_t, process_id);
 
-    _boundary_conditions[process_id].preTimestep(t, x);
+    _boundary_conditions[process_id].preTimestep(t, x, process_id);
 }
 
-void Process::postTimestep(GlobalVector const& x, const double t,
+void Process::postTimestep(std::vector<GlobalVector*> const& x, const double t,
                            const double delta_t, int const process_id)
 {
-    MathLib::LinAlg::setLocalAccessibleVector(x);
+    for (auto* const solution : x)
+        MathLib::LinAlg::setLocalAccessibleVector(*solution);
     postTimestepConcreteProcess(x, t, delta_t, process_id);
 }
 

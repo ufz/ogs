@@ -528,9 +528,8 @@ void preTimestepForAllProcesses(
     for (auto& process_data : per_process_data)
     {
         auto const process_id = process_data->process_id;
-        auto& x = *_process_solutions[process_id];
         auto& pcs = process_data->process;
-        pcs.preTimestep(x, t, dt, process_id);
+        pcs.preTimestep(_process_solutions, t, dt, process_id);
     }
 }
 
@@ -575,7 +574,7 @@ void postTimestepForAllProcesses(
             pcs.setCoupledSolutionsForStaggeredScheme(&coupled_solutions);
         }
         auto& x = *process_solutions[process_id];
-        pcs.postTimestep(x, t, dt, process_id);
+        pcs.postTimestep(process_solutions, t, dt, process_id);
         pcs.computeSecondaryVariable(t, x, process_id);
     }
 }
@@ -772,7 +771,7 @@ void TimeLoop::outputSolutions(bool const output_initial_condition,
 
         if (output_initial_condition)
         {
-            pcs.preTimestep(x, _start_time,
+            pcs.preTimestep(_process_solutions, _start_time,
                             process_data->timestepper->getTimeStep().dt(),
                             process_id);
             // Update secondary variables, which might be uninitialized, before

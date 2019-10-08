@@ -260,11 +260,11 @@ void ThermoMechanicalPhaseFieldProcess<DisplacementDim>::
 }
 
 template <int DisplacementDim>
-void ThermoMechanicalPhaseFieldProcess<
-    DisplacementDim>::preTimestepConcreteProcess(GlobalVector const& x,
-                                                 double const t,
-                                                 double const dt,
-                                                 const int process_id)
+void ThermoMechanicalPhaseFieldProcess<DisplacementDim>::
+    preTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
+                               double const t,
+                               double const dt,
+                               const int process_id)
 {
     DBUG("PreTimestep ThermoMechanicalPhaseFieldProcess.");
 
@@ -277,16 +277,16 @@ void ThermoMechanicalPhaseFieldProcess<
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &ThermoMechanicalPhaseFieldLocalAssemblerInterface::preTimestep,
-        _local_assemblers, pv.getActiveElementIDs(), getDOFTable(process_id), x,
-        t, dt);
+        _local_assemblers, pv.getActiveElementIDs(), getDOFTable(process_id),
+        *x[process_id], t, dt);
 }
 
 template <int DisplacementDim>
-void ThermoMechanicalPhaseFieldProcess<
-    DisplacementDim>::postTimestepConcreteProcess(GlobalVector const& x,
-                                                  double const t,
-                                                  double const dt,
-                                                  int const process_id)
+void ThermoMechanicalPhaseFieldProcess<DisplacementDim>::
+    postTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
+                                double const t,
+                                double const dt,
+                                int const process_id)
 {
     DBUG("PostTimestep ThermoMechanicalPhaseFieldProcess.");
 
@@ -294,8 +294,8 @@ void ThermoMechanicalPhaseFieldProcess<
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &ThermoMechanicalPhaseFieldLocalAssemblerInterface::postTimestep,
-        _local_assemblers, pv.getActiveElementIDs(), getDOFTable(process_id), x,
-        t, dt);
+        _local_assemblers, pv.getActiveElementIDs(), getDOFTable(process_id),
+        *x[process_id], t, dt);
 }
 
 template <int DisplacementDim>

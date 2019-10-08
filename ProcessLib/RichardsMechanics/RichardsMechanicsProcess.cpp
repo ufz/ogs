@@ -324,7 +324,7 @@ void RichardsMechanicsProcess<DisplacementDim>::
 
 template <int DisplacementDim>
 void RichardsMechanicsProcess<DisplacementDim>::preTimestepConcreteProcess(
-    GlobalVector const& x, double const t, double const dt,
+    std::vector<GlobalVector*> const& x, double const t, double const dt,
     const int process_id)
 {
     DBUG("PreTimestep RichardsMechanicsProcess.");
@@ -335,8 +335,8 @@ void RichardsMechanicsProcess<DisplacementDim>::preTimestepConcreteProcess(
             getProcessVariables(process_id)[0];
         GlobalExecutor::executeSelectedMemberOnDereferenced(
             &LocalAssemblerInterface::preTimestep, _local_assemblers,
-            pv.getActiveElementIDs(), *_local_to_global_index_map, x,
-            t, dt);
+            pv.getActiveElementIDs(), *_local_to_global_index_map,
+            *x[process_id], t, dt);
     }
 }
 

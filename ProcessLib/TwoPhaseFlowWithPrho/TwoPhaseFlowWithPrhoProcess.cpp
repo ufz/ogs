@@ -108,7 +108,7 @@ void TwoPhaseFlowWithPrhoProcess::assembleWithJacobianConcreteProcess(
         dxdot_dx, dx_dx, process_id, M, K, b, Jac, _coupled_solutions);
 }
 void TwoPhaseFlowWithPrhoProcess::preTimestepConcreteProcess(
-    GlobalVector const& x, double const t, double const dt,
+    std::vector<GlobalVector*> const& x, double const t, double const dt,
     const int process_id)
 {
     DBUG("PreTimestep TwoPhaseFlowWithPrhoProcess.");
@@ -117,8 +117,8 @@ void TwoPhaseFlowWithPrhoProcess::preTimestepConcreteProcess(
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerInterface::preTimestep, _local_assemblers,
-        pv.getActiveElementIDs(), *_local_to_global_index_map, x, t,
-        dt);
+        pv.getActiveElementIDs(), *_local_to_global_index_map, *x[process_id],
+        t, dt);
 }
 
 }  // namespace TwoPhaseFlowWithPrho
