@@ -185,6 +185,34 @@ int main(int argc, char* argv[])
         auto const partitions = mesh_partitioner.partitionOtherMesh(
             *mesh, is_mixed_high_order_linear_elems);
 
+        if (!mesh->getProperties().existsPropertyVector<std::size_t>(
+                "bulk_element_ids", MeshLib::MeshItemType::Cell, 1))
+        {
+            INFO(
+                "Property array 'bulk_element_ids' not found in the attribute "
+                "Cell Data");
+
+            if (!mesh->getProperties().existsPropertyVector<std::size_t>(
+                    "flat_bulk_element_ids",
+                    MeshLib::MeshItemType::IntegrationPoint, 1) &&
+                !mesh->getProperties().existsPropertyVector<std::size_t>(
+                    "number_bulk_elements", MeshLib::MeshItemType::Cell, 1))
+            {
+                ERR("Property array 'flat_bulk_element_ids' not found in the "
+                    "attribute Field Data. Property array "
+                    "'number_bulk_elements' not found in the attribute Cell "
+                    "Data. Failed to generate in-place property array "
+                    "'bulk_element_ids' in the attribute Cell Data.");
+
+                return EXIT_FAILURE;
+            }
+
+            auto bulk_element_ids =
+                mesh->getProperties().createNewPropertyVector<std::size_t>(
+                    "bulk_element_ids", MeshLib::MeshItemType::Cell, 1);
+            bulk_element_ids->resize(mesh->getNumberOfElements(), 0.);
+        }
+
         auto partitioned_properties =
             partitionProperties(mesh->getProperties(), partitions);
         mesh_partitioner.renumberBulkNodeIdsProperty(
