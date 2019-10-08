@@ -204,7 +204,7 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
     _b->setZero();
 
     _ode.preAssemble(t, dt, x_curr);
-    _ode.assemble(t, dt, x_curr, process_id, *_M, *_K, *_b);
+    _ode.assemble(t, dt, x_new_timestep, process_id, *_M, *_K, *_b);
 
     LinAlg::finalizeAssembly(*_M);
     LinAlg::finalizeAssembly(*_K);

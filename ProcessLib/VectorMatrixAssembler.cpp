@@ -43,7 +43,7 @@ void VectorMatrixAssembler::assemble(
     const std::size_t mesh_item_id, LocalAssemblerInterface& local_assembler,
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>> const&
         dof_tables,
-    const double t, double const dt, const GlobalVector& x,
+    const double t, double const dt, std::vector<GlobalVector*> const& x,
     int const process_id, GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
     CoupledSolutionsForStaggeredScheme const* const cpl_xs)
 {
@@ -62,7 +62,7 @@ void VectorMatrixAssembler::assemble(
 
     if (cpl_xs == nullptr)
     {
-        auto const local_x = x.get(indices);
+        auto const local_x = x[process_id]->get(indices);
         local_assembler.assemble(t, dt, local_x, _local_M_data, _local_K_data,
                                  _local_b_data);
     }
@@ -71,7 +71,7 @@ void VectorMatrixAssembler::assemble(
         auto local_coupled_xs0 = getCoupledLocalSolutions(cpl_xs->coupled_xs_t0,
                                                           indices_of_processes);
         auto local_coupled_xs =
-            getCoupledLocalSolutions(cpl_xs->coupled_xs, indices_of_processes);
+            getCoupledLocalSolutions(x, indices_of_processes);
 
         ProcessLib::LocalCoupledSolutions local_coupled_solutions(
             std::move(local_coupled_xs0), std::move(local_coupled_xs));

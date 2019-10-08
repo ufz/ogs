@@ -51,9 +51,9 @@ public:
 
     //! Assemble \c M, \c K and \c b at the provided state (\c t, \c x).
     virtual void assemble(const double t, double const dt,
-                          GlobalVector const& x, int const process_id,
-                          GlobalMatrix& M, GlobalMatrix& K,
-                          GlobalVector& b) = 0;
+                          std::vector<GlobalVector*> const& x,
+                          int const process_id, GlobalMatrix& M,
+                          GlobalMatrix& K, GlobalVector& b) = 0;
 
     using Index = MathLib::MatrixVectorTraits<GlobalMatrix>::Index;
 

@@ -47,9 +47,9 @@ public:
                   LocalAssemblerInterface& local_assembler,
                   std::vector<std::reference_wrapper<
                       NumLib::LocalToGlobalIndexMap>> const& dof_tables,
-                  double const t, double const dt, GlobalVector const& x,
-                  int const process_id, GlobalMatrix& M, GlobalMatrix& K,
-                  GlobalVector& b,
+                  double const t, double const dt,
+                  std::vector<GlobalVector*> const& x, int const process_id,
+                  GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
                   CoupledSolutionsForStaggeredScheme const* const cpl_xs);
 
     //! Assembles \c M, \c K, \c b, and the Jacobian \c Jac of the residual.
