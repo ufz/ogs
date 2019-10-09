@@ -826,27 +826,6 @@ public:
         auto const local_C = Eigen::Map<const NodalVectorType>(
             &local_x[first_concentration_index], concentration_size);
 
-        return calculateFlux(pnt_local_coords, t, local_p, local_C);
-    }
-
-    Eigen::Vector3d getFlux(
-        MathLib::Point3d const& pnt_local_coords,
-        double const t,
-        std::vector<std::vector<double>> const& local_xs) const override
-    {
-        auto const local_p = MathLib::toVector(local_xs[hydraulic_process_id]);
-        auto const local_C =
-            MathLib::toVector(local_xs[first_transport_process_id]);
-
-        return calculateFlux(pnt_local_coords, t, local_p, local_C);
-    }
-
-    Eigen::Vector3d calculateFlux(
-        MathLib::Point3d const& pnt_local_coords,
-        double const t,
-        Eigen::Ref<const NodalVectorType> const& p_nodal_values,
-        Eigen::Ref<const NodalVectorType> const& C_nodal_values) const
-    {
         // eval shape matrices at given point
         auto const shape_matrices = [&]() {
             auto const fe = NumLib::createIsoparametricFiniteElement<
@@ -874,11 +853,11 @@ public:
 
         // local_x contains the local concentration and pressure values
         NumLib::shapeFunctionInterpolate(
-            C_nodal_values, shape_matrices.N,
+            local_C, shape_matrices.N,
             std::get<double>(vars[static_cast<int>(
                 MaterialPropertyLib::Variable::concentration)]));
         NumLib::shapeFunctionInterpolate(
-            p_nodal_values, shape_matrices.N,
+            local_p, shape_matrices.N,
             std::get<double>(vars[static_cast<int>(
                 MaterialPropertyLib::Variable::phase_pressure)]));
 
@@ -891,8 +870,7 @@ public:
                 .template value<double>(vars, pos, t);
         GlobalDimMatrixType const K_over_mu = K / mu;
 
-        GlobalDimVectorType q =
-            -K_over_mu * shape_matrices.dNdx * p_nodal_values;
+        GlobalDimVectorType q = -K_over_mu * shape_matrices.dNdx * local_p;
         auto const rho_w =
             phase.property(MaterialPropertyLib::PropertyType::density)
                 .template value<double>(vars, pos, t);
