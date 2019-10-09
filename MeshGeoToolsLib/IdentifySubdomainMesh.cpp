@@ -246,7 +246,7 @@ void identifySubdomainMesh(MeshLib::Mesh& subdomain_mesh,
             subdomain_mesh, "number_bulk_elements", number_of_bulk_element_ids,
             MeshLib::MeshItemType::Cell, force_overwrite);
         updateOrCheckExistingSubdomainProperty(
-            subdomain_mesh, "bulk_element_ids", flat_bulk_element_ids,
+            subdomain_mesh, "flat_bulk_element_ids", flat_bulk_element_ids,
             MeshLib::MeshItemType::IntegrationPoint, force_overwrite);
     }
 }
