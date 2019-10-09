@@ -202,3 +202,27 @@ AddTest(
         3D_line_source_term_restricted_pcs_0_ts_1_t_1.000000.vtu 3D_line_source_term_restricted_pcs_0_ts_1_t_1.000000.vtu heat_flux_x heat_flux_x 1e-15 0.0
         REQUIREMENTS NOT OGS_USE_MPI
 )
+
+AddTest(
+        NAME HeatConduction_3D_LineSourceTermInMiddleOfCylinder_49k_prisms
+        PATH
+        Parabolic/T/3D_line_source_term_tests/3D_line_source_term_in_cylinder/49k_prisms
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS line_source_term_in_cylinder.prj
+        TESTER vtkdiff
+        DIFF_DATA
+        Cylinder_r_1_h_1_prism_49k.vtu 3D_line_source_term_in_cylinder_49k_pcs_0_ts_1_t_1.000000.vtu analytical_solution_temperature temperature 0.2 0.0
+        REQUIREMENTS NOT OGS_USE_MPI
+)
+
+AddTest(
+        NAME LARGE_HeatConduction_3D_LineSourceTermInMiddleOfCylinder_286k_prisms
+        PATH
+        Parabolic/T/3D_line_source_term_tests/3D_line_source_term_in_cylinder/286k_prisms
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS line_source_term_in_cylinder.prj
+        TESTER vtkdiff
+        DIFF_DATA
+        Cylinder_r_1_h_1_prism_286k.vtu 3D_line_source_term_in_cylinder_286k_pcs_0_ts_1_t_1.000000.vtu analytical_solution_temperature temperature 4e-3 0.0
+        REQUIREMENTS NOT OGS_USE_MPI
+)
