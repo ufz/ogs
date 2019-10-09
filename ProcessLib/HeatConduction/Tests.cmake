@@ -140,6 +140,7 @@ AddTest(
         REQUIREMENTS NOT OGS_USE_MPI
 )
 
+# tests for line source term implementation
 AddTest(
         NAME HeatConduction_2D_LineSourceTermLeft
         PATH Parabolic/T/2D_source_term_tests/line_source_term_left
@@ -152,6 +153,9 @@ AddTest(
         REQUIREMENTS NOT OGS_USE_MPI
 )
 
+# For the special setup with a 'dirac' line source term at x=0.5 the
+# analytical solution in 2 dimensions is valid:
+# u(x,y) = -ln(sqrt((x-0.5)^2))/(2 * Pi)
 AddTest(
         NAME HeatConduction_2D_LineSourceTermMiddle
         PATH Parabolic/T/2D_source_term_tests/line_source_term_x_0.5
@@ -177,6 +181,7 @@ AddTest(
         REQUIREMENTS NOT OGS_USE_MPI
 )
 
+# tests for line source term implementation on a cubic domain
 AddTest(
         NAME HeatConduction_3D_LineSourceTermMiddle
         PATH
@@ -190,6 +195,7 @@ AddTest(
         REQUIREMENTS NOT OGS_USE_MPI
 )
 
+# tests for line source term implementation on a cubic domain
 AddTest(
         NAME HeatConduction_3D_LineSourceTermMiddle_Restricted
         PATH
@@ -203,6 +209,10 @@ AddTest(
         REQUIREMENTS NOT OGS_USE_MPI
 )
 
+# tests for line source term implementation on a cylindrical domain
+# For the special setup with a line source term at position (xi, eta) the
+# analytical solution in 2 dimensions is valid:
+# u(x,y) = -ln(sqrt((x-xi)^2+(y-eta)^2))/(2 * Pi)
 AddTest(
         NAME HeatConduction_3D_LineSourceTermInMiddleOfCylinder_49k_prisms
         PATH
