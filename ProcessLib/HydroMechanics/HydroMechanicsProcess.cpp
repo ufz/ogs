@@ -455,7 +455,7 @@ void HydroMechanicsProcess<DisplacementDim>::
 
 template <int DisplacementDim>
 void HydroMechanicsProcess<DisplacementDim>::preTimestepConcreteProcess(
-    GlobalVector const& x, double const t, double const dt,
+    std::vector<GlobalVector*> const& x, double const t, double const dt,
     const int process_id)
 {
     DBUG("PreTimestep HydroMechanicsProcess.");
@@ -466,21 +466,22 @@ void HydroMechanicsProcess<DisplacementDim>::preTimestepConcreteProcess(
             getProcessVariables(process_id)[0];
         GlobalExecutor::executeSelectedMemberOnDereferenced(
             &LocalAssemblerInterface::preTimestep, _local_assemblers,
-            pv.getActiveElementIDs(), *_local_to_global_index_map, x, t,
-            dt);
+            pv.getActiveElementIDs(), *_local_to_global_index_map,
+            *x[process_id], t, dt);
     }
 }
 
 template <int DisplacementDim>
 void HydroMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
-    GlobalVector const& x, double const t, double const dt,
+    std::vector<GlobalVector*> const& x, double const t, double const dt,
     const int process_id)
 {
     DBUG("PostTimestep HydroMechanicsProcess.");
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerInterface::postTimestep, _local_assemblers,
-        pv.getActiveElementIDs(), getDOFTable(process_id), x, t, dt);
+        pv.getActiveElementIDs(), getDOFTable(process_id), *x[process_id], t,
+        dt);
 }
 
 template <int DisplacementDim>

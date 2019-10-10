@@ -283,7 +283,7 @@ void SmallDeformationProcess<DisplacementDim>::
 
 template <int DisplacementDim>
 void SmallDeformationProcess<DisplacementDim>::postTimestepConcreteProcess(
-    GlobalVector const& x, const double t, const double dt,
+    std::vector<GlobalVector*> const& x, const double t, const double dt,
     int const process_id)
 {
     DBUG("PostTimestep SmallDeformationProcess.");
@@ -292,11 +292,13 @@ void SmallDeformationProcess<DisplacementDim>::postTimestepConcreteProcess(
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerInterface::postTimestep, _local_assemblers,
-        pv.getActiveElementIDs(), *_local_to_global_index_map, x, t, dt);
+        pv.getActiveElementIDs(), *_local_to_global_index_map, *x[process_id],
+        t, dt);
 
     std::unique_ptr<GlobalVector> material_forces;
     ProcessLib::SmallDeformation::writeMaterialForces(
-        material_forces, _local_assemblers, *_local_to_global_index_map, x);
+        material_forces, _local_assemblers, *_local_to_global_index_map,
+        *x[process_id]);
 
     material_forces->copyValues(*_material_forces);
 }

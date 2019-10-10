@@ -44,8 +44,8 @@ public:
         NumLib::NamedFunctionCaller&& named_function_caller,
         BaseLib::ConfigTree const& config);
 
-    void preTimestepConcreteProcess(GlobalVector const& x, const double t,
-                                    const double delta_t,
+    void preTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
+                                    const double t, const double delta_t,
                                     const int process_id) override;
     void preIterationConcreteProcess(const unsigned iter,
                                      GlobalVector const& x) override;

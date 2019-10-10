@@ -154,7 +154,7 @@ void HTProcess::assembleWithJacobianConcreteProcess(
         dxdot_dx, dx_dx, process_id, M, K, b, Jac, _coupled_solutions);
 }
 
-void HTProcess::preTimestepConcreteProcess(GlobalVector const& x,
+void HTProcess::preTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
                                            const double /*t*/,
                                            const double /*delta_t*/,
                                            const int process_id)
@@ -169,12 +169,13 @@ void HTProcess::preTimestepConcreteProcess(GlobalVector const& x,
     if (!_xs_previous_timestep[process_id])
     {
         _xs_previous_timestep[process_id] =
-            MathLib::MatrixVectorTraits<GlobalVector>::newInstance(x);
+            MathLib::MatrixVectorTraits<GlobalVector>::newInstance(
+                *x[process_id]);
     }
     else
     {
         auto& x0 = *_xs_previous_timestep[process_id];
-        MathLib::LinAlg::copy(x, x0);
+        MathLib::LinAlg::copy(*x[process_id], x0);
     }
 
     auto& x0 = *_xs_previous_timestep[process_id];
@@ -254,7 +255,7 @@ Eigen::Vector3d HTProcess::getFlux(std::size_t element_id,
 }
 
 // this is almost a copy of the implementation in the GroundwaterFlow
-void HTProcess::postTimestepConcreteProcess(GlobalVector const& x,
+void HTProcess::postTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
                                             const double t,
                                             const double /*delta_t*/,
                                             int const process_id)
@@ -278,7 +279,8 @@ void HTProcess::postTimestepConcreteProcess(GlobalVector const& x,
 
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
-    _surfaceflux->integrate(x, t, *this, process_id, _integration_order, _mesh,
+    _surfaceflux->integrate(*x[process_id], t, *this, process_id,
+                            _integration_order, _mesh,
                             pv.getActiveElementIDs());
     _surfaceflux->save(t);
 }

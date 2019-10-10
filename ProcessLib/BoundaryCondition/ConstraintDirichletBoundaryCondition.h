@@ -61,7 +61,8 @@ public:
                                       GlobalVector const&)>
             getFlux);
 
-    void preTimestep(double t, GlobalVector const& x) override;
+    void preTimestep(double t, std::vector<GlobalVector*> const& x,
+                     int const process_id) override;
 
     void getEssentialBCValues(
         const double t, const GlobalVector& x,

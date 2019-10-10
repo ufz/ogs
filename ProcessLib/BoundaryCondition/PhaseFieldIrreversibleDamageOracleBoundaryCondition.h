@@ -47,7 +47,8 @@ public:
         const double t, const GlobalVector& x,
         NumLib::IndexValueVector<GlobalIndexType>& bc_values) const override;
 
-    void preTimestep(const double t, const GlobalVector& x) override;
+    void preTimestep(const double t, std::vector<GlobalVector*> const& x,
+                     int const process_id) override;
 
 private:
     NumLib::LocalToGlobalIndexMap const& _dof_table;

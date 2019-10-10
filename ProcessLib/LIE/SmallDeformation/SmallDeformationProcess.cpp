@@ -579,7 +579,7 @@ void SmallDeformationProcess<DisplacementDim>::
 }
 template <int DisplacementDim>
 void SmallDeformationProcess<DisplacementDim>::preTimestepConcreteProcess(
-    GlobalVector const& x, double const t, double const dt,
+    std::vector<GlobalVector*> const& x, double const t, double const dt,
     const int process_id)
 {
     DBUG("PreTimestep SmallDeformationProcess.");
@@ -588,7 +588,7 @@ void SmallDeformationProcess<DisplacementDim>::preTimestepConcreteProcess(
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &SmallDeformationLocalAssemblerInterface::preTimestep,
         _local_assemblers, pv.getActiveElementIDs(),
-        *_local_to_global_index_map, x, t, dt);
+        *_local_to_global_index_map, *x[process_id], t, dt);
 }
 // ------------------------------------------------------------------------------------
 // template instantiation

@@ -106,17 +106,18 @@ ConstraintDirichletBoundaryCondition::ConstraintDirichletBoundaryCondition(
         _integration_order, bulk_mesh, _bulk_ids);
 }
 
-void ConstraintDirichletBoundaryCondition::preTimestep(double t,
-                                                       GlobalVector const& x)
+void ConstraintDirichletBoundaryCondition::preTimestep(
+    double t, std::vector<GlobalVector*> const& x, int const process_id)
 {
     DBUG(
         "ConstraintDirichletBoundaryCondition::preTimestep: computing flux "
         "constraints");
+    auto const& solution = *x[process_id];
     for (auto const* boundary_element : _bc_mesh.getElements())
     {
         _flux_values[boundary_element->getID()] =
             _local_assemblers[boundary_element->getID()]->integrate(
-                x, t,
+                solution, t,
                 [this](std::size_t const element_id,
                        MathLib::Point3d const& pnt, double const t,
                        GlobalVector const& x) {

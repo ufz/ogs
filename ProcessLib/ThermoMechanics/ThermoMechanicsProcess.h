@@ -78,12 +78,12 @@ private:
         int const process_id, GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
         GlobalMatrix& Jac) override;
 
-    void preTimestepConcreteProcess(GlobalVector const& x, double const t,
-                                    double const dt,
+    void preTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
+                                    double const t, double const dt,
                                     const int process_id) override;
 
-    void postTimestepConcreteProcess(GlobalVector const& x, const double t,
-                                     const double delta_t,
+    void postTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
+                                     const double t, const double delta_t,
                                      int const process_id) override;
 
     NumLib::LocalToGlobalIndexMap const& getDOFTable(

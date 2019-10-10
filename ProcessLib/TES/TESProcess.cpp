@@ -263,10 +263,10 @@ void TESProcess::assembleWithJacobianConcreteProcess(
         dxdot_dx, dx_dx, process_id, M, K, b, Jac, _coupled_solutions);
 }
 
-void TESProcess::preTimestepConcreteProcess(GlobalVector const& x,
+void TESProcess::preTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
                                             const double t,
                                             const double delta_t,
-                                            const int /*process_id*/)
+                                            const int process_id)
 {
     DBUG("new timestep");
 
@@ -275,7 +275,7 @@ void TESProcess::preTimestepConcreteProcess(GlobalVector const& x,
     ++_assembly_params.timestep;  // TODO remove that
 
     _x_previous_timestep =
-        MathLib::MatrixVectorTraits<GlobalVector>::newInstance(x);
+        MathLib::MatrixVectorTraits<GlobalVector>::newInstance(*x[process_id]);
 }
 
 void TESProcess::preIterationConcreteProcess(const unsigned iter,

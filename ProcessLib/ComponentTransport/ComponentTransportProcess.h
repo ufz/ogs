@@ -126,11 +126,12 @@ public:
     void setCoupledTermForTheStaggeredSchemeToLocalAssemblers(
         int const process_id) override;
 
-    void preTimestepConcreteProcess(GlobalVector const& x, const double /*t*/,
+    void preTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
+                                    const double /*t*/,
                                     const double /*delta_t*/,
                                     int const process_id) override;
 
-    void postTimestepConcreteProcess(GlobalVector const& x,
+    void postTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
                                      const double t,
                                      const double delta_t,
                                      int const process_id) override;

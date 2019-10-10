@@ -67,8 +67,8 @@ private:
         int const process_id, GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
         GlobalMatrix& Jac) override;
 
-    void postTimestepConcreteProcess(GlobalVector const& x, double const t,
-                                     double const dt,
+    void postTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
+                                     double const t, double const dt,
                                      int const process_id) override;
 
     NumLib::IterationResult postIterationConcreteProcess(

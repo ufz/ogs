@@ -59,11 +59,11 @@ public:
             const bool use_monolithic_scheme = true);
 
     /// Preprocessing before starting assembly for new timestep.
-    void preTimestep(GlobalVector const& x, const double t,
+    void preTimestep(std::vector<GlobalVector*> const& x, const double t,
                      const double delta_t, const int process_id);
 
     /// Postprocessing after a complete timestep.
-    void postTimestep(GlobalVector const& x, const double t,
+    void postTimestep(std::vector<GlobalVector*> const& x, const double t,
                       const double delta_t, int const process_id);
 
     /// Calculates secondary variables, e.g. stress and strain for deformation
@@ -206,17 +206,19 @@ private:
         int const process_id, GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
         GlobalMatrix& Jac) = 0;
 
-    virtual void preTimestepConcreteProcess(GlobalVector const& /*x*/,
-                                            const double /*t*/,
-                                            const double /*delta_t*/,
-                                            const int /*process_id*/)
+    virtual void preTimestepConcreteProcess(
+        std::vector<GlobalVector*> const& /*x*/,
+        const double /*t*/,
+        const double /*delta_t*/,
+        const int /*process_id*/)
     {
     }
 
-    virtual void postTimestepConcreteProcess(GlobalVector const& /*x*/,
-                                             const double /*t*/,
-                                             const double /*delta_t*/,
-                                             int const /*process_id*/)
+    virtual void postTimestepConcreteProcess(
+        std::vector<GlobalVector*> const& /*x*/,
+        const double /*t*/,
+        const double /*delta_t*/,
+        int const /*process_id*/)
     {
     }
 

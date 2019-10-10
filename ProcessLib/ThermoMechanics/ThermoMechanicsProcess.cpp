@@ -383,7 +383,7 @@ void ThermoMechanicsProcess<DisplacementDim>::
 
 template <int DisplacementDim>
 void ThermoMechanicsProcess<DisplacementDim>::preTimestepConcreteProcess(
-    GlobalVector const& x, double const t, double const dt,
+    std::vector<GlobalVector*> const& x, double const t, double const dt,
     const int process_id)
 {
     DBUG("PreTimestep ThermoMechanicsProcess.");
@@ -397,19 +397,20 @@ void ThermoMechanicsProcess<DisplacementDim>::preTimestepConcreteProcess(
         GlobalExecutor::executeSelectedMemberOnDereferenced(
             &ThermoMechanicsLocalAssemblerInterface::preTimestep,
             _local_assemblers, pv.getActiveElementIDs(),
-            *_local_to_global_index_map, x, t, dt);
+            *_local_to_global_index_map, *x[process_id], t, dt);
         return;
     }
 
     // For the staggered scheme.
     if (!_previous_T)
     {
-        _previous_T = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(x);
+        _previous_T = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(
+            *x[process_id]);
     }
     else
     {
         auto& x0 = *_previous_T;
-        MathLib::LinAlg::copy(x, x0);
+        MathLib::LinAlg::copy(*x[process_id], x0);
     }
 
     auto& x0 = *_previous_T;
@@ -418,7 +419,7 @@ void ThermoMechanicsProcess<DisplacementDim>::preTimestepConcreteProcess(
 
 template <int DisplacementDim>
 void ThermoMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
-    GlobalVector const& x, double const t, double const dt,
+    std::vector<GlobalVector*> const& x, double const t, double const dt,
     int const process_id)
 {
     if (process_id != _process_data.mechanics_process_id)
@@ -433,7 +434,7 @@ void ThermoMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &ThermoMechanicsLocalAssemblerInterface::postTimestep,
         _local_assemblers, pv.getActiveElementIDs(),
-        *_local_to_global_index_map, x, t, dt);
+        *_local_to_global_index_map, *x[process_id], t, dt);
 }
 
 template <int DisplacementDim>

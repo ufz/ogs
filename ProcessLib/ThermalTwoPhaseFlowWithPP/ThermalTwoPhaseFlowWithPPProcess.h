@@ -72,8 +72,8 @@ private:
         int const process_id, GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
         GlobalMatrix& Jac) override;
 
-    void preTimestepConcreteProcess(GlobalVector const& x, const double t,
-                                    const double delta_t,
+    void preTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
+                                    const double t, const double delta_t,
                                     const int process_id) override;
 
     ThermalTwoPhaseFlowWithPPProcessData _process_data;
