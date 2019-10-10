@@ -50,8 +50,9 @@ public:
     void extrapolate(const unsigned num_components,
                      ExtrapolatableElementCollection const& extrapolatables,
                      const double t,
-                     GlobalVector const& current_solution,
-                     LocalToGlobalIndexMap const& dof_table) override;
+                     std::vector<GlobalVector*> const& x,
+                     std::vector<NumLib::LocalToGlobalIndexMap const*> const&
+                         dof_table) override;
 
     /*! \copydoc Extrapolator::calculateResiduals()
      *
@@ -64,8 +65,9 @@ public:
         const unsigned num_components,
         ExtrapolatableElementCollection const& extrapolatables,
         const double t,
-        GlobalVector const& current_solution,
-        LocalToGlobalIndexMap const& dof_table) override;
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table)
+        override;
 
     GlobalVector const& getNodalValues() const override
     {
@@ -82,8 +84,9 @@ private:
     void extrapolateElement(
         std::size_t const element_index, const unsigned num_components,
         ExtrapolatableElementCollection const& extrapolatables, const double t,
-        GlobalVector const& current_solution,
-        LocalToGlobalIndexMap const& dof_table, GlobalVector& counts);
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+        GlobalVector& counts);
 
     //! Compute the residuals for one element
     void calculateResidualElement(
@@ -91,8 +94,8 @@ private:
         const unsigned num_components,
         ExtrapolatableElementCollection const& extrapolatables,
         const double t,
-        GlobalVector const& current_solution,
-        LocalToGlobalIndexMap const& dof_table);
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table);
 
     std::unique_ptr<GlobalVector> _nodal_values;  //!< extrapolated nodal values
     std::unique_ptr<GlobalVector> _residuals;     //!< extrapolation residuals

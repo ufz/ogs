@@ -45,8 +45,8 @@ void LocalLinearLeastSquaresExtrapolator::extrapolate(
     const unsigned num_components,
     ExtrapolatableElementCollection const& extrapolatables,
     const double t,
-    GlobalVector const& current_solution,
-    LocalToGlobalIndexMap const& dof_table)
+    std::vector<GlobalVector*> const& x,
+    std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table)
 {
     auto const num_nodal_dof_result =
         _dof_table_single_component.dofSizeWithoutGhosts() * num_components;
@@ -94,8 +94,8 @@ void LocalLinearLeastSquaresExtrapolator::extrapolate(
     auto const size = extrapolatables.size();
     for (std::size_t i = 0; i < size; ++i)
     {
-        extrapolateElement(i, num_components, extrapolatables, t,
-                           current_solution, dof_table, *counts);
+        extrapolateElement(i, num_components, extrapolatables, t, x, dof_table,
+                           *counts);
     }
     MathLib::LinAlg::finalizeAssembly(*_nodal_values);
 
@@ -107,8 +107,8 @@ void LocalLinearLeastSquaresExtrapolator::calculateResiduals(
     const unsigned num_components,
     ExtrapolatableElementCollection const& extrapolatables,
     const double t,
-    GlobalVector const& current_solution,
-    LocalToGlobalIndexMap const& dof_table)
+    std::vector<GlobalVector*> const& x,
+    std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table)
 {
     auto const num_element_dof_result = static_cast<GlobalIndexType>(
         _dof_table_single_component.size() * num_components);
@@ -131,8 +131,8 @@ void LocalLinearLeastSquaresExtrapolator::calculateResiduals(
     auto const size = extrapolatables.size();
     for (std::size_t i = 0; i < size; ++i)
     {
-        calculateResidualElement(i, num_components, extrapolatables, t,
-                                 current_solution, dof_table);
+        calculateResidualElement(i, num_components, extrapolatables, t, x,
+                                 dof_table);
     }
     MathLib::LinAlg::finalizeAssembly(*_residuals);
 }
@@ -142,14 +142,13 @@ void LocalLinearLeastSquaresExtrapolator::extrapolateElement(
     const unsigned num_components,
     ExtrapolatableElementCollection const& extrapolatables,
     const double t,
-    GlobalVector const& current_solution,
-    LocalToGlobalIndexMap const& dof_table,
+    std::vector<GlobalVector*> const& x,
+    std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
     GlobalVector& counts)
 {
     auto const& integration_point_values =
         extrapolatables.getIntegrationPointValues(
-            element_index, t, current_solution, dof_table,
-            _integration_point_values_cache);
+            element_index, t, x, dof_table, _integration_point_values_cache);
 
     auto const& N_0 = extrapolatables.getShapeMatrix(element_index, 0);
     auto const num_nodes = static_cast<unsigned>(N_0.cols());
@@ -278,12 +277,11 @@ void LocalLinearLeastSquaresExtrapolator::calculateResidualElement(
     const unsigned num_components,
     ExtrapolatableElementCollection const& extrapolatables,
     const double t,
-    GlobalVector const& current_solution,
-    LocalToGlobalIndexMap const& dof_table)
+    std::vector<GlobalVector*> const& x,
+    std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table)
 {
     auto const& int_pt_vals = extrapolatables.getIntegrationPointValues(
-        element_index, t, current_solution, dof_table,
-        _integration_point_values_cache);
+        element_index, t, x, dof_table, _integration_point_values_cache);
 
     auto const num_values = static_cast<unsigned>(int_pt_vals.size());
     if (num_values % num_components != 0)

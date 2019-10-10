@@ -39,10 +39,10 @@ public:
      *
      * \param id ID of the element of which the property is queried.
      * \param t The time used in the evaluation if time dependent quantities.
-     * \param current_solution The current solution of a ProcessLib::Process;
-     * more generally any nodal GlobalVector.
+     * \param x The current solutions of a ProcessLib::Process;
+     * more generally any nodal GlobalVector pointers for each process.
      * \param dof_table The processes d.o.f. table used to get each element's
-     * local d.o.f. from \c current_solution.
+     * local d.o.f. from \c x.
      * \param cache Can be used to compute a property on-the-fly.
      *
      * \remark
@@ -63,8 +63,8 @@ public:
      */
     virtual std::vector<double> const& getIntegrationPointValues(
         std::size_t const id, const double t,
-        GlobalVector const& current_solution,
-        LocalToGlobalIndexMap const& dof_table,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const = 0;
 
     //! Returns the number of elements whose properties shall be extrapolated.
@@ -98,8 +98,8 @@ public:
     using IntegrationPointValuesMethod =
         std::function<std::vector<double> const&(
             LocalAssembler const& loc_asm, const double t,
-            GlobalVector const& current_solution,
-            NumLib::LocalToGlobalIndexMap const& dof_table,
+            std::vector<GlobalVector*> const& x,
+            std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
             std::vector<double>& cache)>;
 
     /*! Constructs a new instance.
@@ -126,13 +126,13 @@ public:
 
     std::vector<double> const& getIntegrationPointValues(
         std::size_t const id, const double t,
-        GlobalVector const& current_solution,
-        LocalToGlobalIndexMap const& dof_table,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const override
     {
         auto const& loc_asm = *_local_assemblers[id];
-        return _integration_point_values_method(loc_asm, t, current_solution,
-                                                dof_table, cache);
+        return _integration_point_values_method(loc_asm, t, x, dof_table,
+                                                cache);
     }
 
     std::size_t size() const override { return _local_assemblers.size(); }

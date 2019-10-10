@@ -31,8 +31,8 @@ static void addOgsVersion(MeshLib::Mesh& mesh)
 
 static void addSecondaryVariableNodes(
     double const t,
-    GlobalVector const& x,
-    NumLib::LocalToGlobalIndexMap const& dof_table,
+    std::vector<GlobalVector*> const& x,
+    std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
     ProcessLib::SecondaryVariable const& var,
     std::string const& output_name,
     MeshLib::Mesh& mesh)
@@ -76,8 +76,8 @@ static void addSecondaryVariableNodes(
 
 static void addSecondaryVariableResiduals(
     double const t,
-    GlobalVector const& x,
-    NumLib::LocalToGlobalIndexMap const& dof_table,
+    std::vector<GlobalVector*> const& x,
+    std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
     ProcessLib::SecondaryVariable const& var,
     std::string const& output_name,
     MeshLib::Mesh& mesh)
@@ -129,9 +129,10 @@ namespace ProcessLib
 {
 void processOutputData(
     const double t,
-    GlobalVector const& x,
+    std::vector<GlobalVector*> const& x,
+    int const process_id,
     MeshLib::Mesh& mesh,
-    NumLib::LocalToGlobalIndexMap const& dof_table,
+    std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
     std::vector<std::reference_wrapper<ProcessVariable>> const&
         process_variables,
     SecondaryVariableCollection const& secondary_variables,
@@ -149,11 +150,12 @@ void processOutputData(
     // TODO It is also possible directly to copy the data for single process
     // variable to a mesh property. It needs a vector of global indices and
     // some PETSc magic to do so.
-    std::vector<double> x_copy(x.getLocalSize() + x.getGhostSize());
+    std::vector<double> x_copy(x[process_id]->getLocalSize() +
+                               x[process_id]->getGhostSize());
 #else
-    std::vector<double> x_copy(x.size());
+    std::vector<double> x_copy(x[process_id]->size());
 #endif
-    x.copyValues(x_copy);
+    x[process_id]->copyValues(x_copy);
 
     auto const& output_variables = process_output.output_variables;
     std::set<std::string> already_output;
@@ -161,7 +163,8 @@ void processOutputData(
     int global_component_offset = 0;
     int global_component_offset_next = 0;
 
-    const auto number_of_dof_variables = dof_table.getNumberOfVariables();
+    const auto number_of_dof_variables =
+        dof_table[process_id]->getNumberOfVariables();
     // primary variables
     for (int variable_id = 0;
          variable_id < static_cast<int>(process_variables.size());
@@ -196,8 +199,8 @@ void processOutputData(
 
         for (int component_id = 0; component_id < num_comp; ++component_id)
         {
-            auto const& mesh_subset =
-                dof_table.getMeshSubset(sub_meshset_id, component_id);
+            auto const& mesh_subset = dof_table[process_id]->getMeshSubset(
+                sub_meshset_id, component_id);
             auto const mesh_id = mesh_subset.getMeshID();
             for (auto const* node : mesh_subset.getNodes())
             {
@@ -206,8 +209,9 @@ void processOutputData(
 
                 auto const global_component_id =
                     global_component_offset + component_id;
-                auto const index = dof_table.getLocalIndex(
-                    l, global_component_id, x.getRangeBegin(), x.getRangeEnd());
+                auto const index = dof_table[process_id]->getLocalIndex(
+                    l, global_component_id, x[process_id]->getRangeBegin(),
+                    x[process_id]->getRangeEnd());
 
                 output_data[node->getID() * n_components + component_id] =
                     x_copy[index];

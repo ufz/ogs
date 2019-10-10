@@ -63,7 +63,7 @@ public:
      */
     virtual NonlinearSolverStatus solve(
         std::vector<GlobalVector*>& x,
-        std::function<void(int, GlobalVector const&)> const&
+        std::function<void(int, std::vector<GlobalVector*> const&)> const&
             postIterationCallback,
         int const process_id) = 0;
 
@@ -121,7 +121,7 @@ public:
 
     NonlinearSolverStatus solve(
         std::vector<GlobalVector*>& x,
-        std::function<void(int, GlobalVector const&)> const&
+        std::function<void(int, std::vector<GlobalVector*> const&)> const&
             postIterationCallback,
         int const process_id) override;
 
@@ -199,7 +199,7 @@ public:
 
     NonlinearSolverStatus solve(
         std::vector<GlobalVector*>& x,
-        std::function<void(int, GlobalVector const&)> const&
+        std::function<void(int, std::vector<GlobalVector*> const&)> const&
             postIterationCallback,
         int const process_id) override;
 
