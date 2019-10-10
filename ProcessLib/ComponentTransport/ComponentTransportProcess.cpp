@@ -205,6 +205,9 @@ void ComponentTransportProcess::preTimestepConcreteProcess(
         auto& x0 = *_xs_previous_timestep[process_id];
         MathLib::LinAlg::copy(*x[process_id], x0);
     }
+
+    auto& x0 = *_xs_previous_timestep[process_id];
+    MathLib::LinAlg::setLocalAccessibleVector(x0);
 }
 
 void ComponentTransportProcess::postTimestepConcreteProcess(
