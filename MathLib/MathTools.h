@@ -9,7 +9,6 @@
 
 #pragma once
 
-#include <boost/math/constants/constants.hpp>
 #include <cstddef>
 
 #ifdef _OPENMP
@@ -94,11 +93,6 @@ double sqrDist(const double* p0, const double* p1)
  * @return the angle between the edges
  */
 double getAngle (const double p0[3], const double p1[3], const double p2[3]);
-
-/// converts the given degrees to radians
-inline double to_radians(double degrees) {
-    return degrees*boost::math::constants::pi<double>()/180.;
-}
 
 template<typename Type> Type limitValueInInterval(const Type variable,
                                                   const Type lower_bound,
