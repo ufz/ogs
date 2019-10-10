@@ -1,6 +1,6 @@
 +++
 date = "2018-09-25T08:17:39+01:00"
-title = "Groundwater Flow (Volumetric Source Term)"
+title = "Volumetric Source Term"
 project = "Elliptic/square_1x1_GroundWaterFlow/square_1e2_volumetricsourceterm.prj"
 author = "Tom Fischer"
 weight = 102
