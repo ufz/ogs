@@ -163,8 +163,8 @@ AddTest(
         EXECUTABLE_ARGS line_source_term_x_0.5.prj
         TESTER vtkdiff
         DIFF_DATA
-        source_term_middle_pcs_0_ts_1_t_1.000000.vtu source_term_middle_pcs_0_ts_1_t_1.000000.vtu temperature temperature 1e-15 0.0
-        source_term_middle_pcs_0_ts_1_t_1.000000.vtu source_term_middle_pcs_0_ts_1_t_1.000000.vtu heat_flux_x heat_flux_x 1e-15 0.0
+        source_term_middle_pcs_0_ts_1_t_1.000000.vtu source_term_middle_pcs_0_ts_1_t_1.000000.vtu temperature temperature 4e-15 2e-14
+        source_term_middle_pcs_0_ts_1_t_1.000000.vtu source_term_middle_pcs_0_ts_1_t_1.000000.vtu heat_flux_x heat_flux_x 7e-14 0.0
         REQUIREMENTS NOT OGS_USE_MPI
 )
 
@@ -177,7 +177,7 @@ AddTest(
         TESTER vtkdiff
         DIFF_DATA
         source_term_middle_restricted_pcs_0_ts_1_t_1.000000.vtu source_term_middle_restricted_pcs_0_ts_1_t_1.000000.vtu temperature temperature 1e-15 0.0
-        source_term_middle_restricted_pcs_0_ts_1_t_1.000000.vtu source_term_middle_restricted_pcs_0_ts_1_t_1.000000.vtu heat_flux_x heat_flux_x 1e-15 0.0
+        source_term_middle_restricted_pcs_0_ts_1_t_1.000000.vtu source_term_middle_restricted_pcs_0_ts_1_t_1.000000.vtu heat_flux_x heat_flux_x 3e-15 4e-7
         REQUIREMENTS NOT OGS_USE_MPI
 )
 
@@ -191,7 +191,7 @@ AddTest(
         TESTER vtkdiff
         DIFF_DATA
         3D_line_source_term_pcs_0_ts_1_t_1.000000.vtu 3D_line_source_term_pcs_0_ts_1_t_1.000000.vtu temperature temperature 1e-15 0.0
-        3D_line_source_term_pcs_0_ts_1_t_1.000000.vtu 3D_line_source_term_pcs_0_ts_1_t_1.000000.vtu heat_flux_x heat_flux_x 1e-15 0.0
+        3D_line_source_term_pcs_0_ts_1_t_1.000000.vtu 3D_line_source_term_pcs_0_ts_1_t_1.000000.vtu heat_flux_x heat_flux_x 7e-15 7e-13
         REQUIREMENTS NOT OGS_USE_MPI
 )
 
@@ -205,7 +205,7 @@ AddTest(
         TESTER vtkdiff
         DIFF_DATA
         3D_line_source_term_restricted_pcs_0_ts_1_t_1.000000.vtu 3D_line_source_term_restricted_pcs_0_ts_1_t_1.000000.vtu temperature temperature 1e-15 0.0
-        3D_line_source_term_restricted_pcs_0_ts_1_t_1.000000.vtu 3D_line_source_term_restricted_pcs_0_ts_1_t_1.000000.vtu heat_flux_x heat_flux_x 1e-15 0.0
+        3D_line_source_term_restricted_pcs_0_ts_1_t_1.000000.vtu 3D_line_source_term_restricted_pcs_0_ts_1_t_1.000000.vtu heat_flux_x heat_flux_x 1.1e-15 5e-12
         REQUIREMENTS NOT OGS_USE_MPI
 )
 
