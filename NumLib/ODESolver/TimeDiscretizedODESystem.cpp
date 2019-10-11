@@ -69,21 +69,21 @@ TimeDiscretizedODESystem<
     NumLib::GlobalVectorProvider::provider.releaseVector(*_b);
 }
 
-void TimeDiscretizedODESystem<
-    ODESystemTag::FirstOrderImplicitQuasilinear,
-    NonlinearSolverTag::Newton>::assemble(const GlobalVector& x_new_timestep,
-                                          int const process_id)
+void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
+                              NonlinearSolverTag::Newton>::
+    assemble(std::vector<GlobalVector*> const& x_new_timestep,
+             int const process_id)
 {
     namespace LinAlg = MathLib::LinAlg;
 
     auto const t = _time_disc.getCurrentTime();
     auto const dt = _time_disc.getCurrentTimeIncrement();
-    auto const& x_curr = _time_disc.getCurrentX(x_new_timestep);
+    auto const& x_curr = _time_disc.getCurrentX(*x_new_timestep[process_id]);
     auto const dxdot_dx = _time_disc.getNewXWeight();
     auto const dx_dx = _time_disc.getDxDx();
 
     auto& xdot = NumLib::GlobalVectorProvider::provider.getVector(_xdot_id);
-    _time_disc.getXdot(x_new_timestep, xdot);
+    _time_disc.getXdot(*x_new_timestep[process_id], xdot);
 
     _M->setZero();
     _K->setZero();
@@ -91,8 +91,8 @@ void TimeDiscretizedODESystem<
     _Jac->setZero();
 
     _ode.preAssemble(t, dt, x_curr);
-    _ode.assembleWithJacobian(t, dt, x_curr, xdot, dxdot_dx, dx_dx, process_id,
-                              *_M, *_K, *_b, *_Jac);
+    _ode.assembleWithJacobian(t, dt, x_new_timestep, xdot, dxdot_dx, dx_dx,
+                              process_id, *_M, *_K, *_b, *_Jac);
 
     LinAlg::finalizeAssembly(*_M);
     LinAlg::finalizeAssembly(*_K);
@@ -188,23 +188,23 @@ TimeDiscretizedODESystem<
     NumLib::GlobalVectorProvider::provider.releaseVector(*_b);
 }
 
-void TimeDiscretizedODESystem<
-    ODESystemTag::FirstOrderImplicitQuasilinear,
-    NonlinearSolverTag::Picard>::assemble(const GlobalVector& x_new_timestep,
-                                          int const process_id)
+void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
+                              NonlinearSolverTag::Picard>::
+    assemble(std::vector<GlobalVector*> const& x_new_timestep,
+             int const process_id)
 {
     namespace LinAlg = MathLib::LinAlg;
 
     auto const t = _time_disc.getCurrentTime();
     auto const dt = _time_disc.getCurrentTimeIncrement();
-    auto const& x_curr = _time_disc.getCurrentX(x_new_timestep);
+    auto const& x_curr = _time_disc.getCurrentX(*x_new_timestep[process_id]);
 
     _M->setZero();
     _K->setZero();
     _b->setZero();
 
     _ode.preAssemble(t, dt, x_curr);
-    _ode.assemble(t, dt, x_curr, process_id, *_M, *_K, *_b);
+    _ode.assemble(t, dt, x_new_timestep, process_id, *_M, *_K, *_b);
 
     LinAlg::finalizeAssembly(*_M);
     LinAlg::finalizeAssembly(*_K);

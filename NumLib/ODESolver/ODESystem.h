@@ -51,9 +51,9 @@ public:
 
     //! Assemble \c M, \c K and \c b at the provided state (\c t, \c x).
     virtual void assemble(const double t, double const dt,
-                          GlobalVector const& x, int const process_id,
-                          GlobalMatrix& M, GlobalMatrix& K,
-                          GlobalVector& b) = 0;
+                          std::vector<GlobalVector*> const& x,
+                          int const process_id, GlobalMatrix& M,
+                          GlobalMatrix& K, GlobalVector& b) = 0;
 
     using Index = MathLib::MatrixVectorTraits<GlobalMatrix>::Index;
 
@@ -128,7 +128,7 @@ public:
      * \endparblock
      */
     virtual void assembleWithJacobian(const double t, double const dt,
-                                      GlobalVector const& x,
+                                      std::vector<GlobalVector*> const& x,
                                       GlobalVector const& xdot,
                                       const double dxdot_dx, const double dx_dx,
                                       int const process_id, GlobalMatrix& M,

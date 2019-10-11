@@ -46,7 +46,7 @@ public:
      *                      assembled.
      * \param process_id    the process' id which will be assembled.
      */
-    virtual void assemble(GlobalVector const& x,
+    virtual void assemble(std::vector<GlobalVector*> const& x,
                           int const process_id) const = 0;
 
     /*! Assemble and solve the equation system.
@@ -59,7 +59,7 @@ public:
      * \retval false otherwise
      */
     virtual NonlinearSolverStatus solve(
-        GlobalVector& x,
+        std::vector<GlobalVector*>& x,
         std::function<void(int, GlobalVector const&)> const&
             postIterationCallback,
         int const process_id) = 0;
@@ -110,10 +110,11 @@ public:
         _convergence_criterion = &conv_crit;
     }
 
-    void assemble(GlobalVector const& x, int const process_id) const override;
+    void assemble(std::vector<GlobalVector*> const& x,
+                  int const process_id) const override;
 
     NonlinearSolverStatus solve(
-        GlobalVector& x,
+        std::vector<GlobalVector*>& x,
         std::function<void(int, GlobalVector const&)> const&
             postIterationCallback,
         int const process_id) override;
@@ -171,10 +172,11 @@ public:
         _convergence_criterion = &conv_crit;
     }
 
-    void assemble(GlobalVector const& x, int const process_id) const override;
+    void assemble(std::vector<GlobalVector*> const& x,
+                  int const process_id) const override;
 
     NonlinearSolverStatus solve(
-        GlobalVector& x,
+        std::vector<GlobalVector*>& x,
         std::function<void(int, GlobalVector const&)> const&
             postIterationCallback,
         int const process_id) override;

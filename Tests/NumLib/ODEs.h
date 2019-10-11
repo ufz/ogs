@@ -32,8 +32,9 @@ public:
     }
 
     void assemble(const double /*t*/, double const /*dt*/,
-                  GlobalVector const& /*x*/, int const /*process_id*/,
-                  GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) override
+                  std::vector<GlobalVector*> const& /*x*/,
+                  int const /*process_id*/, GlobalMatrix& M, GlobalMatrix& K,
+                  GlobalVector& b) override
     {
         MathLib::setMatrix(M, { 1.0, 0.0,  0.0, 1.0 });
         MathLib::setMatrix(K, { 0.0, 1.0, -1.0, 0.0 });
@@ -42,7 +43,7 @@ public:
     }
 
     void assembleWithJacobian(const double t, double const dt,
-                              GlobalVector const& x_curr,
+                              std::vector<GlobalVector*> const& x_curr,
                               GlobalVector const& /*xdot*/,
                               const double dxdot_dx, const double dx_dx,
                               int const process_id, GlobalMatrix& M,
@@ -118,17 +119,17 @@ public:
     }
 
     void assemble(const double /*t*/, double const /*dt*/,
-                  GlobalVector const& x, int const /*process_id*/,
+                  std::vector<GlobalVector*> const& x, int const process_id,
                   GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) override
     {
         MathLib::setMatrix(M, {1.0});
-        MathLib::LinAlg::setLocalAccessibleVector(x);
-        MathLib::setMatrix(K, {x[0]});
+        MathLib::LinAlg::setLocalAccessibleVector(*x[process_id]);
+        MathLib::setMatrix(K, {(*x[process_id])[0]});
         MathLib::setVector(b, {0.0});
     }
 
     void assembleWithJacobian(const double t, double const dt,
-                              GlobalVector const& x,
+                              std::vector<GlobalVector*> const& x,
                               GlobalVector const& /*xdot*/,
                               const double dxdot_dx, const double dx_dx,
                               int const process_id, GlobalMatrix& M,
@@ -144,7 +145,7 @@ public:
         LinAlg::copy(M, Jac);
         LinAlg::scale(Jac, dxdot_dx);
 
-        MathLib::addToMatrix(Jac, { x[0] }); // add dK_dx
+        MathLib::addToMatrix(Jac, {(*x[process_id])[0]});  // add dK_dx
 
         if (dx_dx != 0.0)
         {
@@ -212,12 +213,13 @@ public:
     }
 
     void assemble(const double /*t*/, double const /*dt*/,
-                  GlobalVector const& x_curr, int const /*process_id*/,
-                  GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) override
+                  std::vector<GlobalVector*> const& x_curr,
+                  int const process_id, GlobalMatrix& M, GlobalMatrix& K,
+                  GlobalVector& b) override
     {
-        MathLib::LinAlg::setLocalAccessibleVector(x_curr);
-        auto const u = x_curr[0];
-        auto const v = x_curr[1];
+        MathLib::LinAlg::setLocalAccessibleVector(*x_curr[process_id]);
+        auto const u = (*x_curr[process_id])[0];
+        auto const v = (*x_curr[process_id])[1];
 
         MathLib::setMatrix(M, {u, 2.0 - u, 2.0 - v, v});
         MathLib::setMatrix(K, {2.0 - u - v, -u, v, 2.0 * v - 5.0});
@@ -226,18 +228,18 @@ public:
     }
 
     void assembleWithJacobian(const double t, double const dt,
-                              GlobalVector const& x_curr,
+                              std::vector<GlobalVector*> const& x_curr,
                               GlobalVector const& xdot, const double dxdot_dx,
                               const double dx_dx, int const process_id,
                               GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
                               GlobalMatrix& Jac) override
     {
-        MathLib::LinAlg::setLocalAccessibleVector(x_curr);
+        MathLib::LinAlg::setLocalAccessibleVector(*x_curr[process_id]);
         MathLib::LinAlg::setLocalAccessibleVector(xdot);
         assemble(t, dt, x_curr, process_id, M, K, b);
 
-        auto const u = x_curr[0];
-        auto const v = x_curr[1];
+        auto const u = (*x_curr[process_id])[0];
+        auto const v = (*x_curr[process_id])[1];
 
         auto const du = xdot[0];
         auto const dv = xdot[1];
