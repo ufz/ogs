@@ -127,3 +127,112 @@ AddTest(
         t2_1D2bt_pcs_0_ts_1500_t_3888.000000.vtu t2_1D2bt_pcs_0_ts_1500_t_3888.000000.vtu temperature temperature 10e-12 0.0
         REQUIREMENTS NOT OGS_USE_MPI
 )
+
+AddTest(
+        NAME HeatConduction_1D_LineSourceTerm
+        PATH
+        Parabolic/T/1D_line_source_term_tests/
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS line_source_term.prj
+        TESTER vtkdiff
+        DIFF_DATA
+        mesh_1_line_100.vtu source_term_at_entire_line_pcs_0_ts_1_t_1.000000.vtu analytical_temperature temperature 1e-13 1e-13
+        REQUIREMENTS NOT OGS_USE_MPI
+)
+
+# tests for line source term implementation
+AddTest(
+        NAME HeatConduction_2D_LineSourceTermLeft
+        PATH Parabolic/T/2D_source_term_tests/line_source_term_left
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS source_term_left.prj
+        TESTER vtkdiff
+        DIFF_DATA
+        source_term_left_pcs_0_ts_1_t_1.000000.vtu source_term_left_pcs_0_ts_1_t_1.000000.vtu temperature temperature 1e-15 0.0
+        source_term_left_pcs_0_ts_1_t_1.000000.vtu source_term_left_pcs_0_ts_1_t_1.000000.vtu heat_flux_x heat_flux_x 1e-15 0.0
+        REQUIREMENTS NOT OGS_USE_MPI
+)
+
+# For the special setup with a 'dirac' line source term at x=0.5 the
+# analytical solution in 2 dimensions is valid:
+# u(x,y) = -ln(sqrt((x-0.5)^2))/(2 * Pi)
+AddTest(
+        NAME HeatConduction_2D_LineSourceTermMiddle
+        PATH Parabolic/T/2D_source_term_tests/line_source_term_x_0.5
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS line_source_term_x_0.5.prj
+        TESTER vtkdiff
+        DIFF_DATA
+        source_term_middle_pcs_0_ts_1_t_1.000000.vtu source_term_middle_pcs_0_ts_1_t_1.000000.vtu temperature temperature 4e-15 2e-14
+        source_term_middle_pcs_0_ts_1_t_1.000000.vtu source_term_middle_pcs_0_ts_1_t_1.000000.vtu heat_flux_x heat_flux_x 7e-14 0.0
+        REQUIREMENTS NOT OGS_USE_MPI
+)
+
+AddTest(
+        NAME HeatConduction_2D_LineSourceTermMiddle_Restricted
+        PATH
+        Parabolic/T/2D_source_term_tests/line_source_term_x_0.5_restricted_to_middle
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS line_source_term_x_0.5.prj
+        TESTER vtkdiff
+        DIFF_DATA
+        source_term_middle_restricted_pcs_0_ts_1_t_1.000000.vtu source_term_middle_restricted_pcs_0_ts_1_t_1.000000.vtu temperature temperature 1e-15 0.0
+        source_term_middle_restricted_pcs_0_ts_1_t_1.000000.vtu source_term_middle_restricted_pcs_0_ts_1_t_1.000000.vtu heat_flux_x heat_flux_x 3e-15 4e-7
+        REQUIREMENTS NOT OGS_USE_MPI
+)
+
+# tests for line source term implementation on a cubic domain
+AddTest(
+        NAME HeatConduction_3D_LineSourceTermMiddle
+        PATH
+        Parabolic/T/3D_line_source_term_tests/3D_line_source_term_middle
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS line_source_term_x_0.5_y_0.5.prj
+        TESTER vtkdiff
+        DIFF_DATA
+        3D_line_source_term_pcs_0_ts_1_t_1.000000.vtu 3D_line_source_term_pcs_0_ts_1_t_1.000000.vtu temperature temperature 1e-15 0.0
+        3D_line_source_term_pcs_0_ts_1_t_1.000000.vtu 3D_line_source_term_pcs_0_ts_1_t_1.000000.vtu heat_flux_x heat_flux_x 7e-15 7e-13
+        REQUIREMENTS NOT OGS_USE_MPI
+)
+
+# tests for line source term implementation on a cubic domain
+AddTest(
+        NAME HeatConduction_3D_LineSourceTermMiddle_Restricted
+        PATH
+        Parabolic/T/3D_line_source_term_tests/3D_line_source_term_middle_restricted
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS line_source_term_x_0.5_y_0.5_restricted.prj
+        TESTER vtkdiff
+        DIFF_DATA
+        3D_line_source_term_restricted_pcs_0_ts_1_t_1.000000.vtu 3D_line_source_term_restricted_pcs_0_ts_1_t_1.000000.vtu temperature temperature 1e-15 0.0
+        3D_line_source_term_restricted_pcs_0_ts_1_t_1.000000.vtu 3D_line_source_term_restricted_pcs_0_ts_1_t_1.000000.vtu heat_flux_x heat_flux_x 1.1e-15 5e-12
+        REQUIREMENTS NOT OGS_USE_MPI
+)
+
+# tests for line source term implementation on a cylindrical domain
+# For the special setup with a line source term at position (xi, eta) the
+# analytical solution in 2 dimensions is valid:
+# u(x,y) = -ln(sqrt((x-xi)^2+(y-eta)^2))/(2 * Pi)
+AddTest(
+        NAME HeatConduction_3D_LineSourceTermInMiddleOfCylinder_49k_prisms
+        PATH
+        Parabolic/T/3D_line_source_term_tests/3D_line_source_term_in_cylinder/49k_prisms
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS line_source_term_in_cylinder.prj
+        TESTER vtkdiff
+        DIFF_DATA
+        Cylinder_r_1_h_1_prism_49k.vtu 3D_line_source_term_in_cylinder_49k_pcs_0_ts_1_t_1.000000.vtu analytical_solution_temperature temperature 0.2 0.0
+        REQUIREMENTS NOT OGS_USE_MPI
+)
+
+AddTest(
+        NAME LARGE_HeatConduction_3D_LineSourceTermInMiddleOfCylinder_286k_prisms
+        PATH
+        Parabolic/T/3D_line_source_term_tests/3D_line_source_term_in_cylinder/286k_prisms
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS line_source_term_in_cylinder.prj
+        TESTER vtkdiff
+        DIFF_DATA
+        Cylinder_r_1_h_1_prism_286k.vtu 3D_line_source_term_in_cylinder_286k_pcs_0_ts_1_t_1.000000.vtu analytical_solution_temperature temperature 4e-3 0.0
+        REQUIREMENTS NOT OGS_USE_MPI
+)
