@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
-    <mesh>TracerSimulation.vtu</mesh>
-    <geometry>TracerSimulation.gml</geometry>
+    <meshes>
+        <mesh>TracerSimulation.vtu</mesh>
+        <mesh>BoundaryLeft.vtu</mesh>
+        <mesh>BoundaryRight.vtu</mesh>
+    </meshes>
     <processes>
         <process>
             <name>hc</name>
@@ -233,14 +236,12 @@
             <initial_condition>p0</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>geometry</geometrical_set>
-                    <geometry>left</geometry>
+                    <mesh>BoundaryLeft</mesh>
                     <type>Neumann</type>
                     <parameter>p_Neumann_left</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <geometrical_set>geometry</geometrical_set>
-                    <geometry>right</geometry>
+                    <mesh>BoundaryRight</mesh>
                     <type>Dirichlet</type>
                     <parameter>p_Dirichlet_right</parameter>
                 </boundary_condition>
@@ -253,8 +254,7 @@
             <initial_condition>c0</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>geometry</geometrical_set>
-                    <geometry>left</geometry>
+                    <mesh>BoundaryLeft</mesh>
                     <type>Dirichlet</type>
                     <parameter>c_Dirichlet_left</parameter>
                 </boundary_condition>

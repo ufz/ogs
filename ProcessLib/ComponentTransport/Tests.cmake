@@ -642,6 +642,25 @@ AddTest(
 )
 
 AddTest(
+    NAME Parallel_2D_StaggeredScheme_ComponentTransport_TracerSimulation
+    PATH Parabolic/ComponentTransport/TracerSimulation
+    EXECUTABLE_ARGS TracerSimulation.prj
+    WRAPPER mpirun
+    WRAPPER_ARGS -np 4
+    TESTER vtkdiff
+    REQUIREMENTS OGS_USE_MPI
+    DIFF_DATA
+    TracerSimulation_pcs_1_ts_100_t_100000_000000_0_expected.vtu TracerSimulation_pcs_1_ts_100_t_100000_000000_0.vtu Cs Cs 1e-10 1e-16
+    TracerSimulation_pcs_1_ts_100_t_100000_000000_0_expected.vtu TracerSimulation_pcs_1_ts_100_t_100000_000000_0.vtu pressure pressure 1e-6 1e-10
+    TracerSimulation_pcs_1_ts_100_t_100000_000000_1_expected.vtu TracerSimulation_pcs_1_ts_100_t_100000_000000_1.vtu Cs Cs 1e-10 1e-16
+    TracerSimulation_pcs_1_ts_100_t_100000_000000_1_expected.vtu TracerSimulation_pcs_1_ts_100_t_100000_000000_1.vtu pressure pressure 1e-6 1e-10
+    TracerSimulation_pcs_1_ts_100_t_100000_000000_2_expected.vtu TracerSimulation_pcs_1_ts_100_t_100000_000000_2.vtu Cs Cs 1e-10 1e-16
+    TracerSimulation_pcs_1_ts_100_t_100000_000000_2_expected.vtu TracerSimulation_pcs_1_ts_100_t_100000_000000_2.vtu pressure pressure 1e-6 1e-10
+    TracerSimulation_pcs_1_ts_100_t_100000_000000_3_expected.vtu TracerSimulation_pcs_1_ts_100_t_100000_000000_3.vtu Cs Cs 1e-10 1e-16
+    TracerSimulation_pcs_1_ts_100_t_100000_000000_3_expected.vtu TracerSimulation_pcs_1_ts_100_t_100000_000000_3.vtu pressure pressure 1e-6 1e-10
+)
+
+AddTest(
     NAME LARGE_2D_ComponentTransport_Goswami
     PATH Parabolic/ComponentTransport/goswami
     RUNTIME 900
