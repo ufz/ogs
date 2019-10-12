@@ -36,7 +36,12 @@ public:
         ShapeMatrixPolicyType<ShapeFunction, 3 /* GlobalDim */>;
     using NodalMatrixType = typename ShapeMatricesType::NodalMatrixType;
     using NodalVectorType = typename ShapeMatricesType::NodalVectorType;
+    using NodalRowVectorType = typename ShapeMatricesType::NodalRowVectorType;
+
     using ShapeMatrices = typename ShapeMatricesType::ShapeMatrices;
+    using GlobalDimVectorType = typename ShapeMatricesType::GlobalDimVectorType;
+    using GlobalDimNodalMatrixType =
+        typename ShapeMatricesType::GlobalDimNodalMatrixType;
 
     HeatTransportBHELocalAssemblerSoil(
         HeatTransportBHELocalAssemblerSoil const&) = delete;
@@ -68,8 +73,9 @@ private:
     HeatTransportBHEProcessData& _process_data;
 
     std::vector<
-        IntegrationPointDataSoil<NodalMatrixType>,
-        Eigen::aligned_allocator<IntegrationPointDataSoil<NodalMatrixType>>>
+        IntegrationPointDataSoil<NodalRowVectorType, GlobalDimNodalMatrixType>,
+        Eigen::aligned_allocator<
+            IntegrationPointDataSoil<NodalRowVectorType, GlobalDimNodalMatrixType>>>
         _ip_data;
 
     IntegrationMethod const _integration_method;

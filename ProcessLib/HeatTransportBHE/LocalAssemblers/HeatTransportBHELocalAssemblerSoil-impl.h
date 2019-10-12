@@ -14,6 +14,7 @@
 #include <vector>
 
 #include "MaterialLib/MPL/Medium.h"
+#include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ProcessLib/HeatTransportBHE/HeatTransportBHEProcessData.h"
@@ -61,8 +62,10 @@ HeatTransportBHELocalAssemblerSoil<ShapeFunction, IntegrationMethod>::
         auto const& sm = _shape_matrices[ip];
         double const w = _integration_method.getWeightedPoint(ip).getWeight() *
                          sm.integralMeasure * sm.detJ;
-        _ip_data.push_back(
-            {sm.N.transpose() * sm.N * w, sm.dNdx.transpose() * sm.dNdx * w});
+        _ip_data.emplace_back(
+            sm.N, sm.dNdx,
+            _integration_method.getWeightedPoint(ip).getWeight() *
+                sm.integralMeasure * sm.detJ);
 
         _secondary_data.N[ip] = sm.N;
     }
@@ -100,8 +103,9 @@ void HeatTransportBHELocalAssemblerSoil<ShapeFunction, IntegrationMethod>::
     {
         pos.setIntegrationPoint(ip);
         auto& ip_data = _ip_data[ip];
-        auto const& M_ip = ip_data.NTN_product_times_w;
-        auto const& K_ip = ip_data.dNdxTdNdx_product_times_w;
+        auto const& N = ip_data.N;
+        auto const& dNdx = ip_data.dNdx;
+        auto const& w = ip_data.integration_weight;
 
         auto const k_s =
             solid_phase
@@ -130,16 +134,25 @@ void HeatTransportBHELocalAssemblerSoil<ShapeFunction, IntegrationMethod>::
                 .template value<double>(vars, pos, t);
         // for now only using the solid phase parameters
 
-        auto const velocity =
+        /*auto const velocity =
+            liquid_phase
+                .property(MaterialPropertyLib::PropertyType::phase_velocity)
+                .template value<GlobalDimVectorType>(vars, pos, t);*/
+        auto const velocity_arr =
             liquid_phase
                 .property(MaterialPropertyLib::PropertyType::phase_velocity)
                 .value(vars, pos, t);
-
+        auto velocity = Eigen::Map<Eigen::Matrix<double, 1, 3> const>(
+            std::get<MaterialPropertyLib::Vector>(velocity_arr).data(), 1, 3);
         // assemble Conductance matrix
-        local_K.noalias() += K_ip * k_s;
+        local_K.noalias() +=
+            (dNdx.transpose() * dNdx * k_s +
+             N.transpose() * velocity * dNdx * density_f * heat_capacity_f) *
+            w;
 
         // assemble Mass matrix
-        local_M.noalias() += M_ip * density_s * heat_capacity_s;
+        local_M.noalias() +=
+            N.transpose() * N * w * density_s * heat_capacity_s;
     }
 
     // debugging
