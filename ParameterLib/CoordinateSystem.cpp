@@ -116,4 +116,39 @@ Eigen::Matrix<double, 3, 3> CoordinateSystem::transformation<3>(
 #endif  // NDEBUG
     return t;
 }
+
+template <int Dimension>
+Eigen::Matrix<double, Dimension, Dimension> CoordinateSystem::rotateTensor(
+    std::vector<double> const& values, SpatialPosition const& pos) const
+{
+    assert(values.size() == Dimension * Dimension ||
+           "Input vector has wrong dimension; expected 4 or 9 entries.");
+    auto const tensor =
+        Eigen::Map<Eigen::Matrix<double, Dimension, Dimension> const>(
+            values.data(), Dimension, Dimension);
+    auto const R = transformation<Dimension>(pos);
+    return R * tensor * R.transpose();
+}
+
+template <int Dimension>
+Eigen::Matrix<double, Dimension, Dimension>
+CoordinateSystem::rotateDiagonalTensor(std::vector<double> const& values,
+                                       SpatialPosition const& pos) const
+{
+    assert(values.size() == Dimension ||
+           "Input vector has wrong dimension; expected 2 or 3 entries.");
+    auto const tensor = Eigen::Map<Eigen::Matrix<double, Dimension, 1> const>(
+        values.data(), Dimension, 1);
+    auto const R = transformation<Dimension>(pos);
+    return R * tensor.asDiagonal() * R.transpose();
+}
+
+template Eigen::Matrix<double, 2, 2> CoordinateSystem::rotateTensor<2>(
+    std::vector<double> const& values, SpatialPosition const& pos) const;
+template Eigen::Matrix<double, 3, 3> CoordinateSystem::rotateTensor<3>(
+    std::vector<double> const& values, SpatialPosition const& pos) const;
+template Eigen::Matrix<double, 2, 2> CoordinateSystem::rotateDiagonalTensor<2>(
+    std::vector<double> const& values, SpatialPosition const& pos) const;
+template Eigen::Matrix<double, 3, 3> CoordinateSystem::rotateDiagonalTensor<3>(
+    std::vector<double> const& values, SpatialPosition const& pos) const;
 }  // namespace ParameterLib
