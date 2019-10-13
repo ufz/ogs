@@ -13,7 +13,7 @@
                 <vapour_mass_fraction> v_mass_frac </vapour_mass_fraction>
             </process_variables>
             <secondary_variables>
-                <secondary_variable type="static" internal_name="TES_solid_density" output_name="solid_density"/>
+                <secondary_variable type="static" internal_name="solid_density" output_name="solid_density"/>
                 <secondary_variable type="static" internal_name="reaction_rate" output_name="reaction_rate"/>
                 <secondary_variable type="static" internal_name="darcy_velocity" output_name="darcy_velocity"/>
                 <secondary_variable type="static" internal_name="vapour_partial_pressure" output_name="vapour_partial_pressure"/>

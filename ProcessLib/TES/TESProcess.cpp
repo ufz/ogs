@@ -192,21 +192,9 @@ void TESProcess::initializeSecondaryVariables()
                                 "TES_vapour_mass_fraction");
     // /////////////////////////////////////////////////////////////////////////
 
-    // named functions: solid density //////////////////////////////////////////
-    auto solid_density = std::make_unique<CachedSecondaryVariable>(
-        "TES_solid_density", getExtrapolator(), _local_assemblers,
-        &TESLocalAssemblerInterface::getIntPtSolidDensity,
-        _secondary_variable_context);
 
-    for (auto&& fct : solid_density->getNamedFunctions())
-    {
-        _named_function_caller.addNamedFunction(std::move(fct));
-    }
-
-    add2nd("solid_density", solid_density->getExtrapolator());
-
-    _cached_secondary_variables.emplace_back(std::move(solid_density));
-    // /////////////////////////////////////////////////////////////////////////
+    add2nd("solid_density",
+           makeEx(1, &TESLocalAssemblerInterface::getIntPtSolidDensity));
 
     add2nd("reaction_rate",
            makeEx(1, &TESLocalAssemblerInterface::getIntPtReactionRate));
