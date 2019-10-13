@@ -18,7 +18,7 @@
 #include "NumLib/ODESolver/TimeDiscretization.h"
 #include "ParameterLib/Parameter.h"
 #include "ProcessLib/BoundaryCondition/BoundaryConditionCollection.h"
-#include "ProcessLib/Output/CachedSecondaryVariable.h"
+#include "ProcessLib/Output/SecondaryVariableContext.h"
 #include "ProcessLib/Output/ExtrapolatorData.h"
 #include "ProcessLib/Output/IntegrationPointWriter.h"
 #include "ProcessLib/Output/SecondaryVariable.h"
@@ -304,8 +304,6 @@ protected:
     SecondaryVariableCollection _secondary_variables;
 
     NumLib::NamedFunctionCaller _named_function_caller;
-    std::vector<std::unique_ptr<CachedSecondaryVariable>>
-        _cached_secondary_variables;
     SecondaryVariableContext _secondary_variable_context;
 
     VectorMatrixAssembler _global_assembler;
