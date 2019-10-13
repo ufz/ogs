@@ -37,29 +37,11 @@ struct CoordinateSystem final
 
     template <int Dimension>
     Eigen::Matrix<double, Dimension, Dimension> rotateTensor(
-        std::vector<double> const& values, SpatialPosition const& pos) const
-    {
-        assert(values.size() == Dimension * Dimension ||
-               "Input vector has wrong dimension; expected 4 or 9 entries.");
-        auto const tensor =
-            Eigen::Map<Eigen::Matrix<double, Dimension, Dimension> const>(
-                values.data(), Dimension, Dimension);
-        auto const R = transformation<Dimension>(pos);
-        return R * tensor * R.transpose();
-    }
+        std::vector<double> const& values, SpatialPosition const& pos) const;
 
     template <int Dimension>
     Eigen::Matrix<double, Dimension, Dimension> rotateDiagonalTensor(
-        std::vector<double> const& values, SpatialPosition const& pos) const
-    {
-        assert(values.size() == Dimension ||
-               "Input vector has wrong dimension; expected 2 or 3 entries.");
-        auto const tensor =
-            Eigen::Map<Eigen::Matrix<double, Dimension, 1> const>(values.data(),
-                                                                  Dimension, 1);
-        auto const R = transformation<Dimension>(pos);
-        return R * tensor.asDiagonal() * R.transpose();
-    }
+        std::vector<double> const& values, SpatialPosition const& pos) const;
 
 private:
     std::array<Parameter<double> const*, 3> _base;
