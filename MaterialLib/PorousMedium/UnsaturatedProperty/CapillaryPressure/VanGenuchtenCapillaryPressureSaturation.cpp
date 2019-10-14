@@ -12,6 +12,7 @@
 
 #include "VanGenuchtenCapillaryPressureSaturation.h"
 
+#include <algorithm>
 #include <cmath>
 
 #include "MathLib/MathTools.h"

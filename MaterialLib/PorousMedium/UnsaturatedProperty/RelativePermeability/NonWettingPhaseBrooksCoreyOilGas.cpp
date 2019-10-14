@@ -12,6 +12,7 @@
 
 #include "NonWettingPhaseBrooksCoreyOilGas.h"
 
+#include <algorithm>
 #include <cmath>
 
 #include "MathLib/MathTools.h"
