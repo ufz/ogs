@@ -12,9 +12,8 @@
 
 #include "WettingPhaseBrooksCoreyOilGas.h"
 
+#include <algorithm>
 #include <cmath>
-
-#include "MathLib/MathTools.h"
 
 namespace MaterialLib
 {
@@ -22,9 +21,8 @@ namespace PorousMedium
 {
 double WettingPhaseBrooksCoreyOilGas::getValue(const double saturation) const
 {
-    const double S =
-        MathLib::limitValueInInterval(saturation, _saturation_r + _minor_offset,
-                                      _saturation_max - _minor_offset);
+    const double S = std::clamp(saturation, _saturation_r + _minor_offset,
+                                _saturation_max - _minor_offset);
     const double Se = (S - _saturation_r) / (_saturation_max - _saturation_r);
     const double krel = std::pow(Se, 3.0 + 2.0 / _m);
     return std::max(_krel_min, krel);
@@ -32,9 +30,8 @@ double WettingPhaseBrooksCoreyOilGas::getValue(const double saturation) const
 
 double WettingPhaseBrooksCoreyOilGas::getdValue(const double saturation) const
 {
-    const double S =
-        MathLib::limitValueInInterval(saturation, _saturation_r + _minor_offset,
-                                      _saturation_max - _minor_offset);
+    const double S = std::clamp(saturation, _saturation_r + _minor_offset,
+                                _saturation_max - _minor_offset);
     const double Se = (S - _saturation_r) / (_saturation_max - _saturation_r);
     return ((3.0 + 2.0 / _m) * std::pow(Se, 2.0 + 2.0 / _m)) /
            (_saturation_max - _saturation_r);

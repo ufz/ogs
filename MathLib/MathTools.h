@@ -93,19 +93,4 @@ double sqrDist(const double* p0, const double* p1)
  * @return the angle between the edges
  */
 double getAngle (const double p0[3], const double p1[3], const double p2[3]);
-
-template<typename Type> Type limitValueInInterval(const Type variable,
-                                                  const Type lower_bound,
-                                                  const Type upper_bound)
-{
-    if (variable < lower_bound)
-    {
-        return lower_bound;
-    }
-    if (variable > upper_bound)
-    {
-        return upper_bound;
-    }
-    return variable;
-}
 }  // namespace MathLib
