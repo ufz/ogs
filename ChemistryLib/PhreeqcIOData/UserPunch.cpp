@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -21,7 +22,7 @@ std::ostream& operator<<(std::ostream& os, UserPunch const& user_punch)
     auto const& secondary_variables = user_punch.secondary_variables;
     for (auto& secondary_variable : secondary_variables)
     {
-        os << secondary_variable.name.c_str() << " ";
+        os << secondary_variable.name << " ";
     }
     os << "\n";
 
@@ -29,7 +30,7 @@ std::ostream& operator<<(std::ostream& os, UserPunch const& user_punch)
     int line_number = 1;
     for (auto const& statement : user_punch.statements)
     {
-        os << line_number << " " << statement.c_str() << "\n";
+        os << line_number << " " << statement << "\n";
         ++line_number;
     }
     os << "-end" << "\n";

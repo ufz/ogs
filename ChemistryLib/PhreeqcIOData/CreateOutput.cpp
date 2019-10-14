@@ -53,6 +53,8 @@ std::unique_ptr<Output> createOutput(
     if (user_punch)
     {
         auto const& secondary_variables = user_punch->secondary_variables;
+        accepted_items.reserve(accepted_items.size() +
+                               secondary_variables.size());
         std::transform(secondary_variables.begin(), secondary_variables.end(),
                        std::back_inserter(accepted_items), accepted_item);
     }

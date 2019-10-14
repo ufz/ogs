@@ -24,8 +24,8 @@ namespace PhreeqcIOData
 {
 struct KineticReactant
 {
-    KineticReactant(std::string&& name_,
-                    std::string&& chemical_formula_,
+    KineticReactant(std::string name_,
+                    std::string chemical_formula_,
                     MeshLib::PropertyVector<double>* amount_,
                     std::vector<double>&& parameters_,
                     bool const fix_amount_)

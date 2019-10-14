@@ -108,7 +108,7 @@ createChemicalSolverInterface<ChemicalSolver::Phreeqc>(
     // knobs
     auto knobs = PhreeqcIOData::createKnobs(
         //! \ogs_file_param{prj__chemical_system__knobs}
-        config.getConfigSubtreeOptional("knobs"));
+        config.getConfigSubtree("knobs"));
 
     // user punch
     auto user_punch = PhreeqcIOData::createUserPunch(

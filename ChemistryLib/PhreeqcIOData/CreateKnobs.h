@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -8,9 +9,6 @@
  */
 
 #pragma once
-
-#include <boost/optional/optional_fwd.hpp>
-#include <memory>
 
 namespace BaseLib
 {
@@ -23,7 +21,6 @@ namespace PhreeqcIOData
 {
 struct Knobs;
 
-std::unique_ptr<Knobs> createKnobs(
-    boost::optional<BaseLib::ConfigTree> const& config);
+Knobs createKnobs(BaseLib::ConfigTree const& config);
 }  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -20,7 +21,7 @@ void Dump::print(std::ostream& os, std::size_t const num_chemical_systems)
     os << "DUMP" << "\n";
     os << "-file " << dump_file << "\n";
     os << "-append false" << "\n";
-    os << "-solution 1-" << std::to_string(num_chemical_systems) << "\n";
+    os << "-solution 1-" << num_chemical_systems << "\n";
     os << "END" << "\n";
 }
 
@@ -31,7 +32,7 @@ void Dump::readDumpFile(std::istream& in,
     aqueous_solutions_prev.reserve(num_chemical_systems);
 
     std::string line;
-    std::string aqueous_solution_prev;
+    std::string aqueous_solution_prev_;
     std::size_t chemical_system_id = 0;
     while (std::getline(in, line))
     {
@@ -42,18 +43,19 @@ void Dump::readDumpFile(std::istream& in,
 
         if (line.find("SOLUTION_RAW") != std::string::npos)
         {
-            aqueous_solution_prev =
+            aqueous_solution_prev_ =
                 "SOLUTION_RAW " +
                 std::to_string(num_chemical_systems + chemical_system_id + 1) +
                 "\n";
             continue;
         }
 
-        aqueous_solution_prev += line + "\n";
+        aqueous_solution_prev_ += line + "\n";
 
         if (line.find("-gammas") != std::string::npos)
         {
-            aqueous_solutions_prev.push_back(std::move(aqueous_solution_prev));
+            aqueous_solutions_prev.push_back(aqueous_solution_prev_);
+            aqueous_solution_prev_.clear();
             ++chemical_system_id;
         }
     }

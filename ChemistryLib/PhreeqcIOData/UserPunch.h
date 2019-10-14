@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -27,9 +28,9 @@ namespace PhreeqcIOData
 {
 struct SecondaryVariable
 {
-    SecondaryVariable(std::string const name_,
+    SecondaryVariable(std::string name_,
                       MeshLib::PropertyVector<double>* value_)
-        : name(name_), value(value_)
+        : name(std::move(name_)), value(value_)
     {
     }
 
@@ -42,7 +43,8 @@ struct UserPunch
 {
     UserPunch(std::vector<SecondaryVariable>&& secondary_variables_,
               std::vector<std::string>&& statements_)
-        : secondary_variables(secondary_variables_), statements(statements_)
+        : secondary_variables(std::move(secondary_variables_)),
+          statements(std::move(statements_))
     {
     }
 

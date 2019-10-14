@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -19,7 +20,7 @@ namespace PhreeqcIOData
 {
 struct Dump
 {
-    explicit Dump(std::string project_file_name)
+    explicit Dump(std::string const& project_file_name)
         : dump_file(project_file_name + ".dmp")
     {
     }

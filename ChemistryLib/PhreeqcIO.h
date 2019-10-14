@@ -13,6 +13,7 @@
 #include <memory>
 
 #include "ChemicalSolverInterface.h"
+#include "PhreeqcIOData/Knobs.h"
 
 namespace ChemistryLib
 {
@@ -25,7 +26,6 @@ struct ReactionRate;
 struct Output;
 struct SurfaceSite;
 struct Dump;
-struct Knobs;
 struct UserPunch;
 
 enum class Status
@@ -47,7 +47,7 @@ public:
               std::unique_ptr<UserPunch>&& user_punch,
               std::unique_ptr<Output>&& output,
               std::unique_ptr<Dump>&& dump,
-              std::unique_ptr<Knobs>&& knobs,
+              Knobs&& knobs,
               std::vector<std::pair<int, std::string>> const&
                   process_id_to_component_name_map);
 
@@ -93,7 +93,7 @@ private:
     std::unique_ptr<UserPunch> _user_punch;
     std::unique_ptr<Output> const _output;
     std::unique_ptr<Dump> const _dump;
-    std::unique_ptr<Knobs> const _knobs;
+    Knobs const _knobs;
     std::vector<std::pair<int, std::string>> const&
         _process_id_to_component_name_map;
     double _dt = std::numeric_limits<double>::quiet_NaN();

@@ -17,16 +17,6 @@ namespace PhreeqcIOData
 {
 struct Knobs
 {
-    Knobs(int max_iterations_, double relative_convergence_tolerance_,
-          double tolerance_, int step_size_, bool scaling_)
-        : max_iterations(max_iterations_),
-          relative_convergence_tolerance(relative_convergence_tolerance_),
-          tolerance(tolerance_),
-          step_size(step_size_),
-          scaling(scaling_)
-    {
-    }
-
     friend std::ostream& operator<<(std::ostream& os, Knobs const& knobs);
 
     int const max_iterations;

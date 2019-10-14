@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -17,7 +18,7 @@ namespace PhreeqcIOData
 {
 std::ostream& operator<<(std::ostream& os, SurfaceSite const& surface_site)
 {
-    os << surface_site.name.c_str() << " " << surface_site.site_density << " "
+    os << surface_site.name << " " << surface_site.site_density << " "
        << surface_site.specific_surface_area << " " << surface_site.mass
        << "\n";
 

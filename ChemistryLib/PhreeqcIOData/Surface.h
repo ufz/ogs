@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -23,7 +24,7 @@ namespace PhreeqcIOData
 {
 struct SurfaceSite
 {
-    SurfaceSite(std::string&& name_,
+    SurfaceSite(std::string name_,
                 double const site_density_,
                 double const specific_surface_area_,
                 double const mass_)
