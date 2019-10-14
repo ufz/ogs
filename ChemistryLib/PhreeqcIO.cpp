@@ -412,7 +412,9 @@ std::istream& operator>>(std::istream& in, PhreeqcIO& phreeqc_io)
     {
         // Skip equilibrium calculation result of initial solution
         for (int i = 0; i < num_skipped_lines; ++i)
+        {
             in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        }
 
         // Get calculation result of the solution after the reaction
         if (!std::getline(in, line))

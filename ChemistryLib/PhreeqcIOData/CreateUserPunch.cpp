@@ -22,7 +22,9 @@ std::unique_ptr<UserPunch> createUserPunch(
     MeshLib::Mesh const& mesh)
 {
     if (!config)
+    {
         return nullptr;
+    }
 
     std::vector<SecondaryVariable> secondary_variables;
     for (auto const& variable_name :

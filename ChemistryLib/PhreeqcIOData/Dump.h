@@ -19,7 +19,8 @@ namespace PhreeqcIOData
 {
 struct Dump
 {
-    Dump(std::string project_file_name) : dump_file(project_file_name + ".dmp")
+    explicit Dump(std::string project_file_name)
+        : dump_file(project_file_name + ".dmp")
     {
     }
 

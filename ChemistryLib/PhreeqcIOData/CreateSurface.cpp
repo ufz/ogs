@@ -20,7 +20,9 @@ std::vector<SurfaceSite> createSurface(
     boost::optional<BaseLib::ConfigTree> const& config)
 {
     if (!config)
+    {
         return {};
+    }
 
     std::vector<SurfaceSite> surface;
     for (auto const& site_config :
