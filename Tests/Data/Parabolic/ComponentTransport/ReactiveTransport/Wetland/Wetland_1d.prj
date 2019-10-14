@@ -1774,6 +1774,13 @@
                 </expression>
             </rate>
                 </rates>
+        <knobs>
+            <max_iter>100</max_iter>
+            <relative_convergence_tolerance>1e-12</relative_convergence_tolerance>
+            <tolerance>1e-15</tolerance>
+            <step_size>100</step_size>
+            <scaling>0</scaling>
+        </knobs>
     </chemical_system>
     <parameters>
         <parameter>
