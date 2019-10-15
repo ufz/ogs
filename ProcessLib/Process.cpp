@@ -385,11 +385,6 @@ void Process::computeSparsityPattern()
 void Process::preTimestep(std::vector<GlobalVector*> const& x, const double t,
                           const double delta_t, const int process_id)
 {
-    for (auto& cached_var : _cached_secondary_variables)
-    {
-        cached_var->setTime(t);
-    }
-
     for (auto* const solution : x)
         MathLib::LinAlg::setLocalAccessibleVector(*solution);
     preTimestepConcreteProcess(x, t, delta_t, process_id);
@@ -422,12 +417,6 @@ void Process::computeSecondaryVariable(const double t, GlobalVector const& x,
 
 void Process::preIteration(const unsigned iter, const GlobalVector& x)
 {
-    // In every new iteration cached values of secondary variables are expired.
-    for (auto& cached_var : _cached_secondary_variables)
-    {
-        cached_var->updateCurrentSolution(x, *_local_to_global_index_map);
-    }
-
     MathLib::LinAlg::setLocalAccessibleVector(x);
     preIterationConcreteProcess(iter, x);
 }
