@@ -120,6 +120,9 @@ struct HydroMechanicsProcessData
     }
 
     MeshLib::PropertyVector<double>* pressure_interpolated = nullptr;
+    std::array<MeshLib::PropertyVector<double>*, 3> principal_stress_vector = {
+        nullptr, nullptr, nullptr};
+    MeshLib::PropertyVector<double>* principal_stress_values = nullptr;
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };

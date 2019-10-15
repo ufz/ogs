@@ -764,6 +764,35 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         ShapeFunctionPressure, typename ShapeFunctionDisplacement::MeshElement,
         DisplacementDim>(_element, _is_axially_symmetric, p,
                          *_process_data.pressure_interpolated);
+
+    auto sigma_eff_sum = MathLib::KelvinVector::tensorToKelvin<DisplacementDim>(
+        Eigen::Matrix<double, 3, 3>::Zero());
+
+    for (auto const& ip_data : _ip_data)
+    {
+        sigma_eff_sum += ip_data.sigma_eff;
+    }
+
+    Eigen::Matrix<double, 3, 3, 0, 3, 3> sigma_avg =
+        MathLib::KelvinVector::kelvinVectorToTensor(sigma_eff_sum) /
+        _integration_method.getNumberOfPoints();
+
+    Eigen::SelfAdjointEigenSolver<Eigen::Matrix<double, 3, 3>> e_s(sigma_avg);
+
+    int const elem_id = _element.getID();
+
+    Eigen::Map<Eigen::Vector3d>(
+        &(*_process_data.principal_stress_values)[elem_id * 3], 3) =
+        e_s.eigenvalues();
+
+    auto eigen_vectors = e_s.eigenvectors();
+
+    for (auto i = 0; i < 3; i++)
+    {
+        Eigen::Map<Eigen::Vector3d>(
+            &(*_process_data.principal_stress_vector[i])[elem_id * 3], 3) =
+            eigen_vectors.col(i);
+    }
 }
 
 }  // namespace HydroMechanics
