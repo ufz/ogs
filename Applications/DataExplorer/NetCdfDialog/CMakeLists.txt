@@ -5,10 +5,10 @@ if(BUILD_SHARED_LIBS)
 endif()
 target_link_libraries(NetCdfDialogLib
                       PUBLIC Qt5::Widgets
-                             ${NETCDF_LIBRARIES_C}
                              ${NETCDF_LIBRARIES_CXX}
-                             ${HDF5_LIBRARIES}
+                             ${NETCDF_LIBRARIES_C}
                              ${HDF5_HL_LIBRARIES}
+                             ${HDF5_LIBRARIES}
                       PRIVATE MathLib)
 set_property(TARGET NetCdfDialogLib PROPERTY FOLDER "DataExplorer")
 

@@ -43,8 +43,8 @@ endif()
 
 if(TARGET NetCdfConverter)
     target_link_libraries(NetCdfConverter
-                          ${NETCDF_LIBRARIES_C}
                           ${NETCDF_LIBRARIES_CXX}
-                          ${HDF5_LIBRARIES}
-                          ${HDF5_HL_LIBRARIES})
+                          ${NETCDF_LIBRARIES_C}
+                          ${HDF5_HL_LIBRARIES}
+                          ${HDF5_LIBRARIES})
 endif()
