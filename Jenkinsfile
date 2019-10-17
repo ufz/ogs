@@ -460,7 +460,7 @@ pipeline {
                   "-DBUILD_SHARED_LIBS=${build_shared} " +
                   '-DOGS_CPU_ARCHITECTURE=core2 ' +
                   '-DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON ' +
-                  '-DOGS_BUILD_GUI=ON ' +
+                  '-DOGS_BUILD_GUI=OFF ' + // Temp. disabled
                   '-DOGS_BUILD_UTILS=ON ' +
                   '-DOGS_CONAN_BUILD=missing ' +
                   '-DCMAKE_OSX_DEPLOYMENT_TARGET="10.14" '
