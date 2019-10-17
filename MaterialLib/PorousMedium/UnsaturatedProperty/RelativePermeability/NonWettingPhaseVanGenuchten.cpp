@@ -12,9 +12,8 @@
 
 #include "NonWettingPhaseVanGenuchten.h"
 
+#include <algorithm>
 #include <cmath>
-
-#include "MathLib/MathTools.h"
 
 namespace MaterialLib
 {
@@ -22,10 +21,9 @@ namespace PorousMedium
 {
 double NonWettingPhaseVanGenuchten::getValue(const double saturation_w) const
 {
-    const double S =
-        MathLib::limitValueInInterval(saturation_w,
-                                      _saturation_r + _minor_offset,
-                                      _saturation_max - _minor_offset);
+    const double S = std::clamp(saturation_w,
+                                _saturation_r + _minor_offset,
+                                _saturation_max - _minor_offset);
     const double Se = (S - _saturation_r) / (_saturation_max - _saturation_r);
     const double krel = std::cbrt(1.0 - Se) *
                         std::pow(1.0 - std::pow(Se, 1.0 / _m), 2.0 * _m);
@@ -34,10 +32,9 @@ double NonWettingPhaseVanGenuchten::getValue(const double saturation_w) const
 
 double NonWettingPhaseVanGenuchten::getdValue(const double saturation_w) const
 {
-    const double S =
-        MathLib::limitValueInInterval(saturation_w,
-                                      _saturation_r + _minor_offset,
-                                      _saturation_max - _minor_offset);
+    const double S = std::clamp(saturation_w,
+                                _saturation_r + _minor_offset,
+                                _saturation_max - _minor_offset);
     const double Se = (S - _saturation_r) / (_saturation_max - _saturation_r);
     const double cbrt1_Se = std::cbrt(1.0 - Se);
     const double temp_val = 1.0 - std::pow(Se, 1.0 / _m);

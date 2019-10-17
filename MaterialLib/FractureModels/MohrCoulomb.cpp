@@ -8,9 +8,11 @@
  */
 
 #include "MohrCoulomb.h"
-#include "LogPenalty.h"
+
+#include <boost/math/constants/constants.hpp>
 
 #include "BaseLib/Error.h"
+#include "LogPenalty.h"
 #include "MathLib/MathTools.h"
 
 namespace MaterialLib
@@ -37,8 +39,10 @@ struct MaterialPropertyValues
     {
         Kn = mp.normal_stiffness(t,x)[0];
         Ks = mp.shear_stiffness(t,x)[0];
-        phi = MathLib::to_radians(mp.friction_angle(t,x)[0]);
-        psi = MathLib::to_radians(mp.dilatancy_angle(t,x)[0]);
+        auto constexpr degree =
+            boost::math::constants::degree<double>();  // pi/180
+        phi = mp.friction_angle(t, x)[0] * degree;
+        psi = mp.dilatancy_angle(t, x)[0] * degree;
         c = mp.cohesion(t,x)[0];
     }
 };

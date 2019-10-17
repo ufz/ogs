@@ -15,9 +15,9 @@
 
 namespace ProcessLib
 {
-using RobinBoundaryCondition = GenericNaturalBoundaryCondition<
-    RobinBoundaryConditionData,
-    RobinBoundaryConditionLocalAssembler>;
+using RobinBoundaryCondition =
+    GenericNaturalBoundaryCondition<RobinBoundaryConditionData,
+                                    RobinBoundaryConditionLocalAssembler>;
 
 /*! Creates a new uniform Robin boundary condition from the given data.
  *

@@ -16,7 +16,8 @@
 
 namespace ProcessLib
 {
-struct RobinBoundaryConditionData final {
+struct RobinBoundaryConditionData final
+{
     ParameterLib::Parameter<double> const& alpha;
     ParameterLib::Parameter<double> const& u_0;
 };

@@ -12,9 +12,9 @@
 
 #include "VanGenuchtenCapillaryPressureSaturation.h"
 
+#include <algorithm>
 #include <cmath>
 
-#include "MathLib/MathTools.h"
 #include "BaseLib/Error.h"
 
 namespace MaterialLib
@@ -41,12 +41,11 @@ double VanGenuchtenCapillaryPressureSaturation::getCapillaryPressure(
         return getPcBarvGSg(1 - _saturation_r) +
                getdPcdSvGBar(1 - _saturation_r) * (Sg - 1 + _saturation_r);
     }
-    const double S =
-        MathLib::limitValueInInterval(saturation, _saturation_r + _minor_offset,
-                                      _saturation_max - _minor_offset);
+    const double S = std::clamp(saturation, _saturation_r + _minor_offset,
+                                _saturation_max - _minor_offset);
     const double Se = (S - _saturation_r) / (_saturation_max - _saturation_r);
     const double pc = _pb * std::pow(std::pow(Se, (-1.0 / _m)) - 1.0, 1.0 - _m);
-    return MathLib::limitValueInInterval(pc, _minor_offset, _pc_max);
+    return std::clamp(pc, _minor_offset, _pc_max);
 }
 
 double VanGenuchtenCapillaryPressureSaturation::getSaturation(
@@ -55,8 +54,8 @@ double VanGenuchtenCapillaryPressureSaturation::getSaturation(
     const double pc = std::max(_minor_offset, capillary_pressure);
     const double Se = std::pow(std::pow(pc / _pb, 1.0 / (1.0 - _m)) + 1.0, -_m);
     const double S = Se * (_saturation_max - _saturation_r) + _saturation_r;
-    return MathLib::limitValueInInterval(S, _saturation_r + _minor_offset,
-                                         _saturation_max - _minor_offset);
+    return std::clamp(S, _saturation_r + _minor_offset,
+                      _saturation_max - _minor_offset);
 }
 
 double VanGenuchtenCapillaryPressureSaturation::getdPcdS(
@@ -85,9 +84,8 @@ double VanGenuchtenCapillaryPressureSaturation::getdPcdS(
         return 0;
     }
 
-    const double S =
-        MathLib::limitValueInInterval(saturation, _saturation_r + _minor_offset,
-                                      _saturation_max - _minor_offset);
+    const double S = std::clamp(saturation, _saturation_r + _minor_offset,
+                                _saturation_max - _minor_offset);
     const double val1 = std::pow(
         ((S - _saturation_r) / (_saturation_max - _saturation_r)), -1.0 / _m);
     const double val2 = std::pow(val1 - 1.0, -_m);
@@ -112,9 +110,8 @@ double VanGenuchtenCapillaryPressureSaturation::getd2PcdS2(
         return 0;
     }
 
-    const double S =
-        MathLib::limitValueInInterval(saturation, _saturation_r + _minor_offset,
-                                      _saturation_max - _minor_offset);
+    const double S = std::clamp(saturation, _saturation_r + _minor_offset,
+                                _saturation_max - _minor_offset);
     const double val1 = std::pow(
         ((S - _saturation_r) / (_saturation_max - _saturation_r)), 1.0 / _m);
     return -_pb / (_m * _m * (S - _saturation_r) * (S - _saturation_r)) *

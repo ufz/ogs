@@ -12,12 +12,11 @@
 
 #pragma once
 
+#include <algorithm>
 #include <memory>
 
 #include "CapillaryPressureSaturation.h"
-
 #include "MathLib/Curve/PiecewiseLinearMonotonicCurve.h"
-#include "MathLib/MathTools.h"
 
 namespace MaterialLib
 {
@@ -47,9 +46,8 @@ public:
     /// Get capillary pressure.
     double getCapillaryPressure(const double saturation) const override
     {
-        const double S = MathLib::limitValueInInterval(
-            saturation, _saturation_r + _minor_offset,
-            _saturation_max - _minor_offset);
+        const double S = std::clamp(saturation, _saturation_r + _minor_offset,
+                                    _saturation_max - _minor_offset);
 
         return _curve_data->getValue(S);
     }
@@ -57,17 +55,16 @@ public:
     /// Get saturation.
     double getSaturation(const double capillary_pressure) const override
     {
-        const double pc = MathLib::limitValueInInterval(capillary_pressure,
-                                                        _minor_offset, _pc_max);
+        const double pc =
+            std::clamp(capillary_pressure, _minor_offset, _pc_max);
         return _curve_data->getInverseVariable(pc);
     }
 
     /// Get the derivative of the capillary pressure with respect to saturation
     double getdPcdS(const double saturation) const override
     {
-        const double S = MathLib::limitValueInInterval(
-            saturation, _saturation_r + _minor_offset,
-            _saturation_max - _minor_offset);
+        const double S = std::clamp(saturation, _saturation_r + _minor_offset,
+                                    _saturation_max - _minor_offset);
 
         return _curve_data->getDerivative(S);
     }

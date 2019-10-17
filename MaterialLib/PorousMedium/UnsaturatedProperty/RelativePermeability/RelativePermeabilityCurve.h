@@ -12,11 +12,11 @@
 
 #pragma once
 
+#include <algorithm>
 #include <memory>
-#include "RelativePermeability.h"
 
-#include "MathLib/MathTools.h"
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
+#include "RelativePermeability.h"
 
 namespace MaterialLib
 {
@@ -42,9 +42,8 @@ public:
     /// Get relative permeability value.
     double getValue(const double saturation) const override
     {
-        const double S = MathLib::limitValueInInterval(
-            saturation, _saturation_r + _minor_offset,
-            _saturation_max - _minor_offset);
+        const double S = std::clamp(saturation, _saturation_r + _minor_offset,
+                                    _saturation_max - _minor_offset);
 
         return _curve_data->getValue(S);
     }
@@ -53,9 +52,8 @@ public:
     /// \param saturation Wetting phase saturation
     double getdValue(const double saturation) const override
     {
-        const double S = MathLib::limitValueInInterval(
-            saturation, _saturation_r + _minor_offset,
-            _saturation_max - _minor_offset);
+        const double S = std::clamp(saturation, _saturation_r + _minor_offset,
+                                    _saturation_max - _minor_offset);
 
         return _curve_data->getDerivative(S);
     }
