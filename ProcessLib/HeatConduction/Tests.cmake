@@ -130,8 +130,7 @@ AddTest(
 
 AddTest(
         NAME HeatConduction_1D_LineSourceTerm
-        PATH
-        Parabolic/T/1D_line_source_term_tests/
+        PATH Parabolic/T/1D_line_source_term_tests
         EXECUTABLE ogs
         EXECUTABLE_ARGS line_source_term.prj
         TESTER vtkdiff
