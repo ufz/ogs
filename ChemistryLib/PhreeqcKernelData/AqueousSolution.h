@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include <memory>
+
 #include "ThirdParty/iphreeqc/src/src/phreeqcpp/common/phrqtype.h"
 #include "ThirdParty/iphreeqc/src/src/phreeqcpp/Solution.h"
 
@@ -24,9 +26,9 @@ public:
                     double const pe_value,
                     cxxISolution const& initial_aqueous_solution);
 
-    cxxISolution getInitialAqueousSolution() const
+    std::unique_ptr<cxxISolution const> getInitialAqueousSolution() const
     {
-        return *Get_initial_data();
+        return std::make_unique<cxxISolution const>(*Get_initial_data());
     }
 
     void setChemicalSystemID(std::size_t const chemical_system_id)

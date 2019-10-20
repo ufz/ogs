@@ -14,12 +14,12 @@
 #include <vector>
 
 #include "ChemicalSolverInterface.h"
-#include "PhreeqcKernelData/InitialAqueousSolution.h"
 #include "PhreeqcKernelData/KineticReactant.h"
 
 #include "ThirdParty/iphreeqc/src/src/phreeqcpp/Phreeqc.h"
 
 class cxxSolution;
+class cxxISolution;
 
 namespace ChemistryLib
 {
@@ -75,7 +75,7 @@ private:
     void setTimeStepSize(double const dt);
 
     std::map<int, struct master*> _process_id_to_master_map;
-    cxxISolution _initial_aqueous_solution;
+    std::unique_ptr<cxxISolution const> _initial_aqueous_solution;
     std::vector<ReactionRate> const _reaction_rates;
 };
 }  // namespace PhreeqcKernelData
