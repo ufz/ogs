@@ -483,7 +483,7 @@ pipeline {
                 excludeFile('.*qrc_icons\\.cpp.*'), excludeMessage('.*QVTKWidget.*'),
                 excludeMessage('.*tmpnam.*')],
                 tools: [clang(name: 'Clang (macOS)', pattern: 'build/build.log',
-                  id: 'clang-mac')], unstableTotalAll: 1
+                  id: 'clang-mac')], unstableTotalAll: 3
             }
             success {
               archiveArtifacts 'build/*.tar.gz,build/*.dmg,build/conaninfo.txt'
