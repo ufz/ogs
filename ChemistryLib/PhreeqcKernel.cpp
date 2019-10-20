@@ -181,7 +181,7 @@ cxxISolution* PhreeqcKernel::getOrCreateInitialAqueousSolution(
 {
     if (!aqueous_solution.Get_initial_data())
     {
-        aqueous_solution.Set_initial_data(&_initial_aqueous_solution);
+        aqueous_solution.Set_initial_data(_initial_aqueous_solution.get());
         aqueous_solution.Set_new_def(true);
     }
 
