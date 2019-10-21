@@ -381,6 +381,33 @@ AddTest(
     flow_gravity_pcs_0_ts_16_t_40000000.000000.vtu flow_gravity_pcs_0_ts_16_t_40000000.000000.vtu velocity velocity 1e-10 0
 )
 
+# Tests for Principal Stress Output
+AddTest(
+    NAME HydroMechanics_hollow_sphere
+    PATH HydroMechanics/Principal_Stress/Hollow_Sphere
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS sphere.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    output_pcs_0_ts_1_t_1.000000.vtu output_pcs_0_ts_1_t_1.000000.vtu displacement displacement 0 1e-12
+    output_pcs_0_ts_1_t_1.000000.vtu output_pcs_0_ts_1_t_1.000000.vtu principal_stress_values principal_stress_values 0 1e-10
+)
+
+AddTest(
+    NAME HydroMechanics_tube
+    PATH HydroMechanics/Principal_Stress/Tube
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS tube.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    output_pcs_0_ts_1_t_1.000000.vtu output_pcs_0_ts_1_t_1.000000.vtu displacement displacement 1e-12 0
+    output_pcs_0_ts_1_t_1.000000.vtu output_pcs_0_ts_1_t_1.000000.vtu principal_stress_values principal_stress_values 0 1e-10
+)
+
 ## Tests for Ideal gas
 # flow_no_strain
 AddTest(
