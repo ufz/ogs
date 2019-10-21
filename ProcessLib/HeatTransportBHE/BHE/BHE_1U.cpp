@@ -84,7 +84,7 @@ std::array<double, BHE_1U::number_of_unknowns> BHE_1U::pipeHeatConductions()
 }
 
 std::array<Eigen::Vector3d, BHE_1U::number_of_unknowns>
-BHE_1U::pipeAdvectionVectors() const
+    BHE_1U::pipeAdvectionVectors(Eigen::Vector3d /*elem_direction_vec*/) const
 {
     double const& rho_r = refrigerant.density;
     double const& Cp_r = refrigerant.specific_heat_capacity;

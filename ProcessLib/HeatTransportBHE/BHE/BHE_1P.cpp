@@ -57,15 +57,17 @@ std::array<double, BHE_1P::number_of_unknowns> BHE_1P::pipeHeatConductions()
 }
 
 std::array<Eigen::Vector3d, BHE_1P::number_of_unknowns>
-BHE_1P::pipeAdvectionVectors() const
+BHE_1P::pipeAdvectionVectors(Eigen::Vector3d elem_direction_vec) const
 {
     double const& rho_r = refrigerant.density;
     double const& Cp_r = refrigerant.specific_heat_capacity;
+    Eigen::Vector3d adv_vector =
+        rho_r * Cp_r * _flow_velocity * elem_direction_vec;
 
-    return {{// pipe, Eq. 19
-             {0, 0, -rho_r * Cp_r * _flow_velocity},
-             // grout, Eq. 21
-             {0, 0, 0}}};
+    return {// pipe, Eq. 19
+            adv_vector,
+            // grout, Eq. 21
+            {0, 0, 0}};
 }
 
 double BHE_1P::compute_R_gs(double const chi, double const R_g)

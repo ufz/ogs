@@ -66,8 +66,8 @@ public:
 
     std::array<double, number_of_unknowns> pipeHeatConductions() const;
 
-    std::array<Eigen::Vector3d, number_of_unknowns> pipeAdvectionVectors()
-        const;
+    std::array<Eigen::Vector3d, number_of_unknowns> pipeAdvectionVectors(
+        Eigen::Vector3d elem_direction_vec) const;
 
     template <int NPoints,
               typename SingleUnknownMatrixType,

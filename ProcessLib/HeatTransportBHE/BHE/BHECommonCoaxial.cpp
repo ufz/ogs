@@ -87,7 +87,8 @@ BHECommonCoaxial::pipeHeatConductions() const
 }
 
 std::array<Eigen::Vector3d, BHECommonCoaxial::number_of_unknowns>
-BHECommonCoaxial::pipeAdvectionVectors() const
+    BHECommonCoaxial::pipeAdvectionVectors(
+        Eigen::Vector3d /*elem_direction_vec*/) const
 {
     double const rho_r = refrigerant.density;
     double const Cp_r = refrigerant.specific_heat_capacity;
