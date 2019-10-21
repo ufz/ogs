@@ -773,7 +773,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         sigma_eff_sum += ip_data.sigma_eff;
     }
 
-    Eigen::Matrix<double, 3, 3, 0, 3, 3> sigma_avg =
+    Eigen::Matrix<double, 3, 3, 0, 3, 3> const sigma_avg =
         MathLib::KelvinVector::kelvinVectorToTensor(sigma_eff_sum) /
         _integration_method.getNumberOfPoints();
 
