@@ -120,12 +120,6 @@ public:
         {
             pos.setIntegrationPoint(ip);
 
-            // \todo the argument to getValue() has to be changed for non
-            // constant storage model
-            auto const specific_storage =
-                solid_phase.property(MaterialPropertyLib::PropertyType::storage)
-                    .template value<double>(vars, pos, t);
-
             auto const& ip_data = this->_ip_data[ip];
             auto const& N = ip_data.N;
             auto const& dNdx = ip_data.dNdx;
@@ -135,6 +129,17 @@ public:
             double p_int_pt = 0.0;
             // Order matters: First T, then P!
             NumLib::shapeFunctionInterpolate(local_x, N, T_int_pt, p_int_pt);
+
+            vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
+                T_int_pt;
+            vars[static_cast<int>(
+                MaterialPropertyLib::Variable::phase_pressure)] = p_int_pt;
+
+            // \todo the argument to getValue() has to be changed for non
+            // constant storage model
+            auto const specific_storage =
+                solid_phase.property(MaterialPropertyLib::PropertyType::storage)
+                    .template value<double>(vars, pos, t);
 
             auto const porosity =
                 medium.property(MaterialPropertyLib::PropertyType::porosity)
@@ -146,11 +151,6 @@ public:
                         .property(
                             MaterialPropertyLib::PropertyType::permeability)
                         .value(vars, pos, t));
-
-            vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
-                T_int_pt;
-            vars[static_cast<int>(
-                MaterialPropertyLib::Variable::phase_pressure)] = p_int_pt;
 
             auto const specific_heat_capacity_fluid =
                 liquid_phase
