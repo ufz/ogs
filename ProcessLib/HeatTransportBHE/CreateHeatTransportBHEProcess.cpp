@@ -96,7 +96,7 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
     std::vector<BHE::BHETypes> bhes;
 
     // bhe array network parameter.
-    bool if_bhe_network_exist_python_bc = false;
+    bool has_network_python_bc = false;
 
     auto const& bhe_configs =
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers}
@@ -148,18 +148,16 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
 
     // find if bhe uses python boundary condition
     auto const isUsingPythonBC =
-        visit([](auto const& bhe) { return bhe.ifUsePythonBC; }, bhes[0]);
+        visit([](auto const& bhe) { return bhe.usePythonBC; }, bhes[0]);
     if (isUsingPythonBC)
     {
-        if_bhe_network_exist_python_bc = true;
+        has_network_python_bc = true;
     }
 
-#ifdef OGS_USE_PYTHON
     //! Python object computing BC values.
     BHEInflowPythonBoundaryConditionPythonSideInterface* py_object = nullptr;
-#endif
     // create a pythonBoundaryCondition object
-    if (if_bhe_network_exist_python_bc)
+    if (has_network_python_bc)
     {
 #ifdef OGS_USE_PYTHON
         // Evaluate Python code in scope of main module
@@ -215,15 +213,10 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
 #endif  // OGS_USE_PYTHON
     }
 
-#ifdef OGS_USE_PYTHON
     HeatTransportBHEProcessData process_data(std::move(media_map),
                                              std::move(bhes),
-                                             if_bhe_network_exist_python_bc,
+                                             has_network_python_bc,
                                              py_object);
-#else
-    HeatTransportBHEProcessData process_data(
-        std::move(media_map), std::move(bhes), if_bhe_network_exist_python_bc);
-#endif
 
     SecondaryVariableCollection secondary_variables;
 

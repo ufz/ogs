@@ -25,27 +25,17 @@ namespace ProcessLib::HeatTransportBHE
 {
 struct HeatTransportBHEProcessData final
 {
-#ifdef OGS_USE_PYTHON
     HeatTransportBHEProcessData(
         std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>&&
             media_map_,
         std::vector<BHE::BHETypes>&& vec_BHEs_,
-        bool const& if_bhe_network_exist_python_bc_,
-        BHEInflowPythonBoundaryConditionPythonSideInterface* py_bc_object_)
+        bool const& has_network_python_bc_,
+        BHEInflowPythonBoundaryConditionPythonSideInterface* py_bc_object_ =
+            nullptr)
         : media_map(std::move(media_map_)),
           _vec_BHE_property(std::move(vec_BHEs_)),
-          if_bhe_network_exist_python_bc(if_bhe_network_exist_python_bc_),
+          has_network_python_bc(has_network_python_bc_),
           py_bc_object(py_bc_object_)
-#else
-    HeatTransportBHEProcessData(
-        std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>&&
-            media_map_,
-        std::vector<BHE::BHETypes>&& vec_BHEs_,
-        bool const& if_bhe_network_exist_python_bc_)
-        : media_map(std::move(media_map_)),
-          _vec_BHE_property(std::move(vec_BHEs_)),
-          if_bhe_network_exist_python_bc(if_bhe_network_exist_python_bc_)
-#endif  // OGS_USE_PYTHON
     {
     }
     std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>
@@ -56,10 +46,8 @@ struct HeatTransportBHEProcessData final
     MeshLib::PropertyVector<int> const* _mesh_prop_materialIDs = nullptr;
     std::unordered_map<int, int> _map_materialID_to_BHE_ID{};
     // if bhe network exists python boundary condition
-    bool if_bhe_network_exist_python_bc;
-#ifdef OGS_USE_PYTHON
+    bool has_network_python_bc;
     //! Python object computing BC values.
     BHEInflowPythonBoundaryConditionPythonSideInterface* py_bc_object;
-#endif
 };
 }  // namespace ProcessLib::HeatTransportBHE

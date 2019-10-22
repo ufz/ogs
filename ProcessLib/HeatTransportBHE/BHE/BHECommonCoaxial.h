@@ -28,9 +28,9 @@ public:
                      GroutParameters const& grout,
                      FlowAndTemperatureControl const& flowAndTemperatureControl,
                      PipeConfigurationCoaxial const& pipes,
-                     bool const ifUsePythonBC)
+                     bool const usePythonBC)
         : BHECommon{borehole, refrigerant, grout, flowAndTemperatureControl,
-                    ifUsePythonBC},
+                    usePythonBC},
           _pipes(pipes)
     {
         cross_section_area_inner_pipe = _pipes.inner_pipe.area();

@@ -204,7 +204,7 @@ NumLib::IterationResult HeatTransportBHEProcess::postIterationConcreteProcess(
     GlobalVector const& x)
 {
     // if the process use python boundary conditon
-    if (_process_data.if_bhe_network_exist_python_bc == false)
+    if (_process_data.has_network_python_bc == false)
         return NumLib::IterationResult::SUCCESS;
 
     // Here the task is to get current time flowrate and flow temperature from
@@ -297,7 +297,7 @@ void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
             for (auto const& in_out_component_id :
                  bhe.inflow_outflow_bc_component_ids)
             {
-                if (bhe.ifUsePythonBC)
+                if (bhe.usePythonBC)
                 // call BHEPythonBoundarycondition
                 {
 #ifdef OGS_USE_PYTHON
