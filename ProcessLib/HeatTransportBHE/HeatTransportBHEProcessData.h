@@ -37,6 +37,7 @@ struct HeatTransportBHEProcessData final
           if_bhe_network_exist_python_bc(if_bhe_network_exist_python_bc_),
           py_bc_object(py_bc_object_)
 #else
+    HeatTransportBHEProcessData(
         std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>&&
             media_map_,
         std::vector<BHE::BHETypes>&& vec_BHEs_,
