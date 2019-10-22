@@ -28,7 +28,8 @@ ConstraintDirichletBoundaryCondition::ConstraintDirichletBoundaryCondition(
     unsigned const integration_order, MeshLib::Mesh const& bulk_mesh,
     double const constraint_threshold, bool const lower,
     std::function<Eigen::Vector3d(std::size_t const, MathLib::Point3d const&,
-                                  double const, GlobalVector const&)>
+                                  double const,
+                                  std::vector<GlobalVector*> const&)>
         getFlux)
     : _parameter(parameter),
       _variable_id(variable_id),
@@ -107,20 +108,20 @@ ConstraintDirichletBoundaryCondition::ConstraintDirichletBoundaryCondition(
 }
 
 void ConstraintDirichletBoundaryCondition::preTimestep(
-    double t, std::vector<GlobalVector*> const& x, int const process_id)
+    double const t, std::vector<GlobalVector*> const& x,
+    int const /*process_id*/)
 {
     DBUG(
         "ConstraintDirichletBoundaryCondition::preTimestep: computing flux "
         "constraints");
-    auto const& solution = *x[process_id];
     for (auto const* boundary_element : _bc_mesh.getElements())
     {
         _flux_values[boundary_element->getID()] =
             _local_assemblers[boundary_element->getID()]->integrate(
-                solution, t,
+                x, t,
                 [this](std::size_t const element_id,
                        MathLib::Point3d const& pnt, double const t,
-                       GlobalVector const& x) {
+                       std::vector<GlobalVector*> const& x) {
                     return _getFlux(element_id, pnt, t, x);
                 });
     }
@@ -323,7 +324,7 @@ createConstraintDirichletBoundaryCondition(
         lower,
         [&constraining_process](std::size_t const element_id,
                                 MathLib::Point3d const& pnt, double const t,
-                                GlobalVector const& x) {
+                                std::vector<GlobalVector*> const& x) {
             return constraining_process.getFlux(element_id, pnt, t, x);
         });
 }

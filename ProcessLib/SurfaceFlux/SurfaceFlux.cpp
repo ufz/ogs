@@ -54,14 +54,14 @@ SurfaceFlux::SurfaceFlux(
 }
 
 void SurfaceFlux::integrate(
-    GlobalVector const& x,
+    std::vector<GlobalVector*> const& x,
     MeshLib::PropertyVector<double>& balance,
     double const t,
     MeshLib::Mesh const& bulk_mesh,
     std::vector<std::size_t> const& active_element_ids,
-    std::function<Eigen::Vector3d(std::size_t const, MathLib::Point3d const&,
-                                  double const, GlobalVector const&)> const&
-        getFlux)
+    std::function<Eigen::Vector3d(
+        std::size_t const, MathLib::Point3d const&, double const,
+        std::vector<GlobalVector*> const&)> const& getFlux)
 {
     DBUG("Integrate SurfaceFlux.");
 

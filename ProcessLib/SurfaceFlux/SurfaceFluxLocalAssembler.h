@@ -29,14 +29,15 @@ class SurfaceFluxLocalAssemblerInterface
 public:
     virtual ~SurfaceFluxLocalAssemblerInterface() = default;
 
-    virtual void integrate(std::size_t const element_id,
-                           GlobalVector const& x,
-                           MeshLib::PropertyVector<double>& specific_flux,
-                           double const t,
-                           MeshLib::Mesh const& bulk_mesh,
-                           std::function<Eigen::Vector3d(
-                               std::size_t const, MathLib::Point3d const&,
-                               double const, GlobalVector const&)>) = 0;
+    virtual void integrate(
+        std::size_t const element_id,
+        std::vector<GlobalVector*> const& x,
+        MeshLib::PropertyVector<double>& specific_flux,
+        double const t,
+        MeshLib::Mesh const& bulk_mesh,
+        std::function<Eigen::Vector3d(std::size_t const,
+                                      MathLib::Point3d const&, double const,
+                                      std::vector<GlobalVector*> const&)>) = 0;
 };
 
 template <typename ShapeFunction, typename IntegrationMethod,
@@ -110,13 +111,13 @@ public:
     /// points of the face elements of the bulk element that belongs to the
     /// surface.
     void integrate(std::size_t const element_id,
-                   GlobalVector const& x,
+                   std::vector<GlobalVector*> const& x,
                    MeshLib::PropertyVector<double>& specific_flux,
                    double const t,
                    MeshLib::Mesh const& bulk_mesh,
                    std::function<Eigen::Vector3d(
                        std::size_t const, MathLib::Point3d const&, double const,
-                       GlobalVector const&)>
+                       std::vector<GlobalVector*> const&)>
                        getFlux) override
     {
         auto surface_element_normal =

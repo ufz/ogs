@@ -54,8 +54,9 @@ public:
         const double t, const GlobalVector& x,
         NumLib::IndexValueVector<GlobalIndexType>& bc_values) const override;
 
-    void applyNaturalBC(const double t, const GlobalVector& x, GlobalMatrix& K,
-                        GlobalVector& b, GlobalMatrix* Jac) override;
+    void applyNaturalBC(const double t, std::vector<GlobalVector*> const& x,
+                        int const process_id, GlobalMatrix& K, GlobalVector& b,
+                        GlobalMatrix* Jac) override;
 
 private:
     //! Auxiliary data.

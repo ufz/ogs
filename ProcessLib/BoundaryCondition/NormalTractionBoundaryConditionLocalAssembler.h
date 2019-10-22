@@ -43,8 +43,8 @@ public:
     virtual void assemble(
         std::size_t const id,
         NumLib::LocalToGlobalIndexMap const& dof_table_boundary, double const t,
-        const GlobalVector& /*x*/, GlobalMatrix& /*K*/, GlobalVector& b,
-        GlobalMatrix* /*Jac*/) = 0;
+        std::vector<GlobalVector*> const& /*x*/, GlobalMatrix& /*K*/,
+        GlobalVector& b, GlobalMatrix* /*Jac*/) = 0;
     virtual ~NormalTractionBoundaryConditionLocalAssemblerInterface() = default;
 };
 
@@ -115,7 +115,7 @@ public:
 
     void assemble(std::size_t const id,
                   NumLib::LocalToGlobalIndexMap const& dof_table_boundary,
-                  double const t, const GlobalVector& /*x*/,
+                  double const t, std::vector<GlobalVector*> const& /*x*/,
                   GlobalMatrix& /*K*/, GlobalVector& local_rhs,
                   GlobalMatrix* /*Jac*/) override
     {

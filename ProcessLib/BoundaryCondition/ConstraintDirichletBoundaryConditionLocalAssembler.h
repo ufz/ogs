@@ -50,10 +50,10 @@ public:
         default;
 
     virtual double integrate(
-        GlobalVector const& x, double const t,
-        std::function<Eigen::Vector3d(std::size_t const,
-                                      MathLib::Point3d const&, double const,
-                                      GlobalVector const&)> const& getFlux) = 0;
+        std::vector<GlobalVector*> const& x, double const t,
+        std::function<Eigen::Vector3d(
+            std::size_t const, MathLib::Point3d const&, double const,
+            std::vector<GlobalVector*> const&)> const& getFlux) = 0;
 };
 
 template <typename ShapeFunction, typename IntegrationMethod,
@@ -124,10 +124,10 @@ public:
     /// @param getFlux The function of the constraining process used to
     /// calculate the flux.
     double integrate(
-        GlobalVector const& x, double const t,
+        std::vector<GlobalVector*> const& x, double const t,
         std::function<Eigen::Vector3d(
             std::size_t const, MathLib::Point3d const&, double const,
-            GlobalVector const&)> const& getFlux) override
+            std::vector<GlobalVector*> const&)> const& getFlux) override
     {
         auto const n_integration_points =
             _integration_method.getNumberOfPoints();

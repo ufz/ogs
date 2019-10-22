@@ -76,9 +76,9 @@ struct SurfaceFluxData
             std::move(surfaceflux_out_fname));
     }
 
-    void integrate(GlobalVector const& x, double const t, Process const& p,
-                   int const process_id, int const integration_order,
-                   MeshLib::Mesh const& bulk_mesh,
+    void integrate(std::vector<GlobalVector*> const& x, double const t,
+                   Process const& p, int const process_id,
+                   int const integration_order, MeshLib::Mesh const& bulk_mesh,
                    std::vector<std::size_t> const& active_element_ids)
     {
         auto* const surfaceflux_pv = MeshLib::getOrCreateMeshProperty<double>(
@@ -93,7 +93,7 @@ struct SurfaceFluxData
         surfaceflux_process.integrate(
             x, *surfaceflux_pv, t, bulk_mesh, active_element_ids,
             [&p](std::size_t const element_id, MathLib::Point3d const& pnt,
-                 double const t, GlobalVector const& x) {
+                 double const t, std::vector<GlobalVector*> const& x) {
                 return p.getFlux(element_id, pnt, t, x);
             });
     }

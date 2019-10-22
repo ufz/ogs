@@ -205,7 +205,7 @@ void Process::assemble(const double t, double const dt,
     assembleConcreteProcess(t, dt, x, process_id, M, K, b);
 
     // the last argument is for the jacobian, nullptr is for a unused jacobian
-    _boundary_conditions[process_id].applyNaturalBC(t, *x[process_id], K, b,
+    _boundary_conditions[process_id].applyNaturalBC(t, x, process_id, K, b,
                                                     nullptr);
 
     // the last argument is for the jacobian, nullptr is for a unused jacobian
@@ -228,7 +228,7 @@ void Process::assembleWithJacobian(const double t, double const dt,
                                         process_id, M, K, b, Jac);
 
     // TODO: apply BCs to Jacobian.
-    _boundary_conditions[process_id].applyNaturalBC(t, *x[process_id], K, b,
+    _boundary_conditions[process_id].applyNaturalBC(t, x, process_id, K, b,
                                                     &Jac);
 
     // the last argument is for the jacobian, nullptr is for a unused jacobian
