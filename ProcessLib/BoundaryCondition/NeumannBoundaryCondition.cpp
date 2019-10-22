@@ -45,6 +45,14 @@ std::unique_ptr<NeumannBoundaryCondition> createNeumannBoundaryCondition(
     }
 #endif  // USE_PETSC
 
+    if (bc_mesh.getDimension() + 1 != global_dim)
+    {
+        OGS_FATAL(
+            "The dimension (%d) of the given boundary mesh '%s' is not by one "
+            "lower than the bulk dimension (%d).",
+            bc_mesh.getDimension(), bc_mesh.getName().c_str(), global_dim);
+    }
+
     return std::make_unique<NeumannBoundaryCondition>(
         integration_order, shapefunction_order, dof_table, variable_id,
         component_id, global_dim, bc_mesh, param);

@@ -25,6 +25,14 @@ std::unique_ptr<RobinBoundaryCondition> createRobinBoundaryCondition(
     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__type}
     config.checkConfigParameter("type", "Robin");
 
+    if (bc_mesh.getDimension() + 1 != global_dim)
+    {
+        OGS_FATAL(
+            "The dimension (%d) of the given boundary mesh '%s' is not by one "
+            "lower than the bulk dimension (%d).",
+            bc_mesh.getDimension(), bc_mesh.getName().c_str(), global_dim);
+    }
+
     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__Robin__alpha}
     auto const alpha_name = config.getConfigParameter<std::string>("alpha");
     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__Robin__u_0}
