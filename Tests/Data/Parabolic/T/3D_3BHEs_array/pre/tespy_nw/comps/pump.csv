@@ -1,0 +1,2 @@
+label;cp;busses;bus_param;bus_P_ref;bus_char;mode;design;offdesign;interface;P;P_set;P_var;eta_s;eta_s_set;eta_s_var;pr;pr_set;pr_var;Sirr;Sirr_set;eta_s_char;eta_s_char_set;eta_s_char_method;eta_s_char_param;flow_char;flow_char_set;flow_char_method;flow_char_param
+pump;pump;[];[];[];[];auto;[];[];False;31.969279414546325;False;False;0.899999999964523;True;False;1.238825068833766;False;False;0.01058760490432178;False;0x00000256999C5FD0;False;GENERIC;nan;0x00000256999C5198;True;default;nan

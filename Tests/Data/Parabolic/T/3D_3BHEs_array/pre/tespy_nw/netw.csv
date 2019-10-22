@@ -1,0 +1,2 @@
+m_unit;p_unit;p_min;p_max;h_unit;h_min;h_max;T_unit;T_min;T_max;fluids
+kg / s;bar;1;20;kJ / kg;1;1000;K;273.25;373.15;['water']
