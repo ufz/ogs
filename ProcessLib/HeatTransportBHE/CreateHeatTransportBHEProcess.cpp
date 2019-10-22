@@ -149,7 +149,7 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
     // find if bhe uses python boundary condition
     auto const isUsingPythonBC =
         visit([](auto const& bhe) { return bhe.ifUsePythonBC; }, bhes[0]);
-    if (isUsingPythonBC == true)
+    if (isUsingPythonBC)
     {
         if_bhe_network_exist_python_bc = true;
     }
@@ -159,7 +159,7 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
     BHEInflowPythonBoundaryConditionPythonSideInterface* py_object = nullptr;
 #endif
     // create a pythonBoundaryCondition object
-    if (if_bhe_network_exist_python_bc == true)
+    if (if_bhe_network_exist_python_bc)
     {
 #ifdef OGS_USE_PYTHON
         // Evaluate Python code in scope of main module

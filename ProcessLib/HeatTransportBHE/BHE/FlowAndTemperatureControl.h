@@ -69,10 +69,14 @@ struct PowerCurveConstantFlow
     {
         double const power = power_curve.getValue(time);
         if (power == 0)
+        {
             return {0.0, T_out};
+        }
         else
+        {
             return {flow_rate,
                     power / flow_rate / heat_capacity / density + T_out};
+        }
     }
     MathLib::PiecewiseLinearInterpolation const& power_curve;
 
@@ -85,7 +89,6 @@ using FlowAndTemperatureControl = std::variant<TemperatureCurveConstantFlow,
                                                FixedPowerConstantFlow,
                                                FixedPowerFlowCurve,
                                                PowerCurveConstantFlow>;
-
 }  // namespace BHE
 }  // namespace HeatTransportBHE
 }  // namespace ProcessLib
