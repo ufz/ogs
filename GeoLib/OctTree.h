@@ -15,9 +15,11 @@
 #pragma once
 
 #include <cstdint>
+#include <vector>
+#include <limits>
 
-#include "MathLib/Point3d.h"
 #include "MathLib/MathTools.h"
+#include "MathLib/Point3d.h"
 
 namespace GeoLib {
 
