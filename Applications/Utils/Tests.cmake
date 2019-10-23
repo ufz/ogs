@@ -274,3 +274,14 @@ AddTest(
     TESTER diff
     DIFF_DATA output0.asc
 )
+
+AddTest(
+    NAME Vtu2Grid_Test
+    PATH FileIO/
+    EXECUTABLE Vtu2Grid
+    EXECUTABLE_ARGS -i AmmerSubsurfaceCoarse.vtu -o ${Data_BINARY_DIR}/FileIO/AmmerGridOutput.vtu -x 200 -y 200 -z 20
+    REQUIREMENTS NOT OGS_USE_MPI
+    TESTER vtkdiff
+    DIFF_DATA
+    AmmerSubsurfaceCoarse.vtu AmmerGridOutput.vtu MaterialIDs MaterialIDs 0 0
+)
