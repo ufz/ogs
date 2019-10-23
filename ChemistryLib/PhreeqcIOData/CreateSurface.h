@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include <boost/optional/optional.hpp>
+#include <boost/optional/optional_fwd.hpp>
 #include <vector>
 
 namespace BaseLib
@@ -22,9 +22,9 @@ namespace ChemistryLib
 {
 namespace PhreeqcIOData
 {
-struct ReactionRate;
+struct SurfaceSite;
 
-std::vector<ReactionRate> createReactionRates(
+std::vector<SurfaceSite> createSurface(
     boost::optional<BaseLib::ConfigTree> const& config);
 }  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

@@ -15,6 +15,7 @@
 #include "CreateOutput.h"
 #include "EquilibriumPhase.h"
 #include "KineticReactant.h"
+#include "UserPunch.h"
 
 namespace ChemistryLib
 {
@@ -24,6 +25,8 @@ std::unique_ptr<Output> createOutput(
     std::vector<Component> const& components,
     std::vector<EquilibriumPhase> const& equilibrium_phases,
     std::vector<KineticReactant> const& kinetic_reactants,
+    std::unique_ptr<UserPunch> const& user_punch,
+    bool const use_high_precision,
     std::string const& project_file_name)
 {
     // Mark which phreeqc output items will be held.
@@ -37,7 +40,6 @@ std::unique_ptr<Output> createOutput(
                    std::back_inserter(accepted_items), accepted_item);
     std::transform(equilibrium_phases.begin(), equilibrium_phases.end(),
                    std::back_inserter(accepted_items), accepted_item);
-
     for (auto const& kinetic_reactant : kinetic_reactants)
     {
         if (kinetic_reactant.fix_amount)
@@ -48,8 +50,18 @@ std::unique_ptr<Output> createOutput(
                                     kinetic_reactant.item_type);
     }
 
+    if (user_punch)
+    {
+        auto const& secondary_variables = user_punch->secondary_variables;
+        accepted_items.reserve(accepted_items.size() +
+                               secondary_variables.size());
+        std::transform(secondary_variables.begin(), secondary_variables.end(),
+                       std::back_inserter(accepted_items), accepted_item);
+    }
+
     // Record ids of which phreeqc output items will be dropped.
-    BasicOutputSetups basic_output_setups(project_file_name);
+    BasicOutputSetups basic_output_setups(project_file_name,
+                                          use_high_precision);
     auto const num_dropped_basic_items =
         basic_output_setups.getNumberOfDroppedItems();
     std::vector<int> dropped_item_ids(num_dropped_basic_items);
