@@ -27,11 +27,14 @@ void NonlinearSolver<NonlinearSolverTag::Picard>::assemble(
     _equation_system->assemble(x, process_id);
 }
 
-void NonlinearSolver<NonlinearSolverTag::Picard>::calculateOutOfBalanceForces(
-    std::vector<GlobalVector*> const& x, int const process_id)
+void NonlinearSolver<NonlinearSolverTag::Picard>::
+    calculateNonEquilibriumInitialResiduum(std::vector<GlobalVector*> const& x,
+                                           int const process_id)
 {
-    if (!_compensate_initial_out_of_balance_forces)
+    if (!_compensate_non_equilibrium_initial_residuum)
+    {
         return;
+    }
 
     auto& A = NumLib::GlobalMatrixProvider::provider.getMatrix(_A_id);
     auto& rhs = NumLib::GlobalVectorProvider::provider.getVector(_rhs_id);
@@ -39,10 +42,10 @@ void NonlinearSolver<NonlinearSolverTag::Picard>::calculateOutOfBalanceForces(
     _equation_system->getA(A);
     _equation_system->getRhs(rhs);
 
-    // F_oob = A * x - rhs
-    _f_oob = &NumLib::GlobalVectorProvider::provider.getVector();
-    MathLib::LinAlg::matMult(A, *x[process_id], *_f_oob);
-    MathLib::LinAlg::axpy(*_f_oob, -1.0, rhs);  // res -= rhs
+    // r_neq = A * x - rhs
+    _r_neq = &NumLib::GlobalVectorProvider::provider.getVector();
+    MathLib::LinAlg::matMult(A, *x[process_id], *_r_neq);
+    MathLib::LinAlg::axpy(*_r_neq, -1.0, rhs);  // res -= rhs
 }
 
 NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
@@ -91,10 +94,11 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
         sys.getRhs(rhs);
         INFO("[time] Assembly took %g s.", time_assembly.elapsed());
 
-
-        // Apply out-of-balance forces if set.
-        if (_f_oob != nullptr)
-            LinAlg::axpy(rhs, -1, *_f_oob);
+        // Subract non-equilibrium initial residuum if set
+        if (_r_neq != nullptr)
+        {
+            LinAlg::axpy(rhs, -1, *_r_neq);
+        }
 
         timer_dirichlet.start();
         sys.applyKnownSolutionsPicard(A, rhs, *x_new[process_id]);
@@ -214,15 +218,18 @@ void NonlinearSolver<NonlinearSolverTag::Newton>::assemble(
     //      equation every time and could not forget it.
 }
 
-void NonlinearSolver<NonlinearSolverTag::Newton>::calculateOutOfBalanceForces(
-    std::vector<GlobalVector*> const& x, int const process_id)
+void NonlinearSolver<NonlinearSolverTag::Newton>::
+    calculateNonEquilibriumInitialResiduum(std::vector<GlobalVector*> const& x,
+                                           int const process_id)
 {
-    if (!_compensate_initial_out_of_balance_forces)
+    if (!_compensate_non_equilibrium_initial_residuum)
+    {
         return;
+    }
 
     _equation_system->assemble(x, process_id);
-    _f_oob = &NumLib::GlobalVectorProvider::provider.getVector();
-    _equation_system->getResidual(*x[process_id], *_f_oob);
+    _r_neq = &NumLib::GlobalVectorProvider::provider.getVector();
+    _equation_system->getResidual(*x[process_id], *_r_neq);
 }
 
 NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
@@ -273,9 +280,9 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
         sys.getJacobian(J);
         INFO("[time] Assembly took %g s.", time_assembly.elapsed());
 
-        // Apply out-of-balance forces if set.
-        if (_f_oob != nullptr)
-            LinAlg::axpy(res, -1, *_f_oob);
+        // Subract non-equilibrium initial residuum if set
+        if (_r_neq != nullptr)
+            LinAlg::axpy(res, -1, *_r_neq);
 
         minus_delta_x.setZero();
 

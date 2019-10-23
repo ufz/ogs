@@ -167,11 +167,12 @@ std::vector<GlobalVector*> setInitialConditions(
     return process_solutions;
 }
 
-void calculateOutOfBalanceForces(
+void calculateNonEquilibriumInitialResiduum(
     std::vector<std::unique_ptr<ProcessData>> const& per_process_data,
-    std::vector<GlobalVector*> process_solutions)
+    std::vector<GlobalVector*>
+        process_solutions)
 {
-    INFO("Calculate out-of-balance forces.");
+    INFO("Calculate non-equilibrium initial residuum.");
     for (auto& process_data : per_process_data)
     {
         auto& ode_sys = *process_data->tdisc_ode_sys;
@@ -187,8 +188,8 @@ void calculateOutOfBalanceForces(
         double const t = 0;
         double const dt = 1;
         time_disc.nextTimestep(t, dt);
-        nonlinear_solver.calculateOutOfBalanceForces(process_solutions,
-                                                     process_data->process_id);
+        nonlinear_solver.calculateNonEquilibriumInitialResiduum(
+            process_solutions, process_data->process_id);
     }
 }
 
@@ -470,7 +471,7 @@ bool TimeLoop::loop()
     bool const is_staggered_coupling =
         !isMonolithicProcess(*_per_process_data[0]);
 
-    bool out_of_balance_forces_computed = false;
+    bool non_equilibrium_initial_residuum_computed = false;
     double t = _start_time;
     std::size_t accepted_steps = 0;
     std::size_t rejected_steps = 0;
@@ -498,10 +499,11 @@ bool TimeLoop::loop()
                 t, process_data->process_id);
         }
 
-        if (!out_of_balance_forces_computed)
+        if (!non_equilibrium_initial_residuum_computed)
         {
-            calculateOutOfBalanceForces(_per_process_data, _process_solutions);
-            out_of_balance_forces_computed = true;
+            calculateNonEquilibriumInitialResiduum(_per_process_data,
+                                                   _process_solutions);
+            non_equilibrium_initial_residuum_computed = true;
         }
 
         if (is_staggered_coupling)

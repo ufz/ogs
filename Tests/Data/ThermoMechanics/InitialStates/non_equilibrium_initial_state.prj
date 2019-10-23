@@ -37,7 +37,7 @@
         <processes>
             <process ref="TM">
                 <nonlinear_solver>basic_newton</nonlinear_solver>
-                <compensate_initial_out_of_balance_forces>true</compensate_initial_out_of_balance_forces>
+                <compensate_non_equilibrium_initial_residuum>true</compensate_non_equilibrium_initial_residuum>
                 <convergence_criterion>
                     <type>DeltaX</type>
                     <norm_type>NORM2</norm_type>
