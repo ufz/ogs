@@ -18,17 +18,16 @@
 
 namespace MeshLib
 {
-
 namespace details
 {
-
 std::vector<MeshLib::Element*> excludeElementCopy(
     std::vector<MeshLib::Element*> const& vec_src_eles,
     std::vector<std::size_t> const& vec_removed)
 {
-    std::vector<MeshLib::Element*> vec_dest_eles(vec_src_eles.size()-vec_removed.size());
+    std::vector<MeshLib::Element*> vec_dest_eles(vec_src_eles.size() -
+                                                 vec_removed.size());
 
-    unsigned cnt (0);
+    unsigned cnt(0);
     for (std::size_t i = 0; i < vec_removed[0]; ++i)
     {
         vec_dest_eles[cnt++] = vec_src_eles[i];
@@ -50,7 +49,10 @@ std::vector<MeshLib::Element*> excludeElementCopy(
 
 }  // namespace details
 
-MeshLib::Mesh* removeElements(const MeshLib::Mesh& mesh, const std::vector<std::size_t> &removed_element_ids, const std::string &new_mesh_name)
+MeshLib::Mesh* removeElements(
+    const MeshLib::Mesh& mesh,
+    const std::vector<std::size_t>& removed_element_ids,
+    const std::string& new_mesh_name)
 {
     if (removed_element_ids.empty())
     {
@@ -59,27 +61,28 @@ MeshLib::Mesh* removeElements(const MeshLib::Mesh& mesh, const std::vector<std::
     }
 
     INFO("Removing total %d elements...", removed_element_ids.size());
-    std::vector<MeshLib::Element*> tmp_elems = details::excludeElementCopy(
-        mesh.getElements(),
-        removed_element_ids
-    );
+    std::vector<MeshLib::Element*> tmp_elems =
+        details::excludeElementCopy(mesh.getElements(), removed_element_ids);
     INFO("%d elements remain in mesh.", tmp_elems.size());
 
     // copy node and element objects
-    std::vector<MeshLib::Node*> new_nodes = MeshLib::copyNodeVector(mesh.getNodes());
-    std::vector<MeshLib::Element*> new_elems = MeshLib::copyElementVector(tmp_elems, new_nodes);
+    std::vector<MeshLib::Node*> new_nodes =
+        MeshLib::copyNodeVector(mesh.getNodes());
+    std::vector<MeshLib::Element*> new_elems =
+        MeshLib::copyElementVector(tmp_elems, new_nodes);
 
     // delete unused nodes
     NodeSearch ns(mesh);
     ns.searchNodesConnectedToOnlyGivenElements(removed_element_ids);
-    auto &removed_node_ids(ns.getSearchedNodeIDs());
+    auto& removed_node_ids(ns.getSearchedNodeIDs());
     INFO("Removing total %d nodes...", removed_node_ids.size());
     for (auto nodeid : removed_node_ids)
     {
         delete new_nodes[nodeid];
         new_nodes[nodeid] = nullptr;
     }
-    new_nodes.erase(std::remove(new_nodes.begin(), new_nodes.end(), nullptr), new_nodes.end());
+    new_nodes.erase(std::remove(new_nodes.begin(), new_nodes.end(), nullptr),
+                    new_nodes.end());
 
     if (!new_elems.empty())
     {
@@ -94,7 +97,9 @@ MeshLib::Mesh* removeElements(const MeshLib::Mesh& mesh, const std::vector<std::
     return nullptr;
 }
 
-MeshLib::Mesh* removeNodes(const MeshLib::Mesh &mesh, const std::vector<std::size_t> &del_nodes_idx, const std::string &new_mesh_name)
+MeshLib::Mesh* removeNodes(const MeshLib::Mesh& mesh,
+                           const std::vector<std::size_t>& del_nodes_idx,
+                           const std::string& new_mesh_name)
 {
     if (del_nodes_idx.empty())
     {
@@ -102,8 +107,10 @@ MeshLib::Mesh* removeNodes(const MeshLib::Mesh &mesh, const std::vector<std::siz
     }
 
     // copy node and element objects
-    std::vector<MeshLib::Node*> new_nodes = MeshLib::copyNodeVector(mesh.getNodes());
-    std::vector<MeshLib::Element*> new_elems = MeshLib::copyElementVector(mesh.getElements(), new_nodes);
+    std::vector<MeshLib::Node*> new_nodes =
+        MeshLib::copyNodeVector(mesh.getNodes());
+    std::vector<MeshLib::Element*> new_elems =
+        MeshLib::copyElementVector(mesh.getElements(), new_nodes);
 
     // delete elements
     MeshLib::ElementSearch es(mesh);
@@ -114,11 +121,13 @@ MeshLib::Mesh* removeNodes(const MeshLib::Mesh &mesh, const std::vector<std::siz
         delete new_elems[eid];
         new_elems[eid] = nullptr;
     }
-    new_elems.erase(std::remove(new_elems.begin(), new_elems.end(), nullptr), new_elems.end());
+    new_elems.erase(std::remove(new_elems.begin(), new_elems.end(), nullptr),
+                    new_elems.end());
 
     // check unused nodes due to element deletion
     std::vector<bool> node_delete_flag(new_nodes.size(), true);
-    for (auto e : new_elems) {
+    for (auto e : new_elems)
+    {
         for (unsigned i = 0; i < e->getNumberOfNodes(); i++)
         {
             node_delete_flag[e->getNodeIndex(i)] = false;
@@ -126,7 +135,7 @@ MeshLib::Mesh* removeNodes(const MeshLib::Mesh &mesh, const std::vector<std::siz
     }
 
     // delete unused nodes
-    for (std::size_t i=0; i<new_nodes.size(); i++)
+    for (std::size_t i = 0; i < new_nodes.size(); i++)
     {
         if (!node_delete_flag[i])
         {
@@ -135,7 +144,8 @@ MeshLib::Mesh* removeNodes(const MeshLib::Mesh &mesh, const std::vector<std::siz
         delete new_nodes[i];
         new_nodes[i] = nullptr;
     }
-    new_nodes.erase(std::remove(new_nodes.begin(), new_nodes.end(), nullptr), new_nodes.end());
+    new_nodes.erase(std::remove(new_nodes.begin(), new_nodes.end(), nullptr),
+                    new_nodes.end());
 
     if (!new_elems.empty())
     {
@@ -148,5 +158,5 @@ MeshLib::Mesh* removeNodes(const MeshLib::Mesh &mesh, const std::vector<std::siz
 
     return nullptr;
 }
-} // end namespace MeshLib
+}  // end namespace MeshLib
 
