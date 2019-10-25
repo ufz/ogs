@@ -27,6 +27,27 @@ void NonlinearSolver<NonlinearSolverTag::Picard>::assemble(
     _equation_system->assemble(x, process_id);
 }
 
+void NonlinearSolver<NonlinearSolverTag::Picard>::
+    calculateNonEquilibriumInitialResiduum(std::vector<GlobalVector*> const& x,
+                                           int const process_id)
+{
+    if (!_compensate_non_equilibrium_initial_residuum)
+    {
+        return;
+    }
+
+    auto& A = NumLib::GlobalMatrixProvider::provider.getMatrix(_A_id);
+    auto& rhs = NumLib::GlobalVectorProvider::provider.getVector(_rhs_id);
+    _equation_system->assemble(x, process_id);
+    _equation_system->getA(A);
+    _equation_system->getRhs(rhs);
+
+    // r_neq = A * x - rhs
+    _r_neq = &NumLib::GlobalVectorProvider::provider.getVector();
+    MathLib::LinAlg::matMult(A, *x[process_id], *_r_neq);
+    MathLib::LinAlg::axpy(*_r_neq, -1.0, rhs);  // res -= rhs
+}
+
 NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
     std::vector<GlobalVector*>& x,
     std::function<void(int, GlobalVector const&)> const& postIterationCallback,
@@ -72,6 +93,12 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
         sys.getA(A);
         sys.getRhs(rhs);
         INFO("[time] Assembly took %g s.", time_assembly.elapsed());
+
+        // Subract non-equilibrium initial residuum if set
+        if (_r_neq != nullptr)
+        {
+            LinAlg::axpy(rhs, -1, *_r_neq);
+        }
 
         timer_dirichlet.start();
         sys.applyKnownSolutionsPicard(A, rhs, *x_new[process_id]);
@@ -191,6 +218,20 @@ void NonlinearSolver<NonlinearSolverTag::Newton>::assemble(
     //      equation every time and could not forget it.
 }
 
+void NonlinearSolver<NonlinearSolverTag::Newton>::
+    calculateNonEquilibriumInitialResiduum(std::vector<GlobalVector*> const& x,
+                                           int const process_id)
+{
+    if (!_compensate_non_equilibrium_initial_residuum)
+    {
+        return;
+    }
+
+    _equation_system->assemble(x, process_id);
+    _r_neq = &NumLib::GlobalVectorProvider::provider.getVector();
+    _equation_system->getResidual(*x[process_id], *_r_neq);
+}
+
 NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
     std::vector<GlobalVector*>& x,
     std::function<void(int, GlobalVector const&)> const& postIterationCallback,
@@ -238,6 +279,10 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
         sys.getResidual(*x[process_id], res);
         sys.getJacobian(J);
         INFO("[time] Assembly took %g s.", time_assembly.elapsed());
+
+        // Subract non-equilibrium initial residuum if set
+        if (_r_neq != nullptr)
+            LinAlg::axpy(res, -1, *_r_neq);
 
         minus_delta_x.setZero();
 

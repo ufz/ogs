@@ -49,6 +49,9 @@ public:
     virtual void assemble(std::vector<GlobalVector*> const& x,
                           int const process_id) const = 0;
 
+    virtual void calculateNonEquilibriumInitialResiduum(
+        std::vector<GlobalVector*> const& x, int const process_id) = 0;
+
     /*! Assemble and solve the equation system.
      *
      * \param x   in: the initial guess, out: the solution.
@@ -113,11 +116,19 @@ public:
     void assemble(std::vector<GlobalVector*> const& x,
                   int const process_id) const override;
 
+    void calculateNonEquilibriumInitialResiduum(
+        std::vector<GlobalVector*> const& x, int const process_id) override;
+
     NonlinearSolverStatus solve(
         std::vector<GlobalVector*>& x,
         std::function<void(int, GlobalVector const&)> const&
             postIterationCallback,
         int const process_id) override;
+
+    void compensateNonEquilibriumInitialResiduum(bool const value)
+    {
+        _compensate_non_equilibrium_initial_residuum = value;
+    }
 
 private:
     GlobalLinearSolver& _linear_solver;
@@ -133,11 +144,19 @@ private:
     //! conservative approach.
     double const _damping;
 
+    GlobalVector* _r_neq = nullptr;      //!< non-equilibrium initial residuum.
     std::size_t _res_id = 0u;            //!< ID of the residual vector.
     std::size_t _J_id = 0u;              //!< ID of the Jacobian matrix.
     std::size_t _minus_delta_x_id = 0u;  //!< ID of the \f$ -\Delta x\f$ vector.
     std::size_t _x_new_id =
         0u;  //!< ID of the vector storing \f$ x - (-\Delta x) \f$.
+
+    /// Enables computation of the non-equilibrium initial residuum \f$ r_{\rm
+    /// neq} \f$ before the first time step. The forces are zero if the external
+    /// forces are in equilibrium with the initial state/initial conditions.
+    /// During the simulation the new residuum reads \f$ \tilde r = r - r_{\rm
+    /// neq} \f$.
+    bool _compensate_non_equilibrium_initial_residuum = false;
 };
 
 /*! Find a solution to a nonlinear equation using the Picard fixpoint iteration
@@ -175,11 +194,19 @@ public:
     void assemble(std::vector<GlobalVector*> const& x,
                   int const process_id) const override;
 
+    void calculateNonEquilibriumInitialResiduum(
+        std::vector<GlobalVector*> const& x, int const process_id) override;
+
     NonlinearSolverStatus solve(
         std::vector<GlobalVector*>& x,
         std::function<void(int, GlobalVector const&)> const&
             postIterationCallback,
         int const process_id) override;
+
+    void compensateNonEquilibriumInitialResiduum(bool const value)
+    {
+        _compensate_non_equilibrium_initial_residuum = value;
+    }
 
 private:
     GlobalLinearSolver& _linear_solver;
@@ -189,10 +216,15 @@ private:
     ConvergenceCriterion* _convergence_criterion = nullptr;
     const int _maxiter;  //!< maximum number of iterations
 
+    GlobalVector* _r_neq = nullptr;  //!< non-equilibrium initial residuum.
     std::size_t _A_id = 0u;      //!< ID of the \f$ A \f$ matrix.
     std::size_t _rhs_id = 0u;    //!< ID of the right-hand side vector.
     std::size_t _x_new_id = 0u;  //!< ID of the vector storing the solution of
                                  //! the linearized equation.
+
+    /// \copydoc
+    /// NumLib::NonlinearSolver<NonlinearSolverTag::Newton>::_compensate_non_equilibrium_initial_residuum
+    bool _compensate_non_equilibrium_initial_residuum = false;
 };
 
 /*! Creates a new nonlinear solver from the given configuration.

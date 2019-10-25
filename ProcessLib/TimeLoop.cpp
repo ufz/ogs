@@ -167,6 +167,32 @@ std::vector<GlobalVector*> setInitialConditions(
     return process_solutions;
 }
 
+void calculateNonEquilibriumInitialResiduum(
+    std::vector<std::unique_ptr<ProcessData>> const& per_process_data,
+    std::vector<GlobalVector*>
+        process_solutions)
+{
+    INFO("Calculate non-equilibrium initial residuum.");
+    for (auto& process_data : per_process_data)
+    {
+        auto& ode_sys = *process_data->tdisc_ode_sys;
+
+        auto& time_disc = *process_data->time_disc;
+        auto& nonlinear_solver = process_data->nonlinear_solver;
+        auto& conv_crit = *process_data->conv_crit;
+
+        auto const nl_tag = process_data->nonlinear_solver_tag;
+        setEquationSystem(nonlinear_solver, ode_sys, conv_crit, nl_tag);
+        // dummy values to handle the time derivative terms more or less
+        // correctly, i.e. to ignore them.
+        double const t = 0;
+        double const dt = 1;
+        time_disc.nextTimestep(t, dt);
+        nonlinear_solver.calculateNonEquilibriumInitialResiduum(
+            process_solutions, process_data->process_id);
+    }
+}
+
 NumLib::NonlinearSolverStatus solveOneTimeStepOneProcess(
     std::vector<GlobalVector*>& x, std::size_t const timestep, double const t,
     double const delta_t, ProcessData const& process_data,
@@ -445,6 +471,7 @@ bool TimeLoop::loop()
     bool const is_staggered_coupling =
         !isMonolithicProcess(*_per_process_data[0]);
 
+    bool non_equilibrium_initial_residuum_computed = false;
     double t = _start_time;
     std::size_t accepted_steps = 0;
     std::size_t rejected_steps = 0;
@@ -470,6 +497,13 @@ bool TimeLoop::loop()
         {
             process_data->process.updateDeactivatedSubdomains(
                 t, process_data->process_id);
+        }
+
+        if (!non_equilibrium_initial_residuum_computed)
+        {
+            calculateNonEquilibriumInitialResiduum(_per_process_data,
+                                                   _process_solutions);
+            non_equilibrium_initial_residuum_computed = true;
         }
 
         if (is_staggered_coupling)
