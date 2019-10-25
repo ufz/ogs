@@ -222,9 +222,10 @@ private:
     std::size_t _x_new_id = 0u;  //!< ID of the vector storing the solution of
                                  //! the linearized equation.
 
-    /// \copydoc
-    /// NumLib::NonlinearSolver<NonlinearSolverTag::Newton>::_compensate_non_equilibrium_initial_residuum
+    // clang-format off
+    /// \copydoc NumLib::NonlinearSolver<NonlinearSolverTag::Newton>::_compensate_non_equilibrium_initial_residuum
     bool _compensate_non_equilibrium_initial_residuum = false;
+    // clang-format on
 };
 
 /*! Creates a new nonlinear solver from the given configuration.
