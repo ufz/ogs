@@ -19,7 +19,7 @@ namespace PhreeqcIOData
 Knobs createKnobs(BaseLib::ConfigTree const& config)
 {
     auto const max_iterations =
-        //! \ogs_file_param{prj__chemical_system__knobs__max_iterations}
+        //! \ogs_file_param{prj__chemical_system__knobs__max_iter}
         config.getConfigParameter<int>("max_iter");
 
     auto const relative_convergence_tolerance =
