@@ -100,6 +100,7 @@ if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR COMPILER_IS_INTEL)
                 using ${CMAKE_CXX_COMPILER_VERSION}.")
         endif()
         add_compile_options(-fext-numeric-literals)
+        include(GCCSanitizer)
     endif()
 
     if(COMPILER_IS_CLANG)
