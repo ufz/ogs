@@ -14,6 +14,7 @@
 #include <vector>
 
 #include "MaterialLib/MPL/Medium.h"
+#include "MaterialLib/MPL/Utils/FormEffectiveThermalConductivity.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
@@ -113,10 +114,24 @@ void HeatTransportBHELocalAssemblerSoil<ShapeFunction, IntegrationMethod>::
                     MaterialPropertyLib::PropertyType::thermal_conductivity)
                 .template value<double>(vars, pos, t);
 
+        auto const density_s =
+            solid_phase.property(MaterialPropertyLib::PropertyType::density)
+                .template value<double>(vars, pos, t);
+
         auto const heat_capacity_s =
             solid_phase
                 .property(
                     MaterialPropertyLib::PropertyType::specific_heat_capacity)
+                .template value<double>(vars, pos, t);
+
+        auto const k_f =
+            liquid_phase
+                .property(
+                    MaterialPropertyLib::PropertyType::thermal_conductivity)
+                .template value<double>(vars, pos, t);
+
+        auto const density_f =
+            liquid_phase.property(MaterialPropertyLib::PropertyType::density)
                 .template value<double>(vars, pos, t);
 
         auto const heat_capacity_f =
@@ -125,25 +140,19 @@ void HeatTransportBHELocalAssemblerSoil<ShapeFunction, IntegrationMethod>::
                     MaterialPropertyLib::PropertyType::specific_heat_capacity)
                 .template value<double>(vars, pos, t);
 
-        auto const density_s =
-            solid_phase.property(MaterialPropertyLib::PropertyType::density)
+        auto const porosity =
+            medium.property(MaterialPropertyLib::PropertyType::porosity)
                 .template value<double>(vars, pos, t);
 
-        auto const density_f =
-            liquid_phase.property(MaterialPropertyLib::PropertyType::density)
-                .template value<double>(vars, pos, t);
-        // for now only using the solid phase parameters
+        // for now only using the solid and liquid phase parameters
 
-        /*auto const velocity =
-            liquid_phase
-                .property(MaterialPropertyLib::PropertyType::phase_velocity)
-                .template value<GlobalDimVectorType>(vars, pos, t);*/
         auto const velocity_arr =
             liquid_phase
                 .property(MaterialPropertyLib::PropertyType::phase_velocity)
                 .value(vars, pos, t);
         auto velocity = Eigen::Map<Eigen::Matrix<double, 1, 3> const>(
             std::get<MaterialPropertyLib::Vector>(velocity_arr).data(), 1, 3);
+
         // assemble Conductance matrix
         local_K.noalias() +=
             (dNdx.transpose() * dNdx * k_s +
@@ -151,8 +160,9 @@ void HeatTransportBHELocalAssemblerSoil<ShapeFunction, IntegrationMethod>::
             w;
 
         // assemble Mass matrix
-        local_M.noalias() +=
-            N.transpose() * N * w * density_s * heat_capacity_s;
+        local_M.noalias() += N.transpose() * N * w *
+                             (density_s * heat_capacity_s * (1 - porosity) +
+                              density_f * heat_capacity_f * porosity);
     }
 
     // debugging
