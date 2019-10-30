@@ -31,8 +31,8 @@ std::unique_ptr<NeumannBoundaryCondition> createNeumannBoundaryCondition(
     auto const& param = ParameterLib::findParameter<double>(
         param_name, parameters, 1, &bc_mesh);
 
-    // In case of partitioned mesh the boundary could be empty, i.e. there is no
-    // boundary condition.
+    // In case of partitioned mesh the boundary could be empty, i.e. there
+    // is no boundary condition.
 #ifdef USE_PETSC
     // This can be extracted to createBoundaryCondition() but then the config
     // parameters are not read and will cause an error.
@@ -45,17 +45,29 @@ std::unique_ptr<NeumannBoundaryCondition> createNeumannBoundaryCondition(
     }
 #endif  // USE_PETSC
 
-    if (bc_mesh.getDimension() + 1 != global_dim)
+    ParameterLib::Parameter<double> const* integral_measure(nullptr);
+    if (global_dim - bc_mesh.getDimension() != 1)
+    {
+        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__Neumann__area_parameter}
+        auto const area_parameter_name =
+            config.getConfigParameter<std::string>("area_parameter");
+        DBUG("area parameter name '%s'", area_parameter_name.c_str());
+        integral_measure = &ParameterLib::findParameter<double>(
+            area_parameter_name, parameters, 1, &bc_mesh);
+    }
+
+    if (bc_mesh.getDimension() >= global_dim)
     {
         OGS_FATAL(
-            "The dimension (%d) of the given boundary mesh '%s' is not by one "
-            "lower than the bulk dimension (%d).",
+            "The dimension (%d) of the given boundary mesh '%s' is not lower "
+            "than the bulk dimension (%d).",
             bc_mesh.getDimension(), bc_mesh.getName().c_str(), global_dim);
     }
 
     return std::make_unique<NeumannBoundaryCondition>(
         integration_order, shapefunction_order, dof_table, variable_id,
-        component_id, global_dim, bc_mesh, param);
+        component_id, global_dim, bc_mesh,
+        NeumannBoundaryConditionData{param, integral_measure});
 }
 
 }  // namespace ProcessLib
