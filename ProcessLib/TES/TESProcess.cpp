@@ -175,24 +175,6 @@ void TESProcess::initializeSecondaryVariables()
                                             _local_assemblers, method);
     };
 
-    // named functions: vapour partial pressure ////////////////////////////////
-    auto p_V_fct = [=](const double p, const double x_mV) {
-        const double x_nV = Adsorption::AdsorptionReaction::getMolarFraction(
-            x_mV, _assembly_params.M_react, _assembly_params.M_inert);
-        return p*x_nV;
-    };
-    _named_function_caller.addNamedFunction(
-        {"vapour_partial_pressure",
-         {"pressure", "vapour_mass_fraction"},
-         BaseLib::easyBind(std::move(p_V_fct))});
-    _named_function_caller.plug("vapour_partial_pressure", "pressure",
-                                "TES_pressure");
-    _named_function_caller.plug("vapour_partial_pressure",
-                                "vapour_mass_fraction",
-                                "TES_vapour_mass_fraction");
-    // /////////////////////////////////////////////////////////////////////////
-
-
     add2nd("solid_density",
            makeEx(1, &TESLocalAssemblerInterface::getIntPtSolidDensity));
 
@@ -208,6 +190,10 @@ void TESProcess::initializeSecondaryVariables()
         "reaction_damping_factor",
         makeEx(1, &TESLocalAssemblerInterface::getIntPtReactionDampingFactor));
 
+    add2nd(
+        "vapour_partial_pressure",
+        {1, BaseLib::easyBind(&TESProcess::computeVapourPartialPressure, this),
+         nullptr});
     add2nd("relative_humidity",
            {1, BaseLib::easyBind(&TESProcess::computeRelativeHumidity, this),
             nullptr});
