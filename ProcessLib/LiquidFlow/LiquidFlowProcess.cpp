@@ -39,7 +39,6 @@ LiquidFlowProcess::LiquidFlowProcess(
     std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>&&
         process_variables,
     SecondaryVariableCollection&& secondary_variables,
-    NumLib::NamedFunctionCaller&& named_function_caller,
     MeshLib::PropertyVector<int> const* const material_ids,
     int const gravitational_axis_id,
     double const gravitational_acceleration,
@@ -47,7 +46,7 @@ LiquidFlowProcess::LiquidFlowProcess(
     BaseLib::ConfigTree const& config)
     : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
-              std::move(secondary_variables), std::move(named_function_caller)),
+              std::move(secondary_variables)),
       _gravitational_axis_id(gravitational_axis_id),
       _gravitational_acceleration(gravitational_acceleration),
       _reference_temperature(reference_temperature),

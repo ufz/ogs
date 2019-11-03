@@ -54,7 +54,6 @@ std::unique_ptr<Process> createLiquidFlowProcess(
 
     SecondaryVariableCollection secondary_variables;
 
-    NumLib::NamedFunctionCaller named_function_caller({"LiquidFlow_pressure"});
 
     ProcessLib::createSecondaryVariables(config, secondary_variables);
 
@@ -104,8 +103,8 @@ std::unique_ptr<Process> createLiquidFlowProcess(
     return std::make_unique<LiquidFlowProcess>(
         std::move(name), mesh, std::move(jacobian_assembler), parameters,
         integration_order, std::move(process_variables),
-        std::move(secondary_variables), std::move(named_function_caller),
-        material_ids, gravity_axis_id, g, reference_temperature, mat_config);
+        std::move(secondary_variables), material_ids, gravity_axis_id, g,
+        reference_temperature, mat_config);
 }
 
 }  // namespace LiquidFlow

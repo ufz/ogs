@@ -55,9 +55,6 @@ std::unique_ptr<Process> createRichardsFlowProcess(
 
     SecondaryVariableCollection secondary_variables;
 
-    NumLib::NamedFunctionCaller named_function_caller(
-        {"RichardsFlow_pressure"});
-
     ProcessLib::createSecondaryVariables(config, secondary_variables);
 
     // Specific body force
@@ -103,8 +100,8 @@ std::unique_ptr<Process> createRichardsFlowProcess(
     return std::make_unique<RichardsFlowProcess>(
         std::move(name), mesh, std::move(jacobian_assembler), parameters,
         integration_order, std::move(process_variables),
-        std::move(process_data), std::move(secondary_variables),
-        std::move(named_function_caller), mat_config, curves);
+        std::move(process_data), std::move(secondary_variables), mat_config,
+        curves);
 }
 
 }  // namespace RichardsFlow

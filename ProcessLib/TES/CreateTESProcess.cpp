@@ -49,16 +49,12 @@ std::unique_ptr<Process> createTESProcess(
 
     SecondaryVariableCollection secondary_variables;
 
-    NumLib::NamedFunctionCaller named_function_caller(
-        {"TES_pressure", "TES_temperature", "TES_vapour_mass_fraction"});
-
     ProcessLib::createSecondaryVariables(config, secondary_variables);
 
     return std::make_unique<TESProcess>(
         std::move(name), mesh, std::move(jacobian_assembler), parameters,
         integration_order, std::move(process_variables),
-        std::move(secondary_variables), std::move(named_function_caller),
-        config);
+        std::move(secondary_variables), config);
 }
 
 }  // namespace TES

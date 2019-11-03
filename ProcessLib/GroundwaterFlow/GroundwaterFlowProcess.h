@@ -38,7 +38,6 @@ public:
             process_variables,
         GroundwaterFlowProcessData&& process_data,
         SecondaryVariableCollection&& secondary_variables,
-        NumLib::NamedFunctionCaller&& named_function_caller,
         std::unique_ptr<ProcessLib::SurfaceFluxData>&& surfaceflux);
 
     //! \name ODESystem interface

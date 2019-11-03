@@ -142,9 +142,6 @@ std::unique_ptr<Process> createComponentTransportProcess(
 
     SecondaryVariableCollection secondary_variables;
 
-    NumLib::NamedFunctionCaller named_function_caller(
-        {"ComponentTransport_concentration_pressure"});
-
     ProcessLib::createSecondaryVariables(config, secondary_variables);
 
     std::unique_ptr<ProcessLib::SurfaceFluxData> surfaceflux;
@@ -161,8 +158,8 @@ std::unique_ptr<Process> createComponentTransportProcess(
         std::move(name), mesh, std::move(jacobian_assembler), parameters,
         integration_order, std::move(process_variables),
         std::move(process_data), std::move(secondary_variables),
-        std::move(named_function_caller), use_monolithic_scheme,
-        std::move(surfaceflux), std::move(process_id_to_component_name_map));
+        use_monolithic_scheme, std::move(surfaceflux),
+        std::move(process_id_to_component_name_map));
 }
 
 }  // namespace ComponentTransport

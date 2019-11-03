@@ -41,7 +41,6 @@ public:
         std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>&&
             process_variables,
         SecondaryVariableCollection&& secondary_variables,
-        NumLib::NamedFunctionCaller&& named_function_caller,
         BaseLib::ConfigTree const& config);
 
     void preTimestepConcreteProcess(std::vector<GlobalVector*> const& x,

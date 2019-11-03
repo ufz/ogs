@@ -167,16 +167,13 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
 
     SecondaryVariableCollection secondary_variables;
 
-    NumLib::NamedFunctionCaller named_function_caller(
-        {"ThermoHydroMechanics_displacement"});
-
     ProcessLib::createSecondaryVariables(config, secondary_variables);
 
     return std::make_unique<ThermoHydroMechanicsProcess<DisplacementDim>>(
         std::move(name), mesh, std::move(jacobian_assembler), parameters,
         integration_order, std::move(process_variables),
         std::move(process_data), std::move(secondary_variables),
-        std::move(named_function_caller), use_monolithic_scheme);
+        use_monolithic_scheme);
 }
 
 template std::unique_ptr<Process> createThermoHydroMechanicsProcess<2>(
