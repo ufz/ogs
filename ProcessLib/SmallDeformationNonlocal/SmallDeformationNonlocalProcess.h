@@ -12,7 +12,6 @@
 
 #include <cassert>
 
-#include "BaseLib/Functional.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "ProcessLib/Process.h"
 

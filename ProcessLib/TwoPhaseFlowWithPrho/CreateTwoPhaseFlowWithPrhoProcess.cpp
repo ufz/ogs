@@ -9,7 +9,6 @@
  */
 #include "CreateTwoPhaseFlowWithPrhoProcess.h"
 #include <cassert>
-#include "BaseLib/Functional.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "ParameterLib/ConstantParameter.h"
 #include "ParameterLib/Utils.h"

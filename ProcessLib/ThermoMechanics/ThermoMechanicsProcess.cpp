@@ -12,7 +12,6 @@
 
 #include <cassert>
 
-#include "BaseLib/Functional.h"
 #include "NumLib/DOF/ComputeSparsityPattern.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "ProcessLib/Output/IntegrationPointWriter.h"
