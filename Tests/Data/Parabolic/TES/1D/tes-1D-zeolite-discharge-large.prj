@@ -13,14 +13,14 @@
                 <vapour_mass_fraction> v_mass_frac </vapour_mass_fraction>
             </process_variables>
             <secondary_variables>
-                <secondary_variable type="static" internal_name="solid_density" output_name="solid_density"/>
-                <secondary_variable type="static" internal_name="reaction_rate" output_name="reaction_rate"/>
-                <secondary_variable type="static" internal_name="darcy_velocity" output_name="darcy_velocity"/>
-                <secondary_variable type="static" internal_name="vapour_partial_pressure" output_name="vapour_partial_pressure"/>
-                <secondary_variable type="static" internal_name="relative_humidity" output_name="relative_humidity"/>
-                <secondary_variable type="static" internal_name="loading" output_name="loading"/>
-                <secondary_variable type="static" internal_name="equilibrium_loading" output_name="equilibrium_loading"/>
-                <secondary_variable type="static" internal_name="reaction_damping_factor" output_name="reaction_damping_factor"/>
+                <secondary_variable internal_name="solid_density" output_name="solid_density"/>
+                <secondary_variable internal_name="reaction_rate" output_name="reaction_rate"/>
+                <secondary_variable internal_name="darcy_velocity" output_name="darcy_velocity"/>
+                <secondary_variable internal_name="vapour_partial_pressure" output_name="vapour_partial_pressure"/>
+                <secondary_variable internal_name="relative_humidity" output_name="relative_humidity"/>
+                <secondary_variable internal_name="loading" output_name="loading"/>
+                <secondary_variable internal_name="equilibrium_loading" output_name="equilibrium_loading"/>
+                <secondary_variable internal_name="reaction_damping_factor" output_name="reaction_damping_factor"/>
             </secondary_variables>
             <reactive_system>
                 <type>Z13XBF</type>

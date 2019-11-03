@@ -103,8 +103,8 @@
                 </porous_medium>
             </material_property>
             <secondary_variables>
-                <secondary_variable type="static" internal_name="saturation" output_name="saturation"/>
-                <secondary_variable type="static" internal_name="pressure_wetting" output_name="pressure_wetting"/>
+                <secondary_variable internal_name="saturation" output_name="saturation"/>
+                <secondary_variable internal_name="pressure_wetting" output_name="pressure_wetting"/>
             </secondary_variables>
             <specific_body_force>0</specific_body_force>
             <mass_lumping> true </mass_lumping>

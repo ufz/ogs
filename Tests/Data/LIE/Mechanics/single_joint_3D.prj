@@ -33,18 +33,18 @@
                 <initial_aperture>aperture0</initial_aperture>
             </fracture_properties>
             <secondary_variables>
-                <secondary_variable type="static" internal_name="sigma_xx" output_name="sigma_xx"/>
-                <secondary_variable type="static" internal_name="sigma_yy" output_name="sigma_yy"/>
-                <secondary_variable type="static" internal_name="sigma_zz" output_name="sigma_zz"/>
-                <secondary_variable type="static" internal_name="sigma_xy" output_name="sigma_xy"/>
-                <secondary_variable type="static" internal_name="sigma_xz" output_name="sigma_xz"/>
-                <secondary_variable type="static" internal_name="sigma_yz" output_name="sigma_yz"/>
-                <secondary_variable type="static" internal_name="epsilon_xx" output_name="epsilon_xx"/>
-                <secondary_variable type="static" internal_name="epsilon_yy" output_name="epsilon_yy"/>
-                <secondary_variable type="static" internal_name="epsilon_zz" output_name="epsilon_zz"/>
-                <secondary_variable type="static" internal_name="epsilon_xy" output_name="epsilon_xy"/>
-                <secondary_variable type="static" internal_name="epsilon_xz" output_name="epsilon_xz"/>
-                <secondary_variable type="static" internal_name="epsilon_yz" output_name="epsilon_yz"/>
+                <secondary_variable internal_name="sigma_xx" output_name="sigma_xx"/>
+                <secondary_variable internal_name="sigma_yy" output_name="sigma_yy"/>
+                <secondary_variable internal_name="sigma_zz" output_name="sigma_zz"/>
+                <secondary_variable internal_name="sigma_xy" output_name="sigma_xy"/>
+                <secondary_variable internal_name="sigma_xz" output_name="sigma_xz"/>
+                <secondary_variable internal_name="sigma_yz" output_name="sigma_yz"/>
+                <secondary_variable internal_name="epsilon_xx" output_name="epsilon_xx"/>
+                <secondary_variable internal_name="epsilon_yy" output_name="epsilon_yy"/>
+                <secondary_variable internal_name="epsilon_zz" output_name="epsilon_zz"/>
+                <secondary_variable internal_name="epsilon_xy" output_name="epsilon_xy"/>
+                <secondary_variable internal_name="epsilon_xz" output_name="epsilon_xz"/>
+                <secondary_variable internal_name="epsilon_yz" output_name="epsilon_yz"/>
             </secondary_variables>
         </process>
     </processes>

@@ -24,15 +24,15 @@
                 <pressure>pressure</pressure>
             </process_variables>
             <secondary_variables>
-                <secondary_variable type="static" internal_name="sigma_xx" output_name="sigma_xx"/>
-                <secondary_variable type="static" internal_name="sigma_yy" output_name="sigma_yy"/>
-                <secondary_variable type="static" internal_name="sigma_zz" output_name="sigma_zz"/>
-                <secondary_variable type="static" internal_name="sigma_xy" output_name="sigma_xy"/>
-                <secondary_variable type="static" internal_name="epsilon_xx" output_name="epsilon_xx"/>
-                <secondary_variable type="static" internal_name="epsilon_yy" output_name="epsilon_yy"/>
-                <secondary_variable type="static" internal_name="epsilon_zz" output_name="epsilon_zz"/>
-                <secondary_variable type="static" internal_name="epsilon_xy" output_name="epsilon_xy"/>
-                <secondary_variable type="static" internal_name="velocity" output_name="velocity"/>
+                <secondary_variable internal_name="sigma_xx" output_name="sigma_xx"/>
+                <secondary_variable internal_name="sigma_yy" output_name="sigma_yy"/>
+                <secondary_variable internal_name="sigma_zz" output_name="sigma_zz"/>
+                <secondary_variable internal_name="sigma_xy" output_name="sigma_xy"/>
+                <secondary_variable internal_name="epsilon_xx" output_name="epsilon_xx"/>
+                <secondary_variable internal_name="epsilon_yy" output_name="epsilon_yy"/>
+                <secondary_variable internal_name="epsilon_zz" output_name="epsilon_zz"/>
+                <secondary_variable internal_name="epsilon_xy" output_name="epsilon_xy"/>
+                <secondary_variable internal_name="velocity" output_name="velocity"/>
             </secondary_variables>
             <specific_body_force>0 -10</specific_body_force>
             <fluid_type>incompressible_fluid</fluid_type>

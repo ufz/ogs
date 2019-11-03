@@ -18,7 +18,7 @@
             </process_variables>
             <specific_body_force>0 0 0</specific_body_force>
             <secondary_variables>
-                <secondary_variable type="static" internal_name="darcy_velocity" output_name="darcy_velocity"/>
+                <secondary_variable internal_name="darcy_velocity" output_name="darcy_velocity"/>
             </secondary_variables>
             <calculatesurfaceflux>
                 <mesh>cube_1x1x1_hex_1e3_complete_surface</mesh>
