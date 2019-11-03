@@ -11,16 +11,12 @@
 #include "CreateSecondaryVariables.h"
 
 #include "BaseLib/ConfigTree.h"
-#include "NumLib/NamedFunctionCaller.h"
-
 #include "SecondaryVariable.h"
 
 namespace ProcessLib
 {
-void createSecondaryVariables(
-    BaseLib::ConfigTree const& config,
-    SecondaryVariableCollection& secondary_variables,
-    NumLib::NamedFunctionCaller& /*named_function_caller*/)
+void createSecondaryVariables(BaseLib::ConfigTree const& config,
+                              SecondaryVariableCollection& secondary_variables)
 {
     auto sec_vars_config =
         //! \ogs_file_param{prj__processes__process__secondary_variables}

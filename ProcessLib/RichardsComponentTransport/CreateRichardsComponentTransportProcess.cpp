@@ -169,8 +169,7 @@ std::unique_ptr<Process> createRichardsComponentTransportProcess(
     NumLib::NamedFunctionCaller named_function_caller(
         {"RichardsComponentTransport_concentration_pressure"});
 
-    ProcessLib::createSecondaryVariables(config, secondary_variables,
-                                         named_function_caller);
+    ProcessLib::createSecondaryVariables(config, secondary_variables);
 
     return std::make_unique<RichardsComponentTransportProcess>(
         std::move(name), mesh, std::move(jacobian_assembler), parameters,

@@ -150,8 +150,7 @@ std::unique_ptr<Process> createHTProcess(
     NumLib::NamedFunctionCaller named_function_caller(
         {"HT_temperature_pressure"});
 
-    ProcessLib::createSecondaryVariables(config, secondary_variables,
-                                         named_function_caller);
+    ProcessLib::createSecondaryVariables(config, secondary_variables);
 
     return std::make_unique<HTProcess>(
         std::move(name), mesh, std::move(jacobian_assembler), parameters,

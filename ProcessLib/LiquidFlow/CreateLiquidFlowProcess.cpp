@@ -56,8 +56,7 @@ std::unique_ptr<Process> createLiquidFlowProcess(
 
     NumLib::NamedFunctionCaller named_function_caller({"LiquidFlow_pressure"});
 
-    ProcessLib::createSecondaryVariables(config, secondary_variables,
-                                         named_function_caller);
+    ProcessLib::createSecondaryVariables(config, secondary_variables);
 
     // Get the gravity vector for the Darcy velocity
     //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__darcy_gravity}

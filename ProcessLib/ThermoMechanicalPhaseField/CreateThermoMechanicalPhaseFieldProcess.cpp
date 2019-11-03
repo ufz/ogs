@@ -236,8 +236,7 @@ std::unique_ptr<Process> createThermoMechanicalPhaseFieldProcess(
     NumLib::NamedFunctionCaller named_function_caller(
         {"temperature_phasefield_displacement"});
 
-    ProcessLib::createSecondaryVariables(config, secondary_variables,
-                                         named_function_caller);
+    ProcessLib::createSecondaryVariables(config, secondary_variables);
 
     return std::make_unique<ThermoMechanicalPhaseFieldProcess<DisplacementDim>>(
         std::move(name), mesh, std::move(jacobian_assembler), parameters,

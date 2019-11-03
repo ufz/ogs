@@ -58,8 +58,7 @@ std::unique_ptr<Process> createRichardsFlowProcess(
     NumLib::NamedFunctionCaller named_function_caller(
         {"RichardsFlow_pressure"});
 
-    ProcessLib::createSecondaryVariables(config, secondary_variables,
-                                         named_function_caller);
+    ProcessLib::createSecondaryVariables(config, secondary_variables);
 
     // Specific body force
     std::vector<double> const b =

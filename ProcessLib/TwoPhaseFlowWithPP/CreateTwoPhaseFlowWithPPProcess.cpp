@@ -60,8 +60,7 @@ std::unique_ptr<Process> createTwoPhaseFlowWithPPProcess(
     NumLib::NamedFunctionCaller named_function_caller(
         {"TwoPhaseFlow_pressure"});
 
-    ProcessLib::createSecondaryVariables(config, secondary_variables,
-                                         named_function_caller);
+    ProcessLib::createSecondaryVariables(config, secondary_variables);
     // Specific body force
     std::vector<double> const b =
         //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_PP__specific_body_force}

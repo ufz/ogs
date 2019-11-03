@@ -230,8 +230,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     NumLib::NamedFunctionCaller named_function_caller(
         {"HydroMechanics_displacement"});
 
-    ProcessLib::createSecondaryVariables(config, secondary_variables,
-                                         named_function_caller);
+    ProcessLib::createSecondaryVariables(config, secondary_variables);
 
     return std::make_unique<HydroMechanicsProcess<DisplacementDim>>(
         std::move(name), mesh, std::move(jacobian_assembler), parameters,

@@ -145,8 +145,7 @@ std::unique_ptr<Process> createComponentTransportProcess(
     NumLib::NamedFunctionCaller named_function_caller(
         {"ComponentTransport_concentration_pressure"});
 
-    ProcessLib::createSecondaryVariables(config, secondary_variables,
-                                         named_function_caller);
+    ProcessLib::createSecondaryVariables(config, secondary_variables);
 
     std::unique_ptr<ProcessLib::SurfaceFluxData> surfaceflux;
     auto surfaceflux_config =

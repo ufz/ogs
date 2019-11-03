@@ -18,16 +18,10 @@ namespace ProcessLib
 {
 class SecondaryVariableCollection;
 }
-namespace NumLib
-{
-class NamedFunctionCaller;
-}
 
 namespace ProcessLib
 {
-void createSecondaryVariables(
-    BaseLib::ConfigTree const& config,
-    SecondaryVariableCollection& secondary_variables,
-    NumLib::NamedFunctionCaller& named_function_caller);
+void createSecondaryVariables(BaseLib::ConfigTree const& config,
+                              SecondaryVariableCollection& secondary_variables);
 
 }  // namespace ProcessLib

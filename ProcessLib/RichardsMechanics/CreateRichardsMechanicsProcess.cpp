@@ -219,8 +219,7 @@ std::unique_ptr<Process> createRichardsMechanicsProcess(
     NumLib::NamedFunctionCaller named_function_caller(
         {"RichardsMechanics_displacement"});
 
-    ProcessLib::createSecondaryVariables(config, secondary_variables,
-                                         named_function_caller);
+    ProcessLib::createSecondaryVariables(config, secondary_variables);
 
     return std::make_unique<RichardsMechanicsProcess<DisplacementDim>>(
         std::move(name), mesh, std::move(jacobian_assembler), parameters,

@@ -147,8 +147,7 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
     NumLib::NamedFunctionCaller named_function_caller(
         {"HeatTransportBHE_Temperature"});
 
-    ProcessLib::createSecondaryVariables(config, secondary_variables,
-                                         named_function_caller);
+    ProcessLib::createSecondaryVariables(config, secondary_variables);
 
     return std::make_unique<HeatTransportBHEProcess>(
         std::move(name), mesh, std::move(jacobian_assembler), parameters,
