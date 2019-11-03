@@ -17,7 +17,6 @@
 #include "NumLib/ODESolver/TimeDiscretization.h"
 #include "ParameterLib/Parameter.h"
 #include "ProcessLib/BoundaryCondition/BoundaryConditionCollection.h"
-#include "ProcessLib/Output/SecondaryVariableContext.h"
 #include "ProcessLib/Output/ExtrapolatorData.h"
 #include "ProcessLib/Output/IntegrationPointWriter.h"
 #include "ProcessLib/Output/SecondaryVariable.h"
