@@ -9,7 +9,6 @@
  */
 
 #include "TESProcess.h"
-#include "BaseLib/Functional.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
 
@@ -189,15 +188,24 @@ void TESProcess::initializeSecondaryVariables()
         "reaction_damping_factor",
         makeEx(1, &TESLocalAssemblerInterface::getIntPtReactionDampingFactor));
 
-    add2nd(
-        "vapour_partial_pressure",
-        {1, BaseLib::easyBind(&TESProcess::computeVapourPartialPressure, this),
-         nullptr});
+    add2nd("vapour_partial_pressure",
+           {1,
+            [&](auto&&... args) -> GlobalVector const& {
+                return computeVapourPartialPressure(args...);
+            },
+            nullptr});
+    namespace PH = std::placeholders;
     add2nd("relative_humidity",
-           {1, BaseLib::easyBind(&TESProcess::computeRelativeHumidity, this),
+           {1,
+            [&](auto&&... args) -> GlobalVector const& {
+                return computeRelativeHumidity(args...);
+            },
             nullptr});
     add2nd("equilibrium_loading",
-           {1, BaseLib::easyBind(&TESProcess::computeEquilibriumLoading, this),
+           {1,
+            [&](auto&&... args) -> GlobalVector const& {
+                return computeEquilibriumLoading(args...);
+            },
             nullptr});
 }
 
