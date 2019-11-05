@@ -21,7 +21,7 @@
                 <process_variable>displacement</process_variable>
             </process_variables>
             <secondary_variables>
-                <secondary_variable type="static" internal_name="sigma" output_name="sigma"/>
+                <secondary_variable internal_name="sigma" output_name="sigma"/>
             </secondary_variables>
         </process>
     </processes>

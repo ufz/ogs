@@ -35,7 +35,6 @@ public:
             process_variables,
         RichardsFlowProcessData&& process_data,
         SecondaryVariableCollection&& secondary_variables,
-        NumLib::NamedFunctionCaller&& named_function_caller,
         BaseLib::ConfigTree const& config,
         std::map<std::string,
                  std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&

@@ -9,7 +9,6 @@
  */
 
 #include "TESProcess.h"
-#include "BaseLib/Functional.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
 
@@ -26,11 +25,10 @@ TESProcess::TESProcess(
     std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>&&
         process_variables,
     SecondaryVariableCollection&& secondary_variables,
-    NumLib::NamedFunctionCaller&& named_function_caller,
     const BaseLib::ConfigTree& config)
     : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
-              std::move(secondary_variables), std::move(named_function_caller))
+              std::move(secondary_variables))
 {
     DBUG("Create TESProcess.");
 
@@ -175,24 +173,6 @@ void TESProcess::initializeSecondaryVariables()
                                             _local_assemblers, method);
     };
 
-    // named functions: vapour partial pressure ////////////////////////////////
-    auto p_V_fct = [=](const double p, const double x_mV) {
-        const double x_nV = Adsorption::AdsorptionReaction::getMolarFraction(
-            x_mV, _assembly_params.M_react, _assembly_params.M_inert);
-        return p*x_nV;
-    };
-    _named_function_caller.addNamedFunction(
-        {"vapour_partial_pressure",
-         {"pressure", "vapour_mass_fraction"},
-         BaseLib::easyBind(std::move(p_V_fct))});
-    _named_function_caller.plug("vapour_partial_pressure", "pressure",
-                                "TES_pressure");
-    _named_function_caller.plug("vapour_partial_pressure",
-                                "vapour_mass_fraction",
-                                "TES_vapour_mass_fraction");
-    // /////////////////////////////////////////////////////////////////////////
-
-
     add2nd("solid_density",
            makeEx(1, &TESLocalAssemblerInterface::getIntPtSolidDensity));
 
@@ -208,11 +188,24 @@ void TESProcess::initializeSecondaryVariables()
         "reaction_damping_factor",
         makeEx(1, &TESLocalAssemblerInterface::getIntPtReactionDampingFactor));
 
+    add2nd("vapour_partial_pressure",
+           {1,
+            [&](auto&&... args) -> GlobalVector const& {
+                return computeVapourPartialPressure(args...);
+            },
+            nullptr});
+    namespace PH = std::placeholders;
     add2nd("relative_humidity",
-           {1, BaseLib::easyBind(&TESProcess::computeRelativeHumidity, this),
+           {1,
+            [&](auto&&... args) -> GlobalVector const& {
+                return computeRelativeHumidity(args...);
+            },
             nullptr});
     add2nd("equilibrium_loading",
-           {1, BaseLib::easyBind(&TESProcess::computeEquilibriumLoading, this),
+           {1,
+            [&](auto&&... args) -> GlobalVector const& {
+                return computeEquilibriumLoading(args...);
+            },
             nullptr});
 }
 

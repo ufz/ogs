@@ -16,7 +16,7 @@
                 <process_variable>pressure</process_variable>
             </process_variables>
             <secondary_variables>
-                <secondary_variable type="static" internal_name="darcy_velocity" output_name="v"/>
+                <secondary_variable internal_name="darcy_velocity" output_name="v"/>
             </secondary_variables>
             <calculatesurfaceflux>
                 <mesh>cube_1x1x1_prism_2e3_complete_surface</mesh>

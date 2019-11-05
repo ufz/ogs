@@ -61,7 +61,6 @@ public:
             process_variables,
         PhaseFieldProcessData<DisplacementDim>&& process_data,
         SecondaryVariableCollection&& secondary_variables,
-        NumLib::NamedFunctionCaller&& named_function_caller,
         bool const use_monolithic_scheme);
 
     //! \name ODESystem interface

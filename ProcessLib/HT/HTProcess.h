@@ -62,7 +62,6 @@ public:
             process_variables,
         HTProcessData&& process_data,
         SecondaryVariableCollection&& secondary_variables,
-        NumLib::NamedFunctionCaller&& named_function_caller,
         bool const use_monolithic_scheme,
         std::unique_ptr<ProcessLib::SurfaceFluxData>&& surfaceflux,
         const int heat_transport_process_id,

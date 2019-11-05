@@ -12,7 +12,6 @@
 
 #include <cassert>
 
-#include "BaseLib/Functional.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "ProcessLib/Process.h"
 
@@ -38,8 +37,7 @@ public:
         std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>&&
             process_variables,
         SmallDeformationNonlocalProcessData<DisplacementDim>&& process_data,
-        SecondaryVariableCollection&& secondary_variables,
-        NumLib::NamedFunctionCaller&& named_function_caller);
+        SecondaryVariableCollection&& secondary_variables);
 
     //! \name ODESystem interface
     //! @{

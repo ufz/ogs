@@ -62,7 +62,7 @@
                 </porous_medium>
             </material_property>
             <secondary_variables>
-                <secondary_variable type="static" internal_name="saturation" output_name="saturation"/>
+                <secondary_variable internal_name="saturation" output_name="saturation"/>
             </secondary_variables>
             <specific_body_force>0 -9.81</specific_body_force>
             <mass_lumping>true</mass_lumping>

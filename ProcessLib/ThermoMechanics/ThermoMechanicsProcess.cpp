@@ -12,7 +12,6 @@
 
 #include <cassert>
 
-#include "BaseLib/Functional.h"
 #include "NumLib/DOF/ComputeSparsityPattern.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "ProcessLib/Output/IntegrationPointWriter.h"
@@ -34,12 +33,10 @@ ThermoMechanicsProcess<DisplacementDim>::ThermoMechanicsProcess(
         process_variables,
     ThermoMechanicsProcessData<DisplacementDim>&& process_data,
     SecondaryVariableCollection&& secondary_variables,
-    NumLib::NamedFunctionCaller&& named_function_caller,
     bool const use_monolithic_scheme)
     : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
-              std::move(secondary_variables), std::move(named_function_caller),
-              use_monolithic_scheme),
+              std::move(secondary_variables), use_monolithic_scheme),
       _process_data(std::move(process_data))
 {
     _nodal_forces = MeshLib::getOrCreateMeshProperty<double>(

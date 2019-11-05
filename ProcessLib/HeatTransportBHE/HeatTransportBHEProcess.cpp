@@ -33,11 +33,10 @@ HeatTransportBHEProcess::HeatTransportBHEProcess(
     std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>&&
         process_variables,
     HeatTransportBHEProcessData&& process_data,
-    SecondaryVariableCollection&& secondary_variables,
-    NumLib::NamedFunctionCaller&& named_function_caller)
+    SecondaryVariableCollection&& secondary_variables)
     : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
-              std::move(secondary_variables), std::move(named_function_caller)),
+              std::move(secondary_variables)),
       _process_data(std::move(process_data)),
       _bheMeshData(getBHEDataInMesh(mesh))
 {

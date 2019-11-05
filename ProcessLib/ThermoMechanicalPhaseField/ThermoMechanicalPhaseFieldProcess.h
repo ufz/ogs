@@ -66,7 +66,6 @@ public:
             process_variables,
         ThermoMechanicalPhaseFieldProcessData<DisplacementDim>&& process_data,
         SecondaryVariableCollection&& secondary_variables,
-        NumLib::NamedFunctionCaller&& named_function_caller,
         int const mechanics_related_process_id,
         int const phase_field_process_id,
         int const heat_conduction_process_id);

@@ -66,7 +66,6 @@ public:
         std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>&&
             process_variables,
         SecondaryVariableCollection&& secondary_variables,
-        NumLib::NamedFunctionCaller&& named_function_caller,
         MeshLib::PropertyVector<int> const* const material_ids,
         int const gravitational_axis_id,
         double const gravitational_acceleration,

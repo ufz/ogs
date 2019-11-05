@@ -15,7 +15,7 @@
                 <process_variable>pressure</process_variable>
             </process_variables>
             <secondary_variables>
-                <secondary_variable type="static" internal_name="darcy_velocity" output_name="mass_flux"/>
+                <secondary_variable internal_name="darcy_velocity" output_name="mass_flux"/>
             </secondary_variables>
         </process>
     </processes>

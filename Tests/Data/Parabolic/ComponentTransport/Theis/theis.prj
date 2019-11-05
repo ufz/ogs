@@ -15,7 +15,7 @@
                 <pressure>pressure</pressure>
             </process_variables>
             <secondary_variables>
-                <secondary_variable type="static" internal_name="darcy_velocity" output_name="darcy_velocity"/>
+                <secondary_variable internal_name="darcy_velocity" output_name="darcy_velocity"/>
             </secondary_variables>
             <!-- <calculatesurfaceflux>
                 <mesh>abstraction_whole_surf</mesh>

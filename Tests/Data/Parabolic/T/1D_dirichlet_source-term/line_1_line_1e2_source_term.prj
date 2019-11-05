@@ -18,7 +18,7 @@
                 <process_variable>temperature</process_variable>
             </process_variables>
             <secondary_variables>
-                <secondary_variable type="static" internal_name="heat_flux_x" output_name="heat_flux_x"/>
+                <secondary_variable internal_name="heat_flux_x" output_name="heat_flux_x"/>
             </secondary_variables>
         </process>
     </processes>

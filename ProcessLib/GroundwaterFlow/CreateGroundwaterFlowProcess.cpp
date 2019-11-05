@@ -65,10 +65,8 @@ std::unique_ptr<Process> createGroundwaterFlowProcess(
 
     SecondaryVariableCollection secondary_variables;
 
-    NumLib::NamedFunctionCaller named_function_caller({"GWFlow_pressure"});
 
-    ProcessLib::createSecondaryVariables(config, secondary_variables,
-                                         named_function_caller);
+    ProcessLib::createSecondaryVariables(config, secondary_variables);
 
     std::unique_ptr<ProcessLib::SurfaceFluxData> surfaceflux;
     auto calculatesurfaceflux_config =
@@ -84,7 +82,7 @@ std::unique_ptr<Process> createGroundwaterFlowProcess(
         std::move(name), mesh, std::move(jacobian_assembler), parameters,
         integration_order, std::move(process_variables),
         std::move(process_data), std::move(secondary_variables),
-        std::move(named_function_caller), std::move(surfaceflux));
+        std::move(surfaceflux));
 }
 
 }  // namespace GroundwaterFlow

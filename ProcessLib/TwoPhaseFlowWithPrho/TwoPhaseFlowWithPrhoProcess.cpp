@@ -34,14 +34,13 @@ TwoPhaseFlowWithPrhoProcess::TwoPhaseFlowWithPrhoProcess(
         process_variables,
     TwoPhaseFlowWithPrhoProcessData&& process_data,
     SecondaryVariableCollection&& secondary_variables,
-    NumLib::NamedFunctionCaller&& named_function_caller,
     BaseLib::ConfigTree const& /*config*/,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
     /*curves*/)
     : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
-              std::move(secondary_variables), std::move(named_function_caller)),
+              std::move(secondary_variables)),
       _process_data(std::move(process_data))
 {
     DBUG("Create TwoPhaseFlowProcess with Prho model.");

@@ -35,8 +35,7 @@ public:
         std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>&&
             process_variables,
         HeatTransportBHEProcessData&& process_data,
-        SecondaryVariableCollection&& secondary_variables,
-        NumLib::NamedFunctionCaller&& named_function_caller);
+        SecondaryVariableCollection&& secondary_variables);
 
     //! \name ODESystem interface
     //! @{

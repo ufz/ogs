@@ -47,7 +47,6 @@ public:
             process_variables,
         TwoPhaseFlowWithPPProcessData&& process_data,
         SecondaryVariableCollection&& secondary_variables,
-        NumLib::NamedFunctionCaller&& named_function_caller,
         std::map<std::string,
                  std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
             curves);

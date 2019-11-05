@@ -11,7 +11,6 @@
 
 #include <cassert>
 
-#include "BaseLib/Functional.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "ParameterLib/ConstantParameter.h"
 #include "ParameterLib/Utils.h"
@@ -60,11 +59,7 @@ std::unique_ptr<Process> createThermalTwoPhaseFlowWithPPProcess(
 
     SecondaryVariableCollection secondary_variables;
 
-    NumLib::NamedFunctionCaller named_function_caller(
-        {"TwoPhaseFlow_pressure"});
-
-    ProcessLib::createSecondaryVariables(config, secondary_variables,
-                                         named_function_caller);
+    ProcessLib::createSecondaryVariables(config, secondary_variables);
     // Specific body force
     std::vector<double> const b =
         //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_THERMAL__specific_body_force}
@@ -142,8 +137,8 @@ std::unique_ptr<Process> createThermalTwoPhaseFlowWithPPProcess(
     return std::make_unique<ThermalTwoPhaseFlowWithPPProcess>(
         std::move(name), mesh, std::move(jacobian_assembler), parameters,
         integration_order, std::move(process_variables),
-        std::move(process_data), std::move(secondary_variables),
-        std::move(named_function_caller), mat_config, curves);
+        std::move(process_data), std::move(secondary_variables), mat_config,
+        curves);
 }
 
 }  // namespace ThermalTwoPhaseFlowWithPP

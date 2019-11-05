@@ -13,7 +13,7 @@
             </process_variables>
             <specific_body_force>0 -1</specific_body_force>
             <secondary_variables>
-                <secondary_variable type="static" internal_name="darcy_velocity" output_name="darcy_velocity"/>
+                <secondary_variable internal_name="darcy_velocity" output_name="darcy_velocity"/>
             </secondary_variables>
         </process>
     </processes>

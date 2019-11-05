@@ -12,13 +12,11 @@
 
 #include <tuple>
 
-#include "NumLib/NamedFunctionCaller.h"
 #include "NumLib/ODESolver/NonlinearSolver.h"
 #include "NumLib/ODESolver/ODESystem.h"
 #include "NumLib/ODESolver/TimeDiscretization.h"
 #include "ParameterLib/Parameter.h"
 #include "ProcessLib/BoundaryCondition/BoundaryConditionCollection.h"
-#include "ProcessLib/Output/SecondaryVariableContext.h"
 #include "ProcessLib/Output/ExtrapolatorData.h"
 #include "ProcessLib/Output/IntegrationPointWriter.h"
 #include "ProcessLib/Output/SecondaryVariable.h"
@@ -55,7 +53,6 @@ public:
             std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>&&
                 process_variables,
             SecondaryVariableCollection&& secondary_variables,
-            NumLib::NamedFunctionCaller&& named_function_caller,
             const bool use_monolithic_scheme = true);
 
     /// Preprocessing before starting assembly for new timestep.
@@ -285,10 +282,6 @@ protected:
 private:
     void initializeExtrapolator();
 
-    /// Finishes the \c _named_function_caller and adds a secondary variable for
-    /// each of the named functions.
-    void finishNamedFunctionsInitialization();
-
     /// Computes and stores global matrix' sparsity pattern from given
     /// DOF-table.
     void computeSparsityPattern();
@@ -303,9 +296,6 @@ protected:
     std::unique_ptr<NumLib::LocalToGlobalIndexMap> _local_to_global_index_map;
 
     SecondaryVariableCollection _secondary_variables;
-
-    NumLib::NamedFunctionCaller _named_function_caller;
-    SecondaryVariableContext _secondary_variable_context;
 
     VectorMatrixAssembler _global_assembler;
 

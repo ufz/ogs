@@ -10,12 +10,10 @@
 
 #include "Process.h"
 
-#include "BaseLib/Functional.h"
 #include "NumLib/DOF/ComputeSparsityPattern.h"
 #include "NumLib/Extrapolation/LocalLinearLeastSquaresExtrapolator.h"
 #include "NumLib/ODESolver/ConvergenceCriterionPerComponent.h"
 #include "ParameterLib/Parameter.h"
-#include "ProcessLib/Output/GlobalVectorFromNamedFunction.h"
 
 #include "ProcessVariable.h"
 #include "CoupledSolutionsForStaggeredScheme.h"
@@ -31,12 +29,10 @@ Process::Process(
     std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>&&
         process_variables,
     SecondaryVariableCollection&& secondary_variables,
-    NumLib::NamedFunctionCaller&& named_function_caller,
     const bool use_monolithic_scheme)
     : name(std::move(name_)),
       _mesh(mesh),
       _secondary_variables(std::move(secondary_variables)),
-      _named_function_caller(std::move(named_function_caller)),
       _global_assembler(std::move(jacobian_assembler)),
       _use_monolithic_scheme(use_monolithic_scheme),
       _coupled_solutions(nullptr),
@@ -107,8 +103,6 @@ void Process::initialize()
 
     initializeConcreteProcess(*_local_to_global_index_map, _mesh,
                               _integration_order);
-
-    finishNamedFunctionsInitialization();
 
     DBUG("Initialize boundary conditions.");
     initializeBoundaryConditions();
@@ -354,26 +348,6 @@ void Process::initializeExtrapolator()
     // TODO: Later on the DOF table can change during the simulation!
     _extrapolator_data = ExtrapolatorData(
         std::move(extrapolator), dof_table_single_component, manage_storage);
-}
-
-void Process::finishNamedFunctionsInitialization()
-{
-    _named_function_caller.applyPlugs();
-
-    for (auto const& named_function :
-         _named_function_caller.getNamedFunctions())
-    {
-        auto const& name = named_function.getName();
-        _secondary_variables.addSecondaryVariable(
-            name,
-            {1, BaseLib::easyBind(
-                    &GlobalVectorFromNamedFunction::call,
-                    GlobalVectorFromNamedFunction(
-                        _named_function_caller.getSpecificFunctionCaller(name),
-                        _mesh, getSingleComponentDOFTable(),
-                        _secondary_variable_context)),
-             nullptr});
-    }
 }
 
 void Process::computeSparsityPattern()
