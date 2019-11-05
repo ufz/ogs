@@ -20,10 +20,6 @@
 #include "LiquidFlowLocalAssembler.h"
 #include "LiquidFlowMaterialProperties.h"
 
-#include "MaterialLib/PorousMedium/Permeability/Permeability.h"
-#include "MaterialLib/PorousMedium/Porosity/Porosity.h"
-#include "MaterialLib/PorousMedium/Storage/Storage.h"
-
 #include "CreateLiquidFlowMaterialProperties.h"
 
 namespace ProcessLib

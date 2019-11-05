@@ -10,17 +10,20 @@
 
 #pragma once
 
-#include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
-#include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "ProcessLib/Process.h"
 #include "TwoPhaseFlowWithPrhoLocalAssembler.h"
 
+namespace MathLib
+{
+class PiecewiseLinearInterpolation;
+}
 namespace MeshLib
 {
-class Element;
 class Mesh;
-template <typename PROP_VAL_TYPE>
-class PropertyVector;
+}  // namespace MeshLib
+namespace NumLib
+{
+class LocalToGlobalIndexMap;
 }
 
 namespace ProcessLib
