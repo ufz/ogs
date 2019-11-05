@@ -194,7 +194,6 @@ void TESProcess::initializeSecondaryVariables()
                 return computeVapourPartialPressure(args...);
             },
             nullptr});
-    namespace PH = std::placeholders;
     add2nd("relative_humidity",
            {1,
             [&](auto&&... args) -> GlobalVector const& {
