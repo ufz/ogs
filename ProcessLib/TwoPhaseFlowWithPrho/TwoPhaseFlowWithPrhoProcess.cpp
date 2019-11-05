@@ -10,15 +10,8 @@
 
 #include "TwoPhaseFlowWithPrhoProcess.h"
 
-#include <cassert>
-#include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
-#include "MeshLib/PropertyVector.h"
-
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
 #include "TwoPhaseFlowWithPrhoLocalAssembler.h"
-
-#include "MaterialLib/PorousMedium/Porosity/Porosity.h"
-#include "MaterialLib/PorousMedium/Storage/Storage.h"
 
 namespace ProcessLib
 {
