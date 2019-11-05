@@ -1107,6 +1107,10 @@ void MainWindow::callGMSH(std::vector<std::string> & selectedGeometries,
                         fname = fname.substr(0, pos);
                     }
                     gmsh_command += " -o " + fname + ".msh";
+                    // Newer gmsh versions write a newer file format for meshes
+                    // per default. At the moment we can't read this new format.
+                    // This is a switch for gmsh to write the 'old' file format.
+                    gmsh_command += " -format msh22";
                     auto const return_value = std::system(gmsh_command.c_str());
                     if (return_value != 0)
                     {
