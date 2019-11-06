@@ -710,37 +710,38 @@ public:
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const override
     {
-        auto const indices = NumLib::getIndices(_element.getID(), dof_table);
-        assert(!indices.empty());
+        assert(x.size() == dof_table.size());
 
-        if (_coupled_solutions == nullptr)  // monolithic scheme
+        auto const n_processes = x.size();
+        std::vector<std::vector<double>> local_x;
+        local_x.reserve(n_processes);
+
+        for (std::size_t process_id = 0; process_id < n_processes; ++process_id)
         {
-            auto const local_x = current_solution.get(indices);
+            auto const indices =
+                NumLib::getIndices(_element.getID(), *dof_table[process_id]);
+            assert(!indices.empty());
+            local_x.push_back(x[process_id]->get(indices));
+        }
 
-            // Assuming that fluid density always depends on the concentration
-            // of the component which is placed at the uppermost.
+        // only one process, must be monolithic.
+        if (n_processes == 1)
+        {
             auto const local_p = Eigen::Map<const NodalVectorType>(
-                &local_x[pressure_index], pressure_size);
+                &local_x[0][pressure_index], pressure_size);
             auto const local_C = Eigen::Map<const NodalVectorType>(
-                &local_x[first_concentration_index], concentration_size);
-
+                &local_x[0][first_concentration_index], concentration_size);
             return calculateIntPtDarcyVelocity(t, local_p, local_C, cache);
         }
-        else  // staggered scheme
+
+        // multiple processes, must be staggered.
         {
-            std::vector<std::vector<GlobalIndexType>>
-                indices_of_all_coupled_processes(
-                    _coupled_solutions->coupled_xs.size(), indices);
-
-            auto const local_xs =
-                getCoupledLocalSolutions(_coupled_solutions->coupled_xs,
-                                         indices_of_all_coupled_processes);
-
+            constexpr int pressure_process_id = 0;
+            constexpr int concentration_process_id = 1;
             auto const local_p = Eigen::Map<const NodalVectorType>(
-                &local_xs[pressure_index], pressure_size);
+                &local_x[pressure_process_id][0], pressure_size);
             auto const local_C = Eigen::Map<const NodalVectorType>(
-                &local_xs[first_concentration_index], concentration_size);
-
+                &local_x[concentration_process_id][0], concentration_size);
             return calculateIntPtDarcyVelocity(t, local_p, local_C, cache);
         }
     }

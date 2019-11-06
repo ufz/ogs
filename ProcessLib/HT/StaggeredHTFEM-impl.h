@@ -299,12 +299,20 @@ StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const
 {
-    auto const indices = NumLib::getIndices(this->_element.getID(), dof_table);
-    assert(!indices.empty());
-    std::vector<std::vector<GlobalIndexType>> indices_of_all_coupled_processes =
-        {indices, indices};
-    auto const local_xs = getCoupledLocalSolutions(
-        this->_coupled_solutions->coupled_xs, indices_of_all_coupled_processes);
+    assert(x.size() == dof_table.size());
+    auto const n_processes = dof_table.size();
+
+    std::vector<std::vector<GlobalIndexType>> indices_of_all_coupled_processes;
+    indices_of_all_coupled_processes.reserve(n_processes);
+    for (std::size_t process_id = 0; process_id < n_processes; ++process_id)
+    {
+        auto const indices =
+            NumLib::getIndices(this->_element.getID(), *dof_table[process_id]);
+        assert(!indices.empty());
+        indices_of_all_coupled_processes.push_back(indices);
+    }
+    auto const local_xs =
+        getCoupledLocalSolutions(x, indices_of_all_coupled_processes);
 
     return this->getIntPtDarcyVelocityLocal(t, local_xs, cache);
 }
