@@ -60,7 +60,7 @@
                 <phase>
                     <type>AqueousLiquid</type>
                     <properties>
-						<property>
+                        <property>
                             <name>phase_velocity</name>
                             <type>Constant</type>
                             <value>0 0 0</value>
@@ -109,15 +109,15 @@
                 </phase>
             </phases>
             <properties>
-				<property>
+                <property>
                     <name>porosity</name>
                     <type>Constant</type>
                     <value>0</value>
                 </property>
-				<property>
-                     <name>thermal_conductivity</name>
-                     <type>Constant</type>
-                     <value>2.78018</value>
+                <property>
+                    <name>thermal_conductivity</name>
+                    <type>Constant</type>
+                    <value>2.78018</value>
                 </property>
                 <property>
                     <name>thermal_longitudinal_dispersivity</name>
