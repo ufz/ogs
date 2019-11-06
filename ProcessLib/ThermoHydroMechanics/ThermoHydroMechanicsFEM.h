@@ -136,8 +136,8 @@ public:
 
     std::vector<double> const& getIntPtDarcyVelocity(
         const double t,
-        GlobalVector const& current_solution,
-        NumLib::LocalToGlobalIndexMap const& dof_table,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const override;
 
 private:
@@ -192,8 +192,8 @@ private:
 
     std::vector<double> const& getIntPtSigma(
         const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
         std::vector<double>& cache) const override
     {
         static const int kelvin_vector_size =
@@ -219,8 +219,8 @@ private:
 
     virtual std::vector<double> const& getIntPtEpsilon(
         const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
         std::vector<double>& cache) const override
     {
         auto const kelvin_vector_size =

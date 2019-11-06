@@ -66,8 +66,8 @@ public:
 
     virtual std::vector<double> const& getIntPtDarcyVelocity(
         const double t,
-        GlobalVector const& current_solution,
-        NumLib::LocalToGlobalIndexMap const& dof_table,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const = 0;
 
 protected:
@@ -706,8 +706,8 @@ public:
 
     std::vector<double> const& getIntPtDarcyVelocity(
         const double t,
-        GlobalVector const& current_solution,
-        NumLib::LocalToGlobalIndexMap const& dof_table,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const override
     {
         auto const indices = NumLib::getIndices(_element.getID(), dof_table);

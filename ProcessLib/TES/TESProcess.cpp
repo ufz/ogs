@@ -161,14 +161,15 @@ void TESProcess::initializeSecondaryVariables()
     };
 
     // creates an extrapolator
-    auto makeEx = [&](
-        unsigned const n_components,
-        std::vector<double> const& (TESLocalAssemblerInterface::*method)(
-            const double /*t*/,
-            GlobalVector const& /*current_solution*/,
-            NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-            std::vector<double>& /*cache*/)
-            const) -> SecondaryVariableFunctions {
+    auto makeEx =
+        [&](unsigned const n_components,
+            std::vector<double> const& (TESLocalAssemblerInterface::*method)(
+                const double /*t*/,
+                std::vector<GlobalVector*> const& /*x*/,
+                std::vector<
+                    NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+                std::vector<double>& /*cache*/)
+                const) -> SecondaryVariableFunctions {
         return ProcessLib::makeExtrapolator(n_components, getExtrapolator(),
                                             _local_assemblers, method);
     };
@@ -317,8 +318,8 @@ NumLib::IterationResult TESProcess::postIterationConcreteProcess(
 
 GlobalVector const& TESProcess::computeVapourPartialPressure(
     const double /*t*/,
-    GlobalVector const& x,
-    NumLib::LocalToGlobalIndexMap const& dof_table,
+    std::vector<GlobalVector*> const& x,
+    std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
     std::unique_ptr<GlobalVector>& result_cache)
 {
     assert(&dof_table == _local_to_global_index_map.get());
@@ -349,8 +350,8 @@ GlobalVector const& TESProcess::computeVapourPartialPressure(
 
 GlobalVector const& TESProcess::computeRelativeHumidity(
     double const /*t*/,
-    GlobalVector const& x,
-    NumLib::LocalToGlobalIndexMap const& dof_table,
+    std::vector<GlobalVector*> const& xs,
+    std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
     std::unique_ptr<GlobalVector>& result_cache)
 {
     assert(&dof_table == _local_to_global_index_map.get());
@@ -386,8 +387,8 @@ GlobalVector const& TESProcess::computeRelativeHumidity(
 
 GlobalVector const& TESProcess::computeEquilibriumLoading(
     double const /*t*/,
-    GlobalVector const& x,
-    NumLib::LocalToGlobalIndexMap const& dof_table,
+    std::vector<GlobalVector*> const& xs,
+    std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
     std::unique_ptr<GlobalVector>& result_cache)
 {
     assert(&dof_table == _local_to_global_index_map.get());

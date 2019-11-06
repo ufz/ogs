@@ -146,8 +146,9 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
             [fct, num_components](
                 LocalAssemblerInterface const& loc_asm,
                 const double /*t*/,
-                GlobalVector const& /*current_solution*/,
-                NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
+                std::vector<GlobalVector*> const& /*x*/,
+                std::vector<
+                    NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
                 std::vector<double>& cache) -> std::vector<double> const& {
             const unsigned num_int_pts = loc_asm.getNumberOfIntegrationPoints();
 

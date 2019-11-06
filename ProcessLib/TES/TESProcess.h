@@ -73,20 +73,20 @@ private:
 
     GlobalVector const& computeVapourPartialPressure(
         const double t,
-        GlobalVector const& x,
-        NumLib::LocalToGlobalIndexMap const& dof_table,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::unique_ptr<GlobalVector>& result_cache);
 
     GlobalVector const& computeRelativeHumidity(
         const double t,
-        GlobalVector const& x,
-        NumLib::LocalToGlobalIndexMap const& dof_table,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::unique_ptr<GlobalVector>& result_cache);
 
     GlobalVector const& computeEquilibriumLoading(
         const double t,
-        GlobalVector const& x,
-        NumLib::LocalToGlobalIndexMap const& dof_table,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::unique_ptr<GlobalVector>& result_cache);
 
     std::vector<std::unique_ptr<TESLocalAssemblerInterface>> _local_assemblers;

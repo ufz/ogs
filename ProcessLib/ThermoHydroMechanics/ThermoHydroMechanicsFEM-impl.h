@@ -440,12 +440,12 @@ template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           typename IntegrationMethod, int DisplacementDim>
 std::vector<double> const& ThermoHydroMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
-    DisplacementDim>::getIntPtDarcyVelocity(const double t,
-                                            GlobalVector const&
-                                                current_solution,
-                                            NumLib::LocalToGlobalIndexMap const&
-                                                dof_table,
-                                            std::vector<double>& cache) const
+    DisplacementDim>::
+    getIntPtDarcyVelocity(
+        const double t,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+        std::vector<double>& cache) const
 {
     auto const num_intpts = _ip_data.size();
 

@@ -214,10 +214,11 @@ template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
 std::vector<double> const&
 LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::
-    getIntPtDarcyVelocity(const double t,
-                          GlobalVector const& current_solution,
-                          NumLib::LocalToGlobalIndexMap const& dof_table,
-                          std::vector<double>& cache) const
+    getIntPtDarcyVelocity(
+        const double t,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+        std::vector<double>& cache) const
 {
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
@@ -302,10 +303,11 @@ template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
 std::vector<double> const&
 LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::
-    getIntPtSaturation(const double t,
-                       GlobalVector const& current_solution,
-                       NumLib::LocalToGlobalIndexMap const& dof_table,
-                       std::vector<double>& cache) const
+    getIntPtSaturation(
+        const double t,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+        std::vector<double>& cache) const
 {
     ParameterLib::SpatialPosition pos;
     pos.setElementID(_element_id);

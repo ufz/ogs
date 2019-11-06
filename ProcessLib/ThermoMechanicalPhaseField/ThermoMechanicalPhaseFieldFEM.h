@@ -275,8 +275,8 @@ public:
 private:
     std::vector<double> const& getIntPtSigma(
         const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
         std::vector<double>& cache) const override
     {
         static const int kelvin_vector_size =
@@ -301,8 +301,8 @@ private:
 
     std::vector<double> const& getIntPtEpsilon(
         const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
         std::vector<double>& cache) const override
     {
         auto const kelvin_vector_size =
@@ -327,8 +327,8 @@ private:
 
     std::vector<double> const& getIntPtHeatFlux(
         const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
         std::vector<double>& cache) const override
     {
         using KelvinVectorType = typename BMatricesType::KelvinVectorType;

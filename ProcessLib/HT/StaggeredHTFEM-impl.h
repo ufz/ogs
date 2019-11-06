@@ -293,10 +293,11 @@ template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
 std::vector<double> const&
 StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
-    getIntPtDarcyVelocity(const double t,
-                          GlobalVector const& /*current_solution*/,
-                          NumLib::LocalToGlobalIndexMap const& dof_table,
-                          std::vector<double>& cache) const
+    getIntPtDarcyVelocity(
+        const double t,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+        std::vector<double>& cache) const
 {
     auto const indices = NumLib::getIndices(this->_element.getID(), dof_table);
     assert(!indices.empty());

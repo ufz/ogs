@@ -54,22 +54,23 @@ public:
 
     virtual std::vector<double> const& getStoredQuantity(
         const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
         std::vector<double>& /*cache*/) const = 0;
 
     virtual std::vector<double> const& getDerivedQuantity(
         const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
         std::vector<double>& cache) const = 0;
 };
 
 using IntegrationPointValuesMethod = std::vector<double> const& (
     LocalAssemblerDataInterface::*)(const double /*t*/,
-                                    GlobalVector const& /*current_solution*/,
-                                    NumLib::
-                                        LocalToGlobalIndexMap const& /*dof_table*/
+                                    std::vector<GlobalVector*> const& /*x*/,
+                                    std::vector<
+                                        NumLib::
+                                            LocalToGlobalIndexMap const*> const& /*dof_table*/
                                     ,
                                     std::vector<double>& /*cache*/) const;
 
@@ -105,8 +106,8 @@ public:
 
     std::vector<double> const& getStoredQuantity(
         const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
         std::vector<double>& /*cache*/) const override
     {
         return _int_pt_values;
@@ -114,8 +115,8 @@ public:
 
     std::vector<double> const& getDerivedQuantity(
         const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
         std::vector<double>& cache) const override
     {
         cache.clear();
@@ -188,7 +189,7 @@ public:
 
     std::pair<GlobalVector const*, GlobalVector const*> extrapolate(
         IntegrationPointValuesMethod method, const double t,
-        const GlobalVector& x) const
+        std::vector<GlobalVector*> const& x) const
     {
         auto const extrapolatables =
             NumLib::makeExtrapolatable(_local_assemblers, method);
@@ -212,10 +213,10 @@ private:
     std::unique_ptr<ExtrapolatorInterface> _extrapolator;
 };
 
-void extrapolate(ExtrapolationTestProcess const& pcs,
-                 IntegrationPointValuesMethod method,
-                 GlobalVector const& expected_extrapolated_global_nodal_values,
-                 std::size_t const nnodes, std::size_t const nelements)
+void extrapolate(
+    ExtrapolationTestProcess const& pcs, IntegrationPointValuesMethod method,
+    std::vector<GlobalVector*> const& expected_extrapolated_global_nodal_values,
+    std::size_t const nnodes, std::size_t const nelements)
 {
     namespace LinAlg = MathLib::LinAlg;
 
