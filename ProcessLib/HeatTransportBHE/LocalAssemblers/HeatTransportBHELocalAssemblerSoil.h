@@ -39,7 +39,6 @@ public:
     using NodalRowVectorType = typename ShapeMatricesType::NodalRowVectorType;
 
     using ShapeMatrices = typename ShapeMatricesType::ShapeMatrices;
-    using GlobalDimVectorType = typename ShapeMatricesType::GlobalDimVectorType;
     using GlobalDimNodalMatrixType =
         typename ShapeMatricesType::GlobalDimNodalMatrixType;
 

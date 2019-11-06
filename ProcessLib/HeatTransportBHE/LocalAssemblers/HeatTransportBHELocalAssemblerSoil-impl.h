@@ -14,7 +14,6 @@
 #include <vector>
 
 #include "MaterialLib/MPL/Medium.h"
-#include "MaterialLib/MPL/Utils/FormEffectiveThermalConductivity.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
@@ -95,6 +94,8 @@ void HeatTransportBHELocalAssemblerSoil<ShapeFunction, IntegrationMethod>::
     auto const& solid_phase = medium.phase("Solid");
     auto const& liquid_phase = medium.phase("AqueousLiquid");
 
+    auto const I = Eigen::Matrix<double, 3, 3>::Identity();
+
     MaterialPropertyLib::VariableArray vars;
 
     unsigned const n_integration_points =
@@ -108,12 +109,7 @@ void HeatTransportBHELocalAssemblerSoil<ShapeFunction, IntegrationMethod>::
         auto const& dNdx = ip_data.dNdx;
         auto const& w = ip_data.integration_weight;
 
-        auto const k_s =
-            solid_phase
-                .property(
-                    MaterialPropertyLib::PropertyType::thermal_conductivity)
-                .template value<double>(vars, pos, t);
-
+        // for now only using the solid and liquid phase parameters
         auto const density_s =
             solid_phase.property(MaterialPropertyLib::PropertyType::density)
                 .template value<double>(vars, pos, t);
@@ -122,12 +118,6 @@ void HeatTransportBHELocalAssemblerSoil<ShapeFunction, IntegrationMethod>::
             solid_phase
                 .property(
                     MaterialPropertyLib::PropertyType::specific_heat_capacity)
-                .template value<double>(vars, pos, t);
-
-        auto const k_f =
-            liquid_phase
-                .property(
-                    MaterialPropertyLib::PropertyType::thermal_conductivity)
                 .template value<double>(vars, pos, t);
 
         auto const density_f =
@@ -144,8 +134,6 @@ void HeatTransportBHELocalAssemblerSoil<ShapeFunction, IntegrationMethod>::
             medium.property(MaterialPropertyLib::PropertyType::porosity)
                 .template value<double>(vars, pos, t);
 
-        // for now only using the solid and liquid phase parameters
-
         auto const velocity_arr =
             liquid_phase
                 .property(MaterialPropertyLib::PropertyType::phase_velocity)
@@ -153,9 +141,41 @@ void HeatTransportBHELocalAssemblerSoil<ShapeFunction, IntegrationMethod>::
         auto velocity = Eigen::Map<Eigen::Matrix<double, 1, 3> const>(
             std::get<MaterialPropertyLib::Vector>(velocity_arr).data(), 1, 3);
 
+        // calculate the hydrodynamic thermodispersion tensor
+        auto const thermal_conductivity =
+            MaterialPropertyLib::formEigenTensor<3>(
+                medium.property(MaterialPropertyLib::PropertyType::thermal_conductivity)
+                    .value(vars, pos, t));
+
+        auto thermal_conductivity_dispersivity = thermal_conductivity;
+
+        double const velocity_magnitude = velocity.norm();
+
+        if (velocity_magnitude >= std::numeric_limits<double>::epsilon())
+        {
+            auto const thermal_dispersivity_longitudinal =
+                medium
+                    .property(MaterialPropertyLib::PropertyType::
+                                  thermal_longitudinal_dispersivity)
+                    .template value<double>();
+            auto const thermal_dispersivity_transversal =
+                medium
+                    .property(MaterialPropertyLib::PropertyType::
+                                  thermal_transversal_dispersivity)
+                    .template value<double>();
+
+            auto const thermal_dispersivity =
+                density_f * heat_capacity_f *
+                (thermal_dispersivity_transversal * velocity_magnitude * I +
+                 (thermal_dispersivity_longitudinal -
+                  thermal_dispersivity_transversal) /
+                     velocity_magnitude * velocity.transpose() * velocity);
+            thermal_conductivity_dispersivity += thermal_dispersivity;
+        }
+
         // assemble Conductance matrix
         local_K.noalias() +=
-            (dNdx.transpose() * dNdx * k_s +
+            (dNdx.transpose() * thermal_conductivity_dispersivity * dNdx +
              N.transpose() * velocity * dNdx * density_f * heat_capacity_f) *
             w;
 
