@@ -657,9 +657,11 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
 {
     auto const num_intpts = _ip_data.size();
 
-    auto const indices = NumLib::getIndices(_element.getID(), dof_table);
+    constexpr int process_id = 0;  // monolithic scheme
+    auto const indices =
+        NumLib::getIndices(_element.getID(), *dof_table[process_id]);
     assert(!indices.empty());
-    auto const local_x = current_solution.get(indices);
+    auto const local_x = x[process_id]->get(indices);
 
     cache.clear();
     auto cache_matrix = MathLib::createZeroedMatrix<Eigen::Matrix<

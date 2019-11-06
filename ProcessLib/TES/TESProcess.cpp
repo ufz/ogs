@@ -138,8 +138,8 @@ TESProcess::TESProcess(
 }
 
 void TESProcess::initializeConcreteProcess(
-    NumLib::LocalToGlobalIndexMap const& dof_table,
-    MeshLib::Mesh const& mesh, unsigned const integration_order)
+    NumLib::LocalToGlobalIndexMap const& dof_table, MeshLib::Mesh const& mesh,
+    unsigned const integration_order)
 {
     const int monolithic_process_id = 0;
     ProcessLib::ProcessVariable const& pv =
@@ -322,7 +322,7 @@ GlobalVector const& TESProcess::computeVapourPartialPressure(
     std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
     std::unique_ptr<GlobalVector>& result_cache)
 {
-    assert(&dof_table == _local_to_global_index_map.get());
+    assert(dof_table[0] == _local_to_global_index_map.get());
 
     auto const& dof_table_single = getSingleComponentDOFTable();
     result_cache = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(
@@ -334,10 +334,10 @@ GlobalVector const& TESProcess::computeVapourPartialPressure(
 
     for (GlobalIndexType node_id = 0; node_id < nnodes; ++node_id)
     {
-        auto const p = NumLib::getNodalValue(x, _mesh, dof_table, node_id,
-                                             COMPONENT_ID_PRESSURE);
-        auto const x_mV = NumLib::getNodalValue(x, _mesh, dof_table, node_id,
-                                                COMPONENT_ID_MASS_FRACTION);
+        auto const p = NumLib::getNodalValue(*x[0], _mesh, *dof_table[0],
+                                             node_id, COMPONENT_ID_PRESSURE);
+        auto const x_mV = NumLib::getNodalValue(
+            *x[0], _mesh, *dof_table[0], node_id, COMPONENT_ID_MASS_FRACTION);
 
         auto const x_nV = Adsorption::AdsorptionReaction::getMolarFraction(
             x_mV, _assembly_params.M_react, _assembly_params.M_inert);
@@ -354,7 +354,7 @@ GlobalVector const& TESProcess::computeRelativeHumidity(
     std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
     std::unique_ptr<GlobalVector>& result_cache)
 {
-    assert(&dof_table == _local_to_global_index_map.get());
+    assert(dof_table[0] == _local_to_global_index_map.get());
 
     auto const& dof_table_single = getSingleComponentDOFTable();
     result_cache = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(
@@ -364,14 +364,15 @@ GlobalVector const& TESProcess::computeRelativeHumidity(
 
     GlobalIndexType const nnodes = _mesh.getNumberOfNodes();
 
+    auto const& x = *xs[0];  // monolithic process
     for (GlobalIndexType node_id = 0; node_id < nnodes; ++node_id)
     {
-        auto const p = NumLib::getNodalValue(x, _mesh, dof_table, node_id,
+        auto const p = NumLib::getNodalValue(x, _mesh, *dof_table[0], node_id,
                                              COMPONENT_ID_PRESSURE);
-        auto const T = NumLib::getNodalValue(x, _mesh, dof_table, node_id,
+        auto const T = NumLib::getNodalValue(x, _mesh, *dof_table[0], node_id,
                                              COMPONENT_ID_TEMPERATURE);
-        auto const x_mV = NumLib::getNodalValue(x, _mesh, dof_table, node_id,
-                                                COMPONENT_ID_MASS_FRACTION);
+        auto const x_mV = NumLib::getNodalValue(
+            x, _mesh, *dof_table[0], node_id, COMPONENT_ID_MASS_FRACTION);
 
         auto const x_nV = Adsorption::AdsorptionReaction::getMolarFraction(
             x_mV, _assembly_params.M_react, _assembly_params.M_inert);
@@ -391,7 +392,7 @@ GlobalVector const& TESProcess::computeEquilibriumLoading(
     std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
     std::unique_ptr<GlobalVector>& result_cache)
 {
-    assert(&dof_table == _local_to_global_index_map.get());
+    assert(dof_table[0] == _local_to_global_index_map.get());
 
     auto const& dof_table_single = getSingleComponentDOFTable();
     result_cache = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(
@@ -401,14 +402,15 @@ GlobalVector const& TESProcess::computeEquilibriumLoading(
 
     GlobalIndexType const nnodes = _mesh.getNumberOfNodes();
 
+    auto const& x = *xs[0];  // monolithic process
     for (GlobalIndexType node_id = 0; node_id < nnodes; ++node_id)
     {
-        auto const p = NumLib::getNodalValue(x, _mesh, dof_table, node_id,
+        auto const p = NumLib::getNodalValue(x, _mesh, *dof_table[0], node_id,
                                              COMPONENT_ID_PRESSURE);
-        auto const T = NumLib::getNodalValue(x, _mesh, dof_table, node_id,
+        auto const T = NumLib::getNodalValue(x, _mesh, *dof_table[0], node_id,
                                              COMPONENT_ID_TEMPERATURE);
         auto const x_mV = NumLib::getNodalValue(
-            x, _mesh, dof_table, node_id, COMPONENT_ID_MASS_FRACTION);
+            x, _mesh, *dof_table[0], node_id, COMPONENT_ID_MASS_FRACTION);
 
         auto const x_nV = Adsorption::AdsorptionReaction::getMolarFraction(
             x_mV, _assembly_params.M_react, _assembly_params.M_inert);

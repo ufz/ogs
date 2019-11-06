@@ -194,9 +194,10 @@ public:
         auto const extrapolatables =
             NumLib::makeExtrapolatable(_local_assemblers, method);
 
-        _extrapolator->extrapolate(1, extrapolatables, t, x, *_dof_table);
+        _extrapolator->extrapolate(1, extrapolatables, t, x,
+                                   {_dof_table.get()});
         _extrapolator->calculateResiduals(1, extrapolatables, t, x,
-                                          *_dof_table);
+                                          {_dof_table.get()});
 
         return {&_extrapolator->getNodalValues(),
                 &_extrapolator->getElementResiduals()};
@@ -238,7 +239,7 @@ void extrapolate(
     EXPECT_GT(tolerance_res, res_norm);
 
     auto delta_x = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(
-        expected_extrapolated_global_nodal_values);
+        *expected_extrapolated_global_nodal_values[0]);
     LinAlg::axpy(*delta_x, -1.0, x_extra);  // delta_x = x_expected - x_extra
 
     auto const dx_norm = LinAlg::normMax(*delta_x);
@@ -286,7 +287,8 @@ TEST(NumLib, DISABLED_Extrapolation)
 
         // generate random nodal values
         MathLib::MatrixSpecifications spec{nnodes, nnodes, nullptr, nullptr};
-        auto x = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(spec);
+        auto const x =
+            MathLib::MatrixVectorTraits<GlobalVector>::newInstance(spec);
 
         fillVectorRandomly(*x);
 
@@ -294,10 +296,11 @@ TEST(NumLib, DISABLED_Extrapolation)
 
         // test extrapolation of a quantity that is stored in the local
         // assembler
+        std::vector<GlobalVector*> xs{x.get()};
         ExtrapolationTest::extrapolate(
             pcs,
             &ExtrapolationTest::LocalAssemblerDataInterface::getStoredQuantity,
-            *x, nnodes, nelements);
+            xs, nnodes, nelements);
 
         // expect 2*x as extraplation result for derived quantity
         auto two_x = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(*x);
@@ -305,9 +308,10 @@ TEST(NumLib, DISABLED_Extrapolation)
 
         // test extrapolation of a quantity that is derived from some
         // integration point values
+        std::vector<GlobalVector*> two_xs{two_x.get()};
         ExtrapolationTest::extrapolate(
             pcs,
             &ExtrapolationTest::LocalAssemblerDataInterface::getDerivedQuantity,
-            *two_x, nnodes, nelements);
+            two_xs, nnodes, nelements);
     }
 }

@@ -223,9 +223,11 @@ LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
 
-    auto const indices = NumLib::getIndices(_element_id, dof_table);
+    constexpr int process_id = 0;  // monolithic scheme
+    auto const indices =
+        NumLib::getIndices(_element_id, *dof_table[process_id]);
     assert(!indices.empty());
-    auto const local_x = current_solution.get(indices);
+    auto const local_x = x[process_id]->get(indices);
 
     cache.clear();
     auto cache_mat = MathLib::createZeroedMatrix<
@@ -315,9 +317,11 @@ LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
 
-    auto const indices = NumLib::getIndices(_element_id, dof_table);
+    constexpr int process_id = 0;  // monolithic scheme
+    auto const indices =
+        NumLib::getIndices(_element_id, *dof_table[process_id]);
     assert(!indices.empty());
-    auto const local_x = current_solution.get(indices);
+    auto const local_x = x[process_id]->get(indices);
 
     cache.clear();
     auto cache_vec = MathLib::createZeroedVector<LocalVectorType>(

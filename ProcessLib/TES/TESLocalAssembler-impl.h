@@ -274,9 +274,11 @@ TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::
 {
     auto const n_integration_points = _integration_method.getNumberOfPoints();
 
-    auto const indices = NumLib::getIndices(_element.getID(), dof_table);
+    constexpr int process_id = 0;  // monolithic scheme
+    auto const indices =
+        NumLib::getIndices(_element.getID(), *dof_table[process_id]);
     assert(!indices.empty());
-    auto const local_x = current_solution.get(indices);
+    auto const local_x = x[process_id]->get(indices);
     // local_x is ordered by component, local_x_mat is row major
     auto const local_x_mat = MathLib::toMatrix<
         Eigen::Matrix<double, NODAL_DOF, Eigen::Dynamic, Eigen::RowMajor>>(
