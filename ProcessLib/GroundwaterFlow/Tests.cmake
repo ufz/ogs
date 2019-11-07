@@ -721,6 +721,18 @@ AddTest(
 )
 
 AddTest(
+    NAME GroundWaterFlowProcess_NeumannBC_In_Center_Point_2D_domain
+    PATH Elliptic/quarter_circle
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS quarter_circle_neumann.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    DIFF_DATA
+    quarter_circle_r_1.vtu neumann_in_center_pcs_0_ts_1_t_1.000000.vtu pressure_nodal_source_term pressure 1e-14 1e-14
+)
+
+AddTest(
     NAME GroundWaterFlowProcess_VolumetricSourceTerm_sin_x_sin_y_square_1e3
     PATH Elliptic/square_1x1_GroundWaterFlow
     EXECUTABLE ogs
