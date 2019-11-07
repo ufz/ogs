@@ -215,11 +215,11 @@ NumLib::NonlinearSolverStatus solveOneTimeStepOneProcess(
 
     time_disc.nextTimestep(t, delta_t);
 
-    auto const post_iteration_callback = [&](int iteration,
-                                             GlobalVector const& x) {
-        output_control.doOutputNonlinearIteration(process, process_id, timestep,
-                                                  t, x, iteration);
-    };
+    auto const post_iteration_callback =
+        [&](int iteration, std::vector<GlobalVector*> const& x) {
+            output_control.doOutputNonlinearIteration(
+                process, process_id, timestep, t, x, iteration);
+        };
 
     auto const nonlinear_solver_status =
         nonlinear_solver.solve(x, post_iteration_callback, process_id);
@@ -645,8 +645,7 @@ NumLib::NonlinearSolverStatus TimeLoop::solveUncoupledEquationSystems(
             {
                 // save unsuccessful solution
                 _output->doOutputAlways(process_data->process, process_id,
-                                        timestep_id, t,
-                                        *_process_solutions[process_id]);
+                                        timestep_id, t, _process_solutions);
                 OGS_FATAL(nonlinear_fixed_dt_fails_info.data());
             }
 
@@ -696,8 +695,6 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
             BaseLib::RunTime time_timestep_process;
             time_timestep_process.start();
 
-            auto& x = *_process_solutions[process_id];
-
             CoupledSolutionsForStaggeredScheme coupled_solutions(
                 _process_solutions);
 
@@ -726,13 +723,14 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
                 {
                     // save unsuccessful solution
                     _output->doOutputAlways(process_data->process, process_id,
-                                            timestep_id, t, x);
+                                            timestep_id, t, _process_solutions);
                     OGS_FATAL(nonlinear_fixed_dt_fails_info.data());
                 }
                 break;
             }
 
             // Check the convergence of the coupling iteration
+            auto& x = *_process_solutions[process_id];
             auto& x_old = *_solutions_of_last_cpl_iteration[process_id];
             if (global_coupling_iteration > 0)
             {
@@ -832,7 +830,8 @@ void TimeLoop::outputSolutions(bool const output_initial_condition,
                 .setCoupledTermForTheStaggeredSchemeToLocalAssemblers(
                     process_id);
         }
-        (output_object.*output_class_member)(pcs, process_id, timestep, t, x);
+        (output_object.*output_class_member)(pcs, process_id, timestep, t,
+                                             _process_solutions);
     }
 }
 

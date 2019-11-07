@@ -50,7 +50,8 @@ void NonlinearSolver<NonlinearSolverTag::Picard>::
 
 NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
     std::vector<GlobalVector*>& x,
-    std::function<void(int, GlobalVector const&)> const& postIterationCallback,
+    std::function<void(int, std::vector<GlobalVector*> const&)> const&
+        postIterationCallback,
     int const process_id)
 {
     namespace LinAlg = MathLib::LinAlg;
@@ -126,7 +127,7 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
         {
             if (postIterationCallback)
             {
-                postIterationCallback(iteration, *x_new[process_id]);
+                postIterationCallback(iteration, x_new);
             }
 
             switch (sys.postIteration(*x_new[process_id]))
@@ -234,7 +235,8 @@ void NonlinearSolver<NonlinearSolverTag::Newton>::
 
 NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
     std::vector<GlobalVector*>& x,
-    std::function<void(int, GlobalVector const&)> const& postIterationCallback,
+    std::function<void(int, std::vector<GlobalVector*> const&)> const&
+        postIterationCallback,
     int const process_id)
 {
     namespace LinAlg = MathLib::LinAlg;
@@ -310,16 +312,20 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
             // TODO could be solved in a better way
             // cf.
             // http://www.mcs.anl.gov/petsc/petsc-current/docs/manualpages/Vec/VecWAXPY.html
-            auto& x_new = NumLib::GlobalVectorProvider::provider.getVector(
-                *x[process_id], _x_new_id);
-            LinAlg::axpy(x_new, -_damping, minus_delta_x);
+
+            // Copy pointers, replace the one for the given process id.
+            std::vector<GlobalVector*> x_new{x};
+            x_new[process_id] =
+                &NumLib::GlobalVectorProvider::provider.getVector(
+                    *x[process_id], _x_new_id);
+            LinAlg::axpy(*x_new[process_id], -_damping, minus_delta_x);
 
             if (postIterationCallback)
             {
                 postIterationCallback(iteration, x_new);
             }
 
-            switch(sys.postIteration(x_new))
+            switch (sys.postIteration(*x_new[process_id]))
             {
                 case IterationResult::SUCCESS:
                     break;
@@ -334,12 +340,15 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
                         "iteration"
                         " has to be repeated.");
                     // TODO introduce some onDestroy hook.
-                    NumLib::GlobalVectorProvider::provider.releaseVector(x_new);
+                    NumLib::GlobalVectorProvider::provider.releaseVector(
+                        *x_new[process_id]);
                     continue;  // That throws the iteration result away.
             }
 
-            LinAlg::copy(x_new, *x[process_id]);  // copy new solution to x
-            NumLib::GlobalVectorProvider::provider.releaseVector(x_new);
+            LinAlg::copy(*x_new[process_id],
+                         *x[process_id]);  // copy new solution to x
+            NumLib::GlobalVectorProvider::provider.releaseVector(
+                *x_new[process_id]);
         }
 
         if (!iteration_succeeded)

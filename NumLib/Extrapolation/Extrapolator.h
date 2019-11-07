@@ -30,8 +30,8 @@ public:
         const unsigned num_components,
         ExtrapolatableElementCollection const& extrapolatables,
         const double t,
-        GlobalVector const& current_solution,
-        LocalToGlobalIndexMap const& dof_table) = 0;
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table) = 0;
 
     /*! Computes residuals from the extrapolation of the given \c property.
      *
@@ -43,8 +43,8 @@ public:
         const unsigned num_components,
         ExtrapolatableElementCollection const& extrapolatables,
         const double t,
-        GlobalVector const& current_solution,
-        LocalToGlobalIndexMap const& dof_table) = 0;
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table) = 0;
 
     //! Returns the extrapolated nodal values.
     //! \todo Maybe write directly to a MeshProperty.

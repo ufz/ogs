@@ -34,17 +34,16 @@ struct ThermoMechanicsLocalAssemblerInterface
     virtual std::vector<double> getEpsilonMechanical() const = 0;
 
     virtual std::vector<double> const& getIntPtSigma(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
+        const double t,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const = 0;
 
     virtual std::vector<double> const& getIntPtEpsilon(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
+        const double t,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const = 0;
-
 };
 
 }  // namespace ThermoMechanics

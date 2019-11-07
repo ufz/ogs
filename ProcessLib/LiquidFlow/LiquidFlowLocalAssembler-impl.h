@@ -122,13 +122,16 @@ template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
 std::vector<double> const&
 LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
-    getIntPtDarcyVelocity(const double t,
-                          GlobalVector const& current_solution,
-                          NumLib::LocalToGlobalIndexMap const& dof_table,
-                          std::vector<double>& velocity_cache) const
+    getIntPtDarcyVelocity(
+        const double t,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+        std::vector<double>& velocity_cache) const
 {
-    auto const indices = NumLib::getIndices(_element.getID(), dof_table);
-    auto const local_x = current_solution.get(indices);
+    constexpr int process_id = 0;
+    auto const indices =
+        NumLib::getIndices(_element.getID(), *dof_table[process_id]);
+    auto const local_x = x[process_id]->get(indices);
     auto const num_intpts = _integration_method.getNumberOfPoints();
     velocity_cache.clear();
     auto velocity_cache_vectors = MathLib::createZeroedMatrix<

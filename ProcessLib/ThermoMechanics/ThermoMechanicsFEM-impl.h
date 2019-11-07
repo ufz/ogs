@@ -596,10 +596,11 @@ template <typename ShapeFunction, typename IntegrationMethod,
           int DisplacementDim>
 std::vector<double> const& ThermoMechanicsLocalAssembler<
     ShapeFunction, IntegrationMethod, DisplacementDim>::
-    getIntPtSigma(const double /*t*/,
-                  GlobalVector const& /*current_solution*/,
-                  NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-                  std::vector<double>& cache) const
+    getIntPtSigma(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const
 {
     static const int kelvin_vector_size =
         MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
@@ -675,10 +676,11 @@ template <typename ShapeFunction, typename IntegrationMethod,
           int DisplacementDim>
 std::vector<double> const& ThermoMechanicsLocalAssembler<
     ShapeFunction, IntegrationMethod, DisplacementDim>::
-    getIntPtEpsilon(const double /*t*/,
-                    GlobalVector const& /*current_solution*/,
-                    NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-                    std::vector<double>& cache) const
+    getIntPtEpsilon(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const
 {
     auto const kelvin_vector_size =
         MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;

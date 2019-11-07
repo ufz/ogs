@@ -204,14 +204,15 @@ public:
 
     std::vector<double> const& getIntPtDarcyVelocity(
         const double t,
-        GlobalVector const& current_solution,
-        NumLib::LocalToGlobalIndexMap const& dof_table,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const override
     {
+        int const process_id = 0;  // monolithic case.
         auto const indices =
-            NumLib::getIndices(this->_element.getID(), dof_table);
+            NumLib::getIndices(this->_element.getID(), *dof_table[process_id]);
         assert(!indices.empty());
-        auto const& local_x = current_solution.get(indices);
+        auto const& local_x = x[process_id]->get(indices);
 
         return this->getIntPtDarcyVelocityLocal(t, local_x, cache);
     }

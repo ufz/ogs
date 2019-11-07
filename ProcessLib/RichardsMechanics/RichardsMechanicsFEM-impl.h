@@ -590,10 +590,11 @@ template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
 std::vector<double> const& RichardsMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
     DisplacementDim>::
-    getIntPtSigma(const double /*t*/,
-                  GlobalVector const& /*current_solution*/,
-                  NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-                  std::vector<double>& cache) const
+    getIntPtSigma(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const
 {
     static const int kelvin_vector_size =
         MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
@@ -619,10 +620,11 @@ template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
 std::vector<double> const& RichardsMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
     DisplacementDim>::
-    getIntPtEpsilon(const double /*t*/,
-                    GlobalVector const& /*current_solution*/,
-                    NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-                    std::vector<double>& cache) const
+    getIntPtEpsilon(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const
 {
     auto const kelvin_vector_size =
         MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
@@ -646,18 +648,20 @@ template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           typename IntegrationMethod, int DisplacementDim>
 std::vector<double> const& RichardsMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
-    DisplacementDim>::getIntPtDarcyVelocity(const double t,
-                                            GlobalVector const&
-                                                current_solution,
-                                            NumLib::LocalToGlobalIndexMap const&
-                                                dof_table,
-                                            std::vector<double>& cache) const
+    DisplacementDim>::
+    getIntPtDarcyVelocity(
+        const double t,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+        std::vector<double>& cache) const
 {
     auto const num_intpts = _ip_data.size();
 
-    auto const indices = NumLib::getIndices(_element.getID(), dof_table);
+    constexpr int process_id = 0;  // monolithic scheme
+    auto const indices =
+        NumLib::getIndices(_element.getID(), *dof_table[process_id]);
     assert(!indices.empty());
-    auto const local_x = current_solution.get(indices);
+    auto const local_x = x[process_id]->get(indices);
 
     cache.clear();
     auto cache_matrix = MathLib::createZeroedMatrix<Eigen::Matrix<
@@ -709,10 +713,11 @@ template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
 std::vector<double> const& RichardsMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
     DisplacementDim>::
-    getIntPtSaturation(const double /*t*/,
-                       GlobalVector const& /*current_solution*/,
-                       NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-                       std::vector<double>& cache) const
+    getIntPtSaturation(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const
 {
     auto const num_intpts = _ip_data.size();
 

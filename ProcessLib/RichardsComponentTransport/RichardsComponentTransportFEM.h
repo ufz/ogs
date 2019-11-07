@@ -60,15 +60,15 @@ class RichardsComponentTransportLocalAssemblerInterface
 {
 public:
     virtual std::vector<double> const& getIntPtSaturation(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& /*cache*/) const = 0;
+        const double t,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+        std::vector<double>& cache) const = 0;
 
     virtual std::vector<double> const& getIntPtDarcyVelocity(
         const double t,
-        GlobalVector const& current_solution,
-        NumLib::LocalToGlobalIndexMap const& dof_table,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const = 0;
 };
 
@@ -112,8 +112,8 @@ public:
 
     std::vector<double> const& getIntPtDarcyVelocity(
         const double t,
-        GlobalVector const& current_solution,
-        NumLib::LocalToGlobalIndexMap const& dof_table,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const override;
 
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
@@ -121,9 +121,10 @@ public:
 
     std::vector<double> const& getIntPtSaturation(
         const double t,
-        GlobalVector const& current_solution,
-        NumLib::LocalToGlobalIndexMap const& dof_table,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const override;
+
 private:
     unsigned const _element_id;
     RichardsComponentTransportProcessData const& _process_data;

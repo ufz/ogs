@@ -214,17 +214,20 @@ template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
 std::vector<double> const&
 LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::
-    getIntPtDarcyVelocity(const double t,
-                          GlobalVector const& current_solution,
-                          NumLib::LocalToGlobalIndexMap const& dof_table,
-                          std::vector<double>& cache) const
+    getIntPtDarcyVelocity(
+        const double t,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+        std::vector<double>& cache) const
 {
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
 
-    auto const indices = NumLib::getIndices(_element_id, dof_table);
+    constexpr int process_id = 0;  // monolithic scheme
+    auto const indices =
+        NumLib::getIndices(_element_id, *dof_table[process_id]);
     assert(!indices.empty());
-    auto const local_x = current_solution.get(indices);
+    auto const local_x = x[process_id]->get(indices);
 
     cache.clear();
     auto cache_mat = MathLib::createZeroedMatrix<
@@ -302,10 +305,11 @@ template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
 std::vector<double> const&
 LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::
-    getIntPtSaturation(const double t,
-                       GlobalVector const& current_solution,
-                       NumLib::LocalToGlobalIndexMap const& dof_table,
-                       std::vector<double>& cache) const
+    getIntPtSaturation(
+        const double t,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+        std::vector<double>& cache) const
 {
     ParameterLib::SpatialPosition pos;
     pos.setElementID(_element_id);
@@ -313,9 +317,11 @@ LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
 
-    auto const indices = NumLib::getIndices(_element_id, dof_table);
+    constexpr int process_id = 0;  // monolithic scheme
+    auto const indices =
+        NumLib::getIndices(_element_id, *dof_table[process_id]);
     assert(!indices.empty());
-    auto const local_x = current_solution.get(indices);
+    auto const local_x = x[process_id]->get(indices);
 
     cache.clear();
     auto cache_vec = MathLib::createZeroedVector<LocalVectorType>(

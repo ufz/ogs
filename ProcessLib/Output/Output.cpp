@@ -192,14 +192,21 @@ void Output::doOutputAlways(Process const& process,
                             const int process_id,
                             const int timestep,
                             const double t,
-                            GlobalVector const& x)
+                            std::vector<GlobalVector*> const& x)
 {
     BaseLib::RunTime time_output;
     time_output.start();
 
+    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
+    dof_tables.reserve(x.size());
+    for (std::size_t i = 0; i < x.size(); ++i)
+    {
+        dof_tables.push_back(&process.getDOFTable(i));
+    }
+
     bool output_secondary_variable = true;
     // Need to add variables of process to vtu even no output takes place.
-    processOutputData(t, x, process.getMesh(), process.getDOFTable(process_id),
+    processOutputData(t, x, process_id, process.getMesh(), dof_tables,
                       process.getProcessVariables(process_id),
                       process.getSecondaryVariables(),
                       output_secondary_variable,
@@ -248,12 +255,26 @@ void Output::doOutputAlways(Process const& process,
             nodes.size(), mesh.getName().c_str());
 
         MeshLib::MeshSubset mesh_subset(mesh, nodes);
-        std::unique_ptr<NumLib::LocalToGlobalIndexMap> mesh_dof_table(
-            process.getDOFTable(process_id)
-                .deriveBoundaryConstrainedMap(std::move(mesh_subset)));
+        std::vector<std::unique_ptr<NumLib::LocalToGlobalIndexMap>>
+            mesh_dof_tables;
+        mesh_dof_tables.reserve(x.size());
+        for (std::size_t i = 0; i < x.size(); ++i)
+        {
+            mesh_dof_tables.push_back(
+                process.getDOFTable(i).deriveBoundaryConstrainedMap(
+                    std::move(mesh_subset)));
+        }
+        std::vector<NumLib::LocalToGlobalIndexMap const*>
+            mesh_dof_table_pointers;
+        mesh_dof_table_pointers.reserve(mesh_dof_tables.size());
+        transform(cbegin(mesh_dof_tables), cend(mesh_dof_tables),
+                  back_inserter(mesh_dof_table_pointers),
+                  [](std::unique_ptr<NumLib::LocalToGlobalIndexMap> const& p) {
+                      return p.get();
+                  });
 
         output_secondary_variable = false;
-        processOutputData(t, x, mesh, *mesh_dof_table,
+        processOutputData(t, x, process_id, mesh, mesh_dof_table_pointers,
                           process.getProcessVariables(process_id),
                           process.getSecondaryVariables(),
                           output_secondary_variable,
@@ -284,7 +305,7 @@ void Output::doOutput(Process const& process,
                       const int process_id,
                       const int timestep,
                       const double t,
-                      GlobalVector const& x)
+                      std::vector<GlobalVector*> const& x)
 {
     if (shallDoOutput(timestep, t))
     {
@@ -301,7 +322,7 @@ void Output::doOutputLastTimestep(Process const& process,
                                   const int process_id,
                                   const int timestep,
                                   const double t,
-                                  GlobalVector const& x)
+                                  std::vector<GlobalVector*> const& x)
 {
     if (!shallDoOutput(timestep, t))
     {
@@ -315,7 +336,7 @@ void Output::doOutputLastTimestep(Process const& process,
 void Output::doOutputNonlinearIteration(Process const& process,
                                         const int process_id,
                                         const int timestep, const double t,
-                                        GlobalVector const& x,
+                                        std::vector<GlobalVector*> const& x,
                                         const int iteration)
 {
     if (!_output_nonlinear_iteration_results)
@@ -326,8 +347,14 @@ void Output::doOutputNonlinearIteration(Process const& process,
     BaseLib::RunTime time_output;
     time_output.start();
 
+    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
+    for (std::size_t i = 0; i < x.size(); ++i)
+    {
+        dof_tables.push_back(&process.getDOFTable(i));
+    }
+
     bool const output_secondary_variable = true;
-    processOutputData(t, x, process.getMesh(), process.getDOFTable(process_id),
+    processOutputData(t, x, process_id, process.getMesh(), dof_tables,
                       process.getProcessVariables(process_id),
                       process.getSecondaryVariables(),
                       output_secondary_variable,

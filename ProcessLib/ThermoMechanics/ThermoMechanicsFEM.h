@@ -276,9 +276,9 @@ private:
     std::vector<double> getSigma() const override;
 
     std::vector<double> const& getIntPtSigma(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
+        const double t,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const override;
 
     std::size_t setEpsilon(double const* values);
@@ -286,9 +286,9 @@ private:
     std::vector<double> getEpsilon() const override;
 
     std::vector<double> const& getIntPtEpsilon(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
+        const double t,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const override;
 
     std::size_t setEpsilonMechanical(double const* values);

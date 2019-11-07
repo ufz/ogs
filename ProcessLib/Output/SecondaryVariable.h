@@ -37,8 +37,8 @@ struct SecondaryVariableFunctions final
      */
     using Function = std::function<GlobalVector const&(
         const double t,
-        GlobalVector const& x,
-        NumLib::LocalToGlobalIndexMap const& dof_table,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::unique_ptr<GlobalVector>& result_cache)>;
 
     template <typename F1, typename F2>
@@ -50,20 +50,24 @@ struct SecondaryVariableFunctions final
     {
         // Used to detect nasty implicit conversions.
         static_assert(
-            std::is_same<GlobalVector const&,
-                         typename std::result_of<F1(
-                             double const, GlobalVector const&,
-                             NumLib::LocalToGlobalIndexMap const&,
-                             std::unique_ptr<GlobalVector>&)>::type>::value,
+            std::is_same<
+                GlobalVector const&,
+                typename std::result_of<F1(
+                    double const, std::vector<GlobalVector*> const&,
+                    std::vector<NumLib::LocalToGlobalIndexMap const*> const&
+                        dof_table,
+                    std::unique_ptr<GlobalVector>&)>::type>::value,
             "The function eval_field_ does not return a const reference"
             " to a GlobalVector");
 
         static_assert(
-            std::is_same<GlobalVector const&,
-                         typename std::result_of<F2(
-                             double const, GlobalVector const&,
-                             NumLib::LocalToGlobalIndexMap const&,
-                             std::unique_ptr<GlobalVector>&)>::type>::value,
+            std::is_same<
+                GlobalVector const&,
+                typename std::result_of<F2(
+                    double const, std::vector<GlobalVector*> const& x,
+                    std::vector<NumLib::LocalToGlobalIndexMap const*> const&
+                        dof_table,
+                    std::unique_ptr<GlobalVector>&)>::type>::value,
             "The function eval_residuals_ does not return a const reference"
             " to a GlobalVector");
     }
@@ -76,11 +80,13 @@ struct SecondaryVariableFunctions final
     {
         // Used to detect nasty implicit conversions.
         static_assert(
-            std::is_same<GlobalVector const&,
-                         typename std::result_of<F1(
-                             double const, GlobalVector const&,
-                             NumLib::LocalToGlobalIndexMap const&,
-                             std::unique_ptr<GlobalVector>&)>::type>::value,
+            std::is_same<
+                GlobalVector const&,
+                typename std::result_of<F1(
+                    double const, std::vector<GlobalVector*> const& x,
+                    std::vector<NumLib::LocalToGlobalIndexMap const*> const&
+                        dof_table,
+                    std::unique_ptr<GlobalVector>&)>::type>::value,
             "The function eval_field_ does not return a const reference"
             " to a GlobalVector");
     }
@@ -165,13 +171,14 @@ SecondaryVariableFunctions makeExtrapolator(
         LocalAssemblerCollection>::IntegrationPointValuesMethod
         integration_point_values_method)
 {
-    auto const eval_field = [num_components, &extrapolator, &local_assemblers,
-                             integration_point_values_method](
-                                const double t,
-                                GlobalVector const& x,
-                                NumLib::LocalToGlobalIndexMap const& dof_table,
-                                std::unique_ptr<GlobalVector> & /*result_cache*/
-                                ) -> GlobalVector const& {
+    auto const eval_field =
+        [num_components, &extrapolator, &local_assemblers,
+         integration_point_values_method](
+            const double t,
+            std::vector<GlobalVector*> const& x,
+            std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+            std::unique_ptr<GlobalVector> & /*result_cache*/
+            ) -> GlobalVector const& {
         auto const extrapolatables = NumLib::makeExtrapolatable(
             local_assemblers, integration_point_values_method);
         extrapolator.extrapolate(num_components, extrapolatables, t, x,
@@ -183,8 +190,8 @@ SecondaryVariableFunctions makeExtrapolator(
         [num_components, &extrapolator, &local_assemblers,
          integration_point_values_method](
             const double t,
-            GlobalVector const& x,
-            NumLib::LocalToGlobalIndexMap const& dof_table,
+            std::vector<GlobalVector*> const& x,
+            std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
             std::unique_ptr<GlobalVector> & /*result_cache*/
             ) -> GlobalVector const& {
         auto const extrapolatables = NumLib::makeExtrapolatable(

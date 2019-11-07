@@ -109,8 +109,8 @@ public:
 
     std::vector<double> const& getIntPtSigmaXX(
         const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
         std::vector<double>& cache) const override
     {
         return getIntPtSigma(cache, 0);
@@ -118,8 +118,8 @@ public:
 
     std::vector<double> const& getIntPtSigmaYY(
         const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
         std::vector<double>& cache) const override
     {
         return getIntPtSigma(cache, 1);
@@ -127,8 +127,8 @@ public:
 
     std::vector<double> const& getIntPtSigmaZZ(
         const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
         std::vector<double>& cache) const override
     {
         return getIntPtSigma(cache, 2);
@@ -136,8 +136,8 @@ public:
 
     std::vector<double> const& getIntPtSigmaXY(
         const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
         std::vector<double>& cache) const override
     {
         return getIntPtSigma(cache, 3);
@@ -145,8 +145,8 @@ public:
 
     std::vector<double> const& getIntPtSigmaXZ(
         const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
         std::vector<double>& cache) const override
     {
         assert(DisplacementDim == 3);
@@ -155,8 +155,8 @@ public:
 
     std::vector<double> const& getIntPtSigmaYZ(
         const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
         std::vector<double>& cache) const override
     {
         assert(DisplacementDim == 3);
@@ -165,8 +165,8 @@ public:
 
     std::vector<double> const& getIntPtEpsilonXX(
         const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
         std::vector<double>& cache) const override
     {
         return getIntPtEpsilon(cache, 0);
@@ -174,8 +174,8 @@ public:
 
     std::vector<double> const& getIntPtEpsilonYY(
         const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
         std::vector<double>& cache) const override
     {
         return getIntPtEpsilon(cache, 1);
@@ -183,8 +183,8 @@ public:
 
     std::vector<double> const& getIntPtEpsilonZZ(
         const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
         std::vector<double>& cache) const override
     {
         return getIntPtEpsilon(cache, 2);
@@ -192,8 +192,8 @@ public:
 
     std::vector<double> const& getIntPtEpsilonXY(
         const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
         std::vector<double>& cache) const override
     {
         return getIntPtEpsilon(cache, 3);
@@ -201,8 +201,8 @@ public:
 
     std::vector<double> const& getIntPtEpsilonXZ(
         const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
         std::vector<double>& cache) const override
     {
         assert(DisplacementDim == 3);
@@ -211,8 +211,8 @@ public:
 
     std::vector<double> const& getIntPtEpsilonYZ(
         const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
         std::vector<double>& cache) const override
     {
         assert(DisplacementDim == 3);
