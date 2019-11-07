@@ -22,6 +22,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QObject>
+#include <QScreen>
 #include <QSettings>
 #include <QSignalMapper>
 #ifndef NDEBUG
@@ -306,12 +307,9 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/) : QMainWindow(parent)
 
     // Get info on screens geometry(ies)
     _vtkWidget.reset(visualizationWidget->vtkWidget);
-    QDesktopWidget* desktopWidget = QApplication::desktop();
-    const unsigned int screenCount = desktopWidget->screenCount();
-    for (std::size_t i = 0; i < screenCount; ++i)
+    for (auto const& screen : QGuiApplication::screens())
     {
-        _screenGeometries.push_back(
-            desktopWidget->availableGeometry(static_cast<int>(i)));
+        _screenGeometries.push_back(screen->availableGeometry());
     }
 
     // Setup import files menu
