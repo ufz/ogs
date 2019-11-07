@@ -55,7 +55,8 @@ public:
         std::vector<GlobalIndexType> indices_cache;
         auto const r_c_indices = NumLib::getRowColumnIndices(
             element_id, *_local_to_global_index_map, indices_cache);
-        std::vector<double> local_x(x[0]->get(r_c_indices.rows));
+        constexpr int process_id = 0;  // monolithic scheme.
+        std::vector<double> local_x(x[process_id]->get(r_c_indices.rows));
 
         return _local_assemblers[element_id]->getFlux(p, t, local_x);
     }
