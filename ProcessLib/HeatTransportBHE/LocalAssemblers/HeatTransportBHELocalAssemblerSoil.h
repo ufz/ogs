@@ -73,8 +73,8 @@ private:
 
     std::vector<
         IntegrationPointDataSoil<NodalRowVectorType, GlobalDimNodalMatrixType>,
-        Eigen::aligned_allocator<
-            IntegrationPointDataSoil<NodalRowVectorType, GlobalDimNodalMatrixType>>>
+        Eigen::aligned_allocator<IntegrationPointDataSoil<
+            NodalRowVectorType, GlobalDimNodalMatrixType>>>
         _ip_data;
 
     IntegrationMethod const _integration_method;

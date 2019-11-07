@@ -18,8 +18,8 @@ template <typename NodalRowVectorType, typename GlobalDimNodalMatrixType>
 struct IntegrationPointDataSoil final
 {
     IntegrationPointDataSoil(NodalRowVectorType N_,
-                         GlobalDimNodalMatrixType dNdx_,
-                         double const& integration_weight_)
+                             GlobalDimNodalMatrixType dNdx_,
+                             double const& integration_weight_)
         : N(std::move(N_)),
           dNdx(std::move(dNdx_)),
           integration_weight(integration_weight_)

@@ -17,6 +17,7 @@
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
+#include "NumLib/Function/Interpolation.h"
 #include "ProcessLib/HeatTransportBHE/HeatTransportBHEProcessData.h"
 #include "ProcessLib/Utils/InitShapeMatrices.h"
 
@@ -44,10 +45,8 @@ HeatTransportBHELocalAssemblerSoil<ShapeFunction, IntegrationMethod>::
     _ip_data.reserve(n_integration_points);
     _secondary_data.N.resize(n_integration_points);
 
-    _shape_matrices = initShapeMatrices<ShapeFunction,
-                                        ShapeMatricesType,
-                                        IntegrationMethod,
-                                        3 /* GlobalDim */>(
+    _shape_matrices = initShapeMatrices<ShapeFunction, ShapeMatricesType,
+                                        IntegrationMethod, 3 /* GlobalDim */>(
         e, is_axially_symmetric, _integration_method);
 
     ParameterLib::SpatialPosition x_position;
@@ -62,10 +61,7 @@ HeatTransportBHELocalAssemblerSoil<ShapeFunction, IntegrationMethod>::
         auto const& sm = _shape_matrices[ip];
         double const w = _integration_method.getWeightedPoint(ip).getWeight() *
                          sm.integralMeasure * sm.detJ;
-        _ip_data.emplace_back(
-            sm.N, sm.dNdx,
-            _integration_method.getWeightedPoint(ip).getWeight() *
-                sm.integralMeasure * sm.detJ);
+        _ip_data.emplace_back(sm.N, sm.dNdx, w);
 
         _secondary_data.N[ip] = sm.N;
     }
@@ -109,6 +105,12 @@ void HeatTransportBHELocalAssemblerSoil<ShapeFunction, IntegrationMethod>::
         auto const& dNdx = ip_data.dNdx;
         auto const& w = ip_data.integration_weight;
 
+        double T_int_pt = 0.0;
+        NumLib::shapeFunctionInterpolate(local_x, N, T_int_pt);
+
+        vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
+            T_int_pt;
+
         // for now only using the solid and liquid phase parameters
         auto const density_s =
             solid_phase.property(MaterialPropertyLib::PropertyType::density)
@@ -138,13 +140,15 @@ void HeatTransportBHELocalAssemblerSoil<ShapeFunction, IntegrationMethod>::
             liquid_phase
                 .property(MaterialPropertyLib::PropertyType::phase_velocity)
                 .value(vars, pos, t);
-        auto velocity = Eigen::Map<Eigen::Matrix<double, 1, 3> const>(
+        auto const velocity = Eigen::Map<Eigen::Vector3d const>(
             std::get<MaterialPropertyLib::Vector>(velocity_arr).data(), 1, 3);
 
         // calculate the hydrodynamic thermodispersion tensor
         auto const thermal_conductivity =
             MaterialPropertyLib::formEigenTensor<3>(
-                medium.property(MaterialPropertyLib::PropertyType::thermal_conductivity)
+                medium
+                    .property(
+                        MaterialPropertyLib::PropertyType::thermal_conductivity)
                     .value(vars, pos, t));
 
         auto thermal_conductivity_dispersivity = thermal_conductivity;
@@ -169,14 +173,15 @@ void HeatTransportBHELocalAssemblerSoil<ShapeFunction, IntegrationMethod>::
                 (thermal_dispersivity_transversal * velocity_magnitude * I +
                  (thermal_dispersivity_longitudinal -
                   thermal_dispersivity_transversal) /
-                     velocity_magnitude * velocity.transpose() * velocity);
+                     velocity_magnitude * velocity * velocity.transpose());
             thermal_conductivity_dispersivity += thermal_dispersivity;
         }
 
         // assemble Conductance matrix
         local_K.noalias() +=
             (dNdx.transpose() * thermal_conductivity_dispersivity * dNdx +
-             N.transpose() * velocity * dNdx * density_f * heat_capacity_f) *
+             N.transpose() * velocity.transpose() * dNdx * density_f *
+                 heat_capacity_f) *
             w;
 
         // assemble Mass matrix
