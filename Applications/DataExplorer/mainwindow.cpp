@@ -22,6 +22,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QObject>
+#include <QScreen>
 #include <QSettings>
 #include <QSignalMapper>
 #ifndef NDEBUG
@@ -306,12 +307,9 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/) : QMainWindow(parent)
 
     // Get info on screens geometry(ies)
     _vtkWidget.reset(visualizationWidget->vtkWidget);
-    QDesktopWidget* desktopWidget = QApplication::desktop();
-    const unsigned int screenCount = desktopWidget->screenCount();
-    for (std::size_t i = 0; i < screenCount; ++i)
+    for (auto const& screen : QGuiApplication::screens())
     {
-        _screenGeometries.push_back(
-            desktopWidget->availableGeometry(static_cast<int>(i)));
+        _screenGeometries.push_back(screen->availableGeometry());
     }
 
     // Setup import files menu
@@ -839,48 +837,33 @@ void MainWindow::about()
 
 QMenu* MainWindow::createImportFilesMenu()
 {
-    auto* signal_mapper = new QSignalMapper(this);  // owned by MainWindow
     QMenu* importFiles = new QMenu("&Import Files", this);
-    QAction* feflowFiles = importFiles->addAction("&FEFLOW Files...");
-    connect(feflowFiles, SIGNAL(triggered()), signal_mapper, SLOT(map()));
-    signal_mapper->setMapping(feflowFiles, ImportFileType::FEFLOW);
-    QAction* gmsFiles = importFiles->addAction("G&MS Files...");
-    connect(gmsFiles, SIGNAL(triggered()), signal_mapper, SLOT(map()));
-    signal_mapper->setMapping(gmsFiles, ImportFileType::GMS);
-    QAction* gmshFiles = importFiles->addAction("&GMSH Files...");
-    connect(gmshFiles, SIGNAL(triggered()), signal_mapper, SLOT(map()));
-    signal_mapper->setMapping(gmshFiles, ImportFileType::GMSH);
-    QAction* gocadTsFiles = importFiles->addAction("&Gocad TSurface...");
-    connect(gocadTsFiles, SIGNAL(triggered()), signal_mapper, SLOT(map()));
-    signal_mapper->setMapping(gocadTsFiles, ImportFileType::GOCAD_TSURF);
+    importFiles->addAction("&FEFLOW Files...",
+                           [=] { open(ImportFileType::FEFLOW); });
+    importFiles->addAction("G&MS Files...",
+                           [=] { open(ImportFileType::GMS); });
+    importFiles->addAction("&GMSH Files...",
+                           [=] { open(ImportFileType::GMSH); });
+    importFiles->addAction("&Gocad TSurface...",
+                           [=] { open(ImportFileType::GOCAD_TSURF); });
 #ifdef OGS_USE_NETCDF
-    QAction* netcdfFiles = importFiles->addAction("&NetCDF Files...");
-    connect(netcdfFiles, SIGNAL(triggered()), signal_mapper, SLOT(map()));
-    signal_mapper->setMapping(netcdfFiles, ImportFileType::NETCDF);
+    importFiles->addAction("&NetCDF Files...",
+                           [=] { open(ImportFileType::NETCDF); });
 #endif  // OGS_USE_NETCDF
-    QAction* petrelFiles = importFiles->addAction("&Petrel Files...");
-    connect(petrelFiles, SIGNAL(triggered()), this, SLOT(loadPetrelFiles()));
-    QAction* rasterFiles = importFiles->addAction("&Raster Files...");
-    connect(rasterFiles, SIGNAL(triggered()), signal_mapper, SLOT(map()));
-    signal_mapper->setMapping(rasterFiles, ImportFileType::RASTER);
+    importFiles->addAction("&Petrel Files...",
+                           [=] { loadPetrelFiles(); });
+    importFiles->addAction("&Raster Files...",
+                           [=] { open(ImportFileType::RASTER); });
 #if defined VTKFBXCONVERTER_FOUND
-    QAction* rasterPolyFiles = importFiles->addAction("R&aster Files as PolyData...");
-    connect(rasterPolyFiles, SIGNAL(triggered()), this, SLOT(map()));
-    _signal_mapper->setMapping(rasterPolyFiles, ImportFileType::POLYRASTER);
+    importFiles->addAction("R&aster Files as PolyData...",
+                           [=] { open(ImportFileType::POLYRASTER); });
 #endif
-    QAction* shapeFiles = importFiles->addAction("&Shape Files...");
-    connect(shapeFiles, SIGNAL(triggered()), signal_mapper, SLOT(map()));
-    signal_mapper->setMapping(shapeFiles, ImportFileType::SHAPE);
-    QAction* tetgenFiles = importFiles->addAction("&TetGen Files...");
-    connect( tetgenFiles, SIGNAL(triggered()), signal_mapper, SLOT(map()) );
-    signal_mapper->setMapping(tetgenFiles, ImportFileType::TETGEN);
-
-    QAction* vtkFiles = importFiles->addAction("&VTK Files...");
-    connect( vtkFiles, SIGNAL(triggered()), signal_mapper, SLOT(map()) );
-    signal_mapper->setMapping(vtkFiles, ImportFileType::VTK);
-
-    connect(signal_mapper, SIGNAL(mapped(int)), this, SLOT(open(int)));
-
+    importFiles->addAction("&Shape Files...",
+                           [=] { open(ImportFileType::SHAPE); });
+    importFiles->addAction("&TetGen Files...",
+                           [=] { open(ImportFileType::TETGEN); });
+    importFiles->addAction("&VTK Files...",
+                           [=] { open(ImportFileType::VTK); });
     return importFiles;
 }
 
@@ -1107,6 +1090,10 @@ void MainWindow::callGMSH(std::vector<std::string> & selectedGeometries,
                         fname = fname.substr(0, pos);
                     }
                     gmsh_command += " -o " + fname + ".msh";
+                    // Newer gmsh versions write a newer file format for meshes
+                    // per default. At the moment we can't read this new format.
+                    // This is a switch for gmsh to write the 'old' file format.
+                    gmsh_command += " -format msh22";
                     auto const return_value = std::system(gmsh_command.c_str());
                     if (return_value != 0)
                     {
