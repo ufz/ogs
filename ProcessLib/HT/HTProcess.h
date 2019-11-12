@@ -13,6 +13,8 @@
 #include <array>
 
 #include "HTProcessData.h"
+#include "MaterialLib/MPL/Medium.h"
+#include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "ProcessLib/Process.h"
 
 namespace NumLib
@@ -86,6 +88,66 @@ public:
                                      int const process_id) override;
 
 private:
+    template <unsigned GlobalDim>
+    void checkProperties(MeshLib::Mesh const& mesh) const
+    {
+        // only needed as dummy for checking of existence of properties
+        MaterialPropertyLib::VariableArray vars;
+        double const t = 0.0;
+
+        DBUG("Check the media properties ...");
+        for (auto const& element : mesh.getElements())
+        {
+            auto const element_id = element->getID();
+            ParameterLib::SpatialPosition pos;
+            pos.setElementID(element_id);
+
+            // check if a definition of the porous media exists
+            auto const& medium =
+                *_process_data.media_map->getMedium(element_id);
+
+            // checking general medium properties
+            auto const porosity =
+                medium.property(MaterialPropertyLib::PropertyType::porosity)
+                    .template value<double>(vars, pos, t);
+            auto const K = MaterialPropertyLib::formEigenTensor<GlobalDim>(
+                medium.property(MaterialPropertyLib::PropertyType::permeability)
+                    .value(vars, pos, t));
+
+            // check if liquid phase definition and the corresponding properties
+            // exists
+            auto const& liquid_phase = medium.phase("AqueousLiquid");
+            auto const mu =
+                liquid_phase
+                    .property(MaterialPropertyLib::PropertyType::viscosity)
+                    .template value<double>(vars, pos, t);
+            auto const liquid_density =
+                liquid_phase
+                    .property(MaterialPropertyLib::PropertyType::density)
+                    .template value<double>(vars, pos, t);
+            auto const specific_heat_capacity_fluid =
+                liquid_phase
+                    .property(MaterialPropertyLib::specific_heat_capacity)
+                    .template value<double>(vars, pos, t);
+
+            // check if solid phase definition and the corresponding properties
+            // exists
+            auto const& solid_phase = medium.phase("Solid");
+            auto const specific_heat_capacity_solid =
+                solid_phase
+                    .property(MaterialPropertyLib::PropertyType::
+                                  specific_heat_capacity)
+                    .template value<double>(vars, pos, t);
+            auto const solid_density =
+                solid_phase.property(MaterialPropertyLib::PropertyType::density)
+                    .template value<double>(vars, pos, t);
+            auto const specific_storage =
+                solid_phase.property(MaterialPropertyLib::PropertyType::storage)
+                    .template value<double>(vars, pos, t);
+        }
+        DBUG("Media properties verified.");
+    }
+
     void initializeConcreteProcess(
         NumLib::LocalToGlobalIndexMap const& dof_table,
         MeshLib::Mesh const& mesh,

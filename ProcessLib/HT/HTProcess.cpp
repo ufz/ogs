@@ -53,6 +53,20 @@ void HTProcess::initializeConcreteProcess(
     MeshLib::Mesh const& mesh,
     unsigned const integration_order)
 {
+    unsigned const global_dim = mesh.getDimension();
+    if (global_dim == 1)
+    {
+        checkProperties<1>(mesh);
+    }
+    if (global_dim == 2)
+    {
+        checkProperties<2>(mesh);
+    }
+    if (global_dim == 3)
+    {
+        checkProperties<3>(mesh);
+    }
+
     // For the staggered scheme, both processes are assumed to use the same
     // element order. Therefore the order of shape function can be fetched from
     // any set of the sets of process variables of the coupled processes. Here,
