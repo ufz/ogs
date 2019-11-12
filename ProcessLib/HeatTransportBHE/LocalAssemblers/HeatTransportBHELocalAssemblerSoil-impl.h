@@ -90,8 +90,6 @@ void HeatTransportBHELocalAssemblerSoil<ShapeFunction, IntegrationMethod>::
     auto const& solid_phase = medium.phase("Solid");
     auto const& liquid_phase = medium.phase("AqueousLiquid");
 
-    auto const I = Eigen::Matrix<double, 3, 3>::Identity();
-
     MaterialPropertyLib::VariableArray vars;
 
     unsigned const n_integration_points =
@@ -170,7 +168,8 @@ void HeatTransportBHELocalAssemblerSoil<ShapeFunction, IntegrationMethod>::
 
             auto const thermal_dispersivity =
                 density_f * heat_capacity_f *
-                (thermal_dispersivity_transversal * velocity_magnitude * I +
+                (thermal_dispersivity_transversal * velocity_magnitude *
+                     Eigen::Matrix3d::Identity() +
                  (thermal_dispersivity_longitudinal -
                   thermal_dispersivity_transversal) /
                      velocity_magnitude * velocity * velocity.transpose());
