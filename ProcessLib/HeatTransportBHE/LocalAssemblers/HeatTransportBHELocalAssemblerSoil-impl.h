@@ -61,7 +61,7 @@ HeatTransportBHELocalAssemblerSoil<ShapeFunction, IntegrationMethod>::
         auto const& sm = _shape_matrices[ip];
         double const w = _integration_method.getWeightedPoint(ip).getWeight() *
                          sm.integralMeasure * sm.detJ;
-        _ip_data.emplace_back(sm.N, sm.dNdx, w);
+        _ip_data.push_back({sm.N, sm.dNdx, w});
 
         _secondary_data.N[ip] = sm.N;
     }
