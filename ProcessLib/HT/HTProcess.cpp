@@ -53,19 +53,7 @@ void HTProcess::initializeConcreteProcess(
     MeshLib::Mesh const& mesh,
     unsigned const integration_order)
 {
-    unsigned const global_dim = mesh.getDimension();
-    if (global_dim == 1)
-    {
-        checkProperties<1>(mesh);
-    }
-    if (global_dim == 2)
-    {
-        checkProperties<2>(mesh);
-    }
-    if (global_dim == 3)
-    {
-        checkProperties<3>(mesh);
-    }
+    checkMPLProperties(mesh, _process_data);
 
     // For the staggered scheme, both processes are assumed to use the same
     // element order. Therefore the order of shape function can be fetched from
@@ -299,5 +287,73 @@ void HTProcess::postTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
     _surfaceflux->save(t);
 }
 
+void checkMPLProperties(MeshLib::Mesh const& mesh,
+                        HTProcessData const& process_data)
+{
+    DBUG("Check the media properties of HT process ...");
+    for (auto const& element : mesh.getElements())
+    {
+        auto const element_id = element->getID();
+
+        // check if a definition of the porous media exists
+        auto const& medium = *process_data.media_map->getMedium(element_id);
+
+        // checking general medium properties
+        if (!medium.hasProperty(MaterialPropertyLib::PropertyType::porosity))
+        {
+            OGS_FATAL("The porosity for the porous media isn't specified.");
+        }
+        if (!medium.hasProperty(
+                MaterialPropertyLib::PropertyType::permeability))
+        {
+            OGS_FATAL("The permeability for the porous media isn't specified.");
+        }
+
+        // check if liquid phase definition and the corresponding properties
+        // exists
+        auto const& liquid_phase = medium.phase("AqueousLiquid");
+        if (!liquid_phase.hasProperty(
+                MaterialPropertyLib::PropertyType::viscosity))
+        {
+            OGS_FATAL(
+                "The viscosity for the AqueousLiquid phase isn't specified.");
+        }
+        if (!liquid_phase.hasProperty(
+                MaterialPropertyLib::PropertyType::density))
+        {
+            OGS_FATAL(
+                "The density for the AqueousLiquid phase isn't specified.");
+        }
+        if (!liquid_phase.hasProperty(
+                MaterialPropertyLib::PropertyType::specific_heat_capacity))
+        {
+            OGS_FATAL(
+                "The specific heat capacity for the AqueousLiquid phase "
+                "isn't specified.");
+        }
+
+        // check if solid phase definition and the corresponding properties
+        // exists
+        auto const& solid_phase = medium.phase("Solid");
+        if (!solid_phase.hasProperty(
+                MaterialPropertyLib::PropertyType::specific_heat_capacity))
+        {
+            OGS_FATAL(
+                "The specific heat capacity for the Solid phase isn't "
+                "specified.");
+        }
+        if (!solid_phase.hasProperty(
+                MaterialPropertyLib::PropertyType::density))
+        {
+            OGS_FATAL("The density for the Solid phase isn't specified.");
+        }
+        if (!solid_phase.hasProperty(
+                MaterialPropertyLib::PropertyType::storage))
+        {
+            OGS_FATAL("The storage for the Solid phase isn't specified.");
+        }
+    }
+    DBUG("Media properties verified.");
+}
 }  // namespace HT
 }  // namespace ProcessLib
