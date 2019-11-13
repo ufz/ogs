@@ -14,8 +14,10 @@
 #include <vector>
 
 #include "MaterialLib/MPL/Medium.h"
+#include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
+#include "NumLib/Function/Interpolation.h"
 #include "ProcessLib/HeatTransportBHE/HeatTransportBHEProcessData.h"
 #include "ProcessLib/Utils/InitShapeMatrices.h"
 
@@ -43,10 +45,8 @@ HeatTransportBHELocalAssemblerSoil<ShapeFunction, IntegrationMethod>::
     _ip_data.reserve(n_integration_points);
     _secondary_data.N.resize(n_integration_points);
 
-    _shape_matrices = initShapeMatrices<ShapeFunction,
-                                        ShapeMatricesType,
-                                        IntegrationMethod,
-                                        3 /* GlobalDim */>(
+    _shape_matrices = initShapeMatrices<ShapeFunction, ShapeMatricesType,
+                                        IntegrationMethod, 3 /* GlobalDim */>(
         e, is_axially_symmetric, _integration_method);
 
     ParameterLib::SpatialPosition x_position;
@@ -61,8 +61,7 @@ HeatTransportBHELocalAssemblerSoil<ShapeFunction, IntegrationMethod>::
         auto const& sm = _shape_matrices[ip];
         double const w = _integration_method.getWeightedPoint(ip).getWeight() *
                          sm.integralMeasure * sm.detJ;
-        _ip_data.push_back(
-            {sm.N.transpose() * sm.N * w, sm.dNdx.transpose() * sm.dNdx * w});
+        _ip_data.push_back({sm.N, sm.dNdx, w});
 
         _secondary_data.N[ip] = sm.N;
     }
@@ -89,6 +88,7 @@ void HeatTransportBHELocalAssemblerSoil<ShapeFunction, IntegrationMethod>::
 
     auto const& medium = *_process_data.media_map->getMedium(_element_id);
     auto const& solid_phase = medium.phase("Solid");
+    auto const& liquid_phase = medium.phase("AqueousLiquid");
 
     MaterialPropertyLib::VariableArray vars;
 
@@ -99,13 +99,19 @@ void HeatTransportBHELocalAssemblerSoil<ShapeFunction, IntegrationMethod>::
     {
         pos.setIntegrationPoint(ip);
         auto& ip_data = _ip_data[ip];
-        auto const& M_ip = ip_data.NTN_product_times_w;
-        auto const& K_ip = ip_data.dNdxTdNdx_product_times_w;
+        auto const& N = ip_data.N;
+        auto const& dNdx = ip_data.dNdx;
+        auto const& w = ip_data.integration_weight;
 
-        auto const k_s =
-            solid_phase
-                .property(
-                    MaterialPropertyLib::PropertyType::thermal_conductivity)
+        double T_int_pt = 0.0;
+        NumLib::shapeFunctionInterpolate(local_x, N, T_int_pt);
+
+        vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
+            T_int_pt;
+
+        // for now only using the solid and liquid phase parameters
+        auto const density_s =
+            solid_phase.property(MaterialPropertyLib::PropertyType::density)
                 .template value<double>(vars, pos, t);
 
         auto const heat_capacity_s =
@@ -114,16 +120,73 @@ void HeatTransportBHELocalAssemblerSoil<ShapeFunction, IntegrationMethod>::
                     MaterialPropertyLib::PropertyType::specific_heat_capacity)
                 .template value<double>(vars, pos, t);
 
-        auto const density_s =
-            solid_phase.property(MaterialPropertyLib::PropertyType::density)
+        auto const density_f =
+            liquid_phase.property(MaterialPropertyLib::PropertyType::density)
                 .template value<double>(vars, pos, t);
-        // for now only using the solid phase parameters
+
+        auto const heat_capacity_f =
+            liquid_phase
+                .property(
+                    MaterialPropertyLib::PropertyType::specific_heat_capacity)
+                .template value<double>(vars, pos, t);
+
+        auto const porosity =
+            medium.property(MaterialPropertyLib::PropertyType::porosity)
+                .template value<double>(vars, pos, t);
+
+        auto const velocity_arr =
+            liquid_phase
+                .property(MaterialPropertyLib::PropertyType::phase_velocity)
+                .value(vars, pos, t);
+        auto const velocity = Eigen::Map<Eigen::Vector3d const>(
+            std::get<MaterialPropertyLib::Vector>(velocity_arr).data(), 1, 3);
+
+        // calculate the hydrodynamic thermodispersion tensor
+        auto const thermal_conductivity =
+            MaterialPropertyLib::formEigenTensor<3>(
+                medium
+                    .property(
+                        MaterialPropertyLib::PropertyType::thermal_conductivity)
+                    .value(vars, pos, t));
+
+        auto thermal_conductivity_dispersivity = thermal_conductivity;
+
+        double const velocity_magnitude = velocity.norm();
+
+        if (velocity_magnitude >= std::numeric_limits<double>::epsilon())
+        {
+            auto const thermal_dispersivity_longitudinal =
+                medium
+                    .property(MaterialPropertyLib::PropertyType::
+                                  thermal_longitudinal_dispersivity)
+                    .template value<double>();
+            auto const thermal_dispersivity_transversal =
+                medium
+                    .property(MaterialPropertyLib::PropertyType::
+                                  thermal_transversal_dispersivity)
+                    .template value<double>();
+
+            auto const thermal_dispersivity =
+                density_f * heat_capacity_f *
+                (thermal_dispersivity_transversal * velocity_magnitude *
+                     Eigen::Matrix3d::Identity() +
+                 (thermal_dispersivity_longitudinal -
+                  thermal_dispersivity_transversal) /
+                     velocity_magnitude * velocity * velocity.transpose());
+            thermal_conductivity_dispersivity += thermal_dispersivity;
+        }
 
         // assemble Conductance matrix
-        local_K.noalias() += K_ip * k_s;
+        local_K.noalias() +=
+            (dNdx.transpose() * thermal_conductivity_dispersivity * dNdx +
+             N.transpose() * velocity.transpose() * dNdx * density_f *
+                 heat_capacity_f) *
+            w;
 
         // assemble Mass matrix
-        local_M.noalias() += M_ip * density_s * heat_capacity_s;
+        local_M.noalias() += N.transpose() * N * w *
+                             (density_s * heat_capacity_s * (1 - porosity) +
+                              density_f * heat_capacity_f * porosity);
     }
 
     // debugging

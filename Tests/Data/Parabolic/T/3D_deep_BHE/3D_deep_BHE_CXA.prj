@@ -60,14 +60,14 @@
                     <type>AqueousLiquid</type>
                     <properties>
                         <property>
+                            <name>phase_velocity</name>
+                            <type>Constant</type>
+                            <value>0 0 0</value>
+                        </property>
+                        <property>
                             <name>specific_heat_capacity</name>
                             <type>Constant</type>
                             <value>4068</value>
-                        </property>
-                        <property>
-                            <name>thermal_conductivity</name>
-                            <type>Constant</type>
-                            <value>0.1</value>
                         </property>
                         <property>
                             <name>density</name>
@@ -85,11 +85,6 @@
                             <value>2000</value>
                         </property>
                         <property>
-                            <name>thermal_conductivity</name>
-                            <type>Constant</type>
-                            <value>2.5</value>
-                        </property>
-                        <property>
                             <name>density</name>
                             <type>Constant</type>
                             <value>1120</value>
@@ -105,11 +100,6 @@
                             <value>1000</value>
                         </property>
                         <property>
-                            <name>thermal_conductivity</name>
-                            <type>Constant</type>
-                            <value>3.2</value>
-                        </property>
-                        <property>
                             <name>density</name>
                             <type>Constant</type>
                             <value>2500</value>
@@ -118,6 +108,16 @@
                 </phase>
             </phases>
             <properties>
+                <property>
+                    <name>porosity</name>
+                    <type>Constant</type>
+                    <value>0</value>
+                </property>
+                <property>
+                    <name>thermal_conductivity</name>
+                    <type>Constant</type>
+                    <value>2.5</value>
+                </property>
                 <property>
                     <name>thermal_longitudinal_dispersivity</name>
                     <type>Constant</type>

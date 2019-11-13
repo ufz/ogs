@@ -14,11 +14,12 @@ namespace ProcessLib
 {
 namespace HeatTransportBHE
 {
-template <typename NodalMatrixType>
+template <typename NodalRowVectorType, typename GlobalDimNodalMatrixType>
 struct IntegrationPointDataSoil final
 {
-    NodalMatrixType const NTN_product_times_w;
-    NodalMatrixType const dNdxTdNdx_product_times_w;
+    NodalRowVectorType const N;
+    GlobalDimNodalMatrixType const dNdx;
+    double const integration_weight;
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };

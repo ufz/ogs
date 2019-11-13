@@ -54,21 +54,21 @@
             </borehole_heat_exchangers>
         </process>
     </processes>
-	<media>
+    <media>
         <medium id="0">
             <phases>
                 <phase>
                     <type>AqueousLiquid</type>
                     <properties>
                         <property>
+                            <name>phase_velocity</name>
+                            <type>Constant</type>
+                            <value>0 0 0</value>
+                        </property>
+                        <property>
                             <name>specific_heat_capacity</name>
                             <type>Constant</type>
                             <value>4068</value>
-                        </property>
-                        <property>
-                            <name>thermal_conductivity</name>
-                            <type>Constant</type>
-                            <value>0.1</value>
                         </property>
                         <property>
                             <name>density</name>
@@ -86,29 +86,19 @@
                             <value>1778</value>
                         </property>
                         <property>
-                            <name>thermal_conductivity</name>
-                            <type>Constant</type>
-                            <value>2.78018</value>
-                        </property>
-                        <property>
                             <name>density</name>
                             <type>Constant</type>
                             <value>1800</value>
                         </property>
                     </properties>
                 </phase>
-				<phase>
+                <phase>
                     <type>Gas</type>
                     <properties>
                         <property>
                             <name>specific_heat_capacity</name>
                             <type>Constant</type>
                             <value>1000</value>
-                        </property>
-                        <property>
-                            <name>thermal_conductivity</name>
-                            <type>Constant</type>
-                            <value>3.2</value>
                         </property>
                         <property>
                             <name>density</name>
@@ -119,6 +109,16 @@
                 </phase>
             </phases>
             <properties>
+                <property>
+                    <name>porosity</name>
+                    <type>Constant</type>
+                    <value>0</value>
+                </property>
+                <property>
+                    <name>thermal_conductivity</name>
+                    <type>Constant</type>
+                    <value>2.78018</value>
+                </property>
                 <property>
                     <name>thermal_longitudinal_dispersivity</name>
                     <type>Constant</type>

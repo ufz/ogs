@@ -64,3 +64,17 @@ AddTest(
     3D_2U_BHE_pcs_0_ts_10_t_600.000000.vtu 3D_2U_BHE_pcs_0_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 1e-12 1e-14
     3D_2U_BHE_pcs_0_ts_10_t_600.000000.vtu 3D_2U_BHE_pcs_0_ts_10_t_600.000000.vtu temperature_soil temperature_soil 1e-12 1e-13
 )
+
+AddTest(
+    NAME HeatTransportBHE_3D_BHE_groundwater_advection
+    PATH Parabolic/T/3D_BHE_GW_advection
+    RUNTIME 30
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS BHE_GW_advection.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    BHE_GW_advection_pcs_0_ts_10_t_500.000000.vtu BHE_GW_advection_pcs_0_ts_10_t_500.000000.vtu temperature_BHE1 temperature_BHE1 1e-12 1e-14
+    BHE_GW_advection_pcs_0_ts_10_t_500.000000.vtu BHE_GW_advection_pcs_0_ts_10_t_500.000000.vtu temperature_soil temperature_soil 1e-12 1e-13
+)
