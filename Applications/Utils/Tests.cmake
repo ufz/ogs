@@ -283,5 +283,5 @@ AddTest(
     REQUIREMENTS NOT OGS_USE_MPI
     TESTER vtkdiff
     DIFF_DATA
-    AmmerSubsurfaceCoarse.vtu AmmerGridOutput.vtu MaterialIDs MaterialIDs 0 0
+    AmmerSubsurfaceGrid.vtu AmmerGridOutput.vtu MaterialIDs MaterialIDs 0 0
 )

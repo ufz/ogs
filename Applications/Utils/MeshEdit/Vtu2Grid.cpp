@@ -1,4 +1,5 @@
 /**
+ * \file
  *
  * @copyright
  * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
@@ -28,7 +29,7 @@
 #include <vtkUnstructuredGrid.h>
 #include <vtkXMLUnstructuredGridReader.h>
 
-static std::string cell_id_name = "CellIds";
+std::string const cell_id_name = "CellIds";
 
 std::array<std::size_t, 3> getDimensions(MathLib::Point3d const& min,
                                          MathLib::Point3d const& max,
@@ -42,18 +43,17 @@ std::array<std::size_t, 3> getDimensions(MathLib::Point3d const& min,
     };
 }
 
-void assignCellIds(vtkSmartPointer<vtkUnstructuredGrid> const& mesh,
-                   MathLib::Point3d const& min,
-                   std::array<std::size_t, 3> const& dims,
-                   std::array<double, 3> const& cellsize,
-                   std::vector<int>& cell_ids)
+std::vector<int> assignCellIds(vtkSmartPointer<vtkUnstructuredGrid> const& mesh,
+                               MathLib::Point3d const& min,
+                               std::array<std::size_t, 3> const& dims,
+                               std::array<double, 3> const& cellsize)
 {
     vtkSmartPointer<vtkCellLocator> locator =
         vtkSmartPointer<vtkCellLocator>::New();
     locator->SetDataSet(mesh);
     locator->Update();
 
-    cell_ids.clear();
+    std::vector<int>  cell_ids;
     cell_ids.reserve(dims[0] * dims[1] * dims[2]);
     std::array<double, 3> const grid_max = {min[0] + dims[0] * cellsize[0],
                                             min[1] + dims[1] * cellsize[1],
@@ -72,6 +72,7 @@ void assignCellIds(vtkSmartPointer<vtkUnstructuredGrid> const& mesh,
             }
         }
     }
+    return cell_ids;
 }
 
 bool removeUnusedGridCells(vtkSmartPointer<vtkUnstructuredGrid> const& mesh,
@@ -130,7 +131,7 @@ void mapMeshArraysOntoGrid(vtkSmartPointer<vtkUnstructuredGrid> const& mesh,
             mapArray<int, vtkSmartPointer<vtkIntArray>>(*grid, int_arr, name);
             continue;
         }
-        WARN("Ignoring array \"%s\"...", name.c_str());
+        WARN("Ignoring array '%s'...", name.c_str());
     }
 }
 
@@ -198,8 +199,7 @@ int main (int argc, char* argv[])
     reader->Update();
     vtkSmartPointer<vtkUnstructuredGrid> mesh = reader->GetOutput();
 
-    double bounds[6];
-    mesh->GetBounds(bounds);
+    double* bounds = mesh->GetBounds();
     MathLib::Point3d const min(std::array<double, 3>{bounds[0], bounds[2], bounds[4]});
     MathLib::Point3d const max(std::array<double, 3>{bounds[1], bounds[3], bounds[5]});
     std::array<std::size_t, 3> const dims = getDimensions(min, max, cellsize);
@@ -208,10 +208,12 @@ int main (int argc, char* argv[])
             dims[0], dims[1], dims[2], cellsize[0], cellsize[1], cellsize[2],
             min, "grid"));
 
+
+    std::vector<int> const tmp_ids = assignCellIds(mesh, min, dims, cellsize);
     std::vector<int>& cell_ids =
         *grid->getProperties().createNewPropertyVector<int>(
             cell_id_name, MeshLib::MeshItemType::Cell, 1);
-    assignCellIds(mesh, min, dims, cellsize, cell_ids);
+    std::copy(tmp_ids.cbegin(), tmp_ids.cend(), std::back_inserter(cell_ids));
 
     if (!removeUnusedGridCells(mesh, grid))
         return EXIT_FAILURE;
