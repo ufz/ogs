@@ -109,6 +109,7 @@ static std::vector<std::string> getArrays(NcFile const& dataset)
     std::vector<std::string> var_names;
     for (auto [name, var] : names)
     {
+        (void)var;
         var_names.push_back(name);
     }
     return var_names;
