@@ -160,7 +160,9 @@ std::vector<std::size_t> MeshNodeSearcher::getMeshNodeIDs(
             auto const& bulk_nodes = _mesh.getNodes();
             for (auto const id : ids)
             {
-                ss << "- bulk node: " << (*bulk_nodes[id]) << ", distance: "
+                ss << "- bulk node: " << (*bulk_nodes[id])[0] << ", "
+                   << (*bulk_nodes[id])[1] << ", " << (*bulk_nodes[id])[2]
+                   << ", distance: "
                    << std::sqrt(MathLib::sqrDist(bulk_nodes[id]->getCoords(),
                                                  p.getCoords()))
                    << "\n";
