@@ -139,7 +139,7 @@ void HeatTransportBHELocalAssemblerSoil<ShapeFunction, IntegrationMethod>::
                 .property(MaterialPropertyLib::PropertyType::phase_velocity)
                 .value(vars, pos, t);
         auto const velocity = Eigen::Map<Eigen::Vector3d const>(
-            std::get<MaterialPropertyLib::Vector>(velocity_arr).data(), 1, 3);
+            std::get<MaterialPropertyLib::Vector>(velocity_arr).data());
 
         // calculate the hydrodynamic thermodispersion tensor
         auto const thermal_conductivity =
