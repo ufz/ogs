@@ -238,9 +238,4 @@ MeshNodeSearcher const& MeshNodeSearcher::getMeshNodeSearcher(
     return *_mesh_node_searchers[mesh_id];
 }
 
-std::size_t MeshNodeSearcher::getMeshId() const
-{
-    return _mesh.getID();
-}
-
 }  // end namespace MeshGeoToolsLib
