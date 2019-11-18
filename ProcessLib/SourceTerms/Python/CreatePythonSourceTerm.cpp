@@ -22,7 +22,8 @@ namespace ProcessLib
 {
 std::unique_ptr<SourceTerm> createPythonSourceTerm(
     BaseLib::ConfigTree const& config, MeshLib::Mesh const& source_term_mesh,
-    std::unique_ptr<NumLib::LocalToGlobalIndexMap> dof_table,
+    std::unique_ptr<NumLib::LocalToGlobalIndexMap> source_dof_table,
+    const NumLib::LocalToGlobalIndexMap& bulk_dof_table,
     std::size_t const bulk_mesh_id, int const variable_id,
     int const component_id, unsigned const integration_order,
     unsigned const shapefunction_order, unsigned const global_dim)
@@ -69,11 +70,12 @@ std::unique_ptr<SourceTerm> createPythonSourceTerm(
 #endif  // USE_PETSC
 
     auto const global_component_id =
-        dof_table->getGlobalComponent(variable_id, component_id);
+        source_dof_table->getGlobalComponent(variable_id, component_id);
     return std::make_unique<ProcessLib::SourceTerms::Python::PythonSourceTerm>(
-        std::move(dof_table),
+        std::move(source_dof_table),
         ProcessLib::SourceTerms::Python::PythonSourceTermData{
-            source_term, bulk_mesh_id, global_component_id, source_term_mesh},
+            bulk_dof_table, source_term, bulk_mesh_id, global_component_id,
+            source_term_mesh},
         integration_order, shapefunction_order, global_dim, flush_stdout);
 }
 

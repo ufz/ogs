@@ -131,7 +131,7 @@ public:
                                           MeshLib::MeshItemType::Node,
                                           bulk_node_id};
                     auto const dof_idx =
-                        dof_table_source_term.getGlobalIndex(loc, var, comp);
+                        _data.dof_table_bulk.getGlobalIndex(loc, var, comp);
                     if (dof_idx == NumLib::MeshComponentMap::nop)
                     {
                         // TODO extend Python BC to mixed FEM ansatz functions

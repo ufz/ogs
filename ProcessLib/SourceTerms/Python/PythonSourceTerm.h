@@ -28,6 +28,8 @@ namespace Python
 //! Groups data used by source terms, in particular by the local assemblers.
 struct PythonSourceTermData final
 {
+    //! DOF table of the entire domain.
+    NumLib::LocalToGlobalIndexMap const& dof_table_bulk;
     //! Python object computing source term values.
     PythonSourceTermPythonSideInterface* source_term_object;
 
