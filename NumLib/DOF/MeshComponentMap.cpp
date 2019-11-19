@@ -30,14 +30,25 @@ GlobalIndexType const MeshComponentMap::nop =
 MeshComponentMap::MeshComponentMap(
     std::vector<MeshLib::MeshSubset> const& components, ComponentOrder order)
 {
+    // Use PETSc with single thread
+    const MeshLib::NodePartitionedMesh& partitioned_mesh =
+        static_cast<const MeshLib::NodePartitionedMesh&>(
+            components[0].getMesh());
+    if (partitioned_mesh.isForSingleThread())
+    {
+        createSerialMeshComponentMap(components, order);
+        return;
+    }
+
+    // Use PETSc with multi-thread
     // get number of unknows
     GlobalIndexType num_unknowns = 0;
     for (auto const& c : components)
     {
         // PETSc always works with MeshLib::NodePartitionedMesh.
-        const MeshLib::NodePartitionedMesh& mesh =
+        const MeshLib::NodePartitionedMesh& p_mesh =
             static_cast<const MeshLib::NodePartitionedMesh&>(c.getMesh());
-        num_unknowns += mesh.getNumberOfGlobalNodes();
+        num_unknowns += p_mesh.getNumberOfGlobalNodes();
     }
 
     // construct dict (and here we number global_index by component type)
@@ -49,7 +60,7 @@ MeshComponentMap::MeshComponentMap(
         assert(dynamic_cast<MeshLib::NodePartitionedMesh const*>(
                    &c.getMesh()) != nullptr);
         std::size_t const mesh_id = c.getMeshID();
-        const MeshLib::NodePartitionedMesh& mesh =
+        const MeshLib::NodePartitionedMesh& p_mesh =
             static_cast<const MeshLib::NodePartitionedMesh&>(c.getMesh());
 
         // mesh items are ordered first by node, cell, ....
@@ -67,8 +78,9 @@ MeshComponentMap::MeshComponentMap(
                     " of ComponentOrder::BY_LOCATION");
             }
             global_id = static_cast<GlobalIndexType>(
-                components.size() * mesh.getGlobalNodeID(j) + comp_id);
-            const bool is_ghost = mesh.isGhostNode(mesh.getNode(j)->getID());
+                components.size() * p_mesh.getGlobalNodeID(j) + comp_id);
+            const bool is_ghost =
+                p_mesh.isGhostNode(p_mesh.getNode(j)->getID());
             if (is_ghost)
             {
                 _ghosts_indices.push_back(global_id);
@@ -85,7 +97,7 @@ MeshComponentMap::MeshComponentMap(
                               comp_id, global_id));
         }
 
-        _num_global_dof += mesh.getNumberOfGlobalNodes();
+        _num_global_dof += p_mesh.getNumberOfGlobalNodes();
         comp_id++;
     }
 }
@@ -93,27 +105,7 @@ MeshComponentMap::MeshComponentMap(
 MeshComponentMap::MeshComponentMap(
     std::vector<MeshLib::MeshSubset> const& components, ComponentOrder order)
 {
-    // construct dict (and here we number global_index by component type)
-    GlobalIndexType global_index = 0;
-    int comp_id = 0;
-    for (auto const& c : components)
-    {
-        std::size_t const mesh_id = c.getMeshID();
-        // mesh items are ordered first by node, cell, ....
-        for (std::size_t j = 0; j < c.getNumberOfNodes(); j++)
-        {
-            _dict.insert(Line(
-                Location(mesh_id, MeshLib::MeshItemType::Node, c.getNodeID(j)),
-                comp_id, global_index++));
-        }
-        comp_id++;
-    }
-    _num_local_dof = _dict.size();
-
-    if (order == ComponentOrder::BY_LOCATION)
-    {
-        renumberByLocation();
-    }
+    createSerialMeshComponentMap(components, order);
 }
 #endif  // end of USE_PETSC
 
@@ -359,6 +351,32 @@ GlobalIndexType MeshComponentMap::getLocalIndex(
            std::distance(_ghosts_indices.begin(), ghost_index_it);
 
 #endif
+}
+
+void MeshComponentMap::createSerialMeshComponentMap(
+    std::vector<MeshLib::MeshSubset> const& components, ComponentOrder order)
+{
+    // construct dict (and here we number global_index by component type)
+    GlobalIndexType global_index = 0;
+    int comp_id = 0;
+    for (auto const& c : components)
+    {
+        std::size_t const mesh_id = c.getMeshID();
+        // mesh items are ordered first by node, cell, ....
+        for (std::size_t j = 0; j < c.getNumberOfNodes(); j++)
+        {
+            _dict.insert(Line(
+                Location(mesh_id, MeshLib::MeshItemType::Node, c.getNodeID(j)),
+                comp_id, global_index++));
+        }
+        comp_id++;
+    }
+    _num_local_dof = _dict.size();
+
+    if (order == ComponentOrder::BY_LOCATION)
+    {
+        renumberByLocation();
+    }
 }
 
 }  // namespace NumLib

@@ -182,6 +182,12 @@ private:
 
     /// Global ID for ghost entries
     std::vector<GlobalIndexType> _ghosts_indices;
+
+    /// \param components   a vector of components
+    /// \param order        type of ordering values in a vector
+    void createSerialMeshComponentMap(
+        std::vector<MeshLib::MeshSubset> const& components,
+        ComponentOrder order);
 };
 
 }  // namespace NumLib
