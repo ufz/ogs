@@ -154,17 +154,11 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     typename ShapeMatricesTypePressure::NodalMatrixType MTT;
     MTT.setZero(temperature_size, temperature_size);
 
-    typename ShapeMatricesTypePressure::NodalMatrixType KTT_coeff;
-    KTT_coeff.setZero(temperature_size, temperature_size);
-
     typename ShapeMatricesTypePressure::NodalMatrixType KTT;
     KTT.setZero(temperature_size, temperature_size);
 
     typename ShapeMatricesTypePressure::NodalMatrixType KTp;
     KTp.setZero(temperature_size, pressure_size);
-
-    typename ShapeMatricesTypePressure::NodalMatrixType KTp_coeff;
-    KTp_coeff.setZero(temperature_size, pressure_size);
 
     typename ShapeMatricesTypePressure::NodalMatrixType laplace_p;
     laplace_p.setZero(pressure_size, pressure_size);
@@ -459,9 +453,6 @@ std::vector<double> const& ThermoHydroMechanicsLocalAssembler<
     auto cache_matrix = MathLib::createZeroedMatrix<Eigen::Matrix<
         double, DisplacementDim, Eigen::Dynamic, Eigen::RowMajor>>(
         cache, DisplacementDim, num_intpts);
-
-    ParameterLib::SpatialPosition pos;
-    pos.setElementID(_element.getID());
 
     auto p = Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
         pressure_size> const>(local_x.data() + pressure_index, pressure_size);
