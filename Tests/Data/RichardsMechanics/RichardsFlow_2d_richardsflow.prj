@@ -195,6 +195,10 @@
                 <solver_type>PardisoLU</solver_type>
                 -->
             </eigen>
+            <petsc>
+                <prefix>RM</prefix>
+                <parameters>-RM_ksp_type bcgs -RM_pc_type bjacobi -RM_ksp_rtol 1e-16 -RM_ksp_max_it 10000</parameters>
+            </petsc>
         </linear_solver>
     </linear_solvers>
 </OpenGeoSysProject>

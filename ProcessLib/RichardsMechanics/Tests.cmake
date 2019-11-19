@@ -182,3 +182,17 @@ AddTest(
     GLOB RichardsFlow_2d_richardsflow_pcs_0_ts_*.vtu pressure pressure 5e-11 1e-15
     GLOB RichardsFlow_2d_richardsflow_pcs_0_ts_*.vtu saturation saturation 1e-14 1e-15
 )
+
+#PETSc
+AddTest(
+    NAME Parallel_RichardsMechanics_RichardsFlow_2d_richardsflow
+    PATH RichardsMechanics
+    EXECUTABLE_ARGS RichardsFlow_2d_richardsflow.prj
+    WRAPPER mpirun
+    WRAPPER_ARGS -np 1
+    TESTER vtkdiff
+    REQUIREMENTS OGS_USE_MPI
+    DIFF_DATA
+    RichardsFlow_2d_richardsflow_pcs_0_ts_99_t_1900.000000.vtu RichardsFlow_2d_richardsflow_pcs_0_ts_99_t_1900_000000_0.vtu pressure pressure 5e-8 1e-10
+    RichardsFlow_2d_richardsflow_pcs_0_ts_99_t_1900.000000.vtu RichardsFlow_2d_richardsflow_pcs_0_ts_99_t_1900_000000_0.vtu saturation saturation 1e-10 1e-11
+)
