@@ -5,7 +5,7 @@
  *
  *   Note: the return message of PETSc routines is ommited in
  *         the source code. If it is really needed, it can be activated by
- *         adding a PetscErrorCode type variable before each PETSc fucntion
+ *         adding a PetscErrorCode type variable before each PETSc function
  *
  * \author Wenqing Wang
  * \date Nov 2011 - Sep 2013

@@ -38,18 +38,19 @@ std::vector<bool> markNodesOutSideOfPolygon(
         rotated_nodes.push_back(new GeoLib::Point(*node, node->getID()));
     }
     // 2 rotate the Points
-    MathLib::DenseMatrix<double> rot_mat(3,3);
+    MathLib::DenseMatrix<double> rot_mat(3, 3);
     GeoLib::computeRotationMatrixToXY(normal, rot_mat);
     GeoLib::rotatePoints(rot_mat, rotated_nodes);
     // 3 set z coord to zero
     std::for_each(rotated_nodes.begin(), rotated_nodes.end(),
-        [] (GeoLib::Point* p) { (*p)[2] = 0.0; }
-    );
+                  [](GeoLib::Point* p) { (*p)[2] = 0.0; });
 
     // *** mark rotated nodes
     std::vector<bool> outside(rotated_nodes.size(), true);
-    for (std::size_t k(0); k<rotated_nodes.size(); k++) {
-        if (rot_polygon.isPntInPolygon(*(rotated_nodes[k]))) {
+    for (std::size_t k(0); k < rotated_nodes.size(); k++)
+    {
+        if (rot_polygon.isPntInPolygon(*(rotated_nodes[k])))
+        {
             outside[k] = false;
         }
     }
@@ -59,11 +60,8 @@ std::vector<bool> markNodesOutSideOfPolygon(
         delete rotated_node;
     }
 
-    std::vector<GeoLib::Point*> & rot_polygon_pnts(
-        const_cast<std::vector<GeoLib::Point*> &>(
-            rot_polygon.getPointsVec()
-        )
-    );
+    std::vector<GeoLib::Point*>& rot_polygon_pnts(
+        const_cast<std::vector<GeoLib::Point*>&>(rot_polygon.getPointsVec()));
     for (auto& rot_polygon_pnt : rot_polygon_pnts)
     {
         delete rot_polygon_pnt;
@@ -72,4 +70,4 @@ std::vector<bool> markNodesOutSideOfPolygon(
     return outside;
 }
 
-} // end namespace MeshGeoToolsLib
+}  // end namespace MeshGeoToolsLib

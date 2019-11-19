@@ -48,7 +48,7 @@ public:
     using MatrixDimDim = Matrix<Dim, Dim>;
 
     // TODO That only works if all process variables are single component
-    //      and use the same shape fucntions.
+    //      and use the same shape functions.
     //! Local matrix for the given number of d.o.f.\ per node and number of
     //! integration points
     using LocalMatrix = Matrix<NNodes*NodalDOF, NNodes*NodalDOF>;
