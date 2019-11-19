@@ -12,20 +12,17 @@
 
 #pragma once
 
-#include "numlib_export.h"
-
-#include "MeshLib/MeshSubset.h"
-
 #include "ComponentGlobalIndexDict.h"
+#include "MeshLib/MeshSubset.h"
+#include "numlib_export.h"
 
 namespace NumLib
 {
-
 /// Ordering of components in global matrix/vector.
 enum class ComponentOrder
 {
-    BY_COMPONENT,   ///< Ordering data by component type
-    BY_LOCATION     ///< Ordering data by spatial location
+    BY_COMPONENT,  ///< Ordering data by component type
+    BY_LOCATION    ///< Ordering data by spatial location
 };
 
 /// Multidirectional mapping between mesh entities and degrees of freedom.
@@ -58,10 +55,7 @@ public:
         std::vector<int> const& new_global_component_ids) const;
 
     /// The number of dofs including the those located in the ghost nodes.
-    std::size_t dofSizeWithGhosts() const
-    {
-        return _dict.size();
-    }
+    std::size_t dofSizeWithGhosts() const { return _dict.size(); }
 
     /// Component ids at given location \c l.
     ///
@@ -89,7 +83,7 @@ public:
     /// | l        | comp_id_1   | gi23        |
     /// | ...      |  ...        | ...         |
     /// | l        | comp_id_k   | gi45        |
-    std::vector<GlobalIndexType> getGlobalIndices(const Location &l) const;
+    std::vector<GlobalIndexType> getGlobalIndices(const Location& l) const;
 
     /// Global indices for all components at all given locations \c ls ordered
     /// by location. The return list is sorted first by location.
@@ -124,10 +118,7 @@ public:
 
     /// Get the number of local unknowns excluding those associated
     /// with ghost nodes (for DDC with node-wise mesh partitioning).
-    std::size_t dofSizeWithoutGhosts() const
-    {
-        return _num_local_dof;
-    }
+    std::size_t dofSizeWithoutGhosts() const { return _num_local_dof; }
 
     /// Get ghost indices (for DDC).
     std::vector<GlobalIndexType> const& getGhostIndices() const
@@ -167,7 +158,8 @@ private:
     /// Private constructor used by internally created mesh component maps.
     explicit MeshComponentMap(detail::ComponentGlobalIndexDict& dict)
         : _dict(dict)
-    { }
+    {
+    }
 
     /// Looks up if a line is already stored in the dictionary.
     /// \attention The line for the location l and component id must exist,
@@ -175,13 +167,13 @@ private:
     /// \return a copy of the line.
     detail::Line getLine(Location const& l, int const comp_id) const;
 
-    void renumberByLocation(GlobalIndexType offset=0);
+    void renumberByLocation(GlobalIndexType offset = 0);
 
     detail::ComponentGlobalIndexDict _dict;
 
     /// Number of local unknowns excluding those associated
     /// with ghost nodes (for domain decomposition).
-    std::size_t _num_local_dof  = 0;
+    std::size_t _num_local_dof = 0;
 
 #ifdef USE_PETSC
     /// Number of global unknowns. Used internally only.
@@ -192,4 +184,4 @@ private:
     std::vector<GlobalIndexType> _ghosts_indices;
 };
 
-}   // namespace NumLib
+}  // namespace NumLib

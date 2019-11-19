@@ -21,7 +21,6 @@
 
 namespace NumLib
 {
-
 using namespace detail;
 
 GlobalIndexType const MeshComponentMap::nop =
@@ -35,10 +34,10 @@ MeshComponentMap::MeshComponentMap(
     GlobalIndexType num_unknowns = 0;
     for (auto const& c : components)
     {
-            // PETSc always works with MeshLib::NodePartitionedMesh.
-            const MeshLib::NodePartitionedMesh& mesh =
-                static_cast<const MeshLib::NodePartitionedMesh&>(c.getMesh());
-            num_unknowns += mesh.getNumberOfGlobalNodes();
+        // PETSc always works with MeshLib::NodePartitionedMesh.
+        const MeshLib::NodePartitionedMesh& mesh =
+            static_cast<const MeshLib::NodePartitionedMesh&>(c.getMesh());
+        num_unknowns += mesh.getNumberOfGlobalNodes();
     }
 
     // construct dict (and here we number global_index by component type)
@@ -116,7 +115,7 @@ MeshComponentMap::MeshComponentMap(
         renumberByLocation();
     }
 }
-#endif // end of USE_PETSC
+#endif  // end of USE_PETSC
 
 MeshComponentMap MeshComponentMap::getSubset(
     std::vector<MeshLib::MeshSubset> const& bulk_mesh_subsets,
@@ -207,8 +206,9 @@ void MeshComponentMap::renumberByLocation(GlobalIndexType offset)
 {
     GlobalIndexType global_index = offset;
 
-    auto &m = _dict.get<ByLocation>(); // view as sorted by mesh item
-    for (auto itr_mesh_item=m.begin(); itr_mesh_item!=m.end(); ++itr_mesh_item)
+    auto& m = _dict.get<ByLocation>();  // view as sorted by mesh item
+    for (auto itr_mesh_item = m.begin(); itr_mesh_item != m.end();
+         ++itr_mesh_item)
     {
         Line pos = *itr_mesh_item;
         pos.global_index = global_index++;
@@ -218,7 +218,7 @@ void MeshComponentMap::renumberByLocation(GlobalIndexType offset)
 
 std::vector<int> MeshComponentMap::getComponentIDs(const Location& l) const
 {
-    auto const &m = _dict.get<ByLocation>();
+    auto const& m = _dict.get<ByLocation>();
     auto const p = m.equal_range(Line(l));
     std::vector<int> vec_compID;
     for (auto itr = p.first; itr != p.second; ++itr)
@@ -230,23 +230,24 @@ std::vector<int> MeshComponentMap::getComponentIDs(const Location& l) const
 
 Line MeshComponentMap::getLine(Location const& l, int const comp_id) const
 {
-    auto const &m = _dict.get<ByLocationAndComponent>();
+    auto const& m = _dict.get<ByLocationAndComponent>();
     auto const itr = m.find(Line(l, comp_id));
-    assert(itr != m.end());     // The line must exist in the current dictionary.
+    assert(itr != m.end());  // The line must exist in the current dictionary.
     return *itr;
 }
 
 GlobalIndexType MeshComponentMap::getGlobalIndex(Location const& l,
                                                  int const comp_id) const
 {
-    auto const &m = _dict.get<ByLocationAndComponent>();
+    auto const& m = _dict.get<ByLocationAndComponent>();
     auto const itr = m.find(Line(l, comp_id));
-    return itr!=m.end() ? itr->global_index : nop;
+    return itr != m.end() ? itr->global_index : nop;
 }
 
-std::vector<GlobalIndexType> MeshComponentMap::getGlobalIndices(const Location &l) const
+std::vector<GlobalIndexType> MeshComponentMap::getGlobalIndices(
+    const Location& l) const
 {
-    auto const &m = _dict.get<ByLocation>();
+    auto const& m = _dict.get<ByLocation>();
     auto const p = m.equal_range(Line(l));
     std::vector<GlobalIndexType> global_indices;
     for (auto itr = p.first; itr != p.second; ++itr)
@@ -265,7 +266,7 @@ std::vector<GlobalIndexType> MeshComponentMap::getGlobalIndicesByLocation(
     std::vector<GlobalIndexType> global_indices;
     global_indices.reserve(ls.size());
 
-    auto const &m = _dict.get<ByLocation>();
+    auto const& m = _dict.get<ByLocation>();
     for (const auto& l : ls)
     {
         auto const p = m.equal_range(Line(l));
@@ -287,7 +288,7 @@ std::vector<GlobalIndexType> MeshComponentMap::getGlobalIndicesByComponent(
     pairs.reserve(ls.size());
 
     // Create a sub dictionary containing all lines with location from ls.
-    auto const &m = _dict.get<ByLocation>();
+    auto const& m = _dict.get<ByLocation>();
     for (const auto& l : ls)
     {
         auto const p = m.equal_range(Line(l));
@@ -297,10 +298,9 @@ std::vector<GlobalIndexType> MeshComponentMap::getGlobalIndicesByComponent(
         }
     }
 
-    auto CIPairLess = [](CIPair const& a, CIPair const& b)
-        {
-            return a.first < b.first;
-        };
+    auto CIPairLess = [](CIPair const& a, CIPair const& b) {
+        return a.first < b.first;
+    };
 
     // Create vector of global indices from sub dictionary sorting by component.
     if (!std::is_sorted(pairs.begin(), pairs.end(), CIPairLess))
@@ -330,7 +330,7 @@ GlobalIndexType MeshComponentMap::getLocalIndex(
     (void)range_end;
     return global_index;
 #else
-    if (global_index >= 0)    // non-ghost location.
+    if (global_index >= 0)  // non-ghost location.
         return global_index - range_begin;
 
     //
@@ -341,17 +341,16 @@ GlobalIndexType MeshComponentMap::getLocalIndex(
     // of the local vector:
     GlobalIndexType const real_global_index =
         (-global_index == static_cast<GlobalIndexType>(_num_global_dof))
-        ? 0 : -global_index;
+            ? 0
+            : -global_index;
 
     // TODO Find in ghost indices is O(n^2/2) for n being the length of
     // _ghosts_indices. Providing an inverted table would be faster.
-    auto const ghost_index_it = std::find(_ghosts_indices.begin(),
-                                          _ghosts_indices.end(),
-                                          real_global_index);
+    auto const ghost_index_it = std::find(
+        _ghosts_indices.begin(), _ghosts_indices.end(), real_global_index);
     if (ghost_index_it == _ghosts_indices.end())
     {
-        OGS_FATAL("index %d not found in ghost_indices",
-                  real_global_index);
+        OGS_FATAL("index %d not found in ghost_indices", real_global_index);
     }
 
     // Using std::distance on a std::vector is O(1). As long as _ghost_indices
@@ -362,4 +361,4 @@ GlobalIndexType MeshComponentMap::getLocalIndex(
 #endif
 }
 
-}   // namespace NumLib
+}  // namespace NumLib

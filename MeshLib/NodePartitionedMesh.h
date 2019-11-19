@@ -166,4 +166,4 @@ private:
     std::size_t _n_active_nodes;
 };
 
-}   // namespace MeshLib
+}  // namespace MeshLib
