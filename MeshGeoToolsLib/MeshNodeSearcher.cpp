@@ -11,6 +11,7 @@
 #include "MeshNodeSearcher.h"
 
 #include <typeinfo>
+#include <sstream>
 
 #include "HeuristicSearchLength.h"
 #include "MeshNodesAlongPolyline.h"
@@ -109,12 +110,21 @@ std::vector<std::size_t> MeshNodeSearcher::getMeshNodeIDs(
         }
         if (ids.size() != 1)
         {
+            std::stringstream ss;
+            auto const& bulk_nodes = _mesh.getNodes();
+            for (auto const id : ids)
+            {
+                ss << "- bulk node: " << (*bulk_nodes[id]) << ", distance: "
+                   << std::sqrt(MathLib::sqrDist(bulk_nodes[id]->getCoords(),
+                                                 p.getCoords()))
+                   << "\n";
+            }
             OGS_FATAL(
                 "Found %d nodes in the mesh for point %d : (%g, %g, %g) in %g "
                 "epsilon radius in the mesh '%s'. Expected to find exactly one "
-                "node.",
+                "node.\n%s",
                 ids.size(), p.getID(), p[0], p[1], p[2], epsilon_radius,
-                _mesh.getName().c_str());
+                _mesh.getName().c_str(), ss.str().c_str());
         }
         node_ids.push_back(ids.front());
     }
@@ -226,11 +236,6 @@ MeshNodeSearcher const& MeshNodeSearcher::getMeshNodeSearcher(
             mesh, std::move(search_length_algorithm), SearchAllNodes::Yes);
 
     return *_mesh_node_searchers[mesh_id];
-}
-
-std::size_t MeshNodeSearcher::getMeshId() const
-{
-    return _mesh.getID();
 }
 
 }  // end namespace MeshGeoToolsLib

@@ -141,11 +141,6 @@ public:
         GeoLib::Surface const& sfc) const;
 
     /**
-     * Get the mesh this searcher operates on.
-     */
-    std::size_t getMeshId() const;
-
-    /**
      * Returns a (possibly new) mesh node searcher for the mesh.
      * A new one will be created, if it does not already exists.
      */
