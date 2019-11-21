@@ -349,7 +349,14 @@ add_subdirectory(MathLib)
 add_subdirectory(MeshLib)
 add_subdirectory(MeshGeoToolsLib)
 add_subdirectory(NumLib)
-add_subdirectory(ChemistryLib)
+
+if (OGS_BUILD_PROCESS_ComponentTransport
+    OR OGS_BUILD_PROCESS_RichardsComponentTransport
+    OR OGS_BUILD_PROCESS_RichardsComponentTransport
+    OR OGS_BUILD_PROCESS_HeatTransportBHE)
+    add_subdirectory(ChemistryLib)
+endif()
+
 if(OGS_BUILD_CLI OR OGS_BUILD_UTILS OR BUILD_TESTING)
     add_subdirectory(ParameterLib)
     add_subdirectory(MaterialLib)
