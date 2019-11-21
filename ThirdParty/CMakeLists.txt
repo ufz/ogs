@@ -25,7 +25,12 @@ add_subdirectory(googletest)
 option(OGS_USE_OPTIONAL_SUBMODULES "Option for enabling optional submodules" OFF)
 
 #iphreeqc
-add_subdirectory(iphreeqc)
+if (OGS_BUILD_PROCESS_ComponentTransport
+    OR OGS_BUILD_PROCESS_RichardsComponentTransport
+    OR OGS_BUILD_PROCESS_RichardsComponentTransport
+    OR OGS_BUILD_PROCESS_HeatTransportBHE)
+    add_subdirectory(iphreeqc)
+endif()
 
 # MFrontGenericInterfaceSupport
 if (OGS_USE_MFRONT)
