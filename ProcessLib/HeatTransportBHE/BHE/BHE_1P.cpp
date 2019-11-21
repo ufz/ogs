@@ -1,7 +1,7 @@
 /**
  * \file
  * \copyright
- * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2020, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
@@ -106,16 +106,14 @@ std::array<double, BHE_1P::number_of_unknowns> BHE_1P::calcThermalResistances(
 
     // thermal resistances of the grout
     double const D = borehole_geometry.diameter;
-    double const outer_pipe_outside_diameter =
-        _pipe.single_pipe.outsideDiameter();
+    double const pipe_outside_diameter = _pipe.single_pipe.outsideDiameter();
 
-    double const chi =
-        std::log(std::sqrt(D * D + outer_pipe_outside_diameter *
-                                       outer_pipe_outside_diameter) /
-                 std::sqrt(2) / outer_pipe_outside_diameter) /
-        std::log(D / outer_pipe_outside_diameter);
+    double const chi = std::log(std::sqrt(D * D + pipe_outside_diameter *
+                                                      pipe_outside_diameter) /
+                                std::sqrt(2) / pipe_outside_diameter) /
+                       std::log(D / pipe_outside_diameter);
     double const R_g =
-        std::log(D / outer_pipe_outside_diameter) / 2 / (pi * lambda_g);
+        std::log(D / pipe_outside_diameter) / 2 / (pi * lambda_g);
 
     double const R_con_b = chi * R_g;
 

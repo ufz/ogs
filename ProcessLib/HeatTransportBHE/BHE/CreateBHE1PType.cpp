@@ -2,7 +2,7 @@
  * \file
  *
  * \copyright
- * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2020, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
@@ -24,13 +24,20 @@ static std::tuple<BoreholeGeometry,
                   RefrigerantProperties,
                   GroutParameters,
                   FlowAndTemperatureControl,
-                  PipeConfiguration1PType>
+                  PipeConfiguration1PType,
+                  bool>
 parseBHE1PTypeConfig(
     BaseLib::ConfigTree const& config,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
         curves)
 {
+    // if the BHE is using python boundary condition
+    auto const bhe_if_use_python_bc_conf =
+        config.getConfigParameter<bool>("bhe_if_use_python_bc", false);
+    DBUG("If using python boundary condition : %s",
+         (bhe_if_use_python_bc_conf) ? "true" : "false");
+
     auto const borehole_geometry =
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__borehole}
         createBoreholeGeometry(config.getConfigSubtree("borehole"));
@@ -60,8 +67,8 @@ parseBHE1PTypeConfig(
         curves,
         refrigerant);
 
-    return {borehole_geometry, refrigerant, grout, flowAndTemperatureControl,
-            pipes};
+    return {borehole_geometry,         refrigerant, grout,
+            flowAndTemperatureControl, pipes,       bhe_if_use_python_bc_conf};
 }
 
 template <typename T_BHE>
@@ -74,7 +81,7 @@ T_BHE createBHE1PType(
     auto SinglePipeType = parseBHE1PTypeConfig(config, curves);
     return {std::get<0>(SinglePipeType), std::get<1>(SinglePipeType),
             std::get<2>(SinglePipeType), std::get<3>(SinglePipeType),
-            std::get<4>(SinglePipeType)};
+            std::get<4>(SinglePipeType), std::get<5>(SinglePipeType)};
 }
 
 template BHE_1P createBHE1PType<BHE_1P>(

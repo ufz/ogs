@@ -55,14 +55,14 @@
                     <type>AqueousLiquid</type>
                     <properties>
                         <property>
+                            <name>phase_velocity</name>
+                            <type>Constant</type>
+                            <value>0 0 0</value>
+                        </property>
+                        <property>
                             <name>specific_heat_capacity</name>
                             <type>Constant</type>
                             <value>4068</value>
-                        </property>
-                        <property>
-                            <name>thermal_conductivity</name>
-                            <type>Constant</type>
-                            <value>0.1</value>
                         </property>
                         <property>
                             <name>density</name>
@@ -77,17 +77,12 @@
                         <property>
                             <name>specific_heat_capacity</name>
                             <type>Constant</type>
-                            <value>2000</value>
-                        </property>
-                        <property>
-                            <name>thermal_conductivity</name>
-                            <type>Constant</type>
-                            <value>2.5</value>
+                            <value>1778</value>
                         </property>
                         <property>
                             <name>density</name>
                             <type>Constant</type>
-                            <value>1120</value>
+                            <value>1800</value>
                         </property>
                     </properties>
                 </phase>
@@ -100,11 +95,6 @@
                             <value>1000</value>
                         </property>
                         <property>
-                            <name>thermal_conductivity</name>
-                            <type>Constant</type>
-                            <value>3.2</value>
-                        </property>
-                        <property>
                             <name>density</name>
                             <type>Constant</type>
                             <value>2500</value>
@@ -113,6 +103,16 @@
                 </phase>
             </phases>
             <properties>
+                <property>
+                    <name>porosity</name>
+                    <type>Constant</type>
+                    <value>0</value>
+                </property>
+                <property>
+                    <name>thermal_conductivity</name>
+                    <type>Constant</type>
+                    <value>2.78018</value>
+                </property>
                 <property>
                     <name>thermal_longitudinal_dispersivity</name>
                     <type>Constant</type>
@@ -177,12 +177,12 @@
         <parameter>
             <name>T0</name>
             <type>Constant</type>
-            <value>25</value>
+            <value>55</value>
         </parameter>
         <parameter>
             <name>T0_BHE1</name>
             <type>Constant</type>
-            <values>25 25</values>
+            <values>20 20</values>
         </parameter>
     </parameters>
     <process_variables>
@@ -228,10 +228,8 @@
     <curves>
         <curve>
             <name>power_curve</name>
-            <coords>0 600
-            </coords>
-            <values>-5000 -5000
-            </values>
+            <coords>0 3600</coords>
+            <values>-5000 -5000</values>
         </curve>
     </curves>
 </OpenGeoSysProject>

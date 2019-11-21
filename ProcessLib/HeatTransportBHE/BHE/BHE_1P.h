@@ -1,7 +1,7 @@
 /**
  * \file
  * \copyright
- * Copyright (c) 2012-2019, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2020, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
@@ -43,8 +43,10 @@ public:
            RefrigerantProperties const& refrigerant,
            GroutParameters const& grout,
            FlowAndTemperatureControl const& flowAndTemperatureControl,
-           PipeConfiguration1PType const& pipes)
-        : BHECommon{borehole, refrigerant, grout, flowAndTemperatureControl},
+           PipeConfiguration1PType const& pipes,
+           bool const usePythonBC)
+        : BHECommon{borehole, refrigerant, grout, flowAndTemperatureControl,
+                    usePythonBC},
           _pipe(pipes)
     {
         _thermal_resistances.fill(std::numeric_limits<double>::quiet_NaN());
@@ -122,7 +124,7 @@ public:
     }
 
     static constexpr std::pair<int, int> inflow_outflow_bc_component_ids[] = {
-        {0, 0}};
+        {0, 1}};
 
 public:
     std::array<double, number_of_unknowns> crossSectionAreas() const
