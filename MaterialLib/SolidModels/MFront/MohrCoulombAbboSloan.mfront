@@ -185,7 +185,7 @@ a.setEntryName("TensionCutOffParameter");
         const auto dev_s_squared = computeJ3Derivative(
             sig);  // replaces dev_s_squared = deviator(square(s));
         const auto dG_dI1 = sin_psi / 3.;
-        const auto root = max(sqrt(J2 * KG * KG + a * a * sin_psi * sin_psi),
+        const auto root = max(sqrt(J2 * KG * KG + a * a * tan(phi) * tan(phi) * cos(psi) * cos(psi)),
                               local_zero_tolerance);
         const auto dG_dJ2 = KG / (2. * root) * (KG - tan_3_lode * dKG_dlode);
         const auto dG_dJ3 = J2 * KG * tan_3_lode / (3. * J3 * root) * dKG_dlode;
