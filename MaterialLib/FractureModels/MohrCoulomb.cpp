@@ -55,13 +55,13 @@ void MohrCoulomb<DisplacementDim>::computeConstitutiveRelation(
     ParameterLib::SpatialPosition const& x,
     double const aperture0,
     Eigen::Ref<Eigen::VectorXd const>
-        sigma0,
+    /*sigma0*/,
     Eigen::Ref<Eigen::VectorXd const>
-    /*w_prev*/,
+        w_prev,
     Eigen::Ref<Eigen::VectorXd const>
         w,
     Eigen::Ref<Eigen::VectorXd const>
-    /*sigma_prev*/,
+        sigma_prev,
     Eigen::Ref<Eigen::VectorXd>
         sigma,
     Eigen::Ref<Eigen::MatrixXd>
@@ -96,23 +96,21 @@ void MohrCoulomb<DisplacementDim>::computeConstitutiveRelation(
     // condition of the w0 = 0. Therefore the initial state is not associated
     // with a plastic aperture change.
     {  // Exact elastic predictor
-        sigma.noalias() = Ke * (w - state.w_p_prev);
+        sigma.noalias() = Ke * (w - w_prev);
 
         sigma.coeffRef(index_ns) *=
             logPenalty(aperture0, aperture, _penalty_aperture_cutoff);
+        sigma.noalias() += sigma_prev;
     }
-
-    sigma.noalias() += sigma0;
 
     // correction for an opening fracture
     if (_tension_cutoff && sigma[DisplacementDim - 1] >= 0)
     {
         Kep.setZero();
         sigma.setZero();
+        state.w_p = w;
         material_state_variables.setTensileStress(true);
         return;
-
-        // TODO (nagel); Update w_p for fracture opening and closing.
     }
 
     auto yield_function = [&mat](Eigen::VectorXd const& s) {
@@ -178,9 +176,12 @@ void MohrCoulomb<DisplacementDim>::computeConstitutiveRelation(
                  */
             state.w_p = state.w_p_prev +
                         solution[0] * plastic_potential_derivative(sigma);
-            sigma.noalias() = sigma0 + (Ke * (w - state.w_p)) *
-                                           logPenalty(aperture0, aperture,
-                                                      _penalty_aperture_cutoff);
+
+            sigma.noalias() = Ke * (w - w_prev - state.w_p + state.w_p_prev);
+
+            sigma.coeffRef(index_ns) *=
+                logPenalty(aperture0, aperture, _penalty_aperture_cutoff);
+            sigma.noalias() += sigma_prev;
         };
 
         auto newton_solver =
