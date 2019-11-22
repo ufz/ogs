@@ -30,8 +30,14 @@ target_link_libraries(ProcessLib
                              MeshLib
                              NumLib
                              logog
-                             ChemistryLib
                       PRIVATE ParameterLib GitInfoLib)
+
+if (OGS_BUILD_PROCESS_ComponentTransport
+    OR OGS_BUILD_PROCESS_RichardsComponentTransport
+    OR OGS_BUILD_PROCESS_RichardsComponentTransport
+    OR OGS_BUILD_PROCESS_HeatTransportBHE)
+    target_link_libraries(ProcessLib PUBLIC ChemistryLib)
+endif()
 
 if(OGS_USE_PYTHON)
     add_subdirectory(BoundaryCondition/Python)
