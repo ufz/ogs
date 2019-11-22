@@ -99,7 +99,7 @@ void MohrCoulomb<DisplacementDim>::computeConstitutiveRelation(
         sigma.noalias() = Ke * (w - w_prev);
 
         sigma.coeffRef(index_ns) *=
-            logPenalty(aperture0, aperture, _penalty_aperture_cutoff);
+            logPenaltyDerivative(aperture0, aperture, _penalty_aperture_cutoff);
         sigma.noalias() += sigma_prev;
     }
 
@@ -179,8 +179,8 @@ void MohrCoulomb<DisplacementDim>::computeConstitutiveRelation(
 
             sigma.noalias() = Ke * (w - w_prev - state.w_p + state.w_p_prev);
 
-            sigma.coeffRef(index_ns) *=
-                logPenalty(aperture0, aperture, _penalty_aperture_cutoff);
+            sigma.coeffRef(index_ns) *= logPenaltyDerivative(
+                aperture0, aperture, _penalty_aperture_cutoff);
             sigma.noalias() += sigma_prev;
         };
 
