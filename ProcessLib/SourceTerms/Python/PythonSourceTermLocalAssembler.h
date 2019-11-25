@@ -103,10 +103,6 @@ public:
         auto const num_comp_total =
             dof_table_source_term.getNumberOfComponents();
 
-        auto const& bulk_node_ids_map =
-            *_data.source_term_mesh.getProperties()
-                 .template getPropertyVector<std::size_t>("bulk_node_ids");
-
         // gather primary variables
         typename ShapeMatricesType::template MatrixType<ShapeFunction::NPOINTS,
                                                        Eigen::Dynamic>
@@ -125,11 +121,9 @@ public:
                 {
                     auto const* const node = _element.getNode(element_node_id);
                     auto const boundary_node_id = node->getID();
-                    auto const bulk_node_id =
-                        bulk_node_ids_map[boundary_node_id];
-                    MeshLib::Location loc{_data.bulk_mesh_id,
+                    MeshLib::Location loc{_data.source_term_mesh.getID(),
                                           MeshLib::MeshItemType::Node,
-                                          bulk_node_id};
+                                          boundary_node_id};
                     auto const dof_idx =
                         dof_table_source_term.getGlobalIndex(loc, var, comp);
                     if (dof_idx == NumLib::MeshComponentMap::nop)
@@ -141,7 +135,7 @@ public:
                             "functions, which is currently not supported by "
                             "the implementation of Python BCs. That excludes, "
                             "e.g., the HM process.",
-                            bulk_node_id, var, comp);
+                            boundary_node_id, var, comp);
                     }
                     primary_variables_mat(element_node_id, global_component) =
                         x[dof_idx];
