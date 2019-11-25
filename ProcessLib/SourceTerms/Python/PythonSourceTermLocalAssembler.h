@@ -119,9 +119,9 @@ public:
                 for (unsigned element_node_id = 0; element_node_id < num_nodes;
                      ++element_node_id)
                 {
-                    auto const* const node = _element.getNode(element_node_id);
-                    auto const boundary_node_id = node->getID();
-                    MeshLib::Location loc{_data.source_term_mesh.getID(),
+                    auto const boundary_node_id =
+                        _element.getNode(element_node_id)->getID();
+                    MeshLib::Location loc{_data.source_term_mesh_id,
                                           MeshLib::MeshItemType::Node,
                                           boundary_node_id};
                     auto const dof_idx =

@@ -113,9 +113,8 @@ std::unique_ptr<SourceTerm> createSourceTerm(
 
         return ProcessLib::createPythonSourceTerm(
             config.config, config.mesh, std::move(dof_table_source_term),
-            source_term_mesh.getID(), variable_id, *config.component_id,
-            integration_order, shapefunction_order,
-            source_term_mesh.getDimension());
+            variable_id, *config.component_id, integration_order,
+            shapefunction_order, source_term_mesh.getDimension());
 #else
         OGS_FATAL("OpenGeoSys has not been built with Python support.");
 #endif
