@@ -39,7 +39,7 @@ struct PythonSourceTermData final
     const MeshLib::Mesh& source_term_mesh;
 
     //! Mesh ID of the entire domain.
-    std::size_t const source_term_mesh_id = source_term_mesh.getID();
+    std::size_t const source_term_mesh_id;
 };
 
 //! A source term whose values are computed by a Python script.
