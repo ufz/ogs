@@ -23,9 +23,9 @@ namespace ProcessLib
 std::unique_ptr<SourceTerm> createPythonSourceTerm(
     BaseLib::ConfigTree const& config, MeshLib::Mesh const& source_term_mesh,
     std::unique_ptr<NumLib::LocalToGlobalIndexMap> dof_table,
-    std::size_t const bulk_mesh_id, int const variable_id,
-    int const component_id, unsigned const integration_order,
-    unsigned const shapefunction_order, unsigned const global_dim)
+    int const variable_id, int const component_id,
+    unsigned const integration_order, unsigned const shapefunction_order,
+    unsigned const global_dim)
 {
     DBUG("Constructing PythonSourceTerm from config.");
     //! \ogs_file_param{prj__process_variables__process_variable__source_terms__source_term__type}
@@ -73,7 +73,8 @@ std::unique_ptr<SourceTerm> createPythonSourceTerm(
     return std::make_unique<ProcessLib::SourceTerms::Python::PythonSourceTerm>(
         std::move(dof_table),
         ProcessLib::SourceTerms::Python::PythonSourceTermData{
-            source_term, bulk_mesh_id, global_component_id, source_term_mesh},
+            source_term, global_component_id, source_term_mesh,
+            source_term_mesh.getID()},
         integration_order, shapefunction_order, global_dim, flush_stdout);
 }
 

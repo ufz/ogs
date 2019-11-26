@@ -31,15 +31,15 @@ struct PythonSourceTermData final
     //! Python object computing source term values.
     PythonSourceTermPythonSideInterface* source_term_object;
 
-    //! Mesh ID of the entire domain.
-    std::size_t const bulk_mesh_id;
-
     //! Global component ID of the (variable, component) to which this source
     //! term is applied.
     int const global_component_id;
 
     //! The source term mesh, i.e., the (sub-) domain of this source term.
     const MeshLib::Mesh& source_term_mesh;
+
+    //! Mesh ID of the entire domain.
+    std::size_t const source_term_mesh_id;
 };
 
 //! A source term whose values are computed by a Python script.
