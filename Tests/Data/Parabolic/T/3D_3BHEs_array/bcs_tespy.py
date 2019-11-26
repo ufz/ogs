@@ -39,7 +39,7 @@ def timerange(t):
 #month demand
 def consumer_demand(t):#dynamic thermal demand from consumer
     #thermal demand in each month, assumed specific heat extraction rate * lenth of BHE * number of BHE
-    month_demand = [-10*50*3,-10*50*3,-10*50*3,-10*50*3,-10*50*3,-10*50*3,-10*50*3,-10*50*3,-10*50*3,-10*50*3,-10*50*3,-10*50*3]
+    month_demand = [-25*50*3,-25*50*3,-25*50*3,-25*50*3,-25*50*3,-25*50*3,-25*50*3,-25*50*3,-25*50*3,-25*50*3,-25*50*3,-25*50*3]
     return month_demand[t -1]
 
 # %% dynamic hydraulic flow rate
