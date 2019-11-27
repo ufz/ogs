@@ -91,12 +91,6 @@ double AdsorptionReaction::getMolarFraction(double xm, double M_this, double M_o
 }
 
 
-double AdsorptionReaction::getMassFraction(double xn, double M_this, double M_other)
-{
-    return M_this*xn/(M_this*xn + M_other*(1.0-xn));
-}
-
-
 double AdsorptionReaction::dMolarFraction(double xm, double M_this, double M_other)
 {
     return M_other * M_this

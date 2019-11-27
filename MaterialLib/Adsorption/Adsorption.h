@@ -26,7 +26,6 @@ public:
     static double getSpecificHeatCapacity(const double T_Ads); // TODO [CL] why unused?
 
     static double getMolarFraction(double xm, double M_this, double M_other);
-    static double getMassFraction(double xn, double M_this, double M_other);
     static double dMolarFraction(double xm, double M_this, double M_other);
 
     static double getLoading(const double rho_curr, const double rho_dry);
