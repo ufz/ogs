@@ -184,18 +184,6 @@ void Mesh::setElementsConnectedToNodes()
     }
 }
 
-void Mesh::resetElementsConnectedToNodes()
-{
-    for (auto& node : _nodes)
-    {
-        if (node)
-        {
-            node->clearElements();
-        }
-    }
-    this->setElementsConnectedToNodes();
-}
-
 void Mesh::calcEdgeLengthRange()
 {
     this->_edge_length.first  = std::numeric_limits<double>::max();
