@@ -48,11 +48,6 @@ class Property
 {
 public:
     virtual ~Property() = default;
-    /// This method is called when a property is used for the wrong kind of
-    /// material, or if the property is not implemented on this kind of material
-    /// yet.
-    void notImplemented(const std::string& property,
-                        const std::string& material) const;
     /// This virtual method simply returns the private _value attribute without
     /// changing it.
     virtual PropertyDataType value() const;
