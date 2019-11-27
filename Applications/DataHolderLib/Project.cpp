@@ -60,11 +60,6 @@ bool Project::removeMesh(const std::string &name)
     return false;
 }
 
-bool Project::meshExists(const std::string &name) const
-{
-    return findMeshByName(name) != _mesh_vec.end();
-}
-
 bool Project::getUniqueName(std::string &name) const
 {
     int count(0);

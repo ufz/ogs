@@ -106,10 +106,6 @@ private:
     /// Returns false and changes the provided name to a unique name otherwise.
     bool getUniqueName(std::string &name) const;
 
-    /// Returns true if a mesh with the same name exists and false otherwise.
-    bool meshExists(const std::string &name) const;
-
-
     /// Returns an iterator to the first found mesh with the given name.
     std::vector<std::unique_ptr<MeshLib::Mesh>>::const_iterator findMeshByName(
         std::string const& name) const;
