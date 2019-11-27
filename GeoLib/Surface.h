@@ -71,14 +71,6 @@ public:
      */
     bool isPntInSfc(MathLib::Point3d const& pnt, double eps) const;
 
-    /**
-     * find a triangle in which the given point is located
-     * @param pnt the point
-     * @return a pointer to a triangle. nullptr is returned if the point is not
-     * contained in the surface
-     */
-    const Triangle* findTriangle(MathLib::Point3d const& pnt) const;
-
     const std::vector<Point*>* getPointVec() const { return &_sfc_pnts; }
     /**
      * method allows access to the internal axis aligned bounding box
