@@ -71,12 +71,6 @@ public:
     MeshLib::Mesh* simplifyMesh(const std::string& new_mesh_name, double eps,
                                 unsigned min_elem_dim = 1);
 
-    /**
-     * Create a new mesh where all elements with nonplanar faces are subdivided into simpler
-     * element types. This method does not collapse or remove any nodes.
-     */
-    MeshLib::Mesh* subdivideMesh(const std::string &new_mesh_name) const;
-
 private:
     /// Constructs a new node vector for the resulting mesh by removing all nodes whose ID indicates they need to be merged/removed.
     std::vector<MeshLib::Node*> constructNewNodesArray(
