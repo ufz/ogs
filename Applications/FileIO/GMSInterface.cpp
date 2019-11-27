@@ -177,7 +177,6 @@ void GMSInterface::writeBoreholesToGMS(
             {
                 continue;
             }
-            // idx = getSoilID(soilID, soilNames[i]);
             current_soil_name = soilNames[i];
 
             out << station->getName() << "\t" << std::fixed
@@ -193,20 +192,6 @@ void GMSInterface::writeBoreholesToGMS(
     }
 
     out.close();
-}
-
-std::size_t GMSInterface::getSoilID(std::vector<std::string>& soilID,
-                                    std::string& soilName)
-{
-    for (std::size_t j = 0; j < soilID.size(); j++)
-    {
-        if (soilID[j] == soilName)
-        {
-            return j;
-        }
-    }
-    soilID.push_back(soilName);
-    return soilID.size() - 1;
 }
 
 int GMSInterface::writeSoilIDTable(const std::vector<std::string>& soilID,

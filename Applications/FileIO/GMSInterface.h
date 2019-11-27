@@ -79,11 +79,6 @@ private:
      */
     static std::vector<std::string> readSoilIDfromFile(
         const std::string& filename);
-
-    /// Finds the ID assigned to soilName or creates a new one ( this method is
-    /// called from writeBoreholeToGMS() )
-    static std::size_t getSoilID(std::vector<std::string>& soilID,
-                                 std::string& soilName);
 };
 
 }  // namespace FileIO
