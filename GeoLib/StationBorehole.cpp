@@ -133,16 +133,6 @@ StationBorehole* StationBorehole::createStation(const std::string &name,
     return station;
 }
 
-void StationBorehole::createSurrogateStratigraphies(std::vector<Point*>* boreholes)
-{
-    std::size_t nBoreholes = boreholes->size();
-    for (std::size_t i = 0; i < nBoreholes; i++)
-    {
-        auto* bore = static_cast<StationBorehole*>((*boreholes)[i]);
-        bore->addSoilLayer(bore->getDepth(), "depth");
-    }
-}
-
 void StationBorehole::addSoilLayer ( double thickness, const std::string &soil_name)
 {
     /*

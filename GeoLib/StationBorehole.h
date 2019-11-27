@@ -78,9 +78,6 @@ public:
     void addSoilLayer ( double x, double y, double z, const std::string &soil_name);
 
 private:
-    /// Creates fake stratigraphies of only one layer with a thickness equal to the borehole depth
-    static void createSurrogateStratigraphies(std::vector<Point*>* boreholes);
-
     /// Reads the specified file containing borehole stratigraphies into an vector of stringlists
     static int readStratigraphyFile(const std::string &path,
                                     std::vector<std::list<std::string> > &data);
