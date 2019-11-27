@@ -34,15 +34,6 @@ MeshRevision::MeshRevision(MeshLib::Mesh &mesh) :
     _mesh(mesh)
 {}
 
-
-MeshLib::Mesh* MeshRevision::collapseNodes(const std::string &new_mesh_name, double eps)
-{
-    std::vector<MeshLib::Node*> new_nodes (this->constructNewNodesArray(this->collapseNodeIndices(eps)));
-    std::vector<MeshLib::Element*> new_elements (MeshLib::copyElementVector(_mesh.getElements(), new_nodes));
-    this->resetNodeIDs();
-    return new MeshLib::Mesh(new_mesh_name, new_nodes, new_elements, _mesh.getProperties());
-}
-
 unsigned MeshRevision::getNumberOfCollapsableNodes(double eps) const
 {
     std::vector<std::size_t> id_map(this->collapseNodeIndices(eps));
