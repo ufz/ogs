@@ -485,7 +485,6 @@ bool XmlGmlInterface::write()
         INFO("XmlGmlInterface::write(): Surface vector is empty, no surfaces written to file.");
 
 
-    //insertStyleFileDefinition(filename);
     std::string xml = doc.toString().toStdString();
     _out << xml;
 
