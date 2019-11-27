@@ -128,17 +128,5 @@ bool XMLQtInterface::checkHash() const
         WARN("File is valid but could not write hashfile!");
     return true;
 }
-
-bool XMLQtInterface::isHashGood(const QByteArray &hash) const
-{
-    QByteArray fileHash = QCryptographicHash::hash(_fileData, QCryptographicHash::Md5);
-    if(hash != fileHash)
-    {
-        INFO("Hashfile does not match data ... checking file ...");
-        return false;
-    }
-    return true;
-}
-
-} // end namespace IO
-} // end namespace BaseLib
+}  // namespace IO
+}  // namespace BaseLib

@@ -46,9 +46,6 @@ protected:
     /// If no hash file exists, the xml-file is validated and a hash file is written if the xml-file was valid.
     bool checkHash() const;
 
-    /// Checks if the given file is conform to the given hash.
-    bool isHashGood(const QByteArray &hash) const;
-
     QString _schemaFile;
 
     /// Caches the actual file contents when reading.
