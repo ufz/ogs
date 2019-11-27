@@ -61,15 +61,6 @@ double swapEndianness(double const& v)
     return b.v;
 }
 
-/**
- * \brief truncate a file
- */
-void truncateFile( std::string const& filename)
-{
-    std::ofstream ofs(filename.c_str(), std::ios_base::trunc);
-    ofs.close();
-}
-
 namespace
 {
 
