@@ -78,10 +78,6 @@ public:
     void addSoilLayer ( double x, double y, double z, const std::string &soil_name);
 
 private:
-    /// Reads the specified file containing borehole stratigraphies into an vector of stringlists
-    static int readStratigraphyFile(const std::string &path,
-                                    std::vector<std::list<std::string> > &data);
-
     //long profile_type;
     //std::vector<long> _soilType;
     double _depth{0};  // depth of the borehole

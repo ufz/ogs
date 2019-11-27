@@ -54,29 +54,6 @@ StationBorehole::~StationBorehole()
     }
 }
 
-int StationBorehole::readStratigraphyFile(const std::string &path,
-                                          std::vector<std::list<std::string> > &data)
-{
-    std::string line;
-    std::ifstream in( path.c_str() );
-
-    if (!in.is_open())
-    {
-        WARN("StationBorehole::readStratigraphyFile() - Could not open file %s.", path.c_str());
-        return 0;
-    }
-
-    while (std::getline(in, line))
-    {
-        std::list<std::string> fields = BaseLib::splitString(line, '\t');
-        data.push_back(fields);
-    }
-
-    in.close();
-
-    return 1;
-}
-
 StationBorehole* StationBorehole::createStation(const std::string &line)
 {
     StationBorehole* borehole = new StationBorehole();
