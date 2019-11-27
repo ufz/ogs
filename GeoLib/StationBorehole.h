@@ -81,9 +81,6 @@ public:
     void addSoilLayer ( double x, double y, double z, const std::string &soil_name);
 
 private:
-    /// Adds a layer for the specified borehole profile based on the information given in the stringlist
-    static int addLayer(std::list<std::string> fields, StationBorehole* borehole);
-
     /// Creates fake stratigraphies of only one layer with a thickness equal to the borehole depth
     static void createSurrogateStratigraphies(std::vector<Point*>* boreholes);
 

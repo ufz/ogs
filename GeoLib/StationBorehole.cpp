@@ -77,35 +77,6 @@ int StationBorehole::readStratigraphyFile(const std::string &path,
     return 1;
 }
 
-int StationBorehole::addLayer(std::list<std::string> fields, StationBorehole* borehole)
-{
-    if (fields.size() >= 4) /* check if there are enough fields to create a borehole object */
-    {
-        if (fields.front() == borehole->_name) /* check if the name of the
-                                                  borehole matches the name in
-                                                  the data */
-        {
-            fields.pop_front();
-
-            // int layer = atoi(fields.front().c_str());
-            fields.pop_front();
-
-            ERR("StationBorehole::addLayer - assuming correct order");
-            double thickness(
-                strtod(BaseLib::replaceString(",", ".", fields.front()).c_str(),
-                       nullptr));
-            fields.pop_front();
-            borehole->addSoilLayer(thickness, fields.front());
-        }
-    }
-    else
-    {
-        WARN("StationBorehole::addLayer() - Unexpected file format (Borehole %s).", borehole->_name.c_str());
-        return 0;
-    }
-    return 1;
-}
-
 int StationBorehole::addStratigraphy(const std::vector<Point*> &profile, const std::vector<std::string> &soil_names)
 {
     if (((profile.size() - 1) == soil_names.size()) && (!soil_names.empty()))
