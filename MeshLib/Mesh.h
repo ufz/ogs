@@ -71,9 +71,6 @@ public:
     /// Destructor
     virtual ~Mesh();
 
-    /// Add a node to the mesh.
-    void addNode(Node* node);
-
     /// Add an element to the mesh.
     void addElement(Element* elem);
 

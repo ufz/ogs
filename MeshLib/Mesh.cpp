@@ -117,11 +117,6 @@ Mesh::~Mesh()
     }
 }
 
-void Mesh::addNode(Node* node)
-{
-    _nodes.push_back(node);
-}
-
 void Mesh::addElement(Element* elem)
 {
     _elements.push_back(elem);
