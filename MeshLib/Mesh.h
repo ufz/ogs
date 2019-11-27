@@ -160,8 +160,6 @@ protected:
     /// Note: Using this implementation, an element e can only have neighbors that have the same dimensionality as e.
     void setElementNeighbors();
 
-    void setNodesConnectedByEdges();
-
     /// Computes the element-connectivity of nodes. Two nodes i and j are
     /// connected if they are shared by an element.
     void setNodesConnectedByElements();

@@ -60,7 +60,6 @@ Mesh::Mesh(std::string name,
     }
     this->setDimension();
     this->setElementsConnectedToNodes();
-    //this->setNodesConnectedByEdges();
     this->setNodesConnectedByElements();
     this->setElementNeighbors();
 
@@ -99,7 +98,6 @@ Mesh::Mesh(const Mesh &mesh)
         this->setDimension();
     }
     this->setElementsConnectedToNodes();
-    //this->setNodesConnectedByEdges();
     //this->setNodesConnectedByElements();
     this->setElementNeighbors();
 }
@@ -244,80 +242,6 @@ void Mesh::setElementNeighbors()
             }
         }
         neighbors.clear();
-    }
-}
-
-void Mesh::setNodesConnectedByEdges()
-{
-    const std::size_t nNodes (this->_nodes.size());
-    for (unsigned i=0; i<nNodes; ++i)
-    {
-        MeshLib::Node* node (_nodes[i]);
-        std::vector<MeshLib::Node*> conn_set;
-        const std::vector<MeshLib::Element*> &conn_elems (node->getElements());
-        const std::size_t nConnElems (conn_elems.size());
-        for (unsigned j=0; j<nConnElems; ++j)
-        {
-            MeshLib::Element* conn_ele = conn_elems[j];
-            const unsigned idx (conn_ele->getNodeIDinElement(node));
-            const unsigned nElemNodes (conn_ele->getNumberOfBaseNodes());
-            for (unsigned k(0); k<nElemNodes; ++k)
-            {
-                MeshLib::Node const* node_k = conn_ele->getNode(k);
-                bool is_in_vector (false);
-                const std::size_t nConnNodes (conn_set.size());
-                for (unsigned l(0); l < nConnNodes; ++l)
-                {
-                    if (node_k == conn_set[l])
-                    {
-                        is_in_vector = true;
-                    }
-                }
-                if (is_in_vector)
-                {
-                    continue;
-                }
-
-                if (conn_ele->getNumberOfBaseNodes() == conn_ele->getNumberOfNodes())
-                {
-                    if (conn_ele->isEdge(idx, k))
-                    {
-                        conn_set.push_back(const_cast<MeshLib::Node*>(node_k));
-                    }
-                }
-                else
-                {
-                    for (unsigned l=0; l<conn_ele->getNumberOfEdges(); l++)
-                    {
-                        std::unique_ptr<Element const> edge(conn_ele->getEdge(l));
-                        unsigned match = 0;
-                        for (unsigned m=0; m<edge->getNumberOfBaseNodes(); m++)
-                        {
-                            auto edge_node = edge->getNode(m);
-                            if (edge_node == node || edge_node == node_k)
-                            {
-                                match++;
-                            }
-                        }
-                        if (match != 2)
-                        {
-                            continue;
-                        }
-                        conn_set.push_back(const_cast<MeshLib::Node*>(node_k));
-                        for (unsigned m = edge->getNumberOfBaseNodes();
-                             m < edge->getNumberOfNodes();
-                             m++)
-                        {
-                            conn_set.push_back(
-                                const_cast<MeshLib::Node*>(edge->getNode(m)));
-                        }
-                        break;
-                    }
-                }
-
-            }
-        }
-        node->setConnectedNodes(conn_set);
     }
 }
 
