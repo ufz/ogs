@@ -140,12 +140,6 @@ public:
     }
     */
 
-    /// get a maximum value in diagonal entries
-    double getMaxDiagCoeff() const
-    {
-        return _mat.diagonal().maxCoeff();
-    }
-
     /// return always true, i.e. the matrix is always ready for use
     bool isAssembled() const { return true; }
 
