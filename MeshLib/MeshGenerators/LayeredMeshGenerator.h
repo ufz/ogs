@@ -89,9 +89,6 @@ protected:
     /// Calculates a data-dependent epsilon value
     double calcEpsilon(GeoLib::Raster const& low, GeoLib::Raster const& high);
 
-    /// Cleans up the already created objects in case of an error
-    void cleanUpOnError();
-
     double _elevation_epsilon{0.0001};
     double _minimum_thickness{std::numeric_limits<float>::epsilon()};
     std::vector<int> _materials;

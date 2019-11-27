@@ -100,9 +100,3 @@ MeshLib::Node* LayeredMeshGenerator::getNewLayerNode(MeshLib::Node const& dem_no
 
     return new MeshLib::Node(dem_node[0], dem_node[1], elevation, new_node_id);
 }
-
-void LayeredMeshGenerator::cleanUpOnError()
-{
-    std::for_each(_nodes.begin(), _nodes.end(), [](MeshLib::Node *node) { delete node; });
-    std::for_each(_elements.begin(), _elements.end(), [](MeshLib::Element *elem) { delete elem; });
-}
