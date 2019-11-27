@@ -274,28 +274,6 @@ bool lineSegmentsIntersect(const GeoLib::Polyline* ply,
     return false;
 }
 
-void computeRotationMatrixToXZ(MathLib::Vector3 const& plane_normal, MathLib::DenseMatrix<double> & rot_mat)
-{
-    // *** some frequently used terms ***
-    // n_1^2 + n_2^2
-    const double h0(plane_normal[0] * plane_normal[0] + plane_normal[1] * plane_normal[1]);
-    // 1 / sqrt (n_1^2 + n_2^2)
-    const double h1(1.0 / sqrt(h0));
-    // 1 / sqrt (n_1^2 + n_2^2 + n_3^2)
-    const double h2(1.0 / sqrt(h0 + plane_normal[2] * plane_normal[2]));
-
-    // calc rotation matrix
-    rot_mat(0, 0) = plane_normal[1] * h1;
-    rot_mat(0, 1) = -plane_normal[0] * h1;
-    rot_mat(0, 2) = 0.0;
-    rot_mat(1, 0) = plane_normal[0] * h2;
-    rot_mat(1, 1) = plane_normal[1] * h2;
-    rot_mat(1, 2) = plane_normal[2] * h2;
-    rot_mat(2, 0) = plane_normal[0] * plane_normal[2] * h1 * h2;
-    rot_mat(2, 1) = plane_normal[1] * plane_normal[2] * h1 * h2;
-    rot_mat(2, 2) = -sqrt(h0) * h2;
-}
-
 void rotatePoints(MathLib::DenseMatrix<double> const& rot_mat, std::vector<GeoLib::Point*> &pnts)
 {
     rotatePoints(rot_mat, pnts.begin(), pnts.end());
