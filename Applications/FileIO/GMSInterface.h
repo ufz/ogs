@@ -66,19 +66,6 @@ public:
 
     /// Reads a GMS *.3dm file and converts it to an CFEMesh.
     static MeshLib::Mesh* readGMS3DMMesh(const std::string& filename);
-
-private:
-    /**
-     * \brief Reads SoilIDs for Borehole export from an external file
-     *
-     * The method expects a file with the name of one stratigraphic layer at
-     * each line. These layers are assigned ascending IDs, i.e. the first name
-     * gets index 0, the second line gets index 1, etc. \return An array with
-     * the names of the stratigraphic layers in which the index for each string
-     * equals its ID.
-     */
-    static std::vector<std::string> readSoilIDfromFile(
-        const std::string& filename);
 };
 
 }  // namespace FileIO
