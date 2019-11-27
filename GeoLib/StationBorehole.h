@@ -49,9 +49,6 @@ public:
                                           double depth,
                                           const std::string &date = "");
 
-    /// Adds a stratigraphy to a borehole given a vector of points of length "n" and a vector of soil names of length "n-1".
-    int addStratigraphy(const std::vector<Point*> &profile, const std::vector<std::string> &soil_names);
-
     // Returns the depth of the borehole
     double getDepth() const { return _depth; }
 

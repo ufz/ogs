@@ -77,24 +77,6 @@ int StationBorehole::readStratigraphyFile(const std::string &path,
     return 1;
 }
 
-int StationBorehole::addStratigraphy(const std::vector<Point*> &profile, const std::vector<std::string> &soil_names)
-{
-    if (((profile.size() - 1) == soil_names.size()) && (!soil_names.empty()))
-    {
-        this->_profilePntVec.push_back(profile[0]);
-        std::size_t nLayers = soil_names.size();
-        for (std::size_t i=0; i<nLayers; i++)
-        {
-            this->_profilePntVec.push_back(profile[i+1]);
-            this->_soilName.push_back(soil_names[i]);
-        }
-        return 1;
-    }
-
-    ERR("Error in StationBorehole::addStratigraphy() - Length of parameter vectors does not match.");
-    return 0;
-}
-
 StationBorehole* StationBorehole::createStation(const std::string &line)
 {
     StationBorehole* borehole = new StationBorehole();
