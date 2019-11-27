@@ -44,9 +44,6 @@ public:
         return readFile(QString(fname.c_str())) != 0;
     }
 
-    /// Reads an xml-file using the RapidXML parser integrated in the source code (i.e. this function is usable without Qt)
-    int rapidReadFile(const std::string &fileName);
-
 protected:
     bool write() override;
 
