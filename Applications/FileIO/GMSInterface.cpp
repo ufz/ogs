@@ -180,28 +180,6 @@ void GMSInterface::writeBoreholesToGMS(
     out.close();
 }
 
-int GMSInterface::writeSoilIDTable(const std::vector<std::string>& soilID,
-                                   const std::string& filename)
-{
-    std::ofstream out(filename.c_str(), std::ios::out);
-
-    // write header
-    out << "ID"
-        << "\t" << std::fixed << "Soil name"
-        << "\n";
-
-    // write table
-    std::size_t nIDs = soilID.size();
-    for (std::size_t i = 0; i < nIDs; i++)
-    {
-        out << i << "\t" << std::fixed << soilID[i] << "\t"
-            << "\n";
-    }
-    out.close();
-
-    return 1;
-}
-
 MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string& filename)
 {
     std::string line;

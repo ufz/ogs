@@ -59,11 +59,6 @@ public:
     static int readBoreholesFromGMS(std::vector<GeoLib::Point*>* boreholes,
                                     const std::string& filename);
 
-    /// Writes a file that assigns each soilID-index in the GMS export file a
-    /// name.
-    static int writeSoilIDTable(const std::vector<std::string>& soilID,
-                                const std::string& filename);
-
     /// Reads a GMS *.3dm file and converts it to an CFEMesh.
     static MeshLib::Mesh* readGMS3DMMesh(const std::string& filename);
 };
