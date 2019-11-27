@@ -72,12 +72,6 @@ void trim(std::string &str, char ch=' ');
  */
 void simplify(std::string &str);
 
-/**
- * Returns the string which is right aligned with padding on the left.
- */
-std::string padLeft(std::string const& str, int maxlen, char ch=' ');
-
-
 //! Method for handling conversion to string uniformly across all types and std::string; see std::string overload below.
 template<typename T> std::string tostring(T const& value)
 {
