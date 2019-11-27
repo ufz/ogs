@@ -41,15 +41,4 @@ std::vector<double> const& ElementQualityMetric::getElementQuality () const
 {
     return _element_quality_metric;
 }
-
-double ElementQualityMetric::getMinValue() const
-{
-    return _min;
-}
-
-double ElementQualityMetric::getMaxValue() const
-{
-    return _max;
-}
-
-} // end namespace MeshLib
+}  // namespace MeshLib

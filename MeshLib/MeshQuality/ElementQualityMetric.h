@@ -42,12 +42,6 @@ public:
     /// Returns the result vector
     std::vector<double> const& getElementQuality () const;
 
-    /// Returns the minimum calculated value
-    double getMinValue() const;
-
-    /// Returns the maximum calculated value
-    double getMaxValue() const;
-
     /// Returns a histogram of the quality vector separated into the given number of bins.
     /// If no number of bins is specified, one will be calculated based on the Sturges criterium.
     virtual BaseLib::Histogram<double> getHistogram (std::size_t n_bins = 0) const;
