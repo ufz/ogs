@@ -52,24 +52,4 @@ void FileFinder::addDirectory(std::string const& dir)
         _directories.push_back(dir);
     }
 }
-
-std::string FileFinder::getPath(std::string const& filename) const
-{
-    if (_directories.empty())
-        ERR("FileFinder::getPath(): No directories set.");
-
-    for (auto const& dir : _directories)
-    {
-        std::string testDir(dir);
-        std::ifstream is(testDir.append(filename).c_str());
-        if (is.good())
-        {
-            is.close();
-            return testDir;
-        }
-    }
-    ERR("FileFinder::getPath(): File not found.");
-    return filename;
-}
-
-} // end namespace BaseLib
+}  // namespace BaseLib
