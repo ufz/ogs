@@ -53,8 +53,6 @@ public:
     virtual BaseLib::Histogram<double> getHistogram (std::size_t n_bins = 0) const;
 
 protected:
-    void errorMsg (Element const& elem, std::size_t idx) const;
-
     double _min;
     double _max;
     Mesh const& _mesh;
