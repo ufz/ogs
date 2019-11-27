@@ -39,17 +39,6 @@ public:
     double getReactionRate(const double p_Ads, const double T_Ads,
                            const double M_Ads,
                            const double loading) const override;
-    /**
-     * @brief get_d_reaction_rate
-     * @param p_Ads
-     * @param T_Ads
-     * @param M_Ads
-     * @param loading
-     * @param dqdr array containing the differentials wrt: p, T, C
-     */
-    virtual void getDReactionRate(const double p_Ads, const double T_Ads,
-                                     const double M_Ads, const double loading,
-                                     std::array<double, 3>& dqdr) const;
 
 protected:
     virtual double getAdsorbateDensity(const double T_Ads) const = 0;
