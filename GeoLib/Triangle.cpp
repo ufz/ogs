@@ -34,31 +34,6 @@ bool Triangle::containsPoint(MathLib::Point3d const& q, double eps) const
     return MathLib::isPointInTriangle(q, a, b, c, eps);
 }
 
-bool Triangle::containsPoint2D (Point const& pnt) const
-{
-    GeoLib::Point const& a (*(_pnts[_pnt_ids[0]]));
-    GeoLib::Point const& b (*(_pnts[_pnt_ids[1]]));
-    GeoLib::Point const& c (*(_pnts[_pnt_ids[2]]));
-
-    // criterion: p-a = u0 * (b-a) + u1 * (c-a); 0 <= u0, u1 <= 1, u0+u1 <= 1
-    Eigen::Matrix2d mat;
-    mat(0,0) = b[0] - a[0];
-    mat(0,1) = c[0] - a[0];
-    mat(1,0) = b[1] - a[1];
-    mat(1,1) = c[1] - a[1];
-    Eigen::Vector2d y;
-    y << pnt[0]-a[0], pnt[1]-a[1];
-
-    y = mat.partialPivLu().solve(y);
-
-    const double delta (std::numeric_limits<double>::epsilon());
-    const double upper (1+delta);
-
-    // check if u0 and u1 fulfills the condition (with some delta)
-    return -delta <= y[0] && y[0] <= upper && -delta <= y[1] && y[1] <= upper &&
-           y[0] + y[1] <= upper;
-}
-
 void getPlaneCoefficients(Triangle const& tri, double c[3])
 {
     GeoLib::Point const& p0 (*(tri.getPoint(0)));
