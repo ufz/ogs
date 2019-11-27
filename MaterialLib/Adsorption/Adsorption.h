@@ -23,7 +23,6 @@ public:
     // TODO [CL] move those three methods to water properties class
     static double getEvaporationEnthalpy(const double T_Ads);
     static double getEquilibriumVapourPressure(const double T_Ads);
-    static double getSpecificHeatCapacity(const double T_Ads); // TODO [CL] why unused?
 
     static double getMolarFraction(double xm, double M_this, double M_other);
     static double dMolarFraction(double xm, double M_this, double M_other);
