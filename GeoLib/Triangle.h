@@ -68,7 +68,4 @@ private:
     /// position of pointers to the geometric points
     std::array<std::size_t, 3> _pnt_ids;
 };
-
-void getPlaneCoefficients(Triangle const& tri, double c[3]);
-
-} // end namespace GeoLib
+}  // namespace GeoLib
