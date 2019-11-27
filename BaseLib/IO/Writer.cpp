@@ -70,11 +70,5 @@ void Writer::setPrecision(unsigned int precision)
 {
     _out.precision(precision);
 }
-
-void Writer::setFormat(std::ios_base::fmtflags flags)
-{
-    _out.setf(flags);
-}
-
-} // namespace IO
-} // namespace BaseLib
+}  // namespace IO
+}  // namespace BaseLib

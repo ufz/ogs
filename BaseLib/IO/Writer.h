@@ -43,9 +43,6 @@ public:
     /// @brief Sets the decimal precision.
     void setPrecision(unsigned int precision);
 
-    /// @brief Sets the format (either ios::scientific or ios::fixed);
-    void setFormat(std::ios_base::fmtflags flags);
-
 protected:
     /// @brief Writes the object to the internal stream.
     /// This method must be implemented by a subclass.
