@@ -68,10 +68,6 @@ public:
      */
     GeoLib::Polyline const& getPolyline () const;
 
-    /// return a vector of node distance from the polyline start. The vector
-    /// corresponds to a vector returned in getNodeIDs()
-    std::vector<double> const & getDistOfProjNodeFromPlyStart() const;
-
 private:
     MeshLib::Mesh const& _mesh;
     GeoLib::Polyline const& _ply;
