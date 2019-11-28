@@ -98,28 +98,6 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
             // by location order is needed for output
             NumLib::ComponentOrder::BY_LOCATION);
 
-    _secondary_variables.addSecondaryVariable(
-        "free_energy_density",
-        makeExtrapolator(1, getExtrapolator(), _local_assemblers,
-                         &LocalAssemblerInterface::getIntPtFreeEnergyDensity));
-
-    _secondary_variables.addSecondaryVariable(
-        "sigma",
-        makeExtrapolator(MathLib::KelvinVector::KelvinVectorType<
-                             DisplacementDim>::RowsAtCompileTime,
-                         getExtrapolator(), _local_assemblers,
-                         &LocalAssemblerInterface::getIntPtSigma));
-
-    _secondary_variables.addSecondaryVariable(
-        "epsilon",
-        makeExtrapolator(MathLib::KelvinVector::KelvinVectorType<
-                             DisplacementDim>::RowsAtCompileTime,
-                         getExtrapolator(), _local_assemblers,
-                         &LocalAssemblerInterface::getIntPtEpsilon));
-
-    //
-    // enable output of internal variables defined by material models
-    //
     auto add_secondary_variable = [&](std::string const& name,
                                       int const num_components,
                                       auto get_ip_values_function) {
@@ -130,6 +108,23 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
                              std::move(get_ip_values_function)));
     };
 
+    add_secondary_variable("free_energy_density",
+                           1,
+                           &LocalAssemblerInterface::getIntPtFreeEnergyDensity);
+
+    add_secondary_variable("sigma",
+                           MathLib::KelvinVector::KelvinVectorType<
+                               DisplacementDim>::RowsAtCompileTime,
+                           &LocalAssemblerInterface::getIntPtSigma);
+
+    add_secondary_variable("epsilon",
+                           MathLib::KelvinVector::KelvinVectorType<
+                               DisplacementDim>::RowsAtCompileTime,
+                           &LocalAssemblerInterface::getIntPtEpsilon);
+
+    //
+    // enable output of internal variables defined by material models
+    //
     ProcessLib::Deformation::solidMaterialInternalToSecondaryVariables<
         LocalAssemblerInterface>(_process_data.solid_materials,
                                  add_secondary_variable);
