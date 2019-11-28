@@ -87,7 +87,7 @@ struct SecondaryData
 template <typename ShapeFunction, typename IntegrationMethod,
           int DisplacementDim>
 class ThermoMechanicsLocalAssembler
-    : public ThermoMechanicsLocalAssemblerInterface
+    : public ThermoMechanicsLocalAssemblerInterface<DisplacementDim>
 {
 public:
     using ShapeMatricesType =
@@ -294,6 +294,14 @@ private:
     std::size_t setEpsilonMechanical(double const* values);
 
     std::vector<double> getEpsilonMechanical() const override;
+
+    unsigned getNumberOfIntegrationPoints() const override;
+
+    typename MaterialLib::Solids::MechanicsBase<
+        DisplacementDim>::MaterialStateVariables const&
+    getMaterialStateVariablesAt(unsigned integration_point) const override;
+
+private:
 
     ThermoMechanicsProcessData<DisplacementDim>& _process_data;
 

@@ -14,9 +14,9 @@
 
 #include "NumLib/DOF/ComputeSparsityPattern.h"
 #include "NumLib/DOF/DOFTableUtil.h"
+#include "ProcessLib/Deformation/SolidMaterialInternalToSecondaryVariables.h"
 #include "ProcessLib/Output/IntegrationPointWriter.h"
 #include "ProcessLib/SmallDeformation/CreateLocalAssemblers.h"
-
 #include "ThermoMechanicsFEM.h"
 
 namespace ProcessLib
@@ -178,21 +178,32 @@ void ThermoMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
         mesh.getElements(), dof_table, _local_assemblers,
         mesh.isAxiallySymmetric(), integration_order, _process_data);
 
-    _secondary_variables.addSecondaryVariable(
-        "sigma",
-        makeExtrapolator(
-            MathLib::KelvinVector::KelvinVectorType<
-                DisplacementDim>::RowsAtCompileTime,
-            getExtrapolator(), _local_assemblers,
-            &ThermoMechanicsLocalAssemblerInterface::getIntPtSigma));
+    auto add_secondary_variable = [&](std::string const& name,
+                                      int const num_components,
+                                      auto get_ip_values_function) {
+        _secondary_variables.addSecondaryVariable(
+            name,
+            makeExtrapolator(num_components, getExtrapolator(),
+                             _local_assemblers,
+                             std::move(get_ip_values_function)));
+    };
 
-    _secondary_variables.addSecondaryVariable(
-        "epsilon",
-        makeExtrapolator(
-            MathLib::KelvinVector::KelvinVectorType<
-                DisplacementDim>::RowsAtCompileTime,
-            getExtrapolator(), _local_assemblers,
-            &ThermoMechanicsLocalAssemblerInterface::getIntPtEpsilon));
+    add_secondary_variable("sigma",
+                           MathLib::KelvinVector::KelvinVectorType<
+                               DisplacementDim>::RowsAtCompileTime,
+                           &LocalAssemblerInterface::getIntPtSigma);
+
+    add_secondary_variable("epsilon",
+                           MathLib::KelvinVector::KelvinVectorType<
+                               DisplacementDim>::RowsAtCompileTime,
+                           &LocalAssemblerInterface::getIntPtEpsilon);
+
+    //
+    // enable output of internal variables defined by material models
+    //
+    ProcessLib::Deformation::solidMaterialInternalToSecondaryVariables<
+        LocalAssemblerInterface>(_process_data.solid_materials,
+                                 add_secondary_variable);
 
     // Set initial conditions for integration point data.
     for (auto const& ip_writer : _integration_point_writer)
@@ -392,9 +403,9 @@ void ThermoMechanicsProcess<DisplacementDim>::preTimestepConcreteProcess(
     if (process_id == _process_data.mechanics_process_id)
     {
         GlobalExecutor::executeSelectedMemberOnDereferenced(
-            &ThermoMechanicsLocalAssemblerInterface::preTimestep,
-            _local_assemblers, pv.getActiveElementIDs(),
-            *_local_to_global_index_map, *x[process_id], t, dt);
+            &LocalAssemblerInterface::preTimestep, _local_assemblers,
+            pv.getActiveElementIDs(), *_local_to_global_index_map,
+            *x[process_id], t, dt);
         return;
     }
 
@@ -429,9 +440,9 @@ void ThermoMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
-        &ThermoMechanicsLocalAssemblerInterface::postTimestep,
-        _local_assemblers, pv.getActiveElementIDs(),
-        *_local_to_global_index_map, *x[process_id], t, dt);
+        &LocalAssemblerInterface::postTimestep, _local_assemblers,
+        pv.getActiveElementIDs(), *_local_to_global_index_map, *x[process_id],
+        t, dt);
 }
 
 template <int DisplacementDim>

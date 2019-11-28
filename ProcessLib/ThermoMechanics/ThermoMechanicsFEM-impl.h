@@ -753,5 +753,24 @@ ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
     return ip_epsilon_m_values;
 }
 
+template <typename ShapeFunction, typename IntegrationMethod,
+          int DisplacementDim>
+unsigned ThermoMechanicsLocalAssembler<
+    ShapeFunction, IntegrationMethod,
+    DisplacementDim>::getNumberOfIntegrationPoints() const
+{
+    return _integration_method.getNumberOfPoints();
+}
+
+template <typename ShapeFunction, typename IntegrationMethod,
+          int DisplacementDim>
+typename MaterialLib::Solids::MechanicsBase<
+    DisplacementDim>::MaterialStateVariables const&
+ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
+                              DisplacementDim>::
+    getMaterialStateVariablesAt(unsigned integration_point) const
+{
+    return *_ip_data[integration_point].material_state_variables;
+}
 }  // namespace ThermoMechanics
 }  // namespace ProcessLib
