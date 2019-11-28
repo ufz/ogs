@@ -15,9 +15,10 @@
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
 #include "BaseLib/RunTime.h"
+#include "ConvergenceCriterion.h"
 #include "MathLib/LinAlg/LinAlg.h"
 #include "NumLib/DOF/GlobalMatrixProviders.h"
-#include "ConvergenceCriterion.h"
+#include "NumLib/Exceptions.h"
 
 namespace NumLib
 {
@@ -277,7 +278,18 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
 
         BaseLib::RunTime time_assembly;
         time_assembly.start();
-        sys.assemble(x, process_id);
+        try
+        {
+            sys.assemble(x, process_id);
+        }
+        catch (AssemblyException const& e)
+        {
+            ERR("Abort nonlinear iteration. Repeating timestep. Reason: %s",
+                e.what());
+            error_norms_met = false;
+            iteration = _maxiter;
+            break;
+        }
         sys.getResidual(*x[process_id], res);
         sys.getJacobian(J);
         INFO("[time] Assembly took %g s.", time_assembly.elapsed());
