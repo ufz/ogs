@@ -69,8 +69,6 @@ private:
 
     std::vector<std::unique_ptr<LocalAssemblerInterface>> _local_assemblers;
 
-    std::unique_ptr<NumLib::LocalToGlobalIndexMap>
-        _local_to_global_index_map_single_component;
     MeshLib::PropertyVector<double>* _nodal_forces = nullptr;
     MeshLib::PropertyVector<double>* _material_forces = nullptr;
 };

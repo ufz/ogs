@@ -88,16 +88,6 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
         mesh.getElements(), dof_table, _local_assemblers,
         mesh.isAxiallySymmetric(), integration_order, _process_data);
 
-    // TODO move the two data members somewhere else.
-    // for extrapolation of secondary variables
-    std::vector<MeshLib::MeshSubset> all_mesh_subsets_single_component{
-        *_mesh_subset_all_nodes};
-    _local_to_global_index_map_single_component =
-        std::make_unique<NumLib::LocalToGlobalIndexMap>(
-            std::move(all_mesh_subsets_single_component),
-            // by location order is needed for output
-            NumLib::ComponentOrder::BY_LOCATION);
-
     auto add_secondary_variable = [&](std::string const& name,
                                       int const num_components,
                                       auto get_ip_values_function) {
