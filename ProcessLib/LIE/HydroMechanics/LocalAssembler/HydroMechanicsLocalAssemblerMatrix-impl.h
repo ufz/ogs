@@ -249,16 +249,14 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
         rhs_u.noalias() -= -H_u.transpose() * rho * gravity_vec * ip_w;
 
         //
-        // displacement equation, pressure part
-        //
-        Kup.noalias() += B.transpose() * alpha * identity2 * N_p * ip_w;
-
-        //
-        // pressure equation, pressure part.
+        // pressure equation, pressure part and displacement equation, pressure
+        // part
         //
         if (!_process_data.deactivate_matrix_in_flow)  // Only for hydraulically
                                                        // active matrix
         {
+            Kup.noalias() += B.transpose() * alpha * identity2 * N_p * ip_w;
+
             double const k_over_mu =
                 _process_data.intrinsic_permeability(t, x_position)[0] /
                 _process_data.fluid_viscosity(t, x_position)[0];
