@@ -13,10 +13,10 @@
 #include <cassert>
 #include <nlohmann/json.hpp>
 
+#include "ProcessLib/Deformation/SolidMaterialInternalToSecondaryVariables.h"
 #include "ProcessLib/Output/IntegrationPointWriter.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/SmallDeformation/CreateLocalAssemblers.h"
-
 #include "SmallDeformationFEM.h"
 
 namespace ProcessLib
@@ -88,97 +88,36 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
         mesh.getElements(), dof_table, _local_assemblers,
         mesh.isAxiallySymmetric(), integration_order, _process_data);
 
-    // TODO move the two data members somewhere else.
-    // for extrapolation of secondary variables
-    std::vector<MeshLib::MeshSubset> all_mesh_subsets_single_component{
-        *_mesh_subset_all_nodes};
-    _local_to_global_index_map_single_component =
-        std::make_unique<NumLib::LocalToGlobalIndexMap>(
-            std::move(all_mesh_subsets_single_component),
-            // by location order is needed for output
-            NumLib::ComponentOrder::BY_LOCATION);
+    auto add_secondary_variable = [&](std::string const& name,
+                                      int const num_components,
+                                      auto get_ip_values_function) {
+        _secondary_variables.addSecondaryVariable(
+            name,
+            makeExtrapolator(num_components, getExtrapolator(),
+                             _local_assemblers,
+                             std::move(get_ip_values_function)));
+    };
 
-    _secondary_variables.addSecondaryVariable(
-        "free_energy_density",
-        makeExtrapolator(1, getExtrapolator(), _local_assemblers,
-                         &LocalAssemblerInterface::getIntPtFreeEnergyDensity));
+    add_secondary_variable("free_energy_density",
+                           1,
+                           &LocalAssemblerInterface::getIntPtFreeEnergyDensity);
 
-    _secondary_variables.addSecondaryVariable(
-        "sigma",
-        makeExtrapolator(MathLib::KelvinVector::KelvinVectorType<
-                             DisplacementDim>::RowsAtCompileTime,
-                         getExtrapolator(), _local_assemblers,
-                         &LocalAssemblerInterface::getIntPtSigma));
+    add_secondary_variable("sigma",
+                           MathLib::KelvinVector::KelvinVectorType<
+                               DisplacementDim>::RowsAtCompileTime,
+                           &LocalAssemblerInterface::getIntPtSigma);
 
-    _secondary_variables.addSecondaryVariable(
-        "epsilon",
-        makeExtrapolator(MathLib::KelvinVector::KelvinVectorType<
-                             DisplacementDim>::RowsAtCompileTime,
-                         getExtrapolator(), _local_assemblers,
-                         &LocalAssemblerInterface::getIntPtEpsilon));
+    add_secondary_variable("epsilon",
+                           MathLib::KelvinVector::KelvinVectorType<
+                               DisplacementDim>::RowsAtCompileTime,
+                           &LocalAssemblerInterface::getIntPtEpsilon);
 
     //
     // enable output of internal variables defined by material models
     //
-
-    // Collect the internal variables for all solid materials.
-    std::vector<typename MaterialLib::Solids::MechanicsBase<
-        DisplacementDim>::InternalVariable>
-        internal_variables;
-    for (auto const& material_id__solid_material :
-         _process_data.solid_materials)
-    {
-        auto const variables =
-            material_id__solid_material.second->getInternalVariables();
-        copy(begin(variables), end(variables),
-             back_inserter(internal_variables));
-    }
-
-    // Register the internal variables.
-    for (auto const& internal_variable : internal_variables)
-    {
-        auto const& name = internal_variable.name;
-        auto const& fct = internal_variable.getter;
-        auto const num_components = internal_variable.num_components;
-        DBUG("Registering internal variable %s.", name.c_str());
-
-        auto getIntPtValues =
-            [fct, num_components](
-                LocalAssemblerInterface const& loc_asm,
-                const double /*t*/,
-                std::vector<GlobalVector*> const& /*x*/,
-                std::vector<
-                    NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
-                std::vector<double>& cache) -> std::vector<double> const& {
-            const unsigned num_int_pts = loc_asm.getNumberOfIntegrationPoints();
-
-            cache.clear();
-            auto cache_mat = MathLib::createZeroedMatrix<Eigen::Matrix<
-                double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>(
-                cache, num_components, num_int_pts);
-
-            // TODO avoid the heap allocation (one per finite element)
-            std::vector<double> cache_column(num_int_pts);
-
-            for (unsigned i = 0; i < num_int_pts; ++i)
-            {
-                auto const& state = loc_asm.getMaterialStateVariablesAt(i);
-
-                auto const& int_pt_values = fct(state, cache_column);
-                assert(int_pt_values.size() == num_components);
-                auto const int_pt_values_vec = MathLib::toVector(int_pt_values);
-
-                cache_mat.col(i).noalias() = int_pt_values_vec;
-            }
-
-            return cache;
-        };
-
-        _secondary_variables.addSecondaryVariable(
-            name,
-            makeExtrapolator(num_components, getExtrapolator(),
-                             _local_assemblers, std::move(getIntPtValues)));
-    }
+    ProcessLib::Deformation::solidMaterialInternalToSecondaryVariables<
+        LocalAssemblerInterface>(_process_data.solid_materials,
+                                 add_secondary_variable);
 
     // Set initial conditions for integration point data.
     for (auto const& ip_writer : _integration_point_writer)
