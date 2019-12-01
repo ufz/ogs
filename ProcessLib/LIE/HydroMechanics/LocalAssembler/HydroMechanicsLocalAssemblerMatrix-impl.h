@@ -79,6 +79,7 @@ HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
         ip_data.integration_weight =
             sm_u.detJ * sm_u.integralMeasure *
             integration_method.getWeightedPoint(ip).getWeight();
+        ip_data.darcy_velocity.setZero();
 
         ip_data.N_u = sm_u.N;
         ip_data.dNdx_u = sm_u.dNdx;
@@ -218,8 +219,6 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
         auto& eps = ip_data.eps;
         auto& state = ip_data.material_state_variables;
 
-        auto q = ip_data.darcy_velocity.head(GlobalDim);
-
         auto const alpha = _process_data.biot_coefficient(t, x_position)[0];
         auto const rho_sr = _process_data.solid_density(t, x_position)[0];
         auto const rho_fr = _process_data.fluid_density(t, x_position)[0];
@@ -262,6 +261,7 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
                 _process_data.fluid_viscosity(t, x_position)[0];
             double const S = _process_data.specific_storage(t, x_position)[0];
 
+            auto q = ip_data.darcy_velocity.head(GlobalDim);
             q.noalias() = -k_over_mu * (dNdx_p * p + rho_fr * gravity_vec);
 
             laplace_p.noalias() +=
