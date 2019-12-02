@@ -14,9 +14,9 @@
 
 #include "MeshLib/Elements/Utils.h"
 #include "NumLib/DOF/ComputeSparsityPattern.h"
+#include "ProcessLib/Deformation/SolidMaterialInternalToSecondaryVariables.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/RichardsMechanics/CreateLocalAssemblers.h"
-
 #include "RichardsMechanicsFEM.h"
 #include "RichardsMechanicsProcessData.h"
 
@@ -168,29 +168,39 @@ void RichardsMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
         _local_assemblers, mesh.isAxiallySymmetric(), integration_order,
         _process_data);
 
-    _secondary_variables.addSecondaryVariable(
-        "sigma",
-        makeExtrapolator(MathLib::KelvinVector::KelvinVectorType<
-                             DisplacementDim>::RowsAtCompileTime,
-                         getExtrapolator(), _local_assemblers,
-                         &LocalAssemblerInterface::getIntPtSigma));
+    auto add_secondary_variable = [&](std::string const& name,
+                                      int const num_components,
+                                      auto get_ip_values_function) {
+        _secondary_variables.addSecondaryVariable(
+            name,
+            makeExtrapolator(num_components, getExtrapolator(),
+                             _local_assemblers,
+                             std::move(get_ip_values_function)));
+    };
 
-    _secondary_variables.addSecondaryVariable(
-        "epsilon",
-        makeExtrapolator(MathLib::KelvinVector::KelvinVectorType<
-                             DisplacementDim>::RowsAtCompileTime,
-                         getExtrapolator(), _local_assemblers,
-                         &LocalAssemblerInterface::getIntPtEpsilon));
+    add_secondary_variable("sigma",
+                           MathLib::KelvinVector::KelvinVectorType<
+                               DisplacementDim>::RowsAtCompileTime,
+                           &LocalAssemblerIF::getIntPtSigma);
 
-    _secondary_variables.addSecondaryVariable(
-        "velocity",
-        makeExtrapolator(DisplacementDim, getExtrapolator(), _local_assemblers,
-                         &LocalAssemblerInterface::getIntPtDarcyVelocity));
+    add_secondary_variable("epsilon",
+                           MathLib::KelvinVector::KelvinVectorType<
+                               DisplacementDim>::RowsAtCompileTime,
+                           &LocalAssemblerIF::getIntPtEpsilon);
 
-    _secondary_variables.addSecondaryVariable(
-        "saturation",
-        makeExtrapolator(1, getExtrapolator(), _local_assemblers,
-                         &LocalAssemblerInterface::getIntPtSaturation));
+    add_secondary_variable("velocity",
+                           DisplacementDim,
+                           &LocalAssemblerIF::getIntPtDarcyVelocity);
+
+    add_secondary_variable("saturation", 1,
+                           &LocalAssemblerIF::getIntPtSaturation);
+
+    //
+    // enable output of internal variables defined by material models
+    //
+    ProcessLib::Deformation::solidMaterialInternalToSecondaryVariables<
+        LocalAssemblerIF>(_process_data.solid_materials,
+                                 add_secondary_variable);
 
     _process_data.element_saturation = MeshLib::getOrCreateMeshProperty<double>(
         const_cast<MeshLib::Mesh&>(mesh), "saturation_avg",
@@ -203,7 +213,7 @@ void RichardsMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
 
     // Initialize local assemblers after all variables have been set.
     GlobalExecutor::executeMemberOnDereferenced(
-        &LocalAssemblerInterface::initialize, _local_assemblers,
+        &LocalAssemblerIF::initialize, _local_assemblers,
         *_local_to_global_index_map);
 }
 
@@ -332,7 +342,7 @@ void RichardsMechanicsProcess<DisplacementDim>::preTimestepConcreteProcess(
         ProcessLib::ProcessVariable const& pv =
             getProcessVariables(process_id)[0];
         GlobalExecutor::executeSelectedMemberOnDereferenced(
-            &LocalAssemblerInterface::preTimestep, _local_assemblers,
+            &LocalAssemblerIF::preTimestep, _local_assemblers,
             pv.getActiveElementIDs(), *_local_to_global_index_map,
             *x[process_id], t, dt);
     }
@@ -355,7 +365,7 @@ void RichardsMechanicsProcess<
 
     // Calculate strain, stress or other internal variables of mechanics.
     GlobalExecutor::executeSelectedMemberOnDereferenced(
-        &LocalAssemblerInterface::postNonLinearSolver, _local_assemblers,
+        &LocalAssemblerIF::postNonLinearSolver, _local_assemblers,
         pv.getActiveElementIDs(), getDOFTable(process_id), x, t, dt,
         _use_monolithic_scheme);
 }
@@ -370,7 +380,7 @@ void RichardsMechanicsProcess<
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
-        &LocalAssemblerInterface::computeSecondaryVariable, _local_assemblers,
+        &LocalAssemblerIF::computeSecondaryVariable, _local_assemblers,
         pv.getActiveElementIDs(), getDOFTable(process_id), t, x,
         _coupled_solutions);
 }
