@@ -21,7 +21,6 @@
 
 namespace NumLib
 {
-
 using namespace detail;
 
 GlobalIndexType const MeshComponentMap::nop =
@@ -31,14 +30,25 @@ GlobalIndexType const MeshComponentMap::nop =
 MeshComponentMap::MeshComponentMap(
     std::vector<MeshLib::MeshSubset> const& components, ComponentOrder order)
 {
+    // Use PETSc with single thread
+    const MeshLib::NodePartitionedMesh& partitioned_mesh =
+        static_cast<const MeshLib::NodePartitionedMesh&>(
+            components[0].getMesh());
+    if (partitioned_mesh.isForSingleThread())
+    {
+        createSerialMeshComponentMap(components, order);
+        return;
+    }
+
+    // Use PETSc with multi-thread
     // get number of unknows
     GlobalIndexType num_unknowns = 0;
     for (auto const& c : components)
     {
-            // PETSc always works with MeshLib::NodePartitionedMesh.
-            const MeshLib::NodePartitionedMesh& mesh =
-                static_cast<const MeshLib::NodePartitionedMesh&>(c.getMesh());
-            num_unknowns += mesh.getNumberOfGlobalNodes();
+        // PETSc always works with MeshLib::NodePartitionedMesh.
+        const MeshLib::NodePartitionedMesh& p_mesh =
+            static_cast<const MeshLib::NodePartitionedMesh&>(c.getMesh());
+        num_unknowns += p_mesh.getNumberOfGlobalNodes();
     }
 
     // construct dict (and here we number global_index by component type)
@@ -50,7 +60,7 @@ MeshComponentMap::MeshComponentMap(
         assert(dynamic_cast<MeshLib::NodePartitionedMesh const*>(
                    &c.getMesh()) != nullptr);
         std::size_t const mesh_id = c.getMeshID();
-        const MeshLib::NodePartitionedMesh& mesh =
+        const MeshLib::NodePartitionedMesh& p_mesh =
             static_cast<const MeshLib::NodePartitionedMesh&>(c.getMesh());
 
         // mesh items are ordered first by node, cell, ....
@@ -68,8 +78,9 @@ MeshComponentMap::MeshComponentMap(
                     " of ComponentOrder::BY_LOCATION");
             }
             global_id = static_cast<GlobalIndexType>(
-                components.size() * mesh.getGlobalNodeID(j) + comp_id);
-            const bool is_ghost = mesh.isGhostNode(mesh.getNode(j)->getID());
+                components.size() * p_mesh.getGlobalNodeID(j) + comp_id);
+            const bool is_ghost =
+                p_mesh.isGhostNode(p_mesh.getNode(j)->getID());
             if (is_ghost)
             {
                 _ghosts_indices.push_back(global_id);
@@ -86,7 +97,7 @@ MeshComponentMap::MeshComponentMap(
                               comp_id, global_id));
         }
 
-        _num_global_dof += mesh.getNumberOfGlobalNodes();
+        _num_global_dof += p_mesh.getNumberOfGlobalNodes();
         comp_id++;
     }
 }
@@ -94,29 +105,9 @@ MeshComponentMap::MeshComponentMap(
 MeshComponentMap::MeshComponentMap(
     std::vector<MeshLib::MeshSubset> const& components, ComponentOrder order)
 {
-    // construct dict (and here we number global_index by component type)
-    GlobalIndexType global_index = 0;
-    int comp_id = 0;
-    for (auto const& c : components)
-    {
-        std::size_t const mesh_id = c.getMeshID();
-        // mesh items are ordered first by node, cell, ....
-        for (std::size_t j = 0; j < c.getNumberOfNodes(); j++)
-        {
-            _dict.insert(Line(
-                Location(mesh_id, MeshLib::MeshItemType::Node, c.getNodeID(j)),
-                comp_id, global_index++));
-        }
-        comp_id++;
-    }
-    _num_local_dof = _dict.size();
-
-    if (order == ComponentOrder::BY_LOCATION)
-    {
-        renumberByLocation();
-    }
+    createSerialMeshComponentMap(components, order);
 }
-#endif // end of USE_PETSC
+#endif  // end of USE_PETSC
 
 MeshComponentMap MeshComponentMap::getSubset(
     std::vector<MeshLib::MeshSubset> const& bulk_mesh_subsets,
@@ -207,8 +198,9 @@ void MeshComponentMap::renumberByLocation(GlobalIndexType offset)
 {
     GlobalIndexType global_index = offset;
 
-    auto &m = _dict.get<ByLocation>(); // view as sorted by mesh item
-    for (auto itr_mesh_item=m.begin(); itr_mesh_item!=m.end(); ++itr_mesh_item)
+    auto& m = _dict.get<ByLocation>();  // view as sorted by mesh item
+    for (auto itr_mesh_item = m.begin(); itr_mesh_item != m.end();
+         ++itr_mesh_item)
     {
         Line pos = *itr_mesh_item;
         pos.global_index = global_index++;
@@ -218,7 +210,7 @@ void MeshComponentMap::renumberByLocation(GlobalIndexType offset)
 
 std::vector<int> MeshComponentMap::getComponentIDs(const Location& l) const
 {
-    auto const &m = _dict.get<ByLocation>();
+    auto const& m = _dict.get<ByLocation>();
     auto const p = m.equal_range(Line(l));
     std::vector<int> vec_compID;
     for (auto itr = p.first; itr != p.second; ++itr)
@@ -230,23 +222,24 @@ std::vector<int> MeshComponentMap::getComponentIDs(const Location& l) const
 
 Line MeshComponentMap::getLine(Location const& l, int const comp_id) const
 {
-    auto const &m = _dict.get<ByLocationAndComponent>();
+    auto const& m = _dict.get<ByLocationAndComponent>();
     auto const itr = m.find(Line(l, comp_id));
-    assert(itr != m.end());     // The line must exist in the current dictionary.
+    assert(itr != m.end());  // The line must exist in the current dictionary.
     return *itr;
 }
 
 GlobalIndexType MeshComponentMap::getGlobalIndex(Location const& l,
                                                  int const comp_id) const
 {
-    auto const &m = _dict.get<ByLocationAndComponent>();
+    auto const& m = _dict.get<ByLocationAndComponent>();
     auto const itr = m.find(Line(l, comp_id));
-    return itr!=m.end() ? itr->global_index : nop;
+    return itr != m.end() ? itr->global_index : nop;
 }
 
-std::vector<GlobalIndexType> MeshComponentMap::getGlobalIndices(const Location &l) const
+std::vector<GlobalIndexType> MeshComponentMap::getGlobalIndices(
+    const Location& l) const
 {
-    auto const &m = _dict.get<ByLocation>();
+    auto const& m = _dict.get<ByLocation>();
     auto const p = m.equal_range(Line(l));
     std::vector<GlobalIndexType> global_indices;
     for (auto itr = p.first; itr != p.second; ++itr)
@@ -265,7 +258,7 @@ std::vector<GlobalIndexType> MeshComponentMap::getGlobalIndicesByLocation(
     std::vector<GlobalIndexType> global_indices;
     global_indices.reserve(ls.size());
 
-    auto const &m = _dict.get<ByLocation>();
+    auto const& m = _dict.get<ByLocation>();
     for (const auto& l : ls)
     {
         auto const p = m.equal_range(Line(l));
@@ -287,7 +280,7 @@ std::vector<GlobalIndexType> MeshComponentMap::getGlobalIndicesByComponent(
     pairs.reserve(ls.size());
 
     // Create a sub dictionary containing all lines with location from ls.
-    auto const &m = _dict.get<ByLocation>();
+    auto const& m = _dict.get<ByLocation>();
     for (const auto& l : ls)
     {
         auto const p = m.equal_range(Line(l));
@@ -297,10 +290,9 @@ std::vector<GlobalIndexType> MeshComponentMap::getGlobalIndicesByComponent(
         }
     }
 
-    auto CIPairLess = [](CIPair const& a, CIPair const& b)
-        {
-            return a.first < b.first;
-        };
+    auto CIPairLess = [](CIPair const& a, CIPair const& b) {
+        return a.first < b.first;
+    };
 
     // Create vector of global indices from sub dictionary sorting by component.
     if (!std::is_sorted(pairs.begin(), pairs.end(), CIPairLess))
@@ -330,7 +322,7 @@ GlobalIndexType MeshComponentMap::getLocalIndex(
     (void)range_end;
     return global_index;
 #else
-    if (global_index >= 0)    // non-ghost location.
+    if (global_index >= 0)  // non-ghost location.
         return global_index - range_begin;
 
     //
@@ -341,17 +333,16 @@ GlobalIndexType MeshComponentMap::getLocalIndex(
     // of the local vector:
     GlobalIndexType const real_global_index =
         (-global_index == static_cast<GlobalIndexType>(_num_global_dof))
-        ? 0 : -global_index;
+            ? 0
+            : -global_index;
 
     // TODO Find in ghost indices is O(n^2/2) for n being the length of
     // _ghosts_indices. Providing an inverted table would be faster.
-    auto const ghost_index_it = std::find(_ghosts_indices.begin(),
-                                          _ghosts_indices.end(),
-                                          real_global_index);
+    auto const ghost_index_it = std::find(
+        _ghosts_indices.begin(), _ghosts_indices.end(), real_global_index);
     if (ghost_index_it == _ghosts_indices.end())
     {
-        OGS_FATAL("index %d not found in ghost_indices",
-                  real_global_index);
+        OGS_FATAL("index %d not found in ghost_indices", real_global_index);
     }
 
     // Using std::distance on a std::vector is O(1). As long as _ghost_indices
@@ -362,4 +353,30 @@ GlobalIndexType MeshComponentMap::getLocalIndex(
 #endif
 }
 
-}   // namespace NumLib
+void MeshComponentMap::createSerialMeshComponentMap(
+    std::vector<MeshLib::MeshSubset> const& components, ComponentOrder order)
+{
+    // construct dict (and here we number global_index by component type)
+    GlobalIndexType global_index = 0;
+    int comp_id = 0;
+    for (auto const& c : components)
+    {
+        std::size_t const mesh_id = c.getMeshID();
+        // mesh items are ordered first by node, cell, ....
+        for (std::size_t j = 0; j < c.getNumberOfNodes(); j++)
+        {
+            _dict.insert(Line(
+                Location(mesh_id, MeshLib::MeshItemType::Node, c.getNodeID(j)),
+                comp_id, global_index++));
+        }
+        comp_id++;
+    }
+    _num_local_dof = _dict.size();
+
+    if (order == ComponentOrder::BY_LOCATION)
+    {
+        renumberByLocation();
+    }
+}
+
+}  // namespace NumLib

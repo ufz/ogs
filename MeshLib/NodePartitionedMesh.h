@@ -37,7 +37,8 @@ public:
           _n_global_base_nodes(mesh.getNumberOfBaseNodes()),
           _n_global_nodes(mesh.getNumberOfNodes()),
           _n_active_base_nodes(mesh.getNumberOfBaseNodes()),
-          _n_active_nodes(mesh.getNumberOfNodes())
+          _n_active_nodes(mesh.getNumberOfNodes()),
+          _is_single_thread(true)
     {
         const auto& mesh_nodes = mesh.getNodes();
         for (std::size_t i = 0; i < _nodes.size(); i++)
@@ -91,7 +92,8 @@ public:
           _n_global_base_nodes(n_global_base_nodes),
           _n_global_nodes(n_global_nodes),
           _n_active_base_nodes(n_active_base_nodes),
-          _n_active_nodes(n_active_nodes)
+          _n_active_nodes(n_active_nodes),
+          _is_single_thread(false)
     {
     }
 
@@ -149,6 +151,8 @@ public:
         return (*it_max_ncn)->getConnectedNodes().size() + 1;
     }
 
+    bool isForSingleThread() const { return _is_single_thread; }
+
 private:
     /// Global IDs of nodes of a partition
     std::vector<std::size_t> _global_node_ids;
@@ -164,6 +168,8 @@ private:
 
     /// Number of the all active nodes.
     std::size_t _n_active_nodes;
+
+    const bool _is_single_thread;
 };
 
-}   // namespace MeshLib
+}  // namespace MeshLib
