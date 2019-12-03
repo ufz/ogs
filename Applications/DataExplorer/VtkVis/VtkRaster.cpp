@@ -256,7 +256,8 @@ vtkImageAlgorithm* VtkRaster::loadImageFromTIFF(const std::string& fileName,
         }
 
         XTIFFClose(tiff);
-        ERR("VtkRaster::loadImageFromTIFF() - File not recognised as GeoTIFF-Image.")
+        ERR("VtkRaster::loadImageFromTIFF() - File not recognised as "
+            "GeoTIFF-Image.");
         return nullptr;
     }
 
@@ -363,9 +364,10 @@ bool VtkRaster::readWorldFile(std::string const& filename,
     }
     double const delta_y = BaseLib::str2number<double>(line);
     if (delta_x != -delta_y)
-        WARN("Anisotropic pixel size detected (%f vs %f). An isotropic "
-             "spacing of %f is assumed, be aware results may be wrong.",
-            delta_x, delta_y, delta_x)
+        WARN(
+            "Anisotropic pixel size detected (%f vs %f). An isotropic "
+            "spacing of %f is assumed, be aware results may be wrong.",
+            delta_x, delta_y, delta_x);
     // x-translation
     if (!std::getline(in, line))
     {

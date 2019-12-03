@@ -59,7 +59,7 @@ void VtkCompositeThresholdFilter::init()
     }
     else
     {
-        WARN("Threshold filter could not find an array on its input object!")
+        WARN("Threshold filter could not find an array on its input object!");
         return;
     }
 

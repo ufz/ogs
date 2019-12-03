@@ -86,7 +86,7 @@ int main(int argc, char* argv[])
     }
     if (h1.n_rows != h2.n_rows)
     {
-        ERR("Raster height is not the same in both raster files.\n")
+        ERR("Raster height is not the same in both raster files.\n");
         errors_found = true;
     }
 

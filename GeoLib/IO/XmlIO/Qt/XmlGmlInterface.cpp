@@ -100,7 +100,7 @@ int XmlGmlInterface::readFile(const QString &fileName)
         {
             if (type_node.toElement().text().isEmpty())
             {
-                ERR("XmlGmlInterface::readFile(): <name>-tag is empty.")
+                ERR("XmlGmlInterface::readFile(): <name>-tag is empty.");
                 deleteGeometry(std::move(points), std::move(polylines),
                                std::move(surfaces));
                 return 0;
