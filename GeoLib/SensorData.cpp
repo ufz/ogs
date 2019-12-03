@@ -85,8 +85,8 @@ const std::vector<float>* SensorData::getTimeSeries(SensorDataType time_series_n
             return _data_vecs[i];
         }
     }
-    ERR("Error in SensorData::getTimeSeries() - Time series '%d' not found.",
-        time_series_name);
+    ERR("Error in SensorData::getTimeSeries() - Time series '{s}' not found.",
+        convertSensorDataType2String(time_series_name));
     return nullptr;
 }
 

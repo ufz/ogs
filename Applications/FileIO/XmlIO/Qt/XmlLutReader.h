@@ -36,7 +36,8 @@ public:
         QFile file(fileName);
         if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
         {
-            ERR("XmlLutReader::readFromFile(): Can't open xml-file %s.", fileName.data());
+            ERR("XmlLutReader::readFromFile(): Can't open xml-file {s}.",
+                fileName.toStdString());
             return false;
         }
 

@@ -119,8 +119,8 @@ int XmlPrjInterface::readFile(const QString& fileName)
                 }
                 if (meshes_node.nodeName() != "mesh")
                 {
-                    ERR("Expected an XML element node named 'mesh' got '%s'.",
-                        meshes_node.nodeName().data())
+                    ERR("Expected an XML element node named 'mesh' got '{s}'.",
+                        meshes_node.nodeName().toStdString());
                     return 0;
                 }
                 if (meshes_node.childNodes().count() != 1)
