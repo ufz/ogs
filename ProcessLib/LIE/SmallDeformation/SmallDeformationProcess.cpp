@@ -496,9 +496,12 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
             {
                 continue;
             }
-            ParameterLib::SpatialPosition x;
-            x.setElementID(e->getID());
-            (*mesh_prop_b)[e->getID()] = fracture_prop.aperture0(0, x)[0];
+            // Mean value for the element. This allows usage of node based
+            // properties for aperture.
+            (*mesh_prop_b)[e->getID()] =
+                fracture_prop.aperture0
+                    .getNodalValuesOnElement(*e, /*time independent*/ 0)
+                    .mean();
         }
     }
     _process_data._mesh_prop_b = mesh_prop_b;

@@ -35,7 +35,7 @@
                 <tension_cutoff>1</tension_cutoff>
             </fracture_model>
             <fracture_properties>
-                <material_id>0</material_id>
+                <material_id>1</material_id>
                 <initial_aperture>aperture0</initial_aperture>
                 <specific_storage>S_f</specific_storage>
                 <biot_coefficient>biot_f</biot_coefficient>
@@ -267,9 +267,9 @@
                 <boundary_condition>
                     <geometrical_set>single_fracture</geometrical_set>
                     <geometry>PLY_EAST</geometry>
-                    <type>Neumann</type>
+                    <type>Dirichlet</type>
                     <component>0</component>
-                    <parameter>p_in</parameter>
+                    <parameter>zero_u</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <geometrical_set>single_fracture</geometrical_set>
@@ -286,6 +286,13 @@
             <order>2</order>
             <initial_condition>displacement0</initial_condition>
             <boundary_conditions>
+                <boundary_condition>
+                    <geometrical_set>single_fracture</geometrical_set>
+                    <geometry>OutletPoint</geometry>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>zero_u</parameter>
+                </boundary_condition>
             </boundary_conditions>
         </process_variable>
     </process_variables>
