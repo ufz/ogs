@@ -6,7 +6,7 @@
 
 ## Requirements
 
-- Download [Hugo](https://gohugo.io/#action) and put it in your `PATH`
+- Download [Hugo](https://github.com/gohugoio/hugo/releases/latest) and put it in your `PATH`. **Attention:** Use the *extended* version: e.g. `hugo_extended_0.60.1_Windows-64bit.zip`
 - [Install Pandoc](https://pandoc.org/installing.html)
 
 ## Getting started
@@ -131,13 +131,6 @@ This json-file is then used by the shortcode.
 
 - Install [Yarn](https://yarnpkg.com/en/docs/install); for downloading required JavaScript & CSS development packages
 - Install [ParaView](http://www.paraview.org/download/); for converting VTK output files to vtk.js-format for interactive web visualization, check if `pvpython` is either in the `PATH` or ParaView is installed in `/Applications/` on macOS or `/usr/local/opt/paraview` on Linux. CURRENTLY DISABLED!
-
-### CSS & JavaScript development
-
-- Inside the source-directory `ogs/web`:
-  - Install packages with `yarn`
-    - Re-run CMake and build the `ctest`-target, *OPTIONAL* for benchmark visualizations
-  - Run `npm run build` to build the site which is created in `public/`
 
 ### Update search index
 

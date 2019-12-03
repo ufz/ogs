@@ -4,7 +4,6 @@ theme = "ogs"
 baseURL = "https://www.opengeosys.org"
 buildDrafts = false
 buildFuture = true
-pygmentsstyle = 'friendly'
 enableGitInfo = true
 canonifyURLs = true
 staticDir = ["dist", "static"]
