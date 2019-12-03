@@ -116,7 +116,7 @@ void mapMeshArraysOntoGrid(vtkSmartPointer<vtkUnstructuredGrid> const& mesh,
     vtkSmartPointer<vtkCellData> const cell_data = mesh->GetCellData();
     for (int i = 0; i < cell_data->GetNumberOfArrays(); ++i)
     {
-        std::string const name = cell_data->GetArrayName(i);
+        std::string const& name = cell_data->GetArrayName(i);
         vtkSmartPointer<vtkDoubleArray> const dbl_arr =
             dynamic_cast<vtkDoubleArray*>(cell_data->GetArray(name.c_str()));
         if (dbl_arr)
@@ -131,7 +131,7 @@ void mapMeshArraysOntoGrid(vtkSmartPointer<vtkUnstructuredGrid> const& mesh,
             mapArray<int, vtkSmartPointer<vtkIntArray>>(*grid, int_arr, name);
             continue;
         }
-        WARN("Ignoring array '%s'...", name.c_str());
+        WARN("Ignoring array '%s', array type not implemented...", name.c_str());
     }
 }
 
@@ -199,7 +199,7 @@ int main (int argc, char* argv[])
     reader->Update();
     vtkSmartPointer<vtkUnstructuredGrid> mesh = reader->GetOutput();
 
-    double* bounds = mesh->GetBounds();
+    double* const bounds = mesh->GetBounds();
     MathLib::Point3d const min(std::array<double, 3>{bounds[0], bounds[2], bounds[4]});
     MathLib::Point3d const max(std::array<double, 3>{bounds[1], bounds[3], bounds[5]});
     std::array<std::size_t, 3> const dims = getDimensions(min, max, cellsize);
