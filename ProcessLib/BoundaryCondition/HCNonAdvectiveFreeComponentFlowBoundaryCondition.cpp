@@ -30,6 +30,14 @@ createHCNonAdvectiveFreeComponentFlowBoundaryCondition(
     config.checkConfigParameter("type",
                                 "HCNonAdvectiveFreeComponentFlowBoundary");
 
+    if (bc_mesh.getDimension() + 1 != global_dim)
+    {
+        OGS_FATAL(
+            "The dimension (%d) of the given boundary mesh '%s' is not by one "
+            "lower than the bulk dimension (%d).",
+            bc_mesh.getDimension(), bc_mesh.getName().c_str(), global_dim);
+    }
+
     auto const boundary_permeability_name =
         //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__HCNonAdvectiveFreeComponentFlowBoundary__parameter}
         config.getConfigParameter<std::string>("parameter");

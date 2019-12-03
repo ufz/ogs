@@ -25,6 +25,14 @@ std::unique_ptr<RobinBoundaryCondition> createRobinBoundaryCondition(
     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__type}
     config.checkConfigParameter("type", "Robin");
 
+    if (bc_mesh.getDimension() >= global_dim)
+    {
+        OGS_FATAL(
+            "The dimension (%d) of the given boundary mesh '%s' is not lower "
+            "than the bulk dimension (%d).",
+            bc_mesh.getDimension(), bc_mesh.getName().c_str(), global_dim);
+    }
+
     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__Robin__alpha}
     auto const alpha_name = config.getConfigParameter<std::string>("alpha");
     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__Robin__u_0}
@@ -32,9 +40,19 @@ std::unique_ptr<RobinBoundaryCondition> createRobinBoundaryCondition(
 
     auto const& alpha = ParameterLib::findParameter<double>(
         alpha_name, parameters, 1, &bc_mesh);
-
     auto const& u_0 =
         ParameterLib::findParameter<double>(u_0_name, parameters, 1, &bc_mesh);
+
+    ParameterLib::Parameter<double> const* integral_measure(nullptr);
+    if (global_dim - bc_mesh.getDimension() != 1)
+    {
+        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__Robin__area_parameter}
+        auto const area_parameter_name =
+            config.getConfigParameter<std::string>("area_parameter");
+        DBUG("area parameter name '%s'", area_parameter_name.c_str());
+        integral_measure = &ParameterLib::findParameter<double>(
+            area_parameter_name, parameters, 1, &bc_mesh);
+    }
 
     // In case of partitioned mesh the boundary could be empty, i.e. there is no
     // boundary condition.
@@ -53,7 +71,7 @@ std::unique_ptr<RobinBoundaryCondition> createRobinBoundaryCondition(
     return std::make_unique<RobinBoundaryCondition>(
         integration_order, shapefunction_order, dof_table, variable_id,
         component_id, global_dim, bc_mesh,
-        RobinBoundaryConditionData{alpha, u_0});
+        RobinBoundaryConditionData{alpha, u_0, integral_measure});
 }
 
 }  // namespace ProcessLib

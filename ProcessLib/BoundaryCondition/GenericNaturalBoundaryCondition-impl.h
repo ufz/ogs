@@ -43,14 +43,6 @@ GenericNaturalBoundaryCondition<BoundaryConditionData,
             dof_table_bulk.getNumberOfVariableComponents(variable_id));
     }
 
-    if (_bc_mesh.getDimension() + 1 != global_dim)
-    {
-        OGS_FATAL(
-            "The dimension (%d) of the given boundary mesh '%s' is not by one "
-            "lower than the bulk dimension (%d).",
-            _bc_mesh.getDimension(), _bc_mesh.getName().c_str(), global_dim);
-    }
-
     if (!_bc_mesh.getProperties().template existsPropertyVector<std::size_t>(
             "bulk_node_ids"))
     {

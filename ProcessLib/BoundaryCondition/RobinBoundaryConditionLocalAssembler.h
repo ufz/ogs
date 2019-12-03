@@ -20,6 +20,7 @@ struct RobinBoundaryConditionData final
 {
     ParameterLib::Parameter<double> const& alpha;
     ParameterLib::Parameter<double> const& u_0;
+    ParameterLib::Parameter<double> const* const integral_measure;
 };
 
 template <typename ShapeFunction, typename IntegrationMethod,
@@ -64,17 +65,29 @@ public:
             _data.u_0.getNodalValuesOnElement(Base::_element, t)
                 .template topRows<ShapeFunction::MeshElement::n_all_nodes>();
 
+        ParameterLib::SpatialPosition position;
+        position.setElementID(Base::_element.getID());
+
         for (unsigned ip = 0; ip < n_integration_points; ++ip)
         {
+            position.setIntegrationPoint(ip);
             auto const& ip_data = Base::_ns_and_weights[ip];
             auto const& N = ip_data.N;
             auto const& w = ip_data.weight;
 
+            double integral_measure = 1.0;
+            if (_data.integral_measure)
+            {
+                integral_measure = (*_data.integral_measure)(t, position)[0];
+            }
+
             // flux = alpha * ( u_0 - u )
             // adding a alpha term to the diagonal of the stiffness matrix
             // and a alpha * u_0 term to the rhs vector
-            _local_K.diagonal().noalias() += N * alpha.dot(N) * w;
-            _local_rhs.noalias() += N * alpha.dot(N) * u_0.dot(N) * w;
+            _local_K.diagonal().noalias() +=
+                N * alpha.dot(N) * w * integral_measure;
+            _local_rhs.noalias() +=
+                N * alpha.dot(N) * u_0.dot(N) * w * integral_measure;
         }
 
         auto const indices = NumLib::getIndices(id, dof_table_boundary);

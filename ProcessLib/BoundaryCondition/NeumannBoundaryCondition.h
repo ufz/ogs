@@ -17,7 +17,7 @@
 namespace ProcessLib
 {
 using NeumannBoundaryCondition =
-    GenericNaturalBoundaryCondition<ParameterLib::Parameter<double> const&,
+    GenericNaturalBoundaryCondition<NeumannBoundaryConditionData,
                                     NeumannBoundaryConditionLocalAssembler>;
 
 std::unique_ptr<NeumannBoundaryCondition> createNeumannBoundaryCondition(
