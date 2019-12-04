@@ -48,8 +48,8 @@ std::unique_ptr<NeumannBoundaryCondition> createNeumannBoundaryCondition(
     ParameterLib::Parameter<double> const* integral_measure(nullptr);
     if (global_dim - bc_mesh.getDimension() != 1)
     {
-        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__Neumann__area_parameter}
         auto const area_parameter_name =
+            //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__Neumann__area_parameter}
             config.getConfigParameter<std::string>("area_parameter");
         DBUG("area parameter name '%s'", area_parameter_name.c_str());
         integral_measure = &ParameterLib::findParameter<double>(
