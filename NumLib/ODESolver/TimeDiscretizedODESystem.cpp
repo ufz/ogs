@@ -13,6 +13,7 @@
 #include "MathLib/LinAlg/ApplyKnownSolution.h"
 #include "MathLib/LinAlg/UnifiedMatrixSetters.h"
 #include "NumLib/IndexValueVector.h"
+#include "NumLib/Exceptions.h"
 
 namespace detail
 {
@@ -91,8 +92,16 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
     _Jac->setZero();
 
     _ode.preAssemble(t, dt, x_curr);
-    _ode.assembleWithJacobian(t, dt, x_new_timestep, xdot, dxdot_dx, dx_dx,
-                              process_id, *_M, *_K, *_b, *_Jac);
+    try
+    {
+        _ode.assembleWithJacobian(t, dt, x_new_timestep, xdot, dxdot_dx, dx_dx,
+                                  process_id, *_M, *_K, *_b, *_Jac);
+    }
+    catch (AssemblyException const&)
+    {
+        NumLib::GlobalVectorProvider::provider.releaseVector(xdot);
+        throw;
+    }
 
     LinAlg::finalizeAssembly(*_M);
     LinAlg::finalizeAssembly(*_K);

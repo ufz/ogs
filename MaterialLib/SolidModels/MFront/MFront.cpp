@@ -11,6 +11,8 @@
 
 #include <MGIS/Behaviour/Integrate.hxx>
 
+#include "NumLib/Exceptions.h"
+
 namespace
 {
 /// Converts between OGSes and MFront's Kelvin vector indices.
@@ -313,7 +315,8 @@ MFront<DisplacementDim>::integrateStress(
     auto const status = mgis::behaviour::integrate(v, _behaviour);
     if (status != 1)
     {
-        OGS_FATAL("Integration failed with status %i.", status);
+        throw NumLib::AssemblyException("MFront: integration failed with status"
+                + std::to_string(status) + ".");
     }
 
     KelvinVector sigma;

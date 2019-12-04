@@ -49,6 +49,8 @@ endif()
 
 if (OGS_USE_MFRONT)
     OgsTest(PROJECTFILE Mechanics/MohrCoulombAbboSloan/load_test_mc.prj)
+    #TODO (naumov) enable when output file format can be specified
+    #OgsTest(PROJECTFILE Mechanics/MohrCoulombAbboSloan/oedometer.prj RUNTIME 80)
 
 # Linear elastic, no internal state variables, no external state variables.
 AddTest(
