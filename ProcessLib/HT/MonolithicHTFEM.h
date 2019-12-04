@@ -141,12 +141,6 @@ public:
             vars[static_cast<int>(
                 MaterialPropertyLib::Variable::phase_pressure)] = p_int_pt;
 
-            // \todo the argument to getValue() has to be changed for non
-            // constant storage model
-            auto const specific_storage =
-                solid_phase.property(MaterialPropertyLib::PropertyType::storage)
-                    .template value<double>(vars, pos, t, dt);
-
             auto const porosity =
                 medium.property(MaterialPropertyLib::PropertyType::porosity)
                     .template value<double>(vars, pos, t, dt);

@@ -284,5 +284,6 @@ void HTProcess::postTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
                             pv.getActiveElementIDs());
     _surfaceflux->save(t);
 }
+
 }  // namespace HT
 }  // namespace ProcessLib

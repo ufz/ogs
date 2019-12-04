@@ -42,8 +42,7 @@ void checkMPLProperties(
 
     std::array const required_property_solid_phase = {
         MaterialPropertyLib::PropertyType::specific_heat_capacity,
-        MaterialPropertyLib::PropertyType::density,
-        MaterialPropertyLib::PropertyType::storage};
+        MaterialPropertyLib::PropertyType::density};
 
     MaterialPropertyLib::checkMaterialSpatialDistributionMap(
         mesh, media_map, required_property_medium, required_property_solid_phase,
