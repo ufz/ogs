@@ -42,7 +42,7 @@ s^{\mathrm{r}}_{\mathrm{L}}}\f]
  *
  * where
  * \f[\lambda=3.0\f]
- * \f[s^{\mathrm{r}}_{\mathrm{L}=0.2\f]
+ * \f[s^{\mathrm{r}}_{\mathrm{L}}=0.2\f]
  */
 class RelPermLiakopoulos final : public Property
 {
