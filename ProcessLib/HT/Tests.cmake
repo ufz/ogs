@@ -449,7 +449,12 @@ AddTest(
     VIS ThermalConvection_pcs_0_ts_1_t_0.000000.vtu
 )
 
-if("${OGS_USE_MPI}" STREQUAL "" AND ${BUILD_TESTING})
+if(NOT OGS_USE_MPI AND BUILD_TESTING AND Python_FOUND)
+    add_custom_target(generate_invalid_project_files_ht
+        ${Python_EXECUTABLE}
+        ${PROJECT_SOURCE_DIR}/ThirdParty/ogs6py/generateInvalidMediaForHT.py
+                                                generateInvalidMediaForHT.py
+        WORKING_DIRECTORY ${Data_SOURCE_DIR}/Parabolic/HT/InvalidProjectFiles/)
     file(GLOB HT_INVALID_PRJ_FILES ${Data_SOURCE_DIR}/Parabolic/HT/InvalidProjectFiles/*.prj)
     foreach(ht_invalid_prj_file ${HT_INVALID_PRJ_FILES})
         string(REPLACE ${Data_SOURCE_DIR}/Parabolic/HT/InvalidProjectFiles/HT "invalid" ht_invalid_prj_file_short ${ht_invalid_prj_file})
@@ -458,8 +463,8 @@ if("${OGS_USE_MPI}" STREQUAL "" AND ${BUILD_TESTING})
             PATH Parabolic/HT/InvalidProjectFiles
             EXECUTABLE ogs
             EXECUTABLE_ARGS ${ht_invalid_prj_file}
-            REQUIREMENTS NOT OGS_USE_MPI
             RUNTIME 1
+            DEPENDS generate_invalid_project_files_ht
         )
         set_tests_properties(ogs-HT_${ht_invalid_prj_file_short} PROPERTIES WILL_FAIL TRUE)
     endforeach()
