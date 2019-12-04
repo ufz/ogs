@@ -750,6 +750,7 @@ pipeline {
           }
           steps {
             dir('web') {
+              sh 'yarn'
               sh 'hugo'
               sh 'broken-links-checker --path ./public --baseUrl https://www.opengeosys.org'
             }
