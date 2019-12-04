@@ -17,7 +17,8 @@ set(TOOLS
     ResetPropertiesInPolygonalRegion
     reviseMesh
     swapNodeCoordinateAxes
-    UnityPreprocessing)
+    UnityPreprocessing
+    Vtu2Grid)
 foreach(TOOL ${TOOLS})
     add_executable(${TOOL} ${TOOL}.cpp)
     target_link_libraries(${TOOL} GitInfoLib MeshLib)
