@@ -42,7 +42,8 @@ struct SecondaryData
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           typename IntegrationMethod, int DisplacementDim>
-class RichardsMechanicsLocalAssembler : public LocalAssemblerInterface
+class RichardsMechanicsLocalAssembler
+    : public LocalAssemblerInterface<DisplacementDim>
 {
 public:
     using ShapeMatricesTypeDisplacement =
@@ -243,6 +244,12 @@ private:
         std::vector<double>& local_M_data, std::vector<double>& local_K_data,
         std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
         LocalCoupledSolutions const& local_coupled_solutions);
+
+    unsigned getNumberOfIntegrationPoints() const override;
+
+    typename MaterialLib::Solids::MechanicsBase<
+        DisplacementDim>::MaterialStateVariables const&
+    getMaterialStateVariablesAt(unsigned integration_point) const override;
 
 private:
     RichardsMechanicsProcessData<DisplacementDim>& _process_data;

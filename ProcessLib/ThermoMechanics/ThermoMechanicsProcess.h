@@ -19,8 +19,6 @@ namespace ProcessLib
 {
 namespace ThermoMechanics
 {
-struct ThermoMechanicsLocalAssemblerInterface;
-
 template <int DisplacementDim>
 class ThermoMechanicsProcess final : public Process
 {
@@ -57,6 +55,9 @@ public:
         const int process_id) const override;
 
 private:
+    using LocalAssemblerInterface =
+        ThermoMechanicsLocalAssemblerInterface<DisplacementDim>;
+
     void constructDofTable() override;
 
     void initializeConcreteProcess(
@@ -91,8 +92,7 @@ private:
 private:
     ThermoMechanicsProcessData<DisplacementDim> _process_data;
 
-    std::vector<std::unique_ptr<ThermoMechanicsLocalAssemblerInterface>>
-        _local_assemblers;
+    std::vector<std::unique_ptr<LocalAssemblerInterface>> _local_assemblers;
 
     std::unique_ptr<NumLib::LocalToGlobalIndexMap>
         _local_to_global_index_map_single_component;

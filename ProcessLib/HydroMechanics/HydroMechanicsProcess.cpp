@@ -12,14 +12,13 @@
 
 #include <cassert>
 
-#include "MeshLib/Elements/Utils.h"
-#include "NumLib/DOF/ComputeSparsityPattern.h"
-#include "ProcessLib/HydroMechanics/CreateLocalAssemblers.h"
-#include "ProcessLib/Process.h"
-
 #include "HydroMechanicsFEM.h"
 #include "HydroMechanicsProcessData.h"
-
+#include "MeshLib/Elements/Utils.h"
+#include "NumLib/DOF/ComputeSparsityPattern.h"
+#include "ProcessLib/Deformation/SolidMaterialInternalToSecondaryVariables.h"
+#include "ProcessLib/HydroMechanics/CreateLocalAssemblers.h"
+#include "ProcessLib/Process.h"
 namespace ProcessLib
 {
 namespace HydroMechanics
@@ -208,77 +207,68 @@ void HydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
         _local_assemblers, mesh.isAxiallySymmetric(), integration_order,
         _process_data);
 
-    _secondary_variables.addSecondaryVariable(
-        "sigma_xx",
-        makeExtrapolator(1, getExtrapolator(), _local_assemblers,
-                         &LocalAssemblerInterface::getIntPtSigmaXX));
+    auto add_secondary_variable = [&](std::string const& name,
+                                      int const num_components,
+                                      auto get_ip_values_function) {
+        _secondary_variables.addSecondaryVariable(
+            name,
+            makeExtrapolator(num_components, getExtrapolator(),
+                             _local_assemblers,
+                             std::move(get_ip_values_function)));
+    };
 
-    _secondary_variables.addSecondaryVariable(
-        "sigma_yy",
-        makeExtrapolator(1, getExtrapolator(), _local_assemblers,
-                         &LocalAssemblerInterface::getIntPtSigmaYY));
+    add_secondary_variable(
+        "sigma_xx", 1, &LocalAssemblerIF::getIntPtSigmaXX);
 
-    _secondary_variables.addSecondaryVariable(
-        "sigma_zz",
-        makeExtrapolator(1, getExtrapolator(), _local_assemblers,
-                         &LocalAssemblerInterface::getIntPtSigmaZZ));
+    add_secondary_variable(
+        "sigma_yy", 1, &LocalAssemblerIF::getIntPtSigmaYY);
 
-    _secondary_variables.addSecondaryVariable(
-        "sigma_xy",
-        makeExtrapolator(1, getExtrapolator(), _local_assemblers,
-                         &LocalAssemblerInterface::getIntPtSigmaXY));
+    add_secondary_variable(
+        "sigma_zz", 1, &LocalAssemblerIF::getIntPtSigmaZZ);
+
+    add_secondary_variable(
+        "sigma_xy", 1, &LocalAssemblerIF::getIntPtSigmaXY);
 
     if (DisplacementDim == 3)
     {
-        _secondary_variables.addSecondaryVariable(
-            "sigma_xz",
-            makeExtrapolator(1, getExtrapolator(), _local_assemblers,
-                             &LocalAssemblerInterface::getIntPtSigmaXZ));
+        add_secondary_variable(
+            "sigma_xz", 1, &LocalAssemblerIF::getIntPtSigmaXZ);
 
-        _secondary_variables.addSecondaryVariable(
-            "sigma_yz",
-            makeExtrapolator(1, getExtrapolator(), _local_assemblers,
-                             &LocalAssemblerInterface::getIntPtSigmaYZ));
+        add_secondary_variable(
+            "sigma_yz", 1, &LocalAssemblerIF::getIntPtSigmaYZ);
     }
 
-    _secondary_variables.addSecondaryVariable(
-        "epsilon_xx",
-        makeExtrapolator(1, getExtrapolator(), _local_assemblers,
-                         &LocalAssemblerInterface::getIntPtEpsilonXX));
+    add_secondary_variable(
+        "epsilon_xx", 1, &LocalAssemblerIF::getIntPtEpsilonXX);
 
-    _secondary_variables.addSecondaryVariable(
-        "epsilon_yy",
-        makeExtrapolator(1, getExtrapolator(), _local_assemblers,
-                         &LocalAssemblerInterface::getIntPtEpsilonYY));
+    add_secondary_variable(
+        "epsilon_yy", 1, &LocalAssemblerIF::getIntPtEpsilonYY);
 
-    _secondary_variables.addSecondaryVariable(
-        "epsilon_zz",
-        makeExtrapolator(1, getExtrapolator(), _local_assemblers,
-                         &LocalAssemblerInterface::getIntPtEpsilonZZ));
+    add_secondary_variable(
+        "epsilon_zz", 1, &LocalAssemblerIF::getIntPtEpsilonZZ);
 
-    _secondary_variables.addSecondaryVariable(
-        "epsilon_xy",
-        makeExtrapolator(1, getExtrapolator(), _local_assemblers,
-                         &LocalAssemblerInterface::getIntPtEpsilonXY));
+    add_secondary_variable(
+        "epsilon_xy", 1, &LocalAssemblerIF::getIntPtEpsilonXY);
 
     if (DisplacementDim == 3)
     {
-        _secondary_variables.addSecondaryVariable(
-            "epsilon_xz",
-            makeExtrapolator(1, getExtrapolator(), _local_assemblers,
-                             &LocalAssemblerInterface::getIntPtEpsilonXZ));
+        add_secondary_variable(
+            "epsilon_xz", 1, &LocalAssemblerIF::getIntPtEpsilonXZ);
 
-        _secondary_variables.addSecondaryVariable(
-            "epsilon_yz",
-            makeExtrapolator(1, getExtrapolator(), _local_assemblers,
-                             &LocalAssemblerInterface::getIntPtEpsilonYZ));
+        add_secondary_variable(
+            "epsilon_yz", 1, &LocalAssemblerIF::getIntPtEpsilonYZ);
     }
 
-    _secondary_variables.addSecondaryVariable(
-        "velocity",
-        makeExtrapolator(mesh.getDimension(), getExtrapolator(),
-                         _local_assemblers,
-                         &LocalAssemblerInterface::getIntPtDarcyVelocity));
+    add_secondary_variable("velocity",
+                           DisplacementDim,
+                           &LocalAssemblerIF::getIntPtDarcyVelocity);
+
+    //
+    // enable output of internal variables defined by material models
+    //
+    ProcessLib::Deformation::solidMaterialInternalToSecondaryVariables<
+        LocalAssemblerIF>(_process_data.solid_materials,
+                                 add_secondary_variable);
 
     _process_data.pressure_interpolated =
         MeshLib::getOrCreateMeshProperty<double>(
@@ -357,7 +347,7 @@ void HydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
 
     // Initialize local assemblers after all variables have been set.
     GlobalExecutor::executeMemberOnDereferenced(
-        &LocalAssemblerInterface::initialize, _local_assemblers,
+        &LocalAssemblerIF::initialize, _local_assemblers,
         *_local_to_global_index_map);
 }
 
@@ -483,7 +473,7 @@ void HydroMechanicsProcess<DisplacementDim>::preTimestepConcreteProcess(
         ProcessLib::ProcessVariable const& pv =
             getProcessVariables(process_id)[0];
         GlobalExecutor::executeSelectedMemberOnDereferenced(
-            &LocalAssemblerInterface::preTimestep, _local_assemblers,
+            &LocalAssemblerIF::preTimestep, _local_assemblers,
             pv.getActiveElementIDs(), *_local_to_global_index_map,
             *x[process_id], t, dt);
     }
@@ -497,7 +487,7 @@ void HydroMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
     DBUG("PostTimestep HydroMechanicsProcess.");
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
-        &LocalAssemblerInterface::postTimestep, _local_assemblers,
+        &LocalAssemblerIF::postTimestep, _local_assemblers,
         pv.getActiveElementIDs(), getDOFTable(process_id), *x[process_id], t,
         dt);
 }
@@ -516,7 +506,7 @@ void HydroMechanicsProcess<DisplacementDim>::postNonLinearSolverConcreteProcess(
     // Calculate strain, stress or other internal variables of mechanics.
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
-        &LocalAssemblerInterface::postNonLinearSolver, _local_assemblers,
+        &LocalAssemblerIF::postNonLinearSolver, _local_assemblers,
         pv.getActiveElementIDs(), getDOFTable(process_id), x, t, dt,
         _use_monolithic_scheme);
 }
@@ -528,7 +518,7 @@ void HydroMechanicsProcess<DisplacementDim>::computeSecondaryVariableConcrete(
     DBUG("Compute the secondary variables for HydroMechanicsProcess.");
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
-        &LocalAssemblerInterface::computeSecondaryVariable, _local_assemblers,
+        &LocalAssemblerIF::computeSecondaryVariable, _local_assemblers,
         pv.getActiveElementIDs(), getDOFTable(process_id), t, x,
         _coupled_solutions);
 }

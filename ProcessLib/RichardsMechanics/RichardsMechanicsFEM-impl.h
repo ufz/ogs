@@ -886,5 +886,25 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                          *_process_data.pressure_interpolated);
 }
 
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          typename IntegrationMethod, int DisplacementDim>
+unsigned RichardsMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    DisplacementDim>::getNumberOfIntegrationPoints() const
+{
+    return _integration_method.getNumberOfPoints();
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          typename IntegrationMethod, int DisplacementDim>
+typename MaterialLib::Solids::MechanicsBase<
+    DisplacementDim>::MaterialStateVariables const&
+RichardsMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    DisplacementDim>::getMaterialStateVariablesAt(unsigned integration_point)
+    const
+{
+    return *_ip_data[integration_point].material_state_variables;
+}
 }  // namespace RichardsMechanics
 }  // namespace ProcessLib

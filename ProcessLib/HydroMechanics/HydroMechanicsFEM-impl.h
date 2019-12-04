@@ -796,5 +796,25 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     }
 }
 
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          typename IntegrationMethod, int DisplacementDim>
+unsigned HydroMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    DisplacementDim>::getNumberOfIntegrationPoints() const
+{
+    return _integration_method.getNumberOfPoints();
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          typename IntegrationMethod, int DisplacementDim>
+typename MaterialLib::Solids::MechanicsBase<
+    DisplacementDim>::MaterialStateVariables const&
+HydroMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
+                             IntegrationMethod, DisplacementDim>::
+    getMaterialStateVariablesAt(unsigned integration_point) const
+{
+    return *_ip_data[integration_point].material_state_variables;
+}
+
 }  // namespace HydroMechanics
 }  // namespace ProcessLib
