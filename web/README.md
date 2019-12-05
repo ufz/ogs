@@ -8,10 +8,12 @@
 
 - Download [Hugo](https://github.com/gohugoio/hugo/releases/latest) and put it in your `PATH`. **Attention:** Use the *extended* version: e.g. `hugo_extended_0.60.1_Windows-64bit.zip`
 - [Install Pandoc](https://pandoc.org/installing.html)
+- Install [Yarn](https://yarnpkg.com/en/docs/install); for downloading required JavaScript & CSS development packages
 
 ## Getting started
 
 - Inside the source-directory `ogs/web`:
+  - Run `yarn` once (this will install required css and js packages)
   - Run `hugo server`
   - Open http://localhost:1313
 
@@ -129,7 +131,6 @@ This json-file is then used by the shortcode.
 
 ### Optional requirements
 
-- Install [Yarn](https://yarnpkg.com/en/docs/install); for downloading required JavaScript & CSS development packages
 - Install [ParaView](http://www.paraview.org/download/); for converting VTK output files to vtk.js-format for interactive web visualization, check if `pvpython` is either in the `PATH` or ParaView is installed in `/Applications/` on macOS or `/usr/local/opt/paraview` on Linux. CURRENTLY DISABLED!
 
 ### Update search index
