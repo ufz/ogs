@@ -92,7 +92,7 @@ if(OGS_USE_NETCDF)
     set(CONAN_REQUIRES ${CONAN_REQUIRES} netcdf-cxx/4.3.1@bilke/testing)
 endif()
 
-conan_check(VERSION 1.19.2)
+conan_check(VERSION 1.20.0)
 
 message(STATUS "Third-party libraries:")
 foreach(LIB ${OGS_LIBS})
