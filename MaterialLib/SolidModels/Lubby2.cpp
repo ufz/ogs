@@ -67,10 +67,10 @@ MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> tangentStiffnessA(
 };
 
 template <int DisplacementDim>
-boost::optional<std::tuple<typename Lubby2<DisplacementDim>::KelvinVector,
-                           std::unique_ptr<typename MechanicsBase<
-                               DisplacementDim>::MaterialStateVariables>,
-                           typename Lubby2<DisplacementDim>::KelvinMatrix>>
+std::optional<std::tuple<typename Lubby2<DisplacementDim>::KelvinVector,
+                         std::unique_ptr<typename MechanicsBase<
+                             DisplacementDim>::MaterialStateVariables>,
+                         typename Lubby2<DisplacementDim>::KelvinMatrix>>
 Lubby2<DisplacementDim>::integrateStress(
     double const t, ParameterLib::SpatialPosition const& x, double const dt,
     KelvinVector const& eps_prev, KelvinVector const& eps,

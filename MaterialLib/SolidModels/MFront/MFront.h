@@ -72,10 +72,10 @@ public:
         typename MechanicsBase<DisplacementDim>::MaterialStateVariables>
     createMaterialStateVariables() const override;
 
-    boost::optional<std::tuple<KelvinVector,
-                               std::unique_ptr<typename MechanicsBase<
-                                   DisplacementDim>::MaterialStateVariables>,
-                               KelvinMatrix>>
+    std::optional<std::tuple<KelvinVector,
+                             std::unique_ptr<typename MechanicsBase<
+                                 DisplacementDim>::MaterialStateVariables>,
+                             KelvinMatrix>>
     integrateStress(
         double const t,
         ParameterLib::SpatialPosition const& x,

@@ -309,7 +309,7 @@ public:
         typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
             material_state_variables) const override;
 
-    boost::optional<std::tuple<KelvinVector,
+    std::optional<std::tuple<KelvinVector,
                                std::unique_ptr<typename MechanicsBase<
                                    DisplacementDim>::MaterialStateVariables>,
                                KelvinMatrix>>

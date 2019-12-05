@@ -246,10 +246,10 @@ MFront<DisplacementDim>::createMaterialStateVariables() const
 }
 
 template <int DisplacementDim>
-boost::optional<std::tuple<typename MFront<DisplacementDim>::KelvinVector,
-                           std::unique_ptr<typename MechanicsBase<
-                               DisplacementDim>::MaterialStateVariables>,
-                           typename MFront<DisplacementDim>::KelvinMatrix>>
+std::optional<std::tuple<typename MFront<DisplacementDim>::KelvinVector,
+                         std::unique_ptr<typename MechanicsBase<
+                             DisplacementDim>::MaterialStateVariables>,
+                         typename MFront<DisplacementDim>::KelvinMatrix>>
 MFront<DisplacementDim>::integrateStress(
     double const t,
     ParameterLib::SpatialPosition const& x,
@@ -335,14 +335,12 @@ MFront<DisplacementDim>::integrateStress(
     KelvinMatrix C =
         MFrontToOGS(Eigen::Map<KelvinMatrix>(behaviour_data.K.data()));
 
-    return boost::make_optional(
+    return std::make_optional(
         std::make_tuple<typename MFront<DisplacementDim>::KelvinVector,
                         std::unique_ptr<typename MechanicsBase<
                             DisplacementDim>::MaterialStateVariables>,
                         typename MFront<DisplacementDim>::KelvinMatrix>(
-            std::move(sigma),
-            std::move(state),
-            std::move(C)));
+            std::move(sigma), std::move(state), std::move(C)));
 }
 
 template <int DisplacementDim>

@@ -229,10 +229,10 @@ public:
                eps_K.dot(sigma - eta_K * (eps_K - eps_K_prev) / dt) / 2;
     }
 
-    boost::optional<std::tuple<KelvinVector,
-                               std::unique_ptr<typename MechanicsBase<
-                                   DisplacementDim>::MaterialStateVariables>,
-                               KelvinMatrix>>
+    std::optional<std::tuple<KelvinVector,
+                             std::unique_ptr<typename MechanicsBase<
+                                 DisplacementDim>::MaterialStateVariables>,
+                             KelvinMatrix>>
     integrateStress(
         double const t, ParameterLib::SpatialPosition const& x, double const dt,
         KelvinVector const& eps_prev, KelvinVector const& eps,
