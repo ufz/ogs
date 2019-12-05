@@ -29,10 +29,10 @@ double getCreepConstantCoefficient(const double A, const double n,
 }
 
 template <int DisplacementDim>
-boost::optional<std::tuple<typename CreepBGRa<DisplacementDim>::KelvinVector,
-                           std::unique_ptr<typename MechanicsBase<
-                               DisplacementDim>::MaterialStateVariables>,
-                           typename CreepBGRa<DisplacementDim>::KelvinMatrix>>
+std::optional<std::tuple<typename CreepBGRa<DisplacementDim>::KelvinVector,
+                         std::unique_ptr<typename MechanicsBase<
+                             DisplacementDim>::MaterialStateVariables>,
+                         typename CreepBGRa<DisplacementDim>::KelvinMatrix>>
 CreepBGRa<DisplacementDim>::integrateStress(
     double const t, ParameterLib::SpatialPosition const& x, double const dt,
     KelvinVector const& eps_prev, KelvinVector const& eps,

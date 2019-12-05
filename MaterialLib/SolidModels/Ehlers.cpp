@@ -502,10 +502,10 @@ double SolidEhlers<DisplacementDim>::computeFreeEnergyDensity(
 }
 
 template <int DisplacementDim>
-boost::optional<std::tuple<typename SolidEhlers<DisplacementDim>::KelvinVector,
-                           std::unique_ptr<typename MechanicsBase<
-                               DisplacementDim>::MaterialStateVariables>,
-                           typename SolidEhlers<DisplacementDim>::KelvinMatrix>>
+std::optional<std::tuple<typename SolidEhlers<DisplacementDim>::KelvinVector,
+                         std::unique_ptr<typename MechanicsBase<
+                             DisplacementDim>::MaterialStateVariables>,
+                         typename SolidEhlers<DisplacementDim>::KelvinMatrix>>
 SolidEhlers<DisplacementDim>::integrateStress(
     double const t, ParameterLib::SpatialPosition const& x, double const dt,
     KelvinVector const& eps_prev, KelvinVector const& eps,

@@ -16,7 +16,7 @@ namespace MaterialLib
 namespace Solids
 {
 template <int DisplacementDim>
-boost::optional<
+std::optional<
     std::tuple<typename MechanicsBase<DisplacementDim>::KelvinVector,
                std::unique_ptr<typename MechanicsBase<
                    DisplacementDim>::MaterialStateVariables>,

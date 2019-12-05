@@ -85,7 +85,7 @@ public:
         return eps.dot(sigma) / 2;
     }
 
-    boost::optional<
+    std::optional<
         std::tuple<typename MechanicsBase<DisplacementDim>::KelvinVector,
                    std::unique_ptr<typename MechanicsBase<
                        DisplacementDim>::MaterialStateVariables>,

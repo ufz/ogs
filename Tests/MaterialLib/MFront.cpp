@@ -158,7 +158,7 @@ TYPED_TEST(MaterialLib_SolidModelsMFront2, IntegrateZeroDisplacement)
         this->t, this->x, this->dt, this->eps_prev, this->eps, this->sigma_prev,
         *state, this->T);
 
-    ASSERT_TRUE(solution != boost::none);
+    ASSERT_TRUE(solution != std::nullopt);
     state = std::move(std::get<1>(*solution));
     ASSERT_TRUE(state != nullptr);
     state.reset(nullptr);
@@ -174,7 +174,7 @@ TYPED_TEST(MaterialLib_SolidModelsMFront3, IntegrateZeroDisplacement)
         this->t, this->x, this->dt, this->eps_prev, this->eps, this->sigma_prev,
         *state, this->T);
 
-    ASSERT_TRUE(solution != boost::none);
+    ASSERT_TRUE(solution != std::nullopt);
     state = std::move(std::get<1>(*solution));
     ASSERT_TRUE(state != nullptr);
     state.reset(nullptr);

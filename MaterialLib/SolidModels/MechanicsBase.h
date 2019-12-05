@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include <boost/optional.hpp>
+#include <optional>
 #include <functional>
 #include <memory>
 #include <tuple>
@@ -77,7 +77,7 @@ struct MechanicsBase
     /// constitutive relation compute function.
     /// Returns nothing in case of errors in the computation if Newton
     /// iterations did not converge, for example.
-    boost::optional<std::tuple<
+    std::optional<std::tuple<
         KelvinVector, std::unique_ptr<MaterialStateVariables>, KelvinMatrix>>
     integrateStress(double const t,
                     ParameterLib::SpatialPosition const& x,
@@ -108,7 +108,7 @@ struct MechanicsBase
     /// wrapper function.
     /// Returns nothing in case of errors in the computation if Newton
     /// iterations did not converge, for example.
-    virtual boost::optional<std::tuple<
+    virtual std::optional<std::tuple<
         KelvinVector, std::unique_ptr<MaterialStateVariables>, KelvinMatrix>>
     integrateStress(double const t,
                     ParameterLib::SpatialPosition const& x,

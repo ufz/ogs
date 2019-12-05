@@ -14,11 +14,10 @@ namespace MaterialLib
 namespace Solids
 {
 template <int DisplacementDim>
-boost::optional<
-    std::tuple<typename MechanicsBase<DisplacementDim>::KelvinVector,
-               std::unique_ptr<typename MechanicsBase<
-                   DisplacementDim>::MaterialStateVariables>,
-               typename MechanicsBase<DisplacementDim>::KelvinMatrix>>
+std::optional<std::tuple<typename MechanicsBase<DisplacementDim>::KelvinVector,
+                         std::unique_ptr<typename MechanicsBase<
+                             DisplacementDim>::MaterialStateVariables>,
+                         typename MechanicsBase<DisplacementDim>::KelvinMatrix>>
 LinearElasticIsotropic<DisplacementDim>::integrateStress(
     double const t, ParameterLib::SpatialPosition const& x, double const /*dt*/,
     KelvinVector const& eps_prev, KelvinVector const& eps,
