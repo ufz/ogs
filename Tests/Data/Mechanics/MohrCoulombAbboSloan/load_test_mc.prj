@@ -259,8 +259,8 @@
         <vtkdiff>
             <file>load_test_mc_pcs_0_ts_20_t_20.000000.vtu</file>
             <field>displacement</field>
-            <absolute_tolerance>1e-13</absolute_tolerance>
-            <relative_tolerance>1e-13</relative_tolerance>
+            <absolute_tolerance>2e-13</absolute_tolerance>
+            <relative_tolerance>2e-13</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <file>load_test_mc_pcs_0_ts_20_t_20.000000.vtu</file>
