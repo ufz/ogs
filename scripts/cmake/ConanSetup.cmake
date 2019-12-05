@@ -69,9 +69,7 @@ if(OGS_BUILD_GUI)
     set(CONAN_REQUIRES ${CONAN_REQUIRES}
         shapelib/1.3.0@bilke/stable
         libgeotiff/1.4.2@bilke/stable
-        qt/5.12.4@bincrafters/stable
-        # Overwrite VTK requirement to match Qt requirement
-        bzip2/1.0.8@conan/stable
+        qt/5.13.2@bincrafters/stable
     )
     set(CONAN_OPTIONS ${CONAN_OPTIONS}
         vtk:minimal=False
