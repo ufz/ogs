@@ -70,6 +70,8 @@ if(OGS_BUILD_GUI)
         shapelib/1.3.0@bilke/stable
         libgeotiff/1.4.2@bilke/stable
         qt/5.13.2@bincrafters/stable
+        # Fix for "Conflict in pcre/8.41@bincrafters/stable"
+        bzip2/1.0.8
     )
     set(CONAN_OPTIONS ${CONAN_OPTIONS}
         vtk:minimal=False
