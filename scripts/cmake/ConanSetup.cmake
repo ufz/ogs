@@ -88,6 +88,9 @@ if(OGS_BUILD_GUI)
         qt:with_sdl2=False
         qt:with_sqlite3=False
     )
+    if(MSVC)
+        set(CONAN_OPTIONS ${CONAN_OPTIONS} qt:with_harfbuzz=False)
+    endif()
 endif()
 
 if(OGS_USE_NETCDF)
