@@ -226,6 +226,7 @@ pipeline {
             always {
               recordIssues enabledForFailure: true, filters: [
                 excludeFile('.*qrc_icons\\.cpp.*'),
+                excludeFile('ncGroup\\.h'),
                 excludeMessage('.*tmpnam.*')],
                 tools: [gcc4(name: 'GCC-GUI', id: 'gcc4-gui',
                              pattern: 'build/build*.log')],
@@ -233,7 +234,7 @@ pipeline {
               recordIssues enabledForFailure: true,
                 tools: [cppCheck(pattern: 'build/cppcheck.log')]
             }
-            success { archiveArtifacts 'build/*.tar.gz,build/conaninfo.txt' }
+            success { archiveArtifacts 'build/*.tar.gz,build/conaninfo.txt,build/cppcheck.log' }
           }
         }
         // ********************* Docker-Conan-Debug ****************************
