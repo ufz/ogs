@@ -36,30 +36,29 @@ int main(int argc, char* argv[])
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
 
-    TCLAP::ValueArg<std::string> input_arg(
-        "i", "input-file", "Gocad triangular surfaces file (*.ts)", true, "",
-        "filename.ts");
-    cmd.add(input_arg);
-
-    TCLAP::ValueArg<std::string> output_arg(
-        "o", "output-dir", "output directory", true, "",
-        "output dir");
-    cmd.add(output_arg);
-
     TCLAP::SwitchArg write_binary_arg(
         "b", "write-binary",
         "if set, OGS-Meshes will be written in binary format");
     cmd.add(write_binary_arg);
+
+    TCLAP::SwitchArg export_surfaces_arg(
+        "s", "surfaces-only",
+        "if set, only TSurf datasets will be parsed from the input file");
+    cmd.add(export_surfaces_arg);
 
     TCLAP::SwitchArg export_lines_arg(
         "l", "lines-only",
         "if set, only PLine datasets will be parsed from the input file");
     cmd.add(export_lines_arg);
 
-    TCLAP::SwitchArg export_surfaces_arg(
-        "s", "surfaces-only",
-        "if set, only TSurf datasets will be parsed from the input file");
-    cmd.add(export_surfaces_arg);
+    TCLAP::ValueArg<std::string> output_arg(
+        "o", "output-dir", "output directory", true, "", "output dir");
+    cmd.add(output_arg);
+
+    TCLAP::ValueArg<std::string> input_arg(
+        "i", "input-file", "Gocad triangular surfaces file (*.ts)", true, "",
+        "filename.ts");
+    cmd.add(input_arg);
 
     cmd.parse(argc, argv);
 
