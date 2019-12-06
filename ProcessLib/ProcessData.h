@@ -27,8 +27,8 @@ struct ProcessData
                 NumLib::NonlinearSolver<NLTag>& nonlinear_solver,
                 std::unique_ptr<NumLib::ConvergenceCriterion>&& conv_crit_,
                 std::unique_ptr<NumLib::TimeDiscretization>&& time_disc_,
-                int const process_id_,
-                Process& process_)
+                int const process_id_, Process& process_,
+                bool const skip_process_computation_)
         : timestepper(std::move(timestepper_)),
           nonlinear_solver_tag(NLTag),
           nonlinear_solver(nonlinear_solver),
@@ -36,7 +36,8 @@ struct ProcessData
           conv_crit(std::move(conv_crit_)),
           time_disc(std::move(time_disc_)),
           process_id(process_id_),
-          process(process_)
+          process(process_),
+          skip_process_computation(skip_process_computation_)
     {
     }
 
@@ -50,7 +51,8 @@ struct ProcessData
           tdisc_ode_sys(std::move(pd.tdisc_ode_sys)),
           mat_strg(pd.mat_strg),
           process_id(pd.process_id),
-          process(pd.process)
+          process(pd.process),
+          skip_process_computation(pd.skip_process_computation)
     {
         pd.mat_strg = nullptr;
     }
@@ -73,5 +75,6 @@ struct ProcessData
     int const process_id;
 
     Process& process;
+    bool const skip_process_computation = false;
 };
 }  // namespace ProcessLib

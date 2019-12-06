@@ -691,6 +691,9 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
         int const last_process_id = _per_process_data.size() - 1;
         for (auto& process_data : _per_process_data)
         {
+            if (process_data->skip_process_computation)
+                continue;
+
             auto const process_id = process_data->process_id;
             BaseLib::RunTime time_timestep_process;
             time_timestep_process.start();

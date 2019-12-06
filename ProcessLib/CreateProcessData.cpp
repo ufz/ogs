@@ -24,7 +24,8 @@ static std::unique_ptr<ProcessData> makeProcessData(
     Process& process,
     std::unique_ptr<NumLib::TimeDiscretization>&& time_disc,
     std::unique_ptr<NumLib::ConvergenceCriterion>&& conv_crit,
-    bool const compensate_non_equilibrium_initial_residuum)
+    bool const compensate_non_equilibrium_initial_residuum,
+    bool const skip_process_computation)
 {
     using Tag = NumLib::NonlinearSolverTag;
 
@@ -36,7 +37,8 @@ static std::unique_ptr<ProcessData> makeProcessData(
             compensate_non_equilibrium_initial_residuum);
         return std::make_unique<ProcessData>(
             std::move(timestepper), *nonlinear_solver_picard,
-            std::move(conv_crit), std::move(time_disc), process_id, process);
+            std::move(conv_crit), std::move(time_disc), process_id, process,
+            skip_process_computation);
     }
     if (auto* nonlinear_solver_newton =
             dynamic_cast<NumLib::NonlinearSolver<Tag::Newton>*>(
@@ -46,7 +48,8 @@ static std::unique_ptr<ProcessData> makeProcessData(
             compensate_non_equilibrium_initial_residuum);
         return std::make_unique<ProcessData>(
             std::move(timestepper), *nonlinear_solver_newton,
-            std::move(conv_crit), std::move(time_disc), process_id, process);
+            std::move(conv_crit), std::move(time_disc), process_id, process,
+            skip_process_computation);
     }
 
     OGS_FATAL("Encountered unknown nonlinear solver type. Aborting");
@@ -97,6 +100,11 @@ std::vector<std::unique_ptr<ProcessData>> createPerProcessData(
             pcs_config.getConfigParameter<bool>(
                 "compensate_non_equilibrium_initial_residuum", false);
 
+        auto skip_process_computation =
+            //! \ogs_file_param{prj__time_loop__processes__process__skip_process_computation}
+            pcs_config.getConfigParameter<bool>("skip_process_computation",
+                                                false);
+
         //! \ogs_file_param{prj__time_loop__processes__process__output}
         auto output = pcs_config.getConfigSubtreeOptional("output");
         if (output)
@@ -114,7 +122,8 @@ std::vector<std::unique_ptr<ProcessData>> createPerProcessData(
         per_process_data.emplace_back(
             makeProcessData(std::move(timestepper), nl_slv, process_id, pcs,
                             std::move(time_disc), std::move(conv_crit),
-                            compensate_non_equilibrium_initial_residuum));
+                            compensate_non_equilibrium_initial_residuum,
+                            skip_process_computation));
         ++process_id;
     }
 
