@@ -17,6 +17,7 @@ conaninfo.txt
 CMakeLists.txt.user*
 
 *.pyc
+.venv
 
 Tests/**/*.md5
 Tests/Data/Parabolic/HT/InvalidProjectFiles/*.prj
