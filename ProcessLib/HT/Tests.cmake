@@ -209,7 +209,7 @@ AddTest(
     VIS ConstViscosityThermalConvectionStaggeredAdaptive_dt_pcs_1_ts_141_t_50000000000.000000.vtu
 )
 # Workaround sporadic timeouts on macOS
-if(APPLE)
+if(APPLE AND TEST ogs-2D_Adaptive_dt_ThermalConvection_constviscosityStaggeredScheme-time)
     set_tests_properties(
         ogs-2D_Adaptive_dt_ThermalConvection_constviscosityStaggeredScheme-time
         PROPERTIES TIMEOUT 1800)
