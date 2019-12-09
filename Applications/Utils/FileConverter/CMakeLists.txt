@@ -11,6 +11,10 @@ set(TOOLS
     GocadTSurfaceReader
     Mesh2Raster)
 
+if(OGS_USE_NETCDF)
+    list(APPEND TOOLS NetCdfConverter)
+endif()
+
 if(OGS_BUILD_GUI)
     if(Shapelib_FOUND)
         list(APPEND TOOLS ConvertSHPToGLI)
@@ -37,3 +41,10 @@ if(TARGET Mesh2Shape)
     target_link_libraries(Mesh2Shape ${Shapelib_LIBRARIES})
 endif()
 
+if(TARGET NetCdfConverter)
+    target_link_libraries(NetCdfConverter
+                          ${NETCDF_LIBRARIES_CXX}
+                          ${NETCDF_LIBRARIES_C}
+                          ${HDF5_HL_LIBRARIES}
+                          ${HDF5_LIBRARIES})
+endif()

@@ -21,16 +21,21 @@
 
 #include <vtkImageImport.h>
 
+using namespace netCDF;
+
 // Constructor
 NetCdfConfigureDialog::NetCdfConfigureDialog(std::string const& fileName, QDialog* parent)
-: QDialog(parent), _currentFile(new NcFile(fileName.c_str(), NcFile::ReadOnly)),
-  _currentInitialDateTime(QDateTime()), _currentMesh(nullptr), _currentRaster(nullptr), _currentPath(fileName)
+    : QDialog(parent),
+      _currentFile(fileName.c_str(), NcFile::read),
+      _currentMesh(nullptr),
+      _currentRaster(nullptr),
+      _currentPath(fileName)
 {
     setupUi(this);
 
     int const idx = setVariableSelect(); // set up variables of the file in the combobox
     comboBoxVariable->setCurrentIndex(idx); //pre-select the variable with the biggest number of dimensions...valueWithMaxDim()
-    _currentVar = _currentFile->get_var(idx);
+    _currentVar = _currentFile.getVar(comboBoxVariable->itemText(idx).toStdString());
 
     setDimensionSelect();
 
@@ -45,7 +50,7 @@ NetCdfConfigureDialog::~NetCdfConfigureDialog() = default;
 void NetCdfConfigureDialog::accept()
 {
     QMessageBox valueErrorBox;
-    if (_currentVar->num_dims() < 2){
+    if (_currentVar.getDimCount() < 2){
         valueErrorBox.setText("Selected Variable has not enough dimensions.");
         valueErrorBox.exec();
     }else if (doubleSpinBoxDim2Start->value() == doubleSpinBoxDim2Start->maximum()){
@@ -56,7 +61,6 @@ void NetCdfConfigureDialog::accept()
         valueErrorBox.exec();
     }else{
         createDataObject();
-        delete _currentFile;
         this->done(QDialog::Accepted);
     }
 }
@@ -64,13 +68,14 @@ void NetCdfConfigureDialog::accept()
 // Instructions if the Cancel-Button has been pressed.
 void NetCdfConfigureDialog::reject()
 {
-    delete _currentFile;
     this->done(QDialog::Rejected);
 }
 
 void NetCdfConfigureDialog::on_comboBoxVariable_currentIndexChanged(int id)
 {
-    _currentVar = _currentFile->get_var(_id_map[id]);
+    Q_UNUSED(id);
+    std::string const var_name = comboBoxVariable->currentText().toStdString();
+    _currentVar = _currentFile.getVar(var_name);
     setDimensionSelect();
 }
 
@@ -80,7 +85,7 @@ void NetCdfConfigureDialog::on_comboBoxDim1_currentIndexChanged(int id)
     if (id == -1) id = 0;
     double firstValue=0, lastValue=0;
     unsigned size = 0;
-    getDimEdges(id,size,firstValue,lastValue);
+    getDimEdges(comboBoxDim1->currentText().toStdString(), size, firstValue, lastValue);
     doubleSpinBoxDim1Start->setValue(firstValue);
     doubleSpinBoxDim1End->setValue(lastValue);
     doubleSpinBoxResolution->setValue(getResolution());
@@ -89,12 +94,12 @@ void NetCdfConfigureDialog::on_comboBoxDim1_currentIndexChanged(int id)
 //set up y-axis/lon
 void NetCdfConfigureDialog::on_comboBoxDim2_currentIndexChanged(int id)
 {
-    if (_currentVar->num_dims() > 1)
+    if (_currentVar.getDimCount() > 1)
     {
         if (id == -1) id = 0;
         double firstValue=0, lastValue=0;
         unsigned size = 0;
-        getDimEdges(id,size,firstValue,lastValue);
+        getDimEdges(comboBoxDim2->currentText().toStdString(), size, firstValue, lastValue);
         doubleSpinBoxDim2Start->setValue(firstValue);
         doubleSpinBoxDim2End->setValue(lastValue);
     }
@@ -103,37 +108,15 @@ void NetCdfConfigureDialog::on_comboBoxDim2_currentIndexChanged(int id)
 //set up time
 void NetCdfConfigureDialog::on_comboBoxDim3_currentIndexChanged(int id)
 {
-    if (_currentVar->num_dims() > 2)
+    if (_currentVar.getDimCount() > 2)
     {
         if (id == -1) id = 0;
         double firstValue=0, lastValue=0;
         unsigned size = 0;
-        getDimEdges(id,size,firstValue,lastValue);
-
-        QTime firstTime(0,0,0), lastTime(0,0,0);
-        int firstDaysToAdd = 0, lastDaysToAdd = 0;
-
-        getDaysTime(firstValue,firstTime,firstDaysToAdd);
-        getDaysTime(lastValue,lastTime,lastDaysToAdd);
-
-        QDate initialDate(1960,1,1);
-        QTime initialTime(0,0);
-
-        QDateTime initialDateTime;
-        initialDateTime.setDate(initialDate);
-        initialDateTime.setTime(initialTime);
-
-        QDateTime firstDateTime = initialDateTime.addDays(firstDaysToAdd);
-        firstDateTime.setTime(firstTime);
-
-        QDateTime lastDateTime = initialDateTime.addDays(lastDaysToAdd);
-        lastDateTime.setTime(lastTime);
-
-        dateTimeEditDim3->setDateTime(firstDateTime);
-        dateTimeEditDim3->setMinimumDateTime(firstDateTime);
-        dateTimeEditDim3->setMaximumDateTime(lastDateTime);
-
-        _currentInitialDateTime = initialDateTime;
+        getDimEdges(comboBoxDim3->currentText().toStdString(), size, firstValue, lastValue);
+        dateTimeEditDim3->setValue(static_cast<int>(firstValue));
+        dateTimeEditDim3->setMinimum(static_cast<int>(firstValue));
+        dateTimeEditDim3->setMaximum(static_cast<int>(lastValue));
         lineEditName->setText(setName());
     }
 }
@@ -141,13 +124,12 @@ void NetCdfConfigureDialog::on_comboBoxDim3_currentIndexChanged(int id)
 //set up additional dimension
 void NetCdfConfigureDialog::on_comboBoxDim4_currentIndexChanged(int id)
 {
-    if (_currentVar->num_dims() > 3)
+    Q_UNUSED(id);
+    if (_currentVar.getDimCount() > 3)
     {
-        if (id == -1) id = 0;
         double firstValue=0, lastValue=0;
         unsigned size = 0;
-        getDimEdges(id,size,firstValue,lastValue);
-        // WARNING: Implicit conversion to int in spinBoxDim4->set*()
+        getDimEdges(comboBoxDim4->currentText().toStdString(), size, firstValue, lastValue);
         spinBoxDim4->setValue(static_cast<int>(firstValue));
         spinBoxDim4->setMinimum(static_cast<int>(firstValue));
         spinBoxDim4->setMaximum(static_cast<int>(lastValue));
@@ -158,17 +140,16 @@ int NetCdfConfigureDialog::setVariableSelect()
 {
     int max_dim = 0;
     int max_dim_idx = 0;
-    auto const n_vars = _currentFile->num_vars();
-    for (int i = 0; i < n_vars; i++)
+    auto const& names =_currentFile.getVars();
+    for (auto [name, var] : names)
     {
-        NcVar const& focusedVar = *_currentFile->get_var(i);
-        if (focusedVar.num_dims() > 1)
+        int const var_dim_count = var.getDimCount();
+        if (var_dim_count > 1)
         {
-            _id_map.push_back(i);
-            comboBoxVariable->addItem(focusedVar.name());
-            if (focusedVar.num_dims() > max_dim)
+            comboBoxVariable->addItem(QString::fromStdString(name));
+            if (var_dim_count > max_dim)
             {
-                max_dim = focusedVar.num_dims();
+                max_dim = var_dim_count;
                 max_dim_idx = comboBoxVariable->count() - 1;
             }
         }
@@ -178,36 +159,41 @@ int NetCdfConfigureDialog::setVariableSelect()
 
 void NetCdfConfigureDialog::setDimensionSelect()
 {
-    int const dim = _currentVar->num_dims();
+    int const dim_count = _currentVar.getDimCount();
     std::array<QComboBox*,4> dim_box = {{ comboBoxDim1, comboBoxDim2, comboBoxDim3, comboBoxDim4 }};
 
     for (int i = 0; i < 4; ++i)
     {
         dim_box[i]->clear();
-        dim_box[i]->setEnabled(i < dim);
+        dim_box[i]->setEnabled(i < dim_count);
     }
 
-    for (int i=0; i < dim; ++i) //write dimension-names into selection-boxes
+    // write dimension-names into selection-boxes
+    for (int i = 0; i < dim_count; ++i)
     {
-        for (int j = 0; j < dim; ++j)
-            dim_box[j]->addItem(_currentVar->get_dim(i)->name());
+        for (int j = 0; j < dim_count; ++j)
+        {
+            dim_box[j]->addItem(QString::fromStdString(_currentVar.getDim(i).getName()));
+        }
     }
-    comboBoxDim1->setCurrentIndex(dim-2);
-    on_comboBoxDim1_currentIndexChanged(dim-2);
-    comboBoxDim2->setCurrentIndex(dim-1);
-    on_comboBoxDim2_currentIndexChanged(dim-1);
-    dateTimeEditDim3->setEnabled(dim > 2); // time is only enabled if dim > 2
-    spinBoxDim4->setEnabled(dim > 3); // add. info is only enabled if dim > 3
+    comboBoxDim1->setCurrentIndex(dim_count - 2);
+    on_comboBoxDim1_currentIndexChanged(dim_count - 2);
+    comboBoxDim2->setCurrentIndex(dim_count - 1);
+    on_comboBoxDim2_currentIndexChanged(dim_count - 1);
+    // time is only enabled if dim > 2
+    dateTimeEditDim3->setEnabled(dim_count > 2);
+    // 3rd data dimension is only enabled if dim > 3
+    spinBoxDim4->setEnabled(dim_count > 3);
 
-    if (dim > 2)
+    if (dim_count > 2)
     {
         comboBoxDim3->setCurrentIndex(0);
         on_comboBoxDim3_currentIndexChanged(0);
     }
     else
-        dateTimeEditDim3->setDateTime(_currentInitialDateTime);
+        dateTimeEditDim3->setSingleStep(0);
 
-    if (dim == 4)
+    if (dim_count == 4)
     {
         comboBoxDim4->setCurrentIndex(1);
         on_comboBoxDim4_currentIndexChanged(1);
@@ -216,81 +202,49 @@ void NetCdfConfigureDialog::setDimensionSelect()
         spinBoxDim4->setValue(0);
 }
 
-void NetCdfConfigureDialog::getDimEdges(int dimId, unsigned &size, double &firstValue, double &lastValue)
+void NetCdfConfigureDialog::getDimEdges(std::string const& name, unsigned& size,
+                                        double& firstValue, double& lastValue)
 {
-    if ((_currentFile->get_var(_currentVar->get_dim(dimId)->name())) != nullptr)
+    size = 0;
+    firstValue = 0;
+    lastValue = 0;
+    if (_currentFile.getVar(name).isNull())
+        return;
+
+    NcVar const& tmpVarOfDim = _currentFile.getVar(name);
+    if ((tmpVarOfDim.getDimCount()) == 1)
     {
-        NcVar *tmpVarOfDim = _currentFile->get_var(_currentVar->get_dim(dimId)->name());
-        if ((tmpVarOfDim->num_dims()) == 1)
-        {
-            int sizeOfDim = tmpVarOfDim->get_dim(0)->size();
-            size = sizeOfDim;
-            double *arrayOfDimStart = new double[1]; //[1] = {0};
-            long edgeOfArray = 1; //[1] = {1};
-            long edgeOrigin[1] = {0};
-            tmpVarOfDim->set_cur(edgeOrigin);
-            tmpVarOfDim->get(arrayOfDimStart,edgeOfArray);
-            firstValue = arrayOfDimStart[0];
-            double arrayOfDimEnd[1] = {0};
-            edgeOrigin[0] = sizeOfDim - 1;
-            tmpVarOfDim->set_cur(edgeOrigin);
-            tmpVarOfDim->get(arrayOfDimEnd,edgeOfArray);
-            lastValue = arrayOfDimEnd[0];
-        }
-    }else{
-        size = 0;
-        firstValue = 0;
-        lastValue = 0;
+        size = tmpVarOfDim.getDim(0).getSize();
+        tmpVarOfDim.getVar({0}, {1}, &firstValue);
+        tmpVarOfDim.getVar({size - 1}, {1}, &lastValue);
     }
 }
 
-void NetCdfConfigureDialog::getDaysTime(double minSince, QTime &time, int &days)
+int NetCdfConfigureDialog::getTimeStep() const
 {
-    auto tmpMin = (long)minSince;
-    long minuits = tmpMin % 60;
-    long tmpHours = tmpMin / 60;
-    long hours = tmpHours % 24;
-    days = (int)(tmpHours / 24);
-    time.setHMS(hours, minuits, 0);
-}
-
-long NetCdfConfigureDialog::convertDateToMinutes(QDateTime initialDateTime, QDate selectedDate, QTime selectedTime)
-{
-    long tmpInitialToSelectedDate = static_cast<long>(selectedDate.daysTo(initialDateTime.date()));
-    long selectedDays = - tmpInitialToSelectedDate * 24 * 60;
-    long selectedMinutes = (selectedTime.hour() * 60) + selectedTime.minute() + selectedDays;
-    return selectedMinutes;
-}
-
-int NetCdfConfigureDialog::getTimeStep()
-{
-    NcVar* timeVar = _currentFile->get_var(comboBoxDim2->currentIndex());
-
-    double const datesToMinutes = convertDateToMinutes(_currentInitialDateTime,dateTimeEditDim3->date(),dateTimeEditDim3->time());
-
-    double timeArray[1] = {datesToMinutes};
-    double currentTime = timeVar->get_index(timeArray);
-    if (currentTime < 0) currentTime=0; //if the value isn't found in the array, set it to 0 as default...
-    return static_cast<int>(currentTime);
+    return dateTimeEditDim3->value();
 }
 
 int NetCdfConfigureDialog::getDim4() const
 {
-    NcVar* dim3Var = _currentFile->get_var(comboBoxDim4->currentIndex());
-    int timeArray[1] = {spinBoxDim4->value()};
-    int currentValueDim3 = dim3Var->get_index(timeArray);
-    if (currentValueDim3 < 0) currentValueDim3=0; //if the value isn't found in the array, set it to 0 as default...
-    return currentValueDim3;
+    NcVar const& dim3Var =
+        _currentFile.getVar(comboBoxDim4->currentText().toStdString());
+    std::vector<std::size_t> start{static_cast<std::size_t>(spinBoxDim4->value())};
+    int value(0);
+    dim3Var.getVar(start, {1}, &value);
+    if (value < 0)
+        value = 0; //if the value isn't found in the array, set it to 0 as default...
+    return value;
 }
 
 double NetCdfConfigureDialog::getResolution()
 {
     if (comboBoxDim1->currentIndex() > -1)
     {
-        NcVar* latVar = _currentFile->get_var(comboBoxDim1->currentIndex());
+        NcVar const& var = _currentFile.getVar(comboBoxDim1->currentText().toStdString());
         double firstValue = 0, lastValue = 0;
         unsigned size = 0;
-        getDimEdges(latVar->id(), size, firstValue, lastValue);
+        getDimEdges(var.getName(), size, firstValue, lastValue);
         if (size < 2)
         {
             return 1;
@@ -306,43 +260,41 @@ double NetCdfConfigureDialog::getResolution()
 
 void NetCdfConfigureDialog::createDataObject()
 {
-    auto* length = new std::size_t[_currentVar->num_dims()];
     double originLon = 0, originLat = 0;
     double lastLon = 0, lastLat = 0;
     unsigned sizeLon = 0, sizeLat = 0;
-    getDimEdges(comboBoxDim1->currentIndex(), sizeLat, originLat, lastLat);
-    getDimEdges(comboBoxDim2->currentIndex(), sizeLon, originLon, lastLon);
-
-
-    for(int i=0; i < _currentVar->num_dims(); i++) length[i]=1;
-
-    // set array edges: lat x lon
-    length[comboBoxDim1->currentIndex()]=sizeLat;
-    length[comboBoxDim2->currentIndex()]=sizeLon;
+    std::string const dim1_name = comboBoxDim1->currentText().toStdString();
+    getDimEdges(dim1_name, sizeLat, originLat, lastLat);
+    std::string const dim2_name = comboBoxDim2->currentText().toStdString();
+    getDimEdges(dim2_name, sizeLon, originLon, lastLon);
 
     // set up array
-    auto* data_array = new double[sizeLat * sizeLon];
-    for(std::size_t i=0; i < (sizeLat*sizeLon); i++) data_array[i]=0;
+    std::vector<double> data_array(sizeLat * sizeLon, 0);
 
-    //Time-Dimension:
-    if (_currentVar->num_dims() > 2)
+    std::vector<std::size_t> data_origin;
+    std::vector<std::size_t> data_length;
+
+    if (_currentVar.getDimCount() > 2)
     {
-        auto* newOrigin = new long[_currentVar->num_dims()];
-        for (int i=0; i < _currentVar->num_dims(); i++) newOrigin[i]=0;
-        newOrigin[comboBoxDim3->currentIndex()] = getTimeStep(); //set origin to selected time
-        _currentVar->set_cur(newOrigin);
-        //Dimension 4:
-        if (_currentVar->num_dims() > 3) newOrigin[comboBoxDim4->currentIndex()] = getDim4(); //if there are is a 4th dimension
-        delete [] newOrigin;
+        // time
+        data_origin.push_back(getTimeStep());
+        data_length.push_back(1);
+        // 3rd dimension
+        if (_currentVar.getDimCount() > 3)
+        {
+            data_origin.push_back(getDim4());
+            data_length.push_back(1);
+        }
     }
 
-    _currentVar->get(data_array,length); //create Array of Values
+    data_origin.push_back(0); // x-origin
+    data_origin.push_back(0); // y-origin
+    data_length.push_back(sizeLat);
+    data_length.push_back(sizeLon);
+    _currentVar.getVar(data_origin, data_length, data_array.data());
 
-    for (std::size_t i=0; i < (sizeLat*sizeLon); i++)
-    {
-        //data_array[i] = data_array[i] - 273; // convert from kalvin to celsius
-        if (data_array[i] < -9999 ) data_array[i] = -9999; // all values < -10000, set to "no-value"
-    }
+    std::replace_if(data_array.begin(), data_array.end(),
+                    [](double& x) { return x <= -9999; }, -9999);
 
     double origin_x = (originLon < lastLon) ? originLon : lastLon;
     double origin_y = (originLat < lastLat) ? originLat : lastLat;
@@ -350,7 +302,7 @@ void NetCdfConfigureDialog::createDataObject()
     double resolution = (doubleSpinBoxResolution->value());
 
     if (originLat > lastLat) // reverse lines in vertical direction if the original file has its origin in the northwest corner
-        this->reverseNorthSouth(data_array, sizeLon, sizeLat);
+        this->reverseNorthSouth(data_array.data(), sizeLon, sizeLat);
 
     GeoLib::RasterHeader const header = {sizeLon, sizeLat,    1,
                                          origin,  resolution, -9999};
@@ -371,17 +323,14 @@ void NetCdfConfigureDialog::createDataObject()
             useIntensity = MeshLib::UseIntensityAs::DATAVECTOR;
         }
         _currentMesh = MeshLib::RasterToMesh::convert(
-            data_array, header, meshElemType, useIntensity, _currentVar->name());
+            data_array.data(), header, meshElemType, useIntensity, _currentVar.getName());
     }
     else
     {
-        vtkImageImport* image = VtkRaster::loadImageFromArray(data_array, header);
+        vtkImageImport* image = VtkRaster::loadImageFromArray(data_array.data(), header);
         _currentRaster = VtkGeoImageSource::New();
         _currentRaster->setImage(image, QString::fromStdString(this->getName()), origin[0], origin[1], resolution);
     }
-
-    delete[] length;
-    delete[] data_array;
 }
 
 QString NetCdfConfigureDialog::setName()
@@ -396,7 +345,7 @@ QString NetCdfConfigureDialog::setName()
 std::string NetCdfConfigureDialog::getName()
 {
     std::string name = (lineEditName->text()).toStdString();
-    QString date = dateTimeEditDim3->date().toString(Qt::LocalDate);
+    QString const date = QString::number(dateTimeEditDim3->value());
     name.append(" - ").append(date.toStdString());
     return name;
 }
@@ -439,5 +388,3 @@ void NetCdfConfigureDialog::on_radioMesh_toggled(bool isTrue)
         this->comboBoxUseIntensity->setEnabled(true);
     }
 }
-
-

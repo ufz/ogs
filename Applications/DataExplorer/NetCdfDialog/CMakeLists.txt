@@ -5,14 +5,18 @@ if(BUILD_SHARED_LIBS)
 endif()
 target_link_libraries(NetCdfDialogLib
                       PUBLIC Qt5::Widgets
-                      PRIVATE MathLib vtknetcdfcpp)
+                             ${NETCDF_LIBRARIES_CXX}
+                             ${NETCDF_LIBRARIES_C}
+                             ${HDF5_HL_LIBRARIES}
+                             ${HDF5_LIBRARIES}
+                      PRIVATE MathLib)
 set_property(TARGET NetCdfDialogLib PROPERTY FOLDER "DataExplorer")
 
 # Workaround for system installed VTK (tested on arch)
 if(NOT OGS_USE_CONAN)
-    target_include_directories(
-        NetCdfDialogLib SYSTEM
-        PUBLIC ${VTK_INSTALL_PREFIX}/include/vtk/vtknetcdfcpp)
+    target_include_directories(NetCdfDialogLib SYSTEM
+                               PUBLIC ${NETCDF_INCLUDES_C}
+                               PUBLIC ${NETCDF_INCLUDES_CXX})
 endif()
 
 add_autogen_include(NetCdfDialogLib)

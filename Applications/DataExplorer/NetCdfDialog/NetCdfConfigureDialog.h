@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include <netcdfcpp.h>
+#include <netcdf>
 
 #include <QDialog>
 #include "ui_NetCdfConfigure.h"
@@ -55,21 +55,20 @@ private:
     /// returns the index of the first variable with the highest dimension.
     int setVariableSelect();
     void setDimensionSelect();
-    void getDimEdges(int dimId, unsigned &size, double &firstValue, double &lastValue);
-    void getDaysTime(double minSince, QTime &time, int &days);
-    long convertDateToMinutes(QDateTime initialDateTime,QDate selectedDate, QTime selectedTime);
+    void getDimEdges(std::string const& name,
+                     unsigned& size,
+                     double& firstValue,
+                     double& lastValue);
     void createDataObject();
-    int getTimeStep();
+    int getTimeStep() const;
     int getDim4() const;
     double getResolution();
     QString setName();
     void reverseNorthSouth(double* data, std::size_t width, std::size_t height);
 
-    NcFile *_currentFile;
-    NcVar *_currentVar;
-    QDateTime _currentInitialDateTime;
+    netCDF::NcFile _currentFile;
+    netCDF::NcVar _currentVar;
     MeshLib::Mesh* _currentMesh;
     VtkGeoImageSource* _currentRaster;
     std::string _currentPath;
-    std::vector<int> _id_map;
 };

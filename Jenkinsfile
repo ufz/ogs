@@ -204,7 +204,8 @@ pipeline {
                   '-DOGS_BUILD_GUI=ON ' +
                   '-DOGS_BUILD_UTILS=ON ' +
                   '-DOGS_CONAN_BUILD=missing ' +
-                  '-DOGS_BUILD_TESTS=OFF '
+                  '-DOGS_BUILD_TESTS=OFF ' +
+                  '-DOGS_USE_NETCDF=ON '
               }
               build {
                 target="package"
@@ -225,6 +226,7 @@ pipeline {
             always {
               recordIssues enabledForFailure: true, filters: [
                 excludeFile('.*qrc_icons\\.cpp.*'),
+                excludeFile('ncGroup\\.h'),
                 excludeMessage('.*tmpnam.*')],
                 tools: [gcc4(name: 'GCC-GUI', id: 'gcc4-gui',
                              pattern: 'build/build*.log')],
@@ -232,7 +234,7 @@ pipeline {
               recordIssues enabledForFailure: true,
                 tools: [cppCheck(pattern: 'build/cppcheck.log')]
             }
-            success { archiveArtifacts 'build/*.tar.gz,build/conaninfo.txt' }
+            success { archiveArtifacts 'build/*.tar.gz,build/conaninfo.txt,build/cppcheck.log' }
           }
         }
         // ********************* Docker-Conan-Debug ****************************
@@ -406,7 +408,8 @@ pipeline {
                   '-DOGS_BUILD_GUI=ON ' +
                   '-DOGS_BUILD_UTILS=ON ' +
                   '-DOGS_CONAN_BUILD=missing ' +
-                  '-DOGS_BUILD_SWMM=ON '
+                  '-DOGS_BUILD_SWMM=ON ' +
+                  '-DOGS_USE_NETCDF=ON '
               }
               build {
                 target="package"
@@ -460,10 +463,10 @@ pipeline {
                   "-DBUILD_SHARED_LIBS=${build_shared} " +
                   '-DOGS_CPU_ARCHITECTURE=core2 ' +
                   '-DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON ' +
-                  '-DOGS_BUILD_GUI=OFF ' + // Temp. disabled
                   '-DOGS_BUILD_UTILS=ON ' +
                   '-DOGS_CONAN_BUILD=missing ' +
-                  '-DCMAKE_OSX_DEPLOYMENT_TARGET="10.14" '
+                  '-DCMAKE_OSX_DEPLOYMENT_TARGET="10.14" ' +
+                  '-DOGS_USE_NETCDF=ON '
               }
               build {
                 target="package"

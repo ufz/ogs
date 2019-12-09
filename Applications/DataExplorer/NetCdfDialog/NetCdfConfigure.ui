@@ -167,68 +167,6 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="2">
-       <widget class="QDateTimeEdit" name="dateTimeEditDim3">
-        <property name="minimumSize">
-         <size>
-          <width>110</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>110</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="autoFillBackground">
-         <bool>false</bool>
-        </property>
-        <property name="dateTime">
-         <datetime>
-          <hour>0</hour>
-          <minute>0</minute>
-          <second>0</second>
-          <year>1900</year>
-          <month>1</month>
-          <day>1</day>
-         </datetime>
-        </property>
-        <property name="date">
-         <date>
-          <year>1900</year>
-          <month>1</month>
-          <day>1</day>
-         </date>
-        </property>
-        <property name="maximumDateTime">
-         <datetime>
-          <hour>23</hour>
-          <minute>59</minute>
-          <second>59</second>
-          <year>2200</year>
-          <month>12</month>
-          <day>31</day>
-         </datetime>
-        </property>
-        <property name="minimumDateTime">
-         <datetime>
-          <hour>0</hour>
-          <minute>0</minute>
-          <second>0</second>
-          <year>1900</year>
-          <month>1</month>
-          <day>1</day>
-         </datetime>
-        </property>
-        <property name="displayFormat">
-         <string>dd.MM.yyyy</string>
-        </property>
-        <property name="calendarPopup">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
       <item row="3" column="3">
        <spacer name="horizontalSpacer_8">
         <property name="orientation">
@@ -254,6 +192,9 @@
          </size>
         </property>
        </spacer>
+      </item>
+      <item row="0" column="2">
+       <widget class="QSpinBox" name="dateTimeEditDim3"/>
       </item>
      </layout>
     </widget>
@@ -720,7 +661,6 @@
   <tabstop>doubleSpinBoxDim2Start</tabstop>
   <tabstop>doubleSpinBoxDim2End</tabstop>
   <tabstop>comboBoxDim3</tabstop>
-  <tabstop>dateTimeEditDim3</tabstop>
   <tabstop>comboBoxDim4</tabstop>
   <tabstop>spinBoxDim4</tabstop>
   <tabstop>doubleSpinBoxResolution</tabstop>

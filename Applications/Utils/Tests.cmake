@@ -285,3 +285,27 @@ AddTest(
     DIFF_DATA
     AmmerSubsurfaceGrid.vtu AmmerGridOutput.vtu MaterialIDs MaterialIDs 0 0
 )
+
+if(OGS_USE_NETCDF)
+    AddTest(
+        NAME NetCDF_2D_Test
+        PATH FileConverter/
+        EXECUTABLE NetCdfConverter
+        EXECUTABLE_ARGS -i sresa1b_ncar_ccsm3-example.nc -o ${Data_BINARY_DIR}/FileConverter/sresa1b_ncar_ccsm3-example.vtu -v pr -t 0 --dim1 2 --dim2 1 --timestep-first 0 --timestep-last 0 -e tri
+        REQUIREMENTS NOT OGS_USE_MPI
+        TESTER vtkdiff
+        DIFF_DATA
+        sresa1b_ncar_ccsm3-example.vtu sresa1b_ncar_ccsm3-example.vtu pr pr 1e-16 0
+    )
+
+    AddTest(
+        NAME NetCDF_3D_Test
+        PATH FileConverter/
+        EXECUTABLE NetCdfConverter
+        EXECUTABLE_ARGS -i slim_100897_198.nc -o ${Data_BINARY_DIR}/FileConverter/slim_100897_198.vtu -v NO -t 0 --dim1 3 --dim2 2 --dim3 1 --timestep-first 0 --timestep-last 0 -e hex
+        REQUIREMENTS NOT OGS_USE_MPI
+        TESTER vtkdiff
+        DIFF_DATA
+        slim_100897_198.vtu slim_100897_198.vtu NO NO 1e-16 0
+    )
+endif()
