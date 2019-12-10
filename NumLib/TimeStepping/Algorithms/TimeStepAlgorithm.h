@@ -111,7 +111,7 @@ public:
 
     /// Get a flag to indicate whether this algorithm needs to compute
     /// solution error. The default return value is false.
-    virtual bool isSolutionErrorComputationNeeded() { return false; }
+    virtual bool isSolutionErrorComputationNeeded() const { return false; }
 
     /// Query the timestepper if further time step size reduction is possible.
     virtual bool canReduceTimestepSize() const { return false; }

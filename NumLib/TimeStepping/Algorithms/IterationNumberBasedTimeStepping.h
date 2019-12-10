@@ -97,7 +97,7 @@ public:
     bool accepted() const override;
     void setAcceptedOrNot(bool accepted) override { _accepted = accepted; };
 
-    bool isSolutionErrorComputationNeeded() override { return true; }
+    bool isSolutionErrorComputationNeeded() const override { return true; }
 
     bool canReduceTimestepSize() const override;
 
