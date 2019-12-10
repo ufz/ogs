@@ -99,6 +99,8 @@ public:
 
     bool isSolutionErrorComputationNeeded() override { return true; }
 
+    bool canReduceTimestepSize() const override;
+
     /// Return the number of repeated steps.
     int getNumberOfRepeatedSteps() const { return _n_rejected_steps; }
 

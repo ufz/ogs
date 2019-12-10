@@ -641,7 +641,7 @@ NumLib::NonlinearSolverStatus TimeLoop::solveUncoupledEquationSystems(
                 "process #%u.",
                 timestep_id, t, process_id);
 
-            if (!process_data->timestepper->isSolutionErrorComputationNeeded())
+            if (!process_data->timestepper->canReduceTimestepSize())
             {
                 // save unsuccessful solution
                 _output->doOutputAlways(process_data->process, process_id,
@@ -718,8 +718,7 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
                     "for process #%u.",
                     timestep_id, t, process_id);
 
-                if (!process_data->timestepper
-                         ->isSolutionErrorComputationNeeded())
+                if (!process_data->timestepper->canReduceTimestepSize())
                 {
                     // save unsuccessful solution
                     _output->doOutputAlways(process_data->process, process_id,

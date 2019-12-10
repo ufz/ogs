@@ -113,6 +113,9 @@ public:
     /// solution error. The default return value is false.
     virtual bool isSolutionErrorComputationNeeded() { return false; }
 
+    /// Query the timestepper if further time step size reduction is possible.
+    virtual bool canReduceTimestepSize() const { return false; }
+
     /// Add specified times to the existing vector of the specified times.
     /// If there are specified times, they will be used as constraints in the
     /// computing of time step size such that the time step can exactly reach at

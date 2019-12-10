@@ -82,6 +82,8 @@ public:
 
     bool isSolutionErrorComputationNeeded() override { return true; }
 
+    virtual bool canReduceTimestepSize() const override;
+
     void addFixedOutputTimes(
         std::vector<double> const& extra_fixed_output_times) override;
 
