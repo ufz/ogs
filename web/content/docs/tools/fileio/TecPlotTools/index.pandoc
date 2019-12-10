@@ -19,7 +19,7 @@ The tool is part of the official [OpenGeoSys git repository](https://github.com/
 ## Usage
 
 ```bash
-   TecPlotTools.exe  -i <string> [-o <string>] [-c] [-s]
+   TecPlotTools -i <string> [-o <string>] [-c] [-s]
 
 
 Where:
@@ -34,7 +34,7 @@ Where:
      convert TecPlot data into OGS meshes
 
    -s,  --split
-     split time steps into seperate files
+     split time steps into separate files
 ```
 
 ## Simple example

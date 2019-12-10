@@ -29,8 +29,8 @@ The tool is part of the official [OpenGeoSys git repository](https://github.com/
 ## Usage
 
 ```bash
-   GocadTSurfaceReader.exe  -i <filename.ts> -o <output dir> [-l] [-s] [-b]
-                            [--] [--version] [-h]
+   GocadTSurfaceReader  -i <filename.ts> -o <output dir> [-l] [-s] [-b]
+                        [--] [--version] [-h]
 
 
 Where:
