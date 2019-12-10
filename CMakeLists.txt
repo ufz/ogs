@@ -255,7 +255,7 @@ option(OGS_CHECK_HEADER_COMPILATION "Check header for standalone compilation."
        OFF)
 
 option(OGS_USE_PYTHON "Interface with Python" OFF)
-if(OGS_USE_PYTHON AND NOT Python_FOUND)
+if(OGS_USE_PYTHON AND NOT Python3_FOUND)
     message(FATAL_ERROR "Python not found but required for OGS_USE_PYTHON=ON!")
 endif()
 
@@ -356,10 +356,10 @@ add_subdirectory(MeshLib)
 add_subdirectory(MeshGeoToolsLib)
 add_subdirectory(NumLib)
 
-if (OGS_BUILD_PROCESS_ComponentTransport
-    OR OGS_BUILD_PROCESS_RichardsComponentTransport
-    OR OGS_BUILD_PROCESS_RichardsComponentTransport
-    OR OGS_BUILD_PROCESS_HeatTransportBHE)
+if(OGS_BUILD_PROCESS_ComponentTransport
+   OR OGS_BUILD_PROCESS_RichardsComponentTransport
+   OR OGS_BUILD_PROCESS_RichardsComponentTransport
+   OR OGS_BUILD_PROCESS_HeatTransportBHE)
     add_subdirectory(ChemistryLib)
 endif()
 

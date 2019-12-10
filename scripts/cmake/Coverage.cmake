@@ -22,7 +22,7 @@ else()
     message(STATUS "No lcov coverage report generated because lcov or genhtml was not found.")
 endif()
 
-if(Python_EXECUTABLE)
+if(Python3_EXECUTABLE)
     setup_target_for_coverage_gcovr_xml(
         NAME testrunner_coverage_cobertura
         EXECUTABLE ${CMAKE_COMMAND} --build . --target tests

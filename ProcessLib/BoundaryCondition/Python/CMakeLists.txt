@@ -1,5 +1,6 @@
 add_library(ProcessLibBoundaryConditionPython
-            PythonBoundaryCondition.cpp PythonBoundaryCondition.h
+            PythonBoundaryCondition.cpp
+            PythonBoundaryCondition.h
             PythonBoundaryConditionLocalAssembler.h
             PythonBoundaryConditionPythonSideInterface.h
             BHEInflowPythonBoundaryCondition.h
@@ -18,13 +19,14 @@ target_link_libraries(ProcessLibBoundaryConditionPython
                              MeshLib
                              NumLib
                              logog
-                             ${Python_LIBRARIES}
+                             ${Python3_LIBRARIES}
                       PRIVATE pybind11::pybind11)
 
 # For the embedded Python module
 add_library(ProcessLibBoundaryConditionPythonModule
             PythonBoundaryConditionModule.cpp PythonBoundaryConditionModule.h
-            BHEInflowPythonBoundaryConditionModule.cpp BHEInflowPythonBoundaryConditionModule.h)
+            BHEInflowPythonBoundaryConditionModule.cpp
+            BHEInflowPythonBoundaryConditionModule.h)
 if(BUILD_SHARED_LIBS)
     install(TARGETS ProcessLibBoundaryConditionPythonModule
             LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
