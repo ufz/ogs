@@ -110,7 +110,6 @@ public:
         fe.computeShapeFunctions(pnt_local_coords.getCoords(), shape_matrices,
                                  GlobalDim, false);
 
-        // fetch permeability, viscosity, density
         ParameterLib::SpatialPosition pos;
         pos.setElementID(this->_element.getID());
 
@@ -131,6 +130,7 @@ public:
             *_process_data.media_map->getMedium(_element.getID());
         auto const& liquid_phase = medium.phase("AqueousLiquid");
 
+        // fetch permeability, viscosity, density
         auto const K = MaterialPropertyLib::formEigenTensor<GlobalDim>(
             medium.property(MaterialPropertyLib::PropertyType::permeability)
                 .value(vars, pos, t));

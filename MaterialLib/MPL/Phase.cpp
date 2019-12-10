@@ -51,6 +51,11 @@ Property const& Phase::property(PropertyType const& p) const
     return *_properties[p];
 }
 
+bool Phase::hasProperty(PropertyType const& p) const
+{
+    return _properties[p] != nullptr;
+}
+
 std::size_t Phase::numberOfComponents() const
 {
     return _components.size();

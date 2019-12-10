@@ -19,3 +19,4 @@ CMakeLists.txt.user*
 *.pyc
 
 Tests/**/*.md5
+Tests/Data/Parabolic/HT/InvalidProjectFiles/*.prj

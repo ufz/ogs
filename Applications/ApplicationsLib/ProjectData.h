@@ -116,7 +116,6 @@ private:
     void parseChemicalSystem(boost::optional<BaseLib::ConfigTree> const& config,
                              const std::string& output_directory);
 
-    std::unique_ptr<MaterialPropertyLib::Medium> _medium;
     std::vector<std::unique_ptr<MeshLib::Mesh>> _mesh_vec;
     std::vector<std::unique_ptr<ProcessLib::Process>> _processes;
     std::vector<ProcessLib::ProcessVariable> _process_variables;

@@ -13,6 +13,8 @@
 #include <array>
 
 #include "HTProcessData.h"
+#include "MaterialLib/MPL/Medium.h"
+#include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "ProcessLib/Process.h"
 
 namespace NumLib
@@ -86,6 +88,7 @@ public:
                                      int const process_id) override;
 
 private:
+
     void initializeConcreteProcess(
         NumLib::LocalToGlobalIndexMap const& dof_table,
         MeshLib::Mesh const& mesh,
@@ -131,6 +134,9 @@ private:
     const int _heat_transport_process_id;
     const int _hydraulic_process_id;
 };
+
+void checkMPLProperties(MeshLib::Mesh const& mesh,
+                        HTProcessData const& process_data);
 
 }  // namespace HT
 }  // namespace ProcessLib

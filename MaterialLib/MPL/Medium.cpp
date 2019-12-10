@@ -47,6 +47,11 @@ Property const& Medium::property(PropertyType const& p) const
     return *_properties[p];
 }
 
+bool Medium::hasProperty(PropertyType const& p) const
+{
+    return _properties[p] != nullptr;
+}
+
 std::size_t Medium::numberOfPhases() const
 {
     return _phases.size();
