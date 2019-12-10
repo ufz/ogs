@@ -120,14 +120,6 @@ pipeline {
                 target="package"
                 log="build1.log"
               }
-              configure { // CLI + Python
-                cmakeOptions = '-DOGS_USE_PYTHON=ON '
-                keepDir = true
-              }
-              build {
-                target="package"
-                log="build2.log"
-              }
               build { target="tests" }
               build { target="ctest" }
               build { target="doc" }
