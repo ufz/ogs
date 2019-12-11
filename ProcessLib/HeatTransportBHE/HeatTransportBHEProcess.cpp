@@ -195,8 +195,8 @@ void HeatTransportBHEProcess::computeSecondaryVariableConcrete(
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &HeatTransportBHELocalAssemblerInterface::computeSecondaryVariable,
-        _local_assemblers, pv.getActiveElementIDs(),
-        getDOFTable(process_id), t, x, _coupled_solutions);
+        _local_assemblers, pv.getActiveElementIDs(), getDOFTable(process_id), t,
+        x, _coupled_solutions);
 }
 
 #ifdef OGS_USE_PYTHON
