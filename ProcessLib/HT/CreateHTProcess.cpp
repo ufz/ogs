@@ -163,9 +163,12 @@ std::unique_ptr<Process> createHTProcess(
     auto media_map =
         MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
 
-    DBUG("Check the media properties of HT process ...");
-    checkMPLProperties(mesh, *media_map);
-    DBUG("Media properties verified.");
+    if (use_monolithic_scheme)  // monolithic scheme.
+    {
+        DBUG("Check the media properties of HT monolithic process ...");
+        checkMPLProperties(mesh, *media_map);
+        DBUG("Media properties verified.");
+    }
 
     HTProcessData process_data{
         std::move(media_map),     has_fluid_thermal_expansion,
