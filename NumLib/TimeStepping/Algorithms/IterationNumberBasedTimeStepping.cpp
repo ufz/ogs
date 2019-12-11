@@ -123,4 +123,12 @@ bool IterationNumberBasedTimeStepping::accepted() const
 {
     return _accepted;
 }
+
+bool IterationNumberBasedTimeStepping::canReduceTimestepSize() const
+{
+    // If current and previous dt are both at minimum dt, then cannot reduce
+    // further.
+    return !(_ts_current.dt() == _min_dt && _ts_prev.dt() == _min_dt);
+}
+
 }  // namespace NumLib

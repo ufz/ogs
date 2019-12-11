@@ -592,9 +592,8 @@ static NumLib::NonlinearSolverStatus solveMonolithicProcess(
     return nonlinear_solver_status;
 }
 
-static std::string const nonlinear_fixed_dt_fails_info =
-    "Nonlinear solver fails. Because the time stepper FixedTimeStepping is "
-    "used, the program has to be terminated.";
+static constexpr std::string_view timestepper_cannot_reduce_dt =
+    "Time stepper cannot reduce the time step size further.";
 
 void postTimestepForAllProcesses(
     double const t, double const dt,
@@ -641,12 +640,12 @@ NumLib::NonlinearSolverStatus TimeLoop::solveUncoupledEquationSystems(
                 "process #%u.",
                 timestep_id, t, process_id);
 
-            if (!process_data->timestepper->isSolutionErrorComputationNeeded())
+            if (!process_data->timestepper->canReduceTimestepSize())
             {
                 // save unsuccessful solution
                 _output->doOutputAlways(process_data->process, process_id,
                                         timestep_id, t, _process_solutions);
-                OGS_FATAL(nonlinear_fixed_dt_fails_info.data());
+                OGS_FATAL(timestepper_cannot_reduce_dt.data());
             }
 
             return nonlinear_solver_status;
@@ -718,13 +717,12 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
                     "for process #%u.",
                     timestep_id, t, process_id);
 
-                if (!process_data->timestepper
-                         ->isSolutionErrorComputationNeeded())
+                if (!process_data->timestepper->canReduceTimestepSize())
                 {
                     // save unsuccessful solution
                     _output->doOutputAlways(process_data->process, process_id,
                                             timestep_id, t, _process_solutions);
-                    OGS_FATAL(nonlinear_fixed_dt_fails_info.data());
+                    OGS_FATAL(timestepper_cannot_reduce_dt.data());
                 }
                 break;
             }

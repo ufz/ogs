@@ -173,4 +173,11 @@ void EvolutionaryPIDcontroller::addFixedOutputTimes(
     // Remove possible duplicated elements and sort in descending order.
     BaseLib::makeVectorUnique(_fixed_output_times, std::greater<double>());
 }
+
+bool EvolutionaryPIDcontroller::canReduceTimestepSize() const
+{
+    // If current and previous dt are both at minimum dt, then cannot reduce
+    // further.
+    return !(_ts_current.dt() == _h_min && _ts_prev.dt() == _h_min);
+}
 }  // namespace NumLib

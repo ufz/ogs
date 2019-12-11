@@ -80,7 +80,9 @@ public:
         _is_accepted = accepted;
     }
 
-    bool isSolutionErrorComputationNeeded() override { return true; }
+    bool isSolutionErrorComputationNeeded() const override { return true; }
+
+    virtual bool canReduceTimestepSize() const override;
 
     void addFixedOutputTimes(
         std::vector<double> const& extra_fixed_output_times) override;
