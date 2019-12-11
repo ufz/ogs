@@ -140,7 +140,7 @@ function (MeshTest)
         COMMAND ${CMAKE_COMMAND}
         -DEXECUTABLE=${MeshTest_EXECUTABLE_PARSED}
         "-DEXECUTABLE_ARGS=${MeshTest_EXECUTABLE_ARGS}" # Quoted because passed as list
-        -Dcase_path=${MeshTest_SOURCE_PATH}             # see https://stackoverflow.com/a/33248574/80480
+        -DSOURCE_PATH=${MeshTest_SOURCE_PATH}             # see https://stackoverflow.com/a/33248574/80480
         -DBINARY_PATH=${MeshTest_BINARY_PATH}
         -DWRAPPER_COMMAND=${WRAPPER_COMMAND}
         "-DWRAPPER_ARGS=${MeshTest_WRAPPER_ARGS}"
@@ -161,7 +161,7 @@ function (MeshTest)
     add_test(
         NAME ${TESTER_NAME}
         COMMAND ${CMAKE_COMMAND}
-        -Dcase_path=${MeshTest_SOURCE_PATH}
+        -DSOURCE_PATH=${MeshTest_SOURCE_PATH}
         -DBINARY_PATH=${${MeshTest_BINARY_PATH}}
         -DSELECTED_DIFF_TOOL_PATH=${SELECTED_DIFF_TOOL_PATH}
         "-DTESTER_COMMAND=${TESTER_COMMAND}"

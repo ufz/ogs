@@ -273,7 +273,7 @@ Use six arguments version of AddTest with absolute and relative tolerances")
     add_test(
         NAME ${TESTER_NAME}
         COMMAND ${CMAKE_COMMAND}
-        -Dcase_path=${AddTest_SOURCE_PATH}
+        -DSOURCE_PATH=${AddTest_SOURCE_PATH}
         -DBINARY_PATH=${${AddTest_BINARY_PATH}}
         -DSELECTED_DIFF_TOOL_PATH=${SELECTED_DIFF_TOOL_PATH}
         "-DTESTER_COMMAND=${TESTER_COMMAND}"
