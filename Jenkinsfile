@@ -108,7 +108,7 @@ pipeline {
               sh 'git submodule sync'
               configure {
                 cmakeOptions =
-                  "-DBUILD_SHARED_LIBS=${build_shared} " +
+                  "-DBUILD_SHARED_LIBS=OFF " +
                   '-DOGS_CPU_ARCHITECTURE=generic ' +
                   '-DOGS_BUILD_UTILS=ON ' +
                   '-DOGS_CONAN_BUILD=missing ' +
