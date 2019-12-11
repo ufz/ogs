@@ -5,10 +5,9 @@ append_source_files(SOURCES LocalAssemblers)
 
 add_library(HeatTransportBHE ${SOURCES})
 
-if(OGS_USE_PYTHON)
-    target_link_libraries(HeatTransportBHE PUBLIC ProcessLib PRIVATE pybind11::pybind11)
-else()
-    target_link_libraries(HeatTransportBHE PUBLIC ProcessLib)
+target_link_libraries(HeatTransportBHE PUBLIC ProcessLib)
+if (OGS_USE_PYTHON)
+    target_link_libraries(HeatTransportBHE PRIVATE pybind11::pybind11)
 endif()
 
 if(BUILD_SHARED_LIBS)
