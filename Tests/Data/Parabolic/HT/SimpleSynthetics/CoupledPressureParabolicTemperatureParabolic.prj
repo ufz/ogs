@@ -49,11 +49,6 @@
                     <type>Solid</type>
                     <properties>
                         <property>
-                            <name>storage</name>
-                            <type>Constant</type>
-                            <value>0</value>
-                        </property>
-                        <property>
                             <name>density</name>
                             <type>Constant</type>
                             <value>0.0</value>
