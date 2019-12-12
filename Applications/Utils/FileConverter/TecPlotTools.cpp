@@ -148,7 +148,7 @@ void resetDataStructures(std::size_t const& n_scalars,
     val_count = 0;
 }
 
-/// Writes one section/zone into a seperate TecPlot file
+/// Writes one section/zone into a separate TecPlot file
 void writeTecPlotSection(std::ofstream& out,
                          std::string const& file_name,
                          std::size_t& write_count,
@@ -169,7 +169,7 @@ void writeTecPlotSection(std::ofstream& out,
     }
 }
 
-/// Writes one section/zone into a seperate OGS-mesh
+/// Writes one section/zone into a separate OGS-mesh
 int writeDataToMesh(std::string const& file_name,
                     std::size_t& write_count,
                     std::vector<std::string> const& vec_names,
@@ -239,7 +239,7 @@ void skipGeometrySection(std::ifstream& in, std::string& line)
     }
 }
 
-/// Splits a TecPlot file containing multiple sections/zones into seperate files
+/// Splits a TecPlot file containing multiple sections/zones into separate files
 int splitFile(std::ifstream& in, std::string file_name)
 {
     std::ofstream out;
@@ -418,14 +418,18 @@ int main(int argc, char* argv[])
             "Copyright (c) 2012-2019, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
-    TCLAP::ValueArg<std::string> input_arg("i", "input-file", "TecPlot input file", true, "", "string");
-    cmd.add(input_arg);
-    TCLAP::ValueArg<std::string> output_arg("o", "output-file", "output mesh file", false, "", "string");
-    cmd.add(output_arg);
-    TCLAP::SwitchArg split_arg("s", "split", "split time steps into seperate files");
+    TCLAP::SwitchArg split_arg("s", "split",
+        "split time steps into separate files");
     cmd.add(split_arg);
-    TCLAP::SwitchArg convert_arg("c", "convert", "convert TecPlot data into OGS meshes");
+    TCLAP::SwitchArg convert_arg("c", "convert",
+        "convert TecPlot data into OGS meshes");
     cmd.add(convert_arg);
+    TCLAP::ValueArg<std::string> output_arg(
+        "o", "output-file", "output mesh file", false, "", "string");
+    cmd.add(output_arg);
+    TCLAP::ValueArg<std::string> input_arg(
+        "i", "input-file", "TecPlot input file", true, "", "string");
+    cmd.add(input_arg);
     cmd.parse(argc, argv);
 
     if (!input_arg.isSet())

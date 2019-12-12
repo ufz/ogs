@@ -17,8 +17,8 @@ The tool is part of the official [OpenGeoSys git repository](https://github.com/
 ## Usage
 
 ```bash
-   Vtu2Grid.exe  -i <input.vtu> -o <output.vtu> -x <floating point number>
-                 [-y <floating point number>] [-z <floating point number>]
+   Vtu2Grid  -i <input.vtu> -o <output.vtu> -x <floating point number>
+             [-y <floating point number>] [-z <floating point number>]
 
 Where:
 

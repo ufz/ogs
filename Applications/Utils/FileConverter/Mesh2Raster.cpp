@@ -37,18 +37,17 @@ int main(int argc, char* argv[])
             "Copyright (c) 2012-2019, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
-    TCLAP::ValueArg<std::string> input_arg("i", "input-file",
-                                           "Mesh input file (*.vtu, *.msh)",
-                                           true, "", "string");
-    cmd.add(input_arg);
-    TCLAP::ValueArg<std::string> output_arg(
-        "o", "output-file", "Raster output file (*.asc)", true, "", "string");
-    cmd.add(output_arg);
     TCLAP::ValueArg<double> cell_arg("c", "cellsize",
                                      "edge length of raster cells in result",
                                      false, 1, "real");
     cmd.add(cell_arg);
-
+    TCLAP::ValueArg<std::string> output_arg(
+        "o", "output-file", "Raster output file (*.asc)", true, "", "string");
+    cmd.add(output_arg);
+    TCLAP::ValueArg<std::string> input_arg("i", "input-file",
+                                           "Mesh input file (*.vtu, *.msh)",
+                                           true, "", "string");
+    cmd.add(input_arg);
     cmd.parse(argc, argv);
 
     INFO("Rasterising mesh...");

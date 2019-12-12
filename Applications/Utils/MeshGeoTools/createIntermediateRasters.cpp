@@ -34,19 +34,19 @@ int main(int argc, char* argv[])
             "Copyright (c) 2012-2019, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
-    TCLAP::ValueArg<std::string> input1_arg(
-        "", "file1", "First DEM-raster file", true, "", "file1.asc");
-    cmd.add(input1_arg);
-    TCLAP::ValueArg<std::string> input2_arg(
-        "", "file2", "Second DEM-raster file", true, "", "file2.asc");
-    cmd.add(input2_arg);
+    TCLAP::ValueArg<std::size_t> number_arg(
+        "n", "number", "number of rasters to be calculated", false, 1, "int");
+    cmd.add(number_arg);
     TCLAP::ValueArg<std::string> output_arg("o", "output-file",
                                             "Raster output file (*.asc)", true,
                                             "", "output.asc");
     cmd.add(output_arg);
-    TCLAP::ValueArg<std::size_t> number_arg(
-        "n", "number", "number of rasters to be calculated", false, 1, "int");
-    cmd.add(number_arg);
+    TCLAP::ValueArg<std::string> input2_arg(
+        "", "file2", "Second DEM-raster file", true, "", "file2.asc");
+    cmd.add(input2_arg);
+    TCLAP::ValueArg<std::string> input1_arg(
+        "", "file1", "First DEM-raster file", true, "", "file1.asc");
+    cmd.add(input1_arg);
 
     cmd.parse(argc, argv);
 
