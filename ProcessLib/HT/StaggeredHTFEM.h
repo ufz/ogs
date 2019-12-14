@@ -95,8 +95,7 @@ private:
                                        Eigen::VectorXd const& local_x,
                                        std::vector<double>& local_M_data,
                                        std::vector<double>& local_K_data,
-                                       std::vector<double>& local_b_data,
-                                       LocalCoupledSolutions const& coupled_xs);
+                                       std::vector<double>& local_b_data);
     const int _heat_transport_process_id;
     const int _hydraulic_process_id;
 };

@@ -35,7 +35,7 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
     if (process_id == _heat_transport_process_id)
     {
         assembleHeatTransportEquation(t, local_x, local_M_data, local_K_data,
-                                      local_b_data, coupled_xs);
+                                      local_b_data);
         return;
     }
 
@@ -53,14 +53,12 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
                               std::vector<double>& local_b_data,
                               LocalCoupledSolutions const& coupled_xs)
 {
-    auto const local_p = Eigen::Map<
-        typename ShapeMatricesType::template VectorType<pressure_size> const>(
-        &coupled_xs.local_coupled_xs[pressure_index], pressure_size);
+    auto const local_p =
+        local_x.template segment<pressure_size>(pressure_index);
 
     auto const local_T1 =
-        Eigen::Map<typename ShapeMatricesType::template VectorType<
-            temperature_size> const>(
-            &coupled_xs.local_coupled_xs[temperature_index], temperature_size);
+        local_x.template segment<temperature_size>(temperature_index);
+
     auto const local_T0 =
         Eigen::Map<typename ShapeMatricesType::template VectorType<
             temperature_size> const>(
@@ -188,17 +186,13 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
                                   Eigen::VectorXd const& local_x,
                                   std::vector<double>& local_M_data,
                                   std::vector<double>& local_K_data,
-                                  std::vector<double>& /*local_b_data*/,
-                                  LocalCoupledSolutions const& coupled_xs)
+                                  std::vector<double>& /*local_b_data*/)
 {
-    auto const local_p = Eigen::Map<
-        typename ShapeMatricesType::template VectorType<pressure_size> const>(
-        &coupled_xs.local_coupled_xs[pressure_index], pressure_size);
+    auto const local_p =
+        local_x.template segment<pressure_size>(pressure_index);
 
     auto const local_T1 =
-        Eigen::Map<typename ShapeMatricesType::template VectorType<
-            temperature_size> const>(
-            &coupled_xs.local_coupled_xs[temperature_index], temperature_size);
+        local_x.template segment<temperature_size>(temperature_index);
 
     auto local_M = MathLib::createZeroedMatrix<LocalMatrixType>(
         local_M_data, temperature_size, temperature_size);
