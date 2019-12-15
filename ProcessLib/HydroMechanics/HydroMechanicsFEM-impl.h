@@ -351,12 +351,11 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                   ShapeFunctionPressure, IntegrationMethod,
                                   DisplacementDim>::
     assembleWithJacobianForPressureEquations(
-        const double t, double const dt, const std::vector<double>& local_xdot,
-        const double /*dxdot_dx*/, const double /*dx_dx*/,
-        std::vector<double>& /*local_M_data*/,
+        const double t, double const dt, Eigen::VectorXd const& local_x,
+        const std::vector<double>& local_xdot, const double /*dxdot_dx*/,
+        const double /*dx_dx*/, std::vector<double>& /*local_M_data*/,
         std::vector<double>& /*local_K_data*/,
-        std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
-        const LocalCoupledSolutions& local_coupled_solutions)
+        std::vector<double>& local_b_data, std::vector<double>& local_Jac_data)
 {
     auto local_rhs =
         MathLib::createZeroedVector<typename ShapeMatricesTypeDisplacement::
@@ -366,16 +365,9 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     ParameterLib::SpatialPosition pos;
     pos.setElementID(this->_element.getID());
 
-    auto const p =
-        Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
-            pressure_size> const>(
-            &local_coupled_solutions.local_coupled_xs[pressure_index],
-            pressure_size);
+    auto const p = local_x.template segment<pressure_size>(pressure_index);
     auto const u =
-        Eigen::Map<typename ShapeMatricesTypeDisplacement::template VectorType<
-            displacement_size> const>(
-            &local_coupled_solutions.local_coupled_xs[displacement_index],
-            displacement_size);
+        local_x.template segment<displacement_size>(displacement_index);
 
     auto p_dot =
         Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
@@ -462,23 +454,15 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                   ShapeFunctionPressure, IntegrationMethod,
                                   DisplacementDim>::
     assembleWithJacobianForDeformationEquations(
-        const double t, double const dt,
+        const double t, double const dt, Eigen::VectorXd const& local_x,
         const std::vector<double>& /*local_xdot*/, const double /*dxdot_dx*/,
         const double /*dx_dx*/, std::vector<double>& /*local_M_data*/,
         std::vector<double>& /*local_K_data*/,
-        std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
-        const LocalCoupledSolutions& local_coupled_solutions)
+        std::vector<double>& local_b_data, std::vector<double>& local_Jac_data)
 {
-    auto const p =
-        Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
-            pressure_size> const>(
-            &local_coupled_solutions.local_coupled_xs[pressure_index],
-            pressure_size);
+    auto const p = local_x.template segment<pressure_size>(pressure_index);
     auto const u =
-        Eigen::Map<typename ShapeMatricesTypeDisplacement::template VectorType<
-            displacement_size> const>(
-            &local_coupled_solutions.local_coupled_xs[displacement_index],
-            displacement_size);
+        local_x.template segment<displacement_size>(displacement_index);
 
     auto local_Jac = MathLib::createZeroedMatrix<
         typename ShapeMatricesTypeDisplacement::template MatrixType<
@@ -552,25 +536,26 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                   ShapeFunctionPressure, IntegrationMethod,
                                   DisplacementDim>::
     assembleWithJacobianForStaggeredScheme(
-        const double t, double const dt, const std::vector<double>& local_xdot,
-        const double dxdot_dx, const double dx_dx, int const process_id,
+        const double t, double const dt, Eigen::VectorXd const& local_x,
+        const std::vector<double>& local_xdot, const double dxdot_dx,
+        const double dx_dx, int const process_id,
         std::vector<double>& local_M_data, std::vector<double>& local_K_data,
         std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
-        const LocalCoupledSolutions& local_coupled_solutions)
+        const LocalCoupledSolutions& /*local_coupled_solutions*/)
 {
     // For the equations with pressure
     if (process_id == 0)
     {
         assembleWithJacobianForPressureEquations(
-            t, dt, local_xdot, dxdot_dx, dx_dx, local_M_data, local_K_data,
-            local_b_data, local_Jac_data, local_coupled_solutions);
+            t, dt, local_x, local_xdot, dxdot_dx, dx_dx, local_M_data,
+            local_K_data, local_b_data, local_Jac_data);
         return;
     }
 
     // For the equations with deformation
     assembleWithJacobianForDeformationEquations(
-        t, dt, local_xdot, dxdot_dx, dx_dx, local_M_data, local_K_data,
-        local_b_data, local_Jac_data, local_coupled_solutions);
+        t, dt, local_x, local_xdot, dxdot_dx, dx_dx, local_M_data, local_K_data,
+        local_b_data, local_Jac_data);
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
