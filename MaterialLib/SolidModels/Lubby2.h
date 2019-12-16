@@ -12,8 +12,11 @@
 #include "MathLib/KelvinVector.h"
 #include "NumLib/NewtonRaphson.h"
 #include "ParameterLib/Parameter.h"
+#include "MaterialLib/PhysicalConstant.h"
 
 #include "MechanicsBase.h"
+
+#include <iostream>
 
 namespace MaterialLib
 {
@@ -24,6 +27,28 @@ namespace Lubby2
 //
 // Variables specific to the material model.
 //
+
+struct Lubby2ThermalMaterialProperties
+{
+    using P = ParameterLib::Parameter<double>;
+    Lubby2ThermalMaterialProperties(P const& Tref_,
+                             P const& mGT_,
+                             P const& mKT_,
+                             P const& Q_)
+        : Tref(Tref_),
+          mGT(mGT_),
+          mKT(mKT_),
+          Q(Q_)
+    {
+    }
+
+    // thermal material parameters
+    P const& Tref;
+    P const& mGT;
+    P const& mKT;
+    P const& Q;
+};
+
 struct Lubby2MaterialProperties
 {
     using P = ParameterLib::Parameter<double>;
@@ -34,7 +59,8 @@ struct Lubby2MaterialProperties
                              P const& etaM0_,
                              P const& mK_,
                              P const& mvK_,
-                             P const& mvM_)
+                             P const& mvM_,
+                             std::optional<Lubby2ThermalMaterialProperties> mpThermal_ = std::nullopt)
         : GK0(GK0_),
           GM0(GM0_),
           KM0(KM0_),
@@ -42,7 +68,8 @@ struct Lubby2MaterialProperties
           etaM0(etaM0_),
           mK(mK_),
           mvK(mvK_),
-          mvM(mvM_)
+          mvM(mvM_),
+          mpThermal(mpThermal_)
     {
     }
 
@@ -55,10 +82,31 @@ struct Lubby2MaterialProperties
     P const& mK;
     P const& mvK;
     P const& mvM;
+    std::optional<Lubby2ThermalMaterialProperties> mpThermal;
 };
 
 namespace detail
 {
+template <int DisplacementDim>
+struct LocalLubby2ThermalProperties
+{
+    LocalLubby2ThermalProperties(double const t,
+                          ParameterLib::SpatialPosition const& x,
+                          Lubby2ThermalMaterialProperties const& mpt)
+        : Tref(mpt.Tref(t, x)[0]),
+          mGT(mpt.mGT(t, x)[0]),
+          mKT(mpt.mKT(t, x)[0]),
+          Q(mpt.Q(t, x)[0])
+    {
+
+    }
+
+    double const Tref;
+    double const mGT;
+    double const mKT;
+    double const Q;
+};
+
 template <int DisplacementDim>
 struct LocalLubby2Properties
 {
@@ -72,8 +120,25 @@ struct LocalLubby2Properties
           etaM0(mp.etaM0(t, x)[0]),
           mK(mp.mK(t, x)[0]),
           mvK(mp.mvK(t, x)[0]),
-          mvM(mp.mvM(t, x)[0])
+          mvM(mp.mvM(t, x)[0]),
+          thermalProperties(mp.mpThermal.has_value() ? std::make_optional(LocalLubby2ThermalProperties<DisplacementDim>{t, x, mp.mpThermal.value()}): std::nullopt)
     {
+    }
+
+    void update(double const s_eff, double const T)
+    {
+        update(s_eff);
+        double const dT(T - thermalProperties->Tref);
+
+        KM = KM0;
+        GM = GM0;
+        if (!std::isnan(T))
+        {
+            KM += thermalProperties->mKT * dT;
+            GM += thermalProperties->mGT * dT;
+            etaM = etaM * std::exp(thermalProperties->Q * (-dT)/ (MaterialLib::PhysicalConstant::IdealGasConstant * T * thermalProperties->Tref));
+        }
+        // std::cout<<"KM = " << KM <<'\t' << "eatm=" << etaM <<'\t'<<"GM=" << GM <<'\n';
     }
 
     void update(double const s_eff)
@@ -92,11 +157,18 @@ struct LocalLubby2Properties
     double const mK;
     double const mvK;
     double const mvM;
-
+    // double const Tref;  //TODO: optional
+    // double const mGT;
+    // double const mKT;
+    // double const Q;
+    std::optional<LocalLubby2ThermalProperties<DisplacementDim>> thermalProperties;
+    
     // Solution dependent values.
     double GK = std::numeric_limits<double>::quiet_NaN();
     double etaK = std::numeric_limits<double>::quiet_NaN();
     double etaM = std::numeric_limits<double>::quiet_NaN();
+    double KM = std::numeric_limits<double>::quiet_NaN();
+    double GM = std::numeric_limits<double>::quiet_NaN();
 };
 }  // namespace detail
 

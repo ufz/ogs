@@ -41,7 +41,7 @@ calculatedGdEBurgers()
 
 template <int DisplacementDim, typename LinearSolver>
 MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> tangentStiffnessA(
-    double const GM0, double const KM0, LinearSolver const& linear_solver)
+    double const GM, double const KM, LinearSolver const& linear_solver)
 {
     // Calculate dGdE for time step
     auto const dGdE = calculatedGdEBurgers<DisplacementDim>();
@@ -62,7 +62,7 @@ MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> tangentStiffnessA(
     auto const& P_sph = Invariants::spherical_projection;
     auto const& P_dev = Invariants::deviatoric_projection;
 
-    KelvinMatrix C = GM0 * dzdE * P_dev + 3. * KM0 * P_sph;
+    KelvinMatrix C = GM * dzdE * P_dev + 3. * KM * P_sph;
     return C;
 };
 
@@ -77,7 +77,7 @@ Lubby2<DisplacementDim>::integrateStress(
     KelvinVector const& sigma_prev,
     typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
         material_state_variables,
-    double const /*T*/) const
+    double const T) const
 {
     using Invariants = MathLib::KelvinVector::Invariants<KelvinVectorSize>;
 
@@ -97,12 +97,12 @@ Lubby2<DisplacementDim>::integrateStress(
 
     // initial guess as elastic predictor.
     KelvinVector sigd_j = 2.0 * (epsd_i - state.eps_M_t - state.eps_K_t);
+    double sig_eff = Invariants::equivalentStress(sigd_j);
+    local_lubby2_properties.update(sig_eff, T);
     // Note: sigd_t contains dimensionless stresses!
-    KelvinVector sigd_t = P_dev * sigma_prev / local_lubby2_properties.GM0;
+    KelvinVector sigd_t = P_dev * sigma_prev / local_lubby2_properties.GM;
 
     // Calculate effective stress and update material properties
-    double sig_eff = Invariants::equivalentStress(sigd_j);
-    local_lubby2_properties.update(sig_eff);
 
     using LocalJacobianMatrix =
         Eigen::Matrix<double, KelvinVectorSize * 3, KelvinVectorSize * 3,
@@ -155,7 +155,7 @@ Lubby2<DisplacementDim>::integrateStress(
             // Calculate effective stress and update material properties
             sig_eff = MathLib::KelvinVector::Invariants<
                 KelvinVectorSize>::equivalentStress(sigd_j);
-            local_lubby2_properties.update(sig_eff);
+            local_lubby2_properties.update(sig_eff, T);
         };
 
         auto newton_solver = NumLib::NewtonRaphson<
@@ -182,15 +182,15 @@ Lubby2<DisplacementDim>::integrateStress(
     }
 
     KelvinMatrix C =
-        tangentStiffnessA<DisplacementDim>(local_lubby2_properties.GM0,
-                                           local_lubby2_properties.KM0,
+        tangentStiffnessA<DisplacementDim>(local_lubby2_properties.GM,
+                                           local_lubby2_properties.KM,
                                            linear_solver);
 
     // Hydrostatic part for the stress and the tangent.
     double const delta_eps_trace = Invariants::trace(eps - eps_prev);
     double const sigma_trace_prev = Invariants::trace(sigma_prev);
-    KelvinVector const sigma = local_lubby2_properties.GM0 * sigd_j +
-                               (local_lubby2_properties.KM0 * delta_eps_trace +
+    KelvinVector const sigma = local_lubby2_properties.GM * sigd_j +
+                               (local_lubby2_properties.KM * delta_eps_trace +
                                 sigma_trace_prev / 3.) *
                                    Invariants::identity2;
     return {std::make_tuple(
@@ -225,13 +225,13 @@ void Lubby2<DisplacementDim>::calculateResidualBurgers(
     res.template segment<KelvinVectorSize>(KelvinVectorSize).noalias() =
         (strain_Kel_curr - strain_Kel_t) -
         dt / (2. * properties.etaK) *
-            (properties.GM0 * stress_curr -
+            (properties.GM * stress_curr -
              2. * properties.GK * strain_Kel_curr);
 
     // calculate Maxwell strain residual
     res.template segment<KelvinVectorSize>(2 * KelvinVectorSize).noalias() =
         (strain_Max_curr - strain_Max_t) -
-        dt * 0.5 * properties.GM0 / properties.etaM * stress_curr;
+        dt * 0.5 * properties.GM / properties.etaM * stress_curr;
 }
 
 template <int DisplacementDim>
@@ -266,16 +266,16 @@ void Lubby2<DisplacementDim>::calculateJacobianBurgers(
     // build G_21
     Jac.template block<KelvinVectorSize, KelvinVectorSize>(KelvinVectorSize, 0)
         .noalias() =
-        -0.5 * dt * properties.GM0 / properties.etaK * KelvinMatrix::Identity();
+        -0.5 * dt * properties.GM / properties.etaK * KelvinMatrix::Identity();
     if (s_eff > 0.)
     {
         KelvinVector const eps_K_aid =
             1. / (properties.etaK * properties.etaK) *
-            (properties.GM0 * sig_i - 2. * properties.GK * eps_K_i);
+            (properties.GM * sig_i - 2. * properties.GK * eps_K_i);
 
         KelvinVector const dG_K = 1.5 * _mp.mK(t, x)[0] * properties.GK *
-                                  properties.GM0 / s_eff * sig_i;
-        KelvinVector const dmu_vK = 1.5 * _mp.mvK(t, x)[0] * properties.GM0 *
+                                  properties.GM / s_eff * sig_i;
+        KelvinVector const dmu_vK = 1.5 * _mp.mvK(t, x)[0] * properties.GM *
                                     properties.etaK / s_eff * sig_i;
         Jac.template block<KelvinVectorSize, KelvinVectorSize>(KelvinVectorSize,
                                                                0)
@@ -295,14 +295,14 @@ void Lubby2<DisplacementDim>::calculateJacobianBurgers(
     Jac.template block<KelvinVectorSize, KelvinVectorSize>(2 * KelvinVectorSize,
                                                            0)
         .noalias() =
-        -0.5 * dt * properties.GM0 / properties.etaM * KelvinMatrix::Identity();
+        -0.5 * dt * properties.GM / properties.etaM * KelvinMatrix::Identity();
     if (s_eff > 0.)
     {
-        KelvinVector const dmu_vM = 1.5 * _mp.mvM(t, x)[0] * properties.GM0 *
+        KelvinVector const dmu_vM = 1.5 * _mp.mvM(t, x)[0] * properties.GM *
                                     properties.etaM / s_eff * sig_i;
         Jac.template block<KelvinVectorSize, KelvinVectorSize>(
                2 * KelvinVectorSize, 0)
-            .noalias() += 0.5 * dt * properties.GM0 /
+            .noalias() += 0.5 * dt * properties.GM /
                           (properties.etaM * properties.etaM) * sig_i *
                           dmu_vM.transpose();
     }
