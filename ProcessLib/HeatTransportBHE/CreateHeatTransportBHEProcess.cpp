@@ -180,15 +180,21 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
                 "file specified.");
 
         // create BHE network dataframe from Python
+        py_object->dataframe_network = py_object->initializeDataContainer();
+        if (!py_object->isOverriddenEssential())
+        {
+            DBUG(
+                "Method `initializeDataContainer' not overridden in Python "
+                "script.");
+        }
+        // clear ogs bc_node_id memory in dataframe
+        std::get<3>(py_object->dataframe_network).clear();  // ogs_bc_node_id
+
         // here calls the tespyHydroSolver to get the pipe flow velocity in bhe
         // network
-        py_object->dataframe_network = py_object->initializeDataContainer();
-        // clear ogs bc_node_id memory in dataframe
-        std::get<4>(py_object->dataframe_network).clear();  // ogs_bc_node_id
-
         /* for 2U type the flowrate initialization process below causes conflict
         // replace the value in flow velocity Matrix _u
-        auto const tespy_flow_rate = std::get<5>(py_object->dataframe_network);
+        auto const tespy_flow_rate = std::get<4>(py_object->dataframe_network);
         const std::size_t n_bhe = tespy_flow_rate.size();
         if (bhes.size() != n_bhe)
             OGS_FATAL(
@@ -215,7 +221,6 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
 
     HeatTransportBHEProcessData process_data(std::move(media_map),
                                              std::move(bhes),
-                                             has_network_python_bc,
                                              py_object);
 
     SecondaryVariableCollection secondary_variables;

@@ -204,26 +204,32 @@ NumLib::IterationResult HeatTransportBHEProcess::postIterationConcreteProcess(
     GlobalVector const& x)
 {
     // if the process use python boundary conditon
-    if (_process_data.has_network_python_bc == false)
+    if (_process_data.py_bc_object == nullptr)
         return NumLib::IterationResult::SUCCESS;
 
     // Here the task is to get current time flowrate and flow temperature from
     // TESPy
     auto const Tout_nodes_id =
-        std::get<4>(_process_data.py_bc_object->dataframe_network);
+        std::get<3>(_process_data.py_bc_object->dataframe_network);
     const std::size_t n_bc_nodes = Tout_nodes_id.size();
 
     // update flowrate in network if network exist a dynamic flowrate in time
     auto const cur_time =
-        std::get<1>(_process_data.py_bc_object->dataframe_network);
+        std::get<0>(_process_data.py_bc_object->dataframe_network);
     if (std::get<0>(_process_data.py_bc_object->tespyHydroSolver(cur_time)))
     {
         // calculate the current flowrate in each BHE from TESPy
         auto const cur_flowrate =
             std::get<1>(_process_data.py_bc_object->tespyHydroSolver(cur_time));
         for (std::size_t i = 0; i < n_bc_nodes; i++)
-            std::get<5>(_process_data.py_bc_object->dataframe_network)[i] =
+            std::get<4>(_process_data.py_bc_object->dataframe_network)[i] =
                 cur_flowrate[i];
+        if (!_process_data.py_bc_object->isOverriddenTespyHydro())
+        {
+            DBUG(
+                "Method `tespyHydroSolver' not overridden in Python "
+                "script.");
+        }
     }
 
     // get the outflow temperature,
@@ -232,23 +238,29 @@ NumLib::IterationResult HeatTransportBHEProcess::postIterationConcreteProcess(
     for (std::size_t i = 0; i < n_bc_nodes; i++)
     {
         // read the T_out and store them in dataframe
-        std::get<3>(_process_data.py_bc_object->dataframe_network)[i] =
+        std::get<2>(_process_data.py_bc_object->dataframe_network)[i] =
             x[Tout_nodes_id[i]];
     }
     // Tout transfer to Python
     auto const tespy_result = _process_data.py_bc_object->tespyThermalSolver(
+        std::get<0>(_process_data.py_bc_object->dataframe_network),
         std::get<1>(_process_data.py_bc_object->dataframe_network),
-        std::get<2>(_process_data.py_bc_object->dataframe_network),
-        std::get<3>(_process_data.py_bc_object->dataframe_network));
+        std::get<2>(_process_data.py_bc_object->dataframe_network));
+    if (!_process_data.py_bc_object->isOverriddenTespyThermal())
+    {
+        DBUG(
+            "Method `tespyThermalSolver' not overridden in Python "
+            "script.");
+    }
     auto const cur_Tin = std::get<2>(tespy_result);
 
     // update the T_in
     for (std::size_t i = 0; i < n_bc_nodes; i++)
-        std::get<2>(_process_data.py_bc_object->dataframe_network)[i] =
+        std::get<1>(_process_data.py_bc_object->dataframe_network)[i] =
             cur_Tin[i];
 
-    auto const if_convergence = std::get<1>(tespy_result);
-    if (if_convergence == true)
+    auto const tespy_has_converged = std::get<1>(tespy_result);
+    if (tespy_has_converged == true)
         return NumLib::IterationResult::SUCCESS;
 
     return NumLib::IterationResult::REPEAT_ITERATION;
