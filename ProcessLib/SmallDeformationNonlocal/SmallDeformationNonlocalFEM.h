@@ -371,6 +371,7 @@ public:
 
             auto&& solution = _ip_data[ip].solid_material.integrateStress(
                 t, x_position, dt, eps_prev, eps, sigma_eff_prev, *state,
+                _process_data.reference_temperature,
                 _process_data.reference_temperature);
 
             if (!solution)

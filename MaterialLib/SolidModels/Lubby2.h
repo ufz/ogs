@@ -16,8 +16,6 @@
 
 #include "MechanicsBase.h"
 
-#include <iostream>
-
 namespace MaterialLib
 {
 namespace Solids
@@ -128,17 +126,18 @@ struct LocalLubby2Properties
     void update(double const s_eff, double const T)
     {
         update(s_eff);
-        double const dT(T - thermalProperties->Tref);
+        double const DT(T - thermalProperties->Tref);
 
         KM = KM0;
         GM = GM0;
         if (!std::isnan(T))
         {
-            KM += thermalProperties->mKT * dT;
-            GM += thermalProperties->mGT * dT;
-            etaM = etaM * std::exp(thermalProperties->Q * (-dT)/ (MaterialLib::PhysicalConstant::IdealGasConstant * T * thermalProperties->Tref));
+            KM += thermalProperties->mKT * DT;
+            GM += thermalProperties->mGT * DT;
+            GK = GK0 * std::exp(mK * GM * s_eff);
+            etaK = etaK0 * std::exp(mvK * GM * s_eff);
+            etaM = etaM0 * std::exp(mvM * GM * s_eff) * std::exp(thermalProperties->Q * (-DT)/ (MaterialLib::PhysicalConstant::IdealGasConstant * T * thermalProperties->Tref));
         }
-        // std::cout<<"KM = " << KM <<'\t' << "eatm=" << etaM <<'\t'<<"GM=" << GM <<'\n';
     }
 
     void update(double const s_eff)
@@ -311,7 +310,7 @@ public:
         KelvinVector const& sigma_prev,
         typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
             material_state_variables,
-        double const T) const override;
+        double const T, double const dT) const override;
 
 private:
     /// Calculates the 18x1 residual vector.
@@ -326,7 +325,8 @@ private:
         KelvinVector& strain_Max_curr,
         const KelvinVector& strain_Max_t,
         ResidualVector& res,
-        detail::LocalLubby2Properties<DisplacementDim> const& properties) const;
+        detail::LocalLubby2Properties<DisplacementDim> const& properties,
+        const double dT) const;
 
     /// Calculates the 18x18 Jacobian.
     void calculateJacobianBurgers(

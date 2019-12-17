@@ -213,9 +213,9 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
         eps_m.noalias() =
             eps_m_prev + eps - eps_prev -
             linear_thermal_strain_increment * Invariants::identity2;
-
+        //TODO: change T_ip->dT_ip
         auto&& solution = _ip_data[ip].solid_material.integrateStress(
-            t, x_position, dt, eps_m_prev, eps_m, sigma_prev, *state, T_ip);
+            t, x_position, dt, eps_m_prev, eps_m, sigma_prev, *state, T_ip, T_ip);
 
         if (!solution)
         {
@@ -417,7 +417,7 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
             linear_thermal_strain_increment * Invariants::identity2;
 
         auto&& solution = _ip_data[ip].solid_material.integrateStress(
-            t, x_position, dt, eps_m_prev, eps_m, sigma_prev, *state, T_ip);
+            t, x_position, dt, eps_m_prev, eps_m, sigma_prev, *state, T_ip, dT_ip);
 
         if (!solution)
         {

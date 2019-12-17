@@ -83,7 +83,7 @@ public:
         KelvinVector const& sigma_prev,
         typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
             material_state_variables,
-        double const T) const override;
+        double const T, double const dT) const override;
 
     ConstitutiveModel getConstitutiveModel() const override
     {

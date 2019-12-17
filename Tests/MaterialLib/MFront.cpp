@@ -154,7 +154,7 @@ TYPED_TEST(MaterialLib_SolidModelsMFront2, IntegrateZeroDisplacement)
 
     auto solution = this->constitutive_relation->integrateStress(
         this->t, this->x, this->dt, this->eps_prev, this->eps, this->sigma_prev,
-        *state, this->T);
+        *state, this->T, this->T);
 
     ASSERT_TRUE(solution != std::nullopt);
     state = std::move(std::get<1>(*solution));
@@ -170,7 +170,7 @@ TYPED_TEST(MaterialLib_SolidModelsMFront3, IntegrateZeroDisplacement)
 
     auto solution = this->constitutive_relation->integrateStress(
         this->t, this->x, this->dt, this->eps_prev, this->eps, this->sigma_prev,
-        *state, this->T);
+        *state, this->T, this->T);
 
     ASSERT_TRUE(solution != std::nullopt);
     state = std::move(std::get<1>(*solution));

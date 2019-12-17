@@ -153,6 +153,7 @@ void SmallDeformationLocalAssemblerMatrix<ShapeFunction, IntegrationMethod,
 
         auto&& solution = _ip_data[ip]._solid_material.integrateStress(
             t, x_position, dt, eps_prev, eps, sigma_prev, *state,
+            _process_data._reference_temperature,
             _process_data._reference_temperature);
 
         if (!solution)

@@ -82,7 +82,7 @@ struct IntegrationPointData final
     {
         auto&& solution = solid_material.integrateStress(
             t, x_position, dt, eps_m_prev, eps_m, sigma_eff_prev,
-            *material_state_variables, T);
+            *material_state_variables, T, T);
 
         if (!solution)
             OGS_FATAL("Computation of local constitutive relation failed.");
@@ -110,7 +110,7 @@ struct IntegrationPointData final
         eps_m.noalias() = eps - thermal_strain * identity2;
         auto&& solution = solid_material.integrateStress(
             t, x_position, dt, eps_m_prev, eps_m, sigma_eff_prev,
-            *material_state_variables, T);
+            *material_state_variables, T, T);
 
         if (!solution)
             OGS_FATAL("Computation of local constitutive relation failed.");

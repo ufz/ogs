@@ -38,7 +38,7 @@ CreepBGRa<DisplacementDim>::integrateStress(
     KelvinVector const& sigma_prev,
     typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
     /*material_state_variables*/,
-    double const T) const
+    double const T, double const /*dT*/) const
 {
     using Invariants = MathLib::KelvinVector::Invariants<KelvinVectorSize>;
 

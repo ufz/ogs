@@ -77,7 +77,7 @@ Lubby2<DisplacementDim>::integrateStress(
     KelvinVector const& sigma_prev,
     typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
         material_state_variables,
-    double const T) const
+    double const T, double const dT) const
 {
     using Invariants = MathLib::KelvinVector::Invariants<KelvinVectorSize>;
 
@@ -132,7 +132,7 @@ Lubby2<DisplacementDim>::integrateStress(
             calculateResidualBurgers(dt, epsd_i, epsd_t, sigd_j, sigd_t,
                                      state.eps_K_j, state.eps_K_t,
                                      state.eps_M_j, state.eps_M_t, residual,
-                                     local_lubby2_properties);
+                                     local_lubby2_properties, dT);
         };
 
         auto const update_jacobian = [&](LocalJacobianMatrix& jacobian) {
@@ -190,7 +190,7 @@ Lubby2<DisplacementDim>::integrateStress(
     double const delta_eps_trace = Invariants::trace(eps - eps_prev);
     double const sigma_trace_prev = Invariants::trace(sigma_prev);
     KelvinVector const sigma = local_lubby2_properties.GM * sigd_j +
-                               (local_lubby2_properties.KM * delta_eps_trace +
+                               (local_lubby2_properties.KM * delta_eps_trace + local_lubby2_properties.thermalProperties->mKT * dT * Invariants::trace(eps) +
                                 sigma_trace_prev / 3.) *
                                    Invariants::identity2;
     return {std::make_tuple(
@@ -213,13 +213,14 @@ void Lubby2<DisplacementDim>::calculateResidualBurgers(
     KelvinVector& strain_Max_curr,
     const KelvinVector& strain_Max_t,
     ResidualVector& res,
-    detail::LocalLubby2Properties<DisplacementDim> const& properties) const
+    detail::LocalLubby2Properties<DisplacementDim> const& properties,
+    const double dT) const
 {
     // calculate stress residual
     res.template segment<KelvinVectorSize>(0).noalias() =
         (stress_curr - stress_t) -
         2. * ((strain_curr - strain_t) - (strain_Kel_curr - strain_Kel_t) -
-              (strain_Max_curr - strain_Max_t));
+              (strain_Max_curr - strain_Max_t)) - properties.thermalProperties->mGT * dT * (strain_curr - strain_Kel_curr - strain_Max_curr)/properties.GM;
 
     // calculate Kelvin strain residual
     res.template segment<KelvinVectorSize>(KelvinVectorSize).noalias() =
