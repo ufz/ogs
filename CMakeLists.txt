@@ -131,17 +131,24 @@ endforeach()
 set(OGS_BUILD_PROCESSES
     ""
     CACHE STRING "Semicolon-separated list of processes to build")
+if(NOT OGS_BUILD_CLI)
+    set(OGS_BUILD_PROCESSES OFF "" CACHE INTERNAL "")
+endif()
 if(NOT "${OGS_BUILD_PROCESSES}" STREQUAL "")
-    foreach(process ${OGS_BUILD_PROCESSES})
-        if(NOT "${process}" IN_LIST ProcessesList)
-            message(
-                FATAL_ERROR
-                    "${process} given in OGS_BUILD_PROCESSES is "
-                    "not a valid process name! Valid names are ${ProcessesList}"
-                )
-        endif()
-    endforeach()
-    message(STATUS "Enabled processes:")
+    if(${OGS_BUILD_PROCESSES})
+        foreach(process ${OGS_BUILD_PROCESSES})
+            if(NOT "${process}" IN_LIST ProcessesList)
+                message(
+                    FATAL_ERROR
+                        "${process} given in OGS_BUILD_PROCESSES is "
+                        "not a valid process name! Valid names are ${ProcessesList}"
+                    )
+            endif()
+        endforeach()
+        message(STATUS "Enabled processes:")
+    else()
+        message(STATUS "All processes disabled.")
+    endif()
     foreach(process ${ProcessesList})
         if("${process}" IN_LIST OGS_BUILD_PROCESSES)
             set(OGS_BUILD_PROCESS_${process} ON CACHE BOOL "" FORCE)
@@ -150,7 +157,6 @@ if(NOT "${OGS_BUILD_PROCESSES}" STREQUAL "")
             set(OGS_BUILD_PROCESS_${process} OFF CACHE BOOL "" FORCE)
         endif()
     endforeach()
-
 endif()
 
 if(WIN32)
