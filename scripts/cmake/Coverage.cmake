@@ -1,12 +1,12 @@
 include(CodeCoverage)
 append_coverage_compiler_flags()
 
-set(COVERAGE_GCOVR_EXCLUDES
+set(COVERAGE_EXCLUDES
     ${PROJECT_BINARY_DIR}/.*
-    Applications/CLI/.*
-    ProcessLib/.*
-    .*Tests/.*
-    ThirdParty/.*
+    ${PROJECT_SOURCE_DIR}/Applications/CLI/.*
+    ${PROJECT_SOURCE_DIR}/ProcessLib/.*
+    ${PROJECT_SOURCE_DIR}/.*Tests/.*
+    ${PROJECT_SOURCE_DIR}/ThirdParty/.*
 )
 
 if(LCOV_PATH AND GENHTML_PATH)
