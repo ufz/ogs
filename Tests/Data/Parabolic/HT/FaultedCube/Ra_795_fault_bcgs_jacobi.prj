@@ -8,6 +8,7 @@
         <mesh>Ra_795_fault_POINT1.vtu</mesh>
         <mesh>Ra_795_fault_POINT2.vtu</mesh>
         <mesh>Ra_795_fault_POINT3.vtu</mesh>
+        <mesh>Ra_795_fault_Top_and_Bottom.vtu</mesh>
     </meshes>
     <processes>
         <process>
@@ -22,6 +23,11 @@
             <secondary_variables>
                 <secondary_variable internal_name="darcy_velocity" output_name="darcy_velocity"/>
             </secondary_variables>
+            <calculatesurfaceflux>
+                <mesh>Ra_795_fault_Top_and_Bottom</mesh>
+                <property_name>specific_flux</property_name>
+                <output_mesh>Top_and_Bottom_flux.vtu</output_mesh>
+            </calculatesurfaceflux>
         </process>
     </processes>
     <media>
