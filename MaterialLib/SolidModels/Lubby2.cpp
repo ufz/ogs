@@ -189,8 +189,16 @@ Lubby2<DisplacementDim>::integrateStress(
     // Hydrostatic part for the stress and the tangent.
     double const delta_eps_trace = Invariants::trace(eps - eps_prev);
     double const sigma_trace_prev = Invariants::trace(sigma_prev);
+
+    // Thermal induced hydrostatic part
+    double delta_p_thermal_trace = 0.0;
+    if(local_lubby2_properties.thermalProperties.has_value())
+    {
+        delta_p_thermal_trace = local_lubby2_properties.thermalProperties->mKT * dT * Invariants::trace(eps);
+    }
+
     KelvinVector const sigma = local_lubby2_properties.GM * sigd_j +
-                               (local_lubby2_properties.KM * delta_eps_trace + local_lubby2_properties.thermalProperties->mKT * dT * Invariants::trace(eps) +
+                               (local_lubby2_properties.KM * delta_eps_trace + delta_p_thermal_trace +
                                 sigma_trace_prev / 3.) *
                                    Invariants::identity2;
     return {std::make_tuple(
@@ -217,10 +225,21 @@ void Lubby2<DisplacementDim>::calculateResidualBurgers(
     const double dT) const
 {
     // calculate stress residual
-    res.template segment<KelvinVectorSize>(0).noalias() =
+    if(properties.thermalProperties.has_value())
+    {
+        res.template segment<KelvinVectorSize>(0).noalias() =
         (stress_curr - stress_t) -
         2. * ((strain_curr - strain_t) - (strain_Kel_curr - strain_Kel_t) -
               (strain_Max_curr - strain_Max_t)) - properties.thermalProperties->mGT * dT * (strain_curr - strain_Kel_curr - strain_Max_curr)/properties.GM;
+    }
+    else
+    {
+        res.template segment<KelvinVectorSize>(0).noalias() =
+        (stress_curr - stress_t) -
+        2. * ((strain_curr - strain_t) - (strain_Kel_curr - strain_Kel_t) -
+              (strain_Max_curr - strain_Max_t));
+    }
+    
 
     // calculate Kelvin strain residual
     res.template segment<KelvinVectorSize>(KelvinVectorSize).noalias() =
