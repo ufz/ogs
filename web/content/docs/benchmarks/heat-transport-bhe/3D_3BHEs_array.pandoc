@@ -40,7 +40,7 @@ The BHE used in this Model contains a single U-shape pipe (1U type). The details
 | Circulating fluid heat capacity        | $(\rho c)_{f}$     | $4.16\times10^{6}$  | $\mathrm{J m^{-3}K^{-1}}$   |
 | Circulating fluid flow rate            | $\mathbf{u}$       | $0.0002$            | $\mathrm{m^{3} s^{-1}}$     |
 | Length of the BHE U-pipe in network    | $l$                | $100$               | $\mathrm{m}$                |
-| Roughness coefficient of the pipe      | $k_s$              | $0.001$             | $\mathrm{m}$                |
+| Roughness coefficient of the pipe      | $k_s$              | $0.00001$           | $\mathrm{m}$                |
 
 TESPy {#TESPy .unnumbered .unnumbered}
 =====
