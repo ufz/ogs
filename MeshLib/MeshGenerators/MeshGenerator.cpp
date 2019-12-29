@@ -146,10 +146,7 @@ Mesh* MeshGenerator::generateLineMesh(
 
     for (std::size_t i = 0; i < n_cells; i++)
     {
-        std::array<Node*, 2> element_nodes;
-        element_nodes[0] = nodes[i];
-        element_nodes[1] = nodes[i + 1];
-        elements.push_back (new Line(element_nodes));
+        elements.push_back(new Line({nodes[i], nodes[i + 1]}));
     }
 
     return new Mesh(mesh_name, nodes, elements);
@@ -222,12 +219,9 @@ Mesh* MeshGenerator::generateRegularQuadMesh(
         const std::size_t offset_y2 = (j + 1) * n_x_nodes;
         for (std::size_t k = 0; k < n_x_cells; k++)
         {
-            std::array<Node*, 4> element_nodes;
-            element_nodes[0] = nodes[offset_y1 + k];
-            element_nodes[1] = nodes[offset_y1 + k + 1];
-            element_nodes[2] = nodes[offset_y2 + k + 1];
-            element_nodes[3] = nodes[offset_y2 + k];
-            elements.push_back (new Quad(element_nodes));
+            elements.push_back(
+                new Quad({nodes[offset_y1 + k], nodes[offset_y1 + k + 1],
+                          nodes[offset_y2 + k + 1], nodes[offset_y2 + k]}));
         }
     }
 
@@ -319,18 +313,17 @@ Mesh* MeshGenerator::generateRegularHexMesh(
             const std::size_t offset_y2 = (j + 1) * n_x_nodes;
             for (std::size_t k = 0; k < n_x_cells; k++)
             {
-                std::array<Node*, 8> element_nodes;
-                // bottom
-                element_nodes[0] = nodes[offset_z1 + offset_y1 + k];
-                element_nodes[1] = nodes[offset_z1 + offset_y1 + k + 1];
-                element_nodes[2] = nodes[offset_z1 + offset_y2 + k + 1];
-                element_nodes[3] = nodes[offset_z1 + offset_y2 + k];
-                // top
-                element_nodes[4] = nodes[offset_z2 + offset_y1 + k];
-                element_nodes[5] = nodes[offset_z2 + offset_y1 + k + 1];
-                element_nodes[6] = nodes[offset_z2 + offset_y2 + k + 1];
-                element_nodes[7] = nodes[offset_z2 + offset_y2 + k];
-                elements.push_back (new Hex(element_nodes));
+                elements.push_back(
+                    new Hex({// bottom
+                             nodes[offset_z1 + offset_y1 + k],
+                             nodes[offset_z1 + offset_y1 + k + 1],
+                             nodes[offset_z1 + offset_y2 + k + 1],
+                             nodes[offset_z1 + offset_y2 + k],
+                             // top
+                             nodes[offset_z2 + offset_y1 + k],
+                             nodes[offset_z2 + offset_y1 + k + 1],
+                             nodes[offset_z2 + offset_y2 + k + 1],
+                             nodes[offset_z2 + offset_y2 + k]}));
             }
         }
     }
@@ -403,16 +396,13 @@ Mesh* MeshGenerator::generateRegularTriMesh(
         const std::size_t offset_y2 = (j + 1) * n_x_nodes;
         for (std::size_t k = 0; k < n_x_cells; k++)
         {
-            std::array<Node*, 3> element1_nodes;
-            element1_nodes[0] = nodes[offset_y1 + k];
-            element1_nodes[1] = nodes[offset_y2 + k + 1];
-            element1_nodes[2] = nodes[offset_y2 + k];
-            elements.push_back (new Tri(element1_nodes));
-            std::array<Node*, 3> element2_nodes;
-            element2_nodes[0] = nodes[offset_y1 + k];
-            element2_nodes[1] = nodes[offset_y1 + k + 1];
-            element2_nodes[2] = nodes[offset_y2 + k + 1];
-            elements.push_back (new Tri(element2_nodes));
+            elements.push_back(
+                new Tri({nodes[offset_y1 + k], nodes[offset_y2 + k + 1],
+                         nodes[offset_y2 + k]}));
+
+            elements.push_back(
+                new Tri({nodes[offset_y1 + k], nodes[offset_y1 + k + 1],
+                         nodes[offset_y2 + k + 1]}));
         }
     }
 
@@ -533,71 +523,53 @@ Mesh* MeshGenerator::generateRegularTetMesh(
             for (std::size_t k = 0; k < n_x_cells; k++)
             {
                 // tet 1
-                {
-                    std::array<Node*, 4> element_nodes;
-                    // bottom
-                    element_nodes[0] = nodes[offset_z1 + offset_y1 + k];
-                    element_nodes[1] = nodes[offset_z1 + offset_y2 + k + 1];
-                    element_nodes[2] = nodes[offset_z1 + offset_y2 + k];
-                    // top
-                    element_nodes[3] = nodes[offset_z2 + offset_y1 + k];
-                    elements.push_back (new Tet(element_nodes));
-                }
+                elements.push_back(
+                    new Tet({// bottom
+                             nodes[offset_z1 + offset_y1 + k],
+                             nodes[offset_z1 + offset_y2 + k + 1],
+                             nodes[offset_z1 + offset_y2 + k],
+                             // top
+                             nodes[offset_z2 + offset_y1 + k]}));
                 // tet 2
-                {
-                    std::array<Node*, 4> element_nodes;
-                    // bottom
-                    element_nodes[0] = nodes[offset_z1 + offset_y2 + k + 1];
-                    element_nodes[1] = nodes[offset_z1 + offset_y2 + k];
-                    // top
-                    element_nodes[2] = nodes[offset_z2 + offset_y1 + k];
-                    element_nodes[3] = nodes[offset_z2 + offset_y2 + k + 1];
-                    elements.push_back (new Tet(element_nodes));
-                }
+                elements.push_back(
+                    new Tet({// bottom
+                             nodes[offset_z1 + offset_y2 + k + 1],
+                             nodes[offset_z1 + offset_y2 + k],
+                             // top
+                             nodes[offset_z2 + offset_y1 + k],
+                             nodes[offset_z2 + offset_y2 + k + 1]}));
                 // tet 3
-                {
-                    std::array<Node*, 4> element_nodes;
-                    // bottom
-                    element_nodes[0] = nodes[offset_z1 + offset_y2 + k];
-                    // top
-                    element_nodes[1] = nodes[offset_z2 + offset_y1 + k];
-                    element_nodes[2] = nodes[offset_z2 + offset_y2 + k + 1];
-                    element_nodes[3] = nodes[offset_z2 + offset_y2 + k];
-                    elements.push_back (new Tet(element_nodes));
-                }
+                elements.push_back(
+                    new Tet({// bottom
+                             nodes[offset_z1 + offset_y2 + k],
+                             // top
+                             nodes[offset_z2 + offset_y1 + k],
+                             nodes[offset_z2 + offset_y2 + k + 1],
+                             nodes[offset_z2 + offset_y2 + k]}));
                 // tet 4
-                {
-                    std::array<Node*, 4> element_nodes;
-                    // bottom
-                    element_nodes[0] = nodes[offset_z1 + offset_y1 + k];
-                    element_nodes[1] = nodes[offset_z1 + offset_y1 + k + 1];
-                    element_nodes[2] = nodes[offset_z1 + offset_y2 + k + 1];
-                    // top
-                    element_nodes[3] = nodes[offset_z2 + offset_y1 + k + 1];
-                    elements.push_back (new Tet(element_nodes));
-                }
+                elements.push_back(
+                    new Tet({// bottom
+                             nodes[offset_z1 + offset_y1 + k],
+                             nodes[offset_z1 + offset_y1 + k + 1],
+                             nodes[offset_z1 + offset_y2 + k + 1],
+                             // top
+                             nodes[offset_z2 + offset_y1 + k + 1]}));
                 // tet 5
-                {
-                    std::array<Node*, 4> element_nodes;
-                    // bottom
-                    element_nodes[0] = nodes[offset_z1 + offset_y1 + k];
-                    element_nodes[1] = nodes[offset_z1 + offset_y2 + k + 1];
-                    // top
-                    element_nodes[2] = nodes[offset_z2 + offset_y1 + k];
-                    element_nodes[3] = nodes[offset_z2 + offset_y1 + k + 1];
-                    elements.push_back (new Tet(element_nodes));
-                }
+                elements.push_back(
+                    new Tet({// bottom
+                             nodes[offset_z1 + offset_y1 + k],
+                             nodes[offset_z1 + offset_y2 + k + 1],
+                             // top
+                             nodes[offset_z2 + offset_y1 + k],
+                             nodes[offset_z2 + offset_y1 + k + 1]}));
                 // tet 6
-                {
-                    std::array<Node*, 4> element_nodes;
-                    // bottom
-                    element_nodes[0] = nodes[offset_z1 + offset_y2 + k + 1];
-                    // top
-                    element_nodes[1] = nodes[offset_z2 + offset_y1 + k];
-                    element_nodes[2] = nodes[offset_z2 + offset_y1 + k + 1];
-                    element_nodes[3] = nodes[offset_z2 + offset_y2 + k + 1];
-                    elements.push_back (new Tet(element_nodes));
-                }
+                elements.push_back(
+                    new Tet({// bottom
+                             nodes[offset_z1 + offset_y2 + k + 1],
+                             // top
+                             nodes[offset_z2 + offset_y1 + k],
+                             nodes[offset_z2 + offset_y1 + k + 1],
+                             nodes[offset_z2 + offset_y2 + k + 1]}));
             }
         }
     }
@@ -617,12 +589,11 @@ MeshGenerator::createSurfaceMesh(std::string const& mesh_name,
     std::vector<MeshLib::Node*> nodes;
     for (std::size_t j(0); j<n_steps[1]; ++j) {
         for (std::size_t i(0); i<n_steps[0]; ++i) {
-            std::size_t const id(i+j*n_steps[1]);
-            std::array<double, 3> coords;
-            coords[0] = ll[0]+i*step_size[0];
-            coords[1] = ll[1]+j*step_size[1];
-            coords[2] = f(coords[0],coords[1]);
-            nodes.push_back(new MeshLib::Node(coords, id));
+            std::size_t const id = i + j * n_steps[1];
+            double const x = ll[0] + i * step_size[0];
+            double const y = ll[1] + j * step_size[1];
+
+            nodes.push_back(new MeshLib::Node({x, y, f(x, y)}, id));
         }
     }
 
@@ -633,10 +604,10 @@ MeshGenerator::createSurfaceMesh(std::string const& mesh_name,
             std::size_t id_lr(i+1+j*n_steps[0]);
             std::size_t id_ul(i+(j+1)*n_steps[0]);
             std::size_t id_ur(i+1+(j+1)*n_steps[0]);
-            sfc_eles.push_back(new MeshLib::Tri(std::array<MeshLib::Node*,3>
-                {{nodes[id_ll], nodes[id_lr], nodes[id_ur]}}));
-            sfc_eles.push_back(new MeshLib::Tri(std::array<MeshLib::Node*,3>
-                {{nodes[id_ll], nodes[id_ur], nodes[id_ul]}}));
+            sfc_eles.push_back(
+                new MeshLib::Tri({nodes[id_ll], nodes[id_lr], nodes[id_ur]}));
+            sfc_eles.push_back(
+                new MeshLib::Tri({nodes[id_ll], nodes[id_ur], nodes[id_ul]}));
         }
     }
 
