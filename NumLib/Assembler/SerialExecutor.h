@@ -166,7 +166,7 @@ struct SerialExecutor
         for (std::size_t i = 0; i < active_container_ids.size(); i++)
         {
             ((*container[active_container_ids[i]]).*method)(
-                i, std::forward<Args>(args)...);
+                active_container_ids[i], std::forward<Args>(args)...);
         }
     }
 
