@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:18.04 AS build
 
 # Generated with ogs-container-maker 1.2.0
 
@@ -24,24 +24,10 @@ RUN apt-get update -y && \
         clang-tidy-8 && \
     rm -rf /var/lib/apt/lists/*
 
-# CMake version 3.12.4
-RUN apt-get update -y && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        make \
-        wget && \
-    rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://cmake.org/files/v3.12/cmake-3.12.4-Linux-x86_64.sh && \
-    mkdir -p /usr/local && \
-    /bin/sh /var/tmp/cmake-3.12.4-Linux-x86_64.sh --prefix=/usr/local --skip-license && \
-    rm -rf /var/tmp/cmake-3.12.4-Linux-x86_64.sh
-ENV PATH=/usr/local/bin:$PATH
-
 # OGS base building block
 # Python
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        python \
-        python-dev \
         python3 \
         python3-dev && \
     rm -rf /var/lib/apt/lists/*
@@ -69,6 +55,18 @@ RUN apt-get update && \
     git lfs install && \
     mkdir -p /apps /scratch /lustre /work /projects /data
 
+# CMake version 3.12.4
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        make \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://cmake.org/files/v3.12/cmake-3.12.4-Linux-x86_64.sh && \
+    mkdir -p /usr/local && \
+    /bin/sh /var/tmp/cmake-3.12.4-Linux-x86_64.sh --prefix=/usr/local --skip-license && \
+    rm -rf /var/tmp/cmake-3.12.4-Linux-x86_64.sh
+ENV PATH=/usr/local/bin:$PATH
+
 # Package manager Conan building block
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -86,12 +84,12 @@ RUN apt-get update -y && \
         python3-setuptools \
         python3-wheel && \
     rm -rf /var/lib/apt/lists/*
-RUN pip3 install conan==1.20.5
+RUN pip3 install conan==1.21.0
 RUN mkdir -p /opt/conan && \
     chmod 777 /opt/conan
 ENV CONAN_USER_HOME=/opt/conan
 LABEL org.opengeosys.pm=conan \
-    org.opengeosys.pm.conan.version=1.20.5
+    org.opengeosys.pm.conan.version=1.21.0
 LABEL org.opengeosys.pm.conan.user_home=/opt/conan
 
 # Include-what-you-use for clang version 8
@@ -108,7 +106,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
     mkdir -p /var/tmp/include-what-you-use-clang_8.0/build && cd /var/tmp/include-what-you-use-clang_8.0/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local/iwyy -D IWYU_LLVM_ROOT_PATH=/usr/lib/llvm-8 /var/tmp/include-what-you-use-clang_8.0 && \
     cmake --build /var/tmp/include-what-you-use-clang_8.0/build --target all -- -j$(nproc) && \
     cmake --build /var/tmp/include-what-you-use-clang_8.0/build --target install -- -j$(nproc) && \
-    rm -rf /var/tmp/clang_8.0.tar.gz /var/tmp/include-what-you-use-clang_8.0
+    rm -rf /var/tmp/include-what-you-use-clang_8.0 /var/tmp/clang_8.0.tar.gz
 ENV PATH=/usr/local/iwyy/bin:$PATH
 
 # Package manager Conan building block

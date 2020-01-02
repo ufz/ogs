@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:18.04 AS build
 
 # Generated with ogs-container-maker 1.2.0
 
@@ -17,24 +17,10 @@ RUN apt-get update -y && \
         gcc && \
     rm -rf /var/lib/apt/lists/*
 
-# CMake version 3.12.4
-RUN apt-get update -y && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        make \
-        wget && \
-    rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://cmake.org/files/v3.12/cmake-3.12.4-Linux-x86_64.sh && \
-    mkdir -p /usr/local && \
-    /bin/sh /var/tmp/cmake-3.12.4-Linux-x86_64.sh --prefix=/usr/local --skip-license && \
-    rm -rf /var/tmp/cmake-3.12.4-Linux-x86_64.sh
-ENV PATH=/usr/local/bin:$PATH
-
 # OGS base building block
 # Python
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        python \
-        python-dev \
         python3 \
         python3-dev && \
     rm -rf /var/lib/apt/lists/*
@@ -70,6 +56,18 @@ RUN apt-get update -y && \
         mesa-common-dev && \
     rm -rf /var/lib/apt/lists/*
 
+# CMake version 3.12.4
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        make \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://cmake.org/files/v3.12/cmake-3.12.4-Linux-x86_64.sh && \
+    mkdir -p /usr/local && \
+    /bin/sh /var/tmp/cmake-3.12.4-Linux-x86_64.sh --prefix=/usr/local --skip-license && \
+    rm -rf /var/tmp/cmake-3.12.4-Linux-x86_64.sh
+ENV PATH=/usr/local/bin:$PATH
+
 # Package manager Conan building block
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -87,12 +85,12 @@ RUN apt-get update -y && \
         python3-setuptools \
         python3-wheel && \
     rm -rf /var/lib/apt/lists/*
-RUN pip3 install conan==1.20.5
+RUN pip3 install conan==1.21.0
 RUN mkdir -p /opt/conan && \
     chmod 777 /opt/conan
 ENV CONAN_USER_HOME=/opt/conan
 LABEL org.opengeosys.pm=conan \
-    org.opengeosys.pm.conan.version=1.20.5
+    org.opengeosys.pm.conan.version=1.21.0
 LABEL org.opengeosys.pm.conan.user_home=/opt/conan
 
 # cppcheck version 1.87
@@ -102,7 +100,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
     mkdir -p /var/tmp/cppcheck-1.87/build && cd /var/tmp/cppcheck-1.87/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local/cppcheck -D CMAKE_BUILD_TYPE=Release /var/tmp/cppcheck-1.87 && \
     cmake --build /var/tmp/cppcheck-1.87/build --target all -- -j$(nproc) && \
     cmake --build /var/tmp/cppcheck-1.87/build --target install -- -j$(nproc) && \
-    rm -rf /var/tmp/1.87.tar.gz /var/tmp/cppcheck-1.87
+    rm -rf /var/tmp/cppcheck-1.87 /var/tmp/1.87.tar.gz
 ENV PATH=/usr/local/cppcheck/bin:$PATH
 
 # pip
