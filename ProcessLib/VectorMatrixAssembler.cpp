@@ -88,8 +88,8 @@ void VectorMatrixAssembler::assemble(
 
         Eigen::VectorXd const local_xdot = (x - x0) / dt;
         local_assembler.assembleForStaggeredScheme(
-            t, dt, local_x, local_xdot, process_id, _local_M_data, _local_K_data,
-            _local_b_data, local_coupled_solutions);
+            t, dt, local_x, local_xdot, process_id, _local_M_data,
+            _local_K_data, _local_b_data, local_coupled_solutions);
     }
 
     auto const num_r_c = indices.size();
