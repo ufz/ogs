@@ -107,11 +107,9 @@ struct SerialExecutor
             return;
         }
 
-        for (std::size_t i = 0; i < active_container_ids.size(); i++)
+        for (auto const id : active_container_ids)
         {
-            (object.*method)(active_container_ids[i],
-                             *container[active_container_ids[i]],
-                             std::forward<Args>(args)...);
+            (object.*method)(id, *container[id], std::forward<Args>(args)...);
         }
     }
 
@@ -163,10 +161,9 @@ struct SerialExecutor
             return;
         }
 
-        for (std::size_t i = 0; i < active_container_ids.size(); i++)
+        for (auto const id : active_container_ids)
         {
-            ((*container[active_container_ids[i]]).*method)(
-                active_container_ids[i], std::forward<Args>(args)...);
+            ((*container[id]).*method)(id, std::forward<Args>(args)...);
         }
     }
 
