@@ -22,25 +22,26 @@ template <typename ShapeFunction, typename IntegrationMethod,
 void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
                               DisplacementDim>::
     assembleWithJacobianForStaggeredScheme(
-        double const t, double const dt, std::vector<double> const& local_xdot,
-        const double dxdot_dx, const double dx_dx, int const process_id,
+        double const t, double const dt, Eigen::VectorXd const& local_x,
+        std::vector<double> const& local_xdot, const double dxdot_dx,
+        const double dx_dx, int const process_id,
         std::vector<double>& local_M_data, std::vector<double>& local_K_data,
         std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
-        LocalCoupledSolutions const& local_coupled_solutions)
+        LocalCoupledSolutions const& /*local_coupled_solutions*/)
 {
     // For the equations with phase field.
     if (process_id == 1)
     {
         assembleWithJacobianPhaseFiledEquations(
-            t, dt, local_xdot, dxdot_dx, dx_dx, local_M_data, local_K_data,
-            local_b_data, local_Jac_data, local_coupled_solutions);
+            t, dt, local_x, local_xdot, dxdot_dx, dx_dx, local_M_data,
+            local_K_data, local_b_data, local_Jac_data);
         return;
     }
 
     // For the equations with deformation
     assembleWithJacobianForDeformationEquations(
-        t, dt, local_xdot, dxdot_dx, dx_dx, local_M_data, local_K_data,
-        local_b_data, local_Jac_data, local_coupled_solutions);
+        t, dt, local_x, local_xdot, dxdot_dx, dx_dx, local_M_data, local_K_data,
+        local_b_data, local_Jac_data);
 }
 
 template <typename ShapeFunction, typename IntegrationMethod,
@@ -48,26 +49,19 @@ template <typename ShapeFunction, typename IntegrationMethod,
 void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
                               DisplacementDim>::
     assembleWithJacobianForDeformationEquations(
-        double const t, double const dt,
+        double const t, double const dt, Eigen::VectorXd const& local_x,
         std::vector<double> const& /*local_xdot*/, const double /*dxdot_dx*/,
         const double /*dx_dx*/, std::vector<double>& /*local_M_data*/,
         std::vector<double>& /*local_K_data*/,
-        std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
-        LocalCoupledSolutions const& local_coupled_solutions)
+        std::vector<double>& local_b_data, std::vector<double>& local_Jac_data)
 {
     using DeformationMatrix =
         typename ShapeMatricesType::template MatrixType<displacement_size,
                                                         displacement_size>;
 
-    assert(local_coupled_solutions.local_coupled_xs.size() ==
-           phasefield_size + displacement_size);
-
-    auto const d = Eigen::Map<PhaseFieldVector const>(
-        &local_coupled_solutions.local_coupled_xs[phasefield_index],
-        phasefield_size);
-    auto const u = Eigen::Map<DeformationVector const>(
-        &local_coupled_solutions.local_coupled_xs[displacement_index],
-        displacement_size);
+    auto const d = local_x.template segment<phasefield_size>(phasefield_index);
+    auto const u =
+        local_x.template segment<displacement_size>(displacement_index);
 
     auto local_Jac = MathLib::createZeroedMatrix<DeformationMatrix>(
         local_Jac_data, displacement_size, displacement_size);
@@ -145,19 +139,15 @@ template <typename ShapeFunction, typename IntegrationMethod,
 void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
                               DisplacementDim>::
     assembleWithJacobianPhaseFiledEquations(
-        double const t, double const dt,
+        double const t, double const dt, Eigen::VectorXd const& local_x,
         std::vector<double> const& /*local_xdot*/, const double /*dxdot_dx*/,
         const double /*dx_dx*/, std::vector<double>& /*local_M_data*/,
         std::vector<double>& /*local_K_data*/,
-        std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
-        LocalCoupledSolutions const& local_coupled_solutions)
+        std::vector<double>& local_b_data, std::vector<double>& local_Jac_data)
 {
-    auto const d = Eigen::Map<PhaseFieldVector const>(
-        &local_coupled_solutions.local_coupled_xs[phasefield_index],
-        phasefield_size);
-    auto const u = Eigen::Map<DeformationVector const>(
-        &local_coupled_solutions.local_coupled_xs[displacement_index],
-        displacement_size);
+    auto const d = local_x.template segment<phasefield_size>(phasefield_index);
+    auto const u =
+        local_x.template segment<displacement_size>(displacement_index);
 
     auto local_Jac = MathLib::createZeroedMatrix<PhaseFieldMatrix>(
         local_Jac_data, phasefield_size, phasefield_size);

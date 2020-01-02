@@ -741,12 +741,12 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                      DisplacementDim>::
     assembleWithJacobianForPressureEquations(
         const double /*t*/, double const /*dt*/,
+        Eigen::VectorXd const& /*local_x*/,
         const std::vector<double>& /*local_xdot*/, const double /*dxdot_dx*/,
         const double /*dx_dx*/, std::vector<double>& /*local_M_data*/,
         std::vector<double>& /*local_K_data*/,
         std::vector<double>& /*local_b_data*/,
-        std::vector<double>& /*local_Jac_data*/,
-        const LocalCoupledSolutions& /*local_coupled_solutions*/)
+        std::vector<double>& /*local_Jac_data*/)
 {
     OGS_FATAL("RichardsMechanics; The staggered scheme is not implemented.");
 }
@@ -758,12 +758,12 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                      DisplacementDim>::
     assembleWithJacobianForDeformationEquations(
         const double /*t*/, double const /*dt*/,
+        Eigen::VectorXd const& /*local_x*/,
         const std::vector<double>& /*local_xdot*/, const double /*dxdot_dx*/,
         const double /*dx_dx*/, std::vector<double>& /*local_M_data*/,
         std::vector<double>& /*local_K_data*/,
         std::vector<double>& /*local_b_data*/,
-        std::vector<double>& /*local_Jac_data*/,
-        const LocalCoupledSolutions& /*local_coupled_solutions*/)
+        std::vector<double>& /*local_Jac_data*/)
 {
     OGS_FATAL("RichardsMechanics; The staggered scheme is not implemented.");
 }
@@ -774,25 +774,26 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                      ShapeFunctionPressure, IntegrationMethod,
                                      DisplacementDim>::
     assembleWithJacobianForStaggeredScheme(
-        const double t, double const dt, const std::vector<double>& local_xdot,
-        const double dxdot_dx, const double dx_dx, int const process_id,
+        const double t, double const dt, Eigen::VectorXd const& local_x,
+        const std::vector<double>& local_xdot, const double dxdot_dx,
+        const double dx_dx, int const process_id,
         std::vector<double>& local_M_data, std::vector<double>& local_K_data,
         std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
-        const LocalCoupledSolutions& local_coupled_solutions)
+        const LocalCoupledSolutions& /*local_coupled_solutions*/)
 {
     // For the equations with pressure
     if (process_id == 0)
     {
         assembleWithJacobianForPressureEquations(
-            t, dt, local_xdot, dxdot_dx, dx_dx, local_M_data, local_K_data,
-            local_b_data, local_Jac_data, local_coupled_solutions);
+            t, dt, local_x, local_xdot, dxdot_dx, dx_dx, local_M_data,
+            local_K_data, local_b_data, local_Jac_data);
         return;
     }
 
     // For the equations with deformation
     assembleWithJacobianForDeformationEquations(
-        t, dt, local_xdot, dxdot_dx, dx_dx, local_M_data, local_K_data,
-        local_b_data, local_Jac_data, local_coupled_solutions);
+        t, dt, local_x, local_xdot, dxdot_dx, dx_dx, local_M_data, local_K_data,
+        local_b_data, local_Jac_data);
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,

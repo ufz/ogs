@@ -72,9 +72,9 @@ public:
     }
 
     void assembleForStaggeredScheme(
-        double const t, double const dt, int const process_id,
-        std::vector<double>& local_M_data, std::vector<double>& local_K_data,
-        std::vector<double>& local_b_data,
+        double const t, double const dt, Eigen::VectorXd const& local_x,
+        int const process_id, std::vector<double>& local_M_data,
+        std::vector<double>& local_K_data, std::vector<double>& local_b_data,
         LocalCoupledSolutions const& coupled_xs) override;
 
     std::vector<double> const& getIntPtDarcyVelocity(
@@ -85,15 +85,17 @@ public:
 
 private:
     void assembleHydraulicEquation(double const t, double const dt,
+                                   Eigen::VectorXd const& local_x,
                                    std::vector<double>& local_M_data,
                                    std::vector<double>& local_K_data,
                                    std::vector<double>& local_b_data,
                                    LocalCoupledSolutions const& coupled_xs);
 
-    void assembleHeatTransportEquation(
-        double const t, std::vector<double>& local_M_data,
-        std::vector<double>& local_K_data, std::vector<double>& local_b_data,
-        LocalCoupledSolutions const& coupled_xs);
+    void assembleHeatTransportEquation(double const t,
+                                       Eigen::VectorXd const& local_x,
+                                       std::vector<double>& local_M_data,
+                                       std::vector<double>& local_K_data,
+                                       std::vector<double>& local_b_data);
     const int _heat_transport_process_id;
     const int _hydraulic_process_id;
 };

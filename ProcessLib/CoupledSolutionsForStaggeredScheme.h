@@ -49,17 +49,13 @@ struct CoupledSolutionsForStaggeredScheme
  */
 struct LocalCoupledSolutions
 {
-    LocalCoupledSolutions(std::vector<double>&& local_coupled_xs0_,
-                          std::vector<double>&& local_coupled_xs_)
-        : local_coupled_xs0(std::move(local_coupled_xs0_)),
-          local_coupled_xs(std::move(local_coupled_xs_))
+    LocalCoupledSolutions(std::vector<double>&& local_coupled_xs0_)
+        : local_coupled_xs0(std::move(local_coupled_xs0_))
     {
     }
 
     /// Local solutions of the previous time step.
     std::vector<double> const local_coupled_xs0;
-    /// Local solutions of the current time step.
-    std::vector<double> const local_coupled_xs;
 };
 
 /**
