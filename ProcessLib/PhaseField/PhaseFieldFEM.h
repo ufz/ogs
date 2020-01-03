@@ -328,7 +328,7 @@ private:
         return cache;
     }
 
-    void assembleWithJacobianPhaseFiledEquations(
+    void assembleWithJacobianPhaseFieldEquations(
         double const t, double const dt, Eigen::VectorXd const& local_x,
         std::vector<double> const& local_xdot, const double dxdot_dx,
         const double dx_dx, std::vector<double>& local_M_data,

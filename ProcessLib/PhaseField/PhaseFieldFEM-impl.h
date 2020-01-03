@@ -32,7 +32,7 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
     // For the equations with phase field.
     if (process_id == 1)
     {
-        assembleWithJacobianPhaseFiledEquations(
+        assembleWithJacobianPhaseFieldEquations(
             t, dt, local_x, local_xdot, dxdot_dx, dx_dx, local_M_data,
             local_K_data, local_b_data, local_Jac_data);
         return;
@@ -138,7 +138,7 @@ template <typename ShapeFunction, typename IntegrationMethod,
           int DisplacementDim>
 void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
                               DisplacementDim>::
-    assembleWithJacobianPhaseFiledEquations(
+    assembleWithJacobianPhaseFieldEquations(
         double const t, double const dt, Eigen::VectorXd const& local_x,
         std::vector<double> const& /*local_xdot*/, const double /*dxdot_dx*/,
         const double /*dx_dx*/, std::vector<double>& /*local_M_data*/,
