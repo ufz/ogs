@@ -23,7 +23,7 @@ foreach(CMD ${TESTER_COMMAND})
         list(GET CMD 2 NAME_B)
         list(GET CMD 3 ABS_TOL)
         list(GET CMD 4 REL_TOL)
-        file(GLOB FILES RELATIVE ${case_path} ${GLOB})
+        file(GLOB FILES RELATIVE ${SOURCE_PATH} ${GLOB})
         list(LENGTH FILES length)
         message(STATUS "Glob expression '${GLOB}' (${NAME_A}) found ${length} files.")
         if(${length} EQUAL 0)
@@ -32,8 +32,8 @@ foreach(CMD ${TESTER_COMMAND})
         endif()
         foreach(FILE ${FILES})
             execute_process(
-                COMMAND ${SELECTED_DIFF_TOOL_PATH} ${case_path}/${FILE} ${BINARY_PATH}/${FILE} -a ${NAME_A} -b ${NAME_B} --abs ${ABS_TOL} --rel ${REL_TOL}
-                WORKING_DIRECTORY ${case_path}
+                COMMAND ${SELECTED_DIFF_TOOL_PATH} ${SOURCE_PATH}/${FILE} ${BINARY_PATH}/${FILE} -a ${NAME_A} -b ${NAME_B} --abs ${ABS_TOL} --rel ${REL_TOL}
+                WORKING_DIRECTORY ${SOURCE_PATH}
                 RESULT_VARIABLE EXIT_CODE
                 OUTPUT_VARIABLE OUTPUT
                 ERROR_VARIABLE OUTPUT
@@ -46,7 +46,7 @@ foreach(CMD ${TESTER_COMMAND})
     else()
         execute_process(
             COMMAND ${TERMINAL_CMD} "${CMD}"
-            WORKING_DIRECTORY ${case_path}
+            WORKING_DIRECTORY ${SOURCE_PATH}
             RESULT_VARIABLE EXIT_CODE
             OUTPUT_VARIABLE OUTPUT
             ERROR_VARIABLE OUTPUT

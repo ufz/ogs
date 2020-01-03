@@ -35,7 +35,7 @@ BHECommonCoaxial::pipeHeatCapacities() const
 }
 
 double BHECommonCoaxial::updateFlowRateAndTemperature(double const T_out,
-                                             double const current_time)
+                                                      double const current_time)
 {
     auto values =
         visit([&](auto const& control) { return control(T_out, current_time); },

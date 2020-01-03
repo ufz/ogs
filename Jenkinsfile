@@ -108,7 +108,7 @@ pipeline {
               sh 'git submodule sync'
               configure {
                 cmakeOptions =
-                  "-DBUILD_SHARED_LIBS=${build_shared} " +
+                  "-DBUILD_SHARED_LIBS=OFF " +
                   '-DOGS_CPU_ARCHITECTURE=generic ' +
                   '-DOGS_BUILD_UTILS=ON ' +
                   '-DOGS_CONAN_BUILD=missing ' +
@@ -119,14 +119,6 @@ pipeline {
               build {
                 target="package"
                 log="build1.log"
-              }
-              configure { // CLI + Python
-                cmakeOptions = '-DOGS_USE_PYTHON=ON '
-                keepDir = true
-              }
-              build {
-                target="package"
-                log="build2.log"
               }
               build { target="tests" }
               build { target="ctest" }
@@ -438,7 +430,7 @@ pipeline {
                 excludeFile('.*\\.conan.*'), excludeFile('.*ThirdParty.*'),
                 excludeFile('.*thread.hpp')],
                 tools: [msBuild(name: 'MSVC', pattern: 'build/build*.log')],
-                qualityGates: [[threshold: 9, type: 'TOTAL', unstable: true]]
+                qualityGates: [[threshold: 10, type: 'TOTAL', unstable: true]]
             }
             success {
               archiveArtifacts 'build/*.zip,build/conaninfo.txt'

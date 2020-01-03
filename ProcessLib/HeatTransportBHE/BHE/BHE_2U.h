@@ -45,9 +45,11 @@ public:
            RefrigerantProperties const& refrigerant,
            GroutParameters const& grout,
            FlowAndTemperatureControl const& flowAndTemperatureControl,
-           PipeConfigurationUType const& pipes)
-        : BHECommonUType{borehole, refrigerant, grout,
-                         flowAndTemperatureControl, pipes}
+           PipeConfigurationUType const& pipes,
+           bool const usePythonBC)
+        : BHECommonUType{borehole, refrigerant,
+                         grout,    flowAndTemperatureControl,
+                         pipes,    usePythonBC}
     {
         _thermal_resistances.fill(std::numeric_limits<double>::quiet_NaN());
 
@@ -242,6 +244,9 @@ private:
     /// 1) Diersch (2013) FEFLOW book on page 958, M.3, or
     /// 2) Diersch (2011) Comp & Geosci 37:1122-1135, Eq. 90-97.
     std::array<double, number_of_unknowns> _thermal_resistances;
+
+    /// Flow velocity inside the pipes. Depends on the flow_rate.
+    double _flow_velocity;
 };
 }  // namespace BHE
 }  // namespace HeatTransportBHE

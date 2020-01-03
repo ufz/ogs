@@ -11,8 +11,9 @@
 #pragma once
 
 #include <memory>
-#include "ProcessLib/Process.h"
+
 #include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
+#include "ProcessLib/Process.h"
 
 namespace ProcessLib
 {

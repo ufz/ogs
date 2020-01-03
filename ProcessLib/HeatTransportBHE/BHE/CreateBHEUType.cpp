@@ -24,13 +24,21 @@ static std::tuple<BoreholeGeometry,
                   RefrigerantProperties,
                   GroutParameters,
                   FlowAndTemperatureControl,
-                  PipeConfigurationUType>
+                  PipeConfigurationUType,
+                  bool>
 parseBHEUTypeConfig(
     BaseLib::ConfigTree const& config,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
         curves)
 {
+    // if the BHE is using python boundary condition
+    auto const bhe_if_use_python_bc_conf =
+        config.getConfigParameter<bool>("bhe_if_use_python_bc", false);
+    DBUG("If using python boundary condition : %s",
+         (bhe_if_use_python_bc_conf) ? "true" : "false");
+
+    //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__borehole}
     auto const borehole_geometry =
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__borehole}
         createBoreholeGeometry(config.getConfigSubtree("borehole"));
@@ -65,8 +73,8 @@ parseBHEUTypeConfig(
         curves,
         refrigerant);
 
-    return {borehole_geometry, refrigerant, grout, flowAndTemperatureControl,
-            pipes};
+    return {borehole_geometry,         refrigerant, grout,
+            flowAndTemperatureControl, pipes,       bhe_if_use_python_bc_conf};
 }
 
 template <typename T_BHE>
@@ -78,7 +86,7 @@ T_BHE createBHEUType(
 {
     auto UType = parseBHEUTypeConfig(config, curves);
     return {std::get<0>(UType), std::get<1>(UType), std::get<2>(UType),
-            std::get<3>(UType), std::get<4>(UType)};
+            std::get<3>(UType), std::get<4>(UType), std::get<5>(UType)};
 }
 
 template BHE_1U createBHEUType<BHE_1U>(

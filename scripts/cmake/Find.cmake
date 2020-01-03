@@ -9,7 +9,11 @@ find_program(GPROF_PATH gprof DOC "GNU profiler gprof" QUIET)
 
 find_program(CPPCHECK_TOOL_PATH cppcheck)
 
-find_package(Python COMPONENTS Interpreter Development)
+if(OGS_USE_PYTHON)
+    find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
+else()
+    find_package(Python3 COMPONENTS Interpreter)
+endif()
 
 # Find bash itself ...
 find_program(BASH_TOOL_PATH bash

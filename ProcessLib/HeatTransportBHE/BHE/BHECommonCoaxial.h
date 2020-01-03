@@ -27,8 +27,10 @@ public:
                      RefrigerantProperties const& refrigerant,
                      GroutParameters const& grout,
                      FlowAndTemperatureControl const& flowAndTemperatureControl,
-                     PipeConfigurationCoaxial const& pipes)
-        : BHECommon{borehole, refrigerant, grout, flowAndTemperatureControl},
+                     PipeConfigurationCoaxial const& pipes,
+                     bool const usePythonBC)
+        : BHECommon{borehole, refrigerant, grout, flowAndTemperatureControl,
+                    usePythonBC},
           _pipes(pipes)
     {
         cross_section_area_inner_pipe = _pipes.inner_pipe.area();
@@ -66,9 +68,9 @@ public:
     double cross_section_area_inner_pipe, cross_section_area_annulus,
         cross_section_area_grout;
 
-protected:
     void updateHeatTransferCoefficients(double const flow_rate);
 
+protected:
     PipeConfigurationCoaxial const _pipes;
 
     virtual std::array<double, 2> velocities() const = 0;

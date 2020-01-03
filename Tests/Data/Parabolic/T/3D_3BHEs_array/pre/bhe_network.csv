@@ -1,0 +1,4 @@
+data_index;BHE_id;Tin_val;Tout_val;Tout_node_id;i_comp;i_id;o_comp;o_id;length;diameter;roughness;flowrate;f_velocity
+BHE1;1;283.15;283.15;0;splitter;0;merge;0;100;0.02733;100;0;0
+BHE2;2;283.15;283.15;0;splitter;0;merge;0;100;0.02733;100;0;0
+BHE3;3;283.15;283.15;0;splitter;0;merge;0;100;0.02733;100;0;0

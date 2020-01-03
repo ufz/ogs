@@ -18,7 +18,7 @@ target_link_libraries(ProcessLibSourceTermPython
                              MeshLib
                              NumLib
                              logog
-                             ${Python_LIBRARIES}
+                             ${Python3_LIBRARIES}
                       PRIVATE pybind11::pybind11)
 
 # For the embedded Python module

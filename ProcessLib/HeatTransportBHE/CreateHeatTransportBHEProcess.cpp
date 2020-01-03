@@ -20,6 +20,9 @@
 #include "BHE/CreateBHEUType.h"
 #include "HeatTransportBHEProcess.h"
 #include "HeatTransportBHEProcessData.h"
+#ifdef OGS_USE_PYTHON
+#include <pybind11/pybind11.h>
+#endif  // OGS_USE_PYTHON
 
 namespace ProcessLib
 {
@@ -91,6 +94,10 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
 
     // reading BHE parameters --------------------------------------------------
     std::vector<BHE::BHETypes> bhes;
+
+    // bhe array network parameter.
+    bool has_network_python_bc = false;
+
     auto const& bhe_configs =
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers}
         config.getConfigSubtree("borehole_heat_exchangers");
@@ -139,8 +146,82 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
     auto media_map =
         MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
 
-    HeatTransportBHEProcessData process_data{std::move(media_map),
-                                             std::move(bhes)};
+    // find if bhe uses python boundary condition
+    auto const isUsingPythonBC =
+        visit([](auto const& bhe) { return bhe.usePythonBC; }, bhes[0]);
+    if (isUsingPythonBC)
+    {
+        has_network_python_bc = true;
+    }
+
+    //! Python object computing BC values.
+    BHEInflowPythonBoundaryConditionPythonSideInterface* py_object = nullptr;
+    // create a pythonBoundaryCondition object
+    if (has_network_python_bc)
+    {
+#ifdef OGS_USE_PYTHON
+        // Evaluate Python code in scope of main module
+        pybind11::object scope =
+            pybind11::module::import("__main__").attr("__dict__");
+
+        if (!scope.contains("bc_bhe"))
+            OGS_FATAL(
+                "Function 'bc_bhe' is not defined in the python script file, "
+                "or there "
+                "was no python script file specified.");
+
+        py_object =
+            scope["bc_bhe"]
+                .cast<BHEInflowPythonBoundaryConditionPythonSideInterface*>();
+
+        if (py_object == nullptr)
+            OGS_FATAL(
+                "Not able to access the correct bc pointer from python script "
+                "file specified.");
+
+        // create BHE network dataframe from Python
+        py_object->dataframe_network = py_object->initializeDataContainer();
+        if (!py_object->isOverriddenEssential())
+        {
+            DBUG(
+                "Method `initializeDataContainer' not overridden in Python "
+                "script.");
+        }
+        // clear ogs bc_node_id memory in dataframe
+        std::get<3>(py_object->dataframe_network).clear();  // ogs_bc_node_id
+
+        // here calls the tespyHydroSolver to get the pipe flow velocity in bhe
+        // network
+        /* for 2U type the flowrate initialization process below causes conflict
+        // replace the value in flow velocity Matrix _u
+        auto const tespy_flow_rate = std::get<4>(py_object->dataframe_network);
+        const std::size_t n_bhe = tespy_flow_rate.size();
+        if (bhes.size() != n_bhe)
+            OGS_FATAL(
+                "The number of BHEs defined in OGS and TESPy are not the "
+                "same!");
+
+        for (std::size_t idx_bhe = 0; idx_bhe < n_bhe; idx_bhe++)
+        {
+            // the flow_rate in OGS should be updated from the flow_rate
+            // computed by TESPy.
+            auto update_flow_rate = [&](auto& bhe) {
+                bhe.updateHeatTransferCoefficients(tespy_flow_rate[idx_bhe]);
+            };
+            visit(update_flow_rate, bhes[idx_bhe]);
+        }
+        */
+#else
+        OGS_FATAL(
+            "Input files suggest the coupling of BHE with pipe network. "
+            "This means the compliling flag OGS_USE_PYTHON must be switched "
+            "on. ");
+#endif  // OGS_USE_PYTHON
+    }
+
+    HeatTransportBHEProcessData process_data(std::move(media_map),
+                                             std::move(bhes),
+                                             py_object);
 
     SecondaryVariableCollection secondary_variables;
 

@@ -112,7 +112,7 @@ endif()
 
 if(OGS_USE_PYTHON)
     if(WIN32)
-        file(GLOB PYTHON_RUNTIME_LIBS "${Python_RUNTIME_LIBRARY_DIRS}/*.dll")
+        file(GLOB PYTHON_RUNTIME_LIBS "${Python3_RUNTIME_LIBRARY_DIRS}/*.dll")
         message(STATUS "Install Python: ${PYTHON_RUNTIME_LIBS}")
         install(FILES ${PYTHON_RUNTIME_LIBS} DESTINATION bin)
     else()
