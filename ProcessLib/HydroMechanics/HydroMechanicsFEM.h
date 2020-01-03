@@ -381,6 +381,7 @@ private:
      *
      * @param t               Time
      * @param dt              Time increment
+     * @param local_x         Nodal values of \f$x\f$ of an element.
      * @param local_xdot      Nodal values of \f$\dot{x}\f$ of an element.
      * @param dxdot_dx        Value of \f$\dot{x} \cdot dx\f$.
      * @param dx_dx           Value of \f$ x \cdot dx\f$.
@@ -415,6 +416,7 @@ private:
      *
      * @param t               Time
      * @param dt              Time increment
+     * @param local_x         Nodal values of \f$x\f$ of an element.
      * @param local_xdot      Nodal values of \f$\dot{x}\f$ of an element.
      * @param dxdot_dx        Value of \f$\dot{x} \cdot dx\f$.
      * @param dx_dx           Value of \f$ x \cdot dx\f$.
