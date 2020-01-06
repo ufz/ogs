@@ -78,6 +78,12 @@ public:
                                           int const process_id) override;
 
     bool isLinear() const override { return true; }
+
+    Eigen::Vector3d getFlux(std::size_t const element_id,
+                            MathLib::Point3d const& p,
+                            double const t,
+                            std::vector<GlobalVector*> const& x) const override;
+
     int getGravitationalAxisID() const { return _gravitational_axis_id; }
     double getGravitationalAcceleration() const
     {
