@@ -19,6 +19,7 @@
 #include "MaterialLib/Fluid/FluidProperties/FluidProperties.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "ProcessLib/Process.h"
+#include "ProcessLib/SurfaceFlux/SurfaceFluxData.h"
 
 namespace MeshLib
 {
@@ -69,7 +70,8 @@ public:
         int const gravitational_axis_id,
         double const gravitational_acceleration,
         double const reference_temperature,
-        BaseLib::ConfigTree const& config);
+        BaseLib::ConfigTree const& config,
+        std::unique_ptr<ProcessLib::SurfaceFluxData>&& surfaceflux);
 
     void computeSecondaryVariableConcrete(double const t,
                                           GlobalVector const& x,
@@ -105,6 +107,8 @@ private:
 
     std::vector<std::unique_ptr<LiquidFlowLocalAssemblerInterface>>
         _local_assemblers;
+
+    std::unique_ptr<ProcessLib::SurfaceFluxData> _surfaceflux;
 };
 
 }  // namespace LiquidFlow

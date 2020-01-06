@@ -18,6 +18,8 @@
 #include "LiquidFlowLocalAssembler.h"
 #include "LiquidFlowMaterialProperties.h"
 #include "MeshLib/PropertyVector.h"
+// TODO(TF) used for output of flux, if output classes are ready this has to be changed
+#include "MeshLib/IO/writeMeshToFile.h"
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
 
 namespace ProcessLib
@@ -37,7 +39,8 @@ LiquidFlowProcess::LiquidFlowProcess(
     int const gravitational_axis_id,
     double const gravitational_acceleration,
     double const reference_temperature,
-    BaseLib::ConfigTree const& config)
+    BaseLib::ConfigTree const& config,
+    std::unique_ptr<ProcessLib::SurfaceFluxData>&& surfaceflux)
     : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables)),
@@ -45,7 +48,8 @@ LiquidFlowProcess::LiquidFlowProcess(
       _gravitational_acceleration(gravitational_acceleration),
       _reference_temperature(reference_temperature),
       _material_properties(
-          createLiquidFlowMaterialProperties(config, parameters, material_ids))
+          createLiquidFlowMaterialProperties(config, parameters, material_ids)),
+      _surfaceflux(std::move(surfaceflux))
 {
     DBUG("Create Liquid flow process.");
 }
