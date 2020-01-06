@@ -14,12 +14,11 @@
 
 #include <memory>
 
+#include "LiquidFlowLocalAssembler.h"
+#include "LiquidFlowMaterialProperties.h"
 #include "MaterialLib/Fluid/FluidProperties/FluidProperties.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "ProcessLib/Process.h"
-
-#include "LiquidFlowLocalAssembler.h"
-#include "LiquidFlowMaterialProperties.h"
 
 namespace MeshLib
 {
