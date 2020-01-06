@@ -14,13 +14,11 @@
 
 #include <cassert>
 
-#include "MeshLib/PropertyVector.h"
-
-#include "ProcessLib/Utils/CreateLocalAssemblers.h"
+#include "CreateLiquidFlowMaterialProperties.h"
 #include "LiquidFlowLocalAssembler.h"
 #include "LiquidFlowMaterialProperties.h"
-
-#include "CreateLiquidFlowMaterialProperties.h"
+#include "MeshLib/PropertyVector.h"
+#include "ProcessLib/Utils/CreateLocalAssemblers.h"
 
 namespace ProcessLib
 {
@@ -119,8 +117,8 @@ void LiquidFlowProcess::computeSecondaryVariableConcrete(const double t,
     DBUG("Compute the velocity for LiquidFlowProcess.");
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LiquidFlowLocalAssemblerInterface::computeSecondaryVariable,
-        _local_assemblers, pv.getActiveElementIDs(),
-        getDOFTable(process_id), t, x, _coupled_solutions);
+        _local_assemblers, pv.getActiveElementIDs(), getDOFTable(process_id), t,
+        x, _coupled_solutions);
 }
 
 }  // namespace LiquidFlow
