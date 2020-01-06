@@ -86,6 +86,32 @@ FlowAndTemperatureControl createFlowAndTemperatureControl(
                                       refrigerant.specific_heat_capacity,
                                       refrigerant.density};
     }
+
+    if (type == "BuildingPowerCurveConstantFlow")
+    {
+        auto const& power_curve = *BaseLib::getOrError(
+            curves,
+            //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__PowerCurveConstantFlow__power_curve}
+            config.getConfigParameter<std::string>("power_curve"),
+            "Required power curve not found.");
+
+        auto const& COP_heating_curve = *BaseLib::getOrError(
+            curves,
+            //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__PowerCurveConstantFlow__power_curve}
+            config.getConfigParameter<std::string>("cop_heating_curve"),
+            "Required power curve not found.");
+
+        //        std::vector<> power_curves;
+
+        //        power_curves.emplace_back(power_curve, COP_heating_curve);
+
+        //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__PowerCurveConstantFlow__flow_rate}
+        auto const flow_rate = config.getConfigParameter<double>("flow_rate");
+
+        return BuildingPowerCurveConstantFlow{
+            power_curve, flow_rate, refrigerant.specific_heat_capacity,
+            refrigerant.density};
+    }
     OGS_FATAL("FlowAndTemperatureControl type '%s' is not implemented.",
               type.c_str());
 }

@@ -81,10 +81,29 @@ struct PowerCurveConstantFlow
     double density;
 };
 
+struct BuildingPowerCurveConstantFlow
+{
+    FlowAndTemperature operator()(double const T_out, double const time) const
+    {
+        double const power = power_curve.getValue(time);
+        if (power == 0)
+        {
+            return {0.0, T_out};
+        }
+        return {flow_rate, power / flow_rate / heat_capacity / density + T_out};
+    }
+    MathLib::PiecewiseLinearInterpolation const& power_curve;
+
+    double flow_rate;
+    double heat_capacity;
+    double density;
+};
+
 using FlowAndTemperatureControl = std::variant<TemperatureCurveConstantFlow,
                                                FixedPowerConstantFlow,
                                                FixedPowerFlowCurve,
-                                               PowerCurveConstantFlow>;
+                                               PowerCurveConstantFlow,
+                                               BuildingPowerCurveConstantFlow>;
 }  // namespace BHE
 }  // namespace HeatTransportBHE
 }  // namespace ProcessLib

@@ -15,9 +15,10 @@
                 <borehole_heat_exchanger>
                     <type>1P</type>
                     <flow_and_temperature_control>
-                        <type>PowerCurveConstantFlow</type>
+                        <type>BuildingPowerCurveConstantFlow</type>
                         <flow_rate>0.00833</flow_rate>
                         <power_curve>power_curve</power_curve>
+                        <cop_heating_curve>COP_heating_curve</cop_heating_curve>
                     </flow_and_temperature_control>
                     <borehole>
                         <length>50.0</length>
@@ -230,6 +231,11 @@
             <name>power_curve</name>
             <coords>0 3600</coords>
             <values>-5000 -5000</values>
+        </curve>
+        <curve>
+            <name>COP_heating_curve</name>
+            <coords>-5.0 25</coords>
+            <values>3.5 6.0</values>
         </curve>
     </curves>
 </OpenGeoSysProject>
