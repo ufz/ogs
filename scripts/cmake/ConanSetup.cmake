@@ -79,7 +79,7 @@ if(OGS_BUILD_GUI)
             # Override for using older version with less (broken) dependencies
             xkbcommon/0.8.3@bincrafters/stable)
     else()
-        set(CONAN_REQUIRES ${CONAN_REQUIRES} qt/5.13.2@bincrafters/stable)
+        set(CONAN_REQUIRES ${CONAN_REQUIRES} qt/5.12.6@bincrafters/stable)
     endif()
     set(CONAN_OPTIONS ${CONAN_OPTIONS}
         vtk:minimal=False
