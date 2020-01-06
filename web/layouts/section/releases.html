@@ -18,7 +18,7 @@
     </div>
 
     {{ range first 1 .Data.Pages }}
-      <h2 class="mt-0" id="current"><i class="far fa-stars"></i> Current Release: OpenGeoSys {{ .Title }} <a class="text-lg" href="{{ .Permalink }}"><i class="far fa-link"></i></a></h2>
+      <h2 class="mt-0" id="current"><i class="far fa-stars"></i> Current Release: {{ .Title }} <a class="text-lg" href="{{ .Permalink }}"><i class="far fa-link"></i></a></h2>
       <div>
         {{ partial "releases-single.html" . }}
       </div>
@@ -28,7 +28,7 @@
     <ul>
       {{ range $index, $element := .Data.Pages }}
         {{ if (ne $index 0) }}
-          <li><a href="{{ .Permalink }}">OpenGeoSys {{ .Title }}</a>, {{.Params.release_date}}</li>
+          <li><a href="{{ .Permalink }}">{{ .Title }}</a>, {{.Params.release_date}}</li>
         {{ end }}
       {{ end }}
       {{ $urlPre := "https://api.github.com" }}
