@@ -12,6 +12,7 @@ weight = 1051
 ## Publication procedure
 
 - Copy changelog from Wiki to new page
+- Update `.github/PULL_REQUEST_TEMPLATE.md` to point to a new changelog wiki page
 - Replace `#([0-9][0-9][0-9][0-9])` with `[#$1](https://github.com/ufz/ogs/pull/$1)` (e.g. in VS Code)
 - Tag the release commit as an annotated tag (`git tag -a 6.0.8 -m "OpenGeoSys Release 6.0.8"`)
 - Create a [new release on GitHub](https://github.com/ufz/ogs/releases)
