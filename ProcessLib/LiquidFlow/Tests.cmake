@@ -364,3 +364,18 @@ AddTest(
     time_dependent_heterogeneous_source_term_pcs_0_ts_120_t_1200.000000.vtu time_dependent_heterogeneous_source_term_pcs_0_ts_120_t_1200.000000.vtu pressure pressure 1e-7 1e-13
     time_dependent_heterogeneous_source_term_pcs_0_ts_200_t_2000.000000.vtu time_dependent_heterogeneous_source_term_pcs_0_ts_200_t_2000.000000.vtu pressure pressure 1e-7 1e-13
 )
+
+AddTest(
+    NAME LiquidFlow_Flux
+    PATH Parabolic/LiquidFlow/Flux
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS cube_1e3_calculatesurfaceflux.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    cube_1x1x1_hex_1e3_complete_surface_left_right_dirichlet_specific_flux_t_0.432000_expected.vtu cube_1x1x1_hex_1e3_complete_surface_left_right_dirichlet_specific_flux_t_0.432000.vtu specific_flux specific_flux 1e-7 1e-13
+    cube_1x1x1_hex_1e3_complete_surface_left_right_dirichlet_specific_flux_t_0.864000_expected.vtu cube_1x1x1_hex_1e3_complete_surface_left_right_dirichlet_specific_flux_t_0.864000.vtu specific_flux specific_flux 1e-7 1e-13
+    LF_cube_1e3_calculatesurfaceflux_pcs_0_ts_1_t_0.432000_expected.vtu LF_cube_1e3_calculatesurfaceflux_pcs_0_ts_1_t_0.432000.vtu pressure pressure 1e-7 1e-13
+    LF_cube_1e3_calculatesurfaceflux_pcs_0_ts_2_t_0.864000_expected.vtu LF_cube_1e3_calculatesurfaceflux_pcs_0_ts_2_t_0.864000.vtu pressure pressure 1e-7 1e-13
+)
