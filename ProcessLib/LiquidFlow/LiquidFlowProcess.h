@@ -90,6 +90,11 @@ public:
         return _gravitational_acceleration;
     }
 
+    void postTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
+                                     const double t,
+                                     const double dt,
+                                     int const process_id) override;
+
 private:
     void initializeConcreteProcess(
         NumLib::LocalToGlobalIndexMap const& dof_table,

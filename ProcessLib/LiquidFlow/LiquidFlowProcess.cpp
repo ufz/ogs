@@ -141,5 +141,23 @@ Eigen::Vector3d LiquidFlowProcess::getFlux(
     return _local_assemblers[element_id]->getFlux(p, t, local_x);
 }
 
+// this is almost a copy of the implementation in the GroundwaterFlow
+void LiquidFlowProcess::postTimestepConcreteProcess(
+    std::vector<GlobalVector*> const& x,
+    const double t,
+    const double /*dt*/,
+    int const process_id)
+{
+    if (!_surfaceflux)  // computing the surfaceflux is optional
+    {
+        return;
+    }
+
+    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
+    _surfaceflux->integrate(x, t, *this, process_id, _integration_order, _mesh,
+                            pv.getActiveElementIDs());
+    _surfaceflux->save(t);
+}
+
 }  // namespace LiquidFlow
 }  // namespace ProcessLib
