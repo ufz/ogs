@@ -17,7 +17,7 @@
             <borehole_heat_exchangers>
                 <borehole_heat_exchanger>
                     <type>1U</type>
-                    <bhe_if_use_python_bc>true</bhe_if_use_python_bc>
+                    <use_bhe_pipe_network>true</use_bhe_pipe_network>
                     <flow_and_temperature_control>
                         <type>TemperatureCurveConstantFlow</type>
                         <flow_rate>2.0e-4</flow_rate>
@@ -57,7 +57,7 @@
                 </borehole_heat_exchanger>
                 <borehole_heat_exchanger>
                     <type>1U</type>
-                    <bhe_if_use_python_bc>true</bhe_if_use_python_bc>
+                    <use_bhe_pipe_network>true</use_bhe_pipe_network>
                     <flow_and_temperature_control>
                         <type>TemperatureCurveConstantFlow</type>
                         <flow_rate>2.0e-4</flow_rate>
@@ -97,7 +97,7 @@
                 </borehole_heat_exchanger>
                 <borehole_heat_exchanger>
                     <type>1U</type>
-                    <bhe_if_use_python_bc>true</bhe_if_use_python_bc>
+                    <use_bhe_pipe_network>true</use_bhe_pipe_network>
                     <flow_and_temperature_control>
                         <type>TemperatureCurveConstantFlow</type>
                         <flow_rate>2.0e-4</flow_rate>
