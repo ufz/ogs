@@ -282,6 +282,7 @@ pipeline {
                 cmakeOptions =
                   '-DOGS_BUILD_UTILS=ON ' +
                   '-DBUILD_SHARED_LIBS=ON ' +
+                  '-DOGS_USE_PYTHON=ON ' +
                   '-DCMAKE_INSTALL_PREFIX=/global/apps/ogs/head/standard ' +
                   '-DOGS_MODULEFILE=/global/apps/modulefiles/ogs/head/standard '
                 env = 'eve/cli.sh'

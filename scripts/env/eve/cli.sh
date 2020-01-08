@@ -11,6 +11,7 @@ module load cmake
 module load foss/2018b
 module load ninja/1.9.0
 module load git/2.20.1
+module load python/3
 
 # Libraries
 module load boost/1.62.0-1
