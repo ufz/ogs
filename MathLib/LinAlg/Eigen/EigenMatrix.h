@@ -129,23 +129,6 @@ public:
         return _mat.coeff(row, col);
     }
 
-    // TODO This method is currently used nowhere.
-    //      I disabled it in order to simplify the interface of this class,
-    //      especially since our other matrix classes lack this operator.
-    /*
-    /// get value. This function returns zero if the element doesn't exist.
-    double operator() (IndexType row, IndexType col) const
-    {
-        return get(row, col);
-    }
-    */
-
-    /// get a maximum value in diagonal entries
-    double getMaxDiagCoeff() const
-    {
-        return _mat.diagonal().maxCoeff();
-    }
-
     /// return always true, i.e. the matrix is always ready for use
     bool isAssembled() const { return true; }
 

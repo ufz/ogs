@@ -33,9 +33,6 @@ public:
     explicit XMLQtInterface(QString schemaFile = "");
     virtual ~XMLQtInterface() = default;
 
-    /// As QXMLStreamWriter seems currently unable to include style-file links into xml-files, this method will workaround this issue and include the stylefile link.
-    int insertStyleFileDefinition(const QString &fileName) const;
-
     /// Reads the file. In an overriden function in the child class be sure to call
     /// XMLQtInterface::readFile(fileName).
     virtual int readFile(const QString &fileName);
@@ -48,9 +45,6 @@ protected:
     /// If a hash file exists _and_ the hash of the data file is the same as the content of the hash file the validation is skipped
     /// If no hash file exists, the xml-file is validated and a hash file is written if the xml-file was valid.
     bool checkHash() const;
-
-    /// Checks if the given file is conform to the given hash.
-    bool isHashGood(const QByteArray &hash) const;
 
     QString _schemaFile;
 

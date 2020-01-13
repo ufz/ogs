@@ -43,14 +43,6 @@ public:
 
     virtual ~MeshRevision() = default;
 
-    /**
-     * Collapsed all nodes with distance < eps but ignores elements
-     * (i.e. elements with collapsed nodes may result)
-     * This is implicitely called when calling simplifyMesh(), so it does not need to be
-     * called separately when using simplifyMesh().
-     */
-    MeshLib::Mesh* collapseNodes(const std::string &new_mesh_name, double eps);
-
     /// Returns the number of potentially collapsable nodes
     unsigned getNumberOfCollapsableNodes(double eps = std::numeric_limits<double>::epsilon()) const;
 
@@ -70,12 +62,6 @@ public:
      */
     MeshLib::Mesh* simplifyMesh(const std::string& new_mesh_name, double eps,
                                 unsigned min_elem_dim = 1);
-
-    /**
-     * Create a new mesh where all elements with nonplanar faces are subdivided into simpler
-     * element types. This method does not collapse or remove any nodes.
-     */
-    MeshLib::Mesh* subdivideMesh(const std::string &new_mesh_name) const;
 
 private:
     /// Constructs a new node vector for the resulting mesh by removing all nodes whose ID indicates they need to be merged/removed.

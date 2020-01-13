@@ -37,30 +37,8 @@ BaseLib::Histogram<double> ElementQualityMetric::getHistogram (std::size_t n_bin
     return BaseLib::Histogram<double>(getElementQuality(), n_bins, true);
 }
 
-void ElementQualityMetric::errorMsg (Element const& elem, std::size_t idx) const
-{
-    ERR ("Error in MeshQualityChecker::check() - Calculated value of element is below double precision minimum.");
-    ERR ("Points of %s-Element %d: ", MeshElemType2String(elem.getGeomType()).c_str(), idx);
-    for (std::size_t i(0); i < elem.getNumberOfBaseNodes(); i++)
-    {
-        const double* coords = elem.getNode(i)->getCoords();
-        ERR ("\t Node %d: (%f, %f, %f)", i, coords[0], coords[1], coords[2]);
-    }
-}
-
 std::vector<double> const& ElementQualityMetric::getElementQuality () const
 {
     return _element_quality_metric;
 }
-
-double ElementQualityMetric::getMinValue() const
-{
-    return _min;
-}
-
-double ElementQualityMetric::getMaxValue() const
-{
-    return _max;
-}
-
-} // end namespace MeshLib
+}  // namespace MeshLib

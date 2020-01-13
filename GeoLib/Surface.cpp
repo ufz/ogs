@@ -108,17 +108,4 @@ bool Surface::isPntInSfc(MathLib::Point3d const& pnt, double eps) const
     }
     return _surface_grid->isPointInSurface(pnt, eps);
 }
-
-const Triangle* Surface::findTriangle(MathLib::Point3d const& pnt) const
-{
-    for (auto _sfc_triangle : _sfc_triangles)
-    {
-        if (_sfc_triangle->containsPoint(pnt))
-        {
-            return _sfc_triangle;
-        }
-    }
-    return nullptr;
-}
-
 }  // namespace GeoLib

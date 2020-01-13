@@ -45,13 +45,6 @@ public:
      */
     void addDirectory(std::string const& dir);
 
-    /**
-     * Given a filename, this method will return the complete path where this file can be found.
-     * If the file is located in more than one of the directories in the search list, only the
-     * first location will be returned.
-     */
-    std::string getPath(std::string const& filename) const;
-
 private:
     std::vector<std::string> _directories;
 };

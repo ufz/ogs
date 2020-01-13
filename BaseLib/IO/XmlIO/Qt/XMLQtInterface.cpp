@@ -95,25 +95,6 @@ int XMLQtInterface::isValid() const
     return 0;
 }
 
-int XMLQtInterface::insertStyleFileDefinition(const QString &fileName) const
-{
-    std::string path = fileName.toStdString();
-    std::fstream stream(path.c_str());
-    std::string styleDef("\n<?xml-stylesheet type=\"text/xsl\" href=\"OpenGeoSysGLI.xsl\"?>");
-
-    if (!stream.is_open())
-    {
-        WARN("XMLQtInterface::insertStyleFileDefinition(): Could not open file %s.",
-             path.c_str());
-        return 0;
-    }
-
-    stream.seekp(43 * sizeof(char),std::ios_base::beg); // go to the correct position in the stream
-    stream.write(styleDef.c_str(), 60 * sizeof(char)); // write new line with xml-stylesheet definition
-    stream.close();
-    return 1;
-}
-
 bool XMLQtInterface::checkHash() const
 {
     QString md5FileName(_fileName + ".md5");
@@ -147,17 +128,5 @@ bool XMLQtInterface::checkHash() const
         WARN("File is valid but could not write hashfile!");
     return true;
 }
-
-bool XMLQtInterface::isHashGood(const QByteArray &hash) const
-{
-    QByteArray fileHash = QCryptographicHash::hash(_fileData, QCryptographicHash::Md5);
-    if(hash != fileHash)
-    {
-        INFO("Hashfile does not match data ... checking file ...");
-        return false;
-    }
-    return true;
-}
-
-} // end namespace IO
-} // end namespace BaseLib
+}  // namespace IO
+}  // namespace BaseLib

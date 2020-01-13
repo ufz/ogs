@@ -71,9 +71,6 @@ public:
     /// Destructor
     virtual ~Mesh();
 
-    /// Add a node to the mesh.
-    void addNode(Node* node);
-
     /// Add an element to the mesh.
     void addElement(Element* elem);
 
@@ -143,13 +140,6 @@ protected:
     /// Set the minimum and maximum length over the edges of the mesh.
     void calcEdgeLengthRange();
 
-    /**
-     * Resets the connected elements for the node vector, i.e. removes the old information and
-     * calls setElementsConnectedToNodes to set the new information.
-     * \attention This needs to be called if node neighbourhoods are reset.
-     */
-    void resetElementsConnectedToNodes();
-
     /// Sets the dimension of the mesh.
     void setDimension();
 
@@ -159,8 +149,6 @@ protected:
     /// Fills in the neighbor-information for elements.
     /// Note: Using this implementation, an element e can only have neighbors that have the same dimensionality as e.
     void setElementNeighbors();
-
-    void setNodesConnectedByEdges();
 
     /// Computes the element-connectivity of nodes. Two nodes i and j are
     /// connected if they are shared by an element.

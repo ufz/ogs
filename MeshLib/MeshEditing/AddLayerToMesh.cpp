@@ -90,13 +90,6 @@ MeshLib::Mesh* addTopLayerToMesh(MeshLib::Mesh const& mesh,
     return addLayerToMesh(mesh, thickness, name, true);
 }
 
-MeshLib::Mesh* addBottomLayerToMesh(MeshLib::Mesh const& mesh,
-    double thickness,
-    std::string const& name)
-{
-    return addLayerToMesh(mesh, thickness, name, false);
-}
-
 MeshLib::Mesh* addLayerToMesh(MeshLib::Mesh const& mesh, double thickness,
     std::string const& name,
     bool on_top)

@@ -34,15 +34,6 @@ MeshRevision::MeshRevision(MeshLib::Mesh &mesh) :
     _mesh(mesh)
 {}
 
-
-MeshLib::Mesh* MeshRevision::collapseNodes(const std::string &new_mesh_name, double eps)
-{
-    std::vector<MeshLib::Node*> new_nodes (this->constructNewNodesArray(this->collapseNodeIndices(eps)));
-    std::vector<MeshLib::Element*> new_elements (MeshLib::copyElementVector(_mesh.getElements(), new_nodes));
-    this->resetNodeIDs();
-    return new MeshLib::Mesh(new_mesh_name, new_nodes, new_elements, _mesh.getProperties());
-}
-
 unsigned MeshRevision::getNumberOfCollapsableNodes(double eps) const
 {
     std::vector<std::size_t> id_map(this->collapseNodeIndices(eps));
@@ -131,69 +122,6 @@ MeshLib::Mesh* MeshRevision::simplifyMesh(const std::string &new_mesh_name,
     }
 
     this->resetNodeIDs();
-    if (!new_elements.empty())
-    {
-        return new MeshLib::Mesh(new_mesh_name, new_nodes, new_elements,
-                                 new_properties);
-    }
-
-    this->cleanUp(new_nodes, new_elements);
-    return nullptr;
-}
-
-MeshLib::Mesh* MeshRevision::subdivideMesh(const std::string &new_mesh_name) const
-{
-    if (this->_mesh.getNumberOfElements() == 0)
-    {
-        return nullptr;
-    }
-
-    // original data
-    std::vector<MeshLib::Element*> const& elements(this->_mesh.getElements());
-    MeshLib::Properties const& properties(_mesh.getProperties());
-    auto const* material_vec = properties.getPropertyVector<int>("MaterialIDs");
-
-    // data structures for the new mesh
-    std::vector<MeshLib::Node*> new_nodes = MeshLib::copyNodeVector(_mesh.getNodes());
-    std::vector<MeshLib::Element*> new_elements;
-    MeshLib::Properties new_properties;
-    PropertyVector<int>* new_material_vec = nullptr;
-    if (material_vec) {
-        new_material_vec = new_properties.createNewPropertyVector<int>(
-            "MaterialIDs", MeshItemType::Cell, 1
-        );
-    }
-
-    for (std::size_t k(0); k<elements.size(); ++k) {
-        MeshLib::Element const*const elem(elements[k]);
-        ElementErrorCode error_code(elem->validate());
-        if (error_code[ElementErrorFlag::NonCoplanar])
-        {
-            std::size_t const n_new_elements(
-                subdivideElement(elem, new_nodes, new_elements));
-            if (n_new_elements == 0)
-            {
-                ERR("Element %d has unknown element type.", k);
-                this->cleanUp(new_nodes, new_elements);
-                return nullptr;
-            }
-            // copy material values
-            if (!material_vec)
-            {
-                continue;
-            }
-            new_material_vec->insert(new_material_vec->end(), n_new_elements,
-                (*material_vec)[k]);
-        } else {
-            new_elements.push_back(MeshLib::copyElement(elem, new_nodes));
-            // copy material values
-            if (material_vec)
-            {
-                new_material_vec->push_back((*material_vec)[k]);
-            }
-        }
-    }
-
     if (!new_elements.empty())
     {
         return new MeshLib::Mesh(new_mesh_name, new_nodes, new_elements,

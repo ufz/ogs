@@ -82,13 +82,6 @@ void simplify(std::string &str)
     );
 }
 
-std::string padLeft(std::string const& str, int maxlen, char ch)
-{
-    std::stringstream ss(str);
-    ss << std::right << std::setw(maxlen) << std::setfill(ch) << str;
-    return ss.str();
-}
-
 std::string const& tostring(std::string const& value)
 {
     return value;

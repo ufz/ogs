@@ -34,11 +34,6 @@ class Element;
 /// @attention The user has to ensure the validity of the pointers while the
 /// MeshElementGrid instance lives.
 class MeshElementGrid final {
-#ifndef NDEBUG
-    friend void getGridGeometry(MeshLib::MeshElementGrid const& grid,
-                                GeoLib::GEOObjects& geometries,
-                                std::string& geometry_name);
-#endif
 public:
     /// Constructs a grid. Grid cells contains intersecting mesh elements.
     /// @param mesh the MeshLib::Mesh instance the grid will be constructed from
@@ -94,14 +89,4 @@ private:
     std::array<std::size_t,3> _n_steps;
     std::vector<std::vector<MeshLib::Element const*>> _elements_in_grid_box;
 };
-
-#ifndef NDEBUG
-/// Transfers the grid cells to a geometry. The grid-geometry can be viewed
-/// using the DataExplorer. The visualization can be used to explain the
-/// algorithm or to find bugs in the algorithm.
-void getGridGeometry(MeshLib::MeshElementGrid const& grid,
-                     GeoLib::GEOObjects& geometries,
-                     std::string& geometry_name);
-#endif
-
-} // end namespace MeshLib
+}  // namespace MeshLib

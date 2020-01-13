@@ -72,28 +72,9 @@ double AdsorptionReaction::getEvaporationEnthalpy(double T_Ads) // in kJ/kg
 }
 
 
-// evaluate specific heat capacity of adsorbate follwing Nunez
-double AdsorptionReaction::getSpecificHeatCapacity(const double T_Ads)
-{
-    const double c[] = {4.224,-3.716e-3,9.351e-5,-7.1786e-7,-9.1266e-9,2.69247e-10,-2.773104e-12,1.553177e-14,-4.982795e-17,8.578e-20,-6.12423e-23};
-    double cp = 0.;
-    for (unsigned i = 0; i < sizeof(c) / sizeof(c[0]); i++)
-    {
-        cp += c[i] * pow(T_Ads, i);
-    }
-    return cp; // kJ/(kg*K)
-}
-
-
 double AdsorptionReaction::getMolarFraction(double xm, double M_this, double M_other)
 {
     return M_other*xm/(M_other*xm + M_this*(1.0-xm));
-}
-
-
-double AdsorptionReaction::getMassFraction(double xn, double M_this, double M_other)
-{
-    return M_this*xn/(M_this*xn + M_other*(1.0-xn));
 }
 
 
@@ -117,29 +98,6 @@ double AdsorptionReaction::getReactionRate(const double p_Ads, const double T_Ad
     return k_rate * (C_eq - loading); // scaled with mass fraction
                                       // this the rate in terms of loading!
 }
-
-void AdsorptionReaction::getDReactionRate(const double p_Ads, const double T_Ads,
-                                     const double M_Ads, const double /*loading*/,
-                                     std::array<double, 3> &dqdr) const
-{
-    const double A = getPotential(p_Ads, T_Ads, M_Ads);
-    const double p_S = getEquilibriumVapourPressure(T_Ads);
-    const double dAdT = MaterialLib::PhysicalConstant::IdealGasConstant * log(p_S/p_Ads) / (M_Ads*1.e3);
-    const double dAdp = - MaterialLib::PhysicalConstant::IdealGasConstant * T_Ads / M_Ads / p_Ads;
-
-    const double W = characteristicCurve(A);
-    const double dWdA = dCharacteristicCurve(A);
-
-    const double rho_Ads = getAdsorbateDensity(T_Ads);
-    const double drhodT = - rho_Ads * getAlphaT(T_Ads);
-
-    dqdr = std::array<double, 3>{{
-        rho_Ads*dWdA*dAdp,
-        drhodT*W + rho_Ads*dWdA*dAdT,
-        -k_rate
-    }};
-}
-
 
 // Evaluate adsorbtion potential A
 double AdsorptionReaction::getPotential(const double p_Ads, double T_Ads, const double M_Ads) const

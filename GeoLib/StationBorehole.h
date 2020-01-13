@@ -49,9 +49,6 @@ public:
                                           double depth,
                                           const std::string &date = "");
 
-    /// Adds a stratigraphy to a borehole given a vector of points of length "n" and a vector of soil names of length "n-1".
-    int addStratigraphy(const std::vector<Point*> &profile, const std::vector<std::string> &soil_names);
-
     // Returns the depth of the borehole
     double getDepth() const { return _depth; }
 
@@ -81,16 +78,6 @@ public:
     void addSoilLayer ( double x, double y, double z, const std::string &soil_name);
 
 private:
-    /// Adds a layer for the specified borehole profile based on the information given in the stringlist
-    static int addLayer(std::list<std::string> fields, StationBorehole* borehole);
-
-    /// Creates fake stratigraphies of only one layer with a thickness equal to the borehole depth
-    static void createSurrogateStratigraphies(std::vector<Point*>* boreholes);
-
-    /// Reads the specified file containing borehole stratigraphies into an vector of stringlists
-    static int readStratigraphyFile(const std::string &path,
-                                    std::vector<std::list<std::string> > &data);
-
     //long profile_type;
     //std::vector<long> _soilType;
     double _depth{0};  // depth of the borehole

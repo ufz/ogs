@@ -62,21 +62,10 @@ public:
         MathLib::Point3d const& q,
         double eps = std::numeric_limits<float>::epsilon()) const;
 
-    /**
-     * projects the triangle points to the x-y-plane and
-     * checks if point pnt is contained into the triangle
-     * @param pnt the point to test for
-     * @return true, if the point is into the projected triangle
-     */
-    bool containsPoint2D(Point const& pnt) const;
-
 private:
     /// a vector of pointers to points the triangle is based on
     std::vector<Point*> const& _pnts;
     /// position of pointers to the geometric points
     std::array<std::size_t, 3> _pnt_ids;
 };
-
-void getPlaneCoefficients(Triangle const& tri, double c[3]);
-
-} // end namespace GeoLib
+}  // namespace GeoLib

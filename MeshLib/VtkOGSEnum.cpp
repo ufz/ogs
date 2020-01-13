@@ -14,52 +14,6 @@
 
 #include <vtkCellType.h>
 
-MeshLib::CellType VtkCellTypeToOGS(int type)
-{
-    switch (type)
-    {
-        case VTK_LINE:
-            return MeshLib::CellType::LINE2;
-        case VTK_QUADRATIC_EDGE:
-            return MeshLib::CellType::LINE3;
-        case VTK_TRIANGLE:
-            return MeshLib::CellType::TRI3;
-        case VTK_QUADRATIC_TRIANGLE:
-            return MeshLib::CellType::TRI6;
-        case VTK_QUAD:
-            return MeshLib::CellType::QUAD4;
-        case VTK_QUADRATIC_QUAD:
-            return MeshLib::CellType::QUAD8;
-        case VTK_BIQUADRATIC_QUAD:
-            return MeshLib::CellType::QUAD9;
-        case VTK_HEXAHEDRON:
-            return MeshLib::CellType::HEX8;
-        case VTK_QUADRATIC_HEXAHEDRON:
-            return MeshLib::CellType::HEX20;
-        case VTK_TRIQUADRATIC_HEXAHEDRON:
-            return MeshLib::CellType::HEX27;
-        case VTK_TETRA:
-            return MeshLib::CellType::TET4;
-        case VTK_QUADRATIC_TETRA:
-            return MeshLib::CellType::TET10;
-        case VTK_WEDGE:
-            return MeshLib::CellType::PRISM6;
-        case VTK_QUADRATIC_WEDGE:
-            return MeshLib::CellType::PRISM15;
-        case VTK_BIQUADRATIC_QUADRATIC_WEDGE:
-            return MeshLib::CellType::PRISM18;
-        case VTK_PYRAMID:
-            return MeshLib::CellType::PYRAMID5;
-        case VTK_QUADRATIC_PYRAMID:
-            return MeshLib::CellType::PYRAMID13;
-        default:
-            OGS_FATAL(
-                "Unknown cell type in conversion from VTK to OGS. Given cell "
-                "type value is %d.",
-                type);
-    }
-}
-
 int OGSToVtkCellType(MeshLib::CellType ogs)
 {
     switch (ogs)

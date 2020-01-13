@@ -89,7 +89,6 @@ public:
     double getGasDensity(const double p, const double T) const;
     double getGasViscosity(const double p, const double T) const;
     double getLiquidViscosity(const double p, const double T) const;
-    double getDerivGasDensity(double const p, double const T) const;
     bool computeConstitutiveRelation(
         double const t,
         ParameterLib::SpatialPosition const& x_position,

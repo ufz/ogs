@@ -49,11 +49,4 @@ PropertyDataType Property::d2Value(VariableArray const& /*variable_array*/,
 {
     return 0.0;
 }
-
-void Property::notImplemented(const std::string& property,
-                              const std::string& material) const
-{
-    OGS_FATAL("The property '%s' is not available on the '%s' scale",
-              property.c_str(), material.c_str());
-}
 }  // namespace MaterialPropertyLib

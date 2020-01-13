@@ -98,16 +98,6 @@ double TwoPhaseFlowWithPrhoMaterialProperties::getGasDensity(
     return _gas_density->getValue(vars);
 }
 
-double TwoPhaseFlowWithPrhoMaterialProperties::getDerivGasDensity(
-    const double p, const double T) const
-{
-    ArrayType vars;
-    vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::T)] = T;
-    vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::p)] = p;
-
-    return _gas_density->getdValue(vars,
-                                   MaterialLib::Fluid::PropertyVariableType::p);
-}
 double TwoPhaseFlowWithPrhoMaterialProperties::getLiquidViscosity(
     const double p, const double T) const
 {

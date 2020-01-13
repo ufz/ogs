@@ -132,20 +132,6 @@ int GMSInterface::readBoreholesFromGMS(std::vector<GeoLib::Point*>* boreholes,
     return 1;
 }
 
-/*
-   // all boreholes to GMS which each borehole in a single file
-   void StationIO::writeBoreholesToGMS(const std::vector<GeoLib::Point*>
-   *stations)
-   {
-    //std::vector<std::string> soilID(1);
-    std::vector<std::string> soilID = readSoilIDfromFile("d:/BodeTimeline.txt");
-    for (std::size_t i=0; i<stations->size(); i++)
-        StationIO::writeBoreholeToGMS(static_cast<GeoLib::StationBorehole*>((*stations)[i]),
-   std::string("Borehole-" +
-   static_cast<GeoLib::StationBorehole*>((*stations)[i])->getName() + ".txt"),
-   soilID); StationIO::writeSoilIDTable(soilID, "SoilIDReference.txt");
-   }
- */
 void GMSInterface::writeBoreholesToGMS(
     const std::vector<GeoLib::Point*>* stations, const std::string& filename)
 {
@@ -177,7 +163,6 @@ void GMSInterface::writeBoreholesToGMS(
             {
                 continue;
             }
-            // idx = getSoilID(soilID, soilNames[i]);
             current_soil_name = soilNames[i];
 
             out << station->getName() << "\t" << std::fixed
@@ -193,63 +178,6 @@ void GMSInterface::writeBoreholesToGMS(
     }
 
     out.close();
-}
-
-std::size_t GMSInterface::getSoilID(std::vector<std::string>& soilID,
-                                    std::string& soilName)
-{
-    for (std::size_t j = 0; j < soilID.size(); j++)
-    {
-        if (soilID[j] == soilName)
-        {
-            return j;
-        }
-    }
-    soilID.push_back(soilName);
-    return soilID.size() - 1;
-}
-
-int GMSInterface::writeSoilIDTable(const std::vector<std::string>& soilID,
-                                   const std::string& filename)
-{
-    std::ofstream out(filename.c_str(), std::ios::out);
-
-    // write header
-    out << "ID"
-        << "\t" << std::fixed << "Soil name"
-        << "\n";
-
-    // write table
-    std::size_t nIDs = soilID.size();
-    for (std::size_t i = 0; i < nIDs; i++)
-    {
-        out << i << "\t" << std::fixed << soilID[i] << "\t"
-            << "\n";
-    }
-    out.close();
-
-    return 1;
-}
-
-std::vector<std::string> GMSInterface::readSoilIDfromFile(
-    const std::string& filename)
-{
-    std::vector<std::string> soilID;
-    std::string line;
-
-    std::ifstream in(filename.c_str());
-
-    if (in.is_open())
-    {
-        while (std::getline(in, line))
-        {
-            BaseLib::trim(line);
-            soilID.push_back(line);
-        }
-    }
-    in.close();
-
-    return soilID;
 }
 
 MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string& filename)

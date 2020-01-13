@@ -45,9 +45,6 @@ public:
     /// Returns the status of the given node
     bool isActiveNode(MeshLib::Node const* node) const;
 
-    /// Returns a vector of active elements connected to a node
-    std::vector<MeshLib::Element*> getActiveElementsAtNode(std::size_t node_id) const;
-
     /// Returns the total number of active nodes
     std::size_t getNumberOfActiveNodes() const;
 

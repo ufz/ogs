@@ -107,14 +107,6 @@ template <class T_MATRIX>
 void computeRotationMatrixToXY(MathLib::Vector3 const& n, T_MATRIX& rot_mat);
 
 /**
- * Method computes the rotation matrix that rotates the given vector parallel to the \f$y\f$ axis.
- * @param plane_normal the (3d) vector that is rotated parallel to the \f$y\f$ axis
- * @param rot_mat 3x3 rotation matrix
- */
-void computeRotationMatrixToXZ(MathLib::Vector3 const& plane_normal,
-                               MathLib::DenseMatrix<double> & rot_mat);
-
-/**
  * rotate points according to the rotation matrix
  * @param rot_mat 3x3 dimensional rotation matrix
  * @param pnts_begin Iterator pointing to the initial element in a vector of points to be rotated

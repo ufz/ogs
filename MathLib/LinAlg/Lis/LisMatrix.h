@@ -111,9 +111,6 @@ public:
     /// printout this equation for debugging
     void write(const std::string &filename) const;
 
-    /// get a maximum value in diagonal entries
-    double getMaxDiagCoeff();
-
     /// return a raw Lis matrix object
     LIS_MATRIX& getRawMatrix() { return _AA; }
 

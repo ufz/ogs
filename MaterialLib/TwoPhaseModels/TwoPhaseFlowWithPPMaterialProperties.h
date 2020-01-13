@@ -98,7 +98,6 @@ public:
     double getGasDensity(const double p, const double T) const;
     double getGasViscosity(const double p, const double T) const;
     double getLiquidViscosity(const double p, const double T) const;
-    double getGasDensityDerivative(double const p, double const T) const;
     double getNonwetRelativePermeability(
         const double t, const ParameterLib::SpatialPosition& pos,
         const double p, const double T, const double saturation) const;

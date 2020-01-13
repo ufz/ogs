@@ -118,24 +118,6 @@ void LisMatrix::write(const std::string &filename) const
     lis_output_matrix(_AA, LIS_FMT_MM, const_cast<char*>(filename.c_str()));
 }
 
-double LisMatrix::getMaxDiagCoeff()
-{
-    double abs_max_entry;
-    int ierr = lis_vector_get_value(_diag, 0, &abs_max_entry);
-    checkLisError(ierr);
-    abs_max_entry = std::abs(abs_max_entry);
-    for (std::size_t k(1); k<_n_rows; ++k) {
-        double tmp;
-        ierr = lis_vector_get_value(_diag, k, &tmp);
-        checkLisError(ierr);
-        if (abs_max_entry < std::abs(tmp)) {
-            abs_max_entry = std::abs(tmp);
-        }
-    }
-
-    return abs_max_entry;
-}
-
 bool finalizeMatrixAssembly(LisMatrix &mat)
 {
     LIS_MATRIX &A = mat.getRawMatrix();

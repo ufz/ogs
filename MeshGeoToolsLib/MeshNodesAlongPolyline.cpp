@@ -61,9 +61,4 @@ GeoLib::Polyline const& MeshNodesAlongPolyline::getPolyline () const
 {
     return _ply;
 }
-
-std::vector<double> const& MeshNodesAlongPolyline::getDistOfProjNodeFromPlyStart() const
-{
-    return _dist_of_proj_node_from_ply_start;
-}
-} // end namespace MeshGeoToolsLib
+}  // end namespace MeshGeoToolsLib
