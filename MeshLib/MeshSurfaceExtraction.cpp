@@ -14,13 +14,12 @@
 
 #include "MeshSurfaceExtraction.h"
 
+#include <boost/math/constants/constants.hpp>
+#include <logog/include/logog.hpp>
 #include <memory>
 
-#include <boost/math/constants/constants.hpp>
-
-#include <logog/include/logog.hpp>
-
 #include "MeshLib/Elements/Line.h"
+#include "MeshLib/Elements/Point.h"
 #include "MeshLib/Elements/Quad.h"
 #include "MeshLib/Elements/Tri.h"
 #include "MeshLib/Mesh.h"
@@ -365,6 +364,9 @@ std::vector<MeshLib::Element*> MeshSurfaceExtraction::createSfcElementVector(
             case MeshElemType::QUAD:
                 new_elements.push_back(new MeshLib::Quad(new_nodes));
                 break;
+            case MeshElemType::LINE:
+                new_elements.push_back(new MeshLib::Line(new_nodes));
+                break;
             default:
                 OGS_FATAL(
                     "MeshSurfaceExtraction::createSfcElementVector Unknown "
@@ -433,6 +435,145 @@ bool MeshSurfaceExtraction::createSfcMeshProperties(
     INFO("%d property vectors copied, %d vectors skipped.", vectors_copied,
          vectors_skipped);
     return true;
+}
+
+std::unique_ptr<MeshLib::Mesh> getBoundaryElementsAsMesh(
+    MeshLib::Mesh const& bulk_mesh,
+    std::string const& subsfc_node_id_prop_name,
+    std::string const& subsfc_element_id_prop_name,
+    std::string const& face_id_prop_name)
+{
+    auto const mesh_dimension = bulk_mesh.getDimension();
+    if (mesh_dimension < 2 || mesh_dimension > 3)
+    {
+        ERR("Cannot handle meshes of dimension %i", mesh_dimension);
+    }
+
+    std::vector<std::size_t> element_to_bulk_element_id_map;
+    std::vector<std::size_t> element_to_bulk_face_id_map;
+    std::vector<MeshLib::Element*> sfc_elements;
+    auto const& bulk_elements = bulk_mesh.getElements();
+    for (auto const* elem : bulk_elements)
+    {
+        const unsigned element_dimension(elem->getDimension());
+        if (element_dimension < mesh_dimension)
+        {
+            continue;
+        }
+
+        if (!elem->isBoundaryElement())
+        {
+            continue;
+        }
+
+        const unsigned nFaces(elem->getNumberOfFaces());
+        for (unsigned j = 0; j < nFaces; ++j)
+        {
+            if (elem->getNeighbor(j) != nullptr)
+            {
+                continue;
+            }
+
+            auto const face =
+                std::unique_ptr<MeshLib::Element const>{elem->getFace(j)};
+            switch (face->getGeomType())
+            {
+                case MeshElemType::TRIANGLE:
+                {
+                    sfc_elements.push_back(new MeshLib::Tri(
+                        *static_cast<const MeshLib::Tri*>(face.get())));
+                    break;
+                }
+                case MeshElemType::QUAD:
+                {
+                    sfc_elements.push_back(new MeshLib::Quad(
+                        *static_cast<const MeshLib::Quad*>(face.get())));
+                    break;
+                }
+                case MeshElemType::LINE:
+                {
+                    sfc_elements.push_back(new MeshLib::Line(
+                        *static_cast<const MeshLib::Line*>(face.get())));
+                    break;
+                }
+                case MeshElemType::POINT:
+                {
+                    sfc_elements.push_back(new MeshLib::Point(
+                        *static_cast<const MeshLib::Point*>(face.get())));
+                    break;
+                }
+                default:
+                    ERR("Unknown face element extracted.");
+            }
+            element_to_bulk_element_id_map.push_back(elem->getID());
+            element_to_bulk_face_id_map.push_back(j);
+        }
+    }
+
+    std::vector<MeshLib::Node*> sfc_nodes;
+    std::vector<std::size_t> node_id_map(bulk_mesh.getNumberOfNodes());
+    MeshSurfaceExtraction::get2DSurfaceNodes(
+        sfc_nodes, bulk_mesh.getNumberOfNodes(), sfc_elements, node_id_map);
+
+    // create new elements vector with newly created nodes (and delete
+    // temp-elements)
+    std::vector<MeshLib::Element*> new_elements;
+    try
+    {
+        new_elements = MeshSurfaceExtraction::createSfcElementVector(
+            sfc_elements, sfc_nodes, node_id_map);
+    }
+    catch (std::runtime_error const& err)
+    {
+        ERR("BoundaryExtraction; could not create new surface elements:\n%s.",
+            err.what());
+        std::for_each(sfc_elements.begin(), sfc_elements.end(),
+                      [](MeshLib::Element* e) { delete e; });
+        std::for_each(sfc_nodes.begin(), sfc_nodes.end(),
+                      [](MeshLib::Node* n) { delete n; });
+        return nullptr;
+    }
+    std::for_each(sfc_elements.begin(), sfc_elements.end(),
+                  [](MeshLib::Element* e) { delete e; });
+
+    std::vector<std::size_t> id_map;
+    id_map.reserve(sfc_nodes.size());
+    std::transform(begin(sfc_nodes), end(sfc_nodes), std::back_inserter(id_map),
+                   [](MeshLib::Node* const n) { return n->getID(); });
+    std::unique_ptr<MeshLib::Mesh> surface_mesh(
+        new Mesh(bulk_mesh.getName() + "-Surface", sfc_nodes, new_elements));
+
+    // transmit the original node ids of the bulk mesh as a property
+    if (!subsfc_node_id_prop_name.empty())
+    {
+        MeshLib::addPropertyToMesh(*surface_mesh, subsfc_node_id_prop_name,
+                                   MeshLib::MeshItemType::Node, 1, id_map);
+    }
+
+    // transmit the original bulk element ids as a property
+    if (!subsfc_element_id_prop_name.empty())
+    {
+        MeshLib::addPropertyToMesh(*surface_mesh, subsfc_element_id_prop_name,
+                                   MeshLib::MeshItemType::Cell, 1,
+                                   element_to_bulk_element_id_map);
+    }
+
+    // transmit the face id of the original bulk element as a property
+    if (!face_id_prop_name.empty())
+    {
+        MeshLib::addPropertyToMesh(*surface_mesh, face_id_prop_name,
+                                   MeshLib::MeshItemType::Cell, 1,
+                                   element_to_bulk_face_id_map);
+    }
+
+    /// Copies relevant parts of scalar arrays to the surface mesh
+    if (!MeshSurfaceExtraction::createSfcMeshProperties(
+            *surface_mesh, bulk_mesh.getProperties(), id_map,
+            element_to_bulk_element_id_map))
+    {
+        ERR("Transferring subsurface properties failed.");
+    }
+    return surface_mesh;
 }
 
 }  // end namespace MeshLib

@@ -80,7 +80,6 @@ public:
      */
     static MeshLib::Mesh* getMeshBoundary(const MeshLib::Mesh& mesh);
 
-private:
     /// Functionality needed for getSurfaceNodes() and getMeshSurface()
     static void get2DSurfaceElements(
         const std::vector<MeshLib::Element*>& all_elements,
@@ -136,4 +135,10 @@ private:
         std::vector<std::size_t> const& element_ids_map);
 };
 
-}  // end namespace MeshLib
+std::unique_ptr<MeshLib::Mesh> getBoundaryElementsAsMesh(
+    MeshLib::Mesh const& bulk_mesh,
+    std::string const& subsfc_node_id_prop_name,
+    std::string const& subsfc_element_id_prop_name,
+    std::string const& face_id_prop_name);
+
+}  // namespace MeshLib
