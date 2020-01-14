@@ -89,49 +89,39 @@ std::unique_ptr<DeactivatedSubdomain const> createDeactivatedSubdomain(
 
     for (auto const ids : deactivated_subdomain_material_ids)
     {
-        std::vector<MeshLib::Element*> deactivated_elements;
+        auto const& nodes = mesh.getNodes();
         std::vector<MeshLib::Node*> deactivated_nodes;
-
-        // temporary vector to enhance node searching.
-        std::vector<bool> deactivation_flag_of_nodes(mesh.getNumberOfNodes(),
-                                                     false);
-
-        for (std::size_t i = 0; i < mesh.getNumberOfElements(); i++)
+        for (auto const& node : nodes)
         {
-            if (ids != (*material_ids)[i])
+            const auto& connected_elements = node->getElements();
+
+            // Check whether this node is in an activated element.
+            if (std::find_if(
+                    connected_elements.begin(),
+                    connected_elements.end(),
+                    [&](auto const* const connected_elem) -> bool {
+                        return ids != (*material_ids)[connected_elem->getID()];
+                    }) != connected_elements.end())
+            {
+                continue;
+            }
+            else
+            {
+                deactivated_nodes.push_back(const_cast<MeshLib::Node*>(node));
+            }
+        }
+
+        auto const& elements = mesh.getElements();
+        std::vector<MeshLib::Element*> deactivated_elements;
+        for (auto const& element : elements)
+        {
+            if (ids != (*material_ids)[element->getID()])
             {
                 continue;
             }
 
-            auto* element = mesh.getElement(i);
             deactivated_elements.push_back(
                 const_cast<MeshLib::Element*>(element));
-
-            for (unsigned j = 0; j < element->getNumberOfNodes(); j++)
-            {
-                auto const* const node = element->getNode(j);
-                const auto& connected_elements = node->getElements();
-
-                if (deactivation_flag_of_nodes[node->getID()])
-                {
-                    continue;
-                }
-
-                // Check whether this node is in an activated element.
-                if (std::find_if(
-                        connected_elements.begin(),
-                        connected_elements.end(),
-                        [&](auto const* const connected_elem) -> bool {
-                            return ids !=
-                                   (*material_ids)[connected_elem->getID()];
-                        }) != connected_elements.end())
-                {
-                    continue;
-                }
-
-                deactivated_nodes.push_back(const_cast<MeshLib::Node*>(node));
-                deactivation_flag_of_nodes[node->getID()] = true;
-            }
         }
 
         auto bc_mesh = MeshLib::createMeshFromElementSelection(
