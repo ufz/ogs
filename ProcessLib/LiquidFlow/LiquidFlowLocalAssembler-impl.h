@@ -87,7 +87,7 @@ LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::getFlux(
     const double mu =
         _material_properties.getViscosity(pressure, _reference_temperature);
 
-    Eigen::Vector3d flux;
+    Eigen::Vector3d flux(0.0, 0.0, 0.0);
     flux.head<GlobalDim>() =
         -permeability / mu * shape_matrices.dNdx *
         Eigen::Map<const NodalVectorType>(local_x.data(), local_x.size());
