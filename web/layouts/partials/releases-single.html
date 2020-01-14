@@ -1,6 +1,6 @@
 {{ $gh_release := print "https://github.com/ufz/ogs/releases/tag/" .Title }}
-{{ $gh_download := print "https://github.com/ufz/ogs/releases/download/" .Title }}
-{{ $file_prefix := print "ogs-" .Title }}
+{{ $gh_download := print "https://github.com/ufz/ogs/releases/download/" .Params.tag }}
+{{ $file_prefix := print "ogs-" .Params.tag }}
 <p>Released on {{ dateFormat "Monday, Jan 2, 2006" .Params.release_date }}, <a href="{{ $gh_release }}"><i class="fab fa-github"></i> GitHub release</a></p>
 {{ if .Params.downloads }}
   <div class="note">
