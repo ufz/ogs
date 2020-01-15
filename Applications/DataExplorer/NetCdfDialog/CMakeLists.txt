@@ -10,6 +10,9 @@ target_link_libraries(NetCdfDialogLib
                              ${HDF5_HL_LIBRARIES}
                              ${HDF5_LIBRARIES}
                       PRIVATE MathLib)
+if(OGS_USE_CONAN AND MSVC)
+    target_link_libraries(NetCdfDialogLib PUBLIC ${CONAN_LIBS})
+endif()
 set_property(TARGET NetCdfDialogLib PROPERTY FOLDER "DataExplorer")
 
 # Workaround for system installed VTK (tested on arch)

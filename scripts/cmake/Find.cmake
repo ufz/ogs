@@ -110,7 +110,13 @@ if(OGS_USE_NETCDF)
     set(NETCDF_ROOT ${CONAN_NETCDF-C_ROOT})
     set(NETCDF_CXX_ROOT ${CONAN_NETCDF-CXX_ROOT})
     find_package(NetCDF REQUIRED)
-    find_package(HDF5 REQUIRED COMPONENTS C HL)
+    if(OGS_USE_CONAN AND MSVC)
+        set(HDF5_DIR ${CONAN_HDF5_ROOT}/cmake/hdf5)
+        find_package(HDF5 REQUIRED COMPONENTS C HL NO_MODULE)
+    else()
+        find_package(HDF5 REQUIRED COMPONENTS C HL)
+    endif()
+
 endif()
 
 # lapack
