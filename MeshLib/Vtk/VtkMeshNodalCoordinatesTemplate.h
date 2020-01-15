@@ -16,11 +16,6 @@
 
 #include <vtkMappedDataArray.h>
 #include <vtkObjectFactory.h>  // for vtkStandardNewMacro
-#include <vtkVersion.h>
-
-#if VTK_MAJOR_VERSION < 7 || VTK_MAJOR_VERSION == 7 && VTK_MINOR_VERSION < 1
-#include <vtkTypeTemplate.h>   // For templated vtkObject API
-#endif
 
 namespace MeshLib
 {
@@ -30,23 +25,15 @@ namespace MeshLib
 namespace MeshLib
 {
 template <class Scalar>
-class VtkMeshNodalCoordinatesTemplate :
-#if !(VTK_MAJOR_VERSION < 7 || VTK_MAJOR_VERSION == 7 && VTK_MINOR_VERSION < 1)
-    public vtkMappedDataArray<Scalar>
-#else
-    public vtkTypeTemplate<VtkMeshNodalCoordinatesTemplate<Scalar>,
-                           vtkMappedDataArray<Scalar>>
-#endif // vtk version
+class VtkMeshNodalCoordinatesTemplate : public vtkMappedDataArray<Scalar>
 {
 public:
-#if !(VTK_MAJOR_VERSION < 7 || VTK_MAJOR_VERSION == 7 && VTK_MINOR_VERSION < 1)
-    vtkTemplateTypeMacro(VtkMeshNodalCoordinatesTemplate<Scalar>,
-                         vtkMappedDataArray<Scalar>);
-#else
-    vtkMappedDataArrayNewInstanceMacro(VtkMeshNodalCoordinatesTemplate<Scalar>);
-#endif // vtk version
-    static VtkMeshNodalCoordinatesTemplate *New();
+    vtkAbstractTemplateTypeMacro(VtkMeshNodalCoordinatesTemplate<Scalar>, vtkMappedDataArray<Scalar>)
+        vtkMappedDataArrayNewInstanceMacro(
+            VtkMeshNodalCoordinatesTemplate<Scalar>) static VtkMeshNodalCoordinatesTemplate* New();
     void PrintSelf(std::ostream& os, vtkIndent indent) override;
+
+    typedef typename Superclass::ValueType ValueType;
 
     /// Pass the nodes from OGS mesh
     void SetNodes(std::vector<MeshLib::Node*> const & nodes);
@@ -101,20 +88,12 @@ public:
     vtkIdType InsertNextValue(Scalar v) override;
     void InsertValue(vtkIdType idx, Scalar v) override;
 
-#if !(VTK_MAJOR_VERSION < 7 || VTK_MAJOR_VERSION == 7 && VTK_MINOR_VERSION < 1)
     Scalar& GetValueReference(vtkIdType idx) const;
     Scalar GetValue(vtkIdType idx) const override;
     void GetTypedTuple(vtkIdType tupleId, Scalar* t) const override;
     void SetTypedTuple(vtkIdType i, const Scalar* t) override;
     void InsertTypedTuple(vtkIdType i, const Scalar* t) override;
     vtkIdType InsertNextTypedTuple(const Scalar* t) override;
-#else
-    Scalar GetValue(vtkIdType idx) override;
-    void GetTupleValue(vtkIdType idx, Scalar* t) override;
-    void SetTupleValue(vtkIdType i, const Scalar* t) override;
-    void InsertTupleValue(vtkIdType i, const Scalar* t) override;
-    vtkIdType InsertNextTupleValue(const Scalar* t) override;
-#endif  // vtk version
 
     VtkMeshNodalCoordinatesTemplate(const VtkMeshNodalCoordinatesTemplate&) =
         delete;
@@ -127,6 +106,9 @@ protected:
     const std::vector<MeshLib::Node*>* _nodes{nullptr};
 
 private:
+    // VtkMeshNodalCoordinatesTemplate(const VtkMeshNodalCoordinatesTemplate&) = delete;
+    // void operator=(const VtkMeshNodalCoordinatesTemplate&) = delete;
+
     vtkIdType Lookup(const Scalar &val, vtkIdType startIndex);
     double* TempDoubleArray{nullptr};
 };

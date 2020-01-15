@@ -38,5 +38,5 @@ if(OGS_USE_PYTHON)
 endif()
 
 if(OGS_INSITU)
-    target_link_libraries(ProcessLib InSituLib)
+    target_link_libraries(ProcessLib PRIVATE InSituLib)
 endif()
