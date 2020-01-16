@@ -437,22 +437,95 @@ bool MeshSurfaceExtraction::createSfcMeshProperties(
     return true;
 }
 
-std::unique_ptr<MeshLib::Mesh> getBoundaryElementsAsMesh(
-    MeshLib::Mesh const& bulk_mesh,
-    std::string const& subsfc_node_id_prop_name,
-    std::string const& subsfc_element_id_prop_name,
-    std::string const& face_id_prop_name)
+std::tuple<std::vector<MeshLib::Node*>, std::vector<std::size_t>>
+MeshSurfaceExtraction::createNodesFromElements(
+    std::vector<MeshLib::Element*> const& elements,
+    std::size_t const n_all_nodes)
 {
-    auto const mesh_dimension = bulk_mesh.getDimension();
-    if (mesh_dimension < 2 || mesh_dimension > 3)
+    std::vector<const MeshLib::Node*> tmp_nodes(n_all_nodes, nullptr);
+    for (auto const* elem : elements)
     {
-        ERR("Cannot handle meshes of dimension %i", mesh_dimension);
+        for (unsigned j = 0; j < elem->getNumberOfBaseNodes(); ++j)
+        {
+            const MeshLib::Node* node(elem->getNode(j));
+            tmp_nodes[node->getID()] = node;
+        }
     }
 
+    std::vector<MeshLib::Node*> nodes;
+    std::vector<std::size_t> node_id_map(n_all_nodes);
+    for (unsigned i = 0; i < n_all_nodes; ++i)
+    {
+        if (tmp_nodes[i])
+        {
+            node_id_map[i] = nodes.size();
+            nodes.push_back(new MeshLib::Node(*tmp_nodes[i]));
+        }
+    }
+    return {nodes, node_id_map};
+}
+
+void MeshSurfaceExtraction::createSurfaceElementsFromElement(
+    MeshLib::Element const& surface_element,
+    std::vector<MeshLib::Element*>& surface_elements,
+    std::vector<std::size_t>& element_to_bulk_element_id_map,
+    std::vector<std::size_t>& element_to_bulk_face_id_map)
+{
+    const unsigned n_faces(surface_element.getNumberOfBoundaries());
+    for (unsigned j = 0; j < n_faces; ++j)
+    {
+        if (surface_element.getNeighbor(j) != nullptr)
+        {
+            continue;
+        }
+
+        auto const face = std::unique_ptr<MeshLib::Element const>{
+            surface_element.getBoundary(j)};
+        switch (face->getGeomType())
+        {
+            case MeshElemType::TRIANGLE:
+            {
+                surface_elements.push_back(new MeshLib::Tri(
+                    *static_cast<const MeshLib::Tri*>(face.get())));
+                break;
+            }
+            case MeshElemType::QUAD:
+            {
+                surface_elements.push_back(new MeshLib::Quad(
+                    *static_cast<const MeshLib::Quad*>(face.get())));
+                break;
+            }
+            case MeshElemType::LINE:
+            {
+                surface_elements.push_back(new MeshLib::Line(
+                    *static_cast<const MeshLib::Line*>(face.get())));
+                break;
+            }
+            case MeshElemType::POINT:
+            {
+                surface_elements.push_back(new MeshLib::Point(
+                    *static_cast<const MeshLib::Point*>(face.get())));
+                break;
+            }
+            default:
+                ERR("Unknown face element extracted.");
+        }
+        element_to_bulk_face_id_map.push_back(j);
+        element_to_bulk_element_id_map.push_back(surface_element.getID());
+    }
+}
+
+std::tuple<std::vector<MeshLib::Element*>, std::vector<std::size_t>,
+           std::vector<std::size_t>>
+MeshSurfaceExtraction::createSurfaceElements(MeshLib::Mesh const& bulk_mesh)
+{
     std::vector<std::size_t> element_to_bulk_element_id_map;
     std::vector<std::size_t> element_to_bulk_face_id_map;
-    std::vector<MeshLib::Element*> sfc_elements;
+    std::vector<MeshLib::Element*> surface_elements;
+
     auto const& bulk_elements = bulk_mesh.getElements();
+    auto const mesh_dimension = bulk_mesh.getDimension();
+
     for (auto const* elem : bulk_elements)
     {
         const unsigned element_dimension(elem->getDimension());
@@ -465,83 +538,68 @@ std::unique_ptr<MeshLib::Mesh> getBoundaryElementsAsMesh(
         {
             continue;
         }
+        createSurfaceElementsFromElement(*elem, surface_elements,
+                                         element_to_bulk_element_id_map,
+                                         element_to_bulk_face_id_map);
+    }
+    return {surface_elements, element_to_bulk_element_id_map,
+            element_to_bulk_face_id_map};
+}
 
-        const unsigned nFaces(elem->getNumberOfFaces());
-        for (unsigned j = 0; j < nFaces; ++j)
-        {
-            if (elem->getNeighbor(j) != nullptr)
-            {
-                continue;
-            }
-
-            auto const face =
-                std::unique_ptr<MeshLib::Element const>{elem->getFace(j)};
-            switch (face->getGeomType())
-            {
-                case MeshElemType::TRIANGLE:
-                {
-                    sfc_elements.push_back(new MeshLib::Tri(
-                        *static_cast<const MeshLib::Tri*>(face.get())));
-                    break;
-                }
-                case MeshElemType::QUAD:
-                {
-                    sfc_elements.push_back(new MeshLib::Quad(
-                        *static_cast<const MeshLib::Quad*>(face.get())));
-                    break;
-                }
-                case MeshElemType::LINE:
-                {
-                    sfc_elements.push_back(new MeshLib::Line(
-                        *static_cast<const MeshLib::Line*>(face.get())));
-                    break;
-                }
-                case MeshElemType::POINT:
-                {
-                    sfc_elements.push_back(new MeshLib::Point(
-                        *static_cast<const MeshLib::Point*>(face.get())));
-                    break;
-                }
-                default:
-                    ERR("Unknown face element extracted.");
-            }
-            element_to_bulk_element_id_map.push_back(elem->getID());
-            element_to_bulk_face_id_map.push_back(j);
-        }
+std::unique_ptr<MeshLib::Mesh> MeshSurfaceExtraction::getBoundaryElementsAsMesh(
+    MeshLib::Mesh const& bulk_mesh,
+    std::string const& subsfc_node_id_prop_name,
+    std::string const& subsfc_element_id_prop_name,
+    std::string const& face_id_prop_name)
+{
+    auto const mesh_dimension = bulk_mesh.getDimension();
+    if (mesh_dimension < 2 || mesh_dimension > 3)
+    {
+        ERR("Cannot handle meshes of dimension %i", mesh_dimension);
     }
 
-    std::vector<MeshLib::Node*> sfc_nodes;
-    std::vector<std::size_t> node_id_map(bulk_mesh.getNumberOfNodes());
-    MeshSurfaceExtraction::get2DSurfaceNodes(
-        sfc_nodes, bulk_mesh.getNumberOfNodes(), sfc_elements, node_id_map);
+    // create surface elements based on the subsurface nodes
+    std::vector<std::size_t> element_to_bulk_element_id_map;
+    std::vector<std::size_t> element_to_bulk_face_id_map;
+    std::vector<MeshLib::Element*> surface_elements;
+    std::tie(surface_elements, element_to_bulk_element_id_map,
+             element_to_bulk_face_id_map) = createSurfaceElements(bulk_mesh);
 
-    // create new elements vector with newly created nodes (and delete
-    // temp-elements)
+    // create new nodes needed for the new surface elements
+    std::vector<MeshLib::Node*> surface_nodes;
+    std::vector<std::size_t> node_id_map;
+    std::tie(surface_nodes, node_id_map) =
+        MeshSurfaceExtraction::createNodesFromElements(
+            surface_elements, bulk_mesh.getNumberOfNodes());
+
+    // create new elements using newly created nodes and delete temp-elements
     std::vector<MeshLib::Element*> new_elements;
     try
     {
         new_elements = MeshSurfaceExtraction::createSfcElementVector(
-            sfc_elements, sfc_nodes, node_id_map);
+            surface_elements, surface_nodes, node_id_map);
     }
     catch (std::runtime_error const& err)
     {
         ERR("BoundaryExtraction; could not create new surface elements:\n%s.",
             err.what());
-        std::for_each(sfc_elements.begin(), sfc_elements.end(),
+        std::for_each(surface_elements.begin(), surface_elements.end(),
                       [](MeshLib::Element* e) { delete e; });
-        std::for_each(sfc_nodes.begin(), sfc_nodes.end(),
+        std::for_each(surface_nodes.begin(), surface_nodes.end(),
                       [](MeshLib::Node* n) { delete n; });
         return nullptr;
     }
-    std::for_each(sfc_elements.begin(), sfc_elements.end(),
+    std::for_each(surface_elements.begin(), surface_elements.end(),
                   [](MeshLib::Element* e) { delete e; });
 
     std::vector<std::size_t> id_map;
-    id_map.reserve(sfc_nodes.size());
-    std::transform(begin(sfc_nodes), end(sfc_nodes), std::back_inserter(id_map),
+    id_map.reserve(surface_nodes.size());
+    std::transform(begin(surface_nodes), end(surface_nodes),
+                   std::back_inserter(id_map),
                    [](MeshLib::Node* const n) { return n->getID(); });
-    std::unique_ptr<MeshLib::Mesh> surface_mesh(
-        new Mesh(bulk_mesh.getName() + "-Surface", sfc_nodes, new_elements));
+
+    std::unique_ptr<MeshLib::Mesh> surface_mesh(new Mesh(
+        bulk_mesh.getName() + "-Surface", surface_nodes, new_elements));
 
     // transmit the original node ids of the bulk mesh as a property
     if (!subsfc_node_id_prop_name.empty())

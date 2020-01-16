@@ -80,6 +80,13 @@ public:
      */
     static MeshLib::Mesh* getMeshBoundary(const MeshLib::Mesh& mesh);
 
+    static std::unique_ptr<MeshLib::Mesh> getBoundaryElementsAsMesh(
+        MeshLib::Mesh const& bulk_mesh,
+        std::string const& subsfc_node_id_prop_name,
+        std::string const& subsfc_element_id_prop_name,
+        std::string const& face_id_prop_name);
+
+private:
     /// Functionality needed for getSurfaceNodes() and getMeshSurface()
     static void get2DSurfaceElements(
         const std::vector<MeshLib::Element*>& all_elements,
@@ -89,6 +96,20 @@ public:
         const MathLib::Vector3& dir,
         double angle,
         unsigned mesh_dimension);
+
+    static std::tuple<std::vector<MeshLib::Node*>, std::vector<std::size_t>>
+    createNodesFromElements(std::vector<MeshLib::Element*> const& elements,
+                            std::size_t const n_all_nodes);
+
+    static void createSurfaceElementsFromElement(
+        MeshLib::Element const& surface_element,
+        std::vector<MeshLib::Element*>& surface_elements,
+        std::vector<std::size_t>& element_to_bulk_element_id_map,
+        std::vector<std::size_t>& element_to_bulk_face_id_map);
+
+    static std::tuple<std::vector<MeshLib::Element*>, std::vector<std::size_t>,
+                      std::vector<std::size_t>>
+    createSurfaceElements(MeshLib::Mesh const& bulk_mesh);
 
     /// Functionality needed for getSurfaceNodes() and getMeshSurface()
     static void get2DSurfaceNodes(
@@ -134,11 +155,5 @@ public:
         std::vector<std::size_t> const& node_ids_map,
         std::vector<std::size_t> const& element_ids_map);
 };
-
-std::unique_ptr<MeshLib::Mesh> getBoundaryElementsAsMesh(
-    MeshLib::Mesh const& bulk_mesh,
-    std::string const& subsfc_node_id_prop_name,
-    std::string const& subsfc_element_id_prop_name,
-    std::string const& face_id_prop_name);
 
 }  // namespace MeshLib
