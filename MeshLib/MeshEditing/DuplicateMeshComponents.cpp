@@ -19,8 +19,8 @@
 
 namespace MeshLib
 {
-
-std::vector<MeshLib::Node*> copyNodeVector(const std::vector<MeshLib::Node*> &nodes)
+std::vector<MeshLib::Node*> copyNodeVector(
+    const std::vector<MeshLib::Node*>& nodes)
 {
     const std::size_t nNodes(nodes.size());
     std::vector<MeshLib::Node*> new_nodes;
@@ -33,7 +33,9 @@ std::vector<MeshLib::Node*> copyNodeVector(const std::vector<MeshLib::Node*> &no
     return new_nodes;
 }
 
-std::vector<MeshLib::Element*> copyElementVector(const std::vector<MeshLib::Element*> &elements, const std::vector<MeshLib::Node*> &nodes)
+std::vector<MeshLib::Element*> copyElementVector(
+    const std::vector<MeshLib::Element*>& elements,
+    const std::vector<MeshLib::Node*>& nodes)
 {
     const std::size_t nElements(elements.size());
     std::vector<MeshLib::Element*> new_elements;
@@ -45,7 +47,8 @@ std::vector<MeshLib::Element*> copyElementVector(const std::vector<MeshLib::Elem
     return new_elements;
 }
 
-MeshLib::Element* copyElement(MeshLib::Element const*const element, const std::vector<MeshLib::Node*> &nodes)
+MeshLib::Element* copyElement(MeshLib::Element const* const element,
+                              const std::vector<MeshLib::Node*>& nodes)
 {
     if (element->getGeomType() == MeshElemType::LINE)
     {
@@ -76,12 +79,13 @@ MeshLib::Element* copyElement(MeshLib::Element const*const element, const std::v
         return copyElement<MeshLib::Prism>(element, nodes);
     }
 
-    ERR ("Error: Unknown element type.");
+    ERR("Error: Unknown element type.");
     return nullptr;
 }
 
 template <typename E>
-MeshLib::Element* copyElement(MeshLib::Element const*const element, const std::vector<MeshLib::Node*> &nodes)
+MeshLib::Element* copyElement(MeshLib::Element const* const element,
+                              const std::vector<MeshLib::Node*>& nodes)
 {
     auto** new_nodes = new MeshLib::Node*[element->getNumberOfNodes()];
     for (unsigned i = 0; i < element->getNumberOfNodes(); ++i)
@@ -102,4 +106,4 @@ std::vector<MeshLib::Element*> cloneElements(
     return cloned_elements;
 }
 
-} // namespace MeshLib
+}  // namespace MeshLib
