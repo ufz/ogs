@@ -39,7 +39,7 @@ def CreateCoProcessor():
       # register the writer with coprocessor
       # and provide it with information such as the filename to use,
       # how frequently to write the data, etc.
-      coprocessor.RegisterWriter(parallelPolyDataWriter1, filename='filename_%t.pvtp', freq=1)
+      coprocessor.RegisterWriter(parallelPolyDataWriter1, filename='cube_1e1_%t.pvtp', freq=1)
 
       # ----------------------------------------------------------------
       # finally, restore active source
@@ -97,7 +97,7 @@ def DoCoProcessing(datadescription):
     coprocessor.UpdateProducers(datadescription)
 
     # Write output data, if appropriate.
-    coprocessor.WriteData(datadescription);
+    coprocessor.WriteData(datadescription)
 
     # Write image capture (Last arg: rescale lookup table), if appropriate.
     coprocessor.WriteImages(datadescription, rescale_lookuptable=False)
