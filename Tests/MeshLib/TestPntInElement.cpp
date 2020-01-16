@@ -11,21 +11,20 @@
  *              http://www.opengeosys.org/LICENSE.txt
  */
 
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 
 #include "GeoLib/Point.h"
-
-#include "MeshLib/Mesh.h"
-#include "MeshLib/Node.h"
-#include "MeshLib/MeshEditing/MeshRevision.h"
 #include "MeshLib/Elements/Element.h"
-#include "MeshLib/Elements/Tri.h"
+#include "MeshLib/Elements/Hex.h"
+#include "MeshLib/Elements/Line.h"
+#include "MeshLib/Elements/Prism.h"
+#include "MeshLib/Elements/Pyramid.h"
 #include "MeshLib/Elements/Quad.h"
 #include "MeshLib/Elements/Tet.h"
-#include "MeshLib/Elements/Hex.h"
-#include "MeshLib/Elements/Pyramid.h"
-#include "MeshLib/Elements/Prism.h"
-
+#include "MeshLib/Elements/Tri.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/MeshEditing/MeshRevision.h"
+#include "MeshLib/Node.h"
 
 std::vector<MeshLib::Node*> createNodes()
 {
