@@ -350,7 +350,7 @@ void Output::doOutput(Process const& process,
 #ifdef USE_INSITU
     // Note: last time step may be output twice: here and in
     // doOutputLastTimestep() which throws a warning.
-    InSituLib::CoProcess(process.getMesh(), t, timestep, false);
+    InSituLib::CoProcess(process.getMesh(), t, timestep, false, _output_directory);
 #endif
 }
 
@@ -365,7 +365,7 @@ void Output::doOutputLastTimestep(Process const& process,
         doOutputAlways(process, process_id, timestep, t, x);
     }
 #ifdef USE_INSITU
-    InSituLib::CoProcess(process.getMesh(), t, timestep, true);
+    InSituLib::CoProcess(process.getMesh(), t, timestep, true, _output_directory);
 #endif
 }
 

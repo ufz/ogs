@@ -19,6 +19,8 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Vtk/VtkMappedMeshSource.h"
 
+#include <filesystem>
+
 namespace InSituLib
 {
 vtkCPProcessor* Processor = nullptr;
@@ -57,7 +59,8 @@ void Finalize()
     }
 }
 void CoProcess(MeshLib::Mesh const& mesh, double const time,
-               unsigned int const timeStep, bool const lastTimeStep)
+               unsigned int const timeStep, bool const lastTimeStep,
+               std::string output_directory)
 {
     if (Processor == nullptr)
         return;
@@ -80,7 +83,10 @@ void CoProcess(MeshLib::Mesh const& mesh, double const time,
         vtkSource->Update();
         dataDescription->GetInputDescriptionByName("input")->SetGrid(
             vtkSource->GetOutput());
+        auto cwd = std::filesystem::current_path();
+        std::filesystem::current_path(output_directory);
         Processor->CoProcess(dataDescription.GetPointer());
+        std::filesystem::current_path(cwd);
         INFO("End InSitu process.");
     }
 }
