@@ -156,4 +156,13 @@ private:
         std::vector<std::size_t> const& element_ids_map);
 };
 
+void addBulkIDPropertiesToMesh(
+    MeshLib::Mesh& surface_mesh,
+    std::string const& node_to_bulk_node_id_map_name,
+    std::vector<std::size_t> const& node_to_bulk_node_id_map,
+    std::string const& element_to_bulk_element_id_map_name,
+    std::vector<std::size_t> const& element_to_bulk_element_id_map,
+    std::string const& element_to_bulk_face_id_map_name,
+    std::vector<std::size_t> const& element_to_bulk_face_id_map);
+
 }  // namespace MeshLib
