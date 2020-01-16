@@ -44,7 +44,7 @@ function (AddTest)
     endif()
     # parse arguments
     set(options NONE)
-    set(oneValueArgs EXECUTABLE PATH NAME WRAPPER TESTER ABSTOL RELTOL RUNTIME)
+    set(oneValueArgs EXECUTABLE PATH NAME WRAPPER TESTER ABSTOL RELTOL RUNTIME DEPENDS)
     set(multiValueArgs EXECUTABLE_ARGS DATA DIFF_DATA WRAPPER_ARGS REQUIREMENTS VIS)
     cmake_parse_arguments(AddTest "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
@@ -251,6 +251,9 @@ Use six arguments version of AddTest with absolute and relative tolerances")
         -P ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestWrapper.cmake
     )
     set_tests_properties(${TEST_NAME} PROPERTIES COST ${AddTest_RUNTIME})
+    if(DEFINED AddTest_DEPENDS)
+        set_tests_properties(${TEST_NAME} PROPERTIES DEPENDS ${AddTest_DEPENDS})
+    endif()
     if(EXISTS ${AddTest_SOURCE_PATH}/requirements.txt)
         set(PYTHONPATH "${AddTest_BINARY_PATH}/.venv/lib/python${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}/site-packages")
         if(WIN32)
