@@ -286,6 +286,28 @@ AddTest(
     AmmerSubsurfaceGrid.vtu AmmerGridOutput.vtu MaterialIDs MaterialIDs 0 0
 )
 
+foreach(element_type tri quad)
+    add_test(NAME ExtractBoundary-generate_input_files_${element_type}
+        COMMAND generateStructuredMesh -e ${element_type} --lx 1 --ly 1 --nx 10 --ny 10 -o ${Data_BINARY_DIR}/FileIO/square_1x1_${element_type}.vtu
+        WORKING_DIRECTORY ${Data_BINARY_DIR}/FileIO/
+    )
+
+    AddTest(
+        NAME ExtractBoundary_2D_${element_type}_Test
+        PATH FileIO/
+        EXECUTABLE ExtractBoundary
+        EXECUTABLE_ARGS -i ${Data_BINARY_DIR}/FileIO/square_1x1_${element_type}.vtu -o ${Data_BINARY_DIR}/FileIO/square_1x1_${element_type}_boundary.vtu
+        REQUIREMENTS NOT OGS_USE_MPI
+        TESTER vtkdiff
+        DIFF_DATA
+        square_1x1_${element_type}_boundary.vtu square_1x1_${element_type}_boundary.vtu bulk_node_ids bulk_node_ids 0 0
+        square_1x1_${element_type}_boundary.vtu square_1x1_${element_type}_boundary.vtu bulk_element_ids bulk_element_ids 0 0
+        square_1x1_${element_type}_boundary.vtu square_1x1_${element_type}_boundary.vtu bulk_face_ids bulk_face_ids 0 0
+        RUNTIME 1
+        DEPENDS ExtractBoundary-generate_input_files_${element_type}
+    )
+endforeach()
+
 if(OGS_USE_NETCDF)
     AddTest(
         NAME NetCDF_2D_Test
