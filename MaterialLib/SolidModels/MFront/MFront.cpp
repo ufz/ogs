@@ -159,9 +159,13 @@ const char* varTypeToString(int v)
 template <int DisplacementDim>
 MFront<DisplacementDim>::MFront(
     mgis::behaviour::Behaviour&& behaviour,
-    std::vector<ParameterLib::Parameter<double> const*>&& material_properties)
+    std::vector<ParameterLib::Parameter<double> const*>&& material_properties,
+    boost::optional<ParameterLib::CoordinateSystem> const&
+        local_coordinate_system)
     : _behaviour(std::move(behaviour)),
-      _material_properties(std::move(material_properties))
+      _material_properties(std::move(material_properties)),
+      _local_coordinate_system(
+          local_coordinate_system ? &local_coordinate_system.get() : nullptr)
 {
     auto const hypothesis = behaviour.hypothesis;
 
