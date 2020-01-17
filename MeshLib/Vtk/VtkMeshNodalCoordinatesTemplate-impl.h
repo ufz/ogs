@@ -27,7 +27,7 @@ namespace MeshLib {
 template <class Scalar> VtkMeshNodalCoordinatesTemplate<Scalar> *
 VtkMeshNodalCoordinatesTemplate<Scalar>::New()
 {
-    VTK_STANDARD_NEW_BODY(VtkMeshNodalCoordinatesTemplate<Scalar>)
+    VTK_STANDARD_NEW_BODY(VtkMeshNodalCoordinatesTemplate<Scalar>);
 }
 
 template <class Scalar> void VtkMeshNodalCoordinatesTemplate<Scalar>
