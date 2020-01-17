@@ -47,6 +47,20 @@ std::vector<MeshLib::Element*> copyElementVector(
     return new_elements;
 }
 
+/// Copies an element without change, using the nodes vector from the result
+/// mesh.
+template <typename E>
+MeshLib::Element* copyElement(MeshLib::Element const* const element,
+                              const std::vector<MeshLib::Node*>& nodes)
+{
+    auto** new_nodes = new MeshLib::Node*[element->getNumberOfNodes()];
+    for (unsigned i = 0; i < element->getNumberOfNodes(); ++i)
+    {
+        new_nodes[i] = nodes[element->getNode(i)->getID()];
+    }
+    return new E(new_nodes);
+}
+
 MeshLib::Element* copyElement(MeshLib::Element const* const element,
                               const std::vector<MeshLib::Node*>& nodes)
 {
@@ -81,18 +95,6 @@ MeshLib::Element* copyElement(MeshLib::Element const* const element,
 
     ERR("Error: Unknown element type.");
     return nullptr;
-}
-
-template <typename E>
-MeshLib::Element* copyElement(MeshLib::Element const* const element,
-                              const std::vector<MeshLib::Node*>& nodes)
-{
-    auto** new_nodes = new MeshLib::Node*[element->getNumberOfNodes()];
-    for (unsigned i = 0; i < element->getNumberOfNodes(); ++i)
-    {
-        new_nodes[i] = nodes[element->getNode(i)->getID()];
-    }
-    return new E(new_nodes);
 }
 
 std::vector<MeshLib::Element*> cloneElements(
