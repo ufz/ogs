@@ -169,13 +169,6 @@ MFront<DisplacementDim>::MFront(
 {
     auto const hypothesis = behaviour.hypothesis;
 
-    if (_behaviour.symmetry != mgis::behaviour::Behaviour::Symmetry::ISOTROPIC)
-        OGS_FATAL(
-            "The storage order of the stiffness matrix is not tested, yet. "
-            "Thus, we cannot be sure if we compute the behaviour of "
-            "anisotropic materials correctly. Therefore, currently only "
-            "isotropic materials are allowed.");
-
     if (_behaviour.gradients.size() != 1)
         OGS_FATAL(
             "The behaviour must have exactly a single gradient as input.");
