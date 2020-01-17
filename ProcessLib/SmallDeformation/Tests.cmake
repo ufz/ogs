@@ -18,6 +18,8 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE Mechanics/Linear/Orthotropy/square_1e0_orthotropic_xyz.prj)
     OgsTest(PROJECTFILE Mechanics/Linear/Orthotropy/square_1e0_orthotropic_yzx.prj)
     OgsTest(PROJECTFILE Mechanics/Linear/Orthotropy/square_1e0_orthotropic_zxy.prj)
+    OgsTest(PROJECTFILE Mechanics/Linear/Orthotropy/square_1e0_orthotropic_45xy_z.prj)
+    OgsTest(PROJECTFILE Mechanics/Linear/Orthotropy/square_1e0_orthotropic_y-xz.prj)
     OgsTest(PROJECTFILE Mechanics/Burgers/cube_1e0.prj)
     OgsTest(PROJECTFILE Mechanics/Burgers/cube_1e3.prj LARGE)
     OgsTest(PROJECTFILE Mechanics/Ehlers/cube_1e0.prj)
@@ -51,7 +53,12 @@ if (OGS_USE_MFRONT)
     OgsTest(PROJECTFILE Mechanics/MohrCoulombAbboSloan/load_test_mc.prj)
     #TODO (naumov) enable when output file format can be specified
     #OgsTest(PROJECTFILE Mechanics/MohrCoulombAbboSloan/oedometer.prj RUNTIME 80)
-
+    OgsTest(PROJECTFILE Mechanics/Linear/MFront/cube_1e0_orthotropic_xyz.prj)
+    OgsTest(PROJECTFILE Mechanics/Linear/MFront/cube_1e0_orthotropic_yzx.prj)
+    OgsTest(PROJECTFILE Mechanics/Linear/MFront/cube_1e0_orthotropic_zxy.prj)
+    OgsTest(PROJECTFILE Mechanics/Linear/MFront/square_1e0_orthotropic_xyz.prj)
+    OgsTest(PROJECTFILE Mechanics/Linear/MFront/square_1e0_orthotropic_45xy_z.prj)
+    OgsTest(PROJECTFILE Mechanics/Linear/MFront/square_1e0_orthotropic_y-xz.prj)
 # Linear elastic, no internal state variables, no external state variables.
 AddTest(
     NAME Mechanics_SDL_disc_with_hole_mfront
