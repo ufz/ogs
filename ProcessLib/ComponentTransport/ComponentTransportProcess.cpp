@@ -20,6 +20,61 @@ namespace ProcessLib
 {
 namespace ComponentTransport
 {
+
+void checkMPLProperties(MeshLib::Mesh const& mesh,
+                        ComponentTransportProcessData const& process_data)
+{
+    DBUG("Check the media properties of ComponentTransport process ...");
+
+    std::array<MaterialPropertyLib::PropertyType, 4> const
+        required_properties_medium = {
+            MaterialPropertyLib::PropertyType::porosity,
+            MaterialPropertyLib::PropertyType::transversal_dispersivity,
+            MaterialPropertyLib::PropertyType::longitudinal_dispersivity,
+            MaterialPropertyLib::PropertyType::permeability};
+
+    std::array<MaterialPropertyLib::PropertyType, 2> const
+        required_properties_liquid_phase = {
+            MaterialPropertyLib::PropertyType::density,
+            MaterialPropertyLib::PropertyType::viscosity};
+
+    std::array<MaterialPropertyLib::PropertyType, 3> const
+        required_properties_components = {
+            MaterialPropertyLib::PropertyType::retardation_factor,
+            MaterialPropertyLib::PropertyType::decay_rate,
+            MaterialPropertyLib::PropertyType::molecular_diffusion};
+
+    for (auto const& element : mesh.getElements())
+    {
+        auto const element_id = element->getID();
+
+        auto const& medium = *process_data.media_map->getMedium(element_id);
+        checkRequiredProperties(medium, required_properties_medium);
+
+        // check if liquid phase definition and the corresponding properties
+        // exists
+        auto const& liquid_phase = medium.phase("AqueousLiquid");
+        checkRequiredProperties(liquid_phase, required_properties_liquid_phase);
+
+        // check if components and the corresponding properties exists
+        auto const number_of_components = liquid_phase.numberOfComponents();
+        for (std::size_t component_id = 0; component_id < number_of_components;
+             ++component_id)
+        {
+            if (!liquid_phase.hasComponent(component_id))
+            {
+                OGS_FATAL(
+                    "The component %u in the AqueousLiquid phase isn't "
+                    "specified.",
+                    component_id);
+            }
+            auto const& component = liquid_phase.component(component_id);
+            checkRequiredProperties(component, required_properties_components);
+        }
+    }
+    DBUG("Media properties verified.");
+}
+
 ComponentTransportProcess::ComponentTransportProcess(
     std::string name,
     MeshLib::Mesh& mesh,
@@ -48,6 +103,8 @@ void ComponentTransportProcess::initializeConcreteProcess(
     MeshLib::Mesh const& mesh,
     unsigned const integration_order)
 {
+    checkMPLProperties(mesh, _process_data);
+
     const int process_id = 0;
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
