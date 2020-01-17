@@ -34,6 +34,11 @@ Component const& Phase::component(const std::size_t& index) const
     return *_components[index];
 }
 
+bool Phase::hasComponent(std::size_t const& index) const
+{
+    return _components[index] != nullptr;
+}
+
 Component const& Phase::component(std::string const& name) const
 {
     return *BaseLib::findElementOrError(
