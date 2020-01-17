@@ -96,10 +96,8 @@ MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(
         return nullptr;
     }
 
-    std::vector<MeshLib::Node*> sfc_nodes;
-    std::vector<std::size_t> node_id_map(subsfc_mesh.getNumberOfNodes());
-    get2DSurfaceNodes(sfc_nodes, subsfc_mesh.getNumberOfNodes(), sfc_elements,
-                      node_id_map);
+    auto [sfc_nodes, node_id_map] =
+        createNodesFromElements(sfc_elements, subsfc_mesh.getNumberOfNodes());
 
     // create new elements vector with newly created nodes (and delete
     // temp-elements)
@@ -272,31 +270,6 @@ void MeshSurfaceExtraction::get2DSurfaceElements(
     }
 }
 
-void MeshSurfaceExtraction::get2DSurfaceNodes(
-    std::vector<MeshLib::Node*>& sfc_nodes, std::size_t n_all_nodes,
-    const std::vector<MeshLib::Element*>& sfc_elements,
-    std::vector<std::size_t>& node_id_map)
-{
-    std::vector<const MeshLib::Node*> tmp_nodes(n_all_nodes, nullptr);
-    for (auto const* elem : sfc_elements)
-    {
-        for (unsigned j = 0; j < elem->getNumberOfBaseNodes(); ++j)
-        {
-            const MeshLib::Node* node(elem->getNode(j));
-            tmp_nodes[node->getID()] = node;
-        }
-    }
-    const std::size_t nNodes(tmp_nodes.size());
-    for (unsigned i = 0; i < nNodes; ++i)
-    {
-        if (tmp_nodes[i])
-        {
-            node_id_map[i] = sfc_nodes.size();
-            sfc_nodes.push_back(new MeshLib::Node(*tmp_nodes[i]));
-        }
-    }
-}
-
 std::vector<MeshLib::Node*> MeshSurfaceExtraction::getSurfaceNodes(
     const MeshLib::Mesh& mesh, const MathLib::Vector3& dir, double angle)
 {
@@ -308,10 +281,8 @@ std::vector<MeshLib::Node*> MeshSurfaceExtraction::getSurfaceNodes(
         mesh.getElements(), sfc_elements, element_to_bulk_element_id_map,
         element_to_bulk_face_id_map, dir, angle, mesh.getDimension());
 
-    std::vector<MeshLib::Node*> sfc_nodes;
-    std::vector<std::size_t> node_id_map(mesh.getNumberOfNodes());
-    get2DSurfaceNodes(sfc_nodes, mesh.getNumberOfNodes(), sfc_elements,
-                      node_id_map);
+    auto [sfc_nodes, node_id_map] =
+        createNodesFromElements(sfc_elements, mesh.getNumberOfNodes());
 
     for (auto e : sfc_elements)
     {

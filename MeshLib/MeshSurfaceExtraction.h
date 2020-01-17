@@ -112,12 +112,6 @@ private:
     createSurfaceElements(MeshLib::Mesh const& bulk_mesh);
 
     /// Functionality needed for getSurfaceNodes() and getMeshSurface()
-    static void get2DSurfaceNodes(
-        std::vector<MeshLib::Node*>& sfc_nodes,
-        std::size_t n_all_nodes,
-        const std::vector<MeshLib::Element*>& sfc_elements,
-        std::vector<std::size_t>& node_id_map);
-
     /// Creates the element vector for the 2d surface mesh
     static std::vector<MeshLib::Element*> createSfcElementVector(
         std::vector<MeshLib::Element*> const& sfc_elements,
