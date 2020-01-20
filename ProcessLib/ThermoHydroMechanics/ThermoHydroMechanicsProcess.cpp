@@ -366,7 +366,7 @@ void ThermoHydroMechanicsProcess<
         return;
     }
 
-    DBUG("PostNonLinearSolver HydroMechanicsProcess.");
+    DBUG("PostNonLinearSolver ThermoHydroMechanicsProcess.");
     // Calculate strain, stress or other internal variables of mechanics.
     GlobalExecutor::executeMemberOnDereferenced(
         &LocalAssemblerInterface::postNonLinearSolver, _local_assemblers,
@@ -379,7 +379,7 @@ void ThermoHydroMechanicsProcess<
                                                        GlobalVector const& x,
                                                        const int process_id)
 {
-    DBUG("Compute the secondary variables for HydroMechanicsProcess.");
+    DBUG("Compute the secondary variables for ThermoHydroMechanicsProcess.");
     GlobalExecutor::executeMemberOnDereferenced(
         &LocalAssemblerInterface::computeSecondaryVariable, _local_assemblers,
         getDOFTable(process_id), t, x, _coupled_solutions);
