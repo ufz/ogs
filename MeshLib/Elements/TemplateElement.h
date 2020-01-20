@@ -17,6 +17,8 @@
 
 #include "MeshLib/Node.h"
 #include "MeshLib/Elements/Element.h"
+#include "MeshLib/Elements/FaceRule.h"
+#include "MeshLib/Elements/CellRule.h"
 #include "MeshLib/Elements/ElementErrorCode.h"
 
 namespace MeshLib
@@ -83,6 +85,33 @@ public:
     const Element* getFace(unsigned i) const override
     {
         return ELEMENT_RULE::getFace(this, i);
+    }
+
+    /// Returns the boundary i of the element.
+    const Element* getBoundary(unsigned i) const override
+    {
+        if constexpr (std::is_convertible<ELEMENT_RULE, FaceRule>::value)
+        {
+            return ELEMENT_RULE::EdgeReturn::getEdge(this, i);
+        }
+        if constexpr (std::is_convertible<ELEMENT_RULE, CellRule>::value)
+        {
+            return ELEMENT_RULE::getFace(this, i);
+        }
+        OGS_FATAL("TemplateElement::getBoundary for boundary %u failed.", i);
+    }
+
+    /// Returns the number of boundaries of the element.
+    unsigned getNumberOfBoundaries() const override
+    {
+        if constexpr (std::is_convertible<ELEMENT_RULE, FaceRule>::value)
+        {
+            return ELEMENT_RULE::n_edges;
+        }
+        else
+        {
+            return ELEMENT_RULE::n_faces;
+        }
     }
 
     /// Get the number of edges for this element.

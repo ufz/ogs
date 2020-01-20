@@ -86,8 +86,12 @@ public:
     /// Returns the i-th face of the element.
     virtual const Element* getFace(unsigned i) const = 0;
 
+    virtual const Element* getBoundary(unsigned i) const = 0;
+
     /// Returns the ID of the element.
     virtual std::size_t getID() const final { return _id; }
+
+    virtual unsigned getNumberOfBoundaries() const = 0;
 
     /// Get the number of edges for this element.
     virtual unsigned getNumberOfEdges() const = 0;
