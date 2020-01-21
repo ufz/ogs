@@ -31,7 +31,9 @@ std::unique_ptr<Process> createLiquidFlowProcess(
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     unsigned const integration_order,
-    BaseLib::ConfigTree const& config)
+    BaseLib::ConfigTree const& config,
+    std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
+    std::string const& output_directory)
 {
     //! \ogs_file_param{prj__processes__process__type}
     config.checkConfigParameter("type", "LIQUID_FLOW");
@@ -99,11 +101,21 @@ std::unique_ptr<Process> createLiquidFlowProcess(
         INFO("The liquid flow is in homogeneous porous media.");
     }
 
+    std::unique_ptr<ProcessLib::SurfaceFluxData> surfaceflux;
+    auto calculatesurfaceflux_config =
+        //! \ogs_file_param{prj__processes__process__calculatesurfaceflux}
+        config.getConfigSubtreeOptional("calculatesurfaceflux");
+    if (calculatesurfaceflux_config)
+    {
+        surfaceflux = ProcessLib::SurfaceFluxData::createSurfaceFluxData(
+            *calculatesurfaceflux_config, meshes, output_directory);
+    }
+
     return std::make_unique<LiquidFlowProcess>(
         std::move(name), mesh, std::move(jacobian_assembler), parameters,
         integration_order, std::move(process_variables),
         std::move(secondary_variables), material_ids, gravity_axis_id, g,
-        reference_temperature, mat_config);
+        reference_temperature, mat_config, std::move(surfaceflux));
 }
 
 }  // namespace LiquidFlow

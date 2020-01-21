@@ -18,6 +18,8 @@
 #include "LiquidFlowLocalAssembler.h"
 #include "LiquidFlowMaterialProperties.h"
 #include "MeshLib/PropertyVector.h"
+// TODO(TF) used for output of flux, if output classes are ready this has to be changed
+#include "MeshLib/IO/writeMeshToFile.h"
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
 
 namespace ProcessLib
@@ -37,7 +39,8 @@ LiquidFlowProcess::LiquidFlowProcess(
     int const gravitational_axis_id,
     double const gravitational_acceleration,
     double const reference_temperature,
-    BaseLib::ConfigTree const& config)
+    BaseLib::ConfigTree const& config,
+    std::unique_ptr<ProcessLib::SurfaceFluxData>&& surfaceflux)
     : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables)),
@@ -45,7 +48,8 @@ LiquidFlowProcess::LiquidFlowProcess(
       _gravitational_acceleration(gravitational_acceleration),
       _reference_temperature(reference_temperature),
       _material_properties(
-          createLiquidFlowMaterialProperties(config, parameters, material_ids))
+          createLiquidFlowMaterialProperties(config, parameters, material_ids)),
+      _surfaceflux(std::move(surfaceflux))
 {
     DBUG("Create Liquid flow process.");
 }
@@ -119,6 +123,40 @@ void LiquidFlowProcess::computeSecondaryVariableConcrete(const double t,
         &LiquidFlowLocalAssemblerInterface::computeSecondaryVariable,
         _local_assemblers, pv.getActiveElementIDs(), getDOFTable(process_id), t,
         x, _coupled_solutions);
+}
+
+Eigen::Vector3d LiquidFlowProcess::getFlux(
+    std::size_t const element_id,
+    MathLib::Point3d const& p,
+    double const t,
+    std::vector<GlobalVector*> const& x) const
+{
+    // fetch local_x from primary variable
+    std::vector<GlobalIndexType> indices_cache;
+    auto const r_c_indices = NumLib::getRowColumnIndices(
+        element_id, *_local_to_global_index_map, indices_cache);
+    constexpr int process_id = 0;  // monolithic scheme.
+    std::vector<double> local_x(x[process_id]->get(r_c_indices.rows));
+
+    return _local_assemblers[element_id]->getFlux(p, t, local_x);
+}
+
+// this is almost a copy of the implementation in the GroundwaterFlow
+void LiquidFlowProcess::postTimestepConcreteProcess(
+    std::vector<GlobalVector*> const& x,
+    const double t,
+    const double /*dt*/,
+    int const process_id)
+{
+    if (!_surfaceflux)  // computing the surfaceflux is optional
+    {
+        return;
+    }
+
+    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
+    _surfaceflux->integrate(x, t, *this, process_id, _integration_order, _mesh,
+                            pv.getActiveElementIDs());
+    _surfaceflux->save(t);
 }
 
 }  // namespace LiquidFlow

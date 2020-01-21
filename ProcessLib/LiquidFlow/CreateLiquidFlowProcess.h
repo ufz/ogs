@@ -26,6 +26,8 @@ std::unique_ptr<Process> createLiquidFlowProcess(
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     unsigned const integration_order,
-    BaseLib::ConfigTree const& config);
+    BaseLib::ConfigTree const& config,
+    std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
+    std::string const& output_directory);
 }  // namespace LiquidFlow
 }  // namespace ProcessLib

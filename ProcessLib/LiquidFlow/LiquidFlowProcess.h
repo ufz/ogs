@@ -19,6 +19,7 @@
 #include "MaterialLib/Fluid/FluidProperties/FluidProperties.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "ProcessLib/Process.h"
+#include "ProcessLib/SurfaceFlux/SurfaceFluxData.h"
 
 namespace MeshLib
 {
@@ -69,18 +70,30 @@ public:
         int const gravitational_axis_id,
         double const gravitational_acceleration,
         double const reference_temperature,
-        BaseLib::ConfigTree const& config);
+        BaseLib::ConfigTree const& config,
+        std::unique_ptr<ProcessLib::SurfaceFluxData>&& surfaceflux);
 
     void computeSecondaryVariableConcrete(double const t,
                                           GlobalVector const& x,
                                           int const process_id) override;
 
     bool isLinear() const override { return true; }
+
+    Eigen::Vector3d getFlux(std::size_t const element_id,
+                            MathLib::Point3d const& p,
+                            double const t,
+                            std::vector<GlobalVector*> const& x) const override;
+
     int getGravitationalAxisID() const { return _gravitational_axis_id; }
     double getGravitationalAcceleration() const
     {
         return _gravitational_acceleration;
     }
+
+    void postTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
+                                     const double t,
+                                     const double dt,
+                                     int const process_id) override;
 
 private:
     void initializeConcreteProcess(
@@ -105,6 +118,8 @@ private:
 
     std::vector<std::unique_ptr<LiquidFlowLocalAssemblerInterface>>
         _local_assemblers;
+
+    std::unique_ptr<ProcessLib::SurfaceFluxData> _surfaceflux;
 };
 
 }  // namespace LiquidFlow

@@ -128,6 +128,12 @@ public:
                   std::vector<double>& local_K_data,
                   std::vector<double>& local_b_data) override;
 
+    /// Computes the flux in the point \c p_local_coords that is given in local
+    /// coordinates using the values from \c local_x.
+    Eigen::Vector3d getFlux(MathLib::Point3d const& p_local_coords,
+                            double const t,
+                            std::vector<double> const& local_x) const override;
+
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override
     {

@@ -120,13 +120,34 @@ public:
                        std::vector<GlobalVector*> const&)>
                        getFlux) override
     {
-        auto surface_element_normal =
-            MeshLib::FaceRule::getSurfaceNormal(&_surface_element);
-        surface_element_normal.normalize();
-        // At the moment (2016-09-28) the surface normal is not oriented
-        // according to the right hand rule
-        // for correct results it is necessary to multiply the normal with -1
-        surface_element_normal *= -1;
+        auto get_surface_normal =
+            [this, &bulk_mesh](
+                MeshLib::Element const& surface_element) -> MathLib::Vector3 {
+            MathLib::Vector3 surface_element_normal;
+            if (surface_element.getGeomType() == MeshLib::MeshElemType::LINE)
+            {
+                auto const bulk_normal = MeshLib::FaceRule::getSurfaceNormal(
+                    bulk_mesh.getElements()[_bulk_element_id]);
+                MathLib::Vector3 const line{*_surface_element.getNodes()[0],
+                                            *_surface_element.getNodes()[1]};
+                surface_element_normal =
+                    MathLib::crossProduct(bulk_normal, line);
+            }
+            else
+            {
+                surface_element_normal =
+                    MeshLib::FaceRule::getSurfaceNormal(&surface_element);
+            }
+            surface_element_normal.normalize();
+            // At the moment (2016-09-28) the surface normal is not oriented
+            // according to the right hand rule
+            // for correct results it is necessary to multiply the normal
+            // with -1
+            surface_element_normal *= -1;
+            return surface_element_normal;
+        };
+        auto const surface_element_normal =
+            get_surface_normal(_surface_element);
 
         double element_area = 0.0;
         std::size_t const n_integration_points =
@@ -142,7 +163,6 @@ public:
                 bulk_mesh, _bulk_element_id, _bulk_face_id, wp);
             auto const bulk_flux =
                 getFlux(_bulk_element_id, bulk_element_point, t, x);
-
             for (int component_id(0);
                  component_id < specific_flux.getNumberOfComponents();
                  ++component_id)

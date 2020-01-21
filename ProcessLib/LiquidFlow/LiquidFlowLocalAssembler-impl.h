@@ -56,6 +56,47 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
 
 template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
+Eigen::Vector3d
+LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::getFlux(
+    MathLib::Point3d const& p_local_coords, double const t,
+    std::vector<double> const& local_x) const
+{
+    // eval dNdx and invJ at p
+    auto const fe =
+        NumLib::createIsoparametricFiniteElement<ShapeFunction,
+                                                 ShapeMatricesType>(_element);
+
+    typename ShapeMatricesType::ShapeMatrices shape_matrices(
+        ShapeFunction::DIM, GlobalDim, ShapeFunction::NPOINTS);
+
+    // Note: Axial symmetry is set to false here, because we only need dNdx
+    // here, which is not affected by axial symmetry.
+    fe.computeShapeFunctions(p_local_coords.getCoords(), shape_matrices,
+                             GlobalDim, false);
+
+    // create pos object to access the correct media property
+    ParameterLib::SpatialPosition pos;
+    pos.setElementID(_element.getID());
+    const int material_id = _material_properties.getMaterialID(pos);
+
+    double pressure = 0.0;
+    NumLib::shapeFunctionInterpolate(local_x, shape_matrices.N, pressure);
+    const Eigen::MatrixXd& permeability = _material_properties.getPermeability(
+        material_id, t, pos, _element.getDimension(), pressure,
+        _reference_temperature);
+    const double mu =
+        _material_properties.getViscosity(pressure, _reference_temperature);
+
+    Eigen::Vector3d flux(0.0, 0.0, 0.0);
+    flux.head<GlobalDim>() =
+        -permeability / mu * shape_matrices.dNdx *
+        Eigen::Map<const NodalVectorType>(local_x.data(), local_x.size());
+
+    return flux;
+}
+
+template <typename ShapeFunction, typename IntegrationMethod,
+          unsigned GlobalDim>
 template <typename LaplacianGravityVelocityCalculator>
 void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     assembleMatrixAndVector(const int material_id, double const t,
