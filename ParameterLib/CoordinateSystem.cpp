@@ -85,6 +85,15 @@ Eigen::Matrix<double, 2, 2> CoordinateSystem::transformation<2>(
     Eigen::Matrix<double, 2, 2> t;
     t << e0[0], e1[0], e0[1], e1[1];
 
+#ifndef NDEBUG
+    if (std::abs(t.determinant() - 1) > std::numeric_limits<double>::epsilon())
+    {
+        OGS_FATAL(
+            "The determinant of the coordinate system transformation matrix is "
+            "'%g', which is not sufficiently close to unity.",
+            t.determinant());
+    }
+#endif  // NDEBUG
     return t;
 }
 
