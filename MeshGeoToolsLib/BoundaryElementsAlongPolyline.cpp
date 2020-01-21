@@ -13,14 +13,12 @@
 
 #include "BaseLib/quicksort.h"
 #include "GeoLib/Polyline.h"
-
-#include "MeshLib/Mesh.h"
-#include "MeshLib/Node.h"
+#include "MeshGeoToolsLib/MeshNodeSearcher.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Elements/Line.h"
+#include "MeshLib/Mesh.h"
 #include "MeshLib/MeshSearch/ElementSearch.h"
-
-#include "MeshGeoToolsLib/MeshNodeSearcher.h"
+#include "MeshLib/Node.h"
 
 namespace MeshGeoToolsLib
 {
@@ -33,10 +31,11 @@ BoundaryElementsAlongPolyline::BoundaryElementsAlongPolyline(
     auto node_ids_on_poly = mshNodeSearcher.getMeshNodeIDsAlongPolyline(ply);
     MeshLib::ElementSearch es(_mesh);
     es.searchByNodeIDs(node_ids_on_poly);
-    auto &ele_ids_near_ply = es.getSearchedElementIDs();
+    auto& ele_ids_near_ply = es.getSearchedElementIDs();
 
     // check all edges of the elements near the polyline
-    for (auto ele_id : ele_ids_near_ply) {
+    for (auto ele_id : ele_ids_near_ply)
+    {
         auto* e = _mesh.getElement(ele_id);
         // skip line elements
         if (e->getDimension() == 1)
@@ -49,9 +48,11 @@ BoundaryElementsAlongPolyline::BoundaryElementsAlongPolyline(
             continue;
         }
         // find edges on the polyline
-        for (unsigned i=0; i<e->getNumberOfEdges(); i++) {
+        for (unsigned i = 0; i < e->getNumberOfEdges(); i++)
+        {
             auto* edge = e->getEdge(i);
-            // check if all edge nodes are along the polyline (if yes, store a distance)
+            // check if all edge nodes are along the polyline (if yes, store a
+            // distance)
             std::vector<std::size_t> edge_node_distances_along_ply;
             if (includesAllEdgeNodeIDs(node_ids_on_poly, *edge,
                                        edge_node_distances_along_ply))
@@ -64,7 +65,9 @@ BoundaryElementsAlongPolyline::BoundaryElementsAlongPolyline(
                     delete edge;
                 }
                 _boundary_elements.push_back(new_edge);
-            } else {
+            }
+            else
+            {
                 delete edge;
             }
         }
@@ -74,19 +77,18 @@ BoundaryElementsAlongPolyline::BoundaryElementsAlongPolyline(
     // needed anymore in OGS-6.
     // sort picked edges according to a distance of their first node along the
     // polyline
-    std::sort(
-        begin(_boundary_elements), end(_boundary_elements),
-        [&](MeshLib::Element* e1, MeshLib::Element* e2) {
-            std::size_t dist1 = std::distance(
-                node_ids_on_poly.begin(),
-                std::find(node_ids_on_poly.begin(), node_ids_on_poly.end(),
-                          e1->getNodeIndex(0)));
-            std::size_t dist2 = std::distance(
-                node_ids_on_poly.begin(),
-                std::find(node_ids_on_poly.begin(), node_ids_on_poly.end(),
-                          e2->getNodeIndex(0)));
-            return (dist1 < dist2);
-        });
+    std::sort(begin(_boundary_elements), end(_boundary_elements),
+              [&](MeshLib::Element* e1, MeshLib::Element* e2) {
+                  std::size_t dist1 = std::distance(
+                      node_ids_on_poly.begin(),
+                      std::find(node_ids_on_poly.begin(),
+                                node_ids_on_poly.end(), e1->getNodeIndex(0)));
+                  std::size_t dist2 = std::distance(
+                      node_ids_on_poly.begin(),
+                      std::find(node_ids_on_poly.begin(),
+                                node_ids_on_poly.end(), e2->getNodeIndex(0)));
+                  return (dist1 < dist2);
+              });
 }
 
 BoundaryElementsAlongPolyline::~BoundaryElementsAlongPolyline()
@@ -97,21 +99,26 @@ BoundaryElementsAlongPolyline::~BoundaryElementsAlongPolyline()
     }
 }
 
-bool BoundaryElementsAlongPolyline::includesAllEdgeNodeIDs(const std::vector<std::size_t> &vec_node_ids, const MeshLib::Element &edge, std::vector<std::size_t> &edge_node_distances) const
+bool BoundaryElementsAlongPolyline::includesAllEdgeNodeIDs(
+    const std::vector<std::size_t>& vec_node_ids, const MeshLib::Element& edge,
+    std::vector<std::size_t>& edge_node_distances) const
 {
-    unsigned j=0;
-    for (; j<edge.getNumberOfBaseNodes(); j++) {
-        auto itr = std::find(vec_node_ids.begin(), vec_node_ids.end(), edge.getNodeIndex(j));
+    unsigned j = 0;
+    for (; j < edge.getNumberOfBaseNodes(); j++)
+    {
+        auto itr = std::find(vec_node_ids.begin(), vec_node_ids.end(),
+                             edge.getNodeIndex(j));
         if (itr != vec_node_ids.end())
         {
-            edge_node_distances.push_back(std::distance(vec_node_ids.begin(), itr));
+            edge_node_distances.push_back(
+                std::distance(vec_node_ids.begin(), itr));
         }
         else
         {
             break;
         }
     }
-    return (j==edge.getNumberOfBaseNodes());
+    return (j == edge.getNumberOfBaseNodes());
 }
 
 MeshLib::Element* BoundaryElementsAlongPolyline::modifyEdgeNodeOrdering(
@@ -150,5 +157,4 @@ MeshLib::Element* BoundaryElementsAlongPolyline::modifyEdgeNodeOrdering(
     // Return the original edge otherwise.
     return const_cast<MeshLib::Element*>(&edge);
 }
-} // end namespace MeshGeoToolsLib
-
+}  // end namespace MeshGeoToolsLib
