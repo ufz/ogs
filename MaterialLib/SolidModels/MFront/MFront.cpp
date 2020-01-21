@@ -258,6 +258,8 @@ MFront<DisplacementDim>::integrateStress(
         material_state_variables,
     double const T) const
 {
+    using namespace MathLib::KelvinVector;
+
     assert(
         dynamic_cast<MaterialStateVariables const*>(&material_state_variables));
     // New state, copy of current one, packed in unique_ptr for return.
@@ -290,19 +292,44 @@ MFront<DisplacementDim>::integrateStress(
 
     auto v = mgis::behaviour::make_view(behaviour_data);
 
-    auto const eps_prev_MFront = OGSToMFront(eps_prev);
+    // rotation tensor
+    auto const Q = [this, &x]() -> KelvinMatrixType<DisplacementDim> {
+        if (!_local_coordinate_system)
+        {
+            return KelvinMatrixType<DisplacementDim>::Identity();
+        }
+        return fourthOrderRotationMatrix(
+            _local_coordinate_system->transformation<DisplacementDim>(x));
+    }();
+
+    auto const eps_prev_MFront =
+        OGSToMFront(Q.transpose()
+                        .template topLeftCorner<
+                            KelvinVectorDimensions<DisplacementDim>::value,
+                            KelvinVectorDimensions<DisplacementDim>::value>() *
+                    eps_prev);
     for (auto i = 0; i < KelvinVector::SizeAtCompileTime; ++i)
     {
         v.s0.gradients[i] = eps_prev_MFront[i];
     }
 
-    auto const eps_MFront = OGSToMFront(eps);
+    auto const eps_MFront =
+        OGSToMFront(Q.transpose()
+                        .template topLeftCorner<
+                            KelvinVectorDimensions<DisplacementDim>::value,
+                            KelvinVectorDimensions<DisplacementDim>::value>() *
+                    eps);
     for (auto i = 0; i < KelvinVector::SizeAtCompileTime; ++i)
     {
         v.s1.gradients[i] = eps_MFront[i];
     }
 
-    auto const sigma_prev_MFront = OGSToMFront(sigma_prev);
+    auto const sigma_prev_MFront =
+        OGSToMFront(Q.transpose()
+                        .template topLeftCorner<
+                            KelvinVectorDimensions<DisplacementDim>::value,
+                            KelvinVectorDimensions<DisplacementDim>::value>() *
+                    sigma_prev);
     for (auto i = 0; i < KelvinVector::SizeAtCompileTime; ++i)
     {
         v.s0.thermodynamic_forces[i] = sigma_prev_MFront[i];
@@ -321,7 +348,10 @@ MFront<DisplacementDim>::integrateStress(
     {
         sigma[i] = behaviour_data.s1.thermodynamic_forces[i];
     }
-    sigma = MFrontToOGS(sigma);
+    sigma = Q.template topLeftCorner<
+                KelvinVectorDimensions<DisplacementDim>::value,
+                KelvinVectorDimensions<DisplacementDim>::value>() *
+            MFrontToOGS(sigma);
 
     // TODO row- vs. column-major storage order. This should only matter for
     // anisotropic materials.
@@ -330,7 +360,11 @@ MFront<DisplacementDim>::integrateStress(
         OGS_FATAL("Stiffness matrix has wrong size.");
 
     KelvinMatrix C =
-        MFrontToOGS(Eigen::Map<KelvinMatrix>(behaviour_data.K.data()));
+        Q * MFrontToOGS(Eigen::Map<KelvinMatrix>(behaviour_data.K.data())) *
+        Q.transpose()
+            .template topLeftCorner<
+                KelvinVectorDimensions<DisplacementDim>::value,
+                KelvinVectorDimensions<DisplacementDim>::value>();
 
     return std::make_optional(
         std::make_tuple<typename MFront<DisplacementDim>::KelvinVector,
