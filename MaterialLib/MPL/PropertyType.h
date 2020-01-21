@@ -267,6 +267,7 @@ static const std::array<std::string, PropertyType::number_of_properties>
                              "critical_pressure",
                              "critical_temperature",
                              "compressibility",
+                             "decay_rate",
                              "density",
                              "drhodT",
                              "effective_stress",
