@@ -291,18 +291,18 @@ void checkMPLProperties(MeshLib::Mesh const& mesh,
 {
     DBUG("Check the media properties of HT process ...");
 
-    std::vector<MaterialPropertyLib::PropertyType> const reqiredPropertyMedium =
+    std::vector<MaterialPropertyLib::PropertyType> const requiredPropertyMedium =
         {MaterialPropertyLib::PropertyType::porosity,
          MaterialPropertyLib::PropertyType::permeability};
 
     std::vector<MaterialPropertyLib::PropertyType> const
-        reqiredPropertyLiquidPhase = {
+        requiredPropertyLiquidPhase = {
             MaterialPropertyLib::PropertyType::viscosity,
             MaterialPropertyLib::PropertyType::density,
             MaterialPropertyLib::PropertyType::specific_heat_capacity};
 
     std::vector<MaterialPropertyLib::PropertyType> const
-        reqiredPropertySolidPhase = {
+        requiredPropertySolidPhase = {
             MaterialPropertyLib::PropertyType::specific_heat_capacity,
             MaterialPropertyLib::PropertyType::density,
             MaterialPropertyLib::PropertyType::storage};
@@ -314,7 +314,7 @@ void checkMPLProperties(MeshLib::Mesh const& mesh,
         // check if a definition of the porous media exists
         auto const& medium = *process_data.media_map->getMedium(element_id);
 
-        for (auto const property : reqiredPropertyMedium)
+        for (auto const property : requiredPropertyMedium)
         {
             if (!medium.hasProperty(property))
             {
@@ -327,7 +327,7 @@ void checkMPLProperties(MeshLib::Mesh const& mesh,
         // check if liquid phase definition and the corresponding properties
         // exists
         auto const& liquid_phase = medium.phase("AqueousLiquid");
-        for (auto const property : reqiredPropertyLiquidPhase)
+        for (auto const property : requiredPropertyLiquidPhase)
         {
             if (!liquid_phase.hasProperty(property))
             {
@@ -341,7 +341,7 @@ void checkMPLProperties(MeshLib::Mesh const& mesh,
         // check if solid phase definition and the corresponding properties
         // exists
         auto const& solid_phase = medium.phase("Solid");
-        for (auto const property : reqiredPropertySolidPhase)
+        for (auto const property : requiredPropertySolidPhase)
         {
             if (!solid_phase.hasProperty(property))
             {
