@@ -19,10 +19,8 @@
                 <poissons_ratio>nu</poissons_ratio>
             </constitutive_relation>
             <intrinsic_permeability>k</intrinsic_permeability>
-            <fluid_viscosity>mu</fluid_viscosity>
             <fluid_density>rho_fr</fluid_density>
             <biot_coefficient>alpha</biot_coefficient>
-            <porosity>phi</porosity>
             <solid_density>rho_sr</solid_density>
             <process_variables>
                 <displacement>displacement</displacement>
@@ -92,6 +90,32 @@
             </variables>
         </output>
     </time_loop>
+    <media>
+        <medium>
+            <phases>
+                <phase>
+                    <type>Gas</type>
+                    <properties>
+                        <property>
+                            <name>viscosity</name>
+                            <type>Constant</type>
+                            <value>1e-3</value>
+                        </property>
+                    </properties>
+                </phase>
+                <phase>
+                    <type>Solid</type>
+                    <properties>
+                        <property>
+                            <name>porosity</name>
+                            <type>Constant</type>
+                            <value>0.0</value>
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+        </medium>
+    </media>
     <parameters>
         <!-- Mechanics -->
         <parameter>
@@ -111,19 +135,9 @@
             <value>1e-16</value>
         </parameter>
         <parameter>
-            <name>mu</name>
-            <type>Constant</type>
-            <value>1e-3</value>
-        </parameter>
-        <parameter>
             <name>alpha</name>
             <type>Constant</type>
             <value>0</value>
-        </parameter>
-        <parameter>
-            <name>phi</name>
-            <type>Constant</type>
-            <value>0.0</value>
         </parameter>
         <parameter>
             <name>rho_sr</name>

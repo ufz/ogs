@@ -14,10 +14,8 @@
                 <poissons_ratio>nu</poissons_ratio>
             </constitutive_relation>
             <intrinsic_permeability>k</intrinsic_permeability>
-            <fluid_viscosity>mu</fluid_viscosity>
             <fluid_density>rho_fr</fluid_density>
             <biot_coefficient>alpha</biot_coefficient>
-            <porosity>phi</porosity>
             <solid_density>rho_sr</solid_density>
             <process_variables>
                 <displacement>displacement</displacement>
@@ -40,6 +38,32 @@
             <specific_gas_constant>287.058</specific_gas_constant>
         </process>
     </processes>
+    <media>
+        <medium>
+            <phases>
+                <phase>
+                    <type>Gas</type>
+                    <properties>
+                        <property>
+                            <name>viscosity</name>
+                            <type>Constant</type>
+                            <value>1e-5</value>
+                        </property>
+                    </properties>
+                </phase>
+                <phase>
+                    <type>Solid</type>
+                    <properties>
+                        <property>
+                            <name>porosity</name>
+                            <type>Constant</type>
+                            <value>0.3</value>
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+        </medium>
+    </media>
     <time_loop>
         <processes>
             <process ref="HM">
@@ -108,19 +132,9 @@
             <value>1e-5</value>
         </parameter>
         <parameter>
-            <name>mu</name>
-            <type>Constant</type>
-            <value>1e-5</value>
-        </parameter>
-        <parameter>
             <name>alpha</name>
             <type>Constant</type>
             <value>0.6</value>
-        </parameter>
-        <parameter>
-            <name>phi</name>
-            <type>Constant</type>
-            <value>0.3</value>
         </parameter>
         <parameter>
             <name>rho_sr</name>
