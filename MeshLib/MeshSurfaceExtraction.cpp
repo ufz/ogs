@@ -145,11 +145,11 @@ std::vector<MeshLib::Element*> createSfcElementVector(
     return new_elements;
 }
 
-std::tuple<std::vector<MeshLib::Node*>, std::vector<std::size_t>>
-createNodesFromElements(std::vector<MeshLib::Element*> const& elements,
-                        std::size_t const n_all_nodes)
+std::vector<MeshLib::Node const*> createTemporaryNodesFromElements(
+    std::vector<MeshLib::Element*> const& elements,
+    std::size_t const n_all_nodes)
 {
-    std::vector<const MeshLib::Node*> tmp_nodes(n_all_nodes, nullptr);
+    std::vector<MeshLib::Node const*> tmp_nodes(n_all_nodes, nullptr);
     for (auto const* elem : elements)
     {
         for (unsigned j = 0; j < elem->getNumberOfBaseNodes(); ++j)
@@ -158,7 +158,30 @@ createNodesFromElements(std::vector<MeshLib::Element*> const& elements,
             tmp_nodes[node->getID()] = node;
         }
     }
+    return tmp_nodes;
+}
 
+std::vector<MeshLib::Node*>
+createNodesFromElements(std::vector<MeshLib::Element*> const& elements,
+                        std::size_t const n_all_nodes)
+{
+    auto tmp_nodes = createTemporaryNodesFromElements(elements, n_all_nodes);
+    std::vector<MeshLib::Node*> nodes;
+    for (unsigned i = 0; i < n_all_nodes; ++i)
+    {
+        if (tmp_nodes[i])
+        {
+            nodes.push_back(new MeshLib::Node(*tmp_nodes[i]));
+        }
+    }
+    return nodes;
+}
+
+std::tuple<std::vector<MeshLib::Node*>, std::vector<std::size_t>>
+createNodesAndIDMapFromElements(std::vector<MeshLib::Element*> const& elements,
+                                std::size_t const n_all_nodes)
+{
+    auto tmp_nodes = createTemporaryNodesFromElements(elements, n_all_nodes);
     std::vector<MeshLib::Node*> nodes;
     std::vector<std::size_t> node_id_map(n_all_nodes);
     for (unsigned i = 0; i < n_all_nodes; ++i)
@@ -239,8 +262,8 @@ MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(
         return nullptr;
     }
 
-    auto [sfc_nodes, node_id_map] =
-        createNodesFromElements(sfc_elements, subsfc_mesh.getNumberOfNodes());
+    auto [sfc_nodes, node_id_map] = createNodesAndIDMapFromElements(
+        sfc_elements, subsfc_mesh.getNumberOfNodes());
 
     // create new elements vector with newly created nodes (and delete
     // temp-elements)
@@ -424,7 +447,7 @@ std::vector<MeshLib::Node*> MeshSurfaceExtraction::getSurfaceNodes(
         mesh.getElements(), sfc_elements, element_to_bulk_element_id_map,
         element_to_bulk_face_id_map, dir, angle, mesh.getDimension());
 
-    auto [sfc_nodes, node_id_map] =
+    auto sfc_nodes =
         createNodesFromElements(sfc_elements, mesh.getNumberOfNodes());
 
     for (auto e : sfc_elements)
@@ -535,8 +558,8 @@ std::unique_ptr<MeshLib::Mesh> getBoundaryElementsAsMesh(
           element_to_bulk_face_id_map] = createSurfaceElements(bulk_mesh);
 
     // create new nodes needed for the new surface elements
-    auto [surface_nodes, node_id_map] =
-        createNodesFromElements(surface_elements, bulk_mesh.getNumberOfNodes());
+    auto [surface_nodes, node_id_map] = createNodesAndIDMapFromElements(
+        surface_elements, bulk_mesh.getNumberOfNodes());
 
     // create new elements using newly created nodes and delete temp-elements
     std::vector<MeshLib::Element*> new_elements;
