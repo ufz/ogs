@@ -47,42 +47,8 @@ std::vector<MeshLib::Element*> copyElementVector(
     return new_elements;
 }
 
-MeshLib::Element* copyElement(MeshLib::Element const* const element,
-                              const std::vector<MeshLib::Node*>& nodes)
-{
-    if (element->getGeomType() == MeshElemType::LINE)
-    {
-        return copyElement<MeshLib::Line>(element, nodes);
-    }
-    if (element->getGeomType() == MeshElemType::TRIANGLE)
-    {
-        return copyElement<MeshLib::Tri>(element, nodes);
-    }
-    if (element->getGeomType() == MeshElemType::QUAD)
-    {
-        return copyElement<MeshLib::Quad>(element, nodes);
-    }
-    if (element->getGeomType() == MeshElemType::TETRAHEDRON)
-    {
-        return copyElement<MeshLib::Tet>(element, nodes);
-    }
-    if (element->getGeomType() == MeshElemType::HEXAHEDRON)
-    {
-        return copyElement<MeshLib::Hex>(element, nodes);
-    }
-    if (element->getGeomType() == MeshElemType::PYRAMID)
-    {
-        return copyElement<MeshLib::Pyramid>(element, nodes);
-    }
-    if (element->getGeomType() == MeshElemType::PRISM)
-    {
-        return copyElement<MeshLib::Prism>(element, nodes);
-    }
-
-    ERR("Error: Unknown element type.");
-    return nullptr;
-}
-
+/// Copies an element without change, using the nodes vector from the result
+/// mesh.
 template <typename E>
 MeshLib::Element* copyElement(MeshLib::Element const* const element,
                               const std::vector<MeshLib::Node*>& nodes)
@@ -93,6 +59,33 @@ MeshLib::Element* copyElement(MeshLib::Element const* const element,
         new_nodes[i] = nodes[element->getNode(i)->getID()];
     }
     return new E(new_nodes);
+}
+
+MeshLib::Element* copyElement(MeshLib::Element const* const element,
+                              const std::vector<MeshLib::Node*>& nodes)
+{
+    switch (element->getGeomType())
+    {
+        case MeshElemType::LINE:
+            return copyElement<MeshLib::Line>(element, nodes);
+        case MeshElemType::TRIANGLE:
+            return copyElement<MeshLib::Tri>(element, nodes);
+        case MeshElemType::QUAD:
+            return copyElement<MeshLib::Quad>(element, nodes);
+        case MeshElemType::TETRAHEDRON:
+            return copyElement<MeshLib::Tet>(element, nodes);
+        case MeshElemType::HEXAHEDRON:
+            return copyElement<MeshLib::Hex>(element, nodes);
+        case MeshElemType::PYRAMID:
+            return copyElement<MeshLib::Pyramid>(element, nodes);
+        case MeshElemType::PRISM:
+            return copyElement<MeshLib::Prism>(element, nodes);
+        default:
+        {
+    ERR ("Error: Unknown element type.");
+            return nullptr;
+        }
+    }
 }
 
 std::vector<MeshLib::Element*> cloneElements(

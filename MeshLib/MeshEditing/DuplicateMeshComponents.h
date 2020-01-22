@@ -41,12 +41,6 @@ std::vector<MeshLib::Element*> copyElementVector(
 MeshLib::Element* copyElement(MeshLib::Element const* const element,
                               const std::vector<MeshLib::Node*>& nodes);
 
-/// Copies an element without change, using the nodes vector from the result
-/// mesh.
-template <typename E>
-MeshLib::Element* copyElement(MeshLib::Element const* const element,
-                              const std::vector<MeshLib::Node*>& nodes);
-
 /// Clones a vector of elements using the Element::clone() function.
 std::vector<MeshLib::Element*> cloneElements(
     std::vector<MeshLib::Element*> const& elements);
