@@ -67,8 +67,7 @@ void HTProcess::initializeConcreteProcess(
         ProcessLib::createLocalAssemblers<MonolithicHTFEM>(
             mesh.getDimension(), mesh.getElements(), dof_table,
             pv.getShapeFunctionOrder(), _local_assemblers,
-            mesh.isAxiallySymmetric(), integration_order,
-            _process_data);
+            mesh.isAxiallySymmetric(), integration_order, _process_data);
     }
     else
     {
@@ -291,6 +290,23 @@ void checkMPLProperties(MeshLib::Mesh const& mesh,
                         HTProcessData const& process_data)
 {
     DBUG("Check the media properties of HT process ...");
+
+    std::vector<MaterialPropertyLib::PropertyType> const reqiredPropertyMedium =
+        {MaterialPropertyLib::PropertyType::porosity,
+         MaterialPropertyLib::PropertyType::permeability};
+
+    std::vector<MaterialPropertyLib::PropertyType> const
+        reqiredPropertyLiquidPhase = {
+            MaterialPropertyLib::PropertyType::viscosity,
+            MaterialPropertyLib::PropertyType::density,
+            MaterialPropertyLib::PropertyType::specific_heat_capacity};
+
+    std::vector<MaterialPropertyLib::PropertyType> const
+        reqiredPropertySolidPhase = {
+            MaterialPropertyLib::PropertyType::specific_heat_capacity,
+            MaterialPropertyLib::PropertyType::density,
+            MaterialPropertyLib::PropertyType::storage};
+
     for (auto const& element : mesh.getElements())
     {
         auto const element_id = element->getID();
@@ -298,59 +314,42 @@ void checkMPLProperties(MeshLib::Mesh const& mesh,
         // check if a definition of the porous media exists
         auto const& medium = *process_data.media_map->getMedium(element_id);
 
-        // checking general medium properties
-        if (!medium.hasProperty(MaterialPropertyLib::PropertyType::porosity))
+        for (auto const property : reqiredPropertyMedium)
         {
-            OGS_FATAL("The porosity for the porous media isn't specified.");
-        }
-        if (!medium.hasProperty(
-                MaterialPropertyLib::PropertyType::permeability))
-        {
-            OGS_FATAL("The permeability for the porous media isn't specified.");
+            if (!medium.hasProperty(property))
+            {
+                OGS_FATAL("The property '%s' is not specified for the medium.",
+                          MaterialPropertyLib::property_enum_to_string[property]
+                              .c_str());
+            }
         }
 
         // check if liquid phase definition and the corresponding properties
         // exists
         auto const& liquid_phase = medium.phase("AqueousLiquid");
-        if (!liquid_phase.hasProperty(
-                MaterialPropertyLib::PropertyType::viscosity))
+        for (auto const property : reqiredPropertyLiquidPhase)
         {
-            OGS_FATAL(
-                "The viscosity for the AqueousLiquid phase isn't specified.");
-        }
-        if (!liquid_phase.hasProperty(
-                MaterialPropertyLib::PropertyType::density))
-        {
-            OGS_FATAL(
-                "The density for the AqueousLiquid phase isn't specified.");
-        }
-        if (!liquid_phase.hasProperty(
-                MaterialPropertyLib::PropertyType::specific_heat_capacity))
-        {
-            OGS_FATAL(
-                "The specific heat capacity for the AqueousLiquid phase "
-                "isn't specified.");
+            if (!liquid_phase.hasProperty(property))
+            {
+                OGS_FATAL(
+                    "The property '%s' is not specified for the liquid phase.",
+                    MaterialPropertyLib::property_enum_to_string[property]
+                        .c_str());
+            }
         }
 
         // check if solid phase definition and the corresponding properties
         // exists
         auto const& solid_phase = medium.phase("Solid");
-        if (!solid_phase.hasProperty(
-                MaterialPropertyLib::PropertyType::specific_heat_capacity))
+        for (auto const property : reqiredPropertySolidPhase)
         {
-            OGS_FATAL(
-                "The specific heat capacity for the Solid phase isn't "
-                "specified.");
-        }
-        if (!solid_phase.hasProperty(
-                MaterialPropertyLib::PropertyType::density))
-        {
-            OGS_FATAL("The density for the Solid phase isn't specified.");
-        }
-        if (!solid_phase.hasProperty(
-                MaterialPropertyLib::PropertyType::storage))
-        {
-            OGS_FATAL("The storage for the Solid phase isn't specified.");
+            if (!solid_phase.hasProperty(property))
+            {
+                OGS_FATAL(
+                    "The property '%s' is not specified for the solid phase.",
+                    MaterialPropertyLib::property_enum_to_string[property]
+                        .c_str());
+            }
         }
     }
     DBUG("Media properties verified.");
