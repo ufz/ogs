@@ -66,7 +66,7 @@ HydroMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         _ip_data.emplace_back(solid_material);
         auto& ip_data = _ip_data[ip];
         auto const& sm_u = shape_matrices_u[ip];
-        _ip_data[ip].integration_weight =
+       ip_data.integration_weight =
             _integration_method.getWeightedPoint(ip).getWeight() *
             sm_u.integralMeasure * sm_u.detJ;
 
@@ -228,7 +228,8 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
             (_process_data.fluid_type == FluidType::Fluid_Type::IDEAL_GAS)
                 ? N_p.dot(p)
                 : std::numeric_limits<double>::quiet_NaN();
-        double const rho_fr = _process_data.getFluidDensity(t, x_position, p_fr);
+        double const rho_fr =
+            _process_data.getFluidDensity(t, x_position, p_fr);
         double const beta_p = _process_data.getFluidCompressibility(p_fr);
         auto const porosity =
             solid_phase.property(MaterialPropertyLib::PropertyType::porosity)
@@ -242,8 +243,8 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         //
         eps.noalias() = B * u;
 
-        auto C =
-            _ip_data[ip].updateConstitutiveRelation(t, x_position, dt, u, T_ref);
+        auto C = _ip_data[ip].updateConstitutiveRelation(t, x_position, dt, u,
+                                                         T_ref);
 
         local_Jac
             .template block<displacement_size, displacement_size>(
@@ -271,7 +272,8 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
             ((alpha - porosity) * (1.0 - alpha) / K_S + porosity * beta_p);
 
         add_p_derivative.noalias() += rho_fr * beta_p * dNdx_p.transpose() *
-            K_over_mu * (dNdx_p * p - 2.0 * rho_fr * b) * N_p * w;
+                                      K_over_mu *
+                                      (dNdx_p * p - 2.0 * rho_fr * b) * N_p * w;
 
         local_rhs.template segment<pressure_size>(pressure_index).noalias() +=
             dNdx_p.transpose() * rho_fr * rho_fr * K_over_mu * b * w;
@@ -442,7 +444,8 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
             (_process_data.fluid_type == FluidType::Fluid_Type::IDEAL_GAS)
                 ? N_p.dot(p)
                 : std::numeric_limits<double>::quiet_NaN();
-        double const rho_fr = _process_data.getFluidDensity(t, x_position, p_fr);
+        double const rho_fr =
+            _process_data.getFluidDensity(t, x_position, p_fr);
         double const beta_p = _process_data.getFluidCompressibility(p_fr);
         auto const porosity =
             solid_phase.property(MaterialPropertyLib::PropertyType::porosity)
