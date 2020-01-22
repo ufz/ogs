@@ -291,21 +291,19 @@ void checkMPLProperties(MeshLib::Mesh const& mesh,
 {
     DBUG("Check the media properties of HT process ...");
 
-    std::vector<MaterialPropertyLib::PropertyType> const requiredPropertyMedium =
-        {MaterialPropertyLib::PropertyType::porosity,
-         MaterialPropertyLib::PropertyType::permeability};
+    std::array const requiredPropertyMedium = {
+        MaterialPropertyLib::PropertyType::porosity,
+        MaterialPropertyLib::PropertyType::permeability};
 
-    std::vector<MaterialPropertyLib::PropertyType> const
-        requiredPropertyLiquidPhase = {
-            MaterialPropertyLib::PropertyType::viscosity,
-            MaterialPropertyLib::PropertyType::density,
-            MaterialPropertyLib::PropertyType::specific_heat_capacity};
+    std::array const requiredPropertyLiquidPhase = {
+        MaterialPropertyLib::PropertyType::viscosity,
+        MaterialPropertyLib::PropertyType::density,
+        MaterialPropertyLib::PropertyType::specific_heat_capacity};
 
-    std::vector<MaterialPropertyLib::PropertyType> const
-        requiredPropertySolidPhase = {
-            MaterialPropertyLib::PropertyType::specific_heat_capacity,
-            MaterialPropertyLib::PropertyType::density,
-            MaterialPropertyLib::PropertyType::storage};
+    std::array const requiredPropertySolidPhase = {
+        MaterialPropertyLib::PropertyType::specific_heat_capacity,
+        MaterialPropertyLib::PropertyType::density,
+        MaterialPropertyLib::PropertyType::storage};
 
     for (auto const& element : mesh.getElements())
     {
