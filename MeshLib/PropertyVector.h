@@ -25,8 +25,7 @@ class PropertyVectorBase
 {
 public:
     virtual PropertyVectorBase* clone(
-        std::vector<std::size_t> const& exclude_positions
-    ) const = 0;
+        std::vector<std::size_t> const& exclude_positions) const = 0;
     virtual ~PropertyVectorBase() = default;
 
     MeshItemType getMeshItemType() const { return _mesh_item_type; }
@@ -40,7 +39,8 @@ protected:
         : _n_components(n_components),
           _mesh_item_type(mesh_item_type),
           _property_name(std::move(property_name))
-    {}
+    {
+    }
 
     int const _n_components;
     MeshItemType const _mesh_item_type;
@@ -53,9 +53,9 @@ protected:
 /// \tparam PROP_VAL_TYPE typical this is a scalar, a vector or a matrix
 template <typename PROP_VAL_TYPE>
 class PropertyVector : public std::vector<PROP_VAL_TYPE>,
-    public PropertyVectorBase
+                       public PropertyVectorBase
 {
-friend class Properties;
+    friend class Properties;
 
 public:
     std::size_t getNumberOfTuples() const
@@ -91,11 +91,9 @@ public:
         return t;
     }
 
-    /// Method returns the number of tuples times the number of tuple components.
-    std::size_t size() const
-    {
-        return std::vector<PROP_VAL_TYPE>::size();
-    }
+    /// Method returns the number of tuples times the number of tuple
+    /// components.
+    std::size_t size() const { return std::vector<PROP_VAL_TYPE>::size(); }
 
 protected:
     /// @brief The constructor taking meta information for the data.
@@ -108,7 +106,8 @@ protected:
                             std::size_t n_components)
         : std::vector<PROP_VAL_TYPE>(),
           PropertyVectorBase(property_name, mesh_item_type, n_components)
-    {}
+    {
+    }
 
     /// @brief The constructor taking meta information for the data.
     /// @param n_property_values number of property values (value can be a tuple
@@ -123,23 +122,25 @@ protected:
                    std::size_t n_components)
         : std::vector<PROP_VAL_TYPE>(n_property_values * n_components),
           PropertyVectorBase(property_name, mesh_item_type, n_components)
-    {}
+    {
+    }
 };
 
 /// Class template PropertyVector is a std::vector with template parameter
 /// T, where T is a pointer type.
-/// The behaviour has changed for the constructor, destructor and the operator[].
-/// The user has to provide the size and an item to group mapping for construction.
-/// The destructor takes care to delete the entries of the vector.
-/// The operator[] uses an item-to-group property map to access the
+/// The behaviour has changed for the constructor, destructor and the
+/// operator[]. The user has to provide the size and an item to group mapping
+/// for construction. The destructor takes care to delete the entries of the
+/// vector. The operator[] uses an item-to-group property map to access the
 /// correct property.
 /// \tparam T pointer type, the type the type points to is typical a scalar,
 /// a vector or a matrix type
 template <typename T>
 class PropertyVector<T*> : public std::vector<std::size_t>,
-    public PropertyVectorBase
+                           public PropertyVectorBase
 {
-friend class Properties;
+    friend class Properties;
+
 public:
     /// Destructor ensures the deletion of the heap-constructed objects.
     ~PropertyVector() override
@@ -157,7 +158,7 @@ public:
         return _values[std::vector<std::size_t>::operator[](id)];
     }
 
-    T* & operator[](std::size_t id)
+    T*& operator[](std::size_t id)
     {
         return _values[std::vector<std::size_t>::operator[](id)];
     }
@@ -197,7 +198,8 @@ public:
         return std::vector<std::size_t>::size();
     }
 
-    /// Method returns the number of tuples times the number of tuple components.
+    /// Method returns the number of tuples times the number of tuple
+    /// components.
     std::size_t size() const
     {
         return _n_components * std::vector<std::size_t>::size();
@@ -207,15 +209,13 @@ public:
         std::vector<std::size_t> const& exclude_positions) const override
     {
         // create new PropertyVector with modified mapping
-        PropertyVector<T*> *t(new PropertyVector<T*>
-            (
-                _values.size()/_n_components,
-                BaseLib::excludeObjectCopy(*this, exclude_positions),
-                _property_name, _mesh_item_type, _n_components
-            )
-        );
+        PropertyVector<T*>* t(new PropertyVector<T*>(
+            _values.size() / _n_components,
+            BaseLib::excludeObjectCopy(*this, exclude_positions),
+            _property_name, _mesh_item_type, _n_components));
         // copy pointers to property values
-        for (std::size_t j(0); j<_values.size(); j++) {
+        for (std::size_t j(0); j < _values.size(); j++)
+        {
             std::vector<T> values(_values[j], _values[j] + _n_components);
             t->initPropertyValue(j, values);
         }
@@ -239,16 +239,17 @@ public:
     }
 
 #ifndef NDEBUG
-    std::ostream& print(std::ostream &os) const
+    std::ostream& print(std::ostream& os) const
     {
         os << "\nPropertyVector<T*> at address: " << this << ":\n";
-        os << "\tmapping (" << size() <<"):\n";
+        os << "\tmapping (" << size() << "):\n";
         std::copy(this->cbegin(), this->cend(),
-            std::ostream_iterator<std::size_t>(os, " "));
+                  std::ostream_iterator<std::size_t>(os, " "));
         os << "\n\tvalues (" << _values.size() << "):\n";
         for (std::size_t k(0); k < _values.size(); k++)
         {
-            os << "val: " << *(_values[k]) << ", address: " << _values[k] << "\n";
+            os << "val: " << *(_values[k]) << ", address: " << _values[k]
+               << "\n";
         }
         return os;
     }
@@ -275,7 +276,8 @@ protected:
         : std::vector<std::size_t>(std::move(item2group_mapping)),
           PropertyVectorBase(property_name, mesh_item_type, n_components),
           _values(n_prop_groups * n_components)
-    {}
+    {
+    }
 
 private:
     std::vector<T*> _values;
@@ -283,4 +285,4 @@ private:
     T* at(std::size_t);
 };
 
-} // end namespace MeshLib
+}  // end namespace MeshLib
