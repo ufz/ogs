@@ -137,9 +137,9 @@ std::vector<MeshLib::Element*> createSfcElementVector(
     return new_elements;
 }
 
-std::vector<MeshLib::Node const*> createTemporaryNodesFromElements(
-    std::vector<MeshLib::Element*> const& elements,
-    std::size_t const n_all_nodes)
+std::tuple<std::vector<MeshLib::Node*>, std::vector<std::size_t>>
+createNodesAndIDMapFromElements(std::vector<MeshLib::Element*> const& elements,
+                                std::size_t const n_all_nodes)
 {
     std::vector<MeshLib::Node const*> tmp_nodes(n_all_nodes, nullptr);
     for (auto const* elem : elements)
@@ -151,30 +151,7 @@ std::vector<MeshLib::Node const*> createTemporaryNodesFromElements(
             tmp_nodes[node->getID()] = node;
         }
     }
-    return tmp_nodes;
-}
 
-std::vector<MeshLib::Node*>
-createNodesFromElements(std::vector<MeshLib::Element*> const& elements,
-                        std::size_t const n_all_nodes)
-{
-    auto tmp_nodes = createTemporaryNodesFromElements(elements, n_all_nodes);
-    std::vector<MeshLib::Node*> nodes;
-    for (unsigned i = 0; i < n_all_nodes; ++i)
-    {
-        if (tmp_nodes[i])
-        {
-            nodes.push_back(new MeshLib::Node(*tmp_nodes[i]));
-        }
-    }
-    return nodes;
-}
-
-std::tuple<std::vector<MeshLib::Node*>, std::vector<std::size_t>>
-createNodesAndIDMapFromElements(std::vector<MeshLib::Element*> const& elements,
-                                std::size_t const n_all_nodes)
-{
-    auto tmp_nodes = createTemporaryNodesFromElements(elements, n_all_nodes);
     std::vector<MeshLib::Node*> nodes;
     std::vector<std::size_t> node_id_map(n_all_nodes);
     for (unsigned i = 0; i < n_all_nodes; ++i)
