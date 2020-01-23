@@ -152,7 +152,8 @@ std::vector<MeshLib::Node const*> createTemporaryNodesFromElements(
     std::vector<MeshLib::Node const*> tmp_nodes(n_all_nodes, nullptr);
     for (auto const* elem : elements)
     {
-        for (unsigned j = 0; j < elem->getNumberOfBaseNodes(); ++j)
+        auto const n_nodes = elem->getNumberOfNodes();
+        for (unsigned j = 0; j < n_nodes; ++j)
         {
             const MeshLib::Node* node(elem->getNode(j));
             tmp_nodes[node->getID()] = node;
@@ -472,37 +473,8 @@ void createSurfaceElementsFromElement(
             continue;
         }
 
-        auto const face = std::unique_ptr<MeshLib::Element const>{
-            surface_element.getBoundary(j)};
-        switch (face->getGeomType())
-        {
-            case MeshElemType::TRIANGLE:
-            {
-                surface_elements.push_back(new MeshLib::Tri(
-                    *static_cast<const MeshLib::Tri*>(face.get())));
-                break;
-            }
-            case MeshElemType::QUAD:
-            {
-                surface_elements.push_back(new MeshLib::Quad(
-                    *static_cast<const MeshLib::Quad*>(face.get())));
-                break;
-            }
-            case MeshElemType::LINE:
-            {
-                surface_elements.push_back(new MeshLib::Line(
-                    *static_cast<const MeshLib::Line*>(face.get())));
-                break;
-            }
-            case MeshElemType::POINT:
-            {
-                surface_elements.push_back(new MeshLib::Point(
-                    *static_cast<const MeshLib::Point*>(face.get())));
-                break;
-            }
-            default:
-                ERR("Unknown face element extracted.");
-        }
+        surface_elements.push_back(
+            const_cast<MeshLib::Element*>(surface_element.getBoundary(j)));
         element_to_bulk_face_id_map.push_back(j);
         element_to_bulk_element_id_map.push_back(surface_element.getID());
     }
