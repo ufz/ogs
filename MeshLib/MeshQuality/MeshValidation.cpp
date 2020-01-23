@@ -156,22 +156,28 @@ unsigned MeshValidation::detectHoles(MeshLib::Mesh const& mesh)
         return 0;
     }
 
-    MeshLib::Mesh* boundary_mesh (MeshSurfaceExtraction::getMeshBoundary(mesh));
-    std::vector<MeshLib::Element*> const& elements (boundary_mesh->getElements());
+    MeshLib::Mesh* boundary_mesh(MeshSurfaceExtraction::getMeshBoundary(mesh));
+    std::vector<MeshLib::Element*> const& elements(
+        boundary_mesh->getElements());
 
-    std::vector<unsigned> sfc_idx (elements.size(), std::numeric_limits<unsigned>::max());
-    unsigned current_surface_id (0);
+    std::vector<unsigned> sfc_idx(elements.size(),
+                                  std::numeric_limits<unsigned>::max());
+    unsigned current_surface_id(0);
     auto it = sfc_idx.cbegin();
 
     while (it != sfc_idx.cend())
     {
-        std::size_t const idx = static_cast<std::size_t>(std::distance(sfc_idx.cbegin(), it));
+        std::size_t const idx =
+            static_cast<std::size_t>(std::distance(sfc_idx.cbegin(), it));
         trackSurface(elements[idx], sfc_idx, current_surface_id++);
-        it = std::find(sfc_idx.cbegin(), sfc_idx.cend(), std::numeric_limits<unsigned>::max());
+        it = std::find(sfc_idx.cbegin(),
+                       sfc_idx.cend(),
+                       std::numeric_limits<unsigned>::max());
     }
     delete boundary_mesh;
 
-    // Subtract "1" from the number of surfaces found to get the number of holes.
+    // Subtract "1" from the number of surfaces found to get the number of
+    // holes.
     return (--current_surface_id);
 }
 
