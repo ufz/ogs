@@ -277,52 +277,6 @@ MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(
     return result;
 }
 
-MeshLib::Mesh* MeshSurfaceExtraction::getMeshBoundary(const MeshLib::Mesh& mesh)
-{
-    if (mesh.getDimension() == 1)
-    {
-        return nullptr;
-    }
-
-    // For 3D meshes return the 2D surface
-    if (mesh.getDimension() == 3)
-    {
-        MathLib::Vector3 dir(0, 0, 0);
-        return getMeshSurface(mesh, dir, 90);
-    }
-
-    // For 2D meshes return the boundary lines
-    std::vector<MeshLib::Node*> nodes =
-        MeshLib::copyNodeVector(mesh.getNodes());
-    std::vector<MeshLib::Element*> boundary_elements;
-
-    std::vector<MeshLib::Element*> const& org_elems(mesh.getElements());
-    for (auto elem : org_elems)
-    {
-        std::size_t const n_edges(elem->getNumberOfEdges());
-        for (std::size_t i = 0; i < n_edges; ++i)
-        {
-            if (elem->getNeighbor(i) == nullptr)
-            {
-                MeshLib::Element const* const edge(elem->getEdge(i));
-                boundary_elements.push_back(MeshLib::copyElement(edge, nodes));
-                delete edge;
-            }
-        }
-    }
-    MeshLib::Mesh* result =
-        new MeshLib::Mesh("Boundary Mesh", nodes, boundary_elements);
-    MeshLib::NodeSearch ns(*result);
-    if (ns.searchUnused() == 0)
-    {
-        return result;
-    }
-    auto removed = MeshLib::removeNodes(*result, ns.getSearchedNodeIDs(),
-                                        result->getName());
-    delete result;
-    return removed;
-}
-
 void MeshSurfaceExtraction::get2DSurfaceElements(
     const std::vector<MeshLib::Element*>& all_elements,
     std::vector<MeshLib::Element*>& sfc_elements,
