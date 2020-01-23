@@ -12,6 +12,9 @@
 
 #include <cassert>
 
+#include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
+#include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
+
 #include "MaterialLib/SolidModels/CreateConstitutiveRelation.h"
 #include "MaterialLib/SolidModels/MechanicsBase.h"
 #include "ParameterLib/Utils.h"
@@ -27,15 +30,14 @@ namespace HydroMechanics
 {
 template <int DisplacementDim>
 std::unique_ptr<Process> createHydroMechanicsProcess(
-    std::string name,
-    MeshLib::Mesh& mesh,
+    std::string name, MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     boost::optional<ParameterLib::CoordinateSystem> const&
         local_coordinate_system,
-    unsigned const integration_order,
-    BaseLib::ConfigTree const& config)
+    unsigned const integration_order, BaseLib::ConfigTree const& config,
+    std::map<int, std::unique_ptr<MaterialPropertyLib::Medium>> const& media)
 {
     //! \ogs_file_param{prj__processes__process__type}
     config.checkConfigParameter("type", "HYDRO_MECHANICS");
@@ -118,14 +120,6 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     DBUG("Use '%s' as intrinsic conductivity parameter.",
          intrinsic_permeability.name.c_str());
 
-    // Fluid viscosity
-    auto& fluid_viscosity = ParameterLib::findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS__fluid_viscosity}
-        "fluid_viscosity", parameters, 1, &mesh);
-    DBUG("Use '%s' as fluid viscosity parameter.",
-         fluid_viscosity.name.c_str());
-
     // Fluid density
     auto& fluid_density = ParameterLib::findParameter<double>(
         config,
@@ -140,13 +134,6 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         "biot_coefficient", parameters, 1, &mesh);
     DBUG("Use '%s' as Biot coefficient parameter.",
          biot_coefficient.name.c_str());
-
-    // Porosity
-    auto& porosity = ParameterLib::findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS__porosity}
-        "porosity", parameters, 1, &mesh);
-    DBUG("Use '%s' as porosity parameter.", porosity.name.c_str());
 
     // Solid density
     auto& solid_density = ParameterLib::findParameter<double>(
@@ -173,6 +160,9 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
 
         std::copy_n(b.data(), b.size(), specific_body_force.data());
     }
+
+    auto media_map =
+        MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
 
     // Initial stress conditions
     auto const initial_stress = ParameterLib::findOptionalTagParameter<double>(
@@ -217,10 +207,10 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     }
 
     HydroMechanicsProcessData<DisplacementDim> process_data{
-        materialIDs(mesh),     std::move(solid_constitutive_relations),
+        materialIDs(mesh),     std::move(media_map),
+        std::move(solid_constitutive_relations),
         initial_stress,        intrinsic_permeability,
-        fluid_viscosity,       fluid_density,
-        biot_coefficient,      porosity,
+        fluid_density,         biot_coefficient,
         solid_density,         specific_body_force,
         fluid_compressibility, reference_temperature,
         specific_gas_constant, fluid_type};
@@ -245,7 +235,8 @@ template std::unique_ptr<Process> createHydroMechanicsProcess<2>(
     boost::optional<ParameterLib::CoordinateSystem> const&
         local_coordinate_system,
     unsigned const integration_order,
-    BaseLib::ConfigTree const& config);
+    BaseLib::ConfigTree const& config,
+    std::map<int, std::unique_ptr<MaterialPropertyLib::Medium>> const& media);
 
 template std::unique_ptr<Process> createHydroMechanicsProcess<3>(
     std::string name,
@@ -256,7 +247,8 @@ template std::unique_ptr<Process> createHydroMechanicsProcess<3>(
     boost::optional<ParameterLib::CoordinateSystem> const&
         local_coordinate_system,
     unsigned const integration_order,
-    BaseLib::ConfigTree const& config);
+    BaseLib::ConfigTree const& config,
+    std::map<int, std::unique_ptr<MaterialPropertyLib::Medium>> const& media);
 
 }  // namespace HydroMechanics
 }  // namespace ProcessLib

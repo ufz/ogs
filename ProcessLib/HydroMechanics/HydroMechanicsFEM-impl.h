@@ -14,6 +14,8 @@
 #include "HydroMechanicsFEM.h"
 
 #include "MaterialLib/SolidModels/SelectSolidConstitutiveRelation.h"
+#include "MaterialLib/MPL/Medium.h"
+#include "MaterialLib/MPL/Property.h"
 #include "MathLib/KelvinVector.h"
 #include "NumLib/Function/Interpolation.h"
 #include "ProcessLib/CoupledSolutionsForStaggeredScheme.h"
@@ -180,6 +182,11 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
+
+    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    auto const& gas_phase = medium->phase("Gas");
+    auto const& solid_phase = medium->phase("Solid");
+    MaterialPropertyLib::VariableArray vars;
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         x_position.setIntegrationPoint(ip);
@@ -206,9 +213,13 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto& eps = _ip_data[ip].eps;
         auto const& sigma_eff = _ip_data[ip].sigma_eff;
 
+        auto const mu =
+            gas_phase.property(MaterialPropertyLib::PropertyType::viscosity)
+                .template value<double>(vars, x_position, t);
+
         double const K_over_mu =
-            _process_data.intrinsic_permeability(t, x_position)[0] /
-            _process_data.fluid_viscosity(t, x_position)[0];
+            _process_data.intrinsic_permeability(t, x_position)[0] / mu;
+
         auto const alpha = _process_data.biot_coefficient(t, x_position)[0];
         auto const K_S = solid_material.getBulkModulus(t, x_position);
         auto const rho_sr = _process_data.solid_density(t, x_position)[0];
@@ -219,7 +230,9 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 : std::numeric_limits<double>::quiet_NaN();
         double const rho_fr = _process_data.getFluidDensity(t, x_position, p_fr);
         double const beta_p = _process_data.getFluidCompressibility(p_fr);
-        auto const porosity = _process_data.porosity(t, x_position)[0];
+        auto const porosity =
+            solid_phase.property(MaterialPropertyLib::PropertyType::porosity)
+                .template value<double>(vars, x_position, t);
         auto const& identity2 = MathLib::KelvinVector::Invariants<
             MathLib::KelvinVector::KelvinVectorDimensions<
                 DisplacementDim>::value>::identity2;
@@ -326,12 +339,21 @@ HydroMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
+
+    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    auto const& gas_phase = medium->phase("Gas");
+    MaterialPropertyLib::VariableArray vars;
+
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         x_position.setIntegrationPoint(ip);
+
+        auto const mu =
+            gas_phase.property(MaterialPropertyLib::PropertyType::viscosity)
+                .template value<double>(vars, x_position, t);
+
         double const K_over_mu =
-            _process_data.intrinsic_permeability(t, x_position)[0] /
-            _process_data.fluid_viscosity(t, x_position)[0];
+            _process_data.intrinsic_permeability(t, x_position)[0] / mu;
 
         auto const rho_fr = _process_data.fluid_density(t, x_position)[0];
         auto const& b = _process_data.specific_body_force;
@@ -391,6 +413,11 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
 
+    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    auto const& gas_phase = medium->phase("Gas");
+    auto const& solid_phase = medium->phase("Solid");
+    MaterialPropertyLib::VariableArray vars;
+
     int const n_integration_points = _integration_method.getNumberOfPoints();
     for (int ip = 0; ip < n_integration_points; ip++)
     {
@@ -403,9 +430,12 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const& N_p = _ip_data[ip].N_p;
         auto const& dNdx_p = _ip_data[ip].dNdx_p;
 
+        auto const mu =
+            gas_phase.property(MaterialPropertyLib::PropertyType::viscosity)
+                .template value<double>(vars, x_position, t);
+
         double const K_over_mu =
-            _process_data.intrinsic_permeability(t, x_position)[0] /
-            _process_data.fluid_viscosity(t, x_position)[0];
+            _process_data.intrinsic_permeability(t, x_position)[0] / mu;
         auto const alpha_b = _process_data.biot_coefficient(t, x_position)[0];
         // TODO (FZill) get fluid properties from GPML
         double const p_fr =
@@ -414,7 +444,9 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 : std::numeric_limits<double>::quiet_NaN();
         double const rho_fr = _process_data.getFluidDensity(t, x_position, p_fr);
         double const beta_p = _process_data.getFluidCompressibility(p_fr);
-        auto const porosity = _process_data.porosity(t, x_position)[0];
+        auto const porosity =
+            solid_phase.property(MaterialPropertyLib::PropertyType::porosity)
+                .template value<double>(vars, x_position, t);
         auto const K_S = solid_material.getBulkModulus(t, x_position);
 
         laplace.noalias() += dNdx_p.transpose() * K_over_mu * dNdx_p * w;
@@ -477,6 +509,10 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
 
+    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    auto const& solid_phase = medium->phase("Solid");
+    MaterialPropertyLib::VariableArray vars;
+
     int const n_integration_points = _integration_method.getNumberOfPoints();
     for (int ip = 0; ip < n_integration_points; ip++)
     {
@@ -506,7 +542,9 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const alpha = _process_data.biot_coefficient(t, x_position)[0];
         auto const rho_sr = _process_data.solid_density(t, x_position)[0];
         auto const rho_fr = _process_data.fluid_density(t, x_position)[0];
-        auto const porosity = _process_data.porosity(t, x_position)[0];
+        auto const porosity =
+            solid_phase.property(MaterialPropertyLib::PropertyType::porosity)
+                .template value<double>(vars, x_position, t);
         auto const& b = _process_data.specific_body_force;
         auto const& identity2 = MathLib::KelvinVector::Invariants<
             MathLib::KelvinVector::KelvinVectorDimensions<

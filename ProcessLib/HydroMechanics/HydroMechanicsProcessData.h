@@ -18,6 +18,8 @@
 
 #include <Eigen/Dense>
 
+#include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
+
 namespace MaterialLib
 {
 namespace Solids
@@ -35,6 +37,9 @@ struct HydroMechanicsProcessData
 {
     MeshLib::PropertyVector<int> const* const material_ids = nullptr;
 
+    std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>
+        media_map = nullptr;
+
     /// The constitutive relation for the mechanical part.
     /// \note Linear elasticity is the only supported one in the moment.
     std::map<
@@ -49,15 +54,10 @@ struct HydroMechanicsProcessData
     /// Permeability of the solid. A scalar quantity,
     /// ParameterLib::Parameter<double>.
     ParameterLib::Parameter<double> const& intrinsic_permeability;
-    /// Fluid's viscosity. A scalar quantity, ParameterLib::Parameter<double>.
-    ParameterLib::Parameter<double> const& fluid_viscosity;
     /// Fluid's density. A scalar quantity, ParameterLib::Parameter<double>.
     ParameterLib::Parameter<double> const& fluid_density;
     /// Biot coefficient. A scalar quantity, ParameterLib::Parameter<double>.
     ParameterLib::Parameter<double> const& biot_coefficient;
-    /// Porosity of the solid. A scalar quantity,
-    /// ParameterLib::Parameter<double>.
-    ParameterLib::Parameter<double> const& porosity;
     /// Solid's density. A scalar quantity, ParameterLib::Parameter<double>.
     ParameterLib::Parameter<double> const& solid_density;
     /// Specific body forces applied to solid and fluid.
