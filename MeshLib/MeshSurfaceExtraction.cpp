@@ -131,29 +131,8 @@ std::vector<MeshLib::Element*> createSfcElementVector(
     new_elements.reserve(sfc_elements.size());
     for (auto sfc_element : sfc_elements)
     {
-        unsigned const n_elem_nodes(sfc_element->getNumberOfBaseNodes());
-        auto** new_nodes = new MeshLib::Node*[n_elem_nodes];
-        for (unsigned k(0); k < n_elem_nodes; k++)
-        {
-            new_nodes[k] =
-                sfc_nodes[node_id_map[sfc_element->getNode(k)->getID()]];
-        }
-        switch (sfc_element->getGeomType())
-        {
-            case MeshElemType::TRIANGLE:
-                new_elements.push_back(new MeshLib::Tri(new_nodes));
-                break;
-            case MeshElemType::QUAD:
-                new_elements.push_back(new MeshLib::Quad(new_nodes));
-                break;
-            case MeshElemType::LINE:
-                new_elements.push_back(new MeshLib::Line(new_nodes));
-                break;
-            default:
-                OGS_FATAL(
-                    "createSfcElementVector Unknown element type '%s'.",
-                    MeshElemType2String(sfc_element->getGeomType()).c_str());
-        }
+        new_elements.push_back(
+            MeshLib::copyElement(sfc_element, sfc_nodes, &node_id_map));
     }
     return new_elements;
 }
