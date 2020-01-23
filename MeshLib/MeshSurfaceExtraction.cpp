@@ -440,15 +440,16 @@ std::vector<MeshLib::Node*> MeshSurfaceExtraction::getSurfaceNodes(
         mesh.getElements(), sfc_elements, element_to_bulk_element_id_map,
         element_to_bulk_face_id_map, dir, angle, mesh.getDimension());
 
-    auto sfc_nodes =
-        createNodesFromElements(sfc_elements, mesh.getNumberOfNodes());
+    std::vector<MeshLib::Node*> surface_nodes;
+    std::tie(surface_nodes, std::ignore) =
+        createNodesAndIDMapFromElements(sfc_elements, mesh.getNumberOfNodes());
 
     for (auto e : sfc_elements)
     {
         delete e;
     }
 
-    return sfc_nodes;
+    return surface_nodes;
 }
 
 void createSurfaceElementsFromElement(
