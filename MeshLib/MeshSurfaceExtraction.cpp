@@ -37,18 +37,31 @@ bool processPropertyVector(std::string const& name,
                            std::vector<std::size_t> const& id_map,
                            MeshLib::Mesh& sfc_mesh)
 {
-    if (!properties.existsPropertyVector<T>(name, type, 1))
+    if (!properties.existsPropertyVector<T>(name))
     {
         return false;
     }
-    auto sfc_prop = getOrCreateMeshProperty<T>(sfc_mesh, name, type, 1);
+
+    auto const& org_vec = *properties.getPropertyVector<T>(name);
+    if (type != org_vec.getMeshItemType())
+    {
+        return false;
+    }
+    auto const number_of_components = org_vec.getNumberOfComponents();
+
+    auto sfc_prop =
+        getOrCreateMeshProperty<T>(sfc_mesh, name, type, number_of_components);
     sfc_prop->clear();
     sfc_prop->reserve(id_map.size());
 
-    auto const& org_vec = *properties.getPropertyVector<T>(name, type, 1);
-    std::transform(
-        begin(id_map), end(id_map), std::back_inserter(*sfc_prop),
-        [&org_vec](std::size_t const bulk_id) { return org_vec[bulk_id]; });
+    for (auto bulk_id : id_map)
+    {
+        for (auto component_id = 0; component_id < number_of_components;
+             ++component_id)
+        {
+            sfc_prop->push_back(org_vec.getComponent(bulk_id, component_id));
+        }
+    }
 
     return true;
 }
