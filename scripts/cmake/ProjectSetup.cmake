@@ -26,7 +26,15 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
+# RPATH setup
 set(CMAKE_MACOSX_RPATH 1)
+if(APPLE)
+    set(CMAKE_BUILD_RPATH "@executable_path/../${CMAKE_INSTALL_LIBDIR}")
+    set(CMAKE_INSTALL_RPATH "@executable_path/../${CMAKE_INSTALL_LIBDIR}")
+else()
+    set(CMAKE_BUILD_RPATH "$ORIGIN/../${CMAKE_INSTALL_LIBDIR}")
+    set(CMAKE_INSTALL_RPATH "$ORIGIN/../${CMAKE_INSTALL_LIBDIR}")
+endif()
 
 if(NOT IS_GIT_REPO)
     return()
