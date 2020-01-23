@@ -78,25 +78,41 @@ MeshLib::Element* copyElement(
     const std::vector<MeshLib::Node*>& nodes,
     std::vector<std::size_t> const* const id_map)
 {
-    switch (element->getGeomType())
+    switch (element->getCellType())
     {
-        case MeshElemType::LINE:
+        case CellType::LINE2:
             return copyElement<MeshLib::Line>(element, nodes, id_map);
-        case MeshElemType::TRIANGLE:
+        case CellType::LINE3:
+            return copyElement<MeshLib::Line3>(element, nodes, id_map);
+        case CellType::TRI3:
             return copyElement<MeshLib::Tri>(element, nodes, id_map);
-        case MeshElemType::QUAD:
+        case CellType::TRI6:
+            return copyElement<MeshLib::Tri6>(element, nodes, id_map);
+        case CellType::QUAD4:
             return copyElement<MeshLib::Quad>(element, nodes, id_map);
-        case MeshElemType::TETRAHEDRON:
+        case CellType::QUAD8:
+            return copyElement<MeshLib::Quad8>(element, nodes, id_map);
+        case CellType::QUAD9:
+            return copyElement<MeshLib::Quad9>(element, nodes, id_map);
+        case CellType::TET4:
             return copyElement<MeshLib::Tet>(element, nodes, id_map);
-        case MeshElemType::HEXAHEDRON:
+        case CellType::TET10:
+            return copyElement<MeshLib::Tet10>(element, nodes, id_map);
+        case CellType::HEX8:
             return copyElement<MeshLib::Hex>(element, nodes, id_map);
-        case MeshElemType::PYRAMID:
+        case CellType::HEX20:
+            return copyElement<MeshLib::Hex20>(element, nodes, id_map);
+        case CellType::PYRAMID5:
             return copyElement<MeshLib::Pyramid>(element, nodes, id_map);
-        case MeshElemType::PRISM:
+        case CellType::PYRAMID13:
+            return copyElement<MeshLib::Pyramid13>(element, nodes, id_map);
+        case CellType::PRISM6:
             return copyElement<MeshLib::Prism>(element, nodes, id_map);
+        case CellType::PRISM15:
+            return copyElement<MeshLib::Prism15>(element, nodes, id_map);
         default:
         {
-    ERR ("Error: Unknown element type.");
+            ERR("Error: Unknown cell type.");
             return nullptr;
         }
     }
