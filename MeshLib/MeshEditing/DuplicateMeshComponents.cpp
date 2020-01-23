@@ -51,35 +51,49 @@ std::vector<MeshLib::Element*> copyElementVector(
 /// mesh.
 template <typename E>
 MeshLib::Element* copyElement(MeshLib::Element const* const element,
-                              const std::vector<MeshLib::Node*>& nodes)
+                              const std::vector<MeshLib::Node*>& nodes,
+                              std::vector<std::size_t> const* const id_map)
 {
-    auto** new_nodes = new MeshLib::Node*[element->getNumberOfNodes()];
-    for (unsigned i = 0; i < element->getNumberOfNodes(); ++i)
+    unsigned const number_of_element_nodes(element->getNumberOfNodes());
+    auto** new_nodes = new MeshLib::Node*[number_of_element_nodes];
+    if (id_map)
     {
-        new_nodes[i] = nodes[element->getNode(i)->getID()];
+        for (unsigned i = 0; i < number_of_element_nodes; ++i)
+        {
+            new_nodes[i] = nodes[(*id_map)[element->getNode(i)->getID()]];
+        }
+    }
+    else
+    {
+        for (unsigned i = 0; i < number_of_element_nodes; ++i)
+        {
+            new_nodes[i] = nodes[element->getNode(i)->getID()];
+        }
     }
     return new E(new_nodes);
 }
 
-MeshLib::Element* copyElement(MeshLib::Element const* const element,
-                              const std::vector<MeshLib::Node*>& nodes)
+MeshLib::Element* copyElement(
+    MeshLib::Element const* const element,
+    const std::vector<MeshLib::Node*>& nodes,
+    std::vector<std::size_t> const* const id_map)
 {
     switch (element->getGeomType())
     {
         case MeshElemType::LINE:
-            return copyElement<MeshLib::Line>(element, nodes);
+            return copyElement<MeshLib::Line>(element, nodes, id_map);
         case MeshElemType::TRIANGLE:
-            return copyElement<MeshLib::Tri>(element, nodes);
+            return copyElement<MeshLib::Tri>(element, nodes, id_map);
         case MeshElemType::QUAD:
-            return copyElement<MeshLib::Quad>(element, nodes);
+            return copyElement<MeshLib::Quad>(element, nodes, id_map);
         case MeshElemType::TETRAHEDRON:
-            return copyElement<MeshLib::Tet>(element, nodes);
+            return copyElement<MeshLib::Tet>(element, nodes, id_map);
         case MeshElemType::HEXAHEDRON:
-            return copyElement<MeshLib::Hex>(element, nodes);
+            return copyElement<MeshLib::Hex>(element, nodes, id_map);
         case MeshElemType::PYRAMID:
-            return copyElement<MeshLib::Pyramid>(element, nodes);
+            return copyElement<MeshLib::Pyramid>(element, nodes, id_map);
         case MeshElemType::PRISM:
-            return copyElement<MeshLib::Prism>(element, nodes);
+            return copyElement<MeshLib::Prism>(element, nodes, id_map);
         default:
         {
     ERR ("Error: Unknown element type.");
