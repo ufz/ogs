@@ -34,15 +34,15 @@ std::vector<MeshLib::Node*> copyNodeVector(
 }
 
 std::vector<MeshLib::Element*> copyElementVector(
-    const std::vector<MeshLib::Element*>& elements,
-    const std::vector<MeshLib::Node*>& nodes)
+    std::vector<MeshLib::Element*> const& elements,
+    std::vector<MeshLib::Node*> const& new_nodes,
+    std::vector<std::size_t> const* const node_id_map)
 {
-    const std::size_t nElements(elements.size());
     std::vector<MeshLib::Element*> new_elements;
-    new_elements.reserve(nElements);
-    for (std::size_t k = 0; k < nElements; ++k)
+    new_elements.reserve(elements.size());
+    for (auto element : elements)
     {
-        new_elements.push_back(copyElement(elements[k], nodes));
+        new_elements.push_back(copyElement(element, new_nodes, node_id_map));
     }
     return new_elements;
 }
