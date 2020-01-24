@@ -406,7 +406,7 @@ void createSurfaceElementsFromElement(
 
 std::tuple<std::vector<MeshLib::Element*>, std::vector<std::size_t>,
            std::vector<std::size_t>>
-createSurfaceElements(MeshLib::Mesh const& bulk_mesh)
+createBoundaryElements(MeshLib::Mesh const& bulk_mesh)
 {
     std::vector<std::size_t> element_to_bulk_element_id_map;
     std::vector<std::size_t> element_to_bulk_face_id_map;
@@ -449,13 +449,13 @@ std::unique_ptr<MeshLib::Mesh> getBoundaryElementsAsMesh(
         ERR("Cannot handle meshes of dimension %i", mesh_dimension);
     }
 
-    // create surface elements based on the subsurface nodes
-    auto [surface_elements, element_to_bulk_element_id_map,
-          element_to_bulk_face_id_map] = createSurfaceElements(bulk_mesh);
+    // create boundary elements based on the subsurface nodes
+    auto [boundary_elements, element_to_bulk_element_id_map,
+          element_to_bulk_face_id_map] = createBoundaryElements(bulk_mesh);
 
     // create new nodes needed for the new surface elements
-    auto [surface_nodes, node_id_map] = createNodesAndIDMapFromElements(
-        surface_elements, bulk_mesh.getNumberOfNodes());
+    auto [boundary_nodes, node_id_map] = createNodesAndIDMapFromElements(
+        boundary_elements, bulk_mesh.getNumberOfNodes());
 
     // create new elements using newly created nodes and delete temp-elements
     std::vector<MeshLib::Element*> new_elements;
@@ -466,7 +466,7 @@ std::unique_ptr<MeshLib::Mesh> getBoundaryElementsAsMesh(
     }
     catch (std::runtime_error const& err)
     {
-        ERR("BoundaryExtraction; could not create new surface elements:\n%s.",
+        ERR("BoundaryExtraction; could not create new boundary elements:\n%s.",
             err.what());
         std::for_each(surface_elements.begin(), surface_elements.end(),
                       [](MeshLib::Element* e) { delete e; });
@@ -478,27 +478,27 @@ std::unique_ptr<MeshLib::Mesh> getBoundaryElementsAsMesh(
                   [](MeshLib::Element* e) { delete e; });
 
     std::vector<std::size_t> nodes_to_bulk_nodes_id_map;
-    nodes_to_bulk_nodes_id_map.reserve(surface_nodes.size());
-    std::transform(begin(surface_nodes), end(surface_nodes),
+    nodes_to_bulk_nodes_id_map.reserve(boundary_nodes.size());
+    std::transform(begin(boundary_nodes), end(boundary_nodes),
                    std::back_inserter(nodes_to_bulk_nodes_id_map),
                    [](MeshLib::Node* const n) { return n->getID(); });
 
-    std::unique_ptr<MeshLib::Mesh> surface_mesh(new Mesh(
-        bulk_mesh.getName() + "-Surface", surface_nodes, new_elements));
+    std::unique_ptr<MeshLib::Mesh> boundary_mesh(new Mesh(
+        bulk_mesh.getName() + "-boundary", boundary_nodes, new_elements));
 
     addBulkIDPropertiesToMesh(
-        *surface_mesh, subsfc_node_id_prop_name, nodes_to_bulk_nodes_id_map,
+        *boundary_mesh, subsfc_node_id_prop_name, nodes_to_bulk_nodes_id_map,
         subsfc_element_id_prop_name, element_to_bulk_element_id_map,
         face_id_prop_name, element_to_bulk_face_id_map);
 
     /// Copies relevant parts of scalar arrays to the surface mesh
-    if (!createSfcMeshProperties(*surface_mesh, bulk_mesh.getProperties(),
+    if (!createSfcMeshProperties(*boundary_mesh, bulk_mesh.getProperties(),
                                  nodes_to_bulk_nodes_id_map,
                                  element_to_bulk_element_id_map))
     {
         ERR("Transferring subsurface properties failed.");
     }
-    return surface_mesh;
+    return boundary_mesh;
 }
 
 }  // namespace BoundaryExtraction
