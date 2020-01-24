@@ -11,12 +11,17 @@
 #pragma once
 
 #include <boost/optional.hpp>
+#include <map>
 #include <memory>
 #include <vector>
 
 namespace BaseLib
 {
 class ConfigTree;
+}
+namespace MaterialPropertyLib
+{
+class Medium;
 }
 namespace MeshLib
 {
@@ -48,7 +53,8 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     boost::optional<ParameterLib::CoordinateSystem> const&
         local_coordinate_system,
     unsigned const integration_order,
-    BaseLib::ConfigTree const& config);
+    BaseLib::ConfigTree const& config,
+    std::map<int, std::unique_ptr<MaterialPropertyLib::Medium>> const& media);
 
 extern template std::unique_ptr<Process> createHydroMechanicsProcess<2>(
     std::string name,
@@ -59,7 +65,8 @@ extern template std::unique_ptr<Process> createHydroMechanicsProcess<2>(
     boost::optional<ParameterLib::CoordinateSystem> const&
         local_coordinate_system,
     unsigned const integration_order,
-    BaseLib::ConfigTree const& config);
+    BaseLib::ConfigTree const& config,
+    std::map<int, std::unique_ptr<MaterialPropertyLib::Medium>> const& media);
 
 extern template std::unique_ptr<Process> createHydroMechanicsProcess<3>(
     std::string name,
@@ -70,6 +77,7 @@ extern template std::unique_ptr<Process> createHydroMechanicsProcess<3>(
     boost::optional<ParameterLib::CoordinateSystem> const&
         local_coordinate_system,
     unsigned const integration_order,
-    BaseLib::ConfigTree const& config);
+    BaseLib::ConfigTree const& config,
+    std::map<int, std::unique_ptr<MaterialPropertyLib::Medium>> const& media);
 }  // namespace HydroMechanics
 }  // namespace ProcessLib
