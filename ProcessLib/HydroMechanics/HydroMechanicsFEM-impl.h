@@ -220,9 +220,14 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         double const K_over_mu =
             _process_data.intrinsic_permeability(t, x_position)[0] / mu;
 
-        auto const alpha = _process_data.biot_coefficient(t, x_position)[0];
+        auto const alpha =
+            solid_phase
+                .property(MaterialPropertyLib::PropertyType::biot_coefficient)
+                .template value<double>(vars, x_position, t);
         auto const K_S = solid_material.getBulkModulus(t, x_position);
-        auto const rho_sr = _process_data.solid_density(t, x_position)[0];
+        auto const rho_sr =
+            solid_phase.property(MaterialPropertyLib::PropertyType::density)
+                .template value<double>(vars, x_position, t);
         // TODO (FZill) get fluid properties from GPML
         double const p_fr =
             (_process_data.fluid_type == FluidType::Fluid_Type::IDEAL_GAS)
@@ -438,7 +443,10 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         double const K_over_mu =
             _process_data.intrinsic_permeability(t, x_position)[0] / mu;
-        auto const alpha_b = _process_data.biot_coefficient(t, x_position)[0];
+        auto const alpha_b =
+            solid_phase
+                .property(MaterialPropertyLib::PropertyType::biot_coefficient)
+                .template value<double>(vars, x_position, t);
         // TODO (FZill) get fluid properties from GPML
         double const p_fr =
             (_process_data.fluid_type == FluidType::Fluid_Type::IDEAL_GAS)
@@ -542,8 +550,13 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto& eps = _ip_data[ip].eps;
         auto const& sigma_eff = _ip_data[ip].sigma_eff;
 
-        auto const alpha = _process_data.biot_coefficient(t, x_position)[0];
-        auto const rho_sr = _process_data.solid_density(t, x_position)[0];
+        auto const alpha =
+            solid_phase
+                .property(MaterialPropertyLib::PropertyType::biot_coefficient)
+                .template value<double>(vars, x_position, t);
+        auto const rho_sr =
+            solid_phase.property(MaterialPropertyLib::PropertyType::density)
+                .template value<double>(vars, x_position, t);
         auto const rho_fr = _process_data.fluid_density(t, x_position)[0];
         auto const porosity =
             solid_phase.property(MaterialPropertyLib::PropertyType::porosity)

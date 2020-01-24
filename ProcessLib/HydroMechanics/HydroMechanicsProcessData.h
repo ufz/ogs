@@ -56,10 +56,6 @@ struct HydroMechanicsProcessData
     ParameterLib::Parameter<double> const& intrinsic_permeability;
     /// Fluid's density. A scalar quantity, ParameterLib::Parameter<double>.
     ParameterLib::Parameter<double> const& fluid_density;
-    /// Biot coefficient. A scalar quantity, ParameterLib::Parameter<double>.
-    ParameterLib::Parameter<double> const& biot_coefficient;
-    /// Solid's density. A scalar quantity, ParameterLib::Parameter<double>.
-    ParameterLib::Parameter<double> const& solid_density;
     /// Specific body forces applied to solid and fluid.
     /// It is usually used to apply gravitational forces.
     /// A vector of displacement dimension's length.
