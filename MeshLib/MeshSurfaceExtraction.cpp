@@ -122,21 +122,6 @@ bool createSfcMeshProperties(MeshLib::Mesh& sfc_mesh,
     return true;
 }
 
-std::vector<MeshLib::Element*> createSfcElementVector(
-    std::vector<MeshLib::Element*> const& sfc_elements,
-    std::vector<MeshLib::Node*> const& sfc_nodes,
-    std::vector<std::size_t> const& node_id_map)
-{
-    std::vector<MeshLib::Element*> new_elements;
-    new_elements.reserve(sfc_elements.size());
-    for (auto sfc_element : sfc_elements)
-    {
-        new_elements.push_back(
-            MeshLib::copyElement(sfc_element, sfc_nodes, &node_id_map));
-    }
-    return new_elements;
-}
-
 std::tuple<std::vector<MeshLib::Node*>, std::vector<std::size_t>>
 createNodesAndIDMapFromElements(std::vector<MeshLib::Element*> const& elements,
                                 std::size_t const n_all_nodes)
@@ -237,23 +222,8 @@ MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(
 
     // create new elements vector with newly created nodes (and delete
     // temp-elements)
-    std::vector<MeshLib::Element*> new_elements;
-    try
-    {
-        new_elements =
-            createSfcElementVector(sfc_elements, sfc_nodes, node_id_map);
-    }
-    catch (std::runtime_error const& err)
-    {
-        ERR("MeshSurfaceExtraction; could not create new surface "
-            "elements:\n%s.",
-            err.what());
-        std::for_each(sfc_elements.begin(), sfc_elements.end(),
-                      [](MeshLib::Element* e) { delete e; });
-        std::for_each(sfc_nodes.begin(), sfc_nodes.end(),
-                      [](MeshLib::Node* n) { delete n; });
-        return nullptr;
-    }
+    auto new_elements =
+        MeshLib::copyElementVector(sfc_elements, sfc_nodes, &node_id_map);
     std::for_each(sfc_elements.begin(), sfc_elements.end(),
                   [](MeshLib::Element* e) { delete e; });
 
@@ -458,24 +428,12 @@ std::unique_ptr<MeshLib::Mesh> getBoundaryElementsAsMesh(
         boundary_elements, bulk_mesh.getNumberOfNodes());
 
     // create new elements using newly created nodes and delete temp-elements
-    std::vector<MeshLib::Element*> new_elements;
-    try
+    auto new_elements = MeshLib::copyElementVector(
+        boundary_elements, boundary_nodes, &node_id_map);
+    for (auto* e : boundary_elements)
     {
-        new_elements = createSfcElementVector(surface_elements, surface_nodes,
-                                              node_id_map);
+        delete e;
     }
-    catch (std::runtime_error const& err)
-    {
-        ERR("BoundaryExtraction; could not create new boundary elements:\n%s.",
-            err.what());
-        std::for_each(surface_elements.begin(), surface_elements.end(),
-                      [](MeshLib::Element* e) { delete e; });
-        std::for_each(surface_nodes.begin(), surface_nodes.end(),
-                      [](MeshLib::Node* n) { delete n; });
-        return nullptr;
-    }
-    std::for_each(surface_elements.begin(), surface_elements.end(),
-                  [](MeshLib::Element* e) { delete e; });
 
     std::vector<std::size_t> nodes_to_bulk_nodes_id_map;
     nodes_to_bulk_nodes_id_map.reserve(boundary_nodes.size());
