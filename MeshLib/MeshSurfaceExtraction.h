@@ -70,16 +70,6 @@ public:
         std::string const& subsfc_element_id_prop_name = "",
         std::string const& face_id_prop_name = "");
 
-    /**
-     * Returns the boundary of mesh, i.e. lines for 2D meshes and surfaces for
-     * 3D meshes. Note, that this method also returns inner boundaries and might
-     * give unexpected results when the mesh geometry is not strict (e.g. more
-     * than two triangles sharing an edge). \param mesh The original mesh of
-     * dimension d \return     A mesh of dimension (d-1) representing the
-     * boundary of the mesh.
-     */
-    static MeshLib::Mesh* getMeshBoundary(const MeshLib::Mesh& mesh);
-
 private:
     /// Functionality needed for getSurfaceNodes() and getMeshSurface()
     static void get2DSurfaceElements(
@@ -90,50 +80,24 @@ private:
         const MathLib::Vector3& dir,
         double angle,
         unsigned mesh_dimension);
-
-    /// Functionality needed for getSurfaceNodes() and getMeshSurface()
-    static void get2DSurfaceNodes(
-        std::vector<MeshLib::Node*>& sfc_nodes,
-        std::size_t n_all_nodes,
-        const std::vector<MeshLib::Element*>& sfc_elements,
-        std::vector<std::size_t>& node_id_map);
-
-    /// Creates the element vector for the 2d surface mesh
-    static std::vector<MeshLib::Element*> createSfcElementVector(
-        std::vector<MeshLib::Element*> const& sfc_elements,
-        std::vector<MeshLib::Node*> const& sfc_nodes,
-        std::vector<std::size_t> const& node_id_map);
-
-    template <typename T>
-    static bool processPropertyVector(std::string const& name,
-                                      MeshLib::MeshItemType const type,
-                                      MeshLib::Properties const& properties,
-                                      std::size_t const /*vec_size*/,
-                                      std::vector<std::size_t> const& id_map,
-                                      MeshLib::Mesh& sfc_mesh)
-    {
-        if (!properties.existsPropertyVector<T>(name, type, 1))
-        {
-            return false;
-        }
-        auto sfc_prop = getOrCreateMeshProperty<T>(sfc_mesh, name, type, 1);
-        sfc_prop->clear();
-        sfc_prop->reserve(id_map.size());
-
-        auto const& org_vec = *properties.getPropertyVector<T>(name, type, 1);
-        std::transform(
-            begin(id_map), end(id_map), std::back_inserter(*sfc_prop),
-            [&org_vec](std::size_t const bulk_id) { return org_vec[bulk_id]; });
-
-        return true;
-    }
-
-    /// Copies relevant parts of scalar arrays to the surface mesh
-    static bool createSfcMeshProperties(
-        MeshLib::Mesh& sfc_mesh,
-        MeshLib::Properties const& properties,
-        std::vector<std::size_t> const& node_ids_map,
-        std::vector<std::size_t> const& element_ids_map);
 };
 
-}  // end namespace MeshLib
+namespace BoundaryExtraction
+{
+std::unique_ptr<MeshLib::Mesh> getBoundaryElementsAsMesh(
+    MeshLib::Mesh const& bulk_mesh,
+    std::string const& subsfc_node_id_prop_name,
+    std::string const& subsfc_element_id_prop_name,
+    std::string const& face_id_prop_name);
+}
+
+void addBulkIDPropertiesToMesh(
+    MeshLib::Mesh& surface_mesh,
+    std::string const& node_to_bulk_node_id_map_name,
+    std::vector<std::size_t> const& node_to_bulk_node_id_map,
+    std::string const& element_to_bulk_element_id_map_name,
+    std::vector<std::size_t> const& element_to_bulk_element_id_map,
+    std::string const& element_to_bulk_face_id_map_name,
+    std::vector<std::size_t> const& element_to_bulk_face_id_map);
+
+}  // namespace MeshLib

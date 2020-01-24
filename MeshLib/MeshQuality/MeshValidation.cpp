@@ -156,7 +156,8 @@ unsigned MeshValidation::detectHoles(MeshLib::Mesh const& mesh)
         return 0;
     }
 
-    MeshLib::Mesh* boundary_mesh(MeshSurfaceExtraction::getMeshBoundary(mesh));
+    auto boundary_mesh = MeshLib::BoundaryExtraction::getBoundaryElementsAsMesh(
+        mesh, "bulk_node_ids", "bulk_element_ids", "bulk_face_ids");
     std::vector<MeshLib::Element*> const& elements(
         boundary_mesh->getElements());
 
@@ -174,7 +175,6 @@ unsigned MeshValidation::detectHoles(MeshLib::Mesh const& mesh)
                        sfc_idx.cend(),
                        std::numeric_limits<unsigned>::max());
     }
-    delete boundary_mesh;
 
     // Subtract "1" from the number of surfaces found to get the number of
     // holes.

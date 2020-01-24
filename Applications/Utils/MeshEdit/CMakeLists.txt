@@ -7,6 +7,7 @@ set(TOOLS
     createLayeredMeshFromRasters
     createQuadraticMesh
     editMaterialID
+    ExtractBoundary
     ExtractSurface
     MapGeometryToMeshSurface
     MoveMesh

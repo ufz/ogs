@@ -90,56 +90,106 @@ protected:
 TEST_F(MeshLibBoundaryElementSearchInSimpleQuadMesh, PolylineSearch)
 {
     ASSERT_TRUE(_quad_mesh != nullptr);
-    const unsigned n_eles_per_dir = _number_of_subdivisions_per_direction;
-    const unsigned n_nodes_per_dir = _number_of_subdivisions_per_direction + 1;
 
-    // create a polyline (closed)
-    _pnts.push_back(new GeoLib::Point(0.0, 0.0, 0.0));
-    _pnts.push_back(new GeoLib::Point(_geometric_size, 0.0, 0.0));
-    _pnts.push_back(new GeoLib::Point(_geometric_size, _geometric_size, 0.0));
-    _pnts.push_back(new GeoLib::Point(0.0, _geometric_size, 0.0));
-    GeoLib::Polyline ply0(_pnts);
-    ply0.addPoint(0);
-    ply0.addPoint(1);
-    ply0.addPoint(2);
-    ply0.addPoint(3);
-    ply0.addPoint(0);
-
-    // perform search on the polyline
     MeshGeoToolsLib::MeshNodeSearcher mesh_node_searcher(
         *_quad_mesh,
         std::make_unique<MeshGeoToolsLib::HeuristicSearchLength>(*_quad_mesh),
         MeshGeoToolsLib::SearchAllNodes::Yes);
-    MeshGeoToolsLib::BoundaryElementsSearcher boundary_element_searcher(*_quad_mesh, mesh_node_searcher);
+    MeshGeoToolsLib::BoundaryElementsSearcher boundary_element_searcher(
+        *_quad_mesh, mesh_node_searcher);
     bool const multiple_nodes_allowed = false;
-    std::vector<MeshLib::Element*> const& found_edges_ply0(
-        boundary_element_searcher.getBoundaryElements(ply0,
-                                                      multiple_nodes_allowed));
 
-    // check the total number of found edges
-    ASSERT_EQ(n_eles_per_dir*4u, found_edges_ply0.size());
-    // check node IDs of edges
-    for (unsigned i=0; i<n_eles_per_dir; i++) {
-        // edge found on a bottom line
-        auto* edge0 = found_edges_ply0[i];
-        ASSERT_EQ(2u, edge0->getNumberOfBaseNodes());
-        ASSERT_EQ(i, edge0->getNodeIndex(0));
-        ASSERT_EQ(i+1, edge0->getNodeIndex(1));
-        // edge found on a right line
-        auto* edge1 = found_edges_ply0[i+n_eles_per_dir];
-        ASSERT_EQ(2u, edge1->getNumberOfBaseNodes());
-        ASSERT_EQ(n_nodes_per_dir*i+n_nodes_per_dir-1, edge1->getNodeIndex(0));
-        ASSERT_EQ(n_nodes_per_dir*(i+1)+n_nodes_per_dir-1, edge1->getNodeIndex(1));
-        // edge found on a top line
-        auto* edge2 = found_edges_ply0[i+n_eles_per_dir*2];
-        ASSERT_EQ(2u, edge2->getNumberOfBaseNodes());
-        ASSERT_EQ(n_nodes_per_dir*n_nodes_per_dir-1-i, edge2->getNodeIndex(0));
-        ASSERT_EQ(n_nodes_per_dir*n_nodes_per_dir-1-(i+1), edge2->getNodeIndex(1));
-        // edge found on a left line
-        auto* edge3 = found_edges_ply0[i+n_eles_per_dir*3];
-        ASSERT_EQ(2u, edge3->getNumberOfBaseNodes());
-        ASSERT_EQ(n_nodes_per_dir*(n_nodes_per_dir-1)-n_nodes_per_dir*i, edge3->getNodeIndex(0));
-        ASSERT_EQ(n_nodes_per_dir*(n_nodes_per_dir-1)-n_nodes_per_dir*(i+1), edge3->getNodeIndex(1));
+    const unsigned n_eles_per_dir = _number_of_subdivisions_per_direction;
+    const unsigned n_nodes_per_dir = _number_of_subdivisions_per_direction + 1;
+
+    // points for the polylines
+    _pnts.push_back(new GeoLib::Point(0.0, 0.0, 0.0));
+    _pnts.push_back(new GeoLib::Point(_geometric_size, 0.0, 0.0));
+    _pnts.push_back(new GeoLib::Point(_geometric_size, _geometric_size, 0.0));
+    _pnts.push_back(new GeoLib::Point(0.0, _geometric_size, 0.0));
+
+    GeoLib::Polyline ply_bottom(_pnts);
+    ply_bottom.addPoint(0);
+    ply_bottom.addPoint(1);
+    {
+        std::vector<MeshLib::Element*> const& found_edges_ply_bottom(
+            boundary_element_searcher.getBoundaryElements(
+                ply_bottom, multiple_nodes_allowed));
+
+        // check the total number of found edges
+        ASSERT_EQ(n_eles_per_dir, found_edges_ply_bottom.size());
+        for (unsigned i = 0; i < n_eles_per_dir; i++)
+        {
+            // edges found on a bottom line
+            auto* edge = found_edges_ply_bottom[i];
+            ASSERT_EQ(2u, edge->getNumberOfBaseNodes());
+            ASSERT_EQ(i, edge->getNodeIndex(0));
+            ASSERT_EQ(i + 1, edge->getNodeIndex(1));
+        }
+    }
+
+    GeoLib::Polyline ply_right(_pnts);
+    ply_right.addPoint(1);
+    ply_right.addPoint(2);
+    {
+        auto const& found_edges_ply_right(
+            boundary_element_searcher.getBoundaryElements(
+                ply_right, multiple_nodes_allowed));
+
+        // check the total number of found edges
+        ASSERT_EQ(n_eles_per_dir, found_edges_ply_right.size());
+        for (unsigned i = 0; i < n_eles_per_dir; i++)
+        {
+            // edges found on a right line
+            auto* edge = found_edges_ply_right[i];
+            ASSERT_EQ(2u, edge->getNumberOfBaseNodes());
+            ASSERT_EQ((i + 1) * n_nodes_per_dir - 1, edge->getNodeIndex(0));
+            ASSERT_EQ((i + 2) * n_nodes_per_dir - 1, edge->getNodeIndex(1));
+        }
+    }
+
+    GeoLib::Polyline ply_top(_pnts);
+    ply_top.addPoint(2);
+    ply_top.addPoint(3);
+    {
+        auto const& found_edges_ply_top(
+            boundary_element_searcher.getBoundaryElements(
+                ply_top, multiple_nodes_allowed));
+
+        // check the total number of found edges
+        ASSERT_EQ(n_eles_per_dir, found_edges_ply_top.size());
+        for (unsigned i = 0; i < n_eles_per_dir; i++)
+        {
+            // edges found on a top line
+            auto* edge = found_edges_ply_top[i];
+            ASSERT_EQ(2u, edge->getNumberOfBaseNodes());
+            ASSERT_EQ(n_nodes_per_dir * n_nodes_per_dir - 1 - i,
+                      edge->getNodeIndex(0));
+            ASSERT_EQ(n_nodes_per_dir * n_nodes_per_dir - 2 - i,
+                      edge->getNodeIndex(1));
+        }
+    }
+
+    GeoLib::Polyline ply_left(_pnts);
+    ply_left.addPoint(3);
+    ply_left.addPoint(0);
+    {
+        auto const& found_edges_ply_left(
+            boundary_element_searcher.getBoundaryElements(
+                ply_left, multiple_nodes_allowed));
+
+        // check the total number of found edges
+        ASSERT_EQ(n_eles_per_dir, found_edges_ply_left.size());
+        for (unsigned i = 0; i < n_eles_per_dir; i++)
+        {
+            // edges found on a left line
+            auto* edge = found_edges_ply_left[i];
+            ASSERT_EQ(2u, edge->getNumberOfBaseNodes());
+            ASSERT_EQ(n_nodes_per_dir * (n_nodes_per_dir - 1 - i),
+                      edge->getNodeIndex(0));
+            ASSERT_EQ(n_nodes_per_dir * (n_nodes_per_dir - 2 - i),
+                      edge->getNodeIndex(1));
+        }
     }
 }
 
