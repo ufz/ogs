@@ -58,8 +58,8 @@
                     <properties>
                         <property>
                             <name>porosity</name>
-                            <type>Parameter</type>
-                            <parameter_name>phi</parameter_name>
+                            <type>Constant</type>
+                            <value>0</value>
                         </property>
                     </properties>
                 </phase>
@@ -146,15 +146,6 @@
             <index_values>
                 <index>0</index>
                 <value>1e-10</value>
-            </index_values>
-        </parameter>
-        <parameter>
-            <name>phi</name>
-            <type>Group</type>
-            <group_id_property>MaterialIDs</group_id_property>
-            <index_values>
-                <index>0</index>
-                <value>0</value>
             </index_values>
         </parameter>
         <parameter>
