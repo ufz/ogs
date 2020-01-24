@@ -65,4 +65,5 @@ std::string Phase::name() const
 {
     return std::get<std::string>(_properties[PropertyType::name]->value());
 }
+
 }  // namespace MaterialPropertyLib

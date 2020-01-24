@@ -14,6 +14,7 @@
 
 #include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
+#include "MaterialLib/MPL/Medium.h"
 
 #include "MaterialLib/SolidModels/CreateConstitutiveRelation.h"
 #include "MaterialLib/SolidModels/MechanicsBase.h"
@@ -163,6 +164,15 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
 
     auto media_map =
         MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
+
+    std::array const requiredGasProperties = {MaterialPropertyLib::viscosity};
+    std::array const requiredSolidProperties = {MaterialPropertyLib::porosity};
+    for (auto const& m : media)
+    {
+        m.second->phase("Gas").checkRequiredProperties(requiredGasProperties);
+        m.second->phase("Solid").checkRequiredProperties(
+            requiredSolidProperties);
+    }
 
     // Initial stress conditions
     auto const initial_stress = ParameterLib::findOptionalTagParameter<double>(

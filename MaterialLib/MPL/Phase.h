@@ -52,6 +52,20 @@ public:
 
     std::string name() const;
 
+    template <size_t N>
+    void checkRequiredProperties(
+        std::array<PropertyType, N> const& required_properties) const
+    {
+        for (auto const& p : required_properties)
+        {
+            if (!hasProperty(p))
+            {
+                OGS_FATAL("The property '%s' is missing in the %s phase.",
+                          property_enum_to_string[p].c_str(), name().c_str());
+            }
+        }
+    }
+
 private:
     std::vector<std::unique_ptr<Component>> const _components;
 
