@@ -449,9 +449,9 @@ AddTest(
     VIS ThermalConvection_pcs_0_ts_1_t_0.000000.vtu
 )
 
-if(NOT OGS_USE_MPI AND BUILD_TESTING AND Python_FOUND)
+if(NOT OGS_USE_MPI AND BUILD_TESTING AND Python3_FOUND)
     add_custom_target(generate_invalid_project_files_ht
-        ${Python_EXECUTABLE}
+        ${Python3_EXECUTABLE}
         ${PROJECT_SOURCE_DIR}/ThirdParty/ogs6py/generateInvalidMediaForHT.py
                                                 generateInvalidMediaForHT.py
         WORKING_DIRECTORY ${Data_SOURCE_DIR}/Parabolic/HT/InvalidProjectFiles/)
