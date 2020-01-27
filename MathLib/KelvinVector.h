@@ -241,8 +241,8 @@ KelvinVectorType<DisplacementDim> symmetricTensorToKelvinVector(
 /// 2D and 3D implementations available.
 template <int DisplacementDim>
 KelvinMatrixType<DisplacementDim> fourthOrderRotationMatrix(
-    Eigen::Matrix<double, DisplacementDim, DisplacementDim> const&
-        transformation);
+    Eigen::Matrix<double, DisplacementDim, DisplacementDim, Eigen::ColMajor,
+                  DisplacementDim, DisplacementDim> const& transformation);
 
 }  // namespace KelvinVector
 }  // namespace MathLib

@@ -182,7 +182,7 @@ kelvinVectorToSymmetricTensor(Eigen::Matrix<double,
 
 template <>
 KelvinMatrixType<2> fourthOrderRotationMatrix<2>(
-    Eigen::Matrix<double, 2, 2> const& transformation)
+    Eigen::Matrix<double, 2, 2, Eigen::ColMajor, 2, 2> const& transformation)
 {
     // 1-based index access for convenience.
     auto Q = [&](int const i, int const j) {
@@ -200,7 +200,7 @@ KelvinMatrixType<2> fourthOrderRotationMatrix<2>(
 
 template <>
 KelvinMatrixType<3> fourthOrderRotationMatrix<3>(
-    Eigen::Matrix<double, 3, 3> const& transformation)
+    Eigen::Matrix<double, 3, 3, Eigen::ColMajor, 3, 3> const& transformation)
 {
     // 1-based index access for convenience.
     auto Q = [&](int const i, int const j) {
