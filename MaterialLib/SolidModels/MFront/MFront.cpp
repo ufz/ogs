@@ -389,6 +389,10 @@ MFront<DisplacementDim>::getInternalVariables() const
         auto const size =
             mgis::behaviour::getVariableSize(iv, _behaviour.hypothesis);
 
+        // TODO (naumov): For orthotropic materials the internal variables
+        // should be rotated to the global coordinate system before output.
+        // MFront stores the variables in local coordinate system.
+        // The `size` variable could be used to find out the type of variable.
         typename MechanicsBase<DisplacementDim>::InternalVariable new_variable{
             name, static_cast<unsigned>(size),
             [offset, size](
