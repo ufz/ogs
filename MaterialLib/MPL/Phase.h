@@ -52,19 +52,6 @@ public:
 
     std::string name() const;
 
-    template <typename Container>
-    void checkRequiredProperties(Container const& required_properties) const
-    {
-        for (auto const& p : required_properties)
-        {
-            if (!hasProperty(p))
-            {
-                OGS_FATAL("The property '%s' is missing in the %s phase.",
-                          property_enum_to_string[p].c_str(), name().c_str());
-            }
-        }
-    }
-
 private:
     std::vector<std::unique_ptr<Component>> const _components;
 
@@ -75,5 +62,18 @@ private:
     /// After this, other special properties can be set as exceptional defaults.
     PropertyArray _properties;
 };
+
+template <typename Container>
+void checkRequiredProperties(Phase const& phase, Container const& required_properties)
+{
+    for (auto const& p : required_properties)
+    {
+        if (!phase.hasProperty(p))
+        {
+            OGS_FATAL("The property '%s' is missing in the %s phase.",
+                      property_enum_to_string[p].c_str(), phase.name().c_str());
+        }
+    }
+}
 
 }  // namespace MaterialPropertyLib
