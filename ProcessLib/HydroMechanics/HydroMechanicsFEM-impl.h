@@ -24,6 +24,8 @@ namespace ProcessLib
 {
 namespace HydroMechanics
 {
+namespace MPL = MaterialPropertyLib;
+
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           typename IntegrationMethod, int DisplacementDim>
 HydroMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
@@ -186,7 +188,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     auto const& medium = _process_data.media_map->getMedium(_element.getID());
     auto const& gas_phase = medium->phase("Gas");
     auto const& solid_phase = medium->phase("Solid");
-    MaterialPropertyLib::VariableArray vars;
+    MPL::VariableArray vars;
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         x_position.setIntegrationPoint(ip);
@@ -213,21 +215,18 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto& eps = _ip_data[ip].eps;
         auto const& sigma_eff = _ip_data[ip].sigma_eff;
 
-        auto const mu =
-            gas_phase.property(MaterialPropertyLib::PropertyType::viscosity)
-                .template value<double>(vars, x_position, t);
+        auto const mu = gas_phase.property(MPL::PropertyType::viscosity)
+                            .template value<double>(vars, x_position, t);
 
         double const K_over_mu =
             _process_data.intrinsic_permeability(t, x_position)[0] / mu;
 
         auto const alpha =
-            solid_phase
-                .property(MaterialPropertyLib::PropertyType::biot_coefficient)
+            solid_phase.property(MPL::PropertyType::biot_coefficient)
                 .template value<double>(vars, x_position, t);
         auto const K_S = solid_material.getBulkModulus(t, x_position);
-        auto const rho_sr =
-            solid_phase.property(MaterialPropertyLib::PropertyType::density)
-                .template value<double>(vars, x_position, t);
+        auto const rho_sr = solid_phase.property(MPL::PropertyType::density)
+                                .template value<double>(vars, x_position, t);
         // TODO (FZill) get fluid properties from GPML
         double const p_fr =
             (_process_data.fluid_type == FluidType::Fluid_Type::IDEAL_GAS)
@@ -236,9 +235,8 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         double const rho_fr =
             _process_data.getFluidDensity(t, x_position, p_fr);
         double const beta_p = _process_data.getFluidCompressibility(p_fr);
-        auto const porosity =
-            solid_phase.property(MaterialPropertyLib::PropertyType::porosity)
-                .template value<double>(vars, x_position, t);
+        auto const porosity = solid_phase.property(MPL::PropertyType::porosity)
+                                  .template value<double>(vars, x_position, t);
         auto const& identity2 = MathLib::KelvinVector::Invariants<
             MathLib::KelvinVector::KelvinVectorDimensions<
                 DisplacementDim>::value>::identity2;
@@ -349,15 +347,14 @@ HydroMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
     auto const& medium = _process_data.media_map->getMedium(_element.getID());
     auto const& gas_phase = medium->phase("Gas");
-    MaterialPropertyLib::VariableArray vars;
+    MPL::VariableArray vars;
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         x_position.setIntegrationPoint(ip);
 
-        auto const mu =
-            gas_phase.property(MaterialPropertyLib::PropertyType::viscosity)
-                .template value<double>(vars, x_position, t);
+        auto const mu = gas_phase.property(MPL::PropertyType::viscosity)
+                            .template value<double>(vars, x_position, t);
 
         double const K_over_mu =
             _process_data.intrinsic_permeability(t, x_position)[0] / mu;
@@ -423,7 +420,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     auto const& medium = _process_data.media_map->getMedium(_element.getID());
     auto const& gas_phase = medium->phase("Gas");
     auto const& solid_phase = medium->phase("Solid");
-    MaterialPropertyLib::VariableArray vars;
+    MPL::VariableArray vars;
 
     int const n_integration_points = _integration_method.getNumberOfPoints();
     for (int ip = 0; ip < n_integration_points; ip++)
@@ -437,15 +434,13 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const& N_p = _ip_data[ip].N_p;
         auto const& dNdx_p = _ip_data[ip].dNdx_p;
 
-        auto const mu =
-            gas_phase.property(MaterialPropertyLib::PropertyType::viscosity)
-                .template value<double>(vars, x_position, t);
+        auto const mu = gas_phase.property(MPL::PropertyType::viscosity)
+                            .template value<double>(vars, x_position, t);
 
         double const K_over_mu =
             _process_data.intrinsic_permeability(t, x_position)[0] / mu;
         auto const alpha_b =
-            solid_phase
-                .property(MaterialPropertyLib::PropertyType::biot_coefficient)
+            solid_phase.property(MPL::PropertyType::biot_coefficient)
                 .template value<double>(vars, x_position, t);
         // TODO (FZill) get fluid properties from GPML
         double const p_fr =
@@ -455,9 +450,8 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         double const rho_fr =
             _process_data.getFluidDensity(t, x_position, p_fr);
         double const beta_p = _process_data.getFluidCompressibility(p_fr);
-        auto const porosity =
-            solid_phase.property(MaterialPropertyLib::PropertyType::porosity)
-                .template value<double>(vars, x_position, t);
+        auto const porosity = solid_phase.property(MPL::PropertyType::porosity)
+                                  .template value<double>(vars, x_position, t);
         auto const K_S = solid_material.getBulkModulus(t, x_position);
 
         laplace.noalias() += dNdx_p.transpose() * K_over_mu * dNdx_p * w;
@@ -522,7 +516,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
     auto const& medium = _process_data.media_map->getMedium(_element.getID());
     auto const& solid_phase = medium->phase("Solid");
-    MaterialPropertyLib::VariableArray vars;
+    MPL::VariableArray vars;
 
     int const n_integration_points = _integration_method.getNumberOfPoints();
     for (int ip = 0; ip < n_integration_points; ip++)
@@ -551,16 +545,13 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const& sigma_eff = _ip_data[ip].sigma_eff;
 
         auto const alpha =
-            solid_phase
-                .property(MaterialPropertyLib::PropertyType::biot_coefficient)
+            solid_phase.property(MPL::PropertyType::biot_coefficient)
                 .template value<double>(vars, x_position, t);
-        auto const rho_sr =
-            solid_phase.property(MaterialPropertyLib::PropertyType::density)
-                .template value<double>(vars, x_position, t);
+        auto const rho_sr = solid_phase.property(MPL::PropertyType::density)
+                                .template value<double>(vars, x_position, t);
         auto const rho_fr = _process_data.fluid_density(t, x_position)[0];
-        auto const porosity =
-            solid_phase.property(MaterialPropertyLib::PropertyType::porosity)
-                .template value<double>(vars, x_position, t);
+        auto const porosity = solid_phase.property(MPL::PropertyType::porosity)
+                                  .template value<double>(vars, x_position, t);
         auto const& b = _process_data.specific_body_force;
         auto const& identity2 = MathLib::KelvinVector::Invariants<
             MathLib::KelvinVector::KelvinVectorDimensions<
