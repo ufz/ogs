@@ -52,9 +52,8 @@ public:
 
     std::string name() const;
 
-    template <size_t N>
-    void checkRequiredProperties(
-        std::array<PropertyType, N> const& required_properties) const
+    template <typename Container>
+    void checkRequiredProperties(Container const& required_properties) const
     {
         for (auto const& p : required_properties)
         {
