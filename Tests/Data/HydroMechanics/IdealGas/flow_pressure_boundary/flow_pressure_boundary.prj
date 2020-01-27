@@ -13,8 +13,6 @@
                 <youngs_modulus>E</youngs_modulus>
                 <poissons_ratio>nu</poissons_ratio>
             </constitutive_relation>
-            <intrinsic_permeability>k</intrinsic_permeability>
-            <fluid_density>rho_fr</fluid_density>
             <process_variables>
                 <displacement>displacement</displacement>
                 <pressure>pressure</pressure>
@@ -31,9 +29,6 @@
                 <secondary_variable internal_name="velocity" output_name="velocity"/>
             </secondary_variables>
             <specific_body_force>0 0</specific_body_force>
-            <fluid_type>ideal_gas</fluid_type>
-            <reference_temperature>293.15</reference_temperature>
-            <specific_gas_constant>287.058</specific_gas_constant>
         </process>
     </processes>
     <media>
@@ -46,6 +41,15 @@
                             <name>viscosity</name>
                             <type>Constant</type>
                             <value>1e-5</value>
+                        </property>
+                        <property>
+                            <name>density</name>
+                            <type>IdealGasLaw</type>
+                        </property>
+                        <property>
+                            <name>molar_mass</name>
+                            <type>Constant</type>
+                            <value>0.028964397787206768</value>
                         </property>
                     </properties>
                 </phase>
@@ -70,6 +74,18 @@
                     </properties>
                 </phase>
             </phases>
+            <properties>
+                <property>
+                    <name>reference_temperature</name>
+                    <type>Constant</type>
+                    <value>293.15</value>
+                </property>
+                <property>
+                    <name>permeability</name>
+                    <type>Constant</type>
+                    <value>1e-12</value>
+                </property>
+            </properties>
         </medium>
     </media>
     <time_loop>
@@ -134,16 +150,6 @@
             <value>.3</value>
         </parameter>
         <!-- Model parameters -->
-        <parameter>
-            <name>k</name>
-            <type>Constant</type>
-            <value>1e-12</value>
-        </parameter>
-        <parameter>
-            <name>rho_fr</name>
-            <type>Constant</type>
-            <value>1.0</value>
-        </parameter>
         <parameter>
             <name>displacement0</name>
             <type>Constant</type>
