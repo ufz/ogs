@@ -13,7 +13,8 @@
 
 #include "Constant.h"
 #include "ExponentialProperty.h"
-#include "IdealGasLaw.h"
+#include "DensityIdealGasLaw.h"
+#include "CompressibilityIdealGasLaw.h"
 #include "LinearProperty.h"
 #include "ParameterProperty.h"
 #include "RelPermBrooksCorey.h"

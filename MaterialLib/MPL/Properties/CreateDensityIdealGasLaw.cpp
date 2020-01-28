@@ -10,22 +10,17 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#pragma once
-
-#include <memory>
-
-namespace BaseLib
-{
-class ConfigTree;
-}
+#include "BaseLib/ConfigTree.h"
+#include "DensityIdealGasLaw.h"
 
 namespace MaterialPropertyLib
 {
-class IdealGasLaw;
-}
-
-namespace MaterialPropertyLib
+std::unique_ptr<DensityIdealGasLaw> createDensityIdealGasLaw(
+    BaseLib::ConfigTree const& config)
 {
-std::unique_ptr<IdealGasLaw> createIdealGasLaw(
-    BaseLib::ConfigTree const& config);
+    //! \ogs_file_param{properties__property__type}
+    config.checkConfigParameter("type", "DensityIdealGasLaw");
+    DBUG("Create DensityIdealGasLaw medium property");
+    return std::make_unique<DensityIdealGasLaw>();
+}
 }  // namespace MaterialPropertyLib

@@ -54,9 +54,14 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
         return createParameterProperty(config, parameters);
     }
 
-    if (boost::iequals(property_type, "IdealGasLaw"))
+    if (boost::iequals(property_type, "DensityIdealGasLaw"))
     {
-        return createIdealGasLaw(config);
+        return createDensityIdealGasLaw(config);
+    }
+
+    if (boost::iequals(property_type, "CompressibilityIdealGasLaw"))
+    {
+        return createCompressibilityIdealGasLaw(config);
     }
 
     if (boost::iequals(property_type, "SaturationBrooksCorey"))

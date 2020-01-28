@@ -13,7 +13,7 @@
  *
  */
 
-#include "MaterialLib/MPL/Properties/IdealGasLaw.h"
+#include "MaterialLib/MPL/Properties/DensityIdealGasLaw.h"
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/PhysicalConstant.h"
 
@@ -40,7 +40,7 @@ double molarMass(Phase* _phase, Component* _component,
     return 0.;
 }
 
-PropertyDataType IdealGasLaw::value(VariableArray const& variable_array,
+PropertyDataType DensityIdealGasLaw::value(VariableArray const& variable_array,
                                     ParameterLib::SpatialPosition const& pos,
                                     double const t) const
 {
@@ -56,7 +56,7 @@ PropertyDataType IdealGasLaw::value(VariableArray const& variable_array,
     return density;
 }
 
-PropertyDataType IdealGasLaw::dValue(VariableArray const& variable_array,
+PropertyDataType DensityIdealGasLaw::dValue(VariableArray const& variable_array,
                                      Variable const primary_variable,
                                      ParameterLib::SpatialPosition const& pos,
                                      double const t) const
@@ -80,13 +80,13 @@ PropertyDataType IdealGasLaw::dValue(VariableArray const& variable_array,
     }
 
     OGS_FATAL(
-        "IdealGasLaw::dValue is implemented for derivatives "
+        "DensityIdealGasLaw::dValue is implemented for derivatives "
         "with respect to phase pressure or temperature only.");
 
     return 0.;
 }
 
-PropertyDataType IdealGasLaw::d2Value(VariableArray const& variable_array,
+PropertyDataType DensityIdealGasLaw::d2Value(VariableArray const& variable_array,
                                       Variable const primary_variable1,
                                       Variable const primary_variable2,
                                       ParameterLib::SpatialPosition const& pos,
@@ -122,7 +122,7 @@ PropertyDataType IdealGasLaw::d2Value(VariableArray const& variable_array,
     }
 
     OGS_FATAL(
-        "IdealGasLaw::d2Value is implemented for derivatives "
+        "DensityIdealGasLaw::d2Value is implemented for derivatives "
         "with respect to phase pressure and temperature only.");
 
     return 0.;

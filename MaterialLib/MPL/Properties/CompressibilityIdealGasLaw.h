@@ -1,17 +1,14 @@
 /**
- * \file
- * \author Norbert Grunwald
- * \date   27.06.2018
- * \brief
- *
- * \file
  * \copyright
  * Copyright (c) 2012-2020, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
+ *  \file
+ *  Created on January 28, 2020, 16:05 PM
  */
+
 #pragma once
 
 #include "BaseLib/ConfigTree.h"
@@ -23,13 +20,12 @@ class Medium;
 class Phase;
 class Component;
 /**
- * \class IdealGasLaw
- * \brief Density function for ideal gases
+ * \class CompressibilityIdealGasLaw
+ * \brief Compressibility function for ideal gases
  * \details This property must be either a phase or a component property, it
- * computes the density of an ideal gas as function of phase pressure and
- * temperature
+ * computes the compressibility of an ideal gas as function of phase pressure
  */
-class IdealGasLaw final : public Property
+class CompressibilityIdealGasLaw final : public Property
 {
 public:
     /// This method assigns a pointer to the material object that is the owner
@@ -48,7 +44,7 @@ public:
         else
         {
             OGS_FATAL(
-                "The property 'IdealGasLaw' is implemented on the "
+                "The property 'CompressibilityIdealGasLaw' is implemented on the "
                 "'phase' and 'component' scales only.");
         }
     }
