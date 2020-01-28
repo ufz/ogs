@@ -41,7 +41,7 @@ void CohesiveZoneModeI<DisplacementDim>::computeConstitutiveRelation(
     ParameterLib::SpatialPosition const& x,
     double const aperture0,
     Eigen::Ref<Eigen::VectorXd const>
-    /*sigma0*/,
+        sigma0,
     Eigen::Ref<Eigen::VectorXd const>
     /*w_prev*/,
     Eigen::Ref<Eigen::VectorXd const>
@@ -87,10 +87,10 @@ void CohesiveZoneModeI<DisplacementDim>::computeConstitutiveRelation(
         mp.Kn *
         logPenaltyDerivative(aperture0, aperture, _penalty_aperture_cutoff);
 
+    sigma.noalias() += sigma0;
+
     // Exit if fracture is closing
-    // TODO (nagel) to be based on the stress state when initial stress effects
-    // are included.
-    if (w_n < 0)
+    if (sigma[index_ns] < 0)
     {
         return;  /// Undamaged stiffness used in compression.
     }
@@ -98,22 +98,29 @@ void CohesiveZoneModeI<DisplacementDim>::computeConstitutiveRelation(
     //
     // Continue with fracture opening.
     //
+    // effective opening calculated by shift to state corresponding to sigma0=0
+    const double w_n_effective = w_n + sigma0[index_ns] / mp.Kn;
     double degradation = 0.0;
-    if (mp.w_nf == 0.0)
+    if (mp.w_nf == 0.0)  // can be used to model tension-cutoff
     {
         state.damage_prev = 1.0;
         state.damage = 1.0;
     }
     else
     {
-        state.damage = computeDamage(state.damage_prev, w_n, mp.w_np, mp.w_nf);
+        state.damage =
+            computeDamage(state.damage_prev, w_n_effective, mp.w_np, mp.w_nf);
         degradation = ((1 - state.damage) * mp.w_np) /
                                    (mp.w_np + state.damage * (mp.w_nf - mp.w_np));
     }
 
     // Degrade stiffness tensor in tension.
     C = C * degradation;
-    sigma = C * w;
+    // Create effective relative displacement vector
+    Eigen::VectorXd w_eff = w;
+    // Only origin of normal entry is shifted, shear unaffected
+    w_eff[index_ns] = w_n_effective;
+    sigma = C * w_eff;
 
     if (state.damage > state.damage_prev)
     {
@@ -126,7 +133,7 @@ void CohesiveZoneModeI<DisplacementDim>::computeConstitutiveRelation(
         dd_dw[index_ns] =
             (mp.w_np * mp.w_nf) / ((mp.w_nf - mp.w_np) * (tmp * tmp));
 
-        C -= C * w * (dd_dw).transpose();
+        C -= C * w_eff * (dd_dw).transpose();
     }
 
     // TODO (nagel) Initial stress not considered, yet.
