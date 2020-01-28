@@ -135,8 +135,5 @@ private:
     const int _hydraulic_process_id;
 };
 
-void checkMPLProperties(MeshLib::Mesh const& mesh,
-                        HTProcessData const& process_data);
-
 }  // namespace HT
 }  // namespace ProcessLib
