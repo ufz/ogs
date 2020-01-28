@@ -88,4 +88,19 @@ private:
     /// special-defaults are allowed as well...
     PropertyArray _properties;
 };
+
+template <typename Container>
+void checkRequiredProperties(Medium const& medium,
+                             Container const& required_properties)
+{
+    for (auto const& p : required_properties)
+    {
+        if (!medium.hasProperty(p))
+        {
+            OGS_FATAL("The property '%s' is missing in the medium definition.",
+                      property_enum_to_string[p].c_str());
+        }
+    }
+}
+
 }  // namespace MaterialPropertyLib

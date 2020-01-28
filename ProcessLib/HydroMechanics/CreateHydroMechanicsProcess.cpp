@@ -156,9 +156,9 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         MaterialPropertyLib::density};
     for (auto const& m : media)
     {
-        m.second->phase("Gas").checkRequiredProperties(requiredGasProperties);
-        m.second->phase("Solid").checkRequiredProperties(
-            requiredSolidProperties);
+        checkRequiredProperties(m.second->phase("Gas"), requiredGasProperties);
+        checkRequiredProperties(m.second->phase("Solid"),
+                                requiredSolidProperties);
     }
 
     // Initial stress conditions
