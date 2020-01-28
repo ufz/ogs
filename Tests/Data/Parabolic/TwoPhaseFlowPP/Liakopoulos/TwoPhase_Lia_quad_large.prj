@@ -47,7 +47,7 @@
                <properties>
                   <property>
                      <name>density</name>
-                     <type>IdealGasLaw</type>
+                     <type>DensityIdealGasLaw</type>
                   </property>
                   <property>
                      <name>viscosity</name>

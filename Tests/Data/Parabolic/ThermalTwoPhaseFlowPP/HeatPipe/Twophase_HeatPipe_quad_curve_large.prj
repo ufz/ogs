@@ -24,7 +24,7 @@
                         <value> 1.e3 </value>
                     </liquid_density>
                     <gas_density>
-                        <type>IdealGasLaw</type>
+                        <type>DensityIdealGasLaw</type>
                         <molar_mass> 0.029 </molar_mass>
                     </gas_density>
                     <liquid_viscosity>
