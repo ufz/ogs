@@ -16,8 +16,6 @@
             </constitutive_relation>
             <intrinsic_permeability>k</intrinsic_permeability>
             <fluid_density>rho_liquid</fluid_density>
-            <biot_coefficient>alpha</biot_coefficient>
-            <solid_density>rho_solid</solid_density>
             <process_variables>
                 <pressure>pressure</pressure>
                 <displacement>displacement</displacement>
@@ -59,8 +57,18 @@
                     <properties>
                         <property>
                             <name>porosity</name>
-                            <type>Parameter</type>
-                            <parameter_name>phi</parameter_name>
+                            <type>Constant</type>
+                            <value>0</value>
+                        </property>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>1</value>
+                        </property>
+                        <property>
+                            <name>biot_coefficient</name>
+                            <type>Constant</type>
+                            <value>1</value>
                         </property>
                     </properties>
                 </phase>
@@ -188,33 +196,6 @@
             <index_values>
                 <index>0</index>
                 <value>1e-10</value>
-            </index_values>
-        </parameter>
-        <parameter>
-            <name>phi</name>
-            <type>Group</type>
-            <group_id_property>MaterialIDs</group_id_property>
-            <index_values>
-                <index>0</index>
-                <value>0</value>
-            </index_values>
-        </parameter>
-        <parameter>
-            <name>rho_solid</name>
-            <type>Group</type>
-            <group_id_property>MaterialIDs</group_id_property>
-            <index_values>
-                <index>0</index>
-                <value>1</value>
-            </index_values>
-        </parameter>
-        <parameter>
-            <name>alpha</name>
-            <type>Group</type>
-            <group_id_property>MaterialIDs</group_id_property>
-            <index_values>
-                <index>0</index>
-                <value>1</value>
             </index_values>
         </parameter>
         <parameter>

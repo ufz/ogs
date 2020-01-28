@@ -128,21 +128,6 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         "fluid_density", parameters, 1, &mesh);
     DBUG("Use '%s' as fluid density parameter.", fluid_density.name.c_str());
 
-    // Biot coefficient
-    auto& biot_coefficient = ParameterLib::findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS__biot_coefficient}
-        "biot_coefficient", parameters, 1, &mesh);
-    DBUG("Use '%s' as Biot coefficient parameter.",
-         biot_coefficient.name.c_str());
-
-    // Solid density
-    auto& solid_density = ParameterLib::findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS__solid_density}
-        "solid_density", parameters, 1, &mesh);
-    DBUG("Use '%s' as solid density parameter.", solid_density.name.c_str());
-
     // Specific body force
     Eigen::Matrix<double, DisplacementDim, 1> specific_body_force;
     {
@@ -166,7 +151,9 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
 
     std::array const requiredGasProperties = {MaterialPropertyLib::viscosity};
-    std::array const requiredSolidProperties = {MaterialPropertyLib::porosity};
+    std::array const requiredSolidProperties = {
+        MaterialPropertyLib::porosity, MaterialPropertyLib::biot_coefficient,
+        MaterialPropertyLib::density};
     for (auto const& m : media)
     {
         m.second->phase("Gas").checkRequiredProperties(requiredGasProperties);
@@ -220,8 +207,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         materialIDs(mesh),     std::move(media_map),
         std::move(solid_constitutive_relations),
         initial_stress,        intrinsic_permeability,
-        fluid_density,         biot_coefficient,
-        solid_density,         specific_body_force,
+        fluid_density,         specific_body_force,
         fluid_compressibility, reference_temperature,
         specific_gas_constant, fluid_type};
 

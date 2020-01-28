@@ -14,8 +14,6 @@
                 <poissons_ratio>nu</poissons_ratio>
             </constitutive_relation>
             <intrinsic_permeability>k</intrinsic_permeability>
-            <biot_coefficient>alpha</biot_coefficient>
-            <solid_density>rho_sr</solid_density>
             <fluid_density>rho_fr</fluid_density>
             <process_variables>
                 <displacement>displacement</displacement>
@@ -47,6 +45,16 @@
                             <name>porosity</name>
                             <type>Constant</type>
                             <value>0</value>
+                        </property>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>1.2e-6</value>
+                        </property>
+                        <property>
+                            <name>biot_coefficient</name>
+                            <type>Constant</type>
+                            <value>1</value>
                         </property>
                     </properties>
                 </phase>
@@ -110,16 +118,6 @@
             <name>k</name>
             <type>Constant</type>
             <value>1e-10</value>
-        </parameter>
-        <parameter>
-            <name>alpha</name>
-            <type>Constant</type>
-            <value>1</value>
-        </parameter>
-        <parameter>
-            <name>rho_sr</name>
-            <type>Constant</type>
-            <value>1.2e-6</value>
         </parameter>
         <parameter>
             <name>rho_fr</name>
