@@ -20,8 +20,6 @@
             </constitutive_relation>
             <intrinsic_permeability>k</intrinsic_permeability>
             <fluid_density>rho_fr</fluid_density>
-            <biot_coefficient>alpha</biot_coefficient>
-            <solid_density>rho_sr</solid_density>
             <process_variables>
                 <displacement>displacement</displacement>
                 <pressure>pressure</pressure>
@@ -111,6 +109,16 @@
                             <type>Constant</type>
                             <value>0.0</value>
                         </property>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>1</value>
+                        </property>
+                        <property>
+                            <name>biot_coefficient</name>
+                            <type>Constant</type>
+                            <value>0</value>
+                        </property>
                     </properties>
                 </phase>
             </phases>
@@ -133,16 +141,6 @@
             <name>k</name>
             <type>Constant</type>
             <value>1e-16</value>
-        </parameter>
-        <parameter>
-            <name>alpha</name>
-            <type>Constant</type>
-            <value>0</value>
-        </parameter>
-        <parameter>
-            <name>rho_sr</name>
-            <type>Constant</type>
-            <value>1</value>
         </parameter>
         <parameter>
             <name>rho_fr</name>
