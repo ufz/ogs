@@ -309,46 +309,15 @@ void checkMPLProperties(MeshLib::Mesh const& mesh,
     {
         auto const element_id = element->getID();
 
-        // check if a definition of the porous media exists
         auto const& medium = *process_data.media_map->getMedium(element_id);
+        MaterialPropertyLib::checkRequiredProperties(
+            medium, requiredPropertyMedium);
 
-        for (auto const property : requiredPropertyMedium)
-        {
-            if (!medium.hasProperty(property))
-            {
-                OGS_FATAL("The property '%s' is not specified for the medium.",
-                          MaterialPropertyLib::property_enum_to_string[property]
-                              .c_str());
-            }
-        }
+        MaterialPropertyLib::checkRequiredProperties(
+            medium.phase("AqueousLiquid"), requiredPropertyLiquidPhase);
 
-        // check if liquid phase definition and the corresponding properties
-        // exists
-        auto const& liquid_phase = medium.phase("AqueousLiquid");
-        for (auto const property : requiredPropertyLiquidPhase)
-        {
-            if (!liquid_phase.hasProperty(property))
-            {
-                OGS_FATAL(
-                    "The property '%s' is not specified for the liquid phase.",
-                    MaterialPropertyLib::property_enum_to_string[property]
-                        .c_str());
-            }
-        }
-
-        // check if solid phase definition and the corresponding properties
-        // exists
-        auto const& solid_phase = medium.phase("Solid");
-        for (auto const property : requiredPropertySolidPhase)
-        {
-            if (!solid_phase.hasProperty(property))
-            {
-                OGS_FATAL(
-                    "The property '%s' is not specified for the solid phase.",
-                    MaterialPropertyLib::property_enum_to_string[property]
-                        .c_str());
-            }
-        }
+        MaterialPropertyLib::checkRequiredProperties(
+            medium.phase("Solid"), requiredPropertySolidPhase);
     }
     DBUG("Media properties verified.");
 }
