@@ -15,10 +15,10 @@
 #include "Tests/TestTools.h"
 
 #include "MaterialLib/MPL/Medium.h"
-#include "MaterialLib/MPL/Properties/IdealGasLaw.h"
+#include "MaterialLib/MPL/Properties/DensityIdealGasLaw.h"
 #include "MaterialLib/PhysicalConstant.h"
 
-TEST(MaterialPropertyLib, IdealGasLawOfPurePhase)
+TEST(MaterialPropertyLib, DensityIdealGasLaw)
 {
     const double pressure_norm = 101325.0;    // Pa
     const double temperature_norm = 273.15;   // K
@@ -44,7 +44,7 @@ TEST(MaterialPropertyLib, IdealGasLawOfPurePhase)
     m << "  <properties>\n";
     m << "    <property>\n";
     m << "      <name>density</name>\n";
-    m << "      <type>IdealGasLaw</type>\n";
+    m << "      <type>DensityIdealGasLaw</type>\n";
     m << "    </property>\n";
     m << "    <property>\n";
     m << "      <name>molar_mass</name>\n";
