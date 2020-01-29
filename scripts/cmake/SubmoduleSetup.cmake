@@ -15,6 +15,7 @@ set(REQUIRED_SUBMODULES
     ThirdParty/googletest
     ThirdParty/iphreeqc/src
     ThirdParty/jedbrown-cmake-modules
+    ThirdParty/json-cmake
     ThirdParty/tclap
     ThirdParty/tetgen
     ThirdParty/vtkdiff

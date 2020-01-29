@@ -1,0 +1,6 @@
+{
+  "minimum_version": {
+    "gcc": "7.3",
+    "clang": "3.5"
+  }
+}

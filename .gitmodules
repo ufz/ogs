@@ -46,3 +46,6 @@
 [submodule "ThirdParty/ogs6py"]
 	path = ThirdParty/ogs6py
 	url = https://github.com/joergbuchwald/ogs6py.git
+[submodule "ThirdParty/json-cmake"]
+	path = ThirdParty/json-cmake
+	url = https://github.com/ufz/json-cmake.git

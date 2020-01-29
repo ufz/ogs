@@ -1,0 +1,9 @@
+{{- with .Get 0 -}}
+  {{- $map := split . "." }}
+  {{- $url := index $.Site.Data $map -}}
+  {{- if $url -}}
+{{- $url -}}
+  {{- else -}}
+{{- errorf "No data for key %s" . -}}
+  {{- end -}}
+{{- end -}}
