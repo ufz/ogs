@@ -22,9 +22,9 @@ The minimum prerequisites to build OGS are:
 ## Step: Install a compiler
 
 ::: {.win}
-As we use lots of features of the C++17-standard we support **Visual Studio 2015** and up. Therefore you will need at least **Windows 7** (64-bit recommended). It is perfectly fine to use the free Community Edition of Visual Studio.
+As we use lots of features of the C++17-standard we support **Visual Studio {{< dataFile "versions.minimum_version.msvc.year" >}}** and up. Therefore you will need at least **Windows 7** (64-bit recommended). It is perfectly fine to use the free Community Edition of Visual Studio.
 
-- Download and install [Visual Studio Community 2017](https://www.visualstudio.com/de/thank-you-downloading-visual-studio/?sku=Community&rel=15)
+- Download and install [Visual Studio Community](https://www.visualstudio.com)
   - Select the *workload* `Desktop Development with C++`
   - You can uncheck everything else
 - When installation finished please start Visual Studio once (when asked for credentials enter your Microsoft account or click on **Skip for now**)

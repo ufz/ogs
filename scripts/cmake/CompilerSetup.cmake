@@ -118,6 +118,12 @@ if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR COMPILER_IS_INTEL)
 endif()
 
 if(MSVC)
+    if(${MSVC_TOOLSET_VERSION} LESS ${ogs.minimum_version.msvc.toolset})
+        message(FATAL_ERROR "Aborting: Visual Studio ${ogs.minimum_version.msvc.year} \
+            is required! Found Visual Studio with toolset version \
+            ${MSVC_TOOLSET_VERSION}. See the following link for version info: \
+            https://cmake.org/cmake/help/v3.16/variable/MSVC_TOOLSET_VERSION.html")
+    endif()
     if(OGS_CPU_ARCHITECTURE STREQUAL "native")
         set(CPU_FLAGS /favor:blend)
     else()
