@@ -176,7 +176,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     MaterialLib::Solids::MechanicsBase<DisplacementDim> const& solid_material =
         *_process_data.solid_materials[0];
 
-    double const T_ref = _process_data.reference_temperature;
+    auto const T_ref = _process_data.reference_temperature;
     auto const& b = _process_data.specific_body_force;
 
     ParameterLib::SpatialPosition x_position;
@@ -189,6 +189,8 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     auto const& gas_phase = medium->phase("Gas");
     auto const& solid_phase = medium->phase("Solid");
     MPL::VariableArray vars;
+    vars[static_cast<int>(MPL::Variable::temperature)] = T_ref;
+
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         x_position.setIntegrationPoint(ip);
@@ -214,6 +216,8 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         auto& eps = _ip_data[ip].eps;
         auto const& sigma_eff = _ip_data[ip].sigma_eff;
+
+        vars[static_cast<int>(MPL::Variable::phase_pressure)] = N_p.dot(p);
 
         auto const K = solid_phase.property(MPL::PropertyType::permeability)
                            .template value<double>(vars, x_position, t);
@@ -350,10 +354,15 @@ HydroMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
     auto const& gas_phase = medium->phase("Gas");
     auto const& solid_phase = medium->phase("Solid");
     MPL::VariableArray vars;
+    vars[static_cast<int>(MPL::Variable::temperature)] =
+        _process_data.reference_temperature;
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         x_position.setIntegrationPoint(ip);
+
+        vars[static_cast<int>(MPL::Variable::phase_pressure)] =
+            _ip_data[ip].N_p.dot(p);
 
         auto const K = solid_phase.property(MPL::PropertyType::permeability)
                            .template value<double>(vars, x_position, t);
@@ -427,6 +436,8 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     auto const& gas_phase = medium->phase("Gas");
     auto const& solid_phase = medium->phase("Solid");
     MPL::VariableArray vars;
+    vars[static_cast<int>(MPL::Variable::temperature)] =
+        _process_data.reference_temperature;
 
     int const n_integration_points = _integration_method.getNumberOfPoints();
     for (int ip = 0; ip < n_integration_points; ip++)
@@ -439,6 +450,8 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         auto const& N_p = _ip_data[ip].N_p;
         auto const& dNdx_p = _ip_data[ip].dNdx_p;
+
+        vars[static_cast<int>(MPL::Variable::phase_pressure)] = N_p.dot(p);
 
         auto const K = solid_phase.property(MPL::PropertyType::permeability)
                            .template value<double>(vars, x_position, t);
@@ -521,10 +534,12 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
 
+    auto const T_ref = _process_data.reference_temperature;
     auto const& medium = _process_data.media_map->getMedium(_element.getID());
     auto const& gas_phase = medium->phase("Gas");
     auto const& solid_phase = medium->phase("Solid");
     MPL::VariableArray vars;
+    vars[static_cast<int>(MPL::Variable::temperature)] = T_ref;
 
     int const n_integration_points = _integration_method.getNumberOfPoints();
     for (int ip = 0; ip < n_integration_points; ip++)
@@ -552,6 +567,8 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto& eps = _ip_data[ip].eps;
         auto const& sigma_eff = _ip_data[ip].sigma_eff;
 
+        vars[static_cast<int>(MPL::Variable::phase_pressure)] = N_p.dot(p);
+
         auto const alpha =
             solid_phase.property(MPL::PropertyType::biot_coefficient)
                 .template value<double>(vars, x_position, t);
@@ -570,7 +587,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         eps.noalias() = B * u;
 
         auto C = _ip_data[ip].updateConstitutiveRelation(
-            t, x_position, dt, u, _process_data.reference_temperature);
+            t, x_position, dt, u, T_ref);
 
         local_Jac.noalias() += B.transpose() * C * B * w;
 
