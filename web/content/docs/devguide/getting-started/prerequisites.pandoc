@@ -218,13 +218,18 @@ brew install python
 :::
 
 ::: {.linux}
-Install CMake with Pythons package manager `pip` (you may get a more recent version than using your systems package manager):
+Install CMake via Kitware's APT Repository (for Ubuntu 18.04 onwards):
 
 ```bash
-$ pip3 install --user cmake
+$ sudo apt-get update
+$ sudo apt-get install apt-transport-https ca-certificates gnupg software-properties-common wget
+$ wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | sudo apt-key add -
+$ sudo apt-add-repository 'deb https://apt.kitware.com/ubuntu/ bionic main'
+$ sudo apt-get update
+$ sudo apt-get install cmake
 ```
 
-This installed `cmake` and `ccmake` to `.local/bin` in your home directory. Make sure to have this directory in your `PATH`!
+For other linux distributions you want to use your distributions package manager, [pip](https://pypi.org/project/cmake/) or [snap](https://snapcraft.io/cmake).
 :::
 
 ::: {.mac}
