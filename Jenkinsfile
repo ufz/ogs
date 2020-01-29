@@ -105,7 +105,7 @@ pipeline {
           }
           steps {
             script {
-              sh 'git submodule sync'
+              sh 'git submodule sync && git submodule update'
               configure {
                 cmakeOptions =
                   "-DBUILD_SHARED_LIBS=OFF " +
@@ -186,7 +186,7 @@ pipeline {
           }
           steps {
             script {
-              sh 'git submodule sync'
+              sh 'git submodule sync && git submodule update'
               sh "conan remove --system-reqs '*'"
               configure {
                 cmakeOptions =
@@ -246,7 +246,7 @@ pipeline {
           }
           steps {
             script {
-              sh 'git submodule sync'
+              sh 'git submodule sync && git submodule update'
               configure {
                 cmakeOptions =
                   "-DBUILD_SHARED_LIBS=${build_shared} " +
@@ -277,7 +277,7 @@ pipeline {
           }
           steps {
             script {
-              sh 'git submodule sync'
+              sh 'git submodule sync && git submodule update'
               configure {
                 cmakeOptions =
                   '-DOGS_BUILD_UTILS=ON ' +
@@ -331,7 +331,7 @@ pipeline {
           }
           steps {
             script {
-              sh 'git submodule sync'
+              sh 'git submodule sync && git submodule update'
               configure {
                 cmakeOptions =
                   '-DOGS_USE_PETSC=ON ' +
@@ -391,7 +391,7 @@ pipeline {
           steps {
             script {
               def num_threads = env.NUM_THREADS
-              bat 'git submodule sync'
+              bat 'git submodule sync && git submodule update'
               bat 'conan remove --locks'
               configure { // CLI + GUI
                 cmakeOptions =
@@ -449,7 +449,7 @@ pipeline {
           }
           steps {
             script {
-              sh 'git submodule sync'
+              sh 'git submodule sync && git submodule update'
               configure {
                 cmakeOptions =
                   "-DBUILD_SHARED_LIBS=${build_shared} " +
@@ -502,7 +502,7 @@ pipeline {
           }
           steps {
             script {
-              sh 'git submodule sync'
+              sh 'git submodule sync && git submodule update'
               sh 'find $CONAN_USER_HOME -name "system_reqs.txt" -exec rm {} \\;'
               configure {
                 cmakeOptions =
@@ -542,7 +542,7 @@ pipeline {
           }
           steps {
             script {
-              sh 'git submodule sync'
+              sh 'git submodule sync && git submodule update'
               sh 'find $CONAN_USER_HOME -name "system_reqs.txt" -exec rm {} \\;'
               try {
                 configure {
@@ -615,7 +615,7 @@ pipeline {
           }
           steps {
             script {
-              sh 'git submodule sync'
+              sh 'git submodule sync && git submodule update'
               sh 'find $CONAN_USER_HOME -name "system_reqs.txt" -exec rm {} \\;'
               configure {
                 cmakeOptions =
