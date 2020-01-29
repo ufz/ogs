@@ -56,11 +56,6 @@ struct HydroMechanicsProcessData
     /// A vector of displacement dimension's length.
     Eigen::Matrix<double, DisplacementDim, 1> const specific_body_force;
 
-    /// Fluid's compressibility. A scalar quantity.
-    /// Only used for compressible_fluid fluid_type
-    double const fluid_compressibility =
-        std::numeric_limits<double>::quiet_NaN();
-
     /// Reference Temperature. A scalar quantity.
     /// Only used for ideal_gas fluid_type
     double const reference_temperature =
@@ -74,25 +69,6 @@ struct HydroMechanicsProcessData
     /// Fluid type. Enumerator with possible values:
     /// incompressible_fluid, compressible_fluid, ideal_gas
     FluidType::Fluid_Type const fluid_type;
-
-
-    /// will be removed after linking with MPL
-    double getFluidCompressibility(double const& p_fr)
-    {
-        if (fluid_type == FluidType::Fluid_Type::INCOMPRESSIBLE_FLUID)
-        {
-            return 0.0;
-        }
-        if (fluid_type == FluidType::Fluid_Type::COMPRESSIBLE_FLUID)
-        {
-            return fluid_compressibility;
-        }
-        if (fluid_type == FluidType::Fluid_Type::IDEAL_GAS)
-        {
-            return 1.0 / p_fr;
-        }
-        OGS_FATAL("unknown fluid type %d", static_cast<int> (fluid_type));
-    }
 
     MeshLib::PropertyVector<double>* pressure_interpolated = nullptr;
     std::array<MeshLib::PropertyVector<double>*, 3> principal_stress_vector = {

@@ -169,13 +169,6 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
             "specific_gas_constant", std::numeric_limits<double>::quiet_NaN());
     DBUG("Use 'specific_gas_constant' as specific gas constant.");
 
-    // Fluid compressibility
-    double const fluid_compressibility =
-        //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS__fluid_compressibility}
-        config.getConfigParameter<double>(
-            "fluid_compressibility", std::numeric_limits<double>::quiet_NaN());
-    DBUG("Use 'fluid_compressibility' as fluid compressibility parameter.");
-
     auto const fluid_type =
         FluidType::strToFluidType(
             //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS__fluid_type}
@@ -193,8 +186,8 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         materialIDs(mesh),     std::move(media_map),
         std::move(solid_constitutive_relations),
         initial_stress,        specific_body_force,
-        fluid_compressibility, reference_temperature,
-        specific_gas_constant, fluid_type};
+        reference_temperature, specific_gas_constant,
+        fluid_type};
 
     SecondaryVariableCollection secondary_variables;
 

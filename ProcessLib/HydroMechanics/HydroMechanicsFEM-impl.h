@@ -228,14 +228,14 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const K_S = solid_material.getBulkModulus(t, x_position);
         auto const rho_sr = solid_phase.property(MPL::PropertyType::density)
                                 .template value<double>(vars, x_position, t);
-        // TODO (FZill) get fluid properties from GPML
-        double const p_fr =
-            (_process_data.fluid_type == FluidType::Fluid_Type::IDEAL_GAS)
-                ? N_p.dot(p)
-                : std::numeric_limits<double>::quiet_NaN();
-        double const beta_p = _process_data.getFluidCompressibility(p_fr);
+
         auto const rho_fr = gas_phase.property(MPL::PropertyType::density)
                                 .template value<double>(vars, x_position, t);
+        auto const beta_p =
+            gas_phase.property(MPL::PropertyType::density)
+                .template dValue<double>(vars, MPL::Variable::phase_pressure,
+                                         x_position, t) / rho_fr;
+
         auto const porosity = solid_phase.property(MPL::PropertyType::porosity)
                                   .template value<double>(vars, x_position, t);
         auto const& identity2 = MathLib::KelvinVector::Invariants<
@@ -450,14 +450,13 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const alpha_b =
             solid_phase.property(MPL::PropertyType::biot_coefficient)
                 .template value<double>(vars, x_position, t);
-        // TODO (FZill) get fluid properties from GPML
-        double const p_fr =
-            (_process_data.fluid_type == FluidType::Fluid_Type::IDEAL_GAS)
-                ? N_p.dot(p)
-                : std::numeric_limits<double>::quiet_NaN();
-        double const beta_p = _process_data.getFluidCompressibility(p_fr);
+
         auto const rho_fr = gas_phase.property(MPL::PropertyType::density)
                                 .template value<double>(vars, x_position, t);
+        auto const beta_p =
+            gas_phase.property(MPL::PropertyType::density)
+                .template dValue<double>(vars, MPL::Variable::phase_pressure,
+                                         x_position, t) / rho_fr;
         auto const porosity = solid_phase.property(MPL::PropertyType::porosity)
                                   .template value<double>(vars, x_position, t);
         auto const K_S = solid_material.getBulkModulus(t, x_position);
