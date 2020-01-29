@@ -162,25 +162,11 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
             "reference_temperature", std::numeric_limits<double>::quiet_NaN());
     DBUG("Use 'reference_temperature' as reference temperature.");
 
-
-    auto const fluid_type =
-        FluidType::strToFluidType(
-            //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS__fluid_type}
-            config.getConfigParameter<std::string>("fluid_type"));
-    DBUG("Use 'fluid_type' as fluid type parameter.");
-
-    if (!FluidType::checkRequiredParams(fluid_type, fluid_compressibility,
-                                        reference_temperature,
-                                        specific_gas_constant))
-    {
-        OGS_FATAL(FluidType::getErrorMsg(fluid_type));
-    }
-
     HydroMechanicsProcessData<DisplacementDim> process_data{
         materialIDs(mesh),     std::move(media_map),
         std::move(solid_constitutive_relations),
         initial_stress,        specific_body_force,
-        reference_temperature, fluid_type};
+        reference_temperature};
 
     SecondaryVariableCollection secondary_variables;
 

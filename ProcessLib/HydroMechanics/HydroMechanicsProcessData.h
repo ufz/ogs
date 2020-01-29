@@ -11,7 +11,6 @@
 #pragma once
 
 #include "ParameterLib/Parameter.h"
-#include "MaterialLib/Fluid/FluidType/FluidType.h"
 
 #include <memory>
 #include <utility>
@@ -57,14 +56,8 @@ struct HydroMechanicsProcessData
     Eigen::Matrix<double, DisplacementDim, 1> const specific_body_force;
 
     /// Reference Temperature. A scalar quantity.
-    /// Only used for ideal_gas fluid_type
     double const reference_temperature =
         std::numeric_limits<double>::quiet_NaN();
-
-
-    /// Fluid type. Enumerator with possible values:
-    /// incompressible_fluid, compressible_fluid, ideal_gas
-    FluidType::Fluid_Type const fluid_type;
 
     MeshLib::PropertyVector<double>* pressure_interpolated = nullptr;
     std::array<MeshLib::PropertyVector<double>*, 3> principal_stress_vector = {
