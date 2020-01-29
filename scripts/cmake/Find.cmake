@@ -2,6 +2,12 @@
 ### Find tools     ###
 ######################
 
+string(REPLACE ".windows.1" "" GIT_VERSION_STRING ${GIT_VERSION_STRING})
+if(${GIT_VERSION_STRING} VERSION_LESS ${ogs.minimum_version.git})
+    message(FATAL_ERROR "Git version ${ogs.minimum_version.git} is required. \
+        Found version ${GIT_VERSION_STRING}.")
+endif()
+
 find_package(Doxygen OPTIONAL_COMPONENTS dot)
 
 # Find gnu profiler gprof

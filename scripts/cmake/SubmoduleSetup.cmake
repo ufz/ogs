@@ -14,7 +14,6 @@ set(REQUIRED_SUBMODULES
     ThirdParty/exprtk
     ThirdParty/googletest
     ThirdParty/iphreeqc/src
-    ThirdParty/jedbrown-cmake-modules
     ThirdParty/json-cmake
     ThirdParty/tclap
     ThirdParty/tetgen
