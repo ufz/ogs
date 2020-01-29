@@ -61,10 +61,6 @@ struct HydroMechanicsProcessData
     double const reference_temperature =
         std::numeric_limits<double>::quiet_NaN();
 
-    /// Specific gas constant. A scalar quantity.
-    /// Only used for ideal_gas fluid_type
-    double const specific_gas_constant =
-        std::numeric_limits<double>::quiet_NaN();
 
     /// Fluid type. Enumerator with possible values:
     /// incompressible_fluid, compressible_fluid, ideal_gas
