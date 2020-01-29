@@ -51,11 +51,6 @@ struct HydroMechanicsProcessData
     /// representation of length 4 or 6, ParameterLib::Parameter<double>.
     ParameterLib::Parameter<double> const* const initial_stress;
 
-    /// Permeability of the solid. A scalar quantity,
-    /// ParameterLib::Parameter<double>.
-    ParameterLib::Parameter<double> const& intrinsic_permeability;
-    /// Fluid's density. A scalar quantity, ParameterLib::Parameter<double>.
-    ParameterLib::Parameter<double> const& fluid_density;
     /// Specific body forces applied to solid and fluid.
     /// It is usually used to apply gravitational forces.
     /// A vector of displacement dimension's length.
@@ -80,22 +75,6 @@ struct HydroMechanicsProcessData
     /// incompressible_fluid, compressible_fluid, ideal_gas
     FluidType::Fluid_Type const fluid_type;
 
-    /// will be removed after linking with MPL
-    double getFluidDensity(
-        double const& t, ParameterLib::SpatialPosition const& x_position,
-        double const& p_fr)
-    {
-        if (fluid_type == FluidType::Fluid_Type::INCOMPRESSIBLE_FLUID ||
-            fluid_type == FluidType::Fluid_Type::COMPRESSIBLE_FLUID)
-        {
-            return fluid_density(t, x_position)[0];
-        }
-        if (fluid_type == FluidType::Fluid_Type::IDEAL_GAS)
-        {
-            return p_fr / (specific_gas_constant * reference_temperature);
-        }
-        OGS_FATAL("unknown fluid type %d", static_cast<int> (fluid_type));
-    }
 
     /// will be removed after linking with MPL
     double getFluidCompressibility(double const& p_fr)

@@ -112,22 +112,6 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         MaterialLib::Solids::createConstitutiveRelations<DisplacementDim>(
             parameters, local_coordinate_system, config);
 
-    // Intrinsic permeability
-    auto& intrinsic_permeability = ParameterLib::findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS__intrinsic_permeability}
-        "intrinsic_permeability", parameters, 1, &mesh);
-
-    DBUG("Use '%s' as intrinsic conductivity parameter.",
-         intrinsic_permeability.name.c_str());
-
-    // Fluid density
-    auto& fluid_density = ParameterLib::findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS__fluid_density}
-        "fluid_density", parameters, 1, &mesh);
-    DBUG("Use '%s' as fluid density parameter.", fluid_density.name.c_str());
-
     // Specific body force
     Eigen::Matrix<double, DisplacementDim, 1> specific_body_force;
     {
@@ -150,10 +134,12 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     auto media_map =
         MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
 
-    std::array const requiredGasProperties = {MaterialPropertyLib::viscosity};
+    std::array const requiredGasProperties = {
+        MaterialPropertyLib::viscosity, MaterialPropertyLib::density};
     std::array const requiredSolidProperties = {
         MaterialPropertyLib::porosity, MaterialPropertyLib::biot_coefficient,
-        MaterialPropertyLib::density};
+        MaterialPropertyLib::density, MaterialPropertyLib::permeability};
+
     for (auto const& m : media)
     {
         checkRequiredProperties(m.second->phase("Gas"), requiredGasProperties);
@@ -206,8 +192,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     HydroMechanicsProcessData<DisplacementDim> process_data{
         materialIDs(mesh),     std::move(media_map),
         std::move(solid_constitutive_relations),
-        initial_stress,        intrinsic_permeability,
-        fluid_density,         specific_body_force,
+        initial_stress,        specific_body_force,
         fluid_compressibility, reference_temperature,
         specific_gas_constant, fluid_type};
 
