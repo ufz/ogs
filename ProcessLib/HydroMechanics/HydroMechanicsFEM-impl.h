@@ -223,7 +223,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         auto const K_S = solid_material.getBulkModulus(t, x_position);
 
-        auto const K = solid.property(MPL::PropertyType::permeability)
+        auto const K =  medium->property(MPL::PropertyType::permeability)
                            .template value<double>(vars, x_position, t);
         auto const alpha = solid.property(MPL::PropertyType::biot_coefficient)
                                .template value<double>(vars, x_position, t);
@@ -351,7 +351,6 @@ HydroMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
     x_position.setElementID(_element.getID());
 
     auto const& medium = _process_data.media_map->getMedium(_element.getID());
-    auto const& solid = medium->phase("Solid");
     auto const& gas = medium->phase("Gas");
     MPL::VariableArray vars;
 
@@ -366,7 +365,7 @@ HydroMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         vars[static_cast<int>(MPL::Variable::phase_pressure)] =
             _ip_data[ip].N_p.dot(p);
 
-        auto const K = solid.property(MPL::PropertyType::permeability)
+        auto const K =  medium->property(MPL::PropertyType::permeability)
                            .template value<double>(vars, x_position, t);
 
         auto const mu = gas.property(MPL::PropertyType::viscosity)
@@ -458,7 +457,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         auto const K_S = solid_material.getBulkModulus(t, x_position);
 
-        auto const K = solid.property(MPL::PropertyType::permeability)
+        auto const K =  medium->property(MPL::PropertyType::permeability)
                            .template value<double>(vars, x_position, t);
         auto const alpha_b = solid.property(MPL::PropertyType::biot_coefficient)
                                  .template value<double>(vars, x_position, t);

@@ -135,12 +135,13 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
 
     std::array const requiredMediumProperties = {
-        MaterialPropertyLib::reference_temperature};
+        MaterialPropertyLib::reference_temperature,
+        MaterialPropertyLib::permeability};
     std::array const requiredGasProperties = {
         MaterialPropertyLib::viscosity, MaterialPropertyLib::density};
     std::array const requiredSolidProperties = {
         MaterialPropertyLib::porosity, MaterialPropertyLib::biot_coefficient,
-        MaterialPropertyLib::density, MaterialPropertyLib::permeability};
+        MaterialPropertyLib::density};
 
     for (auto const& m : media)
     {
