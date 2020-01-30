@@ -134,6 +134,8 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     auto media_map =
         MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
 
+    std::array const requiredMediumProperties = {
+        MaterialPropertyLib::reference_temperature};
     std::array const requiredGasProperties = {
         MaterialPropertyLib::viscosity, MaterialPropertyLib::density};
     std::array const requiredSolidProperties = {
@@ -142,6 +144,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
 
     for (auto const& m : media)
     {
+        checkRequiredProperties(*m.second, requiredMediumProperties);
         checkRequiredProperties(m.second->phase("Gas"), requiredGasProperties);
         checkRequiredProperties(m.second->phase("Solid"),
                                 requiredSolidProperties);
@@ -155,18 +158,10 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value,
         &mesh);
 
-    // Reference temperature
-    double const reference_temperature =
-        //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS__reference_temperature}
-        config.getConfigParameter<double>(
-            "reference_temperature", std::numeric_limits<double>::quiet_NaN());
-    DBUG("Use 'reference_temperature' as reference temperature.");
-
     HydroMechanicsProcessData<DisplacementDim> process_data{
         materialIDs(mesh),     std::move(media_map),
         std::move(solid_constitutive_relations),
-        initial_stress,        specific_body_force,
-        reference_temperature};
+        initial_stress,        specific_body_force};
 
     SecondaryVariableCollection secondary_variables;
 

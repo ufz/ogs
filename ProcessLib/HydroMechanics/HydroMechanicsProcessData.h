@@ -55,10 +55,6 @@ struct HydroMechanicsProcessData
     /// A vector of displacement dimension's length.
     Eigen::Matrix<double, DisplacementDim, 1> const specific_body_force;
 
-    /// Reference Temperature. A scalar quantity.
-    double const reference_temperature =
-        std::numeric_limits<double>::quiet_NaN();
-
     MeshLib::PropertyVector<double>* pressure_interpolated = nullptr;
     std::array<MeshLib::PropertyVector<double>*, 3> principal_stress_vector = {
         nullptr, nullptr, nullptr};

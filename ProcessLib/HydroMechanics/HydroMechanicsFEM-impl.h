@@ -182,12 +182,15 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
 
-    auto const T_ref = _process_data.reference_temperature;
     auto const& b = _process_data.specific_body_force;
     auto const& medium = _process_data.media_map->getMedium(_element.getID());
     auto const& solid = medium->phase("Solid");
     auto const& gas = medium->phase("Gas");
     MPL::VariableArray vars;
+
+    auto const T_ref =
+        medium->property(MPL::PropertyType::reference_temperature)
+            .template value<double>(vars, x_position, t);
     vars[static_cast<int>(MPL::Variable::temperature)] = T_ref;
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
@@ -351,8 +354,10 @@ HydroMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
     auto const& solid = medium->phase("Solid");
     auto const& gas = medium->phase("Gas");
     MPL::VariableArray vars;
+
     vars[static_cast<int>(MPL::Variable::temperature)] =
-        _process_data.reference_temperature;
+        medium->property(MPL::PropertyType::reference_temperature)
+            .template value<double>(vars, x_position, t);
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
@@ -432,8 +437,10 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     auto const& solid = medium->phase("Solid");
     auto const& gas = medium->phase("Gas");
     MPL::VariableArray vars;
+
     vars[static_cast<int>(MPL::Variable::temperature)] =
-        _process_data.reference_temperature;
+        medium->property(MPL::PropertyType::reference_temperature)
+            .template value<double>(vars, x_position, t);
 
     int const n_integration_points = _integration_method.getNumberOfPoints();
     for (int ip = 0; ip < n_integration_points; ip++)
@@ -528,11 +535,14 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
 
-    auto const T_ref = _process_data.reference_temperature;
     auto const& medium = _process_data.media_map->getMedium(_element.getID());
     auto const& solid = medium->phase("Solid");
     auto const& gas = medium->phase("Gas");
     MPL::VariableArray vars;
+
+    auto const T_ref =
+        medium->property(MPL::PropertyType::reference_temperature)
+            .template value<double>(vars, x_position, t);
     vars[static_cast<int>(MPL::Variable::temperature)] = T_ref;
 
     int const n_integration_points = _integration_method.getNumberOfPoints();
@@ -643,6 +653,12 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
 
+    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+
+    auto const T_ref =
+        medium->property(MPL::PropertyType::reference_temperature)
+            .template value<double>(MPL::VariableArray(), x_position, t);
+
     int const n_integration_points = _integration_method.getNumberOfPoints();
     for (int ip = 0; ip < n_integration_points; ip++)
     {
@@ -663,8 +679,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto& eps = _ip_data[ip].eps;
         eps.noalias() = B * u;
 
-        _ip_data[ip].updateConstitutiveRelation(
-            t, x_position, dt, u, _process_data.reference_temperature);
+        _ip_data[ip].updateConstitutiveRelation(t, x_position, dt, u, T_ref);
     }
 }
 
