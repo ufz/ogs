@@ -22,7 +22,7 @@ ninja install
 
 ```bash
 cmake -DCMAKE_BUILD_TYPE=Release -DOGS_INSITU=ON -DOGS_USE_CONAN=OFF \
-  -DParaView_DIR=~/code/pv/paraview_install/lib/cmake/paraview-5.8 \
+  -DParaView_DIR=~/path/to/paraview_install/lib/cmake/paraview-5.8 \
   -DOGS_BUILD_PROCESSES=GroundwaterFlow ../ogs
 ```
 
@@ -44,7 +44,17 @@ Open generated `cube_1e1_*.pvtp` in ParaView.
 
 See section `<insitu>` in `Elliptic/cube_1x1x1_GroundWaterFlow/cube_1e1.prj`. It defines Python scripts with visualization pipelines which are executed after every time step.
 
-These python scripts can be generated with ParaView. See page 11 on the [Catalyst User Guide](https://www.paraview.org/files/catalyst/docs/ParaViewCatalystUsersGuide_v2.pdf).
+These python scripts can be generated with ParaView:
+
+- Load a typical dataset representative for your expected simulation output
+- Rename dataset in the *Pipeline Browser* to `input`
+- Setup the filter pipeline
+- In the menu click *Catalyst / Define Exports* which opens the *Export Inspector*
+- In the *Export Inspector* under *Data Extracts*:
+  - Select the filter you want to write out
+  - Choose the data format, e.g. *XMLPPolyDataWriter*
+  - Click the check-box next to the data format drop-down
+- In the menu click *Catalyst / Export Catalyst Script*
 
 ----
 
