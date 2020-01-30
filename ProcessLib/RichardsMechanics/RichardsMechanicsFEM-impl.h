@@ -864,6 +864,10 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
     double saturation_avg = 0;
 
+    typename BMatricesType::KelvinVectorType sigma_avg;
+    sigma_avg.setZero(
+        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value);
+
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         x_position.setIntegrationPoint(ip);
@@ -876,10 +880,20 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         S_L = _process_data.flow_material->getSaturation(
             material_id, t, x_position, -p_cap_ip, temperature, p_cap_ip);
         saturation_avg += S_L;
+        sigma_avg += _ip_data[ip].sigma_eff;
     }
     saturation_avg /= n_integration_points;
+    sigma_avg /= n_integration_points;
 
     (*_process_data.element_saturation)[_element.getID()] = saturation_avg;
+    auto const sym_stress_tensor =
+        MathLib::KelvinVector::kelvinVectorToSymmetricTensor(sigma_avg);
+    auto& stress_outputs = (*_process_data.element_stresses);
+    for (int comp = 0; comp != stress_outputs.getNumberOfComponents(); comp++)
+    {
+        stress_outputs.getComponent(_element.getID(), comp) =
+            sym_stress_tensor[comp];
+    }
 
     NumLib::interpolateToHigherOrderNodes<
         ShapeFunctionPressure, typename ShapeFunctionDisplacement::MeshElement,
