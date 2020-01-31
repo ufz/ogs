@@ -1,19 +1,15 @@
 container:
+  stage: package
   only:
     refs:
       - master
   tags:
     - docker-shell
-  stage: package
   variables:
     GIT_STRATEGY: fetch
     OPENMPI_VERSIONS: 'off 2.1.6 3.1.4 4.0.1'
+  extends: .container-maker-setup
   script:
-    - git submodule update --init ThirdParty/container-maker
-    - virtualenv .venv
-    - source .venv/bin/activate
-    - pip install -r ThirdParty/container-maker/requirements.txt
-    - export PYTHONPATH="${PYTHONPATH}:${PWD}/ThirdParty/container-maker"
     - python ThirdParty/container-maker/ogscm/cli.py -B -C -R --ogs . --pm system --cvode --ompi $OPENMPI_VERSIONS
   artifacts:
     paths:

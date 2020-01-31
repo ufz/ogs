@@ -3,5 +3,7 @@ stages:
   - package
 
 include:
-  - local: '/scripts/ci/jobs/container.yml'
+  - local: '/scripts/ci/extends/container-maker-setup.yml'
+  - local: '/scripts/ci/jobs/build_image.yml'
   - local: '/scripts/ci/jobs/build.yml'
+  - local: '/scripts/ci/jobs/container.yml'

@@ -1,0 +1,13 @@
+build_image:
+  stage: .pre
+  # only:
+    # changes:
+      # - ThirdParty/container-maker
+  tags:
+    - docker-shell
+  variables:
+    GIT_STRATEGY: fetch
+  extends: .container-maker-setup
+  script:
+    # --jenkins? --gui?
+    - python ThirdParty/container-maker/ogscm/cli.py -B --ogs off --pm system --cvode --cppcheck --docs --gcovr
