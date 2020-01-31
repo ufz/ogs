@@ -864,7 +864,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
     double saturation_avg = 0;
 
-    using KV = typename BMatricesType::KelvinVectorType;
+    using KV = MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
     KV sigma_avg = KV::Zero();
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
