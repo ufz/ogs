@@ -1,0 +1,25 @@
+build:
+  stage: test
+  variables:
+    CONAN_USER_HOME: "$CI_PROJECT_DIR"
+    CCACHE_DIR: "$CI_PROJECT_DIR/.ccache"
+    CTEST_NUM_THREADS: '4'
+    CTEST_LARGE_NUM_THREADS: '3'
+  image:
+    name: ogs6/gcc
+    entrypoint:
+      - '/usr/bin/env'
+      - 'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
+  cache:
+    paths:
+      - .conan
+      - .ccache
+
+  before_script:
+    - mkdir -p build
+    - cd build
+
+  script:
+    - cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DOGS_BUILD_PROCESSES=GroundwaterFlow
+    - cmake --build . --target tests
+    - cmake --build . --target ctest -j 3
