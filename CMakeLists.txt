@@ -243,7 +243,6 @@ include(scripts/cmake/packaging/Pack.cmake)
 
 # External projects
 if(OGS_INSITU)
-    include("${PARAVIEW_USE_FILE}")
     add_definitions(-DUSE_INSITU)
 endif()
 
