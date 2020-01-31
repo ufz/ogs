@@ -11,8 +11,7 @@ import os
 import numpy as np
 from pandas import read_csv
 import OpenGeoSys
-from tespy import cmp, con, nwk, hlp, cmp_char
-from tespy import nwkr
+from tespy.networks import load_network
 
 # User setting +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # parameters
@@ -181,9 +180,9 @@ class BC(OpenGeoSys.BHENetwork):
 # loading the TESPy model
 project_dir = os.getcwd()
 print("Project dir is: ", project_dir)
-nw = nwkr.load_nwk('./pre/tespy_nw')
-# set if print the information of the network
-nw.set_printoptions(print_level='none')
+nw = load_network('./pre/tespy_nw')
+# set if print the network iteration info
+nw.set_attr(iterinfo=False)
 
 # create bhe dataframe of the network system from bhe_network.csv
 df = create_dataframe()

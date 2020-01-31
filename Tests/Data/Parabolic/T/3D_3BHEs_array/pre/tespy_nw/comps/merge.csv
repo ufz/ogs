@@ -1,2 +1,2 @@
-label;cp;busses;bus_param;bus_P_ref;bus_char;design;offdesign;interface;design_path;num_in;num_in_set;zero_flag;zero_flag_set
-merge;merge;[];[];[];[];[];[];False;nan;3;True;nan;False
+label;cp;busses;bus_param;bus_P_ref;bus_char;design;offdesign;design_path;local_design;local_offdesign;num_in;num_in_set;zero_flag;zero_flag_set
+merge;merge;[];[];[];[];[];[];nan;False;False;3;True;nan;False

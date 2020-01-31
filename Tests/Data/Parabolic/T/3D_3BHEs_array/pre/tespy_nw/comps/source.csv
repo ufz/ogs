@@ -1,2 +1,2 @@
-label;cp;busses;bus_param;bus_P_ref;bus_char;design;offdesign;interface;design_path
-from consumer inflow;source;[];[];[];[];[];[];False;nan
+label;cp;busses;bus_param;bus_P_ref;bus_char;design;offdesign;design_path;local_design;local_offdesign
+from consumer inflow;source;[];[];[];[];[];[];nan;False;False
