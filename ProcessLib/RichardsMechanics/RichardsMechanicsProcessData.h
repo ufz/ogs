@@ -71,6 +71,7 @@ struct RichardsMechanicsProcessData
     bool const apply_mass_lumping;
 
     MeshLib::PropertyVector<double>* element_saturation = nullptr;
+    MeshLib::PropertyVector<double>* element_stresses = nullptr;
     MeshLib::PropertyVector<double>* pressure_interpolated = nullptr;
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
