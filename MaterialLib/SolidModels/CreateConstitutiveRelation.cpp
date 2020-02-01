@@ -75,7 +75,7 @@ createConstitutiveRelation(
     {
 #ifdef OGS_USE_MFRONT
         return MaterialLib::Solids::MFront::createMFront<DisplacementDim>(
-            parameters, config);
+            parameters, local_coordinate_system, config);
 #else   // OGS_USE_MFRONT
         OGS_FATAL(
             "OGS is compiled without MFront support. See OGS_USE_MFRONT CMake "

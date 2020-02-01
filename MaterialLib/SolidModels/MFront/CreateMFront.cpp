@@ -55,6 +55,8 @@ namespace MFront
 template <int DisplacementDim>
 std::unique_ptr<MechanicsBase<DisplacementDim>> createMFront(
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
+    boost::optional<ParameterLib::CoordinateSystem> const&
+        local_coordinate_system,
     BaseLib::ConfigTree const& config)
 {
     INFO("### MFRONT ########################################################");
@@ -191,7 +193,8 @@ std::unique_ptr<MechanicsBase<DisplacementDim>> createMFront(
     INFO("### MFRONT END ####################################################");
 
     return std::make_unique<MFront<DisplacementDim>>(
-        std::move(behaviour), std::move(material_properties));
+        std::move(behaviour), std::move(material_properties),
+        local_coordinate_system);
 }
 }  // namespace MFront
 }  // namespace Solids
@@ -205,9 +208,13 @@ namespace MFront
 {
 template std::unique_ptr<MechanicsBase<2>> createMFront<2>(
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
+    boost::optional<ParameterLib::CoordinateSystem> const&
+        local_coordinate_system,
     BaseLib::ConfigTree const& config);
 template std::unique_ptr<MechanicsBase<3>> createMFront<3>(
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
+    boost::optional<ParameterLib::CoordinateSystem> const&
+        local_coordinate_system,
     BaseLib::ConfigTree const& config);
 }  // namespace MFront
 }  // namespace Solids

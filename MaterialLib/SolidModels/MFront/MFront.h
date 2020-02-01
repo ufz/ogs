@@ -66,11 +66,14 @@ public:
 
     MFront(mgis::behaviour::Behaviour&& behaviour,
            std::vector<ParameterLib::Parameter<double> const*>&&
-               material_properties);
+               material_properties,
+           boost::optional<ParameterLib::CoordinateSystem> const&
+               local_coordinate_system);
 
-    std::unique_ptr<
-        typename MechanicsBase<DisplacementDim>::MaterialStateVariables>
-    createMaterialStateVariables() const override;
+        std::unique_ptr<
+            typename MechanicsBase<DisplacementDim>::
+                MaterialStateVariables> createMaterialStateVariables()
+            const override;
 
     std::optional<std::tuple<KelvinVector,
                              std::unique_ptr<typename MechanicsBase<
@@ -102,6 +105,7 @@ public:
 private:
     mgis::behaviour::Behaviour _behaviour;
     std::vector<ParameterLib::Parameter<double> const*> _material_properties;
+    ParameterLib::CoordinateSystem const* const _local_coordinate_system;
 };
 
 extern template class MFront<2>;

@@ -238,8 +238,11 @@ KelvinVectorType<DisplacementDim> symmetricTensorToKelvinVector(
 /// Rotation tensor for Kelvin mapped vectors and tensors. It is meant to be
 /// used for rotation of stress/strain tensors epsilon:Q and tangent stiffness
 /// tensors Q*C*Q^t.
-KelvinMatrixType<3> fourthOrderRotationMatrix(
-    Eigen::Matrix3d const& transformation);
+/// 2D and 3D implementations available.
+template <int DisplacementDim>
+KelvinMatrixType<DisplacementDim> fourthOrderRotationMatrix(
+    Eigen::Matrix<double, DisplacementDim, DisplacementDim, Eigen::ColMajor,
+                  DisplacementDim, DisplacementDim> const& transformation);
 
 }  // namespace KelvinVector
 }  // namespace MathLib

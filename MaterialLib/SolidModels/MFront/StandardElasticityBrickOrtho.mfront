@@ -1,0 +1,28 @@
+/**
+ * \file
+ * \copyright
+ * Copyright (c) 2012-2020, OpenGeoSys Community (http://www.opengeosys.org)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.org/project/license
+ */
+
+@DSL Implicit;
+@Behaviour StandardElasticityBrickOrtho;
+@Author Thomas Nagel;
+@Date 17/01/2020;
+
+@Algorithm NewtonRaphson;
+
+@OrthotropicBehaviour<Pipe>;
+@Brick StandardElasticity;
+
+@Theta 1.0;       // time integration scheme
+@Epsilon 1e-14;  // tolerance of local stress integration algorithm
+@ModellingHypotheses{".+"};
+
+@RequireStiffnessTensor<UnAltered>;
+
+@Integrator
+{
+}
