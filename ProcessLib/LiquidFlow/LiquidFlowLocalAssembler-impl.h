@@ -14,6 +14,7 @@
 
 #include "LiquidFlowLocalAssembler.h"
 
+#include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 #include "NumLib/Function/Interpolation.h"
 
 namespace ProcessLib

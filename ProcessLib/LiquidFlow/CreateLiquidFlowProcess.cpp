@@ -13,6 +13,7 @@
 
 #include <algorithm>
 
+#include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
 #include "MaterialLib/PhysicalConstant.h"
 #include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
@@ -112,11 +113,17 @@ std::unique_ptr<Process> createLiquidFlowProcess(
             *calculatesurfaceflux_config, meshes, output_directory);
     }
 
+    auto media_map =
+        MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
+
+    LiquidFlowData process_data{std::move(media_map)};
+
     return std::make_unique<LiquidFlowProcess>(
         std::move(name), mesh, std::move(jacobian_assembler), parameters,
         integration_order, std::move(process_variables),
-        std::move(secondary_variables), material_ids, gravity_axis_id, g,
-        reference_temperature, mat_config, std::move(surfaceflux));
+        std::move(process_data), std::move(secondary_variables), material_ids,
+        gravity_axis_id, g, reference_temperature, mat_config,
+        std::move(surfaceflux));
 }
 
 }  // namespace LiquidFlow

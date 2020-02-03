@@ -34,6 +34,7 @@ LiquidFlowProcess::LiquidFlowProcess(
     unsigned const integration_order,
     std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>&&
         process_variables,
+    LiquidFlowData&& process_data,
     SecondaryVariableCollection&& secondary_variables,
     MeshLib::PropertyVector<int> const* const material_ids,
     int const gravitational_axis_id,
@@ -49,6 +50,7 @@ LiquidFlowProcess::LiquidFlowProcess(
       _reference_temperature(reference_temperature),
       _material_properties(
           createLiquidFlowMaterialProperties(config, parameters, material_ids)),
+      _process_data(std::move(process_data)),
       _surfaceflux(std::move(surfaceflux))
 {
     DBUG("Create Liquid flow process.");

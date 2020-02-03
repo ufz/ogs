@@ -16,6 +16,7 @@
 
 #include "LiquidFlowLocalAssembler.h"
 #include "LiquidFlowMaterialProperties.h"
+#include "LiquidFlowData.h"
 #include "MaterialLib/Fluid/FluidProperties/FluidProperties.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "ProcessLib/Process.h"
@@ -65,6 +66,7 @@ public:
         unsigned const integration_order,
         std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>&&
             process_variables,
+        LiquidFlowData&& process_data,
         SecondaryVariableCollection&& secondary_variables,
         MeshLib::PropertyVector<int> const* const material_ids,
         int const gravitational_axis_id,
@@ -116,6 +118,7 @@ private:
     const double _gravitational_acceleration;
     const double _reference_temperature;
     const std::unique_ptr<LiquidFlowMaterialProperties> _material_properties;
+    LiquidFlowData _process_data;
 
     std::vector<std::unique_ptr<LiquidFlowLocalAssemblerInterface>>
         _local_assemblers;
