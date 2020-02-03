@@ -125,7 +125,7 @@ private:
 
     boost::optional<ParameterLib::CoordinateSystem> _local_coordinate_system;
 
-    std::map<int, std::unique_ptr<MaterialPropertyLib::Medium>> _media;
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> _media;
 
     /// The time loop used to solve this project's processes.
     std::unique_ptr<ProcessLib::TimeLoop> _time_loop;

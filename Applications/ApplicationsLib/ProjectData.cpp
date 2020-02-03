@@ -14,6 +14,8 @@
 #include "ProjectData.h"
 
 #include <algorithm>
+#include <boost/algorithm/string.hpp>
+#include <boost/algorithm/cxx11/all_of.hpp>
 #include <set>
 
 #include <logog/include/logog.hpp>
@@ -448,19 +450,37 @@ void ProjectData::parseMedia(
          media_config->getConfigSubtreeList("medium"))
     {
         //! \ogs_file_attr{prj__media__medium__id}
-        auto const material_id = medium_config.getConfigAttribute<int>("id", 0);
+        auto material_id_string =
+            medium_config.getConfigAttribute<std::string>("id", "0");
+        std::vector<std::string> material_ids;
+        boost::algorithm::erase_all(material_id_string, " ");
+        boost::split(material_ids, material_id_string, boost::is_any_of(","));
 
-        if (_media.find(material_id) != _media.end())
+        for (auto const& m_id : material_ids)
         {
-            OGS_FATAL(
-                "Multiple media were specified for the same material id %d. "
-                "Keep in mind, that if no material id is specified, it is "
-                "assumed to be 0 by default.",
-                material_id);
-        }
+            if (!boost::algorithm::all_of(m_id, boost::algorithm::is_digit()))
+            {
+                OGS_FATAL(
+                    "Could not parse material ID's from '%s'. Please separate "
+                    "multiple material ID's by comma only. Invalid character: "
+                    "%c",
+                    material_id_string.c_str(),
+                    m_id[m_id.find_first_not_of("0123456789")]);
+            }
+            if (_media.find(std::stoi(m_id)) != _media.end())
+            {
+                OGS_FATAL(
+                    "Multiple media were specified for the same material id "
+                    "%d. "
+                    "Keep in mind, that if no material id is specified, it is "
+                    "assumed to be 0 by default.",
+                    m_id.c_str());
+            }
 
-        _media[material_id] =
-            MaterialPropertyLib::createMedium(medium_config, _parameters);
+            _media[std::stoi(m_id)] = (m_id == material_ids[0])
+                ? MaterialPropertyLib::createMedium(medium_config, _parameters)
+                : _media[std::stoi(material_ids[0])];
+        }
     }
 
     if (_media.empty())
