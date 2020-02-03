@@ -143,13 +143,16 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         MaterialPropertyLib::porosity, MaterialPropertyLib::biot_coefficient,
         MaterialPropertyLib::density};
 
-    for (auto const& m : media)
+    for (auto const& element : mesh.getElements())
     {
-        checkRequiredProperties(*m.second, requiredMediumProperties);
-        checkRequiredProperties(m.second->phase("Gas"), requiredGasProperties);
-        checkRequiredProperties(m.second->phase("Solid"),
-                                requiredSolidProperties);
+        auto const element_id = element->getID();
+        media_map->checkElementHasMedium(element_id);
+        auto const& medium = *media_map->getMedium(element_id);
+        checkRequiredProperties(medium, requiredMediumProperties);
+        checkRequiredProperties(medium.phase("Gas"), requiredGasProperties);
+        checkRequiredProperties(medium.phase("Solid"), requiredSolidProperties);
     }
+    DBUG("Media properties verified.");
 
     // Initial stress conditions
     auto const initial_stress = ParameterLib::findOptionalTagParameter<double>(
