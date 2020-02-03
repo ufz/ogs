@@ -57,7 +57,7 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
         local_coordinate_system,
     unsigned const integration_order,
     BaseLib::ConfigTree const& config,
-    std::map<int, std::unique_ptr<MaterialPropertyLib::Medium>> const& media);
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media);
 
 extern template std::unique_ptr<Process> createThermoHydroMechanicsProcess<2>(
     std::string name, MeshLib::Mesh& mesh,
@@ -67,7 +67,7 @@ extern template std::unique_ptr<Process> createThermoHydroMechanicsProcess<2>(
     boost::optional<ParameterLib::CoordinateSystem> const&
         local_coordinate_system,
     unsigned const integration_order, BaseLib::ConfigTree const& config,
-    std::map<int, std::unique_ptr<MaterialPropertyLib::Medium>> const& media);
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media);
 
 extern template std::unique_ptr<Process> createThermoHydroMechanicsProcess<3>(
     std::string name,
@@ -79,6 +79,6 @@ extern template std::unique_ptr<Process> createThermoHydroMechanicsProcess<3>(
         local_coordinate_system,
     unsigned const integration_order,
     BaseLib::ConfigTree const& config,
-    std::map<int, std::unique_ptr<MaterialPropertyLib::Medium>> const& media);
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media);
 }  // namespace ThermoHydroMechanics
 }  // namespace ProcessLib

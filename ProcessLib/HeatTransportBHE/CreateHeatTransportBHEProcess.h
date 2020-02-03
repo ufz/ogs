@@ -30,6 +30,6 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
         curves,
-    std::map<int, std::unique_ptr<MaterialPropertyLib::Medium>> const& media);
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media);
 }  // namespace HeatTransportBHE
 }  // namespace ProcessLib
