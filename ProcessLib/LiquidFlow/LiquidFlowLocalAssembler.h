@@ -17,6 +17,9 @@
 #include <vector>
 #include <typeindex>
 
+#include "MaterialLib/MPL/Medium.h"
+#include "MaterialLib/MPL/Utils/FormEffectiveThermalConductivity.h"
+
 #include "MaterialLib/PorousMedium/Permeability/Permeability.h"
 #include "MaterialLib/PorousMedium/Storage/Storage.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"

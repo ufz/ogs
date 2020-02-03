@@ -15,6 +15,8 @@
 #include "LiquidFlowLocalAssembler.h"
 
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
+#include "MaterialLib/MPL/Utils/FormEigenTensor.h"
+#include "MaterialLib/MPL/VariableType.h"
 #include "NumLib/Function/Interpolation.h"
 
 namespace ProcessLib
@@ -133,12 +135,22 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     //       the integration loop for non-constant porosity and storage models.
     double porosity_variable = 0.;
     double storage_variable = 0.;
+
+    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    auto const& liquid_phase = medium->phase("AqueousLiquid");
+
+    MaterialPropertyLib::VariableArray vars;
+    vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
+        _reference_temperature;
+
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         auto const& ip_data = _ip_data[ip];
 
         double p = 0.;
         NumLib::shapeFunctionInterpolate(local_x, ip_data.N, p);
+        vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
+            p;
 
         // Assemble mass matrix, M
         local_M.noalias() += _material_properties.getMassCoefficient(
@@ -148,9 +160,9 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
                              ip_data.integration_weight;
 
         // Compute density:
-        const double rho_g =
-            _material_properties.getLiquidDensity(p, _reference_temperature) *
-            _gravitational_acceleration;
+        auto const fluid_density =
+            liquid_phase.property(MaterialPropertyLib::PropertyType::density)
+                .template value<double>(vars, pos, t);
         // Compute viscosity:
         const double mu =
             _material_properties.getViscosity(p, _reference_temperature);
@@ -162,7 +174,8 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
 
         // Assemble Laplacian, K, and RHS by the gravitational term
         LaplacianGravityVelocityCalculator::calculateLaplacianAndGravityTerm(
-            local_K, local_b, ip_data, permeability, mu, rho_g,
+            local_K, local_b, ip_data, permeability, mu,
+            fluid_density * _gravitational_acceleration,
             _gravitational_axis_id);
     }
 }
@@ -237,15 +250,24 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
 
+    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    auto const& liquid_phase = medium->phase("AqueousLiquid");
+
+    MaterialPropertyLib::VariableArray vars;
+    vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
+        _reference_temperature;
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         auto const& ip_data = _ip_data[ip];
         double p = 0.;
         NumLib::shapeFunctionInterpolate(local_x, ip_data.N, p);
+        vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
+            p;
 
-        const double rho_g =
-            _material_properties.getLiquidDensity(p, _reference_temperature) *
-            _gravitational_acceleration;
+        // Compute density:
+        auto const fluid_density =
+            liquid_phase.property(MaterialPropertyLib::PropertyType::density)
+                .template value<double>(vars, pos, t, dt);
         // Compute viscosity:
         const double mu =
             _material_properties.getViscosity(p, _reference_temperature);
@@ -254,8 +276,9 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
             material_id, t, pos, _element.getDimension(), p,
             _reference_temperature);
         LaplacianGravityVelocityCalculator::calculateVelocity(
-            ip, local_p_vec, ip_data, permeability, mu, rho_g,
-            _gravitational_axis_id, darcy_velocity_at_ips);
+            ip, local_p_vec, ip_data, permeability, mu,
+            fluid_density * _gravitational_acceleration, _gravitational_axis_id,
+            darcy_velocity_at_ips);
     }
 }
 
