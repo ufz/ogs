@@ -164,8 +164,10 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
             liquid_phase.property(MaterialPropertyLib::PropertyType::density)
                 .template value<double>(vars, pos, t);
         // Compute viscosity:
-        const double mu =
             _material_properties.getViscosity(p, _reference_temperature);
+        auto const viscosity =
+            liquid_phase.property(MaterialPropertyLib::PropertyType::viscosity)
+                .template value<double>(vars, pos, t, dt);
 
         pos.setIntegrationPoint(ip);
         auto const& permeability = _material_properties.getPermeability(
@@ -174,7 +176,7 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
 
         // Assemble Laplacian, K, and RHS by the gravitational term
         LaplacianGravityVelocityCalculator::calculateLaplacianAndGravityTerm(
-            local_K, local_b, ip_data, permeability, mu,
+            local_K, local_b, ip_data, permeability, viscosity,
             fluid_density * _gravitational_acceleration,
             _gravitational_axis_id);
     }
@@ -269,14 +271,15 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
             liquid_phase.property(MaterialPropertyLib::PropertyType::density)
                 .template value<double>(vars, pos, t, dt);
         // Compute viscosity:
-        const double mu =
-            _material_properties.getViscosity(p, _reference_temperature);
+        auto const viscosity =
+            liquid_phase.property(MaterialPropertyLib::PropertyType::viscosity)
+                .template value<double>(vars, pos, t, dt);
 
         auto const& permeability = _material_properties.getPermeability(
             material_id, t, pos, _element.getDimension(), p,
             _reference_temperature);
         LaplacianGravityVelocityCalculator::calculateVelocity(
-            ip, local_p_vec, ip_data, permeability, mu,
+            ip, local_p_vec, ip_data, permeability, viscosity,
             fluid_density * _gravitational_acceleration, _gravitational_axis_id,
             darcy_velocity_at_ips);
     }
