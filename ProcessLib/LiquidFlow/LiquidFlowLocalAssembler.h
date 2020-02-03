@@ -30,6 +30,7 @@
 #include "ProcessLib/Utils/InitShapeMatrices.h"
 
 #include "LiquidFlowMaterialProperties.h"
+#include "LiquidFlowData.h"
 
 namespace ProcessLib
 {
@@ -95,13 +96,15 @@ public:
         int const gravitational_axis_id,
         double const gravitational_acceleration,
         double const reference_temperature,
-        LiquidFlowMaterialProperties const& material_propertries)
+        LiquidFlowMaterialProperties const& material_propertries,
+        LiquidFlowData const& process_data)
         : _element(element),
           _integration_method(integration_order),
           _gravitational_axis_id(gravitational_axis_id),
           _gravitational_acceleration(gravitational_acceleration),
           _reference_temperature(reference_temperature),
-          _material_properties(material_propertries)
+          _material_properties(material_propertries),
+          _process_data(process_data)
     {
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
@@ -225,6 +228,7 @@ private:
     const double _gravitational_acceleration;
     const double _reference_temperature;
     const LiquidFlowMaterialProperties& _material_properties;
+    const LiquidFlowData& _process_data;
 };
 
 }  // namespace LiquidFlow
