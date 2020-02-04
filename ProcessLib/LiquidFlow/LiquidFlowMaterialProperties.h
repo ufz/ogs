@@ -45,7 +45,7 @@ public:
     using ArrayType = MaterialLib::Fluid::FluidProperty::ArrayType;
 
     LiquidFlowMaterialProperties(
-        std::unique_ptr<MaterialLib::Fluid::FluidProperties>&& fluid_properties,
+//        std::unique_ptr<MaterialLib::Fluid::FluidProperties>&& fluid_properties,
         std::vector<std::unique_ptr<MaterialLib::PorousMedium::Permeability>>&&
             intrinsic_permeability_models,
         std::vector<std::unique_ptr<MaterialLib::PorousMedium::Porosity>>&&
@@ -54,7 +54,7 @@ public:
             storage_models,
         MeshLib::PropertyVector<int> const* const material_ids)
         : _material_ids(material_ids),
-          _fluid_properties(std::move(fluid_properties)),
+//          _fluid_properties(std::move(fluid_properties)),
           _intrinsic_permeability_models(
               std::move(intrinsic_permeability_models)),
           _porosity_models(std::move(porosity_models)),
@@ -85,16 +85,18 @@ public:
                               const ParameterLib::SpatialPosition& pos,
                               const double p, const double T,
                               const double porosity_variable,
-                              const double storage_variable) const;
+                              const double storage_variable,
+                              double const density,
+                              double const ddensity_dpressure) const;
 
     Eigen::MatrixXd getPermeability(const int material_id, const double t,
                                     const ParameterLib::SpatialPosition& pos,
                                     const int dim, const double p,
                                     const double T) const;
 
-    double getLiquidDensity(const double p, const double T) const;
+ //   double getLiquidDensity(const double p, const double T) const;
 
-    double getViscosity(const double p, const double T) const;
+//    double getViscosity(const double p, const double T) const;
 
     double getPorosity(const int material_id, const double t,
                        const ParameterLib::SpatialPosition& pos,
@@ -106,8 +108,8 @@ private:
      */
     MeshLib::PropertyVector<int> const* const _material_ids;
 
-    const std::unique_ptr<MaterialLib::Fluid::FluidProperties>
-        _fluid_properties;
+ //   const std::unique_ptr<MaterialLib::Fluid::FluidProperties>
+ //       _fluid_properties;
 
     const std::vector<std::unique_ptr<MaterialLib::PorousMedium::Permeability>>
         _intrinsic_permeability_models;

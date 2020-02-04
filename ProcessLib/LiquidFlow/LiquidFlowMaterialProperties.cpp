@@ -42,6 +42,7 @@ int LiquidFlowMaterialProperties::getMaterialID(
     return (*_material_ids)[pos.getElementID().get()];
 }
 
+/*
 double LiquidFlowMaterialProperties::getLiquidDensity(const double p,
                                                       const double T) const
 {
@@ -61,6 +62,7 @@ double LiquidFlowMaterialProperties::getViscosity(const double p,
     return _fluid_properties->getValue(
         MaterialLib::Fluid::FluidPropertyType::Viscosity, vars);
 }
+*/
 
 double LiquidFlowMaterialProperties::getPorosity(
     const int material_id,
@@ -76,23 +78,18 @@ double LiquidFlowMaterialProperties::getPorosity(
 double LiquidFlowMaterialProperties::getMassCoefficient(
     const int material_id, const double t,
     const ParameterLib::SpatialPosition& pos, const double p, const double T,
-    const double porosity_variable, const double storage_variable) const
+    const double porosity_variable, const double storage_variable,
+    double const density, double const ddensity_dpressure) const
 {
     ArrayType vars;
     vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::T)] = T;
     vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::p)] = p;
-    const double drho_dp = _fluid_properties->getdValue(
-        MaterialLib::Fluid::FluidPropertyType::Density, vars,
-        MaterialLib::Fluid::PropertyVariableType::p);
-    const double rho = _fluid_properties->getValue(
-        MaterialLib::Fluid::FluidPropertyType::Density, vars);
-    assert(rho > 0.);
 
     const double porosity =
         _porosity_models[material_id]->getValue(t, pos, porosity_variable, T);
     const double storage =
         _storage_models[material_id]->getValue(storage_variable);
-    return porosity * drho_dp / rho + storage;
+    return porosity * ddensity_dpressure / density + storage;
 }
 
 Eigen::MatrixXd LiquidFlowMaterialProperties::getPermeability(

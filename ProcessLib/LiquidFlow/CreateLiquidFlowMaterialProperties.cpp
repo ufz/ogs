@@ -45,9 +45,9 @@ createLiquidFlowMaterialProperties(
     DBUG("Reading material properties of liquid flow process.");
 
     //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__material_property__fluid}
-    auto const& fluid_config = config.getConfigSubtree("fluid");
-    auto fluid_properties =
-        MaterialLib::Fluid::createFluidProperties(fluid_config);
+//    auto const& fluid_config = config.getConfigSubtree("fluid");
+//    auto fluid_properties =
+//        MaterialLib::Fluid::createFluidProperties(fluid_config);
 
     // Get porous properties
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Permeability>>
@@ -97,7 +97,8 @@ createLiquidFlowMaterialProperties(
     BaseLib::reorderVector(storage_models, mat_ids);
 
     return std::make_unique<LiquidFlowMaterialProperties>(
-        std::move(fluid_properties), std::move(intrinsic_permeability_models),
+        //std::move(fluid_properties),
+        std::move(intrinsic_permeability_models),
         std::move(porosity_models), std::move(storage_models), material_ids);
 }
 
