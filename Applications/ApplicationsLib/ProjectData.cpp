@@ -447,8 +447,8 @@ void ProjectData::parseMedia(
          //! \ogs_file_param{prj__media__medium}
          media_config->getConfigSubtreeList("medium"))
     {
-        //! \ogs_file_attr{prj__media__medium__id}
         auto material_id_string =
+            //! \ogs_file_attr{prj__media__medium__id}
             medium_config.getConfigAttribute<std::string>("id", "0");
         material_id_string.erase(
             remove_if(begin(material_id_string), end(material_id_string),
