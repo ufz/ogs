@@ -14,11 +14,9 @@
 #include "ProjectData.h"
 
 #include <algorithm>
-#include <boost/algorithm/string.hpp>
-#include <boost/algorithm/cxx11/all_of.hpp>
-#include <set>
-
+#include <cctype>
 #include <logog/include/logog.hpp>
+#include <set>
 
 #ifdef OGS_USE_PYTHON
 #include <pybind11/eval.h>
@@ -452,34 +450,42 @@ void ProjectData::parseMedia(
         //! \ogs_file_attr{prj__media__medium__id}
         auto material_id_string =
             medium_config.getConfigAttribute<std::string>("id", "0");
-        std::vector<std::string> material_ids;
-        boost::algorithm::erase_all(material_id_string, " ");
-        boost::split(material_ids, material_id_string, boost::is_any_of(","));
+        material_id_string.erase(
+            remove_if(begin(material_id_string), end(material_id_string),
+                      [](unsigned char const c) { return std::isspace(c); }),
+            end(material_id_string));
+        auto const material_ids = BaseLib::splitString(material_id_string, ',');
 
+        int const first_material_id = std::stoi(material_ids.front());
         for (auto const& m_id : material_ids)
         {
-            if (!boost::algorithm::all_of(m_id, boost::algorithm::is_digit()))
+            if (auto const it = std::find_if_not(
+                    begin(m_id), end(m_id),
+                    [](unsigned char const c) { return std::isdigit(c); });
+                it != end(m_id))
             {
                 OGS_FATAL(
                     "Could not parse material ID's from '%s'. Please separate "
                     "multiple material ID's by comma only. Invalid character: "
-                    "%c",
+                    "'%c'",
                     material_id_string.c_str(),
-                    m_id[m_id.find_first_not_of("0123456789")]);
+                    *it);
             }
-            if (_media.find(std::stoi(m_id)) != _media.end())
+            int const material_id = std::stoi(m_id);
+            if (_media.find(material_id) != end(_media))
             {
                 OGS_FATAL(
                     "Multiple media were specified for the same material id "
-                    "%d. "
+                    "'%s'. "
                     "Keep in mind, that if no material id is specified, it is "
                     "assumed to be 0 by default.",
                     m_id.c_str());
             }
 
-            _media[std::stoi(m_id)] = (m_id == material_ids[0])
-                ? MaterialPropertyLib::createMedium(medium_config, _parameters)
-                : _media[std::stoi(material_ids[0])];
+            _media[material_id] = (material_id == first_material_id)
+                                      ? MaterialPropertyLib::createMedium(
+                                            medium_config, _parameters)
+                                      : _media[first_material_id];
         }
     }
 
