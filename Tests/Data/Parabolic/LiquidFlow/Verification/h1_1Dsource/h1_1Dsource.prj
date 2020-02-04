@@ -70,7 +70,13 @@
                     </properties>
                 </phase>
             </phases>
-            <properties/>
+            <properties>
+                <property>
+                    <name>permeability</name>
+                    <type>Constant</type>
+                    <value>1.e-12</value>
+                </property>
+            </properties>
         </medium>
         <medium id="1">
             <phases>
@@ -90,7 +96,13 @@
                     </properties>
                 </phase>
             </phases>
-            <properties/>
+            <properties>
+                <property>
+                    <name>permeability</name>
+                    <type>Constant</type>
+                    <value>3.e-12</value>
+                </property>
+            </properties>
         </medium>
     </media>
     <time_loop>

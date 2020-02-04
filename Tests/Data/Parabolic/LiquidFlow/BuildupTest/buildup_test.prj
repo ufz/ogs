@@ -21,7 +21,13 @@
                     </properties>
                 </phase>
             </phases>
-            <properties/>
+            <properties>
+                <property>
+                    <name>permeability</name>
+                    <type>Constant</type>
+                    <value>9.2e-12</value>
+                </property>
+            </properties>
         </medium>
     </media>
     <processes>

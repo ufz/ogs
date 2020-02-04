@@ -101,7 +101,13 @@
                     </properties>
                 </phase>
             </phases>
-            <properties/>
+            <properties>
+                <property>
+                    <name>permeability</name>
+                    <type>Constant</type>
+                    <value>1.e-12</value>
+                </property>
+            </properties>
         </medium>
     </media>
     <parameters>

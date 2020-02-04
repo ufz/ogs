@@ -56,7 +56,13 @@
                     </properties>
                 </phase>
             </phases>
-            <properties/>
+            <properties>
+                <property>
+                    <name>permeability</name>
+                    <type>Constant</type>
+                    <value>1.e-15</value>
+                </property>
+            </properties>
         </medium>
     </media>
     <time_loop>
