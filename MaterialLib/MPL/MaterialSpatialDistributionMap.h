@@ -29,7 +29,7 @@ class MaterialSpatialDistributionMap
 {
 public:
     MaterialSpatialDistributionMap(
-        std::map<int, std::unique_ptr<Medium>> const& media,
+        std::map<int, std::shared_ptr<Medium>> const& media,
         MeshLib::PropertyVector<int> const* const material_ids)
         : _media(media), _material_ids(material_ids)
     {
@@ -38,7 +38,7 @@ public:
     Medium* getMedium(std::size_t element_id);
 
 private:
-    std::map<int, std::unique_ptr<Medium>> const& _media;
+    std::map<int, std::shared_ptr<Medium>> const& _media;
     MeshLib::PropertyVector<int> const* const _material_ids;
 };
 }  // namespace MaterialPropertyLib

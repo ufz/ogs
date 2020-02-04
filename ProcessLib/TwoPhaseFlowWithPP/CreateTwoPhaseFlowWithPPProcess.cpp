@@ -34,7 +34,7 @@ std::unique_ptr<Process> createTwoPhaseFlowWithPPProcess(
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
         curves,
-    std::map<int, std::unique_ptr<MaterialPropertyLib::Medium>> const& media)
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
 {
     //! \ogs_file_param{prj__processes__process__type}
     config.checkConfigParameter("type", "TWOPHASE_FLOW_PP");

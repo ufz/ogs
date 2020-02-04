@@ -54,7 +54,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         local_coordinate_system,
     unsigned const integration_order,
     BaseLib::ConfigTree const& config,
-    std::map<int, std::unique_ptr<MaterialPropertyLib::Medium>> const& media);
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media);
 
 extern template std::unique_ptr<Process> createHydroMechanicsProcess<2>(
     std::string name,
@@ -66,7 +66,7 @@ extern template std::unique_ptr<Process> createHydroMechanicsProcess<2>(
         local_coordinate_system,
     unsigned const integration_order,
     BaseLib::ConfigTree const& config,
-    std::map<int, std::unique_ptr<MaterialPropertyLib::Medium>> const& media);
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media);
 
 extern template std::unique_ptr<Process> createHydroMechanicsProcess<3>(
     std::string name,
@@ -78,6 +78,6 @@ extern template std::unique_ptr<Process> createHydroMechanicsProcess<3>(
         local_coordinate_system,
     unsigned const integration_order,
     BaseLib::ConfigTree const& config,
-    std::map<int, std::unique_ptr<MaterialPropertyLib::Medium>> const& media);
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media);
 }  // namespace HydroMechanics
 }  // namespace ProcessLib
