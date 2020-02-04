@@ -89,17 +89,26 @@ LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::getFlux(
     pos.setElementID(_element.getID());
     const int material_id = _material_properties.getMaterialID(pos);
 
+    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    auto const& liquid_phase = medium->phase("AqueousLiquid");
+
+    MaterialPropertyLib::VariableArray vars;
+
     double pressure = 0.0;
     NumLib::shapeFunctionInterpolate(local_x, shape_matrices.N, pressure);
+    vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
+        pressure;
+
     const Eigen::MatrixXd& permeability = _material_properties.getPermeability(
         material_id, t, pos, _element.getDimension(), pressure,
         _reference_temperature);
-    const double mu =
-        _material_properties.getViscosity(pressure, _reference_temperature);
+    auto const viscosity =
+        liquid_phase.property(MaterialPropertyLib::PropertyType::viscosity)
+            .template value<double>(vars, pos, t, dt);
 
     Eigen::Vector3d flux(0.0, 0.0, 0.0);
     flux.head<GlobalDim>() =
-        -permeability / mu * shape_matrices.dNdx *
+        -permeability / viscosity * shape_matrices.dNdx *
         Eigen::Map<const NodalVectorType>(local_x.data(), local_x.size());
 
     return flux;
@@ -152,19 +161,27 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
         vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
             p;
 
-        // Assemble mass matrix, M
-        local_M.noalias() += _material_properties.getMassCoefficient(
-                                 material_id, t, pos, porosity_variable,
-                                 storage_variable, p, _reference_temperature) *
-                             ip_data.N.transpose() * ip_data.N *
-                             ip_data.integration_weight;
-
         // Compute density:
         auto const fluid_density =
             liquid_phase.property(MaterialPropertyLib::PropertyType::density)
-                .template value<double>(vars, pos, t);
+                .template value<double>(vars, pos, t, dt);
+        auto const ddensity_dpressure =
+            liquid_phase.property(MaterialPropertyLib::PropertyType::density)
+                .template dValue<double>(
+                    vars, MaterialPropertyLib::Variable::phase_pressure, pos,
+                    t, dt);
+
+        assert(fluid_density > 0.);
+
+        // Assemble mass matrix, M
+        local_M.noalias() += _material_properties.getMassCoefficient(
+                                 material_id, t, pos, porosity_variable,
+                                 storage_variable, p, _reference_temperature,
+                                 fluid_density, ddensity_dpressure) *
+                             ip_data.N.transpose() * ip_data.N *
+                             ip_data.integration_weight;
+
         // Compute viscosity:
-            _material_properties.getViscosity(p, _reference_temperature);
         auto const viscosity =
             liquid_phase.property(MaterialPropertyLib::PropertyType::viscosity)
                 .template value<double>(vars, pos, t, dt);
