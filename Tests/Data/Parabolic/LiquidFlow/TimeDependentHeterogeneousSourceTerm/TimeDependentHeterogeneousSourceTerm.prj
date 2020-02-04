@@ -24,16 +24,6 @@
                 <secondary_variable internal_name="darcy_velocity" output_name="v"/>
             </secondary_variables>
             <material_property>
-                <fluid>
-                    <density>
-                        <type>Constant</type>
-                        <value> 1.e3 </value>
-                    </density>
-                    <viscosity>
-                        <type>Constant</type>
-                        <value> 1.e-3 </value>
-                    </viscosity>
-                </fluid>
                 <porous_medium>
                     <porous_medium id="0">
                         <permeability>
@@ -105,6 +95,28 @@
             </variables>
         </output>
     </time_loop>
+    <media>
+        <medium>
+            <phases>
+                <phase>
+                    <type>AqueousLiquid</type>
+                    <properties>
+                        <property>
+                            <name>viscosity</name>
+                            <type>Constant</type>
+                            <value> 1.e-3 </value>
+                        </property>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value> 1.e3 </value>
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+            <properties/>
+        </medium>
+    </media>
     <parameters>
         <parameter>
             <name>p0</name>

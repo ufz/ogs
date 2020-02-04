@@ -2,6 +2,28 @@
 <OpenGeoSysProject>
     <mesh axially_symmetric="true">line_1000_axi.vtu</mesh>
     <geometry>line_1000_axi.gml</geometry>
+    <media>
+        <medium>
+            <phases>
+                <phase>
+                    <type>AqueousLiquid</type>
+                    <properties>
+                        <property>
+                            <name>viscosity</name>
+                            <type>Constant</type>
+                            <value> 1.295e-4 </value>
+                        </property>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value> 78.68 </value>
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+            <properties/>
+        </medium>
+    </media>
     <processes>
         <process>
             <name>LiquidFlow</name>
@@ -20,16 +42,6 @@
                 <secondary_variable internal_name="darcy_velocity" output_name="v"/>
             </secondary_variables>
             <material_property>
-                <fluid>
-                    <density>
-                        <type>Constant</type>
-                        <value> 78.68 </value>
-                    </density>
-                    <viscosity>
-                        <type>Constant</type>
-                        <value> 1.295e-4 </value>
-                    </viscosity>
-                </fluid>
                 <porous_medium>
                     <porous_medium id="0">
                         <permeability>

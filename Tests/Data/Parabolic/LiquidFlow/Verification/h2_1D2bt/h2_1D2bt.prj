@@ -18,16 +18,6 @@
                 <secondary_variable internal_name="darcy_velocity" output_name="q"/>
             </secondary_variables>
             <material_property>
-                <fluid>
-                    <density>
-                        <type>Constant</type>
-                        <value> 1.e+3 </value>
-                    </density>
-                    <viscosity>
-                        <type>Constant</type>
-                        <value> 0.864e-3 </value>
-                    </viscosity>
-                </fluid>
                 <porous_medium>
                     <porous_medium id="0">
                         <permeability>
@@ -61,6 +51,48 @@
             </material_property>
         </process>
     </processes>
+    <media>
+        <medium id="0">
+            <phases>
+                <phase>
+                    <type>AqueousLiquid</type>
+                    <properties>
+                        <property>
+                            <name>viscosity</name>
+                            <type>Constant</type>
+                            <value> 0.864e-3 </value>
+                        </property>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value> 1.e+3 </value>
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+            <properties/>
+        </medium>
+        <medium id="1">
+            <phases>
+                <phase>
+                    <type>AqueousLiquid</type>
+                    <properties>
+                        <property>
+                            <name>viscosity</name>
+                            <type>Constant</type>
+                            <value> 0.864e-3 </value>
+                        </property>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value> 1.e+3 </value>
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+            <properties/>
+        </medium>
+    </media>
     <time_loop>
         <processes>
             <process ref="LiquidFlow">

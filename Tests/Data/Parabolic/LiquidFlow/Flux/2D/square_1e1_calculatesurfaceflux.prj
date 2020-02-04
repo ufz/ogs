@@ -29,16 +29,6 @@
                 <output_mesh>square_1x1_quad_1e1_complete_surface_left_right_dirichlet_specific_flux.vtu</output_mesh>
             </calculatesurfaceflux>
             <material_property>
-                <fluid>
-                    <density>
-                        <type>Constant</type>
-                        <value> 78.68 </value>
-                    </density>
-                    <viscosity>
-                        <type>Constant</type>
-                        <value> 1.295e-4 </value>
-                    </viscosity>
-                </fluid>
                 <porous_medium>
                     <porous_medium id="0">
                         <permeability>
@@ -98,6 +88,28 @@
             </variables>
         </output>
     </time_loop>
+    <media>
+        <medium>
+            <phases>
+                <phase>
+                    <type>AqueousLiquid</type>
+                    <properties>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value> 78.68 </value>
+                        </property>
+                        <property>
+                            <name>viscosity</name>
+                            <type>Constant</type>
+                            <value> 1.295e-4 </value>
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+            <properties/>
+        </medium>
+    </media>
     <parameters>
         <parameter>
             <name>p0</name>
