@@ -454,38 +454,44 @@ void ProjectData::parseMedia(
             remove_if(begin(material_id_string), end(material_id_string),
                       [](unsigned char const c) { return std::isspace(c); }),
             end(material_id_string));
-        auto const material_ids = BaseLib::splitString(material_id_string, ',');
+        auto const material_ids_strings =
+            BaseLib::splitString(material_id_string, ',');
 
-        int const first_material_id = std::stoi(material_ids.front());
-        for (auto const& m_id : material_ids)
+        // Convert strings to ints;
+        std::vector<int> material_ids;
+        std::transform(
+            begin(material_ids_strings), end(material_ids_strings),
+            std::back_inserter(material_ids), [](std::string const& m_id) {
+                if (auto const it = std::find_if_not(
+                        begin(m_id), end(m_id),
+                        [](unsigned char const c) { return std::isdigit(c); });
+                    it != end(m_id))
+                {
+                    OGS_FATAL(
+                        "Could not parse material ID's from '%s'. Please "
+                        "separate multiple material ID's by comma only. "
+                        "Invalid character: '%c'",
+                        m_id.c_str(), *it);
+                }
+                return std::stoi(m_id);
+            });
+
+        for (auto const& id : material_ids)
         {
-            if (auto const it = std::find_if_not(
-                    begin(m_id), end(m_id),
-                    [](unsigned char const c) { return std::isdigit(c); });
-                it != end(m_id))
-            {
-                OGS_FATAL(
-                    "Could not parse material ID's from '%s'. Please separate "
-                    "multiple material ID's by comma only. Invalid character: "
-                    "'%c'",
-                    material_id_string.c_str(),
-                    *it);
-            }
-            int const material_id = std::stoi(m_id);
-            if (_media.find(material_id) != end(_media))
+            if (_media.find(id) != end(_media))
             {
                 OGS_FATAL(
                     "Multiple media were specified for the same material id "
-                    "'%s'. "
+                    "'%d'. "
                     "Keep in mind, that if no material id is specified, it is "
                     "assumed to be 0 by default.",
-                    m_id.c_str());
+                    id);
             }
 
-            _media[material_id] = (material_id == first_material_id)
-                                      ? MaterialPropertyLib::createMedium(
-                                            medium_config, _parameters)
-                                      : _media[first_material_id];
+            _media[id] = (id == material_ids[0])
+                             ? MaterialPropertyLib::createMedium(medium_config,
+                                                                 _parameters)
+                             : _media[material_ids[0]];
         }
     }
 
