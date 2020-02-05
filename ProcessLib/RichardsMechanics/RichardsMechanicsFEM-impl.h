@@ -24,30 +24,6 @@ namespace ProcessLib
 {
 namespace RichardsMechanics
 {
-template <int DisplacementDim>
-Eigen::Matrix<double, DisplacementDim, DisplacementDim> intrinsicPermeability(
-    double const t, ParameterLib::SpatialPosition const& x_position,
-    int const material_id,
-    RichardsFlow::RichardsFlowMaterialProperties const& material)
-{
-    const Eigen::MatrixXd& permeability =
-        material.getPermeability(material_id, t, x_position, DisplacementDim);
-    if (permeability.rows() == DisplacementDim)
-    {
-        return permeability;
-    }
-    if (permeability.rows() == 1)
-    {
-        return Eigen::Matrix<double, DisplacementDim,
-                             DisplacementDim>::Identity() *
-               permeability(0, 0);
-    }
-
-    OGS_FATAL(
-        "Intrinsic permeability dimension is neither %d nor one, but %dx%d.",
-        DisplacementDim, permeability.rows(), permeability.cols());
-}
-
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           typename IntegrationMethod, int DisplacementDim>
 RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
@@ -190,44 +166,67 @@ void RichardsMechanicsLocalAssembler<
                                           typename BMatricesType::BMatrixType>(
                 dNdx_u, N_u, x_coord, _is_axially_symmetric);
 
-        double p_cap_ip;
-        NumLib::shapeFunctionInterpolate(-p_L, N_p, p_cap_ip);
-
         auto& eps = _ip_data[ip].eps;
         auto& S_L = _ip_data[ip].saturation;
 
-        auto const alpha = _process_data.biot_coefficient(t, x_position)[0];
-        auto const rho_SR = _process_data.solid_density(t, x_position)[0];
-        auto const K_SR = _process_data.solid_bulk_modulus(t, x_position)[0];
-        auto const K_LR = _process_data.fluid_bulk_modulus(t, x_position)[0];
-        auto const temperature = _process_data.temperature(t, x_position)[0];
-        auto const porosity = _process_data.flow_material->getPorosity(
-            material_id, t, x_position, -p_cap_ip, temperature, p_cap_ip);
-        auto const rho_LR = _process_data.flow_material->getFluidDensity(
-            -p_cap_ip, temperature);
+        double p_cap_ip;
+        NumLib::shapeFunctionInterpolate(-p_L, N_p, p_cap_ip);
+
+        variables[static_cast<int>(MPL::Variable::capillary_pressure)] =
+            p_cap_ip;
+        variables[static_cast<int>(MPL::Variable::phase_pressure)] = -p_cap_ip;
+
+        auto const temperature =
+            medium->property(MPL::PropertyType::reference_temperature)
+                .template value<double>(variables, x_position, t);
+        variables[static_cast<int>(MPL::Variable::temperature)] = temperature;
+
+        auto const alpha =
+            solid_phase.property(MPL::PropertyType::biot_coefficient)
+                .template value<double>(variables, x_position, t);
+        auto const rho_SR =
+            solid_phase.property(MPL::PropertyType::density)
+                .template value<double>(variables, x_position, t);
+        auto const K_SR =
+            solid_phase.property(MPL::PropertyType::bulk_modulus)
+                .template value<double>(variables, x_position, t);
+        auto const K_LR =
+            liquid_phase.property(MPL::PropertyType::bulk_modulus)
+                .template value<double>(variables, x_position, t);
+        auto const porosity =
+            solid_phase.property(MPL::PropertyType::porosity)
+                .template value<double>(variables, x_position, t);
+        auto const rho_LR =
+            liquid_phase.property(MPL::PropertyType::density)
+                .template value<double>(variables, x_position, t);
+
         auto const& b = _process_data.specific_body_force;
         auto const& identity2 = MathLib::KelvinVector::Invariants<
             MathLib::KelvinVector::KelvinVectorDimensions<
                 DisplacementDim>::value>::identity2;
 
-        S_L = _process_data.flow_material->getSaturation(
-            material_id, t, x_position, -p_cap_ip, temperature, p_cap_ip);
+        S_L = medium->property(MPL::PropertyType::saturation)
+                  .template value<double>(variables, x_position, t);
+        variables[static_cast<int>(MPL::Variable::liquid_saturation)] = S_L;
 
         double const dS_L_dp_cap =
-            _process_data.flow_material->getSaturationDerivative(
-                material_id, t, x_position, -p_cap_ip, temperature, S_L);
+            medium->property(MPL::PropertyType::saturation)
+                .template dValue<double>(variables,
+                                         MPL::Variable::capillary_pressure,
+                                         x_position, t);
 
         double const k_rel =
-            _process_data.flow_material->getRelativePermeability(
-                t, x_position, -p_cap_ip, temperature, S_L);
+            medium->property(MPL::PropertyType::relative_permeability)
+                .template value<double>(variables, x_position, t);
 
-        double const mu = _process_data.flow_material->getFluidViscosity(
-            -p_cap_ip, temperature);
+        auto const mu = liquid_phase.property(MPL::PropertyType::viscosity)
+                            .template value<double>(variables, x_position, t);
+        auto const K_intrinsic = MPL::formEigenTensor<DisplacementDim>(
+            solid_phase.property(MPL::PropertyType::permeability)
+                .value(variables, x_position, t));
 
         GlobalDimMatrixType const rho_K_over_mu =
-            intrinsicPermeability<DisplacementDim>(
-                t, x_position, material_id, *_process_data.flow_material) *
-            (rho_LR * k_rel / mu);
+            K_intrinsic * rho_LR * k_rel / mu;
 
         //
         // displacement equation, displacement part
@@ -406,48 +405,66 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                           ShapeFunctionDisplacement::NPOINTS),
                 N_u, u_ip.coeffRef(i));
         }
+        variables[static_cast<int>(MPL::Variable::capillary_pressure)] =
+            p_cap_ip;
+        variables[static_cast<int>(MPL::Variable::phase_pressure)] = -p_cap_ip;
+        auto const temperature =
+            medium->property(MPL::PropertyType::reference_temperature)
+                .template value<double>(variables, x_position, t);
+        variables[static_cast<int>(MPL::Variable::temperature)] = temperature;
 
         auto& eps = _ip_data[ip].eps;
+        auto& sigma_eff = _ip_data[ip].sigma_eff;
         auto& S_L = _ip_data[ip].saturation;
-        auto const& sigma_eff = _ip_data[ip].sigma_eff;
-
-        auto const alpha = _process_data.biot_coefficient(t, x_position)[0];
-        auto const rho_SR = _process_data.solid_density(t, x_position)[0];
-        auto const K_SR = _process_data.solid_bulk_modulus(t, x_position)[0];
-        auto const K_LR = _process_data.fluid_bulk_modulus(t, x_position)[0];
-        auto const temperature = _process_data.temperature(t, x_position)[0];
-
-        auto const porosity = _process_data.flow_material->getPorosity(
-            material_id, t, x_position, -p_cap_ip, temperature, p_cap_ip);
-        auto const rho_LR = _process_data.flow_material->getFluidDensity(
-            -p_cap_ip, temperature);
+        auto const alpha =
+            solid_phase.property(MPL::PropertyType::biot_coefficient)
+                .template value<double>(variables, x_position, t);
+        auto const rho_SR =
+            solid_phase.property(MPL::PropertyType::density)
+                .template value<double>(variables, x_position, t);
+        auto const K_SR =
+            solid_phase.property(MPL::PropertyType::bulk_modulus)
+                .template value<double>(variables, x_position, t);
+        auto const K_LR =
+            liquid_phase.property(MPL::PropertyType::bulk_modulus)
+                .template value<double>(variables, x_position, t);
+        auto const porosity =
+            solid_phase.property(MPL::PropertyType::porosity)
+                .template value<double>(variables, x_position, t);
+        auto const rho_LR =
+            liquid_phase.property(MPL::PropertyType::density)
+                .template value<double>(variables, x_position, t);
         auto const& b = _process_data.specific_body_force;
         auto const& identity2 = MathLib::KelvinVector::Invariants<
             MathLib::KelvinVector::KelvinVectorDimensions<
                 DisplacementDim>::value>::identity2;
 
-        S_L = _process_data.flow_material->getSaturation(
-            material_id, t, x_position, -p_cap_ip, temperature, p_cap_ip);
+        S_L = medium->property(MPL::PropertyType::saturation)
+                  .template value<double>(variables, x_position, t);
+        variables[static_cast<int>(MPL::Variable::liquid_saturation)] = S_L;
 
         double const dS_L_dp_cap =
-            _process_data.flow_material->getSaturationDerivative(
-                material_id, t, x_position, -p_cap_ip, temperature, S_L);
+            medium->property(MPL::PropertyType::saturation)
+                .template dValue<double>(variables,
+                                         MPL::Variable::capillary_pressure,
+                                         x_position, t);
 
         double const d2S_L_dp_cap_2 =
-            _process_data.flow_material->getSaturationDerivative2(
-                material_id, t, x_position, -p_cap_ip, temperature, S_L);
+            medium->property(MPL::PropertyType::saturation)
+                .template d2Value<double>(
+                    variables, MPL::Variable::capillary_pressure,
+                    MPL::Variable::capillary_pressure, x_position, t);
 
         double const k_rel =
-            _process_data.flow_material->getRelativePermeability(
-                t, x_position, -p_cap_ip, temperature, S_L);
+            medium->property(MPL::PropertyType::relative_permeability)
+                .template value<double>(variables, x_position, t);
+        auto const mu = liquid_phase.property(MPL::PropertyType::viscosity)
+                            .template value<double>(variables, x_position, t);
+        auto const K_intrinsic = MPL::formEigenTensor<DisplacementDim>(
+            solid_phase.property(MPL::PropertyType::permeability)
+                .value(variables, x_position, t));
 
-        double const mu = _process_data.flow_material->getFluidViscosity(
-            -p_cap_ip, temperature);
-
-        GlobalDimMatrixType const rho_Ki_over_mu =
-            intrinsicPermeability<DisplacementDim>(
-                t, x_position, material_id, *_process_data.flow_material) *
-            (rho_LR / mu);
+        GlobalDimMatrixType const rho_Ki_over_mu = K_intrinsic * rho_LR / mu;
 
         //
         // displacement equation, displacement part
@@ -542,9 +559,11 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                           div_u_dot * N_p * w;
          */
 
-        double const dk_rel_dS_l =
+        double const dk_rel_dS_l = 0;
+    /*
             _process_data.flow_material->getRelativePermeabilityDerivative(
                 t, x_position, -p_cap_ip, temperature, S_L);
+                */
         typename ShapeMatricesTypeDisplacement::GlobalDimVectorType const
             grad_p_cap = -dNdx_p * p_L;
         local_Jac
@@ -682,11 +701,12 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
     auto const& solid_phase = medium->phase("Solid");
     MPL::VariableArray variables;
 
+    ParameterLib::SpatialPosition x_position;
+    x_position.setElementID(_element.getID());
+
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
 
-    ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         x_position.setIntegrationPoint(ip);
@@ -694,15 +714,26 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
 
         double p_cap_ip;
         NumLib::shapeFunctionInterpolate(-p_L, N_p, p_cap_ip);
+        variables[static_cast<int>(MPL::Variable::capillary_pressure)] =
+            p_cap_ip;
+        variables[static_cast<int>(MPL::Variable::phase_pressure)] = -p_cap_ip;
 
-        auto const temperature = _process_data.temperature(t, x_position)[0];
-        GlobalDimMatrixType const K_over_mu =
-            intrinsicPermeability<DisplacementDim>(
-                t, x_position, material_id, *_process_data.flow_material) /
-            _process_data.flow_material->getFluidViscosity(-p_cap_ip,
-                                                           temperature);
-        auto const rho_LR = _process_data.flow_material->getFluidDensity(
-            -p_cap_ip, temperature);
+        auto const temperature =
+            medium->property(MPL::PropertyType::reference_temperature)
+                .template value<double>(variables, x_position, t);
+        variables[static_cast<int>(MPL::Variable::temperature)] = temperature;
+
+        auto const mu = liquid_phase.property(MPL::PropertyType::viscosity)
+                            .template value<double>(variables, x_position, t);
+        auto const rho_LR =
+            liquid_phase.property(MPL::PropertyType::density)
+                .template value<double>(variables, x_position, t);
+        auto const K_intrinsic = MPL::formEigenTensor<DisplacementDim>(
+            solid_phase.property(MPL::PropertyType::permeability)
+                .value(variables, x_position, t));
+
+        GlobalDimMatrixType const K_over_mu = K_intrinsic / mu;
+
         auto const& b = _process_data.specific_body_force;
 
         // Compute the velocity
@@ -829,7 +860,10 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         x_position.setIntegrationPoint(ip);
         auto const& N_u = _ip_data[ip].N_u;
         auto const& dNdx_u = _ip_data[ip].dNdx_u;
-        auto const temperature = _process_data.temperature(t, x_position)[0];
+        auto const temperature =
+            medium->property(MPL::PropertyType::reference_temperature)
+                .template value<double>(variables, x_position, t);
+        variables[static_cast<int>(MPL::Variable::temperature)] = temperature;
 
         auto const x_coord =
             interpolateXCoordinate<ShapeFunctionDisplacement,
@@ -880,13 +914,20 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     {
         x_position.setIntegrationPoint(ip);
         auto const& N_p = _ip_data[ip].N_p;
-        auto const temperature = _process_data.temperature(t, x_position)[0];
+        auto const temperature =
+            medium->property(MPL::PropertyType::reference_temperature)
+                .template value<double>(variables, x_position, t);
+        variables[static_cast<int>(MPL::Variable::temperature)] = temperature;
 
         double p_cap_ip;
         NumLib::shapeFunctionInterpolate(-p_L, N_p, p_cap_ip);
+        variables[static_cast<int>(MPL::Variable::capillary_pressure)] =
+            p_cap_ip;
+        variables[static_cast<int>(MPL::Variable::phase_pressure)] = -p_cap_ip;
+
         auto& S_L = _ip_data[ip].saturation;
-        S_L = _process_data.flow_material->getSaturation(
-            material_id, t, x_position, -p_cap_ip, temperature, p_cap_ip);
+        S_L = medium->property(MPL::PropertyType::saturation)
+                  .template value<double>(variables, x_position, t);
         saturation_avg += S_L;
         sigma_avg += _ip_data[ip].sigma_eff;
     }
