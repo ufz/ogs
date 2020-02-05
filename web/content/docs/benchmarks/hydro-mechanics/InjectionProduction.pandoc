@@ -45,7 +45,7 @@ The material properties are shown in the following table.
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">Water density</td>
+<td align="left">Fluid density</td>
 <td align="left">1,000</td>
 <td align="left">kg/m<span class="math inline"><em></em><sup>3</sup></span></td>
 </tr>
@@ -60,8 +60,8 @@ The material properties are shown in the following table.
 <td align="left">Pa<span class="math inline">⋅</span>s</td>
 </tr>
 <tr class="even">
-<td align="left">Specific storage</td>
-<td align="left"><span class="math inline">10<sup>−4</sup></span></td>
+<td align="left">Fluid compressibility</td>
+<td align="left"><span class="math inline">3.3332941333333<em>e</em> × 10<sup>−5</sup></span></td>
 <td align="left">m <span class="math inline"><em></em><sup>−1</sup></span></td>
 </tr>
 <tr class="odd">

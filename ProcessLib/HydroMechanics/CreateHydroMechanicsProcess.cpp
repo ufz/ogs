@@ -112,22 +112,6 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         MaterialLib::Solids::createConstitutiveRelations<DisplacementDim>(
             parameters, local_coordinate_system, config);
 
-    // Intrinsic permeability
-    auto& intrinsic_permeability = ParameterLib::findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS__intrinsic_permeability}
-        "intrinsic_permeability", parameters, 1, &mesh);
-
-    DBUG("Use '%s' as intrinsic conductivity parameter.",
-         intrinsic_permeability.name.c_str());
-
-    // Fluid density
-    auto& fluid_density = ParameterLib::findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS__fluid_density}
-        "fluid_density", parameters, 1, &mesh);
-    DBUG("Use '%s' as fluid density parameter.", fluid_density.name.c_str());
-
     // Specific body force
     Eigen::Matrix<double, DisplacementDim, 1> specific_body_force;
     {
@@ -150,16 +134,25 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     auto media_map =
         MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
 
-    std::array const requiredGasProperties = {MaterialPropertyLib::viscosity};
+    std::array const requiredMediumProperties = {
+        MaterialPropertyLib::reference_temperature,
+        MaterialPropertyLib::permeability};
+    std::array const requiredGasProperties = {
+        MaterialPropertyLib::viscosity, MaterialPropertyLib::density};
     std::array const requiredSolidProperties = {
         MaterialPropertyLib::porosity, MaterialPropertyLib::biot_coefficient,
         MaterialPropertyLib::density};
-    for (auto const& m : media)
+
+    for (auto const& element : mesh.getElements())
     {
-        checkRequiredProperties(m.second->phase("Gas"), requiredGasProperties);
-        checkRequiredProperties(m.second->phase("Solid"),
-                                requiredSolidProperties);
+        auto const element_id = element->getID();
+        media_map->checkElementHasMedium(element_id);
+        auto const& medium = *media_map->getMedium(element_id);
+        checkRequiredProperties(medium, requiredMediumProperties);
+        checkRequiredProperties(medium.phase("Gas"), requiredGasProperties);
+        checkRequiredProperties(medium.phase("Solid"), requiredSolidProperties);
     }
+    DBUG("Media properties verified.");
 
     // Initial stress conditions
     auto const initial_stress = ParameterLib::findOptionalTagParameter<double>(
@@ -169,47 +162,10 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value,
         &mesh);
 
-    // Reference temperature
-    double const reference_temperature =
-        //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS__reference_temperature}
-        config.getConfigParameter<double>(
-            "reference_temperature", std::numeric_limits<double>::quiet_NaN());
-    DBUG("Use 'reference_temperature' as reference temperature.");
-
-    //Specific gas constant
-    double const specific_gas_constant =
-        //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS__specific_gas_constant}
-        config.getConfigParameter<double>(
-            "specific_gas_constant", std::numeric_limits<double>::quiet_NaN());
-    DBUG("Use 'specific_gas_constant' as specific gas constant.");
-
-    // Fluid compressibility
-    double const fluid_compressibility =
-        //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS__fluid_compressibility}
-        config.getConfigParameter<double>(
-            "fluid_compressibility", std::numeric_limits<double>::quiet_NaN());
-    DBUG("Use 'fluid_compressibility' as fluid compressibility parameter.");
-
-    auto const fluid_type =
-        FluidType::strToFluidType(
-            //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS__fluid_type}
-            config.getConfigParameter<std::string>("fluid_type"));
-    DBUG("Use 'fluid_type' as fluid type parameter.");
-
-    if (!FluidType::checkRequiredParams(fluid_type, fluid_compressibility,
-                                        reference_temperature,
-                                        specific_gas_constant))
-    {
-        OGS_FATAL(FluidType::getErrorMsg(fluid_type));
-    }
-
     HydroMechanicsProcessData<DisplacementDim> process_data{
         materialIDs(mesh),     std::move(media_map),
         std::move(solid_constitutive_relations),
-        initial_stress,        intrinsic_permeability,
-        fluid_density,         specific_body_force,
-        fluid_compressibility, reference_temperature,
-        specific_gas_constant, fluid_type};
+        initial_stress,        specific_body_force};
 
     SecondaryVariableCollection secondary_variables;
 

@@ -14,8 +14,6 @@
                 <youngs_modulus>E</youngs_modulus>
                 <poissons_ratio>nu</poissons_ratio>
             </constitutive_relation>
-            <intrinsic_permeability>k</intrinsic_permeability>
-            <fluid_density>rho_liquid</fluid_density>
             <process_variables>
                 <pressure>pressure</pressure>
                 <displacement>displacement</displacement>
@@ -36,11 +34,10 @@
                 <secondary_variable internal_name="epsilon_yz" output_name="epsilon_yz"/>
             </secondary_variables>
             <specific_body_force> 0 0 -9.81 </specific_body_force>
-            <fluid_type>incompressible_fluid</fluid_type>
         </process>
     </processes>
     <media>
-        <medium id="0">
+        <medium id = "0,1,2,3">
             <phases>
                 <phase>
                     <type>Gas</type>
@@ -49,6 +46,11 @@
                             <name>viscosity</name>
                             <type>Constant</type>
                             <value>1e-3</value>
+                        </property>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>1.019368e+3</value>
                         </property>
                     </properties>
                 </phase>
@@ -73,108 +75,18 @@
                     </properties>
                 </phase>
             </phases>
-        </medium>
-        <medium id="1">
-            <phases>
-                <phase>
-                    <type>Gas</type>
-                    <properties>
-                        <property>
-                            <name>viscosity</name>
-                            <type>Constant</type>
-                            <value>1e-3</value>
-                        </property>
-                    </properties>
-                </phase>
-                <phase>
-                    <type>Solid</type>
-                    <properties>
-                        <property>
-                            <name>porosity</name>
-                            <type>Constant</type>
-                            <value>0</value>
-                        </property>
-                        <property>
-                            <name>density</name>
-                            <type>Constant</type>
-                            <value>3.058104e+03</value>
-                        </property>
-                        <property>
-                            <name>biot_coefficient</name>
-                            <type>Constant</type>
-                            <value>1</value>
-                        </property>
-                    </properties>
-                </phase>
-            </phases>
-        </medium>
-        <medium id="2">
-            <phases>
-                <phase>
-                    <type>Gas</type>
-                    <properties>
-                        <property>
-                            <name>viscosity</name>
-                            <type>Constant</type>
-                            <value>1e-3</value>
-                        </property>
-                    </properties>
-                </phase>
-                <phase>
-                    <type>Solid</type>
-                    <properties>
-                        <property>
-                            <name>porosity</name>
-                            <type>Constant</type>
-                            <value>0</value>
-                        </property>
-                        <property>
-                            <name>density</name>
-                            <type>Constant</type>
-                            <value>3.058104e+03</value>
-                        </property>
-                        <property>
-                            <name>biot_coefficient</name>
-                            <type>Constant</type>
-                            <value>1</value>
-                        </property>
-                    </properties>
-                </phase>
-            </phases>
-        </medium>
-        <medium id="3">
-            <phases>
-                <phase>
-                    <type>Gas</type>
-                    <properties>
-                        <property>
-                            <name>viscosity</name>
-                            <type>Constant</type>
-                            <value>1e-3</value>
-                        </property>
-                    </properties>
-                </phase>
-                <phase>
-                    <type>Solid</type>
-                    <properties>
-                        <property>
-                            <name>porosity</name>
-                            <type>Constant</type>
-                            <value>0</value>
-                        </property>
-                        <property>
-                            <name>density</name>
-                            <type>Constant</type>
-                            <value>3.058104e+03</value>
-                        </property>
-                        <property>
-                            <name>biot_coefficient</name>
-                            <type>Constant</type>
-                            <value>1</value>
-                        </property>
-                    </properties>
-                </phase>
-            </phases>
+            <properties>
+                <property>
+                    <name>reference_temperature</name>
+                    <type>Constant</type>
+                    <value>293.15</value>
+                </property>
+                <property>
+                    <name>permeability</name>
+                    <type>Parameter</type>
+                    <parameter_name>k</parameter_name>
+                </property>
+            </properties>
         </medium>
     </media>
     <time_loop>
@@ -275,45 +187,13 @@
     <parameters>
         <parameter>
             <name>E</name>
-            <type>Group</type>
-            <group_id_property>MaterialIDs</group_id_property>
-            <index_values>
-                <index>0</index>
-                <value>1.0e+10</value>
-            </index_values>
-            <index_values>
-                <index>1</index>
-                <value>1.0e+10</value>
-            </index_values>
-            <index_values>
-                <index>2</index>
-                <value>1.0e+10</value>
-            </index_values>
-            <index_values>
-                <index>3</index>
-                <value>1.0e+10</value>
-            </index_values>
+            <type>Constant</type>
+            <value>1e10</value>
         </parameter>
         <parameter>
             <name>nu</name>
-            <type>Group</type>
-            <group_id_property>MaterialIDs</group_id_property>
-            <index_values>
-                <index>0</index>
-                <value>0.25</value>
-            </index_values>
-            <index_values>
-                <index>1</index>
-                <value>0.25</value>
-            </index_values>
-            <index_values>
-                <index>2</index>
-                <value>0.25</value>
-            </index_values>
-            <index_values>
-                <index>3</index>
-                <value>0.25</value>
-            </index_values>
+            <type>Constant</type>
+            <value>0.25</value>
         </parameter>
         <parameter>
             <name>k</name>
@@ -335,11 +215,6 @@
                 <index>3</index>
                 <value>1e-12</value>
             </index_values>
-        </parameter>
-        <parameter>
-            <name>rho_liquid</name>
-            <type>Constant</type>
-            <value>1.019368e+3</value>
         </parameter>
         <parameter>
             <name>zero</name>

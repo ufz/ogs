@@ -13,8 +13,6 @@
                 <youngs_modulus>E</youngs_modulus>
                 <poissons_ratio>nu</poissons_ratio>
             </constitutive_relation>
-            <intrinsic_permeability>k</intrinsic_permeability>
-            <fluid_density>rho_f</fluid_density>
             <process_variables>
                 <pressure>pressure</pressure>
                 <displacement>displacement</displacement>
@@ -31,9 +29,6 @@
                 <secondary_variable internal_name="velocity" output_name="velocity"/>
             </secondary_variables>
             <specific_body_force>0 0</specific_body_force>
-            <fluid_type>compressible_fluid</fluid_type>
-            <!--this value creates the same result as a specific storage of S = 1e-5 -->
-            <fluid_compressibility>3.33333333333e-5</fluid_compressibility>
         </process>
     </processes>
     <media>
@@ -46,6 +41,16 @@
                             <name>viscosity</name>
                             <type>Constant</type>
                             <value>1e-3</value>
+                        </property>
+                        <property>
+                            <name>density</name>
+                            <type>Linear</type>
+                            <reference_value>1e4</reference_value>
+                                <independent_variable>
+                                    <variable_name>phase_pressure</variable_name>
+                                    <reference_condition>0</reference_condition>
+                                    <slope>3.3332941333333e-5</slope>
+                                </independent_variable>
                         </property>
                     </properties>
                 </phase>
@@ -70,6 +75,18 @@
                     </properties>
                 </phase>
             </phases>
+            <properties>
+                <property>
+                    <name>reference_temperature</name>
+                    <type>Constant</type>
+                    <value>293.15</value>
+                </property>
+                <property>
+                    <name>permeability</name>
+                    <type>Constant</type>
+                    <value>4.9346165e-11</value>
+                </property>
+            </properties>
         </medium>
     </media>
     <time_loop>
@@ -144,16 +161,6 @@
         </parameter>
         <!-- Model parameters -->
         <parameter>
-            <name>k</name>
-            <type>Constant</type>
-            <value>4.9346165e-11</value>
-        </parameter>
-        <parameter>
-            <name>rho_f</name>
-            <type>Constant</type>
-            <value>1.0e3</value>
-        </parameter>
-        <parameter>
             <name>displacement0</name>
             <type>Constant</type>
             <values>0 0</values>
@@ -161,7 +168,7 @@
         <parameter>
             <name>pressure_ic</name>
             <type>Constant</type>
-            <values>0.</values>
+            <values>1e5</values>
         </parameter>
         <parameter>
             <name>dirichlet0</name>

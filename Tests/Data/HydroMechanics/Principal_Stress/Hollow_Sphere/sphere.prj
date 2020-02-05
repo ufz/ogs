@@ -18,8 +18,6 @@
                 <youngs_modulus>E</youngs_modulus>
                 <poissons_ratio>nu</poissons_ratio>
             </constitutive_relation>
-            <intrinsic_permeability>k</intrinsic_permeability>
-            <fluid_density>rho_fr</fluid_density>
             <process_variables>
                 <displacement>displacement</displacement>
                 <pressure>pressure</pressure>
@@ -36,7 +34,6 @@
                 <secondary_variable internal_name="velocity" output_name="velocity"/>
             </secondary_variables>
             <specific_body_force>0 0</specific_body_force>
-            <fluid_type>incompressible_fluid</fluid_type>
         </process>
     </processes>
     <time_loop>
@@ -99,6 +96,11 @@
                             <type>Constant</type>
                             <value>1e-3</value>
                         </property>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>1</value>
+                        </property>
                     </properties>
                 </phase>
                 <phase>
@@ -122,6 +124,18 @@
                     </properties>
                 </phase>
             </phases>
+            <properties>
+                <property>
+                    <name>reference_temperature</name>
+                    <type>Constant</type>
+                    <value>293.15</value>
+                </property>
+                <property>
+                    <name>permeability</name>
+                    <type>Constant</type>
+                    <value>1e-16</value>
+                </property>
+            </properties>
         </medium>
     </media>
     <parameters>
@@ -137,16 +151,6 @@
             <value>0.3</value>
         </parameter>
         <!-- Model parameters -->
-        <parameter>
-            <name>k</name>
-            <type>Constant</type>
-            <value>1e-16</value>
-        </parameter>
-        <parameter>
-            <name>rho_fr</name>
-            <type>Constant</type>
-            <value>1</value>
-        </parameter>
         <parameter>
             <name>displacement0</name>
             <type>Constant</type>
