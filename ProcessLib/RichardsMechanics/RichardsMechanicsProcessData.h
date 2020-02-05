@@ -17,7 +17,7 @@
 
 #include <Eigen/Dense>
 
-#include "ProcessLib/RichardsFlow/RichardsFlowMaterialProperties.h"
+#include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 
 namespace MaterialLib
 {
@@ -34,10 +34,11 @@ namespace RichardsMechanics
 template <int DisplacementDim>
 struct RichardsMechanicsProcessData
 {
+
     MeshLib::PropertyVector<int> const* const material_ids = nullptr;
 
-    std::unique_ptr<ProcessLib::RichardsFlow::RichardsFlowMaterialProperties>
-        flow_material;
+    std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>
+        media_map = nullptr;
 
     /// The constitutive relation for the mechanical part.
     std::map<
@@ -49,20 +50,6 @@ struct RichardsMechanicsProcessData
     /// representation of length 4 or 6, ParameterLib::Parameter<double>.
     ParameterLib::Parameter<double> const* const initial_stress;
 
-    /// Fluid's bulk modulus. A scalar quantity,
-    /// ParameterLib::Parameter<double>.
-    ParameterLib::Parameter<double> const& fluid_bulk_modulus;
-    /// Biot coefficient. A scalar quantity, ParameterLib::Parameter<double>.
-    ParameterLib::Parameter<double> const& biot_coefficient;
-    /// Density of the solid. A scalar quantity,
-    /// ParameterLib::Parameter<double>.
-    ParameterLib::Parameter<double> const& solid_density;
-    /// Solid's bulk modulus. A scalar quantity,
-    /// ParameterLib::Parameter<double>.
-    ParameterLib::Parameter<double> const& solid_bulk_modulus;
-    /// Reference temperature for material properties. A scalar quantity,
-    /// ParameterLib::Parameter<double>.
-    ParameterLib::Parameter<double> const& temperature;
     /// Specific body forces applied to solid and fluid.
     /// It is usually used to apply gravitational forces.
     /// A vector of displacement dimension's length.

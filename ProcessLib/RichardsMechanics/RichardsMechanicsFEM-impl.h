@@ -15,6 +15,8 @@
 
 #include <cassert>
 
+#include "MaterialLib/MPL/Medium.h"
+#include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "MaterialLib/SolidModels/SelectSolidConstitutiveRelation.h"
 #include "MathLib/KelvinVector.h"
 #include "NumLib/Function/Interpolation.h"
@@ -157,8 +159,10 @@ void RichardsMechanicsLocalAssembler<
             displacement_size + pressure_size>>(
         local_rhs_data, displacement_size + pressure_size);
 
-    auto const material_id =
-        _process_data.flow_material->getMaterialID(_element.getID());
+    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    auto const& liquid_phase = medium->phase("AqueousLiquid");
+    auto const& solid_phase = medium->phase("Solid");
+    MPL::VariableArray variables;
 
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
@@ -356,8 +360,10 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             pressure_size, displacement_size>::Zero(pressure_size,
                                                     displacement_size);
 
-    auto const material_id =
-        _process_data.flow_material->getMaterialID(_element.getID());
+    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    auto const& liquid_phase = medium->phase("AqueousLiquid");
+    auto const& solid_phase = medium->phase("Solid");
+    MPL::VariableArray variables;
 
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
@@ -673,8 +679,10 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
             pressure_size> const>(local_x.data() + pressure_index,
                                   pressure_size);
 
-    auto const material_id =
-        _process_data.flow_material->getMaterialID(_element.getID());
+    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    auto const& liquid_phase = medium->phase("AqueousLiquid");
+    auto const& solid_phase = medium->phase("Solid");
+    MPL::VariableArray variables;
 
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
@@ -812,6 +820,8 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         Eigen::Map<typename ShapeMatricesTypeDisplacement::template VectorType<
             displacement_size> const>(local_x.data() + displacement_offset,
                                       displacement_size);
+    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    MPL::VariableArray variables;
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
 
@@ -853,8 +863,9 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
             pressure_size> const>(local_x.data() + pressure_index,
                                   pressure_size);
-    auto const material_id =
-        _process_data.flow_material->getMaterialID(_element.getID());
+
+    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    MPL::VariableArray variables;
 
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
