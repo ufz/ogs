@@ -11,8 +11,6 @@
 
 #pragma once
 
-#include "RichardsMechanicsFEM.h"
-
 #include <cassert>
 
 #include "MaterialLib/MPL/Medium.h"
