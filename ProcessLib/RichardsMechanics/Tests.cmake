@@ -163,9 +163,9 @@ AddTest(
     GLOB RichardsFlow_2d_quasinewton_pcs_0_ts_*.vtu displacement displacement 2e-14 0
     GLOB RichardsFlow_2d_quasinewton_pcs_0_ts_*.vtu sigma sigma 1e-8 0
     GLOB RichardsFlow_2d_quasinewton_pcs_0_ts_*.vtu epsilon epsilon 1e-15 0
-    GLOB RichardsFlow_2d_quasinewton_pcs_0_ts_*.vtu pressure pressure 1e-10 1e-15
-    GLOB RichardsFlow_2d_quasinewton_pcs_0_ts_*.vtu saturation saturation 1e-14 1e-15
-    GLOB RichardsFlow_2d_quasinewton_pcs_0_ts_*.vtu saturation_avg saturation_avg 1e-14 1e-15
+    GLOB RichardsFlow_2d_quasinewton_pcs_0_ts_*.vtu pressure pressure 3e-9 1e-15
+    GLOB RichardsFlow_2d_quasinewton_pcs_0_ts_*.vtu saturation saturation 6e-13 1e-15
+    GLOB RichardsFlow_2d_quasinewton_pcs_0_ts_*.vtu saturation_avg saturation_avg 4e-13 1e-15
     GLOB RichardsFlow_2d_quasinewton_pcs_0_ts_*.vtu velocity velocity 1e-15 1e-15
     GLOB RichardsFlow_2d_quasinewton_pcs_0_ts_*.vtu HydraulicFlow HydraulicFlow 1e-15 0
     GLOB RichardsFlow_2d_quasinewton_pcs_0_ts_*.vtu NodalForces NodalForces 1e-15 0
