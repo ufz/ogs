@@ -141,13 +141,9 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     ParameterLib::SpatialPosition pos;
     pos.setElementID(_element.getID());
 
-    // TODO: The following two variables should be calculated inside the
-    //       the integration loop for non-constant porosity and storage models.
-    double porosity_variable = 0.;
-    double storage_variable = 0.;
-
     auto const& medium = _process_data.media_map->getMedium(_element.getID());
     auto const& liquid_phase = medium->phase("AqueousLiquid");
+    auto const& solid_phase = medium->phase("Solid");
 
     MaterialPropertyLib::VariableArray vars;
     vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
@@ -173,14 +169,17 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
                     t, dt);
 
         assert(fluid_density > 0.);
+        auto const porosity =
+            medium->property(MaterialPropertyLib::PropertyType::porosity)
+                .template value<double>(vars, pos, t, dt);
+        auto const storage =
+            solid_phase.property(MaterialPropertyLib::PropertyType::storage)
+                .template value<double>(vars, pos, t, dt);
 
         // Assemble mass matrix, M
-        local_M.noalias() += _material_properties.getMassCoefficient(
-                                 material_id, t, pos, porosity_variable,
-                                 storage_variable, p, _reference_temperature,
-                                 fluid_density, ddensity_dpressure) *
-                             ip_data.N.transpose() * ip_data.N *
-                             ip_data.integration_weight;
+        local_M.noalias() +=
+            (porosity * ddensity_dpressure / fluid_density + storage) *
+            ip_data.N.transpose() * ip_data.N * ip_data.integration_weight;
 
         // Compute viscosity:
         auto const viscosity =
