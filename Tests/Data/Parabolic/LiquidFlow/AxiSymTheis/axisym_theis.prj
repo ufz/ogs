@@ -57,12 +57,27 @@
                         </property>
                     </properties>
                 </phase>
+                <phase>
+                    <type>Solid</type>
+                    <properties>
+                        <property>
+                            <name>storage</name>
+                            <type>Constant</type>
+                            <value> 1.0e-3 </value>
+                        </property>
+                    </properties>
+                </phase>
             </phases>
             <properties>
                 <property>
                     <name>permeability</name>
                     <type>Constant</type>
                     <value>9.2903e-4 0 0 0 9.2903e-4 0 0 0 9.2903e-4</value>
+                </property>
+                <property>
+                    <name>porosity</name>
+                    <type>Constant</type>
+                    <value>1.0</value>
                 </property>
             </properties>
         </medium>

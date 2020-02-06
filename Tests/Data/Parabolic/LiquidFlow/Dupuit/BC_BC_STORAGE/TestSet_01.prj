@@ -101,12 +101,27 @@
                         </property>
                     </properties>
                 </phase>
+                <phase>
+                    <type>Solid</type>
+                    <properties>
+                        <property>
+                            <name>storage</name>
+                            <type>Constant</type>
+                            <value> 0.25 </value>
+                        </property>
+                    </properties>
+                </phase>
             </phases>
             <properties>
                 <property>
                     <name>permeability</name>
                     <type>Dupuit</type>
                     <parameter_name>kappa1</parameter_name>
+                </property>
+                <property>
+                    <name>porosity</name>
+                    <type>Constant</type>
+                    <value>0.25</value>
                 </property>
             </properties>
         </medium>
