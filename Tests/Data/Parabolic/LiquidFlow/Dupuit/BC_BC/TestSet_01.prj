@@ -101,7 +101,13 @@
                     </properties>
                 </phase>
             </phases>
-            <properties/>
+            <properties>
+                <property>
+                    <name>permeability</name>
+                    <type>Dupuit</type>
+                    <parameter_name>kappa1</parameter_name>
+                </property>
+            </properties>
         </medium>
     </media>
     <parameters>
