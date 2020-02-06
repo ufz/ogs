@@ -13,7 +13,7 @@ AddTest(
     GLOB gravity_pcs_0_ts_*.vtu pressure pressure 0 2e-2
     GLOB gravity_pcs_0_ts_*.vtu velocity velocity 1e-7 1e-15
     GLOB gravity_pcs_0_ts_*.vtu HydraulicFlow HydraulicFlow 1e-5 0
-    GLOB gravity_pcs_0_ts_*.vtu NodalForces NodalForces 1e-10 0
+    GLOB gravity_pcs_0_ts_*.vtu NodalForces NodalForces 2e-10 0
     GLOB gravity_pcs_0_ts_24_t_5.000000.vtu pressure pressure 1e-4 1e-15
 )
 
@@ -102,7 +102,7 @@ AddTest(
     GLOB flow_fully_saturated_coordinate_system_pcs_0_ts_*.vtu displacement displacement 2e-14 0
     GLOB flow_fully_saturated_coordinate_system_pcs_0_ts_*.vtu sigma sigma 1e-14 0
     GLOB flow_fully_saturated_coordinate_system_pcs_0_ts_*.vtu epsilon epsilon 1e-15 0
-    GLOB flow_fully_saturated_coordinate_system_pcs_0_ts_*.vtu pressure pressure 1e-15 1e-15
+    GLOB flow_fully_saturated_coordinate_system_pcs_0_ts_*.vtu pressure pressure 2e-15 1e-15
     GLOB flow_fully_saturated_coordinate_system_pcs_0_ts_*.vtu velocity velocity 1e-15 1e-15
     GLOB flow_fully_saturated_coordinate_system_pcs_0_ts_*.vtu HydraulicFlow HydraulicFlow 1e-15 0
     GLOB flow_fully_saturated_coordinate_system_pcs_0_ts_*.vtu NodalForces NodalForces 1e-15 0
