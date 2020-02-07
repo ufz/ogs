@@ -11,14 +11,14 @@
  */
 #pragma once
 
+#include <Eigen/Dense>
 #include <array>
 #include <string>
 #include <variant>
 
+#include "ParameterLib/SpatialPosition.h"
 #include "PropertyType.h"
 #include "VariableType.h"
-
-#include "ParameterLib/SpatialPosition.h"
 
 namespace MaterialPropertyLib
 {
@@ -26,8 +26,11 @@ class Medium;
 class Phase;
 class Component;
 
-using PropertyDataType = std::variant<double, Pair, Vector, Tensor2d,
-                                      SymmTensor, Tensor, std::string>;
+using PropertyDataType =
+    std::variant<double, Eigen::Matrix<double, 2, 1>,
+                 Eigen::Matrix<double, 3, 1>, Eigen::Matrix<double, 2, 2>,
+                 Eigen::Matrix<double, 3, 3>, Eigen::Matrix<double, 4, 1>,
+                 Eigen::Matrix<double, 6, 1>>;
 
 /// This class is the base class for any material property of any
 /// scale (i.e. components, phases, media, ...). The single value of
