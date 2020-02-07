@@ -16,6 +16,7 @@
 #include "CreateIdealGasLaw.h"
 #include "CreateLinearProperty.h"
 #include "CreateParameterProperty.h"
+#include "CreatePorosityFromMassBalance.h"
 #include "CreateRelPermBrooksCorey.h"
 #include "CreateRelPermLiakopoulos.h"
 #include "CreateRelPermVanGenuchten.h"
