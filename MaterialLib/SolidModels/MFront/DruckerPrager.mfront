@@ -44,6 +44,10 @@ lam.setGlossaryName("EquivalentPlasticStrain");
 
 @InitLocalVariables
 {
+    // Compute initial elastic strain
+    const auto S = invert(D);
+    eel = S*sig;
+
     const auto sig_el = computeElasticPrediction();
     const auto I1_el = trace(sig_el);
     const auto s_el = deviator(sig_el);
