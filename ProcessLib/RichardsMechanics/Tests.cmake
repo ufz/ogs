@@ -182,7 +182,24 @@ AddTest(
     GLOB RichardsFlow_2d_richardsflow_pcs_0_ts_*.vtu pressure pressure 5e-11 1e-15
     GLOB RichardsFlow_2d_richardsflow_pcs_0_ts_*.vtu saturation saturation 1e-14 1e-15
 )
-
+AddTest(
+    NAME RichardsMechanics_deformation_dependent_porosity
+    PATH RichardsMechanics
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS deformation_dependent_porosity.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    GLOB deformation_dependent_porosity_pcs_0_ts_*.vtu pressure pressure 5e-11 1e-15
+    GLOB deformation_dependent_porosity_pcs_0_ts_*.vtu saturation saturation 1e-14 0
+    GLOB deformation_dependent_porosity_pcs_0_ts_*.vtu displacement displacement 5e-11 0
+    GLOB deformation_dependent_porosity_pcs_0_ts_*.vtu sigma sigma 1e-14 0
+    GLOB deformation_dependent_porosity_pcs_0_ts_*.vtu epsilon epsilon 1e-14 0
+    GLOB deformation_dependent_porosity_pcs_0_ts_*.vtu velocity velocity 5e-14 0
+    GLOB deformation_dependent_porosity_pcs_0_ts_*.vtu porosity porosity 5e-14 1e-15
+    GLOB deformation_dependent_porosity_pcs_0_ts_*.vtu porosity_avg porosity_avg 1e-14 1e-15
+)
 #PETSc
 AddTest(
     NAME Parallel_RichardsMechanics_RichardsFlow_2d_richardsflow
