@@ -48,6 +48,7 @@ enum class Variable : int
     temperature,
     liquid_saturation,
     displacement,
+    strain,
     number_of_variables
 };
 
