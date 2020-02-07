@@ -44,6 +44,7 @@ enum class Variable : int
 {
     concentration,
     phase_pressure,
+    phase_pressure_rate,
     capillary_pressure,
     density,
     temperature,
@@ -51,6 +52,7 @@ enum class Variable : int
     porosity,
     displacement,
     strain,
+    volumetric_strain_rate,
     number_of_variables
 };
 
