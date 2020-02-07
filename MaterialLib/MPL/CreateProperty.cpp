@@ -65,6 +65,12 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
         return createIdealGasLaw(config);
     }
 
+    if (boost::iequals(property_type, "PermeabilityOrthotropicPowerLaw"))
+    {
+        return createPermeabilityOrthotropicPowerLaw(config,
+                                                     local_coordinate_system);
+    }
+
     if (boost::iequals(property_type, "PorosityFromMassBalance"))
     {
         return createPorosityFromMassBalance(config, parameters);
