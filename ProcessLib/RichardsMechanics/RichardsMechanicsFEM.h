@@ -167,6 +167,12 @@ public:
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const override;
 
+    std::vector<double> const& getIntPtPorosity(
+        const double t,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+        std::vector<double>& cache) const override;
+
     std::vector<double> const& getIntPtSigma(
         const double t,
         std::vector<GlobalVector*> const& x,
