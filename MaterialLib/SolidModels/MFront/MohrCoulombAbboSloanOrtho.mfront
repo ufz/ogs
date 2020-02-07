@@ -80,6 +80,11 @@ a.setEntryName("TensionCutOffParameter");
     cos_3_lodeT = cos(3. * lodeT);
     sin_3_lodeT = sin(3. * lodeT);
     tan_3_lodeT = tan(3. * lodeT);
+
+    // Compute initial elastic strain
+    const auto S = invert(D);
+    eel = S*sig;
+
     // elastic prediction
     const auto sig_el = computeElasticPrediction();
     const auto s_el = deviator(sig_el);
