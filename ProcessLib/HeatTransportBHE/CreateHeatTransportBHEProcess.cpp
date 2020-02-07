@@ -95,9 +95,6 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
     // reading BHE parameters --------------------------------------------------
     std::vector<BHE::BHETypes> bhes;
 
-    // bhe array network parameter.
-    bool has_network_python_bc = false;
-
     auto const& bhe_configs =
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers}
         config.getConfigSubtree("borehole_heat_exchangers");
@@ -147,17 +144,13 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
         MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
 
     // find if bhe uses python boundary condition
-    auto const isUsingPythonBC =
-        visit([](auto const& bhe) { return bhe.usePythonBC; }, bhes[0]);
-    if (isUsingPythonBC)
-    {
-        has_network_python_bc = true;
-    }
+    auto const using_python_bcs =
+        visit([](auto const& bhe) { return bhe.use_python_bcs; }, bhes[0]);
 
     //! Python object computing BC values.
     BHEInflowPythonBoundaryConditionPythonSideInterface* py_object = nullptr;
     // create a pythonBoundaryCondition object
-    if (has_network_python_bc)
+    if (using_python_bcs)
     {
 #ifdef OGS_USE_PYTHON
         // Evaluate Python code in scope of main module

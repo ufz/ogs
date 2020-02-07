@@ -46,10 +46,10 @@ public:
            GroutParameters const& grout,
            FlowAndTemperatureControl const& flowAndTemperatureControl,
            PipeConfigurationUType const& pipes,
-           bool const usePythonBC)
+           bool const use_python_bcs)
         : BHECommonUType{borehole, refrigerant,
                          grout,    flowAndTemperatureControl,
-                         pipes,    usePythonBC}
+                         pipes,    use_python_bcs}
     {
         _thermal_resistances.fill(std::numeric_limits<double>::quiet_NaN());
 
