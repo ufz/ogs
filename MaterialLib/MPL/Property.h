@@ -26,18 +26,6 @@ class Medium;
 class Phase;
 class Component;
 
-/// This is a custom data type for arbitrary properties, based on the
-/// std::variant container. It can hold scalars, vectors, tensors, and so
-/// forth.
-enum PropertyDataTypeName
-{
-    nScalar,
-    nPair,
-    nVector,
-    nSymmTensor,
-    nTensor
-};
-
 using PropertyDataType = std::variant<double, Pair, Vector, Tensor2d,
                                       SymmTensor, Tensor, std::string>;
 
