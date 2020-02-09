@@ -84,12 +84,12 @@ std::vector<std::unique_ptr<Component>> createComponents(
 
         if (std::find_if(components.begin(),
                          components.end(),
-                         [component_name = component->name()](auto const& c) {
-                             return c->name() == component_name;
+                         [component_name = component->name](auto const& c) {
+                             return c->name == component_name;
                          }) != components.end())
         {
             OGS_FATAL("Found duplicates with the same component name tag '%s'.",
-                      component->name().c_str());
+                      component->name.c_str());
         }
 
         components.push_back(std::move(component));

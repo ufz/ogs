@@ -37,7 +37,7 @@ Phase const& Medium::phase(std::string const& name) const
     return *BaseLib::findElementOrError(
         _phases.begin(), _phases.end(),
         [&name](std::unique_ptr<MaterialPropertyLib::Phase> const& phase) {
-            return phase->name() == name;
+            return phase->name == name;
         },
         "Could not find phase name '" + name + "'.");
 }
