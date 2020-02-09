@@ -16,6 +16,48 @@
 
 namespace MaterialPropertyLib
 {
+PropertyDataType fromVector(std::vector<double> const& values)
+{
+    switch (values.size())
+    {
+        case 1:
+        {
+            return values[0];
+        }
+        case 2:
+        {
+            return Eigen::Vector2d{values[0], values[1]};
+        }
+        case 3:
+        {
+            return Eigen::Vector3d{values[0], values[1], values[2]};
+        }
+        case 4:
+        {
+            using M = Eigen::Matrix2d;
+            return M{Eigen::Map<M const>{values.data(), 2, 2}};
+        }
+        case 6:
+        {
+            // Symmetric Tensor - xx, yy, zz, xy, xz, yz
+            using M = Eigen::Matrix<double, 6, 1>;
+            return M{Eigen::Map<M const>{values.data(), 6}};
+        }
+        case 9:
+        {
+            using M = Eigen::Matrix3d;
+            return M{Eigen::Map<M const>{values.data(), 3, 3}};
+        }
+        default:
+        {
+            OGS_FATAL(
+                "Conversion of a %d-vector to PropertyDataType is not "
+                "implemented.",
+                values.size());
+        }
+    }
+}
+
 PropertyDataType Property::value() const
 {
     return _value;

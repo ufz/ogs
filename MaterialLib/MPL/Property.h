@@ -32,6 +32,11 @@ using PropertyDataType =
                  Eigen::Matrix<double, 3, 3>, Eigen::Matrix<double, 4, 1>,
                  Eigen::Matrix<double, 6, 1>>;
 
+/// Conversion of a vector to PropertyDataType for different sizes of the
+/// vector.
+/// \attention It cannot distinguish between 2x2 matrix and 4x1 vector.
+PropertyDataType fromVector(std::vector<double> const& values);
+
 /// This class is the base class for any material property of any
 /// scale (i.e. components, phases, media, ...). The single value of
 /// that Property can hold scalars, vectors, tensors, strings, etc.
