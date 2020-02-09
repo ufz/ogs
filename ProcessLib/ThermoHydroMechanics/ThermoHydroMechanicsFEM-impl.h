@@ -205,7 +205,7 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         // same order
         auto const& N_T = N_p;
         auto const& dNdx_T = dNdx_p;
-        auto const T_int_pt = N_T * T;
+        auto const T_int_pt = N_T.dot(T);
 
         auto const x_coord =
             interpolateXCoordinate<ShapeFunctionDisplacement,
@@ -223,7 +223,7 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
             T_int_pt;
         vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
-            N_p * p;
+            N_p.dot(p);
 
         auto const solid_density =
             solid_phase.property(MaterialPropertyLib::PropertyType::density)
@@ -478,9 +478,9 @@ std::vector<double> const& ThermoHydroMechanicsLocalAssembler<
         auto const& N_p = _ip_data[ip].N_p;
 
         vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
-            N_p * T;  // N_p = N_T
+            N_p.dot(T);  // N_p = N_T
         vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
-            N_p * p;
+            N_p.dot(p);
 
         auto const viscosity =
             liquid_phase.property(MaterialPropertyLib::PropertyType::viscosity)
@@ -555,11 +555,11 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         double const T0 = _process_data.reference_temperature(t, x_position)[0];
 
-        double const T_int_pt = N_T * T;
+        double const T_int_pt = N_T.dot(T);
         vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
             T_int_pt;
         vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
-            N_T * p;  // N_T = N_p
+            N_T.dot(p);  // N_T = N_p
 
         auto const solid_linear_thermal_expansion_coefficient =
             solid_phase
