@@ -37,12 +37,12 @@ PropertyDataType RelPermLiakopoulos::value(
 
     if (s_L <= s_L_res)
     {
-        return Pair{0., 1.};
+        return Eigen::Vector2d{0., 1.};
     }
 
     if (s_L >= 1.)
     {
-        return Pair{1., k_rel_min_GR};
+        return Eigen::Vector2d{1., k_rel_min_GR};
     }
 
     auto const a = _parameter_a;
@@ -55,11 +55,10 @@ PropertyDataType RelPermLiakopoulos::value(
     auto const k_rel_GR = (1. - s_eff) * (1. - s_eff) *
                           (1. - std::pow(s_eff, (2. + lambda) / lambda));
 
-    const Pair kRel = {std::max(k_rel_LR, 0.),
-                       std::max(k_rel_GR, k_rel_min_GR)};
-
-    return kRel;
+    return Eigen::Vector2d{std::max(k_rel_LR, 0.),
+                           std::max(k_rel_GR, k_rel_min_GR)};
 }
+
 PropertyDataType RelPermLiakopoulos::dValue(
     VariableArray const& variable_array, Variable const primary_variable,
     ParameterLib::SpatialPosition const& pos, double const t) const
@@ -90,9 +89,7 @@ PropertyDataType RelPermLiakopoulos::dValue(
         _2L_L * std::pow(s_eff, _2L_L - 1.) * s_G_eff * s_G_eff;
     auto const dk_rel_GRdsL = dk_rel_GRdse * _dse_dsL;
 
-    const Pair dkReldsL = {{dk_rel_LRdsL, dk_rel_GRdsL}};
-
-    return dkReldsL;
+    return Eigen::Vector2d{dk_rel_LRdsL, dk_rel_GRdsL};
 }
 
 }  // namespace MaterialPropertyLib
