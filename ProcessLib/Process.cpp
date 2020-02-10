@@ -196,6 +196,7 @@ void Process::assemble(const double t, double const dt,
                        GlobalVector& b)
 {
     MathLib::LinAlg::setLocalAccessibleVector(*x[process_id]);
+    MathLib::LinAlg::setLocalAccessibleVector(*xdot[process_id]);
 
     assembleConcreteProcess(t, dt, x, xdot, process_id, M, K, b);
 
