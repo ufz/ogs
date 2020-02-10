@@ -100,7 +100,8 @@ public:
     void preAssemble(const double t, double const dt,
                      GlobalVector const& x) final;
     void assemble(const double t, double const dt,
-                  std::vector<GlobalVector*> const& x, int const process_id,
+                  std::vector<GlobalVector*> const& x,
+                  std::vector<GlobalVector*> const& xdot, int const process_id,
                   GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) final;
 
     void assembleWithJacobian(const double t, double const dt,
@@ -195,6 +196,7 @@ private:
 
     virtual void assembleConcreteProcess(const double t, double const dt,
                                          std::vector<GlobalVector*> const& x,
+                                         std::vector<GlobalVector*> const& xdot,
                                          int const process_id, GlobalMatrix& M,
                                          GlobalMatrix& K, GlobalVector& b) = 0;
 

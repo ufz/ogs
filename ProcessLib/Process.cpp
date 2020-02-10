@@ -191,12 +191,13 @@ void Process::preAssemble(const double t, double const dt,
 
 void Process::assemble(const double t, double const dt,
                        std::vector<GlobalVector*> const& x,
+                       std::vector<GlobalVector*> const& xdot,
                        int const process_id, GlobalMatrix& M, GlobalMatrix& K,
                        GlobalVector& b)
 {
     MathLib::LinAlg::setLocalAccessibleVector(*x[process_id]);
 
-    assembleConcreteProcess(t, dt, x, process_id, M, K, b);
+    assembleConcreteProcess(t, dt, x, xdot, process_id, M, K, b);
 
     // the last argument is for the jacobian, nullptr is for a unused jacobian
     _boundary_conditions[process_id].applyNaturalBC(t, x, process_id, K, b,
