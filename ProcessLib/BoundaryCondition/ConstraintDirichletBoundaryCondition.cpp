@@ -158,7 +158,7 @@ void ConstraintDirichletBoundaryCondition::getEssentialBCValues(
             auto const id = boundary_element->getNode(i)->getID();
             pos.setNodeID(id);
 
-            MeshLib::Location l(_bulk_mesh.getID(), MeshLib::MeshItemType::Node,
+            MeshLib::Location l(_bc_mesh.getID(), MeshLib::MeshItemType::Node,
                                 id);
             // TODO: that might be slow, but only done once
             const auto g_idx = _dof_table_boundary->getGlobalIndex(
