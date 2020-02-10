@@ -18,5 +18,7 @@
 #include "ParameterProperty.h"
 #include "RelPermBrooksCorey.h"
 #include "RelPermLiakopoulos.h"
+#include "RelPermVanGenuchten.h"
 #include "SaturationBrooksCorey.h"
 #include "SaturationLiakopoulos.h"
+#include "SaturationVanGenuchten.h"
