@@ -65,7 +65,8 @@ void TwoPhaseFlowWithPPProcess::initializeConcreteProcess(
 
 void TwoPhaseFlowWithPPProcess::assembleConcreteProcess(
     const double t, double const dt, std::vector<GlobalVector*> const& x,
-    int const process_id, GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
+    std::vector<GlobalVector*> const& xdot, int const process_id,
+    GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
 {
     DBUG("Assemble TwoPhaseFlowWithPPProcess.");
 
@@ -76,8 +77,8 @@ void TwoPhaseFlowWithPPProcess::assembleConcreteProcess(
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        pv.getActiveElementIDs(), dof_table, t, dt, x, process_id, M, K, b,
-        _coupled_solutions);
+        pv.getActiveElementIDs(), dof_table, t, dt, x, xdot, process_id, M, K,
+        b, _coupled_solutions);
 }
 
 void TwoPhaseFlowWithPPProcess::assembleWithJacobianConcreteProcess(
