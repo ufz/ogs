@@ -26,5 +26,5 @@ std::unique_ptr<MPL::Medium> createTestMaterial(std::string const& xml)
     auto const& config = conf.getConfigSubtree("medium");
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> parameters;
 
-    return MPL::createMedium(config, parameters);
+    return MPL::createMedium(config, parameters, nullptr);
 }

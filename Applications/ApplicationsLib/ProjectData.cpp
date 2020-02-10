@@ -428,7 +428,7 @@ std::vector<std::string> ProjectData::parseParameters(
 }
 
 void ProjectData::parseMedia(
-        boost::optional<BaseLib::ConfigTree> const& media_config)
+    boost::optional<BaseLib::ConfigTree> const& media_config)
 {
     if (!media_config)
     {
@@ -488,10 +488,13 @@ void ProjectData::parseMedia(
                     id);
             }
 
-            _media[id] = (id == material_ids[0])
-                             ? MaterialPropertyLib::createMedium(medium_config,
-                                                                 _parameters)
-                             : _media[material_ids[0]];
+            _media[id] =
+                (id == material_ids[0])
+                    ? MaterialPropertyLib::createMedium(
+                          medium_config, _parameters,
+                          _local_coordinate_system ? &*_local_coordinate_system
+                                                   : nullptr)
+                    : _media[material_ids[0]];
         }
     }
 

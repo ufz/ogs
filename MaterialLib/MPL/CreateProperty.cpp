@@ -28,7 +28,8 @@ namespace
 {
 std::unique_ptr<MaterialPropertyLib::Property> createProperty(
     BaseLib::ConfigTree const& config,
-    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters)
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
+    ParameterLib::CoordinateSystem const* const local_coordinate_system)
 {
     using namespace MaterialPropertyLib;
     // Parsing the property type:
@@ -109,7 +110,8 @@ namespace MaterialPropertyLib
 {
 std::unique_ptr<PropertyArray> createProperties(
     boost::optional<BaseLib::ConfigTree> const& config,
-    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters)
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
+    ParameterLib::CoordinateSystem const* const local_coordinate_system)
 {
     if (!config)
     {
@@ -132,7 +134,8 @@ std::unique_ptr<PropertyArray> createProperties(
             //! \ogs_file_param{properties__property__name}
             property_config.getConfigParameter<std::string>("name");
         // Create a new property based on the configuration subtree:
-        auto property = createProperty(property_config, parameters);
+        auto property = createProperty(
+            property_config, parameters, local_coordinate_system);
 
         // Insert the new property at the right position into the components
         // private PropertyArray:
