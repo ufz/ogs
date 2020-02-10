@@ -62,9 +62,10 @@ option(OGS_USE_CVODE "Use the Sundials CVODE module?" OFF)
 
 # ---- CMake includes ----
 include(PreFind)
+include(SubmoduleSetup)
+include(Versions)
 include(CheckTypeSizes)
 include(Functions)
-include(SubmoduleSetup)
 include(ConanSetup)
 include(CompilerSetup)
 include(Find)

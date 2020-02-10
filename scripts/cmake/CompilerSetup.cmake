@@ -95,18 +95,18 @@ if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR COMPILER_IS_INTEL)
     endif()
 
     if(COMPILER_IS_GCC)
-        if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "7.3")
-            message(FATAL_ERROR "GCC minimum required version is 7.3! You are \
-                using ${CMAKE_CXX_COMPILER_VERSION}.")
+        if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS ${ogs.minimum_version.gcc})
+            message(FATAL_ERROR "GCC minimum required version is ${OGS_GCC_MINIMUM_VERSION}! \
+                You are using ${CMAKE_CXX_COMPILER_VERSION}.")
         endif()
         add_compile_options(-fext-numeric-literals)
         include(GCCSanitizer)
     endif()
 
     if(COMPILER_IS_CLANG)
-        if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "3.5")
-            message(FATAL_ERROR "Aborting: Clang 3.5 is required! Found version \
-                ${CMAKE_CXX_COMPILER_VERSION}")
+        if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS ${ogs.minimum_version.clang})
+            message(FATAL_ERROR "Aborting: Clang ${OGS_CLANG_MINIMUM_VERSION} \
+                is required! Found version ${CMAKE_CXX_COMPILER_VERSION}")
         endif()
         include(ClangSanitizer)
     endif()
@@ -118,6 +118,12 @@ if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR COMPILER_IS_INTEL)
 endif()
 
 if(MSVC)
+    if(${MSVC_TOOLSET_VERSION} LESS ${ogs.minimum_version.msvc.toolset})
+        message(FATAL_ERROR "Aborting: Visual Studio ${ogs.minimum_version.msvc.year} \
+            is required! Found Visual Studio with toolset version \
+            ${MSVC_TOOLSET_VERSION}. See the following link for version info: \
+            https://cmake.org/cmake/help/v3.16/variable/MSVC_TOOLSET_VERSION.html")
+    endif()
     if(OGS_CPU_ARCHITECTURE STREQUAL "native")
         set(CPU_FLAGS /favor:blend)
     else()

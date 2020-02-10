@@ -1,0 +1,13 @@
+{
+  "minimum_version": {
+    "gcc": "7.3",
+    "clang": "3.5",
+    "msvc": {
+      "year": "2017",
+      "number": "15",
+      "toolset": "141"
+    },
+    "conan": "1.21.0",
+    "git": "2.14"
+  }
+}
