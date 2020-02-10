@@ -42,7 +42,7 @@ struct BHECommon
     RefrigerantProperties const refrigerant;
     GroutParameters const grout;
     FlowAndTemperatureControl const flowAndTemperatureControl;
-    bool const usePythonBC;
+    bool const use_python_bcs;
 };
 }  // end of namespace BHE
 }  // end of namespace HeatTransportBHE

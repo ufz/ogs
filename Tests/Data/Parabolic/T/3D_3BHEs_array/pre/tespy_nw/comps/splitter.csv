@@ -1,2 +1,2 @@
-label;cp;busses;bus_param;bus_P_ref;bus_char;design;offdesign;interface;design_path;num_out;num_out_set
-splitter;splitter;[];[];[];[];[];[];False;nan;3;True
+label;cp;busses;bus_param;bus_P_ref;bus_char;design;offdesign;design_path;local_design;local_offdesign;num_out;num_out_set
+splitter;splitter;[];[];[];[];[];[];nan;False;False;3;True

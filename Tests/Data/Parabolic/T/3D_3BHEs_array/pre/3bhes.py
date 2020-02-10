@@ -6,13 +6,17 @@
 ###
 
 # Execute this file to generate TESPy network csv files
-from tespy import cmp, con, nwk, hlp
-from tespy import nwkr
+from tespy.networks import network
+from tespy.components import (sink, source, splitter, merge,
+                              pump, heat_exchanger_simple)
+from tespy.connections import connection, ref, bus
+from tespy.tools.characteristics import char_line
+from tespy.tools.data_containers import dc_cc
+
 import numpy as np
-import pandas as pd
 
 # %% network
-btes = nwk.network(fluids=['water'],
+btes = network(fluids=['water'],
                    T_unit='K',
                    p_unit='bar',
                    h_unit='kJ / kg',
@@ -20,55 +24,53 @@ btes = nwk.network(fluids=['water'],
                    p_range=[1, 20],
                    h_range=[1, 1000])
 
-# components
-fc_in = cmp.source('from consumer inflow')
-fc_out = cmp.sink('from consumer outflow')
+# %% components
+fc_in = source('from consumer inflow')
+fc_out = sink('from consumer outflow')
 
-pu = cmp.pump('pump')
+pu = pump('pump')
 
-sp = cmp.splitter('splitter', num_out=3)
+sp = splitter('splitter', num_out=3)
 
 # bhe:
 bhe_name = 'BHE1'
 assert 'BHE1' in bhe_name, "BHE should be named with 'BHE1'"
-bhe1 = cmp.heat_exchanger_simple(bhe_name)
+bhe1 = heat_exchanger_simple(bhe_name)
 bhe_name = 'BHE2'
 assert 'BHE2' in bhe_name, "BHE should be named with 'BHE2'"
-bhe2 = cmp.heat_exchanger_simple(bhe_name)
+bhe2 = heat_exchanger_simple(bhe_name)
 bhe_name = 'BHE3'
 assert 'BHE3' in bhe_name, "BHE should be named with 'BHE3'"
-bhe3 = cmp.heat_exchanger_simple(bhe_name)
+bhe3 = heat_exchanger_simple(bhe_name)
 
-mg = cmp.merge('merge', num_in=3)
+mg = merge('merge', num_in=3)
 
-cons = cmp.heat_exchanger_simple('consumer')
+cons = heat_exchanger_simple('consumer')
 
-# connections
-# inlet
-fc_pu = con.connection(fc_in, 'out1', pu, 'in1')
+# %% connections
+fc_pu = connection(fc_in, 'out1', pu, 'in1')
 
-pu_sp = con.connection(pu, 'out1', sp, 'in1')
+pu_sp = connection(pu, 'out1', sp, 'in1')
 
-sp_bhe1 = con.connection(sp, 'out1', bhe1, 'in1')
-sp_bhe2 = con.connection(sp, 'out2', bhe2, 'in1')
-sp_bhe3 = con.connection(sp, 'out3', bhe3, 'in1')
+sp_bhe1 = connection(sp, 'out1', bhe1, 'in1')
+sp_bhe2 = connection(sp, 'out2', bhe2, 'in1')
+sp_bhe3 = connection(sp, 'out3', bhe3, 'in1')
 
-bhe1_mg = con.connection(bhe1, 'out1', mg, 'in1')
-bhe2_mg = con.connection(bhe2, 'out1', mg, 'in2')
-bhe3_mg = con.connection(bhe3, 'out1', mg, 'in3')
+bhe1_mg = connection(bhe1, 'out1', mg, 'in1')
+bhe2_mg = connection(bhe2, 'out1', mg, 'in2')
+bhe3_mg = connection(bhe3, 'out1', mg, 'in3')
 
-mg_cons = con.connection(mg, 'out1', cons, 'in1')
+mg_cons = connection(mg, 'out1', cons, 'in1')
 
-cons_fc = con.connection(cons, 'out1', fc_out, 'in1')
+cons_fc = connection(cons, 'out1', fc_out, 'in1')
 
 btes.add_conns(fc_pu, pu_sp, sp_bhe1, sp_bhe2, sp_bhe3, bhe1_mg, bhe2_mg,
                bhe3_mg, mg_cons, cons_fc)
 
-# busses
-heat = con.bus('consumer heat demand')
-heat.add_comps({'c': cons, 'p': 'P'})
-btes.add_busses(heat)
 
+# %% paramerization
+## components paramerization
+# pump
 # flow_char
 # provide volumetric flow in m^3 / s
 x = np.array([
@@ -91,29 +93,30 @@ y = np.array([
     0.15056329, 0.12272329, 0.09374696, 0.06363430, 0.03238531, 0.00000000
 ]) * 1e5
 
-f = hlp.dc_cc(x=x, y=y, is_set=True)
-pu.set_attr(flow_char=f)
+char = char_line(x=x, y=y)
+pu.set_attr(flow_char=dc_cc(func=char, is_set=True))
+pu.set_attr(eta_s=0.90)
 
-# components paramerization
+# bhes
+bhe1.set_attr(D=0.013665, L=100, ks=0.00001)
+bhe2.set_attr(D=0.013665, L=100, ks=0.00001)
+bhe3.set_attr(D=0.013665, L=100, ks=0.00001)
+
+# consumer
+cons.set_attr(D=0.2, L=20, ks=0.00001)
+# busses
+heat = bus('consumer heat demand')
+heat.add_comps({'c': cons, 'p': 'P'})
+btes.add_busses(heat)
+# consumer heat demand
+heat.set_attr(P=-3000)  # W
+
+
+## connection parametrization
 # system inlet
 inflow_head = 2  # bar
 
 fc_pu.set_attr(p=inflow_head, m=0.6, fluid={'water': 1})
-
-# pump
-pu.set_attr(eta_s=0.90)
-
-# bhes
-bhe1.set_attr(D=0.02733, L=100, ks=0.00001)
-bhe2.set_attr(D=0.02733, L=100, ks=0.00001)
-bhe3.set_attr(D=0.02733, L=100, ks=0.00001)
-
-# consumer
-cons.set_attr(D=0.2, L=20, ks=0.00001)
-
-# connection parametrization
-# Tin:
-pu_sp.set_attr(h=con.ref(cons_fc, 1, 0))
 
 # for BHEs:
 # Tout:
@@ -121,11 +124,12 @@ bhe1_mg.set_attr(T=303.15)
 bhe2_mg.set_attr(T=303.15)
 bhe3_mg.set_attr(T=303.15)
 
-# consumer heat demand
-heat.set_attr(P=-3000)  # W
+# imposed boundary condition: ensure all heat from BHEs are consumed on 'consumer'
+pu_sp.set_attr(h=ref(cons_fc, 1, 0))
 
-# solve
-btes.set_printoptions(print_level='info')
+# %% solve
 btes.solve('design')
-# save to csv:
+#btes.print_results()
+
+# %% save to csv:
 btes.save('tespy_nw', structure=True)

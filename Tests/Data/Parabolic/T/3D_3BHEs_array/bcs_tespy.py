@@ -1,5 +1,5 @@
 ###
-# Copyright(c) 2012 - 2019, OpenGeoSys Community(http://www.opengeosys.org)
+# Copyright (c) 2012-2020, OpenGeoSys Community (http://www.opengeosys.org)
 # Distributed under a Modified BSD License.
 # See accompanying file LICENSE.txt or
 # http://www.opengeosys.org/project/license
@@ -11,8 +11,7 @@ import os
 import numpy as np
 from pandas import read_csv
 import OpenGeoSys
-from tespy import cmp, con, nwk, hlp, cmp_char
-from tespy import nwkr
+from tespy.networks import load_network
 
 # User setting +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # parameters
@@ -25,11 +24,11 @@ switch_dyn_demand = 'on'
 switch_dyn_frate = 'off'
 
 
-# timecurve setting
-def timerange(t):
+# network status setting
+def network_status(t):
+    nw_status = 'on'
     # month for closed network
     timerange_nw_off_month = [-9999]  # No month for closed network
-    nw_status = 'on'
     # t-1 to avoid the calculation problem at special time point,
     # e.g. t = 2592000.
     t_trans = int((t - 1) / 86400 / 30) + 1
@@ -38,12 +37,15 @@ def timerange(t):
         t_trans_month = t_trans - 12 * (int(t_trans / 12))
     if t_trans_month in timerange_nw_off_month:
         nw_status = 'off'
-    return t_trans, t_trans_month, nw_status
+    return nw_status
 
 
-# consumer thermal load
-# month demand
+# dynamic consumer thermal load
 def consumer_demand(t):  # dynamic thermal demand from consumer
+    # time conversion
+    t_trans = int((t - 1) / 86400 / 30) + 1
+    if t_trans > 12:
+        t_trans = t_trans - 12 * (int(t_trans / 12))
     # thermal demand in each month (assumed specific heat extraction rate*
     # length of BHE* number of BHE)
     month_demand = [
@@ -51,15 +53,18 @@ def consumer_demand(t):  # dynamic thermal demand from consumer
         -25 * 50 * 3, -25 * 50 * 3, -25 * 50 * 3, -25 * 50 * 3, -25 * 50 * 3,
         -25 * 50 * 3, -25 * 50 * 3
     ]
-    return month_demand[t - 1]
+    return month_demand[t_trans - 1]
 
 
 # dynamic hydraulic flow rate
-# month demand
 def dyn_frate(t):  # dynamic flowrate in BHE
+    # time conversion
+    t_trans = int((t - 1) / 86400 / 30) + 1
+    if t_trans > 12:
+        t_trans = t_trans - 12 * (int(t_trans / 12))
     # flow rate in kg / s time curve in month
     month_frate = [-9999]
-    return month_frate[t - 1]
+    return month_frate[t_trans - 1]
 
 
 # End User setting+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -76,22 +81,18 @@ def create_dataframe():
 
 
 # TESPy hydraulic calculation process
-def get_hydraulics(t_trans):
+def get_hydraulics(t):
     # if network exist dynamic flowrate
     if switch_dyn_frate == 'on':
-        cur_frate = dyn_frate(t_trans)
+        cur_frate = dyn_frate(t)
         localVars['inlet_name'].set_attr(m=cur_frate)
     # solve imported network
     nw.solve(mode='design')
-    # get flowrate #kg / s
+    # get flowrate #m ^ 3 / s
     for i in range(n_BHE):
         for c in nw.conns.index:
             if c.t.label == data_index[i]:  # t:inlet comp, s:outlet comp
-                df.loc[df.index[i], 'flowrate'] = c.get_attr('m').val_SI
-    # convert flowrate to velocity : #m ^ 3 / s
-    for i in range(n_BHE):
-        df.loc[df.index[i],
-               'f_velocity'] = df.loc[df.index[i], 'flowrate'] / refrig_density
+                df.loc[df.index[i], 'flowrate'] = c.get_attr('m').val_SI / refrig_density
     return df
 
 
@@ -129,12 +130,12 @@ class BC(OpenGeoSys.BHENetwork):
         data_col_2 = df['Tout_val'].tolist()  # 'Tout_val'
         data_col_3 = df['Tout_node_id'].astype(int).tolist()  # 'Tout_node_id'
         get_hydraulics(0)
-        data_col_4 = df['f_velocity'].tolist()  # 'BHE flow rate'
+        data_col_4 = df['flowrate'].tolist()  # 'BHE flow rate'
         return (t, data_col_1, data_col_2, data_col_3, data_col_4)
 
     def tespyThermalSolver(self, t, Tin_val, Tout_val):
-        # current time, network status:
-        t_trans, t_trans_month, nw_status = timerange(t)
+        # network status:
+        nw_status = network_status(t)
         # if network closed:
         #     print('nw_status = ', nw_status)
         if nw_status == 'off':
@@ -144,7 +145,7 @@ class BC(OpenGeoSys.BHENetwork):
             for i in range(n_BHE):
                 df.loc[df.index[i], 'Tout_val'] = Tout_val[i]
             # TESPy solver
-            cur_cal_Tin_val = get_thermal(t_trans_month)
+            cur_cal_Tin_val = get_thermal(t)
             # check norm if network achieves the converge
             if_success = False
             pre_cal_Tin_val = Tin_val
@@ -157,20 +158,20 @@ class BC(OpenGeoSys.BHENetwork):
 
     def tespyHydroSolver(self, t):
         if_dyn_frate = False
-        data_f_velocity = df['f_velocity'].tolist()
+        data_flowrate = df['flowrate'].tolist()
         if switch_dyn_frate == 'on':
             if_dyn_frate = True
-            # current time, network status:
-            t_trans, t_trans_month, nw_status = timerange(t)
+            # network status:
+            nw_status = network_status(t)
             if nw_status == 'off':
                 for i in range(n_BHE):
-                    df.loc[df.index[i], 'f_velocity'] = 0
-                data_f_velocity = df['f_velocity'].tolist()
+                    df.loc[df.index[i], 'flowrate'] = 0
+                data_flowrate = df['flowrate'].tolist()
             else:
-                dataframe = get_hydraulics(t_trans)
-                data_f_velocity = dataframe['f_velocity'].tolist()
+                dataframe = get_hydraulics(t)
+                data_flowrate = dataframe['flowrate'].tolist()
         # return to OGS
-        return (if_dyn_frate, data_f_velocity)
+        return (if_dyn_frate, data_flowrate)
 
 
 # main
@@ -179,9 +180,9 @@ class BC(OpenGeoSys.BHENetwork):
 # loading the TESPy model
 project_dir = os.getcwd()
 print("Project dir is: ", project_dir)
-nw = nwkr.load_nwk('./pre/tespy_nw')
-# set if print the information of the network
-nw.set_printoptions(print_level='none')
+nw = load_network('./pre/tespy_nw')
+# set if print the network iteration info
+nw.set_attr(iterinfo=False)
 
 # create bhe dataframe of the network system from bhe_network.csv
 df = create_dataframe()

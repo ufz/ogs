@@ -307,7 +307,7 @@ void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
             for (auto const& in_out_component_id :
                  bhe.inflow_outflow_bc_component_ids)
             {
-                if (bhe.usePythonBC)
+                if (bhe.use_python_bcs)
                 // call BHEPythonBoundarycondition
                 {
 #ifdef OGS_USE_PYTHON

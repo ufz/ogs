@@ -43,10 +43,10 @@ public:
             GroutParameters const& grout,
             FlowAndTemperatureControl const& flowAndTemperatureControl,
             PipeConfigurationCoaxial const& pipes,
-            bool const usePythonBC)
+            bool const use_python_bcs)
         : BHECommonCoaxial{borehole, refrigerant,
                            grout,    flowAndTemperatureControl,
-                           pipes,    usePythonBC}
+                           pipes,    use_python_bcs}
     {
         // Initialize thermal resistances.
         auto values = visit(
