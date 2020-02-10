@@ -2,6 +2,12 @@ stages:
   - test
   - package
 
+variables:
+  CONTAINER_GCC_IMAGE: $CI_REGISTRY_IMAGE:gcc-$CI_COMMIT_REF_SLUG
+
+before_script:
+  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+
 include:
   - local: '/scripts/ci/extends/container-maker-setup.yml'
   - local: '/scripts/ci/jobs/build_image.yml'

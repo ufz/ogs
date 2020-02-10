@@ -6,7 +6,7 @@ build:
     CTEST_NUM_THREADS: '4'
     CTEST_LARGE_NUM_THREADS: '3'
   image:
-    name: ogs6/gcc
+    name: $CONTAINER_GCC_IMAGE
     entrypoint:
       - '/usr/bin/env'
       - 'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'

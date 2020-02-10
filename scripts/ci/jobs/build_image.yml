@@ -9,5 +9,8 @@ build_image:
     GIT_STRATEGY: fetch
   extends: .container-maker-setup
   script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     # --jenkins? --gui?
-    - python ThirdParty/container-maker/ogscm/cli.py -B --ogs off --pm system --cvode --cppcheck --docs --gcovr
+    - python ThirdParty/container-maker/ogscm/cli.py --build --gitlab
+      --ogs off --pm system --cvode --cppcheck --docs --gcovr
+      --tag $CONTAINER_GCC_IMAGE --upload
