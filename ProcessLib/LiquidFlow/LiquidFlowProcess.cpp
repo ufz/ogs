@@ -26,6 +26,40 @@ namespace ProcessLib
 {
 namespace LiquidFlow
 {
+void checkMPLProperties(
+    MeshLib::Mesh const& mesh,
+    MaterialPropertyLib::MaterialSpatialDistributionMap const& media_map)
+{
+    DBUG("Check the media properties of LiquidFlow process ...");
+
+    std::array const requiredPropertyMedium = {
+        MaterialPropertyLib::PropertyType::porosity,
+        MaterialPropertyLib::PropertyType::permeability};
+
+    std::array const requiredPropertyLiquidPhase = {
+        MaterialPropertyLib::PropertyType::viscosity,
+        MaterialPropertyLib::PropertyType::density};
+
+    std::array const requiredPropertySolidPhase = {
+        MaterialPropertyLib::PropertyType::storage};
+
+    for (auto const& element : mesh.getElements())
+    {
+        auto const element_id = element->getID();
+
+        auto const& medium = *media_map.getMedium(element_id);
+        MaterialPropertyLib::checkRequiredProperties(
+            medium, requiredPropertyMedium);
+
+        MaterialPropertyLib::checkRequiredProperties(
+            medium.phase("AqueousLiquid"), requiredPropertyLiquidPhase);
+
+        MaterialPropertyLib::checkRequiredProperties(
+            medium.phase("Solid"), requiredPropertySolidPhase);
+    }
+    DBUG("Media properties verified.");
+}
+
 LiquidFlowProcess::LiquidFlowProcess(
     std::string name,
     MeshLib::Mesh& mesh,
@@ -61,6 +95,8 @@ void LiquidFlowProcess::initializeConcreteProcess(
     MeshLib::Mesh const& mesh,
     unsigned const integration_order)
 {
+    checkMPLProperties(mesh, *_process_data.media_map.get());
+
     const int process_id = 0;
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     ProcessLib::createLocalAssemblers<LiquidFlowLocalAssembler>(
