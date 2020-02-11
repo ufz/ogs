@@ -219,7 +219,8 @@ void ConstraintDirichletBoundaryCondition::getEssentialBCValues(
     bc_values.ids.emplace_back(current_id);
     bc_values.values.emplace_back(sum / cnt);
 
-    DBUG("Found %d dirichlet values.", bc_values.ids.size());
+    DBUG("Found %d constraint dirichlet boundary condition values.",
+         bc_values.ids.size());
     for (unsigned i = 0; i < bc_values.ids.size(); ++i)
     {
         DBUG("\tid: %d, value: %e", bc_values.ids[i], bc_values.values[i]);
