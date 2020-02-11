@@ -16,10 +16,9 @@
 
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
-
-#include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
-#include "MeshLib/Mesh.h"
 #include "MeshLib/Elements/Element.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
 #include "MeshLib/Node.h"
 
 namespace ProcessLib
@@ -89,54 +88,72 @@ std::unique_ptr<DeactivatedSubdomain const> createDeactivatedSubdomain(
 
     for (auto const ids : deactivated_subdomain_material_ids)
     {
-        std::vector<MeshLib::Element*> deactivated_elements;
-        std::vector<MeshLib::Node*> deactivated_nodes;
-
-        // temporary vector to enhance node searching.
-        std::vector<bool> deactivation_flag_of_nodes(mesh.getNumberOfNodes(),
-                                                     false);
-
-        for (std::size_t i = 0; i < mesh.getNumberOfElements(); i++)
+        auto const& nodes = mesh.getNodes();
+        std::vector<std::size_t> deactivated_bulk_node_ids;
+        for (auto const& node : nodes)
         {
-            if (ids != (*material_ids)[i])
+            const auto& connected_elements = node->getElements();
+
+            // Check whether this node is in an activated element.
+            if (std::find_if(
+                    connected_elements.begin(),
+                    connected_elements.end(),
+                    [&](auto const* const connected_elem) -> bool {
+                        return ids != (*material_ids)[connected_elem->getID()];
+                    }) != connected_elements.end())
             {
                 continue;
             }
 
-            auto* element = mesh.getElement(i);
+            deactivated_bulk_node_ids.push_back(node->getID());
+        }
+
+        auto const& elements = mesh.getElements();
+        std::vector<MeshLib::Element*> deactivated_elements;
+        for (auto const& element : elements)
+        {
+            if (ids != (*material_ids)[element->getID()])
+            {
+                continue;
+            }
+
             deactivated_elements.push_back(
                 const_cast<MeshLib::Element*>(element));
-
-            for (unsigned j = 0; j < element->getNumberOfNodes(); j++)
-            {
-                auto const* const node = element->getNode(j);
-                const auto& connected_elements = node->getElements();
-
-                if (deactivation_flag_of_nodes[node->getID()])
-                {
-                    continue;
-                }
-
-                // Check whether this node is in an activated element.
-                if (std::find_if(
-                        connected_elements.begin(),
-                        connected_elements.end(),
-                        [&](auto const* const connected_elem) -> bool {
-                            return ids !=
-                                   (*material_ids)[connected_elem->getID()];
-                        }) != connected_elements.end())
-                {
-                    continue;
-                }
-
-                deactivated_nodes.push_back(const_cast<MeshLib::Node*>(node));
-                deactivation_flag_of_nodes[node->getID()] = true;
-            }
         }
 
         auto bc_mesh = MeshLib::createMeshFromElementSelection(
             "deactivate_subdomain" + std::to_string(ids),
             MeshLib::cloneElements(deactivated_elements));
+
+        auto const& new_mesh_properties = bc_mesh->getProperties();
+        if (!new_mesh_properties.template existsPropertyVector<std::size_t>(
+                "bulk_node_ids"))
+        {
+            OGS_FATAL(
+                "Bulk node ids map expected in the construction of the mesh "
+                "subset.");
+        }
+        auto const& bulk_node_ids_map =
+            *new_mesh_properties.template getPropertyVector<std::size_t>(
+                "bulk_node_ids", MeshLib::MeshItemType::Node, 1);
+
+        std::vector<MeshLib::Node*> deactivated_nodes;
+        auto const& nodes_in_bc_mesh = bc_mesh->getNodes();
+        for (std::size_t i = 0; i < bulk_node_ids_map.size(); i++)
+        {
+            auto const found_iterator = std::find(
+                deactivated_bulk_node_ids.begin(),
+                deactivated_bulk_node_ids.end(), bulk_node_ids_map[i]);
+
+            if (std::end(deactivated_bulk_node_ids) == found_iterator)
+            {
+                continue;
+            }
+            deactivated_nodes.push_back(
+                const_cast<MeshLib::Node*>(nodes_in_bc_mesh[i]));
+
+            deactivated_bulk_node_ids.erase(found_iterator);
+        }
 
         deactivated_subdomain_meshes.emplace_back(
             std::make_unique<DeactivetedSubdomainMesh>(
