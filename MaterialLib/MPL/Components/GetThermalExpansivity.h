@@ -41,5 +41,5 @@ class Phase;
 double getThermalExpansivity(Phase const& phase, VariableArray const& vars,
                              const double density,
                              ParameterLib::SpatialPosition const& pos,
-                             double const t);
+                             double const t, double const dt);
 }  // namespace MaterialPropertyLib

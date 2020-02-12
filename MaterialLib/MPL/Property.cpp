@@ -67,7 +67,7 @@ PropertyDataType Property::value() const
 /// without altering it.
 PropertyDataType Property::value(VariableArray const& /*variable_array*/,
                                  ParameterLib::SpatialPosition const& /*pos*/,
-                                 double const /*t*/) const
+                                 double const /*t*/, double const /*dt*/) const
 {
     return _value;
 }
@@ -77,7 +77,7 @@ PropertyDataType Property::value(VariableArray const& /*variable_array*/,
 PropertyDataType Property::dValue(VariableArray const& /*variable_array*/,
                                   Variable const /*variable*/,
                                   ParameterLib::SpatialPosition const& /*pos*/,
-                                  double const /*t*/) const
+                                  double const /*t*/, double const /*dt*/) const
 {
     return _dvalue;
 }
@@ -87,7 +87,8 @@ PropertyDataType Property::d2Value(VariableArray const& /*variable_array*/,
                                    Variable const /*variable*/,
                                    Variable const /*variable*/,
                                    ParameterLib::SpatialPosition const& /*pos*/,
-                                   double const /*t*/) const
+                                   double const /*t*/,
+                                   double const /*dt*/) const
 {
     return 0.0;
 }

@@ -23,8 +23,8 @@ namespace MaterialPropertyLib
 {
 PropertyDataType SaturationLiakopoulos::value(
     VariableArray const& variable_array,
-    ParameterLib::SpatialPosition const& /*pos*/,
-    double const /*t*/) const
+    ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
+    double const /*dt*/) const
 {
     const double p_cap = std::get<double>(
         variable_array[static_cast<int>(Variable::capillary_pressure)]);
@@ -38,7 +38,8 @@ PropertyDataType SaturationLiakopoulos::value(
 
 PropertyDataType SaturationLiakopoulos::dValue(
     VariableArray const& variable_array, Variable const primary_variable,
-    ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/) const
+    ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
+    double const /*dt*/) const
 {
     (void)primary_variable;
     assert((primary_variable == Variable::capillary_pressure) &&
@@ -60,7 +61,8 @@ PropertyDataType SaturationLiakopoulos::dValue(
 PropertyDataType SaturationLiakopoulos::d2Value(
     VariableArray const& variable_array, Variable const primary_variable1,
     Variable const primary_variable2,
-    ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/) const
+    ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
+    double const /*dt*/) const
 {
     (void)primary_variable1;
     (void)primary_variable2;

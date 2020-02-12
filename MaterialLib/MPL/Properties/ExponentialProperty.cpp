@@ -24,8 +24,8 @@ ExponentialProperty::ExponentialProperty(
 
 PropertyDataType ExponentialProperty::value(
     VariableArray const& variable_array,
-    ParameterLib::SpatialPosition const& /*pos*/,
-    double const /*t*/) const
+    ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
+    double const /*dt*/) const
 {
     return std::get<double>(_value) *
            std::exp(
@@ -37,7 +37,8 @@ PropertyDataType ExponentialProperty::value(
 
 PropertyDataType ExponentialProperty::dValue(
     VariableArray const& variable_array, Variable const primary_variable,
-    ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/) const
+    ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
+    double const /*dt*/) const
 {
     return _exponent_data.type == primary_variable
                ? -std::get<double>(_value) *
@@ -52,7 +53,8 @@ PropertyDataType ExponentialProperty::dValue(
 
 PropertyDataType ExponentialProperty::d2Value(
     VariableArray const& variable_array, Variable const pv1, Variable const pv2,
-    ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/) const
+    ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
+    double const /*dt*/) const
 {
     return _exponent_data.type == pv1 && _exponent_data.type == pv2
                ? std::get<double>(_value) *

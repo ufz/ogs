@@ -20,8 +20,8 @@ ParameterProperty::ParameterProperty(
 
 PropertyDataType ParameterProperty::value(
     VariableArray const& /*variable_array*/,
-    ParameterLib::SpatialPosition const& pos,
-    double const t) const
+    ParameterLib::SpatialPosition const& pos, double const t,
+    double const /*dt*/) const
 {
     return fromVector(_parameter(t, pos));
 }
@@ -29,18 +29,16 @@ PropertyDataType ParameterProperty::value(
 PropertyDataType ParameterProperty::dValue(
     VariableArray const& /*variable_array*/,
     Variable const /*primary_variable*/,
-    ParameterLib::SpatialPosition const& /*pos*/,
-    double const /*t*/) const
+    ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
+    double const /*dt*/) const
 {
     return double{};
 }
 
 PropertyDataType ParameterProperty::d2Value(
-    VariableArray const& /*variable_array*/,
-    Variable const /*pv1*/,
-    Variable const /*pv2*/,
-    ParameterLib::SpatialPosition const& /*pos*/,
-    double const /*t*/) const
+    VariableArray const& /*variable_array*/, Variable const /*pv1*/,
+    Variable const /*pv2*/, ParameterLib::SpatialPosition const& /*pos*/,
+    double const /*t*/, double const /*dt*/) const
 {
     return double{};
 }

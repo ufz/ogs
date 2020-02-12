@@ -23,15 +23,15 @@ namespace MaterialPropertyLib
  */
 PropertyDataType RelPermLiakopoulos::value(
     VariableArray const& variable_array,
-    ParameterLib::SpatialPosition const& pos,
-    double const t) const
+    ParameterLib::SpatialPosition const& pos, double const t,
+    double const dt) const
 {
     /// here, an extra computation of saturation is forced, guaranteeing a
     /// correct value. In order to speed up the computing time, saturation could
     /// be insertred into the primary variable array after it is computed in the
     /// FEM assembly.
     auto const s_L = _medium->property(PropertyType::saturation)
-                         .template value<double>(variable_array, pos, t);
+                         .template value<double>(variable_array, pos, t, dt);
     auto const s_L_res = _residual_liquid_saturation;
     auto const k_rel_min_GR = _min_relative_permeability_gas;
 
@@ -61,14 +61,15 @@ PropertyDataType RelPermLiakopoulos::value(
 
 PropertyDataType RelPermLiakopoulos::dValue(
     VariableArray const& variable_array, Variable const primary_variable,
-    ParameterLib::SpatialPosition const& pos, double const t) const
+    ParameterLib::SpatialPosition const& pos, double const t,
+    double const dt) const
 {
     (void)primary_variable;
     assert((primary_variable == Variable::liquid_saturation) &&
            "RelPermLiakopoulos::dValue is implemented for "
            " derivatives with respect to liquid saturation only.");
     auto const s_L = _medium->property(PropertyType::saturation)
-                         .template value<double>(variable_array, pos, t);
+                         .template value<double>(variable_array, pos, t, dt);
     auto const s_L_res = _residual_liquid_saturation;
     auto const s_L_max = _maximal_liquid_saturation;
 
