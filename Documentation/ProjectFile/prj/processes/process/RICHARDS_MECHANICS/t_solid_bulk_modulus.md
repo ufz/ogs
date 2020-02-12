@@ -1,1 +1,0 @@
-\copydoc ProcessLib::RichardsMechanics::RichardsMechanicsProcessData::solid_bulk_modulus
