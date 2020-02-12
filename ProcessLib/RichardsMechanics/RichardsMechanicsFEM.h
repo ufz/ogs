@@ -32,6 +32,8 @@ namespace ProcessLib
 {
 namespace RichardsMechanics
 {
+namespace MPL = MaterialPropertyLib;
+
 /// Used for the extrapolation of the integration point values. It is ordered
 /// (and stored) by integration points.
 template <typename ShapeMatrixType>

@@ -27,6 +27,10 @@ namespace MathLib
 {
 class PiecewiseLinearInterpolation;
 }
+namespace MaterialPropertyLib
+{
+class Medium;
+}
 namespace ParameterLib
 {
 struct CoordinateSystem;
@@ -53,7 +57,8 @@ std::unique_ptr<Process> createRichardsMechanicsProcess(
     boost::optional<ParameterLib::CoordinateSystem> const&
         local_coordinate_system,
     unsigned const integration_order,
-    BaseLib::ConfigTree const& config);
+    BaseLib::ConfigTree const& config,
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media);
 
 extern template std::unique_ptr<Process> createRichardsMechanicsProcess<2>(
     std::string name,
@@ -64,7 +69,8 @@ extern template std::unique_ptr<Process> createRichardsMechanicsProcess<2>(
     boost::optional<ParameterLib::CoordinateSystem> const&
         local_coordinate_system,
     unsigned const integration_order,
-    BaseLib::ConfigTree const& config);
+    BaseLib::ConfigTree const& config,
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media);
 
 extern template std::unique_ptr<Process> createRichardsMechanicsProcess<3>(
     std::string name,
@@ -75,6 +81,7 @@ extern template std::unique_ptr<Process> createRichardsMechanicsProcess<3>(
     boost::optional<ParameterLib::CoordinateSystem> const&
         local_coordinate_system,
     unsigned const integration_order,
-    BaseLib::ConfigTree const& config);
+    BaseLib::ConfigTree const& config,
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media);
 }  // namespace RichardsMechanics
 }  // namespace ProcessLib

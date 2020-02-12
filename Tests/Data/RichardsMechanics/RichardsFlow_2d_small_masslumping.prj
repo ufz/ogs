@@ -13,57 +13,10 @@
                 <youngs_modulus>E</youngs_modulus>
                 <poissons_ratio>nu</poissons_ratio>
             </constitutive_relation>
-            <solid_bulk_modulus>K_SR</solid_bulk_modulus>
-            <fluid_bulk_modulus>K_LR</fluid_bulk_modulus>
-            <biot_coefficient>alpha</biot_coefficient>
-            <solid_density>rho_sr</solid_density>
             <process_variables>
                 <displacement>displacement</displacement>
                 <pressure>pressure</pressure>
             </process_variables>
-            <material_property>
-                <fluid>
-                    <density>
-                        <type>Constant</type>
-                        <value> 1 </value>
-                    </density>
-                    <viscosity>
-                        <type>Constant</type>
-                        <value> 1.e-3 </value>
-                    </viscosity>
-                </fluid>
-                <porous_medium>
-                    <porous_medium id="0">
-                        <permeability>
-                            <permeability_tensor_entries>k</permeability_tensor_entries>
-                            <type>Constant</type>
-                        </permeability>
-                        <porosity>
-                            <type>Constant</type>
-                            <porosity_parameter>phi</porosity_parameter>
-                        </porosity>
-                        <storage>
-                            <type>Constant</type>
-                            <value> 0.0 </value>
-                        </storage>
-                        <capillary_pressure>
-                            <type>vanGenuchten</type>
-                            <m>0.789029535864979</m>
-                            <pc_max>36333.30</pc_max>
-                            <pd>3633.33</pd>
-                            <smax>0.95</smax>
-                            <sr>0.1689</sr>
-                        </capillary_pressure>
-                        <relative_permeability>
-                            <type>WettingPhaseVanGenuchten</type>
-                            <krel_min>1e-12</krel_min>
-                            <m>0.789029535864979</m>
-                            <smax>0.95</smax>
-                            <sr>0.1689</sr>
-                        </relative_permeability>
-                    </porous_medium>
-                </porous_medium>
-            </material_property>
             <secondary_variables>
                 <secondary_variable internal_name="sigma" output_name="sigma"/>
                 <secondary_variable internal_name="epsilon" output_name="epsilon"/>
@@ -72,9 +25,92 @@
             </secondary_variables>
             <specific_body_force>0 -9.81</specific_body_force>
             <mass_lumping>true</mass_lumping>
-            <temperature> temp </temperature>
         </process>
     </processes>
+    <media>
+        <medium>
+            <phases>
+                <phase>
+                    <type>AqueousLiquid</type>
+                    <properties>
+                        <property>
+                            <name>bulk_modulus</name>
+                            <type>Constant</type>
+                            <value>2.2e300</value>
+                        </property>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value> 1 </value>
+                        </property>
+                        <property>
+                            <name>viscosity</name>
+                            <type>Constant</type>
+                            <value> 1.e-3 </value>
+                        </property>
+                    </properties>
+                </phase>
+                <phase>
+                    <type>Solid</type>
+                    <properties>
+                        <property>
+                            <name>bulk_modulus</name>
+                            <type>Constant</type>
+                            <value>160e300</value>
+                        </property>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>1</value>
+                        </property>
+                        <property>
+                            <name>biot_coefficient</name>
+                            <type>Constant</type>
+                            <value>0</value>
+                        </property>
+                        <property>
+                            <name>porosity</name>
+                            <type>Constant</type>
+                            <value>0.38</value>
+                        </property>
+                        <property>
+                            <name>storage</name>
+                            <type>Constant</type>
+                            <value> 0.0 </value>
+                        </property>
+                        <property>
+                            <name>permeability</name>
+                            <type>Constant</type>
+                            <value>4.46e-13</value>
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+            <properties>
+                <property>
+                    <name>reference_temperature</name>
+                    <type>Constant</type>
+                    <value>293.15</value>
+                </property>
+                <property>
+                    <name>saturation</name>
+                    <type>SaturationVanGenuchten</type>
+                    <residual_liquid_saturation>0.1689</residual_liquid_saturation>
+                    <residual_gas_saturation>0.05</residual_gas_saturation>
+                    <exponent>0.789029535864979</exponent>
+                    <entry_pressure>3633.33</entry_pressure>
+                </property>
+                <property>
+                    <name>relative_permeability</name>
+                    <type>RelativePermeabilityVanGenuchten</type>
+                    <residual_liquid_saturation>0.1689</residual_liquid_saturation>
+                    <residual_gas_saturation>0.05</residual_gas_saturation>
+                    <exponent>0.789029535864979</exponent>
+                    <minimum_relative_permeability_liquid>1e-12</minimum_relative_permeability_liquid>
+                </property>
+            </properties>
+        </medium>
+    </media>
     <time_loop>
         <processes>
             <process ref="RM">
@@ -143,11 +179,6 @@
     <parameters>
         <!-- Mechanics -->
         <parameter>
-            <name>K_SR</name>
-            <type>Constant</type>
-            <value>160e300</value>
-        </parameter>
-        <parameter>
             <name>E</name>
             <type>Constant</type>
             <value>5e9</value>
@@ -158,36 +189,6 @@
             <value>.1</value>
         </parameter>
         <!-- Model parameters -->
-        <parameter>
-            <name>k</name>
-            <type>Constant</type>
-            <value>4.46e-13</value>
-        </parameter>
-        <parameter>
-            <name>alpha</name>
-            <type>Constant</type>
-            <value>0</value>
-        </parameter>
-        <parameter>
-            <name>phi</name>
-            <type>Constant</type>
-            <value>0.38</value>
-        </parameter>
-        <parameter>
-            <name>rho_sr</name>
-            <type>Constant</type>
-            <value>1</value>
-        </parameter>
-        <parameter>
-            <name>K_LR</name>
-            <type>Constant</type>
-            <value>2.2e300</value>
-        </parameter>
-        <parameter>
-            <name>temp</name>
-            <type>Constant</type>
-            <value>293.15</value>
-        </parameter>
         <parameter>
             <name>displacement0</name>
             <type>Constant</type>
