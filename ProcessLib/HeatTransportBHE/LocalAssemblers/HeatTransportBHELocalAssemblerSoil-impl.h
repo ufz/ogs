@@ -134,12 +134,10 @@ void HeatTransportBHELocalAssemblerSoil<ShapeFunction, IntegrationMethod>::
             medium.property(MaterialPropertyLib::PropertyType::porosity)
                 .template value<double>(vars, pos, t);
 
-        auto const velocity_arr =
+        auto const velocity =
             liquid_phase
                 .property(MaterialPropertyLib::PropertyType::phase_velocity)
-                .value(vars, pos, t);
-        auto const velocity = Eigen::Map<Eigen::Vector3d const>(
-            std::get<MaterialPropertyLib::Vector>(velocity_arr).data());
+                .template value<Eigen::Vector3d>(vars, pos, t);
 
         // calculate the hydrodynamic thermodispersion tensor
         auto const thermal_conductivity =

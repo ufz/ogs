@@ -65,7 +65,8 @@ public:
                                                variable2);
     }
 
-    std::string name() const;
+public:
+    std::string const name;
 
 protected:
     /// The property array of the component.

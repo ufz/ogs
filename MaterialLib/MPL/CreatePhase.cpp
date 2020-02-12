@@ -101,12 +101,12 @@ std::vector<std::unique_ptr<Phase>> createPhases(
 
         if (std::find_if(phases.begin(),
                          phases.end(),
-                         [phase_name = phase->name()](auto const& p) {
-                             return p->name() == phase_name;
+                         [phase_name = phase->name](auto const& p) {
+                             return p->name == phase_name;
                          }) != phases.end())
         {
             OGS_FATAL("Found duplicates with the same phase name tag '%s'.",
-                      phase->name().c_str());
+                      phase->name.c_str());
         }
 
         phases.push_back(std::move(phase));

@@ -86,14 +86,13 @@ TEST(MaterialPropertyLib, RelPermLiakopoulos)
             medium
                 ->property(
                     MaterialPropertyLib::PropertyType::relative_permeability)
-                .template value<MaterialPropertyLib::Pair>(variable_array, pos,
-                                                           time);
+                .template value<Eigen::Vector2d>(variable_array, pos, time);
 
         auto dk_rel_ds_L =
             medium
                 ->property(
                     MaterialPropertyLib::PropertyType::relative_permeability)
-                .template dValue<MaterialPropertyLib::Pair>(
+                .template dValue<Eigen::Vector2d>(
                     variable_array,
                     MaterialPropertyLib::Variable::liquid_saturation, pos,
                     time);

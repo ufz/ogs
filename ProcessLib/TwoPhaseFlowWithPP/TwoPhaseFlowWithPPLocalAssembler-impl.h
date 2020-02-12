@@ -146,7 +146,7 @@ void TwoPhaseFlowWithPPLocalAssembler<
 
         auto const k_rel =
             medium.property(MPL::PropertyType::relative_permeability)
-                .template value<MPL::Pair>(variables, pos, t);
+                .template value<Eigen::Vector2d>(variables, pos, t);
 
         auto const k_rel_wet = k_rel[0];
         auto const k_rel_nonwet = k_rel[1];

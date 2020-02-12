@@ -11,14 +11,14 @@
  */
 #pragma once
 
+#include <Eigen/Dense>
 #include <array>
 #include <string>
 #include <variant>
 
+#include "ParameterLib/SpatialPosition.h"
 #include "PropertyType.h"
 #include "VariableType.h"
-
-#include "ParameterLib/SpatialPosition.h"
 
 namespace MaterialPropertyLib
 {
@@ -26,20 +26,16 @@ class Medium;
 class Phase;
 class Component;
 
-/// This is a custom data type for arbitrary properties, based on the
-/// std::variant container. It can hold scalars, vectors, tensors, and so
-/// forth.
-enum PropertyDataTypeName
-{
-    nScalar,
-    nPair,
-    nVector,
-    nSymmTensor,
-    nTensor
-};
+using PropertyDataType =
+    std::variant<double, Eigen::Matrix<double, 2, 1>,
+                 Eigen::Matrix<double, 3, 1>, Eigen::Matrix<double, 2, 2>,
+                 Eigen::Matrix<double, 3, 3>, Eigen::Matrix<double, 4, 1>,
+                 Eigen::Matrix<double, 6, 1>>;
 
-using PropertyDataType = std::variant<double, Pair, Vector, Tensor2d,
-                                      SymmTensor, Tensor, std::string>;
+/// Conversion of a vector to PropertyDataType for different sizes of the
+/// vector.
+/// \attention It cannot distinguish between 2x2 matrix and 4x1 vector.
+PropertyDataType fromVector(std::vector<double> const& values);
 
 /// This class is the base class for any material property of any
 /// scale (i.e. components, phases, media, ...). The single value of
