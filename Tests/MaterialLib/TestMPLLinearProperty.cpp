@@ -28,23 +28,24 @@ TEST(MaterialPropertyLib, LinearProperty)
         MaterialPropertyLib::Variable::temperature)] = 303.15;
     ParameterLib::SpatialPosition const pos;
     double const time = std::numeric_limits<double>::quiet_NaN();
+    double const dt = std::numeric_limits<double>::quiet_NaN();
     ASSERT_NEAR(
-        std::get<double>(linear_property.value(variable_array, pos, time)),
+        std::get<double>(linear_property.value(variable_array, pos, time, dt)),
         y_ref * (1 + m * (std::get<double>(variable_array[static_cast<int>(
                               MaterialPropertyLib::Variable::temperature)]) -
                           x_ref)),
         1.e-10);
     ASSERT_EQ(std::get<double>(linear_property.dValue(
                   variable_array, MaterialPropertyLib::Variable::phase_pressure,
-                  pos, time)),
+                  pos, time, dt)),
               0.0);
     ASSERT_NEAR(std::get<double>(linear_property.dValue(
                     variable_array, MaterialPropertyLib::Variable::temperature,
-                    pos, time)),
+                    pos, time, dt)),
                 y_ref * m, 1.e-16);
     ASSERT_EQ(std::get<double>(linear_property.d2Value(
                   variable_array, MaterialPropertyLib::Variable::temperature,
-                  MaterialPropertyLib::Variable::temperature, pos, time)),
+                  MaterialPropertyLib::Variable::temperature, pos, time, dt)),
               0.0);
 }
 

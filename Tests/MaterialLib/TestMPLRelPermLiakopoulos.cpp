@@ -81,12 +81,13 @@ TEST(MaterialPropertyLib, RelPermLiakopoulos)
         MaterialPropertyLib::VariableArray variable_array;
         ParameterLib::SpatialPosition const pos;
         double const time = std::numeric_limits<double>::quiet_NaN();
+        double const dt = std::numeric_limits<double>::quiet_NaN();
 
         auto k_rel =
             medium
                 ->property(
                     MaterialPropertyLib::PropertyType::relative_permeability)
-                .template value<Eigen::Vector2d>(variable_array, pos, time);
+                .template value<Eigen::Vector2d>(variable_array, pos, time, dt);
 
         auto dk_rel_ds_L =
             medium
@@ -94,8 +95,8 @@ TEST(MaterialPropertyLib, RelPermLiakopoulos)
                     MaterialPropertyLib::PropertyType::relative_permeability)
                 .template dValue<Eigen::Vector2d>(
                     variable_array,
-                    MaterialPropertyLib::Variable::liquid_saturation, pos,
-                    time);
+                    MaterialPropertyLib::Variable::liquid_saturation, pos, time,
+                    dt);
 
         auto k_rel_L = k_rel[0];
         auto k_rel_G = k_rel[1];

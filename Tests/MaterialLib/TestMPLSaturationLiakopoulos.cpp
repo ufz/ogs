@@ -35,6 +35,7 @@ TEST(MaterialPropertyLib, SaturationLiakopoulos)
     MaterialPropertyLib::VariableArray variable_array;
     ParameterLib::SpatialPosition const pos;
     double const time = std::numeric_limits<double>::quiet_NaN();
+    double const dt = std::numeric_limits<double>::quiet_NaN();
 
     std::array<double, 17> p_cap = {
         -1.000000000E+00, 1.000000000E+00, 2.000000000E+00, 4.000000000E+00,
@@ -72,22 +73,20 @@ TEST(MaterialPropertyLib, SaturationLiakopoulos)
 
         auto s_L =
             medium->property(MaterialPropertyLib::PropertyType::saturation)
-                .template value<double>(variable_array, pos, time);
+                .template value<double>(variable_array, pos, time, dt);
         auto ds_L_dp_cap =
             medium->property(MaterialPropertyLib::PropertyType::saturation)
                 .template dValue<double>(
                     variable_array,
-                    MaterialPropertyLib::Variable::capillary_pressure,
-                    pos,
-                    time);
+                    MaterialPropertyLib::Variable::capillary_pressure, pos,
+                    time, dt);
         auto d2s_L_dp_cap2 =
             medium->property(MaterialPropertyLib::PropertyType::saturation)
                 .template d2Value<double>(
                     variable_array,
                     MaterialPropertyLib::Variable::capillary_pressure,
-                    MaterialPropertyLib::Variable::capillary_pressure,
-                    pos,
-                    time);
+                    MaterialPropertyLib::Variable::capillary_pressure, pos,
+                    time, dt);
 
         ASSERT_NEAR(s_L, s_L_ref[idx], 1.e-10);
         ASSERT_NEAR(ds_L_dp_cap, ds_L_dp_cap_ref[idx], 1.e-10);

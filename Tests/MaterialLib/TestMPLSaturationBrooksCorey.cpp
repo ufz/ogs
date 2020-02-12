@@ -48,6 +48,7 @@ TEST(MaterialPropertyLib, SaturationBrooksCorey)
     MaterialPropertyLib::VariableArray variable_array;
     ParameterLib::SpatialPosition const pos;
     double const t = std::numeric_limits<double>::quiet_NaN();
+    double const dt = std::numeric_limits<double>::quiet_NaN();
 
     for (double p_cap = 1.0; p_cap < 1.0e10; p_cap *= 1.5)
     {
@@ -56,14 +57,13 @@ TEST(MaterialPropertyLib, SaturationBrooksCorey)
 
         auto s_L =
             medium->property(MaterialPropertyLib::PropertyType::saturation)
-                .template value<double>(variable_array, pos, t);
+                .template value<double>(variable_array, pos, t, dt);
         auto ds_L_dp_cap =
             medium->property(MaterialPropertyLib::PropertyType::saturation)
                 .template dValue<double>(
                     variable_array,
-                    MaterialPropertyLib::Variable::capillary_pressure,
-                    pos,
-                    t);
+                    MaterialPropertyLib::Variable::capillary_pressure, pos, t,
+                    dt);
 
         const double s_eff =
             std::pow(ref_entry_pressure / std::max(p_cap, ref_entry_pressure),
