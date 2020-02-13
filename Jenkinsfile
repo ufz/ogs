@@ -690,7 +690,9 @@ pipeline {
                 source .venv/bin/activate
                 pip install -r ThirdParty/container-maker/requirements.txt
                 export PYTHONPATH="${PYTHONPATH}:${PWD}/ThirdParty/container-maker"
-                python ThirdParty/container-maker/ogscm/cli.py -B -C -R --ogs . --pm system --cvode --ompi off 2.1.6 3.1.4 4.0.1
+                python ThirdParty/container-maker/ogscm/cli.py -B -C -R \
+                  -j $NUM_THREADS --ogs . --pm system --cvode \
+                  --ompi off 2.1.6 3.1.4 4.0.1
               '''.stripIndent()
             }
           }
