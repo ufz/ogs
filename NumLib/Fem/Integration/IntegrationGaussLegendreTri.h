@@ -89,6 +89,8 @@ public:
                 return getWeightedPoint<MathLib::GaussLegendreTri<2>>(igp);
             case 3:
                 return getWeightedPoint<MathLib::GaussLegendreTri<3>>(igp);
+            case 4:
+                return getWeightedPoint<MathLib::GaussLegendreTri<4>>(igp);
         }
         return WeightedPoint(std::array<double, 2>(), 0);
     }
@@ -115,6 +117,8 @@ public:
                 return MathLib::GaussLegendreTri<2>::NPoints;
             case 3:
                 return MathLib::GaussLegendreTri<3>::NPoints;
+            case 4:
+                return MathLib::GaussLegendreTri<4>::NPoints;
         }
         return 0;
     }
