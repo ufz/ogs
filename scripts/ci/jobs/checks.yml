@@ -2,9 +2,28 @@ compiler warnings:
   stage: checks
   variables:
     GIT_STRATEGY: none
-  script:
-    - cd build
-    - "if [[ $(cat make.output | grep warning -i) ]]; then echo 'There were compiler warnings:'; cat make.output | grep warning -i; exit 1; fi"
   allow_failure: true
   dependencies:
     - build
+  script:
+  - cd build
+  - "if [[ $(cat make.output | grep warning -i) ]]; then echo 'There were compiler warnings:'; cat make.output | grep warning -i; exit 1; fi"
+
+
+ctest results:
+  stage: checks
+  variables:
+    GIT_STRATEGY: none
+  tags:
+    - singularity
+  dependencies:
+    - build
+  script:
+    - singularity run docker://$XUNIT_TO_JUNIT_IMAGE -s:./build/Tests/ctest.xml > build/ctest-junit.xml
+  artifacts:
+    paths:
+      - build/ctest-junit.xml
+    expire_in: 1 week
+    reports:
+      junit:
+        - build/ctest-junit.xml

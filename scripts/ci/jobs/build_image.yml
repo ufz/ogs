@@ -1,8 +1,8 @@
-build_image:
+build gcc image:
   stage: .pre
-  # only:
-    # changes:
-      # - ThirdParty/container-maker
+  only:
+    changes:
+      - ThirdParty/container-maker
   tags:
     - docker-shell
   extends: .container-maker-setup
@@ -12,3 +12,16 @@ build_image:
     - python ThirdParty/container-maker/ogscm/cli.py --build --gitlab
       --ogs off --pm system --cvode --cppcheck --docs --gcovr
       --tag $CONTAINER_GCC_IMAGE --upload
+
+build xunit-to-junit image:
+  stage: .pre
+  only:
+    changes:
+      - scripts/docker/saxon/**/*
+  tags:
+    - docker-shell
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker pull $XUNIT_TO_JUNIT_IMAGE:latest || true
+    - docker build --cache-from $XUNIT_TO_JUNIT_IMAGE:latest -t $XUNIT_TO_JUNIT_IMAGE:latest -f scripts/docker/saxon/Dockerfile scripts/docker/saxon
+    - docker push $XUNIT_TO_JUNIT_IMAGE:latest

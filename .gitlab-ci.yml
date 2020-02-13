@@ -4,7 +4,8 @@ stages:
   - package
 
 variables:
-  CONTAINER_GCC_IMAGE: $CI_REGISTRY_IMAGE:gcc-$CI_COMMIT_REF_SLUG
+  CONTAINER_GCC_IMAGE: $CI_REGISTRY_IMAGE/gcc:$CI_COMMIT_REF_SLUG
+  XUNIT_TO_JUNIT_IMAGE: $CI_REGISTRY_IMAGE/xunit-to-junit
 
 include:
   - local: '/scripts/ci/extends/container-maker-setup.yml'

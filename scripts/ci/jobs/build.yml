@@ -19,15 +19,15 @@ build:
     - cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DOGS_USE_CONAN=OFF -DOGS_BUILD_PROCESSES=GroundwaterFlow
     - cmake --build . > >(tee make.output)
     - cmake --build . --target tests
-    - cmake --build . --target ctest -j 8
+    - cmake --build . --target ctest
+    - cp Testing/**/Test.xml Tests/ctest.xml
 
   artifacts:
     paths:
-      - build/Testing/**/*.xml
+      - build/Tests/ctest.xml
       - build/Tests/testrunner.xml
       - build/make.output
     expire_in: 1 week
     reports:
       junit:
         - build/Tests/testrunner.xml
-        - build/Testing/**/*.xml
