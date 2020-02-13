@@ -106,6 +106,7 @@ if(OGS_USE_NETCDF)
 endif()
 
 conan_check(VERSION ${ogs.minimum_version.conan})
+conan_config_install(ITEM ${PROJECT_SOURCE_DIR}/scripts/cmake/conan/config)
 
 message(STATUS "Third-party libraries:")
 foreach(LIB ${OGS_LIBS})
