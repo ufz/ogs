@@ -1,10 +1,7 @@
 build:
   stage: test
   variables:
-    CONAN_USER_HOME: "$CI_PROJECT_DIR"
     CCACHE_DIR: "$CI_PROJECT_DIR/.ccache"
-    CTEST_NUM_THREADS: '4'
-    CTEST_LARGE_NUM_THREADS: '3'
   image:
     name: $CONTAINER_GCC_IMAGE
     entrypoint:
@@ -12,7 +9,6 @@ build:
       - 'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
   cache:
     paths:
-      - .conan
       - .ccache
 
   before_script:
@@ -20,7 +16,7 @@ build:
     - cd build
 
   script:
-    - cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DOGS_USE_CONAN=OFF-DOGS_BUILD_PROCESSES=GroundwaterFlow
+    - cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DOGS_USE_CONAN=OFF -DOGS_BUILD_PROCESSES=GroundwaterFlow
     - cmake --build . > >(tee make.output)
     - cmake --build . --target tests
     - cmake --build . --target ctest -j 8
