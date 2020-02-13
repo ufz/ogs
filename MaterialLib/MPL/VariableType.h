@@ -12,6 +12,7 @@
 
 #pragma once
 
+#include <Eigen/Dense>
 #include <array>
 #include <variant>
 
@@ -43,17 +44,22 @@ enum class Variable : int
 {
     concentration,
     phase_pressure,
+    phase_pressure_rate,
     capillary_pressure,
     density,
     temperature,
     liquid_saturation,
+    porosity,
     displacement,
+    strain,
+    volumetric_strain_rate,
     number_of_variables
 };
 
 /// Data type for primary variables, designed to contain both scalar and vector
 /// data.
-using VariableType = std::variant<double, Vector>;
+using VariableType = std::variant<double, Vector, Eigen::Matrix<double, 4, 1>,
+                                  Eigen::Matrix<double, 6, 1>>;
 
 /// The VariableArray is a std::array of fixed size. Its size is determined by
 /// the Variable enumerator list. Data type of that array is defined by the
