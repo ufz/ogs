@@ -1,0 +1,10 @@
+compiler warnings:
+  stage: checks
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - cd build
+    - "if [[ $(cat make.output | grep warning -i) ]]; then echo 'There were compiler warnings:'; cat make.output | grep warning -i; exit 1; fi"
+  allow_failure: true
+  dependencies:
+    - build

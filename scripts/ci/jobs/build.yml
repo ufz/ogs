@@ -20,7 +20,8 @@ build:
     - cd build
 
   script:
-    - cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DOGS_BUILD_PROCESSES=GroundwaterFlow
+    - cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DOGS_USE_CONAN=OFF-DOGS_BUILD_PROCESSES=GroundwaterFlow
+    - cmake --build . > >(tee make.output)
     - cmake --build . --target tests
     - cmake --build . --target ctest -j 8
 
@@ -28,6 +29,8 @@ build:
     paths:
       - build/Testing/**/*.xml
       - build/Tests/testrunner.xml
+      - build/make.output
+    expire_in: 1 week
     reports:
       junit:
         - build/Tests/testrunner.xml
