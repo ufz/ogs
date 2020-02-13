@@ -295,6 +295,7 @@ class LocalAssemblerM final : public ProcessLib::LocalAssemblerInterface
 public:
     void assemble(double const /*t*/, double const /*dt*/,
                   std::vector<double> const& local_x,
+                  std::vector<double> const& /*local_xdot*/,
                   std::vector<double>& local_M_data,
                   std::vector<double>& /*local_K_data*/,
                   std::vector<double>& /*local_b_data*/) override
@@ -311,7 +312,8 @@ public:
                               std::vector<double>& local_b_data,
                               std::vector<double>& local_Jac_data) override
     {
-        assemble(t, dt, local_x, local_M_data, local_K_data, local_b_data);
+        assemble(t, dt, local_x, local_xdot, local_M_data, local_K_data,
+                 local_b_data);
 
         // dM/dx * xdot
         MatVec::Mat::getDMatDxTimesY(local_x, local_xdot, local_Jac_data);
@@ -336,6 +338,7 @@ class LocalAssemblerK final : public ProcessLib::LocalAssemblerInterface
 public:
     void assemble(double const /*t*/, double const /*dt*/,
                   std::vector<double> const& local_x,
+                  std::vector<double> const& /*local_xdot*/,
                   std::vector<double>& /*local_M_data*/,
                   std::vector<double>& local_K_data,
                   std::vector<double>& /*local_b_data*/) override
@@ -345,14 +348,15 @@ public:
 
     void assembleWithJacobian(double const t, double const dt,
                               std::vector<double> const& local_x,
-                              std::vector<double> const& /*local_xdot*/,
+                              std::vector<double> const& local_xdot,
                               const double /*dxdot_dx*/, const double dx_dx,
                               std::vector<double>& local_M_data,
                               std::vector<double>& local_K_data,
                               std::vector<double>& local_b_data,
                               std::vector<double>& local_Jac_data) override
     {
-        assemble(t, dt, local_x, local_M_data, local_K_data, local_b_data);
+        assemble(t, dt, local_x, local_xdot, local_M_data, local_K_data,
+                 local_b_data);
 
         // dK/dx * x
         MatVec::Mat::getDMatDxTimesY(local_x, local_x, local_Jac_data);
@@ -377,6 +381,7 @@ class LocalAssemblerB final : public ProcessLib::LocalAssemblerInterface
 public:
     void assemble(double const /*t*/, double const /*dt*/,
                   std::vector<double> const& local_x,
+                  std::vector<double> const& /*local_xdot*/,
                   std::vector<double>& /*local_M_data*/,
                   std::vector<double>& /*local_K_data*/,
                   std::vector<double>& local_b_data) override
@@ -386,14 +391,15 @@ public:
 
     void assembleWithJacobian(double const t, double const dt,
                               std::vector<double> const& local_x,
-                              std::vector<double> const& /*local_xdot*/,
+                              std::vector<double> const& local_xdot,
                               const double /*dxdot_dx*/, const double /*dx_dx*/,
                               std::vector<double>& local_M_data,
                               std::vector<double>& local_K_data,
                               std::vector<double>& local_b_data,
                               std::vector<double>& local_Jac_data) override
     {
-        assemble(t, dt, local_x, local_M_data, local_K_data, local_b_data);
+        assemble(t, dt, local_x, local_xdot, local_M_data, local_K_data,
+                 local_b_data);
 
         // db/dx
         MatVec::Vec::getDVecDx(local_x, local_Jac_data);
@@ -417,6 +423,7 @@ class LocalAssemblerMKb final : public ProcessLib::LocalAssemblerInterface
 public:
     void assemble(double const /*t*/, double const /*dt*/,
                   std::vector<double> const& local_x,
+                  std::vector<double> const& /*local_xdot*/,
                   std::vector<double>& local_M_data,
                   std::vector<double>& local_K_data,
                   std::vector<double>& local_b_data) override
@@ -435,7 +442,8 @@ public:
                               std::vector<double>& local_b_data,
                               std::vector<double>& local_Jac_data) override
     {
-        assemble(t, dt, local_x, local_M_data, local_K_data, local_b_data);
+        assemble(t, dt, local_x, local_xdot, local_M_data, local_K_data,
+                 local_b_data);
 
         std::vector<double> local_JacM_data;
         // dM/dx * xdot

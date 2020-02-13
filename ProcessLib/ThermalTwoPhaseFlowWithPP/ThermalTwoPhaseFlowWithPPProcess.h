@@ -62,6 +62,7 @@ private:
 
     void assembleConcreteProcess(const double t, double const dt,
                                  std::vector<GlobalVector*> const& x,
+                                 std::vector<GlobalVector*> const& xdot,
                                  int const process_id, GlobalMatrix& M,
                                  GlobalMatrix& K, GlobalVector& b) override;
 
