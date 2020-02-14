@@ -13,12 +13,11 @@
 #include <cassert>
 
 #include "MaterialLib/FractureModels/CreateCohesiveZoneModeI.h"
+#include "MaterialLib/FractureModels/CreateCoulomb.h"
 #include "MaterialLib/FractureModels/CreateLinearElasticIsotropic.h"
-#include "MaterialLib/FractureModels/CreateMohrCoulomb.h"
 #include "MaterialLib/SolidModels/CreateConstitutiveRelation.h"
 #include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
-
 #include "SmallDeformationProcess.h"
 #include "SmallDeformationProcessData.h"
 
@@ -130,11 +129,10 @@ std::unique_ptr<Process> createSmallDeformationProcess(
         fracture_model = MaterialLib::Fracture::createLinearElasticIsotropic<
             DisplacementDim>(parameters, fracture_model_config);
     }
-    else if (frac_type == "MohrCoulomb")
+    else if (frac_type == "Coulomb")
     {
-        fracture_model =
-            MaterialLib::Fracture::createMohrCoulomb<DisplacementDim>(
-                parameters, fracture_model_config);
+        fracture_model = MaterialLib::Fracture::createCoulomb<DisplacementDim>(
+            parameters, fracture_model_config);
     }
     else if (frac_type == "CohesiveZoneModeI")
     {

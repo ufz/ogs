@@ -7,74 +7,73 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#include "CreateMohrCoulomb.h"
+#include "CreateCoulomb.h"
 
+#include "Coulomb.h"
 #include "MaterialLib/SolidModels/CreateNewtonRaphsonSolverParameters.h"
 #include "ParameterLib/Utils.h"
-
-#include "MohrCoulomb.h"
 
 namespace MaterialLib
 {
 namespace Fracture
 {
 template <int DisplacementDim>
-std::unique_ptr<FractureModelBase<DisplacementDim>> createMohrCoulomb(
+std::unique_ptr<FractureModelBase<DisplacementDim>> createCoulomb(
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config)
 {
     //! \ogs_file_param{material__fracture_model__type}
-    config.checkConfigParameter("type", "MohrCoulomb");
-    DBUG("Create MohrCoulomb material");
+    config.checkConfigParameter("type", "Coulomb");
+    DBUG("Create Coulomb material");
 
     auto& Kn = ParameterLib::findParameter<double>(
-        //! \ogs_file_param_special{material__fracture_model__MohrCoulomb__normal_stiffness}
+        //! \ogs_file_param_special{material__fracture_model__Coulomb__normal_stiffness}
         config, "normal_stiffness", parameters, 1);
 
     auto& Ks = ParameterLib::findParameter<double>(
-        //! \ogs_file_param_special{material__fracture_model__MohrCoulomb__shear_stiffness}
+        //! \ogs_file_param_special{material__fracture_model__Coulomb__shear_stiffness}
         config, "shear_stiffness", parameters, 1);
 
     auto& friction_angle = ParameterLib::findParameter<double>(
-        //! \ogs_file_param_special{material__fracture_model__MohrCoulomb__friction_angle}
+        //! \ogs_file_param_special{material__fracture_model__Coulomb__friction_angle}
         config, "friction_angle", parameters, 1);
 
     auto& dilatancy_angle = ParameterLib::findParameter<double>(
-        //! \ogs_file_param_special{material__fracture_model__MohrCoulomb__dilatancy_angle}
+        //! \ogs_file_param_special{material__fracture_model__Coulomb__dilatancy_angle}
         config, "dilatancy_angle", parameters, 1);
 
     auto& cohesion = ParameterLib::findParameter<double>(
-        //! \ogs_file_param_special{material__fracture_model__MohrCoulomb__cohesion}
+        //! \ogs_file_param_special{material__fracture_model__Coulomb__cohesion}
         config, "cohesion", parameters, 1);
 
     auto const penalty_aperture_cutoff =
-        //! \ogs_file_param{material__fracture_model__MohrCoulomb__penalty_aperture_cutoff}
+        //! \ogs_file_param{material__fracture_model__Coulomb__penalty_aperture_cutoff}
         config.getConfigParameter<double>("penalty_aperture_cutoff");
 
     auto const tension_cutoff =
-        //! \ogs_file_param{material__fracture_model__MohrCoulomb__tension_cutoff}
+        //! \ogs_file_param{material__fracture_model__Coulomb__tension_cutoff}
         config.getConfigParameter<bool>("tension_cutoff");
 
-    typename MohrCoulomb::MohrCoulomb<DisplacementDim>::MaterialProperties mp{
+    typename Coulomb::Coulomb<DisplacementDim>::MaterialProperties mp{
         Kn, Ks, friction_angle, dilatancy_angle, cohesion};
 
     auto const& nonlinear_solver_config =
-        //! \ogs_file_param{material__fracture_model__MohrCoulomb__nonlinear_solver}
+        //! \ogs_file_param{material__fracture_model__Coulomb__nonlinear_solver}
         config.getConfigSubtree("nonlinear_solver");
     auto const nonlinear_solver_parameters =
         MaterialLib::createNewtonRaphsonSolverParameters(
             nonlinear_solver_config);
 
-    return std::make_unique<MohrCoulomb::MohrCoulomb<DisplacementDim>>(
+    return std::make_unique<Coulomb::Coulomb<DisplacementDim>>(
         nonlinear_solver_parameters, penalty_aperture_cutoff, tension_cutoff,
         mp);
 }
 
-template std::unique_ptr<FractureModelBase<2>> createMohrCoulomb(
+template std::unique_ptr<FractureModelBase<2>> createCoulomb(
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config);
 
-template std::unique_ptr<FractureModelBase<3>> createMohrCoulomb(
+template std::unique_ptr<FractureModelBase<3>> createCoulomb(
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config);
 

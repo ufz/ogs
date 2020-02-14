@@ -18,7 +18,7 @@
                 <poissons_ratio>nu</poissons_ratio>
             </constitutive_relation>
             <fracture_model>
-                <type>MohrCoulomb</type>
+                <type>Coulomb</type>
                 <normal_stiffness>Kn</normal_stiffness>
                 <shear_stiffness>Ks</shear_stiffness>
                 <friction_angle>friction_angle</friction_angle>

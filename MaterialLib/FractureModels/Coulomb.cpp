@@ -7,7 +7,7 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#include "MohrCoulomb.h"
+#include "Coulomb.h"
 
 #include <boost/math/constants/constants.hpp>
 
@@ -19,7 +19,7 @@ namespace MaterialLib
 {
 namespace Fracture
 {
-namespace MohrCoulomb
+namespace Coulomb
 {
 namespace
 {
@@ -50,7 +50,7 @@ struct MaterialPropertyValues
 }  // namespace
 
 template <int DisplacementDim>
-void MohrCoulomb<DisplacementDim>::computeConstitutiveRelation(
+void Coulomb<DisplacementDim>::computeConstitutiveRelation(
     double const t,
     ParameterLib::SpatialPosition const& x,
     double const aperture0,
@@ -196,7 +196,7 @@ void MohrCoulomb<DisplacementDim>::computeConstitutiveRelation(
 
         if (!success_iterations)
         {
-            OGS_FATAL("MohrCoulomb nonlinear solver didn't converge.");
+            OGS_FATAL("Coulomb nonlinear solver didn't converge.");
         }
 
         // Solution containing lambda is not needed; w_p and sigma already
@@ -217,9 +217,9 @@ void MohrCoulomb<DisplacementDim>::computeConstitutiveRelation(
     Kep = Ke - Ke * plastic_potential_derivative(sigma) * A;
 }
 
-template class MohrCoulomb<2>;
-template class MohrCoulomb<3>;
+template class Coulomb<2>;
+template class Coulomb<3>;
 
-}  // namespace MohrCoulomb
+}  // namespace Coulomb
 }  // namespace Fracture
 }  // namespace MaterialLib

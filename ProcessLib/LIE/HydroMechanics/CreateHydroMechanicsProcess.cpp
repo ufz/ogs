@@ -12,16 +12,15 @@
 
 #include <cassert>
 
+#include "HydroMechanicsProcess.h"
+#include "HydroMechanicsProcessData.h"
 #include "MaterialLib/FractureModels/CreateCohesiveZoneModeI.h"
+#include "MaterialLib/FractureModels/CreateCoulomb.h"
 #include "MaterialLib/FractureModels/CreateLinearElasticIsotropic.h"
-#include "MaterialLib/FractureModels/CreateMohrCoulomb.h"
 #include "MaterialLib/FractureModels/Permeability/CreatePermeabilityModel.h"
 #include "MaterialLib/SolidModels/CreateConstitutiveRelation.h"
 #include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
-
-#include "HydroMechanicsProcess.h"
-#include "HydroMechanicsProcessData.h"
 
 namespace ProcessLib
 {
@@ -231,11 +230,10 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
                 MaterialLib::Fracture::createLinearElasticIsotropic<GlobalDim>(
                     parameters, fracture_model_config);
         }
-        else if (frac_type == "MohrCoulomb")
+        else if (frac_type == "Coulomb")
         {
-            fracture_model =
-                MaterialLib::Fracture::createMohrCoulomb<GlobalDim>(
-                    parameters, fracture_model_config);
+            fracture_model = MaterialLib::Fracture::createCoulomb<GlobalDim>(
+                parameters, fracture_model_config);
         }
         else if (frac_type == "CohesiveZoneModeI")
         {

@@ -16,7 +16,7 @@ namespace MaterialLib
 namespace Fracture
 {
 template <int DisplacementDim>
-std::unique_ptr<FractureModelBase<DisplacementDim>> createMohrCoulomb(
+std::unique_ptr<FractureModelBase<DisplacementDim>> createCoulomb(
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config);
 
