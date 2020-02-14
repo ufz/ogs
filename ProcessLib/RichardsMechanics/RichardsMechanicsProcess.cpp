@@ -206,6 +206,10 @@ void RichardsMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
         const_cast<MeshLib::Mesh&>(mesh), "saturation_avg",
         MeshLib::MeshItemType::Cell, 1);
 
+    _process_data.element_porosity = MeshLib::getOrCreateMeshProperty<double>(
+        const_cast<MeshLib::Mesh&>(mesh), "porosity_avg",
+        MeshLib::MeshItemType::Cell, 1);
+
     _process_data.element_stresses = MeshLib::getOrCreateMeshProperty<double>(
         const_cast<MeshLib::Mesh&>(mesh), "stress_avg",
         MeshLib::MeshItemType::Cell,
