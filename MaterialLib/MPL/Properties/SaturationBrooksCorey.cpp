@@ -34,8 +34,8 @@ SaturationBrooksCorey::SaturationBrooksCorey(
 
 PropertyDataType SaturationBrooksCorey::value(
     VariableArray const& variable_array,
-    ParameterLib::SpatialPosition const& /*pos*/,
-    double const /*t*/) const
+    ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
+    double const /*dt*/) const
 {
     const double p_cap = std::get<double>(
         variable_array[static_cast<int>(Variable::capillary_pressure)]);
@@ -54,7 +54,8 @@ PropertyDataType SaturationBrooksCorey::value(
 
 PropertyDataType SaturationBrooksCorey::dValue(
     VariableArray const& variable_array, Variable const primary_variable,
-    ParameterLib::SpatialPosition const& pos, double const t) const
+    ParameterLib::SpatialPosition const& pos, double const t,
+    double const dt) const
 {
     (void)primary_variable;
     assert((primary_variable == Variable::capillary_pressure) &&
@@ -70,7 +71,7 @@ PropertyDataType SaturationBrooksCorey::dValue(
             variable_array[static_cast<int>(Variable::capillary_pressure)]));
 
     auto const s_L = _medium->property(PropertyType::saturation)
-                         .template value<double>(variable_array, pos, t);
+                         .template value<double>(variable_array, pos, t, dt);
 
     const double lambda = _exponent;
     const double ds_L_d_s_eff = 1. / (s_L_max - s_L_res);
@@ -81,7 +82,8 @@ PropertyDataType SaturationBrooksCorey::dValue(
 PropertyDataType SaturationBrooksCorey::d2Value(
     VariableArray const& variable_array, Variable const primary_variable1,
     Variable const primary_variable2,
-    ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/) const
+    ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
+    double const /*dt*/) const
 {
     (void)primary_variable1;
     (void)primary_variable2;

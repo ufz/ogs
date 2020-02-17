@@ -51,20 +51,20 @@ public:
     /// variables that are passed as arguments.
     virtual PropertyDataType value(VariableArray const& variable_array,
                                    ParameterLib::SpatialPosition const& pos,
-                                   double const t) const;
+                                   double const t, double const dt) const;
     /// This virtual method will compute the derivative of a property
     /// with respect to the given variable pv.
     virtual PropertyDataType dValue(VariableArray const& variable_array,
                                     Variable const variable,
                                     ParameterLib::SpatialPosition const& pos,
-                                    double const t) const;
+                                    double const t, double const dt) const;
     /// This virtual method will compute the second derivative of a
     /// property with respect to the given variables pv1 and pv2.
     virtual PropertyDataType d2Value(VariableArray const& variable_array,
                                      Variable const variable1,
                                      Variable const variable2,
                                      ParameterLib::SpatialPosition const& pos,
-                                     double const t) const;
+                                     double const t, double const dt) const;
     virtual void setScale(
         std::variant<Medium*, Phase*, Component*> /*scale_pointer*/){};
 
@@ -76,25 +76,27 @@ public:
 
     template <typename T>
     T value(VariableArray const& variable_array,
-            ParameterLib::SpatialPosition const& pos,
-            double const t) const
+            ParameterLib::SpatialPosition const& pos, double const t,
+            double const dt) const
     {
-        return std::get<T>(value(variable_array, pos, t));
+        return std::get<T>(value(variable_array, pos, t, dt));
     }
 
     template <typename T>
     T dValue(VariableArray const& variable_array, Variable const variable,
-             ParameterLib::SpatialPosition const& pos, double const t) const
+             ParameterLib::SpatialPosition const& pos, double const t,
+             double const dt) const
     {
-        return std::get<T>(dValue(variable_array, variable, pos, t));
+        return std::get<T>(dValue(variable_array, variable, pos, t, dt));
     }
     template <typename T>
     T d2Value(VariableArray const& variable_array, Variable const& variable1,
               Variable const& variable2,
-              ParameterLib::SpatialPosition const& pos, double const t) const
+              ParameterLib::SpatialPosition const& pos, double const t,
+              double const dt) const
     {
         return std::get<T>(
-            d2Value(variable_array, variable1, variable2, pos, t));
+            d2Value(variable_array, variable1, variable2, pos, t, dt));
     }
 
 protected:

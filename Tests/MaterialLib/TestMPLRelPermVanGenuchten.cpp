@@ -30,6 +30,7 @@ TEST(MaterialPropertyLib, RelPermVanGenuchten)
     MPL::VariableArray variable_array;
     ParameterLib::SpatialPosition const pos;
     double const t = std::numeric_limits<double>::quiet_NaN();
+    double const dt = std::numeric_limits<double>::quiet_NaN();
 
     double const S_0 = -0.1;
     double const S_max = 1.1;
@@ -41,19 +42,19 @@ TEST(MaterialPropertyLib, RelPermVanGenuchten)
             S_L;
 
         double const k_rel =
-            permeability.template value<double>(variable_array, pos, t);
+            permeability.template value<double>(variable_array, pos, t, dt);
         double const dk_rel = permeability.template dValue<double>(
-            variable_array, MPL::Variable::liquid_saturation, pos, t);
+            variable_array, MPL::Variable::liquid_saturation, pos, t, dt);
 
         double const eps = 1e-8;
         variable_array[static_cast<int>(MPL::Variable::liquid_saturation)] =
             S_L - eps;
         double const k_rel_minus =
-            permeability.template value<double>(variable_array, pos, t);
+            permeability.template value<double>(variable_array, pos, t, dt);
         variable_array[static_cast<int>(MPL::Variable::liquid_saturation)] =
             S_L + eps;
         double const k_rel_plus =
-            permeability.template value<double>(variable_array, pos, t);
+            permeability.template value<double>(variable_array, pos, t, dt);
 
         double const Dk_rel = (k_rel_plus - k_rel_minus) / 2 / eps;
 

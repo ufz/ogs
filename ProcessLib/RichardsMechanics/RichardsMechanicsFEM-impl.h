@@ -179,27 +179,27 @@ void RichardsMechanicsLocalAssembler<
 
         auto const temperature =
             medium->property(MPL::PropertyType::reference_temperature)
-                .template value<double>(variables, x_position, t);
+                .template value<double>(variables, x_position, t, dt);
         variables[static_cast<int>(MPL::Variable::temperature)] = temperature;
 
         auto const alpha =
             solid_phase.property(MPL::PropertyType::biot_coefficient)
-                .template value<double>(variables, x_position, t);
+                .template value<double>(variables, x_position, t, dt);
         auto const rho_SR =
             solid_phase.property(MPL::PropertyType::density)
-                .template value<double>(variables, x_position, t);
+                .template value<double>(variables, x_position, t, dt);
         auto const K_SR =
             solid_phase.property(MPL::PropertyType::bulk_modulus)
-                .template value<double>(variables, x_position, t);
+                .template value<double>(variables, x_position, t, dt);
         auto const K_LR =
             liquid_phase.property(MPL::PropertyType::bulk_modulus)
-                .template value<double>(variables, x_position, t);
+                .template value<double>(variables, x_position, t, dt);
         auto const porosity =
             solid_phase.property(MPL::PropertyType::porosity)
-                .template value<double>(variables, x_position, t);
+                .template value<double>(variables, x_position, t, dt);
         auto const rho_LR =
             liquid_phase.property(MPL::PropertyType::density)
-                .template value<double>(variables, x_position, t);
+                .template value<double>(variables, x_position, t, dt);
 
         auto const& b = _process_data.specific_body_force;
         auto const& identity2 = MathLib::KelvinVector::Invariants<
@@ -207,24 +207,24 @@ void RichardsMechanicsLocalAssembler<
                 DisplacementDim>::value>::identity2;
 
         S_L = medium->property(MPL::PropertyType::saturation)
-                  .template value<double>(variables, x_position, t);
+                  .template value<double>(variables, x_position, t, dt);
         variables[static_cast<int>(MPL::Variable::liquid_saturation)] = S_L;
 
         double const dS_L_dp_cap =
             medium->property(MPL::PropertyType::saturation)
                 .template dValue<double>(variables,
                                          MPL::Variable::capillary_pressure,
-                                         x_position, t);
+                                         x_position, t, dt);
 
         double const k_rel =
             medium->property(MPL::PropertyType::relative_permeability)
-                .template value<double>(variables, x_position, t);
+                .template value<double>(variables, x_position, t, dt);
 
         auto const mu = liquid_phase.property(MPL::PropertyType::viscosity)
-                            .template value<double>(variables, x_position, t);
+                            .template value<double>(variables, x_position, t, dt);
         auto const K_intrinsic = MPL::formEigenTensor<DisplacementDim>(
             solid_phase.property(MPL::PropertyType::permeability)
-                .value(variables, x_position, t));
+                .value(variables, x_position, t, dt));
 
         GlobalDimMatrixType const rho_K_over_mu =
             K_intrinsic * rho_LR * k_rel / mu;
@@ -411,7 +411,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         variables[static_cast<int>(MPL::Variable::phase_pressure)] = -p_cap_ip;
         auto const temperature =
             medium->property(MPL::PropertyType::reference_temperature)
-                .template value<double>(variables, x_position, t);
+                .template value<double>(variables, x_position, t, dt);
         variables[static_cast<int>(MPL::Variable::temperature)] = temperature;
 
         auto& eps = _ip_data[ip].eps;
@@ -419,51 +419,51 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto& S_L = _ip_data[ip].saturation;
         auto const alpha =
             solid_phase.property(MPL::PropertyType::biot_coefficient)
-                .template value<double>(variables, x_position, t);
+                .template value<double>(variables, x_position, t, dt);
         auto const rho_SR =
             solid_phase.property(MPL::PropertyType::density)
-                .template value<double>(variables, x_position, t);
+                .template value<double>(variables, x_position, t, dt);
         auto const K_SR =
             solid_phase.property(MPL::PropertyType::bulk_modulus)
-                .template value<double>(variables, x_position, t);
+                .template value<double>(variables, x_position, t, dt);
         auto const K_LR =
             liquid_phase.property(MPL::PropertyType::bulk_modulus)
-                .template value<double>(variables, x_position, t);
+                .template value<double>(variables, x_position, t, dt);
         auto const porosity =
             solid_phase.property(MPL::PropertyType::porosity)
-                .template value<double>(variables, x_position, t);
+                .template value<double>(variables, x_position, t, dt);
         auto const rho_LR =
             liquid_phase.property(MPL::PropertyType::density)
-                .template value<double>(variables, x_position, t);
+                .template value<double>(variables, x_position, t, dt);
         auto const& b = _process_data.specific_body_force;
         auto const& identity2 = MathLib::KelvinVector::Invariants<
             MathLib::KelvinVector::KelvinVectorDimensions<
                 DisplacementDim>::value>::identity2;
 
         S_L = medium->property(MPL::PropertyType::saturation)
-                  .template value<double>(variables, x_position, t);
+                  .template value<double>(variables, x_position, t, dt);
         variables[static_cast<int>(MPL::Variable::liquid_saturation)] = S_L;
 
         double const dS_L_dp_cap =
             medium->property(MPL::PropertyType::saturation)
                 .template dValue<double>(variables,
                                          MPL::Variable::capillary_pressure,
-                                         x_position, t);
+                                         x_position, t, dt);
 
         double const d2S_L_dp_cap_2 =
             medium->property(MPL::PropertyType::saturation)
                 .template d2Value<double>(
                     variables, MPL::Variable::capillary_pressure,
-                    MPL::Variable::capillary_pressure, x_position, t);
+                    MPL::Variable::capillary_pressure, x_position, t, dt);
 
         double const k_rel =
             medium->property(MPL::PropertyType::relative_permeability)
-                .template value<double>(variables, x_position, t);
+                .template value<double>(variables, x_position, t, dt);
         auto const mu = liquid_phase.property(MPL::PropertyType::viscosity)
-                            .template value<double>(variables, x_position, t);
+                            .template value<double>(variables, x_position, t, dt);
         auto const K_intrinsic = MPL::formEigenTensor<DisplacementDim>(
             solid_phase.property(MPL::PropertyType::permeability)
-                .value(variables, x_position, t));
+                .value(variables, x_position, t, dt));
 
         GlobalDimMatrixType const rho_Ki_over_mu = K_intrinsic * rho_LR / mu;
 
@@ -719,19 +719,22 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
             p_cap_ip;
         variables[static_cast<int>(MPL::Variable::phase_pressure)] = -p_cap_ip;
 
+        // TODO (naumov) Temporary value not used by current material models.
+        // Need extension of secondary variables interface.
+        double const dt = std::numeric_limits<double>::quiet_NaN();
         auto const temperature =
             medium->property(MPL::PropertyType::reference_temperature)
-                .template value<double>(variables, x_position, t);
+                .template value<double>(variables, x_position, t, dt);
         variables[static_cast<int>(MPL::Variable::temperature)] = temperature;
 
         auto const mu = liquid_phase.property(MPL::PropertyType::viscosity)
-                            .template value<double>(variables, x_position, t);
+                            .template value<double>(variables, x_position, t, dt);
         auto const rho_LR =
             liquid_phase.property(MPL::PropertyType::density)
-                .template value<double>(variables, x_position, t);
+                .template value<double>(variables, x_position, t, dt);
         auto const K_intrinsic = MPL::formEigenTensor<DisplacementDim>(
             solid_phase.property(MPL::PropertyType::permeability)
-                .value(variables, x_position, t));
+                .value(variables, x_position, t, dt));
 
         GlobalDimMatrixType const K_over_mu = K_intrinsic / mu;
 
@@ -863,7 +866,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const& dNdx_u = _ip_data[ip].dNdx_u;
         auto const temperature =
             medium->property(MPL::PropertyType::reference_temperature)
-                .template value<double>(variables, x_position, t);
+                .template value<double>(variables, x_position, t, dt);
         variables[static_cast<int>(MPL::Variable::temperature)] = temperature;
 
         auto const x_coord =
@@ -915,9 +918,12 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     {
         x_position.setIntegrationPoint(ip);
         auto const& N_p = _ip_data[ip].N_p;
+        // TODO (naumov) Temporary value not used by current material models.
+        // Need extension of secondary variables interface.
+        double const dt = std::numeric_limits<double>::quiet_NaN();
         auto const temperature =
             medium->property(MPL::PropertyType::reference_temperature)
-                .template value<double>(variables, x_position, t);
+                .template value<double>(variables, x_position, t, dt);
         variables[static_cast<int>(MPL::Variable::temperature)] = temperature;
 
         double p_cap_ip;
@@ -928,7 +934,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         auto& S_L = _ip_data[ip].saturation;
         S_L = medium->property(MPL::PropertyType::saturation)
-                  .template value<double>(variables, x_position, t);
+                  .template value<double>(variables, x_position, t, dt);
         saturation_avg += S_L;
         sigma_avg += _ip_data[ip].sigma_eff;
     }

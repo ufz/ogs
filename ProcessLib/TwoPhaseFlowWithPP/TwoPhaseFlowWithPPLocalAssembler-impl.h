@@ -46,7 +46,7 @@ template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
 void TwoPhaseFlowWithPPLocalAssembler<
     ShapeFunction, IntegrationMethod,
-    GlobalDim>::assemble(double const t, double const /*dt*/,
+    GlobalDim>::assemble(double const t, double const dt,
                          std::vector<double> const& local_x,
                          std::vector<double> const& /*local_xdot*/,
                          std::vector<double>& local_M_data,
@@ -123,48 +123,51 @@ void TwoPhaseFlowWithPPLocalAssembler<
         variables[static_cast<int>(MPL::Variable::temperature)] =
             _process_data.temperature(t, pos)[0];
 
-        auto const rho_nonwet = gas_phase.property(MPL::PropertyType::density)
-                                    .template value<double>(variables, pos, t);
+        auto const rho_nonwet =
+            gas_phase.property(MPL::PropertyType::density)
+                .template value<double>(variables, pos, t, dt);
 
         auto const rho_wet = liquid_phase.property(MPL::PropertyType::density)
-                                 .template value<double>(variables, pos, t);
+                                 .template value<double>(variables, pos, t, dt);
         auto& Sw = _saturation[ip];
         Sw = medium.property(MPL::PropertyType::saturation)
-                 .template value<double>(variables, pos, t);
+                 .template value<double>(variables, pos, t, dt);
 
         auto const dSw_dpc =
             medium.property(MPL::PropertyType::saturation)
                 .template dValue<double>(
-                    variables, MPL::Variable::capillary_pressure, pos, t);
+                    variables, MPL::Variable::capillary_pressure, pos, t, dt);
 
-        auto const porosity = medium.property(MPL::PropertyType::porosity)
-                                  .template value<double>(variables, pos, t);
+        auto const porosity =
+            medium.property(MPL::PropertyType::porosity)
+                .template value<double>(variables, pos, t, dt);
 
         auto const drhononwet_dpn =
             gas_phase.property(MPL::PropertyType::density)
-                .template dValue<double>(variables,
-                                         MPL::Variable::phase_pressure, pos, t);
+                .template dValue<double>(
+                    variables, MPL::Variable::phase_pressure, pos, t, dt);
 
         auto const k_rel =
             medium.property(MPL::PropertyType::relative_permeability)
-                .template value<Eigen::Vector2d>(variables, pos, t);
+                .template value<Eigen::Vector2d>(variables, pos, t, dt);
 
         auto const k_rel_wet = k_rel[0];
         auto const k_rel_nonwet = k_rel[1];
 
-        auto const mu_nonwet = gas_phase.property(MPL::PropertyType::viscosity)
-                                   .template value<double>(variables, pos, t);
+        auto const mu_nonwet =
+            gas_phase.property(MPL::PropertyType::viscosity)
+                .template value<double>(variables, pos, t, dt);
 
         auto const lambda_nonwet = k_rel_nonwet / mu_nonwet;
 
         auto const mu_wet = liquid_phase.property(MPL::PropertyType::viscosity)
-                                .template value<double>(variables, pos, t);
+                                .template value<double>(variables, pos, t, dt);
 
         auto const lambda_wet = k_rel_wet / mu_wet;
 
         auto const K = MPL::formEigenTensor<GlobalDim>(
             medium.property(MPL::PropertyType::permeability)
-                .template value<double>(variables, pos, t));
+                .template value<double>(variables, pos, t, dt));
 
         Mgp.noalias() += porosity * (1 - Sw) * drhononwet_dpn * M;
         Mgpc.noalias() += -porosity * rho_nonwet * dSw_dpc * M;

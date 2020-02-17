@@ -38,8 +38,8 @@ RelPermVanGenuchten::RelPermVanGenuchten(
 
 PropertyDataType RelPermVanGenuchten::value(
     VariableArray const& variable_array,
-    ParameterLib::SpatialPosition const& /*pos*/,
-    double const /*t*/) const
+    ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
+    double const /*dt*/) const
 {
     double const S_L = std::clamp(
         std::get<double>(
@@ -54,7 +54,8 @@ PropertyDataType RelPermVanGenuchten::value(
 
 PropertyDataType RelPermVanGenuchten::dValue(
     VariableArray const& variable_array, Variable const primary_variable,
-    ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/) const
+    ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
+    double const /*dt*/) const
 {
     (void)primary_variable;
     assert((primary_variable == Variable::liquid_saturation) &&

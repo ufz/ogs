@@ -34,8 +34,8 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
 {
     if (process_id == _heat_transport_process_id)
     {
-        assembleHeatTransportEquation(t, local_x, local_M_data, local_K_data,
-                                      local_b_data);
+        assembleHeatTransportEquation(t, dt, local_x, local_M_data,
+                                      local_K_data, local_b_data);
         return;
     }
 
@@ -108,32 +108,32 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
 
         auto const porosity =
             medium.property(MaterialPropertyLib::PropertyType::porosity)
-                .template value<double>(vars, pos, t);
+                .template value<double>(vars, pos, t, dt);
         auto const fluid_density =
             liquid_phase.property(MaterialPropertyLib::PropertyType::density)
-                .template value<double>(vars, pos, t);
+                .template value<double>(vars, pos, t, dt);
 
         const double dfluid_density_dp =
             liquid_phase.property(MaterialPropertyLib::PropertyType::density)
                 .template dValue<double>(
-                    vars, MaterialPropertyLib::Variable::phase_pressure, pos,
-                    t);
+                    vars, MaterialPropertyLib::Variable::phase_pressure, pos, t,
+                    dt);
 
         // Use the viscosity model to compute the viscosity
         auto const viscosity =
             liquid_phase.property(MaterialPropertyLib::PropertyType::viscosity)
-                .template value<double>(vars, pos, t);
+                .template value<double>(vars, pos, t, dt);
 
         // \todo the argument to getValue() has to be changed for non
         // constant storage model
         auto const specific_storage =
             solid_phase.property(MaterialPropertyLib::PropertyType::storage)
-                .template value<double>(vars, pos, t);
+                .template value<double>(vars, pos, t, dt);
 
         auto const intrinsic_permeability =
             MaterialPropertyLib::formEigenTensor<GlobalDim>(
                 medium.property(MaterialPropertyLib::PropertyType::permeability)
-                    .value(vars, pos, t));
+                    .value(vars, pos, t, dt));
         GlobalDimMatrixType const K_over_mu =
             intrinsic_permeability / viscosity;
 
@@ -165,7 +165,7 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
                     .property(MaterialPropertyLib::PropertyType::density)
                     .template dValue<double>(
                         vars, MaterialPropertyLib::Variable::temperature, pos,
-                        t);
+                        t, dt);
             double T0_int_pt = 0.;
             NumLib::shapeFunctionInterpolate(local_T0, N, T0_int_pt);
             auto const biot_constant =
@@ -183,6 +183,7 @@ template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
 void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
     assembleHeatTransportEquation(double const t,
+                                  double const dt,
                                   Eigen::VectorXd const& local_x,
                                   std::vector<double>& local_M_data,
                                   std::vector<double>& local_K_data,
@@ -238,33 +239,33 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
 
         auto const porosity =
             medium.property(MaterialPropertyLib::PropertyType::porosity)
-                .template value<double>(vars, pos, t);
+                .template value<double>(vars, pos, t, dt);
 
         // Use the fluid density model to compute the density
         auto const fluid_density =
             liquid_phase.property(MaterialPropertyLib::PropertyType::density)
-                .template value<double>(vars, pos, t);
+                .template value<double>(vars, pos, t, dt);
         auto const specific_heat_capacity_fluid =
             liquid_phase.property(MaterialPropertyLib::specific_heat_capacity)
-                .template value<double>(vars, pos, t);
+                .template value<double>(vars, pos, t, dt);
 
         // Assemble mass matrix
         local_M.noalias() += w *
                              this->getHeatEnergyCoefficient(
                                  vars, porosity, fluid_density,
-                                 specific_heat_capacity_fluid, pos, t) *
+                                 specific_heat_capacity_fluid, pos, t, dt) *
                              N.transpose() * N;
 
         // Assemble Laplace matrix
         auto const viscosity =
             liquid_phase.property(MaterialPropertyLib::PropertyType::viscosity)
-                .template value<double>(vars, pos, t);
+                .template value<double>(vars, pos, t, dt);
 
         auto const intrinsic_permeability =
             MaterialPropertyLib::formEigenTensor<GlobalDim>(
                 medium
                     .property(MaterialPropertyLib::PropertyType::permeability)
-                    .value(vars, pos, t));
+                    .value(vars, pos, t, dt));
 
         GlobalDimMatrixType const K_over_mu =
             intrinsic_permeability / viscosity;
@@ -277,7 +278,7 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
         GlobalDimMatrixType const thermal_conductivity_dispersivity =
             this->getThermalConductivityDispersivity(
                 vars, porosity, fluid_density, specific_heat_capacity_fluid,
-                velocity, I, pos, t);
+                velocity, I, pos, t, dt);
 
         local_K.noalias() +=
             w * (dNdx.transpose() * thermal_conductivity_dispersivity * dNdx +

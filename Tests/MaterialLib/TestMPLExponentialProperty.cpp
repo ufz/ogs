@@ -28,20 +28,22 @@ TEST(MaterialPropertyLib, ExponentialProperty)
         MaterialPropertyLib::Variable::temperature)] = 20;
     ParameterLib::SpatialPosition const pos;
     double const time = std::numeric_limits<double>::quiet_NaN();
+    double const dt = std::numeric_limits<double>::quiet_NaN();
     ASSERT_NEAR(
-        std::get<double>(exp_property.value(variable_array, pos, time)),
+        std::get<double>(exp_property.value(variable_array, pos, time, dt)),
         y_ref * (std::exp(-factor *
                           (std::get<double>(variable_array[static_cast<int>(
                                MaterialPropertyLib::Variable::temperature)]) -
                            reference_condition))),
         1.e-10);
-    ASSERT_EQ(
-        std::get<double>(exp_property.dValue(
-            variable_array, MaterialPropertyLib::Variable::phase_pressure, pos, time)),
-        0.0);
+    ASSERT_EQ(std::get<double>(exp_property.dValue(
+                  variable_array, MaterialPropertyLib::Variable::phase_pressure,
+                  pos, time, dt)),
+              0.0);
     ASSERT_NEAR(
         std::get<double>(exp_property.dValue(
-            variable_array, MaterialPropertyLib::Variable::temperature, pos, time)),
+            variable_array, MaterialPropertyLib::Variable::temperature, pos,
+            time, dt)),
         -y_ref * factor *
             std::exp(-factor *
                      (std::get<double>(variable_array[static_cast<int>(
@@ -51,7 +53,7 @@ TEST(MaterialPropertyLib, ExponentialProperty)
     ASSERT_NEAR(
         std::get<double>(exp_property.d2Value(
             variable_array, MaterialPropertyLib::Variable::temperature,
-            MaterialPropertyLib::Variable::temperature, pos, time)),
+            MaterialPropertyLib::Variable::temperature, pos, time, dt)),
         y_ref * std::pow(factor, 2) *
             std::exp(-factor *
                      (std::get<double>(variable_array[static_cast<int>(
