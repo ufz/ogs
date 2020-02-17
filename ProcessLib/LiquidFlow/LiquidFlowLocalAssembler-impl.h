@@ -35,16 +35,23 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
 {
     ParameterLib::SpatialPosition pos;
     pos.setElementID(_element.getID());
-    const int material_id = _material_properties.getMaterialID(pos);
 
-    double const pressure = std::nan("");
-    const Eigen::MatrixXd& permeability = _material_properties.getPermeability(
-        material_id, t, pos, _element.getDimension(), pressure,
-        _reference_temperature);
+    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    MaterialPropertyLib::VariableArray vars;
+    vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
+        _reference_temperature;
+    vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
+        std::numeric_limits<double>::quiet_NaN();
+    auto const permeability =
+        MaterialPropertyLib::formEigenTensor<GlobalDim>(
+            medium->property(MaterialPropertyLib::PropertyType::permeability)
+                .value(vars, pos, t, dt));
     // Note: For Inclined 1D in 2D/3D or 2D element in 3D, the first item in
     //  the assert must be changed to permeability.rows() ==
     //  _element->getDimension()
     assert(permeability.rows() == GlobalDim || permeability.rows() == 1);
+
+    const int material_id = _material_properties.getMaterialID(pos);
 
     if (permeability.size() == 1)
     {  // isotropic or 1D problem.
