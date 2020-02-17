@@ -34,6 +34,7 @@ public:
 
     /// A get-function for retrieving a certain property.
     Property const& property(PropertyType const& /*p*/) const;
+    bool hasProperty(PropertyType const& p) const;
 
     template <typename T>
     T value(PropertyType const p) const
@@ -83,5 +84,19 @@ protected:
 /// class (if no name is specified).
 std::unique_ptr<Component> newComponent(std::string const& component_name,
                                         bool& isCustomComponent);
+
+template <typename Container>
+void checkRequiredProperties(Component const& c,
+                             Container const& required_properties)
+{
+    for (auto const& p : required_properties)
+    {
+        if (!c.hasProperty(p))
+        {
+            OGS_FATAL("The property '%s' is missing in the component '%s'.",
+                      property_enum_to_string[p].c_str(), c.name.c_str());
+        }
+    }
+}
 
 }  // namespace MaterialPropertyLib

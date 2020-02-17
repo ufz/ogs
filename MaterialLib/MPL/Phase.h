@@ -38,6 +38,7 @@ public:
     /// A simple get-function for a component. The argument refers to the
     /// Index of the component in the components vector.
     Component const& component(std::size_t const& index) const;
+    bool hasComponent(std::size_t const& index) const;
 
     /// A get-function for a component by component name.
     Component const& component(std::string const& name) const;

@@ -34,4 +34,9 @@ Property const& Component::property(PropertyType const& p) const
 {
     return *_properties[p];
 }
+
+bool Component::hasProperty(PropertyType const& p) const
+{
+    return _properties[p] != nullptr;
+}
 }  // namespace MaterialPropertyLib
