@@ -56,6 +56,8 @@ struct IntegrationPointData final
     typename ShapeMatricesTypePressure::GlobalDimNodalMatrixType dNdx_p;
 
     double saturation;
+    double porosity = std::numeric_limits<double>::quiet_NaN();
+    double porosity_prev = std::numeric_limits<double>::quiet_NaN();
 
     MaterialLib::Solids::MechanicsBase<DisplacementDim> const& solid_material;
     std::unique_ptr<typename MaterialLib::Solids::MechanicsBase<
@@ -67,6 +69,7 @@ struct IntegrationPointData final
     {
         eps_prev = eps;
         sigma_eff_prev = sigma_eff;
+        porosity_prev = porosity;
         material_state_variables->pushBackState();
     }
 
