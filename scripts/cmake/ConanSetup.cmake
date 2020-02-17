@@ -74,10 +74,7 @@ if(OGS_BUILD_GUI)
         zlib/1.2.11
     )
     if(UNIX AND NOT APPLE)
-        set(CONAN_REQUIRES ${CONAN_REQUIRES}
-            qt/5.12.4@bincrafters/stable
-            # Override for using older version with less (broken) dependencies
-            xkbcommon/0.8.3@bincrafters/stable)
+        set(CONAN_REQUIRES ${CONAN_REQUIRES} qt/5.14.1@bincrafters/stable)
     else()
         set(CONAN_REQUIRES ${CONAN_REQUIRES} qt/5.13.2@bincrafters/stable)
     endif()
