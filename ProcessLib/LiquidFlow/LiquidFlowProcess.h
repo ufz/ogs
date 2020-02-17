@@ -15,9 +15,7 @@
 #include <memory>
 
 #include "LiquidFlowLocalAssembler.h"
-#include "LiquidFlowMaterialProperties.h"
 #include "LiquidFlowData.h"
-#include "MaterialLib/Fluid/FluidProperties/FluidProperties.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/SurfaceFlux/SurfaceFluxData.h"
@@ -68,11 +66,9 @@ public:
             process_variables,
         LiquidFlowData&& process_data,
         SecondaryVariableCollection&& secondary_variables,
-        MeshLib::PropertyVector<int> const* const material_ids,
         int const gravitational_axis_id,
         double const gravitational_acceleration,
         double const reference_temperature,
-        BaseLib::ConfigTree const& config,
         std::unique_ptr<ProcessLib::SurfaceFluxData>&& surfaceflux);
 
     void computeSecondaryVariableConcrete(double const t,
@@ -117,7 +113,6 @@ private:
     const int _gravitational_axis_id;
     const double _gravitational_acceleration;
     const double _reference_temperature;
-    const std::unique_ptr<LiquidFlowMaterialProperties> _material_properties;
     LiquidFlowData _process_data;
 
     std::vector<std::unique_ptr<LiquidFlowLocalAssemblerInterface>>

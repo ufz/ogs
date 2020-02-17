@@ -20,8 +20,6 @@
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/MPL/Utils/FormEffectiveThermalConductivity.h"
 
-#include "MaterialLib/PorousMedium/Permeability/Permeability.h"
-#include "MaterialLib/PorousMedium/Storage/Storage.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
@@ -32,7 +30,6 @@
 #include "ProcessLib/LocalAssemblerTraits.h"
 #include "ProcessLib/Utils/InitShapeMatrices.h"
 
-#include "LiquidFlowMaterialProperties.h"
 #include "LiquidFlowData.h"
 
 namespace ProcessLib
@@ -99,14 +96,12 @@ public:
         int const gravitational_axis_id,
         double const gravitational_acceleration,
         double const reference_temperature,
-        LiquidFlowMaterialProperties const& material_propertries,
         LiquidFlowData const& process_data)
         : _element(element),
           _integration_method(integration_order),
           _gravitational_axis_id(gravitational_axis_id),
           _gravitational_acceleration(gravitational_acceleration),
           _reference_temperature(reference_temperature),
-          _material_properties(material_propertries),
           _process_data(process_data)
     {
         unsigned const n_integration_points =
@@ -228,7 +223,6 @@ private:
     const int _gravitational_axis_id;
     const double _gravitational_acceleration;
     const double _reference_temperature;
-    const LiquidFlowMaterialProperties& _material_properties;
     const LiquidFlowData& _process_data;
 };
 

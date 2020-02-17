@@ -14,9 +14,7 @@
 
 #include <cassert>
 
-#include "CreateLiquidFlowMaterialProperties.h"
 #include "LiquidFlowLocalAssembler.h"
-#include "LiquidFlowMaterialProperties.h"
 #include "MeshLib/PropertyVector.h"
 // TODO(TF) used for output of flux, if output classes are ready this has to be changed
 #include "MeshLib/IO/writeMeshToFile.h"
@@ -70,11 +68,9 @@ LiquidFlowProcess::LiquidFlowProcess(
         process_variables,
     LiquidFlowData&& process_data,
     SecondaryVariableCollection&& secondary_variables,
-    MeshLib::PropertyVector<int> const* const material_ids,
     int const gravitational_axis_id,
     double const gravitational_acceleration,
     double const reference_temperature,
-    BaseLib::ConfigTree const& config,
     std::unique_ptr<ProcessLib::SurfaceFluxData>&& surfaceflux)
     : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
@@ -82,8 +78,6 @@ LiquidFlowProcess::LiquidFlowProcess(
       _gravitational_axis_id(gravitational_axis_id),
       _gravitational_acceleration(gravitational_acceleration),
       _reference_temperature(reference_temperature),
-      _material_properties(
-          createLiquidFlowMaterialProperties(config, parameters, material_ids)),
       _process_data(std::move(process_data)),
       _surfaceflux(std::move(surfaceflux))
 {
@@ -103,8 +97,7 @@ void LiquidFlowProcess::initializeConcreteProcess(
         mesh.getDimension(), mesh.getElements(), dof_table,
         pv.getShapeFunctionOrder(), _local_assemblers,
         mesh.isAxiallySymmetric(), integration_order, _gravitational_axis_id,
-        _gravitational_acceleration, _reference_temperature,
-        *_material_properties, _process_data);
+        _gravitational_acceleration, _reference_temperature, _process_data);
 
     _secondary_variables.addSecondaryVariable(
         "darcy_velocity",
