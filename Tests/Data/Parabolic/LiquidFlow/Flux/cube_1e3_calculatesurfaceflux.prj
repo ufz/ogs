@@ -28,24 +28,6 @@
                 <property_name>specific_flux</property_name>
                 <output_mesh>cube_1x1x1_hex_1e3_complete_surface_left_right_dirichlet_specific_flux.vtu</output_mesh>
             </calculatesurfaceflux>
-            <material_property>
-                <porous_medium>
-                    <porous_medium id="0">
-                        <permeability>
-                            <permeability_tensor_entries>kappa1</permeability_tensor_entries>
-                            <type>Constant</type>
-                        </permeability>
-                        <porosity>
-                            <type>Constant</type>
-                            <porosity_parameter>constant_porosity_parameter</porosity_parameter>
-                        </porosity>
-                        <storage>
-                            <type>Constant</type>
-                            <value> 8.05e-10 </value>
-                        </storage>
-                    </porous_medium>
-                </porous_medium>
-            </material_property>
         </process>
     </processes>
     <time_loop>

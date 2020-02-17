@@ -17,24 +17,6 @@
             <secondary_variables>
                 <secondary_variable internal_name="darcy_velocity" output_name="q"/>
             </secondary_variables>
-            <material_property>
-                <porous_medium>
-                    <porous_medium id="0">
-                        <permeability>
-                            <permeability_tensor_entries>k</permeability_tensor_entries>
-                            <type>Constant</type>
-                        </permeability>
-                        <porosity>
-                            <type>Constant</type>
-                            <porosity_parameter>phi</porosity_parameter>
-                        </porosity>
-                        <storage>
-                            <type>Constant</type>
-                            <value> 0.0 </value>
-                        </storage>
-                    </porous_medium>
-                </porous_medium>
-            </material_property>
         </process>
     </processes>
     <media>
