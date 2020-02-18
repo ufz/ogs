@@ -11,6 +11,7 @@ variables:
 
 include:
   - local: '/scripts/ci/extends/container-maker-setup.yml'
+  - local: '/scripts/ci/extends/vs2019-environment.yml'
   - local: '/scripts/ci/jobs/pre-commit.yml'
   - local: '/scripts/ci/jobs/build_image.yml'
   - local: '/scripts/ci/jobs/build.yml'

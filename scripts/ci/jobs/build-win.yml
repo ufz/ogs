@@ -2,34 +2,32 @@ build win:
   stage: test
   tags:
     - windows
-
-  before_script:
-    # Load VS environment
-    - |
-      pushd $env:VS160COMNTOOLS
-      cmd /c "VsDevCmd.bat -arch=amd64 -host_arch=amd64&set" |
-      foreach {
-        if ($_ -match "=") {
-          $v = $_.split("="); set-item -force -path "ENV:\$($v[0])"  -value "$($v[1])"
-        }
-      }
-      popd
-      Write-Host "`nVisual Studio Command Prompt variables set." -ForegroundColor Yellow
-    - mkdir -p build-win
-    - cd build-win
+  variables:
+    BUILD_DIR: "build-win"
+  extends: .vs2019-environment
 
   script:
-    - cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DOGS_BUILD_PROCESSES=GroundwaterFlow
-    - cmake --build .
+    - mkdir -p $BUILD_DIR
+    - cd $BUILD_DIR
+    - |
+      cmake .. -G Ninja `
+        -DCMAKE_BUILD_TYPE=Release `
+        -DOGS_BUILD_PROCESSES=GroundwaterFlow `
+        -DOGS_USE_PYTHON=ON `
+        -DOGS_BUILD_GUI=ON `
+        -DOGS_BUILD_UTILS=ON `
+        -DOGS_BUILD_SWMM=ON `
+        -DOGS_USE_NETCDF=ON
     - cmake --build . --target tests
     - cmake --build . --target ctest
     - cp Testing/**/Test.xml Tests/ctest.xml
+    - cmake --build .
 
   artifacts:
     paths:
-      - build-win/Tests/ctest.xml
-      - build-win/Tests/testrunner.xml
+      - $BUILD_DIR/Tests/ctest.xml
+      - $BUILD_DIR/Tests/testrunner.xml
     expire_in: 1 week
     reports:
       junit:
-        - build-win/Tests/testrunner.xml
+        - $BUILD_DIR/Tests/testrunner.xml
