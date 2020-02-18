@@ -18,16 +18,18 @@ build docs:
 build:
   stage: test
   variables:
+    BUILD_DIR: "build"
     CCACHE_DIR: "$CI_PROJECT_DIR/.ccache"
   image:
     name: $CONTAINER_GCC_IMAGE
   cache:
     paths:
       - .ccache
+  extends: .test-artifacts
 
   before_script:
-    - mkdir -p build
-    - cd build
+    - mkdir -p $BUILD_DIR
+    - cd $BUILD_DIR
 
   script:
     - cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DOGS_USE_CONAN=OFF -DOGS_BUILD_PROCESSES=GroundwaterFlow
@@ -35,13 +37,3 @@ build:
     - cmake --build . --target tests
     - cmake --build . --target ctest
     - cp Testing/**/Test.xml Tests/ctest.xml
-
-  artifacts:
-    paths:
-      - build/Tests/ctest.xml
-      - build/Tests/testrunner.xml
-      - build/make.output
-    expire_in: 1 week
-    reports:
-      junit:
-        - build/Tests/testrunner.xml
