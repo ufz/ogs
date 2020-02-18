@@ -2,9 +2,6 @@ build docs:
   stage: test
   image:
     name: $CONTAINER_GCC_IMAGE
-    entrypoint:
-      - '/usr/bin/env'
-      - 'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
 
   before_script:
     - mkdir -p build
@@ -24,9 +21,6 @@ build:
     CCACHE_DIR: "$CI_PROJECT_DIR/.ccache"
   image:
     name: $CONTAINER_GCC_IMAGE
-    entrypoint:
-      - '/usr/bin/env'
-      - 'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
   cache:
     paths:
       - .ccache
