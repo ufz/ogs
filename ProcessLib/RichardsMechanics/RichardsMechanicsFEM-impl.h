@@ -910,6 +910,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         _integration_method.getNumberOfPoints();
 
     double saturation_avg = 0;
+    double porosity_avg = 0;
 
     using KV = MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
     KV sigma_avg = KV::Zero();
@@ -936,12 +937,17 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         S_L = medium->property(MPL::PropertyType::saturation)
                   .template value<double>(variables, x_position, t, dt);
         saturation_avg += S_L;
+        porosity_avg +=
+            _ip_data[ip].porosity;  // Note, this is not updated, because needs
+                                    // xdot and dt to be passed.
         sigma_avg += _ip_data[ip].sigma_eff;
     }
     saturation_avg /= n_integration_points;
+    porosity_avg /= n_integration_points;
     sigma_avg /= n_integration_points;
 
     (*_process_data.element_saturation)[_element.getID()] = saturation_avg;
+    (*_process_data.element_porosity)[_element.getID()] = porosity_avg;
 
     Eigen::Map<KV>(&(*_process_data.element_stresses)[_element.getID() *
                                                       KV::RowsAtCompileTime]) =
