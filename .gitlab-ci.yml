@@ -1,4 +1,5 @@
 stages:
+  - pre-checks
   - test
   - checks
   - package
@@ -6,9 +7,11 @@ stages:
 variables:
   CONTAINER_GCC_IMAGE: $CI_REGISTRY_IMAGE/gcc:$CI_COMMIT_REF_SLUG
   XUNIT_TO_JUNIT_IMAGE: $CI_REGISTRY_IMAGE/xunit-to-junit
+  PRECOMMIT_IMAGE: $CI_REGISTRY_IMAGE/pre-commit
 
 include:
   - local: '/scripts/ci/extends/container-maker-setup.yml'
+  - local: '/scripts/ci/jobs/pre-commit.yml'
   - local: '/scripts/ci/jobs/build_image.yml'
   - local: '/scripts/ci/jobs/build.yml'
   - local: '/scripts/ci/jobs/build-win.yml'

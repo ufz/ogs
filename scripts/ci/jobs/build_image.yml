@@ -25,3 +25,17 @@ build xunit-to-junit image:
     - docker pull $XUNIT_TO_JUNIT_IMAGE:latest || true
     - docker build --cache-from $XUNIT_TO_JUNIT_IMAGE:latest -t $XUNIT_TO_JUNIT_IMAGE:latest -f scripts/docker/saxon/Dockerfile scripts/docker/saxon
     - docker push $XUNIT_TO_JUNIT_IMAGE:latest
+
+
+build pre-commit image:
+  stage: .pre
+  only:
+    changes:
+      - scripts/docker/Dockerfile.pre-commit
+  tags:
+    - docker-shell
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker pull $PRECOMMIT_IMAGE:latest || true
+    - docker build --cache-from $PRECOMMIT_IMAGE:latest -t $PRECOMMIT_IMAGE:latest -f scripts/docker/Dockerfile.pre-commit scripts/docker
+    - docker push $PRECOMMIT_IMAGE:latest
