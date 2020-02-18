@@ -1,5 +1,6 @@
 gui win:
   stage: gui
+  when: manual
   tags:
     - windows
   variables:
