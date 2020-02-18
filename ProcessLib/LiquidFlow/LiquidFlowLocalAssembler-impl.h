@@ -24,7 +24,7 @@ namespace LiquidFlow
 template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
 void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
-    assemble(double const t, double const /*dt*/,
+    assemble(double const t, double const dt,
              std::vector<double> const& local_x,
              std::vector<double> const& /*local_xdot*/,
              std::vector<double>& local_M_data,
@@ -47,12 +47,14 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     if (permeability.size() == 1)
     {  // isotropic or 1D problem.
         assembleMatrixAndVector<IsotropicCalculator>(
-            material_id, t, local_x, local_M_data, local_K_data, local_b_data);
+            material_id, t, dt, local_x, local_M_data, local_K_data,
+            local_b_data);
     }
     else
     {
         assembleMatrixAndVector<AnisotropicCalculator>(
-            material_id, t, local_x, local_M_data, local_K_data, local_b_data);
+            material_id, t, dt, local_x, local_M_data, local_K_data,
+            local_b_data);
     }
 }
 
@@ -102,7 +104,7 @@ template <typename ShapeFunction, typename IntegrationMethod,
 template <typename LaplacianGravityVelocityCalculator>
 void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     assembleMatrixAndVector(const int material_id, double const t,
-                            std::vector<double> const& local_x,
+                            double const dt, std::vector<double> const& local_x,
                             std::vector<double>& local_M_data,
                             std::vector<double>& local_K_data,
                             std::vector<double>& local_b_data)
@@ -198,12 +200,12 @@ LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     if (permeability.size() == 1)
     {  // isotropic or 1D problem.
         computeDarcyVelocityLocal<IsotropicCalculator>(
-            material_id, t, local_x, pos, velocity_cache_vectors);
+            material_id, t, dt, local_x, pos, velocity_cache_vectors);
     }
     else
     {
         computeDarcyVelocityLocal<AnisotropicCalculator>(
-            material_id, t, local_x, pos, velocity_cache_vectors);
+            material_id, t, dt, local_x, pos, velocity_cache_vectors);
     }
     return velocity_cache;
 }
@@ -213,8 +215,7 @@ template <typename ShapeFunction, typename IntegrationMethod,
 template <typename LaplacianGravityVelocityCalculator>
 void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     computeDarcyVelocityLocal(
-        const int material_id,
-        const double t,
+        const int material_id, const double t, const double dt,
         std::vector<double> const& local_x,
         ParameterLib::SpatialPosition const& pos,
         MatrixOfVelocityAtIntegrationPoints& darcy_velocity_at_ips) const

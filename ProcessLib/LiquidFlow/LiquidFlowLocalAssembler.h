@@ -211,6 +211,7 @@ private:
 
     template <typename LaplacianGravityVelocityCalculator>
     void assembleMatrixAndVector(const int material_id, double const t,
+                                 double const dt,
                                  std::vector<double> const& local_x,
                                  std::vector<double>& local_M_data,
                                  std::vector<double>& local_K_data,
@@ -218,8 +219,7 @@ private:
 
     template <typename LaplacianGravityVelocityCalculator>
     void computeDarcyVelocityLocal(
-        const int material_id,
-        const double t,
+        const int material_id, const double t, const double dt,
         std::vector<double> const& local_x,
         ParameterLib::SpatialPosition const& pos,
         MatrixOfVelocityAtIntegrationPoints& darcy_velocity_at_ips) const;
