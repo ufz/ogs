@@ -11,5 +11,6 @@ include:
   - local: '/scripts/ci/extends/container-maker-setup.yml'
   - local: '/scripts/ci/jobs/build_image.yml'
   - local: '/scripts/ci/jobs/build.yml'
+  - local: '/scripts/ci/jobs/build-win.yml'
   - local: '/scripts/ci/jobs/checks.yml'
   - local: '/scripts/ci/jobs/container.yml'

@@ -18,12 +18,16 @@ ctest results:
     - singularity
   dependencies:
     - build
+    - "build win"
   script:
     - singularity run docker://$XUNIT_TO_JUNIT_IMAGE -s:./build/Tests/ctest.xml > build/ctest-junit.xml
+    - singularity run docker://$XUNIT_TO_JUNIT_IMAGE -s:./build-win/Tests/ctest.xml > build-win/ctest-junit.xml
   artifacts:
     paths:
       - build/ctest-junit.xml
+      - build-win/ctest-junit.xml
     expire_in: 1 week
     reports:
       junit:
         - build/ctest-junit.xml
+        - build-win/ctest-junit.xml
