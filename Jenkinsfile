@@ -280,6 +280,7 @@ pipeline {
               sh 'git submodule sync && git submodule update'
               configure {
                 cmakeOptions =
+                  '-DOGS_USE_CONAN=OFF ' +
                   '-DOGS_BUILD_UTILS=ON ' +
                   '-DBUILD_SHARED_LIBS=ON ' +
                   '-DCMAKE_INSTALL_PREFIX=/global/apps/ogs/head/standard ' +
@@ -334,6 +335,7 @@ pipeline {
               sh 'git submodule sync && git submodule update'
               configure {
                 cmakeOptions =
+                  '-DOGS_USE_CONAN=OFF ' +
                   '-DOGS_USE_PETSC=ON ' +
                   '-DBUILD_SHARED_LIBS=ON ' +
                   '-DCMAKE_INSTALL_PREFIX=/global/apps/ogs/head/petsc ' +
