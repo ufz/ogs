@@ -325,9 +325,6 @@ endif()
 add_definitions(-DLOGOG_LEVEL=${OGS_LOG_LEVEL})
 
 # Packaging
-option(OGS_DOWNLOAD_ADDITIONAL_CONTENT
-       "Should additional content such as manuals be downloaded and packaged?"
-       OFF)
 include(scripts/cmake/packaging/Pack.cmake)
 
 # ---- Subdirectories ----

@@ -50,34 +50,6 @@ if(UNIX)
     endif()
 endif()
 
-# Download additional content
-if(OGS_DOWNLOAD_ADDITIONAL_CONTENT)
-    DownloadAdditionalFilesForPackaging(
-        URLS http://docs.opengeosys.org/assets/releases/head/docs/DataExplorer-Manual.pdf
-        #     http://docs.opengeosys.org/assets/releases/head/docs/User-Manual.pdf
-        #     http://docs.opengeosys.org/assets/releases/head/docs/Theory-Manual.pdf
-        DESTINATION docs
-        PACKAGE_GROUP ogs_docs
-    )
-
-    if(WIN32)
-        DownloadAdditionalFilesForPackaging(
-            URLS http://docs.opengeosys.org/assets/releases/head/win/OGSFileConverter.exe
-            DESTINATION bin
-            EXECUTABLE TRUE
-            PACKAGE_GROUP ogs_converter
-        )
-    endif()
-    if(APPLE)
-        DownloadAdditionalFilesForPackaging(
-            URLS http://docs.opengeosys.org/assets/releases/head/mac/OGSFileConverter
-            DESTINATION bin
-            EXECUTABLE TRUE
-            PACKAGE_GROUP ogs_converter
-        )
-    endif()
-endif()
-
 include (CPack)
 
 cpack_add_component_group(Applications
