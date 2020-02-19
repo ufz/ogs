@@ -83,13 +83,6 @@ std::unique_ptr<Process> createLiquidFlowProcess(
     }
     const int gravity_axis_id = (g == 0.) ? -1 : gravity_axis_id_input;
 
-    auto const& refT =
-        //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__reference_temperature}
-        config.getConfigParameterOptional<double>("reference_temperature");
-    const double reference_temperature =
-        refT ? *refT
-             : MaterialLib::PhysicalConstant::CelsiusZeroInKelvin + 18.0;
-
     auto const material_ids = materialIDs(mesh);
     if (material_ids)
     {
@@ -119,7 +112,7 @@ std::unique_ptr<Process> createLiquidFlowProcess(
         std::move(name), mesh, std::move(jacobian_assembler), parameters,
         integration_order, std::move(process_variables),
         std::move(process_data), std::move(secondary_variables),
-        gravity_axis_id, g, reference_temperature, std::move(surfaceflux));
+        gravity_axis_id, g, std::move(surfaceflux));
 }
 
 }  // namespace LiquidFlow

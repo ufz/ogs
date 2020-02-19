@@ -68,7 +68,6 @@ public:
         SecondaryVariableCollection&& secondary_variables,
         int const gravitational_axis_id,
         double const gravitational_acceleration,
-        double const reference_temperature,
         std::unique_ptr<ProcessLib::SurfaceFluxData>&& surfaceflux);
 
     void computeSecondaryVariableConcrete(double const t,
@@ -112,7 +111,6 @@ private:
 
     const int _gravitational_axis_id;
     const double _gravitational_acceleration;
-    const double _reference_temperature;
     LiquidFlowData _process_data;
 
     std::vector<std::unique_ptr<LiquidFlowLocalAssemblerInterface>>

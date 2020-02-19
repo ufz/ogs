@@ -92,13 +92,11 @@ public:
         unsigned const integration_order,
         int const gravitational_axis_id,
         double const gravitational_acceleration,
-        double const reference_temperature,
         LiquidFlowData const& process_data)
         : _element(element),
           _integration_method(integration_order),
           _gravitational_axis_id(gravitational_axis_id),
           _gravitational_acceleration(gravitational_acceleration),
-          _reference_temperature(reference_temperature),
           _process_data(process_data)
     {
         unsigned const n_integration_points =
@@ -219,7 +217,6 @@ private:
 
     const int _gravitational_axis_id;
     const double _gravitational_acceleration;
-    const double _reference_temperature;
     const LiquidFlowData& _process_data;
 };
 

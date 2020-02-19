@@ -39,7 +39,9 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     auto const& medium = _process_data.media_map->getMedium(_element.getID());
     MaterialPropertyLib::VariableArray vars;
     vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
-        _reference_temperature;
+        medium
+            ->property(MaterialPropertyLib::PropertyType::reference_temperature)
+            .template value<double>(vars, pos, t, dt);
     vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
         std::numeric_limits<double>::quiet_NaN();
     auto const permeability =
@@ -149,7 +151,9 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
 
     MaterialPropertyLib::VariableArray vars;
     vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
-        _reference_temperature;
+        medium
+            ->property(MaterialPropertyLib::PropertyType::reference_temperature)
+            .template value<double>(vars, pos, t, dt);
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
@@ -235,7 +239,9 @@ LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     auto const& medium = _process_data.media_map->getMedium(_element.getID());
     MaterialPropertyLib::VariableArray vars;
     vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
-        _reference_temperature;
+        medium
+            ->property(MaterialPropertyLib::PropertyType::reference_temperature)
+            .template value<double>(vars, pos, t, dt);
     vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
         std::numeric_limits<double>::quiet_NaN();
     auto const permeability =
@@ -282,7 +288,9 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
 
     MaterialPropertyLib::VariableArray vars;
     vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
-        _reference_temperature;
+        medium
+            ->property(MaterialPropertyLib::PropertyType::reference_temperature)
+            .template value<double>(vars, pos, t, dt);
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         auto const& ip_data = _ip_data[ip];
