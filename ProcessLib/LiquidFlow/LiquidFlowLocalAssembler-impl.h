@@ -65,6 +65,10 @@ LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::getFlux(
     MathLib::Point3d const& p_local_coords, double const t,
     std::vector<double> const& local_x) const
 {
+    // TODO (tf) Temporary value not used by current material models. Need
+    // extension of getFlux interface
+    double const dt = std::numeric_limits<double>::quiet_NaN();
+
     // eval dNdx and invJ at p
     auto const fe =
         NumLib::createIsoparametricFiniteElement<ShapeFunction,
