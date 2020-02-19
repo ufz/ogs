@@ -17,7 +17,7 @@ build win:
         -DOGS_BUILD_PROCESSES=GroundwaterFlow `
         -DOGS_USE_PYTHON=ON `
         -DOGS_CI_TESTRUNNER_REPEAT=1
-    - cmake --build .
+    - cmake --build . | Tee-Object -FilePath make.output
     - cmake --build . --target tests
     - cmake --build . --target ctest
     - cp Testing/**/Test.xml Tests/ctest.xml
