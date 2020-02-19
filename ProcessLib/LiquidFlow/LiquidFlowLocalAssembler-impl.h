@@ -177,6 +177,10 @@ LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& velocity_cache) const
 {
+    // TODO (tf) Temporary value not used by current material models. Need
+    // extension of secondary variable interface.
+    double const dt = std::numeric_limits<double>::quiet_NaN();
+
     constexpr int process_id = 0;
     auto const indices =
         NumLib::getIndices(_element.getID(), *dof_table[process_id]);
