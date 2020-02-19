@@ -22,7 +22,7 @@
         </process>
     </processes>
     <media>
-        <medium>
+        <medium id="0">
             <phases>
                 <phase>
                     <type>AqueousLiquid</type>
@@ -45,7 +45,7 @@
                         <property>
                             <name>storage</name>
                             <type>Constant</type>
-                            <value>0.0</value>
+                            <value> 0.0 </value>
                         </property>
                     </properties>
                 </phase>

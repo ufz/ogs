@@ -2,8 +2,27 @@
 <OpenGeoSysProject>
     <mesh axially_symmetric="true">line_1000_axi.vtu</mesh>
     <geometry>line_1000_axi.gml</geometry>
+    <processes>
+        <process>
+            <name>LiquidFlow</name>
+            <type>LIQUID_FLOW</type>
+            <integration_order>2</integration_order>
+            <darcy_gravity>
+                <!-- axis_id: 0, 1, or the dimension of space minus one -->
+                <axis_id>0</axis_id>
+                <!-- g>=0. g=0: non gravity term -->
+                <g>0.</g>
+            </darcy_gravity>
+            <process_variables>
+                <process_variable>pressure</process_variable>
+            </process_variables>
+            <secondary_variables>
+                <secondary_variable internal_name="darcy_velocity" output_name="v"/>
+            </secondary_variables>
+        </process>
+    </processes>
     <media>
-        <medium>
+        <medium id="0">
             <phases>
                 <phase>
                     <type>AqueousLiquid</type>
@@ -40,7 +59,7 @@
                 <property>
                     <name>porosity</name>
                     <type>Constant</type>
-                    <value>1.0</value>
+                    <value>1</value>
                 </property>
                 <property>
                     <name>reference_temperature</name>
@@ -50,25 +69,6 @@
             </properties>
         </medium>
     </media>
-    <processes>
-        <process>
-            <name>LiquidFlow</name>
-            <type>LIQUID_FLOW</type>
-            <integration_order>2</integration_order>
-            <darcy_gravity>
-                <!-- axis_id: 0, 1, or the dimension of space minus one -->
-                <axis_id>0</axis_id>
-                <!-- g>=0. g=0: non gravity term -->
-                <g>0.</g>
-            </darcy_gravity>
-            <process_variables>
-                <process_variable>pressure</process_variable>
-            </process_variables>
-            <secondary_variables>
-                <secondary_variable internal_name="darcy_velocity" output_name="v"/>
-            </secondary_variables>
-        </process>
-    </processes>
     <time_loop>
         <processes>
             <process ref="LiquidFlow">

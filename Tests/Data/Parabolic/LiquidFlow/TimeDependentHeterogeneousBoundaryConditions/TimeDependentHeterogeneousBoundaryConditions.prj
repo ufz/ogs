@@ -77,20 +77,20 @@
         </output>
     </time_loop>
     <media>
-        <medium>
+        <medium id="0">
             <phases>
                 <phase>
                     <type>AqueousLiquid</type>
                     <properties>
                         <property>
-                            <name>density</name>
-                            <type>Constant</type>
-                            <value> 1.e3 </value>
-                        </property>
-                        <property>
                             <name>viscosity</name>
                             <type>Constant</type>
                             <value> 1.e-3 </value>
+                        </property>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value> 1.e3 </value>
                         </property>
                     </properties>
                 </phase>

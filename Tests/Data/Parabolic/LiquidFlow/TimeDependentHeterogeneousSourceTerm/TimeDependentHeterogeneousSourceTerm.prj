@@ -78,7 +78,7 @@
         </output>
     </time_loop>
     <media>
-        <medium>
+        <medium id="0">
             <phases>
                 <phase>
                     <type>AqueousLiquid</type>
@@ -115,7 +115,7 @@
                 <property>
                     <name>porosity</name>
                     <type>Constant</type>
-                    <value>0.1</value>
+                    <value>0.2</value>
                 </property>
                 <property>
                     <name>reference_temperature</name>

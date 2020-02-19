@@ -66,18 +66,18 @@
         </output>
     </time_loop>
     <media>
-        <medium>
+        <medium id="0">
             <phases>
                 <phase>
                     <type>AqueousLiquid</type>
                     <properties>
                         <property>
-                            <name>viscosity</name>
+                            <name>density</name>
                             <type>Constant</type>
                             <value> 1 </value>
                         </property>
                         <property>
-                            <name>density</name>
+                            <name>viscosity</name>
                             <type>Constant</type>
                             <value> 1 </value>
                         </property>
@@ -96,14 +96,14 @@
             </phases>
             <properties>
                 <property>
-                    <name>permeability</name>
-                    <type>Dupuit</type>
-                    <parameter_name>kappa1</parameter_name>
-                </property>
-                <property>
                     <name>porosity</name>
                     <type>Constant</type>
                     <value>0.25</value>
+                </property>
+                <property>
+                    <name>permeability</name>
+                    <type>Dupuit</type>
+                    <parameter_name>kappa1</parameter_name>
                 </property>
                 <property>
                     <name>reference_temperature</name>

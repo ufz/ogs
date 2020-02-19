@@ -22,18 +22,18 @@
         </process>
     </processes>
     <media>
-        <medium>
+        <medium id="0">
             <phases>
                 <phase>
                     <type>AqueousLiquid</type>
                     <properties>
                         <property>
-                            <name>density</name>
+                            <name>viscosity</name>
                             <type>Constant</type>
                             <value> 1.0 </value>
                         </property>
                         <property>
-                            <name>viscosity</name>
+                            <name>density</name>
                             <type>Constant</type>
                             <value> 1.0 </value>
                         </property>
@@ -54,7 +54,7 @@
                 <property>
                     <name>permeability</name>
                     <type>Constant</type>
-                    <value>9.2903e-4 0 0 9.2903e-4</value>
+                    <value>9.2903e-4</value>
                 </property>
                 <property>
                     <name>porosity</name>
