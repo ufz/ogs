@@ -88,6 +88,13 @@ double IterationNumberBasedTimeStepping::findMultiplier(
             multiplier = _multiplier_vector[i];
         }
     }
+
+    if (!_accepted && (multiplier >= 1.0))
+    {
+        return *std::min_element(_multiplier_vector.begin(),
+                                 _multiplier_vector.end());
+    }
+
     return multiplier;
 }
 
