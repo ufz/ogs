@@ -44,6 +44,12 @@ class Property
 {
 public:
     virtual ~Property() = default;
+
+    /// Returns the initial (or reference) value of the property.
+    /// The default implementation forwards to the value function.
+    virtual PropertyDataType initialValue(
+        ParameterLib::SpatialPosition const& pos, double const t) const;
+
     /// This virtual method simply returns the private _value attribute without
     /// changing it.
     virtual PropertyDataType value() const;
@@ -67,6 +73,13 @@ public:
                                      double const t, double const dt) const;
     virtual void setScale(
         std::variant<Medium*, Phase*, Component*> /*scale_pointer*/){};
+
+    template <typename T>
+    T initialValue(ParameterLib::SpatialPosition const& pos,
+                   double const t) const
+    {
+        return std::get<T>(initialValue(pos, t));
+    }
 
     template <typename T>
     T value() const

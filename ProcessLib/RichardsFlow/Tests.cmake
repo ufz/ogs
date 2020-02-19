@@ -61,6 +61,19 @@ AddTest(
     # no longer be ambiguous.
 )
 
+# Comparison test for richards mechanics w/o deformations.
+AddTest(
+    NAME RichardsMechanics_RichardsFlow_2d_richardsflow
+    PATH RichardsMechanics
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS RichardsFlow_2d_richardsflow.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    GLOB RichardsFlow_2d_richardsflow_pcs_0_ts_*.vtu pressure pressure 5e-11 1e-15
+    GLOB RichardsFlow_2d_richardsflow_pcs_0_ts_*.vtu saturation saturation 1e-14 1e-15
+)
 #PETSc/MPI
 AddTest(
     NAME 2D_RichardsFlow_h_us_quad_small_PID_adaptive_dt
@@ -73,4 +86,18 @@ AddTest(
     RUNTIME 220
     DIFF_DATA
     ref_t_1600.000000.vtu richards_pcs_0_ts_803_t_1600_000000_0.vtu pressure pressure 1e-8 1e-3
+)
+
+# Comparison test for richards mechanics w/o deformations.
+AddTest(
+    NAME Parallel_RichardsMechanics_RichardsFlow_2d_richardsflow
+    PATH RichardsMechanics
+    EXECUTABLE_ARGS RichardsFlow_2d_richardsflow.prj
+    WRAPPER mpirun
+    WRAPPER_ARGS -np 1
+    TESTER vtkdiff
+    REQUIREMENTS OGS_USE_MPI
+    DIFF_DATA
+    RichardsFlow_2d_richardsflow_pcs_0_ts_99_t_1900.000000.vtu RichardsFlow_2d_richardsflow_pcs_0_ts_99_t_1900_000000_0.vtu pressure pressure 5e-8 1e-10
+    RichardsFlow_2d_richardsflow_pcs_0_ts_99_t_1900.000000.vtu RichardsFlow_2d_richardsflow_pcs_0_ts_99_t_1900_000000_0.vtu saturation saturation 1e-10 1e-11
 )

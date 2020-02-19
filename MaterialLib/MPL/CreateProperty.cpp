@@ -59,6 +59,11 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
         return createIdealGasLaw(config);
     }
 
+    if (boost::iequals(property_type, "PorosityFromMassBalance"))
+    {
+        return createPorosityFromMassBalance(config, parameters);
+    }
+
     if (boost::iequals(property_type, "SaturationBrooksCorey"))
     {
         return createSaturationBrooksCorey(config);

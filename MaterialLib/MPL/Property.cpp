@@ -58,6 +58,13 @@ PropertyDataType fromVector(std::vector<double> const& values)
     }
 }
 
+PropertyDataType Property::initialValue(
+    ParameterLib::SpatialPosition const& pos, double const t) const
+{
+    return value(VariableArray{}, pos, t,
+                 std::numeric_limits<double>::quiet_NaN());
+}
+
 PropertyDataType Property::value() const
 {
     return _value;

@@ -195,6 +195,9 @@ void RichardsMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
     add_secondary_variable("saturation", 1,
                            &LocalAssemblerIF::getIntPtSaturation);
 
+    add_secondary_variable("porosity", 1,
+                           &LocalAssemblerIF::getIntPtPorosity);
+
     //
     // enable output of internal variables defined by material models
     //
