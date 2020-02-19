@@ -33,7 +33,7 @@ std::unique_ptr<DupuitPermeability> createDupuitPermeability(
     DBUG("Create Dupuit permeability.");
 
     std::string const& parameter_name =
-        //! \ogs_file_param{properties__property__Parameter__parameter_name}
+        //! \ogs_file_param{properties__property__DupuitPermeability__parameter_name}
         config.getConfigParameter<std::string>("parameter_name");
     auto const& parameter = ParameterLib::findParameter<double>(
         parameter_name, parameters, 0, nullptr);
