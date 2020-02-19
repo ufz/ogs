@@ -66,8 +66,6 @@ public:
             process_variables,
         LiquidFlowData&& process_data,
         SecondaryVariableCollection&& secondary_variables,
-        int const gravitational_axis_id,
-        double const gravitational_acceleration,
         std::unique_ptr<ProcessLib::SurfaceFluxData>&& surfaceflux);
 
     void computeSecondaryVariableConcrete(double const t,
@@ -80,12 +78,6 @@ public:
                             MathLib::Point3d const& p,
                             double const t,
                             std::vector<GlobalVector*> const& x) const override;
-
-    int getGravitationalAxisID() const { return _gravitational_axis_id; }
-    double getGravitationalAcceleration() const
-    {
-        return _gravitational_acceleration;
-    }
 
     void postTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
                                      const double t,
@@ -109,8 +101,6 @@ private:
         int const process_id, GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
         GlobalMatrix& Jac) override;
 
-    const int _gravitational_axis_id;
-    const double _gravitational_acceleration;
     LiquidFlowData _process_data;
 
     std::vector<std::unique_ptr<LiquidFlowLocalAssemblerInterface>>

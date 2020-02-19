@@ -106,13 +106,13 @@ std::unique_ptr<Process> createLiquidFlowProcess(
     auto media_map =
         MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
 
-    LiquidFlowData process_data{std::move(media_map)};
+    LiquidFlowData process_data{std::move(media_map), gravity_axis_id, g};
 
     return std::make_unique<LiquidFlowProcess>(
         std::move(name), mesh, std::move(jacobian_assembler), parameters,
         integration_order, std::move(process_variables),
         std::move(process_data), std::move(secondary_variables),
-        gravity_axis_id, g, std::move(surfaceflux));
+        std::move(surfaceflux));
 }
 
 }  // namespace LiquidFlow

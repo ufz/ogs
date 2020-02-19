@@ -202,8 +202,8 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
         // Assemble Laplacian, K, and RHS by the gravitational term
         LaplacianGravityVelocityCalculator::calculateLaplacianAndGravityTerm(
             local_K, local_b, ip_data, permeability, viscosity,
-            fluid_density * _gravitational_acceleration,
-            _gravitational_axis_id);
+            fluid_density * _process_data.gravitational_acceleration,
+            _process_data.gravitational_axis_id);
     }
 }
 
@@ -315,8 +315,8 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
                     .value(vars, pos, t, dt));
         LaplacianGravityVelocityCalculator::calculateVelocity(
             ip, local_p_vec, ip_data, permeability, viscosity,
-            fluid_density * _gravitational_acceleration, _gravitational_axis_id,
-            darcy_velocity_at_ips);
+            fluid_density * _process_data.gravitational_acceleration,
+            _process_data.gravitational_axis_id, darcy_velocity_at_ips);
     }
 }
 

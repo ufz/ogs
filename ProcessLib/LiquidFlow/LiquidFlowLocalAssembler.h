@@ -90,13 +90,9 @@ public:
         std::size_t const /*local_matrix_size*/,
         bool const is_axially_symmetric,
         unsigned const integration_order,
-        int const gravitational_axis_id,
-        double const gravitational_acceleration,
         LiquidFlowData const& process_data)
         : _element(element),
           _integration_method(integration_order),
-          _gravitational_axis_id(gravitational_axis_id),
-          _gravitational_acceleration(gravitational_acceleration),
           _process_data(process_data)
     {
         unsigned const n_integration_points =
@@ -215,8 +211,6 @@ private:
         ParameterLib::SpatialPosition const& pos,
         MatrixOfVelocityAtIntegrationPoints& darcy_velocity_at_ips) const;
 
-    const int _gravitational_axis_id;
-    const double _gravitational_acceleration;
     const LiquidFlowData& _process_data;
 };
 

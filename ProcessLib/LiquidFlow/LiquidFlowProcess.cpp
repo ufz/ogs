@@ -69,14 +69,10 @@ LiquidFlowProcess::LiquidFlowProcess(
         process_variables,
     LiquidFlowData&& process_data,
     SecondaryVariableCollection&& secondary_variables,
-    int const gravitational_axis_id,
-    double const gravitational_acceleration,
     std::unique_ptr<ProcessLib::SurfaceFluxData>&& surfaceflux)
     : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables)),
-      _gravitational_axis_id(gravitational_axis_id),
-      _gravitational_acceleration(gravitational_acceleration),
       _process_data(std::move(process_data)),
       _surfaceflux(std::move(surfaceflux))
 {
@@ -95,8 +91,7 @@ void LiquidFlowProcess::initializeConcreteProcess(
     ProcessLib::createLocalAssemblers<LiquidFlowLocalAssembler>(
         mesh.getDimension(), mesh.getElements(), dof_table,
         pv.getShapeFunctionOrder(), _local_assemblers,
-        mesh.isAxiallySymmetric(), integration_order, _gravitational_axis_id,
-        _gravitational_acceleration, _process_data);
+        mesh.isAxiallySymmetric(), integration_order, _process_data);
 
     _secondary_variables.addSecondaryVariable(
         "darcy_velocity",

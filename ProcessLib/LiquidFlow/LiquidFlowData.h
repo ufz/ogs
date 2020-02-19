@@ -25,6 +25,8 @@ struct LiquidFlowData final
 {
     std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>
         media_map;
+    const int gravitational_axis_id;
+    const double gravitational_acceleration;
 };
 
 }  // namespace LiquidFlow
