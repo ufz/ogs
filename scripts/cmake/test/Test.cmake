@@ -58,7 +58,11 @@ add_custom_target(ctest-cleanup ${CMAKE_COMMAND} -E remove -f Tests/ctest.log)
 
 set(test_dependencies ogs vtkdiff)
 if(OGS_BUILD_UTILS)
-    list(APPEND test_dependencies partmesh MapGeometryToMeshSurface)
+    list(APPEND test_dependencies
+        partmesh
+        MapGeometryToMeshSurface
+        generateStructuredMesh
+    )
 endif()
 if(OGS_USE_MFRONT)
     list(APPEND test_dependencies
