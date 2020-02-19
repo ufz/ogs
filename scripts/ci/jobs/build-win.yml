@@ -15,7 +15,8 @@ build win:
       cmake .. -G Ninja `
         -DCMAKE_BUILD_TYPE=Release `
         -DOGS_BUILD_PROCESSES=GroundwaterFlow `
-        -DOGS_USE_PYTHON=ON
+        -DOGS_USE_PYTHON=ON `
+        -DOGS_CI_TESTRUNNER_REPEAT=1
     - cmake --build .
     - cmake --build . --target tests
     - cmake --build . --target ctest

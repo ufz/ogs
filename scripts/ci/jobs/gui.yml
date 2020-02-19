@@ -20,7 +20,8 @@ gui win:
         -DOGS_BUILD_GUI=ON `
         -DOGS_BUILD_UTILS=ON `
         -DOGS_BUILD_SWMM=ON `
-        -DOGS_USE_NETCDF=ON
+        -DOGS_USE_NETCDF=ON `
+        -DOGS_CI_TESTRUNNER_REPEAT=1
     - cmake --build . --target tests
     - cmake --build . --target ctest
     - cp Testing/**/Test.xml Tests/ctest.xml
