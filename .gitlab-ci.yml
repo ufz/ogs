@@ -11,13 +11,16 @@ variables:
   PRECOMMIT_IMAGE: $CI_REGISTRY_IMAGE/pre-commit
 
 include:
+  # extends
   - local: '/scripts/ci/extends/container-maker-setup.yml'
   - local: '/scripts/ci/extends/vs2019-environment.yml'
   - local: '/scripts/ci/extends/test-artifacts.yml'
+  # jobs
   - local: '/scripts/ci/jobs/pre-commit.yml'
   - local: '/scripts/ci/jobs/build_image.yml'
   - local: '/scripts/ci/jobs/build.yml'
   - local: '/scripts/ci/jobs/build-win.yml'
+  - local: '/scripts/ci/jobs/build-mac.yml'
   - local: '/scripts/ci/jobs/checks.yml'
   - local: '/scripts/ci/jobs/container.yml'
   - local: '/scripts/ci/jobs/gui.yml'
