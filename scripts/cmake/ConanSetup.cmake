@@ -73,7 +73,7 @@ if(OGS_BUILD_GUI)
         bzip2/1.0.8
         zlib/1.2.11
     )
-    if(UNIX AND NOT APPLE)
+    if(UNIX)
         set(CONAN_REQUIRES ${CONAN_REQUIRES} qt/5.14.1@bincrafters/stable)
     else()
         set(CONAN_REQUIRES ${CONAN_REQUIRES} qt/5.13.2@bincrafters/stable)

@@ -458,6 +458,7 @@ pipeline {
                   '-DOGS_CPU_ARCHITECTURE=core2 ' +
                   '-DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON ' +
                   '-DOGS_BUILD_UTILS=ON ' +
+                  '-DOGS_BUILD_GUI=ON ' +
                   '-DOGS_CONAN_BUILD=missing ' +
                   '-DCMAKE_OSX_DEPLOYMENT_TARGET="10.14" ' +
                   '-DOGS_USE_NETCDF=ON '
