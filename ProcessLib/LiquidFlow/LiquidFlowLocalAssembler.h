@@ -12,10 +12,7 @@
 
 #pragma once
 
-#include <map>
-#include <unordered_map>
 #include <vector>
-#include <typeindex>
 
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/MPL/Utils/FormEffectiveThermalConductivity.h"
