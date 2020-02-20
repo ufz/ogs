@@ -7,8 +7,8 @@ build win:
   variables:
     BUILD_DIR: build-win
     CMAKE_ARGS: >-
-      "-DOGS_USE_PYTHON=ON"
-      "-DOGS_CI_TESTRUNNER_REPEAT=1"
+      -DOGS_USE_PYTHON=ON
+      -DOGS_CI_TESTRUNNER_REPEAT=1
 
   extends:
     - .build_win_definition

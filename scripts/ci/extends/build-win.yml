@@ -10,7 +10,11 @@
   script:
     - mkdir -p $BUILD_DIR
     - cd $BUILD_DIR
-    - cmake .. -G Ninja $env:CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release -DOGS_BUILD_PROCESSES=GroundwaterFlow
+    - >
+      cmake .. -G Ninja
+      "$env:CMAKE_ARGS"
+      -DCMAKE_BUILD_TYPE="$env:BUILD_TYPE"
+      -DOGS_BUILD_PROCESSES="$env:BUILD_PROCESSES"
     - cmake --build . | Tee-Object -FilePath make.output
     - cmake --build . --target tests
     - cmake --build . --target ctest
