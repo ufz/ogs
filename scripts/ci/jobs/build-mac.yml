@@ -1,22 +1,9 @@
 build mac:
-  stage: test
+  extends: .build_definition
+
   tags:
     - mac
+
   variables:
     BUILD_DIR: "build-mac"
     CCACHE_DIR: "$CI_PROJECT_DIR/.ccache"
-  cache:
-    paths:
-      - .ccache
-  extends: .test-artifacts
-
-  before_script:
-    - mkdir -p $BUILD_DIR
-    - cd $BUILD_DIR
-
-  script:
-    - cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DOGS_BUILD_PROCESSES=GroundwaterFlow
-    - cmake --build . > >(tee make.output)
-    - cmake --build . --target tests
-    - cmake --build . --target ctest
-    - cp Testing/**/Test.xml Tests/ctest.xml

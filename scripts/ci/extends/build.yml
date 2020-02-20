@@ -1,22 +1,21 @@
-build:
+.build_definition:
   stage: test
-  variables:
-    BUILD_DIR: "build"
-    CCACHE_DIR: "$CI_PROJECT_DIR/.ccache"
-  image:
-    name: $CONTAINER_GCC_IMAGE
-  cache:
-    paths:
-      - .ccache
   extends: .test-artifacts
+
+  variables:
+    CCACHE_DIR: "$CI_PROJECT_DIR/.ccache"
 
   before_script:
     - mkdir -p $BUILD_DIR
     - cd $BUILD_DIR
 
   script:
-    - cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DOGS_USE_CONAN=OFF -DOGS_BUILD_PROCESSES=GroundwaterFlow
+    - cmake .. -G Ninja $CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release -DOGS_BUILD_PROCESSES=GroundwaterFlow
     - cmake --build . > >(tee make.output)
     - cmake --build . --target tests
     - cmake --build . --target ctest
     - cp Testing/**/Test.xml Tests/ctest.xml
+
+  cache:
+    paths:
+      - $CCACHE_DIR

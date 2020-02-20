@@ -4,7 +4,7 @@ compiler warnings:
     GIT_STRATEGY: none
   allow_failure: true
   dependencies:
-    - build
+    - build linux
     - build win
     - build mac
   script:
@@ -25,7 +25,7 @@ ctest results:
   tags:
     - singularity
   dependencies:
-    - build
+    - build linux
     - build win
     - build mac
   script:

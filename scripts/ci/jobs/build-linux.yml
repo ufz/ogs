@@ -1,0 +1,9 @@
+build linux:
+  extends: .build_definition
+
+  variables:
+    BUILD_DIR: "build"
+    CMAKE_ARGS: "-DOGS_USE_CONAN=OFF"
+
+  image:
+    name: $CONTAINER_GCC_IMAGE
