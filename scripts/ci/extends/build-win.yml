@@ -1,5 +1,9 @@
 .build_win_definition:
   stage: test
+
+  tags:
+    - windows
+
   extends:
     - .defaults
     - .vs2019-environment
@@ -13,7 +17,7 @@
     - cd $BUILD_DIR
     - >
       cmake .. -G Ninja
-      "$env:CMAKE_ARGS"
+      $env:CMAKE_ARGS.Split(" ")
       -DCMAKE_BUILD_TYPE="$env:BUILD_TYPE"
       -DOGS_BUILD_PROCESSES="$env:BUILD_PROCESSES"
     - cmake --build . | Tee-Object -FilePath make.output

@@ -1,14 +1,9 @@
 build win:
-  stage: test
-
-  tags:
-    - windows
+  extends:
+    - .build_win_definition
 
   variables:
     BUILD_DIR: build-win
     CMAKE_ARGS: >-
       -DOGS_USE_PYTHON=ON
       -DOGS_CI_TESTRUNNER_REPEAT=1
-
-  extends:
-    - .build_win_definition

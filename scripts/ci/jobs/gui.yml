@@ -1,19 +1,15 @@
 gui win:
+  extends:
+    - .build_win_definition
   stage: gui
   when: manual
-
-  tags:
-    - windows
 
   variables:
     BUILD_DIR: build-gui-win
     CMAKE_ARGS: >-
-      "-DOGS_USE_PYTHON=ON"
-      "-DOGS_BUILD_GUI=ON"
-      "-DOGS_BUILD_UTILS=ON"
-      "-DOGS_BUILD_SWMM=ON"
-      "-DOGS_USE_NETCDF=ON"
-      "-DOGS_CI_TESTRUNNER_REPEAT=1"
-
-  extends:
-    - .build_win_definition
+      -DOGS_USE_PYTHON=ON
+      -DOGS_BUILD_GUI=ON
+      -DOGS_BUILD_UTILS=ON
+      -DOGS_BUILD_SWMM=ON
+      -DOGS_USE_NETCDF=ON
+      -DOGS_CI_TESTRUNNER_REPEAT=1
