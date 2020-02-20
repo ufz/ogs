@@ -19,6 +19,7 @@ include:
   - local: '/scripts/ci/jobs/pre-commit.yml'
   - local: '/scripts/ci/jobs/build_image.yml'
   - local: '/scripts/ci/jobs/build.yml'
+  - local: '/scripts/ci/jobs/build-docs.yml'
   - local: '/scripts/ci/jobs/build-win.yml'
   - local: '/scripts/ci/jobs/build-mac.yml'
   - local: '/scripts/ci/jobs/checks.yml'
