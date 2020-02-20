@@ -1,6 +1,8 @@
 .build_definition:
   stage: test
-  extends: .test-artifacts
+  extends:
+    - .defaults
+    - .test-artifacts
 
   variables:
     CCACHE_DIR: "$CI_PROJECT_DIR/.ccache"

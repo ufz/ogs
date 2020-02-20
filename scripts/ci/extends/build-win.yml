@@ -1,6 +1,7 @@
 .build_win_definition:
   stage: test
   extends:
+    - .defaults
     - .vs2019-environment
     - .test-artifacts
 

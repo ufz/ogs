@@ -1,0 +1,3 @@
+.defaults:
+  # Disable artifacts passing between stages
+  dependencies: []

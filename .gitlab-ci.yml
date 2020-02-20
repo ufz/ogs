@@ -16,6 +16,7 @@ variables:
 
 include:
   # extends
+  - local: '/scripts/ci/extends/defaults.yml'
   - local: '/scripts/ci/extends/build.yml'
   - local: '/scripts/ci/extends/build-win.yml'
   - local: '/scripts/ci/extends/container-maker-setup.yml'
