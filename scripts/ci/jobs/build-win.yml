@@ -1,23 +1,14 @@
 build win:
   stage: test
+
   tags:
     - windows
-  variables:
-    BUILD_DIR: "build-win"
-  extends:
-    - .vs2019-environment
-    - .test-artifacts
 
-  script:
-    - mkdir -p $BUILD_DIR
-    - cd $BUILD_DIR
-    - |
-      cmake .. -G Ninja `
-        -DCMAKE_BUILD_TYPE=Release `
-        -DOGS_BUILD_PROCESSES=GroundwaterFlow `
-        -DOGS_USE_PYTHON=ON `
-        -DOGS_CI_TESTRUNNER_REPEAT=1
-    - cmake --build . | Tee-Object -FilePath make.output
-    - cmake --build . --target tests
-    - cmake --build . --target ctest
-    - cp Testing/**/Test.xml Tests/ctest.xml
+  variables:
+    BUILD_DIR: build-win
+    CMAKE_ARGS: >-
+      "-DOGS_USE_PYTHON=ON"
+      "-DOGS_CI_TESTRUNNER_REPEAT=1"
+
+  extends:
+    - .build_win_definition

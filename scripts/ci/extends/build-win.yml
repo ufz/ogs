@@ -1,0 +1,17 @@
+.build_win_definition:
+  stage: test
+  extends:
+    - .vs2019-environment
+    - .test-artifacts
+
+  variables:
+    CCACHE_DIR: "$CI_PROJECT_DIR/.ccache"
+
+  script:
+    - mkdir -p $BUILD_DIR
+    - cd $BUILD_DIR
+    - cmake .. -G Ninja $env:CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release -DOGS_BUILD_PROCESSES=GroundwaterFlow
+    - cmake --build . | Tee-Object -FilePath make.output
+    - cmake --build . --target tests
+    - cmake --build . --target ctest
+    - cp Testing/**/Test.xml Tests/ctest.xml

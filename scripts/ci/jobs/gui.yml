@@ -1,28 +1,19 @@
 gui win:
   stage: gui
   when: manual
+
   tags:
     - windows
-  variables:
-    BUILD_DIR: "build-gui-win"
-  extends:
-    - .vs2019-environment
-    - .test-artifacts
 
-  script:
-    - mkdir -p $BUILD_DIR
-    - cd $BUILD_DIR
-    - |
-      cmake .. -G Ninja `
-        -DCMAKE_BUILD_TYPE=Release `
-        -DOGS_BUILD_PROCESSES=GroundwaterFlow `
-        -DOGS_USE_PYTHON=ON `
-        -DOGS_BUILD_GUI=ON `
-        -DOGS_BUILD_UTILS=ON `
-        -DOGS_BUILD_SWMM=ON `
-        -DOGS_USE_NETCDF=ON `
-        -DOGS_CI_TESTRUNNER_REPEAT=1
-    - cmake --build . --target tests
-    - cmake --build . --target ctest
-    - cp Testing/**/Test.xml Tests/ctest.xml
-    - cmake --build .
+  variables:
+    BUILD_DIR: build-gui-win
+    CMAKE_ARGS: >-
+      "-DOGS_USE_PYTHON=ON"
+      "-DOGS_BUILD_GUI=ON"
+      "-DOGS_BUILD_UTILS=ON"
+      "-DOGS_BUILD_SWMM=ON"
+      "-DOGS_USE_NETCDF=ON"
+      "-DOGS_CI_TESTRUNNER_REPEAT=1"
+
+  extends:
+    - .build_win_definition
