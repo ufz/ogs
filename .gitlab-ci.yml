@@ -34,3 +34,4 @@ include:
   - local: '/scripts/ci/jobs/container.yml'
   - local: '/scripts/ci/jobs/build-gui-linux.yml'
   - local: '/scripts/ci/jobs/build-gui-win.yml'
+  - local: '/scripts/ci/jobs/build-gui-mac.yml'

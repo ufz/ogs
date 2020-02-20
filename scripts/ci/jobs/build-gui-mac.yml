@@ -1,17 +1,16 @@
-build gui linux:
+build gui mac:
   extends: .build_definition
   stage: gui
+  tags:
+    - mac
   when: manual
 
   variables:
-    BUILD_DIR: "build-gui-linux"
+    BUILD_DIR: "build-gui-mac"
     CCACHE_DIR: "$CI_PROJECT_DIR/.ccache"
     CMAKE_ARGS: >-
-      -DOGS_USE_CONAN=ON
+      -DOGS_USE_CONAN=OFF
       -DOGS_USE_PCH=OFF
       -DOGS_BUILD_GUI=ON
       -DOGS_BUILD_UTILS=ON
       -DOGS_USE_NETCDF=ON
-
-  image:
-    name: $CONTAINER_GCC_GUI_IMAGE
