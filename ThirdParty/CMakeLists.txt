@@ -13,9 +13,10 @@ endif()
 set_property(TARGET logog PROPERTY FOLDER "logog")
 set_property(TARGET test-logog PROPERTY FOLDER "logog")
 set_target_properties(test-logog PROPERTIES EXCLUDE_FROM_ALL TRUE)
-if(MSVC)
-    set_target_properties(logog PROPERTIES COMPILE_FLAGS /W0)
-endif()
+target_compile_options(logog PRIVATE
+    $<$<CXX_COMPILER_ID:Clang>:-w>
+    $<$<CXX_COMPILER_ID:GNU>:-w>
+    $<$<CXX_COMPILER_ID:MSVC>:/W0>)
 
 set(gtest_force_shared_crt ON CACHE INTERNAL "") # Use dynamic MSVC runtime
 set(INSTALL_GTEST OFF CACHE INTERNAL "")
@@ -50,7 +51,15 @@ endif()
 # tetgen
 if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/tetgen/CMakeLists.txt)
     add_subdirectory(tetgen)
-    install (PROGRAMS $<TARGET_FILE:tetgen> DESTINATION bin COMPONENT ogs_extras)
+    install(PROGRAMS $<TARGET_FILE:tetgen> DESTINATION bin COMPONENT ogs_extras)
+    target_compile_options(tet PRIVATE
+        $<$<CXX_COMPILER_ID:Clang>:-w>
+        $<$<CXX_COMPILER_ID:GNU>:-w>
+        $<$<CXX_COMPILER_ID:MSVC>:/W0>)
+    target_compile_options(tetgen PRIVATE
+        $<$<CXX_COMPILER_ID:Clang>:-w>
+        $<$<CXX_COMPILER_ID:GNU>:-w>
+        $<$<CXX_COMPILER_ID:MSVC>:/W0>)
 endif()
 
 # vtkdiff
