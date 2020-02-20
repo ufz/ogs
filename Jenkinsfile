@@ -398,7 +398,6 @@ pipeline {
               configure { // CLI + GUI
                 cmakeOptions =
                   "-DBUILD_SHARED_LIBS=OFF " +
-                  '-DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON ' +
                   '-DOGS_BUILD_GUI=ON ' +
                   '-DOGS_BUILD_UTILS=ON ' +
                   '-DOGS_CONAN_BUILD=missing ' +
@@ -456,7 +455,6 @@ pipeline {
                 cmakeOptions =
                   "-DBUILD_SHARED_LIBS=${build_shared} " +
                   '-DOGS_CPU_ARCHITECTURE=core2 ' +
-                  '-DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON ' +
                   '-DOGS_BUILD_UTILS=ON ' +
                   '-DOGS_BUILD_GUI=ON ' +
                   '-DOGS_CONAN_BUILD=missing ' +
