@@ -1,0 +1,16 @@
+build gui linux:
+  extends: .build_definition
+  stage: gui
+  when: manual
+
+  variables:
+    BUILD_DIR: "build-gui-linux"
+    CMAKE_ARGS: >-
+      -DOGS_USE_CONAN=ON
+      -DOGS_USE_PCH=OFF
+      -DOGS_BUILD_GUI=ON
+      -DOGS_BUILD_UTILS=ON
+      -DOGS_USE_NETCDF=ON
+
+  image:
+    name: $CONTAINER_GCC_GUI_IMAGE

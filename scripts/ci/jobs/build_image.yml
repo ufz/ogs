@@ -1,8 +1,9 @@
-build gcc image:
+build gcc images:
   stage: .pre
   only:
     changes:
       - ThirdParty/container-maker
+      - scripts/ci/jobs/build_image.yml
   tags:
     - docker-shell
   variables:
@@ -10,10 +11,12 @@ build gcc image:
   extends: .container-maker-setup
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    # --jenkins? --gui?
     - python ThirdParty/container-maker/ogscm/cli.py --build --gitlab
       --ogs off --pm system --cvode --cppcheck --docs --gcovr
       --tag $CONTAINER_GCC_IMAGE --upload
+    - python ThirdParty/container-maker/ogscm/cli.py --build --gitlab
+      --ogs off --pm conan --cvode --cppcheck --docs --gcovr --gui
+      --tag $CONTAINER_GCC_GUI_IMAGE --upload
 
 build xunit-to-junit image:
   stage: .pre

@@ -8,6 +8,7 @@ stages:
 variables:
   # Docker image names
   CONTAINER_GCC_IMAGE: $CI_REGISTRY_IMAGE/gcc:$CI_COMMIT_REF_SLUG
+  CONTAINER_GCC_GUI_IMAGE: $CI_REGISTRY_IMAGE/gcc-gui:$CI_COMMIT_REF_SLUG
   XUNIT_TO_JUNIT_IMAGE: $CI_REGISTRY_IMAGE/xunit-to-junit
   PRECOMMIT_IMAGE: $CI_REGISTRY_IMAGE/pre-commit
   # Build config
@@ -31,4 +32,5 @@ include:
   - local: '/scripts/ci/jobs/build-mac.yml'
   - local: '/scripts/ci/jobs/checks.yml'
   - local: '/scripts/ci/jobs/container.yml'
-  - local: '/scripts/ci/jobs/gui.yml'
+  - local: '/scripts/ci/jobs/build-gui-linux.yml'
+  - local: '/scripts/ci/jobs/build-gui-win.yml'

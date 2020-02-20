@@ -1,4 +1,4 @@
-gui win:
+build gui win:
   extends:
     - .build_win_definition
   stage: gui
