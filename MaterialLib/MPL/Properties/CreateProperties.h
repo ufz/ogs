@@ -17,6 +17,7 @@
 #include "CreateIdealGasLaw.h"
 #include "CreateLinearProperty.h"
 #include "CreateParameterProperty.h"
+#include "CreatePermeabilityOrthotropicPowerLaw.h"
 #include "CreatePorosityFromMassBalance.h"
 #include "CreateRelPermBrooksCorey.h"
 #include "CreateRelPermLiakopoulos.h"

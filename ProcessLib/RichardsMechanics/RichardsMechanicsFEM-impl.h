@@ -777,6 +777,9 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
                 .template value<double>(variables, x_position, t, dt);
         variables[static_cast<int>(MPL::Variable::temperature)] = temperature;
 
+        variables[static_cast<int>(MPL::Variable::porosity)] =
+            _ip_data[ip].porosity;
+
         auto const mu = liquid_phase.property(MPL::PropertyType::viscosity)
                             .template value<double>(variables, x_position, t, dt);
         auto const rho_LR =

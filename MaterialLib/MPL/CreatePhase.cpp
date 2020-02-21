@@ -26,7 +26,8 @@ namespace
 {
 std::unique_ptr<MaterialPropertyLib::Phase> createPhase(
     BaseLib::ConfigTree const& config,
-    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters)
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
+    ParameterLib::CoordinateSystem const* const local_coordinate_system)
 {
     using namespace MaterialPropertyLib;
 
@@ -59,13 +60,13 @@ std::unique_ptr<MaterialPropertyLib::Phase> createPhase(
     auto components =
         //! \ogs_file_param{prj__media__medium__phases__phase__components}
         createComponents(config.getConfigSubtreeOptional("components"),
-                         parameters);
+                         parameters, local_coordinate_system);
 
     // Properties of optional properties.
     auto properties =
         //! \ogs_file_param{prj__media__medium__phases__phase__properties}
         createProperties(config.getConfigSubtreeOptional("properties"),
-                         parameters);
+                         parameters, local_coordinate_system);
 
     if (components.empty() && !properties)
     {
@@ -84,7 +85,8 @@ namespace MaterialPropertyLib
 {
 std::vector<std::unique_ptr<Phase>> createPhases(
     boost::optional<BaseLib::ConfigTree> const& config,
-    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters)
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
+    ParameterLib::CoordinateSystem const* const local_coordinate_system)
 {
     if (!config)
     {
@@ -97,7 +99,8 @@ std::vector<std::unique_ptr<Phase>> createPhases(
          //! \ogs_file_param{prj__media__medium__phases__phase}
          config->getConfigSubtreeList("phase"))
     {
-        auto phase = createPhase(phase_config, parameters);
+        auto phase =
+            createPhase(phase_config, parameters, local_coordinate_system);
 
         if (std::find_if(phases.begin(),
                          phases.end(),
