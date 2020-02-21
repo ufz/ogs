@@ -16,6 +16,28 @@
 
 namespace MaterialPropertyLib
 {
+void PorosityFromMassBalance::setScale(
+    std::variant<Medium*, Phase*, Component*> scale_pointer)
+{
+    if (std::holds_alternative<Phase*>(scale_pointer))
+    {
+        _phase = std::get<Phase*>(scale_pointer);
+        if (_phase->name != "Solid")
+        {
+            OGS_FATAL(
+                "The property 'PorosityFromMassBalance' must be "
+                "given in the 'Solid' phase, not in '%s' phase.",
+                _phase->name.c_str());
+        }
+    }
+    else
+    {
+        OGS_FATAL(
+            "The property 'PorosityFromMassBalance' is "
+            "implemented on the 'phase' scales only.");
+    }
+}
+
 PropertyDataType PorosityFromMassBalance::value(
     VariableArray const& variable_array,
     ParameterLib::SpatialPosition const& pos,

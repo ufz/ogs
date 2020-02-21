@@ -38,20 +38,7 @@ public:
     }
 
     void setScale(
-        std::variant<Medium*, Phase*, Component*> scale_pointer) override
-    {
-        if (std::holds_alternative<Phase*>(scale_pointer))
-        {
-            _phase = std::get<Phase*>(scale_pointer);
-            // TODO (naumov) Test phase is solid phase.
-        }
-        else
-        {
-            OGS_FATAL(
-                "The property 'PorosityFromMassBalance' is "
-                "implemented on the 'phase' scales only.");
-        }
-    }
+        std::variant<Medium*, Phase*, Component*> scale_pointer) override;
 
     PropertyDataType initialValue(ParameterLib::SpatialPosition const& pos,
                                   double const t) const override
