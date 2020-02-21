@@ -221,10 +221,6 @@ void ConstraintDirichletBoundaryCondition::getEssentialBCValues(
 
     DBUG("Found %d constraint dirichlet boundary condition values.",
          bc_values.ids.size());
-    for (unsigned i = 0; i < bc_values.ids.size(); ++i)
-    {
-        DBUG("\tid: %d, value: %e", bc_values.ids[i], bc_values.values[i]);
-    }
 }
 
 std::unique_ptr<ConstraintDirichletBoundaryCondition>
