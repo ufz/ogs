@@ -53,6 +53,7 @@ enum class Variable : int
     porosity,
     displacement,
     strain,
+    stress,
     volumetric_strain_rate,
     number_of_variables
 };
