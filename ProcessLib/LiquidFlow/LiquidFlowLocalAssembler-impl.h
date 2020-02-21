@@ -14,6 +14,9 @@
 
 #include "LiquidFlowLocalAssembler.h"
 
+#include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
+#include "MaterialLib/MPL/Utils/FormEigenTensor.h"
+#include "MaterialLib/MPL/VariableType.h"
 #include "NumLib/Function/Interpolation.h"
 
 namespace ProcessLib
@@ -23,7 +26,7 @@ namespace LiquidFlow
 template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
 void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
-    assemble(double const t, double const /*dt*/,
+    assemble(double const t, double const dt,
              std::vector<double> const& local_x,
              std::vector<double> const& /*local_xdot*/,
              std::vector<double>& local_M_data,
@@ -32,12 +35,19 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
 {
     ParameterLib::SpatialPosition pos;
     pos.setElementID(_element.getID());
-    const int material_id = _material_properties.getMaterialID(pos);
 
-    double const pressure = std::nan("");
-    const Eigen::MatrixXd& permeability = _material_properties.getPermeability(
-        material_id, t, pos, _element.getDimension(), pressure,
-        _reference_temperature);
+    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    MaterialPropertyLib::VariableArray vars;
+    vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
+        medium
+            ->property(MaterialPropertyLib::PropertyType::reference_temperature)
+            .template value<double>(vars, pos, t, dt);
+    vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
+        std::numeric_limits<double>::quiet_NaN();
+    auto const permeability =
+        MaterialPropertyLib::formEigenTensor<GlobalDim>(
+            medium->property(MaterialPropertyLib::PropertyType::permeability)
+                .value(vars, pos, t, dt));
     // Note: For Inclined 1D in 2D/3D or 2D element in 3D, the first item in
     //  the assert must be changed to permeability.rows() ==
     //  _element->getDimension()
@@ -46,12 +56,12 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     if (permeability.size() == 1)
     {  // isotropic or 1D problem.
         assembleMatrixAndVector<IsotropicCalculator>(
-            material_id, t, local_x, local_M_data, local_K_data, local_b_data);
+            t, dt, local_x, local_M_data, local_K_data, local_b_data);
     }
     else
     {
         assembleMatrixAndVector<AnisotropicCalculator>(
-            material_id, t, local_x, local_M_data, local_K_data, local_b_data);
+            t, dt, local_x, local_M_data, local_K_data, local_b_data);
     }
 }
 
@@ -62,6 +72,10 @@ LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::getFlux(
     MathLib::Point3d const& p_local_coords, double const t,
     std::vector<double> const& local_x) const
 {
+    // TODO (tf) Temporary value not used by current material models. Need
+    // extension of getFlux interface
+    double const dt = std::numeric_limits<double>::quiet_NaN();
+
     // eval dNdx and invJ at p
     auto const fe =
         NumLib::createIsoparametricFiniteElement<ShapeFunction,
@@ -78,19 +92,28 @@ LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::getFlux(
     // create pos object to access the correct media property
     ParameterLib::SpatialPosition pos;
     pos.setElementID(_element.getID());
-    const int material_id = _material_properties.getMaterialID(pos);
+
+    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    auto const& liquid_phase = medium->phase("AqueousLiquid");
+
+    MaterialPropertyLib::VariableArray vars;
 
     double pressure = 0.0;
     NumLib::shapeFunctionInterpolate(local_x, shape_matrices.N, pressure);
-    const Eigen::MatrixXd& permeability = _material_properties.getPermeability(
-        material_id, t, pos, _element.getDimension(), pressure,
-        _reference_temperature);
-    const double mu =
-        _material_properties.getViscosity(pressure, _reference_temperature);
+    vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
+        pressure;
+
+    auto const intrinsic_permeability =
+        MaterialPropertyLib::formEigenTensor<GlobalDim>(
+            medium->property(MaterialPropertyLib::PropertyType::permeability)
+                .value(vars, pos, t, dt));
+    auto const viscosity =
+        liquid_phase.property(MaterialPropertyLib::PropertyType::viscosity)
+            .template value<double>(vars, pos, t, dt);
 
     Eigen::Vector3d flux(0.0, 0.0, 0.0);
     flux.head<GlobalDim>() =
-        -permeability / mu * shape_matrices.dNdx *
+        -intrinsic_permeability / viscosity * shape_matrices.dNdx *
         Eigen::Map<const NodalVectorType>(local_x.data(), local_x.size());
 
     return flux;
@@ -100,7 +123,7 @@ template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
 template <typename LaplacianGravityVelocityCalculator>
 void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
-    assembleMatrixAndVector(const int material_id, double const t,
+    assembleMatrixAndVector(double const t, double const dt,
                             std::vector<double> const& local_x,
                             std::vector<double>& local_M_data,
                             std::vector<double>& local_K_data,
@@ -122,41 +145,65 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     ParameterLib::SpatialPosition pos;
     pos.setElementID(_element.getID());
 
-    // TODO: The following two variables should be calculated inside the
-    //       the integration loop for non-constant porosity and storage models.
-    double porosity_variable = 0.;
-    double storage_variable = 0.;
+    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    auto const& liquid_phase = medium->phase("AqueousLiquid");
+    auto const& solid_phase = medium->phase("Solid");
+
+    MaterialPropertyLib::VariableArray vars;
+    vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
+        medium
+            ->property(MaterialPropertyLib::PropertyType::reference_temperature)
+            .template value<double>(vars, pos, t, dt);
+
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         auto const& ip_data = _ip_data[ip];
 
         double p = 0.;
         NumLib::shapeFunctionInterpolate(local_x, ip_data.N, p);
-
-        // Assemble mass matrix, M
-        local_M.noalias() += _material_properties.getMassCoefficient(
-                                 material_id, t, pos, porosity_variable,
-                                 storage_variable, p, _reference_temperature) *
-                             ip_data.N.transpose() * ip_data.N *
-                             ip_data.integration_weight;
+        vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
+            p;
 
         // Compute density:
-        const double rho_g =
-            _material_properties.getLiquidDensity(p, _reference_temperature) *
-            _gravitational_acceleration;
+        auto const fluid_density =
+            liquid_phase.property(MaterialPropertyLib::PropertyType::density)
+                .template value<double>(vars, pos, t, dt);
+        assert(fluid_density > 0.);
+        auto const ddensity_dpressure =
+            liquid_phase.property(MaterialPropertyLib::PropertyType::density)
+                .template dValue<double>(
+                    vars, MaterialPropertyLib::Variable::phase_pressure, pos,
+                    t, dt);
+
+        auto const porosity =
+            medium->property(MaterialPropertyLib::PropertyType::porosity)
+                .template value<double>(vars, pos, t, dt);
+        auto const storage =
+            solid_phase.property(MaterialPropertyLib::PropertyType::storage)
+                .template value<double>(vars, pos, t, dt);
+
+        // Assemble mass matrix, M
+        local_M.noalias() +=
+            (porosity * ddensity_dpressure / fluid_density + storage) *
+            ip_data.N.transpose() * ip_data.N * ip_data.integration_weight;
+
         // Compute viscosity:
-        const double mu =
-            _material_properties.getViscosity(p, _reference_temperature);
+        auto const viscosity =
+            liquid_phase.property(MaterialPropertyLib::PropertyType::viscosity)
+                .template value<double>(vars, pos, t, dt);
 
         pos.setIntegrationPoint(ip);
-        auto const& permeability = _material_properties.getPermeability(
-            material_id, t, pos, _element.getDimension(), p,
-            _reference_temperature);
+        auto const permeability =
+            MaterialPropertyLib::formEigenTensor<GlobalDim>(
+                medium
+                    ->property(MaterialPropertyLib::PropertyType::permeability)
+                    .value(vars, pos, t, dt));
 
         // Assemble Laplacian, K, and RHS by the gravitational term
         LaplacianGravityVelocityCalculator::calculateLaplacianAndGravityTerm(
-            local_K, local_b, ip_data, permeability, mu, rho_g,
-            _gravitational_axis_id);
+            local_K, local_b, ip_data, permeability, viscosity,
+            fluid_density * _process_data.gravitational_acceleration,
+            _process_data.gravitational_axis_id);
     }
 }
 
@@ -170,6 +217,10 @@ LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& velocity_cache) const
 {
+    // TODO (tf) Temporary value not used by current material models. Need
+    // extension of secondary variable interface.
+    double const dt = std::numeric_limits<double>::quiet_NaN();
+
     constexpr int process_id = 0;
     auto const indices =
         NumLib::getIndices(_element.getID(), *dof_table[process_id]);
@@ -182,27 +233,34 @@ LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
 
     ParameterLib::SpatialPosition pos;
     pos.setElementID(_element.getID());
-    const int material_id = _material_properties.getMaterialID(pos);
     // evaluate the permeability to distinguish which computeDarcyVelocity
     // method should be used
-    double const pressure = std::nan("");
-    const Eigen::MatrixXd& permeability = _material_properties.getPermeability(
-        material_id, t, pos, _element.getDimension(), pressure,
-        _reference_temperature);
 
+    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    MaterialPropertyLib::VariableArray vars;
+    vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
+        medium
+            ->property(MaterialPropertyLib::PropertyType::reference_temperature)
+            .template value<double>(vars, pos, t, dt);
+    vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
+        std::numeric_limits<double>::quiet_NaN();
+    auto const permeability =
+        MaterialPropertyLib::formEigenTensor<GlobalDim>(
+            medium->property(MaterialPropertyLib::PropertyType::permeability)
+                .value(vars, pos, t, dt));
     // Note: For Inclined 1D in 2D/3D or 2D element in 3D, the first item in
     //  the assert must be changed to perm.rows() == _element->getDimension()
     assert(permeability.rows() == GlobalDim || permeability.rows() == 1);
 
     if (permeability.size() == 1)
     {  // isotropic or 1D problem.
-        computeDarcyVelocityLocal<IsotropicCalculator>(
-            material_id, t, local_x, pos, velocity_cache_vectors);
+        computeDarcyVelocityLocal<IsotropicCalculator>(t, dt, local_x, pos,
+                                                       velocity_cache_vectors);
     }
     else
     {
         computeDarcyVelocityLocal<AnisotropicCalculator>(
-            material_id, t, local_x, pos, velocity_cache_vectors);
+            t, dt, local_x, pos, velocity_cache_vectors);
     }
     return velocity_cache;
 }
@@ -212,9 +270,7 @@ template <typename ShapeFunction, typename IntegrationMethod,
 template <typename LaplacianGravityVelocityCalculator>
 void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     computeDarcyVelocityLocal(
-        const int material_id,
-        const double t,
-        std::vector<double> const& local_x,
+        const double t, const double dt, std::vector<double> const& local_x,
         ParameterLib::SpatialPosition const& pos,
         MatrixOfVelocityAtIntegrationPoints& darcy_velocity_at_ips) const
 {
@@ -227,25 +283,40 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
 
+    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    auto const& liquid_phase = medium->phase("AqueousLiquid");
+
+    MaterialPropertyLib::VariableArray vars;
+    vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
+        medium
+            ->property(MaterialPropertyLib::PropertyType::reference_temperature)
+            .template value<double>(vars, pos, t, dt);
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         auto const& ip_data = _ip_data[ip];
         double p = 0.;
         NumLib::shapeFunctionInterpolate(local_x, ip_data.N, p);
+        vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
+            p;
 
-        const double rho_g =
-            _material_properties.getLiquidDensity(p, _reference_temperature) *
-            _gravitational_acceleration;
+        // Compute density:
+        auto const fluid_density =
+            liquid_phase.property(MaterialPropertyLib::PropertyType::density)
+                .template value<double>(vars, pos, t, dt);
         // Compute viscosity:
-        const double mu =
-            _material_properties.getViscosity(p, _reference_temperature);
+        auto const viscosity =
+            liquid_phase.property(MaterialPropertyLib::PropertyType::viscosity)
+                .template value<double>(vars, pos, t, dt);
 
-        auto const& permeability = _material_properties.getPermeability(
-            material_id, t, pos, _element.getDimension(), p,
-            _reference_temperature);
+        auto const permeability =
+            MaterialPropertyLib::formEigenTensor<GlobalDim>(
+                medium
+                    ->property(MaterialPropertyLib::PropertyType::permeability)
+                    .value(vars, pos, t, dt));
         LaplacianGravityVelocityCalculator::calculateVelocity(
-            ip, local_p_vec, ip_data, permeability, mu, rho_g,
-            _gravitational_axis_id, darcy_velocity_at_ips);
+            ip, local_p_vec, ip_data, permeability, viscosity,
+            fluid_density * _process_data.gravitational_acceleration,
+            _process_data.gravitational_axis_id, darcy_velocity_at_ips);
     }
 }
 

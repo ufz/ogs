@@ -54,6 +54,11 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
         return createParameterProperty(config, parameters);
     }
 
+    if (boost::iequals(property_type, "Dupuit"))
+    {
+        return createDupuitPermeability(config, parameters);
+    }
+
     if (boost::iequals(property_type, "IdealGasLaw"))
     {
         return createIdealGasLaw(config);

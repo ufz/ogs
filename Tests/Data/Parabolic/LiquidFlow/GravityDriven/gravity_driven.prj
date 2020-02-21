@@ -19,36 +19,56 @@
             <secondary_variables>
                 <secondary_variable internal_name="darcy_velocity" output_name="v"/>
             </secondary_variables>
-            <material_property>
-                <fluid>
-                    <density>
-                        <type>Constant</type>
-                        <value> 1.e3 </value>
-                    </density>
-                    <viscosity>
-                        <type>Constant</type>
-                        <value> 1.e-3 </value>
-                    </viscosity>
-                </fluid>
-                <porous_medium>
-                    <porous_medium id="0">
-                        <permeability>
-                            <permeability_tensor_entries>kappa1</permeability_tensor_entries>
-                            <type>Constant</type>
-                        </permeability>
-                        <porosity>
-                            <type>Constant</type>
-                            <porosity_parameter>constant_porosity_parameter</porosity_parameter>
-                        </porosity>
-                        <storage>
-                            <type>Constant</type>
-                            <value> 0.0 </value>
-                        </storage>
-                    </porous_medium>
-                </porous_medium>
-            </material_property>
         </process>
     </processes>
+    <media>
+        <medium id="0">
+            <phases>
+                <phase>
+                    <type>AqueousLiquid</type>
+                    <properties>
+                        <property>
+                            <name>viscosity</name>
+                            <type>Constant</type>
+                            <value> 1.e-3 </value>
+                        </property>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value> 1.e3 </value>
+                        </property>
+                    </properties>
+                </phase>
+                <phase>
+                    <type>Solid</type>
+                    <properties>
+                        <property>
+                            <name>storage</name>
+                            <type>Constant</type>
+                            <value> 0.0 </value>
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+            <properties>
+                <property>
+                    <name>permeability</name>
+                    <type>Constant</type>
+                    <value>1.e-12</value>
+                </property>
+                <property>
+                    <name>porosity</name>
+                    <type>Constant</type>
+                    <value>0.2</value>
+                </property>
+                <property>
+                    <name>reference_temperature</name>
+                    <type>Constant</type>
+                    <value>293.15</value>
+                </property>
+            </properties>
+        </medium>
+    </media>
     <time_loop>
         <processes>
             <process ref="LiquidFlow">

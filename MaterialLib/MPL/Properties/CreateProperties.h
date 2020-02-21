@@ -12,6 +12,7 @@
 #pragma once
 
 #include "CreateConstant.h"
+#include "CreateDupuitPermeability.h"
 #include "CreateExponentialProperty.h"
 #include "CreateIdealGasLaw.h"
 #include "CreateLinearProperty.h"

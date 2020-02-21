@@ -36,6 +36,7 @@ public:
     }
 
     Medium* getMedium(std::size_t element_id);
+    Medium const* getMedium(std::size_t element_id) const;
     void checkElementHasMedium(std::size_t const element_id);
 
 private:
