@@ -1,6 +1,5 @@
 build win:
-  extends:
-    - .build_win_definition
+  extends: .template-build-win
 
   variables:
     BUILD_DIR: build-win

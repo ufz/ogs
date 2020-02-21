@@ -1,5 +1,5 @@
 build mac:
-  extends: .build_definition
+  extends: .template-build-linux
 
   tags:
     - mac

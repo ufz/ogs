@@ -1,5 +1,5 @@
-.build_win_definition:
-  stage: test
+.template-build-win:
+  stage: build
 
   tags:
     - windows

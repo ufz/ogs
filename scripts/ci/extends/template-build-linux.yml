@@ -1,5 +1,5 @@
-.build_definition:
-  stage: test
+.template-build-linux:
+  stage: build
   extends:
     - .defaults
     - .test-artifacts

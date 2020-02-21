@@ -1,5 +1,5 @@
 build linux:
-  extends: .build_definition
+  extends: .template-build-linux
 
   variables:
     BUILD_DIR: "build"

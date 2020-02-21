@@ -1,6 +1,5 @@
 build gui win:
-  extends:
-    - .build_win_definition
+  extends: .template-build-win
   stage: gui
   when: manual
 

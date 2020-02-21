@@ -1,5 +1,5 @@
 build docs:
-  stage: test
+  stage: build
   image:
     name: $CONTAINER_GCC_IMAGE
 

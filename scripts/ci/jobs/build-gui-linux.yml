@@ -1,5 +1,5 @@
 build gui linux:
-  extends: .build_definition
+  extends: .template-build-linux
   stage: gui
   when: manual
 

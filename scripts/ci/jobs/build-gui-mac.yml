@@ -1,5 +1,5 @@
 build gui mac:
-  extends: .build_definition
+  extends: .template-build-linux
   stage: gui
   tags:
     - mac
