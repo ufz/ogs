@@ -35,6 +35,9 @@ struct CoordinateSystem final
     Eigen::Matrix<double, Dimension, Dimension> transformation(
         SpatialPosition const& pos) const;
 
+    Eigen::Matrix<double, 3, 3> transformation_3d(
+        SpatialPosition const& pos) const;
+
     template <int Dimension>
     Eigen::Matrix<double, Dimension, Dimension> rotateTensor(
         std::vector<double> const& values, SpatialPosition const& pos) const;
