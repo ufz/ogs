@@ -67,11 +67,5 @@ using VariableType = std::variant<double, Vector, Eigen::Matrix<double, 4, 1>,
 using VariableArray =
     std::array<VariableType, static_cast<int>(Variable::number_of_variables)>;
 
-/// This method returns a value of type double from the variables array
-inline double getScalar(VariableType pv)
-{
-    return std::get<double>(pv);
-}
-
 Variable convertStringToVariable(std::string const& input);
 }  // namespace MaterialPropertyLib
