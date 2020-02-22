@@ -8,9 +8,8 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#include "ParameterLib/Utils.h"
-
-#include "DupuitPermeability.h"
+#include <memory>
+#include <vector>
 
 namespace BaseLib
 {
@@ -24,19 +23,13 @@ struct ParameterBase;
 
 namespace MaterialPropertyLib
 {
+class DupuitPermeability;
+}
+
+namespace MaterialPropertyLib
+{
 std::unique_ptr<DupuitPermeability> createDupuitPermeability(
     BaseLib::ConfigTree const& config,
-    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters)
-{
-    //! \ogs_file_param{properties__property__type}
-    config.checkConfigParameter("type", "Dupuit");
-    DBUG("Create Dupuit permeability.");
-
-    std::string const& parameter_name =
-        //! \ogs_file_param{properties__property__DupuitPermeability__parameter_name}
-        config.getConfigParameter<std::string>("parameter_name");
-    auto const& parameter = ParameterLib::findParameter<double>(
-        parameter_name, parameters, 0, nullptr);
-    return std::make_unique<MaterialPropertyLib::DupuitPermeability>(parameter);
-}
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
+        parameters);
 }  // namespace MaterialPropertyLib
