@@ -19,6 +19,10 @@ namespace ParameterLib
 {
 struct CoordinateSystem;
 }
+namespace MaterialPropertyLib
+{
+class Property;
+}
 
 namespace MaterialPropertyLib
 {
