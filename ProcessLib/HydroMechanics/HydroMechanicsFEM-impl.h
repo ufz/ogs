@@ -303,6 +303,11 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                                           pressure_index)
         .noalias() = -Kup;
 
+    if (_process_data.mass_lumping)
+    {
+        storage_p = storage_p.colwise().sum().eval().asDiagonal();
+    }
+
     // pressure equation, pressure part.
     local_Jac
         .template block<pressure_size, pressure_size>(pressure_index,
