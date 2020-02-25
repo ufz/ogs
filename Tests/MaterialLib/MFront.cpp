@@ -84,9 +84,8 @@ struct MohrCoulombAbboSloanBehaviour
 {
     static std::unique_ptr<MFront::MFront<Dim>> createConstitutiveRelation()
     {
-        auto behaviour =
-            mgis::behaviour::load("libOgsMFrontBehaviour.so",
-                                  "MohrCoulombAbboSloan", hypothesis(Dim));
+        auto behaviour = mgis::behaviour::load(
+            "libOgsMFrontBehaviour.so", "MohrCoulombAbboSloan", hypothesis(Dim));
 
         using P = ParameterLib::ConstantParameter<double>;
         // Parameters used by mfront model in the order of appearence in the

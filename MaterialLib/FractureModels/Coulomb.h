@@ -21,7 +21,7 @@ namespace MaterialLib
 {
 namespace Fracture
 {
-namespace MohrCoulomb
+namespace Coulomb
 {
 template <int DisplacementDim>
 struct StateVariables
@@ -43,7 +43,7 @@ struct StateVariables
 };
 
 template <int DisplacementDim>
-class MohrCoulomb final : public FractureModelBase<DisplacementDim>
+class Coulomb final : public FractureModelBase<DisplacementDim>
 {
 public:
     std::unique_ptr<
@@ -87,7 +87,7 @@ public:
 
 
 public:
-    explicit MohrCoulomb(
+    explicit Coulomb(
         NumLib::NewtonRaphsonSolverParameters nonlinear_solver_parameters,
         double const penalty_aperture_cutoff,
         bool const tension_cutoff,
@@ -148,7 +148,7 @@ private:
     MaterialProperties _mp;
 };
 
-}  // namespace MohrCoulomb
+}  // namespace Coulomb
 }  // namespace Fracture
 }  // namespace MaterialLib
 
@@ -156,10 +156,10 @@ namespace MaterialLib
 {
 namespace Fracture
 {
-namespace MohrCoulomb
+namespace Coulomb
 {
-extern template class MohrCoulomb<2>;
-extern template class MohrCoulomb<3>;
-}  // namespace MohrCoulomb
+extern template class Coulomb<2>;
+extern template class Coulomb<3>;
+}  // namespace Coulomb
 }  // namespace Fracture
 }  // namespace MaterialLib
