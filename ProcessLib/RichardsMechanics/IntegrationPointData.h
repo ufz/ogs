@@ -36,6 +36,7 @@ struct IntegrationPointData final
             MathLib::KelvinVector::KelvinVectorDimensions<
                 DisplacementDim>::value;
         sigma_eff.setZero(kelvin_vector_size);
+        sigma_sw.setZero(kelvin_vector_size);
         eps.setZero(kelvin_vector_size);
 
         // Previous time step values are not initialized and are set later.
@@ -47,6 +48,7 @@ struct IntegrationPointData final
         DisplacementDim, NPoints * DisplacementDim>
         N_u_op;
     typename BMatricesType::KelvinVectorType sigma_eff, sigma_eff_prev;
+    typename BMatricesType::KelvinVectorType sigma_sw, sigma_sw_prev;
     typename BMatricesType::KelvinVectorType eps, eps_prev;
 
     typename ShapeMatrixTypeDisplacement::NodalRowVectorType N_u;
@@ -56,6 +58,7 @@ struct IntegrationPointData final
     typename ShapeMatricesTypePressure::GlobalDimNodalMatrixType dNdx_p;
 
     double saturation = std::numeric_limits<double>::quiet_NaN();
+    double saturation_prev = std::numeric_limits<double>::quiet_NaN();
     double porosity = std::numeric_limits<double>::quiet_NaN();
     double porosity_prev = std::numeric_limits<double>::quiet_NaN();
 
@@ -69,6 +72,8 @@ struct IntegrationPointData final
     {
         eps_prev = eps;
         sigma_eff_prev = sigma_eff;
+        sigma_sw_prev = sigma_sw;
+        saturation_prev = saturation;
         porosity_prev = porosity;
         material_state_variables->pushBackState();
     }
