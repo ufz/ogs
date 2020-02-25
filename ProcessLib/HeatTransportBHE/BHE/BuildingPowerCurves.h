@@ -10,12 +10,6 @@
 
 #pragma once
 
-#include <map>
-#include <memory>
-#include <string>
-
-#include "BaseLib/ConfigTree.h"
-
 namespace MathLib
 {
 class PiecewiseLinearInterpolation;

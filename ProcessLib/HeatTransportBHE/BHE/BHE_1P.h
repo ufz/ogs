@@ -44,22 +44,7 @@ public:
            GroutParameters const& grout,
            FlowAndTemperatureControl const& flowAndTemperatureControl,
            PipeConfiguration1PType const& pipes,
-           bool const usePythonBC)
-        : BHECommon{borehole, refrigerant, grout, flowAndTemperatureControl,
-                    usePythonBC},
-          _pipe(pipes)
-    {
-        _thermal_resistances.fill(std::numeric_limits<double>::quiet_NaN());
-
-        // Initialize thermal resistances.
-        auto values = visit(
-            [&](auto const& control) {
-                return control(refrigerant.reference_temperature,
-                               0. /* initial time */);
-            },
-            flowAndTemperatureControl);
-        updateHeatTransferCoefficients(values.flow_rate);
-    }
+           bool const use_python_bcs);
 
     static constexpr int number_of_unknowns = 2;
     static constexpr int number_of_grout_zones = 1;
@@ -69,7 +54,7 @@ public:
     std::array<double, number_of_unknowns> pipeHeatConductions() const;
 
     std::array<Eigen::Vector3d, number_of_unknowns> pipeAdvectionVectors(
-        Eigen::Vector3d elem_direction_vec) const;
+        Eigen::Vector3d const& elem_direction) const;
 
     template <int NPoints,
               typename SingleUnknownMatrixType,
@@ -127,11 +112,9 @@ public:
         {0, 1}};
 
 public:
-    std::array<double, number_of_unknowns> crossSectionAreas() const
-    {
-        return {{_pipe.single_pipe.area(),
-                 borehole_geometry.area() - _pipe.single_pipe.outsideArea()}};
-    }
+    std::array<double, number_of_unknowns> crossSectionAreas() const;
+
+    void updateHeatTransferCoefficients(double const flow_rate);
 
 protected:
     PipeConfiguration1PType const _pipe;
@@ -140,8 +123,6 @@ protected:
     double _flow_velocity = std::numeric_limits<double>::quiet_NaN();
 
 private:
-    void updateHeatTransferCoefficients(double const flow_rate);
-
     std::array<double, number_of_unknowns> calcThermalResistances(
         double const Nu);
 

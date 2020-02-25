@@ -10,10 +10,9 @@
 
 #pragma once
 
-#include <Eigen/Eigen>
-#include "BHECommon.h"
-#include "FlowAndTemperatureControl.h"
-#include "PipeConfiguration1PType.h"
+#include <map>
+#include <memory>
+#include <string>
 
 namespace BaseLib
 {

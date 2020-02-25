@@ -21,6 +21,28 @@ namespace HeatTransportBHE
 {
 namespace BHE
 {
+BHE_1P::BHE_1P(BoreholeGeometry const& borehole,
+               RefrigerantProperties const& refrigerant,
+               GroutParameters const& grout,
+               FlowAndTemperatureControl const& flowAndTemperatureControl,
+               PipeConfiguration1PType const& pipes,
+               bool const use_python_bcs)
+    : BHECommon{borehole, refrigerant, grout, flowAndTemperatureControl,
+                use_python_bcs},
+      _pipe(pipes)
+{
+    _thermal_resistances.fill(std::numeric_limits<double>::quiet_NaN());
+
+    // Initialize thermal resistances.
+    auto values = visit(
+        [&](auto const& control) {
+            return control(refrigerant.reference_temperature,
+                           0. /* initial time */);
+        },
+        flowAndTemperatureControl);
+    updateHeatTransferCoefficients(values.flow_rate);
+}
+
 std::array<double, BHE_1P::number_of_unknowns> BHE_1P::pipeHeatCapacities()
     const
 {
@@ -57,12 +79,11 @@ std::array<double, BHE_1P::number_of_unknowns> BHE_1P::pipeHeatConductions()
 }
 
 std::array<Eigen::Vector3d, BHE_1P::number_of_unknowns>
-BHE_1P::pipeAdvectionVectors(Eigen::Vector3d elem_direction_vec) const
+BHE_1P::pipeAdvectionVectors(Eigen::Vector3d const& elem_direction) const
 {
     double const& rho_r = refrigerant.density;
     double const& Cp_r = refrigerant.specific_heat_capacity;
-    Eigen::Vector3d adv_vector =
-        rho_r * Cp_r * _flow_velocity * elem_direction_vec;
+    Eigen::Vector3d adv_vector = rho_r * Cp_r * _flow_velocity * elem_direction;
 
     return {// pipe, Eq. 19
             adv_vector,
@@ -86,7 +107,7 @@ void BHE_1P::updateHeatTransferCoefficients(double const flow_rate)
         calcThermalResistances(tm_flow_properties.nusselt_number);
 }
 
-/// Nu is the Nusselt number.
+// Nu is the Nusselt number.
 std::array<double, BHE_1P::number_of_unknowns> BHE_1P::calcThermalResistances(
     double const Nu)
 {
@@ -124,6 +145,12 @@ std::array<double, BHE_1P::number_of_unknowns> BHE_1P::calcThermalResistances(
     double const R_fg = R_adv_i1 + R_con_a + R_con_b;
 
     return {{R_fg, R_gs}};
+}
+
+std::array<double, BHE_1P::number_of_unknowns> BHE_1P::crossSectionAreas() const
+{
+    return {{_pipe.single_pipe.area(),
+             borehole_geometry.area() - _pipe.single_pipe.outsideArea()}};
 }
 
 double BHE_1P::updateFlowRateAndTemperature(double const T_out,

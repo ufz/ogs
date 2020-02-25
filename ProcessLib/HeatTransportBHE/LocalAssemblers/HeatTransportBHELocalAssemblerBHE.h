@@ -29,10 +29,11 @@ class HeatTransportBHELocalAssemblerBHE
     : public HeatTransportBHELocalAssemblerInterface
 {
     static constexpr int bhe_unknowns = BHEType::number_of_unknowns;
-    static constexpr int n_int_points = ShapeFunction::NPOINTS;
+    static constexpr int single_bhe_unknowns_size = ShapeFunction::NPOINTS;
     static constexpr int soil_temperature_size = ShapeFunction::NPOINTS;
     static constexpr int soil_temperature_index = 0;
-    static constexpr int bhe_unknowns_size = n_int_points * bhe_unknowns;
+    static constexpr int bhe_unknowns_size =
+        single_bhe_unknowns_size * bhe_unknowns;
     static constexpr int bhe_unknowns_index = ShapeFunction::NPOINTS;
     static constexpr int local_matrix_size =
         soil_temperature_size + bhe_unknowns_size;
@@ -90,7 +91,7 @@ private:
 
     SecondaryData<typename ShapeMatrices::ShapeType> _secondary_data;
 
-    Eigen::Vector3d _element_direction_vector;
+    Eigen::Vector3d _element_direction;
 
     typename ShapeMatricesType::template MatrixType<bhe_unknowns_size,
                                                     bhe_unknowns_size>

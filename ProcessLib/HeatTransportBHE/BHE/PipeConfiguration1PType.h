@@ -9,7 +9,7 @@
  */
 
 #pragma once
-#include "BaseLib/ConfigTree.h"
+
 #include "Pipe.h"
 
 namespace ProcessLib

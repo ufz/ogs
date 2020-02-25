@@ -51,8 +51,7 @@ public:
     std::array<double, number_of_unknowns> pipeHeatConductions() const;
 
     std::array<Eigen::Vector3d, number_of_unknowns> pipeAdvectionVectors(
-        Eigen::Vector3d /*elem_direction_vec*/)
-        const;
+        Eigen::Vector3d const& /*elem_direction*/) const;
 
     double cross_section_area_inner_pipe, cross_section_area_annulus,
         cross_section_area_grout;

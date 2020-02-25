@@ -13,7 +13,7 @@
 
 #include "BHE_1P.h"
 #include "CreateFlowAndTemperatureControl.h"
-#include "PipeConfiguration1PType.h"
+
 namespace ProcessLib
 {
 namespace HeatTransportBHE
@@ -34,7 +34,7 @@ parseBHE1PTypeConfig(
 {
     // if the BHE is using python boundary condition
     auto const bhe_if_use_python_bc_conf =
-        config.getConfigParameter<bool>("bhe_if_use_python_bc", false);
+        config.getConfigParameter<bool>("use_bhe_pipe_network", false);
     DBUG("If using python boundary condition : %s",
          (bhe_if_use_python_bc_conf) ? "true" : "false");
 

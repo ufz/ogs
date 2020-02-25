@@ -325,23 +325,6 @@ void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
                     get_global_index(nodes_and_components[1].first,
                                      nodes_and_components[1].second));
             };
-        auto get_global_bhe_1P_bc_indices =
-            [&](std::size_t const top_node_id,
-                std::size_t const bottom_node_id) {
-                return std::make_pair(
-                    _local_to_global_index_map->getGlobalIndex(
-                        {_mesh.getID(), MeshLib::MeshItemType::Node,
-                         top_node_id},
-                        variable_id),
-                    _local_to_global_index_map->getGlobalIndex(
-                        {_mesh.getID(), MeshLib::MeshItemType::Node,
-                         bottom_node_id},
-                        variable_id));
-            };
-
-        auto number_of_unknowns =
-            visit([](auto const& bhe) { return bhe.number_of_unknowns; },
-                  _process_data._vec_BHE_property[bhe_i]);
 
         auto createBCs = [&, bc_top_node_id = bhe_boundary_nodes[0]->getID(),
                           bc_bottom_node_id =
