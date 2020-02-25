@@ -183,6 +183,11 @@ void RichardsMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
                                DisplacementDim>::RowsAtCompileTime,
                            &LocalAssemblerIF::getIntPtSigma);
 
+    add_secondary_variable("swelling_stress",
+                           MathLib::KelvinVector::KelvinVectorType<
+                               DisplacementDim>::RowsAtCompileTime,
+                           &LocalAssemblerIF::getIntPtSwellingStress);
+
     add_secondary_variable("epsilon",
                            MathLib::KelvinVector::KelvinVectorType<
                                DisplacementDim>::RowsAtCompileTime,

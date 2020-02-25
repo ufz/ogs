@@ -780,6 +780,36 @@ template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
 std::vector<double> const& RichardsMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
     DisplacementDim>::
+    getIntPtSwellingStress(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const
+{
+    static const int kelvin_vector_size =
+        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
+    auto const num_intpts = _ip_data.size();
+
+    cache.clear();
+    auto cache_mat = MathLib::createZeroedMatrix<Eigen::Matrix<
+        double, kelvin_vector_size, Eigen::Dynamic, Eigen::RowMajor>>(
+        cache, kelvin_vector_size, num_intpts);
+
+    for (unsigned ip = 0; ip < num_intpts; ++ip)
+    {
+        auto const& sigma_sw = _ip_data[ip].sigma_sw;
+        cache_mat.col(ip) =
+            MathLib::KelvinVector::kelvinVectorToSymmetricTensor(sigma_sw);
+    }
+
+    return cache;
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          typename IntegrationMethod, int DisplacementDim>
+std::vector<double> const& RichardsMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    DisplacementDim>::
     getIntPtEpsilon(
         const double /*t*/,
         std::vector<GlobalVector*> const& /*x*/,
