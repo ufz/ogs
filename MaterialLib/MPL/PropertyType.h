@@ -71,6 +71,7 @@ enum PropertyType : int
     saturation,
     specific_heat_capacity,
     storage,
+    swelling_stress_rate,
     thermal_conductivity,
     thermal_expansivity,
     thermal_longitudinal_dispersivity,
@@ -224,6 +225,10 @@ inline PropertyType convertStringToProperty(std::string const& inString)
     {
         return PropertyType::storage;
     }
+    if (boost::iequals(inString, "swelling_stress_rate"))
+    {
+        return PropertyType::swelling_stress_rate;
+    }
     if (boost::iequals(inString, "thermal_conductivity"))
     {
         return PropertyType::thermal_conductivity;
@@ -292,6 +297,7 @@ static const std::array<std::string, PropertyType::number_of_properties>
                              "saturation",
                              "specific_heat_capacity",
                              "storage",
+                             "swelling_stress_rate",
                              "thermal_conductivity",
                              "thermal_expansivity",
                              "thermal_longitudinal_dispersivity",
