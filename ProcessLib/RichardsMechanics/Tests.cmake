@@ -206,3 +206,41 @@ AddTest(
     GLOB orthotropic_power_law_permeability_xyz_pcs_0_ts_*.vtu porosity porosity 5e-14 1e-15
     GLOB orthotropic_power_law_permeability_xyz_pcs_0_ts_*.vtu porosity_avg porosity_avg 5e-14 1e-15
 )
+AddTest(
+    NAME RichardsMechanics_orthotropic_swelling_xyz
+    PATH RichardsMechanics
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS orthotropic_swelling_xyz.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    GLOB orthotropic_swelling_xyz_pcs_0_ts_*.vtu pressure pressure 1e-15 0
+    GLOB orthotropic_swelling_xyz_pcs_0_ts_*.vtu saturation saturation 1e-14 1e-15
+    GLOB orthotropic_swelling_xyz_pcs_0_ts_*.vtu displacement displacement 1e-15 0
+    GLOB orthotropic_swelling_xyz_pcs_0_ts_*.vtu sigma sigma 1e-15 0
+    GLOB orthotropic_swelling_xyz_pcs_0_ts_*.vtu swelling_stress swelling_stress 1e-15 0
+    GLOB orthotropic_swelling_xyz_pcs_0_ts_*.vtu epsilon epsilon 1e-15 0
+    GLOB orthotropic_swelling_xyz_pcs_0_ts_*.vtu velocity velocity 1e-15 0
+    GLOB orthotropic_swelling_xyz_pcs_0_ts_*.vtu porosity porosity 5e-15 1e-15
+    GLOB orthotropic_swelling_xyz_pcs_0_ts_*.vtu porosity_avg porosity_avg 5e-15 1e-15
+)
+AddTest(
+    NAME RichardsMechanics_orthotropic_swelling_xy
+    PATH RichardsMechanics
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS orthotropic_swelling_xy.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    GLOB orthotropic_swelling_xy_pcs_0_ts_*.vtu pressure pressure 1e-15 0
+    GLOB orthotropic_swelling_xy_pcs_0_ts_*.vtu saturation saturation 2e-15 1e-15
+    GLOB orthotropic_swelling_xy_pcs_0_ts_*.vtu displacement displacement 1e-15 0
+    GLOB orthotropic_swelling_xy_pcs_0_ts_*.vtu sigma sigma 1e-15 0
+    GLOB orthotropic_swelling_xy_pcs_0_ts_*.vtu swelling_stress swelling_stress 1e-15 0
+    GLOB orthotropic_swelling_xy_pcs_0_ts_*.vtu epsilon epsilon 1e-15 0
+    GLOB orthotropic_swelling_xy_pcs_0_ts_*.vtu velocity velocity 1e-15 0
+    GLOB orthotropic_swelling_xy_pcs_0_ts_*.vtu porosity porosity 1e-15 1e-15
+    GLOB orthotropic_swelling_xy_pcs_0_ts_*.vtu porosity_avg porosity_avg 1e-15 1e-15
+)
