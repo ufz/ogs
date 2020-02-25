@@ -254,6 +254,18 @@ void RichardsMechanicsProcess<DisplacementDim>::initializeBoundaryConditions()
 }
 
 template <int DisplacementDim>
+void RichardsMechanicsProcess<
+    DisplacementDim>::setInitialConditionsConcreteProcess(GlobalVector const& x,
+                                                          double const t)
+{
+    DBUG("SetInitialConditions RichardsMechanicsProcess.");
+
+    GlobalExecutor::executeMemberOnDereferenced(
+        &LocalAssemblerIF::setInitialConditions, _local_assemblers,
+        *_local_to_global_index_map, x, t);
+}
+
+template <int DisplacementDim>
 void RichardsMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
     const double t, double const dt, std::vector<GlobalVector*> const& x,
     std::vector<GlobalVector*> const& xdot, int const process_id,

@@ -71,6 +71,9 @@ public:
         unsigned const integration_order,
         RichardsMechanicsProcessData<DisplacementDim>& process_data);
 
+    void setInitialConditionsConcrete(std::vector<double> const& local_x,
+                                      double const t) override;
+
     void assemble(double const t, double const dt,
                   std::vector<double> const& local_x,
                   std::vector<double> const& local_xdot,

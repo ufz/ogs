@@ -110,6 +110,50 @@ template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           typename IntegrationMethod, int DisplacementDim>
 void RichardsMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    DisplacementDim>::setInitialConditionsConcrete(std::vector<double> const&
+                                                       local_x,
+                                                   double const t)
+{
+    assert(local_x.size() == pressure_size + displacement_size);
+
+    auto p_L =
+        Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
+            pressure_size> const>(local_x.data() + pressure_index,
+                                  pressure_size);
+
+    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    MPL::VariableArray variables;
+
+    ParameterLib::SpatialPosition x_position;
+    x_position.setElementID(_element.getID());
+
+    unsigned const n_integration_points =
+        _integration_method.getNumberOfPoints();
+    for (unsigned ip = 0; ip < n_integration_points; ip++)
+    {
+        x_position.setIntegrationPoint(ip);
+
+        auto const& N_p = _ip_data[ip].N_p;
+
+        double p_cap_ip;
+        NumLib::shapeFunctionInterpolate(-p_L, N_p, p_cap_ip);
+
+        variables[static_cast<int>(MPL::Variable::capillary_pressure)] =
+            p_cap_ip;
+        variables[static_cast<int>(MPL::Variable::phase_pressure)] = -p_cap_ip;
+
+        _ip_data[ip].saturation_prev =
+            medium->property(MPL::PropertyType::saturation)
+                .template value<double>(
+                    variables, x_position, t,
+                    std::numeric_limits<double>::quiet_NaN());
+    }
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          typename IntegrationMethod, int DisplacementDim>
+void RichardsMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
     DisplacementDim>::assemble(double const t, double const dt,
                                std::vector<double> const& local_x,
                                std::vector<double> const& local_xdot,
