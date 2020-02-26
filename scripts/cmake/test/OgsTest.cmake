@@ -33,9 +33,11 @@ function (OgsTest)
             set(TEST_NAME "${TEST_NAME}-mpi")
         endif()
     endif()
+    set(BATS_FILENAME benchmarks.bats)
     # Add -LARGE tag.
     if (${OgsTest_LARGE})
         set(TEST_NAME "${TEST_NAME}-LARGE")
+        set(BATS_FILENAME benchmarks-large.bats)
     endif()
 
     add_test(
@@ -49,7 +51,7 @@ function (OgsTest)
     #    COMMAND ${OgsTest_WRAPPER} $<TARGET_FILE:ogs> -r ${OgsTest_SOURCE_DIR} ${OgsTest_SOURCE_DIR}/${OgsTest_NAME})
 
     # bats container benchmark runner
-    file(APPEND ${PROJECT_BINARY_DIR}/benchmarks.bats "\
+    file(APPEND ${PROJECT_BINARY_DIR}/${BATS_FILENAME} "\
 @test \"benchmark - ${TEST_NAME}\" {\n\
   rm -r $OUT/${OgsTest_DIR} | true\n\
   mkdir -p $OUT/${OgsTest_DIR}\n\

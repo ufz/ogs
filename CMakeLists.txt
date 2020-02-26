@@ -379,6 +379,8 @@ if(OGS_BUILD_CLI OR OGS_BUILD_UTILS OR BUILD_TESTING)
 # export SRC=/abs/path/to/ogs-source-dir/Tests/Data\n\
 # bats benchmarks.bats\n\n\
 ")
+    file(WRITE ${PROJECT_BINARY_DIR}/benchmarks-large.bats "\
+# --- see benchmarks.bats for usage ---\n")
     add_subdirectory(ProcessLib)
 endif()
 if(BUILD_TESTING AND NOT IS_SUBPROJECT)
