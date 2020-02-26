@@ -154,7 +154,7 @@ pipeline {
               publishHTML(target: [allowMissing: false, alwaysLinkToLastBuild: true,
                   keepAll: true, reportDir: 'build/docs', reportFiles: 'index.html',
                   reportName: 'Doxygen'])
-              archiveArtifacts 'build/*.tar.gz,build/conaninfo.txt'
+              archiveArtifacts 'build/*.tar.gz,build/conaninfo.txt,build/*.bats'
               script {
                 if (env.JOB_NAME == 'ufz/ogs/master') {
                   // Deploy Doxygen
