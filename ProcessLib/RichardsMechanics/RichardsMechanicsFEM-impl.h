@@ -302,6 +302,10 @@ void RichardsMechanicsLocalAssembler<
                                          MPL::Variable::capillary_pressure,
                                          x_position, t, dt);
 
+        auto const chi_S_L =
+            medium->property(MPL::PropertyType::bishops_effective_stress)
+                .template value<double>(variables, x_position, t, dt);
+
         double const k_rel =
             medium->property(MPL::PropertyType::relative_permeability)
                 .template value<double>(variables, x_position, t, dt);
@@ -370,7 +374,8 @@ void RichardsMechanicsLocalAssembler<
         //
         K.template block<displacement_size, pressure_size>(displacement_index,
                                                            pressure_index)
-            .noalias() -= B.transpose() * alpha * S_L * identity2 * N_p * w;
+            .noalias() -=
+            B.transpose() * alpha * chi_S_L * identity2 * N_p * w;
 
         //
         // pressure equation, displacement part.
@@ -571,6 +576,15 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                     variables, MPL::Variable::capillary_pressure,
                     MPL::Variable::capillary_pressure, x_position, t, dt);
 
+        auto const chi = [&](double const S_L) {
+            MPL::VariableArray variables;
+            variables[static_cast<int>(MPL::Variable::liquid_saturation)] = S_L;
+            return medium->property(MPL::PropertyType::bishops_effective_stress)
+                .template value<double>(variables, x_position, t, dt);
+        };
+        double const chi_S_L = chi(S_L);
+        double const chi_S_L_prev = chi(S_L_prev);
+
         double const k_rel =
             medium->property(MPL::PropertyType::relative_permeability)
                 .template value<double>(variables, x_position, t, dt);
@@ -617,13 +631,19 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         //
         // displacement equation, pressure part
         //
-        Kup.noalias() += B.transpose() * alpha * S_L * identity2 * N_p * w;
+        Kup.noalias() += B.transpose() * alpha * chi_S_L * identity2 * N_p * w;
 
+        auto const dchi_dS_L =
+            medium->property(MPL::PropertyType::bishops_effective_stress)
+                .template dValue<double>(variables,
+                                         MPL::Variable::liquid_saturation,
+                                         x_position, t, dt);
         local_Jac
             .template block<displacement_size, pressure_size>(
                 displacement_index, pressure_index)
             .noalias() -= B.transpose() * alpha *
-                          (S_L + p_cap_ip * dS_L_dp_cap) * identity2 * N_p * w;
+                          (chi_S_L + dchi_dS_L * p_cap_ip * dS_L_dp_cap) *
+                          identity2 * N_p * w;
 
         local_Jac
             .template block<displacement_size, pressure_size>(
