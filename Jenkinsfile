@@ -124,6 +124,7 @@ pipeline {
               build { target="ctest" }
               build { target="doc" }
             }
+            stash name: 'bats-files', includes: 'build/*.bats'
           }
           post {
             always {
@@ -689,37 +690,6 @@ pipeline {
             // }
           // }
         }
-        // ********************* Update ufz/ogs-data ***************************
-        stage('Update ogs-data') {
-          when {
-            beforeAgent true
-            allOf {
-              expression { return params.master_jobs }
-              environment name: 'JOB_NAME', value: 'ufz/ogs/master'
-            }
-          }
-          agent { label "master"}
-          steps {
-            script {
-              dir('ogs') { checkout scm }
-              dir('ogs-data') {
-                checkout(changelog: false, poll: false, scm: [$class: 'GitSCM',
-                  extensions: [[$class: 'CloneOption', shallow: true]],
-                  userRemoteConfigs: [[
-                    credentialsId: '2719b702-1298-4e87-8464-5dfc62fbd923',
-                    url: 'https://github.com/ufz/ogs-data']]])
-                sh 'rsync -av --delete --exclude .git/ ../ogs/Tests/Data/ .'
-                unstash 'bats-files'
-                sh "git add --all . && git diff --quiet && git diff --staged --quiet || git commit -am 'Update'"
-                withCredentials([usernamePassword(
-                  credentialsId: '2719b702-1298-4e87-8464-5dfc62fbd923',
-                  passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
-                  sh 'git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/ufz/ogs-data HEAD:master'
-                }
-              }
-            }
-          }
-        }
         // ******************** Container Maker Images *************************
         stage('Container Maker Images') {
           when {
@@ -813,5 +783,34 @@ pipeline {
         }
       } // end parallel
     } // end stage Build
+    stage('Post') {
+      parallel {
+        // ********************* Update ufz/ogs-data ***************************
+        stage('Update ogs-data') {
+          agent { label "master"}
+          steps {
+            script {
+              dir('ogs') { checkout scm }
+              dir('ogs-data') {
+                checkout(changelog: false, poll: false, scm: [$class: 'GitSCM',
+                  extensions: [[$class: 'CloneOption', shallow: true]],
+                  userRemoteConfigs: [[
+                    credentialsId: '2719b702-1298-4e87-8464-5dfc62fbd923',
+                    url: 'https://github.com/ufz/ogs-data']]])
+                sh 'rsync -av --delete --exclude .git/ ../ogs/Tests/Data/ .'
+                unstash 'bats-files'
+                sh 'mv build/*.bats . && rm -r build'
+                sh "git add --all . && git diff --quiet && git diff --staged --quiet || git commit -am 'Update'"
+                withCredentials([usernamePassword(
+                  credentialsId: '2719b702-1298-4e87-8464-5dfc62fbd923',
+                  passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+                  sh 'git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/ufz/ogs-data HEAD:master'
+                }
+              }
+            }
+          }
+        }
+      } // end parallel
+    } // end stage Post
   }
 }
