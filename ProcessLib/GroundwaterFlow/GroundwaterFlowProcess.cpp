@@ -18,6 +18,27 @@ namespace ProcessLib
 {
 namespace GroundwaterFlow
 {
+
+void checkMPLProperties(MeshLib::Mesh const& mesh,
+                        GroundwaterFlowProcessData const& process_data)
+{
+    DBUG("Check the media properties of HT process ...");
+
+    std::array const requiredPropertyMedium = {
+        MaterialPropertyLib::PropertyType::reference_temperature,
+        MaterialPropertyLib::PropertyType::diffusion};
+
+    for (auto const& element : mesh.getElements())
+    {
+        auto const element_id = element->getID();
+
+        auto const& medium = *process_data.media_map->getMedium(element_id);
+        MaterialPropertyLib::checkRequiredProperties(
+            medium, requiredPropertyMedium);
+    }
+    DBUG("Media properties verified.");
+}
+
 GroundwaterFlowProcess::GroundwaterFlowProcess(
     std::string name,
     MeshLib::Mesh& mesh,
@@ -42,6 +63,7 @@ void GroundwaterFlowProcess::initializeConcreteProcess(
     MeshLib::Mesh const& mesh,
     unsigned const integration_order)
 {
+    checkMPLProperties(mesh, _process_data);
     const int process_id = 0;
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     ProcessLib::createLocalAssemblers<LocalAssemblerData>(
