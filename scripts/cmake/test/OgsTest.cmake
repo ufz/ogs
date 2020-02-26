@@ -48,6 +48,16 @@ function (OgsTest)
     #    WORKING_DIRECTORY ${OgsTest_BINARY_DIR}
     #    COMMAND ${OgsTest_WRAPPER} $<TARGET_FILE:ogs> -r ${OgsTest_SOURCE_DIR} ${OgsTest_SOURCE_DIR}/${OgsTest_NAME})
 
+    # bats container benchmark runner
+    file(APPEND ${PROJECT_BINARY_DIR}/benchmarks.bats "\
+@test \"benchmark - ${TEST_NAME}\" {\n\
+  rm -r $OUT/${OgsTest_DIR} | true\n\
+  mkdir -p $OUT/${OgsTest_DIR}\n\
+  run singularity exec $SIF scif run ogs -o $OUT/${OgsTest_DIR} -r $SRC/${OgsTest_DIR} $SRC/${OgsTest_DIR}/${OgsTest_NAME}\n\
+  [ \"$status\" -eq 0 ]\n\
+}\n\n\
+")
+
     set_tests_properties(${TEST_NAME} PROPERTIES
         ENVIRONMENT VTKDIFF_EXE=$<TARGET_FILE:vtkdiff>
         COST ${OgsTest_RUNTIME})

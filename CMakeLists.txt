@@ -365,6 +365,20 @@ endif()
 if(OGS_BUILD_CLI OR OGS_BUILD_UTILS OR BUILD_TESTING)
     add_subdirectory(ParameterLib)
     add_subdirectory(MaterialLib)
+    # Prepare bats container benchmark runner
+    file(WRITE ${PROJECT_BINARY_DIR}/benchmarks.bats "\
+# --- Container benchmark runner ---\n\
+#\n\
+# Requirements:\n\
+#   - bats (https://github.com/bats-core/bats-core)\n\
+#   - Singularity OGS container, e.g. from https://www.opengeosys.org/releases/\n\
+#\n\
+# Usage:\n\
+# export SIF=./path/to/ogs-xx.sif\n\
+# export OUT=/abs/path/to/output/dir\n\
+# export SRC=/abs/path/to/ogs-source-dir/Tests/Data\n\
+# bats benchmarks.bats\n\n\
+")
     add_subdirectory(ProcessLib)
 endif()
 if(BUILD_TESTING AND NOT IS_SUBPROJECT)
