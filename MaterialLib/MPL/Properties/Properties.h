@@ -12,6 +12,7 @@
 #pragma once
 
 #include "BishopsPowerLaw.h"
+#include "BishopsSaturationCutoff.h"
 #include "Constant.h"
 #include "DupuitPermeability.h"
 #include "ExponentialProperty.h"
