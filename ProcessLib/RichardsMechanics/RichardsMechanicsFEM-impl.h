@@ -251,11 +251,12 @@ void RichardsMechanicsLocalAssembler<
         double p_cap_ip;
         NumLib::shapeFunctionInterpolate(-p_L, N_p, p_cap_ip);
 
+        double p_cap_dot_ip;
+        NumLib::shapeFunctionInterpolate(-p_L_dot, N_p, p_cap_dot_ip);
+
         variables[static_cast<int>(MPL::Variable::capillary_pressure)] =
             p_cap_ip;
         variables[static_cast<int>(MPL::Variable::phase_pressure)] = -p_cap_ip;
-        variables[static_cast<int>(MPL::Variable::phase_pressure_rate)] =
-            N_p.dot(p_L_dot);
 
         auto const temperature =
             medium->property(MPL::PropertyType::reference_temperature)
@@ -275,15 +276,6 @@ void RichardsMechanicsLocalAssembler<
             liquid_phase.property(MPL::PropertyType::bulk_modulus)
                 .template value<double>(variables, x_position, t, dt);
 
-        // Use previous time step porosity for porosity update, ...
-        variables[static_cast<int>(MPL::Variable::porosity)] =
-            _ip_data[ip].porosity_prev;
-        auto& porosity = _ip_data[ip].porosity;
-        porosity = solid_phase.property(MPL::PropertyType::porosity)
-                       .template value<double>(variables, x_position, t, dt);
-        // ... then use new porosity.
-        variables[static_cast<int>(MPL::Variable::porosity)] = porosity;
-
         auto const rho_LR =
             liquid_phase.property(MPL::PropertyType::density)
                 .template value<double>(variables, x_position, t, dt);
@@ -302,9 +294,30 @@ void RichardsMechanicsLocalAssembler<
                                          MPL::Variable::capillary_pressure,
                                          x_position, t, dt);
 
-        auto const chi_S_L =
-            medium->property(MPL::PropertyType::bishops_effective_stress)
+        auto const chi = [&](double const S_L) {
+            MPL::VariableArray variables;
+            variables[static_cast<int>(MPL::Variable::liquid_saturation)] = S_L;
+            return medium->property(MPL::PropertyType::bishops_effective_stress)
                 .template value<double>(variables, x_position, t, dt);
+        };
+        double const chi_S_L = chi(S_L);
+        double const chi_S_L_prev = chi(S_L_prev);
+
+        variables[static_cast<int>(
+            MPL::Variable::effective_pore_pressure_rate)] =
+            (chi_S_L * (-p_cap_ip) -
+             chi_S_L_prev * (-p_cap_ip + p_cap_dot_ip * dt)) /
+            dt;
+
+        // Use previous time step porosity for porosity update, ...
+        variables[static_cast<int>(MPL::Variable::porosity)] =
+            _ip_data[ip].porosity_prev;
+        auto& porosity = _ip_data[ip].porosity;
+        porosity = solid_phase.property(MPL::PropertyType::porosity)
+                       .template value<double>(variables, x_position, t, dt);
+        // ... then use new porosity.
+        variables[static_cast<int>(MPL::Variable::porosity)] = porosity;
+
 
         double const k_rel =
             medium->property(MPL::PropertyType::relative_permeability)
@@ -516,8 +529,6 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         variables[static_cast<int>(MPL::Variable::capillary_pressure)] =
             p_cap_ip;
         variables[static_cast<int>(MPL::Variable::phase_pressure)] = -p_cap_ip;
-        variables[static_cast<int>(MPL::Variable::phase_pressure_rate)] =
-            N_p.dot(p_L_dot);
         variables[static_cast<int>(MPL::Variable::volumetric_strain_rate)]
             .emplace<double>(identity2.transpose() * B * u_dot);
         auto const temperature =
@@ -543,15 +554,6 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const K_LR =
             liquid_phase.property(MPL::PropertyType::bulk_modulus)
                 .template value<double>(variables, x_position, t, dt);
-
-        // Use previous time step porosity for porosity update, ...
-        variables[static_cast<int>(MPL::Variable::porosity)] =
-            _ip_data[ip].porosity_prev;
-        auto& porosity = _ip_data[ip].porosity;
-        porosity = solid_phase.property(MPL::PropertyType::porosity)
-                       .template value<double>(variables, x_position, t, dt);
-        // ... then use new porosity.
-        variables[static_cast<int>(MPL::Variable::porosity)] = porosity;
 
         auto const rho_LR =
             liquid_phase.property(MPL::PropertyType::density)
@@ -595,6 +597,21 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 .value(variables, x_position, t, dt));
 
         GlobalDimMatrixType const rho_Ki_over_mu = K_intrinsic * rho_LR / mu;
+
+        variables[static_cast<int>(
+            MPL::Variable::effective_pore_pressure_rate)] =
+            (chi_S_L * (-p_cap_ip) -
+             chi_S_L_prev * (-p_cap_ip + p_cap_dot_ip * dt)) /
+            dt;
+
+        // Use previous time step porosity for porosity update, ...
+        variables[static_cast<int>(MPL::Variable::porosity)] =
+            _ip_data[ip].porosity_prev;
+        auto& porosity = _ip_data[ip].porosity;
+        porosity = solid_phase.property(MPL::PropertyType::porosity)
+                       .template value<double>(variables, x_position, t, dt);
+        // ... then use new porosity.
+        variables[static_cast<int>(MPL::Variable::porosity)] = porosity;
 
         sigma_sw = sigma_sw_prev;
         if (solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate))
