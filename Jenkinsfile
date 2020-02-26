@@ -710,8 +710,10 @@ pipeline {
                 python ThirdParty/container-maker/ogscm/cli.py -B -C -R \
                   -j $NUM_THREADS --ogs . --pm system --cvode \
                   --ompi off 2.1.6 3.1.4 4.0.1
+                cp _out_images/ogs*serial*.sif ogs-serial.sif
               '''.stripIndent()
             }
+            stash name: 'serial-sif', includes: 'ogs-serial.sif'
           }
           post {
             success {
@@ -785,27 +787,46 @@ pipeline {
     } // end stage Build
     stage('Post') {
       parallel {
-        // ********************* Update ufz/ogs-data ***************************
-        stage('Update ogs-data') {
-          agent { label "master"}
-          steps {
-            script {
-              dir('ogs') { checkout scm }
-              dir('ogs-data') {
-                checkout(changelog: false, poll: false, scm: [$class: 'GitSCM',
-                  extensions: [[$class: 'CloneOption', shallow: true]],
-                  userRemoteConfigs: [[
-                    credentialsId: '2719b702-1298-4e87-8464-5dfc62fbd923',
-                    url: 'https://github.com/ufz/ogs-data']]])
-                sh 'rsync -av --delete --exclude .git/ ../ogs/Tests/Data/ .'
-                unstash 'bats-files'
-                sh 'mv build/*.bats . && rm -r build'
-                sh "git add --all . && git diff --quiet && git diff --staged --quiet || git commit -am 'Update'"
-                withCredentials([usernamePassword(
-                  credentialsId: '2719b702-1298-4e87-8464-5dfc62fbd923',
-                  passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
-                  sh 'git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/ufz/ogs-data HEAD:master'
+        // ********************* External benchmarks ***************************
+        stage('External Benchmarks') {
+          agent { label "envinf1" }
+          when {
+            beforeAgent true
+            environment name: 'JOB_NAME', value: 'ufz/ogs/master'
+          }
+          environment {
+            SIF = "ogs-serial.sif"
+            SRC = "$WORKSPACE/ogs-data"
+            OUT = "$WORKSPACE/out"
+          }
+          stages {
+            stage('Update ogs-data') {
+              steps {
+                script {
+                  dir('ogs') { checkout scm }
+                  dir('ogs-data') {
+                    checkout(changelog: false, poll: false, scm: [$class: 'GitSCM',
+                      extensions: [[$class: 'CloneOption', shallow: true]],
+                      userRemoteConfigs: [[
+                        credentialsId: '2719b702-1298-4e87-8464-5dfc62fbd923',
+                        url: 'https://github.com/ufz/ogs-data']]])
+                    sh 'rsync -av --delete --exclude .git/ ../ogs/Tests/Data/ .'
+                    unstash 'bats-files'
+                    sh 'mv build/*.bats . && rm -r build'
+                    sh "git add --all . && git diff --quiet && git diff --staged --quiet || git commit -am 'Update'"
+                    withCredentials([usernamePassword(
+                      credentialsId: '2719b702-1298-4e87-8464-5dfc62fbd923',
+                      passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+                      sh 'git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/ufz/ogs-data HEAD:master'
+                    }
+                  }
                 }
+              }
+            }
+            stage('Container benchmarks') {
+              steps {
+                unstash 'serial-sif'
+                sh 'bats ogs-data/benchmarks.bats'
               }
             }
           }
