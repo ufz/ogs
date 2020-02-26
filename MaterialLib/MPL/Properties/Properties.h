@@ -11,6 +11,7 @@
  */
 #pragma once
 
+#include "BishopsPowerLaw.h"
 #include "Constant.h"
 #include "DupuitPermeability.h"
 #include "ExponentialProperty.h"

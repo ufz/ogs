@@ -36,6 +36,7 @@ enum PropertyType : int
     acentric_factor,
     binary_interaction_coefficient,
     biot_coefficient,
+    bishops_effective_stress,
     brooks_corey_exponent,
     bulk_modulus,
     critical_density,
@@ -100,6 +101,10 @@ inline PropertyType convertStringToProperty(std::string const& inString)
     if (boost::iequals(inString, "biot_coefficient"))
     {
         return PropertyType::biot_coefficient;
+    }
+    if (boost::iequals(inString, "bishops_effective_stress"))
+    {
+        return PropertyType::bishops_effective_stress;
     }
     if (boost::iequals(inString, "brooks_corey_exponent"))
     {
@@ -266,6 +271,7 @@ static const std::array<std::string, PropertyType::number_of_properties>
     property_enum_to_string{{"acentric_factor",
                              "binary_interaction_coefficient",
                              "biot_coefficient",
+                             "bishops_effective_stress",
                              "brooks_corey_exponent",
                              "bulk_modulus",
                              "critical_density",
