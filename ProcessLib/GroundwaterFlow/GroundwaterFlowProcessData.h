@@ -10,6 +10,9 @@
 
 #pragma once
 
+#include <memory>
+#include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
+
 namespace ProcessLib
 {
 
@@ -20,6 +23,8 @@ namespace GroundwaterFlow
 {
 struct GroundwaterFlowProcessData final
 {
+    std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>
+        media_map;
     ParameterLib::Parameter<double> const& hydraulic_conductivity;
 };
 

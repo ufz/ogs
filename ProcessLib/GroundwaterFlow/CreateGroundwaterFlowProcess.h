@@ -13,6 +13,10 @@
 #include <memory>
 #include "ProcessLib/Process.h"
 
+namespace MaterialPropertyLib
+{
+class Medium;
+}
 
 namespace ProcessLib
 {
@@ -27,7 +31,8 @@ std::unique_ptr<Process> createGroundwaterFlowProcess(
     unsigned const integration_order,
     BaseLib::ConfigTree const& config,
     std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
-    std::string const& output_directory);
+    std::string const& output_directory,
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media);
 
 }   // namespace GroundwaterFlow
 }   // namespace ProcessLib
