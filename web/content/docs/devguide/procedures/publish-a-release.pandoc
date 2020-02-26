@@ -18,6 +18,7 @@ weight = 1051
 - Create a [new release on GitHub](https://github.com/ufz/ogs/releases)
 - Fill in the release notes from the Wiki
 - Start the `ufz/master` Jenkins job manually and check that it ran successfully! (Do not push to `master` until job ran successfully!)
+- Tag ogs-data repository accordingly
 - Copy release binaries from Jenkins job to GitHub release page
 - Create and copy container images to GitHub release page
 - Update web release page with generated artifacts
