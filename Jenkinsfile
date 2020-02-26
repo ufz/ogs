@@ -157,6 +157,7 @@ pipeline {
               archiveArtifacts 'build/*.tar.gz,build/conaninfo.txt,build/*.bats'
               script {
                 if (env.JOB_NAME == 'ufz/ogs/master') {
+                  dir 'build' { stash name: 'bats-files', includes: '*.bats' }
                   // Deploy Doxygen
                   unstash 'known_hosts'
                   sshagent(credentials: ['www-data_jenkins']) {
@@ -708,6 +709,7 @@ pipeline {
                     credentialsId: '2719b702-1298-4e87-8464-5dfc62fbd923',
                     url: 'https://github.com/ufz/ogs-data']]])
                 sh 'rsync -av --delete --exclude .git/ ../ogs/Tests/Data/ .'
+                unstash 'bats-files'
                 sh "git add --all . && git diff --quiet && git diff --staged --quiet || git commit -am 'Update'"
                 withCredentials([usernamePassword(
                   credentialsId: '2719b702-1298-4e87-8464-5dfc62fbd923',
