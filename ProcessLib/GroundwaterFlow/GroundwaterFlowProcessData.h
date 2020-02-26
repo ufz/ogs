@@ -25,7 +25,6 @@ struct GroundwaterFlowProcessData final
 {
     std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>
         media_map;
-    ParameterLib::Parameter<double> const& hydraulic_conductivity;
 };
 
 } // namespace GroundwaterFlow

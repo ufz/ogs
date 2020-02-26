@@ -54,21 +54,10 @@ std::unique_ptr<Process> createGroundwaterFlowProcess(
          "process_variable"});
     process_variables.push_back(std::move(per_process_variables));
 
-    // Hydraulic conductivity parameter.
-    auto& hydraulic_conductivity = ParameterLib::findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__GROUNDWATER_FLOW__hydraulic_conductivity}
-        "hydraulic_conductivity", parameters, 0 /*arbitrary many components*/,
-        &mesh);
-
-    DBUG("Use '%s' as hydraulic conductivity parameter.",
-         hydraulic_conductivity.name.c_str());
-
     auto media_map =
         MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
 
-    GroundwaterFlowProcessData process_data{std::move(media_map),
-                                            hydraulic_conductivity};
+    GroundwaterFlowProcessData process_data{std::move(media_map)};
 
     SecondaryVariableCollection secondary_variables;
 
