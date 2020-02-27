@@ -3,10 +3,10 @@ compiler warnings:
   variables:
     GIT_STRATEGY: none
   allow_failure: true
-  dependencies:
-    - build linux
-    - build win
-    - build mac
+  needs:
+    - job: build linux
+    - job: build win
+    - job: build mac
   script:
     - exit_code=0
     - cd build
@@ -24,10 +24,10 @@ ctest results:
     GIT_STRATEGY: none
   tags:
     - singularity
-  dependencies:
-    - build linux
-    - build win
-    - build mac
+  needs:
+    - job: build linux
+    - job: build win
+    - job: build mac
   script:
     - singularity run docker://$XUNIT_TO_JUNIT_IMAGE -s:./build/Tests/ctest.xml > build/ctest-junit.xml
     - singularity run docker://$XUNIT_TO_JUNIT_IMAGE -s:./build-win/Tests/ctest.xml > build-win/ctest-junit.xml

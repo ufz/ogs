@@ -1,13 +1,17 @@
 build gui mac:
   extends: .template-build-linux
   stage: gui
+  needs:
+    - job: build mac
+      artifacts: false
   tags:
     - mac
   rules:
+    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "master"'
     - changes:
       - Applications/DataExplorer/**/*
-      when: always
     - when: manual
+      allow_failure: true
 
   variables:
     BUILD_DIR: "build-gui-mac"
