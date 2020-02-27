@@ -453,13 +453,11 @@ pipeline {
               sh 'git submodule sync && git submodule update'
               configure {
                 cmakeOptions =
-                  "-DBUILD_SHARED_LIBS=${build_shared} " +
+                  "-DBUILD_SHARED_LIBS=OFF " +
                   '-DOGS_CPU_ARCHITECTURE=core2 ' +
                   '-DOGS_BUILD_UTILS=ON ' +
-                  '-DOGS_BUILD_GUI=ON ' +
                   '-DOGS_CONAN_BUILD=missing ' +
-                  '-DCMAKE_OSX_DEPLOYMENT_TARGET="10.14" ' +
-                  '-DOGS_USE_NETCDF=ON '
+                  '-DCMAKE_OSX_DEPLOYMENT_TARGET="10.14" '
               }
               build {
                 target="package"
@@ -480,6 +478,52 @@ pipeline {
                 excludeMessage('.*tmpnam.*')],
                 tools: [clang(name: 'Clang (macOS)', pattern: 'build/build.log',
                   id: 'clang-mac')], unstableTotalAll: 3
+            }
+            success {
+              archiveArtifacts 'build/*.tar.gz,build/*.dmg,build/conaninfo.txt'
+            }
+          }
+        }
+        // **************************** Mac-Gui ********************************
+        stage('Mac-Gui') {
+          when {
+            beforeAgent true
+            expression { return params.mac && (stage_required.build || stage_required.full) }
+          }
+          agent { label "mac"}
+          environment {
+            OMP_NUM_THREADS = '1'
+          }
+          steps {
+            script {
+              sh 'git submodule sync && git submodule update'
+              configure {
+                cmakeOptions =
+                  "-DBUILD_SHARED_LIBS=${build_shared} " +
+                  '-DOGS_CPU_ARCHITECTURE=core2 ' +
+                  '-DOGS_BUILD_UTILS=ON ' +
+                  '-DOGS_BUILD_GUI=ON ' +
+                  '-DOGS_CONAN_BUILD=missing ' +
+                  '-DCMAKE_OSX_DEPLOYMENT_TARGET="10.14" ' +
+                  '-DOGS_USE_NETCDF=ON '
+              }
+              build {
+                target="package"
+                log = "build.log"
+              }
+              build { target = 'tests' }
+            }
+          }
+          post {
+            always {
+              xunit([
+                GoogleTest(pattern: 'build/Tests/testrunner.xml')
+              ])
+              recordIssues enabledForFailure: true, filters: [
+                excludeFile('.*qrc_icons\\.cpp.*'), excludeMessage('.*QVTKWidget.*'),
+                excludeMessage('.*tmpnam.*')],
+                tools: [clang(name: 'Clang (macOS, GUI)', pattern: 'build/build.log',
+                  id: 'clang-mac-gui')], unstableTotalAll: 3
             }
             success {
               archiveArtifacts 'build/*.tar.gz,build/*.dmg,build/conaninfo.txt'
