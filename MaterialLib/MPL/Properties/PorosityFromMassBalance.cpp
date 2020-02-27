@@ -59,7 +59,7 @@ PropertyDataType PorosityFromMassBalance::value(
         variable_array[static_cast<int>(Variable::porosity)]);
 
     double const w = dt * (e_dot + p_dot / K_SR);
-    return (phi + alpha_b * w) / (1 + w);
+    return std::clamp((phi + alpha_b * w) / (1 + w), 0., 1.);
 }
 
 PropertyDataType PorosityFromMassBalance::dValue(
