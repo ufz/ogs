@@ -76,35 +76,39 @@ disableKinds = ["taxonomyTerm"]
 [[menu.benchmarks]]
   name = "Heat Transport BHE"
   identifier = "heat-transport-bhe"
-  weight = 11
+  weight = 12
 [[menu.benchmarks]]
   name = "Richards Flow"
   identifier = "richards-flow"
   weight = 4
 [[menu.benchmarks]]
+  name = "Richards-Mechanics"
+  identifier = "richards-mechanics"
+  weight = 5
+[[menu.benchmarks]]
   name = "Hydro-Mechanics"
   identifier = "hydro-mechanics"
-  weight = 5
+  weight = 6
 [[menu.benchmarks]]
   name = "Thermo-Hydro-Mechanics"
   identifier = "thermo-hydro-mechanics"
-  weight = 7
+  weight = 8
 [[menu.benchmarks]]
   name = "Hydro-Thermal"
   identifier = "hydro-thermal"
-  weight = 6
+  weight = 7
 [[menu.benchmarks]]
   name = "Liquid Flow"
   identifier = "liquid-flow"
-  weight = 8
+  weight = 9
 [[menu.benchmarks]]
   name = "Two-phase Flow"
   identifier = "two-phase-flow"
-  weight = 9
+  weight = 10
 [[menu.benchmarks]]
   name = "Python Boundary Conditions"
   identifier = "python-bc"
-  weight = 10
+  weight = 11
 
 # Quickstart sidebar top-level categories
 [[menu.userguide]]
