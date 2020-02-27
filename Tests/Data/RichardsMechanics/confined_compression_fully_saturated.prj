@@ -108,6 +108,11 @@
                     <type>Constant</type>
                     <value>1</value>
                 </property>
+                <property>
+                    <name>bishops_effective_stress</name>
+                    <type>BishopsPowerLaw</type>
+                    <exponent>1</exponent>
+                </property>
             </properties>
         </medium>
     </media>

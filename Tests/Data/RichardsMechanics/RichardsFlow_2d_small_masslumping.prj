@@ -108,6 +108,11 @@
                     <exponent>0.789029535864979</exponent>
                     <minimum_relative_permeability_liquid>1e-12</minimum_relative_permeability_liquid>
                 </property>
+                <property>
+                    <name>bishops_effective_stress</name>
+                    <type>BishopsPowerLaw</type>
+                    <exponent>1</exponent>
+                </property>
             </properties>
         </medium>
     </media>
