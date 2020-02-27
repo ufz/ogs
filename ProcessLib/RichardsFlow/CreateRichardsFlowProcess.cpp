@@ -10,6 +10,7 @@
 
 #include "CreateRichardsFlowProcess.h"
 
+#include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
 #include "ParameterLib/ConstantParameter.h"
 #include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
@@ -33,7 +34,8 @@ std::unique_ptr<Process> createRichardsFlowProcess(
     BaseLib::ConfigTree const& config,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves)
+        curves,
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
 {
     //! \ogs_file_param{prj__processes__process__type}
     config.checkConfigParameter("type", "RICHARDS_FLOW");
