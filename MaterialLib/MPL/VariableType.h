@@ -49,6 +49,7 @@ enum class Variable : int
     density,
     temperature,
     liquid_saturation,
+    liquid_saturation_rate,
     porosity,
     displacement,
     strain,

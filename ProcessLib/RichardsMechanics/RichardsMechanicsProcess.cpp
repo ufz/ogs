@@ -183,6 +183,11 @@ void RichardsMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
                                DisplacementDim>::RowsAtCompileTime,
                            &LocalAssemblerIF::getIntPtSigma);
 
+    add_secondary_variable("swelling_stress",
+                           MathLib::KelvinVector::KelvinVectorType<
+                               DisplacementDim>::RowsAtCompileTime,
+                           &LocalAssemblerIF::getIntPtSwellingStress);
+
     add_secondary_variable("epsilon",
                            MathLib::KelvinVector::KelvinVectorType<
                                DisplacementDim>::RowsAtCompileTime,
@@ -251,6 +256,18 @@ void RichardsMechanicsProcess<DisplacementDim>::initializeBoundaryConditions()
     const int mechanical_process_id = 1;
     initializeProcessBoundaryConditionsAndSourceTerms(
         *_local_to_global_index_map, mechanical_process_id);
+}
+
+template <int DisplacementDim>
+void RichardsMechanicsProcess<
+    DisplacementDim>::setInitialConditionsConcreteProcess(GlobalVector const& x,
+                                                          double const t)
+{
+    DBUG("SetInitialConditions RichardsMechanicsProcess.");
+
+    GlobalExecutor::executeMemberOnDereferenced(
+        &LocalAssemblerIF::setInitialConditions, _local_assemblers,
+        *_local_to_global_index_map, x, t);
 }
 
 template <int DisplacementDim>

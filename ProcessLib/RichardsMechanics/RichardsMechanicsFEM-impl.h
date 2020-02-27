@@ -110,6 +110,50 @@ template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           typename IntegrationMethod, int DisplacementDim>
 void RichardsMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    DisplacementDim>::setInitialConditionsConcrete(std::vector<double> const&
+                                                       local_x,
+                                                   double const t)
+{
+    assert(local_x.size() == pressure_size + displacement_size);
+
+    auto p_L =
+        Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
+            pressure_size> const>(local_x.data() + pressure_index,
+                                  pressure_size);
+
+    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    MPL::VariableArray variables;
+
+    ParameterLib::SpatialPosition x_position;
+    x_position.setElementID(_element.getID());
+
+    unsigned const n_integration_points =
+        _integration_method.getNumberOfPoints();
+    for (unsigned ip = 0; ip < n_integration_points; ip++)
+    {
+        x_position.setIntegrationPoint(ip);
+
+        auto const& N_p = _ip_data[ip].N_p;
+
+        double p_cap_ip;
+        NumLib::shapeFunctionInterpolate(-p_L, N_p, p_cap_ip);
+
+        variables[static_cast<int>(MPL::Variable::capillary_pressure)] =
+            p_cap_ip;
+        variables[static_cast<int>(MPL::Variable::phase_pressure)] = -p_cap_ip;
+
+        _ip_data[ip].saturation_prev =
+            medium->property(MPL::PropertyType::saturation)
+                .template value<double>(
+                    variables, x_position, t,
+                    std::numeric_limits<double>::quiet_NaN());
+    }
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          typename IntegrationMethod, int DisplacementDim>
+void RichardsMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
     DisplacementDim>::assemble(double const t, double const dt,
                                std::vector<double> const& local_x,
                                std::vector<double> const& local_xdot,
@@ -199,7 +243,10 @@ void RichardsMechanicsLocalAssembler<
         variables[static_cast<int>(MPL::Variable::volumetric_strain_rate)]
             .emplace<double>(identity2.transpose() * B * u_dot);
 
+        auto& sigma_sw = _ip_data[ip].sigma_sw;
+        auto const& sigma_sw_prev = _ip_data[ip].sigma_sw_prev;
         auto& S_L = _ip_data[ip].saturation;
+        auto const S_L_prev = _ip_data[ip].saturation_prev;
 
         double p_cap_ip;
         NumLib::shapeFunctionInterpolate(-p_L, N_p, p_cap_ip);
@@ -246,6 +293,8 @@ void RichardsMechanicsLocalAssembler<
         S_L = medium->property(MPL::PropertyType::saturation)
                   .template value<double>(variables, x_position, t, dt);
         variables[static_cast<int>(MPL::Variable::liquid_saturation)] = S_L;
+        variables[static_cast<int>(MPL::Variable::liquid_saturation_rate)] =
+            (S_L - S_L_prev) / dt;
 
         double const dS_L_dp_cap =
             medium->property(MPL::PropertyType::saturation)
@@ -266,6 +315,18 @@ void RichardsMechanicsLocalAssembler<
         GlobalDimMatrixType const rho_K_over_mu =
             K_intrinsic * rho_LR * k_rel / mu;
 
+        sigma_sw = sigma_sw_prev;
+        if (solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate))
+        {
+            using DimMatrix = Eigen::Matrix<double, 3, 3>;
+            sigma_sw +=
+                MathLib::KelvinVector::tensorToKelvin<DisplacementDim>(
+                    solid_phase
+                        .property(MPL::PropertyType::swelling_stress_rate)
+                        .template value<DimMatrix>(variables, x_position, t,
+                                                   dt)) *
+                dt;
+        }
         //
         // displacement equation, displacement part
         //
@@ -283,7 +344,7 @@ void RichardsMechanicsLocalAssembler<
 
         double const rho = rho_SR * (1 - porosity) + S_L * porosity * rho_LR;
         rhs.template segment<displacement_size>(displacement_index).noalias() +=
-            N_u_op.transpose() * rho * b * w;
+            N_u_op.transpose() * rho * b * w - B.transpose() * sigma_sw * w;
 
         //
         // pressure equation, pressure part.
@@ -461,7 +522,10 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         auto& eps = _ip_data[ip].eps;
         auto& sigma_eff = _ip_data[ip].sigma_eff;
+        auto& sigma_sw = _ip_data[ip].sigma_sw;
+        auto const& sigma_sw_prev = _ip_data[ip].sigma_sw_prev;
         auto& S_L = _ip_data[ip].saturation;
+        auto const S_L_prev = _ip_data[ip].saturation_prev;
         auto const alpha =
             solid_phase.property(MPL::PropertyType::biot_coefficient)
                 .template value<double>(variables, x_position, t, dt);
@@ -492,6 +556,8 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         S_L = medium->property(MPL::PropertyType::saturation)
                   .template value<double>(variables, x_position, t, dt);
         variables[static_cast<int>(MPL::Variable::liquid_saturation)] = S_L;
+        variables[static_cast<int>(MPL::Variable::liquid_saturation_rate)] =
+            (S_L - S_L_prev) / dt;
 
         double const dS_L_dp_cap =
             medium->property(MPL::PropertyType::saturation)
@@ -516,6 +582,19 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         GlobalDimMatrixType const rho_Ki_over_mu = K_intrinsic * rho_LR / mu;
 
+        sigma_sw = sigma_sw_prev;
+        if (solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate))
+        {
+            using DimMatrix = Eigen::Matrix<double, 3, 3>;
+            sigma_sw +=
+                MathLib::KelvinVector::tensorToKelvin<DisplacementDim>(
+                    solid_phase
+                        .property(MPL::PropertyType::swelling_stress_rate)
+                        .template value<DimMatrix>(variables, x_position, t,
+                                                   dt)) *
+                dt;
+        }
+
         //
         // displacement equation, displacement part
         //
@@ -531,23 +610,14 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         double const rho = rho_SR * (1 - porosity) + S_L * porosity * rho_LR;
         local_rhs.template segment<displacement_size>(displacement_index)
-            .noalias() -=
-            (B.transpose() * sigma_eff - N_u_op.transpose() * rho * b) * w;
+            .noalias() -= (B.transpose() * (sigma_eff + sigma_sw) -
+                           N_u_op.transpose() * rho * b) *
+                          w;
 
         //
         // displacement equation, pressure part
         //
         Kup.noalias() += B.transpose() * alpha * S_L * identity2 * N_p * w;
-
-        /* For future implementation including swelling.
-        double const dsigma_eff_dp_cap = -K_intrinsic * m_swell * n *
-                                         std::pow(S_L, n - 1) * dS_L_dp_cap *
-                                         identity2;
-        local_Jac
-            .template block<displacement_size, pressure_size>(
-                displacement_index, pressure_index)
-            .noalias() -= B.transpose() * dsigma_eff_dp_cap * N_p * w;
-        */
 
         local_Jac
             .template block<displacement_size, pressure_size>(
@@ -560,6 +630,23 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 displacement_index, pressure_index)
             .noalias() +=
             N_u_op.transpose() * porosity * rho_LR * dS_L_dp_cap * b * N_p * w;
+
+        if (solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate))
+        {
+            using DimMatrix = Eigen::Matrix<double, 3, 3>;
+            auto const dsigma_sw_dS_L =
+                MathLib::KelvinVector::tensorToKelvin<DisplacementDim>(
+                    solid_phase
+                        .property(MPL::PropertyType::swelling_stress_rate)
+                        .template dValue<DimMatrix>(
+                            variables, MPL::Variable::liquid_saturation,
+                            x_position, t, dt));
+            local_Jac
+                .template block<displacement_size, pressure_size>(
+                    displacement_index, pressure_index)
+                .noalias() +=
+                B.transpose() * dsigma_sw_dS_L * dS_L_dp_cap * N_p * w;
+        }
         //
         // pressure equation, displacement part.
         //
@@ -683,6 +770,36 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
         auto const& sigma = _ip_data[ip].sigma_eff;
         cache_mat.col(ip) =
             MathLib::KelvinVector::kelvinVectorToSymmetricTensor(sigma);
+    }
+
+    return cache;
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          typename IntegrationMethod, int DisplacementDim>
+std::vector<double> const& RichardsMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    DisplacementDim>::
+    getIntPtSwellingStress(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const
+{
+    static const int kelvin_vector_size =
+        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
+    auto const num_intpts = _ip_data.size();
+
+    cache.clear();
+    auto cache_mat = MathLib::createZeroedMatrix<Eigen::Matrix<
+        double, kelvin_vector_size, Eigen::Dynamic, Eigen::RowMajor>>(
+        cache, kelvin_vector_size, num_intpts);
+
+    for (unsigned ip = 0; ip < num_intpts; ++ip)
+    {
+        auto const& sigma_sw = _ip_data[ip].sigma_sw;
+        cache_mat.col(ip) =
+            MathLib::KelvinVector::kelvinVectorToSymmetricTensor(sigma_sw);
     }
 
     return cache;

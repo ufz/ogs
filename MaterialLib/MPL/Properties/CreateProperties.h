@@ -23,5 +23,6 @@
 #include "CreateRelPermLiakopoulos.h"
 #include "CreateRelPermVanGenuchten.h"
 #include "CreateSaturationBrooksCorey.h"
+#include "CreateSaturationDependentSwelling.h"
 #include "CreateSaturationLiakopoulos.h"
 #include "CreateSaturationVanGenuchten.h"

@@ -22,5 +22,6 @@
 #include "RelPermLiakopoulos.h"
 #include "RelPermVanGenuchten.h"
 #include "SaturationBrooksCorey.h"
+#include "SaturationDependentSwelling.h"
 #include "SaturationLiakopoulos.h"
 #include "SaturationVanGenuchten.h"
