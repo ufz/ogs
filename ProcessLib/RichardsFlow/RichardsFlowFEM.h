@@ -12,6 +12,7 @@
 
 #include <vector>
 
+#include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/DOF/DOFTableUtil.h"
