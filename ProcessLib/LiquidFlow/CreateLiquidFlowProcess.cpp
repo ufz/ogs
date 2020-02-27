@@ -83,16 +83,6 @@ std::unique_ptr<Process> createLiquidFlowProcess(
     }
     const int gravity_axis_id = (g == 0.) ? -1 : gravity_axis_id_input;
 
-    auto const material_ids = materialIDs(mesh);
-    if (material_ids)
-    {
-        INFO("The liquid flow is in heterogeneous porous media.");
-    }
-    else
-    {
-        INFO("The liquid flow is in homogeneous porous media.");
-    }
-
     std::unique_ptr<ProcessLib::SurfaceFluxData> surfaceflux;
     auto calculatesurfaceflux_config =
         //! \ogs_file_param{prj__processes__process__calculatesurfaceflux}
