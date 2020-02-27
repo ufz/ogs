@@ -399,6 +399,25 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
         dt = _end_time - t;
     }
 
+    // Check whether the time stepping is stabilized
+    if (std::fabs(dt - prev_dt) < std::numeric_limits<double>::epsilon())
+    {
+        if (_last_step_rejected)
+        {
+            OGS_FATAL(
+                "The new step size of %g is the same as that of the previous "
+                "rejected time step. \nPlease re-run ogs with a proper "
+                "adjustment in the numerical settings, \ne.g those for "
+                "time stepper, local or global non-linear solver.",
+                dt);
+        }
+        else
+        {
+            DBUG("The time stepping is stabilized with the step size of %g.",
+                 dt);
+        }
+    }
+
     return dt;
 }
 
