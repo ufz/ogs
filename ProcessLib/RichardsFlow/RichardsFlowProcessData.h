@@ -13,9 +13,6 @@
 
 namespace ProcessLib
 {
-template <typename T>
-struct Parameter;
-
 namespace RichardsFlow
 {
 struct RichardsFlowProcessData
