@@ -1,7 +1,11 @@
 build gui win:
   extends: .template-build-win
   stage: gui
-  when: manual
+  rules:
+    - changes:
+      - Applications/DataExplorer/**/*
+      when: always
+    - when: manual
 
   variables:
     BUILD_DIR: build-gui-win

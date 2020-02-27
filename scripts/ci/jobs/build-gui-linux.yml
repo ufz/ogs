@@ -1,7 +1,11 @@
 build gui linux:
   extends: .template-build-linux
   stage: gui
-  when: manual
+  rules:
+    - changes:
+      - Applications/DataExplorer/**/*
+      when: always
+    - when: manual
 
   variables:
     BUILD_DIR: "build-gui-linux"

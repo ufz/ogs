@@ -3,7 +3,11 @@ build gui mac:
   stage: gui
   tags:
     - mac
-  when: manual
+  rules:
+    - changes:
+      - Applications/DataExplorer/**/*
+      when: always
+    - when: manual
 
   variables:
     BUILD_DIR: "build-gui-mac"
