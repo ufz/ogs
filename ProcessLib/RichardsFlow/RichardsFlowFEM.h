@@ -184,8 +184,9 @@ public:
                     medium.property(MaterialPropertyLib::permeability)
                         .value(vars, pos, t, dt));
 
-            auto const porosity = _process_data.material->getPorosity(
-                material_id, t, pos, p_int_pt, temperature, 0);
+            auto const porosity =
+                medium.property(MaterialPropertyLib::PropertyType::porosity)
+                    .template value<double>(vars, pos, t, dt);
 
             double const pc_int_pt = -p_int_pt;
 
