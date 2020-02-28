@@ -169,13 +169,14 @@ public:
 
         const int material_id =
             _process_data.material->getMaterialID(_element.getID());
+        const double& temperature = std::get<double>(
+            vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)]);
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             pos.setIntegrationPoint(ip);
             double p_int_pt = 0.0;
             NumLib::shapeFunctionInterpolate(local_x, _ip_data[ip].N, p_int_pt);
-            const double& temperature = _process_data.temperature(t, pos)[0];
 
             vars[static_cast<int>(
                 MaterialPropertyLib::Variable::phase_pressure)] = p_int_pt;
@@ -312,6 +313,9 @@ public:
         auto const p_nodal_values = Eigen::Map<const NodalVectorType>(
             &local_x[0], ShapeFunction::NPOINTS);
 
+        const double& temperature = std::get<double>(
+            vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)]);
+
         for (unsigned ip = 0; ip < n_integration_points; ++ip)
         {
             double p_int_pt = 0.0;
@@ -320,7 +324,6 @@ public:
             vars[static_cast<int>(
                 MaterialPropertyLib::Variable::phase_pressure)] = p_int_pt;
 
-            const double& temperature = _process_data.temperature(t, pos)[0];
             double const Sw = _process_data.material->getSaturation(
                 material_id, t, pos, p_int_pt, temperature, pc_int_pt);
 
