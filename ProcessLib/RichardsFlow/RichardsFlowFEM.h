@@ -159,6 +159,7 @@ public:
         auto const& medium =
             *_process_data.media_map->getMedium(_element.getID());
         auto const& liquid_phase = medium.phase("AqueousLiquid");
+        auto const& solid_phase = medium.phase("Solid");
         MaterialPropertyLib::VariableArray vars;
         vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
             medium
@@ -204,8 +205,9 @@ public:
                     .template dValue<double>(
                         vars, MaterialPropertyLib::Variable::phase_pressure,
                         pos, t, dt);
-            auto const storage = _process_data.material->getStorage(
-                material_id, t, pos, p_int_pt, temperature, 0);
+            auto const storage =
+                solid_phase.property(MaterialPropertyLib::PropertyType::storage)
+                    .template value<double>(vars, pos, t, dt);
             double const mass_mat_coeff =
                 storage * Sw + porosity * Sw * drhow_dp - porosity * dSw_dpc;
 
