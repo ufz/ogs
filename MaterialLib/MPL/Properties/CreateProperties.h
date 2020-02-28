@@ -11,6 +11,8 @@
  */
 #pragma once
 
+#include "CreateBishopsPowerLaw.h"
+#include "CreateBishopsSaturationCutoff.h"
 #include "CreateConstant.h"
 #include "CreateDupuitPermeability.h"
 #include "CreateExponentialProperty.h"

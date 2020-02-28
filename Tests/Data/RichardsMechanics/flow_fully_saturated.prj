@@ -97,6 +97,11 @@
                     <value>1</value>
                 </property>
                 <property>
+                    <name>bishops_effective_stress</name>
+                    <type>BishopsPowerLaw</type>
+                    <exponent>1</exponent>
+                </property>
+                <property>
                     <name>reference_temperature</name>
                     <type>Constant</type>
                     <value>293.15</value>

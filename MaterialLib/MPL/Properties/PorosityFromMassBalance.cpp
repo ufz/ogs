@@ -52,13 +52,13 @@ PropertyDataType PorosityFromMassBalance::value(
     double const e_dot = std::get<double>(
         variable_array[static_cast<int>(Variable::volumetric_strain_rate)]);
 
-    double const p_dot = std::get<double>(
-        variable_array[static_cast<int>(Variable::phase_pressure_rate)]);
+    double const p_eff_dot = std::get<double>(variable_array[static_cast<int>(
+        Variable::effective_pore_pressure_rate)]);
 
     double const phi = std::get<double>(
         variable_array[static_cast<int>(Variable::porosity)]);
 
-    double const w = dt * (e_dot + p_dot / K_SR);
+    double const w = dt * (e_dot + p_eff_dot / K_SR);
     return std::clamp((phi + alpha_b * w) / (1 + w), 0., 1.);
 }
 
