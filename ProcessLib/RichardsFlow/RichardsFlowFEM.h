@@ -13,6 +13,9 @@
 #include <vector>
 
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
+#include "MaterialLib/MPL/Medium.h"
+#include "MaterialLib/MPL/Utils/FormEigenTensor.h"
+#include "MaterialLib/MPL/VariableType.h"
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/DOF/DOFTableUtil.h"
@@ -129,7 +132,7 @@ public:
         }
     }
 
-    void assemble(double const t, double const /*dt*/,
+    void assemble(double const t, double const dt,
                   std::vector<double> const& local_x,
                   std::vector<double> const& /*local_xdot*/,
                   std::vector<double>& local_M_data,
@@ -152,21 +155,18 @@ public:
             _integration_method.getNumberOfPoints();
         ParameterLib::SpatialPosition pos;
         pos.setElementID(_element.getID());
+
+        auto const& medium =
+            *_process_data.media_map->getMedium(_element.getID());
+        MaterialPropertyLib::VariableArray vars;
+        vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
+            medium
+                .property(
+                    MaterialPropertyLib::PropertyType::reference_temperature)
+                .template value<double>(vars, pos, t, dt);
+
         const int material_id =
             _process_data.material->getMaterialID(_element.getID());
-        const Eigen::MatrixXd& perm = _process_data.material->getPermeability(
-            material_id, t, pos, _element.getDimension());
-        assert(perm.rows() == _element.getDimension() || perm.rows() == 1);
-        GlobalDimMatrixType permeability = GlobalDimMatrixType::Zero(
-            _element.getDimension(), _element.getDimension());
-        if (perm.rows() == _element.getDimension())
-        {
-            permeability = perm;
-        }
-        else if (perm.rows() == 1)
-        {
-            permeability.diagonal().setConstant(perm(0, 0));
-        }
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
@@ -174,6 +174,15 @@ public:
             double p_int_pt = 0.0;
             NumLib::shapeFunctionInterpolate(local_x, _ip_data[ip].N, p_int_pt);
             const double& temperature = _process_data.temperature(t, pos)[0];
+
+            vars[static_cast<int>(
+                MaterialPropertyLib::Variable::phase_pressure)] = p_int_pt;
+
+            auto const permeability =
+                MaterialPropertyLib::formEigenTensor<GlobalDim>(
+                    medium.property(MaterialPropertyLib::permeability)
+                        .value(vars, pos, t, dt));
+
             auto const porosity = _process_data.material->getPorosity(
                 material_id, t, pos, p_int_pt, temperature, 0);
 
@@ -253,6 +262,10 @@ public:
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const override
     {
+        // TODO (tf) Temporary value not used by current material models. Need
+        // extension of secondary variable interface
+        double const dt = std::numeric_limits<double>::quiet_NaN();
+
         auto const num_intpts = _shape_matrices.size();
 
         constexpr int process_id = 0;  // monolithic scheme.
@@ -268,22 +281,18 @@ public:
 
         ParameterLib::SpatialPosition pos;
         pos.setElementID(_element.getID());
+
+        auto const& medium =
+            *_process_data.media_map->getMedium(_element.getID());
+        MaterialPropertyLib::VariableArray vars;
+        vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
+            medium
+                .property(
+                    MaterialPropertyLib::PropertyType::reference_temperature)
+                .template value<double>(vars, pos, t, dt);
+
         const int material_id =
             _process_data.material->getMaterialID(_element.getID());
-
-        const Eigen::MatrixXd& perm = _process_data.material->getPermeability(
-            material_id, t, pos, _element.getDimension());
-        assert(perm.rows() == _element.getDimension() || perm.rows() == 1);
-        GlobalDimMatrixType permeability = GlobalDimMatrixType::Zero(
-            _element.getDimension(), _element.getDimension());
-        if (perm.rows() == _element.getDimension())
-        {
-            permeability = perm;
-        }
-        else if (perm.rows() == 1)
-        {
-            permeability.diagonal().setConstant(perm(0, 0));
-        }
 
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
@@ -296,9 +305,18 @@ public:
             double p_int_pt = 0.0;
             NumLib::shapeFunctionInterpolate(local_x, _ip_data[ip].N, p_int_pt);
             double const pc_int_pt = -p_int_pt;
+            vars[static_cast<int>(
+                MaterialPropertyLib::Variable::phase_pressure)] = p_int_pt;
+
             const double& temperature = _process_data.temperature(t, pos)[0];
             double const Sw = _process_data.material->getSaturation(
                 material_id, t, pos, p_int_pt, temperature, pc_int_pt);
+
+            auto const permeability =
+                MaterialPropertyLib::formEigenTensor<GlobalDim>(
+                    medium.property(MaterialPropertyLib::permeability)
+                        .value(vars, pos, t, dt));
+
             double const k_rel =
                 _process_data.material->getRelativePermeability(
                     t, pos, p_int_pt, temperature, Sw);
