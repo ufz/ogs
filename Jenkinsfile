@@ -709,7 +709,7 @@ pipeline {
                 export PYTHONPATH="${PYTHONPATH}:${PWD}/ThirdParty/container-maker"
                 python ThirdParty/container-maker/ogscm/cli.py -B -C -R \
                   -j $NUM_THREADS --ogs . --pm system --cvode \
-                  --ompi off 2.1.6 3.1.4 4.0.1
+                  --ompi off
                 cp _out_images/ogs*serial*.sif ogs-serial.sif
               '''.stripIndent()
             }
