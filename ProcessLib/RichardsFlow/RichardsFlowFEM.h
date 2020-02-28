@@ -197,8 +197,12 @@ public:
                 _process_data.material->getSaturationDerivative(
                     material_id, t, pos, p_int_pt, temperature, Sw);
 
-            // \TODO Extend to pressure dependent density.
-            double const drhow_dp(0.0);
+            auto const drhow_dp =
+                liquid_phase
+                    .property(MaterialPropertyLib::PropertyType::density)
+                    .template dValue<double>(
+                        vars, MaterialPropertyLib::Variable::phase_pressure,
+                        pos, t, dt);
             auto const storage = _process_data.material->getStorage(
                 material_id, t, pos, p_int_pt, temperature, 0);
             double const mass_mat_coeff =
@@ -218,8 +222,10 @@ public:
 
             if (_process_data.has_gravity)
             {
-                auto const rho_w = _process_data.material->getFluidDensity(
-                    p_int_pt, temperature);
+                auto const rho_w =
+                    liquid_phase
+                        .property(MaterialPropertyLib::PropertyType::density)
+                        .template value<double>(vars, pos, t, dt);
                 auto const& body_force = _process_data.specific_body_force;
                 assert(body_force.size() == GlobalDim);
                 NodalVectorType gravity_operator =
@@ -331,8 +337,10 @@ public:
                 -K_mat_coeff * _ip_data[ip].dNdx * p_nodal_values;
             if (_process_data.has_gravity)
             {
-                auto const rho_w = _process_data.material->getFluidDensity(
-                    p_int_pt, temperature);
+                auto const rho_w =
+                    liquid_phase
+                        .property(MaterialPropertyLib::PropertyType::density)
+                        .template value<double>(vars, pos, t, dt);
                 auto const& body_force = _process_data.specific_body_force;
                 assert(body_force.size() == GlobalDim);
                 // here it is assumed that the vector body_force is directed
