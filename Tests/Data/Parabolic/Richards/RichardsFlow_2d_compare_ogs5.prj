@@ -87,6 +87,16 @@
                         </property>
                     </properties>
                 </phase>
+                <phase>
+                    <type>Solid</type>
+                    <properties>
+                        <property>
+                            <name>storage</name>
+                            <type>Constant</type>
+                            <value> 0.0 </value>
+                        </property>
+                    </properties>
+                </phase>
             </phases>
             <properties>
                 <property>
