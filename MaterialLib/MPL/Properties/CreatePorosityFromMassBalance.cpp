@@ -29,6 +29,13 @@ std::unique_ptr<PorosityFromMassBalance> createPorosityFromMassBalance(
     auto const& initial_porosity = ParameterLib::findParameter<double>(
         parameter_name, parameters, 0, nullptr);
 
-    return std::make_unique<PorosityFromMassBalance>(initial_porosity);
+    //! \ogs_file_param{properties__property__PorosityFromMassBalance__minimal_porosity}
+    auto const& phi_min = config.getConfigParameter<double>("minimal_porosity");
+
+    //! \ogs_file_param{properties__property__PorosityFromMassBalance__maximal_porosity}
+    auto const& phi_max = config.getConfigParameter<double>("maximal_porosity");
+
+    return std::make_unique<PorosityFromMassBalance>(
+        initial_porosity, phi_min, phi_max);
 }
 }  // namespace MaterialPropertyLib
