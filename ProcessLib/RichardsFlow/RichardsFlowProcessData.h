@@ -11,12 +11,19 @@
 #pragma once
 #include "RichardsFlowMaterialProperties.h"
 
+namespace MaterialPropertyLib
+{
+class MaterialSpatialDistributionMap;
+}
+
 namespace ProcessLib
 {
 namespace RichardsFlow
 {
 struct RichardsFlowProcessData
 {
+    std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>
+        media_map;
     std::unique_ptr<RichardsFlowMaterialProperties> material;
     Eigen::VectorXd const specific_body_force;
     bool const has_gravity;

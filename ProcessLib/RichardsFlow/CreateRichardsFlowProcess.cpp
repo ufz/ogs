@@ -98,9 +98,9 @@ std::unique_ptr<Process> createRichardsFlowProcess(
     auto media_map =
         MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
 
-    RichardsFlowProcessData process_data{std::move(material),
-                                         specific_body_force, has_gravity,
-                                         mass_lumping, temperature};
+    RichardsFlowProcessData process_data{
+        std::move(media_map), std::move(material), specific_body_force,
+        has_gravity,          mass_lumping,        temperature};
 
     return std::make_unique<RichardsFlowProcess>(
         std::move(name), mesh, std::move(jacobian_assembler), parameters,
