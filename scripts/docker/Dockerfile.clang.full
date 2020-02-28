@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:experimental
+
 FROM ubuntu:18.04 AS build
 
 # Generated with ogs-container-maker 1.2.0
@@ -13,16 +15,25 @@ RUN apt-get update -y && \
 # LLVM compiler
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        clang-8 && \
+        clang-9 && \
     rm -rf /var/lib/apt/lists/*
-RUN update-alternatives --install /usr/bin/clang clang $(which clang-8) 30 && \
-    update-alternatives --install /usr/bin/clang++ clang++ $(which clang++-8) 30
+RUN update-alternatives --install /usr/bin/clang clang $(which clang-9) 30 && \
+    update-alternatives --install /usr/bin/clang++ clang++ $(which clang++-9) 30
 
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        clang-format-8 \
-        clang-tidy-8 && \
+        clang-format-9 \
+        clang-tidy-9 && \
     rm -rf /var/lib/apt/lists/*
+
+# pip
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        python3-pip \
+        python3-setuptools \
+        python3-wheel && \
+    rm -rf /var/lib/apt/lists/*
+RUN pip3 install scif
 
 # OGS base building block
 # Python
@@ -55,16 +66,16 @@ RUN apt-get update && \
     git lfs install && \
     mkdir -p /apps /scratch /lustre /work /projects /data
 
-# CMake version 3.12.4
+# CMake version 3.14.7
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         make \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://cmake.org/files/v3.12/cmake-3.12.4-Linux-x86_64.sh && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://cmake.org/files/v3.14/cmake-3.14.7-Linux-x86_64.sh && \
     mkdir -p /usr/local && \
-    /bin/sh /var/tmp/cmake-3.12.4-Linux-x86_64.sh --prefix=/usr/local --skip-license && \
-    rm -rf /var/tmp/cmake-3.12.4-Linux-x86_64.sh
+    /bin/sh /var/tmp/cmake-3.14.7-Linux-x86_64.sh --prefix=/usr/local --skip-license && \
+    rm -rf /var/tmp/cmake-3.14.7-Linux-x86_64.sh
 ENV PATH=/usr/local/bin:$PATH
 
 # Package manager Conan building block
@@ -84,41 +95,41 @@ RUN apt-get update -y && \
         python3-setuptools \
         python3-wheel && \
     rm -rf /var/lib/apt/lists/*
-RUN pip3 install conan==1.21.0
+RUN pip3 install conan==1.22.2
 RUN mkdir -p /opt/conan && \
     chmod 777 /opt/conan
 ENV CONAN_USER_HOME=/opt/conan
 LABEL org.opengeosys.pm=conan \
-    org.opengeosys.pm.conan.version=1.21.0
+    org.opengeosys.pm.conan.version=1.22.2
 LABEL org.opengeosys.pm.conan.user_home=/opt/conan
 
-# Include-what-you-use for clang version 8
+# Include-what-you-use for clang version 9
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        libclang-8-dev \
+        libclang-9-dev \
         libncurses5-dev \
-        llvm-8-dev \
+        llvm-9-dev \
         zlib1g-dev && \
     rm -rf /var/lib/apt/lists/*
-# https://github.com/include-what-you-use/include-what-you-use/archive/clang_8.0.tar.gz
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/include-what-you-use/include-what-you-use/archive/clang_8.0.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/clang_8.0.tar.gz -C /var/tmp -z && \
-    mkdir -p /var/tmp/include-what-you-use-clang_8.0/build && cd /var/tmp/include-what-you-use-clang_8.0/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local/iwyy -D IWYU_LLVM_ROOT_PATH=/usr/lib/llvm-8 /var/tmp/include-what-you-use-clang_8.0 && \
-    cmake --build /var/tmp/include-what-you-use-clang_8.0/build --target all -- -j$(nproc) && \
-    cmake --build /var/tmp/include-what-you-use-clang_8.0/build --target install -- -j$(nproc) && \
-    rm -rf /var/tmp/include-what-you-use-clang_8.0 /var/tmp/clang_8.0.tar.gz
+# https://github.com/include-what-you-use/include-what-you-use/archive/clang_9.0.tar.gz
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/include-what-you-use/include-what-you-use/archive/clang_9.0.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/clang_9.0.tar.gz -C /var/tmp -z && \
+    mkdir -p /var/tmp/include-what-you-use-clang_9.0/build && cd /var/tmp/include-what-you-use-clang_9.0/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local/iwyy -D IWYU_LLVM_ROOT_PATH=/usr/lib/llvm-9 /var/tmp/include-what-you-use-clang_9.0 && \
+    cmake --build /var/tmp/include-what-you-use-clang_9.0/build --target all -- -j$(nproc) && \
+    cmake --build /var/tmp/include-what-you-use-clang_9.0/build --target install -- -j$(nproc) && \
+    rm -rf /var/tmp/include-what-you-use-clang_9.0 /var/tmp/clang_9.0.tar.gz
 ENV PATH=/usr/local/iwyy/bin:$PATH
 
-# Package manager Conan building block
+# ccache building block
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         ccache && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /opt/cache && chmod 777 /opt/cache
-ENV CCACHE_DIR=/opt/cache \
+RUN mkdir -p /opt/ccache && chmod 777 /opt/ccache
+ENV CCACHE_DIR=/opt/ccache \
     CCACHE_MAXSIZE=15G \
     CCACHE_SLOPPINESS=pch_defines,time_macros
-LABEL ccache.dir=/opt/cache \
+LABEL ccache.dir=/opt/ccache \
     ccache.size=15G
 
 # Jenkins node
