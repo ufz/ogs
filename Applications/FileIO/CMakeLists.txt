@@ -32,6 +32,11 @@ target_link_libraries(ApplicationsFileIO
                              logog
                       PRIVATE MeshLib GitInfoLib)
 
+# std::filesystem is available on gcc 8 by linking to stdc++fs
+if(COMPILER_IS_GCC AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 9)
+    target_link_libraries(ApplicationsFileIO PUBLIC stdc++fs)
+endif()
+
 if(OGS_BUILD_GUI)
     # Needed for the XmlPrjInterface, which links the DE/Base/OGSError.h.
     target_link_libraries(ApplicationsFileIO PUBLIC QtBase)
