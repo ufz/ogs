@@ -715,23 +715,11 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             .noalias() += N_p.transpose() * rho_LR * p_cap_dot_ip *
                           dspecific_storage_dp_cap * N_p * w;
 
-        /* In the derivation there is a div(du/dt) term in the Jacobian, but
-         * this implementation increases the total runtime by 1%. Maybe a very
-         * large step is needed to see the increase of efficiency.
-        double div_u_dot = 0;
-        for (int i = 0; i < DisplacementDim; ++i)
-        {
-            div_u_dot +=
-                (dNdx_u *
-                 u_dot.template segment<ShapeFunctionDisplacement::NPOINTS>(
-                     i * ShapeFunctionDisplacement::NPOINTS))[i];
-        }
         local_Jac
             .template block<pressure_size, pressure_size>(pressure_index,
                                                           pressure_index)
             .noalias() -= N_p.transpose() * rho_LR * dS_L_dp_cap * alpha *
-                          div_u_dot * N_p * w;
-         */
+                          identity2.transpose() * B * u_dot * N_p * w;
 
         double const dk_rel_dS_l =
             medium->property(MPL::PropertyType::relative_permeability)
