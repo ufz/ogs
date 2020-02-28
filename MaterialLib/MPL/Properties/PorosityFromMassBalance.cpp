@@ -59,19 +59,16 @@ PropertyDataType PorosityFromMassBalance::value(
         variable_array[static_cast<int>(Variable::porosity)]);
 
     double const w = dt * (e_dot + p_dot / K_SR);
-    return (phi + alpha_b * w) / (1 + w);
+    return std::clamp((phi + alpha_b * w) / (1 + w), 0., 1.);
 }
 
 PropertyDataType PorosityFromMassBalance::dValue(
-    VariableArray const& /*variable_array*/, Variable const primary_variable,
+    VariableArray const& /*variable_array*/,
+    Variable const /*primary_variable*/,
     ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
     double const /*dt*/) const
 {
-    (void)primary_variable;
-    assert((primary_variable == Variable::liquid_saturation) &&
-           "PorosityFromMassBalance::dValue is implemented for "
-           "derivatives with respect to liquid saturation only.");
-    return 0;
+    OGS_FATAL("PorosityFromMassBalance derivatives are not implemented.");
 }
 
 }  // namespace MaterialPropertyLib

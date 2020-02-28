@@ -19,10 +19,14 @@ namespace ParameterLib
 {
 struct CoordinateSystem;
 }
+namespace MaterialPropertyLib
+{
+class SaturationDependentSwelling;
+}
 
 namespace MaterialPropertyLib
 {
-std::unique_ptr<Property> createSaturationDependentSwelling(
+std::unique_ptr<SaturationDependentSwelling> createSaturationDependentSwelling(
     BaseLib::ConfigTree const& config,
     ParameterLib::CoordinateSystem const* const local_coordinate_system);
 }  // namespace MaterialPropertyLib
