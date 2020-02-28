@@ -461,7 +461,7 @@ pipeline {
                   '-DOGS_CPU_ARCHITECTURE=core2 ' +
                   '-DOGS_BUILD_UTILS=ON ' +
                   '-DOGS_CONAN_BUILD=missing ' +
-                  '-DCMAKE_OSX_DEPLOYMENT_TARGET="10.14" '
+                  '-DCMAKE_OSX_DEPLOYMENT_TARGET="10.15" '
               }
               build {
                 target="package"
