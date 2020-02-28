@@ -115,7 +115,7 @@ double IterationNumberBasedTimeStepping::getNextTimeStepSize() const
         dt = _ts_prev.dt() * findMultiplier(_iter_times);
     }
 
-    dt = std::min(std::max(dt, _min_dt), _max_dt);
+    dt = std::clamp(dt, _min_dt, _max_dt);
 
     double const t_next = dt + _ts_prev.current();
     if (t_next > end())
