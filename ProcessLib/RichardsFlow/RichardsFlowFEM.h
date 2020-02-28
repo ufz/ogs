@@ -158,6 +158,7 @@ public:
 
         auto const& medium =
             *_process_data.media_map->getMedium(_element.getID());
+        auto const& liquid_phase = medium.phase("AqueousLiquid");
         MaterialPropertyLib::VariableArray vars;
         vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
             medium
@@ -208,8 +209,9 @@ public:
             double const k_rel =
                 _process_data.material->getRelativePermeability(
                     t, pos, p_int_pt, temperature, Sw);
-            auto const mu = _process_data.material->getFluidViscosity(
-                p_int_pt, temperature);
+            auto const mu =
+                liquid_phase.property(MaterialPropertyLib::viscosity)
+                    .template value<double>(vars, pos, t, dt);
             local_K.noalias() += _ip_data[ip].dNdx.transpose() * permeability *
                                  _ip_data[ip].dNdx *
                                  _ip_data[ip].integration_weight * (k_rel / mu);
@@ -284,6 +286,7 @@ public:
 
         auto const& medium =
             *_process_data.media_map->getMedium(_element.getID());
+        auto const& liquid_phase = medium.phase("AqueousLiquid");
         MaterialPropertyLib::VariableArray vars;
         vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
             medium
@@ -320,8 +323,9 @@ public:
             double const k_rel =
                 _process_data.material->getRelativePermeability(
                     t, pos, p_int_pt, temperature, Sw);
-            auto const mu = _process_data.material->getFluidViscosity(
-                p_int_pt, temperature);
+            auto const mu =
+                liquid_phase.property(MaterialPropertyLib::viscosity)
+                    .template value<double>(vars, pos, t, dt);
             auto const K_mat_coeff = permeability * (k_rel / mu);
             cache_vec.col(ip).noalias() =
                 -K_mat_coeff * _ip_data[ip].dNdx * p_nodal_values;
