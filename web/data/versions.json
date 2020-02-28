@@ -3,13 +3,13 @@
     "gcc": "8.0",
     "clang": "3.5",
     "msvc": {
-      "year": "2017",
-      "number": "15",
-      "toolset": "141"
+      "year": "2019",
+      "number": "16",
+      "toolset": "142"
     },
     "conan": "1.21.0",
     "git": "2.14",
-    "cmake": "3.12",
+    "cmake": "3.14",
     "hugo": "0.64.1",
     "boost": "1.66.0",
     "eigen": "3.3.4",

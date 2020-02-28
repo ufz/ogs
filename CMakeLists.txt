@@ -1,17 +1,9 @@
 # ---- OGS-6 Project ----
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.14)
 
 # Set CMake policies
-cmake_policy(SET CMP0054 NEW)
-cmake_policy(SET CMP0071 NEW)
-cmake_policy(SET CMP0074 NEW)
-if(${CMAKE_VERSION} VERSION_GREATER 3.14)
+if(${CMAKE_VERSION} VERSION_GREATER_EQUAL 3.15)
     cmake_policy(SET CMP0092 NEW)
-endif()
-
-if(MSVC AND NOT ${CMAKE_GENERATOR} STREQUAL Ninja)
-    # Force 64-bit VS compiler
-    set(CMAKE_GENERATOR_TOOLSET host=x64)
 endif()
 
 project(OGS-6)
