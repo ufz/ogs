@@ -388,8 +388,8 @@ pipeline {
           }
           agent {label 'win && conan' }
           environment {
-            MSVC_NUMBER = '15'
-            MSVC_VERSION = '2017'
+            MSVC_NUMBER = '16'
+            MSVC_VERSION = '2019'
             OMP_NUM_THREADS = '1'
             CC = 'clcache'
             CXX = 'clcache'
