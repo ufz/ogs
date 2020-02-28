@@ -733,11 +733,11 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                           div_u_dot * N_p * w;
          */
 
-        double const dk_rel_dS_l = 0;
-    /*
-            _process_data.flow_material->getRelativePermeabilityDerivative(
-                t, x_position, -p_cap_ip, temperature, S_L);
-                */
+        double const dk_rel_dS_l =
+            medium->property(MPL::PropertyType::relative_permeability)
+                .template dValue<double>(variables,
+                                         MPL::Variable::liquid_saturation,
+                                         x_position, t, dt);
         typename ShapeMatricesTypeDisplacement::GlobalDimVectorType const
             grad_p_cap = -dNdx_p * p_L;
         local_Jac
