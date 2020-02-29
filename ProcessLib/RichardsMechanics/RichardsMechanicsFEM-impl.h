@@ -102,6 +102,17 @@ RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                     std::numeric_limits<
                         double>::quiet_NaN() /* t independent */);
 
+        ip_data.transport_porosity = ip_data.porosity;
+        if (solid_phase.hasProperty(MPL::PropertyType::transport_porosity))
+        {
+            ip_data.transport_porosity =
+                solid_phase.property(MPL::transport_porosity)
+                    .template initialValue<double>(
+                        x_position,
+                        std::numeric_limits<
+                            double>::quiet_NaN() /* t independent */);
+        }
+
         _secondary_data.N_u[ip] = shape_matrices_u[ip].N;
     }
 }
@@ -636,14 +647,26 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                                      sigma_sw_dot);
             }
 
-            // Use previous time step porosity for porosity update, ...
-            variables[static_cast<int>(MPL::Variable::porosity)] =
-                _ip_data[ip].porosity_prev;
-            porosity =
-                solid_phase.property(MPL::PropertyType::porosity)
-                    .template value<double>(variables, x_position, t, dt);
-            // ... then use new porosity.
-            variables[static_cast<int>(MPL::Variable::porosity)] = porosity;
+            if (solid_phase.hasProperty(MPL::PropertyType::transport_porosity))
+            {
+                double& phi_tr = _ip_data[ip].transport_porosity;
+
+                // Use previous time step transport_porosity for
+                // transport_porosity update, ...
+                variables[static_cast<int>(MPL::Variable::transport_porosity)] =
+                    _ip_data[ip].transport_porosity_prev;
+                // ... then use new transport_porosity.
+                phi_tr =
+                    solid_phase.property(MPL::PropertyType::transport_porosity)
+                        .template value<double>(variables, x_position, t, dt);
+                variables[static_cast<int>(MPL::Variable::transport_porosity)] =
+                    phi_tr;
+            }
+            else
+            {
+                variables[static_cast<int>(MPL::Variable::transport_porosity)] =
+                    porosity;
+            }
         }
 
         double const k_rel =
@@ -952,6 +975,9 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
 
         variables[static_cast<int>(MPL::Variable::porosity)] =
             _ip_data[ip].porosity;
+
+        variables[static_cast<int>(MPL::Variable::transport_porosity)] =
+            _ip_data[ip].transport_porosity;
 
         auto const mu = liquid_phase.property(MPL::PropertyType::viscosity)
                             .template value<double>(variables, x_position, t, dt);

@@ -61,6 +61,8 @@ struct IntegrationPointData final
     double saturation_prev = std::numeric_limits<double>::quiet_NaN();
     double porosity = std::numeric_limits<double>::quiet_NaN();
     double porosity_prev = std::numeric_limits<double>::quiet_NaN();
+    double transport_porosity = std::numeric_limits<double>::quiet_NaN();
+    double transport_porosity_prev = std::numeric_limits<double>::quiet_NaN();
 
     MaterialLib::Solids::MechanicsBase<DisplacementDim> const& solid_material;
     std::unique_ptr<typename MaterialLib::Solids::MechanicsBase<
@@ -75,6 +77,7 @@ struct IntegrationPointData final
         sigma_sw_prev = sigma_sw;
         saturation_prev = saturation;
         porosity_prev = porosity;
+        transport_porosity_prev = transport_porosity;
         material_state_variables->pushBackState();
     }
 
