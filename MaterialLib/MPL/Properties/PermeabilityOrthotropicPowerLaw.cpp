@@ -59,14 +59,19 @@ PropertyDataType PermeabilityOrthotropicPowerLaw<DisplacementDim>::value(
     ParameterLib::SpatialPosition const& pos, double const /*t*/,
     double const /*dt*/) const
 {
-    auto const phi =
-        std::get<double>(variable_array[static_cast<int>(Variable::porosity)]);
+    auto const phi = std::get<double>(
+        variable_array[static_cast<int>(Variable::transport_porosity)]);
     // TODO (naumov) The phi0 must be evaluated once upon
     // creation/initialization and be stored in a local state.
     // For now assume porosity's initial value does not change with time.
-    auto const phi_0 = _phase->property(PropertyType::porosity)
-                           .template initialValue<double>(
-                               pos, std::numeric_limits<double>::quiet_NaN());
+    auto const phi_0 =
+        _phase->hasProperty(PropertyType::transport_porosity)
+            ? _phase->property(PropertyType::transport_porosity)
+                  .template initialValue<double>(
+                      pos, std::numeric_limits<double>::quiet_NaN())
+            : _phase->property(PropertyType::porosity)
+                  .template initialValue<double>(
+                      pos, std::numeric_limits<double>::quiet_NaN());
 
     Eigen::Matrix<double, DisplacementDim, DisplacementDim> k =
         Eigen::Matrix<double, DisplacementDim, DisplacementDim>::Zero();
