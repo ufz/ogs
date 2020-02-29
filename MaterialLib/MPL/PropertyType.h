@@ -78,6 +78,7 @@ enum PropertyType : int
     thermal_expansivity,
     thermal_longitudinal_dispersivity,
     thermal_transversal_dispersivity,
+    transport_porosity,
     /// used to compute the hydrodynamic dispersion tensor.
     transversal_dispersivity,
     viscosity,
@@ -255,6 +256,10 @@ inline PropertyType convertStringToProperty(std::string const& inString)
     {
         return PropertyType::thermal_transversal_dispersivity;
     }
+    if (boost::iequals(inString, "transport_porosity"))
+    {
+        return PropertyType::transport_porosity;
+    }
     if (boost::iequals(inString, "transversal_dispersivity"))
     {
         return PropertyType::transversal_dispersivity;
@@ -314,6 +319,7 @@ static const std::array<std::string, PropertyType::number_of_properties>
                              "thermal_expansivity",
                              "thermal_longitudinal_dispersivity",
                              "thermal_transversal_dispersivity",
+                             "transport_porosity",
                              "transversal_dispersivity",
                              "viscosity"}};
 
