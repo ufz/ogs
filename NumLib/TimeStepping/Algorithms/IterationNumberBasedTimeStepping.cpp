@@ -18,16 +18,20 @@
 #include <limits>
 #include <utility>
 
+#include "BaseLib/Algorithm.h"
+
 namespace NumLib
 {
 IterationNumberBasedTimeStepping::IterationNumberBasedTimeStepping(
     double const t_initial, double const t_end, double const min_dt,
     double const max_dt, double const initial_dt,
     std::vector<int>&& iter_times_vector,
-    std::vector<double>&& multiplier_vector)
+    std::vector<double>&& multiplier_vector,
+    std::vector<double>&& fixed_output_times)
     : TimeStepAlgorithm(t_initial, t_end),
       _iter_times_vector(std::move(iter_times_vector)),
       _multiplier_vector(std::move(multiplier_vector)),
+      _fixed_output_times(std::move(fixed_output_times)),
       _min_dt(min_dt),
       _max_dt(max_dt),
       _initial_dt(initial_dt),
@@ -48,6 +52,9 @@ IterationNumberBasedTimeStepping::IterationNumberBasedTimeStepping(
     {
         OGS_FATAL("Vector of iteration numbers must be sorted.");
     }
+    //
+    // Remove possible duplicated elements and sort in descending order.
+    BaseLib::makeVectorUnique(_fixed_output_times, std::greater<double>());
 }
 
 bool IterationNumberBasedTimeStepping::next(double const /*solution_error*/,
@@ -72,7 +79,7 @@ bool IterationNumberBasedTimeStepping::next(double const /*solution_error*/,
 
     // prepare the next time step info
     _ts_current = _ts_prev;
-    _ts_current += getNextTimeStepSize();
+    _ts_current += checkSpecificTimeReached(getNextTimeStepSize());
 
     return true;
 }
@@ -124,6 +131,35 @@ double IterationNumberBasedTimeStepping::getNextTimeStepSize() const
     }
 
     return dt;
+}
+
+double IterationNumberBasedTimeStepping::checkSpecificTimeReached(const double h_new)
+{
+    if (_fixed_output_times.empty())
+    {
+        return h_new;
+    }
+
+    const double specific_time = _fixed_output_times.back();
+    if ((specific_time > _ts_current.current()) &&
+        (_ts_current.current() + h_new - specific_time > 0.0))
+    {
+        _fixed_output_times.pop_back();
+        return specific_time - _ts_current.current();
+    }
+
+    return h_new;
+}
+
+void IterationNumberBasedTimeStepping::addFixedOutputTimes(
+    std::vector<double> const& extra_fixed_output_times)
+{
+    _fixed_output_times.insert(_fixed_output_times.end(),
+                               extra_fixed_output_times.begin(),
+                               extra_fixed_output_times.end());
+
+    // Remove possible duplicated elements and sort in descending order.
+    BaseLib::makeVectorUnique(_fixed_output_times, std::greater<double>());
 }
 
 bool IterationNumberBasedTimeStepping::accepted() const
