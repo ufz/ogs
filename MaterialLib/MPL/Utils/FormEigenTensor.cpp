@@ -52,7 +52,8 @@ struct FormEigenTensor
         if constexpr (GlobalDim == 2) {
             return values;
         }
-        OGS_FATAL("Cannot convert a 2d tensor to %dx%d matrix", GlobalDim);
+        OGS_FATAL("Cannot convert a 2d tensor to %dx%d matrix", GlobalDim,
+                  GlobalDim);
     }
     Eigen::Matrix<double, GlobalDim, GlobalDim> operator()(
         Eigen::Matrix<double, 3, 3> const& values) const
@@ -60,7 +61,8 @@ struct FormEigenTensor
         if constexpr (GlobalDim == 3) {
             return values;
         }
-        OGS_FATAL("Cannot convert a 3d tensor to %dx%d matrix", GlobalDim);
+        OGS_FATAL("Cannot convert a 3d tensor to %dx%d matrix", GlobalDim,
+                  GlobalDim);
     }
 
     Eigen::Matrix<double, GlobalDim, GlobalDim> operator()(
