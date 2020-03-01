@@ -97,7 +97,7 @@ PropertyDataType SaturationDependentSwelling::value(
             _lambda[i] * _p[i] * std::pow(S_eff, _lambda[i] - 1) * ei_otimes_ei;
     }
 
-    return (delta_sigma_sw * delta_S_eff).eval();
+    return (delta_sigma_sw * delta_S_eff / dt).eval();
 }
 
 PropertyDataType SaturationDependentSwelling::dValue(
