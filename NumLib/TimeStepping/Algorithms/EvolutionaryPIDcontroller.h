@@ -55,7 +55,7 @@ public:
                               const double h0, const double h_min,
                               const double h_max, const double rel_h_min,
                               const double rel_h_max,
-                              const std::vector<double>&& fixed_output_times,
+                              std::vector<double>&& fixed_output_times,
                               const double tol)
         : TimeStepAlgorithm(t0, t_end),
           _h0(h0),
