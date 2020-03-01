@@ -587,17 +587,6 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         double const chi_S_L = chi(S_L);
         double const chi_S_L_prev = chi(S_L_prev);
 
-        double const k_rel =
-            medium->property(MPL::PropertyType::relative_permeability)
-                .template value<double>(variables, x_position, t, dt);
-        auto const mu = liquid_phase.property(MPL::PropertyType::viscosity)
-                            .template value<double>(variables, x_position, t, dt);
-        auto const K_intrinsic = MPL::formEigenTensor<DisplacementDim>(
-            solid_phase.property(MPL::PropertyType::permeability)
-                .value(variables, x_position, t, dt));
-
-        GlobalDimMatrixType const rho_Ki_over_mu = K_intrinsic * rho_LR / mu;
-
         variables[static_cast<int>(
             MPL::Variable::effective_pore_pressure_rate)] =
             (chi_S_L * (-p_cap_ip) -
@@ -625,6 +614,17 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                                    dt)) *
                 dt;
         }
+
+        double const k_rel =
+            medium->property(MPL::PropertyType::relative_permeability)
+                .template value<double>(variables, x_position, t, dt);
+        auto const mu = liquid_phase.property(MPL::PropertyType::viscosity)
+                            .template value<double>(variables, x_position, t, dt);
+        auto const K_intrinsic = MPL::formEigenTensor<DisplacementDim>(
+            solid_phase.property(MPL::PropertyType::permeability)
+                .value(variables, x_position, t, dt));
+
+        GlobalDimMatrixType const rho_Ki_over_mu = K_intrinsic * rho_LR / mu;
 
         //
         // displacement equation, displacement part
