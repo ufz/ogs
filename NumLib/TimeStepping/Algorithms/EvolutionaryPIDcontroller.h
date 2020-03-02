@@ -15,7 +15,6 @@
 #include <vector>
 
 #include "TimeStepAlgorithm.h"
-#include "BaseLib/Algorithm.h"
 
 namespace BaseLib
 {
@@ -57,22 +56,7 @@ public:
                               const double h_max, const double rel_h_min,
                               const double rel_h_max,
                               std::vector<double>&& fixed_output_times,
-                              const double tol)
-        : TimeStepAlgorithm(t0, t_end),
-          _h0(h0),
-          _h_min(h_min),
-          _h_max(h_max),
-          _rel_h_min(rel_h_min),
-          _rel_h_max(rel_h_max),
-          _fixed_output_times(std::move(fixed_output_times)),
-          _tol(tol),
-          _e_n_minus1(0.),
-          _e_n_minus2(0.),
-          _is_accepted(true)
-    {
-        // Remove possible duplicated elements. Result will be sorted.
-        BaseLib::makeVectorUnique(_fixed_output_times);
-    }
+                              const double tol);
 
     bool next(double solution_error, int number_iterations) override;
 
