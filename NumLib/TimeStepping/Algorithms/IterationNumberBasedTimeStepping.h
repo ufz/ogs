@@ -116,10 +116,6 @@ private:
     /// Find a multiplier for the given number of iterations.
     double findMultiplier(int number_iterations) const;
 
-    /// If any time will be reached with given time increment, it will be
-    /// reduced, otherwise the input will be returned.
-    double possiblyClampToNextFixedTime(const double h_new) const;
-
     /// This vector stores the number of iterations to which the respective
     /// multiplier coefficient will be applied.
     const std::vector<int> _iter_times_vector;

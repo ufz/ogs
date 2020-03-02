@@ -111,10 +111,6 @@ private:
      */
     double limitStepSize(const double h_new,
                          const bool previous_step_accepted) const;
-
-    /// If any time will be reached with given time increment, it will be
-    /// reduced, otherwise the input will be returned.
-    double possiblyClampToNextFixedTime(const double h_new) const;
 };
 
 /// Create an EvolutionaryPIDcontroller time stepper from the given

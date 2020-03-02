@@ -79,7 +79,8 @@ bool IterationNumberBasedTimeStepping::next(double const /*solution_error*/,
 
     // prepare the next time step info
     _ts_current = _ts_prev;
-    _ts_current += possiblyClampToNextFixedTime(getNextTimeStepSize());
+    _ts_current += possiblyClampDtToNextFixedTime(
+        _ts_current.current(), getNextTimeStepSize(), _fixed_output_times);
 
     return true;
 }
@@ -131,27 +132,6 @@ double IterationNumberBasedTimeStepping::getNextTimeStepSize() const
     }
 
     return dt;
-}
-
-double IterationNumberBasedTimeStepping::possiblyClampToNextFixedTime(
-    const double h_new) const
-{
-    auto const specific_time =
-        std::upper_bound(std::cbegin(_fixed_output_times),
-                         std::cend(_fixed_output_times), _ts_current.current());
-
-    if (specific_time == std::cend(_fixed_output_times))
-    {
-        return h_new;
-    }
-
-    if ((*specific_time > _ts_current.current()) &&
-        (_ts_current.current() + h_new - *specific_time > 0.0))
-    {
-        return *specific_time - _ts_current.current();
-    }
-
-    return h_new;
 }
 
 void IterationNumberBasedTimeStepping::addFixedOutputTimes(

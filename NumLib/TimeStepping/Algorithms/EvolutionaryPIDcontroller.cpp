@@ -56,7 +56,8 @@ bool EvolutionaryPIDcontroller::next(double const solution_error,
                                               : 0.5 * _ts_current.dt();
 
         h_new = limitStepSize(h_new, is_previous_step_accepted);
-        h_new = possiblyClampToNextFixedTime(h_new);
+        h_new = possiblyClampDtToNextFixedTime(_ts_current.current(), h_new,
+                                               _fixed_output_times);
 
         _ts_current = _ts_prev;
         _ts_current += h_new;
@@ -116,7 +117,8 @@ bool EvolutionaryPIDcontroller::next(double const solution_error,
         }
 
         h_new = limitStepSize(h_new, is_previous_step_accepted);
-        h_new = possiblyClampToNextFixedTime(h_new);
+        h_new = possiblyClampDtToNextFixedTime(_ts_current.current(), h_new,
+                                               _fixed_output_times);
         _dt_vector.push_back(h_new);
 
         _ts_prev = _ts_current;
@@ -163,27 +165,6 @@ double EvolutionaryPIDcontroller::limitStepSize(
         }
     }
     return limited_h;
-}
-
-double EvolutionaryPIDcontroller::possiblyClampToNextFixedTime(
-    const double h_new) const
-{
-    auto const specific_time =
-        std::upper_bound(std::cbegin(_fixed_output_times),
-                         std::cend(_fixed_output_times), _ts_current.current());
-
-    if (specific_time == std::cend(_fixed_output_times))
-    {
-        return h_new;
-    }
-
-    if ((*specific_time > _ts_current.current()) &&
-        (_ts_current.current() + h_new - *specific_time > 0.0))
-    {
-        return *specific_time - _ts_current.current();
-    }
-
-    return h_new;
 }
 
 void EvolutionaryPIDcontroller::addFixedOutputTimes(

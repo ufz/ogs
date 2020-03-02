@@ -141,4 +141,14 @@ protected:
     std::vector<double> _dt_vector;
 };
 
+/// If any of the fixed times will be reached with given time increment, it will
+/// be reduced, otherwise the input will be returned.
+/// \pre The input vector of fixed times must be sorted.
+/// \param t Current time.
+/// \param dt Suggested time increment.
+/// \param fixed_output_times Sorted list of times which are to be reached.
+double possiblyClampDtToNextFixedTime(
+    double const t, double const dt,
+    std::vector<double> const& fixed_output_times);
+
 }  // namespace NumLib
