@@ -218,9 +218,9 @@ AddTest(
     GLOB orthotropic_swelling_xyz_pcs_0_ts_*.vtu pressure pressure 1e-15 0
     GLOB orthotropic_swelling_xyz_pcs_0_ts_*.vtu saturation saturation 1e-14 1e-15
     GLOB orthotropic_swelling_xyz_pcs_0_ts_*.vtu displacement displacement 1e-15 0
-    GLOB orthotropic_swelling_xyz_pcs_0_ts_*.vtu sigma sigma 1e-15 0
-    GLOB orthotropic_swelling_xyz_pcs_0_ts_*.vtu swelling_stress swelling_stress 1e-15 0
-    GLOB orthotropic_swelling_xyz_pcs_0_ts_*.vtu epsilon epsilon 1e-15 0
+    GLOB orthotropic_swelling_xyz_pcs_0_ts_*.vtu sigma sigma 2e-15 0
+    GLOB orthotropic_swelling_xyz_pcs_0_ts_*.vtu swelling_stress swelling_stress 3e-15 0
+    GLOB orthotropic_swelling_xyz_pcs_0_ts_*.vtu epsilon epsilon 2e-15 0
     GLOB orthotropic_swelling_xyz_pcs_0_ts_*.vtu velocity velocity 1e-15 0
     GLOB orthotropic_swelling_xyz_pcs_0_ts_*.vtu porosity porosity 5e-15 1e-15
     GLOB orthotropic_swelling_xyz_pcs_0_ts_*.vtu porosity_avg porosity_avg 5e-15 1e-15
