@@ -29,11 +29,14 @@ private:
 
     /// Parameter, which is used by FEM to set the initial porosity value.
     ParameterLib::Parameter<double> const& _phi0;
+    double const _phi_min;  //< Lower limit for the porosity.
+    double const _phi_max;  //< Upper limit for the porosity.
 
 public:
     PorosityFromMassBalance(
-        ParameterLib::Parameter<double> const& initial_porosity)
-        : _phi0(initial_porosity)
+        ParameterLib::Parameter<double> const& initial_porosity,
+        double const phi_min, double const phi_max)
+        : _phi0(initial_porosity), _phi_min(phi_min), _phi_max(phi_max)
     {
     }
 
