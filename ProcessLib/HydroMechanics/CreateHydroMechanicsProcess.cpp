@@ -131,6 +131,9 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         std::copy_n(b.data(), b.size(), specific_body_force.data());
     }
 
+    //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS__mass_lumping}
+    auto mass_lumping = config.getConfigParameter<bool>("mass_lumping", false);
+
     auto media_map =
         MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
 
@@ -165,7 +168,8 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     HydroMechanicsProcessData<DisplacementDim> process_data{
         materialIDs(mesh),     std::move(media_map),
         std::move(solid_constitutive_relations),
-        initial_stress,        specific_body_force};
+        initial_stress,        specific_body_force,
+        mass_lumping};
 
     SecondaryVariableCollection secondary_variables;
 
