@@ -36,7 +36,7 @@ bool EvolutionaryPIDcontroller::next(double const solution_error,
                                               : 0.5 * _ts_current.dt();
 
         h_new = limitStepSize(h_new, is_previous_step_accepted);
-        h_new = checkSpecificTimeReached(h_new);
+        h_new = possiblyClampToNextFixedTime(h_new);
 
         _ts_current = _ts_prev;
         _ts_current += h_new;
@@ -96,7 +96,7 @@ bool EvolutionaryPIDcontroller::next(double const solution_error,
         }
 
         h_new = limitStepSize(h_new, is_previous_step_accepted);
-        h_new = checkSpecificTimeReached(h_new);
+        h_new = possiblyClampToNextFixedTime(h_new);
         _dt_vector.push_back(h_new);
 
         _ts_prev = _ts_current;
@@ -145,19 +145,22 @@ double EvolutionaryPIDcontroller::limitStepSize(
     return limited_h;
 }
 
-double EvolutionaryPIDcontroller::checkSpecificTimeReached(const double h_new)
+double EvolutionaryPIDcontroller::possiblyClampToNextFixedTime(
+    const double h_new) const
 {
-    if (_fixed_output_times.empty())
+    auto const specific_time =
+        std::upper_bound(std::cbegin(_fixed_output_times),
+                         std::cend(_fixed_output_times), _ts_current.current());
+
+    if (specific_time == std::cend(_fixed_output_times))
     {
         return h_new;
     }
 
-    const double specific_time = _fixed_output_times.back();
-    if ((specific_time > _ts_current.current()) &&
-        (_ts_current.current() + h_new - specific_time > 0.0))
+    if ((*specific_time > _ts_current.current()) &&
+        (_ts_current.current() + h_new - *specific_time > 0.0))
     {
-        _fixed_output_times.pop_back();
-        return specific_time - _ts_current.current();
+        return *specific_time - _ts_current.current();
     }
 
     return h_new;
@@ -170,8 +173,8 @@ void EvolutionaryPIDcontroller::addFixedOutputTimes(
                                extra_fixed_output_times.begin(),
                                extra_fixed_output_times.end());
 
-    // Remove possible duplicated elements and sort in descending order.
-    BaseLib::makeVectorUnique(_fixed_output_times, std::greater<double>());
+    // Remove possible duplicated elements. Result will be sorted.
+    BaseLib::makeVectorUnique(_fixed_output_times);
 }
 
 bool EvolutionaryPIDcontroller::canReduceTimestepSize() const

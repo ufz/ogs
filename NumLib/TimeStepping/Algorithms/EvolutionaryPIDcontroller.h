@@ -15,6 +15,7 @@
 #include <vector>
 
 #include "TimeStepAlgorithm.h"
+#include "BaseLib/Algorithm.h"
 
 namespace BaseLib
 {
@@ -69,6 +70,8 @@ public:
           _e_n_minus2(0.),
           _is_accepted(true)
     {
+        // Remove possible duplicated elements. Result will be sorted.
+        BaseLib::makeVectorUnique(_fixed_output_times);
     }
 
     bool next(double solution_error, int number_iterations) override;
@@ -125,7 +128,9 @@ private:
     double limitStepSize(const double h_new,
                          const bool previous_step_accepted) const;
 
-    double checkSpecificTimeReached(const double h_new);
+    /// If any time will be reached with given time increment, it will be
+    /// reduced, otherwise the input will be returned.
+    double possiblyClampToNextFixedTime(const double h_new) const;
 };
 
 /// Create an EvolutionaryPIDcontroller time stepper from the given
