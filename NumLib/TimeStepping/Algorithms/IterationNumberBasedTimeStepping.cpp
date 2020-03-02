@@ -88,6 +88,13 @@ double IterationNumberBasedTimeStepping::findMultiplier(
             multiplier = _multiplier_vector[i];
         }
     }
+
+    if (!_accepted && (multiplier >= 1.0))
+    {
+        return *std::min_element(_multiplier_vector.begin(),
+                                 _multiplier_vector.end());
+    }
+
     return multiplier;
 }
 
@@ -108,7 +115,7 @@ double IterationNumberBasedTimeStepping::getNextTimeStepSize() const
         dt = _ts_prev.dt() * findMultiplier(_iter_times);
     }
 
-    dt = std::min(std::max(dt, _min_dt), _max_dt);
+    dt = std::clamp(dt, _min_dt, _max_dt);
 
     double const t_next = dt + _ts_prev.current();
     if (t_next > end())
