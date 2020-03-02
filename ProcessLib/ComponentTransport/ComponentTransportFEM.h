@@ -419,7 +419,7 @@ public:
         }
     }
 
-    void assembleHydraulicEquation(double const t, double const /*dt*/,
+    void assembleHydraulicEquation(double const t, double const dt,
                                    Eigen::VectorXd const& local_x,
                                    Eigen::VectorXd const& local_xdot,
                                    std::vector<double>& local_M_data,
@@ -530,7 +530,7 @@ public:
     }
 
     void assembleComponentTransportEquation(
-        double const t, double const /*dt*/, Eigen::VectorXd const& local_x,
+        double const t, double const dt, Eigen::VectorXd const& local_x,
         Eigen::VectorXd const& local_xdot, std::vector<double>& local_M_data,
         std::vector<double>& local_K_data,
         std::vector<double>& /*local_b_data*/, int const transport_process_id)
