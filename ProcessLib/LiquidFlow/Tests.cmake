@@ -394,3 +394,14 @@ AddTest(
     LF_square_1e1_surfaceflux_pcs_0_ts_1_t_0.432000_expected.vtu LF_square_1e1_surfaceflux_pcs_0_ts_1_t_0.432000.vtu pressure pressure 1e-7 1e-13
     LF_square_1e1_surfaceflux_pcs_0_ts_2_t_0.864000_expected.vtu LF_square_1e1_surfaceflux_pcs_0_ts_2_t_0.864000.vtu pressure pressure 1e-7 1e-13
 )
+
+AddTest(
+    NAME LiquidFlow_SimpleSynthetics_constraint_dirichlet_bc
+    PATH Parabolic/LiquidFlow/SimpleSynthetics
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS constraint_bc_1e3.prj
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    GLOB LF_constraint_bc_1e3_pcs_0_ts_*.vtu p p 1e-15 1e-14
+)
