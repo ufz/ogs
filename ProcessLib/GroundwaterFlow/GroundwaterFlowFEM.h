@@ -155,7 +155,8 @@ public:
         // fetch hydraulic conductivity
         ParameterLib::SpatialPosition pos;
         pos.setElementID(_element.getID());
-        auto const k = _process_data.hydraulic_conductivity(t, pos)[0];
+        auto const k = hydraulicConductivity<GlobalDim>(
+            _process_data.hydraulic_conductivity(t, pos));
 
         Eigen::Vector3d flux;
         flux.head<GlobalDim>() =
@@ -203,7 +204,8 @@ public:
         for (unsigned i = 0; i < n_integration_points; ++i)
         {
             pos.setIntegrationPoint(i);
-            auto const k = _process_data.hydraulic_conductivity(t, pos)[0];
+            auto const k = hydraulicConductivity<GlobalDim>(
+                _process_data.hydraulic_conductivity(t, pos));
             // dimensions: (d x 1) = (d x n) * (n x 1)
             cache_mat.col(i).noalias() =
                 -k * _shape_matrices[i].dNdx * local_x_vec;
