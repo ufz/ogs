@@ -28,19 +28,7 @@ public:
                      GroutParameters const& grout,
                      FlowAndTemperatureControl const& flowAndTemperatureControl,
                      PipeConfigurationCoaxial const& pipes,
-                     bool const use_python_bcs)
-        : BHECommon{borehole, refrigerant, grout, flowAndTemperatureControl,
-                    use_python_bcs},
-          _pipes(pipes)
-    {
-        cross_section_area_inner_pipe = _pipes.inner_pipe.area();
-        cross_section_area_annulus =
-            _pipes.outer_pipe.area() - _pipes.inner_pipe.outsideArea();
-        cross_section_area_grout =
-            borehole_geometry.area() - _pipes.outer_pipe.outsideArea();
-
-        _thermal_resistances.fill(std::numeric_limits<double>::quiet_NaN());
-    }
+                     bool const use_python_bcs);
 
     static constexpr int number_of_unknowns = 3;
     static constexpr int number_of_grout_zones = 1;
