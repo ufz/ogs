@@ -176,7 +176,7 @@ void ConstraintDirichletBoundaryCondition::getEssentialBCValues(
             // if-condition is applied.
             if (g_idx >= 0)
             {
-                tmp_bc_values.emplace_back(g_idx, _parameter(t,pos).front());
+                tmp_bc_values.emplace_back(g_idx, _parameter(t, pos).front());
             }
         }
     }
