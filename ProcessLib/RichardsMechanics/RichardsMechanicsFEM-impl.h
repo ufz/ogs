@@ -294,7 +294,7 @@ void RichardsMechanicsLocalAssembler<
                                          MPL::Variable::capillary_pressure,
                                          x_position, t, dt);
 
-        auto const chi = [&](double const S_L) {
+        auto const chi = [medium, x_position, t, dt](double const S_L) {
             MPL::VariableArray variables;
             variables[static_cast<int>(MPL::Variable::liquid_saturation)] = S_L;
             return medium->property(MPL::PropertyType::bishops_effective_stress)
@@ -578,7 +578,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                     variables, MPL::Variable::capillary_pressure,
                     MPL::Variable::capillary_pressure, x_position, t, dt);
 
-        auto const chi = [&](double const S_L) {
+        auto const chi = [medium, x_position, t, dt](double const S_L) {
             MPL::VariableArray variables;
             variables[static_cast<int>(MPL::Variable::liquid_saturation)] = S_L;
             return medium->property(MPL::PropertyType::bishops_effective_stress)
