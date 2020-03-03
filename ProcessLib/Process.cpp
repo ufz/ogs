@@ -218,7 +218,7 @@ void Process::assembleWithJacobian(const double t, double const dt,
                                    GlobalMatrix& Jac)
 {
     MathLib::LinAlg::setLocalAccessibleVector(*x[process_id]);
-    MathLib::LinAlg::setLocalAccessibleVector(xdot);
+    MathLib::LinAlg::setLocalAccessibleVector(*xdot[process_id]);
 
     assembleWithJacobianConcreteProcess(t, dt, x, xdot, dxdot_dx, dx_dx,
                                         process_id, M, K, b, Jac);
