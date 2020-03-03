@@ -115,9 +115,10 @@ void VectorMatrixAssembler::assembleWithJacobian(
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>> const&
         dof_tables,
     const double t, double const dt, std::vector<GlobalVector*> const& x,
-    GlobalVector const& xdot, const double dxdot_dx, const double dx_dx,
-    int const process_id, GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
-    GlobalMatrix& Jac, CoupledSolutionsForStaggeredScheme const* const cpl_xs)
+    std::vector<GlobalVector*> const& xdot, const double dxdot_dx,
+    const double dx_dx, int const process_id, GlobalMatrix& M, GlobalMatrix& K,
+    GlobalVector& b, GlobalMatrix& Jac,
+    CoupledSolutionsForStaggeredScheme const* const cpl_xs)
 {
     std::vector<std::vector<GlobalIndexType>> indices_of_processes;
     indices_of_processes.reserve(dof_tables.size());
@@ -128,7 +129,6 @@ void VectorMatrixAssembler::assembleWithJacobian(
     }
 
     auto const& indices = indices_of_processes[process_id];
-    auto const local_xdot = xdot.get(indices);
 
     _local_M_data.clear();
     _local_K_data.clear();
@@ -138,6 +138,7 @@ void VectorMatrixAssembler::assembleWithJacobian(
     if (cpl_xs == nullptr)
     {
         auto const local_x = x[process_id]->get(indices);
+        auto const local_xdot = xdot[process_id]->get(indices);
         _jacobian_assembler->assembleWithJacobian(
             local_assembler, t, dt, local_x, local_xdot, dxdot_dx, dx_dx,
             _local_M_data, _local_K_data, _local_b_data, _local_Jac_data);
@@ -147,13 +148,16 @@ void VectorMatrixAssembler::assembleWithJacobian(
 
         auto local_coupled_xs =
             getCoupledLocalSolutions(x, indices_of_processes);
+        auto local_coupled_xdots =
+            getCoupledLocalSolutions(xdot, indices_of_processes);
 
-        auto const x = MathLib::toVector(local_coupled_xs);
-        auto const xdot = MathLib::toVector(local_xdot);
+        auto const local_x = MathLib::toVector(local_coupled_xs);
+        auto const local_xdot = MathLib::toVector(local_coupled_xdots);
 
         _jacobian_assembler->assembleWithJacobianForStaggeredScheme(
-            local_assembler, t, dt, x, xdot, dxdot_dx, dx_dx, process_id,
-            _local_M_data, _local_K_data, _local_b_data, _local_Jac_data);
+            local_assembler, t, dt, local_x, local_xdot, dxdot_dx, dx_dx,
+            process_id, _local_M_data, _local_K_data, _local_b_data,
+            _local_Jac_data);
     }
 
     auto const num_r_c = indices.size();
