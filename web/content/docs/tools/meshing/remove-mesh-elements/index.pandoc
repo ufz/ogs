@@ -29,7 +29,8 @@ removeMeshElements -i <input-mesh> -o <output-mesh>
 	[--zero-volume]
     [--x-min <value>] [--x-max <value>] [--y-min <value>] [--y-max <value>] [--z-min <value>] [--z-max <value>]
 ```
-Each particular line with optional arguments refere to one of the different removal criterions mentioned in the general section.
+Each particular line with optional arguments refers to one of the different removal criteria mentioned in the general section.
+The corresponding element types differ from vtk cell types and can be found in MeshLib/MeshEnums.cpp.
 
 ## Examples
 
