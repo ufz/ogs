@@ -144,35 +144,43 @@ int VtkMappedMeshSource::RequestData(vtkInformation* /*request*/,
     std::vector<std::string> const& propertyNames =
         properties.getPropertyVectorNames();
 
-    for (auto name = propertyNames.cbegin(); name != propertyNames.cend();
-         ++name)
+    for (auto const& name : propertyNames)
     {
-        if (addProperty<double>(properties, *name))
+        if (addProperty<double>(properties, name))
         {
             continue;
         }
-        if (addProperty<float>(properties, *name))
+        if (addProperty<float>(properties, name))
         {
             continue;
         }
-        if (addProperty<int>(properties, *name))
+        if (addProperty<int>(properties, name))
         {
             continue;
         }
-        if (addProperty<unsigned>(properties, *name))
+        if (addProperty<unsigned>(properties, name))
         {
             continue;
         }
-        if (addProperty<std::size_t>(properties, *name))
+        if (addProperty<std::size_t>(properties, name))
         {
             continue;
         }
-        if (addProperty<char>(properties, *name))
+        if (addProperty<char>(properties, name))
         {
             continue;
         }
 
-        DBUG("Mesh property '%s' with unknown data type.", *name->c_str());
+        OGS_FATAL(
+            "Mesh property '%s' with unknown data type. Please check the data "
+            "type of the mesh properties. The available data types are:"
+            "\n\t double,"
+            "\n\t float,"
+            "\n\t int,"
+            "\n\t unsigned,"
+            "\n\t size_t,"
+            "\n\t char.",
+            name.data());
     }
 
     output->GetPointData()->ShallowCopy(this->PointData.GetPointer());
