@@ -128,7 +128,7 @@ static void checkJacobianDeterminant(const double detJ,
             "\t the element nodes may have the same coordinates,\n"
             "\t or the coordinates of all nodes are not given on the x-axis "
             "for a 1D problem or in the xy-plane in the 2D case.\n"
-            "The first case can occurr, if not all boundary elements"
+            "The first case can occur, if not all boundary elements"
             "were removed from the bulk mesh.");
     }
 }
