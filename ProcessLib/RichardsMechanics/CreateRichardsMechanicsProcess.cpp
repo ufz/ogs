@@ -19,7 +19,6 @@
 #include "MaterialLib/SolidModels/MechanicsBase.h"
 #include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
-#include "ProcessLib/RichardsFlow/CreateRichardsFlowMaterialProperties.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
 #include "RichardsMechanicsProcess.h"
 #include "RichardsMechanicsProcessData.h"
