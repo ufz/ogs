@@ -308,9 +308,6 @@ void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
                 "for every single BHE, there should be 2 boundary nodes.");
         }
 
-        auto const bc_top_node_id = bhe_boundary_nodes[0]->getID();
-        auto const bc_bottom_node_id = bhe_boundary_nodes[1]->getID();
-
         auto get_global_bhe_bc_indices =
             [&](std::size_t const node_id,
                 std::pair<int, int> const& in_out_component_id) {
@@ -323,7 +320,9 @@ void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
                         variable_id, in_out_component_id.second));
             };
 
-        auto createBCs = [&](auto& bhe) {
+        auto createBCs = [&, bc_top_node_id = bhe_boundary_nodes[0]->getID(),
+                          bc_bottom_node_id =
+                              bhe_boundary_nodes[1]->getID()](auto& bhe) {
             for (auto const& in_out_component_id :
                  bhe.inflow_outflow_bc_component_ids)
             {
