@@ -16,7 +16,6 @@
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
 
-#include "CreateRichardsFlowMaterialProperties.h"
 #include "RichardsFlowProcess.h"
 #include "RichardsFlowProcessData.h"
 
@@ -34,7 +33,7 @@ std::unique_ptr<Process> createRichardsFlowProcess(
     BaseLib::ConfigTree const& config,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves,
+        /*curves*/,
     std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
 {
     //! \ogs_file_param{prj__processes__process__type}
@@ -75,38 +74,16 @@ std::unique_ptr<Process> createRichardsFlowProcess(
     //! \ogs_file_param{prj__processes__process__RICHARDS_FLOW__mass_lumping}
     auto mass_lumping = config.getConfigParameter<bool>("mass_lumping");
 
-    auto& temperature = ParameterLib::findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__RICHARDS_FLOW__temperature}
-        "temperature", parameters, 1, &mesh);
-
-    //! \ogs_file_param{prj__processes__process__RICHARDS_FLOW__material_property}
-    auto const& mat_config = config.getConfigSubtree("material_property");
-
-    auto const material_ids = materialIDs(mesh);
-    if (material_ids != nullptr)
-    {
-        INFO("The Richards flow is in heterogeneous porous media.");
-    }
-    else
-    {
-        INFO("The Richards flow is in homogeneous porous media.");
-    }
-    std::unique_ptr<RichardsFlowMaterialProperties> material =
-        createRichardsFlowMaterialProperties(mat_config, material_ids,
-                                             parameters);
     auto media_map =
         MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
 
     RichardsFlowProcessData process_data{
-        std::move(media_map), std::move(material), specific_body_force,
-        has_gravity,          mass_lumping,        temperature};
+        std::move(media_map), specific_body_force, has_gravity, mass_lumping};
 
     return std::make_unique<RichardsFlowProcess>(
         std::move(name), mesh, std::move(jacobian_assembler), parameters,
         integration_order, std::move(process_variables),
-        std::move(process_data), std::move(secondary_variables), mat_config,
-        curves);
+        std::move(process_data), std::move(secondary_variables));
 }
 
 }  // namespace RichardsFlow
