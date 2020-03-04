@@ -16,7 +16,7 @@
 #include "PhreeqcKernelData/AqueousSolution.h"
 #include "PhreeqcKernelData/ReactionRate.h"
 
-#include "ThirdParty/iphreeqc/src/src/phreeqcpp/cxxKinetics.h"
+#include <iphreeqc/src/src/phreeqcpp/cxxKinetics.h>
 
 namespace ChemistryLib
 {
