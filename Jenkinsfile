@@ -135,7 +135,6 @@ pipeline {
               recordIssues enabledForFailure: true, filters: [
                 excludeFile('.*qrc_icons\\.cpp.*'), excludeFile('.*QVTKWidget.*'),
                 excludeFile('.*\\.conan.*/TFEL/.*'),
-                excludeFile('.*ThirdParty/MGIS/src.*'),
                 excludeFile('.*MaterialLib/SolidModels/MFront/.*\\.mfront'),
                 excludeFile('.*MaterialLib/SolidModels/MFront/.*\\.hxx'),
                 excludeMessage('.*tmpnam.*')],
@@ -429,7 +428,7 @@ pipeline {
                 GoogleTest(pattern: 'build/Tests/testrunner.xml')
               ])
               recordIssues enabledForFailure: true, filters: [
-                excludeFile('.*\\.conan.*'), excludeFile('.*ThirdParty.*'),
+                excludeFile('.*\\.conan.*'),
                 excludeFile('.*thread.hpp')],
                 tools: [msBuild(name: 'MSVC', pattern: 'build/build*.log')],
                 qualityGates: [[threshold: 10, type: 'TOTAL', unstable: true]]
