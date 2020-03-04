@@ -7,7 +7,7 @@ title = "Heat pipe problem"
 
 [menu]
   [menu.benchmarks]
-    parent = "thermal-two-phase-flow"
+    parent = "Thermal-Two-Phase Flow"
 
 +++
 

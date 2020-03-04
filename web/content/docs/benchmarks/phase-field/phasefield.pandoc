@@ -7,7 +7,7 @@ weight = 158
 
 [menu]
   [menu.benchmarks]
-    parent = "phase-field"
+    parent = "Phase-Field"
 
 +++
 
@@ -18,7 +18,7 @@ weight = 158
 We solve a homogeneous beam model under a given displacement loading. The length of the beam is 2\,mm. Detailed model description can refer [this PDF](../Miao_Biot2017.pdf).
 ## Results and evaluation
 
-Results show crack phase-field and displacement field distributions through the length of the beam:
+Results show crack Phase-Field and displacement field distributions through the length of the beam:
 
 {{< img src="../beam.png" >}}
 {{< img src="../beam_d.png" >}}

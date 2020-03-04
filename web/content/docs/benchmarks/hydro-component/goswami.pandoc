@@ -7,7 +7,7 @@ title = "Saturated Variable-Density Flow and Mass Transport (Goswami)"
 
 [menu]
   [menu.benchmarks]
-    parent = "hydro-component"
+    parent = "Hydro-Component"
 
 +++
 

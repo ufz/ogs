@@ -2,7 +2,6 @@
 date = "2019-04-24T15:15:45+01:00"
 title = "Small deformations: Verification examples by Vogel,Maßmann"
 weight = 50
-project = "SmallDeformation"
 author = "Johannes Herfurth, Jan Thiedau"
 
 [menu]
@@ -10,8 +9,6 @@ author = "Johannes Herfurth, Jan Thiedau"
     parent = "small-deformations"
 
 +++
-
-{{< data-link >}}
 
 These benchmark examples test the implementation of
 small deformations process with analytical solutions
@@ -37,7 +34,7 @@ chapters in the benchmark books.
 |3.15  |           {{< data-link "m3_3Dshearz" "Mechanics/Linear/Orthotropy/m3_3Dshearz.prj" >}}|
 |3.15 (rotated) |  {{< data-link "m3_3Dshearz_rot" "Mechanics/Linear/Orthotropy/m3_3Dshearz_rot.prj" >}}|
 |3.16  |           {{< data-link "m3_3Dtopload" "Mechanics/Linear/Orthotropy/m3_3Dtopload.prj" >}}|
-|3.16 (rotated) |  {{< data-link "m3_3Dtopload_lc" "Mechanics/Linear/Orthotropy/m3_3Dtopload_lc.prj" >}}|
+|3.16 (rotated) |  {{< data-link "m3_3Dtoploadlc" "Mechanics/Linear/Orthotropy/m3_3Dtoploadlc.prj" >}}|
 
 ## References
 

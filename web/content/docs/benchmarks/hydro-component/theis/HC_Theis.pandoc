@@ -7,7 +7,7 @@ title = "Theis solution for well pumping"
 
 [menu]
   [menu.benchmarks]
-    parent = "hydro-component"
+    parent = "Hydro-Component"
 
 +++
 
