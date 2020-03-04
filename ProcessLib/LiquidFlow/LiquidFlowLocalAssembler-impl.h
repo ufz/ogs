@@ -233,8 +233,6 @@ LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
 
     ParameterLib::SpatialPosition pos;
     pos.setElementID(_element.getID());
-    // evaluate the permeability to distinguish which computeDarcyVelocity
-    // method should be used
 
     auto const& medium = _process_data.media_map->getMedium(_element.getID());
     MaterialPropertyLib::VariableArray vars;
@@ -252,6 +250,8 @@ LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     //  the assert must be changed to perm.rows() == _element->getDimension()
     assert(permeability.rows() == GlobalDim || permeability.rows() == 1);
 
+    // evaluate the permeability to distinguish which computeDarcyVelocity
+    // method should be used
     if (permeability.size() == 1)
     {  // isotropic or 1D problem.
         computeDarcyVelocityLocal<IsotropicCalculator>(t, dt, local_x, pos,

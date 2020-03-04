@@ -46,6 +46,7 @@ enum PropertyType : int
     /// used to specify decay rate of a substance.
     decay_rate,
     density,
+    diffusion,
     drhodT,
     effective_stress,
     entry_pressure,
@@ -137,6 +138,10 @@ inline PropertyType convertStringToProperty(std::string const& inString)
     if (boost::iequals(inString, "density"))
     {
         return PropertyType::density;
+    }
+    if (boost::iequals(inString, "diffusion"))
+    {
+        return PropertyType::diffusion;
     }
     if (boost::iequals(inString, "drhodT"))
     {
@@ -280,6 +285,7 @@ static const std::array<std::string, PropertyType::number_of_properties>
                              "compressibility",
                              "decay_rate",
                              "density",
+                             "diffusion",
                              "drhodT",
                              "effective_stress",
                              "entry_pressure",

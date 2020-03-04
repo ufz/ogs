@@ -13,6 +13,8 @@
 #include "BaseLib/FileTools.h"
 #include "GroundwaterFlowProcess.h"
 #include "GroundwaterFlowProcessData.h"
+#include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
+#include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
@@ -31,7 +33,8 @@ std::unique_ptr<Process> createGroundwaterFlowProcess(
     unsigned const integration_order,
     BaseLib::ConfigTree const& config,
     std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
-    std::string const& output_directory)
+    std::string const& output_directory,
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
 {
     //! \ogs_file_param{prj__processes__process__type}
     config.checkConfigParameter("type", "GROUNDWATER_FLOW");
@@ -51,17 +54,10 @@ std::unique_ptr<Process> createGroundwaterFlowProcess(
          "process_variable"});
     process_variables.push_back(std::move(per_process_variables));
 
-    // Hydraulic conductivity parameter.
-    auto& hydraulic_conductivity = ParameterLib::findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__GROUNDWATER_FLOW__hydraulic_conductivity}
-        "hydraulic_conductivity", parameters, 0 /*arbitrary many components*/,
-        &mesh);
+    auto media_map =
+        MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
 
-    DBUG("Use '%s' as hydraulic conductivity parameter.",
-         hydraulic_conductivity.name.c_str());
-
-    GroundwaterFlowProcessData process_data{hydraulic_conductivity};
+    GroundwaterFlowProcessData process_data{std::move(media_map)};
 
     SecondaryVariableCollection secondary_variables;
 

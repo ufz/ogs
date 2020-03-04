@@ -13,11 +13,15 @@
 #include <vector>
 
 #include "GroundwaterFlowProcessData.h"
+#include "MaterialLib/MPL/Medium.h"
+#include "MaterialLib/MPL/Utils/FormEigenTensor.h"
+#include "MaterialLib/MPL/VariableType.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
+#include "NumLib/Function/Interpolation.h"
 #include "ParameterLib/Parameter.h"
 #include "ProcessLib/LocalAssemblerInterface.h"
 #include "ProcessLib/LocalAssemblerTraits.h"
@@ -28,34 +32,6 @@ namespace ProcessLib
 namespace GroundwaterFlow
 {
 const unsigned NUM_NODAL_DOF = 1;
-
-template <int GlobalDim>
-Eigen::Matrix<double, GlobalDim, GlobalDim> hydraulicConductivity(
-    std::vector<double> const& values)
-{
-    auto const size{values.size()};
-    if (size == 1)  // This is a duplicate but preferred case for GlobalDim==1.
-    {
-        return Eigen::Matrix<double, GlobalDim, GlobalDim>::Identity() *
-               values[0];
-    }
-    if (size == GlobalDim)
-    {
-        return Eigen::Map<Eigen::Matrix<double, GlobalDim, 1> const>(
-                   values.data(), GlobalDim, 1)
-            .asDiagonal();
-    }
-    if (size == GlobalDim * GlobalDim)
-    {
-        return Eigen::Map<Eigen::Matrix<double, GlobalDim, GlobalDim> const>(
-            values.data(), GlobalDim, GlobalDim);
-    }
-
-    OGS_FATAL(
-        "Hydraulic conductivity parameter values size is neither one nor %d "
-        "nor %d squared, but %d.",
-        GlobalDim, GlobalDim, values.size());
-}
 
 class GroundwaterFlowLocalAssemblerInterface
     : public ProcessLib::LocalAssemblerInterface,
@@ -100,7 +76,7 @@ public:
     {
     }
 
-    void assemble(double const t, double const /*dt*/,
+    void assemble(double const t, double const dt,
                   std::vector<double> const& local_x,
                   std::vector<double> const& /*local_xdot*/,
                   std::vector<double>& /*local_M_data*/,
@@ -121,13 +97,28 @@ public:
         ParameterLib::SpatialPosition pos;
         pos.setElementID(_element.getID());
 
+        auto const& medium =
+            *_process_data.media_map->getMedium(_element.getID());
+        MaterialPropertyLib::VariableArray vars;
+        vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
+            medium
+                .property(
+                    MaterialPropertyLib::PropertyType::reference_temperature)
+                .template value<double>(vars, pos, t, dt);
+
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             pos.setIntegrationPoint(ip);
             auto const& sm = _shape_matrices[ip];
             auto const& wp = _integration_method.getWeightedPoint(ip);
-            auto const k = hydraulicConductivity<GlobalDim>(
-                _process_data.hydraulic_conductivity(t, pos));
+
+            double p_int_pt = 0.0;
+            NumLib::shapeFunctionInterpolate(local_x, sm.N, p_int_pt);
+            vars[static_cast<int>(
+                MaterialPropertyLib::Variable::phase_pressure)] = p_int_pt;
+            auto const k = MaterialPropertyLib::formEigenTensor<GlobalDim>(
+                medium.property(MaterialPropertyLib::PropertyType::diffusion)
+                    .value(vars, pos, t, dt));
 
             local_K.noalias() += sm.dNdx.transpose() * k * sm.dNdx * sm.detJ *
                                  sm.integralMeasure * wp.getWeight();
@@ -140,6 +131,10 @@ public:
                             double const t,
                             std::vector<double> const& local_x) const override
     {
+        // TODO (tf) Temporary value not used by current material models. Need
+        // extension of getFlux interface
+        double const dt = std::numeric_limits<double>::quiet_NaN();
+
         // eval dNdx and invJ at p
         auto const fe = NumLib::createIsoparametricFiniteElement<
             ShapeFunction, ShapeMatricesType>(_element);
@@ -155,10 +150,25 @@ public:
         // fetch hydraulic conductivity
         ParameterLib::SpatialPosition pos;
         pos.setElementID(_element.getID());
-        auto const k = hydraulicConductivity<GlobalDim>(
-            _process_data.hydraulic_conductivity(t, pos));
+        auto const& medium =
+            *_process_data.media_map->getMedium(_element.getID());
 
-        Eigen::Vector3d flux;
+        MaterialPropertyLib::VariableArray vars;
+        vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
+            medium
+                .property(
+                    MaterialPropertyLib::PropertyType::reference_temperature)
+                .template value<double>(vars, pos, t, dt);
+        double pressure = 0.0;
+        NumLib::shapeFunctionInterpolate(local_x, shape_matrices.N, pressure);
+        vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
+            pressure;
+
+        auto const k = MaterialPropertyLib::formEigenTensor<GlobalDim>(
+            medium.property(MaterialPropertyLib::PropertyType::diffusion)
+                .value(vars, pos, t, dt));
+
+        Eigen::Vector3d flux(0.0, 0.0, 0.0);
         flux.head<GlobalDim>() =
             -k * shape_matrices.dNdx *
             Eigen::Map<const NodalVectorType>(local_x.data(), local_x.size());
@@ -181,6 +191,10 @@ public:
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const override
     {
+        // TODO (tf) Temporary value not used by current material models. Need
+        // extension of secondary variable interface.
+        double const dt = std::numeric_limits<double>::quiet_NaN();
+
         auto const n_integration_points =
             _integration_method.getNumberOfPoints();
 
@@ -201,11 +215,27 @@ public:
         ParameterLib::SpatialPosition pos;
         pos.setElementID(_element.getID());
 
+        auto const& medium =
+            *_process_data.media_map->getMedium(_element.getID());
+
+        MaterialPropertyLib::VariableArray vars;
+        vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
+            medium
+                .property(
+                    MaterialPropertyLib::PropertyType::reference_temperature)
+                .template value<double>(vars, pos, t, dt);
+        double pressure = 0.0;
         for (unsigned i = 0; i < n_integration_points; ++i)
         {
             pos.setIntegrationPoint(i);
-            auto const k = hydraulicConductivity<GlobalDim>(
-                _process_data.hydraulic_conductivity(t, pos));
+            NumLib::shapeFunctionInterpolate(local_x, _shape_matrices[i].N,
+                                             pressure);
+            vars[static_cast<int>(
+                MaterialPropertyLib::Variable::phase_pressure)] = pressure;
+
+            auto const k = MaterialPropertyLib::formEigenTensor<GlobalDim>(
+                medium.property(MaterialPropertyLib::PropertyType::diffusion)
+                    .value(vars, pos, t, dt));
             // dimensions: (d x 1) = (d x n) * (n x 1)
             cache_mat.col(i).noalias() =
                 -k * _shape_matrices[i].dNdx * local_x_vec;
