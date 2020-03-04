@@ -193,6 +193,8 @@ public:
                     .property(MaterialPropertyLib::PropertyType::saturation)
                     .template value<double>(vars, pos, t, dt);
             _saturation[ip] = Sw;
+            vars[static_cast<int>(
+                MaterialPropertyLib::Variable::liquid_saturation)] = Sw;
 
             double const dSw_dpc =
                 medium
@@ -327,6 +329,8 @@ public:
                 medium
                     .property(MaterialPropertyLib::PropertyType::saturation)
                     .template value<double>(vars, pos, t, dt);
+            vars[static_cast<int>(
+                MaterialPropertyLib::Variable::liquid_saturation)] = Sw;
 
             auto const permeability =
                 MaterialPropertyLib::formEigenTensor<GlobalDim>(
