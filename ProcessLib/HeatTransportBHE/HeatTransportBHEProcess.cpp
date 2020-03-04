@@ -307,17 +307,19 @@ void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
                 "Error!!! The BHE boundary nodes are not correctly found, "
                 "for every single BHE, there should be 2 boundary nodes.");
         }
+        auto get_global_index =
+            [&](std::size_t const node_id, int const component) {
+                return _local_to_global_index_map->getGlobalIndex(
+                    {_mesh.getID(), MeshLib::MeshItemType::Node, node_id},
+                    variable_id, component);
+            };
 
         auto get_global_bhe_bc_indices =
             [&](std::size_t const node_id,
                 std::pair<int, int> const& in_out_component_id) {
                 return std::make_pair(
-                    _local_to_global_index_map->getGlobalIndex(
-                        {_mesh.getID(), MeshLib::MeshItemType::Node, node_id},
-                        variable_id, in_out_component_id.first),
-                    _local_to_global_index_map->getGlobalIndex(
-                        {_mesh.getID(), MeshLib::MeshItemType::Node, node_id},
-                        variable_id, in_out_component_id.second));
+                    get_global_index(node_id, in_out_component_id.first),
+                    get_global_index(node_id, in_out_component_id.second));
             };
 
         auto createBCs = [&, bc_top_node_id = bhe_boundary_nodes[0]->getID(),
