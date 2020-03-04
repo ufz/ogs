@@ -15,12 +15,6 @@ find_program(GPROF_PATH gprof DOC "GNU profiler gprof" QUIET)
 
 find_program(CPPCHECK_TOOL_PATH cppcheck)
 
-if(OGS_USE_PYTHON)
-    find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
-else()
-    find_package(Python3 COMPONENTS Interpreter)
-endif()
-
 # Find bash itself ...
 find_program(BASH_TOOL_PATH bash
     HINTS ${GITHUB_BIN_DIR} DOC "The bash executable")

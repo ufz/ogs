@@ -5,6 +5,9 @@ cmake_minimum_required(VERSION 3.12)
 cmake_policy(SET CMP0054 NEW)
 cmake_policy(SET CMP0071 NEW)
 cmake_policy(SET CMP0074 NEW)
+if(${CMAKE_VERSION} VERSION_GREATER 3.14)
+    cmake_policy(SET CMP0092 NEW)
+endif()
 
 if(MSVC AND NOT ${CMAKE_GENERATOR} STREQUAL Ninja)
     # Force 64-bit VS compiler
@@ -63,6 +66,7 @@ option(OGS_USE_CVODE "Use the Sundials CVODE module?" OFF)
 # ---- CMake includes ----
 include(PreFind)
 include(SubmoduleSetup)
+add_subdirectory(ThirdParty)
 include(Versions)
 include(CheckTypeSizes)
 include(CheckArchitecture)
@@ -334,7 +338,7 @@ if(OGS_INSITU)
     include("${PARAVIEW_USE_FILE}")
     add_definitions(-DUSE_INSITU)
 endif()
-add_subdirectory(ThirdParty)
+
 include_directories(
     SYSTEM
     ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty
@@ -343,6 +347,12 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/tclap/include
     ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/json/include
     ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/exprtk)
+
+# vtkdiff
+if(EXISTS ${PROJECT_SOURCE_DIR}/ThirdParty/vtkdiff/CMakeLists.txt)
+    add_subdirectory(ThirdParty/vtkdiff)
+    install(PROGRAMS $<TARGET_FILE:vtkdiff> DESTINATION bin COMPONENT ogs_extras)
+endif()
 
 include(scripts/cmake/CheckHeaderCompilation.cmake)
 

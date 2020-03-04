@@ -1,22 +1,5 @@
-# Disable all warnings
-if(COMPILER_IS_CLANG OR COMPILER_IS_GCC)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w")
-elseif(MSVC)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W0")
-endif()
-
-# Add logog subdirectory and group its targets in a Visual Studio folder
 add_subdirectory(logog)
-if(BUILD_TESTING)
-    set_property(TARGET Continuous PROPERTY FOLDER "logog")
-endif()
-set_property(TARGET logog PROPERTY FOLDER "logog")
-set_property(TARGET test-logog PROPERTY FOLDER "logog")
-set_target_properties(test-logog PROPERTIES EXCLUDE_FROM_ALL TRUE)
-target_compile_options(logog PRIVATE
-    $<$<CXX_COMPILER_ID:Clang>:-w>
-    $<$<CXX_COMPILER_ID:GNU>:-w>
-    $<$<CXX_COMPILER_ID:MSVC>:/W0>)
+set(DISABLE_WARNINGS_TARGETS logog)
 
 set(gtest_force_shared_crt ON CACHE INTERNAL "") # Use dynamic MSVC runtime
 set(INSTALL_GTEST OFF CACHE INTERNAL "")
@@ -25,12 +8,13 @@ add_subdirectory(googletest)
 # This is a workaround for Travis builds.
 option(OGS_USE_OPTIONAL_SUBMODULES "Option for enabling optional submodules" OFF)
 
-#iphreeqc
+# iphreeqc
 if (OGS_BUILD_PROCESS_ComponentTransport
     OR OGS_BUILD_PROCESS_RichardsComponentTransport
     OR OGS_BUILD_PROCESS_RichardsComponentTransport
     OR OGS_BUILD_PROCESS_HeatTransportBHE)
     add_subdirectory(iphreeqc)
+    list(APPEND DISABLE_WARNINGS_TARGETS iphreeqc)
 endif()
 
 # MFrontGenericInterfaceSupport
@@ -40,6 +24,7 @@ if (OGS_USE_MFRONT)
     set(CMAKE_CXX_STANDARD 11)
     add_subdirectory(MGIS)
     set(CMAKE_CXX_STANDARD 17)
+    list(APPEND DISABLE_WARNINGS_TARGETS MFrontGenericInterface)
 endif()
 
 # VtkFbxConverter
@@ -51,26 +36,13 @@ endif()
 # tetgen
 if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/tetgen/CMakeLists.txt)
     add_subdirectory(tetgen)
+    list(APPEND DISABLE_WARNINGS_TARGETS tet tetgen)
     install(PROGRAMS $<TARGET_FILE:tetgen> DESTINATION bin COMPONENT ogs_extras)
-    target_compile_options(tet PRIVATE
-        $<$<CXX_COMPILER_ID:Clang>:-w>
-        $<$<CXX_COMPILER_ID:GNU>:-w>
-        $<$<CXX_COMPILER_ID:MSVC>:/W0>)
-    target_compile_options(tetgen PRIVATE
-        $<$<CXX_COMPILER_ID:Clang>:-w>
-        $<$<CXX_COMPILER_ID:GNU>:-w>
-        $<$<CXX_COMPILER_ID:MSVC>:/W0>)
-endif()
-
-# vtkdiff
-if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/vtkdiff/CMakeLists.txt)
-    add_subdirectory(vtkdiff)
-    install (PROGRAMS $<TARGET_FILE:vtkdiff> DESTINATION bin COMPONENT ogs_extras)
 endif()
 
 if(OGS_BUILD_SWMM)
     add_subdirectory(SWMMInterface)
-    set_target_properties(SWMM SwmmInterface PROPERTIES COMPILE_FLAGS /W0)
+    list(APPEND DISABLE_WARNINGS_TARGETS SWMM SwmmInterface)
 endif()
 
 if(OGS_USE_PYTHON)
@@ -113,4 +85,11 @@ endif()
 
 if(OGS_BUILD_UTILS)
     include(${PROJECT_SOURCE_DIR}/scripts/cmake/MetisSetup.cmake)
+    list(APPEND DISABLE_WARNINGS_TARGETS metis mpmetis)
 endif()
+
+foreach(TARGET ${DISABLE_WARNINGS_TARGETS})
+    target_compile_options(${TARGET} PRIVATE
+        $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>:-w>
+        $<$<CXX_COMPILER_ID:MSVC>:/W0>)
+endforeach()
