@@ -167,11 +167,6 @@ public:
                     MaterialPropertyLib::PropertyType::reference_temperature)
                 .template value<double>(vars, pos, t, dt);
 
-        const int material_id =
-            _process_data.material->getMaterialID(_element.getID());
-        const double& temperature = std::get<double>(
-            vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)]);
-
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             pos.setIntegrationPoint(ip);
@@ -313,17 +308,11 @@ public:
                     MaterialPropertyLib::PropertyType::reference_temperature)
                 .template value<double>(vars, pos, t, dt);
 
-        const int material_id =
-            _process_data.material->getMaterialID(_element.getID());
-
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
 
         auto const p_nodal_values = Eigen::Map<const NodalVectorType>(
             &local_x[0], ShapeFunction::NPOINTS);
-
-        const double& temperature = std::get<double>(
-            vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)]);
 
         for (unsigned ip = 0; ip < n_integration_points; ++ip)
         {
