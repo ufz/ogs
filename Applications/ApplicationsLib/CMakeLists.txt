@@ -9,11 +9,10 @@ if(BUILD_SHARED_LIBS)
 endif()
 
 target_link_libraries(ApplicationsLib
-                      PUBLIC BaseLib GeoLib Processes logog
+                      PUBLIC BaseLib GeoLib NumLib Processes logog
                       PRIVATE MathLib
                               MeshLib
                               MeshGeoToolsLib
-                              NumLib
                               ParameterLib)
 
 # Set cpp definitions if the cmake option is enabled for the given process.
