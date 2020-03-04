@@ -215,8 +215,11 @@ public:
             local_M.noalias() += mass_mat_coeff * _ip_data[ip].mass_operator;
 
             double const k_rel =
-                _process_data.material->getRelativePermeability(
-                    t, pos, p_int_pt, temperature, Sw);
+                medium
+                    .property(MaterialPropertyLib::PropertyType::
+                                  relative_permeability)
+                    .template value<double>(vars, pos, t, dt);
+
             auto const mu =
                 liquid_phase.property(MaterialPropertyLib::viscosity)
                     .template value<double>(vars, pos, t, dt);
@@ -333,8 +336,10 @@ public:
                         .value(vars, pos, t, dt));
 
             double const k_rel =
-                _process_data.material->getRelativePermeability(
-                    t, pos, p_int_pt, temperature, Sw);
+                medium
+                    .property(MaterialPropertyLib::PropertyType::
+                                  relative_permeability)
+                    .template value<double>(vars, pos, t, dt);
             auto const mu =
                 liquid_phase.property(MaterialPropertyLib::viscosity)
                     .template value<double>(vars, pos, t, dt);
