@@ -32,6 +32,7 @@ struct LinearSolverLibrarySetup final
         MPI_Init(&argc, &argv);
         char help[] = "ogs6 with PETSc \n";
         PetscInitialize(&argc, &argv, nullptr, help);
+        MPI_Comm_set_errhandler(PETSC_COMM_WORLD, MPI_ERRORS_RETURN);
     }
 
     ~LinearSolverLibrarySetup()
