@@ -190,15 +190,21 @@ public:
                 medium.property(MaterialPropertyLib::PropertyType::porosity)
                     .template value<double>(vars, pos, t, dt);
 
-            double const pc_int_pt = -p_int_pt;
+            vars[static_cast<int>(
+                MaterialPropertyLib::Variable::capillary_pressure)] = -p_int_pt;
 
-            double const Sw = _process_data.material->getSaturation(
-                material_id, t, pos, p_int_pt, temperature, pc_int_pt);
+            double const Sw =
+                medium
+                    .property(MaterialPropertyLib::PropertyType::saturation)
+                    .template value<double>(vars, pos, t, dt);
             _saturation[ip] = Sw;
 
             double const dSw_dpc =
-                _process_data.material->getSaturationDerivative(
-                    material_id, t, pos, p_int_pt, temperature, Sw);
+                medium
+                    .property(MaterialPropertyLib::PropertyType::saturation)
+                    .template dValue<double>(
+                        vars, MaterialPropertyLib::Variable::capillary_pressure,
+                        pos, t, dt);
 
             auto const drhow_dp =
                 liquid_phase
@@ -323,12 +329,15 @@ public:
         {
             double p_int_pt = 0.0;
             NumLib::shapeFunctionInterpolate(local_x, _ip_data[ip].N, p_int_pt);
+            // TODO (tf) Is it necessary to put this value in vars[...]?
             double const pc_int_pt = -p_int_pt;
             vars[static_cast<int>(
                 MaterialPropertyLib::Variable::phase_pressure)] = p_int_pt;
 
-            double const Sw = _process_data.material->getSaturation(
-                material_id, t, pos, p_int_pt, temperature, pc_int_pt);
+            double const Sw =
+                medium
+                    .property(MaterialPropertyLib::PropertyType::saturation)
+                    .template value<double>(vars, pos, t, dt);
 
             auto const permeability =
                 MaterialPropertyLib::formEigenTensor<GlobalDim>(
