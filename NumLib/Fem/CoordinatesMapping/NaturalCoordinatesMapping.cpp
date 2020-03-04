@@ -112,7 +112,9 @@ static void checkJacobianDeterminant(const double detJ,
 #ifndef NDEBUG
         std::cerr << element << "\n";
 #endif  // NDEBUG
-        OGS_FATAL("Please check the node numbering of the element.");
+        OGS_FATAL(
+                "Please check whether the node numbering of the element is correct,"
+                "or additional elements (like boundary elements) are still present in the mesh.");
     }
 
     if (detJ == 0)
@@ -125,7 +127,9 @@ static void checkJacobianDeterminant(const double detJ,
             "Please check whether:\n"
             "\t the element nodes may have the same coordinates,\n"
             "\t or the coordinates of all nodes are not given on the x-axis "
-            "for a 1D problem or in the xy-plane in the 2D case.");
+            "for a 1D problem or in the xy-plane in the 2D case.\n"
+            "The first case can occurr, if not all boundary elements"
+            "were removed from the bulk mesh.");
     }
 }
 
