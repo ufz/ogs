@@ -147,6 +147,26 @@ std::array<double, BHE_1P::number_of_unknowns> BHE_1P::calcThermalResistances(
     return {{R_fg, R_gs}};
 }
 
+std::array<std::pair<std::size_t /*node_id*/, int /*component*/>, 2>
+BHE_1P::getBHEInflowDirichletBCNodesAndComponents(
+    std::size_t const top_node_id,
+    std::size_t const bottom_node_id,
+    int const in_component_id) const
+{
+    return {std::make_pair(top_node_id, in_component_id),
+            std::make_pair(bottom_node_id, in_component_id)};
+}
+
+std::optional<
+    std::array<std::pair<std::size_t /*node_id*/, int /*component*/>, 2>>
+BHE_1P::getBHEBottomDirichletBCNodesAndComponents(
+    std::size_t const /*bottom_node_id*/,
+    int const /*in_component_id*/,
+    int const /*out_component_id*/) const
+{
+    return {};
+}
+
 std::array<double, BHE_1P::number_of_unknowns> BHE_1P::crossSectionAreas() const
 {
     return {{_pipe.single_pipe.area(),
