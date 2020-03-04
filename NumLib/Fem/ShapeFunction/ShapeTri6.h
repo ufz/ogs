@@ -44,6 +44,7 @@ public:
     using MeshElement = MeshLib::Tri6;
     static const unsigned DIM = MeshElement::dimension;
     static const unsigned NPOINTS = MeshElement::n_all_nodes;
+    static constexpr int ORDER = 2;
 };
 
 }  // namespace NumLib
