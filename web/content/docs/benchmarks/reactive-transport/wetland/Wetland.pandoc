@@ -7,7 +7,7 @@ title = "Complex kinetic reaction network"
 
 [menu]
   [menu.benchmarks]
-    parent = "Reactive transport"
+    parent = "Reactive Transport"
 
 +++
 

@@ -7,7 +7,7 @@ title = "Variable Dependent Boundary Condition"
 
 [menu]
   [menu.benchmarks]
-    parent = "hydro-component"
+    parent = "Hydro-Component"
 
 +++
 

@@ -7,7 +7,7 @@ title = "Solute transport including kinetic reaction"
 
 [menu]
   [menu.benchmarks]
-    parent = "Reactive transport"
+    parent = "Reactive Transport"
 
 +++
 

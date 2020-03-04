@@ -7,7 +7,7 @@ title = "Heterogeneous Saturated Mass Transport"
 
 [menu]
   [menu.benchmarks]
-    parent = "hydro-component"
+    parent = "Hydro-Component"
 
 +++
 
