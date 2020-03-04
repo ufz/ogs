@@ -318,10 +318,10 @@ public:
         {
             double p_int_pt = 0.0;
             NumLib::shapeFunctionInterpolate(local_x, _ip_data[ip].N, p_int_pt);
-            // TODO (tf) Is it necessary to put this value in vars[...]?
-            double const pc_int_pt = -p_int_pt;
             vars[static_cast<int>(
                 MaterialPropertyLib::Variable::phase_pressure)] = p_int_pt;
+            vars[static_cast<int>(
+                MaterialPropertyLib::Variable::capillary_pressure)] = -p_int_pt;
 
             double const Sw =
                 medium
