@@ -21,7 +21,8 @@
                 </material_properties>
             </constitutive_relation>
             <solid_density>rho_sr</solid_density>
-            <specific_body_force>0 -9.8</specific_body_force><!--introduce time ramp-->
+            <specific_body_force>0 -9.8</specific_body_force>
+            <!--introduce time ramp-->
             <reference_temperature>293.15</reference_temperature>
             <process_variables>
                 <process_variable>displacement</process_variable>
@@ -41,7 +42,7 @@
                 <convergence_criterion>
                     <type>DeltaX</type>
                     <norm_type>NORM2</norm_type>
-                    <abstol>1e-14</abstol>
+                    <reltol>1e-14</reltol>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>
