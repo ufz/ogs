@@ -13,6 +13,7 @@
 
 #include <algorithm>
 
+#include "MaterialLib/MPL/CheckMaterialSpatialDistributionMap.h"
 #include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
 #include "MaterialLib/PhysicalConstant.h"
 #include "ParameterLib/Utils.h"
@@ -29,32 +30,21 @@ void checkMPLProperties(
     MeshLib::Mesh const& mesh,
     MaterialPropertyLib::MaterialSpatialDistributionMap const& media_map)
 {
-    std::array const requiredPropertyMedium = {
+    std::array const required_medium_properties = {
         MaterialPropertyLib::reference_temperature,
-        MaterialPropertyLib::PropertyType::porosity,
         MaterialPropertyLib::PropertyType::permeability};
 
-    std::array const requiredPropertyLiquidPhase = {
+    std::array const required_liquid_properties = {
         MaterialPropertyLib::PropertyType::viscosity,
         MaterialPropertyLib::PropertyType::density};
 
-    std::array const requiredPropertySolidPhase = {
+    std::array const required_solid_properties = {
+        MaterialPropertyLib::PropertyType::porosity,
         MaterialPropertyLib::PropertyType::storage};
 
-    for (auto const& element : mesh.getElements())
-    {
-        auto const element_id = element->getID();
-
-        auto const& medium = *media_map.getMedium(element_id);
-        MaterialPropertyLib::checkRequiredProperties(
-            medium, requiredPropertyMedium);
-
-        MaterialPropertyLib::checkRequiredProperties(
-            medium.phase("AqueousLiquid"), requiredPropertyLiquidPhase);
-
-        MaterialPropertyLib::checkRequiredProperties(
-            medium.phase("Solid"), requiredPropertySolidPhase);
-    }
+    MaterialPropertyLib::checkMaterialSpatialDistributionMap(
+        mesh, media_map, required_medium_properties, required_solid_properties,
+        required_liquid_properties);
 }
 
 std::unique_ptr<Process> createLiquidFlowProcess(
