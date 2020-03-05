@@ -13,11 +13,11 @@
 
 #include "HydroMechanicsFEM.h"
 
-#include "MaterialLib/SolidModels/SelectSolidConstitutiveRelation.h"
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/MPL/Property.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "MaterialLib/MPL/Utils/GetSymmetricTensor.h"
+#include "MaterialLib/SolidModels/SelectSolidConstitutiveRelation.h"
 #include "MathLib/KelvinVector.h"
 #include "NumLib/Function/Interpolation.h"
 #include "ProcessLib/CoupledSolutionsForStaggeredScheme.h"
@@ -70,7 +70,7 @@ HydroMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         _ip_data.emplace_back(solid_material);
         auto& ip_data = _ip_data[ip];
         auto const& sm_u = shape_matrices_u[ip];
-       ip_data.integration_weight =
+        ip_data.integration_weight =
             _integration_method.getWeightedPoint(ip).getWeight() *
             sm_u.integralMeasure * sm_u.detJ;
 
@@ -616,8 +616,8 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         eps.noalias() = B * u;
 
-        auto C = _ip_data[ip].updateConstitutiveRelation(
-            t, x_position, dt, u, T_ref);
+        auto C = _ip_data[ip].updateConstitutiveRelation(t, x_position, dt, u,
+                                                         T_ref);
 
         local_Jac.noalias() += B.transpose() * C * B * w;
 
