@@ -60,6 +60,7 @@ if (OGS_USE_MFRONT)
     OgsTest(PROJECTFILE Mechanics/Linear/MFront/square_1e0_orthotropic_xyz.prj)
     OgsTest(PROJECTFILE Mechanics/Linear/MFront/square_1e0_orthotropic_45xy_z.prj)
     OgsTest(PROJECTFILE Mechanics/Linear/MFront/square_1e0_orthotropic_y-xz.prj)
+    OgsTest(PROJECTFILE Mechanics/Linear/MFront/slope.prj)
 # Linear elastic, no internal state variables, no external state variables.
 AddTest(
     NAME Mechanics_SDL_disc_with_hole_mfront
@@ -101,6 +102,17 @@ AddTest(
     DIFF_DATA
     ../../ring_plane_strain_pcs_0_ts_1_t_1.000000.vtu ring_plane_strain_pcs_0_ts_1_t_1.000000.vtu displacement displacement 1e-16 0
     ../../ring_plane_strain_pcs_0_ts_1_t_1.000000.vtu ring_plane_strain_pcs_0_ts_1_t_1.000000.vtu sigma sigma 1e-15 0
+)
+
+AddTest(
+    NAME SmallDeformation_slope_stability_mfront
+    PATH Mechanics/Linear/MFront/slope_stability
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS slope.prj
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    ../../slope_pcs_0_ts_300_t_3.000000.vtu slope_pcs_0_ts_300_t_3.000000.vtu displacement displacement 1e-14 0
 )
 endif()
 
