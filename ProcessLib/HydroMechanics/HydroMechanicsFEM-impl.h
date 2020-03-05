@@ -16,6 +16,7 @@
 #include "MaterialLib/SolidModels/SelectSolidConstitutiveRelation.h"
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/MPL/Property.h"
+#include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "MathLib/KelvinVector.h"
 #include "NumLib/Function/Interpolation.h"
 #include "ProcessLib/CoupledSolutionsForStaggeredScheme.h"
@@ -223,8 +224,9 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         auto const K_S = solid_material.getBulkModulus(t, x_position);
 
-        auto const K = medium->property(MPL::PropertyType::permeability)
-                           .template value<double>(vars, x_position, t, dt);
+        auto const K = MPL::formEigenTensor<DisplacementDim>(
+            medium->property(MPL::PropertyType::permeability)
+                .value(vars, x_position, t, dt));
         auto const alpha = solid.property(MPL::PropertyType::biot_coefficient)
                                .template value<double>(vars, x_position, t, dt);
         auto const rho_sr =
@@ -378,8 +380,9 @@ HydroMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         vars[static_cast<int>(MPL::Variable::phase_pressure)] =
             _ip_data[ip].N_p.dot(p);
 
-        auto const K = medium->property(MPL::PropertyType::permeability)
-                           .template value<double>(vars, x_position, t, dt);
+        auto const K = MPL::formEigenTensor<DisplacementDim>(
+            medium->property(MPL::PropertyType::permeability)
+                .value(vars, x_position, t, dt));
 
         auto const mu = gas.property(MPL::PropertyType::viscosity)
                             .template value<double>(vars, x_position, t, dt);
@@ -471,8 +474,9 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         auto const K_S = solid_material.getBulkModulus(t, x_position);
 
-        auto const K = medium->property(MPL::PropertyType::permeability)
-                           .template value<double>(vars, x_position, t, dt);
+        auto const K = MPL::formEigenTensor<DisplacementDim>(
+            medium->property(MPL::PropertyType::permeability)
+                .value(vars, x_position, t, dt));
         auto const alpha_b =
             solid.property(MPL::PropertyType::biot_coefficient)
                 .template value<double>(vars, x_position, t, dt);
