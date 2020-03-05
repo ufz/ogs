@@ -13,7 +13,8 @@ target_link_libraries(ApplicationsLib
                       PRIVATE MathLib
                               MeshLib
                               MeshGeoToolsLib
-                              ParameterLib)
+                              ParameterLib
+                              ProcessLib)
 
 # Set cpp definitions if the cmake option is enabled for the given process.
 foreach(process ${ProcessesList})
