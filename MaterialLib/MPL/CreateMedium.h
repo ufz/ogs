@@ -24,6 +24,7 @@ class Medium;
 namespace ParameterLib
 {
 struct ParameterBase;
+struct CoordinateSystem;
 }
 
 namespace MaterialPropertyLib
@@ -34,6 +35,6 @@ namespace MaterialPropertyLib
 /// assigned.
 std::unique_ptr<Medium> createMedium(
     BaseLib::ConfigTree const& config,
-    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
-        parameters);
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
+    ParameterLib::CoordinateSystem const* const local_coordinate_system);
 }  // namespace MaterialPropertyLib

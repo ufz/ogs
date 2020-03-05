@@ -16,11 +16,20 @@ namespace MaterialPropertyLib
 {
 Medium* MaterialSpatialDistributionMap::getMedium(std::size_t const element_id)
 {
+    return const_cast<Medium*>(
+        static_cast<MaterialSpatialDistributionMap const&>(*this).getMedium(
+            element_id));
+}
+
+Medium const* MaterialSpatialDistributionMap::getMedium(
+    std::size_t const element_id) const
+{
     auto const material_id =
         _material_ids == nullptr ? 0 : (*_material_ids)[element_id];
 
     return _media.at(material_id).get();
 }
+
 
 void MaterialSpatialDistributionMap::checkElementHasMedium(std::size_t const element_id)
 {

@@ -7,7 +7,7 @@ weight = 101
 
 [menu]
   [menu.benchmarks]
-    parent = "two-phase-flow-pp"
+    parent = "Two-Phase-Flow-pp"
 
 +++
 

@@ -66,11 +66,11 @@ public:
     /// actually compute and set the property _values and _dValues.
     PropertyDataType value(VariableArray const& variable_array,
                            ParameterLib::SpatialPosition const& pos,
-                           double const t) const override;
+                           double const t, double const dt) const override;
     PropertyDataType dValue(VariableArray const& variable_array,
                             Variable const variable,
                             ParameterLib::SpatialPosition const& pos,
-                            double const t) const override;
+                            double const t, double const dt) const override;
 };
 
 }  // namespace MaterialPropertyLib

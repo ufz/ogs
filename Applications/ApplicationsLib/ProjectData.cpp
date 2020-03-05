@@ -428,7 +428,7 @@ std::vector<std::string> ProjectData::parseParameters(
 }
 
 void ProjectData::parseMedia(
-        boost::optional<BaseLib::ConfigTree> const& media_config)
+    boost::optional<BaseLib::ConfigTree> const& media_config)
 {
     if (!media_config)
     {
@@ -488,10 +488,13 @@ void ProjectData::parseMedia(
                     id);
             }
 
-            _media[id] = (id == material_ids[0])
-                             ? MaterialPropertyLib::createMedium(medium_config,
-                                                                 _parameters)
-                             : _media[material_ids[0]];
+            _media[id] =
+                (id == material_ids[0])
+                    ? MaterialPropertyLib::createMedium(
+                          medium_config, _parameters,
+                          _local_coordinate_system ? &*_local_coordinate_system
+                                                   : nullptr)
+                    : _media[material_ids[0]];
         }
     }
 
@@ -541,7 +544,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
             process = ProcessLib::GroundwaterFlow::createGroundwaterFlowProcess(
                 name, *_mesh_vec[0], std::move(jacobian_assembler),
                 _process_variables, _parameters, integration_order,
-                process_config, _mesh_vec, output_directory);
+                process_config, _mesh_vec, output_directory, _media);
         }
         else
 #endif
@@ -551,7 +554,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
             process = ProcessLib::LiquidFlow::createLiquidFlowProcess(
                 name, *_mesh_vec[0], std::move(jacobian_assembler),
                 _process_variables, _parameters, integration_order,
-                process_config, _mesh_vec, output_directory);
+                process_config, _mesh_vec, output_directory, _media);
         }
         else
 #endif
@@ -903,7 +906,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                             name, *_mesh_vec[0], std::move(jacobian_assembler),
                             _process_variables, _parameters,
                             _local_coordinate_system, integration_order,
-                            process_config);
+                            process_config, _media);
                     break;
                 case 3:
                     process = ProcessLib::RichardsMechanics::
@@ -911,7 +914,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                             name, *_mesh_vec[0], std::move(jacobian_assembler),
                             _process_variables, _parameters,
                             _local_coordinate_system, integration_order,
-                            process_config);
+                            process_config, _media);
                     break;
             }
         }

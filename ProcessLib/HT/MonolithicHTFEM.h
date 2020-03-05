@@ -66,8 +66,9 @@ public:
     {
     }
 
-    void assemble(double const t, double const /*dt*/,
+    void assemble(double const t, double const dt,
                   std::vector<double> const& local_x,
+                  std::vector<double> const& /*local_xdot*/,
                   std::vector<double>& local_M_data,
                   std::vector<double>& local_K_data,
                   std::vector<double>& local_b_data) override
@@ -139,35 +140,35 @@ public:
             // constant storage model
             auto const specific_storage =
                 solid_phase.property(MaterialPropertyLib::PropertyType::storage)
-                    .template value<double>(vars, pos, t);
+                    .template value<double>(vars, pos, t, dt);
 
             auto const porosity =
                 medium.property(MaterialPropertyLib::PropertyType::porosity)
-                    .template value<double>(vars, pos, t);
+                    .template value<double>(vars, pos, t, dt);
 
             auto const intrinsic_permeability =
                 MaterialPropertyLib::formEigenTensor<GlobalDim>(
                     medium
                         .property(
                             MaterialPropertyLib::PropertyType::permeability)
-                        .value(vars, pos, t));
+                        .value(vars, pos, t, dt));
 
             auto const specific_heat_capacity_fluid =
                 liquid_phase
                     .property(MaterialPropertyLib::specific_heat_capacity)
-                    .template value<double>(vars, pos, t);
+                    .template value<double>(vars, pos, t, dt);
 
             // Use the fluid density model to compute the density
             auto const fluid_density =
                 liquid_phase
                     .property(MaterialPropertyLib::PropertyType::density)
-                    .template value<double>(vars, pos, t);
+                    .template value<double>(vars, pos, t, dt);
 
             // Use the viscosity model to compute the viscosity
             auto const viscosity =
                 liquid_phase
                     .property(MaterialPropertyLib::PropertyType::viscosity)
-                    .template value<double>(vars, pos, t);
+                    .template value<double>(vars, pos, t, dt);
             GlobalDimMatrixType K_over_mu = intrinsic_permeability / viscosity;
 
             GlobalDimVectorType const velocity =
@@ -180,7 +181,7 @@ public:
             GlobalDimMatrixType const thermal_conductivity_dispersivity =
                 this->getThermalConductivityDispersivity(
                     vars, porosity, fluid_density, specific_heat_capacity_fluid,
-                    velocity, I, pos, t);
+                    velocity, I, pos, t, dt);
             KTT.noalias() +=
                 (dNdx.transpose() * thermal_conductivity_dispersivity * dNdx +
                  N.transpose() * velocity.transpose() * dNdx * fluid_density *
@@ -190,7 +191,7 @@ public:
             MTT.noalias() += w *
                              this->getHeatEnergyCoefficient(
                                  vars, porosity, fluid_density,
-                                 specific_heat_capacity_fluid, pos, t) *
+                                 specific_heat_capacity_fluid, pos, t, dt) *
                              N.transpose() * N;
             Mpp.noalias() += w * N.transpose() * specific_storage * N;
             if (process_data.has_gravity)

@@ -23,26 +23,26 @@ namespace MaterialPropertyLib
  */
 PropertyDataType RelPermLiakopoulos::value(
     VariableArray const& variable_array,
-    ParameterLib::SpatialPosition const& pos,
-    double const t) const
+    ParameterLib::SpatialPosition const& pos, double const t,
+    double const dt) const
 {
     /// here, an extra computation of saturation is forced, guaranteeing a
     /// correct value. In order to speed up the computing time, saturation could
     /// be insertred into the primary variable array after it is computed in the
     /// FEM assembly.
     auto const s_L = _medium->property(PropertyType::saturation)
-                         .template value<double>(variable_array, pos, t);
+                         .template value<double>(variable_array, pos, t, dt);
     auto const s_L_res = _residual_liquid_saturation;
     auto const k_rel_min_GR = _min_relative_permeability_gas;
 
     if (s_L <= s_L_res)
     {
-        return Pair{0., 1.};
+        return Eigen::Vector2d{0., 1.};
     }
 
     if (s_L >= 1.)
     {
-        return Pair{1., k_rel_min_GR};
+        return Eigen::Vector2d{1., k_rel_min_GR};
     }
 
     auto const a = _parameter_a;
@@ -55,21 +55,21 @@ PropertyDataType RelPermLiakopoulos::value(
     auto const k_rel_GR = (1. - s_eff) * (1. - s_eff) *
                           (1. - std::pow(s_eff, (2. + lambda) / lambda));
 
-    const Pair kRel = {std::max(k_rel_LR, 0.),
-                       std::max(k_rel_GR, k_rel_min_GR)};
-
-    return kRel;
+    return Eigen::Vector2d{std::max(k_rel_LR, 0.),
+                           std::max(k_rel_GR, k_rel_min_GR)};
 }
+
 PropertyDataType RelPermLiakopoulos::dValue(
     VariableArray const& variable_array, Variable const primary_variable,
-    ParameterLib::SpatialPosition const& pos, double const t) const
+    ParameterLib::SpatialPosition const& pos, double const t,
+    double const dt) const
 {
     (void)primary_variable;
     assert((primary_variable == Variable::liquid_saturation) &&
            "RelPermLiakopoulos::dValue is implemented for "
            " derivatives with respect to liquid saturation only.");
     auto const s_L = _medium->property(PropertyType::saturation)
-                         .template value<double>(variable_array, pos, t);
+                         .template value<double>(variable_array, pos, t, dt);
     auto const s_L_res = _residual_liquid_saturation;
     auto const s_L_max = _maximal_liquid_saturation;
 
@@ -90,9 +90,7 @@ PropertyDataType RelPermLiakopoulos::dValue(
         _2L_L * std::pow(s_eff, _2L_L - 1.) * s_G_eff * s_G_eff;
     auto const dk_rel_GRdsL = dk_rel_GRdse * _dse_dsL;
 
-    const Pair dkReldsL = {{dk_rel_LRdsL, dk_rel_GRdsL}};
-
-    return dkReldsL;
+    return Eigen::Vector2d{dk_rel_LRdsL, dk_rel_GRdsL};
 }
 
 }  // namespace MaterialPropertyLib

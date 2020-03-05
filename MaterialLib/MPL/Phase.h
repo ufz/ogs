@@ -38,6 +38,7 @@ public:
     /// A simple get-function for a component. The argument refers to the
     /// Index of the component in the components vector.
     Component const& component(std::size_t const& index) const;
+    bool hasComponent(std::size_t const& index) const;
 
     /// A get-function for a component by component name.
     Component const& component(std::string const& name) const;
@@ -50,7 +51,8 @@ public:
     /// A get-function for retrieving the number of components in this phase.
     std::size_t numberOfComponents() const;
 
-    std::string name() const;
+public:
+    std::string const name;
 
 private:
     std::vector<std::unique_ptr<Component>> const _components;
@@ -71,7 +73,7 @@ void checkRequiredProperties(Phase const& phase, Container const& required_prope
         if (!phase.hasProperty(p))
         {
             OGS_FATAL("The property '%s' is missing in the %s phase.",
-                      property_enum_to_string[p].c_str(), phase.name().c_str());
+                      property_enum_to_string[p].c_str(), phase.name.c_str());
         }
     }
 }

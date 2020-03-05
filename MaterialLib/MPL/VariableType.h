@@ -12,6 +12,7 @@
 
 #pragma once
 
+#include <Eigen/Dense>
 #include <array>
 #include <variant>
 
@@ -43,29 +44,29 @@ enum class Variable : int
 {
     concentration,
     phase_pressure,
+    effective_pore_pressure_rate,
     capillary_pressure,
     density,
     temperature,
     liquid_saturation,
+    liquid_saturation_rate,
+    porosity,
     displacement,
+    strain,
+    volumetric_strain_rate,
     number_of_variables
 };
 
 /// Data type for primary variables, designed to contain both scalar and vector
 /// data.
-using VariableType = std::variant<double, Vector>;
+using VariableType = std::variant<double, Vector, Eigen::Matrix<double, 4, 1>,
+                                  Eigen::Matrix<double, 6, 1>>;
 
 /// The VariableArray is a std::array of fixed size. Its size is determined by
 /// the Variable enumerator list. Data type of that array is defined by the
 /// VariableType definition.
 using VariableArray =
     std::array<VariableType, static_cast<int>(Variable::number_of_variables)>;
-
-/// This method returns a value of type double from the variables array
-inline double getScalar(VariableType pv)
-{
-    return std::get<double>(pv);
-}
 
 Variable convertStringToVariable(std::string const& input);
 }  // namespace MaterialPropertyLib

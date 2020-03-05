@@ -15,9 +15,6 @@ set(CPACK_NSIS_MENU_LINKS
     "http://www.opengeosys.org" "Website"
     "https://github.com/ufz/ogs" "Source code on GitHub"
 )
-if(OGS_DOWNLOAD_ADDITIONAL_CONTENT)
-    set(CPACK_NSIS_MENU_LINKS ${CPACK_NSIS_MENU_LINKS} "docs" "Documentation folder")
-endif()
 
 if(OGS_USE_CONAN)
     file(GLOB MATCHED_FILES "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/*.dll")

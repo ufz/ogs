@@ -22,7 +22,8 @@ namespace
 {
 std::unique_ptr<MaterialPropertyLib::Component> createComponent(
     BaseLib::ConfigTree const& config,
-    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters)
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
+    ParameterLib::CoordinateSystem const* const local_coordinate_system)
 {
     using namespace MaterialPropertyLib;
     // Parsing the component name
@@ -42,7 +43,7 @@ std::unique_ptr<MaterialPropertyLib::Component> createComponent(
     std::unique_ptr<PropertyArray> properties =
         //! \ogs_file_param{prj__media__medium__phases__phase__components__component__properties}
         createProperties(config.getConfigSubtreeOptional("properties"),
-                         parameters);
+                         parameters, local_coordinate_system);
 
     // If a name is given, it must conform with one of the derived component
     // names in the following list:
@@ -67,7 +68,8 @@ namespace MaterialPropertyLib
 {
 std::vector<std::unique_ptr<Component>> createComponents(
     boost::optional<BaseLib::ConfigTree> const& config,
-    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters)
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
+    ParameterLib::CoordinateSystem const* const local_coordinate_system)
 {
     if (!config)
     {
@@ -80,16 +82,17 @@ std::vector<std::unique_ptr<Component>> createComponents(
         //! \ogs_file_param{prj__media__medium__phases__phase__components__component}
         config->getConfigSubtreeList("component"))
     {
-        auto component = createComponent(component_config, parameters);
+        auto component = createComponent(component_config, parameters,
+                                         local_coordinate_system);
 
         if (std::find_if(components.begin(),
                          components.end(),
-                         [component_name = component->name()](auto const& c) {
-                             return c->name() == component_name;
+                         [component_name = component->name](auto const& c) {
+                             return c->name == component_name;
                          }) != components.end())
         {
             OGS_FATAL("Found duplicates with the same component name tag '%s'.",
-                      component->name().c_str());
+                      component->name.c_str());
         }
 
         components.push_back(std::move(component));

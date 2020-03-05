@@ -205,7 +205,7 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         // same order
         auto const& N_T = N_p;
         auto const& dNdx_T = dNdx_p;
-        auto const T_int_pt = N_T * T;
+        auto const T_int_pt = N_T.dot(T);
 
         auto const x_coord =
             interpolateXCoordinate<ShapeFunctionDisplacement,
@@ -223,42 +223,42 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
             T_int_pt;
         vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
-            N_p * p;
+            N_p.dot(p);
 
         auto const solid_density =
             solid_phase.property(MaterialPropertyLib::PropertyType::density)
-                .template value<double>(vars, x_position, t);
+                .template value<double>(vars, x_position, t, dt);
         auto const specific_storage =
             solid_phase.property(MaterialPropertyLib::PropertyType::storage)
-                .template value<double>(vars, x_position, t);
+                .template value<double>(vars, x_position, t, dt);
         auto const solid_linear_thermal_expansion_coefficient =
             solid_phase
                 .property(
                     MaterialPropertyLib::PropertyType::thermal_expansivity)
-                .template value<double>(vars, x_position, t);
+                .template value<double>(vars, x_position, t, dt);
 
         auto const porosity =
             solid_phase.property(MaterialPropertyLib::PropertyType::porosity)
-                .template value<double>(vars, x_position, t);
+                .template value<double>(vars, x_position, t, dt);
 
         auto const intrinsic_permeability =
             MaterialPropertyLib::formEigenTensor<DisplacementDim>(
                 solid_phase
                     .property(MaterialPropertyLib::PropertyType::permeability)
-                    .value(vars, x_position, t));
+                    .value(vars, x_position, t, dt));
 
         auto const fluid_density =
             liquid_phase.property(MaterialPropertyLib::PropertyType::density)
-                .template value<double>(vars, x_position, t);
+                .template value<double>(vars, x_position, t, dt);
 
         double const fluid_volumetric_thermal_expansion_coefficient =
             MaterialPropertyLib::getThermalExpansivity(
-                liquid_phase, vars, fluid_density, x_position, t);
+                liquid_phase, vars, fluid_density, x_position, t, dt);
 
         // Use the viscosity model to compute the viscosity
         auto const viscosity =
             liquid_phase.property(MaterialPropertyLib::PropertyType::viscosity)
-                .template value<double>(vars, x_position, t);
+                .template value<double>(vars, x_position, t, dt);
         GlobalDimMatrixType K_over_mu = intrinsic_permeability / viscosity;
 
         double const T0 = _process_data.reference_temperature(t, x_position)[0];
@@ -303,7 +303,7 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const alpha =
             solid_phase
                 .property(MaterialPropertyLib::PropertyType::biot_coefficient)
-                .template value<double>(vars, x_position, t);
+                .template value<double>(vars, x_position, t, dt);
 
         Kup.noalias() += B.transpose() * alpha * identity2 * N_p * w;
 
@@ -338,19 +338,19 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
             liquid_phase
                 .property(
                     MaterialPropertyLib::PropertyType::specific_heat_capacity)
-                .template value<double>(vars, x_position, t);
+                .template value<double>(vars, x_position, t, dt);
         auto const fluid_thermal_conductivity =
             liquid_phase
                 .property(
                     MaterialPropertyLib::PropertyType::thermal_conductivity)
-                .template value<double>(vars, x_position, t);
+                .template value<double>(vars, x_position, t, dt);
         GlobalDimMatrixType effective_thermal_condictivity =
             MaterialPropertyLib::formEffectiveThermalConductivity<
                 DisplacementDim>(
                 solid_phase
                     .property(
                         MaterialPropertyLib::PropertyType::thermal_conductivity)
-                    .value(vars, x_position, t),
+                    .value(vars, x_position, t, dt),
                 fluid_thermal_conductivity, porosity);
 
         KTT.noalias() +=
@@ -364,7 +364,7 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 solid_phase
                     .property(MaterialPropertyLib::PropertyType::
                                   specific_heat_capacity)
-                    .template value<double>(vars, x_position, t);
+                    .template value<double>(vars, x_position, t, dt);
 
         MTT.noalias() +=
             N_T.transpose() * effective_volumetric_heat_capacity * N_T * w;
@@ -478,23 +478,26 @@ std::vector<double> const& ThermoHydroMechanicsLocalAssembler<
         auto const& N_p = _ip_data[ip].N_p;
 
         vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
-            N_p * T;  // N_p = N_T
+            N_p.dot(T);  // N_p = N_T
         vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
-            N_p * p;
+            N_p.dot(p);
 
+        // TODO (naumov) Temporary value not used by current material models.
+        // Need extension of secondary variables interface.
+        double const dt = std::numeric_limits<double>::quiet_NaN();
         auto const viscosity =
             liquid_phase.property(MaterialPropertyLib::PropertyType::viscosity)
-                .template value<double>(vars, x_position, t);
+                .template value<double>(vars, x_position, t, dt);
         GlobalDimMatrixType K_over_mu =
             MaterialPropertyLib::formEigenTensor<DisplacementDim>(
                 solid_phase
                     .property(MaterialPropertyLib::PropertyType::permeability)
-                    .value(vars, x_position, t)) /
+                    .value(vars, x_position, t, dt)) /
             viscosity;
 
         auto const fluid_density =
             liquid_phase.property(MaterialPropertyLib::PropertyType::density)
-                .template value<double>(vars, x_position, t);
+                .template value<double>(vars, x_position, t, dt);
         auto const& b = _process_data.specific_body_force;
 
         // Compute the velocity
@@ -555,17 +558,17 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         double const T0 = _process_data.reference_temperature(t, x_position)[0];
 
-        double const T_int_pt = N_T * T;
+        double const T_int_pt = N_T.dot(T);
         vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
             T_int_pt;
         vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
-            N_T * p;  // N_T = N_p
+            N_T.dot(p);  // N_T = N_p
 
         auto const solid_linear_thermal_expansion_coefficient =
             solid_phase
                 .property(
                     MaterialPropertyLib::PropertyType::thermal_expansivity)
-                .template value<double>(vars, x_position, t);
+                .template value<double>(vars, x_position, t, dt);
 
         double const delta_T(T_int_pt - T0);
         double const thermal_strain =

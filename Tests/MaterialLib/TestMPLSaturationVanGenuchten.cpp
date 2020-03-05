@@ -30,6 +30,7 @@ TEST(MaterialPropertyLib, SaturationVanGenuchten)
     MPL::VariableArray variable_array;
     ParameterLib::SpatialPosition const pos;
     double const t = std::numeric_limits<double>::quiet_NaN();
+    double const dt = std::numeric_limits<double>::quiet_NaN();
 
     double const p_0 = -1e6;
     double const p_max = 10000;
@@ -40,23 +41,23 @@ TEST(MaterialPropertyLib, SaturationVanGenuchten)
         variable_array[static_cast<int>(MPL::Variable::capillary_pressure)] =
             -p_L;
 
-        double const S =
-            pressure_saturation.template value<double>(variable_array, pos, t);
+        double const S = pressure_saturation.template value<double>(
+            variable_array, pos, t, dt);
         double const dS = pressure_saturation.template dValue<double>(
-            variable_array, MPL::Variable::capillary_pressure, pos, t);
+            variable_array, MPL::Variable::capillary_pressure, pos, t, dt);
         double const dS2 = pressure_saturation.template d2Value<double>(
             variable_array, MPL::Variable::capillary_pressure,
-            MPL::Variable::capillary_pressure, pos, t);
+            MPL::Variable::capillary_pressure, pos, t, dt);
 
         double const eps = 1e-1;
         variable_array[static_cast<int>(MPL::Variable::capillary_pressure)] =
             -p_L - eps;
-        double const S_minus =
-            pressure_saturation.template value<double>(variable_array, pos, t);
+        double const S_minus = pressure_saturation.template value<double>(
+            variable_array, pos, t, dt);
         variable_array[static_cast<int>(MPL::Variable::capillary_pressure)] =
             -p_L + eps;
-        double const S_plus =
-            pressure_saturation.template value<double>(variable_array, pos, t);
+        double const S_plus = pressure_saturation.template value<double>(
+            variable_array, pos, t, dt);
 
         double const DS = (S_plus - S_minus) / 2 / eps;
         double const DS2 = (S_plus - 2 * S + S_minus) / (eps * eps);

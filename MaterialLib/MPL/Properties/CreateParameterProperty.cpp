@@ -10,6 +10,8 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include "CreateParameterProperty.h"
+
 #include "BaseLib/ConfigTree.h"
 #include "ParameterLib/Parameter.h"
 #include "ParameterLib/Utils.h"

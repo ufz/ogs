@@ -7,7 +7,7 @@ weight = 158
 
 [menu]
   [menu.benchmarks]
-    parent = "thermo-mechanical-phase-field"
+    parent = "Thermo-Mechanical Phase-Field"
 
 +++
 
@@ -22,7 +22,7 @@ The thermal expansion test was implemented by imposing a temperature increase to
 
 ## Models, results, and evaluation
 
-Results show phase-field evolution in the thermo-mechanical case can follow the mechanical case, and both solutions correspond to the analytical solution:
+Results show Phase-Field evolution in the thermo-mechanical case can follow the mechanical case, and both solutions correspond to the analytical solution:
 
 {{< img src="../uncon_com_bc.png" >}}
 {{< img src="../therm_exp_bc.png" >}}

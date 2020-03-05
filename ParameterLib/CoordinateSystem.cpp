@@ -126,6 +126,31 @@ Eigen::Matrix<double, 3, 3> CoordinateSystem::transformation<3>(
     return t;
 }
 
+Eigen::Matrix<double, 3, 3> CoordinateSystem::transformation_3d(
+    SpatialPosition const& pos) const
+{
+    if (_base[2] != nullptr)
+    {
+        return transformation<3>(pos);
+    }
+
+    auto e0 = (*_base[0])(0 /* time independent */, pos);
+    auto e1 = (*_base[1])(0 /* time independent */, pos);
+    Eigen::Matrix<double, 3, 3> t = Eigen::Matrix<double, 3, 3>::Identity();
+    t.template topLeftCorner<2, 2>() << e0[0], e1[0], e0[1], e1[1];
+
+#ifndef NDEBUG
+    if (std::abs(t.determinant() - 1) > std::numeric_limits<double>::epsilon())
+    {
+        OGS_FATAL(
+            "The determinant of the coordinate system transformation matrix is "
+            "'%g', which is not sufficiently close to unity.",
+            t.determinant());
+    }
+#endif  // NDEBUG
+    return t;
+}
+
 template <int Dimension>
 Eigen::Matrix<double, Dimension, Dimension> CoordinateSystem::rotateTensor(
     std::vector<double> const& values, SpatialPosition const& pos) const

@@ -16,12 +16,7 @@
 namespace MaterialPropertyLib
 {
 Water::Water(std::unique_ptr<PropertyArray>&& properties)
+    : Component{"Water", std::move(properties)}
 {
-    _properties[PropertyType::name] = std::make_unique<Constant>("Water");
-
-    if (properties)
-    {
-        overwriteExistingProperties(_properties, *properties, this);
-    }
 }
 }  // namespace MaterialPropertyLib

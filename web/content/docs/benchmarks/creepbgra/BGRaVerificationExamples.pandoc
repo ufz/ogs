@@ -7,7 +7,7 @@ author = "Jan Thiedau"
 
 [menu]
   [menu.benchmarks]
-    parent = "thermo-mechanics"
+    parent = "Thermo-Mechanics"
 
 +++
 

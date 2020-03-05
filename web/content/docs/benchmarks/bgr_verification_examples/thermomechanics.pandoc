@@ -7,7 +7,7 @@ author = "Johannes Herfurth, Jan Thiedau"
 
 [menu]
   [menu.benchmarks]
-    parent = "thermo-mechanics"
+    parent = "Thermo-Mechanics"
 
 +++
 

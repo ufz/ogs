@@ -36,6 +36,7 @@ enum PropertyType : int
     acentric_factor,
     binary_interaction_coefficient,
     biot_coefficient,
+    bishops_effective_stress,
     brooks_corey_exponent,
     bulk_modulus,
     critical_density,
@@ -45,6 +46,7 @@ enum PropertyType : int
     /// used to specify decay rate of a substance.
     decay_rate,
     density,
+    diffusion,
     drhodT,
     effective_stress,
     entry_pressure,
@@ -71,6 +73,7 @@ enum PropertyType : int
     saturation,
     specific_heat_capacity,
     storage,
+    swelling_stress_rate,
     thermal_conductivity,
     thermal_expansivity,
     thermal_longitudinal_dispersivity,
@@ -99,6 +102,10 @@ inline PropertyType convertStringToProperty(std::string const& inString)
     if (boost::iequals(inString, "biot_coefficient"))
     {
         return PropertyType::biot_coefficient;
+    }
+    if (boost::iequals(inString, "bishops_effective_stress"))
+    {
+        return PropertyType::bishops_effective_stress;
     }
     if (boost::iequals(inString, "brooks_corey_exponent"))
     {
@@ -131,6 +138,10 @@ inline PropertyType convertStringToProperty(std::string const& inString)
     if (boost::iequals(inString, "density"))
     {
         return PropertyType::density;
+    }
+    if (boost::iequals(inString, "diffusion"))
+    {
+        return PropertyType::diffusion;
     }
     if (boost::iequals(inString, "drhodT"))
     {
@@ -224,6 +235,10 @@ inline PropertyType convertStringToProperty(std::string const& inString)
     {
         return PropertyType::storage;
     }
+    if (boost::iequals(inString, "swelling_stress_rate"))
+    {
+        return PropertyType::swelling_stress_rate;
+    }
     if (boost::iequals(inString, "thermal_conductivity"))
     {
         return PropertyType::thermal_conductivity;
@@ -261,6 +276,7 @@ static const std::array<std::string, PropertyType::number_of_properties>
     property_enum_to_string{{"acentric_factor",
                              "binary_interaction_coefficient",
                              "biot_coefficient",
+                             "bishops_effective_stress",
                              "brooks_corey_exponent",
                              "bulk_modulus",
                              "critical_density",
@@ -269,6 +285,7 @@ static const std::array<std::string, PropertyType::number_of_properties>
                              "compressibility",
                              "decay_rate",
                              "density",
+                             "diffusion",
                              "drhodT",
                              "effective_stress",
                              "entry_pressure",
@@ -292,6 +309,7 @@ static const std::array<std::string, PropertyType::number_of_properties>
                              "saturation",
                              "specific_heat_capacity",
                              "storage",
+                             "swelling_stress_rate",
                              "thermal_conductivity",
                              "thermal_expansivity",
                              "thermal_longitudinal_dispersivity",

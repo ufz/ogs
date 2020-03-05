@@ -7,7 +7,7 @@ author = "Wenqing Wang"
 
 [menu]
   [menu.benchmarks]
-    parent = "thermo-mechanics"
+    parent = "Thermo-Mechanics"
 
 +++
 

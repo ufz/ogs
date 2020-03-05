@@ -23,8 +23,8 @@ LinearProperty::LinearProperty(PropertyDataType const& property_reference_value,
 
 PropertyDataType LinearProperty::value(
     VariableArray const& variable_array,
-    ParameterLib::SpatialPosition const& /*pos*/,
-    double const /*t*/) const
+    ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
+    double const /*dt*/) const
 {
     auto calculate_linearized_ratio = [&variable_array](
                                           double const initial_linearized_ratio,
@@ -46,10 +46,9 @@ PropertyDataType LinearProperty::value(
 }
 
 PropertyDataType LinearProperty::dValue(
-    VariableArray const& /*variable_array*/,
-    Variable const primary_variable,
-    ParameterLib::SpatialPosition const& /*pos*/,
-    double const /*t*/) const
+    VariableArray const& /*variable_array*/, Variable const primary_variable,
+    ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
+    double const /*dt*/) const
 {
     auto const independent_variable =
         std::find_if(_independent_variables.begin(),
@@ -65,11 +64,9 @@ PropertyDataType LinearProperty::dValue(
 }
 
 PropertyDataType LinearProperty::d2Value(
-    VariableArray const& /*variable_array*/,
-    Variable const /*pv1*/,
-    Variable const /*pv2*/,
-    ParameterLib::SpatialPosition const& /*pos*/,
-    double const /*t*/) const
+    VariableArray const& /*variable_array*/, Variable const /*pv1*/,
+    Variable const /*pv2*/, ParameterLib::SpatialPosition const& /*pos*/,
+    double const /*t*/, double const /*dt*/) const
 {
     return decltype(_value){};
 }

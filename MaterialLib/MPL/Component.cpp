@@ -18,17 +18,12 @@ namespace MaterialPropertyLib
 {
 Component::Component()
 {
-    // Some properties can be initialized by other default properties:
-    _properties[PropertyType::name] = std::make_unique<Constant>("no_name");
 }
 
 Component::Component(std::string const& component_name,
                      std::unique_ptr<PropertyArray>&& properties)
+    : name(component_name)
 {
-    // Some properties can be initialized by other default properties:
-    _properties[PropertyType::name] =
-        std::make_unique<Constant>(component_name);
-
     if (properties)
     {
         overwriteExistingProperties(_properties, *properties, this);
@@ -40,8 +35,8 @@ Property const& Component::property(PropertyType const& p) const
     return *_properties[p];
 }
 
-std::string Component::name() const
+bool Component::hasProperty(PropertyType const& p) const
 {
-    return std::get<std::string>(_properties[PropertyType::name]->value());
+    return _properties[p] != nullptr;
 }
 }  // namespace MaterialPropertyLib

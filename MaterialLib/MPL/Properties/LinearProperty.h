@@ -37,22 +37,24 @@ public:
     /// the value of the given primary variable.
     PropertyDataType value(VariableArray const& variable_array,
                            ParameterLib::SpatialPosition const& /*pos*/,
-                           double const /*t*/) const override;
+                           double const /*t*/,
+                           double const /*dt*/) const override;
 
     /// This method will compute the derivative of a property with respect to
     /// the given primary variable.
     PropertyDataType dValue(VariableArray const& variable_array,
                             Variable const primary_variable,
                             ParameterLib::SpatialPosition const& /*pos*/,
-                            double const /*t*/) const override;
+                            double const /*t*/,
+                            double const /*dt*/) const override;
 
     /// This method will compute the second derivative of a
     /// property with respect to the given primary variables pv1 and pv2.
     PropertyDataType d2Value(VariableArray const& variable_array,
-                             Variable const pv1,
-                             Variable const pv2,
+                             Variable const pv1, Variable const pv2,
                              ParameterLib::SpatialPosition const& /*pos*/,
-                             double const /*t*/) const override;
+                             double const /*t*/,
+                             double const /*dt*/) const override;
 
 private:
     std::vector<IndependentVariable> const _independent_variables;

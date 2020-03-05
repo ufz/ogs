@@ -7,7 +7,6 @@
             <name>GW23</name>
             <type>GROUNDWATER_FLOW</type>
             <integration_order>2</integration_order>
-            <hydraulic_conductivity>K</hydraulic_conductivity>
             <process_variables>
                 <process_variable>pressure</process_variable>
             </process_variables>
@@ -16,6 +15,22 @@
             </secondary_variables>
         </process>
     </processes>
+    <media>
+        <medium id="0,1,2">
+            <properties>
+                <property>
+                    <name>diffusion</name>
+                    <type>Parameter</type>
+                    <parameter_name>K</parameter_name>
+                </property>
+                <property>
+                    <name>reference_temperature</name>
+                    <type>Constant</type>
+                    <value>293.15</value>
+                </property>
+            </properties>
+        </medium>
+    </media>
     <time_loop>
         <processes>
             <process ref="GW23">

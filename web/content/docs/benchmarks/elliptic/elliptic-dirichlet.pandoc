@@ -65,7 +65,10 @@ To start the simulation (after successful compilation) run:
 $ ogs square_1e2.prj
 ```
 
-It will produce some output and write the computed result into the `square_1e2_result.dat`, which is a simple list of values for every node of the mesh.
+It will produce the output files `square_1e2_pcs_0.pvd`,
+`square_1e2_pcs_0_ts_0_t_0.000000.vtu` and
+`square_1e2_pcs_0_ts_1_t_1.000000.vtu`. The last file contains the results
+computed in the first time step.
 
 The output on the console will be similar to the following one (ignore the spurious error messages "Could not find POINT..."):
 ```
@@ -100,23 +103,6 @@ A major part of the output was produced by the linear equation solver (LIS in th
 
 <!-- {{< vis path="Elliptic/square_1x1_GroundWaterFlow/square_1e2_pcs_0_ts_1_t_1.000000.vtu" >}} -->
 
+The result can be visualized with Paraview.
+
 ![](../square_1e2_pcs_0_ts_1_t_1.000000.png)
-
-The result, written in the `square_1e2_result.dat`, can be visualized with Paraview, for example, by including the values into the `square_1x1_quad_1e2.vtu` file in the `PointData` section:
-```
-...
-
-
-1
-0.8
-0.6
-0.4
-0.2
-...
--0.6
--0.8
--1
-
-
-```
-(The next releases shall simplify this procedure.)

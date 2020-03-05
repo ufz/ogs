@@ -34,15 +34,15 @@ RelPermBrooksCorey::RelPermBrooksCorey(
 
 PropertyDataType RelPermBrooksCorey::value(
     VariableArray const& variable_array,
-    ParameterLib::SpatialPosition const& pos,
-    double const t) const
+    ParameterLib::SpatialPosition const& pos, double const t,
+    double const dt) const
 {
     /// here, an extra computation of saturation is forced, guaranteeing a
     /// correct value. In order to speed up the computing time, saturation could
     /// be insertred into the primary variable array after it is computed in the
     /// FEM assembly.
     auto const s_L = _medium->property(PropertyType::saturation)
-                         .template value<double>(variable_array, pos, t);
+                         .template value<double>(variable_array, pos, t, dt);
 
     auto const s_L_res = _residual_liquid_saturation;
     auto const s_L_max = 1. - _residual_gas_saturation;
@@ -56,32 +56,32 @@ PropertyDataType RelPermBrooksCorey::value(
     if (s_eff >= 1.0)
     {
         // fully saturated medium
-        return Pair{{1.0, k_rel_min_GR}};
+        return Eigen::Vector2d{1.0, k_rel_min_GR};
     }
     if (s_eff <= 0.0)
     {
         // dry medium
-        return Pair{{k_rel_min_LR, 1.0}};
+        return Eigen::Vector2d{k_rel_min_LR, 1.0};
     }
 
     auto const k_rel_LR = std::pow(s_eff, (2. + 3. * lambda) / lambda);
     auto const k_rel_GR = (1. - s_eff) * (1. - s_eff) *
                           (1. - std::pow(s_eff, (2. + lambda) / lambda));
 
-    const Pair kRel = {std::max(k_rel_LR, k_rel_min_LR),
-                       std::max(k_rel_GR, k_rel_min_GR)};
-    return kRel;
+    return Eigen::Vector2d{std::max(k_rel_LR, k_rel_min_LR),
+                           std::max(k_rel_GR, k_rel_min_GR)};
 }
 PropertyDataType RelPermBrooksCorey::dValue(
     VariableArray const& variable_array, Variable const primary_variable,
-    ParameterLib::SpatialPosition const& pos, double const t) const
+    ParameterLib::SpatialPosition const& pos, double const t,
+    double const dt) const
 {
     (void)primary_variable;
     assert((primary_variable == Variable::liquid_saturation) &&
            "RelPermBrooksCorey::dValue is implemented for "
            " derivatives with respect to liquid saturation only.");
     auto const s_L = _medium->property(PropertyType::saturation)
-                         .template value<double>(variable_array, pos, t);
+                         .template value<double>(variable_array, pos, t, dt);
 
     auto const s_L_res = _residual_liquid_saturation;
     auto const s_L_max = 1. - _residual_gas_saturation;
@@ -89,7 +89,7 @@ PropertyDataType RelPermBrooksCorey::dValue(
 
     auto const s_eff = (s_L - s_L_res) / (s_L_max - s_L_res);
     if ((s_eff < 0.) || (s_eff > 1.))
-        return Pair{0., 0.};
+        return Eigen::Vector2d{0., 0.};
 
     auto const d_se_d_sL = 1. / (s_L_max - s_L_res);
     auto const dk_rel_LRdse =
@@ -103,9 +103,7 @@ PropertyDataType RelPermBrooksCorey::dValue(
         _2L_L * std::pow(s_eff, _2L_L - 1.) * (1. - s_eff) * (1. - s_eff);
 
     auto const dk_rel_GRdsL = dk_rel_GRdse * d_se_d_sL;
-    const Pair dkReldsL = {{dk_rel_LRdsL, dk_rel_GRdsL}};
-
-    return dkReldsL;
+    return Eigen::Vector2d{dk_rel_LRdsL, dk_rel_GRdsL};
 }
 
 }  // namespace MaterialPropertyLib

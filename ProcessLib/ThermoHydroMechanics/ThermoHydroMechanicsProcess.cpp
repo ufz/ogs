@@ -239,7 +239,8 @@ void ThermoHydroMechanicsProcess<
 template <int DisplacementDim>
 void ThermoHydroMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
     const double t, double const dt, std::vector<GlobalVector*> const& x,
-    int const process_id, GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
+    std::vector<GlobalVector*> const& xdot, int const process_id,
+    GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
 {
     DBUG("Assemble the equations for ThermoHydroMechanics");
 
@@ -252,7 +253,7 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        dof_table, t, dt, x, process_id, M, K, b, _coupled_solutions);
+        dof_table, t, dt, x, xdot, process_id, M, K, b, _coupled_solutions);
 }
 
 template <int DisplacementDim>

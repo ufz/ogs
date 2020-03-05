@@ -13,6 +13,7 @@
 
 #include <algorithm>
 
+#include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
 #include "MaterialLib/PhysicalConstant.h"
 #include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
@@ -33,7 +34,8 @@ std::unique_ptr<Process> createLiquidFlowProcess(
     unsigned const integration_order,
     BaseLib::ConfigTree const& config,
     std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
-    std::string const& output_directory)
+    std::string const& output_directory,
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
 {
     //! \ogs_file_param{prj__processes__process__type}
     config.checkConfigParameter("type", "LIQUID_FLOW");
@@ -81,16 +83,6 @@ std::unique_ptr<Process> createLiquidFlowProcess(
     }
     const int gravity_axis_id = (g == 0.) ? -1 : gravity_axis_id_input;
 
-    auto const& refT =
-        //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__reference_temperature}
-        config.getConfigParameterOptional<double>("reference_temperature");
-    const double reference_temperature =
-        refT ? *refT
-             : MaterialLib::PhysicalConstant::CelsiusZeroInKelvin + 18.0;
-
-    //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__material_property}
-    auto const& mat_config = config.getConfigSubtree("material_property");
-
     auto const material_ids = materialIDs(mesh);
     if (material_ids)
     {
@@ -111,11 +103,16 @@ std::unique_ptr<Process> createLiquidFlowProcess(
             *calculatesurfaceflux_config, meshes, output_directory);
     }
 
+    auto media_map =
+        MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
+
+    LiquidFlowData process_data{std::move(media_map), gravity_axis_id, g};
+
     return std::make_unique<LiquidFlowProcess>(
         std::move(name), mesh, std::move(jacobian_assembler), parameters,
         integration_order, std::move(process_variables),
-        std::move(secondary_variables), material_ids, gravity_axis_id, g,
-        reference_temperature, mat_config, std::move(surfaceflux));
+        std::move(process_data), std::move(secondary_variables),
+        std::move(surfaceflux));
 }
 
 }  // namespace LiquidFlow

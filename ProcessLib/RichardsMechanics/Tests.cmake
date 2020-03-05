@@ -13,7 +13,7 @@ AddTest(
     GLOB gravity_pcs_0_ts_*.vtu pressure pressure 0 2e-2
     GLOB gravity_pcs_0_ts_*.vtu velocity velocity 1e-7 1e-15
     GLOB gravity_pcs_0_ts_*.vtu HydraulicFlow HydraulicFlow 1e-5 0
-    GLOB gravity_pcs_0_ts_*.vtu NodalForces NodalForces 1e-10 0
+    GLOB gravity_pcs_0_ts_*.vtu NodalForces NodalForces 2e-10 0
     GLOB gravity_pcs_0_ts_24_t_5.000000.vtu pressure pressure 1e-4 1e-15
 )
 
@@ -102,7 +102,7 @@ AddTest(
     GLOB flow_fully_saturated_coordinate_system_pcs_0_ts_*.vtu displacement displacement 2e-14 0
     GLOB flow_fully_saturated_coordinate_system_pcs_0_ts_*.vtu sigma sigma 1e-14 0
     GLOB flow_fully_saturated_coordinate_system_pcs_0_ts_*.vtu epsilon epsilon 1e-15 0
-    GLOB flow_fully_saturated_coordinate_system_pcs_0_ts_*.vtu pressure pressure 1e-15 1e-15
+    GLOB flow_fully_saturated_coordinate_system_pcs_0_ts_*.vtu pressure pressure 2e-15 1e-15
     GLOB flow_fully_saturated_coordinate_system_pcs_0_ts_*.vtu velocity velocity 1e-15 1e-15
     GLOB flow_fully_saturated_coordinate_system_pcs_0_ts_*.vtu HydraulicFlow HydraulicFlow 1e-15 0
     GLOB flow_fully_saturated_coordinate_system_pcs_0_ts_*.vtu NodalForces NodalForces 1e-15 0
@@ -163,36 +163,120 @@ AddTest(
     GLOB RichardsFlow_2d_quasinewton_pcs_0_ts_*.vtu displacement displacement 2e-14 0
     GLOB RichardsFlow_2d_quasinewton_pcs_0_ts_*.vtu sigma sigma 1e-8 0
     GLOB RichardsFlow_2d_quasinewton_pcs_0_ts_*.vtu epsilon epsilon 1e-15 0
-    GLOB RichardsFlow_2d_quasinewton_pcs_0_ts_*.vtu pressure pressure 1e-10 1e-15
-    GLOB RichardsFlow_2d_quasinewton_pcs_0_ts_*.vtu saturation saturation 1e-14 1e-15
-    GLOB RichardsFlow_2d_quasinewton_pcs_0_ts_*.vtu saturation_avg saturation_avg 1e-14 1e-15
+    GLOB RichardsFlow_2d_quasinewton_pcs_0_ts_*.vtu pressure pressure 3e-9 1e-15
+    GLOB RichardsFlow_2d_quasinewton_pcs_0_ts_*.vtu saturation saturation 6e-13 1e-15
+    GLOB RichardsFlow_2d_quasinewton_pcs_0_ts_*.vtu saturation_avg saturation_avg 4e-13 1e-15
     GLOB RichardsFlow_2d_quasinewton_pcs_0_ts_*.vtu velocity velocity 1e-15 1e-15
     GLOB RichardsFlow_2d_quasinewton_pcs_0_ts_*.vtu HydraulicFlow HydraulicFlow 1e-15 0
     GLOB RichardsFlow_2d_quasinewton_pcs_0_ts_*.vtu NodalForces NodalForces 1e-15 0
 )
 AddTest(
-    NAME RichardsMechanics_RichardsFlow_2d_richardsflow
+    NAME RichardsMechanics_deformation_dependent_porosity
     PATH RichardsMechanics
     EXECUTABLE ogs
-    EXECUTABLE_ARGS RichardsFlow_2d_richardsflow.prj
+    EXECUTABLE_ARGS deformation_dependent_porosity.prj
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    GLOB RichardsFlow_2d_richardsflow_pcs_0_ts_*.vtu pressure pressure 5e-11 1e-15
-    GLOB RichardsFlow_2d_richardsflow_pcs_0_ts_*.vtu saturation saturation 1e-14 1e-15
+    GLOB deformation_dependent_porosity_pcs_0_ts_*.vtu pressure pressure 5e-11 1e-15
+    GLOB deformation_dependent_porosity_pcs_0_ts_*.vtu saturation saturation 1e-14 0
+    GLOB deformation_dependent_porosity_pcs_0_ts_*.vtu displacement displacement 5e-11 0
+    GLOB deformation_dependent_porosity_pcs_0_ts_*.vtu sigma sigma 1e-14 0
+    GLOB deformation_dependent_porosity_pcs_0_ts_*.vtu epsilon epsilon 1e-14 0
+    GLOB deformation_dependent_porosity_pcs_0_ts_*.vtu velocity velocity 5e-14 0
+    GLOB deformation_dependent_porosity_pcs_0_ts_*.vtu porosity porosity 5e-14 1e-15
+    GLOB deformation_dependent_porosity_pcs_0_ts_*.vtu porosity_avg porosity_avg 1e-14 1e-15
 )
-
-#PETSc
 AddTest(
-    NAME Parallel_RichardsMechanics_RichardsFlow_2d_richardsflow
+    NAME RichardsMechanics_orthotropic_power_law_permeability_xyz
     PATH RichardsMechanics
-    EXECUTABLE_ARGS RichardsFlow_2d_richardsflow.prj
-    WRAPPER mpirun
-    WRAPPER_ARGS -np 1
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS orthotropic_power_law_permeability_xyz.prj
+    WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS OGS_USE_MPI
+    REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    RichardsFlow_2d_richardsflow_pcs_0_ts_99_t_1900.000000.vtu RichardsFlow_2d_richardsflow_pcs_0_ts_99_t_1900_000000_0.vtu pressure pressure 5e-8 1e-10
-    RichardsFlow_2d_richardsflow_pcs_0_ts_99_t_1900.000000.vtu RichardsFlow_2d_richardsflow_pcs_0_ts_99_t_1900_000000_0.vtu saturation saturation 1e-10 1e-11
+    GLOB orthotropic_power_law_permeability_xyz_pcs_0_ts_*.vtu pressure pressure 5e-11 1e-15
+    GLOB orthotropic_power_law_permeability_xyz_pcs_0_ts_*.vtu saturation saturation 1e-14 0
+    GLOB orthotropic_power_law_permeability_xyz_pcs_0_ts_*.vtu displacement displacement 5e-11 0
+    GLOB orthotropic_power_law_permeability_xyz_pcs_0_ts_*.vtu sigma sigma 2e-14 0
+    GLOB orthotropic_power_law_permeability_xyz_pcs_0_ts_*.vtu epsilon epsilon 1e-14 0
+    GLOB orthotropic_power_law_permeability_xyz_pcs_0_ts_*.vtu velocity velocity 5e-14 0
+    GLOB orthotropic_power_law_permeability_xyz_pcs_0_ts_*.vtu porosity porosity 5e-14 1e-15
+    GLOB orthotropic_power_law_permeability_xyz_pcs_0_ts_*.vtu porosity_avg porosity_avg 5e-14 1e-15
+)
+AddTest(
+    NAME RichardsMechanics_orthotropic_swelling_xyz
+    PATH RichardsMechanics
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS orthotropic_swelling_xyz.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    GLOB orthotropic_swelling_xyz_pcs_0_ts_*.vtu pressure pressure 1e-15 0
+    GLOB orthotropic_swelling_xyz_pcs_0_ts_*.vtu saturation saturation 1e-14 1e-15
+    GLOB orthotropic_swelling_xyz_pcs_0_ts_*.vtu displacement displacement 1e-15 0
+    GLOB orthotropic_swelling_xyz_pcs_0_ts_*.vtu sigma sigma 2e-15 0
+    GLOB orthotropic_swelling_xyz_pcs_0_ts_*.vtu swelling_stress swelling_stress 3e-15 0
+    GLOB orthotropic_swelling_xyz_pcs_0_ts_*.vtu epsilon epsilon 2e-15 0
+    GLOB orthotropic_swelling_xyz_pcs_0_ts_*.vtu velocity velocity 1e-15 0
+    GLOB orthotropic_swelling_xyz_pcs_0_ts_*.vtu porosity porosity 5e-15 1e-15
+    GLOB orthotropic_swelling_xyz_pcs_0_ts_*.vtu porosity_avg porosity_avg 5e-15 1e-15
+)
+AddTest(
+    NAME RichardsMechanics_orthotropic_swelling_xy
+    PATH RichardsMechanics
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS orthotropic_swelling_xy.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    GLOB orthotropic_swelling_xy_pcs_0_ts_*.vtu pressure pressure 1e-15 0
+    GLOB orthotropic_swelling_xy_pcs_0_ts_*.vtu saturation saturation 2e-15 1e-15
+    GLOB orthotropic_swelling_xy_pcs_0_ts_*.vtu displacement displacement 1e-15 0
+    GLOB orthotropic_swelling_xy_pcs_0_ts_*.vtu sigma sigma 1e-15 0
+    GLOB orthotropic_swelling_xy_pcs_0_ts_*.vtu swelling_stress swelling_stress 1e-15 0
+    GLOB orthotropic_swelling_xy_pcs_0_ts_*.vtu epsilon epsilon 1e-15 0
+    GLOB orthotropic_swelling_xy_pcs_0_ts_*.vtu velocity velocity 1e-15 0
+    GLOB orthotropic_swelling_xy_pcs_0_ts_*.vtu porosity porosity 1e-15 1e-15
+    GLOB orthotropic_swelling_xy_pcs_0_ts_*.vtu porosity_avg porosity_avg 1e-15 1e-15
+)
+AddTest(
+    NAME RichardsMechanics_bishops_effective_stress_power_law
+    PATH RichardsMechanics
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS bishops_effective_stress_power_law.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    GLOB bishops_effective_stress_power_law_pcs_0_ts_*.vtu pressure pressure 1e-15 0
+    GLOB bishops_effective_stress_power_law_pcs_0_ts_*.vtu saturation saturation 1e-14 1e-15
+    GLOB bishops_effective_stress_power_law_pcs_0_ts_*.vtu displacement displacement 1e-15 0
+    GLOB bishops_effective_stress_power_law_pcs_0_ts_*.vtu sigma sigma 5e-15 0
+    GLOB bishops_effective_stress_power_law_pcs_0_ts_*.vtu epsilon epsilon 2e-15 0
+    GLOB bishops_effective_stress_power_law_pcs_0_ts_*.vtu velocity velocity 1e-15 0
+    GLOB bishops_effective_stress_power_law_pcs_0_ts_*.vtu porosity porosity 5e-15 1e-15
+    GLOB bishops_effective_stress_power_law_pcs_0_ts_*.vtu porosity_avg porosity_avg 5e-15 1e-15
+)
+AddTest(
+    NAME RichardsMechanics_bishops_effective_stress_saturation_cutoff
+    PATH RichardsMechanics
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS bishops_effective_stress_saturation_cutoff.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    GLOB bishops_effective_stress_saturation_cutoff_pcs_0_ts_*.vtu pressure pressure 1e-15 0
+    GLOB bishops_effective_stress_saturation_cutoff_pcs_0_ts_*.vtu saturation saturation 1e-14 1e-15
+    GLOB bishops_effective_stress_saturation_cutoff_pcs_0_ts_*.vtu displacement displacement 1e-15 0
+    GLOB bishops_effective_stress_saturation_cutoff_pcs_0_ts_*.vtu sigma sigma 1e-15 0
+    GLOB bishops_effective_stress_saturation_cutoff_pcs_0_ts_*.vtu epsilon epsilon 1e-15 0
+    GLOB bishops_effective_stress_saturation_cutoff_pcs_0_ts_*.vtu velocity velocity 1e-15 0
+    GLOB bishops_effective_stress_saturation_cutoff_pcs_0_ts_*.vtu porosity porosity 5e-15 1e-15
+    GLOB bishops_effective_stress_saturation_cutoff_pcs_0_ts_*.vtu porosity_avg porosity_avg 5e-15 1e-15
 )

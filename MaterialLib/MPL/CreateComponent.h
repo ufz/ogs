@@ -22,6 +22,7 @@ class ConfigTree;
 namespace ParameterLib
 {
 struct ParameterBase;
+struct CoordinateSystem;
 }
 
 namespace MaterialPropertyLib
@@ -36,7 +37,7 @@ namespace MaterialPropertyLib
 /// without predefined properties is created.
 std::vector<std::unique_ptr<Component>> createComponents(
     boost::optional<BaseLib::ConfigTree> const& config,
-    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
-        parameters);
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
+    ParameterLib::CoordinateSystem const* const local_coordinate_system);
 
 }  // namespace MaterialPropertyLib

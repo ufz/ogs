@@ -1,1 +1,1 @@
-\copydoc MaterialPropertyLib::RelativePermeabilityVanGenuchten
+\copydoc MaterialPropertyLib::RelPermVanGenuchten

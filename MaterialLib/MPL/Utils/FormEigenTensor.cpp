@@ -25,45 +25,75 @@ struct FormEigenTensor
     }
 
     Eigen::Matrix<double, GlobalDim, GlobalDim> operator()(
-        MaterialPropertyLib::Vector const& values) const
+        Eigen::Vector2d const& values) const
     {
-        return Eigen::Map<Eigen::Matrix<double, GlobalDim, 1> const>(
-                   values.data(), GlobalDim, 1)
-            .asDiagonal();
-    }
-
-    Eigen::Matrix<double, GlobalDim, GlobalDim> operator()(
-        MaterialPropertyLib::Tensor2d const& values) const
-    {
-        return Eigen::Map<Eigen::Matrix<double, GlobalDim, GlobalDim> const>(
-            values.data(), GlobalDim, GlobalDim);
-    }
-
-    Eigen::Matrix<double, GlobalDim, GlobalDim> operator()(
-        MaterialPropertyLib::Tensor const& values) const
-    {
-        return Eigen::Map<Eigen::Matrix<double, GlobalDim, GlobalDim> const>(
-            values.data(), GlobalDim, GlobalDim);
-    }
-
-    Eigen::Matrix<double, GlobalDim, GlobalDim> operator()(
-        MaterialPropertyLib::SymmTensor const& /*values*/) const
-    {
-        OGS_FATAL(
-            "The value of MaterialPropertyLib::SymmTensor is inapplicable");
-    }
-
-    Eigen::Matrix<double, GlobalDim, GlobalDim> operator()(
-        std::string const& /*values*/) const
-    {
-        OGS_FATAL("The value of std::string is inapplicable");
-    }
-
-    Eigen::Matrix<double, GlobalDim, GlobalDim> operator()(
-        MaterialPropertyLib::Pair const& /*values*/) const
-    {
-        OGS_FATAL("The size of tensor is neither one nor %d nor %d squared.",
+        if constexpr (GlobalDim == 2)
+        {
+            return values.asDiagonal();
+        }
+        OGS_FATAL("Cannot convert 2d vector to %dx%d diagonal matrix.",
                   GlobalDim, GlobalDim);
+    }
+
+    Eigen::Matrix<double, GlobalDim, GlobalDim> operator()(
+        Eigen::Vector3d const& values) const
+    {
+        if constexpr (GlobalDim == 3)
+        {
+            return values.asDiagonal();
+        }
+        OGS_FATAL("Cannot convert 3d vector to %dx%d diagonal matrix.",
+                  GlobalDim, GlobalDim);
+    }
+
+    Eigen::Matrix<double, GlobalDim, GlobalDim> operator()(
+        Eigen::Matrix<double, 2, 2> const& values) const
+    {
+        if constexpr (GlobalDim == 2) {
+            return values;
+        }
+        OGS_FATAL("Cannot convert a 2d tensor to %dx%d matrix", GlobalDim,
+                  GlobalDim);
+    }
+    Eigen::Matrix<double, GlobalDim, GlobalDim> operator()(
+        Eigen::Matrix<double, 3, 3> const& values) const
+    {
+        if constexpr (GlobalDim == 3) {
+            return values;
+        }
+        OGS_FATAL("Cannot convert a 3d tensor to %dx%d matrix", GlobalDim,
+                  GlobalDim);
+    }
+
+    Eigen::Matrix<double, GlobalDim, GlobalDim> operator()(
+        Eigen::Matrix<double, 4, 1> const& values) const
+    {
+        Eigen::Matrix<double, GlobalDim, GlobalDim> result;
+        if constexpr (GlobalDim == 2)
+        {   // skip the z-direction in this case
+            result << values[0], values[3], values[3], values[1];
+        }
+        if constexpr (GlobalDim == 3)
+        {
+            result << values[0], values[3], 0, values[3], values[1], 0, 0, 0,
+                values[2];
+        }
+        return result;
+    }
+
+    Eigen::Matrix<double, GlobalDim, GlobalDim> operator()(
+        Eigen::Matrix<double, 6, 1> const& values) const
+    {
+        if constexpr (GlobalDim == 3)
+        {
+            Eigen::Matrix<double, GlobalDim, GlobalDim> result;
+            result << values[0], values[3], values[5], values[3], values[1],
+                values[4], values[5], values[4], values[2];
+            return result;
+        }
+
+        OGS_FATAL("Cannot convert a symmetric 3d tensor to %dx%d matrix",
+                  GlobalDim);
     }
 };
 

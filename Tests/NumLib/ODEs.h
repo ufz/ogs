@@ -31,28 +31,34 @@ public:
     {
     }
 
+    void setMKbValues(GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
+    {
+        MathLib::setMatrix(M, {1.0, 0.0, 0.0, 1.0});
+        MathLib::setMatrix(K, {0.0, 1.0, -1.0, 0.0});
+
+        MathLib::setVector(b, {0.0, 0.0});
+    }
+
     void assemble(const double /*t*/, double const /*dt*/,
                   std::vector<GlobalVector*> const& /*x*/,
+                  std::vector<GlobalVector*> const& /*xdot*/,
                   int const /*process_id*/, GlobalMatrix& M, GlobalMatrix& K,
                   GlobalVector& b) override
     {
-        MathLib::setMatrix(M, { 1.0, 0.0,  0.0, 1.0 });
-        MathLib::setMatrix(K, { 0.0, 1.0, -1.0, 0.0 });
-
-        MathLib::setVector(b, { 0.0, 0.0 });
+        setMKbValues(M, K, b);
     }
 
-    void assembleWithJacobian(const double t, double const dt,
-                              std::vector<GlobalVector*> const& x_curr,
+    void assembleWithJacobian(const double /*t*/, double const /*dt*/,
+                              std::vector<GlobalVector*> const& /*x_curr*/,
                               GlobalVector const& /*xdot*/,
                               const double dxdot_dx, const double dx_dx,
-                              int const process_id, GlobalMatrix& M,
+                              int const /*process_id*/, GlobalMatrix& M,
                               GlobalMatrix& K, GlobalVector& b,
                               GlobalMatrix& Jac) override
     {
         namespace LinAlg = MathLib::LinAlg;
 
-        assemble(t, dt, x_curr, process_id, M, K, b);
+        setMKbValues(M, K, b);
 
         // compute Jac = M*dxdot_dx + dx_dx*K
         LinAlg::finalizeAssembly(M);
@@ -118,17 +124,25 @@ public:
     {
     }
 
-    void assemble(const double /*t*/, double const /*dt*/,
-                  std::vector<GlobalVector*> const& x, int const process_id,
-                  GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) override
+    void setMKbValues(GlobalVector const& x, GlobalMatrix& M, GlobalMatrix& K,
+                      GlobalVector& b)
     {
         MathLib::setMatrix(M, {1.0});
-        MathLib::LinAlg::setLocalAccessibleVector(*x[process_id]);
-        MathLib::setMatrix(K, {(*x[process_id])[0]});
+        MathLib::LinAlg::setLocalAccessibleVector(x);
+        MathLib::setMatrix(K, {x[0]});
         MathLib::setVector(b, {0.0});
     }
+    void assemble(const double /*t*/, double const /*dt*/,
+                  std::vector<GlobalVector*> const& x,
+                  std::vector<GlobalVector*> const& /*xdot*/,
+                  int const process_id, GlobalMatrix& M, GlobalMatrix& K,
+                  GlobalVector& b) override
+    {
+        MathLib::LinAlg::setLocalAccessibleVector(*x[process_id]);
+        setMKbValues(*x[process_id], M, K, b);
+    }
 
-    void assembleWithJacobian(const double t, double const dt,
+    void assembleWithJacobian(const double /*t*/, double const /*dt*/,
                               std::vector<GlobalVector*> const& x,
                               GlobalVector const& /*xdot*/,
                               const double dxdot_dx, const double dx_dx,
@@ -136,7 +150,8 @@ public:
                               GlobalMatrix& K, GlobalVector& b,
                               GlobalMatrix& Jac) override
     {
-        assemble(t, dt, x, process_id, M, K, b);
+        MathLib::LinAlg::setLocalAccessibleVector(*x[process_id]);
+        setMKbValues(*x[process_id], M, K, b);
 
         namespace LinAlg = MathLib::LinAlg;
 
@@ -212,14 +227,11 @@ public:
     {
     }
 
-    void assemble(const double /*t*/, double const /*dt*/,
-                  std::vector<GlobalVector*> const& x_curr,
-                  int const process_id, GlobalMatrix& M, GlobalMatrix& K,
-                  GlobalVector& b) override
+    void setMKbValues(GlobalVector const& x, GlobalMatrix& M, GlobalMatrix& K,
+                      GlobalVector& b)
     {
-        MathLib::LinAlg::setLocalAccessibleVector(*x_curr[process_id]);
-        auto const u = (*x_curr[process_id])[0];
-        auto const v = (*x_curr[process_id])[1];
+        auto const u = x[0];
+        auto const v = x[1];
 
         MathLib::setMatrix(M, {u, 2.0 - u, 2.0 - v, v});
         MathLib::setMatrix(K, {2.0 - u - v, -u, v, 2.0 * v - 5.0});
@@ -227,7 +239,17 @@ public:
             b, {-2 * u + 2.0 * u * v, -2.0 * v * v + 5.0 * v - 4.0});
     }
 
-    void assembleWithJacobian(const double t, double const dt,
+    void assemble(const double /*t*/, double const /*dt*/,
+                  std::vector<GlobalVector*> const& x_curr,
+                  std::vector<GlobalVector*> const& /*xdot*/,
+                  int const process_id, GlobalMatrix& M, GlobalMatrix& K,
+                  GlobalVector& b) override
+    {
+        MathLib::LinAlg::setLocalAccessibleVector(*x_curr[process_id]);
+        setMKbValues(*x_curr[process_id], M, K, b);
+    }
+
+    void assembleWithJacobian(const double /*t*/, double const /*dt*/,
                               std::vector<GlobalVector*> const& x_curr,
                               GlobalVector const& xdot, const double dxdot_dx,
                               const double dx_dx, int const process_id,
@@ -236,7 +258,8 @@ public:
     {
         MathLib::LinAlg::setLocalAccessibleVector(*x_curr[process_id]);
         MathLib::LinAlg::setLocalAccessibleVector(xdot);
-        assemble(t, dt, x_curr, process_id, M, K, b);
+
+        setMKbValues(*x_curr[process_id], M, K, b);
 
         auto const u = (*x_curr[process_id])[0];
         auto const v = (*x_curr[process_id])[1];

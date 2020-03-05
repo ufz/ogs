@@ -95,6 +95,7 @@
           </xs:complexType>
         </xs:element>
         <xs:element name="processes" minOccurs="0"/> <!--ignore-->
+        <xs:element name="media" minOccurs="1" maxOccurs="1"/> <!--ignore-->
         <xs:element name="time_loop" minOccurs="0"/> <!--ignore-->
         <xs:element name="parameters" minOccurs="0">
           <xs:complexType>

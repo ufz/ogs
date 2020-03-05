@@ -21,10 +21,8 @@ namespace MaterialPropertyLib
 Phase::Phase(std::string&& phase_name,
              std::vector<std::unique_ptr<Component>>&& components,
              std::unique_ptr<PropertyArray>&& properties)
-    : _components(std::move(components))
+    : name(std::move(phase_name)), _components(std::move(components))
 {
-    _properties[PropertyType::name] = std::make_unique<Constant>(phase_name);
-
     if (properties)
     {
         overwriteExistingProperties(_properties, *properties, this);
@@ -36,12 +34,17 @@ Component const& Phase::component(const std::size_t& index) const
     return *_components[index];
 }
 
+bool Phase::hasComponent(std::size_t const& index) const
+{
+    return _components[index] != nullptr;
+}
+
 Component const& Phase::component(std::string const& name) const
 {
     return *BaseLib::findElementOrError(
         _components.begin(), _components.end(),
         [&name](std::unique_ptr<Component> const& component) {
-            return component->name() == name;
+            return component->name == name;
         },
         "Could not find component name '" + name + "'.");
 }
@@ -59,11 +62,6 @@ bool Phase::hasProperty(PropertyType const& p) const
 std::size_t Phase::numberOfComponents() const
 {
     return _components.size();
-}
-
-std::string Phase::name() const
-{
-    return std::get<std::string>(_properties[PropertyType::name]->value());
 }
 
 }  // namespace MaterialPropertyLib

@@ -11,14 +11,14 @@
  */
 #pragma once
 
+#include <Eigen/Dense>
 #include <array>
 #include <string>
 #include <variant>
 
+#include "ParameterLib/SpatialPosition.h"
 #include "PropertyType.h"
 #include "VariableType.h"
-
-#include "ParameterLib/SpatialPosition.h"
 
 namespace MaterialPropertyLib
 {
@@ -26,20 +26,16 @@ class Medium;
 class Phase;
 class Component;
 
-/// This is a custom data type for arbitrary properties, based on the
-/// std::variant container. It can hold scalars, vectors, tensors, and so
-/// forth.
-enum PropertyDataTypeName
-{
-    nScalar,
-    nPair,
-    nVector,
-    nSymmTensor,
-    nTensor
-};
+using PropertyDataType =
+    std::variant<double, Eigen::Matrix<double, 2, 1>,
+                 Eigen::Matrix<double, 3, 1>, Eigen::Matrix<double, 2, 2>,
+                 Eigen::Matrix<double, 3, 3>, Eigen::Matrix<double, 4, 1>,
+                 Eigen::Matrix<double, 6, 1>>;
 
-using PropertyDataType = std::variant<double, Pair, Vector, Tensor2d,
-                                      SymmTensor, Tensor, std::string>;
+/// Conversion of a vector to PropertyDataType for different sizes of the
+/// vector.
+/// \attention It cannot distinguish between 2x2 matrix and 4x1 vector.
+PropertyDataType fromVector(std::vector<double> const& values);
 
 /// This class is the base class for any material property of any
 /// scale (i.e. components, phases, media, ...). The single value of
@@ -48,6 +44,12 @@ class Property
 {
 public:
     virtual ~Property() = default;
+
+    /// Returns the initial (or reference) value of the property.
+    /// The default implementation forwards to the value function.
+    virtual PropertyDataType initialValue(
+        ParameterLib::SpatialPosition const& pos, double const t) const;
+
     /// This virtual method simply returns the private _value attribute without
     /// changing it.
     virtual PropertyDataType value() const;
@@ -55,22 +57,29 @@ public:
     /// variables that are passed as arguments.
     virtual PropertyDataType value(VariableArray const& variable_array,
                                    ParameterLib::SpatialPosition const& pos,
-                                   double const t) const;
+                                   double const t, double const dt) const;
     /// This virtual method will compute the derivative of a property
     /// with respect to the given variable pv.
     virtual PropertyDataType dValue(VariableArray const& variable_array,
                                     Variable const variable,
                                     ParameterLib::SpatialPosition const& pos,
-                                    double const t) const;
+                                    double const t, double const dt) const;
     /// This virtual method will compute the second derivative of a
     /// property with respect to the given variables pv1 and pv2.
     virtual PropertyDataType d2Value(VariableArray const& variable_array,
                                      Variable const variable1,
                                      Variable const variable2,
                                      ParameterLib::SpatialPosition const& pos,
-                                     double const t) const;
+                                     double const t, double const dt) const;
     virtual void setScale(
         std::variant<Medium*, Phase*, Component*> /*scale_pointer*/){};
+
+    template <typename T>
+    T initialValue(ParameterLib::SpatialPosition const& pos,
+                   double const t) const
+    {
+        return std::get<T>(initialValue(pos, t));
+    }
 
     template <typename T>
     T value() const
@@ -80,25 +89,27 @@ public:
 
     template <typename T>
     T value(VariableArray const& variable_array,
-            ParameterLib::SpatialPosition const& pos,
-            double const t) const
+            ParameterLib::SpatialPosition const& pos, double const t,
+            double const dt) const
     {
-        return std::get<T>(value(variable_array, pos, t));
+        return std::get<T>(value(variable_array, pos, t, dt));
     }
 
     template <typename T>
     T dValue(VariableArray const& variable_array, Variable const variable,
-             ParameterLib::SpatialPosition const& pos, double const t) const
+             ParameterLib::SpatialPosition const& pos, double const t,
+             double const dt) const
     {
-        return std::get<T>(dValue(variable_array, variable, pos, t));
+        return std::get<T>(dValue(variable_array, variable, pos, t, dt));
     }
     template <typename T>
     T d2Value(VariableArray const& variable_array, Variable const& variable1,
               Variable const& variable2,
-              ParameterLib::SpatialPosition const& pos, double const t) const
+              ParameterLib::SpatialPosition const& pos, double const t,
+              double const dt) const
     {
         return std::get<T>(
-            d2Value(variable_array, variable1, variable2, pos, t));
+            d2Value(variable_array, variable1, variable2, pos, t, dt));
     }
 
 protected:

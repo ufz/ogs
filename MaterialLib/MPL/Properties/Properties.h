@@ -11,14 +11,19 @@
  */
 #pragma once
 
+#include "BishopsPowerLaw.h"
+#include "BishopsSaturationCutoff.h"
 #include "Constant.h"
+#include "DupuitPermeability.h"
 #include "ExponentialProperty.h"
 #include "IdealGasLaw.h"
 #include "LinearProperty.h"
 #include "ParameterProperty.h"
+#include "PorosityFromMassBalance.h"
 #include "RelPermBrooksCorey.h"
 #include "RelPermLiakopoulos.h"
 #include "RelPermVanGenuchten.h"
 #include "SaturationBrooksCorey.h"
+#include "SaturationDependentSwelling.h"
 #include "SaturationLiakopoulos.h"
 #include "SaturationVanGenuchten.h"

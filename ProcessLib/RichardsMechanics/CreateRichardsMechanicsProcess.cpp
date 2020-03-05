@@ -12,13 +12,14 @@
 
 #include <cassert>
 
+#include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
+#include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
+#include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/SolidModels/CreateConstitutiveRelation.h"
 #include "MaterialLib/SolidModels/MechanicsBase.h"
 #include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
-#include "ProcessLib/RichardsFlow/CreateRichardsFlowMaterialProperties.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
-
 #include "RichardsMechanicsProcess.h"
 #include "RichardsMechanicsProcessData.h"
 
@@ -36,7 +37,8 @@ std::unique_ptr<Process> createRichardsMechanicsProcess(
     boost::optional<ParameterLib::CoordinateSystem> const&
         local_coordinate_system,
     unsigned const integration_order,
-    BaseLib::ConfigTree const& config)
+    BaseLib::ConfigTree const& config,
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
 {
     //! \ogs_file_param{prj__processes__process__type}
     config.checkConfigParameter("type", "RICHARDS_MECHANICS");
@@ -110,37 +112,6 @@ std::unique_ptr<Process> createRichardsMechanicsProcess(
         MaterialLib::Solids::createConstitutiveRelations<DisplacementDim>(
             parameters, local_coordinate_system, config);
 
-    // Fluid bulk modulus
-    auto& fluid_bulk_modulus = ParameterLib::findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__RICHARDS_MECHANICS__fluid_bulk_modulus}
-        "fluid_bulk_modulus", parameters, 1, &mesh);
-    DBUG("Use '%s' as fluid bulk modulus parameter.",
-         fluid_bulk_modulus.name.c_str());
-
-    // Biot coefficient
-    auto& biot_coefficient = ParameterLib::findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__RICHARDS_MECHANICS__biot_coefficient}
-        "biot_coefficient", parameters, 1, &mesh);
-    DBUG("Use '%s' as Biot coefficient parameter.",
-         biot_coefficient.name.c_str());
-
-    // Solid density
-    auto& solid_density = ParameterLib::findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__RICHARDS_MECHANICS__solid_density}
-        "solid_density", parameters, 1, &mesh);
-    DBUG("Use '%s' as solid density parameter.", solid_density.name.c_str());
-
-    // Solid bulk modulus
-    auto& solid_bulk_modulus = ParameterLib::findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__RICHARDS_MECHANICS__solid_bulk_modulus}
-        "solid_bulk_modulus", parameters, 1, &mesh);
-    DBUG("Use '%s' as solid bulk modulus parameter.",
-         solid_bulk_modulus.name.c_str());
-
     // Specific body force
     Eigen::Matrix<double, DisplacementDim, 1> specific_body_force;
     {
@@ -160,6 +131,21 @@ std::unique_ptr<Process> createRichardsMechanicsProcess(
         std::copy_n(b.data(), b.size(), specific_body_force.data());
     }
 
+    auto media_map =
+        MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
+
+    std::array const requiredGasProperties = {MaterialPropertyLib::viscosity};
+    std::array const requiredSolidProperties = {
+        MaterialPropertyLib::porosity, MaterialPropertyLib::biot_coefficient,
+        MaterialPropertyLib::density};
+    for (auto const& m : media)
+    {
+        checkRequiredProperties(m.second->phase("AqueousLiquid"),
+                                requiredGasProperties);
+        checkRequiredProperties(m.second->phase("Solid"),
+                                requiredSolidProperties);
+    }
+
     // Initial stress conditions
     auto const initial_stress = ParameterLib::findOptionalTagParameter<double>(
         //! \ogs_file_param_special{prj__processes__process__RICHARDS_MECHANICS__initial_stress}
@@ -168,49 +154,15 @@ std::unique_ptr<Process> createRichardsMechanicsProcess(
         MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value,
         &mesh);
 
-    auto& temperature = ParameterLib::findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__RICHARDS_MECHANICS__temperature}
-        "temperature", parameters, 1, &mesh);
-
-    auto const& flow_material_config =
-        //! \ogs_file_param{prj__processes__process__RICHARDS_MECHANICS__material_property}
-        config.getConfigSubtree("material_property");
-
-    auto const material_ids =
-        mesh.getProperties().existsPropertyVector<int>("MaterialIDs")
-            ? mesh.getProperties().getPropertyVector<int>("MaterialIDs")
-            : nullptr;
-    if (material_ids != nullptr)
-    {
-        INFO(
-            "MaterialIDs vector found; the Richards flow is in heterogeneous "
-            "porous media.");
-    }
-    else
-    {
-        INFO(
-            "MaterialIDs vector not found; the Richards flow is in homogeneous "
-            "porous media.");
-    }
-    auto flow_material =
-        ProcessLib::RichardsFlow::createRichardsFlowMaterialProperties(
-            flow_material_config, material_ids, parameters);
-
     auto const mass_lumping =
         //! \ogs_file_param{prj__processes__process__RICHARDS_MECHANICS__mass_lumping}
         config.getConfigParameter<bool>("mass_lumping", false);
 
     RichardsMechanicsProcessData<DisplacementDim> process_data{
-        material_ids,
-        std::move(flow_material),
+        materialIDs(mesh),
+        std::move(media_map),
         std::move(solid_constitutive_relations),
         initial_stress,
-        fluid_bulk_modulus,
-        biot_coefficient,
-        solid_density,
-        solid_bulk_modulus,
-        temperature,
         specific_body_force,
         mass_lumping};
 
@@ -234,7 +186,8 @@ template std::unique_ptr<Process> createRichardsMechanicsProcess<2>(
     boost::optional<ParameterLib::CoordinateSystem> const&
         local_coordinate_system,
     unsigned const integration_order,
-    BaseLib::ConfigTree const& config);
+    BaseLib::ConfigTree const& config,
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media);
 
 template std::unique_ptr<Process> createRichardsMechanicsProcess<3>(
     std::string name,
@@ -245,7 +198,8 @@ template std::unique_ptr<Process> createRichardsMechanicsProcess<3>(
     boost::optional<ParameterLib::CoordinateSystem> const&
         local_coordinate_system,
     unsigned const integration_order,
-    BaseLib::ConfigTree const& config);
+    BaseLib::ConfigTree const& config,
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media);
 
 }  // namespace RichardsMechanics
 }  // namespace ProcessLib

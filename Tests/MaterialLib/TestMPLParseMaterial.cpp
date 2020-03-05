@@ -254,13 +254,13 @@ TEST(Material, parseMaterials)
     for (std::size_t p = 0; p < m->numberOfPhases(); ++p)
     {
         const auto& phase = m->phase(p);
-        getNames(phase.name(), medium.phases[p].property[MPL::name], "no_name",
+        getNames(phase.name, medium.phases[p].property[MPL::name], "no_name",
                  observed, expected);
 
         for (std::size_t c = 0; c < phase.numberOfComponents(); ++c)
         {
             const auto& component = phase.component(c);
-            getNames(component.name(),
+            getNames(component.name,
                      medium.phases[p].component[c].property[MPL::name],
                      "no_name", observed, expected);
         }

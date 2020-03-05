@@ -32,6 +32,8 @@ namespace ProcessLib
 {
 namespace RichardsMechanics
 {
+namespace MPL = MaterialPropertyLib;
+
 /// Used for the extrapolation of the integration point values. It is ordered
 /// (and stored) by integration points.
 template <typename ShapeMatrixType>
@@ -69,8 +71,12 @@ public:
         unsigned const integration_order,
         RichardsMechanicsProcessData<DisplacementDim>& process_data);
 
+    void setInitialConditionsConcrete(std::vector<double> const& local_x,
+                                      double const t) override;
+
     void assemble(double const t, double const dt,
                   std::vector<double> const& local_x,
+                  std::vector<double> const& local_xdot,
                   std::vector<double>& local_M_data,
                   std::vector<double>& local_K_data,
                   std::vector<double>& local_rhs_data) override;
@@ -164,7 +170,19 @@ public:
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const override;
 
+    std::vector<double> const& getIntPtPorosity(
+        const double t,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+        std::vector<double>& cache) const override;
+
     std::vector<double> const& getIntPtSigma(
+        const double t,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+        std::vector<double>& cache) const override;
+
+    std::vector<double> const& getIntPtSwellingStress(
         const double t,
         std::vector<GlobalVector*> const& x,
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,

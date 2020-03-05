@@ -161,7 +161,8 @@ void PhaseFieldProcess<DisplacementDim>::initializeBoundaryConditions()
 template <int DisplacementDim>
 void PhaseFieldProcess<DisplacementDim>::assembleConcreteProcess(
     const double t, double const dt, std::vector<GlobalVector*> const& x,
-    int const process_id, GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
+    std::vector<GlobalVector*> const& xdot, int const process_id,
+    GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
 {
     DBUG("Assemble PhaseFieldProcess.");
 
@@ -189,8 +190,8 @@ void PhaseFieldProcess<DisplacementDim>::assembleConcreteProcess(
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        pv.getActiveElementIDs(), dof_tables, t, dt, x, process_id, M, K, b,
-        _coupled_solutions);
+        pv.getActiveElementIDs(), dof_tables, t, dt, x, xdot, process_id, M, K,
+        b, _coupled_solutions);
 }
 
 template <int DisplacementDim>

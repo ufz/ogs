@@ -5,8 +5,9 @@ if(BUILD_SHARED_LIBS)
     install(TARGETS RichardsMechanics
             LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 endif()
-target_link_libraries(RichardsMechanics
-                      PUBLIC ProcessLib
-                      PRIVATE RichardsFlow ParameterLib)
+target_link_libraries(
+    RichardsMechanics
+    PUBLIC ProcessLib
+    PRIVATE ParameterLib)
 
 include(Tests.cmake)

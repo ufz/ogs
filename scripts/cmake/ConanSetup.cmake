@@ -68,16 +68,13 @@ endif()
 if(OGS_BUILD_GUI)
     set(CONAN_REQUIRES ${CONAN_REQUIRES}
         shapelib/1.3.0@bilke/stable
-        libgeotiff/1.4.2@bilke/stable
+        # libgeotiff/1.4.2@bilke/stable # TODO
         # Overrides for dependency mismatches
         bzip2/1.0.8
         zlib/1.2.11
     )
-    if(UNIX AND NOT APPLE)
-        set(CONAN_REQUIRES ${CONAN_REQUIRES}
-            qt/5.12.4@bincrafters/stable
-            # Override for using older version with less (broken) dependencies
-            xkbcommon/0.8.3@bincrafters/stable)
+    if(UNIX)
+        set(CONAN_REQUIRES ${CONAN_REQUIRES} qt/5.14.1@bincrafters/stable)
     else()
         set(CONAN_REQUIRES ${CONAN_REQUIRES} qt/5.13.2@bincrafters/stable)
     endif()
@@ -106,6 +103,7 @@ if(OGS_USE_NETCDF)
 endif()
 
 conan_check(VERSION ${ogs.minimum_version.conan})
+conan_config_install(ITEM ${PROJECT_SOURCE_DIR}/scripts/cmake/conan/config)
 
 message(STATUS "Third-party libraries:")
 foreach(LIB ${OGS_LIBS})

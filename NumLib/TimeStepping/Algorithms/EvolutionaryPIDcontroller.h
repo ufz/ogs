@@ -55,21 +55,8 @@ public:
                               const double h0, const double h_min,
                               const double h_max, const double rel_h_min,
                               const double rel_h_max,
-                              const std::vector<double>&& fixed_output_times,
-                              const double tol)
-        : TimeStepAlgorithm(t0, t_end),
-          _h0(h0),
-          _h_min(h_min),
-          _h_max(h_max),
-          _rel_h_min(rel_h_min),
-          _rel_h_max(rel_h_max),
-          _fixed_output_times(std::move(fixed_output_times)),
-          _tol(tol),
-          _e_n_minus1(0.),
-          _e_n_minus2(0.),
-          _is_accepted(true)
-    {
-    }
+                              std::vector<double>&& fixed_output_times,
+                              const double tol);
 
     bool next(double solution_error, int number_iterations) override;
 
@@ -124,8 +111,6 @@ private:
      */
     double limitStepSize(const double h_new,
                          const bool previous_step_accepted) const;
-
-    double checkSpecificTimeReached(const double h_new);
 };
 
 /// Create an EvolutionaryPIDcontroller time stepper from the given

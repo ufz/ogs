@@ -183,6 +183,11 @@ void RichardsMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
                                DisplacementDim>::RowsAtCompileTime,
                            &LocalAssemblerIF::getIntPtSigma);
 
+    add_secondary_variable("swelling_stress",
+                           MathLib::KelvinVector::KelvinVectorType<
+                               DisplacementDim>::RowsAtCompileTime,
+                           &LocalAssemblerIF::getIntPtSwellingStress);
+
     add_secondary_variable("epsilon",
                            MathLib::KelvinVector::KelvinVectorType<
                                DisplacementDim>::RowsAtCompileTime,
@@ -195,6 +200,9 @@ void RichardsMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
     add_secondary_variable("saturation", 1,
                            &LocalAssemblerIF::getIntPtSaturation);
 
+    add_secondary_variable("porosity", 1,
+                           &LocalAssemblerIF::getIntPtPorosity);
+
     //
     // enable output of internal variables defined by material models
     //
@@ -204,6 +212,10 @@ void RichardsMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
 
     _process_data.element_saturation = MeshLib::getOrCreateMeshProperty<double>(
         const_cast<MeshLib::Mesh&>(mesh), "saturation_avg",
+        MeshLib::MeshItemType::Cell, 1);
+
+    _process_data.element_porosity = MeshLib::getOrCreateMeshProperty<double>(
+        const_cast<MeshLib::Mesh&>(mesh), "porosity_avg",
         MeshLib::MeshItemType::Cell, 1);
 
     _process_data.element_stresses = MeshLib::getOrCreateMeshProperty<double>(
@@ -247,9 +259,22 @@ void RichardsMechanicsProcess<DisplacementDim>::initializeBoundaryConditions()
 }
 
 template <int DisplacementDim>
+void RichardsMechanicsProcess<
+    DisplacementDim>::setInitialConditionsConcreteProcess(GlobalVector const& x,
+                                                          double const t)
+{
+    DBUG("SetInitialConditions RichardsMechanicsProcess.");
+
+    GlobalExecutor::executeMemberOnDereferenced(
+        &LocalAssemblerIF::setInitialConditions, _local_assemblers,
+        *_local_to_global_index_map, x, t);
+}
+
+template <int DisplacementDim>
 void RichardsMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
     const double t, double const dt, std::vector<GlobalVector*> const& x,
-    int const process_id, GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
+    std::vector<GlobalVector*> const& xdot, int const process_id,
+    GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
 {
     DBUG("Assemble the equations for RichardsMechanics");
 
@@ -264,8 +289,8 @@ void RichardsMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        pv.getActiveElementIDs(), dof_table, t, dt, x, process_id, M, K, b,
-        _coupled_solutions);
+        pv.getActiveElementIDs(), dof_table, t, dt, x, xdot, process_id, M, K,
+        b, _coupled_solutions);
 }
 
 template <int DisplacementDim>

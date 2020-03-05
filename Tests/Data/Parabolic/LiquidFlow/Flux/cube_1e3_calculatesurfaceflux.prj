@@ -28,34 +28,6 @@
                 <property_name>specific_flux</property_name>
                 <output_mesh>cube_1x1x1_hex_1e3_complete_surface_left_right_dirichlet_specific_flux.vtu</output_mesh>
             </calculatesurfaceflux>
-            <material_property>
-                <fluid>
-                    <density>
-                        <type>Constant</type>
-                        <value> 78.68 </value>
-                    </density>
-                    <viscosity>
-                        <type>Constant</type>
-                        <value> 1.295e-4 </value>
-                    </viscosity>
-                </fluid>
-                <porous_medium>
-                    <porous_medium id="0">
-                        <permeability>
-                            <permeability_tensor_entries>kappa1</permeability_tensor_entries>
-                            <type>Constant</type>
-                        </permeability>
-                        <porosity>
-                            <type>Constant</type>
-                            <porosity_parameter>constant_porosity_parameter</porosity_parameter>
-                        </porosity>
-                        <storage>
-                            <type>Constant</type>
-                            <value> 8.05e-10 </value>
-                        </storage>
-                    </porous_medium>
-                </porous_medium>
-            </material_property>
         </process>
     </processes>
     <time_loop>
@@ -98,6 +70,54 @@
             </variables>
         </output>
     </time_loop>
+    <media>
+        <medium id="0">
+            <phases>
+                <phase>
+                    <type>AqueousLiquid</type>
+                    <properties>
+                        <property>
+                            <name>viscosity</name>
+                            <type>Constant</type>
+                            <value> 1.295e-4 </value>
+                        </property>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value> 78.68 </value>
+                        </property>
+                    </properties>
+                </phase>
+                <phase>
+                    <type>Solid</type>
+                    <properties>
+                        <property>
+                            <name>storage</name>
+                            <type>Constant</type>
+                            <value> 8.05e-10 </value>
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+            <properties>
+                <property>
+                    <name>permeability</name>
+                    <type>Constant</type>
+                    <value>9.2e-12 0 0 0 9.2e-12 0 0 0 9.2e-12</value>
+                </property>
+                <property>
+                    <name>porosity</name>
+                    <type>Constant</type>
+                    <value>1</value>
+                </property>
+                <property>
+                    <name>reference_temperature</name>
+                    <type>Constant</type>
+                    <value>293.15</value>
+                </property>
+            </properties>
+        </medium>
+    </media>
     <parameters>
         <parameter>
             <name>p0</name>

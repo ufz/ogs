@@ -35,7 +35,7 @@
 #include <QPushButton>
 #include <QRadioButton>
 #include <QSettings>
-#include <QTime>
+#include <QElapsedTimer>
 #include <QVBoxLayout>
 
 MeshLayerEditDialog::MeshLayerEditDialog(const MeshLib::Mesh* mesh, QDialog* parent)
@@ -191,7 +191,7 @@ MeshLib::Mesh* MeshLayerEditDialog::createPrismMesh()
 
     MeshLib::MeshLayerMapper mapper;
 
-    QTime myTimer0;
+    QElapsedTimer myTimer0;
     myTimer0.start();
     if (_use_rasters)
     {
@@ -237,7 +237,7 @@ MeshLib::Mesh* MeshLayerEditDialog::createTetMesh()
 
     const unsigned nLayers = _layerEdit->text().toInt();
     MeshLib::Mesh* tg_mesh(nullptr);
-    QTime myTimer0;
+    QElapsedTimer myTimer0;
     myTimer0.start();
 
     if (_use_rasters)

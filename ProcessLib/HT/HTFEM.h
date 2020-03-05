@@ -130,14 +130,17 @@ public:
             *_process_data.media_map->getMedium(_element.getID());
         auto const& liquid_phase = medium.phase("AqueousLiquid");
 
+        // TODO (naumov) Temporary value not used by current material models.
+        // Need extension of secondary variables interface.
+        double const dt = std::numeric_limits<double>::quiet_NaN();
         // fetch permeability, viscosity, density
         auto const K = MaterialPropertyLib::formEigenTensor<GlobalDim>(
             medium.property(MaterialPropertyLib::PropertyType::permeability)
-                .value(vars, pos, t));
+                .value(vars, pos, t, dt));
 
         auto const mu =
             liquid_phase.property(MaterialPropertyLib::PropertyType::viscosity)
-                .template value<double>(vars, pos, t);
+                .template value<double>(vars, pos, t, dt);
         GlobalDimMatrixType const K_over_mu = K / mu;
 
         auto const p_nodal_values = Eigen::Map<const NodalVectorType>(
@@ -150,7 +153,7 @@ public:
             auto const rho_w =
                 liquid_phase
                     .property(MaterialPropertyLib::PropertyType::density)
-                    .template value<double>(vars, pos, t);
+                    .template value<double>(vars, pos, t, dt);
             auto const b = this->_process_data.specific_body_force;
             q += K_over_mu * rho_w * b;
         }
@@ -174,7 +177,8 @@ protected:
     double getHeatEnergyCoefficient(
         MaterialPropertyLib::VariableArray const& vars, const double porosity,
         const double fluid_density, const double specific_heat_capacity_fluid,
-        ParameterLib::SpatialPosition const& pos, double const t)
+        ParameterLib::SpatialPosition const& pos, double const t,
+        double const dt)
     {
         auto const& medium =
             *_process_data.media_map->getMedium(this->_element.getID());
@@ -184,11 +188,11 @@ protected:
             solid_phase
                 .property(
                     MaterialPropertyLib::PropertyType::specific_heat_capacity)
-                .template value<double>(vars, pos, t);
+                .template value<double>(vars, pos, t, dt);
 
         auto const solid_density =
             solid_phase.property(MaterialPropertyLib::PropertyType::density)
-                .template value<double>(vars, pos, t);
+                .template value<double>(vars, pos, t, dt);
 
         return solid_density * specific_heat_capacity_solid * (1 - porosity) +
                fluid_density * specific_heat_capacity_fluid * porosity;
@@ -198,7 +202,8 @@ protected:
         MaterialPropertyLib::VariableArray const& vars, const double porosity,
         const double fluid_density, const double specific_heat_capacity_fluid,
         const GlobalDimVectorType& velocity, const GlobalDimMatrixType& I,
-        ParameterLib::SpatialPosition const& pos, double const t)
+        ParameterLib::SpatialPosition const& pos, double const t,
+        double const dt)
     {
         auto const& medium =
             *_process_data.media_map->getMedium(_element.getID());
@@ -209,13 +214,13 @@ protected:
             solid_phase
                 .property(
                     MaterialPropertyLib::PropertyType::thermal_conductivity)
-                .value(vars, pos, t);
+                .value(vars, pos, t, dt);
 
         auto const thermal_conductivity_fluid =
             liquid_phase
                 .property(
                     MaterialPropertyLib::PropertyType::thermal_conductivity)
-                .template value<double>(vars, pos, t);
+                .template value<double>(vars, pos, t, dt);
 
         auto const thermal_conductivity =
             MaterialPropertyLib::formEffectiveThermalConductivity<GlobalDim>(
@@ -299,14 +304,17 @@ protected:
             vars[static_cast<int>(
                 MaterialPropertyLib::Variable::phase_pressure)] = p_int_pt;
 
+            // TODO (naumov) Temporary value not used by current material
+            // models. Need extension of secondary variables interface.
+            double const dt = std::numeric_limits<double>::quiet_NaN();
             auto const K = MaterialPropertyLib::formEigenTensor<GlobalDim>(
                 medium.property(MaterialPropertyLib::PropertyType::permeability)
-                    .value(vars, pos, t));
+                    .value(vars, pos, t, dt));
 
             auto const mu =
                 liquid_phase
                     .property(MaterialPropertyLib::PropertyType::viscosity)
-                    .template value<double>(vars, pos, t);
+                    .template value<double>(vars, pos, t, dt);
             GlobalDimMatrixType const K_over_mu = K / mu;
 
             cache_mat.col(ip).noalias() = -K_over_mu * dNdx * p_nodal_values;
@@ -316,7 +324,7 @@ protected:
                 auto const rho_w =
                     liquid_phase
                         .property(MaterialPropertyLib::PropertyType::density)
-                        .template value<double>(vars, pos, t);
+                        .template value<double>(vars, pos, t, dt);
                 auto const b = _process_data.specific_body_force;
                 // here it is assumed that the vector b is directed 'downwards'
                 cache_mat.col(ip).noalias() += K_over_mu * rho_w * b;

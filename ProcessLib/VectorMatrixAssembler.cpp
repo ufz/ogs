@@ -44,7 +44,8 @@ void VectorMatrixAssembler::assemble(
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>> const&
         dof_tables,
     const double t, double const dt, std::vector<GlobalVector*> const& x,
-    int const process_id, GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
+    std::vector<GlobalVector*> const& xdot, int const process_id,
+    GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
     CoupledSolutionsForStaggeredScheme const* const cpl_xs)
 {
     std::vector<std::vector<GlobalIndexType>> indices_of_processes;
@@ -63,8 +64,9 @@ void VectorMatrixAssembler::assemble(
     if (cpl_xs == nullptr)
     {
         auto const local_x = x[process_id]->get(indices);
-        local_assembler.assemble(t, dt, local_x, _local_M_data, _local_K_data,
-                                 _local_b_data);
+        auto const local_xdot = xdot[process_id]->get(indices);
+        local_assembler.assemble(t, dt, local_x, local_xdot, _local_M_data,
+                                 _local_K_data, _local_b_data);
     }
     else
     {

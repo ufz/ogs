@@ -67,46 +67,47 @@ TEST(MaterialPropertyLib, IdealGasLawOfPurePhase)
 
     ParameterLib::SpatialPosition const pos;
     double const time = std::numeric_limits<double>::quiet_NaN();
+    double const dt = std::numeric_limits<double>::quiet_NaN();
 
     auto const density =
         gas_phase.property(MaterialPropertyLib::PropertyType::density)
-            .template value<double>(variable_array, pos, time);
+            .template value<double>(variable_array, pos, time, dt);
 
     auto const d_rho_dT =
         gas_phase.property(MaterialPropertyLib::PropertyType::density)
             .template dValue<double>(variable_array,
                                      MaterialPropertyLib::Variable::temperature,
-                                     pos, time);
+                                     pos, time, dt);
 
     auto const d_rho_dp =
         gas_phase.property(MaterialPropertyLib::PropertyType::density)
             .template dValue<double>(
                 variable_array, MaterialPropertyLib::Variable::phase_pressure,
-                pos, time);
+                pos, time, dt);
 
     auto const d_rho2_dp2 =
         gas_phase.property(MaterialPropertyLib::PropertyType::density)
             .template d2Value<double>(
                 variable_array, MaterialPropertyLib::Variable::phase_pressure,
-                MaterialPropertyLib::Variable::phase_pressure, pos, time);
+                MaterialPropertyLib::Variable::phase_pressure, pos, time, dt);
 
     auto const d_rho2_dT2 =
         gas_phase.property(MaterialPropertyLib::PropertyType::density)
             .template d2Value<double>(
                 variable_array, MaterialPropertyLib::Variable::temperature,
-                MaterialPropertyLib::Variable::temperature, pos, time);
+                MaterialPropertyLib::Variable::temperature, pos, time, dt);
 
     auto const d_rho2_dTdp =
         gas_phase.property(MaterialPropertyLib::PropertyType::density)
             .template d2Value<double>(
                 variable_array, MaterialPropertyLib::Variable::temperature,
-                MaterialPropertyLib::Variable::phase_pressure, pos, time);
+                MaterialPropertyLib::Variable::phase_pressure, pos, time, dt);
 
     auto const d_rho2_dpdT =
         gas_phase.property(MaterialPropertyLib::PropertyType::density)
             .template d2Value<double>(
                 variable_array, MaterialPropertyLib::Variable::phase_pressure,
-                MaterialPropertyLib::Variable::temperature, pos, time);
+                MaterialPropertyLib::Variable::temperature, pos, time, dt);
 
     ASSERT_NEAR(density_norm_air, density, 1.e-10);
     ASSERT_NEAR(d_rho_dT_air, d_rho_dT, 1.e-10);
