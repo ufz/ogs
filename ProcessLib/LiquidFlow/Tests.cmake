@@ -242,7 +242,7 @@ AddTest(
 # Dupuit
 AddTest(
     NAME LiquidFlow_Dupuit_BC_BC
-    PATH Parabolic/LiquidFlow/Dupuit/BC_BC
+    PATH Parabolic/LiquidFlow/Unconfined_Aquifer/BC_BC
     EXECUTABLE ogs
     EXECUTABLE_ARGS TestSet_01.prj
     WRAPPER time
@@ -263,7 +263,7 @@ AddTest(
 
 AddTest(
     NAME LiquidFlow_Dupuit_BC_BC_Recharge
-    PATH Parabolic/LiquidFlow/Dupuit/BC_BC_RECHARGE
+    PATH Parabolic/LiquidFlow/Unconfined_Aquifer/BC_BC_RECHARGE
     EXECUTABLE ogs
     EXECUTABLE_ARGS TestSet_01.prj
     WRAPPER time
@@ -284,7 +284,7 @@ AddTest(
 
 AddTest(
     NAME LiquidFlow_Dupuit_BC_BC_Recharge2
-    PATH Parabolic/LiquidFlow/Dupuit/BC_BC_RECHARGE2
+    PATH Parabolic/LiquidFlow/Unconfined_Aquifer/BC_BC_RECHARGE2
     EXECUTABLE ogs
     EXECUTABLE_ARGS TestSet_01.prj
     WRAPPER time
@@ -305,7 +305,7 @@ AddTest(
 
 AddTest(
     NAME LiquidFlow_Dupuit_BC_BC_Storage
-    PATH Parabolic/LiquidFlow/Dupuit/BC_BC_STORAGE
+    PATH Parabolic/LiquidFlow/Unconfined_Aquifer/BC_BC_STORAGE
     EXECUTABLE ogs
     EXECUTABLE_ARGS TestSet_01.prj
     WRAPPER time

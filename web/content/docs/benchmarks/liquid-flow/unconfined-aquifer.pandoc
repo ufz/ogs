@@ -35,11 +35,14 @@ $$
 
 
 
-where _h[m]_ is the hydraulic head, _S<sub>y</sub>_ is the specific yield and _K_ is the hydraulic conductivity. The Specific Yield _S<sub>y</sub>_, also known as the drainable porosity, is a quantity that is smaller or equal to the effective porosity in a coarse and porous medium. _S<sub>y</sub>_ indicates the volumetric water content that can flow out from the material under the influence of gravity.
+where $h[m]$ is the hydraulic head, $S_y$ is the specific yield and $K$ is the
+hydraulic conductivity. The Specific Yield $S_y$, also known as the drainable
+porosity, is a quantity that is smaller or equal to the effective porosity in a
+coarse and porous medium. $S_y$ indicates the volumetric water content that can flow out from the material under the influence of gravity.
 
-The examples shown here are horizontal 2D models parameterized by hydraulic head _h[m]_ .
+The examples shown here are horizontal 2D models parameterized by hydraulic head $h[m]$.
 
-Since the formulation within OGS is basically based on pressure (_P_) and permeability (_k_), the following relationships must be considered during parameterization in order to be able to work head-based and with hydraulic conductivity (_K_):
+Since the formulation within OGS is basically based on pressure ($P$) and permeability ($k$), the following relationships must be considered during parameterization in order to be able to work head-based and with hydraulic conductivity ($K$):
 
 $$
 \begin{eqnarray}
@@ -80,7 +83,7 @@ The basic scenario for the two-dimensional unconfined aquifer:
 * Steady-state model.
 * In the north there is a fixed head boundary condition with 15 m.
 * The southern boundary has a fixed head boundary condition with 25 m.
-* the Specific Yield is set to _S<sub>y</sub>_ = 0.00
+* the Specific Yield is set to $S_y = 0.0$
 {{< img src="../Dupuit_Scenario_A.jpg" >}}
 
 
@@ -99,7 +102,7 @@ The basic scenario for the two-dimensional unconfined aquifer:
 ### Scenario D:
 
 - like scenario A but transient and
-- with a Specific Yield _S<sub>y</sub>_ = 0.25.
+- with a Specific Yield $S_y_ = 0.25$.
 - Simulation time = 100 days.
 {{< img src="../Dupuit_Scenario_D.jpg" >}}
 
