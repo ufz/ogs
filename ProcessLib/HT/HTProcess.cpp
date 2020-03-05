@@ -24,42 +24,6 @@ namespace ProcessLib
 {
 namespace HT
 {
-void checkMPLProperties(MeshLib::Mesh const& mesh,
-                        HTProcessData const& process_data)
-{
-    DBUG("Check the media properties of HT process ...");
-
-    std::array const requiredPropertyMedium = {
-        MaterialPropertyLib::PropertyType::porosity,
-        MaterialPropertyLib::PropertyType::permeability};
-
-    std::array const requiredPropertyLiquidPhase = {
-        MaterialPropertyLib::PropertyType::viscosity,
-        MaterialPropertyLib::PropertyType::density,
-        MaterialPropertyLib::PropertyType::specific_heat_capacity};
-
-    std::array const requiredPropertySolidPhase = {
-        MaterialPropertyLib::PropertyType::specific_heat_capacity,
-        MaterialPropertyLib::PropertyType::density,
-        MaterialPropertyLib::PropertyType::storage};
-
-    for (auto const& element : mesh.getElements())
-    {
-        auto const element_id = element->getID();
-
-        auto const& medium = *process_data.media_map->getMedium(element_id);
-        MaterialPropertyLib::checkRequiredProperties(
-            medium, requiredPropertyMedium);
-
-        MaterialPropertyLib::checkRequiredProperties(
-            medium.phase("AqueousLiquid"), requiredPropertyLiquidPhase);
-
-        MaterialPropertyLib::checkRequiredProperties(
-            medium.phase("Solid"), requiredPropertySolidPhase);
-    }
-    DBUG("Media properties verified.");
-}
-
 HTProcess::HTProcess(
     std::string name,
     MeshLib::Mesh& mesh,
@@ -89,8 +53,6 @@ void HTProcess::initializeConcreteProcess(
     MeshLib::Mesh const& mesh,
     unsigned const integration_order)
 {
-    checkMPLProperties(mesh, _process_data);
-
     // For the staggered scheme, both processes are assumed to use the same
     // element order. Therefore the order of shape function can be fetched from
     // any set of the sets of process variables of the coupled processes. Here,

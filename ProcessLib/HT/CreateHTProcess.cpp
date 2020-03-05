@@ -10,6 +10,7 @@
 
 #include "CreateHTProcess.h"
 
+#include "MaterialLib/MPL/CheckMaterialSpatialDistributionMap.h"
 #include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "ParameterLib/ConstantParameter.h"
@@ -26,6 +27,29 @@ namespace ProcessLib
 {
 namespace HT
 {
+void checkMPLProperties(
+    MeshLib::Mesh const& mesh,
+    MaterialPropertyLib::MaterialSpatialDistributionMap const& media_map)
+{
+    std::array const requiredPropertyMedium = {
+        MaterialPropertyLib::PropertyType::porosity,
+        MaterialPropertyLib::PropertyType::permeability};
+
+    std::array const requiredPropertyLiquidPhase = {
+        MaterialPropertyLib::PropertyType::viscosity,
+        MaterialPropertyLib::PropertyType::density,
+        MaterialPropertyLib::PropertyType::specific_heat_capacity};
+
+    std::array const requiredPropertySolidPhase = {
+        MaterialPropertyLib::PropertyType::specific_heat_capacity,
+        MaterialPropertyLib::PropertyType::density,
+        MaterialPropertyLib::PropertyType::storage};
+
+    MaterialPropertyLib::checkMaterialSpatialDistributionMap(
+        mesh, media_map, requiredPropertyMedium, requiredPropertySolidPhase,
+        requiredPropertyLiquidPhase);
+}
+
 std::unique_ptr<Process> createHTProcess(
     std::string name,
     MeshLib::Mesh& mesh,
@@ -139,6 +163,10 @@ std::unique_ptr<Process> createHTProcess(
 
     auto media_map =
         MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
+
+    DBUG("Check the media properties of HT process ...");
+    checkMPLProperties(mesh, *media_map);
+    DBUG("Media properties verified.");
 
     HTProcessData process_data{
         std::move(media_map),     has_fluid_thermal_expansion,
