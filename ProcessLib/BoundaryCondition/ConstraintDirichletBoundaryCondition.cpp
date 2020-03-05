@@ -156,9 +156,9 @@ void ConstraintDirichletBoundaryCondition::getEssentialBCValues(
         for (unsigned i = 0; i < number_nodes; ++i)
         {
             auto const id = boundary_element->getNode(i)->getID();
-            pos.setNodeID(id);
+            pos.setAll(id, boundary_element->getID(), {}, {});
 
-            MeshLib::Location l(_bulk_mesh.getID(), MeshLib::MeshItemType::Node,
+            MeshLib::Location l(_bc_mesh.getID(), MeshLib::MeshItemType::Node,
                                 id);
             // TODO: that might be slow, but only done once
             const auto g_idx = _dof_table_boundary->getGlobalIndex(
@@ -176,7 +176,7 @@ void ConstraintDirichletBoundaryCondition::getEssentialBCValues(
             // if-condition is applied.
             if (g_idx >= 0)
             {
-                tmp_bc_values.emplace_back(g_idx, _parameter(t,pos).front());
+                tmp_bc_values.emplace_back(g_idx, _parameter(t, pos).front());
             }
         }
     }
@@ -219,11 +219,8 @@ void ConstraintDirichletBoundaryCondition::getEssentialBCValues(
     bc_values.ids.emplace_back(current_id);
     bc_values.values.emplace_back(sum / cnt);
 
-    DBUG("Found %d dirichlet values.", bc_values.ids.size());
-    for (unsigned i = 0; i < bc_values.ids.size(); ++i)
-    {
-        DBUG("\tid: %d, value: %e", bc_values.ids[i], bc_values.values[i]);
-    }
+    DBUG("Found %d constraint dirichlet boundary condition values.",
+         bc_values.ids.size());
 }
 
 std::unique_ptr<ConstraintDirichletBoundaryCondition>
