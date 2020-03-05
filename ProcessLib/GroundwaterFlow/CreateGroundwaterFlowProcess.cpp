@@ -13,6 +13,7 @@
 #include "BaseLib/FileTools.h"
 #include "GroundwaterFlowProcess.h"
 #include "GroundwaterFlowProcessData.h"
+#include "MaterialLib/MPL/CheckMaterialSpatialDistributionMap.h"
 #include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 #include "MeshLib/IO/readMeshFromFile.h"
@@ -28,18 +29,13 @@ void checkMPLProperties(
     MeshLib::Mesh const& mesh,
     MaterialPropertyLib::MaterialSpatialDistributionMap const& media_map)
 {
-    std::array const requiredPropertyMedium = {
+    std::array const required_medium_properties = {
         MaterialPropertyLib::PropertyType::reference_temperature,
         MaterialPropertyLib::PropertyType::diffusion};
+    std::array<MaterialPropertyLib::PropertyType, 0> const empty{};
 
-    for (auto const& element : mesh.getElements())
-    {
-        auto const element_id = element->getID();
-
-        auto const& medium = *media_map.getMedium(element_id);
-        MaterialPropertyLib::checkRequiredProperties(
-            medium, requiredPropertyMedium);
-    }
+    MaterialPropertyLib::checkMaterialSpatialDistributionMap(
+        mesh, media_map, required_medium_properties, empty, empty);
 }
 
 std::unique_ptr<Process> createGroundwaterFlowProcess(
