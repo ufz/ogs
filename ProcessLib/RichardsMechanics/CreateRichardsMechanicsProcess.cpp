@@ -27,6 +27,31 @@ namespace ProcessLib
 {
 namespace RichardsMechanics
 {
+void checkMPLProperties(
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
+{
+    std::array const required_medium_properties = {
+        MaterialPropertyLib::reference_temperature,
+        MaterialPropertyLib::bishops_effective_stress,
+        MaterialPropertyLib::relative_permeability,
+        MaterialPropertyLib::saturation};
+    std::array const required_liquid_properties = {
+        MaterialPropertyLib::viscosity, MaterialPropertyLib::density,
+        MaterialPropertyLib::bulk_modulus};
+    std::array const required_solid_properties = {
+        MaterialPropertyLib::porosity, MaterialPropertyLib::biot_coefficient,
+        MaterialPropertyLib::density, MaterialPropertyLib::bulk_modulus};
+
+    for (auto const& m : media)
+    {
+        checkRequiredProperties(*m.second, required_medium_properties);
+        checkRequiredProperties(m.second->phase("AqueousLiquid"),
+                                required_liquid_properties);
+        checkRequiredProperties(m.second->phase("Solid"),
+                                required_solid_properties);
+    }
+}
+
 template <int DisplacementDim>
 std::unique_ptr<Process> createRichardsMechanicsProcess(
     std::string name,
@@ -133,18 +158,9 @@ std::unique_ptr<Process> createRichardsMechanicsProcess(
 
     auto media_map =
         MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
-
-    std::array const requiredGasProperties = {MaterialPropertyLib::viscosity};
-    std::array const requiredSolidProperties = {
-        MaterialPropertyLib::porosity, MaterialPropertyLib::biot_coefficient,
-        MaterialPropertyLib::density};
-    for (auto const& m : media)
-    {
-        checkRequiredProperties(m.second->phase("AqueousLiquid"),
-                                requiredGasProperties);
-        checkRequiredProperties(m.second->phase("Solid"),
-                                requiredSolidProperties);
-    }
+    DBUG("Check the media properties of RichardsMechanics process ...");
+    checkMPLProperties(media);
+    DBUG("Media properties verified.");
 
     // Initial stress conditions
     auto const initial_stress = ParameterLib::findOptionalTagParameter<double>(
