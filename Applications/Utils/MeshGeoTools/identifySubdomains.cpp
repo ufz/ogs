@@ -60,11 +60,11 @@ int main(int argc, char* argv[])
     TCLAP::ValueArg<bool> force_overwrite_arg(
         "f",
         "force",
-        "Overwrites the existing subdomain meshes. (default: do not "
+        "Overwrites the existing subdomain meshes. (default: 0, do not "
         "overwrite.)",
         false,
         false,
-        "true/false");
+        "1/0");
     cmd.add(force_overwrite_arg);
 
     TCLAP::ValueArg<std::string> output_prefix_arg(
