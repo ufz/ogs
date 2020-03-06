@@ -115,7 +115,7 @@ AddTest(
     REQUIREMENTS NOT OGS_USE_MPI
     # See also the prj file.
     DIFF_DATA
-    ../../slope_pcs_0_ts_300_t_3.000000.vtu slope_pcs_0_ts_300_t_3.000000.vtu displacement displacement 1e-14 0
+    slope_pcs_0_ts_300_t_3.000000.vtu slope_pcs_0_ts_300_t_3.000000.vtu displacement displacement 1e-14 0.0
 )
 endif()
 
