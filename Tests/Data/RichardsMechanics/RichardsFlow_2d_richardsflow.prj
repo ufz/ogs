@@ -48,6 +48,16 @@
                             <type>Constant</type>
                             <value> 0.0 </value>
                         </property>
+                        <property>
+                            <name>porosity</name>
+                            <type>Constant</type>
+                            <value>0.38</value>
+                        </property>
+                        <property>
+                            <name>permeability</name>
+                            <type>Constant</type>
+                            <value>4.46e-13</value>
+                        </property>
                     </properties>
                 </phase>
             </phases>
@@ -56,11 +66,6 @@
                     <name>reference_temperature</name>
                     <type>Constant</type>
                     <value>293.15</value>
-                </property>
-                <property>
-                    <name>permeability</name>
-                    <type>Constant</type>
-                    <value>4.46e-13</value>
                 </property>
                 <property>
                     <name>saturation</name>
@@ -77,11 +82,6 @@
                     <residual_gas_saturation>0.05</residual_gas_saturation>
                     <exponent>0.789029535864979</exponent>
                     <minimum_relative_permeability_liquid>1e-12</minimum_relative_permeability_liquid>
-                </property>
-                <property>
-                    <name>porosity</name>
-                    <type>Constant</type>
-                    <value>0.38</value>
                 </property>
                 <property>
                     <name>reference_temperature</name>
