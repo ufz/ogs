@@ -284,18 +284,11 @@ public:
         // extension of secondary variable interface
         double const dt = std::numeric_limits<double>::quiet_NaN();
 
-        auto const num_intpts = _shape_matrices.size();
-
         constexpr int process_id = 0;  // monolithic scheme.
         auto const indices =
             NumLib::getIndices(_element.getID(), *dof_table[process_id]);
         assert(!indices.empty());
         auto const local_x = x[process_id]->get(indices);
-
-        cache.clear();
-        auto cache_vec = MathLib::createZeroedMatrix<
-            Eigen::Matrix<double, GlobalDim, Eigen::Dynamic, Eigen::RowMajor>>(
-            cache, GlobalDim, num_intpts);
 
         ParameterLib::SpatialPosition pos;
         pos.setElementID(_element.getID());
@@ -312,11 +305,16 @@ public:
                     MaterialPropertyLib::PropertyType::reference_temperature)
                 .template value<double>(vars, pos, t, dt);
 
+        auto const p_nodal_values = Eigen::Map<const NodalVectorType>(
+            &local_x[0], ShapeFunction::NPOINTS);
+
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
 
-        auto const p_nodal_values = Eigen::Map<const NodalVectorType>(
-            &local_x[0], ShapeFunction::NPOINTS);
+        cache.clear();
+        auto cache_vec = MathLib::createZeroedMatrix<
+            Eigen::Matrix<double, GlobalDim, Eigen::Dynamic, Eigen::RowMajor>>(
+            cache, GlobalDim, n_integration_points);
 
         for (unsigned ip = 0; ip < n_integration_points; ++ip)
         {
@@ -372,8 +370,6 @@ private:
     RichardsFlowProcessData const& _process_data;
 
     IntegrationMethod const _integration_method;
-    std::vector<ShapeMatrices, Eigen::aligned_allocator<ShapeMatrices>>
-        _shape_matrices;
     std::vector<
         IntegrationPointData<NodalRowVectorType, GlobalDimNodalMatrixType,
                              NodalMatrixType>,
