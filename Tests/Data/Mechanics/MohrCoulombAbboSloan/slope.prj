@@ -64,7 +64,7 @@
         <time_stepping>
                     <type>IterationNumberBasedTimeStepping</type>
                     <t_initial>0.0</t_initial>
-                    <t_end>7</t_end>
+                    <t_end>5</t_end>
                     <initial_dt>0.1</initial_dt>
                     <minimum_dt>1e-4</minimum_dt>
                     <maximum_dt>0.01</maximum_dt>
