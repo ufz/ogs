@@ -54,7 +54,16 @@ std::vector<EquilibriumPhase> createEquilibriumPhases(
             name,
             MeshLib::MeshItemType::Node,
             1);
-        std::fill(amount->begin(), amount->end(), initial_amount);
+
+        std::fill(std::begin(*amount),
+                  std::end(*amount),
+                  std::numeric_limits<double>::quiet_NaN());
+
+        std::for_each(chemical_system_map.begin(),
+                      chemical_system_map.end(),
+                      [&amount, initial_amount](auto const& global_id) {
+                          (*amount)[global_id] = initial_amount;
+                      });
 
         equilibrium_phases.emplace_back(
             std::move(name), amount, saturation_index);
