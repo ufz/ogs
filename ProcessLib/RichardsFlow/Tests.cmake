@@ -74,6 +74,19 @@ AddTest(
     GLOB RichardsFlow_2d_richardsflow_pcs_0_ts_*.vtu pressure pressure 5e-11 1e-15
     GLOB RichardsFlow_2d_richardsflow_pcs_0_ts_*.vtu saturation saturation 1e-14 1e-15
 )
+
+AddTest(
+    NAME RichardsFlow_square_1e2_flow_fully_saturated
+    PATH Parabolic/Richards
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS flow_fully_saturated.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    GLOB flow_fully_saturated_pcs_0_ts_*.vtu pressure pressure 1e-9 0
+    GLOB flow_fully_saturated_pcs_0_ts_*.vtu darcy_velocity darcy_velocity 1e-11 1e-15
+)
 #PETSc/MPI
 #AddTest(
 #    NAME 2D_RichardsFlow_h_us_quad_small_PID_adaptive_dt
