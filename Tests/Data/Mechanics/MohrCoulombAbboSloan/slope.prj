@@ -64,7 +64,7 @@
         <time_stepping>
                     <type>IterationNumberBasedTimeStepping</type>
                     <t_initial>0.0</t_initial>
-                    <t_end>6</t_end>
+                    <t_end>5</t_end>
                     <initial_dt>0.1</initial_dt>
                     <minimum_dt>1e-4</minimum_dt>
                     <maximum_dt>0.5</maximum_dt>
@@ -279,7 +279,7 @@
     </linear_solvers>
     <test_definition>
         <vtkdiff>
-            <file>slope_pcs_0_ts_300_t_3.000000.vtu</file>
+            <file>slope_pcs_0_ts_20_t_2.000000.vtu</file>
             <field>displacement</field>
             <absolute_tolerance>1e-14</absolute_tolerance>
             <relative_tolerance>0.0</relative_tolerance>
