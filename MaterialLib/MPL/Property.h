@@ -71,6 +71,14 @@ public:
                                      Variable const variable2,
                                      ParameterLib::SpatialPosition const& pos,
                                      double const t, double const dt) const;
+
+    /// This virtual method will compute the inverse value of the property
+    /// based on the primary variables that are passed as arguments.
+    virtual PropertyDataType inverse_value(
+        VariableArray const& variable_array,
+        ParameterLib::SpatialPosition const& pos, double const t,
+        double const dt) const;
+
     virtual void setScale(
         std::variant<Medium*, Phase*, Component*> /*scale_pointer*/){};
 
@@ -93,6 +101,14 @@ public:
             double const dt) const
     {
         return std::get<T>(value(variable_array, pos, t, dt));
+    }
+
+    template <typename T>
+    T inverse_value(VariableArray const& variable_array,
+                    ParameterLib::SpatialPosition const& pos, double const t,
+                    double const dt) const
+    {
+        return std::get<T>(inverse_value(variable_array, pos, t, dt));
     }
 
     template <typename T>

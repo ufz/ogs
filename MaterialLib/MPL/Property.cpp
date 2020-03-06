@@ -79,6 +79,14 @@ PropertyDataType Property::value(VariableArray const& /*variable_array*/,
     return _value;
 }
 
+PropertyDataType Property::inverse_value(
+    VariableArray const& /*variable_array*/,
+    ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
+    double const /*dt*/) const
+{
+    return 0.0;
+}
+
 /// The default implementation of this method only returns the
 /// property value derivative without altering it.
 PropertyDataType Property::dValue(VariableArray const& /*variable_array*/,
