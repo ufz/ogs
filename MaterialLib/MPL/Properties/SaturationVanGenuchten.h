@@ -19,10 +19,31 @@ class Medium;
 class Phase;
 class Component;
 
-/// The van Genuchten soil characteristics function.
-///
-/// This property must be a medium property, it computes the saturation of the
-/// wetting phase as function of capillary pressure.
+/**
+ *   \brief van Genuchten water retention model
+ *
+ *   \f[p_c=p_b (S_e^{-1/m}-1)^{1-m}\f]
+ *   with
+ *   \f[S_e=\frac{S-S_r}{S_{\mbox{max}}-S_r}\f]
+ *   where
+ *    \f{eqnarray*}{
+ *       &p_b&            \mbox{ entry pressure,}\\
+ *       &S_r&            \mbox{ residual saturation,}\\
+ *       &S_{\mbox{max}}& \mbox{ maximum saturation,}\\
+ *       &m(<=1) &        \mbox{ exponent.}\\
+ *    \f}
+ *
+ *    Note:
+ *     \f[m=1/(1-n)\f].
+ *
+ *    If \f$\alpha\f$ instead of \f$p_b\f$ is available, \f$p_b\f$ can
+ * be calculated
+ * as
+ *    \f[p_b=\rho g/\alpha\f]
+ *
+ * This property must be a medium property, it computes the saturation
+ *  of the wetting phase as function of capillary pressure.
+ */
 class SaturationVanGenuchten final : public Property
 {
 private:
@@ -58,11 +79,15 @@ public:
                            ParameterLib::SpatialPosition const& /*pos*/,
                            double const /*t*/,
                            double const /*dt*/) const override;
+
+    /// Gets \f$ \frac{\partial S}{\partial p_c} \f$
     PropertyDataType dValue(VariableArray const& variable_array,
                             Variable const variable,
                             ParameterLib::SpatialPosition const& /*pos*/,
                             double const /*t*/,
                             double const /*dt*/) const override;
+
+    /// Gets \f$ \frac{\partial^2 S}{\partial p_c^2} \f$
     PropertyDataType d2Value(VariableArray const& variable_array,
                              Variable const variable1, Variable const variable2,
                              ParameterLib::SpatialPosition const& /*pos*/,
