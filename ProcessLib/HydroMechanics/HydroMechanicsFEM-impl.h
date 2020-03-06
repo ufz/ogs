@@ -13,9 +13,11 @@
 
 #include "HydroMechanicsFEM.h"
 
-#include "MaterialLib/SolidModels/SelectSolidConstitutiveRelation.h"
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/MPL/Property.h"
+#include "MaterialLib/MPL/Utils/FormEigenTensor.h"
+#include "MaterialLib/MPL/Utils/GetSymmetricTensor.h"
+#include "MaterialLib/SolidModels/SelectSolidConstitutiveRelation.h"
 #include "MathLib/KelvinVector.h"
 #include "NumLib/Function/Interpolation.h"
 #include "ProcessLib/CoupledSolutionsForStaggeredScheme.h"
@@ -68,7 +70,7 @@ HydroMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         _ip_data.emplace_back(solid_material);
         auto& ip_data = _ip_data[ip];
         auto const& sm_u = shape_matrices_u[ip];
-       ip_data.integration_weight =
+        ip_data.integration_weight =
             _integration_method.getWeightedPoint(ip).getWeight() *
             sm_u.integralMeasure * sm_u.detJ;
 
@@ -223,8 +225,9 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         auto const K_S = solid_material.getBulkModulus(t, x_position);
 
-        auto const K = medium->property(MPL::PropertyType::permeability)
-                           .template value<double>(vars, x_position, t, dt);
+        auto const K = MPL::formEigenTensor<DisplacementDim>(
+            medium->property(MPL::PropertyType::permeability)
+                .value(vars, x_position, t, dt));
         auto const alpha = solid.property(MPL::PropertyType::biot_coefficient)
                                .template value<double>(vars, x_position, t, dt);
         auto const rho_sr =
@@ -378,8 +381,9 @@ HydroMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         vars[static_cast<int>(MPL::Variable::phase_pressure)] =
             _ip_data[ip].N_p.dot(p);
 
-        auto const K = medium->property(MPL::PropertyType::permeability)
-                           .template value<double>(vars, x_position, t, dt);
+        auto const K = MPL::formEigenTensor<DisplacementDim>(
+            medium->property(MPL::PropertyType::permeability)
+                .value(vars, x_position, t, dt));
 
         auto const mu = gas.property(MPL::PropertyType::viscosity)
                             .template value<double>(vars, x_position, t, dt);
@@ -471,8 +475,9 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         auto const K_S = solid_material.getBulkModulus(t, x_position);
 
-        auto const K = medium->property(MPL::PropertyType::permeability)
-                           .template value<double>(vars, x_position, t, dt);
+        auto const K = MPL::formEigenTensor<DisplacementDim>(
+            medium->property(MPL::PropertyType::permeability)
+                .value(vars, x_position, t, dt));
         auto const alpha_b =
             solid.property(MPL::PropertyType::biot_coefficient)
                 .template value<double>(vars, x_position, t, dt);
@@ -611,8 +616,8 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         eps.noalias() = B * u;
 
-        auto C = _ip_data[ip].updateConstitutiveRelation(
-            t, x_position, dt, u, T_ref);
+        auto C = _ip_data[ip].updateConstitutiveRelation(t, x_position, dt, u,
+                                                         T_ref);
 
         local_Jac.noalias() += B.transpose() * C * B * w;
 
@@ -842,7 +847,7 @@ template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
 void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                   ShapeFunctionPressure, IntegrationMethod,
                                   DisplacementDim>::
-    computeSecondaryVariableConcrete(double const /*t*/,
+    computeSecondaryVariableConcrete(double const t,
                                      std::vector<double> const& local_x)
 {
     auto p = Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
@@ -853,21 +858,55 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         DisplacementDim>(_element, _is_axially_symmetric, p,
                          *_process_data.pressure_interpolated);
 
+    int const elem_id = _element.getID();
+    ParameterLib::SpatialPosition x_position;
+    x_position.setElementID(elem_id);
+    unsigned const n_integration_points =
+        _integration_method.getNumberOfPoints();
+
+    auto const& medium = _process_data.media_map->getMedium(elem_id);
+    MPL::VariableArray vars;
+
+    // TODO (naumov) Temporary value not used by current material models. Need
+    // extension of secondary variables interface.
+    double const dt = std::numeric_limits<double>::quiet_NaN();
+
+    constexpr int symmetric_tensor_size =
+        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
+    using SymmetricTensor = Eigen::Matrix<double, symmetric_tensor_size, 1>;
+
+    SymmetricTensor k_sum = SymmetricTensor::Zero(symmetric_tensor_size);
     auto sigma_eff_sum = MathLib::KelvinVector::tensorToKelvin<DisplacementDim>(
         Eigen::Matrix<double, 3, 3>::Zero());
 
-    for (auto const& ip_data : _ip_data)
+    for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        sigma_eff_sum += ip_data.sigma_eff;
+        x_position.setIntegrationPoint(ip);
+
+        auto const& eps = _ip_data[ip].eps;
+        auto const& sigma_eff = _ip_data[ip].sigma_eff;
+        sigma_eff_sum += sigma_eff;
+
+        vars[static_cast<int>(MPL::Variable::strain)].emplace<SymmetricTensor>(
+            MathLib::KelvinVector::kelvinVectorToSymmetricTensor(eps));
+        vars[static_cast<int>(MPL::Variable::stress)].emplace<SymmetricTensor>(
+            MathLib::KelvinVector::kelvinVectorToSymmetricTensor(sigma_eff));
+        vars[static_cast<int>(MPL::Variable::phase_pressure)] =
+            _ip_data[ip].N_p.dot(p);
+        k_sum += MPL::getSymmetricTensor<DisplacementDim>(
+                    medium->property(MPL::PropertyType::permeability)
+                        .value(vars, x_position, t, dt));
     }
+
+    Eigen::Map<Eigen::VectorXd>(
+        &(*_process_data.permeability)[elem_id * symmetric_tensor_size],
+        symmetric_tensor_size) = k_sum / n_integration_points;
 
     Eigen::Matrix<double, 3, 3, 0, 3, 3> const sigma_avg =
         MathLib::KelvinVector::kelvinVectorToTensor(sigma_eff_sum) /
-        _integration_method.getNumberOfPoints();
+        n_integration_points;
 
     Eigen::SelfAdjointEigenSolver<Eigen::Matrix<double, 3, 3>> e_s(sigma_avg);
-
-    int const elem_id = _element.getID();
 
     Eigen::Map<Eigen::Vector3d>(
         &(*_process_data.principal_stress_values)[elem_id * 3], 3) =
