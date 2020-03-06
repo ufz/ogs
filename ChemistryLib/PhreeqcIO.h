@@ -15,6 +15,11 @@
 #include "ChemicalSolverInterface.h"
 #include "PhreeqcIOData/Knobs.h"
 
+namespace MeshLib
+{
+class Mesh;
+}
+
 namespace ChemistryLib
 {
 namespace PhreeqcIOData
@@ -38,6 +43,7 @@ class PhreeqcIO final : public ChemicalSolverInterface
 {
 public:
     PhreeqcIO(std::string const project_file_name,
+              MeshLib::Mesh const& mesh,
               std::string&& database,
               std::vector<AqueousSolution>&& aqueous_solutions,
               std::vector<EquilibriumPhase>&& equilibrium_phases,
@@ -84,6 +90,7 @@ private:
 
     void setAqueousSolutionsPrevFromDumpFile();
 
+    MeshLib::Mesh const& _mesh;
     std::string const _database;
     std::vector<AqueousSolution> _aqueous_solutions;
     std::vector<EquilibriumPhase> _equilibrium_phases;

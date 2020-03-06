@@ -14,6 +14,7 @@
 
 #include "BaseLib/Algorithm.h"
 #include "BaseLib/ConfigTreeUtil.h"
+#include "MeshLib/Mesh.h"
 #include "PhreeqcIO.h"
 #include "PhreeqcIOData/AqueousSolution.h"
 #include "PhreeqcIOData/Dump.h"
@@ -44,6 +45,7 @@ std::ostream& operator<<(std::ostream& os,
 }  // namespace
 
 PhreeqcIO::PhreeqcIO(std::string const project_file_name,
+                     MeshLib::Mesh const& mesh,
                      std::string&& database,
                      std::vector<AqueousSolution>&& aqueous_solutions,
                      std::vector<EquilibriumPhase>&& equilibrium_phases,
@@ -57,6 +59,7 @@ PhreeqcIO::PhreeqcIO(std::string const project_file_name,
                      std::vector<std::pair<int, std::string>> const&
                          process_id_to_component_name_map)
     : _phreeqc_input_file(project_file_name + "_phreeqc.inp"),
+      _mesh(mesh),
       _database(std::move(database)),
       _aqueous_solutions(std::move(aqueous_solutions)),
       _equilibrium_phases(std::move(equilibrium_phases)),
