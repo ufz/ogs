@@ -37,7 +37,7 @@ struct EquilibriumPhase
     {
     }
 
-    void print(std::ostream& os, std::size_t const chemical_system_id) const;
+    void print(std::ostream& os, std::size_t const global_id) const;
 
     std::string const name;
     MeshLib::PropertyVector<double>* amount;
