@@ -99,7 +99,8 @@ createChemicalSolverInterface<ChemicalSolver::Phreeqc>(
 
     auto kinetic_reactants = PhreeqcIOData::createKineticReactants(
         //! \ogs_file_param{prj__chemical_system__kinetic_reactants}
-        config.getConfigSubtreeOptional("kinetic_reactants"), mesh);
+        config.getConfigSubtreeOptional("kinetic_reactants"), *meshes[0],
+        chemical_system_map);
 
     // rates
     auto reaction_rates = createReactionRates<PhreeqcIOData::ReactionRate>(
@@ -109,7 +110,8 @@ createChemicalSolverInterface<ChemicalSolver::Phreeqc>(
     // equilibrium phases
     auto equilibrium_phases = PhreeqcIOData::createEquilibriumPhases(
         //! \ogs_file_param{prj__chemical_system__equilibrium_phases}
-        config.getConfigSubtreeOptional("equilibrium_phases"), mesh);
+        config.getConfigSubtreeOptional("equilibrium_phases"), *meshes[0],
+        chemical_system_map);
 
     // surface
     auto surface = PhreeqcIOData::createSurface(
@@ -133,7 +135,7 @@ createChemicalSolverInterface<ChemicalSolver::Phreeqc>(
     // user punch
     auto user_punch = PhreeqcIOData::createUserPunch(
         //! \ogs_file_param{prj__chemical_system__user_punch}
-        config.getConfigSubtreeOptional("user_punch"), mesh);
+        config.getConfigSubtreeOptional("user_punch"), *meshes[0]);
 
     // output
     auto const& components = aqueous_solution.components;
