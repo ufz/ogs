@@ -100,7 +100,7 @@ AddTest(
 )
 
 AddTest(
-    NAME HeatTransportBHE_single_pipe_flow_EBHE
+    NAME HeatTransportBHE_single_pipe_flow_EUBHE
     PATH Parabolic/T/BHE_1P
     RUNTIME 60
     EXECUTABLE ogs

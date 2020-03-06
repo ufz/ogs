@@ -12,6 +12,7 @@
 
 #include <Eigen/Eigen>
 
+#include <optional>
 #include "BaseLib/Error.h"
 
 #include "BHECommon.h"
