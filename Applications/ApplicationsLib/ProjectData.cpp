@@ -1082,7 +1082,7 @@ void ProjectData::parseChemicalSystem(
 
             _chemical_system = ChemistryLib::createChemicalSolverInterface<
                 ChemistryLib::ChemicalSolver::Phreeqc>(
-                *_mesh_vec[0], process_id_to_component_name_map, *config,
+                _mesh_vec, process_id_to_component_name_map, *config,
                 output_directory);
         }
         else if (boost::iequals(chemical_solver, "PhreeqcKernel"))
@@ -1093,7 +1093,7 @@ void ProjectData::parseChemicalSystem(
 
             _chemical_system = ChemistryLib::createChemicalSolverInterface<
                 ChemistryLib::ChemicalSolver::PhreeqcKernel>(
-                *_mesh_vec[0], process_id_to_component_name_map, *config,
+                _mesh_vec, process_id_to_component_name_map, *config,
                 output_directory);
         }
         else

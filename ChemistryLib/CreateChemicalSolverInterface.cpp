@@ -63,7 +63,7 @@ namespace ChemistryLib
 template <>
 std::unique_ptr<ChemicalSolverInterface>
 createChemicalSolverInterface<ChemicalSolver::Phreeqc>(
-    MeshLib::Mesh const& mesh,
+    std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
     std::vector<std::pair<int, std::string>> const&
         process_id_to_component_name_map,
     BaseLib::ConfigTree const& config, std::string const& output_directory)
@@ -139,7 +139,7 @@ createChemicalSolverInterface<ChemicalSolver::Phreeqc>(
 template <>
 std::unique_ptr<ChemicalSolverInterface>
 createChemicalSolverInterface<ChemicalSolver::PhreeqcKernel>(
-    MeshLib::Mesh const& mesh,
+    std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
     std::vector<std::pair<int, std::string>> const&
         process_id_to_component_name_map,
     BaseLib::ConfigTree const& config, std::string const& /*output_directory*/)
