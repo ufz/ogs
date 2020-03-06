@@ -178,11 +178,11 @@ public:
 
             auto const permeability =
                 MaterialPropertyLib::formEigenTensor<GlobalDim>(
-                    medium.property(MaterialPropertyLib::permeability)
+                    solid_phase.property(MaterialPropertyLib::permeability)
                         .value(vars, pos, t, dt));
 
             auto const porosity =
-                medium.property(MaterialPropertyLib::PropertyType::porosity)
+                solid_phase.property(MaterialPropertyLib::PropertyType::porosity)
                     .template value<double>(vars, pos, t, dt);
 
             vars[static_cast<int>(
@@ -303,6 +303,8 @@ public:
         auto const& medium =
             *_process_data.media_map->getMedium(_element.getID());
         auto const& liquid_phase = medium.phase("AqueousLiquid");
+        auto const& solid_phase = medium.phase("Solid");
+
         MaterialPropertyLib::VariableArray vars;
         vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
             medium
@@ -334,7 +336,7 @@ public:
 
             auto const permeability =
                 MaterialPropertyLib::formEigenTensor<GlobalDim>(
-                    medium.property(MaterialPropertyLib::permeability)
+                    solid_phase.property(MaterialPropertyLib::permeability)
                         .value(vars, pos, t, dt));
 
             double const k_rel =
