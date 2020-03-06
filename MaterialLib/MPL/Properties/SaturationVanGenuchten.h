@@ -8,6 +8,9 @@
  */
 #pragma once
 
+#include <cmath>
+#include <limits>
+
 #include "MaterialLib/MPL/Property.h"
 
 namespace MaterialPropertyLib
@@ -28,12 +31,14 @@ private:
     double const _S_L_max;
     double const _m;
     double const _p_b;
+    double const _pc_max; ///< Maximum capillary pressiure
 
 public:
     SaturationVanGenuchten(double const residual_liquid_saturation,
                            double const residual_gas_saturation,
                            double const exponent,
-                           double const entry_pressure);
+                           double const entry_pressure,
+                           double const max_capillary_pressure);
 
     void setScale(
         std::variant<Medium*, Phase*, Component*> scale_pointer) override
@@ -63,5 +68,11 @@ public:
                              ParameterLib::SpatialPosition const& /*pos*/,
                              double const /*t*/,
                              double const /*dt*/) const override;
+
+    /// This method gets capillary pressure via saturation.
+    PropertyDataType inverse_value(VariableArray const& variable_array,
+                                   ParameterLib::SpatialPosition const& pos,
+                                   double const t,
+                                   double const dt) const override;
 };
 }  // namespace MaterialPropertyLib

@@ -22,10 +22,11 @@ TEST(MaterialPropertyLib, SaturationVanGenuchten)
     double const residual_gas_saturation = 0.05;
     double const exponent = 0.79;
     double const entry_pressure = 5000;
+    double const max_capillary_pressure = std::numeric_limits<double>::max();
 
     MPL::Property const& pressure_saturation = MPL::SaturationVanGenuchten{
         residual_liquid_saturation, residual_gas_saturation, exponent,
-        entry_pressure};
+        entry_pressure, max_capillary_pressure};
 
     MPL::VariableArray variable_array;
     ParameterLib::SpatialPosition const pos;

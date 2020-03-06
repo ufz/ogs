@@ -19,13 +19,13 @@ namespace MaterialPropertyLib
 {
 SaturationVanGenuchten::SaturationVanGenuchten(
     double const residual_liquid_saturation,
-    double const residual_gas_saturation,
-    double const exponent,
-    double const entry_pressure)
+    double const residual_gas_saturation, double const exponent,
+    double const entry_pressure, double const max_capillary_pressure)
     : _S_L_res(residual_liquid_saturation),
       _S_L_max(1. - residual_gas_saturation),
       _m(exponent),
-      _p_b(entry_pressure)
+      _p_b(entry_pressure),
+      _pc_max(max_capillary_pressure)
 {
     if (!(_m > 0 && _m < 1))
     {
@@ -132,4 +132,20 @@ PropertyDataType SaturationVanGenuchten::d2Value(
         (p_cap * p_cap * (_m - 1.) * (_m - 1.));
     return d2S_eff_dp_cap2 * (_S_L_max - _S_L_res);
 }
+
+PropertyDataType SaturationVanGenuchten::inverse_value(
+    VariableArray const& variable_array,
+    ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
+    double const /*dt*/) const
+{
+    const double saturation = std::get<double>(
+        variable_array[static_cast<int>(Variable::liquid_saturation)]);
+
+    const double S = std::clamp(saturation, _S_L_res, _S_L_max);
+    const double Se = (S - _S_L_res) / (_S_L_max - _S_L_res);
+    const double pc =
+        _p_b * std::pow(std::pow(Se, (-1.0 / _m)) - 1.0, 1.0 - _m);
+    return std::clamp(pc, 0.0, _pc_max);
+}
+
 }  // namespace MaterialPropertyLib
