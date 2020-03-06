@@ -21,6 +21,27 @@ namespace HeatTransportBHE
 {
 namespace BHE
 {
+BHE_1U::BHE_1U(BoreholeGeometry const& borehole,
+               RefrigerantProperties const& refrigerant,
+               GroutParameters const& grout,
+               FlowAndTemperatureControl const& flowAndTemperatureControl,
+               PipeConfigurationUType const& pipes,
+               bool const use_python_bcs)
+    : BHECommonUType{borehole, refrigerant,   grout, flowAndTemperatureControl,
+                     pipes,    use_python_bcs}
+{
+    _thermal_resistances.fill(std::numeric_limits<double>::quiet_NaN());
+
+    // Initialize thermal resistances.
+    auto values = visit(
+        [&](auto const& control) {
+            return control(refrigerant.reference_temperature,
+                           0. /* initial time */);
+        },
+        flowAndTemperatureControl);
+    updateHeatTransferCoefficients(values.flow_rate);
+}
+
 std::array<double, BHE_1U::number_of_unknowns> BHE_1U::pipeHeatCapacities()
     const
 {
@@ -205,6 +226,13 @@ std::array<double, BHE_1U::number_of_unknowns> BHE_1U::calcThermalResistances(
     // << phi_fig << " phi_fog =" << phi_fog << " phi_gg =" << phi_gg << "
     // phi_gs =" << phi_gs << "\n";
     // -------------------------------------------------------------------------
+}
+
+std::array<double, BHE_1U::number_of_unknowns> BHE_1U::crossSectionAreas() const
+{
+    return {{_pipes.inlet.area(), _pipes.outlet.area(),
+             borehole_geometry.area() / 2 - _pipes.inlet.area(),
+             borehole_geometry.area() / 2 - _pipes.outlet.area()}};
 }
 
 double BHE_1U::updateFlowRateAndTemperature(double const T_out,

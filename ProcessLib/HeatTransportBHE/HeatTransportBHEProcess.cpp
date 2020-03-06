@@ -283,28 +283,51 @@ void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
         // the BHE temperature is therefore bhe_i + 1
         const int variable_id = bhe_i + 1;
 
-        // Bottom and top nodes w.r.t. the z coordinate.
-        auto const bottom_top_nodes = std::minmax_element(
-            begin(bhe_nodes), end(bhe_nodes),
-            [&](auto const& a, auto const& b) {
-                return a->getCoords()[2] < b->getCoords()[2];
-            });
-        auto const bc_bottom_node_id = (*bottom_top_nodes.first)->getID();
-        auto const bc_top_node_id = (*bottom_top_nodes.second)->getID();
+        std::vector<MeshLib::Node*> bhe_boundary_nodes;
+        // cherry-pick the boundary nodes according to
+        // the number of connected line elements.
+        for (auto const& bhe_node : bhe_nodes)
+        {
+            // Count number of 1d elements connected with every BHE node.
+            const std::size_t n_line_elements = std::count_if(
+                bhe_node->getElements().begin(), bhe_node->getElements().end(),
+                [](MeshLib::Element const* elem) {
+                    return (elem->getDimension() == 1);
+                });
 
-        auto get_global_bhe_bc_indices =
-            [&](std::size_t const node_id,
-                std::pair<int, int> const& in_out_component_id) {
-                return std::make_pair(
-                    _local_to_global_index_map->getGlobalIndex(
-                        {_mesh.getID(), MeshLib::MeshItemType::Node, node_id},
-                        variable_id, in_out_component_id.first),
-                    _local_to_global_index_map->getGlobalIndex(
-                        {_mesh.getID(), MeshLib::MeshItemType::Node, node_id},
-                        variable_id, in_out_component_id.second));
+            if (n_line_elements == 1)
+            {
+                bhe_boundary_nodes.push_back(bhe_node);
+            }
+        }
+
+        if (bhe_boundary_nodes.size() != 2)
+        {
+            OGS_FATAL(
+                "Error!!! The BHE boundary nodes are not correctly found, "
+                "for every single BHE, there should be 2 boundary nodes.");
+        }
+        auto get_global_index =
+            [&](std::size_t const node_id, int const component) {
+                return _local_to_global_index_map->getGlobalIndex(
+                    {_mesh.getID(), MeshLib::MeshItemType::Node, node_id},
+                    variable_id, component);
             };
 
-        auto createBCs = [&](auto& bhe) {
+        auto get_global_bhe_bc_indices =
+            [&](std::array<
+                std::pair<std::size_t /*node_id*/, int /*component*/>, 2>
+                    nodes_and_components) {
+                return std::make_pair(
+                    get_global_index(nodes_and_components[0].first,
+                                     nodes_and_components[0].second),
+                    get_global_index(nodes_and_components[1].first,
+                                     nodes_and_components[1].second));
+            };
+
+        auto createBCs = [&, bc_top_node_id = bhe_boundary_nodes[0]->getID(),
+                          bc_bottom_node_id =
+                              bhe_boundary_nodes[1]->getID()](auto& bhe) {
             for (auto const& in_out_component_id :
                  bhe.inflow_outflow_bc_component_ids)
             {
@@ -317,8 +340,11 @@ void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
                         // apply the customized top, inflow BC.
                         bcs.addBoundaryCondition(
                             ProcessLib::createBHEInflowPythonBoundaryCondition(
-                                get_global_bhe_bc_indices(bc_top_node_id,
-                                                          in_out_component_id),
+                                get_global_bhe_bc_indices(
+                                    {{{bc_top_node_id,
+                                       in_out_component_id.first},
+                                      {bc_top_node_id,
+                                       in_out_component_id.second}}}),
                                 bhe,
                                 *(_process_data.py_bc_object)));
                     }
@@ -339,8 +365,10 @@ void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
                     // Top, inflow, normal case
                     bcs.addBoundaryCondition(
                         createBHEInflowDirichletBoundaryCondition(
-                            get_global_bhe_bc_indices(bc_top_node_id,
-                                                      in_out_component_id),
+                            get_global_bhe_bc_indices(
+                                {{{bc_top_node_id, in_out_component_id.first},
+                                  {bc_top_node_id,
+                                   in_out_component_id.second}}}),
                             [&bhe](double const T, double const t) {
                                 return bhe.updateFlowRateAndTemperature(T, t);
                             }));
@@ -348,8 +376,10 @@ void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
                 // Bottom, outflow, all cases
                 bcs.addBoundaryCondition(
                     createBHEBottomDirichletBoundaryCondition(
-                        get_global_bhe_bc_indices(bc_bottom_node_id,
-                                                  in_out_component_id)));
+                        get_global_bhe_bc_indices(
+                            {{{bc_bottom_node_id, in_out_component_id.first},
+                              {bc_bottom_node_id,
+                               in_out_component_id.second}}})));
             }
         };
         visit(createBCs, _process_data._vec_BHE_property[bhe_i]);

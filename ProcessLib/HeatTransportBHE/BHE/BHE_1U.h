@@ -46,22 +46,7 @@ public:
            GroutParameters const& grout,
            FlowAndTemperatureControl const& flowAndTemperatureControl,
            PipeConfigurationUType const& pipes,
-           bool const use_python_bcs)
-        : BHECommonUType{borehole, refrigerant,
-                         grout,    flowAndTemperatureControl,
-                         pipes,    use_python_bcs}
-    {
-        _thermal_resistances.fill(std::numeric_limits<double>::quiet_NaN());
-
-        // Initialize thermal resistances.
-        auto values = visit(
-            [&](auto const& control) {
-                return control(refrigerant.reference_temperature,
-                               0. /* initial time */);
-            },
-            flowAndTemperatureControl);
-        updateHeatTransferCoefficients(values.flow_rate);
-    }
+           bool const use_python_bcs);
 
     static constexpr int number_of_unknowns = 4;
     static constexpr int number_of_grout_zones = 2;
@@ -154,12 +139,7 @@ public:
         {0, 1}};
 
 public:
-    std::array<double, number_of_unknowns> crossSectionAreas() const
-    {
-        return {{_pipes.inlet.area(), _pipes.outlet.area(),
-                 borehole_geometry.area() / 2 - _pipes.inlet.area(),
-                 borehole_geometry.area() / 2 - _pipes.outlet.area()}};
-    }
+    std::array<double, number_of_unknowns> crossSectionAreas() const;
 
     void updateHeatTransferCoefficients(double const flow_rate);
 
