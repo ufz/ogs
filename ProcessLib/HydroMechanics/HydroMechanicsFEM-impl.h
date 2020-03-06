@@ -344,6 +344,12 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     if (_process_data.mass_lumping)
     {
         storage_p = storage_p.colwise().sum().eval().asDiagonal();
+
+        if constexpr (pressure_size == displacement_size)
+        {
+            Kpu = Kpu.colwise().sum().eval().asDiagonal();
+            Kpu_k = Kpu_k.colwise().sum().eval().asDiagonal();
+        }
     }
 
     // pressure equation, pressure part.
