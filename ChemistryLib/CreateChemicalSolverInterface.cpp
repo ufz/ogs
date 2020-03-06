@@ -93,6 +93,10 @@ createChemicalSolverInterface<ChemicalSolver::Phreeqc>(
         process_id_to_component_name_map);
 
     // kinetic reactants
+    auto chemical_system_map =
+        *mesh.getProperties().template getPropertyVector<std::size_t>(
+            "bulk_node_ids", MeshLib::MeshItemType::Node, 1);
+
     auto kinetic_reactants = PhreeqcIOData::createKineticReactants(
         //! \ogs_file_param{prj__chemical_system__kinetic_reactants}
         config.getConfigSubtreeOptional("kinetic_reactants"), mesh);
