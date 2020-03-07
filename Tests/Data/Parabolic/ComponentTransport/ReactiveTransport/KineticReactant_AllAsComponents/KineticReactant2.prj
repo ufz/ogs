@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
-    <mesh>1d_isofrac.vtu</mesh>
-    <geometry>KineticReactant2.gml</geometry>
+    <meshes>
+        <mesh>KineticReactant2.vtu</mesh>
+        <mesh>KineticReactant2_upstream.vtu</mesh>
+        <mesh>KineticReactant2_downstream.vtu</mesh>
+        <mesh>KineticReactant2_ReactiveDomain.vtu</mesh>
+    </meshes>
     <processes>
         <process>
             <name>hc</name>
@@ -319,6 +323,7 @@
         </output>
     </time_loop>
     <chemical_system chemical_solver="Phreeqc">
+        <mesh>KineticReactant2_ReactiveDomain</mesh>
         <database>test.dat</database>
         <solution>
             <temperature>25</temperature>
@@ -446,14 +451,12 @@
             <initial_condition>p0</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>geometry</geometrical_set>
-                    <geometry>upstream</geometry>
+                    <mesh>KineticReactant2_upstream</mesh>
                     <type>Dirichlet</type>
                     <parameter>p_upstream</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <geometrical_set>geometry</geometrical_set>
-                    <geometry>downstream</geometry>
+                    <mesh>KineticReactant2_downstream</mesh>
                     <type>Neumann</type>
                     <parameter>p_downstream_Neumann</parameter>
                 </boundary_condition>
@@ -466,8 +469,7 @@
             <initial_condition>c0_H</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>geometry</geometrical_set>
-                    <geometry>upstream</geometry>
+                    <mesh>KineticReactant2_upstream</mesh>
                     <type>Dirichlet</type>
                     <parameter>c_H</parameter>
                 </boundary_condition>
@@ -480,8 +482,7 @@
             <initial_condition>c0_Synthetica</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>geometry</geometrical_set>
-                    <geometry>upstream</geometry>
+                    <mesh>KineticReactant2_upstream</mesh>
                     <type>Dirichlet</type>
                     <parameter>c_Synthetica</parameter>
                 </boundary_condition>
@@ -494,8 +495,7 @@
             <initial_condition>c0_Syntheticb</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>geometry</geometrical_set>
-                    <geometry>upstream</geometry>
+                    <mesh>KineticReactant2_upstream</mesh>
                     <type>Dirichlet</type>
                     <parameter>c_Syntheticb</parameter>
                 </boundary_condition>
@@ -508,8 +508,7 @@
             <initial_condition>c0_Productd</initial_condition>
                 <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>geometry</geometrical_set>
-                    <geometry>upstream</geometry>
+                    <mesh>KineticReactant2_upstream</mesh>
                     <type>Dirichlet</type>
                     <parameter>c_Productd</parameter>
                 </boundary_condition>

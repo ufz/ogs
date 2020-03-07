@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
-    <mesh>1d_isofrac.vtu</mesh>
-    <geometry>1d_isofrac.gml</geometry>
+    <meshes>
+        <mesh>1d_isofrac.vtu</mesh>
+        <mesh>1d_isofrac_upstream.vtu</mesh>
+        <mesh>1d_isofrac_downstream.vtu</mesh>
+        <mesh>1d_isofrac_ReactiveDomain.vtu</mesh>
+    </meshes>
     <processes>
         <process>
             <name>hc</name>
@@ -268,6 +272,7 @@
         </output>
     </time_loop>
     <chemical_system chemical_solver="Phreeqc">
+        <mesh>1d_isofrac_ReactiveDomain</mesh>
         <database>1d_isofrac_database.dat</database>
         <solution>
             <temperature>25</temperature>
@@ -400,14 +405,12 @@
             <initial_condition>p0</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>geometry</geometrical_set>
-                    <geometry>upstream</geometry>
+                    <mesh>1d_isofrac_upstream</mesh>
                     <type>Dirichlet</type>
                     <parameter>p_upstream</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <geometrical_set>geometry</geometrical_set>
-                    <geometry>downstream</geometry>
+                    <mesh>1d_isofrac_downstream</mesh>
                     <type>Neumann</type>
                     <parameter>p_downstream_Neumann</parameter>
                 </boundary_condition>
@@ -420,8 +423,7 @@
             <initial_condition>c0_H</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>geometry</geometrical_set>
-                    <geometry>upstream</geometry>
+                    <mesh>1d_isofrac_upstream</mesh>
                     <type>Dirichlet</type>
                     <parameter>c_H</parameter>
                 </boundary_condition>
@@ -434,8 +436,7 @@
             <initial_condition>c0_Synthetica</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>geometry</geometrical_set>
-                    <geometry>upstream</geometry>
+                    <mesh>1d_isofrac_upstream</mesh>
                     <type>Dirichlet</type>
                     <parameter>c_Synthetica</parameter>
                 </boundary_condition>
@@ -448,8 +449,7 @@
             <initial_condition>c0_Syntheticb</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>geometry</geometrical_set>
-                    <geometry>upstream</geometry>
+                    <mesh>1d_isofrac_upstream</mesh>
                     <type>Dirichlet</type>
                     <parameter>c_Syntheticb</parameter>
                 </boundary_condition>
