@@ -238,7 +238,7 @@ AddTest(
     GLOB orthotropic_power_law_permeability_xyz_pcs_0_ts_*.vtu displacement displacement 5e-11 0
     GLOB orthotropic_power_law_permeability_xyz_pcs_0_ts_*.vtu sigma sigma 2e-14 0
     GLOB orthotropic_power_law_permeability_xyz_pcs_0_ts_*.vtu epsilon epsilon 1e-14 0
-    GLOB orthotropic_power_law_permeability_xyz_pcs_0_ts_*.vtu velocity velocity 5e-14 0
+    GLOB orthotropic_power_law_permeability_xyz_pcs_0_ts_*.vtu velocity velocity 7e-14 0
     GLOB orthotropic_power_law_permeability_xyz_pcs_0_ts_*.vtu porosity porosity 5e-14 1e-15
     GLOB orthotropic_power_law_permeability_xyz_pcs_0_ts_*.vtu porosity_avg porosity_avg 5e-14 1e-15
 )
