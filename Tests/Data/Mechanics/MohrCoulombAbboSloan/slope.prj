@@ -22,7 +22,6 @@
             </constitutive_relation>
             <solid_density>rho_sr</solid_density>
             <specific_body_force>0 -9.8</specific_body_force>
-            <!--introduce time ramp-->
             <reference_temperature>293.15</reference_temperature>
             <process_variables>
                 <process_variable>displacement</process_variable>
@@ -47,25 +46,10 @@
                 <time_discretization>
                     <type>BackwardEuler</type>
                 </time_discretization>
-                <!--time_stepping>
-                    <type>FixedTimeStepping</type>
-                    <t_initial>0</t_initial>
-                    <t_end>1</t_end>
-                    <timesteps>
-                        <pair>
-                            <repeat>30</repeat>
-                            <delta_t>0.02</delta_t>
-                        </pair>
-<pair>
-                            <repeat>1000</repeat>
-                            <delta_t>0.002</delta_t>
-                        </pair>
-                    </timesteps>
-                </time_stepping-->
         <time_stepping>
                     <type>IterationNumberBasedTimeStepping</type>
                     <t_initial>0.0</t_initial>
-                    <t_end>5</t_end>
+                    <t_end>6</t_end>
                     <initial_dt>0.1</initial_dt>
                     <minimum_dt>1e-4</minimum_dt>
                     <maximum_dt>0.5</maximum_dt>
@@ -79,7 +63,7 @@
             <prefix>slope</prefix>
             <timesteps>
                 <pair>
-                    <repeat>100000</repeat>
+                    <repeat>10000</repeat>
                     <each_steps>1</each_steps>
                 </pair>
             </timesteps>
@@ -262,28 +246,10 @@
     <linear_solvers>
         <linear_solver>
             <name>general_linear_solver</name>
-            <lis>-i cg -p jacobi -tol 1e-16 -maxiter 10000</lis>
             <eigen>
-                <!--solver_type>SparseLU</solver_type>
-                <scaling>1</scaling-->
                 <solver_type>SparseLU</solver_type>
-                <!--solver_type>PardisoLU</solver_type-->
-                <!--precon_type>DIAGONAL</precon_type>
-                <max_iteration_step>10000</max_iteration_step>
-                <error_tolerance>1e-16</error_tolerance-->
+                <scaling>true</scaling>
             </eigen>
-            <petsc>
-                <prefix>sd</prefix>
-                <parameters>-sd_ksp_type cg -sd_pc_type bjacobi -sd_ksp_rtol 1e-16 -sd_ksp_max_it 10000</parameters>
-            </petsc>
         </linear_solver>
     </linear_solvers>
-    <test_definition>
-        <vtkdiff>
-            <file>slope_pcs_0_ts_20_t_2.000000.vtu</file>
-            <field>displacement</field>
-            <absolute_tolerance>1e-14</absolute_tolerance>
-            <relative_tolerance>0.0</relative_tolerance>
-        </vtkdiff>
-    </test_definition>
 </OpenGeoSysProject>
