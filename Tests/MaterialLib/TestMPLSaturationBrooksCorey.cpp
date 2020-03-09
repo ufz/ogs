@@ -9,6 +9,10 @@
  *
  */
 #include <gtest/gtest.h>
+
+#include <cmath>
+#include <limits>
+#include <random>
 #include <sstream>
 
 #include "TestMPL.h"
@@ -79,5 +83,67 @@ TEST(MaterialPropertyLib, SaturationBrooksCorey)
 
         ASSERT_NEAR(s_L, s_ref, 1.e-10);
         ASSERT_NEAR(ds_L_dp_cap, ds_L_dpc, 1.e-10);
+    }
+}
+
+TEST(MaterialPropertyLib, CapillaryPressureBrooksCorey)
+{
+    const double ref_lambda = 2.5;
+    const double ref_residual_liquid_saturation = 0.12;
+    const double ref_residual_gas_saturation = 0.06;
+    const double ref_entry_pressure = 5678.54;
+
+    std::stringstream m;
+    m << "<medium>\n";
+    m << "<phases></phases>\n";
+    m << "<properties>\n";
+    m << "  <property>\n";
+    m << "    <name>saturation</name>\n";
+    m << "    <type>SaturationBrooksCorey</type>\n";
+    m << "    <residual_liquid_saturation>" << ref_residual_liquid_saturation
+      << "</residual_liquid_saturation>\n";
+    m << "    <residual_gas_saturation>" << ref_residual_gas_saturation
+      << "</residual_gas_saturation>\n";
+    m << "    <lambda>" << ref_lambda << "</lambda>\n";
+    m << "    <entry_pressure>" << ref_entry_pressure << "</entry_pressure>\n";
+    m << "  </property> \n";
+    m << "</properties>\n";
+    m << "</medium>\n";
+
+    auto const& medium = createTestMaterial(m.str());
+
+    MaterialPropertyLib::VariableArray variable_array;
+    ParameterLib::SpatialPosition const pos;
+    double const t = std::numeric_limits<double>::quiet_NaN();
+    double const dt = std::numeric_limits<double>::quiet_NaN();
+
+    std::random_device rd;
+    std::mt19937 mt(rd());
+    const double offset = std::sqrt(std::numeric_limits<double>::epsilon());
+    std::uniform_real_distribution<double> distributor(
+        ref_residual_liquid_saturation + offset,
+        1.0 - ref_residual_gas_saturation - offset);
+
+    const int n = 20;
+
+    for (int i = 1; i < n; ++i)
+    {
+        double const S = distributor(mt);
+        variable_array[static_cast<int>(MPL::Variable::liquid_saturation)] = S;
+
+        const double computed_capillary_pressure =
+            medium->property(MaterialPropertyLib::PropertyType::saturation)
+                .template inverse_value<double>(variable_array, pos, t, dt);
+        variable_array[static_cast<int>(MPL::Variable::capillary_pressure)] =
+            computed_capillary_pressure;
+
+        const double re_computedS =
+            medium->property(MaterialPropertyLib::PropertyType::saturation)
+                .template value<double>(variable_array, pos, t, dt);
+
+        ASSERT_LE(std::abs(S - re_computedS), 1e-9)
+            << "for saturation " << S
+            << " and re-computed saturation via capillary pressure"
+            << re_computedS;
     }
 }
