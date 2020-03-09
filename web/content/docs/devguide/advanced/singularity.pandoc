@@ -24,15 +24,15 @@ Singularity per default mounts your home directory and also passes your current 
 
 - Linux and [Mac](https://sylabs.io/singularity-desktop-macos/) only!
 - [Install Git with LFS]({{< ref "prerequisites" >}}/#step-install-git)
-- [Install Singularity](https://sylabs.io/guides/3.3/user-guide/quick_start.html#quick-installation-steps)
+- [Install Singularity](https://sylabs.io/guides/3.5/user-guide/quick_start.html#quick-installation-steps)
 
 ### Build OGS inside a container
 
 ```bash
 [git clone ogs]
-singularity pull docker://ogs6/gcc # Downloads the image to gcc.simg
+singularity pull docker://ogs6/gcc # Downloads the image to gcc.sif
 # OR: Pull the docker://ogs6/gcc:gui image for compiling the Data Explorer
-singularity shell gcc.simg
+singularity shell gcc.sif
 [Now inside the container]
 mkdir build; cd build
 cmake ../ogs -DCMAKE_BUILD_TYPE=Release
@@ -45,7 +45,7 @@ make
 Once ogs executable is built it can be called from **outside** the container:
 
 ```bash
-singularity exec gcc.simg build/bin/ogs some/path/project.prj
+singularity exec gcc.sif build/bin/ogs some/path/project.prj
 ```
 
 This starts the container, mounts your home directory inside the container, passes the current working directory and runs the ogs executable (which is in your home directory which is mounted inside the container) with the passed project file. Everything works as expected and is transparent to the user. When ogs finishes the container stops and you returns to the host system.
