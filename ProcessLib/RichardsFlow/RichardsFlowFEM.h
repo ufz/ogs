@@ -175,6 +175,8 @@ public:
 
             vars[static_cast<int>(
                 MaterialPropertyLib::Variable::phase_pressure)] = p_int_pt;
+            vars[static_cast<int>(
+                MaterialPropertyLib::Variable::capillary_pressure)] = -p_int_pt;
 
             auto const permeability =
                 MaterialPropertyLib::formEigenTensor<GlobalDim>(
@@ -184,9 +186,6 @@ public:
             auto const porosity =
                 solid_phase.property(MaterialPropertyLib::PropertyType::porosity)
                     .template value<double>(vars, pos, t, dt);
-
-            vars[static_cast<int>(
-                MaterialPropertyLib::Variable::capillary_pressure)] = -p_int_pt;
 
             double const Sw =
                 medium
