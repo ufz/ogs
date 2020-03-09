@@ -45,6 +45,11 @@
                             <type>Constant</type>
                             <value> 0.0 </value>
                         </property>
+                        <property>
+                            <name>porosity</name>
+                            <type>Constant</type>
+                            <value>0.1</value>
+                        </property>
                     </properties>
                 </phase>
             </phases>
@@ -53,11 +58,6 @@
                     <name>permeability</name>
                     <type>Constant</type>
                     <value>1.e-14</value>
-                </property>
-                <property>
-                    <name>porosity</name>
-                    <type>Constant</type>
-                    <value>0.1</value>
                 </property>
                 <property>
                     <name>reference_temperature</name>
@@ -91,6 +91,11 @@
                             <type>Constant</type>
                             <value> 0.0 </value>
                         </property>
+                        <property>
+                            <name>porosity</name>
+                            <type>Constant</type>
+                            <value>0.2</value>
+                        </property>
                     </properties>
                 </phase>
             </phases>
@@ -99,11 +104,6 @@
                     <name>permeability</name>
                     <type>Constant</type>
                     <value>1.e-13</value>
-                </property>
-                <property>
-                    <name>porosity</name>
-                    <type>Constant</type>
-                    <value>0.2</value>
                 </property>
                 <property>
                     <name>reference_temperature</name>
@@ -137,6 +137,11 @@
                             <type>Constant</type>
                             <value> 0.0 </value>
                         </property>
+                        <property>
+                            <name>porosity</name>
+                            <type>Constant</type>
+                            <value>0.3</value>
+                        </property>
                     </properties>
                 </phase>
             </phases>
@@ -145,11 +150,6 @@
                     <name>permeability</name>
                     <type>Constant</type>
                     <value>1.e-12</value>
-                </property>
-                <property>
-                    <name>porosity</name>
-                    <type>Constant</type>
-                    <value>0.3</value>
                 </property>
                 <property>
                     <name>reference_temperature</name>
@@ -183,6 +183,11 @@
                             <type>Constant</type>
                             <value> 0.0 </value>
                         </property>
+                        <property>
+                            <name>porosity</name>
+                            <type>Constant</type>
+                            <value>0.4</value>
+                        </property>
                     </properties>
                 </phase>
             </phases>
@@ -191,11 +196,6 @@
                     <name>permeability</name>
                     <type>Constant</type>
                     <value>1.e-11</value>
-                </property>
-                <property>
-                    <name>porosity</name>
-                    <type>Constant</type>
-                    <value>0.4</value>
                 </property>
                 <property>
                     <name>reference_temperature</name>
