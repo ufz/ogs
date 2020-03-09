@@ -83,4 +83,19 @@ PropertyDataType SaturationLiakopoulos::d2Value(
            std::pow(p_cap_restricted, _parameter_b - 2.);
 }
 
+PropertyDataType SaturationLiakopoulos::inverse_value(
+    VariableArray const& variable_array,
+    ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
+    double const /*dt*/) const
+{
+    const double saturation = std::get<double>(
+        variable_array[static_cast<int>(Variable::liquid_saturation)]);
+
+    const double S_L_max = 1.0;
+    const double S =
+        std::clamp(saturation, _residual_liquid_saturation, S_L_max);
+
+    return std::pow((1.0 - S) / _parameter_a, 1.0 / _parameter_b);
+}
+
 }  // namespace MaterialPropertyLib

@@ -86,6 +86,12 @@ public:
                              ParameterLib::SpatialPosition const& /*pos*/,
                              double const /*t*/,
                              double const /*dt*/) const override;
+
+    /// This method gets capillary pressure via saturation.
+    PropertyDataType inverse_value(VariableArray const& variable_array,
+                                   ParameterLib::SpatialPosition const& pos,
+                                   double const t,
+                                   double const dt) const override;
 };
 
 }  // namespace MaterialPropertyLib
