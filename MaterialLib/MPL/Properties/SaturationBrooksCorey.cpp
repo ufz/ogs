@@ -24,13 +24,15 @@ namespace MaterialPropertyLib
 {
 SaturationBrooksCorey::SaturationBrooksCorey(
     const double residual_liquid_saturation,
-    const double residual_gas_saturation,
-    const double exponent,
-    const double entry_pressure)
+    const double residual_gas_saturation, const double exponent,
+    const double entry_pressure, double const max_capillary_pressure)
     : _residual_liquid_saturation(residual_liquid_saturation),
       _residual_gas_saturation(residual_gas_saturation),
       _exponent(exponent),
-      _entry_pressure(entry_pressure){};
+      _entry_pressure(entry_pressure),
+      _pc_max(max_capillary_pressure)
+{
+}
 
 PropertyDataType SaturationBrooksCorey::value(
     VariableArray const& variable_array,
@@ -105,6 +107,24 @@ PropertyDataType SaturationBrooksCorey::d2Value(
 
     return lambda * (lambda + 1) * std::pow(p_b / p_cap, lambda) /
            (p_cap * p_cap) * (s_L_max - s_L_res);
+}
+
+PropertyDataType SaturationBrooksCorey::inverse_value(
+    VariableArray const& variable_array,
+    ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
+    double const /*dt*/) const
+{
+    const double saturation = std::get<double>(
+        variable_array[static_cast<int>(Variable::liquid_saturation)]);
+
+    const double S_L_max = 1.0 - _residual_gas_saturation;
+    const double S =
+        std::clamp(saturation, _residual_liquid_saturation, S_L_max);
+
+    const double Se = (S - _residual_liquid_saturation) /
+                      (S_L_max - _residual_liquid_saturation);
+    const double pc = _entry_pressure * std::pow(Se, -1.0 / _exponent);
+    return std::clamp(pc, 0.0, _pc_max);
 }
 
 }  // namespace MaterialPropertyLib

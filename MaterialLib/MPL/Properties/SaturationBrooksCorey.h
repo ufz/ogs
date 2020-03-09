@@ -35,12 +35,13 @@ private:
     const double _residual_gas_saturation;
     const double _exponent;
     const double _entry_pressure;
+    double const _pc_max;  ///< Maximum capillary pressiure
 
 public:
     SaturationBrooksCorey(const double residual_liquid_saturation,
                           const double residual_gas_saturation,
-                          const double exponent,
-                          const double entry_pressure);
+                          const double exponent, const double entry_pressure,
+                          double const max_capillary_pressure);
 
     void setScale(
         std::variant<Medium*, Phase*, Component*> scale_pointer) override
@@ -70,5 +71,11 @@ public:
                              ParameterLib::SpatialPosition const& /*pos*/,
                              double const /*t*/,
                              double const /*dt*/) const override;
+
+    /// This method gets capillary pressure via saturation.
+    PropertyDataType inverse_value(VariableArray const& variable_array,
+                                   ParameterLib::SpatialPosition const& pos,
+                                   double const t,
+                                   double const dt) const override;
 };
 }  // namespace MaterialPropertyLib

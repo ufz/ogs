@@ -34,8 +34,14 @@ std::unique_ptr<SaturationBrooksCorey> createSaturationBrooksCorey(
         //! \ogs_file_param{properties__property__SaturationBrooksCorey__entry_pressure}
         config.getConfigParameter<double>("entry_pressure");
 
-    return std::make_unique<SaturationBrooksCorey>(residual_liquid_saturation,
-                                                   residual_gas_saturation,
-                                                   exponent, entry_pressure);
+    // Optional input to get the maximum capillary pressure.
+    auto pc_max =
+        //! \ogs_file_param{properties__property__SaturationBrooksCorey__maximum_capillary_pressure}
+        config.getConfigParameter<double>("maximum_capillary_pressure",
+                                          std::numeric_limits<double>::max());
+
+    return std::make_unique<SaturationBrooksCorey>(
+        residual_liquid_saturation, residual_gas_saturation, exponent,
+        entry_pressure, pc_max);
 }
 }  // namespace MaterialPropertyLib
