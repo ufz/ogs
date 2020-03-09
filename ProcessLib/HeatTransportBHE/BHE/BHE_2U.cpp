@@ -94,7 +94,7 @@ std::array<double, BHE_2U::number_of_unknowns> BHE_2U::pipeHeatConductions()
 }
 
 std::array<Eigen::Vector3d, BHE_2U::number_of_unknowns>
-BHE_2U::pipeAdvectionVectors() const
+BHE_2U::pipeAdvectionVectors(Eigen::Vector3d const& /*elem_direction*/) const
 {
     double const rho_r = refrigerant.density;
     double const Cp_r = refrigerant.specific_heat_capacity;
@@ -256,6 +256,27 @@ std::array<double, BHE_2U::number_of_unknowns> BHE_2U::calcThermalResistances(
     // << phi_fig << " phi_fog =" << phi_fog << " phi_gg =" << phi_gg << "
     // phi_gs =" << phi_gs << "\n";
     // -------------------------------------------------------------------------
+}
+
+std::array<std::pair<std::size_t /*node_id*/, int /*component*/>, 2>
+BHE_2U::getBHEInflowDirichletBCNodesAndComponents(
+    std::size_t const top_node_id,
+    std::size_t const /*bottom_node_id*/,
+    int const in_component_id) const
+{
+    return {std::make_pair(top_node_id, in_component_id),
+            std::make_pair(top_node_id, in_component_id + 2)};
+}
+
+std::optional<
+    std::array<std::pair<std::size_t /*node_id*/, int /*component*/>, 2>>
+BHE_2U::getBHEBottomDirichletBCNodesAndComponents(
+    std::size_t const bottom_node_id,
+    int const in_component_id,
+    int const out_component_id) const
+{
+    return {{std::make_pair(bottom_node_id, in_component_id),
+             std::make_pair(bottom_node_id, out_component_id)}};
 }
 
 std::array<double, BHE_2U::number_of_unknowns> BHE_2U::crossSectionAreas() const

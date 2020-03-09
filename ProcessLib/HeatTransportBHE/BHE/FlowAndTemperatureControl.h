@@ -11,6 +11,7 @@
 #pragma once
 
 #include <variant>
+#include "BuildingPowerCurves.h"
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 
 namespace ProcessLib
@@ -81,10 +82,34 @@ struct PowerCurveConstantFlow
     double density;
 };
 
+struct BuildingPowerCurveConstantFlow
+{
+    FlowAndTemperature operator()(double const T_out, double const time) const
+    {
+        double const power = building_power_curves.power_curve.getValue(time);
+        double const cop =
+            building_power_curves.cop_heating_curve.getValue(T_out);
+
+        if (power == 0)
+        {
+            return {0.0, T_out};
+        }
+        return {flow_rate,
+                power * (cop - 1) / cop / flow_rate / heat_capacity / density +
+                    T_out};
+    }
+    BuildingPowerCurves const building_power_curves;
+
+    double flow_rate;
+    double heat_capacity;
+    double density;
+};
+
 using FlowAndTemperatureControl = std::variant<TemperatureCurveConstantFlow,
                                                FixedPowerConstantFlow,
                                                FixedPowerFlowCurve,
-                                               PowerCurveConstantFlow>;
+                                               PowerCurveConstantFlow,
+                                               BuildingPowerCurveConstantFlow>;
 }  // namespace BHE
 }  // namespace HeatTransportBHE
 }  // namespace ProcessLib

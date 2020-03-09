@@ -10,6 +10,7 @@
 #pragma once
 
 #include <Eigen/Eigen>
+#include <optional>
 #include "BHECommon.h"
 #include "FlowAndTemperatureControl.h"
 #include "PipeConfigurationCoaxial.h"
@@ -48,10 +49,22 @@ public:
     static constexpr std::pair<int, int> inflow_outflow_bc_component_ids[] = {
         {0, 1}};
 
+    std::array<std::pair<std::size_t /*node_id*/, int /*component*/>, 2>
+    getBHEInflowDirichletBCNodesAndComponents(
+        std::size_t const top_node_id,
+        std::size_t const /*bottom_node_id*/,
+        int const in_component_id) const;
+
+    std::optional<
+        std::array<std::pair<std::size_t /*node_id*/, int /*component*/>, 2>>
+    getBHEBottomDirichletBCNodesAndComponents(std::size_t const bottom_node_id,
+                                              int const in_component_id,
+                                              int const out_component_id) const;
+
     std::array<double, number_of_unknowns> pipeHeatConductions() const;
 
-    std::array<Eigen::Vector3d, number_of_unknowns> pipeAdvectionVectors()
-        const;
+    std::array<Eigen::Vector3d, number_of_unknowns> pipeAdvectionVectors(
+        Eigen::Vector3d const& /*elem_direction*/) const;
 
     double cross_section_area_inner_pipe, cross_section_area_annulus,
         cross_section_area_grout;

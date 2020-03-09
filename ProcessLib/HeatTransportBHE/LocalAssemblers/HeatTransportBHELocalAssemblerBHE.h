@@ -30,13 +30,13 @@ class HeatTransportBHELocalAssemblerBHE
 {
     static constexpr int bhe_unknowns = BHEType::number_of_unknowns;
     static constexpr int single_bhe_unknowns_size = ShapeFunction::NPOINTS;
-    static constexpr int temperature_size = ShapeFunction::NPOINTS;
-    static constexpr int temperature_index = 0;
+    static constexpr int soil_temperature_size = ShapeFunction::NPOINTS;
+    static constexpr int soil_temperature_index = 0;
     static constexpr int bhe_unknowns_size =
         single_bhe_unknowns_size * bhe_unknowns;
     static constexpr int bhe_unknowns_index = ShapeFunction::NPOINTS;
     static constexpr int local_matrix_size =
-        temperature_size + bhe_unknowns_size;
+        soil_temperature_size + bhe_unknowns_size;
 
 public:
     using ShapeMatricesType =
@@ -91,16 +91,18 @@ private:
 
     SecondaryData<typename ShapeMatrices::ShapeType> _secondary_data;
 
+    Eigen::Vector3d _element_direction;
+
     typename ShapeMatricesType::template MatrixType<bhe_unknowns_size,
                                                     bhe_unknowns_size>
         _R_matrix;
 
-    typename ShapeMatricesType::template MatrixType<temperature_size,
-                                                    temperature_size>
+    typename ShapeMatricesType::template MatrixType<soil_temperature_size,
+                                                    soil_temperature_size>
         _R_s_matrix;
 
     typename ShapeMatricesType::template MatrixType<bhe_unknowns_size,
-                                                    temperature_size>
+                                                    soil_temperature_size>
         _R_pi_s_matrix;
 };
 }  // namespace HeatTransportBHE

@@ -18,13 +18,9 @@ namespace HeatTransportBHE
 {
 namespace BHE
 {
-struct PipeConfigurationUType
+struct PipeConfiguration1PType
 {
-    Pipe const inlet;
-    Pipe const outlet;
-
-    /// Distance between pipes.
-    double const distance;
+    Pipe const single_pipe;
 
     double const longitudinal_dispersion_length;
 };

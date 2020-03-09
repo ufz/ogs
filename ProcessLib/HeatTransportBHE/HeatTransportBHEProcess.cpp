@@ -284,6 +284,7 @@ void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
         const int variable_id = bhe_i + 1;
 
         std::vector<MeshLib::Node*> bhe_boundary_nodes;
+
         // cherry-pick the boundary nodes according to
         // the number of connected line elements.
         for (auto const& bhe_node : bhe_nodes)
@@ -366,20 +367,31 @@ void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
                     bcs.addBoundaryCondition(
                         createBHEInflowDirichletBoundaryCondition(
                             get_global_bhe_bc_indices(
-                                {{{bc_top_node_id, in_out_component_id.first},
-                                  {bc_top_node_id,
-                                   in_out_component_id.second}}}),
+                                bhe.getBHEInflowDirichletBCNodesAndComponents(
+                                    bc_top_node_id, bc_bottom_node_id,
+                                    in_out_component_id.first)),
                             [&bhe](double const T, double const t) {
                                 return bhe.updateFlowRateAndTemperature(T, t);
                             }));
                 }
-                // Bottom, outflow, all cases
-                bcs.addBoundaryCondition(
-                    createBHEBottomDirichletBoundaryCondition(
-                        get_global_bhe_bc_indices(
-                            {{{bc_bottom_node_id, in_out_component_id.first},
-                              {bc_bottom_node_id,
-                               in_out_component_id.second}}})));
+
+                auto const bottom_nodes_and_components =
+                    bhe.getBHEBottomDirichletBCNodesAndComponents(
+                        bc_bottom_node_id,
+                        in_out_component_id.first,
+                        in_out_component_id.second);
+
+                if (bottom_nodes_and_components)
+                {
+                    // Bottom, outflow, all cases
+                    bcs.addBoundaryCondition(
+                        createBHEBottomDirichletBoundaryCondition(
+                            get_global_bhe_bc_indices(
+                                {{{bc_bottom_node_id, in_out_component_id.first},
+                                  {bc_bottom_node_id,
+                                   in_out_component_id.second}}})));
+                }
+
             }
         };
         visit(createBCs, _process_data._vec_BHE_property[bhe_i]);

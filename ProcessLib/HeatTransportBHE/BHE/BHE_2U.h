@@ -12,6 +12,7 @@
 
 #include <Eigen/Eigen>
 
+#include <optional>
 #include "BaseLib/Error.h"
 
 #include "BHECommon.h"
@@ -55,8 +56,8 @@ public:
 
     std::array<double, number_of_unknowns> pipeHeatConductions() const;
 
-    std::array<Eigen::Vector3d, number_of_unknowns> pipeAdvectionVectors()
-        const;
+    std::array<Eigen::Vector3d, number_of_unknowns> pipeAdvectionVectors(
+        Eigen::Vector3d const& /*elem_direction*/) const;
 
     template <int NPoints,
               typename SingleUnknownMatrixType,
@@ -199,6 +200,18 @@ public:
 
     static constexpr std::pair<int, int> inflow_outflow_bc_component_ids[] = {
         {0, 2}, {1, 3}};
+
+    std::array<std::pair<std::size_t /*node_id*/, int /*component*/>, 2>
+    getBHEInflowDirichletBCNodesAndComponents(
+        std::size_t const top_node_id,
+        std::size_t const /*bottom_node_id*/,
+        int const in_component_id) const;
+
+    std::optional<
+        std::array<std::pair<std::size_t /*node_id*/, int /*component*/>, 2>>
+    getBHEBottomDirichletBCNodesAndComponents(std::size_t const bottom_node_id,
+                                              int const in_component_id,
+                                              int const out_component_id) const;
 
 public:
     std::array<double, number_of_unknowns> crossSectionAreas() const;

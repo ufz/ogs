@@ -57,9 +57,17 @@ HeatTransportBHELocalAssemblerBHE<ShapeFunction, IntegrationMethod, BHEType>::
         _secondary_data.N[ip] = sm.N;
     }
 
+    // calculate the element direction vector
+    auto const p0 =
+        Eigen::Map<Eigen::Vector3d const>(e.getNode(0)->getCoords(), 3);
+    auto const p1 =
+        Eigen::Map<Eigen::Vector3d const>(e.getNode(1)->getCoords(), 3);
+
+    _element_direction = (p1 - p0).normalized();
+
     _R_matrix.setZero(bhe_unknowns_size, bhe_unknowns_size);
-    _R_pi_s_matrix.setZero(bhe_unknowns_size, temperature_size);
-    _R_s_matrix.setZero(temperature_size, temperature_size);
+    _R_pi_s_matrix.setZero(bhe_unknowns_size, soil_temperature_size);
+    _R_s_matrix.setZero(soil_temperature_size, soil_temperature_size);
     static constexpr int max_num_thermal_exchange_terms = 5;
     // formulate the local BHE R matrix
     for (int idx_bhe_unknowns = 0; idx_bhe_unknowns < bhe_unknowns;
@@ -131,7 +139,8 @@ void HeatTransportBHELocalAssemblerBHE<ShapeFunction, IntegrationMethod,
 
     auto const& pipe_heat_capacities = _bhe.pipeHeatCapacities();
     auto const& pipe_heat_conductions = _bhe.pipeHeatConductions();
-    auto const& pipe_advection_vectors = _bhe.pipeAdvectionVectors();
+    auto const& pipe_advection_vectors =
+        _bhe.pipeAdvectionVectors(_element_direction);
     auto const& cross_section_areas = _bhe.crossSectionAreas();
 
     // the mass and conductance matrix terms
@@ -187,18 +196,18 @@ void HeatTransportBHELocalAssemblerBHE<ShapeFunction, IntegrationMethod,
 
     // add the R_pi_s matrix to local_K
     local_K
-        .template block<bhe_unknowns_size, temperature_size>(bhe_unknowns_index,
-                                                             temperature_index)
+        .template block<bhe_unknowns_size, soil_temperature_size>(
+            bhe_unknowns_index, soil_temperature_index)
         .noalias() += _R_pi_s_matrix;
     local_K
-        .template block<temperature_size, bhe_unknowns_size>(temperature_index,
-                                                             bhe_unknowns_index)
+        .template block<soil_temperature_size, bhe_unknowns_size>(
+            soil_temperature_index, bhe_unknowns_index)
         .noalias() += _R_pi_s_matrix.transpose();
 
     // add the R_s matrix to local_K
     local_K
-        .template block<temperature_size, temperature_size>(temperature_index,
-                                                            temperature_index)
+        .template block<soil_temperature_size, soil_temperature_size>(
+            soil_temperature_index, soil_temperature_index)
         .noalias() += _bhe.number_of_grout_zones * _R_s_matrix;
 
     // debugging

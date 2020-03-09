@@ -87,7 +87,8 @@ BHECommonCoaxial::pipeHeatConductions() const
 }
 
 std::array<Eigen::Vector3d, BHECommonCoaxial::number_of_unknowns>
-BHECommonCoaxial::pipeAdvectionVectors() const
+BHECommonCoaxial::pipeAdvectionVectors(
+    Eigen::Vector3d const& /*elem_direction*/) const
 {
     double const rho_r = refrigerant.density;
     double const Cp_r = refrigerant.specific_heat_capacity;
@@ -128,6 +129,26 @@ BHECommonCoaxial::calcThermalResistances(double const Nu_inner_pipe,
         R_advective.b_annulus + R_conductive.annulus + R.conductive_b;
 
     return getThermalResistances(R_gs, R_ff, R_fg);
+}
+
+std::array<std::pair<std::size_t /*node_id*/, int /*component*/>, 2>
+BHECommonCoaxial::getBHEInflowDirichletBCNodesAndComponents(
+    std::size_t const top_node_id,
+    std::size_t const /*bottom_node_id*/,
+    int const in_component_id) const
+{
+    return {std::make_pair(top_node_id, in_component_id),
+            std::make_pair(top_node_id, in_component_id + 1)};
+}
+
+std::optional<
+    std::array<std::pair<std::size_t /*node_id*/, int /*component*/>, 2>>
+BHECommonCoaxial::getBHEBottomDirichletBCNodesAndComponents(
+    std::size_t const bottom_node_id, int const in_component_id,
+    int const out_component_id) const
+{
+    return {{std::make_pair(bottom_node_id, in_component_id),
+             std::make_pair(bottom_node_id, out_component_id)}};
 }
 
 void BHECommonCoaxial::updateHeatTransferCoefficients(double const flow_rate)

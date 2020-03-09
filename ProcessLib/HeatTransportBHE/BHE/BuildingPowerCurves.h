@@ -10,7 +10,10 @@
 
 #pragma once
 
-#include "Pipe.h"
+namespace MathLib
+{
+class PiecewiseLinearInterpolation;
+}
 
 namespace ProcessLib
 {
@@ -18,15 +21,10 @@ namespace HeatTransportBHE
 {
 namespace BHE
 {
-struct PipeConfigurationUType
+struct BuildingPowerCurves
 {
-    Pipe const inlet;
-    Pipe const outlet;
-
-    /// Distance between pipes.
-    double const distance;
-
-    double const longitudinal_dispersion_length;
+    MathLib::PiecewiseLinearInterpolation const& power_curve;
+    MathLib::PiecewiseLinearInterpolation const& cop_heating_curve;
 };
 }  // namespace BHE
 }  // namespace HeatTransportBHE
