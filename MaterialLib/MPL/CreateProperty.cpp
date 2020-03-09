@@ -29,7 +29,10 @@ namespace
 std::unique_ptr<MaterialPropertyLib::Property> createProperty(
     BaseLib::ConfigTree const& config,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
-    ParameterLib::CoordinateSystem const* const local_coordinate_system)
+    ParameterLib::CoordinateSystem const* const local_coordinate_system,
+    std::map<std::string,
+             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
+        curves)
 {
     using namespace MaterialPropertyLib;
     // Parsing the property type:
@@ -39,6 +42,10 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
     if (property_type == "Constant")
     {
         return createConstant(config);
+    }
+    if (property_type == "Curve")
+    {
+        return createCurveProperty(config, curves);
     }
     if (property_type == "Linear")
     {
@@ -138,7 +145,10 @@ namespace MaterialPropertyLib
 std::unique_ptr<PropertyArray> createProperties(
     boost::optional<BaseLib::ConfigTree> const& config,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
-    ParameterLib::CoordinateSystem const* const local_coordinate_system)
+    ParameterLib::CoordinateSystem const* const local_coordinate_system,
+    std::map<std::string,
+             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
+        curves)
 {
     if (!config)
     {
@@ -162,7 +172,7 @@ std::unique_ptr<PropertyArray> createProperties(
             property_config.getConfigParameter<std::string>("name");
         // Create a new property based on the configuration subtree:
         auto property = createProperty(
-            property_config, parameters, local_coordinate_system);
+            property_config, parameters, local_coordinate_system, curves);
 
         // Insert the new property at the right position into the components
         // private PropertyArray:

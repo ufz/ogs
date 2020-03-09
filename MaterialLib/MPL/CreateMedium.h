@@ -26,6 +26,10 @@ namespace ParameterLib
 struct ParameterBase;
 struct CoordinateSystem;
 }
+namespace MathLib
+{
+class PiecewiseLinearInterpolation;
+}
 
 namespace MaterialPropertyLib
 {
@@ -36,5 +40,8 @@ namespace MaterialPropertyLib
 std::unique_ptr<Medium> createMedium(
     BaseLib::ConfigTree const& config,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
-    ParameterLib::CoordinateSystem const* const local_coordinate_system);
+    ParameterLib::CoordinateSystem const* const local_coordinate_system,
+    std::map<std::string,
+             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
+        curves);
 }  // namespace MaterialPropertyLib

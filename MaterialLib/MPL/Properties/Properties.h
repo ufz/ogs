@@ -14,6 +14,7 @@
 #include "BishopsPowerLaw.h"
 #include "BishopsSaturationCutoff.h"
 #include "Constant.h"
+#include "CurveProperty.h"
 #include "DupuitPermeability.h"
 #include "ExponentialProperty.h"
 #include "IdealGasLaw.h"
