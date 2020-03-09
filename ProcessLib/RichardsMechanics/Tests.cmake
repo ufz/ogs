@@ -73,6 +73,24 @@ AddTest(
 )
 
 AddTest(
+    NAME RichardsMechanics_square_1e2_flow_fully_saturated_linear
+    PATH RichardsMechanics
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS flow_fully_saturated_linear.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    GLOB flow_fully_saturated_linear_pcs_0_ts_*.vtu displacement displacement 2e-14 0
+    GLOB flow_fully_saturated_linear_pcs_0_ts_*.vtu sigma sigma 6e-2 0
+    GLOB flow_fully_saturated_linear_pcs_0_ts_*.vtu epsilon epsilon 5e-12 0
+    GLOB flow_fully_saturated_linear_pcs_0_ts_*.vtu pressure pressure 1e-15 1e-15
+    GLOB flow_fully_saturated_linear_pcs_0_ts_*.vtu velocity velocity 1e-15 1e-15
+    GLOB flow_fully_saturated_linear_pcs_0_ts_*.vtu HydraulicFlow HydraulicFlow 1e-14 0
+    GLOB flow_fully_saturated_linear_pcs_0_ts_*.vtu NodalForces NodalForces 5e-2 0
+)
+
+AddTest(
     NAME RichardsMechanics_square_1e2_flow_fully_saturated_anisotropic
     PATH RichardsMechanics
     EXECUTABLE ogs

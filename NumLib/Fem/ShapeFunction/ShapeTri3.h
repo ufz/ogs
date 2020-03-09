@@ -55,6 +55,7 @@ public:
     using MeshElement = MeshLib::Tri;
     static const unsigned DIM = MeshElement::dimension;
     static const unsigned NPOINTS = MeshElement::n_all_nodes;
+    static constexpr int ORDER = 1;
 };
 
 }  // namespace NumLib
