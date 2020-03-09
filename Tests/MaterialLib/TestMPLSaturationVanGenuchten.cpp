@@ -9,6 +9,10 @@
  */
 #include <gtest/gtest.h>
 
+#include <cmath>
+#include <limits>
+#include <random>
+
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/MPL/Properties/SaturationVanGenuchten.h"
 #include "TestMPL.h"
@@ -67,5 +71,51 @@ TEST(MaterialPropertyLib, SaturationVanGenuchten)
             << "for capillary pressure " << -p_L << " and saturation " << S;
         ASSERT_LE(std::abs(dS2 - DS2), 1e-9)
             << "for capillary pressure " << -p_L << " and saturation " << S;
+    }
+}
+
+TEST(MaterialPropertyLib, CapillaryPressureVanGenuchten)
+{
+    double const residual_liquid_saturation = 0.1;
+    double const residual_gas_saturation = 0.05;
+    double const exponent = 0.79;
+    double const entry_pressure = 5000;
+    double const max_capillary_pressure = std::numeric_limits<double>::max();
+
+    MPL::Property const& pressure_saturation = MPL::SaturationVanGenuchten{
+        residual_liquid_saturation, residual_gas_saturation, exponent,
+        entry_pressure, max_capillary_pressure};
+
+    MPL::VariableArray variable_array;
+    ParameterLib::SpatialPosition const pos;
+    double const t = std::numeric_limits<double>::quiet_NaN();
+    double const dt = std::numeric_limits<double>::quiet_NaN();
+
+    std::random_device rd;
+    std::mt19937 mt(rd());
+    const double offset = std::sqrt(std::numeric_limits<double>::epsilon());
+    std::uniform_real_distribution<double> distributor(
+        residual_liquid_saturation + offset,
+        1.0 - residual_gas_saturation - offset);
+
+    const int n = 20;
+    for (int i = 0; i <= n; ++i)
+    {
+        double const S = distributor(mt);
+        variable_array[static_cast<int>(MPL::Variable::liquid_saturation)] = S;
+
+        const double computed_capillary_pressure =
+            pressure_saturation.template inverse_value<double>(variable_array,
+                                                               pos, t, dt);
+        variable_array[static_cast<int>(MPL::Variable::capillary_pressure)] =
+            computed_capillary_pressure;
+
+        const double re_computedS = pressure_saturation.template value<double>(
+            variable_array, pos, t, dt);
+
+        ASSERT_LE(std::abs(S - re_computedS), 1e-9)
+            << "for saturation " << S
+            << " and re-computed saturation via capillary pressure"
+            << re_computedS;
     }
 }
