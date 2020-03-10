@@ -27,8 +27,8 @@
 
 {{ define "latest-pages" }}
 <ul>
-{{ $pages := .Pages.ByLastmod.Reverse }}
-{{ range first 8 (where .Pages "CurrentSection.RelPermalink" "/docs/benchmarks/").ByLastmod.Reverse }}
+
+{{ range first 8 (where .Site.RegularPages "CurrentSection.RelPermalink" "/docs/benchmarks/").ByLastmod.Reverse }}
   <li>
     <!-- Two weeks -->
     <a href="{{ .Permalink }}">

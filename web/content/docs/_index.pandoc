@@ -15,7 +15,7 @@ icon = "fal fa-laptop-code"
 
 [[sections]]
 name = "Benchmarks"
-url = "/docs/benchmarks/elliptic/groundwater-flow-dirichlet/"
+url = "/docs/benchmarks/elliptic/elliptic-dirichlet/"
 text = "Basic benchmarks are explained and input files are provided to get you started in using OGS."
 icon = "fal fa-rabbit-fast"
 
