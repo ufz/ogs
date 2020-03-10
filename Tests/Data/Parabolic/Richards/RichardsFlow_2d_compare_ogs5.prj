@@ -218,17 +218,6 @@
             <type>Constant</type>
             <values>4.46e-13</values>
         </parameter>
-        <parameter>
-            <name>one</name>
-            <type>Constant</type>
-            <value>1</value>
-        </parameter>
-        <!--parameter>
-            <name>relative_permeability</name>
-            <type>CurveScaled</type>
-            <curve>relative_permeability</curve>
-            <parameter>one</parameter>
-        </parameter-->
     </parameters>
     <curves>
         <curve>
