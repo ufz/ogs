@@ -91,15 +91,15 @@
                             <type>Constant</type>
                             <value> 0.25 </value>
                         </property>
+                        <property>
+                            <name>porosity</name>
+                            <type>Constant</type>
+                            <value>0.25</value>
+                        </property>
                     </properties>
                 </phase>
             </phases>
             <properties>
-                <property>
-                    <name>porosity</name>
-                    <type>Constant</type>
-                    <value>0.25</value>
-                </property>
                 <property>
                     <name>permeability</name>
                     <type>Dupuit</type>

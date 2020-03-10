@@ -90,6 +90,11 @@
                             <type>Constant</type>
                             <value> 0.0 </value>
                         </property>
+                        <property>
+                            <name>porosity</name>
+                            <type>Constant</type>
+                            <value>1.0</value>
+                        </property>
                     </properties>
                 </phase>
             </phases>
@@ -98,11 +103,6 @@
                     <name>permeability</name>
                     <type>Dupuit</type>
                     <parameter_name>kappa1</parameter_name>
-                </property>
-                <property>
-                    <name>porosity</name>
-                    <type>Constant</type>
-                    <value>1.0</value>
                 </property>
                 <property>
                     <name>reference_temperature</name>

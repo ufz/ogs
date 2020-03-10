@@ -32,7 +32,6 @@ void checkMPLProperties(
 
     std::array const requiredPropertyMedium = {
         MaterialPropertyLib::reference_temperature,
-        MaterialPropertyLib::PropertyType::porosity,
         MaterialPropertyLib::PropertyType::permeability};
 
     std::array const requiredPropertyLiquidPhase = {
@@ -40,6 +39,7 @@ void checkMPLProperties(
         MaterialPropertyLib::PropertyType::density};
 
     std::array const requiredPropertySolidPhase = {
+        MaterialPropertyLib::PropertyType::porosity,
         MaterialPropertyLib::PropertyType::storage};
 
     for (auto const& element : mesh.getElements())

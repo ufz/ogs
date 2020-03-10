@@ -47,6 +47,11 @@
                             <type>Constant</type>
                             <value> 0.0 </value>
                         </property>
+                        <property>
+                            <name>porosity</name>
+                            <type>Constant</type>
+                            <value>1.0</value>
+                        </property>
                     </properties>
                 </phase>
             </phases>
@@ -55,11 +60,6 @@
                     <name>permeability</name>
                     <type>Constant</type>
                     <value>1e-15 0. 0. 1e-14</value>
-                </property>
-                <property>
-                    <name>porosity</name>
-                    <type>Constant</type>
-                    <value>1.0</value>
                 </property>
                 <property>
                     <name>reference_temperature</name>

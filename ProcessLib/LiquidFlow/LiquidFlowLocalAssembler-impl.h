@@ -176,7 +176,7 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
                     t, dt);
 
         auto const porosity =
-            medium->property(MaterialPropertyLib::PropertyType::porosity)
+            solid_phase.property(MaterialPropertyLib::PropertyType::porosity)
                 .template value<double>(vars, pos, t, dt);
         auto const storage =
             solid_phase.property(MaterialPropertyLib::PropertyType::storage)
