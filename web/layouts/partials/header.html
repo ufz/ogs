@@ -28,7 +28,7 @@
   <script async
     src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
   </script>
-  <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-LRlmVvLKVApDVGuspQFnRQJjkv0P7/YFrw84YYQtmYG4nK8c+M+NlmYDCv0rKWpG" crossorigin="anonymous">
+  <script src="https://kit.fontawesome.com/92e08dbd1e.js"></script>
 
 </head>
 
@@ -59,6 +59,13 @@
         <span class="lh-title ml3">{{ .Site.Params.alert | safeHTML }}</span>
       </div>
       {{ end }}
+    </div>
+    <div class="container {{if .IsHome}} hidden{{end}}">
+      <div class="w-auto">
+          <div class="text-xs header w-full" id="theHeader">
+              {{ partial "breadcrumb" . }}
+            </div>
+      </div>
     </div>
   </header>
   <div class="py-2">

@@ -5,8 +5,6 @@ project = "Elliptic/square_1x1_GroundWaterFlow/square_1e2_volumetricsourceterm.p
 author = "Tom Fischer"
 weight = 102
 
-aliases = [ "/docs/benchmarks/" ] # First benchmark page
-
 [menu]
   [menu.benchmarks]
     parent = "elliptic"

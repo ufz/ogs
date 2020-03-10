@@ -1,7 +1,7 @@
 <div class="container">
   <div class="flex flex-wrap">
     <div class="w-full md:w-1/2 px-4 md:px-2">
-      <h2 class="mt-0">Latest News</h2>
+      <h2 class="mt-0">News</h2>
       <div class="py-0 lg:px-4">
         <ul id="news">
         </ul>
@@ -9,11 +9,37 @@
     </div>
 
     <div class="w-full md:w-1/2 px-4 md:px-2">
-      <h2 class="mt-0">Latest Discussions</h2>
+      <h2 class="mt-0">Discussions</h2>
       <div class="py-0 lg:px-4">
         <ul id="discussions">
         </ul>
       </div>
     </div>
+
+    <div class="w-full px-4 md:px-2">
+      <h2 class="mt-0">Latest Benchmarks</h2>
+      <div class="py-0 lg:px-4">
+        {{ template "latest-pages" .}}
+      </div>
+    </div>
   </div>
 </div>
+
+{{ define "latest-pages" }}
+<ul>
+
+{{ range first 8 (where .Site.RegularPages "CurrentSection.RelPermalink" "/docs/benchmarks/").ByLastmod.Reverse }}
+  <li>
+    <!-- Two weeks -->
+    <a href="{{ .Permalink }}">
+
+      <span class="fa-layers fa-fw{{if gt (sub now.Unix .Lastmod.Unix) 1209600}} invisible{{end}}">
+        <i class="fas fa-certificate"></i>
+        <span class="fa-layers-text fa-inverse" data-fa-transform="shrink-11.5 rotate--30" style="font-weight:900">NEW</span>
+      </span>
+      {{ .Title }}
+    </a>
+  </li>
+{{ end }}
+</ul>
+{{ end }}

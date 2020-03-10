@@ -1,7 +1,7 @@
 {{ define "main" }}
   {{ partial "components/hero" .Params.hero }}
   <!-- {{ partial "components/quicklinks" .Params.hero }} -->
-  {{ partial "components/news" }}
+  {{ partial "components/news" . }}
   {{ range .Params.features }}
     {{ partial "components/feature" (dict "page" $ "feature" .) }}
   {{ end }}

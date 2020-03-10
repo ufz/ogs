@@ -3,25 +3,25 @@ title = "Documentation"
 
 [[sections]]
 name = "User Guide"
-url = "/docs/userguide"
+url = "/docs/userguide/basics/introduction/"
 text = "Download, install and run an OGS benchmark in 5 minutes! No development setup required."
 icon = "fal fa-users"
 
 [[sections]]
 name = "Developer Guide"
-url = "/docs/devguide"
+url = "/docs/devguide/getting-started/introduction/"
 text = "You want to contribute to the OpenGeoSys project or implement a custom feature? In the Developer Guide you will find everything to get you started into OpenGeoSys development. Experienced developers will find a comprehensive list of advanced development topics."
 icon = "fal fa-laptop-code"
 
 [[sections]]
-name = "Selected Benchmarks"
-url = "/docs/benchmarks"
+name = "Benchmarks"
+url = "/docs/benchmarks/elliptic/elliptic-dirichlet/"
 text = "Basic benchmarks are explained and input files are provided to get you started in using OGS."
 icon = "fal fa-rabbit-fast"
 
 [[sections]]
 name = "Tools & Workflows"
-url = "/docs/tools"
+url = "/docs/tools/getting-started/overview/"
 text = "Helpful tools for pre- and postprocessing as well as complete model setup workflows."
 icon = "fal fa-tools"
 

@@ -4,8 +4,6 @@ title = "Welcome!"
 author = "Lars Bilke"
 weight = 1001
 
-aliases = [ "/docs/devguide/" ] # First devguide page
-
 [menu]
   [menu.devguide]
     parent = "getting-started"

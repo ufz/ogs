@@ -1,5 +1,5 @@
 import vtkURLExtract              from 'vtk.js/Sources/Common/Core/URLExtract';
-import vis from './vis';
+import vis from '.';
 
 const userParams = vtkURLExtract.extractURLParameters();
 
