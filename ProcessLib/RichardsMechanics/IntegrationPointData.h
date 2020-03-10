@@ -61,6 +61,8 @@ struct IntegrationPointData final
     double saturation_prev = std::numeric_limits<double>::quiet_NaN();
     double porosity = std::numeric_limits<double>::quiet_NaN();
     double porosity_prev = std::numeric_limits<double>::quiet_NaN();
+    double transport_porosity = std::numeric_limits<double>::quiet_NaN();
+    double transport_porosity_prev = std::numeric_limits<double>::quiet_NaN();
 
     MaterialLib::Solids::MechanicsBase<DisplacementDim> const& solid_material;
     std::unique_ptr<typename MaterialLib::Solids::MechanicsBase<
@@ -75,7 +77,31 @@ struct IntegrationPointData final
         sigma_sw_prev = sigma_sw;
         saturation_prev = saturation;
         porosity_prev = porosity;
+        transport_porosity_prev = transport_porosity;
         material_state_variables->pushBackState();
+    }
+
+    typename BMatricesType::KelvinMatrixType computeElasticTangentStiffness(
+        double const t,
+        ParameterLib::SpatialPosition const& x_position,
+        double const dt,
+        double const temperature)
+    {
+        using KV = MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
+        auto const null_state = solid_material.createMaterialStateVariables();
+        KV const zero = KV::Zero();
+        auto&& solution = solid_material.integrateStress(
+            t, x_position, dt, zero, zero, zero, *null_state, temperature);
+
+        if (!solution)
+        {
+            OGS_FATAL("Computation of elastic tangent stiffness failed.");
+        }
+
+        MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> C =
+            std::move(std::get<2>(*solution));
+
+        return C;
     }
 
     template <typename DisplacementVectorType>

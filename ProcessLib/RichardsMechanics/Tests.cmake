@@ -207,6 +207,24 @@ AddTest(
     GLOB deformation_dependent_porosity_pcs_0_ts_*.vtu porosity_avg porosity_avg 1e-14 1e-15
 )
 AddTest(
+    NAME RichardsMechanics_deformation_dependent_porosity_swelling
+    PATH RichardsMechanics
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS deformation_dependent_porosity_swelling.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    GLOB deformation_dependent_porosity_swelling_pcs_0_ts_*.vtu pressure pressure 5e-11 1e-15
+    GLOB deformation_dependent_porosity_swelling_pcs_0_ts_*.vtu saturation saturation 1e-14 0
+    GLOB deformation_dependent_porosity_swelling_pcs_0_ts_*.vtu displacement displacement 5e-11 0
+    GLOB deformation_dependent_porosity_swelling_pcs_0_ts_*.vtu sigma sigma 1e-14 0
+    GLOB deformation_dependent_porosity_swelling_pcs_0_ts_*.vtu epsilon epsilon 1e-14 0
+    GLOB deformation_dependent_porosity_swelling_pcs_0_ts_*.vtu velocity velocity 5e-14 0
+    GLOB deformation_dependent_porosity_swelling_pcs_0_ts_*.vtu porosity porosity 5e-14 1e-15
+    GLOB deformation_dependent_porosity_swelling_pcs_0_ts_*.vtu porosity_avg porosity_avg 1e-14 1e-15
+)
+AddTest(
     NAME RichardsMechanics_orthotropic_power_law_permeability_xyz
     PATH RichardsMechanics
     EXECUTABLE ogs
@@ -220,7 +238,7 @@ AddTest(
     GLOB orthotropic_power_law_permeability_xyz_pcs_0_ts_*.vtu displacement displacement 5e-11 0
     GLOB orthotropic_power_law_permeability_xyz_pcs_0_ts_*.vtu sigma sigma 2e-14 0
     GLOB orthotropic_power_law_permeability_xyz_pcs_0_ts_*.vtu epsilon epsilon 1e-14 0
-    GLOB orthotropic_power_law_permeability_xyz_pcs_0_ts_*.vtu velocity velocity 5e-14 0
+    GLOB orthotropic_power_law_permeability_xyz_pcs_0_ts_*.vtu velocity velocity 7e-14 0
     GLOB orthotropic_power_law_permeability_xyz_pcs_0_ts_*.vtu porosity porosity 5e-14 1e-15
     GLOB orthotropic_power_law_permeability_xyz_pcs_0_ts_*.vtu porosity_avg porosity_avg 5e-14 1e-15
 )

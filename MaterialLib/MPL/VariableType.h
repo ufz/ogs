@@ -51,6 +51,7 @@ enum class Variable : int
     liquid_saturation,
     liquid_saturation_rate,
     porosity,
+    transport_porosity,
     displacement,
     strain,
     stress,

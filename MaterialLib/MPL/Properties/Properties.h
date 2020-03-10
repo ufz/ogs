@@ -27,3 +27,4 @@
 #include "SaturationDependentSwelling.h"
 #include "SaturationLiakopoulos.h"
 #include "SaturationVanGenuchten.h"
+#include "TransportPorosityFromMassBalance.h"
