@@ -59,7 +59,7 @@ find_program(MODULE_CMD modulecmd
 ######################
 ### Find libraries ###
 ######################
-find_package(Boost 1.62.0 REQUIRED)
+find_package(Boost ${ogs.minimum_version.boost} REQUIRED)
 
 set(VTK_COMPONENTS vtkIOXML)
 if(OGS_BUILD_GUI)
@@ -73,10 +73,10 @@ endif()
 if(OGS_USE_MPI)
     set(VTK_COMPONENTS ${VTK_COMPONENTS} vtkIOParallelXML vtkParallelMPI)
 endif()
-find_package(VTK 8.1.2 REQUIRED COMPONENTS ${VTK_COMPONENTS})
+find_package(VTK ${ogs.minimum_version.vtk} REQUIRED COMPONENTS ${VTK_COMPONENTS})
 include(${VTK_USE_FILE})
 
-find_package(Eigen3 3.3.4 REQUIRED)
+find_package(Eigen3 ${ogs.minimum_version.eigen} REQUIRED)
 include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
 
 ## pthread, is a requirement of logog ##
@@ -108,7 +108,7 @@ if(OGS_BUILD_GUI)
     if(OGS_USE_CONAN AND UNIX AND NOT APPLE)
         set(QT_MODULES ${QT_MODULES} X11Extras)
     endif()
-    find_package(Qt5 5.2 REQUIRED ${QT_MODULES})
+    find_package(Qt5 ${ogs.minimum_version.qt} REQUIRED ${QT_MODULES})
     cmake_policy(SET CMP0020 NEW)
 endif()
 
@@ -155,7 +155,7 @@ if(OGS_USE_PETSC)
         set(PETSC_EXECUTABLE_RUNS YES)
     endif()
 
-    find_package(PETSc REQUIRED)
+    find_package(PETSc ${ogs.minimum_version.petsc} REQUIRED)
 
     include_directories(SYSTEM ${PETSC_INCLUDES})
 

@@ -25,9 +25,9 @@ endif()
 include(${PROJECT_SOURCE_DIR}/scripts/cmake/conan/conan.cmake)
 
 set(CONAN_REQUIRES
-    boost/1.66.0@conan/stable
-    eigen/3.3.4@conan/stable
-    vtk/8.2.0@bilke/stable
+    boost/${ogs.minimum_version.boost}@conan/stable
+    eigen/${ogs.minimum_version.eigen}@conan/stable
+    vtk/${ogs.tested_version.vtk}@bilke/stable
     CACHE INTERNAL ""
 )
 
@@ -74,9 +74,9 @@ if(OGS_BUILD_GUI)
         zlib/1.2.11
     )
     if(UNIX)
-        set(CONAN_REQUIRES ${CONAN_REQUIRES} qt/5.14.1@bincrafters/stable)
+        set(CONAN_REQUIRES ${CONAN_REQUIRES} qt/${ogs.tested_version.qt.linux}@bincrafters/stable)
     else()
-        set(CONAN_REQUIRES ${CONAN_REQUIRES} qt/5.13.2@bincrafters/stable)
+        set(CONAN_REQUIRES ${CONAN_REQUIRES} qt/${ogs.tested_version.qt.win}@bincrafters/stable)
     endif()
     set(CONAN_OPTIONS ${CONAN_OPTIONS}
         vtk:minimal=False

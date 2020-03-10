@@ -19,13 +19,13 @@ We strongly recommend to simply use [Conan]({{< ref "conan.pandoc" >}}) for hand
 
 The following libraries are required:
 
-- [Boost](http://www.boost.org/) >= 1.56.0
-- [Eigen](http://eigen.tuxfamily.org/) >= 3.2.9
-- [VTK](https://www.vtk.org/) >= 7.1.0
+- [Boost](http://www.boost.org/) >= {{< dataFile "versions.minimum_version.boost" >}}
+- [Eigen](http://eigen.tuxfamily.org/) >= {{< dataFile "versions.minimum_version.eigen" >}}
+- [VTK](https://www.vtk.org/) >= {{< dataFile "versions.minimum_version.vtk" >}}
 
 If you want to build the Data Explorer you need these too:
 
-- [Qt](https://www.qt.io/) >= 5.9.2
+- [Qt](https://www.qt.io/) >= {{< dataFile "versions.minimum_version.qt" >}}
 - [Shapelib](http://shapelib.maptools.org) >= 1.3.0
 - [libgeotiff](https://trac.osgeo.org/geotiff/) >= 1.4.2
 
