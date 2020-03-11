@@ -11,11 +11,12 @@
  *
  */
 
-#include "MaterialLib/MPL/Properties/RelPermLiakopoulos.h"
-#include "MaterialLib/MPL/Medium.h"
+#include "RelPermLiakopoulos.h"
 
 #include <algorithm>
 #include <cmath>
+
+#include "MaterialLib/MPL/Medium.h"
 
 namespace MaterialPropertyLib
 {

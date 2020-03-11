@@ -15,7 +15,7 @@
 #include "Tests/TestTools.h"
 
 #include "MaterialLib/MPL/Medium.h"
-#include "MaterialLib/MPL/Properties/RelPermLiakopoulos.h"
+#include "MaterialLib/MPL/Properties/RelativePermeability/RelPermLiakopoulos.h"
 
 TEST(MaterialPropertyLib, RelPermLiakopoulos)
 {

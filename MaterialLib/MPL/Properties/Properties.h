@@ -24,8 +24,9 @@
 #include "LinearProperty.h"
 #include "ParameterProperty.h"
 #include "PorosityFromMassBalance.h"
-#include "RelPermBrooksCorey.h"
-#include "RelPermLiakopoulos.h"
-#include "RelPermVanGenuchten.h"
+#include "RelativePermeability/RelPermBrooksCorey.h"
+#include "RelativePermeability/RelPermLiakopoulos.h"
+#include "RelativePermeability/RelPermVanGenuchten.h"
+
 #include "SaturationDependentSwelling.h"
 #include "TransportPorosityFromMassBalance.h"
