@@ -10,6 +10,7 @@
 
 #include "CreateRichardsFlowProcess.h"
 
+#include "MaterialLib/MPL/CheckMaterialSpatialDistributionMap.h"
 #include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
 #include "ParameterLib/ConstantParameter.h"
 #include "ParameterLib/Utils.h"
@@ -27,34 +28,23 @@ void checkMPLProperties(
     MeshLib::Mesh const& mesh,
     MaterialPropertyLib::MaterialSpatialDistributionMap const& media_map)
 {
-    std::array const requiredPropertyMedium = {
+    std::array const required_medium_properties = {
         MaterialPropertyLib::PropertyType::reference_temperature,
         MaterialPropertyLib::PropertyType::saturation,
         MaterialPropertyLib::PropertyType::relative_permeability};
 
-    std::array const requiredPropertyLiquidPhase = {
+    std::array const required_liquid_properties = {
         MaterialPropertyLib::PropertyType::viscosity,
         MaterialPropertyLib::PropertyType::density};
 
-    std::array const requiredPropertySolidPhase = {
+    std::array const required_solid_properties = {
         MaterialPropertyLib::PropertyType::porosity,
         MaterialPropertyLib::PropertyType::storage,
         MaterialPropertyLib::PropertyType::permeability};
 
-    for (auto const& element : mesh.getElements())
-    {
-        auto const element_id = element->getID();
-
-        auto const& medium = *media_map.getMedium(element_id);
-        MaterialPropertyLib::checkRequiredProperties(
-            medium, requiredPropertyMedium);
-
-        MaterialPropertyLib::checkRequiredProperties(
-            medium.phase("AqueousLiquid"), requiredPropertyLiquidPhase);
-
-        MaterialPropertyLib::checkRequiredProperties(
-            medium.phase("Solid"), requiredPropertySolidPhase);
-    }
+    MaterialPropertyLib::checkMaterialSpatialDistributionMap(
+        mesh, media_map, required_medium_properties, required_solid_properties,
+        required_liquid_properties);
 }
 
 std::unique_ptr<Process> createRichardsFlowProcess(
@@ -112,7 +102,7 @@ std::unique_ptr<Process> createRichardsFlowProcess(
         MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
 
     DBUG("Check the media properties of RichardsFlow process ...");
-    checkMPLProperties(mesh, *media_map.get());
+    checkMPLProperties(mesh, *media_map);
     DBUG("Media properties verified.");
 
     RichardsFlowProcessData process_data{
