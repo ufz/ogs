@@ -15,7 +15,7 @@
 #include "Tests/TestTools.h"
 
 #include "MaterialLib/MPL/Medium.h"
-#include "MaterialLib/MPL/Properties/SaturationLiakopoulos.h"
+#include "MaterialLib/MPL/Properties/CapillaryPressureSaturation/SaturationLiakopoulos.h"
 
 TEST(MaterialPropertyLib, SaturationLiakopoulos)
 {

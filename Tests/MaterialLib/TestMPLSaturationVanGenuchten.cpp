@@ -10,7 +10,7 @@
 #include <gtest/gtest.h>
 
 #include "MaterialLib/MPL/Medium.h"
-#include "MaterialLib/MPL/Properties/SaturationVanGenuchten.h"
+#include "MaterialLib/MPL/Properties/CapillaryPressureSaturation/SaturationVanGenuchten.h"
 #include "TestMPL.h"
 #include "Tests/TestTools.h"
 
