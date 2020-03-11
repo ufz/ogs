@@ -46,19 +46,24 @@ disableKinds = ["taxonomyTerm"]
   weight = 3
 
 [[menu.devguide]]
+  name = "Documentation"
+  identifier = "documentation"
+  weight = 4
+
+[[menu.devguide]]
   name = "Advanced"
   identifier = "advanced"
-  weight = 4
+  weight = 5
 
 [[menu.devguide]]
   name = "Troubleshooting"
   identifier = "troubleshooting"
-  weight = 5
+  weight = 6
 
 [[menu.devguide]]
   name = "Procedures"
   identifier = "procedures"
-  weight = 6
+  weight = 7
 
 # Benchmarks sidebar top-level categories
 [[menu.benchmarks]]

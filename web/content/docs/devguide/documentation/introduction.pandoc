@@ -1,12 +1,22 @@
++++
+date = "2018-02-23T15:28:13+01:00"
+title = "Introduction"
+author = "Lars Bilke"
+weight = 1024
+
+[menu]
+  [menu.devguide]
+    parent = "documentation"
++++
+
 ## The big picture
 
-- Development related content such as developer guide, benchmark documentation, tools description, ... will be simple Markdown files in e.g. [/web/content/docs](https://www.opengeosys.org/docs/benchmarks/elliptic/elliptic-neumann)
-- You can preview documentation locally with [Hugo](https://gohugo.io) – a static site generator
-- You can [mark](https://github.com/bilke/ogs/blob/web-hugo/ProcessLib/GroundwaterFlow/CMakeLists.txt#L80) benchmarks to be automatically and interactively visualized [in the documentation](https://github.com/bilke/ogs/commit/d4fc7d94a3821a6b4483a1d7aeaabd6ee391c449#diff-2f5b1ac2a759aa09b2d3f5cc1ece45ceR108) inside your [browser](https://www.opengeosys.org/docs/benchmarks/elliptic/elliptic-neumann/#results-and-evaluation) via [vtk.js](https://kitware.github.io/vtk-js/)! 🍻 CURRENTLY DISABLED!
+- Development related content such as developer guide, benchmark documentation, tools description, ... are simple Markdown files in e.g. [/web/content/docs](https://www.opengeosys.org/docs/benchmarks/elliptic/elliptic-neumann)
+- You can preview documentation locally with [Hugo](https://gohugo.io) – a static site generator (minimum version: {{< dataFile "versions.minimum_version.hugo" >}})
 
 ## Requirements
 
-- Download [Hugo](https://github.com/gohugoio/hugo/releases/latest) and put it in your `PATH`. **Attention:** Use the *extended* version: e.g. `hugo_extended_0.60.1_Windows-64bit.zip`
+- Download [Hugo](https://github.com/gohugoio/hugo/releases/latest) and put it in your `PATH`. **Attention:** Use the *extended* version: e.g. `hugo_extended_{{< dataFile "versions.minimum_version.hugo" >}}_Windows-64bit.zip`
 - [Install Pandoc](https://pandoc.org/installing.html)
 - Install [Yarn](https://yarnpkg.com/en/docs/install); for downloading required JavaScript & CSS development packages
 
@@ -15,7 +25,7 @@
 - Inside the source-directory `ogs/web`:
   - Run `yarn` once (this will install required css and js packages)
   - Run `hugo server`
-  - Open http://localhost:1313
+  - Open [http://localhost:1313](http://localhost:1313)
 
 As you make modifications to the site it will be rebuild and the page in the browser gets reloaded.
 
@@ -74,32 +84,6 @@ The path to the image can be absolute (by preceding with `/`) or relative. The r
 
 See the [Pandoc Help](https://pandoc.org/MANUAL.html#images) for more options on e.g. image size and captions.
 
-#### Visualizations
-
-CURRENTLY DISABLED!
-
-Use shortcode `vis`:
-
-```go
-{{< vis path="Elliptic/square_1x1_GroundWaterFlow/square_1e2_pcs_0_ts_1_t_1.000000.vtu" [height="300"] >}}
-```
-
-`path` is relative to `ogs/web/static/vis/` and points to a converted data set, see below.
-
-Optional parameters:
-
-- `height` - In px
-
-----
-
-You can convert VTK output files to vtk.js format with:
-
-```bash
-npm run convert -- -e -i vtk-file.vtu -o output/path
-```
-
-Run `npm run convert` to get a list of possible arguments.
-
 #### Equations
 
 Equations can be set with typical LaTeX syntax by using [MathJax](https://www.mathjax.org/). Blocks are defined by `$$` at the beginning and `$$` at the end of the block. Inline math uses one `$` as the delimiter. For more usage instructions see the [MathJax LaTeX help](http://docs.mathjax.org/en/latest/tex.html).
@@ -110,11 +94,8 @@ Files belonging directly to a page (e.g. images shown on that same page) should 
 
 #### Bibliography references
 
-Bibliography items from *Documentation/bibliography.bib* can be referenced by their id with the `bib`-shortcode:
+Bibliography items from *Documentation/bibliography.bib* can be referenced by their id with the [`bib`-shortcode](https://github.com/ufz/ogs/blob/f0ebe2e5c9507039a6776c7cb2989a35790bce2f/web/content/docs/benchmarks/bgr_verification_examples/thermomechanics.pandoc#L42-L46).
 
-```go
-{{< bib id="Kolditz2012" >}}
-```
 
 The bib-file has to be converted into a json-file with the [pandoc-citeproc](https://github.com/jgm/pandoc-citeproc)-tool:
 
@@ -129,10 +110,6 @@ This json-file is then used by the shortcode.
 
 ## Advanced topics
 
-### Optional requirements
-
-- Install [ParaView](http://www.paraview.org/download/); for converting VTK output files to vtk.js-format for interactive web visualization, check if `pvpython` is either in the `PATH` or ParaView is installed in `/Applications/` on macOS or `/usr/local/opt/paraview` on Linux. CURRENTLY DISABLED!
-
 ### Update search index
 
 ```bash
@@ -143,7 +120,6 @@ ALGOLIA_WRITE_KEY=XXX node_modules/.bin/hugo-algolia --toml -s
 
 - [Hugo](https://gothugo.com) - Web site generator
 - [Tailwind](https://tailwindcss.com/docs/what-is-tailwind) - CSS framework
-- [vtk.js](https://kitware.github.io/vtk-js/) - 3D Visualizations, CURRENTLY DISABLED!
 - [FontAwesome](https://fontawesome.com) - Icons, see [icon search](https://fontawesome.com/icons?d=gallery)
 - [Slick Carousel](http://kenwheeler.github.io/slick/) & [FancyBox](https://fancyapps.com/fancybox/3/) for image galleries
 - [Algolia](https://github.com/algolia/algoliasearch-client-javascript) for site search
