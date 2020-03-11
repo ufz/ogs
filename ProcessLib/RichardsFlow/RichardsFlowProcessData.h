@@ -9,22 +9,25 @@
  */
 
 #pragma once
-#include "RichardsFlowMaterialProperties.h"
+
+#include <memory>
+
+namespace MaterialPropertyLib
+{
+class MaterialSpatialDistributionMap;
+}
 
 namespace ProcessLib
 {
-template <typename T>
-struct Parameter;
-
 namespace RichardsFlow
 {
 struct RichardsFlowProcessData
 {
-    std::unique_ptr<RichardsFlowMaterialProperties> material;
+    std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>
+        media_map;
     Eigen::VectorXd const specific_body_force;
     bool const has_gravity;
     bool const has_mass_lumping;
-    ParameterLib::Parameter<double> const& temperature;
 };
 
 }  // namespace RichardsFlow

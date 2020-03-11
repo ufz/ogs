@@ -69,6 +69,59 @@
             <temperature> temp </temperature>
         </process>
     </processes>
+    <media>
+        <medium id="0">
+            <phases>
+                <phase>
+                    <type>AqueousLiquid</type>
+                    <properties>
+                        <property>
+                            <name>viscosity</name>
+                            <type>Constant</type>
+                            <value> 1.e-3 </value>
+                        </property>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value> 1.e3 </value>
+                        </property>
+                    </properties>
+                </phase>
+                <phase>
+                    <type>Solid</type>
+                    <properties>
+                        <property>
+                            <name>storage</name>
+                            <type>Constant</type>
+                            <value> 0.0 </value>
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+            <properties>
+                <property>
+                    <name>permeability</name>
+                    <type>Constant</type>
+                    <value>4.46e-13</value>
+                </property>
+                <property>
+                    <name>relative_permeability</name>
+                    <type>Parameter</type>
+                    <parameter_name>relative_permeability</parameter_name>
+                </property>
+                <property>
+                    <name>porosity</name>
+                    <type>Constant</type>
+                    <value>0.38</value>
+                </property>
+                <property>
+                    <name>reference_temperature</name>
+                    <type>Constant</type>
+                    <value>293.15</value>
+                </property>
+            </properties>
+        </medium>
+    </media>
     <time_loop>
         <processes>
             <process ref="GW23">
@@ -158,7 +211,27 @@
             <type>Constant</type>
             <values>4.46e-13</values>
         </parameter>
+        <parameter>
+            <name>one</name>
+            <type>Constant</type>
+            <value>1</value>
+        </parameter>
+        <parameter>
+            <name>relative_permeability</name>
+            <type>CurveScaled</type>
+            <curve>relative_permeability</curve>
+            <parameter>one</parameter>
+        </parameter>
     </parameters>
+    <curves>
+        <curve>
+            <name>relative_permeability</name>
+            <coords>0.26315789 0.39473684 0.52631579 0.57894737 0.63157895 0.65789474 0.78947368 0.81578947 0.84210526 0.86842105 0.89473684 0.92105263 0.94894737 0.96052632 0.97368421 0.98684211 1
+                </coords>
+            <values>4.43E-05 0.00026547 0.00159003 0.00325358 0.00665757 0.00952343 0.05704014 0.08159396 0.11671736 0.16696017 0.23883078 0.34163922 0.49931406 0.58449912 0.69907308 0.8361059 1
+                </values>
+        </curve>
+    </curves>
     <process_variables>
         <process_variable>
             <name>pressure</name>

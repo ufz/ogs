@@ -34,11 +34,7 @@ public:
         std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>&&
             process_variables,
         RichardsFlowProcessData&& process_data,
-        SecondaryVariableCollection&& secondary_variables,
-        BaseLib::ConfigTree const& config,
-        std::map<std::string,
-                 std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-            curves);
+        SecondaryVariableCollection&& secondary_variables);
 
     //! \name ODESystem interface
     //! @{

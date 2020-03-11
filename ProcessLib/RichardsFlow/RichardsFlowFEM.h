@@ -12,6 +12,10 @@
 
 #include <vector>
 
+#include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
+#include "MaterialLib/MPL/Medium.h"
+#include "MaterialLib/MPL/Utils/FormEigenTensor.h"
+#include "MaterialLib/MPL/VariableType.h"
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/DOF/DOFTableUtil.h"
@@ -128,7 +132,7 @@ public:
         }
     }
 
-    void assemble(double const t, double const /*dt*/,
+    void assemble(double const t, double const dt,
                   std::vector<double> const& local_x,
                   std::vector<double> const& /*local_xdot*/,
                   std::vector<double>& local_M_data,
@@ -151,63 +155,86 @@ public:
             _integration_method.getNumberOfPoints();
         ParameterLib::SpatialPosition pos;
         pos.setElementID(_element.getID());
-        const int material_id =
-            _process_data.material->getMaterialID(_element.getID());
-        const Eigen::MatrixXd& perm = _process_data.material->getPermeability(
-            material_id, t, pos, _element.getDimension());
-        assert(perm.rows() == _element.getDimension() || perm.rows() == 1);
-        GlobalDimMatrixType permeability = GlobalDimMatrixType::Zero(
-            _element.getDimension(), _element.getDimension());
-        if (perm.rows() == _element.getDimension())
-        {
-            permeability = perm;
-        }
-        else if (perm.rows() == 1)
-        {
-            permeability.diagonal().setConstant(perm(0, 0));
-        }
+
+        auto const& medium =
+            *_process_data.media_map->getMedium(_element.getID());
+        auto const& liquid_phase = medium.phase("AqueousLiquid");
+        auto const& solid_phase = medium.phase("Solid");
+        MaterialPropertyLib::VariableArray vars;
+        vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
+            medium
+                .property(
+                    MaterialPropertyLib::PropertyType::reference_temperature)
+                .template value<double>(vars, pos, t, dt);
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             pos.setIntegrationPoint(ip);
             double p_int_pt = 0.0;
             NumLib::shapeFunctionInterpolate(local_x, _ip_data[ip].N, p_int_pt);
-            const double& temperature = _process_data.temperature(t, pos)[0];
-            auto const porosity = _process_data.material->getPorosity(
-                material_id, t, pos, p_int_pt, temperature, 0);
 
-            double const pc_int_pt = -p_int_pt;
+            vars[static_cast<int>(
+                MaterialPropertyLib::Variable::phase_pressure)] = p_int_pt;
+            vars[static_cast<int>(
+                MaterialPropertyLib::Variable::capillary_pressure)] = -p_int_pt;
 
-            double const Sw = _process_data.material->getSaturation(
-                material_id, t, pos, p_int_pt, temperature, pc_int_pt);
+            auto const permeability =
+                MaterialPropertyLib::formEigenTensor<GlobalDim>(
+                    solid_phase.property(MaterialPropertyLib::permeability)
+                        .value(vars, pos, t, dt));
+
+            auto const porosity =
+                solid_phase.property(MaterialPropertyLib::PropertyType::porosity)
+                    .template value<double>(vars, pos, t, dt);
+
+            double const Sw =
+                medium
+                    .property(MaterialPropertyLib::PropertyType::saturation)
+                    .template value<double>(vars, pos, t, dt);
             _saturation[ip] = Sw;
+            vars[static_cast<int>(
+                MaterialPropertyLib::Variable::liquid_saturation)] = Sw;
 
             double const dSw_dpc =
-                _process_data.material->getSaturationDerivative(
-                    material_id, t, pos, p_int_pt, temperature, Sw);
+                medium
+                    .property(MaterialPropertyLib::PropertyType::saturation)
+                    .template dValue<double>(
+                        vars, MaterialPropertyLib::Variable::capillary_pressure,
+                        pos, t, dt);
 
-            // \TODO Extend to pressure dependent density.
-            double const drhow_dp(0.0);
-            auto const storage = _process_data.material->getStorage(
-                material_id, t, pos, p_int_pt, temperature, 0);
+            auto const drhow_dp =
+                liquid_phase
+                    .property(MaterialPropertyLib::PropertyType::density)
+                    .template dValue<double>(
+                        vars, MaterialPropertyLib::Variable::phase_pressure,
+                        pos, t, dt);
+            auto const storage =
+                solid_phase.property(MaterialPropertyLib::PropertyType::storage)
+                    .template value<double>(vars, pos, t, dt);
             double const mass_mat_coeff =
                 storage * Sw + porosity * Sw * drhow_dp - porosity * dSw_dpc;
 
             local_M.noalias() += mass_mat_coeff * _ip_data[ip].mass_operator;
 
             double const k_rel =
-                _process_data.material->getRelativePermeability(
-                    t, pos, p_int_pt, temperature, Sw);
-            auto const mu = _process_data.material->getFluidViscosity(
-                p_int_pt, temperature);
+                medium
+                    .property(MaterialPropertyLib::PropertyType::
+                                  relative_permeability)
+                    .template value<double>(vars, pos, t, dt);
+
+            auto const mu =
+                liquid_phase.property(MaterialPropertyLib::viscosity)
+                    .template value<double>(vars, pos, t, dt);
             local_K.noalias() += _ip_data[ip].dNdx.transpose() * permeability *
                                  _ip_data[ip].dNdx *
                                  _ip_data[ip].integration_weight * (k_rel / mu);
 
             if (_process_data.has_gravity)
             {
-                auto const rho_w = _process_data.material->getFluidDensity(
-                    p_int_pt, temperature);
+                auto const rho_w =
+                    liquid_phase
+                        .property(MaterialPropertyLib::PropertyType::density)
+                        .template value<double>(vars, pos, t, dt);
                 auto const& body_force = _process_data.specific_body_force;
                 assert(body_force.size() == GlobalDim);
                 NodalVectorType gravity_operator =
@@ -252,7 +279,9 @@ public:
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const override
     {
-        auto const num_intpts = _shape_matrices.size();
+        // TODO (tf) Temporary value not used by current material models. Need
+        // extension of secondary variable interface
+        double const dt = std::numeric_limits<double>::quiet_NaN();
 
         constexpr int process_id = 0;  // monolithic scheme.
         auto const indices =
@@ -260,56 +289,70 @@ public:
         assert(!indices.empty());
         auto const local_x = x[process_id]->get(indices);
 
-        cache.clear();
-        auto cache_vec = MathLib::createZeroedMatrix<
-            Eigen::Matrix<double, GlobalDim, Eigen::Dynamic, Eigen::RowMajor>>(
-            cache, GlobalDim, num_intpts);
-
         ParameterLib::SpatialPosition pos;
         pos.setElementID(_element.getID());
-        const int material_id =
-            _process_data.material->getMaterialID(_element.getID());
 
-        const Eigen::MatrixXd& perm = _process_data.material->getPermeability(
-            material_id, t, pos, _element.getDimension());
-        assert(perm.rows() == _element.getDimension() || perm.rows() == 1);
-        GlobalDimMatrixType permeability = GlobalDimMatrixType::Zero(
-            _element.getDimension(), _element.getDimension());
-        if (perm.rows() == _element.getDimension())
-        {
-            permeability = perm;
-        }
-        else if (perm.rows() == 1)
-        {
-            permeability.diagonal().setConstant(perm(0, 0));
-        }
+        auto const& medium =
+            *_process_data.media_map->getMedium(_element.getID());
+        auto const& liquid_phase = medium.phase("AqueousLiquid");
+        auto const& solid_phase = medium.phase("Solid");
+
+        MaterialPropertyLib::VariableArray vars;
+        vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
+            medium
+                .property(
+                    MaterialPropertyLib::PropertyType::reference_temperature)
+                .template value<double>(vars, pos, t, dt);
+
+        auto const p_nodal_values = Eigen::Map<const NodalVectorType>(
+            &local_x[0], ShapeFunction::NPOINTS);
 
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
 
-        auto const p_nodal_values = Eigen::Map<const NodalVectorType>(
-            &local_x[0], ShapeFunction::NPOINTS);
+        cache.clear();
+        auto cache_vec = MathLib::createZeroedMatrix<
+            Eigen::Matrix<double, GlobalDim, Eigen::Dynamic, Eigen::RowMajor>>(
+            cache, GlobalDim, n_integration_points);
 
         for (unsigned ip = 0; ip < n_integration_points; ++ip)
         {
             double p_int_pt = 0.0;
             NumLib::shapeFunctionInterpolate(local_x, _ip_data[ip].N, p_int_pt);
-            double const pc_int_pt = -p_int_pt;
-            const double& temperature = _process_data.temperature(t, pos)[0];
-            double const Sw = _process_data.material->getSaturation(
-                material_id, t, pos, p_int_pt, temperature, pc_int_pt);
+            vars[static_cast<int>(
+                MaterialPropertyLib::Variable::phase_pressure)] = p_int_pt;
+            vars[static_cast<int>(
+                MaterialPropertyLib::Variable::capillary_pressure)] = -p_int_pt;
+
+            double const Sw =
+                medium
+                    .property(MaterialPropertyLib::PropertyType::saturation)
+                    .template value<double>(vars, pos, t, dt);
+            vars[static_cast<int>(
+                MaterialPropertyLib::Variable::liquid_saturation)] = Sw;
+
+            auto const permeability =
+                MaterialPropertyLib::formEigenTensor<GlobalDim>(
+                    solid_phase.property(MaterialPropertyLib::permeability)
+                        .value(vars, pos, t, dt));
+
             double const k_rel =
-                _process_data.material->getRelativePermeability(
-                    t, pos, p_int_pt, temperature, Sw);
-            auto const mu = _process_data.material->getFluidViscosity(
-                p_int_pt, temperature);
+                medium
+                    .property(MaterialPropertyLib::PropertyType::
+                                  relative_permeability)
+                    .template value<double>(vars, pos, t, dt);
+            auto const mu =
+                liquid_phase.property(MaterialPropertyLib::viscosity)
+                    .template value<double>(vars, pos, t, dt);
             auto const K_mat_coeff = permeability * (k_rel / mu);
             cache_vec.col(ip).noalias() =
                 -K_mat_coeff * _ip_data[ip].dNdx * p_nodal_values;
             if (_process_data.has_gravity)
             {
-                auto const rho_w = _process_data.material->getFluidDensity(
-                    p_int_pt, temperature);
+                auto const rho_w =
+                    liquid_phase
+                        .property(MaterialPropertyLib::PropertyType::density)
+                        .template value<double>(vars, pos, t, dt);
                 auto const& body_force = _process_data.specific_body_force;
                 assert(body_force.size() == GlobalDim);
                 // here it is assumed that the vector body_force is directed
@@ -326,8 +369,6 @@ private:
     RichardsFlowProcessData const& _process_data;
 
     IntegrationMethod const _integration_method;
-    std::vector<ShapeMatrices, Eigen::aligned_allocator<ShapeMatrices>>
-        _shape_matrices;
     std::vector<
         IntegrationPointData<NodalRowVectorType, GlobalDimNodalMatrixType,
                              NodalMatrixType>,
