@@ -987,15 +987,18 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
         auto const K_intrinsic = MPL::formEigenTensor<DisplacementDim>(
             solid_phase.property(MPL::PropertyType::permeability)
                 .value(variables, x_position, t, dt));
+        double const k_rel =
+            medium->property(MPL::PropertyType::relative_permeability)
+                .template value<double>(variables, x_position, t, dt);
 
-        GlobalDimMatrixType const K_over_mu = K_intrinsic / mu;
+        GlobalDimMatrixType const K_over_mu = k_rel * K_intrinsic / mu;
 
         auto const& b = _process_data.specific_body_force;
 
         // Compute the velocity
         auto const& dNdx_p = _ip_data[ip].dNdx_p;
         cache_matrix.col(ip).noalias() =
-            -K_over_mu * dNdx_p * p_L - rho_LR * K_over_mu * b;
+            -K_over_mu * dNdx_p * p_L + rho_LR * K_over_mu * b;
     }
 
     return cache;
