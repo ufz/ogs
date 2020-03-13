@@ -116,6 +116,10 @@ pipeline {
                   '-DOGS_USE_MFRONT=ON ' +
                   '-DOGS_USE_PYTHON=ON '
               }
+              // Workaround some MGIS CMake logic flaws
+              configure {
+                keepDir = true
+              }
               build {
                 target="package"
                 log="build1.log"
