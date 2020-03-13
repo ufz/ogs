@@ -17,7 +17,7 @@ namespace ChemistryLib
 namespace PhreeqcIOData
 {
 void KineticReactant::print(std::ostream& os,
-                            std::size_t const chemical_system_id) const
+                            std::size_t const global_id) const
 {
     os << name << "\n";
 
@@ -26,7 +26,7 @@ void KineticReactant::print(std::ostream& os,
         os << "-formula " << chemical_formula << "\n";
     }
 
-    os << "-m  " << (*amount)[chemical_system_id] << "\n";
+    os << "-m  " << (*amount)[global_id] << "\n";
 
     if (!parameters.empty())
     {

@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
-    <mesh>Wetland_1d.vtu</mesh>
-    <geometry>Wetland_1d.gml</geometry>
+    <meshes>
+        <mesh>Wetland_1d.vtu</mesh>
+        <mesh>Wetland_1d_inlet.vtu</mesh>
+        <mesh>Wetland_1d_outlet.vtu</mesh>
+        <mesh>Wetland_1d_ReactiveDomain.vtu</mesh>
+    </meshes>
     <processes>
         <process>
             <name>hc</name>
@@ -1180,6 +1184,7 @@
         </output>
     </time_loop>
         <chemical_system chemical_solver="Phreeqc">
+        <mesh>Wetland_1d_ReactiveDomain</mesh>
         <database>cwm1.dat</database>
         <solution>
             <temperature>10</temperature>
@@ -1962,17 +1967,15 @@
             <initial_condition>p0</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>geometry</geometrical_set>
-                    <geometry>outlet</geometry>
+                    <mesh>Wetland_1d_outlet</mesh>
                     <type>Dirichlet</type>
                     <parameter>p_Dirichlet_right</parameter>
                 </boundary_condition>
-        <boundary_condition>
-            <geometrical_set>geometry</geometrical_set>
-            <geometry>inlet</geometry>
-            <type>Neumann</type>
-            <parameter>p_Neumann_inlet</parameter>
-         </boundary_condition>
+                <boundary_condition>
+                    <mesh>Wetland_1d_inlet</mesh>
+                    <type>Neumann</type>
+                    <parameter>p_Neumann_inlet</parameter>
+                </boundary_condition>
             </boundary_conditions>
         </process_variable>
         <process_variable>
@@ -1982,8 +1985,7 @@
             <initial_condition>c_H</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>geometry</geometrical_set>
-                    <geometry>inlet</geometry>
+                    <mesh>Wetland_1d_inlet</mesh>
                     <type>Dirichlet</type>
                     <parameter>c_H</parameter>
                 </boundary_condition>
@@ -1996,8 +1998,7 @@
             <initial_condition>c0_CWM1</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>geometry</geometrical_set>
-                    <geometry>inlet</geometry>
+                    <mesh>Wetland_1d_inlet</mesh>
                     <type>Dirichlet</type>
                     <parameter>c_Do_inlet</parameter>
                 </boundary_condition>
@@ -2010,8 +2011,7 @@
             <initial_condition>c0_CWM1</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>geometry</geometrical_set>
-                    <geometry>inlet</geometry>
+                    <mesh>Wetland_1d_inlet</mesh>
                     <type>Dirichlet</type>
                     <parameter>c_Sf_inlet</parameter>
                 </boundary_condition>
@@ -2024,8 +2024,7 @@
             <initial_condition>c0_CWM1</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>geometry</geometrical_set>
-                    <geometry>inlet</geometry>
+                    <mesh>Wetland_1d_inlet</mesh>
                     <type>Dirichlet</type>
                     <parameter>c_Sa_inlet</parameter>
                 </boundary_condition>
@@ -2038,8 +2037,7 @@
             <initial_condition>c0_CWM1</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>geometry</geometrical_set>
-                    <geometry>inlet</geometry>
+                    <mesh>Wetland_1d_inlet</mesh>
                     <type>Dirichlet</type>
                     <parameter>c_Sin_inlet</parameter>
                 </boundary_condition>
@@ -2052,8 +2050,7 @@
             <initial_condition>c0_CWM1</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>geometry</geometrical_set>
-                    <geometry>inlet</geometry>
+                    <mesh>Wetland_1d_inlet</mesh>
                     <type>Dirichlet</type>
                     <parameter>c_Xsm_inlet</parameter>
                 </boundary_condition>
@@ -2066,8 +2063,7 @@
             <initial_condition>c0_CWM1</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>geometry</geometrical_set>
-                    <geometry>inlet</geometry>
+                    <mesh>Wetland_1d_inlet</mesh>
                     <type>Dirichlet</type>
                     <parameter>c_Xim_inlet</parameter>
                 </boundary_condition>
@@ -2080,8 +2076,7 @@
             <initial_condition>c0_CWM1</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>geometry</geometrical_set>
-                    <geometry>inlet</geometry>
+                    <mesh>Wetland_1d_inlet</mesh>
                     <type>Dirichlet</type>
                     <parameter>c_Snh_inlet</parameter>
                 </boundary_condition>
@@ -2094,8 +2089,7 @@
             <initial_condition>c0_CWM1</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>geometry</geometrical_set>
-                    <geometry>inlet</geometry>
+                    <mesh>Wetland_1d_inlet</mesh>
                     <type>Dirichlet</type>
                     <parameter>c_Sno_inlet</parameter>
                 </boundary_condition>
@@ -2108,8 +2102,7 @@
             <initial_condition>c0_CWM1</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>geometry</geometrical_set>
-                    <geometry>inlet</geometry>
+                    <mesh>Wetland_1d_inlet</mesh>
                     <type>Dirichlet</type>
                     <parameter>c_Sso_inlet</parameter>
                 </boundary_condition>
@@ -2122,8 +2115,7 @@
             <initial_condition>c0_CWM1</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>geometry</geometrical_set>
-                    <geometry>inlet</geometry>
+                    <mesh>Wetland_1d_inlet</mesh>
                     <type>Dirichlet</type>
                     <parameter>c_Sulphide_inlet</parameter>
                 </boundary_condition>

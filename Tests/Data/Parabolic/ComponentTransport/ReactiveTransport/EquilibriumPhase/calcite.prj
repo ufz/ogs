@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
-    <mesh>calcite.vtu</mesh>
-    <geometry>calcite.gml</geometry>
+    <meshes>
+        <mesh>calcite.vtu</mesh>
+        <mesh>calcite_upstream.vtu</mesh>
+        <mesh>calcite_downstream.vtu</mesh>
+        <mesh>calcite_ReactiveDomain.vtu</mesh>
+    </meshes>
     <processes>
         <process>
             <name>hc</name>
@@ -370,6 +374,7 @@
         </output>
     </time_loop>
     <chemical_system chemical_solver="Phreeqc">
+        <mesh>calcite_ReactiveDomain</mesh>
         <database>PSINA_12_07_110615_DAV_s.dat</database>
         <solution>
             <temperature>25</temperature>
@@ -495,14 +500,12 @@
             <initial_condition>p0</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>geometry</geometrical_set>
-                    <geometry>upstream</geometry>
+                    <mesh>calcite_upstream</mesh>
                     <type>Dirichlet</type>
                     <parameter>p_upstream</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <geometrical_set>geometry</geometrical_set>
-                    <geometry>downstream</geometry>
+                    <mesh>calcite_downstream</mesh>
                     <type>Neumann</type>
                     <parameter>p_downstream_Neumann</parameter>
                 </boundary_condition>
@@ -515,8 +518,7 @@
             <initial_condition>c0_C(4)</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>geometry</geometrical_set>
-                    <geometry>upstream</geometry>
+                    <mesh>calcite_upstream</mesh>
                     <type>Dirichlet</type>
                     <parameter>c_C(4)</parameter>
                 </boundary_condition>
@@ -529,8 +531,7 @@
             <initial_condition>c0_Ca</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>geometry</geometrical_set>
-                    <geometry>upstream</geometry>
+                    <mesh>calcite_upstream</mesh>
                     <type>Dirichlet</type>
                     <parameter>c_Ca</parameter>
                 </boundary_condition>
@@ -543,8 +544,7 @@
             <initial_condition>c0_Mg</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>geometry</geometrical_set>
-                    <geometry>upstream</geometry>
+                    <mesh>calcite_upstream</mesh>
                     <type>Dirichlet</type>
                     <parameter>c_Mg</parameter>
                 </boundary_condition>
@@ -557,8 +557,7 @@
             <initial_condition>c0_Cl</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>geometry</geometrical_set>
-                    <geometry>upstream</geometry>
+                    <mesh>calcite_upstream</mesh>
                     <type>Dirichlet</type>
                     <parameter>c_Cl</parameter>
                 </boundary_condition>
@@ -571,8 +570,7 @@
             <initial_condition>c0_H</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>geometry</geometrical_set>
-                    <geometry>upstream</geometry>
+                    <mesh>calcite_upstream</mesh>
                     <type>Dirichlet</type>
                     <parameter>c_H</parameter>
                 </boundary_condition>

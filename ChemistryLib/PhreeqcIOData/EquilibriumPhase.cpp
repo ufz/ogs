@@ -17,10 +17,10 @@ namespace ChemistryLib
 namespace PhreeqcIOData
 {
 void EquilibriumPhase::print(std::ostream& os,
-                             std::size_t const chemical_system_id) const
+                             std::size_t const global_id) const
 {
     os << name << " " << saturation_index << " "
-       << (*amount)[chemical_system_id] << "\n";
+       << (*amount)[global_id] << "\n";
 }
 }  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

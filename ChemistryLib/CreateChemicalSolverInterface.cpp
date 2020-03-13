@@ -63,11 +63,27 @@ namespace ChemistryLib
 template <>
 std::unique_ptr<ChemicalSolverInterface>
 createChemicalSolverInterface<ChemicalSolver::Phreeqc>(
-    MeshLib::Mesh const& mesh,
+    std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
     std::vector<std::pair<int, std::string>> const&
         process_id_to_component_name_map,
     BaseLib::ConfigTree const& config, std::string const& output_directory)
 {
+    auto mesh_name =
+        //! \ogs_file_param{prj__chemical_system__mesh}
+        config.getConfigParameter<std::string>("mesh");
+
+    // Find and extract mesh from the list of meshes.
+    auto const& mesh = *BaseLib::findElementOrError(
+        std::begin(meshes), std::end(meshes),
+        [&mesh_name](auto const& mesh) {
+            assert(mesh != nullptr);
+            return mesh->getName() == mesh_name;
+        },
+        "Required mesh with name '" + mesh_name + "' not found.");
+
+    assert(mesh.getID() != 0);
+    DBUG("Found mesh '%s' with id %d.", mesh.getName().c_str(), mesh.getID());
+
     auto path_to_database = parseDatabasePath(config);
 
     // solution
@@ -77,9 +93,14 @@ createChemicalSolverInterface<ChemicalSolver::Phreeqc>(
         process_id_to_component_name_map);
 
     // kinetic reactants
+    auto chemical_system_map =
+        *mesh.getProperties().template getPropertyVector<std::size_t>(
+            "bulk_node_ids", MeshLib::MeshItemType::Node, 1);
+
     auto kinetic_reactants = PhreeqcIOData::createKineticReactants(
         //! \ogs_file_param{prj__chemical_system__kinetic_reactants}
-        config.getConfigSubtreeOptional("kinetic_reactants"), mesh);
+        config.getConfigSubtreeOptional("kinetic_reactants"), *meshes[0],
+        chemical_system_map);
 
     // rates
     auto reaction_rates = createReactionRates<PhreeqcIOData::ReactionRate>(
@@ -89,7 +110,8 @@ createChemicalSolverInterface<ChemicalSolver::Phreeqc>(
     // equilibrium phases
     auto equilibrium_phases = PhreeqcIOData::createEquilibriumPhases(
         //! \ogs_file_param{prj__chemical_system__equilibrium_phases}
-        config.getConfigSubtreeOptional("equilibrium_phases"), mesh);
+        config.getConfigSubtreeOptional("equilibrium_phases"), *meshes[0],
+        chemical_system_map);
 
     // surface
     auto surface = PhreeqcIOData::createSurface(
@@ -113,7 +135,7 @@ createChemicalSolverInterface<ChemicalSolver::Phreeqc>(
     // user punch
     auto user_punch = PhreeqcIOData::createUserPunch(
         //! \ogs_file_param{prj__chemical_system__user_punch}
-        config.getConfigSubtreeOptional("user_punch"), mesh);
+        config.getConfigSubtreeOptional("user_punch"), *meshes[0]);
 
     // output
     auto const& components = aqueous_solution.components;
@@ -129,21 +151,23 @@ createChemicalSolverInterface<ChemicalSolver::Phreeqc>(
         num_chemical_systems, aqueous_solution);
 
     return std::make_unique<PhreeqcIOData::PhreeqcIO>(
-        std::move(project_file_name), std::move(path_to_database),
-        std::move(aqueous_solutions), std::move(equilibrium_phases),
-        std::move(kinetic_reactants), std::move(reaction_rates),
-        std::move(surface), std::move(user_punch), std::move(output),
-        std::move(dump), std::move(knobs), process_id_to_component_name_map);
+        std::move(project_file_name), *meshes[mesh.getID()],
+        std::move(path_to_database), std::move(aqueous_solutions),
+        std::move(equilibrium_phases), std::move(kinetic_reactants),
+        std::move(reaction_rates), std::move(surface), std::move(user_punch),
+        std::move(output), std::move(dump), std::move(knobs),
+        process_id_to_component_name_map);
 }
 
 template <>
 std::unique_ptr<ChemicalSolverInterface>
 createChemicalSolverInterface<ChemicalSolver::PhreeqcKernel>(
-    MeshLib::Mesh const& mesh,
+    std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
     std::vector<std::pair<int, std::string>> const&
         process_id_to_component_name_map,
     BaseLib::ConfigTree const& config, std::string const& /*output_directory*/)
 {
+    auto mesh = *meshes[0];
     auto path_to_database = parseDatabasePath(config);
 
     // solution
