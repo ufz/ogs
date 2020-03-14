@@ -233,7 +233,8 @@ pipeline {
         stage('Docker-Conan-Debug') {
           when {
             beforeAgent true
-            expression { return params.docker_conan_debug && (stage_required.build || stage_required.full) }
+            // expression { return params.docker_conan_debug && (stage_required.build || stage_required.full) }
+            expression { return false }
           }
           agent {
             dockerfile {
