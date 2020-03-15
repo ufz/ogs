@@ -10,10 +10,12 @@
 
 #include "TimeDiscretizedODESystem.h"
 
+#include <iostream>
+
 #include "MathLib/LinAlg/ApplyKnownSolution.h"
 #include "MathLib/LinAlg/UnifiedMatrixSetters.h"
-#include "NumLib/IndexValueVector.h"
 #include "NumLib/Exceptions.h"
+#include "NumLib/IndexValueVector.h"
 
 namespace detail
 {
@@ -83,6 +85,10 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
     auto const& x_curr = *x_new_timestep[process_id];
     auto const dxdot_dx = _time_disc.getNewXWeight();
 
+    std::cerr << "NL/TDODE assemble call for process_id " << process_id
+              << " and x\n"
+              << x_curr.getRawVector() << "\n";
+
     std::vector<GlobalVector*> xdot(x_new_timestep.size());
     for (auto& v : xdot)
     {
@@ -90,6 +96,9 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
         _time_disc.getXdot(*x_new_timestep[process_id], *x_prev[process_id],
                            *v);
     }
+
+    std::cerr << "NL/TDODE assemble xdot\n"
+              << xdot[process_id]->getRawVector() << "\n";
 
     _M->setZero();
     _K->setZero();
