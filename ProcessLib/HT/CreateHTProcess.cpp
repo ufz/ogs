@@ -31,23 +31,23 @@ void checkMPLProperties(
     MeshLib::Mesh const& mesh,
     MaterialPropertyLib::MaterialSpatialDistributionMap const& media_map)
 {
-    std::array const requiredPropertyMedium = {
+    std::array const required_property_medium = {
         MaterialPropertyLib::PropertyType::porosity,
         MaterialPropertyLib::PropertyType::permeability};
 
-    std::array const requiredPropertyLiquidPhase = {
+    std::array const required_property_liquid_phase = {
         MaterialPropertyLib::PropertyType::viscosity,
         MaterialPropertyLib::PropertyType::density,
         MaterialPropertyLib::PropertyType::specific_heat_capacity};
 
-    std::array const requiredPropertySolidPhase = {
+    std::array const required_property_solid_phase = {
         MaterialPropertyLib::PropertyType::specific_heat_capacity,
         MaterialPropertyLib::PropertyType::density,
         MaterialPropertyLib::PropertyType::storage};
 
     MaterialPropertyLib::checkMaterialSpatialDistributionMap(
-        mesh, media_map, requiredPropertyMedium, requiredPropertySolidPhase,
-        requiredPropertyLiquidPhase);
+        mesh, media_map, required_property_medium, required_property_solid_phase,
+        required_property_liquid_phase);
 }
 
 std::unique_ptr<Process> createHTProcess(
