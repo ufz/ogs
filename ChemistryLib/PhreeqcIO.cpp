@@ -26,7 +26,7 @@
 #include "PhreeqcIOData/Surface.h"
 #include "PhreeqcIOData/UserPunch.h"
 
-#include "ThirdParty/iphreeqc/src/src/IPhreeqc.h"
+#include <iphreeqc/src/src/IPhreeqc.h>
 
 namespace ChemistryLib
 {

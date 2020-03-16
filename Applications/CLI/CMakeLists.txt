@@ -1,7 +1,13 @@
 add_executable(ogs ogs.cpp)
 
 target_link_libraries(ogs
-                      PRIVATE BaseLib ApplicationsLib CMakeInfoLib GitInfoLib)
+    PRIVATE
+        ApplicationsLib
+        BaseLib
+        CMakeInfoLib
+        GitInfoLib
+        ProcessLib
+)
 
 if(OGS_USE_PYTHON)
     # Troubleshooting: If you get linker errors, such as   ogs.cpp:(.text+0xb4):

@@ -26,15 +26,6 @@ elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC")
     set(COMPILER_IS_MSVC TRUE CACHE INTERNAL "")
 endif() # CMAKE_CXX_COMPILER_ID
 
-if(BUILD_SHARED_LIBS)
-    # When static libraries are used in some shared libraries it is required
-    # that also the static libraries have position independent code.
-    set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
-
-    # Enable Windows DLL support.
-    set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
-endif()
-
 ### GNU-like compiler
 if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR COMPILER_IS_INTEL)
     if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")

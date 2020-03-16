@@ -12,8 +12,8 @@
 
 #include <memory>
 
-#include "ThirdParty/iphreeqc/src/src/phreeqcpp/common/phrqtype.h"
-#include "ThirdParty/iphreeqc/src/src/phreeqcpp/Solution.h"
+#include <iphreeqc/src/src/phreeqcpp/common/phrqtype.h>
+#include <iphreeqc/src/src/phreeqcpp/Solution.h>
 
 namespace ChemistryLib
 {

@@ -16,7 +16,7 @@
 #include "ChemicalSolverInterface.h"
 #include "PhreeqcKernelData/KineticReactant.h"
 
-#include "ThirdParty/iphreeqc/src/src/phreeqcpp/Phreeqc.h"
+#include <iphreeqc/src/src/phreeqcpp/Phreeqc.h>
 
 class cxxSolution;
 class cxxISolution;

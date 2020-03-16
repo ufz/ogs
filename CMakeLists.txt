@@ -5,6 +5,9 @@ cmake_minimum_required(VERSION 3.12)
 cmake_policy(SET CMP0054 NEW)
 cmake_policy(SET CMP0071 NEW)
 cmake_policy(SET CMP0074 NEW)
+if(${CMAKE_VERSION} VERSION_GREATER 3.14)
+    cmake_policy(SET CMP0092 NEW)
+endif()
 
 if(MSVC AND NOT ${CMAKE_GENERATOR} STREQUAL Ninja)
     # Force 64-bit VS compiler
@@ -20,6 +23,7 @@ include(CTest)
 # ---- Preliminary Options ----
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 option(BUILD_SHARED_LIBS "Create shared libraries?" OFF)
+option(OGS_BUILD_CLI "Should the OGS simulator be built?" ON)
 set(CMAKE_LIBRARY_SEARCH_PATH
     ""
     CACHE PATH
@@ -63,6 +67,9 @@ option(OGS_USE_CVODE "Use the Sundials CVODE module?" OFF)
 # ---- CMake includes ----
 include(PreFind)
 include(SubmoduleSetup)
+include(ProcessesSetup)
+include(ProjectSetup)
+add_subdirectory(ThirdParty)
 include(Versions)
 include(CheckTypeSizes)
 include(CheckArchitecture)
@@ -71,7 +78,6 @@ include(ConanSetup)
 include(CompilerSetup)
 include(Find)
 include(CCacheSetup)
-include(ProjectSetup)
 include(DocumentationSetup)
 include(test/Test)
 if(OGS_COVERAGE AND NOT IS_SUBPROJECT)
@@ -87,7 +93,6 @@ if((CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC) AND GPROF_PATH)
            "Enables compiling with flags set for profiling with gprof." OFF)
 endif() # GCC AND GPROF_PATH
 
-option(OGS_BUILD_CLI "Should the OGS simulator be built?" ON)
 option(OGS_BUILD_GUI "Should the Data Explorer be built?" OFF)
 if(OGS_BUILD_GUI)
     add_definitions(-DOGS_BUILD_GUI)
@@ -98,67 +103,6 @@ if(OGS_BUILD_UTILS AND OGS_USE_MPI)
     message(WARNING "OGS_BUILD_UTILS cannot be used with OGS_USE_MPI "
                     "(OGS_USE_PETSC)! Disabling OGS_BUILD_UTILS.")
     set(OGS_BUILD_UTILS OFF CACHE BOOL "" FORCE)
-endif()
-
-# A list of processes to be build. Also used in the ProcessLib to select
-# processes to be build.
-set(ProcessesList
-    ComponentTransport
-    GroundwaterFlow
-    HT
-    HeatConduction
-    HeatTransportBHE
-    HydroMechanics
-    LiquidFlow
-    LIE
-    PhaseField
-    RichardsComponentTransport
-    RichardsFlow
-    RichardsMechanics
-    SmallDeformation
-    SmallDeformationNonlocal
-    TES
-    ThermalTwoPhaseFlowWithPP
-    ThermoHydroMechanics
-    ThermoMechanicalPhaseField
-    ThermoMechanics
-    TwoPhaseFlowWithPP
-    TwoPhaseFlowWithPrho)
-
-# Add a cmake option for each process.
-foreach(process ${ProcessesList})
-    option(OGS_BUILD_PROCESS_${process} "Build the ${process} process." ON)
-endforeach()
-
-set(OGS_BUILD_PROCESSES
-    ""
-    CACHE STRING "Semicolon-separated list of processes to build")
-if(NOT OGS_BUILD_CLI)
-    set(OGS_BUILD_PROCESSES OFF "" CACHE INTERNAL "")
-endif()
-if(NOT "${OGS_BUILD_PROCESSES}" STREQUAL "")
-    if(${OGS_BUILD_PROCESSES})
-        foreach(process ${OGS_BUILD_PROCESSES})
-            if(NOT "${process}" IN_LIST ProcessesList)
-                message(
-                    FATAL_ERROR
-                        "${process} given in OGS_BUILD_PROCESSES is "
-                        "not a valid process name! Valid names are ${ProcessesList}"
-                    )
-            endif()
-        endforeach()
-        message(STATUS "Enabled processes:")
-    else()
-        message(STATUS "All processes disabled.")
-    endif()
-    foreach(process ${ProcessesList})
-        if("${process}" IN_LIST OGS_BUILD_PROCESSES)
-            set(OGS_BUILD_PROCESS_${process} ON CACHE BOOL "" FORCE)
-            message(STATUS "  ${process}")
-        else()
-            set(OGS_BUILD_PROCESS_${process} OFF CACHE BOOL "" FORCE)
-        endif()
-    endforeach()
 endif()
 
 if(WIN32)
@@ -334,7 +278,7 @@ if(OGS_INSITU)
     include("${PARAVIEW_USE_FILE}")
     add_definitions(-DUSE_INSITU)
 endif()
-add_subdirectory(ThirdParty)
+
 include_directories(
     SYSTEM
     ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty
@@ -343,6 +287,12 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/tclap/include
     ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/json/include
     ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/exprtk)
+
+# vtkdiff
+if(EXISTS ${PROJECT_SOURCE_DIR}/ThirdParty/vtkdiff/CMakeLists.txt)
+    add_subdirectory(ThirdParty/vtkdiff)
+    install(PROGRAMS $<TARGET_FILE:vtkdiff> DESTINATION bin COMPONENT ogs_extras)
+endif()
 
 include(scripts/cmake/CheckHeaderCompilation.cmake)
 

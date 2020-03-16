@@ -13,7 +13,7 @@
 #include <string>
 #include <vector>
 
-#include "ThirdParty/iphreeqc/src/src/phreeqcpp/cxxKinetics.h"
+#include <iphreeqc/src/src/phreeqcpp/cxxKinetics.h>
 
 namespace ChemistryLib
 {

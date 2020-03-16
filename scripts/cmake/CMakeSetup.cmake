@@ -44,3 +44,12 @@ site_name(HOSTNAME)
 if(DEFINED ENV{JENKINS_URL} OR DEFINED ENV{CI})
     set(IS_CI ON CACHE INTERNAL "")
 endif()
+
+if(BUILD_SHARED_LIBS)
+    # When static libraries are used in some shared libraries it is required
+    # that also the static libraries have position independent code.
+    set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
+
+    # Enable Windows DLL support.
+    set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
+endif()
