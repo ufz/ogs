@@ -23,6 +23,7 @@ include(CTest)
 # ---- Preliminary Options ----
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 option(BUILD_SHARED_LIBS "Create shared libraries?" OFF)
+option(OGS_BUILD_CLI "Should the OGS simulator be built?" ON)
 set(CMAKE_LIBRARY_SEARCH_PATH
     ""
     CACHE PATH
@@ -92,7 +93,6 @@ if((CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC) AND GPROF_PATH)
            "Enables compiling with flags set for profiling with gprof." OFF)
 endif() # GCC AND GPROF_PATH
 
-option(OGS_BUILD_CLI "Should the OGS simulator be built?" ON)
 option(OGS_BUILD_GUI "Should the Data Explorer be built?" OFF)
 if(OGS_BUILD_GUI)
     add_definitions(-DOGS_BUILD_GUI)
