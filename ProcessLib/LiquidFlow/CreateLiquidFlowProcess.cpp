@@ -13,6 +13,7 @@
 
 #include <algorithm>
 
+#include "MaterialLib/MPL/CheckMaterialSpatialDistributionMap.h"
 #include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
 #include "MaterialLib/PhysicalConstant.h"
 #include "ParameterLib/Utils.h"
@@ -25,6 +26,27 @@ namespace ProcessLib
 {
 namespace LiquidFlow
 {
+void checkMPLProperties(
+    MeshLib::Mesh const& mesh,
+    MaterialPropertyLib::MaterialSpatialDistributionMap const& media_map)
+{
+    std::array const required_medium_properties = {
+        MaterialPropertyLib::reference_temperature,
+        MaterialPropertyLib::PropertyType::permeability};
+
+    std::array const required_liquid_properties = {
+        MaterialPropertyLib::PropertyType::viscosity,
+        MaterialPropertyLib::PropertyType::density};
+
+    std::array const required_solid_properties = {
+        MaterialPropertyLib::PropertyType::porosity,
+        MaterialPropertyLib::PropertyType::storage};
+
+    MaterialPropertyLib::checkMaterialSpatialDistributionMap(
+        mesh, media_map, required_medium_properties, required_solid_properties,
+        required_liquid_properties);
+}
+
 std::unique_ptr<Process> createLiquidFlowProcess(
     std::string name,
     MeshLib::Mesh& mesh,
@@ -95,6 +117,10 @@ std::unique_ptr<Process> createLiquidFlowProcess(
 
     auto media_map =
         MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
+
+    DBUG("Check the media properties of LiquidFlow process ...");
+    checkMPLProperties(mesh, *media_map);
+    DBUG("Media properties verified.");
 
     LiquidFlowData process_data{std::move(media_map), gravity_axis_id, g};
 
