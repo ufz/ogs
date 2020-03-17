@@ -10,8 +10,9 @@
 
 #pragma once
 
-#include "ProcessLib/ProcessVariable.h"
+#include <set>
 
+#include "ProcessLib/ProcessVariable.h"
 #include "SecondaryVariable.h"
 
 namespace ProcessLib
