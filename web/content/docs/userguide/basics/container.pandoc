@@ -22,6 +22,10 @@ weight = 10
 
 Simply download an image from the [releases]({{< ref "/releases" >}}) page.
 
+#### Option: Download image from the latest master-branch build
+
+Simply download an image from the [latest master-branch build](https://jenkins.opengeosys.org/job/ufz/job/ogs/job/master/lastSuccessfulBuild/artifact/build) page.
+
 #### Option: Create custom image with ogs-container-maker
 
 Build images with [ogs-container-maker](https://github.com/ufz/ogs-container-maker) on [Jenkins](https://jenkins.opengeosys.org/job/ufz/job/ogs-container-maker/job/master/build) (login required, ask Lars Bilke for access):

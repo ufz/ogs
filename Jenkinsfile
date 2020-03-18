@@ -742,7 +742,10 @@ pipeline {
                 export PYTHONPATH="${PYTHONPATH}:${PWD}/ThirdParty/container-maker"
                 python ThirdParty/container-maker/ogscm/cli.py -B -C -R \
                   -j $NUM_THREADS --ogs . --pm system --cvode \
-                  --ompi off 2.1.6 3.1.4 4.0.1
+                  --cmake ' -DOGS_USE_PYTHON=ON -DOGS_BUILD_UTILS=ON'
+                python ThirdParty/container-maker/ogscm/cli.py -B -C -R \
+                  -j $NUM_THREADS --ogs . --pm system --cvode \
+                  --ompi 4.0.1
               '''.stripIndent()
             }
           }
