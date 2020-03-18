@@ -96,7 +96,6 @@ endif() # GCC AND GPROF_PATH
 option(OGS_BUILD_GUI "Should the Data Explorer be built?" OFF)
 if(OGS_BUILD_GUI)
     add_definitions(-DOGS_BUILD_GUI)
-    option(OGS_USE_NETCDF "Add NetCDF support." OFF)
 endif()
 option(OGS_BUILD_UTILS "Should the utilities programms be built?" OFF)
 if(OGS_BUILD_UTILS AND OGS_USE_MPI)
@@ -116,6 +115,7 @@ option(OGS_NO_EXTERNAL_LIBS "Builds OGS without any external dependencies." OFF)
 option(OGS_INSITU "Builds OGS with insitu visualization capabilities." OFF)
 option(OGS_USE_LIS "Use Lis" OFF)
 option(OGS_USE_PETSC "Use PETSc routines" OFF)
+option(OGS_USE_NETCDF "Add NetCDF support." OFF)
 
 # Eigen
 option(OGS_USE_EIGEN "Use Eigen linear solver" ON)

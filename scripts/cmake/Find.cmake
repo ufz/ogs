@@ -116,7 +116,7 @@ if(OGS_USE_NETCDF)
     else()
         find_package(HDF5 REQUIRED COMPONENTS C HL)
     endif()
-
+    add_compile_options(-DOGS_USE_NETCDF)
 endif()
 
 # lapack

@@ -55,7 +55,6 @@ target_link_libraries(DataExplorer
 
 
 if(OGS_USE_NETCDF)
-    add_definitions(-DOGS_USE_NETCDF)
     add_subdirectory(NetCdfDialog)
     target_link_libraries(DataExplorer NetCdfDialogLib)
 endif()
