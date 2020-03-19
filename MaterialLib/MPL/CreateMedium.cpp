@@ -26,21 +26,23 @@ namespace MaterialPropertyLib
 std::unique_ptr<Medium> createMedium(
     BaseLib::ConfigTree const& config,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
-    ParameterLib::CoordinateSystem const* const local_coordinate_system)
+    ParameterLib::CoordinateSystem const* const local_coordinate_system,
+    std::map<std::string,
+             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
+        curves)
 {
     // Parsing the phases
     // Properties of phases may be not required in all the cases.
     auto&& phases =
         //! \ogs_file_param{prj__media__medium__phases}
-        createPhases(config.getConfigSubtreeOptional("phases"),
-                     parameters,
-                     local_coordinate_system);
+        createPhases(config.getConfigSubtreeOptional("phases"), parameters,
+                     local_coordinate_system, curves);
 
     // Parsing medium properties, overwriting the defaults.
     auto&& properties =
         //! \ogs_file_param{prj__media__medium__properties}
         createProperties(config.getConfigSubtreeOptional("properties"),
-                         parameters, local_coordinate_system);
+                         parameters, local_coordinate_system, curves);
 
     if (phases.empty() && !properties)
     {

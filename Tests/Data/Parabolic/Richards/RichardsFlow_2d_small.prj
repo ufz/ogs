@@ -15,58 +15,11 @@
             <process_variables>
                 <process_variable>pressure</process_variable>
             </process_variables>
-            <material_property>
-                <fluid>
-                    <density>
-                        <type>Constant</type>
-                        <value> 1.e3 </value>
-                    </density>
-                    <viscosity>
-                        <type>Constant</type>
-                        <value> 1.e-3 </value>
-                    </viscosity>
-                </fluid>
-                <porous_medium>
-                    <porous_medium id="0">
-                        <permeability>
-                            <permeability_tensor_entries>kappa1</permeability_tensor_entries>
-                            <type>Constant</type>
-                        </permeability>
-                        <porosity>
-                            <type>Constant</type>
-                            <porosity_parameter>constant_porosity_parameter</porosity_parameter>
-                        </porosity>
-                        <storage>
-                            <type>Constant</type>
-                            <value> 0.0 </value>
-                        </storage>
-                        <capillary_pressure>
-                            <type>Curve</type>
-                            <curve>
-                                <coords>1 0.98684211 0.97368421 0.96052632 0.94894737 0.92105263 0.89473684 0.86842105 0.84210526 0.81578947 0.78947368 0.65789474 0.63157895 0.57894737 0.52631579 0.39473684 0.26315789
-                                </coords>
-                                <values>1421.99634 1707.55369 2050.45507 2462.21599 2892.29884 3232.80969 3590.71602 3988.24638 4429.78757 4920.21206 5464.93174 9238.24221 10261.0136 12658.7874 15616.8683 26399.6732 44627.5611
-                                </values>
-                            </curve>
-                        </capillary_pressure>
-                        <relative_permeability>
-                            <type>Curve</type>
-                            <curve>
-                                <coords>0.26315789 0.39473684 0.52631579 0.57894737 0.63157895 0.65789474 0.78947368 0.81578947 0.84210526 0.86842105 0.89473684 0.92105263 0.94894737 0.96052632 0.97368421 0.98684211 1
-                                    </coords>
-                                <values>4.43E-05 0.00026547 0.00159003 0.00325358 0.00665757 0.00952343 0.05704014 0.08159396 0.11671736 0.16696017 0.23883078 0.34163922 0.49931406 0.58449912 0.69907308 0.8361059 1
-                                    </values>
-                            </curve>
-                        </relative_permeability>
-                    </porous_medium>
-                </porous_medium>
-            </material_property>
             <secondary_variables>
                 <secondary_variable internal_name="saturation" output_name="saturation"/>
             </secondary_variables>
             <specific_body_force>0 -9.81</specific_body_force>
             <mass_lumping>true</mass_lumping>
-            <temperature> temp </temperature>
         </process>
     </processes>
     <media>
@@ -76,14 +29,14 @@
                     <type>AqueousLiquid</type>
                     <properties>
                         <property>
-                            <name>density</name>
-                            <type>Constant</type>
-                            <value> 1.e3 </value>
-                        </property>
-                        <property>
                             <name>viscosity</name>
                             <type>Constant</type>
                             <value> 1.e-3 </value>
+                        </property>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value> 1.e3 </value>
                         </property>
                     </properties>
                 </phase>
@@ -95,34 +48,36 @@
                             <type>Constant</type>
                             <value> 0.0 </value>
                         </property>
+                        <property>
+                            <name>porosity</name>
+                            <type>Constant</type>
+                            <value>0.38</value>
+                        </property>
+                        <property>
+                            <name>permeability</name>
+                            <type>Constant</type>
+                            <value>4.46e-13</value>
+                        </property>
                     </properties>
                 </phase>
             </phases>
             <properties>
                 <property>
-                    <name>reference_temperature</name>
-                    <type>Constant</type>
-                    <value>293.15</value>
-                </property>
-                <property>
-                    <name>permeability</name>
-                    <type>Constant</type>
-                    <value>4.46e-13</value>
-                </property>
-                <property>
                     <name>relative_permeability</name>
-                    <type>Constant</type>
-                    <value>1</value>
-                </property>
-                <property>
-                    <name>porosity</name>
-                    <type>Constant</type>
-                    <value>0.38</value>
+                    <type>Curve</type>
+                    <independent_variable>liquid_saturation</independent_variable>
+                    <curve>relative_permeability</curve>
                 </property>
                 <property>
                     <name>saturation</name>
+                    <type>Curve</type>
+                    <independent_variable>capillary_pressure</independent_variable>
+                    <curve>capillary_pressure</curve>
+                </property>
+                <property>
+                    <name>reference_temperature</name>
                     <type>Constant</type>
-                    <value>1</value>
+                    <value>293.15</value>
                 </property>
             </properties>
         </medium>
@@ -200,22 +155,19 @@
             <type>Constant</type>
             <value>0.0</value>
         </parameter>
-        <parameter>
-            <name>temp</name>
-            <type>Constant</type>
-            <value>293.15</value>
-        </parameter>
-        <parameter>
-            <name>constant_porosity_parameter</name>
-            <type>Constant</type>
-            <value>0.38</value>
-        </parameter>
-        <parameter>
-            <name>kappa1</name>
-            <type>Constant</type>
-            <values>4.46e-13</values>
-        </parameter>
     </parameters>
+    <curves>
+        <curve>
+            <name>capillary_pressure</name>
+            <coords>1421.99634 1707.55369 2050.45507 2462.21599 2892.29884 3232.80969 3590.71602 3988.24638 4429.78757 4920.21206 5464.93174 9238.24221 10261.0136 12658.7874 15616.8683 26399.6732 44627.5611</coords>
+            <values>1 0.98684211 0.97368421 0.96052632 0.94894737 0.92105263 0.89473684 0.86842105 0.84210526 0.81578947 0.78947368 0.65789474 0.63157895 0.57894737 0.52631579 0.39473684 0.26315789</values>
+        </curve>
+        <curve>
+            <name>relative_permeability</name>
+            <coords>0.26315789 0.39473684 0.52631579 0.57894737 0.63157895 0.65789474 0.78947368 0.81578947 0.84210526 0.86842105 0.89473684 0.92105263 0.94894737 0.96052632 0.97368421 0.98684211 1</coords>
+            <values>4.43E-05 0.00026547 0.00159003 0.00325358 0.00665757 0.00952343 0.05704014 0.08159396 0.11671736 0.16696017 0.23883078 0.34163922 0.49931406 0.58449912 0.69907308 0.8361059 1</values>
+        </curve>
+    </curves>
     <process_variables>
         <process_variable>
             <name>pressure</name>

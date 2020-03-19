@@ -16,6 +16,7 @@
 
 #include "BaseLib/ConfigTree.h"
 #include "MaterialLib/MPL/CreateMedium.h"
+#include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 #include "ParameterLib/Parameter.h"
 
 std::unique_ptr<MPL::Medium> createTestMaterial(std::string const& xml)
@@ -25,6 +26,9 @@ std::unique_ptr<MPL::Medium> createTestMaterial(std::string const& xml)
                              BaseLib::ConfigTree::onwarning);
     auto const& config = conf.getConfigSubtree("medium");
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> parameters;
+    std::map<std::string,
+             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>>
+        curves;
 
-    return MPL::createMedium(config, parameters, nullptr);
+    return MPL::createMedium(config, parameters, nullptr, curves);
 }

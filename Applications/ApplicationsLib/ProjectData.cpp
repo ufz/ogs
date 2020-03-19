@@ -493,7 +493,8 @@ void ProjectData::parseMedia(
                     ? MaterialPropertyLib::createMedium(
                           medium_config, _parameters,
                           _local_coordinate_system ? &*_local_coordinate_system
-                                                   : nullptr)
+                                                   : nullptr,
+                          _curves)
                     : _media[material_ids[0]];
         }
     }
