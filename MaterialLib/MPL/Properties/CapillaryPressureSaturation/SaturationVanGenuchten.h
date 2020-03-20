@@ -26,7 +26,7 @@ class Component;
  *       &p_b&            \mbox{ entry pressure,}\\
  *       &S_r&            \mbox{ residual saturation,}\\
  *       &S_{\mbox{max}}& \mbox{ maximum saturation,}\\
- *       &m \in [0,1) &        \mbox{ exponent.}\\
+ *       &m \in (0,1) &        \mbox{ exponent.}\\
  *    \f}
  *
  *    Note in some expressions, a parameter of \f$n\f$ is introduced, where
@@ -49,7 +49,10 @@ class Component;
  * \f].
  *
  *   class SaturationVanGenuchten handles the computations associated
- *    with  \f$S(p_c)\f$.
+ *    with  \f$S(p_c)\f$,
+ *  while class CapillaryPressureVanGenuchten and
+ *  class CapillaryPressureRegularizedVanGenuchten deal with the
+ *  computations of \f$ p_c(S) \f$.
  */
 class SaturationVanGenuchten final : public Property
 {
@@ -71,22 +74,25 @@ public:
         _medium = std::get<Medium*>(scale_pointer);
     }
 
-    /// Those methods override the base class implementations and
-    /// actually compute and set the property _values and _dValues.
+    /// gets \f$ S(p_c) \f$
     PropertyDataType value(VariableArray const& variable_array,
-                           ParameterLib::SpatialPosition const& /*pos*/,
-                           double const /*t*/,
-                           double const /*dt*/) const override;
+                           ParameterLib::SpatialPosition const& pos,
+                           double const t,
+                           double const dt) const override;
+
+    /// gets \f$ \frac{\partial S(p_c)}{\partial  p_c} \f$
     PropertyDataType dValue(VariableArray const& variable_array,
                             Variable const variable,
-                            ParameterLib::SpatialPosition const& /*pos*/,
-                            double const /*t*/,
-                            double const /*dt*/) const override;
+                            ParameterLib::SpatialPosition const& pos,
+                            double const t,
+                            double const dt) const override;
+
+    /// gets \f$ \frac{\partial^2 S(p_c)}{\partial  p_c^2} \f$
     PropertyDataType d2Value(VariableArray const& variable_array,
                              Variable const variable1, Variable const variable2,
-                             ParameterLib::SpatialPosition const& /*pos*/,
-                             double const /*t*/,
-                             double const /*dt*/) const override;
+                             ParameterLib::SpatialPosition const& pos,
+                             double const t,
+                             double const dt) const override;
 
 private:
     Medium* _medium = nullptr;
