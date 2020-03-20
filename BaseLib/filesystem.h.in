@@ -1,0 +1,3 @@
+// Provides namespace fs for std::filesystem
+#include <@CXX_FILESYSTEM_HEADER@>
+namespace fs = @CXX_FILESYSTEM_NAMESPACE@;

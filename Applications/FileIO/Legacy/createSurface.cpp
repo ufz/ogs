@@ -11,12 +11,11 @@
 #include <cstdio>
 #include <list>
 #include <memory>
-#include <filesystem>
-namespace fs = std::filesystem;
 
 #include <logog/include/logog.hpp>
 
 #include "createSurface.h"
+#include "filesystem.h"
 
 #include "Applications/FileIO/Gmsh/GMSHInterface.h"
 #include "Applications/FileIO/Gmsh/GmshReader.h"
