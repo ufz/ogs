@@ -111,9 +111,9 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::read(
         vtkGhostType->reserve(_mesh_info.regular_elements +
                               _mesh_info.ghost_elements);
         std::fill_n(std::back_inserter(*vtkGhostType),
-                    _mesh_info.regular_elements, 0);
+                    _mesh_info.regular_elements, 1);
         std::fill_n(std::back_inserter(*vtkGhostType),
-                    _mesh_info.ghost_elements, 1);
+                    _mesh_info.ghost_elements, 0);
     }
 
     INFO("[time] Reading the mesh took %f s.", timer.elapsed());
