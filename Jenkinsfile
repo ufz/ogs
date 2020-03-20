@@ -20,6 +20,7 @@ pipeline {
     booleanParam(name: 'eve_parallel', defaultValue: true)
     booleanParam(name: 'win', defaultValue: true)
     booleanParam(name: 'mac', defaultValue: true)
+    booleanParam(name: 'mac_gui', defaultValue: true)
     booleanParam(name: 'clang_analyzer', defaultValue: true)
     booleanParam(name: 'master_jobs', defaultValue: true)
   }
@@ -494,8 +495,7 @@ pipeline {
         stage('Mac-Gui') {
           when {
             beforeAgent true
-            // expression { return params.mac && (stage_required.build || stage_required.full) }
-            expression { return false }
+            expression { return params.mac_gui && (stage_required.build || stage_required.full) }
           }
           agent { label "mac"}
           environment {
@@ -510,8 +510,8 @@ pipeline {
                   '-DOGS_CPU_ARCHITECTURE=core2 ' +
                   '-DOGS_BUILD_UTILS=ON ' +
                   '-DOGS_BUILD_GUI=ON ' +
-                  '-DOGS_CONAN_BUILD=missing ' +
-                  '-DCMAKE_OSX_DEPLOYMENT_TARGET="10.14" ' +
+                  '-DOGS_USE_CONAN=OFF ' +
+                  '-DCMAKE_OSX_DEPLOYMENT_TARGET="10.15" ' +
                   '-DOGS_USE_NETCDF=ON '
               }
               build {
