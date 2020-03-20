@@ -14,13 +14,20 @@ set(TOOLS
     moveMeshNodes
     NodeReordering
     queryMesh
-    RemoveGhostNodes
     removeMeshElements
     ResetPropertiesInPolygonalRegion
     reviseMesh
     swapNodeCoordinateAxes
     UnityPreprocessing
     Vtu2Grid)
+if(OGS_BUILD_GUI)
+    add_executable(RemoveGhostNodes
+        RemoveGhostNodes.cpp
+        vtkCleanUnstructuredGrid.cpp)
+    target_link_libraries(RemoveGhostNodes GitInfoLib MeshLib)
+    set_target_properties(RemoveGhostNodes PROPERTIES FOLDER Utilities)
+    install(TARGETS RemoveGhostNodes RUNTIME DESTINATION bin COMPONENT Utilities)
+endif()
 foreach(TOOL ${TOOLS})
     add_executable(${TOOL} ${TOOL}.cpp)
     target_link_libraries(${TOOL} GitInfoLib MeshLib)
