@@ -168,14 +168,14 @@ public:
     PetscScalar get(const PetscInt idx) const;
 
     //! Exposes the underlying PETSc vector.
-    PETSc_Vec getRawVector() { return _v; }
+    PETSc_Vec& getRawVector() { return _v; }
     /*! Exposes the underlying PETSc vector.
      *
      * \warning
      * This method is dangerous insofar as you can do arbitrary things also
      * with a const PETSc vector!
      */
-    PETSc_Vec getRawVector() const { return _v; }
+    PETSc_Vec const&  getRawVector() const { return _v; }
     /*!
        Copy local entries including ghost ones to an array
        \param u Preallocated vector for the values of local entries.

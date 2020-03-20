@@ -66,7 +66,7 @@ endif()
 if(OGS_USE_PETSC)
     target_link_libraries(ogs PRIVATE ${PETSC_LIBRARIES})
 endif()
-if(OGS_USE_MPI)
+if(OGS_USE_MPI AND TARGET MPI::MPI_CXX)
     target_link_libraries(ogs PRIVATE MPI::MPI_CXX)
 endif()
 
