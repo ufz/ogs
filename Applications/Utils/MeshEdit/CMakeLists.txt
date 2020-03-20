@@ -14,6 +14,7 @@ set(TOOLS
     moveMeshNodes
     NodeReordering
     queryMesh
+    RemoveGhostNodes
     removeMeshElements
     ResetPropertiesInPolygonalRegion
     reviseMesh
