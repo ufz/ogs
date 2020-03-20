@@ -20,6 +20,8 @@
 #include "Applications/FileIO/Gmsh/GMSHInterface.h"
 #include "Applications/FileIO/Gmsh/GmshReader.h"
 
+#include "BaseLib/StringTools.h"
+
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Point.h"
 #include "GeoLib/Polygon.h"
@@ -78,9 +80,9 @@ bool createSurface(GeoLib::Polyline const& ply,
         0.0, 0, geo_names, false, false);
     gmsh_io.setPrecision(std::numeric_limits<double>::digits10);
 
-    // fs::path const temp_dir = fs::temp_directory_path();
-    auto geo_file = fs::temp_directory_path() /= "createSurface.geo";
-    auto msh_file = fs::temp_directory_path() /= "createSurface.msh";
+    // write to random file in temp directory
+    auto geo_file = fs::temp_directory_path() /= BaseLib::random_string(32);
+    auto msh_file = fs::temp_directory_path() /= BaseLib::random_string(32);
 
     gmsh_io.writeToFile(geo_file.string());
     // Newer gmsh versions write a newer file format for meshes per default. At
