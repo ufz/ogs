@@ -9,4 +9,6 @@ if(BUILD_SHARED_LIBS)
             LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 endif()
 
-include(Tests.cmake)
+if(BUILD_TESTING)
+    include(Tests.cmake)
+endif()

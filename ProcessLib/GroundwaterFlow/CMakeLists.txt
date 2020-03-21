@@ -7,4 +7,6 @@ endif()
 
 target_link_libraries(GroundwaterFlow PUBLIC ProcessLib PRIVATE ParameterLib)
 
-include(Tests.cmake)
+if(BUILD_TESTING)
+    include(Tests.cmake)
+endif()

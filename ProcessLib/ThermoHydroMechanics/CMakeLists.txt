@@ -9,4 +9,6 @@ target_link_libraries(ThermoHydroMechanics
                       PUBLIC ProcessLib
                       PRIVATE ParameterLib)
 
-include(Tests.cmake)
+if(BUILD_TESTING)
+    include(Tests.cmake)
+endif()

@@ -1,5 +1,5 @@
 function (OgsTest)
-    if(NOT BUILD_TESTING OR NOT OGS_BUILD_CLI)
+    if(NOT OGS_BUILD_CLI)
         return()
     endif()
     set(options LARGE)
