@@ -24,7 +24,7 @@ endmacro()
 #
 # Downloads files (into build/AdditionalContent) and packages them. Order of arguments can be arbitrary.
 #
-# AddTest(
+# DownloadAdditionalFilesForPackaging(
 #   URLS <multiple URLs>
 #   DESTINATION <install directory>
 #   PACKAGE_GROUP <name of the package to add these files to> # optional, defaults to ogs_extras
