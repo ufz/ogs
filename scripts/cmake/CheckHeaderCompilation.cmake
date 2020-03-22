@@ -58,21 +58,24 @@ function(_check_header_compilation TARGET)
             continue()
         endif()
 
+        string(REPLACE "${PROJECT_SOURCE_DIR}/" "" TEST_NAME ${FILE})
+        string(REPLACE "." "_" TEST_NAME ${TEST_NAME})
+        string(REPLACE "/" "_" TEST_NAME ${TEST_NAME})
         check_cxx_source_compiles(
             "
             #include \"${FILE}\"
             int main() { return 0; }
             "
-            COMPILES
+            ${TEST_NAME}_COMPILES
         )
 
-        if(NOT COMPILES)
+        if(NOT ${TEST_NAME}_COMPILES)
             set(HEADER_COMPILE_ERROR TRUE CACHE INTERNAL "")
-            string(REPLACE "${PROJECT_SOURCE_DIR}/" "" FILE_SHORT ${FILE})
-            message(STATUS "  Compilation failed for ${FILE_SHORT}")
+            message(STATUS "  Compilation failed for ${FILE}")
         endif()
-        unset(COMPILES CACHE)
+        unset(${TEST_NAME}_COMPILES CACHE)
 
+        unset(TEST_NAME)
     endforeach()
 endfunction()
 
