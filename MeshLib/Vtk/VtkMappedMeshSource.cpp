@@ -158,10 +158,6 @@ int VtkMappedMeshSource::RequestData(vtkInformation* /*request*/,
         {
             continue;
         }
-        if (addProperty<std::int8_t>(properties, name))
-        {
-            continue;
-        }
         if (addProperty<unsigned>(properties, name))
         {
             continue;
@@ -181,7 +177,6 @@ int VtkMappedMeshSource::RequestData(vtkInformation* /*request*/,
             "\n\t double,"
             "\n\t float,"
             "\n\t int,"
-            "\n\t int8_t,"
             "\n\t unsigned,"
             "\n\t size_t,"
             "\n\t char.",
