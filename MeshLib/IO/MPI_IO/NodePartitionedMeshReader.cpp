@@ -18,7 +18,6 @@
 #include <logog/include/logog.hpp>
 
 #ifdef USE_PETSC
-#include <algorithm>
 #include <mpi.h>
 #endif
 
@@ -33,8 +32,7 @@ template <typename VALUE, typename TYPE>
 bool
 is_safely_convertable(VALUE const& value)
 {
-    bool const result =
-        static_cast<TYPE>(value) <= std::numeric_limits<TYPE>::max();
+    bool const result = value <= std::numeric_limits<TYPE>::max();
     if (!result)
     {
         ERR("The value %d is too large for conversion.", value);
@@ -95,25 +93,6 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::read(
         INFO("Reading binary mesh file ...");
 
         mesh = readBinary(file_name_base);
-    }
-
-    auto* vtkGhostType =
-        mesh->getProperties().createNewPropertyVector<std::int8_t>(
-            "vtkGhostType", MeshLib::MeshItemType::Cell, 1);
-    if (!vtkGhostType)
-    {
-        WARN(
-            "Could not create PropertyVector for the cell values of "
-            "vtkGhostType in Mesh.");
-    }
-    else
-    {
-        vtkGhostType->reserve(_mesh_info.regular_elements +
-                              _mesh_info.ghost_elements);
-        std::fill_n(std::back_inserter(*vtkGhostType),
-                    _mesh_info.regular_elements, 0);
-        std::fill_n(std::back_inserter(*vtkGhostType),
-                    _mesh_info.ghost_elements, 1);
     }
 
     INFO("[time] Reading the mesh took %f s.", timer.elapsed());
