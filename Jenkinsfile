@@ -596,7 +596,7 @@ pipeline {
               sh 'find $CONAN_USER_HOME -name "system_reqs.txt" -exec rm {} \\;'
               try {
                 configure {
-                  cmakeOptions = '-DOGS_CHECK_HEADER_COMPILATION=ON'
+                  cmakeOptions = '-DOGS_CHECK_HEADER_COMPILATION=ON -DBUILD_TESTING=OFF'
                   dir = 'build-check-header'
                 }
               }
