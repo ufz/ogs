@@ -12,7 +12,6 @@
 
 #include "Medium.h"
 
-#include <string>
 #include "BaseLib/ConfigTree.h"
 #include "ParameterLib/Parameter.h"
 

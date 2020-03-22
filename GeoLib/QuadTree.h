@@ -16,9 +16,9 @@
 
 #include <cassert>
 #include <limits>
-#include <utility>
-
+#include <list>
 #include <logog/include/logog.hpp>
+#include <utility>
 
 namespace GeoLib
 {
