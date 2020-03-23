@@ -16,9 +16,9 @@
 
 namespace ProcessLib
 {
-namespace GroundwaterFlow
+namespace SteadyStateDiffusion
 {
-GroundwaterFlowProcess::GroundwaterFlowProcess(
+SteadyStateDiffusion::SteadyStateDiffusion(
     std::string name,
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
@@ -26,7 +26,7 @@ GroundwaterFlowProcess::GroundwaterFlowProcess(
     unsigned const integration_order,
     std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>&&
         process_variables,
-    GroundwaterFlowProcessData&& process_data,
+    SteadyStateDiffusionData&& process_data,
     SecondaryVariableCollection&& secondary_variables,
     std::unique_ptr<ProcessLib::SurfaceFluxData>&& surfaceflux)
     : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
@@ -37,7 +37,7 @@ GroundwaterFlowProcess::GroundwaterFlowProcess(
 {
 }
 
-void GroundwaterFlowProcess::initializeConcreteProcess(
+void SteadyStateDiffusion::initializeConcreteProcess(
     NumLib::LocalToGlobalIndexMap const& dof_table,
     MeshLib::Mesh const& mesh,
     unsigned const integration_order)
@@ -51,17 +51,18 @@ void GroundwaterFlowProcess::initializeConcreteProcess(
 
     _secondary_variables.addSecondaryVariable(
         "darcy_velocity",
-        makeExtrapolator(
-            mesh.getDimension(), getExtrapolator(), _local_assemblers,
-            &GroundwaterFlowLocalAssemblerInterface::getIntPtDarcyVelocity));
+        makeExtrapolator(mesh.getDimension(), getExtrapolator(),
+                         _local_assemblers,
+                         &SteadyStateDiffusionLocalAssemblerInterface::
+                             getIntPtDarcyVelocity));
 }
 
-void GroundwaterFlowProcess::assembleConcreteProcess(
+void SteadyStateDiffusion::assembleConcreteProcess(
     const double t, double const dt, std::vector<GlobalVector*> const& x,
     std::vector<GlobalVector*> const& xdot, int const process_id,
     GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
 {
-    DBUG("Assemble GroundwaterFlowProcess.");
+    DBUG("Assemble SteadyStateDiffusion.");
 
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
@@ -73,13 +74,13 @@ void GroundwaterFlowProcess::assembleConcreteProcess(
         b, _coupled_solutions);
 }
 
-void GroundwaterFlowProcess::assembleWithJacobianConcreteProcess(
+void SteadyStateDiffusion::assembleWithJacobianConcreteProcess(
     const double t, double const dt, std::vector<GlobalVector*> const& x,
     GlobalVector const& xdot, const double dxdot_dx, const double dx_dx,
     int const process_id, GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
     GlobalMatrix& Jac)
 {
-    DBUG("AssembleWithJacobian GroundwaterFlowProcess.");
+    DBUG("AssembleWithJacobian SteadyStateDiffusion.");
 
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
@@ -91,5 +92,5 @@ void GroundwaterFlowProcess::assembleWithJacobianConcreteProcess(
         dxdot_dx, dx_dx, process_id, M, K, b, Jac, _coupled_solutions);
 }
 
-}   // namespace GroundwaterFlow
+}  // namespace SteadyStateDiffusion
 }   // namespace ProcessLib

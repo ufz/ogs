@@ -29,11 +29,11 @@
 
 namespace ProcessLib
 {
-namespace GroundwaterFlow
+namespace SteadyStateDiffusion
 {
 const unsigned NUM_NODAL_DOF = 1;
 
-class GroundwaterFlowLocalAssemblerInterface
+class SteadyStateDiffusionLocalAssemblerInterface
     : public ProcessLib::LocalAssemblerInterface,
       public NumLib::ExtrapolatableElement
 {
@@ -47,7 +47,7 @@ public:
 
 template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
-class LocalAssemblerData : public GroundwaterFlowLocalAssemblerInterface
+class LocalAssemblerData : public SteadyStateDiffusionLocalAssemblerInterface
 {
     using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction, GlobalDim>;
     using ShapeMatrices = typename ShapeMatricesType::ShapeMatrices;
@@ -66,7 +66,7 @@ public:
                        std::size_t const /*local_matrix_size*/,
                        bool is_axially_symmetric,
                        unsigned const integration_order,
-                       GroundwaterFlowProcessData const& process_data)
+                       SteadyStateDiffusionData const& process_data)
         : _element(element),
           _process_data(process_data),
           _integration_method(integration_order),
@@ -246,12 +246,12 @@ public:
 
 private:
     MeshLib::Element const& _element;
-    GroundwaterFlowProcessData const& _process_data;
+    SteadyStateDiffusionData const& _process_data;
 
     IntegrationMethod const _integration_method;
     std::vector<ShapeMatrices, Eigen::aligned_allocator<ShapeMatrices>>
         _shape_matrices;
 };
 
-}  // namespace GroundwaterFlow
+}  // namespace SteadyStateDiffusion
 }  // namespace ProcessLib

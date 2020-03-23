@@ -542,10 +542,11 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
             // TODO at the moment we have only one mesh, later there can be
             // several meshes. Then we have to assign the referenced mesh
             // here.
-            process = ProcessLib::GroundwaterFlow::createGroundwaterFlowProcess(
-                name, *_mesh_vec[0], std::move(jacobian_assembler),
-                _process_variables, _parameters, integration_order,
-                process_config, _mesh_vec, output_directory, _media);
+            process =
+                ProcessLib::SteadyStateDiffusion::createSteadyStateDiffusion(
+                    name, *_mesh_vec[0], std::move(jacobian_assembler),
+                    _process_variables, _parameters, integration_order,
+                    process_config, _mesh_vec, output_directory, _media);
         }
         else
 #endif

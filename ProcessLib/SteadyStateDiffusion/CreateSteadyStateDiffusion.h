@@ -20,9 +20,9 @@ class Medium;
 
 namespace ProcessLib
 {
-namespace GroundwaterFlow
+namespace SteadyStateDiffusion
 {
-std::unique_ptr<Process> createGroundwaterFlowProcess(
+std::unique_ptr<Process> createSteadyStateDiffusion(
     std::string name,
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
@@ -34,5 +34,5 @@ std::unique_ptr<Process> createGroundwaterFlowProcess(
     std::string const& output_directory,
     std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media);
 
-}   // namespace GroundwaterFlow
+}   // namespace SteadyStateDiffusion
 }   // namespace ProcessLib

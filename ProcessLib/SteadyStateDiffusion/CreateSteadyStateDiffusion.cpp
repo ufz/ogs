@@ -23,7 +23,7 @@
 
 namespace ProcessLib
 {
-namespace GroundwaterFlow
+namespace SteadyStateDiffusion
 {
 void checkMPLProperties(
     MeshLib::Mesh const& mesh,
@@ -38,7 +38,7 @@ void checkMPLProperties(
         mesh, media_map, required_medium_properties, empty, empty);
 }
 
-std::unique_ptr<Process> createGroundwaterFlowProcess(
+std::unique_ptr<Process> createSteadyStateDiffusion(
     std::string name,
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
@@ -53,7 +53,7 @@ std::unique_ptr<Process> createGroundwaterFlowProcess(
     //! \ogs_file_param{prj__processes__process__type}
     config.checkConfigParameter("type", "GROUNDWATER_FLOW");
 
-    DBUG("Create GroundwaterFlowProcess.");
+    DBUG("Create SteadyStateDiffusion.");
 
     // Process variable.
 
@@ -75,10 +75,9 @@ std::unique_ptr<Process> createGroundwaterFlowProcess(
     checkMPLProperties(mesh, *media_map);
     DBUG("Media properties verified.");
 
-    GroundwaterFlowProcessData process_data{std::move(media_map)};
+    SteadyStateDiffusionData process_data{std::move(media_map)};
 
     SecondaryVariableCollection secondary_variables;
-
 
     ProcessLib::createSecondaryVariables(config, secondary_variables);
 
@@ -92,12 +91,12 @@ std::unique_ptr<Process> createGroundwaterFlowProcess(
             *calculatesurfaceflux_config, meshes, output_directory);
     }
 
-    return std::make_unique<GroundwaterFlowProcess>(
+    return std::make_unique<SteadyStateDiffusion>(
         std::move(name), mesh, std::move(jacobian_assembler), parameters,
         integration_order, std::move(process_variables),
         std::move(process_data), std::move(secondary_variables),
         std::move(surfaceflux));
 }
 
-}  // namespace GroundwaterFlow
+}  // namespace SteadyStateDiffusion
 }  // namespace ProcessLib

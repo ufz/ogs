@@ -21,12 +21,12 @@
 
 namespace ProcessLib
 {
-namespace GroundwaterFlow
+namespace SteadyStateDiffusion
 {
-class GroundwaterFlowProcess final : public Process
+class SteadyStateDiffusion final : public Process
 {
 public:
-    GroundwaterFlowProcess(
+    SteadyStateDiffusion(
         std::string name,
         MeshLib::Mesh& mesh,
         std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&&
@@ -36,7 +36,7 @@ public:
         unsigned const integration_order,
         std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>&&
             process_variables,
-        GroundwaterFlowProcessData&& process_data,
+        SteadyStateDiffusionData&& process_data,
         SecondaryVariableCollection&& secondary_variables,
         std::unique_ptr<ProcessLib::SurfaceFluxData>&& surfaceflux);
 
@@ -66,18 +66,20 @@ public:
                                      const double /*delta_t*/,
                                      int const process_id) override
     {
-        //For this single process, process_id is always zero.
+        // For this single process, process_id is always zero.
         if (process_id != 0)
         {
-            OGS_FATAL("The condition of process_id = 0 must be satisfied for "
-                      "GroundwaterFlowProcess, which is a single process." );
+            OGS_FATAL(
+                "The condition of process_id = 0 must be satisfied for "
+                "SteadyStateDiffusion, which is a single process.");
         }
-        if (!_surfaceflux) // computing the surfaceflux is optional
+        if (!_surfaceflux)  // computing the surfaceflux is optional
         {
             return;
         }
 
-        ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
+        ProcessLib::ProcessVariable const& pv =
+            getProcessVariables(process_id)[0];
 
         _surfaceflux->integrate(x, t, *this, process_id, _integration_order,
                                 _mesh, pv.getActiveElementIDs());
@@ -102,13 +104,13 @@ private:
         int const process_id, GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
         GlobalMatrix& Jac) override;
 
-    GroundwaterFlowProcessData _process_data;
+    SteadyStateDiffusionData _process_data;
 
-    std::vector<std::unique_ptr<GroundwaterFlowLocalAssemblerInterface>>
+    std::vector<std::unique_ptr<SteadyStateDiffusionLocalAssemblerInterface>>
         _local_assemblers;
 
     std::unique_ptr<ProcessLib::SurfaceFluxData> _surfaceflux;
 };
 
-}   // namespace GroundwaterFlow
+}  // namespace SteadyStateDiffusion
 }   // namespace ProcessLib

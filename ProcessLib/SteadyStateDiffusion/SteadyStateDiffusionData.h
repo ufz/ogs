@@ -19,13 +19,13 @@ namespace ProcessLib
 template <typename T>
 struct Parameter;
 
-namespace GroundwaterFlow
+namespace SteadyStateDiffusion
 {
-struct GroundwaterFlowProcessData final
+struct SteadyStateDiffusionData final
 {
     std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>
         media_map;
 };
 
-} // namespace GroundwaterFlow
+} // namespace SteadyStateDiffusion
 } // namespace ProcessLib
