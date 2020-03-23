@@ -263,7 +263,8 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/autocheck/include
     ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/tclap/include
     ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/json/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/exprtk)
+    ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/exprtk
+    ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/spdlog/include)
 
 # vtkdiff
 if(EXISTS ${PROJECT_SOURCE_DIR}/ThirdParty/vtkdiff/CMakeLists.txt)
