@@ -10,7 +10,7 @@ include(GenerateExportHeader)
 generate_export_header(ParameterLib)
 target_include_directories(ParameterLib PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 
-target_link_libraries(ParameterLib PRIVATE BaseLib MeshLib)
+target_link_libraries(ParameterLib PUBLIC MathLib PRIVATE BaseLib MeshLib)
 
 if(OGS_USE_PCH)
     cotire(ParameterLib)
