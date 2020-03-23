@@ -12,8 +12,8 @@
 
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "ProcessLib/Process.h"
-#include "GroundwaterFlowFEM.h"
-#include "GroundwaterFlowProcessData.h"
+#include "SteadyStateDiffusionFEM.h"
+#include "SteadyStateDiffusionData.h"
 #include "ProcessLib/SurfaceFlux/SurfaceFluxData.h"
 
 // TODO used for output, if output classes are ready this has to be changed

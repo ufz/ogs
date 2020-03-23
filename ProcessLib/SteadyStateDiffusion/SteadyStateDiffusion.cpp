@@ -8,7 +8,7 @@
  *
  */
 
-#include "GroundwaterFlowProcess.h"
+#include "SteadyStateDiffusion.h"
 
 #include <cassert>
 

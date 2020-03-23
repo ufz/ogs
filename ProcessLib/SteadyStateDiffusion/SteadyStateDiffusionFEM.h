@@ -12,7 +12,7 @@
 
 #include <vector>
 
-#include "GroundwaterFlowProcessData.h"
+#include "SteadyStateDiffusionData.h"
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "MaterialLib/MPL/VariableType.h"

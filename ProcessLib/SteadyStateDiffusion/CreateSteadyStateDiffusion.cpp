@@ -11,8 +11,8 @@
 #include "CreateSteadyStateDiffusion.h"
 
 #include "BaseLib/FileTools.h"
-#include "GroundwaterFlowProcess.h"
-#include "GroundwaterFlowProcessData.h"
+#include "SteadyStateDiffusion.h"
+#include "SteadyStateDiffusionData.h"
 #include "MaterialLib/MPL/CheckMaterialSpatialDistributionMap.h"
 #include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
