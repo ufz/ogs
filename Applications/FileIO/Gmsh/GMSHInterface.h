@@ -11,6 +11,7 @@
 #pragma once
 
 #include <iosfwd>
+#include <list>
 
 #include "BaseLib/IO/Writer.h"
 
