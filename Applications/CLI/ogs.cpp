@@ -121,7 +121,8 @@ int main(int argc, char* argv[])
         std::cout.setf(std::ios::unitbuf);
     }
 
-    logog_setup.setLevel(log_level_arg.getValue());
+    BaseLib::setConsoleLogLevel(log_level_arg.getValue());
+    spdlog::set_pattern("%^%l:%$ %v");
 
     INFO("This is OpenGeoSys-6 version {:s}.",
          GitInfoLib::GitInfo::ogs_version);
@@ -166,10 +167,11 @@ int main(int argc, char* argv[])
             controller->Initialize(&argc, &argv, 1);
             vtkMPIController::SetGlobalController(controller);
 
-            logog_setup.setFormatter(
-                std::make_unique<BaseLib::TemplateLogogFormatterSuppressedGCC<
-                    TOPIC_LEVEL_FLAG | TOPIC_FILE_NAME_FLAG |
-                    TOPIC_LINE_NUMBER_FLAG>>());
+            {   // Can be called only after MPI_INIT.
+                int mpi_rank;
+                MPI_Comm_rank(PETSC_COMM_WORLD, &mpi_rank);
+                spdlog::set_pattern(fmt::format("[{}] %^%l:%$ %v", mpi_rank));
+            }
 #endif
             run_time.start();
 
