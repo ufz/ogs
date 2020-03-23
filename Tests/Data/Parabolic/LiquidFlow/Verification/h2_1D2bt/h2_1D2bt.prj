@@ -37,10 +37,6 @@
                         </property>
                     </properties>
                 </phase>
-                <phase>
-                    <type>Solid</type>
-                    <properties/>
-                </phase>
             </phases>
             <properties>
                 <property>
@@ -81,10 +77,6 @@
                             <value> 1.e+3 </value>
                         </property>
                     </properties>
-                </phase>
-                <phase>
-                    <type>Solid</type>
-                    <properties/>
                 </phase>
             </phases>
             <properties>

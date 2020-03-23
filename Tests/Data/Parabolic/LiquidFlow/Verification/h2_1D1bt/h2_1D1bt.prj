@@ -37,10 +37,6 @@
                         </property>
                     </properties>
                 </phase>
-                <phase>
-                    <type>Solid</type>
-                    <properties/>
-                </phase>
             </phases>
             <properties>
                 <property>
