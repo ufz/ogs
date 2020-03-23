@@ -96,13 +96,7 @@
                 </phase>
                 <phase>
                     <type>Solid</type>
-                    <properties>
-                        <property>
-                            <name>storage</name>
-                            <type>Constant</type>
-                            <value> 1e-5 </value>
-                        </property>
-                    </properties>
+                    <properties/>
                 </phase>
             </phases>
             <properties>
@@ -120,6 +114,11 @@
                     <name>porosity</name>
                     <type>Constant</type>
                     <value>0.2</value>
+                </property>
+                <property>
+                    <name>storage</name>
+                    <type>Constant</type>
+                    <value> 1e-5 </value>
                 </property>
             </properties>
         </medium>

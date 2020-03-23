@@ -39,13 +39,7 @@
                 </phase>
                 <phase>
                     <type>Solid</type>
-                    <properties>
-                        <property>
-                            <name>storage</name>
-                            <type>Constant</type>
-                            <value> 0.0 </value>
-                        </property>
-                    </properties>
+                    <properties/>
                 </phase>
             </phases>
             <properties>
@@ -63,6 +57,11 @@
                     <name>porosity</name>
                     <type>Constant</type>
                     <value>1.0</value>
+                </property>
+                <property>
+                    <name>storage</name>
+                    <type>Constant</type>
+                    <value> 0.0 </value>
                 </property>
             </properties>
         </medium>
@@ -85,13 +84,7 @@
                 </phase>
                 <phase>
                     <type>Solid</type>
-                    <properties>
-                        <property>
-                            <name>storage</name>
-                            <type>Constant</type>
-                            <value> 0.0 </value>
-                        </property>
-                    </properties>
+                    <properties/>
                 </phase>
             </phases>
             <properties>
@@ -109,6 +102,11 @@
                     <name>porosity</name>
                     <type>Constant</type>
                     <value>1.0</value>
+                </property>
+                <property>
+                    <name>storage</name>
+                    <type>Constant</type>
+                    <value> 0.0 </value>
                 </property>
             </properties>
         </medium>
