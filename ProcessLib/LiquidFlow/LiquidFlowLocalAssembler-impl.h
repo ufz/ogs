@@ -147,7 +147,6 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
 
     auto const& medium = _process_data.media_map->getMedium(_element.getID());
     auto const& liquid_phase = medium->phase("AqueousLiquid");
-    auto const& solid_phase = medium->phase("Solid");
 
     MaterialPropertyLib::VariableArray vars;
     vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
@@ -176,10 +175,10 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
                     t, dt);
 
         auto const porosity =
-            solid_phase.property(MaterialPropertyLib::PropertyType::porosity)
+            medium->property(MaterialPropertyLib::PropertyType::porosity)
                 .template value<double>(vars, pos, t, dt);
         auto const storage =
-            solid_phase.property(MaterialPropertyLib::PropertyType::storage)
+            medium->property(MaterialPropertyLib::PropertyType::storage)
                 .template value<double>(vars, pos, t, dt);
 
         // Assemble mass matrix, M
