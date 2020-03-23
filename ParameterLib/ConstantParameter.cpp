@@ -34,10 +34,10 @@ std::unique_ptr<ParameterBase> createConstantParameter(
             if (value->size() != 1)
             {
                 OGS_FATAL(
-                    "Expected to read exactly one value, but %d were given.",
+                    "Expected to read exactly one value, but {:d} were given.",
                     value->size());
             }
-            DBUG("Using value %g for constant parameter.", (*value)[0]);
+            DBUG("Using value {:g} for constant parameter.", (*value)[0]);
             return std::make_unique<ConstantParameter<double>>(name,
                                                                (*value)[0]);
         }
@@ -57,7 +57,7 @@ std::unique_ptr<ParameterBase> createConstantParameter(
     for (double const v : values)
     {
         (void)v;  // unused value if building w/o DBUG output.
-        DBUG("\t%g", v);
+        DBUG("\t{:g}", v);
     }
 
     return std::make_unique<ConstantParameter<double>>(name, values);

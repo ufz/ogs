@@ -29,7 +29,8 @@ std::vector<std::unique_ptr<MeshLib::Mesh>> readMeshes(
         auto mesh = MeshLib::IO::readMeshFromFile(filename);
         if (mesh == nullptr)
         {
-            OGS_FATAL("Could not read mesh from '%s' file.", filename.c_str());
+            OGS_FATAL("Could not read mesh from '{:s}' file.",
+                      filename.c_str());
         }
         meshes.emplace_back(mesh);
     }
@@ -105,7 +106,7 @@ int main(int argc, char* argv[])
         MeshLib::IO::readMeshFromFile(bulk_mesh_arg.getValue())};
     if (bulk_mesh == nullptr)
     {
-        OGS_FATAL("Could not read bulk mesh from '%s'",
+        OGS_FATAL("Could not read bulk mesh from '{:s}'",
                   bulk_mesh_arg.getValue().c_str());
     }
 

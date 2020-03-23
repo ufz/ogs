@@ -39,7 +39,7 @@ void convertPoints (DBFHandle dbf_handle,
                     bool station)
 {
     int n_records (DBFGetRecordCount (dbf_handle));
-    INFO("Reading %d records.", n_records);
+    INFO("Reading {:d} records.", n_records);
 
     auto points = std::make_unique<std::vector<GeoLib::Point*>>();
     points->reserve (n_records);
@@ -147,7 +147,7 @@ void printFieldInformationTable(DBFHandle const& dbf_handle, std::size_t n_field
     }
     delete[] field_name;
     out << "************************************************" << std::endl;
-    INFO("%s", out.str().c_str());
+    INFO("{:s}", out.str().c_str());
 }
 
 int main (int argc, char* argv[])
@@ -183,17 +183,17 @@ int main (int argc, char* argv[])
                    nullptr /*padfMinBound*/, nullptr /*padfMinBound*/);
 
         if ((shape_type - 1) % 10 == 0)
-            INFO("Shape file contains %d points.", number_of_elements);
+            INFO("Shape file contains {:d} points.", number_of_elements);
         if ( ((shape_type - 3) % 10 == 0 || (shape_type - 5) % 10 == 0))
         {
-            ERR("Shape file contains %d polylines.", number_of_elements);
+            ERR("Shape file contains {:d} polylines.", number_of_elements);
             ERR("This programm only handles only files containing points.");
             SHPClose(hSHP);
             return EXIT_SUCCESS;
         }
         SHPClose(hSHP);
     } else {
-        ERR("Could not open shapefile %s.", fname.c_str());
+        ERR("Could not open shapefile {:s}.", fname.c_str());
     }
 
     DBFHandle dbf_handle = DBFOpen(fname.c_str(),"rb");
@@ -253,7 +253,7 @@ int main (int argc, char* argv[])
             fname += ".gml";
         }
 
-        INFO("Writing to %s.", fname.c_str());
+        INFO("Writing to {:s}.", fname.c_str());
         convertPoints(dbf_handle,
                       fname,
                       x_id,

@@ -70,7 +70,7 @@ int main (int argc, char* argv[])
     const GeoLib::PolylineVec* ply_vec (geo_objs.getPolylineVecObj(geo_names[0]));
     if (!ply_vec)
     {
-        ERR("Could not find polylines in geometry '%s'.",
+        ERR("Could not find polylines in geometry '{:s}'.",
             geo_names.front().c_str());
         return EXIT_FAILURE;
     }
@@ -79,15 +79,17 @@ int main (int argc, char* argv[])
     MeshLib::Mesh const*const mesh (MeshLib::IO::readMeshFromFile(mesh_in.getValue()));
     if (!mesh)
     {
-        ERR("Mesh file '%s' not found", mesh_in.getValue().c_str());
+        ERR("Mesh file '{:s}' not found", mesh_in.getValue().c_str());
         return EXIT_FAILURE;
     }
-    INFO("Mesh read: %d nodes, %d elements.", mesh->getNumberOfNodes(), mesh->getNumberOfElements());
+    INFO("Mesh read: {:d} nodes, {:d} elements.", mesh->getNumberOfNodes(),
+         mesh->getNumberOfElements());
 
     // add line elements
     std::unique_ptr<MeshLib::Mesh> new_mesh =
         MeshGeoToolsLib::appendLinesAlongPolylines(*mesh, *ply_vec);
-    INFO("Mesh created: %d nodes, %d elements.", new_mesh->getNumberOfNodes(), new_mesh->getNumberOfElements());
+    INFO("Mesh created: {:d} nodes, {:d} elements.",
+         new_mesh->getNumberOfNodes(), new_mesh->getNumberOfElements());
 
     MeshLib::IO::writeMeshToFile(*new_mesh, mesh_out.getValue());
 

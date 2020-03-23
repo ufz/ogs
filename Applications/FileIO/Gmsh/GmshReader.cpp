@@ -39,7 +39,7 @@ bool isGMSHMeshFile(const std::string& fname)
     std::ifstream input(fname.c_str());
 
     if (!input) {
-        ERR("isGMSHMeshFile(): Could not open file %s.", fname.c_str());
+        ERR("isGMSHMeshFile(): Could not open file {:s}.", fname.c_str());
         return false;
     }
 
@@ -50,7 +50,7 @@ bool isGMSHMeshFile(const std::string& fname)
         std::string version;
         getline(input, version);
         getline(input, version);
-        INFO("isGMSHMeshFile(): Found GMSH mesh file version: %s.",
+        INFO("isGMSHMeshFile(): Found GMSH mesh file version: {:s}.",
              version.c_str());
         input.close();
         return true;
@@ -156,7 +156,7 @@ std::pair<MeshLib::Element*, int> readElement(
         in >> dummy; // skip rest of line
         break;
     default:
-        WARN("readGMSHMesh(): Unknown element type %d.", type);
+        WARN("readGMSHMesh(): Unknown element type {:d}.", type);
         break;
     }
     return std::make_pair(nullptr, -1);
@@ -168,7 +168,7 @@ MeshLib::Mesh* readGMSHMesh(std::string const& fname)
     std::ifstream in(fname.c_str(), std::ios::in);
     if (!in.is_open())
     {
-        WARN ("readGMSHMesh() - Could not open file %s.", fname.c_str());
+        WARN("readGMSHMesh() - Could not open file {:s}.", fname.c_str());
         return nullptr;
     }
 
@@ -183,7 +183,8 @@ MeshLib::Mesh* readGMSHMesh(std::string const& fname)
     getline(in, line); // version-number file-type data-size
     if (line.substr(0, 3) != "2.2")
     {
-        WARN("Wrong gmsh file format version '%s'.", line.substr(0,3).c_str());
+        WARN("Wrong gmsh file format version '{:s}'.",
+             line.substr(0, 3).c_str());
         return nullptr;
     }
 
@@ -281,8 +282,8 @@ MeshLib::Mesh* readGMSHMesh(std::string const& fname)
     MeshLib::ElementValueModification::condense(*mesh);
 
     INFO("\t... finished.");
-    INFO("Nr. Nodes: %d.", nodes.size());
-    INFO("Nr. Elements: %d.", elements.size());
+    INFO("Nr. Nodes: {:d}.", nodes.size());
+    INFO("Nr. Elements: {:d}.", elements.size());
 
     return mesh;
 }

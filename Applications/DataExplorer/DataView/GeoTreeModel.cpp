@@ -78,8 +78,8 @@ void GeoTreeModel::addPointList(QString geoName, GeoLib::PointVec const& pointVe
                               ->setData(4, QString::fromStdString(pnt->first)));
     }
 
-    INFO("Geometry '%s' built. %d points added.", geoName.toStdString().c_str(),
-         nPoints);
+    INFO("Geometry '{:s}' built. {:d} points added.",
+         geoName.toStdString().c_str(), nPoints);
 
     endResetModel();
 }
@@ -101,7 +101,7 @@ void GeoTreeModel::addPolylineList(QString geoName, GeoLib::PolylineVec const& p
     if (geo == nullptr)
     {
         ERR("GeoTreeModel::addPolylineList(): No corresponding geometry for "
-            "'%s' found.",
+            "'{:s}' found.",
             geoName.toStdString().c_str());
         return;
     }
@@ -182,7 +182,7 @@ void GeoTreeModel::addChildren(GeoObjectListItem* plyList,
                               ->setData(1, QString::fromStdString(pnt->first)));
     }
 
-    INFO("%d polylines added.", end_index - start_index);
+    INFO("{:d} polylines added.", end_index - start_index);
 }
 
 void GeoTreeModel::addSurfaceList(QString geoName, GeoLib::SurfaceVec const& surfaceVec)
@@ -202,7 +202,7 @@ void GeoTreeModel::addSurfaceList(QString geoName, GeoLib::SurfaceVec const& sur
     if (geo == nullptr)
     {
         ERR("GeoTreeModel::addSurfaceList(): No corresponding geometry for "
-            "'%s' found.",
+            "'{:s}' found.",
             geoName.toStdString().c_str());
         return;
     }
@@ -297,7 +297,7 @@ void GeoTreeModel::addChildren(GeoObjectListItem* sfcList,
                               ->setData(1, QString::fromStdString(pnt->first)));
     }
 
-    INFO("%d surfaces added.", end_index - start_index);
+    INFO("{:d} surfaces added.", end_index - start_index);
 }
 
 void GeoTreeModel::renameGeometry(std::string const& old_name,
@@ -316,7 +316,7 @@ void GeoTreeModel::renameGeometry(std::string const& old_name,
     {
         if (new_name == tree_item_entry->data(0).toString().toStdString())
         {
-            INFO("Found tree_item_entry with name '%s'.", new_name.c_str());
+            INFO("Found tree_item_entry with name '{:s}'.", new_name.c_str());
         }
     }
 }

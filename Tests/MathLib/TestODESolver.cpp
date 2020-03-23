@@ -99,8 +99,10 @@ std::unique_ptr<MathLib::ODE::ODESolver<NumEquations>> make_ode_solver(
 void check(const double time_reached, const double y, const double y_dot,
            const double time, const double y_ana, const double y_dot_ana)
 {
-    DBUG("t: %14.7g, y: %14.7g, diff: %14.7g, y_dot: %14.7g, diff: %14.7g",
-         time_reached, y, y - y_ana, y_dot, y_dot - y_dot_ana);
+    DBUG(
+        "t: {:14.7g}, y: {:14.7g}, diff: {:14.7g}, y_dot: {:14.7g}, diff: "
+        "{:14.7g}",
+        time_reached, y, y - y_ana, y_dot, y_dot - y_dot_ana);
     (void)y_dot_ana;  // Avoid unused variable warning when DBUG output is
                       // disabled.
 

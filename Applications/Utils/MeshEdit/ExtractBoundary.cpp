@@ -16,7 +16,6 @@
 #include <string>
 #include <vector>
 
-#include "Applications/ApplicationsLib/LogogSetup.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/StringTools.h"
 #include "InfoLib/GitInfo.h"
@@ -31,8 +30,6 @@
 
 int main (int argc, char* argv[])
 {
-    ApplicationsLib::LogogSetup logog_setup;
-
     TCLAP::CmdLine cmd(
         "Tool extracts the boundary of the given mesh. The documentation is "
         "available at "
@@ -89,7 +86,7 @@ int main (int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
-    INFO("Mesh read: %u nodes, %u elements.", mesh->getNumberOfNodes(),
+    INFO("Mesh read: {:d} nodes, {:d} elements.", mesh->getNumberOfNodes(),
          mesh->getNumberOfElements());
 
     // extract surface
@@ -98,7 +95,7 @@ int main (int argc, char* argv[])
             *mesh, node_prop_name.getValue(), element_prop_name.getValue(),
             face_prop_name.getValue()));
 
-    INFO("Created surface mesh: %u nodes, %u elements.",
+    INFO("Created surface mesh: {:d} nodes, {:d} elements.",
          surface_mesh->getNumberOfNodes(), surface_mesh->getNumberOfElements());
 
     std::string out_fname(mesh_out.getValue());

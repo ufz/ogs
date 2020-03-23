@@ -12,8 +12,6 @@
  */
 #include "DeactivatedSubdomain.h"
 
-#include <logog/include/logog.hpp>
-
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
 #include "MeshLib/Elements/Element.h"

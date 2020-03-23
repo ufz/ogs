@@ -120,7 +120,7 @@ namespace
 {
 void readGeometry(std::string const& fname, GeoLib::GEOObjects& geo_objects)
 {
-    DBUG("Reading geometry file '%s'.", fname.c_str());
+    DBUG("Reading geometry file '{:s}'.", fname.c_str());
     GeoLib::IO::BoostXmlGmlInterface gml_reader(geo_objects);
     gml_reader.readFile(fname);
 }
@@ -131,13 +131,13 @@ std::unique_ptr<MeshLib::Mesh> readSingleMesh(
 {
     std::string const mesh_file = BaseLib::copyPathToFileName(
         mesh_config_parameter.getValue<std::string>(), project_directory);
-    DBUG("Reading mesh file '%s'.", mesh_file.c_str());
+    DBUG("Reading mesh file '{:s}'.", mesh_file.c_str());
 
     auto mesh = std::unique_ptr<MeshLib::Mesh>(
         MeshLib::IO::readMeshFromFile(mesh_file));
     if (!mesh)
     {
-        OGS_FATAL("Could not read mesh from '%s' file. No mesh added.",
+        OGS_FATAL("Could not read mesh from '{:s}' file. No mesh added.",
                   mesh_file.c_str());
     }
 
@@ -230,8 +230,8 @@ boost::optional<ParameterLib::CoordinateSystem> parseLocalCoordinateSystem(
     if (dimension != 2 && dimension != 3)
     {
         OGS_FATAL(
-            "Basis vector parameter '%s' must have two or three components, "
-            "but it has %d.",
+            "Basis vector parameter '{:s}' must have two or three components, "
+            "but it has {:d}.",
             basis_vector_0.name.c_str(), dimension);
     }
 
@@ -316,7 +316,7 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
             if (!_local_coordinate_system)
             {
                 OGS_FATAL(
-                    "The parameter '%s' is using the local coordinate system "
+                    "The parameter '{:s}' is using the local coordinate system "
                     "but no local coordinate system was provided.",
                     parameter->name.c_str());
             }
@@ -379,7 +379,7 @@ void ProjectData::parseProcessVariables(
                                               _parameters};
         if (!names.insert(pv.getName()).second)
         {
-            OGS_FATAL("A process variable with name `%s' already exists.",
+            OGS_FATAL("A process variable with name `{:s}' already exists.",
                       pv.getName().c_str());
         }
 
@@ -404,7 +404,7 @@ std::vector<std::string> ProjectData::parseParameters(
             ParameterLib::createParameter(parameter_config, _mesh_vec, _curves);
         if (!names.insert(p->name).second)
         {
-            OGS_FATAL("A parameter with name `%s' already exists.",
+            OGS_FATAL("A parameter with name `{:s}' already exists.",
                       p->name.c_str());
         }
 
@@ -468,7 +468,7 @@ void ProjectData::parseMedia(
                     it != end(m_id))
                 {
                     OGS_FATAL(
-                        "Could not parse material ID's from '%s'. Please "
+                        "Could not parse material ID's from '{:s}'. Please "
                         "separate multiple material ID's by comma only. "
                         "Invalid character: '%c'",
                         m_id.c_str(), *it);
@@ -482,7 +482,7 @@ void ProjectData::parseMedia(
             {
                 OGS_FATAL(
                     "Multiple media were specified for the same material id "
-                    "'%d'. "
+                    "'{:d}'. "
                     "Keep in mind, that if no material id is specified, it is "
                     "assumed to be 0 by default.",
                     id);
@@ -770,7 +770,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                 default:
                     OGS_FATAL(
                         "SMALL_DEFORMATION_NONLOCAL process does not support "
-                        "given dimension %d",
+                        "given dimension {:d}",
                         _mesh_vec[0]->getDimension());
             }
         }
@@ -956,7 +956,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
         else
 #endif
         {
-            OGS_FATAL("Unknown process type: %s", type.c_str());
+            OGS_FATAL("Unknown process type: {:s}", type.c_str());
         }
 
         if (BaseLib::containsIf(
@@ -965,7 +965,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                     return p->name == name;
                 }))
         {
-            OGS_FATAL("The process name '%s' is not unique.", name.c_str());
+            OGS_FATAL("The process name '{:s}' is not unique.", name.c_str());
         }
         _processes.push_back(std::move(process));
     }

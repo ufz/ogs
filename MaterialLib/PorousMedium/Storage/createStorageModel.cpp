@@ -34,7 +34,7 @@ std::unique_ptr<Storage> createStorageModel(BaseLib::ConfigTree const& config)
             config.getConfigParameter<double>("value"));
     }
 
-    OGS_FATAL("The storage type %s is unavailable.\n", type.data(),
+    OGS_FATAL("The storage type {:s} is unavailable.\n", type.data(),
               "The available type is Constant.");
 }
 

@@ -180,7 +180,7 @@ symmetricTensorToKelvinVector(Eigen::MatrixBase<Derived> const& v)
     if (v.cols() != 1)
     {
         OGS_FATAL(
-            "KelvinVector must be a column vector, but input has %d columns.",
+            "KelvinVector must be a column vector, but input has {:d} columns.",
             v.cols());
     }
 
@@ -201,7 +201,7 @@ symmetricTensorToKelvinVector(Eigen::MatrixBase<Derived> const& v)
     {
         OGS_FATAL(
             "Symmetric tensor to Kelvin vector conversion expected an input "
-            "vector of size 4 or 6, but a vector of size %d was given.",
+            "vector of size 4 or 6, but a vector of size {:d} was given.",
             v.size());
     }
     return result;
@@ -222,7 +222,7 @@ KelvinVectorType<DisplacementDim> symmetricTensorToKelvinVector(
     {
         OGS_FATAL(
             "Symmetric tensor to Kelvin vector conversion expected an input "
-            "vector of size %d, but a vector of size %d was given.",
+            "vector of size {:d}, but a vector of size {:d} was given.",
             kelvin_vector_size, values.size());
     }
 

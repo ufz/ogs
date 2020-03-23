@@ -57,7 +57,7 @@ int main (int argc, char* argv[])
         INFO(
             "Moves mesh nodes and connected elements either by a given value "
             "or based on a list.\n");
-        INFO("Usage: %s <msh-file.msh> <keyword> [<value1>] [<value2>]",
+        INFO("Usage: {:s} <msh-file.msh> <keyword> [<value1>] [<value2>]",
              argv[0]);
         INFO("Available keywords:");
         INFO(
@@ -78,7 +78,7 @@ int main (int argc, char* argv[])
     if (!(ext == "msh" || ext == "vtu"))
     {
         ERR("Error: Parameter 1 must be a mesh-file (*.msh / *.vtu).");
-        INFO("Usage: %s <msh-file.gml> <keyword> <value>", argv[0]);
+        INFO("Usage: {:s} <msh-file.gml> <keyword> <value>", argv[0]);
         return EXIT_FAILURE;
     }
 
@@ -96,7 +96,7 @@ int main (int argc, char* argv[])
     {
         ERR("Keyword not recognised. Available keywords:");
         for (auto const& keyword : keywords)
-            INFO("\t%s", keyword.c_str());
+            INFO("\t{:s}", keyword.c_str());
         return EXIT_FAILURE;
     }
 
@@ -120,8 +120,8 @@ int main (int argc, char* argv[])
         const std::string dir(argv[3]);
         unsigned idx = (dir == "x") ? 0 : (dir == "y") ? 1 : 2;
         const double value(strtod(argv[4],0));
-        INFO("Moving all mesh nodes by %g in direction %d (%s)...", value, idx,
-             dir.c_str());
+        INFO("Moving all mesh nodes by {:g} in direction {:d} ({:s})...", value,
+             idx, dir.c_str());
         //double value(-10);
         const std::size_t nNodes(mesh->getNumberOfNodes());
         std::vector<MeshLib::Node*> nodes (mesh->getNodes());

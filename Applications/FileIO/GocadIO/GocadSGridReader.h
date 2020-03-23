@@ -9,22 +9,20 @@
 
 #pragma once
 
+#include <spdlog/spdlog.h>
+
+#include <boost/dynamic_bitset.hpp>
 #include <cstddef>
 #include <limits>
 #include <numeric>
 #include <string>
 #include <vector>
 
-#include <boost/dynamic_bitset.hpp>
-
-#include <logog/include/logog.hpp>
-
-#include "MeshLib/Elements/Element.h"
-
 #include "CoordinateSystem.h"
 #include "GocadNode.h"
 #include "IndexCalculator.h"
 #include "Layer.h"
+#include "MeshLib/Elements/Element.h"
 #include "Property.h"
 #include "Region.h"
 

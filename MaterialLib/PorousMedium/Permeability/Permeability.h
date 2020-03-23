@@ -33,8 +33,8 @@ public:
             _dimension * _dimension)
         {
             OGS_FATAL(
-                "The given parameter has %d components, but the permeability "
-                "tensor is defined for a %d dimensional problem.",
+                "The given parameter has {:d} components, but the permeability "
+                "tensor is defined for a {:d} dimensional problem.",
                 permeability_parameter.getNumberOfComponents(), _dimension);
         }
     }

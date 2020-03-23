@@ -59,7 +59,7 @@ const Element* PyramidRule13::getFace(const Element* e, unsigned i)
 
         return new Quad8(nodes, e->getID());
     }
-    ERR("Error in MeshLib::Element::getFace() - Index %d does not exist.", i);
+    ERR("Error in MeshLib::Element::getFace() - Index {:d} does not exist.", i);
     return nullptr;
 }
 

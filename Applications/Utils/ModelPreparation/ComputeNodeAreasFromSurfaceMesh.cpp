@@ -32,12 +32,12 @@ void writeToFile(std::string const& id_area_fname, std::string const& csv_fname,
 {
     std::ofstream ids_and_area_out(id_area_fname);
     if (!ids_and_area_out) {
-        OGS_FATAL("Unable to open the file '%s' - aborting.",
+        OGS_FATAL("Unable to open the file '{:s}' - aborting.",
                   id_area_fname.c_str());
     }
     std::ofstream csv_out(csv_fname);
     if (!csv_out) {
-        OGS_FATAL("Unable to open the file '%s' - aborting.",
+        OGS_FATAL("Unable to open the file '{:s}' - aborting.",
                   csv_fname.c_str());
     }
 
@@ -86,8 +86,8 @@ int main (int argc, char* argv[])
 
     std::unique_ptr<MeshLib::Mesh> surface_mesh(
         MeshLib::IO::readMeshFromFile(mesh_in.getValue()));
-    INFO("Mesh read: %u nodes, %u elements.", surface_mesh->getNumberOfNodes(),
-         surface_mesh->getNumberOfElements());
+    INFO("Mesh read: {:d} nodes, {:d} elements.",
+         surface_mesh->getNumberOfNodes(), surface_mesh->getNumberOfElements());
     // ToDo check if mesh is read correct and if the mesh is a surface mesh
 
     MeshLib::PropertyVector<std::size_t>* orig_node_ids(nullptr);

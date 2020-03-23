@@ -23,8 +23,9 @@ CoordinateSystem::CoordinateSystem(Parameter<double> const& e0,
     if (typeid(_base[0]) != typeid(_base[1]))
     {
         OGS_FATAL(
-            "The parameter types for the basis must be equal but they are '%s' "
-            "and '%s'.",
+            "The parameter types for the basis must be equal but they are "
+            "'{:s}' "
+            "and '{:s}'.",
             typeid(_base[0]).name(),
             typeid(_base[1]).name());
     }
@@ -50,7 +51,7 @@ CoordinateSystem::CoordinateSystem(Parameter<double> const& e0,
     {
         OGS_FATAL(
             "The parameter types for the basis must be equal but they are "
-            "'%s', '%s', and '%s'.",
+            "'{:s}', '{:s}', and '{:s}'.",
             typeid(_base[0]).name(),
             typeid(_base[1]).name(),
             typeid(_base[2]).name());
@@ -90,7 +91,7 @@ Eigen::Matrix<double, 2, 2> CoordinateSystem::transformation<2>(
     {
         OGS_FATAL(
             "The determinant of the coordinate system transformation matrix is "
-            "'%g', which is not sufficiently close to unity.",
+            "'{:g}', which is not sufficiently close to unity.",
             t.determinant());
     }
 #endif  // NDEBUG
@@ -119,7 +120,7 @@ Eigen::Matrix<double, 3, 3> CoordinateSystem::transformation<3>(
     {
         OGS_FATAL(
             "The determinant of the coordinate system transformation matrix is "
-            "'%g', which is not sufficiently close to unity.",
+            "'{:g}', which is not sufficiently close to unity.",
             t.determinant());
     }
 #endif  // NDEBUG
@@ -144,7 +145,7 @@ Eigen::Matrix<double, 3, 3> CoordinateSystem::transformation_3d(
     {
         OGS_FATAL(
             "The determinant of the coordinate system transformation matrix is "
-            "'%g', which is not sufficiently close to unity.",
+            "'{:g}', which is not sufficiently close to unity.",
             t.determinant());
     }
 #endif  // NDEBUG

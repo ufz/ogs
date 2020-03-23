@@ -165,7 +165,7 @@ int main (int argc, char* argv[])
     {
         if (dim_used[i] && !vec_lengthArg[i]->isSet())
         {
-            ERR("Missing input: Length for dimension [%d] is required but "
+            ERR("Missing input: Length for dimension [{:d}] is required but "
                 "missing.",
                 i);
             return EXIT_FAILURE;
@@ -235,7 +235,8 @@ int main (int argc, char* argv[])
 
     if (mesh)
     {
-        INFO("Mesh created: %d nodes, %d elements.", mesh->getNumberOfNodes(), mesh->getNumberOfElements());
+        INFO("Mesh created: {:d} nodes, {:d} elements.",
+             mesh->getNumberOfNodes(), mesh->getNumberOfElements());
 
         // write into a file
         MeshLib::IO::writeMeshToFile(*(mesh.get()), mesh_out.getValue());

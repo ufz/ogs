@@ -277,7 +277,7 @@ void CompareJacobiansJacobianAssembler::assembleWithJacobian(
 
     if (tol_exceeded)
     {
-        WARN("Compare Jacobians: %s", msg_tolerance.str().c_str());
+        WARN("Compare Jacobians: {:s}", msg_tolerance.str().c_str());
     }
 
     bool const output = tol_exceeded || fatal_error;
@@ -384,7 +384,7 @@ void CompareJacobiansJacobianAssembler::assembleWithJacobian(
     if (fatal_error)
     {
         _log_file << std::flush;
-        OGS_FATAL("%s", msg_fatal.c_str());
+        OGS_FATAL("{:s}", msg_fatal.c_str());
     }
 
     if (tol_exceeded && _fail_on_error)

@@ -95,8 +95,8 @@ bool createSurface(GeoLib::Polyline const& ply,
     int const gmsh_return_value = std::system(gmsh_command.c_str());
     if (gmsh_return_value != 0)
     {
-        WARN("Call to '%s' returned non-zero value %d.", gmsh_command.c_str(),
-             gmsh_return_value);
+        WARN("Call to '{:s}' returned non-zero value {:d}.",
+             gmsh_command.c_str(), gmsh_return_value);
     }
     auto surface_mesh =
         FileIO::GMSH::readGMSHMesh(msh_file.string());

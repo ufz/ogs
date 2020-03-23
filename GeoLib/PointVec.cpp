@@ -111,7 +111,7 @@ PointVec::PointVec(
     }
 
     if (number_of_all_input_pnts > _data_vec->size())
-        WARN("PointVec::PointVec(): there are %d double points.",
+        WARN("PointVec::PointVec(): there are {:d} double points.",
              number_of_all_input_pnts - _data_vec->size());
 
     correctNameIDMapping();
@@ -149,7 +149,7 @@ void PointVec::push_back(Point* pnt, std::string const* const name)
     if (it != _name_id_map->end())
     {
         _id_to_name_map.emplace_back("");
-        WARN("PointVec::push_back(): two points share the name %s.",
+        WARN("PointVec::push_back(): two points share the name {:s}.",
              name->c_str());
         return;
     }

@@ -204,7 +204,7 @@ public:
             _name_id_map->insert(NameIdPair(*name, _data_vec->size() - 1));
         } else {
             WARN(
-                "Name '%s' exists already. The object will be inserted "
+                "Name '{:s}' exists already. The object will be inserted "
                 "without a name",
                 name->c_str());
         }

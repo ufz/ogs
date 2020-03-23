@@ -31,10 +31,6 @@ int main(int argc, char* argv[])
     auto myOutputWindow = vtkSmartPointer<VtkConsoleOutputWindow>::New();
     vtkOutputWindow::SetInstance(myOutputWindow);
 
-    LOGOG_INITIALIZE();
-    auto* logogCout = new logog::Cout;
-    auto* formatter = new BaseLib::LogogSimpleFormatter;
-    logogCout->SetFormatter(*formatter);
     QApplication a(argc, argv);
     QApplication::setApplicationName("OpenGeoSys - Data Explorer");
     QApplication::setApplicationVersion(QString::fromStdString(
@@ -51,9 +47,6 @@ int main(int argc, char* argv[])
     }
     w->show();
     int returncode = QApplication::exec();
-    delete formatter;
-    delete logogCout;
-    LOGOG_SHUTDOWN();
 #ifdef VTKFBXCONVERTER_FOUND
     DestroySdkObjects(lSdkManager, true);
 #endif

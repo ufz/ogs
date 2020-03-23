@@ -109,7 +109,7 @@ private:
             array_name, type, nComponents);
         if (!vec)
         {
-            WARN("Array %s could not be converted to PropertyVector.",
+            WARN("Array {:s} could not be converted to PropertyVector.",
                  array_name);
             return;
         }

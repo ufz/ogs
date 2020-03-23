@@ -78,7 +78,7 @@ std::vector<double> TimeDependentHeterogeneousParameter::operator()(
 void TimeDependentHeterogeneousParameter::initialize(
     std::vector<std::unique_ptr<ParameterBase>> const& parameters)
 {
-    DBUG("TimeDependentHeterogeneousParameter init %d time series entries.",
+    DBUG("TimeDependentHeterogeneousParameter init {:d} time series entries.",
          _time_parameter_name_mapping.size());
     for (auto const& time_parameter_map : _time_parameter_name_mapping)
     {
@@ -98,7 +98,7 @@ void TimeDependentHeterogeneousParameter::initialize(
     {
         OGS_FATAL(
             "All referenced parameters in time dependent heterogeneous "
-            "parameter '%s' have to have the same number of components.",
+            "parameter '{:s}' have to have the same number of components.",
             name.c_str());
     }
 }
@@ -128,7 +128,7 @@ std::unique_ptr<ParameterBase> createTimeDependentHeterogeneousParameter(
     if (time_series.empty())
     {
         OGS_FATAL(
-            "Time dependent heterogeneous parameter '%s' doesn't contain "
+            "Time dependent heterogeneous parameter '{:s}' doesn't contain "
             "necessary time series data.",
             name.c_str());
     }
@@ -141,7 +141,7 @@ std::unique_ptr<ParameterBase> createTimeDependentHeterogeneousParameter(
                    p1) { return p0.first < p1.first; }))
     {
         OGS_FATAL(
-            "The points in time in the time series '%s' aren't in ascending "
+            "The points in time in the time series '{:s}' aren't in ascending "
             "order.",
             name.c_str());
     }

@@ -81,7 +81,7 @@ public:
         }
         catch (std::runtime_error const& e)
         {
-            ERR("%s", e.what());
+            ERR("{:s}", e.what());
             WARN(
                 "Value-based element removal currently only works for "
                 "scalars.");

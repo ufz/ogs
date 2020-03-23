@@ -40,7 +40,7 @@ std::vector<double> getSurfaceIntegratedValuesForNodes(
 
     if (!mesh.getProperties().existsPropertyVector<double>(prop_name))
     {
-        ERR("Need element property, but the property '%s' is not "
+        ERR("Need element property, but the property '{:s}' is not "
             "available.",
             prop_name.c_str());
         return std::vector<double>();
@@ -67,7 +67,7 @@ std::vector<double> getSurfaceIntegratedValuesForNodes(
         integrated_node_area_vec.push_back(integrated_node_area);
     }
 
-    INFO ("Total surface area: %g", total_area);
+    INFO("Total surface area: {:g}", total_area);
 
     return integrated_node_area_vec;
 }
@@ -142,7 +142,7 @@ int main(int argc, char* argv[])
         }
         catch (std::runtime_error const& e)
         {
-            WARN("%s", e.what());
+            WARN("{:s}", e.what());
             return nullptr;
         }
     }();

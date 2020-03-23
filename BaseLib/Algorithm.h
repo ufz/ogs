@@ -72,7 +72,7 @@ typename std::iterator_traits<InputIt>::reference findElementOrError(
     auto it = std::find_if(begin, end, predicate);
     if (it == end)
     {
-        OGS_FATAL("Element not found in the input range; %s", error.c_str());
+        OGS_FATAL("Element not found in the input range; {:s}", error.c_str());
     }
     return *it;
 }
@@ -91,7 +91,7 @@ void insertIfTypeIndexKeyUniqueElseError(Map& map, Key const& key,
     auto const inserted = map.emplace(key, std::forward<Value>(value));
     if (!inserted.second)
     {  // insertion failed, i.e., key already exists
-        OGS_FATAL("%s Key `%s' already exists.", error_message.c_str(),
+        OGS_FATAL("{:s} Key `{:s}' already exists.", error_message.c_str(),
                   tostring(key.hash_code()).c_str());
     }
 }
@@ -108,7 +108,7 @@ void insertIfKeyUniqueElseError(Map& map, Key const& key, Value&& value,
     auto const inserted = map.emplace(key, std::forward<Value>(value));
     if (!inserted.second)
     {  // insertion failed, i.e., key already exists
-        OGS_FATAL("%s Key `%s' already exists.", error_message.c_str(),
+        OGS_FATAL("{:s} Key `{:s}' already exists.", error_message.c_str(),
                   tostring(key).c_str());
     }
 }
@@ -127,14 +127,14 @@ void insertIfKeyValueUniqueElseError(Map& map, Key const& key, Value&& value,
 
     if (std::find_if(map.cbegin(), map.cend(), value_compare) != map.cend())
     {
-        OGS_FATAL("%s Value `%s' already exists.", error_message.c_str(),
+        OGS_FATAL("{:s} Value `{:s}' already exists.", error_message.c_str(),
                   tostring(value).c_str());
     }
 
     auto const inserted = map.emplace(key, std::forward<Value>(value));
     if (!inserted.second)
     {  // insertion failed, i.e., key already exists
-        OGS_FATAL("%s Key `%s' already exists.", error_message.c_str(),
+        OGS_FATAL("{:s} Key `{:s}' already exists.", error_message.c_str(),
                   tostring(key).c_str());
     }
 }
@@ -151,7 +151,7 @@ typename Map::mapped_type& getOrError(Map& map, Key const& key,
     auto it = map.find(key);
     if (it == map.end())
     {
-        OGS_FATAL("%s Key `%s' does not exist.", error_message.c_str(),
+        OGS_FATAL("{:s} Key `{:s}' does not exist.", error_message.c_str(),
                   tostring(key).c_str());
     }
 
@@ -165,7 +165,7 @@ typename Map::mapped_type const& getOrError(Map const& map, Key const& key,
     auto it = map.find(key);
     if (it == map.end())
     {
-        OGS_FATAL("%s Key `%s' does not exist.", error_message.c_str(),
+        OGS_FATAL("{:s} Key `{:s}' does not exist.", error_message.c_str(),
                   tostring(key).c_str());
     }
 
@@ -184,7 +184,7 @@ typename Container::value_type const& getIfOrError(
     auto it = std::find_if(begin(container), end(container), predicate);
     if (it == end(container))
     {
-        OGS_FATAL("Could not find element matching the predicate: %s",
+        OGS_FATAL("Could not find element matching the predicate: {:s}",
                   error_message.c_str());
     }
     return *it;

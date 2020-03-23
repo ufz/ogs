@@ -145,7 +145,7 @@ std::pair<double, double> thermalResistancesGroutSoil(double chi,
         }
         DBUG(
             "Warning! Correction procedure was applied due to negative thermal "
-            "resistance! Chi = %f.\n",
+            "resistance! Chi = {:f}.\n",
             m_chi);
 
         R_gs = compute_R_gs(m_chi, R_g);

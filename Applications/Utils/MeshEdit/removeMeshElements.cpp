@@ -41,7 +41,7 @@ void searchByPropertyValue(std::string const& property_name,
                 property_name, property_value);
         }
 
-        INFO("%d elements with property value %s found.", n_marked_elements,
+        INFO("{:d} elements with property value {:s} found.", n_marked_elements,
              std::to_string(property_value).c_str());
     }
 }
@@ -63,7 +63,7 @@ void searchByPropertyRange(std::string const& property_name,
 
     // add checks for other data types here (if n_marked_elements remains 0)
 
-    INFO("%d elements in range [%s, %s] found.", n_marked_elements,
+    INFO("{:d} elements in range [{:s}, {:s}] found.", n_marked_elements,
          std::to_string(min_value).c_str(), std::to_string(max_value).c_str());
 }
 
@@ -153,12 +153,13 @@ int main (int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
-    INFO("Mesh read: %d nodes, %d elements.", mesh->getNumberOfNodes(), mesh->getNumberOfElements());
+    INFO("Mesh read: {:d} nodes, {:d} elements.", mesh->getNumberOfNodes(),
+         mesh->getNumberOfElements());
     MeshLib::ElementSearch searcher(*mesh);
 
     // search elements IDs to be removed
     if (zveArg.isSet()) {
-        INFO("%d zero volume elements found.", searcher.searchByContent());
+        INFO("{:d} zero volume elements found.", searcher.searchByContent());
     }
     if (eleTypeArg.isSet()) {
         const std::vector<std::string> eleTypeNames = eleTypeArg.getValue();
@@ -168,8 +169,8 @@ int main (int argc, char* argv[])
             {
                 continue;
             }
-            INFO("%d %s elements found.", searcher.searchByElementType(type),
-                 typeName.c_str());
+            INFO("{:d} {:s} elements found.",
+                 searcher.searchByElementType(type), typeName.c_str());
         }
     }
 
@@ -248,8 +249,9 @@ int main (int argc, char* argv[])
                 ySmallArg.getValue(), zSmallArg.getValue()}}),
             MathLib::Point3d(std::array<double,3>{{xLargeArg.getValue(),
                 yLargeArg.getValue(), zLargeArg.getValue()}})}});
-        INFO("%d elements found.",
-             searcher.searchByBoundingBox(GeoLib::AABB(extent.begin(), extent.end())));
+        INFO("{:d} elements found.",
+             searcher.searchByBoundingBox(
+                 GeoLib::AABB(extent.begin(), extent.end())));
     }
 
     // remove the elements and create a new mesh object.

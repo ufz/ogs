@@ -93,7 +93,7 @@ std::unique_ptr<Process> createLiquidFlowProcess(
     {
         OGS_FATAL(
             "The gravity axis must be a number between 0 and one less than the "
-            "mesh dimension, which is %d. Read gravity axis %d from input "
+            "mesh dimension, which is {:d}. Read gravity axis {:d} from input "
             "file.",
             mesh.getDimension(), gravity_axis_id_input);
     }

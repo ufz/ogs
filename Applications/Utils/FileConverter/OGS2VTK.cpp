@@ -58,7 +58,7 @@ int main (int argc, char* argv[])
     {
         return EXIT_FAILURE;
     }
-    INFO("Mesh read: %d nodes, %d elements.", mesh->getNumberOfNodes(),
+    INFO("Mesh read: {:d} nodes, {:d} elements.", mesh->getNumberOfNodes(),
          mesh->getNumberOfElements());
 
     auto const data_mode =

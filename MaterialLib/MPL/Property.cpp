@@ -51,7 +51,7 @@ PropertyDataType fromVector(std::vector<double> const& values)
         default:
         {
             OGS_FATAL(
-                "Conversion of a %d-vector to PropertyDataType is not "
+                "Conversion of a {:d}-vector to PropertyDataType is not "
                 "implemented.",
                 values.size());
         }

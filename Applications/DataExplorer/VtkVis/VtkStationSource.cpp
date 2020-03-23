@@ -235,7 +235,7 @@ std::size_t VtkStationSource::GetIndexByName( std::string const& name )
     }
 
     vtkIdType new_index = (_id_map.empty()) ? 0 : (max_key+1);
-    INFO("Key '%s' has been assigned index %d.", name.c_str(), new_index);
+    INFO("Key '{:s}' has been assigned index {:d}.", name.c_str(), new_index);
     _id_map.insert(std::pair<std::string, vtkIdType>(name, new_index));
     return new_index;
 }

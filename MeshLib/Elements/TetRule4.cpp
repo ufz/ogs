@@ -51,7 +51,7 @@ const Element* TetRule4::getFace(const Element* e, unsigned i)
         }
         return new Tri(nodes, e->getID());
     }
-    ERR("Error in MeshLib::Element::getFace() - Index %d does not exist.", i);
+    ERR("Error in MeshLib::Element::getFace() - Index {:d} does not exist.", i);
     return nullptr;
 }
 

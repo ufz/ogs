@@ -59,7 +59,7 @@ int OGSToVtkCellType(MeshLib::CellType ogs)
         default:
             OGS_FATAL(
                 "Unknown cell type in conversion from OGS to VTK. Given cell "
-                "type value is %d.",
+                "type value is {:d}.",
                 ogs);
     }
 }

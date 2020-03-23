@@ -7,13 +7,13 @@
  *              http://www.opengeosys.org/LICENSE.txt
  */
 
+#include "CoordinateSystem.h"
+
+#include <boost/algorithm/string/trim.hpp>
+#include <boost/tokenizer.hpp>
 #include <iostream>
 
-#include <logog/include/logog.hpp>
-#include <boost/tokenizer.hpp>
-#include <boost/algorithm/string/trim.hpp>
-
-#include "CoordinateSystem.h"
+#include "BaseLib/Logging.h"
 
 namespace FileIO
 {
@@ -100,7 +100,8 @@ bool CoordinateSystem::parse(std::istream& in)
             return true;
         }
         else
-            WARN("CoordinateSystem::parse() - Unknown keyword found: %s", line.c_str());
+            WARN("CoordinateSystem::parse() - Unknown keyword found: {:s}",
+                 line.c_str());
     }
     ERR ("Error: Unexpected end of file.");
     return false;

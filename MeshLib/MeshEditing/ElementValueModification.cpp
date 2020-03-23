@@ -36,7 +36,7 @@ bool ElementValueModification::replace(MeshLib::Mesh &mesh,
     }
     catch (std::runtime_error const& e)
     {
-        ERR("%s", e.what());
+        ERR("{:s}", e.what());
         return false;
     }
 
@@ -51,7 +51,7 @@ bool ElementValueModification::replace(MeshLib::Mesh &mesh,
             {
                 WARN(
                     "ElementValueModification::replaceElementValue() "
-                    "- Replacement value '%d' is already taken, "
+                    "- Replacement value '{:d}' is already taken, "
                     "no changes have been made.",
                     new_value);
                 return false;
@@ -86,7 +86,7 @@ std::size_t ElementValueModification::condense(MeshLib::Mesh &mesh)
     }
     catch (std::runtime_error const& e)
     {
-        ERR("%s", e.what());
+        ERR("{:s}", e.what());
         return 0;
     }
 
@@ -120,7 +120,7 @@ std::size_t ElementValueModification::setByElementType(MeshLib::Mesh &mesh, Mesh
     }
     catch (std::runtime_error const& e)
     {
-        ERR("%s", e.what());
+        ERR("{:s}", e.what());
         return 0;
     }
 

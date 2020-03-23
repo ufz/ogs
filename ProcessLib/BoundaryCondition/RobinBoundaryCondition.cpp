@@ -28,8 +28,9 @@ std::unique_ptr<RobinBoundaryCondition> createRobinBoundaryCondition(
     if (bc_mesh.getDimension() >= global_dim)
     {
         OGS_FATAL(
-            "The dimension (%d) of the given boundary mesh '%s' is not lower "
-            "than the bulk dimension (%d).",
+            "The dimension ({:d}) of the given boundary mesh '{:s}' is not "
+            "lower "
+            "than the bulk dimension ({:d}).",
             bc_mesh.getDimension(), bc_mesh.getName().c_str(), global_dim);
     }
 
@@ -49,7 +50,7 @@ std::unique_ptr<RobinBoundaryCondition> createRobinBoundaryCondition(
         auto const area_parameter_name =
             //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__Robin__area_parameter}
             config.getConfigParameter<std::string>("area_parameter");
-        DBUG("area parameter name '%s'", area_parameter_name.c_str());
+        DBUG("area parameter name '{:s}'", area_parameter_name.c_str());
         integral_measure = &ParameterLib::findParameter<double>(
             area_parameter_name, parameters, 1, &bc_mesh);
     }

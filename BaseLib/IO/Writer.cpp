@@ -54,7 +54,7 @@ int Writer::writeToFile(std::string const& filename)
         // check file stream
         if (!fileStream)
         {
-            ERR("Could not open file '%s'!", filename.c_str());
+            ERR("Could not open file '{:s}'!", filename.c_str());
             return 0;
         }
 

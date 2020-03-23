@@ -66,9 +66,9 @@ bool EvolutionaryPIDcontroller::next(double const solution_error,
             "This step is rejected due to the relative change from the"
             " solution of the previous\n"
             "\t time step to the current solution exceeds the given tolerance"
-            " of %g.\n"
+            " of {:g}.\n"
             "\t This time step will be repeated with a new time step size of"
-            " %g\n"
+            " {:g}\n"
             "\t or the simulation will be halted.",
             _tol, h_new);
 

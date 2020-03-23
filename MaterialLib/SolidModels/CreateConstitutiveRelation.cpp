@@ -82,7 +82,7 @@ createConstitutiveRelation(
             "option.");
 #endif  // OGS_USE_MFRONT
     }
-    OGS_FATAL("Cannot construct constitutive relation of given type '%s'.",
+    OGS_FATAL("Cannot construct constitutive relation of given type '{:s}'.",
               type.c_str());
 }
 
@@ -114,7 +114,7 @@ createConstitutiveRelations(
         {
             OGS_FATAL(
                 "Multiple constitutive relations were specified for the same "
-                "material id %d. Keep in mind, that if no material id is "
+                "material id {:d}. Keep in mind, that if no material id is "
                 "specified, it is assumed to be 0 by default.",
                 material_id);
         }
@@ -127,7 +127,7 @@ createConstitutiveRelations(
                 constitutive_relation_config));
     }
 
-    DBUG("Found %d constitutive relations.", constitutive_relations.size());
+    DBUG("Found {:d} constitutive relations.", constitutive_relations.size());
 
     return constitutive_relations;
 }

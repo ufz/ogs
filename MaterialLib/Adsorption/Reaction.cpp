@@ -82,7 +82,7 @@ newInstance(BaseLib::ConfigTree const& conf)
         return std::make_unique<ReactionCaOH2>(conf);
     }
 
-    OGS_FATAL("Unknown reactive system: %s.", type.c_str());
+    OGS_FATAL("Unknown reactive system: {:s}.", type.c_str());
 
     return nullptr;
 }

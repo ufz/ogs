@@ -23,7 +23,7 @@ template <typename Msg>
 [[noreturn]]
     bool error_impl(Msg&& msg)
 {
-    ERR("%s", msg.data());
+    ERR("{:s}", msg.data());
     std::abort();
 }
 

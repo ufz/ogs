@@ -42,7 +42,7 @@ void PermeabilityOrthotropicPowerLaw<DisplacementDim>::setScale(
         {
             OGS_FATAL(
                 "The property 'PermeabilityOrthotropicPowerLaw' must be "
-                "given in the 'Solid' phase, not in '%s' phase.",
+                "given in the 'Solid' phase, not in '{:s}' phase.",
                 _phase->name.c_str());
         }
     }

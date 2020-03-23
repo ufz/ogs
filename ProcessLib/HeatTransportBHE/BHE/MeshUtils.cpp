@@ -9,6 +9,8 @@
 
 #include "MeshUtils.h"
 
+#include <set>
+
 #include "BaseLib/Algorithm.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
@@ -54,7 +56,7 @@ BHEMeshData getBHEDataInMesh(MeshLib::Mesh const& mesh)
 
     // finally counting two types of elements
     // They are (i) soil, and (ii) BHE type of elements
-    DBUG("-> found total %d soil elements and %d BHE elements",
+    DBUG("-> found total {:d} soil elements and {:d} BHE elements",
          mesh.getNumberOfElements() - all_bhe_elements.size(),
          all_bhe_elements.size());
 
@@ -68,7 +70,7 @@ BHEMeshData getBHEDataInMesh(MeshLib::Mesh const& mesh)
 
     auto const& bhe_material_ids =
         getUniqueMaterialIds(material_ids, all_bhe_elements);
-    DBUG("-> found %d BHE material groups", bhe_material_ids.size());
+    DBUG("-> found {:d} BHE material groups", bhe_material_ids.size());
 
     // create a vector of BHE elements for each group
     std::vector<std::vector<MeshLib::Element*>> bhe_elements;
@@ -81,7 +83,8 @@ BHEMeshData getBHEDataInMesh(MeshLib::Mesh const& mesh)
                 back_inserter(vec_elements), [&](MeshLib::Element* e) {
                     return material_ids[e->getID()] == bhe_mat_id;
                 });
-        DBUG("-> found %d elements on the BHE_%d", vec_elements.size(), bhe_id);
+        DBUG("-> found {:d} elements on the BHE_{:d}", vec_elements.size(),
+             bhe_id);
     }
 
     // get a vector of BHE nodes
@@ -101,7 +104,7 @@ BHEMeshData getBHEDataInMesh(MeshLib::Mesh const& mesh)
             vec_nodes, [](MeshLib::Node* node1, MeshLib::Node* node2) {
                 return node1->getID() < node2->getID();
             });
-        DBUG("-> found %d nodes on the BHE_%d", vec_nodes.size(), bhe_id);
+        DBUG("-> found {:d} nodes on the BHE_{:d}", vec_nodes.size(), bhe_id);
     }
 
     return {bhe_material_ids, bhe_elements, bhe_nodes};

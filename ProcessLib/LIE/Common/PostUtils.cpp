@@ -252,7 +252,8 @@ void PostProcessTool::createProperties()
         else
         {
             WARN(
-                "Property '%s' cannot be created because its mesh item type is "
+                "Property '{:s}' cannot be created because its mesh item type "
+                "is "
                 "not supported.",
                 name.c_str());
         }
@@ -311,7 +312,8 @@ void PostProcessTool::copyProperties()
         else
         {
             WARN(
-                "Property '%s' cannot be created because its mesh item type is "
+                "Property '{:s}' cannot be created because its mesh item type "
+                "is "
                 "not supported.",
                 name.c_str());
         }

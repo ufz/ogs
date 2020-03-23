@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
     std::unique_ptr<MeshLib::Mesh> mesh(MeshLib::IO::readMeshFromFile(fname));
 
     if (!mesh) {
-        ERR("Could not read mesh from file '%s'.", fname.c_str());
+        ERR("Could not read mesh from file '{:s}'.", fname.c_str());
         return EXIT_FAILURE;
     }
 
@@ -82,7 +82,7 @@ int main(int argc, char *argv[])
         displacement[2] = z_arg.getValue();
     }
 
-    INFO("translate model (%f, %f, %f).",
+    INFO("translate model ({:f}, {:f}, {:f}).",
          displacement[0],
          displacement[1],
          displacement[2]);

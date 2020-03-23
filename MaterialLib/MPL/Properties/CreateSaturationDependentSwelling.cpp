@@ -28,7 +28,7 @@ std::unique_ptr<SaturationDependentSwelling> createSaturationDependentSwelling(
     if (swelling_pressures.size() != 3)
     {
         OGS_FATAL(
-            "The number of swelling pressures must be three, but %d were "
+            "The number of swelling pressures must be three, but {:d} were "
             "given.",
             swelling_pressures.size());
     }
@@ -39,7 +39,7 @@ std::unique_ptr<SaturationDependentSwelling> createSaturationDependentSwelling(
 
     if (exponents.size() != 3)
     {
-        OGS_FATAL("The number of exponents must be three, but %d were given.",
+        OGS_FATAL("The number of exponents must be three, but {:d} were given.",
                   exponents.size());
     }
 
@@ -47,7 +47,7 @@ std::unique_ptr<SaturationDependentSwelling> createSaturationDependentSwelling(
     {
         OGS_FATAL(
             "The number of swelling pressures and exponents must be equal, but "
-            "they are %d and %d, respectively.",
+            "they are {:d} and {:d}, respectively.",
             swelling_pressures.size(), exponents.size());
     }
 

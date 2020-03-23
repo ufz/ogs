@@ -47,16 +47,17 @@ ConstraintDirichletBoundaryCondition::ConstraintDirichletBoundaryCondition(
             dof_table_bulk.getNumberOfVariableComponents(variable_id))
     {
         OGS_FATAL(
-            "Variable id or component id too high. Actual values: (%d, "
-            "%d), maximum values: (%d, %d).",
+            "Variable id or component id too high. Actual values: ({:d}, "
+            "{:d}), maximum values: ({:d}, {:d}).",
             variable_id, component_id, dof_table_bulk.getNumberOfVariables(),
             dof_table_bulk.getNumberOfVariableComponents(variable_id));
     }
 
     std::vector<MeshLib::Node*> const& bc_nodes = _bc_mesh.getNodes();
     DBUG(
-        "Found %d nodes for constraint Dirichlet BCs for the variable %d and "
-        "component %d",
+        "Found {:d} nodes for constraint Dirichlet BCs for the variable {:d} "
+        "and "
+        "component {:d}",
         bc_nodes.size(), variable_id, component_id);
 
     MeshLib::MeshSubset bc_mesh_subset{_bc_mesh, bc_nodes};
@@ -219,7 +220,7 @@ void ConstraintDirichletBoundaryCondition::getEssentialBCValues(
     bc_values.ids.emplace_back(current_id);
     bc_values.values.emplace_back(sum / cnt);
 
-    DBUG("Found %d constraint dirichlet boundary condition values.",
+    DBUG("Found {:d} constraint dirichlet boundary condition values.",
          bc_values.ids.size());
 }
 
@@ -240,7 +241,7 @@ createConstraintDirichletBoundaryCondition(
         config.getConfigParameter<std::string>("constraint_type");
     if (constraint_type != "Flux")
     {
-        OGS_FATAL("The constraint type is '%s', but has to be 'Flux'.",
+        OGS_FATAL("The constraint type is '{:s}', but has to be 'Flux'.",
                   constraint_type.c_str());
     }
 
@@ -269,9 +270,10 @@ createConstraintDirichletBoundaryCondition(
         auto const& constraining_process_variable_name =
             process_variables[variable_id].get().getName();
         OGS_FATAL(
-            "<constraining_process_variable> in process variable name '%s' at "
+            "<constraining_process_variable> in process variable name '{:s}' "
+            "at "
             "geometry 'TODO' : The constraining process variable is set as "
-            "'%s', but this is not specified in the project file.",
+            "'{:s}', but this is not specified in the project file.",
             constraining_process_variable_name.c_str(),
             constraining_process_variable.c_str());
     }
@@ -287,7 +289,8 @@ createConstraintDirichletBoundaryCondition(
         constraint_direction_string != "lower")
     {
         OGS_FATAL(
-            "The constraint direction is '%s', but has to be either 'greater' "
+            "The constraint direction is '{:s}', but has to be either "
+            "'greater' "
             "or 'lower'.",
             constraint_direction_string.c_str());
     }
@@ -296,7 +299,7 @@ createConstraintDirichletBoundaryCondition(
 
     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__ConstraintDirichletBoundaryCondition__parameter}
     auto const param_name = config.getConfigParameter<std::string>("parameter");
-    DBUG("Using parameter %s", param_name.c_str());
+    DBUG("Using parameter {:s}", param_name.c_str());
 
     auto& param = ParameterLib::findParameter<double>(param_name, parameters, 1,
                                                       &bc_mesh);

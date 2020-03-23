@@ -38,7 +38,7 @@ std::unique_ptr<SourceTerm> createVolumetricSourceTerm(
         volumetric_source_term_parameter_name, parameters, 1,
         &source_term_mesh);
 
-    DBUG("Using '%s' as volumetric source term parameter.",
+    DBUG("Using '{:s}' as volumetric source term parameter.",
          volumetric_source_term.name.c_str());
 
     return std::make_unique<VolumetricSourceTerm>(

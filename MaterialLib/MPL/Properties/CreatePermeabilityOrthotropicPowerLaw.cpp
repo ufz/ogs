@@ -31,7 +31,7 @@ std::unique_ptr<Property> createPermeabilityOrthotropicPowerLaw(
     {
         OGS_FATAL(
             "The number of intrinsic permeabilities must be two or three, but "
-            "%d were given.",
+            "{:d} were given.",
             intrinsic_permeabilities.size());
     }
 
@@ -42,7 +42,8 @@ std::unique_ptr<Property> createPermeabilityOrthotropicPowerLaw(
     if (exponents.size() != 3 && exponents.size() != 2)
     {
         OGS_FATAL(
-            "The number of exponents must be two or three, but %d were given.",
+            "The number of exponents must be two or three, but {:d} were "
+            "given.",
             exponents.size());
     }
 
@@ -50,7 +51,7 @@ std::unique_ptr<Property> createPermeabilityOrthotropicPowerLaw(
     {
         OGS_FATAL(
             "The number of intrinsic permeabilities and exponents must be "
-            "equal, but they are %d and %d, respectively.",
+            "equal, but they are {:d} and {:d}, respectively.",
             intrinsic_permeabilities.size(), exponents.size());
     }
 

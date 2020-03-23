@@ -29,7 +29,7 @@ std::vector<std::string> CsvInterface::getColumnNames(std::string const& fname,
 
     if (!in.is_open())
     {
-        ERR("CsvInterface::readPoints(): Could not open file %s.",
+        ERR("CsvInterface::readPoints(): Could not open file {:s}.",
             fname.c_str());
         return std::vector<std::string>();
     }
@@ -65,7 +65,8 @@ int CsvInterface::readPoints(std::string const& fname, char delim,
     std::ifstream in(fname.c_str());
 
     if (!in.is_open()) {
-        ERR ("CsvInterface::readPoints(): Could not open file %s.", fname.c_str());
+        ERR("CsvInterface::readPoints(): Could not open file {:s}.",
+            fname.c_str());
         return -1;
     }
 
@@ -82,7 +83,9 @@ int CsvInterface::readPoints(std::string const& fname, char delim,
 
         if (fields.size() < 3)
         {
-            ERR ("Line %d contains not enough columns of data. Skipping line...", line_count);
+            ERR("Line {:d} contains not enough columns of data. Skipping "
+                "line...",
+                line_count);
             error_count++;
             continue;
         }
@@ -94,7 +97,8 @@ int CsvInterface::readPoints(std::string const& fname, char delim,
             point[2] = std::stod(*(++it));
             points.push_back(new GeoLib::Point(point[0], point[1], point[2]));
         } catch (const std::invalid_argument&) {
-            ERR ("Error converting data to coordinates in line %d.", line_count);
+            ERR("Error converting data to coordinates in line {:d}.",
+                line_count);
         }
     }
     return error_count;
@@ -110,7 +114,8 @@ int CsvInterface::readPoints(std::string const& fname, char delim,
     std::array<std::string, 3> const column_names = {{x_column_name, y_column_name, z_column_name}};
 
     if (!in.is_open()) {
-        ERR ("CsvInterface::readPoints(): Could not open file %s.", fname.c_str());
+        ERR("CsvInterface::readPoints(): Could not open file {:s}.",
+            fname.c_str());
         return -1;
     }
 
@@ -126,7 +131,7 @@ int CsvInterface::readPoints(std::string const& fname, char delim,
     {
         if (column_idx[i] == std::numeric_limits<std::size_t>::max())
         {
-            ERR("Column '%s' not found in file header.",
+            ERR("Column '{:s}' not found in file header.",
                 column_names[i].c_str());
             return -1;
         }
@@ -144,7 +149,8 @@ int CsvInterface::readPoints(std::string const& fname, char delim,
     std::ifstream in(fname.c_str());
 
     if (!in.is_open()) {
-        ERR ("CsvInterface::readPoints(): Could not open file %s.", fname.c_str());
+        ERR("CsvInterface::readPoints(): Could not open file {:s}.",
+            fname.c_str());
         return -1;
     }
 
@@ -181,7 +187,9 @@ int CsvInterface::readPoints(std::ifstream &in, char delim,
 
         if (fields.size() < column_idx[order[2]]+1)
         {
-            ERR ("Line %d contains not enough columns of data. Skipping line...", line_count);
+            ERR("Line {:d} contains not enough columns of data. Skipping "
+                "line...",
+                line_count);
             error_count++;
             continue;
         }
@@ -197,7 +205,8 @@ int CsvInterface::readPoints(std::ifstream &in, char delim,
             point[order[2]] = (column_idx[1] == column_idx[2]) ? 0 : std::stod(*it);
             points.push_back(new GeoLib::Point(point[0], point[1], point[2]));
         } catch (const std::invalid_argument&) {
-            ERR ("Error converting data to coordinates in line %d.", line_count);
+            ERR("Error converting data to coordinates in line {:d}.",
+                line_count);
             error_count++;
         }
     }

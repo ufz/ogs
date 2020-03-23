@@ -37,7 +37,7 @@ static void addSecondaryVariableNodes(
     std::string const& output_name,
     MeshLib::Mesh& mesh)
 {
-    DBUG("  secondary variable %s", output_name.c_str());
+    DBUG("  secondary variable {:s}", output_name.c_str());
 
     auto& nodal_values_mesh = *MeshLib::getOrCreateMeshProperty<double>(
         mesh, output_name, MeshLib::MeshItemType::Node,
@@ -46,8 +46,8 @@ static void addSecondaryVariableNodes(
         mesh.getNumberOfNodes() * var.fcts.num_components)
     {
         OGS_FATAL(
-            "Nodal property `%s' does not have the right number of "
-            "components. Expected: %d, actual: %d",
+            "Nodal property `{:s}' does not have the right number of "
+            "components. Expected: {:d}, actual: {:d}",
             output_name.c_str(),
             mesh.getNumberOfNodes() * var.fcts.num_components,
             nodal_values_mesh.size());
@@ -65,8 +65,8 @@ static void addSecondaryVariableNodes(
     if (nodal_values_mesh.size() != global_vector_size)
     {
         OGS_FATAL(
-            "Secondary variable `%s' did not evaluate to the right "
-            "number of components. Expected: %d, actual: %d.",
+            "Secondary variable `{:s}' did not evaluate to the right "
+            "number of components. Expected: {:d}, actual: {:d}.",
             var.name.c_str(), nodal_values_mesh.size(), global_vector_size);
     }
 
@@ -87,7 +87,7 @@ static void addSecondaryVariableResiduals(
         return;
     }
 
-    DBUG("  secondary variable %s residual", output_name.c_str());
+    DBUG("  secondary variable {:s} residual", output_name.c_str());
     auto const& property_name_res = output_name + "_residual";
 
     auto& residuals_mesh = *MeshLib::getOrCreateMeshProperty<double>(
@@ -97,8 +97,9 @@ static void addSecondaryVariableResiduals(
         mesh.getNumberOfElements() * var.fcts.num_components)
     {
         OGS_FATAL(
-            "Cell property `%s' does not have the right number of components. "
-            "Expected: %d, actual: %d",
+            "Cell property `{:s}' does not have the right number of "
+            "components. "
+            "Expected: {:d}, actual: {:d}",
             property_name_res.c_str(),
             mesh.getNumberOfElements() * var.fcts.num_components,
             residuals_mesh.size());
@@ -116,8 +117,8 @@ static void addSecondaryVariableResiduals(
     if (residuals_mesh.size() != global_vector_size)
     {
         OGS_FATAL(
-            "The residual of secondary variable `%s' did not evaluate to the "
-            "right number of components. Expected: %d, actual: %d.",
+            "The residual of secondary variable `{:s}' did not evaluate to the "
+            "right number of components. Expected: {:d}, actual: {:d}.",
             var.name.c_str(), residuals_mesh.size(), global_vector_size);
     }
 
@@ -190,7 +191,7 @@ void processOutputData(
 
         already_output.insert(pv.getName());
 
-        DBUG("  process variable %s", pv.getName().c_str());
+        DBUG("  process variable {:s}", pv.getName().c_str());
 
         auto const num_comp = pv.getNumberOfComponents();
         auto& output_data = *MeshLib::getOrCreateMeshProperty<double>(
@@ -248,7 +249,7 @@ void makeOutput(std::string const& file_name, MeshLib::Mesh const& mesh,
                 bool const compress_output, int const data_mode)
 {
     // Write output file
-    DBUG("Writing output to '%s'.", file_name.c_str());
+    DBUG("Writing output to '{:s}'.", file_name.c_str());
     MeshLib::IO::VtuInterface vtu_interface(&mesh, data_mode, compress_output);
     vtu_interface.writeToFile(file_name);
 }

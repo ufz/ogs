@@ -22,12 +22,12 @@ void writeMETIS(std::vector<MeshLib::Element*> const& elements,
     std::ofstream os(file_name, std::ios::trunc);
     if (!os.is_open())
     {
-        OGS_FATAL("Error: cannot open file %s.", file_name.data());
+        OGS_FATAL("Error: cannot open file {:s}.", file_name.data());
     }
 
     if (!os.good())
     {
-        OGS_FATAL("Error: Cannot write in file %s.", file_name.data());
+        OGS_FATAL("Error: Cannot write in file {:s}.", file_name.data());
     }
 
     os << elements.size() << " \n";
@@ -56,7 +56,7 @@ std::vector<std::size_t> readMetisData(const std::string& file_name_base,
     if (!npart_in.is_open())
     {
         OGS_FATAL(
-            "Error: cannot open file %s. It may not exist!\n"
+            "Error: cannot open file {:s}. It may not exist!\n"
             "Run mpmetis beforehand or use option -m",
             fname_parts.data());
     }
@@ -76,12 +76,12 @@ std::vector<std::size_t> readMetisData(const std::string& file_name_base,
 
     if (npart_in.bad())
     {
-        OGS_FATAL("Error while reading file %s.", fname_parts.data());
+        OGS_FATAL("Error while reading file {:s}.", fname_parts.data());
     }
 
     if (counter != number_of_nodes)
     {
-        OGS_FATAL("Error: data in %s are less than expected.",
+        OGS_FATAL("Error: data in {:s} are less than expected.",
                   fname_parts.data());
     }
 

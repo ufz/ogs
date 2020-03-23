@@ -722,7 +722,7 @@ std::size_t HydroMechanicsLocalAssembler<
     {
         OGS_FATAL(
             "Setting integration point initial conditions; The integration "
-            "order of the local assembler for element %d is different from "
+            "order of the local assembler for element {:d} is different from "
             "the integration order in the initial condition.",
             _element.getID());
     }

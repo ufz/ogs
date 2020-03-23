@@ -126,8 +126,8 @@ int main(int argc, char* argv[])
     ApplicationsLib::LogogSetup logog_setup;
     logog_setup.setLevel(log_level_arg.getValue());
 
-    INFO("This is OpenGeoSys-6 version %s.",
-         GitInfoLib::GitInfo::ogs_version.c_str());
+    INFO("This is OpenGeoSys-6 version {:s}.",
+         GitInfoLib::GitInfo::ogs_version);
 
 #ifndef _WIN32  // On windows this command line option is not present.
     // Enable floating point exceptions
@@ -151,7 +151,7 @@ int main(int argc, char* argv[])
     {
         auto const start_time = std::chrono::system_clock::now();
         auto const time_str = BaseLib::formatDate(start_time);
-        INFO("OGS started on %s.", time_str.c_str());
+        INFO("OGS started on {:s}.", time_str);
     }
 
     std::unique_ptr<ApplicationsLib::TestDefinition> test_definition;
@@ -242,7 +242,7 @@ int main(int argc, char* argv[])
             if (isInsituConfigured)
                 InSituLib::Finalize();
 #endif
-            INFO("[time] Execution took %g s.", run_time.elapsed());
+            INFO("[time] Execution took {:g} s.", run_time.elapsed());
 
 #if defined(USE_PETSC)
             controller->Finalize(1);
@@ -264,7 +264,7 @@ int main(int argc, char* argv[])
     {
         auto const end_time = std::chrono::system_clock::now();
         auto const time_str = BaseLib::formatDate(end_time);
-        INFO("OGS terminated on %s.", time_str.c_str());
+        INFO("OGS terminated on {:s}.", time_str);
     }
 
     if (ogs_status == EXIT_FAILURE)

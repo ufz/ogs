@@ -36,10 +36,11 @@ MeshValidation::MeshValidation(MeshLib::Mesh &mesh)
     NodeSearch ns(mesh);
     ns.searchUnused();
     if (!ns.getSearchedNodeIDs().empty()) {
-        INFO ("%d unused mesh nodes found.", ns.getSearchedNodeIDs().size());
+        INFO("{:d} unused mesh nodes found.", ns.getSearchedNodeIDs().size());
     }
     MeshRevision rev(mesh);
-    INFO ("Found %d potentially collapsable nodes.", rev.getNumberOfCollapsableNodes());
+    INFO("Found {:d} potentially collapsable nodes.",
+         rev.getNumberOfCollapsableNodes());
 
     const std::vector<ElementErrorCode> codes(
         MeshLib::MeshValidation::testElementGeometry(mesh));
@@ -101,7 +102,7 @@ std::vector<ElementErrorCode> MeshValidation::testElementGeometry(const MeshLib:
         for (std::size_t i = 0; i < nErrorCodes; ++i)
         {
             if (error_count[i])
-                INFO("%d elements found with %s.",
+                INFO("{:d} elements found with {:s}.",
                      error_count[i],
                      ElementErrorCode::toString(flags[i]).c_str());
         }

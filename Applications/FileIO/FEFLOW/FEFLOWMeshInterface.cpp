@@ -33,7 +33,7 @@ MeshLib::Mesh* FEFLOWMeshInterface::readFEFLOWFile(const std::string& filename)
     std::ifstream in(filename.c_str());
     if (!in)
     {
-        ERR("FEFLOWMeshInterface::readFEFLOWFile(): Could not open file %s.",
+        ERR("FEFLOWMeshInterface::readFEFLOWFile(): Could not open file {:s}.",
             filename.c_str());
         return nullptr;
     }
@@ -131,7 +131,7 @@ MeshLib::Mesh* FEFLOWMeshInterface::readFEFLOWFile(const std::string& filename)
             if (eleType == MeshLib::MeshElemType::INVALID)
             {
                 ERR("FEFLOWInterface::readFEFLOWFile(): Unsupported element "
-                    "type with the number of node = %d and dim = %d",
+                    "type with the number of node = {:d} and dim = {:d}",
                     fem_dim.n_nodes_of_element, fem_class.dimension);
                 std::for_each(vec_nodes.begin(), vec_nodes.end(),
                               [](MeshLib::Node* nod)
@@ -276,7 +276,7 @@ void FEFLOWMeshInterface::readNodeCoordinates(
         // read the line containing the coordinates as string
         if (!std::getline(in, line_string))
         {
-            ERR("Could not read the node '%u'.", k);
+            ERR("Could not read the node '{:d}'.", k);
             for (auto* n : vec_nodes)
             {
                 delete n;
@@ -290,7 +290,7 @@ void FEFLOWMeshInterface::readNodeCoordinates(
         {
             if (!(line_stream >> (*vec_nodes[k])[i]))
             {
-                ERR("Could not parse coordinate %u of node '%u'.", i, k);
+                ERR("Could not parse coordinate {:d} of node '{:d}'.", i, k);
                 for (auto* n : vec_nodes)
                 {
                     delete n;
@@ -299,7 +299,7 @@ void FEFLOWMeshInterface::readNodeCoordinates(
             }
             if (!(line_stream >> dummy_char) && i < 2)  // read comma
             {
-                ERR("Could not parse node '%u'.", k);
+                ERR("Could not parse node '{:d}'.", k);
                 for (auto* n : vec_nodes)
                 {
                     delete n;
@@ -691,7 +691,7 @@ void FEFLOWMeshInterface::readELEMENTALSETS(
                 set_name = line_string.substr(0, pos);
                 ids = line_string.substr(pos + 1);
             }
-            INFO("Found an element group - %s", set_name.data());
+            INFO("Found an element group - {:s}", set_name.data());
             str_idList += compressSpaces(ids);
         }
         else

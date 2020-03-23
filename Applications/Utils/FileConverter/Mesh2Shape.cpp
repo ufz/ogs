@@ -9,7 +9,6 @@
 
 #include <tclap/CmdLine.h>
 
-#include "Applications/ApplicationsLib/LogogSetup.h"
 #include "Applications/FileIO/SHPInterface.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/IO/readMeshFromFile.h"
@@ -17,8 +16,6 @@
 
 int main(int argc, char* argv[])
 {
-    ApplicationsLib::LogogSetup logog_setup;
-
     TCLAP::CmdLine cmd(
         "Converts 2D mesh file into shapfile such that each element is "
         "represented by a polygon. Cell attributes are transferred onto shape "

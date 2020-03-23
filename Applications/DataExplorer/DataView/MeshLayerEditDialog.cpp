@@ -209,7 +209,7 @@ MeshLib::Mesh* MeshLayerEditDialog::createPrismMesh()
         auto const rasters = FileIO::readRasters(raster_paths);
         if (rasters && mapper.createLayers(*_msh, *rasters, minimum_thickness))
         {
-            INFO("Mesh construction time: %d ms.", myTimer0.elapsed());
+            INFO("Mesh construction time: {:d} ms.", myTimer0.elapsed());
             return mapper.getMesh("SubsurfaceMesh").release();
         }
         return nullptr;
@@ -220,7 +220,7 @@ MeshLib::Mesh* MeshLayerEditDialog::createPrismMesh()
     {
         layer_thickness.push_back(this->_edits[i]->text().toFloat());
     }
-    INFO("Mesh construction time: %d ms.", myTimer0.elapsed());
+    INFO("Mesh construction time: {:d} ms.", myTimer0.elapsed());
     return MeshLib::MeshLayerMapper::createStaticLayers(*_msh, layer_thickness);
 }
 
@@ -279,7 +279,7 @@ MeshLib::Mesh* MeshLayerEditDialog::createTetMesh()
         FileIO::TetGenInterface tetgen_interface;
         tetgen_interface.writeTetGenSmesh(filename.toStdString(), *tg_mesh, tg_attr);
     }
-    INFO("Mesh construction time: %d ms.", myTimer0.elapsed());
+    INFO("Mesh construction time: {:d} ms.", myTimer0.elapsed());
 
     return tg_mesh;
 }

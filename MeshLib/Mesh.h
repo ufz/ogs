@@ -214,8 +214,8 @@ void addPropertyToMesh(MeshLib::Mesh& mesh, std::string const& name,
         if (mesh.getNumberOfNodes() != values.size() / number_of_components)
         {
             OGS_FATAL(
-                "Error number of nodes (%u) does not match the number of "
-                "tuples (%u).",
+                "Error number of nodes ({:d}) does not match the number of "
+                "tuples ({:d}).",
                 mesh.getNumberOfNodes(), values.size() / number_of_components);
         }
     }
@@ -224,8 +224,8 @@ void addPropertyToMesh(MeshLib::Mesh& mesh, std::string const& name,
         if (mesh.getNumberOfElements() != values.size() / number_of_components)
         {
             OGS_FATAL(
-                "Error number of elements (%u) does not match the number of "
-                "tuples (%u).",
+                "Error number of elements ({:d}) does not match the number of "
+                "tuples ({:d}).",
                 mesh.getNumberOfElements(),
                 values.size() / number_of_components);
         }
@@ -235,7 +235,7 @@ void addPropertyToMesh(MeshLib::Mesh& mesh, std::string const& name,
         name, item_type, number_of_components);
     if (!property)
     {
-        OGS_FATAL("Error while creating PropertyVector '%s'.", name.c_str());
+        OGS_FATAL("Error while creating PropertyVector '{:s}'.", name.c_str());
     }
     property->reserve(values.size());
     std::copy(values.cbegin(), values.cend(), std::back_inserter(*property));

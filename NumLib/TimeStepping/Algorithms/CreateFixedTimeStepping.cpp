@@ -72,9 +72,9 @@ std::unique_ptr<TimeStepAlgorithm> createFixedTimeStepping(
             {
                 OGS_FATAL(
                     "Resize of the time steps vector failed for the requested "
-                    "new size %u. Probably there is not enough memory (%g GiB "
-                    "requested).\n"
-                    "Thrown exception: %s",
+                    "new size {:d}. Probably there is not enough memory ({:g} "
+                    "GiB requested).\n"
+                    "Thrown exception: {:s}",
                     new_size,
                     new_size * sizeof(double) / 1024. / 1024. / 1024.,
                     e.what());
@@ -83,9 +83,9 @@ std::unique_ptr<TimeStepAlgorithm> createFixedTimeStepping(
             {
                 OGS_FATAL(
                     "Resize of the time steps vector failed for the requested "
-                    "new size %u. Probably there is not enough memory (%g GiB "
-                    "requested).\n"
-                    "Thrown exception: %s",
+                    "new size {:d}. Probably there is not enough memory ({:g} "
+                    "GiB requested).\n"
+                    "Thrown exception: {:s}",
                     new_size, new_size * sizeof(double) / 1024. / 1024. / 1024.,
                     e.what());
             }
@@ -108,9 +108,9 @@ std::unique_ptr<TimeStepAlgorithm> createFixedTimeStepping(
         {
             OGS_FATAL(
                 "Resize of the time steps vector failed for the requested new "
-                "size %u. Probably there is not enough memory (%g GiB "
+                "size {:d}. Probably there is not enough memory ({:g} GiB "
                 "requested).\n"
-                "Thrown exception: %s",
+                "Thrown exception: {:s}",
                 new_size,
                 new_size * sizeof(double) / 1024. / 1024. / 1024.,
                 e.what());
@@ -119,9 +119,9 @@ std::unique_ptr<TimeStepAlgorithm> createFixedTimeStepping(
         {
             OGS_FATAL(
                 "Resize of the time steps vector failed for the requested new "
-                "size %u. Probably there is not enough memory (%g GiB "
+                "size {:d}. Probably there is not enough memory ({:g} GiB "
                 "requested).\n"
-                "Thrown exception: %s",
+                "Thrown exception: {:s}",
                 new_size, new_size * sizeof(double) / 1024. / 1024. / 1024.,
                 e.what());
         }

@@ -9,12 +9,12 @@
 
 #pragma once
 
+#include <spdlog/spdlog.h>
+
 #include <array>
 #include <cstddef>
 #include <limits>
 #include <numeric>
-
-#include <logog/include/logog.hpp>
 
 namespace FileIO
 {
@@ -61,8 +61,8 @@ public:
         {
             ERR("GocadSGridReader::IndexCalculator::getCellIdx(): At least "
                 "one grid coordinate to big.");
-            ERR("\t Given: (%d, %d, %d), max allowed cell grid coords: "
-                "(%d, %d, %d).",
+            ERR("\t Given: ({:d}, {:d}, {:d}), max allowed cell grid coords: "
+                "({:d}, {:d}, {:d}).",
                 u, v, w, _x_dim - 1, _y_dim - 1, _z_dim - 1);
             return std::numeric_limits<std::size_t>::max();
         }

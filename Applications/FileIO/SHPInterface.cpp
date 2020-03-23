@@ -294,7 +294,7 @@ bool SHPInterface::write2dMeshToSHP(const std::string &file_name, const MeshLib:
         }
     }
     DBFClose(hDBF);
-    INFO("Shape export of 2D mesh '%s' finished.", mesh.getName().c_str());
+    INFO("Shape export of 2D mesh '{:s}' finished.", mesh.getName().c_str());
     return true;
 }
 

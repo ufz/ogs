@@ -77,8 +77,9 @@ void EdgeRatioMetric::calculateQuality()
             break;
         }
         default:
-            ERR ("MeshQualityShortestLongestRatio::check () check for element type %s not implemented.",
-                 MeshElemType2String(elem.getGeomType()).c_str());
+            ERR("MeshQualityShortestLongestRatio::check () check for element "
+                "type {:s} not implemented.",
+                MeshElemType2String(elem.getGeomType()).c_str());
         }
     }
 }

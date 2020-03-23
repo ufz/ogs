@@ -172,7 +172,8 @@ int VtkMappedMeshSource::RequestData(vtkInformation* /*request*/,
         }
 
         OGS_FATAL(
-            "Mesh property '%s' with unknown data type. Please check the data "
+            "Mesh property '{:s}' with unknown data type. Please check the "
+            "data "
             "type of the mesh properties. The available data types are:"
             "\n\t double,"
             "\n\t float,"

@@ -593,7 +593,7 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
             std::unique_ptr<MeshLib::Mesh> mesh(
                 MeshLib::IO::readMeshFromFile(fileName.toStdString()));
 #ifndef NDEBUG
-            INFO("Mesh loading time: %d ms.", myTimer0.elapsed());
+            INFO("Mesh loading time: {:d} ms.", myTimer0.elapsed());
             myTimer1.start();
 #endif
             if (mesh)
@@ -605,7 +605,7 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
                 OGSError::box("Failed to load mesh file.");
             }
 #ifndef NDEBUG
-            INFO("Mesh model setup time: %d ms.", myTimer1.elapsed());
+            INFO("Mesh model setup time: {:d} ms.", myTimer1.elapsed());
 #endif
         }
 
@@ -1130,7 +1130,7 @@ void MainWindow::callGMSH(std::vector<std::string> & selectedGeometries,
                 remove_command = "del ";
 #endif
                 remove_command += fileName.toStdString();
-                INFO("remove command: %s", remove_command.c_str());
+                INFO("remove command: {:s}", remove_command.c_str());
                 auto const return_value = system(remove_command.c_str());
                 if (return_value != 0)
                 {

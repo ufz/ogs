@@ -34,7 +34,7 @@ void FEFLOWGeoInterface::readFEFLOWFile(const std::string& filename,
     std::ifstream in(filename.c_str());
     if (!in)
     {
-        ERR("FEFLOWGeoInterface::readFEFLOWFile(): Could not open file %s.",
+        ERR("FEFLOWGeoInterface::readFEFLOWFile(): Could not open file {:s}.",
             filename.c_str());
         return;
     }

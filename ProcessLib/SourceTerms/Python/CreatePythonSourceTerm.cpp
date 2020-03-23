@@ -44,7 +44,8 @@ std::unique_ptr<SourceTerm> createPythonSourceTerm(
     if (!scope.contains(source_term_object))
     {
         OGS_FATAL(
-            "Function `%s' is not defined in the python script file, or there "
+            "Function `{:s}' is not defined in the python script file, or "
+            "there "
             "was no python script file specified.",
             source_term_object.c_str());
     }

@@ -35,7 +35,7 @@ void PVDFile::addVTUFile(const std::string &vtu_fname, double timestep)
 
     std::ofstream fh(_pvd_filename.c_str());
     if (!fh) {
-        OGS_FATAL("could not open file `%s'", _pvd_filename.c_str());
+        OGS_FATAL("could not open file `{:s}'", _pvd_filename.c_str());
     }
 
     fh << std::setprecision(std::numeric_limits<double>::digits10);

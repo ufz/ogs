@@ -114,8 +114,8 @@ std::unique_ptr<Process> createHTProcess(
     if (b.size() < mesh.getDimension())
     {
         OGS_FATAL(
-            "specific body force (gravity vector) has %d components, mesh "
-            "dimension is %d",
+            "specific body force (gravity vector) has {:d} components, mesh "
+            "dimension is {:d}",
             b.size(), mesh.getDimension());
     }
     bool const has_gravity = MathLib::toVector(b).norm() > 0;
@@ -142,12 +142,12 @@ std::unique_ptr<Process> createHTProcess(
         solid_thermal_expansion = &ParameterLib::findParameter<double>(
             //! \ogs_file_param_special{prj__processes__process__HT__solid_thermal_expansion__thermal_expansion}
             *solid_config, "thermal_expansion", parameters, 1, &mesh);
-        DBUG("Use '%s' as solid thermal expansion.",
+        DBUG("Use '{:s}' as solid thermal expansion.",
              solid_thermal_expansion->name.c_str());
         biot_constant = &ParameterLib::findParameter<double>(
             //! \ogs_file_param_special{prj__processes__process__HT__solid_thermal_expansion__biot_constant}
             *solid_config, "biot_constant", parameters, 1, &mesh);
-        DBUG("Use '%s' as Biot's constant.", biot_constant->name.c_str());
+        DBUG("Use '{:s}' as Biot's constant.", biot_constant->name.c_str());
     }
 
     std::unique_ptr<ProcessLib::SurfaceFluxData> surfaceflux;

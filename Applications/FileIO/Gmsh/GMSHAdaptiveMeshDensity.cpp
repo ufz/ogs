@@ -86,7 +86,10 @@ void GMSHAdaptiveMeshDensity::addPoints(std::vector<GeoLib::Point const*> const&
 {
     // *** QuadTree - insert points
     const std::size_t n_pnts(pnts.size());
-    DBUG("GMSHAdaptiveMeshDensity::addPoints(): Inserting %d points into quadtree.", n_pnts);
+    DBUG(
+        "GMSHAdaptiveMeshDensity::addPoints(): Inserting {:d} points into "
+        "quadtree.",
+        n_pnts);
     for (std::size_t k(0); k < n_pnts; k++)
     {
         _quad_tree->addPoint(pnts[k]);

@@ -65,8 +65,8 @@ TESProcess::TESProcess(
                     //! \ogs_file_special
                     config.getConfigParameterOptional<double>(p.first))
             {
-                DBUG("setting parameter `%s' to value `%g'", p.first.c_str(),
-                     *par);
+                DBUG("setting parameter `{:s}' to value `{:g}'",
+                     p.first.c_str(), *par);
                 *p.second = *par;
             }
         }
@@ -88,8 +88,8 @@ TESProcess::TESProcess(
                     //! \ogs_file_special
                     config.getConfigParameterOptional<double>(p.first))
             {
-                INFO("setting parameter `%s' to value `%g'", p.first.c_str(),
-                     *par);
+                INFO("setting parameter `{:s}' to value `{:g}'",
+                     p.first.c_str(), *par);
                 *p.second = Trafo{*par};
             }
         }
@@ -102,7 +102,7 @@ TESProcess::TESProcess(
     {
         DBUG(
             "setting parameter `solid_hydraulic_permeability' to isotropic "
-            "value `%g'",
+            "value `{:g}'",
             *par);
         const auto dim = mesh.getDimension();
         _assembly_params.solid_perm_tensor =
@@ -119,7 +119,7 @@ TESProcess::TESProcess(
             //! \ogs_file_param{prj__processes__process__TES__output_element_matrices}
             config.getConfigParameterOptional<bool>("output_element_matrices"))
     {
-        DBUG("output_element_matrices: %s", (*param) ? "true" : "false");
+        DBUG("output_element_matrices: {:s}", (*param) ? "true" : "false");
 
         _assembly_params.output_element_matrices = *param;
     }
@@ -130,7 +130,7 @@ TESProcess::TESProcess(
     //! \ogs_file_param{prj__processes__process__TES__output_global_matrix}
     config.getConfigParameterOptional<bool>("output_global_matrix"))
     {
-        DBUG("output_global_matrix: %s", (*param) ? "true" : "false");
+        DBUG("output_global_matrix: {:s}", (*param) ? "true" : "false");
 
         this->_process_output.output_global_matrix = *param;
     }
@@ -307,7 +307,7 @@ NumLib::IterationResult TESProcess::postIterationConcreteProcess(
     }
 
     // TODO remove
-    DBUG("ts %lu iteration %lu (in current ts: %lu) try %u accepted",
+    DBUG("ts {:d} iteration {:d} (in current ts: {:d}) try {:d} accepted",
          _assembly_params.timestep, _assembly_params.total_iteration,
          _assembly_params.iteration_in_current_timestep,
          _assembly_params.number_of_try_of_iteration);

@@ -104,7 +104,7 @@ int main (int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
-    INFO("Mesh read: %u nodes, %u elements.", mesh->getNumberOfNodes(),
+    INFO("Mesh read: {:d} nodes, {:d} elements.", mesh->getNumberOfNodes(),
          mesh->getNumberOfElements());
 
     // extract surface

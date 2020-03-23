@@ -239,7 +239,8 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
         if (b_m < 0.0)
         {
             DBUG(
-                "Element %d, gp %d: Fracture aperture is %g, but it must be "
+                "Element {:d}, gp {:d}: Fracture aperture is {:g}, but it must "
+                "be "
                 "non-negative. Setting it to zero.",
                 _element.getID(), ip, b_m);
             b_m = 0;
@@ -369,7 +370,7 @@ void HydroMechanicsLocalAssemblerFracture<
         if (b_m < 0.0)
         {
             DBUG(
-                "Element %d, gp %d: Fracture aperture is %g, but it is "
+                "Element {:d}, gp {:d}: Fracture aperture is {:g}, but it is "
                 "expected to be non-negative.",
                 _element.getID(), ip, b_m);
         }

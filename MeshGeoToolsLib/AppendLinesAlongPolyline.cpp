@@ -52,7 +52,7 @@ std::unique_ptr<MeshLib::Mesh> appendLinesAlongPolylines(
         if (vec_nodes_on_ply.empty()) {
             std::string ply_name;
             ply_vec.getNameOfElementByID(k, ply_name);
-            INFO("No nodes found on polyline %s", ply_name.c_str());
+            INFO("No nodes found on polyline {:s}", ply_name.c_str());
             continue;
         }
 

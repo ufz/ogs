@@ -305,10 +305,10 @@ public:
 
         // Eigen::MatrixXd J(Jac.getRawMatrix());
 
-        // INFO("t: %e, x: %e, y: %e, z: %e, dxdot/dx: %e", t, x, y, z, dxdot_dx);
-        // std::cout << "Jacobian:\n" << J << "\n";
+        // INFO("t: {:e}, x: {:e}, y: {:e}, z: {:e}, dxdot/dx: {:e}", t, x, y,
+        // z, dxdot_dx); std::cout << "Jacobian:\n" << J << "\n";
 
-        // INFO("Det J: %e <<<", J.determinant());
+        // INFO("Det J: {:e} <<<", J.determinant());
     }
 
     MathLib::MatrixSpecifications getMatrixSpecifications(

@@ -40,7 +40,7 @@ int convertVtkDataMode(std::string const& data_mode)
         return 2;
     }
     OGS_FATAL(
-        "Unsupported vtk output file data mode '%s'. Expected Ascii, "
+        "Unsupported vtk output file data mode '{:s}'. Expected Ascii, "
         "Binary, or Appended.",
         data_mode.c_str());
 }
@@ -180,7 +180,7 @@ void Output::outputBulkMesh(OutputFile const& output_file,
                             MeshLib::Mesh const& mesh,
                             double const t) const
 {
-    DBUG("output to %s", output_file.path.c_str());
+    DBUG("output to {:s}", output_file.path.c_str());
 
     process_data->pvd_file.addVTUFile(output_file.name, t);
 
@@ -250,9 +250,8 @@ void Output::doOutputAlways(Process const& process,
             "Need mesh '" + mesh_output_name + "' for the output.");
 
         std::vector<MeshLib::Node*> const& nodes = mesh.getNodes();
-        DBUG(
-            "Found %d nodes for output at mesh '%s'.",
-            nodes.size(), mesh.getName().c_str());
+        DBUG("Found {:d} nodes for output at mesh '{:s}'.", nodes.size(),
+             mesh.getName().c_str());
 
         MeshLib::MeshSubset mesh_subset(mesh, nodes);
         std::vector<std::unique_ptr<NumLib::LocalToGlobalIndexMap>>
@@ -292,12 +291,12 @@ void Output::doOutputAlways(Process const& process,
                                      _output_file_data_mode,
                                      _output_file_compression};
 
-        DBUG("output to %s", output_file.path.c_str());
+        DBUG("output to {:s}", output_file.path.c_str());
 
         makeOutput(output_file.path, mesh, output_file.compression,
                    output_file.data_mode);
     }
-    INFO("[time] Output of timestep %d took %g s.", timestep,
+    INFO("[time] Output of timestep {:d} took {:g} s.", timestep,
          time_output.elapsed());
 }
 
@@ -378,9 +377,9 @@ void Output::doOutputNonlinearIteration(Process const& process,
     std::string const output_file_path =
         BaseLib::joinPaths(_output_directory, output_file_name);
 
-    DBUG("output iteration results to %s", output_file_path.c_str());
+    DBUG("output iteration results to {:s}", output_file_path.c_str());
 
-    INFO("[time] Output took %g s.", time_output.elapsed());
+    INFO("[time] Output took {:g} s.", time_output.elapsed());
 
     makeOutput(output_file_path, process.getMesh(), _output_file_compression,
                _output_file_data_mode);

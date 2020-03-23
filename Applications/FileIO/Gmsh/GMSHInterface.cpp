@@ -150,12 +150,12 @@ int GMSHInterface::writeGMSHInputFile(std::ostream& out)
     }
     DBUG(
         "GMSHInterface::writeGMSHInputFile(): Computed topological hierarchy - "
-        "detected %d polygons.",
+        "detected {:d} polygons.",
         _polygon_tree_list.size());
     GeoLib::createPolygonTrees<GMSH::GMSHPolygonTree>(_polygon_tree_list);
     DBUG(
         "GMSHInterface::writeGMSHInputFile(): Computed topological hierarchy - "
-        "calculated %d polygon trees.",
+        "calculated {:d} polygon trees.",
         _polygon_tree_list.size());
 
     // *** Mark in each polygon tree the segments shared by two polygons.

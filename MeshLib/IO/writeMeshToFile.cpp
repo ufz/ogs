@@ -38,14 +38,15 @@ int writeMeshToFile(const MeshLib::Mesh &mesh, const std::string &file_name)
         auto const result = writer.writeToFile(file_name);
         if (!result)
         {
-            ERR("writeMeshToFile(): Could not write mesh to '%s'.",
+            ERR("writeMeshToFile(): Could not write mesh to '{:s}'.",
                 file_name.c_str());
             return -1;
         }
         return 0;
     }
 
-    ERR("writeMeshToFile(): Unknown mesh file format in file %s.", file_name.c_str());
+    ERR("writeMeshToFile(): Unknown mesh file format in file {:s}.",
+        file_name.c_str());
     return -1;
 }
 

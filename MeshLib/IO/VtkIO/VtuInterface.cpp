@@ -50,7 +50,7 @@ VtuInterface::VtuInterface(const MeshLib::Mesh* mesh, int dataMode, bool compres
 MeshLib::Mesh* VtuInterface::readVTUFile(std::string const &file_name)
 {
     if (!BaseLib::IsFileExisting(file_name)) {
-        ERR("File '%s' does not exist.", file_name.c_str());
+        ERR("File '{:s}' does not exist.", file_name.c_str());
         return nullptr;
     }
 
@@ -62,7 +62,7 @@ MeshLib::Mesh* VtuInterface::readVTUFile(std::string const &file_name)
     vtkUnstructuredGrid* vtkGrid = reader->GetOutput();
     if (vtkGrid->GetNumberOfPoints() == 0)
     {
-        ERR("Mesh '%s' contains zero points.", file_name.c_str());
+        ERR("Mesh '{:s}' contains zero points.", file_name.c_str());
         return nullptr;
     }
 
@@ -116,7 +116,7 @@ int writeVtu(MeshLib::Mesh const& mesh, std::string const& file_name,
     auto const result = writer.writeToFile(file_name);
     if (!result)
     {
-        ERR("writeMeshToFile(): Could not write mesh to '%s'.",
+        ERR("writeMeshToFile(): Could not write mesh to '{:s}'.",
             file_name.c_str());
         return -1;
     }

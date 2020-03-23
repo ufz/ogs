@@ -13,7 +13,6 @@
 
 #include <tclap/CmdLine.h>
 
-#include "Applications/ApplicationsLib/LogogSetup.h"
 #include "InfoLib/GitInfo.h"
 #include "GeoLib/AABB.h"
 #include "MeshLib/IO/readMeshFromFile.h"
@@ -24,8 +23,6 @@
 
 int main(int argc, char* argv[])
 {
-    ApplicationsLib::LogogSetup logog_setup;
-
     TCLAP::CmdLine cmd(
         "Mesh to raster converter.\n"
         "Rasterises a 2D mesh, pixel values are set to the elevation of a "
@@ -67,7 +64,7 @@ int main(int argc, char* argv[])
 
     double const cellsize =
         (cell_arg.isSet()) ? cell_arg.getValue() : mesh->getMinEdgeLength();
-    INFO("Cellsize set to %f", cellsize);
+    INFO("Cellsize set to {:f}", cellsize);
 
     std::vector<MeshLib::Node*> const& nodes_vec(mesh->getNodes());
     GeoLib::AABB const bounding_box(nodes_vec.begin(), nodes_vec.end());
@@ -88,7 +85,7 @@ int main(int argc, char* argv[])
     out << std::fixed << "cellsize      " << cellsize << "\n";
     out << "NODATA_value  "
         << "-9999\n";
-    INFO("Writing raster with %d x %d pixels.", n_cols, n_rows);
+    INFO("Writing raster with {:d} x {:d} pixels.", n_cols, n_rows);
 
     MeshLib::MeshElementGrid const grid(*mesh);
     double const max_edge(mesh->getMaxEdgeLength() + cellsize);
@@ -153,6 +150,6 @@ int main(int argc, char* argv[])
         out << "\n";
     }
     out.close();
-    INFO("Result written to %s", output_arg.getValue().c_str());
+    INFO("Result written to {:s}", output_arg.getValue().c_str());
     return 0;
 }

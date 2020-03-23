@@ -171,7 +171,7 @@ void Coulomb<DisplacementDim>::computeConstitutiveRelation(
 
         auto const update_solution = [&](ResidualVectorType const& increment) {
             solution += increment;
-            /*DBUG("analytical = %g",
+            /*DBUG("analytical = {:g}",
                  Fs / (mat.Ks + mat.Kn * std::tan(mat.psi) * std::tan(mat.phi)))
                  */
             state.w_p = state.w_p_prev +

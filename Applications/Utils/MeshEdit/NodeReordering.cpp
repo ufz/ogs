@@ -77,7 +77,7 @@ void reorderNodes(std::vector<MeshLib::Element*> &elements)
         }
     }
 
-    INFO("Corrected %d elements.", n_corrected_elements);
+    INFO("Corrected {:d} elements.", n_corrected_elements);
 }
 
 /// Re-ordering prism elements to correct OGS6 meshes with and without InSitu-Lib

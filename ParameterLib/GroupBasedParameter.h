@@ -67,7 +67,7 @@ struct GroupBasedParameter final : public Parameter<T>
         auto const& values = _vec_values[index];
         if (values.empty())
         {
-            OGS_FATAL("No data found for the group index %d", index);
+            OGS_FATAL("No data found for the group index {:d}", index);
         }
 
         if (!this->_coordinate_system)

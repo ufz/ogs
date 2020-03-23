@@ -31,7 +31,7 @@ struct FormEigenTensor
         {
             return values.asDiagonal();
         }
-        OGS_FATAL("Cannot convert 2d vector to %dx%d diagonal matrix.",
+        OGS_FATAL("Cannot convert 2d vector to {:d}x{:d} diagonal matrix.",
                   GlobalDim, GlobalDim);
     }
 
@@ -42,7 +42,7 @@ struct FormEigenTensor
         {
             return values.asDiagonal();
         }
-        OGS_FATAL("Cannot convert 3d vector to %dx%d diagonal matrix.",
+        OGS_FATAL("Cannot convert 3d vector to {:d}x{:d} diagonal matrix.",
                   GlobalDim, GlobalDim);
     }
 
@@ -52,7 +52,7 @@ struct FormEigenTensor
         if constexpr (GlobalDim == 2) {
             return values;
         }
-        OGS_FATAL("Cannot convert a 2d tensor to %dx%d matrix", GlobalDim,
+        OGS_FATAL("Cannot convert a 2d tensor to {:d}x{:d} matrix", GlobalDim,
                   GlobalDim);
     }
     Eigen::Matrix<double, GlobalDim, GlobalDim> operator()(
@@ -61,7 +61,7 @@ struct FormEigenTensor
         if constexpr (GlobalDim == 3) {
             return values;
         }
-        OGS_FATAL("Cannot convert a 3d tensor to %dx%d matrix", GlobalDim,
+        OGS_FATAL("Cannot convert a 3d tensor to {:d}x{:d} matrix", GlobalDim,
                   GlobalDim);
     }
 
@@ -92,7 +92,7 @@ struct FormEigenTensor
             return result;
         }
 
-        OGS_FATAL("Cannot convert a symmetric 3d tensor to %dx%d matrix",
+        OGS_FATAL("Cannot convert a symmetric 3d tensor to {:d}x{:d} matrix",
                   GlobalDim);
     }
 };

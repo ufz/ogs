@@ -43,7 +43,8 @@ std::unique_ptr<BoundaryCondition> createBoundaryCondition(
         bulk_mesh.isAxiallySymmetric())
     {
         OGS_FATAL(
-            "The boundary mesh %s axially symmetric but the bulk mesh %s. Both "
+            "The boundary mesh {:s} axially symmetric but the bulk mesh {:s}. "
+            "Both "
             "must have an equal axial symmetry property.",
             config.boundary_mesh.isAxiallySymmetric() ? "is" : "is not",
             bulk_mesh.isAxiallySymmetric() ? "is" : "is not");
@@ -130,7 +131,7 @@ std::unique_ptr<BoundaryCondition> createBoundaryCondition(
                 config.config, dof_table, bulk_mesh, variable_id,
                 *config.component_id);
     }
-    OGS_FATAL("Unknown boundary condition type: `%s'.", type.c_str());
+    OGS_FATAL("Unknown boundary condition type: `{:s}'.", type.c_str());
 }
 
 }  // namespace ProcessLib

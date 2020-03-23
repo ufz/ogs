@@ -50,16 +50,16 @@ MechanicsBase<DisplacementDim>& selectSolidConstitutiveRelation(
     if (constitutive_relation == end(constitutive_relations))
     {
         OGS_FATAL(
-            "No constitutive relation found for material id %d and element %d. "
-            "There are %d constitutive relations available.",
+            "No constitutive relation found for material id {:d} and element "
+            "{:d}. There are {:d} constitutive relations available.",
             material_id, element_id, constitutive_relations.size());
     }
 
     if (constitutive_relation->second == nullptr)
     {
         OGS_FATAL(
-            "The constitutive relation found for material id %d and element %d "
-            "is a nullptr, which is impossible.",
+            "The constitutive relation found for material id {:d} and element "
+            "{:d} is a nullptr, which is impossible.",
             material_id, element_id);
     }
 

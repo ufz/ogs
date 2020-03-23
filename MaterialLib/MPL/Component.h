@@ -93,7 +93,7 @@ void checkRequiredProperties(Component const& c,
     {
         if (!c.hasProperty(p))
         {
-            OGS_FATAL("The property '%s' is missing in the component '%s'.",
+            OGS_FATAL("The property '{:s}' is missing in the component '{:s}'.",
                       property_enum_to_string[p].c_str(), c.name.c_str());
         }
     }

@@ -111,7 +111,7 @@ QVariant VtkAlgorithmProperties::GetUserProperty(QString name) const
         return this->_algorithmUserProperties->value(name);
     }
 
-    ERR("Not a valid property: %s", name.toStdString().c_str());
+    ERR("Not a valid property: {:s}", name.toStdString().c_str());
     return QVariant();
 }
 
@@ -122,7 +122,7 @@ QList<QVariant> VtkAlgorithmProperties::GetUserVectorProperty(QString name) cons
         return this->_algorithmUserVectorProperties->value(name);
     }
 
-    ERR("Not a valid property: %s", name.toStdString().c_str());
+    ERR("Not a valid property: {:s}", name.toStdString().c_str());
     return QList<QVariant>();
 }
 

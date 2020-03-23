@@ -46,7 +46,7 @@ Variable convertStringToVariable(std::string const& input)
     }
 
     OGS_FATAL(
-        "The variable name '%s' does not correspond to any known variable",
+        "The variable name '{:s}' does not correspond to any known variable",
         input.c_str());
 
     return Variable::number_of_variables;  // to avoid the 'no return' warning

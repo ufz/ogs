@@ -21,7 +21,7 @@ void Properties::removePropertyVector(std::string const& name)
         _properties.find(name)
     );
     if (it == _properties.end()) {
-        WARN("A property of the name '%s' does not exist.", name.c_str());
+        WARN("A property of the name '{:s}' does not exist.", name.c_str());
         return;
     }
     delete it->second;

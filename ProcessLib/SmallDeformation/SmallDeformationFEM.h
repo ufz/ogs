@@ -170,8 +170,8 @@ public:
         {
             OGS_FATAL(
                 "Setting integration point initial conditions; The integration "
-                "order of the local assembler for element %d is different from "
-                "the integration order in the initial condition.",
+                "order of the local assembler for element {:d} is different "
+                "from the integration order in the initial condition.",
                 _element.getID());
         }
 
@@ -181,7 +181,7 @@ public:
             {
                 OGS_FATAL(
                     "Setting initial conditions for stress from integration "
-                    "point data and from a parameter '%s' is not possible "
+                    "point data and from a parameter '{:s}' is not possible "
                     "simultaneously.",
                     _process_data.initial_stress->name.c_str());
             }

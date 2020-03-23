@@ -98,7 +98,7 @@ public:
         {
             return ELEMENT_RULE::getFace(this, i);
         }
-        OGS_FATAL("TemplateElement::getBoundary for boundary %u failed.", i);
+        OGS_FATAL("TemplateElement::getBoundary for boundary {:d} failed.", i);
     }
 
     /// Returns the number of boundaries of the element.

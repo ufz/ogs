@@ -61,7 +61,7 @@ void checkMPLProperties(
             if (!liquid_phase.hasComponent(component_id))
             {
                 OGS_FATAL(
-                    "The component %u in the AqueousLiquid phase isn't "
+                    "The component {:d} in the AqueousLiquid phase isn't "
                     "specified.",
                     component_id);
             }
@@ -121,8 +121,9 @@ std::unique_ptr<Process> createComponentTransportProcess(
     if (it != collected_process_variables.end())
     {
         OGS_FATAL(
-            "Number of components for process variable '%s' should be 1 rather "
-            "than %d.",
+            "Number of components for process variable '{:s}' should be 1 "
+            "rather "
+            "than {:d}.",
             it->get().getName().c_str(),
             it->get().getNumberOfComponents());
     }
@@ -165,8 +166,8 @@ std::unique_ptr<Process> createComponentTransportProcess(
     if (b.size() < mesh.getDimension())
     {
         OGS_FATAL(
-            "specific body force (gravity vector) has %d components, mesh "
-            "dimension is %d",
+            "specific body force (gravity vector) has {:d} components, mesh "
+            "dimension is {:d}",
             b.size(), mesh.getDimension());
     }
     bool const has_gravity = MathLib::toVector(b).norm() > 0;

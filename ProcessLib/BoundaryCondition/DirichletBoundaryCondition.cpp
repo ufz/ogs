@@ -67,7 +67,7 @@ std::unique_ptr<DirichletBoundaryCondition> createDirichletBoundaryCondition(
 
     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__Dirichlet__parameter}
     auto const param_name = config.getConfigParameter<std::string>("parameter");
-    DBUG("Using parameter %s", param_name.c_str());
+    DBUG("Using parameter {:s}", param_name.c_str());
 
     auto& parameter = ParameterLib::findParameter<double>(
         param_name, parameters, 1, &bc_mesh);

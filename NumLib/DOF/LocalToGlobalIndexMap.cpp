@@ -209,7 +209,7 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
     {
         OGS_FATAL(
             "Number of mesh subsets is not equal to number of components. "
-            "There are %d mesh subsets and %d components.",
+            "There are {:d} mesh subsets and {:d} components.",
             _mesh_subsets.size(), global_component_ids.size());
     }
 

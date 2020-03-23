@@ -147,7 +147,7 @@ MeshLib::Element* BoundaryElementsAlongPolyline::modifyEdgeNodeOrdering(
         }
         else
         {
-            OGS_FATAL("Not implemented for element type %s",
+            OGS_FATAL("Not implemented for element type {:s}",
                       typeid(edge).name());
         }
 

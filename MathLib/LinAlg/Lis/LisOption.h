@@ -47,7 +47,7 @@ struct LisOption final
             if (auto s = options->getConfigParameterOptional<std::string>("lis")) {
                 if (!s->empty()) {
                     _option_string += " " + *s;
-                    INFO("Lis options: '%s'", _option_string.c_str());
+                    INFO("Lis options: '{:s}'", _option_string.c_str());
                 }
             }
         }

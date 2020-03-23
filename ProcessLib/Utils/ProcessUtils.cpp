@@ -28,12 +28,12 @@ ProcessLib::ProcessVariable& findVariableByName(
     if (variable == variables.end())
     {
         OGS_FATAL(
-            "There is no entry of the defined process variable '%s' in the "
+            "There is no entry of the defined process variable '{:s}' in the "
             "provided variables list (see tag <process_variables>). A "
-            "definition is required for config tag <%s>.",
+            "definition is required for config tag <{:s}>.",
             name.c_str(), tag.c_str());
     }
-    DBUG("Found process variable '%s' for config tag <%s>.",
+    DBUG("Found process variable '{:s}' for config tag <{:s}>.",
          variable->getName().c_str(), tag.c_str());
 
     // Const cast is needed because of variables argument constness.
@@ -86,7 +86,7 @@ std::vector<std::reference_wrapper<ProcessVariable>> findProcessVariables(
 
     if (var_names.empty())
     {
-        OGS_FATAL("No entity is found with config tag <%s>.", tag.c_str());
+        OGS_FATAL("No entity is found with config tag <{:s}>.", tag.c_str());
     }
 
     std::vector<std::string> cached_var_names;
@@ -102,7 +102,7 @@ std::vector<std::reference_wrapper<ProcessVariable>> findProcessVariables(
 
     if (cached_var_names.size() != var_names.size())
     {
-        OGS_FATAL("Found duplicates with config tag <%s>.", tag.c_str());
+        OGS_FATAL("Found duplicates with config tag <{:s}>.", tag.c_str());
     }
 
     return vars;

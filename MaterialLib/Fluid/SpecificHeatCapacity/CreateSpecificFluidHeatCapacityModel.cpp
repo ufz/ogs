@@ -37,7 +37,7 @@ std::unique_ptr<FluidProperty> createSpecificFluidHeatCapacityModel(
     // TODO: add more models
 
     OGS_FATAL(
-        "The specific heat capacity type %s is unavailable.\n"
+        "The specific heat capacity type {:s} is unavailable.\n"
         "The available type is \n\tConstant\n",
         type.data());
 }

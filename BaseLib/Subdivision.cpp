@@ -27,8 +27,8 @@ GradualSubdivision::GradualSubdivision(const double L,
     // Cf. geometric series formula.
     if (multiplier < 1.0 && dL0 / (1.0 - multiplier) < L) {
         OGS_FATAL(
-            "Using dL0=%g and multiplier=%g the generated subdivisions can not "
-            "sum up to a total length of %g.",
+            "Using dL0={:g} and multiplier={:g} the generated subdivisions can "
+            "not sum up to a total length of {:g}.",
             dL0,
             multiplier,
             L);

@@ -119,14 +119,14 @@ int XmlPrjInterface::readFile(const QString& fileName)
                 }
                 if (meshes_node.nodeName() != "mesh")
                 {
-                    ERR("Expected an XML element node named 'mesh' got '{s}'.",
+                    ERR("Expected an XML element node named 'mesh' got '{:s}'.",
                         meshes_node.nodeName().toStdString());
                     return 0;
                 }
                 if (meshes_node.childNodes().count() != 1)
                 {
                     ERR("Expected an XML element node named 'mesh' to contain "
-                        "exactly one child node but it has %d children.",
+                        "exactly one child node but it has {:d} children.",
                         meshes_node.childNodes().count());
                     return 0;
                 }
@@ -389,7 +389,7 @@ bool XmlPrjInterface::write()
             geo_tag.appendChild(filename_text);
         }
         else
-            ERR("XmlGmlInterface::writeFile(): Error writing gml-file '%s'.",
+            ERR("XmlGmlInterface::writeFile(): Error writing gml-file '{:s}'.",
                 name.c_str());
     }
 
@@ -412,7 +412,7 @@ bool XmlPrjInterface::write()
             stn_tag.appendChild(filename_text);
         }
         else
-            ERR("XmlStnInterface::writeFile(): Error writing stn-file '%s'.",
+            ERR("XmlStnInterface::writeFile(): Error writing stn-file '{:s}'.",
                 name.c_str());
     }
 

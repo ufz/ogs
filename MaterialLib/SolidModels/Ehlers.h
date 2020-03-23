@@ -55,7 +55,7 @@ inline TangentType makeTangentType(std::string const& s)
     {
         return TangentType::Plastic;
     }
-    OGS_FATAL("Not valid string '%s' to create a tangent type from.",
+    OGS_FATAL("Not valid string '{:s}' to create a tangent type from.",
               s.c_str());
 }
 

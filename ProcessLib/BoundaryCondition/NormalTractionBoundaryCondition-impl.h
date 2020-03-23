@@ -43,8 +43,8 @@ NormalTractionBoundaryCondition<LocalAssemblerImplementation>::
 
     // BC mesh subset creation
     std::vector<MeshLib::Node*> const bc_nodes = _bc_mesh.getNodes();
-    DBUG("Found %d nodes for Natural BCs for the variable %d", bc_nodes.size(),
-         variable_id);
+    DBUG("Found {:d} nodes for Natural BCs for the variable {:d}",
+         bc_nodes.size(), variable_id);
 
     MeshLib::MeshSubset bc_mesh_subset(_bc_mesh, bc_nodes);
 
@@ -87,7 +87,7 @@ createNormalTractionBoundaryCondition(
     auto const parameter_name =
         //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__NormalTraction__parameter}
         config.getConfigParameter<std::string>("parameter");
-    DBUG("Using parameter %s", parameter_name.c_str());
+    DBUG("Using parameter {:s}", parameter_name.c_str());
 
     auto const& pressure = ParameterLib::findParameter<double>(
         parameter_name, parameters, 1, &bc_mesh);

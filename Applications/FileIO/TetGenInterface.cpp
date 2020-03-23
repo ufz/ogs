@@ -42,7 +42,8 @@ bool TetGenInterface::readTetGenGeometry (std::string const& geo_fname,
 
     if (!poly_stream)
     {
-        ERR ("TetGenInterface::readTetGenGeometry() failed to open %s", geo_fname.c_str());
+        ERR("TetGenInterface::readTetGenGeometry() failed to open {:s}",
+            geo_fname.c_str());
         return false;
     }
     std::string ext (BaseLib::getFileExtension(geo_fname));
@@ -137,7 +138,7 @@ bool TetGenInterface::parseSmeshFacets(std::ifstream &input,
         getline (input, line);
         if (input.fail())
         {
-            ERR("TetGenInterface::parseFacets(): Error reading facet %d.", k);
+            ERR("TetGenInterface::parseFacets(): Error reading facet {:d}.", k);
             return false;
         }
 
@@ -178,7 +179,9 @@ bool TetGenInterface::parseSmeshFacets(std::ifstream &input,
         }
         else
         {
-            ERR("TetGenInterface::parseFacets(): Error reading points for facet %d.", k);
+            ERR("TetGenInterface::parseFacets(): Error reading points for "
+                "facet {:d}.",
+                k);
             return false;
         }
         ++k;
@@ -196,7 +199,10 @@ bool TetGenInterface::parseSmeshFacets(std::ifstream &input,
         return true;
     }
 
-    ERR ("TetGenInterface::parseFacets(): Number of expected total triangles (%d) does not match number of found triangles (%d).", surfaces.size(), nTotalTriangles);
+    ERR("TetGenInterface::parseFacets(): Number of expected total triangles "
+        "({:d}) does not match number of found triangles ({:d}).",
+        surfaces.size(),
+        nTotalTriangles);
     return false;
 }
 
@@ -209,9 +215,11 @@ MeshLib::Mesh* TetGenInterface::readTetGenMesh (std::string const& nodes_fname,
     if (!ins_nodes || !ins_ele)
     {
         if (!ins_nodes)
-            ERR ("TetGenInterface::readTetGenMesh failed to open %s", nodes_fname.c_str());
+            ERR("TetGenInterface::readTetGenMesh failed to open {:s}",
+                nodes_fname.c_str());
         if (!ins_ele)
-            ERR ("TetGenInterface::readTetGenMesh failed to open %s", ele_fname.c_str());
+            ERR("TetGenInterface::readTetGenMesh failed to open {:s}",
+                ele_fname.c_str());
         return nullptr;
     }
 
@@ -332,7 +340,7 @@ bool TetGenInterface::parseNodes(std::ifstream &ins,
         std::getline(ins, line);
         if (ins.fail())
         {
-            ERR("TetGenInterface::parseNodes(): Error reading node %d.", k);
+            ERR("TetGenInterface::parseNodes(): Error reading node {:d}.", k);
             return false;
         }
 
@@ -353,7 +361,8 @@ bool TetGenInterface::parseNodes(std::ifstream &ins,
                 _zero_based_idx = true;
             }
         } else {
-            ERR("TetGenInterface::parseNodes(): Error reading ID of node %d.", k);
+            ERR("TetGenInterface::parseNodes(): Error reading ID of node {:d}.",
+                k);
             return false;
         }
         // read coordinates
@@ -371,7 +380,10 @@ bool TetGenInterface::parseNodes(std::ifstream &ins,
             }
             else
             {
-                ERR("TetGenInterface::parseNodes(): error reading coordinate %d of node %d.", i, k);
+                ERR("TetGenInterface::parseNodes(): error reading coordinate "
+                    "{:d} of node {:d}.",
+                    i,
+                    k);
                 return false;
             }
         }
@@ -484,7 +496,9 @@ bool TetGenInterface::parseElements(std::ifstream& ins,
         getline (ins, line);
         if (ins.fail())
         {
-            ERR("TetGenInterface::parseElements(): Error reading tetrahedron %d.", k);
+            ERR("TetGenInterface::parseElements(): Error reading tetrahedron "
+                "{:d}.",
+                k);
             return false;
         }
 
@@ -500,7 +514,9 @@ bool TetGenInterface::parseElements(std::ifstream& ins,
 
         if (pos_beg == std::string::npos || pos_end == std::string::npos)
         {
-            ERR("TetGenInterface::parseElements(): Error reading id of tetrahedron %d.", k);
+            ERR("TetGenInterface::parseElements(): Error reading id of "
+                "tetrahedron {:d}.",
+                k);
             return false;
         }
 
@@ -519,7 +535,10 @@ bool TetGenInterface::parseElements(std::ifstream& ins,
             }
             else
             {
-                ERR("TetGenInterface::parseElements(): Error reading node %d of tetrahedron %d.", i, k);
+                ERR("TetGenInterface::parseElements(): Error reading node {:d} "
+                    "of tetrahedron {:d}.",
+                    i,
+                    k);
                 return false;
             }
         }
@@ -539,7 +558,9 @@ bool TetGenInterface::parseElements(std::ifstream& ins,
             }
             else
             {
-                ERR("TetGenInterface::parseElements(): Error reading region attribute of tetrahedron %d.", k);
+                ERR("TetGenInterface::parseElements(): Error reading region "
+                    "attribute of tetrahedron {:d}.",
+                    k);
                 return false;
             }
         }
@@ -566,11 +587,12 @@ bool TetGenInterface::writeTetGenSmesh(const std::string &file_name,
 
     if (points==nullptr)
     {
-        ERR ("Geometry %s not found.", geo_name.c_str());
+        ERR("Geometry {:s} not found.", geo_name.c_str());
         return false;
     }
     if (surfaces==nullptr)
-        WARN ("No surfaces found for geometry %s. Writing points only.", geo_name.c_str());
+        WARN("No surfaces found for geometry {:s}. Writing points only.",
+             geo_name.c_str());
 
     std::ofstream out( file_name.c_str(), std::ios::out );
     out.precision(std::numeric_limits<double>::digits10);
@@ -620,7 +642,11 @@ bool TetGenInterface::writeTetGenSmesh(const std::string &file_name,
                 << " " << 10 * attribute_points[i].getID() << "\n";
         }
     }
-    INFO ("TetGenInterface::writeTetGenSmesh() - %d points and %d surfaces successfully written.", nPoints, nSurfaces);
+    INFO(
+        "TetGenInterface::writeTetGenSmesh() - {:d} points and {:d} surfaces "
+        "successfully written.",
+        nPoints,
+        nSurfaces);
     out.close();
     return true;
 }
@@ -676,7 +702,11 @@ bool TetGenInterface::writeTetGenSmesh(const std::string &file_name,
         }
     }
 
-    INFO ("TetGenInterface::writeTetGenPoly() - %d points and %d surfaces successfully written.", nPoints, mesh.getNumberOfElements());
+    INFO(
+        "TetGenInterface::writeTetGenPoly() - {:d} points and {:d} surfaces "
+        "successfully written.",
+        nPoints,
+        mesh.getNumberOfElements());
     out.close();
     return true;
 }

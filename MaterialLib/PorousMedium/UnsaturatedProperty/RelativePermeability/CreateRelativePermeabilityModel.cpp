@@ -199,7 +199,7 @@ std::unique_ptr<RelativePermeability> createRelativePermeabilityModel(
     }
 
     OGS_FATAL(
-        "The relative permeability model %s is unavailable.\n"
+        "The relative permeability model {:s} is unavailable.\n"
         "The available models are:"
         "\n\tWettingPhaseVanGenuchten,"
         "\n\tNonWettingPhaseVanGenuchten,"

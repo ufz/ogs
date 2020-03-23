@@ -104,7 +104,7 @@ const std::vector< std::pair<std::size_t,double> >& DirectConditionGenerator::di
     }
     catch (std::runtime_error const& e)
     {
-        WARN("%s", e.what());
+        WARN("{:s}", e.what());
         return _direct_values;
     }
 

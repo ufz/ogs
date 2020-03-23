@@ -9,12 +9,11 @@
 
 #include "GocadAsciiReader.h"
 
-#include <logog/include/logog.hpp>
-
 #include <iosfwd>
 
 #include "Applications/FileIO/GocadIO/CoordinateSystem.h"
 #include "BaseLib/FileTools.h"
+#include "BaseLib/Logging.h"
 #include "BaseLib/StringTools.h"
 #include "MeshLib/Elements/Line.h"
 #include "MeshLib/Elements/Tri.h"
@@ -90,7 +89,7 @@ bool skipToEND(std::ifstream& in)
             return true;
         }
     }
-    ERR("%s", eof_error.c_str());
+    ERR("{:s}", eof_error.c_str());
     return false;
 }
 
@@ -151,7 +150,7 @@ bool parseHeader(std::ifstream& in, std::string& mesh_name)
         }
         // ignore all other header parameters
     }
-    ERR("%s", eof_error.c_str());
+    ERR("{:s}", eof_error.c_str());
     return false;
 }
 
@@ -167,7 +166,7 @@ bool parsePropertyClass(std::ifstream& in)
             return true;
         }
     }
-    ERR("%s", eof_error.c_str());
+    ERR("{:s}", eof_error.c_str());
     return false;
 }
 
@@ -221,8 +220,8 @@ bool parseProperties(std::ifstream& in,
 
             if (names.size() != prop_size.size())
             {
-                ERR("Error: Number of PROPERTY-names (%d) does not match "
-                    "number of ESIZES (%d)",
+                ERR("Error: Number of PROPERTY-names ({:d}) does not match "
+                    "number of ESIZES ({:d})",
                     names.size(), prop_size.size());
                 return false;
             }
@@ -238,7 +237,7 @@ bool parseProperties(std::ifstream& in,
         // Remember current position in case the properties black ends now.
         pos = in.tellg();
     }
-    ERR("%s", eof_error.c_str());
+    ERR("{:s}", eof_error.c_str());
     return false;
 }
 
@@ -284,7 +283,7 @@ bool parseNodes(std::ifstream& in,
         if (!(line.substr(0, 4) == "VRTX" || line.substr(0, 5) == "PVRTX" ||
               line.substr(0, 4) == "ATOM"))
         {
-            WARN("GocadAsciiReader::parseNodes() - Unknown keyword found: %s",
+            WARN("GocadAsciiReader::parseNodes() - Unknown keyword found: {:s}",
                  line.c_str());
             continue;
         }
@@ -322,7 +321,7 @@ bool parseNodes(std::ifstream& in,
         node_id_map[nodes.back()->getID()] = nodes.size() - 1;
         pos = in.tellg();
     }
-    ERR("%s", eof_error.c_str());
+    ERR("{:s}", eof_error.c_str());
     return false;
 }
 
@@ -361,8 +360,8 @@ bool parseLineSegments(std::ifstream& in,
                 auto const it = node_id_map.find(data[i]);
                 if (it == node_id_map.end() || it->second >= nodes.size())
                 {
-                    ERR("Error: Node ID (%d) out of range (0, %d).", data[i],
-                        nodes.back()->getID());
+                    ERR("Error: Node ID ({:d}) out of range (0, {:d}).",
+                        data[i], nodes.back()->getID());
                     return false;
                 }
                 elem_nodes[i] = nodes[it->second];
@@ -377,7 +376,7 @@ bool parseLineSegments(std::ifstream& in,
         }
         pos = in.tellg();
     }
-    ERR("%s", eof_error.c_str());
+    ERR("{:s}", eof_error.c_str());
     return false;
 }
 
@@ -410,10 +409,10 @@ bool parseLine(std::ifstream& in,
         {
             return true;
         }
-        WARN("GocadAsciiReader::parseLine() - Unknown keyword found: %s",
+        WARN("GocadAsciiReader::parseLine() - Unknown keyword found: {:s}",
              line.c_str());
     }
-    ERR("%s", eof_error.c_str());
+    ERR("{:s}", eof_error.c_str());
     return false;
 }
 
@@ -452,8 +451,8 @@ bool parseElements(std::ifstream& in,
                 auto const it = node_id_map.find(data[i]);
                 if (it == node_id_map.end() || it->second >= nodes.size())
                 {
-                    ERR("Error: Node ID (%d) out of range (0, %d).", data[i],
-                        nodes.back()->getID());
+                    ERR("Error: Node ID ({:d}) out of range (0, {:d}).",
+                        data[i], nodes.back()->getID());
                     return false;
                 }
                 elem_nodes[i] = nodes[it->second];
@@ -468,7 +467,7 @@ bool parseElements(std::ifstream& in,
         }
         pos = in.tellg();
     }
-    ERR("%s", eof_error.c_str());
+    ERR("{:s}", eof_error.c_str());
     return false;
 }
 
@@ -511,11 +510,13 @@ bool parseSurface(std::ifstream& in,
         }
         else
         {
-            WARN("GocadAsciiReader::parseSurface() - Unknown keyword found: %s",
-                 line.c_str());
+            WARN(
+                "GocadAsciiReader::parseSurface() - Unknown keyword found: "
+                "{:s}",
+                line.c_str());
         }
     }
-    ERR("%s", eof_error.c_str());
+    ERR("{:s}", eof_error.c_str());
     return false;
 }
 
@@ -528,7 +529,7 @@ MeshLib::Mesh* createMesh(std::ifstream& in, DataType type,
     std::vector<MeshLib::Node*> nodes;
     std::vector<MeshLib::Element*> elems;
     std::map<std::size_t, std::size_t> node_id_map;
-    INFO("Parsing %s %s.", dataType2ShortString(type).c_str(),
+    INFO("Parsing {:s} {:s}.", dataType2ShortString(type).c_str(),
          mesh_name.c_str());
     bool return_val;
     return_val = parser(in, nodes, elems, node_id_map, mesh_prop);
@@ -537,7 +538,7 @@ MeshLib::Mesh* createMesh(std::ifstream& in, DataType type,
     {
         return new MeshLib::Mesh(mesh_name, nodes, elems, mesh_prop);
     }
-    ERR("Error parsing %s %s.", dataType2ShortString(type).c_str(),
+    ERR("Error parsing {:s} {:s}.", dataType2ShortString(type).c_str(),
         mesh_name.c_str());
     clearData(nodes, elems);
     return nullptr;
@@ -605,11 +606,11 @@ MeshLib::Mesh* readData(std::ifstream& in,
         }
         else
         {
-            WARN("GocadAsciiReader::readData() - Unknown keyword found: %s",
+            WARN("GocadAsciiReader::readData() - Unknown keyword found: {:s}",
                  line.c_str());
         }
     }
-    ERR("%s", eof_error.c_str());
+    ERR("{:s}", eof_error.c_str());
     return nullptr;
 }
 
@@ -620,7 +621,7 @@ bool readFile(std::string const& file_name,
     std::ifstream in(file_name.c_str());
     if (!in.is_open())
     {
-        ERR("GocadAsciiReader::readFile(): Could not open file %s.",
+        ERR("GocadAsciiReader::readFile(): Could not open file {:s}.",
             file_name.c_str());
         return false;
     }
@@ -638,7 +639,8 @@ bool readFile(std::string const& file_name,
         {
             if (!skipToEND(in))
             {
-                ERR("Parsing of type %s is not implemented. Skipping section.",
+                ERR("Parsing of type {:s} is not implemented. Skipping "
+                    "section.",
                     dataType2String(type).c_str());
                 return false;
             }

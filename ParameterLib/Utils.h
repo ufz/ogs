@@ -57,7 +57,7 @@ Parameter<ParameterDataType>* findParameterOptional(
         dynamic_cast<Parameter<ParameterDataType>*>(parameter_ptr);
     if (!parameter)
     {
-        OGS_FATAL("The read parameter `%s' is of incompatible type.",
+        OGS_FATAL("The read parameter `{:s}' is of incompatible type.",
                   parameter_name.c_str());
     }
 
@@ -65,8 +65,9 @@ Parameter<ParameterDataType>* findParameterOptional(
         parameter->getNumberOfComponents() != num_components)
     {
         OGS_FATAL(
-            "The read parameter `%s' has the wrong number of components (%lu "
-            "instead of %u).",
+            "The read parameter `{:s}' has the wrong number of components "
+            "({:d} "
+            "instead of {:d}).",
             parameter_name.c_str(), parameter->getNumberOfComponents(),
             num_components);
     }
@@ -78,7 +79,7 @@ Parameter<ParameterDataType>* findParameterOptional(
         {
             OGS_FATAL(
                 "The found parameter is not suitable for the use on the "
-                "required mesh.\n%s",
+                "required mesh.\n{:s}",
                 error->c_str());
         }
     }
@@ -110,7 +111,7 @@ Parameter<ParameterDataType>& findParameter(
     if (!parameter)
     {
         OGS_FATAL(
-            "Could not find parameter `%s' in the provided parameters list.",
+            "Could not find parameter `{:s}' in the provided parameters list.",
             parameter_name.c_str());
     }
     return *parameter;

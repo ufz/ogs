@@ -131,7 +131,7 @@ std::unique_ptr<FluidProperty> createViscosityModel(
         }
 
         OGS_FATAL(
-            "The fluid type %s for Vogels model is unavailable.\n"
+            "The fluid type {:s} for Vogels model is unavailable.\n"
             "The available fluid types are Water, CO2 and CH4\n",
             fluid_type.data());
     }
@@ -143,7 +143,7 @@ std::unique_ptr<FluidProperty> createViscosityModel(
     }
 
     OGS_FATAL(
-        "The viscosity type %s is unavailable.\n"
+        "The viscosity type {:s} is unavailable.\n"
         "The available types are \n\tConstant, \n\tLinearPressure "
         "\n\tTemperatureDependent, \n\tVogels\n",
         type.data());

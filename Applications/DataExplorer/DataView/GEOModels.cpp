@@ -70,7 +70,7 @@ void GEOModels::updateGeometry(const std::string &geo_name)
         }
     }
     else
-        ERR("GEOModels::updateGeometry() - Geometry '%s' not found.",
+        ERR("GEOModels::updateGeometry() - Geometry '{:s}' not found.",
             geo_name.c_str());
 }
 
@@ -250,7 +250,7 @@ void GEOModels::addNameForElement(std::string const& geometry_name,
         _geo_objects.getSurfaceVecObj(geometry_name)->setNameForElement(id, new_name);
     }
     else
-        ERR("GEOModels::addNameForElement() - Unknown GEOTYPE %s.",
+        ERR("GEOModels::addNameForElement() - Unknown GEOTYPE {:s}.",
             GeoLib::convertGeoTypeToString(object_type).c_str());
 }
 
@@ -290,6 +290,6 @@ void GEOModels::addNameForObjectPoints(const std::string &geometry_name,
         }
     }
     else
-        ERR("GEOModels::addNameForObjectPoints() - Unknown GEOTYPE %s.",
+        ERR("GEOModels::addNameForObjectPoints() - Unknown GEOTYPE {:s}.",
             GeoLib::convertGeoTypeToString(object_type).c_str());
 }

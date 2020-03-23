@@ -107,7 +107,7 @@ HydroMechanicsProcess<GlobalDim>::HydroMechanicsProcess(
         {
             OGS_FATAL(
                 "Could not get minimum/maximum ranges values for the "
-                "MaterialIDs property in the mesh '%s'.",
+                "MaterialIDs property in the mesh '{:s}'.",
                 mesh.getName().c_str());
         }
 
@@ -195,7 +195,7 @@ void HydroMechanicsProcess<GlobalDim>::constructDofTable()
             vec_var_elements,
             NumLib::ComponentOrder::BY_COMPONENT);
 
-    DBUG("created %d DoF", _local_to_global_index_map->size());
+    DBUG("created {:d} DoF", _local_to_global_index_map->size());
 }
 
 template <int GlobalDim>

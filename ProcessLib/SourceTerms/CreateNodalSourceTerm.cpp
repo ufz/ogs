@@ -32,7 +32,7 @@ std::unique_ptr<SourceTerm> createNodalSourceTerm(
 
     //! \ogs_file_param{prj__process_variables__process_variable__source_terms__source_term__Nodal__parameter}
     auto const param_name = config.getConfigParameter<std::string>("parameter");
-    DBUG("Using parameter %s as nodal source term.", param_name.c_str());
+    DBUG("Using parameter {:s} as nodal source term.", param_name.c_str());
 
     auto& param = ParameterLib::findParameter<double>(param_name, parameters, 1,
                                                       &st_mesh);

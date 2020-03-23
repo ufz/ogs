@@ -7,12 +7,12 @@
  *              http://www.opengeosys.org/LICENSE.txt
  */
 
+#include "Region.h"
+
 #include <iterator>
 #include <sstream>
 
-#include <logog/include/logog.hpp>
-
-#include "Region.h"
+#include "BaseLib/Logging.h"
 
 namespace FileIO
 {
@@ -31,7 +31,7 @@ Region parseRegion(std::string const& line)
     // Check first word is REGION or MODEL_REGION.
     if (*it != std::string("REGION") && *it != std::string("MODEL_REGION"))
     {
-        ERR("Expected REGION or MODEL_REGION keyword but '%s' found.\n",
+        ERR("Expected REGION or MODEL_REGION keyword but '{:s}' found.\n",
             it->c_str());
         throw std::runtime_error(
             "In parseRegion() expected REGION or MODEL_REGION keyword not "

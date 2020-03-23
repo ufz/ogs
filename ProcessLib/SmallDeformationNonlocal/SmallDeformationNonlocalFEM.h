@@ -150,8 +150,8 @@ public:
         {
             OGS_FATAL(
                 "Setting integration point initial conditions; The integration "
-                "order of the local assembler for element %d is different from "
-                "the integration order in the initial condition.",
+                "order of the local assembler for element {:d} is different "
+                "from the integration order in the initial condition.",
                 _element.getID());
         }
 
@@ -177,7 +177,7 @@ public:
             {
                 OGS_FATAL(
                     "CellData for kappa_d initial conditions has wrong number "
-                    "of components. 1 expected, got %d.",
+                    "of components. 1 expected, got {:d}.",
                     value.size());
             }
             setKappaD(value[0]);

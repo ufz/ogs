@@ -229,7 +229,7 @@ void XmlGmlInterface::readPolylines(
                 ply_names->insert(std::pair<std::string, std::size_t>(ply_name, idx));
             } else {
                 WARN(
-                    "Polyline '%s' exists already. Polyline %d will be "
+                    "Polyline '{:s}' exists already. Polyline {:d} will be "
                     "inserted without a name.",
                     ply_name.c_str(), idx);
             }
@@ -248,7 +248,7 @@ void XmlGmlInterface::readPolylines(
                             polyline.attribute("name").toStdString();
                     }
                     OGS_FATAL(
-                        "Polyline `%s' contains the point id `%d' which is "
+                        "Polyline `{:s}' contains the point id `{:d}' which is "
                         "not in the point list.",
                         polyline_name.c_str(), pt_idx);
                 }
@@ -295,7 +295,7 @@ void XmlGmlInterface::readSurfaces(
                         surface_name = surface.attribute("name").toStdString();
                     }
                     OGS_FATAL(
-                        "Surface `%s' contains the point id `%d', which is "
+                        "Surface `{:s}' contains the point id `{:d}', which is "
                         "not in the point list.",
                         surface_name.c_str(), pt_idx);
                 }

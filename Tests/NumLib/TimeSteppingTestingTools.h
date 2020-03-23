@@ -42,7 +42,7 @@ std::vector<double> timeStepping(T_TIME_STEPPING& algorithm,
         }
 
         NumLib::TimeStep t = algorithm.getTimeStep();
-        //INFO("t: n=%d,t=%g,dt=%g", t.steps(), t.current(), t.dt());
+        // INFO("t: n={:d},t={:g},dt={:g}", t.steps(), t.current(), t.dt());
         if (obj)
         {
             (*obj)(algorithm);  // do something

@@ -15,8 +15,6 @@
 
 #include <tclap/CmdLine.h>
 
-#include "Applications/ApplicationsLib/LogogSetup.h"
-
 #include "InfoLib/GitInfo.h"
 
 #include "MeshLib/IO/readMeshFromFile.h"
@@ -56,8 +54,6 @@ std::pair<bool, std::string> castPropertyVectorToPropertyVector(
 
 int main(int argc, char* argv[])
 {
-    ApplicationsLib::LogogSetup logog_setup;
-
     TCLAP::CmdLine cmd(
         "Converts a double or floating point cell data array of a vtk "
         "unstructured grid into a int or double cell data array.\n\n"
@@ -156,7 +152,7 @@ int main(int argc, char* argv[])
 
     if (!success)
     {
-        ERR("%s", err_msg.c_str());
+        ERR("{:s}", err_msg.c_str());
         return -1;
     }
 

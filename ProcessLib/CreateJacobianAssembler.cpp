@@ -41,6 +41,6 @@ std::unique_ptr<AbstractJacobianAssembler> createJacobianAssembler(
         return createCompareJacobiansJacobianAssembler(*config);
     }
 
-    OGS_FATAL("Unknown Jacobian assembler type: `%s'.", type.c_str());
+    OGS_FATAL("Unknown Jacobian assembler type: `{:s}'.", type.c_str());
 }
 }  // namespace ProcessLib

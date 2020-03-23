@@ -131,7 +131,8 @@ int main(int argc, char *argv[])
         WARN("Swapping coordinate values of 3D elements can result in incorrect node-ordering.");
     }
 
-    INFO("Exchange node coordinates from xyz to %s", new_order_arg.getValue().data());
+    INFO("Exchange node coordinates from xyz to {:s}",
+         new_order_arg.getValue().data());
     swapNodeCoordinateAxes(*mesh, new_order);
 
     INFO("Save the new mesh into a file");

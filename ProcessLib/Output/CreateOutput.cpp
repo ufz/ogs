@@ -89,11 +89,11 @@ std::unique_ptr<Output> createOutput(
     {
         if (output_variables.find(out_var) != output_variables.cend())
         {
-            OGS_FATAL("output variable `%s' specified more than once.",
+            OGS_FATAL("output variable `{:s}' specified more than once.",
                       out_var.c_str());
         }
 
-        DBUG("adding output variable `%s'", out_var.c_str());
+        DBUG("adding output variable `{:s}'", out_var.c_str());
         output_variables.insert(out_var);
     }
 
@@ -112,7 +112,7 @@ std::unique_ptr<Output> createOutput(
         {
             mesh_names_for_output.push_back(
                 mesh_config.getValue<std::string>());
-            INFO("Configure mesh '%s' for output.",
+            INFO("Configure mesh '{:s}' for output.",
                  mesh_names_for_output.back().c_str());
         }
     }

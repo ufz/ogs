@@ -325,8 +325,8 @@ void HydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
         if (ip_meta_data.n_components != mesh_property.getNumberOfComponents())
         {
             OGS_FATAL(
-                "Different number of components in meta data (%d) than in "
-                "the integration point field data for '%s': %d.",
+                "Different number of components in meta data ({:d}) than in "
+                "the integration point field data for '{:s}': {:d}.",
                 ip_meta_data.n_components, name.c_str(),
                 mesh_property.getNumberOfComponents());
         }

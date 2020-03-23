@@ -217,8 +217,8 @@ void XmlStnInterface::readStratigraphy( const QDomNode &stratRoot,
             }
             else
                 WARN(
-                    "XmlStnInterface::readStratigraphy(): Skipped layer '%s' "
-                    "in borehole '%s' because of thickness 0.0.",
+                    "XmlStnInterface::readStratigraphy(): Skipped layer '{:s}' "
+                    "in borehole '{:s}' because of thickness 0.0.",
                     horizonName.c_str(), borehole->getName().c_str());
         }
         else

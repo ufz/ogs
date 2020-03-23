@@ -28,7 +28,7 @@ MathLib::Point3d getBulkElementPoint(MeshLib::Quad const& /*quad*/,
     case 3:
         return MathLib::Point3d{std::array<double, 3>{{0.0, 1.0 - wp[0], 0.0}}};
     default:
-        OGS_FATAL("Invalid face id '%u' for the quad.", face_id);
+        OGS_FATAL("Invalid face id '{:d}' for the quad.", face_id);
     }
 }
 
@@ -55,7 +55,7 @@ MathLib::Point3d getBulkElementPoint(MeshLib::Hex const& /*hex*/,
         case 5:
             return MathLib::Point3d{std::array<double, 3>{{wp[0], wp[1], 1.0}}};
         default:
-            OGS_FATAL("Invalid face id '%u' for the hexahedron.", face_id);
+            OGS_FATAL("Invalid face id '{:d}' for the hexahedron.", face_id);
     }
 }
 
@@ -76,7 +76,7 @@ MathLib::Point3d getBulkElementPoint(MeshLib::Tet const& /*tet*/,
             return MathLib::Point3d{
                 std::array<double, 3>{{0, 1 - wp[0], wp[1]}}};
         default:
-            OGS_FATAL("Invalid face id '%u' for the tetrahedron.", face_id);
+            OGS_FATAL("Invalid face id '{:d}' for the tetrahedron.", face_id);
     }
 }
 
@@ -102,7 +102,7 @@ MathLib::Point3d getBulkElementPoint(MeshLib::Prism const& /*prism*/,
             return MathLib::Point3d{
                 std::array<double, 3>{{wp[0], wp[1], 1.0}}};
         default:
-            OGS_FATAL("Invalid face id '%u' for the prism.", face_id);
+            OGS_FATAL("Invalid face id '{:d}' for the prism.", face_id);
     }
 }
 
@@ -117,7 +117,7 @@ MathLib::Point3d getBulkElementPoint(MeshLib::Mesh const& mesh,
         MeshLib::Quad const& quad(*dynamic_cast<MeshLib::Quad const*>(element));
         return getBulkElementPoint(quad, bulk_face_id, wp);
     }
-    OGS_FATAL("Wrong cell type '%s' or functionality not yet implemented.",
+    OGS_FATAL("Wrong cell type '{:s}' or functionality not yet implemented.",
               MeshLib::CellType2String(element->getCellType()).c_str());
 }
 
@@ -143,7 +143,7 @@ MathLib::Point3d getBulkElementPoint(MeshLib::Mesh const& mesh,
         MeshLib::Tet const& tet = *static_cast<MeshLib::Tet const*>(element);
         return getBulkElementPoint(tet, bulk_face_id, wp);
     }
-    OGS_FATAL("Wrong cell type '%s' or functionality not yet implemented.",
+    OGS_FATAL("Wrong cell type '{:s}' or functionality not yet implemented.",
               MeshLib::CellType2String(element->getCellType()).c_str());
 }
 

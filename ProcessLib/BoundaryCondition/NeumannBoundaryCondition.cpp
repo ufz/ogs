@@ -26,7 +26,7 @@ std::unique_ptr<NeumannBoundaryCondition> createNeumannBoundaryCondition(
 
     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__Neumann__parameter}
     auto const param_name = config.getConfigParameter<std::string>("parameter");
-    DBUG("Using parameter %s", param_name.c_str());
+    DBUG("Using parameter {:s}", param_name.c_str());
 
     auto const& param = ParameterLib::findParameter<double>(
         param_name, parameters, 1, &bc_mesh);
@@ -51,7 +51,7 @@ std::unique_ptr<NeumannBoundaryCondition> createNeumannBoundaryCondition(
         auto const area_parameter_name =
             //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__Neumann__area_parameter}
             config.getConfigParameter<std::string>("area_parameter");
-        DBUG("area parameter name '%s'", area_parameter_name.c_str());
+        DBUG("area parameter name '{:s}'", area_parameter_name.c_str());
         integral_measure = &ParameterLib::findParameter<double>(
             area_parameter_name, parameters, 1, &bc_mesh);
     }
@@ -59,8 +59,9 @@ std::unique_ptr<NeumannBoundaryCondition> createNeumannBoundaryCondition(
     if (bc_mesh.getDimension() >= global_dim)
     {
         OGS_FATAL(
-            "The dimension (%d) of the given boundary mesh '%s' is not lower "
-            "than the bulk dimension (%d).",
+            "The dimension ({:d}) of the given boundary mesh '{:s}' is not "
+            "lower "
+            "than the bulk dimension ({:d}).",
             bc_mesh.getDimension(), bc_mesh.getName().c_str(), global_dim);
     }
 

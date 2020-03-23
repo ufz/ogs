@@ -36,7 +36,8 @@ std::vector<std::size_t> identifySubdomainMeshNodes(
     {
         OGS_FATAL(
             "Expected to find exactly one node in the bulk mesh for each node "
-            "of the subdomain; Found %d nodes in the bulk mesh out of %d nodes "
+            "of the subdomain; Found {:d} nodes in the bulk mesh out of {:d} "
+            "nodes "
             "in the subdomain.",
             bulk_node_ids.size(), subdomain_mesh.getNumberOfNodes());
     }
@@ -125,11 +126,11 @@ std::vector<std::vector<std::size_t>> identifySubdomainMeshElements(
 
         if (bulk_element_ids.empty())
         {
-            ERR("No element could be found for the subdomain element %d. "
+            ERR("No element could be found for the subdomain element {:d}. "
                 "Corresponding bulk mesh node ids are:",
                 e->getID());
             for (auto const i : element_node_ids_bulk)
-                ERR("\t%d", i);
+                ERR("\t{:d}", i);
             OGS_FATAL(
                 "Expect at least one element to be found in the bulk mesh.");
         }
@@ -162,8 +163,8 @@ void updateOrCheckExistingSubdomainProperty(
                    begin(values), end(values)))
     {
         INFO(
-            "There is already a '%s' property present in the subdomain mesh "
-            "'%s' and it is equal to the newly computed values.",
+            "There is already a '{:s}' property present in the subdomain mesh "
+            "'{:s}' and it is equal to the newly computed values.",
             property_name.c_str(), mesh.getName().c_str());
         return;
     }
@@ -172,7 +173,8 @@ void updateOrCheckExistingSubdomainProperty(
     // Property differs. Notify and update if forced.
     //
     WARN(
-        "There is already a '%s' property present in the subdomain mesh '%s' "
+        "There is already a '{:s}' property present in the subdomain mesh "
+        "'{:s}' "
         "and it is not equal to the newly computed values.",
         property_name.c_str(),
         mesh.getName().c_str());
@@ -182,7 +184,7 @@ void updateOrCheckExistingSubdomainProperty(
         OGS_FATAL("The force overwrite flag was not specified, exiting.");
     }
 
-    INFO("Overwriting '%s' property.", property_name.c_str());
+    INFO("Overwriting '{:s}' property.", property_name.c_str());
     original_property.resize(values.size());
     std::copy(begin(values), end(values), begin(original_property));
 }

@@ -29,7 +29,7 @@ BoundaryElementsAtPoint::BoundaryElementsAtPoint(
     {
         OGS_FATAL(
             "BoundaryElementsAtPoint: the mesh node searcher was unable to "
-            "locate the point (%f, %f, %f) in the mesh.",
+            "locate the point ({:f}, {:f}, {:f}) in the mesh.",
             _point[0], _point[1], _point[2]);
     }
     if (node_ids.size() == 1)
@@ -52,9 +52,11 @@ BoundaryElementsAtPoint::BoundaryElementsAtPoint(
     if (!multiple_nodes_allowed)
     {
         OGS_FATAL(
-            "BoundaryElementsAtPoint: the mesh node searcher found %d points "
-            "near the requested point (%f, %f, %f) in the mesh, while exactly "
-            "one is expected. Node  (id=%d) (%f, %f, %f) has distance %f.",
+            "BoundaryElementsAtPoint: the mesh node searcher found {:d} points "
+            "near the requested point ({:f}, {:f}, {:f}) in the mesh, while "
+            "exactly "
+            "one is expected. Node  (id={:d}) ({:f}, {:f}, {:f}) has distance "
+            "{:f}.",
             node_ids.size(), _point[0], _point[1], _point[2],
             mesh_nodes[nearest_node_id]->getID(),
             (*mesh_nodes[nearest_node_id])[0],
@@ -63,14 +65,14 @@ BoundaryElementsAtPoint::BoundaryElementsAtPoint(
             MathLib::sqrDist(*mesh_nodes[nearest_node_id], point));
     }
     WARN(
-        "BoundaryElementsAtPoint: the mesh node searcher found %d points "
-        "near the requested point (%f, %f, %f) in the mesh, while exactly "
-        "one is expected. Node  (id=%d) (%f, %f, %f) has distance %f.",
+        "BoundaryElementsAtPoint: the mesh node searcher found {:d} points "
+        "near the requested point ({:f}, {:f}, {:f}) in the mesh, while "
+        "exactly "
+        "one is expected. Node  (id={:d}) ({:f}, {:f}, {:f}) has distance "
+        "{:f}.",
         node_ids.size(), _point[0], _point[1], _point[2],
-        mesh_nodes[nearest_node_id]->getID(),
-        (*mesh_nodes[nearest_node_id])[0],
-        (*mesh_nodes[nearest_node_id])[1],
-        (*mesh_nodes[nearest_node_id])[2],
+        mesh_nodes[nearest_node_id]->getID(), (*mesh_nodes[nearest_node_id])[0],
+        (*mesh_nodes[nearest_node_id])[1], (*mesh_nodes[nearest_node_id])[2],
         MathLib::sqrDist(*mesh_nodes[nearest_node_id], point));
 
     std::array<MeshLib::Node*, 1> const nodes = {

@@ -36,8 +36,9 @@ createVariableDependentNeumannBoundaryCondition(
     if (bc_mesh.getDimension() + 1 != global_dim)
     {
         OGS_FATAL(
-            "The dimension (%d) of the given boundary mesh '%s' is not by one "
-            "lower than the bulk dimension (%d).",
+            "The dimension ({:d}) of the given boundary mesh '{:s}' is not by "
+            "one "
+            "lower than the bulk dimension ({:d}).",
             bc_mesh.getDimension(), bc_mesh.getName().c_str(), global_dim);
     }
 

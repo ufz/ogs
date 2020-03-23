@@ -64,12 +64,13 @@ int main (int argc, char* argv[])
     {
         return EXIT_FAILURE;
     }
-    INFO("TIN read:  %d points, %d triangles", point_vec.size(),
+    INFO("TIN read:  {:d} points, {:d} triangles", point_vec.size(),
          sfc->getNumberOfTriangles());
 
     INFO("converting to mesh data");
     std::unique_ptr<MeshLib::Mesh> mesh(MeshLib::convertSurfaceToMesh(*sfc, BaseLib::extractBaseNameWithoutExtension(tinFileName), std::numeric_limits<double>::epsilon()));
-    INFO("Mesh created: %d nodes, %d elements.", mesh->getNumberOfNodes(), mesh->getNumberOfElements());
+    INFO("Mesh created: {:d} nodes, {:d} elements.", mesh->getNumberOfNodes(),
+         mesh->getNumberOfElements());
 
     INFO("Write it into VTU");
     MeshLib::IO::VtuInterface writer(mesh.get());

@@ -29,17 +29,19 @@ createMaterialSpatialDistributionMap(
     if (max_material_id > static_cast<int>(media.size() - 1))
     {
         WARN(
-            "The maximum value of MaterialIDs in mesh is %d. As the given "
-            "number of porous media definitions in the project file is %d, the "
-            "maximum value of MaterialIDs in mesh must be %d (index starts "
+            "The maximum value of MaterialIDs in mesh is {:d}. As the given "
+            "number of porous media definitions in the project file is {:d}, "
+            "the "
+            "maximum value of MaterialIDs in mesh must be {:d} (index starts "
             "with zero).",
             max_material_id, media.size(), max_material_id - 1);
     }
 
     if (max_material_id < static_cast<int>(media.size() - 1))
         WARN(
-            "There are %d porous medium definitions in the project file but "
-            "only %d different values in the MaterialIDs vector/data_array in "
+            "There are {:d} porous medium definitions in the project file but "
+            "only {:d} different values in the MaterialIDs vector/data_array "
+            "in "
             "the mesh.",
             media.size(), max_material_id - 1);
 

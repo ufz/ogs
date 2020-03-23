@@ -60,8 +60,8 @@ void ConvergenceCriterionPerComponentDeltaX::checkDeltaX(
             norm(x, global_component, _norm_type, *_dof_table, *_mesh);
 
         INFO(
-            "Convergence criterion, component %u: |dx|=%.4e, |x|=%.4e, "
-            "|dx|/|x|=%.4e",
+            "Convergence criterion, component {:d}: |dx|={:.4e}, |x|={:.4e}, "
+            "|dx|/|x|={:.4e}",
             global_component, error_dx, norm_x,
             (norm_x == 0. ? std::numeric_limits<double>::quiet_NaN()
                           : (error_dx / norm_x)));
@@ -122,7 +122,7 @@ createConvergenceCriterionPerComponentDeltaX(const BaseLib::ConfigTree& config)
 
     if (norm_type == MathLib::VecNormType::INVALID)
     {
-        OGS_FATAL("Unknown vector norm type `%s'.", norm_type_str.c_str());
+        OGS_FATAL("Unknown vector norm type `{:s}'.", norm_type_str.c_str());
     }
 
     return std::make_unique<ConvergenceCriterionPerComponentDeltaX>(

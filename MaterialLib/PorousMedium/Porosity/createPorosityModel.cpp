@@ -39,7 +39,7 @@ std::unique_ptr<Porosity> createPorosityModel(
         return std::make_unique<Porosity>(constant_porosity);
     }
 
-    OGS_FATAL("The porosity type %s is unavailable.\n",
+    OGS_FATAL("The porosity type {:s} is unavailable.\n",
               "The available type is Constant.",
               type.data());
 }

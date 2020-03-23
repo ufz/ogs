@@ -76,7 +76,7 @@ std::unique_ptr<MeshLib::Element> createQuadraticElement(
         return convertLinearToQuadratic<MeshLib::Hex20>(e);
     }
 
-    OGS_FATAL("Mesh element type %s is not supported",
+    OGS_FATAL("Mesh element type {:s} is not supported",
               MeshLib::CellType2String(e.getCellType()).c_str());
 }
 

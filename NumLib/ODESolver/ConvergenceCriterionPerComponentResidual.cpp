@@ -59,8 +59,8 @@ void ConvergenceCriterionPerComponentResidual::checkDeltaX(
             norm(x, global_component, _norm_type, *_dof_table, *_mesh);
 
         INFO(
-            "Convergence criterion, component %u: |dx|=%.4e, |x|=%.4e, "
-            "|dx|/|x|=%.4e",
+            "Convergence criterion, component {:d}: |dx|={:.4e}, |x|={:.4e}, "
+            "|dx|/|x|={:.4e}",
             global_component, error_dx, norm_x,
             (norm_x == 0. ? std::numeric_limits<double>::quiet_NaN()
                           : (error_dx / norm_x)));
@@ -89,13 +89,15 @@ void ConvergenceCriterionPerComponentResidual::checkResidual(
                              *_dof_table, *_mesh);
 
         if (_is_first_iteration) {
-            INFO("Convergence criterion, component %u: |r0|=%.4e", global_component, norm_res);
+            INFO("Convergence criterion, component {:d}: |r0|={:.4e}",
+                 global_component, norm_res);
             _residual_norms_0[global_component] = norm_res;
         } else {
             auto const norm_res0 = _residual_norms_0[global_component];
             INFO(
-                "Convergence criterion, component %u: |r|=%.4e, |r0|=%.4e, "
-                "|r|/|r0|=%.4e",
+                "Convergence criterion, component {:d}: |r|={:.4e}, "
+                "|r0|={:.4e}, "
+                "|r|/|r0|={:.4e}",
                 global_component, norm_res, norm_res0,
                 (norm_res0 == 0. ? std::numeric_limits<double>::quiet_NaN()
                                  : (norm_res / norm_res0)));
@@ -159,7 +161,7 @@ createConvergenceCriterionPerComponentResidual(
 
     if (norm_type == MathLib::VecNormType::INVALID)
     {
-        OGS_FATAL("Unknown vector norm type `%s'.", norm_type_str.c_str());
+        OGS_FATAL("Unknown vector norm type `{:s}'.", norm_type_str.c_str());
     }
 
     return std::make_unique<ConvergenceCriterionPerComponentResidual>(

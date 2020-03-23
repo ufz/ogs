@@ -27,7 +27,7 @@ std::unique_ptr<ParameterBase> createGroupBasedParameter(
     std::string const group_id_property_name =
         //! \ogs_file_param{prj__parameters__parameter__Group__group_id_property}
         config.getConfigParameter<std::string>("group_id_property");
-    DBUG("Using group_id_property %s", group_id_property_name.c_str());
+    DBUG("Using group_id_property {:s}", group_id_property_name.c_str());
 
     auto const& group_id_property =
         mesh.getProperties().getPropertyVector<int>(group_id_property_name);
@@ -74,16 +74,16 @@ std::unique_ptr<ParameterBase> createGroupBasedParameter(
         if (itr == group_id_property->end())
         {
             OGS_FATAL(
-                "Specified property index %d does not exist in the property "
-                "vector %s",
+                "Specified property index {:d} does not exist in the property "
+                "vector {:s}",
                 p.first, group_id_property_name.c_str());
         }
 
         if (p.second.size() != n_values)
         {
             OGS_FATAL(
-                "The length of some values (%d) is different from the first "
-                "one (%d). "
+                "The length of some values ({:d}) is different from the first "
+                "one ({:d}). "
                 "The length should be same for all index_values.",
                 p.second.size(), n_values);
         }

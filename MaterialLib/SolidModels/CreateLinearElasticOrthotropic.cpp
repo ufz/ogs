@@ -35,19 +35,19 @@ createLinearElasticOrthotropic(
     auto& youngs_moduli = ParameterLib::findParameter<double>(
         //! \ogs_file_param_special{material__solid__constitutive_relation__LinearElasticOrthotropic__youngs_moduli}
         config, "youngs_moduli", parameters, 3);
-    DBUG("Use '%s' as youngs_moduli parameter.", youngs_moduli.name.c_str());
+    DBUG("Use '{:s}' as youngs_moduli parameter.", youngs_moduli.name.c_str());
 
     // Shear moduli
     auto& shear_moduli = ParameterLib::findParameter<double>(
         //! \ogs_file_param_special{material__solid__constitutive_relation__LinearElasticOrthotropic__shear_moduli}
         config, "shear_moduli", parameters, 3);
-    DBUG("Use '%s' as shear_moduli parameter.", shear_moduli.name.c_str());
+    DBUG("Use '{:s}' as shear_moduli parameter.", shear_moduli.name.c_str());
 
     // Poissons ratios
     auto& poissons_ratios = ParameterLib::findParameter<double>(
         //! \ogs_file_param_special{material__solid__constitutive_relation__LinearElasticOrthotropic__poissons_ratios}
         config, "poissons_ratios", parameters, 3);
-    DBUG("Use '%s' as poissons_ratios parameter.",
+    DBUG("Use '{:s}' as poissons_ratios parameter.",
          poissons_ratios.name.c_str());
 
     typename LinearElasticOrthotropic<DisplacementDim>::MaterialProperties mp{

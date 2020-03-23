@@ -178,7 +178,7 @@ void VtkVisPipeline::loadFromFile(QString filename)
 #ifndef NDEBUG
     QTime myTimer;
     myTimer.start();
-    INFO("VTK Read: %s.", filename.toStdString().c_str());
+    INFO("VTK Read: {:s}.", filename.toStdString().c_str());
 #endif
 
     if (filename.size() > 0)
@@ -244,7 +244,7 @@ void VtkVisPipeline::loadFromFile(QString filename)
     }
 
 #ifndef NDEBUG
-    INFO("%d ms", myTimer.elapsed());
+    INFO("{:d} ms", myTimer.elapsed());
 #endif
 }
 
@@ -467,14 +467,14 @@ void VtkVisPipeline::listArrays(vtkDataSet* dataSet)
     if (dataSet)
     {
         vtkPointData* pointData = dataSet->GetPointData();
-        INFO("  #point data arrays: %d", pointData->GetNumberOfArrays());
+        INFO("  #point data arrays: {:d}", pointData->GetNumberOfArrays());
         for (int i = 0; i < pointData->GetNumberOfArrays(); i++)
-            INFO("    Name: %s", pointData->GetArrayName(i));
+            INFO("    Name: {:s}", pointData->GetArrayName(i));
 
         vtkCellData* cellData = dataSet->GetCellData();
-        INFO("  #cell data arrays: %d", cellData->GetNumberOfArrays());
+        INFO("  #cell data arrays: {:d}", cellData->GetNumberOfArrays());
         for (int i = 0; i < cellData->GetNumberOfArrays(); i++)
-            INFO("    Name: %s", cellData->GetArrayName(i));
+            INFO("    Name: {:s}", cellData->GetArrayName(i));
     }
     else
         ERR("VtkVisPipeline::listArrays(): not a valid vtkDataSet.");

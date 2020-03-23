@@ -42,7 +42,7 @@ void solidMaterialInternalToSecondaryVariables(
         auto const& name = internal_variable.name;
         auto const& fct = internal_variable.getter;
         auto const num_components = internal_variable.num_components;
-        DBUG("Registering internal variable %s.", name.c_str());
+        DBUG("Registering internal variable {:s}.", name.c_str());
 
         auto getIntPtValues =
             [fct, num_components](
