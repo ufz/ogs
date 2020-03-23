@@ -39,9 +39,6 @@
 #         the benchmark output directory.
 
 function (AddTest)
-    if(NOT BUILD_TESTING)
-        return()
-    endif()
     # parse arguments
     set(options NONE)
     set(oneValueArgs EXECUTABLE PATH NAME WRAPPER TESTER ABSTOL RELTOL RUNTIME DEPENDS)

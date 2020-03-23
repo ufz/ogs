@@ -7,4 +7,6 @@ if(BUILD_SHARED_LIBS)
 endif()
 target_link_libraries(SmallDeformation PUBLIC ProcessLib PRIVATE ParameterLib)
 
-include(Tests.cmake)
+if(BUILD_TESTING)
+    include(Tests.cmake)
+endif()
