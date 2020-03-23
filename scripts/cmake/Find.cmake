@@ -73,15 +73,6 @@ include(${VTK_USE_FILE})
 find_package(Eigen3 ${ogs.minimum_version.eigen} REQUIRED)
 include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
 
-## pthread, is a requirement of logog ##
-set(CMAKE_THREAD_PREFER_PTHREAD ON)
-set(THREADS_PREFER_PTHREAD_FLAG ON)
-find_package(Threads REQUIRED)
-if(CMAKE_USE_PTHREADS_INIT)
-    set(HAVE_PTHREADS TRUE)
-    add_definitions(-DHAVE_PTHREADS)
-endif()
-
 # Do not search for libs if this option is set
 if(OGS_NO_EXTERNAL_LIBS)
     return()
