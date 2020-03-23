@@ -49,7 +49,6 @@ target_link_libraries(DataExplorer
     Qt5::Widgets
     Qt5::Xml
     Qt5::Network
-    logog
     ${VTK_LIBRARIES}
 )
 

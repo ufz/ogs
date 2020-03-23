@@ -12,7 +12,7 @@ endif()
 # Create the library
 ogs_add_library(GeoLib ${SOURCES})
 
-target_link_libraries(GeoLib PUBLIC BaseLib MathLib logog PRIVATE tet)
+target_link_libraries(GeoLib PUBLIC BaseLib MathLib PRIVATE tet)
 
 if(OGS_BUILD_GUI)
     target_link_libraries(GeoLib PUBLIC Qt5::Xml Qt5::XmlPatterns)

@@ -13,7 +13,6 @@ target_link_libraries(ProcessLibSourceTermPython
                              MathLib
                              MeshLib
                              NumLib
-                             logog
                              ${Python3_LIBRARIES}
                       PRIVATE pybind11::pybind11)
 

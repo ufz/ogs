@@ -27,5 +27,4 @@ target_link_libraries(MeshLib
                       PUBLIC BaseLib
                              GeoLib
                              MathLib
-                             logog
                              ${VTK_LIBRARIES})

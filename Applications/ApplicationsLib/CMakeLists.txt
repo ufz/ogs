@@ -6,7 +6,7 @@ set(LIB_SOURCES ${SOURCES_APPLICATIONSLIB})
 ogs_add_library(ApplicationsLib ${LIB_SOURCES})
 
 target_link_libraries(ApplicationsLib
-                      PUBLIC BaseLib GeoLib NumLib Processes logog
+                      PUBLIC BaseLib GeoLib NumLib Processes
                       PRIVATE MathLib
                               MeshLib
                               MeshGeoToolsLib

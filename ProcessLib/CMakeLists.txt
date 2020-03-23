@@ -26,7 +26,6 @@ target_link_libraries(ProcessLib
                              MeshGeoToolsLib
                              MeshLib
                              NumLib
-                             logog
                       PRIVATE ParameterLib GitInfoLib)
 
 if (OGS_BUILD_PROCESS_ComponentTransport

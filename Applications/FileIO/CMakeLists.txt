@@ -29,7 +29,6 @@ target_link_libraries(ApplicationsFileIO
                              DataHolderLib
                              GeoLib
                              MathLib
-                             logog
                       PRIVATE MeshLib GitInfoLib std::filesystem)
 
 if(OGS_BUILD_GUI)

@@ -36,8 +36,7 @@ target_link_libraries(QtDiagramView
                               GeoLib
                               QtBase
                               DataHolderLib
-                              Qt5::Gui
-                              logog)
+                              Qt5::Gui)
 
 add_autogen_include(QtDiagramView)
 

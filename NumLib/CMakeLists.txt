@@ -24,5 +24,4 @@ target_link_libraries(NumLib
                              GeoLib
                              MathLib
                              MeshLib
-                             logog
                       PRIVATE MeshGeoToolsLib)

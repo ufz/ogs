@@ -5,7 +5,7 @@ list(APPEND SOURCES MFront.cpp MFront.h)
 ogs_add_library(MaterialLib_SolidModels_MFront ${SOURCES})
 
 target_link_libraries(MaterialLib_SolidModels_MFront
-                      PUBLIC BaseLib NumLib logog OgsMFrontBehaviour
+                      PUBLIC BaseLib NumLib OgsMFrontBehaviour
                       PRIVATE MathLib MeshLib)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
