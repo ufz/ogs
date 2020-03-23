@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
-    <mesh axially_symmetric="true">line_1_lines_1e2.vtu</mesh>
-    <geometry>circle_1_axi.gml</geometry>
+    <meshes>
+        <mesh>square_1x1_quad_1e3.vtu</mesh>
+        <mesh>square_1x1_quad_1e3_geometry_ll.vtu</mesh>
+        <mesh>square_1x1_quad_1e3_geometry_lr.vtu</mesh>
+        <mesh>square_1x1_quad_1e3_geometry_ul.vtu</mesh>
+        <mesh>square_1x1_quad_1e3_geometry_ur.vtu</mesh>
+        <mesh>square_1x1_quad_1e3_entire_domain.vtu</mesh>
+    </meshes>
+    <python_script>sin_x_sin_y_source_term.py</python_script>
     <processes>
         <process>
             <name>SteadyStateDiffusion</name>
@@ -51,7 +58,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>circle_1e2_axi</prefix>
+            <prefix>square_1e3_volumetricsourceterm</prefix>
             <variables>
                 <variable> pressure </variable>
                 <variable> v      </variable>
@@ -89,12 +96,7 @@
             <value>0</value>
         </parameter>
         <parameter>
-            <name>pressure_bc</name>
-            <type>Constant</type>
-            <value>0</value>
-        </parameter>
-        <parameter>
-            <name>pressure_source_term</name>
+            <name>pressure_edge_points</name>
             <type>Constant</type>
             <value>1</value>
         </parameter>
@@ -107,18 +109,31 @@
             <initial_condition>p0</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>geometry</geometrical_set>
-                    <geometry>outer</geometry>
+                    <mesh>square_1x1_quad_1e3_geometry_ll</mesh>
                     <type>Dirichlet</type>
-                    <parameter>pressure_bc</parameter>
+                    <parameter>pressure_edge_points</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <mesh>square_1x1_quad_1e3_geometry_lr</mesh>
+                    <type>Dirichlet</type>
+                    <parameter>pressure_edge_points</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <mesh>square_1x1_quad_1e3_geometry_ul</mesh>
+                    <type>Dirichlet</type>
+                    <parameter>pressure_edge_points</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <mesh>square_1x1_quad_1e3_geometry_ur</mesh>
+                    <type>Dirichlet</type>
+                    <parameter>pressure_edge_points</parameter>
                 </boundary_condition>
             </boundary_conditions>
             <source_terms>
                 <source_term>
-                    <geometrical_set>geometry</geometrical_set>
-                    <geometry>inner</geometry>
-                    <type>Nodal</type>
-                    <parameter>pressure_source_term</parameter>
+                    <mesh>square_1x1_quad_1e3_entire_domain</mesh>
+                    <type>Python</type>
+                    <source_term_object>sinx_siny_source_term</source_term_object>
                 </source_term>
             </source_terms>
         </process_variable>

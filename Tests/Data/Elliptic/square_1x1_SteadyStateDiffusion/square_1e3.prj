@@ -1,10 +1,29 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
-    <meshes>
-        <mesh>quarter_circle_r_1.vtu</mesh>
-        <mesh>quarter_circle_r_1_circle_line.vtu</mesh>
-        <mesh>quarter_circle_r_1_center_point.vtu</mesh>
-    </meshes>
+    <mesh>square_1x1_quad_1e3.vtu</mesh>
+    <geometry>square_1x1.gml</geometry>
+    <!-- Just for testing the search length algorithm -->
+    <media>
+        <medium id="0">
+            <phases/>
+            <properties>
+                <property>
+                    <name>diffusion</name>
+                    <type>Constant</type>
+                    <value>1</value>
+                </property>
+                <property>
+                    <name>reference_temperature</name>
+                    <type>Constant</type>
+                    <value>293.15</value>
+                </property>
+            </properties>
+        </medium>
+    </media>
+    <search_length_algorithm>
+        <type>fixed</type>
+        <value>1e-16</value>
+    </search_length_algorithm>
     <processes>
         <process>
             <name>SteadyStateDiffusion</name>
@@ -37,30 +56,13 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>nodal_source_term_in_center</prefix>
+            <prefix>square_1e3</prefix>
             <variables>
                 <variable> pressure </variable>
                 <variable> v      </variable>
             </variables>
         </output>
     </time_loop>
-    <media>
-        <medium id="0">
-            <phases/>
-            <properties>
-                <property>
-                    <name>diffusion</name>
-                    <type>Constant</type>
-                    <value>1</value>
-                </property>
-                <property>
-                    <name>reference_temperature</name>
-                    <type>Constant</type>
-                    <value>293.15</value>
-                </property>
-            </properties>
-        </medium>
-    </media>
     <parameters>
         <parameter>
             <name>p0</name>
@@ -68,14 +70,14 @@
             <value>0</value>
         </parameter>
         <parameter>
-            <name>inflow</name>
+            <name>p_Dirichlet_left</name>
             <type>Constant</type>
-            <value>0.125</value>
+            <value>1</value>
         </parameter>
         <parameter>
-            <name>p_Dirichlet_barrel</name>
+            <name>p_Dirichlet_right</name>
             <type>Constant</type>
-            <value>0</value>
+            <value>-1</value>
         </parameter>
     </parameters>
     <process_variables>
@@ -86,18 +88,18 @@
             <initial_condition>p0</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <mesh>quarter_circle_r_1_circle_line</mesh>
+                    <geometrical_set>square_1x1_geometry</geometrical_set>
+                    <geometry>left</geometry>
                     <type>Dirichlet</type>
-                    <parameter>p_Dirichlet_barrel</parameter>
+                    <parameter>p_Dirichlet_left</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <geometrical_set>square_1x1_geometry</geometrical_set>
+                    <geometry>right</geometry>
+                    <type>Dirichlet</type>
+                    <parameter>p_Dirichlet_right</parameter>
                 </boundary_condition>
             </boundary_conditions>
-            <source_terms>
-                <source_term>
-                    <mesh>quarter_circle_r_1_center_point</mesh>
-                    <type>Nodal</type>
-                    <parameter>inflow</parameter>
-                </source_term>
-            </source_terms>
         </process_variable>
     </process_variables>
     <nonlinear_solvers>

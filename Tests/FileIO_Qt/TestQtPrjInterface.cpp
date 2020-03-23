@@ -34,10 +34,10 @@ TEST(TestQtPrjInterface, QtXmlPrjReader)
 
     std::string name =
         TestInfoLib::TestInfo::data_path +
-        "/Elliptic/nonuniform_bc_Groundwaterflow/neumann_nonuniform.prj";
+        "/Elliptic/nonuniform_bc_SteadyStateDiffusion/neumann_nonuniform.prj";
     test_files.push_back({name, 0, 3, 2, 0});
     name = TestInfoLib::TestInfo::data_path +
-           "/Elliptic/nonuniform_bc_Groundwaterflow/neumann_nonuniform.prj";
+           "/Elliptic/nonuniform_bc_SteadyStateDiffusion/neumann_nonuniform.prj";
     test_files.push_back({name, 0, 3, 2, 0});
 
     for (auto& test_file : test_files)

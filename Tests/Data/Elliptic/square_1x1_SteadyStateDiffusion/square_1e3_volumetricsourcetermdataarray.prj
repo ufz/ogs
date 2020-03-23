@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
-    <mesh axially_symmetric="true">line_1_lines_1e2.vtu</mesh>
-    <geometry>circle_1_axi.gml</geometry>
+    <meshes>
+        <mesh>square_1x1_quad_1e3_volumetricsourcetermdataarray.vtu</mesh>
+        <mesh>square_1x1_quad_1e3_volumetricsourcetermdataarray_volumetric_source_term.vtu</mesh>
+        <mesh>square_1x1_quad_1e3_volumetricsourcetermdataarray_geometry_ll.vtu</mesh>
+        <mesh>square_1x1_quad_1e3_volumetricsourcetermdataarray_geometry_lr.vtu</mesh>
+        <mesh>square_1x1_quad_1e3_volumetricsourcetermdataarray_geometry_ul.vtu</mesh>
+        <mesh>square_1x1_quad_1e3_volumetricsourcetermdataarray_geometry_ur.vtu</mesh>
+    </meshes>
     <processes>
         <process>
             <name>SteadyStateDiffusion</name>
@@ -15,23 +21,6 @@
             </secondary_variables>
         </process>
     </processes>
-    <media>
-        <medium id="0">
-            <phases/>
-            <properties>
-                <property>
-                    <name>diffusion</name>
-                    <type>Constant</type>
-                    <value>1</value>
-                </property>
-                <property>
-                    <name>reference_temperature</name>
-                    <type>Constant</type>
-                    <value>293.15</value>
-                </property>
-            </properties>
-        </medium>
-    </media>
     <time_loop>
         <processes>
             <process ref="SteadyStateDiffusion">
@@ -51,13 +40,30 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>circle_1e2_axi</prefix>
+            <prefix>square_1e3_volumetricsourcetermdataarray</prefix>
             <variables>
                 <variable> pressure </variable>
                 <variable> v      </variable>
             </variables>
         </output>
     </time_loop>
+    <media>
+        <medium id="0">
+            <phases/>
+            <properties>
+                <property>
+                    <name>diffusion</name>
+                    <type>Constant</type>
+                    <value>1</value>
+                </property>
+                <property>
+                    <name>reference_temperature</name>
+                    <type>Constant</type>
+                    <value>293.15</value>
+                </property>
+            </properties>
+        </medium>
+    </media>
     <nonlinear_solvers>
         <nonlinear_solver>
             <name>basic_picard</name>
@@ -89,14 +95,15 @@
             <value>0</value>
         </parameter>
         <parameter>
-            <name>pressure_bc</name>
-            <type>Constant</type>
-            <value>0</value>
-        </parameter>
-        <parameter>
-            <name>pressure_source_term</name>
+            <name>p_Dirichlet</name>
             <type>Constant</type>
             <value>1</value>
+        </parameter>
+        <parameter>
+            <name>volumetric_source_term_parameter</name>
+            <mesh>square_1x1_quad_1e3_volumetricsourcetermdataarray_volumetric_source_term</mesh>
+            <type>MeshElement</type>
+            <field_name>non-constant-source_term</field_name>
         </parameter>
     </parameters>
     <process_variables>
@@ -107,18 +114,31 @@
             <initial_condition>p0</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>geometry</geometrical_set>
-                    <geometry>outer</geometry>
+                    <mesh>square_1x1_quad_1e3_volumetricsourcetermdataarray_geometry_ll</mesh>
                     <type>Dirichlet</type>
-                    <parameter>pressure_bc</parameter>
+                    <parameter>p_Dirichlet</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <mesh>square_1x1_quad_1e3_volumetricsourcetermdataarray_geometry_lr</mesh>
+                    <type>Dirichlet</type>
+                    <parameter>p_Dirichlet</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <mesh>square_1x1_quad_1e3_volumetricsourcetermdataarray_geometry_ur</mesh>
+                    <type>Dirichlet</type>
+                    <parameter>p_Dirichlet</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <mesh>square_1x1_quad_1e3_volumetricsourcetermdataarray_geometry_ul</mesh>
+                    <type>Dirichlet</type>
+                    <parameter>p_Dirichlet</parameter>
                 </boundary_condition>
             </boundary_conditions>
             <source_terms>
                 <source_term>
-                    <geometrical_set>geometry</geometrical_set>
-                    <geometry>inner</geometry>
-                    <type>Nodal</type>
-                    <parameter>pressure_source_term</parameter>
+                    <mesh>square_1x1_quad_1e3_volumetricsourcetermdataarray_volumetric_source_term</mesh>
+                    <type>Volumetric</type>
+                    <parameter>volumetric_source_term_parameter</parameter>
                 </source_term>
             </source_terms>
         </process_variable>

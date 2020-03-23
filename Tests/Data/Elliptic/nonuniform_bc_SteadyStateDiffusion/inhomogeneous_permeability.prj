@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
     <meshes>
-        <mesh>quarter_circle_r_1.vtu</mesh>
-        <mesh>quarter_circle_r_1_circle_line.vtu</mesh>
-        <mesh>quarter_circle_r_1_center_point.vtu</mesh>
+        <mesh axially_symmetric="true">inhomogeneous_permeability.vtu</mesh>
+        <mesh axially_symmetric="true">inhomogeneous_permeability_top.vtu</mesh>
+        <mesh axially_symmetric="true">inhomogeneous_permeability_bottom.vtu</mesh>
     </meshes>
     <processes>
         <process>
@@ -14,7 +14,7 @@
                 <process_variable>pressure</process_variable>
             </process_variables>
             <secondary_variables>
-                <secondary_variable internal_name="darcy_velocity" output_name="v"/>
+                <secondary_variable internal_name="darcy_velocity" output_name="mass_flux"/>
             </secondary_variables>
         </process>
     </processes>
@@ -37,10 +37,10 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>nodal_source_term_in_center</prefix>
+            <prefix>inhomogeneous_permeability</prefix>
             <variables>
-                <variable> pressure </variable>
-                <variable> v      </variable>
+                <variable> pressure  </variable>
+                <variable> mass_flux </variable>
             </variables>
         </output>
     </time_loop>
@@ -50,8 +50,8 @@
             <properties>
                 <property>
                     <name>diffusion</name>
-                    <type>Constant</type>
-                    <value>1</value>
+                    <type>Parameter</type>
+                    <parameter_name>K_rho_over_mu__eff</parameter_name>
                 </property>
                 <property>
                     <name>reference_temperature</name>
@@ -63,41 +63,46 @@
     </media>
     <parameters>
         <parameter>
-            <name>p0</name>
+            <name>K_rho_over_mu__eff</name>
+            <type>MeshElement</type>
+            <field_name>K_rho_over_mu__eff</field_name>
+        </parameter>
+        <parameter>
+            <name>p_initial</name>
             <type>Constant</type>
             <value>0</value>
         </parameter>
         <parameter>
-            <name>inflow</name>
-            <type>Constant</type>
-            <value>0.125</value>
-        </parameter>
-        <parameter>
-            <name>p_Dirichlet_barrel</name>
+            <name>p_outlet</name>
             <type>Constant</type>
             <value>0</value>
+        </parameter>
+        <parameter>
+            <name>mass_flux</name>
+            <type>MeshNode</type>
+            <mesh>inhomogeneous_permeability_top</mesh>
+            <field_name>mass_flux</field_name>
         </parameter>
     </parameters>
     <process_variables>
         <process_variable>
             <name>pressure</name>
+            <mesh>inhomogeneous_permeability</mesh>
             <components>1</components>
             <order>1</order>
-            <initial_condition>p0</initial_condition>
+            <initial_condition>p_initial</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <mesh>quarter_circle_r_1_circle_line</mesh>
+                    <mesh>inhomogeneous_permeability_top</mesh>
+                    <type>Neumann</type>
+                    <parameter>mass_flux</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <mesh>inhomogeneous_permeability_bottom</mesh>
                     <type>Dirichlet</type>
-                    <parameter>p_Dirichlet_barrel</parameter>
+                    <parameter>p_outlet</parameter>
                 </boundary_condition>
             </boundary_conditions>
-            <source_terms>
-                <source_term>
-                    <mesh>quarter_circle_r_1_center_point</mesh>
-                    <type>Nodal</type>
-                    <parameter>inflow</parameter>
-                </source_term>
-            </source_terms>
         </process_variable>
     </process_variables>
     <nonlinear_solvers>

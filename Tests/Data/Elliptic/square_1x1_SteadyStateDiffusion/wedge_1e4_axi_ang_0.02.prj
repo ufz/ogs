@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
-    <mesh axially_symmetric="true">line_1_lines_1e2.vtu</mesh>
-    <geometry>circle_1_axi.gml</geometry>
+    <mesh>wedge-1e4-ang-0.02.vtu</mesh>
+    <geometry>wedge-ang-0.02.gml</geometry>
     <processes>
         <process>
             <name>SteadyStateDiffusion</name>
             <type>STEADY_STATE_DIFFUSION</type>
             <integration_order>2</integration_order>
             <process_variables>
-                <process_variable>pressure</process_variable>
+                <process_variable>temperature</process_variable>
             </process_variables>
             <secondary_variables>
                 <secondary_variable internal_name="darcy_velocity" output_name="v"/>
@@ -51,9 +51,9 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>circle_1e2_axi</prefix>
+            <prefix>wedge_1e4_axi_ang_0.02</prefix>
             <variables>
-                <variable> pressure </variable>
+                <variable> temperature </variable>
                 <variable> v      </variable>
             </variables>
         </output>
@@ -84,43 +84,53 @@
     </linear_solvers>
     <parameters>
         <parameter>
-            <name>p0</name>
+            <name>T0</name>
             <type>Constant</type>
             <value>0</value>
         </parameter>
         <parameter>
-            <name>pressure_bc</name>
-            <type>Constant</type>
-            <value>0</value>
-        </parameter>
-        <parameter>
-            <name>pressure_source_term</name>
+            <name>heat_flux_bottom</name>
             <type>Constant</type>
             <value>1</value>
+        </parameter>
+        <parameter>
+            <name>heat_transfer_coefficient</name>
+            <type>Constant</type>
+            <value>1</value>
+        </parameter>
+        <parameter>
+            <name>ambient_temperature</name>
+            <type>Constant</type>
+            <value>0</value>
         </parameter>
     </parameters>
     <process_variables>
         <process_variable>
-            <name>pressure</name>
+            <name>temperature</name>
             <components>1</components>
             <order>1</order>
-            <initial_condition>p0</initial_condition>
+            <initial_condition>T0</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
                     <geometrical_set>geometry</geometrical_set>
-                    <geometry>outer</geometry>
+                    <geometry>bottom</geometry>
+                    <type>Neumann</type>
+                    <parameter>heat_flux_bottom</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <geometrical_set>geometry</geometrical_set>
+                    <geometry>top</geometry>
                     <type>Dirichlet</type>
-                    <parameter>pressure_bc</parameter>
+                    <parameter>ambient_temperature</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <geometrical_set>geometry</geometrical_set>
+                    <geometry>outer</geometry>
+                    <type>Robin</type>
+                    <alpha>heat_transfer_coefficient</alpha>
+                    <u_0>ambient_temperature</u_0>
                 </boundary_condition>
             </boundary_conditions>
-            <source_terms>
-                <source_term>
-                    <geometrical_set>geometry</geometrical_set>
-                    <geometry>inner</geometry>
-                    <type>Nodal</type>
-                    <parameter>pressure_source_term</parameter>
-                </source_term>
-            </source_terms>
         </process_variable>
     </process_variables>
 </OpenGeoSysProject>

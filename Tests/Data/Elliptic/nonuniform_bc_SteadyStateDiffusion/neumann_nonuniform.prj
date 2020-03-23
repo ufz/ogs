@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
-    <mesh axially_symmetric="true">line_1_lines_1e2.vtu</mesh>
-    <geometry>circle_1_axi.gml</geometry>
+    <meshes>
+        <mesh>square_1x1_quad_1e3.vtu</mesh>
+        <mesh>square_1x1_left.vtu</mesh>
+        <mesh>square_1x1_right.vtu</mesh>
+    </meshes>
     <processes>
         <process>
             <name>SteadyStateDiffusion</name>
@@ -11,7 +14,7 @@
                 <process_variable>pressure</process_variable>
             </process_variables>
             <secondary_variables>
-                <secondary_variable internal_name="darcy_velocity" output_name="v"/>
+                <secondary_variable internal_name="darcy_velocity" output_name="darcy_velocity"/>
             </secondary_variables>
         </process>
     </processes>
@@ -39,7 +42,7 @@
                 <convergence_criterion>
                     <type>DeltaX</type>
                     <norm_type>NORM2</norm_type>
-                    <abstol>1.e-6</abstol>
+                    <abstol>1e-15</abstol>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>
@@ -51,13 +54,52 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>circle_1e2_axi</prefix>
+            <prefix>neumann_nonuniform</prefix>
             <variables>
                 <variable> pressure </variable>
-                <variable> v      </variable>
+                <variable> darcy_velocity </variable>
             </variables>
         </output>
     </time_loop>
+    <parameters>
+        <parameter>
+            <name>p0</name>
+            <type>Constant</type>
+            <value>0</value>
+        </parameter>
+        <parameter>
+            <name>p_Dirichlet_right</name>
+            <type>Constant</type>
+            <value>-1</value>
+        </parameter>
+        <parameter>
+            <name>p_Neumann_left</name>
+            <type>MeshNode</type>
+            <mesh>square_1x1_left</mesh>
+            <field_name>cosY</field_name>
+        </parameter>
+    </parameters>
+    <process_variables>
+        <process_variable>
+            <name>pressure</name>
+            <mesh>square_1x1_quad_1e3</mesh>
+            <components>1</components>
+            <order>1</order>
+            <initial_condition>p0</initial_condition>
+            <boundary_conditions>
+                <boundary_condition>
+                    <type>Neumann</type>
+                    <mesh>square_1x1_left</mesh>
+                    <parameter>p_Neumann_left</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <type>Dirichlet</type>
+                    <mesh>square_1x1_right</mesh>
+                    <parameter>p_Dirichlet_right</parameter>
+                </boundary_condition>
+            </boundary_conditions>
+        </process_variable>
+    </process_variables>
     <nonlinear_solvers>
         <nonlinear_solver>
             <name>basic_picard</name>
@@ -82,45 +124,4 @@
             </petsc>
         </linear_solver>
     </linear_solvers>
-    <parameters>
-        <parameter>
-            <name>p0</name>
-            <type>Constant</type>
-            <value>0</value>
-        </parameter>
-        <parameter>
-            <name>pressure_bc</name>
-            <type>Constant</type>
-            <value>0</value>
-        </parameter>
-        <parameter>
-            <name>pressure_source_term</name>
-            <type>Constant</type>
-            <value>1</value>
-        </parameter>
-    </parameters>
-    <process_variables>
-        <process_variable>
-            <name>pressure</name>
-            <components>1</components>
-            <order>1</order>
-            <initial_condition>p0</initial_condition>
-            <boundary_conditions>
-                <boundary_condition>
-                    <geometrical_set>geometry</geometrical_set>
-                    <geometry>outer</geometry>
-                    <type>Dirichlet</type>
-                    <parameter>pressure_bc</parameter>
-                </boundary_condition>
-            </boundary_conditions>
-            <source_terms>
-                <source_term>
-                    <geometrical_set>geometry</geometrical_set>
-                    <geometry>inner</geometry>
-                    <type>Nodal</type>
-                    <parameter>pressure_source_term</parameter>
-                </source_term>
-            </source_terms>
-        </process_variable>
-    </process_variables>
 </OpenGeoSysProject>

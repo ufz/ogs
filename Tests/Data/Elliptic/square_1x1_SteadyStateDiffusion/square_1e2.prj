@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
-    <mesh axially_symmetric="true">line_1_lines_1e2.vtu</mesh>
-    <geometry>circle_1_axi.gml</geometry>
+    <mesh>square_1x1_quad_1e2.vtu</mesh>
+    <geometry>square_1x1.gml</geometry>
     <processes>
         <process>
             <name>SteadyStateDiffusion</name>
@@ -51,7 +51,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>circle_1e2_axi</prefix>
+            <prefix>square_1e2</prefix>
             <variables>
                 <variable> pressure </variable>
                 <variable> v      </variable>
@@ -89,14 +89,14 @@
             <value>0</value>
         </parameter>
         <parameter>
-            <name>pressure_bc</name>
-            <type>Constant</type>
-            <value>0</value>
-        </parameter>
-        <parameter>
-            <name>pressure_source_term</name>
+            <name>p_Dirichlet_left</name>
             <type>Constant</type>
             <value>1</value>
+        </parameter>
+        <parameter>
+            <name>p_Dirichlet_right</name>
+            <type>Constant</type>
+            <value>-1</value>
         </parameter>
     </parameters>
     <process_variables>
@@ -107,20 +107,18 @@
             <initial_condition>p0</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>geometry</geometrical_set>
-                    <geometry>outer</geometry>
+                    <geometrical_set>square_1x1_geometry</geometrical_set>
+                    <geometry>left</geometry>
                     <type>Dirichlet</type>
-                    <parameter>pressure_bc</parameter>
+                    <parameter>p_Dirichlet_left</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <geometrical_set>square_1x1_geometry</geometrical_set>
+                    <geometry>right</geometry>
+                    <type>Dirichlet</type>
+                    <parameter>p_Dirichlet_right</parameter>
                 </boundary_condition>
             </boundary_conditions>
-            <source_terms>
-                <source_term>
-                    <geometrical_set>geometry</geometrical_set>
-                    <geometry>inner</geometry>
-                    <type>Nodal</type>
-                    <parameter>pressure_source_term</parameter>
-                </source_term>
-            </source_terms>
         </process_variable>
     </process_variables>
 </OpenGeoSysProject>
