@@ -249,7 +249,7 @@ void VtkVisTabWidget::buildProportiesDialog(VtkVisPipelineItem* item)
     VtkAlgorithmProperties* algProps = item->getVtkProperties();
 
     if (algProps == nullptr)
-        WARN("VtkAlgorithmProperties null!")
+        WARN("VtkAlgorithmProperties null!");
 
     // Retrieve algorithm properties
     if (item->compositeFilter())

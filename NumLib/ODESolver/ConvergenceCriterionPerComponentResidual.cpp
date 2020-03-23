@@ -61,7 +61,7 @@ void ConvergenceCriterionPerComponentResidual::checkDeltaX(
         INFO(
             "Convergence criterion, component %u: |dx|=%.4e, |x|=%.4e, "
             "|dx|/|x|=%.4e",
-            error_dx, global_component, norm_x,
+            global_component, error_dx, norm_x,
             (norm_x == 0. ? std::numeric_limits<double>::quiet_NaN()
                           : (error_dx / norm_x)));
     }

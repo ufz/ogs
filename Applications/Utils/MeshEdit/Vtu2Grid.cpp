@@ -184,7 +184,7 @@ int main (int argc, char* argv[])
         ((!y_arg.isSet() && z_arg.isSet())))
     {
         ERR("For equilateral cubes, only x needs to be set. For unequal "
-            "cuboids, all three edge lengths (x/y/z) need to be specified.")
+            "cuboids, all three edge lengths (x/y/z) need to be specified.");
         return -1;
     }
 

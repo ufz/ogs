@@ -114,7 +114,7 @@ int XmlPrjInterface::readFile(const QString& fileName)
             {
                 if (!meshes_node.isElement())
                 {
-                    ERR("Expected an XML element node.")
+                    ERR("Expected an XML element node.");
                     return 0;
                 }
                 if (meshes_node.nodeName() != "mesh")
@@ -134,7 +134,7 @@ int XmlPrjInterface::readFile(const QString& fileName)
                 if (!node_text.isText())
                 {
                     ERR("Expected an XML element node named 'mesh' to contain "
-                        "text.")
+                        "text.");
                     return 0;
                 }
                 read_single_mesh(path + node_text.toText().data().trimmed());

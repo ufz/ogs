@@ -650,7 +650,7 @@ bool readFile(std::string const& file_name,
         std::unique_ptr<MeshLib::Mesh> mesh(readData(in, type, mesh_name));
         if (mesh == nullptr)
         {
-            ERR("File parsing aborted...")
+            ERR("File parsing aborted...");
             return false;
         }
         meshes.push_back(std::move(mesh));

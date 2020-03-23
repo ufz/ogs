@@ -456,9 +456,9 @@ void processProperties(MeshLib::Properties const& properties,
                         });
 
     DBUG(
-        "total number of tuples define on mesh item type '%d' after "
+        "total number of tuples define on mesh item type '%s' after "
         "partitioning: %d ",
-        mesh_item_type, total_number_of_tuples);
+        toString(mesh_item_type), total_number_of_tuples);
 
     // 1 create new PV
     // 2 resize the PV with total_number_of_tuples

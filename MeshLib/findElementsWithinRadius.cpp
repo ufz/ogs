@@ -10,9 +10,9 @@
 
 #include "findElementsWithinRadius.h"
 
-
-#include <vector>
+#include <set>
 #include <unordered_set>
+#include <vector>
 
 #include "MathLib/MathTools.h"
 

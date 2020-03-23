@@ -8,12 +8,15 @@
 
 #include "QuadraticMeshGenerator.h"
 
+#include <set>
+
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Elements/Hex.h"
 #include "MeshLib/Elements/Line.h"
 #include "MeshLib/Elements/Quad.h"
 #include "MeshLib/Elements/Tet.h"
 #include "MeshLib/Elements/Tri.h"
+#include "MeshLib/Mesh.h"
 #include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
 #include "MeshLib/Node.h"
 

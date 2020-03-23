@@ -8,11 +8,13 @@
 
 #include <memory>
 
-#include "MeshLib/Mesh.h"
+namespace MeshLib
+{
+class Mesh;
+}
 
 namespace MeshLib
 {
-
 /// create a quadratic order mesh from the linear order mesh
 std::unique_ptr<Mesh> createQuadraticOrderMesh(Mesh const& linear_mesh);
 
