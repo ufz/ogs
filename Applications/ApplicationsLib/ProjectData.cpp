@@ -54,8 +54,8 @@
 #include "ProcessLib/ComponentTransport/ComponentTransportProcess.h"
 #include "ProcessLib/ComponentTransport/CreateComponentTransportProcess.h"
 #endif
-#ifdef OGS_BUILD_PROCESS_GROUNDWATERFLOW
-#include "ProcessLib/GroundwaterFlow/CreateGroundwaterFlowProcess.h"
+#ifdef OGS_BUILD_PROCESS_STEADYSTATEDIFFUSION
+#include "ProcessLib/SteadyStateDiffusion/CreateGroundwaterFlowProcess.h"
 #endif
 #ifdef OGS_BUILD_PROCESS_HT
 #include "ProcessLib/HT/CreateHTProcess.h"
@@ -534,7 +534,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
             //! \ogs_file_param{prj__processes__process__jacobian_assembler}
             process_config.getConfigSubtreeOptional("jacobian_assembler"));
 
-#ifdef OGS_BUILD_PROCESS_GROUNDWATERFLOW
+#ifdef OGS_BUILD_PROCESS_STEADYSTATEDIFFUSION
         if (type == "GROUNDWATER_FLOW")
         {
             // The existence check of the in the configuration referenced
