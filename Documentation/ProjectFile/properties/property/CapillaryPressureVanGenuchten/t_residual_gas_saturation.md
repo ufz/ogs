@@ -1,0 +1,1 @@
+\copydoc ogs_file_param__properties__property__SaturationVanGenuchten__residual_gas_saturation
