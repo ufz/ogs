@@ -8,7 +8,7 @@
  *
  */
 
-#include "CreateGroundwaterFlowProcess.h"
+#include "CreateSteadyStateDiffusion.h"
 
 #include "BaseLib/FileTools.h"
 #include "GroundwaterFlowProcess.h"

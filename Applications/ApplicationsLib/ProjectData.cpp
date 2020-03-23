@@ -55,7 +55,7 @@
 #include "ProcessLib/ComponentTransport/CreateComponentTransportProcess.h"
 #endif
 #ifdef OGS_BUILD_PROCESS_STEADYSTATEDIFFUSION
-#include "ProcessLib/SteadyStateDiffusion/CreateGroundwaterFlowProcess.h"
+#include "ProcessLib/SteadyStateDiffusion/CreateSteadyStateDiffusion.h"
 #endif
 #ifdef OGS_BUILD_PROCESS_HT
 #include "ProcessLib/HT/CreateHTProcess.h"
