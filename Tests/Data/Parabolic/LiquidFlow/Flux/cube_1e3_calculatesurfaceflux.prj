@@ -96,11 +96,6 @@
                             <type>Constant</type>
                             <value> 8.05e-10 </value>
                         </property>
-                        <property>
-                            <name>porosity</name>
-                            <type>Constant</type>
-                            <value>1</value>
-                        </property>
                     </properties>
                 </phase>
             </phases>
@@ -114,6 +109,11 @@
                     <name>reference_temperature</name>
                     <type>Constant</type>
                     <value>293.15</value>
+                </property>
+                <property>
+                    <name>porosity</name>
+                    <type>Constant</type>
+                    <value>1</value>
                 </property>
             </properties>
         </medium>
