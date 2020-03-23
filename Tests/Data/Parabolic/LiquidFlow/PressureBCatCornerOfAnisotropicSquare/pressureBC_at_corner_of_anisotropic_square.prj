@@ -39,21 +39,6 @@
                         </property>
                     </properties>
                 </phase>
-                <phase>
-                    <type>Solid</type>
-                    <properties>
-                        <property>
-                            <name>storage</name>
-                            <type>Constant</type>
-                            <value> 0.0 </value>
-                        </property>
-                        <property>
-                            <name>porosity</name>
-                            <type>Constant</type>
-                            <value>1.0</value>
-                        </property>
-                    </properties>
-                </phase>
             </phases>
             <properties>
                 <property>
@@ -65,6 +50,16 @@
                     <name>reference_temperature</name>
                     <type>Constant</type>
                     <value>293.15</value>
+                </property>
+                <property>
+                    <name>porosity</name>
+                    <type>Constant</type>
+                    <value>1.0</value>
+                </property>
+                <property>
+                    <name>storage</name>
+                    <type>Constant</type>
+                    <value> 0.0 </value>
                 </property>
             </properties>
         </medium>
