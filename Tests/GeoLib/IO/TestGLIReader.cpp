@@ -15,6 +15,7 @@
 
 #include "gtest/gtest.h"
 
+#include "filesystem.h"
 #include "InfoLib/TestInfo.h"
 #include "Applications/FileIO/Legacy/OGSIOVer4.h"
 #include "GeoLib/GEOObjects.h"
@@ -23,9 +24,11 @@ class OGSIOVer4InterfaceTest : public ::testing::Test
 {
 public:
     OGSIOVer4InterfaceTest()
-        : _gli_fname(TestInfoLib::TestInfo::tests_tmp_path+"test.gli")
+        : _test_path(fs::temp_directory_path() /= BaseLib::random_string(32)),
+          _gli_fname(_test_path), _surface_fname(_test_path)
     {
-        std::ofstream gli_out(_gli_fname);
+        fs::create_directory(_test_path);
+        std::ofstream gli_out(_gli_fname /= "test.gli");
         gli_out << "#POINTS\n";
         gli_out << "0 0 0 0\n";
         gli_out << "#SURFACE\n";
@@ -35,17 +38,20 @@ public:
         gli_out << "    Surface.tin\n";
         gli_out << "#STOP\n";
         gli_out.close();
+        _surface_fname /= "Surface.tin";
     }
 
-    ~OGSIOVer4InterfaceTest() override { std::remove(_gli_fname.c_str()); }
+    ~OGSIOVer4InterfaceTest() override { fs::remove_all(_test_path); }
 
 protected:
-    std::string _gli_fname;
+    const fs::path _test_path;
+    fs::path _gli_fname;
+    fs::path _surface_fname;
 };
 
 TEST_F(OGSIOVer4InterfaceTest, SimpleTIN)
 {
-    std::string tin_fname(TestInfoLib::TestInfo::tests_tmp_path+"Surface.tin");
+    std::string tin_fname(_surface_fname);
     std::ofstream tin_out (tin_fname);
     tin_out << "0 0.0 0.0 0.0 1.0 0.0.0 0.0 0.0 1.0\n";
     tin_out << "1 0.0 0.0 0.0 1.0 0.0.0 0.0 1.0 1.0\n";
@@ -63,14 +69,11 @@ TEST_F(OGSIOVer4InterfaceTest, SimpleTIN)
     ASSERT_TRUE(sfcs != nullptr);
     ASSERT_EQ(1u, geometries.getSurfaceVec(geometry_name)->size());
     ASSERT_EQ(2u, (*geometries.getSurfaceVec(geometry_name))[0]->getNumberOfTriangles());
-
-    std::remove(tin_fname.c_str());
 }
 
 TEST_F(OGSIOVer4InterfaceTest, StillCorrectTINWihtAdditionalValueAtEndOfLine)
 {
-    std::string tin_fname(TestInfoLib::TestInfo::tests_tmp_path+"Surface.tin");
-    std::ofstream tin_out (tin_fname);
+    std::ofstream tin_out (_surface_fname);
     tin_out << "0 0.0 0.0 0.0 1.0 0.0.0 0.0 0.0 1.0 10\n";
     tin_out << "1 0.0 0.0 0.0 1.0 0.0.0 0.0 0.0 1.0\n";
     tin_out.close();
@@ -87,14 +90,11 @@ TEST_F(OGSIOVer4InterfaceTest, StillCorrectTINWihtAdditionalValueAtEndOfLine)
     ASSERT_TRUE(sfcs != nullptr);
     ASSERT_EQ(1u, geometries.getSurfaceVec(geometry_name)->size());
     ASSERT_EQ(2u, (*geometries.getSurfaceVec(geometry_name))[0]->getNumberOfTriangles());
-
-    std::remove(tin_fname.c_str());
 }
 
 TEST_F(OGSIOVer4InterfaceTest, InvalidTIN_ZeroAreaTri)
 {
-    std::string tin_fname(TestInfoLib::TestInfo::tests_tmp_path+"Surface.tin");
-    std::ofstream tin_out (tin_fname);
+    std::ofstream tin_out (_surface_fname);
     tin_out << "0 0.0 0.0 0.0 1.0 0.0.0 0.0 0.0 0.0\n";
     tin_out.close();
 
@@ -108,15 +108,12 @@ TEST_F(OGSIOVer4InterfaceTest, InvalidTIN_ZeroAreaTri)
     std::vector<GeoLib::Surface*> const*
         sfcs(geometries.getSurfaceVec(geometry_name));
     ASSERT_TRUE(sfcs == nullptr);
-
-    std::remove(tin_fname.c_str());
 }
 
 
 TEST_F(OGSIOVer4InterfaceTest, InvalidTIN_LineDoesNotStartWithID)
 {
-    std::string tin_fname(TestInfoLib::TestInfo::tests_tmp_path+"Surface.tin");
-    std::ofstream tin_out (tin_fname);
+    std::ofstream tin_out (_surface_fname);
     tin_out << "0 0.0 0.0 0.0 1.0 0.0.0 0.0 0.0 1.0\n";
     tin_out << "a\n";
     tin_out << "1 0.0 0.0 0.0 1.0 0.0.0 0.0 0.0 1.0\n";
@@ -132,15 +129,12 @@ TEST_F(OGSIOVer4InterfaceTest, InvalidTIN_LineDoesNotStartWithID)
     std::vector<GeoLib::Surface*> const*
         sfcs(geometries.getSurfaceVec(geometry_name));
     ASSERT_TRUE(sfcs == nullptr);
-
-    std::remove(tin_fname.c_str());
 }
 
 
 TEST_F(OGSIOVer4InterfaceTest, InvalidTIN_PointIsMissing)
 {
-    std::string tin_fname(TestInfoLib::TestInfo::tests_tmp_path+"Surface.tin");
-    std::ofstream tin_out (tin_fname);
+    std::ofstream tin_out (_surface_fname);
     tin_out << "0 0.0 0.0 0.0 1.0 0.0.0 0.0 0.0 1.0\n";
     tin_out << "1 0.0 0.0 0.0 1.0 0.0.0\n";
     tin_out.close();
@@ -155,14 +149,11 @@ TEST_F(OGSIOVer4InterfaceTest, InvalidTIN_PointIsMissing)
     std::vector<GeoLib::Surface*> const*
         sfcs(geometries.getSurfaceVec(geometry_name));
     ASSERT_TRUE(sfcs == nullptr);
-
-    std::remove(tin_fname.c_str());
 }
 
 TEST_F(OGSIOVer4InterfaceTest, InvalidTIN_CoordOfPointIsMissing)
 {
-    std::string tin_fname(TestInfoLib::TestInfo::tests_tmp_path+"Surface.tin");
-    std::ofstream tin_out (tin_fname);
+    std::ofstream tin_out (_surface_fname);
     tin_out << "0 0.0 0.0 0.0 1.0 0.0.0 0.0\n";
     tin_out << "1 0.0 0.0 0.0 1.0 0.0.0\n";
     tin_out.close();
@@ -177,14 +168,11 @@ TEST_F(OGSIOVer4InterfaceTest, InvalidTIN_CoordOfPointIsMissing)
     std::vector<GeoLib::Surface*> const*
         sfcs(geometries.getSurfaceVec(geometry_name));
     ASSERT_TRUE(sfcs == nullptr);
-
-    std::remove(tin_fname.c_str());
 }
 
 TEST_F(OGSIOVer4InterfaceTest, SimpleTIN_AdditionalEmptyLinesAtEnd)
 {
-    std::string tin_fname(TestInfoLib::TestInfo::tests_tmp_path+"Surface.tin");
-    std::ofstream tin_out (tin_fname);
+    std::ofstream tin_out (_surface_fname);
     tin_out << "0 0.0 0.0 0.0 1.0 0.0.0 0.0 0.0 1.0 10\n";
     tin_out << "1 0.0 0.0 0.0 1.0 0.0.0 0.0 0.0 1.0\n\n\n";
     tin_out.close();
@@ -201,6 +189,4 @@ TEST_F(OGSIOVer4InterfaceTest, SimpleTIN_AdditionalEmptyLinesAtEnd)
     ASSERT_TRUE(sfcs != nullptr);
     ASSERT_EQ(1u, geometries.getSurfaceVec(geometry_name)->size());
     ASSERT_EQ(2u, (*geometries.getSurfaceVec(geometry_name))[0]->getNumberOfTriangles());
-
-    std::remove(tin_fname.c_str());
 }

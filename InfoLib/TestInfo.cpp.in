@@ -18,6 +18,5 @@ namespace TestInfoLib
 namespace TestInfo
 {
     const std::string data_path("@Data_SOURCE_DIR@");
-    const std::string tests_tmp_path("@PROJECT_BINARY_DIR@/Tests/");
 }
 }
