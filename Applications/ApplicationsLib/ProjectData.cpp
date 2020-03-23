@@ -535,7 +535,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
             process_config.getConfigSubtreeOptional("jacobian_assembler"));
 
 #ifdef OGS_BUILD_PROCESS_STEADYSTATEDIFFUSION
-        if (type == "GROUNDWATER_FLOW")
+        if (type == "STEADY_STATE_DIFFUSION")
         {
             // The existence check of the in the configuration referenced
             // process variables is checked in the physical process.

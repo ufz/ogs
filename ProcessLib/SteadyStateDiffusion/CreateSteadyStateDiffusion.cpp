@@ -51,7 +51,7 @@ std::unique_ptr<Process> createSteadyStateDiffusion(
     std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
 {
     //! \ogs_file_param{prj__processes__process__type}
-    config.checkConfigParameter("type", "GROUNDWATER_FLOW");
+    config.checkConfigParameter("type", "STEADY_STATE_DIFFUSION");
 
     DBUG("Create SteadyStateDiffusion.");
 
