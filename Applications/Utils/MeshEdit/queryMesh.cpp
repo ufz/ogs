@@ -13,8 +13,6 @@
 
 #include <tclap/CmdLine.h>
 
-#include "Applications/ApplicationsLib/LogogSetup.h"
-
 #include "InfoLib/GitInfo.h"
 #include "BaseLib/StringTools.h"
 #include "BaseLib/FileTools.h"
@@ -26,8 +24,6 @@
 
 int main(int argc, char *argv[])
 {
-    ApplicationsLib::LogogSetup logog_setup;
-
     TCLAP::CmdLine cmd(
         "Query mesh information.\n\n"
         "OpenGeoSys-6 software, version " +

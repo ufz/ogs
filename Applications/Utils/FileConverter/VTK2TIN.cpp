@@ -13,8 +13,6 @@
 
 #include <tclap/CmdLine.h>
 
-#include "Applications/ApplicationsLib/LogogSetup.h"
-
 // BaseLib
 #include "InfoLib/GitInfo.h"
 #include "BaseLib/Logging.h"
@@ -35,8 +33,6 @@
 
 int main (int argc, char* argv[])
 {
-    ApplicationsLib::LogogSetup logog_setup;
-
     TCLAP::CmdLine cmd(
         "Converts VTK mesh into TIN file.\n\n"
         "OpenGeoSys-6 software, version " +

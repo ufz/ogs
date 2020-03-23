@@ -9,12 +9,6 @@
  */
 
 #include <tclap/CmdLine.h>
-
-#include "Applications/ApplicationsLib/LogogSetup.h"
-#include "InfoLib/GitInfo.h"
-
-#include "MeshLib/IO/writeMeshToFile.h"
-
 #include <vtkCleanUnstructuredGrid.h>
 #include <vtkRemoveGhosts.h>
 #include <vtkSmartPointer.h>
@@ -22,10 +16,11 @@
 #include <vtkXMLPUnstructuredGridReader.h>
 #include <vtkXMLUnstructuredGridWriter.h>
 
+#include "InfoLib/GitInfo.h"
+#include "MeshLib/IO/writeMeshToFile.h"
+
 int main (int argc, char* argv[])
 {
-    ApplicationsLib::LogogSetup logog_setup;
-
     TCLAP::CmdLine cmd(
         "Reads a VTK partitioned unstructured grid (*.pvtu), cleans the ghost "
         "information and saves the data as as a regular, connected mesh file."

@@ -14,8 +14,6 @@
 
 #include <tclap/CmdLine.h>
 
-#include <Applications/ApplicationsLib/LogogSetup.h>
-
 #include "InfoLib/GitInfo.h"
 #include "BaseLib/StringTools.h"
 
@@ -409,8 +407,6 @@ int convertFile(std::ifstream& in, std::string file_name)
  */
 int main(int argc, char* argv[])
 {
-    ApplicationsLib::LogogSetup logog_setup;
-
     TCLAP::CmdLine cmd(
         "TecPlot Parser\n\n"
         "OpenGeoSys-6 software, version " +

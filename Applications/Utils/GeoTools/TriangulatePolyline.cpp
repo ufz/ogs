@@ -15,7 +15,6 @@
 
 #include <tclap/CmdLine.h>
 
-#include "Applications/ApplicationsLib/LogogSetup.h"
 #include "Applications/FileIO/Legacy/createSurface.h"
 
 #include "InfoLib/GitInfo.h"
@@ -39,8 +38,6 @@ std::string output_question()
 int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv, false);
-
-    ApplicationsLib::LogogSetup logog_setup;
 
     TCLAP::CmdLine cmd(
         "Triangulates the specified polyline in the given geometry file.\n\n"

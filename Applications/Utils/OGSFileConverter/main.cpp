@@ -10,19 +10,14 @@
 #include "OGSFileConverter.h"
 
 #include <clocale>
-
 #include <tclap/CmdLine.h>
 
-#include "Applications/ApplicationsLib/LogogSetup.h"
 #include "InfoLib/GitInfo.h"
-
 #include <QApplication>
 
 
 int main(int argc, char* argv[])
 {
-    ApplicationsLib::LogogSetup logog_setup;
-
     TCLAP::CmdLine cmd(
         "A conversion tool for ogs5 and ogs6 files.\n\n"
         "OpenGeoSys-6 software, version " +

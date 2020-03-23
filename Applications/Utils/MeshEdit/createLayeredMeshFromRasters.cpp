@@ -18,8 +18,6 @@
 
 #include <tclap/CmdLine.h>
 
-#include "Applications/ApplicationsLib/LogogSetup.h"
-
 #include "InfoLib/GitInfo.h"
 #include "BaseLib/FileTools.h"
 
@@ -58,8 +56,6 @@ int readRasterPaths(std::string const& raster_list_file, std::vector<std::string
 
 int main (int argc, char* argv[])
 {
-    ApplicationsLib::LogogSetup logog_setup;
-
     TCLAP::CmdLine cmd(
         "Creates a layered 3D OGS mesh from an existing 2D OGS mesh and raster "
         "files representing subsurface layers. Supported raster formats are "

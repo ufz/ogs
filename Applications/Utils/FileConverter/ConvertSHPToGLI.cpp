@@ -21,7 +21,6 @@
 // ShapeLib
 #include <shapefil.h>
 
-#include "Applications/ApplicationsLib/LogogSetup.h"
 #include "InfoLib/GitInfo.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/IO/XmlIO/Qt/XmlGmlInterface.h"
@@ -152,8 +151,6 @@ void printFieldInformationTable(DBFHandle const& dbf_handle, std::size_t n_field
 
 int main (int argc, char* argv[])
 {
-    ApplicationsLib::LogogSetup logog_setup;
-
     TCLAP::CmdLine cmd(
         "Converts points contained in shape file\n\n"
         "OpenGeoSys-6 software, version " +

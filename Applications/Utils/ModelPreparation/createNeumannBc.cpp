@@ -10,7 +10,6 @@
 #include <fstream>
 #include <tclap/CmdLine.h>
 
-#include "Applications/ApplicationsLib/LogogSetup.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/IO/readMeshFromFile.h"
@@ -74,8 +73,6 @@ std::vector<double> getSurfaceIntegratedValuesForNodes(
 
 int main(int argc, char* argv[])
 {
-    ApplicationsLib::LogogSetup logo_setup;
-
     TCLAP::CmdLine cmd(
         "Integrates the given element property and outputs an OGS-5 direct "
         "Neumann boundary condition. The mesh has to contain a property "

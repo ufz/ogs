@@ -15,7 +15,6 @@
 
 #include <tclap/CmdLine.h>
 
-#include "Applications/ApplicationsLib/LogogSetup.h"
 #include "Applications/FileIO/readGeometryFromFile.h"
 #include "InfoLib/GitInfo.h"
 #include "GeoLib/GEOObjects.h"
@@ -27,8 +26,6 @@
 
 int main(int argc, char* argv[])
 {
-    ApplicationsLib::LogogSetup logog_setup;
-
     TCLAP::CmdLine cmd(
         "Sets the property value of a mesh element to a given new value iff at "
         "least one node of the element is within a polygonal region that is "

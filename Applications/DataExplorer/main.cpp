@@ -16,7 +16,7 @@ FbxScene* lScene = nullptr;
 #include <vtkSmartPointer.h>
 
 #include "InfoLib/GitInfo.h"
-#include "BaseLib/LogogSimpleFormatter.h"
+#include "BaseLib/Logging.h"
 #include "VtkVis/VtkConsoleOutputWindow.h"
 
 int main(int argc, char* argv[])

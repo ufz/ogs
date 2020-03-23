@@ -16,7 +16,6 @@
 
 #include <tclap/CmdLine.h>
 
-#include "Applications/ApplicationsLib/LogogSetup.h"
 #include "BaseLib/Algorithm.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/Elements/Element.h"
@@ -143,8 +142,6 @@ void reorderNonlinearNodes(MeshLib::Mesh &mesh)
 
 int main (int argc, char* argv[])
 {
-    ApplicationsLib::LogogSetup logo_setup;
-
     TCLAP::CmdLine cmd(
         "Reordering of mesh nodes to make OGS Data Explorer 5 meshes "
         "compatible with OGS6.\n"

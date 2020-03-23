@@ -12,7 +12,6 @@
 
 #include <tclap/CmdLine.h>
 
-#include "Applications/ApplicationsLib/LogogSetup.h"
 #include "InfoLib/GitInfo.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/StringTools.h"
@@ -26,8 +25,6 @@
 
 int main(int argc, char *argv[])
 {
-    ApplicationsLib::LogogSetup logog_setup;
-
     TCLAP::CmdLine cmd(
         "Moves the mesh nodes using the given displacement vector or if no "
         "displacement vector is given, moves the mesh nodes such that the "

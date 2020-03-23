@@ -16,8 +16,6 @@
 
 #include <tclap/CmdLine.h>
 
-#include "Applications/ApplicationsLib/LogogSetup.h"
-
 #include "InfoLib/GitInfo.h"
 #include "BaseLib/FileTools.h"
 
@@ -29,8 +27,6 @@
 
 int main (int argc, char* argv[])
 {
-    ApplicationsLib::LogogSetup logog_setup;
-
     TCLAP::CmdLine cmd(
         "Creates a new file for material properties and sets the material ids "
         "in the msh-file to 0\n\n"

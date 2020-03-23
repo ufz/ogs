@@ -16,7 +16,6 @@
 
 #include <tclap/CmdLine.h>
 
-#include "Applications/ApplicationsLib/LogogSetup.h"
 #include "InfoLib/GitInfo.h"
 #include "BaseLib/Error.h"
 #include "BaseLib/FileTools.h"
@@ -57,8 +56,6 @@ void writeToFile(std::string const& id_area_fname, std::string const& csv_fname,
 
 int main (int argc, char* argv[])
 {
-    ApplicationsLib::LogogSetup logog_setup;
-
     TCLAP::CmdLine cmd(
         "The tool computes the area per node of the surface mesh and writes "
         "the information as txt and csv data.\n\n"

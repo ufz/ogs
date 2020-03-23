@@ -15,7 +15,6 @@
 
 #include <tclap/CmdLine.h>
 
-#include "Applications/ApplicationsLib/LogogSetup.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
@@ -23,8 +22,6 @@
 
 int main(int argc, char* argv[])
 {
-    ApplicationsLib::LogogSetup logo_setup;
-
     TCLAP::CmdLine cmd(
         "Scales a property of a mesh.\n\n"
         "OpenGeoSys-6 software, version " +

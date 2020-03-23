@@ -13,8 +13,6 @@
 // ThirdParty
 #include <tclap/CmdLine.h>
 
-#include "Applications/ApplicationsLib/LogogSetup.h"
-
 // BaseLib
 #include "InfoLib/GitInfo.h"
 #include "BaseLib/FileTools.h"
@@ -33,8 +31,6 @@
 
 int main (int argc, char* argv[])
 {
-    ApplicationsLib::LogogSetup logog_setup;
-
     TCLAP::CmdLine cmd(
         "Converting a mesh in FEFLOW file format (ASCII, version 5.4) to a vtk "
         "unstructured grid file (new OGS file format) or to the old OGS file "

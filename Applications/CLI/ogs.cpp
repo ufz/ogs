@@ -31,10 +31,8 @@
 #include "BaseLib/DateTools.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/RunTime.h"
-#include "BaseLib/TemplateLogogFormatterSuppressedGCC.h"
 
 #include "Applications/ApplicationsLib/LinearSolverLibrarySetup.h"
-#include "Applications/ApplicationsLib/LogogSetup.h"
 #include "Applications/ApplicationsLib/ProjectData.h"
 #include "Applications/ApplicationsLib/TestDefinition.h"
 #include "Applications/InSituLib/Adaptor.h"
@@ -123,7 +121,6 @@ int main(int argc, char* argv[])
         std::cout.setf(std::ios::unitbuf);
     }
 
-    ApplicationsLib::LogogSetup logog_setup;
     logog_setup.setLevel(log_level_arg.getValue());
 
     INFO("This is OpenGeoSys-6 version {:s}.",

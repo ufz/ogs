@@ -13,8 +13,6 @@
 
 #include <tclap/CmdLine.h>
 
-#include "Applications/ApplicationsLib/LogogSetup.h"
-
 #include "InfoLib/GitInfo.h"
 #include "BaseLib/Error.h"
 #include "BaseLib/Subdivision.h"
@@ -59,8 +57,6 @@ unsigned getDimension(MeshLib::MeshElemType eleType)
 
 int main (int argc, char* argv[])
 {
-    ApplicationsLib::LogogSetup logog_setup;
-
     TCLAP::CmdLine cmd(
         "Structured mesh generator.\n"
         "The documentation is available at "

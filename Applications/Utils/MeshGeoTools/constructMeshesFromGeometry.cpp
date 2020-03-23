@@ -9,7 +9,6 @@
 
 #include <tclap/CmdLine.h>
 
-#include "Applications/ApplicationsLib/LogogSetup.h"
 #include "InfoLib/GitInfo.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/IO/XmlIO/Boost/BoostXmlGmlInterface.h"
@@ -31,8 +30,6 @@ std::unique_ptr<GeoLib::GEOObjects> readGeometry(std::string const& filename)
 
 int main(int argc, char* argv[])
 {
-    ApplicationsLib::LogogSetup logo_setup;
-
     TCLAP::CmdLine cmd(
         "Converts a geometry defined on a given mesh to distinct meshes. The "
         "documentation is available at "

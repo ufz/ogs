@@ -16,7 +16,6 @@
 
 #include <tclap/CmdLine.h>
 
-#include "Applications/ApplicationsLib/LogogSetup.h"
 #include "Applications/FileIO/readGeometryFromFile.h"
 #include "Applications/FileIO/writeGeometryToFile.h"
 
@@ -123,8 +122,6 @@ void writeBCsAndGeometry(GeoLib::GEOObjects& geometry_sets,
 
 int main (int argc, char* argv[])
 {
-    ApplicationsLib::LogogSetup logog_setup;
-
     TCLAP::CmdLine cmd(
         "Creates boundary conditions for mesh nodes along polylines."
         "The documentation is available at "

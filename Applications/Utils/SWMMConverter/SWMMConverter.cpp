@@ -10,8 +10,6 @@
 
 #include "Applications/FileIO/SWMM/SWMMInterface.h"
 
-#include "Applications/ApplicationsLib/LogogSetup.h"
-
 #include "InfoLib/GitInfo.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/StringTools.h"
@@ -166,8 +164,6 @@ int writeCsvOutput(std::string input_file,
 
 int main(int argc, char* argv[])
 {
-    ApplicationsLib::LogogSetup setup;
-
     TCLAP::CmdLine cmd(
         "Read files for the Storm Water Management Model (SWMM) and converts "
         "them into OGS data structures.\n\n"

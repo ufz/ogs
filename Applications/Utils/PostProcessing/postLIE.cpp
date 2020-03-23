@@ -15,7 +15,6 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
-#include "Applications/ApplicationsLib/LogogSetup.h"
 #include "InfoLib/GitInfo.h"
 #include "BaseLib/FileTools.h"
 #include "MeshLib/IO/readMeshFromFile.h"
@@ -116,8 +115,6 @@ void postPVD(std::string const& in_pvd_filename,
 
 int main(int argc, char* argv[])
 {
-    ApplicationsLib::LogogSetup logog_setup;
-
     TCLAP::CmdLine cmd(
         "Post-process results of the LIE approach.\n\n"
         "OpenGeoSys-6 software, version " +

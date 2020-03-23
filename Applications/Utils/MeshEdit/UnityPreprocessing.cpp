@@ -11,7 +11,6 @@
 
 #include <tclap/CmdLine.h>
 
-#include "Applications/ApplicationsLib/LogogSetup.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/Elements/Hex.h"
 #include "MeshLib/Elements/Line.h"
@@ -181,8 +180,6 @@ MeshLib::Mesh* constructMesh(MeshLib::Mesh const& mesh)
 
 int main (int argc, char* argv[])
 {
-    ApplicationsLib::LogogSetup logog_setup;
-
     TCLAP::CmdLine cmd(
         "Prepares OGS-meshes for use in Unity.\n\n"
         "OpenGeoSys-6 software, version " +

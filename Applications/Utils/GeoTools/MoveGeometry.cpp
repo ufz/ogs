@@ -14,7 +14,6 @@
 // ThirdParty
 #include <tclap/CmdLine.h>
 
-#include "Applications/ApplicationsLib/LogogSetup.h"
 #include "InfoLib/GitInfo.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/IO/XmlIO/Qt/XmlGmlInterface.h"
@@ -25,8 +24,6 @@
 int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
-
-    ApplicationsLib::LogogSetup logog_setup;
 
     TCLAP::CmdLine cmd(
         "Moves the points of a geometry by a given displacement vector\n\n"

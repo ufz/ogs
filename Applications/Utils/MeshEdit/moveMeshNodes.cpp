@@ -12,7 +12,6 @@
 #include <memory>
 #include <string>
 
-#include "Applications/ApplicationsLib/LogogSetup.h"
 #include "InfoLib/GitInfo.h"
 #include "BaseLib/FileTools.h"
 #include "GeoLib/AABB.h"
@@ -45,8 +44,6 @@ double getClosestPointElevation(MeshLib::Node const& p,
 
 int main (int argc, char* argv[])
 {
-    ApplicationsLib::LogogSetup logog_setup;
-
     std::vector<std::string> keywords;
     keywords.emplace_back("-ALL");
     keywords.emplace_back("-MESH");

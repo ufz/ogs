@@ -20,9 +20,7 @@
 #include <string>
 #include <utility>
 
-#include "Applications/ApplicationsLib/LogogSetup.h"
 #include "BaseLib/FileTools.h"
-#include "BaseLib/LogogSimpleFormatter.h"
 #include "BaseLib/Logging.h"
 #include "GeoLib/Raster.h"
 #include "InfoLib/GitInfo.h"
@@ -577,8 +575,6 @@ static bool convert(NcFile const& dataset, NcVar const& var,
 
 int main(int argc, char* argv[])
 {
-    ApplicationsLib::LogogSetup logog_setup;
-
     TCLAP::CmdLine cmd(
         "Converts NetCDF data into mesh file(s).\n\n "
         "OpenGeoSys-6 software, version " +

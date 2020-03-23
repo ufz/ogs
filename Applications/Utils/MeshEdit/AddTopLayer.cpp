@@ -13,7 +13,6 @@
 
 #include <tclap/CmdLine.h>
 
-#include "Applications/ApplicationsLib/LogogSetup.h"
 #include "InfoLib/GitInfo.h"
 #include "BaseLib/FileTools.h"
 #include "MeshLib/IO/readMeshFromFile.h"
@@ -23,8 +22,6 @@
 
 int main (int argc, char* argv[])
 {
-    ApplicationsLib::LogogSetup logog_setup;
-
     TCLAP::CmdLine cmd(
         "Adds a top layer to an existing mesh"
         "The documentation is available at "
