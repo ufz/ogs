@@ -12,7 +12,7 @@
     <processes>
         <process>
             <name>GW23</name>
-            <type>GROUNDWATER_FLOW</type>
+            <type>STEADY_STATE_DIFFUSION</type>
             <integration_order>2</integration_order>
             <process_variables>
                 <process_variable>pressure</process_variable>
