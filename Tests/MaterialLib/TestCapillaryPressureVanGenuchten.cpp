@@ -15,30 +15,63 @@
 #include <limits>
 #include <random>
 
+#include "BaseLib/ConfigTree.h"
+
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/MPL/Properties/CapillaryPressureSaturation/CapillaryPressureVanGenuchten.h"
 #include "MaterialLib/MPL/Properties/CapillaryPressureSaturation/SaturationVanGenuchten.h"
+#include "MaterialLib/MPL/Properties/CapillaryPressureSaturation/CreateCapillaryPressureVanGenuchten.h"
+#include "MaterialLib/MPL/Properties/CapillaryPressureSaturation/CreateSaturationVanGenuchten.h"
+
 #include "TestMPL.h"
 #include "Tests/TestTools.h"
 
 namespace MPL = MaterialPropertyLib;
 
+std::unique_ptr<MaterialPropertyLib::Property>
+createVanGenuchtenProperty(const char xml[], bool const saturation)
+{
+    auto const ptree = readXml(xml);
+    BaseLib::ConfigTree conf(ptree, "", BaseLib::ConfigTree::onerror,
+                             BaseLib::ConfigTree::onwarning);
+    auto const& sub_config = conf.getConfigSubtree("property");
+    // Parsing the property name:
+    auto const property_name =
+            sub_config.getConfigParameter<std::string>("name");
+
+    if (saturation)
+    {
+        return MPL::createSaturationVanGenuchten(sub_config);
+    }
+    return MPL::createCapillaryPressureVanGenuchten(sub_config);
+}
+
 TEST(MaterialPropertyLib, CapillaryPressureVanGenuchten)
 {
-    double const residual_liquid_saturation = 0.1;
-    double const residual_gas_saturation = 0.05;
-    double const exponent = 0.79;
-    double const entry_pressure = 5000;
+    const char xml_S_pc[] =
+        "<property>"
+        "   <name>saturation</name>"
+        "   <type>SaturationVanGenuchten</type>"
+        "   <residual_liquid_saturation>0.1</residual_liquid_saturation>"
+        "   <residual_gas_saturation>0.05</residual_gas_saturation>"
+        "   <exponent>0.79</exponent>"
+        "   <entry_pressure>5000.0</entry_pressure>"
+        "</property>";
+    auto const S_ptr = createVanGenuchtenProperty(xml_S_pc, true);
+    MPL::Property const& saturation_property = *S_ptr;
 
-    MPL::Property const& saturation_property = MPL::SaturationVanGenuchten{
-        residual_liquid_saturation, residual_gas_saturation, exponent,
-        entry_pressure};
-
-    double const max_capillary_pressure = std::numeric_limits<double>::max();
-    MPL::Property const& capillary_pressure_property =
-        MPL::CapillaryPressureVanGenuchten{
-            residual_liquid_saturation, residual_gas_saturation, exponent,
-            entry_pressure, max_capillary_pressure};
+    const char xml_pc_S[] =
+        "<property>"
+        "   <name>capillary_pressure</name>"
+        "   <type>CapillaryPressureVanGenuchten</type>"
+        "   <residual_liquid_saturation>0.1</residual_liquid_saturation>"
+        "   <residual_gas_saturation>0.05</residual_gas_saturation>"
+        "   <exponent>0.79</exponent>"
+        "   <entry_pressure>5000.0</entry_pressure>"
+        "   <maximum_capillary_pressure>1.e+20</maximum_capillary_pressure>"
+        "</property>";
+    auto const cp_ptr = createVanGenuchtenProperty(xml_pc_S, false);
+    MPL::Property const& capillary_pressure_property = *cp_ptr;
 
     MPL::VariableArray variable_array;
     ParameterLib::SpatialPosition const pos;
@@ -48,6 +81,8 @@ TEST(MaterialPropertyLib, CapillaryPressureVanGenuchten)
     std::random_device rd;
     std::mt19937 mt(rd());
     const double offset = std::sqrt(std::numeric_limits<double>::epsilon());
+    double const residual_liquid_saturation = 0.1;
+    double const residual_gas_saturation = 0.05;
     std::uniform_real_distribution<double> distributor(
         residual_liquid_saturation + offset,
         1.0 - residual_gas_saturation - offset);
@@ -113,22 +148,22 @@ TEST(MaterialPropertyLib, CapillaryPressureVanGenuchten)
     }
 }
 
-TEST(MaterialPropertyLib, RegularizedCapillaryVanGenuchten)
+TEST(MaterialPropertyLib, CapillaryPressureRegularizedVanGenuchten)
 {
-    double const residual_liquid_saturation = 0.1;
-    double const residual_gas_saturation = 0.05;
-    double const exponent = 0.79;
-    double const entry_pressure = 5000;
+    const char xml_pc_S[] =
+        "<property>"
+        "   <name>capillary_pressure</name>"
+        "   <type>CapillaryPressureVanGenuchten</type>"
+        "   <residual_liquid_saturation>0.1</residual_liquid_saturation>"
+        "   <residual_gas_saturation>0.05</residual_gas_saturation>"
+        "   <exponent>0.79</exponent>"
+        "   <entry_pressure>5000.0</entry_pressure>"
+        "   <maximum_capillary_pressure>1.e+20</maximum_capillary_pressure>"
+        "   <regularization>1</regularization>"
+        "</property>";
 
-    MPL::Property const& saturation_property = MPL::SaturationVanGenuchten{
-        residual_liquid_saturation, residual_gas_saturation, exponent,
-        entry_pressure};
-
-    double const max_capillary_pressure = std::numeric_limits<double>::max();
-    MPL::Property const& regularized_capillary_pressure_property =
-        MPL::CapillaryPressureRegularizedVanGenuchten{
-            residual_liquid_saturation, residual_gas_saturation, exponent,
-            entry_pressure, max_capillary_pressure};
+    auto const cp_ptr = createVanGenuchtenProperty(xml_pc_S, false);
+    MPL::Property const& regularized_capillary_pressure_property = *cp_ptr;
 
     MPL::VariableArray variable_array;
     ParameterLib::SpatialPosition const pos;
@@ -138,6 +173,8 @@ TEST(MaterialPropertyLib, RegularizedCapillaryVanGenuchten)
     std::random_device rd;
     std::mt19937 mt(rd());
     const double offset = std::sqrt(std::numeric_limits<double>::epsilon());
+    double const residual_liquid_saturation = 0.1;
+    double const residual_gas_saturation = 0.05;
     std::uniform_real_distribution<double> distributor(
         residual_liquid_saturation + offset,
         1.0 - residual_gas_saturation - offset);
