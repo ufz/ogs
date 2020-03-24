@@ -8,14 +8,17 @@
  *
  */
 
+#include "PhreeqcIO.h"
+
+#include <iphreeqc/src/src/IPhreeqc.h>
+
 #include <boost/algorithm/string.hpp>
 #include <cmath>
-#include <iostream>
+#include <fstream>
 
 #include "BaseLib/Algorithm.h"
 #include "BaseLib/ConfigTreeUtil.h"
 #include "MeshLib/Mesh.h"
-#include "PhreeqcIO.h"
 #include "PhreeqcIOData/AqueousSolution.h"
 #include "PhreeqcIOData/Dump.h"
 #include "PhreeqcIOData/EquilibriumReactant.h"
@@ -25,8 +28,6 @@
 #include "PhreeqcIOData/ReactionRate.h"
 #include "PhreeqcIOData/Surface.h"
 #include "PhreeqcIOData/UserPunch.h"
-
-#include <iphreeqc/src/src/IPhreeqc.h>
 
 namespace ChemistryLib
 {

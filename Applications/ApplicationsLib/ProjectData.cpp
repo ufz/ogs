@@ -25,7 +25,7 @@
 #include "BaseLib/Algorithm.h"
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/FileTools.h"
-
+#include "BaseLib/StringTools.h"
 #include "GeoLib/GEOObjects.h"
 #include "MaterialLib/MPL/CreateMedium.h"
 #include "MathLib/Curve/CreatePiecewiseLinearCurve.h"
@@ -33,7 +33,6 @@
 #include "MeshGeoToolsLib/CreateSearchLength.h"
 #include "MeshGeoToolsLib/SearchLength.h"
 #include "MeshLib/Mesh.h"
-
 #include "NumLib/ODESolver/ConvergenceCriterion.h"
 #include "ProcessLib/CreateJacobianAssembler.h"
 #include "ProcessLib/DeactivatedSubdomain.h"

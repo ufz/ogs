@@ -10,13 +10,13 @@
 #include "GocadSGridReader.h"
 
 #include <algorithm>
+#include <boost/tokenizer.hpp>
 #include <cstddef>
 #include <fstream>
 #include <iostream>
 #include <sstream>
 
-#include <boost/tokenizer.hpp>
-
+#include "BaseLib/FileTools.h"
 #include "MeshLib/Elements/Hex.h"
 #include "MeshLib/Elements/Quad.h"
 #include "MeshLib/Mesh.h"

@@ -8,18 +8,19 @@
  *              http://www.opengeosys.org/LICENSE.txt
  */
 
+#include <tclap/CmdLine.h>
+
+#include <fstream>
 #include <memory>
 #include <string>
 
-#include <tclap/CmdLine.h>
-
-#include "InfoLib/GitInfo.h"
 #include "GeoLib/AABB.h"
+#include "InfoLib/GitInfo.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/Mesh.h"
+#include "MeshLib/MeshEditing/ProjectPointOnMesh.h"
 #include "MeshLib/MeshSearch/MeshElementGrid.h"
 #include "MeshLib/Node.h"
-#include "MeshLib/MeshEditing/ProjectPointOnMesh.h"
 
 int main(int argc, char* argv[])
 {

@@ -9,6 +9,10 @@
  */
 
 #include "CreateChemicalSolverInterface.h"
+
+#include <iphreeqc/src/src/phreeqcpp/cxxKinetics.h>
+
+#include "BaseLib/FileTools.h"
 #include "Common/CreateReactionRate.h"
 #include "MeshLib/Mesh.h"
 #include "PhreeqcIO.h"
@@ -33,8 +37,6 @@
 #include "PhreeqcKernelData/CreateEquilibriumReactants.h"
 #include "PhreeqcKernelData/CreateKineticReactant.h"
 #include "PhreeqcKernelData/ReactionRate.h"
-
-#include <iphreeqc/src/src/phreeqcpp/cxxKinetics.h>
 
 namespace
 {

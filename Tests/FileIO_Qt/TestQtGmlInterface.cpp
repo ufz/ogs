@@ -14,14 +14,13 @@
 
 #include <cstdio>
 
-#include "gtest/gtest.h"
-
-#include "Tests/FileIO/TestGmlInterface.h"
-
-#include "filesystem.h"
-#include "InfoLib/TestInfo.h"
-#include "GeoLib/IO/XmlIO/Qt/XmlGmlInterface.h"
+#include "BaseLib/StringTools.h"
 #include "GeoLib/GEOObjects.h"
+#include "GeoLib/IO/XmlIO/Qt/XmlGmlInterface.h"
+#include "InfoLib/TestInfo.h"
+#include "Tests/FileIO/TestGmlInterface.h"
+#include "filesystem.h"
+#include "gtest/gtest.h"
 
 TEST_F(TestGmlInterface, QtXmlGmlWriterReaderTest)
 {

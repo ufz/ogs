@@ -18,11 +18,10 @@
 #include <numeric>
 #include <unordered_map>
 
-#include "BaseLib/Logging.h"
-
 #include "BaseLib/Error.h"
+#include "BaseLib/FileTools.h"
+#include "BaseLib/Logging.h"
 #include "BaseLib/Stream.h"
-
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 
 namespace ApplicationUtils
