@@ -125,4 +125,4 @@ std::string randomString(std::size_t const length)
     return s;
 }
 
-} // end namespace BaseLib
+}  // end namespace BaseLib
