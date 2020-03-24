@@ -1,7 +1,6 @@
 # Supply include directories and compiler flags
 get_directory_property(INCLUDE_DIRS INCLUDE_DIRECTORIES)
-set(CMAKE_REQUIRED_FLAGS "-c -std=gnu++14")
-set(CMAKE_REQUIRED_QUIET TRUE)
+set(CMAKE_REQUIRED_FLAGS "-c")
 
 add_custom_target(check-header
     COMMAND ${CMAKE_COMMAND} -E remove -f CMakeFiles/CMakeError.log
@@ -31,8 +30,11 @@ function(_check_header_compilation TARGET)
     get_target_property(LINK_LIBS ${TARGET} LINK_LIBRARIES)
     foreach(LIB ${LINK_LIBS})
         # Ignore non-existing targets or interface libs
+        if(NOT TARGET ${LIB})
+            continue()
+        endif()
         get_target_property(LIB_TYPE ${LIB} TYPE)
-        if(NOT TARGET ${LIB} OR LIB_TYPE STREQUAL "INTERFACE_LIBRARY")
+        if(LIB_TYPE STREQUAL "INTERFACE_LIBRARY")
             continue()
         endif()
         get_target_property(TARGET_INCLUDE_DIRS ${LIB} INCLUDE_DIRECTORIES)
@@ -58,21 +60,24 @@ function(_check_header_compilation TARGET)
             continue()
         endif()
 
+        string(REPLACE "${PROJECT_SOURCE_DIR}/" "" TEST_NAME ${FILE})
+        string(REPLACE "." "_" TEST_NAME ${TEST_NAME})
+        string(REPLACE "/" "_" TEST_NAME ${TEST_NAME})
         check_cxx_source_compiles(
             "
             #include \"${FILE}\"
             int main() { return 0; }
             "
-            COMPILES
+            ${TEST_NAME}_COMPILES
         )
 
-        if(NOT COMPILES)
+        if(NOT ${TEST_NAME}_COMPILES)
             set(HEADER_COMPILE_ERROR TRUE CACHE INTERNAL "")
-            string(REPLACE "${PROJECT_SOURCE_DIR}/" "" FILE_SHORT ${FILE})
-            message(STATUS "  Compilation failed for ${FILE_SHORT}")
+            message(STATUS "  Compilation failed for ${FILE}")
         endif()
-        unset(COMPILES CACHE)
+        unset(${TEST_NAME}_COMPILES CACHE)
 
+        unset(TEST_NAME)
     endforeach()
 endfunction()
 
@@ -83,12 +88,17 @@ function(check_header_compilation)
     set(HEADER_COMPILE_ERROR FALSE CACHE INTERNAL "")
 
     _check_header_compilation(BaseLib)
+    _check_header_compilation(ChemistryLib)
     _check_header_compilation(GeoLib)
+    foreach(lib Git CMake Test)
+        _check_header_compilation(${lib}InfoLib)
+    endforeach(lib)
     _check_header_compilation(MaterialLib)
     _check_header_compilation(MathLib)
     _check_header_compilation(MeshGeoToolsLib)
     _check_header_compilation(MeshLib)
     _check_header_compilation(NumLib)
+    _check_header_compilation(ParameterLib)
     _check_header_compilation(ProcessLib)
 
     if(HEADER_COMPILE_ERROR)
