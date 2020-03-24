@@ -113,6 +113,11 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
         return createSaturationVanGenuchten(config);
     }
 
+    if (boost::iequals(property_type, "CapillaryPressureVanGenuchten"))
+    {
+        return createCapillaryPressureVanGenuchten(config);
+    }
+
     if (boost::iequals(property_type, "RelativePermeabilityVanGenuchten"))
     {
         return createRelPermVanGenuchten(config);

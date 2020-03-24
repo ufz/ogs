@@ -11,6 +11,7 @@
  */
 #pragma once
 
+#include "CapillaryPressureSaturation/CreateCapillaryPressureVanGenuchten.h"
 #include "CapillaryPressureSaturation/CreateSaturationBrooksCorey.h"
 #include "CapillaryPressureSaturation/CreateSaturationLiakopoulos.h"
 #include "CapillaryPressureSaturation/CreateSaturationVanGenuchten.h"
