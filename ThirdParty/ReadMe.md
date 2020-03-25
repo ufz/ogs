@@ -1,17 +1,5 @@
 # Third-party libraries #
 
-## logog ##
-
-For details how to use logog see the [OGS devguide](http://devguide.opengeosys.com/logging/) and the [logog documentation](http://johnwbyrd.github.com/logog/).
-
-[logog](http://johnwbyrd.github.com/logog/) is integrated as a [git-subtree](https://github.com/apenwarr/git-subtree) and can be updated with (executed in the sources root):
-
-    git-subtree pull -P ThirdParty/logog --squash https://github.com/johnwbyrd/logog.git
-
-It was initially integrated with:
-
-    git-subtree add -P ThirdParty/logog --squash https://github.com/johnwbyrd/logog.git master
-
 ## RapidXML ##
 
 Is used for XML-IO. Is integrated directly.
@@ -40,3 +28,7 @@ tests are too large.
 ## exprtk ##
 
 Header only c++ mathematical expression parsing and evaluation library
+
+## spdlog ##
+
+Very fast, header-only/compiled, C++ logging library.
