@@ -21,12 +21,12 @@ set(TOOLS
     UnityPreprocessing
     Vtu2Grid)
 if(OGS_BUILD_GUI)
-    add_executable(RemoveGhostNodes
-        RemoveGhostNodes.cpp
+    add_executable(RemoveGhostData
+        RemoveGhostData.cpp
         vtkCleanUnstructuredGrid.cpp)
-    target_link_libraries(RemoveGhostNodes GitInfoLib MeshLib)
-    set_target_properties(RemoveGhostNodes PROPERTIES FOLDER Utilities)
-    install(TARGETS RemoveGhostNodes RUNTIME DESTINATION bin COMPONENT Utilities)
+    target_link_libraries(RemoveGhostData GitInfoLib MeshLib)
+    set_target_properties(RemoveGhostData PROPERTIES FOLDER Utilities)
+    install(TARGETS RemoveGhostData RUNTIME DESTINATION bin COMPONENT Utilities)
 endif()
 foreach(TOOL ${TOOLS})
     add_executable(${TOOL} ${TOOL}.cpp)
