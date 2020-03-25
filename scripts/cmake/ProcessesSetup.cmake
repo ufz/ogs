@@ -2,7 +2,6 @@
 # processes to be build.
 set(ProcessesList
     ComponentTransport
-    GroundwaterFlow
     HT
     HeatConduction
     HeatTransportBHE
@@ -15,6 +14,7 @@ set(ProcessesList
     RichardsMechanics
     SmallDeformation
     SmallDeformationNonlocal
+    SteadyStateDiffusion
     TES
     ThermalTwoPhaseFlowWithPP
     ThermoHydroMechanics

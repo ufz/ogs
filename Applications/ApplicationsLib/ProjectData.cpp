@@ -54,8 +54,8 @@
 #include "ProcessLib/ComponentTransport/ComponentTransportProcess.h"
 #include "ProcessLib/ComponentTransport/CreateComponentTransportProcess.h"
 #endif
-#ifdef OGS_BUILD_PROCESS_GROUNDWATERFLOW
-#include "ProcessLib/GroundwaterFlow/CreateGroundwaterFlowProcess.h"
+#ifdef OGS_BUILD_PROCESS_STEADYSTATEDIFFUSION
+#include "ProcessLib/SteadyStateDiffusion/CreateSteadyStateDiffusion.h"
 #endif
 #ifdef OGS_BUILD_PROCESS_HT
 #include "ProcessLib/HT/CreateHTProcess.h"
@@ -534,18 +534,19 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
             //! \ogs_file_param{prj__processes__process__jacobian_assembler}
             process_config.getConfigSubtreeOptional("jacobian_assembler"));
 
-#ifdef OGS_BUILD_PROCESS_GROUNDWATERFLOW
-        if (type == "GROUNDWATER_FLOW")
+#ifdef OGS_BUILD_PROCESS_STEADYSTATEDIFFUSION
+        if (type == "STEADY_STATE_DIFFUSION")
         {
             // The existence check of the in the configuration referenced
             // process variables is checked in the physical process.
             // TODO at the moment we have only one mesh, later there can be
             // several meshes. Then we have to assign the referenced mesh
             // here.
-            process = ProcessLib::GroundwaterFlow::createGroundwaterFlowProcess(
-                name, *_mesh_vec[0], std::move(jacobian_assembler),
-                _process_variables, _parameters, integration_order,
-                process_config, _mesh_vec, output_directory, _media);
+            process =
+                ProcessLib::SteadyStateDiffusion::createSteadyStateDiffusion(
+                    name, *_mesh_vec[0], std::move(jacobian_assembler),
+                    _process_variables, _parameters, integration_order,
+                    process_config, _mesh_vec, output_directory, _media);
         }
         else
 #endif
