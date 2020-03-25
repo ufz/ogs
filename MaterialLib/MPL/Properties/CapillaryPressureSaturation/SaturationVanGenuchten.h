@@ -16,7 +16,7 @@ class Medium;
 class Phase;
 class Component;
 /**
- *   \brief The van Genuchten capillary pressure model.
+ *   \brief The van Genuchten capillary pressure model:
  *
  *   \f[p_c(S)=p_b (S_e^{-1/m}-1)^{1-m}\f]
  *   with
@@ -26,22 +26,28 @@ class Component;
  *       &p_b&            \mbox{ entry pressure,}\\
  *       &S_r&            \mbox{ residual saturation,}\\
  *       &S_{\mbox{max}}& \mbox{ maximum saturation,}\\
- *       &m(<=1) &        \mbox{ exponent.}\\
+ *       &m \in [0,1) &        \mbox{ exponent.}\\
  *    \f}
  *
- *    Note:
- *     \f[m=1/(1-n)\f].
+ *    Note in some expressions, a parameter of \f$n\f$ is introduced, where
+ *     \f[n=1/(1-m)\f].
  *
  *    If \f$\alpha\f$ instead of \f$p_b\f$ is available, \f$p_b\f$ can
  * be calculated
  * as
- *    \f[p_b=\rho g/\alpha\f]
+ *    \f[p_b=\rho g/\alpha\f].
  *
  *  If the capillary pressure is known, the saturation can be
  *  obtained by this model with
- *  \f[S(p_c)=
- *    \left( \left(\dfrac{p_c}{p_b}\right)^{\frac{1}{m}} +1\right)^{-m}
- *     (S_{\mbox{max}}-S_r) +S_r \f]
+ *  \f[S(p_c)=\left \{
+ *  \begin{array}{1}
+ *   S_{\mbox{max}},\, p_c < 0,\\
+ *    \left( \left(\dfrac{p_c}{p_b}\right)^{\frac{1}{1-m}} +1\right)^{-m}
+ *     (S_{\mbox{max}}-S_r) +S_r,\, p_c  \geq 0
+      \end{array}
+ *   \right.
+ * \f].
+ *
  *   class SaturationVanGenuchten handles the computations associated
  *    with  \f$S(p_c)\f$.
  */
