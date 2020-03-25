@@ -331,3 +331,16 @@ if(OGS_USE_NETCDF)
         slim_100897_198.vtu slim_100897_198.vtu NO NO 1e-16 0
     )
 endif()
+
+if(OGS_BUILD_GUI)
+    AddTest(
+        NAME RemoveGhostData_Test
+        PATH MeshLib/
+        EXECUTABLE RemoveGhostData
+        EXECUTABLE_ARGS -i Mesh3D.pvtu -o ${Data_BINARY_DIR}/MeshLib/RemoveGhostDataOutput.vtu
+        REQUIREMENTS NOT OGS_USE_MPI
+        TESTER vtkdiff
+        DIFF_DATA
+        RemoveGhostDataOutput.vtu RemoveGhostDataOutput.vtu slice slice 0 0
+    )
+endif()
