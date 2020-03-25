@@ -23,7 +23,9 @@ set(TOOLS
 if(OGS_BUILD_GUI)
     add_executable(RemoveGhostData
         RemoveGhostData.cpp
-        vtkCleanUnstructuredGrid.cpp)
+        ${PROJECT_SOURCE_DIR}/ThirdParty/paraview/vtkCleanUnstructuredGrid.cpp)
+    target_include_directories(RemoveGhostData
+        PRIVATE ${PROJECT_SOURCE_DIR}/ThirdParty/paraview)
     target_link_libraries(RemoveGhostData GitInfoLib MeshLib)
     set_target_properties(RemoveGhostData PROPERTIES FOLDER Utilities)
     install(TARGETS RemoveGhostData RUNTIME DESTINATION bin COMPONENT Utilities)
