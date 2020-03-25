@@ -28,7 +28,7 @@ SaturationBrooksCorey::SaturationBrooksCorey(
     const double exponent,
     const double entry_pressure)
     : _residual_liquid_saturation(residual_liquid_saturation),
-      _residual_gas_saturation(residual_gas_saturation),
+      _max_liquid_saturation(1.0 - residual_gas_saturation),
       _exponent(exponent),
       _entry_pressure(entry_pressure){};
 
@@ -41,7 +41,7 @@ PropertyDataType SaturationBrooksCorey::value(
         variable_array[static_cast<int>(Variable::capillary_pressure)]);
 
     const double s_L_res = _residual_liquid_saturation;
-    const double s_L_max = 1.0 - _residual_gas_saturation;
+    const double s_L_max = _max_liquid_saturation;
     const double lambda = _exponent;
     const double p_b = _entry_pressure;
 
@@ -63,7 +63,7 @@ PropertyDataType SaturationBrooksCorey::dValue(
            " derivatives with respect to capillary pressure only.");
 
     const double s_L_res = _residual_liquid_saturation;
-    const double s_L_max = 1.0 - _residual_gas_saturation;
+    const double s_L_max = _max_liquid_saturation;
     const double p_b = _entry_pressure;
     const double p_cap = std::max(
         p_b,
@@ -99,7 +99,7 @@ PropertyDataType SaturationBrooksCorey::d2Value(
             variable_array[static_cast<int>(Variable::capillary_pressure)]));
 
     const double s_L_res = _residual_liquid_saturation;
-    const double s_L_max = 1.0 - _residual_gas_saturation;
+    const double s_L_max = _max_liquid_saturation;
 
     const double lambda = _exponent;
 
