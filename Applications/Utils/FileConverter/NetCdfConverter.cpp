@@ -362,9 +362,11 @@ static double getResolution(NcFile const& dataset, NcVar const& var)
     auto const bounds = (dim_var.isNull()) ? getDimLength(var, dim_idx)
                                            : getBoundaries(dim_var);
     std::size_t const dim_size = var.getDim(dim_idx).getSize();
-    std::string const err_msg("Dimension \"" + var.getDim(dim_idx).getName() +
-                              "\" has size 0. Aborting...");
-    if (dim_size == 0) return OGS_FATAL(err_msg.c_str());
+    if (dim_size == 0)
+    {
+        OGS_FATAL("Dimension '{:s}' has size 0. Aborting...",
+                  var.getDim(dim_idx).getName());
+    }
     return std::fabs(bounds.second - bounds.first) / static_cast<double>(dim_size);
 }
 
