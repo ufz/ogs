@@ -61,7 +61,7 @@ if(OGS_BUILD_GUI)
         vtkIOImage vtkIOLegacy vtkIOExport vtkIOExportPDF
         vtkIOExportOpenGL2 vtkInteractionStyle vtkInteractionWidgets
         vtkGUISupportQt vtkRenderingOpenGL2 vtkRenderingContextOpenGL2
-        vtkFiltersTexture vtkRenderingCore
+        vtkFiltersTexture vtkRenderingCore vtkFiltersParallel
     )
 endif()
 if(OGS_USE_MPI)
