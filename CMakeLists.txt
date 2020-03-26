@@ -69,7 +69,6 @@ include(PreFind)
 include(SubmoduleSetup)
 include(ProcessesSetup)
 include(ProjectSetup)
-add_subdirectory(ThirdParty)
 include(Versions)
 include(CheckTypeSizes)
 include(CheckArchitecture)
@@ -279,6 +278,7 @@ if(OGS_INSITU)
     add_definitions(-DUSE_INSITU)
 endif()
 
+add_subdirectory(ThirdParty)
 include_directories(
     SYSTEM
     ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty
@@ -306,7 +306,6 @@ add_subdirectory(MeshGeoToolsLib)
 add_subdirectory(NumLib)
 
 if(OGS_BUILD_PROCESS_ComponentTransport
-   OR OGS_BUILD_PROCESS_RichardsComponentTransport
    OR OGS_BUILD_PROCESS_RichardsComponentTransport
    OR OGS_BUILD_PROCESS_HeatTransportBHE)
     add_subdirectory(ChemistryLib)
