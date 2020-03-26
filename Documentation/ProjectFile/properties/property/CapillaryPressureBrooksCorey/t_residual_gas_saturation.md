@@ -1,0 +1,2 @@
+\copydoc ogs_file_param__properties__property__SaturationBrooksCorey__residual_gas_saturation
+
