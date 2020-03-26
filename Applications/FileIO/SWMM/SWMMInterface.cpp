@@ -8,27 +8,24 @@
 
 #include "SwmmInterface.h"
 
+#include <boost/algorithm/string/predicate.hpp>
 #include <cctype>
 #include <fstream>
 #include <utility>
 
+#include "Applications/FileIO/CsvInterface.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/StringTools.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Point.h"
-#include "GeoLib/Polyline.h"
-#include "GeoLib/Polygon.h"
 #include "GeoLib/PointVec.h"
-
+#include "GeoLib/Polygon.h"
+#include "GeoLib/Polyline.h"
+#include "MeshLib/Elements/Line.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
-#include "MeshLib/Elements/Line.h"
 #include "MeshLib/Properties.h"
-
-#include "Applications/FileIO/CsvInterface.h"
-
 #include "ThirdParty/SWMMInterface/swmm5_iface.h"
-
 
 namespace FileIO
 {
@@ -130,9 +127,7 @@ SwmmInterface::~SwmmInterface()
 
 bool SwmmInterface::isSwmmInputFile(std::string const& inp_file_name)
 {
-    std::string path (inp_file_name);
-    std::transform(path.begin(), path.end(), path.begin(), std::tolower);
-    if (BaseLib::getFileExtension(path) != "inp")
+    if (!boost::iequals(BaseLib::getFileExtension(inp_file_name), "inp"))
     {
         ERR ("SWMMInterface: %s is not a SWMM input file.", inp_file_name.c_str());
         return false;
