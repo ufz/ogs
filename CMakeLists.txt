@@ -69,7 +69,6 @@ include(PreFind)
 include(SubmoduleSetup)
 include(ProcessesSetup)
 include(ProjectSetup)
-add_subdirectory(ThirdParty)
 include(Versions)
 include(CheckTypeSizes)
 include(CheckArchitecture)
@@ -279,6 +278,7 @@ if(OGS_INSITU)
     add_definitions(-DUSE_INSITU)
 endif()
 
+add_subdirectory(ThirdParty)
 include_directories(
     SYSTEM
     ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty
