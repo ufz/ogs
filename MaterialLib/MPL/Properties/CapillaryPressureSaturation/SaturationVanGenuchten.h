@@ -16,40 +16,29 @@ class Medium;
 class Phase;
 class Component;
 /**
- *   \brief The van Genuchten capillary pressure model:
+ * \brief The van Genuchten capillary pressure model.
  *
- *   \f[p_c(S)=p_b (S_e^{-1/m}-1)^{1-m}\f]
- *   with
- *   \f[S_e=\frac{S-S_r}{S_{\mbox{max}}-S_r}\f]
- *   where
- *    \f{eqnarray*}{
- *       &p_b&            \mbox{ entry pressure,}\\
- *       &S_r&            \mbox{ residual saturation,}\\
- *       &S_{\mbox{max}}& \mbox{ maximum saturation,}\\
- *       &m \in [0,1) &        \mbox{ exponent.}\\
- *    \f}
+ * The van Genuchten capillary pressure model (\cite Genuchten1980) is:
+ * \f[p_c(S)=p_b (S_\text{eff}^{-1/m}-1)^{1-m}\f]
+ * with effective saturation defined as
+ * \f[S_\text{eff}=\frac{S-S_r}{S_{\text{max}}-S_r}.\f]
+ * Above, \f$S_r\f$ and \f$S_{\text{max}}\f$ are the residual and the maximum
+ * saturations.
+ * The exponent \f$m \in (0,1)\f$ and the parameter \f$p_b\f$ (it is equal to
+ * \f$\rho g/\alpha\f$ in original publication) are given by the user.
  *
- *    Note in some expressions, a parameter of \f$n\f$ is introduced, where
- *     \f[n=1/(1-m)\f].
+ * Sometimes a formulation with \f$n = 1 / (1 - m) > 1\f$ is used.
  *
- *    If \f$\alpha\f$ instead of \f$p_b\f$ is available, \f$p_b\f$ can
- * be calculated
- * as
- *    \f[p_b=\rho g/\alpha\f].
- *
- *  If the capillary pressure is known, the saturation can be
- *  obtained by this model with
- *  \f[S(p_c)=\left \{
- *  \begin{array}{1}
- *   S_{\mbox{max}},\, p_c < 0,\\
- *    \left( \left(\dfrac{p_c}{p_b}\right)^{\frac{1}{1-m}} +1\right)^{-m}
- *     (S_{\mbox{max}}-S_r) +S_r,\, p_c  \geq 0
-      \end{array}
- *   \right.
- * \f].
- *
- *   class SaturationVanGenuchten handles the computations associated
- *    with  \f$S(p_c)\f$.
+ * The saturation is computed from the capillary pressure as follows:
+ * \f[S(p_c)=
+ * \begin{cases}
+ *  S_{\text{max}} & \text{for $p_c \leq 0$, and}\\
+ *   \left( \left(\frac{p_c}{p_b}\right)^{\frac{1}{1-m}} +1\right)^{-m}
+ *    (S_{\text{max}}-S_r) +S_r& \text{for $p_c > 0$.}
+ * \end{cases}
+ * \f]
+ * The result is then clamped between the residual and maximum liquid
+ * saturations.
  */
 class SaturationVanGenuchten final : public Property
 {
