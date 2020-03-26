@@ -14,8 +14,8 @@
 #include "InfoLib/GitInfo.h"
 
 #include "MeshLib/IO/writeMeshToFile.h"
-#include "vtkCleanUnstructuredGrid.h"
 
+#include <vtkCleanUnstructuredGrid.h>
 #include <vtkRemoveGhosts.h>
 #include <vtkSmartPointer.h>
 #include <vtkUnstructuredGrid.h>
