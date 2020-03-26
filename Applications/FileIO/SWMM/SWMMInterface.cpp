@@ -450,7 +450,7 @@ bool SwmmInterface::convertSwmmInputToGeometry(std::string const& inp_file_name,
         }
         else if (line == "[WEIRS]")
         {
-            INFO ("Reading weirs...")
+            INFO ("Reading weirs...");
             if (!readLinksAsPolylines(in, *lines, line_names, *points, *name_id_map))
                 return geometryCleanup(*points, *lines);
         }
@@ -756,7 +756,7 @@ bool SwmmInterface::readSwmmInputToLineMesh()
         }
         else if (line == "[WEIRS]")
         {
-            INFO ("Reading weirs...")
+            INFO ("Reading weirs...");
             if (!readLineElements(in, elements, nodes, name_id_map))
                 return false;
             n_elem_types[2] = elements.size();
