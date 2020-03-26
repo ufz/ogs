@@ -24,10 +24,13 @@ class Component;
  * \f[S_\text{eff}=\frac{S-S_r}{S_{\text{max}}-S_r}.\f]
  * Above, \f$S_r\f$ and \f$S_{\text{max}}\f$ are the residual and the maximum
  * saturations.
- * The exponent \f$m \in (0,1)\f$ and the parameter \f$p_b\f$ (it is equal to
- * \f$\rho g/\alpha\f$ in original publication) are given by the user.
+ * The exponent \f$m \in (0,1)\f$ and the pressure scaling parameter \f$p_b\f$
+ * (it is equal to \f$\rho g/\alpha\f$ in original publication) are given by the
+ * user.
+ * The scaling parameter \f$p_b\f$ is given in same units as pressure.
  *
- * Sometimes a formulation with \f$n = 1 / (1 - m) > 1\f$ is used.
+ * In the original work another exponent \f$n\f$ is used, but usually set to
+ * \f$n = 1 / (1 - m)\f$, and also in this implementation.
  *
  * The saturation is computed from the capillary pressure as follows:
  * \f[S(p_c)=
@@ -46,7 +49,7 @@ public:
     SaturationVanGenuchten(double const residual_liquid_saturation,
                            double const residual_gas_saturation,
                            double const exponent,
-                           double const entry_pressure);
+                           double const p_b);
 
     void setScale(
         std::variant<Medium*, Phase*, Component*> scale_pointer) override
