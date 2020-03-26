@@ -15,7 +15,7 @@
 #include "Tests/TestTools.h"
 
 #include "MaterialLib/MPL/Medium.h"
-#include "MaterialLib/MPL/Properties/SaturationBrooksCorey.h"
+#include "MaterialLib/MPL/Properties/CapillaryPressureSaturation/SaturationBrooksCorey.h"
 
 TEST(MaterialPropertyLib, SaturationBrooksCorey)
 {

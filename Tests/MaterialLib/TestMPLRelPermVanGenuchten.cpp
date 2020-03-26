@@ -10,7 +10,7 @@
 #include <gtest/gtest.h>
 
 #include "MaterialLib/MPL/Medium.h"
-#include "MaterialLib/MPL/Properties/RelPermVanGenuchten.h"
+#include "MaterialLib/MPL/Properties/RelativePermeability/RelPermVanGenuchten.h"
 #include "TestMPL.h"
 #include "Tests/TestTools.h"
 

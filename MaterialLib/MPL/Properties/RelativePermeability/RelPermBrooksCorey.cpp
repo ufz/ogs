@@ -12,11 +12,12 @@
  *
  */
 
-#include "MaterialLib/MPL/Properties/RelPermBrooksCorey.h"
-#include "MaterialLib/MPL/Medium.h"
+#include "RelPermBrooksCorey.h"
 
 #include <algorithm>
 #include <cmath>
+
+#include "MaterialLib/MPL/Medium.h"
 
 namespace MaterialPropertyLib
 {

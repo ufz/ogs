@@ -12,7 +12,8 @@
  *
  */
 
-#include "MaterialLib/MPL/Properties/SaturationLiakopoulos.h"
+#include "SaturationLiakopoulos.h"
+
 #include "MaterialLib/MPL/Medium.h"
 #include "MathLib/MathTools.h"
 

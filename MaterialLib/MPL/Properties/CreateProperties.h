@@ -11,6 +11,10 @@
  */
 #pragma once
 
+#include "CapillaryPressureSaturation/CreateSaturationBrooksCorey.h"
+#include "CapillaryPressureSaturation/CreateSaturationLiakopoulos.h"
+#include "CapillaryPressureSaturation/CreateSaturationVanGenuchten.h"
+
 #include "CreateBishopsPowerLaw.h"
 #include "CreateBishopsSaturationCutoff.h"
 #include "CreateConstant.h"
@@ -22,11 +26,11 @@
 #include "CreateParameterProperty.h"
 #include "CreatePermeabilityOrthotropicPowerLaw.h"
 #include "CreatePorosityFromMassBalance.h"
-#include "CreateRelPermBrooksCorey.h"
-#include "CreateRelPermLiakopoulos.h"
-#include "CreateRelPermVanGenuchten.h"
-#include "CreateSaturationBrooksCorey.h"
+#include "CapillaryPressureSaturation/CreateSaturationBrooksCorey.h"
 #include "CreateSaturationDependentSwelling.h"
-#include "CreateSaturationLiakopoulos.h"
-#include "CreateSaturationVanGenuchten.h"
+#include "CapillaryPressureSaturation/CreateSaturationLiakopoulos.h"
+#include "CapillaryPressureSaturation/CreateSaturationVanGenuchten.h"
 #include "CreateTransportPorosityFromMassBalance.h"
+#include "RelativePermeability/CreateRelPermBrooksCorey.h"
+#include "RelativePermeability/CreateRelPermLiakopoulos.h"
+#include "RelativePermeability/CreateRelPermVanGenuchten.h"

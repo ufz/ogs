@@ -15,7 +15,7 @@
 #include "Tests/TestTools.h"
 
 #include "MaterialLib/MPL/Medium.h"
-#include "MaterialLib/MPL/Properties/RelPermBrooksCorey.h"
+#include "MaterialLib/MPL/Properties/RelativePermeability/RelPermBrooksCorey.h"
 
 TEST(MaterialPropertyLib, RelPermBrooksCorey)
 {

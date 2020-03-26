@@ -15,20 +15,44 @@ namespace MaterialPropertyLib
 class Medium;
 class Phase;
 class Component;
-
-/// The van Genuchten soil characteristics function.
-///
-/// This property must be a medium property, it computes the saturation of the
-/// wetting phase as function of capillary pressure.
+/**
+ *   \brief The van Genuchten capillary pressure model:
+ *
+ *   \f[p_c(S)=p_b (S_e^{-1/m}-1)^{1-m}\f]
+ *   with
+ *   \f[S_e=\frac{S-S_r}{S_{\mbox{max}}-S_r}\f]
+ *   where
+ *    \f{eqnarray*}{
+ *       &p_b&            \mbox{ entry pressure,}\\
+ *       &S_r&            \mbox{ residual saturation,}\\
+ *       &S_{\mbox{max}}& \mbox{ maximum saturation,}\\
+ *       &m \in [0,1) &        \mbox{ exponent.}\\
+ *    \f}
+ *
+ *    Note in some expressions, a parameter of \f$n\f$ is introduced, where
+ *     \f[n=1/(1-m)\f].
+ *
+ *    If \f$\alpha\f$ instead of \f$p_b\f$ is available, \f$p_b\f$ can
+ * be calculated
+ * as
+ *    \f[p_b=\rho g/\alpha\f].
+ *
+ *  If the capillary pressure is known, the saturation can be
+ *  obtained by this model with
+ *  \f[S(p_c)=\left \{
+ *  \begin{array}{1}
+ *   S_{\mbox{max}},\, p_c < 0,\\
+ *    \left( \left(\dfrac{p_c}{p_b}\right)^{\frac{1}{1-m}} +1\right)^{-m}
+ *     (S_{\mbox{max}}-S_r) +S_r,\, p_c  \geq 0
+      \end{array}
+ *   \right.
+ * \f].
+ *
+ *   class SaturationVanGenuchten handles the computations associated
+ *    with  \f$S(p_c)\f$.
+ */
 class SaturationVanGenuchten final : public Property
 {
-private:
-    Medium* _medium = nullptr;
-    double const _S_L_res;
-    double const _S_L_max;
-    double const _m;
-    double const _p_b;
-
 public:
     SaturationVanGenuchten(double const residual_liquid_saturation,
                            double const residual_gas_saturation,
@@ -63,5 +87,12 @@ public:
                              ParameterLib::SpatialPosition const& /*pos*/,
                              double const /*t*/,
                              double const /*dt*/) const override;
+
+private:
+    Medium* _medium = nullptr;
+    double const _S_L_res;
+    double const _S_L_max;
+    double const _m;
+    double const _p_b;
 };
 }  // namespace MaterialPropertyLib
