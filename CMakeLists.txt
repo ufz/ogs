@@ -307,7 +307,6 @@ add_subdirectory(NumLib)
 
 if(OGS_BUILD_PROCESS_ComponentTransport
    OR OGS_BUILD_PROCESS_RichardsComponentTransport
-   OR OGS_BUILD_PROCESS_RichardsComponentTransport
    OR OGS_BUILD_PROCESS_HeatTransportBHE)
     add_subdirectory(ChemistryLib)
 endif()
