@@ -15,6 +15,7 @@
 #include "BishopsSaturationCutoff.h"
 #include "Constant.h"
 #include "CapillaryPressureSaturation/CapillaryPressureBrooksCorey.h"
+#include "CapillaryPressureSaturation/CapillaryPressureLiakopoulos.h"
 #include "CapillaryPressureSaturation/CapillaryPressureVanGenuchten.h"
 #include "CapillaryPressureSaturation/SaturationBrooksCorey.h"
 #include "CapillaryPressureSaturation/SaturationLiakopoulos.h"
