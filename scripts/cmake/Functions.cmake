@@ -94,7 +94,7 @@ function(ogs_add_library targetName)
     generate_export_header(${targetName})
     target_include_directories(${targetName} PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 
-    if(OGS_USE_PCH)
+    if(OGS_USE_PCH AND NOT ${targetName} STREQUAL "ChemistryLib")
         cotire(${targetName})
     endif()
 endfunction()
