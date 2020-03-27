@@ -37,7 +37,7 @@ void varInfo(std::string const& msg,
 /// Prints info about MFront parameters.
 void varInfo(std::string const& msg, std::vector<std::string> const& parameters)
 {
-    INFO("#%s: %lu (array size %lu).", msg.c_str(), parameters.size());
+    INFO("#%s: %lu.", msg.c_str(), parameters.size());
     // mgis::behaviour::getArraySize(vars, hypothesis));
     for (auto const& parameter : parameters)
     {

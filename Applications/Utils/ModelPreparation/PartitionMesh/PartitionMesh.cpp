@@ -14,12 +14,6 @@
 
 #include <tclap/CmdLine.h>
 
-#ifdef WIN32
-#include <windows.h>
-#else
-#include <climits>
-#endif
-
 #include "Applications/ApplicationsLib/LogogSetup.h"
 #include "InfoLib/GitInfo.h"
 #include "BaseLib/CPUTime.h"
