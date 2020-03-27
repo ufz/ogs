@@ -3,10 +3,7 @@ get_source_files(SOURCES_APPLICATIONSLIB)
 set(LIB_SOURCES ${SOURCES_APPLICATIONSLIB})
 
 # Library
-add_library(ApplicationsLib ${LIB_SOURCES})
-if(BUILD_SHARED_LIBS)
-    install(TARGETS ApplicationsLib LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
-endif()
+ogs_add_library(ApplicationsLib ${LIB_SOURCES})
 
 target_link_libraries(ApplicationsLib
                       PUBLIC BaseLib GeoLib NumLib Processes logog
@@ -25,10 +22,6 @@ foreach(process ${ProcessesList})
                      PROPERTY COMPILE_DEFINITIONS ${EnableProcess})
     endif()
 endforeach()
-
-if(OGS_USE_PCH)
-    cotire(ApplicationsLib)
-endif()
 
 if(OGS_USE_PYTHON)
     target_link_libraries(ApplicationsLib PRIVATE pybind11::pybind11)

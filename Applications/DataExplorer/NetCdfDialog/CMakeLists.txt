@@ -1,8 +1,4 @@
-add_library(NetCdfDialogLib NetCdfConfigureDialog.cpp NetCdfConfigureDialog.h)
-if(BUILD_SHARED_LIBS)
-    install(TARGETS NetCdfConfigureDialog
-            LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
-endif()
+ogs_add_library(NetCdfDialogLib NetCdfConfigureDialog.cpp NetCdfConfigureDialog.h)
 target_link_libraries(NetCdfDialogLib
                       PUBLIC Qt5::Widgets
                              ${NETCDF_LIBRARIES_CXX}

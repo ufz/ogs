@@ -78,3 +78,27 @@ function(add_autogen_include target)
             ${CMAKE_CURRENT_BINARY_DIR}/${target}_autogen/include)
     endif()
 endfunction()
+
+function(ogs_add_library targetName)
+    add_library(${targetName} ${ARGN})
+    target_compile_options(${targetName} PRIVATE
+        # OR does not work with cotire
+        # $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,
+            #    $<CXX_COMPILER_ID:GNU>>:-Wall -Wextra>
+        $<$<CXX_COMPILER_ID:Clang>:-Wall -Wextra>
+        $<$<CXX_COMPILER_ID:AppleClang>:-Wall -Wextra>
+        $<$<CXX_COMPILER_ID:GNU>:-Wall -Wextra>
+        $<$<CXX_COMPILER_ID:MSVC>:/W3>)
+
+    if(BUILD_SHARED_LIBS)
+        install(TARGETS ${targetName} LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+    endif()
+
+    include(GenerateExportHeader)
+    generate_export_header(${targetName})
+    target_include_directories(${targetName} PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
+
+    if(OGS_USE_PCH AND NOT ${targetName} STREQUAL "ChemistryLib")
+        cotire(${targetName})
+    endif()
+endfunction()

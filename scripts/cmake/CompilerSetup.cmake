@@ -3,8 +3,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-# macOS: https://github.com/sakra/cotire/issues/139
-if(APPLE OR ${CMAKE_CXX_COMPILER} MATCHES "clcache")
+if(${CMAKE_CXX_COMPILER} MATCHES "clcache")
     set(OGS_USE_PCH OFF CACHE INTERNAL "")
 endif()
 if(OGS_USE_PCH)
@@ -40,10 +39,6 @@ if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR COMPILER_IS_INTEL)
             -D_GLIBCXX_DEBUG_VERIFY
         )
     endif()
-    add_compile_options(
-        -Wall
-        -Wextra
-    )
 
     # Coloring output
     option (FORCE_COLORED_OUTPUT "Always produce ANSI-colored output (GNU/Clang only)." ON)
@@ -125,7 +120,6 @@ if(MSVC)
     endif()
     add_compile_options(
         /MP # multi-core compilation
-        /W3
         /wd4290 /wd4267 /wd4996
         /bigobj
         -D_CRT_SECURE_NO_WARNINGS

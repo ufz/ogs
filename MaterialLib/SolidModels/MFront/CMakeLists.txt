@@ -2,12 +2,7 @@ set(SOURCES CreateMFront.cpp CreateMFront.h)
 
 list(APPEND SOURCES MFront.cpp MFront.h)
 
-add_library(MaterialLib_SolidModels_MFront ${SOURCES})
-
-if(BUILD_SHARED_LIBS)
-    install(TARGETS MaterialLib_SolidModels_MFront
-            LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
-endif()
+ogs_add_library(MaterialLib_SolidModels_MFront ${SOURCES})
 
 target_link_libraries(MaterialLib_SolidModels_MFront
                       PUBLIC BaseLib NumLib logog OgsMFrontBehaviour

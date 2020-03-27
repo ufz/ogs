@@ -13,10 +13,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}
 file(GLOB_RECURSE UI_FILES CONFIGURE_DEPENDS *.ui)
 source_group("UI Files" FILES ${UI_FILES})
 
-add_library(QtStratView ${SOURCES} ${HEADERS} ${UIS})
-if(BUILD_SHARED_LIBS)
-    install(TARGETS QtStratView LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
-endif()
+ogs_add_library(QtStratView ${SOURCES} ${HEADERS} ${UIS})
 
 target_link_libraries(QtStratView
                       PRIVATE BaseLib
@@ -27,7 +24,3 @@ target_link_libraries(QtStratView
 add_autogen_include(QtStratView)
 
 set_property(TARGET QtStratView PROPERTY FOLDER "DataExplorer")
-
-if(OGS_USE_PCH)
-    cotire(QtStratView)
-endif()

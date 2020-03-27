@@ -121,10 +121,7 @@ if(GEOTIFF_FOUND)
     include_directories(${GEOTIFF_INCLUDE_DIRS})
 endif() # GEOTIFF_FOUND
 
-add_library(QtDataView ${SOURCES} ${HEADERS} ${UIS})
-if(BUILD_SHARED_LIBS)
-    install(TARGETS QtDataView LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
-endif()
+ogs_add_library(QtDataView ${SOURCES} ${HEADERS} ${UIS})
 
 target_link_libraries(QtDataView
                       PUBLIC GeoLib
@@ -149,7 +146,3 @@ endif() # GEOTIFF_FOUND
 add_autogen_include(QtDataView)
 
 set_property(TARGET QtDataView PROPERTY FOLDER "DataExplorer")
-
-if(OGS_USE_PCH)
-    cotire(QtDataView)
-endif()

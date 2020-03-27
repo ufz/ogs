@@ -58,7 +58,7 @@ find_package(Boost ${ogs.minimum_version.boost} REQUIRED)
 set(VTK_COMPONENTS vtkIOXML)
 if(OGS_BUILD_GUI)
     set(VTK_COMPONENTS ${VTK_COMPONENTS}
-        vtkIOImage vtkIOLegacy vtkIOExport vtkIOExportPDF
+        vtkIOImage vtkIOLegacy vtkIOExport
         vtkIOExportOpenGL2 vtkInteractionStyle vtkInteractionWidgets
         vtkGUISupportQt vtkRenderingOpenGL2 vtkRenderingContextOpenGL2
         vtkFiltersTexture vtkRenderingCore vtkFiltersParallel

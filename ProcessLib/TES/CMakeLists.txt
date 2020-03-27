@@ -1,9 +1,7 @@
 append_source_files(SOURCES)
 
-add_library(TES ${SOURCES})
-if(BUILD_SHARED_LIBS)
-    install(TARGETS TES LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
-endif()
+ogs_add_library(TES ${SOURCES})
+
 target_link_libraries(TES PUBLIC ProcessLib PRIVATE ParameterLib)
 
 if(BUILD_TESTING)

@@ -23,11 +23,7 @@ endif()
 include(${PROJECT_SOURCE_DIR}/scripts/cmake/OGSEnabledElements.cmake)
 
 # Create the library
-add_library(ApplicationsFileIO ${SOURCES})
-if(BUILD_SHARED_LIBS)
-    install(TARGETS ApplicationsFileIO
-            LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
-endif()
+ogs_add_library(ApplicationsFileIO ${SOURCES})
 target_link_libraries(ApplicationsFileIO
                       PUBLIC BaseLib
                              DataHolderLib
@@ -47,10 +43,6 @@ endif()
 
 if(OGS_BUILD_SWMM)
     target_link_libraries(ApplicationsFileIO PRIVATE SwmmInterface)
-endif()
-
-if(OGS_USE_PCH)
-    cotire(ApplicationsFileIO)
 endif()
 
 configure_file(XmlIO/OpenGeoSysCND.xsd
