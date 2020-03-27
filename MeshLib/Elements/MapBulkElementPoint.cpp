@@ -14,6 +14,25 @@
 
 namespace MeshLib
 {
+MathLib::Point3d getBulkElementPoint(MeshLib::Tri const& /*tri*/,
+                                     std::size_t const face_id,
+                                     MathLib::WeightedPoint1D const& wp)
+{
+    switch (face_id)
+    {
+        case 0:
+            return MathLib::Point3d{std::array<double, 3>{{wp[0], 0.0, 0.0}}};
+        case 1:
+            return MathLib::Point3d{
+                std::array<double, 3>{{1 - wp[0], wp[0], 0.0}}};
+        case 2:
+            return MathLib::Point3d{
+                std::array<double, 3>{{0.0, 1 - wp[0], 0.0}}};
+        default:
+            OGS_FATAL("Invalid face id '{:d}' for the tri.", face_id);
+    }
+}
+
 MathLib::Point3d getBulkElementPoint(MeshLib::Quad const& /*quad*/,
                                      std::size_t const face_id,
                                      MathLib::WeightedPoint1D const& wp)
@@ -116,6 +135,11 @@ MathLib::Point3d getBulkElementPoint(MeshLib::Mesh const& mesh,
     {
         MeshLib::Quad const& quad(*dynamic_cast<MeshLib::Quad const*>(element));
         return getBulkElementPoint(quad, bulk_face_id, wp);
+    }
+    if (element->getCellType() == MeshLib::CellType::TRI3)
+    {
+        MeshLib::Tri const& tri = *static_cast<MeshLib::Tri const*>(element);
+        return getBulkElementPoint(tri, bulk_face_id, wp);
     }
     OGS_FATAL("Wrong cell type '{:s}' or functionality not yet implemented.",
               MeshLib::CellType2String(element->getCellType()));
