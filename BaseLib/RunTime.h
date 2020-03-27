@@ -14,14 +14,10 @@
 
 #pragma once
 
-#if defined(USE_MPI)
+#ifdef USE_MPI
 #include <mpi.h>
 #else
-#ifndef WIN32
-#include <sys/time.h>
-#else
-#include <windows.h>
-#endif
+#include <chrono>
 #endif
 
 namespace BaseLib
@@ -34,37 +30,30 @@ class RunTime
         /// Start the timer.
         void start()
         {
-#if defined(USE_MPI)
+#ifdef USE_MPI
             _start_time = MPI_Wtime();
 #else
-#ifndef WIN32
-            timeval t;
-            gettimeofday(&t, nullptr);
-            _start_time = t.tv_sec + t.tv_usec/1000000.0;
-#else
-            _start_time = timeGetTime();
-#endif
+            _start_time = std::chrono::system_clock::now();
 #endif
         }
 
-        /// Get the elapsed time after started.
+        /// Get the elapsed time in seconds.
         double elapsed() const
         {
-#if defined(USE_MPI)
+#ifdef USE_MPI
             return MPI_Wtime() - _start_time;
 #else
-#ifndef WIN32
-            timeval t;
-            gettimeofday(&t, nullptr);
-            return t.tv_sec + t.tv_usec/1000000.0 - _start_time;
-#else
-            return (timeGetTime() - _start_time)/1000.0;
-#endif
+            using namespace std::chrono;
+            return duration<double>(system_clock::now() - _start_time).count();
 #endif
         }
 
     private:
-        double _start_time = 0.;
+#ifdef USE_MPI
+        double _start_time = std::numeric_limits<double>::quiet_NaN();
+#else
+        std::chrono::time_point<std::chrono::system_clock> _start_time;
+#endif
 };
 
 } // end namespace BaseLib
