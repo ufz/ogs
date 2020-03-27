@@ -49,7 +49,7 @@ PhreeqcKernel::PhreeqcKernel(std::size_t const num_chemical_systems,
     use.Set_solution_in(true);
 
     // kinetics
-    if (kinetic_reactants->isKineticReactantDefined())
+    if (kinetic_reactants)
     {
         for (std::size_t chemical_system_id = 0;
              chemical_system_id < num_chemical_systems;

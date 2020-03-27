@@ -35,11 +35,6 @@ class Kinetics final : private cxxKinetics
 public:
     explicit Kinetics(std::vector<KineticReactant> const& kinetic_reactants);
 
-    bool isKineticReactantDefined() const
-    {
-        return !Get_kinetics_comps().empty();
-    }
-
     void setChemicalSystemID(std::size_t const chemical_system_id)
     {
         Set_n_user_both(chemical_system_id);
