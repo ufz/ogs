@@ -86,7 +86,7 @@ See the [Pandoc Help](https://pandoc.org/MANUAL.html#images) for more options on
 
 #### Equations
 
-Equations can be set with typical LaTeX syntax by using [MathJax](https://www.mathjax.org/). Blocks are defined by `$$` at the beginning and `$$` at the end of the block. Inline math uses one `$` as the delimiter. For more usage instructions see the [MathJax LaTeX help](http://docs.mathjax.org/en/latest/tex.html).
+Equations can be set with typical LaTeX syntax by using [MathJax](https://www.mathjax.org/). Blocks are defined by `$$` at the beginning and `$$` at the end of the block. Inline math uses one `$` as the delimiter. For more usage instructions see the [MathJax LaTeX help](https://docs.mathjax.org/en/latest/input/tex/index.html).
 
 #### Files and Downloads
 
@@ -118,7 +118,7 @@ ALGOLIA_WRITE_KEY=XXX node_modules/.bin/hugo-algolia --toml -s
 
 ### Used components
 
-- [Hugo](https://gothugo.com) - Web site generator
+- [Hugo](https://gohugo.com) - Web site generator
 - [Tailwind](https://tailwindcss.com/docs/what-is-tailwind) - CSS framework
 - [FontAwesome](https://fontawesome.com) - Icons, see [icon search](https://fontawesome.com/icons?d=gallery)
 - [Slick Carousel](http://kenwheeler.github.io/slick/) & [FancyBox](https://fancyapps.com/fancybox/3/) for image galleries
