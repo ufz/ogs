@@ -30,7 +30,7 @@ class Component;
  * of capillary pressure.
  *
  * Wetting (liquid) phase saturation is given by the empirical relation
- * \f[s^\mathrm{r}_\mathrm{L}=1 - 1.9722\cdot10^{-11}p_\mathrm{cap}^{2.4279}\f]
+ * \f[S=1 - 1.9722\cdot10^{-11}p_\mathrm{c}^{2.4279}\f]
  *
  */
 class SaturationLiakopoulos : public Property
