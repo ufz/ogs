@@ -1,10 +1,6 @@
 append_source_files(SOURCES)
 
-add_library(TwoPhaseFlowWithPrho ${SOURCES})
-if(BUILD_SHARED_LIBS)
-    install(TARGETS TwoPhaseFlowWithPrho
-            LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
-endif()
+ogs_add_library(TwoPhaseFlowWithPrho ${SOURCES})
 target_link_libraries(TwoPhaseFlowWithPrho
                       PUBLIC ProcessLib
                       PRIVATE ParameterLib)

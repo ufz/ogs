@@ -10,19 +10,12 @@ if(OGS_BUILD_GUI)
 endif()
 
 # Create the library
-add_library(GeoLib ${SOURCES})
-if(BUILD_SHARED_LIBS)
-    install(TARGETS GeoLib LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
-endif()
+ogs_add_library(GeoLib ${SOURCES})
 
 target_link_libraries(GeoLib PUBLIC BaseLib MathLib logog PRIVATE tet)
 
 if(OGS_BUILD_GUI)
     target_link_libraries(GeoLib PUBLIC Qt5::Xml Qt5::XmlPatterns)
-endif()
-
-if(OGS_USE_PCH)
-    cotire(GeoLib)
 endif()
 
 configure_file(IO/XmlIO/OpenGeoSysGLI.xsd

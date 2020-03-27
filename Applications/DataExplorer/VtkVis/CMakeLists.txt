@@ -119,10 +119,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}
                     ${GUI_SOURCE_DIR_REL}/DataView
                     ${GUI_SOURCE_DIR_REL}/VtkModules/Qt)
 
-add_library(VtkVis ${SOURCES} ${HEADERS} ${UIS})
-if(BUILD_SHARED_LIBS)
-    install(TARGETS VtkVis LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
-endif()
+ogs_add_library(VtkVis ${SOURCES} ${HEADERS} ${UIS})
 
 if(GEOTIFF_FOUND)
     include_directories(${GEOTIFF_INCLUDE_DIRS})
@@ -145,7 +142,3 @@ endif()
 set_property(TARGET VtkVis PROPERTY FOLDER "DataExplorer")
 
 add_autogen_include(VtkVis)
-
-if(OGS_USE_PCH)
-    cotire(VtkVis)
-endif()

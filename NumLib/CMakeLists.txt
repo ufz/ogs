@@ -14,12 +14,7 @@ append_source_files(SOURCES ODESolver)
 append_source_files(SOURCES Extrapolation)
 
 # Create the library
-add_library(NumLib ${SOURCES})
-if(BUILD_SHARED_LIBS)
-    install(TARGETS NumLib LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
-endif()
-include(GenerateExportHeader)
-generate_export_header(NumLib)
+ogs_add_library(NumLib ${SOURCES})
 target_include_directories(NumLib PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 
 set_target_properties(NumLib PROPERTIES LINKER_LANGUAGE CXX)
@@ -31,7 +26,3 @@ target_link_libraries(NumLib
                              MeshLib
                              logog
                       PRIVATE MeshGeoToolsLib)
-
-if(OGS_USE_PCH)
-    cotire(NumLib)
-endif()

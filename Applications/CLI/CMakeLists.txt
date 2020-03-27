@@ -33,7 +33,7 @@ if(OGS_USE_PYTHON)
     # appropriate message should be presented. The note is kept for the case
     # that the automatic detection does not work due to whatever reason.
 
-    add_library(ogs_embedded_python ogs_embedded_python.cpp)
+    ogs_add_library(ogs_embedded_python ogs_embedded_python.cpp)
 
     # Performance warning from
     # https://github.com/pybind/pybind11/blob/master/docs/compiling.rst: Since
@@ -57,9 +57,6 @@ if(OGS_USE_PYTHON)
         # by the linker.
         target_compile_definitions(ogs_embedded_python PRIVATE
                                    OGS_BUILD_SHARED_LIBS)
-        install(TARGETS ogs_embedded_python
-                LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
-
     endif()
 endif()
 

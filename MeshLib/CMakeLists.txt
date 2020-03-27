@@ -21,13 +21,7 @@ if(OGS_USE_PETSC)
 endif()
 
 # Create the library
-add_library(MeshLib ${SOURCES})
-if(BUILD_SHARED_LIBS)
-    install(TARGETS MeshLib LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
-endif()
-if(OGS_USE_PCH)
-    cotire(MeshLib)
-endif()
+ogs_add_library(MeshLib ${SOURCES})
 
 target_link_libraries(MeshLib
                       PUBLIC BaseLib

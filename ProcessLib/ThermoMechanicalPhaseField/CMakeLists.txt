@@ -1,10 +1,6 @@
 append_source_files(SOURCES)
 
-add_library(ThermoMechanicalPhaseField ${SOURCES})
-if(BUILD_SHARED_LIBS)
-    install(TARGETS ThermoMechanicalPhaseField
-            LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
-endif()
+ogs_add_library(ThermoMechanicalPhaseField ${SOURCES})
 target_link_libraries(ThermoMechanicalPhaseField
                       PUBLIC ProcessLib
                       PRIVATE ParameterLib)

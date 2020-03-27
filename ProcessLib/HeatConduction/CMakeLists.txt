@@ -1,9 +1,6 @@
 append_source_files(SOURCES)
 
-add_library(HeatConduction ${SOURCES})
-if(BUILD_SHARED_LIBS)
-    install(TARGETS HeatConduction LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
-endif()
+ogs_add_library(HeatConduction ${SOURCES})
 target_link_libraries(HeatConduction PUBLIC ProcessLib PRIVATE ParameterLib)
 
 if(BUILD_TESTING)

@@ -4,10 +4,7 @@ append_source_files(SOURCES HydroMechanics/LocalAssembler)
 append_source_files(SOURCES SmallDeformation)
 append_source_files(SOURCES SmallDeformation/LocalAssembler)
 
-add_library(LIE ${SOURCES})
-if(BUILD_SHARED_LIBS)
-    install(TARGETS LIE LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
-endif()
+ogs_add_library(LIE ${SOURCES})
 target_link_libraries(LIE PUBLIC ProcessLib LIECommon PRIVATE ParameterLib)
 
 if(BUILD_TESTING)

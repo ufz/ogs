@@ -1,7 +1,4 @@
 append_source_files(SOURCES)
 
-add_library(LIECommon ${SOURCES})
-if(BUILD_SHARED_LIBS)
-    install(TARGETS LIECommon LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
-endif()
+ogs_add_library(LIECommon ${SOURCES})
 target_link_libraries(LIECommon PUBLIC MeshLib)

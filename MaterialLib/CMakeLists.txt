@@ -34,10 +34,7 @@ if(OGS_USE_MFRONT)
     add_subdirectory(SolidModels/MFront)
 endif()
 
-add_library(MaterialLib ${SOURCES})
-if(BUILD_SHARED_LIBS)
-    install(TARGETS MaterialLib LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
-endif()
+ogs_add_library(MaterialLib ${SOURCES})
 
 include(GenerateExportHeader)
 generate_export_header(MaterialLib)
@@ -47,8 +44,4 @@ target_link_libraries(MaterialLib PRIVATE MathLib MeshLib ParameterLib)
 
 if(OGS_USE_MFRONT)
     target_link_libraries(MaterialLib PUBLIC MaterialLib_SolidModels_MFront)
-endif()
-
-if(OGS_USE_PCH)
-    cotire(MaterialLib)
 endif()

@@ -29,15 +29,8 @@ source_group("UI Files" REGULAR_EXPRESSION "\\w*\\.ui")
 source_group("Moc Files" REGULAR_EXPRESSION "moc_.*")
 
 # Create the library
-add_library(QtBase ${SOURCES} ${HEADERS})
-if(BUILD_SHARED_LIBS)
-    install(TARGETS QtBase LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
-endif()
+ogs_add_library(QtBase ${SOURCES} ${HEADERS})
 
 target_link_libraries(QtBase Qt5::Widgets)
 
 set_property(TARGET QtBase PROPERTY FOLDER "DataExplorer")
-
-if(OGS_USE_PCH)
-    cotire(QtBase)
-endif()

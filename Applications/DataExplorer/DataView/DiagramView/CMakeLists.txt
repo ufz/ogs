@@ -29,10 +29,7 @@ include_directories(${SOURCE_DIR_REL}/BaseLib
 file(GLOB_RECURSE UIS CONFIGURE_DEPENDS *.ui)
 source_group("UI Files" FILES ${UIS})
 
-add_library(QtDiagramView ${SOURCES} ${HEADERS} ${UIS})
-if(BUILD_SHARED_LIBS)
-    install(TARGETS QtDiagramView LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
-endif()
+ogs_add_library(QtDiagramView ${SOURCES} ${HEADERS} ${UIS})
 
 target_link_libraries(QtDiagramView
                       PRIVATE BaseLib
@@ -45,7 +42,3 @@ target_link_libraries(QtDiagramView
 add_autogen_include(QtDiagramView)
 
 set_property(TARGET QtDiagramView PROPERTY FOLDER "DataExplorer")
-
-if(OGS_USE_PCH)
-    cotire(QtDiagramView)
-endif()

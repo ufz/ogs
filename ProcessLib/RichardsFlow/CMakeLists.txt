@@ -1,9 +1,6 @@
 append_source_files(SOURCES)
 
-add_library(RichardsFlow ${SOURCES})
-if(BUILD_SHARED_LIBS)
-    install(TARGETS RichardsFlow LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
-endif()
+ogs_add_library(RichardsFlow ${SOURCES})
 target_link_libraries(RichardsFlow PUBLIC ProcessLib PRIVATE ParameterLib)
 
 if(BUILD_TESTING)

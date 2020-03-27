@@ -17,10 +17,7 @@ append_source_files(SOURCES Output)
 append_source_files(SOURCES SourceTerms)
 append_source_files(SOURCES Utils)
 
-add_library(ProcessLib ${SOURCES})
-if(BUILD_SHARED_LIBS)
-    install(TARGETS ProcessLib LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
-endif()
+ogs_add_library(ProcessLib ${SOURCES})
 
 target_link_libraries(ProcessLib
                       PUBLIC BaseLib
@@ -49,8 +46,4 @@ endif()
 
 if(OGS_INSITU)
     target_link_libraries(ProcessLib InSituLib)
-endif()
-
-if(OGS_USE_PCH)
-    cotire(ProcessLib)
 endif()
