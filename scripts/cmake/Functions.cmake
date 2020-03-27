@@ -83,8 +83,8 @@ function(ogs_add_library targetName)
     add_library(${targetName} ${ARGN})
     target_compile_options(${targetName} PRIVATE
         $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,
-               $<CXX_COMPILER_ID:GNU>>:-Wall>
-        $<$<CXX_COMPILER_ID:MSVC>:/W4>)
+               $<CXX_COMPILER_ID:GNU>>:-Wall -Wextra>
+        $<$<CXX_COMPILER_ID:MSVC>:/W3>)
 
     if(BUILD_SHARED_LIBS)
         install(TARGETS ${targetName} LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
