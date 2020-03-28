@@ -314,6 +314,18 @@ void PhreeqcKernel::reset(std::size_t const chemical_system_id)
         Rxn_kinetics_map[chemical_system_id].Get_steps().clear();
     }
 }
+
+void PhreeqcKernel::executeInitialCalculation(
+    std::vector<GlobalVector*>& process_solutions)
+{
+    // TODO (Renchao): This function could be replaced with
+    // PhreeqcKernel::doWaterChemistryCalculation(std::vector<GlobalVector*>&
+    // process_solutions, double const dt).
+    setAqueousSolutions(process_solutions);
+
+    setTimeStepSize(0);
+
+    execute(process_solutions);
 }
 
 void PhreeqcKernel::updateNodalProcessSolutions(
