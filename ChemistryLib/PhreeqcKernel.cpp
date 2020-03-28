@@ -351,7 +351,9 @@ void PhreeqcKernel::updateNodalProcessSolutions(
         {
             // Update solutions of component transport processes.
             auto const concentration =
-                master_species->total_primary / mass_water_aq_x;
+                master_species->primary
+                    ? master_species->total_primary / mass_water_aq_x
+                    : master_species->total / mass_water_aq_x;
             transport_process_solution->set(node_id, concentration);
         }
     }
