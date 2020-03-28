@@ -166,6 +166,14 @@ void PhreeqcKernel::setAqueousSolutions(
                 // Set pH value by hydrogen concentration.
                 double const pH = -std::log10(concentration);
                 aqueous_solution.Set_ph(pH);
+
+                {
+                    auto hydrogen = components.find("H(1)");
+                    if (hydrogen != components.end())
+                    {
+                        hydrogen->second.Set_input_conc(pH);
+                    }
+                }
             }
             else
             {
