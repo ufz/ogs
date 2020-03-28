@@ -49,6 +49,22 @@ PhreeqcKernel::PhreeqcKernel(
     }
     use.Set_solution_in(true);
 
+    // equilibrium reactants
+    if (equilibrium_reactants)
+    {
+        tidyEquilibriumReactants(*equilibrium_reactants);
+
+        for (std::size_t chemical_system_id = 0;
+             chemical_system_id < num_chemical_systems;
+             ++chemical_system_id)
+        {
+            equilibrium_reactants->setChemicalSystemID(chemical_system_id);
+            Rxn_pp_assemblage_map.emplace(
+                chemical_system_id, *equilibrium_reactants->castToBaseClass());
+        }
+        use.Set_pp_assemblage_in(true);
+    }
+
     // kinetics
     if (kinetic_reactants)
     {
@@ -79,6 +95,27 @@ PhreeqcKernel::PhreeqcKernel(
 
         _process_id_to_master_map[transport_process_id] = master_species;
     }
+}
+
+void PhreeqcKernel::tidyEquilibriumReactants(
+    EquilibriumReactants const equilibrium_reactants)
+{
+    // extract a part of function body from int
+    // Phreeqc::tidy_pp_assemblage(void)
+    count_elts = 0;
+    double coef = 1.0;
+    for (auto const& phase_component :
+         equilibrium_reactants.getPhaseComponents())
+    {
+        int phase_id;
+        struct phase* phase_component_ptr =
+            phase_bsearch(phase_component.first.c_str(), &phase_id, FALSE);
+        add_elt_list(phase_component_ptr->next_elt, coef);
+    }
+
+    cxxNameDouble nd = elt_list_NameDouble();
+    const_cast<cxxPPassemblage*>(equilibrium_reactants.castToBaseClass())
+        ->Set_eltList(nd);
 }
 
 void PhreeqcKernel::loadDatabase(std::string const& database)

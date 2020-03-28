@@ -62,6 +62,9 @@ public:
 private:
     void initializePhreeqcGeneralSettings() { do_initialize(); }
 
+    void tidyEquilibriumReactants(
+        EquilibriumReactants const equilibrium_reactants);
+
     void loadDatabase(std::string const& database);
 
     void reinitializeRates();
