@@ -83,8 +83,11 @@ private:
 
     void setTimeStepSize(double const dt);
 
+    void reset(std::size_t const chemical_system_id);
+
     std::map<int, struct master*> _process_id_to_master_map;
     std::unique_ptr<cxxISolution const> _initial_aqueous_solution;
+    std::unique_ptr<cxxSolution const> _aqueous_solution;
     std::vector<ReactionRate> const _reaction_rates;
 };
 }  // namespace PhreeqcKernelData

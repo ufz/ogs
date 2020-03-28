@@ -32,6 +32,7 @@ PhreeqcKernel::PhreeqcKernel(
     std::unique_ptr<Kinetics>&& kinetic_reactants,
     std::vector<ReactionRate>&& reaction_rates)
     : _initial_aqueous_solution(aqueous_solution.getInitialAqueousSolution()),
+      _aqueous_solution(aqueous_solution.castToBaseClassNoninitialized()),
       _reaction_rates(std::move(reaction_rates))
 {
     initializePhreeqcGeneralSettings();
@@ -255,6 +256,13 @@ void PhreeqcKernel::execute(std::vector<GlobalVector*>& process_solutions)
         new_solution = 1;
         use.Set_n_solution_user(chemical_system_id);
 
+        if (!Rxn_pp_assemblage_map.empty())
+        {
+            Rxn_new_pp_assemblage.insert(chemical_system_id);
+            use.Set_pp_assemblage_in(true);
+            use.Set_n_pp_assemblage_user(chemical_system_id);
+        }
+
         if (!Rxn_kinetics_map.empty())
         {
             use.Set_kinetics_in(true);
@@ -267,15 +275,45 @@ void PhreeqcKernel::execute(std::vector<GlobalVector*>& process_solutions)
 
         updateNodalProcessSolutions(process_solutions, chemical_system_id);
 
-        // Clean up
-        Rxn_new_solution.clear();
-        Rxn_solution_map[chemical_system_id].Get_totals().clear();
+        reset(chemical_system_id);
+    }
+}
 
-        if (!Rxn_kinetics_map.empty())
+void PhreeqcKernel::reset(std::size_t const chemical_system_id)
+{
+    // Clean up
+    Rxn_new_solution.clear();
+
+    // Solution
+    {
+        Rxn_solution_map[chemical_system_id] = *_aqueous_solution;
+        Rxn_solution_map[chemical_system_id].Set_n_user_both(
+            chemical_system_id);
+        Rxn_solution_map[chemical_system_id].Set_pe(-s_eminus->la);
+    }
+
+    // Equilibrium reactants
+    if (!Rxn_pp_assemblage_map.empty())
+    {
+        Rxn_new_pp_assemblage.clear();
+        for (int j = 0; j < count_unknowns; j++)
         {
-            Rxn_kinetics_map[chemical_system_id].Get_steps().clear();
+            if (x == nullptr || x[j]->type != PP)
+                continue;
+
+            auto& phase_components = Rxn_pp_assemblage_map[chemical_system_id]
+                                         .Get_pp_assemblage_comps();
+            phase_components[x[j]->pp_assemblage_comp_name].Set_moles(
+                x[j]->moles);
         }
     }
+
+    // Kinetics
+    if (!Rxn_kinetics_map.empty())
+    {
+        Rxn_kinetics_map[chemical_system_id].Get_steps().clear();
+    }
+}
 }
 
 void PhreeqcKernel::updateNodalProcessSolutions(
