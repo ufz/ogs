@@ -14,6 +14,7 @@
 #include <vector>
 
 #include "ChemicalSolverInterface.h"
+#include "PhreeqcKernelData/EquilibriumReactants.h"
 #include "PhreeqcKernelData/KineticReactant.h"
 
 #include <iphreeqc/src/src/phreeqcpp/Phreeqc.h>
@@ -36,8 +37,8 @@ public:
                       process_id_to_component_name_map,
                   std::string const database,
                   AqueousSolution aqueous_solution,
-                  std::unique_ptr<Kinetics>
-                      kinetic_reactants,
+                  std::unique_ptr<EquilibriumReactants>&& equilibrium_reactants,
+                  std::unique_ptr<Kinetics>&& kinetic_reactants,
                   std::vector<ReactionRate>&& reaction_rates);
 
     void executeInitialCalculation(

@@ -30,6 +30,7 @@
 #include "PhreeqcKernel.h"
 #include "PhreeqcKernelData/AqueousSolution.h"
 #include "PhreeqcKernelData/CreateAqueousSolution.h"
+#include "PhreeqcKernelData/CreateEquilibriumReactants.h"
 #include "PhreeqcKernelData/CreateKineticReactant.h"
 #include "PhreeqcKernelData/ReactionRate.h"
 
@@ -186,9 +187,15 @@ createChemicalSolverInterface<ChemicalSolver::PhreeqcKernel>(
         //! \ogs_file_param{prj__chemical_system__rates}
         config.getConfigSubtreeOptional("rates"));
 
+    // equilibrium reactants
+    auto equilibrium_reactants = PhreeqcKernelData::createEquilibriumReactants(
+        //! \ogs_file_param{prj__chemical_system__equilibrium_phases}
+        config.getConfigSubtreeOptional("equilibrium_phases"), mesh);
+
     return std::make_unique<PhreeqcKernelData::PhreeqcKernel>(
         mesh.getNumberOfBaseNodes(), process_id_to_component_name_map,
         std::move(path_to_database), std::move(aqueous_solution),
-        std::move(kinetic_reactants), std::move(reaction_rates));
+        std::move(equilibrium_reactants), std::move(kinetic_reactants),
+        std::move(reaction_rates));
 }
 }  // namespace ChemistryLib
