@@ -386,7 +386,7 @@
                 <component>Mg</component>
                 <component>Cl</component>
             </components>
-            <means_of_adjusting_charge>pH</means_of_adjusting_charge>
+            <charge_balance>pH</charge_balance>
         </solution>
         <equilibrium_phases>
             <equilibrium_phase>

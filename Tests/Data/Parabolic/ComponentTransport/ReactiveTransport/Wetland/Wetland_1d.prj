@@ -1190,7 +1190,7 @@
             <temperature>10</temperature>
             <pressure>1</pressure>
             <pe>4</pe>
-            <means_of_adjusting_charge>pH</means_of_adjusting_charge>
+            <charge_balance>pH</charge_balance>
             <components>
                 <component>Do</component>
                 <component>Sf</component>

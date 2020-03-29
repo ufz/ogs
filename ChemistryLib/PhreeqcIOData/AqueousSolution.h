@@ -29,7 +29,7 @@ struct Component
     static const ItemType item_type = ItemType::Component;
 };
 
-enum class MeansOfAdjustingCharge
+enum class ChargeBalance
 {
     pH,
     pe,
@@ -42,12 +42,12 @@ struct AqueousSolution
                     double pressure_,
                     double pe_,
                     std::vector<Component>&& components_,
-                    MeansOfAdjustingCharge means_of_adjusting_charge_)
+                    ChargeBalance charge_balance_)
         : temperature(temperature_),
           pressure(pressure_),
           pe(pe_),
           components(std::move(components_)),
-          means_of_adjusting_charge(means_of_adjusting_charge_)
+          charge_balance(charge_balance_)
     {
     }
 
@@ -59,7 +59,7 @@ struct AqueousSolution
     double pH = std::numeric_limits<double>::quiet_NaN();
     double pe;
     std::vector<Component> components;
-    MeansOfAdjustingCharge const means_of_adjusting_charge;
+    ChargeBalance const charge_balance;
 };
 }  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

@@ -62,11 +62,11 @@ InitialAqueousSolution createInitialAqueousSolution(
             "for the transport process of hydrogen.");
     }
 
-    auto const means_of_adjusting_charge_in_str =
-        //! \ogs_file_param{prj__chemical_system__solution__means_of_adjusting_charge}
-        config.getConfigParameter<std::string>("means_of_adjusting_charge", "");
+    auto const charge_balance =
+        //! \ogs_file_param{prj__chemical_system__solution__charge_balance}
+        config.getConfigParameter<std::string>("charge_balance", "");
 
-    if (means_of_adjusting_charge_in_str == "pH")
+    if (charge_balance == "pH")
     {
         Component component("H(1)");
         component.Set_equation_name("charge");
