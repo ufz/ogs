@@ -306,8 +306,7 @@ add_subdirectory(MeshGeoToolsLib)
 add_subdirectory(NumLib)
 
 if(OGS_BUILD_PROCESS_ComponentTransport
-   OR OGS_BUILD_PROCESS_RichardsComponentTransport
-   OR OGS_BUILD_PROCESS_HeatTransportBHE)
+   OR OGS_BUILD_PROCESS_RichardsComponentTransport)
     add_subdirectory(ChemistryLib)
 endif()
 
