@@ -24,7 +24,7 @@
 #include "VtkGeoImageSource.h"
 #include "VtkRaster.h"
 #ifdef OGS_USE_NETCDF
-#include "NetCdfDialog/NetCdfConfigureDialog.h"
+#include "NetCdfConfigureDialog.h"
 #endif  // OGS_USE_NETCDF
 
 #include <QFileDialog>

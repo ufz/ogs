@@ -98,12 +98,21 @@ set(HEADERS
     VtkVisPointSetItem.h
     VtkVisTabWidget.h)
 
+set(UIS
+    MeshFromRaster.ui VisPrefs.ui VisualizationWidgetBase.ui
+    VtkAddFilterDialogBase.ui VtkVisTabWidgetBase.ui)
+
+if(OGS_USE_NETCDF)
+    set(SOURCES ${SOURCES} NetCdfConfigureDialog.h NetCdfConfigureDialog.cpp)
+    set(UIS ${UIS} NetCdfConfigure.ui)
+endif()
+
 # Visual Studio folder
 source_group("Filter Header Files" REGULAR_EXPRESSION "[.]*Filter.h")
 source_group("Filter Source Files" REGULAR_EXPRESSION "[.]*Filter.cpp")
 source_group("Source Header Files" REGULAR_EXPRESSION "[.]*Source.h")
 source_group("Source Source Files" REGULAR_EXPRESSION "[.]*Source.cpp")
-file(GLOB_RECURSE UIS CONFIGURE_DEPENDS *.ui)
+
 source_group("UI Files" FILES ${UIS})
 
 set(SOURCE_DIR_REL ${CMAKE_CURRENT_SOURCE_DIR}/../../..)
@@ -123,7 +132,7 @@ ogs_add_library(VtkVis ${SOURCES} ${HEADERS} ${UIS})
 
 if(GEOTIFF_FOUND)
     include_directories(${GEOTIFF_INCLUDE_DIRS})
-    target_link_libraries(VtkVis INTERFACE ${GEOTIFF_LIBRARIES})
+    target_link_libraries(VtkVis PUBLIC ${GEOTIFF_LIBRARIES})
 endif() # GEOTIFF_FOUND
 
 target_link_libraries(VtkVis
@@ -136,7 +145,20 @@ target_link_libraries(VtkVis
                       PRIVATE MathLib ApplicationsFileIO Qt5::Gui logog)
 
 if(OGS_USE_NETCDF)
-    target_link_libraries(VtkVis PRIVATE NetCdfDialogLib)
+    target_link_libraries(VtkVis
+                          PUBLIC ${NETCDF_LIBRARIES_CXX}
+                                 ${NETCDF_LIBRARIES_C}
+                                 ${HDF5_HL_LIBRARIES}
+                                 ${HDF5_LIBRARIES})
+    if(OGS_USE_CONAN AND MSVC)
+        target_link_libraries(VtkVis PUBLIC ${CONAN_LIBS})
+    endif()
+    # Workaround for system installed VTK (tested on arch)
+    if(NOT OGS_USE_CONAN)
+        target_include_directories(VtkVis SYSTEM
+                                   PUBLIC ${NETCDF_INCLUDES_C}
+                                   PUBLIC ${NETCDF_INCLUDES_CXX})
+    endif()
 endif()
 
 set_property(TARGET VtkVis PROPERTY FOLDER "DataExplorer")

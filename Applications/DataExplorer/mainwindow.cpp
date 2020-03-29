@@ -77,7 +77,7 @@
 #include "MeshElementRemovalDialog.h"
 #include "MeshQualitySelectionDialog.h"
 #ifdef OGS_USE_NETCDF
-#include "NetCdfDialog/NetCdfConfigureDialog.h"
+#include "NetCdfConfigureDialog.h"
 #endif  // OGS_USE_NETCDF
 #include "SHPImportDialog.h"
 #include "SetNameDialog.h"
