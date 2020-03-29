@@ -128,7 +128,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}
                     ${GUI_SOURCE_DIR_REL}/DataView
                     ${GUI_SOURCE_DIR_REL}/VtkModules/Qt)
 
-ogs_add_library(VtkVis ${SOURCES} ${HEADERS} ${UIS})
+ogs_add_library(VtkVis STATIC ${SOURCES} ${HEADERS} ${UIS})
 
 if(GEOTIFF_FOUND)
     include_directories(${GEOTIFF_INCLUDE_DIRS})
