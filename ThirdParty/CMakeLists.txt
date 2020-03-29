@@ -10,9 +10,7 @@ option(OGS_USE_OPTIONAL_SUBMODULES "Option for enabling optional submodules" OFF
 
 # iphreeqc
 if (OGS_BUILD_PROCESS_ComponentTransport
-    OR OGS_BUILD_PROCESS_RichardsComponentTransport
-    OR OGS_BUILD_PROCESS_RichardsComponentTransport
-    OR OGS_BUILD_PROCESS_HeatTransportBHE)
+    OR OGS_BUILD_PROCESS_RichardsComponentTransport)
     add_subdirectory(iphreeqc)
     list(APPEND DISABLE_WARNINGS_TARGETS iphreeqc)
     target_include_directories(iphreeqc SYSTEM PUBLIC

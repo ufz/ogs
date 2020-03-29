@@ -30,9 +30,7 @@ target_link_libraries(ProcessLib
                       PRIVATE ParameterLib GitInfoLib)
 
 if (OGS_BUILD_PROCESS_ComponentTransport
-    OR OGS_BUILD_PROCESS_RichardsComponentTransport
-    OR OGS_BUILD_PROCESS_RichardsComponentTransport
-    OR OGS_BUILD_PROCESS_HeatTransportBHE)
+    OR OGS_BUILD_PROCESS_RichardsComponentTransport)
     target_link_libraries(ProcessLib PUBLIC ChemistryLib)
 endif()
 
