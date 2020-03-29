@@ -66,7 +66,7 @@ PhreeqcKernel::PhreeqcKernel(
         use.Set_pp_assemblage_in(true);
     }
 
-    // kinetics
+    // kinetic reactants
     if (kinetic_reactants)
     {
         for (std::size_t chemical_system_id = 0;
@@ -80,6 +80,7 @@ PhreeqcKernel::PhreeqcKernel(
         use.Set_kinetics_in(true);
     }
 
+    // rates
     reinitializeRates();
 
     setConvergenceTolerance();
