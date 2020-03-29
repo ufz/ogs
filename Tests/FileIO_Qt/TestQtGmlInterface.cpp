@@ -26,8 +26,8 @@
 TEST_F(TestGmlInterface, QtXmlGmlWriterReaderTest)
 {
     // Writer test
-    std::string test_data_file(
-        fs::temp_directory_path() /= BaseLib::random_string(32));
+    std::string test_data_file =
+        (fs::temp_directory_path() /= BaseLib::random_string(32)).string();
 
     GeoLib::IO::XmlGmlInterface xml(geo_objects);
     xml.setNameForExport(geo_name);

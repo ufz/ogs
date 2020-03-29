@@ -56,8 +56,8 @@ TEST(FileIO, DISABLED_TetGenSmeshInterface)
     std::unique_ptr<MeshLib::Mesh const> const mesh (MeshLib::IO::readMeshFromFile(file_name));
 
     std::string const tg_new_name (BaseLib::random_string(32));
-    std::string const output_name(
-        fs::temp_directory_path() /= tg_new_name + ".smesh");
+    std::string const output_name =
+        (fs::temp_directory_path() /= tg_new_name + ".smesh").string();
     std::cout << output_name << std::endl;
     std::vector<MeshLib::Node> attr_pnts;
     FileIO::TetGenInterface tgi;

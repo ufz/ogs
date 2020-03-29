@@ -152,8 +152,8 @@ TEST_F(InSituMesh, DISABLED_MappedMeshSourceRoundtrip)
     // TODO Add more comparison criteria
 
     ASSERT_TRUE(mesh != nullptr);
-    std::string test_data_file(
-        fs::temp_directory_path() /= BaseLib::random_string(32));
+    std::string test_data_file =
+        (fs::temp_directory_path() /= BaseLib::random_string(32)).string();
 
     // -- Test VtkMappedMeshSource, i.e. OGS mesh to VTK mesh
     vtkNew<MeshLib::VtkMappedMeshSource> vtkSource;
