@@ -331,7 +331,7 @@ private:
 
     // local assembler builder implementations.
 private:
-        /// Generates a function that creates a new LocalAssembler of type
+    /// Generates a function that creates a new LocalAssembler of type
     /// LAData<ShapeFunctionDisplacement, ShapeFunctionPressure>. Only functions
     /// with shape function's dimension less or equal to the global dimension
     /// are instantiated, e.g.  following combinations of shape functions and
