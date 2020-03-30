@@ -132,8 +132,8 @@ public:
                       shapefunction_order);
 
         if (shapefunction_order == 1)
-        { 
-// /// Quads and Hexahedra ///////////////////////////////////
+        {
+            // /// Quads and Hexahedra ///////////////////////////////////
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_QUAD) != 0 && \
     OGS_MAX_ELEMENT_DIM >= 2 && OGS_MAX_ELEMENT_ORDER >= 1
@@ -161,7 +161,7 @@ public:
                 makeLocalAssemblerBuilder<NumLib::ShapeHex8>();
 #endif
 
-// /// Simplices ////////////////////////////////////////////////
+            // /// Simplices ////////////////////////////////////////////////
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_TRI) != 0 && \
     OGS_MAX_ELEMENT_DIM >= 2 && OGS_MAX_ELEMENT_ORDER >= 1
@@ -187,7 +187,7 @@ public:
                 makeLocalAssemblerBuilder<NumLib::ShapeTet4>();
 #endif
 
-// /// Prisms ////////////////////////////////////////////////////
+            // /// Prisms ////////////////////////////////////////////////////
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_PRISM) != 0 && \
     OGS_MAX_ELEMENT_DIM >= 3 && OGS_MAX_ELEMENT_ORDER >= 1
@@ -201,7 +201,7 @@ public:
                 makeLocalAssemblerBuilder<NumLib::ShapePrism6>();
 #endif
 
-// /// Pyramids //////////////////////////////////////////////////
+            // /// Pyramids //////////////////////////////////////////////////
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_PYRAMID) != 0 && \
     OGS_MAX_ELEMENT_DIM >= 3 && OGS_MAX_ELEMENT_ORDER >= 1
@@ -217,7 +217,7 @@ public:
         }
         else if (shapefunction_order == 2)
         {
-// /// Quads and Hexahedra ///////////////////////////////////
+            // /// Quads and Hexahedra ///////////////////////////////////
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_QUAD) != 0 && \
     OGS_MAX_ELEMENT_DIM >= 2 && OGS_MAX_ELEMENT_ORDER >= 2
@@ -233,7 +233,7 @@ public:
             makeLocalAssemblerBuilder<NumLib::ShapeHex20>();
 #endif
 
-// /// Simplices ////////////////////////////////////////////////
+        // /// Simplices ////////////////////////////////////////////////
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_TRI) != 0 && \
     OGS_MAX_ELEMENT_DIM >= 2 && OGS_MAX_ELEMENT_ORDER >= 2
@@ -247,7 +247,7 @@ public:
             makeLocalAssemblerBuilder<NumLib::ShapeTet10>();
 #endif
 
-// /// Prisms ////////////////////////////////////////////////////
+        // /// Prisms ////////////////////////////////////////////////////
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_PRISM) != 0 && \
     OGS_MAX_ELEMENT_DIM >= 3 && OGS_MAX_ELEMENT_ORDER >= 2
@@ -255,7 +255,7 @@ public:
             makeLocalAssemblerBuilder<NumLib::ShapePrism15>();
 #endif
 
-// /// Pyramids //////////////////////////////////////////////////
+        // /// Pyramids //////////////////////////////////////////////////
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_PYRAMID) != 0 && \
     OGS_MAX_ELEMENT_DIM >= 3 && OGS_MAX_ELEMENT_ORDER >= 2
@@ -309,8 +309,8 @@ private:
               typename ShapeFunctionPressure>
     using LAData =
         LocalAssemblerData<ShapeFunctionDisplacement, ShapeFunctionPressure,
-        IntegrationMethod<ShapeFunctionDisplacement>,
-        GlobalDim>;
+                           IntegrationMethod<ShapeFunctionDisplacement>,
+                           GlobalDim>;
 
     /// A helper forwarding to the correct version of makeLocalAssemblerBuilder
     /// depending whether the global dimension is less than the shape function's
@@ -322,7 +322,6 @@ private:
             static_cast<std::integral_constant<
                 bool, (GlobalDim >= ShapeFunction::DIM)>*>(nullptr));
     }
-
 
     /// Mapping of element types to local assembler constructors.
     std::unordered_map<std::type_index, LADataBuilder> _builder;
@@ -380,7 +379,7 @@ private:
     }
 };
 
-}  // namespace Process::ThermoHydroMechanics
+}  // namespace ProcessLib::ThermoHydroMechanics
 
 #undef ENABLED_ELEMENT_TYPE_SIMPLEX
 #undef ENABLED_ELEMENT_TYPE_CUBOID
