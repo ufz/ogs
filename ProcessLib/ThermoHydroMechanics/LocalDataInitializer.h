@@ -132,7 +132,7 @@ public:
                       shapefunction_order);
 
         if (shapefunction_order == 1)
-        {        
+        { 
 // /// Quads and Hexahedra ///////////////////////////////////
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_QUAD) != 0 && \
@@ -307,9 +307,9 @@ private:
 
     template <typename ShapeFunctionDisplacement,
               typename ShapeFunctionPressure>
-    using LAData = 
+    using LAData =
         LocalAssemblerData<ShapeFunctionDisplacement, ShapeFunctionPressure,
-        IntegrationMethod<ShapeFunctionDisplacement>, 
+        IntegrationMethod<ShapeFunctionDisplacement>,
         GlobalDim>;
 
     /// A helper forwarding to the correct version of makeLocalAssemblerBuilder
