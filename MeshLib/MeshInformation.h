@@ -70,6 +70,16 @@ public:
      */
     static std::array<unsigned, 7> getNumberOfElementTypes(
         const MeshLib::Mesh& mesh);
+
+    /// writes all numbers of element types
+    static void writeAllNumbersOfElementTypes(const MeshLib::Mesh& mesh);
+
+    /// writes out property vector information
+    static void writePropertyVectorInformation(const MeshLib::Mesh& mesh);
+
+    /// writes out mesh validation results
+    // Remark: MeshValidation can modify the original mesh
+    static void writeMeshValidationResults(MeshLib::Mesh& mesh);
 };
 
 }  // namespace MeshLib

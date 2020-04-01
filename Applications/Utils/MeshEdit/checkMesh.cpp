@@ -82,75 +82,14 @@ int main(int argc, char *argv[])
     INFO("Edge length: [%g, %g]", mesh->getMinEdgeLength(), mesh->getMaxEdgeLength());
 
     // Element information
-    const std::array<unsigned, 7> nr_ele_types(MeshLib::MeshInformation::getNumberOfElementTypes(*mesh));
-    INFO("Element types:");
-    unsigned etype = 0;
-    if (nr_ele_types[etype] > 0)
-    {
-        INFO("\t%d lines", nr_ele_types[etype]);
-    }
-    if (nr_ele_types[++etype] > 0)
-    {
-        INFO("\t%d triangles", nr_ele_types[etype]);
-    }
-    if (nr_ele_types[++etype] > 0)
-    {
-        INFO("\t%d quads", nr_ele_types[etype]);
-    }
-    if (nr_ele_types[++etype] > 0)
-    {
-        INFO("\t%d tetrahedra", nr_ele_types[etype]);
-    }
-    if (nr_ele_types[++etype] > 0)
-    {
-        INFO("\t%d hexahedra", nr_ele_types[etype]);
-    }
-    if (nr_ele_types[++etype] > 0)
-    {
-        INFO("\t%d pyramids", nr_ele_types[etype]);
-    }
-    if (nr_ele_types[++etype] > 0)
-    {
-        INFO("\t%d prisms", nr_ele_types[etype]);
-    }
 
-    std::vector<std::string> const& vec_names (mesh->getProperties().getPropertyVectorNames());
-    INFO("There are %d properties in the mesh:", vec_names.size());
-    for (const auto& vec_name : vec_names)
-    {
-        if (auto const vec_bounds =
-                MeshLib::MeshInformation::getValueBounds<int>(*mesh, vec_name))
-        {
-            INFO("\t%s: [%d, %d]", vec_name.c_str(), vec_bounds->first,
-                 vec_bounds->second);
-        }
-        else if (auto const vec_bounds =
-                     MeshLib::MeshInformation::getValueBounds<double>(*mesh,
-                                                                      vec_name))
-        {
-            INFO("\t%s: [%g, %g]", vec_name.c_str(), vec_bounds->first,
-                 vec_bounds->second);
-        }
-        else
-        {
-            INFO("\t%s: Could not get value bounds for property vector.",
-                 vec_name.c_str());
-        }
-    }
+    MeshLib::MeshInformation::writeAllNumbersOfElementTypes(*mesh);
+
+    MeshLib::MeshInformation::writePropertyVectorInformation(*mesh);
 
     if (valid_arg.isSet()) {
         // MeshValidation outputs error messages
         // Remark: MeshValidation can modify the original mesh
-        MeshLib::MeshValidation validation(*mesh);
-
-        unsigned const n_holes (MeshLib::MeshValidation::detectHoles(*mesh));
-        if (n_holes > 0)
-        {
-            INFO("%d hole(s) detected within the mesh", n_holes);
-        }
-        else
-        {
-            INFO ("No holes found within the mesh.");
-        }
+        MeshLib::MeshInformation::writeMeshValidationResults(*mesh);
     }
 }
