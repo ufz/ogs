@@ -189,8 +189,8 @@ createChemicalSolverInterface<ChemicalSolver::PhreeqcKernel>(
 
     // equilibrium reactants
     auto equilibrium_reactants = PhreeqcKernelData::createEquilibriumReactants(
-        //! \ogs_file_param{prj__chemical_system__equilibrium_phases}
-        config.getConfigSubtreeOptional("equilibrium_phases"), mesh);
+        //! \ogs_file_param{prj__chemical_system__equilibrium_reactants}
+        config.getConfigSubtreeOptional("equilibrium_reactants"), mesh);
 
     return std::make_unique<PhreeqcKernelData::PhreeqcKernel>(
         mesh.getNumberOfBaseNodes(), process_id_to_component_name_map,

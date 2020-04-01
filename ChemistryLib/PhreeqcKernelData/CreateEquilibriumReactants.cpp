@@ -32,19 +32,19 @@ std::unique_ptr<EquilibriumReactants> createEquilibriumReactants(
     std::vector<PhaseComponent> phase_components;
     for (
         auto const& phase_component_config :
-        //! \ogs_file_param{prj__chemical_system__equilibrium_phases__equilibrium_phase}
-        config->getConfigSubtreeList("equilibrium_phase"))
+        //! \ogs_file_param{prj__chemical_system__equilibrium_reactants__phase_component}
+        config->getConfigSubtreeList("phase_component"))
     {
         auto name =
-            //! \ogs_file_param{prj__chemical_system__equilibrium_phases__equilibrium_phase__name}
+            //! \ogs_file_param{prj__chemical_system__equilibrium_reactants__phase_component__name}
             phase_component_config.getConfigParameter<std::string>("name");
 
         double const initial_amount =
-            //! \ogs_file_param{prj__chemical_system__equilibrium_phases__equilibrium_phase__initial_amount}
+            //! \ogs_file_param{prj__chemical_system__equilibrium_reactants__phase_component__initial_amount}
             phase_component_config.getConfigParameter<double>("initial_amount");
 
         double const saturation_index =
-            //! \ogs_file_param{prj__chemical_system__equilibrium_phases__equilibrium_phase__saturation_index}
+            //! \ogs_file_param{prj__chemical_system__equilibrium_reactants__phase_component__saturation_index}
             phase_component_config.getConfigParameter<double>(
                 "saturation_index");
 
