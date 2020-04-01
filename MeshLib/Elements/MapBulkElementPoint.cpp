@@ -93,7 +93,7 @@ MathLib::Point3d getBulkElementPoint(MeshLib::Tet const& /*tet*/,
                 std::array<double, 3>{{1 - wp[0] - wp[1], wp[0], wp[1]}}};
         case 3:
             return MathLib::Point3d{
-                std::array<double, 3>{{0, 1 - wp[0], wp[1]}}};
+                std::array<double, 3>{{0, wp[1], wp[0]}}};
         default:
             OGS_FATAL("Invalid face id '{:d}' for the tetrahedron.", face_id);
     }
