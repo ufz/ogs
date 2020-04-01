@@ -1,0 +1,1 @@
+specify a solid/gas phase component. The chemical equilibrium between the specified phase component and the associated aqueous species has to be achieved as an unconditional constraint for the follow-up chemical calculation.
