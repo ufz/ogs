@@ -30,9 +30,9 @@ namespace ChemistryLib
 {
 namespace PhreeqcIOData
 {
-struct EquilibriumPhase;
+struct EquilibriumReactant;
 
-std::vector<EquilibriumPhase> createEquilibriumPhases(
+std::vector<EquilibriumReactant> createEquilibriumReactants(
     boost::optional<BaseLib::ConfigTree> const& config,
     MeshLib::Mesh const& mesh,
     MeshLib::PropertyVector<std::size_t> const& chemical_system_map);

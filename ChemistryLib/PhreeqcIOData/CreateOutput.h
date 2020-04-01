@@ -19,13 +19,13 @@ namespace PhreeqcIOData
 {
 struct Output;
 struct Component;
-struct EquilibriumPhase;
+struct EquilibriumReactant;
 struct KineticReactant;
 struct UserPunch;
 
 std::unique_ptr<Output> createOutput(
     std::vector<Component> const& components,
-    std::vector<EquilibriumPhase> const& equilibrium_phases,
+    std::vector<EquilibriumReactant> const& equilibrium_reactants,
     std::vector<KineticReactant> const& kinetic_reactants,
     std::unique_ptr<UserPunch> const& user_punch,
     bool const use_high_precision,

@@ -13,7 +13,7 @@
 
 #include "AqueousSolution.h"
 #include "CreateOutput.h"
-#include "EquilibriumPhase.h"
+#include "EquilibriumReactant.h"
 #include "KineticReactant.h"
 #include "UserPunch.h"
 
@@ -23,7 +23,7 @@ namespace PhreeqcIOData
 {
 std::unique_ptr<Output> createOutput(
     std::vector<Component> const& components,
-    std::vector<EquilibriumPhase> const& equilibrium_phases,
+    std::vector<EquilibriumReactant> const& equilibrium_reactants,
     std::vector<KineticReactant> const& kinetic_reactants,
     std::unique_ptr<UserPunch> const& user_punch,
     bool const use_high_precision,
@@ -38,7 +38,7 @@ std::unique_ptr<Output> createOutput(
     };
     std::transform(components.begin(), components.end(),
                    std::back_inserter(accepted_items), accepted_item);
-    std::transform(equilibrium_phases.begin(), equilibrium_phases.end(),
+    std::transform(equilibrium_reactants.begin(), equilibrium_reactants.end(),
                    std::back_inserter(accepted_items), accepted_item);
     for (auto const& kinetic_reactant : kinetic_reactants)
     {
@@ -67,10 +67,10 @@ std::unique_ptr<Output> createOutput(
     std::vector<int> dropped_item_ids(num_dropped_basic_items);
     std::iota(dropped_item_ids.begin(), dropped_item_ids.end(), 0);
 
-    auto const num_dvalue_equilibrium_phases = equilibrium_phases.size();
+    auto const num_dvalue_equilibrium_reactants = equilibrium_reactants.size();
     auto const num_dvalue_kinetic_reactants = kinetic_reactants.size();
     int const num_dvalue_items =
-        num_dvalue_equilibrium_phases + num_dvalue_kinetic_reactants;
+        num_dvalue_equilibrium_reactants + num_dvalue_kinetic_reactants;
 
     auto const num_basic_items =
         basic_output_setups.getNumberOfItemsInDisplay();

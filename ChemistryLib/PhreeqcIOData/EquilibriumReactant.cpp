@@ -10,14 +10,14 @@
 
 #include <ostream>
 
-#include "EquilibriumPhase.h"
+#include "EquilibriumReactant.h"
 
 namespace ChemistryLib
 {
 namespace PhreeqcIOData
 {
-void EquilibriumPhase::print(std::ostream& os,
-                             std::size_t const global_id) const
+void EquilibriumReactant::print(std::ostream& os,
+                                std::size_t const global_id) const
 {
     os << name << " " << saturation_index << " "
        << (*amount)[global_id] << "\n";

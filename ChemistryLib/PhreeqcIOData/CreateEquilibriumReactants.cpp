@@ -11,15 +11,15 @@
 #include <boost/optional/optional.hpp>
 
 #include "BaseLib/ConfigTree.h"
-#include "CreateEquilibriumPhase.h"
-#include "EquilibriumPhase.h"
+#include "CreateEquilibriumReactants.h"
+#include "EquilibriumReactant.h"
 #include "MeshLib/Mesh.h"
 
 namespace ChemistryLib
 {
 namespace PhreeqcIOData
 {
-std::vector<EquilibriumPhase> createEquilibriumPhases(
+std::vector<EquilibriumReactant> createEquilibriumReactants(
     boost::optional<BaseLib::ConfigTree> const& config,
     MeshLib::Mesh const& mesh,
     MeshLib::PropertyVector<std::size_t> const& chemical_system_map)
@@ -29,24 +29,24 @@ std::vector<EquilibriumPhase> createEquilibriumPhases(
         return {};
     }
 
-    std::vector<EquilibriumPhase> equilibrium_phases;
+    std::vector<EquilibriumReactant> equilibrium_reactants;
     for (
-        auto const& equilibrium_phase_config :
-        //! \ogs_file_param{prj__chemical_system__equilibrium_phases__equilibrium_phase}
-        config->getConfigSubtreeList("equilibrium_phase"))
+        auto const& equilibrium_reactant_config :
+        //! \ogs_file_param{prj__chemical_system__equilibrium_reactants__phase_component}
+        config->getConfigSubtreeList("phase_component"))
     {
         auto name =
-            //! \ogs_file_param{prj__chemical_system__equilibrium_phases__equilibrium_phase__name}
-            equilibrium_phase_config.getConfigParameter<std::string>("name");
+            //! \ogs_file_param{prj__chemical_system__equilibrium_reactants__phase_component__name}
+            equilibrium_reactant_config.getConfigParameter<std::string>("name");
 
         double const initial_amount =
-            //! \ogs_file_param{prj__chemical_system__equilibrium_phases__equilibrium_phase__initial_amount}
-            equilibrium_phase_config.getConfigParameter<double>(
+            //! \ogs_file_param{prj__chemical_system__equilibrium_reactants__phase_component__initial_amount}
+            equilibrium_reactant_config.getConfigParameter<double>(
                 "initial_amount");
 
         double const saturation_index =
-            //! \ogs_file_param{prj__chemical_system__equilibrium_phases__equilibrium_phase__saturation_index}
-            equilibrium_phase_config.getConfigParameter<double>(
+            //! \ogs_file_param{prj__chemical_system__equilibrium_reactants__phase_component__saturation_index}
+            equilibrium_reactant_config.getConfigParameter<double>(
                 "saturation_index");
 
         auto amount = MeshLib::getOrCreateMeshProperty<double>(
@@ -65,11 +65,11 @@ std::vector<EquilibriumPhase> createEquilibriumPhases(
                           (*amount)[global_id] = initial_amount;
                       });
 
-        equilibrium_phases.emplace_back(
+        equilibrium_reactants.emplace_back(
             std::move(name), amount, saturation_index);
     }
 
-    return equilibrium_phases;
+    return equilibrium_reactants;
 }
 }  // namespace PhreeqcIOData
 }  // namespace ChemistryLib
