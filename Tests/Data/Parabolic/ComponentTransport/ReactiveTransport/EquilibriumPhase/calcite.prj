@@ -388,18 +388,18 @@
             </components>
             <charge_balance>pH</charge_balance>
         </solution>
-        <equilibrium_phases>
-            <equilibrium_phase>
+        <equilibrium_reactants>
+            <phase_component>
 		<name>Calcite</name>
                 <initial_amount>2.07e-4</initial_amount>
                 <saturation_index>0.0</saturation_index>
-            </equilibrium_phase>
-            <equilibrium_phase>
+            </phase_component>
+            <phase_component>
                 <name>Dolomite(dis)</name>
                 <initial_amount>1e-10</initial_amount>
                 <saturation_index>0.0</saturation_index>
-            </equilibrium_phase>
-        </equilibrium_phases>
+            </phase_component>
+        </equilibrium_reactants>
         <knobs>
             <max_iter>100</max_iter>
             <relative_convergence_tolerance>1e-12</relative_convergence_tolerance>
