@@ -190,7 +190,7 @@ AddTest(
 )
 
 AddTest(
-    NAME 2D_ComponentTransport_NonAdvective_OpenBoundary
+    NAME 3D_ComponentTransport_NonAdvective_OpenBoundary
     PATH Parabolic/ComponentTransport/OpenBoundaryWithTets
     EXECUTABLE ogs
     EXECUTABLE_ARGS box_flow.prj
