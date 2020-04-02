@@ -62,6 +62,17 @@ InitialAqueousSolution createInitialAqueousSolution(
             "for the transport process of hydrogen.");
     }
 
+    auto const means_of_adjusting_charge_in_str =
+        //! \ogs_file_param{prj__chemical_system__solution__means_of_adjusting_charge}
+        config.getConfigParameter<std::string>("means_of_adjusting_charge", "");
+
+    if (means_of_adjusting_charge_in_str == "pH")
+    {
+        Component component("H(1)");
+        component.Set_equation_name("charge");
+        components.emplace("H(1)", component);
+    }
+
     return InitialAqueousSolution(components);
 }
 }  // namespace PhreeqcKernelData
