@@ -1,8 +1,8 @@
 # syntax=docker/dockerfile:experimental
 
-FROM ubuntu:19.04 AS build
+FROM ubuntu:19.10 AS build
 
-# Generated with ogs-container-maker 1.2.0
+# Generated with ogs-container-maker 1.4.3
 
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \

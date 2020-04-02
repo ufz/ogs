@@ -2,7 +2,7 @@
 
 FROM ubuntu:18.04 AS build
 
-# Generated with ogs-container-maker 1.2.0
+# Generated with ogs-container-maker 1.4.3
 
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -15,16 +15,15 @@ RUN apt-get update -y && \
 # LLVM compiler
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        clang-9 && \
+        clang-9 \
+        clang-format-9 \
+        clang-tidy-9 \
+        libomp-dev && \
     rm -rf /var/lib/apt/lists/*
 RUN update-alternatives --install /usr/bin/clang clang $(which clang-9) 30 && \
-    update-alternatives --install /usr/bin/clang++ clang++ $(which clang++-9) 30
-
-RUN apt-get update -y && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        clang-format-9 \
-        clang-tidy-9 && \
-    rm -rf /var/lib/apt/lists/*
+    update-alternatives --install /usr/bin/clang++ clang++ $(which clang++-9) 30 && \
+    update-alternatives --install /usr/bin/clang-format clang-format $(which clang-format-9) 30 && \
+    update-alternatives --install /usr/bin/clang-tidy clang-tidy $(which clang-tidy-9) 30
 
 # pip
 RUN apt-get update -y && \
