@@ -209,3 +209,17 @@ AddTest(
     DIFF_DATA
     m1_3Dtopload_pcs_0_ts_1_t_1.000000.vtu m1_3Dtopload_pcs_0_ts_1_t_1.000000.vtu displacement displacement 10e-12 0.0
 )
+
+# Tests for Principal Stress Output
+AddTest(
+    NAME Mechanics_hollow_sphere
+    PATH Mechanics/Linear/PrincipalStress
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS sphere.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    output_pcs_0_ts_1_t_1.000000.vtu output_pcs_0_ts_1_t_1.000000.vtu displacement displacement 0 1e-12
+    output_pcs_0_ts_1_t_1.000000.vtu output_pcs_0_ts_1_t_1.000000.vtu principal_stress_values principal_stress_values 0 1e-10
+)
