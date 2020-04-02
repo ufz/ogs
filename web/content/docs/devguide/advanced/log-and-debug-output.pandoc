@@ -30,4 +30,7 @@ if (foo > maxfoo)
 
 For more information see the [Logog documentation](http://johnwbyrd.github.com/logog/quickstart.html).
 
-On release builds the log level is `LOGOG_LEVEL_INFO`, on debug it is `LOGOG_LEVEL_DEBUG` and it can be overriden with the CMake option `OGS_LOG_LEVEL`. You can completely disable logging with the CMake-option `OGS_DISABLE_LOGGING` set to `ON`.
+
+On release builds the default log level is `INFO`, for debug builds it is
+`DEBUG`.
+The log level can be adjusted on the command line with `-l <LOG_LEVEL>` flag.

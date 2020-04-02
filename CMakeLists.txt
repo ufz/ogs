@@ -150,19 +150,6 @@ endif()
 
 option(OGS_USE_MKL "Use Intel MKL" OFF)
 
-# Logging
-set(OGS_LOG_LEVEL
-    "LOGOG_LEVEL_DEBUG"
-    CACHE STRING "Set logging level included in compilation.")
-set_property(CACHE OGS_LOG_LEVEL
-             PROPERTY STRINGS
-                      LOGOG_LEVEL_NONE
-                      LOGOG_LEVEL_ERROR
-                      LOGOG_LEVEL_WARN
-                      LOGOG_LEVEL_INFO
-                      LOGOG_LEVEL_DEBUG
-                      LOGOG_LEVEL_ALL)
-
 # Debug
 option(OGS_FATAL_ABORT "Abort in OGS_FATAL" OFF)
 
@@ -264,8 +251,6 @@ endif()
 if(OGS_FATAL_ABORT)
     add_definitions(-DOGS_FATAL_ABORT)
 endif()
-
-add_definitions(-DLOGOG_LEVEL=${OGS_LOG_LEVEL})
 
 # Packaging
 include(scripts/cmake/packaging/Pack.cmake)

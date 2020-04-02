@@ -36,10 +36,6 @@ CMake switches to enable / disable parts of OGS.
 
 - `CMAKE_BUILD_TYPE` - Set to `Release` to build with optimization flags, set to `Debug` for debugging.
 
-#### Logging
-
-- `OGS_DISABLE_LOGGING` - Disables all logog output messages. This really strips out all logog-code (useful for performance testing).
-
 #### Testing
 
 - `OGS_COVERAGE` - Enables code coverage measurements with gcov/lcov. TODO
