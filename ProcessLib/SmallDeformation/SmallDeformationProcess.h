@@ -65,6 +65,9 @@ private:
                                      const double t, const double dt,
                                      int const process_id) override;
 
+    void computeSecondaryVariableConcrete(const double t, GlobalVector const& x,
+                                          const int process_id) override;
+
 private:
     SmallDeformationProcessData<DisplacementDim> _process_data;
 

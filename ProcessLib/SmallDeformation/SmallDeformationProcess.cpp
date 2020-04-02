@@ -260,6 +260,17 @@ void SmallDeformationProcess<DisplacementDim>::postTimestepConcreteProcess(
     material_forces->copyValues(*_material_forces);
 }
 
+template <int DisplacementDim>
+void SmallDeformationProcess<DisplacementDim>::computeSecondaryVariableConcrete(
+    const double t, GlobalVector const& x, const int process_id)
+{
+    DBUG("Compute the secondary variables for SmallDeformationProcess.");
+    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
+    GlobalExecutor::executeSelectedMemberOnDereferenced(
+        &LocalAssemblerInterface::computeSecondaryVariable, _local_assemblers,
+        pv.getActiveElementIDs(), getDOFTable(process_id), t, x,
+        _coupled_solutions);
+}
 template class SmallDeformationProcess<2>;
 template class SmallDeformationProcess<3>;
 
