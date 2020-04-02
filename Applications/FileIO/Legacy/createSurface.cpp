@@ -81,8 +81,8 @@ bool createSurface(GeoLib::Polyline const& ply,
     gmsh_io.setPrecision(std::numeric_limits<double>::digits10);
 
     // write to random file in temp directory
-    auto geo_file = fs::temp_directory_path() /= BaseLib::random_string(32);
-    auto msh_file = fs::temp_directory_path() /= BaseLib::random_string(32);
+    auto geo_file = fs::temp_directory_path() /= BaseLib::randomString(32);
+    auto msh_file = fs::temp_directory_path() /= BaseLib::randomString(32);
 
     gmsh_io.writeToFile(geo_file.string());
     // Newer gmsh versions write a newer file format for meshes per default. At

@@ -27,7 +27,7 @@ public:
     CsvInterfaceTest()
     {
         _file_name =
-            (fs::temp_directory_path() /= BaseLib::random_string(32) + ".csv").string();
+            (fs::temp_directory_path() /= BaseLib::randomString(32) + ".csv").string();
         std::ofstream out(_file_name);
         out << "id\tx\ty\tz\tname\tvalue1\tvalue_two\n";
         out << "0\t642015.538\t5724666.445\t391.759\ttest_a\t11.05303121\t436.913\t133\n";

@@ -24,7 +24,7 @@ class OGSIOVer4InterfaceTest : public ::testing::Test
 {
 public:
     OGSIOVer4InterfaceTest()
-        : _test_path(fs::temp_directory_path() /= BaseLib::random_string(32)),
+        : _test_path(fs::temp_directory_path() /= BaseLib::randomString(32)),
           _gli_fname(_test_path), _surface_fname(_test_path)
     {
         fs::create_directory(_test_path);

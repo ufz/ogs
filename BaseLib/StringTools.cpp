@@ -15,13 +15,14 @@
 #include "StringTools.h"
 
 #include <algorithm>
+#include <boost/algorithm/string/replace.hpp>
 #include <cctype>
+#include <chrono>
 #include <cstdarg>
 #include <cstdio>
 #include <iomanip>
-
 #include <logog/include/logog.hpp>
-#include <boost/algorithm/string/replace.hpp>
+#include <random>
 
 namespace BaseLib
 {
@@ -104,21 +105,24 @@ std::string format(const char* format_str, ... )
     return std::string(buffer.data());
 }
 
-std::string random_string( size_t length )
+std::string randomString(std::size_t const length)
 {
-    auto randchar = []() -> char
-    {
-        const char charset[] =
+    static constexpr char charset[] =
         "0123456789"
         "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         "abcdefghijklmnopqrstuvwxyz";
-        const size_t max_index = (sizeof(charset) - 1);
-        return charset[ rand() % max_index ];
-    };
-    std::string str(length,0);
-    std::generate_n( str.begin(), length, randchar );
 
-    return str;
+    static const auto seed = static_cast<std::mt19937::result_type>(
+        std::chrono::system_clock::now().time_since_epoch().count());
+    static std::mt19937 generator{seed};
+    static std::uniform_int_distribution<unsigned short> distribution(
+        0, sizeof(charset) - 2);
+
+    std::string s(length, 0);
+    std::generate_n(
+        begin(s), length, [&]() { return charset[distribution(generator)]; });
+
+    return s;
 }
 
 } // end namespace BaseLib
