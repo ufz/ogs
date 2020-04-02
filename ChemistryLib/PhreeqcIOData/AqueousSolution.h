@@ -18,6 +18,8 @@
 
 namespace ChemistryLib
 {
+enum class ChargeBalance;
+
 namespace PhreeqcIOData
 {
 struct Component
@@ -27,13 +29,6 @@ struct Component
     std::string const name;
     double amount = std::numeric_limits<double>::quiet_NaN();
     static const ItemType item_type = ItemType::Component;
-};
-
-enum class ChargeBalance
-{
-    pH,
-    pe,
-    Unspecified
 };
 
 struct AqueousSolution

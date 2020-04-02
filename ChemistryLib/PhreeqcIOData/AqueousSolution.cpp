@@ -11,6 +11,7 @@
 #include <ostream>
 
 #include "AqueousSolution.h"
+#include "ChemistryLib/Common/ChargeBalance.h"
 
 namespace ChemistryLib
 {
