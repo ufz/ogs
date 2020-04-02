@@ -63,6 +63,9 @@ PhreeqcKernel::PhreeqcKernel(
             Rxn_pp_assemblage_map.emplace(
                 chemical_system_id, *equilibrium_reactants->castToBaseClass());
         }
+        // explicitly release and delete equilibrium_reactants
+        equilibrium_reactants.reset(nullptr);
+
         use.Set_pp_assemblage_in(true);
     }
 
@@ -77,6 +80,9 @@ PhreeqcKernel::PhreeqcKernel(
             Rxn_kinetics_map.emplace(chemical_system_id,
                                      *kinetic_reactants->castToBaseClass());
         }
+        // explicitly release and delete kinetic_reactants
+        kinetic_reactants.reset(nullptr);
+
         use.Set_kinetics_in(true);
     }
 
