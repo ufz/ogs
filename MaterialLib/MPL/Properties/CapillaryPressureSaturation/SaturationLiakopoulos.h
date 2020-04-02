@@ -20,8 +20,6 @@
 namespace MaterialPropertyLib
 {
 class Medium;
-class Phase;
-class Component;
 /**
  * \class SaturationLiakopoulos
  * \brief A well known soil characteristics function
@@ -31,27 +29,16 @@ class Component;
  *
  * Wetting (liquid) phase saturation is given by the empirical relation
  * \f[s^\mathrm{r}_\mathrm{L}=1 - 1.9722\cdot10^{-11}p_\mathrm{cap}^{2.4279}\f]
+ *    Parameters for Liakopoulos saturation curve taken from:
+ *    Asadi, R., Ataie-Ashtiani, B. (2015): A Comparison of finite volume
+ *    formulations and coupling strategies for two-phase flow in deforming
+ *    porous media. Comput. Geosci., p. 24ff.
  *
+ *    Those parameters are fixed for that particular model, no need to change
+ *    them.
  */
 class SaturationLiakopoulos final : public Property
 {
-private:
-    Medium* _medium = nullptr;
-    /**
-      Parameters for Liakopoulos saturation curve taken from:
-      Asadi, R., Ataie-Ashtiani, B. (2015): A Comparison of finite volume
-      formulations and coupling strategies for two-phase flow in deforming
-      porous media. Comput. Geosci., p. 24ff.
-
-      Those parameters are fixed for that particular model, no need to change
-      them.
-    */
-    const double _residual_liquid_saturation = 0.2;
-    const double _parameter_a = 1.9722e-11;
-    const double _parameter_b = 2.4279;
-    const double _p_cap_max = std::pow(
-        (1. - _residual_liquid_saturation) / _parameter_a, (1. / _parameter_b));
-
 public:
     /// This method assigns a pointer to the material object that is the owner
     /// of this property
@@ -70,22 +57,32 @@ public:
         }
     }
 
-    /// Those methods override the base class implementations and
-    /// actually compute and set the property _values and _dValues.
+    /// It returns \f$ S(p_c) \f$
     PropertyDataType value(VariableArray const& variable_array,
-                           ParameterLib::SpatialPosition const& /*pos*/,
-                           double const /*t*/,
-                           double const /*dt*/) const override;
+                           ParameterLib::SpatialPosition const& pos,
+                           double const t,
+                           double const dt) const override;
+
+    /// It returns \f$ \frac{\partial S(p_c)}{\partial  p_c} \f$
     PropertyDataType dValue(VariableArray const& variable_array,
                             Variable const variable,
-                            ParameterLib::SpatialPosition const& /*pos*/,
-                            double const /*t*/,
-                            double const /*dt*/) const override;
+                            ParameterLib::SpatialPosition const& pos,
+                            double const t,
+                            double const dt) const override;
+
+    /// It returns \f$ \frac{\partial^2 S(p_c)}{\partial  p_c^2} \f$
     PropertyDataType d2Value(VariableArray const& variable_array,
                              Variable const variable1, Variable const variable2,
-                             ParameterLib::SpatialPosition const& /*pos*/,
-                             double const /*t*/,
-                             double const /*dt*/) const override;
-};
+                             ParameterLib::SpatialPosition const& pos,
+                             double const t, double const dt) const override;
 
+private:
+    Medium* _medium = nullptr;
+
+    const double _residual_liquid_saturation = 0.2;
+    const double _parameter_a = 1.9722e-11;
+    const double _parameter_b = 2.4279;
+    const double _p_cap_max = std::pow(
+        (1. - _residual_liquid_saturation) / _parameter_a, (1. / _parameter_b));
+};
 }  // namespace MaterialPropertyLib
