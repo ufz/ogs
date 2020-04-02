@@ -502,10 +502,6 @@ public:
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
 
-        constexpr int symmetric_tensor_size =
-            MathLib::KelvinVector::KelvinVectorDimensions<
-                DisplacementDim>::value;
-
         auto sigma_sum = MathLib::KelvinVector::tensorToKelvin<DisplacementDim>(
             Eigen::Matrix<double, 3, 3>::Zero());
 
