@@ -45,6 +45,26 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
     _material_forces = MeshLib::getOrCreateMeshProperty<double>(
         mesh, "MaterialForces", MeshLib::MeshItemType::Node, DisplacementDim);
 
+    _process_data.principal_stress_vector[0] =
+        MeshLib::getOrCreateMeshProperty<double>(
+            const_cast<MeshLib::Mesh&>(mesh), "principal_stress_vector_1",
+            MeshLib::MeshItemType::Cell, 3);
+
+    _process_data.principal_stress_vector[1] =
+        MeshLib::getOrCreateMeshProperty<double>(
+            const_cast<MeshLib::Mesh&>(mesh), "principal_stress_vector_2",
+            MeshLib::MeshItemType::Cell, 3);
+
+    _process_data.principal_stress_vector[2] =
+        MeshLib::getOrCreateMeshProperty<double>(
+            const_cast<MeshLib::Mesh&>(mesh), "principal_stress_vector_3",
+            MeshLib::MeshItemType::Cell, 3);
+
+    _process_data.principal_stress_values =
+        MeshLib::getOrCreateMeshProperty<double>(
+            const_cast<MeshLib::Mesh&>(mesh), "principal_stress_values",
+            MeshLib::MeshItemType::Cell, 3);
+
     // TODO (naumov) remove ip suffix. Probably needs modification of the mesh
     // properties, s.t. there is no "overlapping" with cell/point data.
     // See getOrCreateMeshProperty.

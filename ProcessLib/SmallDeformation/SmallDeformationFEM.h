@@ -493,6 +493,50 @@ public:
         return *_ip_data[integration_point].material_state_variables;
     }
 
+    void computeSecondaryVariableConcrete(
+        double const /*t*/, std::vector<double> const& /*local_x*/) override
+    {
+        int const elem_id = _element.getID();
+        ParameterLib::SpatialPosition x_position;
+        x_position.setElementID(elem_id);
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
+
+        constexpr int symmetric_tensor_size =
+            MathLib::KelvinVector::KelvinVectorDimensions<
+                DisplacementDim>::value;
+
+        auto sigma_sum = MathLib::KelvinVector::tensorToKelvin<DisplacementDim>(
+            Eigen::Matrix<double, 3, 3>::Zero());
+
+        for (unsigned ip = 0; ip < n_integration_points; ip++)
+        {
+            x_position.setIntegrationPoint(ip);
+            auto const& sigma = _ip_data[ip].sigma;
+            sigma_sum += sigma;
+        }
+
+        Eigen::Matrix<double, 3, 3, 0, 3, 3> const sigma_avg =
+            MathLib::KelvinVector::kelvinVectorToTensor(sigma_sum) /
+            n_integration_points;
+
+        Eigen::SelfAdjointEigenSolver<Eigen::Matrix<double, 3, 3>> e_s(
+            sigma_avg);
+
+        Eigen::Map<Eigen::Vector3d>(
+            &(*_process_data.principal_stress_values)[elem_id * 3], 3) =
+            e_s.eigenvalues();
+
+        auto eigen_vectors = e_s.eigenvectors();
+
+        for (auto i = 0; i < 3; i++)
+        {
+            Eigen::Map<Eigen::Vector3d>(
+                &(*_process_data.principal_stress_vector[i])[elem_id * 3], 3) =
+                eigen_vectors.col(i);
+        }
+    }
+
 private:
     SmallDeformationProcessData<DisplacementDim>& _process_data;
 
