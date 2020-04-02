@@ -1,6 +1,6 @@
 {
   "minimum_version": {
-    "gcc": "8.4",
+    "gcc": "8.0",
     "clang": "9.0",
     "msvc": {
       "year": "2019",
