@@ -53,6 +53,10 @@ struct SmallDeformationProcessData
 
     double const reference_temperature =
         std::numeric_limits<double>::quiet_NaN();
+
+    std::array<MeshLib::PropertyVector<double>*, 3> principal_stress_vector = {
+        nullptr, nullptr, nullptr};
+    MeshLib::PropertyVector<double>* principal_stress_values = nullptr;
 };
 
 }  // namespace SmallDeformation

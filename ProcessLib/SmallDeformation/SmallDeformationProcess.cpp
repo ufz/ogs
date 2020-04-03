@@ -45,6 +45,26 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
     _material_forces = MeshLib::getOrCreateMeshProperty<double>(
         mesh, "MaterialForces", MeshLib::MeshItemType::Node, DisplacementDim);
 
+    _process_data.principal_stress_vector[0] =
+        MeshLib::getOrCreateMeshProperty<double>(
+            const_cast<MeshLib::Mesh&>(mesh), "principal_stress_vector_1",
+            MeshLib::MeshItemType::Cell, 3);
+
+    _process_data.principal_stress_vector[1] =
+        MeshLib::getOrCreateMeshProperty<double>(
+            const_cast<MeshLib::Mesh&>(mesh), "principal_stress_vector_2",
+            MeshLib::MeshItemType::Cell, 3);
+
+    _process_data.principal_stress_vector[2] =
+        MeshLib::getOrCreateMeshProperty<double>(
+            const_cast<MeshLib::Mesh&>(mesh), "principal_stress_vector_3",
+            MeshLib::MeshItemType::Cell, 3);
+
+    _process_data.principal_stress_values =
+        MeshLib::getOrCreateMeshProperty<double>(
+            const_cast<MeshLib::Mesh&>(mesh), "principal_stress_values",
+            MeshLib::MeshItemType::Cell, 3);
+
     // TODO (naumov) remove ip suffix. Probably needs modification of the mesh
     // properties, s.t. there is no "overlapping" with cell/point data.
     // See getOrCreateMeshProperty.
@@ -240,6 +260,17 @@ void SmallDeformationProcess<DisplacementDim>::postTimestepConcreteProcess(
     material_forces->copyValues(*_material_forces);
 }
 
+template <int DisplacementDim>
+void SmallDeformationProcess<DisplacementDim>::computeSecondaryVariableConcrete(
+    const double t, GlobalVector const& x, const int process_id)
+{
+    DBUG("Compute the secondary variables for SmallDeformationProcess.");
+    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
+    GlobalExecutor::executeSelectedMemberOnDereferenced(
+        &LocalAssemblerInterface::computeSecondaryVariable, _local_assemblers,
+        pv.getActiveElementIDs(), getDOFTable(process_id), t, x,
+        _coupled_solutions);
+}
 template class SmallDeformationProcess<2>;
 template class SmallDeformationProcess<3>;
 
