@@ -30,11 +30,13 @@
 #endif
 
 #include "Applications/FileIO/Gmsh/GmshReader.h"
-
+#include "GeoLib/AABB.h"
 #include "MeshLib/IO/writeMeshToFile.h"
-#include "MeshLib/MeshSearch/ElementSearch.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshEditing/RemoveMeshComponents.h"
+#include "MeshLib/MeshInformation.h"
+#include "MeshLib/MeshQuality/MeshValidation.h"
+#include "MeshLib/MeshSearch/ElementSearch.h"
 
 int main (int argc, char* argv[])
 {
@@ -68,6 +70,9 @@ int main (int argc, char* argv[])
         "",
         "filename as string");
     cmd.add(gmsh_mesh_arg);
+
+    TCLAP::SwitchArg valid_arg("v", "validation", "validate the mesh");
+    cmd.add(valid_arg);
 
     TCLAP::SwitchArg exclude_lines_arg("e", "exclude-lines",
         "if set, lines will not be written to the ogs mesh");
@@ -110,6 +115,35 @@ int main (int argc, char* argv[])
         } else {
             INFO("Mesh does not contain any lines.");
         }
+    }
+    // *** print meshinformation
+
+    INFO("Please check your mesh carefully!");
+    INFO(
+        "Degenerated or redundant mesh elements can cause OGS to stop or "
+        "misbehave.");
+    INFO("Use the -e option to delete redundant line elements.");
+
+    // Geometric information
+    const GeoLib::AABB aabb = MeshLib::MeshInformation::getBoundingBox(*mesh);
+    auto const minPt(aabb.getMinPoint());
+    auto const maxPt(aabb.getMaxPoint());
+    INFO("Node coordinates:");
+    INFO("\tx [%g, %g] (extent %g)", minPt[0], maxPt[0], maxPt[0] - minPt[0]);
+    INFO("\ty [%g, %g] (extent %g)", minPt[1], maxPt[1], maxPt[1] - minPt[1]);
+    INFO("\tz [%g, %g] (extent %g)", minPt[2], maxPt[2], maxPt[2] - minPt[2]);
+
+    INFO("Edge length: [%g, %g]", mesh->getMinEdgeLength(),
+         mesh->getMaxEdgeLength());
+
+    // Element information
+    MeshLib::MeshInformation::writeAllNumbersOfElementTypes(*mesh);
+
+    MeshLib::MeshInformation::writePropertyVectorInformation(*mesh);
+
+    if (valid_arg.isSet())
+    {
+        MeshLib::MeshInformation::writeMeshValidationResults(*mesh);
     }
 
     // *** write mesh in new format
