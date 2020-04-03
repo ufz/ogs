@@ -61,9 +61,9 @@ TEST_F(RasterToMeshTest, convertRasterToTriMeshElevation)
         mesh->getProperties().getPropertyVectorNames();
     ASSERT_TRUE(names.empty());
 
-    std::array<unsigned, 7> n_types =
+    auto const& n_types =
         MeshLib::MeshInformation::getNumberOfElementTypes(*mesh);
-    ASSERT_EQ(2 * _n_pix, n_types[1]);
+    ASSERT_EQ(2 * _n_pix, n_types.at(MeshLib::MeshElemType::TRIANGLE));
 
     GeoLib::AABB aabb = MeshLib::MeshInformation::getBoundingBox(*mesh);
     ASSERT_NEAR(aabb.getMinPoint()[2], 0,
@@ -83,9 +83,9 @@ TEST_F(RasterToMeshTest, convertRasterToQuadMeshElevation)
     std::vector<std::string> names = mesh->getProperties().getPropertyVectorNames();
     ASSERT_TRUE(names.empty());
 
-    std::array<unsigned, 7> n_types =
+    auto const& n_types =
         MeshLib::MeshInformation::getNumberOfElementTypes(*mesh);
-    ASSERT_EQ(_n_pix, n_types[2]);
+    ASSERT_EQ(_n_pix, n_types.at(MeshLib::MeshElemType::QUAD));
 
     GeoLib::AABB aabb = MeshLib::MeshInformation::getBoundingBox(*mesh);
     ASSERT_NEAR(aabb.getMinPoint()[2], 0,
@@ -136,9 +136,9 @@ TEST_F(RasterToMeshTest, convertRasterToTriMeshValue)
         ASSERT_NEAR(0, (*n)[2], std::numeric_limits<double>::epsilon());
     }
 
-    std::array<unsigned, 7> n_types =
+    auto const& n_types =
         MeshLib::MeshInformation::getNumberOfElementTypes(*mesh);
-    ASSERT_EQ(2 * _n_pix, n_types[1]);
+    ASSERT_EQ(2 * _n_pix, n_types.at(MeshLib::MeshElemType::TRIANGLE));
 }
 
 TEST_F(RasterToMeshTest, convertRasterToQuadMeshValue)
@@ -170,9 +170,9 @@ TEST_F(RasterToMeshTest, convertRasterToQuadMeshValue)
         ASSERT_TRUE((*n)[2] == 0);
     }
 
-    std::array<unsigned, 7> n_types =
+    auto const& n_types =
         MeshLib::MeshInformation::getNumberOfElementTypes(*mesh);
-    ASSERT_EQ(_n_pix, n_types[2]);
+    ASSERT_EQ(_n_pix, n_types.at(MeshLib::MeshElemType::QUAD));
 }
 
 TEST_F(RasterToMeshTest, convertRasterToPrismMeshValue)
@@ -204,9 +204,9 @@ TEST_F(RasterToMeshTest, convertRasterToPrismMeshValue)
         ASSERT_TRUE(((*n)[2] == 0) || ((*n)[2] == _spacing));
     }
 
-    std::array<unsigned, 7> n_types =
+    auto const& n_types =
         MeshLib::MeshInformation::getNumberOfElementTypes(*mesh);
-    ASSERT_EQ(2 * _n_pix, n_types[6]);
+    ASSERT_EQ(2 * _n_pix, n_types.at(MeshLib::MeshElemType::PRISM));
 }
 
 TEST_F(RasterToMeshTest, convertRasterToHexMeshValue)
@@ -238,9 +238,9 @@ TEST_F(RasterToMeshTest, convertRasterToHexMeshValue)
         ASSERT_TRUE(((*n)[2] == 0) || ((*n)[2] == _spacing));
     }
 
-    std::array<unsigned, 7> n_types =
+    auto const& n_types =
         MeshLib::MeshInformation::getNumberOfElementTypes(*mesh);
-    ASSERT_EQ(_n_pix, n_types[4]);
+    ASSERT_EQ(_n_pix, n_types.at(MeshLib::MeshElemType::HEXAHEDRON));
 }
 
 TEST_F(RasterToMeshTest, convertRasterToQuadMeshNone)
@@ -262,9 +262,9 @@ TEST_F(RasterToMeshTest, convertRasterToQuadMeshNone)
         ASSERT_TRUE((*n)[2] == 0);
     }
 
-    std::array<unsigned, 7> n_types =
+    auto const& n_types =
         MeshLib::MeshInformation::getNumberOfElementTypes(*mesh);
-    ASSERT_EQ(_n_pix, n_types[2]);
+    ASSERT_EQ(_n_pix, n_types.at(MeshLib::MeshElemType::QUAD));
 }
 
 #ifdef OGS_BUILD_GUI
@@ -305,8 +305,8 @@ TEST_F(RasterToMeshTest, vtkImage)
         ASSERT_TRUE((*n)[2] == 0);
     }
 
-    std::array<unsigned, 7> n_types =
+    auto const& n_types =
         MeshLib::MeshInformation::getNumberOfElementTypes(*mesh);
-    ASSERT_EQ(2 * _n_pix, n_types[1]);
+    ASSERT_EQ(2 * _n_pix, n_types.at(MeshLib::MeshElemType::TRIANGLE));
 }
 #endif
