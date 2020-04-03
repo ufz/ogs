@@ -128,17 +128,20 @@ void ElementTreeModel::setMesh(MeshLib::Mesh const& mesh)
     auto* elements_item = new TreeItem(elements_number, _rootItem);
     _rootItem->appendChild(elements_item);
 
-    const std::array<QString, 7> n_element_names = {{ "Lines:", "Triangles:", "Quads:", "Tetrahedra:", "Hexahedra:", "Pyramids:", "Prisms:" }};
-    const std::array<unsigned, 7>& n_element_types (MeshLib::MeshInformation::getNumberOfElementTypes(mesh));
-    for (std::size_t i=0; i<n_element_types.size(); ++i)
+    auto const& n_element_types =
+        MeshLib::MeshInformation::getNumberOfElementTypes(mesh);
+    for (auto entry : n_element_types)
     {
-        if (n_element_types[i])
-        {
-            QList<QVariant> elements_number;
-            elements_number << n_element_names[i] << QString::number(n_element_types[i]) << "" << "";
-            auto* type_item = new TreeItem(elements_number, elements_item);
-            elements_item->appendChild(type_item);
-        }
+        QList<QVariant> elements_number;
+        elements_number << QString::fromStdString(
+                               MeshLib::MeshElemType2String(
+                                   static_cast<MeshLib::MeshElemType>(
+                                       entry.first)) +
+                               "s:")
+                        << QString::number(entry.second) << ""
+                        << "";
+        auto* type_item = new TreeItem(elements_number, elements_item);
+        elements_item->appendChild(type_item);
     }
 
     QList<QVariant> bounding_box;

@@ -210,15 +210,16 @@ int main (int argc, char* argv[])
     INFO("done.\n");
 
     INFO("Checking for line elements...");
-    std::array<unsigned, 7> const& n_element_types =
+    auto const& n_element_types =
         MeshLib::MeshInformation::getNumberOfElementTypes(*mesh);
     std::unique_ptr<MeshLib::Mesh> result;
-    if (n_element_types[0] == 0)
+    if (n_element_types.at(MeshLib::MeshElemType::LINE) == 0)
     {
         INFO ("No line elements found.\n");
         result = std::move(mesh);
     }
-    else if (n_element_types[0] == mesh->getNumberOfElements())
+    else if (n_element_types.at(MeshLib::MeshElemType::LINE) ==
+             mesh->getNumberOfElements())
     {
         INFO ("Keeping line mesh.\n");
         result = std::move(mesh);

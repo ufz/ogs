@@ -16,6 +16,7 @@
 
 #include <array>
 #include <limits>
+#include <map>
 #include <string>
 
 #include "GeoLib/AABB.h"
@@ -68,7 +69,7 @@ public:
      *        5: \#pyramids
      *        6: \#prisms
      */
-    static std::array<unsigned, 7> getNumberOfElementTypes(
+    static std::map<MeshElemType, unsigned> getNumberOfElementTypes(
         const MeshLib::Mesh& mesh);
 
     /// writes all numbers of element types

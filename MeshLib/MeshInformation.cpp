@@ -25,42 +25,15 @@ GeoLib::AABB MeshInformation::getBoundingBox(const MeshLib::Mesh& mesh)
     return GeoLib::AABB(nodes.begin(), nodes.end());
 }
 
-std::array<unsigned, 7> MeshInformation::getNumberOfElementTypes(
+std::map<MeshElemType, unsigned> MeshInformation::getNumberOfElementTypes(
     const MeshLib::Mesh& mesh)
 {
-    std::array<unsigned, 7> n_element_types = {{0, 0, 0, 0, 0, 0, 0}};
+    std::map<MeshElemType, unsigned> n_element_types;
     const std::vector<MeshLib::Element*>& elements(mesh.getElements());
     for (auto element : elements)
     {
         MeshElemType t = element->getGeomType();
-        if (t == MeshElemType::LINE)
-        {
-            n_element_types[0]++;
-        }
-        if (t == MeshElemType::TRIANGLE)
-        {
-            n_element_types[1]++;
-        }
-        if (t == MeshElemType::QUAD)
-        {
-            n_element_types[2]++;
-        }
-        if (t == MeshElemType::TETRAHEDRON)
-        {
-            n_element_types[3]++;
-        }
-        if (t == MeshElemType::HEXAHEDRON)
-        {
-            n_element_types[4]++;
-        }
-        if (t == MeshElemType::PYRAMID)
-        {
-            n_element_types[5]++;
-        }
-        if (t == MeshElemType::PRISM)
-        {
-            n_element_types[6]++;
-        }
+        n_element_types[t]++;
     }
     return n_element_types;
 }
@@ -69,14 +42,14 @@ void MeshInformation::writeAllNumbersOfElementTypes(const MeshLib::Mesh& mesh)
 {
     auto const& nr_ele_types =
         MeshLib::MeshInformation::getNumberOfElementTypes(mesh);
-    const std::array<std::string, 7> element_names{
-        "lines",     "triangles", "quads", "tetrahedra",
-        "hexahedra", "pyramids",  "prisms"};
-    for (unsigned int element_type = 0; element_type < nr_ele_types.size();
-         element_type++)
+
+    INFO("Number of elements in the mesh:");
+    for (auto entry : nr_ele_types)
     {
-        INFO("\t{:d} {:s} ", nr_ele_types[element_type],
-             element_names[element_type].c_str());
+        INFO("\t{:s}s: {:d}",
+             MeshLib::MeshElemType2String(
+                 static_cast<MeshLib::MeshElemType>(entry.first)),
+             entry.second);
     }
 }
 

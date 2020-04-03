@@ -25,10 +25,11 @@ TEST(FileIO, TestGmsInterface)
     ASSERT_EQ(11795, mesh->getNumberOfNodes());
     ASSERT_EQ(19885, mesh->getNumberOfElements());
 
-    std::array<unsigned, 7> types (MeshLib::MeshInformation::getNumberOfElementTypes(*mesh));
-    ASSERT_EQ(1456,  types[3]);    // tets
-    ASSERT_EQ(1355,  types[5]);    // pyramids
-    ASSERT_EQ(17074, types[6]);    // prism
+    auto const& types =
+        MeshLib::MeshInformation::getNumberOfElementTypes(*mesh);
+    ASSERT_EQ(1456, types.at(MeshLib::MeshElemType::TETRAHEDRON));  // tets
+    ASSERT_EQ(1355, types.at(MeshLib::MeshElemType::PYRAMID));      // pyramids
+    ASSERT_EQ(17074, types.at(MeshLib::MeshElemType::PRISM));       // prism
     auto const& bounds =
         MeshLib::MeshInformation::getValueBounds<int>(*mesh, "MaterialIDs");
     ASSERT_TRUE(boost::none != bounds);

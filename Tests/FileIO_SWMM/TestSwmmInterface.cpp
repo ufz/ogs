@@ -66,8 +66,9 @@ TEST(FileIO, TestSwmmInterface)
     for (std::size_t i=3; i<n_nodes; ++i)
         ASSERT_NEAR(0, (*depth)[i], std::numeric_limits<double>::epsilon());
 
-    std::array<unsigned, 7> types (MeshLib::MeshInformation::getNumberOfElementTypes(mesh));
-    ASSERT_EQ(n_elems, types[0]); // all elems are lines
+    auto const& types = MeshLib::MeshInformation::getNumberOfElementTypes(mesh);
+    ASSERT_EQ(n_elems,
+              types.at(MeshLib::MeshElemType::LINE));  // all elems are lines
     auto const bounds =
         MeshLib::MeshInformation::getValueBounds<int>(mesh, "MaterialIDs");
     ASSERT_TRUE(boost::none != bounds);
