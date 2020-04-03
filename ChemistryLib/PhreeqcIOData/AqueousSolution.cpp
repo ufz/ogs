@@ -11,6 +11,7 @@
 #include <ostream>
 
 #include "AqueousSolution.h"
+#include "ChemistryLib/Common/ChargeBalance.h"
 
 namespace ChemistryLib
 {
@@ -23,19 +24,19 @@ std::ostream& operator<<(std::ostream& os,
 
     os << "pressure " << aqueous_solution.pressure << "\n";
 
-    switch (aqueous_solution.means_of_adjusting_charge)
+    switch (aqueous_solution.charge_balance)
     {
-        case MeansOfAdjustingCharge::pH:
+        case ChargeBalance::pH:
             os << "pH " << aqueous_solution.pH << " charge"
                << "\n";
             os << "pe " << aqueous_solution.pe << "\n";
             break;
-        case MeansOfAdjustingCharge::pe:
+        case ChargeBalance::pe:
             os << "pH " << aqueous_solution.pH << "\n";
             os << "pe " << aqueous_solution.pe << " charge"
                << "\n";
             break;
-        case MeansOfAdjustingCharge::Unspecified:
+        case ChargeBalance::Unspecified:
             os << "pH " << aqueous_solution.pH << "\n";
             os << "pe " << aqueous_solution.pe << "\n";
             break;

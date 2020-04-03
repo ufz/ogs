@@ -64,7 +64,7 @@ enum class ItemType
     pH,
     pe,
     Component,
-    EquilibriumPhase,
+    EquilibriumReactant,
     KineticReactant,
     SecondaryVariable
 };

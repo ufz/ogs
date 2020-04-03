@@ -51,7 +51,7 @@ std::ostream& operator<<(std::ostream& os, Output const& output)
     os << "\n";
 
     auto const equilibrium_phase_items =
-        output.getOutputItemsByItemType(ItemType::EquilibriumPhase);
+        output.getOutputItemsByItemType(ItemType::EquilibriumReactant);
     if (!equilibrium_phase_items.empty())
     {
         os << "-equilibrium_phases";

@@ -14,6 +14,7 @@
 #include <vector>
 
 #include "ChemicalSolverInterface.h"
+#include "PhreeqcKernelData/EquilibriumReactants.h"
 #include "PhreeqcKernelData/KineticReactant.h"
 
 #include <iphreeqc/src/src/phreeqcpp/Phreeqc.h>
@@ -36,14 +37,12 @@ public:
                       process_id_to_component_name_map,
                   std::string const database,
                   AqueousSolution aqueous_solution,
-                  std::unique_ptr<Kinetics>
-                      kinetic_reactants,
+                  std::unique_ptr<EquilibriumReactants>&& equilibrium_reactants,
+                  std::unique_ptr<Kinetics>&& kinetic_reactants,
                   std::vector<ReactionRate>&& reaction_rates);
 
     void executeInitialCalculation(
-        std::vector<GlobalVector*>& /*process_solutions*/) override
-    {
-    }
+        std::vector<GlobalVector*>& process_solutions) override;
 
     void doWaterChemistryCalculation(
         std::vector<GlobalVector*>& process_solutions,
@@ -60,6 +59,9 @@ public:
 
 private:
     void initializePhreeqcGeneralSettings() { do_initialize(); }
+
+    void tidyEquilibriumReactants(
+        EquilibriumReactants const equilibrium_reactants);
 
     void loadDatabase(std::string const& database);
 
@@ -79,8 +81,11 @@ private:
 
     void setTimeStepSize(double const dt);
 
+    void reset(std::size_t const chemical_system_id);
+
     std::map<int, struct master*> _process_id_to_master_map;
     std::unique_ptr<cxxISolution const> _initial_aqueous_solution;
+    std::unique_ptr<cxxSolution const> _aqueous_solution;
     std::vector<ReactionRate> const _reaction_rates;
 };
 }  // namespace PhreeqcKernelData

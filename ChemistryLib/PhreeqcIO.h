@@ -25,7 +25,7 @@ namespace ChemistryLib
 namespace PhreeqcIOData
 {
 struct AqueousSolution;
-struct EquilibriumPhase;
+struct EquilibriumReactant;
 struct KineticReactant;
 struct ReactionRate;
 struct Output;
@@ -46,7 +46,7 @@ public:
               MeshLib::Mesh const& mesh,
               std::string&& database,
               std::vector<AqueousSolution>&& aqueous_solutions,
-              std::vector<EquilibriumPhase>&& equilibrium_phases,
+              std::vector<EquilibriumReactant>&& equilibrium_reactants,
               std::vector<KineticReactant>&& kinetic_reactants,
               std::vector<ReactionRate>&& reaction_rates,
               std::vector<SurfaceSite>&& surface,
@@ -93,7 +93,7 @@ private:
     MeshLib::Mesh const& _mesh;
     std::string const _database;
     std::vector<AqueousSolution> _aqueous_solutions;
-    std::vector<EquilibriumPhase> _equilibrium_phases;
+    std::vector<EquilibriumReactant> _equilibrium_reactants;
     std::vector<KineticReactant> _kinetic_reactants;
     std::vector<ReactionRate> const _reaction_rates;
     std::vector<SurfaceSite> const _surface;

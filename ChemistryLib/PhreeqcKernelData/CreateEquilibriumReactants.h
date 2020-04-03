@@ -11,7 +11,9 @@
 #pragma once
 
 #include <boost/optional/optional_fwd.hpp>
-#include <vector>
+#include <memory>
+
+#include "EquilibriumReactants.h"
 
 namespace BaseLib
 {
@@ -21,20 +23,14 @@ class ConfigTree;
 namespace MeshLib
 {
 class Mesh;
-
-template <typename PROP_VAL_TYPE>
-class PropertyVector;
 }
 
 namespace ChemistryLib
 {
-namespace PhreeqcIOData
+namespace PhreeqcKernelData
 {
-struct EquilibriumPhase;
-
-std::vector<EquilibriumPhase> createEquilibriumPhases(
+std::unique_ptr<EquilibriumReactants> createEquilibriumReactants(
     boost::optional<BaseLib::ConfigTree> const& config,
-    MeshLib::Mesh const& mesh,
-    MeshLib::PropertyVector<std::size_t> const& chemical_system_map);
-}  // namespace PhreeqcIOData
+    MeshLib::Mesh const& mesh);
+}
 }  // namespace ChemistryLib

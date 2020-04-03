@@ -11,6 +11,8 @@
 #include "CreateInitialAqueousSolution.h"
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
+#include "ChemistryLib/Common/ChargeBalance.h"
+#include "ChemistryLib/Common/CreateChargeBalance.h"
 #include "InitialAqueousSolution.h"
 
 namespace ChemistryLib
@@ -60,6 +62,21 @@ InitialAqueousSolution createInitialAqueousSolution(
             "The number of components given in <solution>/<components> is not "
             "in line with the number of transport processes - 1 which stands "
             "for the transport process of hydrogen.");
+    }
+
+    auto const charge_balance = createChargeBalance(config);
+    if (charge_balance == ChargeBalance::pH)
+    {
+        Component component("H(1)");
+        component.Set_equation_name("charge");
+        components.emplace("H(1)", component);
+    }
+    if (charge_balance == ChargeBalance::pe)
+    {
+        OGS_FATAL(
+            "Adjusting pe value for charge balance is unsupported yet with the "
+            "chemical solver 'PhreeqcKernel'. Please use the chemical solver "
+            "'Phreeqc' for this functionality.");
     }
 
     return InitialAqueousSolution(components);

@@ -10,25 +10,31 @@
 
 #pragma once
 
-#include <memory>
+#include <boost/optional/optional_fwd.hpp>
 #include <vector>
+
+namespace BaseLib
+{
+class ConfigTree;
+}
+
+namespace MeshLib
+{
+class Mesh;
+
+template <typename PROP_VAL_TYPE>
+class PropertyVector;
+}
 
 namespace ChemistryLib
 {
 namespace PhreeqcIOData
 {
-struct Output;
-struct Component;
 struct EquilibriumReactant;
-struct KineticReactant;
-struct UserPunch;
 
-std::unique_ptr<Output> createOutput(
-    std::vector<Component> const& components,
-    std::vector<EquilibriumReactant> const& equilibrium_reactants,
-    std::vector<KineticReactant> const& kinetic_reactants,
-    std::unique_ptr<UserPunch> const& user_punch,
-    bool const use_high_precision,
-    std::string const& project_file_name);
+std::vector<EquilibriumReactant> createEquilibriumReactants(
+    boost::optional<BaseLib::ConfigTree> const& config,
+    MeshLib::Mesh const& mesh,
+    MeshLib::PropertyVector<std::size_t> const& chemical_system_map);
 }  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

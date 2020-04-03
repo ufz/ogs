@@ -355,7 +355,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>calcite</prefix>
+            <prefix>calcite_phreeqckernel</prefix>
             <timesteps>
                 <pair>
                     <repeat>5</repeat>
@@ -373,8 +373,8 @@
             </variables>
         </output>
     </time_loop>
-    <chemical_system chemical_solver="Phreeqc">
-        <mesh>calcite_ReactiveDomain</mesh>
+    <chemical_system chemical_solver="PhreeqcKernel">
+        <!--mesh>calcite_ReactiveDomain</mesh-->
         <database>PSINA_12_07_110615_DAV_s.dat</database>
         <solution>
             <temperature>25</temperature>
@@ -400,13 +400,13 @@
                 <saturation_index>0.0</saturation_index>
             </phase_component>
         </equilibrium_reactants>
-        <knobs>
+        <!--knobs>
             <max_iter>100</max_iter>
             <relative_convergence_tolerance>1e-12</relative_convergence_tolerance>
             <tolerance>1e-15</tolerance>
             <step_size>100</step_size>
             <scaling>0</scaling>
-        </knobs>
+        </knobs-->
     </chemical_system>
     <parameters>
         <parameter>

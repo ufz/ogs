@@ -1040,6 +1040,43 @@ AddTest(
 )
 
 AddTest(
+    NAME 1D_ReactiveMassTransport_PhreeqcKernel_EquilibriumPhaseBlockTest
+    PATH Parabolic/ComponentTransport/ReactiveTransport/EquilibriumPhase
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS calcite_phreeqckernel.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    calcite_phreeqckernel_pcs_5_ts_42_t_4200.000000_expected.vtu calcite_phreeqckernel_pcs_5_ts_42_t_4200.000000.vtu pressure pressure 1e-6 1e-10
+    calcite_phreeqckernel_pcs_5_ts_84_t_8400.000000_expected.vtu calcite_phreeqckernel_pcs_5_ts_84_t_8400.000000.vtu pressure pressure 1e-6 1e-10
+    calcite_phreeqckernel_pcs_5_ts_126_t_12600.000000_expected.vtu calcite_phreeqckernel_pcs_5_ts_126_t_12600.000000.vtu pressure pressure 1e-6 1e-10
+    calcite_phreeqckernel_pcs_5_ts_168_t_16800.000000_expected.vtu calcite_phreeqckernel_pcs_5_ts_168_t_16800.000000.vtu pressure pressure 1e-6 1e-10
+    calcite_phreeqckernel_pcs_5_ts_210_t_21000.000000_expected.vtu calcite_phreeqckernel_pcs_5_ts_210_t_21000.000000.vtu pressure pressure 1e-6 1e-10
+    calcite_phreeqckernel_pcs_5_ts_42_t_4200.000000_expected.vtu calcite_phreeqckernel_pcs_5_ts_42_t_4200.000000.vtu Ca Ca 1e-10 1e-16
+    calcite_phreeqckernel_pcs_5_ts_84_t_8400.000000_expected.vtu calcite_phreeqckernel_pcs_5_ts_84_t_8400.000000.vtu Ca Ca 1e-10 1e-16
+    calcite_phreeqckernel_pcs_5_ts_126_t_12600.000000_expected.vtu calcite_phreeqckernel_pcs_5_ts_126_t_12600.000000.vtu Ca Ca 1e-10 1e-16
+    calcite_phreeqckernel_pcs_5_ts_168_t_16800.000000_expected.vtu calcite_phreeqckernel_pcs_5_ts_168_t_16800.000000.vtu Ca Ca 1e-10 1e-16
+    calcite_phreeqckernel_pcs_5_ts_210_t_21000.000000_expected.vtu calcite_phreeqckernel_pcs_5_ts_210_t_21000.000000.vtu Ca Ca 1e-10 1e-16
+    calcite_phreeqckernel_pcs_5_ts_42_t_4200.000000_expected.vtu calcite_phreeqckernel_pcs_5_ts_42_t_4200.000000.vtu Cl Cl 1e-10 1e-16
+    calcite_phreeqckernel_pcs_5_ts_84_t_8400.000000_expected.vtu calcite_phreeqckernel_pcs_5_ts_84_t_8400.000000.vtu Cl Cl 1e-10 1e-16
+    calcite_phreeqckernel_pcs_5_ts_126_t_12600.000000_expected.vtu calcite_phreeqckernel_pcs_5_ts_126_t_12600.000000.vtu Cl Cl 1e-10 1e-16
+    calcite_phreeqckernel_pcs_5_ts_168_t_16800.000000_expected.vtu calcite_phreeqckernel_pcs_5_ts_168_t_16800.000000.vtu Cl Cl 1e-10 1e-16
+    calcite_phreeqckernel_pcs_5_ts_210_t_21000.000000_expected.vtu calcite_phreeqckernel_pcs_5_ts_210_t_21000.000000.vtu Cl Cl 1e-10 1e-16
+    calcite_phreeqckernel_pcs_5_ts_42_t_4200.000000_expected.vtu calcite_phreeqckernel_pcs_5_ts_42_t_4200.000000.vtu H H 1e-10 1e-16
+    calcite_phreeqckernel_pcs_5_ts_84_t_8400.000000_expected.vtu calcite_phreeqckernel_pcs_5_ts_84_t_8400.000000.vtu H H 1e-10 1e-16
+    calcite_phreeqckernel_pcs_5_ts_126_t_12600.000000_expected.vtu calcite_phreeqckernel_pcs_5_ts_126_t_12600.000000.vtu H H 1e-10 1e-16
+    calcite_phreeqckernel_pcs_5_ts_168_t_16800.000000_expected.vtu calcite_phreeqckernel_pcs_5_ts_168_t_16800.000000.vtu H H 1e-10 1e-16
+    calcite_phreeqckernel_pcs_5_ts_210_t_21000.000000_expected.vtu calcite_phreeqckernel_pcs_5_ts_210_t_21000.000000.vtu H H 1e-10 1e-16
+    calcite_phreeqckernel_pcs_5_ts_42_t_4200.000000_expected.vtu calcite_phreeqckernel_pcs_5_ts_42_t_4200.000000.vtu Mg Mg 1e-10 1e-16
+    calcite_phreeqckernel_pcs_5_ts_84_t_8400.000000_expected.vtu calcite_phreeqckernel_pcs_5_ts_84_t_8400.000000.vtu Mg Mg 1e-10 1e-16
+    calcite_phreeqckernel_pcs_5_ts_126_t_12600.000000_expected.vtu calcite_phreeqckernel_pcs_5_ts_126_t_12600.000000.vtu Mg Mg 1e-10 1e-16
+    calcite_phreeqckernel_pcs_5_ts_168_t_16800.000000_expected.vtu calcite_phreeqckernel_pcs_5_ts_168_t_16800.000000.vtu Mg Mg 1e-10 1e-16
+    calcite_phreeqckernel_pcs_5_ts_210_t_21000.000000_expected.vtu calcite_phreeqckernel_pcs_5_ts_210_t_21000.000000.vtu Mg Mg 1e-10 1e-16
+    RUNTIME 10
+)
+
+AddTest(
     NAME 1D_ReactiveMassTransport_IPhreeqc_KineticReactantBlockTest
     PATH Parabolic/ComponentTransport/ReactiveTransport/KineticReactant
     EXECUTABLE ogs

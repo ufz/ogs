@@ -11,37 +11,8 @@
 #include "CreateAqueousSolution.h"
 #include "AqueousSolution.h"
 #include "BaseLib/ConfigTree.h"
-#include "BaseLib/Error.h"
+#include "ChemistryLib/Common/CreateChargeBalance.h"
 #include "CreateSolutionComponent.h"
-
-namespace
-{
-ChemistryLib::PhreeqcIOData::MeansOfAdjustingCharge parseMeansOfAdjustingCharge(
-    BaseLib::ConfigTree const& config)
-{
-    auto const means_of_adjusting_charge_in_str =
-        //! \ogs_file_param{prj__chemical_system__solution__means_of_adjusting_charge}
-        config.getConfigParameter<std::string>("means_of_adjusting_charge", "");
-
-    if (means_of_adjusting_charge_in_str.empty())
-    {
-        return ChemistryLib::PhreeqcIOData::MeansOfAdjustingCharge::Unspecified;
-    }
-    if (means_of_adjusting_charge_in_str == "pH")
-    {
-        return ChemistryLib::PhreeqcIOData::MeansOfAdjustingCharge::pH;
-    }
-    if (means_of_adjusting_charge_in_str == "pe")
-    {
-        return ChemistryLib::PhreeqcIOData::MeansOfAdjustingCharge::pe;
-    }
-
-    OGS_FATAL(
-        "Error in specifying means of adjusting charge. Achieving charge "
-        "balance is currently supported with the way of adjusting pH value or "
-        "pe value.");
-}
-}  // namespace
 
 namespace ChemistryLib
 {
@@ -64,10 +35,9 @@ AqueousSolution createAqueousSolution(
     auto components =
         createSolutionComponents(config, process_id_to_component_name_map);
 
-    auto means_of_adjusting_charge = parseMeansOfAdjustingCharge(config);
+    auto charge_balance = createChargeBalance(config);
 
-    return {temperature, pressure, pe, std::move(components),
-            means_of_adjusting_charge};
+    return {temperature, pressure, pe, std::move(components), charge_balance};
 }
 }  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

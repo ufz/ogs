@@ -26,11 +26,11 @@ namespace ChemistryLib
 {
 namespace PhreeqcIOData
 {
-struct EquilibriumPhase
+struct EquilibriumReactant
 {
-    EquilibriumPhase(std::string name_,
-                     MeshLib::PropertyVector<double>* amount_,
-                     double saturation_index_)
+    EquilibriumReactant(std::string name_,
+                        MeshLib::PropertyVector<double>* amount_,
+                        double saturation_index_)
         : name(std::move(name_)),
           amount(amount_),
           saturation_index(saturation_index_)
@@ -42,7 +42,7 @@ struct EquilibriumPhase
     std::string const name;
     MeshLib::PropertyVector<double>* amount;
     double const saturation_index;
-    static const ItemType item_type = ItemType::EquilibriumPhase;
+    static const ItemType item_type = ItemType::EquilibriumReactant;
 };
 }  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

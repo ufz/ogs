@@ -14,14 +14,14 @@
 #include "PhreeqcIO.h"
 #include "PhreeqcIOData/AqueousSolution.h"
 #include "PhreeqcIOData/CreateAqueousSolution.h"
-#include "PhreeqcIOData/CreateEquilibriumPhase.h"
+#include "PhreeqcIOData/CreateEquilibriumReactants.h"
 #include "PhreeqcIOData/CreateKineticReactant.h"
 #include "PhreeqcIOData/CreateKnobs.h"
 #include "PhreeqcIOData/CreateOutput.h"
 #include "PhreeqcIOData/CreateSurface.h"
 #include "PhreeqcIOData/CreateUserPunch.h"
 #include "PhreeqcIOData/Dump.h"
-#include "PhreeqcIOData/EquilibriumPhase.h"
+#include "PhreeqcIOData/EquilibriumReactant.h"
 #include "PhreeqcIOData/KineticReactant.h"
 #include "PhreeqcIOData/Knobs.h"
 #include "PhreeqcIOData/ReactionRate.h"
@@ -30,6 +30,7 @@
 #include "PhreeqcKernel.h"
 #include "PhreeqcKernelData/AqueousSolution.h"
 #include "PhreeqcKernelData/CreateAqueousSolution.h"
+#include "PhreeqcKernelData/CreateEquilibriumReactants.h"
 #include "PhreeqcKernelData/CreateKineticReactant.h"
 #include "PhreeqcKernelData/ReactionRate.h"
 
@@ -107,10 +108,10 @@ createChemicalSolverInterface<ChemicalSolver::Phreeqc>(
         //! \ogs_file_param{prj__chemical_system__rates}
         config.getConfigSubtreeOptional("rates"));
 
-    // equilibrium phases
-    auto equilibrium_phases = PhreeqcIOData::createEquilibriumPhases(
-        //! \ogs_file_param{prj__chemical_system__equilibrium_phases}
-        config.getConfigSubtreeOptional("equilibrium_phases"), *meshes[0],
+    // equilibrium reactants
+    auto equilibrium_reactants = PhreeqcIOData::createEquilibriumReactants(
+        //! \ogs_file_param{prj__chemical_system__equilibrium_reactants}
+        config.getConfigSubtreeOptional("equilibrium_reactants"), *meshes[0],
         chemical_system_map);
 
     // surface
@@ -143,7 +144,7 @@ createChemicalSolverInterface<ChemicalSolver::Phreeqc>(
         //! \ogs_file_param{prj__chemical_system__use_high_precision}
         config.getConfigParameter<bool>("use_high_precision", true);
     auto output = PhreeqcIOData::createOutput(
-        components, equilibrium_phases, kinetic_reactants, user_punch,
+        components, equilibrium_reactants, kinetic_reactants, user_punch,
         use_high_precision, project_file_name);
 
     auto const num_chemical_systems = mesh.getNumberOfBaseNodes();
@@ -153,7 +154,7 @@ createChemicalSolverInterface<ChemicalSolver::Phreeqc>(
     return std::make_unique<PhreeqcIOData::PhreeqcIO>(
         std::move(project_file_name), *meshes[mesh.getID()],
         std::move(path_to_database), std::move(aqueous_solutions),
-        std::move(equilibrium_phases), std::move(kinetic_reactants),
+        std::move(equilibrium_reactants), std::move(kinetic_reactants),
         std::move(reaction_rates), std::move(surface), std::move(user_punch),
         std::move(output), std::move(dump), std::move(knobs),
         process_id_to_component_name_map);
@@ -186,9 +187,15 @@ createChemicalSolverInterface<ChemicalSolver::PhreeqcKernel>(
         //! \ogs_file_param{prj__chemical_system__rates}
         config.getConfigSubtreeOptional("rates"));
 
+    // equilibrium reactants
+    auto equilibrium_reactants = PhreeqcKernelData::createEquilibriumReactants(
+        //! \ogs_file_param{prj__chemical_system__equilibrium_reactants}
+        config.getConfigSubtreeOptional("equilibrium_reactants"), mesh);
+
     return std::make_unique<PhreeqcKernelData::PhreeqcKernel>(
         mesh.getNumberOfBaseNodes(), process_id_to_component_name_map,
         std::move(path_to_database), std::move(aqueous_solution),
-        std::move(kinetic_reactants), std::move(reaction_rates));
+        std::move(equilibrium_reactants), std::move(kinetic_reactants),
+        std::move(reaction_rates));
 }
 }  // namespace ChemistryLib

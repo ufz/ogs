@@ -18,7 +18,7 @@
 #include "PhreeqcIO.h"
 #include "PhreeqcIOData/AqueousSolution.h"
 #include "PhreeqcIOData/Dump.h"
-#include "PhreeqcIOData/EquilibriumPhase.h"
+#include "PhreeqcIOData/EquilibriumReactant.h"
 #include "PhreeqcIOData/KineticReactant.h"
 #include "PhreeqcIOData/Knobs.h"
 #include "PhreeqcIOData/Output.h"
@@ -48,7 +48,7 @@ PhreeqcIO::PhreeqcIO(std::string const project_file_name,
                      MeshLib::Mesh const& mesh,
                      std::string&& database,
                      std::vector<AqueousSolution>&& aqueous_solutions,
-                     std::vector<EquilibriumPhase>&& equilibrium_phases,
+                     std::vector<EquilibriumReactant>&& equilibrium_reactants,
                      std::vector<KineticReactant>&& kinetic_reactants,
                      std::vector<ReactionRate>&& reaction_rates,
                      std::vector<SurfaceSite>&& surface,
@@ -62,7 +62,7 @@ PhreeqcIO::PhreeqcIO(std::string const project_file_name,
       _mesh(mesh),
       _database(std::move(database)),
       _aqueous_solutions(std::move(aqueous_solutions)),
-      _equilibrium_phases(std::move(equilibrium_phases)),
+      _equilibrium_reactants(std::move(equilibrium_reactants)),
       _kinetic_reactants(std::move(kinetic_reactants)),
       _reaction_rates(std::move(reaction_rates)),
       _surface(std::move(surface)),
@@ -316,13 +316,13 @@ std::ostream& operator<<(std::ostream& os, PhreeqcIO const& phreeqc_io)
 
         os << "USE solution " << global_id + 1 << "\n\n";
 
-        auto const& equilibrium_phases = phreeqc_io._equilibrium_phases;
-        if (!equilibrium_phases.empty())
+        auto const& equilibrium_reactants = phreeqc_io._equilibrium_reactants;
+        if (!equilibrium_reactants.empty())
         {
             os << "EQUILIBRIUM_PHASES " << global_id + 1 << "\n";
-            for (auto const& equilibrium_phase : equilibrium_phases)
+            for (auto const& equilibrium_reactant : equilibrium_reactants)
             {
-                equilibrium_phase.print(os, global_id);
+                equilibrium_reactant.print(os, global_id);
             }
             os << "\n";
         }
@@ -481,7 +481,7 @@ std::istream& operator>>(std::istream& in, PhreeqcIO& phreeqc_io)
         auto& aqueous_solution =
             phreeqc_io._aqueous_solutions[local_id];
         auto& components = aqueous_solution.components;
-        auto& equilibrium_phases = phreeqc_io._equilibrium_phases;
+        auto& equilibrium_reactants = phreeqc_io._equilibrium_reactants;
         auto& kinetic_reactants = phreeqc_io._kinetic_reactants;
         auto& user_punch = phreeqc_io._user_punch;
         for (int item_id = 0; item_id < static_cast<int>(accepted_items.size());
@@ -517,15 +517,15 @@ std::istream& operator>>(std::istream& in, PhreeqcIO& phreeqc_io)
                     component.amount = accepted_items[item_id];
                     break;
                 }
-                case ItemType::EquilibriumPhase:
+                case ItemType::EquilibriumReactant:
                 {
-                    // Update amounts of equilibrium phases
-                    auto& equilibrium_phase = BaseLib::findElementOrError(
-                        equilibrium_phases.begin(), equilibrium_phases.end(),
-                        compare_by_name,
-                        "Could not find equilibrium phase '" + item_name +
+                    // Update amounts of equilibrium reactant
+                    auto& equilibrium_reactant = BaseLib::findElementOrError(
+                        equilibrium_reactants.begin(),
+                        equilibrium_reactants.end(), compare_by_name,
+                        "Could not find equilibrium reactant '" + item_name +
                             "'.");
-                    (*equilibrium_phase.amount)[global_id] =
+                    (*equilibrium_reactant.amount)[global_id] =
                         accepted_items[item_id];
                     break;
                 }

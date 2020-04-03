@@ -40,6 +40,12 @@ public:
     {
         return static_cast<cxxSolution const*>(this);
     }
+
+    std::unique_ptr<cxxSolution const> castToBaseClassNoninitialized()
+    {
+        Destroy_initial_data();
+        return std::make_unique<cxxSolution const>(*castToBaseClass());
+    }
 };
 }  // namespace PhreeqcKernelData
 }  // namespace ChemistryLib

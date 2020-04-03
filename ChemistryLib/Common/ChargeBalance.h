@@ -8,19 +8,14 @@
  *
  */
 
-#include <ostream>
-
-#include "EquilibriumPhase.h"
+#pragma once
 
 namespace ChemistryLib
 {
-namespace PhreeqcIOData
+enum class ChargeBalance
 {
-void EquilibriumPhase::print(std::ostream& os,
-                             std::size_t const global_id) const
-{
-    os << name << " " << saturation_index << " "
-       << (*amount)[global_id] << "\n";
-}
-}  // namespace PhreeqcIOData
+    pH,
+    pe,
+    Unspecified
+};
 }  // namespace ChemistryLib
