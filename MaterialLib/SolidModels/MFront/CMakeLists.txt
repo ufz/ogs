@@ -19,7 +19,8 @@ mfront_behaviours_check_library(OgsMFrontBehaviour
                                 MohrCoulombAbboSloanOrtho
                                 StandardElasticityBrick
                                 StandardElasticityBrickOrtho
-                                Lubby2)
+                                Lubby2
+                                Lubby2mod)
 
 target_include_directories(MaterialLib_SolidModels_MFront
                            PUBLIC ThirdParty/MGIS/include)

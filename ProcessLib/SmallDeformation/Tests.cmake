@@ -61,6 +61,7 @@ if (OGS_USE_MFRONT)
     OgsTest(PROJECTFILE Mechanics/Linear/MFront/square_1e0_orthotropic_45xy_z.prj)
     OgsTest(PROJECTFILE Mechanics/Linear/MFront/square_1e0_orthotropic_y-xz.prj)
     OgsTest(PROJECTFILE Mechanics/Burgers/cube_1e0_mfront.prj)
+    OgsTest(PROJECTFILE Mechanics/Burgers/cube_1e0_mfront_mod.prj)
 # Linear elastic, no internal state variables, no external state variables.
 AddTest(
     NAME Mechanics_SDL_disc_with_hole_mfront
