@@ -44,7 +44,6 @@ int main (int argc, char* argv[])
     vtkSmartPointer<vtkXMLPUnstructuredGridReader> reader =
         vtkSmartPointer<vtkXMLPUnstructuredGridReader>::New();
     reader->SetFileName(input_arg.getValue().c_str());
-    vtkSmartPointer<vtkUnstructuredGrid> mesh = reader->GetOutput();
 
     vtkSmartPointer<vtkRemoveGhosts> ghosts =
         vtkSmartPointer<vtkRemoveGhosts>::New();
