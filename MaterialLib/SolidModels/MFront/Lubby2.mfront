@@ -1,10 +1,12 @@
 
 @DSL Implicit;
 @Behaviour Lubby2;
-@Author Thomas Nagel;
-@Description{Lubby2 model for stationary
+@Author Thomas Nagel, Tengfei Deng;
+@Description
+{Lubby2 model for stationary
 and transient creep based on Burgers
-rheological model};
+rheological model
+};
 
 @Algorithm NewtonRaphson;
 @MaximumNumberOfIterations 100;
@@ -41,23 +43,25 @@ epsM.setEntryName("MaxwellStrain");
 @Integrator
 {
     // Implicit system
-    constexpr const auto id4 = Stensor4::Id();
-    const auto Pdev = Stensor4::K();
+    constexpr auto id4 = Stensor4::Id();
+    constexpr auto Pdev = Stensor4::K();
 
     const auto sigma_eff =
         std::max(sigmaeq(sig), local_zero_tolerance * D(0, 0));
 
     const auto s = deviator(sig);
+    const auto k = deviator(epsK + depsK);
 
     const auto etaK = etaK0 * std::exp(mvK * sigma_eff);
     const auto etaM = etaM0 * std::exp(mvM * sigma_eff);
     const auto GK = GK0 * std::exp(mK * sigma_eff);
+    const auto s_m_2G_eK = s - 2.0 * GK * k;
 
     // residuals
     feel += depsM + depsK;
 
     // calculate Kelvin strain residual
-    fepsK = depsK - dt / (2.0 * etaK) * (s - 2.0 * GK * (epsK + depsK));
+    fepsK = depsK - dt / (2.0 * etaK) * s_m_2G_eK;
 
     // calculate Maxwell strain residual
     fepsM = depsM - dt / (2.0 * etaM) * s;
@@ -68,14 +72,12 @@ epsM.setEntryName("MaxwellStrain");
     const auto detaM_ddeel = etaM * mvM * dsigma_eff_ddeel;
     const auto dGK_ddeel = GK * mK * dsigma_eff_ddeel;
 
-    dfeel_ddeel = id4;
+    // dfeel_ddeel = id4; //initialized as such
     dfeel_ddepsK = id4;
     dfeel_ddepsM = id4;
 
-    dfepsK_ddeel = (dt / (2.0 * etaK * etaK) * (s - 2.0 * GK * (epsK + depsK)) ^
-                    detaK_ddeel) -
-                   (dt / (2.0 * etaK) * Pdev * D) +
-                   (dt / etaK * (epsK + depsK) ^ dGK_ddeel);
+    dfepsK_ddeel = (dt / (2.0 * etaK * etaK) * s_m_2G_eK ^ detaK_ddeel) -
+                   (dt / (2.0 * etaK) * Pdev * D) + (dt / etaK * k ^ dGK_ddeel);
     dfepsK_ddepsK = (1. + dt * GK / etaK) * id4;
     // dfepsK_ddepsM is all zero --> nothing to do
 
