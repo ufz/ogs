@@ -78,7 +78,7 @@ public:
     static void writePropertyVectorInformation(const MeshLib::Mesh& mesh);
 
     /// writes out mesh validation results
-    // Remark: MeshValidation can modify the original mesh
+    /// Remark: MeshValidation can modify the original mesh
     static void writeMeshValidationResults(MeshLib::Mesh& mesh);
 };
 
