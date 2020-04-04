@@ -70,7 +70,7 @@ std::unique_ptr<MechanicsBase<DisplacementDim>> createMFront(
     auto const lib_path =
         library_name
             ? BaseLib::joinPaths(BaseLib::getProjectDirectory(), *library_name)
-            : "libOgsMFrontBehaviour.so";
+            : "libOgsMFrontBehaviour";
 
     auto const behaviour_name =
         //! \ogs_file_param{material__solid__constitutive_relation__MFront__behaviour}
