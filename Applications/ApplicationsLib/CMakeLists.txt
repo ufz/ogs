@@ -11,7 +11,8 @@ target_link_libraries(ApplicationsLib
                               MeshLib
                               MeshGeoToolsLib
                               ParameterLib
-                              ProcessLib)
+                              ProcessLib
+                              spdlog::spdlog)
 
 # Set cpp definitions if the cmake option is enabled for the given process.
 foreach(process ${ProcessesList})

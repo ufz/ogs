@@ -30,7 +30,10 @@ target_include_directories(MathLib PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 
 set_target_properties(MathLib PROPERTIES LINKER_LANGUAGE CXX)
 
-target_link_libraries(MathLib PUBLIC BaseLib ${OpenMP_CXX_LIBRARIES})
+target_link_libraries(
+    MathLib
+    PUBLIC BaseLib ${OpenMP_CXX_LIBRARIES}
+    PRIVATE spdlog::spdlog)
 
 if(CVODE_FOUND)
     target_include_directories(MathLib PRIVATE ${CVODE_INCLUDE_DIRS})

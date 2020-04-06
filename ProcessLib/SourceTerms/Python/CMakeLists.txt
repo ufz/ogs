@@ -8,13 +8,10 @@ ogs_add_library(ProcessLibSourceTermPython
 
 target_compile_definitions(ProcessLibSourceTermPython PUBLIC OGS_USE_PYTHON)
 
-target_link_libraries(ProcessLibSourceTermPython
-                      PUBLIC BaseLib
-                             MathLib
-                             MeshLib
-                             NumLib
-                             ${Python3_LIBRARIES}
-                      PRIVATE pybind11::pybind11)
+target_link_libraries(
+    ProcessLibSourceTermPython
+    PUBLIC BaseLib MathLib MeshLib NumLib ${Python3_LIBRARIES}
+    PRIVATE pybind11::pybind11 spdlog::spdlog)
 
 # For the embedded Python module
 ogs_add_library(ProcessLibSourceTermPythonModule PythonSourceTermModule.cpp

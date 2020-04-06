@@ -10,6 +10,6 @@ ogs_add_library(ChemistryLib ${SOURCES})
 include(GenerateExportHeader)
 generate_export_header(ChemistryLib)
 
-target_link_libraries(ChemistryLib PUBLIC iphreeqc PRIVATE NumLib)
+target_link_libraries(ChemistryLib PUBLIC iphreeqc PRIVATE NumLib spdlog::spdlog)
 
 set_target_properties(ChemistryLib PROPERTIES CXX_STANDARD 14)

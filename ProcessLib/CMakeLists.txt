@@ -19,14 +19,10 @@ append_source_files(SOURCES Utils)
 
 ogs_add_library(ProcessLib ${SOURCES})
 
-target_link_libraries(ProcessLib
-                      PUBLIC BaseLib
-                             MaterialLib
-                             MathLib
-                             MeshGeoToolsLib
-                             MeshLib
-                             NumLib
-                      PRIVATE ParameterLib GitInfoLib)
+target_link_libraries(
+    ProcessLib
+    PUBLIC BaseLib MaterialLib MathLib MeshGeoToolsLib MeshLib NumLib
+    PRIVATE ParameterLib GitInfoLib spdlog::spdlog)
 
 if (OGS_BUILD_PROCESS_ComponentTransport
     OR OGS_BUILD_PROCESS_RichardsComponentTransport)

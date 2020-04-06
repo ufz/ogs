@@ -19,9 +19,7 @@ target_include_directories(NumLib PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 
 set_target_properties(NumLib PROPERTIES LINKER_LANGUAGE CXX)
 
-target_link_libraries(NumLib
-                      PUBLIC BaseLib
-                             GeoLib
-                             MathLib
-                             MeshLib
-                      PRIVATE MeshGeoToolsLib)
+target_link_libraries(
+    NumLib
+    PUBLIC BaseLib GeoLib MathLib MeshLib
+    PRIVATE MeshGeoToolsLib spdlog::spdlog)
