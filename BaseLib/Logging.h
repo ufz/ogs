@@ -11,7 +11,10 @@
 
 #pragma once
 
-#include <spdlog/spdlog.h>
+#include <spdlog/logger.h>
+
+#include <memory>
+#include <string>
 
 namespace BaseLib
 {

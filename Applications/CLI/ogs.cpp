@@ -10,7 +10,9 @@
  *
  */
 
+#include <spdlog/spdlog.h>
 #include <tclap/CmdLine.h>
+
 #include <chrono>
 
 #ifndef _WIN32

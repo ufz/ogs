@@ -12,6 +12,8 @@
  *
  */
 
+#include <spdlog/spdlog.h>
+
 #include <clocale>
 
 #include "Applications/ApplicationsLib/LinearSolverLibrarySetup.h"
