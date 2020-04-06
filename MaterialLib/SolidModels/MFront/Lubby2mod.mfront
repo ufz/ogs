@@ -46,6 +46,8 @@ epsK.setEntryName("KelvinStrain");
 @InitLocalVariables
 {
     mu = computeMu(young, nu);
+    // Compute initial elastic strain
+    eel = 1. / (2. * mu) * sig - nu / young * trace(sig) * Stensor::Id();
 }
 
 @Integrator
