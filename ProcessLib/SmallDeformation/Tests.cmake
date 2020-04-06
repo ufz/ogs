@@ -118,7 +118,9 @@ AddTest(
     GLOB slope_pcs_0_ts_*.vtu EquivalentPlasticStrain EquivalentPlasticStrain 1e-13 0.0
     GLOB slope_pcs_0_ts_*.vtu ElasticStrain ElasticStrain 1e-14 0.0
 )
-set_tests_properties(ogs-Mechanics_slope_stability_mfront PROPERTIES WILL_FAIL true)
+if(NOT OGS_USE_MPI)
+    set_tests_properties(ogs-Mechanics_slope_stability_mfront PROPERTIES WILL_FAIL true)
+endif()
 
 endif()
 
