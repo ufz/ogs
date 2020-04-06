@@ -293,7 +293,7 @@ pipeline {
               }
               build {
                 env = 'eve/cli.sh'
-                cmd_args = '-l 30'
+                cmd_args = '-j 8'
               }
               build {
                 env = 'eve/cli.sh'
@@ -348,7 +348,7 @@ pipeline {
               }
               build {
                 env = 'eve/petsc.sh'
-                cmd_args = '-l 30'
+                cmd_args = '-j 8'
               }
               build {
                 env = 'eve/petsc.sh'
