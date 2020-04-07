@@ -14,7 +14,7 @@ weight = 10
 ### Prerequisites
 
 * Linux or macOS (you may run Singularity with [Vagrant](https://app.vagrantup.com/sylabs) on Windows as well)
-* A running [installation](https://www.sylabs.io/guides/3.0/user-guide/quick_start.html#quick-installation-steps) of Singularity 3.0 or higher
+* A running [installation](https://sylabs.io/guides/3.5/user-guide/quick_start.html#quick-installation-steps) of Singularity 3.0 or higher
 
 ### Get a container image
 
