@@ -15,9 +15,12 @@
 #include <logog/include/logog.hpp>
 
 #include "createSurface.h"
+#include "filesystem.h"
 
 #include "Applications/FileIO/Gmsh/GMSHInterface.h"
 #include "Applications/FileIO/Gmsh/GmshReader.h"
+
+#include "BaseLib/StringTools.h"
 
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Point.h"
@@ -77,20 +80,18 @@ bool createSurface(GeoLib::Polyline const& ply,
         0.0, 0, geo_names, false, false);
     gmsh_io.setPrecision(std::numeric_limits<double>::digits10);
 
-    char file_base_name_c[L_tmpnam];
-    if (! std::tmpnam(file_base_name_c))
-    {
-       OGS_FATAL("Could not create unique file name.");
-    }
-    std::string const file_base_name(file_base_name_c);
-    gmsh_io.writeToFile(file_base_name + ".geo");
-    std::string gmsh_command =
-        gmsh_binary + " -2 -algo meshadapt \"" + file_base_name + ".geo\"";
-    gmsh_command += " -o \"" + file_base_name + ".msh\"";
+    // write to random file in temp directory
+    auto geo_file = fs::temp_directory_path() /= BaseLib::randomString(32);
+    auto msh_file = fs::temp_directory_path() /= BaseLib::randomString(32);
+
+    gmsh_io.writeToFile(geo_file.string());
     // Newer gmsh versions write a newer file format for meshes per default. At
     // the moment we can't read this new format. This is a switch for gmsh to
     // write the 'old' file format.
-    gmsh_command += " -format msh22";
+    std::string gmsh_command =
+        gmsh_binary + " -2 -algo meshadapt -format msh22 -o "
+        + msh_file.string() + " " + geo_file.string();
+
     int const gmsh_return_value = std::system(gmsh_command.c_str());
     if (gmsh_return_value != 0)
     {
@@ -98,18 +99,14 @@ bool createSurface(GeoLib::Polyline const& ply,
              gmsh_return_value);
     }
     auto surface_mesh =
-        FileIO::GMSH::readGMSHMesh("\"" + file_base_name + ".msh\"");
+        FileIO::GMSH::readGMSHMesh(msh_file.string());
     if (!surface_mesh)
     {
         WARN("The surface mesh could not be created.");
         return false;
     }
-    if (std::remove((file_base_name + ".geo").c_str()) !=0)
-        WARN("Could not remove temporary file '%s'.",
-            (file_base_name + ".geo").c_str());
-    if (std::remove((file_base_name + ".msh").c_str()) !=0)
-        WARN("Could not remove temporary file '%s'.",
-            (file_base_name + ".msh").c_str());
+    if (!(fs::remove(geo_file) && fs::remove(msh_file)))
+        WARN("Could not remove temporary files in createSurface.");
 
     // convert the surface mesh into a geometric surface
     if (!MeshLib::convertMeshToGeo(*surface_mesh, geometries,

@@ -1,6 +1,8 @@
-FROM ubuntu:18.04 AS build
+# syntax=docker/dockerfile:experimental
 
-# Generated with ogs-container-maker 1.2.0
+FROM ubuntu:19.10 AS build
+
+# Generated with ogs-container-maker 1.4.3
 
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -16,6 +18,15 @@ RUN apt-get update -y && \
         g++ \
         gcc && \
     rm -rf /var/lib/apt/lists/*
+
+# pip
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        python3-pip \
+        python3-setuptools \
+        python3-wheel && \
+    rm -rf /var/lib/apt/lists/*
+RUN pip3 install scif
 
 # OGS base building block
 # Python
@@ -56,16 +67,16 @@ RUN apt-get update -y && \
         mesa-common-dev && \
     rm -rf /var/lib/apt/lists/*
 
-# CMake version 3.12.4
+# CMake version 3.14.7
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         make \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://cmake.org/files/v3.12/cmake-3.12.4-Linux-x86_64.sh && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://cmake.org/files/v3.14/cmake-3.14.7-Linux-x86_64.sh && \
     mkdir -p /usr/local && \
-    /bin/sh /var/tmp/cmake-3.12.4-Linux-x86_64.sh --prefix=/usr/local --skip-license && \
-    rm -rf /var/tmp/cmake-3.12.4-Linux-x86_64.sh
+    /bin/sh /var/tmp/cmake-3.14.7-Linux-x86_64.sh --prefix=/usr/local --skip-license && \
+    rm -rf /var/tmp/cmake-3.14.7-Linux-x86_64.sh
 ENV PATH=/usr/local/bin:$PATH
 
 # Package manager Conan building block
@@ -85,13 +96,23 @@ RUN apt-get update -y && \
         python3-setuptools \
         python3-wheel && \
     rm -rf /var/lib/apt/lists/*
-RUN pip3 install conan==1.21.0
+RUN pip3 install conan==1.22.2
 RUN mkdir -p /opt/conan && \
     chmod 777 /opt/conan
 ENV CONAN_USER_HOME=/opt/conan
 LABEL org.opengeosys.pm=conan \
-    org.opengeosys.pm.conan.version=1.21.0
+    org.opengeosys.pm.conan.version=1.22.2
 LABEL org.opengeosys.pm.conan.user_home=/opt/conan
+
+# CVode version 2.8.2
+# https://github.com/ufz/cvode/archive/2.8.2.tar.gz
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/ufz/cvode/archive/2.8.2.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/2.8.2.tar.gz -C /var/tmp -z && \
+    mkdir -p /var/tmp/cvode-2.8.2/build && cd /var/tmp/cvode-2.8.2/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local/cvode -D CMAKE_INSTALL_PREFIX=/usr/local/cvode -D EXAMPLES_INSTALL=OFF -D BUILD_SHARED_LIBS=OFF -D CMAKE_POSITION_INDEPENDENT_CODE=ON /var/tmp/cvode-2.8.2 && \
+    cmake --build /var/tmp/cvode-2.8.2/build --target all -- -j$(nproc) && \
+    cmake --build /var/tmp/cvode-2.8.2/build --target install -- -j$(nproc) && \
+    rm -rf /var/tmp/cvode-2.8.2 /var/tmp/2.8.2.tar.gz
+ENV CVODE_ROOT=/usr/local/cvode
 
 # cppcheck version 1.87
 # https://github.com/danmar/cppcheck/archive/1.87.tar.gz
@@ -103,6 +124,13 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
     rm -rf /var/tmp/cppcheck-1.87 /var/tmp/1.87.tar.gz
 ENV PATH=/usr/local/cppcheck/bin:$PATH
 
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        doxygen \
+        graphviz \
+        texlive-base && \
+    rm -rf /var/lib/apt/lists/*
+
 # pip
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -112,16 +140,16 @@ RUN apt-get update -y && \
     rm -rf /var/lib/apt/lists/*
 RUN pip3 install gcovr
 
-# Package manager Conan building block
+# ccache building block
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         ccache && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /opt/cache && chmod 777 /opt/cache
-ENV CCACHE_DIR=/opt/cache \
+RUN mkdir -p /opt/ccache && chmod 777 /opt/ccache
+ENV CCACHE_DIR=/opt/ccache \
     CCACHE_MAXSIZE=15G \
     CCACHE_SLOPPINESS=pch_defines,time_macros
-LABEL ccache.dir=/opt/cache \
+LABEL ccache.dir=/opt/ccache \
     ccache.size=15G
 
 # Jenkins node

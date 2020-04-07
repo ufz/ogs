@@ -18,6 +18,7 @@
 
 #include "gtest/gtest.h"
 
+#include "filesystem.h"
 #include "Applications/FileIO/TetGenInterface.h"
 #include "InfoLib/TestInfo.h"
 #include "MeshLib/IO/readMeshFromFile.h"
@@ -29,7 +30,8 @@
 // read TetGen geometry
 TEST(FileIO, TetGenSmeshReader)
 {
-    std::string const file_name (TestInfoLib::TestInfo::data_path + "/FileIO/twolayermdl.smesh");
+    std::string const file_name(
+        TestInfoLib::TestInfo::data_path + "/FileIO/twolayermdl.smesh");
     GeoLib::GEOObjects geo_objects;
     FileIO::TetGenInterface tgi;
     bool const result (tgi.readTetGenGeometry(file_name, geo_objects));
@@ -53,8 +55,10 @@ TEST(FileIO, DISABLED_TetGenSmeshInterface)
     std::string const file_name (TestInfoLib::TestInfo::data_path + "/FileIO/AmmerSubsurfaceCoarse.vtu");
     std::unique_ptr<MeshLib::Mesh const> const mesh (MeshLib::IO::readMeshFromFile(file_name));
 
-    std::string const tg_new_name ("TestSmeshWriter");
-    std::string const output_name(TestInfoLib::TestInfo::tests_tmp_path + tg_new_name + ".smesh");
+    std::string const tg_new_name (BaseLib::randomString(32));
+    std::string const output_name =
+        (fs::temp_directory_path() /= tg_new_name + ".smesh").string();
+    std::cout << output_name << std::endl;
     std::vector<MeshLib::Node> attr_pnts;
     FileIO::TetGenInterface tgi;
     bool result (tgi.writeTetGenSmesh(output_name, *mesh, attr_pnts));

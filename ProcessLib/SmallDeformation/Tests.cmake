@@ -112,7 +112,7 @@ AddTest(
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
     GLOB slope_pcs_0_ts_*.vtu displacement displacement 1e-14 0.0
-    GLOB slope_pcs_0_ts_*.vtu sigma sigma 1e-8 0.0
+    GLOB slope_pcs_0_ts_*.vtu sigma sigma 2e-8 0.0
     GLOB slope_pcs_0_ts_*.vtu epsilon epsilon 1e-14 0.0
     GLOB slope_pcs_0_ts_*.vtu NodalForces NodalForces 1e-8 0.0
     GLOB slope_pcs_0_ts_*.vtu EquivalentPlasticStrain EquivalentPlasticStrain 1e-13 0.0

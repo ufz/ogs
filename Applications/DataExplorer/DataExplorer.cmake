@@ -53,12 +53,6 @@ target_link_libraries(DataExplorer
     ${VTK_LIBRARIES}
 )
 
-
-if(OGS_USE_NETCDF)
-    add_subdirectory(NetCdfDialog)
-    target_link_libraries(DataExplorer NetCdfDialogLib)
-endif()
-
 if(NOT APPLE AND OGS_USE_CONAN)
     if(UNIX)
         target_link_libraries(DataExplorer Qt5::X11Extras)

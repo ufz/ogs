@@ -83,4 +83,7 @@ std::string const& tostring(std::string const& value);
 //! returns printf-like formatted string
 std::string format(const char* format_string, ... );
 
+//! Returns a random string of the given length containing just a-z,A-Z,0-9
+std::string randomString(std::size_t length);
+
 } // end namespace BaseLib

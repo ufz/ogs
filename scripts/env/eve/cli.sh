@@ -7,15 +7,15 @@ fi
 
 module use /global/apps/modulefiles
 
-module load foss/2018b
-module load cmake
+module load foss/2019b
+module load CMake/3.15.3
 module load ninja
-module load git-lfs
+module load git/2.23.0
 
 # Libraries
-module load Boost/1.67.0
+module load boost/1.67.0-1
 module load eigen/3.3.4-1-cmake
-module load vtk/8.2.0/foss2018b/serial
+module load vtk/8.2.0/foss2019b/serial
 
 # Tools
 module load ccache/3.3.3

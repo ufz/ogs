@@ -10,6 +10,7 @@ endif()
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
   "${PROJECT_SOURCE_DIR}/scripts/cmake"
   "${PROJECT_SOURCE_DIR}/scripts/cmake/jedbrown"
+  "${PROJECT_SOURCE_DIR}/scripts/cmake/vector-of-bool"
   "${PROJECT_SOURCE_DIR}/ThirdParty/cmake-modules")
 
 list(APPEND CMAKE_PREFIX_PATH

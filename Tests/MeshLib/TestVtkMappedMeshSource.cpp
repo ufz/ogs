@@ -17,6 +17,7 @@
 #include <memory>
 #include <numeric>
 
+#include "filesystem.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
@@ -151,7 +152,8 @@ TEST_F(InSituMesh, DISABLED_MappedMeshSourceRoundtrip)
     // TODO Add more comparison criteria
 
     ASSERT_TRUE(mesh != nullptr);
-    std::string test_data_file(TestInfoLib::TestInfo::tests_tmp_path + "/MappedMeshSourceRoundtrip.vtu");
+    std::string test_data_file =
+        (fs::temp_directory_path() /= BaseLib::randomString(32)).string();
 
     // -- Test VtkMappedMeshSource, i.e. OGS mesh to VTK mesh
     vtkNew<MeshLib::VtkMappedMeshSource> vtkSource;

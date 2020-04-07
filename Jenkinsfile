@@ -20,6 +20,7 @@ pipeline {
     booleanParam(name: 'eve_parallel', defaultValue: true)
     booleanParam(name: 'win', defaultValue: true)
     booleanParam(name: 'mac', defaultValue: true)
+    booleanParam(name: 'mac_gui', defaultValue: true)
     booleanParam(name: 'clang_analyzer', defaultValue: true)
     booleanParam(name: 'master_jobs', defaultValue: true)
   }
@@ -287,6 +288,7 @@ pipeline {
                   '-DOGS_USE_CONAN=OFF ' +
                   '-DOGS_BUILD_UTILS=ON ' +
                   '-DBUILD_SHARED_LIBS=ON ' +
+                  '-DOGS_CPU_ARCHITECTURE=sandybridge ' +
                   '-DCMAKE_INSTALL_PREFIX=/global/apps/ogs/head/standard ' +
                   '-DOGS_MODULEFILE=/global/apps/modulefiles/ogs/head/standard '
                 env = 'eve/cli.sh'
@@ -342,6 +344,7 @@ pipeline {
                   '-DOGS_USE_CONAN=OFF ' +
                   '-DOGS_USE_PETSC=ON ' +
                   '-DBUILD_SHARED_LIBS=ON ' +
+                  '-DOGS_CPU_ARCHITECTURE=sandybridge ' +
                   '-DCMAKE_INSTALL_PREFIX=/global/apps/ogs/head/petsc ' +
                   '-DOGS_MODULEFILE=/global/apps/modulefiles/ogs/head/petsc '
                 env = 'eve/petsc.sh'
@@ -388,8 +391,8 @@ pipeline {
           }
           agent {label 'win && conan' }
           environment {
-            MSVC_NUMBER = '15'
-            MSVC_VERSION = '2017'
+            MSVC_NUMBER = '16'
+            MSVC_VERSION = '2019'
             OMP_NUM_THREADS = '1'
             CC = 'clcache'
             CXX = 'clcache'
@@ -461,7 +464,7 @@ pipeline {
                   '-DOGS_CPU_ARCHITECTURE=core2 ' +
                   '-DOGS_BUILD_UTILS=ON ' +
                   '-DOGS_CONAN_BUILD=missing ' +
-                  '-DCMAKE_OSX_DEPLOYMENT_TARGET="10.14" '
+                  '-DCMAKE_OSX_DEPLOYMENT_TARGET="10.15" '
               }
               build {
                 target="package"
@@ -492,8 +495,7 @@ pipeline {
         stage('Mac-Gui') {
           when {
             beforeAgent true
-            // expression { return params.mac && (stage_required.build || stage_required.full) }
-            expression { return false }
+            expression { return params.mac_gui && (stage_required.build || stage_required.full) }
           }
           agent { label "mac"}
           environment {
@@ -508,8 +510,8 @@ pipeline {
                   '-DOGS_CPU_ARCHITECTURE=core2 ' +
                   '-DOGS_BUILD_UTILS=ON ' +
                   '-DOGS_BUILD_GUI=ON ' +
-                  '-DOGS_CONAN_BUILD=missing ' +
-                  '-DCMAKE_OSX_DEPLOYMENT_TARGET="10.14" ' +
+                  '-DOGS_USE_CONAN=OFF ' +
+                  '-DCMAKE_OSX_DEPLOYMENT_TARGET="10.15" ' +
                   '-DOGS_USE_NETCDF=ON '
               }
               build {
@@ -558,7 +560,7 @@ pipeline {
                 cmakeOptions =
                   "-DBUILD_SHARED_LIBS=${build_shared} " +
                   '-DBUILD_TESTING=OFF ' +
-                  '-DCMAKE_CXX_CLANG_TIDY=clang-tidy-8 '
+                  '-DCMAKE_CXX_CLANG_TIDY=clang-tidy-9 '
               }
               build { log = 'build.log' }
             }
