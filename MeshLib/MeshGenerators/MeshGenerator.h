@@ -396,7 +396,7 @@ Mesh* generateRegularPrismMesh(const double x_length,
                                std::string   const& mesh_name = "mesh");
 
 /**
- * Generate a regular 2D Triangle-Element mesh.
+ * Generate a regular 3D Prism-Element mesh.
  *
  * \param n_x_cells Number of cells in x-direction.
  * \param n_y_cells Number of cells in y-direction.
@@ -413,7 +413,7 @@ Mesh* generateRegularPrismMesh(const unsigned n_x_cells,
                                std::string   const& mesh_name = "mesh");
 
 /**
- * Generate a regular 2D Triangle-Element mesh.
+ * Generate a regular 3D Prism-Element mesh.
  *
  * \param n_x_cells    Number of cells in x-direction.
  * \param n_y_cells    Number of cells in y-direction.
