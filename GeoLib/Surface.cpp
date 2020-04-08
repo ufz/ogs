@@ -9,8 +9,6 @@
 
 #include <list>
 
-#include "BaseLib/Logging.h"
-
 #include "Surface.h"
 
 // GeoLib

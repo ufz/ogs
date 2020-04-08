@@ -15,7 +15,6 @@
 #include "Polygon.h"
 
 #include <boost/math/constants/constants.hpp>
-#include "BaseLib/Logging.h"
 
 #include "BaseLib/quicksort.h"
 
