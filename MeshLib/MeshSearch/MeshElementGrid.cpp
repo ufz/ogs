@@ -15,8 +15,6 @@
 #include <cmath>
 #include <memory>
 
-#include "BaseLib/Logging.h"
-
 #include "../Mesh.h"
 #include "../Node.h"
 #include "../Elements/Element.h"

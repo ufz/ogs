@@ -10,8 +10,6 @@
 
 #include "LineRule2.h"
 
-#include "BaseLib/Logging.h"
-
 #include "MeshLib/Node.h"
 
 namespace MeshLib {

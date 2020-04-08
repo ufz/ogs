@@ -10,8 +10,6 @@
 
 #include "TriRule3.h"
 
-#include "BaseLib/Logging.h"
-
 #include "MathLib/GeometricBasics.h"
 
 #include "MeshLib/Node.h"

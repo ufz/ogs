@@ -16,8 +16,6 @@
 
 #include <vector>
 
-#include "BaseLib/Logging.h"
-
 #include "BaseLib/Histogram.h"
 
 #include "MeshLib/Mesh.h"

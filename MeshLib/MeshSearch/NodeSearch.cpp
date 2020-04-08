@@ -13,8 +13,6 @@
 #include <memory>
 #include <set>
 
-#include "BaseLib/Logging.h"
-
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/Elements/Element.h"
