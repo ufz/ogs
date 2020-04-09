@@ -37,8 +37,7 @@ std::vector<std::size_t> identifySubdomainMeshNodes(
         OGS_FATAL(
             "Expected to find exactly one node in the bulk mesh for each node "
             "of the subdomain; Found {:d} nodes in the bulk mesh out of {:d} "
-            "nodes "
-            "in the subdomain.",
+            "nodes in the subdomain.",
             bulk_node_ids.size(), subdomain_mesh.getNumberOfNodes());
     }
 
@@ -174,8 +173,7 @@ void updateOrCheckExistingSubdomainProperty(
     //
     WARN(
         "There is already a '{:s}' property present in the subdomain mesh "
-        "'{:s}' "
-        "and it is not equal to the newly computed values.",
+        "'{:s}' and it is not equal to the newly computed values.",
         property_name.c_str(),
         mesh.getName().c_str());
 
