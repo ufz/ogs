@@ -84,8 +84,7 @@ bool createSfcMeshProperties(MeshLib::Mesh& sfc_mesh,
     if (element_ids_map.size() != n_elems)
     {
         ERR("createSfcMeshProperties() - Incorrect number of element IDs "
-            "({:d}) "
-            "compared to actual number of surface elements ({:d}).",
+            "({:d}) compared to actual number of surface elements ({:d}).",
             element_ids_map.size(), n_elems);
         return false;
     }

@@ -39,8 +39,7 @@ bool Mesh2MeshPropertyInterpolation::setPropertiesForMesh(Mesh& dest_mesh) const
     if (_src_mesh.getDimension() != dest_mesh.getDimension()) {
         ERR("MeshLib::Mesh2MeshPropertyInterpolation::setPropertiesForMesh() "
             "dimension of source (dim = {:d}) and destination (dim = {:d}) "
-            "mesh "
-            "does not match.",
+            "mesh does not match.",
             _src_mesh.getDimension(), dest_mesh.getDimension());
         return false;
     }

@@ -54,8 +54,7 @@ public:
                 if (it == end(mesh_nodes))
                 {
                     ERR("A node {:d} ({:g}, {:g}, {:g}) in mesh subset is not "
-                        "a part "
-                        "of the mesh.",
+                        "a part of the mesh.",
                         n->getID(), (*n)[0], (*n)[1], (*n)[2]);
                     return false;
                 }
