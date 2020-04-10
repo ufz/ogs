@@ -15,7 +15,6 @@
 
 #include <vector>
 
-#include "BaseLib/Error.h"
 
 #include "BaseLib/ConfigTree.h"
 

@@ -12,7 +12,6 @@
 
 #include <Eigen/Dense>
 
-#include "BaseLib/Error.h"
 #include "MaterialLib/PorousMedium/Permeability/Permeability.h"
 #include "ParameterLib/Parameter.h"
 

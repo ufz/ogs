@@ -10,7 +10,6 @@
 
 #include <cassert>
 
-#include "BaseLib/Error.h"
 #include "MathLib/Point3d.h"
 
 #include "MeshLib/ElementCoordinatesMappingLocal.h"

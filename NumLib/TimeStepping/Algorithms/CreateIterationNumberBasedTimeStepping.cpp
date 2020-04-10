@@ -13,7 +13,6 @@
 
 #include "BaseLib/Algorithm.h"
 #include "BaseLib/ConfigTree.h"
-#include "BaseLib/Error.h"
 #include "IterationNumberBasedTimeStepping.h"
 #include "TimeStepAlgorithm.h"
 

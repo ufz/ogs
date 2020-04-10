@@ -12,7 +12,6 @@
 #include "CreateNewtonRaphsonSolverParameters.h"
 
 #include "BaseLib/ConfigTree.h"
-#include "BaseLib/Error.h"
 
 #include "NumLib/NewtonRaphson.h"
 

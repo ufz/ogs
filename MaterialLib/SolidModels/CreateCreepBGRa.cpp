@@ -19,7 +19,6 @@
 #include "MechanicsBase.h"
 
 #include "BaseLib/ConfigTree.h"
-#include "BaseLib/Error.h"
 
 #include "ParameterLib/Parameter.h"
 #include "ParameterLib/Utils.h"
