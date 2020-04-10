@@ -97,7 +97,7 @@ int SensorData::readDataFromFile(const std::string &file_name)
     if (!in.is_open())
     {
         INFO("SensorData::readDataFromFile() - Could not open file {:s}.",
-             file_name.c_str());
+             file_name);
         return 0;
     }
 

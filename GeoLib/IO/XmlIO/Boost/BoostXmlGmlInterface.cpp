@@ -264,7 +264,7 @@ bool BoostXmlGmlInterface::write()
     if (! pnt_vec) {
         ERR("BoostXmlGmlInterface::write(): No PointVec within the geometry "
             "'{:s}'.",
-            _exportName.c_str());
+            _exportName);
         return false;
     }
 
@@ -272,13 +272,13 @@ bool BoostXmlGmlInterface::write()
     if (! pnts) {
         ERR("BoostXmlGmlInterface::write(): No vector of points within the "
             "geometry '{:s}'.",
-            _exportName.c_str());
+            _exportName);
         return false;
     }
     if (pnts->empty()) {
         ERR("BoostXmlGmlInterface::write(): No points within the geometry "
             "'{:s}'.",
-            _exportName.c_str());
+            _exportName);
         return false;
     }
 
@@ -322,7 +322,7 @@ void BoostXmlGmlInterface::addSurfacesToPropertyTree(
         INFO(
             "BoostXmlGmlInterface::addSurfacesToPropertyTree(): "
             "No surfaces within the geometry '{:s}'.",
-            _exportName.c_str());
+            _exportName);
         return;
     }
 
@@ -332,7 +332,7 @@ void BoostXmlGmlInterface::addSurfacesToPropertyTree(
         INFO(
             "BoostXmlGmlInterface::addSurfacesToPropertyTree(): "
             "No surfaces within the geometry '{:s}'.",
-            _exportName.c_str());
+            _exportName);
         return;
     }
 
@@ -364,7 +364,7 @@ void BoostXmlGmlInterface::addPolylinesToPropertyTree(
         INFO(
             "BoostXmlGmlInterface::addPolylinesToPropertyTree(): "
             "No polylines within the geometry '{:s}'.",
-            _exportName.c_str());
+            _exportName);
         return;
     }
 
@@ -374,7 +374,7 @@ void BoostXmlGmlInterface::addPolylinesToPropertyTree(
         INFO(
             "BoostXmlGmlInterface::addPolylinesToPropertyTree(): "
             "No polylines within the geometry '{:s}'.",
-            _exportName.c_str());
+            _exportName);
         return;
     }
 

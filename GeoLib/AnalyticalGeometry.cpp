@@ -442,7 +442,7 @@ std::vector<MathLib::Point3d> lineSegmentIntersect2d(
             OGS_FATAL(
                 "The case of parallel line segments ({:s}) is not handled yet. "
                 "Aborting.",
-                err.str().c_str());
+                err.str());
         }
 
         // check if d in (ab)
@@ -470,7 +470,7 @@ std::vector<MathLib::Point3d> lineSegmentIntersect2d(
             OGS_FATAL(
                 "The case of parallel line segments ({:s}) "
                 "is not handled yet. Aborting.",
-                err.str().c_str());
+                err.str());
         }
         return std::vector<MathLib::Point3d>();
     }

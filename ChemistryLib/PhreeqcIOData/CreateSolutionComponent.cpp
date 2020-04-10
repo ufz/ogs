@@ -50,7 +50,7 @@ std::vector<Component> createSolutionComponents(
                 "in "
                 "specified coupled processes (see "
                 "<process>/<process_variables>/<concentration>).",
-                component.name.c_str());
+                component.name);
         }
     }
     if (components.size() + 1 != process_id_to_component_name_map.size())

@@ -42,7 +42,7 @@ int convertVtkDataMode(std::string const& data_mode)
     OGS_FATAL(
         "Unsupported vtk output file data mode '{:s}'. Expected Ascii, "
         "Binary, or Appended.",
-        data_mode.c_str());
+        data_mode);
 }
 
 std::string constructFileName(std::string const& prefix,
@@ -180,7 +180,7 @@ void Output::outputBulkMesh(OutputFile const& output_file,
                             MeshLib::Mesh const& mesh,
                             double const t) const
 {
-    DBUG("output to {:s}", output_file.path.c_str());
+    DBUG("output to {:s}", output_file.path);
 
     process_data->pvd_file.addVTUFile(output_file.name, t);
 
@@ -251,7 +251,7 @@ void Output::doOutputAlways(Process const& process,
 
         std::vector<MeshLib::Node*> const& nodes = mesh.getNodes();
         DBUG("Found {:d} nodes for output at mesh '{:s}'.", nodes.size(),
-             mesh.getName().c_str());
+             mesh.getName());
 
         MeshLib::MeshSubset mesh_subset(mesh, nodes);
         std::vector<std::unique_ptr<NumLib::LocalToGlobalIndexMap>>
@@ -291,7 +291,7 @@ void Output::doOutputAlways(Process const& process,
                                      _output_file_data_mode,
                                      _output_file_compression};
 
-        DBUG("output to {:s}", output_file.path.c_str());
+        DBUG("output to {:s}", output_file.path);
 
         makeOutput(output_file.path, mesh, output_file.compression,
                    output_file.data_mode);
@@ -377,7 +377,7 @@ void Output::doOutputNonlinearIteration(Process const& process,
     std::string const output_file_path =
         BaseLib::joinPaths(_output_directory, output_file_name);
 
-    DBUG("output iteration results to {:s}", output_file_path.c_str());
+    DBUG("output iteration results to {:s}", output_file_path);
 
     INFO("[time] Output took {:g} s.", time_output.elapsed());
 

@@ -115,7 +115,7 @@ bool createSfcMeshProperties(MeshLib::Mesh& sfc_mesh,
             WARN(
                 "Skipping property vector '{:s}' - no matching data type "
                 "found.",
-                name.c_str());
+                name);
             vectors_skipped++;
         }
     }

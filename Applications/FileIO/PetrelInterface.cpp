@@ -128,7 +128,7 @@ void PetrelInterface::readPetrelSurface(std::istream &in)
         WARN(
             "PetrelInterface::readPetrelSurface(): problem reading petrel "
             "points from line\n'{:s}'.",
-            line.c_str());
+            line);
 }
 
 void PetrelInterface::readPetrelWellTrace(std::istream &in)

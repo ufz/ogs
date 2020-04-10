@@ -129,7 +129,7 @@ TEST(MPITest_NumLib, ComponentNormSingleComponent)
     using VNT = MathLib::VecNormType;
     for (auto norm_type : {VNT::NORM1, VNT::NORM2, VNT::INFINITY_N}) {
         DBUG("norm type: {:s}.",
-             MathLib::convertVecNormTypeToString(norm_type).c_str());
+             MathLib::convertVecNormTypeToString(norm_type));
         do_test(num_components, norm_type, tolerance,
                 [](double /*n_total*/, double n) { return n; },
                 [](double n_total) { return n_total; });

@@ -344,8 +344,7 @@ bool VtkRaster::readWorldFile(std::string const& filename,
     std::ifstream in(world_file.c_str());
     if (!in.is_open())
     {
-        ERR("VtkRaster::readWorldFile(): Could not open file {:s}.",
-            filename.c_str());
+        ERR("VtkRaster::readWorldFile(): Could not open file {:s}.", filename);
         return false;
     }
 

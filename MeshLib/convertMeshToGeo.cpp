@@ -104,7 +104,7 @@ bool convertMeshToGeo(const MeshLib::Mesh& mesh,
             OGS_FATAL(
                 "Could not get minimum/maximum ranges values for the "
                 "MaterialIDs property in the mesh '{:s}'.",
-                mesh.getName().c_str());
+                mesh.getName());
         }
         return std::make_tuple(materialIds, *bounds);
     };

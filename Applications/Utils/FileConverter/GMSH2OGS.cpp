@@ -77,7 +77,7 @@ int main (int argc, char* argv[])
     cmd.parse(argc, argv);
 
     // *** read mesh
-    INFO("Reading {:s}.", gmsh_mesh_arg.getValue().c_str());
+    INFO("Reading {:s}.", gmsh_mesh_arg.getValue());
 #ifndef WIN32
     BaseLib::MemWatch mem_watch;
     unsigned long mem_without_mesh (mem_watch.getVirtMemUsage());
@@ -88,8 +88,7 @@ int main (int argc, char* argv[])
         FileIO::GMSH::readGMSHMesh(gmsh_mesh_arg.getValue()));
 
     if (mesh == nullptr) {
-        INFO("Could not read mesh from {:s}.",
-             gmsh_mesh_arg.getValue().c_str());
+        INFO("Could not read mesh from {:s}.", gmsh_mesh_arg.getValue());
         return -1;
     }
 #ifndef WIN32

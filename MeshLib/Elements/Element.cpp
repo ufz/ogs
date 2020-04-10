@@ -165,7 +165,7 @@ const Node* Element::getNode(unsigned i) const
     }
 #ifndef NDEBUG
     ERR("Error in MeshLib::Element::getNode() - Index {:d} in {:s}", i,
-        MeshElemType2String(getGeomType()).c_str());
+        MeshElemType2String(getGeomType()));
     return nullptr;
 #endif
 }
@@ -263,7 +263,7 @@ bool isPointInElementXY(MathLib::Point3d const& p, Element const& e)
     }
 
     WARN("isPointInElementXY: element type '{:s}' is not supported.",
-         MeshLib::MeshElemType2String(e.getGeomType()).c_str());
+         MeshLib::MeshElemType2String(e.getGeomType()));
     return false;
 }
 }  // namespace MeshLib

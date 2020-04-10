@@ -45,7 +45,7 @@ void checkParametersOfDirichletBoundaryCondition(
         OGS_FATAL(
             "The required bulk node ids map does not exist in the boundary "
             "mesh '{:s}'.",
-            bc_mesh.getName().c_str());
+            bc_mesh.getName());
     }
 
     DBUG(

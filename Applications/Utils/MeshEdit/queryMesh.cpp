@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
             }
         }
         out << std::endl;
-        INFO("{:s}", out.str().c_str());
+        INFO("{:s}", out.str());
     }
 
     for (auto node_id : selected_node_ids)
@@ -124,6 +124,6 @@ int main(int argc, char *argv[])
             out << nd->getID() << " ";
         }
         out << std::endl;
-        INFO("{:s}", out.str().c_str());
+        INFO("{:s}", out.str());
     }
 }

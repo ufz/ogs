@@ -1130,7 +1130,7 @@ void MainWindow::callGMSH(std::vector<std::string> & selectedGeometries,
                 remove_command = "del ";
 #endif
                 remove_command += fileName.toStdString();
-                INFO("remove command: {:s}", remove_command.c_str());
+                INFO("remove command: {:s}", remove_command);
                 auto const return_value = system(remove_command.c_str());
                 if (return_value != 0)
                 {

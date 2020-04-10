@@ -112,7 +112,7 @@ bool dataCountError(std::string const& name,
     {
         ERR("Data rows found do not fit specified dimensions for section "
             "'{:s}'.",
-            name.c_str());
+            name);
         return true;
     }
     return false;
@@ -207,7 +207,7 @@ int writeDataToMesh(std::string const& file_name,
             vec_names[i], MeshLib::MeshItemType::Cell, 1);
         if (!prop)
         {
-            ERR("Error creating array '{:s}'.", vec_names[i].c_str());
+            ERR("Error creating array '{:s}'.", vec_names[i]);
             return -5;
         }
         prop->reserve(scalars[i].size());
@@ -444,7 +444,7 @@ int main(int argc, char* argv[])
     std::ifstream in(input_arg.getValue().c_str());
     if (!in.is_open())
     {
-        ERR("Could not open file {:s}.", input_arg.getValue().c_str());
+        ERR("Could not open file {:s}.", input_arg.getValue());
         return -2;
     }
 

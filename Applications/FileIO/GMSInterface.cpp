@@ -51,7 +51,7 @@ int GMSInterface::readBoreholesFromGMS(std::vector<GeoLib::Point*>* boreholes,
     if (!in.is_open())
     {
         ERR("GMSInterface::readBoreholeFromGMS(): Could not open file {:s}.",
-            filename.c_str());
+            filename);
         return 0;
     }
 
@@ -93,7 +93,7 @@ int GMSInterface::readBoreholesFromGMS(std::vector<GeoLib::Point*>* boreholes,
                     WARN(
                         "GMSInterface::readBoreholeFromGMS(): Skipped layer "
                         "'{:s}' in borehole '{:s}' because of thickness 0.0.",
-                        sName.c_str(), cName.c_str());
+                        sName, cName);
             }
             else  // add new borehole
             {
@@ -187,7 +187,7 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string& filename)
     if (!in.is_open())
     {
         ERR("GMSInterface::readGMS3DMMesh(): Could not open file {:s}.",
-            filename.c_str());
+            filename);
         return nullptr;
     }
 
@@ -284,7 +284,7 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string& filename)
             WARN(
                 "GMSInterface::readGMS3DMMesh() - Element type '{:s}' not "
                 "recognised.",
-                element_id.c_str());
+                element_id);
             return nullptr;
         }
     }

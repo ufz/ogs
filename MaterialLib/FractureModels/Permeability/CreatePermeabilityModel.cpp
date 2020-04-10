@@ -33,6 +33,6 @@ std::unique_ptr<Permeability> createPermeabilityModel(
         return MaterialLib::Fracture::Permeability::createCubicLaw(config);
     }
     OGS_FATAL("Unknown fracture permeability model type \"{:s}\".",
-              permeability_model_type.c_str());
+              permeability_model_type);
 }
 }  // namespace MaterialLib::Fracture::Permeability

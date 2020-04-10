@@ -91,7 +91,7 @@ std::unique_ptr<Process> createRichardsComponentTransportProcess(
         //! \ogs_file_param_special{prj__processes__process__RichardsComponentTransport__fluid_reference_density}
         "fluid_reference_density", parameters, 1, &mesh);
     DBUG("Use '{:s}' as fluid_reference_density parameter.",
-         fluid_reference_density.name.c_str());
+         fluid_reference_density.name);
 
     // Parameter for the longitudinal solute dispersivity.
     auto const& molecular_diffusion_coefficient = ParameterLib::findParameter<
@@ -100,7 +100,7 @@ std::unique_ptr<Process> createRichardsComponentTransportProcess(
         //! \ogs_file_param_special{prj__processes__process__RichardsComponentTransport__molecular_diffusion_coefficient}
         "molecular_diffusion_coefficient", parameters, 1, &mesh);
     DBUG("Use '{:s}' as molecular diffusion coefficient parameter.",
-         molecular_diffusion_coefficient.name.c_str());
+         molecular_diffusion_coefficient.name);
 
     // Parameter for the longitudinal solute dispersivity.
     auto const& solute_dispersivity_longitudinal = ParameterLib::findParameter<
@@ -109,7 +109,7 @@ std::unique_ptr<Process> createRichardsComponentTransportProcess(
         //! \ogs_file_param_special{prj__processes__process__RichardsComponentTransport__solute_dispersivity_longitudinal}
         "solute_dispersivity_longitudinal", parameters, 1, &mesh);
     DBUG("Use '{:s}' as longitudinal solute dispersivity parameter.",
-         solute_dispersivity_longitudinal.name.c_str());
+         solute_dispersivity_longitudinal.name);
 
     // Parameter for the transverse solute dispersivity.
     auto const& solute_dispersivity_transverse = ParameterLib::findParameter<
@@ -118,7 +118,7 @@ std::unique_ptr<Process> createRichardsComponentTransportProcess(
         //! \ogs_file_param_special{prj__processes__process__RichardsComponentTransport__solute_dispersivity_transverse}
         "solute_dispersivity_transverse", parameters, 1, &mesh);
     DBUG("Use '{:s}' as transverse solute dispersivity parameter.",
-         solute_dispersivity_transverse.name.c_str());
+         solute_dispersivity_transverse.name);
 
     // Parameter for the retardation factor.
     auto const& retardation_factor = ParameterLib::findParameter<double>(

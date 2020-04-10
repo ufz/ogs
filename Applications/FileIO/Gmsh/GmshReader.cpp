@@ -39,7 +39,7 @@ bool isGMSHMeshFile(const std::string& fname)
     std::ifstream input(fname.c_str());
 
     if (!input) {
-        ERR("isGMSHMeshFile(): Could not open file {:s}.", fname.c_str());
+        ERR("isGMSHMeshFile(): Could not open file {:s}.", fname);
         return false;
     }
 
@@ -50,8 +50,7 @@ bool isGMSHMeshFile(const std::string& fname)
         std::string version;
         getline(input, version);
         getline(input, version);
-        INFO("isGMSHMeshFile(): Found GMSH mesh file version: {:s}.",
-             version.c_str());
+        INFO("isGMSHMeshFile(): Found GMSH mesh file version: {:s}.", version);
         input.close();
         return true;
     }
@@ -168,7 +167,7 @@ MeshLib::Mesh* readGMSHMesh(std::string const& fname)
     std::ifstream in(fname.c_str(), std::ios::in);
     if (!in.is_open())
     {
-        WARN("readGMSHMesh() - Could not open file {:s}.", fname.c_str());
+        WARN("readGMSHMesh() - Could not open file {:s}.", fname);
         return nullptr;
     }
 
@@ -183,8 +182,7 @@ MeshLib::Mesh* readGMSHMesh(std::string const& fname)
     getline(in, line); // version-number file-type data-size
     if (line.substr(0, 3) != "2.2")
     {
-        WARN("Wrong gmsh file format version '{:s}'.",
-             line.substr(0, 3).c_str());
+        WARN("Wrong gmsh file format version '{:s}'.", line.substr(0, 3));
         return nullptr;
     }
 

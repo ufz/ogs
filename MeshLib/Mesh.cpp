@@ -296,8 +296,7 @@ void scaleMeshPropertyVector(MeshLib::Mesh & mesh,
 {
     if (!mesh.getProperties().existsPropertyVector<double>(property_name))
     {
-        WARN("Did not find PropertyVector '{:s}' for scaling.",
-             property_name.c_str());
+        WARN("Did not find PropertyVector '{:s}' for scaling.", property_name);
         return;
     }
     for (auto& v :

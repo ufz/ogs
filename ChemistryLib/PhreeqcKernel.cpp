@@ -131,7 +131,7 @@ void PhreeqcKernel::loadDatabase(std::string const& database)
     std::ifstream in(database);
     if (!in)
     {
-        OGS_FATAL("Unable to open database file '{:s}'.", database.c_str());
+        OGS_FATAL("Unable to open database file '{:s}'.", database);
     }
     assert(phrq_io->get_istream() == nullptr);
     phrq_io->push_istream(&in, false);

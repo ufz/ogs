@@ -390,7 +390,7 @@ bool XmlPrjInterface::write()
         }
         else
             ERR("XmlGmlInterface::writeFile(): Error writing gml-file '{:s}'.",
-                name.c_str());
+                name);
     }
 
     // stations
@@ -413,7 +413,7 @@ bool XmlPrjInterface::write()
         }
         else
             ERR("XmlStnInterface::writeFile(): Error writing stn-file '{:s}'.",
-                name.c_str());
+                name);
     }
 
     if (!_project.getBoundaryConditions().empty() ||

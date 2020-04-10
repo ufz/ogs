@@ -71,7 +71,7 @@ void GEOModels::updateGeometry(const std::string &geo_name)
     }
     else
         ERR("GEOModels::updateGeometry() - Geometry '{:s}' not found.",
-            geo_name.c_str());
+            geo_name);
 }
 
 void GEOModels::removeGeometry(std::string const& geo_name,
@@ -251,7 +251,7 @@ void GEOModels::addNameForElement(std::string const& geometry_name,
     }
     else
         ERR("GEOModels::addNameForElement() - Unknown GEOTYPE {:s}.",
-            GeoLib::convertGeoTypeToString(object_type).c_str());
+            GeoLib::convertGeoTypeToString(object_type));
 }
 
 void GEOModels::addNameForObjectPoints(const std::string &geometry_name,
@@ -291,5 +291,5 @@ void GEOModels::addNameForObjectPoints(const std::string &geometry_name,
     }
     else
         ERR("GEOModels::addNameForObjectPoints() - Unknown GEOTYPE {:s}.",
-            GeoLib::convertGeoTypeToString(object_type).c_str());
+            GeoLib::convertGeoTypeToString(object_type));
 }

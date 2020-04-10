@@ -33,7 +33,7 @@ int readRasterPaths(std::string const& raster_list_file, std::vector<std::string
     std::ifstream in (raster_list_file.c_str());
     if (in.fail())
     {
-        ERR("Could not open file {:s}.", raster_list_file.c_str());
+        ERR("Could not open file {:s}.", raster_list_file);
         return -1;
     }
     std::string line;
@@ -113,12 +113,12 @@ int main (int argc, char* argv[])
         }
     }
 
-    INFO("Reading mesh '{:s}' ... ", mesh_arg.getValue().c_str());
+    INFO("Reading mesh '{:s}' ... ", mesh_arg.getValue());
     std::unique_ptr<MeshLib::Mesh> const sfc_mesh(
         MeshLib::IO::readMeshFromFile(mesh_arg.getValue()));
     if (!sfc_mesh)
     {
-        ERR("Error reading mesh '{:s}'.", mesh_arg.getValue().c_str());
+        ERR("Error reading mesh '{:s}'.", mesh_arg.getValue());
         return EXIT_FAILURE;
     }
     if (sfc_mesh->getDimension() != 2)
@@ -153,7 +153,7 @@ int main (int argc, char* argv[])
         output_name.append(".vtu");
     }
 
-    INFO("Writing mesh '{:s}' ... ", output_name.c_str());
+    INFO("Writing mesh '{:s}' ... ", output_name);
     auto result_mesh = std::make_unique<MeshLib::Mesh>(
         *(mapper.getMesh("SubsurfaceMesh").release()));
 

@@ -99,7 +99,7 @@ void TimeDependentHeterogeneousParameter::initialize(
         OGS_FATAL(
             "All referenced parameters in time dependent heterogeneous "
             "parameter '{:s}' have to have the same number of components.",
-            name.c_str());
+            name);
     }
 }
 
@@ -130,7 +130,7 @@ std::unique_ptr<ParameterBase> createTimeDependentHeterogeneousParameter(
         OGS_FATAL(
             "Time dependent heterogeneous parameter '{:s}' doesn't contain "
             "necessary time series data.",
-            name.c_str());
+            name);
     }
 
     if (!std::is_sorted(
@@ -143,7 +143,7 @@ std::unique_ptr<ParameterBase> createTimeDependentHeterogeneousParameter(
         OGS_FATAL(
             "The points in time in the time series '{:s}' aren't in ascending "
             "order.",
-            name.c_str());
+            name);
     }
 
     return std::make_unique<TimeDependentHeterogeneousParameter>(

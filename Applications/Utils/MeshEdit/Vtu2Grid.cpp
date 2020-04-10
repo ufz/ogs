@@ -130,8 +130,7 @@ void mapMeshArraysOntoGrid(vtkSmartPointer<vtkUnstructuredGrid> const& mesh,
             mapArray<int, vtkSmartPointer<vtkIntArray>>(*grid, int_arr, name);
             continue;
         }
-        WARN("Ignoring array '{:s}', array type not implemented...",
-             name.c_str());
+        WARN("Ignoring array '{:s}', array type not implemented...", name);
     }
 }
 

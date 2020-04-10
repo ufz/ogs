@@ -23,7 +23,7 @@ std::unique_ptr<ParameterBase> createMeshElementParameter(
     auto const field_name =
         //! \ogs_file_param{prj__parameters__parameter__MeshElement__field_name}
         config.getConfigParameter<std::string>("field_name");
-    DBUG("Using field_name {:s}", field_name.c_str());
+    DBUG("Using field_name {:s}", field_name);
 
     // TODO other data types than only double
     auto const& property =
@@ -32,7 +32,7 @@ std::unique_ptr<ParameterBase> createMeshElementParameter(
     if (property->getMeshItemType() != MeshLib::MeshItemType::Cell)
     {
         OGS_FATAL("The mesh property `{:s}' is not an element property.",
-                  field_name.c_str());
+                  field_name);
     }
 
     return std::make_unique<MeshElementParameter<double>>(name, mesh,

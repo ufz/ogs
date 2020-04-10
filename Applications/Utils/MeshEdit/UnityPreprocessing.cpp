@@ -65,7 +65,7 @@ bool fillPropVec(MeshLib::Properties const& props,
     MeshLib::PropertyVector<T> const*const vec = props.getPropertyVector<T>(name);
     if (vec->getNumberOfComponents() != 1)
     {
-        INFO("Ignoring array '{:s}' (more than one component).", name.c_str());
+        INFO("Ignoring array '{:s}' (more than one component).", name);
         return false;
     }
 
@@ -74,8 +74,7 @@ bool fillPropVec(MeshLib::Properties const& props,
     new_vec->resize(total_nodes);
     if (vec->getMeshItemType() == MeshLib::MeshItemType::Node)
     {
-        INFO("Migrating node array '{:s}' to new mesh structure...",
-             name.c_str());
+        INFO("Migrating node array '{:s}' to new mesh structure...", name);
         std::size_t const n_nodes (node_map.size());
         for (std::size_t i = 0; i<n_nodes; ++i)
         {
@@ -88,7 +87,7 @@ bool fillPropVec(MeshLib::Properties const& props,
     }
     else if (vec->getMeshItemType() == MeshLib::MeshItemType::Cell)
     {
-        INFO("Transforming cell array '{:s}' into node array...", name.c_str());
+        INFO("Transforming cell array '{:s}' into node array...", name);
         std::size_t const n_elems (vec->size());
         for (std::size_t i = 0; i<n_elems; ++i)
         {
@@ -201,7 +200,7 @@ int main (int argc, char* argv[])
 
     cmd.parse(argc, argv);
 
-    INFO("Reading mesh '{:s}' ... ", mesh_arg.getValue().c_str());
+    INFO("Reading mesh '{:s}' ... ", mesh_arg.getValue());
     std::unique_ptr<MeshLib::Mesh> mesh {MeshLib::IO::readMeshFromFile(mesh_arg.getValue())};
     if (!mesh)
     {
@@ -240,7 +239,7 @@ int main (int argc, char* argv[])
     else
         INFO("No cell arrays found, keeping mesh structure.\n");
 
-    INFO("Writing mesh '{:s}' ... ", mesh_out_arg.getValue().c_str());
+    INFO("Writing mesh '{:s}' ... ", mesh_out_arg.getValue());
     MeshLib::IO::VtuInterface writer(result.get(), vtkXMLWriter::Ascii, false);
     writer.writeToFile(mesh_out_arg.getValue());
     INFO("done.");

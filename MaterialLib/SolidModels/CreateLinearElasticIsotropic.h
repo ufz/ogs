@@ -36,16 +36,14 @@ createLinearElasticIsotropic(
         //! \ogs_file_param_special{material__solid__constitutive_relation__LinearElasticIsotropic__youngs_modulus}
         config, "youngs_modulus", parameters, 1);
 
-    DBUG("Use '{:s}' as youngs_modulus parameter.",
-         youngs_modulus.name.c_str());
+    DBUG("Use '{:s}' as youngs_modulus parameter.", youngs_modulus.name);
 
     // Poissons ratio
     auto& poissons_ratio = ParameterLib::findParameter<double>(
         //! \ogs_file_param_special{material__solid__constitutive_relation__LinearElasticIsotropic__poissons_ratio}
         config, "poissons_ratio", parameters, 1);
 
-    DBUG("Use '{:s}' as poissons_ratio parameter.",
-         poissons_ratio.name.c_str());
+    DBUG("Use '{:s}' as poissons_ratio parameter.", poissons_ratio.name);
 
     typename LinearElasticIsotropic<DisplacementDim>::MaterialProperties mp{
         youngs_modulus, poissons_ratio};

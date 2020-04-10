@@ -55,8 +55,7 @@ inline TangentType makeTangentType(std::string const& s)
     {
         return TangentType::Plastic;
     }
-    OGS_FATAL("Not valid string '{:s}' to create a tangent type from.",
-              s.c_str());
+    OGS_FATAL("Not valid string '{:s}' to create a tangent type from.", s);
 }
 
 /// material parameters in relation to Ehler's single-surface model see Ehler's

@@ -83,7 +83,7 @@ createConstitutiveRelation(
 #endif  // OGS_USE_MFRONT
     }
     OGS_FATAL("Cannot construct constitutive relation of given type '{:s}'.",
-              type.c_str());
+              type);
 }
 
 template <int DisplacementDim>

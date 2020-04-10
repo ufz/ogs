@@ -65,7 +65,7 @@ void MeshModel::addMeshObject(const MeshLib::Mesh* mesh)
 {
     beginResetModel();
 
-    INFO("name: {:s}", mesh->getName().c_str());
+    INFO("name: {:s}", mesh->getName());
     QVariant const display_name (QString::fromStdString(mesh->getName()));
     QList<QVariant> meshData;
     meshData << display_name << "" << "";
@@ -115,8 +115,7 @@ const MeshLib::Mesh* MeshModel::getMesh(const std::string &name) const
         }
     }
 
-    INFO("MeshModel::getMesh(): No entry found with name \"{:s}\".",
-         name.c_str());
+    INFO("MeshModel::getMesh(): No entry found with name \"{:s}\".", name);
     return nullptr;
 }
 
@@ -149,8 +148,7 @@ bool MeshModel::removeMesh(const std::string &name)
         }
     }
 
-    INFO("MeshModel::removeMesh(): No entry found with name \"{:s}\".",
-         name.c_str());
+    INFO("MeshModel::removeMesh(): No entry found with name \"{:s}\".", name);
     return false;
 }
 
@@ -216,7 +214,6 @@ vtkUnstructuredGridAlgorithm* MeshModel::vtkSource(const std::string &name) cons
         }
     }
 
-    INFO("MeshModel::vtkSource(): No entry found with name \"{:s}\".",
-         name.c_str());
+    INFO("MeshModel::vtkSource(): No entry found with name \"{:s}\".", name);
     return nullptr;
 }

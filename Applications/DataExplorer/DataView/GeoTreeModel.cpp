@@ -78,8 +78,8 @@ void GeoTreeModel::addPointList(QString geoName, GeoLib::PointVec const& pointVe
                               ->setData(4, QString::fromStdString(pnt->first)));
     }
 
-    INFO("Geometry '{:s}' built. {:d} points added.",
-         geoName.toStdString().c_str(), nPoints);
+    INFO("Geometry '{:s}' built. {:d} points added.", geoName.toStdString(),
+         nPoints);
 
     endResetModel();
 }
@@ -102,7 +102,7 @@ void GeoTreeModel::addPolylineList(QString geoName, GeoLib::PolylineVec const& p
     {
         ERR("GeoTreeModel::addPolylineList(): No corresponding geometry for "
             "'{:s}' found.",
-            geoName.toStdString().c_str());
+            geoName.toStdString());
         return;
     }
 
@@ -203,7 +203,7 @@ void GeoTreeModel::addSurfaceList(QString geoName, GeoLib::SurfaceVec const& sur
     {
         ERR("GeoTreeModel::addSurfaceList(): No corresponding geometry for "
             "'{:s}' found.",
-            geoName.toStdString().c_str());
+            geoName.toStdString());
         return;
     }
 
@@ -316,7 +316,7 @@ void GeoTreeModel::renameGeometry(std::string const& old_name,
     {
         if (new_name == tree_item_entry->data(0).toString().toStdString())
         {
-            INFO("Found tree_item_entry with name '{:s}'.", new_name.c_str());
+            INFO("Found tree_item_entry with name '{:s}'.", new_name);
         }
     }
 }

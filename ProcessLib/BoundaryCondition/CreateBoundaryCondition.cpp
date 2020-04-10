@@ -131,7 +131,7 @@ std::unique_ptr<BoundaryCondition> createBoundaryCondition(
                 config.config, dof_table, bulk_mesh, variable_id,
                 *config.component_id);
     }
-    OGS_FATAL("Unknown boundary condition type: `{:s}'.", type.c_str());
+    OGS_FATAL("Unknown boundary condition type: `{:s}'.", type);
 }
 
 }  // namespace ProcessLib

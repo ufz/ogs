@@ -228,7 +228,7 @@ void removeFiles(std::vector<std::string> const& files)
         int const success = std::remove(file.c_str());
         if (success == 0)
         {
-            DBUG("Removed '{:s}'", file.c_str());
+            DBUG("Removed '{:s}'", file);
         }
         else
         {
@@ -236,8 +236,7 @@ void removeFiles(std::vector<std::string> const& files)
             {
                 continue;
             }
-            ERR("Removing file '{:s}' failed with error {:d}.", file.c_str(),
-                errno);
+            ERR("Removing file '{:s}' failed with error {:d}.", file, errno);
             std::perror("Error: ");
             OGS_FATAL("Unrecoverable error happened while removing a file.");
         }

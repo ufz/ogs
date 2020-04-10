@@ -232,15 +232,15 @@ void ConfigTree::warning(const std::string& message) const
 void ConfigTree::onerror(const std::string& filename, const std::string& path,
                             const std::string& message)
 {
-    OGS_FATAL("ConfigTree: In file `{:s}' at path <{:s}>: {:s}",
-              filename.c_str(), path.c_str(), message.c_str());
+    OGS_FATAL("ConfigTree: In file `{:s}' at path <{:s}>: {:s}", filename, path,
+              message);
 }
 
 void ConfigTree::onwarning(const std::string& filename, const std::string& path,
                               const std::string& message)
 {
-    WARN("ConfigTree: In file `{:s}' at path <{:s}>: {:s}", filename.c_str(),
-         path.c_str(), message.c_str());
+    WARN("ConfigTree: In file `{:s}' at path <{:s}>: {:s}", filename, path,
+         message);
 }
 
 void ConfigTree::assertNoSwallowedErrors()
@@ -254,7 +254,7 @@ void ConfigTree::assertNoSwallowedErrors()
         "file(s):");
 
     for (auto const& msg : configtree_destructor_error_messages) {
-        ERR("{:s}", msg.c_str());
+        ERR("{:s}", msg);
     }
 
     OGS_FATAL("There have been errors when parsing the configuration file(s).");

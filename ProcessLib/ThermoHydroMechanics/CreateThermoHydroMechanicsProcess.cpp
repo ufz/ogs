@@ -90,37 +90,37 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
     }
 
     DBUG("Associate displacement with process variable '{:s}'.",
-         variable_u->getName().c_str());
+         variable_u->getName());
 
     if (variable_u->getNumberOfComponents() != DisplacementDim)
     {
         OGS_FATAL(
             "Number of components of the process variable '{:s}' is different "
             "from the displacement dimension: got {:d}, expected {:d}",
-            variable_u->getName().c_str(),
+            variable_u->getName(),
             variable_u->getNumberOfComponents(),
             DisplacementDim);
     }
 
     DBUG("Associate pressure with process variable '{:s}'.",
-         variable_p->getName().c_str());
+         variable_p->getName());
     if (variable_p->getNumberOfComponents() != 1)
     {
         OGS_FATAL(
             "Pressure process variable '{:s}' is not a scalar variable but has "
             "{:d} components.",
-            variable_p->getName().c_str(),
+            variable_p->getName(),
             variable_p->getNumberOfComponents());
     }
 
     DBUG("Associate temperature with process variable '{:s}'.",
-         variable_T->getName().c_str());
+         variable_T->getName());
     if (variable_T->getNumberOfComponents() != 1)
     {
         OGS_FATAL(
             "temperature process variable '{:s}' is not a scalar variable but "
             "has {:d} components.",
-            variable_T->getName().c_str(),
+            variable_T->getName(),
             variable_T->getNumberOfComponents());
     }
 
@@ -134,7 +134,7 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
         //! \ogs_file_param_special{prj__processes__process__THERMO_HYDRO_MECHANICS__reference_temperature}
         "reference_temperature", parameters, 1, &mesh);
     DBUG("Use '{:s}' as reference temperature parameter.",
-         reference_temperature.name.c_str());
+         reference_temperature.name);
 
     // Specific body force
     Eigen::Matrix<double, DisplacementDim, 1> specific_body_force;

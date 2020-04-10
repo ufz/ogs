@@ -89,7 +89,7 @@ void writeBCsAndGeometry(GeoLib::GEOObjects& geometry_sets,
                          std::string const& bc_type, bool write_gml)
 {
     if (write_gml) {
-        INFO("write points to '{:s}.gml'.", geo_name.c_str());
+        INFO("write points to '{:s}.gml'.", geo_name);
         FileIO::writeGeometryToFile(geo_name, geometry_sets, out_fname+".gml");
     }
     FileIO::writeGeometryToFile(geo_name, geometry_sets, out_fname+".gli");
@@ -175,12 +175,11 @@ int main (int argc, char* argv[])
     cmd.parse(argc, argv);
 
     // *** read mesh
-    INFO("Reading mesh '{:s}' ... ", mesh_arg.getValue().c_str());
+    INFO("Reading mesh '{:s}' ... ", mesh_arg.getValue());
     std::unique_ptr<MeshLib::Mesh> subsurface_mesh(
         MeshLib::IO::readMeshFromFile(mesh_arg.getValue()));
     INFO("done.");
-    INFO("Extracting top surface of mesh '{:s}' ... ",
-         mesh_arg.getValue().c_str());
+    INFO("Extracting top surface of mesh '{:s}' ... ", mesh_arg.getValue());
     const MathLib::Vector3 dir(0,0,-1);
     double const angle(90);
     std::unique_ptr<MeshLib::Mesh> surface_mesh(
@@ -206,7 +205,7 @@ int main (int argc, char* argv[])
     std::vector<GeoLib::Polyline*> const* plys(geometries.getPolylineVec(geo_name));
     if (!plys) {
         ERR("Could not get vector of polylines out of geometry '{:s}'.",
-            geo_name.c_str());
+            geo_name);
         return EXIT_FAILURE;
     }
 

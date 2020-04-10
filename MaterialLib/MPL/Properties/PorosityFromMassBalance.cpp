@@ -27,7 +27,7 @@ void PorosityFromMassBalance::setScale(
             OGS_FATAL(
                 "The property 'PorosityFromMassBalance' must be "
                 "given in the 'Solid' phase, not in '{:s}' phase.",
-                _phase->name.c_str());
+                _phase->name);
         }
     }
     else

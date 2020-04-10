@@ -164,7 +164,7 @@ void updateOrCheckExistingSubdomainProperty(
         INFO(
             "There is already a '{:s}' property present in the subdomain mesh "
             "'{:s}' and it is equal to the newly computed values.",
-            property_name.c_str(), mesh.getName().c_str());
+            property_name, mesh.getName());
         return;
     }
 
@@ -174,15 +174,15 @@ void updateOrCheckExistingSubdomainProperty(
     WARN(
         "There is already a '{:s}' property present in the subdomain mesh "
         "'{:s}' and it is not equal to the newly computed values.",
-        property_name.c_str(),
-        mesh.getName().c_str());
+        property_name,
+        mesh.getName());
 
     if (!force_overwrite)
     {
         OGS_FATAL("The force overwrite flag was not specified, exiting.");
     }
 
-    INFO("Overwriting '{:s}' property.", property_name.c_str());
+    INFO("Overwriting '{:s}' property.", property_name);
     original_property.resize(values.size());
     std::copy(begin(values), end(values), begin(original_property));
 }

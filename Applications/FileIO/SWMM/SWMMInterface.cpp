@@ -129,16 +129,14 @@ bool SwmmInterface::isSwmmInputFile(std::string const& inp_file_name)
 {
     if (!boost::iequals(BaseLib::getFileExtension(inp_file_name), "inp"))
     {
-        ERR("SWMMInterface: {:s} is not a SWMM input file.",
-            inp_file_name.c_str());
+        ERR("SWMMInterface: {:s} is not a SWMM input file.", inp_file_name);
         return false;
     }
 
     std::ifstream in ( inp_file_name.c_str() );
     if (!in.is_open())
     {
-        ERR("SWMMInterface: Could not open input file {:s}.",
-            inp_file_name.c_str());
+        ERR("SWMMInterface: Could not open input file {:s}.", inp_file_name);
         return false;
     }
 
@@ -162,7 +160,7 @@ bool SwmmInterface::isSwmmInputFile(std::string const& inp_file_name)
         else
         {
             INFO("SWMMInterface: input file type {:s} not recognised.",
-                 BaseLib::getFileExtension(inp_file_name).c_str());
+                 BaseLib::getFileExtension(inp_file_name));
             return false;
         }
     }
@@ -293,7 +291,7 @@ bool SwmmInterface::addPointElevation(std::ifstream &in,
         {
             ERR("SwmmInterface::addPointElevation(): Name {:s} not found in "
                 "coordinates map.",
-                current_name.c_str());
+                current_name);
             return false;
         }
         std::size_t const id = it->second;
@@ -329,7 +327,7 @@ bool SwmmInterface::readLinksAsPolylines(std::ifstream &in,
         {
             ERR("SwmmInterface::readLineElements(): Inlet node {:s} not found "
                 "in coordinates map.",
-                inlet.c_str());
+                inlet);
             return false;
         }
 
@@ -339,7 +337,7 @@ bool SwmmInterface::readLinksAsPolylines(std::ifstream &in,
         {
             ERR("SwmmInterface::readLineElements(): Outlet node {:s} not found "
                 "in coordinates map.",
-                outlet.c_str());
+                outlet);
             return false;
         }
         GeoLib::Polyline* ply = new GeoLib::Polyline(points);
@@ -371,8 +369,7 @@ bool SwmmInterface::convertSwmmInputToGeometry(std::string const& inp_file_name,
     std::ifstream in ( inp_file_name.c_str() );
     if (!in.is_open())
     {
-        ERR("SWMMInterface: Could not open input file {:s}.",
-            inp_file_name.c_str());
+        ERR("SWMMInterface: Could not open input file {:s}.", inp_file_name);
         return false;
     }
 
@@ -529,7 +526,7 @@ bool SwmmInterface::readNodeData(std::ifstream &in, std::vector<MeshLib::Node*> 
         {
             ERR("SwmmInterface::readNodeData(): Name {:s} not found in "
                 "coordinates map.",
-                current_name.c_str());
+                current_name);
             return false;
         }
         std::size_t const id = it->second;
@@ -569,7 +566,7 @@ bool SwmmInterface::readLineElements(std::ifstream &in, std::vector<MeshLib::Ele
         {
             ERR("SwmmInterface::readLineElements(): Inlet node {:s} not found "
                 "in coordinates map.",
-                inlet.c_str());
+                inlet);
             return false;
         }
 
@@ -579,7 +576,7 @@ bool SwmmInterface::readLineElements(std::ifstream &in, std::vector<MeshLib::Ele
         {
             ERR("SwmmInterface::readLineElements(): Outlet node {:s} not found "
                 "in coordinates map.",
-                outlet.c_str());
+                outlet);
             return false;
         }
 
@@ -622,16 +619,14 @@ bool SwmmInterface::readSubcatchments(std::ifstream &in, std::map< std::string, 
         }
         if (sc.rain_gauge == std::numeric_limits<std::size_t>::max())
         {
-            ERR("Rain gauge for subcatchment '{:s}' not found.",
-                split_str[0].c_str());
+            ERR("Rain gauge for subcatchment '{:s}' not found.", split_str[0]);
             return false;
         }
 
         auto const it = name_id_map.find(split_str[2]);
         if (it == name_id_map.end())
         {
-            ERR("Outlet node for subcatchment '{:s}' not found.",
-                split_str[0].c_str());
+            ERR("Outlet node for subcatchment '{:s}' not found.", split_str[0]);
             return false;
         }
         sc.outlet = it->second;
@@ -657,8 +652,7 @@ bool SwmmInterface::readSwmmInputToLineMesh()
     std::ifstream in ( inp_file_name.c_str() );
     if (!in.is_open())
     {
-        ERR("SWMMInterface: Could not open input file {:s}.",
-            inp_file_name.c_str());
+        ERR("SWMMInterface: Could not open input file {:s}.", inp_file_name);
         return false;
     }
 
@@ -846,8 +840,7 @@ bool SwmmInterface::matchSubcatchmentsWithPolygons(std::vector<GeoLib::Polyline*
         }
         if (found == false)
         {
-            ERR("No match in subcatcments for outline '{:s}'.",
-                names[i].c_str());
+            ERR("No match in subcatcments for outline '{:s}'.", names[i]);
             return false;
         }
     }
@@ -1003,7 +996,7 @@ bool SwmmInterface::addResultsToMesh(MeshLib::Mesh &mesh, SwmmObject const swmm_
         MeshLib::getOrCreateMeshProperty<double>(mesh, vec_name, item_type, 1);
     if (!prop)
     {
-        ERR("Error fetching array '{:s}'.", vec_name.c_str());
+        ERR("Error fetching array '{:s}'.", vec_name);
         return false;
     }
     std::copy(data.cbegin(), data.cend(), prop->begin());
@@ -1067,7 +1060,7 @@ std::vector<double> SwmmInterface::getArrayAtTimeStep(SwmmObject obj_type, std::
     }
 
     INFO("Fetching '{:s}'-data for time step {:d}...",
-         getArrayName(obj_type, var_idx, SWMM_Npolluts).c_str(), time_step);
+         getArrayName(obj_type, var_idx, SWMM_Npolluts), time_step);
 
     for (std::size_t i=0; i<n_objects; ++i)
     {
@@ -1224,7 +1217,7 @@ bool SwmmInterface::addRainGaugeTimeSeriesLocations(std::ifstream &in)
     for (auto const& stn : _rain_gauges)
         if (stn.second.empty())
             WARN("No associated time series found for rain gauge '{:s}'.",
-                 stn.first.getName().c_str());
+                 stn.first.getName());
     return true;
 }
 
@@ -1333,8 +1326,8 @@ bool SwmmInterface::writeCsvForTimestep(std::string const& file_name, SwmmObject
 bool SwmmInterface::writeCsvForObject(std::string const& file_name, SwmmObject obj_type, std::size_t obj_idx) const
 {
     FileIO::CsvInterface csv;
-    INFO("Writing data for {:s} {:d}.",
-         swmmObjectTypeToString(obj_type).c_str(), obj_idx);
+    INFO("Writing data for {:s} {:d}.", swmmObjectTypeToString(obj_type),
+         obj_idx);
     csv.addIndexVectorForWriting(getNumberOfTimeSteps());
     std::size_t const n_params (getNumberOfParameters(obj_type));
     for (std::size_t i=0; i<n_params; ++i)

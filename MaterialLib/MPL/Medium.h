@@ -99,7 +99,7 @@ void checkRequiredProperties(Medium const& medium,
         {
             OGS_FATAL(
                 "The property '{:s}' is missing in the medium definition.",
-                property_enum_to_string[p].c_str());
+                property_enum_to_string[p]);
         }
     }
 }

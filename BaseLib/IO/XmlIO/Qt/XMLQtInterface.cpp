@@ -41,7 +41,7 @@ int XMLQtInterface::readFile(const QString &fileName)
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
         ERR("XMLQtInterface::readFile(): Can't open xml-file {:s}.",
-            fileName.toStdString().c_str());
+            fileName.toStdString());
         return 0;
     }
     _fileData = file.readAll();
@@ -75,7 +75,7 @@ int XMLQtInterface::isValid() const
         INFO(
             "XMLQtInterface::isValid(): XML file {:s} is invalid (in reference "
             "to schema {:s}).",
-            _fileName.toStdString().c_str(), _schemaFile.toStdString().c_str());
+            _fileName.toStdString(), _schemaFile.toStdString());
     }
     else
     {
@@ -90,7 +90,7 @@ int XMLQtInterface::isValid() const
         INFO(
             "XMLQtInterface::isValid(): XML file {:s} is invalid (in reference "
             "to its schema).",
-            _fileName.toStdString().c_str());
+            _fileName.toStdString());
     }
     return 0;
 }

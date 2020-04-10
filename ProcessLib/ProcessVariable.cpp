@@ -81,8 +81,7 @@ MeshLib::Mesh const& findMeshInConfig(
             return mesh->getName() == mesh_name;
         },
         "Required mesh with name '" + mesh_name + "' not found.");
-    DBUG("Found mesh '{:s}' with id {:d}.", mesh.getName().c_str(),
-         mesh.getID());
+    DBUG("Found mesh '{:s}' with id {:d}.", mesh.getName(), mesh.getID());
 
     return mesh;
 }
@@ -108,7 +107,7 @@ ProcessVariable::ProcessVariable(
           config.getConfigParameter<std::string>("initial_condition"),
           parameters, _n_components, &mesh))
 {
-    DBUG("Constructing process variable {:s}", _name.c_str());
+    DBUG("Constructing process variable {:s}", _name);
 
     if (_shapefunction_order < 1 || 2 < _shapefunction_order)
     {
@@ -143,7 +142,7 @@ ProcessVariable::ProcessVariable(
     else
     {
         INFO("No boundary conditions for process variable '{:s}' found.",
-             _name.c_str());
+             _name);
     }
 
     // Source terms
@@ -172,8 +171,7 @@ ProcessVariable::ProcessVariable(
     }
     else
     {
-        INFO("No source terms for process variable '{:s}' found.",
-             _name.c_str());
+        INFO("No source terms for process variable '{:s}' found.", _name);
     }
 }
 

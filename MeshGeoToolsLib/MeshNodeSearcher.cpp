@@ -41,7 +41,7 @@ MeshNodeSearcher::MeshNodeSearcher(
       _search_length_algorithm(std::move(search_length_algorithm)),
       _search_all_nodes(search_all_nodes)
 {
-    DBUG("The search length for mesh '{:s}' is {:e}.", _mesh.getName().c_str(),
+    DBUG("The search length for mesh '{:s}' is {:e}.", _mesh.getName(),
          _search_length_algorithm->getSearchLength());
 }
 
@@ -105,8 +105,7 @@ std::vector<std::size_t> MeshNodeSearcher::getMeshNodeIDs(
             OGS_FATAL(
                 "No nodes could be found in the mesh for point {:d} : ({:g}, "
                 "{:g}, {:g}) in {:g} epsilon radius in the mesh '{:s}'",
-                p.getID(), p[0], p[1], p[2], epsilon_radius,
-                _mesh.getName().c_str());
+                p.getID(), p[0], p[1], p[2], epsilon_radius, _mesh.getName());
         }
         if (ids.size() != 1)
         {
@@ -124,7 +123,7 @@ std::vector<std::size_t> MeshNodeSearcher::getMeshNodeIDs(
                 "{:g}) in {:g} epsilon radius in the mesh '{:s}'. Expected to "
                 "find exactly one node.\n{:s}",
                 ids.size(), p.getID(), p[0], p[1], p[2], epsilon_radius,
-                _mesh.getName().c_str(), ss.str().c_str());
+                _mesh.getName(), ss.str());
         }
         node_ids.push_back(ids.front());
     }

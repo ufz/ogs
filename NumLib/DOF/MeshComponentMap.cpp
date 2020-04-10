@@ -127,7 +127,7 @@ MeshComponentMap MeshComponentMap::getSubset(
                 "Assumption in the MeshComponentMap violated. Expecting "
                 "all of mesh ids to be the same, but it is not true for "
                 "the mesh '{:s}' with id {:d}.",
-                first_mismatch->getMesh().getName().c_str(),
+                first_mismatch->getMesh().getName(),
                 first_mismatch->getMeshID());
         }
     }
@@ -182,9 +182,9 @@ MeshComponentMap MeshComponentMap::getSubset(
                         "the bulk component, usually because the geometry for "
                         "the boundary condition is too large.",
                         component_id,
-                        new_mesh_subset.getMesh().getName().c_str(),
+                        new_mesh_subset.getMesh().getName(),
                         node_id,
-                        bulk_mesh_subsets.front().getMesh().getName().c_str(),
+                        bulk_mesh_subsets.front().getMesh().getName(),
                         bulk_node_ids_map[node_id]);
                 }
                 continue;

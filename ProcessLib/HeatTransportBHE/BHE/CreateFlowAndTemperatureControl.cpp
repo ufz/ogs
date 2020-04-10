@@ -113,7 +113,7 @@ FlowAndTemperatureControl createFlowAndTemperatureControl(
             refrigerant.specific_heat_capacity, refrigerant.density};
     }
     OGS_FATAL("FlowAndTemperatureControl type '{:s}' is not implemented.",
-              type.c_str());
+              type);
 }
 }  // namespace BHE
 }  // namespace HeatTransportBHE

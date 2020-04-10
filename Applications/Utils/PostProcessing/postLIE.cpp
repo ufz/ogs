@@ -60,7 +60,7 @@ void postVTU(std::string const& int_vtu_filename,
                                           vec_junction_nodeID_matIDs);
 
     // create a new VTU file
-    INFO("create {:s}", out_vtu_filename.c_str());
+    INFO("create {:s}", out_vtu_filename);
     MeshLib::IO::writeMeshToFile(post.getOutputMesh(), out_vtu_filename);
 }
 
@@ -69,7 +69,7 @@ void postPVD(std::string const& in_pvd_filename,
 {
     auto const in_pvd_file_dir = BaseLib::extractPath(in_pvd_filename);
     auto const out_pvd_file_dir = BaseLib::extractPath(out_pvd_filename);
-    INFO("start reading the PVD file {:s}", in_pvd_filename.c_str());
+    INFO("start reading the PVD file {:s}", in_pvd_filename);
     boost::property_tree::ptree pt;
     read_xml(in_pvd_filename, pt,
              boost::property_tree::xml_parser::trim_whitespace);
@@ -93,7 +93,7 @@ void postPVD(std::string const& in_pvd_filename,
         }
         auto const org_vtu_filepath =
             BaseLib::joinPaths(org_vtu_dir, org_vtu_filebasename);
-        INFO("processing {:s}...", org_vtu_filepath.c_str());
+        INFO("processing {:s}...", org_vtu_filepath);
 
         // post-process the VTU and save into the new file
         auto const dest_vtu_filename = "post_" + org_vtu_filebasename;
@@ -106,7 +106,7 @@ void postPVD(std::string const& in_pvd_filename,
     }
 
     // save into the new PVD file
-    INFO("save into the new PVD file {:s}", out_pvd_filename.c_str());
+    INFO("save into the new PVD file {:s}", out_pvd_filename);
     boost::property_tree::xml_writer_settings<std::string> settings('\t', 1);
     write_xml(out_pvd_filename, pt, std::locale(), settings);
 }
@@ -145,8 +145,7 @@ int main(int argc, char* argv[])
     }
     else
     {
-        OGS_FATAL("The given file type ({:s}) is not supported.",
-                  in_file_ext.c_str());
+        OGS_FATAL("The given file type ({:s}) is not supported.", in_file_ext);
     }
 
     return EXIT_SUCCESS;

@@ -35,20 +35,19 @@ bool isConvertibleToDouble(std::string const& s)
     }
     catch (...)
     {
-        OGS_FATAL("The given string '{:s}' is not convertible to double.",
-                  s.c_str());
+        OGS_FATAL("The given string '{:s}' is not convertible to double.", s);
     }
     if (pos != s.size())
     {
         OGS_FATAL(
             "Only {:d} characters were used for double conversion of string "
             "'{:s}'",
-            pos, s.c_str());
+            pos, s);
     }
 
     if (std::isnan(value))
     {
-        OGS_FATAL("The given string '{:s}' results in a NaN value.", s.c_str());
+        OGS_FATAL("The given string '{:s}' results in a NaN value.", s);
     }
     return true;
 }
@@ -68,7 +67,7 @@ std::string findVtkdiff()
             std::getenv("VTKDIFF_EXE"))
     {
         std::string const vtkdiff_exe{vtkdiff_exe_environment_variable};
-        DBUG("VTKDIFF_EXE set to {:s}.", vtkdiff_exe.c_str());
+        DBUG("VTKDIFF_EXE set to {:s}.", vtkdiff_exe);
 
         //
         // Sanity checks.
@@ -81,7 +80,7 @@ std::string findVtkdiff()
                 OGS_FATAL(
                     "The VTKDIFF_EXE environment variable does not point to "
                     "'vtkdiff'. VTKDIFF_EXE='{:s}'",
-                    vtkdiff_exe.c_str());
+                    vtkdiff_exe);
             }
         }
         {  // vtkdiff must exist.
@@ -90,7 +89,7 @@ std::string findVtkdiff()
                 OGS_FATAL(
                     "The VTKDIFF_EXE points to a non-existing file. "
                     "VTKDIFF_EXE='{:s}'",
-                    vtkdiff_exe.c_str());
+                    vtkdiff_exe);
             }
         }
 
@@ -114,7 +113,7 @@ std::string findVtkdiff()
             "Calling {:s} from the VTKDIFF_EXE environment variable didn't "
             "work "
             "as expected. Return value was {:d}.",
-            vtkdiff_exe.c_str(), return_value);
+            vtkdiff_exe, return_value);
     }
 
     std::string const vtkdiff_exe{"vtkdiff"};
@@ -162,7 +161,7 @@ TestDefinition::TestDefinition(BaseLib::ConfigTree const& config_tree,
         std::string const& field_name =
             //! \ogs_file_param{prj__test_definition__vtkdiff__field}
             vtkdiff_config.getConfigParameter<std::string>("field");
-        DBUG("vtkdiff will compare field '{:s}'.", field_name.c_str());
+        DBUG("vtkdiff will compare field '{:s}'.", field_name);
 
 #ifdef USE_PETSC
         int rank;
@@ -196,7 +195,7 @@ TestDefinition::TestDefinition(BaseLib::ConfigTree const& config_tree,
             OGS_FATAL(
                 "The absolute tolerance value '{:s}' is not convertible to "
                 "double.",
-                absolute_tolerance.c_str());
+                absolute_tolerance);
         }
         std::string const absolute_tolerance_parameter =
             "--abs " + absolute_tolerance;
@@ -211,7 +210,7 @@ TestDefinition::TestDefinition(BaseLib::ConfigTree const& config_tree,
             OGS_FATAL(
                 "The relative tolerance value '{:s}' is not convertible to "
                 "double.",
-                relative_tolerance.c_str());
+                relative_tolerance);
         }
         std::string const relative_tolerance_parameter =
             "--rel " + relative_tolerance;
@@ -224,7 +223,7 @@ TestDefinition::TestDefinition(BaseLib::ConfigTree const& config_tree,
             safeString(field_name) + " " + safeString(reference_filename) +
             " " + safeString(output_filename) + " " +
             absolute_tolerance_parameter + " " + relative_tolerance_parameter;
-        INFO("Will run '{:s}'", command_line.c_str());
+        INFO("Will run '{:s}'", command_line);
         _command_lines.emplace_back(std::move(command_line));
     }
 }
@@ -239,7 +238,7 @@ bool TestDefinition::runTests() const
                   if (return_value != 0)
                   {
                       WARN("Return value {:d} was returned by '{:s}'.",
-                           return_value, command_line.c_str());
+                           return_value, command_line);
                   }
                   return return_value;
               });

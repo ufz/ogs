@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
     }
     catch (std::runtime_error const& err)
     {
-        ERR("Failed to read file `{:s}'.", file_name.c_str());
+        ERR("Failed to read file `{:s}'.", file_name);
         ERR("{:s}", err.what());
         return EXIT_FAILURE;
     }
@@ -87,8 +87,7 @@ int main(int argc, char *argv[])
     // check if line exists
     if (line == nullptr)
     {
-        ERR("No polyline found with name '{:s}'. Aborting...",
-            polyline_name.c_str());
+        ERR("No polyline found with name '{:s}'. Aborting...", polyline_name);
         return EXIT_FAILURE;
     }
 

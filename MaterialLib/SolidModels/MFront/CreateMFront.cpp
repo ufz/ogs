@@ -21,14 +21,14 @@ void varInfo(std::string const& msg,
              mgis::behaviour::Hypothesis hypothesis)
 {
     INFO("#{:s}: {:d} (array size {:d}).",
-         msg.c_str(),
+         msg,
          vars.size(),
          mgis::behaviour::getArraySize(vars, hypothesis));
     for (auto& var : vars)
     {
         INFO("  --> type `{:s}' with name `{:s}', size {:d}, offset {:d}.",
              MaterialLib::Solids::MFront::varTypeToString(var.type),
-             var.name.c_str(),
+             var.name,
              mgis::behaviour::getVariableSize(var, hypothesis),
              mgis::behaviour::getVariableOffset(vars, var.name, hypothesis));
     }
@@ -37,11 +37,11 @@ void varInfo(std::string const& msg,
 /// Prints info about MFront parameters.
 void varInfo(std::string const& msg, std::vector<std::string> const& parameters)
 {
-    INFO("#{:s}: {:d}.", msg.c_str(), parameters.size());
+    INFO("#{:s}: {:d}.", msg, parameters.size());
     // mgis::behaviour::getArraySize(vars, hypothesis));
     for (auto const& parameter : parameters)
     {
-        INFO("  --> with name `{:s}'.", parameter.c_str());
+        INFO("  --> with name `{:s}'.", parameter);
     }
 }
 }  // anonymous namespace
@@ -98,10 +98,10 @@ std::unique_ptr<MechanicsBase<DisplacementDim>> createMFront(
     auto behaviour =
         mgis::behaviour::load(lib_path, behaviour_name, hypothesis);
 
-    INFO("Behaviour:      `{:s}'.", behaviour.behaviour.c_str());
+    INFO("Behaviour:      `{:s}'.", behaviour.behaviour);
     INFO("Hypothesis:     `{:s}'.", mgis::behaviour::toString(hypothesis));
-    INFO("Source:         `{:s}'.", behaviour.source.c_str());
-    INFO("TFEL version:   `{:s}'.", behaviour.tfel_version.c_str());
+    INFO("Source:         `{:s}'.", behaviour.source);
+    INFO("TFEL version:   `{:s}'.", behaviour.tfel_version);
     INFO("Behaviour type: `{:s}'.", btypeToString(behaviour.btype));
     INFO("Kinematic:      `{:s}'.", toString(behaviour.kinematic));
     INFO("Symmetry:       `{:s}'.", toString(behaviour.symmetry));
@@ -148,7 +148,7 @@ std::unique_ptr<MechanicsBase<DisplacementDim>> createMFront(
                 OGS_FATAL(
                     "Material Property `{:s}' has not been configured in the "
                     "project file.",
-                    mp.name.c_str());
+                    mp.name);
 
             auto const param_name = it->second;
             auto const num_comp =
@@ -157,7 +157,7 @@ std::unique_ptr<MechanicsBase<DisplacementDim>> createMFront(
                 param_name, parameters, num_comp);
 
             INFO("Using OGS parameter `{:s}' for material property `{:s}'.",
-                 param_name.c_str(), mp.name.c_str());
+                 param_name, mp.name);
 
             using V = mgis::behaviour::Variable;
             if (mp.type == V::STENSOR || mp.type == V::TENSOR)
@@ -167,7 +167,7 @@ std::unique_ptr<MechanicsBase<DisplacementDim>> createMFront(
                     "the "
                     "user, have to make sure that the component order of "
                     "parameter `{:s}' matches the one required by MFront!",
-                    mp.name.c_str(), param_name.c_str());
+                    mp.name, param_name);
             }
 
             material_properties.push_back(param);
@@ -182,8 +182,7 @@ std::unique_ptr<MechanicsBase<DisplacementDim>> createMFront(
 
             for (auto& e : map_name_to_param)
             {
-                ERR("  name: `{:s}', parameter: `{:s}'.", e.first.c_str(),
-                    e.second.c_str());
+                ERR("  name: `{:s}', parameter: `{:s}'.", e.first, e.second);
             }
 
             OGS_FATAL(

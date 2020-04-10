@@ -93,7 +93,7 @@ int main (int argc, char* argv[])
     {
         ERR("Keyword not recognised. Available keywords:");
         for (auto const& keyword : keywords)
-            INFO("\t{:s}", keyword.c_str());
+            INFO("\t{:s}", keyword);
         return EXIT_FAILURE;
     }
 
@@ -118,7 +118,7 @@ int main (int argc, char* argv[])
         unsigned idx = (dir == "x") ? 0 : (dir == "y") ? 1 : 2;
         const double value(strtod(argv[4],0));
         INFO("Moving all mesh nodes by {:g} in direction {:d} ({:s})...", value,
-             idx, dir.c_str());
+             idx, dir);
         //double value(-10);
         const std::size_t nNodes(mesh->getNumberOfNodes());
         std::vector<MeshLib::Node*> nodes (mesh->getNodes());

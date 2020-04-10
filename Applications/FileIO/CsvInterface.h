@@ -155,8 +155,7 @@ public:
     {
         std::ifstream in(fname.c_str());
         if (!in.is_open()) {
-            ERR("CsvInterface::readColumn(): Could not open file {:s}.",
-                fname.c_str());
+            ERR("CsvInterface::readColumn(): Could not open file {:s}.", fname);
             return -1;
         }
 
@@ -165,7 +164,7 @@ public:
         std::size_t const column_idx = CsvInterface::findColumn(line, delim, column_name);
         if (column_idx == std::numeric_limits<std::size_t>::max())
         {
-            ERR("Column '{:s}' not found in file header.", column_name.c_str());
+            ERR("Column '{:s}' not found in file header.", column_name);
             return -1;
         }
         return readColumn<T>(in, delim, data_array, column_idx);
@@ -178,8 +177,7 @@ public:
     {
         std::ifstream in(fname.c_str());
         if (!in.is_open()) {
-            ERR("CsvInterface::readColumn(): Could not open file {:s}.",
-                fname.c_str());
+            ERR("CsvInterface::readColumn(): Could not open file {:s}.", fname);
             return -1;
         }
         return readColumn<T>(in, delim, data_array, column_idx);

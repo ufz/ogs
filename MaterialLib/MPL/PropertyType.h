@@ -271,7 +271,7 @@ inline PropertyType convertStringToProperty(std::string const& inString)
 
     OGS_FATAL(
         "The property name '{:s}' does not correspond to any known property",
-        inString.c_str());
+        inString);
 
     return PropertyType::number_of_properties;  // to avoid the 'no return'
                                                 // warning

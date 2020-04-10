@@ -93,7 +93,7 @@ std::unique_ptr<MeshLib::Mesh> convertToLinearMesh(
         else
         {
             OGS_FATAL("Mesh element type {:s} is not supported",
-                      MeshLib::CellType2String(e->getCellType()).c_str());
+                      MeshLib::CellType2String(e->getCellType()));
         }
     }
 

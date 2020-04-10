@@ -63,20 +63,20 @@ void MeshInformation::writePropertyVectorInformation(const MeshLib::Mesh& mesh)
         if (auto const vec_bounds =
                 MeshLib::MeshInformation::getValueBounds<int>(mesh, vec_name))
         {
-            INFO("\t{:s}: [{:d}, {:d}]", vec_name.c_str(), vec_bounds->first,
+            INFO("\t{:s}: [{:d}, {:d}]", vec_name, vec_bounds->first,
                  vec_bounds->second);
         }
         else if (auto const vec_bounds =
                      MeshLib::MeshInformation::getValueBounds<double>(mesh,
                                                                       vec_name))
         {
-            INFO("\t{:s}: [{:g}, {:g}]", vec_name.c_str(), vec_bounds->first,
+            INFO("\t{:s}: [{:g}, {:g}]", vec_name, vec_bounds->first,
                  vec_bounds->second);
         }
         else
         {
             INFO("\t{:s}: Could not get value bounds for property vector.",
-                 vec_name.c_str());
+                 vec_name);
         }
     }
 }

@@ -447,7 +447,7 @@ static bool assignDimParams(NcVar const& var,
         arg_dim2.getValue() >= n_dims || arg_dim3.getValue() >= n_dims)
     {
         ERR("Maximum allowed dimension for variable \"{:s}\" is {:d}.",
-            var.getName().c_str(), n_dims - 1);
+            var.getName(), n_dims - 1);
         return false;
     }
 
@@ -674,8 +674,7 @@ int main(int argc, char* argv[])
     NcVar const& var = dataset.getVar(var_name);
     if (var.isNull())
     {
-        ERR("Variable \"{:s}\" not found in file.",
-            arg_varname.getValue().c_str());
+        ERR("Variable \"{:s}\" not found in file.", arg_varname.getValue());
         return EXIT_FAILURE;
     }
 

@@ -29,8 +29,7 @@ std::vector<std::string> CsvInterface::getColumnNames(std::string const& fname,
 
     if (!in.is_open())
     {
-        ERR("CsvInterface::readPoints(): Could not open file {:s}.",
-            fname.c_str());
+        ERR("CsvInterface::readPoints(): Could not open file {:s}.", fname);
         return std::vector<std::string>();
     }
     std::string line;
@@ -65,8 +64,7 @@ int CsvInterface::readPoints(std::string const& fname, char delim,
     std::ifstream in(fname.c_str());
 
     if (!in.is_open()) {
-        ERR("CsvInterface::readPoints(): Could not open file {:s}.",
-            fname.c_str());
+        ERR("CsvInterface::readPoints(): Could not open file {:s}.", fname);
         return -1;
     }
 
@@ -114,8 +112,7 @@ int CsvInterface::readPoints(std::string const& fname, char delim,
     std::array<std::string, 3> const column_names = {{x_column_name, y_column_name, z_column_name}};
 
     if (!in.is_open()) {
-        ERR("CsvInterface::readPoints(): Could not open file {:s}.",
-            fname.c_str());
+        ERR("CsvInterface::readPoints(): Could not open file {:s}.", fname);
         return -1;
     }
 
@@ -131,8 +128,7 @@ int CsvInterface::readPoints(std::string const& fname, char delim,
     {
         if (column_idx[i] == std::numeric_limits<std::size_t>::max())
         {
-            ERR("Column '{:s}' not found in file header.",
-                column_names[i].c_str());
+            ERR("Column '{:s}' not found in file header.", column_names[i]);
             return -1;
         }
     }
@@ -149,8 +145,7 @@ int CsvInterface::readPoints(std::string const& fname, char delim,
     std::ifstream in(fname.c_str());
 
     if (!in.is_open()) {
-        ERR("CsvInterface::readPoints(): Could not open file {:s}.",
-            fname.c_str());
+        ERR("CsvInterface::readPoints(): Could not open file {:s}.", fname);
         return -1;
     }
 

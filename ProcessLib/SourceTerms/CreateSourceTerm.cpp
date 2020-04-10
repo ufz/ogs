@@ -51,7 +51,7 @@ std::unique_ptr<SourceTerm> createSourceTerm(
         OGS_FATAL(
             "The required bulk node ids map does not exist in the "
             "source term mesh '{:s}'.",
-            source_term_mesh.getName().c_str());
+            source_term_mesh.getName());
     }
     std::vector<MeshLib::Node*> const& source_term_nodes =
         source_term_mesh.getNodes();
@@ -59,8 +59,8 @@ std::unique_ptr<SourceTerm> createSourceTerm(
         "Found {:d} nodes for source term at mesh '{:s}' for the variable {:d} "
         "and "
         "component {:d}",
-        source_term_nodes.size(), source_term_mesh.getName().c_str(),
-        variable_id, *config.component_id);
+        source_term_nodes.size(), source_term_mesh.getName(), variable_id,
+        *config.component_id);
 
     MeshLib::MeshSubset source_term_mesh_subset(source_term_mesh,
                                                 source_term_nodes);
@@ -121,6 +121,6 @@ std::unique_ptr<SourceTerm> createSourceTerm(
 #endif
     }
 
-    OGS_FATAL("Unknown source term type: `{:s}'.", type.c_str());
+    OGS_FATAL("Unknown source term type: `{:s}'.", type);
 }
 }  // namespace ProcessLib

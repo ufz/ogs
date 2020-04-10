@@ -255,7 +255,7 @@ void PostProcessTool::createProperties()
                 "Property '{:s}' cannot be created because its mesh item type "
                 "is "
                 "not supported.",
-                name.c_str());
+                name);
         }
     }
 }
@@ -315,7 +315,7 @@ void PostProcessTool::copyProperties()
                 "Property '{:s}' cannot be created because its mesh item type "
                 "is "
                 "not supported.",
-                name.c_str());
+                name);
         }
     }
 }

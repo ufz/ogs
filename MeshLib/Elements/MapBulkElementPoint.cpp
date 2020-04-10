@@ -118,7 +118,7 @@ MathLib::Point3d getBulkElementPoint(MeshLib::Mesh const& mesh,
         return getBulkElementPoint(quad, bulk_face_id, wp);
     }
     OGS_FATAL("Wrong cell type '{:s}' or functionality not yet implemented.",
-              MeshLib::CellType2String(element->getCellType()).c_str());
+              MeshLib::CellType2String(element->getCellType()));
 }
 
 MathLib::Point3d getBulkElementPoint(MeshLib::Mesh const& mesh,
@@ -144,7 +144,7 @@ MathLib::Point3d getBulkElementPoint(MeshLib::Mesh const& mesh,
         return getBulkElementPoint(tet, bulk_face_id, wp);
     }
     OGS_FATAL("Wrong cell type '{:s}' or functionality not yet implemented.",
-              MeshLib::CellType2String(element->getCellType()).c_str());
+              MeshLib::CellType2String(element->getCellType()));
 }
 
 // TODO disable the 3d elements in the local assembler creator
