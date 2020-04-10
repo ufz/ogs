@@ -1,0 +1,94 @@
+
+@DSL Implicit;
+@Behaviour Lubby2mod;
+@Author Thomas Nagel, Thomas Helfer;
+@Description
+{Lubby2 model for stationary
+and transient creep based on Burgers
+rheological model.
+Reduced implementation.
+};
+
+@Algorithm NewtonRaphson;
+@MaximumNumberOfIterations 100;
+
+@Epsilon 1.e-14;
+@Theta 1.0;
+
+@ModellingHypotheses{".+"};
+@Brick StandardElasticity;
+
+// Intercept of yield function
+@MaterialProperty real GK0;
+GK0.setEntryName("KelvinShearModulus");
+@MaterialProperty real etaK0;
+etaK0.setEntryName("KelvinViscosity");
+@MaterialProperty real etaM0;
+etaM0.setEntryName("MaxwellViscosity");
+@MaterialProperty real mK;
+mK.setEntryName("KelvinElasticParameter");
+@MaterialProperty real mvK;
+mvK.setEntryName("KelvinViscoParameter");
+@MaterialProperty real mvM;
+mvM.setEntryName("MaxwellViscoParameter");
+
+@AuxiliaryStateVariable Stensor epsK;
+epsK.setEntryName("KelvinStrain");
+
+//! increment of the Kelvin strain
+@LocalVariable Stensor depsK;
+//! increment of the Maxwell strain
+@LocalVariable Stensor depsM;
+
+//! Second Lamé coefficient
+@LocalVariable stress mu;
+
+@InitLocalVariables
+{
+    mu = computeMu(young, nu);
+    // Compute initial elastic strain
+    eel = 1. / (2. * mu) * sig - nu / young * trace(sig) * Stensor::Id();
+}
+
+@Integrator
+{
+    const auto seq = sigmaeq(sig);
+    const auto iseq = 1. / std::max(seq, 1.e-14 * mu);
+    const auto s = deviator(sig);
+    constexpr auto Pdev = Stensor4::K();
+
+    const auto etaK = etaK0 * std::exp(mvK * seq);
+    const auto etaM = etaM0 * std::exp(mvM * seq);
+    const auto GK = GK0 * std::exp(mK * seq);
+
+    // calculate Kelvin strain residual
+    const auto etaK_impl = etaK + dt * GK * theta;
+    depsK = dt / (2. * etaK_impl) * (s - 2 * GK * epsK);
+
+    // calculate Maxwell strain residual
+    depsM = dt / (2 * etaM) * s;
+
+    // residuals
+    feel += depsM + depsK;
+
+    // Jacobian
+    // Pdev_D
+    const auto Pdev_D = 2 * mu * Pdev;
+    const auto dseq_ddeel = 3. * iseq / 2. * s | (Pdev_D);
+    const auto detaK_ddeel = etaK * mvK * dseq_ddeel;
+    const auto detaM_ddeel = etaM * mvM * dseq_ddeel;
+    const auto dGK_ddeel = GK * mK * dseq_ddeel;
+    //
+    dfeel_ddeel +=
+        -(dt / (2 * etaK_impl * etaK_impl) * (s - 2 * GK * epsK) ^
+          detaK_ddeel) +
+        (dt / (2 * etaK_impl) * Pdev_D) - dt / etaK_impl * (epsK ^ dGK_ddeel) -
+        dt / (2 * etaK_impl * etaK_impl) * dt * theta *
+            ((s - 2 * GK * epsK) ^ dGK_ddeel) -
+        (dt / (2 * etaM * etaM) * s ^ detaM_ddeel) + (dt / (2 * etaM) * Pdev_D);
+}
+
+@UpdateAuxiliaryStateVariables
+{
+    epsK += depsK;
+}  // end of @UpdateAuxiliaryStateVariables

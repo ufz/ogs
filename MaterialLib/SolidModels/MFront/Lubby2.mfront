@@ -1,0 +1,99 @@
+
+@DSL Implicit;
+@Behaviour Lubby2;
+@Author Thomas Nagel, Tengfei Deng;
+@Description
+{Lubby2 model for stationary
+and transient creep based on Burgers
+rheological model
+};
+
+@Algorithm NewtonRaphson;
+@MaximumNumberOfIterations 100;
+
+@Brick StandardElasticity;
+
+@Epsilon 1.e-14;
+@Theta 1.0;
+@Parameter local_zero_tolerance = 1.e-14;
+
+@ModellingHypotheses{".+"};
+
+// Intercept of yield function
+@MaterialProperty real GK0;
+GK0.setEntryName("KelvinShearModulus");
+@MaterialProperty real etaK0;
+etaK0.setEntryName("KelvinViscosity");
+@MaterialProperty real etaM0;
+etaM0.setEntryName("MaxwellViscosity");
+@MaterialProperty real mK;
+mK.setEntryName("KelvinElasticParameter");
+@MaterialProperty real mvK;
+mvK.setEntryName("KelvinViscoParameter");
+@MaterialProperty real mvM;
+mvM.setEntryName("MaxwellViscoParameter");
+
+@StateVariable Stensor epsK;
+epsK.setEntryName("KelvinStrain");
+
+@StateVariable Stensor epsM;
+epsM.setEntryName("MaxwellStrain");
+
+//! Second Lamé coefficient
+@LocalVariable stress mu;
+
+@InitLocalVariables
+{
+    mu = computeMu(young, nu);
+    // Compute initial elastic strain
+    eel = 1. / (2. * mu) * sig - nu / young * trace(sig) * Stensor::Id();
+}
+
+@Integrator
+{
+    // Implicit system
+    constexpr auto id4 = Stensor4::Id();
+    constexpr auto Pdev = Stensor4::K();
+
+    const auto sigma_eff = std::max(sigmaeq(sig), local_zero_tolerance * mu);
+
+    const auto s = deviator(sig);
+    const auto k = deviator(epsK + depsK);
+
+    const auto etaK = etaK0 * std::exp(mvK * sigma_eff);
+    const auto etaM = etaM0 * std::exp(mvM * sigma_eff);
+    const auto GK = GK0 * std::exp(mK * sigma_eff);
+    const auto s_m_2G_eK = s - 2.0 * GK * k;
+
+    // residuals
+    feel += depsM + depsK;
+
+    // calculate Kelvin strain residual
+    fepsK = depsK - dt / (2.0 * etaK) * s_m_2G_eK;
+
+    // calculate Maxwell strain residual
+    fepsM = depsM - dt / (2.0 * etaM) * s;
+
+    // Pdev * D
+    const auto Pdev_D = 2 * mu * Pdev;
+
+    // Jacobian
+    const auto dsigma_eff_ddeel = 3. / (2. * sigma_eff) * s | (Pdev_D);
+    const auto detaK_ddeel = etaK * mvK * dsigma_eff_ddeel;
+    const auto detaM_ddeel = etaM * mvM * dsigma_eff_ddeel;
+    const auto dGK_ddeel = GK * mK * dsigma_eff_ddeel;
+
+    // dfeel_ddeel = id4; //initialized as such
+    dfeel_ddepsK = id4;
+    dfeel_ddepsM = id4;
+
+    dfepsK_ddeel = (dt / (2.0 * etaK * etaK) * s_m_2G_eK ^ detaK_ddeel) -
+                   (dt / (2.0 * etaK) * Pdev_D) + (dt / etaK * k ^ dGK_ddeel);
+    dfepsK_ddepsK = (1. + dt * GK / etaK) * id4;
+    // dfepsK_ddepsM is all zero --> nothing to do
+
+    dfepsM_ddeel = (dt / (2.0 * etaM * etaM) * s ^ detaM_ddeel) -
+                   (dt / (2.0 * etaM) * Pdev_D);
+    // dfepsM_ddepsK is all zero --> nothing to do
+    dfepsM_ddepsM = id4;
+}
