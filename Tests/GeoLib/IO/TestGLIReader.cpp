@@ -10,15 +10,15 @@
  *
  */
 
-#include <fstream>
 #include <cstdio>
+#include <fstream>
 
-#include "gtest/gtest.h"
-
-#include "filesystem.h"
-#include "InfoLib/TestInfo.h"
 #include "Applications/FileIO/Legacy/OGSIOVer4.h"
+#include "BaseLib/StringTools.h"
 #include "GeoLib/GEOObjects.h"
+#include "InfoLib/TestInfo.h"
+#include "filesystem.h"
+#include "gtest/gtest.h"
 
 class OGSIOVer4InterfaceTest : public ::testing::Test
 {

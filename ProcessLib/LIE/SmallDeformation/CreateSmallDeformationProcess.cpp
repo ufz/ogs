@@ -57,7 +57,7 @@ std::unique_ptr<Process> createSmallDeformationProcess(
         if (pv_name != "displacement" && pv_name.find("displacement_jump") != 0)
         {
             OGS_FATAL(
-                "Found a process variable name '%s'. It should be "
+                "Found a process variable name '{:s}'. It should be "
                 "'displacement' or 'displacement_jumpN' or "
                 "'displacement_junctionN'");
         }
@@ -74,12 +74,12 @@ std::unique_ptr<Process> createSmallDeformationProcess(
         if (variable == variables.end())
         {
             OGS_FATAL(
-                "Could not find process variable '%s' in the provided "
+                "Could not find process variable '{:s}' in the provided "
                 "variables "
-                "list for config tag <%s>.",
+                "list for config tag <{:s}>.",
                 pv_name.c_str(), "process_variable");
         }
-        DBUG("Found process variable '%s' for config tag <%s>.",
+        DBUG("Found process variable '{:s}' for config tag <{:s}>.",
              variable->getName().c_str(), "process_variable");
 
         per_process_variables.emplace_back(
@@ -91,15 +91,15 @@ std::unique_ptr<Process> createSmallDeformationProcess(
         OGS_FATAL("No displacement jump variables are specified");
     }
 
-    DBUG("Associate displacement with process variable '%s'.",
+    DBUG("Associate displacement with process variable '{:s}'.",
          per_process_variables.back().get().getName().c_str());
 
     if (per_process_variables.back().get().getNumberOfComponents() !=
         DisplacementDim)
     {
         OGS_FATAL(
-            "Number of components of the process variable '%s' is different "
-            "from the displacement dimension: got %d, expected %d",
+            "Number of components of the process variable '{:s}' is different "
+            "from the displacement dimension: got {:d}, expected {:d}",
             per_process_variables.back().get().getName().c_str(),
             per_process_variables.back().get().getNumberOfComponents(),
             DisplacementDim);
@@ -144,7 +144,7 @@ std::unique_ptr<Process> createSmallDeformationProcess(
     {
         OGS_FATAL(
             "Cannot construct fracture constitutive relation of given type "
-            "'%s'.",
+            "'{:s}'.",
             frac_type.c_str());
     }
 

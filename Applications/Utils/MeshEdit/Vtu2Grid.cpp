@@ -10,7 +10,6 @@
 
 #include <tclap/CmdLine.h>
 
-#include "Applications/ApplicationsLib/LogogSetup.h"
 #include "InfoLib/GitInfo.h"
 
 #include "MeshLib/IO/writeMeshToFile.h"
@@ -131,14 +130,13 @@ void mapMeshArraysOntoGrid(vtkSmartPointer<vtkUnstructuredGrid> const& mesh,
             mapArray<int, vtkSmartPointer<vtkIntArray>>(*grid, int_arr, name);
             continue;
         }
-        WARN("Ignoring array '%s', array type not implemented...", name.c_str());
+        WARN("Ignoring array '{:s}', array type not implemented...",
+             name.c_str());
     }
 }
 
 int main (int argc, char* argv[])
 {
-    ApplicationsLib::LogogSetup logog_setup;
-
     TCLAP::CmdLine cmd(
         "Reads a 3D unstructured mesh and samples it onto a structured grid of "
         "the same extent. Cell properties are mapped onto the grid (sampled at "

@@ -17,7 +17,7 @@
 #include <cmath>
 #include <sstream>
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include <vtkObjectFactory.h>
 
@@ -149,7 +149,7 @@ void VtkColorLookupTable::writeToFile(const std::string &filename)
     }
 
     strout << " done." << std::endl;
-    INFO("%s", strout.str().c_str());
+    INFO("{:s}", strout.str().c_str());
     out.close();
 }
 

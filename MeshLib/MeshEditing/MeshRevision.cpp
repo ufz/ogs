@@ -16,7 +16,7 @@
 
 #include <numeric>
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "GeoLib/Grid.h"
 #include "MathLib/GeometricBasics.h"
@@ -87,7 +87,7 @@ MeshLib::Mesh* MeshRevision::simplifyMesh(const std::string &new_mesh_name,
                     subdivideElement(elem, new_nodes, new_elements));
                 if (n_new_elements == 0)
                 {
-                    ERR("Element %d has unknown element type.", k);
+                    ERR("Element {:d} has unknown element type.", k);
                     this->resetNodeIDs();
                     this->cleanUp(new_nodes, new_elements);
                     return nullptr;

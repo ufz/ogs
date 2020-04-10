@@ -22,7 +22,7 @@
 #include <QSettings>
 #include <QStringList>
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "BaseLib/FileTools.h"
 

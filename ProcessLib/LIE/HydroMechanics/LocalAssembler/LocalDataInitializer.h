@@ -144,7 +144,7 @@ public:
         if (shapefunction_order != 2)
         {
             OGS_FATAL(
-                "The given shape function order %d is not supported.\nOnly "
+                "The given shape function order {:d} is not supported.\nOnly "
                 "shape functions of order 2 are supported.",
                 shapefunction_order);
         }
@@ -219,7 +219,7 @@ public:
         {
             OGS_FATAL(
                 "You are trying to build a local assembler for an unknown mesh "
-                "element type (%s)."
+                "element type ({:s})."
                 " Maybe you have disabled this mesh element type in your build "
                 "configuration or this process requires higher order elements.",
                 type_idx.name());

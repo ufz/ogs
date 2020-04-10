@@ -38,9 +38,12 @@ void ElementSizeMetric::calculateQuality()
         error_count = calc3dQuality();
     }
 
-    INFO ("ElementSizeMetric::calculateQuality() minimum: %f, max_volume: %f", _min, _max);
+    INFO(
+        "ElementSizeMetric::calculateQuality() minimum: {:f}, max_volume: {:f}",
+        _min,
+        _max);
     if (error_count > 0)
-        WARN ("Warning: %d elements with zero volume found.", error_count);
+        WARN("Warning: {:d} elements with zero volume found.", error_count);
 }
 
 std::size_t ElementSizeMetric::calc1dQuality()

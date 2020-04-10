@@ -3,8 +3,8 @@
 #include <QApplication>
 #include <QSurfaceFormat>
 #include <QVTKOpenGLWidget.h>
-#include <logog/include/logog.hpp>
 #include <memory>
+#include "BaseLib/Logging.h"
 
 #ifdef VTKFBXCONVERTER_FOUND
 #include <fbxsdk.h>
@@ -16,7 +16,7 @@ FbxScene* lScene = nullptr;
 #include <vtkSmartPointer.h>
 
 #include "InfoLib/GitInfo.h"
-#include "BaseLib/LogogSimpleFormatter.h"
+#include "BaseLib/Logging.h"
 #include "VtkVis/VtkConsoleOutputWindow.h"
 
 int main(int argc, char* argv[])
@@ -31,10 +31,6 @@ int main(int argc, char* argv[])
     auto myOutputWindow = vtkSmartPointer<VtkConsoleOutputWindow>::New();
     vtkOutputWindow::SetInstance(myOutputWindow);
 
-    LOGOG_INITIALIZE();
-    auto* logogCout = new logog::Cout;
-    auto* formatter = new BaseLib::LogogSimpleFormatter;
-    logogCout->SetFormatter(*formatter);
     QApplication a(argc, argv);
     QApplication::setApplicationName("OpenGeoSys - Data Explorer");
     QApplication::setApplicationVersion(QString::fromStdString(
@@ -51,9 +47,6 @@ int main(int argc, char* argv[])
     }
     w->show();
     int returncode = QApplication::exec();
-    delete formatter;
-    delete logogCout;
-    LOGOG_SHUTDOWN();
 #ifdef VTKFBXCONVERTER_FOUND
     DestroySdkObjects(lSdkManager, true);
 #endif

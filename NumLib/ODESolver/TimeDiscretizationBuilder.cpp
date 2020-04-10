@@ -45,6 +45,6 @@ std::unique_ptr<TimeDiscretization> createTimeDiscretization(
         return std::make_unique<BackwardDifferentiationFormula>(order);
     }
 
-    OGS_FATAL("Unrecognized time discretization type `%s'", type.c_str());
+    OGS_FATAL("Unrecognized time discretization type `{:s}'", type.c_str());
 }
 }  // namespace NumLib

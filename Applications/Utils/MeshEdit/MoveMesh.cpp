@@ -12,7 +12,6 @@
 
 #include <tclap/CmdLine.h>
 
-#include "Applications/ApplicationsLib/LogogSetup.h"
 #include "InfoLib/GitInfo.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/StringTools.h"
@@ -26,8 +25,6 @@
 
 int main(int argc, char *argv[])
 {
-    ApplicationsLib::LogogSetup logog_setup;
-
     TCLAP::CmdLine cmd(
         "Moves the mesh nodes using the given displacement vector or if no "
         "displacement vector is given, moves the mesh nodes such that the "
@@ -64,7 +61,7 @@ int main(int argc, char *argv[])
     std::unique_ptr<MeshLib::Mesh> mesh(MeshLib::IO::readMeshFromFile(fname));
 
     if (!mesh) {
-        ERR("Could not read mesh from file '%s'.", fname.c_str());
+        ERR("Could not read mesh from file '{:s}'.", fname.c_str());
         return EXIT_FAILURE;
     }
 
@@ -82,7 +79,7 @@ int main(int argc, char *argv[])
         displacement[2] = z_arg.getValue();
     }
 
-    INFO("translate model (%f, %f, %f).",
+    INFO("translate model ({:f}, {:f}, {:f}).",
          displacement[0],
          displacement[1],
          displacement[2]);

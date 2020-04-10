@@ -44,8 +44,8 @@ HeatTransportBHEProcess::HeatTransportBHEProcess(
         _process_data._vec_BHE_property.size())
     {
         OGS_FATAL(
-            "The number of the given BHE properties (%d) are not consistent "
-            "with the number of BHE groups in the mesh (%d).",
+            "The number of the given BHE properties ({:d}) are not consistent "
+            "with the number of BHE groups in the mesh ({:d}).",
             _process_data._vec_BHE_property.size(),
             _bheMeshData.BHE_mat_IDs.size());
     }

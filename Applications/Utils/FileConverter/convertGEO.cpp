@@ -14,7 +14,6 @@
 
 #include "InfoLib/GitInfo.h"
 
-#include "Applications/ApplicationsLib/LogogSetup.h"
 #include "Applications/FileIO/readGeometryFromFile.h"
 #include "Applications/FileIO/writeGeometryToFile.h"
 #include "GeoLib/GEOObjects.h"
@@ -22,8 +21,6 @@
 
 int main (int argc, char* argv[])
 {
-    ApplicationsLib::LogogSetup logog_setup;
-
     TCLAP::CmdLine cmd(
         "Converts OGS geometry file into another file format. "
         "Currently *.gml (OGS6 XML-based format) and *.gli (OGS5 format) "

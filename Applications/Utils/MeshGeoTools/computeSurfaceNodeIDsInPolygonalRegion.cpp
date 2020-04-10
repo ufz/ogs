@@ -17,7 +17,6 @@
 
 #include <tclap/CmdLine.h>
 
-#include "Applications/ApplicationsLib/LogogSetup.h"
 #include "Applications/FileIO/readGeometryFromFile.h"
 #include "InfoLib/GitInfo.h"
 #include "BaseLib/Error.h"
@@ -36,12 +35,12 @@ void writeToFile(std::string const& id_area_fname, std::string const& csv_fname,
 {
     std::ofstream ids_and_area_out(id_area_fname);
     if (!ids_and_area_out) {
-        OGS_FATAL("Unable to open the file '%s' - aborting.",
+        OGS_FATAL("Unable to open the file '{:s}' - aborting.",
                   id_area_fname.c_str());
     }
     std::ofstream csv_out(csv_fname);
     if (!csv_out) {
-        OGS_FATAL("Unable to open the file '%s' - aborting.",
+        OGS_FATAL("Unable to open the file '{:s}' - aborting.",
                   csv_fname.c_str());
     }
 
@@ -64,8 +63,6 @@ void writeToFile(std::string const& id_area_fname, std::string const& csv_fname,
 
 int main (int argc, char* argv[])
 {
-    ApplicationsLib::LogogSetup logog_setup;
-
     TCLAP::CmdLine cmd(
         "Computes ids of mesh nodes that are in polygonal regions and resides "
         "on the top surface. The polygonal regions have to be given in a gml- "
@@ -95,14 +92,15 @@ int main (int argc, char* argv[])
     cmd.parse(argc, argv);
 
     std::unique_ptr<MeshLib::Mesh const> mesh(MeshLib::IO::readMeshFromFile(mesh_in.getValue()));
-    INFO("Mesh read: %u nodes, %u elements.", mesh->getNumberOfNodes(), mesh->getNumberOfElements());
+    INFO("Mesh read: {:d} nodes, {:d} elements.", mesh->getNumberOfNodes(),
+         mesh->getNumberOfElements());
 
     GeoLib::GEOObjects geo_objs;
     FileIO::readGeometryFromFile(geo_in.getValue(), geo_objs,
                                  gmsh_path_arg.getValue());
     std::vector<std::string> geo_names;
     geo_objs.getGeometryNames(geo_names);
-    INFO("Geometry '%s' read: %u points, %u polylines.",
+    INFO("Geometry '{:s}' read: {:d} points, {:d} polylines.",
          geo_names[0].c_str(),
          geo_objs.getPointVec(geo_names[0])->size(),
          geo_objs.getPolylineVec(geo_names[0])->size());
@@ -154,7 +152,7 @@ int main (int argc, char* argv[])
             }
         }
         if (ids_and_areas.empty()) {
-            ERR("Polygonal part of surface '%s' doesn't contains nodes. No "
+            ERR("Polygonal part of surface '{:s}' doesn't contains nodes. No "
                 "output will be generated.",
                 polygon_name.c_str());
             continue;
@@ -166,8 +164,8 @@ int main (int argc, char* argv[])
         id_and_area_fname += std::to_string(j) + ".txt";
         csv_fname += std::to_string(j) + ".csv";
         INFO(
-            "Polygonal part of surface '%s' contains %ul nodes. Writting to"
-            " files '%s' and '%s'.",
+            "Polygonal part of surface '{:s}' contains %{ul} nodes. Writting to"
+            " files '{:s}' and '{:s}'.",
             polygon_name.c_str(),
             ids_and_areas.size(),
             id_and_area_fname.c_str(),

@@ -33,7 +33,7 @@ public:
             return;
         }
 
-        LOGOG_COUT << std::flush;
+        std::cout << std::flush;
     }
 
     //! Optionally flushes Python's stdout after running Python code.
@@ -125,7 +125,8 @@ void PythonBoundaryCondition::getEssentialBCValues(
                 {
                     // TODO extend Python BC to mixed FEM ansatz functions
                     OGS_FATAL(
-                        "No d.o.f. found for (node=%d, var=%d, comp=%d).  "
+                        "No d.o.f. found for (node={:d}, var={:d}, comp={:d}). "
+                        " "
                         "That might be due to the use of mixed FEM ansatz "
                         "functions, which is currently not supported by "
                         "the implementation of Python BCs. That excludes, "
@@ -220,7 +221,8 @@ std::unique_ptr<PythonBoundaryCondition> createPythonBoundaryCondition(
     if (!scope.contains(bc_object))
     {
         OGS_FATAL(
-            "Function `%s' is not defined in the python script file, or there "
+            "Function `{:s}' is not defined in the python script file, or "
+            "there "
             "was no python script file specified.",
             bc_object.c_str());
     }
@@ -232,8 +234,9 @@ std::unique_ptr<PythonBoundaryCondition> createPythonBoundaryCondition(
         component_id >= dof_table.getNumberOfVariableComponents(variable_id))
     {
         OGS_FATAL(
-            "Variable id or component id too high. Actual values: (%d, %d), "
-            "maximum values: (%d, %d).",
+            "Variable id or component id too high. Actual values: ({:d}, "
+            "{:d}), "
+            "maximum values: ({:d}, {:d}).",
             variable_id, component_id, dof_table.getNumberOfVariables(),
             dof_table.getNumberOfVariableComponents(variable_id));
     }

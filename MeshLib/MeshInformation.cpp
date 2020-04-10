@@ -75,7 +75,7 @@ void MeshInformation::writeAllNumbersOfElementTypes(const MeshLib::Mesh& mesh)
     for (unsigned int element_type = 0; element_type < nr_ele_types.size();
          element_type++)
     {
-        INFO("\t%d %s ", nr_ele_types[element_type],
+        INFO("\t{:d} {:s} ", nr_ele_types[element_type],
              element_names[element_type].c_str());
     }
 }
@@ -84,25 +84,25 @@ void MeshInformation::writePropertyVectorInformation(const MeshLib::Mesh& mesh)
 {
     std::vector<std::string> const& vec_names(
         mesh.getProperties().getPropertyVectorNames());
-    INFO("There are %d properties in the mesh:", vec_names.size());
+    INFO("There are {:d} properties in the mesh:", vec_names.size());
     for (const auto& vec_name : vec_names)
     {
         if (auto const vec_bounds =
                 MeshLib::MeshInformation::getValueBounds<int>(mesh, vec_name))
         {
-            INFO("\t%s: [%d, %d]", vec_name.c_str(), vec_bounds->first,
+            INFO("\t{:s}: [{:d}, {:d}]", vec_name.c_str(), vec_bounds->first,
                  vec_bounds->second);
         }
         else if (auto const vec_bounds =
                      MeshLib::MeshInformation::getValueBounds<double>(mesh,
                                                                       vec_name))
         {
-            INFO("\t%s: [%g, %g]", vec_name.c_str(), vec_bounds->first,
+            INFO("\t{:s}: [{:g}, {:g}]", vec_name.c_str(), vec_bounds->first,
                  vec_bounds->second);
         }
         else
         {
-            INFO("\t%s: Could not get value bounds for property vector.",
+            INFO("\t{:s}: Could not get value bounds for property vector.",
                  vec_name.c_str());
         }
     }
@@ -115,7 +115,7 @@ void MeshInformation::writeMeshValidationResults(MeshLib::Mesh& mesh)
     unsigned const n_holes(MeshLib::MeshValidation::detectHoles(mesh));
     if (n_holes > 0)
     {
-        INFO("%d hole(s) detected within the mesh", n_holes);
+        INFO("{:d} hole(s) detected within the mesh", n_holes);
     }
     else
     {

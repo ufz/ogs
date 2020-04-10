@@ -9,7 +9,7 @@
  */
 
 #include "ConvergenceCriterionDeltaX.h"
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "BaseLib/ConfigTree.h"
 #include "MathLib/LinAlg/LinAlg.h"
@@ -38,8 +38,8 @@ void ConvergenceCriterionDeltaX::checkDeltaX(const GlobalVector& minus_delta_x,
     auto error_dx = MathLib::LinAlg::norm(minus_delta_x, _norm_type);
     auto norm_x = MathLib::LinAlg::norm(x, _norm_type);
 
-    INFO("Convergence criterion: |dx|=%.4e, |x|=%.4e, |dx|/|x|=%.4e", error_dx,
-         norm_x,
+    INFO("Convergence criterion: |dx|={:.4e}, |x|={:.4e}, |dx|/|x|={:.4e}",
+         error_dx, norm_x,
          (norm_x == 0. ? std::numeric_limits<double>::quiet_NaN()
                        : (error_dx / norm_x)));
 
@@ -73,7 +73,7 @@ std::unique_ptr<ConvergenceCriterionDeltaX> createConvergenceCriterionDeltaX(
 
     if (norm_type == MathLib::VecNormType::INVALID)
     {
-        OGS_FATAL("Unknown vector norm type `%s'.", norm_type_str.c_str());
+        OGS_FATAL("Unknown vector norm type `{:s}'.", norm_type_str.c_str());
     }
 
     return std::make_unique<ConvergenceCriterionDeltaX>(

@@ -13,8 +13,6 @@
 
 #include <fstream>
 
-#include <logog/include/logog.hpp>
-
 #include "Raster.h"
 
 // BaseLib

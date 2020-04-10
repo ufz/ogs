@@ -15,7 +15,7 @@
 #include "DiagramList.h"
 #include "GetDateTime.h"
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "DateTools.h"
 #include "StringTools.h"
@@ -220,7 +220,8 @@ int DiagramList::readList(const QString &path, std::vector<DiagramList*> &lists)
             }
             else
             {
-                WARN("DiagramList::readList(): Unexpected format in line %d.", line_count);
+                WARN("DiagramList::readList(): Unexpected format in line {:d}.",
+                     line_count);
                 file.close();
                 return 0;
             }

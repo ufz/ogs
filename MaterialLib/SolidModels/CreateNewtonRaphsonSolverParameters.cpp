@@ -26,13 +26,13 @@ NumLib::NewtonRaphsonSolverParameters createNewtonRaphsonSolverParameters(
         //! \ogs_file_param{nonlinear_solver__maximum_iterations}
         config.getConfigParameter<int>("maximum_iterations");
 
-    DBUG("\tmaximum_iterations: %d.", maximum_iterations);
+    DBUG("\tmaximum_iterations: {:d}.", maximum_iterations);
 
     auto const error_tolerance =
         //! \ogs_file_param{nonlinear_solver__error_tolerance}
         config.getConfigParameter<double>("error_tolerance");
 
-    DBUG("\terror_tolerance: %g.", error_tolerance);
+    DBUG("\terror_tolerance: {:g}.", error_tolerance);
 
     return {maximum_iterations, error_tolerance};
 }

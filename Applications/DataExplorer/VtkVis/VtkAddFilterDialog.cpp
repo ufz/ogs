@@ -15,7 +15,7 @@
 // ** INCLUDES **
 #include "VtkAddFilterDialog.h"
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "VtkCompositeFilter.h"
 #include "VtkFilterFactory.h"
@@ -113,7 +113,8 @@ void VtkAddFilterDialog::on_buttonBox_accepted()
         }
         else
         {
-            ERR("VtkFilterFactory cannot create %s.", filterName.toStdString().c_str());
+            ERR("VtkFilterFactory cannot create {:s}.",
+                filterName.toStdString().c_str());
             return;
         }
     }

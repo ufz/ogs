@@ -315,8 +315,8 @@ void SmallDeformationLocalAssemblerFracture<ShapeFunction, IntegrationMethod,
         if (b_m < 0.0)
         {
             OGS_FATAL(
-                "Element %d, gp %d: Fracture aperture is %g, but it must be "
-                "non-negative.",
+                "Element {:d}, gp {:d}: Fracture aperture is {:g}, but it must "
+                "be non-negative.",
                 _element.getID(), ip, b_m);
         }
 

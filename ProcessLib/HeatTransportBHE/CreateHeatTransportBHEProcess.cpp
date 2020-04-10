@@ -67,7 +67,7 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
             pv_name.find("temperature_BHE") == std::string::npos)
         {
             OGS_FATAL(
-                "Found a process variable name '%s'. It should be "
+                "Found a process variable name '{:s}'. It should be "
                 "'temperature_soil' or 'temperature_BHE_X'");
         }
         auto variable = std::find_if(variables.cbegin(), variables.cend(),
@@ -78,12 +78,12 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
         if (variable == variables.end())
         {
             OGS_FATAL(
-                "Could not find process variable '%s' in the provided "
+                "Could not find process variable '{:s}' in the provided "
                 "variables "
-                "list for config tag <%s>.",
+                "list for config tag <{:s}>.",
                 pv_name.c_str(), "process_variable");
         }
-        DBUG("Found process variable '%s' for config tag <%s>.",
+        DBUG("Found process variable '{:s}' for config tag <{:s}>.",
              variable->getName().c_str(), "process_variable");
 
         per_process_variables.emplace_back(
@@ -144,7 +144,7 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
                 BHE::createBHE1PType<BHE::BHE_1P>(bhe_config, curves));
             continue;
         }
-        OGS_FATAL("Unknown BHE type '%s'.", bhe_type.c_str());
+        OGS_FATAL("Unknown BHE type '{:s}'.", bhe_type.c_str());
     }
     // end of reading BHE parameters -------------------------------------------
 

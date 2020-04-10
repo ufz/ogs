@@ -13,8 +13,6 @@
 
 #include <tclap/CmdLine.h>
 
-#include "Applications/ApplicationsLib/LogogSetup.h"
-
 #include "InfoLib/GitInfo.h"
 #include "BaseLib/Error.h"
 #include "BaseLib/Subdivision.h"
@@ -59,8 +57,6 @@ unsigned getDimension(MeshLib::MeshElemType eleType)
 
 int main (int argc, char* argv[])
 {
-    ApplicationsLib::LogogSetup logog_setup;
-
     TCLAP::CmdLine cmd(
         "Structured mesh generator.\n"
         "The documentation is available at "
@@ -165,7 +161,7 @@ int main (int argc, char* argv[])
     {
         if (dim_used[i] && !vec_lengthArg[i]->isSet())
         {
-            ERR("Missing input: Length for dimension [%d] is required but "
+            ERR("Missing input: Length for dimension [{:d}] is required but "
                 "missing.",
                 i);
             return EXIT_FAILURE;
@@ -235,7 +231,8 @@ int main (int argc, char* argv[])
 
     if (mesh)
     {
-        INFO("Mesh created: %d nodes, %d elements.", mesh->getNumberOfNodes(), mesh->getNumberOfElements());
+        INFO("Mesh created: {:d} nodes, {:d} elements.",
+             mesh->getNumberOfNodes(), mesh->getNumberOfElements());
 
         // write into a file
         MeshLib::IO::writeMeshToFile(*(mesh.get()), mesh_out.getValue());

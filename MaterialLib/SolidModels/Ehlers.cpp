@@ -675,7 +675,7 @@ SolidEhlers<DisplacementDim>::integrateStress(
         {
             OGS_FATAL(
                 "Unimplemented tangent type behaviour for the tangent type "
-                "'%d'.",
+                "'{:d}'.",
                 _tangent_type);
         }
     }

@@ -10,7 +10,7 @@
 
 #include "NonlinearSolver.h"
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
@@ -94,7 +94,7 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
         sys.assemble(x_new, process_id);
         sys.getA(A);
         sys.getRhs(rhs);
-        INFO("[time] Assembly took %g s.", time_assembly.elapsed());
+        INFO("[time] Assembly took {:g} s.", time_assembly.elapsed());
 
         // Subract non-equilibrium initial residuum if set
         if (_r_neq != nullptr)
@@ -105,7 +105,7 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
         timer_dirichlet.start();
         sys.applyKnownSolutionsPicard(A, rhs, *x_new[process_id]);
         time_dirichlet += timer_dirichlet.elapsed();
-        INFO("[time] Applying Dirichlet BCs took %g s.", time_dirichlet);
+        INFO("[time] Applying Dirichlet BCs took {:g} s.", time_dirichlet);
 
         if (!sys.isLinear() && _convergence_criterion->hasResidualCheck()) {
             GlobalVector res;
@@ -118,7 +118,7 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
         time_linear_solver.start();
         bool iteration_succeeded =
             _linear_solver.solve(A, rhs, *x_new[process_id]);
-        INFO("[time] Linear solver took %g s.", time_linear_solver.elapsed());
+        INFO("[time] Linear solver took {:g} s.", time_linear_solver.elapsed());
 
         if (!iteration_succeeded)
         {
@@ -181,7 +181,7 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
         // Update x s.t. in the next iteration we will compute the right delta x
         LinAlg::copy(*x_new[process_id], *x[process_id]);
 
-        INFO("[time] Iteration #%u took %g s.", iteration,
+        INFO("[time] Iteration #{:d} took {:g} s.", iteration,
              time_iteration.elapsed());
 
         if (error_norms_met)
@@ -199,7 +199,7 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
 
     if (iteration > _maxiter)
     {
-        ERR("Picard: Could not solve the given nonlinear system within %u "
+        ERR("Picard: Could not solve the given nonlinear system within {:d} "
             "iterations",
             _maxiter);
     }
@@ -284,7 +284,7 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
         }
         catch (AssemblyException const& e)
         {
-            ERR("Abort nonlinear iteration. Repeating timestep. Reason: %s",
+            ERR("Abort nonlinear iteration. Repeating timestep. Reason: {:s}",
                 e.what());
             error_norms_met = false;
             iteration = _maxiter;
@@ -292,7 +292,7 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
         }
         sys.getResidual(*x[process_id], res);
         sys.getJacobian(J);
-        INFO("[time] Assembly took %g s.", time_assembly.elapsed());
+        INFO("[time] Assembly took {:g} s.", time_assembly.elapsed());
 
         // Subract non-equilibrium initial residuum if set
         if (_r_neq != nullptr)
@@ -303,7 +303,7 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
         timer_dirichlet.start();
         sys.applyKnownSolutionsNewton(J, res, minus_delta_x);
         time_dirichlet += timer_dirichlet.elapsed();
-        INFO("[time] Applying Dirichlet BCs took %g s.", time_dirichlet);
+        INFO("[time] Applying Dirichlet BCs took {:g} s.", time_dirichlet);
 
         if (!sys.isLinear() && _convergence_criterion->hasResidualCheck())
         {
@@ -313,7 +313,7 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
         BaseLib::RunTime time_linear_solver;
         time_linear_solver.start();
         bool iteration_succeeded = _linear_solver.solve(J, res, minus_delta_x);
-        INFO("[time] Linear solver took %g s.", time_linear_solver.elapsed());
+        INFO("[time] Linear solver took {:g} s.", time_linear_solver.elapsed());
 
         if (!iteration_succeeded)
         {
@@ -382,7 +382,7 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
             error_norms_met = _convergence_criterion->isSatisfied();
         }
 
-        INFO("[time] Iteration #%u took %g s.", iteration,
+        INFO("[time] Iteration #{:d} took {:g} s.", iteration,
              time_iteration.elapsed());
 
         if (error_norms_met)
@@ -400,7 +400,7 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
 
     if (iteration > _maxiter)
     {
-        ERR("Newton: Could not solve the given nonlinear system within %u "
+        ERR("Newton: Could not solve the given nonlinear system within {:d} "
             "iterations",
             _maxiter);
     }
@@ -436,7 +436,7 @@ createNonlinearSolver(GlobalLinearSolver& linear_solver,
         {
             OGS_FATAL(
                 "The damping factor for the Newon method must be positive, got "
-                "%g.",
+                "{:g}.",
                 damping);
         }
         auto const tag = NonlinearSolverTag::Newton;

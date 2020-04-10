@@ -23,7 +23,7 @@
 
 #include <boost/algorithm/string/erase.hpp>
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "BaseLib/FileTools.h"
 #include "BaseLib/StringTools.h"
@@ -80,7 +80,8 @@ MeshLib::Mesh* readMeshFromFileSerial(const std::string &file_name)
         return MeshLib::IO::VtuInterface::readVTUFile(file_name);
     }
 
-    ERR("readMeshFromFile(): Unknown mesh file format in file %s.", file_name.c_str());
+    ERR("readMeshFromFile(): Unknown mesh file format in file {:s}.",
+        file_name.c_str());
     return nullptr;
 }
 

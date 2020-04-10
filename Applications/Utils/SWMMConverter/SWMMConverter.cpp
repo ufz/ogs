@@ -10,8 +10,6 @@
 
 #include "Applications/FileIO/SWMM/SWMMInterface.h"
 
-#include "Applications/ApplicationsLib/LogogSetup.h"
-
 #include "InfoLib/GitInfo.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/StringTools.h"
@@ -83,7 +81,7 @@ int writeMeshOutput(std::string const& input_file,
     std::string const extension =
         std::string("." + BaseLib::getFileExtension(output_file));
     std::size_t const n_time_steps(swmm->getNumberOfTimeSteps());
-    INFO("Number of simulation time steps: %d", n_time_steps);
+    INFO("Number of simulation time steps: {:d}", n_time_steps);
     for (std::size_t i = 0; i < n_time_steps; i++)
     {
         if (node_args)
@@ -166,8 +164,6 @@ int writeCsvOutput(std::string input_file,
 
 int main(int argc, char* argv[])
 {
-    ApplicationsLib::LogogSetup setup;
-
     TCLAP::CmdLine cmd(
         "Read files for the Storm Water Management Model (SWMM) and converts "
         "them into OGS data structures.\n\n"

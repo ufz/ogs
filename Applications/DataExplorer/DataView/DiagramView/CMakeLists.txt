@@ -37,7 +37,7 @@ target_link_libraries(QtDiagramView
                               QtBase
                               DataHolderLib
                               Qt5::Gui
-                              logog)
+                              spdlog::spdlog)
 
 add_autogen_include(QtDiagramView)
 

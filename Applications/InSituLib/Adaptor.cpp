@@ -40,7 +40,7 @@ void Initialize(BaseLib::ConfigTree const& scripts_config,
     {
         //! \ogs_file_param{prj__insitu__scripts__script__name}
         auto scriptName = script_config.getConfigParameter<std::string>("name");
-        INFO("Initializing in-situ script: %s", scriptName.c_str());
+        INFO("Initializing in-situ script: {:s}", scriptName.c_str());
         std::stringstream ss;
         ss << path << scriptName;
         vtkNew<vtkCPPythonScriptPipeline> pipeline;
@@ -73,8 +73,8 @@ void CoProcess(MeshLib::Mesh const& mesh, double const time,
     }
     if (Processor->RequestDataDescription(dataDescription.GetPointer()) != 0)
     {
-        INFO("Start InSitu process: timestep #%d (t=%g, last=%d)", timeStep,
-             time, lastTimeStep);
+        INFO("Start InSitu process: timestep #{:d} (t={:g}, last={:d})",
+             timeStep, time, lastTimeStep);
         vtkNew<MeshLib::VtkMappedMeshSource> vtkSource;
         vtkSource->SetMesh(&mesh);
         vtkSource->Update();

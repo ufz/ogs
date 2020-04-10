@@ -235,7 +235,7 @@ void extrapolate(
     ASSERT_EQ(nelements, residual.size());
 
     auto const res_norm = LinAlg::normMax(residual);
-    DBUG("maximum norm of residual: %g", res_norm);
+    DBUG("maximum norm of residual: {:g}", res_norm);
     EXPECT_GT(tolerance_res, res_norm);
 
     auto delta_x = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(
@@ -243,7 +243,7 @@ void extrapolate(
     LinAlg::axpy(*delta_x, -1.0, x_extra);  // delta_x = x_expected - x_extra
 
     auto const dx_norm = LinAlg::normMax(*delta_x);
-    DBUG("maximum norm of delta x:  %g", dx_norm);
+    DBUG("maximum norm of delta x:  {:g}", dx_norm);
     EXPECT_GT(tolerance_dx, dx_norm);
 }
 
@@ -279,7 +279,7 @@ TEST(NumLib, DISABLED_Extrapolation)
 
         auto const nnodes = mesh->getNumberOfNodes();
         auto const nelements = mesh->getNumberOfElements();
-        DBUG("number of nodes: %lu, number of elements: %lu", nnodes,
+        DBUG("number of nodes: {:d}, number of elements: {:d}", nnodes,
              nelements);
 
         ExtrapolationTest::ExtrapolationTestProcess pcs(*mesh,

@@ -13,8 +13,8 @@
 
 #pragma once
 
-#include <logog/include/logog.hpp>
 #include <boost/any.hpp>
+#include "BaseLib/Logging.h"
 
 #include <array>
 #include <fstream>
@@ -74,7 +74,9 @@ public:
             std::size_t const vec_size (getVectorSize(0));
             if (vec_size != vec.size())
             {
-                ERR ("Vector size does not match existing data (should be %d).", vec_size);
+                ERR("Vector size does not match existing data (should be "
+                    "{:d}).",
+                    vec_size);
                 return false;
             }
         }
@@ -153,7 +155,8 @@ public:
     {
         std::ifstream in(fname.c_str());
         if (!in.is_open()) {
-            ERR ("CsvInterface::readColumn(): Could not open file %s.", fname.c_str());
+            ERR("CsvInterface::readColumn(): Could not open file {:s}.",
+                fname.c_str());
             return -1;
         }
 
@@ -162,7 +165,7 @@ public:
         std::size_t const column_idx = CsvInterface::findColumn(line, delim, column_name);
         if (column_idx == std::numeric_limits<std::size_t>::max())
         {
-            ERR("Column '%s' not found in file header.", column_name.c_str());
+            ERR("Column '{:s}' not found in file header.", column_name.c_str());
             return -1;
         }
         return readColumn<T>(in, delim, data_array, column_idx);
@@ -175,7 +178,8 @@ public:
     {
         std::ifstream in(fname.c_str());
         if (!in.is_open()) {
-            ERR ("CsvInterface::readColumn(): Could not open file %s.", fname.c_str());
+            ERR("CsvInterface::readColumn(): Could not open file {:s}.",
+                fname.c_str());
             return -1;
         }
         return readColumn<T>(in, delim, data_array, column_idx);
@@ -204,7 +208,9 @@ private:
 
             if (fields.size() < column_idx+1)
             {
-                ERR ("Line %d contains not enough columns of data. Skipping line...", line_count);
+                ERR("Line {:d} contains not enough columns of data. Skipping "
+                    "line...",
+                    line_count);
                 error_count++;
                 continue;
             }
@@ -215,7 +221,7 @@ private:
             T value;
             if (!(stream >> value))
             {
-                ERR("Error reading value in line %d.", line_count);
+                ERR("Error reading value in line {:d}.", line_count);
                 error_count++;
                 continue;
             }

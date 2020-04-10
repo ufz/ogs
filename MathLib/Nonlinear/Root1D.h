@@ -14,8 +14,8 @@
 #include <cmath>
 #include <limits>
 #include <type_traits>
-#include <logog/include/logog.hpp>
 #include "BaseLib/Error.h"
+#include "BaseLib/Logging.h"
 
 namespace MathLib
 {

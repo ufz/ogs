@@ -17,7 +17,7 @@
 #include <vector>
 #include <fstream>
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "GeoLib/Raster.h"
 
@@ -65,7 +65,11 @@ LayeredMeshGenerator::getMesh(std::string const& mesh_name) const
                   std::back_inserter(*materials));
     }
     else
-        WARN ("Skipping MaterialID information, number of entries does not match element number");
+    {
+        WARN(
+            "Skipping MaterialID information, number of entries does not match "
+            "element number");
+    }
 
     std::unique_ptr<MeshLib::Mesh> result(new MeshLib::Mesh(mesh_name, _nodes, _elements, properties));
     MeshLib::NodeSearch ns(*result);

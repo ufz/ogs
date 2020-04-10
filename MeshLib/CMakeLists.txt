@@ -23,9 +23,7 @@ endif()
 # Create the library
 ogs_add_library(MeshLib ${SOURCES})
 
-target_link_libraries(MeshLib
-                      PUBLIC BaseLib
-                             GeoLib
-                             MathLib
-                             logog
-                             ${VTK_LIBRARIES})
+target_link_libraries(
+    MeshLib
+    PUBLIC BaseLib GeoLib MathLib ${VTK_LIBRARIES}
+    PRIVATE spdlog::spdlog)

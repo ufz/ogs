@@ -16,7 +16,7 @@
 
 #include <algorithm>
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "GeoLib/Raster.h"
 
@@ -42,7 +42,7 @@ MeshLib::Mesh* MeshLayerMapper::createStaticLayers(MeshLib::Mesh const& mesh, st
             thickness.push_back(layer_thickness_vector[i]);
         }
         else
-            WARN("Ignoring layer %d with thickness %f.", i,
+            WARN("Ignoring layer {:d} with thickness {:f}.", i,
                  layer_thickness_vector[i]);
     }
 

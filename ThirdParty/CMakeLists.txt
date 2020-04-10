@@ -1,5 +1,5 @@
-add_subdirectory(logog)
-set(DISABLE_WARNINGS_TARGETS logog)
+add_subdirectory(spdlog)
+set(DISABLE_WARNINGS_TARGETS spdlog)
 
 set(gtest_force_shared_crt ON CACHE INTERNAL "") # Use dynamic MSVC runtime
 set(INSTALL_GTEST OFF CACHE INTERNAL "")

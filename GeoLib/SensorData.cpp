@@ -17,7 +17,7 @@
 #include <cstdlib>
 #include <fstream>
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "BaseLib/StringTools.h"
 #include "BaseLib/DateTools.h"
@@ -85,8 +85,8 @@ const std::vector<float>* SensorData::getTimeSeries(SensorDataType time_series_n
             return _data_vecs[i];
         }
     }
-    ERR("Error in SensorData::getTimeSeries() - Time series '%d' not found.",
-        time_series_name);
+    ERR("Error in SensorData::getTimeSeries() - Time series '{:s}' not found.",
+        convertSensorDataType2String(time_series_name));
     return nullptr;
 }
 
@@ -96,7 +96,8 @@ int SensorData::readDataFromFile(const std::string &file_name)
 
     if (!in.is_open())
     {
-        INFO("SensorData::readDataFromFile() - Could not open file %s.", file_name.c_str());
+        INFO("SensorData::readDataFromFile() - Could not open file {:s}.",
+             file_name.c_str());
         return 0;
     }
 

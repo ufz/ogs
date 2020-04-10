@@ -8,14 +8,17 @@
  *
  */
 
+#include "PhreeqcIO.h"
+
+#include <iphreeqc/src/src/IPhreeqc.h>
+
 #include <boost/algorithm/string.hpp>
 #include <cmath>
-#include <iostream>
+#include <fstream>
 
 #include "BaseLib/Algorithm.h"
 #include "BaseLib/ConfigTreeUtil.h"
 #include "MeshLib/Mesh.h"
-#include "PhreeqcIO.h"
 #include "PhreeqcIOData/AqueousSolution.h"
 #include "PhreeqcIOData/Dump.h"
 #include "PhreeqcIOData/EquilibriumReactant.h"
@@ -25,8 +28,6 @@
 #include "PhreeqcIOData/ReactionRate.h"
 #include "PhreeqcIOData/Surface.h"
 #include "PhreeqcIOData/UserPunch.h"
-
-#include <iphreeqc/src/src/IPhreeqc.h>
 
 namespace ChemistryLib
 {
@@ -84,14 +85,14 @@ PhreeqcIO::PhreeqcIO(std::string const project_file_name,
     {
         OGS_FATAL(
             "Failed in loading the specified thermodynamic database file: "
-            "%s.",
+            "{:s}.",
             _database.c_str());
     }
 
     if (SetSelectedOutputFileOn(phreeqc_instance_id, 1) != IPQ_OK)
     {
         OGS_FATAL(
-            "Failed to fly the flag for the specified file %s where phreeqc "
+            "Failed to fly the flag for the specified file {:s} where phreeqc "
             "will write output.",
             _output->basic_output_setups.output_file.c_str());
     }
@@ -229,7 +230,8 @@ void PhreeqcIO::setAqueousSolutionsPrevFromDumpFile()
     std::ifstream in(dump_file);
     if (!in)
     {
-        OGS_FATAL("Could not open phreeqc dump file '%s'.", dump_file.c_str());
+        OGS_FATAL("Could not open phreeqc dump file '{:s}'.",
+                  dump_file.c_str());
     }
 
     std::size_t const num_chemical_systems = _mesh.getNumberOfBaseNodes();
@@ -237,7 +239,7 @@ void PhreeqcIO::setAqueousSolutionsPrevFromDumpFile()
 
     if (!in)
     {
-        OGS_FATAL("Error when reading phreeqc dump file '%s'",
+        OGS_FATAL("Error when reading phreeqc dump file '{:s}'",
                   dump_file.c_str());
     }
 
@@ -246,12 +248,13 @@ void PhreeqcIO::setAqueousSolutionsPrevFromDumpFile()
 
 void PhreeqcIO::writeInputsToFile(double const dt)
 {
-    DBUG("Writing phreeqc inputs into file '%s'.", _phreeqc_input_file.c_str());
+    DBUG("Writing phreeqc inputs into file '{:s}'.",
+         _phreeqc_input_file.c_str());
     std::ofstream out(_phreeqc_input_file, std::ofstream::out);
 
     if (!out)
     {
-        OGS_FATAL("Could not open file '%s' for writing phreeqc inputs.",
+        OGS_FATAL("Could not open file '{:s}' for writing phreeqc inputs.",
                   _phreeqc_input_file.c_str());
     }
 
@@ -259,7 +262,7 @@ void PhreeqcIO::writeInputsToFile(double const dt)
 
     if (!out)
     {
-        OGS_FATAL("Failed in generating phreeqc input file '%s'.",
+        OGS_FATAL("Failed in generating phreeqc input file '{:s}'.",
                   _phreeqc_input_file.c_str());
     }
 
@@ -373,7 +376,7 @@ void PhreeqcIO::execute()
         OutputErrorString(phreeqc_instance_id);
         OGS_FATAL(
             "Failed in performing speciation calculation with the generated "
-            "phreeqc input file '%s'.",
+            "phreeqc input file '{:s}'.",
             _phreeqc_input_file.c_str());
     }
 }
@@ -382,13 +385,13 @@ void PhreeqcIO::readOutputsFromFile()
 {
     auto const& basic_output_setups = _output->basic_output_setups;
     auto const& phreeqc_result_file = basic_output_setups.output_file;
-    DBUG("Reading phreeqc results from file '%s'.",
+    DBUG("Reading phreeqc results from file '{:s}'.",
          phreeqc_result_file.c_str());
     std::ifstream in(phreeqc_result_file);
 
     if (!in)
     {
-        OGS_FATAL("Could not open phreeqc result file '%s'.",
+        OGS_FATAL("Could not open phreeqc result file '{:s}'.",
                   phreeqc_result_file.c_str());
     }
 
@@ -396,7 +399,7 @@ void PhreeqcIO::readOutputsFromFile()
 
     if (!in)
     {
-        OGS_FATAL("Error when reading phreeqc result file '%s'",
+        OGS_FATAL("Error when reading phreeqc result file '{:s}'",
                   phreeqc_result_file.c_str());
     }
 
@@ -436,7 +439,7 @@ std::istream& operator>>(std::istream& in, PhreeqcIO& phreeqc_io)
         if (!std::getline(in, line))
         {
             OGS_FATAL(
-                "Error when reading calculation result of Solution %u after "
+                "Error when reading calculation result of Solution {:d} after "
                 "the reaction.",
                 global_id);
         }
@@ -460,17 +463,20 @@ std::istream& operator>>(std::istream& in, PhreeqcIO& phreeqc_io)
                 catch (const std::invalid_argument& e)
                 {
                     OGS_FATAL(
-                        "Invalid argument. Could not convert string '%s' to "
-                        "double for chemical system %d, column %d. Exception "
-                        "'%s' was thrown.",
+                        "Invalid argument. Could not convert string '{:s}' to "
+                        "double for chemical system {:d}, column {:d}. "
+                        "Exception "
+                        "'{:s}' was thrown.",
                         items[item_id].c_str(), global_id, item_id, e.what());
                 }
                 catch (const std::out_of_range& e)
                 {
                     OGS_FATAL(
-                        "Out of range error. Could not convert string '%s' to "
-                        "double for chemical system %d, column %d. Exception "
-                        "'%s' was thrown.",
+                        "Out of range error. Could not convert string '{:s}' "
+                        "to "
+                        "double for chemical system {:d}, column {:d}. "
+                        "Exception "
+                        "'{:s}' was thrown.",
                         items[item_id].c_str(), global_id, item_id, e.what());
                 }
                 accepted_items.push_back(value);

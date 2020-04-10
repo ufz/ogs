@@ -9,7 +9,6 @@
 
 #include <tclap/CmdLine.h>
 
-#include "Applications/ApplicationsLib/LogogSetup.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshGeoToolsLib/IdentifySubdomainMesh.h"
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
@@ -29,7 +28,8 @@ std::vector<std::unique_ptr<MeshLib::Mesh>> readMeshes(
         auto mesh = MeshLib::IO::readMeshFromFile(filename);
         if (mesh == nullptr)
         {
-            OGS_FATAL("Could not read mesh from '%s' file.", filename.c_str());
+            OGS_FATAL("Could not read mesh from '{:s}' file.",
+                      filename.c_str());
         }
         meshes.emplace_back(mesh);
     }
@@ -42,8 +42,6 @@ std::vector<std::unique_ptr<MeshLib::Mesh>> readMeshes(
 
 int main(int argc, char* argv[])
 {
-    ApplicationsLib::LogogSetup logog_setup;
-
     TCLAP::CmdLine cmd(
         "Checks if the subdomain meshes are part of the bulk mesh and writes "
         "the 'bulk_node_ids' and the 'bulk_element_ids' in each of them. The "
@@ -105,7 +103,7 @@ int main(int argc, char* argv[])
         MeshLib::IO::readMeshFromFile(bulk_mesh_arg.getValue())};
     if (bulk_mesh == nullptr)
     {
-        OGS_FATAL("Could not read bulk mesh from '%s'",
+        OGS_FATAL("Could not read bulk mesh from '{:s}'",
                   bulk_mesh_arg.getValue().c_str());
     }
 

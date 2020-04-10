@@ -13,8 +13,6 @@
 
 #include <tclap/CmdLine.h>
 
-#include "Applications/ApplicationsLib/LogogSetup.h"
-
 #include "InfoLib/GitInfo.h"
 #include "BaseLib/StringTools.h"
 #include "BaseLib/FileTools.h"
@@ -26,8 +24,6 @@
 
 int main(int argc, char *argv[])
 {
-    ApplicationsLib::LogogSetup logog_setup;
-
     TCLAP::CmdLine cmd(
         "Query mesh information.\n\n"
         "OpenGeoSys-6 software, version " +
@@ -104,7 +100,7 @@ int main(int argc, char *argv[])
             }
         }
         out << std::endl;
-        INFO("%s", out.str().c_str());
+        INFO("{:s}", out.str().c_str());
     }
 
     for (auto node_id : selected_node_ids)
@@ -128,6 +124,6 @@ int main(int argc, char *argv[])
             out << nd->getID() << " ";
         }
         out << std::endl;
-        INFO("%s", out.str().c_str());
+        INFO("{:s}", out.str().c_str());
     }
 }

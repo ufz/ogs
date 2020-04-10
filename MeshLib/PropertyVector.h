@@ -231,8 +231,8 @@ public:
         if (p == nullptr)
         {
             OGS_FATAL(
-                "No data found in the property vector %s "
-                "for the tuple index %d and component %d",
+                "No data found in the property vector {:s} "
+                "for the tuple index {:d} and component {:d}",
                 getPropertyName().c_str(), tuple_index, component);
         }
         return p[component];

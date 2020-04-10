@@ -7,13 +7,13 @@
  *              http://www.opengeosys.org/LICENSE.txt
  */
 
+#include "Layer.h"
+
 #include <algorithm>
 #include <iterator>
 #include <sstream>
 
-#include <logog/include/logog.hpp>
-
-#include "Layer.h"
+#include "BaseLib/Logging.h"
 
 namespace FileIO
 {
@@ -35,7 +35,7 @@ Layer parseLayer(std::string const& line, std::vector<Gocad::Region> const& regi
     // Check first word is MODEL_LAYER.
     if (*it != std::string("MODEL_LAYER"))
     {
-        ERR("Expected MODEL_LAYER keyword but '%s' found.\n", it->c_str());
+        ERR("Expected MODEL_LAYER keyword but '{:s}' found.\n", it->c_str());
         throw std::runtime_error(
             "In parseRegion() expected MODEL_LAYER keyword not found.\n");
     }

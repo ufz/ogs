@@ -48,8 +48,8 @@ std::unique_ptr<Permeability> createPermeabilityModel(
             dimension * dimension)
         {
             OGS_FATAL(
-                "The given parameter has %d components, but the permeability "
-                "tensor is defined for a %d dimensional problem.",
+                "The given parameter has {:d} components, but the permeability "
+                "tensor is defined for a {:d} dimensional problem.",
                 permeability_parameter.getNumberOfComponents(), dimension);
         }
 
@@ -71,15 +71,15 @@ std::unique_ptr<Permeability> createPermeabilityModel(
             dimension * dimension)
         {
             OGS_FATAL(
-                "The given parameter has %d components, but the permeability "
-                "tensor is defined for a %d dimensional problem.",
+                "The given parameter has {:d} components, but the permeability "
+                "tensor is defined for a {:d} dimensional problem.",
                 permeability_parameter.getNumberOfComponents(), dimension);
         }
 
         return std::make_unique<DupuitPermeability>(permeability_parameter,
                                                     dimension);
     }
-    OGS_FATAL("The permeability type '%s' is unavailable.\n",
+    OGS_FATAL("The permeability type '{:s}' is unavailable.\n",
               "The available types are \n\tConstant.",
               type.data());
 }

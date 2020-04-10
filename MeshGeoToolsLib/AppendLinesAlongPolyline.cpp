@@ -8,7 +8,7 @@
 
 #include "AppendLinesAlongPolyline.h"
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "GeoLib/Polyline.h"
 #include "GeoLib/PolylineVec.h"
@@ -52,7 +52,7 @@ std::unique_ptr<MeshLib::Mesh> appendLinesAlongPolylines(
         if (vec_nodes_on_ply.empty()) {
             std::string ply_name;
             ply_vec.getNameOfElementByID(k, ply_name);
-            INFO("No nodes found on polyline %s", ply_name.c_str());
+            INFO("No nodes found on polyline {:s}", ply_name.c_str());
             continue;
         }
 

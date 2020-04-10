@@ -417,7 +417,7 @@ std::unique_ptr<FBase> getF(unsigned polynomial_order)
             return std::make_unique<FQuad>();
     }
 
-    OGS_FATAL("unsupported polynomial order: %d.", polynomial_order);
+    OGS_FATAL("unsupported polynomial order: {:d}.", polynomial_order);
 }
 
 }  // namespace GaussLegendreTest
@@ -455,7 +455,7 @@ OGS_DONT_TEST_THIS_IF_PETSC(MathLib, IntegrationGaussLegendreTet)
 
     for (unsigned integration_order : {1, 2, 3})
     {
-        DBUG("\n==== integration order: %u.\n", integration_order);
+        DBUG("\n==== integration order: {:d}.\n", integration_order);
         GaussLegendreTest::IntegrationTestProcess pcs_tet(*mesh_tet,
                                                           integration_order);
 
@@ -466,7 +466,7 @@ OGS_DONT_TEST_THIS_IF_PETSC(MathLib, IntegrationGaussLegendreTet)
                 break;
             }
 
-            DBUG("  == polynomial order: %u.", polynomial_order);
+            DBUG("  == polynomial order: {:d}.", polynomial_order);
             auto f = GaussLegendreTest::getF(polynomial_order);
 
             auto const integral_tet = pcs_tet.integrate(f->getClosure());
@@ -484,7 +484,7 @@ OGS_DONT_TEST_THIS_IF_PETSC(MathLib, IntegrationGaussLegendreHex)
 
     for (unsigned integration_order : {1, 2, 3})
     {
-        DBUG("\n==== integration order: %u.\n", integration_order);
+        DBUG("\n==== integration order: {:d}.\n", integration_order);
         GaussLegendreTest::IntegrationTestProcess pcs_hex(*mesh_hex,
                                                           integration_order);
 
@@ -495,7 +495,7 @@ OGS_DONT_TEST_THIS_IF_PETSC(MathLib, IntegrationGaussLegendreHex)
                 break;
             }
 
-            DBUG("  == polynomial order: %u.", polynomial_order);
+            DBUG("  == polynomial order: {:d}.", polynomial_order);
             auto f = GaussLegendreTest::getF(polynomial_order);
 
             auto const integral_hex = pcs_hex.integrate(f->getClosure());
@@ -516,7 +516,7 @@ OGS_DONT_TEST_THIS_IF_PETSC(
 
     for (unsigned integration_order : {1, 2, 3})
     {
-        DBUG("\n==== integration order: %u.\n", integration_order);
+        DBUG("\n==== integration order: {:d}.\n", integration_order);
         GaussLegendreTest::IntegrationTestProcess pcs_tet(*mesh_tet,
                                                           integration_order);
 
@@ -525,7 +525,7 @@ OGS_DONT_TEST_THIS_IF_PETSC(
              polynomial_order < 2 * integration_order;
              ++polynomial_order)
         {
-            DBUG("  == polynomial order: %u.", polynomial_order);
+            DBUG("  == polynomial order: {:d}.", polynomial_order);
             GaussLegendreTest::F3DSeparablePolynomial f(polynomial_order);
 
             auto const integral_tet = pcs_tet.integrate(f.getClosure());
@@ -544,7 +544,7 @@ OGS_DONT_TEST_THIS_IF_PETSC(MathLib,
 
     for (unsigned integration_order : {1, 2, 3, 4})
     {
-        DBUG("\n==== integration order: %u.\n", integration_order);
+        DBUG("\n==== integration order: {:d}.\n", integration_order);
         GaussLegendreTest::IntegrationTestProcess pcs_hex(*mesh_hex,
                                                           integration_order);
 
@@ -553,7 +553,7 @@ OGS_DONT_TEST_THIS_IF_PETSC(MathLib,
              polynomial_order < 2 * integration_order;
              ++polynomial_order)
         {
-            DBUG("  == polynomial order: %u.", polynomial_order);
+            DBUG("  == polynomial order: {:d}.", polynomial_order);
             GaussLegendreTest::F3DSeparablePolynomial f(polynomial_order);
 
             auto const integral_hex = pcs_hex.integrate(f.getClosure());
@@ -572,7 +572,7 @@ OGS_DONT_TEST_THIS_IF_PETSC(MathLib,
 
     for (unsigned integration_order : {1, 2, 3})
     {
-        DBUG("\n==== integration order: %u.\n", integration_order);
+        DBUG("\n==== integration order: {:d}.\n", integration_order);
         GaussLegendreTest::IntegrationTestProcess pcs_tet(*mesh_tet,
                                                           integration_order);
 
@@ -581,7 +581,7 @@ OGS_DONT_TEST_THIS_IF_PETSC(MathLib,
              polynomial_order < 2 * integration_order;
              ++polynomial_order)
         {
-            DBUG("  == polynomial order: %u.", polynomial_order);
+            DBUG("  == polynomial order: {:d}.", polynomial_order);
             GaussLegendreTest::F3DNonseparablePolynomial f(polynomial_order);
 
             auto const integral_tet = pcs_tet.integrate(f.getClosure());
@@ -600,7 +600,7 @@ OGS_DONT_TEST_THIS_IF_PETSC(MathLib,
 
     for (unsigned integration_order : {1, 2, 3, 4})
     {
-        DBUG("\n==== integration order: %u.\n", integration_order);
+        DBUG("\n==== integration order: {:d}.\n", integration_order);
         GaussLegendreTest::IntegrationTestProcess pcs_hex(*mesh_hex,
                                                           integration_order);
 
@@ -609,7 +609,7 @@ OGS_DONT_TEST_THIS_IF_PETSC(MathLib,
              polynomial_order < 2 * integration_order;
              ++polynomial_order)
         {
-            DBUG("  == polynomial order: %u.", polynomial_order);
+            DBUG("  == polynomial order: {:d}.", polynomial_order);
             GaussLegendreTest::F3DNonseparablePolynomial f(polynomial_order);
 
             auto const integral_hex = pcs_hex.integrate(f.getClosure());

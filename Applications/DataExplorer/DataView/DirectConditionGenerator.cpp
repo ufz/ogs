@@ -15,7 +15,7 @@
 #include <fstream>
 #include <memory>
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "DirectConditionGenerator.h"
 
@@ -104,7 +104,7 @@ const std::vector< std::pair<std::size_t,double> >& DirectConditionGenerator::di
     }
     catch (std::runtime_error const& e)
     {
-        WARN("%s", e.what());
+        WARN("{:s}", e.what());
         return _direct_values;
     }
 

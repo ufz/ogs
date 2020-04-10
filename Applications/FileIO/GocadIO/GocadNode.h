@@ -60,8 +60,9 @@ public:
                                               FaceDirection::W);
                 break;
             default:
-                OGS_FATAL("GocadNode::setFaceSet(): unknown face indicator %d.",
-                          face_indicator);
+                OGS_FATAL(
+                    "GocadNode::setFaceSet(): unknown face indicator {:d}.",
+                    face_indicator);
         }
     }
 
@@ -93,7 +94,8 @@ public:
         if (it == _face_directions.end())
         {
             OGS_FATAL(
-                "GocadNode %d: Could not found face indicator for face set %d",
+                "GocadNode {:d}: Could not found face indicator for face set "
+                "{:d}",
                 _id, face_set_number);
         }
         return it->second;

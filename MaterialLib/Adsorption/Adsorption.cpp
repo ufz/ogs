@@ -8,7 +8,7 @@
  */
 
 #include "Adsorption.h"
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 #include "MaterialLib/PhysicalConstant.h"
 
 namespace {
@@ -126,7 +126,8 @@ double AdsorptionReaction::getEntropy(const double T_Ads, const double A) const
 
     if (W_p <= 0.0 || W_m <= 0.0)
     {
-        ERR("characteristic curve in negative region (W-, W+): %g, %g", W_m, W_p);
+        ERR("characteristic curve in negative region (W-, W+): {:g}, {:g}", W_m,
+            W_p);
         return 0.0;
     }
 

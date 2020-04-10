@@ -49,7 +49,7 @@ std::unique_ptr<TimeStepAlgorithm> createTimeStepper(
         return NumLib::createIterationNumberBasedTimeStepping(config);
     }
     OGS_FATAL(
-        "Unknown time stepping type: '%s'. The available types are: "
+        "Unknown time stepping type: '{:s}'. The available types are: "
         "\n\tSingleStep,"
         "\n\tFixedTimeStepping,"
         "\n\tEvolutionaryPIDcontroller,",

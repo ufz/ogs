@@ -200,7 +200,7 @@ private:
         if (!is.read(reinterpret_cast<char*>(pv->data()), number_of_bytes))
             OGS_FATAL(
                 "Error in NodePartitionedMeshReader::readPropertiesBinary: "
-                "Could not read part %d of the PropertyVector.",
+                "Could not read part {:d} of the PropertyVector.",
                 _mpi_rank);
     }
 

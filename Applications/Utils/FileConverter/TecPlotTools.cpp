@@ -14,8 +14,6 @@
 
 #include <tclap/CmdLine.h>
 
-#include <Applications/ApplicationsLib/LogogSetup.h>
-
 #include "InfoLib/GitInfo.h"
 #include "BaseLib/StringTools.h"
 
@@ -112,7 +110,8 @@ bool dataCountError(std::string const& name,
 {
     if (current != total)
     {
-        ERR("Data rows found do not fit specified dimensions for section '%s'.",
+        ERR("Data rows found do not fit specified dimensions for section "
+            "'{:s}'.",
             name.c_str());
         return true;
     }
@@ -163,7 +162,7 @@ void writeTecPlotSection(std::ofstream& out,
 
         val_count = 0;
         val_total = 0;
-        INFO("Writing section #%i", write_count);
+        INFO("Writing section #{:i}", write_count);
         out.close();
         out.open(base_name + std::to_string(write_count++) + extension);
     }
@@ -208,7 +207,7 @@ int writeDataToMesh(std::string const& file_name,
             vec_names[i], MeshLib::MeshItemType::Cell, 1);
         if (!prop)
         {
-            ERR("Error creating array '%s'.", vec_names[i].c_str());
+            ERR("Error creating array '{:s}'.", vec_names[i].c_str());
             return -5;
         }
         prop->reserve(scalars[i].size());
@@ -219,7 +218,7 @@ int writeDataToMesh(std::string const& file_name,
     std::string const base_name(file_name.substr(0, delim_pos + 1));
     std::string const extension(file_name.substr(delim_pos, std::string::npos));
 
-    INFO("Writing section #%i", write_count);
+    INFO("Writing section #{:i}", write_count);
     MeshLib::IO::VtuInterface vtu(mesh.get());
     vtu.writeToFile(base_name + std::to_string(write_count++) + extension);
     return 0;
@@ -292,7 +291,7 @@ int splitFile(std::ifstream& in, std::string file_name)
     {
         return -3;
     }
-    INFO("Writing time step #%i", write_count);
+    INFO("Writing time step #{:i}", write_count);
     out.close();
     INFO("Finished split.");
     return 0;
@@ -408,8 +407,6 @@ int convertFile(std::ifstream& in, std::string file_name)
  */
 int main(int argc, char* argv[])
 {
-    ApplicationsLib::LogogSetup logog_setup;
-
     TCLAP::CmdLine cmd(
         "TecPlot Parser\n\n"
         "OpenGeoSys-6 software, version " +
@@ -447,7 +444,7 @@ int main(int argc, char* argv[])
     std::ifstream in(input_arg.getValue().c_str());
     if (!in.is_open())
     {
-        ERR("Could not open file %s.", input_arg.getValue().c_str());
+        ERR("Could not open file {:s}.", input_arg.getValue().c_str());
         return -2;
     }
 

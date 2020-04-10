@@ -17,8 +17,9 @@
 #include <cassert>
 #include <limits>
 #include <list>
-#include <logog/include/logog.hpp>
 #include <utility>
+
+#include "BaseLib/Logging.h"
 
 namespace GeoLib
 {
@@ -74,7 +75,16 @@ public:
             _ur[0] = _ll[0] + _ur[1] - _ll[1];
         }
 
-        DBUG("QuadTree(): lower left: (%f,%f,%f), upper right: (%f,%f,%f), depth: %d", _ll[0], _ll[1], _ll[2], _ur[0], _ur[1], _ur[2], _depth);
+        DBUG(
+            "QuadTree(): lower left: ({:f},{:f},{:f}), upper right: "
+            "({:f},{:f},{:f}), depth: {:d}",
+            _ll[0],
+            _ll[1],
+            _ll[2],
+            _ur[0],
+            _ur[1],
+            _ur[2],
+            _depth);
     }
 
     /**

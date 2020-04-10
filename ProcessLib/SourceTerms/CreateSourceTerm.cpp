@@ -38,8 +38,8 @@ std::unique_ptr<SourceTerm> createSourceTerm(
             dof_table_bulk.getNumberOfVariableComponents(variable_id))
     {
         OGS_FATAL(
-            "Variable id or component id too high. Actual values: (%d, "
-            "%d), maximum values: (%d, %d).",
+            "Variable id or component id too high. Actual values: ({:d}, "
+            "{:d}), maximum values: ({:d}, {:d}).",
             variable_id, *config.component_id,
             dof_table_bulk.getNumberOfVariables(),
             dof_table_bulk.getNumberOfVariableComponents(variable_id));
@@ -50,14 +50,15 @@ std::unique_ptr<SourceTerm> createSourceTerm(
     {
         OGS_FATAL(
             "The required bulk node ids map does not exist in the "
-            "source term mesh '%s'.",
+            "source term mesh '{:s}'.",
             source_term_mesh.getName().c_str());
     }
     std::vector<MeshLib::Node*> const& source_term_nodes =
         source_term_mesh.getNodes();
     DBUG(
-        "Found %d nodes for source term at mesh '%s' for the variable %d and "
-        "component %d",
+        "Found {:d} nodes for source term at mesh '{:s}' for the variable {:d} "
+        "and "
+        "component {:d}",
         source_term_nodes.size(), source_term_mesh.getName().c_str(),
         variable_id, *config.component_id);
 
@@ -120,7 +121,6 @@ std::unique_ptr<SourceTerm> createSourceTerm(
 #endif
     }
 
-
-    OGS_FATAL("Unknown source term type: `%s'.", type.c_str());
+    OGS_FATAL("Unknown source term type: `{:s}'.", type.c_str());
 }
 }  // namespace ProcessLib

@@ -13,8 +13,8 @@
 #include <memory>
 #include <typeinfo>
 
-#include <logog/include/logog.hpp>
 #include <boost/property_tree/xml_parser.hpp>
+#include "BaseLib/Logging.h"
 
 #include "InfoLib/TestInfo.h"
 #include "NumLib/NumericsConfig.h"
@@ -87,7 +87,7 @@ public:
         const double delta_t = (num_timesteps == 0) ? -1.0
                                                     : ((t_end-t0) / num_timesteps);
 
-        DBUG("Running test with %u timesteps of size %g s.", num_timesteps,
+        DBUG("Running test with {:d} timesteps of size {:g} s.", num_timesteps,
              delta_t);
 
         // initial condition

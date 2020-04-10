@@ -17,7 +17,7 @@
 #include <bitset>
 #include <vector>
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 // GeoLib
 #include "AABB.h"
@@ -225,9 +225,10 @@ Grid<POINT>::Grid(InputIterator first, InputIterator last,
             std::size_t const pos(coords[0]+coords[1]*_n_steps[0]+coords[2]*n_plane);
             _grid_cell_nodes_map[pos].push_back(const_cast<POINT*>(copyOrAddress(*it)));
         } else {
-            ERR("Grid constructor: error computing indices [%d, %d, %d], "
-                "max indices [%d, %d, %d].", coords[0], coords[1], coords[2],
-                _n_steps[0], _n_steps[1], _n_steps[2]);
+            ERR("Grid constructor: error computing indices [{:d}, {:d}, {:d}], "
+                "max indices [{:d}, {:d}, {:d}].",
+                coords[0], coords[1], coords[2], _n_steps[0], _n_steps[1],
+                _n_steps[2]);
         }
         it++;
     }

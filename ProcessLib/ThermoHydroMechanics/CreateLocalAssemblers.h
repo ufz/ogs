@@ -9,13 +9,12 @@
 
 #pragma once
 
+#include <spdlog/spdlog.h>
+
 #include <vector>
 
-#include <logog/include/logog.hpp>
-
-#include "NumLib/DOF/LocalToGlobalIndexMap.h"
-
 #include "LocalDataInitializer.h"
+#include "NumLib/DOF/LocalToGlobalIndexMap.h"
 
 namespace ProcessLib
 {

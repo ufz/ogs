@@ -273,8 +273,8 @@ void Mesh::checkNonlinearNodeIDs() const
             }
 
             WARN(
-                "Found a nonlinear node whose ID (%d) is smaller than the "
-                "number of base node IDs (%d). Some functions may not work "
+                "Found a nonlinear node whose ID ({:d}) is smaller than the "
+                "number of base node IDs ({:d}). Some functions may not work "
                 "properly.",
                 e->getNodeIndex(i), getNumberOfBaseNodes());
             return;
@@ -296,7 +296,7 @@ void scaleMeshPropertyVector(MeshLib::Mesh & mesh,
 {
     if (!mesh.getProperties().existsPropertyVector<double>(property_name))
     {
-        WARN("Did not find PropertyVector '%s' for scaling.",
+        WARN("Did not find PropertyVector '{:s}' for scaling.",
              property_name.c_str());
         return;
     }
@@ -320,7 +320,7 @@ PropertyVector<int> const* materialIDs(Mesh const& mesh)
 std::unique_ptr<MeshLib::Mesh> createMeshFromElementSelection(
     std::string mesh_name, std::vector<MeshLib::Element*> const& elements)
 {
-    DBUG("Found %d elements in the mesh", elements.size());
+    DBUG("Found {:d} elements in the mesh", elements.size());
 
     // Store bulk element ids for each of the new elements.
     std::vector<std::size_t> bulk_element_ids;

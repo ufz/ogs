@@ -135,7 +135,7 @@ target_link_libraries(QtDataView
                               QtDiagramView
                               QtStratView
                               DataHolderLib
-                              logog
+                              spdlog::spdlog
                               Qt5::Core
                               Qt5::Gui)
 

@@ -16,7 +16,6 @@
 
 #include <tclap/CmdLine.h>
 
-#include "Applications/ApplicationsLib/LogogSetup.h"
 #include "Applications/FileIO/AsciiRasterInterface.h"
 #include "InfoLib/GitInfo.h"
 #include "BaseLib/FileTools.h"
@@ -34,8 +33,6 @@
 
 int main(int argc, char* argv[])
 {
-    ApplicationsLib::LogogSetup logo_setup;
-
     TCLAP::CmdLine cmd(
         "Generates properties for mesh elements of an input mesh deploying a "
         "ASC raster file.\n\n"

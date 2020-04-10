@@ -576,7 +576,7 @@ private:
         ASSERT_EQ(x.size()*x.size(), Jac_data_cd.size());
         ASSERT_EQ(x.size()*x.size(), Jac_data_ana.size());
         for (std::size_t i=0; i<x.size()*x.size(); ++i) {
-            // DBUG("%lu, %g, %g", i, Jac_data_ana[i], Jac_data_cd[i]);
+            // DBUG("{:d}, {:g}, {:g}", i, Jac_data_ana[i], Jac_data_cd[i]);
             EXPECT_NEAR(Jac_data_ana[i], Jac_data_cd[i], LocAsm::getTol());
         }
     }

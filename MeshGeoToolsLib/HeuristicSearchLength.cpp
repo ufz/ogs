@@ -11,7 +11,7 @@
 
 #include "HeuristicSearchLength.h"
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "MeshLib/Elements/Element.h"
 
@@ -72,7 +72,7 @@ HeuristicSearchLength::HeuristicSearchLength(MeshLib::Mesh const& mesh, LengthTy
 
     DBUG(
         "[MeshNodeSearcher::MeshNodeSearcher] Calculated search length for "
-        "mesh '%s' is %f.",
+        "mesh '{:s}' is {:f}.",
         _mesh.getName().c_str(), _search_length);
 }
 

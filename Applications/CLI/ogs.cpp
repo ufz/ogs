@@ -10,7 +10,9 @@
  *
  */
 
+#include <spdlog/spdlog.h>
 #include <tclap/CmdLine.h>
+
 #include <chrono>
 
 #ifndef _WIN32
@@ -31,10 +33,8 @@
 #include "BaseLib/DateTools.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/RunTime.h"
-#include "BaseLib/TemplateLogogFormatterSuppressedGCC.h"
 
 #include "Applications/ApplicationsLib/LinearSolverLibrarySetup.h"
-#include "Applications/ApplicationsLib/LogogSetup.h"
 #include "Applications/ApplicationsLib/ProjectData.h"
 #include "Applications/ApplicationsLib/TestDefinition.h"
 #include "Applications/InSituLib/Adaptor.h"
@@ -123,11 +123,15 @@ int main(int argc, char* argv[])
         std::cout.setf(std::ios::unitbuf);
     }
 
-    ApplicationsLib::LogogSetup logog_setup;
-    logog_setup.setLevel(log_level_arg.getValue());
+    BaseLib::setConsoleLogLevel(log_level_arg.getValue());
+    spdlog::set_pattern("%^%l:%$ %v");
+    spdlog::set_error_handler([](const std::string& msg) {
+        std::cerr << "spdlog error: " << msg << std::endl;
+        OGS_FATAL("spdlog logger error occured.");
+    });
 
-    INFO("This is OpenGeoSys-6 version %s.",
-         GitInfoLib::GitInfo::ogs_version.c_str());
+    INFO("This is OpenGeoSys-6 version {:s}.",
+         GitInfoLib::GitInfo::ogs_version);
 
 #ifndef _WIN32  // On windows this command line option is not present.
     // Enable floating point exceptions
@@ -151,7 +155,7 @@ int main(int argc, char* argv[])
     {
         auto const start_time = std::chrono::system_clock::now();
         auto const time_str = BaseLib::formatDate(start_time);
-        INFO("OGS started on %s.", time_str.c_str());
+        INFO("OGS started on {:s}.", time_str);
     }
 
     std::unique_ptr<ApplicationsLib::TestDefinition> test_definition;
@@ -169,10 +173,11 @@ int main(int argc, char* argv[])
             controller->Initialize(&argc, &argv, 1);
             vtkMPIController::SetGlobalController(controller);
 
-            logog_setup.setFormatter(
-                std::make_unique<BaseLib::TemplateLogogFormatterSuppressedGCC<
-                    TOPIC_LEVEL_FLAG | TOPIC_FILE_NAME_FLAG |
-                    TOPIC_LINE_NUMBER_FLAG>>());
+            {   // Can be called only after MPI_INIT.
+                int mpi_rank;
+                MPI_Comm_rank(PETSC_COMM_WORLD, &mpi_rank);
+                spdlog::set_pattern(fmt::format("[{}] %^%l:%$ %v", mpi_rank));
+            }
 #endif
             run_time.start();
 
@@ -242,7 +247,7 @@ int main(int argc, char* argv[])
             if (isInsituConfigured)
                 InSituLib::Finalize();
 #endif
-            INFO("[time] Execution took %g s.", run_time.elapsed());
+            INFO("[time] Execution took {:g} s.", run_time.elapsed());
 
 #if defined(USE_PETSC)
             controller->Finalize(1);
@@ -264,7 +269,7 @@ int main(int argc, char* argv[])
     {
         auto const end_time = std::chrono::system_clock::now();
         auto const time_str = BaseLib::formatDate(end_time);
-        INFO("OGS terminated on %s.", time_str.c_str());
+        INFO("OGS terminated on {:s}.", time_str);
     }
 
     if (ogs_status == EXIT_FAILURE)

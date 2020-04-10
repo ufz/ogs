@@ -13,8 +13,6 @@
 
 #include "XMLQtInterface.h"
 
-#include <fstream>
-
 #include <QByteArray>
 #include <QCoreApplication>
 #include <QCryptographicHash>
@@ -23,9 +21,10 @@
 #include <QXmlSchema>
 #include <QXmlSchemaValidator>
 #include <QXmlStreamReader>
-
-#include <logog/include/logog.hpp>
+#include <fstream>
 #include <utility>
+
+#include "BaseLib/Logging.h"
 
 namespace BaseLib
 {
@@ -41,7 +40,8 @@ int XMLQtInterface::readFile(const QString &fileName)
     QFile file(fileName);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
-        ERR("XMLQtInterface::readFile(): Can't open xml-file %s.", fileName.toStdString().c_str());
+        ERR("XMLQtInterface::readFile(): Can't open xml-file {:s}.",
+            fileName.toStdString().c_str());
         return 0;
     }
     _fileData = file.readAll();
@@ -73,8 +73,8 @@ int XMLQtInterface::isValid() const
         }
 
         INFO(
-            "XMLQtInterface::isValid(): XML file %s is invalid (in reference "
-            "to schema %s).",
+            "XMLQtInterface::isValid(): XML file {:s} is invalid (in reference "
+            "to schema {:s}).",
             _fileName.toStdString().c_str(), _schemaFile.toStdString().c_str());
     }
     else
@@ -88,7 +88,7 @@ int XMLQtInterface::isValid() const
         }
 
         INFO(
-            "XMLQtInterface::isValid(): XML file %s is invalid (in reference "
+            "XMLQtInterface::isValid(): XML file {:s} is invalid (in reference "
             "to its schema).",
             _fileName.toStdString().c_str());
     }

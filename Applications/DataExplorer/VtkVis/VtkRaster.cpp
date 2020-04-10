@@ -33,10 +33,11 @@
 #include "xtiffio.h"
 #endif
 
-#include <logog/include/logog.hpp>
 #include <memory>
 
 #include "Applications/FileIO/AsciiRasterInterface.h"
+#include "BaseLib/FileTools.h"
+#include "BaseLib/Logging.h"
 #include "BaseLib/StringTools.h"
 #include "GeoLib/Raster.h"
 
@@ -143,7 +144,10 @@ vtkImageAlgorithm* VtkRaster::loadImageFromTIFF(const std::string& fileName,
                 ++nImages;
             } while (TIFFReadDirectory(tiff));
             if (nImages > 1)
-                INFO("VtkRaster::loadImageFromTIFF() - File contains %d images. This method is not tested for this case.", nImages);
+                INFO(
+                    "VtkRaster::loadImageFromTIFF() - File contains {:d} "
+                    "images. This method is not tested for this case.",
+                    nImages);
 
             // get image size
             TIFFGetField(tiff, TIFFTAG_IMAGEWIDTH,  &imgWidth);
@@ -340,7 +344,7 @@ bool VtkRaster::readWorldFile(std::string const& filename,
     std::ifstream in(world_file.c_str());
     if (!in.is_open())
     {
-        ERR("VtkRaster::readWorldFile(): Could not open file %s.",
+        ERR("VtkRaster::readWorldFile(): Could not open file {:s}.",
             filename.c_str());
         return false;
     }
@@ -365,8 +369,8 @@ bool VtkRaster::readWorldFile(std::string const& filename,
     double const delta_y = BaseLib::str2number<double>(line);
     if (delta_x != -delta_y)
         WARN(
-            "Anisotropic pixel size detected (%f vs %f). An isotropic "
-            "spacing of %f is assumed, be aware results may be wrong.",
+            "Anisotropic pixel size detected ({:f} vs {:f}). An isotropic "
+            "spacing of {:f} is assumed, be aware results may be wrong.",
             delta_x, delta_y, delta_x);
     // x-translation
     if (!std::getline(in, line))

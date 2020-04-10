@@ -44,8 +44,8 @@ T_ELEMENT* createLinearElement(MeshLib::Element const* e,
         if (it == end(vec_new_nodes))
         {
             OGS_FATAL(
-                "A base node %d (with original global node id %d) not found in "
-                "the list for element %d.",
+                "A base node {:d} (with original global node id {:d}) not "
+                "found in the list for element {:d}.",
                 i, e->getNode(i)->getID(), e->getID());
         }
         nodes[i] = const_cast<MeshLib::Node*>(*it);
@@ -92,7 +92,7 @@ std::unique_ptr<MeshLib::Mesh> convertToLinearMesh(
         }
         else
         {
-            OGS_FATAL("Mesh element type %s is not supported",
+            OGS_FATAL("Mesh element type {:s} is not supported",
                       MeshLib::CellType2String(e->getCellType()).c_str());
         }
     }

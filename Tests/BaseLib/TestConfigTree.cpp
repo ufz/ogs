@@ -8,7 +8,7 @@
  */
 
 #include <gtest/gtest.h>
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include <boost/property_tree/xml_parser.hpp>
 #include <numeric>
@@ -44,7 +44,7 @@ public:
             // move construction/assignment
             EXPECT_EQ("FILENAME", filename);
 
-            DBUG("error <%s> : %s", path.c_str(), message.c_str());
+            DBUG("error <{:s}> : {:s}", path.c_str(), message.c_str());
             _error = true;
             throw Exc(); // throw in order to stop normal execution
         };
@@ -62,7 +62,7 @@ public:
             // move construction/assignment
             EXPECT_EQ("FILENAME", filename);
 
-            DBUG("warning <%s> : %s", path.c_str(), message.c_str());
+            DBUG("warning <{:s}> : {:s}", path.c_str(), message.c_str());
             _warning = true;
         };
     }

@@ -168,7 +168,7 @@ std::unique_ptr<FluidProperty> createFluidDensityModel(
     }
 
     OGS_FATAL(
-        "The density type %s is unavailable.\n"
+        "The density type {:s} is unavailable.\n"
         "The available types are: \n\tConstant, \n\tLiquidDensity, "
         "\n\tTemperatureDependent, \n\tIdealGasLaw."
         "\n\tWaterDensityIAPWSIF97Region1\n",

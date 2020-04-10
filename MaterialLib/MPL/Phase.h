@@ -72,7 +72,7 @@ void checkRequiredProperties(Phase const& phase, Container const& required_prope
     {
         if (!phase.hasProperty(p))
         {
-            OGS_FATAL("The property '%s' is missing in the %s phase.",
+            OGS_FATAL("The property '{:s}' is missing in the {:s} phase.",
                       property_enum_to_string[p].c_str(), phase.name.c_str());
         }
     }

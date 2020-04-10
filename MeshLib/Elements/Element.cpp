@@ -14,7 +14,7 @@
 
 #include "Element.h"
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "MathLib/GeometricBasics.h"
 #include "MathLib/MathTools.h"
@@ -164,7 +164,8 @@ const Node* Element::getNode(unsigned i) const
         return _nodes[i];
     }
 #ifndef NDEBUG
-    ERR("Error in MeshLib::Element::getNode() - Index %d in %s", i, MeshElemType2String(getGeomType()).c_str());
+    ERR("Error in MeshLib::Element::getNode() - Index {:d} in {:s}", i,
+        MeshElemType2String(getGeomType()).c_str());
     return nullptr;
 #endif
 }
@@ -261,7 +262,7 @@ bool isPointInElementXY(MathLib::Point3d const& p, Element const& e)
                MathLib::isPointInTriangleXY(p, n0, n2, n3);
     }
 
-    WARN("isPointInElementXY: element type '%s' is not supported.",
+    WARN("isPointInElementXY: element type '{:s}' is not supported.",
          MeshLib::MeshElemType2String(e.getGeomType()).c_str());
     return false;
 }

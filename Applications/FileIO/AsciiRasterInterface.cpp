@@ -13,8 +13,8 @@
 
 #include "AsciiRasterInterface.h"
 
-#include <logog/include/logog.hpp>
 #include <boost/optional.hpp>
+#include "BaseLib/Logging.h"
 
 #include "BaseLib/FileTools.h"
 #include "BaseLib/StringTools.h"
@@ -44,7 +44,8 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromASCFile(std::string const& fn
     std::ifstream in(fname.c_str());
 
     if (!in.is_open()) {
-        WARN("Raster::getRasterFromASCFile(): Could not open file %s.", fname.c_str());
+        WARN("Raster::getRasterFromASCFile(): Could not open file {:s}.",
+             fname.c_str());
         return nullptr;
     }
 
@@ -68,7 +69,7 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromASCFile(std::string const& fn
         delete [] values;
         return raster;
     }
-    WARN("Raster::getRasterFromASCFile(): Could not read header of file %s",
+    WARN("Raster::getRasterFromASCFile(): Could not read header of file {:s}",
          fname.c_str());
     return nullptr;
 }
@@ -159,7 +160,8 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromSurferFile(std::string const&
     std::ifstream in(fname.c_str());
 
     if (!in.is_open()) {
-        ERR("Raster::getRasterFromSurferFile() - Could not open file %s", fname.c_str());
+        ERR("Raster::getRasterFromSurferFile() - Could not open file {:s}",
+            fname.c_str());
         return nullptr;
     }
 
@@ -191,7 +193,7 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromSurferFile(std::string const&
         delete [] values;
         return raster;
     }
-    ERR("Raster::getRasterFromASCFile() - could not read header of file %s",
+    ERR("Raster::getRasterFromASCFile() - could not read header of file {:s}",
         fname.c_str());
     return nullptr;
 }

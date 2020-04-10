@@ -69,8 +69,8 @@ TEST_F(MeshGeoToolsLibGeoMapper, PointsOnSurfaceMesh)
             {
                 if (std::abs(std::cos(p[0]+p[1]) - p[2]) >= eps)
                 {
-                    INFO("std::cos(%f + %f) = %f, %f",
-                        p[0], p[1], cos(p[0]+p[1]), p[2]);
+                    INFO("std::cos({:f} + {:f}) = {:f}, {:f}", p[0], p[1],
+                         cos(p[0] + p[1]), p[2]);
                     return false;
                 }
             }

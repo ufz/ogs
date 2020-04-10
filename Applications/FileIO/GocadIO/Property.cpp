@@ -39,7 +39,7 @@ Property parseGocadPropertyMetaData(std::string& line, std::istream& in,
     // PROPERTY id "property_name"
     if (*tok_it != "PROPERTY")
     {
-        ERR("Expected PROPERTY keyword but '%s' found.", tok_it->c_str());
+        ERR("Expected PROPERTY keyword but '{:s}' found.", tok_it->c_str());
         throw std::runtime_error(
             "In parseGocadPropertyMetaData() expected PROPERTY keyword not "
             "found.");
@@ -115,7 +115,7 @@ Property parseGocadPropertyMetaData(std::string& line, std::istream& in,
             tok_it++;
             if (*tok_it != "QUANTITY" && *tok_it != "ENUM")
             {
-                ERR("Expected keywords QUANTITY or ENUM, but found '%s'.",
+                ERR("Expected keywords QUANTITY or ENUM, but found '{:s}'.",
                     tok_it->c_str());
                 throw std::runtime_error(
                     "parseGocadPropertyMetaData(): Expected keywords QUANTITY "

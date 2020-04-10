@@ -111,7 +111,7 @@ const char* toString(mgis::behaviour::Behaviour::Kinematic kin)
             return "FINITESTRAINKINEMATIC_ETO_PK1";
     }
 
-    OGS_FATAL("Unknown kinematic %d.", kin);
+    OGS_FATAL("Unknown kinematic {:d}.", kin);
 }
 
 const char* toString(mgis::behaviour::Behaviour::Symmetry sym)
@@ -125,7 +125,7 @@ const char* toString(mgis::behaviour::Behaviour::Symmetry sym)
             return "ORTHOTROPIC";
     }
 
-    OGS_FATAL("Unknown symmetry %d.", sym);
+    OGS_FATAL("Unknown symmetry {:d}.", sym);
 }
 const char* btypeToString(int btype)
 {
@@ -139,7 +139,7 @@ const char* btypeToString(int btype)
     if (btype == B::COHESIVEZONEMODEL)
         return "COHESIVEZONEMODEL";
 
-    OGS_FATAL("Unknown behaviour type %d.", btype);
+    OGS_FATAL("Unknown behaviour type {:d}.", btype);
 }
 const char* varTypeToString(int v)
 {
@@ -153,7 +153,7 @@ const char* varTypeToString(int v)
     if (v == V::TENSOR)
         return "TENSOR";
 
-    OGS_FATAL("Unknown variable type %d.", v);
+    OGS_FATAL("Unknown variable type {:d}.", v);
 }
 
 template <int DisplacementDim>
@@ -181,7 +181,7 @@ MFront<DisplacementDim>::MFront(
 
     if (mgis::behaviour::getVariableSize(_behaviour.gradients[0], hypothesis) !=
         MFront<DisplacementDim>::KelvinVector::SizeAtCompileTime)
-        OGS_FATAL("Strain must have %ld components instead of %lu.",
+        OGS_FATAL("Strain must have {:d} components instead of {:d}.",
                   MFront<DisplacementDim>::KelvinVector::SizeAtCompileTime,
                   mgis::behaviour::getVariableSize(_behaviour.gradients[0],
                                                    hypothesis));
@@ -200,7 +200,7 @@ MFront<DisplacementDim>::MFront(
     if (mgis::behaviour::getVariableSize(_behaviour.thermodynamic_forces[0],
                                          hypothesis) !=
         MFront<DisplacementDim>::KelvinVector::SizeAtCompileTime)
-        OGS_FATAL("Stress must have %ld components instead of %lu.",
+        OGS_FATAL("Stress must have {:d} components instead of {:d}.",
                   MFront<DisplacementDim>::KelvinVector::SizeAtCompileTime,
                   mgis::behaviour::getVariableSize(
                       _behaviour.thermodynamic_forces[0], hypothesis));
@@ -216,7 +216,7 @@ MFront<DisplacementDim>::MFront(
         if (mgis::behaviour::getVariableSize(_behaviour.esvs[0], hypothesis) !=
             1)
             OGS_FATAL(
-                "Temperature must be a scalar instead of having %lu "
+                "Temperature must be a scalar instead of having {:d} "
                 "components.",
                 mgis::behaviour::getVariableSize(
                     _behaviour.thermodynamic_forces[0], hypothesis));
@@ -224,13 +224,13 @@ MFront<DisplacementDim>::MFront(
 
     if (_behaviour.mps.size() != _material_properties.size())
     {
-        ERR("There are %d material properties in the loaded behaviour:",
+        ERR("There are {:d} material properties in the loaded behaviour:",
             _behaviour.mps.size());
         for (auto const& mp : _behaviour.mps)
         {
-            ERR("\t%s", mp.name.c_str());
+            ERR("\t{:s}", mp.name.c_str());
         }
-        OGS_FATAL("But the number of passed material properties is %d.",
+        OGS_FATAL("But the number of passed material properties is {:d}.",
                   _material_properties.size());
     }
 }

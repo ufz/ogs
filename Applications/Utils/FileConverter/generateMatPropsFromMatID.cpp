@@ -16,8 +16,6 @@
 
 #include <tclap/CmdLine.h>
 
-#include "Applications/ApplicationsLib/LogogSetup.h"
-
 #include "InfoLib/GitInfo.h"
 #include "BaseLib/FileTools.h"
 
@@ -29,8 +27,6 @@
 
 int main (int argc, char* argv[])
 {
-    ApplicationsLib::LogogSetup logog_setup;
-
     TCLAP::CmdLine cmd(
         "Creates a new file for material properties and sets the material ids "
         "in the msh-file to 0\n\n"
@@ -57,7 +53,7 @@ int main (int argc, char* argv[])
 
     if (!mesh)
     {
-        INFO("Could not read mesh from file '%s'.",
+        INFO("Could not read mesh from file '{:s}'.",
              mesh_arg.getValue().c_str());
         return EXIT_FAILURE;
     }
@@ -86,17 +82,17 @@ int main (int argc, char* argv[])
     }
     else
     {
-        ERR("Could not create property '%s' file.", new_matname.c_str());
+        ERR("Could not create property '{:s}' file.", new_matname.c_str());
         return EXIT_FAILURE;
     }
 
     mesh->getProperties().removePropertyVector("MaterialIDs");
 
     std::string const new_mshname(name + "_new.vtu");
-    INFO("Writing mesh to file '%s'.", new_mshname.c_str());
+    INFO("Writing mesh to file '{:s}'.", new_mshname.c_str());
     MeshLib::IO::writeMeshToFile(*mesh, new_mshname);
 
-    INFO("New files '%s' and '%s' written.", new_mshname.c_str(),
+    INFO("New files '{:s}' and '{:s}' written.", new_mshname.c_str(),
          new_matname.c_str());
 
     return EXIT_SUCCESS;

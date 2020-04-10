@@ -14,7 +14,6 @@
 
 #include <tclap/CmdLine.h>
 
-#include "Applications/ApplicationsLib/LogogSetup.h"
 #include "InfoLib/GitInfo.h"
 #include "BaseLib/CPUTime.h"
 #include "BaseLib/FileTools.h"
@@ -28,8 +27,6 @@ using namespace ApplicationUtils;
 
 int main(int argc, char* argv[])
 {
-    ApplicationsLib::LogogSetup logog_setup;
-
     TCLAP::CmdLine cmd(
         "Partition a mesh for parallel computing."
         "The tasks of this tool are in twofold:\n"
@@ -95,7 +92,7 @@ int main(int argc, char* argv[])
         BaseLib::dropFileExtension(mesh_input.getValue());
     std::unique_ptr<MeshLib::Mesh> mesh_ptr(
         MeshLib::IO::readMeshFromFile(input_file_name_wo_extension + ".vtu"));
-    INFO("Mesh '%s' read: %d nodes, %d elements.",
+    INFO("Mesh '{:s}' read: {:d} nodes, {:d} elements.",
          mesh_ptr->getName().c_str(),
          mesh_ptr->getNumberOfNodes(),
          mesh_ptr->getNumberOfElements());
@@ -105,8 +102,8 @@ int main(int argc, char* argv[])
         INFO("Write the mesh into METIS input file.");
         ApplicationUtils::writeMETIS(mesh_ptr->getElements(),
                                      input_file_name_wo_extension + ".mesh");
-        INFO("Total runtime: %g s.", run_timer.elapsed());
-        INFO("Total CPU time: %g s.", CPU_timer.elapsed());
+        INFO("Total runtime: {:g} s.", run_timer.elapsed());
+        INFO("Total CPU time: {:g} s.", CPU_timer.elapsed());
 
         return EXIT_SUCCESS;
     }
@@ -138,7 +135,7 @@ int main(int argc, char* argv[])
         INFO("METIS is running ...");
         const std::string exe_name = argv[0];
         const std::string exe_path = BaseLib::extractPath(exe_name);
-        INFO("Path to mpmetis is: \n\t%s", exe_path.c_str());
+        INFO("Path to mpmetis is: \n\t{:s}", exe_path.c_str());
 
         const std::string mpmetis_com =
             BaseLib::joinPaths(exe_path, "mpmetis") + " -gtype=nodal " + "'" +
@@ -149,7 +146,7 @@ int main(int argc, char* argv[])
         if (status != 0)
         {
             INFO("Failed in system calling.");
-            INFO("Return value of system call %d ", status);
+            INFO("Return value of system call {:d} ", status);
             return EXIT_FAILURE;
         }
     }
@@ -168,7 +165,7 @@ int main(int argc, char* argv[])
     {
         std::unique_ptr<MeshLib::Mesh> mesh(
             MeshLib::IO::readMeshFromFile(filename));
-        INFO("Mesh '%s' from file '%s' read: %d nodes, %d elements.",
+        INFO("Mesh '{:s}' from file '{:s}' read: {:d} nodes, {:d} elements.",
              mesh->getName().c_str(), filename.c_str(),
              mesh->getNumberOfNodes(), mesh->getNumberOfElements());
 
@@ -205,8 +202,8 @@ int main(int argc, char* argv[])
         mesh_partitioner.writeBinary(output_file_name_wo_extension);
     }
 
-    INFO("Total runtime: %g s.", run_timer.elapsed());
-    INFO("Total CPU time: %g s.", CPU_timer.elapsed());
+    INFO("Total runtime: {:g} s.", run_timer.elapsed());
+    INFO("Total CPU time: {:g} s.", CPU_timer.elapsed());
 
     return EXIT_SUCCESS;
 }

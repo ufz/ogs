@@ -9,14 +9,10 @@ ogs_add_library(ProcessLibBoundaryConditionPython
 target_compile_definitions(ProcessLibBoundaryConditionPython PUBLIC
                            OGS_USE_PYTHON)
 
-target_link_libraries(ProcessLibBoundaryConditionPython
-                      PUBLIC BaseLib
-                             MathLib
-                             MeshLib
-                             NumLib
-                             logog
-                             ${Python3_LIBRARIES}
-                      PRIVATE pybind11::pybind11)
+target_link_libraries(
+    ProcessLibBoundaryConditionPython
+    PUBLIC BaseLib MathLib MeshLib NumLib ${Python3_LIBRARIES}
+    PRIVATE pybind11::pybind11 spdlog::spdlog)
 
 # For the embedded Python module
 ogs_add_library(ProcessLibBoundaryConditionPythonModule

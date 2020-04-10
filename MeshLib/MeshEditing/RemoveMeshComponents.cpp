@@ -60,10 +60,10 @@ MeshLib::Mesh* removeElements(
         return nullptr;
     }
 
-    INFO("Removing total %d elements...", removed_element_ids.size());
+    INFO("Removing total {:d} elements...", removed_element_ids.size());
     std::vector<MeshLib::Element*> tmp_elems =
         details::excludeElementCopy(mesh.getElements(), removed_element_ids);
-    INFO("%d elements remain in mesh.", tmp_elems.size());
+    INFO("{:d} elements remain in mesh.", tmp_elems.size());
 
     // copy node and element objects
     std::vector<MeshLib::Node*> new_nodes =
@@ -75,7 +75,7 @@ MeshLib::Mesh* removeElements(
     NodeSearch ns(mesh);
     ns.searchNodesConnectedToOnlyGivenElements(removed_element_ids);
     auto& removed_node_ids(ns.getSearchedNodeIDs());
-    INFO("Removing total %d nodes...", removed_node_ids.size());
+    INFO("Removing total {:d} nodes...", removed_node_ids.size());
     for (auto nodeid : removed_node_ids)
     {
         delete new_nodes[nodeid];

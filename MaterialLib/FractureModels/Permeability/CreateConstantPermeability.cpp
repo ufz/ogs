@@ -28,7 +28,8 @@ std::unique_ptr<Permeability> createConstantPermeability(
     if (permeability < 0)
     {
         OGS_FATAL(
-            "The permeability parameter must be non-negative. Given value %g.",
+            "The permeability parameter must be non-negative. Given value "
+            "{:g}.",
             permeability);
     }
 

@@ -10,6 +10,8 @@
 
 #include "RasterToMesh.h"
 
+#include "BaseLib/Logging.h"
+
 #include "MeshLib/Elements/Elements.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"

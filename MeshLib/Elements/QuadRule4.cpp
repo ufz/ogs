@@ -10,8 +10,6 @@
 
 #include "QuadRule4.h"
 
-#include <logog/include/logog.hpp>
-
 #include "MathLib/GeometricBasics.h"
 
 #include "MeshLib/Node.h"

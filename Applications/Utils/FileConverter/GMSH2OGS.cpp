@@ -19,8 +19,6 @@
 // ThirdParty
 #include <tclap/CmdLine.h>
 
-#include "Applications/ApplicationsLib/LogogSetup.h"
-
 // BaseLib
 #include "InfoLib/GitInfo.h"
 #include "BaseLib/FileTools.h"
@@ -40,8 +38,6 @@
 
 int main (int argc, char* argv[])
 {
-    ApplicationsLib::LogogSetup logog_setup;
-
     TCLAP::CmdLine cmd(
         "Converting meshes in gmsh file format (ASCII, version 2.2) to a vtk "
         "unstructured grid file (new OGS file format) or to the old OGS file "
@@ -81,7 +77,7 @@ int main (int argc, char* argv[])
     cmd.parse(argc, argv);
 
     // *** read mesh
-    INFO("Reading %s.", gmsh_mesh_arg.getValue().c_str());
+    INFO("Reading {:s}.", gmsh_mesh_arg.getValue().c_str());
 #ifndef WIN32
     BaseLib::MemWatch mem_watch;
     unsigned long mem_without_mesh (mem_watch.getVirtMemUsage());
@@ -92,16 +88,18 @@ int main (int argc, char* argv[])
         FileIO::GMSH::readGMSHMesh(gmsh_mesh_arg.getValue()));
 
     if (mesh == nullptr) {
-        INFO("Could not read mesh from %s.", gmsh_mesh_arg.getValue().c_str());
+        INFO("Could not read mesh from {:s}.",
+             gmsh_mesh_arg.getValue().c_str());
         return -1;
     }
 #ifndef WIN32
-    INFO("Mem for mesh: %i MB",
+    INFO("Mem for mesh: {:i} MB",
          (mem_watch.getVirtMemUsage() - mem_without_mesh) / (1024 * 1024));
 #endif
 
-    INFO("Time for reading: %f seconds.", run_time.elapsed());
-    INFO("Read %d nodes and %d elements.", mesh->getNumberOfNodes(), mesh->getNumberOfElements());
+    INFO("Time for reading: {:f} seconds.", run_time.elapsed());
+    INFO("Read {:d} nodes and {:d} elements.", mesh->getNumberOfNodes(),
+         mesh->getNumberOfElements());
 
     // *** remove line elements on request
     if (exclude_lines_arg.getValue()) {
@@ -109,7 +107,8 @@ int main (int argc, char* argv[])
         ex.searchByElementType(MeshLib::MeshElemType::LINE);
         auto m = MeshLib::removeElements(*mesh, ex.getSearchedElementIDs(), mesh->getName()+"-withoutLines");
         if (m != nullptr) {
-            INFO("Removed %d lines.", mesh->getNumberOfElements() - m->getNumberOfElements());
+            INFO("Removed {:d} lines.",
+                 mesh->getNumberOfElements() - m->getNumberOfElements());
             std::swap(m, mesh);
             delete m;
         } else {
@@ -129,11 +128,14 @@ int main (int argc, char* argv[])
     auto const minPt(aabb.getMinPoint());
     auto const maxPt(aabb.getMaxPoint());
     INFO("Node coordinates:");
-    INFO("\tx [%g, %g] (extent %g)", minPt[0], maxPt[0], maxPt[0] - minPt[0]);
-    INFO("\ty [%g, %g] (extent %g)", minPt[1], maxPt[1], maxPt[1] - minPt[1]);
-    INFO("\tz [%g, %g] (extent %g)", minPt[2], maxPt[2], maxPt[2] - minPt[2]);
+    INFO("\tx [{:g}, {:g}] (extent {:g})", minPt[0], maxPt[0],
+         maxPt[0] - minPt[0]);
+    INFO("\ty [{:g}, {:g}] (extent {:g})", minPt[1], maxPt[1],
+         maxPt[1] - minPt[1]);
+    INFO("\tz [{:g}, {:g}] (extent {:g})", minPt[2], maxPt[2],
+         maxPt[2] - minPt[2]);
 
-    INFO("Edge length: [%g, %g]", mesh->getMinEdgeLength(),
+    INFO("Edge length: [{:g}, {:g}]", mesh->getMinEdgeLength(),
          mesh->getMaxEdgeLength());
 
     // Element information

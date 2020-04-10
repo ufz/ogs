@@ -123,7 +123,7 @@ void Process::setInitialConditions(const int process_id, double const t,
         ParameterLib::SpatialPosition pos;
 
         auto const& pv = per_process_variables[variable_id];
-        DBUG("Set the initial condition of variable %s of process %d.",
+        DBUG("Set the initial condition of variable {:s} of process {:d}.",
              pv.get().getName().data(), process_id);
 
         auto const& ic = pv.get().getInitialCondition();

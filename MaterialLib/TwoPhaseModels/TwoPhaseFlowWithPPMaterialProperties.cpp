@@ -10,8 +10,8 @@
 #include "TwoPhaseFlowWithPPMaterialProperties.h"
 
 #include <boost/math/special_functions/pow.hpp>
-#include <logog/include/logog.hpp>
 #include <utility>
+#include "BaseLib/Logging.h"
 
 #include "MaterialLib/Fluid/FluidProperty.h"
 #include "MaterialLib/PorousMedium/Porosity/Porosity.h"

@@ -18,11 +18,10 @@
 #include <numeric>
 #include <unordered_map>
 
-#include <logog/include/logog.hpp>
-
 #include "BaseLib/Error.h"
+#include "BaseLib/FileTools.h"
+#include "BaseLib/Logging.h"
 #include "BaseLib/Stream.h"
-
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 
 namespace ApplicationUtils
@@ -403,7 +402,7 @@ bool copyPropertyVector(MeshLib::Properties const& original_properties,
                                                 *partitioned_pv);
         }
         OGS_FATAL(
-            "Copying of property vector values for mesh item type %s is "
+            "Copying of property vector values for mesh item type {:s} is "
             "not implemented.",
             pv->getMeshItemType());
     };
@@ -438,7 +437,7 @@ void applyToPropertyVectors(std::vector<std::string> const& property_names,
             f(static_cast<unsigned long>(0), name) || f(std::size_t{}, name);
         if (!success)
         {
-            OGS_FATAL("Could not apply function to PropertyVector '%s'.",
+            OGS_FATAL("Could not apply function to PropertyVector '{:s}'.",
                       name.c_str());
         }
     }
@@ -456,8 +455,8 @@ void processProperties(MeshLib::Properties const& properties,
                         });
 
     DBUG(
-        "total number of tuples define on mesh item type '%s' after "
-        "partitioning: %d ",
+        "total number of tuples define on mesh item type '{:s}' after "
+        "partitioning: {:d} ",
         toString(mesh_item_type), total_number_of_tuples);
 
     // 1 create new PV
@@ -488,7 +487,7 @@ void NodeWiseMeshPartitioner::partitionByMETIS(
 {
     for (std::size_t part_id = 0; part_id < _partitions.size(); part_id++)
     {
-        INFO("Processing partition: %d", part_id);
+        INFO("Processing partition: {:d}", part_id);
         processPartition(part_id, is_mixed_high_order_linear_elems);
     }
 
@@ -608,7 +607,7 @@ std::vector<Partition> NodeWiseMeshPartitioner::partitionOtherMesh(
     for (std::size_t part_id = 0; part_id < _partitions.size(); part_id++)
     {
         auto& partition = partitions[part_id];
-        INFO("Processing partition: %d", part_id);
+        INFO("Processing partition: {:d}", part_id);
         // Set the node numbers of base and all mesh nodes.
         partition.number_of_mesh_base_nodes = mesh.getNumberOfBaseNodes();
         partition.number_of_mesh_all_nodes = mesh.getNumberOfNodes();
@@ -741,7 +740,7 @@ void writePropertiesBinary(const std::string& file_name_base,
     std::ofstream out(file_name_cfg, std::ios::binary);
     if (!out)
     {
-        OGS_FATAL("Could not open file '%s' for output.",
+        OGS_FATAL("Could not open file '{:s}' for output.",
                   file_name_cfg.c_str());
     }
 
@@ -751,7 +750,7 @@ void writePropertiesBinary(const std::string& file_name_base,
     std::ofstream out_val(file_name_val, std::ios::binary);
     if (!out_val)
     {
-        OGS_FATAL("Could not open file '%s' for output.",
+        OGS_FATAL("Could not open file '{:s}' for output.",
                   file_name_val.c_str());
     }
 
@@ -771,8 +770,9 @@ void writePropertiesBinary(const std::string& file_name_base,
             offset, static_cast<unsigned long>(
                         partition.numberOfMeshItems(mesh_item_type))};
         DBUG(
-            "Write meta data for node-based PropertyVector: global offset %d, "
-            "number of tuples %d",
+            "Write meta data for node-based PropertyVector: global offset "
+            "{:d}, "
+            "number of tuples {:d}",
             pvpmd.offset, pvpmd.number_of_tuples);
         MeshLib::IO::writePropertyVectorPartitionMetaData(out, pvpmd);
         offset += pvpmd.number_of_tuples;
@@ -845,7 +845,7 @@ std::tuple<std::vector<long>, std::vector<long>> writeConfigDataBinary(
     std::ofstream of_bin_cfg(file_name_cfg, std::ios::binary);
     if (!of_bin_cfg)
     {
-        OGS_FATAL("Could not open file '%s' for output.",
+        OGS_FATAL("Could not open file '{:s}' for output.",
                   file_name_cfg.c_str());
     }
 
@@ -929,7 +929,7 @@ void writeElementsBinary(std::string const& file_name_base,
     std::ofstream element_info_os(file_name_ele, std::ios::binary);
     if (!element_info_os)
     {
-        OGS_FATAL("Could not open file '%s' for output.",
+        OGS_FATAL("Could not open file '{:s}' for output.",
                   file_name_ele.c_str());
     }
 
@@ -938,7 +938,7 @@ void writeElementsBinary(std::string const& file_name_base,
     std::ofstream ghost_element_info_os(file_name_ele_g, std::ios::binary);
     if (!ghost_element_info_os)
     {
-        OGS_FATAL("Could not open file '%s' for output.",
+        OGS_FATAL("Could not open file '{:s}' for output.",
                   file_name_ele_g.c_str());
     }
 
@@ -997,7 +997,7 @@ void writeNodesBinary(const std::string& file_name_base,
     std::ofstream os(file_name, std::ios::binary);
     if (!os)
     {
-        OGS_FATAL("Could not open file '%s' for output.", file_name.c_str());
+        OGS_FATAL("Could not open file '{:s}' for output.", file_name.c_str());
     }
 
     for (const auto& partition : partitions)

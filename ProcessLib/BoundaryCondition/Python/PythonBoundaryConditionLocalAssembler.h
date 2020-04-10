@@ -97,7 +97,8 @@ public:
                     {
                         // TODO extend Python BC to mixed FEM ansatz functions
                         OGS_FATAL(
-                            "No d.o.f. found for (node=%d, var=%d, comp=%d).  "
+                            "No d.o.f. found for (node={:d}, var={:d}, "
+                            "comp={:d}).  "
                             "That might be due to the use of mixed FEM ansatz "
                             "functions, which is currently not supported by "
                             "the implementation of Python BCs. That excludes, "
@@ -151,8 +152,8 @@ public:
                 // for cases without Jacobian assembly.
                 OGS_FATAL(
                     "The Python BC must return the derivative of the flux "
-                    "w.r.t. each primary variable. %d components expected. %d "
-                    "components returned from Python.",
+                    "w.r.t. each primary variable. {:d} components expected. "
+                    "{:d} components returned from Python.",
                     num_comp_total, dFlux.size());
             }
 

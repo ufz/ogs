@@ -11,8 +11,6 @@
 
 #include <tclap/CmdLine.h>
 
-#include "Applications/ApplicationsLib/LogogSetup.h"
-
 #include "InfoLib/GitInfo.h"
 #include "BaseLib/StringTools.h"
 #include "BaseLib/MemWatch.h"
@@ -31,8 +29,6 @@
 
 int main(int argc, char *argv[])
 {
-    ApplicationsLib::LogogSetup logog_setup;
-
     TCLAP::CmdLine cmd(
         "Checks mesh properties.\n\n"
         "OpenGeoSys-6 software, version " +
@@ -65,21 +61,26 @@ int main(int argc, char *argv[])
     const unsigned long mem_with_mesh (mem_watch.getVirtMemUsage());
     if (mem_with_mesh>0)
     {
-        INFO ("Memory size: %i MB", (mem_with_mesh - mem_without_mesh)/(1024*1024));
+        INFO("Memory size: {:i} MB",
+             (mem_with_mesh - mem_without_mesh) / (1024 * 1024));
         (void)mem_with_mesh;
     }
-    INFO ("Time for reading: %g s", run_time.elapsed());
+    INFO("Time for reading: {:g} s", run_time.elapsed());
 
     // Geometric information
     const GeoLib::AABB aabb(MeshLib::MeshInformation::getBoundingBox(*mesh));
     auto minPt(aabb.getMinPoint());
     auto maxPt(aabb.getMaxPoint());
     INFO("Node coordinates:");
-    INFO("\tx [%g, %g] (extent %g)", minPt[0], maxPt[0], maxPt[0]-minPt[0]);
-    INFO("\ty [%g, %g] (extent %g)", minPt[1], maxPt[1], maxPt[1]-minPt[1]);
-    INFO("\tz [%g, %g] (extent %g)", minPt[2], maxPt[2], maxPt[2]-minPt[2]);
+    INFO("\tx [{:g}, {:g}] (extent {:g})", minPt[0], maxPt[0],
+         maxPt[0] - minPt[0]);
+    INFO("\ty [{:g}, {:g}] (extent {:g})", minPt[1], maxPt[1],
+         maxPt[1] - minPt[1]);
+    INFO("\tz [{:g}, {:g}] (extent {:g})", minPt[2], maxPt[2],
+         maxPt[2] - minPt[2]);
 
-    INFO("Edge length: [%g, %g]", mesh->getMinEdgeLength(), mesh->getMaxEdgeLength());
+    INFO("Edge length: [{:g}, {:g}]", mesh->getMinEdgeLength(),
+         mesh->getMaxEdgeLength());
 
     // Element information
 

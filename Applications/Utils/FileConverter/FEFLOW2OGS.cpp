@@ -13,8 +13,6 @@
 // ThirdParty
 #include <tclap/CmdLine.h>
 
-#include "Applications/ApplicationsLib/LogogSetup.h"
-
 // BaseLib
 #include "InfoLib/GitInfo.h"
 #include "BaseLib/FileTools.h"
@@ -33,8 +31,6 @@
 
 int main (int argc, char* argv[])
 {
-    ApplicationsLib::LogogSetup logog_setup;
-
     TCLAP::CmdLine cmd(
         "Converting a mesh in FEFLOW file format (ASCII, version 5.4) to a vtk "
         "unstructured grid file (new OGS file format) or to the old OGS file "
@@ -67,7 +63,7 @@ int main (int argc, char* argv[])
     cmd.parse(argc, argv);
 
     // *** read mesh
-    INFO("Reading %s.", feflow_mesh_arg.getValue().c_str());
+    INFO("Reading {:s}.", feflow_mesh_arg.getValue().c_str());
 #ifndef WIN32
     BaseLib::MemWatch mem_watch;
     unsigned long mem_without_mesh (mem_watch.getVirtMemUsage());
@@ -79,18 +75,21 @@ int main (int argc, char* argv[])
         feflowIO.readFEFLOWFile(feflow_mesh_arg.getValue()));
 
     if (mesh == nullptr) {
-        INFO("Could not read mesh from %s.", feflow_mesh_arg.getValue().c_str());
+        INFO("Could not read mesh from {:s}.",
+             feflow_mesh_arg.getValue().c_str());
         return EXIT_FAILURE;
     }
 #ifndef WIN32
     unsigned long mem_with_mesh (mem_watch.getVirtMemUsage());
-    INFO("Mem for mesh: %i MB", (mem_with_mesh - mem_without_mesh)/(1024*1024));
+    INFO("Mem for mesh: {:i} MB",
+         (mem_with_mesh - mem_without_mesh) / (1024 * 1024));
 #endif
-    INFO("Time for reading: %f seconds.", run_time.elapsed());
-    INFO("Read %d nodes and %d elements.", mesh->getNumberOfNodes(), mesh->getNumberOfElements());
+    INFO("Time for reading: {:f} seconds.", run_time.elapsed());
+    INFO("Read {:d} nodes and {:d} elements.", mesh->getNumberOfNodes(),
+         mesh->getNumberOfElements());
 
     std::string ogs_mesh_fname(ogs_mesh_arg.getValue());
-    INFO("Writing %s.", ogs_mesh_fname.c_str());
+    INFO("Writing {:s}.", ogs_mesh_fname.c_str());
     MeshLib::IO::writeMeshToFile(*mesh, ogs_mesh_fname);
     INFO("\tDone.");
     return EXIT_SUCCESS;

@@ -14,7 +14,7 @@
 
 #include "Color.h"
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 namespace DataHolderLib {
 
@@ -36,7 +36,7 @@ Color getColor(const std::string& id, std::map<std::string, Color>& colors)
 
     if (it == end(colors))
     {
-        WARN("Key '%s' not found in color lookup table.", id.c_str());
+        WARN("Key '{:s}' not found in color lookup table.", id.c_str());
         it = colors.insert({id, getRandomColor()}).first;
     }
 

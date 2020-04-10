@@ -30,8 +30,8 @@ RelPermVanGenuchten::RelPermVanGenuchten(
     if (!(_m > 0 && _m < 1))
     {
         OGS_FATAL(
-            "The exponent value m = %g of van Genuchten relative permeability "
-            "model, is out of its range of (0, 1)",
+            "The exponent value m = {:g} of van Genuchten relative "
+            "permeability model, is out of its range of (0, 1)",
             _m);
     }
 }

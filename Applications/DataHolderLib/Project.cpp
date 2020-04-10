@@ -11,7 +11,7 @@
 #include "Project.h"
 
 #include <algorithm>
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "BaseLib/Algorithm.h"
 #include "BaseLib/FileTools.h"

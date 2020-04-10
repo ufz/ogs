@@ -10,8 +10,6 @@
 
 #pragma once
 
-#include <logog/include/logog.hpp>
-
 #include "GeoLib/Raster.h"
 #include "MeshLib/Location.h"
 #include "MeshLib/MeshEnums.h"

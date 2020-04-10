@@ -84,26 +84,26 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         variable_u = &process_variables[1][0].get();
     }
 
-    DBUG("Associate displacement with process variable '%s'.",
+    DBUG("Associate displacement with process variable '{:s}'.",
          variable_u->getName().c_str());
 
     if (variable_u->getNumberOfComponents() != DisplacementDim)
     {
         OGS_FATAL(
-            "Number of components of the process variable '%s' is different "
-            "from the displacement dimension: got %d, expected %d",
+            "Number of components of the process variable '{:s}' is different "
+            "from the displacement dimension: got {:d}, expected {:d}",
             variable_u->getName().c_str(),
             variable_u->getNumberOfComponents(),
             DisplacementDim);
     }
 
-    DBUG("Associate pressure with process variable '%s'.",
+    DBUG("Associate pressure with process variable '{:s}'.",
          variable_p->getName().c_str());
     if (variable_p->getNumberOfComponents() != 1)
     {
         OGS_FATAL(
-            "Pressure process variable '%s' is not a scalar variable but has "
-            "%d components.",
+            "Pressure process variable '{:s}' is not a scalar variable but has "
+            "{:d} components.",
             variable_p->getName().c_str(),
             variable_p->getNumberOfComponents());
     }
@@ -123,8 +123,8 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         {
             OGS_FATAL(
                 "The size of the specific body force vector does not match the "
-                "displacement dimension. Vector size is %d, displacement "
-                "dimension is %d",
+                "displacement dimension. Vector size is {:d}, displacement "
+                "dimension is {:d}",
                 b.size(), DisplacementDim);
         }
 

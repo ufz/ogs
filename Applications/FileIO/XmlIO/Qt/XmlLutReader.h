@@ -17,7 +17,7 @@
 #include <QFile>
 #include <QtXml/QDomDocument>
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "Applications/DataHolderLib/ColorLookupTable.h"
 
@@ -36,7 +36,8 @@ public:
         QFile file(fileName);
         if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
         {
-            ERR("XmlLutReader::readFromFile(): Can't open xml-file %s.", fileName.data());
+            ERR("XmlLutReader::readFromFile(): Can't open xml-file {:s}.",
+                fileName.toStdString());
             return false;
         }
 

@@ -33,8 +33,8 @@ void checkParametersOfDirichletBoundaryCondition(
             dof_table_bulk.getNumberOfVariableComponents(variable_id))
     {
         OGS_FATAL(
-            "Variable id or component id too high. Actual values: (%d, "
-            "%d), maximum values: (%d, %d).",
+            "Variable id or component id too high. Actual values: ({:d}, "
+            "{:d}), maximum values: ({:d}, {:d}).",
             variable_id, component_id, dof_table_bulk.getNumberOfVariables(),
             dof_table_bulk.getNumberOfVariableComponents(variable_id));
     }
@@ -44,14 +44,14 @@ void checkParametersOfDirichletBoundaryCondition(
     {
         OGS_FATAL(
             "The required bulk node ids map does not exist in the boundary "
-            "mesh '%s'.",
+            "mesh '{:s}'.",
             bc_mesh.getName().c_str());
     }
 
     DBUG(
-        "Found %d nodes for Dirichlet BCs for the variable %d and "
+        "Found {:d} nodes for Dirichlet BCs for the variable {:d} and "
         "component "
-        "%d",
+        "{:d}",
         bc_mesh.getNodes().size(), variable_id, component_id);
 }
 

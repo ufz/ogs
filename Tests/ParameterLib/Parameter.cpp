@@ -8,7 +8,7 @@
  */
 
 #include <gtest/gtest.h>
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include <boost/property_tree/xml_parser.hpp>
 #include <numeric>
@@ -138,8 +138,9 @@ bool testNodalValuesOfElement(
                 double const expected_value = get_expected_value(e, i);
                 if (expected_value != nodal_values(i, 0))
                 {
-                    ERR("Mismatch for element %d, node %d; Expected %g, got "
-                        "%g.",
+                    ERR("Mismatch for element {:d}, node {:d}; Expected {:g}, "
+                        "got "
+                        "{:g}.",
                         e->getID(), i, expected_value, nodal_values(i, 0));
                     return false;
                 }

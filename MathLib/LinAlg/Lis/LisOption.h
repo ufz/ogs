@@ -17,7 +17,7 @@
 #include <string>
 #include <map>
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "BaseLib/ConfigTree.h"
 #include "MathLib/LinAlg/LinearSolverOptions.h"
@@ -47,7 +47,7 @@ struct LisOption final
             if (auto s = options->getConfigParameterOptional<std::string>("lis")) {
                 if (!s->empty()) {
                     _option_string += " " + *s;
-                    INFO("Lis options: '%s'", _option_string.c_str());
+                    INFO("Lis options: '{:s}'", _option_string.c_str());
                 }
             }
         }

@@ -15,8 +15,6 @@
 #include <cmath>
 #include <memory>
 
-#include <logog/include/logog.hpp>
-
 #include "../Mesh.h"
 #include "../Node.h"
 #include "../Elements/Element.h"
@@ -117,8 +115,8 @@ void MeshElementGrid::sortElementsInGridCells(MeshLib::Mesh const& sfc_mesh)
 {
     for (auto const element : sfc_mesh.getElements()) {
         if (! sortElementInGridCells(*element)) {
-            OGS_FATAL("Sorting element (id=%d) into mesh element grid.",
-                element->getID());
+            OGS_FATAL("Sorting element (id={:d}) into mesh element grid.",
+                      element->getID());
         }
     }
 }

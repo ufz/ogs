@@ -14,7 +14,6 @@
 #endif  // OGS_USE_PYTHON
 #include <algorithm>
 #include <iostream>
-#include <logog/include/logog.hpp>
 #include <vector>
 
 #include "BHEInflowPythonBoundaryConditionPythonSideInterface.h"

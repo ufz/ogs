@@ -15,7 +15,7 @@
 #include "MeshSurfaceExtraction.h"
 
 #include <boost/math/constants/constants.hpp>
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 #include <memory>
 
 #include "MeshLib/Elements/Line.h"
@@ -75,16 +75,16 @@ bool createSfcMeshProperties(MeshLib::Mesh& sfc_mesh,
     std::size_t const n_nodes(sfc_mesh.getNumberOfNodes());
     if (node_ids_map.size() != n_nodes)
     {
-        ERR("createSfcMeshProperties() - Incorrect number of node IDs (%d) "
-            "compared to actual number of surface nodes (%d).",
+        ERR("createSfcMeshProperties() - Incorrect number of node IDs ({:d}) "
+            "compared to actual number of surface nodes ({:d}).",
             node_ids_map.size(), n_nodes);
         return false;
     }
 
     if (element_ids_map.size() != n_elems)
     {
-        ERR("createSfcMeshProperties() - Incorrect number of element IDs (%d) "
-            "compared to actual number of surface elements (%d).",
+        ERR("createSfcMeshProperties() - Incorrect number of element IDs "
+            "({:d}) compared to actual number of surface elements ({:d}).",
             element_ids_map.size(), n_elems);
         return false;
     }
@@ -112,12 +112,14 @@ bool createSfcMeshProperties(MeshLib::Mesh& sfc_mesh,
         }
         else
         {
-            WARN("Skipping property vector '%s' - no matching data type found.",
-                 name.c_str());
+            WARN(
+                "Skipping property vector '{:s}' - no matching data type "
+                "found.",
+                name.c_str());
             vectors_skipped++;
         }
     }
-    INFO("%d property vectors copied, %d vectors skipped.", vectors_copied,
+    INFO("{:d} property vectors copied, {:d} vectors skipped.", vectors_copied,
          vectors_skipped);
     return true;
 }
@@ -186,7 +188,7 @@ std::vector<double> MeshSurfaceExtraction::getSurfaceAreaForNodes(
         node_area_vec.push_back(node_area);
     }
 
-    INFO("Total surface Area: %f", total_area);
+    INFO("Total surface Area: {:f}", total_area);
 
     return node_area_vec;
 }
@@ -255,7 +257,7 @@ void MeshSurfaceExtraction::get2DSurfaceElements(
     const MathLib::Vector3& dir, double angle, unsigned mesh_dimension)
 {
     if (mesh_dimension < 2 || mesh_dimension > 3)
-        ERR("Cannot handle meshes of dimension %i", mesh_dimension);
+        ERR("Cannot handle meshes of dimension {:i}", mesh_dimension);
 
     bool const complete_surface = (MathLib::scalarProduct(dir, dir) == 0);
 
@@ -416,7 +418,7 @@ std::unique_ptr<MeshLib::Mesh> getBoundaryElementsAsMesh(
     auto const mesh_dimension = bulk_mesh.getDimension();
     if (mesh_dimension < 2 || mesh_dimension > 3)
     {
-        ERR("Cannot handle meshes of dimension %i", mesh_dimension);
+        ERR("Cannot handle meshes of dimension {:i}", mesh_dimension);
     }
 
     // create boundary elements based on the subsurface nodes

@@ -46,3 +46,6 @@
 [submodule "ThirdParty/json-cmake"]
 	path = ThirdParty/json-cmake
 	url = https://github.com/ufz/json-cmake.git
+[submodule "ThirdParty/spdlog"]
+	path = ThirdParty/spdlog
+	url = https://github.com/gabime/spdlog.git

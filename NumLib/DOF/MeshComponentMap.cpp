@@ -126,7 +126,7 @@ MeshComponentMap MeshComponentMap::getSubset(
             OGS_FATAL(
                 "Assumption in the MeshComponentMap violated. Expecting "
                 "all of mesh ids to be the same, but it is not true for "
-                "the mesh '%s' with id %d.",
+                "the mesh '{:s}' with id {:d}.",
                 first_mismatch->getMesh().getName().c_str(),
                 first_mismatch->getMeshID());
         }
@@ -173,9 +173,11 @@ MeshComponentMap MeshComponentMap::getSubset(
                 if (is_base_node)
                 {
                     OGS_FATAL(
-                        "Could not find a global index for global component %d "
-                        "for the mesh '%s', node %d, in the corresponding bulk "
-                        "mesh '%s' and node %d. This happens because the "
+                        "Could not find a global index for global component "
+                        "{:d} "
+                        "for the mesh '{:s}', node {:d}, in the corresponding "
+                        "bulk "
+                        "mesh '{:s}' and node {:d}. This happens because the "
                         "boundary mesh is larger then the definition region of "
                         "the bulk component, usually because the geometry for "
                         "the boundary condition is too large.",
@@ -342,7 +344,7 @@ GlobalIndexType MeshComponentMap::getLocalIndex(
         _ghosts_indices.begin(), _ghosts_indices.end(), real_global_index);
     if (ghost_index_it == _ghosts_indices.end())
     {
-        OGS_FATAL("index %d not found in ghost_indices", real_global_index);
+        OGS_FATAL("index {:d} not found in ghost_indices", real_global_index);
     }
 
     // Using std::distance on a std::vector is O(1). As long as _ghost_indices

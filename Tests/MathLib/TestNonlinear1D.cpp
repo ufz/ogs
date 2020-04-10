@@ -7,10 +7,10 @@
  *
  */
 
+#include <gtest/gtest.h>
 #include <limits>
 #include <type_traits>
-#include <gtest/gtest.h>
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 #include "MathLib/Nonlinear/Root1D.h"
 
 double f(double x)
@@ -33,7 +33,7 @@ TYPED_TEST(MathLibRegulaFalsi, QuadraticFunction)
     auto rf = NL::makeRegulaFalsi<TypeParam>(f, -0.1, 1.1);
     double old_range = rf.getRange();
 
-    DBUG(" 0 -- x ~ %23.16g, range = %23.16g", rf.getResult(), old_range);
+    DBUG(" 0 -- x ~ {:23.16g}, range = {:23.16g}", rf.getResult(), old_range);
 
     for (unsigned n=0; n<10; ++n)
     {
@@ -42,7 +42,8 @@ TYPED_TEST(MathLibRegulaFalsi, QuadraticFunction)
         // expect that the interval of the root search shrinks
         EXPECT_GT(old_range, range);
         old_range = range;
-        DBUG("%2i -- x ~ %23.16g, range = %23.16g", n+1, rf.getResult(), range);
+        DBUG("{:2d} -- x ~ {:23.16g}, range = {:23.16g}", n + 1, rf.getResult(),
+             range);
 
         if (range < std::numeric_limits<double>::epsilon())
         {

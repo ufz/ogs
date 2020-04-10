@@ -15,8 +15,8 @@
 #pragma once
 
 #include <vector>
+#include "BaseLib/Logging.h"
 #include "lis.h"
-#include <logog/include/logog.hpp>
 
 namespace MathLib
 {
@@ -31,7 +31,7 @@ inline bool checkLisError(int err)
 {
     bool ok = (err == LIS_SUCCESS);
     if (!ok) {
-        ERR("***ERROR: Lis error code = %d", err);
+        ERR("***ERROR: Lis error code = {:d}", err);
     }
     return ok;
 }

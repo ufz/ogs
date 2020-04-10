@@ -90,8 +90,8 @@ inline void setFractureProperty(int const dim, MeshLib::Element const& e,
     computeNormalVector(e, dim, n);
     frac_prop.R.resize(dim, dim);
     computeRotationMatrix(e, n, dim, frac_prop.R);
-    DBUG("Normal vector of the fracture element %d: [%g, %g, %g]", e.getID(),
-         n[0], n[1], n[2]);
+    DBUG("Normal vector of the fracture element {:d}: [{:g}, {:g}, {:g}]",
+         e.getID(), n[0], n[1], n[2]);
 }
 
 inline BranchProperty createBranchProperty(MeshLib::Node const& branchNode,

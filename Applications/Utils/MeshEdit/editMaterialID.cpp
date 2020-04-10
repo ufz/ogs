@@ -10,7 +10,6 @@
 
 #include <tclap/CmdLine.h>
 
-#include "Applications/ApplicationsLib/LogogSetup.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/IO/readMeshFromFile.h"
@@ -20,8 +19,6 @@
 
 int main (int argc, char* argv[])
 {
-    ApplicationsLib::LogogSetup logog_setup;
-
     TCLAP::CmdLine cmd(
         "Edit material IDs of mesh elements.\n\n"
         "OpenGeoSys-6 software, version " +
@@ -84,7 +81,8 @@ int main (int argc, char* argv[])
 
     std::unique_ptr<MeshLib::Mesh> mesh(
         MeshLib::IO::readMeshFromFile(mesh_in.getValue()));
-    INFO("Mesh read: %d nodes, %d elements.", mesh->getNumberOfNodes(), mesh->getNumberOfElements());
+    INFO("Mesh read: {:d} nodes, {:d} elements.", mesh->getNumberOfNodes(),
+         mesh->getNumberOfElements());
 
     if (condenseArg.isSet()) {
         INFO("Condensing material ID...");
@@ -94,7 +92,7 @@ int main (int argc, char* argv[])
         const auto vecOldID = matIDArg.getValue();
         const unsigned newID = newIDArg.getValue();
         for (auto oldID : vecOldID) {
-            INFO("%d -> %d", oldID, newID);
+            INFO("{:d} -> {:d}", oldID, newID);
             MeshLib::ElementValueModification::replace(*mesh, oldID, newID, true);
         }
     } else if (specifyArg.isSet()) {
@@ -103,7 +101,7 @@ int main (int argc, char* argv[])
         const MeshLib::MeshElemType eleType = MeshLib::String2MeshElemType(eleTypeName);
         const unsigned newID = newIDArg.getValue();
         unsigned cnt = MeshLib::ElementValueModification::setByElementType(*mesh, eleType, newID);
-        INFO("updated %d elements", cnt);
+        INFO("updated {:d} elements", cnt);
     }
 
     MeshLib::IO::writeMeshToFile(*mesh, mesh_out.getValue());

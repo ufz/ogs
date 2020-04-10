@@ -167,8 +167,9 @@ void SmallDeformationNonlocalProcess<DisplacementDim>::
                 mesh_property.getNumberOfComponents())
             {
                 OGS_FATAL(
-                    "Different number of components in meta data (%d) than in "
-                    "the integration point field data for '%s': %d.",
+                    "Different number of components in meta data ({:d}) than "
+                    "in "
+                    "the integration point field data for '{:s}': {:d}.",
                     ip_meta_data.n_components, name.c_str(),
                     mesh_property.getNumberOfComponents());
             }
@@ -327,7 +328,7 @@ SmallDeformationNonlocalProcess<DisplacementDim>::postIterationConcreteProcess(
         pv.getActiveElementIDs(), *_local_to_global_index_map, x,
         _process_data.crack_volume);
 
-    INFO("Integral of crack: %g", _process_data.crack_volume);
+    INFO("Integral of crack: {:g}", _process_data.crack_volume);
 
     return NumLib::IterationResult::SUCCESS;
 }

@@ -132,7 +132,7 @@ public:
         : _dof_table(dof_table)
     {
         if (shapefunction_order < 1 || 2 < shapefunction_order)
-            OGS_FATAL("The given shape function order %d is not supported",
+            OGS_FATAL("The given shape function order {:d} is not supported",
                       shapefunction_order);
 
         if (shapefunction_order == 1)
@@ -325,7 +325,7 @@ public:
         {
             OGS_FATAL(
                 "You are trying to build a local assembler for an unknown mesh "
-                "element type (%s)."
+                "element type ({:s})."
                 " Maybe you have disabled this mesh element type in your build "
                 "configuration.",
                 type_idx.name());

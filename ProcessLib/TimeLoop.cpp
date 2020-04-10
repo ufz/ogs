@@ -366,7 +366,7 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
                                      std::numeric_limits<double>::epsilon())
             {
                 WARN(
-                    "Time step %d was rejected %d times "
+                    "Time step {:d} was rejected {:d} times "
                     "and it will be repeated with a reduced step size.",
                     accepted_steps + 1, _repeating_times_of_rejected_step);
                 time_disc->popState(x);
@@ -405,7 +405,7 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
         if (_last_step_rejected)
         {
             OGS_FATAL(
-                "The new step size of %g is the same as that of the previous "
+                "The new step size of {:g} is the same as that of the previous "
                 "rejected time step. \nPlease re-run ogs with a proper "
                 "adjustment in the numerical settings, \ne.g those for "
                 "time stepper, local or global non-linear solver.",
@@ -413,7 +413,7 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
         }
         else
         {
-            DBUG("The time stepping is stabilized with the step size of %g.",
+            DBUG("The time stepping is stabilized with the step size of {:g}.",
                  dt);
         }
     }
@@ -455,7 +455,7 @@ void TimeLoop::initialize()
         BaseLib::RunTime time_phreeqc;
         time_phreeqc.start();
         _chemical_system->executeInitialCalculation(_process_solutions);
-        INFO("[time] Phreeqc took %g s.", time_phreeqc.elapsed());
+        INFO("[time] Phreeqc took {:g} s.", time_phreeqc.elapsed());
     }
 
     // All _per_process_data share the first process.
@@ -508,8 +508,9 @@ bool TimeLoop::loop()
 
         const std::size_t timesteps = accepted_steps + 1;
         // TODO(wenqing): , input option for time unit.
-        INFO("=== Time stepping at step #%u and time %g with step size %g",
-             timesteps, t, dt);
+        INFO(
+            "=== Time stepping at step #{:d} and time {:g} with step size {:g}",
+            timesteps, t, dt);
 
         // Check element deactivation:
         for (auto& process_data : _per_process_data)
@@ -536,7 +537,7 @@ bool TimeLoop::loop()
                 solveUncoupledEquationSystems(t, dt, timesteps);
         }
 
-        INFO("[time] Time step #%u took %g s.", timesteps,
+        INFO("[time] Time step #{:d} took {:g} s.", timesteps,
              time_timestep.elapsed());
 
         dt = computeTimeStepping(prev_dt, t, accepted_steps, rejected_steps);
@@ -557,16 +558,16 @@ bool TimeLoop::loop()
         if (dt < std::numeric_limits<double>::epsilon())
         {
             WARN(
-                "Time step size of %g is too small.\n"
-                "Time stepping stops at step %u and at time of %g.",
+                "Time step size of {:g} is too small.\n"
+                "Time stepping stops at step {:d} and at time of {:g}.",
                 dt, timesteps, t);
             break;
         }
     }
 
     INFO(
-        "The whole computation of the time stepping took %u steps, in which\n"
-        "\t the accepted steps are %u, and the rejected steps are %u.\n",
+        "The whole computation of the time stepping took {:d} steps, in which\n"
+        "\t the accepted steps are {:d}, and the rejected steps are {:d}.\n",
         accepted_steps + rejected_steps, accepted_steps, rejected_steps);
 
     // output last time step
@@ -605,7 +606,7 @@ static NumLib::NonlinearSolverStatus solveMonolithicProcess(
     auto const nonlinear_solver_status =
         solveOneTimeStepOneProcess(x, timestep_id, t, dt, process_data, output);
 
-    INFO("[time] Solving process #%u took %g s in time step #%u ",
+    INFO("[time] Solving process #{:d} took {:g} s in time step #{:d} ",
          process_data.process_id, time_timestep_process.elapsed(), timestep_id);
 
     return nonlinear_solver_status;
@@ -655,8 +656,9 @@ NumLib::NonlinearSolverStatus TimeLoop::solveUncoupledEquationSystems(
         process_data->nonlinear_solver_status = nonlinear_solver_status;
         if (!nonlinear_solver_status.error_norms_met)
         {
-            ERR("The nonlinear solver failed in time step #%u at t = %g s for "
-                "process #%u.",
+            ERR("The nonlinear solver failed in time step #{:d} at t = {:g} s "
+                "for "
+                "process #{:d}.",
                 timestep_id, t, process_id);
 
             if (!process_data->timestepper->canReduceTimestepSize())
@@ -725,15 +727,16 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
             process_data->nonlinear_solver_status = nonlinear_solver_status;
 
             INFO(
-                "[time] Solving process #%u took %g s in time step #%u "
-                " coupling iteration #%u",
+                "[time] Solving process #{:d} took {:g} s in time step #{:d} "
+                " coupling iteration #{:d}",
                 process_id, time_timestep_process.elapsed(), timestep_id,
                 global_coupling_iteration);
 
             if (!nonlinear_solver_status.error_norms_met)
             {
-                ERR("The nonlinear solver failed in time step #%u at t = %g s "
-                    "for process #%u.",
+                ERR("The nonlinear solver failed in time step #{:d} at t = "
+                    "{:g} s "
+                    "for process #{:d}.",
                     timestep_id, t, process_id);
 
                 if (!process_data->timestepper->canReduceTimestepSize())
@@ -782,7 +785,7 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
     {
         WARN(
             "The coupling iterations reaches its maximum number in time step"
-            "#%u at t = %g s",
+            "#{:d} at t = {:g} s",
             timestep_id, t);
     }
 
@@ -796,7 +799,7 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
         BaseLib::RunTime time_phreeqc;
         time_phreeqc.start();
         _chemical_system->doWaterChemistryCalculation(_process_solutions, dt);
-        INFO("[time] Phreeqc took %g s.", time_phreeqc.elapsed());
+        INFO("[time] Phreeqc took {:g} s.", time_phreeqc.elapsed());
     }
 
     postTimestepForAllProcesses(t, dt, _per_process_data, _process_solutions);

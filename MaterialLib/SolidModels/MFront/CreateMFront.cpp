@@ -20,13 +20,13 @@ void varInfo(std::string const& msg,
              std::vector<mgis::behaviour::Variable> const& vars,
              mgis::behaviour::Hypothesis hypothesis)
 {
-    INFO("#%s: %lu (array size %lu).",
+    INFO("#{:s}: {:d} (array size {:d}).",
          msg.c_str(),
          vars.size(),
          mgis::behaviour::getArraySize(vars, hypothesis));
     for (auto& var : vars)
     {
-        INFO("  --> type `%s' with name `%s', size %lu, offset %lu.",
+        INFO("  --> type `{:s}' with name `{:s}', size {:d}, offset {:d}.",
              MaterialLib::Solids::MFront::varTypeToString(var.type),
              var.name.c_str(),
              mgis::behaviour::getVariableSize(var, hypothesis),
@@ -37,11 +37,11 @@ void varInfo(std::string const& msg,
 /// Prints info about MFront parameters.
 void varInfo(std::string const& msg, std::vector<std::string> const& parameters)
 {
-    INFO("#%s: %lu.", msg.c_str(), parameters.size());
+    INFO("#{:s}: {:d}.", msg.c_str(), parameters.size());
     // mgis::behaviour::getArraySize(vars, hypothesis));
     for (auto const& parameter : parameters)
     {
-        INFO("  --> with name `%s'.", parameter.c_str());
+        INFO("  --> with name `{:s}'.", parameter.c_str());
     }
 }
 }  // anonymous namespace
@@ -98,13 +98,13 @@ std::unique_ptr<MechanicsBase<DisplacementDim>> createMFront(
     auto behaviour =
         mgis::behaviour::load(lib_path, behaviour_name, hypothesis);
 
-    INFO("Behaviour:      `%s'.", behaviour.behaviour.c_str());
-    INFO("Hypothesis:     `%s'.", mgis::behaviour::toString(hypothesis));
-    INFO("Source:         `%s'.", behaviour.source.c_str());
-    INFO("TFEL version:   `%s'.", behaviour.tfel_version.c_str());
-    INFO("Behaviour type: `%s'.", btypeToString(behaviour.btype));
-    INFO("Kinematic:      `%s'.", toString(behaviour.kinematic));
-    INFO("Symmetry:       `%s'.", toString(behaviour.symmetry));
+    INFO("Behaviour:      `{:s}'.", behaviour.behaviour.c_str());
+    INFO("Hypothesis:     `{:s}'.", mgis::behaviour::toString(hypothesis));
+    INFO("Source:         `{:s}'.", behaviour.source.c_str());
+    INFO("TFEL version:   `{:s}'.", behaviour.tfel_version.c_str());
+    INFO("Behaviour type: `{:s}'.", btypeToString(behaviour.btype));
+    INFO("Kinematic:      `{:s}'.", toString(behaviour.kinematic));
+    INFO("Symmetry:       `{:s}'.", toString(behaviour.symmetry));
 
     varInfo("Mat. props.", behaviour.mps, hypothesis);
     varInfo("Gradients", behaviour.gradients, hypothesis);
@@ -146,7 +146,7 @@ std::unique_ptr<MechanicsBase<DisplacementDim>> createMFront(
             auto const it = map_name_to_param.find(mp.name);
             if (it == map_name_to_param.end())
                 OGS_FATAL(
-                    "Material Property `%s' has not been configured in the "
+                    "Material Property `{:s}' has not been configured in the "
                     "project file.",
                     mp.name.c_str());
 
@@ -156,16 +156,17 @@ std::unique_ptr<MechanicsBase<DisplacementDim>> createMFront(
             auto const* param = &ParameterLib::findParameter<double>(
                 param_name, parameters, num_comp);
 
-            INFO("Using OGS parameter `%s' for material property `%s'.",
+            INFO("Using OGS parameter `{:s}' for material property `{:s}'.",
                  param_name.c_str(), mp.name.c_str());
 
             using V = mgis::behaviour::Variable;
             if (mp.type == V::STENSOR || mp.type == V::TENSOR)
             {
                 WARN(
-                    "Material property `%s' is a tensorial quantity. You, the "
+                    "Material property `{:s}' is a tensorial quantity. You, "
+                    "the "
                     "user, have to make sure that the component order of "
-                    "parameter `%s' matches the one required by MFront!",
+                    "parameter `{:s}' matches the one required by MFront!",
                     mp.name.c_str(), param_name.c_str());
             }
 
@@ -181,7 +182,7 @@ std::unique_ptr<MechanicsBase<DisplacementDim>> createMFront(
 
             for (auto& e : map_name_to_param)
             {
-                ERR("  name: `%s', parameter: `%s'.", e.first.c_str(),
+                ERR("  name: `{:s}', parameter: `{:s}'.", e.first.c_str(),
                     e.second.c_str());
             }
 

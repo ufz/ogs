@@ -15,7 +15,7 @@
 // ** INCLUDES **
 #include "VtkCompositeThresholdFilter.h"
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include <vtkCellData.h>
 #include <vtkThreshold.h>

@@ -48,41 +48,42 @@ std::unique_ptr<ParameterBase> createParameter(
     // Create parameter based on the provided type.
     if (type == "Constant")
     {
-        INFO("ConstantParameter: %s", name.c_str());
+        INFO("ConstantParameter: {:s}", name.c_str());
         return createConstantParameter(name, config);
     }
     if (type == "CurveScaled")
     {
-        INFO("CurveScaledParameter: %s", name.c_str());
+        INFO("CurveScaledParameter: {:s}", name.c_str());
         return createCurveScaledParameter(name, config, curves);
     }
     if (type == "Function")
     {
-        INFO("FunctionParameter: %s", name.c_str());
+        INFO("FunctionParameter: {:s}", name.c_str());
         return createFunctionParameter(name, config, mesh);
     }
     if (type == "Group")
     {
-        INFO("GroupBasedParameter: %s", name.c_str());
+        INFO("GroupBasedParameter: {:s}", name.c_str());
         return createGroupBasedParameter(name, config, mesh);
     }
     if (type == "MeshElement")
     {
-        INFO("MeshElementParameter: %s", name.c_str());
+        INFO("MeshElementParameter: {:s}", name.c_str());
         return createMeshElementParameter(name, config, mesh);
     }
     if (type == "MeshNode")
     {
-        INFO("MeshNodeParameter: %s", name.c_str());
+        INFO("MeshNodeParameter: {:s}", name.c_str());
         return createMeshNodeParameter(name, config, mesh);
     }
     if (type == "TimeDependentHeterogeneousParameter")
     {
-        INFO("TimeDependentHeterogeneousParameter: %s", name.c_str());
+        INFO("TimeDependentHeterogeneousParameter: {:s}", name.c_str());
         return createTimeDependentHeterogeneousParameter(name, config);
     }
 
-    OGS_FATAL("Cannot construct a parameter of given type '%s'.", type.c_str());
+    OGS_FATAL("Cannot construct a parameter of given type '{:s}'.",
+              type.c_str());
 }
 
 boost::optional<std::string> isDefinedOnSameMesh(ParameterBase const& parameter,

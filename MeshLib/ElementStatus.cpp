@@ -71,7 +71,7 @@ ElementStatus::ElementStatus(Mesh const* const mesh,
     }
 
     DBUG(
-        "Deactivated %d materials and resulting active %d nodes and %d "
+        "Deactivated {:d} materials and resulting active {:d} nodes and {:d} "
         "elements",
         vec_inactive_matIDs.size(),
         _vec_active_nodes.size(),

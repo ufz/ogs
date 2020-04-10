@@ -14,7 +14,6 @@
 
 #include <tclap/CmdLine.h>
 
-#include "Applications/ApplicationsLib/LogogSetup.h"
 #include "InfoLib/GitInfo.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/IO/XmlIO/Boost/BoostXmlGmlInterface.h"
@@ -24,8 +23,6 @@
 
 int main (int argc, char* argv[])
 {
-    ApplicationsLib::LogogSetup logog_setup;
-
     TCLAP::CmdLine cmd(
         "Maps geometric objects to the surface of a given mesh."
         "The documentation is available at "
@@ -61,7 +58,7 @@ int main (int argc, char* argv[])
     {
         GeoLib::IO::BoostXmlGmlInterface xml_io(geometries);
         if (xml_io.readFile(input_geometry_fname.getValue())) {
-            INFO("Read geometry from file '%s'.",
+            INFO("Read geometry from file '{:s}'.",
                  input_geometry_fname.getValue().c_str());
         } else {
             return EXIT_FAILURE;

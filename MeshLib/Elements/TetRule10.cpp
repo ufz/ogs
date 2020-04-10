@@ -12,7 +12,7 @@
 
 #include <array>
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "MeshLib/Node.h"
 #include "Tri.h"
@@ -49,7 +49,7 @@ const Element* TetRule10::getFace(const Element* e, unsigned i)
         }
         return new Tri6(nodes, e->getID());
     }
-    ERR("Error in MeshLib::Element::getFace() - Index %d does not exist.", i);
+    ERR("Error in MeshLib::Element::getFace() - Index {:d} does not exist.", i);
     return nullptr;
 }
 

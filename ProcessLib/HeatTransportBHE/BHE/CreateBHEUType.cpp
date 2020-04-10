@@ -37,7 +37,7 @@ parseBHEUTypeConfig(
     auto const bhe_if_use_python_bc_conf =
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__use_bhe_pipe_network}
         config.getConfigParameter<bool>("use_bhe_pipe_network", false);
-    DBUG("If using python boundary condition : %s",
+    DBUG("If using python boundary condition : {:s}",
          (bhe_if_use_python_bc_conf) ? "true" : "false");
 
     auto const borehole_geometry =

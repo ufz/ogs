@@ -18,7 +18,7 @@
 #include <vtkActor.h>
 #include <vtkCellPicker.h>
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 VtkPickCallback* VtkPickCallback::New()
 {
@@ -43,8 +43,8 @@ void VtkPickCallback::Execute(vtkObject* caller,
         }
 
         double* pos = picker->GetPickPosition();
-        INFO("Picked cell id is: %d", picker->GetCellId());
-        INFO("Picked position is: %f %f %f", pos[0], pos[1], pos[2]);
+        INFO("Picked cell id is: {:d}", picker->GetCellId());
+        INFO("Picked position is: {:f} {:f} {:f}", pos[0], pos[1], pos[2]);
     }
 }
 

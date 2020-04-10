@@ -15,7 +15,7 @@
 // ** VTK INCLUDES **
 #include "VtkColorByHeightFilter.h"
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "VtkColorLookupTable.h"
 

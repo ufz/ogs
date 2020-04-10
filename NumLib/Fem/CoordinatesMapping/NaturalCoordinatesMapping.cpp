@@ -108,7 +108,9 @@ static void checkJacobianDeterminant(const double detJ,
 
     if (detJ < 0)
     {
-        ERR("det J = %g is negative for element %d.", detJ, element.getID());
+        ERR("det J = {:g} is negative for element {:d}.",
+            detJ,
+            element.getID());
 #ifndef NDEBUG
         std::cerr << element << "\n";
 #endif  // NDEBUG
@@ -119,7 +121,7 @@ static void checkJacobianDeterminant(const double detJ,
 
     if (detJ == 0)
     {
-        ERR("det J is zero for element %d.", element.getID());
+        ERR("det J is zero for element {:d}.", element.getID());
 #ifndef NDEBUG
         std::cerr << element << "\n";
 #endif  // NDEBUG

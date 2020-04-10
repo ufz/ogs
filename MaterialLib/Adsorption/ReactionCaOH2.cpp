@@ -9,10 +9,10 @@
 
 #include "ReactionCaOH2.h"
 #include <cassert>
-#include <logog/include/logog.hpp>
-#include "BaseLib/Error.h"
-#include "MaterialLib/PhysicalConstant.h"
 #include "Adsorption.h"
+#include "BaseLib/Error.h"
+#include "BaseLib/Logging.h"
+#include "MaterialLib/PhysicalConstant.h"
 
 namespace Adsorption
 {

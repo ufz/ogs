@@ -8,28 +8,25 @@
  */
 
 // STL
+#include <tclap/CmdLine.h>
+
 #include <cctype>
 #include <iostream>
 #include <limits>
 #include <memory>
+#include <netcdf>
 #include <numeric>
 #include <sstream>
 #include <string>
 #include <utility>
 
-#include <tclap/CmdLine.h>
-
-#include "Applications/ApplicationsLib/LogogSetup.h"
-
-#include <netcdf>
-
 #include "BaseLib/FileTools.h"
-#include "BaseLib/LogogSimpleFormatter.h"
-#include "InfoLib/GitInfo.h"
+#include "BaseLib/Logging.h"
 #include "GeoLib/Raster.h"
+#include "InfoLib/GitInfo.h"
+#include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshGenerators/RasterToMesh.h"
-#include "MeshLib/IO/VtkIO/VtuInterface.h"
 
 using namespace netCDF;
 
@@ -50,7 +47,7 @@ static void showErrorMessage(std::size_t const error_id,
     }
     else if (error_id == 1)
     {
-        ERR("Index not valid. Valid indices are in [0,%d].", max);
+        ERR("Index not valid. Valid indices are in [0,{:d}].", max);
     }
     else if (error_id == 2)
     {
@@ -363,9 +360,11 @@ static double getResolution(NcFile const& dataset, NcVar const& var)
     auto const bounds = (dim_var.isNull()) ? getDimLength(var, dim_idx)
                                            : getBoundaries(dim_var);
     std::size_t const dim_size = var.getDim(dim_idx).getSize();
-    std::string const err_msg("Dimension \"" + var.getDim(dim_idx).getName() +
-                              "\" has size 0. Aborting...");
-    if (dim_size == 0) return OGS_FATAL(err_msg.c_str());
+    if (dim_size == 0)
+    {
+        OGS_FATAL("Dimension '{:s}' has size 0. Aborting...",
+                  var.getDim(dim_idx).getName());
+    }
     return std::fabs(bounds.second - bounds.first) / static_cast<double>(dim_size);
 }
 
@@ -447,7 +446,8 @@ static bool assignDimParams(NcVar const& var,
     if (arg_dim_time.getValue() >= n_dims || arg_dim1.getValue() >= n_dims ||
         arg_dim2.getValue() >= n_dims || arg_dim3.getValue() >= n_dims)
     {
-        ERR("Maximum allowed dimension for variable \"%s\" is %d.", var.getName().c_str(), n_dims-1);
+        ERR("Maximum allowed dimension for variable \"{:s}\" is {:d}.",
+            var.getName().c_str(), n_dims - 1);
         return false;
     }
 
@@ -575,8 +575,6 @@ static bool convert(NcFile const& dataset, NcVar const& var,
 
 int main(int argc, char* argv[])
 {
-    ApplicationsLib::LogogSetup logog_setup;
-
     TCLAP::CmdLine cmd(
         "Converts NetCDF data into mesh file(s).\n\n "
         "OpenGeoSys-6 software, version " +
@@ -676,7 +674,8 @@ int main(int argc, char* argv[])
     NcVar const& var = dataset.getVar(var_name);
     if (var.isNull())
     {
-        ERR("Variable \"%s\" not found in file.", arg_varname.getValue().c_str());
+        ERR("Variable \"{:s}\" not found in file.",
+            arg_varname.getValue().c_str());
         return EXIT_FAILURE;
     }
 

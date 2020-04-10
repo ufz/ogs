@@ -7,7 +7,7 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "BaseLib/StringTools.h"
 
@@ -82,7 +82,7 @@ newInstance(BaseLib::ConfigTree const& conf)
         return std::make_unique<ReactionCaOH2>(conf);
     }
 
-    OGS_FATAL("Unknown reactive system: %s.", type.c_str());
+    OGS_FATAL("Unknown reactive system: {:s}.", type.c_str());
 
     return nullptr;
 }

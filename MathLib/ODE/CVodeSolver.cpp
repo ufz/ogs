@@ -10,7 +10,7 @@
 #include "CVodeSolver.h"
 
 #include <cassert>
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include <cvode/cvode.h>             /* prototypes for CVODE fcts., consts. */
 #include <nvector/nvector_serial.h>  /* serial N_Vector types, fcts., macros */
@@ -33,8 +33,8 @@ void check_error(std::string const& f_name, int const error_flag)
 {
     if (error_flag != CV_SUCCESS)
     {
-        OGS_FATAL("CVodeSolver: %s failed with error flag %d.", f_name.c_str(),
-            error_flag);
+        OGS_FATAL("CVodeSolver: {:s} failed with error flag {:d}.",
+                  f_name.c_str(), error_flag);
     }
 }
 
@@ -59,10 +59,11 @@ void printStats(void* cvode_mem)
     check_error("CVodeGetNumGEvals", CVodeGetNumGEvals(cvode_mem, &nge));
 
     DBUG("Sundials CVode solver. Statistics:");
-    DBUG("nst = %-6ld  nfe = %-6ld nsetups = %-6ld nfeLS = %-6ld nje = %ld",
-         nst, nfe, nsetups, nfeLS, nje);
-    DBUG("nni = %-6ld ncfn = %-6ld    netf = %-6ld   nge = %ld\n", nni, ncfn,
-         netf, nge);
+    DBUG(
+        "nst = {:<0d}  nfe = {:<0d} nsetups = {:<0d} nfeLS = {:<0d} nje = {:d}",
+        nst, nfe, nsetups, nfeLS, nje);
+    DBUG("nni = {:<0d} ncfn = {:<0d}    netf = {:<0d}   nge = {:d}\n", nni,
+         ncfn, netf, nge);
 }
 
 //! @}
@@ -134,7 +135,7 @@ CVodeSolverImpl::CVodeSolverImpl(const BaseLib::ConfigTree& config,
         //! \ogs_file_param{ode_solver__CVODE__linear_multistep_method}
         config.getConfigParameterOptional<std::string>("linear_multistep_method"))
     {
-        DBUG("setting linear multistep method (config: %s)", param->c_str());
+        DBUG("setting linear multistep method (config: {:s})", param->c_str());
 
         if (*param == "Adams")
         {
@@ -146,7 +147,7 @@ CVodeSolverImpl::CVodeSolverImpl(const BaseLib::ConfigTree& config,
         }
         else
         {
-            OGS_FATAL("unknown linear multistep method: %s", param->c_str());
+            OGS_FATAL("unknown linear multistep method: {:s}", param->c_str());
         }
     }
 
@@ -154,7 +155,8 @@ CVodeSolverImpl::CVodeSolverImpl(const BaseLib::ConfigTree& config,
         //! \ogs_file_param{ode_solver__CVODE__nonlinear_solver_iteration}
         config.getConfigParameterOptional<std::string>("nonlinear_solver_iteration"))
     {
-        DBUG("setting nonlinear solver iteration (config: %s)", param->c_str());
+        DBUG("setting nonlinear solver iteration (config: {:s})",
+             param->c_str());
 
         if (*param == "Functional")
         {
@@ -166,7 +168,8 @@ CVodeSolverImpl::CVodeSolverImpl(const BaseLib::ConfigTree& config,
         }
         else
         {
-            OGS_FATAL("unknown nonlinear solver iteration: %s", param->c_str());
+            OGS_FATAL("unknown nonlinear solver iteration: {:s}",
+                      param->c_str());
         }
     }
 

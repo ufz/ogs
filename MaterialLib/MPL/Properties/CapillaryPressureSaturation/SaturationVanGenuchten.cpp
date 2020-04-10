@@ -30,7 +30,7 @@ SaturationVanGenuchten::SaturationVanGenuchten(
     if (!(_m > 0 && _m < 1))
     {
         OGS_FATAL(
-            "The exponent value m = %g of van Genuchten saturation model, is "
+            "The exponent value m = {:g} of van Genuchten saturation model, is "
             "out of its range of (0, 1)",
             _m);
     }

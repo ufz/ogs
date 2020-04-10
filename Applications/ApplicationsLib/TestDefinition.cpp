@@ -35,19 +35,20 @@ bool isConvertibleToDouble(std::string const& s)
     }
     catch (...)
     {
-        OGS_FATAL("The given string '%s' is not convertible to double.",
+        OGS_FATAL("The given string '{:s}' is not convertible to double.",
                   s.c_str());
     }
     if (pos != s.size())
     {
         OGS_FATAL(
-            "Only %d characters were used for double conversion of string '%s'",
+            "Only {:d} characters were used for double conversion of string "
+            "'{:s}'",
             pos, s.c_str());
     }
 
     if (std::isnan(value))
     {
-        OGS_FATAL("The given string '%s' results in a NaN value.", s.c_str());
+        OGS_FATAL("The given string '{:s}' results in a NaN value.", s.c_str());
     }
     return true;
 }
@@ -67,7 +68,7 @@ std::string findVtkdiff()
             std::getenv("VTKDIFF_EXE"))
     {
         std::string const vtkdiff_exe{vtkdiff_exe_environment_variable};
-        DBUG("VTKDIFF_EXE set to %s.", vtkdiff_exe.c_str());
+        DBUG("VTKDIFF_EXE set to {:s}.", vtkdiff_exe.c_str());
 
         //
         // Sanity checks.
@@ -79,7 +80,7 @@ std::string findVtkdiff()
             {
                 OGS_FATAL(
                     "The VTKDIFF_EXE environment variable does not point to "
-                    "'vtkdiff'. VTKDIFF_EXE='%s'",
+                    "'vtkdiff'. VTKDIFF_EXE='{:s}'",
                     vtkdiff_exe.c_str());
             }
         }
@@ -88,7 +89,7 @@ std::string findVtkdiff()
             {
                 OGS_FATAL(
                     "The VTKDIFF_EXE points to a non-existing file. "
-                    "VTKDIFF_EXE='%s'",
+                    "VTKDIFF_EXE='{:s}'",
                     vtkdiff_exe.c_str());
             }
         }
@@ -110,8 +111,9 @@ std::string findVtkdiff()
             return vtkdiff_exe;
         }
         WARN(
-            "Calling %s from the VTKDIFF_EXE environment variable didn't work "
-            "as expected. Return value was %d.",
+            "Calling {:s} from the VTKDIFF_EXE environment variable didn't "
+            "work "
+            "as expected. Return value was {:d}.",
             vtkdiff_exe.c_str(), return_value);
     }
 
@@ -160,7 +162,7 @@ TestDefinition::TestDefinition(BaseLib::ConfigTree const& config_tree,
         std::string const& field_name =
             //! \ogs_file_param{prj__test_definition__vtkdiff__field}
             vtkdiff_config.getConfigParameter<std::string>("field");
-        DBUG("vtkdiff will compare field '%s'.", field_name.c_str());
+        DBUG("vtkdiff will compare field '{:s}'.", field_name.c_str());
 
 #ifdef USE_PETSC
         int rank;
@@ -192,7 +194,7 @@ TestDefinition::TestDefinition(BaseLib::ConfigTree const& config_tree,
             !isConvertibleToDouble(absolute_tolerance))
         {
             OGS_FATAL(
-                "The absolute tolerance value '%s' is not convertible to "
+                "The absolute tolerance value '{:s}' is not convertible to "
                 "double.",
                 absolute_tolerance.c_str());
         }
@@ -207,7 +209,7 @@ TestDefinition::TestDefinition(BaseLib::ConfigTree const& config_tree,
             !isConvertibleToDouble(relative_tolerance))
         {
             OGS_FATAL(
-                "The relative tolerance value '%s' is not convertible to "
+                "The relative tolerance value '{:s}' is not convertible to "
                 "double.",
                 relative_tolerance.c_str());
         }
@@ -222,7 +224,7 @@ TestDefinition::TestDefinition(BaseLib::ConfigTree const& config_tree,
             safeString(field_name) + " " + safeString(reference_filename) +
             " " + safeString(output_filename) + " " +
             absolute_tolerance_parameter + " " + relative_tolerance_parameter;
-        INFO("Will run '%s'", command_line.c_str());
+        INFO("Will run '{:s}'", command_line.c_str());
         _command_lines.emplace_back(std::move(command_line));
     }
 }
@@ -236,7 +238,7 @@ bool TestDefinition::runTests() const
                   int const return_value = std::system(command_line.c_str());
                   if (return_value != 0)
                   {
-                      WARN("Return value %d was returned by '%s'.",
+                      WARN("Return value {:d} was returned by '{:s}'.",
                            return_value, command_line.c_str());
                   }
                   return return_value;

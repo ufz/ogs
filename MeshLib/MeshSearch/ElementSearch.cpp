@@ -10,8 +10,6 @@
 
 #include "ElementSearch.h"
 
-#include <logog/include/logog.hpp>
-
 #include "BaseLib/Algorithm.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Node.h"

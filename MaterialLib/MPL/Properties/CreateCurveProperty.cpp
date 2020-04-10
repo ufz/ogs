@@ -30,7 +30,7 @@ std::unique_ptr<CurveProperty> createCurveProperty(
 
     //! \ogs_file_param{properties__property__Curve__curve}
     auto curve_name = config.getConfigParameter<std::string>("curve");
-    DBUG("Using curve '%s'", curve_name.c_str());
+    DBUG("Using curve '{:s}'", curve_name.c_str());
 
     auto const& curve =
         *BaseLib::getOrError(curves, curve_name, "Could not find curve.");
@@ -38,7 +38,7 @@ std::unique_ptr<CurveProperty> createCurveProperty(
     auto const independent_variable_string =
         //! \ogs_file_param{properties__property__Curve__independent_variable}
         config.getConfigParameter<std::string>("independent_variable");
-    DBUG("Using independent_variable '%s'",
+    DBUG("Using independent_variable '{:s}'",
          independent_variable_string.c_str());
     auto const independent_variable =
         MaterialPropertyLib::convertStringToVariable(

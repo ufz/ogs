@@ -113,7 +113,7 @@ NumLib::NonlinearSolverStatus TimeLoopSingleODE<NLTag>::loop(
     {
         ++timestep;
 
-        // INFO("time: %e, delta_t: %e", t, delta_t);
+        // INFO("time: {:e}, delta_t: {:e}", t, delta_t);
         time_disc.nextTimestep(t, delta_t);
 
         int const process_id = 0;
@@ -136,7 +136,8 @@ NumLib::NonlinearSolverStatus TimeLoopSingleODE<NLTag>::loop(
 
     if (!nonlinear_solver_status.error_norms_met)
     {
-        ERR("Nonlinear solver failed in timestep #%u at t = %g s", timestep, t);
+        ERR("Nonlinear solver failed in timestep #{:d} at t = {:g} s", timestep,
+            t);
     }
     return nonlinear_solver_status;
 }

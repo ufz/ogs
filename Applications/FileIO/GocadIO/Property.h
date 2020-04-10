@@ -12,7 +12,7 @@
 #include <cstddef>
 #include <string>
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 namespace FileIO
 {
@@ -32,7 +32,7 @@ struct Property final
     {
         if (_property_id != std::stoul(id_string))
         {
-            ERR("Expected property id %d but found %d.",
+            ERR("Expected property id {:d} but found {:d}.",
                 _property_id,
                 std::stoul(id_string));
             return false;

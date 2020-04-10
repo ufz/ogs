@@ -118,7 +118,7 @@ protected:
             };
         }
         OGS_FATAL(
-            "Coordinate transformation for a %d-component parameter is not "
+            "Coordinate transformation for a {:d}-component parameter is not "
             "implemented.",
             values.size());
     }

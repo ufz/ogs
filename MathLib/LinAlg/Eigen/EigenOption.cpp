@@ -48,7 +48,7 @@ EigenOption::SolverType EigenOption::getSolverType(const std::string &solver_nam
         return SolverType::GMRES;
     }
 
-    OGS_FATAL("Unknown Eigen solver type `%s'", solver_name.c_str());
+    OGS_FATAL("Unknown Eigen solver type `{:s}'", solver_name.c_str());
 }
 
 EigenOption::PreconType EigenOption::getPreconType(const std::string &precon_name)
@@ -66,7 +66,7 @@ EigenOption::PreconType EigenOption::getPreconType(const std::string &precon_nam
         return PreconType::ILUT;
     }
 
-    OGS_FATAL("Unknown Eigen preconditioner type `%s'", precon_name.c_str());
+    OGS_FATAL("Unknown Eigen preconditioner type `{:s}'", precon_name.c_str());
 }
 
 std::string EigenOption::getSolverName(SolverType const solver_type)

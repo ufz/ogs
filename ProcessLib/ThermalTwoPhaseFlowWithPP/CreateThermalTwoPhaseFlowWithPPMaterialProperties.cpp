@@ -10,8 +10,8 @@
 
 #include "CreateThermalTwoPhaseFlowWithPPMaterialProperties.h"
 
-#include <logog/include/logog.hpp>
 #include <tuple>
+#include "BaseLib/Logging.h"
 
 #include "MaterialLib/Fluid/FluidProperty.h"
 #include "MaterialLib/Fluid/SpecificHeatCapacity/CreateSpecificFluidHeatCapacityModel.h"

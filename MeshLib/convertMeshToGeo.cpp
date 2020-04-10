@@ -14,7 +14,7 @@
 
 #include "convertMeshToGeo.h"
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Surface.h"
@@ -103,7 +103,7 @@ bool convertMeshToGeo(const MeshLib::Mesh& mesh,
         {
             OGS_FATAL(
                 "Could not get minimum/maximum ranges values for the "
-                "MaterialIDs property in the mesh '%s'.",
+                "MaterialIDs property in the mesh '{:s}'.",
                 mesh.getName().c_str());
         }
         return std::make_tuple(materialIds, *bounds);

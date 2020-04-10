@@ -15,7 +15,7 @@
 // ** INCLUDES **
 #include "VtkCustomInteractorStyle.h"
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include <vtkActor.h>
 #include <vtkAlgorithmOutput.h>
@@ -154,11 +154,12 @@ void VtkCustomInteractorStyle::OnLeftButtonDown()
         picker->Pick(pos[0], pos[1], 0, this->GetDefaultRenderer());
 
         double* worldPosition = picker->GetPickPosition();
-        INFO("Cell id is: %d", picker->GetCellId());
+        INFO("Cell id is: {:d}", picker->GetCellId());
 
         if(picker->GetCellId() != -1)
         {
-            INFO("Pick position is: %f %f %f", worldPosition[0], worldPosition[1], worldPosition[2]);
+            INFO("Pick position is: {:f} {:f} {:f}", worldPosition[0],
+                 worldPosition[1], worldPosition[2]);
 
             vtkSmartPointer<vtkIdTypeArray> ids =
                     vtkSmartPointer<vtkIdTypeArray>::New();
@@ -186,8 +187,10 @@ void VtkCustomInteractorStyle::OnLeftButtonDown()
                     vtkSmartPointer<vtkUnstructuredGrid>::New();
             selected->ShallowCopy(extractSelection->GetOutput());
 
-            INFO("There are %d points in the selection.", selected->GetNumberOfPoints());
-            INFO("There are %d cells in the selection.", selected->GetNumberOfCells());
+            INFO("There are {:d} points in the selection.",
+                 selected->GetNumberOfPoints());
+            INFO("There are {:d} cells in the selection.",
+                 selected->GetNumberOfCells());
 
             // check if the underlying object is a mesh and if so, send a signal to the element model for display of information about the picked element.
             vtkAlgorithm* data_set = picker->GetActor()->GetMapper()->GetInputConnection(0, 0)->GetProducer()->GetInputConnection(0,0)->GetProducer();
@@ -243,7 +246,7 @@ void VtkCustomInteractorStyle::OnRightButtonDown()
         picker->Pick(pos[0], pos[1], 0, this->GetDefaultRenderer());
 
         double* worldPosition = picker->GetPickPosition();
-        INFO("Cell id is: %d", picker->GetCellId());
+        INFO("Cell id is: {:d}", picker->GetCellId());
 
         if(picker->GetCellId() != -1)
         {

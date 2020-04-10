@@ -11,7 +11,7 @@
 
 #include <vector>
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 

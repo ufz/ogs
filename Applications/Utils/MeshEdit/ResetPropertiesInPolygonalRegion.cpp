@@ -15,7 +15,6 @@
 
 #include <tclap/CmdLine.h>
 
-#include "Applications/ApplicationsLib/LogogSetup.h"
 #include "Applications/FileIO/readGeometryFromFile.h"
 #include "InfoLib/GitInfo.h"
 #include "GeoLib/GEOObjects.h"
@@ -27,8 +26,6 @@
 
 int main(int argc, char* argv[])
 {
-    ApplicationsLib::LogogSetup logog_setup;
-
     TCLAP::CmdLine cmd(
         "Sets the property value of a mesh element to a given new value iff at "
         "least one node of the element is within a polygonal region that is "
@@ -106,7 +103,7 @@ int main(int argc, char* argv[])
     GeoLib::PolylineVec const* plys(geometries.getPolylineVecObj(geo_name));
     if (!plys)
     {
-        ERR("Could not get vector of polylines out of geometry '%s'.",
+        ERR("Could not get vector of polylines out of geometry '{:s}'.",
             geo_name.c_str());
         return EXIT_FAILURE;
     }
@@ -116,7 +113,7 @@ int main(int argc, char* argv[])
         plys->getElementByName(polygon_name_arg.getValue()));
     if (!ply)
     {
-        ERR("Polyline '%s' not found.", polygon_name_arg.getValue().c_str());
+        ERR("Polyline '{:s}' not found.", polygon_name_arg.getValue().c_str());
         return EXIT_FAILURE;
     }
 
@@ -124,7 +121,7 @@ int main(int argc, char* argv[])
     bool closed(ply->isClosed());
     if (!closed)
     {
-        ERR("Polyline '%s' is not closed, i.e. does not describe a region.",
+        ERR("Polyline '{:s}' is not closed, i.e. does not describe a region.",
             polygon_name_arg.getValue().c_str());
         return EXIT_FAILURE;
     }
@@ -164,10 +161,10 @@ int main(int argc, char* argv[])
 
     std::vector<std::string> property_names(
         mesh->getProperties().getPropertyVectorNames());
-    INFO("Mesh contains %d property vectors:", property_names.size());
+    INFO("Mesh contains {:d} property vectors:", property_names.size());
     for (const auto& name : property_names)
     {
-        INFO("- %s", name.c_str());
+        INFO("- {:s}", name.c_str());
     }
 
     MeshLib::IO::writeMeshToFile(*mesh, mesh_out.getValue());

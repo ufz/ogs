@@ -241,7 +241,7 @@ void PhaseFieldProcess<DisplacementDim>::preTimestepConcreteProcess(
     std::vector<GlobalVector*> const& x, double const t, double const dt,
     const int process_id)
 {
-    DBUG("PreTimestep PhaseFieldProcess %d.", process_id);
+    DBUG("PreTimestep PhaseFieldProcess {:d}.", process_id);
 
     _process_data.injected_volume = t;
 
@@ -281,7 +281,7 @@ void PhaseFieldProcess<DisplacementDim>::postTimestepConcreteProcess(
             _process_data.elastic_energy, _process_data.surface_energy,
             _process_data.pressure_work, _coupled_solutions);
 
-        INFO("Elastic energy: %g Surface energy: %g Pressure work: %g ",
+        INFO("Elastic energy: {:g} Surface energy: {:g} Pressure work: {:g} ",
              _process_data.elastic_energy, _process_data.surface_energy,
              _process_data.pressure_work);
     }
@@ -311,7 +311,7 @@ void PhaseFieldProcess<DisplacementDim>::postNonLinearSolverConcreteProcess(
             pv.getActiveElementIDs(), dof_tables, x, t,
             _process_data.crack_volume, _coupled_solutions);
 
-        INFO("Integral of crack: %g", _process_data.crack_volume);
+        INFO("Integral of crack: {:g}", _process_data.crack_volume);
 
         if (_process_data.propagating_crack)
         {
@@ -321,7 +321,7 @@ void PhaseFieldProcess<DisplacementDim>::postNonLinearSolverConcreteProcess(
             _process_data.pressure_error =
                 std::fabs(_process_data.pressure_old - _process_data.pressure) /
                 _process_data.pressure;
-            INFO("Internal pressure: %g and Pressure error: %.4e",
+            INFO("Internal pressure: {:g} and Pressure error: {:.4e}",
                  _process_data.pressure, _process_data.pressure_error);
             auto& u = *_coupled_solutions->coupled_xs[0];
             MathLib::LinAlg::scale(const_cast<GlobalVector&>(u),

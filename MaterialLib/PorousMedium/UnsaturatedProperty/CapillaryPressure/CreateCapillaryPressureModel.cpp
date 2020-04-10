@@ -49,7 +49,7 @@ static std::unique_ptr<CapillaryPressureSaturation> createBrooksCorey(
     if (auto const Sg_r_ptr = config.getConfigParameterOptional<double>("sg_r"))
     {
         DBUG(
-            "Using value %g for nonwetting phase residual saturation in "
+            "Using value {:g} for nonwetting phase residual saturation in "
             "capillary pressure model.",
             (*Sg_r_ptr));
         Sg_r = *Sg_r_ptr;
@@ -94,7 +94,7 @@ static std::unique_ptr<CapillaryPressureSaturation> createVanGenuchten(
     if (auto const Sg_r_ptr = config.getConfigParameterOptional<double>("sg_r"))
     {
         DBUG(
-            "Using value %g for nonwetting phase residual saturation in "
+            "Using value {:g} for nonwetting phase residual saturation in "
             "capillary pressure model.",
             (*Sg_r_ptr));
         Sg_r = *Sg_r_ptr;
@@ -119,7 +119,7 @@ static std::unique_ptr<CapillaryPressureSaturation> createVanGenuchten(
             //! \ogs_file_param{material__porous_medium__capillary_pressure__vanGenuchten__has_regularized}
         config.getConfigParameterOptional<bool>("has_regularized"))
     {
-        DBUG("capillary pressure model: %s",
+        DBUG("capillary pressure model: {:s}",
              (*has_regularized_conf) ? "true" : "false");
         has_regularized = *has_regularized_conf;
     }
@@ -157,7 +157,7 @@ std::unique_ptr<CapillaryPressureSaturation> createCapillaryPressureModel(
     }
 
     OGS_FATAL(
-        "The capillary pressure saturation models %s are unavailable.\n"
+        "The capillary pressure saturation models {:s} are unavailable.\n"
         "The available types are: \n\tBrooksCorey, \n\tvanGenuchten,",
         "\n\tCurve.\n",
         type.data());

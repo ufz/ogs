@@ -11,8 +11,8 @@
 #include "PhaseFieldIrreversibleDamageOracleBoundaryCondition.h"
 
 #include <algorithm>
-#include <logog/include/logog.hpp>
 #include <vector>
+#include "BaseLib/Logging.h"
 
 namespace ProcessLib
 {

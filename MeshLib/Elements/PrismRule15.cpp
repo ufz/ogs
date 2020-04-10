@@ -10,7 +10,7 @@
 
 #include "PrismRule15.h"
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "MeshLib/Node.h"
 #include "Quad.h"
@@ -60,7 +60,7 @@ const Element* PrismRule15::getFace(const Element* e, unsigned i)
 
         return new Quad8(nodes);
     }
-    ERR("Error in MeshLib::Element::getFace() - Index %d does not exist.", i);
+    ERR("Error in MeshLib::Element::getFace() - Index {:d} does not exist.", i);
     return nullptr;
 }
 

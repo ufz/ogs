@@ -12,8 +12,6 @@
 
 #include <tclap/CmdLine.h>
 
-#include "Applications/ApplicationsLib/LogogSetup.h"
-
 #include "InfoLib/GitInfo.h"
 
 #include "MeshLib/Mesh.h"
@@ -25,8 +23,6 @@
 
 int main(int argc, char *argv[])
 {
-    ApplicationsLib::LogogSetup logog_setup;
-
     TCLAP::CmdLine cmd(
         "Convert a non-linear mesh to a linear mesh.\n\n"
         "OpenGeoSys-6 software, version " +

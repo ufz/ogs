@@ -10,8 +10,8 @@
 
 #include "DuplicateGeometry.h"
 
-#include <logog/include/logog.hpp>
 #include <utility>
+#include "BaseLib/Logging.h"
 
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Point.h"
@@ -35,7 +35,7 @@ void DuplicateGeometry::duplicate(std::string const& input_name)
     std::vector<GeoLib::Point*> const*const pnts (_geo_objects.getPointVec(input_name));
     if (pnts == nullptr)
     {
-        ERR("Geometry '%s' not found.", input_name.c_str());
+        ERR("Geometry '{:s}' not found.", input_name.c_str());
         return;
     }
 

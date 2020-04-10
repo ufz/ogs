@@ -9,7 +9,6 @@
 
 #include <tclap/CmdLine.h>
 
-#include "Applications/ApplicationsLib/LogogSetup.h"
 #include "InfoLib/GitInfo.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/IO/XmlIO/Boost/BoostXmlGmlInterface.h"
@@ -24,15 +23,13 @@ std::unique_ptr<GeoLib::GEOObjects> readGeometry(std::string const& filename)
     auto geo_objects = std::make_unique<GeoLib::GEOObjects>();
     GeoLib::IO::BoostXmlGmlInterface gml_reader(*geo_objects);
 
-    DBUG("Reading geometry file '%s'.", filename.c_str());
+    DBUG("Reading geometry file '{:s}'.", filename.c_str());
     gml_reader.readFile(filename);
     return geo_objects;
 }
 
 int main(int argc, char* argv[])
 {
-    ApplicationsLib::LogogSetup logo_setup;
-
     TCLAP::CmdLine cmd(
         "Converts a geometry defined on a given mesh to distinct meshes. The "
         "documentation is available at "
@@ -107,7 +104,7 @@ int main(int argc, char* argv[])
         if (m_ptr->getNodes().empty())
         {
             WARN(
-                "The created mesh '%s' hasn't any nodes or elements and thus "
+                "The created mesh '{:s}' hasn't any nodes or elements and thus "
                 "it isn't written to file.",
                 m_ptr->getName().c_str());
             continue;

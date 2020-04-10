@@ -13,8 +13,6 @@
 
 #include <tclap/CmdLine.h>
 
-#include "Applications/ApplicationsLib/LogogSetup.h"
-
 #include "InfoLib/GitInfo.h"
 #include "BaseLib/StringTools.h"
 #include "BaseLib/FileTools.h"
@@ -29,8 +27,6 @@
 
 int main(int argc, char *argv[])
 {
-    ApplicationsLib::LogogSetup logog_setup;
-
     TCLAP::CmdLine cmd(
         "Mesh revision tool.\n\n"
         "OpenGeoSys-6 software, version " +
@@ -60,7 +56,8 @@ int main(int argc, char *argv[])
     {
         return EXIT_FAILURE;
     }
-    INFO("Mesh read: %d nodes, %d elements.", org_mesh->getNumberOfNodes(), org_mesh->getNumberOfElements());
+    INFO("Mesh read: {:d} nodes, {:d} elements.", org_mesh->getNumberOfNodes(),
+         org_mesh->getNumberOfElements());
 
     // revise the mesh
     std::unique_ptr<MeshLib::Mesh> new_mesh;
@@ -74,7 +71,8 @@ int main(int argc, char *argv[])
 
     // write into a file
     if (new_mesh) {
-        INFO("Revised mesh: %d nodes, %d elements.", new_mesh->getNumberOfNodes(), new_mesh->getNumberOfElements());
+        INFO("Revised mesh: {:d} nodes, {:d} elements.",
+             new_mesh->getNumberOfNodes(), new_mesh->getNumberOfElements());
         MeshLib::IO::writeMeshToFile(*new_mesh, output_arg.getValue());
     }
 

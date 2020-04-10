@@ -15,7 +15,7 @@
 // ** VTK INCLUDES **
 #include "VtkAppendArrayFilter.h"
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include <vtkCellData.h>
 #include <vtkDoubleArray.h>

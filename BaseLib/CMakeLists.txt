@@ -8,7 +8,9 @@ endif()
 # Create the library
 ogs_add_library(BaseLib ${SOURCES})
 
-target_link_libraries(BaseLib PUBLIC logog Boost::boost)
+target_link_libraries(
+    BaseLib
+    PUBLIC Boost::boost spdlog::spdlog)
 
 if(MSVC)
     target_link_libraries(BaseLib PUBLIC WinMM) # needed for timeGetTime

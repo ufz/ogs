@@ -15,14 +15,11 @@
 
 #include "InfoLib/GitInfo.h"
 #include "BaseLib/FileTools.h"
-#include "Applications/ApplicationsLib/LogogSetup.h"
 #include "Applications/FileIO/AsciiRasterInterface.h"
 #include "GeoLib/Raster.h"
 
 int main(int argc, char* argv[])
 {
-    ApplicationsLib::LogogSetup logog_setup;
-
     TCLAP::CmdLine cmd(
         "Takes two DEMs located at the exact same spatial position (but at "
         "different elevation) and calculates n raster DEMs located at "
@@ -145,7 +142,7 @@ int main(int argc, char* argv[])
 
         GeoLib::Raster r(h1, raster[i].begin(), raster[i].end());
         FileIO::AsciiRasterInterface::writeRasterAsASC(r, basename + std::to_string(i) + "." + ext);
-        INFO("Layer %d written.", i+1);
+        INFO("Layer {:d} written.", i + 1);
     }
     return EXIT_SUCCESS;
 }

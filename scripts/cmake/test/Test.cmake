@@ -27,13 +27,6 @@ endif()
 
 enable_testing() # Enable CTest
 
-# See http://www.vtk.org/Wiki/CMake/Testing_With_CTest for some customization options
-set(CTEST_CUSTOM_TESTS_IGNORE test-harness) # ignore logog test
-configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/test/CTestCustom.cmake.in
-    ${PROJECT_BINARY_DIR}/CTestCustom.cmake
-)
-
 include(${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/test/AddTest.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/test/MeshTest.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/test/OgsTest.cmake)

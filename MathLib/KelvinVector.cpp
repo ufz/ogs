@@ -102,7 +102,7 @@ Eigen::Matrix<double, 3, 3> kelvinVectorToTensor(Eigen::Matrix<double,
         return kelvinVectorToTensor(v6);
     }
     OGS_FATAL(
-        "Conversion of dynamic Kelvin vector of size %d to a tensor is not "
+        "Conversion of dynamic Kelvin vector of size {:d} to a tensor is not "
         "possible. Kelvin vector must be of size 4 or 6.",
         v.size());
 }
@@ -176,7 +176,7 @@ kelvinVectorToSymmetricTensor(Eigen::Matrix<double,
     }
     OGS_FATAL(
         "Kelvin vector to tensor conversion expected an input vector of size 4 "
-        "or 6, but a vector of size %d was given.",
+        "or 6, but a vector of size {:d} was given.",
         v.size());
 }
 

@@ -13,9 +13,8 @@
 
 #include <tclap/CmdLine.h>
 
-#include "Applications/ApplicationsLib/LogogSetup.h"
-
 #include "InfoLib/GitInfo.h"
+#include "BaseLib/Logging.h"
 
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
@@ -90,8 +89,6 @@ static bool parseNewOrder(std::string const& str_order, std::array<int, 3> &new_
 
 int main(int argc, char *argv[])
 {
-    ApplicationsLib::LogogSetup logog_setup;
-
     TCLAP::CmdLine cmd(
         "Swap node coordinate values.\n\n"
         "OpenGeoSys-6 software, version " +
@@ -131,7 +128,8 @@ int main(int argc, char *argv[])
         WARN("Swapping coordinate values of 3D elements can result in incorrect node-ordering.");
     }
 
-    INFO("Exchange node coordinates from xyz to %s", new_order_arg.getValue().data());
+    INFO("Exchange node coordinates from xyz to {:s}",
+         new_order_arg.getValue().data());
     swapNodeCoordinateAxes(*mesh, new_order);
 
     INFO("Save the new mesh into a file");

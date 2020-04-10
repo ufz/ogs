@@ -15,6 +15,7 @@ set(REQUIRED_SUBMODULES
     ThirdParty/googletest
     ThirdParty/iphreeqc/src
     ThirdParty/json-cmake
+    ThirdParty/spdlog
     ThirdParty/tclap
     ThirdParty/tetgen
     ThirdParty/vtkdiff

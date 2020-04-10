@@ -205,7 +205,7 @@ void findFracutreIntersections(
         BaseLib::makeVectorUnique(eles);
     }
 
-    DBUG("-> found %d branchs and %d junctions",
+    DBUG("-> found {:d} branchs and {:d} junctions",
          vec_branch_nodeID_matIDs.size(), vec_junction_nodeID_matIDs.size());
 }
 
@@ -239,7 +239,7 @@ void getFractureMatrixDataInMesh(
             all_fracture_elements.push_back(e);
         }
     }
-    DBUG("-> found total %d matrix elements and %d fracture elements",
+    DBUG("-> found total {:d} matrix elements and {:d} fracture elements",
          vec_matrix_elements.size(), all_fracture_elements.size());
 
     // get fracture material IDs
@@ -253,7 +253,7 @@ void getFractureMatrixDataInMesh(
         vec_fracture_mat_IDs.push_back((*material_ids)[e->getID()]);
     }
     BaseLib::makeVectorUnique(vec_fracture_mat_IDs);
-    DBUG("-> found %d fracture material groups", vec_fracture_mat_IDs.size());
+    DBUG("-> found {:d} fracture material groups", vec_fracture_mat_IDs.size());
 
     // create a vector of fracture elements for each material
     vec_fracture_elements.resize(vec_fracture_mat_IDs.size());
@@ -267,7 +267,7 @@ void getFractureMatrixDataInMesh(
                      [&](MeshLib::Element* e) {
                          return (*material_ids)[e->getID()] == frac_mat_id;
                      });
-        DBUG("-> found %d elements on the fracture %d", vec_elements.size(),
+        DBUG("-> found {:d} elements on the fracture {:d}", vec_elements.size(),
              frac_id);
     }
 
@@ -291,7 +291,8 @@ void getFractureMatrixDataInMesh(
             vec_nodes, [](MeshLib::Node* node1, MeshLib::Node* node2) {
                 return node1->getID() < node2->getID();
             });
-        DBUG("-> found %d nodes on the fracture %d", vec_nodes.size(), frac_id);
+        DBUG("-> found {:d} nodes on the fracture {:d}", vec_nodes.size(),
+             frac_id);
     }
 
     // find branch/junction nodes which connect to multiple fractures

@@ -12,7 +12,6 @@
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
-#include "Applications/ApplicationsLib/LogogSetup.h"
 #include "Applications/FileIO/GocadIO/GocadAsciiReader.h"
 
 std::string getDelim(std::string const& str)
@@ -24,8 +23,6 @@ std::string getDelim(std::string const& str)
 
 int main(int argc, char* argv[])
 {
-    ApplicationsLib::LogogSetup logog_setup;
-
     TCLAP::CmdLine cmd(
         "Reads Gocad ascii files (*.ts, *.pl, *.mx) and writes TSurf- and PLine"
         "data into one or more VTU unstructured grids.\n\n"
@@ -86,7 +83,7 @@ int main(int argc, char* argv[])
         ERR("Error reading file.");
         return 1;
     }
-    INFO("%d meshes found.", meshes.size());
+    INFO("{:d} meshes found.", meshes.size());
     std::string const dir = output_arg.getValue();
     bool const write_binary = write_binary_arg.getValue();
     std::string const delim = getDelim(dir);
@@ -96,7 +93,7 @@ int main(int argc, char* argv[])
         {
             continue;
         }
-        INFO("Writing mesh \"%s\"", mesh->getName().c_str());
+        INFO("Writing mesh \"{:s}\"", mesh->getName().c_str());
         int data_mode = (write_binary) ? 2 : 0;
         bool compressed = (write_binary);
         MeshLib::IO::VtuInterface vtu(mesh.get(), data_mode, compressed);

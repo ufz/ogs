@@ -56,7 +56,7 @@ std::unique_ptr<MaterialPropertyLib::Phase> createPhase(
         {
             ERR(type.c_str());
         }
-        OGS_FATAL("Wrong phase type '%s' given.", phase_type.c_str());
+        OGS_FATAL("Wrong phase type '{:s}' given.", phase_type.c_str());
     }
 
     // Parsing of optional components.
@@ -75,7 +75,7 @@ std::unique_ptr<MaterialPropertyLib::Phase> createPhase(
     {
         OGS_FATAL(
             "Neither tag <components> nor tag <properties> has been set for "
-            "the phase '%s'.",
+            "the phase '{:s}'.",
             phase_type.c_str());
     }
 
@@ -114,7 +114,7 @@ std::vector<std::unique_ptr<Phase>> createPhases(
                              return p->name == phase_name;
                          }) != phases.end())
         {
-            OGS_FATAL("Found duplicates with the same phase name tag '%s'.",
+            OGS_FATAL("Found duplicates with the same phase name tag '{:s}'.",
                       phase->name.c_str());
         }
 

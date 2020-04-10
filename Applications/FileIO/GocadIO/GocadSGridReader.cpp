@@ -10,13 +10,13 @@
 #include "GocadSGridReader.h"
 
 #include <algorithm>
+#include <boost/tokenizer.hpp>
 #include <cstddef>
 #include <fstream>
 #include <iostream>
 #include <sstream>
 
-#include <boost/tokenizer.hpp>
-
+#include "BaseLib/FileTools.h"
 #include "MeshLib/Elements/Hex.h"
 #include "MeshLib/Elements/Quad.h"
 #include "MeshLib/Mesh.h"
@@ -38,7 +38,7 @@ GocadSGridReader::GocadSGridReader(std::string const& fname)
     std::ifstream in(_fname.c_str());
     if (!in)
     {
-        ERR("Could not open '%s'.", _fname.c_str());
+        ERR("Could not open '{:s}'.", _fname.c_str());
         in.close();
         return;
     }
@@ -108,7 +108,7 @@ GocadSGridReader::GocadSGridReader(std::string const& fname)
             std::size_t bit_length = std::atoi(it->c_str());
             if (regions.size() != bit_length)
             {
-                ERR("%d regions read but %d expected.\n", regions.size(),
+                ERR("{:d} regions read but {:d} expected.\n", regions.size(),
                     bit_length);
                 throw std::runtime_error(
                     "Number of read regions differs from expected.\n");
@@ -131,20 +131,20 @@ GocadSGridReader::GocadSGridReader(std::string const& fname)
     regions_ss << regions.size() << " regions read:\n";
     std::copy(regions.begin(), regions.end(),
               std::ostream_iterator<Gocad::Region>(regions_ss, "\t"));
-    DBUG("%s", regions_ss.str().c_str());
+    DBUG("{:s}", regions_ss.str().c_str());
 
     std::stringstream layers_ss;
     layers_ss << layers.size() << " layers read:\n";
     std::copy(layers.begin(), layers.end(),
               std::ostream_iterator<Gocad::Layer>(layers_ss, "\n"));
-    DBUG("%s", layers_ss.str().c_str());
+    DBUG("{:s}", layers_ss.str().c_str());
 
     std::stringstream properties_ss;
     properties_ss << "meta data for " << _property_meta_data_vecs.size()
                   << " properties read:\n";
     std::copy(_property_meta_data_vecs.begin(), _property_meta_data_vecs.end(),
               std::ostream_iterator<Gocad::Property>(properties_ss, "\n"));
-    DBUG("%s", properties_ss.str().c_str());
+    DBUG("{:s}", properties_ss.str().c_str());
 #endif
 
     // if not done already read the points
@@ -204,14 +204,14 @@ void GocadSGridReader::addGocadPropertiesToMesh(MeshLib::Mesh& mesh) const
             continue;
         }
 
-        DBUG("Adding Gocad property '%s' with %d values.", name.c_str(),
+        DBUG("Adding Gocad property '{:s}' with {:d} values.", name.c_str(),
              prop->_property_data.size());
 
         auto pv = MeshLib::getOrCreateMeshProperty<double>(
             mesh, name, MeshLib::MeshItemType::Cell, 1);
         if (pv == nullptr)
         {
-            ERR("Could not create mesh property '%s'.", name.c_str());
+            ERR("Could not create mesh property '{:s}'.", name.c_str());
             continue;
         }
 
@@ -262,9 +262,11 @@ void GocadSGridReader::parseDims(std::string const& line)
     std::stringstream ssz(*it, std::stringstream::in | std::stringstream::out);
     ssz >> z_dim;
     _index_calculator = Gocad::IndexCalculator(x_dim, y_dim, z_dim);
-    DBUG("x_dim = %d, y_dim = %d, z_dim = %d => #nodes = %d, #cells = %d",
-         x_dim, y_dim, z_dim, _index_calculator._n_nodes,
-         _index_calculator._n_cells);
+    DBUG(
+        "x_dim = {:d}, y_dim = {:d}, z_dim = {:d} => #nodes = {:d}, #cells = "
+        "{:d}",
+        x_dim, y_dim, z_dim, _index_calculator._n_nodes,
+        _index_calculator._n_cells);
 }
 
 void GocadSGridReader::parseFileName(std::string const& line,
@@ -302,7 +304,7 @@ void GocadSGridReader::parseFaceSet(std::string& line, std::istream& in)
     // Check first word is FACE_SET
     if (*it != std::string("FACE_SET"))
     {
-        ERR("Expected FACE_SET keyword but '%s' found.", it->c_str());
+        ERR("Expected FACE_SET keyword but '{:s}' found.", it->c_str());
         throw std::runtime_error(
             "In GocadSGridReader::parseFaceSet() expected FACE_SET keyword not "
             "found.");
@@ -333,7 +335,8 @@ void GocadSGridReader::parseFaceSet(std::string& line, std::istream& in)
 
             if (id >= _index_calculator._n_nodes)
             {
-                ERR("Face set id %d is greater than the number of nodes (%d).",
+                ERR("Face set id {:d} is greater than the number of nodes "
+                    "({:d}).",
                     id, _index_calculator._n_nodes);
             }
             else
@@ -343,11 +346,11 @@ void GocadSGridReader::parseFaceSet(std::string& line, std::istream& in)
                 std::array<std::size_t, 3> const c(
                     _index_calculator.getCoordsForID(id));
                 if (c[0] >= _index_calculator._x_dim - 1)
-                    ERR("****** i coord %d to big for id %d.", c[0], id);
+                    ERR("****** i coord {:d} to big for id {:d}.", c[0], id);
                 if (c[1] >= _index_calculator._y_dim - 1)
-                    ERR("****** j coord %d to big for id %d.", c[1], id);
+                    ERR("****** j coord {:d} to big for id {:d}.", c[1], id);
                 if (c[2] >= _index_calculator._z_dim - 1)
-                    ERR("****** k coord %d to big for id %d.", c[2], id);
+                    ERR("****** k coord {:d} to big for id {:d}.", c[2], id);
                 std::size_t const cell_id(
                     _index_calculator.getCellIdx(c[0], c[1], c[2]));
                 face_set_property._property_data[cell_id] =
@@ -359,8 +362,8 @@ void GocadSGridReader::parseFaceSet(std::string& line, std::istream& in)
 
     if (face_set_id_cnt != n_of_face_set_ids)
     {
-        ERR("Expected %d number of face set ids, read %d.", n_of_face_set_ids,
-            face_set_id_cnt);
+        ERR("Expected {:d} number of face set ids, read {:d}.",
+            n_of_face_set_ids, face_set_id_cnt);
         throw std::runtime_error(
             "Expected number of face set points does not match number of read "
             "points.");
@@ -400,7 +403,7 @@ void GocadSGridReader::readNodesBinary()
     std::ifstream in(_pnts_fname.c_str(), std::ios::binary);
     if (!in)
     {
-        ERR("Could not open points file '%s'.", _pnts_fname.c_str());
+        ERR("Could not open points file '{:s}'.", _pnts_fname.c_str());
         throw std::runtime_error("Could not open points file.");
     }
 
@@ -432,7 +435,8 @@ void GocadSGridReader::readNodesBinary()
         k++;
     }
     if (k != n * 3 && !in.eof())
-        ERR("Read different number of points. Expected %d floats, got %d.\n",
+        ERR("Read different number of points. Expected {:d} floats, got "
+            "{:d}.\n",
             n * 3, k);
 }
 
@@ -441,7 +445,7 @@ void GocadSGridReader::mapRegionFlagsToCellProperties(
 {
     DBUG(
         "GocadSGridReader::mapRegionFlagsToCellProperties region_flags.size: "
-        "%d",
+        "{:d}",
         rf.size());
 
     Gocad::Property region_flags;
@@ -491,14 +495,14 @@ void GocadSGridReader::readElementPropertiesBinary()
         std::string const& fname(prop_it->_property_data_fname);
         if (prop_it->_property_data_fname.empty())
         {
-            WARN("Empty filename for property %s.",
+            WARN("Empty filename for property {:s}.",
                  prop_it->_property_name.c_str());
             continue;
         }
         std::vector<float> float_properties =
             BaseLib::readBinaryArray<float>(fname, _index_calculator._n_cells);
         DBUG(
-            "GocadSGridReader::readElementPropertiesBinary(): Read %d float "
+            "GocadSGridReader::readElementPropertiesBinary(): Read {:d} float "
             "properties from binary file.",
             _index_calculator._n_cells);
 
@@ -512,7 +516,7 @@ void GocadSGridReader::readElementPropertiesBinary()
                   prop_it->_property_data.begin());
         if (prop_it->_property_data.empty())
         {
-            ERR("Reading of element properties file '%s' failed.",
+            ERR("Reading of element properties file '{:s}' failed.",
                 fname.c_str());
         }
     }
@@ -525,7 +529,7 @@ std::vector<Bitset> GocadSGridReader::readRegionFlagsBinary() const
     std::ifstream in(_region_flags_fname.c_str());
     if (!in)
     {
-        ERR("readRegionFlagsBinary(): Could not open file '%s' for input.\n",
+        ERR("readRegionFlagsBinary(): Could not open file '{:s}' for input.\n",
             _region_flags_fname.c_str());
         in.close();
         return result;
@@ -540,7 +544,8 @@ std::vector<Bitset> GocadSGridReader::readRegionFlagsBinary() const
         result[k++] = readBits(in, regions.size());
     }
     if (k != n && !in.eof())
-        ERR("Read different number of values. Expected %d, got %d.\n", n, k);
+        ERR("Read different number of values. Expected {:d}, got {:d}.\n", n,
+            k);
 
     return result;
 }
@@ -580,7 +585,7 @@ void GocadSGridReader::readSplitInformation()
     std::ifstream in(_fname.c_str());
     if (!in)
     {
-        ERR("Could not open '%s'.", _fname.c_str());
+        ERR("Could not open '{:s}'.", _fname.c_str());
         in.close();
         return;
     }
@@ -820,7 +825,7 @@ void GocadSGridReader::addFaceSetQuad(
                 *_nodes[_index_calculator({c[0], c[1] + 1, c[2]})]);
             break;
         default:
-            ERR("Could not create face for node with id %d.", id);
+            ERR("Could not create face for node with id {:d}.", id);
     }
     std::copy(begin(quad_nodes), end(quad_nodes),
               back_inserter(face_set_nodes));

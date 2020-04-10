@@ -20,8 +20,8 @@ PropertyVector<T>* Properties::createNewPropertyVector(
         _properties.find(name)
     );
     if (it != _properties.end()) {
-        ERR("A property of the name '%s' is already assigned to the mesh.",
-            name.c_str());
+        ERR("A property of the name '{:s}' is already assigned to the mesh.",
+            name);
         return nullptr;
     }
     auto entry_info(
@@ -48,8 +48,8 @@ PropertyVector<T>* Properties::createNewPropertyVector(
         _properties.find(name)
     );
     if (it != _properties.end()) {
-        ERR("A property of the name '%s' already assigned to the mesh.",
-            name.c_str());
+        ERR("A property of the name '{:s}' already assigned to the mesh.",
+            name);
         return nullptr;
     }
 
@@ -57,7 +57,9 @@ PropertyVector<T>* Properties::createNewPropertyVector(
     for (std::size_t k(0); k<item2group_mapping.size(); k++) {
         std::size_t const group_id (item2group_mapping[k]);
         if (group_id >= n_prop_groups) {
-            ERR("The mapping to property %d for item %d is not in the correct range [0,%d).", group_id, k, n_prop_groups);
+            ERR("The mapping to property {:d} for item {:d} is not in the "
+                "correct range [0,{:d}).",
+                group_id, k, n_prop_groups);
             return nullptr;
         }
     }
@@ -121,16 +123,15 @@ PropertyVector<T> const* Properties::getPropertyVector(
     auto it(_properties.find(name));
     if (it == _properties.end())
     {
-        OGS_FATAL(
-            "The PropertyVector '%s' is not available in the mesh.",
-            name.c_str());
+        OGS_FATAL("The PropertyVector '{:s}' is not available in the mesh.",
+                  name);
     }
     if (!dynamic_cast<PropertyVector<T> const*>(it->second))
     {
         OGS_FATAL(
-            "The PropertyVector '%s' has a different type than the requested "
+            "The PropertyVector '{:s}' has a different type than the requested "
             "PropertyVector.",
-            name.c_str());
+            name);
     }
     return dynamic_cast<PropertyVector<T> const*>(it->second);
 }
@@ -142,15 +143,15 @@ PropertyVector<T>* Properties::getPropertyVector(std::string const& name)
     if (it == _properties.end())
     {
         OGS_FATAL(
-            "A PropertyVector with the specified name '%s' is not available.",
-            name.c_str());
+            "A PropertyVector with the specified name '{:s}' is not available.",
+            name);
     }
     if (!dynamic_cast<PropertyVector<T>*>(it->second))
     {
         OGS_FATAL(
-            "The PropertyVector '%s' has a different type than the requested "
+            "The PropertyVector '{:s}' has a different type than the requested "
             "PropertyVector.",
-            name.c_str());
+            name);
     }
     return dynamic_cast<PropertyVector<T>*>(it->second);
 }
@@ -163,30 +164,32 @@ PropertyVector<T> const* Properties::getPropertyVector(
     auto const it = _properties.find(name);
     if (it == _properties.end())
     {
-        OGS_FATAL("A PropertyVector with name '%s' does not exist in the mesh.",
-                  name.c_str());
+        OGS_FATAL(
+            "A PropertyVector with name '{:s}' does not exist in the mesh.",
+            name);
     }
 
     auto property = dynamic_cast<PropertyVector<T>*>(it->second);
     if (property == nullptr)
     {
         OGS_FATAL(
-            "Could not cast the data type of the PropertyVector '%s' to "
+            "Could not cast the data type of the PropertyVector '{:s}' to "
             "requested data type.",
-            name.c_str());
+            name);
     }
     if (property->getMeshItemType() != item_type)
     {
         OGS_FATAL(
-            "The PropertyVector '%s' has type '%s'. A '%s' field is requested.",
-            name.c_str(), toString(property->getMeshItemType()),
-            toString(item_type));
+            "The PropertyVector '{:s}' has type '{:s}'. A '{:s}' field is "
+            "requested.",
+            name, toString(property->getMeshItemType()), toString(item_type));
     }
     if (property->getNumberOfComponents() != n_components)
     {
         OGS_FATAL(
-            "PropertyVector '%s' has %d components, %d components are needed.",
-            name.c_str(), property->getNumberOfComponents(), n_components);
+            "PropertyVector '{:s}' has {:d} components, {:d} components are "
+            "needed.",
+            name, property->getNumberOfComponents(), n_components);
     }
     return property;
 }
@@ -199,30 +202,32 @@ PropertyVector<T>* Properties::getPropertyVector(std::string const& name,
     auto const it = _properties.find(name);
     if (it == _properties.end())
     {
-        OGS_FATAL("A PropertyVector with name '%s' does not exist in the mesh.",
-                  name.c_str());
+        OGS_FATAL(
+            "A PropertyVector with name '{:s}' does not exist in the mesh.",
+            name);
     }
 
     auto property = dynamic_cast<PropertyVector<T>*>(it->second);
     if (property == nullptr)
     {
         OGS_FATAL(
-            "Could not cast the data type of the PropertyVector '%s' to "
+            "Could not cast the data type of the PropertyVector '{:s}' to "
             "requested data type.",
-            name.c_str());
+            name);
     }
     if (property->getMeshItemType() != item_type)
     {
         OGS_FATAL(
-            "The PropertyVector '%s' has type '%s'. A '%s' field is requested.",
-            name.c_str(), toString(property->getMeshItemType()),
-            toString(item_type));
+            "The PropertyVector '{:s}' has type '{:s}'. A '{:s}' field is "
+            "requested.",
+            name, toString(property->getMeshItemType()), toString(item_type));
     }
     if (property->getNumberOfComponents() != n_components)
     {
         OGS_FATAL(
-            "PropertyVector '%s' has %d components, %d components are needed.",
-            name.c_str(), property->getNumberOfComponents(), n_components);
+            "PropertyVector '{:s}' has {:d} components, {:d} components are "
+            "needed.",
+            name, property->getNumberOfComponents(), n_components);
     }
     return property;
 }

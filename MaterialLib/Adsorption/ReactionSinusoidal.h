@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "Reaction.h"
 #include "BaseLib/ConfigTree.h"

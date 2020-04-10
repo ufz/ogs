@@ -7,18 +7,18 @@
  *              http://www.opengeosys.org/LICENSE.txt
  */
 
+#include "Applications/FileIO/GocadIO/GocadSGridReader.h"
+
+#include <spdlog/spdlog.h>
+#include <tclap/CmdLine.h>
+
 #include <fstream>
 #include <sstream>
 #include <string>
 
-#include <logog/include/logog.hpp>
-#include <tclap/CmdLine.h>
-
-#include "Applications/ApplicationsLib/LogogSetup.h"
 #include "Applications/FileIO/GocadIO/GenerateFaceSetMeshes.h"
-#include "Applications/FileIO/GocadIO/GocadSGridReader.h"
-#include "InfoLib/GitInfo.h"
 #include "BaseLib/FileTools.h"
+#include "InfoLib/GitInfo.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
@@ -26,8 +26,6 @@
 
 int main(int argc, char* argv[])
 {
-    ApplicationsLib::LogogSetup logog_setup;
-
     TCLAP::CmdLine cmd(
         "Reads a Gocad stratigraphic grid file (file ending sg) and writes the "
         "data in the vtk unstructured grid file format. The documentation is "
@@ -77,7 +75,7 @@ int main(int argc, char* argv[])
     auto property_names(mesh->getProperties().getPropertyVectorNames());
     for (auto const& property_name : property_names)
     {
-        INFO("- %s (#values: %d)", property_name.c_str(),
+        INFO("- {:s} (#values: {:d})", property_name.c_str(),
              mesh->getProperties()
                  .getPropertyVector<double>(property_name)
                  ->size());
@@ -88,10 +86,11 @@ int main(int argc, char* argv[])
                                 mesh->getProperties()
                                     .getPropertyVector<double>(property_name)
                                     ->cend()));
-        INFO("\tvalues in range [%e, %e].", *(bounds.first), *(bounds.second));
+        INFO("\tvalues in range [{:e}, {:e}].", *(bounds.first),
+             *(bounds.second));
     }
 
-    INFO("Writing mesh to '%s'.", mesh_output_arg.getValue().c_str());
+    INFO("Writing mesh to '{:s}'.", mesh_output_arg.getValue().c_str());
     MeshLib::IO::writeMeshToFile(*mesh, mesh_output_arg.getValue());
 
     return 0;

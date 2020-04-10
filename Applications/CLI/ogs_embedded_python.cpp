@@ -11,7 +11,7 @@
 
 #include <pybind11/embed.h>
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "ProcessLib/BoundaryCondition/Python/BHEInflowPythonBoundaryConditionModule.h"
 #include "ProcessLib/BoundaryCondition/Python/PythonBoundaryConditionModule.h"

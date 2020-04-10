@@ -11,7 +11,7 @@
 #include "SimpleMatrixVectorProvider.h"
 
 #include <cassert>
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "BaseLib/Error.h"
 #include "MathLib/LinAlg/LinAlg.h"

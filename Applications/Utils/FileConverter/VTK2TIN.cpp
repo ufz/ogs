@@ -13,11 +13,9 @@
 
 #include <tclap/CmdLine.h>
 
-#include "Applications/ApplicationsLib/LogogSetup.h"
-
 // BaseLib
 #include "InfoLib/GitInfo.h"
-#include "BaseLib/LogogSimpleFormatter.h"
+#include "BaseLib/Logging.h"
 
 // GeoLib
 #include "GeoLib/GEOObjects.h"
@@ -35,8 +33,6 @@
 
 int main (int argc, char* argv[])
 {
-    ApplicationsLib::LogogSetup logog_setup;
-
     TCLAP::CmdLine cmd(
         "Converts VTK mesh into TIN file.\n\n"
         "OpenGeoSys-6 software, version " +
@@ -56,7 +52,8 @@ int main (int argc, char* argv[])
     cmd.parse(argc, argv);
 
     std::unique_ptr<MeshLib::Mesh> mesh (MeshLib::IO::VtuInterface::readVTUFile(mesh_in.getValue()));
-    INFO("Mesh read: %d nodes, %d elements.", mesh->getNumberOfNodes(), mesh->getNumberOfElements());
+    INFO("Mesh read: {:d} nodes, {:d} elements.", mesh->getNumberOfNodes(),
+         mesh->getNumberOfElements());
 
     INFO("Converting the mesh to TIN");
     GeoLib::GEOObjects geo_objects;

@@ -10,7 +10,7 @@
 
 #include "EigenLinearSolver.h"
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #ifdef USE_MKL
 #include <Eigen/PardisoSupport>
@@ -55,7 +55,7 @@ class EigenDirectLinearSolver final : public EigenLinearSolverBase
 public:
     bool solve(Matrix& A, Vector const& b, Vector& x, EigenOption& opt) override
     {
-        INFO("-> solve with %s",
+        INFO("-> solve with {:s}",
              EigenOption::getSolverName(opt.solver_type).c_str());
         if (!A.isCompressed())
         {
@@ -88,7 +88,7 @@ class EigenIterativeLinearSolver final : public EigenLinearSolverBase
 public:
     bool solve(Matrix& A, Vector const& b, Vector& x, EigenOption& opt) override
     {
-        INFO("-> solve with %s (precon %s)",
+        INFO("-> solve with {:s} (precon {:s})",
              EigenOption::getSolverName(opt.solver_type).c_str(),
              EigenOption::getPreconName(opt.precon_type).c_str());
         _solver.setTolerance(opt.error_tolerance);
@@ -106,8 +106,9 @@ public:
         }
 
         x = _solver.solveWithGuess(b, x);
-        INFO("\t iteration: %d/%ld", _solver.iterations(), opt.max_iterations);
-        INFO("\t residual: %e\n", _solver.error());
+        INFO("\t iteration: {:d}/{:d}", _solver.iterations(),
+             opt.max_iterations);
+        INFO("\t residual: {:e}\n", _solver.error());
 
         if(_solver.info()!=Eigen::Success) {
             ERR("Failed during Eigen linear solve");

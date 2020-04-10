@@ -15,7 +15,7 @@
 
 #include "NodePartitionedMeshReader.h"
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #ifdef USE_PETSC
 #include <mpi.h>
@@ -35,8 +35,9 @@ is_safely_convertable(VALUE const& value)
     bool const result = value <= std::numeric_limits<TYPE>::max();
     if (!result)
     {
-        ERR("The value %d is too large for conversion.", value);
-        ERR("Maximum available size is %d.", std::numeric_limits<TYPE>::max());
+        ERR("The value {:d} is too large for conversion.", value);
+        ERR("Maximum available size is {:d}.",
+            std::numeric_limits<TYPE>::max());
     }
     return result;
 }
@@ -95,7 +96,7 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::read(
         mesh = readBinary(file_name_base);
     }
 
-    INFO("[time] Reading the mesh took %f s.", timer.elapsed());
+    INFO("[time] Reading the mesh took {:f} s.", timer.elapsed());
 
     MPI_Barrier(_mpi_comm);
 
@@ -123,7 +124,8 @@ NodePartitionedMeshReader::readBinaryDataFromFile(std::string const& filename,
 
     if(file_status != 0)
     {
-        ERR("Error opening file %s. MPI error code %d", filename.c_str(), file_status);
+        ERR("Error opening file {:s}. MPI error code {:d}", filename.c_str(),
+            file_status);
         return false;
     }
 
@@ -217,9 +219,11 @@ void NodePartitionedMeshReader::readPropertiesBinary(
     std::ifstream is(fname_cfg.c_str(), std::ios::binary | std::ios::in);
     if (!is)
     {
-        WARN("Could not open file '%s'.\n"
-             "\tYou can ignore this warning if the mesh does not contain %s-"
-             "wise property data.", fname_cfg.c_str(), item_type.data());
+        WARN(
+            "Could not open file '{:s}'.\n"
+            "\tYou can ignore this warning if the mesh does not contain {:s}-"
+            "wise property data.",
+            fname_cfg.c_str(), item_type.data());
         return;
     }
     std::size_t number_of_properties = 0;
@@ -233,15 +237,15 @@ void NodePartitionedMeshReader::readPropertiesBinary(
         {
             OGS_FATAL(
                 "Error in NodePartitionedMeshReader::readPropertiesBinary: "
-                "Could not read the meta data for the PropertyVector %d",
+                "Could not read the meta data for the PropertyVector {:d}",
                 i);
         }
     }
     for (std::size_t i(0); i < number_of_properties; ++i)
     {
-        DBUG("[%d] +++++++++++++", _mpi_rank);
+        DBUG("[{:d}] +++++++++++++", _mpi_rank);
         MeshLib::IO::writePropertyVectorMetaData(*(vec_pvmd[i]));
-        DBUG("[%d] +++++++++++++", _mpi_rank);
+        DBUG("[{:d}] +++++++++++++", _mpi_rank);
     }
     auto pos = is.tellg();
     auto offset =
@@ -259,11 +263,12 @@ void NodePartitionedMeshReader::readPropertiesBinary(
     {
         OGS_FATAL(
             "Error in NodePartitionedMeshReader::readPropertiesBinary: "
-            "Could not read the partition meta data for the mpi process %d",
+            "Could not read the partition meta data for the mpi process {:d}",
             _mpi_rank);
     }
-    DBUG("[%d] offset in the PropertyVector: %d", _mpi_rank, pvpmd->offset);
-    DBUG("[%d] %d tuples in partition.", _mpi_rank, pvpmd->number_of_tuples);
+    DBUG("[{:d}] offset in the PropertyVector: {:d}", _mpi_rank, pvpmd->offset);
+    DBUG("[{:d}] {:d} tuples in partition.", _mpi_rank,
+         pvpmd->number_of_tuples);
     is.close();
 
     const std::string fname_val = file_name_base + "_partitioned_" + item_type +
@@ -272,9 +277,10 @@ void NodePartitionedMeshReader::readPropertiesBinary(
     is.open(fname_val.c_str(), std::ios::binary | std::ios::in);
     if (!is)
     {
-        ERR("Could not open file '%s'\n."
-            "\tYou can ignore this warning if the mesh does not contain %s-"
-             "wise property data.", fname_val.c_str(), item_type.data());
+        ERR("Could not open file '{:s}'\n."
+            "\tYou can ignore this warning if the mesh does not contain {:s}-"
+            "wise property data.",
+            fname_val.c_str(), item_type.data());
     }
 
     readDomainSpecificPartOfPropertyVectors(vec_pvmd, *pvpmd, t, is, p);
@@ -292,10 +298,12 @@ void NodePartitionedMeshReader::readDomainSpecificPartOfPropertyVectors(
     std::size_t const number_of_properties = vec_pvmd.size();
     for (std::size_t i(0); i < number_of_properties; ++i)
     {
-        DBUG("[%d] global offset: %d, offset within the PropertyVector: %d.",
-             _mpi_rank, global_offset,
-             global_offset +
-                 pvpmd.offset * vec_pvmd[i]->data_type_size_in_bytes);
+        DBUG(
+            "[{:d}] global offset: {:d}, offset within the PropertyVector: "
+            "{:d}.",
+            _mpi_rank, global_offset,
+            global_offset +
+                pvpmd.offset * vec_pvmd[i]->data_type_size_in_bytes);
         if (vec_pvmd[i]->is_int_type)
         {
             if (vec_pvmd[i]->is_data_type_signed)
@@ -347,7 +355,7 @@ bool NodePartitionedMeshReader::openASCIIFiles(
 
         if( !is_cfg.good() )
         {
-            ERR("Error opening file %s for input.", filename.c_str());
+            ERR("Error opening file {:s} for input.", filename.c_str());
             return false;
         }
 
@@ -369,7 +377,7 @@ bool NodePartitionedMeshReader::openASCIIFiles(
         is_node.open(filename);
         if( !is_node.good() )
         {
-            ERR("Error opening file %s for input.", filename.c_str());
+            ERR("Error opening file {:s} for input.", filename.c_str());
             return false;
         }
     }
@@ -379,7 +387,7 @@ bool NodePartitionedMeshReader::openASCIIFiles(
         is_elem.open(filename);
         if( !is_elem.good() )
         {
-            ERR("Error opening file %s for input.", filename.c_str());
+            ERR("Error opening file {:s} for input.", filename.c_str());
             return false;
         }
     }
@@ -665,7 +673,7 @@ void NodePartitionedMeshReader::setElements(
             default:
                 OGS_FATAL(
                     "NodePartitionedMeshReader: construction of element type "
-                    "%d is not implemented.",
+                    "{:d} is not implemented.",
                     e_type);
         }
     }

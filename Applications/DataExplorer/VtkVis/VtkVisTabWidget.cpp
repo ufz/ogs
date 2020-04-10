@@ -22,7 +22,7 @@
 #include "VtkVisImageItem.h"
 #include "VtkVisPipelineItem.h"
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include <vtkActor.h>
 #include <vtkImageChangeInformation.h>

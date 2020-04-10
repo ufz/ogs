@@ -11,7 +11,7 @@
 #include <fstream>
 #include <limits>
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "BaseLib/FileTools.h"
 #include "BaseLib/StringTools.h"
@@ -34,7 +34,7 @@ GeoLib::Surface* TINInterface::readTIN(std::string const& fname,
     // open file
     std::ifstream in(fname.c_str());
     if (!in) {
-        WARN("readTIN(): could not open stream from %s.", fname.c_str());
+        WARN("readTIN(): could not open stream from {:s}.", fname.c_str());
         if (errors)
         {
             errors->push_back("readTINFile error opening stream from " + fname);
@@ -66,7 +66,7 @@ GeoLib::Surface* TINInterface::readTIN(std::string const& fname,
         }
         // read first point
         if (!(input >> p0[0] >> p0[1] >> p0[2])) {
-            ERR("Could not read coords of 1st point of triangle %d.", id);
+            ERR("Could not read coords of 1st point of triangle {:d}.", id);
             if (errors)
             {
                 errors->push_back(
@@ -81,7 +81,7 @@ GeoLib::Surface* TINInterface::readTIN(std::string const& fname,
         }
         // read second point
         if (!(input >> p1[0] >> p1[1] >> p1[2])) {
-            ERR("Could not read coords of 2nd point of triangle %d.", id);
+            ERR("Could not read coords of 2nd point of triangle {:d}.", id);
             if (errors)
             {
                 errors->push_back(
@@ -96,7 +96,7 @@ GeoLib::Surface* TINInterface::readTIN(std::string const& fname,
         }
         // read third point
         if (!(input >> p2[0] >> p2[1] >> p2[2])) {
-            ERR("Could not read coords of 3rd point of triangle %d.", id);
+            ERR("Could not read coords of 3rd point of triangle {:d}.", id);
             if (errors)
             {
                 errors->push_back(
@@ -113,7 +113,7 @@ GeoLib::Surface* TINInterface::readTIN(std::string const& fname,
         // check area of triangle
         double const d_eps(std::numeric_limits<double>::epsilon());
         if (MathLib::calcTriangleArea(p0, p1, p2) < d_eps) {
-            ERR("readTIN: Triangle %d has zero area.", id);
+            ERR("readTIN: Triangle {:d} has zero area.", id);
             if (errors)
             {
                 errors->push_back(std::string("readTIN: Triangle ") +
@@ -156,7 +156,8 @@ void TINInterface::writeSurfaceAsTIN(GeoLib::Surface const& surface, std::string
 {
     std::ofstream os (file_name.c_str());
     if (!os) {
-        WARN("writeSurfaceAsTIN(): could not open stream to %s.", file_name.c_str());
+        WARN("writeSurfaceAsTIN(): could not open stream to {:s}.",
+             file_name.c_str());
         return;
     }
     os.precision(std::numeric_limits<double>::digits10);

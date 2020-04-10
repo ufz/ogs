@@ -11,7 +11,7 @@
 #pragma once
 
 #include <boost/optional.hpp>
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include <Eigen/Dense>
 
@@ -71,20 +71,21 @@ public:
 
             increment.noalias() =
                 _linear_solver.compute(jacobian).solve(-residual);
-            // DBUG("Local linear solver accuracy |J dx - r| = %g",
+            // DBUG("Local linear solver accuracy |J dx - r| = {:g}",
             //      (jacobian * increment + residual).norm());
 
             _solution_update(increment);
 
-            // DBUG("Local Newton: Iteration #%d |dx| = %g, |r| = %g",
+            // DBUG("Local Newton: Iteration #{:d} |dx| = {:g}, |r| = {:g}",
             //      iteration, increment.norm(), residual.norm());
         } while (iteration++ < _maximum_iterations);
 
         if (iteration > _maximum_iterations)
         {
             ERR("The local Newton method did not converge within the given "
-                "number of iterations. Iteration: %d, increment %g, residual: "
-                "%g",
+                "number of iterations. Iteration: {:d}, increment {:g}, "
+                "residual: "
+                "{:g}",
                 iteration - 1, increment.norm(), residual.norm());
             return {};
         }

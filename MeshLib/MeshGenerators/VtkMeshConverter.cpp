@@ -229,7 +229,7 @@ MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(
             }
             default:
                 ERR("VtkMeshConverter::convertUnstructuredGrid(): Unknown mesh "
-                    "element type '%d'.",
+                    "element type '{:d}'.",
                     cell_type);
                 return nullptr;
         }
@@ -343,7 +343,7 @@ void VtkMeshConverter::convertArray(vtkDataArray& array,
     }
 
     WARN(
-        "Array '%s' in VTU file uses unsupported data type '%s'. The data "
+        "Array '{:s}' in VTU file uses unsupported data type '{:s}'. The data "
         "array will not be available.",
         array.GetName(), array.GetDataTypeAsString());
 }

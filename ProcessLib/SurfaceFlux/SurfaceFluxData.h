@@ -10,11 +10,11 @@
 
 #pragma once
 
-#include <logog/include/logog.hpp>
-
 #include <memory>
 #include <string>
 
+#include "BaseLib/FileTools.h"
+#include "BaseLib/Logging.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 // TODO used for output, if output classes are ready this has to be changed
 #include "MeshLib/IO/writeMeshToFile.h"
@@ -42,8 +42,9 @@ struct SurfaceFluxData
           output_mesh_file_name(std::move(surfaceflux_output_mesh_file_name))
     {
         DBUG(
-            "read surfaceflux meta data:\n\tsurfaceflux mesh:'%s'\n\tproperty "
-            "name: '%s'\n\toutput to: '%s'",
+            "read surfaceflux meta data:\n\tsurfaceflux "
+            "mesh:'{:s}'\n\tproperty "
+            "name: '{:s}'\n\toutput to: '{:s}'",
             mesh_name.c_str(), property_vector_name.c_str(),
             output_mesh_file_name.c_str());
     }

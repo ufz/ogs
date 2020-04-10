@@ -53,8 +53,8 @@ public:
                 auto it = lower_bound(begin(mesh_nodes), end(mesh_nodes), n);
                 if (it == end(mesh_nodes))
                 {
-                    ERR("A node %d (%g, %g, %g) in mesh subset is not a part "
-                        "of the mesh.",
+                    ERR("A node {:d} ({:g}, {:g}, {:g}) in mesh subset is not "
+                        "a part of the mesh.",
                         n->getID(), (*n)[0], (*n)[1], (*n)[2]);
                     return false;
                 }

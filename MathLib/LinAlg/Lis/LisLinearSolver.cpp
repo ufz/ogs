@@ -18,7 +18,7 @@
 
 #include "LisLinearSolver.h"
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "LisCheck.h"
 #include "LisMatrix.h"
@@ -50,21 +50,21 @@ bool LisLinearSolver::solve(LisMatrix &A, LisVector &b, LisVector &x)
     lis_solver_set_option(
         const_cast<char*>(_lis_option._option_string.c_str()), solver);
 #ifdef _OPENMP
-    INFO("-> number of threads: %i", (int) omp_get_max_threads());
+    INFO("-> number of threads: {:i}", (int)omp_get_max_threads());
 #endif
     {
         int precon;
         ierr = lis_solver_get_precon(solver, &precon);
         if (!checkLisError(ierr))
             return false;
-        INFO("-> precon: %i", precon);
+        INFO("-> precon: {:i}", precon);
     }
     {
         int slv;
         ierr = lis_solver_get_solver(solver, &slv);
         if (!checkLisError(ierr))
             return false;
-        INFO("-> solver: %i", slv);
+        INFO("-> solver: {:i}", slv);
     }
 
     // solve
@@ -78,7 +78,7 @@ bool LisLinearSolver::solve(LisMatrix &A, LisVector &b, LisVector &x)
     if (!checkLisError(ierr))
         return false;
 
-    INFO("-> status: %d", linear_solver_status);
+    INFO("-> status: {:d}", linear_solver_status);
 
     {
         int iter = 0;
@@ -86,14 +86,14 @@ bool LisLinearSolver::solve(LisMatrix &A, LisVector &b, LisVector &x)
         if (!checkLisError(ierr))
             return false;
 
-        INFO("-> iteration: %d", iter);
+        INFO("-> iteration: {:d}", iter);
     }
     {
         double resid = 0.0;
         ierr = lis_solver_get_residualnorm(solver, &resid);
         if (!checkLisError(ierr))
             return false;
-        INFO("-> residual: %g", resid);
+        INFO("-> residual: {:g}", resid);
     }
     {
         double time, itime, ptime, p_ctime, p_itime;
@@ -101,11 +101,11 @@ bool LisLinearSolver::solve(LisMatrix &A, LisVector &b, LisVector &x)
                                      &ptime, &p_ctime, &p_itime);
         if (!checkLisError(ierr))
             return false;
-        INFO("-> time total           (s): %g", time);
-        INFO("-> time iterations      (s): %g", itime);
-        INFO("-> time preconditioning (s): %g", ptime);
-        INFO("-> time precond. create (s): %g", p_ctime);
-        INFO("-> time precond. iter   (s): %g", p_itime);
+        INFO("-> time total           (s): {:g}", time);
+        INFO("-> time iterations      (s): {:g}", itime);
+        INFO("-> time preconditioning (s): {:g}", ptime);
+        INFO("-> time precond. create (s): {:g}", p_ctime);
+        INFO("-> time precond. iter   (s): {:g}", p_itime);
     }
 
     // Clear solver

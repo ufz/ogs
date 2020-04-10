@@ -44,7 +44,7 @@ std::unique_ptr<MeshGeoToolsLib::SearchLength> createSearchLengthAlgorithm(
         //! \ogs_file_param_special{prj__search_length_algorithm__heuristic}
         return std::make_unique<HeuristicSearchLength>(mesh);
     }
-    OGS_FATAL("Unknown search length algorithm type '%s'.", type.c_str());
+    OGS_FATAL("Unknown search length algorithm type '{:s}'.", type.c_str());
 }
 
 }  // end namespace MeshGeoToolsLib

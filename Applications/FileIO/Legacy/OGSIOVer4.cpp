@@ -18,7 +18,7 @@
 #include <limits>
 #include <sstream>
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "Applications/FileIO/Legacy/createSurface.h"
 
@@ -101,7 +101,10 @@ std::string readPoints(std::istream &in, std::vector<GeoLib::Point*>* pnt_vec,
 
             std::size_t id_pos (line.find("$ID"));
             if (id_pos != std::string::npos)
-                WARN("readPoints(): found tag $ID - please use tag $NAME for reading point names in point %d.", cnt);
+                WARN(
+                    "readPoints(): found tag $ID - please use tag $NAME for "
+                    "reading point names in point {:d}.",
+                    cnt);
             cnt++;
         }
         getline(in, line);
@@ -120,7 +123,8 @@ void readPolylinePointVector(const std::string &fname,
     // open file
     std::ifstream in((path + fname).c_str());
     if (!in) {
-        WARN("readPolylinePointVector(): error opening stream from %s", fname.c_str());
+        WARN("readPolylinePointVector(): error opening stream from {:s}",
+             fname.c_str());
         errors.push_back ("[readPolylinePointVector] error opening stream from " + fname);
         return;
     }
@@ -410,7 +414,10 @@ std::string readSurface(std::istream& in,
             }
             else
             {
-                WARN("readSurface(): cannot create surface %s from polyline %d since polyline is not closed.",  name.c_str(), ply_id);
+                WARN(
+                    "readSurface(): cannot create surface {:s} from polyline "
+                    "{:d} since polyline is not closed.",
+                    name.c_str(), ply_id);
             }
         }
     }
@@ -481,10 +488,10 @@ bool readGLIFileV4(const std::string& fname,
                    std::vector<std::string>& errors,
                    std::string const& gmsh_path)
 {
-    INFO("GeoLib::readGLIFile(): open stream from file %s.", fname.c_str());
+    INFO("GeoLib::readGLIFile(): open stream from file {:s}.", fname.c_str());
     std::ifstream in(fname.c_str());
     if (!in) {
-        WARN("GeoLib::readGLIFile(): could not open file %s.", fname.c_str());
+        WARN("GeoLib::readGLIFile(): could not open file {:s}.", fname.c_str());
         errors.push_back("[readGLIFileV4] error opening stream from " + fname);
         return false;
     }
@@ -505,7 +512,7 @@ bool readGLIFileV4(const std::string& fname,
     auto pnt_vec = std::make_unique<std::vector<GeoLib::Point*>>();
     INFO("GeoLib::readGLIFile(): read points from stream.");
     tag = readPoints(in, pnt_vec.get(), zero_based_idx, pnt_id_names_map.get());
-    INFO("GeoLib::readGLIFile(): \t ok, %d points read.", pnt_vec->size());
+    INFO("GeoLib::readGLIFile(): \t ok, {:d} points read.", pnt_vec->size());
 
     unique_name = BaseLib::extractBaseName(fname);
     if (!pnt_vec->empty())
@@ -530,7 +537,8 @@ bool readGLIFileV4(const std::string& fname,
         tag = readPolylines(in, ply_vec.get(), *ply_names, *geo_pnt_vec,
                             zero_based_idx,
                             geo.getPointVecObj(unique_name)->getIDMap(), path, errors);
-        INFO("GeoLib::readGLIFile(): \t ok, %d polylines read.", ply_vec->size());
+        INFO("GeoLib::readGLIFile(): \t ok, {:d} polylines read.",
+             ply_vec->size());
     }
     else
         INFO("GeoLib::readGLIFile(): tag #POLYLINE not found.");
@@ -560,7 +568,8 @@ bool readGLIFileV4(const std::string& fname,
         readSurfaces(in, *sfc_vec, *sfc_names, *geo.getPolylineVec(unique_name),
                      ply_names_copy, point_vec, path, errors, geo, unique_name,
                      gmsh_path);
-        INFO("GeoLib::readGLIFile(): \tok, %d surfaces read.", sfc_vec->size());
+        INFO("GeoLib::readGLIFile(): \tok, {:d} surfaces read.",
+             sfc_vec->size());
     }
     else
     {
@@ -611,7 +620,8 @@ void writeGLIFileV4 (const std::string& fname,
     std::ofstream os (fname.c_str());
     if (pnts) {
         const std::size_t n_pnts(pnts->size());
-        INFO("GeoLib::writeGLIFileV4(): writing %d points to file %s.", n_pnts, fname.c_str());
+        INFO("GeoLib::writeGLIFileV4(): writing {:d} points to file {:s}.",
+             n_pnts, fname.c_str());
         os << "#POINTS" << "\n";
         os.precision(std::numeric_limits<double>::digits10);
         for (std::size_t k(0); k < n_pnts; k++) {
@@ -628,8 +638,8 @@ void writeGLIFileV4 (const std::string& fname,
     if (plys_vec)
     {
         const std::vector<GeoLib::Polyline*>* plys (plys_vec->getVector());
-        INFO("GeoLib::writeGLIFileV4(): %d polylines to file %s.",
-             plys->size (), fname.c_str());
+        INFO("GeoLib::writeGLIFileV4(): {:d} polylines to file {:s}.",
+             plys->size(), fname.c_str());
         for (auto ply : *plys)
         {
             os << "#POLYLINE" << "\n";
@@ -691,7 +701,7 @@ void writeAllDataToGLIFileV4 (const std::string& fname, const GeoLib::GEOObjects
         }
     }
 
-    INFO("GeoLib::writeAllDataToGLIFileV4(): wrote %d points.", pnts_offset);
+    INFO("GeoLib::writeAllDataToGLIFileV4(): wrote {:d} points.", pnts_offset);
 
     // writing all stations
     std::vector<std::string> stn_names;

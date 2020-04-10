@@ -37,8 +37,9 @@ GenericNaturalBoundaryCondition<BoundaryConditionData,
             dof_table_bulk.getNumberOfVariableComponents(variable_id))
     {
         OGS_FATAL(
-            "Variable id or component id too high. Actual values: (%d, %d), "
-            "maximum values: (%d, %d).",
+            "Variable id or component id too high. Actual values: ({:d}, "
+            "{:d}), "
+            "maximum values: ({:d}, {:d}).",
             variable_id, component_id, dof_table_bulk.getNumberOfVariables(),
             dof_table_bulk.getNumberOfVariableComponents(variable_id));
     }
@@ -48,13 +49,15 @@ GenericNaturalBoundaryCondition<BoundaryConditionData,
     {
         OGS_FATAL(
             "The required bulk node ids map does not exist in the boundary "
-            "mesh '%s'.",
+            "mesh '{:s}'.",
             _bc_mesh.getName().c_str());
     }
 
     std::vector<MeshLib::Node*> const& bc_nodes = _bc_mesh.getNodes();
-    DBUG("Found %d nodes for Natural BCs for the variable %d and component %d",
-         bc_nodes.size(), variable_id, component_id);
+    DBUG(
+        "Found {:d} nodes for Natural BCs for the variable {:d} and component "
+        "{:d}",
+        bc_nodes.size(), variable_id, component_id);
 
     MeshLib::MeshSubset bc_mesh_subset(_bc_mesh, bc_nodes);
 

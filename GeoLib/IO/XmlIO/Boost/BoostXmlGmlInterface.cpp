@@ -15,7 +15,7 @@
 #include "BoostXmlGmlInterface.h"
 
 #include <boost/property_tree/xml_parser.hpp>
-#include <logog/include/logog.hpp>
+#include "BaseLib/Logging.h"
 
 #include "BaseLib/Algorithm.h"
 #include "BaseLib/ConfigTreeUtil.h"
@@ -169,7 +169,7 @@ void BoostXmlGmlInterface::readPolylines(
                 if (search == _idx_map.end())
                 {
                     OGS_FATAL(
-                        "Polyline `%s' contains the point id `%d', but the "
+                        "Polyline `{:s}' contains the point id `{:d}', but the "
                         "id is not in the point list.",
                         p_name->c_str(), pt_idx);
                 }
@@ -231,8 +231,9 @@ void BoostXmlGmlInterface::readSurfaces(
                     if (search == _idx_map.end())
                     {
                         OGS_FATAL(
-                            "The element list of the surface `%s' contains the "
-                            "invalid point id `%d'.",
+                            "The element list of the surface `{:s}' contains "
+                            "the "
+                            "invalid point id `{:d}'.",
                             s_name->c_str(), pt_idx);
                     }
                     return search->second;
@@ -262,7 +263,7 @@ bool BoostXmlGmlInterface::write()
     GeoLib::PointVec const*const pnt_vec(_geo_objects.getPointVecObj(_exportName));
     if (! pnt_vec) {
         ERR("BoostXmlGmlInterface::write(): No PointVec within the geometry "
-            "'%s'.",
+            "'{:s}'.",
             _exportName.c_str());
         return false;
     }
@@ -270,13 +271,13 @@ bool BoostXmlGmlInterface::write()
     std::vector<GeoLib::Point*> const*const pnts(pnt_vec->getVector());
     if (! pnts) {
         ERR("BoostXmlGmlInterface::write(): No vector of points within the "
-            "geometry '%s'.",
+            "geometry '{:s}'.",
             _exportName.c_str());
         return false;
     }
     if (pnts->empty()) {
         ERR("BoostXmlGmlInterface::write(): No points within the geometry "
-            "'%s'.",
+            "'{:s}'.",
             _exportName.c_str());
         return false;
     }
@@ -320,7 +321,7 @@ void BoostXmlGmlInterface::addSurfacesToPropertyTree(
     if (!sfc_vec) {
         INFO(
             "BoostXmlGmlInterface::addSurfacesToPropertyTree(): "
-            "No surfaces within the geometry '%s'.",
+            "No surfaces within the geometry '{:s}'.",
             _exportName.c_str());
         return;
     }
@@ -330,7 +331,7 @@ void BoostXmlGmlInterface::addSurfacesToPropertyTree(
     {
         INFO(
             "BoostXmlGmlInterface::addSurfacesToPropertyTree(): "
-            "No surfaces within the geometry '%s'.",
+            "No surfaces within the geometry '{:s}'.",
             _exportName.c_str());
         return;
     }
@@ -362,7 +363,7 @@ void BoostXmlGmlInterface::addPolylinesToPropertyTree(
     if (!vec) {
         INFO(
             "BoostXmlGmlInterface::addPolylinesToPropertyTree(): "
-            "No polylines within the geometry '%s'.",
+            "No polylines within the geometry '{:s}'.",
             _exportName.c_str());
         return;
     }
@@ -372,7 +373,7 @@ void BoostXmlGmlInterface::addPolylinesToPropertyTree(
     {
         INFO(
             "BoostXmlGmlInterface::addPolylinesToPropertyTree(): "
-            "No polylines within the geometry '%s'.",
+            "No polylines within the geometry '{:s}'.",
             _exportName.c_str());
         return;
     }
