@@ -13,7 +13,6 @@
 
 #pragma once
 
-#include "BaseLib/Logging.h"
 
 #include "NumLib/Function/Interpolation.h"
 

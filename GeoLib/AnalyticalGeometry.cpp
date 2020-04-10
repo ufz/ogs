@@ -18,7 +18,6 @@
 #include <cmath>
 #include <limits>
 
-#include "BaseLib/Logging.h"
 
 #include <Eigen/Dense>
 

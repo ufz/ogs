@@ -14,7 +14,6 @@
 
 #include "StationTreeModel.h"
 
-#include "BaseLib/Logging.h"
 
 #include "BaseItem.h"
 #include "OGSError.h"

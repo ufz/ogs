@@ -10,7 +10,6 @@
 
 #pragma once
 
-#include "BaseLib/Logging.h"
 
 #include "BaseLib/Error.h"
 #include "ODESolver.h"

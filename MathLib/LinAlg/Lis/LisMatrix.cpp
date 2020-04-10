@@ -17,7 +17,6 @@
 #include <cmath>
 #include <cstdlib>
 
-#include "BaseLib/Logging.h"
 
 #include "BaseLib/Error.h"
 #include "LisVector.h"

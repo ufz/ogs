@@ -13,7 +13,6 @@
 #include <functional>
 #include <memory>
 
-#include "BaseLib/Logging.h"
 
 #include "NumLib/ODESolver/NonlinearSolver.h"
 #include "NumLib/TimeStepping/Algorithms/TimeStepAlgorithm.h"

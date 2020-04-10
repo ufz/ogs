@@ -10,7 +10,6 @@
 
 #include <cassert>
 
-#include "BaseLib/Logging.h"
 
 #include "MathLib/Nonlinear/Root1D.h"
 #include "MathLib/ODE/ODESolverBuilder.h"

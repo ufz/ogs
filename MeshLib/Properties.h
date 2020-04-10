@@ -16,7 +16,6 @@
 #include <string>
 #include <map>
 
-#include "BaseLib/Logging.h"
 
 #include "Location.h"
 

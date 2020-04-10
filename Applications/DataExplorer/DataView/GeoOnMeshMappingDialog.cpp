@@ -15,7 +15,6 @@
 #include "GeoOnMeshMappingDialog.h"
 #include "Mesh.h"
 
-#include "BaseLib/Logging.h"
 
 #include "OGSError.h"
 
