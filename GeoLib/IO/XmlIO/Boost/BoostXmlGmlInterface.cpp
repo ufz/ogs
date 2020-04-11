@@ -45,12 +45,10 @@ bool BoostXmlGmlInterface::readFile(const std::string &fname)
     doc->ignoreConfigAttribute("xsi:noNamespaceSchemaLocation");
     doc->ignoreConfigAttribute("xmlns:ogs");
 
-    auto points = std::make_unique<std::vector<GeoLib::Point*>>();
     auto polylines = std::make_unique<std::vector<GeoLib::Polyline*>>();
     auto surfaces = std::make_unique<std::vector<GeoLib::Surface*>>();
 
     using MapNameId = std::map<std::string, std::size_t>;
-    auto pnt_names = std::make_unique<MapNameId>();
     auto ply_names = std::make_unique<MapNameId>();
     auto sfc_names = std::make_unique<MapNameId>();
 
@@ -64,6 +62,8 @@ bool BoostXmlGmlInterface::readFile(const std::string &fname)
     //! \ogs_file_param{gml__points}
     for (auto st : doc->getConfigSubtreeList("points"))
     {
+        auto points = std::make_unique<std::vector<GeoLib::Point*>>();
+        auto pnt_names = std::make_unique<MapNameId>();
         readPoints(st, *points, *pnt_names);
         _geo_objects.addPointVec(std::move(points), geo_name,
                                  std::move(pnt_names));
