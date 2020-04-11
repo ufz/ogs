@@ -46,4 +46,4 @@ std::unique_ptr<CurveProperty> createCurveProperty(
     return std::make_unique<CurveProperty>(independent_variable, curve);
 }
 
-}  // namespace ParameterLib
+}  // namespace MaterialPropertyLib
