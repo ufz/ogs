@@ -488,14 +488,12 @@ void GocadSGridReader::mapRegionFlagsToCellProperties(
 
 void GocadSGridReader::readElementPropertiesBinary()
 {
-    for (auto prop_it(_property_meta_data_vecs.begin());
-         prop_it != _property_meta_data_vecs.end();
-         prop_it++)
+    for (auto& property : _property_meta_data_vecs)
     {
-        std::string const& fname(prop_it->_property_data_fname);
-        if (prop_it->_property_data_fname.empty())
+        std::string const& fname(property._property_data_fname);
+        if (property._property_data_fname.empty())
         {
-            WARN("Empty filename for property {:s}.", prop_it->_property_name);
+            WARN("Empty filename for property {:s}.", property._property_name);
             continue;
         }
         std::vector<float> float_properties =
@@ -510,10 +508,10 @@ void GocadSGridReader::readElementPropertiesBinary()
                            return BaseLib::swapEndianness(val);
                        });
 
-        prop_it->_property_data.resize(float_properties.size());
+        property._property_data.resize(float_properties.size());
         std::copy(float_properties.begin(), float_properties.end(),
-                  prop_it->_property_data.begin());
-        if (prop_it->_property_data.empty())
+                  property._property_data.begin());
+        if (property._property_data.empty())
         {
             ERR("Reading of element properties file '{:s}' failed.", fname);
         }
