@@ -798,6 +798,8 @@ MeshLib::Element* MeshRevision::constructFourNodeElement(
         return new MeshLib::Tet(new_nodes);
     }
     // is quad but min elem dim == 3
+
+    delete[] new_nodes;
     return nullptr;
 }
 
