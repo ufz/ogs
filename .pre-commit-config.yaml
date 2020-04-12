@@ -22,11 +22,6 @@ repos:
         language: system
         files: '.*\.cpp'
         stages: [commit, manual]
-    -   id: file-names
-        name: Check file names
-        entry: scripts/hooks/pre-commit-file-names.sh
-        language: system
-        stages: [commit, manual]
     -   id: git-lfs
         name: Check git lfs files
         entry: scripts/hooks/pre-commit-git-lfs.sh
