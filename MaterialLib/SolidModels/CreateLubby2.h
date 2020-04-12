@@ -117,7 +117,7 @@ std::unique_ptr<Lubby2<DisplacementDim>> createLubby2(
     if (dependency_parameter_tref_name || dependency_parameter_mgt_name ||
         dependency_parameter_mkt_name || dependency_parameter_q_name)
     {
-        WARN("Lubby2 model lost essential thermal parameter(s), the thermal related properties are not activated.")
+        WARN("Lubby2 model lost essential thermal parameter(s), the thermal related properties are not activated.");
     }
 
     // Initialize the thermal related parameters 
