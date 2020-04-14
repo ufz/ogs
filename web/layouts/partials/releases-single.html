@@ -4,7 +4,11 @@
 <p>Released on {{ dateFormat "Monday, Jan 2, 2006" .Params.release_date }}, <a href="{{ $gh_release }}"><i class="fab fa-github"></i> GitHub release</a></p>
 {{ if .Params.downloads }}
   <div class="note">
-    <h3><i class="fal fa-download"></i> Downloads</h3>
+    <h3><i class="fal fa-download"></i> Benchmark downloads</h3>
+    <div class="flex">
+      <a href="https://github.com/ufz/ogs-data/archive/{{.Params.tag}}.zip"><i class="far fa-arrow-right"></i> Benchmark input files for OpenGeoSys {{ .Params.tag }}</a>
+    </div>
+    <h3><i class="fal fa-download"></i> Binary downloads</h3>
     <div class="flex">
       {{ if .Params.downloads.win }}
         <div class="w-1/2">
