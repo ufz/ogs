@@ -28,6 +28,7 @@
 #include "CreateKozenyCarmanModel.h"
 #include "CreateLinear.h"
 #include "CreateParameter.h"
+#include "CreateEmbeddedFracturePermeability.h"
 #include "CreatePermeabilityMohrCoulombFailureIndexModel.h"
 #include "CreatePermeabilityOrthotropicPowerLaw.h"
 #include "CreatePorosityFromMassBalance.h"
