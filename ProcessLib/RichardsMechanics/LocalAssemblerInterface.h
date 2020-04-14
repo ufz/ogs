@@ -22,17 +22,27 @@ template <int DisplacementDim>
 struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
                                  public NumLib::ExtrapolatableElement
 {
+    virtual std::size_t setIPDataInitialConditions(
+        std::string const& name, double const* values,
+        int const integration_order) = 0;
+
+    virtual std::vector<double> getSigma() const = 0;
+
     virtual std::vector<double> const& getIntPtSigma(
         const double t,
         std::vector<GlobalVector*> const& x,
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const = 0;
 
+    virtual std::vector<double> getSwellingStress() const = 0;
+
     virtual std::vector<double> const& getIntPtSwellingStress(
         const double t,
         std::vector<GlobalVector*> const& x,
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const = 0;
+
+    virtual std::vector<double> getEpsilon() const = 0;
 
     virtual std::vector<double> const& getIntPtEpsilon(
         const double t,
@@ -46,17 +56,23 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const = 0;
 
+    virtual std::vector<double> getSaturation() const = 0;
+
     virtual std::vector<double> const& getIntPtSaturation(
         const double t,
         std::vector<GlobalVector*> const& x,
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const = 0;
 
+    virtual std::vector<double> getPorosity() const = 0;
+
     virtual std::vector<double> const& getIntPtPorosity(
         const double t,
         std::vector<GlobalVector*> const& x,
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const = 0;
+
+    virtual std::vector<double> getTransportPorosity() const = 0;
 
     virtual std::vector<double> const& getIntPtTransportPorosity(
         const double t,

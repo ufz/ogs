@@ -71,6 +71,12 @@ public:
         unsigned const integration_order,
         RichardsMechanicsProcessData<DisplacementDim>& process_data);
 
+    /// \return the number of read integration points.
+    std::size_t setIPDataInitialConditions(
+        std::string const& name,
+        double const* values,
+        int const integration_order) override;
+
     void setInitialConditionsConcrete(std::vector<double> const& local_x,
                                       double const t) override;
 
@@ -158,24 +164,34 @@ public:
         return Eigen::Map<const Eigen::RowVectorXd>(N_u.data(), N_u.size());
     }
 
+    std::size_t setSigma(double const* values);
+
+    std::vector<double> getSigma() const override;
+
     std::vector<double> const& getIntPtDarcyVelocity(
         const double t,
         std::vector<GlobalVector*> const& x,
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const override;
 
+    std::size_t setSaturation(double const* values);
+    std::vector<double> getSaturation() const override;
     std::vector<double> const& getIntPtSaturation(
         const double t,
         std::vector<GlobalVector*> const& x,
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const override;
 
+    std::size_t setPorosity(double const* values);
+    std::vector<double> getPorosity() const override;
     std::vector<double> const& getIntPtPorosity(
         const double t,
         std::vector<GlobalVector*> const& x,
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const override;
 
+    std::size_t setTransportPorosity(double const* values);
+    std::vector<double> getTransportPorosity() const override;
     std::vector<double> const& getIntPtTransportPorosity(
         const double t,
         std::vector<GlobalVector*> const& x,
@@ -188,12 +204,16 @@ public:
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const override;
 
+    std::size_t setSwellingStress(double const* values);
+    std::vector<double> getSwellingStress() const override;
     std::vector<double> const& getIntPtSwellingStress(
         const double t,
         std::vector<GlobalVector*> const& x,
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const override;
 
+    std::size_t setEpsilon(double const* values);
+    std::vector<double> getEpsilon() const override;
     std::vector<double> const& getIntPtEpsilon(
         const double t,
         std::vector<GlobalVector*> const& x,
