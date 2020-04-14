@@ -82,8 +82,8 @@ if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR COMPILER_IS_INTEL)
 
     if(COMPILER_IS_GCC)
         if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS ${ogs.minimum_version.gcc})
-            message(FATAL_ERROR "GCC minimum required version is ${OGS_GCC_MINIMUM_VERSION}! \
-                You are using ${CMAKE_CXX_COMPILER_VERSION}.")
+            message(FATAL_ERROR "Aborting: GCC ${ogs.minimum_version.gcc} is \
+                required! Found version ${CMAKE_CXX_COMPILER_VERSION}.")
         endif()
         add_compile_options(-fext-numeric-literals)
         include(GCCSanitizer)
@@ -91,7 +91,7 @@ if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR COMPILER_IS_INTEL)
 
     if(COMPILER_IS_CLANG)
         if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS ${ogs.minimum_version.clang})
-            message(FATAL_ERROR "Aborting: Clang ${OGS_CLANG_MINIMUM_VERSION} \
+            message(FATAL_ERROR "Aborting: Clang ${ogs.minimum_version.clang} \
                 is required! Found version ${CMAKE_CXX_COMPILER_VERSION}")
         endif()
         include(ClangSanitizer)
