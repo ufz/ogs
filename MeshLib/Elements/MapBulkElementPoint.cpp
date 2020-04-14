@@ -78,27 +78,6 @@ MathLib::Point3d getBulkElementPoint(MeshLib::Hex const& /*hex*/,
     }
 }
 
-MathLib::Point3d getBulkElementPoint(MeshLib::Tet const& /*tet*/,
-                                     std::size_t const face_id,
-                                     MathLib::WeightedPoint2D const& wp)
-{
-    switch (face_id)
-    {
-        case 0:
-            return MathLib::Point3d{std::array<double, 3>{{wp[1], wp[0], 0.0}}};
-        case 1:
-            return MathLib::Point3d{std::array<double, 3>{{wp[0], 0.0, wp[1]}}};
-        case 2:
-            return MathLib::Point3d{
-                std::array<double, 3>{{1 - wp[0] - wp[1], wp[0], wp[1]}}};
-        case 3:
-            return MathLib::Point3d{
-                std::array<double, 3>{{0, wp[1], wp[0]}}};
-        default:
-            OGS_FATAL("Invalid face id '{:d}' for the tetrahedron.", face_id);
-    }
-}
-
 MathLib::Point3d getBulkElementPoint(MeshLib::Prism const& /*prism*/,
                                      std::size_t const face_id,
                                      MathLib::WeightedPoint2D const& wp)
@@ -122,6 +101,53 @@ MathLib::Point3d getBulkElementPoint(MeshLib::Prism const& /*prism*/,
                 std::array<double, 3>{{wp[0], wp[1], 1.0}}};
         default:
             OGS_FATAL("Invalid face id '{:d}' for the prism.", face_id);
+    }
+}
+
+MathLib::Point3d getBulkElementPoint(MeshLib::Pyramid const& /*pyramid*/,
+                                     std::size_t const face_id,
+                                     MathLib::WeightedPoint2D const& wp)
+{
+    switch (face_id)
+    {
+        case 0:
+            return MathLib::Point3d{
+                std::array<double, 3>{{2 * wp[0] - 1, -1.0, 2 * wp[1] - 1}}};
+        case 1:
+            return MathLib::Point3d{
+                std::array<double, 3>{{1.0, 2 * wp[0] - 1, 2 * wp[1] - 1}}};
+        case 2:
+            return MathLib::Point3d{
+                std::array<double, 3>{{1 - 2 * wp[0], 1.0, 2 * wp[1] - 1}}};
+        case 3:
+            return MathLib::Point3d{std::array<double, 3>{
+                {-1.0, 2 * wp[1] - 1, 2 * wp[0] - 1}}};
+        case 4:
+            return MathLib::Point3d{
+                std::array<double, 3>{{-wp[0], wp[1], -1.0}}};
+        default:
+            OGS_FATAL("Invalid face id '{:d}' for the pyramid.", face_id);
+    }
+}
+
+MathLib::Point3d getBulkElementPoint(MeshLib::Tet const& /*tet*/,
+                                     std::size_t const face_id,
+                                     MathLib::WeightedPoint2D const& wp)
+{
+    switch (face_id)
+    {
+        case 0:
+            return MathLib::Point3d{std::array<double, 3>{{wp[1], wp[0], 0.0}}};
+        case 1:
+            return MathLib::Point3d{std::array<double, 3>{{wp[0], 0.0, wp[1]}}};
+        case 2:
+            return MathLib::Point3d{
+                std::array<double, 3>{{1 - wp[0] - wp[1], wp[0], wp[1]}}};
+        case 3:
+            return MathLib::Point3d{
+                std::array<double, 3>{{0, wp[1], wp[0]}}};
+        default:
+            OGS_FATAL("Invalid face id '{:d}' for the tetrahedron.", face_id);
     }
 }
 
@@ -161,6 +187,12 @@ MathLib::Point3d getBulkElementPoint(MeshLib::Mesh const& mesh,
         MeshLib::Prism const& prism =
             *static_cast<MeshLib::Prism const*>(element);
         return getBulkElementPoint(prism, bulk_face_id, wp);
+    }
+    if (element->getCellType() == MeshLib::CellType::PYRAMID5)
+    {
+        MeshLib::Pyramid const& pyramid =
+            *static_cast<MeshLib::Pyramid const*>(element);
+        return getBulkElementPoint(pyramid, bulk_face_id, wp);
     }
     if (element->getCellType() == MeshLib::CellType::TET4)
     {
