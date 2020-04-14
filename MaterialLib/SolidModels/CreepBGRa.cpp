@@ -13,7 +13,6 @@
 
 #include <limits>
 
-#include "BaseLib/Error.h"
 #include "MaterialLib/PhysicalConstant.h"
 
 namespace MaterialLib

@@ -39,7 +39,7 @@ createVariableDependentNeumannBoundaryCondition(
             "The dimension ({:d}) of the given boundary mesh '{:s}' is not by "
             "one "
             "lower than the bulk dimension ({:d}).",
-            bc_mesh.getDimension(), bc_mesh.getName().c_str(), global_dim);
+            bc_mesh.getDimension(), bc_mesh.getName(), global_dim);
     }
 
     auto const constant_name =

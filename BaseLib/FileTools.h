@@ -76,8 +76,8 @@ std::vector<T> readBinaryArray(std::string const& filename, std::size_t const n)
     std::ifstream in(filename.c_str());
     if (!in) {
         ERR("readBinaryArray(): Error while reading from file '{:s}'.",
-            filename.c_str());
-        ERR("Could not open file '{:s}' for input.", filename.c_str());
+            filename);
+        ERR("Could not open file '{:s}' for input.", filename);
         in.close();
         return std::vector<T>();
     }
@@ -95,8 +95,7 @@ std::vector<T> readBinaryArray(std::string const& filename, std::size_t const n)
         return result;
     }
 
-    ERR("readBinaryArray(): Error while reading from file '{:s}'.",
-        filename.c_str());
+    ERR("readBinaryArray(): Error while reading from file '{:s}'.", filename);
     ERR("Read different number of values. Expected {:d}, got {:d}.",
         n,
         result.size());

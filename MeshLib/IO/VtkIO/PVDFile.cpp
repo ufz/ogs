@@ -14,7 +14,6 @@
 #include <iomanip>
 #include <limits>
 #include "BaseLib/Error.h"
-#include "BaseLib/Logging.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 
 namespace MeshLib
@@ -35,7 +34,7 @@ void PVDFile::addVTUFile(const std::string &vtu_fname, double timestep)
 
     std::ofstream fh(_pvd_filename.c_str());
     if (!fh) {
-        OGS_FATAL("could not open file `{:s}'", _pvd_filename.c_str());
+        OGS_FATAL("could not open file `{:s}'", _pvd_filename);
     }
 
     fh << std::setprecision(std::numeric_limits<double>::digits10);

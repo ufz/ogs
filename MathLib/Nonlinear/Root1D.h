@@ -15,7 +15,6 @@
 #include <limits>
 #include <type_traits>
 #include "BaseLib/Error.h"
-#include "BaseLib/Logging.h"
 
 namespace MathLib
 {

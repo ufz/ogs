@@ -11,7 +11,6 @@
 #include <cassert>
 #include "Adsorption.h"
 #include "BaseLib/Error.h"
-#include "BaseLib/Logging.h"
 #include "MaterialLib/PhysicalConstant.h"
 
 namespace Adsorption

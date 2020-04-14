@@ -12,7 +12,6 @@
 #include <string>
 #include <vector>
 
-#include "BaseLib/Logging.h"
 
 #include "GeoLib/Station.h"
 

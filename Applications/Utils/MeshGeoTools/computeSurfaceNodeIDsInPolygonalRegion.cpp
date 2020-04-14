@@ -35,13 +35,11 @@ void writeToFile(std::string const& id_area_fname, std::string const& csv_fname,
 {
     std::ofstream ids_and_area_out(id_area_fname);
     if (!ids_and_area_out) {
-        OGS_FATAL("Unable to open the file '{:s}' - aborting.",
-                  id_area_fname.c_str());
+        OGS_FATAL("Unable to open the file '{:s}' - aborting.", id_area_fname);
     }
     std::ofstream csv_out(csv_fname);
     if (!csv_out) {
-        OGS_FATAL("Unable to open the file '{:s}' - aborting.",
-                  csv_fname.c_str());
+        OGS_FATAL("Unable to open the file '{:s}' - aborting.", csv_fname);
     }
 
     ids_and_area_out << std::setprecision(20);
@@ -101,7 +99,7 @@ int main (int argc, char* argv[])
     std::vector<std::string> geo_names;
     geo_objs.getGeometryNames(geo_names);
     INFO("Geometry '{:s}' read: {:d} points, {:d} polylines.",
-         geo_names[0].c_str(),
+         geo_names[0],
          geo_objs.getPointVec(geo_names[0])->size(),
          geo_objs.getPolylineVec(geo_names[0])->size());
 
@@ -154,7 +152,7 @@ int main (int argc, char* argv[])
         if (ids_and_areas.empty()) {
             ERR("Polygonal part of surface '{:s}' doesn't contains nodes. No "
                 "output will be generated.",
-                polygon_name.c_str());
+                polygon_name);
             continue;
         }
 
@@ -166,10 +164,10 @@ int main (int argc, char* argv[])
         INFO(
             "Polygonal part of surface '{:s}' contains %{ul} nodes. Writting to"
             " files '{:s}' and '{:s}'.",
-            polygon_name.c_str(),
+            polygon_name,
             ids_and_areas.size(),
-            id_and_area_fname.c_str(),
-            csv_fname.c_str());
+            id_and_area_fname,
+            csv_fname);
         writeToFile(id_and_area_fname, csv_fname, ids_and_areas, mesh_nodes);
     }
 

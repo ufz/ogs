@@ -41,7 +41,7 @@ std::vector<double> getSurfaceIntegratedValuesForNodes(
     {
         ERR("Need element property, but the property '{:s}' is not "
             "available.",
-            prop_name.c_str());
+            prop_name);
         return std::vector<double>();
     }
     auto const* const elem_pv = mesh.getProperties().getPropertyVector<double>(

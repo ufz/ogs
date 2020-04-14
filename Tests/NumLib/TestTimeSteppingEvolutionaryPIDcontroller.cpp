@@ -14,7 +14,6 @@
 #include <memory>
 #include <vector>
 
-#include "BaseLib/Logging.h"
 
 #include "BaseLib/ConfigTree.h"
 

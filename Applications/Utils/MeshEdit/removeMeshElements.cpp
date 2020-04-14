@@ -41,7 +41,7 @@ void searchByPropertyValue(std::string const& property_name,
         }
 
         INFO("{:d} elements with property value {:s} found.", n_marked_elements,
-             std::to_string(property_value).c_str());
+             std::to_string(property_value));
     }
 }
 
@@ -63,7 +63,7 @@ void searchByPropertyRange(std::string const& property_name,
     // add checks for other data types here (if n_marked_elements remains 0)
 
     INFO("{:d} elements in range [{:s}, {:s}] found.", n_marked_elements,
-         std::to_string(min_value).c_str(), std::to_string(max_value).c_str());
+         std::to_string(min_value), std::to_string(max_value));
 }
 
 int main (int argc, char* argv[])
@@ -167,7 +167,7 @@ int main (int argc, char* argv[])
                 continue;
             }
             INFO("{:d} {:s} elements found.",
-                 searcher.searchByElementType(type), typeName.c_str());
+                 searcher.searchByElementType(type), typeName);
         }
     }
 

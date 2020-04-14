@@ -12,7 +12,6 @@
 
 #include <memory>
 #include <utility>
-#include "BaseLib/Logging.h"
 
 #include "ConvergenceCriterion.h"
 #include "NonlinearSolverStatus.h"

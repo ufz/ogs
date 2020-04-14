@@ -119,7 +119,7 @@ namespace
 {
 void readGeometry(std::string const& fname, GeoLib::GEOObjects& geo_objects)
 {
-    DBUG("Reading geometry file '{:s}'.", fname.c_str());
+    DBUG("Reading geometry file '{:s}'.", fname);
     GeoLib::IO::BoostXmlGmlInterface gml_reader(geo_objects);
     gml_reader.readFile(fname);
 }
@@ -130,14 +130,14 @@ std::unique_ptr<MeshLib::Mesh> readSingleMesh(
 {
     std::string const mesh_file = BaseLib::copyPathToFileName(
         mesh_config_parameter.getValue<std::string>(), project_directory);
-    DBUG("Reading mesh file '{:s}'.", mesh_file.c_str());
+    DBUG("Reading mesh file '{:s}'.", mesh_file);
 
     auto mesh = std::unique_ptr<MeshLib::Mesh>(
         MeshLib::IO::readMeshFromFile(mesh_file));
     if (!mesh)
     {
         OGS_FATAL("Could not read mesh from '{:s}' file. No mesh added.",
-                  mesh_file.c_str());
+                  mesh_file);
     }
 
 #ifdef DOXYGEN_DOCU_ONLY
@@ -231,7 +231,7 @@ boost::optional<ParameterLib::CoordinateSystem> parseLocalCoordinateSystem(
         OGS_FATAL(
             "Basis vector parameter '{:s}' must have two or three components, "
             "but it has {:d}.",
-            basis_vector_0.name.c_str(), dimension);
+            basis_vector_0.name, dimension);
     }
 
     //
@@ -317,7 +317,7 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
                 OGS_FATAL(
                     "The parameter '{:s}' is using the local coordinate system "
                     "but no local coordinate system was provided.",
-                    parameter->name.c_str());
+                    parameter->name);
             }
             parameter->setCoordinateSystem(*_local_coordinate_system);
         }
@@ -379,7 +379,7 @@ void ProjectData::parseProcessVariables(
         if (!names.insert(pv.getName()).second)
         {
             OGS_FATAL("A process variable with name `{:s}' already exists.",
-                      pv.getName().c_str());
+                      pv.getName());
         }
 
         _process_variables.push_back(std::move(pv));
@@ -403,8 +403,7 @@ std::vector<std::string> ProjectData::parseParameters(
             ParameterLib::createParameter(parameter_config, _mesh_vec, _curves);
         if (!names.insert(p->name).second)
         {
-            OGS_FATAL("A parameter with name `{:s}' already exists.",
-                      p->name.c_str());
+            OGS_FATAL("A parameter with name `{:s}' already exists.", p->name);
         }
 
         auto const use_local_coordinate_system =
@@ -470,7 +469,7 @@ void ProjectData::parseMedia(
                         "Could not parse material ID's from '{:s}'. Please "
                         "separate multiple material ID's by comma only. "
                         "Invalid character: '%c'",
-                        m_id.c_str(), *it);
+                        m_id, *it);
                 }
                 return std::stoi(m_id);
             });
@@ -955,7 +954,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
         else
 #endif
         {
-            OGS_FATAL("Unknown process type: {:s}", type.c_str());
+            OGS_FATAL("Unknown process type: {:s}", type);
         }
 
         if (BaseLib::containsIf(
@@ -964,7 +963,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                     return p->name == name;
                 }))
         {
-            OGS_FATAL("The process name '{:s}' is not unique.", name.c_str());
+            OGS_FATAL("The process name '{:s}' is not unique.", name);
         }
         _processes.push_back(std::move(process));
     }

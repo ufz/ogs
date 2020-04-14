@@ -49,7 +49,7 @@ struct CoupledSolutionsForStaggeredScheme
  */
 struct LocalCoupledSolutions
 {
-    LocalCoupledSolutions(std::vector<double>&& local_coupled_xs0_)
+    explicit LocalCoupledSolutions(std::vector<double>&& local_coupled_xs0_)
         : local_coupled_xs0(std::move(local_coupled_xs0_))
     {
     }

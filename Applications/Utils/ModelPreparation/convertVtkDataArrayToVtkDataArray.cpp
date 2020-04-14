@@ -152,7 +152,7 @@ int main(int argc, char* argv[])
 
     if (!success)
     {
-        ERR("{:s}", err_msg.c_str());
+        ERR("{:s}", err_msg);
         return -1;
     }
 

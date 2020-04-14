@@ -93,7 +93,7 @@ int main(int argc, char* argv[])
         {
             continue;
         }
-        INFO("Writing mesh \"{:s}\"", mesh->getName().c_str());
+        INFO("Writing mesh \"{:s}\"", mesh->getName());
         int data_mode = (write_binary) ? 2 : 0;
         bool compressed = (write_binary);
         MeshLib::IO::VtuInterface vtu(mesh.get(), data_mode, compressed);

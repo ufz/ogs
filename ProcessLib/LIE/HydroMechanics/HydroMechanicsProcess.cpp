@@ -108,7 +108,7 @@ HydroMechanicsProcess<GlobalDim>::HydroMechanicsProcess(
             OGS_FATAL(
                 "Could not get minimum/maximum ranges values for the "
                 "MaterialIDs property in the mesh '{:s}'.",
-                mesh.getName().c_str());
+                mesh.getName());
         }
 
         std::vector<int> vec_p_inactive_matIDs;

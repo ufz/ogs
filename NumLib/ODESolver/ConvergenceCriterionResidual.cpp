@@ -108,7 +108,7 @@ createConvergenceCriterionResidual(const BaseLib::ConfigTree& config)
 
     if (norm_type == MathLib::VecNormType::INVALID)
     {
-        OGS_FATAL("Unknown vector norm type `{:s}'.", norm_type_str.c_str());
+        OGS_FATAL("Unknown vector norm type `{:s}'.", norm_type_str);
     }
 
     return std::make_unique<ConvergenceCriterionResidual>(

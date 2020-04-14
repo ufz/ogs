@@ -35,7 +35,7 @@ public:
     PhreeqcKernel(std::size_t const num_chemical_systems,
                   std::vector<std::pair<int, std::string>> const&
                       process_id_to_component_name_map,
-                  std::string const database,
+                  std::string const& database,
                   AqueousSolution aqueous_solution,
                   std::unique_ptr<EquilibriumReactants>&& equilibrium_reactants,
                   std::unique_ptr<Kinetics>&& kinetic_reactants,

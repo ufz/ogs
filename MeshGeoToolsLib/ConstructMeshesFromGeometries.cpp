@@ -58,8 +58,8 @@ constructAdditionalMeshesFromGeometries(
 
             auto const& geometry = *vec_data[i];
 
-            DBUG("Creating mesh from geometry {:s} {:s}.", vec_name.c_str(),
-                 geometry_name.c_str());
+            DBUG("Creating mesh from geometry {:s} {:s}.", vec_name,
+                 geometry_name);
 
             additional_meshes.emplace_back(createMeshFromElementSelection(
                 meshNameFromGeometry(vec_name, geometry_name),

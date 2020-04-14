@@ -77,10 +77,10 @@ std::unique_ptr<Process> createSmallDeformationProcess(
                 "Could not find process variable '{:s}' in the provided "
                 "variables "
                 "list for config tag <{:s}>.",
-                pv_name.c_str(), "process_variable");
+                pv_name, "process_variable");
         }
         DBUG("Found process variable '{:s}' for config tag <{:s}>.",
-             variable->getName().c_str(), "process_variable");
+             variable->getName(), "process_variable");
 
         per_process_variables.emplace_back(
             const_cast<ProcessVariable&>(*variable));
@@ -92,7 +92,7 @@ std::unique_ptr<Process> createSmallDeformationProcess(
     }
 
     DBUG("Associate displacement with process variable '{:s}'.",
-         per_process_variables.back().get().getName().c_str());
+         per_process_variables.back().get().getName());
 
     if (per_process_variables.back().get().getNumberOfComponents() !=
         DisplacementDim)
@@ -100,7 +100,7 @@ std::unique_ptr<Process> createSmallDeformationProcess(
         OGS_FATAL(
             "Number of components of the process variable '{:s}' is different "
             "from the displacement dimension: got {:d}, expected {:d}",
-            per_process_variables.back().get().getName().c_str(),
+            per_process_variables.back().get().getName(),
             per_process_variables.back().get().getNumberOfComponents(),
             DisplacementDim);
     }
@@ -145,7 +145,7 @@ std::unique_ptr<Process> createSmallDeformationProcess(
         OGS_FATAL(
             "Cannot construct fracture constitutive relation of given type "
             "'{:s}'.",
-            frac_type.c_str());
+            frac_type);
     }
 
     // Fracture properties

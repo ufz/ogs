@@ -79,27 +79,27 @@ std::unique_ptr<Process> createPhaseFieldProcess(
     }
 
     DBUG("Associate displacement with process variable '{:s}'.",
-         variable_u->getName().c_str());
+         variable_u->getName());
 
     if (variable_u->getNumberOfComponents() != DisplacementDim)
     {
         OGS_FATAL(
             "Number of components of the process variable '{:s}' is different "
             "from the displacement dimension: got {:d}, expected {:d}",
-            variable_u->getName().c_str(),
+            variable_u->getName(),
             variable_u->getNumberOfComponents(),
             DisplacementDim);
     }
 
     DBUG("Associate phase field with process variable '{:s}'.",
-         variable_ph->getName().c_str());
+         variable_ph->getName());
     if (variable_ph->getNumberOfComponents() != 1)
     {
         OGS_FATAL(
             "Phasefield process variable '{:s}' is not a scalar variable but "
             "has "
             "{:d} components.",
-            variable_ph->getName().c_str(),
+            variable_ph->getName(),
             variable_ph->getNumberOfComponents());
     }
 
@@ -116,43 +116,42 @@ std::unique_ptr<Process> createPhaseFieldProcess(
         phasefield_parameters_config,
         //! \ogs_file_param_special{prj__processes__process__PHASE_FIELD__phasefield_parameters__residual_stiffness}
         "residual_stiffness", parameters, 1);
-    DBUG("Use '{:s}' as residual stiffness.", residual_stiffness.name.c_str());
+    DBUG("Use '{:s}' as residual stiffness.", residual_stiffness.name);
 
     // Crack resistance
     auto& crack_resistance = ParameterLib::findParameter<double>(
         phasefield_parameters_config,
         //! \ogs_file_param_special{prj__processes__process__PHASE_FIELD__phasefield_parameters__crack_resistance}
         "crack_resistance", parameters, 1);
-    DBUG("Use '{:s}' as crack resistance.", crack_resistance.name.c_str());
+    DBUG("Use '{:s}' as crack resistance.", crack_resistance.name);
 
     // Crack length scale
     auto& crack_length_scale = ParameterLib::findParameter<double>(
         phasefield_parameters_config,
         //! \ogs_file_param_special{prj__processes__process__PHASE_FIELD__phasefield_parameters__crack_length_scale}
         "crack_length_scale", parameters, 1);
-    DBUG("Use '{:s}' as crack length scale.", crack_length_scale.name.c_str());
+    DBUG("Use '{:s}' as crack length scale.", crack_length_scale.name);
 
     // Kinetic coefficient
     auto& kinetic_coefficient = ParameterLib::findParameter<double>(
         phasefield_parameters_config,
         //! \ogs_file_param_special{prj__processes__process__PHASE_FIELD__phasefield_parameters__kinetic_coefficient}
         "kinetic_coefficient", parameters, 1);
-    DBUG("Use '{:s}' as kinetic coefficient.",
-         kinetic_coefficient.name.c_str());
+    DBUG("Use '{:s}' as kinetic coefficient.", kinetic_coefficient.name);
 
     // Solid density
     auto& solid_density = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__PHASE_FIELD__solid_density}
         "solid_density", parameters, 1);
-    DBUG("Use '{:s}' as solid density parameter.", solid_density.name.c_str());
+    DBUG("Use '{:s}' as solid density parameter.", solid_density.name);
 
     // History field
     auto& history_field = ParameterLib::findParameter<double>(
         phasefield_parameters_config,
         //! \ogs_file_param_special{prj__processes__process__PHASE_FIELD__phasefield_parameters__history_field}
         "history_field", parameters, 1);
-    DBUG("Use '{:s}' as history field.", history_field.name.c_str());
+    DBUG("Use '{:s}' as history field.", history_field.name);
 
     // Specific body force
     Eigen::Matrix<double, DisplacementDim, 1> specific_body_force;

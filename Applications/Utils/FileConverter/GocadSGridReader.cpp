@@ -75,7 +75,7 @@ int main(int argc, char* argv[])
     auto property_names(mesh->getProperties().getPropertyVectorNames());
     for (auto const& property_name : property_names)
     {
-        INFO("- {:s} (#values: {:d})", property_name.c_str(),
+        INFO("- {:s} (#values: {:d})", property_name,
              mesh->getProperties()
                  .getPropertyVector<double>(property_name)
                  ->size());
@@ -90,7 +90,7 @@ int main(int argc, char* argv[])
              *(bounds.second));
     }
 
-    INFO("Writing mesh to '{:s}'.", mesh_output_arg.getValue().c_str());
+    INFO("Writing mesh to '{:s}'.", mesh_output_arg.getValue());
     MeshLib::IO::writeMeshToFile(*mesh, mesh_output_arg.getValue());
 
     return 0;

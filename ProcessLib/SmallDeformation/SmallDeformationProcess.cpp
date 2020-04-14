@@ -166,7 +166,7 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
             OGS_FATAL(
                 "Different number of components in meta data ({:d}) than in "
                 "the integration point field data for '{:s}': {:d}.",
-                ip_meta_data.n_components, name.c_str(),
+                ip_meta_data.n_components, name,
                 mesh_property.getNumberOfComponents());
         }
 

@@ -53,7 +53,7 @@ InitialAqueousSolution createInitialAqueousSolution(
                 "in "
                 "specified coupled processes (see "
                 "<process>/<process_variables>/<concentration>).",
-                component.first.c_str());
+                component.first);
         }
     }
 

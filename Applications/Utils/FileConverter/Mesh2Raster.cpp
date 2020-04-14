@@ -151,6 +151,6 @@ int main(int argc, char* argv[])
         out << "\n";
     }
     out.close();
-    INFO("Result written to {:s}", output_arg.getValue().c_str());
+    INFO("Result written to {:s}", output_arg.getValue());
     return 0;
 }

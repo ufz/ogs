@@ -51,11 +51,10 @@ std::string parseDatabasePath(BaseLib::ConfigTree const& config)
     if (!BaseLib::IsFileExisting(path_to_database))
     {
         OGS_FATAL("Not found the specified thermodynamicdatabase: {:s}",
-                  path_to_database.c_str());
+                  path_to_database);
     }
 
-    INFO("Found the specified thermodynamic database: {:s}",
-         path_to_database.c_str());
+    INFO("Found the specified thermodynamic database: {:s}", path_to_database);
 
     return path_to_database;
 }
@@ -85,8 +84,7 @@ createChemicalSolverInterface<ChemicalSolver::Phreeqc>(
         "Required mesh with name '" + mesh_name + "' not found.");
 
     assert(mesh.getID() != 0);
-    DBUG("Found mesh '{:s}' with id {:d}.", mesh.getName().c_str(),
-         mesh.getID());
+    DBUG("Found mesh '{:s}' with id {:d}.", mesh.getName(), mesh.getID());
 
     auto path_to_database = parseDatabasePath(config);
 

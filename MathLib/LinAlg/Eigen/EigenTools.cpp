@@ -10,7 +10,6 @@
 
 #include "EigenTools.h"
 
-#include "BaseLib/Logging.h"
 
 #include "EigenVector.h"
 

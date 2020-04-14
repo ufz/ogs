@@ -53,8 +53,7 @@ int main (int argc, char* argv[])
 
     if (!mesh)
     {
-        INFO("Could not read mesh from file '{:s}'.",
-             mesh_arg.getValue().c_str());
+        INFO("Could not read mesh from file '{:s}'.", mesh_arg.getValue());
         return EXIT_FAILURE;
     }
 
@@ -82,18 +81,17 @@ int main (int argc, char* argv[])
     }
     else
     {
-        ERR("Could not create property '{:s}' file.", new_matname.c_str());
+        ERR("Could not create property '{:s}' file.", new_matname);
         return EXIT_FAILURE;
     }
 
     mesh->getProperties().removePropertyVector("MaterialIDs");
 
     std::string const new_mshname(name + "_new.vtu");
-    INFO("Writing mesh to file '{:s}'.", new_mshname.c_str());
+    INFO("Writing mesh to file '{:s}'.", new_mshname);
     MeshLib::IO::writeMeshToFile(*mesh, new_mshname);
 
-    INFO("New files '{:s}' and '{:s}' written.", new_mshname.c_str(),
-         new_matname.c_str());
+    INFO("New files '{:s}' and '{:s}' written.", new_mshname, new_matname);
 
     return EXIT_SUCCESS;
 }

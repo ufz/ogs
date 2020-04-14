@@ -438,7 +438,7 @@ void applyToPropertyVectors(std::vector<std::string> const& property_names,
         if (!success)
         {
             OGS_FATAL("Could not apply function to PropertyVector '{:s}'.",
-                      name.c_str());
+                      name);
         }
     }
 }
@@ -740,8 +740,7 @@ void writePropertiesBinary(const std::string& file_name_base,
     std::ofstream out(file_name_cfg, std::ios::binary);
     if (!out)
     {
-        OGS_FATAL("Could not open file '{:s}' for output.",
-                  file_name_cfg.c_str());
+        OGS_FATAL("Could not open file '{:s}' for output.", file_name_cfg);
     }
 
     auto const file_name_val = file_name_base + "_partitioned_" +
@@ -750,8 +749,7 @@ void writePropertiesBinary(const std::string& file_name_base,
     std::ofstream out_val(file_name_val, std::ios::binary);
     if (!out_val)
     {
-        OGS_FATAL("Could not open file '{:s}' for output.",
-                  file_name_val.c_str());
+        OGS_FATAL("Could not open file '{:s}' for output.", file_name_val);
     }
 
     std::size_t const number_of_properties(property_names.size());
@@ -845,8 +843,7 @@ std::tuple<std::vector<long>, std::vector<long>> writeConfigDataBinary(
     std::ofstream of_bin_cfg(file_name_cfg, std::ios::binary);
     if (!of_bin_cfg)
     {
-        OGS_FATAL("Could not open file '{:s}' for output.",
-                  file_name_cfg.c_str());
+        OGS_FATAL("Could not open file '{:s}' for output.", file_name_cfg);
     }
 
     std::vector<long> num_elem_integers;
@@ -929,8 +926,7 @@ void writeElementsBinary(std::string const& file_name_base,
     std::ofstream element_info_os(file_name_ele, std::ios::binary);
     if (!element_info_os)
     {
-        OGS_FATAL("Could not open file '{:s}' for output.",
-                  file_name_ele.c_str());
+        OGS_FATAL("Could not open file '{:s}' for output.", file_name_ele);
     }
 
     auto const file_name_ele_g =
@@ -938,8 +934,7 @@ void writeElementsBinary(std::string const& file_name_base,
     std::ofstream ghost_element_info_os(file_name_ele_g, std::ios::binary);
     if (!ghost_element_info_os)
     {
-        OGS_FATAL("Could not open file '{:s}' for output.",
-                  file_name_ele_g.c_str());
+        OGS_FATAL("Could not open file '{:s}' for output.", file_name_ele_g);
     }
 
     for (std::size_t i = 0; i < partitions.size(); i++)
@@ -997,7 +992,7 @@ void writeNodesBinary(const std::string& file_name_base,
     std::ofstream os(file_name, std::ios::binary);
     if (!os)
     {
-        OGS_FATAL("Could not open file '{:s}' for output.", file_name.c_str());
+        OGS_FATAL("Could not open file '{:s}' for output.", file_name);
     }
 
     for (const auto& partition : partitions)

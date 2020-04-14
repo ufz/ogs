@@ -45,12 +45,10 @@ bool BoostXmlGmlInterface::readFile(const std::string &fname)
     doc->ignoreConfigAttribute("xsi:noNamespaceSchemaLocation");
     doc->ignoreConfigAttribute("xmlns:ogs");
 
-    auto points = std::make_unique<std::vector<GeoLib::Point*>>();
     auto polylines = std::make_unique<std::vector<GeoLib::Polyline*>>();
     auto surfaces = std::make_unique<std::vector<GeoLib::Surface*>>();
 
     using MapNameId = std::map<std::string, std::size_t>;
-    auto pnt_names = std::make_unique<MapNameId>();
     auto ply_names = std::make_unique<MapNameId>();
     auto sfc_names = std::make_unique<MapNameId>();
 
@@ -64,6 +62,8 @@ bool BoostXmlGmlInterface::readFile(const std::string &fname)
     //! \ogs_file_param{gml__points}
     for (auto st : doc->getConfigSubtreeList("points"))
     {
+        auto points = std::make_unique<std::vector<GeoLib::Point*>>();
+        auto pnt_names = std::make_unique<MapNameId>();
         readPoints(st, *points, *pnt_names);
         _geo_objects.addPointVec(std::move(points), geo_name,
                                  std::move(pnt_names));
@@ -264,7 +264,7 @@ bool BoostXmlGmlInterface::write()
     if (! pnt_vec) {
         ERR("BoostXmlGmlInterface::write(): No PointVec within the geometry "
             "'{:s}'.",
-            _exportName.c_str());
+            _exportName);
         return false;
     }
 
@@ -272,13 +272,13 @@ bool BoostXmlGmlInterface::write()
     if (! pnts) {
         ERR("BoostXmlGmlInterface::write(): No vector of points within the "
             "geometry '{:s}'.",
-            _exportName.c_str());
+            _exportName);
         return false;
     }
     if (pnts->empty()) {
         ERR("BoostXmlGmlInterface::write(): No points within the geometry "
             "'{:s}'.",
-            _exportName.c_str());
+            _exportName);
         return false;
     }
 
@@ -322,7 +322,7 @@ void BoostXmlGmlInterface::addSurfacesToPropertyTree(
         INFO(
             "BoostXmlGmlInterface::addSurfacesToPropertyTree(): "
             "No surfaces within the geometry '{:s}'.",
-            _exportName.c_str());
+            _exportName);
         return;
     }
 
@@ -332,7 +332,7 @@ void BoostXmlGmlInterface::addSurfacesToPropertyTree(
         INFO(
             "BoostXmlGmlInterface::addSurfacesToPropertyTree(): "
             "No surfaces within the geometry '{:s}'.",
-            _exportName.c_str());
+            _exportName);
         return;
     }
 
@@ -364,7 +364,7 @@ void BoostXmlGmlInterface::addPolylinesToPropertyTree(
         INFO(
             "BoostXmlGmlInterface::addPolylinesToPropertyTree(): "
             "No polylines within the geometry '{:s}'.",
-            _exportName.c_str());
+            _exportName);
         return;
     }
 
@@ -374,7 +374,7 @@ void BoostXmlGmlInterface::addPolylinesToPropertyTree(
         INFO(
             "BoostXmlGmlInterface::addPolylinesToPropertyTree(): "
             "No polylines within the geometry '{:s}'.",
-            _exportName.c_str());
+            _exportName);
         return;
     }
 

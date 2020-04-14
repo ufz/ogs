@@ -64,16 +64,16 @@ makeConfigTree(const std::string& filepath, const bool be_ruthless,
     catch (boost::property_tree::xml_parser_error const& e)
     {
         OGS_FATAL("Error while parsing XML file `{:s}' at line {:d}: {:s}.",
-                  e.filename().c_str(), e.line(), e.message().c_str());
+                  e.filename(), e.line(), e.message());
     }
 
-    DBUG("Project configuration from file '{:s}' read.", filepath.c_str());
+    DBUG("Project configuration from file '{:s}' read.", filepath);
 
     if (auto child = ptree.get_child_optional(toplevel_tag)) {
         return ConfigTreeTopLevel(filepath, be_ruthless, std::move(*child));
     }
-    OGS_FATAL("Tag <{:s}> has not been found in file `{:s}'.",
-              toplevel_tag.c_str(), filepath.c_str());
+    OGS_FATAL("Tag <{:s}> has not been found in file `{:s}'.", toplevel_tag,
+              filepath);
 }
 
 }  // namespace BaseLib

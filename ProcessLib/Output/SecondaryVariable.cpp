@@ -35,7 +35,7 @@ void SecondaryVariableCollection::addSecondaryVariable(
         OGS_FATAL(
             "The secondary variable with internal name `{:s}' has already been "
             "set up.",
-            internal_name.c_str());
+            internal_name);
     }
 }
 
@@ -61,7 +61,7 @@ SecondaryVariable const& SecondaryVariableCollection::get(
         OGS_FATAL(
             "A secondary variable with external name '{:s}' has not been set "
             "up.",
-            external_name.c_str());
+            external_name);
     }
 
     auto const& internal_name = it->second;
@@ -72,7 +72,7 @@ SecondaryVariable const& SecondaryVariableCollection::get(
         OGS_FATAL(
             "A secondary variable with internal name '{:s}' has not been set "
             "up.",
-            internal_name.c_str());
+            internal_name);
     }
 
     return it2->second;

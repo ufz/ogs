@@ -12,7 +12,6 @@
 #include "CohesiveZoneModeI.h"
 #include "LogPenalty.h"
 
-#include "BaseLib/Error.h"
 #include "MathLib/MathTools.h"
 
 namespace MaterialLib

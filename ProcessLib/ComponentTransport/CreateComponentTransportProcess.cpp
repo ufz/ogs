@@ -124,7 +124,7 @@ std::unique_ptr<Process> createComponentTransportProcess(
             "Number of components for process variable '{:s}' should be 1 "
             "rather "
             "than {:d}.",
-            it->get().getName().c_str(),
+            it->get().getName(),
             it->get().getNumberOfComponents());
     }
 

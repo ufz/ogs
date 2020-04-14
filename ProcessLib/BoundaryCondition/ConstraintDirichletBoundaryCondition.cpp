@@ -242,7 +242,7 @@ createConstraintDirichletBoundaryCondition(
     if (constraint_type != "Flux")
     {
         OGS_FATAL("The constraint type is '{:s}', but has to be 'Flux'.",
-                  constraint_type.c_str());
+                  constraint_type);
     }
 
     // Todo (TF) Open question: How to specify which getFlux function should be
@@ -274,8 +274,8 @@ createConstraintDirichletBoundaryCondition(
             "at "
             "geometry 'TODO' : The constraining process variable is set as "
             "'{:s}', but this is not specified in the project file.",
-            constraining_process_variable_name.c_str(),
-            constraining_process_variable.c_str());
+            constraining_process_variable_name,
+            constraining_process_variable);
     }
 
     auto const constraint_threshold =
@@ -292,14 +292,14 @@ createConstraintDirichletBoundaryCondition(
             "The constraint direction is '{:s}', but has to be either "
             "'greater' "
             "or 'lower'.",
-            constraint_direction_string.c_str());
+            constraint_direction_string);
     }
     bool const lower = constraint_direction_string == "lower";
 
 
     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__ConstraintDirichletBoundaryCondition__parameter}
     auto const param_name = config.getConfigParameter<std::string>("parameter");
-    DBUG("Using parameter {:s}", param_name.c_str());
+    DBUG("Using parameter {:s}", param_name);
 
     auto& param = ParameterLib::findParameter<double>(param_name, parameters, 1,
                                                       &bc_mesh);

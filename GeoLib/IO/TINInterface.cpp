@@ -34,7 +34,7 @@ GeoLib::Surface* TINInterface::readTIN(std::string const& fname,
     // open file
     std::ifstream in(fname.c_str());
     if (!in) {
-        WARN("readTIN(): could not open stream from {:s}.", fname.c_str());
+        WARN("readTIN(): could not open stream from {:s}.", fname);
         if (errors)
         {
             errors->push_back("readTINFile error opening stream from " + fname);
@@ -140,7 +140,7 @@ GeoLib::Surface* TINInterface::readTIN(std::string const& fname,
     }
 
     if (sfc->getNumberOfTriangles() == 0) {
-        WARN("readTIN(): No triangle found.", fname.c_str());
+        WARN("readTIN(): No triangle found.", fname);
         if (errors)
         {
             errors->push_back("readTIN error because of no triangle found");
@@ -156,8 +156,7 @@ void TINInterface::writeSurfaceAsTIN(GeoLib::Surface const& surface, std::string
 {
     std::ofstream os (file_name.c_str());
     if (!os) {
-        WARN("writeSurfaceAsTIN(): could not open stream to {:s}.",
-             file_name.c_str());
+        WARN("writeSurfaceAsTIN(): could not open stream to {:s}.", file_name);
         return;
     }
     os.precision(std::numeric_limits<double>::digits10);

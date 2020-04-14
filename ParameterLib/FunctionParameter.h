@@ -62,8 +62,8 @@ struct FunctionParameter final : public Parameter<T>
             if (!parser.compile(_vec_expression_str[i], _vec_expression[i]))
             {
                 OGS_FATAL("Error: {:s}\tExpression: {:s}\n",
-                          parser.error().c_str(),
-                          _vec_expression_str[i].c_str());
+                          parser.error(),
+                          _vec_expression_str[i]);
             }
         }
     }

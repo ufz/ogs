@@ -114,7 +114,7 @@ void VtkAddFilterDialog::on_buttonBox_accepted()
         else
         {
             ERR("VtkFilterFactory cannot create {:s}.",
-                filterName.toStdString().c_str());
+                filterName.toStdString());
             return;
         }
     }

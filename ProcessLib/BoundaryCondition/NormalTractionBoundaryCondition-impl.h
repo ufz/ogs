@@ -87,7 +87,7 @@ createNormalTractionBoundaryCondition(
     auto const parameter_name =
         //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__NormalTraction__parameter}
         config.getConfigParameter<std::string>("parameter");
-    DBUG("Using parameter {:s}", parameter_name.c_str());
+    DBUG("Using parameter {:s}", parameter_name);
 
     auto const& pressure = ParameterLib::findParameter<double>(
         parameter_name, parameters, 1, &bc_mesh);

@@ -38,8 +38,7 @@ std::unique_ptr<SourceTerm> createLineSourceTerm(
     auto& line_source_term = ParameterLib::findParameter<double>(
         line_source_term_parameter_name, parameters, 1, &source_term_mesh);
 
-    DBUG("Using '{:s}' as line source term parameter.",
-         line_source_term.name.c_str());
+    DBUG("Using '{:s}' as line source term parameter.", line_source_term.name);
 
     return std::make_unique<LineSourceTerm>(
         bulk_mesh_dimension, source_term_mesh, std::move(source_term_dof_table),

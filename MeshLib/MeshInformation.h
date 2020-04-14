@@ -47,8 +47,7 @@ public:
             mesh.getProperties().getPropertyVector<T>(name);
         if (data_vec->empty())
         {
-            INFO("Mesh does not contain values for the property '{:s}'.",
-                 name.c_str());
+            INFO("Mesh does not contain values for the property '{:s}'.", name);
             return {};
         }
 

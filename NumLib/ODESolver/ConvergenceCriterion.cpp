@@ -41,8 +41,7 @@ std::unique_ptr<ConvergenceCriterion> createConvergenceCriterion(
         return createConvergenceCriterionPerComponentResidual(config);
     }
 
-    OGS_FATAL("There is no convergence criterion of type `{:s}'.",
-              type.c_str());
+    OGS_FATAL("There is no convergence criterion of type `{:s}'.", type);
 }
 
 bool checkRelativeTolerance(const double reltol, const double numerator,

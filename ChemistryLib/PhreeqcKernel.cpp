@@ -26,7 +26,7 @@ PhreeqcKernel::PhreeqcKernel(
     std::size_t const num_chemical_systems,
     std::vector<std::pair<int, std::string>> const&
         process_id_to_component_name_map,
-    std::string const database,
+    std::string const& database,
     AqueousSolution aqueous_solution,
     std::unique_ptr<EquilibriumReactants>&& equilibrium_reactants,
     std::unique_ptr<Kinetics>&& kinetic_reactants,
@@ -131,7 +131,7 @@ void PhreeqcKernel::loadDatabase(std::string const& database)
     std::ifstream in(database);
     if (!in)
     {
-        OGS_FATAL("Unable to open database file '{:s}'.", database.c_str());
+        OGS_FATAL("Unable to open database file '{:s}'.", database);
     }
     assert(phrq_io->get_istream() == nullptr);
     phrq_io->push_istream(&in, false);

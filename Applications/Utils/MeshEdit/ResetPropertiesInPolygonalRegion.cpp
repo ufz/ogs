@@ -104,7 +104,7 @@ int main(int argc, char* argv[])
     if (!plys)
     {
         ERR("Could not get vector of polylines out of geometry '{:s}'.",
-            geo_name.c_str());
+            geo_name);
         return EXIT_FAILURE;
     }
 
@@ -113,7 +113,7 @@ int main(int argc, char* argv[])
         plys->getElementByName(polygon_name_arg.getValue()));
     if (!ply)
     {
-        ERR("Polyline '{:s}' not found.", polygon_name_arg.getValue().c_str());
+        ERR("Polyline '{:s}' not found.", polygon_name_arg.getValue());
         return EXIT_FAILURE;
     }
 
@@ -122,7 +122,7 @@ int main(int argc, char* argv[])
     if (!closed)
     {
         ERR("Polyline '{:s}' is not closed, i.e. does not describe a region.",
-            polygon_name_arg.getValue().c_str());
+            polygon_name_arg.getValue());
         return EXIT_FAILURE;
     }
 
@@ -164,7 +164,7 @@ int main(int argc, char* argv[])
     INFO("Mesh contains {:d} property vectors:", property_names.size());
     for (const auto& name : property_names)
     {
-        INFO("- {:s}", name.c_str());
+        INFO("- {:s}", name);
     }
 
     MeshLib::IO::writeMeshToFile(*mesh, mesh_out.getValue());

@@ -63,7 +63,7 @@ int main (int argc, char* argv[])
     cmd.parse(argc, argv);
 
     // *** read mesh
-    INFO("Reading {:s}.", feflow_mesh_arg.getValue().c_str());
+    INFO("Reading {:s}.", feflow_mesh_arg.getValue());
 #ifndef WIN32
     BaseLib::MemWatch mem_watch;
     unsigned long mem_without_mesh (mem_watch.getVirtMemUsage());
@@ -75,8 +75,7 @@ int main (int argc, char* argv[])
         feflowIO.readFEFLOWFile(feflow_mesh_arg.getValue()));
 
     if (mesh == nullptr) {
-        INFO("Could not read mesh from {:s}.",
-             feflow_mesh_arg.getValue().c_str());
+        INFO("Could not read mesh from {:s}.", feflow_mesh_arg.getValue());
         return EXIT_FAILURE;
     }
 #ifndef WIN32
@@ -89,7 +88,7 @@ int main (int argc, char* argv[])
          mesh->getNumberOfElements());
 
     std::string ogs_mesh_fname(ogs_mesh_arg.getValue());
-    INFO("Writing {:s}.", ogs_mesh_fname.c_str());
+    INFO("Writing {:s}.", ogs_mesh_fname);
     MeshLib::IO::writeMeshToFile(*mesh, ogs_mesh_fname);
     INFO("\tDone.");
     return EXIT_SUCCESS;

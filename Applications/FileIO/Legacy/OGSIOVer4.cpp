@@ -124,7 +124,7 @@ void readPolylinePointVector(const std::string &fname,
     std::ifstream in((path + fname).c_str());
     if (!in) {
         WARN("readPolylinePointVector(): error opening stream from {:s}",
-             fname.c_str());
+             fname);
         errors.push_back ("[readPolylinePointVector] error opening stream from " + fname);
         return;
     }
@@ -417,7 +417,7 @@ std::string readSurface(std::istream& in,
                 WARN(
                     "readSurface(): cannot create surface {:s} from polyline "
                     "{:d} since polyline is not closed.",
-                    name.c_str(), ply_id);
+                    name, ply_id);
             }
         }
     }
@@ -488,10 +488,10 @@ bool readGLIFileV4(const std::string& fname,
                    std::vector<std::string>& errors,
                    std::string const& gmsh_path)
 {
-    INFO("GeoLib::readGLIFile(): open stream from file {:s}.", fname.c_str());
+    INFO("GeoLib::readGLIFile(): open stream from file {:s}.", fname);
     std::ifstream in(fname.c_str());
     if (!in) {
-        WARN("GeoLib::readGLIFile(): could not open file {:s}.", fname.c_str());
+        WARN("GeoLib::readGLIFile(): could not open file {:s}.", fname);
         errors.push_back("[readGLIFileV4] error opening stream from " + fname);
         return false;
     }
@@ -621,7 +621,7 @@ void writeGLIFileV4 (const std::string& fname,
     if (pnts) {
         const std::size_t n_pnts(pnts->size());
         INFO("GeoLib::writeGLIFileV4(): writing {:d} points to file {:s}.",
-             n_pnts, fname.c_str());
+             n_pnts, fname);
         os << "#POINTS" << "\n";
         os.precision(std::numeric_limits<double>::digits10);
         for (std::size_t k(0); k < n_pnts; k++) {
@@ -639,7 +639,7 @@ void writeGLIFileV4 (const std::string& fname,
     {
         const std::vector<GeoLib::Polyline*>* plys (plys_vec->getVector());
         INFO("GeoLib::writeGLIFileV4(): {:d} polylines to file {:s}.",
-             plys->size(), fname.c_str());
+             plys->size(), fname);
         for (auto ply : *plys)
         {
             os << "#POLYLINE" << "\n";

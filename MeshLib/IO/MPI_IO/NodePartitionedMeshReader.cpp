@@ -124,7 +124,7 @@ NodePartitionedMeshReader::readBinaryDataFromFile(std::string const& filename,
 
     if(file_status != 0)
     {
-        ERR("Error opening file {:s}. MPI error code {:d}", filename.c_str(),
+        ERR("Error opening file {:s}. MPI error code {:d}", filename,
             file_status);
         return false;
     }
@@ -223,7 +223,7 @@ void NodePartitionedMeshReader::readPropertiesBinary(
             "Could not open file '{:s}'.\n"
             "\tYou can ignore this warning if the mesh does not contain {:s}-"
             "wise property data.",
-            fname_cfg.c_str(), item_type.data());
+            fname_cfg, item_type.data());
         return;
     }
     std::size_t number_of_properties = 0;
@@ -280,7 +280,7 @@ void NodePartitionedMeshReader::readPropertiesBinary(
         ERR("Could not open file '{:s}'\n."
             "\tYou can ignore this warning if the mesh does not contain {:s}-"
             "wise property data.",
-            fname_val.c_str(), item_type.data());
+            fname_val, item_type.data());
     }
 
     readDomainSpecificPartOfPropertyVectors(vec_pvmd, *pvpmd, t, is, p);
@@ -355,7 +355,7 @@ bool NodePartitionedMeshReader::openASCIIFiles(
 
         if( !is_cfg.good() )
         {
-            ERR("Error opening file {:s} for input.", filename.c_str());
+            ERR("Error opening file {:s} for input.", filename);
             return false;
         }
 
@@ -377,7 +377,7 @@ bool NodePartitionedMeshReader::openASCIIFiles(
         is_node.open(filename);
         if( !is_node.good() )
         {
-            ERR("Error opening file {:s} for input.", filename.c_str());
+            ERR("Error opening file {:s} for input.", filename);
             return false;
         }
     }
@@ -387,7 +387,7 @@ bool NodePartitionedMeshReader::openASCIIFiles(
         is_elem.open(filename);
         if( !is_elem.good() )
         {
-            ERR("Error opening file {:s} for input.", filename.c_str());
+            ERR("Error opening file {:s} for input.", filename);
             return false;
         }
     }

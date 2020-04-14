@@ -45,7 +45,7 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromASCFile(std::string const& fn
 
     if (!in.is_open()) {
         WARN("Raster::getRasterFromASCFile(): Could not open file {:s}.",
-             fname.c_str());
+             fname);
         return nullptr;
     }
 
@@ -70,7 +70,7 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromASCFile(std::string const& fn
         return raster;
     }
     WARN("Raster::getRasterFromASCFile(): Could not read header of file {:s}",
-         fname.c_str());
+         fname);
     return nullptr;
 }
 
@@ -161,7 +161,7 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromSurferFile(std::string const&
 
     if (!in.is_open()) {
         ERR("Raster::getRasterFromSurferFile() - Could not open file {:s}",
-            fname.c_str());
+            fname);
         return nullptr;
     }
 
@@ -194,7 +194,7 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromSurferFile(std::string const&
         return raster;
     }
     ERR("Raster::getRasterFromASCFile() - could not read header of file {:s}",
-        fname.c_str());
+        fname);
     return nullptr;
 }
 

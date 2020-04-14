@@ -43,7 +43,7 @@ bool TetGenInterface::readTetGenGeometry (std::string const& geo_fname,
     if (!poly_stream)
     {
         ERR("TetGenInterface::readTetGenGeometry() failed to open {:s}",
-            geo_fname.c_str());
+            geo_fname);
         return false;
     }
     std::string ext (BaseLib::getFileExtension(geo_fname));
@@ -216,10 +216,10 @@ MeshLib::Mesh* TetGenInterface::readTetGenMesh (std::string const& nodes_fname,
     {
         if (!ins_nodes)
             ERR("TetGenInterface::readTetGenMesh failed to open {:s}",
-                nodes_fname.c_str());
+                nodes_fname);
         if (!ins_ele)
             ERR("TetGenInterface::readTetGenMesh failed to open {:s}",
-                ele_fname.c_str());
+                ele_fname);
         return nullptr;
     }
 
@@ -587,12 +587,12 @@ bool TetGenInterface::writeTetGenSmesh(const std::string &file_name,
 
     if (points==nullptr)
     {
-        ERR("Geometry {:s} not found.", geo_name.c_str());
+        ERR("Geometry {:s} not found.", geo_name);
         return false;
     }
     if (surfaces==nullptr)
         WARN("No surfaces found for geometry {:s}. Writing points only.",
-             geo_name.c_str());
+             geo_name);
 
     std::ofstream out( file_name.c_str(), std::ios::out );
     out.precision(std::numeric_limits<double>::digits10);

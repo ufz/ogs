@@ -65,8 +65,7 @@ TESProcess::TESProcess(
                     //! \ogs_file_special
                     config.getConfigParameterOptional<double>(p.first))
             {
-                DBUG("setting parameter `{:s}' to value `{:g}'",
-                     p.first.c_str(), *par);
+                DBUG("setting parameter `{:s}' to value `{:g}'", p.first, *par);
                 *p.second = *par;
             }
         }
@@ -88,8 +87,7 @@ TESProcess::TESProcess(
                     //! \ogs_file_special
                     config.getConfigParameterOptional<double>(p.first))
             {
-                INFO("setting parameter `{:s}' to value `{:g}'",
-                     p.first.c_str(), *par);
+                INFO("setting parameter `{:s}' to value `{:g}'", p.first, *par);
                 *p.second = Trafo{*par};
             }
         }

@@ -28,7 +28,7 @@ ParameterBase* findParameterByName(
         return nullptr;
     }
 
-    DBUG("Found parameter `{:s}'.", (*it)->name.c_str());
+    DBUG("Found parameter `{:s}'.", (*it)->name);
     return it->get();
 }
 }  // namespace ParameterLib

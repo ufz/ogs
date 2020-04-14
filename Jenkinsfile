@@ -438,7 +438,7 @@ pipeline {
                 excludeFile('.*\\.conan.*'),
                 excludeFile('.*thread.hpp')],
                 tools: [msBuild(name: 'MSVC', pattern: 'build/build*.log')],
-                qualityGates: [[threshold: 10, type: 'TOTAL', unstable: true]]
+                qualityGates: [[threshold: 7, type: 'TOTAL', unstable: true]]
             }
             success {
               archiveArtifacts 'build/*.zip,build/conaninfo.txt'
@@ -530,7 +530,7 @@ pipeline {
                 excludeFile('.*qrc_icons\\.cpp.*'), excludeMessage('.*QVTKWidget.*'),
                 excludeMessage('.*tmpnam.*')],
                 tools: [clang(name: 'Clang (macOS, GUI)', pattern: 'build/build.log',
-                  id: 'clang-mac-gui')], unstableTotalAll: 3
+                  id: 'clang-mac-gui')], unstableTotalAll: 1
             }
             success {
               archiveArtifacts 'build/*.tar.gz,build/*.dmg,build/conaninfo.txt'
@@ -570,7 +570,7 @@ pipeline {
               recordIssues enabledForFailure: true, filters: [
                 excludeFile('.*\\.conan.*')],
                 tools: [clangTidy(name: 'Clang-Tidy', pattern: 'build/build.log')],
-                qualityGates: [[threshold: 260, type: 'TOTAL', unstable: true]]
+                qualityGates: [[threshold: 165, type: 'TOTAL', unstable: true]]
             }
           }
         }

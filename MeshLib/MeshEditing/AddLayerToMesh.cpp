@@ -94,7 +94,7 @@ MeshLib::Mesh* addLayerToMesh(MeshLib::Mesh const& mesh, double thickness,
     std::string const& name,
     bool on_top)
 {
-    INFO("Extracting top surface of mesh '{:s}' ... ", mesh.getName().c_str());
+    INFO("Extracting top surface of mesh '{:s}' ... ", mesh.getName());
     int const flag = (on_top) ? -1 : 1;
     const MathLib::Vector3 dir(0, 0, flag);
     double const angle(90);
@@ -141,7 +141,7 @@ MeshLib::Mesh* addLayerToMesh(MeshLib::Mesh const& mesh, double thickness,
     {
         ERR("Need subsurface node ids, but the property '{:s}' is not "
             "available.",
-            prop_name.c_str());
+            prop_name);
         return nullptr;
     }
     // fetch subsurface node ids PropertyVector

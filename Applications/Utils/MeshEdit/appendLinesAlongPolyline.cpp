@@ -67,8 +67,7 @@ int main (int argc, char* argv[])
     const GeoLib::PolylineVec* ply_vec (geo_objs.getPolylineVecObj(geo_names[0]));
     if (!ply_vec)
     {
-        ERR("Could not find polylines in geometry '{:s}'.",
-            geo_names.front().c_str());
+        ERR("Could not find polylines in geometry '{:s}'.", geo_names.front());
         return EXIT_FAILURE;
     }
 
@@ -76,7 +75,7 @@ int main (int argc, char* argv[])
     MeshLib::Mesh const*const mesh (MeshLib::IO::readMeshFromFile(mesh_in.getValue()));
     if (!mesh)
     {
-        ERR("Mesh file '{:s}' not found", mesh_in.getValue().c_str());
+        ERR("Mesh file '{:s}' not found", mesh_in.getValue());
         return EXIT_FAILURE;
     }
     INFO("Mesh read: {:d} nodes, {:d} elements.", mesh->getNumberOfNodes(),

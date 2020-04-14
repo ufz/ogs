@@ -146,7 +146,7 @@ void printFieldInformationTable(DBFHandle const& dbf_handle, std::size_t n_field
     }
     delete[] field_name;
     out << "************************************************" << std::endl;
-    INFO("{:s}", out.str().c_str());
+    INFO("{:s}", out.str());
 }
 
 int main (int argc, char* argv[])
@@ -190,7 +190,7 @@ int main (int argc, char* argv[])
         }
         SHPClose(hSHP);
     } else {
-        ERR("Could not open shapefile {:s}.", fname.c_str());
+        ERR("Could not open shapefile {:s}.", fname);
     }
 
     DBFHandle dbf_handle = DBFOpen(fname.c_str(),"rb");
@@ -250,7 +250,7 @@ int main (int argc, char* argv[])
             fname += ".gml";
         }
 
-        INFO("Writing to {:s}.", fname.c_str());
+        INFO("Writing to {:s}.", fname);
         convertPoints(dbf_handle,
                       fname,
                       x_id,

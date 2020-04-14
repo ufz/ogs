@@ -45,8 +45,7 @@ struct SurfaceFluxData
             "read surfaceflux meta data:\n\tsurfaceflux "
             "mesh:'{:s}'\n\tproperty "
             "name: '{:s}'\n\toutput to: '{:s}'",
-            mesh_name.c_str(), property_vector_name.c_str(),
-            output_mesh_file_name.c_str());
+            mesh_name, property_vector_name, output_mesh_file_name);
     }
 
     static std::unique_ptr<ProcessLib::SurfaceFluxData> createSurfaceFluxData(

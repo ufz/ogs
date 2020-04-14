@@ -70,7 +70,7 @@ inline void writePropertyVectorMetaDataBinary(
 inline void writePropertyVectorMetaData(PropertyVectorMetaData const& pvmd)
 {
     DBUG("size of name: {:d}", pvmd.property_name.length());
-    DBUG("name: '{:s}'", pvmd.property_name.c_str());
+    DBUG("name: '{:s}'", pvmd.property_name);
     DBUG("is_int_data_type: {:d}", pvmd.is_int_type);
     DBUG("is_data_type_signed: {:d}", pvmd.is_data_type_signed);
     DBUG("data_type_size_in_bytes: {:d}", pvmd.data_type_size_in_bytes);

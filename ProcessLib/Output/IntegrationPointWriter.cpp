@@ -81,8 +81,7 @@ static ProcessLib::IntegrationPointMetaData extractIntegrationPointMetaData(
             return {name, md["number_of_components"], md["integration_order"]};
         }
     }
-    OGS_FATAL("No integration point meta data with name '{:s}' found.",
-              name.c_str());
+    OGS_FATAL("No integration point meta data with name '{:s}' found.", name);
 }
 
 namespace ProcessLib
@@ -113,7 +112,7 @@ IntegrationPointMetaData getIntegrationPointMetaData(MeshLib::Mesh const& mesh,
             "Integration point data '{:s}' is present in the vtk field "
             "data but the required 'IntegrationPointMetaData' array "
             "is not available.",
-            name.c_str());
+            name);
     }
     auto const& mesh_property_ip_meta_data =
         *mesh.getProperties().template getPropertyVector<char>(

@@ -178,7 +178,7 @@ void VtkVisPipeline::loadFromFile(QString filename)
 #ifndef NDEBUG
     QTime myTimer;
     myTimer.start();
-    INFO("VTK Read: {:s}.", filename.toStdString().c_str());
+    INFO("VTK Read: {:s}.", filename.toStdString());
 #endif
 
     if (filename.size() > 0)

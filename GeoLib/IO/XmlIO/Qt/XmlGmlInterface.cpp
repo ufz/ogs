@@ -231,7 +231,7 @@ void XmlGmlInterface::readPolylines(
                 WARN(
                     "Polyline '{:s}' exists already. Polyline {:d} will be "
                     "inserted without a name.",
-                    ply_name.c_str(), idx);
+                    ply_name, idx);
             }
         }
 
@@ -250,7 +250,7 @@ void XmlGmlInterface::readPolylines(
                     OGS_FATAL(
                         "Polyline `{:s}' contains the point id `{:d}' which is "
                         "not in the point list.",
-                        polyline_name.c_str(), pt_idx);
+                        polyline_name, pt_idx);
                 }
                 return search->second;
             };
@@ -297,7 +297,7 @@ void XmlGmlInterface::readSurfaces(
                     OGS_FATAL(
                         "Surface `{:s}' contains the point id `{:d}', which is "
                         "not in the point list.",
-                        surface_name.c_str(), pt_idx);
+                        surface_name, pt_idx);
                 }
                 return search->second;
             };

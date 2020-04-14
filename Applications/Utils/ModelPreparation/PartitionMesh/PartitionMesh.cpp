@@ -93,7 +93,7 @@ int main(int argc, char* argv[])
     std::unique_ptr<MeshLib::Mesh> mesh_ptr(
         MeshLib::IO::readMeshFromFile(input_file_name_wo_extension + ".vtu"));
     INFO("Mesh '{:s}' read: {:d} nodes, {:d} elements.",
-         mesh_ptr->getName().c_str(),
+         mesh_ptr->getName(),
          mesh_ptr->getNumberOfNodes(),
          mesh_ptr->getNumberOfElements());
 
@@ -135,7 +135,7 @@ int main(int argc, char* argv[])
         INFO("METIS is running ...");
         const std::string exe_name = argv[0];
         const std::string exe_path = BaseLib::extractPath(exe_name);
-        INFO("Path to mpmetis is: \n\t{:s}", exe_path.c_str());
+        INFO("Path to mpmetis is: \n\t{:s}", exe_path);
 
         const std::string mpmetis_com =
             BaseLib::joinPaths(exe_path, "mpmetis") + " -gtype=nodal " + "'" +
@@ -166,8 +166,8 @@ int main(int argc, char* argv[])
         std::unique_ptr<MeshLib::Mesh> mesh(
             MeshLib::IO::readMeshFromFile(filename));
         INFO("Mesh '{:s}' from file '{:s}' read: {:d} nodes, {:d} elements.",
-             mesh->getName().c_str(), filename.c_str(),
-             mesh->getNumberOfNodes(), mesh->getNumberOfElements());
+             mesh->getName(), filename, mesh->getNumberOfNodes(),
+             mesh->getNumberOfElements());
 
         std::string const other_mesh_output_file_name_wo_extension =
             BaseLib::joinPaths(

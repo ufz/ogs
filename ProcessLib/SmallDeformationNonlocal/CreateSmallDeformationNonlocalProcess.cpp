@@ -51,7 +51,7 @@ std::unique_ptr<Process> createSmallDeformationNonlocalProcess(
          "process_variable"});
 
     DBUG("Associate displacement with process variable '{:s}'.",
-         per_process_variables.back().get().getName().c_str());
+         per_process_variables.back().get().getName());
 
     if (per_process_variables.back().get().getNumberOfComponents() !=
         DisplacementDim)
@@ -59,7 +59,7 @@ std::unique_ptr<Process> createSmallDeformationNonlocalProcess(
         OGS_FATAL(
             "Number of components of the process variable '{:s}' is different "
             "from the displacement dimension: got {:d}, expected {:d}",
-            per_process_variables.back().get().getName().c_str(),
+            per_process_variables.back().get().getName(),
             per_process_variables.back().get().getNumberOfComponents(),
             DisplacementDim);
     }
@@ -76,7 +76,7 @@ std::unique_ptr<Process> createSmallDeformationNonlocalProcess(
         config,
         //! \ogs_file_param_special{prj__processes__process__SMALL_DEFORMATION_NONLOCAL__solid_density}
         "solid_density", parameters, 1, &mesh);
-    DBUG("Use '{:s}' as solid density parameter.", solid_density.name.c_str());
+    DBUG("Use '{:s}' as solid density parameter.", solid_density.name);
 
     // Specific body force
     Eigen::Matrix<double, DisplacementDim, 1> specific_body_force;

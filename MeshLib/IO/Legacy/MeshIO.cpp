@@ -47,7 +47,7 @@ MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
     if (!in.is_open())
     {
         WARN("MeshIO::loadMeshFromFile() - Could not open file {:s}.",
-             file_name.c_str());
+             file_name);
         return nullptr;
     }
 
@@ -108,7 +108,7 @@ MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
                     if (elem == nullptr) {
                         ERR("Reading mesh element {:d} from file '{:s}' "
                             "failed.",
-                            i, file_name.c_str());
+                            i, file_name);
                         // clean up the elements vector
                         std::for_each(elements.begin(), elements.end(),
                             std::default_delete<MeshLib::Element>());

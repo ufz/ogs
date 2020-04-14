@@ -50,7 +50,7 @@ GenericNaturalBoundaryCondition<BoundaryConditionData,
         OGS_FATAL(
             "The required bulk node ids map does not exist in the boundary "
             "mesh '{:s}'.",
-            _bc_mesh.getName().c_str());
+            _bc_mesh.getName());
     }
 
     std::vector<MeshLib::Node*> const& bc_nodes = _bc_mesh.getNodes();

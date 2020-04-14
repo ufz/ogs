@@ -58,7 +58,7 @@ Parameter<ParameterDataType>* findParameterOptional(
     if (!parameter)
     {
         OGS_FATAL("The read parameter `{:s}' is of incompatible type.",
-                  parameter_name.c_str());
+                  parameter_name);
     }
 
     if (num_components != 0 &&
@@ -68,8 +68,7 @@ Parameter<ParameterDataType>* findParameterOptional(
             "The read parameter `{:s}' has the wrong number of components "
             "({:d} "
             "instead of {:d}).",
-            parameter_name.c_str(), parameter->getNumberOfComponents(),
-            num_components);
+            parameter_name, parameter->getNumberOfComponents(), num_components);
     }
 
     // Test the parameter's mesh only if there is a "test"-mesh provided.
@@ -112,7 +111,7 @@ Parameter<ParameterDataType>& findParameter(
     {
         OGS_FATAL(
             "Could not find parameter `{:s}' in the provided parameters list.",
-            parameter_name.c_str());
+            parameter_name);
     }
     return *parameter;
 }

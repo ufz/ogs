@@ -59,7 +59,7 @@ int main (int argc, char* argv[])
         GeoLib::IO::BoostXmlGmlInterface xml_io(geometries);
         if (xml_io.readFile(input_geometry_fname.getValue())) {
             INFO("Read geometry from file '{:s}'.",
-                 input_geometry_fname.getValue().c_str());
+                 input_geometry_fname.getValue());
         } else {
             return EXIT_FAILURE;
         }

@@ -224,7 +224,7 @@ std::unique_ptr<PythonBoundaryCondition> createPythonBoundaryCondition(
             "Function `{:s}' is not defined in the python script file, or "
             "there "
             "was no python script file specified.",
-            bc_object.c_str());
+            bc_object);
     }
 
     auto* bc = scope[bc_object.c_str()]

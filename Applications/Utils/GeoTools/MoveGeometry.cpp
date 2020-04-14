@@ -61,7 +61,7 @@ int main(int argc, char *argv[])
     }
     catch (std::runtime_error const& err)
     {
-        ERR("Failed to read file `{:s}'.", geo_input_arg.getValue().c_str());
+        ERR("Failed to read file `{:s}'.", geo_input_arg.getValue());
         ERR("{:s}", err.what());
         return EXIT_FAILURE;
     }

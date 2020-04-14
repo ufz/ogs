@@ -81,10 +81,10 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
                 "Could not find process variable '{:s}' in the provided "
                 "variables "
                 "list for config tag <{:s}>.",
-                pv_name.c_str(), "process_variable");
+                pv_name, "process_variable");
         }
         DBUG("Found process variable '{:s}' for config tag <{:s}>.",
-             variable->getName().c_str(), "process_variable");
+             variable->getName(), "process_variable");
 
         per_process_variables.emplace_back(
             const_cast<ProcessVariable&>(*variable));
@@ -144,7 +144,7 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
                 BHE::createBHE1PType<BHE::BHE_1P>(bhe_config, curves));
             continue;
         }
-        OGS_FATAL("Unknown BHE type '{:s}'.", bhe_type.c_str());
+        OGS_FATAL("Unknown BHE type '{:s}'.", bhe_type);
     }
     // end of reading BHE parameters -------------------------------------------
 

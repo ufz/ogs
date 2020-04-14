@@ -15,7 +15,6 @@
 #include <QFileInfo>
 
 #include "Applications/DataHolderLib/FemCondition.h"
-#include "BaseLib/Logging.h"
 #include "CondItem.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/GeoObject.h"

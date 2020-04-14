@@ -23,7 +23,7 @@ std::unique_ptr<GeoLib::GEOObjects> readGeometry(std::string const& filename)
     auto geo_objects = std::make_unique<GeoLib::GEOObjects>();
     GeoLib::IO::BoostXmlGmlInterface gml_reader(*geo_objects);
 
-    DBUG("Reading geometry file '{:s}'.", filename.c_str());
+    DBUG("Reading geometry file '{:s}'.", filename);
     gml_reader.readFile(filename);
     return geo_objects;
 }
@@ -106,7 +106,7 @@ int main(int argc, char* argv[])
             WARN(
                 "The created mesh '{:s}' hasn't any nodes or elements and thus "
                 "it isn't written to file.",
-                m_ptr->getName().c_str());
+                m_ptr->getName());
             continue;
         }
         MeshLib::IO::writeMeshToFile(*m_ptr, m_ptr->getName() + ".vtu");

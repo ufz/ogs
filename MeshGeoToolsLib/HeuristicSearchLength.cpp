@@ -73,7 +73,7 @@ HeuristicSearchLength::HeuristicSearchLength(MeshLib::Mesh const& mesh, LengthTy
     DBUG(
         "[MeshNodeSearcher::MeshNodeSearcher] Calculated search length for "
         "mesh '{:s}' is {:f}.",
-        _mesh.getName().c_str(), _search_length);
+        _mesh.getName(), _search_length);
 }
 
 } // end namespace MeshGeoToolsLib

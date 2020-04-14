@@ -4,7 +4,6 @@
 #include <QSurfaceFormat>
 #include <QVTKOpenGLWidget.h>
 #include <memory>
-#include "BaseLib/Logging.h"
 
 #ifdef VTKFBXCONVERTER_FOUND
 #include <fbxsdk.h>
@@ -16,7 +15,6 @@ FbxScene* lScene = nullptr;
 #include <vtkSmartPointer.h>
 
 #include "InfoLib/GitInfo.h"
-#include "BaseLib/Logging.h"
 #include "VtkVis/VtkConsoleOutputWindow.h"
 
 int main(int argc, char* argv[])

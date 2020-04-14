@@ -54,7 +54,7 @@ std::unique_ptr<Process> createHeatConductionProcess(
         "thermal_conductivity", parameters, 1, &mesh);
 
     DBUG("Use '{:s}' as thermal conductivity parameter.",
-         thermal_conductivity.name.c_str());
+         thermal_conductivity.name);
 
     // heat capacity parameter.
     auto& heat_capacity = ParameterLib::findParameter<double>(
@@ -62,7 +62,7 @@ std::unique_ptr<Process> createHeatConductionProcess(
         //! \ogs_file_param_special{prj__processes__process__HEAT_CONDUCTION__heat_capacity}
         "heat_capacity", parameters, 1, &mesh);
 
-    DBUG("Use '{:s}' as heat capacity parameter.", heat_capacity.name.c_str());
+    DBUG("Use '{:s}' as heat capacity parameter.", heat_capacity.name);
 
     // density parameter.
     auto& density = ParameterLib::findParameter<double>(
@@ -70,7 +70,7 @@ std::unique_ptr<Process> createHeatConductionProcess(
         //! \ogs_file_param_special{prj__processes__process__HEAT_CONDUCTION__density}
         "density", parameters, 1, &mesh);
 
-    DBUG("Use '{:s}' as density parameter.", density.name.c_str());
+    DBUG("Use '{:s}' as density parameter.", density.name);
 
     HeatConductionProcessData process_data{thermal_conductivity, heat_capacity,
                                            density};

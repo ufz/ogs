@@ -38,7 +38,7 @@ GocadSGridReader::GocadSGridReader(std::string const& fname)
     std::ifstream in(_fname.c_str());
     if (!in)
     {
-        ERR("Could not open '{:s}'.", _fname.c_str());
+        ERR("Could not open '{:s}'.", _fname);
         in.close();
         return;
     }
@@ -131,20 +131,20 @@ GocadSGridReader::GocadSGridReader(std::string const& fname)
     regions_ss << regions.size() << " regions read:\n";
     std::copy(regions.begin(), regions.end(),
               std::ostream_iterator<Gocad::Region>(regions_ss, "\t"));
-    DBUG("{:s}", regions_ss.str().c_str());
+    DBUG("{:s}", regions_ss.str());
 
     std::stringstream layers_ss;
     layers_ss << layers.size() << " layers read:\n";
     std::copy(layers.begin(), layers.end(),
               std::ostream_iterator<Gocad::Layer>(layers_ss, "\n"));
-    DBUG("{:s}", layers_ss.str().c_str());
+    DBUG("{:s}", layers_ss.str());
 
     std::stringstream properties_ss;
     properties_ss << "meta data for " << _property_meta_data_vecs.size()
                   << " properties read:\n";
     std::copy(_property_meta_data_vecs.begin(), _property_meta_data_vecs.end(),
               std::ostream_iterator<Gocad::Property>(properties_ss, "\n"));
-    DBUG("{:s}", properties_ss.str().c_str());
+    DBUG("{:s}", properties_ss.str());
 #endif
 
     // if not done already read the points
@@ -204,14 +204,14 @@ void GocadSGridReader::addGocadPropertiesToMesh(MeshLib::Mesh& mesh) const
             continue;
         }
 
-        DBUG("Adding Gocad property '{:s}' with {:d} values.", name.c_str(),
+        DBUG("Adding Gocad property '{:s}' with {:d} values.", name,
              prop->_property_data.size());
 
         auto pv = MeshLib::getOrCreateMeshProperty<double>(
             mesh, name, MeshLib::MeshItemType::Cell, 1);
         if (pv == nullptr)
         {
-            ERR("Could not create mesh property '{:s}'.", name.c_str());
+            ERR("Could not create mesh property '{:s}'.", name);
             continue;
         }
 
@@ -403,7 +403,7 @@ void GocadSGridReader::readNodesBinary()
     std::ifstream in(_pnts_fname.c_str(), std::ios::binary);
     if (!in)
     {
-        ERR("Could not open points file '{:s}'.", _pnts_fname.c_str());
+        ERR("Could not open points file '{:s}'.", _pnts_fname);
         throw std::runtime_error("Could not open points file.");
     }
 
@@ -488,15 +488,12 @@ void GocadSGridReader::mapRegionFlagsToCellProperties(
 
 void GocadSGridReader::readElementPropertiesBinary()
 {
-    for (auto prop_it(_property_meta_data_vecs.begin());
-         prop_it != _property_meta_data_vecs.end();
-         prop_it++)
+    for (auto& property : _property_meta_data_vecs)
     {
-        std::string const& fname(prop_it->_property_data_fname);
-        if (prop_it->_property_data_fname.empty())
+        std::string const& fname(property._property_data_fname);
+        if (property._property_data_fname.empty())
         {
-            WARN("Empty filename for property {:s}.",
-                 prop_it->_property_name.c_str());
+            WARN("Empty filename for property {:s}.", property._property_name);
             continue;
         }
         std::vector<float> float_properties =
@@ -511,13 +508,12 @@ void GocadSGridReader::readElementPropertiesBinary()
                            return BaseLib::swapEndianness(val);
                        });
 
-        prop_it->_property_data.resize(float_properties.size());
+        property._property_data.resize(float_properties.size());
         std::copy(float_properties.begin(), float_properties.end(),
-                  prop_it->_property_data.begin());
-        if (prop_it->_property_data.empty())
+                  property._property_data.begin());
+        if (property._property_data.empty())
         {
-            ERR("Reading of element properties file '{:s}' failed.",
-                fname.c_str());
+            ERR("Reading of element properties file '{:s}' failed.", fname);
         }
     }
 }
@@ -530,7 +526,7 @@ std::vector<Bitset> GocadSGridReader::readRegionFlagsBinary() const
     if (!in)
     {
         ERR("readRegionFlagsBinary(): Could not open file '{:s}' for input.\n",
-            _region_flags_fname.c_str());
+            _region_flags_fname);
         in.close();
         return result;
     }
@@ -585,7 +581,7 @@ void GocadSGridReader::readSplitInformation()
     std::ifstream in(_fname.c_str());
     if (!in)
     {
-        ERR("Could not open '{:s}'.", _fname.c_str());
+        ERR("Could not open '{:s}'.", _fname);
         in.close();
         return;
     }

@@ -86,7 +86,7 @@ PhreeqcIO::PhreeqcIO(std::string const project_file_name,
         OGS_FATAL(
             "Failed in loading the specified thermodynamic database file: "
             "{:s}.",
-            _database.c_str());
+            _database);
     }
 
     if (SetSelectedOutputFileOn(phreeqc_instance_id, 1) != IPQ_OK)
@@ -94,7 +94,7 @@ PhreeqcIO::PhreeqcIO(std::string const project_file_name,
         OGS_FATAL(
             "Failed to fly the flag for the specified file {:s} where phreeqc "
             "will write output.",
-            _output->basic_output_setups.output_file.c_str());
+            _output->basic_output_setups.output_file);
     }
 
     if (_dump)
@@ -230,8 +230,7 @@ void PhreeqcIO::setAqueousSolutionsPrevFromDumpFile()
     std::ifstream in(dump_file);
     if (!in)
     {
-        OGS_FATAL("Could not open phreeqc dump file '{:s}'.",
-                  dump_file.c_str());
+        OGS_FATAL("Could not open phreeqc dump file '{:s}'.", dump_file);
     }
 
     std::size_t const num_chemical_systems = _mesh.getNumberOfBaseNodes();
@@ -239,8 +238,7 @@ void PhreeqcIO::setAqueousSolutionsPrevFromDumpFile()
 
     if (!in)
     {
-        OGS_FATAL("Error when reading phreeqc dump file '{:s}'",
-                  dump_file.c_str());
+        OGS_FATAL("Error when reading phreeqc dump file '{:s}'", dump_file);
     }
 
     in.close();
@@ -248,14 +246,13 @@ void PhreeqcIO::setAqueousSolutionsPrevFromDumpFile()
 
 void PhreeqcIO::writeInputsToFile(double const dt)
 {
-    DBUG("Writing phreeqc inputs into file '{:s}'.",
-         _phreeqc_input_file.c_str());
+    DBUG("Writing phreeqc inputs into file '{:s}'.", _phreeqc_input_file);
     std::ofstream out(_phreeqc_input_file, std::ofstream::out);
 
     if (!out)
     {
         OGS_FATAL("Could not open file '{:s}' for writing phreeqc inputs.",
-                  _phreeqc_input_file.c_str());
+                  _phreeqc_input_file);
     }
 
     out << (*this << dt);
@@ -263,7 +260,7 @@ void PhreeqcIO::writeInputsToFile(double const dt)
     if (!out)
     {
         OGS_FATAL("Failed in generating phreeqc input file '{:s}'.",
-                  _phreeqc_input_file.c_str());
+                  _phreeqc_input_file);
     }
 
     out.close();
@@ -377,7 +374,7 @@ void PhreeqcIO::execute()
         OGS_FATAL(
             "Failed in performing speciation calculation with the generated "
             "phreeqc input file '{:s}'.",
-            _phreeqc_input_file.c_str());
+            _phreeqc_input_file);
     }
 }
 
@@ -385,14 +382,13 @@ void PhreeqcIO::readOutputsFromFile()
 {
     auto const& basic_output_setups = _output->basic_output_setups;
     auto const& phreeqc_result_file = basic_output_setups.output_file;
-    DBUG("Reading phreeqc results from file '{:s}'.",
-         phreeqc_result_file.c_str());
+    DBUG("Reading phreeqc results from file '{:s}'.", phreeqc_result_file);
     std::ifstream in(phreeqc_result_file);
 
     if (!in)
     {
         OGS_FATAL("Could not open phreeqc result file '{:s}'.",
-                  phreeqc_result_file.c_str());
+                  phreeqc_result_file);
     }
 
     in >> *this;
@@ -400,7 +396,7 @@ void PhreeqcIO::readOutputsFromFile()
     if (!in)
     {
         OGS_FATAL("Error when reading phreeqc result file '{:s}'",
-                  phreeqc_result_file.c_str());
+                  phreeqc_result_file);
     }
 
     in.close();
@@ -467,7 +463,7 @@ std::istream& operator>>(std::istream& in, PhreeqcIO& phreeqc_io)
                         "double for chemical system {:d}, column {:d}. "
                         "Exception "
                         "'{:s}' was thrown.",
-                        items[item_id].c_str(), global_id, item_id, e.what());
+                        items[item_id], global_id, item_id, e.what());
                 }
                 catch (const std::out_of_range& e)
                 {
@@ -477,7 +473,7 @@ std::istream& operator>>(std::istream& in, PhreeqcIO& phreeqc_io)
                         "double for chemical system {:d}, column {:d}. "
                         "Exception "
                         "'{:s}' was thrown.",
-                        items[item_id].c_str(), global_id, item_id, e.what());
+                        items[item_id], global_id, item_id, e.what());
                 }
                 accepted_items.push_back(value);
             }

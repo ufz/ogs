@@ -228,7 +228,7 @@ MFront<DisplacementDim>::MFront(
             _behaviour.mps.size());
         for (auto const& mp : _behaviour.mps)
         {
-            ERR("\t{:s}", mp.name.c_str());
+            ERR("\t{:s}", mp.name);
         }
         OGS_FATAL("But the number of passed material properties is {:d}.",
                   _material_properties.size());

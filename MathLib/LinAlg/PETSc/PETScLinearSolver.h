@@ -20,7 +20,6 @@
 
 #include <petscksp.h>
 
-#include "BaseLib/Logging.h"
 
 #include "BaseLib/ConfigTree.h"
 

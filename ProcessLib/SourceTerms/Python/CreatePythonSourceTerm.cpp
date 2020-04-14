@@ -47,7 +47,7 @@ std::unique_ptr<SourceTerm> createPythonSourceTerm(
             "Function `{:s}' is not defined in the python script file, or "
             "there "
             "was no python script file specified.",
-            source_term_object.c_str());
+            source_term_object);
     }
 
     auto* source_term = scope[source_term_object.c_str()]

@@ -36,15 +36,14 @@ std::unique_ptr<Lubby2<DisplacementDim>> createLubby2(
         config, "kelvin_shear_modulus", parameters, 1);
 
     DBUG("Use '{:s}' as kelvin shear modulus parameter.",
-         kelvin_shear_modulus.name.c_str());
+         kelvin_shear_modulus.name);
 
     // Kelvin viscosity.
     auto& kelvin_viscosity = ParameterLib::findParameter<double>(
         //! \ogs_file_param_special{material__solid__constitutive_relation__Lubby2__kelvin_viscosity}
         config, "kelvin_viscosity", parameters, 1);
 
-    DBUG("Use '{:s}' as kelvin viscosity parameter.",
-         kelvin_viscosity.name.c_str());
+    DBUG("Use '{:s}' as kelvin viscosity parameter.", kelvin_viscosity.name);
 
     // Maxwell shear modulus.
     auto& maxwell_shear_modulus = ParameterLib::findParameter<double>(
@@ -52,7 +51,7 @@ std::unique_ptr<Lubby2<DisplacementDim>> createLubby2(
         config, "maxwell_shear_modulus", parameters, 1);
 
     DBUG("Use '{:s}' as maxwell shear modulus parameter.",
-         maxwell_shear_modulus.name.c_str());
+         maxwell_shear_modulus.name);
 
     // Maxwell bulk modulus.
     auto& maxwell_bulk_modulus = ParameterLib::findParameter<double>(
@@ -60,15 +59,14 @@ std::unique_ptr<Lubby2<DisplacementDim>> createLubby2(
         config, "maxwell_bulk_modulus", parameters, 1);
 
     DBUG("Use '{:s}' as maxwell bulk modulus parameter.",
-         maxwell_bulk_modulus.name.c_str());
+         maxwell_bulk_modulus.name);
 
     // Maxwell viscosity.
     auto& maxwell_viscosity = ParameterLib::findParameter<double>(
         //! \ogs_file_param_special{material__solid__constitutive_relation__Lubby2__maxwell_viscosity}
         config, "maxwell_viscosity", parameters, 1);
 
-    DBUG("Use '{:s}' as maxwell viscosity parameter.",
-         maxwell_viscosity.name.c_str());
+    DBUG("Use '{:s}' as maxwell viscosity parameter.", maxwell_viscosity.name);
 
     // Dependency parameter for mK.
     auto& dependency_parameter_mK = ParameterLib::findParameter<double>(
@@ -76,7 +74,7 @@ std::unique_ptr<Lubby2<DisplacementDim>> createLubby2(
         config, "dependency_parameter_mk", parameters, 1);
 
     DBUG("Use '{:s}' as dependency parameter mK.",
-         dependency_parameter_mK.name.c_str());
+         dependency_parameter_mK.name);
 
     // Dependency parameter for mvK.
     auto& dependency_parameter_mvK = ParameterLib::findParameter<double>(
@@ -84,7 +82,7 @@ std::unique_ptr<Lubby2<DisplacementDim>> createLubby2(
         config, "dependency_parameter_mvk", parameters, 1);
 
     DBUG("Use '{:s}' as dependency parameter mvK.",
-         dependency_parameter_mvK.name.c_str());
+         dependency_parameter_mvK.name);
 
     // Dependency parameter for mvM.
     auto& dependency_parameter_mvM = ParameterLib::findParameter<double>(
@@ -92,7 +90,7 @@ std::unique_ptr<Lubby2<DisplacementDim>> createLubby2(
         config, "dependency_parameter_mvm", parameters, 1);
 
     DBUG("Use '{:s}' as dependency parameter mvM.",
-         dependency_parameter_mvM.name.c_str());
+         dependency_parameter_mvM.name);
 
     Lubby2MaterialProperties mp{
         kelvin_shear_modulus,     maxwell_shear_modulus,

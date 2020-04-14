@@ -47,8 +47,10 @@ MeshValidation::MeshValidation(MeshLib::Mesh &mesh)
     std::array<std::string,
                static_cast<std::size_t>(ElementErrorFlag::MaxValue)>
         output_str(MeshLib::MeshValidation::ElementErrorCodeOutput(codes));
-    for (auto & i : output_str)
-        INFO (i.c_str());
+    for (auto& i : output_str)
+    {
+        INFO("{:s}", i);
+    }
 }
 
 std::vector<ElementErrorCode> MeshValidation::testElementGeometry(const MeshLib::Mesh &mesh, double min_volume)
@@ -104,7 +106,7 @@ std::vector<ElementErrorCode> MeshValidation::testElementGeometry(const MeshLib:
             if (error_count[i])
                 INFO("{:d} elements found with {:s}.",
                      error_count[i],
-                     ElementErrorCode::toString(flags[i]).c_str());
+                     ElementErrorCode::toString(flags[i]));
         }
     }
     else

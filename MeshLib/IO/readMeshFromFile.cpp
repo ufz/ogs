@@ -81,7 +81,7 @@ MeshLib::Mesh* readMeshFromFileSerial(const std::string &file_name)
     }
 
     ERR("readMeshFromFile(): Unknown mesh file format in file {:s}.",
-        file_name.c_str());
+        file_name);
     return nullptr;
 }
 
