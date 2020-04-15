@@ -21,11 +21,11 @@ SaturationVanGenuchten::SaturationVanGenuchten(
     double const residual_liquid_saturation,
     double const residual_gas_saturation,
     double const exponent,
-    double const entry_pressure)
+    double const p_b)
     : _S_L_res(residual_liquid_saturation),
       _S_L_max(1. - residual_gas_saturation),
       _m(exponent),
-      _p_b(entry_pressure)
+      _p_b(p_b)
 {
     if (!(_m > 0 && _m < 1))
     {

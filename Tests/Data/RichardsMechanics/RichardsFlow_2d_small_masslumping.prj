@@ -98,7 +98,7 @@
                     <residual_liquid_saturation>0.1689</residual_liquid_saturation>
                     <residual_gas_saturation>0.05</residual_gas_saturation>
                     <exponent>0.789029535864979</exponent>
-                    <entry_pressure>3633.33</entry_pressure>
+                    <p_b>3633.33</p_b>
                 </property>
                 <property>
                     <name>relative_permeability</name>

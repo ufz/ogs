@@ -30,12 +30,10 @@ std::unique_ptr<SaturationVanGenuchten> createSaturationVanGenuchten(
     auto const exponent =
         //! \ogs_file_param{properties__property__SaturationVanGenuchten__exponent}
         config.getConfigParameter<double>("exponent");
-    auto const entry_pressure =
-        //! \ogs_file_param{properties__property__SaturationVanGenuchten__entry_pressure}
-        config.getConfigParameter<double>("entry_pressure");
+    //! \ogs_file_param{properties__property__SaturationVanGenuchten__p_b}
+    auto const p_b = config.getConfigParameter<double>("p_b");
 
-    return std::make_unique<SaturationVanGenuchten>(residual_liquid_saturation,
-                                                    residual_gas_saturation,
-                                                    exponent, entry_pressure);
+    return std::make_unique<SaturationVanGenuchten>(
+        residual_liquid_saturation, residual_gas_saturation, exponent, p_b);
 }
 }  // namespace MaterialPropertyLib
