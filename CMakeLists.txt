@@ -30,6 +30,7 @@ endif()
 option(OGS_USE_CONAN "Should Conan package manager be used?" ON)
 set(OGS_CONAN_BUILD "missing" CACHE STRING "Possible values: all, missing, \
     never or list of libs to build")
+option(OGS_DISABLE_CCACHE "Disables ccache compiler cache." OFF)
 
 # Third-party libraries, names come from Conan package names
 set(OGS_LIBS
