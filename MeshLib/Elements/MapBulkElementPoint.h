@@ -17,6 +17,11 @@
 
 namespace MeshLib
 {
+/// \page BulkMappingDocuPage
+/// [Documentation](https://www.opengeosys.org/pdf/BulkElementMappings.pdf) for
+/// the mapping of a point given in local coordinates of a boundary face/element
+/// to the corresponding bulk element point.
+
 /// Maps the given lower dimensional boundary point \c wp of a line, i.e. the 1d
 /// integration point given in local coordinates of a line, to higher
 /// dimensional point of the triangle face (defined by the triangle element and
