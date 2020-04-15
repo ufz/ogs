@@ -30,7 +30,7 @@ MathLib::Point3d getBulkElementPoint(MeshLib::Tri const& tri,
                                      MathLib::WeightedPoint1D const& wp);
 
 /// Maps the given lower dimensional boundary point \c wp of a line, i.e. the 1d
-/// gauss point given in local coordinates of a line, to higher dimensional
+/// integration point given in local coordinates of a line, to higher dimensional
 /// point of the quad face (defined by the quad element and the face id) also in
 /// local coordinates of the quad face.
 /// \param quad the quad element
