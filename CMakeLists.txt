@@ -298,6 +298,8 @@ if(BUILD_TESTING AND NOT IS_SUBPROJECT)
     add_subdirectory(Tests)
 endif()
 
+include(UnityBuildSettings)
+
 file(WRITE ${PROJECT_BINARY_DIR}/disabled-tests.log "${DISABLED_TESTS_LOG}")
 unset(DISABLED_TESTS_LOG CACHE) # Don't write to CMakeCache.txt
 

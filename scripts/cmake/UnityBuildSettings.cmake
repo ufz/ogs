@@ -1,0 +1,8 @@
+set_target_properties(BaseLib PROPERTIES UNITY_BUILD ON
+    UNITY_BUILD_BATCH_SIZE 8)
+set_target_properties(GeoLib PROPERTIES UNITY_BUILD ON
+    UNITY_BUILD_BATCH_SIZE 40)
+set_target_properties(MathLib PROPERTIES UNITY_BUILD ON
+    UNITY_BUILD_BATCH_SIZE 10)
+set_target_properties(MeshLib PROPERTIES UNITY_BUILD ON
+    UNITY_BUILD_BATCH_SIZE 40)
