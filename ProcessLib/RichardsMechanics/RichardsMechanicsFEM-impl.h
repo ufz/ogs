@@ -1105,85 +1105,24 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
     DisplacementDim>::
     getIntPtDarcyVelocity(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
         std::vector<double>& cache) const
 {
     auto const num_intpts = _ip_data.size();
-
-    constexpr int process_id = 0;  // monolithic scheme
-    auto const indices =
-        NumLib::getIndices(_element.getID(), *dof_table[process_id]);
-    assert(!indices.empty());
-    auto const local_x = x[process_id]->get(indices);
 
     cache.clear();
     auto cache_matrix = MathLib::createZeroedMatrix<Eigen::Matrix<
         double, DisplacementDim, Eigen::Dynamic, Eigen::RowMajor>>(
         cache, DisplacementDim, num_intpts);
 
-    auto p_L =
-        Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
-            pressure_size> const>(local_x.data() + pressure_index,
-                                  pressure_size);
-
-    auto const& medium = _process_data.media_map->getMedium(_element.getID());
-    auto const& liquid_phase = medium->phase("AqueousLiquid");
-    auto const& solid_phase = medium->phase("Solid");
-    MPL::VariableArray variables;
-
-    ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
-
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        x_position.setIntegrationPoint(ip);
-        auto const& N_p = _ip_data[ip].N_p;
-
-        double p_cap_ip;
-        NumLib::shapeFunctionInterpolate(-p_L, N_p, p_cap_ip);
-        variables[static_cast<int>(MPL::Variable::capillary_pressure)] =
-            p_cap_ip;
-        variables[static_cast<int>(MPL::Variable::phase_pressure)] = -p_cap_ip;
-
-        // TODO (naumov) Temporary value not used by current material models.
-        // Need extension of secondary variables interface.
-        double const dt = std::numeric_limits<double>::quiet_NaN();
-        auto const temperature =
-            medium->property(MPL::PropertyType::reference_temperature)
-                .template value<double>(variables, x_position, t, dt);
-        variables[static_cast<int>(MPL::Variable::temperature)] = temperature;
-
-        variables[static_cast<int>(MPL::Variable::porosity)] =
-            _ip_data[ip].porosity;
-
-        variables[static_cast<int>(MPL::Variable::transport_porosity)] =
-            _ip_data[ip].transport_porosity;
-
-        auto const mu = liquid_phase.property(MPL::PropertyType::viscosity)
-                            .template value<double>(variables, x_position, t, dt);
-        auto const rho_LR =
-            liquid_phase.property(MPL::PropertyType::density)
-                .template value<double>(variables, x_position, t, dt);
-        auto const K_intrinsic = MPL::formEigenTensor<DisplacementDim>(
-            solid_phase.property(MPL::PropertyType::permeability)
-                .value(variables, x_position, t, dt));
-        double const k_rel =
-            medium->property(MPL::PropertyType::relative_permeability)
-                .template value<double>(variables, x_position, t, dt);
-
-        GlobalDimMatrixType const K_over_mu = k_rel * K_intrinsic / mu;
-
-        auto const& b = _process_data.specific_body_force;
-
-        // Compute the velocity
-        auto const& dNdx_p = _ip_data[ip].dNdx_p;
-        cache_matrix.col(ip).noalias() =
-            -K_over_mu * dNdx_p * p_L + rho_LR * K_over_mu * b;
+        cache_matrix.col(ip).noalias() = _ip_data[ip].v_darcy;
     }
 
     return cache;
@@ -1517,6 +1456,8 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                   pressure_size);
 
     auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    auto const& liquid_phase = medium->phase("AqueousLiquid");
+    auto const& solid_phase = medium->phase("Solid");
     MPL::VariableArray variables;
 
     ParameterLib::SpatialPosition x_position;
@@ -1543,6 +1484,9 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 .template value<double>(variables, x_position, t, dt);
         variables[static_cast<int>(MPL::Variable::temperature)] = temperature;
 
+        variables[static_cast<int>(MPL::Variable::porosity)] =
+            _ip_data[ip].porosity;
+
         double p_cap_ip;
         NumLib::shapeFunctionInterpolate(-p_L, N_p, p_cap_ip);
         variables[static_cast<int>(MPL::Variable::capillary_pressure)] =
@@ -1552,6 +1496,31 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto& S_L = _ip_data[ip].saturation;
         S_L = medium->property(MPL::PropertyType::saturation)
                   .template value<double>(variables, x_position, t, dt);
+
+        variables[static_cast<int>(MPL::Variable::transport_porosity)] =
+            _ip_data[ip].transport_porosity;
+
+        auto const mu = liquid_phase.property(MPL::PropertyType::viscosity)
+                            .template value<double>(variables, x_position, t, dt);
+        auto const rho_LR =
+            liquid_phase.property(MPL::PropertyType::density)
+                .template value<double>(variables, x_position, t, dt);
+        auto const K_intrinsic = MPL::formEigenTensor<DisplacementDim>(
+            solid_phase.property(MPL::PropertyType::permeability)
+                .value(variables, x_position, t, dt));
+        double const k_rel =
+            medium->property(MPL::PropertyType::relative_permeability)
+                .template value<double>(variables, x_position, t, dt);
+
+        GlobalDimMatrixType const K_over_mu = k_rel * K_intrinsic / mu;
+
+        auto const& b = _process_data.specific_body_force;
+
+        // Compute the velocity
+        auto const& dNdx_p = _ip_data[ip].dNdx_p;
+        _ip_data[ip].v_darcy.noalias() =
+            -K_over_mu * dNdx_p * p_L + rho_LR * K_over_mu * b;
+
         saturation_avg += S_L;
         porosity_avg +=
             _ip_data[ip].porosity;  // Note, this is not updated, because needs
