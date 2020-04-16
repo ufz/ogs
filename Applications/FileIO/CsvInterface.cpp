@@ -88,7 +88,7 @@ int CsvInterface::readPoints(std::string const& fname, char delim,
             continue;
         }
         it = fields.begin();
-        std::array<double, 3> point;
+        std::array<double, 3> point{};
         try {
             point[0] = std::stod(*it);
             point[1] = std::stod(*(++it));
@@ -189,7 +189,7 @@ int CsvInterface::readPoints(std::ifstream &in, char delim,
             continue;
         }
 
-        std::array<double, 3> point;
+        std::array<double, 3> point{};
         it = fields.begin();
         try {
             std::advance(it, column_advance[0]);
