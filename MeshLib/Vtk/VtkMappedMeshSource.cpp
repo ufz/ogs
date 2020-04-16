@@ -113,7 +113,7 @@ int VtkMappedMeshSource::RequestData(vtkInformation* /*request*/,
         }
         else if (cellType == VTK_QUADRATIC_WEDGE)
         {
-            std::array<vtkIdType, 15> ogs_nodeIds;
+            std::array<vtkIdType, 15> ogs_nodeIds{};
             for (unsigned i = 0; i < 15; ++i)
             {
                 ogs_nodeIds[i] = ptIds->GetId(i);

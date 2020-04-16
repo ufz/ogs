@@ -31,7 +31,7 @@ std::unique_ptr<QuadraticElement> convertLinearToQuadratic(
     assert(n_base_nodes == e.getNumberOfBaseNodes());
 
     // Copy base nodes of element to the quadratic element new nodes'.
-    std::array<MeshLib::Node*, n_all_nodes> nodes;
+    std::array<MeshLib::Node*, n_all_nodes> nodes{};
     for (int i = 0; i < n_base_nodes; i++)
     {
         nodes[i] = const_cast<MeshLib::Node*>(e.getNode(i));

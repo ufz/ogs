@@ -97,8 +97,11 @@ private:
                 {
                     auto val(static_cast<T>(img[idx + j]));
                     prop_vec.push_back(val);
-                    if (elem_type == MeshElemType::TRIANGLE || elem_type == MeshElemType::PRISM)
+                    if (elem_type == MeshElemType::TRIANGLE ||
+                        elem_type == MeshElemType::PRISM)
+                    {
                         prop_vec.push_back(val); // because each pixel is represented by two cells
+                    }
                 }
             }
         }

@@ -52,7 +52,7 @@ const Element* HexRule8::getFace(const Element* e, unsigned i)
 {
     if (i < n_faces)
     {
-        std::array<Node*, 4> nodes;
+        std::array<Node*, 4> nodes{};
         for (unsigned j = 0; j < 4; j++)
         {
             nodes[j] = const_cast<Node*>(e->getNode(face_nodes[i][j]));

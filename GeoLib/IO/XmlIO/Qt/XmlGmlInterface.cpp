@@ -431,12 +431,15 @@ bool XmlGmlInterface::write()
                 }
             }
             else
+            {
                 INFO("XmlGmlInterface::write(): Polyline vector is empty, no polylines written to file.");
+            }
         }
     }
     else
+    {
         INFO("XmlGmlInterface::write(): Polyline vector is empty, no polylines written to file.");
-
+    }
 
     // SURFACES
     const GeoLib::SurfaceVec* sfc_vec (_geo_objs.getSurfaceVecObj(_exportName));
@@ -478,12 +481,15 @@ bool XmlGmlInterface::write()
                 }
             }
             else
+            {
                 INFO("XmlGmlInterface::write(): Surface vector is empty, no surfaces written to file.");
+            }
         }
     }
     else
+    {
         INFO("XmlGmlInterface::write(): Surface vector is empty, no surfaces written to file.");
-
+    }
 
     std::string xml = doc.toString().toStdString();
     _out << xml;

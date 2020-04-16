@@ -44,7 +44,7 @@ const Element* TetRule4::getFace(const Element* e, unsigned i)
 {
     if (i<n_faces)
     {
-        std::array<Node*,3> nodes;
+        std::array<Node*,3> nodes{};
         for (unsigned j = 0; j < 3; j++)
         {
             nodes[j] = const_cast<Node*>(e->getNode(face_nodes[i][j]));

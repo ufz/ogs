@@ -200,8 +200,10 @@ Grid<POINT>::Grid(InputIterator first, InputIterator last,
                                     _max_pnt[2] - _min_pnt[2]}};
 
     // enlarge delta
-    for (auto & d : delta)
+    for (auto& d : delta)
+    {
         d = std::nextafter(d, std::numeric_limits<double>::max());
+    }
 
     assert(n_pnts > 0);
     initNumberOfSteps(max_num_per_grid_cell, static_cast<std::size_t>(n_pnts), delta);
@@ -375,7 +377,7 @@ template <typename POINT>
 template <typename T>
 std::array<std::size_t,3> Grid<POINT>::getGridCoords(T const& pnt) const
 {
-    std::array<std::size_t,3> coords;
+    std::array<std::size_t,3> coords{};
     for (std::size_t k(0); k < 3; k++)
     {
         if (pnt[k] < _min_pnt[k])
@@ -405,7 +407,7 @@ template <typename P>
 std::array<double,6> Grid<POINT>::getPointCellBorderDistances(P const& p,
     std::array<std::size_t,3> const& coords) const
 {
-    std::array<double,6> dists;
+    std::array<double,6> dists{};
     dists[0] = std::abs(p[2]-_min_pnt[2] + coords[2]*_step_sizes[2]); // bottom
     dists[5] = std::abs(p[2]-_min_pnt[2] + (coords[2]+1)*_step_sizes[2]); // top
 

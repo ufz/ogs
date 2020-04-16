@@ -101,7 +101,9 @@ std::vector<T> readBinaryArray(std::string const& filename, std::size_t const n)
         result.size());
 
     if (!in.eof())
+    {
         ERR("EOF reached.\n");
+    }
 
     return std::vector<T>();
 }

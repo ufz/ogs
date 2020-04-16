@@ -96,7 +96,9 @@ public:
             {
                 if ((*pv)[i] < min_property_value ||
                     (*pv)[i] > max_property_value)
+                {
                     matchedIDs.push_back(i);
+                }
             }
         }
         else
@@ -105,7 +107,9 @@ public:
             {
                 if ((*pv)[i] >= min_property_value &&
                     (*pv)[i] <= max_property_value)
+                {
                     matchedIDs.push_back(i);
+                }
             }
         }
         updateUnion(matchedIDs);

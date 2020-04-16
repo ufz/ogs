@@ -123,8 +123,8 @@ void MeshElementGrid::sortElementsInGridCells(MeshLib::Mesh const& sfc_mesh)
 
 bool MeshElementGrid::sortElementInGridCells(MeshLib::Element const& element)
 {
-    std::array<std::size_t,3> min;
-    std::array<std::size_t,3> max;
+    std::array<std::size_t,3> min{};
+    std::array<std::size_t,3> max{};
     std::pair<bool, std::array<std::size_t, 3>> c(
         getGridCellCoordinates(*(static_cast<MathLib::Point3d const*>(element.getNode(0)))));
     if (c.first) {
@@ -183,7 +183,7 @@ std::pair<bool, std::array<std::size_t, 3>>
 MeshElementGrid::getGridCellCoordinates(MathLib::Point3d const& p) const
 {
     bool valid(true);
-    std::array<std::size_t, 3> coords;
+    std::array<std::size_t, 3> coords{};
 
     for (std::size_t k(0); k<3; ++k) {
         const double d(p[k]-_aabb.getMinPoint()[k]);

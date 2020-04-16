@@ -79,7 +79,9 @@ private:
             for (std::size_t j = 0; j < imgWidth; j++)
             {
                 if (!pix_vis[i * imgWidth + j])
+                {
                     continue;
+                }
                 T val(static_cast<T>(pix_val[i * (imgWidth + 1) + j]));
                 if (elem_type == MeshElemType::TRIANGLE)
                 {
@@ -87,7 +89,9 @@ private:
                     prop_vec.push_back(val);
                 }
                 else if (elem_type == MeshElemType::QUAD)
+                {
                     prop_vec.push_back(val);
+                }
             }
         }
     }

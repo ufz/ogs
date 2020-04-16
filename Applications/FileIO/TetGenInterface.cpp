@@ -215,11 +215,15 @@ MeshLib::Mesh* TetGenInterface::readTetGenMesh (std::string const& nodes_fname,
     if (!ins_nodes || !ins_ele)
     {
         if (!ins_nodes)
+        {
             ERR("TetGenInterface::readTetGenMesh failed to open {:s}",
                 nodes_fname);
+        }
         if (!ins_ele)
+        {
             ERR("TetGenInterface::readTetGenMesh failed to open {:s}",
                 ele_fname);
+        }
         return nullptr;
     }
 
@@ -591,8 +595,10 @@ bool TetGenInterface::writeTetGenSmesh(const std::string &file_name,
         return false;
     }
     if (surfaces==nullptr)
+    {
         WARN("No surfaces found for geometry {:s}. Writing points only.",
              geo_name);
+    }
 
     std::ofstream out( file_name.c_str(), std::ios::out );
     out.precision(std::numeric_limits<double>::digits10);

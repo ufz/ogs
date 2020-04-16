@@ -82,7 +82,7 @@ private:
     bool addProperty(MeshLib::Properties const& properties,
                      std::string const& prop_name) const;
 
-    const MeshLib::Mesh* _mesh;
+    const MeshLib::Mesh* _mesh{};
 
     int NumberOfDimensions{0};
     int NumberOfNodes{0};

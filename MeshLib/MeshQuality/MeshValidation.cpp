@@ -104,13 +104,17 @@ std::vector<ElementErrorCode> MeshValidation::testElementGeometry(const MeshLib:
         for (std::size_t i = 0; i < nErrorCodes; ++i)
         {
             if (error_count[i])
+            {
                 INFO("{:d} elements found with {:s}.",
                      error_count[i],
                      ElementErrorCode::toString(flags[i]));
+            }
         }
     }
     else
+    {
         INFO ("No errors found.");
+    }
     return error_code_vector;
 }
 

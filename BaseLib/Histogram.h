@@ -49,7 +49,7 @@ public:
     template <typename InputIterator>
     Histogram(InputIterator first, InputIterator last, const int nr_bins = 16,
               const bool computeHistogram = true )
-        : _data(first, last), _nr_bins(nr_bins)
+        : _data(first, last), _nr_bins(nr_bins), _dirty(true)
     {
         init(computeHistogram);
     }
@@ -62,7 +62,7 @@ public:
      */
     explicit Histogram(std::vector<T> data, const unsigned int nr_bins = 16,
                        const bool computeHistogram = true)
-        : _data(std::move(data)), _nr_bins(nr_bins)
+        : _data(std::move(data)), _nr_bins(nr_bins), _dirty(true)
     {
         init(computeHistogram);
     }
