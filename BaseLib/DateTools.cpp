@@ -75,11 +75,15 @@ std::string date2string(double ddate)
     rest = rest % (y * 10000);
     auto m = static_cast<int>(std::floor(rest / 100.0));
     if (m < 1 || m > 12)
+    {
         WARN("date2String(): month not in [1:12].");
+    }
     rest = rest % (m * 100);
     int d = rest;
     if (d < 1 || d > 31)
+    {
         WARN("date2String(): day not in [1:31].");
+    }
 
     std::string day = std::to_string(d);
     if (d < 10)
@@ -116,10 +120,14 @@ int xmlDate2int(const std::string &s)
     {
         int d = atoi(s.substr(8,2).c_str());
         if (d < 1 || d > 31)
+        {
             WARN("xmlDate2double(): day not in [1:31].");
+        }
         int m = atoi(s.substr(5,2).c_str());
         if (m < 1 || m > 12)
+        {
             WARN("xmlDate2double(): month not in [1:12].");
+        }
         int y = atoi(s.substr(0,4).c_str());
         return date2int(y, m, d);
     }

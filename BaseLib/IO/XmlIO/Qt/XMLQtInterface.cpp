@@ -125,7 +125,9 @@ bool XMLQtInterface::checkHash() const
         INFO("File is valid, hashfile written.");
     }
     else
+    {
         WARN("File is valid but could not write hashfile!");
+    }
     return true;
 }
 }  // namespace IO
