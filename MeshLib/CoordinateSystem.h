@@ -55,9 +55,13 @@ public:
     /// get dimension size
     unsigned getDimension() const {
         if (hasZ())
+        {
             return 3;
+        }
         if (hasY())
+        {
             return 2;
+        }
 
         return 1;
     }

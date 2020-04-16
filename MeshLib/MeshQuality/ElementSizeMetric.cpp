@@ -43,7 +43,9 @@ void ElementSizeMetric::calculateQuality()
         _min,
         _max);
     if (error_count > 0)
+    {
         WARN("Warning: {:d} elements with zero volume found.", error_count);
+    }
 }
 
 std::size_t ElementSizeMetric::calc1dQuality()

@@ -66,7 +66,9 @@ private:
                 }
             }
             if (!exists)
+            {
                 value_mapping.push_back(value);
+            }
         }
 
         std::sort(value_mapping.begin(), value_mapping.end());

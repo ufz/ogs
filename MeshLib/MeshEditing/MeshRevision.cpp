@@ -117,8 +117,11 @@ MeshLib::Mesh* MeshRevision::simplifyMesh(const std::string &new_mesh_name,
             }
             new_material_vec->insert(new_material_vec->end(),
                 n_new_elements, (*material_vec)[k]);
-        } else
+        }
+        else
+        {
             ERR ("Something is wrong, more unique nodes than actual nodes");
+        }
     }
 
     this->resetNodeIDs();

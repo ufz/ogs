@@ -257,7 +257,9 @@ void MeshSurfaceExtraction::get2DSurfaceElements(
     const MathLib::Vector3& dir, double angle, unsigned mesh_dimension)
 {
     if (mesh_dimension < 2 || mesh_dimension > 3)
+    {
         ERR("Cannot handle meshes of dimension {:i}", mesh_dimension);
+    }
 
     bool const complete_surface = (MathLib::scalarProduct(dir, dir) == 0);
 

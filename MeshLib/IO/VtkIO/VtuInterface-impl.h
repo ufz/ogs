@@ -49,14 +49,20 @@ bool VtuInterface::writeVTU(std::string const& file_name,
     vtkSource->Update();
     vtuWriter->SetInputData(vtkSource->GetOutput());
 
-    if(_use_compressor)
+    if (_use_compressor)
+    {
         vtuWriter->SetCompressorTypeToZLib();
+    }
     else
+    {
         vtuWriter->SetCompressorTypeToNone();
+    }
 
     vtuWriter->SetDataMode(_data_mode);
     if (_data_mode == vtkXMLWriter::Appended)
+    {
         vtuWriter->SetEncodeAppendedData(1);
+    }
     if (_data_mode == vtkXMLWriter::Ascii)
     {
         vtkSource->Update();

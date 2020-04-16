@@ -42,8 +42,10 @@ MeshLib::Mesh* MeshLayerMapper::createStaticLayers(MeshLib::Mesh const& mesh, st
             thickness.push_back(layer_thickness_vector[i]);
         }
         else
+        {
             WARN("Ignoring layer {:d} with thickness {:f}.", i,
                  layer_thickness_vector[i]);
+        }
     }
 
     const std::size_t nLayers(thickness.size());
