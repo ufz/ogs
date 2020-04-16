@@ -7,6 +7,8 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#pragma once
+
 #include "LinearElasticIsotropic.h"
 
 namespace MaterialLib

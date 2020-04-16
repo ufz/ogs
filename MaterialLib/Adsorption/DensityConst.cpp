@@ -15,7 +15,7 @@ namespace
 
 // NaX_Constant_polyfrac_CC.pickle
 // date extracted 2015-06-23 15:38:35 file mtime 2015-06-23 15:20:05
-const double c[] = {
+const double DensityConst_c[] = {
     0.3824098506898007,            /* a0 */
     -0.001316857559708455,        /* a1 */
     -0.0007935756090263691,        /* a2 */
@@ -43,7 +43,7 @@ double DensityConst::getAlphaT(const double /*T_Ads*/) const
 // Characteristic curve. Return W (A)
 double DensityConst::characteristicCurve(const double A) const
 {
-    double W = curvePolyfrac(c, A); //cm^3/g
+    double W = curvePolyfrac(DensityConst_c, A); //cm^3/g
 
     if (W < 0.0) {
         W = 0.0; // TODO [CL] debug output
@@ -54,7 +54,7 @@ double DensityConst::characteristicCurve(const double A) const
 
 double DensityConst::dCharacteristicCurve(const double A) const
 {
-    return dCurvePolyfrac(c, A);
+    return dCurvePolyfrac(DensityConst_c, A);
 }
 
 }  // namespace Adsorption

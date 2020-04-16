@@ -14,7 +14,7 @@ namespace
 
 // NaX_HighP_polyfrac_CC.pickle
 // date extracted 2015-06-23 15:38:35 file mtime 2015-06-23 15:19:57
-const double c[] = {
+const double Density100MPa_c[] = {
     0.3490302932983226,        /* a0 */
     -0.0014061345691831226,    /* a1 */
     -0.0007399303393402753,    /* a2 */
@@ -46,7 +46,7 @@ double Density100MPa::getAlphaT(const double T_Ads) const
 // Characteristic curve. Return W (A)
 double Density100MPa::characteristicCurve(const double A) const
 {
-    double W = curvePolyfrac(c, A); // cm^3/g
+    double W = curvePolyfrac(Density100MPa_c, A); // cm^3/g
 
     if (W < 0.0) {
         W = 0.0; // TODO [CL] debug output
@@ -57,7 +57,7 @@ double Density100MPa::characteristicCurve(const double A) const
 
 double Density100MPa::dCharacteristicCurve(const double A) const
 {
-    return dCurvePolyfrac(c, A);
+    return dCurvePolyfrac(Density100MPa_c, A);
 }
 
 }  // namespace Adsorption

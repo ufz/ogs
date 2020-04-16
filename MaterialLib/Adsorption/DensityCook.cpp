@@ -14,7 +14,7 @@ namespace
 
 // NaX_Dean_polyfrac_CC.pickle
 // date extracted 2015-06-23 15:38:35 file mtime 2015-06-23 15:19:42
-const double c[] = {
+const double DensityCook_c[] = {
     0.3632627555646154,        /* a0 */
     -0.0014090624975800715,    /* a1 */
     -0.0007717609035743321,    /* a2 */
@@ -42,7 +42,7 @@ double DensityCook::getAlphaT(const double T_Ads) const
 // Characteristic curve. Return W (A)
 double DensityCook::characteristicCurve(const double A) const
 {
-    double W = curvePolyfrac(c, A); //cm^3/g
+    double W = curvePolyfrac(DensityCook_c, A); //cm^3/g
 
     if (W < 0.0) {
         W = 0.0; // TODO [CL] debug output
@@ -53,7 +53,7 @@ double DensityCook::characteristicCurve(const double A) const
 
 double DensityCook::dCharacteristicCurve(const double A) const
 {
-    return dCurvePolyfrac(c, A);
+    return dCurvePolyfrac(DensityCook_c, A);
 }
 
 }  // namespace Adsorption

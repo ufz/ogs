@@ -14,7 +14,7 @@ namespace
 
 // NaX_Hauer_polyfrac_CC.pickle
 // date extracted 2015-06-23 15:38:35 file mtime 2015-06-23 15:19:19
-const double c[] = {
+const double DensityHauer_c[] = {
     0.36490158988356747,    /* a0 */
     -0.0013723270478333963,    /* a1 */
     -0.0007655780628099964,    /* a2 */
@@ -47,7 +47,7 @@ double DensityHauer::getAlphaT(const double T_Ads) const
 // Characteristic curve. Return W (A)
 double DensityHauer::characteristicCurve(const double A) const
 {
-    double W = curvePolyfrac(c, A); // cm^3/g
+    double W = curvePolyfrac(DensityHauer_c, A); // cm^3/g
 
     if (W < 0.0) {
         W = 0.0; // TODO [CL] debug output
@@ -58,7 +58,7 @@ double DensityHauer::characteristicCurve(const double A) const
 
 double DensityHauer::dCharacteristicCurve(const double A) const
 {
-    return dCurvePolyfrac(c, A);
+    return dCurvePolyfrac(DensityHauer_c, A);
 }
 
 }  // namespace Adsorption

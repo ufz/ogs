@@ -13,7 +13,7 @@ namespace
 {
 
 //parameters from least squares fit (experimental data)
-const double c[] = { 0.34102920966608297,
+const double DensityLegacy_c[] = { 0.34102920966608297,
                      -0.0013106032830951296,
                      -0.00060754147575378876,
                      3.7843404172683339e-07,
@@ -50,7 +50,7 @@ double DensityLegacy::getAlphaT(const double T_Ads) const
 // Characteristic curve. Return W (A)
 double DensityLegacy::characteristicCurve(const double A) const
 {
-    double W = curvePolyfrac(c, A); // cm^3/g
+    double W = curvePolyfrac(DensityLegacy_c, A); // cm^3/g
 
     if (W < 0.0) {
         W = 0.0; // TODO [CL] debug output
@@ -61,7 +61,7 @@ double DensityLegacy::characteristicCurve(const double A) const
 
 double DensityLegacy::dCharacteristicCurve(const double A) const
 {
-    return dCurvePolyfrac(c, A);
+    return dCurvePolyfrac(DensityLegacy_c, A);
 }
 
 }  // namespace Adsorption

@@ -14,7 +14,7 @@ namespace
 
 // NaX_Nunez_polyfrac_CC.pickle
 // date extracted 2015-06-23 15:38:35 file mtime 2015-06-23 15:19:34
-const double c[] = {
+const double DensityNunez_c[] = {
     0.3631900485031771,        /* a0 */
     -0.0014242280940080726,    /* a1 */
     -0.0007751726942386291,    /* a2 */
@@ -57,7 +57,7 @@ double DensityNunez::getAlphaT(const double T_Ads) const
 // Characteristic curve. Return W (A)
 double DensityNunez::characteristicCurve(const double A) const
 {
-    double W = curvePolyfrac(c, A); // cm^3/g
+    double W = curvePolyfrac(DensityNunez_c, A); // cm^3/g
 
     if (W < 0.0) {
         W = 0.0; // TODO [CL] debug output
@@ -68,7 +68,7 @@ double DensityNunez::characteristicCurve(const double A) const
 
 double DensityNunez::dCharacteristicCurve(const double A) const
 {
-    return dCurvePolyfrac(c, A);
+    return dCurvePolyfrac(DensityNunez_c, A);
 }
 
 }  // namespace Adsorption
