@@ -33,8 +33,10 @@ SensorData::SensorData(std::vector<std::size_t> time_steps)
 {
     for (std::size_t i=1; i<time_steps.size(); i++)
     {
-        if (time_steps[i-1]>=time_steps[i])
+        if (time_steps[i - 1] >= time_steps[i])
+        {
             ERR("Error in SensorData() - Time series has no order!");
+        }
     }
 }
 

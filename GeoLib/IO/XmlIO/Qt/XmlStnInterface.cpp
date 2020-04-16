@@ -177,7 +177,9 @@ void XmlStnInterface::readStations( const QDomNode &stationsRoot,
             }
         }
         else
+        {
             WARN("XmlStnInterface::readStations(): Attribute missing in <station> tag.");
+        }
         station = station.nextSiblingElement();
     }
 }
@@ -216,13 +218,17 @@ void XmlStnInterface::readStratigraphy( const QDomNode &stratRoot,
                 depth_check = depth;
             }
             else
+            {
                 WARN(
                     "XmlStnInterface::readStratigraphy(): Skipped layer '{:s}' "
                     "in borehole '{:s}' because of thickness 0.0.",
                     horizonName, borehole->getName());
+            }
         }
         else
+        {
             WARN("XmlStnInterface::readStratigraphy(): Attribute missing in <horizon> tag.");
+        }
         horizon = horizon.nextSiblingElement();
     }
 }

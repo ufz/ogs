@@ -111,8 +111,10 @@ PointVec::PointVec(
     }
 
     if (number_of_all_input_pnts > _data_vec->size())
+    {
         WARN("PointVec::PointVec(): there are {:d} double points.",
              number_of_all_input_pnts - _data_vec->size());
+    }
 
     correctNameIDMapping();
     // create the inverse mapping

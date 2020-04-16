@@ -378,7 +378,9 @@ Polyline* Polyline::constructPolylineFromSegments(const std::vector<Polyline*> &
                 }
             }
             else
+            {
                 ERR("Error in Polyline::contructPolylineFromSegments() - Line segments use different point vectors.");
+            }
         }
 
         if (!ply_found)
