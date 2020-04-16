@@ -903,32 +903,39 @@ std::size_t RichardsMechanicsLocalAssembler<
     return n_integration_points;
 }
 
-// TODO (naumov) This method is same as getIntPtSigma but for arguments and
-// the ordering of the cache_mat.
-// There should be only one.
+template <int Components, typename StoreValuesFunction>
+std::vector<double> transposeInPlace(
+    StoreValuesFunction const& store_values_function)
+{
+    std::vector<double> result;
+    store_values_function(result);
+    // Transpose. For time being Eigen's transposeInPlace doesn't work for
+    // non-square mapped matrices.
+    MathLib::toMatrix<
+        Eigen::Matrix<double, Eigen::Dynamic, Components, Eigen::RowMajor>>(
+        result, result.size() / Components, Components) =
+        MathLib::toMatrix<
+            Eigen::Matrix<double, Components, Eigen::Dynamic, Eigen::RowMajor>>(
+            result, Components, result.size() / Components)
+            .transpose()
+            .eval();
+
+    return result;
+}
+
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           typename IntegrationMethod, int DisplacementDim>
 std::vector<double> RichardsMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
     DisplacementDim>::getSigma() const
 {
-    auto const kelvin_vector_size =
+    constexpr int kelvin_vector_size =
         MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
-    auto const n_integration_points = _ip_data.size();
 
-    std::vector<double> ip_sigma_values;
-    auto cache_mat = MathLib::createZeroedMatrix<Eigen::Matrix<
-        double, Eigen::Dynamic, kelvin_vector_size, Eigen::RowMajor>>(
-        ip_sigma_values, n_integration_points, kelvin_vector_size);
-
-    for (unsigned ip = 0; ip < n_integration_points; ++ip)
-    {
-        auto const& sigma = _ip_data[ip].sigma_eff;
-        cache_mat.row(ip) =
-            MathLib::KelvinVector::kelvinVectorToSymmetricTensor(sigma);
-    }
-
-    return ip_sigma_values;
+    return transposeInPlace<kelvin_vector_size>(
+        [this](std::vector<double>& values) {
+            return getIntPtSigma(0, {}, {}, values);
+        });
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
@@ -961,32 +968,19 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
     return cache;
 }
 
-// TODO (naumov) This method is same as getIntPtSwellingStress but for arguments
-// and the ordering of the cache_mat.
-// There should be only one.
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           typename IntegrationMethod, int DisplacementDim>
 std::vector<double> RichardsMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
     DisplacementDim>::getSwellingStress() const
 {
-    auto const kelvin_vector_size =
+    constexpr int kelvin_vector_size =
         MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
-    auto const n_integration_points = _ip_data.size();
 
-    std::vector<double> ip_sigma_values;
-    auto cache_mat = MathLib::createZeroedMatrix<Eigen::Matrix<
-        double, Eigen::Dynamic, kelvin_vector_size, Eigen::RowMajor>>(
-        ip_sigma_values, n_integration_points, kelvin_vector_size);
-
-    for (unsigned ip = 0; ip < n_integration_points; ++ip)
-    {
-        auto const& sigma = _ip_data[ip].sigma_sw;
-        cache_mat.row(ip) =
-            MathLib::KelvinVector::kelvinVectorToSymmetricTensor(sigma);
-    }
-
-    return ip_sigma_values;
+    return transposeInPlace<kelvin_vector_size>(
+        [this](std::vector<double>& values) {
+            return getIntPtSwellingStress(0, {}, {}, values);
+        });
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
@@ -1050,23 +1044,13 @@ std::vector<double> RichardsMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
     DisplacementDim>::getEpsilon() const
 {
-    auto const kelvin_vector_size =
+    constexpr int kelvin_vector_size =
         MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
-    auto const n_integration_points = _ip_data.size();
 
-    std::vector<double> ip_values;
-    auto cache_mat = MathLib::createZeroedMatrix<Eigen::Matrix<
-        double, Eigen::Dynamic, kelvin_vector_size, Eigen::RowMajor>>(
-        ip_values, n_integration_points, kelvin_vector_size);
-
-    for (unsigned ip = 0; ip < n_integration_points; ++ip)
-    {
-        auto const& eps = _ip_data[ip].eps;
-        cache_mat.row(ip) =
-            MathLib::KelvinVector::kelvinVectorToSymmetricTensor(eps);
-    }
-
-    return ip_values;
+    return transposeInPlace<kelvin_vector_size>(
+        [this](std::vector<double>& values) {
+            return getIntPtEpsilon(0, {}, {}, values);
+        });
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
