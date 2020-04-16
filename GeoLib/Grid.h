@@ -377,7 +377,7 @@ template <typename POINT>
 template <typename T>
 std::array<std::size_t,3> Grid<POINT>::getGridCoords(T const& pnt) const
 {
-    std::array<std::size_t,3> coords;
+    std::array<std::size_t,3> coords{};
     for (std::size_t k(0); k < 3; k++)
     {
         if (pnt[k] < _min_pnt[k])
@@ -407,7 +407,7 @@ template <typename P>
 std::array<double,6> Grid<POINT>::getPointCellBorderDistances(P const& p,
     std::array<std::size_t,3> const& coords) const
 {
-    std::array<double,6> dists;
+    std::array<double,6> dists{};
     dists[0] = std::abs(p[2]-_min_pnt[2] + coords[2]*_step_sizes[2]); // bottom
     dists[5] = std::abs(p[2]-_min_pnt[2] + (coords[2]+1)*_step_sizes[2]); // top
 

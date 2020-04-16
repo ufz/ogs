@@ -99,7 +99,7 @@ double Raster::interpolateValueAtPoint(MathLib::Point3d const& pnt) const
     std::array<int,4> const y_nb = {{ 0, 0, yShiftIdx, yShiftIdx }};
 
     // get pixel values
-    std::array<double,4>  pix_val;
+    std::array<double,4>  pix_val{};
     unsigned no_data_count (0);
     for (unsigned j=0; j<4; ++j)
     {
