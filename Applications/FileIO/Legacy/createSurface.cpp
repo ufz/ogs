@@ -106,7 +106,9 @@ bool createSurface(GeoLib::Polyline const& ply,
         return false;
     }
     if (!(fs::remove(geo_file) && fs::remove(msh_file)))
+    {
         WARN("Could not remove temporary files in createSurface.");
+    }
 
     // convert the surface mesh into a geometric surface
     if (!MeshLib::convertMeshToGeo(*surface_mesh, geometries,

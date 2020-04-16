@@ -90,10 +90,12 @@ int GMSInterface::readBoreholesFromGMS(std::vector<GeoLib::Point*>* boreholes,
                     depth = pnt[2];
                 }
                 else
+                {
                     WARN(
                         "GMSInterface::readBoreholeFromGMS(): Skipped layer "
                         "'{:s}' in borehole '{:s}' because of thickness 0.0.",
                         sName, cName);
+                }
             }
             else  // add new borehole
             {
@@ -317,8 +319,10 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string& filename)
                   std::back_inserter(*opt_pv));
     }
     else
+    {
         ERR("Ignoring Material IDs information (does not match number of "
             "elements).");
+    }
     return new MeshLib::Mesh(mesh_name, nodes, elements, properties);
 }
 

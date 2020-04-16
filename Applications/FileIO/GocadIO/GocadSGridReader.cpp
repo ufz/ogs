@@ -346,11 +346,17 @@ void GocadSGridReader::parseFaceSet(std::string& line, std::istream& in)
                 std::array<std::size_t, 3> const c(
                     _index_calculator.getCoordsForID(id));
                 if (c[0] >= _index_calculator._x_dim - 1)
+                {
                     ERR("****** i coord {:d} to big for id {:d}.", c[0], id);
+                }
                 if (c[1] >= _index_calculator._y_dim - 1)
+                {
                     ERR("****** j coord {:d} to big for id {:d}.", c[1], id);
+                }
                 if (c[2] >= _index_calculator._z_dim - 1)
+                {
                     ERR("****** k coord {:d} to big for id {:d}.", c[2], id);
+                }
                 std::size_t const cell_id(
                     _index_calculator.getCellIdx(c[0], c[1], c[2]));
                 face_set_property._property_data[cell_id] =
@@ -435,9 +441,11 @@ void GocadSGridReader::readNodesBinary()
         k++;
     }
     if (k != n * 3 && !in.eof())
+    {
         ERR("Read different number of points. Expected {:d} floats, got "
             "{:d}.\n",
             n * 3, k);
+    }
 }
 
 void GocadSGridReader::mapRegionFlagsToCellProperties(
@@ -540,9 +548,10 @@ std::vector<Bitset> GocadSGridReader::readRegionFlagsBinary() const
         result[k++] = readBits(in, regions.size());
     }
     if (k != n && !in.eof())
+    {
         ERR("Read different number of values. Expected {:d}, got {:d}.\n", n,
             k);
-
+    }
     return result;
 }
 std::vector<MeshLib::Element*> GocadSGridReader::createElements(

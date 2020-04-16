@@ -100,8 +100,10 @@ bool CoordinateSystem::parse(std::istream& in)
             return true;
         }
         else
+        {
             WARN("CoordinateSystem::parse() - Unknown keyword found: {:s}",
                  line);
+        }
     }
     ERR ("Error: Unexpected end of file.");
     return false;

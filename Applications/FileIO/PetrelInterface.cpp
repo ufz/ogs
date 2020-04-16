@@ -45,10 +45,12 @@ PetrelInterface::PetrelInterface(std::list<std::string> &sfc_fnames,
             in.close();
         }
         else
+        {
             WARN(
                 "PetrelInterface::PetrelInterface(): \tCould not open file "
                 "{:s}.",
                 it->c_str());
+        }
     }
 
     for (std::list<std::string>::const_iterator it(well_path_fnames.begin()); it
@@ -63,10 +65,12 @@ PetrelInterface::PetrelInterface(std::list<std::string> &sfc_fnames,
             in.close();
         }
         else
+        {
             WARN(
                 "PetrelInterface::PetrelInterface(): \tCould not open well "
                 "path file {:s}.",
                 it->c_str());
+        }
     }
 
     // store data in GEOObject
@@ -124,11 +128,14 @@ void PetrelInterface::readPetrelSurface(std::istream &in)
                 idx++;
             }
         }
-    } else
+    }
+    else
+    {
         WARN(
             "PetrelInterface::readPetrelSurface(): problem reading petrel "
             "points from line\n'{:s}'.",
             line);
+    }
 }
 
 void PetrelInterface::readPetrelWellTrace(std::istream &in)

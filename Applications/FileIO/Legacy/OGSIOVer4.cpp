@@ -101,10 +101,12 @@ std::string readPoints(std::istream &in, std::vector<GeoLib::Point*>* pnt_vec,
 
             std::size_t id_pos (line.find("$ID"));
             if (id_pos != std::string::npos)
+            {
                 WARN(
                     "readPoints(): found tag $ID - please use tag $NAME for "
                     "reading point names in point {:d}.",
                     cnt);
+            }
             cnt++;
         }
         getline(in, line);
@@ -541,7 +543,9 @@ bool readGLIFileV4(const std::string& fname,
              ply_vec->size());
     }
     else
+    {
         INFO("GeoLib::readGLIFile(): tag #POLYLINE not found.");
+    }
 
     if (!ply_vec->empty())
     {
