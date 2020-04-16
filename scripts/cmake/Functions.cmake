@@ -101,4 +101,9 @@ function(ogs_add_library targetName)
     if(OGS_USE_PCH AND NOT ${targetName} STREQUAL "ChemistryLib")
         cotire(${targetName})
     endif()
+
+    if(${CMAKE_VERSION} VERSION_GREATER_EQUAL 3.16)
+        set_target_properties(${targetName} PROPERTIES
+            UNITY_BUILD ${OGS_USE_UNITY_BUILDS})
+    endif()
 endfunction()
