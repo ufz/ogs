@@ -245,7 +245,7 @@ MeshLib::Node* createNode(std::stringstream& sstr)
 {
     std::string keyword;
     std::size_t id;
-    std::array<double, 3> data;
+    std::array<double, 3> data{};
     sstr >> keyword >> id >> data[0] >> data[1] >> data[2];
     return new MeshLib::Node(data, id);
 }
@@ -352,9 +352,9 @@ bool parseLineSegments(std::ifstream& in,
         {
             std::stringstream sstr(line);
             std::string keyword;
-            std::array<std::size_t, 2> data;
+            std::array<std::size_t, 2> data{};
             sstr >> keyword >> data[0] >> data[1];
-            std::array<MeshLib::Node*, 2> elem_nodes;
+            std::array<MeshLib::Node*, 2> elem_nodes{};
             for (std::size_t i = 0; i < 2; ++i)
             {
                 auto const it = node_id_map.find(data[i]);
@@ -443,9 +443,9 @@ bool parseElements(std::ifstream& in,
         {
             std::stringstream sstr(line);
             std::string keyword;
-            std::array<std::size_t, 3> data;
+            std::array<std::size_t, 3> data{};
             sstr >> keyword >> data[0] >> data[1] >> data[2];
-            std::array<MeshLib::Node*, 3> elem_nodes;
+            std::array<MeshLib::Node*, 3> elem_nodes{};
             for (std::size_t i = 0; i < 3; ++i)
             {
                 auto const it = node_id_map.find(data[i]);
