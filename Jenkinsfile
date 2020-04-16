@@ -297,7 +297,7 @@ pipeline {
                   '-DOGS_CPU_ARCHITECTURE=sandybridge ' +
                   '-DCMAKE_INSTALL_PREFIX=/global/apps/ogs/head/standard ' +
                   '-DOGS_MODULEFILE=/global/apps/modulefiles/ogs/head/standard ' +
-                  '-DOGS_USE_UNITY_BUILDS=ON ' +
+                  '-DOGS_USE_UNITY_BUILDS=ON ' + // no effect as cmake too old
                   '-DOGS_USE_PCH=OFF '
                 env = 'eve/cli.sh'
               }
@@ -355,7 +355,7 @@ pipeline {
                   '-DOGS_CPU_ARCHITECTURE=sandybridge ' +
                   '-DCMAKE_INSTALL_PREFIX=/global/apps/ogs/head/petsc ' +
                   '-DOGS_MODULEFILE=/global/apps/modulefiles/ogs/head/petsc ' +
-                  '-DOGS_USE_UNITY_BUILDS=ON ' +
+                  '-DOGS_USE_UNITY_BUILDS=ON ' + // no effect as cmake too old
                   '-DOGS_USE_PCH=OFF '
                 env = 'eve/petsc.sh'
               }
