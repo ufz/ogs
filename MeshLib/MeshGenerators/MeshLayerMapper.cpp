@@ -219,7 +219,7 @@ void MeshLayerMapper::addLayerToMesh(const MeshLib::Mesh &dem_mesh, unsigned lay
         }
         unsigned node_counter(3);
         unsigned missing_idx(0);
-        std::array<MeshLib::Node*, 6> new_elem_nodes;
+        std::array<MeshLib::Node*, 6> new_elem_nodes{};
         for (unsigned j=0; j<3; ++j)
         {
             new_elem_nodes[j] = _nodes[_nodes[last_layer_node_offset + elem->getNodeIndex(j)]->getID()];
@@ -242,6 +242,7 @@ void MeshLayerMapper::addLayerToMesh(const MeshLib::Mesh &dem_mesh, unsigned lay
             _materials.push_back(layer_id);
             break;
         case 5:
+        {
             std::array<MeshLib::Node*, 5> pyramid_nodes;
             pyramid_nodes[0] = new_elem_nodes[pyramid_base[missing_idx][0]];
             pyramid_nodes[1] = new_elem_nodes[pyramid_base[missing_idx][1]];
@@ -251,12 +252,15 @@ void MeshLayerMapper::addLayerToMesh(const MeshLib::Mesh &dem_mesh, unsigned lay
             _elements.push_back(new MeshLib::Pyramid(pyramid_nodes));
             _materials.push_back(layer_id);
             break;
+        }
         case 4:
+        {
             std::array<MeshLib::Node*, 4> tet_nodes;
             std::copy(new_elem_nodes.begin(), new_elem_nodes.begin() + node_counter, tet_nodes.begin());
             _elements.push_back(new MeshLib::Tet(tet_nodes));
             _materials.push_back(layer_id);
             break;
+        }
         default:
             continue;
         }

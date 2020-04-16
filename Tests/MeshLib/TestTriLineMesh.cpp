@@ -25,7 +25,7 @@ class MeshLibTriLineMesh : public ::testing::Test
         nodes.push_back(new MeshLib::Node(0, 1, 0));
         nodes.push_back(new MeshLib::Node(1, 1, 0));
 
-        std::array<MeshLib::Node*, 3> t_nodes;
+        std::array<MeshLib::Node*, 3> t_nodes{};
         t_nodes[0] = nodes[0];
         t_nodes[1] = nodes[1];
         t_nodes[2] = nodes[2];
@@ -36,7 +36,7 @@ class MeshLibTriLineMesh : public ::testing::Test
         t_nodes[2] = nodes[2];
         elements.push_back(new MeshLib::Tri(t_nodes));
 
-        std::array<MeshLib::Node*, 2> l_nodes;
+        std::array<MeshLib::Node*, 2> l_nodes{};
         l_nodes[0] = nodes[1];
         l_nodes[1] = nodes[2];
         elements.push_back(new MeshLib::Line(l_nodes));

@@ -20,7 +20,7 @@ TEST(MeshLib, ElementConstantsQuad4)
     ASSERT_EQ(4u, Quad::n_all_nodes);
     ASSERT_EQ(4u, Quad::n_base_nodes);
 
-    std::array<Node*, 4> nodes;
+    std::array<Node*, 4> nodes{};
     nodes[0] = new Node(0.0, 0.0, 0.0);
     nodes[1] = new Node(0.0, 1.0, 0.0);
     nodes[2] = new Node(1.0, 1.0, 0.0);
@@ -43,7 +43,7 @@ TEST(MeshLib, ElementConstantsQuad8)
     ASSERT_EQ(8u, Quad8::n_all_nodes);
     ASSERT_EQ(4u, Quad8::n_base_nodes);
 
-    std::array<Node*, 8> nodes;
+    std::array<Node*, 8> nodes{};
     nodes[0] = new Node(0.0, 0.0, 0.0);
     nodes[1] = new Node(0.0, 1.0, 0.0);
     nodes[2] = new Node(1.0, 1.0, 0.0);
@@ -72,7 +72,7 @@ TEST(MeshLib, ElementConstantsQuad9)
     ASSERT_EQ(9u, Quad9::n_all_nodes);
     ASSERT_EQ(4u, Quad9::n_base_nodes);
 
-    std::array<Node*, 9> nodes;
+    std::array<Node*, 9> nodes{};
     nodes[0] = new Node(0.0, 0.0, 0.0);
     nodes[1] = new Node(0.0, 1.0, 0.0);
     nodes[2] = new Node(1.0, 1.0, 0.0);
@@ -102,7 +102,7 @@ TEST(MeshLib, ElementConstantsHex8)
     ASSERT_EQ(8u, Hex::n_all_nodes);
     ASSERT_EQ(8u, Hex::n_base_nodes);
 
-    std::array<Node*, 8> nodes;
+    std::array<Node*, 8> nodes{};
     nodes[0] = new Node(0.0, 0.0, 0.0);
     nodes[1] = new Node(0.0, 1.0, 0.0);
     nodes[2] = new Node(1.0, 1.0, 0.0);
@@ -129,7 +129,7 @@ TEST(MeshLib, ElementConstantsHex20)
     ASSERT_EQ(20u, Hex20::n_all_nodes);
     ASSERT_EQ( 8u, Hex20::n_base_nodes);
 
-    std::array<Node*, 20> nodes;
+    std::array<Node*, 20> nodes{};
     nodes[0] = new Node(0.0, 0.0, 0.0);
     nodes[1] = new Node(1.0, 0.0, 0.0);
     nodes[2] = new Node(1.0, 1.0, 0.0);
@@ -168,7 +168,7 @@ TEST(MeshLib, ElementConstantsTet4)
     ASSERT_EQ(4u, Tet::n_all_nodes);
     ASSERT_EQ(4u, Tet::n_base_nodes);
 
-    std::array<Node*, 4> nodes;
+    std::array<Node*, 4> nodes{};
     nodes[0] = new Node(0.0, 0.0, 0.0);
     nodes[1] = new Node(1.0, 0.0, 0.0);
     nodes[2] = new Node(0.0, 1.0, 0.0);
@@ -191,7 +191,7 @@ TEST(MeshLib, ElementConstantsTet10)
     ASSERT_EQ(10u, Tet10::n_all_nodes);
     ASSERT_EQ( 4u, Tet10::n_base_nodes);
 
-    std::array<Node*, 10> nodes;
+    std::array<Node*, 10> nodes{};
     nodes[0] = new Node(0.0, 0.0, 0.0);
     nodes[1] = new Node(1.0, 0.0, 0.0);
     nodes[2] = new Node(0.0, 1.0, 0.0);

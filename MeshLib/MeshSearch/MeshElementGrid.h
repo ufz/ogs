@@ -84,8 +84,8 @@ private:
     /// false.
     std::pair<bool, std::array<std::size_t,3>>
         getGridCellCoordinates(MathLib::Point3d const& p) const;
-    std::array<double,3> _step_sizes;
-    std::array<double,3> _inverse_step_sizes;
+    std::array<double,3> _step_sizes{};
+    std::array<double,3> _inverse_step_sizes{};
     std::array<std::size_t,3> _n_steps;
     std::vector<std::vector<MeshLib::Element const*>> _elements_in_grid_box;
 };

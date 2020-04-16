@@ -833,7 +833,7 @@ unsigned MeshRevision::lutHexDiametralNode(unsigned id) const
 std::array<unsigned, 4> MeshRevision::lutHexCuttingQuadNodes(unsigned id1,
                                                              unsigned id2) const
 {
-    std::array<unsigned,4> nodes;
+    std::array<unsigned,4> nodes{};
     if      (id1==0 && id2==1) { nodes[0]=3; nodes[1]=2; nodes[2]=5; nodes[3]=4; }
     else if (id1==1 && id2==2) { nodes[0]=0; nodes[1]=3; nodes[2]=6; nodes[3]=5; }
     else if (id1==2 && id2==3) { nodes[0]=1; nodes[1]=0; nodes[2]=7; nodes[3]=6; }

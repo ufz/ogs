@@ -109,7 +109,7 @@ TEST(IsPntInElement, Pyramid)
 {
     GeoLib::Point pnt;
     std::vector<MeshLib::Node*> nodes (createNodes());
-    std::array<MeshLib::Node*, 5> pyr_nodes;
+    std::array<MeshLib::Node*, 5> pyr_nodes{};
     std::copy(nodes.begin(), nodes.begin()+5, pyr_nodes.begin());
     MeshLib::Pyramid pyr(pyr_nodes);
 
@@ -144,7 +144,7 @@ TEST(IsPntInElement, Hex)
 {
     GeoLib::Point pnt;
     std::vector<MeshLib::Node*> nodes (createNodes());
-    std::array<MeshLib::Node*, 8> hex_nodes;
+    std::array<MeshLib::Node*, 8> hex_nodes{};
     std::copy(nodes.begin(), nodes.end(), hex_nodes.begin());
     MeshLib::Hex hex(hex_nodes);
 
