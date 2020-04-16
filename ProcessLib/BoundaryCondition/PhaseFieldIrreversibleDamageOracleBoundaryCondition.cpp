@@ -12,6 +12,8 @@
 
 #include <algorithm>
 #include <vector>
+
+#include "BaseLib/ConfigTree.h"
 #include "BaseLib/Logging.h"
 
 namespace ProcessLib
