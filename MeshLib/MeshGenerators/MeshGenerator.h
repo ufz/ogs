@@ -291,6 +291,26 @@ Mesh* generateRegularHexMesh(const unsigned n_x_cells,
                              std::string   const& mesh_name = "mesh");
 
 /**
+ * Generate a regular 3D mesh that consists of pyramid elements.
+ *
+ * This algorithm generates regular grid points as well as middle points of the
+ * virtual hexahedra cells and split each hex grid cell into six pyramids.
+ *
+ * \param div_x Subdivision operator in x direction
+ * \param div_y Subdivision operator in y direction
+ * \param div_z Subdivision operator in z direction
+ * \param origin Optional mesh's origin (the bottom lower left corner) with
+ * MathLib::ORIGIN default.
+ * \param mesh_name Name of the new mesh.
+ */
+Mesh* generateRegularPyramidMesh(
+    const BaseLib::ISubdivision& div_x,
+    const BaseLib::ISubdivision& div_y,
+    const BaseLib::ISubdivision& div_z,
+    MathLib::Point3d const& origin = MathLib::ORIGIN,
+    std::string const& mesh_name = "mesh");
+
+/**
  * Generate a regular 2D Triangle-Element mesh. The mesh is generated in the
  * x-y-plane.
  *
