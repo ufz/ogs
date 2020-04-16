@@ -115,7 +115,8 @@ pipeline {
                   '-DOGS_CONAN_BUILD=missing ' +
                   '-DOGS_USE_CVODE=ON ' +
                   '-DOGS_USE_MFRONT=ON ' +
-                  '-DOGS_USE_PYTHON=ON '
+                  '-DOGS_USE_PYTHON=ON ' +
+                  '-DOGS_USE_UNITY_BUILDS=ON '
               }
               // Workaround some MGIS CMake logic flaws
               configure {
@@ -201,7 +202,8 @@ pipeline {
                   '-DOGS_BUILD_UTILS=ON ' +
                   '-DOGS_CONAN_BUILD=missing ' +
                   '-DOGS_BUILD_TESTS=OFF ' +
-                  '-DOGS_USE_NETCDF=ON '
+                  '-DOGS_USE_NETCDF=ON ' +
+                  '-DOGS_USE_UNITY_BUILDS=ON '
               }
               build {
                 target="package"
@@ -257,7 +259,8 @@ pipeline {
                   "-DBUILD_SHARED_LIBS=${build_shared} " +
                   '-DOGS_CONAN_BUILD=missing ' +
                   '-DOGS_CONAN_BUILD_TYPE=Release ' +
-                  '-DOGS_CPU_ARCHITECTURE=generic '
+                  '-DOGS_CPU_ARCHITECTURE=generic ' +
+                  '-DOGS_USE_UNITY_BUILDS=ON '
                 config = 'Debug'
               }
               build { }
@@ -290,7 +293,8 @@ pipeline {
                   '-DBUILD_SHARED_LIBS=ON ' +
                   '-DOGS_CPU_ARCHITECTURE=sandybridge ' +
                   '-DCMAKE_INSTALL_PREFIX=/global/apps/ogs/head/standard ' +
-                  '-DOGS_MODULEFILE=/global/apps/modulefiles/ogs/head/standard '
+                  '-DOGS_MODULEFILE=/global/apps/modulefiles/ogs/head/standard ' +
+                  '-DOGS_USE_UNITY_BUILDS=ON '
                 env = 'eve/cli.sh'
               }
               build {
@@ -346,7 +350,8 @@ pipeline {
                   '-DBUILD_SHARED_LIBS=ON ' +
                   '-DOGS_CPU_ARCHITECTURE=sandybridge ' +
                   '-DCMAKE_INSTALL_PREFIX=/global/apps/ogs/head/petsc ' +
-                  '-DOGS_MODULEFILE=/global/apps/modulefiles/ogs/head/petsc '
+                  '-DOGS_MODULEFILE=/global/apps/modulefiles/ogs/head/petsc ' +
+                  '-DOGS_USE_UNITY_BUILDS=ON '
                 env = 'eve/petsc.sh'
               }
               build {
@@ -409,7 +414,8 @@ pipeline {
                   '-DOGS_BUILD_UTILS=ON ' +
                   '-DOGS_CONAN_BUILD=missing ' +
                   '-DOGS_BUILD_SWMM=ON ' +
-                  '-DOGS_USE_NETCDF=ON '
+                  '-DOGS_USE_NETCDF=ON ' +
+                  '-DOGS_USE_UNITY_BUILDS=ON '
               }
               build {
                 target="package"
@@ -464,7 +470,8 @@ pipeline {
                   '-DOGS_CPU_ARCHITECTURE=core2 ' +
                   '-DOGS_BUILD_UTILS=ON ' +
                   '-DOGS_CONAN_BUILD=missing ' +
-                  '-DCMAKE_OSX_DEPLOYMENT_TARGET="10.15" '
+                  '-DCMAKE_OSX_DEPLOYMENT_TARGET="10.15" ' +
+                  '-DOGS_USE_UNITY_BUILDS=ON '
               }
               build {
                 target="package"
@@ -512,7 +519,8 @@ pipeline {
                   '-DOGS_BUILD_GUI=ON ' +
                   '-DOGS_USE_CONAN=OFF ' +
                   '-DCMAKE_OSX_DEPLOYMENT_TARGET="10.15" ' +
-                  '-DOGS_USE_NETCDF=ON '
+                  '-DOGS_USE_NETCDF=ON ' +
+                  '-DOGS_USE_UNITY_BUILDS=ON '
               }
               build {
                 target="package"
