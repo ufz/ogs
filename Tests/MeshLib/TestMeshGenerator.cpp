@@ -141,3 +141,62 @@ TEST(MeshLib, MeshGeneratorRegularPrism)
         }
     }
 }
+
+TEST(MeshLib, MeshGeneratorRegularPyramid)
+{
+    const double L = 10.0;
+    const std::size_t n_subdivisions = 9;
+    const double dL = L / static_cast<double>(n_subdivisions);
+    std::vector<std::unique_ptr<BaseLib::ISubdivision>> vec_div;
+    vec_div.reserve(3);
+    for (unsigned i=0; i<3; i++)
+    {
+        vec_div.emplace_back(
+            new BaseLib::UniformSubdivision(L, n_subdivisions));
+    }
+    std::unique_ptr<Mesh> msh(MeshGenerator::generateRegularPyramidMesh(
+        *vec_div[0], *vec_div[1], *vec_div[2]));
+
+    // check number of generates nodes and elements
+    ASSERT_EQ(6 * std::pow(n_subdivisions, 3), msh->getNumberOfElements());
+    ASSERT_EQ(std::pow(n_subdivisions + 1, 3) + std::pow(n_subdivisions, 3),
+              msh->getNumberOfNodes());
+
+    // check the positions of the diagonal edge nodes (lower left front and upper right back)
+    const Node& node0 = *msh->getNode(0);
+    const Node& node1 = *msh->getNode(1);
+    const Node& node_n = *msh->getNode(L*L*L-2);
+    const Node& node_n1 = *msh->getNode(L*L*L-1);
+    ASSERT_DOUBLE_EQ(.0, node0[0]);
+    ASSERT_DOUBLE_EQ(.0, node0[1]);
+    ASSERT_DOUBLE_EQ(.0, node0[2]);
+    ASSERT_DOUBLE_EQ(dL, node1[0]);
+    ASSERT_DOUBLE_EQ(.0, node1[1]);
+    ASSERT_DOUBLE_EQ(.0, node1[2]);
+    ASSERT_DOUBLE_EQ(L-dL, node_n[0]);
+    ASSERT_DOUBLE_EQ(L, node_n[1]);
+    ASSERT_DOUBLE_EQ(L, node_n[2]);
+    ASSERT_DOUBLE_EQ(L, node_n1[0]);
+    ASSERT_DOUBLE_EQ(L, node_n1[1]);
+    ASSERT_DOUBLE_EQ(L, node_n1[2]);
+
+    // check if the domain volume equals the volume of the elements
+    long double element_volumes = 0.0;
+    for (auto const element : msh->getElements())
+    {
+        element_volumes += element->computeVolume();
+    }
+    EXPECT_NEAR(L*L*L, element_volumes, 1e-10);
+
+    // test node order of the elements
+    for (auto const element : msh->getElements())
+    {
+        ASSERT_TRUE(element->testElementNodeOrder());
+    }
+
+    // validate the elements
+    for (auto const element : msh->getElements())
+    {
+        ASSERT_TRUE(element->validate().none());
+    }
+}
