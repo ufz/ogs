@@ -14,6 +14,8 @@
 
 #include "MeshEnums.h"
 
+#include <boost/algorithm/string/predicate.hpp>
+
 namespace MeshLib {
 std::string MeshElemType2String(const MeshElemType t)
 {
@@ -91,35 +93,35 @@ std::string MeshElemType2StringShort(const MeshElemType t)
 
 MeshElemType String2MeshElemType(const std::string &s)
 {
-    if (s == "point" || s == "Point")
+    if (boost::iequals(s, "point"))
     {
         return MeshElemType::POINT;
     }
-    if (s == "line" || s == "Line")
+    if (boost::iequals(s, "line"))
     {
         return MeshElemType::LINE;
     }
-    if (s == "quad" || s == "Quadrilateral")
+    if (boost::iequals(s, "quad") || boost::iequals(s, "Quadrilateral"))
     {
         return MeshElemType::QUAD;
     }
-    if (s == "hex" || s == "Hexahedron")
+    if (boost::iequals(s, "hex") || boost::iequals(s, "Hexahedron"))
     {
         return MeshElemType::HEXAHEDRON;
     }
-    if (s == "tri" || s == "Triangle")
+    if (boost::iequals(s, "tri") || boost::iequals(s, "Triangle"))
     {
         return MeshElemType::TRIANGLE;
     }
-    if (s == "tet" || s == "Tetrahedron")
+    if (boost::iequals(s, "tet") || boost::iequals(s, "Tetrahedron"))
     {
         return MeshElemType::TETRAHEDRON;
     }
-    if (s == "pris" || s == "Prism")
+    if (boost::iequals(s, "pris") || boost::iequals(s, "Prism"))
     {
         return MeshElemType::PRISM;
     }
-    if (s == "pyra" || s == "Pyramid")
+    if (boost::iequals(s, "pyra") || boost::iequals(s, "Pyramid"))
     {
         return MeshElemType::PYRAMID;
     }
