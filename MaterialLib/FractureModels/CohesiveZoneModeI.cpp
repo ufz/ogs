@@ -7,8 +7,6 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#include <iostream>
-
 #include "CohesiveZoneModeI.h"
 #include "LogPenalty.h"
 
