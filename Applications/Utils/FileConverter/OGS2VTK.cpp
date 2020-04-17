@@ -1,14 +1,14 @@
 /**
- * @file OGS2VTK.cpp
- * @author Thomas Fischer
- * @date Jan 24, 2013
- * @brief Converts OGS mesh into VTK mesh.
+ * \file
+ * \author Thomas Fischer
+ * \date Jan 24, 2013
+ * \brief Converts OGS mesh into VTK mesh.
  *
- * @copyright
+ * \copyright
  * Copyright (c) 2012-2020, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.org/LICENSE.txt
+ *              http://www.opengeosys.org/project/license
  */
 
 #include <string>

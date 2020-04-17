@@ -1,14 +1,13 @@
 /**
- * @file TestPolygon.cpp
- * @author
- * @date Nov 27, 2013
- * @brief Test functionality of class Polygon.
+ * \file
+ * \date Nov 27, 2013
+ * \brief Test functionality of class Polygon.
  *
- * @copyright
+ * \copyright
  * Copyright (c) 2012-2020, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.org/LICENSE.txt
+ *              http://www.opengeosys.org/project/license
  */
 
 #include "gtest/gtest.h"

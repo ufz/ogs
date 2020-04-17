@@ -1,14 +1,13 @@
 /**
- * @file
- * @author git blame XMLQtInterface.cpp
- * @date Oct 15, 2013
- * @brief Base part of implementation of reading XML files using Qt stuff.
+ * \file
+ * \date Oct 15, 2013
+ * \brief Base part of implementation of reading XML files using Qt stuff.
  *
- * @copyright
+ * \copyright
  * Copyright (c) 2012-2020, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.org/LICENSE.txt
+ *              http://www.opengeosys.org/project/license
  */
 
 #include "XMLQtInterface.h"

@@ -1,11 +1,12 @@
 /**
- * @brief Tests for GeoLib::Surface::isPntInSfc()
+ * \file
+ * \brief Tests for GeoLib::Surface::isPntInSfc()
  *
- * @copyright
+ * \copyright
  * Copyright (c) 2012-2020, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.org/LICENSE.txt
+ *              http://www.opengeosys.org/project/license
  */
 
 #include <array>

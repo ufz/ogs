@@ -1,14 +1,14 @@
 /**
- * @file TestPntInElement.cpp
- * @author Karsten Rink
- * @date 2014-09-23
- * @brief Tests for check if a point is located inside an element
+ * \file
+ * \author Karsten Rink
+ * \date 2014-09-23
+ * \brief Tests for check if a point is located inside an element
  *
- * @copyright
+ * \copyright
  * Copyright (c) 2012-2020, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.org/LICENSE.txt
+ *              http://www.opengeosys.org/project/license
  */
 
 #include <gtest/gtest.h>
