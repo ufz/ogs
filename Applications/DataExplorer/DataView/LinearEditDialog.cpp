@@ -43,7 +43,7 @@ void LinearEditDialog::setupDialog(const std::vector<std::size_t> &dis_nodes,
     std::size_t nValues (dis_values.size());
     for (std::size_t i = 0; i < nValues; i++)
     {
-        tableWidget->item(dis_nodes[i], 0)
+        tableWidget->item(static_cast<int>(dis_nodes[i]), 0)
             ->setText(QString::number(dis_values[i]));
     }
 }
