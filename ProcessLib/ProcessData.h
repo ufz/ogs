@@ -48,11 +48,9 @@ struct ProcessData
           conv_crit(std::move(pd.conv_crit)),
           time_disc(std::move(pd.time_disc)),
           tdisc_ode_sys(std::move(pd.tdisc_ode_sys)),
-          mat_strg(pd.mat_strg),
           process_id(pd.process_id),
           process(pd.process)
     {
-        pd.mat_strg = nullptr;
     }
 
     std::unique_ptr<NumLib::TimeStepAlgorithm> timestepper;
@@ -67,8 +65,6 @@ struct ProcessData
     std::unique_ptr<NumLib::TimeDiscretization> time_disc;
     //! type-erased time-discretized ODE system
     std::unique_ptr<NumLib::EquationSystem> tdisc_ode_sys;
-    //! cast of \c tdisc_ode_sys to NumLib::InternalMatrixStorage
-    NumLib::InternalMatrixStorage* mat_strg = nullptr;
 
     int const process_id;
 

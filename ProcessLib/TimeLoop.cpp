@@ -114,9 +114,6 @@ void setTimeDiscretizedODESystem(
     {
         OGS_FATAL("Encountered unknown nonlinear solver type. Aborting");
     }
-
-    process_data.mat_strg = dynamic_cast<NumLib::InternalMatrixStorage*>(
-        process_data.tdisc_ode_sys.get());
 }
 
 void setTimeDiscretizedODESystem(ProcessData& process_data)
@@ -148,20 +145,6 @@ std::vector<GlobalVector*> setInitialConditions(
         MathLib::LinAlg::finalizeAssembly(x0);
 
         time_disc.setInitialState(t0, x0);  // push IC
-
-        if (time_disc.needsPreload())
-        {
-            auto& nonlinear_solver = process_data->nonlinear_solver;
-            auto& mat_strg = *process_data->mat_strg;
-            auto& conv_crit = *process_data->conv_crit;
-
-            auto const nl_tag = process_data->nonlinear_solver_tag;
-            setEquationSystem(nonlinear_solver, ode_sys, conv_crit, nl_tag);
-            nonlinear_solver.assemble(process_solutions, process_id);
-            time_disc.pushState(
-                t0, x0,
-                mat_strg);  // TODO: that might do duplicate work
-        }
     }
 
     return process_solutions;
@@ -358,7 +341,7 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
         auto& x = *_process_solutions[i];
         if (all_process_steps_accepted)
         {
-            time_disc->pushState(t, x, *ppd.mat_strg);
+            time_disc->pushState(t, x);
         }
         else
         {

@@ -79,9 +79,8 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
 
     auto const t = _time_disc.getCurrentTime();
     auto const dt = _time_disc.getCurrentTimeIncrement();
-    auto const& x_curr = _time_disc.getCurrentX(*x_new_timestep[process_id]);
+    auto const& x_curr = *x_new_timestep[process_id];
     auto const dxdot_dx = _time_disc.getNewXWeight();
-    auto const dx_dx = _time_disc.getDxDx();
 
     std::vector<GlobalVector*> xdot(x_new_timestep.size());
     for (auto& v : xdot)
@@ -99,7 +98,7 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
     try
     {
         _ode.assembleWithJacobian(t, dt, x_new_timestep, *xdot[process_id],
-                                  dxdot_dx, dx_dx, process_id, *_M, *_K, *_b,
+                                  dxdot_dx, 1.0, process_id, *_M, *_K, *_b,
                                   *_Jac);
     }
     catch (AssemblyException const&)
@@ -217,7 +216,7 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
 
     auto const t = _time_disc.getCurrentTime();
     auto const dt = _time_disc.getCurrentTimeIncrement();
-    auto const& x_curr = _time_disc.getCurrentX(*x_new_timestep[process_id]);
+    auto const& x_curr = *x_new_timestep[process_id];
     std::vector<GlobalVector*> xdot(x_new_timestep.size());
     for (auto& v : xdot)
     {

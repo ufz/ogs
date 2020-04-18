@@ -201,8 +201,7 @@
                     <abstol>1.e-5</abstol>
                 </convergence_criterion>
                 <time_discretization>
-                    <type>CrankNicolson</type>
-                    <theta>0.5</theta>
+                    <type>BackwardEuler</type>
                 </time_discretization>
                 <time_stepping>
                     <type>FixedTimeStepping</type>

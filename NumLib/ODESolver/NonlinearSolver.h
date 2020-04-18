@@ -35,19 +35,6 @@ namespace NumLib
 class NonlinearSolverBase
 {
 public:
-    /*! Only assemble the equation system.
-     *
-     * \note This method is needed to preload CrankNicolson time discretization
-     * scheme. It is not used for the general solver steps; in those only the
-     * solve() method is needed.
-     *
-     * \param x             the state at which the equation system will be
-     *                      assembled.
-     * \param process_id    the process' id which will be assembled.
-     */
-    virtual void assemble(std::vector<GlobalVector*> const& x,
-                          int const process_id) const = 0;
-
     virtual void calculateNonEquilibriumInitialResiduum(
         std::vector<GlobalVector*> const& x, int const process_id) = 0;
 
@@ -111,9 +98,6 @@ public:
         _equation_system = &eq;
         _convergence_criterion = &conv_crit;
     }
-
-    void assemble(std::vector<GlobalVector*> const& x,
-                  int const process_id) const override;
 
     void calculateNonEquilibriumInitialResiduum(
         std::vector<GlobalVector*> const& x, int const process_id) override;
@@ -189,9 +173,6 @@ public:
         _equation_system = &eq;
         _convergence_criterion = &conv_crit;
     }
-
-    void assemble(std::vector<GlobalVector*> const& x,
-                  int const process_id) const override;
 
     void calculateNonEquilibriumInitialResiduum(
         std::vector<GlobalVector*> const& x, int const process_id) override;

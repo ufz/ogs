@@ -160,8 +160,7 @@
                     <reltols>1.e-5 1.e-3</reltols>
                 </convergence_criterion>
                 <time_discretization>
-                    <type>CrankNicolson</type>
-                    <theta>0.5</theta>
+                    <type>BackwardEuler</type>
                 </time_discretization>
                 <time_stepping>
                     <type>EvolutionaryPIDcontroller</type>

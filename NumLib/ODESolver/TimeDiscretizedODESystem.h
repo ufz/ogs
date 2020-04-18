@@ -30,8 +30,7 @@ namespace NumLib
  * \tparam NLTag  a tag indicating the method used for resolving nonlinearities.
  */
 template <NonlinearSolverTag NLTag>
-class TimeDiscretizedODESystemBase : public NonlinearSystem<NLTag>,
-                                     public InternalMatrixStorage
+class TimeDiscretizedODESystemBase : public NonlinearSystem<NLTag>
 {
 public:
     //! Exposes the used time discretization scheme.
@@ -99,10 +98,7 @@ public:
     void applyKnownSolutionsNewton(GlobalMatrix& Jac, GlobalVector& res,
                                    GlobalVector& minus_delta_x) const override;
 
-    bool isLinear() const override
-    {
-        return _time_disc.isLinearTimeDisc() || _ode.isLinear();
-    }
+    bool isLinear() const override { return _ode.isLinear(); }
 
     void preIteration(const unsigned iter, GlobalVector const& x) override
     {
@@ -112,11 +108,6 @@ public:
     IterationResult postIteration(GlobalVector const& x) override
     {
         return _ode.postIteration(x);
-    }
-
-    void pushMatrices() const override
-    {
-        _mat_trans->pushMatrices(*_M, *_K, *_b);
     }
 
     TimeDisc& getTimeDiscretization() override { return _time_disc; }
@@ -202,10 +193,7 @@ public:
     void applyKnownSolutionsPicard(GlobalMatrix& A, GlobalVector& rhs,
                                    GlobalVector& x) const override;
 
-    bool isLinear() const override
-    {
-        return _time_disc.isLinearTimeDisc() || _ode.isLinear();
-    }
+    bool isLinear() const override { return _ode.isLinear(); }
 
     void preIteration(const unsigned iter, GlobalVector const& x) override
     {
@@ -215,11 +203,6 @@ public:
     IterationResult postIteration(GlobalVector const& x) override
     {
         return _ode.postIteration(x);
-    }
-
-    void pushMatrices() const override
-    {
-        _mat_trans->pushMatrices(*_M, *_K, *_b);
     }
 
     TimeDisc& getTimeDiscretization() override { return _time_disc; }
