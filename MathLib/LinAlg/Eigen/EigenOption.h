@@ -47,6 +47,7 @@ struct EigenOption final
 #ifdef USE_EIGEN_UNSUPPORTED
     /// Scaling the coefficient matrix and the RHS bector
     bool scaling;
+    int restart;
 #endif
 
     /// Constructor

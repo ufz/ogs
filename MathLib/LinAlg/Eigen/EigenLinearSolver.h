@@ -59,6 +59,7 @@ public:
 protected:
     EigenOption _option;
     std::unique_ptr<EigenLinearSolverBase> _solver;
+    void setRestart();
 };
 
 }  // namespace MathLib
