@@ -153,16 +153,16 @@
                             <delta_t>0.01</delta_t>
                         </pair>
                         <pair>
-                            <repeat>8</repeat>
-                            <delta_t>1</delta_t>
+                            <repeat>40</repeat>
+                            <delta_t>0.2</delta_t>
                         </pair>
                         <pair>
                             <repeat>100</repeat>
                             <delta_t>0.01</delta_t>
                         </pair>
                         <pair>
-                            <repeat>8</repeat>
-                            <delta_t>1</delta_t>
+                            <repeat>40</repeat>
+                            <delta_t>0.2</delta_t>
                         </pair>
                     </timesteps>
                 </time_stepping>
