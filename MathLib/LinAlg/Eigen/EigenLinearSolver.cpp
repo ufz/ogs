@@ -124,16 +124,20 @@ private:
     }
 };
 
-template <> 
-void EigenIterativeLinearSolver<Eigen::GMRES<EigenMatrix::RawMatrixType, Eigen::IdentityPreconditioner>>::setRestart(int const restart)
+template <>
+void EigenIterativeLinearSolver<
+    Eigen::GMRES<EigenMatrix::RawMatrixType,
+                 Eigen::IdentityPreconditioner>>::setRestart(int const restart)
 {
     _solver.set_restart(restart);
     INFO("-> set restart value: {:d}", _solver.get_restart());
 }
 
-template <> 
-void EigenIterativeLinearSolver<Eigen::GMRES<EigenMatrix::RawMatrixType, Eigen::DiagonalPreconditioner<double>>>::setRestart(int const restart)
-{   
+template <>
+void EigenIterativeLinearSolver<Eigen::GMRES<
+    EigenMatrix::RawMatrixType,
+    Eigen::DiagonalPreconditioner<double>>>::setRestart(int const restart)
+{
     _solver.set_restart(restart);
     INFO("-> set restart value: {:d}", _solver.get_restart());
 }
@@ -297,7 +301,7 @@ void EigenLinearSolver::setOption(BaseLib::ConfigTree const& option)
 #else
         OGS_FATAL(
             "The code is not compiled with the Eigen unsupported modules. "
-            "GMRES option restart is not available.");
+            "GMRES/GMRES option restart is not available.");
 #endif
     }
 
