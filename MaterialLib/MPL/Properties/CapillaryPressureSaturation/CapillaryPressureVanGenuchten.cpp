@@ -11,6 +11,8 @@
 
 #include "CapillaryPressureVanGenuchten.h"
 
+#include "MaterialLib/MPL/Utils/CheckVanGenuchtenExponentRange.h"
+
 #include <algorithm>
 #include <cmath>
 
@@ -28,13 +30,7 @@ CapillaryPressureVanGenuchten::CapillaryPressureVanGenuchten(
       _p_b(p_b),
       _pc_max(max_capillary_pressure)
 {
-    if (!(_m > 0 && _m < 1))
-    {
-        OGS_FATAL(
-            "The exponent value m = %g of van Genuchten saturation model, is "
-            "out of its range of (0, 1)",
-            _m);
-    }
+    checkVanGenuchtenExponentRange(_m);
 }
 
 PropertyDataType CapillaryPressureVanGenuchten::value(

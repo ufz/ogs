@@ -15,21 +15,11 @@
 #include <cmath>
 
 #include "MaterialLib/MPL/Medium.h"
+#include "MaterialLib/MPL/Utils/CheckVanGenuchtenExponentRange.h"
 #include "MaterialLib/MPL/VariableType.h"
 
 namespace MaterialPropertyLib
 {
-void checkVanGenuchtenExponentRange(const double m)
-{
-    if (!(m > 0 && m < 1))
-    {
-        OGS_FATAL(
-            "The exponent value m = {:g} of van Genuchten saturation model, is "
-            "out of its range of (0, 1)",
-            m);
-    }
-}
-
 CapillaryPressureRegularizedVanGenuchten::
     CapillaryPressureRegularizedVanGenuchten(
         double const residual_liquid_saturation,
