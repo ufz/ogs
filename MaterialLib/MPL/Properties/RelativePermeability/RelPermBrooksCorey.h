@@ -20,7 +20,6 @@ namespace MaterialPropertyLib
 {
 class Medium;
 class Phase;
-class Component;
 /**
  * \class RelPermBrooksCorey
  * \brief Relative permeability function proposed by Brooks&Corey
@@ -48,11 +47,12 @@ public:
 
     void checkScale() const override
     {
-        if (!std::holds_alternative<Medium*>(scale_))
+        if (!std::holds_alternative<Medium*>(scale_) ||
+            !std::holds_alternative<Phase*>(scale_))
         {
             OGS_FATAL(
                 "The property 'RelPermBrooksCorey' is implemented on the "
-                "'media' scale only.");
+                "'media' or 'phase' scale only.");
         }
     }
 

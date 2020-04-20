@@ -16,7 +16,6 @@ namespace MaterialPropertyLib
 {
 class Medium;
 class Phase;
-class Component;
 
 /// Van Genuchten relative permeability function.
 ///
@@ -39,11 +38,12 @@ public:
 
     void checkScale() const override
     {
-        if (!std::holds_alternative<Medium*>(scale_))
+        if (!std::holds_alternative<Medium*>(scale_) ||
+            !std::holds_alternative<Phase*>(scale_))
         {
             OGS_FATAL(
                 "The property 'RelativePermeabilityVanGenuchten' is "
-                "implemented on the 'media' scale only.");
+                "implemented on the 'media' or 'phase' scale only.");
         }
     }
 
