@@ -56,6 +56,15 @@ public:
     using GlobalDimMatrixType =
         typename ShapeMatricesTypePressure::GlobalDimMatrixType;
 
+    using BMatricesType =
+        BMatrixPolicyType<ShapeFunctionDisplacement, DisplacementDim>;
+    using KelvinVectorType = typename BMatricesType::KelvinVectorType;
+
+    using IpData =
+        IntegrationPointData<BMatricesType, ShapeMatricesTypeDisplacement,
+                             ShapeMatricesTypePressure, DisplacementDim,
+                             ShapeFunctionDisplacement::NPOINTS>;
+
     static int const KelvinVectorSize =
         MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
     using Invariants = MathLib::KelvinVector::Invariants<KelvinVectorSize>;
@@ -164,7 +173,9 @@ public:
         return Eigen::Map<const Eigen::RowVectorXd>(N_u.data(), N_u.size());
     }
 
-    std::size_t setSigma(double const* values);
+    std::size_t setScalar(double const* values, double IpData::*member);
+    std::size_t setKelvinVector(double const* values,
+                                KelvinVectorType IpData::*member);
 
     std::vector<double> getSigma() const override;
 
@@ -174,7 +185,6 @@ public:
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const override;
 
-    std::size_t setSaturation(double const* values);
     std::vector<double> getSaturation() const override;
     std::vector<double> const& getIntPtSaturation(
         const double t,
@@ -182,7 +192,6 @@ public:
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const override;
 
-    std::size_t setPorosity(double const* values);
     std::vector<double> getPorosity() const override;
     std::vector<double> const& getIntPtPorosity(
         const double t,
@@ -190,7 +199,6 @@ public:
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const override;
 
-    std::size_t setTransportPorosity(double const* values);
     std::vector<double> getTransportPorosity() const override;
     std::vector<double> const& getIntPtTransportPorosity(
         const double t,
@@ -204,7 +212,6 @@ public:
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const override;
 
-    std::size_t setSwellingStress(double const* values);
     std::vector<double> getSwellingStress() const override;
     std::vector<double> const& getIntPtSwellingStress(
         const double t,
@@ -212,7 +219,6 @@ public:
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const override;
 
-    std::size_t setEpsilon(double const* values);
     std::vector<double> getEpsilon() const override;
     std::vector<double> const& getIntPtEpsilon(
         const double t,
@@ -297,12 +303,6 @@ private:
 private:
     RichardsMechanicsProcessData<DisplacementDim>& _process_data;
 
-    using BMatricesType =
-        BMatrixPolicyType<ShapeFunctionDisplacement, DisplacementDim>;
-    using IpData =
-        IntegrationPointData<BMatricesType, ShapeMatricesTypeDisplacement,
-                             ShapeMatricesTypePressure, DisplacementDim,
-                             ShapeFunctionDisplacement::NPOINTS>;
     std::vector<IpData, Eigen::aligned_allocator<IpData>> _ip_data;
 
     IntegrationMethod _integration_method;

@@ -145,28 +145,28 @@ std::size_t RichardsMechanicsLocalAssembler<
                 "simultaneously.",
                 _process_data.initial_stress->name);
         }
-        return setSigma(values);
+        return setKelvinVector(values, &IpData::sigma_eff);
     }
 
     if (name == "saturation_ip")
     {
-        return setSaturation(values);
+        return setScalar(values, &IpData::saturation);
     }
     if (name == "porosity_ip")
     {
-        return setPorosity(values);
+        return setScalar(values, &IpData::porosity);
     }
     if (name == "transport_porosity_ip")
     {
-        return setTransportPorosity(values);
+        return setScalar(values, &IpData::transport_porosity);
     }
     if (name == "swelling_stress_ip")
     {
-        return setSwellingStress(values);
+        return setKelvinVector(values, &IpData::sigma_sw);
     }
     if (name == "epsilon_ip")
     {
-        return setEpsilon(values);
+        return setKelvinVector(values, &IpData::eps);
     }
     return 0;
 }
@@ -882,22 +882,23 @@ template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           typename IntegrationMethod, int DisplacementDim>
 std::size_t RichardsMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
-    DisplacementDim>::setSigma(double const* values)
+    DisplacementDim>::setKelvinVector(double const* values,
+                                      KelvinVectorType IpData::*member)
 {
-    auto const kelvin_vector_size =
+    constexpr int kelvin_vector_size =
         MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
     auto const n_integration_points = _ip_data.size();
 
-    auto sigma_values =
+    auto const matrix_mapped_values =
         Eigen::Map<Eigen::Matrix<double, kelvin_vector_size, Eigen::Dynamic,
                                  Eigen::ColMajor> const>(
             values, kelvin_vector_size, n_integration_points);
 
     for (unsigned ip = 0; ip < n_integration_points; ++ip)
     {
-        _ip_data[ip].sigma_eff =
+        _ip_data[ip].*member =
             MathLib::KelvinVector::symmetricTensorToKelvinVector(
-                sigma_values.col(ip));
+                matrix_mapped_values.col(ip));
     }
 
     return n_integration_points;
@@ -949,7 +950,7 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
         std::vector<double>& cache) const
 {
-    static const int kelvin_vector_size =
+    constexpr int kelvin_vector_size =
         MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
     auto const num_intpts = _ip_data.size();
 
@@ -994,7 +995,7 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
         std::vector<double>& cache) const
 {
-    static const int kelvin_vector_size =
+    constexpr int kelvin_vector_size =
         MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
     auto const num_intpts = _ip_data.size();
 
@@ -1011,31 +1012,6 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
     }
 
     return cache;
-}
-
-
-template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
-std::size_t RichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
-    DisplacementDim>::setEpsilon(double const* values)
-{
-    auto const kelvin_vector_size =
-        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
-    auto const n_integration_points = _ip_data.size();
-
-    auto eps = Eigen::Map<Eigen::Matrix<double, kelvin_vector_size,
-                                        Eigen::Dynamic, Eigen::ColMajor> const>(
-        values, kelvin_vector_size, n_integration_points);
-
-    for (unsigned ip = 0; ip < n_integration_points; ++ip)
-    {
-        _ip_data[ip].eps =
-            MathLib::KelvinVector::symmetricTensorToKelvinVector(
-                eps.col(ip));
-    }
-
-    return n_integration_points;
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
@@ -1064,7 +1040,7 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
         std::vector<double>& cache) const
 {
-    auto const kelvin_vector_size =
+    constexpr int kelvin_vector_size =
         MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
     auto const num_intpts = _ip_data.size();
 
@@ -1116,13 +1092,13 @@ template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           typename IntegrationMethod, int DisplacementDim>
 std::size_t RichardsMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
-    DisplacementDim>::setSaturation(double const* values)
+    DisplacementDim>::setScalar(double const* values, double IpData::*member)
 {
-    auto const n_integration_points = _ip_data.size();
+    auto const n_integration_points = _integration_method.getNumberOfPoints();
 
     for (unsigned ip = 0; ip < n_integration_points; ++ip)
     {
-        _ip_data[ip].saturation = values[ip];
+        _ip_data[ip].*member = values[ip];
     }
     return n_integration_points;
 }
@@ -1133,15 +1109,8 @@ std::vector<double> RichardsMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
     DisplacementDim>::getSaturation() const
 {
-    auto const n_integration_points = _ip_data.size();
     std::vector<double> result;
-    result.reserve(n_integration_points);
-
-    for (unsigned ip = 0; ip < n_integration_points; ++ip)
-    {
-        result.push_back(_ip_data[ip].saturation);
-    }
-
+    getIntPtSaturation(0, {}, {}, result);
     return result;
 }
 
@@ -1173,34 +1142,12 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           typename IntegrationMethod, int DisplacementDim>
-std::size_t RichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
-    DisplacementDim>::setPorosity(double const* values)
-{
-    auto const n_integration_points = _ip_data.size();
-
-    for (unsigned ip = 0; ip < n_integration_points; ++ip)
-    {
-        _ip_data[ip].porosity = values[ip];
-    }
-    return n_integration_points;
-}
-
-template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
 std::vector<double> RichardsMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
     DisplacementDim>::getPorosity() const
 {
-    auto const n_integration_points = _ip_data.size();
     std::vector<double> result;
-    result.reserve(n_integration_points);
-
-    for (unsigned ip = 0; ip < n_integration_points; ++ip)
-    {
-        result.push_back(_ip_data[ip].porosity);
-    }
-
+    getIntPtPorosity(0, {}, {}, result);
     return result;
 }
 
@@ -1232,34 +1179,12 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           typename IntegrationMethod, int DisplacementDim>
-std::size_t RichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
-    DisplacementDim>::setTransportPorosity(double const* values)
-{
-    auto const n_integration_points = _ip_data.size();
-
-    for (unsigned ip = 0; ip < n_integration_points; ++ip)
-    {
-        _ip_data[ip].transport_porosity = values[ip];
-    }
-    return n_integration_points;
-}
-
-template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
 std::vector<double> RichardsMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
     DisplacementDim>::getTransportPorosity() const
 {
-    auto const n_integration_points = _ip_data.size();
     std::vector<double> result;
-    result.reserve(n_integration_points);
-
-    for (unsigned ip = 0; ip < n_integration_points; ++ip)
-    {
-        result.push_back(_ip_data[ip].transport_porosity);
-    }
-
+    getIntPtTransportPorosity(0, {}, {}, result);
     return result;
 }
 
@@ -1287,31 +1212,6 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
     }
 
     return cache;
-}
-
-template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
-std::size_t RichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
-    DisplacementDim>::setSwellingStress(double const* values)
-{
-    auto const kelvin_vector_size =
-        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
-    auto const n_integration_points = _ip_data.size();
-
-    auto sigma_values =
-        Eigen::Map<Eigen::Matrix<double, kelvin_vector_size, Eigen::Dynamic,
-                                 Eigen::ColMajor> const>(
-            values, kelvin_vector_size, n_integration_points);
-
-    for (unsigned ip = 0; ip < n_integration_points; ++ip)
-    {
-        _ip_data[ip].sigma_sw =
-            MathLib::KelvinVector::symmetricTensorToKelvinVector(
-                sigma_values.col(ip));
-    }
-
-    return n_integration_points;
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
