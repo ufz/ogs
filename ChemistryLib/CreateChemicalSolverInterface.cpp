@@ -12,6 +12,7 @@
 
 #include <iphreeqc/src/src/phreeqcpp/cxxKinetics.h>
 
+#include "BaseLib/ConfigTree.h"
 #include "BaseLib/FileTools.h"
 #include "Common/CreateReactionRate.h"
 #include "MeshLib/Mesh.h"

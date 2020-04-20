@@ -21,8 +21,6 @@ namespace Fracture
 {
 namespace Coulomb
 {
-namespace
-{
 
 struct MaterialPropertyValues
 {
@@ -46,8 +44,6 @@ struct MaterialPropertyValues
         c = mp.cohesion(t,x)[0];
     }
 };
-
-}  // namespace
 
 template <int DisplacementDim>
 void Coulomb<DisplacementDim>::computeConstitutiveRelation(

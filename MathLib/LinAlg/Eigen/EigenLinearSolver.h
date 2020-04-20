@@ -10,10 +10,15 @@
 
 #pragma once
 
+#include <memory>
 #include <vector>
 
-#include "BaseLib/ConfigTree.h"
 #include "EigenOption.h"
+
+namespace BaseLib
+{
+class ConfigTree;
+}
 
 namespace MathLib
 {

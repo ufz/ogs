@@ -1,11 +1,12 @@
 /**
- * @brief Computes the areas associated nodes of the surface mesh.
+ * \file
+ * \brief Computes the areas associated nodes of the surface mesh.
  *
- * @copyright
+ * \copyright
  * Copyright (c) 2012-2020, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.org/LICENSE.txt
+ *              http://www.opengeosys.org/project/license
  */
 
 #include <fstream>

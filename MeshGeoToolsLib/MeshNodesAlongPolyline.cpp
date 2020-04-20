@@ -1,13 +1,12 @@
 /**
- * @file
- * @date Aug 9, 2010
- * @brief
+ * \file
+ * \date Aug 9, 2010
  *
- * @copyright
+ * \copyright
  * Copyright (c) 2012-2020, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.org/LICENSE.txt
+ *              http://www.opengeosys.org/project/license
  */
 
 #include "MeshNodesAlongPolyline.h"

@@ -10,31 +10,29 @@
  *
  */
 
+#include <gtest/gtest.h>
+
 #include <cmath>
 #include <memory>
 #include <vector>
 
-#include <gtest/gtest.h>
-
+#include "BaseLib/ConfigTree.h"
 #include "MathLib/LinAlg/ApplyKnownSolution.h"
+#include "MathLib/LinAlg/FinalizeMatrixAssembly.h"
 #include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
 #include "MathLib/LinAlg/MatrixSpecifications.h"
 #include "MathLib/LinAlg/MatrixVectorTraits.h"
-#include "MathLib/LinAlg/FinalizeMatrixAssembly.h"
 #include "MathLib/MathTools.h"
-
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Elements/Quad.h"
 #include "MeshLib/Location.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshSubset.h"
 #include "MeshLib/Node.h"
-
-#include "NumLib/NumericsConfig.h"
 #include "NumLib/DOF/DOFTableUtil.h"
-
-#include "Tests/TestTools.h"
+#include "NumLib/NumericsConfig.h"
 #include "SteadyDiffusion2DExample1.h"
+#include "Tests/TestTools.h"
 
 TEST(NumLibSerialLinearSolver, Steady2DdiffusionQuadElem)
 {

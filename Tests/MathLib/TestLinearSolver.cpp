@@ -15,10 +15,11 @@
 
 #include <gtest/gtest.h>
 
-#include "MathLib/LinAlg/LinAlg.h"
+#include "BaseLib/ConfigTree.h"
+#include "MathLib/LinAlg/ApplyKnownSolution.h"
 #include "MathLib/LinAlg/Dense/DenseMatrix.h"
 #include "MathLib/LinAlg/FinalizeMatrixAssembly.h"
-#include "MathLib/LinAlg/ApplyKnownSolution.h"
+#include "MathLib/LinAlg/LinAlg.h"
 
 #ifdef OGS_USE_EIGEN
 #include "MathLib/LinAlg/Eigen/EigenMatrix.h"

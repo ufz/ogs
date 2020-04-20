@@ -17,7 +17,7 @@ namespace
 
 // NaX_Dubinin_polyfrac_CC.pickle
 // date extracted 2015-06-23 16:47:50 file mtime 2015-06-23 16:47:23
-const double c[] = {
+const double DensityDubinin_c[] = {
     0.3635538371322433,        /* a0 */
     -0.0014521033261199435,    /* a1 */
     -0.0007855160157616825,    /* a2 */
@@ -77,7 +77,7 @@ double DensityDubinin::getAlphaT(const double T_Ads) const
 // Characteristic curve. Return W (A)
 double DensityDubinin::characteristicCurve(const double A) const
 {
-    double W = curvePolyfrac(c, A); // cm^3/g
+    double W = curvePolyfrac(DensityDubinin_c, A); // cm^3/g
 
     if (W < 0.0) {
         W = 0.0; // TODO [CL] debug output
@@ -88,7 +88,7 @@ double DensityDubinin::characteristicCurve(const double A) const
 
 double DensityDubinin::dCharacteristicCurve(const double A) const
 {
-    return dCurvePolyfrac(c, A);
+    return dCurvePolyfrac(DensityDubinin_c, A);
 }
 
 }  // namespace Adsorption

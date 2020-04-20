@@ -27,7 +27,7 @@ DiagramPrefsDialog::DiagramPrefsDialog(const GeoLib::Station* stn,
                                        const QString &listName,
                                        //DatabaseConnection* db,
                                        QDialog* parent)
-    : QDialog(parent), _listID(-1), _stationID(-1), _window(nullptr)
+    : QDialog(parent), _window(nullptr)
 {
     setAttribute(Qt::WA_DeleteOnClose);
 
@@ -37,7 +37,7 @@ DiagramPrefsDialog::DiagramPrefsDialog(const GeoLib::Station* stn,
 }
 
 DiagramPrefsDialog::DiagramPrefsDialog(GeoLib::Station* stn, QDialog* parent)
-    : QDialog(parent), _listID(-1), _stationID(-1), _window(nullptr)
+    : QDialog(parent), _window(nullptr)
 {
     setupUi(this);
     stationNameLabel->setText(QString::fromStdString(stn->getName()));
@@ -52,7 +52,7 @@ DiagramPrefsDialog::DiagramPrefsDialog(GeoLib::Station* stn, QDialog* parent)
 DiagramPrefsDialog::DiagramPrefsDialog(const QString &filename,
                                        DetailWindow* window,
                                        QDialog* parent)
-    : QDialog(parent), _listID(-1), _stationID(-1), _window(window)
+    : QDialog(parent), _window(window)
 {
     QFileInfo fi(filename);
     setupUi(this);

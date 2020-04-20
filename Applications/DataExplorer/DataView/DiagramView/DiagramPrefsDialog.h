@@ -98,8 +98,6 @@ private:
 
     std::vector<DiagramList*> _list;
     std::vector<QCheckBox*> _visability;
-    int _listID;
-    int _stationID;
     DetailWindow* _window;
 
 private slots:

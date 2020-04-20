@@ -14,7 +14,7 @@ namespace
 {
 // NaX_Mette_polyfrac_CC.pickle
 // date extracted 2015-06-23 15:38:35 file mtime 2015-06-23 15:19:26
-const double c[] = {
+const double DensityMette_c[] = {
     0.36340572890087813,    /* a0 */
     -0.0013449597038375108,    /* a1 */
     -0.0007581210111121073,    /* a2 */
@@ -49,7 +49,7 @@ double DensityMette::getAlphaT(const double T_Ads) const
 // Characteristic curve. Return W (A)
 double DensityMette::characteristicCurve(const double A) const
 {
-    double W = curvePolyfrac(c, A); // cm^3/g
+    double W = curvePolyfrac(DensityMette_c, A); // cm^3/g
 
     if (W < 0.0) {
         W = 0.0; // TODO [CL] debug output
@@ -60,7 +60,7 @@ double DensityMette::characteristicCurve(const double A) const
 
 double DensityMette::dCharacteristicCurve(const double A) const
 {
-    return dCurvePolyfrac(c, A);
+    return dCurvePolyfrac(DensityMette_c, A);
 }
 
 }  // namespace Adsorption

@@ -31,13 +31,13 @@ public:
     virtual ~LineSourceTermLocalAssemblerInterface() = default;
 };
 
-const unsigned NUM_NODAL_DOF = 1;
-
 template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
 class LineSourceTermLocalAssembler final
     : public LineSourceTermLocalAssemblerInterface
 {
+    static const unsigned NUM_NODAL_DOF = 1;
+
     using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction, GlobalDim>;
 
     using LocalAssemblerTraits = ProcessLib::LocalAssemblerTraits<
