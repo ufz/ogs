@@ -110,7 +110,8 @@ ElementErrorCode PyramidRule5::validate(const Element* e)
     ElementErrorCode error_code;
     error_code[ElementErrorFlag::ZeroVolume] = e->hasZeroVolume();
 
-    const auto* base(dynamic_cast<const MeshLib::Quad*>(e->getFace(4)));
+    std::unique_ptr<MeshLib::Quad const> const base{
+        dynamic_cast<MeshLib::Quad const*>(e->getFace(4))};
     if (base)
     {
         error_code |= base->validate();
@@ -120,7 +121,6 @@ ElementErrorCode PyramidRule5::validate(const Element* e)
     {
         error_code.set(ElementErrorFlag::NodeOrder);
     }
-    delete base;
 
     return error_code;
 }

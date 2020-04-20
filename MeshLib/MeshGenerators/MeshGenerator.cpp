@@ -13,14 +13,15 @@
 #include <memory>
 #include <numeric>
 
-#include "MeshLib/Node.h"
-#include "MeshLib/Elements/Line.h"
-#include "MeshLib/Elements/Quad.h"
 #include "MeshLib/Elements/Hex.h"
+#include "MeshLib/Elements/Line.h"
+#include "MeshLib/Elements/Pyramid.h"
+#include "MeshLib/Elements/Quad.h"
 #include "MeshLib/Elements/Tet.h"
 #include "MeshLib/Elements/Tri.h"
 #include "MeshLib/MeshEditing/AddLayerToMesh.h"
 #include "MeshLib/MeshEditing/RemoveMeshComponents.h"
+#include "MeshLib/Node.h"
 
 namespace MeshLib
 {
@@ -112,6 +113,39 @@ std::vector<MeshLib::Node*> MeshGenerator::generateRegularNodes(
     }
     return nodes;
 }
+
+namespace MeshGenerator
+{
+std::vector<MeshLib::Node*> generateRegularPyramidTopNodes(
+    std::vector<double> const& x_coords,
+    std::vector<double> const& y_coords,
+    std::vector<double> const& z_coords,
+    const MathLib::Point3d& origin)
+{
+    std::vector<Node*> nodes;
+    nodes.reserve((x_coords.size() - 1) * (y_coords.size() - 1) *
+                  (z_coords.size() - 1));
+
+    auto const n_x_coords = x_coords.size() - 1;
+    auto const n_y_coords = y_coords.size() - 1;
+    auto const n_z_coords = z_coords.size() - 1;
+
+    for (std::size_t i = 0; i < n_z_coords; i++)
+    {
+        const double z((z_coords[i] + z_coords[i + 1]) / 2 + origin[2]);
+        for (std::size_t j = 0; j < n_y_coords; j++)
+        {
+            const double y((y_coords[j] + y_coords[j + 1]) / 2 + origin[1]);
+            for (std::size_t k = 0; k < n_x_coords; k++)
+            {
+                const double x((x_coords[k] + x_coords[k + 1]) / 2 + origin[0]);
+                nodes.push_back(new Node(x, y, z));
+            }
+        }
+    }
+    return nodes;
+}
+}  // end namespace MeshGenerator
 
 Mesh* MeshGenerator::generateLineMesh(
     const double length,
@@ -328,6 +362,102 @@ Mesh* MeshGenerator::generateRegularHexMesh(
         }
     }
 
+    return new Mesh(mesh_name, nodes, elements);
+}
+
+Mesh* MeshGenerator::generateRegularPyramidMesh(
+    const BaseLib::ISubdivision& div_x,
+    const BaseLib::ISubdivision& div_y,
+    const BaseLib::ISubdivision& div_z,
+    MathLib::Point3d const& origin,
+    std::string const& mesh_name)
+{
+    std::vector<double> vec_x(div_x());
+    std::vector<double> vec_y(div_y());
+    std::vector<double> vec_z(div_z());
+    std::vector<Node*> nodes(generateRegularNodes(vec_x, vec_y, vec_z, origin));
+    std::vector<Node*> const top_nodes(
+        generateRegularPyramidTopNodes(vec_x, vec_y, vec_z, origin));
+
+    nodes.insert(nodes.end(), top_nodes.begin(), top_nodes.end());
+
+    const unsigned n_x_nodes(vec_x.size());
+    const unsigned n_y_nodes(vec_y.size());
+    const unsigned n_z_nodes(vec_z.size());
+    const unsigned n_x_cells(vec_x.size() - 1);
+    const unsigned n_y_cells(vec_y.size() - 1);
+    const unsigned n_z_cells(vec_z.size() - 1);
+
+    // elements
+    std::vector<Element*> elements;
+    auto const top_node_offset(n_x_nodes * n_y_nodes * n_z_nodes);
+    elements.reserve(n_x_cells * n_y_cells * n_z_cells);
+
+    for (std::size_t i = 0; i < n_z_cells; i++)
+    {
+        const std::size_t offset_z1 = i * n_x_nodes * n_y_nodes;  // bottom
+        const std::size_t offset_z2 = (i + 1) * n_x_nodes * n_y_nodes;  // top
+        for (std::size_t j = 0; j < n_y_cells; j++)
+        {
+            const std::size_t offset_y1 = j * n_x_nodes;
+            const std::size_t offset_y2 = (j + 1) * n_x_nodes;
+            for (std::size_t k = 0; k < n_x_cells; k++)
+            {
+                // generate 6 pyramids within the virtual hexahedron cell
+                int const pyramid_top_index(i * n_x_cells * n_y_cells +
+                                            j * n_x_cells + k +
+                                            top_node_offset);
+                elements.push_back(
+                    new Pyramid{{// bottom 'hexahedron' face
+                                 nodes[offset_z1 + offset_y1 + k],
+                                 nodes[offset_z1 + offset_y1 + k + 1],
+                                 nodes[offset_z1 + offset_y2 + k + 1],
+                                 nodes[offset_z1 + offset_y2 + k],
+                                 // top
+                                 nodes[pyramid_top_index]}});
+                elements.push_back(
+                    new Pyramid{{// top 'hexahedron' face
+                                 nodes[offset_z2 + offset_y1 + k + 1],
+                                 nodes[offset_z2 + offset_y1 + k],
+                                 nodes[offset_z2 + offset_y2 + k],
+                                 nodes[offset_z2 + offset_y2 + k + 1],
+                                 // top of pyramid directed towards the bottom
+                                 nodes[pyramid_top_index]}});
+                elements.push_back(
+                    new Pyramid{{// right 'hexahedron' face
+                                 nodes[offset_z1 + offset_y1 + k + 1],
+                                 nodes[offset_z2 + offset_y1 + k + 1],
+                                 nodes[offset_z2 + offset_y2 + k + 1],
+                                 nodes[offset_z1 + offset_y2 + k + 1],
+                                 // top of pyramid directed towards the bottom
+                                 nodes[pyramid_top_index]}});
+                elements.push_back(
+                    new Pyramid{{// left 'hexahedron' face
+                                 nodes[offset_z2 + offset_y1 + k],
+                                 nodes[offset_z1 + offset_y1 + k],
+                                 nodes[offset_z1 + offset_y2 + k],
+                                 nodes[offset_z2 + offset_y2 + k],
+                                 // top of pyramid directed towards the bottom
+                                 nodes[pyramid_top_index]}});
+                elements.push_back(
+                    new Pyramid{{// front 'hexahedron' face
+                                 nodes[offset_z2 + offset_y1 + k],
+                                 nodes[offset_z2 + offset_y1 + k + 1],
+                                 nodes[offset_z1 + offset_y1 + k + 1],
+                                 nodes[offset_z1 + offset_y1 + k],
+                                 // top of pyramid directed towards the bottom
+                                 nodes[pyramid_top_index]}});
+                elements.push_back(
+                    new Pyramid{{// back 'hexahedron' face
+                                 nodes[offset_z1 + offset_y2 + k],
+                                 nodes[offset_z1 + offset_y2 + k + 1],
+                                 nodes[offset_z2 + offset_y2 + k + 1],
+                                 nodes[offset_z2 + offset_y2 + k],
+                                 // top of pyramid directed towards the bottom
+                                 nodes[pyramid_top_index]}});
+            }
+        }
+    }
     return new Mesh(mesh_name, nodes, elements);
 }
 

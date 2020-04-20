@@ -19,7 +19,7 @@ Running `generateStructuredMesh` tool will print the required arguments and a sh
 > bin/generateStructuredMesh --help ⏎
 ```
 
-To generate a mesh two arguments are required: file name for the resulting mesh, and the element type; depending on the element type chosen (a line, triangle, quad, tetrahedron, or hexahedron) length information for one, two, or three dimensions will be required.
+To generate a mesh two arguments are required: file name for the resulting mesh, and the element type; depending on the element type chosen (a line, triangle, quad, tetrahedron, hexahedron, prism, or pyramid) length information for one, two, or three dimensions will be required.
 
 ## Examples
 
@@ -48,7 +48,7 @@ Depending on the file ending `.msh` or `.vtu` either a legacy OGS5 mesh file or 
  - Quad (and triangle) elements are available for the 2-dimensional meshes. The triangle meshes will be constructed from the quad meshes by dividing each of the quad elements into two triangle elements.
  - Hex and tetrahedron elements are available for the 3-dimensional meshes.
 
-__Note:__ The generated FEM elements will be all of the first order corresponding to Line1, Tri3/Quad4, Hex8, and Tet4.
+__Note:__ The generated FEM elements will be all of the first order corresponding to Line1, Tri3/Quad4, Hex8, Tet4, Prism6, and Pyramid5.
 
 ### Lengths `--lx`, `--ly`, `--lz`
 The mesh lengths for each direction can be specified. If not given in `--dx*` arguments the default elements' lengths are 1. The last element in the corresponding direction can be of different size if the ratio of mesh's length in that direction to element's length in the same direction is not an integer.
@@ -92,9 +92,12 @@ To generate non-uniformly refined meshes the element length multiplier (differen
 By default the initial element length is 1 but can be specified using the `--d*0` arguments.
 Consider initial element length (in x-direction for example) being $l_0 = 0.1$ and the corresponding element length multiplier to be equal $m=2$. Then the element lengths will be
 $$
-\eqalign{
-l_{i+1} &= l_i \cdot m \text{for $i=0,1,0, \ldots}\cr
-l_{i+1} &= 0.1 \cdot 2^i = 0.2, 0.4, 0.8, \text{\ldots,}}
+\eqalign
+{
+    l_{i + 1} &= l_i \cdot m \text
+    {for $i=0,1,0, \ldots}\cr
+l_{i+1} &= 0.1 \cdot 2^i = 0.2, 0.4, 0.8, \text{\ldots,}
+}
 $$
 
 
