@@ -581,15 +581,6 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         double p_cap_dot_ip;
         NumLib::shapeFunctionInterpolate(-p_L_dot, N_p, p_cap_dot_ip);
 
-        typename ShapeMatricesTypeDisplacement::GlobalDimVectorType u_ip(
-            DisplacementDim);
-        for (int i = 0; i < u_ip.size(); ++i)
-        {
-            NumLib::shapeFunctionInterpolate(
-                u.segment(i * ShapeFunctionDisplacement::NPOINTS,
-                          ShapeFunctionDisplacement::NPOINTS),
-                N_u, u_ip.coeffRef(i));
-        }
         variables[static_cast<int>(MPL::Variable::capillary_pressure)] =
             p_cap_ip;
         variables[static_cast<int>(MPL::Variable::phase_pressure)] = -p_cap_ip;
