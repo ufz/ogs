@@ -1330,6 +1330,10 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             pressure_size> const>(local_x.data() + pressure_index,
                                   pressure_size);
 
+    auto u =
+        Eigen::Map<typename ShapeMatricesTypeDisplacement::template VectorType<
+            displacement_size> const>(local_x.data() + displacement_index,
+                                      displacement_size);
     auto const& medium = _process_data.media_map->getMedium(_element.getID());
     auto const& liquid_phase = medium->phase("AqueousLiquid");
     auto const& solid_phase = medium->phase("Solid");
@@ -1351,6 +1355,18 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     {
         x_position.setIntegrationPoint(ip);
         auto const& N_p = _ip_data[ip].N_p;
+        auto const& N_u = _ip_data[ip].N_u;
+        auto const& dNdx_u = _ip_data[ip].dNdx_u;
+
+        auto const x_coord =
+            interpolateXCoordinate<ShapeFunctionDisplacement,
+                                   ShapeMatricesTypeDisplacement>(_element,
+                                                                  N_u);
+        auto const B =
+            LinearBMatrix::computeBMatrix<DisplacementDim,
+                                          ShapeFunctionDisplacement::NPOINTS,
+                                          typename BMatricesType::BMatrixType>(
+                dNdx_u, N_u, x_coord, _is_axially_symmetric);
         // TODO (naumov) Temporary value not used by current material models.
         // Need extension of secondary variables interface.
         double const dt = std::numeric_limits<double>::quiet_NaN();
@@ -1368,6 +1384,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             p_cap_ip;
         variables[static_cast<int>(MPL::Variable::phase_pressure)] = -p_cap_ip;
 
+        auto& eps = _ip_data[ip].eps;
         auto& S_L = _ip_data[ip].saturation;
         S_L = medium->property(MPL::PropertyType::saturation)
                   .template value<double>(variables, x_position, t, dt);
@@ -1388,6 +1405,11 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 .template value<double>(variables, x_position, t, dt);
 
         GlobalDimMatrixType const K_over_mu = k_rel * K_intrinsic / mu;
+
+        eps.noalias() = B * u;
+
+        _ip_data[ip].updateConstitutiveRelation(t, x_position, dt, u,
+                                                temperature);
 
         auto const& b = _process_data.specific_body_force;
 
