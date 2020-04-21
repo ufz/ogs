@@ -1367,13 +1367,6 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                           ShapeFunctionDisplacement::NPOINTS,
                                           typename BMatricesType::BMatrixType>(
                 dNdx_u, N_u, x_coord, _is_axially_symmetric);
-        // TODO (naumov) Temporary value not used by current material models.
-        // Need extension of secondary variables interface.
-        double const dt = std::numeric_limits<double>::quiet_NaN();
-        auto const temperature =
-            medium->property(MPL::PropertyType::reference_temperature)
-                .template value<double>(variables, x_position, t, dt);
-        variables[static_cast<int>(MPL::Variable::temperature)] = temperature;
 
         variables[static_cast<int>(MPL::Variable::porosity)] =
             _ip_data[ip].porosity;
@@ -1384,6 +1377,14 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             p_cap_ip;
         variables[static_cast<int>(MPL::Variable::phase_pressure)] = -p_cap_ip;
 
+        // TODO (naumov) Temporary value not used by current material models.
+        // Need extension of secondary variables interface.
+        double const dt = std::numeric_limits<double>::quiet_NaN();
+        auto const temperature =
+            medium->property(MPL::PropertyType::reference_temperature)
+                .template value<double>(variables, x_position, t, dt);
+
+        variables[static_cast<int>(MPL::Variable::temperature)] = temperature;
         auto& eps = _ip_data[ip].eps;
         auto& S_L = _ip_data[ip].saturation;
         S_L = medium->property(MPL::PropertyType::saturation)
