@@ -1368,8 +1368,6 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                           typename BMatricesType::BMatrixType>(
                 dNdx_u, N_u, x_coord, _is_axially_symmetric);
 
-        variables[static_cast<int>(MPL::Variable::porosity)] =
-            _ip_data[ip].porosity;
 
         double p_cap_ip;
         NumLib::shapeFunctionInterpolate(-p_L, N_p, p_cap_ip);
@@ -1392,6 +1390,18 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         variables[static_cast<int>(MPL::Variable::transport_porosity)] =
             _ip_data[ip].transport_porosity;
+        auto& porosity = _ip_data[ip].porosity;
+        {  // Porosity update
+
+            // Use previous time step porosity for porosity update, ...
+            variables[static_cast<int>(MPL::Variable::porosity)] =
+                _ip_data[ip].porosity_prev;
+            porosity =
+                solid_phase.property(MPL::PropertyType::porosity)
+                    .template value<double>(variables, x_position, t, dt);
+            // ... then use new porosity.
+            variables[static_cast<int>(MPL::Variable::porosity)] = porosity;
+        }
 
         auto const mu = liquid_phase.property(MPL::PropertyType::viscosity)
                             .template value<double>(variables, x_position, t, dt);
