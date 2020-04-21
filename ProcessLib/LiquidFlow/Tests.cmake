@@ -366,7 +366,7 @@ AddTest(
 )
 
 AddTest(
-    NAME LiquidFlow_Flux_3D
+    NAME LiquidFlow_Flux_3D_Hex
     PATH Parabolic/LiquidFlow/Flux
     EXECUTABLE ogs
     EXECUTABLE_ARGS cube_1e3_calculatesurfaceflux.prj
@@ -378,6 +378,21 @@ AddTest(
     cube_1x1x1_hex_1e3_complete_surface_left_right_dirichlet_specific_flux_t_0.864000_expected.vtu cube_1x1x1_hex_1e3_complete_surface_left_right_dirichlet_specific_flux_t_0.864000.vtu specific_flux specific_flux 1e-7 1e-13
     LF_cube_1e3_calculatesurfaceflux_pcs_0_ts_1_t_0.432000_expected.vtu LF_cube_1e3_calculatesurfaceflux_pcs_0_ts_1_t_0.432000.vtu pressure pressure 1e-7 1e-13
     LF_cube_1e3_calculatesurfaceflux_pcs_0_ts_2_t_0.864000_expected.vtu LF_cube_1e3_calculatesurfaceflux_pcs_0_ts_2_t_0.864000.vtu pressure pressure 1e-7 1e-13
+)
+
+AddTest(
+    NAME LiquidFlow_Flux_3D_Pyramid
+    PATH Parabolic/LiquidFlow/Flux/3D/Pyramid
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS cuboid_1x1x1_pyramid_6000_calculatesurfaceflux.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    cuboid_1x1x1_pyramid_6000_entire_boundary_left_right_dirichlet_specific_flux_t_0.432000_expected.vtu cuboid_1x1x1_pyramid_6000_entire_boundary_left_right_dirichlet_specific_flux_t_0.432000.vtu specific_flux specific_flux 1e-7 1e-13
+    cuboid_1x1x1_pyramid_6000_entire_boundary_left_right_dirichlet_specific_flux_t_0.864000_expected.vtu cuboid_1x1x1_pyramid_6000_entire_boundary_left_right_dirichlet_specific_flux_t_0.864000.vtu specific_flux specific_flux 1e-7 1e-13
+    LF_cuboid_1x1x1_pyramid_6000_calculatesurfaceflux_pcs_0_ts_1_t_0.432000_expected.vtu LF_cuboid_1x1x1_pyramid_6000_calculatesurfaceflux_pcs_0_ts_1_t_0.432000.vtu pressure pressure 1e-7 1e-13
+    LF_cuboid_1x1x1_pyramid_6000_calculatesurfaceflux_pcs_0_ts_2_t_0.864000_expected.vtu LF_cuboid_1x1x1_pyramid_6000_calculatesurfaceflux_pcs_0_ts_2_t_0.864000.vtu pressure pressure 1e-7 1e-13
 )
 
 AddTest(
