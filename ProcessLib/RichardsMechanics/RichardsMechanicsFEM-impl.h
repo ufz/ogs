@@ -119,6 +119,60 @@ RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           typename IntegrationMethod, int DisplacementDim>
+std::size_t RichardsMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    DisplacementDim>::setIPDataInitialConditions(std::string const& name,
+                                                 double const* values,
+                                                 int const integration_order)
+{
+    if (integration_order !=
+        static_cast<int>(_integration_method.getIntegrationOrder()))
+    {
+        OGS_FATAL(
+            "Setting integration point initial conditions; The integration "
+            "order of the local assembler for element {:d} is different "
+            "from the integration order in the initial condition.",
+            _element.getID());
+    }
+
+    if (name == "sigma_ip")
+    {
+        if (_process_data.initial_stress != nullptr)
+        {
+            OGS_FATAL(
+                "Setting initial conditions for stress from integration "
+                "point data and from a parameter '{:s}' is not possible "
+                "simultaneously.",
+                _process_data.initial_stress->name);
+        }
+        return setKelvinVector(values, &IpData::sigma_eff);
+    }
+
+    if (name == "saturation_ip")
+    {
+        return setScalar(values, &IpData::saturation);
+    }
+    if (name == "porosity_ip")
+    {
+        return setScalar(values, &IpData::porosity);
+    }
+    if (name == "transport_porosity_ip")
+    {
+        return setScalar(values, &IpData::transport_porosity);
+    }
+    if (name == "swelling_stress_ip")
+    {
+        return setKelvinVector(values, &IpData::sigma_sw);
+    }
+    if (name == "epsilon_ip")
+    {
+        return setKelvinVector(values, &IpData::eps);
+    }
+    return 0;
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          typename IntegrationMethod, int DisplacementDim>
 void RichardsMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
     DisplacementDim>::setInitialConditionsConcrete(std::vector<double> const&
@@ -527,15 +581,6 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         double p_cap_dot_ip;
         NumLib::shapeFunctionInterpolate(-p_L_dot, N_p, p_cap_dot_ip);
 
-        typename ShapeMatricesTypeDisplacement::GlobalDimVectorType u_ip(
-            DisplacementDim);
-        for (int i = 0; i < u_ip.size(); ++i)
-        {
-            NumLib::shapeFunctionInterpolate(
-                u.segment(i * ShapeFunctionDisplacement::NPOINTS,
-                          ShapeFunctionDisplacement::NPOINTS),
-                N_u, u_ip.coeffRef(i));
-        }
         variables[static_cast<int>(MPL::Variable::capillary_pressure)] =
             p_cap_ip;
         variables[static_cast<int>(MPL::Variable::phase_pressure)] = -p_cap_ip;
@@ -826,6 +871,67 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           typename IntegrationMethod, int DisplacementDim>
+std::size_t RichardsMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    DisplacementDim>::setKelvinVector(double const* values,
+                                      KelvinVectorType IpData::*member)
+{
+    constexpr int kelvin_vector_size =
+        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
+    auto const n_integration_points = _ip_data.size();
+
+    auto const matrix_mapped_values =
+        Eigen::Map<Eigen::Matrix<double, kelvin_vector_size, Eigen::Dynamic,
+                                 Eigen::ColMajor> const>(
+            values, kelvin_vector_size, n_integration_points);
+
+    for (unsigned ip = 0; ip < n_integration_points; ++ip)
+    {
+        _ip_data[ip].*member =
+            MathLib::KelvinVector::symmetricTensorToKelvinVector(
+                matrix_mapped_values.col(ip));
+    }
+
+    return n_integration_points;
+}
+
+template <int Components, typename StoreValuesFunction>
+std::vector<double> transposeInPlace(
+    StoreValuesFunction const& store_values_function)
+{
+    std::vector<double> result;
+    store_values_function(result);
+    // Transpose. For time being Eigen's transposeInPlace doesn't work for
+    // non-square mapped matrices.
+    MathLib::toMatrix<
+        Eigen::Matrix<double, Eigen::Dynamic, Components, Eigen::RowMajor>>(
+        result, result.size() / Components, Components) =
+        MathLib::toMatrix<
+            Eigen::Matrix<double, Components, Eigen::Dynamic, Eigen::RowMajor>>(
+            result, Components, result.size() / Components)
+            .transpose()
+            .eval();
+
+    return result;
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          typename IntegrationMethod, int DisplacementDim>
+std::vector<double> RichardsMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    DisplacementDim>::getSigma() const
+{
+    constexpr int kelvin_vector_size =
+        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
+
+    return transposeInPlace<kelvin_vector_size>(
+        [this](std::vector<double>& values) {
+            return getIntPtSigma(0, {}, {}, values);
+        });
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          typename IntegrationMethod, int DisplacementDim>
 std::vector<double> const& RichardsMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
     DisplacementDim>::
@@ -835,7 +941,7 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
         std::vector<double>& cache) const
 {
-    static const int kelvin_vector_size =
+    constexpr int kelvin_vector_size =
         MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
     auto const num_intpts = _ip_data.size();
 
@@ -856,6 +962,21 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           typename IntegrationMethod, int DisplacementDim>
+std::vector<double> RichardsMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    DisplacementDim>::getSwellingStress() const
+{
+    constexpr int kelvin_vector_size =
+        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
+
+    return transposeInPlace<kelvin_vector_size>(
+        [this](std::vector<double>& values) {
+            return getIntPtSwellingStress(0, {}, {}, values);
+        });
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          typename IntegrationMethod, int DisplacementDim>
 std::vector<double> const& RichardsMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
     DisplacementDim>::
@@ -865,7 +986,7 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
         std::vector<double>& cache) const
 {
-    static const int kelvin_vector_size =
+    constexpr int kelvin_vector_size =
         MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
     auto const num_intpts = _ip_data.size();
 
@@ -886,6 +1007,21 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           typename IntegrationMethod, int DisplacementDim>
+std::vector<double> RichardsMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    DisplacementDim>::getEpsilon() const
+{
+    constexpr int kelvin_vector_size =
+        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
+
+    return transposeInPlace<kelvin_vector_size>(
+        [this](std::vector<double>& values) {
+            return getIntPtEpsilon(0, {}, {}, values);
+        });
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          typename IntegrationMethod, int DisplacementDim>
 std::vector<double> const& RichardsMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
     DisplacementDim>::
@@ -895,7 +1031,7 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
         std::vector<double>& cache) const
 {
-    auto const kelvin_vector_size =
+    constexpr int kelvin_vector_size =
         MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
     auto const num_intpts = _ip_data.size();
 
@@ -920,88 +1056,53 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
     DisplacementDim>::
     getIntPtDarcyVelocity(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
         std::vector<double>& cache) const
 {
     auto const num_intpts = _ip_data.size();
-
-    constexpr int process_id = 0;  // monolithic scheme
-    auto const indices =
-        NumLib::getIndices(_element.getID(), *dof_table[process_id]);
-    assert(!indices.empty());
-    auto const local_x = x[process_id]->get(indices);
 
     cache.clear();
     auto cache_matrix = MathLib::createZeroedMatrix<Eigen::Matrix<
         double, DisplacementDim, Eigen::Dynamic, Eigen::RowMajor>>(
         cache, DisplacementDim, num_intpts);
 
-    auto p_L =
-        Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
-            pressure_size> const>(local_x.data() + pressure_index,
-                                  pressure_size);
-
-    auto const& medium = _process_data.media_map->getMedium(_element.getID());
-    auto const& liquid_phase = medium->phase("AqueousLiquid");
-    auto const& solid_phase = medium->phase("Solid");
-    MPL::VariableArray variables;
-
-    ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
-
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        x_position.setIntegrationPoint(ip);
-        auto const& N_p = _ip_data[ip].N_p;
-
-        double p_cap_ip;
-        NumLib::shapeFunctionInterpolate(-p_L, N_p, p_cap_ip);
-        variables[static_cast<int>(MPL::Variable::capillary_pressure)] =
-            p_cap_ip;
-        variables[static_cast<int>(MPL::Variable::phase_pressure)] = -p_cap_ip;
-
-        // TODO (naumov) Temporary value not used by current material models.
-        // Need extension of secondary variables interface.
-        double const dt = std::numeric_limits<double>::quiet_NaN();
-        auto const temperature =
-            medium->property(MPL::PropertyType::reference_temperature)
-                .template value<double>(variables, x_position, t, dt);
-        variables[static_cast<int>(MPL::Variable::temperature)] = temperature;
-
-        variables[static_cast<int>(MPL::Variable::porosity)] =
-            _ip_data[ip].porosity;
-
-        variables[static_cast<int>(MPL::Variable::transport_porosity)] =
-            _ip_data[ip].transport_porosity;
-
-        auto const mu = liquid_phase.property(MPL::PropertyType::viscosity)
-                            .template value<double>(variables, x_position, t, dt);
-        auto const rho_LR =
-            liquid_phase.property(MPL::PropertyType::density)
-                .template value<double>(variables, x_position, t, dt);
-        auto const K_intrinsic = MPL::formEigenTensor<DisplacementDim>(
-            solid_phase.property(MPL::PropertyType::permeability)
-                .value(variables, x_position, t, dt));
-        double const k_rel =
-            medium->property(MPL::PropertyType::relative_permeability)
-                .template value<double>(variables, x_position, t, dt);
-
-        GlobalDimMatrixType const K_over_mu = k_rel * K_intrinsic / mu;
-
-        auto const& b = _process_data.specific_body_force;
-
-        // Compute the velocity
-        auto const& dNdx_p = _ip_data[ip].dNdx_p;
-        cache_matrix.col(ip).noalias() =
-            -K_over_mu * dNdx_p * p_L + rho_LR * K_over_mu * b;
+        cache_matrix.col(ip).noalias() = _ip_data[ip].v_darcy;
     }
 
     return cache;
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          typename IntegrationMethod, int DisplacementDim>
+std::size_t RichardsMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    DisplacementDim>::setScalar(double const* values, double IpData::*member)
+{
+    auto const n_integration_points = _integration_method.getNumberOfPoints();
+
+    for (unsigned ip = 0; ip < n_integration_points; ++ip)
+    {
+        _ip_data[ip].*member = values[ip];
+    }
+    return n_integration_points;
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          typename IntegrationMethod, int DisplacementDim>
+std::vector<double> RichardsMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    DisplacementDim>::getSaturation() const
+{
+    std::vector<double> result;
+    getIntPtSaturation(0, {}, {}, result);
+    return result;
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
@@ -1032,6 +1133,17 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           typename IntegrationMethod, int DisplacementDim>
+std::vector<double> RichardsMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    DisplacementDim>::getPorosity() const
+{
+    std::vector<double> result;
+    getIntPtPorosity(0, {}, {}, result);
+    return result;
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          typename IntegrationMethod, int DisplacementDim>
 std::vector<double> const& RichardsMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
     DisplacementDim>::
@@ -1054,6 +1166,17 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
     }
 
     return cache;
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          typename IntegrationMethod, int DisplacementDim>
+std::vector<double> RichardsMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    DisplacementDim>::getTransportPorosity() const
+{
+    std::vector<double> result;
+    getIntPtTransportPorosity(0, {}, {}, result);
+    return result;
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
@@ -1207,7 +1330,13 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             pressure_size> const>(local_x.data() + pressure_index,
                                   pressure_size);
 
+    auto u =
+        Eigen::Map<typename ShapeMatricesTypeDisplacement::template VectorType<
+            displacement_size> const>(local_x.data() + displacement_index,
+                                      displacement_size);
     auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    auto const& liquid_phase = medium->phase("AqueousLiquid");
+    auto const& solid_phase = medium->phase("Solid");
     MPL::VariableArray variables;
 
     ParameterLib::SpatialPosition x_position;
@@ -1226,13 +1355,19 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     {
         x_position.setIntegrationPoint(ip);
         auto const& N_p = _ip_data[ip].N_p;
-        // TODO (naumov) Temporary value not used by current material models.
-        // Need extension of secondary variables interface.
-        double const dt = std::numeric_limits<double>::quiet_NaN();
-        auto const temperature =
-            medium->property(MPL::PropertyType::reference_temperature)
-                .template value<double>(variables, x_position, t, dt);
-        variables[static_cast<int>(MPL::Variable::temperature)] = temperature;
+        auto const& N_u = _ip_data[ip].N_u;
+        auto const& dNdx_u = _ip_data[ip].dNdx_u;
+
+        auto const x_coord =
+            interpolateXCoordinate<ShapeFunctionDisplacement,
+                                   ShapeMatricesTypeDisplacement>(_element,
+                                                                  N_u);
+        auto const B =
+            LinearBMatrix::computeBMatrix<DisplacementDim,
+                                          ShapeFunctionDisplacement::NPOINTS,
+                                          typename BMatricesType::BMatrixType>(
+                dNdx_u, N_u, x_coord, _is_axially_symmetric);
+
 
         double p_cap_ip;
         NumLib::shapeFunctionInterpolate(-p_L, N_p, p_cap_ip);
@@ -1240,9 +1375,60 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             p_cap_ip;
         variables[static_cast<int>(MPL::Variable::phase_pressure)] = -p_cap_ip;
 
+        // TODO (naumov) Temporary value not used by current material models.
+        // Need extension of secondary variables interface.
+        double const dt = std::numeric_limits<double>::quiet_NaN();
+        auto const temperature =
+            medium->property(MPL::PropertyType::reference_temperature)
+                .template value<double>(variables, x_position, t, dt);
+
+        variables[static_cast<int>(MPL::Variable::temperature)] = temperature;
+        auto& eps = _ip_data[ip].eps;
         auto& S_L = _ip_data[ip].saturation;
         S_L = medium->property(MPL::PropertyType::saturation)
                   .template value<double>(variables, x_position, t, dt);
+
+        variables[static_cast<int>(MPL::Variable::transport_porosity)] =
+            _ip_data[ip].transport_porosity;
+        auto& porosity = _ip_data[ip].porosity;
+        {  // Porosity update
+
+            // Use previous time step porosity for porosity update, ...
+            variables[static_cast<int>(MPL::Variable::porosity)] =
+                _ip_data[ip].porosity_prev;
+            porosity =
+                solid_phase.property(MPL::PropertyType::porosity)
+                    .template value<double>(variables, x_position, t, dt);
+            // ... then use new porosity.
+            variables[static_cast<int>(MPL::Variable::porosity)] = porosity;
+        }
+
+        auto const mu = liquid_phase.property(MPL::PropertyType::viscosity)
+                            .template value<double>(variables, x_position, t, dt);
+        auto const rho_LR =
+            liquid_phase.property(MPL::PropertyType::density)
+                .template value<double>(variables, x_position, t, dt);
+        auto const K_intrinsic = MPL::formEigenTensor<DisplacementDim>(
+            solid_phase.property(MPL::PropertyType::permeability)
+                .value(variables, x_position, t, dt));
+        double const k_rel =
+            medium->property(MPL::PropertyType::relative_permeability)
+                .template value<double>(variables, x_position, t, dt);
+
+        GlobalDimMatrixType const K_over_mu = k_rel * K_intrinsic / mu;
+
+        eps.noalias() = B * u;
+
+        _ip_data[ip].updateConstitutiveRelation(t, x_position, dt, u,
+                                                temperature);
+
+        auto const& b = _process_data.specific_body_force;
+
+        // Compute the velocity
+        auto const& dNdx_p = _ip_data[ip].dNdx_p;
+        _ip_data[ip].v_darcy.noalias() =
+            -K_over_mu * dNdx_p * p_L + rho_LR * K_over_mu * b;
+
         saturation_avg += S_L;
         porosity_avg +=
             _ip_data[ip].porosity;  // Note, this is not updated, because needs

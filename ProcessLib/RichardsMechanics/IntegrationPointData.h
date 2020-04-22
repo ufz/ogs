@@ -57,6 +57,8 @@ struct IntegrationPointData final
     typename ShapeMatricesTypePressure::NodalRowVectorType N_p;
     typename ShapeMatricesTypePressure::GlobalDimNodalMatrixType dNdx_p;
 
+    typename ShapeMatricesTypePressure::GlobalDimVectorType v_darcy;
+
     double saturation = std::numeric_limits<double>::quiet_NaN();
     double saturation_prev = std::numeric_limits<double>::quiet_NaN();
     double porosity = std::numeric_limits<double>::quiet_NaN();

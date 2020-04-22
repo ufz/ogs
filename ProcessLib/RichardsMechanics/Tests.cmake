@@ -55,6 +55,44 @@ AddTest(
 )
 
 AddTest(
+    NAME RichardsMechanics_square_1e2_confined_compression_restart
+    PATH RichardsMechanics
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS confined_compression_fully_saturated_restart.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    confined_compression_fully_saturated_pcs_0_ts_20_t_100.000000.vtu confined_compression_fully_saturated_restart_pcs_0_ts_0_t_100.000000.vtu displacement displacement 1e-16 0
+    confined_compression_fully_saturated_pcs_0_ts_120_t_1000.000000.vtu confined_compression_fully_saturated_restart_pcs_0_ts_100_t_1000.000000.vtu displacement displacement 1e-16 0
+    confined_compression_fully_saturated_pcs_0_ts_420_t_4000.000000.vtu confined_compression_fully_saturated_restart_pcs_0_ts_400_t_4000.000000.vtu displacement displacement 1e-16 0
+
+    confined_compression_fully_saturated_pcs_0_ts_20_t_100.000000.vtu confined_compression_fully_saturated_restart_pcs_0_ts_0_t_100.000000.vtu pressure pressure 1e-16 0
+    confined_compression_fully_saturated_pcs_0_ts_120_t_1000.000000.vtu confined_compression_fully_saturated_restart_pcs_0_ts_100_t_1000.000000.vtu pressure pressure 1e-16 0
+    confined_compression_fully_saturated_pcs_0_ts_420_t_4000.000000.vtu confined_compression_fully_saturated_restart_pcs_0_ts_400_t_4000.000000.vtu pressure pressure 1e-16 0
+
+    confined_compression_fully_saturated_pcs_0_ts_20_t_100.000000.vtu confined_compression_fully_saturated_restart_pcs_0_ts_0_t_100.000000.vtu sigma sigma 5e-14 0
+    confined_compression_fully_saturated_pcs_0_ts_120_t_1000.000000.vtu confined_compression_fully_saturated_restart_pcs_0_ts_100_t_1000.000000.vtu sigma sigma 5e-14 0
+    confined_compression_fully_saturated_pcs_0_ts_420_t_4000.000000.vtu confined_compression_fully_saturated_restart_pcs_0_ts_400_t_4000.000000.vtu sigma sigma 5e-14 0
+
+    confined_compression_fully_saturated_pcs_0_ts_20_t_100.000000.vtu confined_compression_fully_saturated_restart_pcs_0_ts_0_t_100.000000.vtu epsilon epsilon 5e-14 0
+    confined_compression_fully_saturated_pcs_0_ts_120_t_1000.000000.vtu confined_compression_fully_saturated_restart_pcs_0_ts_100_t_1000.000000.vtu epsilon epsilon 5e-14 0
+    confined_compression_fully_saturated_pcs_0_ts_420_t_4000.000000.vtu confined_compression_fully_saturated_restart_pcs_0_ts_400_t_4000.000000.vtu epsilon epsilon 5e-14 0
+
+    confined_compression_fully_saturated_pcs_0_ts_20_t_100.000000.vtu confined_compression_fully_saturated_restart_pcs_0_ts_0_t_100.000000.vtu saturation saturation 2e-15 0
+    confined_compression_fully_saturated_pcs_0_ts_120_t_1000.000000.vtu confined_compression_fully_saturated_restart_pcs_0_ts_100_t_1000.000000.vtu saturation saturation 2e-15 0
+    confined_compression_fully_saturated_pcs_0_ts_420_t_4000.000000.vtu confined_compression_fully_saturated_restart_pcs_0_ts_400_t_4000.000000.vtu saturation saturation 2e-15 0
+
+    confined_compression_fully_saturated_pcs_0_ts_20_t_100.000000.vtu confined_compression_fully_saturated_restart_pcs_0_ts_0_t_100.000000.vtu velocity velocity 1e-16 0
+    confined_compression_fully_saturated_pcs_0_ts_120_t_1000.000000.vtu confined_compression_fully_saturated_restart_pcs_0_ts_100_t_1000.000000.vtu velocity velocity 1e-16 0
+    confined_compression_fully_saturated_pcs_0_ts_420_t_4000.000000.vtu confined_compression_fully_saturated_restart_pcs_0_ts_400_t_4000.000000.vtu velocity velocity 1e-16 0
+)
+if(TEST ogs-RichardsMechanics_square_1e2_confined_compression_restart-time)
+    set_tests_properties(ogs-RichardsMechanics_square_1e2_confined_compression_restart-time PROPERTIES
+        DEPENDS ogs-RichardsMechanics_square_1e2_confined_compression-time-vtkdiff)
+endif()
+
+AddTest(
     NAME RichardsMechanics_square_1e2_flow_fully_saturated
     PATH RichardsMechanics
     EXECUTABLE ogs

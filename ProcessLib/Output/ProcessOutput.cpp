@@ -138,7 +138,7 @@ void processOutputData(
         process_variables,
     SecondaryVariableCollection const& secondary_variables,
     bool const output_secondary_variable,
-    std::vector<std::unique_ptr<IntegrationPointWriter>> const&
+    std::vector<std::unique_ptr<IntegrationPointWriter>> const* const
         integration_point_writer,
     ProcessOutput const& process_output)
 {
@@ -242,7 +242,10 @@ void processOutputData(
         }
     }
 
-    addIntegrationPointWriter(mesh, integration_point_writer);
+    if (integration_point_writer != nullptr)
+    {
+        addIntegrationPointWriter(mesh, *integration_point_writer);
+    }
 }
 
 void makeOutput(std::string const& file_name, MeshLib::Mesh const& mesh,

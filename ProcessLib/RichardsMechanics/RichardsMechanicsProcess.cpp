@@ -46,6 +46,118 @@ RichardsMechanicsProcess<DisplacementDim>::RichardsMechanicsProcess(
 
     _hydraulic_flow = MeshLib::getOrCreateMeshProperty<double>(
         mesh, "HydraulicFlow", MeshLib::MeshItemType::Node, 1);
+
+    // TODO (naumov) remove ip suffix. Probably needs modification of the mesh
+    // properties, s.t. there is no "overlapping" with cell/point data.
+    // See getOrCreateMeshProperty.
+    _integration_point_writer.emplace_back(
+        std::make_unique<IntegrationPointWriter>(
+            "sigma_ip",
+            static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
+            integration_order, [this]() {
+                // Result containing integration point data for each local
+                // assembler.
+                std::vector<std::vector<double>> result;
+                result.resize(_local_assemblers.size());
+
+                for (std::size_t i = 0; i < _local_assemblers.size(); ++i)
+                {
+                    auto const& local_asm = *_local_assemblers[i];
+                    result[i] = local_asm.getSigma();
+                }
+
+                return result;
+            }));
+
+    _integration_point_writer.emplace_back(
+        std::make_unique<IntegrationPointWriter>(
+            "saturation_ip", 1 /*n components*/, integration_order, [this]() {
+                // Result containing integration point data for each local
+                // assembler.
+                std::vector<std::vector<double>> result;
+                result.resize(_local_assemblers.size());
+
+                for (std::size_t i = 0; i < _local_assemblers.size(); ++i)
+                {
+                    auto const& local_asm = *_local_assemblers[i];
+                    result[i] = local_asm.getSaturation();
+                }
+
+                return result;
+            }));
+
+    _integration_point_writer.emplace_back(
+        std::make_unique<IntegrationPointWriter>(
+            "porosity_ip", 1 /*n components*/, integration_order, [this]() {
+                // Result containing integration point data for each local
+                // assembler.
+                std::vector<std::vector<double>> result;
+                result.resize(_local_assemblers.size());
+
+                for (std::size_t i = 0; i < _local_assemblers.size(); ++i)
+                {
+                    auto const& local_asm = *_local_assemblers[i];
+                    result[i] = local_asm.getPorosity();
+                }
+
+                return result;
+            }));
+
+    _integration_point_writer.emplace_back(
+        std::make_unique<IntegrationPointWriter>(
+            "transport_porosity_ip", 1 /*n components*/, integration_order,
+            [this]() {
+                // Result containing integration point data for each local
+                // assembler.
+                std::vector<std::vector<double>> result;
+                result.resize(_local_assemblers.size());
+
+                for (std::size_t i = 0; i < _local_assemblers.size(); ++i)
+                {
+                    auto const& local_asm = *_local_assemblers[i];
+                    result[i] = local_asm.getTransportPorosity();
+                }
+
+                return result;
+            }));
+
+    _integration_point_writer.emplace_back(
+        std::make_unique<IntegrationPointWriter>(
+            "swelling_stress_ip",
+            static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
+            integration_order, [this]() {
+                // Result containing integration point data for each local
+                // assembler.
+                std::vector<std::vector<double>> result;
+                result.resize(_local_assemblers.size());
+
+                for (std::size_t i = 0; i < _local_assemblers.size(); ++i)
+                {
+                    auto const& local_asm = *_local_assemblers[i];
+                    result[i] = local_asm.getSwellingStress();
+                }
+
+                return result;
+            }));
+
+    _integration_point_writer.emplace_back(
+        std::make_unique<IntegrationPointWriter>(
+            "epsilon_ip",
+            static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
+            integration_order, [this]() {
+                // Result containing integration point data for each local
+                // assembler.
+                std::vector<std::vector<double>> result;
+                result.resize(_local_assemblers.size());
+
+                for (std::size_t i = 0; i < _local_assemblers.size(); ++i)
+                {
+                    auto const& local_asm = *_local_assemblers[i];
+                    result[i] = local_asm.getEpsilon();
+                }
+
+                return result;
+            }));
 }
 
 template <int DisplacementDim>
@@ -156,6 +268,8 @@ void RichardsMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
     MeshLib::Mesh const& mesh,
     unsigned const integration_order)
 {
+    using nlohmann::json;
+
     const int mechanical_process_id = _use_monolithic_scheme ? 0 : 1;
     const int deformation_variable_id = _use_monolithic_scheme ? 1 : 0;
     ProcessLib::RichardsMechanics::createLocalAssemblers<
@@ -230,6 +344,57 @@ void RichardsMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
         MeshLib::getOrCreateMeshProperty<double>(
             const_cast<MeshLib::Mesh&>(mesh), "pressure_interpolated",
             MeshLib::MeshItemType::Node, 1);
+
+    // Set initial conditions for integration point data.
+    for (auto const& ip_writer : _integration_point_writer)
+    {
+        // Find the mesh property with integration point writer's name.
+        auto const& name = ip_writer->name();
+        if (!mesh.getProperties().existsPropertyVector<double>(name))
+        {
+            continue;
+        }
+        auto const& mesh_property =
+            *mesh.getProperties().template getPropertyVector<double>(name);
+
+        // The mesh property must be defined on integration points.
+        if (mesh_property.getMeshItemType() !=
+            MeshLib::MeshItemType::IntegrationPoint)
+        {
+            continue;
+        }
+
+        auto const ip_meta_data = getIntegrationPointMetaData(mesh, name);
+
+        // Check the number of components.
+        if (ip_meta_data.n_components != mesh_property.getNumberOfComponents())
+        {
+            OGS_FATAL(
+                "Different number of components in meta data ({:d}) than in "
+                "the integration point field data for '{:s}': {:d}.",
+                ip_meta_data.n_components, name,
+                mesh_property.getNumberOfComponents());
+        }
+
+        // Now we have a properly named vtk's field data array and the
+        // corresponding meta data.
+        std::size_t position = 0;
+        for (auto& local_asm : _local_assemblers)
+        {
+            std::size_t const integration_points_read =
+                local_asm->setIPDataInitialConditions(
+                    name, &mesh_property[position],
+                    ip_meta_data.integration_order);
+            if (integration_points_read == 0)
+            {
+                OGS_FATAL(
+                    "No integration points read in the integration point "
+                    "initial conditions set function.");
+            }
+            position += integration_points_read * ip_meta_data.n_components;
+        }
+    }
+
 
     // Initialize local assemblers after all variables have been set.
     GlobalExecutor::executeMemberOnDereferenced(
