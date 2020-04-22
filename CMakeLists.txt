@@ -23,10 +23,6 @@ set(CMAKE_LIBRARY_SEARCH_PATH
 set(OGS_CPU_ARCHITECTURE "native" CACHE STRING "Processor architecture, \
     defaults to native (*nix) / blend (MSVC).")
 option(OGS_ENABLE_AVX2 "Enable the use of AVX2 instructions" OFF)
-option(OGS_USE_PCH "Should pre-compiled headers be used?" ON)
-if(DEFINED CMAKE_CXX_CLANG_TIDY)
-    set(OGS_USE_PCH OFF CACHE INTERNAL "")
-endif()
 option(OGS_USE_CONAN "Should Conan package manager be used?" ON)
 set(OGS_CONAN_BUILD "missing" CACHE STRING "Possible values: all, missing, \
     never or list of libs to build")

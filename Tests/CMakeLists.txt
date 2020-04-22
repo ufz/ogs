@@ -85,10 +85,6 @@ if(OGS_BUILD_GUI)
     endif()
 endif()
 
-if(OGS_USE_PCH)
-    cotire(testrunner)
-endif()
-
 # cmake-format: off
 # Add make-target tests which runs the testrunner
 if(IS_CI AND NOT OGS_COVERAGE)

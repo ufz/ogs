@@ -81,10 +81,6 @@ endif()
 
 set_property(TARGET DataExplorer PROPERTY FOLDER "DataExplorer")
 
-if(OGS_USE_PCH)
-    cotire(DataExplorer)
-endif()
-
 # ---- Installation ----
 install(TARGETS DataExplorer RUNTIME DESTINATION bin COMPONENT ogs_gui)
 
