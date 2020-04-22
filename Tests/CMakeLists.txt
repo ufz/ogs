@@ -15,7 +15,11 @@ append_source_files(TEST_SOURCES MaterialLib)
 append_source_files(TEST_SOURCES MathLib)
 append_source_files(TEST_SOURCES MeshLib)
 append_source_files(TEST_SOURCES MeshGeoToolsLib)
-append_source_files(TEST_SOURCES NumLib)
+append_source_files(TEST_SOURCES_NUMLIB NumLib)
+# Disable Unity build for NumLib tests
+set_source_files_properties(${TEST_SOURCES_NUMLIB} PROPERTIES SKIP_UNITY_BUILD_INCLUSION ON)
+# Keep order of source files, otherwise PETSc non-MPI tests fail
+set(TEST_SOURCES ${TEST_SOURCES} ${TEST_SOURCES_NUMLIB})
 append_source_files(TEST_SOURCES ParameterLib)
 append_source_files(TEST_SOURCES ProcessLib)
 

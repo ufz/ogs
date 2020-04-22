@@ -69,7 +69,7 @@ double Invariants<KelvinVectorSize>::trace(
 // Initialization of static Invariant variables.
 //
 
-namespace detail
+namespace KelvinVector_detail
 {
 template <int KelvinVectorSize>
 Eigen::Matrix<double, KelvinVectorSize, KelvinVectorSize>
@@ -108,17 +108,17 @@ Eigen::Matrix<double, KelvinVectorSize, 1> initIdentity2()
 template <int KelvinVectorSize>
 const Eigen::Matrix<double, KelvinVectorSize, KelvinVectorSize>
     Invariants<KelvinVectorSize>::deviatoric_projection =
-        detail::initDeviatoricProjection<KelvinVectorSize>();
+        KelvinVector_detail::initDeviatoricProjection<KelvinVectorSize>();
 
 template <int KelvinVectorSize>
 Eigen::Matrix<double, KelvinVectorSize, KelvinVectorSize> const
     Invariants<KelvinVectorSize>::spherical_projection =
-        detail::initSphericalProjection<KelvinVectorSize>();
+        KelvinVector_detail::initSphericalProjection<KelvinVectorSize>();
 
 template <int KelvinVectorSize>
 const Eigen::Matrix<double, KelvinVectorSize, 1>
     Invariants<KelvinVectorSize>::identity2 =
-        detail::initIdentity2<KelvinVectorSize>();
+        KelvinVector_detail::initIdentity2<KelvinVectorSize>();
 
 }  // namespace KelvinVector
 }  // namespace MathLib
