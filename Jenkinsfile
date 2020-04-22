@@ -116,7 +116,6 @@ pipeline {
                   '-DOGS_USE_CVODE=ON ' +
                   '-DOGS_USE_MFRONT=ON ' +
                   '-DOGS_USE_PYTHON=ON ' +
-                  '-DOGS_USE_UNITY_BUILDS=ON ' +
                   '-DOGS_USE_PCH=OFF '
               }
               // Workaround some MGIS CMake logic flaws
@@ -204,7 +203,6 @@ pipeline {
                   '-DOGS_CONAN_BUILD=missing ' +
                   '-DOGS_BUILD_TESTS=OFF ' +
                   '-DOGS_USE_NETCDF=ON ' +
-                  '-DOGS_USE_UNITY_BUILDS=ON ' +
                   '-DOGS_USE_PCH=OFF '
               }
               build {
@@ -262,7 +260,6 @@ pipeline {
                   '-DOGS_CONAN_BUILD=missing ' +
                   '-DOGS_CONAN_BUILD_TYPE=Release ' +
                   '-DOGS_CPU_ARCHITECTURE=generic ' +
-                  '-DOGS_USE_UNITY_BUILDS=ON ' +
                   '-DOGS_USE_PCH=OFF '
                 config = 'Debug'
               }
@@ -297,7 +294,6 @@ pipeline {
                   '-DOGS_CPU_ARCHITECTURE=sandybridge ' +
                   '-DCMAKE_INSTALL_PREFIX=/global/apps/ogs/head/standard ' +
                   '-DOGS_MODULEFILE=/global/apps/modulefiles/ogs/head/standard ' +
-                  '-DOGS_USE_UNITY_BUILDS=ON ' + // no effect as cmake too old
                   '-DOGS_USE_PCH=OFF '
                 env = 'eve/cli.sh'
               }
@@ -355,7 +351,6 @@ pipeline {
                   '-DOGS_CPU_ARCHITECTURE=sandybridge ' +
                   '-DCMAKE_INSTALL_PREFIX=/global/apps/ogs/head/petsc ' +
                   '-DOGS_MODULEFILE=/global/apps/modulefiles/ogs/head/petsc ' +
-                  '-DOGS_USE_UNITY_BUILDS=ON ' + // no effect as cmake too old
                   '-DOGS_USE_PCH=OFF '
                 env = 'eve/petsc.sh'
               }
@@ -420,7 +415,6 @@ pipeline {
                   '-DOGS_CONAN_BUILD=missing ' +
                   '-DOGS_BUILD_SWMM=ON ' +
                   '-DOGS_USE_NETCDF=ON ' +
-                  '-DOGS_USE_UNITY_BUILDS=ON ' +
                   '-DOGS_USE_PCH=OFF '
               }
               build {
@@ -477,7 +471,6 @@ pipeline {
                   '-DOGS_BUILD_UTILS=ON ' +
                   '-DOGS_CONAN_BUILD=missing ' +
                   '-DCMAKE_OSX_DEPLOYMENT_TARGET="10.15" ' +
-                  '-DOGS_USE_UNITY_BUILDS=ON ' +
                   '-DOGS_USE_PCH=OFF '
               }
               build {
@@ -527,7 +520,6 @@ pipeline {
                   '-DOGS_USE_CONAN=OFF ' +
                   '-DCMAKE_OSX_DEPLOYMENT_TARGET="10.15" ' +
                   '-DOGS_USE_NETCDF=ON ' +
-                  '-DOGS_USE_UNITY_BUILDS=ON ' +
                   '-DOGS_USE_PCH=OFF '
               }
               build {
