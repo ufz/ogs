@@ -266,18 +266,6 @@
                     <type>Dirichlet</type>
                     <parameter>pressure_bc</parameter>
                 </boundary_condition>
-                <!--boundary_condition> werden automatisch neumann 0 RB
-                    <geometrical_set>square_1x1_geometry</geometrical_set>
-                    <geometry>bottom</geometry>
-                    <type>Dirichlet</type>
-                    <parameter>pressure_bc</parameter>
-                </boundary_condition>
-                <boundary_condition>
-                    <geometrical_set>square_1x1_geometry</geometrical_set>
-                    <geometry>top</geometry>
-                    <type>Dirichlet</type>
-                    <parameter>pressure_bc</parameter>
-                </boundary_condition-->
             </boundary_conditions>
         </process_variable>
     </process_variables>
