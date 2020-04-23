@@ -14,7 +14,7 @@
             <jacobian_assembler>
                 <type>CentralDifferences</type>
                 <component_magnitudes>1e6 1.0</component_magnitudes>
-                <relative_epsilons>1e-6 1e-7</relative_epsilons>
+                <relative_epsilons>1e-8 1e-8</relative_epsilons>
             </jacobian_assembler>
             <material_property>
                 <fluid>
@@ -157,7 +157,7 @@
                 <convergence_criterion>
                     <type>PerComponentDeltaX</type>
                     <norm_type>NORM2</norm_type>
-                    <reltols>1.e-5 1.e-3</reltols>
+                    <reltols>1.e-10 1.e-10</reltols>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>
@@ -168,7 +168,7 @@
                     <t_end> 1.e5 </t_end>
                     <dt_guess> 1000 </dt_guess>
                     <dt_min> 100 </dt_min>
-                    <dt_max> 7e3 </dt_max>
+                    <dt_max> 1e3 </dt_max>
                     <rel_dt_min> 0.01 </rel_dt_min>
                     <rel_dt_max> 1.5 </rel_dt_max>
                     <tol> 1</tol>
