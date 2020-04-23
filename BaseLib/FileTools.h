@@ -142,23 +142,11 @@ bool hasFileExtension(std::string const& extension,
 std::string dropFileExtension(std::string const& filename);
 
 /**
- * Checks if file_name already contains a qualified path and if not copies the
- * path from source.
- */
-std::string copyPathToFileName(const std::string &file_name,
-                               const std::string &source);
-
-/**
  * Extracts the path of a pathname.
  *
  * Returns a string up to the last path separator not including it.
  */
 std::string extractPath(std::string const& pathname);
-
-/**
- * Appends a platform-dependent path separator (/ or \) if missing
- */
-std::string appendPathSeparator(std::string const& path);
 
 /**
  * Concat two paths. Does not check for validity.
