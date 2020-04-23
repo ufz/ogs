@@ -131,7 +131,7 @@ public:
                 MathLib::Vector3 const line{*_surface_element.getNodes()[0],
                                             *_surface_element.getNodes()[1]};
                 surface_element_normal =
-                    MathLib::crossProduct(bulk_normal, line);
+                    MathLib::crossProduct(line, bulk_normal);
             }
             else
             {
@@ -140,10 +140,9 @@ public:
             }
             surface_element_normal.normalize();
             // At the moment (2016-09-28) the surface normal is not oriented
-            // according to the right hand rule
-            // for correct results it is necessary to multiply the normal
-            // with -1
-            surface_element_normal *= -1;
+            // according to the right hand rule. Thus for an intuitive flux
+            // output, i.e., inflow has positive sign, outflow has negative
+            // sign, the normal must not be multiplied by -1.
             return surface_element_normal;
         };
         auto const surface_element_normal =
