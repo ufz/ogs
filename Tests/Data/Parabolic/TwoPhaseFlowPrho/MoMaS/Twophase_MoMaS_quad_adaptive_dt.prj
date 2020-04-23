@@ -181,6 +181,10 @@
             <timesteps>
                 <pair>
                     <repeat> 1 </repeat>
+                    <each_steps> 10 </each_steps>
+                </pair>
+                <pair>
+                    <repeat> 1 </repeat>
                     <each_steps> 1000 </each_steps>
                 </pair>
             </timesteps>
