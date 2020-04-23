@@ -526,9 +526,11 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         ShapeMatricesTypePressure::NodalMatrixType::Zero(pressure_size,
                                                          pressure_size);
 
-    typename ShapeMatricesTypePressure::NodalMatrixType storage_p =
+    typename ShapeMatricesTypePressure::NodalMatrixType storage_p_a_p =
         ShapeMatricesTypePressure::NodalMatrixType::Zero(pressure_size,
                                                          pressure_size);
+    typename ShapeMatricesTypePressure::NodalVectorType storage_p_a_S =
+        ShapeMatricesTypePressure::NodalVectorType::Zero(pressure_size);
 
     typename ShapeMatricesTypeDisplacement::template MatrixType<
         displacement_size, pressure_size>
@@ -622,12 +624,6 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 .template dValue<double>(variables,
                                          MPL::Variable::capillary_pressure,
                                          x_position, t, dt);
-
-        double const d2S_L_dp_cap_2 =
-            medium->property(MPL::PropertyType::saturation)
-                .template d2Value<double>(
-                    variables, MPL::Variable::capillary_pressure,
-                    MPL::Variable::capillary_pressure, x_position, t, dt);
 
         auto const chi = [medium, x_position, t, dt](double const S_L) {
             MPL::VariableArray variables;
@@ -796,23 +792,33 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             dNdx_p.transpose() * k_rel * rho_Ki_over_mu * dNdx_p * w;
 
         double const a0 = (alpha - porosity) / K_SR;
-        double const specific_storage =
-            dS_L_dp_cap * (p_cap_ip * S_L * a0 - porosity) +
-            S_L * (porosity / K_LR + S_L * a0);
+        double const specific_storage_a_p = S_L * (porosity / K_LR + S_L * a0);
+        double const specific_storage_a_S = porosity - p_cap_ip * S_L * a0;
 
-        double const dspecific_storage_dp_cap =
-            d2S_L_dp_cap_2 * (p_cap_ip * S_L * a0 - porosity) +
-            dS_L_dp_cap *
-                (porosity / K_LR + a0 * 3 * S_L + dS_L_dp_cap * p_cap_ip * a0);
+        double const dspecific_storage_a_p_dp_cap =
+            dS_L_dp_cap * (porosity / K_LR + 2 * S_L * a0);
+        double const dspecific_storage_a_S_dp_cap =
+            -a0 * (S_L + p_cap_ip * dS_L_dp_cap);
 
-        storage_p.noalias() +=
-            N_p.transpose() * rho_LR * specific_storage * N_p * w;
+        storage_p_a_p.noalias() +=
+            N_p.transpose() * rho_LR * specific_storage_a_p * N_p * w;
+        storage_p_a_S.noalias() += N_p.transpose() * rho_LR *
+                                   specific_storage_a_S * (S_L - S_L_prev) /
+                                   dt * w;
 
         local_Jac
             .template block<pressure_size, pressure_size>(pressure_index,
                                                           pressure_index)
-            .noalias() += N_p.transpose() * rho_LR * p_cap_dot_ip *
-                          dspecific_storage_dp_cap * N_p * w;
+            .noalias() += N_p.transpose() * p_cap_dot_ip * rho_LR *
+                          dspecific_storage_a_p_dp_cap * N_p * w;
+
+        local_Jac
+            .template block<pressure_size, pressure_size>(pressure_index,
+                                                          pressure_index)
+            .noalias() -= N_p.transpose() * rho_LR *
+                          ((S_L - S_L_prev) * dspecific_storage_a_S_dp_cap +
+                           specific_storage_a_S * dS_L_dp_cap) /
+                          dt * N_p * w;
 
         local_Jac
             .template block<pressure_size, pressure_size>(pressure_index,
@@ -845,14 +851,14 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
     if (_process_data.apply_mass_lumping)
     {
-        storage_p = storage_p.colwise().sum().eval().asDiagonal();
+        storage_p_a_p = storage_p_a_p.colwise().sum().eval().asDiagonal();
     }
 
     // pressure equation, pressure part.
     local_Jac
         .template block<pressure_size, pressure_size>(pressure_index,
                                                       pressure_index)
-        .noalias() += laplace_p + storage_p / dt;
+        .noalias() += laplace_p + storage_p_a_p / dt;
 
     // pressure equation, displacement part.
     local_Jac
@@ -862,7 +868,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
     // pressure equation
     local_rhs.template segment<pressure_size>(pressure_index).noalias() -=
-        laplace_p * p_L + storage_p * p_L_dot + Kpu * u_dot;
+        laplace_p * p_L + storage_p_a_p * p_L_dot + storage_p_a_S + Kpu * u_dot;
 
     // displacement equation
     local_rhs.template segment<displacement_size>(displacement_index)
