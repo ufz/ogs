@@ -1,1 +1,1 @@
-\copydoc MaterialPropertyLib::CapillaryPressureVanGenuchten::_pc_max
+\copydoc MaterialPropertyLib::CapillaryPressureVanGenuchten::_p_cap_max

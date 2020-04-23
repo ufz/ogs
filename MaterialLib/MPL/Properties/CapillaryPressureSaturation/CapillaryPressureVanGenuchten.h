@@ -19,15 +19,34 @@ class Medium;
 class Phase;
 class Component;
 
-/// \copydoc MaterialPropertyLib::SaturationVanGenuchten
+/**
+ * \brief The van Genuchten capillary pressure model.
+ *
+ * The van Genuchten capillary pressure model (\cite Genuchten1980) is:
+ * \f[p_c(S)=p_b (S_\text{eff}^{-1/m}-1)^{1-m}\f]
+ * with effective saturation defined as
+ * \f[S_\text{eff}=\frac{S-S_r}{S_{\text{max}}-S_r}.\f]
+ * Above, \f$S_r\f$ and \f$S_{\text{max}}\f$ are the residual and the maximum
+ * saturations.
+ * The exponent \f$m \in (0,1)\f$ and the pressure scaling parameter \f$p_b\f$
+ * (it is equal to \f$\rho g/\alpha\f$ in original publication) are given by the
+ * user.
+ * The scaling parameter \f$p_b\f$ is given in same units as pressure.
+ *
+ * In the original work another exponent \f$n\f$ is used, but usually set to
+ * \f$n = 1 / (1 - m)\f$, and also in this implementation.
+ *
+ * The the capillary pressure is computed from saturation as above but is cut
+ * off at maximum capillary pressure given by user.
+ */
 class CapillaryPressureVanGenuchten : public Property
 {
 public:
     CapillaryPressureVanGenuchten(double const residual_liquid_saturation,
-                                  double const maximum_liquid_saturation,
+                                  double const residual_gas_saturation,
                                   double const exponent,
                                   double const p_b,
-                                  double const max_capillary_pressure);
+                                  double const maximum_capillary_pressure);
 
     void setScale(
         std::variant<Medium*, Phase*, Component*> scale_pointer) override
@@ -35,26 +54,26 @@ public:
         if (!std::holds_alternative<Medium*>(scale_pointer))
         {
             OGS_FATAL(
-                "The property 'CapillaryVanGenuchten' is implemented on the "
-                "'media' scale only.");
+                "The property 'CapillaryPressureVanGenuchten' is implemented "
+                "on the 'media' scale only.");
         }
         _medium = std::get<Medium*>(scale_pointer);
     }
 
-    /// It returns \f$ p_c(S) \f$.
+    /// \returns \f$ p_c(S) \f$.
     PropertyDataType value(VariableArray const& variable_array,
                            ParameterLib::SpatialPosition const& pos,
                            double const t,
                            double const dt) const override;
 
-    /// It returns \f$ \frac{\partial p_c(S)}{\partial  S} \f$
+    /// \returns \f$ \frac{\partial p_c(S)}{\partial  S} \f$
     PropertyDataType dValue(VariableArray const& variable_array,
                             Variable const variable,
                             ParameterLib::SpatialPosition const& pos,
                             double const t,
                             double const dt) const override;
 
-    /// It returns \f$ \frac{\partial^2 p_c(S)}{\partial  S^2} \f$
+    /// \returns \f$ \frac{\partial^2 p_c(S)}{\partial  S^2} \f$
     PropertyDataType d2Value(VariableArray const& variable_array,
                              Variable const variable1, Variable const variable2,
                              ParameterLib::SpatialPosition const& pos,
@@ -62,13 +81,10 @@ public:
 
 private:
     Medium* _medium = nullptr;
-    /// Residual saturation of liquid phase.
-    double const _residual_saturation;
-    double const _maximuml_saturation;  ///< Maximum saturation of liquid phase.
-    double const _m;                    ///< Exponent.
-    /// Capillary pressure scaling factor. Sometimes, it is called apparent gas
-    /// entry pressure.
-    double const _p_b;
-    double const _pc_max;  ///< Maximum capillary pressure.
+    double const _S_L_res;    ///< Residual saturation of liquid phase.
+    double const _S_L_max;    ///< Maximum saturation of liquid phase.
+    double const _m;          ///< Exponent.
+    double const _p_b;        ///< Pressure scaling factor.
+    double const _p_cap_max;  ///< Maximum capillary pressure.
 };
 }  // namespace MaterialPropertyLib

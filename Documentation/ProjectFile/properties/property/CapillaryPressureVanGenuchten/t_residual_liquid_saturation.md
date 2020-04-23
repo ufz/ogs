@@ -1,1 +1,1 @@
-The residual saturation of liquid phase.
+\copydoc MaterialPropertyLib::CapillaryPressureVanGenuchten::_S_L_res
