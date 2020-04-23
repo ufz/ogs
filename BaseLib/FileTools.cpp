@@ -14,10 +14,8 @@
 
 #include "FileTools.h"
 #include "Error.h"
-#include "StringTools.h"
 #include "filesystem.h"
 
-#include <sys/stat.h>
 #include <boost/algorithm/string.hpp>
 
 namespace
@@ -36,8 +34,7 @@ namespace BaseLib
  */
 bool IsFileExisting(const std::string &strFilename)
 {
-    struct stat buffer {};
-    return (stat (strFilename.c_str(), &buffer) == 0);
+    return fs::exists(fs::path(strFilename));
 }
 
 double swapEndianness(double const& v)
