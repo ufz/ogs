@@ -71,10 +71,6 @@ if(OGS_INSITU)
     target_link_libraries(ogs PRIVATE InSituLib)
 endif()
 
-if(OGS_USE_PCH)
-    cotire(ogs)
-endif()
-
 # ---- Tests ----
 add_test(NAME ogs_no_args COMMAND ogs)
 set_tests_properties(ogs_no_args PROPERTIES WILL_FAIL TRUE)

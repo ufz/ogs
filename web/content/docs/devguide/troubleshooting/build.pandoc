@@ -29,13 +29,3 @@ If this still fails you can disable building of the failing processes, e.g.:
 ```
 cmake . -DOGS_BUILD_PROCESS_HT=OFF
 cmake --build . --config Release -j 1
-
-## Cotire-related (pre-compiled headers)
-
-If you get some error during build which mentions `cotire` or `*.prefix.hxx.gch` you can try to clean the pre-compiled headers with:
-
-```bash
-make clean_cotire
-```
-
-This may occur after updating the compiler or system libraries. Related to configurations with `OGS_USE_PCH=ON` only.

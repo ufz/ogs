@@ -1,4 +1,4 @@
-if(NOT CCACHE_TOOL_PATH)
+if(NOT CCACHE_TOOL_PATH OR OGS_DISABLE_CCACHE)
     return()
 endif()
 

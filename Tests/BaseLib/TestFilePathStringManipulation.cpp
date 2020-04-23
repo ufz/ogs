@@ -15,33 +15,6 @@
 
 #include "BaseLib/FileTools.h"
 
-// For testing of some internal functions used inside FileTools.cpp.
-#include "BaseLib/FileTools.cpp"
-
-TEST(BaseLib, FindLastPathSeparatorWin)
-{
-    ASSERT_EQ ( BaseLib::findLastPathSeparator("file"), std::string::npos );
-    ASSERT_EQ ( BaseLib::findLastPathSeparator("\\file"), 0U );
-    ASSERT_EQ ( BaseLib::findLastPathSeparator("path\\"), 4U );
-    ASSERT_EQ ( BaseLib::findLastPathSeparator("\\path\\"), 5U );
-    ASSERT_EQ ( BaseLib::findLastPathSeparator("path\\file"), 4U );
-    ASSERT_EQ ( BaseLib::findLastPathSeparator("\\path\\file"), 5U );
-    ASSERT_EQ ( BaseLib::findLastPathSeparator("\\path\\path\\file"), 10U );
-    ASSERT_EQ ( BaseLib::findLastPathSeparator("\\path\\path\\path\\"), 15U );
-}
-
-TEST(BaseLib, FindLastPathSeparatorUnix)
-{
-    ASSERT_EQ ( BaseLib::findLastPathSeparator("file"), std::string::npos );
-    ASSERT_EQ ( BaseLib::findLastPathSeparator("/file"), 0U );
-    ASSERT_EQ ( BaseLib::findLastPathSeparator("path/"), 4U );
-    ASSERT_EQ ( BaseLib::findLastPathSeparator("/path/"), 5U );
-    ASSERT_EQ ( BaseLib::findLastPathSeparator("path/file"), 4U );
-    ASSERT_EQ ( BaseLib::findLastPathSeparator("/path/file"), 5U );
-    ASSERT_EQ ( BaseLib::findLastPathSeparator("/path/path/file"), 10U );
-    ASSERT_EQ ( BaseLib::findLastPathSeparator("/path/path/path/"), 15U );
-}
-
 TEST(BaseLib, DropFileExtensionWin)
 {
     ASSERT_EQ ( BaseLib::dropFileExtension("file"), "file" );

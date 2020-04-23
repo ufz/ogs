@@ -25,6 +25,8 @@
 
 #include "TimeLoopSingleODE.h"
 
+namespace TestODEInt {
+
 #ifndef USE_PETSC
 std::unique_ptr<GlobalLinearSolver>
 createLinearSolver()
@@ -298,3 +300,5 @@ TYPED_TEST(NumLibODEIntTyped, DISABLED_T1)
  * * check that the order of time discretization scales correctly
  *   with the timestep size
  */
+
+} // end namespace

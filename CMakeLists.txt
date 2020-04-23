@@ -23,13 +23,13 @@ set(CMAKE_LIBRARY_SEARCH_PATH
 set(OGS_CPU_ARCHITECTURE "native" CACHE STRING "Processor architecture, \
     defaults to native (*nix) / blend (MSVC).")
 option(OGS_ENABLE_AVX2 "Enable the use of AVX2 instructions" OFF)
-option(OGS_USE_PCH "Should pre-compiled headers be used?" ON)
-if(DEFINED CMAKE_CXX_CLANG_TIDY)
-    set(OGS_USE_PCH OFF CACHE INTERNAL "")
-endif()
 option(OGS_USE_CONAN "Should Conan package manager be used?" ON)
 set(OGS_CONAN_BUILD "missing" CACHE STRING "Possible values: all, missing, \
     never or list of libs to build")
+option(OGS_DISABLE_CCACHE "Disables ccache compiler cache." OFF)
+if(${CMAKE_VERSION} VERSION_GREATER_EQUAL 3.16)
+    option(OGS_USE_UNITY_BUILDS "Enables Unity builds for faster compilation." ON)
+endif()
 
 # Third-party libraries, names come from Conan package names
 set(OGS_LIBS
@@ -296,6 +296,8 @@ endif()
 if(BUILD_TESTING AND NOT IS_SUBPROJECT)
     add_subdirectory(Tests)
 endif()
+
+include(UnityBuildSettings)
 
 file(WRITE ${PROJECT_BINARY_DIR}/disabled-tests.log "${DISABLED_TESTS_LOG}")
 unset(DISABLED_TESTS_LOG CACHE) # Don't write to CMakeCache.txt

@@ -13,6 +13,8 @@
 #include "BaseLib/ConfigTree.h"
 #include "MathLib/ODE/ODESolverBuilder.h"
 
+namespace TestODESolver {
+
 const double abs_tol = 1e-8;
 const double rel_tol = 1e-8;
 
@@ -315,3 +317,5 @@ TEST(MathLibCVodeTest, ExponentialWithJacobianNewton)
         check(time_reached, y[0], y_dot[0], time, y_ana, y_dot_ana);
     }
 }
+
+} // end namespace
