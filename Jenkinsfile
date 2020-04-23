@@ -801,7 +801,7 @@ pipeline {
           }
           steps {
             dir('web') {
-              sh 'urlchecker check --file-types .pandoc,.md --white-listed-files releases/* --white-listed-urls https://jenkins.opengeosys.org/job/ufz/job/ogs-container-maker/job/master/build,http://yourproxy.example.com,https://apt.kitware.com/ubuntu/,https://github.com/YOUR-USERNAME/ogs,https://jenkins.opengeosys.org/github-webhook/,http://localhost:1313,https://github.com/ufz/ogs/pull/$1,http://www.opengeosys.org/images/xsd/OpenGeoSysXXX.xsd content'
+              sh 'urlchecker check --file-types .pandoc,.md --white-listed-files releases/* --white-listed-urls https://jenkins.opengeosys.org/job/ufz/job/ogs-container-maker/job/master/build,http://yourproxy.example.com,https://apt.kitware.com/ubuntu/,https://github.com/YOUR-USERNAME/ogs,https://jenkins.opengeosys.org/github-webhook/,http://localhost:1313,https://github.com/ufz/ogs/pull/\$1,http://www.opengeosys.org/images/xsd/OpenGeoSysXXX.xsd,https://`-protocol content'
             }
           }
         }
