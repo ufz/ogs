@@ -119,20 +119,10 @@ void removeFiles(std::vector<std::string> const& files)
 {
     for (auto const& file : files)
     {
-        int const success = std::remove(file.c_str());
-        if (success == 0)
+        bool const success = fs::remove(fs::path(file));
+        if (success)
         {
             DBUG("Removed '{:s}'", file);
-        }
-        else
-        {
-            if (errno == ENOENT)  // File does not exists
-            {
-                continue;
-            }
-            ERR("Removing file '{:s}' failed with error {:d}.", file, errno);
-            std::perror("Error: ");
-            OGS_FATAL("Unrecoverable error happened while removing a file.");
         }
     }
 }
