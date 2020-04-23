@@ -69,13 +69,13 @@ MeshLib::Mesh* readMeshFromFile(const std::string &file_name)
 
 MeshLib::Mesh* readMeshFromFileSerial(const std::string &file_name)
 {
-    if (BaseLib::hasFileExtension("msh", file_name))
+    if (BaseLib::hasFileExtension(".msh", file_name))
     {
         MeshLib::IO::Legacy::MeshIO meshIO;
         return meshIO.loadMeshFromFile(file_name);
     }
 
-    if (BaseLib::hasFileExtension("vtu", file_name))
+    if (BaseLib::hasFileExtension(".vtu", file_name))
     {
         return MeshLib::IO::VtuInterface::readVTUFile(file_name);
     }

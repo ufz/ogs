@@ -62,19 +62,6 @@ double swapEndianness(double const& v)
     return b.v;
 }
 
-namespace
-{
-
-/** Finds the position of last dot.
- * This could be used to extract file extension.
- */
-
-std::string::size_type findLastDot(std::string const& path)
-{
-    return path.find_last_of('.');
-}
-} // end namespace
-
 std::string dropFileExtension(std::string const& filename)
 {
     auto const filename_path = fs::path(filename);
@@ -94,26 +81,13 @@ std::string extractBaseNameWithoutExtension(std::string const& pathname)
 
 std::string getFileExtension(const std::string &path)
 {
-    const std::string str = extractBaseName(path);
-    auto const p = findLastDot(str);
-    if (p == std::string::npos)
-    {
-        return std::string();
-    }
-    return str.substr(p + 1);
+    return fs::path(path).extension();
 }
 
 bool hasFileExtension(std::string const& extension, std::string const& filename)
 {
     return boost::iequals(extension, getFileExtension(filename));
 }
-
-static const char pathSeparator =
-#ifdef _WIN32
-                            '\\';
-#else
-                            '/';
-#endif
 
 std::string extractPath(std::string const& pathname)
 {

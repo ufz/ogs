@@ -25,14 +25,14 @@ namespace IO
 {
 int writeMeshToFile(const MeshLib::Mesh &mesh, const std::string &file_name)
 {
-    if (BaseLib::hasFileExtension("msh", file_name))
+    if (BaseLib::hasFileExtension(".msh", file_name))
     {
         MeshLib::IO::Legacy::MeshIO meshIO;
         meshIO.setMesh(&mesh);
         meshIO.writeToFile(file_name);
         return 0;
     }
-    if (BaseLib::hasFileExtension("vtu", file_name))
+    if (BaseLib::hasFileExtension(".vtu", file_name))
     {
         MeshLib::IO::VtuInterface writer(&mesh);
         auto const result = writer.writeToFile(file_name);

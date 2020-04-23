@@ -26,7 +26,7 @@ void readGeometryFromFile(std::string const& fname,
                           GeoLib::GEOObjects& geo_objs,
                           std::string const& gmsh_path)
 {
-    if (BaseLib::getFileExtension(fname) == "gml")
+    if (BaseLib::getFileExtension(fname) == ".gml")
     {
         GeoLib::IO::BoostXmlGmlInterface xml(geo_objs);
         xml.readFile(fname);

@@ -28,11 +28,11 @@ GeoLib::Raster* AsciiRasterInterface::readRaster(std::string const& fname)
 {
     std::string ext (BaseLib::getFileExtension(fname));
     std::transform(ext.begin(), ext.end(), ext.begin(), tolower);
-    if (ext == "asc")
+    if (ext == ".asc")
     {
         return getRasterFromASCFile(fname);
     }
-    if (ext == "grd")
+    if (ext == ".grd")
     {
         return getRasterFromSurferFile(fname);
     }

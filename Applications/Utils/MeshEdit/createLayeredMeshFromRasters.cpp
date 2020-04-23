@@ -148,7 +148,7 @@ int main (int argc, char* argv[])
     }
 
     std::string output_name(mesh_out_arg.getValue());
-    if (!BaseLib::hasFileExtension("vtu", output_name))
+    if (!BaseLib::hasFileExtension(".vtu", output_name))
     {
         output_name.append(".vtu");
     }

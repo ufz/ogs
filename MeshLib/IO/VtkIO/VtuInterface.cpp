@@ -77,7 +77,7 @@ std::string getVtuFileNameForPetscOutputWithoutExtension(
     std::string const& file_name)
 {
     auto const file_name_extension = BaseLib::getFileExtension(file_name);
-    if (file_name_extension != "vtu")
+    if (file_name_extension != ".vtu")
     {
         OGS_FATAL("Expected a .vtu file for petsc output.");
     }

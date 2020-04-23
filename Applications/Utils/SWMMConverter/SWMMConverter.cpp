@@ -78,8 +78,7 @@ int writeMeshOutput(std::string const& input_file,
     }
 
     std::string const basename = BaseLib::dropFileExtension(output_file);
-    std::string const extension =
-        std::string("." + BaseLib::getFileExtension(output_file));
+    std::string const extension = BaseLib::getFileExtension(output_file);
     std::size_t const n_time_steps(swmm->getNumberOfTimeSteps());
     INFO("Number of simulation time steps: {:d}", n_time_steps);
     for (std::size_t i = 0; i < n_time_steps; i++)
@@ -138,8 +137,7 @@ int writeCsvOutput(std::string input_file,
     }
 
     std::string const basename = BaseLib::dropFileExtension(output_file);
-    std::string const extension =
-        std::string("." + BaseLib::getFileExtension(output_file));
+    std::string const extension = BaseLib::getFileExtension(output_file);
 
     if (node_args)
         writeObjectsOfSwmmTypeToCsv(*swmm, FileIO::SwmmObject::NODE, basename,

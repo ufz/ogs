@@ -252,7 +252,7 @@ int VtkVisPointSetItem::callVTKWriter(vtkAlgorithm* algorithm, const std::string
         vtkSmartPointer<vtkXMLPolyDataWriter> pdWriter =
                 vtkSmartPointer<vtkXMLPolyDataWriter>::New();
         pdWriter->SetInputData(algPD->GetOutputDataObject(0));
-        if (BaseLib::getFileExtension(filename) != "vtp")
+        if (BaseLib::getFileExtension(filename) != ".vtp")
         {
             file_name_cpy.append(".vtp");
         }
@@ -266,7 +266,7 @@ int VtkVisPointSetItem::callVTKWriter(vtkAlgorithm* algorithm, const std::string
         vtkSmartPointer<vtkXMLUnstructuredGridWriter> ugWriter =
                 vtkSmartPointer<vtkXMLUnstructuredGridWriter>::New();
         ugWriter->SetInputData(algUG->GetOutputDataObject(0));
-        if (BaseLib::getFileExtension(filename) != "vtu")
+        if (BaseLib::getFileExtension(filename) != ".vtu")
         {
             file_name_cpy.append(".vtu");
         }

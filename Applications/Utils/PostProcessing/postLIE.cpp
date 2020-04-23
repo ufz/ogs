@@ -136,11 +136,11 @@ int main(int argc, char* argv[])
     cmd.parse(argc, argv);
 
     auto const in_file_ext = BaseLib::getFileExtension(arg_in_file.getValue());
-    if (in_file_ext == "pvd")
+    if (in_file_ext == ".pvd")
     {
         postPVD(arg_in_file.getValue(), arg_out_file.getValue());
     }
-    else if (in_file_ext == "vtu")
+    else if (in_file_ext == ".vtu")
     {
         postVTU(arg_in_file.getValue(), arg_out_file.getValue());
     }
