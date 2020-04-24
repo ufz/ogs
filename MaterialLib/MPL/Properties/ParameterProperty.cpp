@@ -14,7 +14,7 @@ namespace MaterialPropertyLib
 {
 ParameterProperty::ParameterProperty(
     ParameterLib::Parameter<double> const& parameter)
-    : _parameter(parameter)
+    : parameter_(parameter)
 {
 }
 
@@ -23,7 +23,7 @@ PropertyDataType ParameterProperty::value(
     ParameterLib::SpatialPosition const& pos, double const t,
     double const /*dt*/) const
 {
-    return fromVector(_parameter(t, pos));
+    return fromVector(parameter_(t, pos));
 }
 
 PropertyDataType ParameterProperty::dValue(

@@ -1,1 +1,1 @@
-\copydoc MaterialPropertyLib::BishopsPowerLaw::_m
+\copydoc MaterialPropertyLib::BishopsPowerLaw::m_

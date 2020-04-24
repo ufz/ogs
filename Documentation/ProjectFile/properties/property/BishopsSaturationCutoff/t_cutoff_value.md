@@ -1,1 +1,1 @@
-\copydoc MaterialPropertyLib::BishopsSaturationCutoff::_S_L_max
+\copydoc MaterialPropertyLib::BishopsSaturationCutoff::S_L_max_

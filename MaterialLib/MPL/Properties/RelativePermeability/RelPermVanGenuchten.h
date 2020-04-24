@@ -25,11 +25,11 @@ class Component;
 class RelPermVanGenuchten final : public Property
 {
 private:
-    double const _S_L_res;
-    double const _S_L_max;
-    double const _k_rel_min;
-    double const _m;
-    Medium* _medium = nullptr;
+    double const S_L_res_;
+    double const S_L_max_;
+    double const k_rel_min_;
+    double const m_;
+    Medium* medium_ = nullptr;
 
 public:
     RelPermVanGenuchten(double const residual_liquid_saturation,
@@ -43,7 +43,7 @@ public:
     {
         if (std::holds_alternative<Medium*>(scale_pointer))
         {
-            _medium = std::get<Medium*>(scale_pointer);
+            medium_ = std::get<Medium*>(scale_pointer);
         }
         else
         {
@@ -54,7 +54,7 @@ public:
     }
 
     /// Those methods override the base class implementations and
-    /// actually compute and set the property _values and _dValues.
+    /// actually compute and set the property values_ and dValues_.
     PropertyDataType value(VariableArray const& variable_array,
                            ParameterLib::SpatialPosition const& pos,
                            double const t, double const dt) const override;

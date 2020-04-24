@@ -30,11 +30,11 @@ class Component;
 class SaturationBrooksCorey final : public Property
 {
 private:
-    Medium* _medium = nullptr;
-    const double _residual_liquid_saturation;
-    const double _residual_gas_saturation;
-    const double _exponent;
-    const double _entry_pressure;
+    Medium* medium_ = nullptr;
+    const double residual_liquid_saturation_;
+    const double residual_gas_saturation_;
+    const double exponent_;
+    const double entry_pressure_;
 
 public:
     SaturationBrooksCorey(const double residual_liquid_saturation,
@@ -51,11 +51,11 @@ public:
                 "The property 'SaturationBrooksCorey' is implemented on the "
                 "'media' scale only.");
         }
-        _medium = std::get<Medium*>(scale_pointer);
+        medium_ = std::get<Medium*>(scale_pointer);
     }
 
     /// Those methods override the base class implementations and
-    /// actually compute and set the property _values and _dValues.
+    /// actually compute and set the property values_ and dValues_.
     PropertyDataType value(VariableArray const& variable_array,
                            ParameterLib::SpatialPosition const& /*pos*/,
                            double const /*t*/,

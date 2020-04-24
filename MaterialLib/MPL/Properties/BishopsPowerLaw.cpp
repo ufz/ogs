@@ -11,7 +11,7 @@
 
 namespace MaterialPropertyLib
 {
-BishopsPowerLaw::BishopsPowerLaw(double const exponent) : _m(exponent) {}
+BishopsPowerLaw::BishopsPowerLaw(double const exponent) : m_(exponent) {}
 
 void BishopsPowerLaw::setScale(
     std::variant<Medium*, Phase*, Component*> scale_pointer)
@@ -22,7 +22,7 @@ void BishopsPowerLaw::setScale(
             "The property 'BishopsPowerLaw' is implemented on the 'media' "
             "scale only.");
     }
-    _medium = std::get<Medium*>(scale_pointer);
+    medium_ = std::get<Medium*>(scale_pointer);
 }
 
 PropertyDataType BishopsPowerLaw::value(
@@ -33,7 +33,7 @@ PropertyDataType BishopsPowerLaw::value(
     auto const S_L = std::get<double>(
         variable_array[static_cast<int>(Variable::liquid_saturation)]);
 
-    return std::pow(S_L, _m);
+    return std::pow(S_L, m_);
 }
 
 PropertyDataType BishopsPowerLaw::dValue(
@@ -49,6 +49,6 @@ PropertyDataType BishopsPowerLaw::dValue(
     auto const S_L = std::get<double>(
         variable_array[static_cast<int>(Variable::liquid_saturation)]);
 
-    return _m * std::pow(S_L, _m - 1.);
+    return m_ * std::pow(S_L, m_ - 1.);
 }
 }  // namespace MaterialPropertyLib

@@ -36,7 +36,7 @@ class PiecewiseLinearInterpolation;
 namespace MaterialPropertyLib
 {
 /// A method that parses the phase details and stores them in the private
-/// _phases member.
+/// phases_ member.
 ///
 /// This method creates the phases of the medium. Unlike a medium, a phase may
 /// have a name. However, this is silly at the moment since this name still has

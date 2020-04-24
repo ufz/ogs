@@ -31,7 +31,7 @@ public:
     MaterialSpatialDistributionMap(
         std::map<int, std::shared_ptr<Medium>> const& media,
         MeshLib::PropertyVector<int> const* const material_ids)
-        : _media(media), _material_ids(material_ids)
+        : media_(media), material_ids_(material_ids)
     {
     }
 
@@ -40,7 +40,7 @@ public:
     void checkElementHasMedium(std::size_t const element_id);
 
 private:
-    std::map<int, std::shared_ptr<Medium>> const& _media;
-    MeshLib::PropertyVector<int> const* const _material_ids;
+    std::map<int, std::shared_ptr<Medium>> const& media_;
+    MeshLib::PropertyVector<int> const* const material_ids_;
 };
 }  // namespace MaterialPropertyLib

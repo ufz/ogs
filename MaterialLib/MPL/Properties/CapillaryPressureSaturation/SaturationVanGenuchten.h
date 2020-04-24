@@ -60,11 +60,11 @@ public:
                 "The property 'SaturationVanGenuchten' is implemented on the "
                 "'media' scale only.");
         }
-        _medium = std::get<Medium*>(scale_pointer);
+        medium_ = std::get<Medium*>(scale_pointer);
     }
 
     /// Those methods override the base class implementations and
-    /// actually compute and set the property _values and _dValues.
+    /// actually compute and set the property values_ and dValues_.
     PropertyDataType value(VariableArray const& variable_array,
                            ParameterLib::SpatialPosition const& /*pos*/,
                            double const /*t*/,
@@ -81,10 +81,10 @@ public:
                              double const /*dt*/) const override;
 
 private:
-    Medium* _medium = nullptr;
-    double const _S_L_res;
-    double const _S_L_max;
-    double const _m;
-    double const _p_b;
+    Medium* medium_ = nullptr;
+    double const S_L_res_;
+    double const S_L_max_;
+    double const m_;
+    double const p_b_;
 };
 }  // namespace MaterialPropertyLib

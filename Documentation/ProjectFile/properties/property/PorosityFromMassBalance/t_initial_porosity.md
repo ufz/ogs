@@ -1,1 +1,1 @@
-\copydoc MaterialPropertyLib::PorosityFromMassBalance::_phi0
+\copydoc MaterialPropertyLib::PorosityFromMassBalance::phi0_

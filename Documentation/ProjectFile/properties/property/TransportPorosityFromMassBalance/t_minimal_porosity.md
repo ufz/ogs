@@ -1,1 +1,1 @@
-\copydoc MaterialPropertyLib::TransportPorosityFromMassBalance::_phi_min
+\copydoc MaterialPropertyLib::TransportPorosityFromMassBalance::phi_min_

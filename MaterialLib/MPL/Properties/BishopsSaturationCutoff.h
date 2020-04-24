@@ -34,7 +34,7 @@ public:
                             double const /*dt*/) const override;
 
 private:
-    Medium* _medium = nullptr;
-    double const _S_L_max;  //< Maximum saturation cutoff value.
+    Medium* medium_ = nullptr;
+    double const S_L_max_;  //< Maximum saturation cutoff value.
 };
 }  // namespace MaterialPropertyLib

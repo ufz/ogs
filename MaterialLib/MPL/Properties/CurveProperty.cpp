@@ -14,7 +14,7 @@ namespace MaterialPropertyLib
 {
 CurveProperty::CurveProperty(Variable const independent_variable,
                              MathLib::PiecewiseLinearInterpolation const& curve)
-    : _independent_variable(independent_variable), _curve(curve)
+    : independent_variable_(independent_variable), curve_(curve)
 {
 }
 
@@ -24,8 +24,8 @@ PropertyDataType CurveProperty::value(
     double const /*dt*/) const
 {
     auto const x = std::get<double>(
-        variable_array[static_cast<int>(_independent_variable)]);
-    return _curve.getValue(x);
+        variable_array[static_cast<int>(independent_variable_)]);
+    return curve_.getValue(x);
 }
 
 PropertyDataType CurveProperty::dValue(
@@ -35,7 +35,7 @@ PropertyDataType CurveProperty::dValue(
     double const /*dt*/) const
 {
     auto const x = std::get<double>(
-        variable_array[static_cast<int>(_independent_variable)]);
-    return _curve.getDerivative(x);
+        variable_array[static_cast<int>(independent_variable_)]);
+    return curve_.getDerivative(x);
 }
 }  // namespace MaterialPropertyLib

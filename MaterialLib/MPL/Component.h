@@ -71,7 +71,7 @@ public:
 
 protected:
     /// The property array of the component.
-    PropertyArray _properties;
+    PropertyArray properties_;
 };
 
 /// Method for creating a new component based on the specified component name.

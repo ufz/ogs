@@ -67,7 +67,7 @@ PropertyDataType Property::initialValue(
 
 PropertyDataType Property::value() const
 {
-    return _value;
+    return value_;
 }
 
 /// The default implementation of this method only returns the property value
@@ -76,7 +76,7 @@ PropertyDataType Property::value(VariableArray const& /*variable_array*/,
                                  ParameterLib::SpatialPosition const& /*pos*/,
                                  double const /*t*/, double const /*dt*/) const
 {
-    return _value;
+    return value_;
 }
 
 /// The default implementation of this method only returns the
@@ -86,7 +86,7 @@ PropertyDataType Property::dValue(VariableArray const& /*variable_array*/,
                                   ParameterLib::SpatialPosition const& /*pos*/,
                                   double const /*t*/, double const /*dt*/) const
 {
-    return _dvalue;
+    return dvalue_;
 }
 
 /// Default implementation: 2nd derivative of any constant property is zero.

@@ -34,7 +34,7 @@ public:
            std::unique_ptr<PropertyArray>&& properties);
 
     /// A get-function for a particular phase. The ul argument specifies the
-    /// index within the _phases vector.
+    /// index within the phases_ vector.
     Phase const& phase(std::size_t index) const;
     /// A get-function for a particular phase by phase name.
     Phase const& phase(std::string const& phase_name) const;
@@ -79,14 +79,14 @@ public:
 
 private:
     /// The vector that holds the phases.
-    std::vector<std::unique_ptr<Phase>> const _phases;
+    std::vector<std::unique_ptr<Phase>> const phases_;
     /// The array that holds the medium properties.
     ///
     /// Currently, these defaults is the volume fraction average.
     ///
     /// Most properties are fine with the volume fraction average, but
     /// special-defaults are allowed as well...
-    PropertyArray _properties;
+    PropertyArray properties_;
 };
 
 template <typename Container>

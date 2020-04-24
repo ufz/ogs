@@ -25,17 +25,17 @@ Medium const* MaterialSpatialDistributionMap::getMedium(
     std::size_t const element_id) const
 {
     auto const material_id =
-        _material_ids == nullptr ? 0 : (*_material_ids)[element_id];
+        material_ids_ == nullptr ? 0 : (*material_ids_)[element_id];
 
-    return _media.at(material_id).get();
+    return media_.at(material_id).get();
 }
 
 
 void MaterialSpatialDistributionMap::checkElementHasMedium(std::size_t const element_id)
 {
     auto const material_id =
-            _material_ids == nullptr ? 0 : (*_material_ids)[element_id];
-    if (_media.find(material_id) == _media.end())
+        material_ids_ == nullptr ? 0 : (*material_ids_)[element_id];
+    if (media_.find(material_id) == media_.end())
     {
         OGS_FATAL(
             "There is no medium definition for element {:d} with material "

@@ -36,7 +36,7 @@ class Component;
 class SaturationLiakopoulos final : public Property
 {
 private:
-    Medium* _medium = nullptr;
+    Medium* medium_ = nullptr;
     /**
       Parameters for Liakopoulos saturation curve taken from:
       Asadi, R., Ataie-Ashtiani, B. (2015): A Comparison of finite volume
@@ -46,11 +46,11 @@ private:
       Those parameters are fixed for that particular model, no need to change
       them.
     */
-    const double _residual_liquid_saturation = 0.2;
-    const double _parameter_a = 1.9722e-11;
-    const double _parameter_b = 2.4279;
-    const double _p_cap_max = std::pow(
-        (1. - _residual_liquid_saturation) / _parameter_a, (1. / _parameter_b));
+    const double residual_liquid_saturation_ = 0.2;
+    const double parameter_a_ = 1.9722e-11;
+    const double parameter_b_ = 2.4279;
+    const double p_cap_max_ = std::pow(
+        (1. - residual_liquid_saturation_) / parameter_a_, (1. / parameter_b_));
 
 public:
     /// This method assigns a pointer to the material object that is the owner
@@ -60,7 +60,7 @@ public:
     {
         if (std::holds_alternative<Medium*>(scale_pointer))
         {
-            _medium = std::get<Medium*>(scale_pointer);
+            medium_ = std::get<Medium*>(scale_pointer);
         }
         else
         {
@@ -71,7 +71,7 @@ public:
     }
 
     /// Those methods override the base class implementations and
-    /// actually compute and set the property _values and _dValues.
+    /// actually compute and set the property values_ and dValues_.
     PropertyDataType value(VariableArray const& variable_array,
                            ParameterLib::SpatialPosition const& /*pos*/,
                            double const /*t*/,

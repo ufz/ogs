@@ -27,11 +27,11 @@ RelPermBrooksCorey::RelPermBrooksCorey(
     const double min_relative_permeability_liquid,
     const double min_relative_permeability_gas,
     const double exponent)
-    : _residual_liquid_saturation(residual_liquid_saturation),
-      _residual_gas_saturation(residual_gas_saturation),
-      _min_relative_permeability_liquid(min_relative_permeability_liquid),
-      _min_relative_permeability_gas(min_relative_permeability_gas),
-      _exponent(exponent){};
+    : residual_liquid_saturation_(residual_liquid_saturation),
+      residual_gas_saturation_(residual_gas_saturation),
+      min_relative_permeability_liquid_(min_relative_permeability_liquid),
+      min_relative_permeability_gas_(min_relative_permeability_gas),
+      exponent_(exponent){};
 
 PropertyDataType RelPermBrooksCorey::value(
     VariableArray const& variable_array,
@@ -42,15 +42,15 @@ PropertyDataType RelPermBrooksCorey::value(
     /// correct value. In order to speed up the computing time, saturation could
     /// be insertred into the primary variable array after it is computed in the
     /// FEM assembly.
-    auto const s_L = _medium->property(PropertyType::saturation)
+    auto const s_L = medium_->property(PropertyType::saturation)
                          .template value<double>(variable_array, pos, t, dt);
 
-    auto const s_L_res = _residual_liquid_saturation;
-    auto const s_L_max = 1. - _residual_gas_saturation;
-    auto const k_rel_min_LR = _min_relative_permeability_liquid;
-    auto const k_rel_min_GR = _min_relative_permeability_gas;
+    auto const s_L_res = residual_liquid_saturation_;
+    auto const s_L_max = 1. - residual_gas_saturation_;
+    auto const k_rel_min_LR = min_relative_permeability_liquid_;
+    auto const k_rel_min_GR = min_relative_permeability_gas_;
 
-    auto const lambda = _exponent;
+    auto const lambda = exponent_;
 
     auto const s_eff = (s_L - s_L_res) / (s_L_max - s_L_res);
 
@@ -81,12 +81,12 @@ PropertyDataType RelPermBrooksCorey::dValue(
     assert((primary_variable == Variable::liquid_saturation) &&
            "RelPermBrooksCorey::dValue is implemented for "
            " derivatives with respect to liquid saturation only.");
-    auto const s_L = _medium->property(PropertyType::saturation)
+    auto const s_L = medium_->property(PropertyType::saturation)
                          .template value<double>(variable_array, pos, t, dt);
 
-    auto const s_L_res = _residual_liquid_saturation;
-    auto const s_L_max = 1. - _residual_gas_saturation;
-    auto const lambda = _exponent;
+    auto const s_L_res = residual_liquid_saturation_;
+    auto const s_L_max = 1. - residual_gas_saturation_;
+    auto const lambda = exponent_;
 
     auto const s_eff = (s_L - s_L_res) / (s_L_max - s_L_res);
     if ((s_eff < 0.) || (s_eff > 1.))
@@ -98,10 +98,10 @@ PropertyDataType RelPermBrooksCorey::dValue(
 
     auto const dk_rel_LRdsL = dk_rel_LRdse * d_se_d_sL;
 
-    auto const _2L_L = (2. + lambda) / lambda;
+    auto const twoL_L = (2. + lambda) / lambda;
     auto const dk_rel_GRdse =
-        -2. * (1 - s_eff) * (1. - std::pow(s_eff, _2L_L)) -
-        _2L_L * std::pow(s_eff, _2L_L - 1.) * (1. - s_eff) * (1. - s_eff);
+        -2. * (1 - s_eff) * (1. - std::pow(s_eff, twoL_L)) -
+        twoL_L * std::pow(s_eff, twoL_L - 1.) * (1. - s_eff) * (1. - s_eff);
 
     auto const dk_rel_GRdsL = dk_rel_GRdse * d_se_d_sL;
     return Eigen::Vector2d{dk_rel_LRdsL, dk_rel_GRdsL};
