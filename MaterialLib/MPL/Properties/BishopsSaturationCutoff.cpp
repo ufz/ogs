@@ -12,7 +12,7 @@
 namespace MaterialPropertyLib
 {
 BishopsSaturationCutoff::BishopsSaturationCutoff(double const cutoff_value)
-    : _S_L_max(cutoff_value)
+    : S_L_max_(cutoff_value)
 {
 }
 
@@ -25,7 +25,7 @@ void BishopsSaturationCutoff::setScale(
             "The property 'BishopsSaturationCutoff' is implemented on the "
             "'media' scale only.");
     }
-    _medium = std::get<Medium*>(scale_pointer);
+    medium_ = std::get<Medium*>(scale_pointer);
 }
 
 PropertyDataType BishopsSaturationCutoff::value(
@@ -36,7 +36,7 @@ PropertyDataType BishopsSaturationCutoff::value(
     auto const S_L = std::get<double>(
         variable_array[static_cast<int>(Variable::liquid_saturation)]);
 
-    return S_L < _S_L_max ? 0. : 1.;
+    return S_L < S_L_max_ ? 0. : 1.;
 }
 
 PropertyDataType BishopsSaturationCutoff::dValue(

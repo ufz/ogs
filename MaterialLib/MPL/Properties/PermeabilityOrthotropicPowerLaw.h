@@ -35,12 +35,12 @@ template <int DisplacementDim>
 class PermeabilityOrthotropicPowerLaw final : public Property
 {
 private:
-    Phase* _phase = nullptr;
+    Phase* phase_ = nullptr;
     /// Intrinsic permeabilities, one for each spatial dimension.
-    std::array<double, DisplacementDim> const _k;
+    std::array<double, DisplacementDim> const k_;
     /// Exponents, one for each spatial dimension.
-    std::array<double, DisplacementDim> const _lambda;
-    ParameterLib::CoordinateSystem const* const _local_coordinate_system;
+    std::array<double, DisplacementDim> const lambda_;
+    ParameterLib::CoordinateSystem const* const local_coordinate_system_;
 
 public:
     PermeabilityOrthotropicPowerLaw(

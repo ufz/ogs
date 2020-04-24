@@ -25,9 +25,9 @@ PermeabilityOrthotropicPowerLaw<DisplacementDim>::
         std::array<double, DisplacementDim>
             exponents,
         ParameterLib::CoordinateSystem const* const local_coordinate_system)
-    : _k(std::move(intrinsic_permeabilities)),
-      _lambda(std::move(exponents)),
-      _local_coordinate_system(local_coordinate_system)
+    : k_(std::move(intrinsic_permeabilities)),
+      lambda_(std::move(exponents)),
+      local_coordinate_system_(local_coordinate_system)
 {
 }
 
@@ -37,13 +37,13 @@ void PermeabilityOrthotropicPowerLaw<DisplacementDim>::setScale(
 {
     if (std::holds_alternative<Phase*>(scale_pointer))
     {
-        _phase = std::get<Phase*>(scale_pointer);
-        if (_phase->name != "Solid")
+        phase_ = std::get<Phase*>(scale_pointer);
+        if (phase_->name != "Solid")
         {
             OGS_FATAL(
                 "The property 'PermeabilityOrthotropicPowerLaw' must be "
                 "given in the 'Solid' phase, not in '{:s}' phase.",
-                _phase->name);
+                phase_->name);
         }
     }
     else
@@ -65,11 +65,11 @@ PropertyDataType PermeabilityOrthotropicPowerLaw<DisplacementDim>::value(
     // creation/initialization and be stored in a local state.
     // For now assume porosity's initial value does not change with time.
     auto const phi_0 =
-        _phase->hasProperty(PropertyType::transport_porosity)
-            ? _phase->property(PropertyType::transport_porosity)
+        phase_->hasProperty(PropertyType::transport_porosity)
+            ? phase_->property(PropertyType::transport_porosity)
                   .template initialValue<double>(
                       pos, std::numeric_limits<double>::quiet_NaN())
-            : _phase->property(PropertyType::porosity)
+            : phase_->property(PropertyType::porosity)
                   .template initialValue<double>(
                       pos, std::numeric_limits<double>::quiet_NaN());
 
@@ -77,10 +77,10 @@ PropertyDataType PermeabilityOrthotropicPowerLaw<DisplacementDim>::value(
         Eigen::Matrix<double, DisplacementDim, DisplacementDim>::Zero();
 
     Eigen::Matrix<double, DisplacementDim, DisplacementDim> const e =
-        _local_coordinate_system == nullptr
+        local_coordinate_system_ == nullptr
             ? Eigen::Matrix<double, DisplacementDim,
                             DisplacementDim>::Identity()
-            : _local_coordinate_system->transformation<DisplacementDim>(pos);
+            : local_coordinate_system_->transformation<DisplacementDim>(pos);
 
     // k = \sum_i k_i (\phi / \phi_0)^{\lambda_i} e_i \otimes e_i
     // e_i \otimes e_i = square matrix e_i,0^2 e_i,0*e_i,1 etc.
@@ -89,7 +89,7 @@ PropertyDataType PermeabilityOrthotropicPowerLaw<DisplacementDim>::value(
         Eigen::Matrix<double, DisplacementDim, DisplacementDim> const
             ei_otimes_ei = e.col(i) * e.col(i).transpose();
 
-        k += _k[i] * std::pow(phi / phi_0, _lambda[i]) * ei_otimes_ei;
+        k += k_[i] * std::pow(phi / phi_0, lambda_[i]) * ei_otimes_ei;
     }
     return k;
 }

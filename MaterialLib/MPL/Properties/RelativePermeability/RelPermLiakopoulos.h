@@ -47,7 +47,7 @@ s^{\mathrm{r}}_{\mathrm{L}}}\f]
 class RelPermLiakopoulos final : public Property
 {
 private:
-    Medium* _medium = nullptr;
+    Medium* medium_ = nullptr;
     /**
     Parameters for Liakopoulos relative permeability:
     Asadi, R., Ataie-Ashtiani, B. (2015): A Comparison of finite volume
@@ -57,14 +57,14 @@ private:
     Those parameters are fixed for that particular model, no need to change
     them.
     */
-    const double _residual_liquid_saturation = 0.2;
-    const double _maximal_liquid_saturation = 1.;
-    const double _parameter_a = 2.207;
-    const double _parameter_b = 1.0121;
-    const double _exponent = 3.;
-    const double _min_relative_permeability_gas = 1.0e-4;
-    const double _dse_dsL =
-        1. / (_maximal_liquid_saturation - _residual_liquid_saturation);
+    const double residual_liquid_saturation_ = 0.2;
+    const double maximal_liquid_saturation_ = 1.;
+    const double parameter_a_ = 2.207;
+    const double parameter_b_ = 1.0121;
+    const double exponent_ = 3.;
+    const double min_relative_permeability_gas_ = 1.0e-4;
+    const double dse_dsL_ =
+        1. / (maximal_liquid_saturation_ - residual_liquid_saturation_);
 
 public:
     /// This method assigns a pointer to the meterial object that is the owner
@@ -74,7 +74,7 @@ public:
     {
         if (std::holds_alternative<Medium*>(scale_pointer))
         {
-            _medium = std::get<Medium*>(scale_pointer);
+            medium_ = std::get<Medium*>(scale_pointer);
         }
         else
         {
@@ -85,7 +85,7 @@ public:
     }
 
     /// Those methods override the base class implementations and
-    /// actually compute and set the property _values and _dValues.
+    /// actually compute and set the property values_ and dValues_.
     PropertyDataType value(VariableArray const& variable_array,
                            ParameterLib::SpatialPosition const& pos,
                            double const t, double const dt) const override;

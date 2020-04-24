@@ -22,7 +22,7 @@ class Constant final : public Property
 {
 public:
     /// This constructor accepts single values of any data type defined in the
-    /// PropertyDataType definition and sets the protected attribute _value of
+    /// PropertyDataType definition and sets the protected attribute value_ of
     /// the base class Property to that value.
     explicit Constant(PropertyDataType const& v);
 };

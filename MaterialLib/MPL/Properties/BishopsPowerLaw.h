@@ -32,7 +32,7 @@ public:
                             double const /*dt*/) const override;
 
 private:
-    Medium* _medium = nullptr;
-    double const _m;  //< Exponent.
+    Medium* medium_ = nullptr;
+    double const m_;  //< Exponent.
 };
 }  // namespace MaterialPropertyLib

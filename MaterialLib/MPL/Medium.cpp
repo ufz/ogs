@@ -19,23 +19,23 @@ namespace MaterialPropertyLib
 {
 Medium::Medium(std::vector<std::unique_ptr<Phase>>&& phases,
                std::unique_ptr<PropertyArray>&& properties)
-    : _phases(std::move(phases))
+    : phases_(std::move(phases))
 {
     if (properties)
     {
-        overwriteExistingProperties(_properties, *properties, this);
+        overwriteExistingProperties(properties_, *properties, this);
     }
 }
 
 Phase const& Medium::phase(std::size_t const index) const
 {
-    return *_phases[index];
+    return *phases_[index];
 }
 
 Phase const& Medium::phase(std::string const& name) const
 {
     return *BaseLib::findElementOrError(
-        _phases.begin(), _phases.end(),
+        phases_.begin(), phases_.end(),
         [&name](std::unique_ptr<MaterialPropertyLib::Phase> const& phase) {
             return phase->name == name;
         },
@@ -44,16 +44,16 @@ Phase const& Medium::phase(std::string const& name) const
 
 Property const& Medium::property(PropertyType const& p) const
 {
-    return *_properties[p];
+    return *properties_[p];
 }
 
 bool Medium::hasProperty(PropertyType const& p) const
 {
-    return _properties[p] != nullptr;
+    return properties_[p] != nullptr;
 }
 
 std::size_t Medium::numberOfPhases() const
 {
-    return _phases.size();
+    return phases_.size();
 }
 }  // namespace MaterialPropertyLib

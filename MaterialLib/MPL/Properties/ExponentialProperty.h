@@ -30,7 +30,7 @@ class ExponentialProperty final : public Property
 {
 public:
     /// This constructor accepts single values of double data type defined in
-    /// the PropertyDataType definition and sets the protected attribute _value
+    /// the PropertyDataType definition and sets the protected attribute value_
     /// of the base class Property to that value.
     ExponentialProperty(PropertyDataType const& property_reference_value,
                         ExponentData const& v);
@@ -55,6 +55,6 @@ public:
                              double const /*dt*/) const override;
 
 private:
-    ExponentData const _exponent_data;
+    ExponentData const exponent_data_;
 };
 }  // namespace MaterialPropertyLib

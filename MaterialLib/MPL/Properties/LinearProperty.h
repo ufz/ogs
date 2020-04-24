@@ -28,7 +28,7 @@ class LinearProperty final : public Property
 {
 public:
     /// This constructor accepts single values of double data type defined in
-    /// the PropertyDataType definition and sets the protected attribute _value
+    /// the PropertyDataType definition and sets the protected attribute value_
     /// of the base class Property to that value.
     LinearProperty(PropertyDataType const& property_reference_value,
                    std::vector<IndependentVariable> const& vs);
@@ -57,6 +57,6 @@ public:
                              double const /*dt*/) const override;
 
 private:
-    std::vector<IndependentVariable> const _independent_variables;
+    std::vector<IndependentVariable> const independent_variables_;
 };
 }  // namespace MaterialPropertyLib

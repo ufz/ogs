@@ -24,11 +24,11 @@ SaturationDependentSwelling::SaturationDependentSwelling(
     double const lower_saturation_limit,
     double const upper_saturation_limit,
     ParameterLib::CoordinateSystem const* const local_coordinate_system)
-    : _p(std::move(swelling_pressures)),
-      _lambda(std::move(exponents)),
-      _S_min(lower_saturation_limit),
-      _S_max(upper_saturation_limit),
-      _local_coordinate_system(local_coordinate_system)
+    : p_(std::move(swelling_pressures)),
+      lambda_(std::move(exponents)),
+      S_min_(lower_saturation_limit),
+      S_max_(upper_saturation_limit),
+      local_coordinate_system_(local_coordinate_system)
 {
 }
 
@@ -37,13 +37,13 @@ void SaturationDependentSwelling::setScale(
 {
     if (std::holds_alternative<Phase*>(scale_pointer))
     {
-        _phase = std::get<Phase*>(scale_pointer);
-        if (_phase->name != "Solid")
+        phase_ = std::get<Phase*>(scale_pointer);
+        if (phase_->name != "Solid")
         {
             OGS_FATAL(
                 "The property 'SaturationDependentSwelling' must be "
                 "given in the 'Solid' phase, not in '{:s}' phase.",
-                _phase->name);
+                phase_->name);
         }
     }
     else
@@ -65,23 +65,23 @@ PropertyDataType SaturationDependentSwelling::value(
         variable_array[static_cast<int>(Variable::liquid_saturation_rate)]);
 
     Eigen::Matrix<double, 3, 3> const e =
-        _local_coordinate_system == nullptr
+        local_coordinate_system_ == nullptr
             ? Eigen::Matrix<double, 3, 3>::Identity()
-            : _local_coordinate_system->transformation_3d(pos);
+            : local_coordinate_system_->transformation_3d(pos);
 
     Eigen::Matrix<double, 3, 3> delta_sigma_sw =
         Eigen::Matrix<double, 3, 3>::Zero();
 
-    if (S_L < _S_min)
+    if (S_L < S_min_)
     {
         return delta_sigma_sw;   // still being zero.
     }
 
     double const S_L_prev = S_L - S_L_dot * dt;
 
-    double const S_eff = std::clamp((S_L - _S_min) / (_S_max - _S_min), 0., 1.);
+    double const S_eff = std::clamp((S_L - S_min_) / (S_max_ - S_min_), 0., 1.);
     double const S_eff_prev =
-        std::clamp((S_L_prev - _S_min) / (_S_max - _S_min), 0., 1.);
+        std::clamp((S_L_prev - S_min_) / (S_max_ - S_min_), 0., 1.);
 
     double const delta_S_eff = S_eff - S_eff_prev;
 
@@ -94,7 +94,7 @@ PropertyDataType SaturationDependentSwelling::value(
             e.col(i) * e.col(i).transpose();
 
         delta_sigma_sw -=
-            _lambda[i] * _p[i] * std::pow(S_eff, _lambda[i] - 1) * ei_otimes_ei;
+            lambda_[i] * p_[i] * std::pow(S_eff, lambda_[i] - 1) * ei_otimes_ei;
     }
 
     return (delta_sigma_sw * delta_S_eff / dt).eval();
@@ -116,23 +116,23 @@ PropertyDataType SaturationDependentSwelling::dValue(
         variable_array[static_cast<int>(Variable::liquid_saturation_rate)]);
 
     Eigen::Matrix<double, 3, 3> const e =
-        _local_coordinate_system == nullptr
+        local_coordinate_system_ == nullptr
             ? Eigen::Matrix<double, 3, 3>::Identity()
-            : _local_coordinate_system->transformation_3d(pos);
+            : local_coordinate_system_->transformation_3d(pos);
 
     Eigen::Matrix<double, 3, 3> delta_sigma_sw =
         Eigen::Matrix<double, 3, 3>::Zero();
 
-    if (S_L < _S_min)
+    if (S_L < S_min_)
     {
         return delta_sigma_sw;   // still being zero.
     }
 
     double const S_L_prev = S_L - S_L_dot * dt;
 
-    double const S_eff = std::clamp((S_L - _S_min) / (_S_max - _S_min), 0., 1.);
+    double const S_eff = std::clamp((S_L - S_min_) / (S_max_ - S_min_), 0., 1.);
     double const S_eff_prev =
-        std::clamp((S_L_prev - _S_min) / (_S_max - _S_min), 0., 1.);
+        std::clamp((S_L_prev - S_min_) / (S_max_ - S_min_), 0., 1.);
 
     double const delta_S_eff = S_eff - S_eff_prev;
 
@@ -148,8 +148,8 @@ PropertyDataType SaturationDependentSwelling::dValue(
             e.col(i) * e.col(i).transpose();
 
         delta_sigma_sw +=
-            _lambda[i] * _p[i] * std::pow(S_eff, _lambda[i] - 1) * ei_otimes_ei;
+            lambda_[i] * p_[i] * std::pow(S_eff, lambda_[i] - 1) * ei_otimes_ei;
     }
-    return (delta_sigma_sw / (_S_max - _S_min)).eval();
+    return (delta_sigma_sw / (S_max_ - S_min_)).eval();
 }
 }  // namespace MaterialPropertyLib

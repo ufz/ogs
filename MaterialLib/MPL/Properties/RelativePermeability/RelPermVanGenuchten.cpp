@@ -22,17 +22,17 @@ RelPermVanGenuchten::RelPermVanGenuchten(
     double const residual_gas_saturation,
     double const min_relative_permeability_liquid,
     double const exponent)
-    : _S_L_res(residual_liquid_saturation),
-      _S_L_max(1. - residual_gas_saturation),
-      _k_rel_min(min_relative_permeability_liquid),
-      _m(exponent)
+    : S_L_res_(residual_liquid_saturation),
+      S_L_max_(1. - residual_gas_saturation),
+      k_rel_min_(min_relative_permeability_liquid),
+      m_(exponent)
 {
-    if (!(_m > 0 && _m < 1))
+    if (!(m_ > 0 && m_ < 1))
     {
         OGS_FATAL(
             "The exponent value m = {:g} of van Genuchten relative "
             "permeability model, is out of its range of (0, 1)",
-            _m);
+            m_);
     }
 }
 
@@ -44,12 +44,12 @@ PropertyDataType RelPermVanGenuchten::value(
     double const S_L = std::clamp(
         std::get<double>(
             variable_array[static_cast<int>(Variable::liquid_saturation)]),
-        _S_L_res, _S_L_max);
+        S_L_res_, S_L_max_);
 
-    double const S_eff = (S_L - _S_L_res) / (_S_L_max - _S_L_res);
-    double const v = 1. - std::pow(1. - std::pow(S_eff, 1. / _m), _m);
+    double const S_eff = (S_L - S_L_res_) / (S_L_max_ - S_L_res_);
+    double const v = 1. - std::pow(1. - std::pow(S_eff, 1. / m_), m_);
     double const k_rel = std::sqrt(S_eff) * v * v;
-    return std::max(_k_rel_min, k_rel);
+    return std::max(k_rel_min_, k_rel);
 }
 
 PropertyDataType RelPermVanGenuchten::dValue(
@@ -64,9 +64,9 @@ PropertyDataType RelPermVanGenuchten::dValue(
     double const S_L = std::clamp(
         std::get<double>(
             variable_array[static_cast<int>(Variable::liquid_saturation)]),
-        _S_L_res, _S_L_max);
+        S_L_res_, S_L_max_);
 
-    double const S_eff = (S_L - _S_L_res) / (_S_L_max - _S_L_res);
+    double const S_eff = (S_L - S_L_res_) / (S_L_max_ - S_L_res_);
     if (S_eff <= 0)  // prevent division by zero
     {
         return 0;
@@ -77,20 +77,20 @@ PropertyDataType RelPermVanGenuchten::dValue(
         return 0;
     }
 
-    double const S_eff_to_1_over_m = std::pow(S_eff, 1. / _m);
-    double const v = 1. - std::pow(1. - S_eff_to_1_over_m, _m);
+    double const S_eff_to_1_over_m = std::pow(S_eff, 1. / m_);
+    double const v = 1. - std::pow(1. - S_eff_to_1_over_m, m_);
     double const sqrt_S_eff = std::sqrt(S_eff);
     double const k_rel = sqrt_S_eff * v * v;
 
-    if (k_rel < _k_rel_min)
+    if (k_rel < k_rel_min_)
     {
         return 0;
     }
 
     return (0.5 * v * v / sqrt_S_eff +
-            2. * sqrt_S_eff * v * std::pow(1. - S_eff_to_1_over_m, _m - 1.) *
+            2. * sqrt_S_eff * v * std::pow(1. - S_eff_to_1_over_m, m_ - 1.) *
                 S_eff_to_1_over_m / S_eff) /
-           (_S_L_max - _S_L_res);
+           (S_L_max_ - S_L_res_);
 }
 
 }  // namespace MaterialPropertyLib

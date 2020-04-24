@@ -1,1 +1,1 @@
-\copydoc MaterialPropertyLib::PermeabilityOrthotropicPowerLaw::_k
+\copydoc MaterialPropertyLib::PermeabilityOrthotropicPowerLaw::k_

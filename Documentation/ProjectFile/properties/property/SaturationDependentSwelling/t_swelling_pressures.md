@@ -1,1 +1,1 @@
-\copydoc MaterialPropertyLib::SaturationDependentSwelling::_p
+\copydoc MaterialPropertyLib::SaturationDependentSwelling::p_

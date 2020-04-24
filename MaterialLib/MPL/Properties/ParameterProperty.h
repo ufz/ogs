@@ -48,6 +48,6 @@ public:
                              double const /*dt*/) const override;
 
 private:
-    ParameterLib::Parameter<double> const& _parameter;
+    ParameterLib::Parameter<double> const& parameter_;
 };
 }  // namespace MaterialPropertyLib

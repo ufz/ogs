@@ -16,9 +16,9 @@ namespace MaterialPropertyLib
 {
 LinearProperty::LinearProperty(PropertyDataType const& property_reference_value,
                                std::vector<IndependentVariable> const& vs)
-    : _independent_variables(vs)
+    : independent_variables_(vs)
 {
-    _value = property_reference_value;
+    value_ = property_reference_value;
 }
 
 PropertyDataType LinearProperty::value(
@@ -37,12 +37,12 @@ PropertyDataType LinearProperty::value(
     };
 
     double const linearized_ratio_to_reference_value =
-        std::accumulate(_independent_variables.begin(),
-                        _independent_variables.end(),
+        std::accumulate(independent_variables_.begin(),
+                        independent_variables_.end(),
                         1.0,
                         calculate_linearized_ratio);
 
-    return std::get<double>(_value) * linearized_ratio_to_reference_value;
+    return std::get<double>(value_) * linearized_ratio_to_reference_value;
 }
 
 PropertyDataType LinearProperty::dValue(
@@ -51,16 +51,16 @@ PropertyDataType LinearProperty::dValue(
     double const /*dt*/) const
 {
     auto const independent_variable =
-        std::find_if(_independent_variables.begin(),
-                     _independent_variables.end(),
+        std::find_if(independent_variables_.begin(),
+                     independent_variables_.end(),
                      [&primary_variable](auto const& iv) -> bool {
                          return iv.type == primary_variable;
                      });
 
-    return independent_variable != _independent_variables.end()
-               ? std::get<double>(_value) *
+    return independent_variable != independent_variables_.end()
+               ? std::get<double>(value_) *
                      std::get<double>(independent_variable->slope)
-               : decltype(_value){};
+               : decltype(value_){};
 }
 
 PropertyDataType LinearProperty::d2Value(
@@ -68,7 +68,7 @@ PropertyDataType LinearProperty::d2Value(
     Variable const /*pv2*/, ParameterLib::SpatialPosition const& /*pos*/,
     double const /*t*/, double const /*dt*/) const
 {
-    return decltype(_value){};
+    return decltype(value_){};
 }
 
 }  // namespace MaterialPropertyLib

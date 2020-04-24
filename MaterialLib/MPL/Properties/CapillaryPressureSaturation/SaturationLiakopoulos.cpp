@@ -33,8 +33,8 @@ PropertyDataType SaturationLiakopoulos::value(
     if (p_cap < 0.)
         return 1.;
 
-    return std::max(_residual_liquid_saturation,
-                    1. - _parameter_a * std::pow(p_cap, _parameter_b));
+    return std::max(residual_liquid_saturation_,
+                    1. - parameter_a_ * std::pow(p_cap, parameter_b_));
 }
 
 PropertyDataType SaturationLiakopoulos::dValue(
@@ -53,10 +53,10 @@ PropertyDataType SaturationLiakopoulos::dValue(
     {
         return 0.;
     }
-    const double p_cap_restricted = std::min(p_cap, _p_cap_max);
+    const double p_cap_restricted = std::min(p_cap, p_cap_max_);
 
-    return -_parameter_a * _parameter_b *
-           std::pow(p_cap_restricted, _parameter_b - 1.);
+    return -parameter_a_ * parameter_b_ *
+           std::pow(p_cap_restricted, parameter_b_ - 1.);
 }
 
 PropertyDataType SaturationLiakopoulos::d2Value(
@@ -79,9 +79,9 @@ PropertyDataType SaturationLiakopoulos::d2Value(
     {
         return 0.;
     }
-    const double p_cap_restricted = std::min(p_cap, _p_cap_max);
-    return -_parameter_a * (_parameter_b - 1.) * _parameter_b *
-           std::pow(p_cap_restricted, _parameter_b - 2.);
+    const double p_cap_restricted = std::min(p_cap, p_cap_max_);
+    return -parameter_a_ * (parameter_b_ - 1.) * parameter_b_ *
+           std::pow(p_cap_restricted, parameter_b_ - 2.);
 }
 
 }  // namespace MaterialPropertyLib

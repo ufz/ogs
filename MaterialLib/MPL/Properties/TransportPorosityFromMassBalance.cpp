@@ -21,13 +21,13 @@ void TransportPorosityFromMassBalance::setScale(
 {
     if (std::holds_alternative<Phase*>(scale_pointer))
     {
-        _phase = std::get<Phase*>(scale_pointer);
-        if (_phase->name != "Solid")
+        phase_ = std::get<Phase*>(scale_pointer);
+        if (phase_->name != "Solid")
         {
             OGS_FATAL(
                 "The property 'TransportPorosityFromMassBalance' must be "
                 "given in the 'Solid' phase, not in '{:s}' phase.",
-                _phase->name);
+                phase_->name);
         }
     }
     else
@@ -43,10 +43,10 @@ PropertyDataType TransportPorosityFromMassBalance::value(
     ParameterLib::SpatialPosition const& pos, double const t,
     double const dt) const
 {
-    double const K_SR = _phase->property(PropertyType::bulk_modulus)
+    double const K_SR = phase_->property(PropertyType::bulk_modulus)
                             .template value<double>(variable_array, pos, t, dt);
     auto const alpha_b =
-        _phase->property(PropertyType::biot_coefficient)
+        phase_->property(PropertyType::biot_coefficient)
             .template value<double>(variable_array, pos, t, dt);
 
     double const e_dot = std::get<double>(
@@ -62,7 +62,7 @@ PropertyDataType TransportPorosityFromMassBalance::value(
         variable_array[static_cast<int>(Variable::transport_porosity)]);
 
     double const w = dt * (e_dot + p_eff_dot / K_SR);
-    return std::clamp(phi_tr_prev + (alpha_b - phi) * w, _phi_min, _phi_max);
+    return std::clamp(phi_tr_prev + (alpha_b - phi) * w, phi_min_, phi_max_);
 }
 
 PropertyDataType TransportPorosityFromMassBalance::dValue(

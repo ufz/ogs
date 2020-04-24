@@ -39,11 +39,11 @@ public:
     {
         if (std::holds_alternative<Phase*>(scale_pointer))
         {
-            _phase = std::get<Phase*>(scale_pointer);
+            phase_ = std::get<Phase*>(scale_pointer);
         }
         else if (std::holds_alternative<Component*>(scale_pointer))
         {
-            _component = std::get<Component*>(scale_pointer);
+            component_ = std::get<Component*>(scale_pointer);
         }
         else
         {
@@ -54,7 +54,7 @@ public:
     }
 
     /// Those methods override the base class implementations and
-    /// actually compute and set the property _values and _dValues.
+    /// actually compute and set the property values_ and dValues_.
     PropertyDataType value(VariableArray const& variable_array,
                            ParameterLib::SpatialPosition const& /*pos*/,
                            double const /*t*/,
@@ -70,8 +70,8 @@ public:
                              double const t, double const dt) const override;
 
 private:
-    Phase* _phase = nullptr;
-    Component* _component = nullptr;
+    Phase* phase_ = nullptr;
+    Component* component_ = nullptr;
 };
 
 }  // namespace MaterialPropertyLib

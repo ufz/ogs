@@ -50,7 +50,7 @@ public:
     virtual PropertyDataType initialValue(
         ParameterLib::SpatialPosition const& pos, double const t) const;
 
-    /// This virtual method simply returns the private _value attribute without
+    /// This virtual method simply returns the private value_ attribute without
     /// changing it.
     virtual PropertyDataType value() const;
     /// This virtual method will compute the property value based on the primary
@@ -114,8 +114,8 @@ public:
 
 protected:
     /// The single value of a property.
-    PropertyDataType _value;
-    PropertyDataType _dvalue;
+    PropertyDataType value_;
+    PropertyDataType dvalue_;
 };
 
 inline void overwriteExistingProperties(

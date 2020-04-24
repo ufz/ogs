@@ -1,1 +1,1 @@
-\copydoc MaterialPropertyLib::CapillaryPressureVanGenuchten::_S_L_res
+\copydoc MaterialPropertyLib::CapillaryPressureVanGenuchten::S_L_res_

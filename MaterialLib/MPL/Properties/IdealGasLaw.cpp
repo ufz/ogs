@@ -19,19 +19,19 @@
 
 namespace MaterialPropertyLib
 {
-double molarMass(Phase* _phase, Component* _component,
+double molarMass(Phase* phase_, Component* component_,
                  VariableArray const& variable_array,
                  ParameterLib::SpatialPosition const& pos, double const t,
                  double const dt)
 {
-    if (_phase)  // IdealGasLaw of an entire phase
+    if (phase_)  // IdealGasLaw of an entire phase
     {
-        return _phase->property(PropertyType::molar_mass)
+        return phase_->property(PropertyType::molar_mass)
             .template value<double>(variable_array, pos, t, dt);
     }
-    if (_component)  // IdealGasLaw of a single component
+    if (component_)  // IdealGasLaw of a single component
     {
-        return _component->property(PropertyType::molar_mass)
+        return component_->property(PropertyType::molar_mass)
             .template value<double>(variable_array, pos, t, dt);
     }
     OGS_FATAL(
@@ -51,7 +51,7 @@ PropertyDataType IdealGasLaw::value(VariableArray const& variable_array,
     const double temperature = std::get<double>(
         variable_array[static_cast<int>(Variable::temperature)]);
     double molar_mass =
-        molarMass(_phase, _component, variable_array, pos, t, dt);
+        molarMass(phase_, component_, variable_array, pos, t, dt);
 
     const double density = pressure * molar_mass / gas_constant / temperature;
 
@@ -69,7 +69,7 @@ PropertyDataType IdealGasLaw::dValue(VariableArray const& variable_array,
     const double temperature = std::get<double>(
         variable_array[static_cast<int>(Variable::temperature)]);
     double molar_mass =
-        molarMass(_phase, _component, variable_array, pos, t, dt);
+        molarMass(phase_, component_, variable_array, pos, t, dt);
 
     if (primary_variable == Variable::temperature)
     {
@@ -101,7 +101,7 @@ PropertyDataType IdealGasLaw::d2Value(VariableArray const& variable_array,
     const double temperature = std::get<double>(
         variable_array[static_cast<int>(Variable::temperature)]);
     double molar_mass =
-        molarMass(_phase, _component, variable_array, pos, t, dt);
+        molarMass(phase_, component_, variable_array, pos, t, dt);
 
     if ((primary_variable1 == Variable::phase_pressure) &&
         (primary_variable2 == Variable::phase_pressure))

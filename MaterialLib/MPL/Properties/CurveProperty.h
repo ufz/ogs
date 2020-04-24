@@ -44,8 +44,8 @@ public:
 
 private:
     /// The variable type that the curve property depends on.
-    Variable const _independent_variable;
+    Variable const independent_variable_;
     /// The curve used by the property.
-    MathLib::PiecewiseLinearInterpolation const& _curve;
+    MathLib::PiecewiseLinearInterpolation const& curve_;
 };
 }  // namespace MaterialPropertyLib

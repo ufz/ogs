@@ -31,18 +31,18 @@ class Component;
 class RelPermBrooksCorey final : public Property
 {
 private:
-    Medium* _medium = nullptr;
-    const double _residual_liquid_saturation;
-    const double _residual_gas_saturation;
-    const double _min_relative_permeability_liquid;
-    const double _min_relative_permeability_gas;
-    const double _exponent;
+    Medium* medium_ = nullptr;
+    const double residual_liquid_saturation_;
+    const double residual_gas_saturation_;
+    const double min_relative_permeability_liquid_;
+    const double min_relative_permeability_gas_;
+    const double exponent_;
 
 public:
     RelPermBrooksCorey(const double /*residual_liquid_saturation*/,
                        const double /*residual_gas_saturation*/,
-                       const double /*_min_relative_permeability_liquid*/,
-                       const double /*_min_relative_permeability_gas*/,
+                       const double /*min_relative_permeability_liquid_*/,
+                       const double /*min_relative_permeability_gas_*/,
                        const double /*exponent*/
     );
     /// This method assigns a pointer to the material object that is the owner
@@ -52,7 +52,7 @@ public:
     {
         if (std::holds_alternative<Medium*>(scale_pointer))
         {
-            _medium = std::get<Medium*>(scale_pointer);
+            medium_ = std::get<Medium*>(scale_pointer);
         }
         else
         {
@@ -63,7 +63,7 @@ public:
     }
 
     /// Those methods override the base class implementations and
-    /// actually compute and set the property _values and _dValues.
+    /// actually compute and set the property values_ and dValues_.
     PropertyDataType value(VariableArray const& variable_array,
                            ParameterLib::SpatialPosition const& pos,
                            double const t, double const dt) const override;

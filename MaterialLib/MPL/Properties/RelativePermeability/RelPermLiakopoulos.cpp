@@ -31,10 +31,10 @@ PropertyDataType RelPermLiakopoulos::value(
     /// correct value. In order to speed up the computing time, saturation could
     /// be insertred into the primary variable array after it is computed in the
     /// FEM assembly.
-    auto const s_L = _medium->property(PropertyType::saturation)
+    auto const s_L = medium_->property(PropertyType::saturation)
                          .template value<double>(variable_array, pos, t, dt);
-    auto const s_L_res = _residual_liquid_saturation;
-    auto const k_rel_min_GR = _min_relative_permeability_gas;
+    auto const s_L_res = residual_liquid_saturation_;
+    auto const k_rel_min_GR = min_relative_permeability_gas_;
 
     if (s_L <= s_L_res)
     {
@@ -46,9 +46,9 @@ PropertyDataType RelPermLiakopoulos::value(
         return Eigen::Vector2d{1., k_rel_min_GR};
     }
 
-    auto const a = _parameter_a;
-    auto const b = _parameter_b;
-    auto const lambda = _exponent;
+    auto const a = parameter_a_;
+    auto const b = parameter_b_;
+    auto const lambda = exponent_;
 
     auto const s_eff = (s_L - s_L_res) / (1. - s_L_res);
 
@@ -69,27 +69,27 @@ PropertyDataType RelPermLiakopoulos::dValue(
     assert((primary_variable == Variable::liquid_saturation) &&
            "RelPermLiakopoulos::dValue is implemented for "
            " derivatives with respect to liquid saturation only.");
-    auto const s_L = _medium->property(PropertyType::saturation)
+    auto const s_L = medium_->property(PropertyType::saturation)
                          .template value<double>(variable_array, pos, t, dt);
-    auto const s_L_res = _residual_liquid_saturation;
-    auto const s_L_max = _maximal_liquid_saturation;
+    auto const s_L_res = residual_liquid_saturation_;
+    auto const s_L_max = maximal_liquid_saturation_;
 
     const double s_L_within_range = std::min(std::max(s_L_res, s_L), s_L_max);
 
-    auto const lambda = _exponent;
-    auto const a = _parameter_a;
-    auto const b = _parameter_b;
+    auto const lambda = exponent_;
+    auto const a = parameter_a_;
+    auto const b = parameter_b_;
 
     auto const s_eff = (s_L_within_range - s_L_res) / (s_L_max - s_L_res);
 
     auto const dk_rel_LRdsL = a * b * std::pow(1. - s_L_within_range, b - 1.);
 
-    auto const _2L_L = (2. + lambda) / lambda;
+    auto const twoL_L = (2. + lambda) / lambda;
     auto const s_G_eff = 1. - s_eff;
     auto const dk_rel_GRdse =
-        -2. * s_G_eff * (1. - std::pow(s_eff, _2L_L)) -
-        _2L_L * std::pow(s_eff, _2L_L - 1.) * s_G_eff * s_G_eff;
-    auto const dk_rel_GRdsL = dk_rel_GRdse * _dse_dsL;
+        -2. * s_G_eff * (1. - std::pow(s_eff, twoL_L)) -
+        twoL_L * std::pow(s_eff, twoL_L - 1.) * s_G_eff * s_G_eff;
+    auto const dk_rel_GRdsL = dk_rel_GRdse * dse_dsL_;
 
     return Eigen::Vector2d{dk_rel_LRdsL, dk_rel_GRdsL};
 }
