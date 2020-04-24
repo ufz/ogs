@@ -529,8 +529,14 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     typename ShapeMatricesTypePressure::NodalMatrixType storage_p_a_p =
         ShapeMatricesTypePressure::NodalMatrixType::Zero(pressure_size,
                                                          pressure_size);
-    typename ShapeMatricesTypePressure::NodalVectorType storage_p_a_S =
-        ShapeMatricesTypePressure::NodalVectorType::Zero(pressure_size);
+
+    typename ShapeMatricesTypePressure::NodalMatrixType storage_p_a_S_Jpp =
+        ShapeMatricesTypePressure::NodalMatrixType::Zero(pressure_size,
+                                                         pressure_size);
+
+    typename ShapeMatricesTypePressure::NodalMatrixType storage_p_a_S =
+        ShapeMatricesTypePressure::NodalMatrixType::Zero(pressure_size,
+                                                         pressure_size);
 
     typename ShapeMatricesTypeDisplacement::template MatrixType<
         displacement_size, pressure_size>
@@ -802,9 +808,12 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         storage_p_a_p.noalias() +=
             N_p.transpose() * rho_LR * specific_storage_a_p * N_p * w;
-        storage_p_a_S.noalias() += N_p.transpose() * rho_LR *
-                                   specific_storage_a_S * (S_L - S_L_prev) /
-                                   dt * w;
+        if (p_cap_dot_ip != 0)  // prevent division by zero.
+        {
+            storage_p_a_S.noalias() -= N_p.transpose() * rho_LR *
+                                       specific_storage_a_S * (S_L - S_L_prev) /
+                                       (dt * p_cap_dot_ip) * N_p * w;
+        }
 
         local_Jac
             .template block<pressure_size, pressure_size>(pressure_index,
@@ -812,13 +821,11 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             .noalias() += N_p.transpose() * p_cap_dot_ip * rho_LR *
                           dspecific_storage_a_p_dp_cap * N_p * w;
 
-        local_Jac
-            .template block<pressure_size, pressure_size>(pressure_index,
-                                                          pressure_index)
-            .noalias() -= N_p.transpose() * rho_LR *
-                          ((S_L - S_L_prev) * dspecific_storage_a_S_dp_cap +
-                           specific_storage_a_S * dS_L_dp_cap) /
-                          dt * N_p * w;
+        storage_p_a_S_Jpp.noalias() -=
+            N_p.transpose() * rho_LR *
+            ((S_L - S_L_prev) * dspecific_storage_a_S_dp_cap +
+             specific_storage_a_S * dS_L_dp_cap) /
+            dt * N_p * w;
 
         local_Jac
             .template block<pressure_size, pressure_size>(pressure_index,
@@ -852,13 +859,16 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     if (_process_data.apply_mass_lumping)
     {
         storage_p_a_p = storage_p_a_p.colwise().sum().eval().asDiagonal();
+        storage_p_a_S = storage_p_a_S.colwise().sum().eval().asDiagonal();
+        storage_p_a_S_Jpp =
+            storage_p_a_S_Jpp.colwise().sum().eval().asDiagonal();
     }
 
     // pressure equation, pressure part.
     local_Jac
         .template block<pressure_size, pressure_size>(pressure_index,
                                                       pressure_index)
-        .noalias() += laplace_p + storage_p_a_p / dt;
+        .noalias() += laplace_p + storage_p_a_p / dt + storage_p_a_S_Jpp;
 
     // pressure equation, displacement part.
     local_Jac
@@ -868,7 +878,8 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
     // pressure equation
     local_rhs.template segment<pressure_size>(pressure_index).noalias() -=
-        laplace_p * p_L + storage_p_a_p * p_L_dot + storage_p_a_S + Kpu * u_dot;
+        laplace_p * p_L + (storage_p_a_p + storage_p_a_S) * p_L_dot +
+        Kpu * u_dot;
 
     // displacement equation
     local_rhs.template segment<displacement_size>(displacement_index)
