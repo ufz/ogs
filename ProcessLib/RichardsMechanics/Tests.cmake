@@ -348,7 +348,7 @@ AddTest(
     GLOB bishops_effective_stress_saturation_cutoff_pcs_0_ts_*.vtu pressure pressure 1e-15 0
     GLOB bishops_effective_stress_saturation_cutoff_pcs_0_ts_*.vtu saturation saturation 1e-14 1e-15
     GLOB bishops_effective_stress_saturation_cutoff_pcs_0_ts_*.vtu displacement displacement 1e-15 0
-    GLOB bishops_effective_stress_saturation_cutoff_pcs_0_ts_*.vtu sigma sigma 1e-15 0
+    GLOB bishops_effective_stress_saturation_cutoff_pcs_0_ts_*.vtu sigma sigma 2e-15 0
     GLOB bishops_effective_stress_saturation_cutoff_pcs_0_ts_*.vtu epsilon epsilon 1e-15 0
     GLOB bishops_effective_stress_saturation_cutoff_pcs_0_ts_*.vtu velocity velocity 1e-15 0
     GLOB bishops_effective_stress_saturation_cutoff_pcs_0_ts_*.vtu porosity porosity 5e-15 1e-15
@@ -363,7 +363,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    GLOB alternative_mass_balance_anzInterval_10_pcs_0_ts_*.vtu HydraulicFlow HydraulicFlow 1e-14 0
+    GLOB alternative_mass_balance_anzInterval_10_pcs_0_ts_*.vtu HydraulicFlow HydraulicFlow 2e-14 0
     GLOB alternative_mass_balance_anzInterval_10_pcs_0_ts_*.vtu NodalForces NodalForces 5e-2 0
     GLOB alternative_mass_balance_anzInterval_10_pcs_0_ts_*.vtu displacement displacement 1e-15 0
     GLOB alternative_mass_balance_anzInterval_10_pcs_0_ts_*.vtu epsilon epsilon 1e-15 0
