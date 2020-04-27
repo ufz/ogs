@@ -73,12 +73,6 @@ public:
                             double const t,
                             double const dt) const override;
 
-    /// \returns \f$ \frac{\partial^2 p_c(S)}{\partial  S^2} \f$
-    PropertyDataType d2Value(VariableArray const& variable_array,
-                             Variable const variable1, Variable const variable2,
-                             ParameterLib::SpatialPosition const& pos,
-                             double const t, double const dt) const override;
-
 private:
     Medium* _medium = nullptr;
     double const _S_L_res;    ///< Residual saturation of liquid phase.

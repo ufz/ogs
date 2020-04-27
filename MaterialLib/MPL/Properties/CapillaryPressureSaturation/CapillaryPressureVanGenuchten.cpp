@@ -103,46 +103,4 @@ PropertyDataType CapillaryPressureVanGenuchten::dValue(
     double const val2 = std::pow(val1 - 1.0, -_m);
     return _p_b * (_m - 1.0) * val1 * val2 / (_m * (S_L - _S_L_res));
 }
-
-PropertyDataType CapillaryPressureVanGenuchten::d2Value(
-    VariableArray const& variable_array, Variable const primary_variable1,
-    Variable const primary_variable2,
-    ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
-    double const /*dt*/) const
-{
-    (void)primary_variable1;
-    (void)primary_variable2;
-    assert((primary_variable1 == Variable::liquid_saturation) &&
-           (primary_variable2 == Variable::liquid_saturation) &&
-           "CapillaryPressureVanGenuchten::d2Value is implemented for "
-           "derivatives with respect to liquid saturation only.");
-
-    double const S_L = std::get<double>(
-        variable_array[static_cast<int>(Variable::liquid_saturation)]);
-
-    if (S_L <= _S_L_res)
-    {
-        return 0;
-    }
-
-    if (S_L >= _S_L_max)
-    {
-        return 0;
-    }
-    double const delta_S_L_res = S_L - _S_L_res;
-    double const S_eff = delta_S_L_res / (_S_L_max - _S_L_res);
-
-    assert(0 < S_eff && S_eff < 1.0);
-
-    double const val1 = std::pow(S_eff, -1.0 / _m);
-    double const p_cap = _p_b * std::pow(val1 - 1.0, 1.0 - _m);
-    if (p_cap >= _p_cap_max)
-    {
-        return 0;
-    }
-
-    return -_p_b / (_m * _m * delta_S_L_res * delta_S_L_res) * val1 * val1 *
-           std::pow(val1 - 1, -_m - 1) * ((1 - _m * _m) / val1 + _m - 1);
-}
-
 }  // namespace MaterialPropertyLib

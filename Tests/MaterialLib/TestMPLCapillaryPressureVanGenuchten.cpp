@@ -84,9 +84,6 @@ TEST(MaterialPropertyLib, CapillaryPressureVanGenuchten)
 
         double const dp_cap = pressure.template dValue<double>(
             variable_array, MPL::Variable::liquid_saturation, pos, t, dt);
-        double const dp_cap2 = pressure.template d2Value<double>(
-            variable_array, MPL::Variable::liquid_saturation,
-            MPL::Variable::liquid_saturation, pos, t, dt);
 
         double const eps = 1e-6;
         variable_array[static_cast<int>(MPL::Variable::liquid_saturation)] =
@@ -99,8 +96,6 @@ TEST(MaterialPropertyLib, CapillaryPressureVanGenuchten)
             pressure.template value<double>(variable_array, pos, t, dt);
 
         double const Dp_cap = (p_cap_plus - p_cap_minus) / 2 / eps;
-        double const Dp_cap2 =
-            (p_cap_plus - 2 * p_cap + p_cap_minus) / (eps * eps);
 
         //
         // First order derivative tests
@@ -130,36 +125,6 @@ TEST(MaterialPropertyLib, CapillaryPressureVanGenuchten)
                 << "for liquid saturation " << S_L << ", capillary pressure "
                 << p_cap << ", dp_cap/dS_L " << dp_cap << " and Dp_cap/DS_L "
                 << Dp_cap;
-        }
-
-        //
-        // Second order derivative tests
-        //
-
-        // Testing relative error up to the S_L_max with different tolerances as
-        // d^2p_cap/dS_L^2 approaches -infinity.
-        if (S_L < 1 - 2 * residual_gas_saturation)
-        {
-            ASSERT_LE(std::abs(dp_cap2 - Dp_cap2) / p_cap, 2e-3)
-                << "for liquid saturation " << S_L << " and capillary pressure "
-                << p_cap << ", d^2p_cap/dS_L^2 " << dp_cap2
-                << " and D^2p_cap/DS_L^2 " << Dp_cap2;
-        }
-        else if (S_L < 1 - residual_gas_saturation * 1.35)
-        {
-            ASSERT_LE(std::abs(dp_cap2 - Dp_cap2) / p_cap, 4e-3)
-                << "for liquid saturation " << S_L << " and capillary pressure "
-                << p_cap << ", d^2p_cap/dS_L^2 " << dp_cap2
-                << " and D^2p_cap/DS_L^2 " << Dp_cap2;
-        }
-        // Skip the range up to maximum liquid saturation, continue after that
-        // with absolute error.
-        else if (S_L > 1 - residual_gas_saturation)
-        {
-            ASSERT_EQ(dp_cap2, Dp_cap2)
-                << "for liquid saturation " << S_L << " and capillary pressure "
-                << p_cap << ", d^2p_cap/dS_L^2 " << dp_cap2
-                << " and D^2p_cap/DS_L^2 " << Dp_cap2;
         }
     }
 }
