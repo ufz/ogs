@@ -124,6 +124,7 @@ private:
     }
 };
 
+/// Specialization for (all) three preconditioners separately
 template <>
 void EigenIterativeLinearSolver<
     Eigen::GMRES<EigenMatrix::RawMatrixType,

@@ -47,6 +47,7 @@ struct EigenOption final
 #ifdef USE_EIGEN_UNSUPPORTED
     /// Scaling the coefficient matrix and the RHS bector
     bool scaling;
+    /// Restart value for the GMRES solver
     int restart;
 #endif
 
