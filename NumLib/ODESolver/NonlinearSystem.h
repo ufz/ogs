@@ -38,6 +38,7 @@ public:
     //! The linearized system is \f$A(x) \cdot x = b(x)\f$. Here the matrix
     //! \f$A(x)\f$ and the vector \f$b(x)\f$ are assembled.
     virtual void assemble(std::vector<GlobalVector*> const& x,
+                          std::vector<GlobalVector*> const& x_prev,
                           int const process_id) = 0;
 
     /*! Writes the residual at point \c x to \c res.
@@ -47,6 +48,7 @@ public:
      * \todo Remove argument \c x.
      */
     virtual void getResidual(GlobalVector const& x,
+                             GlobalVector const& x_prev,
                              GlobalVector& res) const = 0;
 
     /*! Writes the Jacobian of the residual to \c Jac.
@@ -85,6 +87,7 @@ public:
     //! The linearized system is \f$J(x) \cdot \Delta x = (x)\f$. Here the
     //! residual vector \f$r(x)\f$ and its Jacobian \f$J(x)\f$ are assembled.
     virtual void assemble(std::vector<GlobalVector*> const& x,
+                          std::vector<GlobalVector*> const& x_prev,
                           int const process_id) = 0;
 
     //! Writes the linearized equation system matrix to \c A.
@@ -93,7 +96,8 @@ public:
 
     //! Writes the linearized equation system right-hand side to \c rhs.
     //! \pre assemble() must have been called before.
-    virtual void getRhs(GlobalVector& rhs) const = 0;
+    virtual void getRhs(GlobalVector const& x_prev,
+                        GlobalVector& rhs) const = 0;
 
     //! Pre-compute known solutions and possibly store them internally.
     virtual void computeKnownSolutions(GlobalVector const& x,

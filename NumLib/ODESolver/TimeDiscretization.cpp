@@ -54,9 +54,11 @@ double TimeDiscretization::computeRelativeChangeFromPreviousTimestep(
 }
 
 double BackwardEuler::getRelativeChangeFromPreviousTimestep(
-    GlobalVector const& x, MathLib::VecNormType norm_type)
+    GlobalVector const& x,
+    GlobalVector const& x_old,
+    MathLib::VecNormType norm_type)
 {
-    return computeRelativeChangeFromPreviousTimestep(x, _x_old, norm_type);
+    return computeRelativeChangeFromPreviousTimestep(x, x_old, norm_type);
 }
 
 }  // end of namespace NumLib

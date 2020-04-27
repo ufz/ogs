@@ -29,12 +29,13 @@ void MatrixTranslatorGeneral<ODESystemTag::FirstOrderImplicitQuasilinear>::
 
 void MatrixTranslatorGeneral<ODESystemTag::FirstOrderImplicitQuasilinear>::
     computeRhs(const GlobalMatrix& M, const GlobalMatrix& /*K*/,
-               const GlobalVector& b, GlobalVector& rhs) const
+               const GlobalVector& b, const GlobalVector& x_prev,
+               GlobalVector& rhs) const
 {
     namespace LinAlg = MathLib::LinAlg;
 
     auto& tmp = NumLib::GlobalVectorProvider::provider.getVector(_tmp_id);
-    _time_disc.getWeightedOldX(tmp);
+    _time_disc.getWeightedOldX(tmp, x_prev);
 
     // rhs = M * weighted_old_x + b
     LinAlg::matMultAdd(M, tmp, b, rhs);

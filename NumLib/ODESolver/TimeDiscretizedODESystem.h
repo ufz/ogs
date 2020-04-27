@@ -83,9 +83,11 @@ public:
     ~TimeDiscretizedODESystem() override;
 
     void assemble(std::vector<GlobalVector*> const& x_new_timestep,
+                  std::vector<GlobalVector*> const& x_prev,
                   int const process_id) override;
 
     void getResidual(GlobalVector const& x_new_timestep,
+                     GlobalVector const& x_prev,
                      GlobalVector& res) const override;
 
     void getJacobian(GlobalMatrix& Jac) const override;
@@ -173,6 +175,7 @@ public:
     ~TimeDiscretizedODESystem() override;
 
     void assemble(std::vector<GlobalVector*> const& x_new_timestep,
+                  std::vector<GlobalVector*> const& x_prev,
                   int const process_id) override;
 
     void getA(GlobalMatrix& A) const override
@@ -180,9 +183,9 @@ public:
         _mat_trans->computeA(*_M, *_K, A);
     }
 
-    void getRhs(GlobalVector& rhs) const override
+    void getRhs(GlobalVector const& x_prev, GlobalVector& rhs) const override
     {
-        _mat_trans->computeRhs(*_M, *_K, *_b, rhs);
+        _mat_trans->computeRhs(*_M, *_K, *_b, x_prev, rhs);
     }
 
     void computeKnownSolutions(GlobalVector const& x,

@@ -44,9 +44,10 @@ public:
     virtual void computeA(GlobalMatrix const& M, GlobalMatrix const& K,
                           GlobalMatrix& A) const = 0;
 
-    //! Computes \c rhs from \c M, \c K and \c b.
+    //! Computes \c rhs from \c M, \c K, \c b and \c x_prev.
     virtual void computeRhs(const GlobalMatrix& M, const GlobalMatrix& K,
-                            const GlobalVector& b, GlobalVector& rhs) const = 0;
+                            const GlobalVector& b, const GlobalVector& x_prev,
+                            GlobalVector& rhs) const = 0;
 
     /*! Computes \c res from \c M, \c K, \c b, \f$ \hat x \f$ and \f$ x_N \f$.
      * You might also want read the remarks on
@@ -101,7 +102,8 @@ public:
 
     //! Computes \f$ \mathtt{rhs} = M \cdot x_O + b \f$.
     void computeRhs(const GlobalMatrix& M, const GlobalMatrix& /*K*/,
-                    const GlobalVector& b, GlobalVector& rhs) const override;
+                    const GlobalVector& b, const GlobalVector& x_prev,
+                    GlobalVector& rhs) const override;
 
     //! Computes \f$ r = M \cdot \hat x + K \cdot x_C - b \f$.
     void computeResidual(GlobalMatrix const& M, GlobalMatrix const& K,
