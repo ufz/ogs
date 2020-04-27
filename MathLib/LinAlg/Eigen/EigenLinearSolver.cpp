@@ -92,6 +92,7 @@ public:
              EigenOption::getPreconName(opt.precon_type));
         _solver.setTolerance(opt.error_tolerance);
         _solver.setMaxIterations(opt.max_iterations);
+        MathLib::details::EigenIterativeLinearSolver<T_SOLVER>::setRestart(opt.restart);
 
         if (!A.isCompressed())
         {
@@ -119,7 +120,35 @@ public:
 
 private:
     T_SOLVER _solver;
+    void setRestart(int const /*restart*/) {
+    }
 };
+
+/// Specialization for (all) three preconditioners separately
+template <>
+void EigenIterativeLinearSolver<
+    Eigen::GMRES<EigenMatrix::RawMatrixType,
+                 Eigen::IdentityPreconditioner>>::setRestart(int const restart)
+{
+    _solver.set_restart(restart);
+    INFO("-> set restart value: {:d}", _solver.get_restart());
+}
+
+template <>
+void EigenIterativeLinearSolver<Eigen::GMRES<
+    EigenMatrix::RawMatrixType,
+    Eigen::DiagonalPreconditioner<double>>>::setRestart(int const restart)
+{
+    _solver.set_restart(restart);
+    INFO("-> set restart value: {:d}", _solver.get_restart());
+}
+
+template <>
+void EigenIterativeLinearSolver<Eigen::GMRES<EigenMatrix::RawMatrixType, Eigen::IncompleteLUT<double>>>::setRestart(int const restart)
+{
+    _solver.set_restart(restart);
+    INFO("-> set restart value: {:d}", _solver.get_restart());
+}
 
 template <template <typename, typename> class Solver, typename Precon>
 std::unique_ptr<EigenLinearSolverBase> createIterativeSolver()
@@ -265,6 +294,18 @@ void EigenLinearSolver::setOption(BaseLib::ConfigTree const& option)
             "scaling is not available.");
 #endif
     }
+    if (auto restart =
+            //! \ogs_file_param{prj__linear_solvers__linear_solver__eigen__restart}
+            ptSolver->getConfigParameterOptional<int>("restart")) {
+#ifdef USE_EIGEN_UNSUPPORTED
+        _option.restart = *restart;
+#else
+        OGS_FATAL(
+            "The code is not compiled with the Eigen unsupported modules. "
+            "GMRES/GMRES option restart is not available.");
+#endif
+    }
+
 }
 
 bool EigenLinearSolver::solve(EigenMatrix &A, EigenVector& b, EigenVector &x)

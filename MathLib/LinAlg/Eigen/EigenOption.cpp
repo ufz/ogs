@@ -22,6 +22,7 @@ EigenOption::EigenOption()
     error_tolerance = 1.e-16;
 #ifdef USE_EIGEN_UNSUPPORTED
     scaling = false;
+    restart = 30;
 #endif
 }
 
