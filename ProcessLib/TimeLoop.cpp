@@ -121,11 +121,13 @@ void setTimeDiscretizedODESystem(ProcessData& process_data)
     setTimeDiscretizedODESystem(process_data, process_data.process);
 }
 
-std::vector<GlobalVector*> setInitialConditions(
+std::pair<std::vector<GlobalVector*>, std::vector<GlobalVector*>>
+setInitialConditions(
     double const t0,
     std::vector<std::unique_ptr<ProcessData>> const& per_process_data)
 {
     std::vector<GlobalVector*> process_solutions;
+    std::vector<GlobalVector*> process_solutions_prev;
 
     for (auto& process_data : per_process_data)
     {
@@ -139,21 +141,27 @@ std::vector<GlobalVector*> setInitialConditions(
         process_solutions.emplace_back(
             &NumLib::GlobalVectorProvider::provider.getVector(
                 ode_sys.getMatrixSpecifications(process_id)));
+        process_solutions_prev.emplace_back(
+            &NumLib::GlobalVectorProvider::provider.getVector(
+                ode_sys.getMatrixSpecifications(process_id)));
 
-        auto& x0 = *process_solutions[process_id];
-        pcs.setInitialConditions(process_id, t0, x0);
-        MathLib::LinAlg::finalizeAssembly(x0);
+        auto& x = *process_solutions[process_id];
+        auto& x_prev = *process_solutions_prev[process_id];
+        pcs.setInitialConditions(process_id, t0, x);
+        MathLib::LinAlg::finalizeAssembly(x);
 
-        time_disc.setInitialState(t0, x0);  // push IC
+        time_disc.setInitialState(t0);     // push IC
+        MathLib::LinAlg::copy(x, x_prev);  // pushState
     }
 
-    return process_solutions;
+    return {process_solutions, process_solutions_prev};
 }
 
 void calculateNonEquilibriumInitialResiduum(
     std::vector<std::unique_ptr<ProcessData>> const& per_process_data,
     std::vector<GlobalVector*>
-        process_solutions)
+        process_solutions,
+    std::vector<GlobalVector*> const& process_solutions_prev)
 {
     INFO("Calculate non-equilibrium initial residuum.");
     for (auto& process_data : per_process_data)
@@ -172,14 +180,15 @@ void calculateNonEquilibriumInitialResiduum(
         double const dt = 1;
         time_disc.nextTimestep(t, dt);
         nonlinear_solver.calculateNonEquilibriumInitialResiduum(
-            process_solutions, process_data->process_id);
+            process_solutions, process_solutions_prev,
+            process_data->process_id);
     }
 }
 
 NumLib::NonlinearSolverStatus solveOneTimeStepOneProcess(
-    std::vector<GlobalVector*>& x, std::size_t const timestep, double const t,
-    double const delta_t, ProcessData const& process_data,
-    Output& output_control)
+    std::vector<GlobalVector*>& x, std::vector<GlobalVector*> const& x_prev,
+    std::size_t const timestep, double const t, double const delta_t,
+    ProcessData const& process_data, Output& output_control)
 {
     auto& process = process_data.process;
     int const process_id = process_data.process_id;
@@ -205,7 +214,7 @@ NumLib::NonlinearSolverStatus solveOneTimeStepOneProcess(
         };
 
     auto const nonlinear_solver_status =
-        nonlinear_solver.solve(x, post_iteration_callback, process_id);
+        nonlinear_solver.solve(x, x_prev, post_iteration_callback, process_id);
 
     if (nonlinear_solver_status.error_norms_met)
     {
@@ -262,6 +271,7 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
 
         auto& time_disc = ppd.time_disc;
         auto const& x = *_process_solutions[i];
+        auto const& x_prev = *_process_solutions_prev[i];
 
         auto const& conv_crit = ppd.conv_crit;
         const MathLib::VecNormType norm_type =
@@ -273,7 +283,7 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
                 ? ((t == timestepper->begin())
                        ? 0.  // Always accepts the zeroth step
                        : time_disc->getRelativeChangeFromPreviousTimestep(
-                             x, norm_type))
+                             x, x_prev, norm_type))
                 : 0.;
 
         if (!ppd.nonlinear_solver_status.error_norms_met)
@@ -324,7 +334,7 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
 
     bool is_initial_step = false;
     // Reset the time step with the minimum step size, dt
-    // Update the solution of the previous time step in time_disc.
+    // Update the solution of the previous time step.
     for (std::size_t i = 0; i < _per_process_data.size(); i++)
     {
         const auto& ppd = *_per_process_data[i];
@@ -337,11 +347,11 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
             continue;
         }
 
-        auto& time_disc = ppd.time_disc;
         auto& x = *_process_solutions[i];
+        auto& x_prev = *_process_solutions_prev[i];
         if (all_process_steps_accepted)
         {
-            time_disc->pushState(t, x);
+            MathLib::LinAlg::copy(x, x_prev);  // pushState
         }
         else
         {
@@ -352,7 +362,7 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
                     "Time step {:d} was rejected {:d} times "
                     "and it will be repeated with a reduced step size.",
                     accepted_steps + 1, _repeating_times_of_rejected_step);
-                time_disc->popState(x);
+                MathLib::LinAlg::copy(x_prev, x);  // popState
             }
         }
     }
@@ -431,7 +441,8 @@ void TimeLoop::initialize()
     }
 
     // init solution storage
-    _process_solutions = setInitialConditions(_start_time, _per_process_data);
+    std::tie(_process_solutions, _process_solutions_prev) =
+        setInitialConditions(_start_time, _per_process_data);
 
     if (_chemical_system != nullptr)
     {
@@ -504,8 +515,8 @@ bool TimeLoop::loop()
 
         if (!non_equilibrium_initial_residuum_computed)
         {
-            calculateNonEquilibriumInitialResiduum(_per_process_data,
-                                                   _process_solutions);
+            calculateNonEquilibriumInitialResiduum(
+                _per_process_data, _process_solutions, _process_solutions_prev);
             non_equilibrium_initial_residuum_computed = true;
         }
 
@@ -581,13 +592,13 @@ void preTimestepForAllProcesses(
 static NumLib::NonlinearSolverStatus solveMonolithicProcess(
     const double t, const double dt, const std::size_t timestep_id,
     ProcessData const& process_data, std::vector<GlobalVector*>& x,
-    Output& output)
+    std::vector<GlobalVector*> const& x_prev, Output& output)
 {
     BaseLib::RunTime time_timestep_process;
     time_timestep_process.start();
 
-    auto const nonlinear_solver_status =
-        solveOneTimeStepOneProcess(x, timestep_id, t, dt, process_data, output);
+    auto const nonlinear_solver_status = solveOneTimeStepOneProcess(
+        x, x_prev, timestep_id, t, dt, process_data, output);
 
     INFO("[time] Solving process #{:d} took {:g} s in time step #{:d} ",
          process_data.process_id, time_timestep_process.elapsed(), timestep_id);
@@ -634,7 +645,8 @@ NumLib::NonlinearSolverStatus TimeLoop::solveUncoupledEquationSystems(
     {
         auto const process_id = process_data->process_id;
         nonlinear_solver_status = solveMonolithicProcess(
-            t, dt, timestep_id, *process_data, _process_solutions, *_output);
+            t, dt, timestep_id, *process_data, _process_solutions,
+            _process_solutions_prev, *_output);
 
         process_data->nonlinear_solver_status = nonlinear_solver_status;
         if (!nonlinear_solver_status.error_norms_met)
@@ -704,9 +716,9 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
             process_data->process.setCoupledSolutionsForStaggeredScheme(
                 &coupled_solutions);
 
-            nonlinear_solver_status =
-                solveOneTimeStepOneProcess(_process_solutions, timestep_id, t,
-                                           dt, *process_data, *_output);
+            nonlinear_solver_status = solveOneTimeStepOneProcess(
+                _process_solutions, _process_solutions_prev, timestep_id, t, dt,
+                *process_data, *_output);
             process_data->nonlinear_solver_status = nonlinear_solver_status;
 
             INFO(

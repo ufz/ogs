@@ -73,6 +73,7 @@ TimeDiscretizedODESystem<
 void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
                               NonlinearSolverTag::Newton>::
     assemble(std::vector<GlobalVector*> const& x_new_timestep,
+             std::vector<GlobalVector*> const& x_prev,
              int const process_id)
 {
     namespace LinAlg = MathLib::LinAlg;
@@ -86,7 +87,8 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
     for (auto& v : xdot)
     {
         v = &NumLib::GlobalVectorProvider::provider.getVector();
-        _time_disc.getXdot(*x_new_timestep[process_id], *v);
+        _time_disc.getXdot(*x_new_timestep[process_id], *x_prev[process_id],
+                           *v);
     }
 
     _M->setZero();
@@ -124,13 +126,14 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
 void TimeDiscretizedODESystem<
     ODESystemTag::FirstOrderImplicitQuasilinear,
     NonlinearSolverTag::Newton>::getResidual(GlobalVector const& x_new_timestep,
+                                             GlobalVector const& x_prev,
                                              GlobalVector& res) const
 {
     // TODO Maybe the duplicate calculation of xdot here and in assembleJacobian
     //      can be optimuized. However, that would make the interface a bit more
     //      fragile.
     auto& xdot = NumLib::GlobalVectorProvider::provider.getVector(_xdot_id);
-    _time_disc.getXdot(x_new_timestep, xdot);
+    _time_disc.getXdot(x_new_timestep, x_prev, xdot);
 
     _mat_trans->computeResidual(*_M, *_K, *_b, x_new_timestep, xdot, res);
 
@@ -210,6 +213,7 @@ TimeDiscretizedODESystem<
 void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
                               NonlinearSolverTag::Picard>::
     assemble(std::vector<GlobalVector*> const& x_new_timestep,
+             std::vector<GlobalVector*> const& x_prev,
              int const process_id)
 {
     namespace LinAlg = MathLib::LinAlg;
@@ -221,7 +225,8 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
     for (auto& v : xdot)
     {
         v = &NumLib::GlobalVectorProvider::provider.getVector();
-        _time_disc.getXdot(*x_new_timestep[process_id], *v);
+        _time_disc.getXdot(*x_new_timestep[process_id], *x_prev[process_id],
+                           *v);
     }
 
     _M->setZero();
