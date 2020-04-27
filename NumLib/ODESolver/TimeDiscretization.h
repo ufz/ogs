@@ -92,16 +92,22 @@ public:
     //! Sets the initial condition.
     virtual void setInitialState(const double t0) = 0;
 
-    /*! Get the relative change of solutions between two successive time steps
-     *  by \f$ e_n = \|u^{n+1}-u^{n}\|/\|u^{n+1}\| \f$.
+    /**
+     * Compute and return the relative change of solutions between two
+     * successive time steps by \f$ e_n = \|u^{n+1}-u^{n}\|/\|u^{n+1}\| \f$.
      *
-     * \param x         The solution at the current timestep.
-     * \param norm_type The type of global vector norm.
+     * @param x         The current solution
+     * @param x_old     The previous solution
+     * @param norm_type The norm type of global vector
+     * @return          \f$ e_n = \|u^{n+1}-u^{n}\|/\|u^{n+1}\| \f$.
+     *
+     * @warning the value of x_old is changed to x - x_old after this
+     * computation.
      */
-    virtual double getRelativeChangeFromPreviousTimestep(
+    double computeRelativeChangeFromPreviousTimestep(
         GlobalVector const& x,
         GlobalVector const& x_old,
-        MathLib::VecNormType norm_type) = 0;
+        MathLib::VecNormType norm_type);
 
     /*! Indicate that the computation of a new timestep is being started now.
      *
@@ -145,23 +151,6 @@ public:
 
 protected:
     std::unique_ptr<GlobalVector> _dx;  ///< Used to store \f$ u_{n+1}-u_{n}\f$.
-
-    /**
-     * Compute and return the relative change of solutions between two
-     * successive time steps by \f$ e_n = \|u^{n+1}-u^{n}\|/\|u^{n+1}\| \f$.
-     *
-     * @param x         The current solution
-     * @param x_old     The previous solution
-     * @param norm_type The norm type of global vector
-     * @return          \f$ e_n = \|u^{n+1}-u^{n}\|/\|u^{n+1}\| \f$.
-     *
-     * @warning the value of x_old is changed to x - x_old after this
-     * computation.
-     */
-    double computeRelativeChangeFromPreviousTimestep(
-        GlobalVector const& x,
-        GlobalVector const& x_old,
-        MathLib::VecNormType norm_type);
 };
 
 //! Backward Euler scheme.
@@ -169,11 +158,6 @@ class BackwardEuler final : public TimeDiscretization
 {
 public:
     void setInitialState(const double t0) override { _t = t0; }
-
-    double getRelativeChangeFromPreviousTimestep(
-        GlobalVector const& x,
-        GlobalVector const& x_old,
-        MathLib::VecNormType norm_type) override;
 
     void nextTimestep(const double t, const double delta_t) override
     {
