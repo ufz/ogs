@@ -282,7 +282,7 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
             (timestepper->isSolutionErrorComputationNeeded())
                 ? ((t == timestepper->begin())
                        ? 0.  // Always accepts the zeroth step
-                       : time_disc->getRelativeChangeFromPreviousTimestep(
+                       : time_disc->computeRelativeChangeFromPreviousTimestep(
                              x, x_prev, norm_type))
                 : 0.;
 
