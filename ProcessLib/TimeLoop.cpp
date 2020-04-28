@@ -612,8 +612,25 @@ static constexpr std::string_view timestepper_cannot_reduce_dt =
 void postTimestepForAllProcesses(
     double const t, double const dt,
     std::vector<std::unique_ptr<ProcessData>> const& per_process_data,
-    std::vector<GlobalVector*> const& process_solutions)
+    std::vector<GlobalVector*> const& process_solutions,
+    std::vector<GlobalVector*> const& process_solutions_prev)
 {
+    std::vector<GlobalVector*> x_dot;
+    x_dot.reserve(per_process_data.size());
+    for (auto& process_data : per_process_data)
+    {
+        auto const process_id = process_data->process_id;
+        auto const& ode_sys = *process_data->tdisc_ode_sys;
+        auto const& time_discretization = *process_data->time_disc;
+
+        x_dot.emplace_back(&NumLib::GlobalVectorProvider::provider.getVector(
+            ode_sys.getMatrixSpecifications(process_id)));
+
+        time_discretization.getXdot(*process_solutions[process_id],
+                                    *process_solutions_prev[process_id],
+                                    *x_dot[process_id]);
+    }
+
     // All _per_process_data share the first process.
     bool const is_staggered_coupling =
         !isMonolithicProcess(*per_process_data[0]);
@@ -630,7 +647,8 @@ void postTimestepForAllProcesses(
             pcs.setCoupledSolutionsForStaggeredScheme(&coupled_solutions);
         }
         auto& x = *process_solutions[process_id];
-        pcs.postTimestep(process_solutions, t, dt, process_id);
+        pcs.postTimestep(process_solutions, process_solutions_prev, t, dt,
+                         process_id);
         pcs.computeSecondaryVariable(t, x, process_id);
     }
 }
@@ -668,7 +686,8 @@ NumLib::NonlinearSolverStatus TimeLoop::solveUncoupledEquationSystems(
         }
     }
 
-    postTimestepForAllProcesses(t, dt, _per_process_data, _process_solutions);
+    postTimestepForAllProcesses(t, dt, _per_process_data, _process_solutions,
+                                _process_solutions_prev);
 
     return nonlinear_solver_status;
 }
@@ -797,7 +816,8 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
         INFO("[time] Phreeqc took {:g} s.", time_phreeqc.elapsed());
     }
 
-    postTimestepForAllProcesses(t, dt, _per_process_data, _process_solutions);
+    postTimestepForAllProcesses(t, dt, _per_process_data, _process_solutions,
+                                _process_solutions_prev);
 
     return nonlinear_solver_status;
 }

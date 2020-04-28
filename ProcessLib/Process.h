@@ -60,7 +60,8 @@ public:
                      const double delta_t, const int process_id);
 
     /// Postprocessing after a complete timestep.
-    void postTimestep(std::vector<GlobalVector*> const& x, const double t,
+    void postTimestep(std::vector<GlobalVector*> const& x,
+                      std::vector<GlobalVector*> const& x_dot, const double t,
                       const double delta_t, int const process_id);
 
     /// Calculates secondary variables, e.g. stress and strain for deformation
@@ -220,6 +221,7 @@ private:
 
     virtual void postTimestepConcreteProcess(
         std::vector<GlobalVector*> const& /*x*/,
+        std::vector<GlobalVector*> const& /*x_dot*/,
         const double /*t*/,
         const double /*dt*/,
         int const /*process_id*/)

@@ -368,12 +368,21 @@ void Process::preTimestep(std::vector<GlobalVector*> const& x, const double t,
     _boundary_conditions[process_id].preTimestep(t, x, process_id);
 }
 
-void Process::postTimestep(std::vector<GlobalVector*> const& x, const double t,
-                           const double delta_t, int const process_id)
+void Process::postTimestep(std::vector<GlobalVector*> const& x,
+                           std::vector<GlobalVector*> const& x_dot,
+                           const double t, const double delta_t,
+                           int const process_id)
 {
-    for (auto* const solution : x)
-        MathLib::LinAlg::setLocalAccessibleVector(*solution);
-    postTimestepConcreteProcess(x, t, delta_t, process_id);
+    for (auto* const v : x)
+    {
+        MathLib::LinAlg::setLocalAccessibleVector(*v);
+    }
+    for (auto* const v : x_dot)
+    {
+        MathLib::LinAlg::setLocalAccessibleVector(*v);
+    }
+
+    postTimestepConcreteProcess(x, x_dot, t, delta_t, process_id);
 }
 
 void Process::postNonLinearSolver(GlobalVector const& x, const double t,

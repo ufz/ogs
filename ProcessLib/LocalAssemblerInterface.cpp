@@ -118,12 +118,13 @@ void LocalAssemblerInterface::preTimestep(
 void LocalAssemblerInterface::postTimestep(
     std::size_t const mesh_item_id,
     NumLib::LocalToGlobalIndexMap const& dof_table, GlobalVector const& x,
-    double const t, double const dt)
+    GlobalVector const& x_dot, double const t, double const dt)
 {
     auto const indices = NumLib::getIndices(mesh_item_id, dof_table);
     auto const local_x = x.get(indices);
+    auto const local_x_dot = x_dot.get(indices);
 
-    postTimestepConcrete(local_x, t, dt);
+    postTimestepConcrete(local_x, local_x_dot, t, dt);
 }
 
 void LocalAssemblerInterface::postNonLinearSolver(
