@@ -37,6 +37,28 @@ bool IsFileExisting(const std::string &strFilename)
     return fs::exists(fs::path(strFilename));
 }
 
+std::tuple<std::string, std::string::size_type, std::string::size_type>
+getParenthesizedString(std::string const& in,
+                       char const open_char,
+                       char const close_char,
+                       std::string::size_type pos)
+{
+    auto const pos_curly_brace_open = in.find_first_of(open_char, pos);
+    if (pos_curly_brace_open == std::string::npos)
+    {
+        return std::make_tuple("", std::string::npos, std::string::npos);
+    }
+    auto const pos_curly_brace_close =
+        in.find_first_of(close_char, pos_curly_brace_open);
+    if (pos_curly_brace_close == std::string::npos)
+    {
+        return std::make_tuple("", std::string::npos, std::string::npos);
+    }
+    return std::make_tuple(
+        in.substr(pos_curly_brace_open + 1,
+                  pos_curly_brace_close - (pos_curly_brace_open + 1)),
+        pos_curly_brace_open, pos_curly_brace_close);
+}
 std::string constructFileName(std::string const& prefix,
                               int const process_id,
                               int const timestep,
