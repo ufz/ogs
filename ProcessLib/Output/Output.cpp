@@ -44,15 +44,6 @@ int convertVtkDataMode(std::string const& data_mode)
         "Binary, or Appended.",
         data_mode);
 }
-
-std::string constructFileName(std::string const& prefix,
-                              int const process_id,
-                              int const timestep,
-                              double const t)
-{
-    return prefix + "_pcs_" + std::to_string(process_id) + "_ts_" +
-           std::to_string(timestep) + "_t_" + std::to_string(t);
-}
 }  // namespace
 
 namespace ProcessLib
@@ -156,7 +147,8 @@ struct Output::OutputFile
     OutputFile(std::string const& directory, std::string const& prefix,
                int const process_id, int const timestep, double const t,
                int const data_mode_, bool const compression_)
-        : name(constructFileName(prefix, process_id, timestep, t) + ".vtu"),
+        : name(BaseLib::constructFileName(prefix, process_id, timestep, t) +
+               ".vtu"),
           path(BaseLib::joinPaths(directory, name)),
           data_mode(data_mode_),
           compression(compression_)
@@ -372,7 +364,8 @@ void Output::doOutputNonlinearIteration(Process const& process,
     findProcessData(process, process_id);
 
     std::string const output_file_name =
-        constructFileName(_output_file_prefix, process_id, timestep, t) +
+        BaseLib::constructFileName(_output_file_prefix, process_id, timestep,
+                                   t) +
         "_nliter_" + std::to_string(iteration) + ".vtu";
     std::string const output_file_path =
         BaseLib::joinPaths(_output_directory, output_file_name);

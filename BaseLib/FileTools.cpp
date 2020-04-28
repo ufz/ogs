@@ -37,6 +37,15 @@ bool IsFileExisting(const std::string &strFilename)
     return fs::exists(fs::path(strFilename));
 }
 
+std::string constructFileName(std::string const& prefix,
+                              int const process_id,
+                              int const timestep,
+                              double const t)
+{
+    return prefix + "_pcs_" + std::to_string(process_id) + "_ts_" +
+           std::to_string(timestep) + "_t_" + std::to_string(t);
+}
+
 double swapEndianness(double const& v)
 {
     union
