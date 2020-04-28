@@ -487,15 +487,16 @@ void HydroMechanicsProcess<DisplacementDim>::preTimestepConcreteProcess(
 
 template <int DisplacementDim>
 void HydroMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
-    std::vector<GlobalVector*> const& x, double const t, double const dt,
+    std::vector<GlobalVector*> const& x,
+    std::vector<GlobalVector*> const& x_dot, double const t, double const dt,
     const int process_id)
 {
     DBUG("PostTimestep HydroMechanicsProcess.");
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::postTimestep, _local_assemblers,
-        pv.getActiveElementIDs(), getDOFTable(process_id), *x[process_id], t,
-        dt);
+        pv.getActiveElementIDs(), getDOFTable(process_id), *x[process_id],
+        *x_dot[process_id], t, dt);
 }
 
 template <int DisplacementDim>

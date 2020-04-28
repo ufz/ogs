@@ -89,8 +89,9 @@ private:
         GlobalMatrix& Jac) override;
 
     void postTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
-                                    double const t, double const dt,
-                                    const int process_id) override;
+                                     std::vector<GlobalVector*> const& x_dot,
+                                     double const t, double const dt,
+                                     const int process_id) override;
 
     void postNonLinearSolverConcreteProcess(GlobalVector const& x,
                                             const double t, double const dt,

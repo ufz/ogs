@@ -456,7 +456,8 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
 
 template <int GlobalDim>
 void HydroMechanicsProcess<GlobalDim>::postTimestepConcreteProcess(
-    std::vector<GlobalVector*> const& x, const double t, double const dt,
+    std::vector<GlobalVector*> const& x,
+    std::vector<GlobalVector*> const& x_dot, const double t, double const dt,
     int const process_id)
 {
     DBUG("Compute the secondary variables for HydroMechanicsProcess.");
@@ -469,7 +470,7 @@ void HydroMechanicsProcess<GlobalDim>::postTimestepConcreteProcess(
         GlobalExecutor::executeSelectedMemberOnDereferenced(
             &HydroMechanicsLocalAssemblerInterface::postTimestep,
             _local_assemblers, pv.getActiveElementIDs(), dof_table,
-            *x[process_id], t, dt);
+            *x[process_id], *x_dot[process_id], t, dt);
     }
 
     // Copy displacement jumps in a solution vector to mesh property

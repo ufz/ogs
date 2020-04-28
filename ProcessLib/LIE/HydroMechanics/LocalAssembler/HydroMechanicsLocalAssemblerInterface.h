@@ -103,6 +103,7 @@ public:
     }
 
     void postTimestepConcrete(std::vector<double> const& local_x_,
+                              std::vector<double> const& /*local_x_dot*/,
                               const double t, double const dt) override
     {
         auto const local_dof_size = local_x_.size();
