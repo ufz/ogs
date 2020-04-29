@@ -1,0 +1,60 @@
++++
+author = "Marc Walther"
+weight = 142
+project = "Parabolic/Richards/infiltration_1D/"
+date = "2020-04-29T09:41:09+02:00"
+title = "Infiltration 1-dimensional"
+
+[menu]
+  [menu.benchmarks]
+    parent = "richards-flow"
+
++++
+
+{{< data-link >}}
+
+
+## Overview
+
+This benchmark evaluates vertical water infiltration into an initially unsaturated soil in a 1-dimensional setup. The original example is given as Tutorial 1 in the Hydrus tutorial [1] and the setup will be described in the following. We compare results from HYDRUS-1D, OpenGeoSys5 and OpenGeoSys6.
+
+
+## Problem description
+
+The problem describes a transient infiltration process. The area of the simulation domain that is evaluated is $1 m$ deep and initially unsaturated where the initial condition is defined as hydraulic pressure $p_{IC} = -1 m = -9810 Pa$. The upper boundary condition is a Dirichlet type with $p_{top} = 0.01 m = 98.1 Pa $. The original lower boundary condition is a Robin/Cauchy type and defined in HYDRUS-1D as a "free drainage" type; in both OGS versions, we extend the model domain to become $2 m$ and mimic the same behavior (the lower boundary condition for OGS is a no-flow Neumann type). The domain is discretized in HYDRUS-1D with line segments of $0.01 m$, in OGS with line segments of $0.005 m$.
+
+The parametrization is summarized in the following table. HYDRUS-1D and OGS5 use the classical Mualem-van-Genuchten formulation with parameters $\alpha$ and $n$, while OGS6 uses the formulation given in ###.
+
+| Parameter                | Unit            | Value                 |
+| ------------------------ | --------------- | --------------------- |
+| Viscosity                | $Pa\cdot s$     | $10^{-3}$             |
+| Fluid density            | $kg\cdot m^{-3} | $10^{3}$              |
+| Porosity                 | $-$             | $0.43$                |
+| Permeability (1, 2)      | $m^{2}$         | $2.9448\cdot 10^{-13} |
+| Hydr. conduct. (3)       | $m\cdot s{-1}$  | $2.9\cdot 10^{-6}     |
+| Exponent; m (2; 1, 3)    | $-$             | $0.358974358974359    |
+| $\alpha$ (1, 3)          | $m^{-1}$        | $3.6$                 |
+| Min. rel. perm. (2)      | $-$             | $10^{-3}$             |
+| Resid. saturation (1, 2) | $-$             | $0.18139535$          |
+| Resid. gas satur. (2)    | $-$             | $0.0$                 |
+| Max. saturation (1)      | $-$             | $1.0$                 |
+| Entry pressure (2)       | $Pa$            | $2725                 |
+
+
+(1) for OGS5
+(2) for OGS6
+(3) for HYDRUS-1D
+
+For details on the numerical settings, please refer to the individual model setup files.
+
+
+### Model results
+
+Evaluation of simulation results is done at $0.2$, $0.4$, $0.6$, and $0.8 m$ below the upper boundary condition. Results of pressure head are shown in the figure below. Simulation results show similar breakthrough curves, with HYDRUS-1D showing first arrival, followed by OGS5 and OGS6. OGS5 shows a slightly steeper increase of pressure head than HYDRUS-1D or OGS6.
+
+{{< img src="../infiltration-1D/compare_ogs5-6-hydrus.png" title="Breakthrough curves of pressure head at different levels below upper boundary condition for OGS5, OGS6 and HYDRUS-1D.">}}
+
+
+## Literature
+
+[1] Rassam, Simunek, Mallants, van Genuchten (2018): The HYDRUS-1D Software Package for Simulating the One-Dimensional Movement of Water, Heat, and Multiple Solutes in Variably-Saturated Media: Tutorial. CSIRO Land and Water, Australia, pp. 183. ISBN 978-1-4863-1001-2. <https://www.pc-progress.com/en/Default.aspx?h1d-tutorials>, last access: 29 April 2020.
