@@ -7,9 +7,9 @@ AddTest(
     REQUIREMENTS NOT OGS_USE_MPI
     RUNTIME 11
     DIFF_DATA
-    h2_Liako_20.vtu twophaseflow_pcs_0_ts_218_t_20.000000.vtu saturation saturation 1e-2 1e-4
-    h2_Liako_20.vtu twophaseflow_pcs_0_ts_218_t_20.000000.vtu capillary_pressure capillary_pressure 20 1e-3
-    h2_Liako_20.vtu twophaseflow_pcs_0_ts_218_t_20.000000.vtu gas_pressure gas_pressure 20 1e-3
+    h2_Liako_20.vtu twophaseflow_pcs_0_ts_290_t_20.000000.vtu saturation saturation 1e-2 1e-4
+    h2_Liako_20.vtu twophaseflow_pcs_0_ts_290_t_20.000000.vtu capillary_pressure capillary_pressure 20 1e-3
+    h2_Liako_20.vtu twophaseflow_pcs_0_ts_290_t_20.000000.vtu gas_pressure gas_pressure 20 1e-3
 )
 AddTest(
     NAME 2D_TwoPhase_PP_Lia_quad_large

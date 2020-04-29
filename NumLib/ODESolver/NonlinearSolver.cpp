@@ -22,12 +22,6 @@
 
 namespace NumLib
 {
-void NonlinearSolver<NonlinearSolverTag::Picard>::assemble(
-    std::vector<GlobalVector*> const& x, int const process_id) const
-{
-    _equation_system->assemble(x, process_id);
-}
-
 void NonlinearSolver<NonlinearSolverTag::Picard>::
     calculateNonEquilibriumInitialResiduum(std::vector<GlobalVector*> const& x,
                                            int const process_id)
@@ -209,15 +203,6 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
     NumLib::GlobalVectorProvider::provider.releaseVector(*x_new[process_id]);
 
     return {error_norms_met, iteration};
-}
-
-void NonlinearSolver<NonlinearSolverTag::Newton>::assemble(
-    std::vector<GlobalVector*> const& x, int const process_id) const
-{
-    _equation_system->assemble(x, process_id);
-    // TODO if the equation system would be reset to nullptr after each
-    //      assemble() or solve() call, the user would be forced to set the
-    //      equation every time and could not forget it.
 }
 
 void NonlinearSolver<NonlinearSolverTag::Newton>::

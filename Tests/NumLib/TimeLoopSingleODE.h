@@ -96,15 +96,6 @@ NumLib::NonlinearSolverStatus TimeLoopSingleODE<NLTag>::loop(
 
     _nonlinear_solver->setEquationSystem(_ode_sys, *_convergence_criterion);
 
-    if (time_disc.needsPreload())
-    {
-        int const process_id = 0;
-        MathLib::LinAlg::setLocalAccessibleVector(x);
-        _nonlinear_solver->assemble(xs, process_id);
-        time_disc.pushState(t0, x0,
-                            _ode_sys);  // TODO: that might do duplicate work
-    }
-
     double t;
     unsigned timestep = 0;
     NumLib::NonlinearSolverStatus nonlinear_solver_status = {false, 0};
@@ -124,7 +115,7 @@ NumLib::NonlinearSolverStatus TimeLoopSingleODE<NLTag>::loop(
             break;
         }
 
-        time_disc.pushState(t, x, _ode_sys);
+        time_disc.pushState(t, x);
 
         auto const t_cb =
             t;  // make sure the callback cannot overwrite anything.

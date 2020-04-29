@@ -141,8 +141,7 @@
                     <abstol>1.e-7</abstol>
                 </convergence_criterion>
                 <time_discretization>
-                    <type>CrankNicolson</type>
-                    <theta>0.5</theta>
+                    <type>BackwardEuler</type>
                 </time_discretization>
                 <time_stepping>
                     <type>FixedTimeStepping</type>
@@ -154,16 +153,16 @@
                             <delta_t>0.01</delta_t>
                         </pair>
                         <pair>
-                            <repeat>8</repeat>
-                            <delta_t>1</delta_t>
+                            <repeat>40</repeat>
+                            <delta_t>0.2</delta_t>
                         </pair>
                         <pair>
                             <repeat>100</repeat>
                             <delta_t>0.01</delta_t>
                         </pair>
                         <pair>
-                            <repeat>8</repeat>
-                            <delta_t>1</delta_t>
+                            <repeat>40</repeat>
+                            <delta_t>0.2</delta_t>
                         </pair>
                     </timesteps>
                 </time_stepping>
@@ -176,7 +175,7 @@
                 <!-- only output last timestep -->
                 <pair>
                     <repeat> 1 </repeat>
-                    <each_steps> 218 </each_steps>
+                    <each_steps> 290 </each_steps>
                 </pair>
             </timesteps>
             <output_iteration_results>false</output_iteration_results>

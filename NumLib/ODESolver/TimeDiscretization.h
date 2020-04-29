@@ -21,28 +21,6 @@ namespace NumLib
 //! \addtogroup ODESolver
 //! @{
 
-//! Interface that allows managing an additional internal state as required by
-//! certain time discretization schemes.
-class InternalMatrixStorage
-{
-public:
-    /*! Triggers a refresh of the internal matrix/vector storage.
-     *
-     * \remark
-     * This method is needed in particular to fully implement the
-     * interaction of the CrankNicolson scheme with other classes.
-     *
-     * \attention
-     * This method must be called (if it is called) from within
-     * TimeDiscretization::pushState() \b after the internal state of
-     * the TimeDiscretization has been set to the new solution.
-     * Otherwise the pushMatrices() method of MatrixTranslator's will break!
-     */
-    virtual void pushMatrices() const = 0;
-
-    virtual ~InternalMatrixStorage() = default;
-};
-
 /*! Interface of time discretization schemes for first-order ODEs.
  *
  * The purpose of TimeDiscretization instances is to store the solution history of
@@ -103,13 +81,8 @@ public:
  *
  * Scheme         | \f$ x_C \f$     | \f$ t_C \f$     | \f$ \alpha \f$        | \f$ x_N \f$     | \f$ x_O \f$
  * -------------- | --------------- | --------------- | --------------------- | --------------- | ----------------------
- * Forward Euler  | \f$ x_n \f$     | \f$ t_n \f$     | \f$ 1/\Delta t \f$    | \f$ x_{n+1} \f$ | \f$ x_n / \Delta t \f$
  * Backward Euler | \f$ x_{n+1} \f$ | \f$ t_{n+1} \f$ | \f$ 1/\Delta t \f$    | \f$ x_{n+1} \f$ | \f$ x_n / \Delta t \f$
- * Crank-Nicolson | \f$ x_{n+1} \f$ | \f$ t_{n+1} \f$ | \f$ 1/\Delta t \f$    | \f$ x_{n+1} \f$ | \f$ x_n / \Delta t \f$
- * BDF(2)         | \f$ x_{n+2} \f$ | \f$ t_{n+1} \f$ | \f$ 3/(2\Delta t) \f$ | \f$ x_{n+2} \f$ | \f$ (2\cdot x_{n+1} - x_n/2)/\Delta t \f$
  *
- * The other backward differentiation formulas of orders 1 to 6 are also implemented, but only
- * BDF(2) has bee given here for brevity.
  */
 class TimeDiscretization
 {
@@ -136,11 +109,8 @@ public:
      *
      * \param t    The current timestep.
      * \param x    The solution at the current timestep.
-     * \param strg Trigger storing some internal state.
-     *             Currently only used by the CrankNicolson scheme.
      */
-    virtual void pushState(const double t, GlobalVector const& x,
-                           InternalMatrixStorage const& strg) = 0;
+    virtual void pushState(const double t, GlobalVector const& x) = 0;
 
     /*!
      * Restores the given vector x to its old value.
@@ -191,43 +161,6 @@ public:
 
     virtual ~TimeDiscretization() = default;
 
-    //! \name Extended Interface
-    //! These methods are provided primarily to make certain concrete time
-    //! discretizations
-    //! with special demands, such as the forward Euler or Crank-Nicolson
-    //! schemes, possible.
-    //! @{
-
-    /*! Tell whether this scheme inherently requires a nonlinear solver or not.
-     *
-     * The ForwardEuler scheme is inherently linear in that sense, the others
-     * are not.
-     */
-    virtual bool isLinearTimeDisc() const { return false; }
-    /*! Returns \f$ \partial x_C / \partial x_N \f$.
-     *
-     * The ForwardEuler scheme overrides this.
-     */
-    virtual double getDxDx() const { return 1.0; }
-    /*! Returns \f$ x_C \f$, i.e., the state at which the equation will be
-     * assembled.
-     *
-     * This method is overridden in the ForwardEuler scheme.
-     */
-    virtual GlobalVector const& getCurrentX(GlobalVector const& x_at_new_timestep) const
-    {
-        return x_at_new_timestep;
-    }
-
-    /*! Indicate that this scheme needs some additional assembly before the
-     * first
-     *  timestep will be solved.
-     *
-     * The CrankNicolson scheme needs such preload.
-     */
-    virtual bool needsPreload() const { return false; }
-    //! @}
-
 protected:
     std::unique_ptr<GlobalVector> _dx;  ///< Used to store \f$ u_{n+1}-u_{n}\f$.
 
@@ -272,8 +205,7 @@ public:
     double getRelativeChangeFromPreviousTimestep(
         GlobalVector const& x, MathLib::VecNormType norm_type) override;
 
-    void pushState(const double /*t*/, GlobalVector const& x,
-                   InternalMatrixStorage const& /*strg*/) override
+    void pushState(const double /*t*/, GlobalVector const& x) override
     {
         MathLib::LinAlg::copy(x, _x_old);
     }
@@ -306,232 +238,6 @@ private:
     double _delta_t =
         std::numeric_limits<double>::quiet_NaN();  //!< the timestep size
     GlobalVector& _x_old;   //!< the solution from the preceding timestep
-};
-
-//! Forward Euler scheme.
-class ForwardEuler final : public TimeDiscretization
-{
-public:
-    ForwardEuler() : _x_old(NumLib::GlobalVectorProvider::provider.getVector())
-    {
-    }
-
-    ~ForwardEuler() override
-    {
-        NumLib::GlobalVectorProvider::provider.releaseVector(_x_old);
-    }
-
-    void setInitialState(const double t0, GlobalVector const& x0) override
-    {
-        _t = t0;
-        _t_old = t0;
-        MathLib::LinAlg::copy(x0, _x_old);
-    }
-
-    double getRelativeChangeFromPreviousTimestep(
-        GlobalVector const& x, MathLib::VecNormType norm_type) override;
-
-    void pushState(const double /*t*/, GlobalVector const& x,
-                   InternalMatrixStorage const& /*strg*/) override
-    {
-        MathLib::LinAlg::copy(x, _x_old);
-    }
-
-    void popState(GlobalVector& x) override
-    {
-        MathLib::LinAlg::copy(_x_old, x);
-    }
-
-    void nextTimestep(const double t, const double delta_t) override
-    {
-        _t_old = _t;
-        _t = t;
-        _delta_t = delta_t;
-    }
-
-    double getCurrentTime() const override
-    {
-        return _t_old;  // forward Euler does assembly at the preceding timestep
-    }
-
-    double getCurrentTimeIncrement() const override { return _delta_t; }
-
-    GlobalVector const& getCurrentX(
-        const GlobalVector& /*x_at_new_timestep*/) const override
-    {
-        return _x_old;
-    }
-
-    double getNewXWeight() const override { return 1.0 / _delta_t; }
-    void getWeightedOldX(GlobalVector& y) const override
-    {
-        namespace LinAlg = MathLib::LinAlg;
-
-        // y = x_old / delta_t
-        LinAlg::copy(_x_old, y);
-        LinAlg::scale(y, 1.0 / _delta_t);
-    }
-
-    bool isLinearTimeDisc() const override { return true; }
-    double getDxDx() const override { return 0.0; }
-    //! Returns the solution from the preceding timestep.
-    GlobalVector const& getXOld() const { return _x_old; }
-private:
-    double _t = std::numeric_limits<double>::quiet_NaN();  //!< \f$ t_C \f$
-    double _t_old =
-        std::numeric_limits<double>::quiet_NaN();  //!< the time of the
-                                                   //!< preceding timestep
-    double _delta_t =
-        std::numeric_limits<double>::quiet_NaN();  //!< the timestep size
-    GlobalVector& _x_old;   //!< the solution from the preceding timestep
-};
-
-//! Generalized Crank-Nicolson scheme.
-class CrankNicolson final : public TimeDiscretization
-{
-public:
-    /*! Constructs a new instance.
-     *
-     * \param theta The implicitness parameter \f$ \theta \f$. Some special
-     * values are:
-     *              \arg 1.0 fully implicit (like BackwardEuler).
-     *              \arg 0.0 fully explicit (like ForwardEuler).
-     *              \arg 0.5 traditional Crank-Nicolson scheme.
-     */
-    explicit CrankNicolson(const double theta)
-        : _theta(theta),
-          _x_old(NumLib::GlobalVectorProvider::provider.getVector())
-    {
-    }
-
-    ~CrankNicolson() override
-    {
-        NumLib::GlobalVectorProvider::provider.releaseVector(_x_old);
-    }
-
-    void setInitialState(const double t0, GlobalVector const& x0) override
-    {
-        _t = t0;
-        MathLib::LinAlg::copy(x0, _x_old);
-    }
-
-    double getRelativeChangeFromPreviousTimestep(
-        GlobalVector const& x, MathLib::VecNormType norm_type) override;
-
-    void pushState(const double /*t*/, GlobalVector const& x,
-                   InternalMatrixStorage const& strg) override
-    {
-        MathLib::LinAlg::copy(x, _x_old);
-        strg.pushMatrices();
-    }
-
-    void popState(GlobalVector& x) override
-    {
-        MathLib::LinAlg::copy(_x_old, x);
-    }
-
-    void nextTimestep(const double t, const double delta_t) override
-    {
-        _t = t;
-        _delta_t = delta_t;
-    }
-
-    double getCurrentTime() const override { return _t; }
-    double getCurrentTimeIncrement() const override { return _delta_t; }
-    double getNewXWeight() const override { return 1.0 / _delta_t; }
-    void getWeightedOldX(GlobalVector& y) const override
-    {
-        namespace LinAlg = MathLib::LinAlg;
-
-        // y = x_old / delta_t
-        LinAlg::copy(_x_old, y);
-        LinAlg::scale(y, 1.0 / _delta_t);
-    }
-
-    bool needsPreload() const override { return true; }
-    //! Returns \f$ \theta \f$.
-    double getTheta() const { return _theta; }
-    //! Returns the solution from the preceding timestep.
-    GlobalVector const& getXOld() const { return _x_old; }
-private:
-    const double _theta;  //!< the implicitness parameter \f$ \theta \f$
-    double _t = std::numeric_limits<double>::quiet_NaN();  //!< \f$ t_C \f$
-    double _delta_t =
-        std::numeric_limits<double>::quiet_NaN();  //!< the timestep size
-    GlobalVector& _x_old;       //!< the solution from the preceding timestep
-};
-
-//! Backward differentiation formula.
-class BackwardDifferentiationFormula final : public TimeDiscretization
-{
-public:
-    /*! Constructs a new instance.
-     *
-     * \param num_steps The order of the BDF to be used
-     *                  (= the number of timesteps kept in the internal history
-     * buffer).
-     *                  Valid range: 1 through 6.
-     *
-     * \note Until a sufficient number of timesteps has been computed to be able
-     *       to use the full \c num_steps order BDF, lower order BDFs are used
-     * in
-     *       the first timesteps.
-     */
-    explicit BackwardDifferentiationFormula(const unsigned num_steps)
-        : _num_steps(num_steps)
-    {
-        assert(1 <= num_steps && num_steps <= 6);
-        _xs_old.reserve(num_steps);
-    }
-
-    ~BackwardDifferentiationFormula() override
-    {
-        for (auto* x : _xs_old)
-        {
-            NumLib::GlobalVectorProvider::provider.releaseVector(*x);
-        }
-    }
-
-    void setInitialState(const double t0, GlobalVector const& x0) override
-    {
-        _t = t0;
-        _xs_old.push_back(
-            &NumLib::GlobalVectorProvider::provider.getVector(x0));
-    }
-
-    double getRelativeChangeFromPreviousTimestep(
-        GlobalVector const& x, MathLib::VecNormType norm_type) override;
-
-    void pushState(const double /*t*/, GlobalVector const& x,
-                   InternalMatrixStorage const& /*strg*/) override;
-
-    void popState(GlobalVector& x) override
-    {
-        MathLib::LinAlg::copy(*_xs_old[_xs_old.size()-1], x);
-    }
-
-    void nextTimestep(const double t, const double delta_t) override
-    {
-        _t = t;
-        _delta_t = delta_t;
-    }
-
-    double getCurrentTime() const override { return _t; }
-    double getCurrentTimeIncrement() const override { return _delta_t; }
-
-    double getNewXWeight() const override;
-
-    void getWeightedOldX(GlobalVector& y) const override;
-
-private:
-    std::size_t eff_num_steps() const { return _xs_old.size(); }
-    const unsigned _num_steps;  //!< The order of the BDF method
-    double _t = std::numeric_limits<double>::quiet_NaN();  //!< \f$ t_C \f$
-    double _delta_t =
-        std::numeric_limits<double>::quiet_NaN();  //!< the timestep size
-
-    std::vector<GlobalVector*> _xs_old;  //!< solutions from the preceding timesteps
-    unsigned _offset = 0;  //!< allows treating \c _xs_old as circular buffer
 };
 
 //! @}

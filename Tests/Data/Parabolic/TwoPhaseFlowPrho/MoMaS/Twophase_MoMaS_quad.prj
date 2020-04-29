@@ -14,7 +14,7 @@
             <jacobian_assembler>
                 <type>CentralDifferences</type>
                 <component_magnitudes>1e6 1.0</component_magnitudes>
-                <relative_epsilons>1e-6 1e-7</relative_epsilons>
+                <relative_epsilons>1e-8 1e-8</relative_epsilons>
             </jacobian_assembler>
             <material_property>
                 <fluid>
@@ -155,18 +155,17 @@
             <process ref="GW23">
                 <nonlinear_solver>basic_newton</nonlinear_solver>
                 <convergence_criterion>
-                    <type>DeltaX</type>
+                    <type>PerComponentDeltaX</type>
                     <norm_type>NORM2</norm_type>
-                    <abstol>1.e-6</abstol>
+                    <reltols>1.e-10 1.e-10</reltols>
                 </convergence_criterion>
                 <time_discretization>
-                    <type>CrankNicolson</type>
-                    <theta>0.5</theta>
+                    <type>BackwardEuler</type>
                 </time_discretization>
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0</t_initial>
-                    <t_end>30000.0</t_end>
+                    <t_end>10000.0</t_end>
                     <timesteps>
                         <pair>
                             <repeat>10</repeat>
@@ -189,8 +188,8 @@
             <prefix>twophaseflow</prefix>
             <timesteps>
                 <pair>
-                    <repeat> 1 </repeat>
-                    <each_steps> 2 </each_steps>
+                    <repeat> 100000 </repeat>
+                    <each_steps> 1 </each_steps>
                 </pair>
             </timesteps>
             <output_iteration_results>false</output_iteration_results>
@@ -248,7 +247,7 @@
         <nonlinear_solver>
             <name>     basic_newton </name>
             <type>     Newton       </type>
-            <max_iter> 50          </max_iter>
+            <max_iter> 20          </max_iter>
             <linear_solver>general_linear_solver</linear_solver>
         </nonlinear_solver>
     </nonlinear_solvers>
@@ -258,8 +257,12 @@
             <lis>-i bicgstab -p ilu -tol 1e-18 -maxiter 10000</lis>
             <eigen>
                 <solver_type>SparseLU</solver_type>
-                <scaling>1</scaling>
+                <scaling>true</scaling>
             </eigen>
+            <petsc>
+                <prefix>multiphase</prefix>
+                <parameters>-gw_ksp_type cg -gw_pc_type bjacobi -gw_ksp_rtol 1e-16 -gw_ksp_max_it 10000</parameters>
+            </petsc>
         </linear_solver>
     </linear_solvers>
 </OpenGeoSysProject>
