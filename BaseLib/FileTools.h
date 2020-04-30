@@ -40,6 +40,13 @@ getParenthesizedString(std::string const& str,
                        char const open_char,
                        char const close_char,
                        std::string::size_type pos);
+
+std::string constructFormattedFileName(std::string const& prefix,
+                                       std::string const& mesh_name,
+                                       int const process_id,
+                                       int const timestep,
+                                       double const t);
+
 std::string constructFileName(std::string const& prefix,
                               int const process_id,
                               int const timestep,
