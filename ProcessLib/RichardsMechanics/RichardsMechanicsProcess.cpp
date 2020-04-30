@@ -569,17 +569,18 @@ void RichardsMechanicsProcess<
 }
 
 template <int DisplacementDim>
-void RichardsMechanicsProcess<
-    DisplacementDim>::computeSecondaryVariableConcrete(const double t,
-                                                       GlobalVector const& x,
-                                                       int const process_id)
+void RichardsMechanicsProcess<DisplacementDim>::
+    computeSecondaryVariableConcrete(const double t, const double dt,
+                                     GlobalVector const& x,
+                                     GlobalVector const& x_dot,
+                                     int const process_id)
 {
     DBUG("Compute the secondary variables for RichardsMechanicsProcess.");
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::computeSecondaryVariable, _local_assemblers,
-        pv.getActiveElementIDs(), getDOFTable(process_id), t, x,
+        pv.getActiveElementIDs(), getDOFTable(process_id), t, dt, x, x_dot,
         _coupled_solutions);
 }
 

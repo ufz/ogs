@@ -101,9 +101,9 @@ void LiquidFlowProcess::assembleWithJacobianConcreteProcess(
         dxdot_dx, dx_dx, process_id, M, K, b, Jac, _coupled_solutions);
 }
 
-void LiquidFlowProcess::computeSecondaryVariableConcrete(const double t,
-                                                         GlobalVector const& x,
-                                                         int const process_id)
+void LiquidFlowProcess::computeSecondaryVariableConcrete(
+    double const t, double const dt, GlobalVector const& x,
+    GlobalVector const& x_dot, int const process_id)
 {
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
@@ -111,7 +111,7 @@ void LiquidFlowProcess::computeSecondaryVariableConcrete(const double t,
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LiquidFlowLocalAssemblerInterface::computeSecondaryVariable,
         _local_assemblers, pv.getActiveElementIDs(), getDOFTable(process_id), t,
-        x, _coupled_solutions);
+        dt, x, x_dot, _coupled_solutions);
 }
 
 Eigen::Vector3d LiquidFlowProcess::getFlux(

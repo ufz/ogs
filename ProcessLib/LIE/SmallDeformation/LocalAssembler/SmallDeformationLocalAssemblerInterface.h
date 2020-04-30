@@ -88,14 +88,15 @@ public:
     }
 
     void computeSecondaryVariableConcrete(
-        const double t, std::vector<double> const& local_x_) override
+        double const t, double const /*dt*/, std::vector<double> const& local_x,
+        std::vector<double> const& /*local_x_dot*/) override
     {
         if (!_dofIndex_to_localIndex.empty())
         {
             _local_u.setZero();
-            for (std::size_t i = 0; i < local_x_.size(); i++)
+            for (std::size_t i = 0; i < local_x.size(); i++)
             {
-                _local_u[_dofIndex_to_localIndex[i]] = local_x_[i];
+                _local_u[_dofIndex_to_localIndex[i]] = local_x[i];
             }
         }
 
