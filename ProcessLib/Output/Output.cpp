@@ -145,9 +145,11 @@ Output::ProcessData* Output::findProcessData(Process const& process,
 struct Output::OutputFile
 {
     OutputFile(std::string const& directory, std::string const& prefix,
-               int const process_id, int const timestep, double const t,
-               int const data_mode_, bool const compression_)
-        : name(BaseLib::constructFileName(prefix, process_id, timestep, t) +
+               std::string const& mesh_name, int const process_id,
+               int const timestep, double const t, int const data_mode_,
+               bool const compression_)
+        : name(BaseLib::constructFormattedFileName(prefix, mesh_name,
+                                                   process_id, timestep, t) +
                ".vtu"),
           path(BaseLib::joinPaths(directory, name)),
           data_mode(data_mode_),
@@ -215,9 +217,9 @@ void Output::doOutputAlways(Process const& process,
 
     auto output_bulk_mesh = [&]() {
         outputBulkMesh(
-            OutputFile(_output_directory, _output_file_prefix, process_id,
-                       timestep, t, _output_file_data_mode,
-                       _output_file_compression),
+            OutputFile(_output_directory, _output_file_prefix,
+                       process.getMesh().getName(), process_id, timestep, t,
+                       _output_file_data_mode, _output_file_compression),
             findProcessData(process, process_id), process.getMesh(), t);
     };
     // Write the bulk mesh only if there are no other meshes specified for
@@ -276,6 +278,7 @@ void Output::doOutputAlways(Process const& process,
         // allow for merging bulk mesh output and arbitrary mesh output.
 
         OutputFile const output_file{_output_directory,
+                                     _output_file_prefix,
                                      mesh.getName(),
                                      process_id,
                                      timestep,
@@ -364,8 +367,9 @@ void Output::doOutputNonlinearIteration(Process const& process,
     findProcessData(process, process_id);
 
     std::string const output_file_name =
-        BaseLib::constructFileName(_output_file_prefix, process_id, timestep,
-                                   t) +
+        BaseLib::constructFormattedFileName(_output_file_prefix,
+                                            process.getMesh().getName(),
+                                            process_id, timestep, t) +
         "_nliter_" + std::to_string(iteration) + ".vtu";
     std::string const output_file_path =
         BaseLib::joinPaths(_output_directory, output_file_name);
