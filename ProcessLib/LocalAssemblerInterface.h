@@ -78,8 +78,9 @@ public:
 
     virtual void computeSecondaryVariable(
         std::size_t const mesh_item_id,
-        NumLib::LocalToGlobalIndexMap const& dof_table, const double t,
-        GlobalVector const& x,
+        NumLib::LocalToGlobalIndexMap const& dof_table, double const t,
+        double const dt, GlobalVector const& local_x,
+        GlobalVector const& local_x_dot,
         CoupledSolutionsForStaggeredScheme const* coupled_xs);
 
     virtual void preTimestep(std::size_t const mesh_item_id,
@@ -142,7 +143,10 @@ private:
     }
 
     virtual void computeSecondaryVariableConcrete(
-        double const /*t*/, std::vector<double> const& /*local_x*/)
+        double const /*t*/,
+        double const /*dt*/,
+        std::vector<double> const& /*local_x*/,
+        std::vector<double> const& /*local_x_dot*/)
     {
     }
 

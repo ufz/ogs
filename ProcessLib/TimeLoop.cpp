@@ -612,8 +612,25 @@ static constexpr std::string_view timestepper_cannot_reduce_dt =
 void postTimestepForAllProcesses(
     double const t, double const dt,
     std::vector<std::unique_ptr<ProcessData>> const& per_process_data,
-    std::vector<GlobalVector*> const& process_solutions)
+    std::vector<GlobalVector*> const& process_solutions,
+    std::vector<GlobalVector*> const& process_solutions_prev)
 {
+    std::vector<GlobalVector*> x_dots;
+    x_dots.reserve(per_process_data.size());
+    for (auto& process_data : per_process_data)
+    {
+        auto const process_id = process_data->process_id;
+        auto const& ode_sys = *process_data->tdisc_ode_sys;
+        auto const& time_discretization = *process_data->time_disc;
+
+        x_dots.emplace_back(&NumLib::GlobalVectorProvider::provider.getVector(
+            ode_sys.getMatrixSpecifications(process_id)));
+
+        time_discretization.getXdot(*process_solutions[process_id],
+                                    *process_solutions_prev[process_id],
+                                    *x_dots[process_id]);
+    }
+
     // All _per_process_data share the first process.
     bool const is_staggered_coupling =
         !isMonolithicProcess(*per_process_data[0]);
@@ -630,8 +647,9 @@ void postTimestepForAllProcesses(
             pcs.setCoupledSolutionsForStaggeredScheme(&coupled_solutions);
         }
         auto& x = *process_solutions[process_id];
+        auto& x_dot = *x_dots[process_id];
         pcs.postTimestep(process_solutions, t, dt, process_id);
-        pcs.computeSecondaryVariable(t, x, process_id);
+        pcs.computeSecondaryVariable(t, dt, x, x_dot, process_id);
     }
 }
 
@@ -668,7 +686,8 @@ NumLib::NonlinearSolverStatus TimeLoop::solveUncoupledEquationSystems(
         }
     }
 
-    postTimestepForAllProcesses(t, dt, _per_process_data, _process_solutions);
+    postTimestepForAllProcesses(t, dt, _per_process_data, _process_solutions,
+                                _process_solutions_prev);
 
     return nonlinear_solver_status;
 }
@@ -797,7 +816,8 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
         INFO("[time] Phreeqc took {:g} s.", time_phreeqc.elapsed());
     }
 
-    postTimestepForAllProcesses(t, dt, _per_process_data, _process_solutions);
+    postTimestepForAllProcesses(t, dt, _per_process_data, _process_solutions,
+                                _process_solutions_prev);
 
     return nonlinear_solver_status;
 }
@@ -816,6 +836,7 @@ void TimeLoop::outputSolutions(bool const output_initial_condition,
     {
         auto const process_id = process_data->process_id;
         auto& pcs = process_data->process;
+        auto const& ode_sys = *process_data->tdisc_ode_sys;
         // If nonlinear solver diverged, the solution has already been
         // saved.
         if (!process_data->nonlinear_solver_status.error_norms_met)
@@ -827,12 +848,22 @@ void TimeLoop::outputSolutions(bool const output_initial_condition,
 
         if (output_initial_condition)
         {
-            pcs.preTimestep(_process_solutions, _start_time,
-                            process_data->timestepper->getTimeStep().dt(),
-                            process_id);
+            // dummy values to handle the time derivative terms more or less
+            // correctly, i.e. to ignore them.
+            double const t = 0;
+            double const dt = 1;
+            process_data->time_disc->nextTimestep(t, dt);
+
+            auto& x_dot = NumLib::GlobalVectorProvider::provider.getVector(
+                ode_sys.getMatrixSpecifications(process_id));
+            x_dot.setZero();
+
+            pcs.preTimestep(_process_solutions, _start_time, dt, process_id);
             // Update secondary variables, which might be uninitialized, before
             // output.
-            pcs.computeSecondaryVariable(_start_time, x, process_id);
+            pcs.computeSecondaryVariable(_start_time, dt, x, x_dot, process_id);
+
+            NumLib::GlobalVectorProvider::provider.releaseVector(x_dot);
         }
         if (is_staggered_coupling)
         {
