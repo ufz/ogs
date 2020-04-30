@@ -59,6 +59,17 @@ getParenthesizedString(std::string const& in,
                   pos_curly_brace_close - (pos_curly_brace_open + 1)),
         pos_curly_brace_open, pos_curly_brace_close);
 }
+
+std::string containsKeyword(std::string const& str, std::string const& keyword)
+{
+    auto const position = str.find(keyword);
+    if (position != std::string::npos)
+    {
+        return str.substr(0, position);
+    }
+    return "";
+}
+
 std::string constructFileName(std::string const& prefix,
                               int const process_id,
                               int const timestep,
