@@ -1,3 +1,2 @@
 FROM python:3-slim
-RUN pip install urlchecker
-ENTRYPOINT /bin/bash
+RUN pip install urlchecker==0.0.20
