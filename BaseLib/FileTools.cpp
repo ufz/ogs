@@ -12,6 +12,9 @@
  *
  */
 
+#include <unordered_map>
+#include <typeindex>
+
 #include "FileTools.h"
 #include "Error.h"
 #include "filesystem.h"
@@ -68,6 +71,41 @@ std::string containsKeyword(std::string const& str, std::string const& keyword)
         return str.substr(0, position);
     }
     return "";
+}
+
+template <typename T>
+bool substituteKeyword(std::string& result, std::string& parenthesized_string,
+                       std::string::size_type begin, std::string::size_type end,
+                       std::string const& keyword, T& data)
+{
+    std::string precision_specification =
+        containsKeyword(parenthesized_string, keyword);
+
+    if (precision_specification.empty())
+    {
+        return false;
+    }
+
+    std::unordered_map<std::type_index, char> type_specification;
+    type_specification[std::type_index(typeid(int))] = 'd';
+    type_specification[std::type_index(typeid(double))] = 'f'; // default
+    type_specification[std::type_index(typeid(std::string))] = 's';
+
+    auto const& b = precision_specification.back();
+    // see https://fmt.dev/latest/syntax.html#formatspec
+    if (b == 'e' || b == 'E' || b == 'f' || b == 'F' || b == 'g' || b == 'G')
+    {
+        type_specification[std::type_index(typeid(double))] = b;
+        precision_specification = precision_specification.substr(
+            0, precision_specification.length() - 1);
+    }
+
+    std::string const generated_fmt_string =
+        "{" + precision_specification +
+        type_specification[std::type_index(typeid(data))] + "}";
+    result = result.substr(0, begin) + fmt::format(generated_fmt_string, data) +
+             result.substr(end + 1, result.length() - (end + 1));
+    return true;
 }
 
 std::string constructFileName(std::string const& prefix,
