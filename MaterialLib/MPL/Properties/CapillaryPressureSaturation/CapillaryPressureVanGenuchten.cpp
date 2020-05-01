@@ -30,12 +30,51 @@ CapillaryPressureVanGenuchten::CapillaryPressureVanGenuchten(
       _p_b(p_b),
       _p_cap_max(maximum_capillary_pressure)
 {
+    if (_S_L_res < 0 || _S_L_res > 1)
+    {
+        OGS_FATAL(
+            "Van Genuchten capillary pressure model: "
+            "The residual liquid saturation value S_L_res = {:g} is out of "
+            "admissible range [0, 1].",
+            _S_L_res);
+    }
+    if (_S_L_max < 0 || _S_L_max > 1)
+    {
+        OGS_FATAL(
+            "Van Genuchten capillary pressure model: "
+            "The maximum liquid saturation value S_L_max = {:g} is out of "
+            "admissible range [0, 1].",
+            _S_L_max);
+    }
+    if (_S_L_res >= _S_L_max)
+    {
+        OGS_FATAL(
+            "Van Genuchten capillary pressure model: "
+            "The maximum liquid saturation S_L_max = {:g} must not be less or "
+            "equal to the residual liquid saturion S_L_res = { : g}.",
+            _S_L_max, _S_L_res);
+    }
     if (!(_m > 0 && _m < 1))
     {
         OGS_FATAL(
-            "The exponent value m = {:g} of van Genuchten capillary pressure "
-            "model, is out of its range of (0, 1)",
+            "Van Genuchten capillary pressure model: "
+            "The exponent value m = {:g} is out of of admissible range (0, 1).",
             _m);
+    }
+    if (_p_b <= 0)
+    {
+        OGS_FATAL(
+            "Van Genuchten capillary pressure model: "
+            "The pressure scaling value p_b = {:g} must be positive.",
+            _p_b);
+    }
+    if (_p_cap_max < 0)
+    {
+        OGS_FATAL(
+            "Van Genuchten capillary pressure model: "
+            "The maximum capillary pressure value p_cap_max = {:g} must be "
+            "non-negative.",
+            _p_cap_max);
     }
 }
 
