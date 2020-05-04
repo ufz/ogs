@@ -1126,19 +1126,8 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
         std::vector<double>& cache) const
 {
-    auto const num_intpts = _ip_data.size();
-
-    cache.clear();
-    auto cache_mat = MathLib::createZeroedMatrix<
-        Eigen::Matrix<double, 1, Eigen::Dynamic, Eigen::RowMajor>>(cache, 1,
-                                                                   num_intpts);
-
-    for (unsigned ip = 0; ip < num_intpts; ++ip)
-    {
-        cache_mat[ip] = _ip_data[ip].saturation;
-    }
-
-    return cache;
+    return ProcessLib::getIntegrationPointScalarData(
+        _ip_data, &IpData::saturation, cache);
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
@@ -1163,19 +1152,8 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
         std::vector<double>& cache) const
 {
-    auto const num_intpts = _ip_data.size();
-
-    cache.clear();
-    auto cache_mat = MathLib::createZeroedMatrix<
-        Eigen::Matrix<double, 1, Eigen::Dynamic, Eigen::RowMajor>>(cache, 1,
-                                                                   num_intpts);
-
-    for (unsigned ip = 0; ip < num_intpts; ++ip)
-    {
-        cache_mat[ip] = _ip_data[ip].porosity;
-    }
-
-    return cache;
+    return ProcessLib::getIntegrationPointScalarData(_ip_data,
+                                                     &IpData::porosity, cache);
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
@@ -1200,19 +1178,8 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
         std::vector<double>& cache) const
 {
-    auto const num_intpts = _ip_data.size();
-
-    cache.clear();
-    auto cache_mat = MathLib::createZeroedMatrix<
-        Eigen::Matrix<double, 1, Eigen::Dynamic, Eigen::RowMajor>>(cache, 1,
-                                                                   num_intpts);
-
-    for (unsigned ip = 0; ip < num_intpts; ++ip)
-    {
-        cache_mat[ip] = _ip_data[ip].transport_porosity;
-    }
-
-    return cache;
+    return ProcessLib::getIntegrationPointScalarData(
+        _ip_data, &IpData::transport_porosity, cache);
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,

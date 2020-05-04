@@ -735,15 +735,8 @@ public:
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
         std::vector<double>& cache) const override
     {
-        cache.clear();
-        cache.reserve(_ip_data.size());
-
-        for (auto const& ip_data : _ip_data)
-        {
-            cache.push_back(ip_data.damage);
-        }
-
-        return cache;
+        return ProcessLib::getIntegrationPointScalarData(
+            _ip_data, &IpData::damage, cache);
     }
 
     unsigned getNumberOfIntegrationPoints() const override
