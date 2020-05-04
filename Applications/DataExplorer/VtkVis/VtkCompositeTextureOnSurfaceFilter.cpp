@@ -84,7 +84,7 @@ void VtkCompositeTextureOnSurfaceFilter::init()
         double scalingFactor(1);
         std::string name = fileName.toStdString();
         vtkImageAlgorithm* image = VtkRaster::loadImage(name, x0, y0, scalingFactor);
-        surface->SetRaster(image, x0, y0, scalingFactor);
+        surface->SetRaster(image);
         surface->Update();
 
         QDir dir = QDir(fileName);
@@ -98,11 +98,7 @@ void VtkCompositeTextureOnSurfaceFilter::init()
         if (dlg.getRaster() != nullptr)
         {
             VtkGeoImageSource* image = dlg.getRaster();
-            double origin[3];
-            image->GetOutput()->GetOrigin(origin);
-            double spacing[3];
-            image->GetOutput()->GetSpacing(spacing);
-            surface->SetRaster(image, origin[0], origin[1], spacing[0]);
+            surface->SetRaster(image);
             surface->Update();
         }
     }
