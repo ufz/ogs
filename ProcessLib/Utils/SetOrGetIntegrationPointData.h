@@ -45,4 +45,30 @@ std::vector<double> const& getIntegrationPointKelvinVectorData(
     return cache;
 }
 
+template <int DisplacementDim, typename IntegrationPointData,
+          typename MemberType>
+std::vector<double> getIntegrationPointKelvinVector(
+    std::vector<IntegrationPointData,
+                Eigen::aligned_allocator<IntegrationPointData>> const& ip_data,
+    MemberType member)
+{
+    constexpr int kelvin_vector_size =
+        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
+    auto const num_intpts = ip_data.size();
+
+    std::vector<double> ip_kelvin_vector_values;
+    auto cache_mat = MathLib::createZeroedMatrix<Eigen::Matrix<
+        double, Eigen::Dynamic, kelvin_vector_size, Eigen::RowMajor>>(
+        ip_kelvin_vector_values, num_intpts, kelvin_vector_size);
+
+    for (unsigned ip = 0; ip < num_intpts; ++ip)
+    {
+        auto const& ip_member = ip_data[ip].*member;
+        cache_mat.row(ip) =
+            MathLib::KelvinVector::kelvinVectorToSymmetricTensor(ip_member);
+    }
+
+    return ip_kelvin_vector_values;
+}
+
 }  // namespace ProcessLib
