@@ -71,4 +71,31 @@ std::vector<double> getIntegrationPointKelvinVector(
     return ip_kelvin_vector_values;
 }
 
+template <int DisplacementDim, typename IntegrationPointData,
+          typename MemberType>
+std::size_t setIntegrationPointKelvinVector(
+    double const* values,
+    std::vector<IntegrationPointData,
+                Eigen::aligned_allocator<IntegrationPointData>>& ip_data,
+    MemberType member)
+{
+    constexpr int kelvin_vector_size =
+        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
+    auto const num_intpts = ip_data.size();
+
+    auto kelvin_vector_values =
+        Eigen::Map<Eigen::Matrix<double, kelvin_vector_size, Eigen::Dynamic,
+                                 Eigen::ColMajor> const>(
+            values, kelvin_vector_size, num_intpts);
+
+    for (unsigned ip = 0; ip < num_intpts; ++ip)
+    {
+        ip_data[ip].*member =
+            MathLib::KelvinVector::symmetricTensorToKelvinVector(
+                kelvin_vector_values.col(ip));
+    }
+
+    return num_intpts;
+}
+
 }  // namespace ProcessLib
