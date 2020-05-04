@@ -15,6 +15,9 @@
 #include <memory>
 #include <vector>
 
+#include "Damage.h"
+#include "IntegrationPointData.h"
+#include "LocalAssemblerInterface.h"
 #include "MaterialLib/SolidModels/Ehlers.h"
 #include "MaterialLib/SolidModels/SelectSolidConstitutiveRelation.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
@@ -28,10 +31,7 @@
 #include "ProcessLib/Deformation/LinearBMatrix.h"
 #include "ProcessLib/LocalAssemblerTraits.h"
 #include "ProcessLib/Utils/InitShapeMatrices.h"
-
-#include "Damage.h"
-#include "IntegrationPointData.h"
-#include "LocalAssemblerInterface.h"
+#include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
 #include "SmallDeformationNonlocalProcessData.h"
 
 namespace ProcessLib
@@ -65,6 +65,8 @@ public:
     using NodalForceVectorType = typename BMatricesType::NodalForceVectorType;
     using NodalDisplacementVectorType =
         typename BMatricesType::NodalForceVectorType;
+    using IpData =
+        IntegrationPointData<BMatricesType, ShapeMatricesType, DisplacementDim>;
 
     SmallDeformationNonlocalLocalAssembler(
         SmallDeformationNonlocalLocalAssembler const&) = delete;
@@ -663,24 +665,8 @@ public:
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
         std::vector<double>& cache) const override
     {
-        static const int kelvin_vector_size =
-            MathLib::KelvinVector::KelvinVectorDimensions<
-                DisplacementDim>::value;
-        auto const num_intpts = _ip_data.size();
-
-        cache.clear();
-        auto cache_mat = MathLib::createZeroedMatrix<Eigen::Matrix<
-            double, kelvin_vector_size, Eigen::Dynamic, Eigen::RowMajor>>(
-            cache, kelvin_vector_size, num_intpts);
-
-        for (unsigned ip = 0; ip < num_intpts; ++ip)
-        {
-            auto const& sigma = _ip_data[ip].sigma;
-            cache_mat.col(ip) =
-                MathLib::KelvinVector::kelvinVectorToSymmetricTensor(sigma);
-        }
-
-        return cache;
+        return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
+            _ip_data, &IpData::sigma, cache);
     }
 
     std::vector<double> const& getIntPtEpsilon(
@@ -689,24 +675,8 @@ public:
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
         std::vector<double>& cache) const override
     {
-        auto const kelvin_vector_size =
-            MathLib::KelvinVector::KelvinVectorDimensions<
-                DisplacementDim>::value;
-        auto const num_intpts = _ip_data.size();
-
-        cache.clear();
-        auto cache_mat = MathLib::createZeroedMatrix<Eigen::Matrix<
-            double, kelvin_vector_size, Eigen::Dynamic, Eigen::RowMajor>>(
-            cache, kelvin_vector_size, num_intpts);
-
-        for (unsigned ip = 0; ip < num_intpts; ++ip)
-        {
-            auto const& eps = _ip_data[ip].eps;
-            cache_mat.col(ip) =
-                MathLib::KelvinVector::kelvinVectorToSymmetricTensor(eps);
-        }
-
-        return cache;
+        return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
+            _ip_data, &IpData::eps, cache);
     }
 
     std::size_t setSigma(double const* values)
@@ -868,11 +838,7 @@ private:
 private:
     SmallDeformationNonlocalProcessData<DisplacementDim>& _process_data;
 
-    std::vector<
-        IntegrationPointData<BMatricesType, ShapeMatricesType, DisplacementDim>,
-        Eigen::aligned_allocator<IntegrationPointData<
-            BMatricesType, ShapeMatricesType, DisplacementDim>>>
-        _ip_data;
+    std::vector<IpData, Eigen::aligned_allocator<IpData>> _ip_data;
 
     IntegrationMethod const _integration_method;
     MeshLib::Element const& _element;

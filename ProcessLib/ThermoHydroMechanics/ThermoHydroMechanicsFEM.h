@@ -13,6 +13,8 @@
 #include <memory>
 #include <vector>
 
+#include "IntegrationPointData.h"
+#include "LocalAssemblerInterface.h"
 #include "MaterialLib/PhysicalConstant.h"
 #include "MaterialLib/SolidModels/LinearElasticIsotropic.h"
 #include "MathLib/KelvinVector.h"
@@ -24,9 +26,7 @@
 #include "ProcessLib/Deformation/LinearBMatrix.h"
 #include "ProcessLib/LocalAssemblerTraits.h"
 #include "ProcessLib/Utils/InitShapeMatrices.h"
-
-#include "IntegrationPointData.h"
-#include "LocalAssemblerInterface.h"
+#include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
 #include "ThermoHydroMechanicsProcessData.h"
 
 namespace ProcessLib
@@ -199,25 +199,8 @@ private:
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
         std::vector<double>& cache) const override
     {
-        static const int kelvin_vector_size =
-            MathLib::KelvinVector::KelvinVectorDimensions<
-                DisplacementDim>::value;
-        unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
-
-        cache.clear();
-        auto cache_mat = MathLib::createZeroedMatrix<Eigen::Matrix<
-            double, kelvin_vector_size, Eigen::Dynamic, Eigen::RowMajor>>(
-            cache, kelvin_vector_size, n_integration_points);
-
-        for (unsigned ip = 0; ip < n_integration_points; ++ip)
-        {
-            auto const& sigma = _ip_data[ip].sigma_eff;
-            cache_mat.col(ip) =
-                MathLib::KelvinVector::kelvinVectorToSymmetricTensor(sigma);
-        }
-
-        return cache;
+        return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
+            _ip_data, &IpData::sigma_eff, cache);
     }
 
     virtual std::vector<double> const& getIntPtEpsilon(
@@ -226,25 +209,8 @@ private:
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
         std::vector<double>& cache) const override
     {
-        auto const kelvin_vector_size =
-            MathLib::KelvinVector::KelvinVectorDimensions<
-                DisplacementDim>::value;
-        unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
-
-        cache.clear();
-        auto cache_mat = MathLib::createZeroedMatrix<Eigen::Matrix<
-            double, kelvin_vector_size, Eigen::Dynamic, Eigen::RowMajor>>(
-            cache, kelvin_vector_size, n_integration_points);
-
-        for (unsigned ip = 0; ip < n_integration_points; ++ip)
-        {
-            auto const& eps = _ip_data[ip].eps;
-            cache_mat.col(ip) =
-                MathLib::KelvinVector::kelvinVectorToSymmetricTensor(eps);
-        }
-
-        return cache;
+        return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
+            _ip_data, &IpData::eps, cache);
     }
 
 private:

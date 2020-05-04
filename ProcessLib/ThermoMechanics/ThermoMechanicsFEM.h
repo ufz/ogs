@@ -104,6 +104,8 @@ public:
     using JacobianMatrix = typename ShapeMatricesType::template MatrixType<
         ShapeFunction::NPOINTS + ShapeFunction::NPOINTS * DisplacementDim,
         ShapeFunction::NPOINTS + ShapeFunction::NPOINTS * DisplacementDim>;
+    using IpData =
+        IntegrationPointData<BMatricesType, ShapeMatricesType, DisplacementDim>;
 
     ThermoMechanicsLocalAssembler(ThermoMechanicsLocalAssembler const&) =
         delete;
@@ -311,11 +313,7 @@ private:
 
     ThermoMechanicsProcessData<DisplacementDim>& _process_data;
 
-    std::vector<
-        IntegrationPointData<BMatricesType, ShapeMatricesType, DisplacementDim>,
-        Eigen::aligned_allocator<IntegrationPointData<
-            BMatricesType, ShapeMatricesType, DisplacementDim>>>
-        _ip_data;
+    std::vector<IpData, Eigen::aligned_allocator<IpData>> _ip_data;
 
     IntegrationMethod _integration_method;
     MeshLib::Element const& _element;
