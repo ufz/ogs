@@ -47,11 +47,6 @@ std::string constructFormattedFileName(std::string const& prefix,
                                        int const timestep,
                                        double const t);
 
-std::string constructFileName(std::string const& prefix,
-                              int const process_id,
-                              int const timestep,
-                              double const t);
-
 /**
  * \brief write value as binary into the given output stream
  *
