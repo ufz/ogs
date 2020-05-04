@@ -329,7 +329,7 @@ void NetCdfConfigureDialog::createDataObject()
     {
         vtkImageImport* image = VtkRaster::loadImageFromArray(data_array.data(), header);
         _currentRaster = VtkGeoImageSource::New();
-        _currentRaster->setImage(image, QString::fromStdString(this->getName()), origin[0], origin[1], resolution);
+        _currentRaster->setImage(image, QString::fromStdString(this->getName()));
     }
 }
 

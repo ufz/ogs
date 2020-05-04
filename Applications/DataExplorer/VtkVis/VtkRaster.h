@@ -44,10 +44,7 @@ public:
      * \param delta The size of each pixel in the image which is needed for correctly displaying the data, the default value is 1.
      * \return The ImageAlgorithm-object.
      */
-    static vtkImageAlgorithm* loadImage(const std::string &fileName,
-                                        double& x0,
-                                        double& y0,
-                                        double& delta);
+    static vtkImageAlgorithm* loadImage(const std::string &fileName);
 private:
 #ifdef GEOTIFF_FOUND
     /**

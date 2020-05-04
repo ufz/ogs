@@ -41,8 +41,7 @@
 #include "BaseLib/StringTools.h"
 #include "GeoLib/Raster.h"
 
-vtkImageAlgorithm* VtkRaster::loadImage(const std::string &fileName,
-                                        double& x0, double& y0, double& delta)
+vtkImageAlgorithm* VtkRaster::loadImage(const std::string &fileName)
 {
     QFileInfo fileInfo(QString::fromStdString(fileName));
 
@@ -65,11 +64,8 @@ vtkImageAlgorithm* VtkRaster::loadImage(const std::string &fileName,
         (fileInfo.suffix().toLower() == "tiff"))
     {
 #ifdef GEOTIFF_FOUND
-        return loadImageFromTIFF(fileName, x0, y0, delta);
+        return loadImageFromTIFF(fileName);
 #else
-        (void)x0;
-        (void)y0;
-        (void)delta;
         ERR("VtkRaster::loadImage(): GeoTiff file format not supported in this "
             "version! Trying to parse as Tiff-file.");
         return loadImageFromFile(fileName);
@@ -114,9 +110,7 @@ vtkImageImport* VtkRaster::loadImageFromArray(double const*const data_array, Geo
 }
 
 #ifdef GEOTIFF_FOUND
-vtkImageAlgorithm* VtkRaster::loadImageFromTIFF(const std::string& fileName,
-                                                double& x0, double& y0,
-                                                double& cellsize)
+vtkImageAlgorithm* VtkRaster::loadImageFromTIFF(const std::string& fileName)
 {
     TIFF* tiff = XTIFFOpen(fileName.c_str(), "r");
 
@@ -126,6 +120,7 @@ vtkImageAlgorithm* VtkRaster::loadImageFromTIFF(const std::string& fileName,
 
         int version[3];
         int count (0);
+        double x0, double y0, cellsize;
         GTIFDirectoryInfo(geoTiff, version, &count);
 
         if (count == 0)

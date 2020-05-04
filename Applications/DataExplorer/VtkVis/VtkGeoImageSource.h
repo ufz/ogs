@@ -48,17 +48,7 @@ public:
     bool readImage(const QString &filename);
 
     /// @brief Imports an existing image object.
-    void setImage(vtkImageAlgorithm* image, const QString& name, double x0,
-                  double y0, double spacing);
-
-    /// @brief Returns the origin in world coordinates.
-    void getOrigin(double origin[3]) const;
-
-    /// @brief Returns the scalar data range.
-    void getRange(double range[2]);
-
-    /// @brief Returns the spacing between two pixels.
-    double getSpacing() const;
+    void setImage(vtkImageAlgorithm* image, const QString& name);
 
     void SetUserProperty(QString name, QVariant value) override;
 
@@ -74,6 +64,4 @@ protected:
 
 private:
     vtkImageAlgorithm* _imageSource{nullptr};
-
-    double _x0{0}, _y0{0}, _z0{0}, _spacing{1};
 };
