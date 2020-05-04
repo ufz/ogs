@@ -54,6 +54,7 @@ TEST(FileIO, DISABLED_TetGenSmeshInterface)
 {
     std::string const file_name (TestInfoLib::TestInfo::data_path + "/FileIO/AmmerSubsurfaceCoarse.vtu");
     std::unique_ptr<MeshLib::Mesh const> const mesh (MeshLib::IO::readMeshFromFile(file_name));
+    ASSERT_NE(mesh, nullptr);
 
     std::string const tg_new_name (BaseLib::randomString(32));
     std::string const output_name =

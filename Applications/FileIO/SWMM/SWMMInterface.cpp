@@ -127,7 +127,7 @@ SwmmInterface::~SwmmInterface()
 
 bool SwmmInterface::isSwmmInputFile(std::string const& inp_file_name)
 {
-    if (!boost::iequals(BaseLib::getFileExtension(inp_file_name), "inp"))
+    if (!boost::iequals(BaseLib::getFileExtension(inp_file_name), ".inp"))
     {
         ERR("SWMMInterface: {:s} is not a SWMM input file.", inp_file_name);
         return false;

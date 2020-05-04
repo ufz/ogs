@@ -123,7 +123,7 @@ void readPolylinePointVector(const std::string &fname,
                              std::vector<std::string> &errors)
 {
     // open file
-    std::ifstream in((path + fname).c_str());
+    std::ifstream in(BaseLib::joinPaths(path, fname).c_str());
     if (!in) {
         WARN("readPolylinePointVector(): error opening stream from {:s}",
              fname);
@@ -241,7 +241,7 @@ std::string readPolyline(std::istream &in,
         if (line.find("$POINT_VECTOR") != std::string::npos) // subkeyword found
         {
             in >> line; // read file name
-            line = path + line;
+            line = BaseLib::joinPaths(path, line);
             readPolylinePointVector(line, pnt_vec, ply, path, errors);
         } // subkeyword found
     } while (line.find('#') == std::string::npos && !line.empty() && in);
@@ -343,7 +343,7 @@ std::string readSurface(std::istream& in,
         if (line.find("$TIN") != std::string::npos) // subkeyword found
         {
             in >> line; // read value (file name)
-            std::string const file_name (path + line);
+            std::string const file_name = BaseLib::joinPaths(path, line);
             sfc = GeoLib::IO::TINInterface::readTIN(file_name, pnt_vec, &errors);
         }
         //....................................................................
@@ -608,7 +608,7 @@ std::size_t writeTINSurfaces(std::ofstream &os, GeoLib::SurfaceVec const* sfcs_v
         os << "\t$TIN" << "\n";
         os << "\t\t" << sfc_name << "\n";
         // create tin file
-        sfc_name = path + sfc_name;
+        sfc_name = BaseLib::joinPaths(path, sfc_name);
         GeoLib::IO::TINInterface::writeSurfaceAsTIN(*sfc, sfc_name);
         sfc_count++;
     }

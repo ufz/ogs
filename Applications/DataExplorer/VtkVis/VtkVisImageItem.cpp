@@ -160,7 +160,7 @@ int VtkVisImageItem::callVTKWriter(vtkAlgorithm* algorithm, const std::string &f
         vtkSmartPointer<vtkXMLImageDataWriter> iWriter =
                 vtkSmartPointer<vtkXMLImageDataWriter>::New();
         iWriter->SetInputData(algID->GetOutputDataObject(0));
-        if (BaseLib::getFileExtension(filename) != "vti")
+        if (BaseLib::getFileExtension(filename) != ".vti")
         {
             file_name_cpy.append(".vti");
         }

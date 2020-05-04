@@ -72,7 +72,7 @@ int main (int argc, char* argv[])
     const std::string msh_name(argv[1]);
     const std::string current_key(argv[2]);
     std::string const ext (BaseLib::getFileExtension(msh_name));
-    if (!(ext == "msh" || ext == "vtu"))
+    if (!(ext == ".msh" || ext == ".vtu"))
     {
         ERR("Error: Parameter 1 must be a mesh-file (*.msh / *.vtu).");
         INFO("Usage: {:s} <msh-file.gml> <keyword> <value>", argv[0]);
