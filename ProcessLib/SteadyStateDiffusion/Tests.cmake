@@ -786,7 +786,7 @@ AddTest(
     NAME SteadyStateDiffusion_square_1x1_1e2_GMRES
     PATH Elliptic/square_1x1_SteadyStateDiffusion
     EXECUTABLE ogs
-    EXECUTABLE_ARGS square_1e2_GMRES.prj 
+    EXECUTABLE_ARGS square_1e2_GMRES.prj
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_MPI)
