@@ -47,4 +47,9 @@ TEST(BaseLib, constructFormattedFileName)
             "pcs_{:process_id}_ts_{:timestep}_t_{:.4time}", 0, 2, 0.2);
         ASSERT_EQ("pcs_0_ts_2_t_0.2000", formatted_filename);
     }
+    {
+        auto const formatted_filename = BaseLib::constructFormattedFileName(
+            "pcs_{:process_id}_ts_{:0>3timestep}_t_{:.4time}", 0, 2, 0.2);
+        ASSERT_EQ("pcs_0_ts_002_t_0.2000", formatted_filename);
+    }
 }
