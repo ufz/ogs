@@ -144,7 +144,9 @@ void EigenIterativeLinearSolver<Eigen::GMRES<
 }
 
 template <>
-void EigenIterativeLinearSolver<Eigen::GMRES<EigenMatrix::RawMatrixType, Eigen::IncompleteLUT<double>>>::setRestart(int const restart)
+void EigenIterativeLinearSolver<
+    Eigen::GMRES<EigenMatrix::RawMatrixType,
+                 Eigen::IncompleteLUT<double>>>::setRestart(int const restart)
 {
     _solver.set_restart(restart);
     INFO("-> set restart value: {:d}", _solver.get_restart());

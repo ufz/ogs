@@ -782,6 +782,18 @@ AddTest(
     square_1x1_quad_1e5.vtu square_1e5_volumetricsourceterm_pcs_0_ts_1_t_1.000000.vtu analytical_solution pressure 0.75e-4 1e-16
 )
 
+AddTest(
+    NAME SteadyStateDiffusion_square_1x1_1e2_GMRES
+    PATH Elliptic/square_1x1_SteadyStateDiffusion
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS square_1e2_GMRES.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT (OGS_USE_MPI)
+    DIFF_DATA
+    square_1x1_quad_1e2.vtu square_1e2_GMRES_pcs_0_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-14 1e-14
+)
+
 if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE "Elliptic/cube_1x1x1_SteadyStateDiffusion/cube_1e4_anisotropic.prj")
 endif() # OGS_USE_MPI
