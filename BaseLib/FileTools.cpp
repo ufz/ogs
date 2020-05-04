@@ -62,12 +62,12 @@ double swapEndianness(double const& v)
 std::string dropFileExtension(std::string const& filename)
 {
     auto const filename_path = fs::path(filename);
-    return filename_path.parent_path() / filename_path.stem();
+    return (filename_path.parent_path() / filename_path.stem()).string();
 }
 
 std::string extractBaseName(std::string const& pathname)
 {
-    return fs::path(pathname).filename();
+    return fs::path(pathname).filename().string();
 }
 
 std::string extractBaseNameWithoutExtension(std::string const& pathname)
@@ -78,7 +78,7 @@ std::string extractBaseNameWithoutExtension(std::string const& pathname)
 
 std::string getFileExtension(const std::string &path)
 {
-    return fs::path(path).extension();
+    return fs::path(path).extension().string();
 }
 
 bool hasFileExtension(std::string const& extension, std::string const& filename)
@@ -96,19 +96,19 @@ std::string copyPathToFileName(const std::string &file_name,
     }
     else
     {
-        return fs::path(source) /= filePath;
+        return (fs::path(source) /= filePath).string();
     }
 
 }
 
 std::string extractPath(std::string const& pathname)
 {
-    return fs::path(pathname).parent_path();
+    return fs::path(pathname).parent_path().string();
 }
 
 std::string joinPaths(std::string const& pathA, std::string const& pathB)
 {
-    return fs::path(pathA) /= fs::path(pathB);
+    return (fs::path(pathA) /= fs::path(pathB)).string();
 }
 
 std::string const& getProjectDirectory()
