@@ -39,6 +39,7 @@ enum PropertyType : int
     bishops_effective_stress,
     brooks_corey_exponent,
     bulk_modulus,
+    capillary_pressure,
     critical_density,
     critical_pressure,
     critical_temperature,
@@ -115,6 +116,10 @@ inline PropertyType convertStringToProperty(std::string const& inString)
     if (boost::iequals(inString, "bulk_modulus"))
     {
         return PropertyType::bulk_modulus;
+    }
+    if (boost::iequals(inString, "capillary_pressure"))
+    {
+        return PropertyType::capillary_pressure;
     }
     if (boost::iequals(inString, "critical_density"))
     {
@@ -284,6 +289,7 @@ static const std::array<std::string, PropertyType::number_of_properties>
                              "bishops_effective_stress",
                              "brooks_corey_exponent",
                              "bulk_modulus",
+                             "capillary_pressure",
                              "critical_density",
                              "critical_pressure",
                              "critical_temperature",
