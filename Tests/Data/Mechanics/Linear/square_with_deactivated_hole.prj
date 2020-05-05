@@ -54,7 +54,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>square_with_deactivated_hole</prefix>
+            <prefix>square_with_deactivated_hole_pcs_{:process_id}</prefix>
             <timesteps>
                 <pair>
                     <repeat>1</repeat>
@@ -66,6 +66,7 @@
                 <variable>sigma</variable>
                 <variable>epsilon</variable>
             </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <parameters>
@@ -169,7 +170,6 @@
             </petsc>
         </linear_solver>
     </linear_solvers>
-
     <test_definition>
         <vtkdiff>
             <file>square_with_deactivated_hole_pcs_0_ts_4_t_1.000000.vtu</file>

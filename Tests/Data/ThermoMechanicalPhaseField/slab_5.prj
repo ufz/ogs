@@ -136,7 +136,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>slab_5</prefix>
+            <prefix>slab_5_pcs_{:process_id}</prefix>
             <timesteps>
                 <pair>
                     <repeat>3</repeat>
@@ -159,6 +159,7 @@
                 <variable>epsilon</variable>
                 <variable>heat_flux</variable>
             </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <parameters>

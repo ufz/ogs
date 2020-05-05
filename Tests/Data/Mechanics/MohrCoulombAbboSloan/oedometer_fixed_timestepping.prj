@@ -58,11 +58,11 @@
                     <timesteps>
                         <pair>
                             <repeat>10</repeat>
-                        <delta_t>8000</delta_t>
+                            <delta_t>8000</delta_t>
                         </pair>
                         <pair>
                             <repeat>200014</repeat>
-                        <delta_t>10</delta_t>
+                            <delta_t>10</delta_t>
                         </pair>
                     </timesteps>
                 </time_stepping>
@@ -70,7 +70,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>oedometer_fixed_timestepping</prefix>
+            <prefix>oedometer_fixed_timestepping_pcs_{:process_id}</prefix>
             <timesteps>
                 <pair>
                     <repeat>100000</repeat>
@@ -80,6 +80,7 @@
             <variables>
                 <variable>displacement</variable>
             </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <parameters>

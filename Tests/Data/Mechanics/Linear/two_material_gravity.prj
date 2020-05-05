@@ -50,7 +50,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>two_material_gravity</prefix>
+            <prefix>two_material_gravity_pcs_{:process_id}</prefix>
             <timesteps>
                 <pair>
                     <repeat>1</repeat>
@@ -62,6 +62,7 @@
                 <variable>sigma</variable>
                 <variable>epsilon</variable>
             </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <parameters>

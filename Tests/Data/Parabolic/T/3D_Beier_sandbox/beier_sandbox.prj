@@ -165,7 +165,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>beier_sandbox</prefix>
+            <prefix>beier_sandbox_pcs_{:process_id}</prefix>
             <timesteps>
                 <!-- use the following for full simulation
                 <pair><repeat> 10</repeat><each_steps> 1 </each_steps></pair>
@@ -180,6 +180,7 @@
                 <variable>temperature_soil</variable>
                 <variable>temperature_BHE1</variable>
             </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <parameters>

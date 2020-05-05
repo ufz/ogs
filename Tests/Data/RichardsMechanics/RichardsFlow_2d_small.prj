@@ -158,7 +158,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>RichardsFlow_2d_small</prefix>
+            <prefix>RichardsFlow_2d_small_pcs_{:process_id}</prefix>
             <meshes>
                 <mesh>Richards_2d</mesh>
                 <mesh>Richards_2d_geometry_OBSERVATION_POINT</mesh>
@@ -182,6 +182,7 @@
                 <variable>velocity</variable>
                 <variable>saturation</variable>
             </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <parameters>

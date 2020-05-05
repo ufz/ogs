@@ -302,10 +302,10 @@
                     </timesteps>
                 </time_stepping>
             </process>
-       </processes>
+        </processes>
         <output>
             <type>VTK</type>
-            <prefix>KineticReactant2</prefix>
+            <prefix>KineticReactant2_pcs_{:process_id}</prefix>
             <timesteps>
                 <pair>
                     <repeat>24</repeat>
@@ -320,6 +320,7 @@
                 <variable>pressure</variable>
                 <variable>darcy_velocity</variable>
             </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <chemical_system chemical_solver="Phreeqc">
@@ -506,7 +507,7 @@
             <components>1</components>
             <order>1</order>
             <initial_condition>c0_Productd</initial_condition>
-                <boundary_conditions>
+            <boundary_conditions>
                 <boundary_condition>
                     <mesh>KineticReactant2_upstream</mesh>
                     <type>Dirichlet</type>
@@ -514,7 +515,7 @@
                 </boundary_condition>
             </boundary_conditions>
         </process_variable>
-   </process_variables>
+    </process_variables>
     <nonlinear_solvers>
         <nonlinear_solver>
             <name>basic_picard</name>

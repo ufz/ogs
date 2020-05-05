@@ -58,7 +58,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>tm_q</prefix>
+            <prefix>tm_q_pcs_{:process_id}</prefix>
             <timesteps>
                 <pair>
                     <repeat>20</repeat>
@@ -71,6 +71,7 @@
                 <variable>sigma</variable>
                 <variable>epsilon</variable>
             </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <parameters>

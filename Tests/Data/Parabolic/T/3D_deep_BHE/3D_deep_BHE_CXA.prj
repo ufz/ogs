@@ -165,7 +165,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>3D_deep_BHE_CXA</prefix>
+            <prefix>3D_deep_BHE_CXA_pcs_{:process_id}</prefix>
             <timesteps>
                 <pair>
                     <repeat> 1</repeat>
@@ -176,6 +176,7 @@
                 <variable>temperature_soil</variable>
                 <variable>temperature_BHE1</variable>
             </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <parameters>

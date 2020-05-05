@@ -80,7 +80,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>TaskB</prefix>
+            <prefix>TaskB_pcs_{:process_id}</prefix>
             <output_iteration_results>0</output_iteration_results>
             <timesteps>
                 <pair>
@@ -93,6 +93,7 @@
                 <variable>displacement</variable>
                 <variable>displacement_jump1</variable>
             </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <parameters>

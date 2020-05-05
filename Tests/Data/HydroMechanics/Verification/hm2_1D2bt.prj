@@ -115,7 +115,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>hm2_1D2bt</prefix>
+            <prefix>hm2_1D2bt_pcs_{:process_id}</prefix>
             <compress_output>false</compress_output>
             <timesteps>
                 <pair>
@@ -136,6 +136,7 @@
                 <variable>epsilon_yy</variable>
                 <variable>epsilon_zz</variable>
             </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <parameters>

@@ -54,7 +54,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>tm1_3Dcube</prefix>
+            <prefix>tm1_3Dcube_pcs_{:process_id}</prefix>
             <data_mode>Ascii</data_mode>
             <compress_output>false</compress_output>
             <timesteps>
@@ -69,6 +69,7 @@
                 <variable>sigma</variable>
                 <variable>epsilon</variable>
             </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <parameters>

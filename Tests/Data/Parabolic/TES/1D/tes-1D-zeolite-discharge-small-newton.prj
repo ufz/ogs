@@ -86,7 +86,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>tes_zeolite_discharge_small_newton</prefix>
+            <prefix>tes_zeolite_discharge_small_newton_pcs_{:process_id}</prefix>
             <timesteps>
                 <!-- only output last timestep -->
                 <pair>
@@ -108,6 +108,7 @@
                 <variable> relative_humidity       </variable>
                 <variable> reaction_damping_factor </variable>
             </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <parameters>

@@ -130,7 +130,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>h1_1Dsource</prefix>
+            <prefix>h1_1Dsource_pcs_{:process_id}</prefix>
             <data_mode>Ascii</data_mode>
             <compress_output>false</compress_output>
             <timesteps>
@@ -142,6 +142,7 @@
             <variables>
                 <variable> pressure </variable>
             </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <parameters>

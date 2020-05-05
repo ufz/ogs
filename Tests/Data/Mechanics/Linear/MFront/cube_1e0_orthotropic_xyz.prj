@@ -61,7 +61,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>cube_1e0_xyz_orthotropic</prefix>
+            <prefix>cube_1e0_xyz_orthotropic_pcs_{:process_id}</prefix>
             <timesteps>
                 <pair>
                     <repeat>1</repeat>
@@ -73,6 +73,7 @@
                 <variable>sigma</variable>
                 <variable>epsilon</variable>
             </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <local_coordinate_system>
@@ -141,7 +142,6 @@
             <type>Constant</type>
             <values>1</values>
         </parameter>
-
         <parameter>
             <name>rho_sr</name>
             <type>Constant</type>

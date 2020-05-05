@@ -70,7 +70,7 @@
                 <time_discretization>
                     <type>BackwardEuler</type>
                 </time_discretization>
-                 <time_stepping>
+                <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0</t_initial>
                     <t_end>500</t_end>
@@ -93,7 +93,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>single_fracture_3compartments_flow_CHZ</prefix>
+            <prefix>single_fracture_3compartments_flow_CHZ_pcs_{:process_id}</prefix>
             <timesteps>
                 <pair>
                     <repeat>1</repeat>
@@ -105,6 +105,7 @@
                 <variable>displacement</variable>
                 <variable>displacement_jump1</variable>
             </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <parameters>
@@ -172,7 +173,7 @@
             <type>Constant</type>
             <value>1</value>
         </parameter>
-		<!--fracture model-->
+        <!--fracture model-->
         <parameter>
             <name>Kn</name>
             <type>Constant</type>

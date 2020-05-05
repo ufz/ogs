@@ -7,10 +7,10 @@
     </meshes>
     <processes>
         <process>
-        <name>hc</name>
-        <type>ComponentTransport</type>
-        <non_advective_form>true</non_advective_form>
-        <integration_order>2</integration_order>
+            <name>hc</name>
+            <type>ComponentTransport</type>
+            <non_advective_form>true</non_advective_form>
+            <integration_order>2</integration_order>
             <process_variables>
                 <concentration>concentration</concentration>
                 <pressure>pressure</pressure>
@@ -112,7 +112,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>box_ogsOutput</prefix>
+            <prefix>box_ogsOutput_pcs_{:process_id}</prefix>
             <timesteps>
                 <pair>
                     <repeat>1</repeat>
@@ -125,6 +125,7 @@
                 <variable>pressure</variable>
                 <variable>darcy_velocity</variable>
             </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <parameters>

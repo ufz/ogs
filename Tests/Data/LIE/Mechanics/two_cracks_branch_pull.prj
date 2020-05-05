@@ -67,7 +67,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>two_cracks_branch_pull</prefix>
+            <prefix>two_cracks_branch_pull_pcs_{:process_id}</prefix>
             <timesteps>
                 <pair>
                     <repeat>1</repeat>
@@ -82,6 +82,7 @@
                 <variable>sigma_yy</variable>
                 <variable>sigma_xy</variable>
             </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <parameters>
@@ -119,10 +120,10 @@
             <name>load</name>
             <type>Constant</type>
             <value>7e+3</value>
-<!--
+            <!--
             <value>-7e+3</value>
 -->
-			</parameter>
+        </parameter>
         <parameter>
             <name>zero_u</name>
             <type>Constant</type>

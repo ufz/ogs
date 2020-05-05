@@ -65,7 +65,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>oedometer</prefix>
+            <prefix>oedometer_pcs_{:process_id}</prefix>
             <timesteps>
                 <pair>
                     <repeat>100000</repeat>
@@ -75,6 +75,7 @@
             <variables>
                 <variable>displacement</variable>
             </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <parameters>
@@ -236,7 +237,6 @@
             <absolute_tolerance>1e-14</absolute_tolerance>
             <relative_tolerance>1e-15</relative_tolerance>
         </vtkdiff>
-
         <vtkdiff>
             <file>oedometer_pcs_0_ts_376_t_240000.000000.vtu</file>
             <field>displacement</field>

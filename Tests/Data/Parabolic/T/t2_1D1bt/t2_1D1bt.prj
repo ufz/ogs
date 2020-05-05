@@ -45,7 +45,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>t2_1D1bt</prefix>
+            <prefix>t2_1D1bt_pcs_{:process_id}</prefix>
             <data_mode>Ascii</data_mode>
             <compress_output>false</compress_output>
             <timesteps>
@@ -57,6 +57,7 @@
             <variables>
                 <variable> temperature </variable>
             </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <parameters>

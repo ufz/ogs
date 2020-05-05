@@ -147,7 +147,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>confined_compression_fully_saturated_restart</prefix>
+            <prefix>confined_compression_fully_saturated_restart_pcs_{:process_id}</prefix>
             <timesteps>
                 <pair>
                     <repeat>1</repeat>
@@ -166,6 +166,7 @@
                 <variable>velocity</variable>
                 <variable>saturation</variable>
             </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <parameters>

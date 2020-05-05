@@ -50,11 +50,12 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>cube_1e4_anisotropic</prefix>
+            <prefix>cube_1e4_anisotropic_pcs_{:process_id}</prefix>
             <variables>
                 <variable>pressure</variable>
                 <variable>darcy_velocity</variable>
             </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <local_coordinate_system>

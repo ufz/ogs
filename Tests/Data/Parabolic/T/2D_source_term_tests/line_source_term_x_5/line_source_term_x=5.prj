@@ -48,7 +48,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>source_term_middle</prefix>
+            <prefix>source_term_middle_pcs_{:process_id}</prefix>
             <timesteps>
                 <pair>
                     <repeat> 10000 </repeat>
@@ -59,6 +59,7 @@
                 <variable> temperature </variable>
                 <variable> heat_flux_x </variable>
             </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <parameters>

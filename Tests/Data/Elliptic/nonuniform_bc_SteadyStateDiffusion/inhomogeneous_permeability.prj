@@ -37,11 +37,12 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>inhomogeneous_permeability</prefix>
+            <prefix>inhomogeneous_permeability_pcs_{:process_id}</prefix>
             <variables>
                 <variable> pressure  </variable>
                 <variable> mass_flux </variable>
             </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <media>

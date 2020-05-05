@@ -63,7 +63,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>m2_2Dload_ym45</prefix>
+            <prefix>m2_2Dload_ym45_pcs_{:process_id}</prefix>
             <timesteps>
                 <pair>
                     <repeat>1</repeat>
@@ -79,6 +79,7 @@
                 <variable>sigma</variable>
                 <variable>epsilon</variable>
             </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <parameters>

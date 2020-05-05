@@ -892,7 +892,7 @@
         </global_process_coupling>
         <processes>
             <!-- convergence criterion for hydraulic equation -->
-             <process ref="hc">
+            <process ref="hc">
                 <nonlinear_solver>basic_picard</nonlinear_solver>
                 <convergence_criterion>
                     <type>DeltaX</type>
@@ -1159,7 +1159,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>Wetland_1d</prefix>
+            <prefix>Wetland_1d_pcs_{:process_id}</prefix>
             <timesteps>
                 <pair>
                     <repeat>1</repeat>
@@ -1181,9 +1181,10 @@
                 <variable>Xs_m</variable>
                 <variable>Xi_m</variable>
             </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
-        <chemical_system chemical_solver="Phreeqc">
+    <chemical_system chemical_solver="Phreeqc">
         <mesh>Wetland_1d_ReactiveDomain</mesh>
         <database>cwm1.dat</database>
         <solution>
@@ -1204,181 +1205,181 @@
                 <component>Xi_m</component>
             </components>
         </solution>
-                <kinetic_reactants>
-                    <kinetic_reactant>
-                        <name>Aeration</name>
-                        <chemical_formula>Do 1</chemical_formula>
-                        <initial_amount>1.0</initial_amount>
-                        <fix_amount>true</fix_amount>
-                    </kinetic_reactant>
-                    <kinetic_reactant>
-                        <name>AttDetachment_Xi</name>
-                        <chemical_formula>Xi_m -1</chemical_formula>
-                        <initial_amount>1.0</initial_amount>
-                        <fix_amount>true</fix_amount>
-                    </kinetic_reactant>
-                    <kinetic_reactant>
-                        <name>AttDetachment_Xs</name>
-                        <chemical_formula>Xs_m -1</chemical_formula>
-                        <initial_amount>1.0</initial_amount>
-                        <fix_amount>true</fix_amount>
-                    </kinetic_reactant>
-                    <kinetic_reactant>
-                        <name>Hydrolysis_Xs_m</name>
-                        <chemical_formula>Sf 1 Sin 0  Snh 0.01  Xs_m -1</chemical_formula>
-                        <initial_amount>1.0</initial_amount>
-                        <fix_amount>true</fix_amount>
-                    </kinetic_reactant>
-                    <kinetic_reactant>
-                        <name>Hydrolysis_Xs_im</name>
-                        <chemical_formula>Sf  1  Sin    0  Snh 0.01</chemical_formula>
-                        <initial_amount>1.0</initial_amount>
-                        <fix_amount>true</fix_amount>
-                    </kinetic_reactant>
-                    <kinetic_reactant>
-                        <name>Aerobic_Growth_Xh_on_Sf</name>
-                        <chemical_formula>Do -0.587301587301587  Sf -1.58730158730159  Snh -0.022380952</chemical_formula>
-                        <initial_amount>1.0</initial_amount>
-                        <fix_amount>true</fix_amount>
-                    </kinetic_reactant>
-                    <kinetic_reactant>
-                        <name>Anoxic_Growth_Xh_on_Sf</name>
-                        <chemical_formula>Sf  -1.58730158730159  Sno -0.205350205  Snh -0.02238095</chemical_formula>
-                        <initial_amount>1.0</initial_amount>
-                        <fix_amount>true</fix_amount>
-                    </kinetic_reactant>
-                    <kinetic_reactant>
-                        <name>Aerobic_Growth_Xh_on_Sa</name>
-                        <chemical_formula>Do  -0.587301587301587  Sa -1.58730158730159  Snh -0.07</chemical_formula>
-                        <initial_amount>1.0</initial_amount>
-                        <fix_amount>true</fix_amount>
-                    </kinetic_reactant>
-                    <kinetic_reactant>
-                        <name>Anoxic_Growth_Xh_on_Sa</name>
-                        <chemical_formula>Sa -1.58730158730159  Sno -0.205350205  Snh -0.07</chemical_formula>
-                        <initial_amount>1.0</initial_amount>
-                        <fix_amount>true</fix_amount>
-                    </kinetic_reactant>
-                    <kinetic_reactant>
-                        <name>Lysis_Xh</name>
-                        <chemical_formula>Sf 0.05  Snh 0.0315</chemical_formula>
-                        <initial_amount>1.0</initial_amount>
-                        <fix_amount>true</fix_amount>
-                    </kinetic_reactant>
-                    <kinetic_reactant>
-                        <name>Aerobic_Growth_Xa_on_Snh</name>
-                        <chemical_formula>Do -18.04166667  Sno 4.166666667  Snh -4.236666667</chemical_formula>
-                        <initial_amount>1.0</initial_amount>
-                        <fix_amount>true</fix_amount>
-                    </kinetic_reactant>
-                    <kinetic_reactant>
-                        <name>Lysis_Xa</name>
+        <kinetic_reactants>
+            <kinetic_reactant>
+                <name>Aeration</name>
+                <chemical_formula>Do 1</chemical_formula>
+                <initial_amount>1.0</initial_amount>
+                <fix_amount>true</fix_amount>
+            </kinetic_reactant>
+            <kinetic_reactant>
+                <name>AttDetachment_Xi</name>
+                <chemical_formula>Xi_m -1</chemical_formula>
+                <initial_amount>1.0</initial_amount>
+                <fix_amount>true</fix_amount>
+            </kinetic_reactant>
+            <kinetic_reactant>
+                <name>AttDetachment_Xs</name>
+                <chemical_formula>Xs_m -1</chemical_formula>
+                <initial_amount>1.0</initial_amount>
+                <fix_amount>true</fix_amount>
+            </kinetic_reactant>
+            <kinetic_reactant>
+                <name>Hydrolysis_Xs_m</name>
+                <chemical_formula>Sf 1 Sin 0  Snh 0.01  Xs_m -1</chemical_formula>
+                <initial_amount>1.0</initial_amount>
+                <fix_amount>true</fix_amount>
+            </kinetic_reactant>
+            <kinetic_reactant>
+                <name>Hydrolysis_Xs_im</name>
+                <chemical_formula>Sf  1  Sin    0  Snh 0.01</chemical_formula>
+                <initial_amount>1.0</initial_amount>
+                <fix_amount>true</fix_amount>
+            </kinetic_reactant>
+            <kinetic_reactant>
+                <name>Aerobic_Growth_Xh_on_Sf</name>
+                <chemical_formula>Do -0.587301587301587  Sf -1.58730158730159  Snh -0.022380952</chemical_formula>
+                <initial_amount>1.0</initial_amount>
+                <fix_amount>true</fix_amount>
+            </kinetic_reactant>
+            <kinetic_reactant>
+                <name>Anoxic_Growth_Xh_on_Sf</name>
+                <chemical_formula>Sf  -1.58730158730159  Sno -0.205350205  Snh -0.02238095</chemical_formula>
+                <initial_amount>1.0</initial_amount>
+                <fix_amount>true</fix_amount>
+            </kinetic_reactant>
+            <kinetic_reactant>
+                <name>Aerobic_Growth_Xh_on_Sa</name>
+                <chemical_formula>Do  -0.587301587301587  Sa -1.58730158730159  Snh -0.07</chemical_formula>
+                <initial_amount>1.0</initial_amount>
+                <fix_amount>true</fix_amount>
+            </kinetic_reactant>
+            <kinetic_reactant>
+                <name>Anoxic_Growth_Xh_on_Sa</name>
+                <chemical_formula>Sa -1.58730158730159  Sno -0.205350205  Snh -0.07</chemical_formula>
+                <initial_amount>1.0</initial_amount>
+                <fix_amount>true</fix_amount>
+            </kinetic_reactant>
+            <kinetic_reactant>
+                <name>Lysis_Xh</name>
                 <chemical_formula>Sf 0.05  Snh 0.0315</chemical_formula>
-                        <initial_amount>1.0</initial_amount>
-                        <fix_amount>true</fix_amount>
-                    </kinetic_reactant>
-                    <kinetic_reactant>
-                        <name>Growth_Xfb</name>
-                        <chemical_formula>Sf -18.86792453  Sa 17.86792453  Snh 0.496037736</chemical_formula>
-                        <initial_amount>1.0</initial_amount>
-                        <fix_amount>true</fix_amount>
-                    </kinetic_reactant>
-                    <kinetic_reactant>
-                        <name>Lysis_Xfb</name>
-                        <chemical_formula>Sf 0.05  Snh 0.0315</chemical_formula>
-                        <initial_amount>1.0</initial_amount>
-                        <fix_amount>true</fix_amount>
-                    </kinetic_reactant>
-                    <kinetic_reactant>
-                        <name>Growth_Xamb</name>
-                        <chemical_formula>Sa -31.25 Snh -0.07</chemical_formula>
-                        <initial_amount>1.0</initial_amount>
-                        <fix_amount>true</fix_amount>
-                    </kinetic_reactant>
-                    <kinetic_reactant>
-                        <name>Lysis_Xamb</name>
-                        <chemical_formula>Sf 0.05   Snh 0.0315</chemical_formula>
-                        <initial_amount>1.0</initial_amount>
-                        <fix_amount>true</fix_amount>
-                    </kinetic_reactant>
-                    <kinetic_reactant>
-                        <name>Growth_Xasrb</name>
-                        <chemical_formula>Sa -20  Sso -9.5  Sulphide 9.5  Snh   -0.07</chemical_formula>
-                        <initial_amount>1.0</initial_amount>
-                        <fix_amount>true</fix_amount>
-                    </kinetic_reactant>
-                    <kinetic_reactant>
-                        <name>Lysis_Xasrb</name>
-                        <chemical_formula>Sf 0.05   Snh 0.0315</chemical_formula>
-                        <initial_amount>1.0</initial_amount>
-                        <fix_amount>true</fix_amount>
-                    </kinetic_reactant>
-                    <kinetic_reactant>
-                        <name>Aerobic_Growth_Xsob</name>
-                        <chemical_formula>Do    -15.66666667  Sso 8.333333333       Sulphide -8.333333333   Snh -0.07</chemical_formula>
-                        <initial_amount>1.0</initial_amount>
-                        <fix_amount>true</fix_amount>
-                    </kinetic_reactant>
-                    <kinetic_reactant>
-                        <name>Anoxic_Growth_Xsob</name>
-                        <chemical_formula>Sno -8.380952381  Sso 8.333333333     Sulphide -8.333333333   Snh -0.07</chemical_formula>
-                        <initial_amount>1.0</initial_amount>
-                        <fix_amount>true</fix_amount>
-                    </kinetic_reactant>
-                    <kinetic_reactant>
-                        <name>Lysis_Xsob</name>
-                        <chemical_formula>Sf 0.05   Snh 0.0315</chemical_formula>
-                        <initial_amount>1.0</initial_amount>
-                        <fix_amount>true</fix_amount>
-                    </kinetic_reactant>
-                    <kinetic_reactant>
-                        <name>Xh</name>
-                        <chemical_formula>Do 0</chemical_formula>
-                        <initial_amount>1.0e-3</initial_amount>
-                    </kinetic_reactant>
-                    <kinetic_reactant>
-                        <name>Xa</name>
-                        <chemical_formula>Do 0</chemical_formula>
-                        <initial_amount>1.0e-3</initial_amount>
-                    </kinetic_reactant>
-                    <kinetic_reactant>
-                        <name>Xfb</name>
-                        <chemical_formula>Do 0</chemical_formula>
-                        <initial_amount>1.0e-3</initial_amount>
-                    </kinetic_reactant>
-                    <kinetic_reactant>
-                        <name>Xamb</name>
-                        <chemical_formula>Do 0</chemical_formula>
-                        <initial_amount>1.0e-3</initial_amount>
-                    </kinetic_reactant>
-                    <kinetic_reactant>
-                        <name>Xasrb</name>
-                        <chemical_formula>Do 0</chemical_formula>
-                        <initial_amount>1.0e-3</initial_amount>
-                    </kinetic_reactant>
-                    <kinetic_reactant>
-                        <name>Xsob</name>
-                        <chemical_formula>Do 0</chemical_formula>
-                        <initial_amount>1.0e-3</initial_amount>
-                    </kinetic_reactant>
-                    <kinetic_reactant>
-                        <name>Xs_im</name>
-                        <chemical_formula>Do 0</chemical_formula>
-                        <initial_amount>1.0e-4</initial_amount>
-                    </kinetic_reactant>
-                    <kinetic_reactant>
-                        <name>Xi_im</name>
-                        <chemical_formula>Do 0</chemical_formula>
-                        <initial_amount>1.0e-4</initial_amount>
-                    </kinetic_reactant>
-                </kinetic_reactants>
+                <initial_amount>1.0</initial_amount>
+                <fix_amount>true</fix_amount>
+            </kinetic_reactant>
+            <kinetic_reactant>
+                <name>Aerobic_Growth_Xa_on_Snh</name>
+                <chemical_formula>Do -18.04166667  Sno 4.166666667  Snh -4.236666667</chemical_formula>
+                <initial_amount>1.0</initial_amount>
+                <fix_amount>true</fix_amount>
+            </kinetic_reactant>
+            <kinetic_reactant>
+                <name>Lysis_Xa</name>
+                <chemical_formula>Sf 0.05  Snh 0.0315</chemical_formula>
+                <initial_amount>1.0</initial_amount>
+                <fix_amount>true</fix_amount>
+            </kinetic_reactant>
+            <kinetic_reactant>
+                <name>Growth_Xfb</name>
+                <chemical_formula>Sf -18.86792453  Sa 17.86792453  Snh 0.496037736</chemical_formula>
+                <initial_amount>1.0</initial_amount>
+                <fix_amount>true</fix_amount>
+            </kinetic_reactant>
+            <kinetic_reactant>
+                <name>Lysis_Xfb</name>
+                <chemical_formula>Sf 0.05  Snh 0.0315</chemical_formula>
+                <initial_amount>1.0</initial_amount>
+                <fix_amount>true</fix_amount>
+            </kinetic_reactant>
+            <kinetic_reactant>
+                <name>Growth_Xamb</name>
+                <chemical_formula>Sa -31.25 Snh -0.07</chemical_formula>
+                <initial_amount>1.0</initial_amount>
+                <fix_amount>true</fix_amount>
+            </kinetic_reactant>
+            <kinetic_reactant>
+                <name>Lysis_Xamb</name>
+                <chemical_formula>Sf 0.05   Snh 0.0315</chemical_formula>
+                <initial_amount>1.0</initial_amount>
+                <fix_amount>true</fix_amount>
+            </kinetic_reactant>
+            <kinetic_reactant>
+                <name>Growth_Xasrb</name>
+                <chemical_formula>Sa -20  Sso -9.5  Sulphide 9.5  Snh   -0.07</chemical_formula>
+                <initial_amount>1.0</initial_amount>
+                <fix_amount>true</fix_amount>
+            </kinetic_reactant>
+            <kinetic_reactant>
+                <name>Lysis_Xasrb</name>
+                <chemical_formula>Sf 0.05   Snh 0.0315</chemical_formula>
+                <initial_amount>1.0</initial_amount>
+                <fix_amount>true</fix_amount>
+            </kinetic_reactant>
+            <kinetic_reactant>
+                <name>Aerobic_Growth_Xsob</name>
+                <chemical_formula>Do    -15.66666667  Sso 8.333333333       Sulphide -8.333333333   Snh -0.07</chemical_formula>
+                <initial_amount>1.0</initial_amount>
+                <fix_amount>true</fix_amount>
+            </kinetic_reactant>
+            <kinetic_reactant>
+                <name>Anoxic_Growth_Xsob</name>
+                <chemical_formula>Sno -8.380952381  Sso 8.333333333     Sulphide -8.333333333   Snh -0.07</chemical_formula>
+                <initial_amount>1.0</initial_amount>
+                <fix_amount>true</fix_amount>
+            </kinetic_reactant>
+            <kinetic_reactant>
+                <name>Lysis_Xsob</name>
+                <chemical_formula>Sf 0.05   Snh 0.0315</chemical_formula>
+                <initial_amount>1.0</initial_amount>
+                <fix_amount>true</fix_amount>
+            </kinetic_reactant>
+            <kinetic_reactant>
+                <name>Xh</name>
+                <chemical_formula>Do 0</chemical_formula>
+                <initial_amount>1.0e-3</initial_amount>
+            </kinetic_reactant>
+            <kinetic_reactant>
+                <name>Xa</name>
+                <chemical_formula>Do 0</chemical_formula>
+                <initial_amount>1.0e-3</initial_amount>
+            </kinetic_reactant>
+            <kinetic_reactant>
+                <name>Xfb</name>
+                <chemical_formula>Do 0</chemical_formula>
+                <initial_amount>1.0e-3</initial_amount>
+            </kinetic_reactant>
+            <kinetic_reactant>
+                <name>Xamb</name>
+                <chemical_formula>Do 0</chemical_formula>
+                <initial_amount>1.0e-3</initial_amount>
+            </kinetic_reactant>
+            <kinetic_reactant>
+                <name>Xasrb</name>
+                <chemical_formula>Do 0</chemical_formula>
+                <initial_amount>1.0e-3</initial_amount>
+            </kinetic_reactant>
+            <kinetic_reactant>
+                <name>Xsob</name>
+                <chemical_formula>Do 0</chemical_formula>
+                <initial_amount>1.0e-3</initial_amount>
+            </kinetic_reactant>
+            <kinetic_reactant>
+                <name>Xs_im</name>
+                <chemical_formula>Do 0</chemical_formula>
+                <initial_amount>1.0e-4</initial_amount>
+            </kinetic_reactant>
+            <kinetic_reactant>
+                <name>Xi_im</name>
+                <chemical_formula>Do 0</chemical_formula>
+                <initial_amount>1.0e-4</initial_amount>
+            </kinetic_reactant>
+        </kinetic_reactants>
         <rates>
             <rate>
                 <kinetic_reactant>Aeration</kinetic_reactant>
                 <expression>
                     <statement>So2 = MOL("Do")</statement>
                     <statement>So2_sat = CALC_VALUE("So_sat")</statement>
-                    <statement>if So2 > So2_sat then goto 8</statement>
+                    <statement>if So2 &gt; So2_sat then goto 8</statement>
                     <statement>kLa = 2 / 3600</statement>
                     <statement>r_So2 = So2_sat - So2</statement>
                     <statement>rates = CALC_VALUE("kLa_theta") * kLa * r_So2</statement>
@@ -1386,12 +1387,12 @@
                     <statement>SAVE dGrowth</statement>
                 </expression>
             </rate>
-                        <rate>
+            <rate>
                 <kinetic_reactant>AttDetachment_Xi</kinetic_reactant>
                 <expression>
                     <statement>Xi_mob = MOL("Xi_m")</statement>
                     <statement>Xi_immob = KIN("Xi_im")</statement>
-                    <statement>IF Xi_immob >= 30.0 THEN GOTO 10</statement>
+                    <statement>IF Xi_immob &gt;= 30.0 THEN GOTO 10</statement>
                     <statement>k_att = 0.1 /3600</statement>
                     <statement>k_det = 0</statement>
                     <statement>r_Att = k_att * Xi_mob</statement>
@@ -1401,7 +1402,7 @@
                     <statement>SAVE dGrowth</statement>
                 </expression>
             </rate>
-                        <rate>
+            <rate>
                 <kinetic_reactant>AttDetachment_Xs</kinetic_reactant>
                 <expression>
                     <statement>Xs_mob = MOL("Xs_m")</statement>
@@ -1429,7 +1430,7 @@
                     <statement>SAVE dHydrolysis</statement>
                 </expression>
             </rate>
-                        <rate>
+            <rate>
                 <kinetic_reactant>Hydrolysis_Xs_im</kinetic_reactant>
                 <expression>
                     <statement>Xs_im = KIN("Xs_im")</statement>
@@ -1463,7 +1464,7 @@
                     <statement>SAVE dGrowth</statement>
                 </expression>
             </rate>
-                        <rate>
+            <rate>
                 <kinetic_reactant>Anoxic_Growth_Xh_on_Sf</kinetic_reactant>
                 <expression>
                     <statement>Sf = MOL("Sf")</statement>
@@ -1505,7 +1506,7 @@
                     <statement>SAVE dGrowth</statement>
                 </expression>
             </rate>
-                        <rate>
+            <rate>
                 <kinetic_reactant>Anoxic_Growth_Xh_on_Sa</kinetic_reactant>
                 <expression>
                     <statement>Sf = MOL("Sf")</statement>
@@ -1537,7 +1538,7 @@
                     <statement>SAVE dLysis</statement>
                 </expression>
             </rate>
-                        <rate>
+            <rate>
                 <kinetic_reactant>Aerobic_Growth_Xa_on_Snh</kinetic_reactant>
                 <expression>
                     <statement>So2 = MOL("Do")</statement>
@@ -1563,7 +1564,7 @@
                     <statement>SAVE dLysis</statement>
                 </expression>
             </rate>
-                        <rate>
+            <rate>
                 <kinetic_reactant>Growth_Xfb</kinetic_reactant>
                 <expression>
                     <statement>Sf = MOL("Sf")</statement>
@@ -1583,7 +1584,7 @@
                     <statement>SAVE dGrowth</statement>
                 </expression>
             </rate>
-                        <rate>
+            <rate>
                 <kinetic_reactant>Lysis_Xfb</kinetic_reactant>
                 <expression>
                     <statement>Xfb = KIN("Xfb")</statement>
@@ -1623,7 +1624,7 @@
                     <statement>SAVE dLysis</statement>
                 </expression>
             </rate>
-                        <rate>
+            <rate>
                 <kinetic_reactant>Growth_Xasrb</kinetic_reactant>
                 <expression>
                     <statement>Sa = MOL("Sa")</statement>
@@ -1655,7 +1656,7 @@
                     <statement>SAVE dLysis</statement>
                 </expression>
             </rate>
-                        <rate>
+            <rate>
                 <kinetic_reactant>Aerobic_Growth_Xsob</kinetic_reactant>
                 <expression>
                     <statement>So2 = MOL("Do")</statement>
@@ -1699,7 +1700,7 @@
                     <statement>SAVE dLysis</statement>
                 </expression>
             </rate>
-                        <rate>
+            <rate>
                 <kinetic_reactant>Xs_im</kinetic_reactant>
                 <expression>
                     <statement>dGrowth = KIN_DELTA("AttDetachment_Xs")</statement>
@@ -1778,7 +1779,7 @@
                     <statement>SAVE dGrowth</statement>
                 </expression>
             </rate>
-                </rates>
+        </rates>
         <knobs>
             <max_iter>100</max_iter>
             <relative_convergence_tolerance>1e-12</relative_convergence_tolerance>
@@ -1826,7 +1827,7 @@
             <value>8829</value>
         </parameter>
         <!-- components related -->
-         <parameter>
+        <parameter>
             <name>c_CurveScaled</name>
             <type>Constant</type>
             <value>1.0</value>
