@@ -110,9 +110,13 @@ Output::Output(std::string output_directory, std::string output_file_prefix,
 void Output::addProcess(ProcessLib::Process const& process,
                         const int process_id)
 {
-    auto const filename = BaseLib::joinPaths(
-        _output_directory,
-        _output_file_prefix + "_pcs_" + std::to_string(process_id) + ".pvd");
+    INFO("addProcess {}", _output_file_prefix);
+    auto const filename =
+        BaseLib::joinPaths(_output_directory,
+                           BaseLib::constructFormattedFileName(
+                               _output_file_prefix, process.getMesh().getName(),
+                               process_id, 0, 0) +
+                               ".pvd");
     _process_to_process_data.emplace(std::piecewise_construct,
                                      std::forward_as_tuple(&process),
                                      std::forward_as_tuple(filename));
