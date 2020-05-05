@@ -85,7 +85,8 @@ bool Output::shallDoOutput(int timestep, double const t)
 }
 
 Output::Output(std::string output_directory, std::string output_file_prefix,
-               bool const compress_output, std::string const& data_mode,
+               std::string output_file_suffix, bool const compress_output,
+               std::string const& data_mode,
                bool const output_nonlinear_iteration_results,
                std::vector<PairRepeatEachSteps> repeats_each_steps,
                std::vector<double>&& fixed_output_times,
@@ -94,6 +95,7 @@ Output::Output(std::string output_directory, std::string output_file_prefix,
                std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes)
     : _output_directory(std::move(output_directory)),
       _output_file_prefix(std::move(output_file_prefix)),
+      _output_file_suffix(std::move(output_file_suffix)),
       _output_file_compression(compress_output),
       _output_file_data_mode(convertVtkDataMode(data_mode)),
       _output_nonlinear_iteration_results(output_nonlinear_iteration_results),
