@@ -28,8 +28,7 @@ TEST(TestVtkRaster, TestPNGReader)
     double x0;
     double y0;
     double delta;
-    vtkSmartPointer<vtkImageAlgorithm> img =
-        VtkRaster::loadImage(name, x0, y0, delta);
+    vtkSmartPointer<vtkImageAlgorithm> img = VtkRaster::loadImage(name);
     img->Update();
     EXPECT_TRUE(img != nullptr);
     EXPECT_TRUE(img->GetOutput() != nullptr);
@@ -57,8 +56,7 @@ TEST(TestVtkRaster, TestASCReader)
     double x0;
     double y0;
     double delta;
-    vtkSmartPointer<vtkImageAlgorithm> img =
-        VtkRaster::loadImage(name, x0, y0, delta);
+    vtkSmartPointer<vtkImageAlgorithm> img = VtkRaster::loadImage(name);
     img->Update();
     EXPECT_TRUE(img != nullptr);
     EXPECT_TRUE(img->GetOutput() != nullptr);
