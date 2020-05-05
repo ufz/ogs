@@ -15,6 +15,8 @@
 
 #include "MaterialLib/MPL/Medium.h"
 
+#include "GetSaturationVanGenuchten.h"
+
 namespace MaterialPropertyLib
 {
 SaturationVanGenuchten::SaturationVanGenuchten(
@@ -49,12 +51,8 @@ PropertyDataType SaturationVanGenuchten::value(
         return S_L_max_;
     }
 
-    double const p = p_cap / p_b_;
-    double const n = 1. / (1. - m_);
-    double const p_to_n = std::pow(p, n);
-
-    double const S_eff = std::pow(p_to_n + 1., -m_);
-    double const S = S_eff * S_L_max_ - S_eff * S_L_res_ + S_L_res_;
+    double const S =
+        getSaturationVanGenuchten(p_cap, p_b_, S_L_res_, S_L_max_, m_);
     return std::clamp(S, S_L_res_, S_L_max_);
 }
 
