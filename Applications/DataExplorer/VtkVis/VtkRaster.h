@@ -55,9 +55,7 @@ private:
      * \param delta The size of each pixel in the image which is needed for correctly displaying the data.
      * \return A vtkImageImport-object (derived from vtkImageAlgorithm).
      */
-    static vtkImageAlgorithm* loadImageFromTIFF(const std::string& fileName,
-                                                double& x0, double& y0,
-                                                double& cellsize);
+    static vtkImageAlgorithm* loadImageFromTIFF(const std::string& fileName);
 #endif
 
     /**

@@ -120,7 +120,6 @@ vtkImageAlgorithm* VtkRaster::loadImageFromTIFF(const std::string& fileName)
 
         int version[3];
         int count (0);
-        double x0, double y0, cellsize;
         GTIFDirectoryInfo(geoTiff, version, &count);
 
         if (count == 0)
@@ -128,6 +127,9 @@ vtkImageAlgorithm* VtkRaster::loadImageFromTIFF(const std::string& fileName)
 
         if (geoTiff)
         {
+            double x0 = 0.0;
+            double y0 = 0.0;
+            double cellsize = 1.0;
             int imgWidth = 0;
             int imgHeight = 0;
             int nImages = 0;
