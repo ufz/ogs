@@ -80,5 +80,7 @@ private:
     double const m_;          ///< Exponent.
     double const p_b_;        ///< Pressure scaling factor.
     double const p_cap_max_;  ///< Maximum capillary pressure.
+    /// Saturation for Maximum capillary pressure.
+    double const S_for_p_cap_max_;
 };
 }  // namespace MaterialPropertyLib

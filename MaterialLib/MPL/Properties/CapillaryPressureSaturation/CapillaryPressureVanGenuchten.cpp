@@ -15,9 +15,20 @@
 #include <cmath>
 
 #include "MaterialLib/MPL/Medium.h"
+#include "GetSaturationVanGenuchten.h"
 
 namespace MaterialPropertyLib
 {
+double getCapillaryPressure(double const S_L, double const p_b,
+                            double const S_L_res, double const S_L_max,
+                            double const m)
+{
+    double const S_eff = (S_L - S_L_res) / (S_L_max - S_L_res);
+    assert(0 <= S_eff && S_eff <= 1);
+
+    return p_b * std::pow(std::pow(S_eff, -1.0 / m) - 1.0, 1.0 - m);
+}
+
 CapillaryPressureVanGenuchten::CapillaryPressureVanGenuchten(
     double const residual_liquid_saturation,
     double const residual_gas_saturation,
@@ -28,16 +39,13 @@ CapillaryPressureVanGenuchten::CapillaryPressureVanGenuchten(
       S_L_max_(1. - residual_gas_saturation),
       m_(exponent),
       p_b_(p_b),
-      p_cap_max_(maximum_capillary_pressure)
+      p_cap_max_(std::min(maximum_capillary_pressure,
+                          getCapillaryPressure(S_L_res_ + 1.0e-9, p_b_,
+                                               S_L_res_, S_L_max_, m_))),
+      S_for_p_cap_max_(std::max(
+          S_L_res_ + 1.0e-9,
+          getSaturationVanGenuchten(p_cap_max_, p_b_, S_L_res_, S_L_max_, m_)))
 {
-    if (S_L_res_ < 0 || S_L_res_ > 1)
-    {
-        OGS_FATAL(
-            "Van Genuchten capillary pressure model: "
-            "The residual liquid saturation value S_L_res = {:g} is out of "
-            "admissible range [0, 1].",
-            S_L_res_);
-    }
     if (S_L_max_ < 0 || S_L_max_ > 1)
     {
         OGS_FATAL(
@@ -86,7 +94,7 @@ PropertyDataType CapillaryPressureVanGenuchten::value(
     double const S_L = std::get<double>(
         variable_array[static_cast<int>(Variable::liquid_saturation)]);
 
-    if (S_L <= S_L_res_)
+    if (S_L <= S_for_p_cap_max_)
     {
         return p_cap_max_;
     }
@@ -96,12 +104,8 @@ PropertyDataType CapillaryPressureVanGenuchten::value(
         return 0;
     }
 
-    double const S_eff = (S_L - S_L_res_) / (S_L_max_ - S_L_res_);
-    assert(0 <= S_eff && S_eff <= 1);
-
     double const p_cap =
-        p_b_ * std::pow(std::pow(S_eff, -1.0 / m_) - 1.0, 1.0 - m_);
-    assert(p_cap > 0);
+        getCapillaryPressure(S_L, p_b_, S_L_res_, S_L_max_, m_);
     return std::min(p_cap, p_cap_max_);
 }
 
@@ -118,28 +122,20 @@ PropertyDataType CapillaryPressureVanGenuchten::dValue(
     double const S_L = std::get<double>(
         variable_array[static_cast<int>(Variable::liquid_saturation)]);
 
-    if (S_L <= S_L_res_)
-    {
-        return 0;
-    }
-
     if (S_L >= S_L_max_)
     {
         return 0;
     }
 
-    double const S_eff = (S_L - S_L_res_) / (S_L_max_ - S_L_res_);
+    const double S = (S_L > S_for_p_cap_max_) ? S_L : S_for_p_cap_max_;
+
+    double const S_eff = (S - S_L_res_) / (S_L_max_ - S_L_res_);
 
     assert(0 < S_eff && S_eff < 1.0);
 
     double const val1 = std::pow(S_eff, -1.0 / m_);
-    double const p_cap = p_b_ * std::pow(val1 - 1.0, 1.0 - m_);
-    if (p_cap >= p_cap_max_)
-    {
-        return 0;
-    }
 
-    double const val2 = std::pow(val1 - 1.0, -m_);
+    double const val2 = std::pow(val1 - 1.0, - m_);
     return p_b_ * (m_ - 1.0) * val1 * val2 / (m_ * (S_L - S_L_res_));
 }
 }  // namespace MaterialPropertyLib
