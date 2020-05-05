@@ -147,10 +147,12 @@ Output::ProcessData* Output::findProcessData(Process const& process,
 struct Output::OutputFile
 {
     OutputFile(std::string const& directory, std::string const& prefix,
-               std::string const& mesh_name, int const process_id,
-               int const timestep, double const t, int const data_mode_,
-               bool const compression_)
+               std::string const& suffix, std::string const& mesh_name,
+               int const process_id, int const timestep, double const t,
+               int const data_mode_, bool const compression_)
         : name(BaseLib::constructFormattedFileName(prefix, mesh_name,
+                                                   process_id, timestep, t) +
+               BaseLib::constructFormattedFileName(suffix, mesh_name,
                                                    process_id, timestep, t) +
                ".vtu"),
           path(BaseLib::joinPaths(directory, name)),
@@ -220,8 +222,9 @@ void Output::doOutputAlways(Process const& process,
     auto output_bulk_mesh = [&]() {
         outputBulkMesh(
             OutputFile(_output_directory, _output_file_prefix,
-                       process.getMesh().getName(), process_id, timestep, t,
-                       _output_file_data_mode, _output_file_compression),
+                       _output_file_suffix, process.getMesh().getName(),
+                       process_id, timestep, t, _output_file_data_mode,
+                       _output_file_compression),
             findProcessData(process, process_id), process.getMesh(), t);
     };
     // Write the bulk mesh only if there are no other meshes specified for
@@ -281,6 +284,7 @@ void Output::doOutputAlways(Process const& process,
 
         OutputFile const output_file{_output_directory,
                                      _output_file_prefix,
+                                     _output_file_suffix,
                                      mesh.getName(),
                                      process_id,
                                      timestep,
