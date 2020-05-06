@@ -1,13 +1,14 @@
-Template for the prefix which will be prepended to the output files. Allowed
+Template for the suffix which will be appended to the output files. Allowed
 template expressions are:
 - {:meshname}
 - {:process_id}
 - {:timestep}
 - {:time}.
 
-Default value: {:meshname}{:process_id}
+Default value: ts_{:timestep}_t_{:time}
 
-Remark: The name of the pvd-file will be constructed out of the prefix.
+Remark: The name of the result files will be constructed out of the prefix and
+the suffix.
 
 Furthermore, it is possible to specifiy the format of the expressions above. For
 instance {:0>3timestep} results in a 3-digit output, if necessary with preceding
