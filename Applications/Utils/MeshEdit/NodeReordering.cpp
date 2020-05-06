@@ -49,10 +49,10 @@ void reorderNodes(std::vector<MeshLib::Element*> &elements)
                 }
                 break;
             case MeshLib::MeshElemType::PYRAMID:
-                for (std::size_t j = 0; j < 5; ++j)
-                {
-                    elements[i]->setNode(j, nodes[(j + 1) % 5]);
-                }
+                elements[i]->setNode(0, nodes[1]);
+                elements[i]->setNode(1, nodes[0]);
+                elements[i]->setNode(2, nodes[3]);
+                elements[i]->setNode(3, nodes[2]);
                 break;
             case MeshLib::MeshElemType::PRISM:
                 for(std::size_t j = 0; j < 3; ++j)
