@@ -74,47 +74,25 @@ void VtkGeoImageSource::PrintSelf(ostream& os, vtkIndent indent)
 
 bool VtkGeoImageSource::readImage(const QString &filename)
 {
-    vtkImageAlgorithm* img (VtkRaster::loadImage(filename.toStdString(), _x0, _y0, _spacing));
+    vtkImageAlgorithm* img (VtkRaster::loadImage(filename.toStdString()));
     if (img == nullptr)
     {
         return false;
     }
-    this->setImage(img, filename, _x0, _y0, _spacing);
+    this->setImage(img, filename);
     return true;
 }
 
-void VtkGeoImageSource::setImage(vtkImageAlgorithm* image, const QString &name, double x0, double y0, double spacing)
+void VtkGeoImageSource::setImage(vtkImageAlgorithm* image, const QString &name)
 {
     this->_imageSource = image;
     this->SetInputConnection(_imageSource->GetOutputPort());
     this->SetName(name);
-    _x0 = x0; _y0 = y0; _z0 = -10; _spacing = spacing;
-
-    this->GetOutput()->SetOrigin(_x0, _y0, _z0);
-    this->GetOutput()->SetSpacing(_spacing, _spacing, _spacing);
 }
 
 vtkImageData* VtkGeoImageSource::getImageData()
 {
     return this->_imageSource->GetImageDataInput(0);
-}
-
-void VtkGeoImageSource::getOrigin(double origin[3]) const
-{
-    origin[0] = this->_x0;
-    origin[1] = this->_y0;
-    origin[2] = this->_z0;
-}
-
-double VtkGeoImageSource::getSpacing() const
-{
-    return this->_spacing;
-}
-
-void VtkGeoImageSource::getRange(double range[2])
-{
-    this->_imageSource->Update();
-    _imageSource->GetOutput()->GetPointData()->GetArray(0)->GetRange(range);
 }
 
 void VtkGeoImageSource::SimpleExecute(vtkImageData* input, vtkImageData* output)

@@ -30,6 +30,8 @@
 #endif  // NDEBUG
 
 // VTK includes
+#include <vtkImageAlgorithm.h>
+#include <vtkImageData.h>
 #include <vtkOBJExporter.h>
 #include <vtkRenderer.h>
 #include <vtkVRMLExporter.h>
@@ -737,11 +739,10 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
     else if (t == ImportFileType::POLYRASTER)
     {
         QImage raster;
-        double origin[2];
-        double cellSize;
-        vtkImageAlgorithm* imageAlgorithm = VtkRaster::loadImage(fileName.toStdString(), origin[0], origin[1], cellSize);
+        vtkImageAlgorithm* img = VtkRaster::loadImage(fileName.toStdString());
         VtkBGImageSource* bg = VtkBGImageSource::New();
-        bg->SetRaster(imageAlgorithm, origin[0], origin[1], cellSize);
+        double* origin = img->GetOutput()->GetOrigin();
+        bg->SetRaster(img, origin[0], origin[1], img->GetOutput()->GetSpacing()[0]);
         bg->SetName(fileName);
         _vtkVisPipeline->addPipelineItem(bg);
         settings.setValue("lastOpenedRasterFileDirectory", dir.absolutePath());

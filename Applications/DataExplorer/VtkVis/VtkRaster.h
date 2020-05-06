@@ -39,28 +39,17 @@ public:
      * Public method for loading all data formats. Internally the method automatically differentiates between
      * images and georeferenced files and then calls the appropriate method for reading the file.
      * \param fileName Filename of the file that should be loaded.
-     * \param x0 X-coordinate of the upper left corner of the data set, the default value is 0.
-     * \param y0 Y-coordinate of the upper left corner of the data set, the default value is 0.
-     * \param delta The size of each pixel in the image which is needed for correctly displaying the data, the default value is 1.
      * \return The ImageAlgorithm-object.
      */
-    static vtkImageAlgorithm* loadImage(const std::string &fileName,
-                                        double& x0,
-                                        double& y0,
-                                        double& delta);
+    static vtkImageAlgorithm* loadImage(const std::string &fileName);
 private:
 #ifdef GEOTIFF_FOUND
     /**
      * Loads ArcGIS asc-files to a QPixmap object and automatically does a contrast stretching to adjust values to 8 bit greyscale images.
      * \param fileName Filename of the file that should be loaded.
-     * \param x0 X-coordinate of the upper left corner of the data set, the default value is 0.
-     * \param y0 Y-coordinate of the upper left corner of the data set, the default value is 0.
-     * \param delta The size of each pixel in the image which is needed for correctly displaying the data.
      * \return A vtkImageImport-object (derived from vtkImageAlgorithm).
      */
-    static vtkImageAlgorithm* loadImageFromTIFF(const std::string& fileName,
-                                                double& x0, double& y0,
-                                                double& cellsize);
+    static vtkImageAlgorithm* loadImageFromTIFF(const std::string& fileName);
 #endif
 
     /**

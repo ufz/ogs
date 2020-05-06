@@ -129,9 +129,7 @@ int VtkTextureOnSurfaceFilter::RequestData( vtkInformation* request,
     return 1;
 }
 
-void VtkTextureOnSurfaceFilter::SetRaster(vtkImageAlgorithm* img,
-                                          double x0, double y0,
-                                          double scalingFactor)
+void VtkTextureOnSurfaceFilter::SetRaster(vtkImageAlgorithm* img)
 {
     double range[2];
     img->Update();
@@ -150,8 +148,9 @@ void VtkTextureOnSurfaceFilter::SetRaster(vtkImageAlgorithm* img,
     texture->SetInputData(scale->GetOutput());
     this->SetTexture(texture);
 
-    _origin = std::pair<float, float>(static_cast<float>(x0), static_cast<float>(y0));
-    _scalingFactor = scalingFactor;
+    double* origin = img->GetOutput()->GetOrigin();
+    _origin = {origin[0], origin[1]};
+    _scalingFactor = img->GetOutput()->GetSpacing()[0];
 }
 
 void VtkTextureOnSurfaceFilter::SetUserProperty( QString name, QVariant value )

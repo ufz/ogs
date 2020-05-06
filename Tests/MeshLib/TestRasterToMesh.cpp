@@ -273,8 +273,7 @@ TEST_F(RasterToMeshTest, vtkImage)
     double x0;
     double y0;
     double spacing;
-    vtkImageAlgorithm* raster =
-        VtkRaster::loadImage(_file_name, x0, y0, spacing);
+    vtkImageAlgorithm* raster = VtkRaster::loadImage(_file_name);
     double origin[3];
     raster->GetOutput()->GetOrigin(origin);
 

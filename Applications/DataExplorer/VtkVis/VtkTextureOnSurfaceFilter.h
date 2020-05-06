@@ -46,7 +46,7 @@ public:
     void PrintSelf(ostream& os, vtkIndent indent) override;
 
     /// Sets the raster/image to be used as a texture map
-    void SetRaster(vtkImageAlgorithm* img, double x0, double y0, double scalingFactor);
+    void SetRaster(vtkImageAlgorithm* img);
 
     void SetUserProperty(QString name, QVariant value) override;
 
@@ -61,6 +61,6 @@ protected:
                     vtkInformationVector* outputVector) override;
 
 private:
-    std::pair<float, float> _origin{0, 0};
+    std::pair<double, double> _origin{0, 0};
     double _scalingFactor{0.};
 };
