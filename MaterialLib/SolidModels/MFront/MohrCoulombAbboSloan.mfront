@@ -85,7 +85,7 @@ a.setEntryName("TensionCutOffParameter");
 
     // Compute initial elastic strain
     const auto S = invert(D);
-    eel = S*sig;
+    eel = S * sig;
 
     // elastic prediction
     const auto sig_el = computeElasticPrediction();
@@ -116,7 +116,7 @@ a.setEntryName("TensionCutOffParameter");
     }
     const auto sMC =
         I1_el / 3 * sin_phi + sqrt(J2_el * K * K + a * a * sin_phi * sin_phi);
-   F = sMC - c * cos_phi > 0.;
+    F = sMC - c * cos_phi > 0.;
     np = Stensor(real(0));
 }
 
@@ -190,7 +190,8 @@ a.setEntryName("TensionCutOffParameter");
         const auto dev_s_squared = computeJ3Derivative(
             sig);  // replaces dev_s_squared = deviator(square(s));
         const auto dG_dI1 = sin_psi / 3.;
-        const auto root = max(sqrt(J2 * KG * KG + a * a * tan(phi) * tan(phi) * cos(psi) * cos(psi)),
+        const auto root = max(sqrt(J2 * KG * KG + a * a * tan(phi) * tan(phi) *
+                                                      cos(psi) * cos(psi)),
                               local_zero_tolerance);
         const auto dG_dJ2 = KG / (2. * root) * (KG - tan_3_lode * dKG_dlode);
         const auto dG_dJ3 = J2 * KG * tan_3_lode / (3. * J3 * root) * dKG_dlode;
@@ -202,10 +203,9 @@ a.setEntryName("TensionCutOffParameter");
         // yield function
         const auto rootF = max(sqrt(J2 * K * K + a * a * sin_phi * sin_phi),
                                local_zero_tolerance);
-        const auto Fy1 = I1 * sin_phi / 3 + rootF;
-        const auto Fy = Fy1 - c * cos_phi;
+        const auto Fy = I1 * sin_phi / 3 + rootF - c * cos_phi;
         // return if overshoot of yield surface
-        if (Fy1 - c * cos_phi > 1e-4 * D(0, 0))
+        if (Fy > 1e-4 * D(0, 0))
         {
             return false;
         }
@@ -217,7 +217,7 @@ a.setEntryName("TensionCutOffParameter");
         const auto nF = eval(dF_dI1 * id + dF_dJ2 * s + dF_dJ3 * dev_s_squared);
 
         // building dfeel_ddeel
-        const auto Pdev = id4 - (id ^ id) / 3;
+        const auto Pdev = Stensor4::K();
 
         const auto dG_dlode = KG * J2 / (root)*dKG_dlode;
         const auto dG_ddlode =

@@ -10,10 +10,11 @@
 @DSL Implicit;
 @Behaviour MohrCoulombAbboSloanOrtho;
 @Author Thomas Nagel;
-@Date 05/02/2019;
+@Date 05 / 02 / 2019;
 
 @Algorithm NewtonRaphson;
-//@Algorithm LevenbergMarquardt;
+@MaximumNumberOfIterations 200;
+// @Algorithm LevenbergMarquardt;
 //@CompareToNumericalJacobian true;
 //@NumericallyComputedJacobianBlocks {dfeel_ddeel};
 // remove the above blocks once an analytical one is provided.
@@ -23,7 +24,7 @@
 @OrthotropicBehaviour<Pipe>;
 @Brick StandardElasticity;
 
-@Theta 1.0;       // time integration scheme
+@Theta 1.0;      // time integration scheme
 @Epsilon 1e-14;  // tolerance of local stress integration algorithm
 @ModellingHypotheses{".+"};
 
@@ -83,7 +84,7 @@ a.setEntryName("TensionCutOffParameter");
 
     // Compute initial elastic strain
     const auto S = invert(D);
-    eel = S*sig;
+    eel = S * sig;
 
     // elastic prediction
     const auto sig_el = computeElasticPrediction();
@@ -114,8 +115,7 @@ a.setEntryName("TensionCutOffParameter");
     }
     const auto sMC =
         I1_el / 3 * sin_phi + sqrt(J2_el * K * K + a * a * sin_phi * sin_phi);
-        //(int)(d * 1000.0)/1000.0
-    F = (sMC - c * cos_phi) / D(0,0) > 0.;
+    F = sMC - c * cos_phi > 0.;
     np = Stensor(real(0));
 }
 
@@ -189,22 +189,22 @@ a.setEntryName("TensionCutOffParameter");
         const auto dev_s_squared = computeJ3Derivative(
             sig);  // replaces dev_s_squared = deviator(square(s));
         const auto dG_dI1 = sin_psi / 3.;
-        const auto root = max(sqrt(J2 * KG * KG + a * a * sin_psi * sin_psi),
+        const auto root = max(sqrt(J2 * KG * KG + a * a * tan(phi) * tan(phi) *
+                                                      cos(psi) * cos(psi)),
                               local_zero_tolerance);
         const auto dG_dJ2 = KG / (2. * root) * (KG - tan_3_lode * dKG_dlode);
         const auto dG_dJ3 = J2 * KG * tan_3_lode / (3. * J3 * root) * dKG_dlode;
         const auto n = eval(dG_dI1 * id + dG_dJ2 * s + dG_dJ3 * dev_s_squared);
-	  if (this->iter > 30 && abs(n | np) < sqrt(n | n) * sqrt(np | np) * 0.99)
+        if (this->iter > 30 && abs(n | np) < sqrt(n | n) * sqrt(np | np) * 0.99)
         {
             return false;
         }
-	  //yield function
+        // yield function
         const auto rootF = max(sqrt(J2 * K * K + a * a * sin_phi * sin_phi),
                                local_zero_tolerance);
-        const auto Fy1 = I1 * sin_phi / 3 + rootF;
-        const auto Fy = Fy1 - c * cos_phi;
+        const auto Fy = I1 * sin_phi / 3 + rootF - c * cos_phi;
         // return if overshoot of yield surface
-        if (Fy1 - c * cos_phi > 1e-4 * D(0, 0))
+        if (Fy > 1e-4 * D(0, 0))
         {
             return false;
         }
@@ -215,7 +215,7 @@ a.setEntryName("TensionCutOffParameter");
         const auto nF = eval(dF_dI1 * id + dF_dJ2 * s + dF_dJ3 * dev_s_squared);
 
         // building dfeel_ddeel
-        const auto Pdev = id4 - (id ^ id) / 3;
+        const auto Pdev = Stensor4::K();
 
         const auto dG_dlode = KG * J2 / (root)*dKG_dlode;
         const auto dG_ddlode =
@@ -254,6 +254,6 @@ a.setEntryName("TensionCutOffParameter");
         flam = Fy / D(0, 0);
         dflam_ddlam = strain(0);
         dflam_ddeel = theta * (nF | D) / D(0, 0);
-	  np = n;
+        np = n;
     }
 }
