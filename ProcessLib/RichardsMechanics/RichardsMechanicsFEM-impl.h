@@ -1385,7 +1385,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                      DisplacementDim>::
     computeSecondaryVariableConcrete(double const t, double const dt,
                                      std::vector<double> const& local_x,
-                                     std::vector<double> const& /*local_x_dot*/)
+                                     std::vector<double> const& local_x_dot)
 {
     auto p_L =
         Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
@@ -1396,6 +1396,20 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         Eigen::Map<typename ShapeMatricesTypeDisplacement::template VectorType<
             displacement_size> const>(local_x.data() + displacement_index,
                                       displacement_size);
+
+    auto p_L_dot =
+        Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
+            pressure_size> const>(local_x_dot.data() + pressure_index,
+                                  pressure_size);
+    auto u_dot =
+        Eigen::Map<typename ShapeMatricesTypeDisplacement::template VectorType<
+            displacement_size> const>(local_x_dot.data() + displacement_index,
+                                      displacement_size);
+
+    auto const& identity2 = MathLib::KelvinVector::Invariants<
+        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value>::
+        identity2;
+
     auto const& medium = _process_data.media_map->getMedium(_element.getID());
     auto const& liquid_phase = medium->phase("AqueousLiquid");
     auto const& solid_phase = medium->phase("Solid");
@@ -1433,6 +1447,10 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         double p_cap_ip;
         NumLib::shapeFunctionInterpolate(-p_L, N_p, p_cap_ip);
+
+        double p_cap_dot_ip;
+        NumLib::shapeFunctionInterpolate(-p_L_dot, N_p, p_cap_dot_ip);
+
         variables[static_cast<int>(MPL::Variable::capillary_pressure)] =
             p_cap_ip;
         variables[static_cast<int>(MPL::Variable::phase_pressure)] = -p_cap_ip;
@@ -1440,16 +1458,38 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const temperature =
             medium->property(MPL::PropertyType::reference_temperature)
                 .template value<double>(variables, x_position, t, dt);
-
         variables[static_cast<int>(MPL::Variable::temperature)] = temperature;
+
         auto& eps = _ip_data[ip].eps;
         auto& S_L = _ip_data[ip].saturation;
+        auto const S_L_prev = _ip_data[ip].saturation_prev;
         S_L = medium->property(MPL::PropertyType::saturation)
                   .template value<double>(variables, x_position, t, dt);
         variables[static_cast<int>(MPL::Variable::liquid_saturation)] = S_L;
+        variables[static_cast<int>(MPL::Variable::liquid_saturation_rate)] =
+            (S_L - S_L_prev) / dt;
 
-        variables[static_cast<int>(MPL::Variable::transport_porosity)] =
-            _ip_data[ip].transport_porosity;
+        auto const chi = [medium, x_position, t, dt](double const S_L) {
+            MPL::VariableArray variables;
+            variables.fill(std::numeric_limits<double>::quiet_NaN());
+            variables[static_cast<int>(MPL::Variable::liquid_saturation)] = S_L;
+            return medium->property(MPL::PropertyType::bishops_effective_stress)
+                .template value<double>(variables, x_position, t, dt);
+        };
+        double const chi_S_L = chi(S_L);
+        double const chi_S_L_prev = chi(S_L_prev);
+
+        variables[static_cast<int>(
+            MPL::Variable::effective_pore_pressure_rate)] =
+            (chi_S_L * (-p_cap_ip) -
+             chi_S_L_prev * (-p_cap_ip + p_cap_dot_ip * dt)) /
+            dt;
+
+        // Set volumetric strain rate for the general case without swelling.
+        double const div_u_dot = identity2.transpose() * B * u_dot;
+        variables[static_cast<int>(MPL::Variable::volumetric_strain_rate)]
+            .emplace<double>(div_u_dot);
+
         auto& porosity = _ip_data[ip].porosity;
         {  // Porosity update
 
@@ -1463,6 +1503,57 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             variables[static_cast<int>(MPL::Variable::porosity)] = porosity;
         }
 
+        // Swelling and possibly volumetric strain rate update.
+        auto& sigma_sw = _ip_data[ip].sigma_sw;
+        {
+            auto const& sigma_sw_prev = _ip_data[ip].sigma_sw_prev;
+
+            // If there is swelling, compute it. Update volumetric strain rate,
+            // s.t. it corresponds to the mechanical part only.
+            sigma_sw = sigma_sw_prev;
+            if (solid_phase.hasProperty(
+                    MPL::PropertyType::swelling_stress_rate))
+            {
+                using DimMatrix = Eigen::Matrix<double, 3, 3>;
+                auto const sigma_sw_dot =
+                    MathLib::KelvinVector::tensorToKelvin<DisplacementDim>(
+                        solid_phase
+                            .property(MPL::PropertyType::swelling_stress_rate)
+                            .template value<DimMatrix>(variables, x_position, t,
+                                                       dt));
+                sigma_sw += sigma_sw_dot * dt;
+
+                auto const C_el = _ip_data[ip].computeElasticTangentStiffness(
+                    t, x_position, dt, temperature);
+
+                variables[static_cast<int>(
+                              MPL::Variable::volumetric_strain_rate)]
+                    .emplace<double>(div_u_dot + identity2.transpose() *
+                                                     C_el.inverse() *
+                                                     sigma_sw_dot);
+            }
+
+            if (solid_phase.hasProperty(MPL::PropertyType::transport_porosity))
+            {
+                double& phi_tr = _ip_data[ip].transport_porosity;
+
+                // Use previous time step transport_porosity for
+                // transport_porosity update, ...
+                variables[static_cast<int>(MPL::Variable::transport_porosity)] =
+                    _ip_data[ip].transport_porosity_prev;
+                // ... then use new transport_porosity.
+                phi_tr =
+                    solid_phase.property(MPL::PropertyType::transport_porosity)
+                        .template value<double>(variables, x_position, t, dt);
+                variables[static_cast<int>(MPL::Variable::transport_porosity)] =
+                    phi_tr;
+            }
+            else
+            {
+                variables[static_cast<int>(MPL::Variable::transport_porosity)] =
+                    porosity;
+            }
+        }
         auto const mu = liquid_phase.property(MPL::PropertyType::viscosity)
                             .template value<double>(variables, x_position, t, dt);
         auto const rho_LR =
