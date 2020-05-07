@@ -172,25 +172,8 @@ private:
     // There should be only one.
     std::vector<double> getSigma() const override
     {
-        auto const kelvin_vector_size =
-            MathLib::KelvinVector::KelvinVectorDimensions<
-                DisplacementDim>::value;
-        unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
-
-        std::vector<double> ip_sigma_values;
-        auto cache_mat = MathLib::createZeroedMatrix<Eigen::Matrix<
-            double, Eigen::Dynamic, kelvin_vector_size, Eigen::RowMajor>>(
-            ip_sigma_values, n_integration_points, kelvin_vector_size);
-
-        for (unsigned ip = 0; ip < n_integration_points; ++ip)
-        {
-            auto const& sigma = _ip_data[ip].sigma_eff;
-            cache_mat.row(ip) =
-                MathLib::KelvinVector::kelvinVectorToSymmetricTensor(sigma);
-        }
-
-        return ip_sigma_values;
+        return ProcessLib::getIntegrationPointKelvinVector<DisplacementDim>(
+            _ip_data, &IpData::sigma_eff);
     }
 
     std::vector<double> const& getIntPtSigma(
