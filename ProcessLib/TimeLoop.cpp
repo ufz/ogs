@@ -28,8 +28,8 @@ namespace
 //! which is Picard or Newton depending on the NLTag.
 template <NumLib::NonlinearSolverTag NLTag>
 void setEquationSystem(NumLib::NonlinearSolverBase& nonlinear_solver,
-                              NumLib::EquationSystem& eq_sys,
-                              NumLib::ConvergenceCriterion& conv_crit)
+                       NumLib::EquationSystem& eq_sys,
+                       NumLib::ConvergenceCriterion& conv_crit)
 {
     using Solver = NumLib::NonlinearSolver<NLTag>;
     using EqSys = NumLib::NonlinearSystem<NLTag>;
@@ -46,9 +46,9 @@ void setEquationSystem(NumLib::NonlinearSolverBase& nonlinear_solver,
 //! Sets the EquationSystem for the given nonlinear solver,
 //! transparently both for Picard and Newton solvers.
 void setEquationSystem(NumLib::NonlinearSolverBase& nonlinear_solver,
-                              NumLib::EquationSystem& eq_sys,
-                              NumLib::ConvergenceCriterion& conv_crit,
-                              NumLib::NonlinearSolverTag nl_tag)
+                       NumLib::EquationSystem& eq_sys,
+                       NumLib::ConvergenceCriterion& conv_crit,
+                       NumLib::NonlinearSolverTag nl_tag)
 {
     using Tag = NumLib::NonlinearSolverTag;
     switch (nl_tag)
@@ -467,7 +467,6 @@ void TimeLoop::initialize()
         outputSolutions(output_initial_condition, 0, _start_time, *_output,
                         &Output::doOutput);
     }
-
 }
 
 /*
@@ -670,8 +669,7 @@ NumLib::NonlinearSolverStatus TimeLoop::solveUncoupledEquationSystems(
         if (!nonlinear_solver_status.error_norms_met)
         {
             ERR("The nonlinear solver failed in time step #{:d} at t = {:g} s "
-                "for "
-                "process #{:d}.",
+                "for process #{:d}.",
                 timestep_id, t, process_id);
 
             if (!process_data->timestepper->canReduceTimestepSize())
@@ -749,8 +747,7 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
             if (!nonlinear_solver_status.error_norms_met)
             {
                 ERR("The nonlinear solver failed in time step #{:d} at t = "
-                    "{:g} s "
-                    "for process #{:d}.",
+                    "{:g} s for process #{:d}.",
                     timestep_id, t, process_id);
 
                 if (!process_data->timestepper->canReduceTimestepSize())
