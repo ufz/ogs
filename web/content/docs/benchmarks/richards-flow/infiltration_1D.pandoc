@@ -21,7 +21,7 @@ This benchmark evaluates vertical water infiltration into an initially unsaturat
 
 ## Problem description
 
-The problem describes a transient infiltration process. The area of the simulation domain that is evaluated is $1 m$ deep and initially unsaturated where the initial condition is defined as hydraulic pressure $p_{IC} = -1 m = -9810 Pa$. The upper boundary condition is a Dirichlet type with $p_{top} = 0.01 m = 98.1 Pa $. The original lower boundary condition is a Robin/Cauchy type and defined in HYDRUS-1D as a "free drainage" type; in both OGS versions, we extend the model domain to become $2 m$ and mimic the same behavior (the lower boundary condition for OGS is a no-flow Neumann type). The domain is discretized in HYDRUS-1D with line segments of $0.01 m$, in OGS with line segments of $0.005 m$.
+The problem describes a transient infiltration process. The area of the simulation domain that is evaluated is $1 m$ deep and initially unsaturated where the initial condition is defined as hydraulic pressure $p_{IC} = -1 m = -9810 Pa$. The upper boundary condition is a Dirichlet type with $p_{top} = 0.01 m = 98.1 Pa $. The original lower boundary condition in HYDRUS-1D is set as a "free drainage" type (see [2]); in both OGS versions, we extend the model domain to become $2 m$ and mimic the same behavior (the lower boundary condition for OGS is a no-flow Neumann type). The domain is discretized in HYDRUS-1D with line segments of $0.01 m$, in OGS with line segments of $0.005 m$.
 
 The parametrization is summarized in the following table. HYDRUS-1D and OGS5 use the classical Mualem-van-Genuchten formulation with parameters $\alpha$ and $n$, while OGS6 uses the formulation given in ###.
 
@@ -58,3 +58,5 @@ Evaluation of simulation results is done at $0.2$, $0.4$, $0.6$, and $0.8 m$ bel
 ## Literature
 
 [1] Rassam, Simunek, Mallants, van Genuchten (2018): The HYDRUS-1D Software Package for Simulating the One-Dimensional Movement of Water, Heat, and Multiple Solutes in Variably-Saturated Media: Tutorial. CSIRO Land and Water, Australia, pp. 183. ISBN 978-1-4863-1001-2. <https://www.pc-progress.com/en/Default.aspx?h1d-tutorials>, last access: 29 April 2020.
+
+[2] Šimůnek, van Genuchten, Šejna3 (2006): The HYDRUS Software Package for Simulating the Two- and Three-Dimensional Movement of Water, Heat, and Multiple Solutes in Variably-Saturated Media. Technical Manual, Version 1.0. PC Progress, Prague, Czech Republic. <https://www.pc-progress.com//Downloads/Pgm_Hydrus3D/HYDRUS3D Technical Manual.pdf>, last access: 05 May 2020.
