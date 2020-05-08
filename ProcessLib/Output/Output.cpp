@@ -110,7 +110,6 @@ Output::Output(std::string output_directory, std::string output_file_prefix,
 void Output::addProcess(ProcessLib::Process const& process,
                         const int process_id)
 {
-    INFO("addProcess {}", _output_file_prefix);
     auto const filename =
         BaseLib::joinPaths(_output_directory,
                            BaseLib::constructFormattedFileName(
