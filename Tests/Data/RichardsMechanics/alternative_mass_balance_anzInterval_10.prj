@@ -137,7 +137,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>alternative_mass_balance_anzInterval_10</prefix>
+            <prefix>alternative_mass_balance_anzInterval_10_pcs_{:process_id}</prefix>
             <timesteps>
                 <pair>
                     <repeat>50000</repeat>
@@ -152,6 +152,7 @@
                 <variable>velocity</variable>
                 <variable>saturation</variable>
             </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <parameters>

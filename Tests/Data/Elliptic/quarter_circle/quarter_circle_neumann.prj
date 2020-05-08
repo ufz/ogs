@@ -37,11 +37,12 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>neumann_in_center</prefix>
+            <prefix>neumann_in_center_pcs_{:process_id}</prefix>
             <variables>
                 <variable> pressure </variable>
                 <variable> v      </variable>
             </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <media>

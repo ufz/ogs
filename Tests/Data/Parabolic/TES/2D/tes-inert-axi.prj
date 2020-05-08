@@ -85,7 +85,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>tes_inert_axi</prefix>
+            <prefix>tes_inert_axi_pcs_{:process_id}</prefix>
             <timesteps>
                 <pair>
                     <repeat> 1 </repeat>
@@ -97,6 +97,7 @@
                 <variable> temperature             </variable>
                 <variable> v_mass_frac             </variable>
             </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <parameters>

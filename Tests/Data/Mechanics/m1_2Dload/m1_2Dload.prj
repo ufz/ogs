@@ -50,7 +50,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>m1_2Dload</prefix>
+            <prefix>m1_2Dload_pcs_{:process_id}</prefix>
             <data_mode>Ascii</data_mode>
             <compress_output>false</compress_output>
             <timesteps>
@@ -64,6 +64,7 @@
                 <variable>epsilon</variable>
                 <variable>sigma</variable>
             </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <parameters>

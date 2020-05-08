@@ -157,7 +157,6 @@
                             <repeat>9</repeat>
                             <delta_t>.1</delta_t>
                         </pair>
-
                         <pair>
                             <repeat>10</repeat>
                             <delta_t>.01</delta_t>
@@ -166,12 +165,10 @@
                             <repeat>9</repeat>
                             <delta_t>.1</delta_t>
                         </pair>
-
                         <pair>
                             <repeat>50</repeat>
                             <delta_t>.02</delta_t>
                         </pair>
-
                         <pair>
                             <repeat>10</repeat>
                             <delta_t>.01</delta_t>
@@ -186,7 +183,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>deformation_dependent_porosity_swelling</prefix>
+            <prefix>deformation_dependent_porosity_swelling_pcs_{:process_id}</prefix>
             <timesteps>
                 <pair>
                     <repeat>1000</repeat>
@@ -204,6 +201,7 @@
                 <variable>porosity</variable>
                 <variable>transport_porosity</variable>
             </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <parameters>

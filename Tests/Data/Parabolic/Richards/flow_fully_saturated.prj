@@ -114,7 +114,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>flow_fully_saturated</prefix>
+            <prefix>flow_fully_saturated_pcs_{:process_id}</prefix>
             <timesteps>
                 <pair>
                     <repeat>10000</repeat>
@@ -126,6 +126,7 @@
                 <variable>darcy_velocity</variable>
                 <variable>saturation</variable>
             </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <parameters>

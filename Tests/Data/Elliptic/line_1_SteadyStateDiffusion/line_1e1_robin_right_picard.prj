@@ -51,11 +51,12 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>line_1e1_robin_right_picard</prefix>
+            <prefix>line_1e1_robin_right_picard_pcs_{:process_id}</prefix>
             <variables>
                 <variable> pressure </variable>
                 <variable> v      </variable>
             </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <parameters>

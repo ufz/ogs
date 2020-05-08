@@ -149,7 +149,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>mechanics_linear</prefix>
+            <prefix>mechanics_linear_pcs_{:process_id}</prefix>
             <timesteps>
                 <pair>
                     <repeat>1</repeat>
@@ -164,6 +164,7 @@
                 <variable>velocity</variable>
                 <variable>saturation</variable>
             </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <parameters>

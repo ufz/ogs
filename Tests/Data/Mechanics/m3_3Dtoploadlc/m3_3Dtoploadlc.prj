@@ -52,7 +52,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>m3_3Dtoploadlc</prefix>
+            <prefix>m3_3Dtoploadlc_pcs_{:process_id}</prefix>
             <data_mode>Ascii</data_mode>
             <compress_output>false</compress_output>
             <timesteps>
@@ -66,77 +66,78 @@
                 <variable>epsilon</variable>
                 <variable>sigma</variable>
             </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <!-- Transversal anisotropic along z-axis -->
     <local_coordinate_system>
-      <basis_vector_0>e2</basis_vector_0>
-      <basis_vector_1>e0</basis_vector_1>
-      <basis_vector_2>e1</basis_vector_2>
+        <basis_vector_0>e2</basis_vector_0>
+        <basis_vector_1>e0</basis_vector_1>
+        <basis_vector_2>e1</basis_vector_2>
     </local_coordinate_system>
     <parameters>
-      <parameter>
-        <name>e0</name>
-        <type>Constant</type>
-        <values>1 0 0</values>
-      </parameter>
-      <parameter>
-        <name>e1</name>
-        <type>Constant</type>
-        <values>0 1 0</values>
-      </parameter>
-      <parameter>
-        <name>e2</name>
-        <type>Constant</type>
-        <values>0 0 1</values>
-      </parameter>
-      <!-- Stresses in Pa -->
-      <parameter>
-        <name>E</name>
-        <type>Constant</type>
-        <!-- E_1 E_2 E_3 -->
-        <!-- E_a E_i E_i -->
-        <values>2.8e9 7.2e9 7.2e9</values>
-      </parameter>
-      <parameter>
-        <name>G</name>
-        <type>Constant</type>
-        <!-- G_{12} G_{23} G_{13} -->
-        <!-- G_a E_i/(2(1+nu)) G_a -->
-        <values>1.2e9 2.70677e9 1.2e9</values>
-      </parameter>
-      <parameter>
-        <name>nu</name>
-        <type>Constant</type>
-        <!-- nu_{12} nu_{23} nu_{13} -->
-        <!-- nu_{ia}*E_a/E_i nu nu_{ia}*E_a/E_i -->
-        <values>0.09333333333333332 0.33 0.09333333333333332</values>
-      </parameter>
-      <parameter>
-        <name>rho</name>
-        <type>Constant</type>
-        <value>2.45e+3</value>
-      </parameter>
-      <parameter>
-        <name>zero</name>
-        <type>Constant</type>
-        <value>0.0</value>
-      </parameter>
-      <parameter>
-        <name>initial_displacement</name>
-        <type>Constant</type>
-        <values>0 0 0</values>
-      </parameter>
-      <parameter>
-        <name>rho_g_H_root2</name>
-        <type>Constant</type>
-        <value>169949.57932428076</value>
-      </parameter>
-      <parameter>
-        <name>m_rho_g_H_root2</name>
-        <type>Constant</type>
-        <value>-169949.57932428076</value>
-      </parameter>
+        <parameter>
+            <name>e0</name>
+            <type>Constant</type>
+            <values>1 0 0</values>
+        </parameter>
+        <parameter>
+            <name>e1</name>
+            <type>Constant</type>
+            <values>0 1 0</values>
+        </parameter>
+        <parameter>
+            <name>e2</name>
+            <type>Constant</type>
+            <values>0 0 1</values>
+        </parameter>
+        <!-- Stresses in Pa -->
+        <parameter>
+            <name>E</name>
+            <type>Constant</type>
+            <!-- E_1 E_2 E_3 -->
+            <!-- E_a E_i E_i -->
+            <values>2.8e9 7.2e9 7.2e9</values>
+        </parameter>
+        <parameter>
+            <name>G</name>
+            <type>Constant</type>
+            <!-- G_{12} G_{23} G_{13} -->
+            <!-- G_a E_i/(2(1+nu)) G_a -->
+            <values>1.2e9 2.70677e9 1.2e9</values>
+        </parameter>
+        <parameter>
+            <name>nu</name>
+            <type>Constant</type>
+            <!-- nu_{12} nu_{23} nu_{13} -->
+            <!-- nu_{ia}*E_a/E_i nu nu_{ia}*E_a/E_i -->
+            <values>0.09333333333333332 0.33 0.09333333333333332</values>
+        </parameter>
+        <parameter>
+            <name>rho</name>
+            <type>Constant</type>
+            <value>2.45e+3</value>
+        </parameter>
+        <parameter>
+            <name>zero</name>
+            <type>Constant</type>
+            <value>0.0</value>
+        </parameter>
+        <parameter>
+            <name>initial_displacement</name>
+            <type>Constant</type>
+            <values>0 0 0</values>
+        </parameter>
+        <parameter>
+            <name>rho_g_H_root2</name>
+            <type>Constant</type>
+            <value>169949.57932428076</value>
+        </parameter>
+        <parameter>
+            <name>m_rho_g_H_root2</name>
+            <type>Constant</type>
+            <value>-169949.57932428076</value>
+        </parameter>
     </parameters>
     <process_variables>
         <process_variable>

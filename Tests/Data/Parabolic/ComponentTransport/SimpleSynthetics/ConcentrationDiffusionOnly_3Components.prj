@@ -91,11 +91,11 @@
                             <name>density</name>
                             <type>Linear</type>
                             <reference_value>1</reference_value>
-                                <independent_variable>
-                                    <variable_name>concentration</variable_name>
-                                    <reference_condition>0</reference_condition>
-                                    <slope>0.0</slope>
-                                </independent_variable>
+                            <independent_variable>
+                                <variable_name>concentration</variable_name>
+                                <reference_condition>0</reference_condition>
+                                <slope>0.0</slope>
+                            </independent_variable>
                         </property>
                         <property>
                             <name>viscosity</name>
@@ -156,7 +156,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>DiffusionOnly_3Components</prefix>
+            <prefix>DiffusionOnly_3Components_pcs_{:process_id}</prefix>
             <timesteps>
                 <pair>
                     <repeat>1</repeat>
@@ -170,6 +170,7 @@
                 <variable>pressure</variable>
                 <variable>darcy_velocity</variable>
             </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <parameters>

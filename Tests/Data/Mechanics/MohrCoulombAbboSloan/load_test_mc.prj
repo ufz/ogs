@@ -65,7 +65,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>load_test_mc</prefix>
+            <prefix>load_test_mc_pcs_{:process_id}</prefix>
             <timesteps>
                 <pair>
                     <repeat>40</repeat>
@@ -79,6 +79,7 @@
                 <variable>ElasticStrain</variable>
                 <variable>EquivalentPlasticStrain</variable>
             </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <parameters>
@@ -255,7 +256,6 @@
             <absolute_tolerance>1e-14</absolute_tolerance>
             <relative_tolerance>1e-15</relative_tolerance>
         </vtkdiff>
-
         <vtkdiff>
             <file>load_test_mc_pcs_0_ts_20_t_20.000000.vtu</file>
             <field>displacement</field>
@@ -292,7 +292,6 @@
             <absolute_tolerance>1e-14</absolute_tolerance>
             <relative_tolerance>1e-15</relative_tolerance>
         </vtkdiff>
-
         <vtkdiff>
             <file>load_test_mc_pcs_0_ts_30_t_30.000000.vtu</file>
             <field>displacement</field>
@@ -329,7 +328,6 @@
             <absolute_tolerance>1e-14</absolute_tolerance>
             <relative_tolerance>1e-15</relative_tolerance>
         </vtkdiff>
-
         <vtkdiff>
             <file>load_test_mc_pcs_0_ts_40_t_40.000000.vtu</file>
             <field>displacement</field>

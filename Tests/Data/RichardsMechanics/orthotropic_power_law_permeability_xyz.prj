@@ -164,7 +164,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>orthotropic_power_law_permeability_xyz</prefix>
+            <prefix>orthotropic_power_law_permeability_xyz_pcs_{:process_id}</prefix>
             <timesteps>
                 <pair>
                     <repeat>1000</repeat>
@@ -180,6 +180,7 @@
                 <variable>saturation</variable>
                 <variable>porosity</variable>
             </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <local_coordinate_system>

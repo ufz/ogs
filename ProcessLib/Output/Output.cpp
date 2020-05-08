@@ -44,15 +44,6 @@ int convertVtkDataMode(std::string const& data_mode)
         "Binary, or Appended.",
         data_mode);
 }
-
-std::string constructFileName(std::string const& prefix,
-                              int const process_id,
-                              int const timestep,
-                              double const t)
-{
-    return prefix + "_pcs_" + std::to_string(process_id) + "_ts_" +
-           std::to_string(timestep) + "_t_" + std::to_string(t);
-}
 }  // namespace
 
 namespace ProcessLib
@@ -94,7 +85,8 @@ bool Output::shallDoOutput(int timestep, double const t)
 }
 
 Output::Output(std::string output_directory, std::string output_file_prefix,
-               bool const compress_output, std::string const& data_mode,
+               std::string output_file_suffix, bool const compress_output,
+               std::string const& data_mode,
                bool const output_nonlinear_iteration_results,
                std::vector<PairRepeatEachSteps> repeats_each_steps,
                std::vector<double>&& fixed_output_times,
@@ -103,6 +95,7 @@ Output::Output(std::string output_directory, std::string output_file_prefix,
                std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes)
     : _output_directory(std::move(output_directory)),
       _output_file_prefix(std::move(output_file_prefix)),
+      _output_file_suffix(std::move(output_file_suffix)),
       _output_file_compression(compress_output),
       _output_file_data_mode(convertVtkDataMode(data_mode)),
       _output_nonlinear_iteration_results(output_nonlinear_iteration_results),
@@ -117,9 +110,13 @@ Output::Output(std::string output_directory, std::string output_file_prefix,
 void Output::addProcess(ProcessLib::Process const& process,
                         const int process_id)
 {
-    auto const filename = BaseLib::joinPaths(
-        _output_directory,
-        _output_file_prefix + "_pcs_" + std::to_string(process_id) + ".pvd");
+    INFO("addProcess {}", _output_file_prefix);
+    auto const filename =
+        BaseLib::joinPaths(_output_directory,
+                           BaseLib::constructFormattedFileName(
+                               _output_file_prefix, process.getMesh().getName(),
+                               process_id, 0, 0) +
+                               ".pvd");
     _process_to_process_data.emplace(std::piecewise_construct,
                                      std::forward_as_tuple(&process),
                                      std::forward_as_tuple(filename));
@@ -154,9 +151,14 @@ Output::ProcessData* Output::findProcessData(Process const& process,
 struct Output::OutputFile
 {
     OutputFile(std::string const& directory, std::string const& prefix,
+               std::string const& suffix, std::string const& mesh_name,
                int const process_id, int const timestep, double const t,
                int const data_mode_, bool const compression_)
-        : name(constructFileName(prefix, process_id, timestep, t) + ".vtu"),
+        : name(BaseLib::constructFormattedFileName(prefix, mesh_name,
+                                                   process_id, timestep, t) +
+               BaseLib::constructFormattedFileName(suffix, mesh_name,
+                                                   process_id, timestep, t) +
+               ".vtu"),
           path(BaseLib::joinPaths(directory, name)),
           data_mode(data_mode_),
           compression(compression_)
@@ -223,8 +225,9 @@ void Output::doOutputAlways(Process const& process,
 
     auto output_bulk_mesh = [&]() {
         outputBulkMesh(
-            OutputFile(_output_directory, _output_file_prefix, process_id,
-                       timestep, t, _output_file_data_mode,
+            OutputFile(_output_directory, _output_file_prefix,
+                       _output_file_suffix, process.getMesh().getName(),
+                       process_id, timestep, t, _output_file_data_mode,
                        _output_file_compression),
             findProcessData(process, process_id), process.getMesh(), t);
     };
@@ -284,6 +287,8 @@ void Output::doOutputAlways(Process const& process,
         // allow for merging bulk mesh output and arbitrary mesh output.
 
         OutputFile const output_file{_output_directory,
+                                     _output_file_prefix,
+                                     _output_file_suffix,
                                      mesh.getName(),
                                      process_id,
                                      timestep,
@@ -372,7 +377,9 @@ void Output::doOutputNonlinearIteration(Process const& process,
     findProcessData(process, process_id);
 
     std::string const output_file_name =
-        constructFileName(_output_file_prefix, process_id, timestep, t) +
+        BaseLib::constructFormattedFileName(_output_file_prefix,
+                                            process.getMesh().getName(),
+                                            process_id, timestep, t) +
         "_nliter_" + std::to_string(iteration) + ".vtu";
     std::string const output_file_path =
         BaseLib::joinPaths(_output_directory, output_file_name);

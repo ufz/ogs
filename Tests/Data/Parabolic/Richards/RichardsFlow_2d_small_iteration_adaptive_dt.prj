@@ -108,7 +108,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>2D_RichardsFlow_h_us_quad_small_iteration_adaptive_dt</prefix>
+            <prefix>2D_RichardsFlow_h_us_quad_small_iteration_adaptive_dt_pcs_{:process_id}</prefix>
             <timesteps>
                 <pair>
                     <repeat>10000000</repeat>
@@ -121,6 +121,7 @@
                 <variable>pressure</variable>
                 <variable>saturation</variable>
             </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <curves>

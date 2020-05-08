@@ -225,7 +225,9 @@
                     <norm_type>NORM2</norm_type>
                     <reltol>1.e-5</reltol>
                 </convergence_criterion>
-                <time_discretization><type>BackwardEuler</type></time_discretization>
+                <time_discretization>
+                    <type>BackwardEuler</type>
+                </time_discretization>
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial> 0.0 </t_initial>
@@ -249,7 +251,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>3bhes_1U</prefix>
+            <prefix>3bhes_1U_pcs_{:process_id}</prefix>
             <timesteps>
                 <!-- use the following for full simulation
                 <pair><repeat> 1</repeat><each_steps> 92 </each_steps></pair>
@@ -260,12 +262,13 @@
                     <each_steps> 1 </each_steps>
                 </pair>
             </timesteps>
-                <variables>
-                    <variable>temperature_soil</variable>
-                    <variable>temperature_BHE1</variable>
-                    <variable>temperature_BHE2</variable>
-                    <variable>temperature_BHE3</variable>
-                </variables>
+            <variables>
+                <variable>temperature_soil</variable>
+                <variable>temperature_BHE1</variable>
+                <variable>temperature_BHE2</variable>
+                <variable>temperature_BHE3</variable>
+            </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <parameters>

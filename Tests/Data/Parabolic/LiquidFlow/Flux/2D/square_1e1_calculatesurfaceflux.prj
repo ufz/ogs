@@ -57,7 +57,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>LF_square_1e1_surfaceflux</prefix>
+            <prefix>LF_square_1e1_surfaceflux_pcs_{:process_id}</prefix>
             <timesteps>
                 <pair>
                     <repeat> 1 </repeat>
@@ -68,6 +68,7 @@
                 <variable> pressure </variable>
                 <variable> v </variable>
             </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <media>

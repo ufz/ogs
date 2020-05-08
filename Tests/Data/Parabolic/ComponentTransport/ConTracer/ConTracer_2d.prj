@@ -103,7 +103,7 @@
         </global_process_coupling>
         <processes>
             <!-- convergence criterion for hydraulic equation -->
-             <process ref="hc">
+            <process ref="hc">
                 <nonlinear_solver>basic_picard</nonlinear_solver>
                 <convergence_criterion>
                     <type>DeltaX</type>
@@ -125,8 +125,8 @@
                     </timesteps>
                 </time_stepping>
             </process>
-           <!-- convergence criterion for component transport equation (Cs) -->
-             <process ref="hc">
+            <!-- convergence criterion for component transport equation (Cs) -->
+            <process ref="hc">
                 <nonlinear_solver>basic_picard</nonlinear_solver>
                 <convergence_criterion>
                     <type>DeltaX</type>
@@ -151,7 +151,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>ConTracer_2d</prefix>
+            <prefix>ConTracer_2d_pcs_{:process_id}</prefix>
             <timesteps>
                 <pair>
                     <repeat>333</repeat>
@@ -163,6 +163,7 @@
                 <variable>pressure</variable>
                 <variable>darcy_velocity</variable>
             </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <parameters>
@@ -241,11 +242,11 @@
                     <parameter>p_Dirichlet_right</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                     <geometrical_set>geometry</geometrical_set>
-                     <geometry>left</geometry>
-                     <type>Neumann</type>
-                     <parameter>p_Neumann_left</parameter>
-                 </boundary_condition>
+                    <geometrical_set>geometry</geometrical_set>
+                    <geometry>left</geometry>
+                    <type>Neumann</type>
+                    <parameter>p_Neumann_left</parameter>
+                </boundary_condition>
             </boundary_conditions>
         </process_variable>
         <process_variable>
@@ -275,7 +276,8 @@
         <linear_solver>
             <name>general_linear_solver</name>
             <lis>-i bicgstab -p ilut -tol 1e-14 -maxiter 1000</lis>
-            <eigen><!--this one is used in the default ogs compilation -->
+            <eigen>
+                <!--this one is used in the default ogs compilation -->
                 <solver_type>BiCGSTAB</solver_type>
                 <precon_type>ILUT</precon_type>
                 <max_iteration_step>1000</max_iteration_step>
@@ -286,5 +288,5 @@
                 <parameters>-hc_ksp_type bcgs -hc_pc_type bjacobi -hc_ksp_rtol 1e-14 -hc_ksp_max_it 20000</parameters>
             </petsc>
         </linear_solver>
-     </linear_solvers>
+    </linear_solvers>
 </OpenGeoSysProject>

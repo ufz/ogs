@@ -75,7 +75,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>cube_1e0_bdt</prefix>
+            <prefix>cube_1e0_bdt_pcs_{:process_id}</prefix>
             <timesteps>
                 <pair>
                     <repeat>1</repeat>
@@ -88,6 +88,7 @@
                 <variable>sigma</variable>
                 <variable>epsilon</variable>
             </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <parameters>

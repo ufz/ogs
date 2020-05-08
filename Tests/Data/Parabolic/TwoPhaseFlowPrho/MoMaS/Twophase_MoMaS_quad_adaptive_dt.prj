@@ -177,7 +177,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>twophaseflow_adaptive_dt</prefix>
+            <prefix>twophaseflow_adaptive_dt_pcs_{:process_id}</prefix>
             <timesteps>
                 <pair>
                     <repeat> 1 </repeat>
@@ -195,6 +195,7 @@
                 <variable> saturation </variable>
                 <variable> pressure_nonwetting </variable>
             </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <process_variables>

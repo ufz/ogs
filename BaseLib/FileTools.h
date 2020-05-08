@@ -30,6 +30,24 @@ namespace BaseLib
 bool IsFileExisting(const std::string &strFilename);
 
 /**
+ * Returns the begin and end position of the string enclosed in open_char and
+ * close_char and the enclosed string itself. Search starts at position pos
+ * within the string str. Nested open_char and close_char are not handled
+ * correctly.
+ */
+std::tuple<std::string, std::string::size_type, std::string::size_type>
+getParenthesizedString(std::string const& str,
+                       char const open_char,
+                       char const close_char,
+                       std::string::size_type pos);
+
+std::string constructFormattedFileName(std::string const& prefix,
+                                       std::string const& mesh_name,
+                                       int const process_id,
+                                       int const timestep,
+                                       double const t);
+
+/**
  * \brief write value as binary into the given output stream
  *
  * \tparam T    data type of the value

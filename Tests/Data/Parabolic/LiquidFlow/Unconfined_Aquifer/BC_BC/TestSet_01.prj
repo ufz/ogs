@@ -51,7 +51,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>TestSet_01</prefix>
+            <prefix>TestSet_01_pcs_{:process_id}</prefix>
             <variables>
                 <variable> pressure </variable>
                 <variable> v </variable>
@@ -62,6 +62,7 @@
                     <each_steps> 1 </each_steps>
                 </pair>
             </timesteps>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <media>

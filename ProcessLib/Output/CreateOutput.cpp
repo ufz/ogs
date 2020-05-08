@@ -36,7 +36,13 @@ std::unique_ptr<Output> createOutput(
 
     auto const prefix =
         //! \ogs_file_param{prj__time_loop__output__prefix}
-        config.getConfigParameter<std::string>("prefix");
+        config.getConfigParameter<std::string>("prefix",
+                                               "{:meshname}{:process_id}");
+
+    auto const suffix =
+        //! \ogs_file_param{prj__time_loop__output__suffix}
+        config.getConfigParameter<std::string>("suffix",
+                                               "ts_{:timestep}_t_{:time}");
 
     auto const compress_output =
         //! \ogs_file_param{prj__time_loop__output__compress_output}
@@ -133,7 +139,7 @@ std::unique_ptr<Output> createOutput(
         config.getConfigParameter<bool>("output_iteration_results", false);
 
     return std::make_unique<Output>(
-        output_directory, prefix, compress_output, data_mode,
+        output_directory, prefix, suffix, compress_output, data_mode,
         output_iteration_results, std::move(repeats_each_steps),
         std::move(fixed_output_times), std::move(process_output),
         std::move(mesh_names_for_output), meshes);

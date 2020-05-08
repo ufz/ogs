@@ -52,7 +52,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>time_dependent_heterogeneous_source_term</prefix>
+            <prefix>time_dependent_heterogeneous_source_term_pcs_{:process_id}</prefix>
             <timesteps>
                 <pair>
                     <repeat> 1 </repeat>
@@ -75,6 +75,7 @@
                 <variable> pressure </variable>
                 <variable> v </variable>
             </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <media>

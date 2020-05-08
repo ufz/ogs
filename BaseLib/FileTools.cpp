@@ -12,6 +12,9 @@
  *
  */
 
+#include <unordered_map>
+#include <typeindex>
+
 #include "FileTools.h"
 #include "Error.h"
 #include "filesystem.h"
@@ -35,6 +38,106 @@ namespace BaseLib
 bool IsFileExisting(const std::string &strFilename)
 {
     return fs::exists(fs::path(strFilename));
+}
+
+std::tuple<std::string, std::string::size_type, std::string::size_type>
+getParenthesizedString(std::string const& in,
+                       char const open_char,
+                       char const close_char,
+                       std::string::size_type pos)
+{
+    auto const pos_curly_brace_open = in.find_first_of(open_char, pos);
+    if (pos_curly_brace_open == std::string::npos)
+    {
+        return std::make_tuple("", std::string::npos, std::string::npos);
+    }
+    auto const pos_curly_brace_close =
+        in.find_first_of(close_char, pos_curly_brace_open);
+    if (pos_curly_brace_close == std::string::npos)
+    {
+        return std::make_tuple("", std::string::npos, std::string::npos);
+    }
+    return std::make_tuple(
+        in.substr(pos_curly_brace_open + 1,
+                  pos_curly_brace_close - (pos_curly_brace_open + 1)),
+        pos_curly_brace_open, pos_curly_brace_close);
+}
+
+std::string containsKeyword(std::string const& str, std::string const& keyword)
+{
+    auto const position = str.find(keyword);
+    if (position != std::string::npos)
+    {
+        return str.substr(0, position);
+    }
+    return "";
+}
+
+template <typename T>
+bool substituteKeyword(std::string& result, std::string& parenthesized_string,
+                       std::string::size_type begin, std::string::size_type end,
+                       std::string const& keyword, T& data)
+{
+    std::string precision_specification =
+        containsKeyword(parenthesized_string, keyword);
+
+    if (precision_specification.empty())
+    {
+        return false;
+    }
+
+    std::unordered_map<std::type_index, char> type_specification;
+    type_specification[std::type_index(typeid(int))] = 'd';
+    type_specification[std::type_index(typeid(double))] = 'f'; // default
+    type_specification[std::type_index(typeid(std::string))] = 's';
+
+    auto const& b = precision_specification.back();
+    // see https://fmt.dev/latest/syntax.html#formatspec
+    if (b == 'e' || b == 'E' || b == 'f' || b == 'F' || b == 'g' || b == 'G')
+    {
+        type_specification[std::type_index(typeid(double))] = b;
+        precision_specification = precision_specification.substr(
+            0, precision_specification.length() - 1);
+    }
+
+    std::string const generated_fmt_string =
+        "{" + precision_specification +
+        type_specification[std::type_index(typeid(data))] + "}";
+    result = result.substr(0, begin) + fmt::format(generated_fmt_string, data) +
+             result.substr(end + 1, result.length() - (end + 1));
+    return true;
+}
+
+std::string constructFormattedFileName(std::string const& format_specification,
+                                       std::string const& mesh_name,
+                                       int const process_id,
+                                       int const timestep,
+                                       double const t)
+{
+    char const open_char = '{';
+    char const close_char = '}';
+    std::string::size_type begin = 0;
+    std::string::size_type end = std::string::npos;
+    std::string result = format_specification;
+
+    while (begin != std::string::npos)
+    {
+        auto length_before_substitution = result.length();
+        // find next parenthesized string
+        std::string str = "";
+        std::tie(str, begin, end) =
+            getParenthesizedString(result, open_char, close_char, begin);
+        if (!substituteKeyword(result, str, begin, end, "timestep", timestep) &&
+            !substituteKeyword(result, str, begin, end, "time", t) &&
+            !substituteKeyword(result, str, begin, end, "process_id",
+                               process_id))
+        {
+            substituteKeyword(result, str, begin, end, "meshname", mesh_name);
+        }
+        begin = end - (length_before_substitution - result.length());
+    }
+
+    return result;
 }
 
 double swapEndianness(double const& v)

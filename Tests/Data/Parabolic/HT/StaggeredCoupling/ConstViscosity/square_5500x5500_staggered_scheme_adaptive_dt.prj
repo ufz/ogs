@@ -169,7 +169,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>ConstViscosityThermalConvectionStaggeredAdaptive_dt</prefix>
+            <prefix>ConstViscosityThermalConvectionStaggeredAdaptive_dt_pcs_{:process_id}</prefix>
             <timesteps>
                 <pair>
                     <repeat> 1 </repeat>
@@ -181,6 +181,7 @@
                 <variable>darcy_velocity</variable>
                 <variable>p</variable>
             </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <parameters>

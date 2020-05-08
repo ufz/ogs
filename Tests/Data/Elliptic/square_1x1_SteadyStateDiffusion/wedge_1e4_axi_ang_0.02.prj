@@ -51,11 +51,12 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>wedge_1e4_axi_ang_0.02</prefix>
+            <prefix>wedge_1e4_axi_ang_0.02_pcs_{:process_id}</prefix>
             <variables>
                 <variable> temperature </variable>
                 <variable> v      </variable>
             </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <nonlinear_solvers>

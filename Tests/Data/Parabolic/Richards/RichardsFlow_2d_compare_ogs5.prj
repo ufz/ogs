@@ -125,7 +125,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>richards</prefix>
+            <prefix>richards_pcs_{:process_id}</prefix>
             <timesteps>
                 <!-- only output last timestep -->
                 <pair>
@@ -138,6 +138,7 @@
                 <variable>pressure</variable>
                 <variable>saturation</variable>
             </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <parameters>

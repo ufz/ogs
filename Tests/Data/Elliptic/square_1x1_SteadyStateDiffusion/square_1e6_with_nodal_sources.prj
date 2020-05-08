@@ -38,11 +38,12 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>square_1e6_with_nodal_sources</prefix>
+            <prefix>square_1e6_with_nodal_sources_pcs_{:process_id}</prefix>
             <variables>
                 <variable> pressure </variable>
                 <variable> v      </variable>
             </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <media>

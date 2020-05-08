@@ -25,70 +25,65 @@
         </process>
     </processes>
     <media>
-      <medium id="0">
-         <phases>
-            <phase>
-               <type>AqueousLiquid</type>
-               <properties>
-                  <property>
-                     <name>density</name>
-                     <type>Constant</type>
-                     <value>1.0e3</value>
-                  </property>
-                  <property>
-                     <name>viscosity</name>
-                     <type>Constant</type>
-                     <value>1e-3</value>
-                  </property>
-              </properties>
-            </phase>
-            <phase>
-               <type>Gas</type>
-               <properties>
-                  <property>
-                     <name>density</name>
-                     <type>IdealGasLaw</type>
-                  </property>
-                  <property>
-                     <name>viscosity</name>
-                     <type>Constant</type>
-                     <value>1.8e-5</value>
-                  </property>
-                  <property>
-                     <name>molar_mass</name>
-                     <type>Constant</type>
-                     <value>0.02896</value>
-                  </property>
-               </properties>
-            </phase>
-         </phases>
-         <properties>
-
-            <property>
-               <name>permeability</name>
-               <type>Constant</type>
-               <value>4.5e-13</value>
-            </property>
-
-            <property>
-               <name>saturation</name>
-               <type>SaturationLiakopoulos</type>
-            </property>
-
-            <property>
-               <name>relative_permeability</name>
-               <type>RelPermLiakopoulos</type>
-            </property>
-
-            <property>
-               <name>porosity</name>
-               <type>Constant</type>
-               <value>0.2975</value>
-            </property>
-
-         </properties>
-      </medium>
-   </media>
+        <medium id="0">
+            <phases>
+                <phase>
+                    <type>AqueousLiquid</type>
+                    <properties>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>1.0e3</value>
+                        </property>
+                        <property>
+                            <name>viscosity</name>
+                            <type>Constant</type>
+                            <value>1e-3</value>
+                        </property>
+                    </properties>
+                </phase>
+                <phase>
+                    <type>Gas</type>
+                    <properties>
+                        <property>
+                            <name>density</name>
+                            <type>IdealGasLaw</type>
+                        </property>
+                        <property>
+                            <name>viscosity</name>
+                            <type>Constant</type>
+                            <value>1.8e-5</value>
+                        </property>
+                        <property>
+                            <name>molar_mass</name>
+                            <type>Constant</type>
+                            <value>0.02896</value>
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+            <properties>
+                <property>
+                    <name>permeability</name>
+                    <type>Constant</type>
+                    <value>4.5e-13</value>
+                </property>
+                <property>
+                    <name>saturation</name>
+                    <type>SaturationLiakopoulos</type>
+                </property>
+                <property>
+                    <name>relative_permeability</name>
+                    <type>RelPermLiakopoulos</type>
+                </property>
+                <property>
+                    <name>porosity</name>
+                    <type>Constant</type>
+                    <value>0.2975</value>
+                </property>
+            </properties>
+        </medium>
+    </media>
     <parameters>
         <parameter>
             <name>pc_Dirichlet_bottom</name>
@@ -170,7 +165,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>twophaseflow</prefix>
+            <prefix>twophaseflow_pcs_{:process_id}</prefix>
             <timesteps>
                 <!-- only output last timestep -->
                 <pair>
@@ -184,6 +179,7 @@
                 <variable> gas_pressure </variable>
                 <variable> saturation </variable>
             </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <process_variables>

@@ -49,7 +49,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>line_1_line_1e2</prefix>
+            <prefix>line_1_line_1e2_pcs_{:process_id}</prefix>
             <timesteps>
                 <pair>
                     <repeat> 1 </repeat>
@@ -60,6 +60,7 @@
                 <variable> temperature </variable>
                 <variable> heat_flux_x </variable>
             </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <parameters>

@@ -374,7 +374,7 @@ bool XmlPrjInterface::write()
     // geometries
     std::vector<std::string> geo_names;
     geo_objects.getGeometryNames(geo_names);
-    for (std::string const name : geo_names)
+    for (std::string const& name : geo_names)
     {
         // write gml file
         GeoLib::IO::XmlGmlInterface gml(geo_objects);
@@ -396,7 +396,7 @@ bool XmlPrjInterface::write()
     // stations
     std::vector<std::string> stn_names;
     geo_objects.getStationVectorNames(stn_names);
-    for (std::string const name : stn_names)
+    for (std::string const& name : stn_names)
     {
         // write station file
         GeoLib::IO::XmlStnInterface stn(geo_objects);
@@ -561,7 +561,7 @@ void XmlPrjInterface::writeProcessVariables(QDomDocument& doc,
     QDomElement pvar_list_tag = doc.createElement("process_variables");
     root.appendChild(pvar_list_tag);
 
-    for (DataHolderLib::ProcessVariable const p_var : p_vars)
+    for (DataHolderLib::ProcessVariable const& p_var : p_vars)
     {
         QDomElement pvar_tag = doc.createElement("process_variable");
         pvar_list_tag.appendChild(pvar_tag);

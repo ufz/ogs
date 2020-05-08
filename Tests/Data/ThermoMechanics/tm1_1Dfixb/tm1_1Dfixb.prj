@@ -34,7 +34,7 @@
                 <convergence_criterion>
                     <type>PerComponentDeltaX</type>
                     <norm_type>NORM2</norm_type>
-		    <reltols> 1e-11 1e-9 1e+15 1e+15 </reltols>
+                    <reltols> 1e-11 1e-9 1e+15 1e+15 </reltols>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>
@@ -54,7 +54,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>tm1_1Dfixb</prefix>
+            <prefix>tm1_1Dfixb_pcs_{:process_id}</prefix>
             <data_mode>Ascii</data_mode>
             <compress_output>false</compress_output>
             <timesteps>
@@ -69,6 +69,7 @@
                 <variable>sigma</variable>
                 <variable>epsilon</variable>
             </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <parameters>

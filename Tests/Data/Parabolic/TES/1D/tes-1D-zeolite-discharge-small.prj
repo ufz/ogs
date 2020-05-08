@@ -97,7 +97,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>tes_zeolite_discharge_small</prefix>
+            <prefix>tes_zeolite_discharge_small_pcs_{:process_id}</prefix>
             <timesteps>
                 <pair>
                     <repeat> 1 </repeat>
@@ -121,6 +121,7 @@
                 <variable> relative_humidity       </variable>
                 <variable> reaction_damping_factor </variable>
             </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <parameters>

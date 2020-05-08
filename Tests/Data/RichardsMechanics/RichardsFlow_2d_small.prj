@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
-    <mesh>Richards_2d.vtu</mesh>
-    <geometry>Richards_2d.gml</geometry>
+    <mesh>RichardsFlow_2d_small.vtu</mesh>
+    <geometry>RichardsFlow_2d_small.gml</geometry>
     <processes>
         <process>
             <name>RM</name>
@@ -158,10 +158,11 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>RichardsFlow_2d_small</prefix>
+            <!--prefix>RichardsFlow_2d_small_pcs_{:process_id}</prefix-->
+            <prefix>{:meshname}_pcs_{:process_id}</prefix>
             <meshes>
-                <mesh>Richards_2d</mesh>
-                <mesh>Richards_2d_geometry_OBSERVATION_POINT</mesh>
+                <mesh>RichardsFlow_2d_small</mesh>
+                <mesh>RichardsFlow_2d_geometry_OBSERVATION_POINT</mesh>
             </meshes>
             <timesteps>
                 <pair>
@@ -182,6 +183,7 @@
                 <variable>velocity</variable>
                 <variable>saturation</variable>
             </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <parameters>
@@ -226,28 +228,28 @@
             <initial_condition>displacement0</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>Richards_2d_geometry</geometrical_set>
+                    <geometrical_set>RichardsFlow_2d_geometry</geometrical_set>
                     <geometry>LEFT</geometry>
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>dirichlet0</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <geometrical_set>Richards_2d_geometry</geometrical_set>
+                    <geometrical_set>RichardsFlow_2d_geometry</geometrical_set>
                     <geometry>RIGHT</geometry>
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>dirichlet0</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <geometrical_set>Richards_2d_geometry</geometrical_set>
+                    <geometrical_set>RichardsFlow_2d_geometry</geometrical_set>
                     <geometry>BOTTOM</geometry>
                     <type>Dirichlet</type>
                     <component>1</component>
                     <parameter>dirichlet0</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <geometrical_set>Richards_2d_geometry</geometrical_set>
+                    <geometrical_set>RichardsFlow_2d_geometry</geometrical_set>
                     <geometry>TOP</geometry>
                     <type>Dirichlet</type>
                     <component>1</component>
@@ -262,13 +264,13 @@
             <initial_condition>p0</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>Richards_2d_geometry</geometrical_set>
+                    <geometrical_set>RichardsFlow_2d_geometry</geometrical_set>
                     <geometry>BOTTOM</geometry>
                     <type>Dirichlet</type>
                     <parameter>p_Dirichlet_bottom</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <geometrical_set>Richards_2d_geometry</geometrical_set>
+                    <geometrical_set>RichardsFlow_2d_geometry</geometrical_set>
                     <geometry>TOP</geometry>
                     <type>Dirichlet</type>
                     <parameter>p0</parameter>
