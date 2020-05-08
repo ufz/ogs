@@ -131,7 +131,8 @@ public:
     }
 
     void computeSecondaryVariableConcrete(
-        const double t, std::vector<double> const& local_x) override
+        double const t, double const /*dt*/, std::vector<double> const& local_x,
+        std::vector<double> const& /*local_x_dot*/) override
     {
         auto const local_matrix_size = local_x.size();
         // This assertion is valid only if all nodal d.o.f. use the same shape

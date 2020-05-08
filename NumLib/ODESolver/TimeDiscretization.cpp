@@ -52,11 +52,4 @@ double TimeDiscretization::computeRelativeChangeFromPreviousTimestep(
     // Only norm_x is close to zero
     return norm_dx / std::numeric_limits<double>::epsilon();
 }
-
-double BackwardEuler::getRelativeChangeFromPreviousTimestep(
-    GlobalVector const& x, MathLib::VecNormType norm_type)
-{
-    return computeRelativeChangeFromPreviousTimestep(x, _x_old, norm_type);
-}
-
 }  // end of namespace NumLib

@@ -110,6 +110,7 @@ private:
 
 private:
     std::vector<GlobalVector*> _process_solutions;
+    std::vector<GlobalVector*> _process_solutions_prev;
     std::unique_ptr<Output> _output;
     std::vector<std::unique_ptr<ProcessData>> _per_process_data;
 

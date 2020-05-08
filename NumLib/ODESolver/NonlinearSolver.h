@@ -36,11 +36,13 @@ class NonlinearSolverBase
 {
 public:
     virtual void calculateNonEquilibriumInitialResiduum(
-        std::vector<GlobalVector*> const& x, int const process_id) = 0;
+        std::vector<GlobalVector*> const& x,
+        std::vector<GlobalVector*> const& x_prev, int const process_id) = 0;
 
     /*! Assemble and solve the equation system.
      *
      * \param x   in: the initial guess, out: the solution.
+     * \param x_prev previous time step solution.
      * \param postIterationCallback called after each iteration if set.
      * \param process_id usually used in staggered schemes.
      *
@@ -49,6 +51,7 @@ public:
      */
     virtual NonlinearSolverStatus solve(
         std::vector<GlobalVector*>& x,
+        std::vector<GlobalVector*> const& x_prev,
         std::function<void(int, std::vector<GlobalVector*> const&)> const&
             postIterationCallback,
         int const process_id) = 0;
@@ -100,10 +103,13 @@ public:
     }
 
     void calculateNonEquilibriumInitialResiduum(
-        std::vector<GlobalVector*> const& x, int const process_id) override;
+        std::vector<GlobalVector*> const& x,
+        std::vector<GlobalVector*> const& x_prev,
+        int const process_id) override;
 
     NonlinearSolverStatus solve(
         std::vector<GlobalVector*>& x,
+        std::vector<GlobalVector*> const& x_prev,
         std::function<void(int, std::vector<GlobalVector*> const&)> const&
             postIterationCallback,
         int const process_id) override;
@@ -175,10 +181,13 @@ public:
     }
 
     void calculateNonEquilibriumInitialResiduum(
-        std::vector<GlobalVector*> const& x, int const process_id) override;
+        std::vector<GlobalVector*> const& x,
+        std::vector<GlobalVector*> const& x_prev,
+        int const process_id) override;
 
     NonlinearSolverStatus solve(
         std::vector<GlobalVector*>& x,
+        std::vector<GlobalVector*> const& x_prev,
         std::function<void(int, std::vector<GlobalVector*> const&)> const&
             postIterationCallback,
         int const process_id) override;

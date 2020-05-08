@@ -68,8 +68,9 @@ public:
         SecondaryVariableCollection&& secondary_variables,
         std::unique_ptr<ProcessLib::SurfaceFluxData>&& surfaceflux);
 
-    void computeSecondaryVariableConcrete(double const t,
+    void computeSecondaryVariableConcrete(double const t, double const dt,
                                           GlobalVector const& x,
+                                          GlobalVector const& x_dot,
                                           int const process_id) override;
 
     bool isLinear() const override { return true; }

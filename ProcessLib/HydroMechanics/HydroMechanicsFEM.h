@@ -191,7 +191,9 @@ public:
     }
 
     void computeSecondaryVariableConcrete(
-        double const t, std::vector<double> const& local_x) override;
+        double const t, double const dt, std::vector<double> const& local_x,
+        std::vector<double> const& local_x_dot) override;
+
     void postNonLinearSolverConcrete(std::vector<double> const& local_x,
                                      double const t, double const dt,
                                      bool const use_monolithic_scheme) override;

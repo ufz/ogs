@@ -90,39 +90,24 @@ public:
     TimeDiscretization() = default;
 
     //! Sets the initial condition.
-    virtual void setInitialState(const double t0, GlobalVector const& x0) = 0;
+    virtual void setInitialState(const double t0) = 0;
 
-    /*! Get the relative change of solutions between two successive time steps
-     *  by \f$ e_n = \|u^{n+1}-u^{n}\|/\|u^{n+1}\| \f$.
+    /**
+     * Compute and return the relative change of solutions between two
+     * successive time steps by \f$ e_n = \|u^{n+1}-u^{n}\|/\|u^{n+1}\| \f$.
      *
-     * \param x         The solution at the current timestep.
-     * \param norm_type The type of global vector norm.
+     * @param x         The current solution
+     * @param x_old     The previous solution
+     * @param norm_type The norm type of global vector
+     * @return          \f$ e_n = \|u^{n+1}-u^{n}\|/\|u^{n+1}\| \f$.
+     *
+     * @warning the value of x_old is changed to x - x_old after this
+     * computation.
      */
-    virtual double getRelativeChangeFromPreviousTimestep(
-        GlobalVector const& x, MathLib::VecNormType norm_type) = 0;
-
-    /*! Indicate that the current timestep is done and that you will proceed to
-     * the next one.
-     *
-     * \warning Do not use this method for setting the initial condition,
-     *          rather use setInitialState()!
-     *
-     * \param t    The current timestep.
-     * \param x    The solution at the current timestep.
-     */
-    virtual void pushState(const double t, GlobalVector const& x) = 0;
-
-    /*!
-     * Restores the given vector x to its old value.
-     * Used only for repeating of the time step with new time step size when
-     * the current time step is rejected. The restored x is only used as
-     * an initial guess for linear solver in the first Picard nonlinear
-     * iteration.
-     *
-     * \param x The solution at the current time step, which is going to be
-     *          reset to its previous value.
-     */
-    virtual void popState(GlobalVector& x) = 0;
+    double computeRelativeChangeFromPreviousTimestep(
+        GlobalVector const& x,
+        GlobalVector const& x_old,
+        MathLib::VecNormType norm_type);
 
     /*! Indicate that the computation of a new timestep is being started now.
      *
@@ -142,14 +127,16 @@ public:
 
     //! Returns \f$ \hat x \f$, i.e. the discretized approximation of \f$ \dot x
     //! \f$.
-    void getXdot(GlobalVector const& x_at_new_timestep, GlobalVector& xdot) const
+    void getXdot(GlobalVector const& x_at_new_timestep,
+                 GlobalVector const& x_old,
+                 GlobalVector& xdot) const
     {
         namespace LinAlg = MathLib::LinAlg;
 
         auto const dxdot_dx = getNewXWeight();
 
         // xdot = dxdot_dx * x_at_new_timestep - x_old
-        getWeightedOldX(xdot);
+        getWeightedOldX(xdot, x_old);
         LinAlg::axpby(xdot, dxdot_dx, -1.0, x_at_new_timestep);
     }
 
@@ -157,63 +144,20 @@ public:
     virtual double getNewXWeight() const = 0;
 
     //! Returns \f$ x_O \f$.
-    virtual void getWeightedOldX(GlobalVector& y) const = 0;  // = x_old
+    virtual void getWeightedOldX(
+        GlobalVector& y, GlobalVector const& x_old) const = 0;  // = x_old
 
     virtual ~TimeDiscretization() = default;
 
 protected:
     std::unique_ptr<GlobalVector> _dx;  ///< Used to store \f$ u_{n+1}-u_{n}\f$.
-
-    /**
-     * Compute and return the relative change of solutions between two
-     * successive time steps by \f$ e_n = \|u^{n+1}-u^{n}\|/\|u^{n+1}\| \f$.
-     *
-     * @param x         The current solution
-     * @param x_old     The previous solution
-     * @param norm_type The norm type of global vector
-     * @return          \f$ e_n = \|u^{n+1}-u^{n}\|/\|u^{n+1}\| \f$.
-     *
-     * @warning the value of x_old is changed to x - x_old after this
-     * computation.
-     */
-    double computeRelativeChangeFromPreviousTimestep(
-        GlobalVector const& x,
-        GlobalVector const& x_old,
-        MathLib::VecNormType norm_type);
 };
 
 //! Backward Euler scheme.
 class BackwardEuler final : public TimeDiscretization
 {
 public:
-    BackwardEuler()
-        : _x_old(NumLib::GlobalVectorProvider::provider.getVector())
-    {
-    }
-
-    ~BackwardEuler() override
-    {
-        NumLib::GlobalVectorProvider::provider.releaseVector(_x_old);
-    }
-
-    void setInitialState(const double t0, GlobalVector const& x0) override
-    {
-        _t = t0;
-        MathLib::LinAlg::copy(x0, _x_old);
-    }
-
-    double getRelativeChangeFromPreviousTimestep(
-        GlobalVector const& x, MathLib::VecNormType norm_type) override;
-
-    void pushState(const double /*t*/, GlobalVector const& x) override
-    {
-        MathLib::LinAlg::copy(x, _x_old);
-    }
-
-    void popState(GlobalVector& x) override
-    {
-        MathLib::LinAlg::copy(_x_old, x);
-    }
+    void setInitialState(const double t0) override { _t = t0; }
 
     void nextTimestep(const double t, const double delta_t) override
     {
@@ -224,12 +168,13 @@ public:
     double getCurrentTime() const override { return _t; }
     double getCurrentTimeIncrement() const override { return _delta_t; }
     double getNewXWeight() const override { return 1.0 / _delta_t; }
-    void getWeightedOldX(GlobalVector& y) const override
+    void getWeightedOldX(GlobalVector& y,
+                         GlobalVector const& x_old) const override
     {
         namespace LinAlg = MathLib::LinAlg;
 
         // y = x_old / delta_t
-        LinAlg::copy(_x_old, y);
+        LinAlg::copy(x_old, y);
         LinAlg::scale(y, 1.0 / _delta_t);
     }
 
@@ -237,7 +182,6 @@ private:
     double _t = std::numeric_limits<double>::quiet_NaN();  //!< \f$ t_C \f$
     double _delta_t =
         std::numeric_limits<double>::quiet_NaN();  //!< the timestep size
-    GlobalVector& _x_old;   //!< the solution from the preceding timestep
 };
 
 //! @}

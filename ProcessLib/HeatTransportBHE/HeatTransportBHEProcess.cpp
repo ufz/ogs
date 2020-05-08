@@ -187,7 +187,8 @@ void HeatTransportBHEProcess::assembleWithJacobianConcreteProcess(
 }
 
 void HeatTransportBHEProcess::computeSecondaryVariableConcrete(
-    const double t, GlobalVector const& x, int const process_id)
+    double const t, double const dt, GlobalVector const& x,
+    GlobalVector const& x_dot, int const process_id)
 {
     DBUG("Compute heat flux for HeatTransportBHE process.");
 
@@ -195,7 +196,7 @@ void HeatTransportBHEProcess::computeSecondaryVariableConcrete(
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &HeatTransportBHELocalAssemblerInterface::computeSecondaryVariable,
         _local_assemblers, pv.getActiveElementIDs(), getDOFTable(process_id), t,
-        x, _coupled_solutions);
+        dt, x, x_dot, _coupled_solutions);
 }
 
 #ifdef OGS_USE_PYTHON

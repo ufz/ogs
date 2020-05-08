@@ -494,7 +494,9 @@ public:
     }
 
     void computeSecondaryVariableConcrete(
-        double const /*t*/, std::vector<double> const& /*local_x*/) override
+        double const /*t*/, double const /*dt*/,
+        std::vector<double> const& /*x*/,
+        std::vector<double> const& /*x_dot*/) override
     {
         int const elem_id = _element.getID();
         ParameterLib::SpatialPosition x_position;

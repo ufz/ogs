@@ -1339,8 +1339,9 @@ template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
 void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                      ShapeFunctionPressure, IntegrationMethod,
                                      DisplacementDim>::
-    computeSecondaryVariableConcrete(double const t,
-                                     std::vector<double> const& local_x)
+    computeSecondaryVariableConcrete(double const t, double const dt,
+                                     std::vector<double> const& local_x,
+                                     std::vector<double> const& /*local_x_dot*/)
 {
     auto p_L =
         Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
@@ -1392,9 +1393,6 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             p_cap_ip;
         variables[static_cast<int>(MPL::Variable::phase_pressure)] = -p_cap_ip;
 
-        // TODO (naumov) Temporary value not used by current material models.
-        // Need extension of secondary variables interface.
-        double const dt = std::numeric_limits<double>::quiet_NaN();
         auto const temperature =
             medium->property(MPL::PropertyType::reference_temperature)
                 .template value<double>(variables, x_position, t, dt);

@@ -90,9 +90,14 @@ NumLib::NonlinearSolverStatus TimeLoopSingleODE<NLTag>::loop(
     xs.push_back(&NumLib::GlobalVectorProvider::provider.getVector(x0));
     GlobalVector& x = *xs.back();
 
+    std::vector<GlobalVector*> xs_prev;
+    xs_prev.push_back(&NumLib::GlobalVectorProvider::provider.getVector(x0));
+    GlobalVector& x_prev = *xs_prev.back();
+
     auto& time_disc = _ode_sys.getTimeDiscretization();
 
-    time_disc.setInitialState(t0, x0);  // push IC
+    time_disc.setInitialState(t0);     // push IC
+    MathLib::LinAlg::copy(x, x_prev);  // pushState
 
     _nonlinear_solver->setEquationSystem(_ode_sys, *_convergence_criterion);
 
@@ -109,13 +114,13 @@ NumLib::NonlinearSolverStatus TimeLoopSingleODE<NLTag>::loop(
 
         int const process_id = 0;
         nonlinear_solver_status =
-            _nonlinear_solver->solve(xs, nullptr, process_id);
+            _nonlinear_solver->solve(xs, xs_prev, nullptr, process_id);
         if (!nonlinear_solver_status.error_norms_met)
         {
             break;
         }
 
-        time_disc.pushState(t, x);
+        MathLib::LinAlg::copy(x, x_prev);  // pushState
 
         auto const t_cb =
             t;  // make sure the callback cannot overwrite anything.

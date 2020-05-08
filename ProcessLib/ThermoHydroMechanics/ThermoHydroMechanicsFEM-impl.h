@@ -589,8 +589,9 @@ template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
 void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                         ShapeFunctionPressure,
                                         IntegrationMethod, DisplacementDim>::
-    computeSecondaryVariableConcrete(double const /*t*/,
-                                     std::vector<double> const& local_x)
+    computeSecondaryVariableConcrete(double const /*t*/, double const /*dt*/,
+                                     std::vector<double> const& local_x,
+                                     std::vector<double> const& /*local_x_dot*/)
 {
     auto p = Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
         pressure_size> const>(local_x.data() + pressure_index, pressure_size);

@@ -847,8 +847,9 @@ template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
 void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                   ShapeFunctionPressure, IntegrationMethod,
                                   DisplacementDim>::
-    computeSecondaryVariableConcrete(double const t,
-                                     std::vector<double> const& local_x)
+    computeSecondaryVariableConcrete(double const t, double const dt,
+                                     std::vector<double> const& local_x,
+                                     std::vector<double> const& /*local_x_dot*/)
 {
     auto p = Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
         pressure_size> const>(local_x.data() + pressure_index, pressure_size);
@@ -866,10 +867,6 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
     auto const& medium = _process_data.media_map->getMedium(elem_id);
     MPL::VariableArray vars;
-
-    // TODO (naumov) Temporary value not used by current material models. Need
-    // extension of secondary variables interface.
-    double const dt = std::numeric_limits<double>::quiet_NaN();
 
     constexpr int symmetric_tensor_size =
         MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
