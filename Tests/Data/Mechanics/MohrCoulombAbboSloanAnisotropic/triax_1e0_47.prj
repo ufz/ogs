@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProject>
+    <mesh>square_1x1_quad_1e0.vtu</mesh>
+    <geometry>square_1x1.gml</geometry>
+    <processes>
+        <process>
+            <name>SD</name>
+            <type>SMALL_DEFORMATION</type>
+            <integration_order>2</integration_order>
+            <constitutive_relation>
+                <type>MFront</type>
+                <behaviour>MohrCoulombAbboSloanUBI</behaviour>
+                <material_properties>
+                    <material_property name="YoungModulus" parameter="YoungModulus"/>
+                    <material_property name="PoissonRatio" parameter="PoissonRatio"/>
+                    <material_property name="PlaneCohesion" parameter="PlaneCohesion"/>
+                    <material_property name="PlaneFrictionAngle" parameter="PlaneFrictionAngle"/>
+                    <material_property name="PlaneDilatancyAngle" parameter="PlaneDilatancyAngle"/>
+                    <material_property name="Cohesion" parameter="Cohesion"/>
+                    <material_property name="FrictionAngle" parameter="FrictionAngle"/>
+                    <material_property name="DilatancyAngle" parameter="DilatancyAngle"/>
+                    <material_property name="TransitionAngle" parameter="TransitionAngle"/>
+                    <material_property name="TensionCutOffParameter" parameter="TensionCutOffParameter"/>
+                </material_properties>
+            </constitutive_relation>
+            <solid_density>rho_sr</solid_density>
+            <specific_body_force>0 0</specific_body_force>
+            <process_variables>
+                <process_variable>displacement</process_variable>
+            </process_variables>
+            <secondary_variables>
+                <secondary_variable type="static" internal_name="ElasticStrain" output_name="ElasticStrain"/>
+                <!--secondary_variable type="static" internal_name="EquivalentPlasticStrain" output_name="EquivalentPlasticStrain"/-->
+                <secondary_variable type="static" internal_name="sigma" output_name="sigma"/>
+                <secondary_variable type="static" internal_name="epsilon" output_name="epsilon"/>
+            </secondary_variables>
+        </process>
+    </processes>
+    <time_loop>
+        <processes>
+            <process ref="SD">
+                <nonlinear_solver>basic_newton</nonlinear_solver>
+                <convergence_criterion>
+                    <type>DeltaX</type>
+                    <norm_type>NORM2</norm_type>
+                    <abstol>1e-14</abstol>
+                </convergence_criterion>
+                <time_discretization>
+                    <type>BackwardEuler</type>
+                </time_discretization>
+                <time_stepping>
+                    <type>IterationNumberBasedTimeStepping</type>
+                    <t_initial>0.0</t_initial>
+                    <t_end>2.0</t_end>
+                    <initial_dt>0.01</initial_dt>
+                    <minimum_dt>0.01</minimum_dt>
+                    <maximum_dt>0.01</maximum_dt>
+                    <number_iterations>1 4 10 20 </number_iterations>
+                    <multiplier>1.2 1.0 0.9 0.8</multiplier>
+                </time_stepping>
+            </process>
+        </processes>
+        <output>
+            <type>VTK</type>
+            <prefix>triax_47_pcs_{:process_id}</prefix>
+            <timesteps>
+                <pair>
+                    <repeat>1</repeat>
+                    <each_steps>10000</each_steps>
+                </pair>
+            </timesteps>
+            <variables>
+                <variable>displacement</variable>
+                <variable>sigma</variable>
+            </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
+        </output>
+    </time_loop>
+    <local_coordinate_system>
+        <basis_vector_0>e0</basis_vector_0>
+        <basis_vector_1>e1</basis_vector_1>
+    </local_coordinate_system>
+    <parameters>
+        <parameter>
+            <name>e0</name>
+            <type>Constant</type>
+            <values>0.6862416378687336 0.7273736415730486</values>
+        </parameter>
+        <parameter>
+            <name>e1</name>
+            <type>Constant</type>
+            <values>-0.7273736415730486 0.6862416378687336</values>
+        </parameter>
+        <parameter>
+            <name>YoungModulus</name>
+            <type>Constant</type>
+            <value>170e6</value>
+        </parameter>
+        <parameter>
+            <name>PoissonRatio</name>
+            <type>Constant</type>
+            <value>.22</value>
+        </parameter>
+        <parameter>
+            <name>PlaneCohesion</name>
+            <type>Constant</type>
+            <value>1e3</value>
+        </parameter>
+        <parameter>
+            <name>PlaneFrictionAngle</name>
+            <type>Constant</type>
+            <value>30</value>
+        </parameter>
+        <parameter>
+            <name>PlaneDilatancyAngle</name>
+            <type>Constant</type>
+            <value>0</value>
+        </parameter>
+        <parameter>
+            <name>Cohesion</name>
+            <type>Constant</type>
+            <value>2.e3</value>
+        </parameter>
+        <parameter>
+            <name>FrictionAngle</name>
+            <type>Constant</type>
+            <value>40</value>
+        </parameter>
+        <parameter>
+            <name>DilatancyAngle</name>
+            <type>Constant</type>
+            <value>10</value>
+        </parameter>
+        <parameter>
+            <name>TransitionAngle</name>
+            <type>Constant</type>
+            <value>29</value>
+        </parameter>
+        <parameter>
+            <name>TensionCutOffParameter</name>
+            <type>Constant</type>
+            <value>1.0</value>
+        </parameter>
+        <parameter>
+            <name>rho_sr</name>
+            <type>Constant</type>
+            <value>1</value>
+        </parameter>
+        <parameter>
+            <name>displacement0</name>
+            <type>Constant</type>
+            <values>0 0</values>
+        </parameter>
+        <parameter>
+            <name>zero</name>
+            <type>Constant</type>
+            <value>0</value>
+        </parameter>
+        <parameter>
+            <name>axial_displacement_top</name>
+            <type>CurveScaled</type>
+            <curve>dis_loading_curve</curve>
+            <parameter>loading_value_top</parameter>
+        </parameter>
+        <parameter>
+            <name>loading_value_top</name>
+            <type>Constant</type>
+            <value>-1.e-4</value>
+        </parameter>
+        <parameter>
+            <name>neumann_force_value_left</name>
+            <type>Constant</type>
+            <values>1e0</values>
+        </parameter>
+        <parameter>
+            <name>neumann_force_left</name>
+            <type>CurveScaled</type>
+            <curve>pre_loading_curve</curve>
+            <parameter>neumann_force_value_left</parameter>
+        </parameter>
+        <parameter>
+            <name>neumann_force_value_right</name>
+            <type>Constant</type>
+            <values>-1e0</values>
+        </parameter>
+        <parameter>
+            <name>neumann_force_right</name>
+            <type>CurveScaled</type>
+            <curve>pre_loading_curve</curve>
+            <parameter>neumann_force_value_right</parameter>
+        </parameter>
+    </parameters>
+    <curves>
+        <curve>
+            <name>dis_loading_curve</name>
+            <coords>0.0 1.0 2.0  </coords>
+            <values>0.0 0.0 1.0  </values>
+        </curve>
+        <curve>
+            <name>pre_loading_curve</name>
+            <coords>0.0 1.0 2.0  </coords>
+            <values>0.0 1.0 1.0  </values>
+        </curve>
+    </curves>
+    <process_variables>
+        <process_variable>
+            <name>displacement</name>
+            <components>2</components>
+            <order>1</order>
+            <initial_condition>displacement0</initial_condition>
+            <boundary_conditions>
+                <boundary_condition>
+                    <geometrical_set>square_1x1_geometry</geometrical_set>
+                    <geometry>bottom</geometry>
+                    <type>Dirichlet</type>
+                    <component>1</component>
+                    <parameter>zero</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <geometrical_set>square_1x1_geometry</geometrical_set>
+                    <geometry>origin</geometry>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>zero</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <geometrical_set>square_1x1_geometry</geometrical_set>
+                    <geometry>top</geometry>
+                    <type>Dirichlet</type>
+                    <component>1</component>
+                    <parameter>axial_displacement_top</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <geometrical_set>square_1x1_geometry</geometrical_set>
+                    <geometry>right</geometry>
+                    <type>Neumann</type>
+                    <component>0</component>
+                    <parameter>neumann_force_right</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <geometrical_set>square_1x1_geometry</geometrical_set>
+                    <geometry>left</geometry>
+                    <type>Neumann</type>
+                    <component>0</component>
+                    <parameter>neumann_force_left</parameter>
+                </boundary_condition>
+            </boundary_conditions>
+        </process_variable>
+    </process_variables>
+    <nonlinear_solvers>
+        <nonlinear_solver>
+            <name>basic_newton</name>
+            <type>Newton</type>
+            <max_iter>40</max_iter>
+            <linear_solver>general_linear_solver</linear_solver>
+        </nonlinear_solver>
+    </nonlinear_solvers>
+    <linear_solvers>
+        <linear_solver>
+            <name>general_linear_solver</name>
+            <lis>-i cg -p jacobi -tol 1e-16 -maxiter 10000</lis>
+            <eigen>
+                <solver_type>SparseLU</solver_type>
+                <precon_type>DIAGONAL</precon_type>
+            </eigen>
+            <petsc>
+                <prefix>sd</prefix>
+                <parameters>-sd_ksp_type cg -sd_pc_type bjacobi -sd_ksp_rtol 1e-16 -sd_ksp_max_it 10000</parameters>
+            </petsc>
+        </linear_solver>
+    </linear_solvers>
+    <test_definition>
+        <vtkdiff>
+            <file>triax_47_pcs_0_ts_200_t_2.000000.vtu</file>
+            <field>displacement</field>
+            <absolute_tolerance>1e-14</absolute_tolerance>
+            <relative_tolerance>1e-14</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>triax_47_pcs_0_ts_200_t_2.000000.vtu</file>
+            <field>sigma</field>
+            <!-- E is 1e8 -> E * u_tol = 1e-6 -->
+            <absolute_tolerance>1e-6</absolute_tolerance>
+            <relative_tolerance>1e-6</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
+</OpenGeoSysProject>

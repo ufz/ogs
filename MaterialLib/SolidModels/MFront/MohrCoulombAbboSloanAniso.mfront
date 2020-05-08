@@ -8,19 +8,26 @@
  */
 
 @DSL Implicit;
-@Behaviour MohrCoulombAbboSloan;
+@Behaviour MohrCoulombAbboSloanAniso;
 @Author Thomas Nagel;
-@Date 05 / 02 / 2019;
+@Date 21 / 03 / 2020;
 
 @Algorithm NewtonRaphson;
 @MaximumNumberOfIterations 200;
-// @Algorithm LevenbergMarquardt;
-//@CompareToNumericalJacobian true;
-//@NumericallyComputedJacobianBlocks {dfeel_ddeel};
-// remove the above blocks once an analytical one is provided.
-// @PerturbationValueForNumericalJacobianComputation 1.e-7;
-//@JacobianComparisonCriterion 1.e-6; // adjust to your needs
 
+@Description
+{
+Non-associated Mohr Coulomb model with singularity smoothing according to
+Abbo-Sloan.Anisotropy is introduced by stress-scaling according to
+//
+Malcom, M.A.M.(2018).Analysis of underground excavations in argillaceous hard
+soils - weak rocks. Technical University of Catalonia.
+//
+The plasticity is transversely isotropic; cn always scales the(1, 0, 0)
+direction. Rotations performed by the FE Programme.
+};
+
+@OrthotropicBehaviour<Pipe>;
 @Brick StandardElasticity;
 
 @Theta 1.0;      // time integration scheme
@@ -31,8 +38,6 @@
 
 @StateVariable real lam;
 lam.setGlossaryName("EquivalentPlasticStrain");
-
-// eel.setMaximumIncrementValuePerIteration(1.e-5);
 
 @Parameter pi = 3.14159265359;
 @Parameter local_zero_tolerance = 1.e-14;
@@ -50,6 +55,10 @@ psi.setEntryName("DilatancyAngle");
 lodeT.setEntryName("TransitionAngle");
 @MaterialProperty stress a;
 a.setEntryName("TensionCutOffParameter");
+@MaterialProperty real cn;
+cn.setEntryName("NormalFactor");
+@MaterialProperty real cs;
+cs.setEntryName("ShearFactor");
 
 @LocalVariable Stensor np;
 
@@ -83,16 +92,24 @@ a.setEntryName("TensionCutOffParameter");
     sin_3_lodeT = sin(3. * lodeT);
     tan_3_lodeT = tan(3. * lodeT);
 
+    auto Hill = Stensor4::Id();
+    const int step = sig.size() + 1;
+    Hill[0] = cn;
+    Hill[step] = Hill[step * 2] = 1. / cn;
+    Hill[step * 3] = Hill[step * 4] = cs;
+
     // Compute initial elastic strain
     const auto S = invert(D);
     eel = S * sig;
 
     // elastic prediction
     const auto sig_el = computeElasticPrediction();
-    const auto s_el = deviator(sig_el);
-    const auto I1_el = trace(sig_el);
-    const auto J2_el = max((s_el | s_el) / 2., local_zero_tolerance);
-    const auto J3_el = det(s_el);
+    const auto sig_el_scaled = Hill * sig_el;
+    const auto s_el_scaled = deviator(sig_el_scaled);
+    const auto I1_el = trace(sig_el_scaled);
+    const auto J2_el =
+        max((s_el_scaled | s_el_scaled) / 2., local_zero_tolerance);
+    const auto J3_el = det(s_el_scaled);
     const auto arg = min(max(-3. * sqrt3 * J3_el / (2. * J2_el * sqrt(J2_el)),
                              -1. + local_zero_tolerance),
                          1. - local_zero_tolerance);
@@ -125,11 +142,16 @@ a.setEntryName("TensionCutOffParameter");
     constexpr auto sqrt3 = Cste<real>::sqrt3;
     constexpr auto isqrt3 = Cste<real>::isqrt3;
     constexpr auto id = Stensor::Id();
-    constexpr auto id4 = Stensor4::Id();
+    auto Hill = Stensor4::Id();
+    const int step = sig.size() + 1;
+    Hill[0] = cn;
+    Hill[step] = Hill[step * 2] = 1. / cn;
+    Hill[step * 3] = Hill[step * 4] = cs;
     if (F)
     {
-        const auto s = deviator(sig);
-        const auto I1 = trace(sig);
+        const auto sig_scaled = Hill * sig;
+        const auto s = deviator(sig_scaled);
+        const auto I1 = trace(sig_scaled);
         const auto J2 = max((s | s) / 2., local_zero_tolerance);
         const auto J3 = real(det(s) < 0. ? min(det(s), -local_zero_tolerance)
                                          : max(det(s), local_zero_tolerance));
@@ -188,14 +210,15 @@ a.setEntryName("TensionCutOffParameter");
 
         // flow direction
         const auto dev_s_squared = computeJ3Derivative(
-            sig);  // replaces dev_s_squared = deviator(square(s));
+            sig_scaled);  // replaces dev_s_squared = deviator(square(s));
         const auto dG_dI1 = sin_psi / 3.;
         const auto root = max(sqrt(J2 * KG * KG + a * a * tan(phi) * tan(phi) *
                                                       cos(psi) * cos(psi)),
                               local_zero_tolerance);
         const auto dG_dJ2 = KG / (2. * root) * (KG - tan_3_lode * dKG_dlode);
         const auto dG_dJ3 = J2 * KG * tan_3_lode / (3. * J3 * root) * dKG_dlode;
-        const auto n = eval(dG_dI1 * id + dG_dJ2 * s + dG_dJ3 * dev_s_squared);
+        const auto n =
+            eval(Hill * (dG_dI1 * id + dG_dJ2 * s + dG_dJ3 * dev_s_squared));
         if (this->iter > 30 && abs(n | np) < sqrt(n | n) * sqrt(np | np) * 0.99)
         {
             return false;
@@ -214,7 +237,8 @@ a.setEntryName("TensionCutOffParameter");
         const auto dF_dI1 = sin_phi / 3.;
         const auto dF_dJ2 = K / (2. * rootF) * (K - tan_3_lode * dK_dlode);
         const auto dF_dJ3 = J2 * K * tan_3_lode / (3. * J3 * rootF) * dK_dlode;
-        const auto nF = eval(dF_dI1 * id + dF_dJ2 * s + dF_dJ3 * dev_s_squared);
+        const auto nF =
+            eval(Hill * (dF_dI1 * id + dF_dJ2 * s + dF_dJ3 * dev_s_squared));
 
         // building dfeel_ddeel
         const auto Pdev = Stensor4::K();
@@ -246,11 +270,11 @@ a.setEntryName("TensionCutOffParameter");
         // elasticity
         feel += dlam * n;
         dfeel_ddeel +=
-            theta * dlam *
-            (dG_dJ2 * Pdev + dG_dJ3 * computeJ3SecondDerivative(sig) +
+            theta * dlam * Hill *
+            (dG_dJ2 * Pdev + dG_dJ3 * computeJ3SecondDerivative(sig_scaled) +
              dG_ddJ2 * (s ^ s) + dG_ddJ3 * (dev_s_squared ^ dev_s_squared) +
              dG_ddJ2J3 * ((dev_s_squared ^ s) + (s ^ dev_s_squared))) *
-            D;
+            Hill * D;
         dfeel_ddlam = n;
         // plasticity
         flam = Fy / D(0, 0);

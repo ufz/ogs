@@ -1,0 +1,442 @@
+/**
+ * \file
+ * \copyright
+ * Copyright (c) 2012-2020, OpenGeoSys Community (http://www.opengeosys.org)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.org/project/license
+ */
+
+@DSL Implicit;
+@Behaviour MohrCoulombAbboSloanUBIOrtho;
+@Author Thomas Nagel;
+@Date 21 / 03 / 2020;
+@Description{
+Ubiquitous joint model where the matrix fails according to a Mohr-Coulomb
+criterion(with tension-cutoff) and the embedded weakness planes follow
+a Coulomb behaviour(so far without tension cut-off). Both models are
+non-associated.
+The fracture normal is the x-direction(1, 0, 0).
+Any rotations to be done by the FE programme.
+The elastic stiffness tensor is orthotropic.
+};
+
+@Algorithm NewtonRaphson;
+@MaximumNumberOfIterations 100;
+
+@OrthotropicBehaviour<Pipe>;
+@Brick StandardElasticity;
+
+@Epsilon 1.e-14;
+@Theta 1.0;
+@Parameter local_zero_tolerance = 1.e-14;
+@Parameter pi = 3.14159265359;
+
+@ModellingHypotheses{".+"};
+@RequireStiffnessTensor<UnAltered>;
+
+// weakness plane cohesion
+@MaterialProperty real c_wp;
+c_wp.setEntryName("PlaneCohesion");
+// weakness plane friction angle
+@MaterialProperty real phi_wp;
+phi_wp.setEntryName("PlaneFrictionAngle");
+// weakness plane dilatancy angle
+@MaterialProperty real psi_wp;
+psi_wp.setEntryName("PlaneDilatancyAngle");
+
+@MaterialProperty stress c;
+c.setEntryName("Cohesion");
+@MaterialProperty real phi;
+phi.setEntryName("FrictionAngle");
+@MaterialProperty real psi;
+psi.setEntryName("DilatancyAngle");
+@MaterialProperty real lodeT;
+lodeT.setEntryName("TransitionAngle");
+@MaterialProperty stress a;
+a.setEntryName("TensionCutOffParameter");
+
+@LocalVariable Stensor np;
+@LocalVariable Stensor npwp;
+
+// Not array because of OGS output
+@StateVariable strain lamWP;
+lamWP.setEntryName("EquivalentPlasticStrainWP");
+@StateVariable strain lam;
+lam.setEntryName("EquivalentPlasticStrainMatrix");
+
+@LocalVariable bool F[2];
+@LocalVariable real tan_phi_wp;
+@LocalVariable real tan_psi_wp;
+@LocalVariable real sin_psi;
+@LocalVariable real sin_phi;
+@LocalVariable real cos_phi;
+@LocalVariable real cos_lodeT;
+@LocalVariable real sin_lodeT;
+@LocalVariable real tan_lodeT;
+@LocalVariable real cos_3_lodeT;
+@LocalVariable real sin_3_lodeT;
+@LocalVariable real tan_3_lodeT;
+
+@InitLocalVariables
+{
+    // tan_phi_wp after conversion to rad
+    tan_phi_wp = tan(phi_wp * pi / 180.);
+    // tan_psi_wp after conversion to rad
+    tan_psi_wp = tan(psi_wp * pi / 180.);
+
+    constexpr auto sqrt3 = Cste<real>::sqrt3;
+    constexpr auto isqrt3 = Cste<real>::isqrt3;
+    // conversion to rad
+    phi *= pi / 180.;
+    psi *= pi / 180.;
+    lodeT *= pi / 180.;
+    sin_psi = sin(psi);
+    cos_phi = cos(phi);
+    sin_phi = sin(phi);
+    sin_lodeT = sin(lodeT);
+    cos_lodeT = cos(lodeT);
+    tan_lodeT = tan(lodeT);
+    cos_3_lodeT = cos(3. * lodeT);
+    sin_3_lodeT = sin(3. * lodeT);
+    tan_3_lodeT = tan(3. * lodeT);
+
+    // Compute initial elastic strain
+    const auto S = invert(D);
+    eel = S * sig;
+
+    const auto sig_el = computeElasticPrediction();
+
+    const auto s_el = deviator(sig_el);
+    const auto I1_el = trace(sig_el);
+    const auto J2_el = max((s_el | s_el) / 2., local_zero_tolerance);
+    const auto J3_el = det(s_el);
+    const auto arg = min(max(-3. * sqrt3 * J3_el / (2. * J2_el * sqrt(J2_el)),
+                             -1. + local_zero_tolerance),
+                         1. - local_zero_tolerance);
+    const auto lode_el = 1. / 3. * asin(arg);
+    auto K = 0.0;
+    if (fabs(lode_el) < lodeT)
+    {
+        K = cos(lode_el) - isqrt3 * sin_phi * sin(lode_el);
+    }
+    else
+    {
+        const auto sign = min(
+            max(lode_el / max(abs(lode_el), local_zero_tolerance), -1.), 1.);
+        const auto A =
+            1. / 3. * cos_lodeT *
+            (3. + tan_lodeT * tan_3_lodeT +
+             isqrt3 * sign * (tan_3_lodeT - 3. * tan_lodeT) * sin_phi);
+        const auto B = 1 / (3. * cos_3_lodeT) *
+                       (sign * sin_lodeT + isqrt3 * sin_phi * cos_lodeT);
+        K = A - B * arg;
+    }
+    const auto sMC =
+        I1_el / 3. * sin_phi + sqrt(J2_el * K * K + a * a * sin_phi * sin_phi);
+
+    // Maximum shear stress
+    const double t_s_el =
+        (sig_el.size() == 6)
+            ? sqrt((sig_el[3] * sig_el[3] + sig_el[4] * sig_el[4]) / 2.)
+            : sqrt((sig_el[3] * sig_el[3]) / 2);
+
+    // weak plane Coulomb
+    F[0] = t_s_el - c_wp + sig_el[0] * tan_phi_wp > 0.;
+
+    // matrix Mohr Coulomb
+    F[1] = sMC - c * cos_phi > 0.;
+    np = npwp = Stensor(real(0));
+}
+
+@Integrator
+{
+    if (F[0] || F[1])
+    {
+        const auto id = Stensor::Id();
+        const auto id4 = Stensor4::Id();
+        const auto Pdev = Stensor4::K();
+
+        if (F[0])
+        {
+            const double t_s =
+                (sig.size() == 6)
+                    ? sqrt((sig[3] * sig[3] + sig[4] * sig[4]) / 2)
+                    : sqrt((sig[3] * sig[3]) / 2);
+            // yield function value
+            const auto Fy = t_s - c_wp + sig[0] * tan_phi_wp;
+            if (Fy > 1e-4 * D(0, 0))
+            {
+                return false;
+            }
+
+            // flow direction and yield function gradient
+            auto n = id;
+            n *= 0.;
+            n[0] = tan_psi_wp;  // x
+
+            auto nF = id;
+            nF *= 0.;
+            nF[0] = tan_phi_wp;  // x
+
+            auto dn_dsig = id4;
+            dn_dsig *= 0.;
+
+            if (t_s > local_zero_tolerance)
+            {
+                n[3] = nF[3] = sig[3] / (t_s * 2.);  // xy
+                const double t_s_cube_over_four = t_s * t_s * t_s * 4.;
+                dn_dsig[21] = dn_dsig[28] = 1. / (t_s * 2.);  //(3,3) and (4,4)
+                dn_dsig[21] -= sig[3] * sig[3] / t_s_cube_over_four;  //(3,3)
+                dn_dsig[28] -= sig[4] * sig[4] / t_s_cube_over_four;  //(4,4)
+                // xz direction
+                if (sig.size() == 6)
+                    n[4] = nF[4] = sig[4] / (t_s * 2);  // xz
+                dn_dsig[22] = dn_dsig[24] =
+                    -sig[3] * sig[4] / t_s_cube_over_four;  //(3,4), (4,3)
+            }
+
+            if (this->iter > 30 &&
+                abs(n | npwp) < sqrt(n | n) * sqrt(npwp | npwp) * 0.99)
+            {
+                return false;
+            }
+
+            // residuals
+            feel += dlamWP * n;
+            flamWP = Fy / D(0, 0);
+            // Jacobian
+            dfeel_ddeel += theta * dlamWP * (dn_dsig * D);
+            dfeel_ddlamWP = n;
+            dflamWP_ddlamWP = strain(0.);
+            dflamWP_ddeel = theta * (nF | D) / D(0, 0);
+
+            npwp = n;
+        }
+
+        if (F[1])
+        {
+            constexpr auto sqrt3 = Cste<real>::sqrt3;
+            constexpr auto isqrt3 = Cste<real>::isqrt3;
+            constexpr auto id = Stensor::Id();
+            const auto s = deviator(sig);
+            const auto I1 = trace(sig);
+            const auto J2 = max((s | s) / 2., local_zero_tolerance);
+            const auto J3 =
+                real(det(s) < 0. ? min(det(s), -local_zero_tolerance)
+                                 : max(det(s), local_zero_tolerance));
+            const auto arg = min(max(-3. * sqrt3 * J3 / (2. * J2 * sqrt(J2)),
+                                     -1. + local_zero_tolerance),
+                                 1. - local_zero_tolerance);
+            const auto lode = 1. / 3. * asin(arg);
+            const auto cos_lode = cos(lode);
+            const auto sin_lode = sin(lode);
+            const auto cos_3_lode = cos(3. * lode);
+            const auto sin_3_lode = arg;
+            const auto tan_3_lode = tan(3. * lode);
+            auto K = 0.;
+            auto dK_dlode = 1.;
+            if (fabs(lode) < lodeT)
+            {
+                K = cos_lode - isqrt3 * sin_phi * sin_lode;
+                dK_dlode = -sin_lode - isqrt3 * sin_phi * cos_lode;
+            }
+            else
+            {
+                const auto sign = min(
+                    max(lode / max(abs(lode), local_zero_tolerance), -1.), 1.);
+                const auto A =
+                    1. / 3. * cos_lodeT *
+                    (3. + tan_lodeT * tan_3_lodeT +
+                     isqrt3 * sign * (tan_3_lodeT - 3. * tan_lodeT) * sin_phi);
+                const auto B =
+                    1. / (3. * cos_3_lodeT) *
+                    (sign * sin_lodeT + isqrt3 * sin_phi * cos_lodeT);
+                K = A - B * sin_3_lode;
+                dK_dlode = -3. * B * cos_3_lode;
+            }
+            auto KG = 0.0;  // move into a function to avoid code duplication
+            auto dKG_dlode = 1.;
+            auto dKG_ddlode = 1.;
+            if (fabs(lode) < lodeT)
+            {
+                KG = cos_lode - isqrt3 * sin_psi * sin_lode;
+                dKG_dlode = -sin_lode - isqrt3 * sin_psi * cos_lode;
+                dKG_ddlode = -cos_lode + isqrt3 * sin_psi * sin_lode;
+            }
+            else
+            {
+                const auto sign = min(
+                    max(lode / max(fabs(lode), local_zero_tolerance), -1.), 1.);
+                const auto A =
+                    1. / 3. * cos_lodeT *
+                    (3. + tan_lodeT * tan_3_lodeT +
+                     isqrt3 * sign * (tan_3_lodeT - 3. * tan_lodeT) * sin_psi);
+                const auto B =
+                    1. / (3. * cos_3_lodeT) *
+                    (sign * sin_lodeT + isqrt3 * sin_psi * cos_lodeT);
+                KG = A - B * sin_3_lode;
+                dKG_dlode = -3. * B * cos_3_lode;
+                dKG_ddlode = 9. * B * sin_3_lode;
+            }
+
+            // flow direction
+            const auto dev_s_squared = computeJ3Derivative(
+                sig);  // replaces dev_s_squared = deviator(square(s));
+            const auto dG_dI1 = sin_psi / 3.;
+            const auto root =
+                max(sqrt(J2 * KG * KG +
+                         a * a * tan(phi) * tan(phi) * cos(psi) * cos(psi)),
+                    local_zero_tolerance);
+            const auto dG_dJ2 =
+                KG / (2. * root) * (KG - tan_3_lode * dKG_dlode);
+            const auto dG_dJ3 =
+                J2 * KG * tan_3_lode / (3. * J3 * root) * dKG_dlode;
+            const auto n =
+                eval(dG_dI1 * id + dG_dJ2 * s + dG_dJ3 * dev_s_squared);
+            if (this->iter > 30 &&
+                abs(n | np) < sqrt(n | n) * sqrt(np | np) * 0.99)
+            {
+                return false;
+            }
+            // yield function
+            const auto rootF = max(sqrt(J2 * K * K + a * a * sin_phi * sin_phi),
+                                   local_zero_tolerance);
+            const auto Fy = I1 * sin_phi / 3 + rootF - c * cos_phi;
+            // return if overshoot of yield surface
+            if (Fy > 1e-4 * D(0, 0))
+            {
+                return false;
+            }
+
+            // yield function derivative for Jacobian
+            const auto dF_dI1 = sin_phi / 3.;
+            const auto dF_dJ2 = K / (2. * rootF) * (K - tan_3_lode * dK_dlode);
+            const auto dF_dJ3 =
+                J2 * K * tan_3_lode / (3. * J3 * rootF) * dK_dlode;
+            const auto nF =
+                eval(dF_dI1 * id + dF_dJ2 * s + dF_dJ3 * dev_s_squared);
+
+            const auto dG_dlode = KG * J2 / (root)*dKG_dlode;
+            const auto dG_ddlode =
+                J2 / root *
+                (dKG_dlode * dKG_dlode * (1. - J2 * KG * KG / (root * root)) +
+                 KG * dKG_ddlode);
+            const auto dG_ddlodeJ2 =
+                KG / root * dKG_dlode * (1. - J2 * KG * KG / (2 * root * root));
+            const auto dG_ddJ2 =
+                -KG * KG * KG * KG / (4. * root * root * root) +
+                dG_dlode * tan_3_lode / (2 * J2 * J2) -
+                tan_3_lode / (2 * J2) *
+                    (2 * dG_ddlodeJ2 - tan_3_lode / (2 * J2) * dG_ddlode -
+                     3 / (2 * J2 * cos_3_lode * cos_3_lode) * dG_dlode);
+            const auto dG_ddJ3 =
+                -tan_3_lode / (3 * J3 * J3) * dG_dlode +
+                tan_3_lode / (3 * J3) *
+                    (dG_ddlode * tan_3_lode / (3 * J3) +
+                     dG_dlode * 1. / (J3 * cos_3_lode * cos_3_lode));
+            const auto dG_ddJ2J3 =
+                dG_ddlodeJ2 * tan_3_lode / (3 * J3) -
+                tan_3_lode / (2 * J2) *
+                    (dG_ddlode * tan_3_lode / (3 * J3) +
+                     dG_dlode * 1. / (J3 * cos_3_lode * cos_3_lode));
+
+            // elasticity
+            feel += dlam * n;
+            dfeel_ddeel +=
+                theta * dlam *
+                (dG_dJ2 * Pdev + dG_dJ3 * computeJ3SecondDerivative(sig) +
+                 dG_ddJ2 * (s ^ s) + dG_ddJ3 * (dev_s_squared ^ dev_s_squared) +
+                 dG_ddJ2J3 * ((dev_s_squared ^ s) + (s ^ dev_s_squared))) *
+                D;
+            dfeel_ddlam = n;
+            // plasticity
+            flam = Fy / D(0, 0);
+            dflam_ddlam = strain(0);
+            dflam_ddeel = theta * (nF | D) / D(0, 0);
+            np = n;
+        }
+    }
+}
+
+@AdditionalConvergenceChecks
+{
+    if (converged)
+    {
+        if (F[0])
+        {
+            if (dlamWP < 0)
+            {
+                // deactivating weak plane
+                converged = F[0] = false;
+            }
+        }
+        else
+        {
+            const double t_s =
+                (sig.size() == 6)
+                    ? sqrt((sig[3] * sig[3] + sig[4] * sig[4]) / 2)
+                    : sqrt((sig[3] * sig[3]) / 2);
+            // yield function value
+            const auto Fy = t_s - c_wp + sig[0] * tan_phi_wp;
+            if (Fy > 0)
+            {
+                converged = false;
+                F[0] = true;
+            }
+        }
+        if (F[1])
+        {
+            if (dlam < 0)
+            {
+                // deactivating matrix
+                converged = F[1] = false;
+            }
+        }
+        else
+        {
+            constexpr auto sqrt3 = Cste<real>::sqrt3;
+            constexpr auto isqrt3 = Cste<real>::isqrt3;
+            const auto s = deviator(sig);
+            const auto I1 = trace(sig);
+            const auto J2 = max((s | s) / 2., local_zero_tolerance);
+            const auto J3 =
+                real(det(s) < 0. ? min(det(s), -local_zero_tolerance)
+                                 : max(det(s), local_zero_tolerance));
+            const auto arg = min(max(-3. * sqrt3 * J3 / (2. * J2 * sqrt(J2)),
+                                     -1. + local_zero_tolerance),
+                                 1. - local_zero_tolerance);
+            const auto lode = 1. / 3. * asin(arg);
+            const auto cos_lode = cos(lode);
+            const auto sin_lode = sin(lode);
+            const auto sin_3_lode = arg;
+            auto K = 0.;
+            if (fabs(lode) < lodeT)
+            {
+                K = cos_lode - isqrt3 * sin_phi * sin_lode;
+            }
+            else
+            {
+                const auto sign = min(
+                    max(lode / max(abs(lode), local_zero_tolerance), -1.), 1.);
+                const auto A =
+                    1. / 3. * cos_lodeT *
+                    (3. + tan_lodeT * tan_3_lodeT +
+                     isqrt3 * sign * (tan_3_lodeT - 3. * tan_lodeT) * sin_phi);
+                const auto B =
+                    1. / (3. * cos_3_lodeT) *
+                    (sign * sin_lodeT + isqrt3 * sin_phi * cos_lodeT);
+                K = A - B * sin_3_lode;
+            }
+            // yield function
+            const auto rootF = max(sqrt(J2 * K * K + a * a * sin_phi * sin_phi),
+                                   local_zero_tolerance);
+            const auto Fy = I1 * sin_phi / 3 + rootF - c * cos_phi;
+            if (Fy > 0)
+            {
+                converged = false;
+                F[1] = true;
+            }
+        }
+    }
+}

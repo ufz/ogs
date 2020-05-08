@@ -1,0 +1,40 @@
+@Author Thomas Nagel;
+@Date   19/02/2019;
+@Description{
+
+};
+
+
+@Real 'theta' -2.697327025809418;
+@Real 'em'  1e-2;
+@Real 'tmax' 1;
+@Real 'c' 'cos(theta)';
+@Real 's' 'sin(theta)';
+
+@MaximumNumberOfSubSteps 5;  // fails without substepping (residual ping-pong)
+@Behaviour<generic> 'src/libBehaviour.so' 'MohrCoulombAbboSloanUBI';
+
+@ImposedStrain 'EXX' {0 : 0, 'tmax' : 'em* c'};
+@ImposedStrain 'EYY' {0 : 0, 'tmax' : 'em* s'};
+@ImposedStrain 'EXY' {0 : 0, 0.5 : 0.0, 1.0 : 'em'};
+@ImposedStrain 'EXZ' {0 : 0, 0.5 : 0.0, 1.0 : '2*em'};
+
+//@NonLinearConstraint<Stress> 'SXX+SYY+SZZ';
+//@NonLinearConstraint<Stress> 'SXY';
+//@NonLinearConstraint<Stress> 'SXZ';
+//@NonLinearConstraint<Stress> 'SYZ';
+
+@ExternalStateVariable "Temperature" 293.15;
+
+@Times{0, 1 in 100};
+
+@MaterialProperty<constant> 'YoungModulus' 150.e3;
+@MaterialProperty<constant> 'PoissonRatio' 0.3;
+@MaterialProperty<constant> 'PlaneCohesion' 2.e1;
+@MaterialProperty<constant> 'PlaneFrictionAngle' 10.;
+@MaterialProperty<constant> 'PlaneDilatancyAngle' 10.;
+@MaterialProperty<constant> 'Cohesion' 3.e1;
+@MaterialProperty<constant> 'FrictionAngle' 30.;
+@MaterialProperty<constant> 'DilatancyAngle' 10.;
+@MaterialProperty<constant> 'TransitionAngle' 29.;
+@MaterialProperty<constant> 'TensionCutOffParameter' 1.e1;

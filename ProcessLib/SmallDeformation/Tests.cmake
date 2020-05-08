@@ -52,6 +52,9 @@ endif()
 
 if (OGS_USE_MFRONT)
     OgsTest(PROJECTFILE Mechanics/MohrCoulombAbboSloan/load_test_mc.prj)
+    OgsTest(PROJECTFILE Mechanics/MohrCoulombAbboSloanAnisotropic/triax_1e0_47.prj)
+    OgsTest(PROJECTFILE Mechanics/MohrCoulombAbboSloanAnisotropic/triax_ortho_1e0_47.prj)
+    OgsTest(PROJECTFILE Mechanics/MohrCoulombAbboSloanAnisotropic/triax_aniso_1e0_47.prj)
     #TODO (naumov) enable when output file format can be specified
     #OgsTest(PROJECTFILE Mechanics/MohrCoulombAbboSloan/oedometer.prj RUNTIME 80)
     OgsTest(PROJECTFILE Mechanics/Linear/MFront/cube_1e0_orthotropic_xyz.prj)
