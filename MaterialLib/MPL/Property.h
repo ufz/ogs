@@ -132,6 +132,16 @@ private:
         // Empty check for properties which can be defined on every scale,
         // medium, phase or component
     }
+
+private:
+    /// Corresponds to the PropertyDataType
+    static constexpr std::array property_data_type_names_ = {
+        "scalar",     "2-vector",         "3-vector",        "2x2-matrix",
+        "3x3-matrix", "2D-Kelvin vector", "3D-Kelvin vector"};
+    static_assert(property_data_type_names_.size() ==
+                      std::variant_size_v<PropertyDataType>,
+                  "The array of property data type names has different size "
+                  "than the PropertyDataType variant type.");
 };
 
 inline void overwriteExistingProperties(
