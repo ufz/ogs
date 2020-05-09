@@ -14,6 +14,7 @@
 #include <Eigen/Dense>
 #include <array>
 #include <string>
+#include <typeinfo>
 #include <variant>
 
 #include "ParameterLib/SpatialPosition.h"
@@ -82,13 +83,37 @@ public:
     T initialValue(ParameterLib::SpatialPosition const& pos,
                    double const t) const
     {
-        return std::get<T>(initialValue(pos, t));
+        try
+        {
+            return std::get<T>(initialValue(pos, t));
+        }
+        catch (std::bad_variant_access const&)
+        {
+            OGS_FATAL(
+                "The '{:s}' property's initial value does not hold requested "
+                "type {:s} but a {:s}.",
+                name_,
+                typeid(T).name(),
+                property_data_type_names_[initialValue(pos, t).index()]);
+        }
     }
 
     template <typename T>
     T value() const
     {
-        return std::get<T>(value());
+        try
+        {
+            return std::get<T>(value());
+        }
+        catch (std::bad_variant_access const&)
+        {
+            OGS_FATAL(
+                "The '{:s}' property's value does not hold requested type {:s} "
+                "but a {:s}.",
+                name_,
+                typeid(T).name(),
+                property_data_type_names_[value().index()]);
+        }
     }
 
     template <typename T>
@@ -96,7 +121,20 @@ public:
             ParameterLib::SpatialPosition const& pos, double const t,
             double const dt) const
     {
-        return std::get<T>(value(variable_array, pos, t, dt));
+        try
+        {
+            return std::get<T>(value(variable_array, pos, t, dt));
+        }
+        catch (std::bad_variant_access const&)
+        {
+            OGS_FATAL(
+                "The '{:s}' property's value is not of the requested type {:s} "
+                "but a {:s}.",
+                name_,
+                typeid(T).name(),
+                property_data_type_names_[value(variable_array, pos, t, dt)
+                                              .index()]);
+        }
     }
 
     template <typename T>
@@ -104,7 +142,20 @@ public:
              ParameterLib::SpatialPosition const& pos, double const t,
              double const dt) const
     {
-        return std::get<T>(dValue(variable_array, variable, pos, t, dt));
+        try
+        {
+            return std::get<T>(dValue(variable_array, variable, pos, t, dt));
+        }
+        catch (std::bad_variant_access const&)
+        {
+            OGS_FATAL(
+                "The '{:s}' property's first derivative value is not of the "
+                "requested type {:s} but a {:s}.",
+                name_,
+                typeid(T).name(),
+                property_data_type_names_
+                    [dValue(variable_array, variable, pos, t, dt).index()]);
+        }
     }
     template <typename T>
     T d2Value(VariableArray const& variable_array, Variable const& variable1,
@@ -112,8 +163,22 @@ public:
               ParameterLib::SpatialPosition const& pos, double const t,
               double const dt) const
     {
-        return std::get<T>(
-            d2Value(variable_array, variable1, variable2, pos, t, dt));
+        try
+        {
+            return std::get<T>(
+                d2Value(variable_array, variable1, variable2, pos, t, dt));
+        }
+        catch (std::bad_variant_access const&)
+        {
+            OGS_FATAL(
+                "The '{:s}' property's second derivative value is not of the "
+                "requested type {:s} but a {:s}.",
+                name_,
+                typeid(T).name(),
+                property_data_type_names_[d2Value(variable_array, variable1,
+                                                  variable2, pos, t, dt)
+                                              .index()]);
+        }
     }
 
 protected:
