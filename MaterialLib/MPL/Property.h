@@ -113,6 +113,7 @@ public:
     }
 
 protected:
+    std::string name_;
     /// The single value of a property.
     PropertyDataType value_;
     PropertyDataType dvalue_;

@@ -20,8 +20,11 @@
 
 namespace MaterialPropertyLib
 {
-/**
- */
+RelPermLiakopoulos::RelPermLiakopoulos(std::string name)
+{
+    name_ = std::move(name);
+}
+
 PropertyDataType RelPermLiakopoulos::value(
     VariableArray const& variable_array,
     ParameterLib::SpatialPosition const& pos, double const t,

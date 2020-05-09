@@ -22,6 +22,7 @@
 namespace MaterialPropertyLib
 {
 RelPermBrooksCorey::RelPermBrooksCorey(
+    std::string name,
     const double residual_liquid_saturation,
     const double residual_gas_saturation,
     const double min_relative_permeability_liquid,
@@ -31,7 +32,10 @@ RelPermBrooksCorey::RelPermBrooksCorey(
       residual_gas_saturation_(residual_gas_saturation),
       min_relative_permeability_liquid_(min_relative_permeability_liquid),
       min_relative_permeability_gas_(min_relative_permeability_gas),
-      exponent_(exponent){};
+      exponent_(exponent)
+{
+    name_ = std::move(name);
+};
 
 PropertyDataType RelPermBrooksCorey::value(
     VariableArray const& variable_array,

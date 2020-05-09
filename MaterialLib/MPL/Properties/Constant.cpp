@@ -14,8 +14,9 @@
 
 namespace MaterialPropertyLib
 {
-Constant::Constant(PropertyDataType const& v)
+Constant::Constant(std::string name, PropertyDataType const& v)
 {
+    name_ = std::move(name);
     value_ = v;
     dvalue_ = std::visit(
         [](auto const& value) -> PropertyDataType { return decltype(value){}; },

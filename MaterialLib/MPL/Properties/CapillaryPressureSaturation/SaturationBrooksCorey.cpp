@@ -23,6 +23,7 @@
 namespace MaterialPropertyLib
 {
 SaturationBrooksCorey::SaturationBrooksCorey(
+    std::string name,
     const double residual_liquid_saturation,
     const double residual_gas_saturation,
     const double exponent,
@@ -30,7 +31,10 @@ SaturationBrooksCorey::SaturationBrooksCorey(
     : residual_liquid_saturation_(residual_liquid_saturation),
       residual_gas_saturation_(residual_gas_saturation),
       exponent_(exponent),
-      entry_pressure_(entry_pressure){};
+      entry_pressure_(entry_pressure)
+{
+    name_ = std::move(name);
+};
 
 PropertyDataType SaturationBrooksCorey::value(
     VariableArray const& variable_array,

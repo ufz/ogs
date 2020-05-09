@@ -42,7 +42,8 @@ class Component;
 class CapillaryPressureVanGenuchten : public Property
 {
 public:
-    CapillaryPressureVanGenuchten(double const residual_liquid_saturation,
+    CapillaryPressureVanGenuchten(std::string name,
+                                  double const residual_liquid_saturation,
                                   double const residual_gas_saturation,
                                   double const exponent,
                                   double const p_b,

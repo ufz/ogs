@@ -32,7 +32,8 @@ private:
     Medium* medium_ = nullptr;
 
 public:
-    RelPermVanGenuchten(double const residual_liquid_saturation,
+    RelPermVanGenuchten(std::string name,
+                        double const residual_liquid_saturation,
                         double const residual_gas_saturation,
                         double const min_relative_permeability_liquid,
                         double const exponent);

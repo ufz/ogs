@@ -26,13 +26,19 @@ std::unique_ptr<ParameterProperty> createParameterProperty(
 {
     //! \ogs_file_param{properties__property__type}
     config.checkConfigParameter("type", "Parameter");
-    DBUG("Create Parameter property");
+
+    // Second access for storage.
+    //! \ogs_file_param{properties__property__name}
+    auto property_name = config.peekConfigParameter<std::string>("name");
+
+    DBUG("Create Parameter property {:s}.", property_name);
 
     std::string const& parameter_name =
         //! \ogs_file_param{properties__property__Parameter__parameter_name}
         config.getConfigParameter<std::string>("parameter_name");
     auto const& parameter = ParameterLib::findParameter<double>(
         parameter_name, parameters, 0, nullptr);
-    return std::make_unique<MaterialPropertyLib::ParameterProperty>(parameter);
+    return std::make_unique<MaterialPropertyLib::ParameterProperty>(
+        std::move(property_name), parameter);
 }
 }  // namespace MaterialPropertyLib

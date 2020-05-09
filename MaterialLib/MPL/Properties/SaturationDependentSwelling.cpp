@@ -18,7 +18,9 @@
 namespace MaterialPropertyLib
 {
 SaturationDependentSwelling::SaturationDependentSwelling(
-    std::array<double, 3> swelling_pressures,
+    std::string name,
+    std::array<double, 3>
+        swelling_pressures,
     std::array<double, 3>
         exponents,
     double const lower_saturation_limit,
@@ -30,6 +32,7 @@ SaturationDependentSwelling::SaturationDependentSwelling(
       S_max_(upper_saturation_limit),
       local_coordinate_system_(local_coordinate_system)
 {
+    name_ = std::move(name);
 }
 
 void SaturationDependentSwelling::setScale(

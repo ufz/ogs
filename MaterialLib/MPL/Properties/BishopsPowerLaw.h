@@ -16,7 +16,7 @@ namespace MaterialPropertyLib
 class BishopsPowerLaw final : public Property
 {
 public:
-    explicit BishopsPowerLaw(double const exponent);
+    BishopsPowerLaw(std::string name, double const exponent);
 
     void setScale(
         std::variant<Medium*, Phase*, Component*> scale_pointer) override;

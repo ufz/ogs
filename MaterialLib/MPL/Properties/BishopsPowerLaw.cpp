@@ -11,7 +11,11 @@
 
 namespace MaterialPropertyLib
 {
-BishopsPowerLaw::BishopsPowerLaw(double const exponent) : m_(exponent) {}
+BishopsPowerLaw::BishopsPowerLaw(std::string name, double const exponent)
+    : m_(exponent)
+{
+    name_ = std::move(name);
+}
 
 void BishopsPowerLaw::setScale(
     std::variant<Medium*, Phase*, Component*> scale_pointer)

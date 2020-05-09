@@ -19,7 +19,11 @@ std::unique_ptr<SaturationVanGenuchten> createSaturationVanGenuchten(
     //! \ogs_file_param{properties__property__type}
     config.checkConfigParameter("type", "SaturationVanGenuchten");
 
-    DBUG("Create SaturationVanGenuchten medium property");
+    // Second access for storage.
+    //! \ogs_file_param{properties__property__name}
+    auto property_name = config.peekConfigParameter<std::string>("name");
+
+    DBUG("Create SaturationVanGenuchten medium property {:s}.", property_name);
 
     auto const residual_liquid_saturation =
         //! \ogs_file_param{properties__property__SaturationVanGenuchten__residual_liquid_saturation}
@@ -34,6 +38,7 @@ std::unique_ptr<SaturationVanGenuchten> createSaturationVanGenuchten(
     auto const p_b = config.getConfigParameter<double>("p_b");
 
     return std::make_unique<SaturationVanGenuchten>(
-        residual_liquid_saturation, residual_gas_saturation, exponent, p_b);
+        std::move(property_name), residual_liquid_saturation,
+        residual_gas_saturation, exponent, p_b);
 }
 }  // namespace MaterialPropertyLib

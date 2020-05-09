@@ -23,8 +23,9 @@ TEST(MaterialPropertyLib, SaturationVanGenuchten)
     double const exponent = 0.79;
     double const p_b = 5000;
 
-    MPL::Property const& pressure_saturation = MPL::SaturationVanGenuchten{
-        residual_liquid_saturation, residual_gas_saturation, exponent, p_b};
+    MPL::Property const& pressure_saturation =
+        MPL::SaturationVanGenuchten{"saturation", residual_liquid_saturation,
+                                    residual_gas_saturation, exponent, p_b};
 
     MPL::VariableArray variable_array;
     ParameterLib::SpatialPosition const pos;

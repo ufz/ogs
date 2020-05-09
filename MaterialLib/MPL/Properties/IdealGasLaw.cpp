@@ -41,6 +41,11 @@ double molarMass(Phase* phase_, Component* component_,
     return 0.;
 }
 
+IdealGasLaw::IdealGasLaw(std::string name)
+{
+    name_ = std::move(name);
+}
+
 PropertyDataType IdealGasLaw::value(VariableArray const& variable_array,
                                     ParameterLib::SpatialPosition const& pos,
                                     double const t, double const dt) const

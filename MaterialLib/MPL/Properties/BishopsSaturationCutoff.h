@@ -18,7 +18,7 @@ namespace MaterialPropertyLib
 class BishopsSaturationCutoff final : public Property
 {
 public:
-    explicit BishopsSaturationCutoff(double const cutoff_value);
+    BishopsSaturationCutoff(std::string name, double const cutoff_value);
 
     void setScale(
         std::variant<Medium*, Phase*, Component*> scale_pointer) override;

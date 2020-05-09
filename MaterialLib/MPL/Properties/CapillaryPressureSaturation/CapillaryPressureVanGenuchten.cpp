@@ -19,6 +19,7 @@
 namespace MaterialPropertyLib
 {
 CapillaryPressureVanGenuchten::CapillaryPressureVanGenuchten(
+    std::string name,
     double const residual_liquid_saturation,
     double const residual_gas_saturation,
     double const exponent,
@@ -30,6 +31,8 @@ CapillaryPressureVanGenuchten::CapillaryPressureVanGenuchten(
       p_b_(p_b),
       p_cap_max_(maximum_capillary_pressure)
 {
+    name_ = std::move(name);
+
     if (S_L_res_ < 0 || S_L_res_ > 1)
     {
         OGS_FATAL(

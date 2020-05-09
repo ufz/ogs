@@ -24,9 +24,14 @@ std::unique_ptr<CurveProperty> createCurveProperty(
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
         curves)
 {
-    DBUG("Create CurveProperty.");
     //! \ogs_file_param{properties__property__type}
     config.checkConfigParameter("type", "Curve");
+
+    // Second access for storage.
+    //! \ogs_file_param{properties__property__name}
+    auto property_name = config.peekConfigParameter<std::string>("name");
+
+    DBUG("Create CurveProperty {:s}.", property_name);
 
     //! \ogs_file_param{properties__property__Curve__curve}
     auto curve_name = config.getConfigParameter<std::string>("curve");
@@ -43,7 +48,8 @@ std::unique_ptr<CurveProperty> createCurveProperty(
         MaterialPropertyLib::convertStringToVariable(
             independent_variable_string);
 
-    return std::make_unique<CurveProperty>(independent_variable, curve);
+    return std::make_unique<CurveProperty>(
+        std::move(property_name), independent_variable, curve);
 }
 
 }  // namespace MaterialPropertyLib

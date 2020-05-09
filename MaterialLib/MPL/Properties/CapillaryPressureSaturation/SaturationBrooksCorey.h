@@ -37,7 +37,8 @@ private:
     const double entry_pressure_;
 
 public:
-    SaturationBrooksCorey(const double residual_liquid_saturation,
+    SaturationBrooksCorey(std::string name,
+                          const double residual_liquid_saturation,
                           const double residual_gas_saturation,
                           const double exponent,
                           const double entry_pressure);

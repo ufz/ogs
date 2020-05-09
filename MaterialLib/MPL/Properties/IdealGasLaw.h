@@ -31,6 +31,7 @@ class Component;
 class IdealGasLaw final : public Property
 {
 public:
+    explicit IdealGasLaw(std::string name);
     /// This method assigns a pointer to the material object that is the owner
     /// of this property
     void setScale(

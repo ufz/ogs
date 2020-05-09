@@ -33,10 +33,12 @@ private:
 
 public:
     TransportPorosityFromMassBalance(
+        std::string name,
         ParameterLib::Parameter<double> const& initial_porosity,
         double const phi_min, double const phi_max)
         : phi0_(initial_porosity), phi_min_(phi_min), phi_max_(phi_max)
     {
+        name_ = std::move(name);
     }
 
     void setScale(

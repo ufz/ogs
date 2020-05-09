@@ -30,7 +30,8 @@ public:
     /// This constructor accepts single values of double data type defined in
     /// the PropertyDataType definition and sets the protected attribute value_
     /// of the base class Property to that value.
-    LinearProperty(PropertyDataType const& property_reference_value,
+    LinearProperty(std::string name,
+                   PropertyDataType const& property_reference_value,
                    std::vector<IndependentVariable> const& vs);
 
     /// This method computes the value of a property depending linearly on

@@ -39,7 +39,8 @@ private:
     const double exponent_;
 
 public:
-    RelPermBrooksCorey(const double /*residual_liquid_saturation*/,
+    RelPermBrooksCorey(std::string name,
+                       const double /*residual_liquid_saturation*/,
                        const double /*residual_gas_saturation*/,
                        const double /*min_relative_permeability_liquid_*/,
                        const double /*min_relative_permeability_gas_*/,

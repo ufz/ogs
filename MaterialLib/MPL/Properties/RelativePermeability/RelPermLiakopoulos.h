@@ -67,6 +67,8 @@ private:
         1. / (maximal_liquid_saturation_ - residual_liquid_saturation_);
 
 public:
+    explicit RelPermLiakopoulos(std::string name);
+
     /// This method assigns a pointer to the meterial object that is the owner
     /// of this property
     void setScale(

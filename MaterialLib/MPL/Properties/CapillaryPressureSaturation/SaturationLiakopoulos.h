@@ -53,6 +53,11 @@ private:
         (1. - residual_liquid_saturation_) / parameter_a_, (1. / parameter_b_));
 
 public:
+    explicit SaturationLiakopoulos(std::string name)
+    {
+        name_ = std::move(name);
+    }
+
     /// This method assigns a pointer to the material object that is the owner
     /// of this property
     void setScale(

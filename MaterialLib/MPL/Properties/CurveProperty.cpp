@@ -12,10 +12,12 @@
 
 namespace MaterialPropertyLib
 {
-CurveProperty::CurveProperty(Variable const independent_variable,
+CurveProperty::CurveProperty(std::string name,
+                             Variable const independent_variable,
                              MathLib::PiecewiseLinearInterpolation const& curve)
     : independent_variable_(independent_variable), curve_(curve)
 {
+    name_ = std::move(name);
 }
 
 PropertyDataType CurveProperty::value(

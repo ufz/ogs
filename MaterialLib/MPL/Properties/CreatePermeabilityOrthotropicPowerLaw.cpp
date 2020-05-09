@@ -19,7 +19,13 @@ std::unique_ptr<Property> createPermeabilityOrthotropicPowerLaw(
 {
     //! \ogs_file_param{properties__property__type}
     config.checkConfigParameter("type", "PermeabilityOrthotropicPowerLaw");
-    DBUG("Create PermeabilityOrthotropicPowerLaw solid phase property");
+
+    // Second access for storage.
+    //! \ogs_file_param{properties__property__name}
+    auto property_name = config.peekConfigParameter<std::string>("name");
+
+    DBUG("Create PermeabilityOrthotropicPowerLaw solid phase property {:s}.",
+         property_name);
 
     auto const intrinsic_permeabilities =
         //! \ogs_file_param{properties__property__PermeabilityOrthotropicPowerLaw__intrinsic_permeabilities}
@@ -58,6 +64,7 @@ std::unique_ptr<Property> createPermeabilityOrthotropicPowerLaw(
     if (exponents.size() == 2)
     {
         return std::make_unique<PermeabilityOrthotropicPowerLaw<2>>(
+            std::move(property_name),
             std::array<double, 2>{intrinsic_permeabilities[0],
                                   intrinsic_permeabilities[1]},
             std::array<double, 2>{exponents[0], exponents[1]},
@@ -66,6 +73,7 @@ std::unique_ptr<Property> createPermeabilityOrthotropicPowerLaw(
     if (exponents.size() == 3)
     {
         return std::make_unique<PermeabilityOrthotropicPowerLaw<3>>(
+            std::move(property_name),
             std::array<double, 3>{intrinsic_permeabilities[0],
                                   intrinsic_permeabilities[1],
                                   intrinsic_permeabilities[2]},

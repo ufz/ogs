@@ -20,8 +20,12 @@ std::unique_ptr<LinearProperty> createLinearProperty(
 {
     //! \ogs_file_param{properties__property__type}
     config.checkConfigParameter("type", "Linear");
-    DBUG("Create Linear property");
 
+    // Second access for storage.
+    //! \ogs_file_param{properties__property__name}
+    auto property_name = config.peekConfigParameter<std::string>("name");
+
+    DBUG("Create Linear property {:s}.", property_name);
     auto const reference_value =
         //! \ogs_file_param{properties__property__LinearProperty__reference_value}
         config.getConfigParameter<double>("reference_value");
@@ -54,6 +58,6 @@ std::unique_ptr<LinearProperty> createLinearProperty(
     }
 
     return std::make_unique<MaterialPropertyLib::LinearProperty>(
-        reference_value, ivs);
+        std::move(property_name), reference_value, ivs);
 }
 }  // namespace MaterialPropertyLib

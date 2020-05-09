@@ -44,7 +44,9 @@ private:
 
 public:
     PermeabilityOrthotropicPowerLaw(
-        std::array<double, DisplacementDim> intrinsic_permeabilities,
+        std::string name,
+        std::array<double, DisplacementDim>
+            intrinsic_permeabilities,
         std::array<double, DisplacementDim>
             exponents,
         ParameterLib::CoordinateSystem const* const local_coordinate_system);

@@ -45,7 +45,9 @@ private:
 
 public:
     SaturationDependentSwelling(
-        std::array<double, 3> swelling_pressures,
+        std::string name,
+        std::array<double, 3>
+            swelling_pressures,
         std::array<double, 3>
             exponents,
         double const lower_saturation_limit,

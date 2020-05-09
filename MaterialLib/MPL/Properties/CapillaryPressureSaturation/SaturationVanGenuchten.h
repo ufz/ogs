@@ -46,7 +46,8 @@ class Component;
 class SaturationVanGenuchten final : public Property
 {
 public:
-    SaturationVanGenuchten(double const residual_liquid_saturation,
+    SaturationVanGenuchten(std::string name,
+                           double const residual_liquid_saturation,
                            double const residual_gas_saturation,
                            double const exponent,
                            double const p_b);

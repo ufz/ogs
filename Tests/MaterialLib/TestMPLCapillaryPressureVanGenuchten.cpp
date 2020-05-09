@@ -25,12 +25,17 @@ TEST(MaterialPropertyLib, CapillaryPressureVanGenuchten)
     double const p_b = 10000;
     double const maximum_capillary_pressure = 20000;
 
-    MPL::Property const& pressure = MPL::CapillaryPressureVanGenuchten{
-        residual_liquid_saturation, residual_gas_saturation, exponent, p_b,
-        maximum_capillary_pressure};
+    MPL::Property const& pressure =
+        MPL::CapillaryPressureVanGenuchten{"capillary_pressure",
+                                           residual_liquid_saturation,
+                                           residual_gas_saturation,
+                                           exponent,
+                                           p_b,
+                                           maximum_capillary_pressure};
 
-    MPL::Property const& saturation = MPL::SaturationVanGenuchten{
-        residual_liquid_saturation, residual_gas_saturation, exponent, p_b};
+    MPL::Property const& saturation =
+        MPL::SaturationVanGenuchten{"saturation", residual_liquid_saturation,
+                                    residual_gas_saturation, exponent, p_b};
 
     MPL::VariableArray variable_array;
     fill(begin(variable_array), end(variable_array),

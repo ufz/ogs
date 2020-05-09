@@ -19,11 +19,17 @@ std::unique_ptr<Constant> createConstant(BaseLib::ConfigTree const& config)
 {
     //! \ogs_file_param{properties__property__type}
     config.checkConfigParameter("type", "Constant");
-    DBUG("Create Constant property");
+
+    // Second access for storage.
+    //! \ogs_file_param{properties__property__name}
+    auto property_name = config.peekConfigParameter<std::string>("name");
+
+    DBUG("Create Constant property {:s}.", property_name);
     std::vector<double> const values =
         //! \ogs_file_param{properties__property__Constant__value}
         config.getConfigParameter<std::vector<double>>("value");
 
-    return std::make_unique<Constant>(fromVector(values));
+    return std::make_unique<Constant>(std::move(property_name),
+                                      fromVector(values));
 }
 }  // namespace MaterialPropertyLib

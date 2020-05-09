@@ -23,7 +23,12 @@ std::unique_ptr<Property> createCapillaryPressureVanGenuchten(
     //! \ogs_file_param{properties__property__type}
     config.checkConfigParameter("type", "CapillaryPressureVanGenuchten");
 
-    DBUG("Create CapillaryPressureVanGenuchten medium property");
+    // Second access for storage.
+    //! \ogs_file_param{properties__property__name}
+    auto property_name = config.peekConfigParameter<std::string>("name");
+
+    DBUG("Create CapillaryPressureVanGenuchten medium property {:s}.",
+         property_name);
 
     auto const residual_liquid_saturation =
         //! \ogs_file_param{properties__property__CapillaryPressureVanGenuchten__residual_liquid_saturation}
@@ -42,7 +47,7 @@ std::unique_ptr<Property> createCapillaryPressureVanGenuchten(
         config.getConfigParameter<double>("maximum_capillary_pressure");
 
     return std::make_unique<CapillaryPressureVanGenuchten>(
-        residual_liquid_saturation, residual_gas_saturation, exponent, p_b,
-        maximum_capillary_pressure);
+        std::move(property_name), residual_liquid_saturation,
+        residual_gas_saturation, exponent, p_b, maximum_capillary_pressure);
 }
 }  // namespace MaterialPropertyLib
