@@ -55,7 +55,7 @@ public:
      */
     virtual void computeResidual(GlobalMatrix const& M, GlobalMatrix const& K,
                                  GlobalVector const& b,
-                                 GlobalVector const& x_new_timestep,
+                                 GlobalVector const& x_curr,
                                  GlobalVector const& xdot,
                                  GlobalVector& res) const = 0;
 
@@ -108,7 +108,7 @@ public:
     //! Computes \f$ r = M \cdot \hat x + K \cdot x_C - b \f$.
     void computeResidual(GlobalMatrix const& M, GlobalMatrix const& K,
                          GlobalVector const& b,
-                         GlobalVector const& x_new_timestep,
+                         GlobalVector const& x_curr,
                          GlobalVector const& xdot,
                          GlobalVector& res) const override;
 
