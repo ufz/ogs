@@ -1402,6 +1402,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto& S_L = _ip_data[ip].saturation;
         S_L = medium->property(MPL::PropertyType::saturation)
                   .template value<double>(variables, x_position, t, dt);
+        variables[static_cast<int>(MPL::Variable::liquid_saturation)] = S_L;
 
         variables[static_cast<int>(MPL::Variable::transport_porosity)] =
             _ip_data[ip].transport_porosity;
