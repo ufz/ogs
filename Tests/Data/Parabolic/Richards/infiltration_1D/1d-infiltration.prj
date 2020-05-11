@@ -49,7 +49,6 @@
                         <property>
                             <name>storage</name>
                             <type>Constant</type>
-                            <!-- <value>1e-9</value> HYDRUS is not using any storage coefficient for the saturated zone --> 
                             <value>0</value>
                         </property>
                         <property>
