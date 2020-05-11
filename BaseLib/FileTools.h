@@ -36,12 +36,12 @@ bool IsFileExisting(const std::string &strFilename);
  * correctly.
  */
 std::tuple<std::string, std::string::size_type, std::string::size_type>
-getParenthesizedString(std::string const& str,
+getParenthesizedString(std::string const& in,
                        char const open_char,
                        char const close_char,
                        std::string::size_type pos);
 
-std::string constructFormattedFileName(std::string const& prefix,
+std::string constructFormattedFileName(std::string const& format_specification,
                                        std::string const& mesh_name,
                                        int const process_id,
                                        int const timestep,
