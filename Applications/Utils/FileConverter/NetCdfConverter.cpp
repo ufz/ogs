@@ -356,7 +356,7 @@ static OutputType multFilesSelectionLoop(
                   << " scalar arrays.\n";
         std::cout << "2. Save data as " << n_time_steps << " ASC images.\n";
 
-        std::size_t ret = parseInput("Select preferred method: ", 3, false);
+        std::size_t const ret = parseInput("Select preferred method: ", 3, false);
 
         if (ret == 0)
             t = OutputType::MULTIMESH;
@@ -590,13 +590,13 @@ static bool convert(NcFile const& dataset, NcVar const& var,
                 MeshLib::IO::VtuInterface vtu(mesh.get());
                 std::string const output_file_name =
                     (BaseLib::getFileExtension(output_name) == ".vtu")
-                        ? "" : output_name + ".vtu";
+                        ? output_name : output_name + ".vtu";
                 vtu.writeToFile(output_file_name);
             }
         }
         else //OutputType::IMAGES
         {
-            GeoLib::Raster raster(
+            GeoLib::Raster const raster(
                 header, data_vec.data(),
                 data_vec.data() + header.n_cols * header.n_rows * header.n_depth);
             std::string const output_file_name(
