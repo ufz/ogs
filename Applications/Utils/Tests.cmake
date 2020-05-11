@@ -330,6 +330,17 @@ if(OGS_USE_NETCDF)
         DIFF_DATA
         slim_100897_198.vtu slim_100897_198.vtu NO NO 1e-16 0
     )
+
+    AddTest(
+        NAME NetCDF_Image_Test
+        PATH FileConverter
+        EXECUTABLE NetCdfConverter
+        EXECUTABLE_ARGS -i sresa1b_ncar_ccsm3-example.nc -o ${Data_BINARY_DIR}/FileConverter/sresa1b_ncar_ccsm3-example.asc -v pr -t 0 --dim1 2 --dim2 1 --timestep-first 0 --timestep-last 0 --images
+        REQUIREMENTS NOT OGS_USE_MPI
+        TESTER diff
+        DIFF_DATA
+        sresa1b_ncar_ccsm3-example.asc
+    )
 endif()
 
 if(OGS_BUILD_GUI)
