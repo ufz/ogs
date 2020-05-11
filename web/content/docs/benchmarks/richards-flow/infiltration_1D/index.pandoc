@@ -52,7 +52,7 @@ For details on the numerical settings, please refer to the individual model setu
 
 Evaluation of simulation results is done at $0.2$, $0.4$, $0.6$, and $0.8 m$ below the upper boundary condition. Results of pressure head are shown in the figure below. Simulation results show similar breakthrough curves, with HYDRUS-1D showing first arrival, followed by OGS5 and OGS6. OGS5 shows a slightly steeper increase of pressure head than HYDRUS-1D or OGS6.
 
-{{< img src="../infiltration-1D/compare_ogs5-6-hydrus.png" title="Breakthrough curves of pressure head at different levels below upper boundary condition for OGS5, OGS6 and HYDRUS-1D.">}}
+{{< img src="./compare_ogs5-6-hydrus.png" title="Breakthrough curves of pressure head at different levels below upper boundary condition for OGS5, OGS6 and HYDRUS-1D.">}}
 
 
 ## Literature
