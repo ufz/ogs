@@ -119,7 +119,7 @@
             <timesteps>
                 <pair>
                     <repeat>1</repeat>
-                    <each_steps>10</each_steps>
+                    <each_steps>50</each_steps>
                 </pair>
             </timesteps>
             <variables>
