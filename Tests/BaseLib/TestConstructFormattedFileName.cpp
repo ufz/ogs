@@ -21,22 +21,29 @@
 
 TEST(BaseLib, constructFormattedFileName)
 {
-    auto const formatted_filename = BaseLib::constructFormattedFileName(
-        "test_{:timestep}", "mesh_name", 0, 2, 0.2);
-    ASSERT_EQ("test_2", formatted_filename);
-
-    auto const formatted_filename_time = BaseLib::constructFormattedFileName(
-        "test_{:0.5time}", "mesh_name", 0, 2, 0.2);
-    ASSERT_EQ("test_0.20000", formatted_filename_time);
-    auto const formatted_filename_timestep_time =
-        BaseLib::constructFormattedFileName("test_{:timestep}_{:0.5time}",
-                                            "mesh_name", 0, 2, 0.2);
-    ASSERT_EQ("test_2_0.20000", formatted_filename_timestep_time);
-    auto const formatted_filename_time_timestep =
-        BaseLib::constructFormattedFileName("test_{:.4time}_{:timestep}",
-                                            "mesh_name", 0, 2, 0.2);
-    ASSERT_EQ("test_0.2000_2", formatted_filename_time_timestep);
-
+    {
+        auto const formatted_filename = BaseLib::constructFormattedFileName(
+            "test_{:timestep}", "mesh_name", 0, 2, 0.2);
+        ASSERT_EQ("test_2", formatted_filename);
+    }
+    {
+        auto const formatted_filename_time =
+            BaseLib::constructFormattedFileName("test_{:0.5time}", "mesh_name",
+                                                0, 2, 0.2);
+        ASSERT_EQ("test_0.20000", formatted_filename_time);
+    }
+    {
+        auto const formatted_filename_timestep_time =
+            BaseLib::constructFormattedFileName("test_{:timestep}_{:0.5time}",
+                                                "mesh_name", 0, 2, 0.2);
+        ASSERT_EQ("test_2_0.20000", formatted_filename_timestep_time);
+    }
+    {
+        auto const formatted_filename_time_timestep =
+            BaseLib::constructFormattedFileName("test_{:.4time}_{:timestep}",
+                                                "mesh_name", 0, 2, 0.2);
+        ASSERT_EQ("test_0.2000_2", formatted_filename_time_timestep);
+    }
     {
         auto const formatted_filename = BaseLib::constructFormattedFileName(
             "test_{:.4time}_{:timestep}_{:process_id}", "mesh_name", 0, 2, 0.2);
