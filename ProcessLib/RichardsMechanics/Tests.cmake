@@ -178,7 +178,7 @@ AddTest(
     GLOB RichardsFlow_2d_small_pcs_0_ts_*.vtu epsilon epsilon 1e-15 0
     GLOB RichardsFlow_2d_small_pcs_0_ts_*.vtu pressure pressure 1e-7 1e-15
     GLOB RichardsFlow_2d_small_pcs_0_ts_*.vtu pressure_interpolated pressure_interpolated 1e-7 1e-15
-    GLOB RichardsFlow_2d_small_pcs_0_ts_*.vtu saturation saturation 1e-11 1e-15
+    GLOB RichardsFlow_2d_small_pcs_0_ts_*.vtu saturation saturation 2e-11 1e-15
     GLOB RichardsFlow_2d_small_pcs_0_ts_*.vtu saturation_avg saturation_avg 1e-11 1e-15
     GLOB RichardsFlow_2d_small_pcs_0_ts_*.vtu velocity velocity 1e-15 1e-15
     GLOB RichardsFlow_2d_small_pcs_0_ts_*.vtu HydraulicFlow HydraulicFlow 1e-13 0
