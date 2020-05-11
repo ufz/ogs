@@ -184,7 +184,8 @@ static void flipRaster(std::vector<double>& data, std::size_t const width,
                 std::size_t const height)
 {
     std::size_t const length(data.size());
-    std::vector<double> tmp_vec(length);
+    std::vector<double> tmp_vec;
+    tmp_vec.reserve(length);
     for (std::size_t i = 0; i < height; i++)
     {
         std::size_t const line_idx(length - (width * (i + 1)));
@@ -437,7 +438,7 @@ static std::vector<double> getData(NcFile const& dataset, NcVar const& var,
     auto const bounds = (dim_var.isNull()) ? getDimLength(var, n_dims - 1)
                                            : getBoundaries(dim_var);
     if (bounds.first > bounds.second)
-        flipRaster(data_vec, length[n_dims - 2], length[n_dims - 1]);
+        flipRaster(data_vec, length[n_dims - 1], length[n_dims - 2]);
     return data_vec;
 }
 
