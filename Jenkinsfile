@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-@Library('jenkins-pipeline@1.0.22') _
+@Library('jenkins-pipeline@master') _
 
 def stage_required = [build: false, full: false]
 def build_shared = 'ON'
@@ -278,13 +278,13 @@ pipeline {
           agent { label "frontend2"}
           environment {
             OMP_NUM_THREADS = '1'
+            SOURCE_DIR = "${env.WORKSPACE}"
+            BUILD_DIR = "/tmp/${env.BUILD_TAG}"
           }
           steps {
             script {
               sh 'git submodule sync && git submodule update'
               configure {
-                dir = "/tmp/${env.BUILD_TAG}"
-                sourceDir = "${env.WORKSPACE}"
                 cmakeOptions =
                   '-DOGS_USE_CONAN=OFF ' +
                   '-DOGS_BUILD_UTILS=ON ' +
@@ -295,17 +295,14 @@ pipeline {
                 env = 'eve/cli.sh'
               }
               build {
-                dir = "/tmp/${env.BUILD_TAG}"
                 env = 'eve/cli.sh'
                 cmd_args = '-j 8'
               }
               build {
-                dir = "/tmp/${env.BUILD_TAG}"
                 env = 'eve/cli.sh'
                 target = 'tests'
               }
               build {
-                dir = "/tmp/${env.BUILD_TAG}"
                 env = 'eve/cli.sh'
                 target = 'ctest'
               }
@@ -317,7 +314,6 @@ pipeline {
                 if (env.JOB_NAME == 'ufz/ogs/master') {
                   sh 'rm -rf /global/apps/ogs/head/standard'
                   build {
-                    dir = "/tmp/${env.BUILD_TAG}"
                     env = 'eve/cli.sh'
                     target = 'install'
                   }
@@ -325,13 +321,13 @@ pipeline {
               }
             }
             always {
+              sh "mkdir _out && cp -r ${env.BUILD_DIR}/Testing _out/ && cp -r ${env.BUILD_DIR}/Tests/testrunner.xml _out/"
               xunit([
-                CTest(pattern: "/tmp/${env.BUILD_TAG}/Testing/**/*.xml"),
-                GoogleTest(pattern: "/tmp/${env.BUILD_TAG}/Tests/testrunner.xml")
+                CTest(pattern: "_out/Testing/**/*.xml"),
+                GoogleTest(pattern: "_out/testrunner.xml")
               ])
-              dir "/tmp/${env.BUILD_TAG}" {
-                deleteDir
-              }
+              dir("${env.BUILD_DIR}") { deleteDir() }
+              dir('_out') { deleteDir() }
             }
           }
         }
