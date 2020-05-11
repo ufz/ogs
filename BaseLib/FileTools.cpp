@@ -197,11 +197,7 @@ std::string copyPathToFileName(const std::string &file_name,
     {
         return filePath.string();
     }
-    else
-    {
-        return (fs::path(source) /= filePath).string();
-    }
-
+    return (fs::path(source) /= filePath).string();
 }
 
 std::string extractPath(std::string const& pathname)
