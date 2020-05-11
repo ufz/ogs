@@ -283,6 +283,8 @@ pipeline {
             script {
               sh 'git submodule sync && git submodule update'
               configure {
+                dir = "/tmp/${env.BUILD_TAG}"
+                sourceDir = "${env.WORKSPACE}"
                 cmakeOptions =
                   '-DOGS_USE_CONAN=OFF ' +
                   '-DOGS_BUILD_UTILS=ON ' +
@@ -293,35 +295,42 @@ pipeline {
                 env = 'eve/cli.sh'
               }
               build {
+                dir = "/tmp/${env.BUILD_TAG}"
                 env = 'eve/cli.sh'
                 cmd_args = '-j 8'
               }
               build {
+                dir = "/tmp/${env.BUILD_TAG}"
                 env = 'eve/cli.sh'
                 target = 'tests'
               }
               build {
+                dir = "/tmp/${env.BUILD_TAG}"
                 env = 'eve/cli.sh'
                 target = 'ctest'
               }
             }
           }
           post {
-            always {
-              xunit([
-                CTest(pattern: 'build/Testing/**/*.xml'),
-                GoogleTest(pattern: 'build/Tests/testrunner.xml')
-              ])
-            }
             success {
               script {
                 if (env.JOB_NAME == 'ufz/ogs/master') {
                   sh 'rm -rf /global/apps/ogs/head/standard'
                   build {
+                    dir = "/tmp/${env.BUILD_TAG}"
                     env = 'eve/cli.sh'
                     target = 'install'
                   }
                 }
+              }
+            }
+            always {
+              xunit([
+                CTest(pattern: "/tmp/${env.BUILD_TAG}/Testing/**/*.xml"),
+                GoogleTest(pattern: "/tmp/${env.BUILD_TAG}/Tests/testrunner.xml")
+              ])
+              dir "/tmp/${env.BUILD_TAG}" {
+                deleteDir
               }
             }
           }
