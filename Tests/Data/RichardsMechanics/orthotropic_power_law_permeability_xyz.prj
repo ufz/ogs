@@ -28,6 +28,7 @@
                 <secondary_variable internal_name="velocity" output_name="velocity"/>
                 <secondary_variable internal_name="saturation" output_name="saturation"/>
                 <secondary_variable internal_name="porosity" output_name="porosity"/>
+                <secondary_variable internal_name="transport_porosity" output_name="transport_porosity"/>
             </secondary_variables>
             <specific_body_force>0 0</specific_body_force>
         </process>
@@ -82,7 +83,7 @@
                         </property>
                         <property>
                             <name>transport_porosity</name>
-                            <type>PorosityFromMassBalance</type>
+                            <type>TransportPorosityFromMassBalance</type>
                             <initial_porosity>phi0</initial_porosity>
                             <minimal_porosity>0</minimal_porosity>
                             <maximal_porosity>1</maximal_porosity>
