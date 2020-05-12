@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-@Library('jenkins-pipeline@master') _
+@Library('jenkins-pipeline@1.0.23') _
 
 def stage_required = [build: false, full: false]
 def build_shared = 'ON'
@@ -339,6 +339,8 @@ pipeline {
           agent { label "frontend2"}
           environment {
             OMP_NUM_THREADS = '1'
+            SOURCE_DIR = "${env.WORKSPACE}"
+            BUILD_DIR = "/tmp/${env.BUILD_TAG}-petsc"
           }
           steps {
             script {
@@ -368,12 +370,6 @@ pipeline {
             }
           }
           post {
-            always {
-              xunit([
-                CTest(pattern: 'build/Testing/**/*.xml'),
-                GoogleTest(pattern: 'build/Tests/testrunner.xml')
-              ])
-            }
             success {
               script {
                 if (env.JOB_NAME == 'ufz/ogs/master') {
@@ -384,6 +380,15 @@ pipeline {
                   }
                 }
               }
+            }
+            always {
+              sh "mkdir _out && cp -r ${env.BUILD_DIR}/Testing _out/ && cp -r ${env.BUILD_DIR}/Tests/testrunner.xml _out/"
+              xunit([
+                CTest(pattern: "_out/Testing/**/*.xml"),
+                GoogleTest(pattern: "_out/testrunner.xml")
+              ])
+              dir("${env.BUILD_DIR}") { deleteDir() }
+              dir('_out') { deleteDir() }
             }
           }
         }
