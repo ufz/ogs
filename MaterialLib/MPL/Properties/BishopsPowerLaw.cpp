@@ -26,7 +26,7 @@ void BishopsPowerLaw::setScale(
             "The property 'BishopsPowerLaw' is implemented on the 'media' "
             "scale only.");
     }
-    medium_ = std::get<Medium*>(scale_pointer);
+    scale_ = scale_pointer;
 }
 
 PropertyDataType BishopsPowerLaw::value(

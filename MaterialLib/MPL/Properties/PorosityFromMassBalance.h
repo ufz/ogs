@@ -25,8 +25,6 @@ class Component;
 class PorosityFromMassBalance final : public Property
 {
 private:
-    Phase* phase_ = nullptr;
-
     /// Parameter, which is used by FEM to set the initial porosity value.
     ParameterLib::Parameter<double> const& phi0_;
     double const phi_min_;  //< Lower limit for the porosity.

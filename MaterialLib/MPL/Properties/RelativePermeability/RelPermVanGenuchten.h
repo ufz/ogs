@@ -29,7 +29,6 @@ private:
     double const S_L_max_;
     double const k_rel_min_;
     double const m_;
-    Medium* medium_ = nullptr;
 
 public:
     RelPermVanGenuchten(std::string name,
@@ -42,16 +41,13 @@ public:
     void setScale(
         std::variant<Medium*, Phase*, Component*> scale_pointer) override
     {
-        if (std::holds_alternative<Medium*>(scale_pointer))
-        {
-            medium_ = std::get<Medium*>(scale_pointer);
-        }
-        else
+        if (!std::holds_alternative<Medium*>(scale_pointer))
         {
             OGS_FATAL(
                 "The property 'RelativePermeabilityVanGenuchten' is "
                 "implemented on the 'media' scale only.");
         }
+        scale_ = scale_pointer;
     }
 
     /// Those methods override the base class implementations and

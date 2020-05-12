@@ -38,22 +38,21 @@ template <int DisplacementDim>
 void PermeabilityOrthotropicPowerLaw<DisplacementDim>::setScale(
     std::variant<Medium*, Phase*, Component*> scale_pointer)
 {
-    if (std::holds_alternative<Phase*>(scale_pointer))
-    {
-        phase_ = std::get<Phase*>(scale_pointer);
-        if (phase_->name != "Solid")
-        {
-            OGS_FATAL(
-                "The property 'PermeabilityOrthotropicPowerLaw' must be "
-                "given in the 'Solid' phase, not in '{:s}' phase.",
-                phase_->name);
-        }
-    }
-    else
+    if (!std::holds_alternative<Phase*>(scale_pointer))
     {
         OGS_FATAL(
             "The property 'PermeabilityOrthotropicPowerLaw' is "
             "implemented on the 'phase' scales only.");
+    }
+    scale_ = scale_pointer;
+
+    auto const phase = std::get<Phase*>(scale_);
+    if (phase->name != "Solid")
+    {
+        OGS_FATAL(
+            "The property 'PermeabilityOrthotropicPowerLaw' must be given in "
+            "the 'Solid' phase, not in '{:s}' phase.",
+            phase->name);
     }
 }
 template <int DisplacementDim>
@@ -67,12 +66,13 @@ PropertyDataType PermeabilityOrthotropicPowerLaw<DisplacementDim>::value(
     // TODO (naumov) The phi0 must be evaluated once upon
     // creation/initialization and be stored in a local state.
     // For now assume porosity's initial value does not change with time.
+    auto const phase = std::get<Phase*>(scale_);
     auto const phi_0 =
-        phase_->hasProperty(PropertyType::transport_porosity)
-            ? phase_->property(PropertyType::transport_porosity)
+        phase->hasProperty(PropertyType::transport_porosity)
+            ? phase->property(PropertyType::transport_porosity)
                   .template initialValue<double>(
                       pos, std::numeric_limits<double>::quiet_NaN())
-            : phase_->property(PropertyType::porosity)
+            : phase->property(PropertyType::porosity)
                   .template initialValue<double>(
                       pos, std::numeric_limits<double>::quiet_NaN());
 

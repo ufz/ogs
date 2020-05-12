@@ -32,7 +32,6 @@ public:
                             double const /*dt*/) const override;
 
 private:
-    Medium* medium_ = nullptr;
     double const m_;  //< Exponent.
 };
 }  // namespace MaterialPropertyLib

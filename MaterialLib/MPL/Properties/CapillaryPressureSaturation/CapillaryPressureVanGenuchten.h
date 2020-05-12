@@ -58,7 +58,7 @@ public:
                 "The property 'CapillaryPressureVanGenuchten' is implemented "
                 "on the 'media' scale only.");
         }
-        medium_ = std::get<Medium*>(scale_pointer);
+        scale_ = scale_pointer;
     }
 
     /// \returns \f$ p_c(S) \f$.
@@ -75,7 +75,6 @@ public:
                             double const dt) const override;
 
 private:
-    Medium* medium_ = nullptr;
     double const S_L_res_;    ///< Residual saturation of liquid phase.
     double const S_L_max_;    ///< Maximum saturation of liquid phase.
     double const m_;          ///< Exponent.

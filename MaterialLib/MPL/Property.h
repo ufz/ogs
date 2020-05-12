@@ -71,8 +71,10 @@ public:
                                      Variable const variable2,
                                      ParameterLib::SpatialPosition const& pos,
                                      double const t, double const dt) const;
-    virtual void setScale(
-        std::variant<Medium*, Phase*, Component*> /*scale_pointer*/){};
+    virtual void setScale(std::variant<Medium*, Phase*, Component*> scale)
+    {
+        scale_ = scale;
+    };
 
     template <typename T>
     T initialValue(ParameterLib::SpatialPosition const& pos,
@@ -117,6 +119,10 @@ protected:
     /// The single value of a property.
     PropertyDataType value_;
     PropertyDataType dvalue_;
+    /// Definition scale of the property. Can be one of medium, phase, or
+    /// component in general. Set through setScale method which takes care of
+    /// the correctness in special cases.
+    std::variant<Medium*, Phase*, Component*> scale_;
 };
 
 inline void overwriteExistingProperties(

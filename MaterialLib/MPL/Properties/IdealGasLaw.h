@@ -37,20 +37,14 @@ public:
     void setScale(
         std::variant<Medium*, Phase*, Component*> scale_pointer) override
     {
-        if (std::holds_alternative<Phase*>(scale_pointer))
-        {
-            phase_ = std::get<Phase*>(scale_pointer);
-        }
-        else if (std::holds_alternative<Component*>(scale_pointer))
-        {
-            component_ = std::get<Component*>(scale_pointer);
-        }
-        else
+        if (!(std::holds_alternative<Phase*>(scale_pointer) ||
+              std::holds_alternative<Component*>(scale_pointer)))
         {
             OGS_FATAL(
                 "The property 'IdealGasLaw' is implemented on the "
                 "'phase' and 'component' scales only.");
         }
+        scale_ = scale_pointer;
     }
 
     /// Those methods override the base class implementations and
@@ -68,10 +62,6 @@ public:
                              Variable const variable1, Variable const variable2,
                              ParameterLib::SpatialPosition const& pos,
                              double const t, double const dt) const override;
-
-private:
-    Phase* phase_ = nullptr;
-    Component* component_ = nullptr;
 };
 
 }  // namespace MaterialPropertyLib

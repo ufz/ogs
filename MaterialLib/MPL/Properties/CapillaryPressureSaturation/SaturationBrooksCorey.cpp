@@ -74,8 +74,12 @@ PropertyDataType SaturationBrooksCorey::dValue(
         std::get<double>(
             variable_array[static_cast<int>(Variable::capillary_pressure)]));
 
-    auto const s_L = medium_->property(PropertyType::saturation)
-                         .template value<double>(variable_array, pos, t, dt);
+    auto const s_L = std::visit(
+        [&variable_array, &pos, t, dt](auto&& scale) -> double {
+            return scale->property(PropertyType::saturation)
+                .template value<double>(variable_array, pos, t, dt);
+        },
+        scale_);
 
     const double lambda = exponent_;
     const double ds_L_d_s_eff = 1. / (s_L_max - s_L_res);

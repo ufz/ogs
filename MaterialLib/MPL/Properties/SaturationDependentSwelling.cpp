@@ -38,22 +38,20 @@ SaturationDependentSwelling::SaturationDependentSwelling(
 void SaturationDependentSwelling::setScale(
     std::variant<Medium*, Phase*, Component*> scale_pointer)
 {
-    if (std::holds_alternative<Phase*>(scale_pointer))
-    {
-        phase_ = std::get<Phase*>(scale_pointer);
-        if (phase_->name != "Solid")
-        {
-            OGS_FATAL(
-                "The property 'SaturationDependentSwelling' must be "
-                "given in the 'Solid' phase, not in '{:s}' phase.",
-                phase_->name);
-        }
-    }
-    else
+    if (!std::holds_alternative<Phase*>(scale_pointer))
     {
         OGS_FATAL(
             "The property 'SaturationDependentSwelling' is "
             "implemented on the 'phase' scales only.");
+    }
+    scale_ = scale_pointer;
+    auto const phase = std::get<Phase*>(scale_pointer);
+    if (phase->name != "Solid")
+    {
+        OGS_FATAL(
+            "The property 'SaturationDependentSwelling' must be given in the "
+            "'Solid' phase, not in '{:s}' phase.",
+            phase->name);
     }
 }
 

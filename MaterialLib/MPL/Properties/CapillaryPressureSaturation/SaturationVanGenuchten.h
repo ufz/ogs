@@ -61,7 +61,7 @@ public:
                 "The property 'SaturationVanGenuchten' is implemented on the "
                 "'media' scale only.");
         }
-        medium_ = std::get<Medium*>(scale_pointer);
+        scale_ = scale_pointer;
     }
 
     /// Those methods override the base class implementations and
@@ -82,7 +82,6 @@ public:
                              double const /*dt*/) const override;
 
 private:
-    Medium* medium_ = nullptr;
     double const S_L_res_;
     double const S_L_max_;
     double const m_;

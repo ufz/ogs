@@ -27,7 +27,7 @@ void BishopsSaturationCutoff::setScale(
             "The property 'BishopsSaturationCutoff' is implemented on the "
             "'media' scale only.");
     }
-    medium_ = std::get<Medium*>(scale_pointer);
+    scale_ = scale_pointer;
 }
 
 PropertyDataType BishopsSaturationCutoff::value(

@@ -19,22 +19,20 @@ namespace MaterialPropertyLib
 void PorosityFromMassBalance::setScale(
     std::variant<Medium*, Phase*, Component*> scale_pointer)
 {
-    if (std::holds_alternative<Phase*>(scale_pointer))
-    {
-        phase_ = std::get<Phase*>(scale_pointer);
-        if (phase_->name != "Solid")
-        {
-            OGS_FATAL(
-                "The property 'PorosityFromMassBalance' must be "
-                "given in the 'Solid' phase, not in '{:s}' phase.",
-                phase_->name);
-        }
-    }
-    else
+    if (!std::holds_alternative<Phase*>(scale_pointer))
     {
         OGS_FATAL(
             "The property 'PorosityFromMassBalance' is "
             "implemented on the 'phase' scales only.");
+    }
+    scale_ = scale_pointer;
+    auto const phase = std::get<Phase*>(scale_pointer);
+    if (phase->name != "Solid")
+    {
+        OGS_FATAL(
+            "The property 'PorosityFromMassBalance' must be given in the "
+            "'Solid' phase, not in '{:s}' phase.",
+            phase->name);
     }
 }
 
@@ -43,10 +41,12 @@ PropertyDataType PorosityFromMassBalance::value(
     ParameterLib::SpatialPosition const& pos,
     double const t, double const dt) const
 {
-    double const K_SR = phase_->property(PropertyType::bulk_modulus)
+    double const K_SR = std::get<Phase*>(scale_)
+                            ->property(PropertyType::bulk_modulus)
                             .template value<double>(variable_array, pos, t, dt);
     auto const alpha_b =
-        phase_->property(PropertyType::biot_coefficient)
+        std::get<Phase*>(scale_)
+            ->property(PropertyType::biot_coefficient)
             .template value<double>(variable_array, pos, t, dt);
 
     double const e_dot = std::get<double>(

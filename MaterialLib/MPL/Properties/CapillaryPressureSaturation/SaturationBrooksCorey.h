@@ -30,7 +30,6 @@ class Component;
 class SaturationBrooksCorey final : public Property
 {
 private:
-    Medium* medium_ = nullptr;
     const double residual_liquid_saturation_;
     const double residual_gas_saturation_;
     const double exponent_;
@@ -52,7 +51,7 @@ public:
                 "The property 'SaturationBrooksCorey' is implemented on the "
                 "'media' scale only.");
         }
-        medium_ = std::get<Medium*>(scale_pointer);
+        scale_ = scale_pointer;
     }
 
     /// Those methods override the base class implementations and

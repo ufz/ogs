@@ -34,7 +34,6 @@ class Component;
 class SaturationDependentSwelling final : public Property
 {
 private:
-    Phase* phase_ = nullptr;
     /// Maximum swelling pressures, one for each spatial dimension.
     std::array<double, 3> const p_;
     /// Exponents, one for each spatial dimension.
