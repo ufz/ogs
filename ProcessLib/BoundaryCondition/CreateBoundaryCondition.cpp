@@ -44,8 +44,7 @@ std::unique_ptr<BoundaryCondition> createBoundaryCondition(
     {
         OGS_FATAL(
             "The boundary mesh {:s} axially symmetric but the bulk mesh {:s}. "
-            "Both "
-            "must have an equal axial symmetry property.",
+            "Both must have an equal axial symmetry property.",
             config.boundary_mesh.isAxiallySymmetric() ? "is" : "is not",
             bulk_mesh.isAxiallySymmetric() ? "is" : "is not");
     }
