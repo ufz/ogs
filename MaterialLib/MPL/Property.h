@@ -197,6 +197,7 @@ private:
         // Empty check for properties which can be defined on every scale,
         // medium, phase or component
     }
+    std::string description() const;
 
 private:
     /// Corresponds to the PropertyDataType

@@ -47,6 +47,9 @@ public:
     /// consists of.
     std::size_t numberOfPhases() const;
 
+    /// Short description of the medium.
+    std::string description() const;
+
     template <typename T>
     T value(PropertyType const p) const
     {

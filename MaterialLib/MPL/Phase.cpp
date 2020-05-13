@@ -70,4 +70,8 @@ std::size_t Phase::numberOfComponents() const
     return components_.size();
 }
 
+std::string Phase::description() const
+{
+    return "phase '" + name + "'";
+}
 }  // namespace MaterialPropertyLib

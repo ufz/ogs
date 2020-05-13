@@ -14,6 +14,10 @@
 
 #include <string>
 
+#include "Component.h"
+#include "Medium.h"
+#include "Phase.h"
+
 namespace MaterialPropertyLib
 {
 PropertyDataType fromVector(std::vector<double> const& values)
@@ -98,5 +102,13 @@ PropertyDataType Property::d2Value(VariableArray const& /*variable_array*/,
                                    double const /*dt*/) const
 {
     return 0.0;
+}
+
+std::string Property::description() const
+{
+    return "property '" + name_ + "' defined for " +
+           std::visit(
+               [](auto&& scale) -> std::string { return scale->description(); },
+               scale_);
 }
 }  // namespace MaterialPropertyLib
