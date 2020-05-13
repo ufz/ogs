@@ -42,7 +42,7 @@ public:
            bool const output_nonlinear_iteration_results,
            std::vector<PairRepeatEachSteps> repeats_each_steps,
            std::vector<double>&& fixed_output_times,
-           ProcessOutput&& process_output,
+           OutputDataSpecification&& output_data_specification,
            std::vector<std::string>&& mesh_names_for_output,
            std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes);
 
@@ -120,7 +120,7 @@ private:
     //! Determines if there should be output at the given \c timestep or \c t.
     bool shallDoOutput(int timestep, double const t);
 
-    ProcessOutput const _process_output;
+    OutputDataSpecification const _output_data_specification;
     std::vector<std::string> const _mesh_names_for_output;
     std::vector<std::unique_ptr<MeshLib::Mesh>> const& _meshes;
 };

@@ -90,7 +90,7 @@ Output::Output(std::string output_directory, std::string output_file_prefix,
                bool const output_nonlinear_iteration_results,
                std::vector<PairRepeatEachSteps> repeats_each_steps,
                std::vector<double>&& fixed_output_times,
-               ProcessOutput&& process_output,
+               OutputDataSpecification&& output_data_specification,
                std::vector<std::string>&& mesh_names_for_output,
                std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes)
     : _output_directory(std::move(output_directory)),
@@ -101,7 +101,7 @@ Output::Output(std::string output_directory, std::string output_file_prefix,
       _output_nonlinear_iteration_results(output_nonlinear_iteration_results),
       _repeats_each_steps(std::move(repeats_each_steps)),
       _fixed_output_times(std::move(fixed_output_times)),
-      _process_output(std::move(process_output)),
+      _output_data_specification(std::move(output_data_specification)),
       _mesh_names_for_output(mesh_names_for_output),
       _meshes(meshes)
 {
@@ -207,11 +207,12 @@ void Output::doOutputAlways(Process const& process,
 
     bool output_secondary_variable = true;
     // Need to add variables of process to vtu even no output takes place.
-    processOutputData(
-        t, x, process_id, process.getMesh(), dof_tables,
-        process.getProcessVariables(process_id),
-        process.getSecondaryVariables(), output_secondary_variable,
-        process.getIntegrationPointWriter(process.getMesh()), _process_output);
+    processOutputData(t, x, process_id, process.getMesh(), dof_tables,
+                      process.getProcessVariables(process_id),
+                      process.getSecondaryVariables(),
+                      output_secondary_variable,
+                      process.getIntegrationPointWriter(process.getMesh()),
+                      _output_data_specification);
 
     // For the staggered scheme for the coupling, only the last process, which
     // gives the latest solution within a coupling loop, is allowed to make
@@ -275,11 +276,12 @@ void Output::doOutputAlways(Process const& process,
                   });
 
         output_secondary_variable = false;
-        processOutputData(
-            t, x, process_id, mesh, mesh_dof_table_pointers,
-            process.getProcessVariables(process_id),
-            process.getSecondaryVariables(), output_secondary_variable,
-            process.getIntegrationPointWriter(mesh), _process_output);
+        processOutputData(t, x, process_id, mesh, mesh_dof_table_pointers,
+                          process.getProcessVariables(process_id),
+                          process.getSecondaryVariables(),
+                          output_secondary_variable,
+                          process.getIntegrationPointWriter(mesh),
+                          _output_data_specification);
 
         // TODO (TomFischer): add pvd support here. This can be done if the
         // output is mesh related instead of process related. This would also
@@ -357,11 +359,12 @@ void Output::doOutputNonlinearIteration(Process const& process,
     }
 
     bool const output_secondary_variable = true;
-    processOutputData(
-        t, x, process_id, process.getMesh(), dof_tables,
-        process.getProcessVariables(process_id),
-        process.getSecondaryVariables(), output_secondary_variable,
-        process.getIntegrationPointWriter(process.getMesh()), _process_output);
+    processOutputData(t, x, process_id, process.getMesh(), dof_tables,
+                      process.getProcessVariables(process_id),
+                      process.getSecondaryVariables(),
+                      output_secondary_variable,
+                      process.getIntegrationPointWriter(process.getMesh()),
+                      _output_data_specification);
 
     // For the staggered scheme for the coupling, only the last process, which
     // gives the latest solution within a coupling loop, is allowed to make

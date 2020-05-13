@@ -142,7 +142,7 @@ void processOutputData(
     bool const output_secondary_variable,
     std::vector<std::unique_ptr<IntegrationPointWriter>> const* const
         integration_point_writer,
-    ProcessOutput const& process_output)
+    OutputDataSpecification const& process_output)
 {
     DBUG("Process output data.");
 

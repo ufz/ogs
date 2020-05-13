@@ -107,7 +107,8 @@ std::unique_ptr<Output> createOutput(
     bool const output_residuals = config.getConfigParameter<bool>(
         "output_extrapolation_residuals", false);
 
-    ProcessOutput process_output{output_variables, output_residuals};
+    OutputDataSpecification output_data_specification{output_variables,
+                                                      output_residuals};
 
     std::vector<std::string> mesh_names_for_output;
     //! \ogs_file_param{prj__time_loop__output__meshes}
@@ -141,7 +142,7 @@ std::unique_ptr<Output> createOutput(
     return std::make_unique<Output>(
         output_directory, prefix, suffix, compress_output, data_mode,
         output_iteration_results, std::move(repeats_each_steps),
-        std::move(fixed_output_times), std::move(process_output),
+        std::move(fixed_output_times), std::move(output_data_specification),
         std::move(mesh_names_for_output), meshes);
 }
 
