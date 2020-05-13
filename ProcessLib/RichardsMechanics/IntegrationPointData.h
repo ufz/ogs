@@ -83,7 +83,8 @@ struct IntegrationPointData final
         material_state_variables->pushBackState();
     }
 
-    typename BMatricesType::KelvinMatrixType computeElasticTangentStiffness(
+    MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>
+    computeElasticTangentStiffness(
         double const t,
         ParameterLib::SpatialPosition const& x_position,
         double const dt,
