@@ -156,7 +156,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>DiffusionOnly_pcs_{:process_id}</prefix>
+            <prefix>DiffusionOnly</prefix>
             <timesteps>
                 <pair>
                     <repeat>1</repeat>

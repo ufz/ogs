@@ -22,10 +22,10 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    DiffusionOnly_pcs_1_ts_1_t_1.000000_expected.vtu DiffusionOnly_pcs_1_ts_1_t_1.000000.vtu Si Si 1e-7 1e-10
-    DiffusionOnly_pcs_1_ts_1_t_1.000000_expected.vtu DiffusionOnly_pcs_1_ts_1_t_1.000000.vtu pressure pressure 1e-7 1e-10
-    DiffusionOnly_pcs_1_ts_1_t_1.000000_expected.vtu DiffusionOnly_pcs_1_ts_1_t_1.000000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-    VIS DiffusionOnly_pcs_1_ts_1_t_1.000000.vtu
+    DiffusionOnly_pcs_1_ts_1_t_1.000000_expected.vtu DiffusionOnly_ts_1_t_1.000000.vtu Si Si 1e-7 1e-10
+    DiffusionOnly_pcs_1_ts_1_t_1.000000_expected.vtu DiffusionOnly_ts_1_t_1.000000.vtu pressure pressure 1e-7 1e-10
+    DiffusionOnly_pcs_1_ts_1_t_1.000000_expected.vtu DiffusionOnly_ts_1_t_1.000000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
+    VIS DiffusionOnly_ts_1_t_1.000000.vtu
 )
 
 AddTest(
