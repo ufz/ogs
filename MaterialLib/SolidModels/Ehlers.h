@@ -330,7 +330,8 @@ public:
     }
 
     double getBulkModulus(double const t,
-                          ParameterLib::SpatialPosition const& x) const override
+                          ParameterLib::SpatialPosition const& x,
+                          KelvinMatrix const* const /*C*/) const override
     {
         return _mp.K(t, x)[0];
     }

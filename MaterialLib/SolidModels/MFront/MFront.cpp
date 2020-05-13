@@ -418,6 +418,24 @@ MFront<DisplacementDim>::getInternalVariables() const
 }
 
 template <int DisplacementDim>
+double MFront<DisplacementDim>::getBulkModulus(
+    double const /*t*/,
+    ParameterLib::SpatialPosition const& /*x*/,
+    KelvinMatrix const* const C) const
+{
+    if (C == nullptr)
+    {
+        OGS_FATAL(
+            "MFront::getBulkModulus() requires the tangent stiffness C input "
+            "argument to be valid.");
+    }
+    auto const& identity2 = MathLib::KelvinVector::Invariants<
+        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value>::
+        identity2;
+    return 1. / 9. * identity2.transpose() * *C * identity2;
+}
+
+template <int DisplacementDim>
 double MFront<DisplacementDim>::computeFreeEnergyDensity(
     double const /*t*/,
     ParameterLib::SpatialPosition const& /*x*/,

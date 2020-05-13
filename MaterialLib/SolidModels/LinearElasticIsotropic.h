@@ -105,7 +105,8 @@ public:
     MaterialProperties getMaterialProperties() const { return _mp; }
 
     double getBulkModulus(double const t,
-                          ParameterLib::SpatialPosition const& x) const override
+                          ParameterLib::SpatialPosition const& x,
+                          KelvinMatrix const* const /*C*/) const override
     {
         return _mp.bulk_modulus(t, x);
     }
