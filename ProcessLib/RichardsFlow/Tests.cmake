@@ -100,7 +100,7 @@ AddTest(
 # 1d infiltration with RichardsFlow
 AddTest(
         NAME 1d-infiltration
-        PATH Parabolic/Richards
+        PATH Parabolic/Richards/infiltration_1D
         EXECUTABLE ogs
         EXECUTABLE_ARGS 1d-infiltration.prj
         TESTER vtkdiff
