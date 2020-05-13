@@ -45,18 +45,15 @@ public:
                        const double /*min_relative_permeability_gas_*/,
                        const double /*exponent*/
     );
-    /// This method assigns a pointer to the material object that is the owner
-    /// of this property
-    void setScale(
-        std::variant<Medium*, Phase*, Component*> scale_pointer) override
+
+    void checkScale() const override
     {
-        if (!std::holds_alternative<Medium*>(scale_pointer))
+        if (!std::holds_alternative<Medium*>(scale_))
         {
             OGS_FATAL(
                 "The property 'RelPermBrooksCorey' is implemented on the "
                 "'media' scale only.");
         }
-        scale_ = scale_pointer;
     }
 
     /// Those methods override the base class implementations and

@@ -50,8 +50,7 @@ public:
             exponents,
         ParameterLib::CoordinateSystem const* const local_coordinate_system);
 
-    void setScale(
-        std::variant<Medium*, Phase*, Component*> scale_pointer) override;
+    void checkScale() const override;
 
     PropertyDataType value(VariableArray const& variable_array,
                            ParameterLib::SpatialPosition const& pos,

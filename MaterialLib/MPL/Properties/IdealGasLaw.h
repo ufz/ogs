@@ -32,19 +32,16 @@ class IdealGasLaw final : public Property
 {
 public:
     explicit IdealGasLaw(std::string name);
-    /// This method assigns a pointer to the material object that is the owner
-    /// of this property
-    void setScale(
-        std::variant<Medium*, Phase*, Component*> scale_pointer) override
+
+    void checkScale() const override
     {
-        if (!(std::holds_alternative<Phase*>(scale_pointer) ||
-              std::holds_alternative<Component*>(scale_pointer)))
+        if (!(std::holds_alternative<Phase*>(scale_) ||
+              std::holds_alternative<Component*>(scale_)))
         {
             OGS_FATAL(
                 "The property 'IdealGasLaw' is implemented on the "
                 "'phase' and 'component' scales only.");
         }
-        scale_ = scale_pointer;
     }
 
     /// Those methods override the base class implementations and

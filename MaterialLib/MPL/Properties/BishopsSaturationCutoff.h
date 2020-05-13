@@ -20,8 +20,7 @@ class BishopsSaturationCutoff final : public Property
 public:
     BishopsSaturationCutoff(std::string name, double const cutoff_value);
 
-    void setScale(
-        std::variant<Medium*, Phase*, Component*> scale_pointer) override;
+    void checkScale() const override;
 
     PropertyDataType value(VariableArray const& variable_array,
                            ParameterLib::SpatialPosition const& /*pos*/,

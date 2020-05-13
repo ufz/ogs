@@ -52,16 +52,14 @@ public:
                            double const exponent,
                            double const p_b);
 
-    void setScale(
-        std::variant<Medium*, Phase*, Component*> scale_pointer) override
+    void checkScale() const override
     {
-        if (!std::holds_alternative<Medium*>(scale_pointer))
+        if (!std::holds_alternative<Medium*>(scale_))
         {
             OGS_FATAL(
                 "The property 'SaturationVanGenuchten' is implemented on the "
                 "'media' scale only.");
         }
-        scale_ = scale_pointer;
     }
 
     /// Those methods override the base class implementations and

@@ -18,16 +18,14 @@ BishopsSaturationCutoff::BishopsSaturationCutoff(std::string name,
     name_ = std::move(name);
 }
 
-void BishopsSaturationCutoff::setScale(
-    std::variant<Medium*, Phase*, Component*> scale_pointer)
+void BishopsSaturationCutoff::checkScale() const
 {
-    if (!std::holds_alternative<Medium*>(scale_pointer))
+    if (!std::holds_alternative<Medium*>(scale_))
     {
         OGS_FATAL(
             "The property 'BishopsSaturationCutoff' is implemented on the "
             "'media' scale only.");
     }
-    scale_ = scale_pointer;
 }
 
 PropertyDataType BishopsSaturationCutoff::value(

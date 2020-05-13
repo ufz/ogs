@@ -57,18 +57,14 @@ public:
         name_ = std::move(name);
     }
 
-    /// This method assigns a pointer to the material object that is the owner
-    /// of this property
-    void setScale(
-        std::variant<Medium*, Phase*, Component*> scale_pointer) override
+    void checkScale() const override
     {
-        if (!std::holds_alternative<Medium*>(scale_pointer))
+        if (!std::holds_alternative<Medium*>(scale_))
         {
             OGS_FATAL(
                 "The property 'SaturationLiakopoulos' is implemented on the "
                 "'media' scale only.");
         }
-        scale_ = std::get<Medium*>(scale_pointer);
     }
 
     /// Those methods override the base class implementations and

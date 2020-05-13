@@ -40,8 +40,7 @@ public:
         name_ = std::move(name);
     }
 
-    void setScale(
-        std::variant<Medium*, Phase*, Component*> scale_pointer) override;
+    void checkScale() const override;
 
     PropertyDataType initialValue(ParameterLib::SpatialPosition const& pos,
                                   double const t) const override

@@ -49,16 +49,14 @@ public:
                                   double const p_b,
                                   double const maximum_capillary_pressure);
 
-    void setScale(
-        std::variant<Medium*, Phase*, Component*> scale_pointer) override
+    void checkScale() const override
     {
-        if (!std::holds_alternative<Medium*>(scale_pointer))
+        if (!std::holds_alternative<Medium*>(scale_))
         {
             OGS_FATAL(
                 "The property 'CapillaryPressureVanGenuchten' is implemented "
                 "on the 'media' scale only.");
         }
-        scale_ = scale_pointer;
     }
 
     /// \returns \f$ p_c(S) \f$.

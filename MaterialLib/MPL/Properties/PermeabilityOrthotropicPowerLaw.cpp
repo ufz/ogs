@@ -35,16 +35,14 @@ PermeabilityOrthotropicPowerLaw<DisplacementDim>::
 }
 
 template <int DisplacementDim>
-void PermeabilityOrthotropicPowerLaw<DisplacementDim>::setScale(
-    std::variant<Medium*, Phase*, Component*> scale_pointer)
+void PermeabilityOrthotropicPowerLaw<DisplacementDim>::checkScale() const
 {
-    if (!std::holds_alternative<Phase*>(scale_pointer))
+    if (!std::holds_alternative<Phase*>(scale_))
     {
         OGS_FATAL(
             "The property 'PermeabilityOrthotropicPowerLaw' is "
             "implemented on the 'phase' scales only.");
     }
-    scale_ = scale_pointer;
 
     auto const phase = std::get<Phase*>(scale_);
     if (phase->name != "Solid")

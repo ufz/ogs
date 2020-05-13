@@ -18,8 +18,7 @@ class BishopsPowerLaw final : public Property
 public:
     BishopsPowerLaw(std::string name, double const exponent);
 
-    void setScale(
-        std::variant<Medium*, Phase*, Component*> scale_pointer) override;
+    void checkScale() const override;
 
     PropertyDataType value(VariableArray const& variable_array,
                            ParameterLib::SpatialPosition const& /*pos*/,

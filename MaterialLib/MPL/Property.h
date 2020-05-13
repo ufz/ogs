@@ -71,9 +71,11 @@ public:
                                      Variable const variable2,
                                      ParameterLib::SpatialPosition const& pos,
                                      double const t, double const dt) const;
-    virtual void setScale(std::variant<Medium*, Phase*, Component*> scale)
+
+    void setScale(std::variant<Medium*, Phase*, Component*> scale)
     {
         scale_ = scale;
+        checkScale();
     };
 
     template <typename T>
@@ -123,6 +125,13 @@ protected:
     /// component in general. Set through setScale method which takes care of
     /// the correctness in special cases.
     std::variant<Medium*, Phase*, Component*> scale_;
+
+private:
+    virtual void checkScale() const
+    {
+        // Empty check for properties which can be defined on every scale,
+        // medium, phase or component
+    }
 };
 
 inline void overwriteExistingProperties(

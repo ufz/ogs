@@ -17,16 +17,14 @@ BishopsPowerLaw::BishopsPowerLaw(std::string name, double const exponent)
     name_ = std::move(name);
 }
 
-void BishopsPowerLaw::setScale(
-    std::variant<Medium*, Phase*, Component*> scale_pointer)
+void BishopsPowerLaw::checkScale() const
 {
-    if (!std::holds_alternative<Medium*>(scale_pointer))
+    if (!std::holds_alternative<Medium*>(scale_))
     {
         OGS_FATAL(
             "The property 'BishopsPowerLaw' is implemented on the 'media' "
             "scale only.");
     }
-    scale_ = scale_pointer;
 }
 
 PropertyDataType BishopsPowerLaw::value(
