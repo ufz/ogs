@@ -132,7 +132,7 @@ static void addSecondaryVariableResiduals(
 
 namespace ProcessLib
 {
-void processOutputData(
+void addProcessDataToMesh(
     const double t, std::vector<GlobalVector*> const& x, int const process_id,
     MeshLib::Mesh& mesh,
     std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,

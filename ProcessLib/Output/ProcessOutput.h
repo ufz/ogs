@@ -30,7 +30,7 @@ struct OutputDataSpecification final
 
 ///
 /// Prepare the output data, i.e. add the solution to vtu data structure.
-void processOutputData(
+void addProcessDataToMesh(
     const double t, std::vector<GlobalVector*> const& x, int const process_id,
     MeshLib::Mesh& mesh,
     std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
