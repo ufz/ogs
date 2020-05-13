@@ -112,10 +112,12 @@ private:
      * Get the address of a PVDFile from corresponding to the given process.
      * @param process    Process.
      * @param process_id Process ID.
+     * @param mesh_name_for_output mesh name for the output.
      * @return Address of a PVDFile.
      */
     MeshLib::IO::PVDFile* findPVDFile(Process const& process,
-                                      const int process_id);
+                                      const int process_id,
+                                      std::string const& mesh_name_for_output);
 
     //! Determines if there should be output at the given \c timestep or \c t.
     bool shallDoOutput(int timestep, double const t);
@@ -124,7 +126,5 @@ private:
     std::vector<std::string> _mesh_names_for_output;
     std::vector<std::unique_ptr<MeshLib::Mesh>> const& _meshes;
 };
-
-
 
 }  // namespace ProcessLib

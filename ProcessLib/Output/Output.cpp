@@ -140,20 +140,28 @@ void Output::addProcess(ProcessLib::Process const& process,
 }
 
 // TODO return a reference.
-MeshLib::IO::PVDFile* Output::findPVDFile(Process const& process,
-                                          const int process_id)
+MeshLib::IO::PVDFile* Output::findPVDFile(
+    Process const& process,
+    const int process_id,
+    std::string const& mesh_name_for_output)
 {
+    auto const filename =
+        constructPVDName(_output_directory, _output_file_prefix, process_id,
+                         mesh_name_for_output);
     auto range = _process_to_pvd_file.equal_range(&process);
     int counter = 0;
     MeshLib::IO::PVDFile* pvd_file = nullptr;
     for (auto spd_it = range.first; spd_it != range.second; ++spd_it)
     {
-        if (counter == process_id)
+        if (spd_it->second.pvd_filename == filename)
         {
-            pvd_file = &spd_it->second;
-            break;
+            if (counter == process_id)
+            {
+                pvd_file = &spd_it->second;
+                break;
+            }
+            counter++;
         }
-        counter++;
     }
     if (pvd_file == nullptr)
     {
@@ -249,7 +257,8 @@ void Output::doOutputAlways(Process const& process,
                        _output_file_suffix, process.getMesh().getName(),
                        process_id, timestep, t, _output_file_data_mode,
                        _output_file_compression),
-            findPVDFile(process, process_id), process.getMesh(), t);
+            findPVDFile(process, process_id, process.getMesh().getName()),
+            process.getMesh(), t);
     };
 
     for (auto const& mesh_output_name : _mesh_names_for_output)
@@ -310,6 +319,9 @@ void Output::doOutputAlways(Process const& process,
                                      t,
                                      _output_file_data_mode,
                                      _output_file_compression};
+
+        auto pvd_file = findPVDFile(process, process_id, mesh.getName());
+        pvd_file->addVTUFile(output_file.name, t);
 
         DBUG("output to {:s}", output_file.path);
 
@@ -390,7 +402,7 @@ void Output::doOutputNonlinearIteration(Process const& process,
     }
 
     // Only check whether a process data is available for output.
-    findPVDFile(process, process_id);
+    findPVDFile(process, process_id, process.getMesh().getName());
 
     std::string const output_file_name =
         BaseLib::constructFormattedFileName(_output_file_prefix,
