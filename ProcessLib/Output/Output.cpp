@@ -44,6 +44,18 @@ int convertVtkDataMode(std::string const& data_mode)
         "Binary, or Appended.",
         data_mode);
 }
+
+std::string constructPVDName(std::string const& output_directory,
+                             std::string const& output_file_prefix,
+                             int const process_id,
+                             std::string const& mesh_name)
+{
+    return BaseLib::joinPaths(
+        output_directory,
+        BaseLib::constructFormattedFileName(output_file_prefix, mesh_name,
+                                            process_id, 0, 0) +
+            ".pvd");
+}
 }  // namespace
 
 namespace ProcessLib
