@@ -90,9 +90,9 @@ public:
         catch (std::bad_variant_access const&)
         {
             OGS_FATAL(
-                "The '{:s}' property's initial value does not hold requested "
-                "type {:s} but a {:s}.",
-                name_,
+                "The initial value of {:s} does not hold requested type '{:s}' "
+                "but a {:s}.",
+                description(),
                 typeid(T).name(),
                 property_data_type_names_[initialValue(pos, t).index()]);
         }
@@ -108,9 +108,9 @@ public:
         catch (std::bad_variant_access const&)
         {
             OGS_FATAL(
-                "The '{:s}' property's value does not hold requested type {:s} "
-                "but a {:s}.",
-                name_,
+                "The value of {:s} does not hold requested type '{:s}' but a "
+                "{:s}.",
+                description(),
                 typeid(T).name(),
                 property_data_type_names_[value().index()]);
         }
@@ -128,9 +128,9 @@ public:
         catch (std::bad_variant_access const&)
         {
             OGS_FATAL(
-                "The '{:s}' property's value is not of the requested type {:s} "
-                "but a {:s}.",
-                name_,
+                "The value of {:s} is not of the requested type '{:s}' but a "
+                "{:s}.",
+                description(),
                 typeid(T).name(),
                 property_data_type_names_[value(variable_array, pos, t, dt)
                                               .index()]);
@@ -149,9 +149,9 @@ public:
         catch (std::bad_variant_access const&)
         {
             OGS_FATAL(
-                "The '{:s}' property's first derivative value is not of the "
-                "requested type {:s} but a {:s}.",
-                name_,
+                "The first derivative value of {:s} is not of the requested "
+                "type '{:s}' but a {:s}.",
+                description(),
                 typeid(T).name(),
                 property_data_type_names_
                     [dValue(variable_array, variable, pos, t, dt).index()]);
@@ -171,9 +171,9 @@ public:
         catch (std::bad_variant_access const&)
         {
             OGS_FATAL(
-                "The '{:s}' property's second derivative value is not of the "
-                "requested type {:s} but a {:s}.",
-                name_,
+                "The second derivative value of {:s} is not of the requested "
+                "type '{:s}' but a {:s}.",
+                description(),
                 typeid(T).name(),
                 property_data_type_names_[d2Value(variable_array, variable1,
                                                   variable2, pos, t, dt)
