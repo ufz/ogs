@@ -72,13 +72,13 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    DiffusionAndStorage_pcs_1_ts_100_t_0.150000_expected.vtu DiffusionAndStorage_pcs_1_ts_100_t_0.150000.vtu Si Si 1e-7 1e-10
-    DiffusionAndStorage_pcs_1_ts_100_t_0.150000_expected.vtu DiffusionAndStorage_pcs_1_ts_100_t_0.150000.vtu pressure pressure 1e-7 1e-10
-    DiffusionAndStorage_pcs_1_ts_100_t_0.150000_expected.vtu DiffusionAndStorage_pcs_1_ts_100_t_0.150000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-    DiffusionAndStorage_pcs_1_ts_134_t_1.500000_expected.vtu DiffusionAndStorage_pcs_1_ts_134_t_1.500000.vtu Si Si 1e-7 1e-10
-    DiffusionAndStorage_pcs_1_ts_134_t_1.500000_expected.vtu DiffusionAndStorage_pcs_1_ts_134_t_1.500000.vtu pressure pressure 1e-7 1e-10
-    DiffusionAndStorage_pcs_1_ts_134_t_1.500000_expected.vtu DiffusionAndStorage_pcs_1_ts_134_t_1.500000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-    VIS DiffusionAndStorage_pcs_1_ts_134_t_1.500000.vtu
+    DiffusionAndStorage_pcs_1_ts_100_t_0.150000_expected.vtu DiffusionAndStorage_ts_100_t_0.150000.vtu Si Si 1e-7 1e-10
+    DiffusionAndStorage_pcs_1_ts_100_t_0.150000_expected.vtu DiffusionAndStorage_ts_100_t_0.150000.vtu pressure pressure 1e-7 1e-10
+    DiffusionAndStorage_pcs_1_ts_100_t_0.150000_expected.vtu DiffusionAndStorage_ts_100_t_0.150000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
+    DiffusionAndStorage_pcs_1_ts_134_t_1.500000_expected.vtu DiffusionAndStorage_ts_134_t_1.500000.vtu Si Si 1e-7 1e-10
+    DiffusionAndStorage_pcs_1_ts_134_t_1.500000_expected.vtu DiffusionAndStorage_ts_134_t_1.500000.vtu pressure pressure 1e-7 1e-10
+    DiffusionAndStorage_pcs_1_ts_134_t_1.500000_expected.vtu DiffusionAndStorage_ts_134_t_1.500000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
+    VIS DiffusionAndStorage_ts_134_t_1.500000.vtu
 )
 
 AddTest(
