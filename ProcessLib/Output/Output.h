@@ -121,7 +121,7 @@ private:
     bool shallDoOutput(int timestep, double const t);
 
     OutputDataSpecification const _output_data_specification;
-    std::vector<std::string> const _mesh_names_for_output;
+    std::vector<std::string> _mesh_names_for_output;
     std::vector<std::unique_ptr<MeshLib::Mesh>> const& _meshes;
 };
 

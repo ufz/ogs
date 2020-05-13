@@ -122,15 +122,21 @@ Output::Output(std::string output_directory, std::string output_file_prefix,
 void Output::addProcess(ProcessLib::Process const& process,
                         const int process_id)
 {
-    auto const filename =
-        BaseLib::joinPaths(_output_directory,
-                           BaseLib::constructFormattedFileName(
-                               _output_file_prefix, process.getMesh().getName(),
-                               process_id, 0, 0) +
-                               ".pvd");
-    _process_to_pvd_file.emplace(std::piecewise_construct,
-                                 std::forward_as_tuple(&process),
-                                 std::forward_as_tuple(filename));
+    if (_mesh_names_for_output.empty())
+    {
+        _mesh_names_for_output.push_back(process.getMesh().getName());
+    }
+
+
+    for (auto const& mesh_output_name : _mesh_names_for_output)
+    {
+        auto const filename =
+            constructPVDName(_output_directory, _output_file_prefix,
+                             process_id, mesh_output_name);
+        _process_to_pvd_file.emplace(std::piecewise_construct,
+                                     std::forward_as_tuple(&process),
+                                     std::forward_as_tuple(filename));
+    }
 }
 
 // TODO return a reference.
@@ -229,7 +235,9 @@ void Output::doOutputAlways(Process const& process,
     // For the staggered scheme for the coupling, only the last process, which
     // gives the latest solution within a coupling loop, is allowed to make
     // output.
-    if (!(process_id == static_cast<int>(_process_to_pvd_file.size() - 1) ||
+    if (!(process_id == static_cast<int>(_process_to_pvd_file.size() /
+                                         _mesh_names_for_output.size()) -
+                            1 ||
           process.isMonolithicSchemeUsed()))
     {
         return;
@@ -243,12 +251,6 @@ void Output::doOutputAlways(Process const& process,
                        _output_file_compression),
             findPVDFile(process, process_id), process.getMesh(), t);
     };
-    // Write the bulk mesh only if there are no other meshes specified for
-    // output, otherwise only the specified meshes are written.
-    if (_mesh_names_for_output.empty())
-    {
-        output_bulk_mesh();
-    }
 
     for (auto const& mesh_output_name : _mesh_names_for_output)
     {
