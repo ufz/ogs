@@ -338,9 +338,13 @@ void RichardsMechanicsLocalAssembler<
         auto const rho_SR =
             solid_phase.property(MPL::PropertyType::density)
                 .template value<double>(variables, x_position, t, dt);
+
+        auto const C_el = _ip_data[ip].computeElasticTangentStiffness(
+            t, x_position, dt, temperature);
+
         auto const K_SR =
-            solid_phase.property(MPL::PropertyType::bulk_modulus)
-                .template value<double>(variables, x_position, t, dt);
+            _ip_data[ip].solid_material.getBulkModulus(t, x_position, &C_el);
+
         auto const K_LR =
             liquid_phase.property(MPL::PropertyType::bulk_modulus)
                 .template value<double>(variables, x_position, t, dt);
@@ -659,9 +663,13 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const rho_SR =
             solid_phase.property(MPL::PropertyType::density)
                 .template value<double>(variables, x_position, t, dt);
+
+        auto const C_el = _ip_data[ip].computeElasticTangentStiffness(
+            t, x_position, dt, temperature);
+
         auto const K_SR =
-            solid_phase.property(MPL::PropertyType::bulk_modulus)
-                .template value<double>(variables, x_position, t, dt);
+            _ip_data[ip].solid_material.getBulkModulus(t, x_position, &C_el);
+
         auto const K_LR =
             liquid_phase.property(MPL::PropertyType::bulk_modulus)
                 .template value<double>(variables, x_position, t, dt);
@@ -735,9 +743,6 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                             .template value<DimMatrix>(variables, x_position, t,
                                                        dt));
                 sigma_sw += sigma_sw_dot * dt;
-
-                auto const C_el = _ip_data[ip].computeElasticTangentStiffness(
-                    t, x_position, dt, temperature);
 
                 variables[static_cast<int>(
                               MPL::Variable::volumetric_strain_rate)]
