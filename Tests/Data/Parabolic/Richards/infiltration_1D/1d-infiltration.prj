@@ -84,7 +84,7 @@
                     <residual_liquid_saturation>0.18139535</residual_liquid_saturation>
                     <residual_gas_saturation>0.0</residual_gas_saturation>
                     <exponent>0.358974358974359</exponent>
-                    <entry_pressure>2725</entry_pressure>
+                    <p_b>2725</p_b>
                 </property>
             </properties>
         </medium>
