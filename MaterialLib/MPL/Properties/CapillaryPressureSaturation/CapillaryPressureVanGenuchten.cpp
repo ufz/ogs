@@ -34,17 +34,12 @@ CapillaryPressureVanGenuchten::CapillaryPressureVanGenuchten(
     double const residual_gas_saturation,
     double const exponent,
     double const p_b,
-    double const maximum_capillary_pressure)
+    double const S_at_pc_max)
     : S_L_res_(residual_liquid_saturation),
       S_L_max_(1. - residual_gas_saturation),
       m_(exponent),
       p_b_(p_b),
-      p_cap_max_(std::min(maximum_capillary_pressure,
-                          getCapillaryPressure(S_L_res_ + 1.0e-9, p_b_,
-                                               S_L_res_, S_L_max_, m_))),
-      S_for_p_cap_max_(std::max(
-          S_L_res_ + 1.0e-9,
-          getSaturationVanGenuchten(p_cap_max_, p_b_, S_L_res_, S_L_max_, m_)))
+      S_at_p_cap_max_(S_at_pc_max)
 {
     if (S_L_max_ < 0 || S_L_max_ > 1)
     {
@@ -76,14 +71,6 @@ CapillaryPressureVanGenuchten::CapillaryPressureVanGenuchten(
             "The pressure scaling value p_b = {:g} must be positive.",
             p_b_);
     }
-    if (p_cap_max_ < 0)
-    {
-        OGS_FATAL(
-            "Van Genuchten capillary pressure model: "
-            "The maximum capillary pressure value p_cap_max = {:g} must be "
-            "non-negative.",
-            p_cap_max_);
-    }
 }
 
 PropertyDataType CapillaryPressureVanGenuchten::value(
@@ -94,19 +81,13 @@ PropertyDataType CapillaryPressureVanGenuchten::value(
     double const S_L = std::get<double>(
         variable_array[static_cast<int>(Variable::liquid_saturation)]);
 
-    if (S_L <= S_for_p_cap_max_)
-    {
-        return p_cap_max_;
-    }
-
     if (S_L >= S_L_max_)
     {
         return 0;
     }
 
-    double const p_cap =
-        getCapillaryPressure(S_L, p_b_, S_L_res_, S_L_max_, m_);
-    return std::min(p_cap, p_cap_max_);
+    const double S = std::max(S_at_p_cap_max_, S_L);
+    return getCapillaryPressure(S, p_b_, S_L_res_, S_L_max_, m_);
 }
 
 PropertyDataType CapillaryPressureVanGenuchten::dValue(
@@ -127,7 +108,7 @@ PropertyDataType CapillaryPressureVanGenuchten::dValue(
         return 0;
     }
 
-    const double S = (S_L > S_for_p_cap_max_) ? S_L : S_for_p_cap_max_;
+    const double S = std::max(S_L, S_at_p_cap_max_);
 
     double const S_eff = (S - S_L_res_) / (S_L_max_ - S_L_res_);
 
@@ -135,7 +116,7 @@ PropertyDataType CapillaryPressureVanGenuchten::dValue(
 
     double const val1 = std::pow(S_eff, -1.0 / m_);
 
-    double const val2 = std::pow(val1 - 1.0, - m_);
+    double const val2 = std::pow(val1 - 1.0, -m_);
     return p_b_ * (m_ - 1.0) * val1 * val2 / (m_ * (S_L - S_L_res_));
 }
 }  // namespace MaterialPropertyLib

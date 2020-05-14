@@ -46,7 +46,7 @@ public:
                                   double const residual_gas_saturation,
                                   double const exponent,
                                   double const p_b,
-                                  double const maximum_capillary_pressure);
+                                  double const S_at_pc_max);
 
     void setScale(
         std::variant<Medium*, Phase*, Component*> scale_pointer) override
@@ -79,8 +79,7 @@ private:
     double const S_L_max_;    ///< Maximum saturation of liquid phase.
     double const m_;          ///< Exponent.
     double const p_b_;        ///< Pressure scaling factor.
-    double const p_cap_max_;  ///< Maximum capillary pressure.
-    /// Saturation for Maximum capillary pressure.
-    double const S_for_p_cap_max_;
+    /// Saturation at the maximum capillary pressure.
+    double const S_at_p_cap_max_;
 };
 }  // namespace MaterialPropertyLib
