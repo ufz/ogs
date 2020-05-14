@@ -345,6 +345,8 @@ void RichardsMechanicsLocalAssembler<
         auto const beta_SR =
             (1 - alpha) /
             _ip_data[ip].solid_material.getBulkModulus(t, x_position, &C_el);
+        variables[static_cast<int>(MPL::Variable::grain_compressibility)] =
+            beta_SR;
 
         auto const K_LR =
             liquid_phase.property(MPL::PropertyType::bulk_modulus)
@@ -671,6 +673,8 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const beta_SR =
             (1 - alpha) /
             _ip_data[ip].solid_material.getBulkModulus(t, x_position, &C_el);
+        variables[static_cast<int>(MPL::Variable::grain_compressibility)] =
+            beta_SR;
 
         auto const K_LR =
             liquid_phase.property(MPL::PropertyType::bulk_modulus)

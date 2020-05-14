@@ -44,6 +44,10 @@ Variable convertStringToVariable(std::string const& input)
     {
         return Variable::displacement;
     }
+    if (boost::iequals(input, "grain_compressibility"))
+    {
+        return Variable::grain_compressibility;
+    }
 
     OGS_FATAL(
         "The variable name '{:s}' does not correspond to any known variable",

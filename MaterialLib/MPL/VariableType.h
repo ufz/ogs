@@ -56,6 +56,7 @@ enum class Variable : int
     strain,
     stress,
     volumetric_strain_rate,
+    grain_compressibility,
     number_of_variables
 };
 
