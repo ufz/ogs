@@ -98,4 +98,25 @@ std::size_t setIntegrationPointKelvinVector(
     return num_intpts;
 }
 
+template <typename IntegrationPointData, typename MemberType>
+std::vector<double> const& getIntegrationPointScalarData(
+    std::vector<IntegrationPointData,
+                Eigen::aligned_allocator<IntegrationPointData>> const& ip_data,
+    MemberType member, std::vector<double>& cache)
+{
+    auto const num_intpts = ip_data.size();
+
+    cache.clear();
+    auto cache_mat = MathLib::createZeroedMatrix<
+        Eigen::Matrix<double, 1, Eigen::Dynamic, Eigen::RowMajor>>(cache, 1,
+                                                                   num_intpts);
+
+    for (unsigned ip = 0; ip < num_intpts; ++ip)
+    {
+        cache_mat[ip] = ip_data[ip].*member;
+    }
+
+    return cache;
+}
+
 }  // namespace ProcessLib
