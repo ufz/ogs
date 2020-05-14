@@ -668,7 +668,8 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             t, x_position, dt, temperature);
 
         auto const K_SR =
-            _ip_data[ip].solid_material.getBulkModulus(t, x_position, &C_el);
+            _ip_data[ip].solid_material.getBulkModulus(t, x_position, &C_el) /
+            (1 - alpha);
 
         auto const K_LR =
             liquid_phase.property(MPL::PropertyType::bulk_modulus)
