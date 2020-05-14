@@ -342,7 +342,8 @@ void RichardsMechanicsLocalAssembler<
         auto const C_el = _ip_data[ip].computeElasticTangentStiffness(
             t, x_position, dt, temperature);
 
-        auto const K_SR =
+        auto const beta_SR =
+            (1 - alpha) /
             _ip_data[ip].solid_material.getBulkModulus(t, x_position, &C_el);
 
         auto const K_LR =
@@ -486,7 +487,7 @@ void RichardsMechanicsLocalAssembler<
         //
         // pressure equation, pressure part.
         //
-        double const a0 = S_L * (alpha - porosity) / K_SR;
+        double const a0 = S_L * (alpha - porosity) * beta_SR;
         // Volumetric average specific storage of the solid and fluid phases.
         double const specific_storage =
             dS_L_dp_cap * (p_cap_ip * a0 - porosity) +
@@ -667,9 +668,9 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const C_el = _ip_data[ip].computeElasticTangentStiffness(
             t, x_position, dt, temperature);
 
-        auto const K_SR =
-            _ip_data[ip].solid_material.getBulkModulus(t, x_position, &C_el) /
-            (1 - alpha);
+        auto const beta_SR =
+            (1 - alpha) /
+            _ip_data[ip].solid_material.getBulkModulus(t, x_position, &C_el);
 
         auto const K_LR =
             liquid_phase.property(MPL::PropertyType::bulk_modulus)
@@ -855,7 +856,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         laplace_p.noalias() +=
             dNdx_p.transpose() * k_rel * rho_Ki_over_mu * dNdx_p * w;
 
-        double const a0 = (alpha - porosity) / K_SR;
+        double const a0 = (alpha - porosity) * beta_SR;
         double const specific_storage_a_p = S_L * (porosity / K_LR + S_L * a0);
         double const specific_storage_a_S = porosity - p_cap_ip * S_L * a0;
 
