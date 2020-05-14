@@ -650,14 +650,14 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    TracerSimulation_pcs_1_ts_100_t_100000_000000_0_expected.vtu TracerSimulation_pcs_1_ts_100_t_100000_000000_0.vtu Cs Cs 1e-10 1e-16
-    TracerSimulation_pcs_1_ts_100_t_100000_000000_0_expected.vtu TracerSimulation_pcs_1_ts_100_t_100000_000000_0.vtu pressure pressure 2.5e-5 1.7e-9
-    TracerSimulation_pcs_1_ts_100_t_100000_000000_1_expected.vtu TracerSimulation_pcs_1_ts_100_t_100000_000000_1.vtu Cs Cs 1e-10 1e-16
-    TracerSimulation_pcs_1_ts_100_t_100000_000000_1_expected.vtu TracerSimulation_pcs_1_ts_100_t_100000_000000_1.vtu pressure pressure 2.5e-5 1.7e-9
-    TracerSimulation_pcs_1_ts_100_t_100000_000000_2_expected.vtu TracerSimulation_pcs_1_ts_100_t_100000_000000_2.vtu Cs Cs 1e-10 1e-16
-    TracerSimulation_pcs_1_ts_100_t_100000_000000_2_expected.vtu TracerSimulation_pcs_1_ts_100_t_100000_000000_2.vtu pressure pressure 2.5e-5 1.7e-9
-    TracerSimulation_pcs_1_ts_100_t_100000_000000_3_expected.vtu TracerSimulation_pcs_1_ts_100_t_100000_000000_3.vtu Cs Cs 1e-10 1e-16
-    TracerSimulation_pcs_1_ts_100_t_100000_000000_3_expected.vtu TracerSimulation_pcs_1_ts_100_t_100000_000000_3.vtu pressure pressure 2.5e-5 1.7e-9
+    TracerSimulation_pcs_1_ts_100_t_100000_000000_0_expected.vtu TracerSimulation_ts_100_t_100000_000000_0.vtu Cs Cs 1e-10 1e-16
+    TracerSimulation_pcs_1_ts_100_t_100000_000000_0_expected.vtu TracerSimulation_ts_100_t_100000_000000_0.vtu pressure pressure 2.5e-5 1.7e-9
+    TracerSimulation_pcs_1_ts_100_t_100000_000000_1_expected.vtu TracerSimulation_ts_100_t_100000_000000_1.vtu Cs Cs 1e-10 1e-16
+    TracerSimulation_pcs_1_ts_100_t_100000_000000_1_expected.vtu TracerSimulation_ts_100_t_100000_000000_1.vtu pressure pressure 2.5e-5 1.7e-9
+    TracerSimulation_pcs_1_ts_100_t_100000_000000_2_expected.vtu TracerSimulation_ts_100_t_100000_000000_2.vtu Cs Cs 1e-10 1e-16
+    TracerSimulation_pcs_1_ts_100_t_100000_000000_2_expected.vtu TracerSimulation_ts_100_t_100000_000000_2.vtu pressure pressure 2.5e-5 1.7e-9
+    TracerSimulation_pcs_1_ts_100_t_100000_000000_3_expected.vtu TracerSimulation_ts_100_t_100000_000000_3.vtu Cs Cs 1e-10 1e-16
+    TracerSimulation_pcs_1_ts_100_t_100000_000000_3_expected.vtu TracerSimulation_ts_100_t_100000_000000_3.vtu pressure pressure 2.5e-5 1.7e-9
 )
 
 AddTest(
@@ -978,28 +978,28 @@ AddTest(
     REQUIREMENTS NOT OGS_USE_MPI
     RUNTIME 40
     DIFF_DATA
-    ConTracer_2d_pcs_1_ts_30_t_108000.000000_expected.vtu ConTracer_2d_pcs_1_ts_30_t_108000.000000.vtu pressure pressure 1e-6 1e-10
-    ConTracer_2d_pcs_1_ts_60_t_216000.000000_expected.vtu ConTracer_2d_pcs_1_ts_60_t_216000.000000.vtu pressure pressure 1e-6 1e-10
-    ConTracer_2d_pcs_1_ts_90_t_324000.000000_expected.vtu ConTracer_2d_pcs_1_ts_90_t_324000.000000.vtu pressure pressure 1e-6 1e-10
-    ConTracer_2d_pcs_1_ts_120_t_432000.000000_expected.vtu ConTracer_2d_pcs_1_ts_120_t_432000.000000.vtu pressure pressure 1e-6 1e-10
-    ConTracer_2d_pcs_1_ts_150_t_540000.000000_expected.vtu ConTracer_2d_pcs_1_ts_150_t_540000.000000.vtu pressure pressure 1e-6 1e-10
-    ConTracer_2d_pcs_1_ts_180_t_648000.000000_expected.vtu ConTracer_2d_pcs_1_ts_180_t_648000.000000.vtu pressure pressure 1e-6 1e-10
-    ConTracer_2d_pcs_1_ts_210_t_756000.000000_expected.vtu ConTracer_2d_pcs_1_ts_210_t_756000.000000.vtu pressure pressure 1e-6 1e-10
-    ConTracer_2d_pcs_1_ts_240_t_864000.000000_expected.vtu ConTracer_2d_pcs_1_ts_240_t_864000.000000.vtu pressure pressure 1e-6 1e-10
-    ConTracer_2d_pcs_1_ts_270_t_972000.000000_expected.vtu ConTracer_2d_pcs_1_ts_270_t_972000.000000.vtu pressure pressure 1e-6 1e-10
-    ConTracer_2d_pcs_1_ts_300_t_1080000.000000_expected.vtu ConTracer_2d_pcs_1_ts_300_t_1080000.000000.vtu pressure pressure 1e-6 1e-10
-    ConTracer_2d_pcs_1_ts_329_t_1184400.000000_expected.vtu ConTracer_2d_pcs_1_ts_329_t_1184400.000000.vtu pressure pressure 1e-6 1e-10
-    ConTracer_2d_pcs_1_ts_30_t_108000.000000_expected.vtu ConTracer_2d_pcs_1_ts_30_t_108000.000000.vtu Cs Cs 1e-10 1e-16
-    ConTracer_2d_pcs_1_ts_60_t_216000.000000_expected.vtu ConTracer_2d_pcs_1_ts_60_t_216000.000000.vtu Cs Cs 1e-10 1e-16
-    ConTracer_2d_pcs_1_ts_90_t_324000.000000_expected.vtu ConTracer_2d_pcs_1_ts_90_t_324000.000000.vtu Cs Cs 1e-10 1e-16
-    ConTracer_2d_pcs_1_ts_120_t_432000.000000_expected.vtu ConTracer_2d_pcs_1_ts_120_t_432000.000000.vtu Cs Cs 1e-10 1e-16
-    ConTracer_2d_pcs_1_ts_150_t_540000.000000_expected.vtu ConTracer_2d_pcs_1_ts_150_t_540000.000000.vtu Cs Cs 1e-10 1e-16
-    ConTracer_2d_pcs_1_ts_180_t_648000.000000_expected.vtu ConTracer_2d_pcs_1_ts_180_t_648000.000000.vtu Cs Cs 1e-10 1e-16
-    ConTracer_2d_pcs_1_ts_210_t_756000.000000_expected.vtu ConTracer_2d_pcs_1_ts_210_t_756000.000000.vtu Cs Cs 1e-10 1e-16
-    ConTracer_2d_pcs_1_ts_240_t_864000.000000_expected.vtu ConTracer_2d_pcs_1_ts_240_t_864000.000000.vtu Cs Cs 1e-10 1e-16
-    ConTracer_2d_pcs_1_ts_270_t_972000.000000_expected.vtu ConTracer_2d_pcs_1_ts_270_t_972000.000000.vtu Cs Cs 1e-10 1e-16
-    ConTracer_2d_pcs_1_ts_300_t_1080000.000000_expected.vtu ConTracer_2d_pcs_1_ts_300_t_1080000.000000.vtu Cs Cs 1e-10 1e-16
-    ConTracer_2d_pcs_1_ts_329_t_1184400.000000_expected.vtu ConTracer_2d_pcs_1_ts_329_t_1184400.000000.vtu Cs Cs 1e-10 1e-16
+    ConTracer_2d_pcs_1_ts_30_t_108000.000000_expected.vtu ConTracer_2d_ts_30_t_108000.000000.vtu pressure pressure 1e-6 1e-10
+    ConTracer_2d_pcs_1_ts_60_t_216000.000000_expected.vtu ConTracer_2d_ts_60_t_216000.000000.vtu pressure pressure 1e-6 1e-10
+    ConTracer_2d_pcs_1_ts_90_t_324000.000000_expected.vtu ConTracer_2d_ts_90_t_324000.000000.vtu pressure pressure 1e-6 1e-10
+    ConTracer_2d_pcs_1_ts_120_t_432000.000000_expected.vtu ConTracer_2d_ts_120_t_432000.000000.vtu pressure pressure 1e-6 1e-10
+    ConTracer_2d_pcs_1_ts_150_t_540000.000000_expected.vtu ConTracer_2d_ts_150_t_540000.000000.vtu pressure pressure 1e-6 1e-10
+    ConTracer_2d_pcs_1_ts_180_t_648000.000000_expected.vtu ConTracer_2d_ts_180_t_648000.000000.vtu pressure pressure 1e-6 1e-10
+    ConTracer_2d_pcs_1_ts_210_t_756000.000000_expected.vtu ConTracer_2d_ts_210_t_756000.000000.vtu pressure pressure 1e-6 1e-10
+    ConTracer_2d_pcs_1_ts_240_t_864000.000000_expected.vtu ConTracer_2d_ts_240_t_864000.000000.vtu pressure pressure 1e-6 1e-10
+    ConTracer_2d_pcs_1_ts_270_t_972000.000000_expected.vtu ConTracer_2d_ts_270_t_972000.000000.vtu pressure pressure 1e-6 1e-10
+    ConTracer_2d_pcs_1_ts_300_t_1080000.000000_expected.vtu ConTracer_2d_ts_300_t_1080000.000000.vtu pressure pressure 1e-6 1e-10
+    ConTracer_2d_pcs_1_ts_329_t_1184400.000000_expected.vtu ConTracer_2d_ts_329_t_1184400.000000.vtu pressure pressure 1e-6 1e-10
+    ConTracer_2d_pcs_1_ts_30_t_108000.000000_expected.vtu ConTracer_2d_ts_30_t_108000.000000.vtu Cs Cs 1e-10 1e-16
+    ConTracer_2d_pcs_1_ts_60_t_216000.000000_expected.vtu ConTracer_2d_ts_60_t_216000.000000.vtu Cs Cs 1e-10 1e-16
+    ConTracer_2d_pcs_1_ts_90_t_324000.000000_expected.vtu ConTracer_2d_ts_90_t_324000.000000.vtu Cs Cs 1e-10 1e-16
+    ConTracer_2d_pcs_1_ts_120_t_432000.000000_expected.vtu ConTracer_2d_ts_120_t_432000.000000.vtu Cs Cs 1e-10 1e-16
+    ConTracer_2d_pcs_1_ts_150_t_540000.000000_expected.vtu ConTracer_2d_ts_150_t_540000.000000.vtu Cs Cs 1e-10 1e-16
+    ConTracer_2d_pcs_1_ts_180_t_648000.000000_expected.vtu ConTracer_2d_ts_180_t_648000.000000.vtu Cs Cs 1e-10 1e-16
+    ConTracer_2d_pcs_1_ts_210_t_756000.000000_expected.vtu ConTracer_2d_ts_210_t_756000.000000.vtu Cs Cs 1e-10 1e-16
+    ConTracer_2d_pcs_1_ts_240_t_864000.000000_expected.vtu ConTracer_2d_ts_240_t_864000.000000.vtu Cs Cs 1e-10 1e-16
+    ConTracer_2d_pcs_1_ts_270_t_972000.000000_expected.vtu ConTracer_2d_ts_270_t_972000.000000.vtu Cs Cs 1e-10 1e-16
+    ConTracer_2d_pcs_1_ts_300_t_1080000.000000_expected.vtu ConTracer_2d_ts_300_t_1080000.000000.vtu Cs Cs 1e-10 1e-16
+    ConTracer_2d_pcs_1_ts_329_t_1184400.000000_expected.vtu ConTracer_2d_ts_329_t_1184400.000000.vtu Cs Cs 1e-10 1e-16
 )
 
 AddTest(
