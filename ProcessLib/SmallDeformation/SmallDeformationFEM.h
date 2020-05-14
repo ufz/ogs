@@ -386,24 +386,8 @@ public:
 
     std::size_t setSigma(double const* values)
     {
-        auto const kelvin_vector_size =
-            MathLib::KelvinVector::KelvinVectorDimensions<
-                DisplacementDim>::value;
-        auto const n_integration_points = _ip_data.size();
-
-        auto sigma_values =
-            Eigen::Map<Eigen::Matrix<double, kelvin_vector_size, Eigen::Dynamic,
-                                     Eigen::ColMajor> const>(
-                values, kelvin_vector_size, n_integration_points);
-
-        for (unsigned ip = 0; ip < n_integration_points; ++ip)
-        {
-            _ip_data[ip].sigma =
-                MathLib::KelvinVector::symmetricTensorToKelvinVector(
-                    sigma_values.col(ip));
-        }
-
-        return n_integration_points;
+        return ProcessLib::setIntegrationPointKelvinVector<DisplacementDim>(
+            values, _ip_data, &IpData::sigma);
     }
 
     // TODO (naumov) This method is same as getIntPtSigma but for arguments and
