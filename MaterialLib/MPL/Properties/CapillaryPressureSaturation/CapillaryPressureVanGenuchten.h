@@ -25,10 +25,12 @@ class Component;
  * The van Genuchten capillary pressure model (\cite Genuchten1980) is:
  * \f[p_c(S)=p_b (S_\text{eff}^{-1/m}-1)^{1-m}\f]
  * with effective saturation defined as
- * \f[S_\text{eff}=\frac{S-S_r}{S_{\text{max}}-S_r}.\f]
+ * \f[S_\text{eff}=\frac{S-S_r}{S_{\text{max}}-S_r},\quad \forall S \in (S_r,
+ * S_{max}].\f]
  * Above, \f$S_r\f$ and \f$S_{\text{max}}\f$ are the residual and the maximum
  * saturations.
- * The exponent \f$m \in (0,1)\f$ and the pressure scaling parameter \f$p_b\f$
+ *
+ *  The exponent \f$m \in (0,1)\f$ and the pressure scaling parameter \f$p_b\f$
  * (it is equal to \f$\rho g/\alpha\f$ in original publication) are given by the
  * user.
  * The scaling parameter \f$p_b\f$ is given in same units as pressure.
@@ -36,8 +38,29 @@ class Component;
  * In the original work another exponent \f$n\f$ is used, but usually set to
  * \f$n = 1 / (1 - m)\f$, and also in this implementation.
  *
- * The the capillary pressure is computed from saturation as above but is cut
- * off at maximum capillary pressure given by user.
+ * Base the about raw van Genuchten capillary pressure model, an extension is
+ * introduced as follows to headle the singularity and the saturation below its
+ * lower bound for the model.
+ *
+ * The \f$p_c(S)\f$ has a singularity at \f$S=S_r\f$. A parameter of the maximum
+ * capillary pressure, \f$p_c^{max}\f$, is introduced. With the restriction of
+ * \f$p_c^{max}\f$, the lower bound or saturation for the model is calculated as
+ * \f[S_m = p_c^{-1}(p_c^{max})\f]
+ * where\f$p_c^{-1}\f$ indicates the inverse function of \f$p_c(S)\f$, and
+ * \f$p_c^{max}\f$ is set as an optional input. If the input data for it is not
+ * given, the lower bound of the saturation is set as
+ * \f[S_m = S_r+10^{-9}\f]
+ *
+ *  In some applications, e.g. the heating deduced vaporization, the saturation
+ * can be smaller than the lower bound of saturation, \f$S_m\f$. For such
+ * saturation,
+ * the values of capillary pressure and its derivative with respect to
+ * saturation are taken as
+ *        \f[p_c(S_m+10^{-9}), \quad \frac{\partial p_c}{\partial S
+ * }|_{S_m+10^{-9}}.\f]
+ * or by setting
+ *        \f[S=max(S_m+10^{-9},S)\f]
+ *
  */
 class CapillaryPressureVanGenuchten : public Property
 {

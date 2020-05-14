@@ -1,1 +1,1 @@
-\copydoc MaterialPropertyLib::CapillaryPressureVanGenuchten::p_cap_max_
+Maximum capillary pressure. It is an optional input.
