@@ -165,7 +165,8 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>{:meshname}_pcs_{:process_id}</prefix>
+            <prefix>{:meshname}</prefix>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
             <timesteps>
                 <pair>
                     <repeat>1</repeat>
@@ -182,7 +183,6 @@
                 <variable>pressure</variable>
                 <variable>darcy_velocity</variable>
             </variables>
-            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <parameters>

@@ -614,10 +614,10 @@ AddTest(
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
     flux_1e3_t_1.000000.vtu flux_1e3_t_1.000000.vtu specific_flux specific_flux 1e-10 1e-16
-    cube_1x1x1_hex_1e3_left_pcs_1_ts_0_t_0.000000.vtu cube_1x1x1_hex_1e3_left_pcs_1_ts_0_t_0.000000.vtu Si Si 1e-10 1e-16
-    cube_1x1x1_hex_1e3_left_pcs_1_ts_1_t_1.000000.vtu cube_1x1x1_hex_1e3_left_pcs_1_ts_1_t_1.000000.vtu Si Si 1e-10 1e-16
-    cube_1x1x1_hex_1e3_right_pcs_1_ts_0_t_0.000000.vtu cube_1x1x1_hex_1e3_right_pcs_1_ts_0_t_0.000000.vtu Si Si 1e-10 1e-16
-    cube_1x1x1_hex_1e3_right_pcs_1_ts_1_t_1.000000.vtu cube_1x1x1_hex_1e3_right_pcs_1_ts_1_t_1.000000.vtu Si Si 1e-10 1e-16
+    cube_1x1x1_hex_1e3_left_pcs_1_ts_0_t_0.000000.vtu cube_1x1x1_hex_1e3_left_ts_0_t_0.000000.vtu Si Si 1e-10 1e-16
+    cube_1x1x1_hex_1e3_left_pcs_1_ts_1_t_1.000000.vtu cube_1x1x1_hex_1e3_left_ts_1_t_1.000000.vtu Si Si 1e-10 1e-16
+    cube_1x1x1_hex_1e3_right_pcs_1_ts_0_t_0.000000.vtu cube_1x1x1_hex_1e3_right_ts_0_t_0.000000.vtu Si Si 1e-10 1e-16
+    cube_1x1x1_hex_1e3_right_pcs_1_ts_1_t_1.000000.vtu cube_1x1x1_hex_1e3_right_ts_1_t_1.000000.vtu Si Si 1e-10 1e-16
 )
 
 AddTest(
@@ -1122,26 +1122,26 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    1d_isofrac_phreeqckernel_pcs_3_ts_42_t_4200.000000_expected.vtu 1d_isofrac_phreeqckernel_pcs_3_ts_42_t_4200.000000.vtu pressure pressure 1e-6 1e-10
-    1d_isofrac_phreeqckernel_pcs_3_ts_84_t_8400.000000_expected.vtu 1d_isofrac_phreeqckernel_pcs_3_ts_84_t_8400.000000.vtu pressure pressure 1e-6 1e-10
-    1d_isofrac_phreeqckernel_pcs_3_ts_126_t_12600.000000_expected.vtu 1d_isofrac_phreeqckernel_pcs_3_ts_126_t_12600.000000.vtu pressure pressure 1e-6 1e-10
-    1d_isofrac_phreeqckernel_pcs_3_ts_168_t_16800.000000_expected.vtu 1d_isofrac_phreeqckernel_pcs_3_ts_168_t_16800.000000.vtu pressure pressure 1e-6 1e-10
-    1d_isofrac_phreeqckernel_pcs_3_ts_210_t_21000.000000_expected.vtu 1d_isofrac_phreeqckernel_pcs_3_ts_210_t_21000.000000.vtu pressure pressure 1e-6 1e-10
-    1d_isofrac_phreeqckernel_pcs_3_ts_42_t_4200.000000_expected.vtu 1d_isofrac_phreeqckernel_pcs_3_ts_42_t_4200.000000.vtu Synthetica Synthetica 1e-10 1e-16
-    1d_isofrac_phreeqckernel_pcs_3_ts_84_t_8400.000000_expected.vtu 1d_isofrac_phreeqckernel_pcs_3_ts_84_t_8400.000000.vtu Synthetica Synthetica 1e-10 1e-16
-    1d_isofrac_phreeqckernel_pcs_3_ts_126_t_12600.000000_expected.vtu 1d_isofrac_phreeqckernel_pcs_3_ts_126_t_12600.000000.vtu Synthetica Synthetica 1e-10 1e-16
-    1d_isofrac_phreeqckernel_pcs_3_ts_168_t_16800.000000_expected.vtu 1d_isofrac_phreeqckernel_pcs_3_ts_168_t_16800.000000.vtu Synthetica Synthetica 1e-10 1e-16
-    1d_isofrac_phreeqckernel_pcs_3_ts_210_t_21000.000000_expected.vtu 1d_isofrac_phreeqckernel_pcs_3_ts_210_t_21000.000000.vtu Synthetica Synthetica 1e-10 1e-16
-    1d_isofrac_phreeqckernel_pcs_3_ts_42_t_4200.000000_expected.vtu 1d_isofrac_phreeqckernel_pcs_3_ts_42_t_4200.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
-    1d_isofrac_phreeqckernel_pcs_3_ts_84_t_8400.000000_expected.vtu 1d_isofrac_phreeqckernel_pcs_3_ts_84_t_8400.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
-    1d_isofrac_phreeqckernel_pcs_3_ts_126_t_12600.000000_expected.vtu 1d_isofrac_phreeqckernel_pcs_3_ts_126_t_12600.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
-    1d_isofrac_phreeqckernel_pcs_3_ts_168_t_16800.000000_expected.vtu 1d_isofrac_phreeqckernel_pcs_3_ts_168_t_16800.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
-    1d_isofrac_phreeqckernel_pcs_3_ts_210_t_21000.000000_expected.vtu 1d_isofrac_phreeqckernel_pcs_3_ts_210_t_21000.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
-    1d_isofrac_phreeqckernel_pcs_3_ts_42_t_4200.000000_expected.vtu 1d_isofrac_phreeqckernel_pcs_3_ts_42_t_4200.000000.vtu H H 1e-10 1e-16
-    1d_isofrac_phreeqckernel_pcs_3_ts_84_t_8400.000000_expected.vtu 1d_isofrac_phreeqckernel_pcs_3_ts_84_t_8400.000000.vtu H H 1e-10 1e-16
-    1d_isofrac_phreeqckernel_pcs_3_ts_126_t_12600.000000_expected.vtu 1d_isofrac_phreeqckernel_pcs_3_ts_126_t_12600.000000.vtu H H 1e-10 1e-16
-    1d_isofrac_phreeqckernel_pcs_3_ts_168_t_16800.000000_expected.vtu 1d_isofrac_phreeqckernel_pcs_3_ts_168_t_16800.000000.vtu H H 1e-10 1e-16
-    1d_isofrac_phreeqckernel_pcs_3_ts_210_t_21000.000000_expected.vtu 1d_isofrac_phreeqckernel_pcs_3_ts_210_t_21000.000000.vtu H H 1e-10 1e-16
+    1d_isofrac_phreeqckernel_pcs_3_ts_42_t_4200.000000_expected.vtu 1d_isofrac_phreeqckernel_ts_42_t_4200.000000.vtu pressure pressure 1e-6 1e-10
+    1d_isofrac_phreeqckernel_pcs_3_ts_84_t_8400.000000_expected.vtu 1d_isofrac_phreeqckernel_ts_84_t_8400.000000.vtu pressure pressure 1e-6 1e-10
+    1d_isofrac_phreeqckernel_pcs_3_ts_126_t_12600.000000_expected.vtu 1d_isofrac_phreeqckernel_ts_126_t_12600.000000.vtu pressure pressure 1e-6 1e-10
+    1d_isofrac_phreeqckernel_pcs_3_ts_168_t_16800.000000_expected.vtu 1d_isofrac_phreeqckernel_ts_168_t_16800.000000.vtu pressure pressure 1e-6 1e-10
+    1d_isofrac_phreeqckernel_pcs_3_ts_210_t_21000.000000_expected.vtu 1d_isofrac_phreeqckernel_ts_210_t_21000.000000.vtu pressure pressure 1e-6 1e-10
+    1d_isofrac_phreeqckernel_pcs_3_ts_42_t_4200.000000_expected.vtu 1d_isofrac_phreeqckernel_ts_42_t_4200.000000.vtu Synthetica Synthetica 1e-10 1e-16
+    1d_isofrac_phreeqckernel_pcs_3_ts_84_t_8400.000000_expected.vtu 1d_isofrac_phreeqckernel_ts_84_t_8400.000000.vtu Synthetica Synthetica 1e-10 1e-16
+    1d_isofrac_phreeqckernel_pcs_3_ts_126_t_12600.000000_expected.vtu 1d_isofrac_phreeqckernel_ts_126_t_12600.000000.vtu Synthetica Synthetica 1e-10 1e-16
+    1d_isofrac_phreeqckernel_pcs_3_ts_168_t_16800.000000_expected.vtu 1d_isofrac_phreeqckernel_ts_168_t_16800.000000.vtu Synthetica Synthetica 1e-10 1e-16
+    1d_isofrac_phreeqckernel_pcs_3_ts_210_t_21000.000000_expected.vtu 1d_isofrac_phreeqckernel_ts_210_t_21000.000000.vtu Synthetica Synthetica 1e-10 1e-16
+    1d_isofrac_phreeqckernel_pcs_3_ts_42_t_4200.000000_expected.vtu 1d_isofrac_phreeqckernel_ts_42_t_4200.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
+    1d_isofrac_phreeqckernel_pcs_3_ts_84_t_8400.000000_expected.vtu 1d_isofrac_phreeqckernel_ts_84_t_8400.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
+    1d_isofrac_phreeqckernel_pcs_3_ts_126_t_12600.000000_expected.vtu 1d_isofrac_phreeqckernel_ts_126_t_12600.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
+    1d_isofrac_phreeqckernel_pcs_3_ts_168_t_16800.000000_expected.vtu 1d_isofrac_phreeqckernel_ts_168_t_16800.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
+    1d_isofrac_phreeqckernel_pcs_3_ts_210_t_21000.000000_expected.vtu 1d_isofrac_phreeqckernel_ts_210_t_21000.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
+    1d_isofrac_phreeqckernel_pcs_3_ts_42_t_4200.000000_expected.vtu 1d_isofrac_phreeqckernel_ts_42_t_4200.000000.vtu H H 1e-10 1e-16
+    1d_isofrac_phreeqckernel_pcs_3_ts_84_t_8400.000000_expected.vtu 1d_isofrac_phreeqckernel_ts_84_t_8400.000000.vtu H H 1e-10 1e-16
+    1d_isofrac_phreeqckernel_pcs_3_ts_126_t_12600.000000_expected.vtu 1d_isofrac_phreeqckernel_ts_126_t_12600.000000.vtu H H 1e-10 1e-16
+    1d_isofrac_phreeqckernel_pcs_3_ts_168_t_16800.000000_expected.vtu 1d_isofrac_phreeqckernel_ts_168_t_16800.000000.vtu H H 1e-10 1e-16
+    1d_isofrac_phreeqckernel_pcs_3_ts_210_t_21000.000000_expected.vtu 1d_isofrac_phreeqckernel_ts_210_t_21000.000000.vtu H H 1e-10 1e-16
     RUNTIME 85
 )
 
@@ -1154,26 +1154,26 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    1d_isofrac_pcs_3_ts_42_t_4200.000000_expected.vtu 1d_isofrac_flag_formula_pcs_3_ts_42_t_4200.000000.vtu pressure pressure 1e-6 1e-10
-    1d_isofrac_pcs_3_ts_84_t_8400.000000_expected.vtu 1d_isofrac_flag_formula_pcs_3_ts_84_t_8400.000000.vtu pressure pressure 1e-6 1e-10
-    1d_isofrac_pcs_3_ts_126_t_12600.000000_expected.vtu 1d_isofrac_flag_formula_pcs_3_ts_126_t_12600.000000.vtu pressure pressure 1e-6 1e-10
-    1d_isofrac_pcs_3_ts_168_t_16800.000000_expected.vtu 1d_isofrac_flag_formula_pcs_3_ts_168_t_16800.000000.vtu pressure pressure 1e-6 1e-10
-    1d_isofrac_pcs_3_ts_210_t_21000.000000_expected.vtu 1d_isofrac_flag_formula_pcs_3_ts_210_t_21000.000000.vtu pressure pressure 1e-6 1e-10
-    1d_isofrac_pcs_3_ts_42_t_4200.000000_expected.vtu 1d_isofrac_flag_formula_pcs_3_ts_42_t_4200.000000.vtu Synthetica Synthetica 1e-10 1e-16
-    1d_isofrac_pcs_3_ts_84_t_8400.000000_expected.vtu 1d_isofrac_flag_formula_pcs_3_ts_84_t_8400.000000.vtu Synthetica Synthetica 1e-10 1e-16
-    1d_isofrac_pcs_3_ts_126_t_12600.000000_expected.vtu 1d_isofrac_flag_formula_pcs_3_ts_126_t_12600.000000.vtu Synthetica Synthetica 1e-10 1e-16
-    1d_isofrac_pcs_3_ts_168_t_16800.000000_expected.vtu 1d_isofrac_flag_formula_pcs_3_ts_168_t_16800.000000.vtu Synthetica Synthetica 1e-10 1e-16
-    1d_isofrac_pcs_3_ts_210_t_21000.000000_expected.vtu 1d_isofrac_flag_formula_pcs_3_ts_210_t_21000.000000.vtu Synthetica Synthetica 1e-10 1e-16
-    1d_isofrac_pcs_3_ts_42_t_4200.000000_expected.vtu 1d_isofrac_flag_formula_pcs_3_ts_42_t_4200.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
-    1d_isofrac_pcs_3_ts_84_t_8400.000000_expected.vtu 1d_isofrac_flag_formula_pcs_3_ts_84_t_8400.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
-    1d_isofrac_pcs_3_ts_126_t_12600.000000_expected.vtu 1d_isofrac_flag_formula_pcs_3_ts_126_t_12600.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
-    1d_isofrac_pcs_3_ts_168_t_16800.000000_expected.vtu 1d_isofrac_flag_formula_pcs_3_ts_168_t_16800.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
-    1d_isofrac_pcs_3_ts_210_t_21000.000000_expected.vtu 1d_isofrac_flag_formula_pcs_3_ts_210_t_21000.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
-    1d_isofrac_pcs_3_ts_42_t_4200.000000_expected.vtu 1d_isofrac_flag_formula_pcs_3_ts_42_t_4200.000000.vtu H H 1e-10 1e-16
-    1d_isofrac_pcs_3_ts_84_t_8400.000000_expected.vtu 1d_isofrac_flag_formula_pcs_3_ts_84_t_8400.000000.vtu H H 1e-10 1e-16
-    1d_isofrac_pcs_3_ts_126_t_12600.000000_expected.vtu 1d_isofrac_flag_formula_pcs_3_ts_126_t_12600.000000.vtu H H 1e-10 1e-16
-    1d_isofrac_pcs_3_ts_168_t_16800.000000_expected.vtu 1d_isofrac_flag_formula_pcs_3_ts_168_t_16800.000000.vtu H H 1e-10 1e-16
-    1d_isofrac_pcs_3_ts_210_t_21000.000000_expected.vtu 1d_isofrac_flag_formula_pcs_3_ts_210_t_21000.000000.vtu H H 1e-10 1e-16
+    1d_isofrac_pcs_3_ts_42_t_4200.000000_expected.vtu 1d_isofrac_flag_formula_ts_42_t_4200.000000.vtu pressure pressure 1e-6 1e-10
+    1d_isofrac_pcs_3_ts_84_t_8400.000000_expected.vtu 1d_isofrac_flag_formula_ts_84_t_8400.000000.vtu pressure pressure 1e-6 1e-10
+    1d_isofrac_pcs_3_ts_126_t_12600.000000_expected.vtu 1d_isofrac_flag_formula_ts_126_t_12600.000000.vtu pressure pressure 1e-6 1e-10
+    1d_isofrac_pcs_3_ts_168_t_16800.000000_expected.vtu 1d_isofrac_flag_formula_ts_168_t_16800.000000.vtu pressure pressure 1e-6 1e-10
+    1d_isofrac_pcs_3_ts_210_t_21000.000000_expected.vtu 1d_isofrac_flag_formula_ts_210_t_21000.000000.vtu pressure pressure 1e-6 1e-10
+    1d_isofrac_pcs_3_ts_42_t_4200.000000_expected.vtu 1d_isofrac_flag_formula_ts_42_t_4200.000000.vtu Synthetica Synthetica 1e-10 1e-16
+    1d_isofrac_pcs_3_ts_84_t_8400.000000_expected.vtu 1d_isofrac_flag_formula_ts_84_t_8400.000000.vtu Synthetica Synthetica 1e-10 1e-16
+    1d_isofrac_pcs_3_ts_126_t_12600.000000_expected.vtu 1d_isofrac_flag_formula_ts_126_t_12600.000000.vtu Synthetica Synthetica 1e-10 1e-16
+    1d_isofrac_pcs_3_ts_168_t_16800.000000_expected.vtu 1d_isofrac_flag_formula_ts_168_t_16800.000000.vtu Synthetica Synthetica 1e-10 1e-16
+    1d_isofrac_pcs_3_ts_210_t_21000.000000_expected.vtu 1d_isofrac_flag_formula_ts_210_t_21000.000000.vtu Synthetica Synthetica 1e-10 1e-16
+    1d_isofrac_pcs_3_ts_42_t_4200.000000_expected.vtu 1d_isofrac_flag_formula_ts_42_t_4200.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
+    1d_isofrac_pcs_3_ts_84_t_8400.000000_expected.vtu 1d_isofrac_flag_formula_ts_84_t_8400.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
+    1d_isofrac_pcs_3_ts_126_t_12600.000000_expected.vtu 1d_isofrac_flag_formula_ts_126_t_12600.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
+    1d_isofrac_pcs_3_ts_168_t_16800.000000_expected.vtu 1d_isofrac_flag_formula_ts_168_t_16800.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
+    1d_isofrac_pcs_3_ts_210_t_21000.000000_expected.vtu 1d_isofrac_flag_formula_ts_210_t_21000.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
+    1d_isofrac_pcs_3_ts_42_t_4200.000000_expected.vtu 1d_isofrac_flag_formula_ts_42_t_4200.000000.vtu H H 1e-10 1e-16
+    1d_isofrac_pcs_3_ts_84_t_8400.000000_expected.vtu 1d_isofrac_flag_formula_ts_84_t_8400.000000.vtu H H 1e-10 1e-16
+    1d_isofrac_pcs_3_ts_126_t_12600.000000_expected.vtu 1d_isofrac_flag_formula_ts_126_t_12600.000000.vtu H H 1e-10 1e-16
+    1d_isofrac_pcs_3_ts_168_t_16800.000000_expected.vtu 1d_isofrac_flag_formula_ts_168_t_16800.000000.vtu H H 1e-10 1e-16
+    1d_isofrac_pcs_3_ts_210_t_21000.000000_expected.vtu 1d_isofrac_flag_formula_ts_210_t_21000.000000.vtu H H 1e-10 1e-16
     RUNTIME 85
 )
 
@@ -1186,31 +1186,31 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    KineticReactant2_pcs_4_ts_42_t_4200.000000_expected.vtu KineticReactant2_pcs_4_ts_42_t_4200.000000.vtu pressure pressure 1e-6 1e-10
-    KineticReactant2_pcs_4_ts_84_t_8400.000000_expected.vtu KineticReactant2_pcs_4_ts_84_t_8400.000000.vtu pressure pressure 1e-6 1e-10
-    KineticReactant2_pcs_4_ts_126_t_12600.000000_expected.vtu KineticReactant2_pcs_4_ts_126_t_12600.000000.vtu pressure pressure 1e-6 1e-10
-KineticReactant2_pcs_4_ts_168_t_16800.000000_expected.vtu KineticReactant2_pcs_4_ts_168_t_16800.000000.vtu pressure pressure 1e-6 1e-10
-    KineticReactant2_pcs_4_ts_210_t_21000.000000_expected.vtu KineticReactant2_pcs_4_ts_210_t_21000.000000.vtu pressure pressure 1e-6 1e-10
-    KineticReactant2_pcs_4_ts_42_t_4200.000000_expected.vtu KineticReactant2_pcs_4_ts_42_t_4200.000000.vtu Synthetica Synthetica 1e-10 1e-16
-    KineticReactant2_pcs_4_ts_84_t_8400.000000_expected.vtu KineticReactant2_pcs_4_ts_84_t_8400.000000.vtu Synthetica Synthetica 1e-10 1e-16
-    KineticReactant2_pcs_4_ts_126_t_12600.000000_expected.vtu KineticReactant2_pcs_4_ts_126_t_12600.000000.vtu Synthetica Synthetica 1e-10 1e-16
-    KineticReactant2_pcs_4_ts_168_t_16800.000000_expected.vtu KineticReactant2_pcs_4_ts_168_t_16800.000000.vtu Synthetica Synthetica 1e-10 1e-16
-    KineticReactant2_pcs_4_ts_210_t_21000.000000_expected.vtu KineticReactant2_pcs_4_ts_210_t_21000.000000.vtu Synthetica Synthetica 1e-10 1e-16
-    KineticReactant2_pcs_4_ts_42_t_4200.000000_expected.vtu KineticReactant2_pcs_4_ts_42_t_4200.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
-    KineticReactant2_pcs_4_ts_84_t_8400.000000_expected.vtu KineticReactant2_pcs_4_ts_84_t_8400.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
-    KineticReactant2_pcs_4_ts_126_t_12600.000000_expected.vtu KineticReactant2_pcs_4_ts_126_t_12600.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
-    KineticReactant2_pcs_4_ts_168_t_16800.000000_expected.vtu KineticReactant2_pcs_4_ts_168_t_16800.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
-    KineticReactant2_pcs_4_ts_210_t_21000.000000_expected.vtu KineticReactant2_pcs_4_ts_210_t_21000.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
-    KineticReactant2_pcs_4_ts_42_t_4200.000000_expected.vtu KineticReactant2_pcs_4_ts_42_t_4200.000000.vtu Productd Productd 1e-10 1e-16
-    KineticReactant2_pcs_4_ts_84_t_8400.000000_expected.vtu KineticReactant2_pcs_4_ts_84_t_8400.000000.vtu Productd Productd 1e-10 1e-16
-    KineticReactant2_pcs_4_ts_126_t_12600.000000_expected.vtu KineticReactant2_pcs_4_ts_126_t_12600.000000.vtu Productd Productd 1e-10 1e-16
-    KineticReactant2_pcs_4_ts_168_t_16800.000000_expected.vtu KineticReactant2_pcs_4_ts_168_t_16800.000000.vtu Productd Productd 1e-10 1e-16
-    KineticReactant2_pcs_4_ts_210_t_21000.000000_expected.vtu KineticReactant2_pcs_4_ts_210_t_21000.000000.vtu Productd Productd 1e-10 1e-16
-    KineticReactant2_pcs_4_ts_42_t_4200.000000_expected.vtu KineticReactant2_pcs_4_ts_42_t_4200.000000.vtu H H 1e-10 1e-16
-    KineticReactant2_pcs_4_ts_84_t_8400.000000_expected.vtu KineticReactant2_pcs_4_ts_84_t_8400.000000.vtu H H 1e-10 1e-16
-    KineticReactant2_pcs_4_ts_126_t_12600.000000_expected.vtu KineticReactant2_pcs_4_ts_126_t_12600.000000.vtu H H 1e-10 1e-16
-    KineticReactant2_pcs_4_ts_168_t_16800.000000_expected.vtu KineticReactant2_pcs_4_ts_168_t_16800.000000.vtu H H 1e-10 1e-16
-    KineticReactant2_pcs_4_ts_210_t_21000.000000_expected.vtu KineticReactant2_pcs_4_ts_210_t_21000.000000.vtu H H 1e-10 1e-16
+    KineticReactant2_pcs_4_ts_42_t_4200.000000_expected.vtu KineticReactant2_ts_42_t_4200.000000.vtu pressure pressure 1e-6 1e-10
+    KineticReactant2_pcs_4_ts_84_t_8400.000000_expected.vtu KineticReactant2_ts_84_t_8400.000000.vtu pressure pressure 1e-6 1e-10
+    KineticReactant2_pcs_4_ts_126_t_12600.000000_expected.vtu KineticReactant2_ts_126_t_12600.000000.vtu pressure pressure 1e-6 1e-10
+KineticReactant2_pcs_4_ts_168_t_16800.000000_expected.vtu KineticReactant2_ts_168_t_16800.000000.vtu pressure pressure 1e-6 1e-10
+    KineticReactant2_pcs_4_ts_210_t_21000.000000_expected.vtu KineticReactant2_ts_210_t_21000.000000.vtu pressure pressure 1e-6 1e-10
+    KineticReactant2_pcs_4_ts_42_t_4200.000000_expected.vtu KineticReactant2_ts_42_t_4200.000000.vtu Synthetica Synthetica 1e-10 1e-16
+    KineticReactant2_pcs_4_ts_84_t_8400.000000_expected.vtu KineticReactant2_ts_84_t_8400.000000.vtu Synthetica Synthetica 1e-10 1e-16
+    KineticReactant2_pcs_4_ts_126_t_12600.000000_expected.vtu KineticReactant2_ts_126_t_12600.000000.vtu Synthetica Synthetica 1e-10 1e-16
+    KineticReactant2_pcs_4_ts_168_t_16800.000000_expected.vtu KineticReactant2_ts_168_t_16800.000000.vtu Synthetica Synthetica 1e-10 1e-16
+    KineticReactant2_pcs_4_ts_210_t_21000.000000_expected.vtu KineticReactant2_ts_210_t_21000.000000.vtu Synthetica Synthetica 1e-10 1e-16
+    KineticReactant2_pcs_4_ts_42_t_4200.000000_expected.vtu KineticReactant2_ts_42_t_4200.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
+    KineticReactant2_pcs_4_ts_84_t_8400.000000_expected.vtu KineticReactant2_ts_84_t_8400.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
+    KineticReactant2_pcs_4_ts_126_t_12600.000000_expected.vtu KineticReactant2_ts_126_t_12600.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
+    KineticReactant2_pcs_4_ts_168_t_16800.000000_expected.vtu KineticReactant2_ts_168_t_16800.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
+    KineticReactant2_pcs_4_ts_210_t_21000.000000_expected.vtu KineticReactant2_ts_210_t_21000.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
+    KineticReactant2_pcs_4_ts_42_t_4200.000000_expected.vtu KineticReactant2_ts_42_t_4200.000000.vtu Productd Productd 1e-10 1e-16
+    KineticReactant2_pcs_4_ts_84_t_8400.000000_expected.vtu KineticReactant2_ts_84_t_8400.000000.vtu Productd Productd 1e-10 1e-16
+    KineticReactant2_pcs_4_ts_126_t_12600.000000_expected.vtu KineticReactant2_ts_126_t_12600.000000.vtu Productd Productd 1e-10 1e-16
+    KineticReactant2_pcs_4_ts_168_t_16800.000000_expected.vtu KineticReactant2_ts_168_t_16800.000000.vtu Productd Productd 1e-10 1e-16
+    KineticReactant2_pcs_4_ts_210_t_21000.000000_expected.vtu KineticReactant2_ts_210_t_21000.000000.vtu Productd Productd 1e-10 1e-16
+    KineticReactant2_pcs_4_ts_42_t_4200.000000_expected.vtu KineticReactant2_ts_42_t_4200.000000.vtu H H 1e-10 1e-16
+    KineticReactant2_pcs_4_ts_84_t_8400.000000_expected.vtu KineticReactant2_ts_84_t_8400.000000.vtu H H 1e-10 1e-16
+    KineticReactant2_pcs_4_ts_126_t_12600.000000_expected.vtu KineticReactant2_ts_126_t_12600.000000.vtu H H 1e-10 1e-16
+    KineticReactant2_pcs_4_ts_168_t_16800.000000_expected.vtu KineticReactant2_ts_168_t_16800.000000.vtu H H 1e-10 1e-16
+    KineticReactant2_pcs_4_ts_210_t_21000.000000_expected.vtu KineticReactant2_ts_210_t_21000.000000.vtu H H 1e-10 1e-16
 )
 
 AddTest(
@@ -1222,36 +1222,36 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    KineticReactant2_2d_pcs_4_ts_4_t_400.000000_expected.vtu KineticReactant2_2d_pcs_4_ts_4_t_400.000000.vtu pressure pressure 1e-6 1e-10
-    KineticReactant2_2d_pcs_4_ts_8_t_800.000000_expected.vtu KineticReactant2_2d_pcs_4_ts_8_t_800.000000.vtu pressure pressure 1e-6 1e-10
-    KineticReactant2_2d_pcs_4_ts_12_t_1200.000000_expected.vtu KineticReactant2_2d_pcs_4_ts_12_t_1200.000000.vtu pressure pressure 1e-6 1e-10
-    KineticReactant2_2d_pcs_4_ts_16_t_1600.000000_expected.vtu KineticReactant2_2d_pcs_4_ts_16_t_1600.000000.vtu pressure pressure 1e-6 1e-10
-    KineticReactant2_2d_pcs_4_ts_20_t_2000.000000_expected.vtu KineticReactant2_2d_pcs_4_ts_20_t_2000.000000.vtu pressure pressure 1e-6 1e-10
-    KineticReactant2_2d_pcs_4_ts_4_t_400.000000_expected.vtu KineticReactant2_2d_pcs_4_ts_4_t_400.000000.vtu pressure pressure 1e-6 1e-10
-    KineticReactant2_2d_pcs_4_ts_8_t_800.000000_expected.vtu KineticReactant2_2d_pcs_4_ts_8_t_800.000000.vtu pressure pressure 1e-6 1e-10
-    KineticReactant2_2d_pcs_4_ts_12_t_1200.000000_expected.vtu KineticReactant2_2d_pcs_4_ts_12_t_1200.000000.vtu pressure pressure 1e-6 1e-10
-    KineticReactant2_2d_pcs_4_ts_16_t_1600.000000_expected.vtu KineticReactant2_2d_pcs_4_ts_16_t_1600.000000.vtu pressure pressure 1e-6 1e-10
-    KineticReactant2_2d_pcs_4_ts_20_t_2000.000000_expected.vtu KineticReactant2_2d_pcs_4_ts_20_t_2000.000000.vtu pressure pressure 1e-6 1e-10
-    KineticReactant2_2d_pcs_4_ts_4_t_400.000000_expected.vtu KineticReactant2_2d_pcs_4_ts_4_t_400.000000.vtu Synthetica Synthetica 1e-10 1e-16
-    KineticReactant2_2d_pcs_4_ts_8_t_800.000000_expected.vtu KineticReactant2_2d_pcs_4_ts_8_t_800.000000.vtu Synthetica Synthetica 1e-10 1e-16
-    KineticReactant2_2d_pcs_4_ts_12_t_1200.000000_expected.vtu KineticReactant2_2d_pcs_4_ts_12_t_1200.000000.vtu Synthetica Synthetica 1e-10 1e-16
-    KineticReactant2_2d_pcs_4_ts_16_t_1600.000000_expected.vtu KineticReactant2_2d_pcs_4_ts_16_t_1600.000000.vtu Synthetica Synthetica 1e-10 1e-16
-    KineticReactant2_2d_pcs_4_ts_20_t_2000.000000_expected.vtu KineticReactant2_2d_pcs_4_ts_20_t_2000.000000.vtu Synthetica Synthetica 1e-10 1e-16
-    KineticReactant2_2d_pcs_4_ts_4_t_400.000000_expected.vtu KineticReactant2_2d_pcs_4_ts_4_t_400.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
-    KineticReactant2_2d_pcs_4_ts_8_t_800.000000_expected.vtu KineticReactant2_2d_pcs_4_ts_8_t_800.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
-    KineticReactant2_2d_pcs_4_ts_12_t_1200.000000_expected.vtu KineticReactant2_2d_pcs_4_ts_12_t_1200.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
-    KineticReactant2_2d_pcs_4_ts_16_t_1600.000000_expected.vtu KineticReactant2_2d_pcs_4_ts_16_t_1600.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
-    KineticReactant2_2d_pcs_4_ts_20_t_2000.000000_expected.vtu KineticReactant2_2d_pcs_4_ts_20_t_2000.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
-    KineticReactant2_2d_pcs_4_ts_4_t_400.000000_expected.vtu KineticReactant2_2d_pcs_4_ts_4_t_400.000000.vtu Productd Productd 1e-10 1e-16
-    KineticReactant2_2d_pcs_4_ts_8_t_800.000000_expected.vtu KineticReactant2_2d_pcs_4_ts_8_t_800.000000.vtu Productd Productd 1e-10 1e-16
-    KineticReactant2_2d_pcs_4_ts_12_t_1200.000000_expected.vtu KineticReactant2_2d_pcs_4_ts_12_t_1200.000000.vtu Productd Productd 1e-10 1e-16
-    KineticReactant2_2d_pcs_4_ts_16_t_1600.000000_expected.vtu KineticReactant2_2d_pcs_4_ts_16_t_1600.000000.vtu Productd Productd 1e-10 1e-16
-    KineticReactant2_2d_pcs_4_ts_20_t_2000.000000_expected.vtu KineticReactant2_2d_pcs_4_ts_20_t_2000.000000.vtu Productd Productd 1e-10 1e-16
-    KineticReactant2_2d_pcs_4_ts_4_t_400.000000_expected.vtu KineticReactant2_2d_pcs_4_ts_4_t_400.000000.vtu H H 1e-10 1e-16
-    KineticReactant2_2d_pcs_4_ts_8_t_800.000000_expected.vtu KineticReactant2_2d_pcs_4_ts_8_t_800.000000.vtu H H 1e-10 1e-16
-    KineticReactant2_2d_pcs_4_ts_12_t_1200.000000_expected.vtu KineticReactant2_2d_pcs_4_ts_12_t_1200.000000.vtu H H 1e-10 1e-16
-    KineticReactant2_2d_pcs_4_ts_16_t_1600.000000_expected.vtu KineticReactant2_2d_pcs_4_ts_16_t_1600.000000.vtu H H 1e-10 1e-16
-    KineticReactant2_2d_pcs_4_ts_20_t_2000.000000_expected.vtu KineticReactant2_2d_pcs_4_ts_20_t_2000.000000.vtu H H 1e-10 1e-16
+    KineticReactant2_2d_pcs_4_ts_4_t_400.000000_expected.vtu KineticReactant2_2d_ts_4_t_400.000000.vtu pressure pressure 1e-6 1e-10
+    KineticReactant2_2d_pcs_4_ts_8_t_800.000000_expected.vtu KineticReactant2_2d_ts_8_t_800.000000.vtu pressure pressure 1e-6 1e-10
+    KineticReactant2_2d_pcs_4_ts_12_t_1200.000000_expected.vtu KineticReactant2_2d_ts_12_t_1200.000000.vtu pressure pressure 1e-6 1e-10
+    KineticReactant2_2d_pcs_4_ts_16_t_1600.000000_expected.vtu KineticReactant2_2d_ts_16_t_1600.000000.vtu pressure pressure 1e-6 1e-10
+    KineticReactant2_2d_pcs_4_ts_20_t_2000.000000_expected.vtu KineticReactant2_2d_ts_20_t_2000.000000.vtu pressure pressure 1e-6 1e-10
+    KineticReactant2_2d_pcs_4_ts_4_t_400.000000_expected.vtu KineticReactant2_2d_ts_4_t_400.000000.vtu pressure pressure 1e-6 1e-10
+    KineticReactant2_2d_pcs_4_ts_8_t_800.000000_expected.vtu KineticReactant2_2d_ts_8_t_800.000000.vtu pressure pressure 1e-6 1e-10
+    KineticReactant2_2d_pcs_4_ts_12_t_1200.000000_expected.vtu KineticReactant2_2d_ts_12_t_1200.000000.vtu pressure pressure 1e-6 1e-10
+    KineticReactant2_2d_pcs_4_ts_16_t_1600.000000_expected.vtu KineticReactant2_2d_ts_16_t_1600.000000.vtu pressure pressure 1e-6 1e-10
+    KineticReactant2_2d_pcs_4_ts_20_t_2000.000000_expected.vtu KineticReactant2_2d_ts_20_t_2000.000000.vtu pressure pressure 1e-6 1e-10
+    KineticReactant2_2d_pcs_4_ts_4_t_400.000000_expected.vtu KineticReactant2_2d_ts_4_t_400.000000.vtu Synthetica Synthetica 1e-10 1e-16
+    KineticReactant2_2d_pcs_4_ts_8_t_800.000000_expected.vtu KineticReactant2_2d_ts_8_t_800.000000.vtu Synthetica Synthetica 1e-10 1e-16
+    KineticReactant2_2d_pcs_4_ts_12_t_1200.000000_expected.vtu KineticReactant2_2d_ts_12_t_1200.000000.vtu Synthetica Synthetica 1e-10 1e-16
+    KineticReactant2_2d_pcs_4_ts_16_t_1600.000000_expected.vtu KineticReactant2_2d_ts_16_t_1600.000000.vtu Synthetica Synthetica 1e-10 1e-16
+    KineticReactant2_2d_pcs_4_ts_20_t_2000.000000_expected.vtu KineticReactant2_2d_ts_20_t_2000.000000.vtu Synthetica Synthetica 1e-10 1e-16
+    KineticReactant2_2d_pcs_4_ts_4_t_400.000000_expected.vtu KineticReactant2_2d_ts_4_t_400.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
+    KineticReactant2_2d_pcs_4_ts_8_t_800.000000_expected.vtu KineticReactant2_2d_ts_8_t_800.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
+    KineticReactant2_2d_pcs_4_ts_12_t_1200.000000_expected.vtu KineticReactant2_2d_ts_12_t_1200.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
+    KineticReactant2_2d_pcs_4_ts_16_t_1600.000000_expected.vtu KineticReactant2_2d_ts_16_t_1600.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
+    KineticReactant2_2d_pcs_4_ts_20_t_2000.000000_expected.vtu KineticReactant2_2d_ts_20_t_2000.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
+    KineticReactant2_2d_pcs_4_ts_4_t_400.000000_expected.vtu KineticReactant2_2d_ts_4_t_400.000000.vtu Productd Productd 1e-10 1e-16
+    KineticReactant2_2d_pcs_4_ts_8_t_800.000000_expected.vtu KineticReactant2_2d_ts_8_t_800.000000.vtu Productd Productd 1e-10 1e-16
+    KineticReactant2_2d_pcs_4_ts_12_t_1200.000000_expected.vtu KineticReactant2_2d_ts_12_t_1200.000000.vtu Productd Productd 1e-10 1e-16
+    KineticReactant2_2d_pcs_4_ts_16_t_1600.000000_expected.vtu KineticReactant2_2d_ts_16_t_1600.000000.vtu Productd Productd 1e-10 1e-16
+    KineticReactant2_2d_pcs_4_ts_20_t_2000.000000_expected.vtu KineticReactant2_2d_ts_20_t_2000.000000.vtu Productd Productd 1e-10 1e-16
+    KineticReactant2_2d_pcs_4_ts_4_t_400.000000_expected.vtu KineticReactant2_2d_ts_4_t_400.000000.vtu H H 1e-10 1e-16
+    KineticReactant2_2d_pcs_4_ts_8_t_800.000000_expected.vtu KineticReactant2_2d_ts_8_t_800.000000.vtu H H 1e-10 1e-16
+    KineticReactant2_2d_pcs_4_ts_12_t_1200.000000_expected.vtu KineticReactant2_2d_ts_12_t_1200.000000.vtu H H 1e-10 1e-16
+    KineticReactant2_2d_pcs_4_ts_16_t_1600.000000_expected.vtu KineticReactant2_2d_ts_16_t_1600.000000.vtu H H 1e-10 1e-16
+    KineticReactant2_2d_pcs_4_ts_20_t_2000.000000_expected.vtu KineticReactant2_2d_ts_20_t_2000.000000.vtu H H 1e-10 1e-16
 )
 
 AddTest(
