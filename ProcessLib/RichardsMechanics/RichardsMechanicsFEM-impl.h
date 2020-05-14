@@ -153,15 +153,18 @@ std::size_t RichardsMechanicsLocalAssembler<
 
     if (name == "saturation_ip")
     {
-        return setScalar(values, &IpData::saturation);
+        return ProcessLib::setIntegrationPointScalarData(values, _ip_data,
+                                                         &IpData::saturation);
     }
     if (name == "porosity_ip")
     {
-        return setScalar(values, &IpData::porosity);
+        return ProcessLib::setIntegrationPointScalarData(values, _ip_data,
+                                                         &IpData::porosity);
     }
     if (name == "transport_porosity_ip")
     {
-        return setScalar(values, &IpData::transport_porosity);
+        return ProcessLib::setIntegrationPointScalarData(
+            values, _ip_data, &IpData::transport_porosity);
     }
     if (name == "swelling_stress_ip")
     {
@@ -1087,21 +1090,6 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
     }
 
     return cache;
-}
-
-template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
-std::size_t RichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
-    DisplacementDim>::setScalar(double const* values, double IpData::*member)
-{
-    auto const n_integration_points = _integration_method.getNumberOfPoints();
-
-    for (unsigned ip = 0; ip < n_integration_points; ++ip)
-    {
-        _ip_data[ip].*member = values[ip];
-    }
-    return n_integration_points;
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,

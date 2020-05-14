@@ -164,7 +164,8 @@ public:
 
         if (name == "kappa_d_ip")
         {
-            return setKappaD(values);
+            return ProcessLib::setIntegrationPointScalarData(values, _ip_data,
+                                                             &IpData::kappa_d);
         }
 
         return 0;
@@ -692,18 +693,6 @@ public:
     {
         return ProcessLib::getIntegrationPointKelvinVector<DisplacementDim>(
             _ip_data, &IpData::sigma);
-    }
-
-    std::size_t setKappaD(double const* values)
-    {
-        unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
-
-        for (unsigned ip = 0; ip < n_integration_points; ++ip)
-        {
-            _ip_data[ip].kappa_d = values[ip];
-        }
-        return n_integration_points;
     }
 
     void setKappaD(double value)
