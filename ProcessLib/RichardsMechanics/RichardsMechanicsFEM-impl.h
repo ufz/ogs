@@ -147,7 +147,8 @@ std::size_t RichardsMechanicsLocalAssembler<
                 "simultaneously.",
                 _process_data.initial_stress->name);
         }
-        return setKelvinVector(values, &IpData::sigma_eff);
+        return ProcessLib::setIntegrationPointKelvinVector<DisplacementDim>(
+            values, _ip_data, &IpData::sigma_eff);
     }
 
     if (name == "saturation_ip")
@@ -164,11 +165,13 @@ std::size_t RichardsMechanicsLocalAssembler<
     }
     if (name == "swelling_stress_ip")
     {
-        return setKelvinVector(values, &IpData::sigma_sw);
+        return ProcessLib::setIntegrationPointKelvinVector<DisplacementDim>(
+            values, _ip_data, &IpData::sigma_sw);
     }
     if (name == "epsilon_ip")
     {
-        return setKelvinVector(values, &IpData::eps);
+        return ProcessLib::setIntegrationPointKelvinVector<DisplacementDim>(
+            values, _ip_data, &IpData::eps);
     }
     return 0;
 }
@@ -930,32 +933,6 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     // displacement equation
     local_rhs.template segment<displacement_size>(displacement_index)
         .noalias() += Kup * p_L;
-}
-
-template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
-std::size_t RichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
-    DisplacementDim>::setKelvinVector(double const* values,
-                                      KelvinVectorType IpData::*member)
-{
-    constexpr int kelvin_vector_size =
-        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
-    auto const n_integration_points = _ip_data.size();
-
-    auto const matrix_mapped_values =
-        Eigen::Map<Eigen::Matrix<double, kelvin_vector_size, Eigen::Dynamic,
-                                 Eigen::ColMajor> const>(
-            values, kelvin_vector_size, n_integration_points);
-
-    for (unsigned ip = 0; ip < n_integration_points; ++ip)
-    {
-        _ip_data[ip].*member =
-            MathLib::KelvinVector::symmetricTensorToKelvinVector(
-                matrix_mapped_values.col(ip));
-    }
-
-    return n_integration_points;
 }
 
 template <int Components, typename StoreValuesFunction>

@@ -175,8 +175,6 @@ public:
     }
 
     std::size_t setScalar(double const* values, double IpData::*member);
-    std::size_t setKelvinVector(double const* values,
-                                KelvinVectorType IpData::*member);
 
     std::vector<double> getSigma() const override;
 
