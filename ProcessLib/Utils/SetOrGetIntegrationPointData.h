@@ -119,4 +119,20 @@ std::vector<double> const& getIntegrationPointScalarData(
     return cache;
 }
 
+template <typename IntegrationPointData, typename MemberType>
+std::size_t setIntegrationPointScalarData(
+    double const* values,
+    std::vector<IntegrationPointData,
+                Eigen::aligned_allocator<IntegrationPointData>>& ip_data,
+    MemberType member)
+{
+    auto const num_intpts = ip_data.size();
+
+    for (unsigned ip = 0; ip < num_intpts; ++ip)
+    {
+        ip_data[ip].*member = values[ip];
+    }
+    return num_intpts;
+}
+
 }  // namespace ProcessLib
