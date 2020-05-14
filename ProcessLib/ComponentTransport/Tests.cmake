@@ -629,16 +629,16 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    TracerSimulation_pcs_1_ts_20_t_20000.000000_expected_ogs5.vtu TracerSimulation_pcs_1_ts_20_t_20000.000000.vtu Cs Cs 4e-7 1e-10
-    TracerSimulation_pcs_1_ts_40_t_40000.000000_expected_ogs5.vtu TracerSimulation_pcs_1_ts_40_t_40000.000000.vtu Cs Cs 1.3e-7 1e-10
-    TracerSimulation_pcs_1_ts_60_t_60000.000000_expected_ogs5.vtu TracerSimulation_pcs_1_ts_60_t_60000.000000.vtu Cs Cs 1.3e-7 1e-10
-    TracerSimulation_pcs_1_ts_80_t_80000.000000_expected_ogs5.vtu TracerSimulation_pcs_1_ts_80_t_80000.000000.vtu Cs Cs 1.3e-7 1e-10
-    TracerSimulation_pcs_1_ts_100_t_100000.000000_expected_ogs5.vtu TracerSimulation_pcs_1_ts_100_t_100000.000000.vtu Cs Cs 1.3e-7 1e-10
-    TracerSimulation_pcs_1_ts_20_t_20000.000000_expected_ogs5.vtu TracerSimulation_pcs_1_ts_20_t_20000.000000.vtu pressure pressure 1.3e-7 1e-10
-    TracerSimulation_pcs_1_ts_40_t_40000.000000_expected_ogs5.vtu TracerSimulation_pcs_1_ts_40_t_40000.000000.vtu pressure pressure 1.3e-7 1e-10
-    TracerSimulation_pcs_1_ts_60_t_60000.000000_expected_ogs5.vtu TracerSimulation_pcs_1_ts_60_t_60000.000000.vtu pressure pressure 1.3e-7 1e-10
-    TracerSimulation_pcs_1_ts_80_t_80000.000000_expected_ogs5.vtu TracerSimulation_pcs_1_ts_80_t_80000.000000.vtu pressure pressure 1.3e-7 1e-10
-    TracerSimulation_pcs_1_ts_100_t_100000.000000_expected_ogs5.vtu TracerSimulation_pcs_1_ts_100_t_100000.000000.vtu pressure pressure 1.3e-7 1e-10
+    TracerSimulation_pcs_1_ts_20_t_20000.000000_expected_ogs5.vtu TracerSimulation_ts_20_t_20000.000000.vtu Cs Cs 4e-7 1e-10
+    TracerSimulation_pcs_1_ts_40_t_40000.000000_expected_ogs5.vtu TracerSimulation_ts_40_t_40000.000000.vtu Cs Cs 1.3e-7 1e-10
+    TracerSimulation_pcs_1_ts_60_t_60000.000000_expected_ogs5.vtu TracerSimulation_ts_60_t_60000.000000.vtu Cs Cs 1.3e-7 1e-10
+    TracerSimulation_pcs_1_ts_80_t_80000.000000_expected_ogs5.vtu TracerSimulation_ts_80_t_80000.000000.vtu Cs Cs 1.3e-7 1e-10
+    TracerSimulation_pcs_1_ts_100_t_100000.000000_expected_ogs5.vtu TracerSimulation_ts_100_t_100000.000000.vtu Cs Cs 1.3e-7 1e-10
+    TracerSimulation_pcs_1_ts_20_t_20000.000000_expected_ogs5.vtu TracerSimulation_ts_20_t_20000.000000.vtu pressure pressure 1.3e-7 1e-10
+    TracerSimulation_pcs_1_ts_40_t_40000.000000_expected_ogs5.vtu TracerSimulation_ts_40_t_40000.000000.vtu pressure pressure 1.3e-7 1e-10
+    TracerSimulation_pcs_1_ts_60_t_60000.000000_expected_ogs5.vtu TracerSimulation_ts_60_t_60000.000000.vtu pressure pressure 1.3e-7 1e-10
+    TracerSimulation_pcs_1_ts_80_t_80000.000000_expected_ogs5.vtu TracerSimulation_ts_80_t_80000.000000.vtu pressure pressure 1.3e-7 1e-10
+    TracerSimulation_pcs_1_ts_100_t_100000.000000_expected_ogs5.vtu TracerSimulation_ts_100_t_100000.000000.vtu pressure pressure 1.3e-7 1e-10
 )
 
 AddTest(
