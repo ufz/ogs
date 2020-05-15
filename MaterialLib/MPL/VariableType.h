@@ -61,8 +61,9 @@ enum class Variable : int
 
 /// Data type for primary variables, designed to contain both scalar and vector
 /// data.
-using VariableType = std::variant<double, Vector, Eigen::Matrix<double, 4, 1>,
-                                  Eigen::Matrix<double, 6, 1>>;
+using VariableType =
+    std::variant<std::monostate, double, Vector, Eigen::Matrix<double, 4, 1>,
+                 Eigen::Matrix<double, 6, 1>>;
 
 /// The VariableArray is a std::array of fixed size. Its size is determined by
 /// the Variable enumerator list. Data type of that array is defined by the

@@ -855,14 +855,15 @@ public:
         auto const& phase = medium.phase("AqueousLiquid");
 
         // local_x contains the local concentration and pressure values
-        NumLib::shapeFunctionInterpolate(
-            local_C, shape_matrices.N,
-            std::get<double>(vars[static_cast<int>(
-                MaterialPropertyLib::Variable::concentration)]));
-        NumLib::shapeFunctionInterpolate(
-            local_p, shape_matrices.N,
-            std::get<double>(vars[static_cast<int>(
-                MaterialPropertyLib::Variable::phase_pressure)]));
+        double c_int_pt;
+        NumLib::shapeFunctionInterpolate(local_C, shape_matrices.N, c_int_pt);
+        vars[static_cast<int>(MaterialPropertyLib::Variable::concentration)]
+            .emplace<double>(c_int_pt);
+
+        double p_int_pt;
+        NumLib::shapeFunctionInterpolate(local_p, shape_matrices.N, p_int_pt);
+        vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)]
+            .emplace<double>(p_int_pt);
 
         // TODO (naumov) Temporary value not used by current material models.
         // Need extension of secondary variables interface.

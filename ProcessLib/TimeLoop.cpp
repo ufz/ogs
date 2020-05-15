@@ -648,8 +648,8 @@ void postTimestepForAllProcesses(
         }
         auto& x = *process_solutions[process_id];
         auto& x_dot = *x_dots[process_id];
-        pcs.postTimestep(process_solutions, t, dt, process_id);
         pcs.computeSecondaryVariable(t, dt, x, x_dot, process_id);
+        pcs.postTimestep(process_solutions, t, dt, process_id);
     }
 }
 
