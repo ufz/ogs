@@ -12,6 +12,10 @@ weight = 1043
 
 ## Visual Studio out-of-heap or stackoverflow errors
 
+::: {.note}
+**Note:** To prevent this you can also use the [WSL setup]({{< ref "wsl.pandoc" >}}).
+:::
+
 The compilation especially of the processes in Release-config can be very memory hungry. Using dynamic Eigen shape matrices can reduce memory usage:
 
 ```
@@ -29,3 +33,4 @@ If this still fails you can disable building of the failing processes, e.g.:
 ```
 cmake . -DOGS_BUILD_PROCESS_HT=OFF
 cmake --build . --config Release -j 1
+```
