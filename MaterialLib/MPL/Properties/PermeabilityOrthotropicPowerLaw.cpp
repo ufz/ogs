@@ -104,7 +104,7 @@ PropertyDataType PermeabilityOrthotropicPowerLaw<DisplacementDim>::dValue(
            "PermeabilityOrthotropicPowerLaw::dValue is implemented for "
            " derivatives with respect to strain only.");
 
-    return 0;
+    return 0.;
 }
 
 template class PermeabilityOrthotropicPowerLaw<2>;

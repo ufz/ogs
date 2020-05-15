@@ -50,6 +50,6 @@ PropertyDataType BishopsSaturationCutoff::dValue(
         "BishopsSaturationCutoff::dvalue is implemented for derivatives with "
         "respect to liquid saturation only.");
 
-    return 0;
+    return 0.;
 }
 }  // namespace MaterialPropertyLib

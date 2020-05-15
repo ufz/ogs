@@ -73,7 +73,7 @@ PropertyDataType SaturationVanGenuchten::dValue(
 
     if (p_cap <= 0)
     {
-        return 0;
+        return 0.;
     }
 
     double const p = p_cap / p_b_;
@@ -85,7 +85,7 @@ PropertyDataType SaturationVanGenuchten::dValue(
 
     if (S < S_L_res_ || S > S_L_max_)
     {
-        return 0;
+        return 0.;
     }
 
     double const dS_eff_dp_cap = -m_ * std::pow(p_cap / p_b_, n - 1) *
@@ -112,7 +112,7 @@ PropertyDataType SaturationVanGenuchten::d2Value(
 
     if (p_cap <= 0)
     {
-        return 0;
+        return 0.;
     }
 
     double const p = p_cap / p_b_;
@@ -124,7 +124,7 @@ PropertyDataType SaturationVanGenuchten::d2Value(
 
     if (S < S_L_res_ || S > S_L_max_)
     {
-        return 0;
+        return 0.;
     }
 
     double const d2S_eff_dp_cap2 =

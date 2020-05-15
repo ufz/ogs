@@ -69,12 +69,12 @@ PropertyDataType RelPermVanGenuchten::dValue(
     double const S_eff = (S_L - S_L_res_) / (S_L_max_ - S_L_res_);
     if (S_eff <= 0)  // prevent division by zero
     {
-        return 0;
+        return 0.;
     }
 
     if (S_eff >= 1)  // prevent taking root of zero
     {
-        return 0;
+        return 0.;
     }
 
     double const S_eff_to_1_over_m = std::pow(S_eff, 1. / m_);
@@ -84,7 +84,7 @@ PropertyDataType RelPermVanGenuchten::dValue(
 
     if (k_rel < k_rel_min_)
     {
-        return 0;
+        return 0.;
     }
 
     return (0.5 * v * v / sqrt_S_eff +
