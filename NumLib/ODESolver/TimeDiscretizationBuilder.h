@@ -12,12 +12,17 @@
 
 #include <memory>
 
-#include "BaseLib/ConfigTree.h"
-#include "TimeDiscretization.h"
+namespace BaseLib
+{
+class ConfigTree;
+}
+namespace NumLib
+{
+class TimeDiscretization;
+}
 
 namespace NumLib
 {
-
 std::unique_ptr<TimeDiscretization> createTimeDiscretization(
     BaseLib::ConfigTree const& config);
 }

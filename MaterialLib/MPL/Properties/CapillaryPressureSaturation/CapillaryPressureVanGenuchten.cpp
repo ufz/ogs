@@ -93,7 +93,7 @@ PropertyDataType CapillaryPressureVanGenuchten::value(
 
     if (S_L >= S_L_max_)
     {
-        return 0;
+        return 0.;
     }
 
     double const S_eff = (S_L - S_L_res_) / (S_L_max_ - S_L_res_);
@@ -120,12 +120,12 @@ PropertyDataType CapillaryPressureVanGenuchten::dValue(
 
     if (S_L <= S_L_res_)
     {
-        return 0;
+        return 0.;
     }
 
     if (S_L >= S_L_max_)
     {
-        return 0;
+        return 0.;
     }
 
     double const S_eff = (S_L - S_L_res_) / (S_L_max_ - S_L_res_);
@@ -136,7 +136,7 @@ PropertyDataType CapillaryPressureVanGenuchten::dValue(
     double const p_cap = p_b_ * std::pow(val1 - 1.0, 1.0 - m_);
     if (p_cap >= p_cap_max_)
     {
-        return 0;
+        return 0.;
     }
 
     double const val2 = std::pow(val1 - 1.0, -m_);

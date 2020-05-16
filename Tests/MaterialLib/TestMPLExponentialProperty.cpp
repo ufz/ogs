@@ -25,7 +25,7 @@ TEST(MaterialPropertyLib, ExponentialProperty)
 
     MaterialPropertyLib::VariableArray variable_array;
     variable_array[static_cast<int>(
-        MaterialPropertyLib::Variable::temperature)] = 20;
+        MaterialPropertyLib::Variable::temperature)] = 20.;
     ParameterLib::SpatialPosition const pos;
     double const time = std::numeric_limits<double>::quiet_NaN();
     double const dt = std::numeric_limits<double>::quiet_NaN();
