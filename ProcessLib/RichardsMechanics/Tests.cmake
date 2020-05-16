@@ -1,21 +1,6 @@
-AddTest(
-    NAME RichardsMechanics_square_1e2_gravity
-    PATH RichardsMechanics
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS gravity.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
-    DIFF_DATA
-    GLOB gravity_pcs_0_ts_*.vtu displacement displacement 1e-15 0
-    GLOB gravity_pcs_0_ts_*.vtu sigma sigma 5e-10 0
-    GLOB gravity_pcs_0_ts_*.vtu epsilon epsilon 1e-15 0
-    GLOB gravity_pcs_0_ts_*.vtu pressure pressure 0 2e-2
-    GLOB gravity_pcs_0_ts_*.vtu velocity velocity 1e-7 1e-15
-    GLOB gravity_pcs_0_ts_*.vtu HydraulicFlow HydraulicFlow 1e-5 0
-    GLOB gravity_pcs_0_ts_*.vtu NodalForces NodalForces 2e-10 0
-    GLOB gravity_pcs_0_ts_24_t_5.000000.vtu pressure pressure 1e-4 1e-15
-)
+if (NOT OGS_USE_MPI)
+    OgsTest(PROJECTFILE RichardsMechanics/gravity.prj)
+endif()
 
 AddTest(
     NAME RichardsMechanics_square_1e2_mechanics_linear
