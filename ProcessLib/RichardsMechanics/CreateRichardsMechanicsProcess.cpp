@@ -40,7 +40,7 @@ void checkMPLProperties(
         MaterialPropertyLib::bulk_modulus};
     std::array const required_solid_properties = {
         MaterialPropertyLib::porosity, MaterialPropertyLib::biot_coefficient,
-        MaterialPropertyLib::density, MaterialPropertyLib::bulk_modulus};
+        MaterialPropertyLib::density};
 
     for (auto const& m : media)
     {
