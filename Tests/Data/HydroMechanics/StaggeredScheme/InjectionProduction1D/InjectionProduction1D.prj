@@ -158,7 +158,8 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>InjectionProduction1D_pcs_{:process_id}</prefix>
+            <prefix>InjectionProduction1D</prefix>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
             <timesteps>
                 <pair>
                     <repeat>1</repeat>
@@ -186,7 +187,6 @@
                 <variable>epsilon_zz</variable>
                 <variable>epsilon_xy</variable>
             </variables>
-            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <parameters>
