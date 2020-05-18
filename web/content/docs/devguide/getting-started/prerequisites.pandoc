@@ -22,6 +22,13 @@ The minimum prerequisites to build OGS are:
 ## Step: Install a compiler
 
 ::: {.win}
+
+::: {.note}
+### Alternative setup
+
+Please note that the following setup on Windows is the **native Windows development setup**. This native setup is **quite involved** and **heavy on system resources**. We can recommend an alternative setup in which the [Windows Subsystem for Linux](https://en.wikipedia.org/wiki/Windows_Subsystem_for_Linux) is used: Setup and development of OGS follows the Linux way but you can use your Windows IDE (especially Visual Studio Code) for development and debugging. If this sounds interesting please [follow the steps here]({{< ref "wsl.pandoc" >}})!
+:::
+
 As we use lots of features of the C++17-standard we support **Visual Studio {{< dataFile "versions.minimum_version.msvc.year" >}}** and up. Therefore you will need at least **Windows 7** (64-bit recommended). It is perfectly fine to use the free Community Edition of Visual Studio.
 
 - Download and install [Visual Studio Community](https://www.visualstudio.com)
