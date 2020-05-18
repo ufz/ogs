@@ -1,6 +1,6 @@
 FROM python:slim
 
-RUN pip install pre-commit
+RUN pip install pre-commit==2.4.0
 CMD ["bash"]
 RUN apt-get update \
  && apt-get install -y --no-install-recommends git curl \
