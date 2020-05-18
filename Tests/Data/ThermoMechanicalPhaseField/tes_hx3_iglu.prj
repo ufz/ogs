@@ -140,7 +140,8 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>tes_hx3_pcs_{:process_id}</prefix>
+            <prefix>tes_hx3</prefix>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
             <timesteps>
                 <pair>
                     <repeat>5</repeat>
@@ -163,7 +164,6 @@
                 <variable>sigma</variable>
                 <variable>epsilon</variable>
             </variables>
-            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <parameters>
