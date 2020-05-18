@@ -58,11 +58,6 @@
                             <value>1</value>
                         </property>
                         <property>
-                            <name>bulk_modulus</name>
-                            <type>Constant</type>
-                            <value>160e300</value>
-                        </property>
-                        <property>
                             <name>biot_coefficient</name>
                             <type>Constant</type>
                             <value>0</value>
@@ -191,7 +186,7 @@
         <parameter>
             <name>E</name>
             <type>Constant</type>
-            <value>5e9</value>
+            <value>384e300</value>
         </parameter>
         <parameter>
             <name>nu</name>

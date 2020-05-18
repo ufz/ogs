@@ -54,11 +54,6 @@
                     <type>Solid</type>
                     <properties>
                         <property>
-                            <name>bulk_modulus</name>
-                            <type>Constant</type>
-                            <value>160e300</value>
-                        </property>
-                        <property>
                             <name>density</name>
                             <type>Constant</type>
                             <value>1</value>
@@ -187,7 +182,7 @@
         <parameter>
             <name>E</name>
             <type>Constant</type>
-            <value>5e9</value>
+            <value>384e300</value>
         </parameter>
         <parameter>
             <name>nu</name>
