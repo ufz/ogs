@@ -11,17 +11,21 @@ build gcc images:
   extends: .container-maker-setup
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker pull $CONTAINER_GCC_IMAGE:latest || true
     - python ThirdParty/container-maker/ogscm/cli.py --build --gitlab
       --ogs off --pm system --cvode --cppcheck --docs --gcovr
       --tag $CONTAINER_GCC_IMAGE --upload
+    - docker pull $CONTAINER_GCC_GUI_IMAGE:latest || true
     - python ThirdParty/container-maker/ogscm/cli.py --build --gitlab
       --ogs off --pm conan --cvode --cppcheck --docs --gcovr --gui
       --tag $CONTAINER_GCC_GUI_IMAGE --upload
 
+### global project images ###
 build xunit-to-junit image:
   stage: .pre
   rules:
-    - changes:
+    - if: '$CI_COMMIT_BRANCH == "master"'
+      changes:
       - scripts/docker/saxon/**/*
       - scripts/ci/jobs/build_image.yml
   tags:
@@ -38,7 +42,8 @@ build xunit-to-junit image:
 build pre-commit image:
   stage: .pre
   rules:
-    - changes:
+    - if: '$CI_COMMIT_BRANCH == "master"'
+      changes:
       - scripts/docker/Dockerfile.pre-commit
       - scripts/ci/jobs/build_image.yml
   tags:
