@@ -97,7 +97,8 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>2D_StaticCrack_pcs_{:process_id}</prefix>
+            <prefix>2D_StaticCrack</prefix>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
             <timesteps>
                 <pair>
                     <repeat>10</repeat>
@@ -113,7 +114,6 @@
                 <variable>displacement</variable>
                 <variable>phasefield</variable>
             </variables>
-            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <parameters>
