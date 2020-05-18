@@ -6,6 +6,7 @@ build gcc images:
       - scripts/ci/jobs/build_image.yml
   tags:
     - docker-shell
+    - ogs
   variables:
     GIT_LFS_SKIP_SMUDGE: "1"
   extends: .container-maker-setup
@@ -30,6 +31,7 @@ build xunit-to-junit image:
       - scripts/ci/jobs/build_image.yml
   tags:
     - docker-shell
+    - ogs
   variables:
     GIT_LFS_SKIP_SMUDGE: "1"
   script:
@@ -48,6 +50,7 @@ build pre-commit image:
       - scripts/ci/jobs/build_image.yml
   tags:
     - docker-shell
+    - ogs
   variables:
     GIT_LFS_SKIP_SMUDGE: "1"
   script:

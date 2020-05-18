@@ -1,5 +1,7 @@
 .template-build-linux:
   stage: build
+  tags:
+    - ogs
   extends:
     - .defaults
     - .test-artifacts

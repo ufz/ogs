@@ -15,6 +15,7 @@
       - scripts/ci/extends/template-build-dockerfile.yml
   tags:
     - docker-shell
+    - ogs
   variables:
     GIT_LFS_SKIP_SMUDGE: "1"
   script:

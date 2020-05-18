@@ -6,6 +6,7 @@ build gui mac:
       artifacts: false
   tags:
     - mac
+    - ogs
   rules:
     - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "master"'
     - changes:

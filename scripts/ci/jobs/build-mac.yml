@@ -3,6 +3,7 @@ build mac:
 
   tags:
     - mac
+    - ogs
 
   variables:
     BUILD_DIR: "build-mac"

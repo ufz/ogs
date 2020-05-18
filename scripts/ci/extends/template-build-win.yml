@@ -3,6 +3,7 @@
 
   tags:
     - windows
+    - ogs
 
   extends:
     - .defaults
