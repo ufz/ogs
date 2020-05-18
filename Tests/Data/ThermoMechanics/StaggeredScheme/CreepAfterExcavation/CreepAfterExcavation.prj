@@ -127,7 +127,8 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>CreepAfterExcavation_pcs_{:process_id}</prefix>
+            <prefix>CreepAfterExcavation</prefix>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
             <timesteps>
                 <pair>
                     <repeat>10</repeat>
@@ -144,7 +145,6 @@
                 <variable>sigma</variable>
                 <variable>epsilon</variable>
             </variables>
-            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <parameters>
@@ -346,25 +346,25 @@
     </linear_solvers>
     <test_definition>
         <vtkdiff>
-            <file>CreepAfterExcavation_pcs_1_ts_61_t_4320000.000000.vtu </file>
+            <file>CreepAfterExcavation_ts_61_t_4320000.000000.vtu </file>
             <field>displacement</field>
             <absolute_tolerance>1e-8</absolute_tolerance>
             <relative_tolerance>1.e-5</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>CreepAfterExcavation_pcs_1_ts_61_t_4320000.000000.vtu </file>
+            <file>CreepAfterExcavation_ts_61_t_4320000.000000.vtu </file>
             <field>sigma</field>
             <absolute_tolerance>1e-8</absolute_tolerance>
             <relative_tolerance>1.e-5</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>CreepAfterExcavation_pcs_1_ts_61_t_4320000.000000.vtu </file>
+            <file>CreepAfterExcavation_ts_61_t_4320000.000000.vtu </file>
             <field>epsilon</field>
             <absolute_tolerance>1e-8</absolute_tolerance>
             <relative_tolerance>1.e-5</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>CreepAfterExcavation_pcs_1_ts_61_t_4320000.000000.vtu </file>
+            <file>CreepAfterExcavation_ts_61_t_4320000.000000.vtu </file>
             <field>temperature</field>
             <absolute_tolerance>1e-8</absolute_tolerance>
             <relative_tolerance>1.e-5</relative_tolerance>

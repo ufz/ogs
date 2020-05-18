@@ -98,7 +98,8 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>tm_q_quad_pcs_{:process_id}</prefix>
+            <prefix>tm_q_quad</prefix>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
             <timesteps>
                 <pair>
                     <repeat>20</repeat>
@@ -111,7 +112,6 @@
                 <variable>sigma</variable>
                 <variable>epsilon</variable>
             </variables>
-            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <parameters>
@@ -291,25 +291,25 @@
     </linear_solvers>
     <test_definition>
         <vtkdiff>
-            <file>tm_q_quad_pcs_1_ts_20_t_20000.000000.vtu</file>
+            <file>tm_q_quad_ts_20_t_20000.000000.vtu</file>
             <field>displacement</field>
             <absolute_tolerance>1e-8</absolute_tolerance>
             <relative_tolerance>1.e-5</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>tm_q_quad_pcs_1_ts_20_t_20000.000000.vtu</file>
+            <file>tm_q_quad_ts_20_t_20000.000000.vtu</file>
             <field>sigma</field>
             <absolute_tolerance>1e-8</absolute_tolerance>
             <relative_tolerance>1.e-5</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>tm_q_quad_pcs_1_ts_20_t_20000.000000.vtu</file>
+            <file>tm_q_quad_ts_20_t_20000.000000.vtu</file>
             <field>epsilon</field>
             <absolute_tolerance>1e-8</absolute_tolerance>
             <relative_tolerance>1.e-5</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>tm_q_quad_pcs_1_ts_20_t_20000.000000.vtu</file>
+            <file>tm_q_quad_ts_20_t_20000.000000.vtu</file>
             <field>temperature</field>
             <absolute_tolerance>1e-8</absolute_tolerance>
             <relative_tolerance>1.e-5</relative_tolerance>
