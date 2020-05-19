@@ -15,3 +15,4 @@ container:
   artifacts:
     paths:
       - _out/images/*.sif
+    expire_in: 2 weeks

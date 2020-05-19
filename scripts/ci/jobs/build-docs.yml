@@ -14,3 +14,4 @@ build docs:
   artifacts:
     expose_as: 'Doxygen'
     paths: ['build/docs/']
+    expire_in: 1 week
