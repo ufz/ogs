@@ -89,7 +89,7 @@ bool createSurface(GeoLib::Polyline const& ply,
     // the moment we can't read this new format. This is a switch for gmsh to
     // write the 'old' file format.
     std::string gmsh_command =
-        gmsh_binary + " -2 -algo meshadapt -format msh22 -o "
+        "\"" + gmsh_binary + "\" -2 -algo meshadapt -format msh22 -o "
         + msh_file.string() + " " + geo_file.string();
 
     int const gmsh_return_value = std::system(gmsh_command.c_str());
