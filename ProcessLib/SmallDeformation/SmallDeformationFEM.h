@@ -386,7 +386,7 @@ public:
 
     std::size_t setSigma(double const* values)
     {
-        return ProcessLib::setIntegrationPointKelvinVector<DisplacementDim>(
+        return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
             values, _ip_data, &IpData::sigma);
     }
 
@@ -395,7 +395,7 @@ public:
     // There should be only one.
     std::vector<double> getSigma() const override
     {
-        return ProcessLib::getIntegrationPointKelvinVector<DisplacementDim>(
+        return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
             _ip_data, &IpData::sigma);
     }
 

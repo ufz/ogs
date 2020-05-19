@@ -47,7 +47,7 @@ std::vector<double> const& getIntegrationPointKelvinVectorData(
 
 template <int DisplacementDim, typename IntegrationPointData,
           typename MemberType>
-std::vector<double> getIntegrationPointKelvinVector(
+std::vector<double> getIntegrationPointKelvinVectorData(
     std::vector<IntegrationPointData,
                 Eigen::aligned_allocator<IntegrationPointData>> const& ip_data,
     MemberType member)
@@ -73,7 +73,7 @@ std::vector<double> getIntegrationPointKelvinVector(
 
 template <int DisplacementDim, typename IntegrationPointData,
           typename MemberType>
-std::size_t setIntegrationPointKelvinVector(
+std::size_t setIntegrationPointKelvinVectorData(
     double const* values,
     std::vector<IntegrationPointData,
                 Eigen::aligned_allocator<IntegrationPointData>>& ip_data,

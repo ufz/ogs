@@ -542,7 +542,7 @@ std::size_t
 ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
                               DisplacementDim>::setSigma(double const* values)
 {
-    return ProcessLib::setIntegrationPointKelvinVector<DisplacementDim>(
+    return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
         values, _ip_data, &IpData::sigma);
 }
 
@@ -551,7 +551,7 @@ template <typename ShapeFunction, typename IntegrationMethod,
 std::vector<double> ThermoMechanicsLocalAssembler<
     ShapeFunction, IntegrationMethod, DisplacementDim>::getSigma() const
 {
-    return ProcessLib::getIntegrationPointKelvinVector<DisplacementDim>(
+    return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
         _ip_data, &IpData::sigma);
 }
 
@@ -575,7 +575,7 @@ std::size_t
 ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
                               DisplacementDim>::setEpsilon(double const* values)
 {
-    return ProcessLib::setIntegrationPointKelvinVector<DisplacementDim>(
+    return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
         values, _ip_data, &IpData::eps);
 }
 
@@ -584,7 +584,7 @@ template <typename ShapeFunction, typename IntegrationMethod,
 std::vector<double> ThermoMechanicsLocalAssembler<
     ShapeFunction, IntegrationMethod, DisplacementDim>::getEpsilon() const
 {
-    return ProcessLib::getIntegrationPointKelvinVector<DisplacementDim>(
+    return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
         _ip_data, &IpData::eps);
 }
 

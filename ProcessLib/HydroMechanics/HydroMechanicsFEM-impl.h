@@ -745,7 +745,7 @@ std::size_t HydroMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
     DisplacementDim>::setSigma(double const* values)
 {
-    return ProcessLib::setIntegrationPointKelvinVector<DisplacementDim>(
+    return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
         values, _ip_data, &IpData::sigma_eff);
 }
 
@@ -755,7 +755,7 @@ std::vector<double> HydroMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
     DisplacementDim>::getSigma() const
 {
-    return ProcessLib::getIntegrationPointKelvinVector<DisplacementDim>(
+    return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
         _ip_data, &IpData::sigma_eff);
 }
 
@@ -765,7 +765,7 @@ std::size_t HydroMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
     DisplacementDim>::setEpsilon(double const* values)
 {
-    return ProcessLib::setIntegrationPointKelvinVector<DisplacementDim>(
+    return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
         values, _ip_data, &IpData::eps);
 }
 

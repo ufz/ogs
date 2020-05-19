@@ -147,7 +147,7 @@ std::size_t RichardsMechanicsLocalAssembler<
                 "simultaneously.",
                 _process_data.initial_stress->name);
         }
-        return ProcessLib::setIntegrationPointKelvinVector<DisplacementDim>(
+        return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
             values, _ip_data, &IpData::sigma_eff);
     }
 
@@ -168,12 +168,12 @@ std::size_t RichardsMechanicsLocalAssembler<
     }
     if (name == "swelling_stress_ip")
     {
-        return ProcessLib::setIntegrationPointKelvinVector<DisplacementDim>(
+        return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
             values, _ip_data, &IpData::sigma_sw);
     }
     if (name == "epsilon_ip")
     {
-        return ProcessLib::setIntegrationPointKelvinVector<DisplacementDim>(
+        return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
             values, _ip_data, &IpData::eps);
     }
     return 0;
