@@ -1392,6 +1392,19 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         double const chi_S_L = chi(S_L);
         double const chi_S_L_prev = chi(S_L_prev);
 
+        auto const alpha =
+            solid_phase.property(MPL::PropertyType::biot_coefficient)
+                .template value<double>(variables, x_position, t, dt);
+
+        auto const C_el = _ip_data[ip].computeElasticTangentStiffness(
+            t, x_position, dt, temperature);
+
+        auto const beta_SR =
+            (1 - alpha) /
+            _ip_data[ip].solid_material.getBulkModulus(t, x_position, &C_el);
+        variables[static_cast<int>(MPL::Variable::grain_compressibility)] =
+            beta_SR;
+
         variables[static_cast<int>(
             MPL::Variable::effective_pore_pressure_rate)] =
             (chi_S_L * (-p_cap_ip) -
@@ -1435,9 +1448,6 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                             .template value<DimMatrix>(variables, x_position, t,
                                                        dt));
                 sigma_sw += sigma_sw_dot * dt;
-
-                auto const C_el = _ip_data[ip].computeElasticTangentStiffness(
-                    t, x_position, dt, temperature);
 
                 variables[static_cast<int>(
                               MPL::Variable::volumetric_strain_rate)]
