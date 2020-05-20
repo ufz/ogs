@@ -20,29 +20,30 @@ namespace MeshLib
 {
 namespace IO
 {
-
-void PVDFile::addVTUFile(const std::string &vtu_fname, double timestep)
+void PVDFile::addVTUFile(const std::string& vtu_fname, double timestep)
 {
-    #ifdef USE_PETSC
-        auto const vtu_file_name =
-            getVtuFileNameForPetscOutputWithoutExtension(vtu_fname);
+#ifdef USE_PETSC
+    auto const vtu_file_name =
+        getVtuFileNameForPetscOutputWithoutExtension(vtu_fname);
 
-        _datasets.emplace_back(timestep, vtu_file_name + ".pvtu");
-    #else
-        _datasets.emplace_back(timestep, vtu_fname);
-    #endif
+    _datasets.emplace_back(timestep, vtu_file_name + ".pvtu");
+#else
+    _datasets.emplace_back(timestep, vtu_fname);
+#endif
 
     std::ofstream fh(_pvd_filename.c_str());
-    if (!fh) {
+    if (!fh)
+    {
         OGS_FATAL("could not open file `{:s}'", _pvd_filename);
     }
 
     fh << std::setprecision(std::numeric_limits<double>::digits10);
 
     fh << "<?xml version=\"1.0\"?>\n"
-           "<VTKFile type=\"Collection\" version=\"0.1\" byte_order=\"LittleEndian\""
-           " compressor=\"vtkZLibDataCompressor\">\n"
-           "  <Collection>\n";
+          "<VTKFile type=\"Collection\" version=\"0.1\" "
+          "byte_order=\"LittleEndian\""
+          " compressor=\"vtkZLibDataCompressor\">\n"
+          "  <Collection>\n";
 
     for (auto const& pair : _datasets)
     {

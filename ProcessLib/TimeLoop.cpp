@@ -831,9 +831,6 @@ void TimeLoop::outputSolutions(bool const output_initial_condition,
 
     for (auto& process_data : _per_process_data)
     {
-        auto const process_id = process_data->process_id;
-        auto& pcs = process_data->process;
-        auto const& ode_sys = *process_data->tdisc_ode_sys;
         // If nonlinear solver diverged, the solution has already been
         // saved.
         if (!process_data->nonlinear_solver_status.error_norms_met)
@@ -841,10 +838,13 @@ void TimeLoop::outputSolutions(bool const output_initial_condition,
             continue;
         }
 
+        auto const process_id = process_data->process_id;
         auto const& x = *_process_solutions[process_id];
+        auto& pcs = process_data->process;
 
         if (output_initial_condition)
         {
+            auto const& ode_sys = *process_data->tdisc_ode_sys;
             // dummy values to handle the time derivative terms more or less
             // correctly, i.e. to ignore them.
             double const t = 0;

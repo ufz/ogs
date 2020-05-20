@@ -133,9 +133,7 @@ static void addSecondaryVariableResiduals(
 namespace ProcessLib
 {
 void processOutputData(
-    const double t,
-    std::vector<GlobalVector*> const& x,
-    int const process_id,
+    const double t, std::vector<GlobalVector*> const& x, int const process_id,
     MeshLib::Mesh& mesh,
     std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
     std::vector<std::reference_wrapper<ProcessVariable>> const&
@@ -200,7 +198,6 @@ void processOutputData(
         auto const num_comp = pv.getNumberOfComponents();
         auto& output_data = *MeshLib::getOrCreateMeshProperty<double>(
             mesh, pv.getName(), MeshLib::MeshItemType::Node, num_comp);
-
 
         for (int component_id = 0; component_id < num_comp; ++component_id)
         {

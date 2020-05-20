@@ -31,9 +31,7 @@ struct ProcessOutput final
 ///
 /// Prepare the output data, i.e. add the solution to vtu data structure.
 void processOutputData(
-    const double t,
-    std::vector<GlobalVector*> const& x,
-    int const process_id,
+    const double t, std::vector<GlobalVector*> const& x, int const process_id,
     MeshLib::Mesh& mesh,
     std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
     std::vector<std::reference_wrapper<ProcessVariable>> const&

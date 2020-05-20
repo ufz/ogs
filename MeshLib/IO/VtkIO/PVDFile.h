@@ -35,7 +35,8 @@ public:
 
 private:
     std::string const _pvd_filename;
-    std::vector<std::pair<double, std::string>> _datasets; // a vector of (time, VTU file name)
+    std::vector<std::pair<double, std::string>>
+        _datasets;  // a vector of (time, VTU file name)
 };
 
 } // namespace IO
