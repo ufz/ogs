@@ -23,15 +23,16 @@ ctest results:
   variables:
     GIT_STRATEGY: none
   tags:
-    - singularity
+    - docker-shell
+    - ogs
   needs:
     - job: build linux
     - job: build win
     - job: build mac
   script:
-    - singularity run docker://$XUNIT_TO_JUNIT_IMAGE -s:./build/Tests/ctest.xml > build/ctest-junit.xml
-    - singularity run docker://$XUNIT_TO_JUNIT_IMAGE -s:./build-win/Tests/ctest.xml > build-win/ctest-junit.xml
-    - singularity run docker://$XUNIT_TO_JUNIT_IMAGE -s:./build-win/Tests/ctest.xml > build-mac/ctest-junit.xml
+    - docker run -v $PWD:/tmp $XUNIT_TO_JUNIT_IMAGE -s:/tmp/build/Tests/ctest.xml > ./build/ctest-junit.xml
+    - docker run -v $PWD:/tmp $XUNIT_TO_JUNIT_IMAGE -s:/tmp/build-win/Tests/ctest.xml > ./build-win/ctest-junit.xml
+    - docker run -v $PWD:/tmp $XUNIT_TO_JUNIT_IMAGE -s:/tmp/build-mac/Tests/ctest.xml > ./build-mac/ctest-junit.xml
   artifacts:
     expire_in: 1 week
     reports:
