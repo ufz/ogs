@@ -60,14 +60,9 @@
                     <type>Solid</type>
                     <properties>
                         <property>
-                            <name>bulk_modulus</name>
-                            <type>Constant</type>
-                            <value>10</value>
-                        </property>
-                        <property>
                             <name>biot_coefficient</name>
                             <type>Constant</type>
-                            <value>1</value>
+                            <value>0.94444444444444444444</value>
                         </property>
                         <property>
                             <name>density</name>
