@@ -13,12 +13,14 @@
 
 #include <cassert>
 
+#include "IntegrationPointData.h"
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "MaterialLib/SolidModels/SelectSolidConstitutiveRelation.h"
 #include "MathLib/KelvinVector.h"
 #include "NumLib/Function/Interpolation.h"
 #include "ProcessLib/CoupledSolutionsForStaggeredScheme.h"
+#include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
 
 namespace ProcessLib
 {
@@ -145,28 +147,34 @@ std::size_t RichardsMechanicsLocalAssembler<
                 "simultaneously.",
                 _process_data.initial_stress->name);
         }
-        return setKelvinVector(values, &IpData::sigma_eff);
+        return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
+            values, _ip_data, &IpData::sigma_eff);
     }
 
     if (name == "saturation_ip")
     {
-        return setScalar(values, &IpData::saturation);
+        return ProcessLib::setIntegrationPointScalarData(values, _ip_data,
+                                                         &IpData::saturation);
     }
     if (name == "porosity_ip")
     {
-        return setScalar(values, &IpData::porosity);
+        return ProcessLib::setIntegrationPointScalarData(values, _ip_data,
+                                                         &IpData::porosity);
     }
     if (name == "transport_porosity_ip")
     {
-        return setScalar(values, &IpData::transport_porosity);
+        return ProcessLib::setIntegrationPointScalarData(
+            values, _ip_data, &IpData::transport_porosity);
     }
     if (name == "swelling_stress_ip")
     {
-        return setKelvinVector(values, &IpData::sigma_sw);
+        return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
+            values, _ip_data, &IpData::sigma_sw);
     }
     if (name == "epsilon_ip")
     {
-        return setKelvinVector(values, &IpData::eps);
+        return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
+            values, _ip_data, &IpData::eps);
     }
     return 0;
 }
@@ -930,32 +938,6 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         .noalias() += Kup * p_L;
 }
 
-template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
-std::size_t RichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
-    DisplacementDim>::setKelvinVector(double const* values,
-                                      KelvinVectorType IpData::*member)
-{
-    constexpr int kelvin_vector_size =
-        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
-    auto const n_integration_points = _ip_data.size();
-
-    auto const matrix_mapped_values =
-        Eigen::Map<Eigen::Matrix<double, kelvin_vector_size, Eigen::Dynamic,
-                                 Eigen::ColMajor> const>(
-            values, kelvin_vector_size, n_integration_points);
-
-    for (unsigned ip = 0; ip < n_integration_points; ++ip)
-    {
-        _ip_data[ip].*member =
-            MathLib::KelvinVector::symmetricTensorToKelvinVector(
-                matrix_mapped_values.col(ip));
-    }
-
-    return n_integration_points;
-}
-
 template <int Components, typename StoreValuesFunction>
 std::vector<double> transposeInPlace(
     StoreValuesFunction const& store_values_function)
@@ -1002,23 +984,8 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
         std::vector<double>& cache) const
 {
-    constexpr int kelvin_vector_size =
-        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
-    auto const num_intpts = _ip_data.size();
-
-    cache.clear();
-    auto cache_mat = MathLib::createZeroedMatrix<Eigen::Matrix<
-        double, kelvin_vector_size, Eigen::Dynamic, Eigen::RowMajor>>(
-        cache, kelvin_vector_size, num_intpts);
-
-    for (unsigned ip = 0; ip < num_intpts; ++ip)
-    {
-        auto const& sigma = _ip_data[ip].sigma_eff;
-        cache_mat.col(ip) =
-            MathLib::KelvinVector::kelvinVectorToSymmetricTensor(sigma);
-    }
-
-    return cache;
+    return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
+        _ip_data, &IpData::sigma_eff, cache);
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
@@ -1092,23 +1059,8 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
         std::vector<double>& cache) const
 {
-    constexpr int kelvin_vector_size =
-        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
-    auto const num_intpts = _ip_data.size();
-
-    cache.clear();
-    auto cache_mat = MathLib::createZeroedMatrix<Eigen::Matrix<
-        double, kelvin_vector_size, Eigen::Dynamic, Eigen::RowMajor>>(
-        cache, kelvin_vector_size, num_intpts);
-
-    for (unsigned ip = 0; ip < num_intpts; ++ip)
-    {
-        auto const& eps = _ip_data[ip].eps;
-        cache_mat.col(ip) =
-            MathLib::KelvinVector::kelvinVectorToSymmetricTensor(eps);
-    }
-
-    return cache;
+    return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
+        _ip_data, &IpData::eps, cache);
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
@@ -1142,21 +1094,6 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           typename IntegrationMethod, int DisplacementDim>
-std::size_t RichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
-    DisplacementDim>::setScalar(double const* values, double IpData::*member)
-{
-    auto const n_integration_points = _integration_method.getNumberOfPoints();
-
-    for (unsigned ip = 0; ip < n_integration_points; ++ip)
-    {
-        _ip_data[ip].*member = values[ip];
-    }
-    return n_integration_points;
-}
-
-template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
 std::vector<double> RichardsMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
     DisplacementDim>::getSaturation() const
@@ -1177,19 +1114,8 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
         std::vector<double>& cache) const
 {
-    auto const num_intpts = _ip_data.size();
-
-    cache.clear();
-    auto cache_mat = MathLib::createZeroedMatrix<
-        Eigen::Matrix<double, 1, Eigen::Dynamic, Eigen::RowMajor>>(cache, 1,
-                                                                   num_intpts);
-
-    for (unsigned ip = 0; ip < num_intpts; ++ip)
-    {
-        cache_mat[ip] = _ip_data[ip].saturation;
-    }
-
-    return cache;
+    return ProcessLib::getIntegrationPointScalarData(
+        _ip_data, &IpData::saturation, cache);
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
@@ -1214,19 +1140,8 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
         std::vector<double>& cache) const
 {
-    auto const num_intpts = _ip_data.size();
-
-    cache.clear();
-    auto cache_mat = MathLib::createZeroedMatrix<
-        Eigen::Matrix<double, 1, Eigen::Dynamic, Eigen::RowMajor>>(cache, 1,
-                                                                   num_intpts);
-
-    for (unsigned ip = 0; ip < num_intpts; ++ip)
-    {
-        cache_mat[ip] = _ip_data[ip].porosity;
-    }
-
-    return cache;
+    return ProcessLib::getIntegrationPointScalarData(_ip_data,
+                                                     &IpData::porosity, cache);
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
@@ -1251,19 +1166,8 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
         std::vector<double>& cache) const
 {
-    auto const num_intpts = _ip_data.size();
-
-    cache.clear();
-    auto cache_mat = MathLib::createZeroedMatrix<
-        Eigen::Matrix<double, 1, Eigen::Dynamic, Eigen::RowMajor>>(cache, 1,
-                                                                   num_intpts);
-
-    for (unsigned ip = 0; ip < num_intpts; ++ip)
-    {
-        cache_mat[ip] = _ip_data[ip].transport_porosity;
-    }
-
-    return cache;
+    return ProcessLib::getIntegrationPointScalarData(
+        _ip_data, &IpData::transport_porosity, cache);
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,

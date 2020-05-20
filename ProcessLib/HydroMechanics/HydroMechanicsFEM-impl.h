@@ -12,7 +12,6 @@
 #pragma once
 
 #include "HydroMechanicsFEM.h"
-
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/MPL/Property.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
@@ -21,6 +20,7 @@
 #include "MathLib/KelvinVector.h"
 #include "NumLib/Function/Interpolation.h"
 #include "ProcessLib/CoupledSolutionsForStaggeredScheme.h"
+#include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
 
 namespace ProcessLib
 {
@@ -745,24 +745,8 @@ std::size_t HydroMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
     DisplacementDim>::setSigma(double const* values)
 {
-    auto const kelvin_vector_size =
-        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
-    unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
-
-    auto sigma_values =
-        Eigen::Map<Eigen::Matrix<double, kelvin_vector_size, Eigen::Dynamic,
-                                 Eigen::ColMajor> const>(
-            values, kelvin_vector_size, n_integration_points);
-
-    for (unsigned ip = 0; ip < n_integration_points; ++ip)
-    {
-        _ip_data[ip].sigma_eff =
-            MathLib::KelvinVector::symmetricTensorToKelvinVector(
-                sigma_values.col(ip));
-    }
-
-    return n_integration_points;
+    return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
+        values, _ip_data, &IpData::sigma_eff);
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
@@ -771,24 +755,8 @@ std::vector<double> HydroMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
     DisplacementDim>::getSigma() const
 {
-    auto const kelvin_vector_size =
-        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
-    unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
-
-    std::vector<double> ip_sigma_values;
-    auto cache_mat = MathLib::createZeroedMatrix<Eigen::Matrix<
-        double, Eigen::Dynamic, kelvin_vector_size, Eigen::RowMajor>>(
-        ip_sigma_values, n_integration_points, kelvin_vector_size);
-
-    for (unsigned ip = 0; ip < n_integration_points; ++ip)
-    {
-        auto const& sigma = _ip_data[ip].sigma_eff;
-        cache_mat.row(ip) =
-            MathLib::KelvinVector::kelvinVectorToSymmetricTensor(sigma);
-    }
-
-    return ip_sigma_values;
+    return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
+        _ip_data, &IpData::sigma_eff);
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
@@ -797,23 +765,8 @@ std::size_t HydroMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
     DisplacementDim>::setEpsilon(double const* values)
 {
-    auto const kelvin_vector_size =
-        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
-    unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
-
-    auto epsilon_values =
-        Eigen::Map<Eigen::Matrix<double, kelvin_vector_size, Eigen::Dynamic,
-                                 Eigen::ColMajor> const>(
-            values, kelvin_vector_size, n_integration_points);
-
-    for (unsigned ip = 0; ip < n_integration_points; ++ip)
-    {
-        _ip_data[ip].eps = MathLib::KelvinVector::symmetricTensorToKelvinVector(
-            epsilon_values.col(ip));
-    }
-
-    return n_integration_points;
+    return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
+        values, _ip_data, &IpData::eps);
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,

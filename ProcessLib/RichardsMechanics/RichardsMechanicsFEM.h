@@ -174,10 +174,6 @@ public:
         return Eigen::Map<const Eigen::RowVectorXd>(N_u.data(), N_u.size());
     }
 
-    std::size_t setScalar(double const* values, double IpData::*member);
-    std::size_t setKelvinVector(double const* values,
-                                KelvinVectorType IpData::*member);
-
     std::vector<double> getSigma() const override;
 
     std::vector<double> const& getIntPtDarcyVelocity(

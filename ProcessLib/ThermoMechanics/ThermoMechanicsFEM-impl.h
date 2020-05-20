@@ -12,6 +12,7 @@
 
 #pragma once
 
+#include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
 #include "ThermoMechanicsFEM.h"
 
 namespace ProcessLib
@@ -541,24 +542,8 @@ std::size_t
 ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
                               DisplacementDim>::setSigma(double const* values)
 {
-    auto const kelvin_vector_size =
-        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
-    unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
-
-    auto sigma_values =
-        Eigen::Map<Eigen::Matrix<double, kelvin_vector_size, Eigen::Dynamic,
-                                 Eigen::ColMajor> const>(
-            values, kelvin_vector_size, n_integration_points);
-
-    for (unsigned ip = 0; ip < n_integration_points; ++ip)
-    {
-        _ip_data[ip].sigma =
-            MathLib::KelvinVector::symmetricTensorToKelvinVector(
-                sigma_values.col(ip));
-    }
-
-    return n_integration_points;
+    return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
+        values, _ip_data, &IpData::sigma);
 }
 
 template <typename ShapeFunction, typename IntegrationMethod,
@@ -566,24 +551,8 @@ template <typename ShapeFunction, typename IntegrationMethod,
 std::vector<double> ThermoMechanicsLocalAssembler<
     ShapeFunction, IntegrationMethod, DisplacementDim>::getSigma() const
 {
-    auto const kelvin_vector_size =
-        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
-    unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
-
-    std::vector<double> ip_sigma_values;
-    auto cache_mat = MathLib::createZeroedMatrix<Eigen::Matrix<
-        double, Eigen::Dynamic, kelvin_vector_size, Eigen::RowMajor>>(
-        ip_sigma_values, n_integration_points, kelvin_vector_size);
-
-    for (unsigned ip = 0; ip < n_integration_points; ++ip)
-    {
-        auto const& sigma = _ip_data[ip].sigma;
-        cache_mat.row(ip) =
-            MathLib::KelvinVector::kelvinVectorToSymmetricTensor(sigma);
-    }
-
-    return ip_sigma_values;
+    return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
+        _ip_data, &IpData::sigma);
 }
 
 template <typename ShapeFunction, typename IntegrationMethod,
@@ -596,24 +565,8 @@ std::vector<double> const& ThermoMechanicsLocalAssembler<
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
         std::vector<double>& cache) const
 {
-    static const int kelvin_vector_size =
-        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
-    unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
-
-    cache.clear();
-    auto cache_mat = MathLib::createZeroedMatrix<Eigen::Matrix<
-        double, kelvin_vector_size, Eigen::Dynamic, Eigen::RowMajor>>(
-        cache, kelvin_vector_size, n_integration_points);
-
-    for (unsigned ip = 0; ip < n_integration_points; ++ip)
-    {
-        auto const& sigma = _ip_data[ip].sigma;
-        cache_mat.col(ip) =
-            MathLib::KelvinVector::kelvinVectorToSymmetricTensor(sigma);
-    }
-
-    return cache;
+    return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
+        _ip_data, &IpData::sigma, cache);
 }
 
 template <typename ShapeFunction, typename IntegrationMethod,
@@ -622,23 +575,8 @@ std::size_t
 ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
                               DisplacementDim>::setEpsilon(double const* values)
 {
-    auto const kelvin_vector_size =
-        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
-    unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
-
-    auto epsilon_values =
-        Eigen::Map<Eigen::Matrix<double, kelvin_vector_size, Eigen::Dynamic,
-                                 Eigen::ColMajor> const>(
-            values, kelvin_vector_size, n_integration_points);
-
-    for (unsigned ip = 0; ip < n_integration_points; ++ip)
-    {
-        _ip_data[ip].eps = MathLib::KelvinVector::symmetricTensorToKelvinVector(
-            epsilon_values.col(ip));
-    }
-
-    return n_integration_points;
+    return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
+        values, _ip_data, &IpData::eps);
 }
 
 template <typename ShapeFunction, typename IntegrationMethod,
@@ -646,24 +584,8 @@ template <typename ShapeFunction, typename IntegrationMethod,
 std::vector<double> ThermoMechanicsLocalAssembler<
     ShapeFunction, IntegrationMethod, DisplacementDim>::getEpsilon() const
 {
-    auto const kelvin_vector_size =
-        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
-    unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
-
-    std::vector<double> ip_epsilon_values;
-    auto cache_mat = MathLib::createZeroedMatrix<Eigen::Matrix<
-        double, Eigen::Dynamic, kelvin_vector_size, Eigen::RowMajor>>(
-        ip_epsilon_values, n_integration_points, kelvin_vector_size);
-
-    for (unsigned ip = 0; ip < n_integration_points; ++ip)
-    {
-        auto const& eps = _ip_data[ip].eps;
-        cache_mat.row(ip) =
-            MathLib::KelvinVector::kelvinVectorToSymmetricTensor(eps);
-    }
-
-    return ip_epsilon_values;
+    return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
+        _ip_data, &IpData::eps);
 }
 
 template <typename ShapeFunction, typename IntegrationMethod,
@@ -676,24 +598,8 @@ std::vector<double> const& ThermoMechanicsLocalAssembler<
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
         std::vector<double>& cache) const
 {
-    auto const kelvin_vector_size =
-        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
-    unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
-
-    cache.clear();
-    auto cache_mat = MathLib::createZeroedMatrix<Eigen::Matrix<
-        double, kelvin_vector_size, Eigen::Dynamic, Eigen::RowMajor>>(
-        cache, kelvin_vector_size, n_integration_points);
-
-    for (unsigned ip = 0; ip < n_integration_points; ++ip)
-    {
-        auto const& eps = _ip_data[ip].eps;
-        cache_mat.col(ip) =
-            MathLib::KelvinVector::kelvinVectorToSymmetricTensor(eps);
-    }
-
-    return cache;
+    return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
+        _ip_data, &IpData::eps, cache);
 }
 
 template <typename ShapeFunction, typename IntegrationMethod,
