@@ -441,7 +441,8 @@ std::vector<double> const& ThermoHydroMechanicsLocalAssembler<
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const
 {
-    auto const num_intpts = _ip_data.size();
+    unsigned const n_integration_points =
+        _integration_method.getNumberOfPoints();
 
     constexpr int process_id = 0;  // monolithic scheme;
     auto const indices =
@@ -452,16 +453,13 @@ std::vector<double> const& ThermoHydroMechanicsLocalAssembler<
     cache.clear();
     auto cache_matrix = MathLib::createZeroedMatrix<Eigen::Matrix<
         double, DisplacementDim, Eigen::Dynamic, Eigen::RowMajor>>(
-        cache, DisplacementDim, num_intpts);
+        cache, DisplacementDim, n_integration_points);
 
     auto p = Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
         pressure_size> const>(local_x.data() + pressure_index, pressure_size);
     auto T = Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
         temperature_size> const>(local_x.data() + temperature_index,
                                  temperature_size);
-
-    unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
 
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());

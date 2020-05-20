@@ -305,14 +305,14 @@ private:
     {
         using KelvinVectorType = typename BMatricesType::KelvinVectorType;
 
-        auto const num_intpts = _ip_data.size();
+        auto const n_integration_points = _ip_data.size();
 
         cache.clear();
         auto cache_mat = MathLib::createZeroedMatrix<Eigen::Matrix<
             double, DisplacementDim, Eigen::Dynamic, Eigen::RowMajor>>(
-            cache, DisplacementDim, num_intpts);
+            cache, DisplacementDim, n_integration_points);
 
-        for (unsigned ip = 0; ip < num_intpts; ++ip)
+        for (unsigned ip = 0; ip < n_integration_points; ++ip)
         {
             auto const& heatflux = _ip_data[ip].heatflux;
 

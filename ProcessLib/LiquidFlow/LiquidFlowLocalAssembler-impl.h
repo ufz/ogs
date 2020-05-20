@@ -224,11 +224,11 @@ LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     auto const indices =
         NumLib::getIndices(_element.getID(), *dof_table[process_id]);
     auto const local_x = x[process_id]->get(indices);
-    auto const num_intpts = _integration_method.getNumberOfPoints();
+    auto const n_integration_points = _integration_method.getNumberOfPoints();
     velocity_cache.clear();
     auto velocity_cache_vectors = MathLib::createZeroedMatrix<
         Eigen::Matrix<double, GlobalDim, Eigen::Dynamic, Eigen::RowMajor>>(
-        velocity_cache, GlobalDim, num_intpts);
+        velocity_cache, GlobalDim, n_integration_points);
 
     ParameterLib::SpatialPosition pos;
     pos.setElementID(_element.getID());
