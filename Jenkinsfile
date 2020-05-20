@@ -326,6 +326,8 @@ pipeline {
                 CTest(pattern: "_out/Testing/**/*.xml"),
                 GoogleTest(pattern: "_out/testrunner.xml")
               ])
+            }
+            cleanup {
               dir("${env.BUILD_DIR}") { deleteDir() }
               dir('_out') { deleteDir() }
             }
@@ -387,6 +389,8 @@ pipeline {
                 CTest(pattern: "_out/Testing/**/*.xml"),
                 GoogleTest(pattern: "_out/testrunner.xml")
               ])
+            }
+            cleanup {
               dir("${env.BUILD_DIR}") { deleteDir() }
               dir('_out') { deleteDir() }
             }
@@ -648,6 +652,8 @@ pipeline {
           post {
             always {
               xunit([CTest(pattern: 'build/Testing/**/*.xml')])
+            }
+            cleanup {
               dir('build') { deleteDir() }
             }
           }
@@ -763,7 +769,9 @@ pipeline {
           post {
             success {
               archiveArtifacts('_out/images/*.sif')
-              dir('_out') { deleteDir() } // Cleanup
+            }
+            cleanup {
+              dir('_out') { deleteDir() }
             }
           }
         }
