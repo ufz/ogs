@@ -96,20 +96,149 @@
                 <convergence_criterion>
                     <type>DeltaX</type>
                     <norm_type>NORM2</norm_type>
-                    <reltol>1e-8</reltol>
+                    <reltol>1e-7</reltol>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>
                 </time_discretization>
                 <time_stepping>
-                    <type>IterationNumberBasedTimeStepping</type>
-                    <t_initial>0.0</t_initial>
+                    <type>FixedTimeStepping</type>
+                    <t_initial>0</t_initial>
                     <t_end>86400</t_end>
-                    <initial_dt>0.1</initial_dt>
-                    <minimum_dt>0.1</minimum_dt>
-                    <maximum_dt>100</maximum_dt>
-                    <number_iterations>1    10  15  20  25  100</number_iterations>
-                    <multiplier>       1.25 1.2 1.1 0.9 0.5 0.1</multiplier>
+                    <timesteps>
+						<pair>
+							<repeat>1</repeat>
+							<delta_t>0.1</delta_t>
+						</pair>
+						<pair>
+							<repeat>1</repeat>
+							<delta_t>0.125</delta_t>
+						</pair>
+						<pair>
+							<repeat>1</repeat>
+							<delta_t>0.15625</delta_t>
+						</pair>
+						<pair>
+							<repeat>1</repeat>
+							<delta_t>0.195312</delta_t>
+						</pair>
+						<pair>
+							<repeat>1</repeat>
+							<delta_t>0.244141</delta_t>
+						</pair>
+						<pair>
+							<repeat>1</repeat>
+							<delta_t>0.305176</delta_t>
+						</pair>
+						<pair>
+							<repeat>1</repeat>
+							<delta_t>0.38147</delta_t>
+						</pair>
+						<pair>
+							<repeat>1</repeat>
+							<delta_t>0.476837</delta_t>
+						</pair>
+						<pair>
+							<repeat>1</repeat>
+							<delta_t>0.596046</delta_t>
+						</pair>
+						<pair>
+							<repeat>1</repeat>
+							<delta_t>0.745058</delta_t>
+						</pair>
+						<pair>
+							<repeat>1</repeat>
+							<delta_t>0.931323</delta_t>
+						</pair>
+						<pair>
+							<repeat>1</repeat>
+							<delta_t>1.16415</delta_t>
+						</pair>
+						<pair>
+							<repeat>1</repeat>
+							<delta_t>1.45519</delta_t>
+						</pair>
+						<pair>
+							<repeat>1</repeat>
+							<delta_t>1.81899</delta_t>
+						</pair>
+						<pair>
+							<repeat>1</repeat>
+							<delta_t>2.27374</delta_t>
+						</pair>
+						<pair>
+							<repeat>1</repeat>
+							<delta_t>2.84217</delta_t>
+						</pair>
+						<pair>
+							<repeat>1</repeat>
+							<delta_t>3.55271</delta_t>
+						</pair>
+						<pair>
+							<repeat>1</repeat>
+							<delta_t>4.44089</delta_t>
+						</pair>
+						<pair>
+							<repeat>1</repeat>
+							<delta_t>5.55112</delta_t>
+						</pair>
+						<pair>
+							<repeat>1</repeat>
+							<delta_t>6.93889</delta_t>
+						</pair>
+						<pair>
+							<repeat>1</repeat>
+							<delta_t>8.67362</delta_t>
+						</pair>
+						<pair>
+							<repeat>1</repeat>
+							<delta_t>10.842</delta_t>
+						</pair>
+						<pair>
+							<repeat>1</repeat>
+							<delta_t>13.5525</delta_t>
+						</pair>
+						<pair>
+							<repeat>1</repeat>
+							<delta_t>16.9407</delta_t>
+						</pair>
+						<pair>
+							<repeat>1</repeat>
+							<delta_t>21.1758</delta_t>
+						</pair>
+						<pair>
+							<repeat>1</repeat>
+							<delta_t>26.4698</delta_t>
+						</pair>
+						<pair>
+							<repeat>1</repeat>
+							<delta_t>33.0872</delta_t>
+						</pair>
+						<pair>
+							<repeat>1</repeat>
+							<delta_t>41.359</delta_t>
+						</pair>
+						<pair>
+							<repeat>1</repeat>
+							<delta_t>51.6988</delta_t>
+						</pair>
+						<pair>
+							<repeat>1</repeat>
+							<delta_t>64.6235</delta_t>
+						</pair>
+						<pair>
+							<repeat>1</repeat>
+							<delta_t>80.7794</delta_t>
+						</pair>
+						<pair>
+							<repeat>1</repeat>
+							<delta_t>100.974</delta_t>
+						</pair>
+						<pair>
+							<repeat>720</repeat>
+							<delta_t>120</delta_t>
+						</pair>
+					</timesteps>
                 </time_stepping>
             </process>
         </processes>
@@ -120,7 +249,7 @@
             <timesteps>
                 <pair>
                     <repeat>1</repeat>
-                    <each_steps>50</each_steps>
+                    <each_steps>10</each_steps>
                 </pair>
             </timesteps>
             <variables>
