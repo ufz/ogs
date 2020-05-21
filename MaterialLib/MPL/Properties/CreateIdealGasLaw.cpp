@@ -21,6 +21,7 @@ std::unique_ptr<IdealGasLaw> createIdealGasLaw(
     //! \ogs_file_param{properties__property__type}
     config.checkConfigParameter("type", "IdealGasLaw");
     DBUG("Create IdealGasLaw medium property");
+    //! \ogs_file_param_special{properties__property__IdealGasLaw}
     return std::make_unique<IdealGasLaw>();
 }
 }  // namespace MaterialPropertyLib

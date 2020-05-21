@@ -23,11 +23,10 @@ class Medium;
 class Phase;
 class Component;
 /**
- * \class IdealGasLaw
- * \brief Density function for ideal gases
+ * \brief Density function for ideal gases.
  * \details This property must be either a phase or a component property, it
  * computes the density of an ideal gas as function of phase pressure and
- * temperature
+ * temperature.
  */
 class IdealGasLaw final : public Property
 {
