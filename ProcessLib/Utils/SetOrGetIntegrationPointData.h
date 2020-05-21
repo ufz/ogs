@@ -15,6 +15,7 @@
 #include <vector>
 
 #include "MathLib/KelvinVector.h"
+#include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/Function/Interpolation.h"
 
 namespace ProcessLib
