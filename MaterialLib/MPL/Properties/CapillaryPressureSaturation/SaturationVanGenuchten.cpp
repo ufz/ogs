@@ -18,6 +18,7 @@
 namespace MaterialPropertyLib
 {
 SaturationVanGenuchten::SaturationVanGenuchten(
+    std::string name,
     double const residual_liquid_saturation,
     double const residual_gas_saturation,
     double const exponent,
@@ -27,6 +28,8 @@ SaturationVanGenuchten::SaturationVanGenuchten(
       m_(exponent),
       p_b_(p_b)
 {
+    name_ = std::move(name);
+
     if (!(m_ > 0 && m_ < 1))
     {
         OGS_FATAL(

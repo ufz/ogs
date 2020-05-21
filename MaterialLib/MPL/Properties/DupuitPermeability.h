@@ -20,8 +20,8 @@ class DupuitPermeability final : public Property
 {
 public:
     /// This constructor accepts two parameters.
-    explicit DupuitPermeability(
-        ParameterLib::Parameter<double> const& parameter);
+    DupuitPermeability(std::string name,
+                       ParameterLib::Parameter<double> const& parameter);
 
     /// This method computes the value of a property depending linearly on
     /// the value of the given primary variable.

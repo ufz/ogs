@@ -19,7 +19,13 @@ std::unique_ptr<SaturationDependentSwelling> createSaturationDependentSwelling(
 {
     //! \ogs_file_param{properties__property__type}
     config.checkConfigParameter("type", "SaturationDependentSwelling");
-    DBUG("Create SaturationDependentSwelling solid phase property");
+
+    // Second access for storage.
+    //! \ogs_file_param{properties__property__name}
+    auto property_name = config.peekConfigParameter<std::string>("name");
+
+    DBUG("Create SaturationDependentSwelling solid phase property {:s}.",
+         property_name);
 
     auto const swelling_pressures =
         //! \ogs_file_param{properties__property__SaturationDependentSwelling__swelling_pressures}
@@ -60,6 +66,7 @@ std::unique_ptr<SaturationDependentSwelling> createSaturationDependentSwelling(
         config.getConfigParameter<double>("upper_saturation_limit");
 
     return std::make_unique<SaturationDependentSwelling>(
+        std::move(property_name),
         std::array<double, 3>{swelling_pressures[0], swelling_pressures[1],
                               swelling_pressures[2]},
         std::array<double, 3>{exponents[0], exponents[1], exponents[2]},

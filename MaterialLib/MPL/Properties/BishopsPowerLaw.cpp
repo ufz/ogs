@@ -11,18 +11,20 @@
 
 namespace MaterialPropertyLib
 {
-BishopsPowerLaw::BishopsPowerLaw(double const exponent) : m_(exponent) {}
-
-void BishopsPowerLaw::setScale(
-    std::variant<Medium*, Phase*, Component*> scale_pointer)
+BishopsPowerLaw::BishopsPowerLaw(std::string name, double const exponent)
+    : m_(exponent)
 {
-    if (!std::holds_alternative<Medium*>(scale_pointer))
+    name_ = std::move(name);
+}
+
+void BishopsPowerLaw::checkScale() const
+{
+    if (!std::holds_alternative<Medium*>(scale_))
     {
         OGS_FATAL(
             "The property 'BishopsPowerLaw' is implemented on the 'media' "
             "scale only.");
     }
-    medium_ = std::get<Medium*>(scale_pointer);
 }
 
 PropertyDataType BishopsPowerLaw::value(

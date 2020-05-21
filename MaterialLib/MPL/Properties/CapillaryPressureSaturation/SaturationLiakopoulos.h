@@ -36,7 +36,6 @@ class Component;
 class SaturationLiakopoulos final : public Property
 {
 private:
-    Medium* medium_ = nullptr;
     /**
       Parameters for Liakopoulos saturation curve taken from:
       Asadi, R., Ataie-Ashtiani, B. (2015): A Comparison of finite volume
@@ -53,16 +52,14 @@ private:
         (1. - residual_liquid_saturation_) / parameter_a_, (1. / parameter_b_));
 
 public:
-    /// This method assigns a pointer to the material object that is the owner
-    /// of this property
-    void setScale(
-        std::variant<Medium*, Phase*, Component*> scale_pointer) override
+    explicit SaturationLiakopoulos(std::string name)
     {
-        if (std::holds_alternative<Medium*>(scale_pointer))
-        {
-            medium_ = std::get<Medium*>(scale_pointer);
-        }
-        else
+        name_ = std::move(name);
+    }
+
+    void checkScale() const override
+    {
+        if (!std::holds_alternative<Medium*>(scale_))
         {
             OGS_FATAL(
                 "The property 'SaturationLiakopoulos' is implemented on the "

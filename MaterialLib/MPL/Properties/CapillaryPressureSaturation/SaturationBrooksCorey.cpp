@@ -23,6 +23,7 @@
 namespace MaterialPropertyLib
 {
 SaturationBrooksCorey::SaturationBrooksCorey(
+    std::string name,
     const double residual_liquid_saturation,
     const double residual_gas_saturation,
     const double exponent,
@@ -30,7 +31,10 @@ SaturationBrooksCorey::SaturationBrooksCorey(
     : residual_liquid_saturation_(residual_liquid_saturation),
       residual_gas_saturation_(residual_gas_saturation),
       exponent_(exponent),
-      entry_pressure_(entry_pressure){};
+      entry_pressure_(entry_pressure)
+{
+    name_ = std::move(name);
+};
 
 PropertyDataType SaturationBrooksCorey::value(
     VariableArray const& variable_array,
@@ -70,8 +74,12 @@ PropertyDataType SaturationBrooksCorey::dValue(
         std::get<double>(
             variable_array[static_cast<int>(Variable::capillary_pressure)]));
 
-    auto const s_L = medium_->property(PropertyType::saturation)
-                         .template value<double>(variable_array, pos, t, dt);
+    auto const s_L = std::visit(
+        [&variable_array, &pos, t, dt](auto&& scale) -> double {
+            return scale->property(PropertyType::saturation)
+                .template value<double>(variable_array, pos, t, dt);
+        },
+        scale_);
 
     const double lambda = exponent_;
     const double ds_L_d_s_eff = 1. / (s_L_max - s_L_res);

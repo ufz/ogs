@@ -13,9 +13,10 @@
 namespace MaterialPropertyLib
 {
 DupuitPermeability::DupuitPermeability(
-    ParameterLib::Parameter<double> const& parameter)
+    std::string name, ParameterLib::Parameter<double> const& parameter)
     : parameter_(parameter)
 {
+    name_ = std::move(name);
 }
 
 PropertyDataType DupuitPermeability::value(

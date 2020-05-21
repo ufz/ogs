@@ -16,10 +16,9 @@ namespace MaterialPropertyLib
 class BishopsPowerLaw final : public Property
 {
 public:
-    explicit BishopsPowerLaw(double const exponent);
+    BishopsPowerLaw(std::string name, double const exponent);
 
-    void setScale(
-        std::variant<Medium*, Phase*, Component*> scale_pointer) override;
+    void checkScale() const override;
 
     PropertyDataType value(VariableArray const& variable_array,
                            ParameterLib::SpatialPosition const& /*pos*/,
@@ -32,7 +31,6 @@ public:
                             double const /*dt*/) const override;
 
 private:
-    Medium* medium_ = nullptr;
     double const m_;  //< Exponent.
 };
 }  // namespace MaterialPropertyLib

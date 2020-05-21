@@ -20,7 +20,12 @@ std::unique_ptr<ExponentialProperty> createExponentialProperty(
 {
     //! \ogs_file_param{properties__property__type}
     config.checkConfigParameter("type", "Exponential");
-    DBUG("Create Exponential property");
+
+    // Second access for storage.
+    //! \ogs_file_param{properties__property__name}
+    auto property_name = config.peekConfigParameter<std::string>("name");
+
+    DBUG("Create Exponential property {:s}.", property_name);
     auto const reference_value =
         //! \ogs_file_param{properties__property__ExponentialProperty__reference_value}
         config.getConfigParameter<double>("reference_value");
@@ -46,6 +51,6 @@ std::unique_ptr<ExponentialProperty> createExponentialProperty(
         exp_data_type, reference_condition, factor};
 
     return std::make_unique<MaterialPropertyLib::ExponentialProperty>(
-        reference_value, exp_data);
+        std::move(property_name), reference_value, exp_data);
 }
 }  // namespace MaterialPropertyLib

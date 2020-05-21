@@ -29,23 +29,17 @@ private:
     double const S_L_max_;
     double const k_rel_min_;
     double const m_;
-    Medium* medium_ = nullptr;
 
 public:
-    RelPermVanGenuchten(double const residual_liquid_saturation,
+    RelPermVanGenuchten(std::string name,
+                        double const residual_liquid_saturation,
                         double const residual_gas_saturation,
                         double const min_relative_permeability_liquid,
                         double const exponent);
-    /// This method assigns a pointer to the material object that is the owner
-    /// of this property
-    void setScale(
-        std::variant<Medium*, Phase*, Component*> scale_pointer) override
+
+    void checkScale() const override
     {
-        if (std::holds_alternative<Medium*>(scale_pointer))
-        {
-            medium_ = std::get<Medium*>(scale_pointer);
-        }
-        else
+        if (!std::holds_alternative<Medium*>(scale_))
         {
             OGS_FATAL(
                 "The property 'RelativePermeabilityVanGenuchten' is "

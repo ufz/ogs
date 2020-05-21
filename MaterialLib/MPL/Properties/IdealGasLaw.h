@@ -31,20 +31,12 @@ class Component;
 class IdealGasLaw final : public Property
 {
 public:
-    /// This method assigns a pointer to the material object that is the owner
-    /// of this property
-    void setScale(
-        std::variant<Medium*, Phase*, Component*> scale_pointer) override
+    explicit IdealGasLaw(std::string name);
+
+    void checkScale() const override
     {
-        if (std::holds_alternative<Phase*>(scale_pointer))
-        {
-            phase_ = std::get<Phase*>(scale_pointer);
-        }
-        else if (std::holds_alternative<Component*>(scale_pointer))
-        {
-            component_ = std::get<Component*>(scale_pointer);
-        }
-        else
+        if (!(std::holds_alternative<Phase*>(scale_) ||
+              std::holds_alternative<Component*>(scale_)))
         {
             OGS_FATAL(
                 "The property 'IdealGasLaw' is implemented on the "
@@ -67,10 +59,6 @@ public:
                              Variable const variable1, Variable const variable2,
                              ParameterLib::SpatialPosition const& pos,
                              double const t, double const dt) const override;
-
-private:
-    Phase* phase_ = nullptr;
-    Component* component_ = nullptr;
 };
 
 }  // namespace MaterialPropertyLib

@@ -31,7 +31,6 @@ class Component;
 class RelPermBrooksCorey final : public Property
 {
 private:
-    Medium* medium_ = nullptr;
     const double residual_liquid_saturation_;
     const double residual_gas_saturation_;
     const double min_relative_permeability_liquid_;
@@ -39,22 +38,17 @@ private:
     const double exponent_;
 
 public:
-    RelPermBrooksCorey(const double /*residual_liquid_saturation*/,
+    RelPermBrooksCorey(std::string name,
+                       const double /*residual_liquid_saturation*/,
                        const double /*residual_gas_saturation*/,
                        const double /*min_relative_permeability_liquid_*/,
                        const double /*min_relative_permeability_gas_*/,
                        const double /*exponent*/
     );
-    /// This method assigns a pointer to the material object that is the owner
-    /// of this property
-    void setScale(
-        std::variant<Medium*, Phase*, Component*> scale_pointer) override
+
+    void checkScale() const override
     {
-        if (std::holds_alternative<Medium*>(scale_pointer))
-        {
-            medium_ = std::get<Medium*>(scale_pointer);
-        }
-        else
+        if (!std::holds_alternative<Medium*>(scale_))
         {
             OGS_FATAL(
                 "The property 'RelPermBrooksCorey' is implemented on the "

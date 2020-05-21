@@ -51,6 +51,12 @@ Component const& Phase::component(std::string const& name) const
 
 Property const& Phase::property(PropertyType const& p) const
 {
+    Property const* const property = properties_[p].get();
+    if (property == nullptr)
+    {
+        OGS_FATAL("Trying to access undefined property '{:s}' of phase {:s}",
+                  property_enum_to_string[p], name);
+    }
     return *properties_[p];
 }
 

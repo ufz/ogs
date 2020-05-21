@@ -21,7 +21,8 @@ TEST(MaterialPropertyLib, ExponentialProperty)
     double const factor = 1 / 75.0;
     MaterialPropertyLib::ExponentData const exp_data{
         MaterialPropertyLib::Variable::temperature, reference_condition, factor};
-    MaterialPropertyLib::ExponentialProperty exp_property{y_ref, exp_data};
+    MaterialPropertyLib::ExponentialProperty exp_property{"exponential", y_ref,
+                                                          exp_data};
 
     MaterialPropertyLib::VariableArray variable_array;
     variable_array[static_cast<int>(

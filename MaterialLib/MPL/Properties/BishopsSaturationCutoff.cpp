@@ -11,21 +11,21 @@
 
 namespace MaterialPropertyLib
 {
-BishopsSaturationCutoff::BishopsSaturationCutoff(double const cutoff_value)
+BishopsSaturationCutoff::BishopsSaturationCutoff(std::string name,
+                                                 double const cutoff_value)
     : S_L_max_(cutoff_value)
 {
+    name_ = std::move(name);
 }
 
-void BishopsSaturationCutoff::setScale(
-    std::variant<Medium*, Phase*, Component*> scale_pointer)
+void BishopsSaturationCutoff::checkScale() const
 {
-    if (!std::holds_alternative<Medium*>(scale_pointer))
+    if (!std::holds_alternative<Medium*>(scale_))
     {
         OGS_FATAL(
             "The property 'BishopsSaturationCutoff' is implemented on the "
             "'media' scale only.");
     }
-    medium_ = std::get<Medium*>(scale_pointer);
 }
 
 PropertyDataType BishopsSaturationCutoff::value(

@@ -18,10 +18,9 @@ namespace MaterialPropertyLib
 class BishopsSaturationCutoff final : public Property
 {
 public:
-    explicit BishopsSaturationCutoff(double const cutoff_value);
+    BishopsSaturationCutoff(std::string name, double const cutoff_value);
 
-    void setScale(
-        std::variant<Medium*, Phase*, Component*> scale_pointer) override;
+    void checkScale() const override;
 
     PropertyDataType value(VariableArray const& variable_array,
                            ParameterLib::SpatialPosition const& /*pos*/,
@@ -34,7 +33,6 @@ public:
                             double const /*dt*/) const override;
 
 private:
-    Medium* medium_ = nullptr;
     double const S_L_max_;  //< Maximum saturation cutoff value.
 };
 }  // namespace MaterialPropertyLib

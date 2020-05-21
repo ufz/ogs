@@ -18,7 +18,9 @@
 namespace MaterialPropertyLib
 {
 SaturationDependentSwelling::SaturationDependentSwelling(
-    std::array<double, 3> swelling_pressures,
+    std::string name,
+    std::array<double, 3>
+        swelling_pressures,
     std::array<double, 3>
         exponents,
     double const lower_saturation_limit,
@@ -30,27 +32,24 @@ SaturationDependentSwelling::SaturationDependentSwelling(
       S_max_(upper_saturation_limit),
       local_coordinate_system_(local_coordinate_system)
 {
+    name_ = std::move(name);
 }
 
-void SaturationDependentSwelling::setScale(
-    std::variant<Medium*, Phase*, Component*> scale_pointer)
+void SaturationDependentSwelling::checkScale() const
 {
-    if (std::holds_alternative<Phase*>(scale_pointer))
-    {
-        phase_ = std::get<Phase*>(scale_pointer);
-        if (phase_->name != "Solid")
-        {
-            OGS_FATAL(
-                "The property 'SaturationDependentSwelling' must be "
-                "given in the 'Solid' phase, not in '{:s}' phase.",
-                phase_->name);
-        }
-    }
-    else
+    if (!std::holds_alternative<Phase*>(scale_))
     {
         OGS_FATAL(
             "The property 'SaturationDependentSwelling' is "
             "implemented on the 'phase' scales only.");
+    }
+    auto const phase = std::get<Phase*>(scale_);
+    if (phase->name != "Solid")
+    {
+        OGS_FATAL(
+            "The property 'SaturationDependentSwelling' must be given in the "
+            "'Solid' phase, not in '{:s}' phase.",
+            phase->name);
     }
 }
 

@@ -47,7 +47,6 @@ s^{\mathrm{r}}_{\mathrm{L}}}\f]
 class RelPermLiakopoulos final : public Property
 {
 private:
-    Medium* medium_ = nullptr;
     /**
     Parameters for Liakopoulos relative permeability:
     Asadi, R., Ataie-Ashtiani, B. (2015): A Comparison of finite volume
@@ -67,16 +66,11 @@ private:
         1. / (maximal_liquid_saturation_ - residual_liquid_saturation_);
 
 public:
-    /// This method assigns a pointer to the meterial object that is the owner
-    /// of this property
-    void setScale(
-        std::variant<Medium*, Phase*, Component*> scale_pointer) override
+    explicit RelPermLiakopoulos(std::string name);
+
+    void checkScale() const override
     {
-        if (std::holds_alternative<Medium*>(scale_pointer))
-        {
-            medium_ = std::get<Medium*>(scale_pointer);
-        }
-        else
+        if (!std::holds_alternative<Medium*>(scale_))
         {
             OGS_FATAL(
                 "The property 'RelPermLiakopoulos' is implemented on the "

@@ -46,21 +46,20 @@ class Component;
 class SaturationVanGenuchten final : public Property
 {
 public:
-    SaturationVanGenuchten(double const residual_liquid_saturation,
+    SaturationVanGenuchten(std::string name,
+                           double const residual_liquid_saturation,
                            double const residual_gas_saturation,
                            double const exponent,
                            double const p_b);
 
-    void setScale(
-        std::variant<Medium*, Phase*, Component*> scale_pointer) override
+    void checkScale() const override
     {
-        if (!std::holds_alternative<Medium*>(scale_pointer))
+        if (!std::holds_alternative<Medium*>(scale_))
         {
             OGS_FATAL(
                 "The property 'SaturationVanGenuchten' is implemented on the "
                 "'media' scale only.");
         }
-        medium_ = std::get<Medium*>(scale_pointer);
     }
 
     /// Those methods override the base class implementations and
@@ -81,7 +80,6 @@ public:
                              double const /*dt*/) const override;
 
 private:
-    Medium* medium_ = nullptr;
     double const S_L_res_;
     double const S_L_max_;
     double const m_;

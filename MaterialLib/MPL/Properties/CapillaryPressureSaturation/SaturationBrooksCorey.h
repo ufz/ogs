@@ -30,28 +30,26 @@ class Component;
 class SaturationBrooksCorey final : public Property
 {
 private:
-    Medium* medium_ = nullptr;
     const double residual_liquid_saturation_;
     const double residual_gas_saturation_;
     const double exponent_;
     const double entry_pressure_;
 
 public:
-    SaturationBrooksCorey(const double residual_liquid_saturation,
+    SaturationBrooksCorey(std::string name,
+                          const double residual_liquid_saturation,
                           const double residual_gas_saturation,
                           const double exponent,
                           const double entry_pressure);
 
-    void setScale(
-        std::variant<Medium*, Phase*, Component*> scale_pointer) override
+    void checkScale() const override
     {
-        if (!std::holds_alternative<Medium*>(scale_pointer))
+        if (!std::holds_alternative<Medium*>(scale_))
         {
             OGS_FATAL(
                 "The property 'SaturationBrooksCorey' is implemented on the "
                 "'media' scale only.");
         }
-        medium_ = std::get<Medium*>(scale_pointer);
     }
 
     /// Those methods override the base class implementations and

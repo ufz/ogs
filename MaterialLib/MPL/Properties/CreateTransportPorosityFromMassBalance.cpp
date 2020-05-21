@@ -22,7 +22,13 @@ createTransportPorosityFromMassBalance(
 {
     //! \ogs_file_param{properties__property__type}
     config.checkConfigParameter("type", "TransportPorosityFromMassBalance");
-    DBUG("Create TransportPorosityFromMassBalance medium property");
+
+    // Second access for storage.
+    //! \ogs_file_param{properties__property__name}
+    auto property_name = config.peekConfigParameter<std::string>("name");
+
+    DBUG("Create TransportPorosityFromMassBalance medium property {:s}.",
+         property_name);
 
     std::string const& parameter_name =
         //! \ogs_file_param{properties__property__TransportPorosityFromMassBalance__initial_porosity}
@@ -37,6 +43,6 @@ createTransportPorosityFromMassBalance(
     auto const& phi_max = config.getConfigParameter<double>("maximal_porosity");
 
     return std::make_unique<TransportPorosityFromMassBalance>(
-        initial_porosity, phi_min, phi_max);
+        std::move(property_name), initial_porosity, phi_min, phi_max);
 }
 }  // namespace MaterialPropertyLib

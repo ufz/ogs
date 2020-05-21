@@ -17,13 +17,18 @@ std::unique_ptr<BishopsSaturationCutoff> createBishopsSaturationCutoff(
 {
     //! \ogs_file_param{properties__property__type}
     config.checkConfigParameter("type", "BishopsSaturationCutoff");
-    DBUG("Create BishopsSaturationCutoff property");
+
+    // Second access for storage.
+    //! \ogs_file_param{properties__property__name}
+    auto property_name = config.peekConfigParameter<std::string>("name");
+
+    DBUG("Create BishopsSaturationCutoff property {:s}.", property_name);
 
     auto const cutoff_value =
         //! \ogs_file_param{properties__property__BishopsSaturationCutoff__cutoff_value}
         config.getConfigParameter<double>("cutoff_value");
 
     return std::make_unique<MaterialPropertyLib::BishopsSaturationCutoff>(
-        cutoff_value);
+        std::move(property_name), cutoff_value);
 }
 }  // namespace MaterialPropertyLib

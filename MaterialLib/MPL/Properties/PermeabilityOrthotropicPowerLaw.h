@@ -35,7 +35,6 @@ template <int DisplacementDim>
 class PermeabilityOrthotropicPowerLaw final : public Property
 {
 private:
-    Phase* phase_ = nullptr;
     /// Intrinsic permeabilities, one for each spatial dimension.
     std::array<double, DisplacementDim> const k_;
     /// Exponents, one for each spatial dimension.
@@ -44,13 +43,14 @@ private:
 
 public:
     PermeabilityOrthotropicPowerLaw(
-        std::array<double, DisplacementDim> intrinsic_permeabilities,
+        std::string name,
+        std::array<double, DisplacementDim>
+            intrinsic_permeabilities,
         std::array<double, DisplacementDim>
             exponents,
         ParameterLib::CoordinateSystem const* const local_coordinate_system);
 
-    void setScale(
-        std::variant<Medium*, Phase*, Component*> scale_pointer) override;
+    void checkScale() const override;
 
     PropertyDataType value(VariableArray const& variable_array,
                            ParameterLib::SpatialPosition const& pos,

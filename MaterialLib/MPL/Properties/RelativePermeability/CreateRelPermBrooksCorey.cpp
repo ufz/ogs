@@ -18,7 +18,12 @@ std::unique_ptr<RelPermBrooksCorey> createRelPermBrooksCorey(
 {
     //! \ogs_file_param{properties__property__type}
     config.checkConfigParameter("type", "RelPermBrooksCorey");
-    DBUG("Create RelPermBrooksCorey medium property");
+
+    // Second access for storage.
+    //! \ogs_file_param{properties__property__name}
+    auto property_name = config.peekConfigParameter<std::string>("name");
+
+    DBUG("Create RelPermBrooksCorey medium property {:s}.", property_name);
 
     auto const residual_liquid_saturation =
         //! \ogs_file_param{properties__property__RelPermBrooksCorey__residual_liquid_saturation}
@@ -41,6 +46,7 @@ std::unique_ptr<RelPermBrooksCorey> createRelPermBrooksCorey(
     }
 
     return std::make_unique<RelPermBrooksCorey>(
+        std::move(property_name),
         residual_liquid_saturation,
         residual_gas_saturation,
         min_relative_permeability_liquid,

@@ -22,9 +22,8 @@ namespace MaterialPropertyLib
 class ParameterProperty final : public Property
 {
 public:
-    /// This constructor accepts a Parameter.
-    explicit ParameterProperty(
-        ParameterLib::Parameter<double> const& parameter);
+    ParameterProperty(std::string name,
+                      ParameterLib::Parameter<double> const& parameter);
 
     /// This method computes the value of a property depending linearly on
     /// the value of the given primary variable.

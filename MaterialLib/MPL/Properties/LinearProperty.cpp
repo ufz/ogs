@@ -14,10 +14,12 @@
 
 namespace MaterialPropertyLib
 {
-LinearProperty::LinearProperty(PropertyDataType const& property_reference_value,
+LinearProperty::LinearProperty(std::string name,
+                               PropertyDataType const& property_reference_value,
                                std::vector<IndependentVariable> const& vs)
     : independent_variables_(vs)
 {
+    name_ = std::move(name);
     value_ = property_reference_value;
 }
 

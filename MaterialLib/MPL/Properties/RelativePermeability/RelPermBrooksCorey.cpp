@@ -22,6 +22,7 @@
 namespace MaterialPropertyLib
 {
 RelPermBrooksCorey::RelPermBrooksCorey(
+    std::string name,
     const double residual_liquid_saturation,
     const double residual_gas_saturation,
     const double min_relative_permeability_liquid,
@@ -31,7 +32,10 @@ RelPermBrooksCorey::RelPermBrooksCorey(
       residual_gas_saturation_(residual_gas_saturation),
       min_relative_permeability_liquid_(min_relative_permeability_liquid),
       min_relative_permeability_gas_(min_relative_permeability_gas),
-      exponent_(exponent){};
+      exponent_(exponent)
+{
+    name_ = std::move(name);
+};
 
 PropertyDataType RelPermBrooksCorey::value(
     VariableArray const& variable_array,
@@ -42,8 +46,12 @@ PropertyDataType RelPermBrooksCorey::value(
     /// correct value. In order to speed up the computing time, saturation could
     /// be insertred into the primary variable array after it is computed in the
     /// FEM assembly.
-    auto const s_L = medium_->property(PropertyType::saturation)
-                         .template value<double>(variable_array, pos, t, dt);
+    auto const s_L = std::visit(
+        [&variable_array, &pos, t, dt](auto&& scale) -> double {
+            return scale->property(PropertyType::saturation)
+                .template value<double>(variable_array, pos, t, dt);
+        },
+        scale_);
 
     auto const s_L_res = residual_liquid_saturation_;
     auto const s_L_max = 1. - residual_gas_saturation_;
@@ -81,8 +89,16 @@ PropertyDataType RelPermBrooksCorey::dValue(
     assert((primary_variable == Variable::liquid_saturation) &&
            "RelPermBrooksCorey::dValue is implemented for "
            " derivatives with respect to liquid saturation only.");
-    auto const s_L = medium_->property(PropertyType::saturation)
-                         .template value<double>(variable_array, pos, t, dt);
+    /// here, an extra computation of saturation is forced, guaranteeing a
+    /// correct value. In order to speed up the computing time, saturation could
+    /// be insertred into the primary variable array after it is computed in the
+    /// FEM assembly.
+    auto const s_L = std::visit(
+        [&variable_array, &pos, t, dt](auto&& scale) -> double {
+            return scale->property(PropertyType::saturation)
+                .template value<double>(variable_array, pos, t, dt);
+        },
+        scale_);
 
     auto const s_L_res = residual_liquid_saturation_;
     auto const s_L_max = 1. - residual_gas_saturation_;

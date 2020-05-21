@@ -25,7 +25,7 @@ class CurveProperty final : public Property
 public:
     /// This constructor allows to specify the independent variable of the
     /// curve and the curve itself, i.e., a piecewise linear function.
-    CurveProperty(Variable const independent_variable,
+    CurveProperty(std::string name, Variable const independent_variable,
                   MathLib::PiecewiseLinearInterpolation const& curve);
 
     /// This method computes the value of a property depending linearly on

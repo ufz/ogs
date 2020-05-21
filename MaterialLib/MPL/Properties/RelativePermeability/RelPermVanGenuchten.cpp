@@ -18,6 +18,7 @@
 namespace MaterialPropertyLib
 {
 RelPermVanGenuchten::RelPermVanGenuchten(
+    std::string name,
     double const residual_liquid_saturation,
     double const residual_gas_saturation,
     double const min_relative_permeability_liquid,
@@ -27,6 +28,8 @@ RelPermVanGenuchten::RelPermVanGenuchten(
       k_rel_min_(min_relative_permeability_liquid),
       m_(exponent)
 {
+    name_ = std::move(name);
+
     if (!(m_ > 0 && m_ < 1))
     {
         OGS_FATAL(

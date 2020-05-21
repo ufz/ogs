@@ -19,7 +19,11 @@ std::unique_ptr<SaturationBrooksCorey> createSaturationBrooksCorey(
     //! \ogs_file_param{properties__property__type}
     config.checkConfigParameter("type", "SaturationBrooksCorey");
 
-    DBUG("Create SaturationBrooksCorey medium property");
+    // Second access for storage.
+    //! \ogs_file_param{properties__property__name}
+    auto property_name = config.peekConfigParameter<std::string>("name");
+
+    DBUG("Create SaturationBrooksCorey medium property {:s}.", property_name);
 
     auto const residual_liquid_saturation =
         //! \ogs_file_param{properties__property__SaturationBrooksCorey__residual_liquid_saturation}
@@ -34,8 +38,8 @@ std::unique_ptr<SaturationBrooksCorey> createSaturationBrooksCorey(
         //! \ogs_file_param{properties__property__SaturationBrooksCorey__entry_pressure}
         config.getConfigParameter<double>("entry_pressure");
 
-    return std::make_unique<SaturationBrooksCorey>(residual_liquid_saturation,
-                                                   residual_gas_saturation,
-                                                   exponent, entry_pressure);
+    return std::make_unique<SaturationBrooksCorey>(
+        std::move(property_name), residual_liquid_saturation,
+        residual_gas_saturation, exponent, entry_pressure);
 }
 }  // namespace MaterialPropertyLib

@@ -24,6 +24,6 @@ public:
     /// This constructor accepts single values of any data type defined in the
     /// PropertyDataType definition and sets the protected attribute value_ of
     /// the base class Property to that value.
-    explicit Constant(PropertyDataType const& v);
+    Constant(std::string name, PropertyDataType const& v);
 };
 }  // namespace MaterialPropertyLib

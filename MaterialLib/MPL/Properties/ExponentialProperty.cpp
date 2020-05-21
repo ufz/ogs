@@ -16,9 +16,11 @@
 namespace MaterialPropertyLib
 {
 ExponentialProperty::ExponentialProperty(
-    PropertyDataType const& property_reference_value, ExponentData const& v)
+    std::string name, PropertyDataType const& property_reference_value,
+    ExponentData const& v)
     : exponent_data_(v)
 {
+    name_ = std::move(name);
     value_ = property_reference_value;
 }
 
