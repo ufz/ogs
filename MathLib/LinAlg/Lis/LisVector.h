@@ -58,7 +58,7 @@ public:
     std::size_t getRangeEnd() const { return this->size(); }
 
     // TODO preliminary
-    void setZero() { lis_vector_set_all(0.0, _vec); }
+    void setZero() { lis_vector_set_all(0.0, vec_); }
 
     /// access entry
     double operator[](IndexType rowId) const { return get(rowId); }
@@ -66,27 +66,27 @@ public:
     double get(IndexType rowId) const
     {
         double v = .0;
-        lis_vector_get_value(_vec, rowId, &v);
+        lis_vector_get_value(vec_, rowId, &v);
         return v;
     }
 
     /// set entry
     void set(IndexType rowId, double v)
     {
-        lis_vector_set_value(LIS_INS_VALUE, rowId, v, _vec);
+        lis_vector_set_value(LIS_INS_VALUE, rowId, v, vec_);
     }
 
     /// add entry
     void add(IndexType rowId, double v)
     {
-        lis_vector_set_value(LIS_ADD_VALUE, rowId, v, _vec);
+        lis_vector_set_value(LIS_ADD_VALUE, rowId, v, vec_);
     }
 
     /// printout this equation for debugging
     void write(const std::string& filename) const;
 
     /// return a raw Lis vector object
-    LIS_VECTOR& getRawVector() { return _vec; }
+    LIS_VECTOR& getRawVector() { return vec_; }
 
     ///
     template <class T_SUBVEC>
@@ -102,11 +102,11 @@ public:
     void copyValues(std::vector<double>& u) const
     {
         assert(u.size() == size());
-        lis_vector_get_values(_vec, 0, size(), u.data());
+        lis_vector_get_values(vec_, 0, size(), u.data());
     }
 
 private:
-    LIS_VECTOR _vec;
+    LIS_VECTOR vec_;
 };
 
 }  // MathLib

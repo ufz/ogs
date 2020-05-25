@@ -22,16 +22,16 @@ class TemplateWeightedPoint : public TemplatePoint<FP_T, DIM>
 {
 public:
     TemplateWeightedPoint(std::array<FP_T, DIM> const& x, W_T weight) :
-        TemplatePoint<FP_T, DIM>(x), _weight(weight)
+        TemplatePoint<FP_T, DIM>(x), weight_(weight)
     {}
 
     W_T getWeight() const
     {
-        return _weight;
+        return weight_;
     }
 
 private:
-    W_T const _weight;
+    W_T const weight_;
 };
 
 using WeightedPoint1D = TemplateWeightedPoint<double, double, 1>;

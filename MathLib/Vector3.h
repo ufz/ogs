@@ -38,9 +38,9 @@ public:
 
     TemplateVector3(T x0, T x1, T x2)
     {
-        this->_x[0] = x0;
-        this->_x[1] = x1;
-        this->_x[2] = x2;
+        this->x_[0] = x0;
+        this->x_[1] = x1;
+        this->x_[2] = x2;
     }
 
     /**
@@ -62,27 +62,27 @@ public:
     TemplateVector3(const MathLib::TemplatePoint<T> &a, const MathLib::TemplatePoint<T> &b) :
         MathLib::TemplatePoint<T>()
     {
-        this->_x[0] = b[0] - a[0];
-        this->_x[1] = b[1] - a[1];
-        this->_x[2] = b[2] - a[2];
+        this->x_[0] = b[0] - a[0];
+        this->x_[1] = b[1] - a[1];
+        this->x_[2] = b[2] - a[2];
     }
 
     // vector arithmetic
     TemplateVector3 operator+(TemplateVector3 const& v) const
     {
-        return TemplateVector3(this->_x[0]+v[0], this->_x[1]+v[1], this->_x[2]+v[2]);
+        return TemplateVector3(this->x_[0]+v[0], this->x_[1]+v[1], this->x_[2]+v[2]);
     }
 
     TemplateVector3 operator-(TemplateVector3 const& v) const
     {
-        return TemplateVector3(this->_x[0]-v[0], this->_x[1]-v[1], this->_x[2]-v[2]);
+        return TemplateVector3(this->x_[0]-v[0], this->x_[1]-v[1], this->x_[2]-v[2]);
     }
 
     TemplateVector3& operator+=(TemplateVector3 const& v)
     {
         for (std::size_t i(0); i < 3; i++)
         {
-            this->_x[i] += v[i];
+            this->x_[i] += v[i];
         }
         return *this;
     }
@@ -91,7 +91,7 @@ public:
     {
         for (std::size_t i(0); i < 3; i++)
         {
-            this->_x[i] -= pV[i];
+            this->x_[i] -= pV[i];
         }
         return *this;
     }
@@ -100,7 +100,7 @@ public:
     {
         for (std::size_t i(0); i < 3; i++)
         {
-            this->_x[i] *= s;
+            this->x_[i] *= s;
         }
         return *this;
     }
@@ -113,7 +113,7 @@ public:
         const double s(1/getLength());
         for (std::size_t i(0); i < 3; i++)
         {
-            this->_x[i] *= s;
+            this->x_[i] *= s;
         }
     }
 
@@ -124,7 +124,7 @@ public:
         {
             return TemplateVector3<double>(0, 0, 0);
         }
-        TemplateVector3<double> norm_vec (this->_x[0], this->_x[1], this->_x[2]);
+        TemplateVector3<double> norm_vec (this->x_[0], this->x_[1], this->x_[2]);
         norm_vec.normalize();
         return norm_vec;
     }
@@ -132,7 +132,7 @@ public:
     /// Returns the squared length
     double getSqrLength() const
     {
-        return this->_x[0]*this->_x[0] + this->_x[1]*this->_x[1] + this->_x[2]*this->_x[2];
+        return this->x_[0]*this->x_[0] + this->x_[1]*this->x_[1] + this->x_[2]*this->x_[2];
     }
 
     /// Returns the length
@@ -166,7 +166,7 @@ public:
 template <typename T>
 T scalarProduct(TemplateVector3<T> const& v, TemplateVector3<T> const& w)
 {
-    return v._x[0] * w._x[0] + v._x[1] * w._x[1] + v._x[2] * w._x[2];
+    return v.x_[0] * w.x_[0] + v.x_[1] * w.x_[1] + v.x_[2] * w.x_[2];
 }
 
 template <typename T1>
@@ -175,9 +175,9 @@ TemplateVector3<T1> crossProduct(
         TemplateVector3<T1> const& w)
 {
     return TemplateVector3<T1>(
-            v._x[1] * w._x[2] - v._x[2] * w._x[1],
-            v._x[2] * w._x[0] - v._x[0] * w._x[2],
-            v._x[0] * w._x[1] - v._x[1] * w._x[0]);
+            v.x_[1] * w.x_[2] - v.x_[2] * w.x_[1],
+            v.x_[2] * w.x_[0] - v.x_[0] * w.x_[2],
+            v.x_[0] * w.x_[1] - v.x_[1] * w.x_[0]);
 }
 
 template <typename T1> TemplateVector3<T1> operator*(
