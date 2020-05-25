@@ -47,17 +47,17 @@ namespace MeshLib
 namespace IO
 {
 NodePartitionedMeshReader::NodePartitionedMeshReader(MPI_Comm comm)
-    : _mpi_comm(comm)
+    : mpi_comm_(comm)
 {
-    MPI_Comm_size(_mpi_comm, &_mpi_comm_size);
-    MPI_Comm_rank(_mpi_comm, &_mpi_rank);
+    MPI_Comm_size(mpi_comm_, &mpi_comm_size_);
+    MPI_Comm_rank(mpi_comm_, &mpi_rank_);
 
     registerNodeDataMpiType();
 }
 
 NodePartitionedMeshReader::~NodePartitionedMeshReader()
 {
-    MPI_Type_free(&_mpi_node_type);
+    MPI_Type_free(&mpi_node_type_);
 }
 
 void NodePartitionedMeshReader::registerNodeDataMpiType()
@@ -67,8 +67,8 @@ void NodePartitionedMeshReader::registerNodeDataMpiType()
     MPI_Datatype types[count] = {MPI_UNSIGNED_LONG, MPI_DOUBLE};
     MPI_Aint displacements[count] = {0, sizeof(NodeData::index)};
 
-    MPI_Type_create_struct(count, blocks, displacements, types, &_mpi_node_type);
-    MPI_Type_commit(&_mpi_node_type);
+    MPI_Type_create_struct(count, blocks, displacements, types, &mpi_node_type_);
+    MPI_Type_commit(&mpi_node_type_);
 }
 
 MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::read(
@@ -81,7 +81,7 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::read(
 
     // Always try binary file first
     std::string const fname_new = file_name_base + "_partitioned_msh_cfg" +
-        std::to_string(_mpi_comm_size) + ".bin";
+        std::to_string(mpi_comm_size_) + ".bin";
 
     if(!BaseLib::IsFileExisting(fname_new)) // doesn't exist binary file.
     {
@@ -98,7 +98,7 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::read(
 
     INFO("[time] Reading the mesh took {:f} s.", timer.elapsed());
 
-    MPI_Barrier(_mpi_comm);
+    MPI_Barrier(mpi_comm_);
 
     return mesh;
 }
@@ -119,7 +119,7 @@ NodePartitionedMeshReader::readBinaryDataFromFile(std::string const& filename,
     MPI_File file;
 
     char* filename_char = const_cast<char*>(filename.data());
-    int const file_status = MPI_File_open(_mpi_comm, filename_char,
+    int const file_status = MPI_File_open(mpi_comm_, filename_char,
             MPI_MODE_RDONLY, MPI_INFO_NULL, &file);
 
     if(file_status != 0)
@@ -146,20 +146,20 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readBinary(
     //----------------------------------------------------------------------------------
     // Read headers
     const std::string fname_header = file_name_base +  "_partitioned_msh_";
-    const std::string fname_num_p_ext = std::to_string(_mpi_comm_size) + ".bin";
+    const std::string fname_num_p_ext = std::to_string(mpi_comm_size_) + ".bin";
 
     if (!readBinaryDataFromFile(fname_header + "cfg" + fname_num_p_ext,
         static_cast<MPI_Offset>(
-            static_cast<unsigned>(_mpi_rank) * sizeof(_mesh_info)),
-        MPI_LONG, _mesh_info))
+            static_cast<unsigned>(mpi_rank_) * sizeof(mesh_info_)),
+        MPI_LONG, mesh_info_))
         return nullptr;
 
     //----------------------------------------------------------------------------------
     // Read Nodes
-    std::vector<NodeData> nodes(_mesh_info.nodes);
+    std::vector<NodeData> nodes(mesh_info_.nodes);
 
     if (!readBinaryDataFromFile(fname_header + "nod" + fname_num_p_ext,
-        static_cast<MPI_Offset>(_mesh_info.offset[2]), _mpi_node_type, nodes))
+        static_cast<MPI_Offset>(mesh_info_.offset[2]), mpi_node_type_, nodes))
         return nullptr;
 
     std::vector<MeshLib::Node*> mesh_nodes;
@@ -169,22 +169,22 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readBinary(
     //----------------------------------------------------------------------------------
     // Read non-ghost elements
     std::vector<unsigned long> elem_data(
-        _mesh_info.regular_elements + _mesh_info.offset[0]);
+        mesh_info_.regular_elements + mesh_info_.offset[0]);
     if (!readBinaryDataFromFile(fname_header + "ele" + fname_num_p_ext,
-        static_cast<MPI_Offset>(_mesh_info.offset[3]), MPI_LONG, elem_data))
+        static_cast<MPI_Offset>(mesh_info_.offset[3]), MPI_LONG, elem_data))
         return nullptr;
 
     std::vector<MeshLib::Element*> mesh_elems(
-        _mesh_info.regular_elements + _mesh_info.ghost_elements);
+        mesh_info_.regular_elements + mesh_info_.ghost_elements);
     setElements(mesh_nodes, elem_data, mesh_elems);
 
     //----------------------------------------------------------------------------------
     //Read ghost element
     std::vector<unsigned long> ghost_elem_data(
-        _mesh_info.ghost_elements + _mesh_info.offset[1]);
+        mesh_info_.ghost_elements + mesh_info_.offset[1]);
 
     if (!readBinaryDataFromFile(fname_header + "ele_g" + fname_num_p_ext,
-        static_cast<MPI_Offset>(_mesh_info.offset[4]), MPI_LONG, ghost_elem_data))
+        static_cast<MPI_Offset>(mesh_info_.offset[4]), MPI_LONG, ghost_elem_data))
         return nullptr;
 
     const bool process_ghost = true;
@@ -215,7 +215,7 @@ void NodePartitionedMeshReader::readPropertiesBinary(
         t == MeshLib::MeshItemType::Node ? "node" : "cell";
     const std::string fname_cfg = file_name_base + "_partitioned_" + item_type +
                                   "_properties_cfg" +
-                                  std::to_string(_mpi_comm_size) + ".bin";
+                                  std::to_string(mpi_comm_size_) + ".bin";
     std::ifstream is(fname_cfg.c_str(), std::ios::binary | std::ios::in);
     if (!is)
     {
@@ -243,14 +243,14 @@ void NodePartitionedMeshReader::readPropertiesBinary(
     }
     for (std::size_t i(0); i < number_of_properties; ++i)
     {
-        DBUG("[{:d}] +++++++++++++", _mpi_rank);
+        DBUG("[{:d}] +++++++++++++", mpi_rank_);
         MeshLib::IO::writePropertyVectorMetaData(*(vec_pvmd[i]));
-        DBUG("[{:d}] +++++++++++++", _mpi_rank);
+        DBUG("[{:d}] +++++++++++++", mpi_rank_);
     }
     auto pos = is.tellg();
     auto offset =
         static_cast<long>(pos) +
-        static_cast<long>(_mpi_rank *
+        static_cast<long>(mpi_rank_ *
                           sizeof(MeshLib::IO::PropertyVectorPartitionMetaData));
     is.seekg(offset);
     boost::optional<MeshLib::IO::PropertyVectorPartitionMetaData> pvpmd(
@@ -258,22 +258,22 @@ void NodePartitionedMeshReader::readPropertiesBinary(
     bool pvpmd_read_ok = static_cast<bool>(pvpmd);
     bool all_pvpmd_read_ok;
     MPI_Allreduce(&pvpmd_read_ok, &all_pvpmd_read_ok, 1, MPI_C_BOOL, MPI_LOR,
-                  _mpi_comm);
+                  mpi_comm_);
     if (!all_pvpmd_read_ok)
     {
         OGS_FATAL(
             "Error in NodePartitionedMeshReader::readPropertiesBinary: "
             "Could not read the partition meta data for the mpi process {:d}",
-            _mpi_rank);
+            mpi_rank_);
     }
-    DBUG("[{:d}] offset in the PropertyVector: {:d}", _mpi_rank, pvpmd->offset);
-    DBUG("[{:d}] {:d} tuples in partition.", _mpi_rank,
+    DBUG("[{:d}] offset in the PropertyVector: {:d}", mpi_rank_, pvpmd->offset);
+    DBUG("[{:d}] {:d} tuples in partition.", mpi_rank_,
          pvpmd->number_of_tuples);
     is.close();
 
     const std::string fname_val = file_name_base + "_partitioned_" + item_type +
                                   "_properties_val" +
-                                  std::to_string(_mpi_comm_size) + ".bin";
+                                  std::to_string(mpi_comm_size_) + ".bin";
     is.open(fname_val.c_str(), std::ios::binary | std::ios::in);
     if (!is)
     {
@@ -301,7 +301,7 @@ void NodePartitionedMeshReader::readDomainSpecificPartOfPropertyVectors(
         DBUG(
             "[{:d}] global offset: {:d}, offset within the PropertyVector: "
             "{:d}.",
-            _mpi_rank, global_offset,
+            mpi_rank_, global_offset,
             global_offset +
                 pvpmd.offset * vec_pvmd[i]->data_type_size_in_bytes);
         if (vec_pvmd[i]->is_int_type)
@@ -347,7 +347,7 @@ bool NodePartitionedMeshReader::openASCIIFiles(
     std::ifstream& is_node, std::ifstream& is_elem) const
 {
     const std::string fname_header = file_name_base +  "_partitioned_";
-    const std::string fname_num_p_ext = std::to_string(_mpi_comm_size) + ".msh";
+    const std::string fname_num_p_ext = std::to_string(mpi_comm_size_) + ".msh";
 
     {   // Configuration.
         std::string const filename = fname_header + "cfg" + fname_num_p_ext;
@@ -364,7 +364,7 @@ bool NodePartitionedMeshReader::openASCIIFiles(
         int num_parts;
         is_cfg >> num_parts >> std::ws;
 
-        if(num_parts != _mpi_comm_size)
+        if(num_parts != mpi_comm_size_)
         {
             ERR("Aborting computation because of number of cores"
                 "/ subdomains mismatch.");
@@ -402,17 +402,17 @@ bool NodePartitionedMeshReader::readCastNodesASCII(std::ifstream& is_node,
     int const message_tag = 0;
 
     // MPI_Send/Recv can handle only int. Check for overflow.
-    if (!is_safely_convertable<unsigned long, int>(_mesh_info.nodes))
+    if (!is_safely_convertable<unsigned long, int>(mesh_info_.nodes))
     {
         ERR("Too large number of nodes to read.");
         return false;
     }
 
-    std::vector<NodeData> nodes(_mesh_info.nodes);
+    std::vector<NodeData> nodes(mesh_info_.nodes);
 
-    if(_mpi_rank == 0)
+    if(mpi_rank_ == 0)
     {
-        for(unsigned long k = 0; k < _mesh_info.nodes; k++)
+        for(unsigned long k = 0; k < mesh_info_.nodes; k++)
         {
             NodeData &node = nodes[k];
             is_node >> node.index >> node.x >> node.y >> node.z >> std::ws;
@@ -421,13 +421,13 @@ bool NodePartitionedMeshReader::readCastNodesASCII(std::ifstream& is_node,
         if(part_id == 0)
             setNodes(nodes, mesh_nodes, glb_node_ids);
         else
-            MPI_Send(nodes.data(), static_cast<int>(_mesh_info.nodes),
-                _mpi_node_type, part_id, message_tag, _mpi_comm);
+            MPI_Send(nodes.data(), static_cast<int>(mesh_info_.nodes),
+                mpi_node_type_, part_id, message_tag, mpi_comm_);
     }
-    else if(_mpi_rank == part_id)
+    else if(mpi_rank_ == part_id)
     {
-        MPI_Recv(nodes.data(), static_cast<int>(_mesh_info.nodes),
-            _mpi_node_type, 0, message_tag, _mpi_comm, MPI_STATUS_IGNORE);
+        MPI_Recv(nodes.data(), static_cast<int>(mesh_info_.nodes),
+            mpi_node_type_, 0, message_tag, mpi_comm_, MPI_STATUS_IGNORE);
         setNodes(nodes, mesh_nodes, glb_node_ids);
     }
 
@@ -449,7 +449,7 @@ bool NodePartitionedMeshReader::readCastElemsASCII(std::ifstream& is_elem,
     }
 
     std::vector<unsigned long> elem_data(data_size);
-    if(_mpi_rank == 0)
+    if(mpi_rank_ == 0)
     {
         readElementASCII(is_elem, elem_data, process_ghost);
 
@@ -457,21 +457,21 @@ bool NodePartitionedMeshReader::readCastElemsASCII(std::ifstream& is_elem,
         {
             if(!process_ghost)
                 mesh_elems.resize(
-                    _mesh_info.regular_elements + _mesh_info.ghost_elements);
+                    mesh_info_.regular_elements + mesh_info_.ghost_elements);
             setElements(mesh_nodes, elem_data, mesh_elems, process_ghost);
         }
         else
             MPI_Send(elem_data.data(), static_cast<int>(data_size), MPI_LONG,
-                part_id, message_tag, _mpi_comm);
+                part_id, message_tag, mpi_comm_);
     }
-    else if(_mpi_rank == part_id)
+    else if(mpi_rank_ == part_id)
     {
         MPI_Recv(elem_data.data(), static_cast<int>(data_size), MPI_LONG,
-            0, message_tag, _mpi_comm, MPI_STATUS_IGNORE);
+            0, message_tag, mpi_comm_, MPI_STATUS_IGNORE);
 
         if(!process_ghost)
             mesh_elems.resize(
-                _mesh_info.regular_elements + _mesh_info.ghost_elements);
+                mesh_info_.regular_elements + mesh_info_.ghost_elements);
         setElements(mesh_nodes, elem_data, mesh_elems, process_ghost);
     }
 
@@ -486,7 +486,7 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readASCII(
     std::ifstream is_elem;
 
     bool file_opened = false;
-    if(_mpi_rank == 0)
+    if(mpi_rank_ == 0)
     {
         file_opened = openASCIIFiles(file_name_base, is_cfg, is_node, is_elem);
 
@@ -498,7 +498,7 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readASCII(
         }
     }
 
-    MPI_Bcast(&file_opened, 1, MPI_INT, 0, _mpi_comm);
+    MPI_Bcast(&file_opened, 1, MPI_INT, 0, mpi_comm_);
 
     if(!file_opened)
         return nullptr;
@@ -508,21 +508,21 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readASCII(
     std::vector<unsigned long> glb_node_ids;
     std::vector<MeshLib::Element*> mesh_elems;
 
-    for(int i = 0; i < _mpi_comm_size; i++)
+    for(int i = 0; i < mpi_comm_size_; i++)
     {
-        if(_mpi_rank == 0)
+        if(mpi_rank_ == 0)
         {
-            // Read first part into _mesh_info which is equal with the binary
+            // Read first part into mesh_info_ which is equal with the binary
             // structure.
             for(unsigned long j = 0; j < 10; ++j)
-                is_cfg >> *(_mesh_info.data() + j);
+                is_cfg >> *(mesh_info_.data() + j);
             // The last positon is the extra_flag.
-            is_cfg >> _mesh_info.extra_flag;
+            is_cfg >> mesh_info_.extra_flag;
             is_cfg >> std::ws;
         }
 
-        MPI_Bcast(_mesh_info.data(), static_cast<int>(_mesh_info.size()),
-            MPI_LONG, 0, _mpi_comm);
+        MPI_Bcast(mesh_info_.data(), static_cast<int>(mesh_info_.size()),
+            MPI_LONG, 0, mpi_comm_);
 
         //---------------------------------------------------------------------
         // Read Nodes
@@ -532,18 +532,18 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readASCII(
         //---------------------------------------------------------------------
         // Read elements
         if (!readCastElemsASCII(is_elem, i,
-            _mesh_info.regular_elements + _mesh_info.offset[0],
+            mesh_info_.regular_elements + mesh_info_.offset[0],
             false, mesh_nodes, mesh_elems))
             break;
 
         //---------------------------------------------------------------------
         // Ghost elements
         if (!readCastElemsASCII(is_elem, i,
-            _mesh_info.ghost_elements + _mesh_info.offset[1],
+            mesh_info_.ghost_elements + mesh_info_.offset[1],
             true, mesh_nodes, mesh_elems))
             break;
 
-        if(_mpi_rank == i) {
+        if(mpi_rank_ == i) {
             // reading ascii properties is not implemented
             MeshLib::Properties properties;
             np_mesh = newMesh(BaseLib::extractBaseName(file_name_base),
@@ -551,14 +551,14 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readASCII(
         }
     }
 
-    if(_mpi_rank == 0)
+    if(mpi_rank_ == 0)
     {
         is_cfg.close();
         is_node.close();
         is_elem.close();
     }
 
-    MPI_Barrier(_mpi_comm);
+    MPI_Barrier(mpi_comm_);
 
     return np_mesh;
 }
@@ -572,9 +572,9 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::newMesh(
 {
     return new MeshLib::NodePartitionedMesh(
         mesh_name, mesh_nodes, glb_node_ids, mesh_elems, properties,
-        _mesh_info.global_base_nodes, _mesh_info.global_nodes,
-        _mesh_info.base_nodes, _mesh_info.active_base_nodes,
-        _mesh_info.active_nodes);
+        mesh_info_.global_base_nodes, mesh_info_.global_nodes,
+        mesh_info_.base_nodes, mesh_info_.active_base_nodes,
+        mesh_info_.active_nodes);
 }
 
 void NodePartitionedMeshReader::readElementASCII(std::ifstream &ins,
@@ -582,7 +582,7 @@ void NodePartitionedMeshReader::readElementASCII(std::ifstream &ins,
 {
     // Set number of elements.
     unsigned long const ne =
-        ghost ? _mesh_info.ghost_elements : _mesh_info.regular_elements;
+        ghost ? mesh_info_.ghost_elements : mesh_info_.regular_elements;
     unsigned long id_offset_elem = ne;
     for(unsigned long j = 0; j < ne; j++)
     {
@@ -600,8 +600,8 @@ void NodePartitionedMeshReader::setNodes(const std::vector<NodeData> &node_data,
     std::vector<MeshLib::Node*> &mesh_node,
     std::vector<unsigned long> &glb_node_ids) const
 {
-    mesh_node.resize(_mesh_info.nodes);
-    glb_node_ids.resize(_mesh_info.nodes);
+    mesh_node.resize(mesh_info_.nodes);
+    glb_node_ids.resize(mesh_info_.nodes);
 
     for(std::size_t i = 0; i < mesh_node.size(); i++)
     {
@@ -618,9 +618,9 @@ void NodePartitionedMeshReader::setElements(
 {
     // Number of elements, ether ghost or regular
     unsigned long const ne =
-        ghost ? _mesh_info.ghost_elements : _mesh_info.regular_elements;
+        ghost ? mesh_info_.ghost_elements : mesh_info_.regular_elements;
     unsigned long const id_offset_ghost =
-        ghost ? _mesh_info.regular_elements : 0;
+        ghost ? mesh_info_.regular_elements : 0;
 
     for(unsigned long i = 0; i < ne; i++)
     {

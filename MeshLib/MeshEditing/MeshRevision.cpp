@@ -28,10 +28,10 @@
 
 namespace MeshLib {
 
-const std::array<unsigned, 8> MeshRevision::_hex_diametral_nodes = {{ 6, 7, 4, 5, 2, 3, 0, 1 }};
+const std::array<unsigned, 8> MeshRevision::hex_diametral_nodes_ = {{ 6, 7, 4, 5, 2, 3, 0, 1 }};
 
 MeshRevision::MeshRevision(MeshLib::Mesh &mesh) :
-    _mesh(mesh)
+    mesh_(mesh)
 {}
 
 unsigned MeshRevision::getNumberOfCollapsableNodes(double eps) const
@@ -52,14 +52,14 @@ unsigned MeshRevision::getNumberOfCollapsableNodes(double eps) const
 MeshLib::Mesh* MeshRevision::simplifyMesh(const std::string &new_mesh_name,
     double eps, unsigned min_elem_dim)
 {
-    if (this->_mesh.getNumberOfElements() == 0)
+    if (this->mesh_.getNumberOfElements() == 0)
     {
         return nullptr;
     }
 
     // original data
-    std::vector<MeshLib::Element*> const& elements(this->_mesh.getElements());
-    MeshLib::Properties const& properties(_mesh.getProperties());
+    std::vector<MeshLib::Element*> const& elements(this->mesh_.getElements());
+    MeshLib::Properties const& properties(mesh_.getProperties());
 
     // data structures for the new mesh
     std::vector<MeshLib::Node*> new_nodes = this->constructNewNodesArray(this->collapseNodeIndices(eps));
@@ -137,8 +137,8 @@ MeshLib::Mesh* MeshRevision::simplifyMesh(const std::string &new_mesh_name,
 
 std::vector<std::size_t> MeshRevision::collapseNodeIndices(double eps) const
 {
-    const std::vector<MeshLib::Node*> &nodes(_mesh.getNodes());
-    const std::size_t nNodes(_mesh.getNumberOfNodes());
+    const std::vector<MeshLib::Node*> &nodes(mesh_.getNodes());
+    const std::size_t nNodes(mesh_.getNumberOfNodes());
     std::vector<std::size_t> id_map(nNodes);
     const double half_eps(eps / 2.0);
     const double sqr_eps(eps*eps);
@@ -191,7 +191,7 @@ std::vector<std::size_t> MeshRevision::collapseNodeIndices(double eps) const
 
 std::vector<MeshLib::Node*> MeshRevision::constructNewNodesArray(const std::vector<std::size_t> &id_map) const
 {
-    const std::vector<MeshLib::Node*> &nodes(_mesh.getNodes());
+    const std::vector<MeshLib::Node*> &nodes(mesh_.getNodes());
     const std::size_t nNodes(nodes.size());
     std::vector<MeshLib::Node*> new_nodes;
     new_nodes.reserve(nNodes);
@@ -234,8 +234,8 @@ unsigned MeshRevision::getNumberOfUniqueNodes(MeshLib::Element const*const eleme
 
 void MeshRevision::resetNodeIDs()
 {
-    const std::size_t nNodes(this->_mesh.getNumberOfNodes());
-    const std::vector<MeshLib::Node*> &nodes(_mesh.getNodes());
+    const std::size_t nNodes(this->mesh_.getNumberOfNodes());
+    const std::vector<MeshLib::Node*> &nodes(mesh_.getNodes());
     for (std::size_t i = 0; i < nNodes; ++i)
     {
         nodes[i]->setID(i);
@@ -830,7 +830,7 @@ unsigned MeshRevision::findPyramidTopNode(MeshLib::Element const& element,
 
 unsigned MeshRevision::lutHexDiametralNode(unsigned id) const
 {
-    return _hex_diametral_nodes[id];
+    return hex_diametral_nodes_[id];
 }
 
 std::array<unsigned, 4> MeshRevision::lutHexCuttingQuadNodes(unsigned id1,

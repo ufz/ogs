@@ -21,13 +21,13 @@
 namespace MeshLib {
 
 ElementStatus::ElementStatus(Mesh const* const mesh, bool hasAnyInactive)
-    : _mesh(mesh),
-      _element_status(mesh->getNumberOfElements(), true),
-      _hasAnyInactive(hasAnyInactive)
+    : mesh_(mesh),
+      element_status_(mesh->getNumberOfElements(), true),
+      hasAnyInactive_(hasAnyInactive)
 {
-    const std::vector<MeshLib::Node*>& nodes(_mesh->getNodes());
+    const std::vector<MeshLib::Node*>& nodes(mesh_->getNodes());
     std::transform(
-        begin(nodes), end(nodes), back_inserter(_active_nodes),
+        begin(nodes), end(nodes), back_inserter(active_nodes_),
         [](Node const* const n) { return n->getNumberOfElements(); });
 }
 
@@ -40,7 +40,7 @@ ElementStatus::ElementStatus(Mesh const* const mesh,
         auto* const materialIds =
             mesh->getProperties().getPropertyVector<int>("MaterialIDs");
         for (auto material_id : vec_inactive_matIDs) {
-            for (auto e : _mesh->getElements()) {
+            for (auto e : mesh_->getElements()) {
                 if ((*materialIds)[e->getID()] == material_id) {
                     setElementStatus(e->getID(), false);
                 }
@@ -48,25 +48,25 @@ ElementStatus::ElementStatus(Mesh const* const mesh,
         }
     }
 
-    _vec_active_eles.reserve(getNumberOfActiveElements());
-    const std::size_t nElems (_mesh->getNumberOfElements());
+    vec_active_eles_.reserve(getNumberOfActiveElements());
+    const std::size_t nElems (mesh_->getNumberOfElements());
     for (std::size_t i = 0; i < nElems; ++i)
     {
-        if (_element_status[i])
+        if (element_status_[i])
         {
-            _vec_active_eles.push_back(
-                const_cast<MeshLib::Element*>(_mesh->getElement(i)));
+            vec_active_eles_.push_back(
+                const_cast<MeshLib::Element*>(mesh_->getElement(i)));
         }
     }
 
-    _vec_active_nodes.reserve(this->getNumberOfActiveNodes());
-    const std::size_t nNodes (_mesh->getNumberOfNodes());
+    vec_active_nodes_.reserve(this->getNumberOfActiveNodes());
+    const std::size_t nNodes (mesh_->getNumberOfNodes());
     for (std::size_t i = 0; i < nNodes; ++i)
     {
-        if (_active_nodes[i] > 0)
+        if (active_nodes_[i] > 0)
         {
-            _vec_active_nodes.push_back(
-                const_cast<MeshLib::Node*>(_mesh->getNode(i)));
+            vec_active_nodes_.push_back(
+                const_cast<MeshLib::Node*>(mesh_->getNode(i)));
         }
     }
 
@@ -74,62 +74,62 @@ ElementStatus::ElementStatus(Mesh const* const mesh,
         "Deactivated {:d} materials and resulting active {:d} nodes and {:d} "
         "elements",
         vec_inactive_matIDs.size(),
-        _vec_active_nodes.size(),
-        _vec_active_eles.size());
+        vec_active_nodes_.size(),
+        vec_active_eles_.size());
 }
 
 std::vector<MeshLib::Element*> const& ElementStatus::getActiveElements() const
 {
-    if (_hasAnyInactive)
+    if (hasAnyInactive_)
     {
-        return _vec_active_eles;
+        return vec_active_eles_;
     }
 
-    return _mesh->getElements();
+    return mesh_->getElements();
 }
 
 std::vector<MeshLib::Node*> const& ElementStatus::getActiveNodes() const
 {
-    if (_hasAnyInactive)
+    if (hasAnyInactive_)
     {
-        return _vec_active_nodes;
+        return vec_active_nodes_;
     }
 
-    return _mesh->getNodes();
+    return mesh_->getNodes();
 }
 
 std::size_t ElementStatus::getNumberOfActiveNodes() const
 {
-    return _active_nodes.size() - std::count(_active_nodes.cbegin(), _active_nodes.cend(), 0);
+    return active_nodes_.size() - std::count(active_nodes_.cbegin(), active_nodes_.cend(), 0);
 }
 
 std::size_t ElementStatus::getNumberOfActiveElements() const
 {
     return static_cast<std::size_t>(
-        std::count(_element_status.cbegin(), _element_status.cend(), true));
+        std::count(element_status_.cbegin(), element_status_.cend(), true));
 }
 
 void ElementStatus::setElementStatus(std::size_t i, bool status)
 {
-    if (_element_status[i] != status)
+    if (element_status_[i] != status)
     {
         const int change = (status) ? 1 : -1;
-        _element_status[i] = status;
-        const unsigned nElemNodes (_mesh->getElement(i)->getNumberOfNodes());
-        MeshLib::Node const*const*const nodes = _mesh->getElement(i)->getNodes();
+        element_status_[i] = status;
+        const unsigned nElemNodes (mesh_->getElement(i)->getNumberOfNodes());
+        MeshLib::Node const*const*const nodes = mesh_->getElement(i)->getNodes();
         for (unsigned j=0; j<nElemNodes; ++j)
         {
-            assert(_active_nodes[j] < 255);  // if one node has >255 connected
+            assert(active_nodes_[j] < 255);  // if one node has >255 connected
                                              // elements the data type is too
                                              // small
-            _active_nodes[nodes[j]->getID()] += change;
+            active_nodes_[nodes[j]->getID()] += change;
         }
     }
 }
 
 bool ElementStatus::isActiveNode(MeshLib::Node const* node) const
 {
-    return _active_nodes[node->getID()]>0;
+    return active_nodes_[node->getID()]>0;
 }
 
 }  // namespace MeshLib

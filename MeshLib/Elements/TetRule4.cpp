@@ -55,9 +55,9 @@ const Element* TetRule4::getFace(const Element* e, unsigned i)
     return nullptr;
 }
 
-double TetRule4::computeVolume(Node const* const* _nodes)
+double TetRule4::computeVolume(Node const* const* nodes_)
 {
-    return MathLib::calcTetrahedronVolume(*_nodes[0], *_nodes[1], *_nodes[2], *_nodes[3]);
+    return MathLib::calcTetrahedronVolume(*nodes_[0], *nodes_[1], *nodes_[2], *nodes_[3]);
 }
 
 bool TetRule4::isPntInElement(Node const* const* nodes,
@@ -67,7 +67,7 @@ bool TetRule4::isPntInElement(Node const* const* nodes,
                                          *nodes[3], eps);
 }
 
-unsigned TetRule4::identifyFace(Node const* const* _nodes, Node* nodes[3])
+unsigned TetRule4::identifyFace(Node const* const* nodes_, Node* nodes[3])
 {
     for (unsigned i=0; i<4; i++)
     {
@@ -76,7 +76,7 @@ unsigned TetRule4::identifyFace(Node const* const* _nodes, Node* nodes[3])
         {
             for (unsigned k = 0; k < 3; k++)
             {
-                if (_nodes[face_nodes[i][j]] == nodes[k])
+                if (nodes_[face_nodes[i][j]] == nodes[k])
                 {
                     flag++;
                 }

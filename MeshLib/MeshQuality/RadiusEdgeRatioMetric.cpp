@@ -26,8 +26,8 @@ RadiusEdgeRatioMetric::RadiusEdgeRatioMetric(Mesh const& mesh)
 
 void RadiusEdgeRatioMetric::calculateQuality ()
 {
-    std::vector<MeshLib::Element*> const& elements(_mesh.getElements());
-    std::size_t const nElements (_mesh.getNumberOfElements());
+    std::vector<MeshLib::Element*> const& elements(mesh_.getElements());
+    std::size_t const nElements (mesh_.getNumberOfElements());
     for (std::size_t k(0); k < nElements; k++)
     {
         Element const& elem (*elements[k]);
@@ -38,7 +38,7 @@ void RadiusEdgeRatioMetric::calculateQuality ()
         double min;
         double max;
         elem.computeSqrEdgeLengthRange(min, max);
-        _element_quality_metric[k] = sqrt(min)/(2*s.getRadius());
+        element_quality_metric_[k] = sqrt(min)/(2*s.getRadius());
     }
 }
 

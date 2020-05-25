@@ -26,9 +26,9 @@ void PVDFile::addVTUFile(const std::string& vtu_fname, double timestep)
     auto const vtu_file_name =
         getVtuFileNameForPetscOutputWithoutExtension(vtu_fname);
 
-    _datasets.emplace_back(timestep, vtu_file_name + ".pvtu");
+    datasets_.emplace_back(timestep, vtu_file_name + ".pvtu");
 #else
-    _datasets.emplace_back(timestep, vtu_fname);
+    datasets_.emplace_back(timestep, vtu_fname);
 #endif
 
     std::ofstream fh(pvd_filename.c_str());
@@ -45,7 +45,7 @@ void PVDFile::addVTUFile(const std::string& vtu_fname, double timestep)
           " compressor=\"vtkZLibDataCompressor\">\n"
           "  <Collection>\n";
 
-    for (auto const& pair : _datasets)
+    for (auto const& pair : datasets_)
     {
         fh << "    <DataSet timestep=\"" << pair.first
            << "\" group=\"\" part=\"0\" file=\"" << pair.second << "\"/>\n";

@@ -24,8 +24,8 @@
 namespace MeshLib {
 
 MeshElementGrid::MeshElementGrid(MeshLib::Mesh const& sfc_mesh) :
-    _aabb{sfc_mesh.getNodes().cbegin(), sfc_mesh.getNodes().cend()},
-    _n_steps({{1,1,1}})
+    aabb_{sfc_mesh.getNodes().cbegin(), sfc_mesh.getNodes().cend()},
+    n_steps_({{1,1,1}})
 {
     auto getDimensions =
         [](MathLib::Point3d const& min, MathLib::Point3d const& max)
@@ -42,8 +42,8 @@ MeshElementGrid::MeshElementGrid(MeshLib::Mesh const& sfc_mesh) :
         return dim;
     };
 
-    MathLib::Point3d const& min_pnt(_aabb.getMinPoint());
-    MathLib::Point3d const& max_pnt(_aabb.getMaxPoint());
+    MathLib::Point3d const& min_pnt(aabb_.getMinPoint());
+    MathLib::Point3d const& max_pnt(aabb_.getMaxPoint());
     auto const dim = getDimensions(min_pnt, max_pnt);
 
     std::array<double, 3> delta{{ max_pnt[0] - min_pnt[0],
@@ -53,39 +53,39 @@ MeshElementGrid::MeshElementGrid(MeshLib::Mesh const& sfc_mesh) :
     const std::size_t n_eles_per_cell(100);
 
     // *** condition: n_eles / n_cells < n_eles_per_cell
-    //                where n_cells = _n_steps[0] * _n_steps[1] * _n_steps[2]
-    // *** with _n_steps[0] = ceil(pow(n_eles*delta[0]*delta[0]/(n_eles_per_cell*delta[1]*delta[2]), 1/3.)));
-    //          _n_steps[1] = _n_steps[0] * delta[1]/delta[0],
-    //          _n_steps[2] = _n_steps[0] * delta[2]/delta[0]
+    //                where n_cells = n_steps_[0] * n_steps_[1] * n_steps_[2]
+    // *** with n_steps_[0] = ceil(pow(n_eles*delta[0]*delta[0]/(n_eles_per_cell*delta[1]*delta[2]), 1/3.)));
+    //          n_steps_[1] = n_steps_[0] * delta[1]/delta[0],
+    //          n_steps_[2] = n_steps_[0] * delta[2]/delta[0]
     auto sc_ceil = [](double v){
         return static_cast<std::size_t>(std::ceil(v));
     };
 
     switch (dim.count()) {
     case 3: // 3d case
-        _n_steps[0] = sc_ceil(std::cbrt(
+        n_steps_[0] = sc_ceil(std::cbrt(
             n_eles*delta[0]*delta[0]/(n_eles_per_cell*delta[1]*delta[2])));
-        _n_steps[1] = sc_ceil(_n_steps[0] * std::min(delta[1] / delta[0], 100.0));
-        _n_steps[2] = sc_ceil(_n_steps[0] * std::min(delta[2] / delta[0], 100.0));
+        n_steps_[1] = sc_ceil(n_steps_[0] * std::min(delta[1] / delta[0], 100.0));
+        n_steps_[2] = sc_ceil(n_steps_[0] * std::min(delta[2] / delta[0], 100.0));
         break;
     case 2: // 2d cases
         if (dim[0] && dim[2]) { // 2d case: xz plane, y = const
-            _n_steps[0] = sc_ceil(std::sqrt(n_eles*delta[0]/(n_eles_per_cell*delta[2])));
-            _n_steps[2] = sc_ceil(_n_steps[0]*delta[2]/delta[0]);
+            n_steps_[0] = sc_ceil(std::sqrt(n_eles*delta[0]/(n_eles_per_cell*delta[2])));
+            n_steps_[2] = sc_ceil(n_steps_[0]*delta[2]/delta[0]);
         }
         else if (dim[0] && dim[1]) { // 2d case: xy plane, z = const
-            _n_steps[0] = sc_ceil(std::sqrt(n_eles*delta[0]/(n_eles_per_cell*delta[1])));
-            _n_steps[1] = sc_ceil(_n_steps[0] * delta[1]/delta[0]);
+            n_steps_[0] = sc_ceil(std::sqrt(n_eles*delta[0]/(n_eles_per_cell*delta[1])));
+            n_steps_[1] = sc_ceil(n_steps_[0] * delta[1]/delta[0]);
         }
         else if (dim[1] && dim[2]) { // 2d case: yz plane, x = const
-            _n_steps[1] = sc_ceil(std::sqrt(n_eles*delta[1]/(n_eles_per_cell*delta[2])));
-            _n_steps[2] = sc_ceil(n_eles * delta[2] / (n_eles_per_cell*delta[1]));
+            n_steps_[1] = sc_ceil(std::sqrt(n_eles*delta[1]/(n_eles_per_cell*delta[2])));
+            n_steps_[2] = sc_ceil(n_eles * delta[2] / (n_eles_per_cell*delta[1]));
         }
         break;
     case 1: // 1d cases
         for (std::size_t k(0); k<3; ++k) {
             if (dim[k]) {
-                _n_steps[k] = sc_ceil(static_cast<double>(n_eles)/n_eles_per_cell);
+                n_steps_[k] = sc_ceil(static_cast<double>(n_eles)/n_eles_per_cell);
             }
         }
     }
@@ -93,22 +93,22 @@ MeshElementGrid::MeshElementGrid(MeshLib::Mesh const& sfc_mesh) :
     // some frequently used expressions to fill the vector of elements per grid
     // cell
     for (std::size_t k(0); k<3; k++) {
-        _step_sizes[k] = delta[k] / _n_steps[k];
-        _inverse_step_sizes[k] = 1.0 / _step_sizes[k];
+        step_sizes_[k] = delta[k] / n_steps_[k];
+        inverse_step_sizes_[k] = 1.0 / step_sizes_[k];
     }
 
-    _elements_in_grid_box.resize(_n_steps[0]*_n_steps[1]*_n_steps[2]);
+    elements_in_grid_box_.resize(n_steps_[0]*n_steps_[1]*n_steps_[2]);
     sortElementsInGridCells(sfc_mesh);
 }
 
 MathLib::Point3d const& MeshElementGrid::getMinPoint() const
 {
-    return _aabb.getMinPoint();
+    return aabb_.getMinPoint();
 }
 
 MathLib::Point3d const& MeshElementGrid::getMaxPoint() const
 {
-    return _aabb.getMaxPoint();
+    return aabb_.getMaxPoint();
 }
 
 void MeshElementGrid::sortElementsInGridCells(MeshLib::Mesh const& sfc_mesh)
@@ -156,7 +156,7 @@ bool MeshElementGrid::sortElementInGridCells(MeshLib::Element const& element)
         }
     }
 
-    const std::size_t n_plane(_n_steps[0]*_n_steps[1]);
+    const std::size_t n_plane(n_steps_[0]*n_steps_[1]);
 
     // If a node of an element is almost equal to the upper right point of the
     // AABB the grid cell coordinates computed by getGridCellCoordintes() could
@@ -164,14 +164,14 @@ bool MeshElementGrid::sortElementInGridCells(MeshLib::Element const& element)
     // the grid cell coordinates are in the valid range.
     for (std::size_t k(0); k < 3; ++k)
     {
-        max[k] = std::min(_n_steps[k] - 1, max[k]);
+        max[k] = std::min(n_steps_[k] - 1, max[k]);
     }
 
     // insert the element into the grid cells
     for (std::size_t i(min[0]); i<=max[0]; i++) {
         for (std::size_t j(min[1]); j<=max[1]; j++) {
             for (std::size_t k(min[2]); k<=max[2]; k++) {
-                _elements_in_grid_box[i+j*_n_steps[0]+k*n_plane].push_back(&element);
+                elements_in_grid_box_[i+j*n_steps_[0]+k*n_plane].push_back(&element);
             }
         }
     }
@@ -186,15 +186,15 @@ MeshElementGrid::getGridCellCoordinates(MathLib::Point3d const& p) const
     std::array<std::size_t, 3> coords{};
 
     for (std::size_t k(0); k<3; ++k) {
-        const double d(p[k]-_aabb.getMinPoint()[k]);
+        const double d(p[k]-aabb_.getMinPoint()[k]);
         if (d < 0.0) {
             valid = false;
             coords[k] = 0;
-        } else if (_aabb.getMaxPoint()[k] <= p[k]) {
+        } else if (aabb_.getMaxPoint()[k] <= p[k]) {
             valid = false;
-            coords[k] = _n_steps[k]-1;
+            coords[k] = n_steps_[k]-1;
         } else {
-            coords[k] = static_cast<std::size_t>(d * _inverse_step_sizes[k]);
+            coords[k] = static_cast<std::size_t>(d * inverse_step_sizes_[k]);
         }
     }
 

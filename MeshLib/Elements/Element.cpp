@@ -25,14 +25,14 @@
 namespace MeshLib {
 
 Element::Element(std::size_t id)
-    : _nodes(nullptr), _id(id), _content(-1.0), _neighbors(nullptr)
+    : nodes_(nullptr), id_(id), content_(-1.0), neighbors_(nullptr)
 {
 }
 
 Element::~Element()
 {
-    delete [] this->_nodes;
-    delete [] this->_neighbors;
+    delete [] this->nodes_;
+    delete [] this->neighbors_;
 }
 
 void Element::setNeighbor(Element* neighbor, unsigned const face_id)
@@ -42,7 +42,7 @@ void Element::setNeighbor(Element* neighbor, unsigned const face_id)
         return;
     }
 
-    this->_neighbors[face_id] = neighbor;
+    this->neighbors_[face_id] = neighbor;
 }
 
 boost::optional<unsigned> Element::addNeighbor(Element* e)
@@ -67,13 +67,13 @@ boost::optional<unsigned> Element::addNeighbor(Element* e)
     {
         for (unsigned j(0); j < eNodes; j++)
         {
-            if (_nodes[i] == e_nodes[j])
+            if (nodes_[i] == e_nodes[j])
             {
-                face_nodes[count] = _nodes[i];
+                face_nodes[count] = nodes_[i];
                 // increment shared nodes counter and check if enough nodes are similar to be sure e is a neighbour of this
                 if ((++count)>=dim)
                 {
-                    _neighbors[ this->identifyFace(face_nodes) ] = e;
+                    neighbors_[ this->identifyFace(face_nodes) ] = e;
                     return boost::optional<unsigned>(e->identifyFace(face_nodes));
                 }
             }
@@ -89,9 +89,9 @@ MeshLib::Node Element::getCenterOfGravity() const
     MeshLib::Node center(0,0,0);
     for (unsigned i=0; i<nNodes; ++i)
     {
-        center[0] += (*_nodes[i])[0];
-        center[1] += (*_nodes[i])[1];
-        center[2] += (*_nodes[i])[2];
+        center[0] += (*nodes_[i])[0];
+        center[1] += (*nodes_[i])[1];
+        center[2] += (*nodes_[i])[2];
     }
     center[0] /= nNodes;
     center[1] /= nNodes;
@@ -134,7 +134,7 @@ const Element* Element::getNeighbor(unsigned i) const
     if (i < getNumberOfNeighbors())
 #endif
     {
-        return _neighbors[i];
+        return neighbors_[i];
     }
 #ifndef NDEBUG
     ERR("Error in MeshLib::Element::getNeighbor() - Index does not exist.");
@@ -147,7 +147,7 @@ unsigned Element::getNodeIDinElement(const MeshLib::Node* node) const
     const unsigned nNodes (this->getNumberOfNodes());
     for (unsigned i(0); i < nNodes; i++)
     {
-        if (node == _nodes[i])
+        if (node == nodes_[i])
         {
             return i;
         }
@@ -161,7 +161,7 @@ const Node* Element::getNode(unsigned i) const
     if (i < getNumberOfNodes())
 #endif
     {
-        return _nodes[i];
+        return nodes_[i];
     }
 #ifndef NDEBUG
     ERR("Error in MeshLib::Element::getNode() - Index {:d} in {:s}", i,
@@ -176,7 +176,7 @@ void Element::setNode(unsigned idx, Node* node)
     if (idx < getNumberOfNodes())
 #endif
     {
-        _nodes[idx] = node;
+        nodes_[idx] = node;
     }
 }
 
@@ -186,7 +186,7 @@ std::size_t Element::getNodeIndex(unsigned i) const
     if (i < getNumberOfNodes())
 #endif
     {
-        return _nodes[i]->getID();
+        return nodes_[i]->getID();
     }
 #ifndef NDEBUG
     ERR("Error in MeshLib::Element::getNodeIndex() - Index does not exist.");
@@ -199,7 +199,7 @@ bool Element::hasNeighbor(Element* elem) const
     unsigned nNeighbors (this->getNumberOfNeighbors());
     for (unsigned i = 0; i < nNeighbors; i++)
     {
-        if (this->_neighbors[i] == elem)
+        if (this->neighbors_[i] == elem)
         {
             return true;
         }
@@ -209,14 +209,14 @@ bool Element::hasNeighbor(Element* elem) const
 
 bool Element::isBoundaryElement() const
 {
-    return std::any_of(_neighbors, _neighbors + this->getNumberOfNeighbors(),
+    return std::any_of(neighbors_, neighbors_ + this->getNumberOfNeighbors(),
         [](MeshLib::Element const*const e){ return e == nullptr; });
 }
 
 #ifndef NDEBUG
 std::ostream& operator<<(std::ostream& os, Element const& e)
 {
-    os << "Element #" << e._id << " @ " << &e << " with " << e.getNumberOfNeighbors()
+    os << "Element #" << e.id_ << " @ " << &e << " with " << e.getNumberOfNeighbors()
        << " neighbours\n";
 
     unsigned const nnodes = e.getNumberOfNodes();

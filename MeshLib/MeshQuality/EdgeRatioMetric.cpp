@@ -27,26 +27,26 @@ EdgeRatioMetric::EdgeRatioMetric(Mesh const& mesh) :
 void EdgeRatioMetric::calculateQuality()
 {
     // get all elements of mesh
-    const std::vector<MeshLib::Element*>& elements(_mesh.getElements());
-    const std::size_t nElements (_mesh.getNumberOfElements());
+    const std::vector<MeshLib::Element*>& elements(mesh_.getElements());
+    const std::size_t nElements (mesh_.getNumberOfElements());
     for (std::size_t k(0); k < nElements; k++)
     {
         Element const& elem (*elements[k]);
         switch (elem.getGeomType())
         {
         case MeshElemType::LINE:
-            _element_quality_metric[k] = 1.0;
+            element_quality_metric_[k] = 1.0;
             break;
         case MeshElemType::TRIANGLE: {
-            _element_quality_metric[k] = checkTriangle(*elem.getNode(0), *elem.getNode(1), *elem.getNode(2));
+            element_quality_metric_[k] = checkTriangle(*elem.getNode(0), *elem.getNode(1), *elem.getNode(2));
             break;
         }
         case MeshElemType::QUAD: {
-            _element_quality_metric[k] = checkQuad(*elem.getNode(0), *elem.getNode(1), *elem.getNode(2), *elem.getNode(3));
+            element_quality_metric_[k] = checkQuad(*elem.getNode(0), *elem.getNode(1), *elem.getNode(2), *elem.getNode(3));
             break;
         }
         case MeshElemType::TETRAHEDRON: {
-            _element_quality_metric[k] = checkTetrahedron(*elem.getNode(0), *elem.getNode(1), *elem.getNode(2), *elem.getNode(3));
+            element_quality_metric_[k] = checkTetrahedron(*elem.getNode(0), *elem.getNode(1), *elem.getNode(2), *elem.getNode(3));
             break;
         }
         case MeshElemType::PRISM: {
@@ -55,7 +55,7 @@ void EdgeRatioMetric::calculateQuality()
             {
                 pnts.push_back(elem.getNode(j));
             }
-            _element_quality_metric[k] = checkPrism(pnts);
+            element_quality_metric_[k] = checkPrism(pnts);
             break;
         }
         case MeshElemType::PYRAMID: {
@@ -64,7 +64,7 @@ void EdgeRatioMetric::calculateQuality()
             {
                 pnts.push_back(elem.getNode(j));
             }
-            _element_quality_metric[k] = checkPyramid(pnts);
+            element_quality_metric_[k] = checkPyramid(pnts);
             break;
         }
         case MeshElemType::HEXAHEDRON: {
@@ -73,7 +73,7 @@ void EdgeRatioMetric::calculateQuality()
             {
                 pnts.push_back(elem.getNode(j));
             }
-            _element_quality_metric[k] = checkHexahedron(pnts);
+            element_quality_metric_[k] = checkHexahedron(pnts);
             break;
         }
         default:

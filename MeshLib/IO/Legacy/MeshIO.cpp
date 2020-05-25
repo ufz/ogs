@@ -314,43 +314,43 @@ MeshLib::Element* MeshIO::readElement(std::istream& in,
 
 bool MeshIO::write()
 {
-    if(!_mesh) {
+    if(!mesh_) {
         WARN("MeshIO::write(): Cannot write: no mesh object specified.");
         return false;
     }
 
-    _out << "#FEM_MSH\n"
+    out_ << "#FEM_MSH\n"
         << "$PCS_TYPE\n"
         << "  NO_PCS\n"
         << "$NODES\n"
         << "  ";
-    const std::size_t n_nodes(_mesh->getNumberOfNodes());
-    _out << n_nodes << "\n";
+    const std::size_t n_nodes(mesh_->getNumberOfNodes());
+    out_ << n_nodes << "\n";
     for (std::size_t i(0); i < n_nodes; ++i) {
-        _out << i << " " << *(_mesh->getNode(i)) << "\n";
+        out_ << i << " " << *(mesh_->getNode(i)) << "\n";
     }
 
-    _out << "$ELEMENTS\n"
+    out_ << "$ELEMENTS\n"
         << "  ";
 
-    if (!_mesh->getProperties().existsPropertyVector<int>("MaterialIDs"))
+    if (!mesh_->getProperties().existsPropertyVector<int>("MaterialIDs"))
     {
-        writeElements(_mesh->getElements(), nullptr, _out);
+        writeElements(mesh_->getElements(), nullptr, out_);
     }
     else
     {
         writeElements(
-            _mesh->getElements(),
-            _mesh->getProperties().getPropertyVector<int>("MaterialIDs"), _out);
+            mesh_->getElements(),
+            mesh_->getProperties().getPropertyVector<int>("MaterialIDs"), out_);
     }
-    _out << "#STOP\n";
+    out_ << "#STOP\n";
 
     return true;
 }
 
 void MeshIO::setMesh(const MeshLib::Mesh* mesh)
 {
-    _mesh = mesh;
+    mesh_ = mesh;
 }
 
 void MeshIO::writeElements(

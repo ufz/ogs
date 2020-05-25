@@ -65,10 +65,10 @@ const Element* PyramidRule5::getFace(const Element* e, unsigned i)
     return nullptr;
 }
 
-double PyramidRule5::computeVolume(Node const* const* _nodes)
+double PyramidRule5::computeVolume(Node const* const* nodes_)
 {
-    return MathLib::calcTetrahedronVolume(*_nodes[0], *_nodes[1], *_nodes[2], *_nodes[4])
-         + MathLib::calcTetrahedronVolume(*_nodes[2], *_nodes[3], *_nodes[0], *_nodes[4]);
+    return MathLib::calcTetrahedronVolume(*nodes_[0], *nodes_[1], *nodes_[2], *nodes_[4])
+         + MathLib::calcTetrahedronVolume(*nodes_[2], *nodes_[3], *nodes_[0], *nodes_[4]);
 }
 
 bool PyramidRule5::isPntInElement(Node const* const* nodes,
@@ -81,7 +81,7 @@ bool PyramidRule5::isPntInElement(Node const* const* nodes,
                 pnt, *nodes[0], *nodes[2], *nodes[3], *nodes[4], eps));
 }
 
-unsigned PyramidRule5::identifyFace(Node const* const* _nodes, Node* nodes[3])
+unsigned PyramidRule5::identifyFace(Node const* const* nodes_, Node* nodes[3])
 {
     for (unsigned i=0; i<5; i++)
     {
@@ -91,7 +91,7 @@ unsigned PyramidRule5::identifyFace(Node const* const* _nodes, Node* nodes[3])
             for (unsigned k = 0; k < 3; k++)
             {
                 if (face_nodes[i][j] != 99 &&
-                    _nodes[face_nodes[i][j]] == nodes[k])
+                    nodes_[face_nodes[i][j]] == nodes[k])
                 {
                     flag++;
                 }

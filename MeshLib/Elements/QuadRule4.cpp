@@ -24,10 +24,10 @@ const unsigned QuadRule4::edge_nodes[4][2] =
         {3, 0}  // Edge 3
 };
 
-double QuadRule4::computeVolume(Node const* const* _nodes)
+double QuadRule4::computeVolume(Node const* const* nodes_)
 {
-    return MathLib::calcTriangleArea(*_nodes[0], *_nodes[1], *_nodes[2])
-         + MathLib::calcTriangleArea(*_nodes[2], *_nodes[3], *_nodes[0]);
+    return MathLib::calcTriangleArea(*nodes_[0], *nodes_[1], *nodes_[2])
+         + MathLib::calcTriangleArea(*nodes_[2], *nodes_[3], *nodes_[0]);
 }
 
 bool QuadRule4::isPntInElement(Node const* const* nodes,
@@ -39,7 +39,7 @@ bool QuadRule4::isPntInElement(Node const* const* nodes,
         MathLib::isPointInTriangle(pnt, *nodes[0], *nodes[2], *nodes[3], eps));
 }
 
-unsigned QuadRule4::identifyFace(Node const* const* _nodes, Node* nodes[3])
+unsigned QuadRule4::identifyFace(Node const* const* nodes_, Node* nodes[3])
 {
     for (unsigned i=0; i<4; i++)
     {
@@ -48,7 +48,7 @@ unsigned QuadRule4::identifyFace(Node const* const* _nodes, Node* nodes[3])
         {
             for (unsigned k = 0; k < 2; k++)
             {
-                if (_nodes[edge_nodes[i][j]] == nodes[k])
+                if (nodes_[edge_nodes[i][j]] == nodes[k])
                 {
                     flag++;
                 }
@@ -66,18 +66,18 @@ ElementErrorCode QuadRule4::validate(const Element* e)
 {
     ElementErrorCode error_code;
     error_code[ElementErrorFlag::ZeroVolume] = e->hasZeroVolume();
-    Node const* const* _nodes = e->getNodes();
+    Node const* const* nodes_ = e->getNodes();
     error_code[ElementErrorFlag::NonCoplanar] =
-        (!MathLib::isCoplanar(*_nodes[0], *_nodes[1], *_nodes[2], *_nodes[3]));
+        (!MathLib::isCoplanar(*nodes_[0], *nodes_[1], *nodes_[2], *nodes_[3]));
     // for collapsed quads (i.e. reduced to a line) this test might result
     // "false" as all four points are actually located on a line.
     if (!error_code[ElementErrorFlag::ZeroVolume])
     {
         error_code[ElementErrorFlag::NonConvex] =
             (!(MathLib::dividedByPlane(
-                   *_nodes[0], *_nodes[2], *_nodes[1], *_nodes[3]) &&
+                   *nodes_[0], *nodes_[2], *nodes_[1], *nodes_[3]) &&
                MathLib::dividedByPlane(
-                   *_nodes[1], *_nodes[3], *_nodes[0], *_nodes[2])));
+                   *nodes_[1], *nodes_[3], *nodes_[0], *nodes_[2])));
     }
     error_code[ElementErrorFlag::NodeOrder] = !e->testElementNodeOrder();
     return error_code;

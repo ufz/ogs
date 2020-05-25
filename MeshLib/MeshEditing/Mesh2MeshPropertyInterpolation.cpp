@@ -31,20 +31,20 @@ namespace MeshLib {
 
 Mesh2MeshPropertyInterpolation::Mesh2MeshPropertyInterpolation(
     Mesh const& src_mesh, std::string const& property_name)
-    : _src_mesh(src_mesh), _property_name(property_name)
+    : src_mesh_(src_mesh), property_name_(property_name)
 {}
 
 bool Mesh2MeshPropertyInterpolation::setPropertiesForMesh(Mesh& dest_mesh) const
 {
-    if (_src_mesh.getDimension() != dest_mesh.getDimension()) {
+    if (src_mesh_.getDimension() != dest_mesh.getDimension()) {
         ERR("MeshLib::Mesh2MeshPropertyInterpolation::setPropertiesForMesh() "
             "dimension of source (dim = {:d}) and destination (dim = {:d}) "
             "mesh does not match.",
-            _src_mesh.getDimension(), dest_mesh.getDimension());
+            src_mesh_.getDimension(), dest_mesh.getDimension());
         return false;
     }
 
-    if (_src_mesh.getDimension() != 2) {
+    if (src_mesh_.getDimension() != 2) {
         WARN(
             "MeshLib::Mesh2MeshPropertyInterpolation::setPropertiesForMesh() "
             "implemented only for 2D case at the moment.");
@@ -52,24 +52,24 @@ bool Mesh2MeshPropertyInterpolation::setPropertiesForMesh(Mesh& dest_mesh) const
     }
 
     MeshLib::PropertyVector<double>* dest_properties;
-    if (dest_mesh.getProperties().existsPropertyVector<double>(_property_name))
+    if (dest_mesh.getProperties().existsPropertyVector<double>(property_name_))
     {
         dest_properties =
-            dest_mesh.getProperties().getPropertyVector<double>(_property_name);
+            dest_mesh.getProperties().getPropertyVector<double>(property_name_);
     }
     else
     {
         INFO("Create new PropertyVector '{:s}' of type double.",
-             _property_name);
+             property_name_);
         dest_properties =
             dest_mesh.getProperties().createNewPropertyVector<double>(
-                _property_name, MeshItemType::Cell, 1);
+                property_name_, MeshItemType::Cell, 1);
         if (!dest_properties)
         {
             WARN(
                 "Could not get or create a PropertyVector of type double"
                 " using the given name '{:s}'.",
-                _property_name);
+                property_name_);
             return false;
         }
     }
@@ -87,14 +87,14 @@ void Mesh2MeshPropertyInterpolation::interpolatePropertiesForMesh(
     Mesh& dest_mesh, MeshLib::PropertyVector<double>& dest_properties) const
 {
     std::vector<double> interpolated_src_node_properties(
-        _src_mesh.getNumberOfNodes());
+        src_mesh_.getNumberOfNodes());
     interpolateElementPropertiesToNodeProperties(
         interpolated_src_node_properties);
 
     // idea: looping over the destination elements and calculate properties
     // from interpolated_src_node_properties to accelerate the (source) point
     // search construct a grid
-    std::vector<MeshLib::Node*> const& src_nodes(_src_mesh.getNodes());
+    std::vector<MeshLib::Node*> const& src_nodes(src_mesh_.getNodes());
     GeoLib::Grid<MeshLib::Node> src_grid(src_nodes.begin(), src_nodes.end(),
                                          64);
 
@@ -150,15 +150,15 @@ void Mesh2MeshPropertyInterpolation::interpolateElementPropertiesToNodePropertie
     std::vector<double> &interpolated_properties) const
 {
     // fetch the source of property values
-    if (!_src_mesh.getProperties().existsPropertyVector<double>(_property_name))
+    if (!src_mesh_.getProperties().existsPropertyVector<double>(property_name_))
     {
-        WARN("Did not find PropertyVector<double> '{:s}'.", _property_name);
+        WARN("Did not find PropertyVector<double> '{:s}'.", property_name_);
         return;
     }
     auto const* elem_props =
-        _src_mesh.getProperties().getPropertyVector<double>(_property_name);
+        src_mesh_.getProperties().getPropertyVector<double>(property_name_);
 
-    std::vector<MeshLib::Node*> const& src_nodes(_src_mesh.getNodes());
+    std::vector<MeshLib::Node*> const& src_nodes(src_mesh_.getNodes());
     const std::size_t n_src_nodes(src_nodes.size());
     for (std::size_t k(0); k < n_src_nodes; k++)
     {

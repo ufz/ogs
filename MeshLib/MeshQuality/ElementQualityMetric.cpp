@@ -21,9 +21,9 @@
 namespace MeshLib
 {
 ElementQualityMetric::ElementQualityMetric(Mesh const& mesh) :
-    _min (std::numeric_limits<double>::max()), _max (0), _mesh (mesh)
+    min_ (std::numeric_limits<double>::max()), max_ (0), mesh_ (mesh)
 {
-    _element_quality_metric.resize (_mesh.getNumberOfElements(), -1.0);
+    element_quality_metric_.resize (mesh_.getNumberOfElements(), -1.0);
 }
 
 BaseLib::Histogram<double> ElementQualityMetric::getHistogram (std::size_t n_bins) const
@@ -31,7 +31,7 @@ BaseLib::Histogram<double> ElementQualityMetric::getHistogram (std::size_t n_bin
     if (n_bins == 0)
     {
         n_bins = static_cast<std::size_t>(
-            1 + 3.3 * log(static_cast<float>((_mesh.getNumberOfElements()))));
+            1 + 3.3 * log(static_cast<float>((mesh_.getNumberOfElements()))));
     }
 
     return BaseLib::Histogram<double>(getElementQuality(), n_bins, true);
@@ -39,6 +39,6 @@ BaseLib::Histogram<double> ElementQualityMetric::getHistogram (std::size_t n_bin
 
 std::vector<double> const& ElementQualityMetric::getElementQuality () const
 {
-    return _element_quality_metric;
+    return element_quality_metric_;
 }
 }  // namespace MeshLib
