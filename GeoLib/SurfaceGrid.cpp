@@ -26,39 +26,39 @@
 namespace GeoLib {
 
 SurfaceGrid::SurfaceGrid(Surface const*const sfc) :
-    AABB(sfc->getAABB()), _n_steps({{1,1,1}})
+    AABB(sfc->getAABB()), n_steps_({{1,1,1}})
 {
     // enlarge the bounding, such that the points with maximal coordinates
     // fits into the grid
     for (std::size_t k(0); k<3; ++k) {
-        _max_pnt[k] += std::abs(_max_pnt[k]) * 1e-6;
-        if (std::abs(_max_pnt[k]) < std::numeric_limits<double>::epsilon()) {
-            _max_pnt[k] = (_max_pnt[k] - _min_pnt[k]) * (1.0 + 1e-6);
+        max_pnt_[k] += std::abs(max_pnt_[k]) * 1e-6;
+        if (std::abs(max_pnt_[k]) < std::numeric_limits<double>::epsilon()) {
+            max_pnt_[k] = (max_pnt_[k] - min_pnt_[k]) * (1.0 + 1e-6);
         }
     }
 
-    std::array<double, 3> delta{{ _max_pnt[0] - _min_pnt[0],
-        _max_pnt[1] - _min_pnt[1], _max_pnt[2] - _min_pnt[2] }};
+    std::array<double, 3> delta{{ max_pnt_[0] - min_pnt_[0],
+        max_pnt_[1] - min_pnt_[1], max_pnt_[2] - min_pnt_[2] }};
 
     if (delta[0] < std::numeric_limits<double>::epsilon()) {
         const double max_delta(std::max(delta[1], delta[2]));
-        _min_pnt[0] -= max_delta * 0.5e-3;
-        _max_pnt[0] += max_delta * 0.5e-3;
-        delta[0] = _max_pnt[0] - _min_pnt[0];
+        min_pnt_[0] -= max_delta * 0.5e-3;
+        max_pnt_[0] += max_delta * 0.5e-3;
+        delta[0] = max_pnt_[0] - min_pnt_[0];
     }
 
     if (delta[1] < std::numeric_limits<double>::epsilon()) {
         const double max_delta(std::max(delta[0], delta[2]));
-        _min_pnt[1] -= max_delta * 0.5e-3;
-        _max_pnt[1] += max_delta * 0.5e-3;
-        delta[1] = _max_pnt[1] - _min_pnt[1];
+        min_pnt_[1] -= max_delta * 0.5e-3;
+        max_pnt_[1] += max_delta * 0.5e-3;
+        delta[1] = max_pnt_[1] - min_pnt_[1];
     }
 
     if (delta[2] < std::numeric_limits<double>::epsilon()) {
         const double max_delta(std::max(delta[0], delta[1]));
-        _min_pnt[2] -= max_delta * 0.5e-3;
-        _max_pnt[2] += max_delta * 0.5e-3;
-        delta[2] = _max_pnt[2] - _min_pnt[2];
+        min_pnt_[2] -= max_delta * 0.5e-3;
+        max_pnt_[2] += max_delta * 0.5e-3;
+        delta[2] = max_pnt_[2] - min_pnt_[2];
     }
 
     const std::size_t n_tris(sfc->getNumberOfTriangles());
@@ -74,49 +74,49 @@ SurfaceGrid::SurfaceGrid(Surface const*const sfc) :
     }
 
     // *** condition: n_tris / n_cells < n_tris_per_cell
-    //                where n_cells = _n_steps[0] * _n_steps[1] * _n_steps[2]
-    // *** with _n_steps[0] = ceil(pow(n_tris*delta[0]*delta[0]/(n_tris_per_cell*delta[1]*delta[2]), 1/3.)));
-    //          _n_steps[1] = _n_steps[0] * delta[1]/delta[0],
-    //          _n_steps[2] = _n_steps[0] * delta[2]/delta[0]
+    //                where n_cells = n_steps_[0] * n_steps_[1] * n_steps_[2]
+    // *** with n_steps_[0] = ceil(pow(n_tris*delta[0]*delta[0]/(n_tris_per_cell*delta[1]*delta[2]), 1/3.)));
+    //          n_steps_[1] = n_steps_[0] * delta[1]/delta[0],
+    //          n_steps_[2] = n_steps_[0] * delta[2]/delta[0]
     auto sc_ceil = [](double v){
         return static_cast<std::size_t>(std::ceil(v));
     };
     switch (dim.count()) {
     case 3: // 3d case
-        _n_steps[0] = sc_ceil(std::cbrt(
+        n_steps_[0] = sc_ceil(std::cbrt(
             n_tris*delta[0]*delta[0]/(n_tris_per_cell*delta[1]*delta[2])));
-        _n_steps[1] = sc_ceil(_n_steps[0] * std::min(delta[1] / delta[0], 100.0));
-        _n_steps[2] = sc_ceil(_n_steps[0] * std::min(delta[2] / delta[0], 100.0));
+        n_steps_[1] = sc_ceil(n_steps_[0] * std::min(delta[1] / delta[0], 100.0));
+        n_steps_[2] = sc_ceil(n_steps_[0] * std::min(delta[2] / delta[0], 100.0));
         break;
     case 2: // 2d cases
         if (dim[0] && dim[2]) { // 2d case: xz plane, y = const
-            _n_steps[0] = sc_ceil(std::sqrt(n_tris*delta[0]/(n_tris_per_cell*delta[2])));
-            _n_steps[2] = sc_ceil(_n_steps[0]*delta[2]/delta[0]);
+            n_steps_[0] = sc_ceil(std::sqrt(n_tris*delta[0]/(n_tris_per_cell*delta[2])));
+            n_steps_[2] = sc_ceil(n_steps_[0]*delta[2]/delta[0]);
         }
         else if (dim[0] && dim[1]) { // 2d case: xy plane, z = const
-            _n_steps[0] = sc_ceil(std::sqrt(n_tris*delta[0]/(n_tris_per_cell*delta[1])));
-            _n_steps[1] = sc_ceil(_n_steps[0] * delta[1]/delta[0]);
+            n_steps_[0] = sc_ceil(std::sqrt(n_tris*delta[0]/(n_tris_per_cell*delta[1])));
+            n_steps_[1] = sc_ceil(n_steps_[0] * delta[1]/delta[0]);
         }
         else if (dim[1] && dim[2]) { // 2d case: yz plane, x = const
-            _n_steps[1] = sc_ceil(std::sqrt(n_tris*delta[1]/(n_tris_per_cell*delta[2])));
-            _n_steps[2] = sc_ceil(n_tris * delta[2] / (n_tris_per_cell*delta[1]));
+            n_steps_[1] = sc_ceil(std::sqrt(n_tris*delta[1]/(n_tris_per_cell*delta[2])));
+            n_steps_[2] = sc_ceil(n_tris * delta[2] / (n_tris_per_cell*delta[1]));
         }
         break;
     case 1: // 1d cases
         for (std::size_t k(0); k<3; ++k) {
             if (dim[k]) {
-                _n_steps[k] = sc_ceil(static_cast<double>(n_tris)/n_tris_per_cell);
+                n_steps_[k] = sc_ceil(static_cast<double>(n_tris)/n_tris_per_cell);
             }
         }
     }
 
     // some frequently used expressions to fill the grid vectors
     for (std::size_t k(0); k<3; k++) {
-        _step_sizes[k] = delta[k] / _n_steps[k];
-        _inverse_step_sizes[k] = 1.0 / _step_sizes[k];
+        step_sizes_[k] = delta[k] / n_steps_[k];
+        inverse_step_sizes_[k] = 1.0 / step_sizes_[k];
     }
 
-    _triangles_in_grid_box.resize(_n_steps[0]*_n_steps[1]*_n_steps[2]);
+    triangles_in_grid_box_.resize(n_steps_[0]*n_steps_[1]*n_steps_[2]);
     sortTrianglesInGridCells(sfc);
 }
 
@@ -167,13 +167,13 @@ bool SurfaceGrid::sortTriangleInGridCells(Triangle const*const triangle)
     std::size_t const k_min(std::min(std::min((*c_p0)[2], (*c_p1)[2]), (*c_p2)[2]));
     std::size_t const k_max(std::max(std::max((*c_p0)[2], (*c_p1)[2]), (*c_p2)[2]));
 
-    const std::size_t n_plane(_n_steps[0]*_n_steps[1]);
+    const std::size_t n_plane(n_steps_[0]*n_steps_[1]);
 
     // insert the triangle into the grid cells
     for (std::size_t i(i_min); i<=i_max; i++) {
         for (std::size_t j(j_min); j<=j_max; j++) {
             for (std::size_t k(k_min); k<=k_max; k++) {
-                _triangles_in_grid_box[i+j*_n_steps[0]+k*n_plane].push_back(triangle);
+                triangles_in_grid_box_[i+j*n_steps_[0]+k*n_plane].push_back(triangle);
             }
         }
     }
@@ -185,17 +185,17 @@ boost::optional<std::array<std::size_t, 3>>
 SurfaceGrid::getGridCellCoordinates(MathLib::Point3d const& p) const
 {
     std::array<std::size_t, 3> coords{{
-        static_cast<std::size_t>((p[0]-_min_pnt[0]) * _inverse_step_sizes[0]),
-        static_cast<std::size_t>((p[1]-_min_pnt[1]) * _inverse_step_sizes[1]),
-        static_cast<std::size_t>((p[2]-_min_pnt[2]) * _inverse_step_sizes[2])
+        static_cast<std::size_t>((p[0]-min_pnt_[0]) * inverse_step_sizes_[0]),
+        static_cast<std::size_t>((p[1]-min_pnt_[1]) * inverse_step_sizes_[1]),
+        static_cast<std::size_t>((p[2]-min_pnt_[2]) * inverse_step_sizes_[2])
     }};
 
-    if (coords[0]>=_n_steps[0] || coords[1]>=_n_steps[1] || coords[2]>=_n_steps[2]) {
+    if (coords[0]>=n_steps_[0] || coords[1]>=n_steps_[1] || coords[2]>=n_steps_[2]) {
         DBUG(
             "Computed indices ({:d},{:d},{:d}), max grid cell indices "
             "({:d},{:d},{:d})",
-            coords[0], coords[1], coords[2], _n_steps[0], _n_steps[1],
-            _n_steps[2]);
+            coords[0], coords[1], coords[2], n_steps_[0], n_steps_[1],
+            n_steps_[2]);
         return boost::optional<std::array<std::size_t, 3>>();
     }
     return boost::optional<std::array<std::size_t, 3>>(coords);
@@ -209,8 +209,8 @@ bool SurfaceGrid::isPointInSurface(MathLib::Point3d const& p, double eps) const
     }
     std::array<std::size_t,3> c(optional_c.get());
 
-    std::size_t const grid_cell_idx(c[0]+c[1]*_n_steps[0]+c[2]*_n_steps[0]*_n_steps[1]);
-    std::vector<Triangle const*> const& triangles(_triangles_in_grid_box[grid_cell_idx]);
+    std::size_t const grid_cell_idx(c[0]+c[1]*n_steps_[0]+c[2]*n_steps_[0]*n_steps_[1]);
+    std::vector<Triangle const*> const& triangles(triangles_in_grid_box_[grid_cell_idx]);
     bool nfound(true);
     const std::size_t n_triangles(triangles.size());
     for (std::size_t k(0); k < n_triangles && nfound; k++) {

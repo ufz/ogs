@@ -20,17 +20,17 @@ namespace GeoLib {
 
 Triangle::Triangle (std::vector<Point *> const &pnt_vec,
     std::size_t pnt_a, std::size_t pnt_b, std::size_t pnt_c) :
-    _pnts(pnt_vec), _pnt_ids( {{pnt_a, pnt_b, pnt_c}} )
+    pnts_(pnt_vec), pnt_ids_( {{pnt_a, pnt_b, pnt_c}} )
 {
-    assert(!_pnts.empty());
-    assert (pnt_a < _pnts.size() && pnt_b < _pnts.size() && pnt_c < _pnts.size());
+    assert(!pnts_.empty());
+    assert (pnt_a < pnts_.size() && pnt_b < pnts_.size() && pnt_c < pnts_.size());
 }
 
 bool Triangle::containsPoint(MathLib::Point3d const& q, double eps) const
 {
-    GeoLib::Point const& a(*(_pnts[_pnt_ids[0]]));
-    GeoLib::Point const& b(*(_pnts[_pnt_ids[1]]));
-    GeoLib::Point const& c(*(_pnts[_pnt_ids[2]]));
+    GeoLib::Point const& a(*(pnts_[pnt_ids_[0]]));
+    GeoLib::Point const& b(*(pnts_[pnt_ids_[1]]));
+    GeoLib::Point const& c(*(pnts_[pnt_ids_[2]]));
     return MathLib::isPointInTriangle(q, a, b, c, eps);
 }
 }  // namespace GeoLib

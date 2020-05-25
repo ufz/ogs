@@ -23,27 +23,27 @@
 namespace GeoLib
 {
 Surface::Surface(const std::vector<Point*>& pnt_vec)
-    : _sfc_pnts(pnt_vec), _bounding_volume(nullptr), _surface_grid(nullptr)
+    : sfc_pnts_(pnt_vec), bounding_volume_(nullptr), surface_grid_(nullptr)
 {
 }
 
 Surface::Surface(Surface const& src)
-    : _sfc_pnts(src._sfc_pnts),
-      _bounding_volume(new AABB(*(src._bounding_volume))),
-      _surface_grid(nullptr)
+    : sfc_pnts_(src.sfc_pnts_),
+      bounding_volume_(new AABB(*(src.bounding_volume_))),
+      surface_grid_(nullptr)
 {
-    _sfc_triangles.reserve(src._sfc_triangles.size());
-    std::transform(src._sfc_triangles.cbegin(),
-                   src._sfc_triangles.cend(),
-                   std::back_inserter(_sfc_triangles),
+    sfc_triangles_.reserve(src.sfc_triangles_.size());
+    std::transform(src.sfc_triangles_.cbegin(),
+                   src.sfc_triangles_.cend(),
+                   std::back_inserter(sfc_triangles_),
                    [](Triangle* t) { return new Triangle(*t); });
 }
 
 Surface::~Surface()
 {
-    for (auto& _sfc_triangle : _sfc_triangles)
+    for (auto& sfc_triangle_ : sfc_triangles_)
     {
-        delete _sfc_triangle;
+        delete sfc_triangle_;
     }
 }
 
@@ -51,8 +51,8 @@ void Surface::addTriangle(std::size_t pnt_a,
                           std::size_t pnt_b,
                           std::size_t pnt_c)
 {
-    assert(pnt_a < _sfc_pnts.size() && pnt_b < _sfc_pnts.size() &&
-           pnt_c < _sfc_pnts.size());
+    assert(pnt_a < sfc_pnts_.size() && pnt_b < sfc_pnts_.size() &&
+           pnt_c < sfc_pnts_.size());
 
     // Check if two points of the triangle have identical IDs
     if (pnt_a == pnt_b || pnt_a == pnt_c || pnt_b == pnt_c)
@@ -61,49 +61,49 @@ void Surface::addTriangle(std::size_t pnt_a,
     }
 
     // Adding a new triangle invalides the surface grid.
-    _surface_grid.reset();
+    surface_grid_.reset();
 
-    _sfc_triangles.push_back(new Triangle(_sfc_pnts, pnt_a, pnt_b, pnt_c));
-    if (!_bounding_volume)
+    sfc_triangles_.push_back(new Triangle(sfc_pnts_, pnt_a, pnt_b, pnt_c));
+    if (!bounding_volume_)
     {
         std::vector<std::size_t> ids(3);
         ids[0] = pnt_a;
         ids[1] = pnt_b;
         ids[2] = pnt_c;
-        _bounding_volume = std::make_unique<GeoLib::AABB>(_sfc_pnts, ids);
+        bounding_volume_ = std::make_unique<GeoLib::AABB>(sfc_pnts_, ids);
     }
     else
     {
-        _bounding_volume->update(*_sfc_pnts[pnt_a]);
-        _bounding_volume->update(*_sfc_pnts[pnt_b]);
-        _bounding_volume->update(*_sfc_pnts[pnt_c]);
+        bounding_volume_->update(*sfc_pnts_[pnt_a]);
+        bounding_volume_->update(*sfc_pnts_[pnt_b]);
+        bounding_volume_->update(*sfc_pnts_[pnt_c]);
     }
 }
 
 std::size_t Surface::getNumberOfTriangles() const
 {
-    return _sfc_triangles.size();
+    return sfc_triangles_.size();
 }
 
 const Triangle* Surface::operator[](std::size_t i) const
 {
-    assert(i < _sfc_triangles.size());
-    return _sfc_triangles[i];
+    assert(i < sfc_triangles_.size());
+    return sfc_triangles_[i];
 }
 
 bool Surface::isPntInBoundingVolume(MathLib::Point3d const& pnt,
                                     double eps) const
 {
-    return _bounding_volume->containsPoint(pnt, eps);
+    return bounding_volume_->containsPoint(pnt, eps);
 }
 
 bool Surface::isPntInSfc(MathLib::Point3d const& pnt, double eps) const
 {
-    // Mutable _surface_grid is constructed if method is called the first time.
-    if (_surface_grid == nullptr)
+    // Mutable surface_grid_ is constructed if method is called the first time.
+    if (surface_grid_ == nullptr)
     {
-        _surface_grid = std::make_unique<GeoLib::SurfaceGrid>(this);
+        surface_grid_ = std::make_unique<GeoLib::SurfaceGrid>(this);
     }
-    return _surface_grid->isPointInSurface(pnt, eps);
+    return surface_grid_->isPointInSurface(pnt, eps);
 }
 }  // namespace GeoLib

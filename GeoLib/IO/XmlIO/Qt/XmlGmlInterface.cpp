@@ -59,7 +59,7 @@ namespace GeoLib
 namespace IO
 {
 XmlGmlInterface::XmlGmlInterface(GeoLib::GEOObjects& geo_objs)
-    : XMLQtInterface("OpenGeoSysGLI.xsd"), _geo_objs(geo_objs)
+    : XMLQtInterface("OpenGeoSysGLI.xsd"), geo_objs_(geo_objs)
 {
 }
 
@@ -71,7 +71,7 @@ int XmlGmlInterface::readFile(const QString &fileName)
     }
 
     QDomDocument doc("OGS-GLI-DOM");
-    doc.setContent(_fileData);
+    doc.setContent(fileData_);
     QDomElement docElement = doc.documentElement(); //OpenGeoSysGLI
     if (docElement.nodeName().compare("OpenGeoSysGLI"))
     {
@@ -116,7 +116,7 @@ int XmlGmlInterface::readFile(const QString &fileName)
             {
                 pnt_names.reset(nullptr);
             }
-            _geo_objs.addPointVec(std::move(points), gliName,
+            geo_objs_.addPointVec(std::move(points), gliName,
                                   std::move(pnt_names));
         }
         else if (nodeName.compare("polylines") == 0)
@@ -124,14 +124,14 @@ int XmlGmlInterface::readFile(const QString &fileName)
             try
             {
                 readPolylines(type_node, polylines.get(),
-                              *_geo_objs.getPointVec(gliName),
-                              _geo_objs.getPointVecObj(gliName)->getIDMap(),
+                              *geo_objs_.getPointVec(gliName),
+                              geo_objs_.getPointVecObj(gliName)->getIDMap(),
                               ply_names.get());
             }
             catch (std::runtime_error const&)
             {
                 // further reading is aborted and it is necessary to clean up
-                _geo_objs.removePointVec(gliName);
+                geo_objs_.removePointVec(gliName);
                 throw;
             }
             // if names-map is empty, set it to nullptr because it is not needed
@@ -145,15 +145,15 @@ int XmlGmlInterface::readFile(const QString &fileName)
             try
             {
                 readSurfaces(type_node, surfaces.get(),
-                             *_geo_objs.getPointVec(gliName),
-                             _geo_objs.getPointVecObj(gliName)->getIDMap(),
+                             *geo_objs_.getPointVec(gliName),
+                             geo_objs_.getPointVecObj(gliName)->getIDMap(),
                              sfc_names.get());
             }
             catch (std::runtime_error const&)
             {
                 // further reading is aborted and it is necessary to clean up
-                _geo_objs.removePointVec(gliName);
-                _geo_objs.removePolylineVec(gliName);
+                geo_objs_.removePointVec(gliName);
+                geo_objs_.removePolylineVec(gliName);
                 throw;
             }
 
@@ -167,13 +167,13 @@ int XmlGmlInterface::readFile(const QString &fileName)
 
     if (!polylines->empty())
     {
-        _geo_objs.addPolylineVec(std::move(polylines), gliName,
+        geo_objs_.addPolylineVec(std::move(polylines), gliName,
                                  std::move(ply_names));
     }
 
     if (!surfaces->empty())
     {
-        _geo_objs.addSurfaceVec(std::move(surfaces), gliName,
+        geo_objs_.addSurfaceVec(std::move(surfaces), gliName,
                                 std::move(sfc_names));
     }
     return 1;
@@ -187,7 +187,7 @@ void XmlGmlInterface::readPoints(const QDomNode& pointsRoot,
     QDomElement point = pointsRoot.firstChildElement();
     while (!point.isNull())
     {
-        _idx_map.insert (std::pair<std::size_t, std::size_t>(
+        idx_map_.insert (std::pair<std::size_t, std::size_t>(
             strtol((point.attribute("id")).toStdString().c_str(), &pEnd, 10), points->size()));
         GeoLib::Point* p = new GeoLib::Point(point.attribute("x").toDouble(),
                                              point.attribute("y").toDouble(),
@@ -237,8 +237,8 @@ void XmlGmlInterface::readPolylines(
         QDomElement point = polyline.firstChildElement();
         auto accessOrError =
             [this, &polyline](auto pt_idx) {
-                auto search = _idx_map.find(pt_idx);
-                if (search == _idx_map.end())
+                auto search = idx_map_.find(pt_idx);
+                if (search == idx_map_.end())
                 {
                     std::string polyline_name;
                     if (polyline.hasAttribute("name"))
@@ -285,8 +285,8 @@ void XmlGmlInterface::readSurfaces(
 
         auto accessOrError =
             [this, &surface](auto pt_idx) {
-                auto search = _idx_map.find(pt_idx);
-                if (search == _idx_map.end())
+                auto search = idx_map_.find(pt_idx);
+                if (search == idx_map_.end())
                 {
                     std::string surface_name;
                     if (surface.hasAttribute("name"))
@@ -319,14 +319,14 @@ void XmlGmlInterface::readSurfaces(
 }
 bool XmlGmlInterface::write()
 {
-    if (this->_exportName.empty())
+    if (this->exportName_.empty())
     {
         ERR("XmlGmlInterface::write(): No geometry specified.");
         return false;
     }
 
-    _out << "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n"; // xml definition
-    //_out << "<?xml-stylesheet type=\"text/xsl\" href=\"OpenGeoSysGLI.xsl\"?>\n\n"; // stylefile definition
+    out_ << "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n"; // xml definition
+    //out_ << "<?xml-stylesheet type=\"text/xsl\" href=\"OpenGeoSysGLI.xsl\"?>\n\n"; // stylefile definition
 
     QDomDocument doc("OGS-GML-DOM");
     QDomElement root = doc.createElement("OpenGeoSysGLI");
@@ -337,14 +337,14 @@ bool XmlGmlInterface::write()
 
     QDomElement geoNameTag = doc.createElement("name");
     root.appendChild(geoNameTag);
-    QDomText geoNameText = doc.createTextNode(QString::fromStdString(_exportName));
+    QDomText geoNameText = doc.createTextNode(QString::fromStdString(exportName_));
     geoNameTag.appendChild(geoNameText);
 
     // POINTS
     QDomElement pointsListTag = doc.createElement("points");
     root.appendChild(pointsListTag);
 
-    const GeoLib::PointVec* pnt_vec (_geo_objs.getPointVecObj(_exportName));
+    const GeoLib::PointVec* pnt_vec (geo_objs_.getPointVecObj(exportName_));
     if (pnt_vec)
     {
         const std::vector<GeoLib::Point*>* points (pnt_vec->getVector());
@@ -392,7 +392,7 @@ bool XmlGmlInterface::write()
     }
 
     // POLYLINES
-    const GeoLib::PolylineVec* ply_vec (_geo_objs.getPolylineVecObj(_exportName));
+    const GeoLib::PolylineVec* ply_vec (geo_objs_.getPolylineVecObj(exportName_));
     if (ply_vec)
     {
         const std::vector<GeoLib::Polyline*>* polylines (ply_vec->getVector());
@@ -441,7 +441,7 @@ bool XmlGmlInterface::write()
     }
 
     // SURFACES
-    const GeoLib::SurfaceVec* sfc_vec (_geo_objs.getSurfaceVecObj(_exportName));
+    const GeoLib::SurfaceVec* sfc_vec (geo_objs_.getSurfaceVecObj(exportName_));
     if (sfc_vec)
     {
         const std::vector<GeoLib::Surface*>* surfaces (sfc_vec->getVector());
@@ -491,7 +491,7 @@ bool XmlGmlInterface::write()
     }
 
     std::string xml = doc.toString().toStdString();
-    _out << xml;
+    out_ << xml;
 
     return true;
 }
