@@ -43,10 +43,10 @@ public:
         std::unique_ptr<GlobalLinearSolver>&& linear_solver,
         std::unique_ptr<NLSolver>&& nonlinear_solver,
         std::unique_ptr<ConvergenceCriterion>&& convergence_criterion)
-        : _ode_sys(ode_sys),
-          _linear_solver(std::move(linear_solver)),
-          _nonlinear_solver(std::move(nonlinear_solver)),
-          _convergence_criterion(std::move(convergence_criterion))
+        : ode_sys_(ode_sys),
+          linear_solver_(std::move(linear_solver)),
+          nonlinear_solver_(std::move(nonlinear_solver)),
+          convergence_criterion_(std::move(convergence_criterion))
     {
     }
 
@@ -71,10 +71,10 @@ public:
                                        Callback& post_timestep);
 
 private:
-    TDiscODESys& _ode_sys;
-    std::unique_ptr<GlobalLinearSolver> _linear_solver;
-    std::unique_ptr<NLSolver> _nonlinear_solver;
-    std::unique_ptr<ConvergenceCriterion> _convergence_criterion;
+    TDiscODESys& ode_sys_;
+    std::unique_ptr<GlobalLinearSolver> linear_solver_;
+    std::unique_ptr<NLSolver> nonlinear_solver_;
+    std::unique_ptr<ConvergenceCriterion> convergence_criterion_;
 };
 
 //! @}
@@ -94,12 +94,12 @@ NumLib::NonlinearSolverStatus TimeLoopSingleODE<NLTag>::loop(
     xs_prev.push_back(&NumLib::GlobalVectorProvider::provider.getVector(x0));
     GlobalVector& x_prev = *xs_prev.back();
 
-    auto& time_disc = _ode_sys.getTimeDiscretization();
+    auto& time_disc = ode_sys_.getTimeDiscretization();
 
     time_disc.setInitialState(t0);     // push IC
     MathLib::LinAlg::copy(x, x_prev);  // pushState
 
-    _nonlinear_solver->setEquationSystem(_ode_sys, *_convergence_criterion);
+    nonlinear_solver_->setEquationSystem(ode_sys_, *convergence_criterion_);
 
     double t;
     unsigned timestep = 0;
@@ -114,7 +114,7 @@ NumLib::NonlinearSolverStatus TimeLoopSingleODE<NLTag>::loop(
 
         int const process_id = 0;
         nonlinear_solver_status =
-            _nonlinear_solver->solve(xs, xs_prev, nullptr, process_id);
+            nonlinear_solver_->solve(xs, xs_prev, nullptr, process_id);
         if (!nonlinear_solver_status.error_norms_met)
         {
             break;

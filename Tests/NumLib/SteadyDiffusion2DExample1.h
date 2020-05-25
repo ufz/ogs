@@ -36,8 +36,8 @@ template<typename IndexType>struct SteadyDiffusion2DExample1
                   LocalMatrixType const& localA,
                   LocalVectorType const& localRhs)
         {
-            _localA = &localA;
-            _localRhs = &localRhs;
+            localA_ = &localA;
+            localRhs_ = &localRhs;
         }
 
         void assemble(std::size_t const id,
@@ -48,30 +48,30 @@ template<typename IndexType>struct SteadyDiffusion2DExample1
         {
             // The local contributions are computed here, usually, but for this
             // particular test all contributions are equal for all elements and are
-            // already stored in the _localA matrix.
+            // already stored in the localA_ matrix.
 
             auto const indices = NumLib::getIndices(id, dof_table);
             auto const r_c_indices =
                 NumLib::LocalToGlobalIndexMap::RowColumnIndices(indices,
                                                                 indices);
 
-            K.add(r_c_indices, *_localA);
-            b.add(indices, *_localRhs);
+            K.add(r_c_indices, *localA_);
+            b.add(indices, *localRhs_);
         }
 
         LocalMatrixType const& getLocalMatrix() const
         {
-            return *_localA;
+            return *localA_;
         }
 
         LocalVectorType const& getLocalVector() const
         {
-            return *_localRhs;
+            return *localRhs_;
         }
 
     private:
-        LocalMatrixType const* _localA = nullptr;
-        LocalVectorType const* _localRhs = nullptr;
+        LocalMatrixType const* localA_ = nullptr;
+        LocalVectorType const* localRhs_ = nullptr;
     };
 
     static
@@ -81,11 +81,11 @@ template<typename IndexType>struct SteadyDiffusion2DExample1
             SteadyDiffusion2DExample1 const& example)
     {
         data_ptr = new LocalAssemblerData;
-        data_ptr->init(e, local_matrix_size, example._localA, example._localRhs);
+        data_ptr->init(e, local_matrix_size, example.localA_, example.localRhs_);
     }
 
     SteadyDiffusion2DExample1()
-        : _localA(4, 4), _localRhs(4)
+        : localA_(4, 4), localRhs_(4)
     {
         msh = MeshLib::MeshGenerator::generateRegularQuadMesh(2.0, mesh_subdivs);
         for (auto* node : msh->getNodes())
@@ -104,33 +104,33 @@ template<typename IndexType>struct SteadyDiffusion2DExample1
 
         // Local assembler matrix and vector are equal for all quad elements.
         {
-            _localA(0,0) = 4.0; _localA(0,1) = -1.0; _localA(0,2) = -2.0; _localA(0,3) = -1.0;
-            _localA(1,1) = 4.0; _localA(1,2) = -1.0; _localA(1,3) = -2.0;
-            _localA(2,2) = 4.0; _localA(2,3) = -1.0;
-            _localA(3,3) = 4.0;
+            localA_(0,0) = 4.0; localA_(0,1) = -1.0; localA_(0,2) = -2.0; localA_(0,3) = -1.0;
+            localA_(1,1) = 4.0; localA_(1,2) = -1.0; localA_(1,3) = -2.0;
+            localA_(2,2) = 4.0; localA_(2,3) = -1.0;
+            localA_(3,3) = 4.0;
 
             // copy upper triangle to lower to localA for symmetry
             for (std::size_t i = 0; i < 4; i++)
             {
                 for (std::size_t j = 0; j < i; j++)
                 {
-                    _localA(i, j) = _localA(j, i);
+                    localA_(i, j) = localA_(j, i);
                 }
             }
 
-            //_localA *= 1.e-11/6.0;
+            //localA_ *= 1.e-11/6.0;
             for (std::size_t i = 0; i < 4; i++)
             {
                 for (std::size_t j = 0; j < 4; j++)
                 {
-                    _localA(i, j) *= 1.e-11 / 6.0;
+                    localA_(i, j) *= 1.e-11 / 6.0;
                 }
             }
 
             // Fill rhs with zero;
             for (std::size_t i = 0; i < 4; i++)
             {
-                _localRhs[i] = 0;
+                localRhs_[i] = 0;
             }
         }
 
@@ -161,8 +161,8 @@ template<typename IndexType>struct SteadyDiffusion2DExample1
     std::vector<double> exact_solutions;
     std::vector<std::size_t> vec_nodeIDs;
 
-    LocalMatrixType _localA;
-    LocalVectorType _localRhs;
+    LocalMatrixType localA_;
+    LocalVectorType localRhs_;
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };

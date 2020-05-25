@@ -44,13 +44,13 @@ struct IntervalGenerator
     /// Construtor initializing the slope and the \f$y\f$-intercept deploying
     /// lower bound \f$a\f$ and upper bound \f$b\f$ of the interval.
     IntervalGenerator(T a, T b)
-        : _m((b-a)/2), _n((b+a)/2)
+        : m_((b-a)/2), n_((b+a)/2)
     {}
 
     // parameters for the interval mapping [-1,1] -> [a,b],
-    // y = _m * x + _n
-    T _m{1};
-    T _n{0};
+    // y = m_ * x + n_
+    T m_{1};
+    T n_{0};
 
     Gen generator;
 
@@ -58,7 +58,7 @@ struct IntervalGenerator
 
     result_type intervalMap(T val) const
     {
-        return _m * val + _n;
+        return m_ * val + n_;
     }
 
     result_type operator()(std::size_t /*size*/ = 0)
@@ -137,18 +137,18 @@ template <typename T, typename Gen = generator<T>>
 struct progressivelySmallerGenerator
 {
     Gen source;
-    T _max_value;
+    T max_value_;
 
     using result_type = T;
 
     explicit progressivelySmallerGenerator(T max_value = T{1})
-        : _max_value(max_value)
+        : max_value_(max_value)
     {
     }
 
     result_type operator()(std::size_t size = 0)
     {
-        return _max_value * fix(1, source)() / (size + 1);
+        return max_value_ * fix(1, source)() / (size + 1);
     }
 };
 
