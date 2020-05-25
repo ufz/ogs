@@ -75,7 +75,7 @@ public:
                        std::size_t const /*local_matrix_size*/,
                        bool is_axially_symmetric,
                        unsigned const /*integration_order*/)
-        : _e(e)
+        : e_(e)
     {
         if (is_axially_symmetric)
         {
@@ -91,7 +91,7 @@ public:
         auto const sms =
             ProcessLib::initShapeMatrices<ShapeFunction, ShapeMatricesType,
                                           IntegrationMethod, GlobalDim>(
-                _e, false /*is_axially_symmetric*/,
+                e_, false /*is_axially_symmetric*/,
                 IntegrationMethod{integration_order});
         IntegrationMethod integration_method{integration_order};
 
@@ -103,7 +103,7 @@ public:
             EXPECT_NEAR(sms[0].detJ, sms[ip].detJ,
                         std::numeric_limits<double>::epsilon());
             auto const& N = sms[ip].N;
-            auto const coords = interpolateNodeCoordinates(_e, N);
+            auto const coords = interpolateNodeCoordinates(e_, N);
             auto const function_value = f(coords);
             integral += function_value * sms[ip].detJ *
                         integration_method.getWeightedPoint(ip).getWeight();
@@ -113,7 +113,7 @@ public:
     }
 
 private:
-    MeshLib::Element const& _e;
+    MeshLib::Element const& e_;
 };
 
 class IntegrationTestProcess
@@ -123,39 +123,39 @@ public:
 
     IntegrationTestProcess(MeshLib::Mesh const& mesh,
                            unsigned const integration_order)
-        : _integration_order(integration_order),
-          _mesh_subset_all_nodes(mesh, mesh.getNodes())
+        : integration_order_(integration_order),
+          mesh_subset_all_nodes_(mesh, mesh.getNodes())
     {
         std::vector<MeshLib::MeshSubset> all_mesh_subsets{
-            _mesh_subset_all_nodes};
+            mesh_subset_all_nodes_};
 
-        _dof_table = std::make_unique<NumLib::LocalToGlobalIndexMap>(
+        dof_table_ = std::make_unique<NumLib::LocalToGlobalIndexMap>(
             std::move(all_mesh_subsets), NumLib::ComponentOrder::BY_COMPONENT);
 
         // createAssemblers(mesh);
         ProcessLib::createLocalAssemblers<LocalAssemblerData>(
-            mesh.getDimension(), mesh.getElements(), *_dof_table, 1,
-            _local_assemblers, mesh.isAxiallySymmetric(), _integration_order);
+            mesh.getDimension(), mesh.getElements(), *dof_table_, 1,
+            local_assemblers_, mesh.isAxiallySymmetric(), integration_order_);
     }
 
     double integrate(LocalAssembler::Function const& f) const
     {
         double integral = 0;
-        for (auto const& la : _local_assemblers)
+        for (auto const& la : local_assemblers_)
         {
-            integral += la->integrate(f, _integration_order);
+            integral += la->integrate(f, integration_order_);
         }
 
         return integral;
     }
 
 private:
-    unsigned const _integration_order;
+    unsigned const integration_order_;
 
-    MeshLib::MeshSubset _mesh_subset_all_nodes;
-    std::unique_ptr<NumLib::LocalToGlobalIndexMap> _dof_table;
+    MeshLib::MeshSubset mesh_subset_all_nodes_;
+    std::unique_ptr<NumLib::LocalToGlobalIndexMap> dof_table_;
 
-    std::vector<std::unique_ptr<LocalAssembler>> _local_assemblers;
+    std::vector<std::unique_ptr<LocalAssembler>> local_assemblers_;
 };
 
 struct FBase
@@ -252,7 +252,7 @@ struct FQuad final : FBase
 struct F3DSeparablePolynomial final : FBase
 {
     explicit F3DSeparablePolynomial(unsigned polynomial_degree)
-        : FBase(3 * polynomial_degree + 3), _degree(polynomial_degree)
+        : FBase(3 * polynomial_degree + 3), degree_(polynomial_degree)
     {
     }
 
@@ -265,9 +265,9 @@ struct F3DSeparablePolynomial final : FBase
             auto const x = coords[d];
 
             double poly = 0.0;
-            for (unsigned n = 0; n <= _degree; ++n)
+            for (unsigned n = 0; n <= degree_; ++n)
             {
-                poly += coeffs[n + d * (_degree + 1)] * std::pow(x, n);
+                poly += coeffs[n + d * (degree_ + 1)] * std::pow(x, n);
             }
 
             res *= poly;
@@ -286,9 +286,9 @@ struct F3DSeparablePolynomial final : FBase
         for (unsigned d : {0, 1, 2})
         {
             double poly = 0.0;
-            for (unsigned n = 0; n <= _degree; ++n)
+            for (unsigned n = 0; n <= degree_; ++n)
             {
-                poly += coeffs[n + d * (_degree + 1)] *
+                poly += coeffs[n + d * (degree_ + 1)] *
                         (std::pow(b, n + 1) - std::pow(a, n + 1)) / (n + 1);
             }
 
@@ -299,7 +299,7 @@ struct F3DSeparablePolynomial final : FBase
     }
 
 private:
-    unsigned const _degree;
+    unsigned const degree_;
 };
 
 unsigned binomial_coefficient(unsigned n, unsigned k)
@@ -330,7 +330,7 @@ struct F3DNonseparablePolynomial final : FBase
     // polynomial_degree times from the set { x, y, z, 1 }
     explicit F3DNonseparablePolynomial(unsigned polynomial_degree)
         : FBase(binomial_coefficient(4 + polynomial_degree - 1, 4 - 1)),
-          _degree(polynomial_degree)
+          degree_(polynomial_degree)
     {
     }
 
@@ -343,11 +343,11 @@ struct F3DNonseparablePolynomial final : FBase
         double res = 0.0;
         unsigned index = 0;
 
-        for (unsigned x_deg = 0; x_deg <= _degree; ++x_deg)
+        for (unsigned x_deg = 0; x_deg <= degree_; ++x_deg)
         {
-            for (unsigned y_deg = 0; x_deg + y_deg <= _degree; ++y_deg)
+            for (unsigned y_deg = 0; x_deg + y_deg <= degree_; ++y_deg)
             {
-                for (unsigned z_deg = 0; x_deg + y_deg + z_deg <= _degree;
+                for (unsigned z_deg = 0; x_deg + y_deg + z_deg <= degree_;
                      ++z_deg)
                 {
                     EXPECT_GT(coeffs.size(), index);
@@ -373,11 +373,11 @@ struct F3DNonseparablePolynomial final : FBase
         double res = 0.0;
         unsigned index = 0;
 
-        for (unsigned x_deg = 0; x_deg <= _degree; ++x_deg)
+        for (unsigned x_deg = 0; x_deg <= degree_; ++x_deg)
         {
-            for (unsigned y_deg = 0; x_deg + y_deg <= _degree; ++y_deg)
+            for (unsigned y_deg = 0; x_deg + y_deg <= degree_; ++y_deg)
             {
-                for (unsigned z_deg = 0; x_deg + y_deg + z_deg <= _degree;
+                for (unsigned z_deg = 0; x_deg + y_deg + z_deg <= degree_;
                      ++z_deg)
                 {
                     EXPECT_GT(coeffs.size(), index);
@@ -401,7 +401,7 @@ struct F3DNonseparablePolynomial final : FBase
     }
 
 private:
-    unsigned const _degree;
+    unsigned const degree_;
 };
 
 std::unique_ptr<FBase> getF(unsigned polynomial_order)

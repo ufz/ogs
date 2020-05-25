@@ -86,19 +86,19 @@ public:
                        std::size_t const /*local_matrix_size*/,
                        bool is_axially_symmetric,
                        unsigned const integration_order)
-        : _shape_matrices(
+        : shape_matrices_(
               ProcessLib::initShapeMatrices<ShapeFunction, ShapeMatricesType,
                                             IntegrationMethod, GlobalDim>(
                   e, is_axially_symmetric,
                   IntegrationMethod{integration_order})),
-          _int_pt_values(_shape_matrices.size())
+          int_pt_values_(shape_matrices_.size())
     {
     }
 
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override
     {
-        auto const& N = _shape_matrices[integration_point].N;
+        auto const& N = shape_matrices_[integration_point].N;
 
         // assumes N is stored contiguously in memory
         return Eigen::Map<const Eigen::RowVectorXd>(N.data(), N.size());
@@ -110,7 +110,7 @@ public:
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
         std::vector<double>& /*cache*/) const override
     {
-        return _int_pt_values;
+        return int_pt_values_;
     }
 
     std::vector<double> const& getDerivedQuantity(
@@ -120,7 +120,7 @@ public:
         std::vector<double>& cache) const override
     {
         cache.clear();
-        for (auto value : _int_pt_values)
+        for (auto value : int_pt_values_)
         {
             cache.push_back(2.0 * value);
         }
@@ -131,13 +131,13 @@ public:
         std::vector<double> const& local_nodal_values) override
     {
         ExtrapolationTest::interpolateNodalValuesToIntegrationPoints(
-            local_nodal_values, _shape_matrices, _int_pt_values);
+            local_nodal_values, shape_matrices_, int_pt_values_);
     }
 
 private:
     std::vector<ShapeMatrices, Eigen::aligned_allocator<ShapeMatrices>>
-        _shape_matrices;
-    std::vector<double> _int_pt_values;
+        shape_matrices_;
+    std::vector<double> int_pt_values_;
 };
 
 class ExtrapolationTestProcess
@@ -151,24 +151,24 @@ public:
 
     ExtrapolationTestProcess(MeshLib::Mesh const& mesh,
                              unsigned const integration_order)
-        : _integration_order(integration_order),
-          _mesh_subset_all_nodes(mesh, mesh.getNodes())
+        : integration_order_(integration_order),
+          mesh_subset_all_nodes_(mesh, mesh.getNodes())
     {
         std::vector<MeshLib::MeshSubset> all_mesh_subsets{
-            _mesh_subset_all_nodes};
+            mesh_subset_all_nodes_};
 
-        _dof_table = std::make_unique<NumLib::LocalToGlobalIndexMap>(
+        dof_table_ = std::make_unique<NumLib::LocalToGlobalIndexMap>(
             std::move(all_mesh_subsets), NumLib::ComponentOrder::BY_COMPONENT);
 
-        // Passing _dof_table works, because this process has only one variable
+        // Passing dof_table_ works, because this process has only one variable
         // and the variable has exactly one component.
-        _extrapolator =
-            std::make_unique<ExtrapolatorImplementation>(*_dof_table);
+        extrapolator_ =
+            std::make_unique<ExtrapolatorImplementation>(*dof_table_);
 
         // createAssemblers(mesh);
         ProcessLib::createLocalAssemblers<LocalAssemblerData>(
-            mesh.getDimension(), mesh.getElements(), *_dof_table, 1,
-            _local_assemblers, mesh.isAxiallySymmetric(), _integration_order);
+            mesh.getDimension(), mesh.getElements(), *dof_table_, 1,
+            local_assemblers_, mesh.isAxiallySymmetric(), integration_order_);
     }
 
     void interpolateNodalValuesToIntegrationPoints(
@@ -183,7 +183,7 @@ public:
             loc_asm.interpolateNodalValuesToIntegrationPoints(local_x);
         };
 
-        GlobalExecutor::executeDereferenced(cb, _local_assemblers, *_dof_table,
+        GlobalExecutor::executeDereferenced(cb, local_assemblers_, *dof_table_,
                                             global_nodal_values);
     }
 
@@ -192,26 +192,26 @@ public:
         std::vector<GlobalVector*> const& x) const
     {
         auto const extrapolatables =
-            NumLib::makeExtrapolatable(_local_assemblers, method);
+            NumLib::makeExtrapolatable(local_assemblers_, method);
 
-        _extrapolator->extrapolate(1, extrapolatables, t, x,
-                                   {_dof_table.get()});
-        _extrapolator->calculateResiduals(1, extrapolatables, t, x,
-                                          {_dof_table.get()});
+        extrapolator_->extrapolate(1, extrapolatables, t, x,
+                                   {dof_table_.get()});
+        extrapolator_->calculateResiduals(1, extrapolatables, t, x,
+                                          {dof_table_.get()});
 
-        return {&_extrapolator->getNodalValues(),
-                &_extrapolator->getElementResiduals()};
+        return {&extrapolator_->getNodalValues(),
+                &extrapolator_->getElementResiduals()};
     }
 
 private:
-    unsigned const _integration_order;
+    unsigned const integration_order_;
 
-    MeshLib::MeshSubset _mesh_subset_all_nodes;
-    std::unique_ptr<NumLib::LocalToGlobalIndexMap> _dof_table;
+    MeshLib::MeshSubset mesh_subset_all_nodes_;
+    std::unique_ptr<NumLib::LocalToGlobalIndexMap> dof_table_;
 
-    std::vector<std::unique_ptr<LocalAssembler>> _local_assemblers;
+    std::vector<std::unique_ptr<LocalAssembler>> local_assemblers_;
 
-    std::unique_ptr<ExtrapolatorInterface> _extrapolator;
+    std::unique_ptr<ExtrapolatorInterface> extrapolator_;
 };
 
 void extrapolate(

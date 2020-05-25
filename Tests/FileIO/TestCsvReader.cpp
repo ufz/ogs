@@ -26,9 +26,9 @@ class CsvInterfaceTest : public ::testing::Test
 public:
     CsvInterfaceTest()
     {
-        _file_name =
+        file_name_ =
             (fs::temp_directory_path() /= BaseLib::randomString(32) + ".csv").string();
-        std::ofstream out(_file_name);
+        std::ofstream out(file_name_);
         out << "id\tx\ty\tz\tname\tvalue1\tvalue_two\n";
         out << "0\t642015.538\t5724666.445\t391.759\ttest_a\t11.05303121\t436.913\t133\n";
         out << "1\t642015.49\t724667.426\t391.85\ttest_b\t51.65503659\n";
@@ -43,11 +43,11 @@ public:
         out.close();
     }
 
-    ~CsvInterfaceTest() override { std::remove(_file_name.c_str()); }
+    ~CsvInterfaceTest() override { std::remove(file_name_.c_str()); }
 
 protected:
-    int _result;
-    std::string _file_name;
+    int result_;
+    std::string file_name_;
 };
 
 /// Reading 3D points
@@ -55,10 +55,10 @@ TEST_F(CsvInterfaceTest, SimpleReadPoints)
 {
     std::vector<GeoLib::Point*> points;
     std::vector<GeoLib::Point*> points2;
-    _result = FileIO::CsvInterface::readPoints(_file_name, '\t', points);
-    ASSERT_EQ(0, _result);
-    _result = FileIO::CsvInterface::readPoints(_file_name, '\t', points2, "x", "y", "z");
-    ASSERT_EQ(0, _result);
+    result_ = FileIO::CsvInterface::readPoints(file_name_, '\t', points);
+    ASSERT_EQ(0, result_);
+    result_ = FileIO::CsvInterface::readPoints(file_name_, '\t', points2, "x", "y", "z");
+    ASSERT_EQ(0, result_);
     ASSERT_TRUE(points.size() == 10);
     ASSERT_TRUE(points2.size() == 10);
     for (std::size_t i=0; i<points.size(); ++i)
@@ -80,8 +80,8 @@ TEST_F(CsvInterfaceTest, SimpleReadPoints)
 TEST_F(CsvInterfaceTest, StringInPointColumn)
 {
     std::vector<GeoLib::Point*> points;
-    _result = FileIO::CsvInterface::readPoints(_file_name, '\t', points, "x", "y", "name");
-    ASSERT_EQ(10, _result);
+    result_ = FileIO::CsvInterface::readPoints(file_name_, '\t', points, "x", "y", "name");
+    ASSERT_EQ(10, result_);
     ASSERT_TRUE(points.empty());
 }
 
@@ -89,12 +89,12 @@ TEST_F(CsvInterfaceTest, StringInPointColumn)
 TEST_F(CsvInterfaceTest, WrongColumnName)
 {
     std::vector<GeoLib::Point*> points;
-    _result = FileIO::CsvInterface::readPoints(_file_name, '\t', points, "x", "y", "wrong_column_name");
-    ASSERT_EQ(-1, _result);
+    result_ = FileIO::CsvInterface::readPoints(file_name_, '\t', points, "x", "y", "wrong_column_name");
+    ASSERT_EQ(-1, result_);
     ASSERT_TRUE(points.empty());
 
-    _result = FileIO::CsvInterface::readPoints(_file_name, '\t', points, "wrong_column_name", "y", "id");
-    ASSERT_EQ(-1, _result);
+    result_ = FileIO::CsvInterface::readPoints(file_name_, '\t', points, "wrong_column_name", "y", "id");
+    ASSERT_EQ(-1, result_);
     ASSERT_TRUE(points.empty());
 }
 
@@ -102,8 +102,8 @@ TEST_F(CsvInterfaceTest, WrongColumnName)
 TEST_F(CsvInterfaceTest, MissingValues)
 {
     std::vector<GeoLib::Point*> points;
-    _result = FileIO::CsvInterface::readPoints(_file_name, '\t', points, "z", "value1", "value_two");
-    ASSERT_EQ(3, _result);
+    result_ = FileIO::CsvInterface::readPoints(file_name_, '\t', points, "z", "value1", "value_two");
+    ASSERT_EQ(3, result_);
     ASSERT_EQ(7, points.size());
     ASSERT_NEAR(437.539, (*points[4])[2], std::numeric_limits<double>::epsilon());
     for (auto p : points)
@@ -116,8 +116,8 @@ TEST_F(CsvInterfaceTest, MissingValues)
 TEST_F(CsvInterfaceTest, Points2D)
 {
     std::vector<GeoLib::Point*> points;
-    _result = FileIO::CsvInterface::readPoints(_file_name, '\t', points, "x", "y");
-    ASSERT_EQ(0, _result);
+    result_ = FileIO::CsvInterface::readPoints(file_name_, '\t', points, "x", "y");
+    ASSERT_EQ(0, result_);
     ASSERT_EQ(10, points.size());
     for (auto& point : points)
     {
@@ -135,12 +135,12 @@ TEST_F(CsvInterfaceTest, CoordinateOrder)
     std::vector<GeoLib::Point*> points1;
     std::vector<GeoLib::Point*> points2;
     std::vector<GeoLib::Point*> points3;
-    _result = FileIO::CsvInterface::readPoints(_file_name, '\t', points1, "id", "y", "z");
-    ASSERT_EQ(0, _result);
-    _result = FileIO::CsvInterface::readPoints(_file_name, '\t', points2, "id", "z", "y");
-    ASSERT_EQ(0, _result);
-    _result = FileIO::CsvInterface::readPoints(_file_name, '\t', points3, "y", "id", "z");
-    ASSERT_EQ(0, _result);
+    result_ = FileIO::CsvInterface::readPoints(file_name_, '\t', points1, "id", "y", "z");
+    ASSERT_EQ(0, result_);
+    result_ = FileIO::CsvInterface::readPoints(file_name_, '\t', points2, "id", "z", "y");
+    ASSERT_EQ(0, result_);
+    result_ = FileIO::CsvInterface::readPoints(file_name_, '\t', points3, "y", "id", "z");
+    ASSERT_EQ(0, result_);
     ASSERT_EQ(10, points1.size());
     ASSERT_EQ(10, points2.size());
     ASSERT_EQ(10, points3.size());
@@ -171,17 +171,17 @@ TEST_F(CsvInterfaceTest, CoordinateOrder)
 TEST_F(CsvInterfaceTest, GetColumn)
 {
     std::vector<std::string> columns =
-        FileIO::CsvInterface::getColumnNames(_file_name, '\t');
+        FileIO::CsvInterface::getColumnNames(file_name_, '\t');
     ASSERT_EQ(7, columns.size());
     std::vector<std::string> names;
-    _result = FileIO::CsvInterface::readColumn<std::string>(_file_name, '\t', names, columns[4]);
-    ASSERT_EQ(0, _result);
+    result_ = FileIO::CsvInterface::readColumn<std::string>(file_name_, '\t', names, columns[4]);
+    ASSERT_EQ(0, result_);
     ASSERT_EQ(10, names.size());
     ASSERT_EQ("test_j", names[9]);
 
     std::vector<double> values;
-    _result = FileIO::CsvInterface::readColumn<double>(_file_name, '\t', values, columns[6]);
-    ASSERT_EQ(2, _result);
+    result_ = FileIO::CsvInterface::readColumn<double>(file_name_, '\t', values, columns[6]);
+    ASSERT_EQ(2, result_);
     ASSERT_EQ(8, values.size());
     ASSERT_NEAR(135, values[1], std::numeric_limits<double>::epsilon());
 }
@@ -190,8 +190,8 @@ TEST_F(CsvInterfaceTest, GetColumn)
 TEST_F(CsvInterfaceTest, NonExistingColumn)
 {
     std::vector<double> values;
-    _result = FileIO::CsvInterface::readColumn<double>(_file_name, '\t', values, "value2");
-    ASSERT_EQ(-1, _result);
+    result_ = FileIO::CsvInterface::readColumn<double>(file_name_, '\t', values, "value2");
+    ASSERT_EQ(-1, result_);
     ASSERT_TRUE(values.empty());
 }
 
@@ -199,13 +199,13 @@ TEST_F(CsvInterfaceTest, NonExistingColumn)
 TEST_F(CsvInterfaceTest, WrongDataType)
 {
     std::vector<double> values;
-    _result = FileIO::CsvInterface::readColumn<double>(_file_name, '\t', values, "name");
-    ASSERT_EQ(10, _result);
+    result_ = FileIO::CsvInterface::readColumn<double>(file_name_, '\t', values, "name");
+    ASSERT_EQ(10, result_);
     ASSERT_TRUE(values.empty());
 
     std::vector<std::string> names;
-    _result = FileIO::CsvInterface::readColumn<std::string>(_file_name, '\t', names, "value1");
-    ASSERT_EQ(2, _result);
+    result_ = FileIO::CsvInterface::readColumn<std::string>(file_name_, '\t', names, "value1");
+    ASSERT_EQ(2, result_);
     ASSERT_EQ(8, names.size());
 }
 

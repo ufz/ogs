@@ -529,22 +529,22 @@ private:
 
         std::vector<double> M_data_cd;
         std::vector<double> K_data_cd;
-        std::vector<double> b_data_cd;
+        std::vector<double> bdata_cd_;
         std::vector<double> Jac_data_cd;
         std::vector<double> M_data_ana;
         std::vector<double> K_data_ana;
-        std::vector<double> b_data_ana;
+        std::vector<double> bdata_ana_;
         std::vector<double> Jac_data_ana;
         double const t = 0.0;
         double const dt = 0.0;
 
         jac_asm_cd.assembleWithJacobian(loc_asm, t, dt, x, xdot, dxdot_dx,
-                                        dx_dx, M_data_cd, K_data_cd, b_data_cd,
+                                        dx_dx, M_data_cd, K_data_cd, bdata_cd_,
                                         Jac_data_cd);
 
         jac_asm_ana.assembleWithJacobian(loc_asm, t, dt, x, xdot, dxdot_dx,
                                          dx_dx, M_data_ana, K_data_ana,
-                                         b_data_ana, Jac_data_ana);
+                                         bdata_ana_, Jac_data_ana);
 
         if (LocAsm::asmM) {
             ASSERT_EQ(x.size()*x.size(), M_data_cd.size());
@@ -565,11 +565,11 @@ private:
         }
 
         if (LocAsm::asmb) {
-            ASSERT_EQ(x.size(), b_data_cd.size());
-            ASSERT_EQ(x.size(), b_data_ana.size());
+            ASSERT_EQ(x.size(), bdata_cd_.size());
+            ASSERT_EQ(x.size(), bdata_ana_.size());
             for (std::size_t i = 0; i < x.size(); ++i)
             {
-                EXPECT_NEAR(b_data_ana[i], b_data_cd[i], eps);
+                EXPECT_NEAR(bdata_ana_[i], bdata_cd_[i], eps);
             }
         }
 

@@ -31,7 +31,7 @@ struct MeshGeoToolsLibGeoMapper : public ::testing::Test
 
     // Generates structured surface mesh, approximation of the surface described
     // by the given function, i.e., std::cos(x+y).
-    std::unique_ptr<MeshLib::Mesh> _surface_mesh{
+    std::unique_ptr<MeshLib::Mesh> surface_mesh_{
         MeshLib::MeshGenerator::createSurfaceMesh(
             "Test", MathLib::Point3d{ {{0.0, 0.0, 0.0}} },
             MathLib::Point3d{ {{1.0, 1.0, 0.0}} }, {{110,60}},
@@ -59,7 +59,7 @@ TEST_F(MeshGeoToolsLibGeoMapper, PointsOnSurfaceMesh)
         geo_obj.addPointVec(std::move(points), geo_name);
         MeshGeoToolsLib::GeoMapper geo_mapper(geo_obj, geo_name);
 
-        geo_mapper.mapOnMesh(_surface_mesh.get());
+        geo_mapper.mapOnMesh(surface_mesh_.get());
 
         auto const mapped_points(geo_obj.getPointVec(geo_name));
         double const eps(0.01);

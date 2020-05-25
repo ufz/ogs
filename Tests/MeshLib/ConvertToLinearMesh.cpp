@@ -39,34 +39,34 @@ public:
     std::unique_ptr<Mesh> quadratic_mesh;
 };
 
-// Returns the (inverse) permutation vector of b_nodes to a_nodes, or an error
+// Returns the (inverse) permutation vector of bnodes_ to a_nodes, or an error
 // message.
 std::variant<std::vector<std::size_t>, std::string> compareNodes(
-    std::vector<Node*> const& a_nodes, std::vector<Node*> const& b_nodes)
+    std::vector<Node*> const& a_nodes, std::vector<Node*> const& bnodes_)
 {
     // For each 'a' mesh node find a corresponding 'b' mesh node, not checking
     // the ids, but store the id's in a map.
-    std::vector<std::size_t> b_node_id(a_nodes.size());
+    std::vector<std::size_t> bnode_id_(a_nodes.size());
 
     std::size_t const nnodes = a_nodes.size();
     for (std::size_t i = 0; i < nnodes; ++i)
     {
         Node* a_node = a_nodes[i];
-        auto const b_it =
-            std::find_if(begin(b_nodes), end(b_nodes), [&](Node* const b_node) {
+        auto const bit_ =
+            std::find_if(begin(bnodes_), end(bnodes_), [&](Node* const bnode_) {
                 return *a_node ==
-                       *b_node;  // coordinate comparison up to epsilon
+                       *bnode_;  // coordinate comparison up to epsilon
             });
-        if (b_it == end(b_nodes))
+        if (bit_ == end(bnodes_))
         {
             return "Could not find a matching node for node " +
                    std::to_string(a_node->getID()) + ".";
         }
 
-        b_node_id[i] = distance(begin(b_nodes), b_it);
+        bnode_id_[i] = distance(begin(bnodes_), bit_);
     }
 
-    return b_node_id;
+    return bnode_id_;
 }
 
 // Two elements are equal if their corresponding node coordinates are equal up
@@ -80,13 +80,13 @@ boost::optional<std::string> equal(Element const& a, Element const& b)
     }
 
     auto const a_nodes = a.getNodes();
-    auto const b_nodes = b.getNodes();
+    auto const bnodes_ = b.getNodes();
     auto const nnodes = a.getNumberOfNodes();
 
     std::size_t first_b_node = 0;
     while (first_b_node < nnodes)
     {
-        if (*a_nodes[0] == *b_nodes[first_b_node])
+        if (*a_nodes[0] == *bnodes_[first_b_node])
         {
             break;
         }
@@ -101,7 +101,7 @@ boost::optional<std::string> equal(Element const& a, Element const& b)
 
     for (std::size_t i = 1; i < nnodes; ++i)
     {
-        if (!(*a_nodes[i] == *b_nodes[(first_b_node + i) % nnodes]))
+        if (!(*a_nodes[i] == *bnodes_[(first_b_node + i) % nnodes]))
         {
             return "node " + std::to_string(i) + " is not equal to the node " +
                    std::to_string((first_b_node + i) % nnodes) + ".";

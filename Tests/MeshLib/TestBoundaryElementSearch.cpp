@@ -31,46 +31,46 @@ class MeshLibBoundaryElementSearchInSimpleQuadMesh : public testing::Test
 {
 public:
     MeshLibBoundaryElementSearchInSimpleQuadMesh()
-        : _quad_mesh(MeshGenerator::generateRegularQuadMesh(
-              _geometric_size, _number_of_subdivisions_per_direction))
+        : quad_mesh_(MeshGenerator::generateRegularQuadMesh(
+              geometric_size_, number_of_subdivisions_per_direction_))
     {}
 
     ~MeshLibBoundaryElementSearchInSimpleQuadMesh() override
     {
-        for (auto p : _pnts)
+        for (auto p : pnts_)
         {
             delete p;
         }
     }
 
 protected:
-    const double _geometric_size{10.0};
-    const std::size_t _number_of_subdivisions_per_direction{10};
-    std::unique_ptr<Mesh> _quad_mesh;
-    std::vector<GeoLib::Point*> _pnts;
+    const double geometric_size_{10.0};
+    const std::size_t number_of_subdivisions_per_direction_{10};
+    std::unique_ptr<Mesh> quad_mesh_;
+    std::vector<GeoLib::Point*> pnts_;
 };
 
 class MeshLibBoundaryElementSearchInSimpleHexMesh : public testing::Test
 {
 public:
     MeshLibBoundaryElementSearchInSimpleHexMesh()
-        : _hex_mesh(MeshGenerator::generateRegularHexMesh(
-              _geometric_size, _number_of_subdivisions_per_direction))
+        : hex_mesh_(MeshGenerator::generateRegularHexMesh(
+              geometric_size_, number_of_subdivisions_per_direction_))
     {
         // Points for the surfaces. Corners of a cube.
-        _pnts.push_back(new GeoLib::Point(0.0, 0.0, 0.0));
-        _pnts.push_back(new GeoLib::Point(_geometric_size, 0.0, 0.0));
-        _pnts.push_back(
-            new GeoLib::Point(_geometric_size, _geometric_size, 0.0));
-        _pnts.push_back(new GeoLib::Point(0.0, _geometric_size, 0.0));
-        _pnts.push_back(
-            new GeoLib::Point(_geometric_size, 0.0, _geometric_size));
-        _pnts.push_back(new GeoLib::Point(0.0, 0.0, _geometric_size));
+        pnts_.push_back(new GeoLib::Point(0.0, 0.0, 0.0));
+        pnts_.push_back(new GeoLib::Point(geometric_size_, 0.0, 0.0));
+        pnts_.push_back(
+            new GeoLib::Point(geometric_size_, geometric_size_, 0.0));
+        pnts_.push_back(new GeoLib::Point(0.0, geometric_size_, 0.0));
+        pnts_.push_back(
+            new GeoLib::Point(geometric_size_, 0.0, geometric_size_));
+        pnts_.push_back(new GeoLib::Point(0.0, 0.0, geometric_size_));
     }
 
     ~MeshLibBoundaryElementSearchInSimpleHexMesh() override
     {
-        for (auto p : _pnts)
+        for (auto p : pnts_)
         {
             delete p;
         }
@@ -82,34 +82,34 @@ public:
         std::size_t const n_eles_2d) const;
 
 protected:
-    const double _geometric_size{10.0};
-    const std::size_t _number_of_subdivisions_per_direction{10};
-    std::unique_ptr<Mesh> _hex_mesh;
-    std::vector<GeoLib::Point*> _pnts;
+    const double geometric_size_{10.0};
+    const std::size_t number_of_subdivisions_per_direction_{10};
+    std::unique_ptr<Mesh> hex_mesh_;
+    std::vector<GeoLib::Point*> pnts_;
 };
 
 TEST_F(MeshLibBoundaryElementSearchInSimpleQuadMesh, PolylineSearch)
 {
-    ASSERT_TRUE(_quad_mesh != nullptr);
+    ASSERT_TRUE(quad_mesh_ != nullptr);
 
     MeshGeoToolsLib::MeshNodeSearcher mesh_node_searcher(
-        *_quad_mesh,
-        std::make_unique<MeshGeoToolsLib::HeuristicSearchLength>(*_quad_mesh),
+        *quad_mesh_,
+        std::make_unique<MeshGeoToolsLib::HeuristicSearchLength>(*quad_mesh_),
         MeshGeoToolsLib::SearchAllNodes::Yes);
     MeshGeoToolsLib::BoundaryElementsSearcher boundary_element_searcher(
-        *_quad_mesh, mesh_node_searcher);
+        *quad_mesh_, mesh_node_searcher);
     bool const multiple_nodes_allowed = false;
 
-    const unsigned n_eles_per_dir = _number_of_subdivisions_per_direction;
-    const unsigned n_nodes_per_dir = _number_of_subdivisions_per_direction + 1;
+    const unsigned n_eles_per_dir = number_of_subdivisions_per_direction_;
+    const unsigned n_nodes_per_dir = number_of_subdivisions_per_direction_ + 1;
 
     // points for the polylines
-    _pnts.push_back(new GeoLib::Point(0.0, 0.0, 0.0));
-    _pnts.push_back(new GeoLib::Point(_geometric_size, 0.0, 0.0));
-    _pnts.push_back(new GeoLib::Point(_geometric_size, _geometric_size, 0.0));
-    _pnts.push_back(new GeoLib::Point(0.0, _geometric_size, 0.0));
+    pnts_.push_back(new GeoLib::Point(0.0, 0.0, 0.0));
+    pnts_.push_back(new GeoLib::Point(geometric_size_, 0.0, 0.0));
+    pnts_.push_back(new GeoLib::Point(geometric_size_, geometric_size_, 0.0));
+    pnts_.push_back(new GeoLib::Point(0.0, geometric_size_, 0.0));
 
-    GeoLib::Polyline ply_bottom(_pnts);
+    GeoLib::Polyline ply_bottom(pnts_);
     ply_bottom.addPoint(0);
     ply_bottom.addPoint(1);
     {
@@ -129,7 +129,7 @@ TEST_F(MeshLibBoundaryElementSearchInSimpleQuadMesh, PolylineSearch)
         }
     }
 
-    GeoLib::Polyline ply_right(_pnts);
+    GeoLib::Polyline ply_right(pnts_);
     ply_right.addPoint(1);
     ply_right.addPoint(2);
     {
@@ -149,7 +149,7 @@ TEST_F(MeshLibBoundaryElementSearchInSimpleQuadMesh, PolylineSearch)
         }
     }
 
-    GeoLib::Polyline ply_top(_pnts);
+    GeoLib::Polyline ply_top(pnts_);
     ply_top.addPoint(2);
     ply_top.addPoint(3);
     {
@@ -171,7 +171,7 @@ TEST_F(MeshLibBoundaryElementSearchInSimpleQuadMesh, PolylineSearch)
         }
     }
 
-    GeoLib::Polyline ply_left(_pnts);
+    GeoLib::Polyline ply_left(pnts_);
     ply_left.addPoint(3);
     ply_left.addPoint(0);
     {
@@ -215,7 +215,7 @@ void MeshLibBoundaryElementSearchInSimpleHexMesh::
         mesh, mesh_node_searcher);
 
     // perform search on the bottom surface
-    GeoLib::Surface sfc_bottom(_pnts);
+    GeoLib::Surface sfc_bottom(pnts_);
     sfc_bottom.addTriangle(0, 1, 2);
     sfc_bottom.addTriangle(0, 2, 3);
 
@@ -224,7 +224,7 @@ void MeshLibBoundaryElementSearchInSimpleHexMesh::
         boundary_element_searcher.getBoundaryElements(sfc_bottom,
                                                       multiple_nodes_allowed));
     ASSERT_EQ(n_eles_2d, found_faces_sfc_b.size());
-    ASSERT_EQ(_geometric_size * _geometric_size,
+    ASSERT_EQ(geometric_size_ * geometric_size_,
               computeAreaOfFaceElements(found_faces_sfc_b.begin(),
                                         found_faces_sfc_b.end()));
     auto connected_nodes_b = MeshLib::getUniqueNodes(found_faces_sfc_b);
@@ -235,7 +235,7 @@ void MeshLibBoundaryElementSearchInSimpleHexMesh::
     }
 
     // perform search on the front surface
-    GeoLib::Surface sfc_front(_pnts);
+    GeoLib::Surface sfc_front(pnts_);
     sfc_front.addTriangle(0, 1, 4);
     sfc_front.addTriangle(0, 4, 5);
 
@@ -243,7 +243,7 @@ void MeshLibBoundaryElementSearchInSimpleHexMesh::
         boundary_element_searcher.getBoundaryElements(sfc_front,
                                                       multiple_nodes_allowed));
     ASSERT_EQ(n_eles_2d, found_faces_sfc_f.size());
-    ASSERT_EQ(_geometric_size * _geometric_size,
+    ASSERT_EQ(geometric_size_ * geometric_size_,
               computeAreaOfFaceElements(found_faces_sfc_f.begin(),
                                         found_faces_sfc_f.end()));
     auto connected_nodes_f = MeshLib::getUniqueNodes(found_faces_sfc_f);
@@ -256,12 +256,12 @@ void MeshLibBoundaryElementSearchInSimpleHexMesh::
 
 TEST_F(MeshLibBoundaryElementSearchInSimpleHexMesh, SurfaceSearch)
 {
-    ASSERT_TRUE(_hex_mesh != nullptr);
-    const std::size_t& s = _number_of_subdivisions_per_direction;
+    ASSERT_TRUE(hex_mesh_ != nullptr);
+    const std::size_t& s = number_of_subdivisions_per_direction_;
     const std::size_t n_nodes_2d = (s + 1) * (s + 1);
     const std::size_t n_eles_2d = s * s;
 
-    TestHexSurfacesBoundaryElementSearcher(*_hex_mesh, n_nodes_2d, n_eles_2d);
+    TestHexSurfacesBoundaryElementSearcher(*hex_mesh_, n_nodes_2d, n_eles_2d);
 }
 
 // This is identical to the above
@@ -269,10 +269,10 @@ TEST_F(MeshLibBoundaryElementSearchInSimpleHexMesh, SurfaceSearch)
 // creates a quadratic mesh from the original hex mesh.
 TEST_F(MeshLibBoundaryElementSearchInSimpleHexMesh, QuadElementsSurfaceSearch)
 {
-    ASSERT_TRUE(_hex_mesh != nullptr);
-    auto mesh = MeshLib::createQuadraticOrderMesh(*_hex_mesh);
+    ASSERT_TRUE(hex_mesh_ != nullptr);
+    auto mesh = MeshLib::createQuadraticOrderMesh(*hex_mesh_);
 
-    const std::size_t& s = _number_of_subdivisions_per_direction;
+    const std::size_t& s = number_of_subdivisions_per_direction_;
     const std::size_t n_nodes_2d = (s + 1) * (3 * s + 1);
     const std::size_t n_eles_2d = s * s;
 

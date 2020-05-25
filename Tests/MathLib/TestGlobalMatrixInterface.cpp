@@ -94,9 +94,9 @@ void checkGlobalMatrixInterfaceMPI(T_MATRIX &m, T_VECTOR &v)
 
     MathLib::finalizeMatrixAssembly(m);
 
-    // Test basic assignment operator with an empty T_MATRIX._A
+    // Test basic assignment operator with an empty T_MATRIX.A_
     T_MATRIX m_c = m;
-    // Test basic assignment operator with an initalized T_MATRIX._A
+    // Test basic assignment operator with an initalized T_MATRIX.A_
     m_c = m;
 
     // Multiply by a vector

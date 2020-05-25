@@ -76,9 +76,9 @@ public:
 
         auto linear_solver = createLinearSolver();
         auto conv_crit = std::make_unique<NumLib::ConvergenceCriterionDeltaX>(
-            _tol, boost::none, MathLib::VecNormType::NORM2);
+            tol_, boost::none, MathLib::VecNormType::NORM2);
         auto nonlinear_solver =
-            std::make_unique<NLSolver>(*linear_solver, _maxiter);
+            std::make_unique<NLSolver>(*linear_solver, maxiter_);
 
         NumLib::TimeLoopSingleODE<NLTag> loop(ode_sys, std::move(linear_solver),
                                               std::move(nonlinear_solver),
@@ -118,8 +118,8 @@ public:
     }
 
 private:
-    const double _tol = 1e-9;
-    const unsigned _maxiter = 20;
+    const double tol_ = 1e-9;
+    const unsigned maxiter_ = 20;
 };
 
 template <typename TimeDisc, typename ODE, NumLib::NonlinearSolverTag NLTag>

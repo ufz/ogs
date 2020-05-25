@@ -45,7 +45,7 @@ public:
             EXPECT_EQ("FILENAME", filename);
 
             DBUG("error <{:s}> : {:s}", path, message);
-            _error = true;
+            error_ = true;
             throw Exc(); // throw in order to stop normal execution
         };
     }
@@ -63,17 +63,17 @@ public:
             EXPECT_EQ("FILENAME", filename);
 
             DBUG("warning <{:s}> : {:s}", path, message);
-            _warning = true;
+            warning_ = true;
         };
     }
 
-    bool get_error()   const { return _error; }
-    bool get_warning() const { return _warning; }
-    void reset() { _error = false; _warning = false; }
+    bool get_error()   const { return error_; }
+    bool get_warning() const { return warning_; }
+    void reset() { error_ = false; warning_ = false; }
 
 private:
-    bool _error = false;
-    bool _warning = false;
+    bool error_ = false;
+    bool warning_ = false;
 };
 
 BaseLib::ConfigTree

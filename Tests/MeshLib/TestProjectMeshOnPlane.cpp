@@ -25,7 +25,7 @@ class ProjectionTest : public ::testing::Test
 {
 public:
     ProjectionTest()
-    : _mesh(nullptr)
+    : mesh_(nullptr)
     {
         std::size_t const n_nodes (100);
         std::vector<MeshLib::Node*> nodes;
@@ -42,21 +42,21 @@ public:
                 std::array<MeshLib::Node*, 2>{{nodes[i], nodes[i + 1]}}));
         }
 
-        _mesh = std::make_unique<MeshLib::Mesh>("TestMesh", nodes, elements);
+        mesh_ = std::make_unique<MeshLib::Mesh>("TestMesh", nodes, elements);
     }
 
 protected:
-    std::unique_ptr<MeshLib::Mesh> _mesh;
+    std::unique_ptr<MeshLib::Mesh> mesh_;
 };
 // Project to parallels of XY plane
 TEST_F(ProjectionTest, ProjectToXY)
 {
     MathLib::Vector3 normal (0,0,1);
-    std::size_t const n_nodes (_mesh->getNumberOfNodes());
+    std::size_t const n_nodes (mesh_->getNumberOfNodes());
     for (std::size_t p=0; p<10; p++)
     {
         MathLib::Point3d origin (std::array<double,3>{{0,0,static_cast<double>(p)}});
-        MeshLib::Mesh* result = MeshLib::projectMeshOntoPlane(*_mesh, origin, normal);
+        MeshLib::Mesh* result = MeshLib::projectMeshOntoPlane(*mesh_, origin, normal);
         for (std::size_t i = 0; i < n_nodes; i++)
         {
             ASSERT_NEAR(static_cast<double>(p), (*result->getNode(i))[2],
@@ -70,11 +70,11 @@ TEST_F(ProjectionTest, ProjectToXY)
 TEST_F(ProjectionTest, ProjectToXZ)
 {
     MathLib::Vector3 normal (0,1,0);
-    std::size_t const n_nodes (_mesh->getNumberOfNodes());
+    std::size_t const n_nodes (mesh_->getNumberOfNodes());
     for (std::size_t p=0; p<10; p++)
     {
         MathLib::Point3d origin (std::array<double,3>{{0,static_cast<double>(p),0}});
-        MeshLib::Mesh* result = MeshLib::projectMeshOntoPlane(*_mesh, origin, normal);
+        MeshLib::Mesh* result = MeshLib::projectMeshOntoPlane(*mesh_, origin, normal);
         for (std::size_t i = 0; i < n_nodes; i++)
         {
             ASSERT_NEAR(static_cast<double>(p), (*result->getNode(i))[1],
@@ -88,11 +88,11 @@ TEST_F(ProjectionTest, ProjectToXZ)
 TEST_F(ProjectionTest, ProjectToYZ)
 {
     MathLib::Vector3 normal (1,0,0);
-    std::size_t const n_nodes (_mesh->getNumberOfNodes());
+    std::size_t const n_nodes (mesh_->getNumberOfNodes());
     for (std::size_t p=0; p<10; p++)
     {
         MathLib::Point3d origin (std::array<double,3>{{static_cast<double>(p),0,0}});
-        MeshLib::Mesh* result = MeshLib::projectMeshOntoPlane(*_mesh, origin, normal);
+        MeshLib::Mesh* result = MeshLib::projectMeshOntoPlane(*mesh_, origin, normal);
         for (std::size_t i = 0; i < n_nodes; i++)
         {
             ASSERT_NEAR(static_cast<double>(p), (*result->getNode(i))[0],
@@ -107,10 +107,10 @@ TEST_F(ProjectionTest, NormalDirection)
 {
     MathLib::Vector3 normal_p (0,0,1);
     MathLib::Vector3 normal_n (0,0,-1);
-    std::size_t const n_nodes (_mesh->getNumberOfNodes());
+    std::size_t const n_nodes (mesh_->getNumberOfNodes());
     MathLib::Point3d origin (std::array<double,3>{{0,0,0}});
-    MeshLib::Mesh* result_p = MeshLib::projectMeshOntoPlane(*_mesh, origin, normal_p);
-    MeshLib::Mesh* result_n = MeshLib::projectMeshOntoPlane(*_mesh, origin, normal_n);
+    MeshLib::Mesh* result_p = MeshLib::projectMeshOntoPlane(*mesh_, origin, normal_p);
+    MeshLib::Mesh* result_n = MeshLib::projectMeshOntoPlane(*mesh_, origin, normal_n);
     for (std::size_t i = 0; i < n_nodes; i++)
     {
         ASSERT_EQ((*result_p->getNode(i))[2], (*result_n->getNode(i))[2]);
@@ -124,12 +124,12 @@ TEST_F(ProjectionTest, NormalLength)
 {
     MathLib::Point3d origin (std::array<double,3>{{0,0,0}});
     MathLib::Vector3 normal (0,0,1);
-    std::size_t const n_nodes (_mesh->getNumberOfNodes());
-    MeshLib::Mesh* result = MeshLib::projectMeshOntoPlane(*_mesh, origin, normal);
+    std::size_t const n_nodes (mesh_->getNumberOfNodes());
+    MeshLib::Mesh* result = MeshLib::projectMeshOntoPlane(*mesh_, origin, normal);
     for (std::size_t p=2; p<10; p++)
     {
         normal[2] = static_cast<double>(p);
-        MeshLib::Mesh* result_p = MeshLib::projectMeshOntoPlane(*_mesh, origin, normal);
+        MeshLib::Mesh* result_p = MeshLib::projectMeshOntoPlane(*mesh_, origin, normal);
         for (std::size_t i = 0; i < n_nodes; i++)
         {
             ASSERT_EQ((*result->getNode(i))[2], (*result_p->getNode(i))[2]);

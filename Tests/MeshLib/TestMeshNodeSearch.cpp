@@ -29,45 +29,45 @@ class MeshLibMeshNodeSearchInSimpleQuadMesh : public testing::Test
 {
 public:
     MeshLibMeshNodeSearchInSimpleQuadMesh()
-        : _quad_mesh(MeshGenerator::generateRegularQuadMesh(
-              _geometric_size, _number_of_subdivisions_per_direction))
+        : quad_mesh_(MeshGenerator::generateRegularQuadMesh(
+              geometric_size_, number_of_subdivisions_per_direction_))
     {}
 
-    ~MeshLibMeshNodeSearchInSimpleQuadMesh() override { delete _quad_mesh; }
+    ~MeshLibMeshNodeSearchInSimpleQuadMesh() override { delete quad_mesh_; }
 
 protected:
-    const double _geometric_size{10.0};
-    const std::size_t _number_of_subdivisions_per_direction{99};
-    Mesh* _quad_mesh;
+    const double geometric_size_{10.0};
+    const std::size_t number_of_subdivisions_per_direction_{99};
+    Mesh* quad_mesh_;
 };
 
 class MeshLibMeshNodeSearchInSimpleHexMesh : public testing::Test
 {
 public:
     MeshLibMeshNodeSearchInSimpleHexMesh()
-        : _hex_mesh(MeshGenerator::generateRegularHexMesh(
-              _geometric_size, _number_of_subdivisions_per_direction))
+        : hex_mesh_(MeshGenerator::generateRegularHexMesh(
+              geometric_size_, number_of_subdivisions_per_direction_))
     {}
 
-    ~MeshLibMeshNodeSearchInSimpleHexMesh() override { delete _hex_mesh; }
+    ~MeshLibMeshNodeSearchInSimpleHexMesh() override { delete hex_mesh_; }
 
 protected:
-    const double _geometric_size{10.0};
-    const std::size_t _number_of_subdivisions_per_direction{10};
-    Mesh* _hex_mesh;
+    const double geometric_size_{10.0};
+    const std::size_t number_of_subdivisions_per_direction_{10};
+    Mesh* hex_mesh_;
 };
 
 TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, PointSearchEpsHalfEdge)
 {
-    double _dx = _geometric_size / _number_of_subdivisions_per_direction;
-    double dx_half = _dx*0.5;
+    double dx_ = geometric_size_ / number_of_subdivisions_per_direction_;
+    double dx_half = dx_*0.5;
 
-    ASSERT_TRUE(_quad_mesh != nullptr);
+    ASSERT_TRUE(quad_mesh_ != nullptr);
 
     // 2 perform search and compare results with expected vals
     auto search_length =
         std::make_unique<MeshGeoToolsLib::SearchLength>(dx_half);
-    MeshGeoToolsLib::MeshNodeSearcher mesh_node_searcher(*_quad_mesh,
+    MeshGeoToolsLib::MeshNodeSearcher mesh_node_searcher(*quad_mesh_,
         std::move(search_length), MeshGeoToolsLib::SearchAllNodes::Yes);
 
     GeoLib::Point p1(0.0, 0.0, 0.0);
@@ -88,12 +88,12 @@ TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, PointSearchEpsHalfEdge)
 
 TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, PointSearchZeroEps)
 {
-    ASSERT_TRUE(_quad_mesh != nullptr);
+    ASSERT_TRUE(quad_mesh_ != nullptr);
     // 1 create a geometry
 
     // 2 perform search and compare results with expected vals
     auto search_length = std::make_unique<MeshGeoToolsLib::SearchLength>();
-    MeshGeoToolsLib::MeshNodeSearcher mesh_node_searcher(*_quad_mesh,
+    MeshGeoToolsLib::MeshNodeSearcher mesh_node_searcher(*quad_mesh_,
         std::move(search_length), MeshGeoToolsLib::SearchAllNodes::Yes);
 
     // find ORIGIN
@@ -115,23 +115,23 @@ TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, PointSearchZeroEps)
     GeoLib::Point pnt6(10, 10, 0.0);
     ASSERT_EQ(1u, mesh_node_searcher.getMeshNodeIDsForPoint(pnt6).size());
     EXPECT_EQ(
-        pow(_number_of_subdivisions_per_direction+1,2)-1,
+        pow(number_of_subdivisions_per_direction_+1,2)-1,
         mesh_node_searcher.getMeshNodeIDsForPoint(pnt6)[0]);
 }
 
 TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, PolylineSearch)
 {
-    ASSERT_TRUE(_quad_mesh != nullptr);
+    ASSERT_TRUE(quad_mesh_ != nullptr);
     // create geometry
     std::vector<GeoLib::Point*> pnts;
     pnts.push_back(new GeoLib::Point(0.0, 0.0, 0.0));
-    pnts.push_back(new GeoLib::Point(_geometric_size, 0.0, 0.0));
+    pnts.push_back(new GeoLib::Point(geometric_size_, 0.0, 0.0));
     pnts.push_back(new GeoLib::Point(0.0, 0.049, 0.0));
-    pnts.push_back(new GeoLib::Point(_geometric_size, 0.049, 0.0));
-    pnts.push_back(new GeoLib::Point(0.0, _geometric_size, 0.0));
-    pnts.push_back(new GeoLib::Point(_geometric_size, _geometric_size, 0.0));
-    pnts.push_back(new GeoLib::Point(0.0, _geometric_size - 0.049, 0.0));
-    pnts.push_back(new GeoLib::Point(_geometric_size, _geometric_size - 0.049, 0.0));
+    pnts.push_back(new GeoLib::Point(geometric_size_, 0.049, 0.0));
+    pnts.push_back(new GeoLib::Point(0.0, geometric_size_, 0.0));
+    pnts.push_back(new GeoLib::Point(geometric_size_, geometric_size_, 0.0));
+    pnts.push_back(new GeoLib::Point(0.0, geometric_size_ - 0.049, 0.0));
+    pnts.push_back(new GeoLib::Point(geometric_size_, geometric_size_ - 0.049, 0.0));
 
     GeoLib::Polyline ply0(pnts);
     ply0.addPoint(0);
@@ -139,8 +139,8 @@ TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, PolylineSearch)
 
     // perform search and compare results with expected vals
     auto search_length =
-        std::make_unique<MeshGeoToolsLib::HeuristicSearchLength>(*_quad_mesh);
-    MeshGeoToolsLib::MeshNodeSearcher mesh_node_searcher(*_quad_mesh,
+        std::make_unique<MeshGeoToolsLib::HeuristicSearchLength>(*quad_mesh_);
+    MeshGeoToolsLib::MeshNodeSearcher mesh_node_searcher(*quad_mesh_,
         std::move(search_length), MeshGeoToolsLib::SearchAllNodes::Yes);
     std::vector<std::size_t> const& found_ids_ply0(mesh_node_searcher.getMeshNodeIDsAlongPolyline(ply0));
 
@@ -166,7 +166,7 @@ TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, PolylineSearch)
     ply2.addPoint(5);
     std::vector<std::size_t> const& found_ids_ply2(mesh_node_searcher.getMeshNodeIDsAlongPolyline(ply2));
 
-    std::size_t offset((_number_of_subdivisions_per_direction+1)*_number_of_subdivisions_per_direction);
+    std::size_t offset((number_of_subdivisions_per_direction_+1)*number_of_subdivisions_per_direction_);
     ASSERT_EQ(100u, found_ids_ply2.size());
     for (std::size_t k(0); k < found_ids_ply2.size(); k++)
     {
@@ -193,7 +193,7 @@ TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, PolylineSearch)
     ASSERT_EQ(100u, found_ids_ply4.size());
     for (std::size_t k(0); k < found_ids_ply4.size(); k++)
     {
-        ASSERT_EQ(k * (_number_of_subdivisions_per_direction + 1),
+        ASSERT_EQ(k * (number_of_subdivisions_per_direction_ + 1),
                   found_ids_ply4[k]);
     }
 
@@ -206,8 +206,8 @@ TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, PolylineSearch)
     ASSERT_EQ(100u, found_ids_ply5.size());
     for (std::size_t k(0); k < found_ids_ply5.size(); k++)
     {
-        ASSERT_EQ(k * (_number_of_subdivisions_per_direction + 1) +
-                      _number_of_subdivisions_per_direction,
+        ASSERT_EQ(k * (number_of_subdivisions_per_direction_ + 1) +
+                      number_of_subdivisions_per_direction_,
                   found_ids_ply5[k]);
     }
 
@@ -220,7 +220,7 @@ TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, PolylineSearch)
     ASSERT_EQ(100u, found_ids_ply6.size());
     for (std::size_t k(0); k < found_ids_ply6.size(); k++)
     {
-        ASSERT_EQ(k * (_number_of_subdivisions_per_direction + 1) + k,
+        ASSERT_EQ(k * (number_of_subdivisions_per_direction_ + 1) + k,
                   found_ids_ply6[k]);
     }
 
@@ -229,18 +229,18 @@ TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, PolylineSearch)
 
 TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, SurfaceSearch)
 {
-    ASSERT_TRUE(_quad_mesh != nullptr);
+    ASSERT_TRUE(quad_mesh_ != nullptr);
     // create geometry
     std::vector<GeoLib::Point*> pnts;
     pnts.push_back(new GeoLib::Point(0.0, 0.0, 0.0));
-    pnts.push_back(new GeoLib::Point(_geometric_size, 0.0, 0.0));
-    pnts.push_back(new GeoLib::Point(_geometric_size, _geometric_size, 0.0));
-    pnts.push_back(new GeoLib::Point(0.0, _geometric_size, 0.0));
-    pnts.push_back(new GeoLib::Point(_geometric_size, 0.5*_geometric_size, 0.0));
-    pnts.push_back(new GeoLib::Point(0.0, 0.5*_geometric_size, 0.0));
+    pnts.push_back(new GeoLib::Point(geometric_size_, 0.0, 0.0));
+    pnts.push_back(new GeoLib::Point(geometric_size_, geometric_size_, 0.0));
+    pnts.push_back(new GeoLib::Point(0.0, geometric_size_, 0.0));
+    pnts.push_back(new GeoLib::Point(geometric_size_, 0.5*geometric_size_, 0.0));
+    pnts.push_back(new GeoLib::Point(0.0, 0.5*geometric_size_, 0.0));
 
     auto search_length = std::make_unique<MeshGeoToolsLib::SearchLength>();
-    MeshGeoToolsLib::MeshNodeSearcher mesh_node_searcher(*_quad_mesh,
+    MeshGeoToolsLib::MeshNodeSearcher mesh_node_searcher(*quad_mesh_,
         std::move(search_length), MeshGeoToolsLib::SearchAllNodes::Yes);
 
     // entire domain
@@ -251,7 +251,7 @@ TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, SurfaceSearch)
     std::vector<std::size_t> const& found_ids_sfc0(
         mesh_node_searcher.getMeshNodeIDsAlongSurface(sfc0));
 
-    ASSERT_EQ(_quad_mesh->getNumberOfNodes(), found_ids_sfc0.size());
+    ASSERT_EQ(quad_mesh_->getNumberOfNodes(), found_ids_sfc0.size());
     for (std::size_t k(0); k < found_ids_sfc0.size(); k++)
     {
         ASSERT_EQ(k, found_ids_sfc0[k]);
@@ -265,7 +265,7 @@ TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, SurfaceSearch)
     std::vector<std::size_t> const& found_ids_sfc1(
         mesh_node_searcher.getMeshNodeIDsAlongSurface(sfc1));
 
-    ASSERT_EQ(_quad_mesh->getNumberOfNodes()/2, found_ids_sfc1.size());
+    ASSERT_EQ(quad_mesh_->getNumberOfNodes()/2, found_ids_sfc1.size());
     for (std::size_t k(0); k < found_ids_sfc1.size(); k++)
     {
         ASSERT_EQ(k, found_ids_sfc1[k]);
@@ -276,23 +276,23 @@ TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, SurfaceSearch)
 
 TEST_F(MeshLibMeshNodeSearchInSimpleHexMesh, SurfaceSearch)
 {
-    ASSERT_TRUE(_hex_mesh != nullptr);
+    ASSERT_TRUE(hex_mesh_ != nullptr);
     // create geometry
     std::vector<GeoLib::Point*> pnts;
     pnts.push_back(new GeoLib::Point(0.0, 0.0, 0.0));
-    pnts.push_back(new GeoLib::Point(_geometric_size, 0.0, 0.0));
-    pnts.push_back(new GeoLib::Point(_geometric_size, _geometric_size, 0.0));
-    pnts.push_back(new GeoLib::Point(0.0, _geometric_size, 0.0));
-    pnts.push_back(new GeoLib::Point(0.0, 0.0, _geometric_size));
-    pnts.push_back(new GeoLib::Point(_geometric_size, 0.0, _geometric_size));
-    pnts.push_back(new GeoLib::Point(_geometric_size, _geometric_size, _geometric_size));
-    pnts.push_back(new GeoLib::Point(0.0, _geometric_size, _geometric_size));
+    pnts.push_back(new GeoLib::Point(geometric_size_, 0.0, 0.0));
+    pnts.push_back(new GeoLib::Point(geometric_size_, geometric_size_, 0.0));
+    pnts.push_back(new GeoLib::Point(0.0, geometric_size_, 0.0));
+    pnts.push_back(new GeoLib::Point(0.0, 0.0, geometric_size_));
+    pnts.push_back(new GeoLib::Point(geometric_size_, 0.0, geometric_size_));
+    pnts.push_back(new GeoLib::Point(geometric_size_, geometric_size_, geometric_size_));
+    pnts.push_back(new GeoLib::Point(0.0, geometric_size_, geometric_size_));
 
     auto search_length = std::make_unique<MeshGeoToolsLib::SearchLength>();
-    MeshGeoToolsLib::MeshNodeSearcher mesh_node_searcher(*_hex_mesh,
+    MeshGeoToolsLib::MeshNodeSearcher mesh_node_searcher(*hex_mesh_,
         std::move(search_length), MeshGeoToolsLib::SearchAllNodes::Yes);
 
-    const std::size_t n_nodes_1d = _number_of_subdivisions_per_direction + 1;
+    const std::size_t n_nodes_1d = number_of_subdivisions_per_direction_ + 1;
     const std::size_t n_nodes_2d = n_nodes_1d * n_nodes_1d;
     const std::size_t n_nodes_3d = n_nodes_1d * n_nodes_1d * n_nodes_1d;
 
