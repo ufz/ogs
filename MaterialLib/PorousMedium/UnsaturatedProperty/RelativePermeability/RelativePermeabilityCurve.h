@@ -29,7 +29,7 @@ public:
         std::unique_ptr<MathLib::PiecewiseLinearInterpolation>&& curve_data)
         : RelativePermeability(curve_data->getSupportMin(),
                                curve_data->getSupportMax()),
-          _curve_data(std::move(curve_data))
+          curve_data_(std::move(curve_data))
     {
     }
 
@@ -42,24 +42,24 @@ public:
     /// Get relative permeability value.
     double getValue(const double saturation) const override
     {
-        const double S = std::clamp(saturation, _saturation_r + _minor_offset,
-                                    _saturation_max - _minor_offset);
+        const double S = std::clamp(saturation, saturation_r_ + minor_offset_,
+                                    saturation_max_ - minor_offset_);
 
-        return _curve_data->getValue(S);
+        return curve_data_->getValue(S);
     }
 
     /// Get the derivative of relative permeability with respect to saturation.
     /// \param saturation Wetting phase saturation
     double getdValue(const double saturation) const override
     {
-        const double S = std::clamp(saturation, _saturation_r + _minor_offset,
-                                    _saturation_max - _minor_offset);
+        const double S = std::clamp(saturation, saturation_r_ + minor_offset_,
+                                    saturation_max_ - minor_offset_);
 
-        return _curve_data->getDerivative(S);
+        return curve_data_->getDerivative(S);
     }
 
 private:
-    std::unique_ptr<MathLib::PiecewiseLinearInterpolation> _curve_data;
+    std::unique_ptr<MathLib::PiecewiseLinearInterpolation> curve_data_;
 };
 }  // namespace PorousMedium
 }  // namespace MaterialLib

@@ -48,7 +48,7 @@ public:
         std::unique_ptr<MaterialLib::Fluid::FluidProperty>&& heat_capacity,
         std::unique_ptr<MaterialLib::Fluid::FluidProperty>&&
             thermal_conductivity)
-        : _property_models{{std::move(density), std::move(viscosity),
+        : property_models_{{std::move(density), std::move(viscosity),
                             std::move(heat_capacity),
                             std::move(thermal_conductivity)}}
     {
@@ -91,7 +91,7 @@ protected:
      *  The index is specified via enum class PropertyType.
      */
     const std::array<std::unique_ptr<FluidProperty>, FluidPropertyTypeNumber>
-        _property_models;
+        property_models_;
 };
 
 }  // namespace Fluid

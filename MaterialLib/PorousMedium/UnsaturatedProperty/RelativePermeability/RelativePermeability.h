@@ -24,7 +24,7 @@ public:
      /// @param Sr       Residual saturation.
      /// @param Smax     Maximum saturation.
     RelativePermeability(const double Sr, const double Smax)
-        : _saturation_r(Sr), _saturation_max(Smax)
+        : saturation_r_(Sr), saturation_max_(Smax)
     {
     }
 
@@ -43,11 +43,11 @@ public:
 
 protected:
     /// A small number for an offset to set the bound of S, the saturation, such
-    /// that S in  [Sr+_minor_offset, Smax-_minor_offset].
-    const double _minor_offset = std::numeric_limits<double>::epsilon();
+    /// that S in  [Sr+minor_offset_, Smax-minor_offset_].
+    const double minor_offset_ = std::numeric_limits<double>::epsilon();
 
-    const double _saturation_r;    ///< Residual saturation.
-    const double _saturation_max;  ///< Maximum saturation.
+    const double saturation_r_;    ///< Residual saturation.
+    const double saturation_max_;  ///< Maximum saturation.
 };
 
 }  // namespace PorousMedium

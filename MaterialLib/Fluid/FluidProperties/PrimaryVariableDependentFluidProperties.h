@@ -49,7 +49,7 @@ public:
     double getValue(const FluidPropertyType property_type,
                     const ArrayType& variable_values) const override
     {
-        return _property_models[static_cast<unsigned>(property_type)]->getValue(
+        return property_models_[static_cast<unsigned>(property_type)]->getValue(
             variable_values);
     }
 
@@ -66,7 +66,7 @@ public:
                      const ArrayType& variable_values,
                      const PropertyVariableType variable_type) const override
     {
-        return _property_models[static_cast<unsigned>(property_type)]
+        return property_models_[static_cast<unsigned>(property_type)]
             ->getdValue(variable_values, variable_type);
     }
 };

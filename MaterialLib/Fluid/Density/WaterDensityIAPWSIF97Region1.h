@@ -29,7 +29,7 @@ class WaterDensityIAPWSIF97Region1 final : public FluidProperty
 {
 public:
     WaterDensityIAPWSIF97Region1()
-        : _gibbs_free_energy(DimensionLessGibbsFreeEnergyRegion1()){};
+        : gibbs_free_energy_(DimensionLessGibbsFreeEnergyRegion1()){};
 
     /// Get density model name.
     std::string getName() const override
@@ -43,10 +43,10 @@ public:
     {
         const double T = var_vals[static_cast<int>(PropertyVariableType::T)];
         const double p = var_vals[static_cast<int>(PropertyVariableType::p)];
-        const double tau = _ref_T / T;
-        const double pi = p / _ref_p;
+        const double tau = ref_T_ / T;
+        const double pi = p / ref_p_;
 
-        return _ref_p / (_sR * T * _gibbs_free_energy.get_dgamma_dpi(tau, pi));
+        return ref_p_ / (sR_ * T * gibbs_free_energy_.get_dgamma_dpi(tau, pi));
     }
 
     /**
@@ -61,33 +61,33 @@ public:
         const double T = var_vals[static_cast<int>(PropertyVariableType::T)];
         const double p = var_vals[static_cast<int>(PropertyVariableType::p)];
 
-        const double tau = _ref_T / T;
-        const double pi = p / _ref_p;
+        const double tau = ref_T_ / T;
+        const double pi = p / ref_p_;
 
-        const double dgamma_dpi = _gibbs_free_energy.get_dgamma_dpi(tau, pi);
+        const double dgamma_dpi = gibbs_free_energy_.get_dgamma_dpi(tau, pi);
         switch (var_type)
         {
             case PropertyVariableType::T:
-                return -(_ref_p -
-                         tau * _ref_p *
-                             _gibbs_free_energy.get_dgamma_dtau_dpi(tau, pi) /
+                return -(ref_p_ -
+                         tau * ref_p_ *
+                             gibbs_free_energy_.get_dgamma_dtau_dpi(tau, pi) /
                              dgamma_dpi) /
-                       (_sR * T * T * dgamma_dpi);
+                       (sR_ * T * T * dgamma_dpi);
             case PropertyVariableType::p:
-                return -_gibbs_free_energy.get_dgamma_dpi_dpi(tau, pi) /
-                       (_sR * T * dgamma_dpi * dgamma_dpi);
+                return -gibbs_free_energy_.get_dgamma_dpi_dpi(tau, pi) /
+                       (sR_ * T * dgamma_dpi * dgamma_dpi);
             default:
                 return 0.0;
         }
     }
 
 private:
-    const DimensionLessGibbsFreeEnergyRegion1 _gibbs_free_energy;
+    const DimensionLessGibbsFreeEnergyRegion1 gibbs_free_energy_;
 
-    const double _ref_T = 1386;     ///< reference temperature in K.
-    const double _ref_p = 1.653e7;  ///< reference pressure in Pa.
+    const double ref_T_ = 1386;     ///< reference temperature in K.
+    const double ref_p_ = 1.653e7;  ///< reference pressure in Pa.
     /// Specific water vapour gas constant in J/(kgK).
-    const double _sR = 461.526;
+    const double sR_ = 461.526;
 };
 
 }  // namespace Fluid

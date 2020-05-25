@@ -70,9 +70,9 @@ public:
                                             const double Pc_max,
                                             const bool has_regularized)
         : CapillaryPressureSaturation(Sr, Sg_r, Smax, Pc_max),
-          _pb(pb),
-          _m(m),
-          _has_regularized(has_regularized)
+          pb_(pb),
+          m_(m),
+          has_regularized_(has_regularized)
     {
     }
 
@@ -94,10 +94,10 @@ public:
     double getd2PcdS2(const double saturation) const override;
 
 private:
-    const double _pb;             ///< Entry pressure.
-    const double _m;              ///< Exponent m, m in [0,1]. n=1/(1-m).
-    const bool _has_regularized;  /// using regularized van Genuchten model
-    const double _xi = 1e-5;  /// parameter in regularized van Genuchten model
+    const double pb_;             ///< Entry pressure.
+    const double m_;              ///< Exponent m, m in [0,1]. n=1/(1-m).
+    const bool has_regularized_;  /// using regularized van Genuchten model
+    const double xi_ = 1e-5;  /// parameter in regularized van Genuchten model
 
 private:
     /// Regularized van Genuchten capillary pressure-saturation Model

@@ -54,7 +54,7 @@ public:
     BrooksCoreyCapillaryPressureSaturation(const double pb, const double Sr,
                                            const double Sg_r, const double Smax,
                                            const double m, const double Pc_max)
-        : CapillaryPressureSaturation(Sr, Sg_r, Smax, Pc_max), _pb(pb), _m(m)
+        : CapillaryPressureSaturation(Sr, Sg_r, Smax, Pc_max), pb_(pb), m_(m)
     {
     }
 
@@ -83,8 +83,8 @@ public:
     }
 
 private:
-    const double _pb;  ///< Entry pressure.
-    const double _m;   ///< Exponent m, m>1.
+    const double pb_;  ///< Entry pressure.
+    const double m_;   ///< Exponent m, m>1.
 };
 
 }  // namespace PorousMedium

@@ -176,8 +176,8 @@ public:
     explicit Lubby2(
         NumLib::NewtonRaphsonSolverParameters nonlinear_solver_parameters,
         Lubby2MaterialProperties& material_properties)
-        : _nonlinear_solver_parameters(std::move(nonlinear_solver_parameters)),
-          _mp(material_properties)
+        : nonlinear_solver_parameters_(std::move(nonlinear_solver_parameters)),
+          mp_(material_properties)
     {
     }
 
@@ -201,7 +201,7 @@ public:
         auto const& eps_M = state.eps_M_j;
 
         auto local_lubby2_properties =
-            detail::LocalLubby2Properties<DisplacementDim>{t, x, _mp};
+            detail::LocalLubby2Properties<DisplacementDim>{t, x, mp_};
 
         // calculation of deviatoric parts
         using Invariants = MathLib::KelvinVector::Invariants<KelvinVectorSize>;
@@ -227,7 +227,7 @@ public:
                           ParameterLib::SpatialPosition const& x,
                           KelvinMatrix const* const /*C*/) const override
     {
-        return _mp.KM0(t, x)[0];
+        return mp_.KM0(t, x)[0];
     }
 
     std::optional<std::tuple<KelvinVector,
@@ -269,8 +269,8 @@ private:
         detail::LocalLubby2Properties<DisplacementDim> const& properties) const;
 
 private:
-    NumLib::NewtonRaphsonSolverParameters const _nonlinear_solver_parameters;
-    Lubby2MaterialProperties _mp;
+    NumLib::NewtonRaphsonSolverParameters const nonlinear_solver_parameters_;
+    Lubby2MaterialProperties mp_;
 };
 
 extern template class Lubby2<2>;

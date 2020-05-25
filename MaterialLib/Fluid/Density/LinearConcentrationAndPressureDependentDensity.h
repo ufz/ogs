@@ -46,12 +46,12 @@ public:
         const double fluid_density_concentration_difference_ratio,
         double reference_pressure,
         const double fluid_density_pressure_difference_ratio)
-        : _reference_density(reference_density),
-          _reference_concentration(reference_concentration),
-          _fluid_density_concentration_difference_ratio(
+        : reference_density_(reference_density),
+          reference_concentration_(reference_concentration),
+          fluid_density_concentration_difference_ratio_(
               fluid_density_concentration_difference_ratio),
-          _reference_pressure(reference_pressure),
-          _fluid_density_pressure_difference_ratio(
+          reference_pressure_(reference_pressure),
+          fluid_density_pressure_difference_ratio_(
               fluid_density_pressure_difference_ratio)
     {
     }
@@ -69,12 +69,12 @@ public:
     {
         const double C = var_vals[static_cast<int>(PropertyVariableType::C)];
         const double p = var_vals[static_cast<int>(PropertyVariableType::p)];
-        return _reference_density *
+        return reference_density_ *
                (1 +
-                _fluid_density_concentration_difference_ratio *
-                    (C - _reference_concentration) +
-                _fluid_density_pressure_difference_ratio *
-                    (p - _reference_pressure));
+                fluid_density_concentration_difference_ratio_ *
+                    (C - reference_concentration_) +
+                fluid_density_pressure_difference_ratio_ *
+                    (p - reference_pressure_));
     }
 
     /// Get the partial differential of the density with respect to
@@ -84,23 +84,23 @@ public:
     {
         if (var == PropertyVariableType::C)
         {
-            return _reference_density *
-                   _fluid_density_concentration_difference_ratio;
+            return reference_density_ *
+                   fluid_density_concentration_difference_ratio_;
         }
         if (var == PropertyVariableType::p)
         {
-            return _reference_density *
-                   _fluid_density_pressure_difference_ratio;
+            return reference_density_ *
+                   fluid_density_pressure_difference_ratio_;
         }
         return 0;
     }
 
 private:
-    const double _reference_density;
-    const double _reference_concentration;
-    const double _fluid_density_concentration_difference_ratio;
-    const double _reference_pressure;
-    const double _fluid_density_pressure_difference_ratio;
+    const double reference_density_;
+    const double reference_concentration_;
+    const double fluid_density_concentration_difference_ratio_;
+    const double reference_pressure_;
+    const double fluid_density_pressure_difference_ratio_;
 };
 
 }  // namespace Fluid

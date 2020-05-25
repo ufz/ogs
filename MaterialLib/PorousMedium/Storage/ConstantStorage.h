@@ -21,7 +21,7 @@ namespace PorousMedium
 class ConstantStorage final : public Storage
 {
 public:
-    explicit ConstantStorage(const double value) : _value(value) {}
+    explicit ConstantStorage(const double value) : value_(value) {}
 
     /// Get model name.
     std::string getName() const override { return "Constant storage"; }
@@ -33,11 +33,11 @@ public:
     double getValue(const double variable) const override
     {
         (void)variable;
-        return _value;
+        return value_;
     }
 
 private:
-    const double _value;
+    const double value_;
 };
 
 }  // namespace PorousMedium

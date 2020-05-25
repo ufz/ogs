@@ -44,7 +44,7 @@ public:
         : public MechanicsBase<DisplacementDim>::MaterialStateVariables
     {
         explicit MaterialStateVariables(mgis::behaviour::Behaviour const& b)
-            : _behaviour_data{b}
+            : behaviour_data_{b}
         {
         }
 
@@ -53,10 +53,10 @@ public:
 
         void pushBackState() override
         {
-            mgis::behaviour::update(_behaviour_data);
+            mgis::behaviour::update(behaviour_data_);
         }
 
-        mgis::behaviour::BehaviourData _behaviour_data;
+        mgis::behaviour::BehaviourData behaviour_data_;
     };
 
     using KelvinVector =
@@ -107,9 +107,9 @@ public:
             material_state_variables) const override;
 
 private:
-    mgis::behaviour::Behaviour _behaviour;
-    std::vector<ParameterLib::Parameter<double> const*> _material_properties;
-    ParameterLib::CoordinateSystem const* const _local_coordinate_system;
+    mgis::behaviour::Behaviour behaviour_;
+    std::vector<ParameterLib::Parameter<double> const*> material_properties_;
+    ParameterLib::CoordinateSystem const* const local_coordinate_system_;
 };
 
 extern template class MFront<2>;

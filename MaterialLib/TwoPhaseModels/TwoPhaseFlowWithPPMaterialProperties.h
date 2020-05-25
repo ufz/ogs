@@ -110,25 +110,25 @@ private:
     /** Use two phase models for different material zones.
     *  Material IDs must be given as mesh element properties.
     */
-    MeshLib::PropertyVector<int> const& _material_ids;
+    MeshLib::PropertyVector<int> const& material_ids_;
 
-    std::unique_ptr<MaterialLib::Fluid::FluidProperty> const _liquid_density;
-    std::unique_ptr<MaterialLib::Fluid::FluidProperty> const _liquid_viscosity;
-    std::unique_ptr<MaterialLib::Fluid::FluidProperty> const _gas_density;
-    std::unique_ptr<MaterialLib::Fluid::FluidProperty> const _gas_viscosity;
+    std::unique_ptr<MaterialLib::Fluid::FluidProperty> const liquid_density_;
+    std::unique_ptr<MaterialLib::Fluid::FluidProperty> const liquid_viscosity_;
+    std::unique_ptr<MaterialLib::Fluid::FluidProperty> const gas_density_;
+    std::unique_ptr<MaterialLib::Fluid::FluidProperty> const gas_viscosity_;
 
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Permeability>> const
-        _intrinsic_permeability_models;
+        intrinsic_permeability_models_;
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Porosity>> const
-        _porosity_models;
+        porosity_models_;
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Storage>> const
-        _storage_models;
+        storage_models_;
     std::vector<
         std::unique_ptr<MaterialLib::PorousMedium::CapillaryPressureSaturation>> const
-        _capillary_pressure_models;
+        capillary_pressure_models_;
     std::vector<
         std::unique_ptr<MaterialLib::PorousMedium::RelativePermeability>> const
-        _relative_permeability_models;
+        relative_permeability_models_;
 };
 
 }  // namespace TwoPhaseFlowWithPP

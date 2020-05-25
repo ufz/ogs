@@ -29,10 +29,10 @@ public:
      */
     CapillaryPressureSaturation(const double Sr, const double Sg_r,
                                 const double Smax, const double Pc_max)
-        : _saturation_r(Sr),
-          _saturation_nonwet_r(Sg_r),
-          _saturation_max(Smax),
-          _pc_max(Pc_max)
+        : saturation_r_(Sr),
+          saturation_nonwet_r_(Sg_r),
+          saturation_max_(Smax),
+          pc_max_(Pc_max)
     {
     }
     virtual ~CapillaryPressureSaturation() = default;
@@ -53,19 +53,19 @@ public:
     virtual double getd2PcdS2(const double saturation) const = 0;
 
 protected:
-    const double _saturation_r;         ///< Residual saturation.
-    const double _saturation_nonwet_r;  ///< Residual saturation of nonwetting
+    const double saturation_r_;         ///< Residual saturation.
+    const double saturation_nonwet_r_;  ///< Residual saturation of nonwetting
                                         ///phase (optional).
-    const double _saturation_max;       ///< Maximum saturation.
-    const double _pc_max;               ///< Maximum capillary pressure
+    const double saturation_max_;       ///< Maximum saturation.
+    const double pc_max_;               ///< Maximum capillary pressure
 
     /** A small number for an offset:
      *  1. to set the bound of S, the saturation, such that
-     *     S in  [_saturation_r+_minor_offset, _saturation_max-_minor_offset]
+     *     S in  [saturation_r_+minor_offset_, saturation_max_-minor_offset_]
      *  2. to set the bound of Pc, the capillary pressure, such that
-     *     Pc in [_minor_offset, _pc_max]
+     *     Pc in [minor_offset_, pc_max_]
      */
-    const double _minor_offset = std::numeric_limits<double>::epsilon();
+    const double minor_offset_ = std::numeric_limits<double>::epsilon();
 };
 
 }  // namespace PorousMedium

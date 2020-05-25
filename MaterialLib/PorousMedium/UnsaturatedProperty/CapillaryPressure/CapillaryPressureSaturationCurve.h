@@ -33,7 +33,7 @@ public:
               1.0 - curve_data->getSupportMax(),
               curve_data->getSupportMax(),
               curve_data->getValue(curve_data->getSupportMin())),
-          _curve_data(std::move(curve_data))
+          curve_data_(std::move(curve_data))
     {
     }
 
@@ -46,27 +46,27 @@ public:
     /// Get capillary pressure.
     double getCapillaryPressure(const double saturation) const override
     {
-        const double S = std::clamp(saturation, _saturation_r + _minor_offset,
-                                    _saturation_max - _minor_offset);
+        const double S = std::clamp(saturation, saturation_r_ + minor_offset_,
+                                    saturation_max_ - minor_offset_);
 
-        return _curve_data->getValue(S);
+        return curve_data_->getValue(S);
     }
 
     /// Get saturation.
     double getSaturation(const double capillary_pressure) const override
     {
         const double pc =
-            std::clamp(capillary_pressure, _minor_offset, _pc_max);
-        return _curve_data->getInverseVariable(pc);
+            std::clamp(capillary_pressure, minor_offset_, pc_max_);
+        return curve_data_->getInverseVariable(pc);
     }
 
     /// Get the derivative of the capillary pressure with respect to saturation
     double getdPcdS(const double saturation) const override
     {
-        const double S = std::clamp(saturation, _saturation_r + _minor_offset,
-                                    _saturation_max - _minor_offset);
+        const double S = std::clamp(saturation, saturation_r_ + minor_offset_,
+                                    saturation_max_ - minor_offset_);
 
-        return _curve_data->getDerivative(S);
+        return curve_data_->getDerivative(S);
     }
 
     /// Get the second derivative of the capillary pressure with respect to
@@ -75,7 +75,7 @@ public:
     double getd2PcdS2(const double /*saturation*/) const override { return 0; }
 
 private:
-    std::unique_ptr<MathLib::PiecewiseLinearMonotonicCurve> _curve_data;
+    std::unique_ptr<MathLib::PiecewiseLinearMonotonicCurve> curve_data_;
 };
 
 }  // namespace PorousMedium

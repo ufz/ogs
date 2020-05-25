@@ -58,8 +58,8 @@ public:
         const double /*pressure*/,
         const double /*latent_heat_evaporation*/) const;
 private:
-    const double& _water_mol_mass = PhysicalConstant::MolarMass::Water;
-    const double& _air_mol_mass = PhysicalConstant::MolarMass::Air;
+    const double& water_mol_mass_ = PhysicalConstant::MolarMass::Water;
+    const double& air_mol_mass_ = PhysicalConstant::MolarMass::Air;
 };
 
 }  // namespace Fluid

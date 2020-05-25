@@ -38,9 +38,9 @@ public:
     explicit LinearConcentrationDependentDensity(
         const double reference_density, double reference_concentration,
         const double fluid_density_difference_ratio)
-        : _reference_density(reference_density),
-          _reference_concentration(reference_concentration),
-          _fluid_density_difference_ratio(fluid_density_difference_ratio)
+        : reference_density_(reference_density),
+          reference_concentration_(reference_concentration),
+          fluid_density_difference_ratio_(fluid_density_difference_ratio)
     {
     }
 
@@ -56,9 +56,9 @@ public:
     double getValue(const ArrayType& var_vals) const override
     {
         const double C = var_vals[static_cast<int>(PropertyVariableType::C)];
-        return _reference_density * (1 +
-                                     _fluid_density_difference_ratio *
-                                         (C - _reference_concentration));
+        return reference_density_ * (1 +
+                                     fluid_density_difference_ratio_ *
+                                         (C - reference_concentration_));
     }
 
     /// Get the partial differential of the density with respect to
@@ -74,13 +74,13 @@ public:
         {
             return 0.0;
         }
-        return _reference_density * _fluid_density_difference_ratio;
+        return reference_density_ * fluid_density_difference_ratio_;
     }
 
 private:
-    const double _reference_density;
-    const double _reference_concentration;
-    const double _fluid_density_difference_ratio;
+    const double reference_density_;
+    const double reference_concentration_;
+    const double fluid_density_difference_ratio_;
 };
 
 }  // namespace Fluid

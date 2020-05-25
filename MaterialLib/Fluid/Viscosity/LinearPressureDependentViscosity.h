@@ -43,7 +43,7 @@ public:
     explicit LinearPressureDependentViscosity(const double mu0,
                                               const double p0,
                                               const double gamma)
-        : _mu0(mu0), _p0(p0), _gamma(gamma)
+        : mu0_(mu0), p0_(p0), gamma_(gamma)
     {
     }
 
@@ -60,7 +60,7 @@ public:
     double getValue(const ArrayType& var_vals) const override
     {
         const double p = var_vals[static_cast<int>(PropertyVariableType::p)];
-        return _mu0 * (1 + _gamma * (p - _p0));
+        return mu0_ * (1 + gamma_ * (p - p0_));
     }
 
     /** Get the partial differential of the viscosity with respect to pressure.
@@ -73,13 +73,13 @@ public:
     {
         (void)var_vals;
         (void)var;
-        return _mu0 * _gamma;
+        return mu0_ * gamma_;
     }
 
 private:
-    const double _mu0;    ///<  Reference viscosity.
-    const double _p0;     ///<  Reference pressure.
-    const double _gamma;  ///<  Parameter.
+    const double mu0_;    ///<  Reference viscosity.
+    const double p0_;     ///<  Reference pressure.
+    const double gamma_;  ///<  Parameter.
 };
 
 }  // namespace Fluid

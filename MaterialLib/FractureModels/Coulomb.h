@@ -92,10 +92,10 @@ public:
         double const penalty_aperture_cutoff,
         bool const tension_cutoff,
         MaterialProperties material_properties)
-        : _nonlinear_solver_parameters(std::move(nonlinear_solver_parameters)),
-          _penalty_aperture_cutoff(penalty_aperture_cutoff),
-          _tension_cutoff(tension_cutoff),
-          _mp(std::move(material_properties))
+        : nonlinear_solver_parameters_(std::move(nonlinear_solver_parameters)),
+          penalty_aperture_cutoff_(penalty_aperture_cutoff),
+          tension_cutoff_(tension_cutoff),
+          mp_(std::move(material_properties))
     {
     }
 
@@ -133,19 +133,19 @@ public:
             material_state_variables) override;
 
 private:
-    NumLib::NewtonRaphsonSolverParameters const _nonlinear_solver_parameters;
+    NumLib::NewtonRaphsonSolverParameters const nonlinear_solver_parameters_;
 
     /// Compressive normal displacements above this value will not enter the
     /// computation of the normal stiffness modulus of the fracture.
     /// \note Setting this to the initial aperture value allows negative
     /// apertures.
-    double const _penalty_aperture_cutoff;
+    double const penalty_aperture_cutoff_;
 
     /// If set no resistance to open the fracture over the initial aperture is
     /// opposed.
-    bool const _tension_cutoff;
+    bool const tension_cutoff_;
 
-    MaterialProperties _mp;
+    MaterialProperties mp_;
 };
 
 }  // namespace Coulomb

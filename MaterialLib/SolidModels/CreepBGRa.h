@@ -65,11 +65,11 @@ public:
         Parameter const& A, Parameter const& n, Parameter const& sigma_f,
         Parameter const& Q)
         : LinearElasticIsotropic<DisplacementDim>(std::move(mp)),
-          _nonlinear_solver_parameters(std::move(nonlinear_solver_parameters)),
-          _a(A),
-          _n(n),
-          _sigma_f(sigma_f),
-          _q(Q)
+          nonlinear_solver_parameters_(std::move(nonlinear_solver_parameters)),
+          a_(A),
+          n_(n),
+          sigma_f_(sigma_f),
+          q_(Q)
     {
     }
 
@@ -95,12 +95,12 @@ public:
         double const T, double const deviatoric_stress_norm) const override;
 
 private:
-    NumLib::NewtonRaphsonSolverParameters const _nonlinear_solver_parameters;
+    NumLib::NewtonRaphsonSolverParameters const nonlinear_solver_parameters_;
 
-    Parameter const& _a;        /// A parameter determined by experiment.
-    Parameter const& _n;        /// Creep rate exponent n.
-    Parameter const& _sigma_f;  /// A stress scaling factor.
-    Parameter const& _q;        /// Activation energy
+    Parameter const& a_;        /// A parameter determined by experiment.
+    Parameter const& n_;        /// Creep rate exponent n.
+    Parameter const& sigma_f_;  /// A stress scaling factor.
+    Parameter const& q_;        /// Activation energy
 };
 
 extern template class CreepBGRa<2>;

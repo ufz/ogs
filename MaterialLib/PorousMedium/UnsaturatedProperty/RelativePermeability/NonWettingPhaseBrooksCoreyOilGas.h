@@ -45,7 +45,7 @@ public:
      */
     NonWettingPhaseBrooksCoreyOilGas(const double Snr, const double Snmax,
                                      const double m, const double krel_min)
-        : RelativePermeability(1. - Snmax, 1. - Snr), _m(m), _krel_min(krel_min)
+        : RelativePermeability(1. - Snmax, 1. - Snr), m_(m), krel_min_(krel_min)
     {
     }
 
@@ -64,8 +64,8 @@ public:
     double getdValue(const double saturation_w) const override;
 
 private:
-    const double _m;         ///< Exponent m, m>=1.0.
-    const double _krel_min;  ///< Minimum relative permeability
+    const double m_;         ///< Exponent m, m>=1.0.
+    const double krel_min_;  ///< Minimum relative permeability
 };
 
 }  // namespace PorousMedium

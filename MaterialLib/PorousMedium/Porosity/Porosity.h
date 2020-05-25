@@ -24,7 +24,7 @@ class Porosity
 {
 public:
     explicit Porosity(ParameterLib::Parameter<double> const& parameter)
-        : _parameter(parameter)
+        : parameter_(parameter)
     {
     }
     virtual ~Porosity() = default;
@@ -43,11 +43,11 @@ public:
     {
         (void)variable;
         (void)temperature;
-        return _parameter(t, pos)[0];
+        return parameter_(t, pos)[0];
     }
 
 private:
-    ParameterLib::Parameter<double> const& _parameter;
+    ParameterLib::Parameter<double> const& parameter_;
 };
 
 }  // namespace PorousMedium

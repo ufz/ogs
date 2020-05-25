@@ -74,7 +74,7 @@ private:
     double compute_df_drho_drho_dp(const FluidPropertyType property_type,
                                    const ArrayType& variable_values) const;
 
-    std::array<bool, FluidPropertyTypeNumber> _is_density_dependent;
+    std::array<bool, FluidPropertyTypeNumber> is_density_dependent_;
 };
 
 }  // namespace Fluid

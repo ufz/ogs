@@ -23,14 +23,14 @@ class ReactionSinusoidal final : public Reaction
 public:
     explicit ReactionSinusoidal(BaseLib::ConfigTree const& conf) :
         //! \ogs_file_param{material__adsorption__reaction__Sinusoidal__reaction_enthalpy}
-        _enthalpy(conf.getConfigParameter<double>("reaction_enthalpy"))
+        enthalpy_(conf.getConfigParameter<double>("reaction_enthalpy"))
     {
     }
 
     double getEnthalpy(const double /*p_Ads*/, const double /*T_Ads*/,
                         const double /*M_Ads*/) const override
     {
-        return _enthalpy;
+        return enthalpy_;
     }
 
     double getReactionRate(const double /*p_Ads*/, const double /*T_Ads*/, const double /*M_Ads*/,
@@ -40,7 +40,7 @@ public:
     }
 
 private:
-    double _enthalpy;
+    double enthalpy_;
 };
 
 }  // namespace Adsorption

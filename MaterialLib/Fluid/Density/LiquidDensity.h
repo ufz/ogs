@@ -53,7 +53,7 @@ class LiquidDensity final : public FluidProperty
 public:
     explicit LiquidDensity(const double beta, const double rho0,
                            const double T0, const double p0, const double E)
-        : _beta(beta), _rho0(rho0), _temperature0(T0), _p0(p0), _bulk_modulus(E)
+        : beta_(beta), rho0_(rho0), temperature0_(T0), p0_(p0), bulk_modulus_(E)
     {
     }
 
@@ -70,8 +70,8 @@ public:
     {
         const double T = var_vals[static_cast<int>(PropertyVariableType::T)];
         const double p = var_vals[static_cast<int>(PropertyVariableType::p)];
-        return _rho0 / (1. + _beta * (T - _temperature0)) /
-               (1. - (p - _p0) / _bulk_modulus);
+        return rho0_ / (1. + beta_ * (T - temperature0_)) /
+               (1. - (p - p0_) / bulk_modulus_);
     }
 
     /// Get the partial differential of the density with respect to temperature
@@ -97,19 +97,19 @@ public:
 
 private:
     /// Volumetric temperature expansion coefficient.
-    const double _beta;
+    const double beta_;
 
     /// Initial density.
-    const double _rho0;
+    const double rho0_;
 
     /// Initial temperature.
-    const double _temperature0;
+    const double temperature0_;
 
     /// Initial pressure.
-    const double _p0;
+    const double p0_;
 
     /// Bulk modulus.
-    const double _bulk_modulus;
+    const double bulk_modulus_;
 
     /**
      *  Calculate the derivative of density of fluids with respect to
@@ -119,9 +119,9 @@ private:
      */
     double dLiquidDensity_dT(const double T, const double p) const
     {
-        const double fac_T = 1. + _beta * (T - _temperature0);
-        return -_beta * _rho0 / (fac_T * fac_T) /
-               (1. - (p - _p0) / _bulk_modulus);
+        const double fac_T = 1. + beta_ * (T - temperature0_);
+        return -beta_ * rho0_ / (fac_T * fac_T) /
+               (1. - (p - p0_) / bulk_modulus_);
     }
 
     /**
@@ -131,9 +131,9 @@ private:
      */
     double dLiquidDensity_dp(const double T, const double p) const
     {
-        const double fac_p = 1. - (p - _p0) / _bulk_modulus;
-        return _rho0 / (1. + _beta * (T - _temperature0)) /
-               (fac_p * fac_p * _bulk_modulus);
+        const double fac_p = 1. - (p - p0_) / bulk_modulus_;
+        return rho0_ / (1. + beta_ * (T - temperature0_)) /
+               (fac_p * fac_p * bulk_modulus_);
     }
 };
 

@@ -61,9 +61,9 @@ public:
     explicit LinearElasticIsotropic(double const penalty_aperture_cutoff,
                                     bool const tension_cutoff,
                                     MaterialProperties material_properties)
-        : _penalty_aperture_cutoff(penalty_aperture_cutoff),
-          _tension_cutoff(tension_cutoff),
-          _mp(std::move(material_properties))
+        : penalty_aperture_cutoff_(penalty_aperture_cutoff),
+          tension_cutoff_(tension_cutoff),
+          mp_(std::move(material_properties))
     {
     }
 
@@ -105,13 +105,13 @@ private:
     /// computation of the normal stiffness modulus of the fracture.
     /// \note Setting this to the initial aperture value allows negative
     /// apertures.
-    double const _penalty_aperture_cutoff;
+    double const penalty_aperture_cutoff_;
 
     /// If set no resistance to open the fracture over the initial aperture is
     /// opposed.
-    bool const _tension_cutoff;
+    bool const tension_cutoff_;
 
-    MaterialProperties _mp;
+    MaterialProperties mp_;
 };
 
 }  // namespace Fracture

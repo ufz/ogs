@@ -22,7 +22,7 @@ namespace Fluid
 class ConstantFluidProperty final : public FluidProperty
 {
 public:
-    explicit ConstantFluidProperty(const double value) : _value(value) {}
+    explicit ConstantFluidProperty(const double value) : value_(value) {}
 
     /// Get model name.
     std::string getName() const override { return "Constant"; }
@@ -32,7 +32,7 @@ public:
     double getValue(const ArrayType& var_vals) const override
     {
         (void)var_vals;
-        return _value;
+        return value_;
     }
 
     /// Get the partial differential of the property value
@@ -48,7 +48,7 @@ public:
     }
 
 private:
-    const double _value;
+    const double value_;
 };
 
 }  // namespace Fluid

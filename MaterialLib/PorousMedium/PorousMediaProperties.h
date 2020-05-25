@@ -36,11 +36,11 @@ public:
         std::vector<std::unique_ptr<MaterialLib::PorousMedium::Storage>>&&
             specific_storage_models,
         MeshLib::PropertyVector<int> const* const material_ids)
-        : _porosity_models(std::move(porosity_models)),
-          _intrinsic_permeability_models(
+        : porosity_models_(std::move(porosity_models)),
+          intrinsic_permeability_models_(
               std::move(intrinsic_permeability_models)),
-          _specific_storage_models(std::move(specific_storage_models)),
-          _material_ids(material_ids)
+          specific_storage_models_(std::move(specific_storage_models)),
+          material_ids_(material_ids)
     {
     }
 
@@ -60,12 +60,12 @@ private:
 
 private:
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Porosity>>
-        _porosity_models;
+        porosity_models_;
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Permeability>>
-        _intrinsic_permeability_models;
+        intrinsic_permeability_models_;
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Storage>>
-        _specific_storage_models;
-    MeshLib::PropertyVector<int> const* const _material_ids;
+        specific_storage_models_;
+    MeshLib::PropertyVector<int> const* const material_ids_;
 };
 
 }  // namespace PorousMedium

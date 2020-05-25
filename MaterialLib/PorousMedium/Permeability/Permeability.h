@@ -27,15 +27,15 @@ public:
     explicit Permeability(
         ParameterLib::Parameter<double> const& permeability_parameter,
         int const dimension)
-        : _permeability_parameter(permeability_parameter), _dimension(dimension)
+        : permeability_parameter_(permeability_parameter), dimension_(dimension)
     {
         if (permeability_parameter.getNumberOfComponents() !=
-            _dimension * _dimension)
+            dimension_ * dimension_)
         {
             OGS_FATAL(
                 "The given parameter has {:d} components, but the permeability "
                 "tensor is defined for a {:d} dimensional problem.",
-                permeability_parameter.getNumberOfComponents(), _dimension);
+                permeability_parameter.getNumberOfComponents(), dimension_);
         }
     }
 
@@ -58,12 +58,12 @@ public:
 
         return Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic,
                                         Eigen::RowMajor> const>(
-            _permeability_parameter(t, pos).data(), _dimension, _dimension);
+            permeability_parameter_(t, pos).data(), dimension_, dimension_);
     }
 
 private:
-    ParameterLib::Parameter<double> const& _permeability_parameter;
-    int const _dimension;
+    ParameterLib::Parameter<double> const& permeability_parameter_;
+    int const dimension_;
 };
 
 }  // namespace PorousMedium

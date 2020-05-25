@@ -49,7 +49,7 @@ public:
     explicit TemperatureDependentViscosity(const double mu0,
                                            const double T_c,
                                            const double T_v)
-        : _mu0(mu0), _temperature_c(T_c), _temperature_v(T_v)
+        : mu0_(mu0), temperature_c_(T_c), temperature_v_(T_v)
     {
     }
 
@@ -66,7 +66,7 @@ public:
     double getValue(const ArrayType& var_vals) const override
     {
         const double T = var_vals[static_cast<int>(PropertyVariableType::T)];
-        return _mu0 * std::exp(-(T - _temperature_c) / _temperature_v);
+        return mu0_ * std::exp(-(T - temperature_c_) / temperature_v_);
     }
 
     /**
@@ -81,14 +81,14 @@ public:
     {
         (void)var;
         const double T = var_vals[static_cast<int>(PropertyVariableType::T)];
-        return -_mu0 / _temperature_v *
-               std::exp(-(T - _temperature_c) / _temperature_v);
+        return -mu0_ / temperature_v_ *
+               std::exp(-(T - temperature_c_) / temperature_v_);
     }
 
 private:
-    const double _mu0;            ///<  Inital viscosity.
-    const double _temperature_c;  ///<  Reference temperature 1.
-    const double _temperature_v;  ///<  Reference temperature 2.
+    const double mu0_;            ///<  Inital viscosity.
+    const double temperature_c_;  ///<  Reference temperature 1.
+    const double temperature_v_;  ///<  Reference temperature 2.
 };
 
 }  // namespace Fluid

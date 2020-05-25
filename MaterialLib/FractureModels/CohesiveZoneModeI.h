@@ -138,9 +138,9 @@ public:
     explicit CohesiveZoneModeI(double const penalty_aperture_cutoff,
                                bool const tension_cutoff,
                                MaterialPropertiesParameters material_properties)
-        : _penalty_aperture_cutoff(penalty_aperture_cutoff),
-          _tension_cutoff(tension_cutoff),
-          _mp(std::move(material_properties))
+        : penalty_aperture_cutoff_(penalty_aperture_cutoff),
+          tension_cutoff_(tension_cutoff),
+          mp_(std::move(material_properties))
     {
     }
 
@@ -181,7 +181,7 @@ public:
     MaterialProperties evaluatedMaterialProperties(
         double const t, ParameterLib::SpatialPosition const& x) const
     {
-        return MaterialProperties(t, x, _mp);
+        return MaterialProperties(t, x, mp_);
     }
 
 private:
@@ -189,13 +189,13 @@ private:
     /// computation of the normal stiffness modulus of the fracture.
     /// \note Setting this to the initial aperture value allows negative
     /// apertures.
-    double const _penalty_aperture_cutoff;
+    double const penalty_aperture_cutoff_;
 
     /// If set no resistance to open the fracture over the initial aperture is
     /// opposed.
-    bool const _tension_cutoff;
+    bool const tension_cutoff_;
 
-    MaterialPropertiesParameters _mp;
+    MaterialPropertiesParameters mp_;
 };
 
 }  // namespace CohesiveZoneModeI

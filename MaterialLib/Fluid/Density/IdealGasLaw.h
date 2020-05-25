@@ -29,7 +29,7 @@ class IdealGasLaw final : public FluidProperty
 {
 public:
     ///   \param molar_mass Molar mass of the gas phase.
-    explicit IdealGasLaw(const double molar_mass) : _molar_mass(molar_mass) {}
+    explicit IdealGasLaw(const double molar_mass) : molar_mass_(molar_mass) {}
 
     /// Get density model name.
     std::string getName() const override { return "Ideal gas law"; }
@@ -38,7 +38,7 @@ public:
     ///                 is given in enum class PropertyVariableType.
     double getValue(const ArrayType& var_vals) const override
     {
-        return _molar_mass *
+        return molar_mass_ *
                var_vals[static_cast<int>(PropertyVariableType::p)] /
                (PhysicalConstant::IdealGasConstant *
                 var_vals[static_cast<int>(PropertyVariableType::T)]);
@@ -67,21 +67,21 @@ public:
 
 private:
     /// Molar mass of gas phase.
-    const double _molar_mass;
+    const double molar_mass_;
 
     /// Get the partial differential of density with the respect to temperature
     /// \param T  Temperature in K.
     /// \param pg Gas phase pressure in Pa.
     double dIdealGasLaw_dT(const double T, const double pg) const
     {
-        return -_molar_mass * pg / (PhysicalConstant::IdealGasConstant * T * T);
+        return -molar_mass_ * pg / (PhysicalConstant::IdealGasConstant * T * T);
     }
 
     /// Get the partial differential of density with the respect to pressure
     /// \param T  Temperature in K.
     double dIdealGasLaw_dp(const double T, const double /* pg */) const
     {
-        return _molar_mass / (PhysicalConstant::IdealGasConstant * T);
+        return molar_mass_ / (PhysicalConstant::IdealGasConstant * T);
     }
 };
 }  // namespace Fluid

@@ -28,35 +28,35 @@ public:
 
     public:
         MaterialProperties(P const& youngs_modulus, P const& poissons_ratio)
-            : _youngs_modulus(youngs_modulus), _poissons_ratio(poissons_ratio)
+            : youngs_modulus_(youngs_modulus), poissons_ratio_(poissons_ratio)
         {
         }
 
         /// Lamé's first parameter.
         double lambda(double const t, X const& x) const
         {
-            return _youngs_modulus(t, x)[0] * _poissons_ratio(t, x)[0] /
-                   (1 + _poissons_ratio(t, x)[0]) /
-                   (1 - 2 * _poissons_ratio(t, x)[0]);
+            return youngs_modulus_(t, x)[0] * poissons_ratio_(t, x)[0] /
+                   (1 + poissons_ratio_(t, x)[0]) /
+                   (1 - 2 * poissons_ratio_(t, x)[0]);
         }
 
         /// Lamé's second parameter, the shear modulus.
         double mu(double const t, X const& x) const
         {
-            return _youngs_modulus(t, x)[0] /
-                   (2 * (1 + _poissons_ratio(t, x)[0]));
+            return youngs_modulus_(t, x)[0] /
+                   (2 * (1 + poissons_ratio_(t, x)[0]));
         }
 
         /// the bulk modulus.
         double bulk_modulus(double const t, X const& x) const
         {
-            return _youngs_modulus(t, x)[0] /
-                   (3 * (1 - 2 * _poissons_ratio(t, x)[0]));
+            return youngs_modulus_(t, x)[0] /
+                   (3 * (1 - 2 * poissons_ratio_(t, x)[0]));
         }
 
     private:
-        P const& _youngs_modulus;
-        P const& _poissons_ratio;
+        P const& youngs_modulus_;
+        P const& poissons_ratio_;
     };
 
 public:
@@ -68,7 +68,7 @@ public:
         MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>;
 
     explicit LinearElasticIsotropic(MaterialProperties material_properties)
-        : _mp(std::move(material_properties))
+        : mp_(std::move(material_properties))
     {
     }
 
@@ -102,19 +102,19 @@ public:
                                   ParameterLib::SpatialPosition const& x,
                                   double const T) const;
 
-    MaterialProperties getMaterialProperties() const { return _mp; }
+    MaterialProperties getMaterialProperties() const { return mp_; }
 
     double getBulkModulus(double const t,
                           ParameterLib::SpatialPosition const& x,
                           KelvinMatrix const* const /*C*/) const override
     {
-        return _mp.bulk_modulus(t, x);
+        return mp_.bulk_modulus(t, x);
     }
 
 
 
 protected:
-    MaterialProperties _mp;
+    MaterialProperties mp_;
 };
 
 extern template class LinearElasticIsotropic<2>;

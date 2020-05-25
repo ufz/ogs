@@ -29,6 +29,6 @@ private:
                                    double const /*aperture_m*/) const override;
 
 private:
-    double const _permeability;
+    double const permeability_;
 };
 }  // namespace MaterialLib::Fracture::Permeability

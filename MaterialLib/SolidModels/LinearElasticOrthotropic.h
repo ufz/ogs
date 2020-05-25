@@ -134,8 +134,8 @@ public:
         MaterialProperties material_properties,
         boost::optional<ParameterLib::CoordinateSystem> const&
             local_coordinate_system)
-        : _mp(std::move(material_properties)),
-          _local_coordinate_system(local_coordinate_system)
+        : mp_(std::move(material_properties)),
+          local_coordinate_system_(local_coordinate_system)
     {
     }
 
@@ -169,12 +169,12 @@ public:
                                   ParameterLib::SpatialPosition const& x,
                                   double const T) const;
 
-    MaterialProperties getMaterialProperties() const { return _mp; }
+    MaterialProperties getMaterialProperties() const { return mp_; }
 
 protected:
-    MaterialProperties _mp;
+    MaterialProperties mp_;
     boost::optional<ParameterLib::CoordinateSystem> const&
-        _local_coordinate_system;
+        local_coordinate_system_;
 };
 
 extern template class LinearElasticOrthotropic<2>;

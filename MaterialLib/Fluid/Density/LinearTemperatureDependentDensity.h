@@ -34,7 +34,7 @@ public:
      */
     explicit LinearTemperatureDependentDensity(const double rho0, double T0,
                                                const double beta)
-        : _rho0(rho0), _temperature0(T0), _beta(beta)
+        : rho0_(rho0), temperature0_(T0), beta_(beta)
     {
     }
 
@@ -50,7 +50,7 @@ public:
     double getValue(const ArrayType& var_vals) const override
     {
         const double T = var_vals[static_cast<int>(PropertyVariableType::T)];
-        return _rho0 * (1 - _beta * (T - _temperature0));
+        return rho0_ * (1 - beta_ * (T - temperature0_));
     }
 
     /// Get the partial differential of the density with respect to temperature.
@@ -65,13 +65,13 @@ public:
         {
             return 0.0;
         }
-        return -_rho0 * _beta;
+        return -rho0_ * beta_;
     }
 
 private:
-    const double _rho0;          ///<  Reference density.
-    const double _temperature0;  ///<  Reference temperature.
-    const double _beta;          ///<  Parameter.
+    const double rho0_;          ///<  Reference density.
+    const double temperature0_;  ///<  Reference temperature.
+    const double beta_;          ///<  Parameter.
 };
 
 }  // namespace Fluid

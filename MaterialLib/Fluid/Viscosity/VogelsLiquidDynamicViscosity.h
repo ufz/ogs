@@ -38,7 +38,7 @@ public:
      *
      */
     explicit VogelsLiquidDynamicViscosity(VogelsConstants constants)
-        : _constants(std::move(constants))
+        : constants_(std::move(constants))
     {
     }
 
@@ -57,7 +57,7 @@ public:
         const double T = var_vals[static_cast<int>(PropertyVariableType::T)];
         // Note: the constant of 1.e-3 is for the SI unit conversion.
         return 1.e-3 *
-               std::exp(_constants.A + _constants.B / (_constants.C + T));
+               std::exp(constants_.A + constants_.B / (constants_.C + T));
     }
 
     /** Get the partial differential of the viscosity with respect to
@@ -71,14 +71,14 @@ public:
     {
         (void)var;
         const double T = var_vals[static_cast<int>(PropertyVariableType::T)];
-        const double f_buff = _constants.B / (_constants.C + T);
+        const double f_buff = constants_.B / (constants_.C + T);
         // Note: the constant of 1.e-3 is for the SI unit conversion.
-        return -1.e-3 * f_buff * std::exp(_constants.A + f_buff) /
-               (_constants.C + T);
+        return -1.e-3 * f_buff * std::exp(constants_.A + f_buff) /
+               (constants_.C + T);
     }
 
 private:
-    const VogelsConstants _constants;
+    const VogelsConstants constants_;
 };
 
 /**  Parameters A, B, C.

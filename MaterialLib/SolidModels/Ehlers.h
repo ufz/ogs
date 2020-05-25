@@ -204,16 +204,16 @@ class Damage final
 public:
     Damage() = default;
     Damage(double const kappa_d, double const value)
-        : _kappa_d(kappa_d), _value(value)
+        : kappa_d_(kappa_d), value_(value)
     {
     }
 
-    double kappa_d() const { return _kappa_d; }
-    double value() const { return _value; }
+    double kappa_d() const { return kappa_d_; }
+    double value() const { return value_; }
 
 private:
-    double _kappa_d = 0;  ///< damage driving variable
-    double _value = 0;    ///< isotropic damage variable
+    double kappa_d_ = 0;  ///< damage driving variable
+    double value_ = 0;    ///< isotropic damage variable
 };
 
 template <int DisplacementDim>
@@ -326,28 +326,28 @@ public:
     MaterialProperties evaluatedMaterialProperties(
         double const t, ParameterLib::SpatialPosition const& x) const
     {
-        return MaterialProperties(t, x, _mp);
+        return MaterialProperties(t, x, mp_);
     }
 
     double getBulkModulus(double const t,
                           ParameterLib::SpatialPosition const& x,
                           KelvinMatrix const* const /*C*/) const override
     {
-        return _mp.K(t, x)[0];
+        return mp_.K(t, x)[0];
     }
 
     DamageProperties evaluatedDamageProperties(
         double const t, ParameterLib::SpatialPosition const& x) const
     {
-        return DamageProperties(t, x, *_damage_properties);
+        return DamageProperties(t, x, *damage_properties_);
     }
 
 private:
-    NumLib::NewtonRaphsonSolverParameters const _nonlinear_solver_parameters;
+    NumLib::NewtonRaphsonSolverParameters const nonlinear_solver_parameters_;
 
-    MaterialPropertiesParameters _mp;
-    std::unique_ptr<DamagePropertiesParameters> _damage_properties;
-    TangentType const _tangent_type;
+    MaterialPropertiesParameters mp_;
+    std::unique_ptr<DamagePropertiesParameters> damage_properties_;
+    TangentType const tangent_type_;
 };
 
 extern template class SolidEhlers<2>;
