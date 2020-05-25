@@ -46,16 +46,16 @@ TwoPhaseFlowWithPPMaterialProperties::TwoPhaseFlowWithPPMaterialProperties(
     std::vector<
         std::unique_ptr<MaterialLib::PorousMedium::RelativePermeability>>&&
         relative_permeability_models)
-    : _material_ids(material_ids),
-      _liquid_density(std::move(liquid_density)),
-      _liquid_viscosity(std::move(liquid_viscosity)),
-      _gas_density(std::move(gas_density)),
-      _gas_viscosity(std::move(gas_viscosity)),
-      _intrinsic_permeability_models(std::move(intrinsic_permeability_models)),
-      _porosity_models(std::move(porosity_models)),
-      _storage_models(std::move(storage_models)),
-      _capillary_pressure_models(std::move(capillary_pressure_models)),
-      _relative_permeability_models(std::move(relative_permeability_models))
+    : material_ids_(material_ids),
+      liquid_density_(std::move(liquid_density)),
+      liquid_viscosity_(std::move(liquid_viscosity)),
+      gas_density_(std::move(gas_density)),
+      gas_viscosity_(std::move(gas_viscosity)),
+      intrinsic_permeability_models_(std::move(intrinsic_permeability_models)),
+      porosity_models_(std::move(porosity_models)),
+      storage_models_(std::move(storage_models)),
+      capillary_pressure_models_(std::move(capillary_pressure_models)),
+      relative_permeability_models_(std::move(relative_permeability_models))
 {
     DBUG("Create material properties for Two-Phase flow with PP model.");
 }
@@ -63,13 +63,13 @@ TwoPhaseFlowWithPPMaterialProperties::TwoPhaseFlowWithPPMaterialProperties(
 int TwoPhaseFlowWithPPMaterialProperties::getMaterialID(
     const std::size_t element_id) const
 {
-    if (_material_ids.empty())
+    if (material_ids_.empty())
     {
         return 0;
     }
 
-    assert(element_id < _material_ids.size());
-    return _material_ids[element_id];
+    assert(element_id < material_ids_.size());
+    return material_ids_[element_id];
 }
 
 double TwoPhaseFlowWithPPMaterialProperties::getLiquidDensity(
@@ -78,7 +78,7 @@ double TwoPhaseFlowWithPPMaterialProperties::getLiquidDensity(
     ArrayType vars;
     vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::T)] = T;
     vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::p)] = p;
-    return _liquid_density->getValue(vars);
+    return liquid_density_->getValue(vars);
 }
 
 double TwoPhaseFlowWithPPMaterialProperties::getGasDensity(const double p,
@@ -87,7 +87,7 @@ double TwoPhaseFlowWithPPMaterialProperties::getGasDensity(const double p,
     ArrayType vars;
     vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::T)] = T;
     vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::p)] = p;
-    return _gas_density->getValue(vars);
+    return gas_density_->getValue(vars);
 }
 
 double TwoPhaseFlowWithPPMaterialProperties::getLiquidViscosity(
@@ -96,7 +96,7 @@ double TwoPhaseFlowWithPPMaterialProperties::getLiquidViscosity(
     ArrayType vars;
     vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::T)] = T;
     vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::p)] = p;
-    return _liquid_viscosity->getValue(vars);
+    return liquid_viscosity_->getValue(vars);
 }
 
 double TwoPhaseFlowWithPPMaterialProperties::getGasViscosity(
@@ -105,14 +105,14 @@ double TwoPhaseFlowWithPPMaterialProperties::getGasViscosity(
     ArrayType vars;
     vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::T)] = T;
     vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::p)] = p;
-    return _gas_viscosity->getValue(vars);
+    return gas_viscosity_->getValue(vars);
 }
 
 Eigen::MatrixXd TwoPhaseFlowWithPPMaterialProperties::getPermeability(
     const int material_id, const double t,
     const ParameterLib::SpatialPosition& pos, const int /*dim*/) const
 {
-    return _intrinsic_permeability_models[material_id]->getValue(t, pos, 0, 0);
+    return intrinsic_permeability_models_[material_id]->getValue(t, pos, 0, 0);
 }
 
 double TwoPhaseFlowWithPPMaterialProperties::getPorosity(
@@ -120,7 +120,7 @@ double TwoPhaseFlowWithPPMaterialProperties::getPorosity(
     const ParameterLib::SpatialPosition& pos, const double /*p*/,
     const double T, const double porosity_variable) const
 {
-    return _porosity_models[material_id]->getValue(t, pos, porosity_variable,
+    return porosity_models_[material_id]->getValue(t, pos, porosity_variable,
                                                    T);
 }
 
@@ -129,7 +129,7 @@ double TwoPhaseFlowWithPPMaterialProperties::getSaturation(
     const ParameterLib::SpatialPosition& /*pos*/, const double /*p*/,
     const double /*T*/, const double pc) const
 {
-    return _capillary_pressure_models[material_id]->getSaturation(pc);
+    return capillary_pressure_models_[material_id]->getSaturation(pc);
 }
 
 double TwoPhaseFlowWithPPMaterialProperties::getCapillaryPressure(
@@ -137,7 +137,7 @@ double TwoPhaseFlowWithPPMaterialProperties::getCapillaryPressure(
     const ParameterLib::SpatialPosition& /*pos*/, const double /*p*/,
     const double /*T*/, const double saturation) const
 {
-    return _capillary_pressure_models[material_id]->getCapillaryPressure(
+    return capillary_pressure_models_[material_id]->getCapillaryPressure(
         saturation);
 }
 
@@ -147,7 +147,7 @@ double TwoPhaseFlowWithPPMaterialProperties::getSaturationDerivative(
     const double /*T*/, const double saturation) const
 {
     const double dpcdsw =
-        _capillary_pressure_models[material_id]->getdPcdS(saturation);
+        capillary_pressure_models_[material_id]->getdPcdS(saturation);
     return 1 / dpcdsw;
 }
 

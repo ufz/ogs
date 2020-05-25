@@ -22,27 +22,27 @@ namespace PorousMedium
 double WettingPhaseVanGenuchten::getValue(const double saturation) const
 {
     const double S = std::clamp(saturation,
-                                _saturation_r + _minor_offset,
-                                _saturation_max - _minor_offset);
-    const double Se = (S - _saturation_r) / (_saturation_max - _saturation_r);
-    const double val = 1.0 - std::pow(1.0 - std::pow(Se, 1.0 / _m), _m);
+                                saturation_r_ + minor_offset_,
+                                saturation_max_ - minor_offset_);
+    const double Se = (S - saturation_r_) / (saturation_max_ - saturation_r_);
+    const double val = 1.0 - std::pow(1.0 - std::pow(Se, 1.0 / m_), m_);
     const double krel = std::sqrt(Se) * val * val;
-    return std::max(_krel_min, krel);
+    return std::max(krel_min_, krel);
 }
 
 double WettingPhaseVanGenuchten::getdValue(const double saturation) const
 {
     const double S = std::clamp(saturation,
-                                _saturation_r + _minor_offset,
-                                _saturation_max - _minor_offset);
-    const double Se = (S - _saturation_r) / (_saturation_max - _saturation_r);
+                                saturation_r_ + minor_offset_,
+                                saturation_max_ - minor_offset_);
+    const double Se = (S - saturation_r_) / (saturation_max_ - saturation_r_);
     const double sqrtSe = std::sqrt(Se);
-    const double temp_val = 1.0 - std::pow(1.0 - std::pow(Se, 1.0 / _m), _m);
+    const double temp_val = 1.0 - std::pow(1.0 - std::pow(Se, 1.0 / m_), m_);
     return (0.5 * temp_val * temp_val / sqrtSe +
             2. * sqrtSe * temp_val *
-                std::pow(1.0 - std::pow(Se, 1.0 / _m), _m - 1.) *
-                std::pow(Se, (1.0 - _m) / _m)) /
-           (_saturation_max - _saturation_r);
+                std::pow(1.0 - std::pow(Se, 1.0 / m_), m_ - 1.) *
+                std::pow(Se, (1.0 - m_) / m_)) /
+           (saturation_max_ - saturation_r_);
 }
 
 }  // namespace PorousMedium

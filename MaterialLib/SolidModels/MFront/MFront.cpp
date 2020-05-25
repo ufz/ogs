@@ -162,76 +162,76 @@ MFront<DisplacementDim>::MFront(
     std::vector<ParameterLib::Parameter<double> const*>&& material_properties,
     boost::optional<ParameterLib::CoordinateSystem> const&
         local_coordinate_system)
-    : _behaviour(std::move(behaviour)),
-      _material_properties(std::move(material_properties)),
-      _local_coordinate_system(
+    : behaviour_(std::move(behaviour)),
+      material_properties_(std::move(material_properties)),
+      local_coordinate_system_(
           local_coordinate_system ? &local_coordinate_system.get() : nullptr)
 {
     auto const hypothesis = behaviour.hypothesis;
 
-    if (_behaviour.gradients.size() != 1)
+    if (behaviour_.gradients.size() != 1)
         OGS_FATAL(
             "The behaviour must have exactly a single gradient as input.");
 
-    if (_behaviour.gradients[0].name != "Strain")
+    if (behaviour_.gradients[0].name != "Strain")
         OGS_FATAL("The behaviour must be driven by strain.");
 
-    if (_behaviour.gradients[0].type != mgis::behaviour::Variable::STENSOR)
+    if (behaviour_.gradients[0].type != mgis::behaviour::Variable::STENSOR)
         OGS_FATAL("Strain must be a symmetric tensor.");
 
-    if (mgis::behaviour::getVariableSize(_behaviour.gradients[0], hypothesis) !=
+    if (mgis::behaviour::getVariableSize(behaviour_.gradients[0], hypothesis) !=
         MFront<DisplacementDim>::KelvinVector::SizeAtCompileTime)
         OGS_FATAL("Strain must have {:d} components instead of {:d}.",
                   MFront<DisplacementDim>::KelvinVector::SizeAtCompileTime,
-                  mgis::behaviour::getVariableSize(_behaviour.gradients[0],
+                  mgis::behaviour::getVariableSize(behaviour_.gradients[0],
                                                    hypothesis));
 
-    if (_behaviour.thermodynamic_forces.size() != 1)
+    if (behaviour_.thermodynamic_forces.size() != 1)
         OGS_FATAL(
             "The behaviour must compute exactly one thermodynamic force.");
 
-    if (_behaviour.thermodynamic_forces[0].name != "Stress")
+    if (behaviour_.thermodynamic_forces[0].name != "Stress")
         OGS_FATAL("The behaviour must compute stress.");
 
-    if (_behaviour.thermodynamic_forces[0].type !=
+    if (behaviour_.thermodynamic_forces[0].type !=
         mgis::behaviour::Variable::STENSOR)
         OGS_FATAL("Stress must be a symmetric tensor.");
 
-    if (mgis::behaviour::getVariableSize(_behaviour.thermodynamic_forces[0],
+    if (mgis::behaviour::getVariableSize(behaviour_.thermodynamic_forces[0],
                                          hypothesis) !=
         MFront<DisplacementDim>::KelvinVector::SizeAtCompileTime)
         OGS_FATAL("Stress must have {:d} components instead of {:d}.",
                   MFront<DisplacementDim>::KelvinVector::SizeAtCompileTime,
                   mgis::behaviour::getVariableSize(
-                      _behaviour.thermodynamic_forces[0], hypothesis));
+                      behaviour_.thermodynamic_forces[0], hypothesis));
 
-    if (!_behaviour.esvs.empty())
+    if (!behaviour_.esvs.empty())
     {
-        if (_behaviour.esvs[0].name != "Temperature")
+        if (behaviour_.esvs[0].name != "Temperature")
         {
             OGS_FATAL(
                 "Only temperature is supported as external state variable.");
         }
 
-        if (mgis::behaviour::getVariableSize(_behaviour.esvs[0], hypothesis) !=
+        if (mgis::behaviour::getVariableSize(behaviour_.esvs[0], hypothesis) !=
             1)
             OGS_FATAL(
                 "Temperature must be a scalar instead of having {:d} "
                 "components.",
                 mgis::behaviour::getVariableSize(
-                    _behaviour.thermodynamic_forces[0], hypothesis));
+                    behaviour_.thermodynamic_forces[0], hypothesis));
     }
 
-    if (_behaviour.mps.size() != _material_properties.size())
+    if (behaviour_.mps.size() != material_properties_.size())
     {
         ERR("There are {:d} material properties in the loaded behaviour:",
-            _behaviour.mps.size());
-        for (auto const& mp : _behaviour.mps)
+            behaviour_.mps.size());
+        for (auto const& mp : behaviour_.mps)
         {
             ERR("\t{:s}", mp.name);
         }
         OGS_FATAL("But the number of passed material properties is {:d}.",
-                  _material_properties.size());
+                  material_properties_.size());
     }
 }
 
@@ -239,7 +239,7 @@ template <int DisplacementDim>
 std::unique_ptr<typename MechanicsBase<DisplacementDim>::MaterialStateVariables>
 MFront<DisplacementDim>::createMaterialStateVariables() const
 {
-    return std::make_unique<MaterialStateVariables>(_behaviour);
+    return std::make_unique<MaterialStateVariables>(behaviour_);
 }
 
 template <int DisplacementDim>
@@ -265,7 +265,7 @@ MFront<DisplacementDim>::integrateStress(
     // New state, copy of current one, packed in unique_ptr for return.
     auto state = std::make_unique<MaterialStateVariables>(
         static_cast<MaterialStateVariables const&>(material_state_variables));
-    auto& behaviour_data = state->_behaviour_data;
+    auto& behaviour_data = state->behaviour_data_;
 
     // TODO add a test of material behaviour where the value of dt matters.
     behaviour_data.dt = dt;
@@ -276,7 +276,7 @@ MFront<DisplacementDim>::integrateStress(
     // evaluate parameters at (t, x)
     {
         auto out = behaviour_data.s1.material_properties.begin();
-        for (auto* param : _material_properties)
+        for (auto* param : material_properties_)
         {
             auto const& vals = (*param)(t, x);
             out = std::copy(vals.begin(), vals.end(), out);
@@ -294,12 +294,12 @@ MFront<DisplacementDim>::integrateStress(
 
     // rotation tensor
     auto const Q = [this, &x]() -> KelvinMatrixType<DisplacementDim> {
-        if (!_local_coordinate_system)
+        if (!local_coordinate_system_)
         {
             return KelvinMatrixType<DisplacementDim>::Identity();
         }
         return fourthOrderRotationMatrix(
-            _local_coordinate_system->transformation<DisplacementDim>(x));
+            local_coordinate_system_->transformation<DisplacementDim>(x));
     }();
 
     auto const eps_prev_MFront =
@@ -336,7 +336,7 @@ MFront<DisplacementDim>::integrateStress(
         v.s1.thermodynamic_forces[i] = sigma_prev_MFront[i];
     }
 
-    auto const status = mgis::behaviour::integrate(v, _behaviour);
+    auto const status = mgis::behaviour::integrate(v, behaviour_);
     if (status != 1)
     {
         throw NumLib::AssemblyException("MFront: integration failed with status"
@@ -381,13 +381,13 @@ MFront<DisplacementDim>::getInternalVariables() const
     std::vector<typename MechanicsBase<DisplacementDim>::InternalVariable>
         internal_variables;
 
-    for (auto const& iv : _behaviour.isvs)
+    for (auto const& iv : behaviour_.isvs)
     {
         auto const name = iv.name;
         auto const offset = mgis::behaviour::getVariableOffset(
-            _behaviour.isvs, name, _behaviour.hypothesis);
+            behaviour_.isvs, name, behaviour_.hypothesis);
         auto const size =
-            mgis::behaviour::getVariableSize(iv, _behaviour.hypothesis);
+            mgis::behaviour::getVariableSize(iv, behaviour_.hypothesis);
 
         // TODO (naumov): For orthotropic materials the internal variables
         // should be rotated to the global coordinate system before output.
@@ -403,7 +403,7 @@ MFront<DisplacementDim>::getInternalVariables() const
                        nullptr);
                 auto const& internal_state_variables =
                     static_cast<MaterialStateVariables const&>(state)
-                        ._behaviour_data.s1.internal_state_variables;
+                        .behaviour_data_.s1.internal_state_variables;
 
                 cache.resize(size);
                 std::copy_n(internal_state_variables.data() + offset,

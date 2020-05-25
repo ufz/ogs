@@ -473,10 +473,10 @@ SolidEhlers<DisplacementDim>::SolidEhlers(
     MaterialPropertiesParameters material_properties,
     std::unique_ptr<DamagePropertiesParameters>&& damage_properties,
     TangentType tangent_type)
-    : _nonlinear_solver_parameters(std::move(nonlinear_solver_parameters)),
-      _mp(std::move(material_properties)),
-      _damage_properties(std::move(damage_properties)),
-      _tangent_type(tangent_type)
+    : nonlinear_solver_parameters_(std::move(nonlinear_solver_parameters)),
+      mp_(std::move(material_properties)),
+      damage_properties_(std::move(damage_properties)),
+      tangent_type_(tangent_type)
 {
 }
 
@@ -532,7 +532,7 @@ SolidEhlers<DisplacementDim>::integrateStress(
     KelvinVector const eps_D = P_dev * eps;
 
     // do the evaluation once per function call.
-    MaterialProperties const mp(t, x, _mp);
+    MaterialProperties const mp(t, x, mp_);
 
     KelvinVector sigma = predict_sigma<DisplacementDim>(mp.G, mp.K, sigma_prev,
                                                         eps, eps_prev, eps_V);
@@ -623,7 +623,7 @@ SolidEhlers<DisplacementDim>::integrateStress(
                 decltype(update_jacobian), ResidualVectorType,
                 decltype(update_residual), decltype(update_solution)>(
                 linear_solver, update_jacobian, update_residual,
-                update_solution, _nonlinear_solver_parameters);
+                update_solution, nonlinear_solver_parameters_);
 
             auto const success_iterations = newton_solver.solve(jacobian);
 
@@ -654,19 +654,19 @@ SolidEhlers<DisplacementDim>::integrateStress(
         dresidual_deps.template block<KelvinVectorSize, KelvinVectorSize>(0, 0)
             .noalias() = calculateDResidualDEps<DisplacementDim>(mp.K, mp.G);
 
-        if (_tangent_type == TangentType::Elastic)
+        if (tangent_type_ == TangentType::Elastic)
         {
             tangentStiffness =
                 elasticTangentStiffness<DisplacementDim>(mp.K, mp.G);
         }
-        else if (_tangent_type == TangentType::Plastic ||
-                 _tangent_type == TangentType::PlasticDamageSecant)
+        else if (tangent_type_ == TangentType::Plastic ||
+                 tangent_type_ == TangentType::PlasticDamageSecant)
         {
             tangentStiffness =
                 mp.G *
                 linear_solver.solve(-dresidual_deps)
                     .template block<KelvinVectorSize, KelvinVectorSize>(0, 0);
-            if (_tangent_type == TangentType::PlasticDamageSecant)
+            if (tangent_type_ == TangentType::PlasticDamageSecant)
             {
                 tangentStiffness *= 1 - state.damage.value();
             }
@@ -676,7 +676,7 @@ SolidEhlers<DisplacementDim>::integrateStress(
             OGS_FATAL(
                 "Unimplemented tangent type behaviour for the tangent type "
                 "'{:d}'.",
-                _tangent_type);
+                tangent_type_);
         }
     }
 

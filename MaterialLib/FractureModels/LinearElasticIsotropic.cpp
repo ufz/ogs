@@ -41,7 +41,7 @@ void LinearElasticIsotropic<DisplacementDim>::computeConstitutiveRelation(
     C.setZero();
     for (int i = 0; i < index_ns; i++)
     {
-        C(i, i) = _mp.shear_stiffness(t, x)[0];
+        C(i, i) = mp_.shear_stiffness(t, x)[0];
     }
 
     sigma.noalias() = C * w;
@@ -49,17 +49,17 @@ void LinearElasticIsotropic<DisplacementDim>::computeConstitutiveRelation(
     double const aperture = w[index_ns] + aperture0;
 
     sigma.coeffRef(index_ns) =
-        _mp.normal_stiffness(t, x)[0] * w[index_ns] *
-        logPenalty(aperture0, aperture, _penalty_aperture_cutoff);
+        mp_.normal_stiffness(t, x)[0] * w[index_ns] *
+        logPenalty(aperture0, aperture, penalty_aperture_cutoff_);
 
     C(index_ns, index_ns) =
-        _mp.normal_stiffness(t, x)[0] *
-        logPenaltyDerivative(aperture0, aperture, _penalty_aperture_cutoff);
+        mp_.normal_stiffness(t, x)[0] *
+        logPenaltyDerivative(aperture0, aperture, penalty_aperture_cutoff_);
 
     sigma.noalias() += sigma0;
 
     // correction for an opening fracture
-    if (_tension_cutoff && sigma[index_ns] > 0)
+    if (tension_cutoff_ && sigma[index_ns] > 0)
     {
         C.setZero();
         sigma.setZero();

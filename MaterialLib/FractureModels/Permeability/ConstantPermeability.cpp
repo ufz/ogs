@@ -12,7 +12,7 @@
 namespace MaterialLib::Fracture::Permeability
 {
 ConstantPermeability::ConstantPermeability(double const permeability)
-    : _permeability(permeability)
+    : permeability_(permeability)
 {
 }
 
@@ -21,7 +21,7 @@ double ConstantPermeability::permeability(
     double const /*aperture0*/,
     double const /*aperture_m*/) const
 {
-    return _permeability;
+    return permeability_;
 }
 
 double ConstantPermeability::dpermeability_daperture(

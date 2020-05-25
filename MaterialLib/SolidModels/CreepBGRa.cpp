@@ -53,7 +53,7 @@ CreepBGRa<DisplacementDim>::integrateStress(
 
     double const norm_s_try =
         Invariants::FrobeniusNorm(deviatoric_matrix * sigma_try);
-    // In case |s_{try}| is zero and _n < 3 (rare case).
+    // In case |s_{try}| is zero and n_ < 3 (rare case).
     if (norm_s_try < std::numeric_limits<double>::epsilon() * C(0, 0))
     {
         return {std::make_tuple(sigma_try, createMaterialStateVariables(), C)};
@@ -61,10 +61,10 @@ CreepBGRa<DisplacementDim>::integrateStress(
 
     ResidualVectorType solution = sigma_try;
 
-    const double A = _a(t, x)[0];
-    const double n = _n(t, x)[0];
-    const double sigma0 = _sigma_f(t, x)[0];
-    const double Q = _q(t, x)[0];
+    const double A = a_(t, x)[0];
+    const double n = n_(t, x)[0];
+    const double sigma0 = sigma_f_(t, x)[0];
+    const double Q = q_(t, x)[0];
 
     const double constant_coefficient =
         getCreepConstantCoefficient(A, n, sigma0);
@@ -73,7 +73,7 @@ CreepBGRa<DisplacementDim>::integrateStress(
         dt * constant_coefficient *
         std::exp(-Q / (MaterialLib::PhysicalConstant::IdealGasConstant * T));
 
-    double const G2b = 2.0 * b * this->_mp.mu(t, x);
+    double const G2b = 2.0 * b * this->mp_.mu(t, x);
 
     auto const update_jacobian = [&solution, &G2b, &n](JacobianMatrix& jacobian) {
         auto const& D = Invariants::deviatoric_projection;
@@ -106,7 +106,7 @@ CreepBGRa<DisplacementDim>::integrateStress(
                               decltype(update_residual),
                               decltype(update_solution)>(
             linear_solver, update_jacobian, update_residual, update_solution,
-            _nonlinear_solver_parameters);
+            nonlinear_solver_parameters_);
 
     JacobianMatrix jacobian;
     auto const success_iterations = newton_solver.solve(jacobian);
@@ -131,10 +131,10 @@ double CreepBGRa<DisplacementDim>::getTemperatureRelatedCoefficient(
     double const t, double const dt, ParameterLib::SpatialPosition const& x,
     double const T, double const deviatoric_stress_norm) const
 {
-    const double A = _a(t, x)[0];
-    const double n = _n(t, x)[0];
-    const double sigma0 = _sigma_f(t, x)[0];
-    const double Q = _q(t, x)[0];
+    const double A = a_(t, x)[0];
+    const double n = n_(t, x)[0];
+    const double sigma0 = sigma_f_(t, x)[0];
+    const double Q = q_(t, x)[0];
 
     const double constant_coefficient =
         getCreepConstantCoefficient(A, n, sigma0);
@@ -142,7 +142,7 @@ double CreepBGRa<DisplacementDim>::getTemperatureRelatedCoefficient(
     return 2.0 * constant_coefficient *
            std::exp(-Q /
                     (MaterialLib::PhysicalConstant::IdealGasConstant * T)) *
-           this->_mp.mu(t, x) * std::pow(deviatoric_stress_norm, n - 1) * dt *
+           this->mp_.mu(t, x) * std::pow(deviatoric_stress_norm, n - 1) * dt *
            Q / (MaterialLib::PhysicalConstant::IdealGasConstant * T * T);
 }
 

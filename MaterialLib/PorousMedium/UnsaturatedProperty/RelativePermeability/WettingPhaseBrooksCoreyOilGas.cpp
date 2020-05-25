@@ -21,20 +21,20 @@ namespace PorousMedium
 {
 double WettingPhaseBrooksCoreyOilGas::getValue(const double saturation) const
 {
-    const double S = std::clamp(saturation, _saturation_r + _minor_offset,
-                                _saturation_max - _minor_offset);
-    const double Se = (S - _saturation_r) / (_saturation_max - _saturation_r);
-    const double krel = std::pow(Se, 3.0 + 2.0 / _m);
-    return std::max(_krel_min, krel);
+    const double S = std::clamp(saturation, saturation_r_ + minor_offset_,
+                                saturation_max_ - minor_offset_);
+    const double Se = (S - saturation_r_) / (saturation_max_ - saturation_r_);
+    const double krel = std::pow(Se, 3.0 + 2.0 / m_);
+    return std::max(krel_min_, krel);
 }
 
 double WettingPhaseBrooksCoreyOilGas::getdValue(const double saturation) const
 {
-    const double S = std::clamp(saturation, _saturation_r + _minor_offset,
-                                _saturation_max - _minor_offset);
-    const double Se = (S - _saturation_r) / (_saturation_max - _saturation_r);
-    return ((3.0 + 2.0 / _m) * std::pow(Se, 2.0 + 2.0 / _m)) /
-           (_saturation_max - _saturation_r);
+    const double S = std::clamp(saturation, saturation_r_ + minor_offset_,
+                                saturation_max_ - minor_offset_);
+    const double Se = (S - saturation_r_) / (saturation_max_ - saturation_r_);
+    return ((3.0 + 2.0 / m_) * std::pow(Se, 2.0 + 2.0 / m_)) /
+           (saturation_max_ - saturation_r_);
 }
 }  // namespace PorousMedium
 }  // namespace MaterialLib

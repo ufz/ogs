@@ -28,14 +28,14 @@ static const double h_wg = 2258000.0;  /// latent heat of water evaporation
 double WaterVaporProperties::calculateSaturatedVaporPressure(
     const double T) const
 {
-    return p_0 * std::exp(((1 / temperature_0) - (1 / T)) * _water_mol_mass * h_wg /
+    return p_0 * std::exp(((1 / temperature_0) - (1 / T)) * water_mol_mass_ * h_wg /
                            IdealGasConstant);
 }
 
 double WaterVaporProperties::calculateDerivativedPsatdT(const double T) const
 {
-    return p_0 * (_water_mol_mass * h_wg / IdealGasConstant) * (1. / T / T) *
-           std::exp(((1. / temperature_0) - (1. / T)) * _water_mol_mass * h_wg /
+    return p_0 * (water_mol_mass_ * h_wg / IdealGasConstant) * (1. / T / T) *
+           std::exp(((1. / temperature_0) - (1. / T)) * water_mol_mass_ * h_wg /
                     IdealGasConstant);
 }
 
@@ -44,23 +44,23 @@ double WaterVaporProperties::calculateVaporPressureNonwet(
     const double mass_density_water) const
 {
     const double p_sat = calculateSaturatedVaporPressure(T);
-    const double c_w = _water_mol_mass / IdealGasConstant / T;
+    const double c_w = water_mol_mass_ / IdealGasConstant / T;
     return p_sat * std::exp(-pc * c_w / mass_density_water);
 }
 double WaterVaporProperties::calculateDerivativedPgwdT(
     const double pc, const double T, const double mass_density_water) const
 {
-    const double c_w = _water_mol_mass / IdealGasConstant / T;
+    const double c_w = water_mol_mass_ / IdealGasConstant / T;
     const double p_sat = calculateSaturatedVaporPressure(T);
     const double dPsatdT = calculateDerivativedPsatdT(T);
     return dPsatdT * std::exp(-pc * c_w / mass_density_water) +
            p_sat * std::exp(-pc * c_w / mass_density_water) *
-               (pc * _water_mol_mass / mass_density_water / IdealGasConstant / T / T);
+               (pc * water_mol_mass_ / mass_density_water / IdealGasConstant / T / T);
 }
 double WaterVaporProperties::calculateDerivativedPgwdPC(
     const double pc, const double T, const double mass_density_water) const
 {
-    const double c_w = _water_mol_mass / IdealGasConstant / T;
+    const double c_w = water_mol_mass_ / IdealGasConstant / T;
     const double p_sat = calculateSaturatedVaporPressure(T);
     return p_sat * std::exp(-pc * c_w / mass_density_water) * (-c_w / mass_density_water);
 }
@@ -69,9 +69,9 @@ double WaterVaporProperties::calculatedDensityNonwetdT(
     const double T, const double mass_density_water) const
 {
     const double dPgwdT = calculateDerivativedPgwdT(pc, T, mass_density_water);
-    return -((p_air_nonwet * _air_mol_mass + p_vapor_nonwet * _water_mol_mass) / IdealGasConstant /
+    return -((p_air_nonwet * air_mol_mass_ + p_vapor_nonwet * water_mol_mass_) / IdealGasConstant /
              T / T) +
-           (_water_mol_mass - _air_mol_mass) * dPgwdT / IdealGasConstant / T;
+           (water_mol_mass_ - air_mol_mass_) * dPgwdT / IdealGasConstant / T;
 }
 double WaterVaporProperties::getWaterVaporEnthalpySimple(const double temperature,
     const double heat_capacity_water_vapor,

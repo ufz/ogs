@@ -48,7 +48,7 @@ LinearElasticOrthotropic<DisplacementDim>::getElasticTensor(
 {
     using namespace MathLib::KelvinVector;
 
-    auto const& mp = _mp.evaluate(t, x);
+    auto const& mp = mp_.evaluate(t, x);
     auto const E = [&mp](int const i) { return mp.E(i); };
     auto const G = [&mp](int const i, int const j) { return mp.G(i, j); };
     auto const nu = [&mp](int const i, int const j) { return mp.nu(i, j); };
@@ -68,12 +68,12 @@ LinearElasticOrthotropic<DisplacementDim>::getElasticTensor(
 
     KelvinMatrixType<3> const C_ortho = S_ortho.inverse();
     auto const Q = [this, &x]() -> KelvinMatrixType<3> {
-        if (!_local_coordinate_system)
+        if (!local_coordinate_system_)
         {
             return MathLib::KelvinVector::KelvinMatrixType<3>::Identity();
         }
         return MathLib::KelvinVector::fourthOrderRotationMatrix(
-            _local_coordinate_system->transformation<3>(x));
+            local_coordinate_system_->transformation<3>(x));
     }();
 
     // Rotate the forth-order tenser in Kelvin mapping with Q*C_ortho*Q^T and

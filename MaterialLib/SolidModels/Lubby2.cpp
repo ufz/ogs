@@ -88,7 +88,7 @@ Lubby2<DisplacementDim>::integrateStress(
     state.setInitialConditions();
 
     auto local_lubby2_properties =
-        detail::LocalLubby2Properties<DisplacementDim>{t, x, _mp};
+        detail::LocalLubby2Properties<DisplacementDim>{t, x, mp_};
 
     // calculation of deviatoric parts
     auto const& P_dev = Invariants::deviatoric_projection;
@@ -163,7 +163,7 @@ Lubby2<DisplacementDim>::integrateStress(
             decltype(update_jacobian), LocalResidualVector,
             decltype(update_residual), decltype(update_solution)>(
             linear_solver, update_jacobian, update_residual, update_solution,
-            _nonlinear_solver_parameters);
+            nonlinear_solver_parameters_);
 
         auto const success_iterations = newton_solver.solve(K_loc);
 
@@ -273,9 +273,9 @@ void Lubby2<DisplacementDim>::calculateJacobianBurgers(
             1. / (properties.etaK * properties.etaK) *
             (properties.GM0 * sig_i - 2. * properties.GK * eps_K_i);
 
-        KelvinVector const dG_K = 1.5 * _mp.mK(t, x)[0] * properties.GK *
+        KelvinVector const dG_K = 1.5 * mp_.mK(t, x)[0] * properties.GK *
                                   properties.GM0 / s_eff * sig_i;
-        KelvinVector const dmu_vK = 1.5 * _mp.mvK(t, x)[0] * properties.GM0 *
+        KelvinVector const dmu_vK = 1.5 * mp_.mvK(t, x)[0] * properties.GM0 *
                                     properties.etaK / s_eff * sig_i;
         Jac.template block<KelvinVectorSize, KelvinVectorSize>(KelvinVectorSize,
                                                                0)
@@ -298,7 +298,7 @@ void Lubby2<DisplacementDim>::calculateJacobianBurgers(
         -0.5 * dt * properties.GM0 / properties.etaM * KelvinMatrix::Identity();
     if (s_eff > 0.)
     {
-        KelvinVector const dmu_vM = 1.5 * _mp.mvM(t, x)[0] * properties.GM0 *
+        KelvinVector const dmu_vM = 1.5 * mp_.mvM(t, x)[0] * properties.GM0 *
                                     properties.etaM / s_eff * sig_i;
         Jac.template block<KelvinVectorSize, KelvinVectorSize>(
                2 * KelvinVectorSize, 0)

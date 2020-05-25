@@ -22,32 +22,32 @@ namespace PorousMedium
 double BrooksCoreyCapillaryPressureSaturation::getCapillaryPressure(
     const double saturation) const
 {
-    const double S = std::clamp(saturation, _saturation_r + _minor_offset,
-                                _saturation_max - _minor_offset);
-    const double Se = (S - _saturation_r) / (_saturation_max - _saturation_r);
-    const double pc = _pb * std::pow(Se, -1.0 / _m);
-    return std::clamp(pc, _minor_offset, _pc_max);
+    const double S = std::clamp(saturation, saturation_r_ + minor_offset_,
+                                saturation_max_ - minor_offset_);
+    const double Se = (S - saturation_r_) / (saturation_max_ - saturation_r_);
+    const double pc = pb_ * std::pow(Se, -1.0 / m_);
+    return std::clamp(pc, minor_offset_, pc_max_);
 }
 
 double BrooksCoreyCapillaryPressureSaturation::getSaturation(
     const double capillary_pressure) const
 {
     const double pc =
-        (capillary_pressure < 0.0) ? _minor_offset : capillary_pressure;
-    const double Se = std::pow(pc / _pb, -_m);
-    const double S = Se * (_saturation_max - _saturation_r) + _saturation_r;
-    return std::clamp(S, _saturation_r + _minor_offset,
-                      _saturation_max - _minor_offset);
+        (capillary_pressure < 0.0) ? minor_offset_ : capillary_pressure;
+    const double Se = std::pow(pc / pb_, -m_);
+    const double S = Se * (saturation_max_ - saturation_r_) + saturation_r_;
+    return std::clamp(S, saturation_r_ + minor_offset_,
+                      saturation_max_ - minor_offset_);
 }
 
 double BrooksCoreyCapillaryPressureSaturation::getdPcdS(
     const double saturation) const
 {
-    const double S = std::clamp(saturation, _saturation_r + _minor_offset,
-                                _saturation_max - _minor_offset);
+    const double S = std::clamp(saturation, saturation_r_ + minor_offset_,
+                                saturation_max_ - minor_offset_);
     const double val = std::pow(
-        ((S - _saturation_r) / (_saturation_max - _saturation_r)), -1.0 / _m);
-    return (_pb * val) / (_m * (_saturation_r - S));
+        ((S - saturation_r_) / (saturation_max_ - saturation_r_)), -1.0 / m_);
+    return (pb_ * val) / (m_ * (saturation_r_ - S));
 }
 
 }  // namespace PorousMedium

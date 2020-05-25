@@ -43,8 +43,8 @@ LinearElasticIsotropic<DisplacementDim>::getElasticTensor(
     double const t, ParameterLib::SpatialPosition const& x,
     double const /*T*/) const
 {
-    return elasticTangentStiffness<DisplacementDim>(_mp.lambda(t, x),
-                                                    _mp.mu(t, x));
+    return elasticTangentStiffness<DisplacementDim>(mp_.lambda(t, x),
+                                                    mp_.mu(t, x));
 }
 
 template class LinearElasticIsotropic<2>;

@@ -71,7 +71,7 @@ void Coulomb<DisplacementDim>::computeConstitutiveRelation(
     StateVariables<DisplacementDim>& state =
         static_cast<StateVariables<DisplacementDim>&>(material_state_variables);
 
-    MaterialPropertyValues const mat(_mp, t, x);
+    MaterialPropertyValues const mat(mp_, t, x);
 
     const int index_ns = DisplacementDim - 1;
     double const aperture = w[index_ns] + aperture0;
@@ -95,12 +95,12 @@ void Coulomb<DisplacementDim>::computeConstitutiveRelation(
         sigma.noalias() = Ke * (w - w_prev);
 
         sigma.coeffRef(index_ns) *=
-            logPenaltyDerivative(aperture0, aperture, _penalty_aperture_cutoff);
+            logPenaltyDerivative(aperture0, aperture, penalty_aperture_cutoff_);
         sigma.noalias() += sigma_prev;
     }
 
     // correction for an opening fracture
-    if (_tension_cutoff && sigma[DisplacementDim - 1] >= 0)
+    if (tension_cutoff_ && sigma[DisplacementDim - 1] >= 0)
     {
         Kep.setZero();
         sigma.setZero();
@@ -123,7 +123,7 @@ void Coulomb<DisplacementDim>::computeConstitutiveRelation(
         {
             Kep = Ke;
             Kep(index_ns, index_ns) *= logPenaltyDerivative(
-                aperture0, aperture, _penalty_aperture_cutoff);
+                aperture0, aperture, penalty_aperture_cutoff_);
             return;
         }
     }
@@ -176,7 +176,7 @@ void Coulomb<DisplacementDim>::computeConstitutiveRelation(
             sigma.noalias() = Ke * (w - w_prev - state.w_p + state.w_p_prev);
 
             sigma.coeffRef(index_ns) *= logPenaltyDerivative(
-                aperture0, aperture, _penalty_aperture_cutoff);
+                aperture0, aperture, penalty_aperture_cutoff_);
             sigma.noalias() += sigma_prev;
         };
 
@@ -186,7 +186,7 @@ void Coulomb<DisplacementDim>::computeConstitutiveRelation(
                                   decltype(update_residual),
                                   decltype(update_solution)>(
                 linear_solver, update_jacobian, update_residual,
-                update_solution, _nonlinear_solver_parameters);
+                update_solution, nonlinear_solver_parameters_);
 
         auto const success_iterations = newton_solver.solve(jacobian);
 
@@ -205,7 +205,7 @@ void Coulomb<DisplacementDim>::computeConstitutiveRelation(
     }
 
     Ke(index_ns, index_ns) *=
-        logPenaltyDerivative(aperture0, aperture, _penalty_aperture_cutoff);
+        logPenaltyDerivative(aperture0, aperture, penalty_aperture_cutoff_);
     Eigen::RowVectorXd const A = yield_function_derivative(sigma).transpose() *
                                  Ke /
                                  (yield_function_derivative(sigma).transpose() *

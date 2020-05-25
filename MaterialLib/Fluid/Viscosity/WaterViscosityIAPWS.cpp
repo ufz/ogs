@@ -42,9 +42,9 @@ static double computedBarMu_dbarRho(const double barT, double bar_rho);
 double WaterViscosityIAPWS::getValue(const ArrayType& var_vals) const
 {
     const double bar_T =
-        var_vals[static_cast<unsigned>(PropertyVariableType::T)] / _ref_T;
+        var_vals[static_cast<unsigned>(PropertyVariableType::T)] / ref_T_;
     const double bar_rho =
-        var_vals[static_cast<unsigned>(PropertyVariableType::rho)] / _ref_rho;
+        var_vals[static_cast<unsigned>(PropertyVariableType::rho)] / ref_rho_;
 
     const double mu0 = 100. * std::sqrt(bar_T) / computeBarMu0Factor(bar_T);
 
@@ -53,23 +53,23 @@ double WaterViscosityIAPWS::getValue(const ArrayType& var_vals) const
     const double mu1 = std::exp(
         bar_rho * computeBarMu1Factor(series_factorT, series_factorRho));
 
-    return mu0 * mu1 * _ref_mu;
+    return mu0 * mu1 * ref_mu_;
 }
 
 double WaterViscosityIAPWS::getdValue(const ArrayType& var_vals,
                                       const PropertyVariableType var_type) const
 {
     const double bar_T =
-        var_vals[static_cast<unsigned>(PropertyVariableType::T)] / _ref_T;
+        var_vals[static_cast<unsigned>(PropertyVariableType::T)] / ref_T_;
     const double bar_rho =
-        var_vals[static_cast<unsigned>(PropertyVariableType::rho)] / _ref_rho;
+        var_vals[static_cast<unsigned>(PropertyVariableType::rho)] / ref_rho_;
 
     switch (var_type)
     {
         case PropertyVariableType::T:
-            return _ref_mu * computedBarMu_dbarT(bar_T, bar_rho) / _ref_T;
+            return ref_mu_ * computedBarMu_dbarT(bar_T, bar_rho) / ref_T_;
         case PropertyVariableType::rho:
-            return _ref_mu * computedBarMu_dbarRho(bar_T, bar_rho) / _ref_rho;
+            return ref_mu_ * computedBarMu_dbarRho(bar_T, bar_rho) / ref_rho_;
         default:
             return 0.;
     }

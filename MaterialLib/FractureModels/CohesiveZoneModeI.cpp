@@ -78,11 +78,11 @@ void CohesiveZoneModeI<DisplacementDim>::computeConstitutiveRelation(
     double const aperture = w_n + aperture0;
 
     sigma.coeffRef(index_ns) =
-        mp.Kn * w_n * logPenalty(aperture0, aperture, _penalty_aperture_cutoff);
+        mp.Kn * w_n * logPenalty(aperture0, aperture, penalty_aperture_cutoff_);
 
     C(index_ns, index_ns) =
         mp.Kn *
-        logPenaltyDerivative(aperture0, aperture, _penalty_aperture_cutoff);
+        logPenaltyDerivative(aperture0, aperture, penalty_aperture_cutoff_);
 
     sigma.noalias() += sigma0;
 
