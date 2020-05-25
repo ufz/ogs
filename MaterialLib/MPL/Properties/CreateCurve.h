@@ -26,9 +26,9 @@ class PiecewiseLinearInterpolation;
 
 namespace MaterialPropertyLib
 {
-class CurveProperty;
+class Curve;
 
-std::unique_ptr<CurveProperty> createCurveProperty(
+std::unique_ptr<Curve> createCurve(
     BaseLib::ConfigTree const& config,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&

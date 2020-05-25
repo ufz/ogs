@@ -17,7 +17,7 @@
 #include "CapillaryPressureSaturation/SaturationBrooksCorey.h"
 #include "CapillaryPressureSaturation/SaturationLiakopoulos.h"
 #include "CapillaryPressureSaturation/SaturationVanGenuchten.h"
-#include "CurveProperty.h"
+#include "Curve.h"
 #include "DupuitPermeability.h"
 #include "Exponential.h"
 #include "IdealGasLaw.h"

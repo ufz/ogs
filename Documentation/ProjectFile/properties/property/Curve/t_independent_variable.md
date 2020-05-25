@@ -1,1 +1,1 @@
-\copydoc MaterialPropertyLib::CurveProperty::independent_variable_
+\copydoc MaterialPropertyLib::Curve::independent_variable_
