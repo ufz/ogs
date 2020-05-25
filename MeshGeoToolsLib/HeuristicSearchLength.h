@@ -46,7 +46,7 @@ public:
                                    LengthType length_type = LengthType::Edge);
 
 private:
-    MeshLib::Mesh const& _mesh;
+    MeshLib::Mesh const& mesh_;
 };
 
 } // end namespace MeshGeoToolsLib

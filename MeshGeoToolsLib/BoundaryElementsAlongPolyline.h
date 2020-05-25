@@ -47,14 +47,14 @@ public:
     virtual ~BoundaryElementsAlongPolyline();
 
     /// return the mesh object
-    MeshLib::Mesh const& getMesh() const { return _mesh; }
+    MeshLib::Mesh const& getMesh() const { return mesh_; }
 
     /**
      * Deploying this method the user can get access to the underlying
      * GeoLib::Polyline.
      * @return the underlying GeoLib::Polyline
      */
-    GeoLib::Polyline const& getPolyline() const { return _ply; }
+    GeoLib::Polyline const& getPolyline() const { return ply_; }
 
     /**
      * Return the vector of boundary elements (i.e. edges). The elements are
@@ -63,7 +63,7 @@ public:
      */
     std::vector<MeshLib::Element*> const& getBoundaryElements() const
     {
-        return _boundary_elements;
+        return boundary_elements_;
     }
 
 private:
@@ -98,9 +98,9 @@ private:
         const std::vector<std::size_t>& edge_node_distances_along_ply,
         const std::vector<std::size_t>& node_ids_on_poly) const;
 
-    MeshLib::Mesh const& _mesh;
-    GeoLib::Polyline const& _ply;
-    std::vector<MeshLib::Element*> _boundary_elements;
+    MeshLib::Mesh const& mesh_;
+    GeoLib::Polyline const& ply_;
+    std::vector<MeshLib::Element*> boundary_elements_;
 };
 
 }  // end namespace MeshGeoToolsLib

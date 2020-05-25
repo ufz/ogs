@@ -47,24 +47,24 @@ public:
                      SearchAllNodes search_all_nodes);
 
     /// return the mesh object
-    MeshLib::Mesh const& getMesh() const { return _mesh; }
+    MeshLib::Mesh const& getMesh() const { return mesh_; }
 
     /**
      * Access the vector of mesh node ids.
      * @return The vector of mesh node ids calculated in the constructor
      */
-    std::vector<std::size_t> const& getNodeIDs() const { return _msh_node_ids; }
+    std::vector<std::size_t> const& getNodeIDs() const { return msh_node_ids_; }
 
     /**
      * Deploying this method the user can get access to the underlying
      * GeoLib::Point.
      * @return the underlying GeoLib::Point
      */
-    GeoLib::Point const& getPoint() const { return _pnt; }
+    GeoLib::Point const& getPoint() const { return pnt_; }
 
 private:
-    MeshLib::Mesh const& _mesh;
-    GeoLib::Point const& _pnt;
-    std::vector<std::size_t> _msh_node_ids;
+    MeshLib::Mesh const& mesh_;
+    GeoLib::Point const& pnt_;
+    std::vector<std::size_t> msh_node_ids_;
 };
 }  // end namespace MeshGeoToolsLib

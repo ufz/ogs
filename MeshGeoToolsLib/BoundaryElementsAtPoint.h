@@ -48,24 +48,24 @@ public:
 
     MeshLib::Mesh const& getMesh() const
     {
-        return _mesh;
+        return mesh_;
     }
 
     GeoLib::Point const& getPoint() const
     {
-        return _point;
+        return point_;
     }
 
     /// Return the vector of boundary elements (i.e. points).
     std::vector<MeshLib::Element*> const& getBoundaryElements() const
     {
-        return _boundary_elements;
+        return boundary_elements_;
     }
 
 private:
-    MeshLib::Mesh const& _mesh;
-    GeoLib::Point const& _point;
-    std::vector<MeshLib::Element*> _boundary_elements;
+    MeshLib::Mesh const& mesh_;
+    GeoLib::Point const& point_;
+    std::vector<MeshLib::Element*> boundary_elements_;
 };
 
 }  // end namespace MeshGeoToolsLib

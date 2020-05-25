@@ -89,11 +89,11 @@ public:
         GeoLib::Surface const& surface);
 
 private:
-    MeshLib::Mesh const& _mesh;
-    MeshNodeSearcher const& _mshNodeSearcher;
-    std::vector<BoundaryElementsAtPoint*> _boundary_elements_at_point;
-    std::vector<BoundaryElementsAlongPolyline*> _boundary_elements_along_polylines;
-    std::vector<BoundaryElementsOnSurface*> _boundary_elements_along_surfaces;
+    MeshLib::Mesh const& mesh_;
+    MeshNodeSearcher const& mshNodeSearcher_;
+    std::vector<BoundaryElementsAtPoint*> boundary_elements_at_point_;
+    std::vector<BoundaryElementsAlongPolyline*> boundary_elements_along_polylines_;
+    std::vector<BoundaryElementsOnSurface*> boundary_elements_along_surfaces_;
 };
 
 } // end namespace MeshGeoToolsLib

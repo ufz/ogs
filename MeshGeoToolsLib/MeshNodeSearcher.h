@@ -151,17 +151,17 @@ public:
             search_length_algorithm);
 
 private:
-    MeshLib::Mesh const& _mesh;
-    GeoLib::Grid<MeshLib::Node> _mesh_grid;
-    std::unique_ptr<MeshGeoToolsLib::SearchLength> _search_length_algorithm;
-    SearchAllNodes _search_all_nodes;
+    MeshLib::Mesh const& mesh_;
+    GeoLib::Grid<MeshLib::Node> mesh_grid_;
+    std::unique_ptr<MeshGeoToolsLib::SearchLength> search_length_algorithm_;
+    SearchAllNodes search_all_nodes_;
     // with newer compiler we can omit to use a pointer here
-    mutable std::vector<MeshNodesOnPoint*> _mesh_nodes_on_points;
-    mutable std::vector<MeshNodesAlongPolyline*> _mesh_nodes_along_polylines;
-    mutable std::vector<MeshNodesAlongSurface*> _mesh_nodes_along_surfaces;
+    mutable std::vector<MeshNodesOnPoint*> mesh_nodes_on_points_;
+    mutable std::vector<MeshNodesAlongPolyline*> mesh_nodes_along_polylines_;
+    mutable std::vector<MeshNodesAlongSurface*> mesh_nodes_along_surfaces_;
 
     /// Mesh node searcher for the meshes indexed by the meshs' ids.
-    static std::vector<std::unique_ptr<MeshNodeSearcher>> _mesh_node_searchers;
+    static std::vector<std::unique_ptr<MeshNodeSearcher>> mesh_node_searchers_;
 };
 
 } // end namespace MeshGeoToolsLib

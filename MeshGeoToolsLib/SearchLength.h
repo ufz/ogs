@@ -25,7 +25,7 @@ public:
     /// Constructor for SearchLength object with a default search length
     /// of 10 angstrom (\f$10^{-9}\f$ m)
     explicit SearchLength(double search_length = 1e-9)
-        : _search_length(search_length) {}
+        : search_length_(search_length) {}
 
     SearchLength(SearchLength const&) = default;
     SearchLength& operator=(SearchLength const&) = default;
@@ -34,11 +34,11 @@ public:
 
     virtual double getSearchLength() const
     {
-        return _search_length;
+        return search_length_;
     }
 
 protected:
-    double _search_length;
+    double search_length_;
 };
 
 } // end namespace MeshGeoToolsLib

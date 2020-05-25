@@ -68,9 +68,9 @@ public:
     GeoLib::Polyline const& getPolyline () const;
 
 private:
-    MeshLib::Mesh const& _mesh;
-    GeoLib::Polyline const& _ply;
-    std::vector<std::size_t> _msh_node_ids;
-    std::vector<double> _dist_of_proj_node_from_ply_start;
+    MeshLib::Mesh const& mesh_;
+    GeoLib::Polyline const& ply_;
+    std::vector<std::size_t> msh_node_ids_;
+    std::vector<double> dist_of_proj_node_from_ply_start_;
 };
 } // end namespace MeshGeoToolsLib

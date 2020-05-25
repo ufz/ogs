@@ -61,7 +61,7 @@ public:
      * intersects a mesh node or the edge of a mesh element.
      * \param mesh          Mesh the geometry is mapped on
      * \result              A new geometry with the given name is inserted into
-     * _geo_objects
+     * geo_objects_
      */
     void advancedMapOnMesh(MeshLib::Mesh const& mesh);
 
@@ -82,15 +82,15 @@ private:
     /// Returns the elevation at Point (x,y) based on a raster
     float getDemElevation(GeoLib::Point const& pnt) const;
 
-    GeoLib::GEOObjects& _geo_objects;
-    std::string& _geo_name;
+    GeoLib::GEOObjects& geo_objects_;
+    std::string& geo_name_;
 
     /// only necessary for mapping on mesh
-    MeshLib::Mesh* _surface_mesh;
-    GeoLib::Grid<MeshLib::Node>* _grid;
+    MeshLib::Mesh* surface_mesh_;
+    GeoLib::Grid<MeshLib::Node>* grid_;
 
     /// only necessary for mapping on DEM
-    std::unique_ptr<GeoLib::Raster const> _raster;
+    std::unique_ptr<GeoLib::Raster const> raster_;
 };
 
 } // end namespace MeshGeoToolsLib

@@ -46,24 +46,24 @@ public:
     virtual ~BoundaryElementsOnSurface();
 
     /// return the mesh object
-    MeshLib::Mesh const& getMesh() const {return _mesh;}
+    MeshLib::Mesh const& getMesh() const {return mesh_;}
 
     /**
      * Deploying this method the user can get access to the underlying
      * GeoLib::Surface.
      * @return the underlying GeoLib::Surface
      */
-    GeoLib::Surface const& getSurface() const {return _sfc;}
+    GeoLib::Surface const& getSurface() const {return sfc_;}
 
     /**
      * Return the vector of boundary elements (i.e. faces). The elements are unsorted.
      */
-    std::vector<MeshLib::Element*> const& getBoundaryElements() const {return _boundary_elements;}
+    std::vector<MeshLib::Element*> const& getBoundaryElements() const {return boundary_elements_;}
 
 private:
-    MeshLib::Mesh const& _mesh;
-    GeoLib::Surface const& _sfc;
-    std::vector<MeshLib::Element*> _boundary_elements;
+    MeshLib::Mesh const& mesh_;
+    GeoLib::Surface const& sfc_;
+    std::vector<MeshLib::Element*> boundary_elements_;
 };
 
 } // end namespace MeshGeoToolsLib

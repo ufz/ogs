@@ -66,8 +66,8 @@ public:
     GeoLib::Surface const& getSurface () const;
 
 private:
-    MeshLib::Mesh const& _mesh;
-    GeoLib::Surface const& _sfc;
-    std::vector<std::size_t> _msh_node_ids;
+    MeshLib::Mesh const& mesh_;
+    GeoLib::Surface const& sfc_;
+    std::vector<std::size_t> msh_node_ids_;
 };
 } // end namespace MeshGeoToolsLib
