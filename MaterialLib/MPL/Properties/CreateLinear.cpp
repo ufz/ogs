@@ -11,11 +11,11 @@
  */
 
 #include "BaseLib/ConfigTree.h"
-#include "LinearProperty.h"
+#include "Linear.h"
 
 namespace MaterialPropertyLib
 {
-std::unique_ptr<LinearProperty> createLinearProperty(
+std::unique_ptr<Linear> createLinear(
     BaseLib::ConfigTree const& config)
 {
     //! \ogs_file_param{properties__property__type}
@@ -27,25 +27,25 @@ std::unique_ptr<LinearProperty> createLinearProperty(
 
     DBUG("Create Linear property {:s}.", property_name);
     auto const reference_value =
-        //! \ogs_file_param{properties__property__LinearProperty__reference_value}
+        //! \ogs_file_param{properties__property__Linear__reference_value}
         config.getConfigParameter<double>("reference_value");
 
     std::vector<MaterialPropertyLib::IndependentVariable> ivs;
     for (
         auto const& independent_variable_config :
-        //! \ogs_file_param{properties__property__LinearProperty__independent_variable}
+        //! \ogs_file_param{properties__property__Linear__independent_variable}
         config.getConfigSubtreeList("independent_variable"))
     {
         auto const& variable_name =
-            //! \ogs_file_param{properties__property__LinearProperty__independent_variable__variable_name}
+            //! \ogs_file_param{properties__property__Linear__independent_variable__variable_name}
             independent_variable_config.getConfigParameter<std::string>(
                 "variable_name");
         auto const reference_condition =
-            //! \ogs_file_param{properties__property__LinearProperty__independent_variable__reference_condition}
+            //! \ogs_file_param{properties__property__Linear__independent_variable__reference_condition}
             independent_variable_config.getConfigParameter<double>(
                 "reference_condition");
         auto const slope =
-            //! \ogs_file_param{properties__property__LinearProperty__independent_variable__slope}
+            //! \ogs_file_param{properties__property__Linear__independent_variable__slope}
             independent_variable_config.getConfigParameter<double>("slope");
 
         MaterialPropertyLib::Variable ivt =
@@ -57,7 +57,7 @@ std::unique_ptr<LinearProperty> createLinearProperty(
         ivs.push_back(std::move(iv));
     }
 
-    return std::make_unique<MaterialPropertyLib::LinearProperty>(
+    return std::make_unique<MaterialPropertyLib::Linear>(
         std::move(property_name), reference_value, ivs);
 }
 }  // namespace MaterialPropertyLib

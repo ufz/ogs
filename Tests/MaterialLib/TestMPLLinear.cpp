@@ -10,9 +10,9 @@
  */
 #include <gtest/gtest.h>
 
-#include "MaterialLib/MPL/Properties/LinearProperty.h"
+#include "MaterialLib/MPL/Properties/Linear.h"
 
-TEST(MaterialPropertyLib, LinearProperty)
+TEST(MaterialPropertyLib, Linear)
 {
     double const y_ref = 1.0;
     double const m = 1.0;
@@ -21,7 +21,7 @@ TEST(MaterialPropertyLib, LinearProperty)
         MaterialPropertyLib::Variable::temperature, x_ref, m};
 
     std::vector<MaterialPropertyLib::IndependentVariable> ivs{iv};
-    MaterialPropertyLib::LinearProperty linear_property{"linear", y_ref, ivs};
+    MaterialPropertyLib::Linear linear_property{"linear", y_ref, ivs};
 
     MaterialPropertyLib::VariableArray variable_array;
     variable_array[static_cast<int>(

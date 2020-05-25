@@ -21,11 +21,11 @@ class ConfigTree;
 
 namespace MaterialPropertyLib
 {
-class LinearProperty;
+class Linear;
 }
 
 namespace MaterialPropertyLib
 {
-std::unique_ptr<LinearProperty> createLinearProperty(
+std::unique_ptr<Linear> createLinear(
     BaseLib::ConfigTree const& config);
 }  // namespace MaterialPropertyLib

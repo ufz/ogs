@@ -49,7 +49,7 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
     }
     if (property_type == "Linear")
     {
-        return createLinearProperty(config);
+        return createLinear(config);
     }
 
     if (property_type == "Exponential")

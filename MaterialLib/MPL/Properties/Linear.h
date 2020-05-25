@@ -24,15 +24,15 @@ struct IndependentVariable
 /// The linear property class. This property calculates the linear relationship.
 /// The current implementation accepts only the double datatype defined in
 /// PropertyDataType.
-class LinearProperty final : public Property
+class Linear final : public Property
 {
 public:
     /// This constructor accepts single values of double data type defined in
     /// the PropertyDataType definition and sets the protected attribute value_
     /// of the base class Property to that value.
-    LinearProperty(std::string name,
-                   PropertyDataType const& property_reference_value,
-                   std::vector<IndependentVariable> const& vs);
+    Linear(std::string name,
+           PropertyDataType const& property_reference_value,
+           std::vector<IndependentVariable> const& vs);
 
     /// This method computes the value of a property depending linearly on
     /// the value of the given primary variable.

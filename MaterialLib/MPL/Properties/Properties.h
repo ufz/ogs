@@ -21,7 +21,7 @@
 #include "DupuitPermeability.h"
 #include "ExponentialProperty.h"
 #include "IdealGasLaw.h"
-#include "LinearProperty.h"
+#include "Linear.h"
 #include "ParameterProperty.h"
 #include "PorosityFromMassBalance.h"
 #include "RelativePermeability/RelPermBrooksCorey.h"

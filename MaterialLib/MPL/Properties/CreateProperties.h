@@ -22,7 +22,7 @@
 #include "CreateDupuitPermeability.h"
 #include "CreateExponentialProperty.h"
 #include "CreateIdealGasLaw.h"
-#include "CreateLinearProperty.h"
+#include "CreateLinear.h"
 #include "CreateParameterProperty.h"
 #include "CreatePermeabilityOrthotropicPowerLaw.h"
 #include "CreatePorosityFromMassBalance.h"
