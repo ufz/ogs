@@ -45,7 +45,7 @@ void applyKnownSolution(EigenMatrix &A_, EigenVector &b_, EigenVector &/*x*/,
         SpMat::Index const row_id = vec_knownX_id[ix];
         auto const x = vec_knownX_x[ix];
 
-        // b_i -= A(i,k)*val, i!=k
+        // bi_ -= A(i,k)*val, i!=k
         // set column to zero, subtract from rhs
         for (SpMat::InnerIterator it(AT, row_id); it; ++it)
         {

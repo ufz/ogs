@@ -61,14 +61,14 @@ public:
             A.makeCompressed();
         }
 
-        _solver.compute(A);
-        if(_solver.info()!=Eigen::Success) {
+        solver_.compute(A);
+        if(solver_.info()!=Eigen::Success) {
             ERR("Failed during Eigen linear solver initialization");
             return false;
         }
 
-        x = _solver.solve(b);
-        if(_solver.info()!=Eigen::Success) {
+        x = solver_.solve(b);
+        if(solver_.info()!=Eigen::Success) {
             ERR("Failed during Eigen linear solve");
             return false;
         }
@@ -77,7 +77,7 @@ public:
     }
 
 private:
-    T_SOLVER _solver;
+    T_SOLVER solver_;
 };
 
 /// Template class for Eigen iterative linear solvers
@@ -90,8 +90,8 @@ public:
         INFO("-> solve with {:s} (precon {:s})",
              EigenOption::getSolverName(opt.solver_type),
              EigenOption::getPreconName(opt.precon_type));
-        _solver.setTolerance(opt.error_tolerance);
-        _solver.setMaxIterations(opt.max_iterations);
+        solver_.setTolerance(opt.error_tolerance);
+        solver_.setMaxIterations(opt.max_iterations);
         MathLib::details::EigenIterativeLinearSolver<T_SOLVER>::setRestart(opt.restart);
 
         if (!A.isCompressed())
@@ -99,18 +99,18 @@ public:
             A.makeCompressed();
         }
 
-        _solver.compute(A);
-        if(_solver.info()!=Eigen::Success) {
+        solver_.compute(A);
+        if(solver_.info()!=Eigen::Success) {
             ERR("Failed during Eigen linear solver initialization");
             return false;
         }
 
-        x = _solver.solveWithGuess(b, x);
-        INFO("\t iteration: {:d}/{:d}", _solver.iterations(),
+        x = solver_.solveWithGuess(b, x);
+        INFO("\t iteration: {:d}/{:d}", solver_.iterations(),
              opt.max_iterations);
-        INFO("\t residual: {:e}\n", _solver.error());
+        INFO("\t residual: {:e}\n", solver_.error());
 
-        if(_solver.info()!=Eigen::Success) {
+        if(solver_.info()!=Eigen::Success) {
             ERR("Failed during Eigen linear solve");
             return false;
         }
@@ -119,7 +119,7 @@ public:
     }
 
 private:
-    T_SOLVER _solver;
+    T_SOLVER solver_;
     void setRestart(int const /*restart*/) {
     }
 };
@@ -130,8 +130,8 @@ void EigenIterativeLinearSolver<
     Eigen::GMRES<EigenMatrix::RawMatrixType,
                  Eigen::IdentityPreconditioner>>::setRestart(int const restart)
 {
-    _solver.set_restart(restart);
-    INFO("-> set restart value: {:d}", _solver.get_restart());
+    solver_.set_restart(restart);
+    INFO("-> set restart value: {:d}", solver_.get_restart());
 }
 
 template <>
@@ -139,8 +139,8 @@ void EigenIterativeLinearSolver<Eigen::GMRES<
     EigenMatrix::RawMatrixType,
     Eigen::DiagonalPreconditioner<double>>>::setRestart(int const restart)
 {
-    _solver.set_restart(restart);
-    INFO("-> set restart value: {:d}", _solver.get_restart());
+    solver_.set_restart(restart);
+    INFO("-> set restart value: {:d}", solver_.get_restart());
 }
 
 template <>
@@ -148,8 +148,8 @@ void EigenIterativeLinearSolver<
     Eigen::GMRES<EigenMatrix::RawMatrixType,
                  Eigen::IncompleteLUT<double>>>::setRestart(int const restart)
 {
-    _solver.set_restart(restart);
-    INFO("-> set restart value: {:d}", _solver.get_restart());
+    solver_.set_restart(restart);
+    INFO("-> set restart value: {:d}", solver_.get_restart());
 }
 
 template <template <typename, typename> class Solver, typename Precon>
@@ -223,24 +223,24 @@ EigenLinearSolver::EigenLinearSolver(
 
     // TODO for my taste it is much too unobvious that the default solver type
     //      currently is SparseLU.
-    switch (_option.solver_type) {
+    switch (option_.solver_type) {
         case EigenOption::SolverType::SparseLU: {
             using SolverType =
                 Eigen::SparseLU<Matrix, Eigen::COLAMDOrdering<int>>;
-            _solver = std::make_unique<
+            solver_ = std::make_unique<
                 details::EigenDirectLinearSolver<SolverType>>();
             return;
         }
         case EigenOption::SolverType::BiCGSTAB:
         case EigenOption::SolverType::CG:
         case EigenOption::SolverType::GMRES:
-            _solver = details::createIterativeSolver(_option.solver_type,
-                                                     _option.precon_type);
+            solver_ = details::createIterativeSolver(option_.solver_type,
+                                                     option_.precon_type);
             return;
         case EigenOption::SolverType::PardisoLU: {
 #ifdef USE_MKL
             using SolverType = Eigen::PardisoLU<EigenMatrix::RawMatrixType>;
-            _solver.reset(new details::EigenDirectLinearSolver<SolverType>);
+            solver_.reset(new details::EigenDirectLinearSolver<SolverType>);
             return;
 #else
             OGS_FATAL(
@@ -268,28 +268,28 @@ void EigenLinearSolver::setOption(BaseLib::ConfigTree const& option)
     if (auto solver_type =
             //! \ogs_file_param{prj__linear_solvers__linear_solver__eigen__solver_type}
             ptSolver->getConfigParameterOptional<std::string>("solver_type")) {
-        _option.solver_type = MathLib::EigenOption::getSolverType(*solver_type);
+        option_.solver_type = MathLib::EigenOption::getSolverType(*solver_type);
     }
     if (auto precon_type =
             //! \ogs_file_param{prj__linear_solvers__linear_solver__eigen__precon_type}
             ptSolver->getConfigParameterOptional<std::string>("precon_type")) {
-        _option.precon_type = MathLib::EigenOption::getPreconType(*precon_type);
+        option_.precon_type = MathLib::EigenOption::getPreconType(*precon_type);
     }
     if (auto error_tolerance =
             //! \ogs_file_param{prj__linear_solvers__linear_solver__eigen__error_tolerance}
             ptSolver->getConfigParameterOptional<double>("error_tolerance")) {
-        _option.error_tolerance = *error_tolerance;
+        option_.error_tolerance = *error_tolerance;
     }
     if (auto max_iteration_step =
             //! \ogs_file_param{prj__linear_solvers__linear_solver__eigen__max_iteration_step}
             ptSolver->getConfigParameterOptional<int>("max_iteration_step")) {
-        _option.max_iterations = *max_iteration_step;
+        option_.max_iterations = *max_iteration_step;
     }
     if (auto scaling =
             //! \ogs_file_param{prj__linear_solvers__linear_solver__eigen__scaling}
             ptSolver->getConfigParameterOptional<bool>("scaling")) {
 #ifdef USE_EIGEN_UNSUPPORTED
-        _option.scaling = *scaling;
+        option_.scaling = *scaling;
 #else
         OGS_FATAL(
             "The code is not compiled with the Eigen unsupported modules. "
@@ -300,7 +300,7 @@ void EigenLinearSolver::setOption(BaseLib::ConfigTree const& option)
             //! \ogs_file_param{prj__linear_solvers__linear_solver__eigen__restart}
             ptSolver->getConfigParameterOptional<int>("restart")) {
 #ifdef USE_EIGEN_UNSUPPORTED
-        _option.restart = *restart;
+        option_.restart = *restart;
 #else
         OGS_FATAL(
             "The code is not compiled with the Eigen unsupported modules. "
@@ -317,7 +317,7 @@ bool EigenLinearSolver::solve(EigenMatrix &A, EigenVector& b, EigenVector &x)
 
 #ifdef USE_EIGEN_UNSUPPORTED
     std::unique_ptr<Eigen::IterScaling<EigenMatrix::RawMatrixType>> scal;
-    if (_option.scaling)
+    if (option_.scaling)
     {
         INFO("-> scale");
         scal =
@@ -326,8 +326,8 @@ bool EigenLinearSolver::solve(EigenMatrix &A, EigenVector& b, EigenVector &x)
         b.getRawVector() = scal->LeftScaling().cwiseProduct(b.getRawVector());
     }
 #endif
-    auto const success = _solver->solve(A.getRawMatrix(), b.getRawVector(),
-                                        x.getRawVector(), _option);
+    auto const success = solver_->solve(A.getRawMatrix(), b.getRawVector(),
+                                        x.getRawVector(), option_);
 #ifdef USE_EIGEN_UNSUPPORTED
     if (scal)
     {
