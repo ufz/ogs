@@ -21,13 +21,13 @@ TimeDependentHeterogeneousParameter::TimeDependentHeterogeneousParameter(
     std::vector<PairTimeParameterName>
         time_parameter_name_mapping)
     : Parameter<double>(std::move(name), nullptr),
-      _time_parameter_name_mapping(time_parameter_name_mapping)
+      time_parameter_name_mapping_(time_parameter_name_mapping)
 {
 }
 
 int TimeDependentHeterogeneousParameter::getNumberOfComponents() const
 {
-    return _time_parameter_mapping[0].second->getNumberOfComponents();
+    return time_parameter_mapping_[0].second->getNumberOfComponents();
 }
 
 bool TimeDependentHeterogeneousParameter::isTimeDependent() const
@@ -40,34 +40,34 @@ std::vector<double> TimeDependentHeterogeneousParameter::operator()(
 {
     // No local coordinate transformation here, which might happen twice
     // otherwise.
-    assert(!this->_coordinate_system ||
+    assert(!this->coordinate_system_ ||
            "Coordinate system not expected to be set for curve scaled "
            "parameters.");
-    if (t < _time_parameter_mapping[0].first)
+    if (t < time_parameter_mapping_[0].first)
     {
-        return _time_parameter_mapping[0].second->operator()(t, pos);
+        return time_parameter_mapping_[0].second->operator()(t, pos);
     }
-    if (_time_parameter_mapping.back().first <= t)
+    if (time_parameter_mapping_.back().first <= t)
     {
-        return _time_parameter_mapping.back().second->operator()(t, pos);
+        return time_parameter_mapping_.back().second->operator()(t, pos);
     }
     std::size_t k(1);
-    for (; k < _time_parameter_mapping.size(); ++k)
+    for (; k < time_parameter_mapping_.size(); ++k)
     {
-        if (_time_parameter_mapping[k - 1].first <= t &&
-            t < _time_parameter_mapping[k].first)
+        if (time_parameter_mapping_[k - 1].first <= t &&
+            t < time_parameter_mapping_[k].first)
         {
             break;
         }
     }
-    auto const t0 = _time_parameter_mapping[k - 1].first;
-    auto const t1 = _time_parameter_mapping[k].first;
+    auto const t0 = time_parameter_mapping_[k - 1].first;
+    auto const t1 = time_parameter_mapping_[k].first;
     auto const alpha = (t - t0) / (t1 - t0);
 
-    auto r0 = _time_parameter_mapping[k - 1].second->operator()(t, pos);
+    auto r0 = time_parameter_mapping_[k - 1].second->operator()(t, pos);
     std::transform(r0.begin(), r0.end(), r0.begin(),
                    [alpha](auto& v) { return (1 - alpha) * v; });
-    auto r1 = _time_parameter_mapping[k].second->operator()(t, pos);
+    auto r1 = time_parameter_mapping_[k].second->operator()(t, pos);
     std::transform(r1.begin(), r1.end(), r1.begin(),
                    [alpha](auto& v) { return alpha * v; });
     std::transform(r0.begin(), r0.end(), r1.begin(), r0.begin(),
@@ -79,19 +79,19 @@ void TimeDependentHeterogeneousParameter::initialize(
     std::vector<std::unique_ptr<ParameterBase>> const& parameters)
 {
     DBUG("TimeDependentHeterogeneousParameter init {:d} time series entries.",
-         _time_parameter_name_mapping.size());
-    for (auto const& time_parameter_map : _time_parameter_name_mapping)
+         time_parameter_name_mapping_.size());
+    for (auto const& time_parameter_map : time_parameter_name_mapping_)
     {
         auto parameter =
             &findParameter<double>(time_parameter_map.second, parameters, 0);
-        _time_parameter_mapping.emplace_back(time_parameter_map.first,
+        time_parameter_mapping_.emplace_back(time_parameter_map.first,
                                              parameter);
     }
 
     // check that all parameters have the same number of components
-    auto const n = _time_parameter_mapping[0].second->getNumberOfComponents();
-    if (!std::all_of(_time_parameter_mapping.begin(),
-                     _time_parameter_mapping.end(),
+    auto const n = time_parameter_mapping_[0].second->getNumberOfComponents();
+    if (!std::all_of(time_parameter_mapping_.begin(),
+                     time_parameter_mapping_.end(),
                      [n](auto const p) {
                          return n == p.second->getNumberOfComponents();
                      }))
