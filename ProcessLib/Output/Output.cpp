@@ -90,7 +90,7 @@ Output::Output(std::string output_directory, std::string output_file_prefix,
                bool const output_nonlinear_iteration_results,
                std::vector<PairRepeatEachSteps> repeats_each_steps,
                std::vector<double>&& fixed_output_times,
-               ProcessOutput&& process_output,
+               OutputDataSpecification&& output_data_specification,
                std::vector<std::string>&& mesh_names_for_output,
                std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes)
     : _output_directory(std::move(output_directory)),
@@ -101,7 +101,7 @@ Output::Output(std::string output_directory, std::string output_file_prefix,
       _output_nonlinear_iteration_results(output_nonlinear_iteration_results),
       _repeats_each_steps(std::move(repeats_each_steps)),
       _fixed_output_times(std::move(fixed_output_times)),
-      _process_output(std::move(process_output)),
+      _output_data_specification(std::move(output_data_specification)),
       _mesh_names_for_output(mesh_names_for_output),
       _meshes(meshes)
 {
@@ -116,35 +116,35 @@ void Output::addProcess(ProcessLib::Process const& process,
                                _output_file_prefix, process.getMesh().getName(),
                                process_id, 0, 0) +
                                ".pvd");
-    _process_to_process_data.emplace(std::piecewise_construct,
-                                     std::forward_as_tuple(&process),
-                                     std::forward_as_tuple(filename));
+    _process_to_pvd_file.emplace(std::piecewise_construct,
+                                 std::forward_as_tuple(&process),
+                                 std::forward_as_tuple(filename));
 }
 
 // TODO return a reference.
-Output::ProcessData* Output::findProcessData(Process const& process,
-                                             const int process_id)
+MeshLib::IO::PVDFile* Output::findPVDFile(Process const& process,
+                                          const int process_id)
 {
-    auto range = _process_to_process_data.equal_range(&process);
+    auto range = _process_to_pvd_file.equal_range(&process);
     int counter = 0;
-    ProcessData* process_data = nullptr;
+    MeshLib::IO::PVDFile* pvd_file = nullptr;
     for (auto spd_it = range.first; spd_it != range.second; ++spd_it)
     {
         if (counter == process_id)
         {
-            process_data = &spd_it->second;
+            pvd_file = &spd_it->second;
             break;
         }
         counter++;
     }
-    if (process_data == nullptr)
+    if (pvd_file == nullptr)
     {
         OGS_FATAL(
             "The given process is not contained in the output"
             " configuration. Aborting.");
     }
 
-    return process_data;
+    return pvd_file;
 }
 
 struct Output::OutputFile
@@ -177,13 +177,13 @@ struct Output::OutputFile
 };
 
 void Output::outputBulkMesh(OutputFile const& output_file,
-                            ProcessData* const process_data,
+                            MeshLib::IO::PVDFile* const pvd_file,
                             MeshLib::Mesh const& mesh,
                             double const t) const
 {
     DBUG("output to {:s}", output_file.path);
 
-    process_data->pvd_file.addVTUFile(output_file.name, t);
+    pvd_file->addVTUFile(output_file.name, t);
 
     makeOutput(output_file.path, mesh, output_file.compression,
                output_file.data_mode);
@@ -207,16 +207,17 @@ void Output::doOutputAlways(Process const& process,
 
     bool output_secondary_variable = true;
     // Need to add variables of process to vtu even no output takes place.
-    processOutputData(
-        t, x, process_id, process.getMesh(), dof_tables,
-        process.getProcessVariables(process_id),
-        process.getSecondaryVariables(), output_secondary_variable,
-        process.getIntegrationPointWriter(process.getMesh()), _process_output);
+    addProcessDataToMesh(t, x, process_id, process.getMesh(), dof_tables,
+                         process.getProcessVariables(process_id),
+                         process.getSecondaryVariables(),
+                         output_secondary_variable,
+                         process.getIntegrationPointWriter(process.getMesh()),
+                         _output_data_specification);
 
     // For the staggered scheme for the coupling, only the last process, which
     // gives the latest solution within a coupling loop, is allowed to make
     // output.
-    if (!(process_id == static_cast<int>(_process_to_process_data.size()) - 1 ||
+    if (!(process_id == static_cast<int>(_process_to_pvd_file.size() - 1) ||
           process.isMonolithicSchemeUsed()))
     {
         return;
@@ -228,7 +229,7 @@ void Output::doOutputAlways(Process const& process,
                        _output_file_suffix, process.getMesh().getName(),
                        process_id, timestep, t, _output_file_data_mode,
                        _output_file_compression),
-            findProcessData(process, process_id), process.getMesh(), t);
+            findPVDFile(process, process_id), process.getMesh(), t);
     };
     // Write the bulk mesh only if there are no other meshes specified for
     // output, otherwise only the specified meshes are written.
@@ -275,11 +276,12 @@ void Output::doOutputAlways(Process const& process,
                   });
 
         output_secondary_variable = false;
-        processOutputData(
-            t, x, process_id, mesh, mesh_dof_table_pointers,
-            process.getProcessVariables(process_id),
-            process.getSecondaryVariables(), output_secondary_variable,
-            process.getIntegrationPointWriter(mesh), _process_output);
+        addProcessDataToMesh(t, x, process_id, mesh, mesh_dof_table_pointers,
+                             process.getProcessVariables(process_id),
+                             process.getSecondaryVariables(),
+                             output_secondary_variable,
+                             process.getIntegrationPointWriter(mesh),
+                             _output_data_specification);
 
         // TODO (TomFischer): add pvd support here. This can be done if the
         // output is mesh related instead of process related. This would also
@@ -357,23 +359,24 @@ void Output::doOutputNonlinearIteration(Process const& process,
     }
 
     bool const output_secondary_variable = true;
-    processOutputData(
-        t, x, process_id, process.getMesh(), dof_tables,
-        process.getProcessVariables(process_id),
-        process.getSecondaryVariables(), output_secondary_variable,
-        process.getIntegrationPointWriter(process.getMesh()), _process_output);
+    addProcessDataToMesh(t, x, process_id, process.getMesh(), dof_tables,
+                         process.getProcessVariables(process_id),
+                         process.getSecondaryVariables(),
+                         output_secondary_variable,
+                         process.getIntegrationPointWriter(process.getMesh()),
+                         _output_data_specification);
 
     // For the staggered scheme for the coupling, only the last process, which
     // gives the latest solution within a coupling loop, is allowed to make
     // output.
-    if (!(process_id == static_cast<int>(_process_to_process_data.size()) - 1 ||
+    if (!(process_id == static_cast<int>(_process_to_pvd_file.size()) - 1 ||
           process.isMonolithicSchemeUsed()))
     {
         return;
     }
 
     // Only check whether a process data is available for output.
-    findProcessData(process, process_id);
+    findPVDFile(process, process_id);
 
     std::string const output_file_name =
         BaseLib::constructFormattedFileName(_output_file_prefix,

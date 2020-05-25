@@ -132,7 +132,7 @@ static void addSecondaryVariableResiduals(
 
 namespace ProcessLib
 {
-void processOutputData(
+void addProcessDataToMesh(
     const double t, std::vector<GlobalVector*> const& x, int const process_id,
     MeshLib::Mesh& mesh,
     std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
@@ -142,7 +142,7 @@ void processOutputData(
     bool const output_secondary_variable,
     std::vector<std::unique_ptr<IntegrationPointWriter>> const* const
         integration_point_writer,
-    ProcessOutput const& process_output)
+    OutputDataSpecification const& process_output)
 {
     DBUG("Process output data.");
 

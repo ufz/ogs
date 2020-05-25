@@ -19,7 +19,7 @@ namespace ProcessLib
 {
 struct IntegrationPointWriter;
 //! Holds information about which variables to write to output files.
-struct ProcessOutput final
+struct OutputDataSpecification final
 {
     //! All variables that shall be output.
     std::set<std::string> output_variables;
@@ -30,7 +30,7 @@ struct ProcessOutput final
 
 ///
 /// Prepare the output data, i.e. add the solution to vtu data structure.
-void processOutputData(
+void addProcessDataToMesh(
     const double t, std::vector<GlobalVector*> const& x, int const process_id,
     MeshLib::Mesh& mesh,
     std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
@@ -40,7 +40,7 @@ void processOutputData(
     bool const output_secondary_variable,
     std::vector<std::unique_ptr<IntegrationPointWriter>> const*
         integration_point_writer,
-    ProcessOutput const& process_output);
+    OutputDataSpecification const& output_data_specification);
 
 //! Writes output to the given \c file_name using the VTU file format.
 ///
