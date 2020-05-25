@@ -51,40 +51,40 @@ public:
      * @param max_points_per_leaf maximum number of points per leaf
      */
     QuadTree(POINT ll, POINT ur, std::size_t max_points_per_leaf)
-        : _father(nullptr),
-          _ll(std::move(ll)),
-          _ur(std::move(ur)),
-          _depth(0),
-          _is_leaf(true),
-          _max_points_per_leaf(max_points_per_leaf)
+        : father_(nullptr),
+          ll_(std::move(ll)),
+          ur_(std::move(ur)),
+          depth_(0),
+          is_leaf_(true),
+          max_points_per_leaf_(max_points_per_leaf)
     {
-        assert (_max_points_per_leaf > 0);
+        assert (max_points_per_leaf_ > 0);
 
         // init children
-        for (auto& child : _children)
+        for (auto& child : children_)
         {
             child = nullptr;
         }
 
-        if ((_ur[0] - _ll[0]) > (_ur[1] - _ll[1]))
+        if ((ur_[0] - ll_[0]) > (ur_[1] - ll_[1]))
         {
-            _ur[1] = _ll[1] + _ur[0] - _ll[0];
+            ur_[1] = ll_[1] + ur_[0] - ll_[0];
         }
         else
         {
-            _ur[0] = _ll[0] + _ur[1] - _ll[1];
+            ur_[0] = ll_[0] + ur_[1] - ll_[1];
         }
 
         DBUG(
             "QuadTree(): lower left: ({:f},{:f},{:f}), upper right: "
             "({:f},{:f},{:f}), depth: {:d}",
-            _ll[0],
-            _ll[1],
-            _ll[2],
-            _ur[0],
-            _ur[1],
-            _ur[2],
-            _depth);
+            ll_[0],
+            ll_[1],
+            ll_[2],
+            ur_[0],
+            ur_[1],
+            ur_[2],
+            depth_);
     }
 
     /**
@@ -92,7 +92,7 @@ public:
      */
     ~QuadTree()
     {
-        for (auto& child : _children)
+        for (auto& child : children_)
         {
             delete child;
         }
@@ -106,25 +106,25 @@ public:
      */
     bool addPoint (POINT const* pnt)
     {
-        if ((*pnt)[0] < _ll[0])
+        if ((*pnt)[0] < ll_[0])
         {
             return false;
         }
-        if ((*pnt)[0] >= _ur[0])
+        if ((*pnt)[0] >= ur_[0])
         {
             return false;
         }
-        if ((*pnt)[1] < _ll[1])
+        if ((*pnt)[1] < ll_[1])
         {
             return false;
         }
-        if ((*pnt)[1] >= _ur[1])
+        if ((*pnt)[1] >= ur_[1])
         {
             return false;
         }
 
-        if (!_is_leaf) {
-            for (auto& child : _children)
+        if (!is_leaf_) {
+            for (auto& child : children_)
             {
                 if (child->addPoint(pnt))
                 {
@@ -136,9 +136,9 @@ public:
 
         // check if point is already in quadtree
         bool pnt_in_quadtree (false);
-        for (std::size_t k(0); k < _pnts.size() && !pnt_in_quadtree; k++) {
-            const double v0((*(_pnts[k]))[0] - (*pnt)[0]);
-            const double v1((*(_pnts[k]))[1] - (*pnt)[1]);
+        for (std::size_t k(0); k < pnts_.size() && !pnt_in_quadtree; k++) {
+            const double v0((*(pnts_[k]))[0] - (*pnt)[0]);
+            const double v1((*(pnts_[k]))[1] - (*pnt)[1]);
             const double sqr_dist (v0*v0 + v1*v1);
             if (sqr_dist < std::numeric_limits<double>::epsilon())
             {
@@ -147,14 +147,14 @@ public:
         }
         if (!pnt_in_quadtree)
         {
-            _pnts.push_back (pnt);
+            pnts_.push_back (pnt);
         }
         else
         {
             return false;
         }
 
-        if (_pnts.size() > _max_points_per_leaf)
+        if (pnts_.size() > max_points_per_leaf_)
         {
             splitNode();
         }
@@ -250,57 +250,57 @@ public:
      */
     void getLeafs (std::list<QuadTree<POINT>*>& leaf_list)
     {
-        if (_is_leaf)
+        if (is_leaf_)
         {
             leaf_list.push_back (this);
         }
         else
         {
-            for (auto& child : _children)
+            for (auto& child : children_)
             {
                 child->getLeafs(leaf_list);
             }
         }
     }
 
-    const std::vector<POINT const*>& getPoints () const { return _pnts; }
+    const std::vector<POINT const*>& getPoints () const { return pnts_; }
 
     void getSquarePoints (POINT& ll, POINT& ur) const
     {
-        ll = _ll;
-        ur = _ur;
+        ll = ll_;
+        ur = ur_;
     }
 
     void getLeaf (const POINT& pnt, POINT& ll, POINT& ur)
     {
         if (this->isLeaf())
         {
-            ll = _ll;
-            ur = _ur;
+            ll = ll_;
+            ur = ur_;
         }
         else
         {
-            if (pnt[0] <= 0.5 * (_ur[0] + _ll[0])) // WEST
+            if (pnt[0] <= 0.5 * (ur_[0] + ll_[0])) // WEST
             {
-                if (pnt[1] <= 0.5 * (_ur[1] + _ll[1]))
+                if (pnt[1] <= 0.5 * (ur_[1] + ll_[1]))
                 {  // SOUTH
-                    _children[static_cast<int>(Quadrant::SW)]->getLeaf (pnt, ll, ur);
+                    children_[static_cast<int>(Quadrant::SW)]->getLeaf (pnt, ll, ur);
                 }
                 else
                 {  // NORTH
-                    _children[static_cast<int>(Quadrant::NW)]->getLeaf(
+                    children_[static_cast<int>(Quadrant::NW)]->getLeaf(
                         pnt, ll, ur);
                 }
             }
             else // EAST
             {
-                if (pnt[1] <= 0.5 * (_ur[1] + _ll[1]))
+                if (pnt[1] <= 0.5 * (ur_[1] + ll_[1]))
                 {  // SOUTH
-                    _children[static_cast<int>(Quadrant::SE)]->getLeaf (pnt, ll, ur);
+                    children_[static_cast<int>(Quadrant::SE)]->getLeaf (pnt, ll, ur);
                 }
                 else
                 {  // NORTH
-                    _children[static_cast<int>(Quadrant::NE)]->getLeaf(
+                    children_[static_cast<int>(Quadrant::NE)]->getLeaf(
                         pnt, ll, ur);
                 }
             }
@@ -309,12 +309,12 @@ public:
 
     QuadTree<POINT> const* getFather ()
     {
-        return _father;
+        return father_;
     }
 
     QuadTree<POINT> const* getChild (Quadrant quadrant) const
     {
-        return _children[quadrant];
+        return children_[quadrant];
     }
 
     /**
@@ -324,12 +324,12 @@ public:
      */
     void getMaxDepth (std::size_t &max_depth) const
     {
-        if (max_depth < _depth)
+        if (max_depth < depth_)
         {
-            max_depth = _depth;
+            max_depth = depth_;
         }
 
-        for (auto& child : _children)
+        for (auto& child : children_)
         {
             if (child)
             {
@@ -342,38 +342,38 @@ public:
      * Method returns the depth of the current QuadTree node.
      * @return the depth of the current QuadTree node
      */
-    std::size_t getDepth () const { return _depth; }
+    std::size_t getDepth () const { return depth_; }
 
 private:
     QuadTree<POINT>* getChild (Quadrant quadrant)
     {
-        return _children[static_cast<int>(quadrant)];
+        return children_[static_cast<int>(quadrant)];
     }
 
-    bool isLeaf () const { return _is_leaf; }
+    bool isLeaf () const { return is_leaf_; }
 
     bool isChild (QuadTree<POINT> const* const tree, Quadrant quadrant) const
     {
-        return _children[static_cast<int>(quadrant)] == tree;
+        return children_[static_cast<int>(quadrant)] == tree;
     }
 
     QuadTree<POINT>* getNorthNeighbor () const
     {
-        if (this->_father == nullptr)
+        if (this->father_ == nullptr)
         {  // root of QuadTree
             return nullptr;
         }
 
-        if (this->_father->isChild(this, Quadrant::SW))
+        if (this->father_->isChild(this, Quadrant::SW))
         {
-            return this->_father->getChild(Quadrant::NW);
+            return this->father_->getChild(Quadrant::NW);
         }
-        if (this->_father->isChild(this, Quadrant::SE))
+        if (this->father_->isChild(this, Quadrant::SE))
         {
-            return this->_father->getChild(Quadrant::NE);
+            return this->father_->getChild(Quadrant::NE);
         }
 
-        QuadTree<POINT>* north_neighbor (this->_father->getNorthNeighbor ());
+        QuadTree<POINT>* north_neighbor (this->father_->getNorthNeighbor ());
         if (north_neighbor == nullptr)
         {
             return nullptr;
@@ -383,7 +383,7 @@ private:
             return north_neighbor;
         }
 
-        if (this->_father->isChild(this, Quadrant::NW))
+        if (this->father_->isChild(this, Quadrant::NW))
         {
             return north_neighbor->getChild(Quadrant::SW);
         }
@@ -393,21 +393,21 @@ private:
 
     QuadTree<POINT>* getSouthNeighbor () const
     {
-        if (this->_father == nullptr)
+        if (this->father_ == nullptr)
         {  // root of QuadTree
             return nullptr;
         }
 
-        if (this->_father->isChild(this, Quadrant::NW))
+        if (this->father_->isChild(this, Quadrant::NW))
         {
-            return this->_father->getChild(Quadrant::SW);
+            return this->father_->getChild(Quadrant::SW);
         }
-        if (this->_father->isChild(this, Quadrant::NE))
+        if (this->father_->isChild(this, Quadrant::NE))
         {
-            return this->_father->getChild(Quadrant::SE);
+            return this->father_->getChild(Quadrant::SE);
         }
 
-        QuadTree<POINT>* south_neighbor (this->_father->getSouthNeighbor ());
+        QuadTree<POINT>* south_neighbor (this->father_->getSouthNeighbor ());
         if (south_neighbor == nullptr)
         {
             return nullptr;
@@ -417,7 +417,7 @@ private:
             return south_neighbor;
         }
 
-        if (this->_father->isChild(this, Quadrant::SW))
+        if (this->father_->isChild(this, Quadrant::SW))
         {
             return south_neighbor->getChild(Quadrant::NW);
         }
@@ -427,21 +427,21 @@ private:
 
     QuadTree<POINT>* getEastNeighbor () const
     {
-        if (this->_father == nullptr)
+        if (this->father_ == nullptr)
         {  // root of QuadTree
             return nullptr;
         }
 
-        if (this->_father->isChild(this, Quadrant::NW))
+        if (this->father_->isChild(this, Quadrant::NW))
         {
-            return this->_father->getChild(Quadrant::NE);
+            return this->father_->getChild(Quadrant::NE);
         }
-        if (this->_father->isChild(this, Quadrant::SW))
+        if (this->father_->isChild(this, Quadrant::SW))
         {
-            return this->_father->getChild(Quadrant::SE);
+            return this->father_->getChild(Quadrant::SE);
         }
 
-        QuadTree<POINT>* east_neighbor (this->_father->getEastNeighbor ());
+        QuadTree<POINT>* east_neighbor (this->father_->getEastNeighbor ());
         if (east_neighbor == nullptr)
         {
             return nullptr;
@@ -451,7 +451,7 @@ private:
             return east_neighbor;
         }
 
-        if (this->_father->isChild(this, Quadrant::SE))
+        if (this->father_->isChild(this, Quadrant::SE))
         {
             return east_neighbor->getChild(Quadrant::SW);
         }
@@ -461,21 +461,21 @@ private:
 
     QuadTree<POINT>* getWestNeighbor () const
     {
-        if (this->_father == nullptr)
+        if (this->father_ == nullptr)
         {  // root of QuadTree
             return nullptr;
         }
 
-        if (this->_father->isChild(this, Quadrant::NE))
+        if (this->father_->isChild(this, Quadrant::NE))
         {
-            return this->_father->getChild(Quadrant::NW);
+            return this->father_->getChild(Quadrant::NW);
         }
-        if (this->_father->isChild(this, Quadrant::SE))
+        if (this->father_->isChild(this, Quadrant::SE))
         {
-            return this->_father->getChild(Quadrant::SW);
+            return this->father_->getChild(Quadrant::SW);
         }
 
-        QuadTree<POINT>* west_neighbor (this->_father->getWestNeighbor ());
+        QuadTree<POINT>* west_neighbor (this->father_->getWestNeighbor ());
         if (west_neighbor == nullptr)
         {
             return nullptr;
@@ -485,7 +485,7 @@ private:
             return west_neighbor;
         }
 
-        if (this->_father->isChild(this, Quadrant::SW))
+        if (this->father_->isChild(this, Quadrant::SW))
         {
             return west_neighbor->getChild(Quadrant::SE);
         }
@@ -507,15 +507,15 @@ private:
              QuadTree* father,
              std::size_t depth,
              std::size_t max_points_per_leaf)
-        : _father(father),
-          _ll(std::move(ll)),
-          _ur(std::move(ur)),
-          _depth(depth),
-          _is_leaf(true),
-          _max_points_per_leaf(max_points_per_leaf)
+        : father_(father),
+          ll_(std::move(ll)),
+          ur_(std::move(ur)),
+          depth_(depth),
+          is_leaf_(true),
+          max_points_per_leaf_(max_points_per_leaf)
     {
         // init children
-        for (auto& child : _children)
+        for (auto& child : children_)
         {
             child = nullptr;
         }
@@ -524,38 +524,38 @@ private:
     void splitNode ()
     {
         // create children
-        POINT mid_point(_ll);
-        mid_point[0] += (_ur[0] - _ll[0]) / 2.0;
-        mid_point[1] += (_ur[1] - _ll[1]) / 2.0;
-        assert(_children[0] == nullptr);
-        _children[0] = new QuadTree<POINT> (mid_point, _ur, this, _depth + 1, _max_points_per_leaf); // north east
+        POINT mid_point(ll_);
+        mid_point[0] += (ur_[0] - ll_[0]) / 2.0;
+        mid_point[1] += (ur_[1] - ll_[1]) / 2.0;
+        assert(children_[0] == nullptr);
+        children_[0] = new QuadTree<POINT> (mid_point, ur_, this, depth_ + 1, max_points_per_leaf_); // north east
         POINT h_ll(mid_point), h_ur(mid_point);
-        h_ll[0] = _ll[0];
-        h_ur[1] = _ur[1];
-        assert(_children[1] == nullptr);
-        _children[1] = new QuadTree<POINT> (h_ll, h_ur, this, _depth + 1, _max_points_per_leaf); // north west
-        assert(_children[2] == nullptr);
-        _children[2] = new QuadTree<POINT> (_ll, mid_point, this, _depth + 1, _max_points_per_leaf); // south west
-        h_ll = _ll;
+        h_ll[0] = ll_[0];
+        h_ur[1] = ur_[1];
+        assert(children_[1] == nullptr);
+        children_[1] = new QuadTree<POINT> (h_ll, h_ur, this, depth_ + 1, max_points_per_leaf_); // north west
+        assert(children_[2] == nullptr);
+        children_[2] = new QuadTree<POINT> (ll_, mid_point, this, depth_ + 1, max_points_per_leaf_); // south west
+        h_ll = ll_;
         h_ll[0] = mid_point[0];
-        h_ur = _ur;
+        h_ur = ur_;
         h_ur[1] = mid_point[1];
-        assert(_children[3] == nullptr);
-        _children[3] = new QuadTree<POINT> (h_ll, h_ur, this, _depth + 1, _max_points_per_leaf); // south east
+        assert(children_[3] == nullptr);
+        children_[3] = new QuadTree<POINT> (h_ll, h_ur, this, depth_ + 1, max_points_per_leaf_); // south east
 
         // distribute points to sub quadtrees
-        for (std::size_t j(0); j < _pnts.size(); j++) {
+        for (std::size_t j(0); j < pnts_.size(); j++) {
             bool nfound(true);
             for (std::size_t k(0); k < 4 && nfound; k++)
             {
-                if (_children[k]->addPoint(_pnts[j]))
+                if (children_[k]->addPoint(pnts_[j]))
                 {
                     nfound = false;
                 }
             }
         }
-        _pnts.clear();
-        _is_leaf = false;
+        pnts_.clear();
+        is_leaf_ = false;
     }
 
     bool needToRefine (QuadTree<POINT>* node)
@@ -638,29 +638,29 @@ private:
         return false;
     }
 
-    QuadTree<POINT>* _father;
+    QuadTree<POINT>* father_;
     /**
      * children are sorted:
-     *   _children[0] is north east child
-     *   _children[1] is north west child
-     *   _children[2] is south west child
-     *   _children[3] is south east child
+     *   children_[0] is north east child
+     *   children_[1] is north west child
+     *   children_[2] is south west child
+     *   children_[3] is south east child
      */
-    QuadTree<POINT>* _children[4];
+    QuadTree<POINT>* children_[4];
     /**
      * lower left point of the square
      */
-    POINT _ll;
+    POINT ll_;
     /**
      * upper right point of the square
      */
-    POINT _ur;
-    std::size_t _depth;
-    std::vector<POINT const*> _pnts;
-    bool _is_leaf;
+    POINT ur_;
+    std::size_t depth_;
+    std::vector<POINT const*> pnts_;
+    bool is_leaf_;
     /**
      * maximum number of points per leaf
      */
-    const std::size_t _max_points_per_leaf;
+    const std::size_t max_points_per_leaf_;
 };
 }  // namespace GeoLib

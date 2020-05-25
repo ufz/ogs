@@ -68,12 +68,12 @@ public:
     ~Station() override;
 
     /// Returns the name of the station.
-    std::string const& getName() const { return _name; }
+    std::string const& getName() const { return name_; }
 
-    void setName(std::string const& name) { _name = name; }
+    void setName(std::string const& name) { name_ = name; }
 
     /// Returns the GeoSys-station-type for the station.
-    StationType type() const { return _type; }
+    StationType type() const { return type_; }
 
     /// Creates a Station-object from information contained in a string (assuming the string has the right format)
     static Station* createStation(const std::string &line);
@@ -82,24 +82,24 @@ public:
     static Station* createStation(const std::string &name, double x, double y, double z);
 
     /// Returns the specific value for this station
-    double getStationValue() { return this->_station_value; }
+    double getStationValue() { return this->station_value_; }
 
     /// Allows to set a specific value for this station (e.g. for classification)
-    void setStationValue(double station_value) { this->_station_value = station_value; }
+    void setStationValue(double station_value) { this->station_value_ = station_value; }
 
     /// Allows to add sensor data from a CSV file to the observation site
-    void addSensorDataFromCSV(const std::string &file_name) { this->_sensor_data = new SensorData(file_name); }
+    void addSensorDataFromCSV(const std::string &file_name) { this->sensor_data_ = new SensorData(file_name); }
 
     /// Returns all the sensor data for this observation site
-    const SensorData* getSensorData() { return this->_sensor_data; }
+    const SensorData* getSensorData() { return this->sensor_data_; }
 
 protected:
-    std::string _name;
-    StationType _type{Station::StationType::STATION};  // GeoSys Station Type
+    std::string name_;
+    StationType type_{Station::StationType::STATION};  // GeoSys Station Type
 
 private:
-    double _station_value{0.0};
-    SensorData* _sensor_data{nullptr};
+    double station_value_{0.0};
+    SensorData* sensor_data_{nullptr};
 };
 
 bool isStation(GeoLib::Point const* pnt);

@@ -102,14 +102,14 @@ public:
         std::pair<bool, std::bitset<3>> updated(false, 0);
         for (std::size_t k(0); k<3; k++) {
             // if the minimum point is updated pair.first==true
-            if (p[k] < _min_pnt[k]) {
-                _min_pnt[k] = p[k];
+            if (p[k] < min_pnt_[k]) {
+                min_pnt_[k] = p[k];
                 updated.first = true;
             }
             // if the kth coordinate of the maximum point is updated
             // pair.second[k]==true
-            if (p[k] >= _max_pnt[k]) {
-                _max_pnt[k] = p[k];
+            if (p[k] >= max_pnt_[k]) {
+                max_pnt_[k] = p[k];
                 updated.second[k] = true;
             }
         }
@@ -127,15 +127,15 @@ public:
     template <typename T>
     bool containsPoint(T const & pnt, double eps) const
     {
-        if (pnt[0] < _min_pnt[0] - eps || _max_pnt[0] + eps <= pnt[0])
+        if (pnt[0] < min_pnt_[0] - eps || max_pnt_[0] + eps <= pnt[0])
         {
             return false;
         }
-        if (pnt[1] < _min_pnt[1] - eps || _max_pnt[1] + eps <= pnt[1])
+        if (pnt[1] < min_pnt_[1] - eps || max_pnt_[1] + eps <= pnt[1])
         {
             return false;
         }
-        if (pnt[2] < _min_pnt[2] - eps || _max_pnt[2] + eps <= pnt[2])
+        if (pnt[2] < min_pnt_[2] - eps || max_pnt_[2] + eps <= pnt[2])
         {
             return false;
         }
@@ -145,11 +145,11 @@ public:
     template <typename T>
     bool containsPointXY(T const & pnt) const
     {
-        if (pnt[0] < _min_pnt[0] || _max_pnt[0] <= pnt[0])
+        if (pnt[0] < min_pnt_[0] || max_pnt_[0] <= pnt[0])
         {
             return false;
         }
-        if (pnt[1] < _min_pnt[1] || _max_pnt[1] <= pnt[1])
+        if (pnt[1] < min_pnt_[1] || max_pnt_[1] <= pnt[1])
         {
             return false;
         }
@@ -161,14 +161,14 @@ public:
      * for the given point set
      * @return a point
      */
-    MathLib::Point3d const& getMinPoint() const { return _min_pnt; }
+    MathLib::Point3d const& getMinPoint() const { return min_pnt_; }
 
     /**
      * returns a point that coordinates are maximal for each dimension
      * within the given point set
      * @return a point
      */
-    MathLib::Point3d const& getMaxPoint() const { return _max_pnt; }
+    MathLib::Point3d const& getMaxPoint() const { return max_pnt_; }
 
     /**
      * Method checks if the given AABB object is contained within the
@@ -184,11 +184,11 @@ public:
     }
 
 protected:
-    MathLib::Point3d _min_pnt = MathLib::Point3d{std::array<double,3>{{
+    MathLib::Point3d min_pnt_ = MathLib::Point3d{std::array<double,3>{{
         std::numeric_limits<double>::max(),
         std::numeric_limits<double>::max(),
         std::numeric_limits<double>::max()}}};
-    MathLib::Point3d _max_pnt = MathLib::Point3d{std::array<double,3>{{
+    MathLib::Point3d max_pnt_ = MathLib::Point3d{std::array<double,3>{{
         std::numeric_limits<double>::lowest(),
         std::numeric_limits<double>::lowest(),
         std::numeric_limits<double>::lowest()}}};
@@ -200,7 +200,7 @@ private:
     {
         for (std::size_t k=0; k<3; ++k) {
             if (to_update[k]) {
-                _max_pnt[k] = std::nextafter(_max_pnt[k],
+                max_pnt_[k] = std::nextafter(max_pnt_[k],
                     std::numeric_limits<double>::max());
             }
         }
@@ -209,9 +209,9 @@ private:
     template <typename PNT_TYPE>
     void init(PNT_TYPE const & pnt)
     {
-        _min_pnt[0] = _max_pnt[0] = pnt[0];
-        _min_pnt[1] = _max_pnt[1] = pnt[1];
-        _min_pnt[2] = _max_pnt[2] = pnt[2];
+        min_pnt_[0] = max_pnt_[0] = pnt[0];
+        min_pnt_[1] = max_pnt_[1] = pnt[1];
+        min_pnt_[2] = max_pnt_[2] = pnt[2];
     }
 
     template <typename PNT_TYPE>
@@ -229,11 +229,11 @@ private:
     void  updateWithoutEnlarge(PNT_TYPE const & p)
     {
         for (std::size_t k(0); k<3; k++) {
-            if (p[k] < _min_pnt[k]) {
-                _min_pnt[k] = p[k];
+            if (p[k] < min_pnt_[k]) {
+                min_pnt_[k] = p[k];
             }
-            if (p[k] >= _max_pnt[k]) {
-                _max_pnt[k] = p[k];
+            if (p[k] >= max_pnt_[k]) {
+                max_pnt_[k] = p[k];
             }
         }
     }

@@ -58,18 +58,18 @@ public:
      */
     TemplateVec(std::string name, std::unique_ptr<std::vector<T*>> data_vec,
                 std::unique_ptr<NameIdMap> elem_name_map = nullptr)
-        : _name(std::move(name)),
-          _data_vec(std::move(data_vec)),
-          _name_id_map(std::move(elem_name_map))
+        : name_(std::move(name)),
+          data_vec_(std::move(data_vec)),
+          name_id_map_(std::move(elem_name_map))
     {
-        if (_data_vec == nullptr)
+        if (data_vec_ == nullptr)
         {
             OGS_FATAL("Constructor TemplateVec: vector of data elements is a nullptr.");
         }
 
-        if (!_name_id_map)
+        if (!name_id_map_)
         {
-            _name_id_map = std::make_unique<NameIdMap>();
+            name_id_map_ = std::make_unique<NameIdMap>();
         }
     }
 
@@ -80,36 +80,36 @@ public:
     {
         for (std::size_t k(0); k < size(); k++)
         {
-            delete (*_data_vec)[k];
+            delete (*data_vec_)[k];
         }
     }
 
     /** sets the name of the vector of geometric objects
      * the data elements belonging to
      * \param n the name as standard string */
-    void setName (const std::string & n) { _name = n; }
+    void setName (const std::string & n) { name_ = n; }
     /**
      * the name, the data element belonging to
      * @return the name of the object
      */
-    std::string getName () const { return _name; }
+    std::string getName () const { return name_; }
 
     /// Returns the begin of the name id mapping structure
-    NameIdMap::const_iterator getNameIDMapBegin() const { return _name_id_map->cbegin(); }
+    NameIdMap::const_iterator getNameIDMapBegin() const { return name_id_map_->cbegin(); }
 
     /// Returns the end of the name id mapping structure
-    NameIdMap::const_iterator getNameIDMapEnd() const { return _name_id_map->cend(); }
+    NameIdMap::const_iterator getNameIDMapEnd() const { return name_id_map_->cend(); }
 
     /**
      * @return the number of data elements
      */
-    std::size_t size () const { return _data_vec->size(); }
+    std::size_t size () const { return data_vec_->size(); }
 
     /**
      * get a pointer to a standard vector containing the data elements
      * @return the data elements
      */
-    const std::vector<T*>* getVector () const { return _data_vec.get(); }
+    const std::vector<T*>* getVector () const { return data_vec_.get(); }
 
     /**
      * search the vector of names for the ID of the geometric element with the given name
@@ -118,9 +118,9 @@ public:
      */
     bool getElementIDByName (const std::string& name, std::size_t &id) const
     {
-        auto it (_name_id_map->find (name));
+        auto it (name_id_map_->find (name));
 
-        if (it != _name_id_map->end())
+        if (it != name_id_map_->end())
         {
             id = it->second;
             return true;
@@ -135,7 +135,7 @@ public:
         bool ret (getElementIDByName (name, id));
         if (ret)
         {
-            return (*_data_vec)[id];
+            return (*data_vec_)[id];
         }
 
         return nullptr;
@@ -154,7 +154,7 @@ public:
     {
         // search in map for id
         auto it = findFirstElementByID(id);
-        if (it == _name_id_map->end()) {
+        if (it == name_id_map_->end()) {
             return false;
         }
         element_name = it->first;
@@ -164,7 +164,7 @@ public:
     /// Return the name of an element based on its ID.
     void setNameOfElementByID (std::size_t id, std::string const& element_name)
     {
-        _name_id_map->insert(NameIdPair(element_name, id));
+        name_id_map_->insert(NameIdPair(element_name, id));
     }
 
     /**
@@ -177,9 +177,9 @@ public:
      */
     bool getNameOfElement (const T* data, std::string& name) const
     {
-        for (std::size_t k(0); k < _data_vec->size(); k++)
+        for (std::size_t k(0); k < data_vec_->size(); k++)
         {
-            if ((*_data_vec)[k] == data)
+            if ((*data_vec_)[k] == data)
             {
                 return getNameOfElementByID(k, name);
             }
@@ -191,17 +191,17 @@ public:
     /// Adds a new element to the vector.
     virtual void push_back (T* data_element, std::string const* const name = nullptr)
     {
-        _data_vec->push_back (data_element);
+        data_vec_->push_back (data_element);
         if (!name || name->empty())
         {
             return;
         }
 
         std::map<std::string, std::size_t>::const_iterator it(
-            _name_id_map->find(*name)
+            name_id_map_->find(*name)
         );
-        if (it == _name_id_map->end()) {
-            _name_id_map->insert(NameIdPair(*name, _data_vec->size() - 1));
+        if (it == name_id_map_->end()) {
+            name_id_map_->insert(NameIdPair(*name, data_vec_->size() - 1));
         } else {
             WARN(
                 "Name '{:s}' exists already. The object will be inserted "
@@ -215,14 +215,14 @@ public:
     {
         // Erase id if found in map.
         auto it = findFirstElementByID(id);
-        if (it != _name_id_map->end())
+        if (it != name_id_map_->end())
         {
-            _name_id_map->erase(it);
+            name_id_map_->erase(it);
         }
 
         if (!name.empty()) {
             //insert new or revised name
-            _name_id_map->insert(NameIdPair(name, id));
+            name_id_map_->insert(NameIdPair(name, id));
         }
     }
 
@@ -231,7 +231,7 @@ private:
     NameIdMap::const_iterator
     findFirstElementByID(std::size_t const& id) const
     {
-        return std::find_if(_name_id_map->begin(), _name_id_map->end(),
+        return std::find_if(name_id_map_->begin(), name_id_map_->end(),
             [id](NameIdPair const& elem) { return elem.second == id; });
     }
 
@@ -244,15 +244,15 @@ protected:
     TemplateVec& operator= (const TemplateVec& rhs);
 
     /** the name of the object */
-    std::string _name;
+    std::string name_;
 
     /**
      * pointer to a vector of data elements
      */
-    std::unique_ptr<std::vector <T*>> _data_vec;
+    std::unique_ptr<std::vector <T*>> data_vec_;
     /**
      * store names associated with the element ids
      */
-    std::unique_ptr<NameIdMap> _name_id_map;
+    std::unique_ptr<NameIdMap> name_id_map_;
 };
 } // end namespace GeoLib

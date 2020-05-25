@@ -66,8 +66,8 @@ private:
                       const std::vector<std::size_t>& pnt_id_map,
                       std::map<std::string, std::size_t>* sfc_names);
 
-    GeoLib::GEOObjects& _geo_objs;
-    std::map<std::size_t, std::size_t> _idx_map;
+    GeoLib::GEOObjects& geo_objs_;
+    std::map<std::size_t, std::size_t> idx_map_;
 };
 
 } // end namespace IO

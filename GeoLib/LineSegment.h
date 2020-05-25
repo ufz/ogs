@@ -40,9 +40,9 @@ public:
     GeoLib::Point & getEndPoint();
 
 private:
-    GeoLib::Point* _a = nullptr;
-    GeoLib::Point* _b = nullptr;
-    bool _point_mem_management_by_line_segment = false;
+    GeoLib::Point* a_ = nullptr;
+    GeoLib::Point* b_ = nullptr;
+    bool point_mem_management_by_line_segment_ = false;
 };
 
 std::ostream& operator<< (std::ostream& os, LineSegment const& s);
