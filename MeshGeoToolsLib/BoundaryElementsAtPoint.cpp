@@ -23,21 +23,21 @@ namespace MeshGeoToolsLib
 BoundaryElementsAtPoint::BoundaryElementsAtPoint(
     MeshLib::Mesh const& mesh, MeshNodeSearcher const& mshNodeSearcher,
     GeoLib::Point const& point, const bool multiple_nodes_allowed)
-    : _mesh(mesh), _point(point)
+    : mesh_(mesh), point_(point)
 {
-    auto const node_ids = mshNodeSearcher.getMeshNodeIDs(_point);
+    auto const node_ids = mshNodeSearcher.getMeshNodeIDs(point_);
     if (node_ids.empty())
     {
         OGS_FATAL(
             "BoundaryElementsAtPoint: the mesh node searcher was unable to "
             "locate the point ({:f}, {:f}, {:f}) in the mesh.",
-            _point[0], _point[1], _point[2]);
+            point_[0], point_[1], point_[2]);
     }
     if (node_ids.size() == 1)
     {
         std::array<MeshLib::Node*, 1> const nodes = {
-            {const_cast<MeshLib::Node*>(_mesh.getNode(node_ids[0]))}};
-        _boundary_elements.push_back(new MeshLib::Point{nodes, node_ids[0]});
+            {const_cast<MeshLib::Node*>(mesh_.getNode(node_ids[0]))}};
+        boundary_elements_.push_back(new MeshLib::Point{nodes, node_ids[0]});
         return;
     }
 
@@ -57,7 +57,7 @@ BoundaryElementsAtPoint::BoundaryElementsAtPoint(
             "near the requested point ({:f}, {:f}, {:f}) in the mesh, while "
             "exactly one is expected. Node  (id={:d}) ({:f}, {:f}, {:f}) has "
             "distance {:f}.",
-            node_ids.size(), _point[0], _point[1], _point[2],
+            node_ids.size(), point_[0], point_[1], point_[2],
             mesh_nodes[nearest_node_id]->getID(),
             (*mesh_nodes[nearest_node_id])[0],
             (*mesh_nodes[nearest_node_id])[1],
@@ -69,21 +69,21 @@ BoundaryElementsAtPoint::BoundaryElementsAtPoint(
         "near the requested point ({:f}, {:f}, {:f}) in the mesh, while "
         "exactly one is expected. Node  (id={:d}) ({:f}, {:f}, {:f}) has "
         "distance {:f}.",
-        node_ids.size(), _point[0], _point[1], _point[2],
+        node_ids.size(), point_[0], point_[1], point_[2],
         mesh_nodes[nearest_node_id]->getID(), (*mesh_nodes[nearest_node_id])[0],
         (*mesh_nodes[nearest_node_id])[1], (*mesh_nodes[nearest_node_id])[2],
         MathLib::sqrDist(*mesh_nodes[nearest_node_id], point));
 
     std::array<MeshLib::Node*, 1> const nodes = {
-        {const_cast<MeshLib::Node*>(_mesh.getNode(nearest_node_id))}};
+        {const_cast<MeshLib::Node*>(mesh_.getNode(nearest_node_id))}};
 
-    _boundary_elements.push_back(
+    boundary_elements_.push_back(
         new MeshLib::Point{nodes, nearest_node_id});
 }
 
 BoundaryElementsAtPoint::~BoundaryElementsAtPoint()
 {
-    for (auto p : _boundary_elements)
+    for (auto p : boundary_elements_)
     {
         delete p;
     }

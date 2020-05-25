@@ -25,39 +25,39 @@ MeshNodesAlongPolyline::MeshNodesAlongPolyline(MeshLib::Mesh const& mesh,
                                                GeoLib::Polyline const& ply,
                                                double epsilon_radius,
                                                SearchAllNodes search_all_nodes)
-    : _mesh(mesh), _ply(ply)
+    : mesh_(mesh), ply_(ply)
 {
     assert(epsilon_radius > 0);
     const std::size_t n_nodes(search_all_nodes == SearchAllNodes::Yes
-                                  ? _mesh.getNumberOfNodes()
-                                  : _mesh.getNumberOfBaseNodes());
-    auto &mesh_nodes = _mesh.getNodes();
+                                  ? mesh_.getNumberOfNodes()
+                                  : mesh_.getNumberOfBaseNodes());
+    auto &mesh_nodes = mesh_.getNodes();
     // loop over all nodes
     for (std::size_t i = 0; i < n_nodes; i++) {
-        double dist = _ply.getDistanceAlongPolyline(*mesh_nodes[i], epsilon_radius);
+        double dist = ply_.getDistanceAlongPolyline(*mesh_nodes[i], epsilon_radius);
         if (dist >= 0.0) {
-            _msh_node_ids.push_back(mesh_nodes[i]->getID());
-            _dist_of_proj_node_from_ply_start.push_back(dist);
+            msh_node_ids_.push_back(mesh_nodes[i]->getID());
+            dist_of_proj_node_from_ply_start_.push_back(dist);
         }
     }
 
     // sort the nodes along the polyline according to their distances
-    BaseLib::quicksort<double> (_dist_of_proj_node_from_ply_start, 0,
-                    _dist_of_proj_node_from_ply_start.size(), _msh_node_ids);
+    BaseLib::quicksort<double> (dist_of_proj_node_from_ply_start_, 0,
+                    dist_of_proj_node_from_ply_start_.size(), msh_node_ids_);
 }
 
 MeshLib::Mesh const& MeshNodesAlongPolyline::getMesh () const
 {
-    return _mesh;
+    return mesh_;
 }
 
 std::vector<std::size_t> const& MeshNodesAlongPolyline::getNodeIDs () const
 {
-    return _msh_node_ids;
+    return msh_node_ids_;
 }
 
 GeoLib::Polyline const& MeshNodesAlongPolyline::getPolyline () const
 {
-    return _ply;
+    return ply_;
 }
 }  // end namespace MeshGeoToolsLib

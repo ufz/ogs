@@ -28,20 +28,20 @@ namespace MeshGeoToolsLib
 {
 BoundaryElementsSearcher::BoundaryElementsSearcher(
     MeshLib::Mesh const& mesh, MeshNodeSearcher const& mshNodeSearcher)
-    : _mesh(mesh), _mshNodeSearcher(mshNodeSearcher)
+    : mesh_(mesh), mshNodeSearcher_(mshNodeSearcher)
 {}
 
 BoundaryElementsSearcher::~BoundaryElementsSearcher()
 {
-    for (auto p : _boundary_elements_at_point)
+    for (auto p : boundary_elements_at_point_)
     {
         delete p;
     }
-    for (auto p : _boundary_elements_along_polylines)
+    for (auto p : boundary_elements_along_polylines_)
     {
         delete p;
     }
-    for (auto p : _boundary_elements_along_surfaces)
+    for (auto p : boundary_elements_along_surfaces_)
     {
         delete p;
     }
@@ -74,7 +74,7 @@ BoundaryElementsSearcher::getBoundaryElementsAtPoint(
     GeoLib::Point const& point, bool const multiple_nodes_allowed)
 {
     // look for already saved points and return if found.
-    for (auto const& boundaryElements : _boundary_elements_at_point)
+    for (auto const& boundaryElements : boundary_elements_at_point_)
     {
         if (boundaryElements->getPoint() == point)
         {
@@ -83,9 +83,9 @@ BoundaryElementsSearcher::getBoundaryElementsAtPoint(
     }
 
     // create new boundary elements at points.
-    _boundary_elements_at_point.push_back(new BoundaryElementsAtPoint(
-        _mesh, _mshNodeSearcher, point, multiple_nodes_allowed));
-    return _boundary_elements_at_point.back()->getBoundaryElements();
+    boundary_elements_at_point_.push_back(new BoundaryElementsAtPoint(
+        mesh_, mshNodeSearcher_, point, multiple_nodes_allowed));
+    return boundary_elements_at_point_.back()->getBoundaryElements();
 }
 
 std::vector<MeshLib::Element*> const&
@@ -93,7 +93,7 @@ BoundaryElementsSearcher::getBoundaryElementsAlongPolyline(
     GeoLib::Polyline const& polyline)
 {
     // look for already saved polylines and return if found.
-    for (auto const& boundary_elements : _boundary_elements_along_polylines)
+    for (auto const& boundary_elements : boundary_elements_along_polylines_)
     {
         if (&boundary_elements->getPolyline() == &polyline)
         {
@@ -102,9 +102,9 @@ BoundaryElementsSearcher::getBoundaryElementsAlongPolyline(
     }
 
     // create new boundary elements at points.
-    _boundary_elements_along_polylines.push_back(
-        new BoundaryElementsAlongPolyline(_mesh, _mshNodeSearcher, polyline));
-    return _boundary_elements_along_polylines.back()->getBoundaryElements();
+    boundary_elements_along_polylines_.push_back(
+        new BoundaryElementsAlongPolyline(mesh_, mshNodeSearcher_, polyline));
+    return boundary_elements_along_polylines_.back()->getBoundaryElements();
 }
 
 std::vector<MeshLib::Element*> const&
@@ -112,7 +112,7 @@ BoundaryElementsSearcher::getBoundaryElementsOnSurface(
     GeoLib::Surface const& surface)
 {
     // look for already saved surfaces and return if found.
-    for (auto const& boundary_elements : _boundary_elements_along_surfaces)
+    for (auto const& boundary_elements : boundary_elements_along_surfaces_)
     {
         if (&boundary_elements->getSurface() == &surface)
         {
@@ -120,9 +120,9 @@ BoundaryElementsSearcher::getBoundaryElementsOnSurface(
         }
     }
 
-    _boundary_elements_along_surfaces.push_back(
-            new BoundaryElementsOnSurface(_mesh, _mshNodeSearcher, surface));
-    return _boundary_elements_along_surfaces.back()->getBoundaryElements();
+    boundary_elements_along_surfaces_.push_back(
+            new BoundaryElementsOnSurface(mesh_, mshNodeSearcher_, surface));
+    return boundary_elements_along_surfaces_.back()->getBoundaryElements();
 }
 
 } // end namespace MeshGeoToolsLib

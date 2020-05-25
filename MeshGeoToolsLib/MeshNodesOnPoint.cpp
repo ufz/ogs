@@ -18,13 +18,13 @@ MeshNodesOnPoint::MeshNodesOnPoint(MeshLib::Mesh const& mesh,
                                    GeoLib::Point const& pnt,
                                    double epsilon_radius,
                                    SearchAllNodes search_all_nodes)
-    : _mesh(mesh), _pnt(pnt)
+    : mesh_(mesh), pnt_(pnt)
 {
     std::vector<std::size_t> vec_ids(
         mesh_grid.getPointsInEpsilonEnvironment(pnt, epsilon_radius));
     if (search_all_nodes == SearchAllNodes::Yes)
     {
-        _msh_node_ids = vec_ids;
+        msh_node_ids_ = vec_ids;
     }
     else
     {
@@ -32,7 +32,7 @@ MeshNodesOnPoint::MeshNodesOnPoint(MeshLib::Mesh const& mesh,
         {
             if (mesh.isBaseNode(id))
             {
-                _msh_node_ids.push_back(id);
+                msh_node_ids_.push_back(id);
             }
         }
     }

@@ -22,17 +22,17 @@ namespace MeshGeoToolsLib
 BoundaryElementsOnSurface::BoundaryElementsOnSurface(
     MeshLib::Mesh const& mesh, MeshNodeSearcher const& mshNodeSearcher,
     GeoLib::Surface const& sfc)
-    : _mesh(mesh), _sfc(sfc)
+    : mesh_(mesh), sfc_(sfc)
 {
     // search elements near the surface
     auto node_ids_on_sfc = mshNodeSearcher.getMeshNodeIDsAlongSurface(sfc);
-    MeshLib::ElementSearch es(_mesh);
+    MeshLib::ElementSearch es(mesh_);
     es.searchByNodeIDs(node_ids_on_sfc);
     auto &ele_ids_near_sfc = es.getSearchedElementIDs();
 
     // get a list of faces made of the nodes
     for (auto ele_id : ele_ids_near_sfc) {
-        auto* e = _mesh.getElement(ele_id);
+        auto* e = mesh_.getElement(ele_id);
         // skip internal elements
         if (!e->isBoundaryElement())
         {
@@ -57,7 +57,7 @@ BoundaryElementsOnSurface::BoundaryElementsOnSurface(
             // update the list
             if (cnt_match==face->getNumberOfBaseNodes())
             {
-                _boundary_elements.push_back(const_cast<MeshLib::Element*>(face));
+                boundary_elements_.push_back(const_cast<MeshLib::Element*>(face));
             }
             else
             {
@@ -69,7 +69,7 @@ BoundaryElementsOnSurface::BoundaryElementsOnSurface(
 
 BoundaryElementsOnSurface::~BoundaryElementsOnSurface()
 {
-    for (auto p : _boundary_elements)
+    for (auto p : boundary_elements_)
     {
         delete p;
     }

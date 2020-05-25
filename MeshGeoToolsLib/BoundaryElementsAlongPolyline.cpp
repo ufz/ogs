@@ -26,18 +26,18 @@ namespace MeshGeoToolsLib
 BoundaryElementsAlongPolyline::BoundaryElementsAlongPolyline(
     MeshLib::Mesh const& mesh, MeshNodeSearcher const& mshNodeSearcher,
     GeoLib::Polyline const& ply)
-    : _mesh(mesh), _ply(ply)
+    : mesh_(mesh), ply_(ply)
 {
     // search nodes and elements located along the polyline
     auto node_ids_on_poly = mshNodeSearcher.getMeshNodeIDsAlongPolyline(ply);
-    MeshLib::ElementSearch es(_mesh);
+    MeshLib::ElementSearch es(mesh_);
     es.searchByNodeIDs(node_ids_on_poly);
     auto& ele_ids_near_ply = es.getSearchedElementIDs();
 
     // check all edges of the elements near the polyline
     for (auto ele_id : ele_ids_near_ply)
     {
-        auto* e = _mesh.getElement(ele_id);
+        auto* e = mesh_.getElement(ele_id);
         // skip line elements
         if (e->getDimension() == 1)
         {
@@ -65,7 +65,7 @@ BoundaryElementsAlongPolyline::BoundaryElementsAlongPolyline(
                 {
                     delete edge;
                 }
-                _boundary_elements.push_back(new_edge);
+                boundary_elements_.push_back(new_edge);
             }
             else
             {
@@ -78,7 +78,7 @@ BoundaryElementsAlongPolyline::BoundaryElementsAlongPolyline(
     // needed anymore in OGS-6.
     // sort picked edges according to a distance of their first node along the
     // polyline
-    std::sort(begin(_boundary_elements), end(_boundary_elements),
+    std::sort(begin(boundary_elements_), end(boundary_elements_),
               [&](MeshLib::Element* e1, MeshLib::Element* e2) {
                   std::size_t dist1 = std::distance(
                       node_ids_on_poly.begin(),
@@ -94,7 +94,7 @@ BoundaryElementsAlongPolyline::BoundaryElementsAlongPolyline(
 
 BoundaryElementsAlongPolyline::~BoundaryElementsAlongPolyline()
 {
-    for (auto p : _boundary_elements)
+    for (auto p : boundary_elements_)
     {
         delete p;
     }

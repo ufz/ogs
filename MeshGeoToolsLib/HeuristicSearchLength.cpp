@@ -20,13 +20,13 @@ namespace MeshGeoToolsLib
 {
 
 HeuristicSearchLength::HeuristicSearchLength(MeshLib::Mesh const& mesh, LengthType length_type)
-: _mesh(mesh)
+: mesh_(mesh)
 {
     double sum (0.0);
     double sum_of_sqr (0.0); // total length of edges
 
     std::size_t n_sampling(0); // total length of edges squared
-    std::vector<MeshLib::Element*> const& elements(_mesh.getElements());
+    std::vector<MeshLib::Element*> const& elements(mesh_.getElements());
 
     if (length_type==LengthType::Edge) {
         for (auto element : elements)
@@ -50,7 +50,7 @@ HeuristicSearchLength::HeuristicSearchLength(MeshLib::Mesh const& mesh, LengthTy
             sum += std::sqrt(min);
             sum_of_sqr += min;
         }
-        n_sampling = _mesh.getNumberOfElements();
+        n_sampling = mesh_.getNumberOfElements();
     }
 
     const double mean (sum/n_sampling);
@@ -58,23 +58,23 @@ HeuristicSearchLength::HeuristicSearchLength(MeshLib::Mesh const& mesh, LengthTy
 
     // Set the search length for the case of non-positive variance (which can
     // happen due to numerics).
-    _search_length = mean/2;
+    search_length_ = mean/2;
 
     if (variance > 0) {
         if (variance < mean * mean / 4)
         {
-            _search_length -= std::sqrt(variance);
+            search_length_ -= std::sqrt(variance);
         }
         else
         {
-            _search_length = std::numeric_limits<double>::epsilon();
+            search_length_ = std::numeric_limits<double>::epsilon();
         }
     }
 
     DBUG(
         "[MeshNodeSearcher::MeshNodeSearcher] Calculated search length for "
         "mesh '{:s}' is {:f}.",
-        _mesh.getName(), _search_length);
+        mesh_.getName(), search_length_);
 }
 
 } // end namespace MeshGeoToolsLib

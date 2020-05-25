@@ -26,12 +26,12 @@ MeshNodesAlongSurface::MeshNodesAlongSurface(MeshLib::Mesh const& mesh,
                                              GeoLib::Surface const& sfc,
                                              double epsilon_radius,
                                              SearchAllNodes search_all_nodes)
-    : _mesh(mesh), _sfc(sfc)
+    : mesh_(mesh), sfc_(sfc)
 {
-    auto& mesh_nodes = _mesh.getNodes();
+    auto& mesh_nodes = mesh_.getNodes();
     const std::size_t n_nodes(search_all_nodes == SearchAllNodes::Yes
-                                  ? _mesh.getNumberOfNodes()
-                                  : _mesh.getNumberOfBaseNodes());
+                                  ? mesh_.getNumberOfNodes()
+                                  : mesh_.getNumberOfBaseNodes());
     // loop over all nodes
     for (std::size_t i = 0; i < n_nodes; i++) {
         auto* node = mesh_nodes[i];
@@ -40,24 +40,24 @@ MeshNodesAlongSurface::MeshNodesAlongSurface(MeshLib::Mesh const& mesh,
             continue;
         }
         if (sfc.isPntInSfc(*node, epsilon_radius)) {
-            _msh_node_ids.push_back(node->getID());
+            msh_node_ids_.push_back(node->getID());
         }
     }
 }
 
 MeshLib::Mesh const& MeshNodesAlongSurface::getMesh () const
 {
-    return _mesh;
+    return mesh_;
 }
 
 std::vector<std::size_t> const& MeshNodesAlongSurface::getNodeIDs () const
 {
-    return _msh_node_ids;
+    return msh_node_ids_;
 }
 
 GeoLib::Surface const& MeshNodesAlongSurface::getSurface () const
 {
-    return _sfc;
+    return sfc_;
 }
 
 } // end namespace MeshGeoToolsLib
