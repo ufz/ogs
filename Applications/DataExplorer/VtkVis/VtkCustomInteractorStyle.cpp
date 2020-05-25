@@ -45,18 +45,18 @@ vtkStandardNewMacro(VtkCustomInteractorStyle);
 
 VtkCustomInteractorStyle::VtkCustomInteractorStyle()
 {
-    _selectedMapper = vtkDataSetMapper::New();
-    _selectedActor = vtkActor::New();
-    _selectedActor->SetMapper(_selectedMapper);
-    _selectedActor->GetProperty()->EdgeVisibilityOn();
-    _selectedActor->GetProperty()->SetEdgeColor(1,0,0);
-    _selectedActor->GetProperty()->SetLineWidth(3);
+    selectedMapper_ = vtkDataSetMapper::New();
+    selectedActor_ = vtkActor::New();
+    selectedActor_->SetMapper(selectedMapper_);
+    selectedActor_->GetProperty()->EdgeVisibilityOn();
+    selectedActor_->GetProperty()->SetEdgeColor(1,0,0);
+    selectedActor_->GetProperty()->SetLineWidth(3);
 }
 
 VtkCustomInteractorStyle::~VtkCustomInteractorStyle()
 {
-    _selectedActor->Delete();
-    _selectedMapper->Delete();
+    selectedActor_->Delete();
+    selectedMapper_->Delete();
 }
 
 void VtkCustomInteractorStyle::OnChar()
@@ -78,7 +78,7 @@ void VtkCustomInteractorStyle::OnKeyDown()
     switch (Interactor->GetKeyCode())
     {
     case 32: // Space
-        _alternateMouseActions = true;
+        alternateMouseActions_ = true;
         emit cursorChanged(Qt::CrossCursor);
         break;
     default:
@@ -91,7 +91,7 @@ void VtkCustomInteractorStyle::OnKeyUp()
     switch (Interactor->GetKeyCode())
     {
     case 32: // Space
-        _alternateMouseActions = false;
+        alternateMouseActions_ = false;
         emit cursorChanged(Qt::ArrowCursor);
         break;
     default:
@@ -101,7 +101,7 @@ void VtkCustomInteractorStyle::OnKeyUp()
 
 void VtkCustomInteractorStyle::highlightActor( vtkProp3D* actor )
 {
-    if (_highlightActor)
+    if (highlightActor_)
     {
         HighlightProp((vtkProp*)actor);
     }
@@ -110,12 +110,12 @@ void VtkCustomInteractorStyle::highlightActor( vtkProp3D* actor )
 void VtkCustomInteractorStyle::removeHighlightActor()
 {
     this->Interactor->GetRenderWindow()->GetRenderers()->GetFirstRenderer()->
-        RemoveActor(_selectedActor);
+        RemoveActor(selectedActor_);
 }
 
 void VtkCustomInteractorStyle::setHighlightActor(bool on)
 {
-    _highlightActor = on;
+    highlightActor_ = on;
     if (!on)
     {
         HighlightProp((vtkProp*)nullptr);
@@ -124,24 +124,24 @@ void VtkCustomInteractorStyle::setHighlightActor(bool on)
 
 void VtkCustomInteractorStyle::pickableDataObject(vtkDataObject* object)
 {
-    _data = object;
+    data_ = object;
     if (!object)
     {
         this->Interactor->GetRenderWindow()->GetRenderers()->GetFirstRenderer()->
-        RemoveActor(_selectedActor);
-        _selectedMapper->SetInputConnection(nullptr);
+        RemoveActor(selectedActor_);
+        selectedMapper_->SetInputConnection(nullptr);
     }
 }
 
 // From http://www.vtk.org/Wiki/VTK/Examples/Cxx/Picking/CellPicking
 void VtkCustomInteractorStyle::OnLeftButtonDown()
 {
-    if (!_data)
+    if (!data_)
     {
         return vtkInteractorStyleTrackballCamera::OnLeftButtonDown();
     }
 
-    if (_alternateMouseActions)
+    if (alternateMouseActions_)
     {
         // Get the location of the click (in window coordinates)
         int* pos = this->GetInteractor()->GetEventPosition();
@@ -178,7 +178,7 @@ void VtkCustomInteractorStyle::OnLeftButtonDown()
 
             vtkSmartPointer<vtkExtractSelection> extractSelection =
                     vtkSmartPointer<vtkExtractSelection>::New();
-            extractSelection->SetInputData(0, _data);
+            extractSelection->SetInputData(0, data_);
             extractSelection->SetInputData(1, selection);
             extractSelection->Update();
 
@@ -204,18 +204,18 @@ void VtkCustomInteractorStyle::OnLeftButtonDown()
             {
                 emit clearElementView();
             }
-            _selectedMapper->SetInputData(selected);
+            selectedMapper_->SetInputData(selected);
 
             this->Interactor->GetRenderWindow()->GetRenderers()->GetFirstRenderer()->
-            AddActor(_selectedActor);
-            //_highlightActor = true;
+            AddActor(selectedActor_);
+            //highlightActor_ = true;
         }
         else
         {
             this->Interactor->GetRenderWindow()
                 ->GetRenderers()
                 ->GetFirstRenderer()
-                ->RemoveActor(_selectedActor);
+                ->RemoveActor(selectedActor_);
         }
         emit requestViewUpdate();
     }
@@ -228,12 +228,12 @@ void VtkCustomInteractorStyle::OnLeftButtonDown()
 
 void VtkCustomInteractorStyle::OnRightButtonDown()
 {
-    if (!_data)
+    if (!data_)
     {
         return vtkInteractorStyleTrackballCamera::OnRightButtonDown();
     }
 
-    if (_alternateMouseActions)
+    if (alternateMouseActions_)
     {
         // Get the location of the click (in window coordinates)
         int* pos = this->GetInteractor()->GetEventPosition();

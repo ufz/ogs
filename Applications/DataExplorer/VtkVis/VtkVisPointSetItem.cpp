@@ -58,8 +58,8 @@
 VtkVisPointSetItem::VtkVisPointSetItem(
         vtkAlgorithm* algorithm, TreeItem* parentItem,
         const QList<QVariant> data /*= QList<QVariant>()*/)
-    : VtkVisPipelineItem(algorithm, parentItem, data), _mapper(nullptr),
-    _transformFilter(nullptr), _onPointData(true), _activeArrayName("")
+    : VtkVisPipelineItem(algorithm, parentItem, data), mapper_(nullptr),
+    transformFilter_(nullptr), onPointData_(true), activeArrayName_("")
 {
     auto* visParentItem = dynamic_cast<VtkVisPipelineItem*>(parentItem);
     if (parentItem->parentItem())
@@ -68,7 +68,7 @@ VtkVisPointSetItem::VtkVisPointSetItem(
         // Image2BarChartFilter)
         if (dynamic_cast<vtkImageAlgorithm*>(visParentItem->algorithm()))
         {
-            _algorithm->SetInputConnection(
+            algorithm_->SetInputConnection(
                 visParentItem->algorithm()->GetOutputPort());
         }
         else
@@ -76,7 +76,7 @@ VtkVisPointSetItem::VtkVisPointSetItem(
             auto* pointSetItem = dynamic_cast<VtkVisPointSetItem*>(parentItem);
             if (pointSetItem)
             {
-                _algorithm->SetInputConnection(
+                algorithm_->SetInputConnection(
                     pointSetItem->transformFilter()->GetOutputPort());
             }
         }
@@ -86,49 +86,49 @@ VtkVisPointSetItem::VtkVisPointSetItem(
 VtkVisPointSetItem::VtkVisPointSetItem(
         VtkCompositeFilter* compositeFilter, TreeItem* parentItem,
         const QList<QVariant> data /*= QList<QVariant>()*/)
-    : VtkVisPipelineItem(compositeFilter, parentItem, data), _mapper(nullptr),
-    _transformFilter(nullptr), _onPointData(true), _activeArrayName("")
+    : VtkVisPipelineItem(compositeFilter, parentItem, data), mapper_(nullptr),
+    transformFilter_(nullptr), onPointData_(true), activeArrayName_("")
 {
 }
 
 VtkVisPointSetItem::~VtkVisPointSetItem()
 {
-    _transformFilter->Delete();
-    _mapper->Delete();
+    transformFilter_->Delete();
+    mapper_->Delete();
 }
 QString VtkVisPointSetItem::GetActiveAttribute() const
 {
-    return _vtkProps->GetActiveAttribute();
+    return vtkProps_->GetActiveAttribute();
 }
 
 void VtkVisPointSetItem::Initialize(vtkRenderer* renderer)
 {
     // TODO vtkTransformFilter creates a new copy of the point coordinates which
     // conflicts with VtkMappedMeshSource. Find a workaround!
-    _transformFilter = vtkTransformFilter::New();
+    transformFilter_ = vtkTransformFilter::New();
     vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
     transform->Identity();
-    _transformFilter->SetTransform(transform);
+    transformFilter_->SetTransform(transform);
 
-    _transformFilter->SetInputConnection(_algorithm->GetOutputPort());
-    _transformFilter->Update();
+    transformFilter_->SetInputConnection(algorithm_->GetOutputPort());
+    transformFilter_->Update();
 
-    _renderer = renderer;
-    _mapper = QVtkDataSetMapper::New();
-    _mapper->InterpolateScalarsBeforeMappingOff();
-    _mapper->SetColorModeToMapScalars();
+    renderer_ = renderer;
+    mapper_ = QVtkDataSetMapper::New();
+    mapper_->InterpolateScalarsBeforeMappingOff();
+    mapper_->SetColorModeToMapScalars();
 
-    _mapper->SetInputConnection(_transformFilter->GetOutputPort());
-    _actor = vtkActor::New();
-    static_cast<vtkActor*>(_actor)->SetMapper(_mapper);
-    _renderer->AddActor(_actor);
+    mapper_->SetInputConnection(transformFilter_->GetOutputPort());
+    actor_ = vtkActor::New();
+    static_cast<vtkActor*>(actor_)->SetMapper(mapper_);
+    renderer_->AddActor(actor_);
 
     // Determine the right pre-set properties
-    // Order is: _algorithm, _compositeFilter, create a new one with props copied from parent
-    auto* vtkProps = dynamic_cast<VtkAlgorithmProperties*>(_algorithm);
+    // Order is: algorithm_, compositeFilter_, create a new one with props copied from parent
+    auto* vtkProps = dynamic_cast<VtkAlgorithmProperties*>(algorithm_);
     if (!vtkProps)
     {
-        vtkProps = dynamic_cast<VtkAlgorithmProperties*>(_compositeFilter);
+        vtkProps = dynamic_cast<VtkAlgorithmProperties*>(compositeFilter_);
 
         // Copy properties from parent or create a new VtkAlgorithmProperties
         if (!vtkProps)
@@ -168,7 +168,7 @@ void VtkVisPointSetItem::Initialize(vtkRenderer* renderer)
             }
         }
     }
-    _vtkProps = vtkProps;
+    vtkProps_ = vtkProps;
 
     if (vtkProps->GetActiveAttribute().length() == 0)
     {
@@ -193,35 +193,35 @@ void VtkVisPointSetItem::Initialize(vtkRenderer* renderer)
     this->setBackfaceCulling(backfaceCulling);
 
     // Set the correct threshold range
-    if (dynamic_cast<VtkCompositeThresholdFilter*>(this->_compositeFilter) )
+    if (dynamic_cast<VtkCompositeThresholdFilter*>(this->compositeFilter_) )
     {
         double range[2];
         this->GetRangeForActiveAttribute(range);
         QList<QVariant> thresholdRangeList;
         thresholdRangeList.push_back(range[0]);
         thresholdRangeList.push_back(range[1]);
-        dynamic_cast<VtkCompositeFilter*>(this->_compositeFilter)
+        dynamic_cast<VtkCompositeFilter*>(this->compositeFilter_)
             ->SetUserVectorProperty("Range", thresholdRangeList);
     }
 
     // Show edges on meshes
-    if (dynamic_cast<MeshLib::VtkMappedMeshSource*>(this->_algorithm))
+    if (dynamic_cast<MeshLib::VtkMappedMeshSource*>(this->algorithm_))
     {
-        _vtkProps->GetProperties()->SetEdgeVisibility(1);
+        vtkProps_->GetProperties()->SetEdgeVisibility(1);
     }
 }
 
 void VtkVisPointSetItem::SetScalarVisibility( bool on )
 {
-    _mapper->SetScalarVisibility(on);
+    mapper_->SetScalarVisibility(on);
 }
 
 void VtkVisPointSetItem::setVtkProperties(VtkAlgorithmProperties* vtkProps)
 {
     QObject::connect(vtkProps, SIGNAL(ScalarVisibilityChanged(bool)),
-                     _mapper, SLOT(SetScalarVisibility(bool)));
+                     mapper_, SLOT(SetScalarVisibility(bool)));
 
-    auto* actor = dynamic_cast<vtkActor*>(_actor);
+    auto* actor = dynamic_cast<vtkActor*>(actor_);
     if (actor)
     {
         if (vtkProps->GetTexture() != nullptr)
@@ -283,16 +283,16 @@ void VtkVisPointSetItem::SetActiveAttribute( const QString& name )
     // Get type by identifier
     if (name.contains(QRegExp("^P-")))
     {
-        _onPointData = true;
+        onPointData_ = true;
     }
     else if (name.contains(QRegExp("^C-")))
     {
-        _onPointData = false;
+        onPointData_ = false;
     }
     else if (name.contains("Solid Color"))
     {
-        _vtkProps->SetActiveAttribute("Solid Color");
-        _mapper->ScalarVisibilityOff();
+        vtkProps_->SetActiveAttribute("Solid Color");
+        mapper_->ScalarVisibilityOff();
         return;
     }
     else
@@ -301,9 +301,9 @@ void VtkVisPointSetItem::SetActiveAttribute( const QString& name )
     }
 
     // Remove type identifier
-    _activeArrayName = QString(name).remove(0, 2).toStdString();
+    activeArrayName_ = QString(name).remove(0, 2).toStdString();
 
-    vtkDataSet* dataSet = vtkDataSet::SafeDownCast(this->_algorithm->GetOutputDataObject(0));
+    vtkDataSet* dataSet = vtkDataSet::SafeDownCast(this->algorithm_->GetOutputDataObject(0));
     if (!dataSet)
     {
         return;
@@ -311,14 +311,14 @@ void VtkVisPointSetItem::SetActiveAttribute( const QString& name )
 
     double range[2];
     GetRangeForActiveAttribute(range);
-    if (_onPointData)
+    if (onPointData_)
     {
         vtkPointData* pointData = dataSet->GetPointData();
         if(pointData)
         {
-            _algorithm->SetInputArrayToProcess(0, 0, 0,
-                vtkDataObject::FIELD_ASSOCIATION_POINTS, _activeArrayName.c_str());
-            _mapper->SetScalarModeToUsePointFieldData();
+            algorithm_->SetInputArrayToProcess(0, 0, 0,
+                vtkDataObject::FIELD_ASSOCIATION_POINTS, activeArrayName_.c_str());
+            mapper_->SetScalarModeToUsePointFieldData();
         }
     }
     else
@@ -326,32 +326,32 @@ void VtkVisPointSetItem::SetActiveAttribute( const QString& name )
         vtkCellData* cellData = dataSet->GetCellData();
         if(cellData)
         {
-            _algorithm->SetInputArrayToProcess(0, 0, 0,
-                vtkDataObject::FIELD_ASSOCIATION_CELLS, _activeArrayName.c_str());
-            _mapper->SetScalarModeToUseCellFieldData();
+            algorithm_->SetInputArrayToProcess(0, 0, 0,
+                vtkDataObject::FIELD_ASSOCIATION_CELLS, activeArrayName_.c_str());
+            mapper_->SetScalarModeToUseCellFieldData();
         }
     }
 
-    _vtkProps->SetActiveAttribute(name);
+    vtkProps_->SetActiveAttribute(name);
 
-    _mapper->ScalarVisibilityOn();
-    _mapper->UseLookupTableScalarRangeOn();
+    mapper_->ScalarVisibilityOn();
+    mapper_->UseLookupTableScalarRangeOn();
 
-    auto* mapper = dynamic_cast<QVtkDataSetMapper*>(_mapper);
+    auto* mapper = dynamic_cast<QVtkDataSetMapper*>(mapper_);
     if (mapper)
     {
         // Create a default color table when there is no lookup table for this attribute
-        vtkLookupTable* lut = _vtkProps->GetLookupTable(name);
+        vtkLookupTable* lut = vtkProps_->GetLookupTable(name);
         if (lut == nullptr)
         {
             //std::cout << "Creating new lookup table for: " << name.toStdString() << std::endl;
             lut = vtkLookupTable::New(); // is not a memory leak, gets deleted in VtkAlgorithmProperties
             lut->SetTableRange(range);
-            _vtkProps->SetLookUpTable(name, lut);
+            vtkProps_->SetLookUpTable(name, lut);
         }
-        _mapper->SetLookupTable(lut);
+        mapper_->SetLookupTable(lut);
     }
-    _mapper->SelectColorArray( _activeArrayName.c_str());
+    mapper_->SelectColorArray( activeArrayName_.c_str());
 }
 
 bool VtkVisPointSetItem::activeAttributeExists(vtkDataSetAttributes* data, std::string& name)
@@ -380,7 +380,7 @@ void VtkVisPointSetItem::setScale(double x, double y, double z) const
     if (this->transformFilter())
     {
         auto* transform =
-            static_cast<vtkTransform*>(this->_transformFilter->GetTransform());
+            static_cast<vtkTransform*>(this->transformFilter_->GetTransform());
         double* trans = transform->GetPosition();
         transform->Identity();
         transform->Scale(x, y, z);
@@ -394,7 +394,7 @@ void VtkVisPointSetItem::setTranslation(double x, double y, double z) const
     if (this->transformFilter())
     {
         auto* transform =
-            static_cast<vtkTransform*>(this->_transformFilter->GetTransform());
+            static_cast<vtkTransform*>(this->transformFilter_->GetTransform());
         double* scale = transform->GetScale();
         transform->Identity();
         transform->Scale(scale);
@@ -405,33 +405,33 @@ void VtkVisPointSetItem::setTranslation(double x, double y, double z) const
 
 vtkAlgorithm* VtkVisPointSetItem::transformFilter() const
 {
-    return _transformFilter;
+    return transformFilter_;
 }
 
 void VtkVisPointSetItem::setBackfaceCulling(bool enable) const
 {
-    static_cast<vtkActor*>(this->_actor)
+    static_cast<vtkActor*>(this->actor_)
         ->GetProperty()
         ->SetBackfaceCulling(static_cast<int>(enable));
 }
 
 void VtkVisPointSetItem::GetRangeForActiveAttribute(double range[2]) const
 {
-    vtkDataSet* dataSet = vtkDataSet::SafeDownCast(this->_algorithm->GetOutputDataObject(0));
-    if (dataSet && _activeArrayName.length() > 0)
+    vtkDataSet* dataSet = vtkDataSet::SafeDownCast(this->algorithm_->GetOutputDataObject(0));
+    if (dataSet && activeArrayName_.length() > 0)
     {
-        if (_onPointData)
+        if (onPointData_)
         {
             vtkPointData* pointData = dataSet->GetPointData();
             if (pointData)
             {
-                pointData->GetArray(_activeArrayName.c_str())->GetRange(range);
+                pointData->GetArray(activeArrayName_.c_str())->GetRange(range);
             }
         }
         else
         {
             vtkCellData* cellData = dataSet->GetCellData();
-                cellData->GetArray(_activeArrayName.c_str())->GetRange(range);
+                cellData->GetArray(activeArrayName_.c_str())->GetRange(range);
         }
     }
 }

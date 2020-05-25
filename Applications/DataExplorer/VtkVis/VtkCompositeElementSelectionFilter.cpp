@@ -30,32 +30,32 @@
 
 
 VtkCompositeElementSelectionFilter::VtkCompositeElementSelectionFilter( vtkAlgorithm* inputAlgorithm )
-: VtkCompositeFilter(inputAlgorithm), _range(0.0, 1.0), _selection_name("Selection")
+: VtkCompositeFilter(inputAlgorithm), range_(0.0, 1.0), selection_name_("Selection")
 {
 }
 
 void VtkCompositeElementSelectionFilter::init()
 {
-    double thresholdLower(_range.first);
-    double thresholdUpper(_range.second);
-    this->_inputDataObjectType = VTK_UNSTRUCTURED_GRID;
-    this->_outputDataObjectType = VTK_UNSTRUCTURED_GRID;
+    double thresholdLower(range_.first);
+    double thresholdUpper(range_.second);
+    this->inputDataObjectType_ = VTK_UNSTRUCTURED_GRID;
+    this->outputDataObjectType_ = VTK_UNSTRUCTURED_GRID;
 
-    this->SetLookUpTable(QString::fromStdString(_selection_name), this->GetLookupTable());
+    this->SetLookUpTable(QString::fromStdString(selection_name_), this->GetLookupTable());
     vtkSmartPointer<VtkAppendArrayFilter> selFilter(nullptr);
-    if (!_selection.empty())
+    if (!selection_.empty())
     {
         selFilter = vtkSmartPointer<VtkAppendArrayFilter>::New();
-        selFilter->SetInputConnection(_inputAlgorithm->GetOutputPort());
-        selFilter->SetArray(_selection_name, _selection);
+        selFilter->SetInputConnection(inputAlgorithm_->GetOutputPort());
+        selFilter->SetArray(selection_name_, selection_);
         selFilter->Update();
     }
 
     vtkSmartPointer<vtkIdFilter> idFilter = vtkSmartPointer<vtkIdFilter>::New();
-    if (_selection.empty())
+    if (selection_.empty())
     {  // if the array is empty it is assumed that an existing array should be
        // used
-        idFilter->SetInputConnection(_inputAlgorithm->GetOutputPort());
+        idFilter->SetInputConnection(inputAlgorithm_->GetOutputPort());
     }
     else
     {
@@ -68,7 +68,7 @@ void VtkCompositeElementSelectionFilter::init()
 
     vtkThreshold* threshold = vtkThreshold::New();
         threshold->SetInputConnection(idFilter->GetOutputPort());
-        threshold->SetInputArrayToProcess(0,0,0,vtkDataObject::FIELD_ASSOCIATION_CELLS, _selection_name.c_str());
+        threshold->SetInputArrayToProcess(0,0,0,vtkDataObject::FIELD_ASSOCIATION_CELLS, selection_name_.c_str());
         threshold->SetSelectedComponent(0);
         threshold->ThresholdBetween(thresholdLower, thresholdUpper);
         threshold->Update();
@@ -76,14 +76,14 @@ void VtkCompositeElementSelectionFilter::init()
     QList<QVariant> thresholdRangeList;
     thresholdRangeList.push_back(thresholdLower);
     thresholdRangeList.push_back(thresholdUpper);
-    (*_algorithmUserVectorProperties)["Threshold Between"] = thresholdRangeList;
-    _outputAlgorithm = threshold;
+    (*algorithmUserVectorProperties_)["Threshold Between"] = thresholdRangeList;
+    outputAlgorithm_ = threshold;
 }
 
 void VtkCompositeElementSelectionFilter::setSelectionArray(const std::string &selection_name, const std::vector<double> &selection)
 {
-    _selection_name = selection_name;
-    _selection = selection;
+    selection_name_ = selection_name;
+    selection_ = selection;
     init();
 }
 
@@ -93,7 +93,7 @@ void VtkCompositeElementSelectionFilter::SetUserVectorProperty( QString name, QL
 
     if (name.compare("Threshold Between") == 0)
     {
-        static_cast<vtkThreshold*>(_outputAlgorithm)
+        static_cast<vtkThreshold*>(outputAlgorithm_)
             ->ThresholdBetween(values[0].toDouble(), values[1].toDouble());
     }
 }

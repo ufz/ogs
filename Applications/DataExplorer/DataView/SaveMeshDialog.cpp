@@ -25,10 +25,10 @@
 #include "LastSavedFileDirectory.h"
 
 SaveMeshDialog::SaveMeshDialog(MeshLib::Mesh const& mesh, QDialog* parent)
-    : QDialog(parent), _mesh(mesh)
+    : QDialog(parent), mesh_(mesh)
 {
     setupUi(this);
-    this->fileNameEdit->setText(LastSavedFileDirectory::getDir() + QString::fromStdString(_mesh.getName()) + ".vtu");
+    this->fileNameEdit->setText(LastSavedFileDirectory::getDir() + QString::fromStdString(mesh_.getName()) + ".vtu");
 }
 
 void SaveMeshDialog::on_selectDirButton_clicked()
@@ -40,7 +40,7 @@ void SaveMeshDialog::on_selectDirButton_clicked()
     QSettings settings;
     QString const file_name = QFileDialog::getSaveFileName(this,
         "Save mesh as...",
-        LastSavedFileDirectory::getDir() + QString::fromStdString(_mesh.getName()),
+        LastSavedFileDirectory::getDir() + QString::fromStdString(mesh_.getName()),
         file_type);
 
     if (!file_name.isEmpty())
@@ -80,13 +80,13 @@ void SaveMeshDialog::accept()
 
         int dataMode = this->dataModeBox->currentIndex();
         bool compress (this->compressionCheckBox->isChecked());
-        MeshLib::IO::VtuInterface vtkIO(&_mesh, dataMode, compress);
+        MeshLib::IO::VtuInterface vtkIO(&mesh_, dataMode, compress);
         vtkIO.writeToFile(file_name.toStdString());
     }
     if (fi.suffix().toLower() == "msh")
     {
         MeshLib::IO::Legacy::MeshIO meshIO;
-        meshIO.setMesh(&_mesh);
+        meshIO.setMesh(&mesh_);
         meshIO.writeToFile(file_name.toStdString());
     }
     LastSavedFileDirectory::setDir(file_name);

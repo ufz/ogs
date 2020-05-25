@@ -55,14 +55,14 @@ void VtkBGImageSource::SetRaster(vtkImageAlgorithm *img, double x0, double y0, d
     texture->SetInputData(imageData);
     this->SetTexture(texture);
 
-    _origin = std::pair<float, float>(static_cast<float>(x0), static_cast<float>(y0));
-    _cellsize = scalingFactor;
+    origin_ = std::pair<float, float>(static_cast<float>(x0), static_cast<float>(y0));
+    cellsize_ = scalingFactor;
 
 
     vtkSmartPointer<vtkPlaneSource> plane = vtkSmartPointer<vtkPlaneSource>::New();
-    plane->SetOrigin( _origin.first, _origin.second, -1 );
-    plane->SetPoint1( _origin.first + dims[0] * _cellsize, _origin.second, -1 );
-    plane->SetPoint2( _origin.first,_origin.second + dims[1] * _cellsize, -1 );
+    plane->SetOrigin( origin_.first, origin_.second, -1 );
+    plane->SetPoint1( origin_.first + dims[0] * cellsize_, origin_.second, -1 );
+    plane->SetPoint2( origin_.first,origin_.second + dims[1] * cellsize_, -1 );
 
     this->SetInputConnection(0, plane->GetOutputPort(0));
     this->SetTexture(texture);

@@ -34,7 +34,7 @@ vtkStandardNewMacro(VtkSurfacesSource);
 
 VtkSurfacesSource::VtkSurfacesSource()
 {
-    _removable = false; // From VtkAlgorithmProperties
+    removable_ = false; // From VtkAlgorithmProperties
     this->SetNumberOfInputPorts(0);
     //this->SetColorBySurface(true);
 
@@ -48,7 +48,7 @@ void VtkSurfacesSource::PrintSelf( ostream& os, vtkIndent indent )
 {
     this->Superclass::PrintSelf(os,indent);
 
-    if (_surfaces->empty())
+    if (surfaces_->empty())
     {
         return;
     }
@@ -63,13 +63,13 @@ int VtkSurfacesSource::RequestData( vtkInformation* request,
     (void)request;
     (void)inputVector;
 
-    const int nSurfaces = _surfaces->size();
+    const int nSurfaces = surfaces_->size();
     if (nSurfaces == 0)
     {
         return 0;
     }
 
-    const std::vector<GeoLib::Point*>* surfacePoints = (*_surfaces)[0]->getPointVec();
+    const std::vector<GeoLib::Point*>* surfacePoints = (*surfaces_)[0]->getPointVec();
     std::size_t nPoints = surfacePoints->size();
 
     vtkSmartPointer<vtkInformation> outInfo = outputVector->GetInformationObject(0);
@@ -98,7 +98,7 @@ int VtkSurfacesSource::RequestData( vtkInformation* request,
     }
 
     int count(0);
-    for (auto surface : *_surfaces)
+    for (auto surface : *surfaces_)
     {
         const std::size_t nTriangles = surface->getNumberOfTriangles();
 
@@ -138,6 +138,6 @@ int VtkSurfacesSource::RequestInformation( vtkInformation* /*request*/,
 void VtkSurfacesSource::SetUserProperty( QString name, QVariant value )
 {
     VtkAlgorithmProperties::SetUserProperty(name, value);
-    (*_algorithmUserProperties)[name] = value;
+    (*algorithmUserProperties_)[name] = value;
 }
 

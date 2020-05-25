@@ -266,7 +266,7 @@ ProjectData::ProjectData() = default;
 ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
                          std::string const& project_directory,
                          std::string const& output_directory)
-    : _mesh_vec(readMeshes(project_config, project_directory))
+    : mesh_vec_(readMeshes(project_config, project_directory))
 {
     if (auto const python_script =
             //! \ogs_file_param{prj__python_script}
@@ -297,29 +297,29 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
         //! \ogs_file_param{prj__parameters}
         parseParameters(project_config.getConfigSubtree("parameters"));
 
-    _local_coordinate_system = parseLocalCoordinateSystem(
+    local_coordinate_system_ = parseLocalCoordinateSystem(
         //! \ogs_file_param{prj__local_coordinate_system}
         project_config.getConfigSubtreeOptional("local_coordinate_system"),
-        _parameters);
+        parameters_);
 
-    for (auto& parameter : _parameters)
+    for (auto& parameter : parameters_)
     {
         if (std::find(begin(parameter_names_for_transformation),
                       end(parameter_names_for_transformation),
                       parameter->name) !=
             end(parameter_names_for_transformation))
         {
-            if (!_local_coordinate_system)
+            if (!local_coordinate_system_)
             {
                 OGS_FATAL(
                     "The parameter '{:s}' is using the local coordinate system "
                     "but no local coordinate system was provided.",
                     parameter->name);
             }
-            parameter->setCoordinateSystem(*_local_coordinate_system);
+            parameter->setCoordinateSystem(*local_coordinate_system_);
         }
 
-        parameter->initialize(_parameters);
+        parameter->initialize(parameters_);
     }
 
     //! \ogs_file_param{prj__process_variables}
@@ -364,22 +364,22 @@ void ProjectData::parseProcessVariables(
         auto const mesh_name =
             //! \ogs_file_param{prj__process_variables__process_variable__mesh}
             var_config.getConfigParameter<std::string>("mesh",
-                                                       _mesh_vec[0]->getName());
+                                                       mesh_vec_[0]->getName());
 
         auto& mesh = *BaseLib::findElementOrError(
-            begin(_mesh_vec), end(_mesh_vec),
+            begin(mesh_vec_), end(mesh_vec_),
             [&mesh_name](auto const& m) { return m->getName() == mesh_name; },
             "Expected to find a mesh named " + mesh_name + ".");
 
-        auto pv = ProcessLib::ProcessVariable{var_config, mesh, _mesh_vec,
-                                              _parameters};
+        auto pv = ProcessLib::ProcessVariable{var_config, mesh, mesh_vec_,
+                                              parameters_};
         if (!names.insert(pv.getName()).second)
         {
             OGS_FATAL("A process variable with name `{:s}' already exists.",
                       pv.getName());
         }
 
-        _process_variables.push_back(std::move(pv));
+        process_variables_.push_back(std::move(pv));
     }
 }
 
@@ -397,7 +397,7 @@ std::vector<std::string> ProjectData::parseParameters(
          parameters_config.getConfigSubtreeList("parameter"))
     {
         auto p =
-            ParameterLib::createParameter(parameter_config, _mesh_vec, _curves);
+            ParameterLib::createParameter(parameter_config, mesh_vec_, curves_);
         if (!names.insert(p->name).second)
         {
             OGS_FATAL("A parameter with name `{:s}' already exists.", p->name);
@@ -412,10 +412,10 @@ std::vector<std::string> ProjectData::parseParameters(
             parameter_names_for_transformation.push_back(p->name);
         }
 
-        _parameters.push_back(std::move(p));
+        parameters_.push_back(std::move(p));
     }
 
-    _parameters.push_back(
+    parameters_.push_back(
         std::make_unique<ParameterLib::ConstantParameter<double>>(
             ProcessLib::DeactivatedSubdomain::zero_parameter_name, 0.0));
 
@@ -432,7 +432,7 @@ void ProjectData::parseMedia(
 
     DBUG("Reading media:");
 
-    if (_mesh_vec.empty() || _mesh_vec[0] == nullptr)
+    if (mesh_vec_.empty() || mesh_vec_[0] == nullptr)
     {
         ERR("A mesh is required to define medium materials.");
         return;
@@ -473,7 +473,7 @@ void ProjectData::parseMedia(
 
         for (auto const& id : material_ids)
         {
-            if (_media.find(id) != end(_media))
+            if (media_.find(id) != end(media_))
             {
                 OGS_FATAL(
                     "Multiple media were specified for the same material id "
@@ -483,18 +483,18 @@ void ProjectData::parseMedia(
                     id);
             }
 
-            _media[id] =
+            media_[id] =
                 (id == material_ids[0])
                     ? MaterialPropertyLib::createMedium(
-                          medium_config, _parameters,
-                          _local_coordinate_system ? &*_local_coordinate_system
+                          medium_config, parameters_,
+                          local_coordinate_system_ ? &*local_coordinate_system_
                                                    : nullptr,
-                          _curves)
-                    : _media[material_ids[0]];
+                          curves_)
+                    : media_[material_ids[0]];
         }
     }
 
-    if (_media.empty())
+    if (media_.empty())
     {
         OGS_FATAL("No entity is found inside <media>.");
     }
@@ -524,9 +524,9 @@ void ProjectData::parseChemicalSolverInterface(
             "Configuring phreeqc interface for water chemistry "
             "calculation using file-based approach.");
 
-        _chemical_solver_interface =
+        chemical_solver_interface_ =
             ChemistryLib::createChemicalSolverInterface<
-                ChemistryLib::ChemicalSolver::Phreeqc>(_mesh_vec, *config,
+                ChemistryLib::ChemicalSolver::Phreeqc>(mesh_vec_, *config,
                                                        output_directory);
     }
     else if (boost::iequals(chemical_solver, "PhreeqcKernel"))
@@ -593,9 +593,9 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
             // here.
             process =
                 ProcessLib::SteadyStateDiffusion::createSteadyStateDiffusion(
-                    name, *_mesh_vec[0], std::move(jacobian_assembler),
-                    _process_variables, _parameters, integration_order,
-                    process_config, _mesh_vec, output_directory, _media);
+                    name, *mesh_vec_[0], std::move(jacobian_assembler),
+                    process_variables_, parameters_, integration_order,
+                    process_config, mesh_vec_, output_directory, media_);
         }
         else
 #endif
@@ -603,9 +603,9 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
             if (type == "LIQUID_FLOW")
         {
             process = ProcessLib::LiquidFlow::createLiquidFlowProcess(
-                name, *_mesh_vec[0], std::move(jacobian_assembler),
-                _process_variables, _parameters, integration_order,
-                process_config, _mesh_vec, output_directory, _media);
+                name, *mesh_vec_[0], std::move(jacobian_assembler),
+                process_variables_, parameters_, integration_order,
+                process_config, mesh_vec_, output_directory, media_);
         }
         else
 #endif
@@ -613,8 +613,8 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
             if (type == "TES")
         {
             process = ProcessLib::TES::createTESProcess(
-                name, *_mesh_vec[0], std::move(jacobian_assembler),
-                _process_variables, _parameters, integration_order,
+                name, *mesh_vec_[0], std::move(jacobian_assembler),
+                process_variables_, parameters_, integration_order,
                 process_config);
         }
         else
@@ -623,8 +623,8 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
             if (type == "HEAT_CONDUCTION")
         {
             process = ProcessLib::HeatConduction::createHeatConductionProcess(
-                name, *_mesh_vec[0], std::move(jacobian_assembler),
-                _process_variables, _parameters, integration_order,
+                name, *mesh_vec_[0], std::move(jacobian_assembler),
+                process_variables_, parameters_, integration_order,
                 process_config);
         }
         else
@@ -632,7 +632,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
 #ifdef OGS_BUILD_PROCESS_HEATTRANSPORTBHE
             if (type == "HEAT_TRANSPORT_BHE")
         {
-            if (_mesh_vec[0]->getDimension() != 3)
+            if (mesh_vec_[0]->getDimension() != 3)
             {
                 OGS_FATAL(
                     "HEAT_TRANSPORT_BHE can only work with a 3-dimentional "
@@ -641,9 +641,9 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
 
             process =
                 ProcessLib::HeatTransportBHE::createHeatTransportBHEProcess(
-                    name, *_mesh_vec[0], std::move(jacobian_assembler),
-                    _process_variables, _parameters, integration_order,
-                    process_config, _curves, _media);
+                    name, *mesh_vec_[0], std::move(jacobian_assembler),
+                    process_variables_, parameters_, integration_order,
+                    process_config, curves_, media_);
         }
         else
 #endif
@@ -656,20 +656,20 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                 case 2:
                     process =
                         ProcessLib::HydroMechanics::createHydroMechanicsProcess<
-                            2>(name, *_mesh_vec[0],
+                            2>(name, *mesh_vec_[0],
                                std::move(jacobian_assembler),
-                               _process_variables, _parameters,
-                               _local_coordinate_system, integration_order,
-                               process_config, _media);
+                               process_variables_, parameters_,
+                               local_coordinate_system_, integration_order,
+                               process_config, media_);
                     break;
                 case 3:
                     process =
                         ProcessLib::HydroMechanics::createHydroMechanicsProcess<
-                            3>(name, *_mesh_vec[0],
+                            3>(name, *mesh_vec_[0],
                                std::move(jacobian_assembler),
-                               _process_variables, _parameters,
-                               _local_coordinate_system, integration_order,
-                               process_config, _media);
+                               process_variables_, parameters_,
+                               local_coordinate_system_, integration_order,
+                               process_config, media_);
                     break;
                 default:
                     OGS_FATAL(
@@ -688,17 +688,17 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                 case 2:
                     process = ProcessLib::LIE::HydroMechanics::
                         createHydroMechanicsProcess<2>(
-                            name, *_mesh_vec[0], std::move(jacobian_assembler),
-                            _process_variables, _parameters,
-                            _local_coordinate_system, integration_order,
+                            name, *mesh_vec_[0], std::move(jacobian_assembler),
+                            process_variables_, parameters_,
+                            local_coordinate_system_, integration_order,
                             process_config);
                     break;
                 case 3:
                     process = ProcessLib::LIE::HydroMechanics::
                         createHydroMechanicsProcess<3>(
-                            name, *_mesh_vec[0], std::move(jacobian_assembler),
-                            _process_variables, _parameters,
-                            _local_coordinate_system, integration_order,
+                            name, *mesh_vec_[0], std::move(jacobian_assembler),
+                            process_variables_, parameters_,
+                            local_coordinate_system_, integration_order,
                             process_config);
                     break;
                 default:
@@ -713,9 +713,9 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
             if (type == "HT")
         {
             process = ProcessLib::HT::createHTProcess(
-                name, *_mesh_vec[0], std::move(jacobian_assembler),
-                _process_variables, _parameters, integration_order,
-                process_config, _mesh_vec, output_directory, _media);
+                name, *mesh_vec_[0], std::move(jacobian_assembler),
+                process_variables_, parameters_, integration_order,
+                process_config, mesh_vec_, output_directory, media_);
         }
         else
 #endif
@@ -724,32 +724,32 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
         {
             process =
                 ProcessLib::ComponentTransport::createComponentTransportProcess(
-                    name, *_mesh_vec[0], std::move(jacobian_assembler),
-                    _process_variables, _parameters, integration_order,
-                    process_config, _mesh_vec, output_directory, _media,
-                    _chemical_solver_interface);
+                    name, *mesh_vec_[0], std::move(jacobian_assembler),
+                    process_variables_, parameters_, integration_order,
+                    process_config, mesh_vec_, output_directory, media_,
+                    chemical_solver_interface_);
         }
         else
 #endif
 #ifdef OGS_BUILD_PROCESS_PHASEFIELD
             if (type == "PHASE_FIELD")
         {
-            switch (_mesh_vec[0]->getDimension())
+            switch (mesh_vec_[0]->getDimension())
             {
                 case 2:
                     process =
                         ProcessLib::PhaseField::createPhaseFieldProcess<2>(
-                            name, *_mesh_vec[0], std::move(jacobian_assembler),
-                            _process_variables, _parameters,
-                            _local_coordinate_system, integration_order,
+                            name, *mesh_vec_[0], std::move(jacobian_assembler),
+                            process_variables_, parameters_,
+                            local_coordinate_system_, integration_order,
                             process_config);
                     break;
                 case 3:
                     process =
                         ProcessLib::PhaseField::createPhaseFieldProcess<3>(
-                            name, *_mesh_vec[0], std::move(jacobian_assembler),
-                            _process_variables, _parameters,
-                            _local_coordinate_system, integration_order,
+                            name, *mesh_vec_[0], std::move(jacobian_assembler),
+                            process_variables_, parameters_,
+                            local_coordinate_system_, integration_order,
                             process_config);
                     break;
             }
@@ -761,8 +761,8 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
         {
             process = ProcessLib::RichardsComponentTransport::
                 createRichardsComponentTransportProcess(
-                    name, *_mesh_vec[0], std::move(jacobian_assembler),
-                    _process_variables, _parameters, integration_order,
+                    name, *mesh_vec_[0], std::move(jacobian_assembler),
+                    process_variables_, parameters_, integration_order,
                     process_config);
         }
         else
@@ -770,22 +770,22 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
 #ifdef OGS_BUILD_PROCESS_SMALLDEFORMATION
             if (type == "SMALL_DEFORMATION")
         {
-            switch (_mesh_vec[0]->getDimension())
+            switch (mesh_vec_[0]->getDimension())
             {
                 case 2:
                     process = ProcessLib::SmallDeformation::
                         createSmallDeformationProcess<2>(
-                            name, *_mesh_vec[0], std::move(jacobian_assembler),
-                            _process_variables, _parameters,
-                            _local_coordinate_system, integration_order,
+                            name, *mesh_vec_[0], std::move(jacobian_assembler),
+                            process_variables_, parameters_,
+                            local_coordinate_system_, integration_order,
                             process_config);
                     break;
                 case 3:
                     process = ProcessLib::SmallDeformation::
                         createSmallDeformationProcess<3>(
-                            name, *_mesh_vec[0], std::move(jacobian_assembler),
-                            _process_variables, _parameters,
-                            _local_coordinate_system, integration_order,
+                            name, *mesh_vec_[0], std::move(jacobian_assembler),
+                            process_variables_, parameters_,
+                            local_coordinate_system_, integration_order,
                             process_config);
                     break;
                 default:
@@ -799,29 +799,29 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
 #ifdef OGS_BUILD_PROCESS_SMALLDEFORMATIONNONLOCAL
             if (type == "SMALL_DEFORMATION_NONLOCAL")
         {
-            switch (_mesh_vec[0]->getDimension())
+            switch (mesh_vec_[0]->getDimension())
             {
                 case 2:
                     process = ProcessLib::SmallDeformationNonlocal::
                         createSmallDeformationNonlocalProcess<2>(
-                            name, *_mesh_vec[0], std::move(jacobian_assembler),
-                            _process_variables, _parameters,
-                            _local_coordinate_system, integration_order,
+                            name, *mesh_vec_[0], std::move(jacobian_assembler),
+                            process_variables_, parameters_,
+                            local_coordinate_system_, integration_order,
                             process_config);
                     break;
                 case 3:
                     process = ProcessLib::SmallDeformationNonlocal::
                         createSmallDeformationNonlocalProcess<3>(
-                            name, *_mesh_vec[0], std::move(jacobian_assembler),
-                            _process_variables, _parameters,
-                            _local_coordinate_system, integration_order,
+                            name, *mesh_vec_[0], std::move(jacobian_assembler),
+                            process_variables_, parameters_,
+                            local_coordinate_system_, integration_order,
                             process_config);
                     break;
                 default:
                     OGS_FATAL(
                         "SMALL_DEFORMATION_NONLOCAL process does not support "
                         "given dimension {:d}",
-                        _mesh_vec[0]->getDimension());
+                        mesh_vec_[0]->getDimension());
             }
         }
         else
@@ -835,17 +835,17 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                 case 2:
                     process = ProcessLib::LIE::SmallDeformation::
                         createSmallDeformationProcess<2>(
-                            name, *_mesh_vec[0], std::move(jacobian_assembler),
-                            _process_variables, _parameters,
-                            _local_coordinate_system, integration_order,
+                            name, *mesh_vec_[0], std::move(jacobian_assembler),
+                            process_variables_, parameters_,
+                            local_coordinate_system_, integration_order,
                             process_config);
                     break;
                 case 3:
                     process = ProcessLib::LIE::SmallDeformation::
                         createSmallDeformationProcess<3>(
-                            name, *_mesh_vec[0], std::move(jacobian_assembler),
-                            _process_variables, _parameters,
-                            _local_coordinate_system, integration_order,
+                            name, *mesh_vec_[0], std::move(jacobian_assembler),
+                            process_variables_, parameters_,
+                            local_coordinate_system_, integration_order,
                             process_config);
                     break;
                 default:
@@ -865,18 +865,18 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                 case 2:
                     process = ProcessLib::ThermoHydroMechanics::
                         createThermoHydroMechanicsProcess<2>(
-                            name, *_mesh_vec[0], std::move(jacobian_assembler),
-                            _process_variables, _parameters,
-                            _local_coordinate_system, integration_order,
-                            process_config, _media);
+                            name, *mesh_vec_[0], std::move(jacobian_assembler),
+                            process_variables_, parameters_,
+                            local_coordinate_system_, integration_order,
+                            process_config, media_);
                     break;
                 case 3:
                     process = ProcessLib::ThermoHydroMechanics::
                         createThermoHydroMechanicsProcess<3>(
-                            name, *_mesh_vec[0], std::move(jacobian_assembler),
-                            _process_variables, _parameters,
-                            _local_coordinate_system, integration_order,
-                            process_config, _media);
+                            name, *mesh_vec_[0], std::move(jacobian_assembler),
+                            process_variables_, parameters_,
+                            local_coordinate_system_, integration_order,
+                            process_config, media_);
                     break;
                 default:
                     OGS_FATAL(
@@ -889,22 +889,22 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
 #ifdef OGS_BUILD_PROCESS_THERMOMECHANICALPHASEFIELD
             if (type == "THERMO_MECHANICAL_PHASE_FIELD")
         {
-            switch (_mesh_vec[0]->getDimension())
+            switch (mesh_vec_[0]->getDimension())
             {
                 case 2:
                     process = ProcessLib::ThermoMechanicalPhaseField::
                         createThermoMechanicalPhaseFieldProcess<2>(
-                            name, *_mesh_vec[0], std::move(jacobian_assembler),
-                            _process_variables, _parameters,
-                            _local_coordinate_system, integration_order,
+                            name, *mesh_vec_[0], std::move(jacobian_assembler),
+                            process_variables_, parameters_,
+                            local_coordinate_system_, integration_order,
                             process_config);
                     break;
                 case 3:
                     process = ProcessLib::ThermoMechanicalPhaseField::
                         createThermoMechanicalPhaseFieldProcess<3>(
-                            name, *_mesh_vec[0], std::move(jacobian_assembler),
-                            _process_variables, _parameters,
-                            _local_coordinate_system, integration_order,
+                            name, *mesh_vec_[0], std::move(jacobian_assembler),
+                            process_variables_, parameters_,
+                            local_coordinate_system_, integration_order,
                             process_config);
                     break;
             }
@@ -914,22 +914,22 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
 #ifdef OGS_BUILD_PROCESS_THERMOMECHANICS
             if (type == "THERMO_MECHANICS")
         {
-            switch (_mesh_vec[0]->getDimension())
+            switch (mesh_vec_[0]->getDimension())
             {
                 case 2:
                     process = ProcessLib::ThermoMechanics::
                         createThermoMechanicsProcess<2>(
-                            name, *_mesh_vec[0], std::move(jacobian_assembler),
-                            _process_variables, _parameters,
-                            _local_coordinate_system, integration_order,
+                            name, *mesh_vec_[0], std::move(jacobian_assembler),
+                            process_variables_, parameters_,
+                            local_coordinate_system_, integration_order,
                             process_config);
                     break;
                 case 3:
                     process = ProcessLib::ThermoMechanics::
                         createThermoMechanicsProcess<3>(
-                            name, *_mesh_vec[0], std::move(jacobian_assembler),
-                            _process_variables, _parameters,
-                            _local_coordinate_system, integration_order,
+                            name, *mesh_vec_[0], std::move(jacobian_assembler),
+                            process_variables_, parameters_,
+                            local_coordinate_system_, integration_order,
                             process_config);
                     break;
             }
@@ -940,9 +940,9 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
             if (type == "RICHARDS_FLOW")
         {
             process = ProcessLib::RichardsFlow::createRichardsFlowProcess(
-                name, *_mesh_vec[0], std::move(jacobian_assembler),
-                _process_variables, _parameters, integration_order,
-                process_config, _curves, _media);
+                name, *mesh_vec_[0], std::move(jacobian_assembler),
+                process_variables_, parameters_, integration_order,
+                process_config, curves_, media_);
         }
         else
 #endif
@@ -955,18 +955,18 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                 case 2:
                     process = ProcessLib::RichardsMechanics::
                         createRichardsMechanicsProcess<2>(
-                            name, *_mesh_vec[0], std::move(jacobian_assembler),
-                            _process_variables, _parameters,
-                            _local_coordinate_system, integration_order,
-                            process_config, _media);
+                            name, *mesh_vec_[0], std::move(jacobian_assembler),
+                            process_variables_, parameters_,
+                            local_coordinate_system_, integration_order,
+                            process_config, media_);
                     break;
                 case 3:
                     process = ProcessLib::RichardsMechanics::
                         createRichardsMechanicsProcess<3>(
-                            name, *_mesh_vec[0], std::move(jacobian_assembler),
-                            _process_variables, _parameters,
-                            _local_coordinate_system, integration_order,
-                            process_config, _media);
+                            name, *mesh_vec_[0], std::move(jacobian_assembler),
+                            process_variables_, parameters_,
+                            local_coordinate_system_, integration_order,
+                            process_config, media_);
                     break;
             }
         }
@@ -977,9 +977,9 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
         {
             process =
                 ProcessLib::TwoPhaseFlowWithPP::createTwoPhaseFlowWithPPProcess(
-                    name, *_mesh_vec[0], std::move(jacobian_assembler),
-                    _process_variables, _parameters, integration_order,
-                    process_config, _curves, _media);
+                    name, *mesh_vec_[0], std::move(jacobian_assembler),
+                    process_variables_, parameters_, integration_order,
+                    process_config, curves_, media_);
         }
         else
 #endif
@@ -988,9 +988,9 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
         {
             process = ProcessLib::TwoPhaseFlowWithPrho::
                 createTwoPhaseFlowWithPrhoProcess(
-                    name, *_mesh_vec[0], std::move(jacobian_assembler),
-                    _process_variables, _parameters, integration_order,
-                    process_config, _curves);
+                    name, *mesh_vec_[0], std::move(jacobian_assembler),
+                    process_variables_, parameters_, integration_order,
+                    process_config, curves_);
         }
         else
 #endif
@@ -999,9 +999,9 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
         {
             process = ProcessLib::ThermalTwoPhaseFlowWithPP::
                 createThermalTwoPhaseFlowWithPPProcess(
-                    name, *_mesh_vec[0], std::move(jacobian_assembler),
-                    _process_variables, _parameters, integration_order,
-                    process_config, _curves);
+                    name, *mesh_vec_[0], std::move(jacobian_assembler),
+                    process_variables_, parameters_, integration_order,
+                    process_config, curves_);
         }
         else
 #endif
@@ -1010,14 +1010,14 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
         }
 
         if (BaseLib::containsIf(
-                _processes,
+                processes_,
                 [&name](std::unique_ptr<ProcessLib::Process> const& p) {
                     return p->name == name;
                 }))
         {
             OGS_FATAL("The process name '{:s}' is not unique.", name);
         }
-        _processes.push_back(std::move(process));
+        processes_.push_back(std::move(process));
     }
 }
 
@@ -1026,11 +1026,11 @@ void ProjectData::parseTimeLoop(BaseLib::ConfigTree const& config,
 {
     DBUG("Reading time loop configuration.");
 
-    _time_loop = ProcessLib::createTimeLoop(
-        config, output_directory, _processes, _nonlinear_solvers, _mesh_vec,
-        _chemical_solver_interface);
+    time_loop_ = ProcessLib::createTimeLoop(
+        config, output_directory, processes_, nonlinear_solvers_, mesh_vec_,
+        chemical_solver_interface_);
 
-    if (!_time_loop)
+    if (!time_loop_)
     {
         OGS_FATAL("Initialization of time loop failed.");
     }
@@ -1046,7 +1046,7 @@ void ProjectData::parseLinearSolvers(BaseLib::ConfigTree const& config)
         //! \ogs_file_param{prj__linear_solvers__linear_solver__name}
         auto const name = conf.getConfigParameter<std::string>("name");
         BaseLib::insertIfKeyUniqueElseError(
-            _linear_solvers,
+            linear_solvers_,
             name,
             std::make_unique<GlobalLinearSolver>("", &conf),
             "The linear solver name is not unique");
@@ -1064,13 +1064,13 @@ void ProjectData::parseNonlinearSolvers(BaseLib::ConfigTree const& config)
             //! \ogs_file_param{prj__nonlinear_solvers__nonlinear_solver__linear_solver}
             conf.getConfigParameter<std::string>("linear_solver");
         auto& linear_solver = BaseLib::getOrError(
-            _linear_solvers, ls_name,
+            linear_solvers_, ls_name,
             "A linear solver with the given name does not exist.");
 
         //! \ogs_file_param{prj__nonlinear_solvers__nonlinear_solver__name}
         auto const name = conf.getConfigParameter<std::string>("name");
         BaseLib::insertIfKeyUniqueElseError(
-            _nonlinear_solvers,
+            nonlinear_solvers_,
             name,
             NumLib::createNonlinearSolver(*linear_solver, conf).first,
             "The nonlinear solver name is not unique");
@@ -1093,7 +1093,7 @@ void ProjectData::parseCurves(
         //! \ogs_file_param{prj__curves__curve__name}
         auto const name = conf.getConfigParameter<std::string>("name");
         BaseLib::insertIfKeyUniqueElseError(
-            _curves,
+            curves_,
             name,
             MathLib::createPiecewiseLinearCurve<
                 MathLib::PiecewiseLinearInterpolation>(conf),

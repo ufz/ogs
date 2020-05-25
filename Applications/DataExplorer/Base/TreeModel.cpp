@@ -26,16 +26,16 @@
 TreeModel::TreeModel( QObject* parent )
     : QAbstractItemModel(parent)
 {
-    //_modelType = TREE_MODEL;
+    //modelType_ = TREE_MODEL;
     QList<QVariant> rootData;
     rootData << "1" << "2" << "3";
-    _rootItem = new TreeItem(rootData, nullptr);
-    //setupModelData(data, _rootItem);
+    rootItem_ = new TreeItem(rootData, nullptr);
+    //setupModelData(data, rootItem_);
 }
 
 TreeModel::~TreeModel()
 {
-    delete _rootItem;
+    delete rootItem_;
 }
 
 /**
@@ -59,7 +59,7 @@ QModelIndex TreeModel::index(int row, int column, const QModelIndex &parent) con
 
     if (!parent.isValid())
     {
-        parentItem = _rootItem;
+        parentItem = rootItem_;
     }
     else
     {
@@ -88,7 +88,7 @@ QModelIndex TreeModel::parent(const QModelIndex &index) const
     auto* childItem = static_cast<TreeItem*>(index.internalPointer());
     TreeItem* parentItem = childItem->parentItem();
 
-    if (parentItem == _rootItem)
+    if (parentItem == rootItem_)
     {
         return QModelIndex();
     }
@@ -110,7 +110,7 @@ int TreeModel::rowCount(const QModelIndex &parent) const
 
     if (!parent.isValid())
     {
-        parentItem = _rootItem;
+        parentItem = rootItem_;
     }
     else
     {
@@ -130,7 +130,7 @@ int TreeModel::columnCount(const QModelIndex &parent) const
         return static_cast<TreeItem*>(parent.internalPointer())->columnCount();
     }
 
-    return _rootItem->columnCount();
+    return rootItem_->columnCount();
 }
 
 void TreeModel::updateData()
@@ -195,14 +195,14 @@ TreeItem* TreeModel::getItem(const QModelIndex &index) const
             return item;
         }
     }
-    return _rootItem;
+    return rootItem_;
 }
 
 QVariant TreeModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
     {
-        return _rootItem->data(section);
+        return rootItem_->data(section);
     }
 
     return QVariant();
@@ -290,5 +290,5 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem* parent)
 
 TreeItem* TreeModel::rootItem() const
 {
-    return _rootItem;
+    return rootItem_;
 }

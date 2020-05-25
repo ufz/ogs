@@ -18,7 +18,7 @@
 
 
 MeshValueEditDialog::MeshValueEditDialog(MeshLib::Mesh* mesh, QDialog* parent)
-    : QDialog(parent), _mesh(mesh)
+    : QDialog(parent), mesh_(mesh)
 {
     setupUi(this);
     this->edit_old_value->setEnabled(false);
@@ -32,7 +32,7 @@ void MeshValueEditDialog::accept()
 {
     if (this->condenseButton->isChecked())
     {
-        MeshLib::ElementValueModification::condense(*_mesh);
+        MeshLib::ElementValueModification::condense(*mesh_);
     }
     else
     {
@@ -49,7 +49,7 @@ void MeshValueEditDialog::accept()
         }
         unsigned new_value = static_cast<unsigned>(this->edit_new_value->text().toInt());
         bool do_not_replace = this->replaceCheckBox->isChecked();
-        bool result = MeshLib::ElementValueModification::replace(*_mesh, old_value, new_value, !do_not_replace);
+        bool result = MeshLib::ElementValueModification::replace(*mesh_, old_value, new_value, !do_not_replace);
         if (!result && do_not_replace)
         {
             OGSError::box("The new material group already exists.");
@@ -57,7 +57,7 @@ void MeshValueEditDialog::accept()
         }
     }
 
-    emit valueEditFinished(_mesh);
+    emit valueEditFinished(mesh_);
     this->done(QDialog::Accepted);
 }
 

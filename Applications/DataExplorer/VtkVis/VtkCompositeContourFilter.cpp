@@ -33,17 +33,17 @@ VtkCompositeContourFilter::~VtkCompositeContourFilter() = default;
 void VtkCompositeContourFilter::init()
 {
     // Set meta information about input and output data types
-    this->_inputDataObjectType = VTK_UNSTRUCTURED_GRID; //VTK_DATA_SET;
-    this->_outputDataObjectType = VTK_UNSTRUCTURED_GRID;
+    this->inputDataObjectType_ = VTK_UNSTRUCTURED_GRID; //VTK_DATA_SET;
+    this->outputDataObjectType_ = VTK_UNSTRUCTURED_GRID;
 
     // Because this is the only filter here we cannot use vtkSmartPointer
     vtkContourFilter* contour = vtkContourFilter::New();
-    contour->SetInputConnection(_inputAlgorithm->GetOutputPort());
+    contour->SetInputConnection(inputAlgorithm_->GetOutputPort());
 
     // Getting the scalar range from the active point data scalar of the input algorithm
     // This assumes that we do not want to contour on cell data.
     double range[2];
-    vtkDataSet* dataSet = vtkDataSet::SafeDownCast(_inputAlgorithm->GetOutputDataObject(0));
+    vtkDataSet* dataSet = vtkDataSet::SafeDownCast(inputAlgorithm_->GetOutputDataObject(0));
     if(dataSet)
     {
         vtkPointData* pointData = dataSet->GetPointData();
@@ -69,13 +69,13 @@ void VtkCompositeContourFilter::init()
     contourRangeList.push_back(range[0]);
     contourRangeList.push_back(range[1]);
     // Put that list in the property map
-    (*_algorithmUserVectorProperties)["Range"] = contourRangeList;
+    (*algorithmUserVectorProperties_)["Range"] = contourRangeList;
 
     // Make a new entry in the property map for the "Number of Values" property
-    (*_algorithmUserProperties)["Number of Contours"] = 10;
+    (*algorithmUserProperties_)["Number of Contours"] = 10;
 
-    // The threshold filter is last one and so it is also the _outputAlgorithm
-    _outputAlgorithm = contour;
+    // The threshold filter is last one and so it is also the outputAlgorithm_
+    outputAlgorithm_ = contour;
 }
 
 void VtkCompositeContourFilter::SetUserProperty( QString name, QVariant value )
@@ -85,7 +85,7 @@ void VtkCompositeContourFilter::SetUserProperty( QString name, QVariant value )
     // Use the same name as in init()
     if (name.compare("Number of Contours") == 0)
     {
-        static_cast<vtkContourFilter*>(_outputAlgorithm)
+        static_cast<vtkContourFilter*>(outputAlgorithm_)
             ->SetNumberOfContours(value.toInt());
     }
 }
@@ -97,7 +97,7 @@ void VtkCompositeContourFilter::SetUserVectorProperty( QString name, QList<QVari
     // Use the same name as in init()
     if (name.compare("Range") == 0)
     {
-        static_cast<vtkContourFilter*>(_outputAlgorithm)
+        static_cast<vtkContourFilter*>(outputAlgorithm_)
             ->GenerateValues(
                 VtkAlgorithmProperties::GetUserProperty("Number of Contours")
                     .toInt(),

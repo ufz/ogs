@@ -36,7 +36,7 @@
 namespace FileIO
 {
 XmlPrjInterface::XmlPrjInterface(DataHolderLib::Project& project)
-    : XMLQtInterface("OpenGeoSysProject.xsd"), _filename(""), _project(project)
+    : XMLQtInterface("OpenGeoSysProject.xsd"), filename_(""), project_(project)
 {
 }
 
@@ -54,7 +54,7 @@ int XmlPrjInterface::readFile(const QString& fileName)
     QDomNode param_root = QDomNode();
     QDomNode pvar_root = QDomNode();
     QDomDocument doc("OGS-PROJECT-DOM");
-    doc.setContent(_fileData);
+    doc.setContent(fileData_);
     QDomElement docElement = doc.documentElement();  // OpenGeoSysProject
     if (docElement.nodeName().compare("OpenGeoSysProject"))
     {
@@ -67,7 +67,7 @@ int XmlPrjInterface::readFile(const QString& fileName)
             MeshLib::IO::readMeshFromFile(mesh_str.toStdString())};
         if (mesh != nullptr)
         {
-            _project.addMesh(std::move(mesh));
+            project_.addMesh(std::move(mesh));
         }
     };
 
@@ -85,7 +85,7 @@ int XmlPrjInterface::readFile(const QString& fileName)
 
         if (node_name == "geometry")
         {
-            GeoLib::IO::XmlGmlInterface gml(_project.getGEOObjects());
+            GeoLib::IO::XmlGmlInterface gml(project_.getGEOObjects());
             try
             {
                 gml.readFile(QString(path + file_name));
@@ -98,7 +98,7 @@ int XmlPrjInterface::readFile(const QString& fileName)
         }
         else if (node_name == "stations")
         {
-            GeoLib::IO::XmlStnInterface stn(_project.getGEOObjects());
+            GeoLib::IO::XmlStnInterface stn(project_.getGEOObjects());
             stn.readFile(QString(path + file_name));
         }
         else if (node_name == "mesh")
@@ -235,7 +235,7 @@ void XmlPrjInterface::readBoundaryConditions(
         if (cond->getType() !=
             DataHolderLib::BoundaryCondition::ConditionType::NONE)
         {
-            _project.addBoundaryCondition(std::move(cond));
+            project_.addBoundaryCondition(std::move(cond));
         }
 
         bc = bc.nextSibling();
@@ -254,7 +254,7 @@ void XmlPrjInterface::readSourceTerms(
             parseCondition<DataHolderLib::SourceTerm>(st, param_root, pvar));
         if (cond->getType() != DataHolderLib::SourceTerm::ConditionType::NONE)
         {
-            _project.addSourceTerm(std::move(cond));
+            project_.addSourceTerm(std::move(cond));
         }
         st = st.nextSibling();
     }
@@ -333,19 +333,19 @@ T* XmlPrjInterface::parseCondition(
 
 int XmlPrjInterface::writeToFile(const std::string& filename)
 {
-    _filename = filename;
+    filename_ = filename;
     return BaseLib::IO::Writer::writeToFile(filename);
 }
 
 bool XmlPrjInterface::write()
 {
-    GeoLib::GEOObjects& geo_objects = _project.getGEOObjects();
-    QFileInfo fi(QString::fromStdString(_filename));
+    GeoLib::GEOObjects& geo_objects = project_.getGEOObjects();
+    QFileInfo fi(QString::fromStdString(filename_));
     std::string path((fi.absolutePath()).toStdString() + "/");
 
-    _out << "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n";  // xml
+    out_ << "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n";  // xml
                                                                   // definition
-    _out << "<?xml-stylesheet type=\"text/xsl\" "
+    out_ << "<?xml-stylesheet type=\"text/xsl\" "
             "href=\"OpenGeoSysProject.xsl\"?>\n\n";  // stylefile definition
 
     QDomDocument doc("OGS-PROJECT-DOM");
@@ -356,7 +356,7 @@ bool XmlPrjInterface::write()
     doc.appendChild(root);
 
     // meshes
-    auto const& mesh_vector = _project.getMeshObjects();
+    auto const& mesh_vector = project_.getMeshObjects();
     for (auto const& mesh : mesh_vector)
     {
         // write mesh file
@@ -415,15 +415,15 @@ bool XmlPrjInterface::write()
                 name);
     }
 
-    if (!_project.getBoundaryConditions().empty() ||
-        !_project.getSourceTerms().empty())
+    if (!project_.getBoundaryConditions().empty() ||
+        !project_.getSourceTerms().empty())
     {
         // parameters
         writeProcessVariables(doc, root);
     }
 
     std::string xml = doc.toString().toStdString();
-    _out << xml;
+    out_ << xml;
     return true;
 }
 
@@ -449,9 +449,9 @@ std::vector<DataHolderLib::ProcessVariable>
 XmlPrjInterface::getPrimaryVariableVec() const
 {
     std::vector<std::unique_ptr<DataHolderLib::BoundaryCondition>> const&
-        boundary_conditions = _project.getBoundaryConditions();
+        boundary_conditions = project_.getBoundaryConditions();
     std::vector<std::unique_ptr<DataHolderLib::SourceTerm>> const&
-        source_terms = _project.getSourceTerms();
+        source_terms = project_.getSourceTerms();
 
     std::vector<DataHolderLib::ProcessVariable> p_vars;
     for (auto& bc : boundary_conditions)
@@ -517,7 +517,7 @@ void XmlPrjInterface::writeBoundaryConditions(QDomDocument& doc,
                                               std::string const& name) const
 {
     std::vector<std::unique_ptr<DataHolderLib::BoundaryCondition>> const&
-        boundary_conditions = _project.getBoundaryConditions();
+        boundary_conditions = project_.getBoundaryConditions();
     for (auto& bc : boundary_conditions)
     {
         if (bc->getProcessVarName() != name)
@@ -535,7 +535,7 @@ void XmlPrjInterface::writeSourceTerms(QDomDocument& doc,
                                        std::string const& name) const
 {
     std::vector<std::unique_ptr<DataHolderLib::SourceTerm>> const&
-        source_terms = _project.getSourceTerms();
+        source_terms = project_.getSourceTerms();
     for (auto& st : source_terms)
     {
         if (st->getProcessVarName() != name)

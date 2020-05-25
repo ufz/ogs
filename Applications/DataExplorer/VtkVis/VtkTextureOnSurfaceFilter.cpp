@@ -63,11 +63,11 @@ int VtkTextureOnSurfaceFilter::RequestData( vtkInformation* request,
     std::size_t imgWidth = dims[0];
     std::size_t imgHeight = dims[1];
 
-    std::pair<int, int> min(static_cast<int>(_origin.first),
-                            static_cast<int>(_origin.second));
+    std::pair<int, int> min(static_cast<int>(origin_.first),
+                            static_cast<int>(origin_.second));
     std::pair<int, int> max(
-        static_cast<int>(_origin.first + (imgWidth * _scalingFactor)),
-        static_cast<int>(_origin.second + (imgHeight * _scalingFactor)));
+        static_cast<int>(origin_.first + (imgWidth * scalingFactor_)),
+        static_cast<int>(origin_.second + (imgHeight * scalingFactor_)));
 
     //calculate texture coordinates
     vtkPoints* points = input->GetPoints();
@@ -149,8 +149,8 @@ void VtkTextureOnSurfaceFilter::SetRaster(vtkImageAlgorithm* img)
     this->SetTexture(texture);
 
     double* origin = img->GetOutput()->GetOrigin();
-    _origin = {origin[0], origin[1]};
-    _scalingFactor = img->GetOutput()->GetSpacing()[0];
+    origin_ = {origin[0], origin[1]};
+    scalingFactor_ = img->GetOutput()->GetSpacing()[0];
 }
 
 void VtkTextureOnSurfaceFilter::SetUserProperty( QString name, QVariant value )

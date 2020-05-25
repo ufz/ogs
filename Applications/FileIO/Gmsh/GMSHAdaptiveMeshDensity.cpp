@@ -33,16 +33,16 @@ namespace GMSH
 GMSHAdaptiveMeshDensity::GMSHAdaptiveMeshDensity(double pnt_density,
                                                  double station_density,
                                                  std::size_t max_pnts_per_leaf)
-    : _pnt_density(pnt_density),
-      _station_density(station_density),
-      _max_pnts_per_leaf(max_pnts_per_leaf),
-      _quad_tree(nullptr)
+    : pnt_density_(pnt_density),
+      station_density_(station_density),
+      max_pnts_per_leaf_(max_pnts_per_leaf),
+      quad_tree_(nullptr)
 {
 }
 
 GMSHAdaptiveMeshDensity::~GMSHAdaptiveMeshDensity()
 {
-    delete _quad_tree;
+    delete quad_tree_;
 }
 
 void GMSHAdaptiveMeshDensity::initialize(std::vector<GeoLib::Point const*> const& pnts)
@@ -75,7 +75,7 @@ void GMSHAdaptiveMeshDensity::initialize(std::vector<GeoLib::Point const*> const
 
     // *** QuadTree - create object
     DBUG("GMSHAdaptiveMeshDensity::init(): Creating quadtree.");
-    _quad_tree = new GeoLib::QuadTree<GeoLib::Point> (min, max, _max_pnts_per_leaf);
+    quad_tree_ = new GeoLib::QuadTree<GeoLib::Point> (min, max, max_pnts_per_leaf_);
     DBUG("GMSHAdaptiveMeshDensity::init(): \tok.");
 
     // *** QuadTree - insert points
@@ -92,26 +92,26 @@ void GMSHAdaptiveMeshDensity::addPoints(std::vector<GeoLib::Point const*> const&
         n_pnts);
     for (std::size_t k(0); k < n_pnts; k++)
     {
-        _quad_tree->addPoint(pnts[k]);
+        quad_tree_->addPoint(pnts[k]);
     }
     DBUG("GMSHAdaptiveMeshDensity::addPoints(): \tok.");
-    _quad_tree->balance();
+    quad_tree_->balance();
 }
 
 double GMSHAdaptiveMeshDensity::getMeshDensityAtPoint(GeoLib::Point const* const pnt) const
 {
     GeoLib::Point ll;
     GeoLib::Point ur;
-    _quad_tree->getLeaf(*pnt, ll, ur);
-    return _pnt_density * (ur[0] - ll[0]);
+    quad_tree_->getLeaf(*pnt, ll, ur);
+    return pnt_density_ * (ur[0] - ll[0]);
 }
 
 double GMSHAdaptiveMeshDensity::getMeshDensityAtStation(GeoLib::Point const* const pnt) const
 {
     GeoLib::Point ll;
     GeoLib::Point ur;
-    _quad_tree->getLeaf(*pnt, ll, ur);
-    return _station_density * (ur[0] - ll[0]);
+    quad_tree_->getLeaf(*pnt, ll, ur);
+    return station_density_ * (ur[0] - ll[0]);
 }
 
 void GMSHAdaptiveMeshDensity::getSteinerPoints (std::vector<GeoLib::Point*> & pnts,
@@ -119,10 +119,10 @@ void GMSHAdaptiveMeshDensity::getSteinerPoints (std::vector<GeoLib::Point*> & pn
 {
     // get Steiner points
     std::size_t max_depth(0);
-    _quad_tree->getMaxDepth(max_depth);
+    quad_tree_->getMaxDepth(max_depth);
 
     std::list<GeoLib::QuadTree<GeoLib::Point>*> leaf_list;
-    _quad_tree->getLeafs(leaf_list);
+    quad_tree_->getLeafs(leaf_list);
 
     for (std::list<GeoLib::QuadTree<GeoLib::Point>*>::const_iterator it(leaf_list.begin()); it
                     != leaf_list.end(); ++it) {
@@ -154,7 +154,7 @@ void GMSHAdaptiveMeshDensity::getQuadTreeGeometry(std::vector<GeoLib::Point*> &p
                                                   std::vector<GeoLib::Polyline*> &plys) const
 {
     std::list<GeoLib::QuadTree<GeoLib::Point>*> leaf_list;
-    _quad_tree->getLeafs(leaf_list);
+    quad_tree_->getLeafs(leaf_list);
 
     for (std::list<GeoLib::QuadTree<GeoLib::Point>*>::const_iterator it(leaf_list.begin()); it
         != leaf_list.end(); ++it) {

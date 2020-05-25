@@ -61,14 +61,14 @@ QVariant ColorTableModel::data( const QModelIndex& index, int role ) const
         return QVariant();
     }
 
-    if (index.row() >= _listOfPairs.size() || index.row() < 0)
+    if (index.row() >= listOfPairs_.size() || index.row() < 0)
     {
         return QVariant();
     }
 
     if (role == Qt::DisplayRole)
     {
-        QPair<QString, QColor> pair = _listOfPairs.at(index.row());
+        QPair<QString, QColor> pair = listOfPairs_.at(index.row());
 
         switch (index.column())
         {
@@ -104,7 +104,7 @@ bool ColorTableModel::buildTable(const std::map<std::string, DataHolderLib::Colo
          */
 
         QPair<QString, QColor> pair(name, color);
-        _listOfPairs.insert(count++, pair);
+        listOfPairs_.insert(count++, pair);
     }
 
     endInsertRows();

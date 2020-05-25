@@ -30,7 +30,7 @@ VtkAlgorithmPropertyVectorEdit::VtkAlgorithmPropertyVectorEdit(
     QVariant::Type type,
     VtkAlgorithmProperties* algProps,
     QWidget* parent /*= 0*/)
-    : QWidget(parent), _name(std::move(name)), _algProps(algProps), _type(type)
+    : QWidget(parent), name_(std::move(name)), algProps_(algProps), type_(type)
 {
     auto* layout = new QHBoxLayout;
     layout->setSpacing(3);
@@ -41,7 +41,7 @@ VtkAlgorithmPropertyVectorEdit::VtkAlgorithmPropertyVectorEdit(
         auto* lineEdit = new QLineEdit(content, this);
         layout->addWidget(lineEdit);
 
-        switch(_type)
+        switch(type_)
         {
         case QVariant::Double:
             lineEdit->setValidator(new QDoubleValidator(this));
@@ -74,7 +74,7 @@ void VtkAlgorithmPropertyVectorEdit::setNewValue()
         list.push_back(QVariant(lineEdit->text()));
     }
 
-    _algProps->SetUserVectorProperty(_name, list);
+    algProps_->SetUserVectorProperty(name_, list);
 
     emit editingFinished();
 }

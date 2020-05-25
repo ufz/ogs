@@ -31,9 +31,9 @@
 ElementTreeModel::ElementTreeModel(QObject* parent) : TreeModel(parent)
 {
     QList<QVariant> rootData;
-    delete _rootItem;
+    delete rootItem_;
     rootData << "Name" << "Type" << "" << "";
-    _rootItem = new TreeItem(rootData, nullptr);
+    rootItem_ = new TreeItem(rootData, nullptr);
 }
 
 ElementTreeModel::~ElementTreeModel() = default;
@@ -42,7 +42,7 @@ void ElementTreeModel::setElement(vtkUnstructuredGridAlgorithm const*const grid,
 {
     beginResetModel();
 
-    _mesh_source = grid;
+    mesh_source_ = grid;
     this->clearView();
 
     auto const* const source =
@@ -58,8 +58,8 @@ void ElementTreeModel::setElement(vtkUnstructuredGridAlgorithm const*const grid,
 
     QList<QVariant> elemData;
     elemData << "Element " + QString::number(elem_index) << "" << "" << "";
-    auto* elemItem = new TreeItem(elemData, _rootItem);
-    _rootItem->appendChild(elemItem);
+    auto* elemItem = new TreeItem(elemData, rootItem_);
+    rootItem_->appendChild(elemItem);
 
     QList<QVariant> typeData;
     typeData << "Element Type: " << QString::fromStdString(MeshElemType2String(elem->getGeomType()));
@@ -103,7 +103,7 @@ void ElementTreeModel::setElement(vtkUnstructuredGridAlgorithm const*const grid,
 void ElementTreeModel::clearView()
 {
     beginResetModel();
-    _rootItem->removeChildren(0, _rootItem->childCount());
+    rootItem_->removeChildren(0, rootItem_->childCount());
     endResetModel();
 }
 
@@ -115,18 +115,18 @@ void ElementTreeModel::setMesh(MeshLib::Mesh const& mesh)
 
     QList<QVariant> mesh_name;
     mesh_name << "Name:" << QString::fromStdString(mesh.getName()) << "" << "" << "";
-    auto* name_item = new TreeItem(mesh_name, _rootItem);
-    _rootItem->appendChild(name_item);
+    auto* name_item = new TreeItem(mesh_name, rootItem_);
+    rootItem_->appendChild(name_item);
 
     QList<QVariant> nodes_number;
     nodes_number << "#Nodes: " << QString::number(mesh.getNumberOfNodes()) << "" << "";
-    auto* nodes_item = new TreeItem(nodes_number, _rootItem);
-    _rootItem->appendChild(nodes_item);
+    auto* nodes_item = new TreeItem(nodes_number, rootItem_);
+    rootItem_->appendChild(nodes_item);
 
     QList<QVariant> elements_number;
     elements_number << "#Elements: " << QString::number(mesh.getNumberOfElements()) << "" << "";
-    auto* elements_item = new TreeItem(elements_number, _rootItem);
-    _rootItem->appendChild(elements_item);
+    auto* elements_item = new TreeItem(elements_number, rootItem_);
+    rootItem_->appendChild(elements_item);
 
     auto const& n_element_types =
         MeshLib::MeshInformation::getNumberOfElementTypes(mesh);
@@ -146,8 +146,8 @@ void ElementTreeModel::setMesh(MeshLib::Mesh const& mesh)
 
     QList<QVariant> bounding_box;
     bounding_box << "Bounding Box" << "" << "" << "";
-    auto* aabb_item = new TreeItem(bounding_box, _rootItem);
-    _rootItem->appendChild(aabb_item);
+    auto* aabb_item = new TreeItem(bounding_box, rootItem_);
+    rootItem_->appendChild(aabb_item);
 
     const GeoLib::AABB aabb (MeshLib::MeshInformation::getBoundingBox(mesh));
     auto const& min = aabb.getMinPoint();
@@ -165,8 +165,8 @@ void ElementTreeModel::setMesh(MeshLib::Mesh const& mesh)
 
     QList<QVariant> edges;
     edges << "Edge Length: " << "[" + QString::number(mesh.getMinEdgeLength(), 'f') + "," << QString::number(mesh.getMaxEdgeLength(), 'f') + "]" << "";
-    auto* edge_item = new TreeItem(edges, _rootItem);
-    _rootItem->appendChild(edge_item);
+    auto* edge_item = new TreeItem(edges, rootItem_);
+    rootItem_->appendChild(edge_item);
 
     std::vector<std::string> const& vec_names (mesh.getProperties().getPropertyVectorNames());
     for (const auto& vec_name : vec_names)
@@ -199,8 +199,8 @@ void ElementTreeModel::setMesh(MeshLib::Mesh const& mesh)
                        << "? ]"
                        << "";
         }
-        auto* vec_item = new TreeItem(array_info, _rootItem);
-        _rootItem->appendChild(vec_item);
+        auto* vec_item = new TreeItem(array_info, rootItem_);
+        rootItem_->appendChild(vec_item);
     }
 
     endResetModel();

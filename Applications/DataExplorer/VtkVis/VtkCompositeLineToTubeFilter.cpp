@@ -29,12 +29,12 @@ VtkCompositeLineToTubeFilter::~VtkCompositeLineToTubeFilter() = default;
 
 void VtkCompositeLineToTubeFilter::init()
 {
-    this->_inputDataObjectType = VTK_DATA_SET;
-    this->_outputDataObjectType = VTK_POLY_DATA;
+    this->inputDataObjectType_ = VTK_DATA_SET;
+    this->outputDataObjectType_ = VTK_POLY_DATA;
 
     // collapse coincident points
     vtkSmartPointer<vtkCleanPolyData> mergePoints = vtkSmartPointer<vtkCleanPolyData>::New();
-    mergePoints->SetInputConnection(0, _inputAlgorithm->GetOutputPort(0));
+    mergePoints->SetInputConnection(0, inputAlgorithm_->GetOutputPort(0));
     mergePoints->SetTolerance(0.0);
     mergePoints->ConvertLinesToPointsOn();
 
@@ -51,11 +51,11 @@ void VtkCompositeLineToTubeFilter::init()
     tubes->SetNumberOfSides(default_number_of_sides);
     tubes->SetCapping(1);
 
-    (*_algorithmUserProperties)["Radius"] = default_radius;
-    (*_algorithmUserProperties)["NumberOfSides"] = default_number_of_sides;
-    (*_algorithmUserProperties)["Capping"] = true;
+    (*algorithmUserProperties_)["Radius"] = default_radius;
+    (*algorithmUserProperties_)["NumberOfSides"] = default_number_of_sides;
+    (*algorithmUserProperties_)["Capping"] = true;
 
-    _outputAlgorithm = tubes;
+    outputAlgorithm_ = tubes;
 }
 
 void VtkCompositeLineToTubeFilter::SetUserProperty( QString name, QVariant value )
@@ -64,15 +64,15 @@ void VtkCompositeLineToTubeFilter::SetUserProperty( QString name, QVariant value
 
     if (name.compare("Radius") == 0)
     {
-        static_cast<vtkTubeFilter*>(_outputAlgorithm)->SetRadius(value.toDouble());
+        static_cast<vtkTubeFilter*>(outputAlgorithm_)->SetRadius(value.toDouble());
     }
     else if (name.compare("NumberOfSides") == 0)
     {
-        static_cast<vtkTubeFilter*>(_outputAlgorithm)->SetNumberOfSides(value.toInt());
+        static_cast<vtkTubeFilter*>(outputAlgorithm_)->SetNumberOfSides(value.toInt());
     }
     else if (name.compare("Capping") == 0)
     {
-        static_cast<vtkTubeFilter*>(_outputAlgorithm)
+        static_cast<vtkTubeFilter*>(outputAlgorithm_)
             ->SetCapping(value.toBool());
     }
 }

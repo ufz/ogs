@@ -28,11 +28,11 @@ VtkAlgorithmPropertyLineEdit::VtkAlgorithmPropertyLineEdit(
     VtkAlgorithmProperties* algProps,
     QWidget* parent /*= 0*/)
     : QLineEdit(contents, parent),
-      _name(std::move(name)),
-      _algProps(algProps),
-      _type(type)
+      name_(std::move(name)),
+      algProps_(algProps),
+      type_(type)
 {
-    switch(_type)
+    switch(type_)
     {
     case QVariant::Double:
         this->setValidator(new QDoubleValidator(this));
@@ -54,8 +54,8 @@ VtkAlgorithmPropertyLineEdit::~VtkAlgorithmPropertyLineEdit() = default;
 void VtkAlgorithmPropertyLineEdit::setNewValue()
 {
     QVariant value(this->text());
-    if (value.convert(_type))
+    if (value.convert(type_))
     {
-        _algProps->SetUserProperty(_name, value);
+        algProps_->SetUserProperty(name_, value);
     }
 }

@@ -28,9 +28,9 @@ GeoTreeModel::GeoTreeModel( QObject* parent )
     : TreeModel(parent)
 {
     QList<QVariant> rootData;
-    delete _rootItem;
+    delete rootItem_;
     rootData << "Id" << "x" << "y" << "z" << "name ";
-    _rootItem = new GeoTreeItem(rootData, nullptr, nullptr);
+    rootItem_ = new GeoTreeItem(rootData, nullptr, nullptr);
 }
 
 GeoTreeModel::~GeoTreeModel() = default;
@@ -43,9 +43,9 @@ void GeoTreeModel::addPointList(QString geoName, GeoLib::PointVec const& pointVe
 
     QList<QVariant> geoData;
     geoData << QVariant(geoName) << "" << "" << "" << "";
-    auto* geo(new GeoTreeItem(geoData, _rootItem));
-    _lists.push_back(geo);
-    _rootItem->appendChild(geo);
+    auto* geo(new GeoTreeItem(geoData, rootItem_));
+    lists_.push_back(geo);
+    rootItem_->appendChild(geo);
 
     QList<QVariant> pointData;
     pointData << "Points" << "" << "" << "" << "";
@@ -88,13 +88,13 @@ void GeoTreeModel::addPolylineList(QString geoName, GeoLib::PolylineVec const& p
 {
     beginResetModel();
 
-    int nLists = _rootItem->childCount();
+    int nLists = rootItem_->childCount();
     TreeItem* geo(nullptr);
     for (int i = 0; i < nLists; i++)
     {
-        if (_rootItem->child(i)->data(0).toString().compare(geoName) == 0)
+        if (rootItem_->child(i)->data(0).toString().compare(geoName) == 0)
         {
-            geo = _rootItem->child(i);
+            geo = rootItem_->child(i);
         }
     }
 
@@ -120,7 +120,7 @@ void GeoTreeModel::addPolylineList(QString geoName, GeoLib::PolylineVec const& p
 
 void GeoTreeModel::appendPolylines(const std::string &name, GeoLib::PolylineVec const& polylineVec)
 {
-    for (auto& list : _lists)
+    for (auto& list : lists_)
     {
         if (name == list->data(0).toString().toStdString())
         {
@@ -189,13 +189,13 @@ void GeoTreeModel::addSurfaceList(QString geoName, GeoLib::SurfaceVec const& sur
 {
     beginResetModel();
 
-    int nLists = _rootItem->childCount();
+    int nLists = rootItem_->childCount();
     TreeItem* geo(nullptr);
     for (int i = 0; i < nLists; i++)
     {
-        if (_rootItem->child(i)->data(0).toString().compare(geoName) == 0)
+        if (rootItem_->child(i)->data(0).toString().compare(geoName) == 0)
         {
-            geo = _rootItem->child(i);
+            geo = rootItem_->child(i);
         }
     }
 
@@ -221,7 +221,7 @@ void GeoTreeModel::addSurfaceList(QString geoName, GeoLib::SurfaceVec const& sur
 
 void GeoTreeModel::appendSurfaces(const std::string &name, GeoLib::SurfaceVec const& surfaceVec)
 {
-    for (auto& list : _lists)
+    for (auto& list : lists_)
     {
         if (name == list->data(0).toString().toStdString())
         {
@@ -303,7 +303,7 @@ void GeoTreeModel::addChildren(GeoObjectListItem* sfcList,
 void GeoTreeModel::renameGeometry(std::string const& old_name,
                                   std::string const& new_name)
 {
-    for (auto tree_item_entry : _lists)
+    for (auto tree_item_entry : lists_)
     {
         if (old_name == tree_item_entry->data(0).toString().toStdString())
         {
@@ -312,7 +312,7 @@ void GeoTreeModel::renameGeometry(std::string const& old_name,
             break;
         }
     }
-    for (auto tree_item_entry : _lists)
+    for (auto tree_item_entry : lists_)
     {
         if (new_name == tree_item_entry->data(0).toString().toStdString())
         {
@@ -326,24 +326,24 @@ void GeoTreeModel::renameGeometry(std::string const& old_name,
  */
 void GeoTreeModel::removeGeoList(const std::string& name, GeoLib::GEOTYPE type)
 {
-    for (std::size_t i = 0; i < _lists.size(); i++)
+    for (std::size_t i = 0; i < lists_.size(); i++)
     {
-        if (name == _lists[i]->data(0).toString().toStdString())
+        if (name == lists_[i]->data(0).toString().toStdString())
         {
-            for (int j = 0; j < _lists[i]->childCount(); j++)
+            for (int j = 0; j < lists_[i]->childCount(); j++)
             {
                 if (type ==
-                    static_cast<GeoObjectListItem*>(_lists[i]->child(j))->getType())
+                    static_cast<GeoObjectListItem*>(lists_[i]->child(j))->getType())
                 {
-                    QModelIndex index = createIndex(j, 0, _lists[i]->child(j));
-                    removeRows(0, _lists[i]->child(j)->childCount(), index);
+                    QModelIndex index = createIndex(j, 0, lists_[i]->child(j));
+                    removeRows(0, lists_[i]->child(j)->childCount(), index);
                     removeRows(j, 1, parent(index));
                     break;
                 }
             }
-            if (_lists[i]->childCount() == 0)
+            if (lists_[i]->childCount() == 0)
             {
-                _lists.erase(_lists.begin() + i);
+                lists_.erase(lists_.begin() + i);
                 removeRows(i, 1, QModelIndex());
             }
         }
@@ -352,15 +352,15 @@ void GeoTreeModel::removeGeoList(const std::string& name, GeoLib::GEOTYPE type)
 
 vtkPolyDataAlgorithm* GeoTreeModel::vtkSource(const std::string &name, GeoLib::GEOTYPE type) const
 {
-    std::size_t nLists = _lists.size();
+    std::size_t nLists = lists_.size();
     for (std::size_t i = 0; i < nLists; i++)
     {
-        if (name == _lists[i]->data(0).toString().toStdString())
+        if (name == lists_[i]->data(0).toString().toStdString())
         {
-            for (int j = 0; j < _lists[i]->childCount(); j++)
+            for (int j = 0; j < lists_[i]->childCount(); j++)
             {
                 auto* item =
-                    dynamic_cast<GeoObjectListItem*>(_lists[i]->child(j));
+                    dynamic_cast<GeoObjectListItem*>(lists_[i]->child(j));
                 if (item->getType() == type)
                 {
                     return item->vtkSource();
@@ -395,7 +395,7 @@ void GeoTreeModel::setNameForItem(const std::string &name,
         geo_type_str = "";
     }
 
-    auto it = find_if(_lists.begin(), _lists.end(), [&name](GeoTreeItem* geo) {
+    auto it = find_if(lists_.begin(), lists_.end(), [&name](GeoTreeItem* geo) {
         return (name == geo->data(0).toString().toStdString());
     });
 

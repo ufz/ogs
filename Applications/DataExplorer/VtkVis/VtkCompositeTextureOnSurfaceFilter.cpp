@@ -46,21 +46,21 @@ VtkCompositeTextureOnSurfaceFilter::~VtkCompositeTextureOnSurfaceFilter() =
 
 void VtkCompositeTextureOnSurfaceFilter::init()
 {
-    this->_inputDataObjectType = VTK_DATA_SET;
-    this->_outputDataObjectType = VTK_POLY_DATA;
+    this->inputDataObjectType_ = VTK_DATA_SET;
+    this->outputDataObjectType_ = VTK_POLY_DATA;
 
     vtkSmartPointer<vtkDataSetSurfaceFilter> surfaceFilter;
     VtkTextureOnSurfaceFilter* surface = VtkTextureOnSurfaceFilter::New();
 
-    if (dynamic_cast<vtkUnstructuredGrid*>(_inputAlgorithm->GetOutputDataObject(0)))
+    if (dynamic_cast<vtkUnstructuredGrid*>(inputAlgorithm_->GetOutputDataObject(0)))
     {
         surfaceFilter = vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
-        surfaceFilter->SetInputConnection(_inputAlgorithm->GetOutputPort());
+        surfaceFilter->SetInputConnection(inputAlgorithm_->GetOutputPort());
         surface->SetInputConnection(surfaceFilter->GetOutputPort());
     }
     else
     {
-        surface->SetInputConnection(_inputAlgorithm->GetOutputPort());
+        surface->SetInputConnection(inputAlgorithm_->GetOutputPort());
     }
 
     QWidget* parent = nullptr;
@@ -103,7 +103,7 @@ void VtkCompositeTextureOnSurfaceFilter::init()
     else
         ERR("VtkCompositeTextureOnSurfaceFilter::init(): Error reading texture file.");
 
-    _outputAlgorithm = surface;
+    outputAlgorithm_ = surface;
 }
 
 void VtkCompositeTextureOnSurfaceFilter::SetUserProperty( QString name, QVariant value )

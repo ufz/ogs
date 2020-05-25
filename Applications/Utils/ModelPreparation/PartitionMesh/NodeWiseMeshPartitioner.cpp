@@ -283,12 +283,12 @@ findGhostNodesInPartition(
 void NodeWiseMeshPartitioner::processPartition(
     std::size_t const part_id, const bool is_mixed_high_order_linear_elems)
 {
-    auto& partition = _partitions[part_id];
+    auto& partition = partitions_[part_id];
     std::vector<MeshLib::Node*> higher_order_regular_nodes;
     std::tie(partition.nodes, higher_order_regular_nodes) =
         findNonGhostNodesInPartition(part_id, is_mixed_high_order_linear_elems,
-                                     _mesh->getNumberOfBaseNodes(),
-                                     _mesh->getNodes(), _nodes_partition_ids);
+                                     mesh_->getNumberOfBaseNodes(),
+                                     mesh_->getNodes(), nodes_partition_ids_);
 
     partition.number_of_non_ghost_base_nodes = partition.nodes.size();
     partition.number_of_non_ghost_nodes =
@@ -296,15 +296,15 @@ void NodeWiseMeshPartitioner::processPartition(
         higher_order_regular_nodes.size();
 
     std::tie(partition.regular_elements, partition.ghost_elements) =
-        findElementsInPartition(part_id, _mesh->getElements(),
-                                _nodes_partition_ids);
+        findElementsInPartition(part_id, mesh_->getElements(),
+                                nodes_partition_ids_);
     std::vector<MeshLib::Node*> base_ghost_nodes;
     std::vector<MeshLib::Node*> higher_order_ghost_nodes;
     std::tie(base_ghost_nodes, higher_order_ghost_nodes) =
         findGhostNodesInPartition(part_id, is_mixed_high_order_linear_elems,
-                                  _mesh->getNumberOfBaseNodes(),
-                                  _mesh->getNodes(), partition.ghost_elements,
-                                  _nodes_partition_ids);
+                                  mesh_->getNumberOfBaseNodes(),
+                                  mesh_->getNodes(), partition.ghost_elements,
+                                  nodes_partition_ids_);
 
     std::copy(begin(base_ghost_nodes), end(base_ghost_nodes),
               std::back_inserter(partition.nodes));
@@ -322,8 +322,8 @@ void NodeWiseMeshPartitioner::processPartition(
     }
 
     // Set the node numbers of base and all mesh nodes.
-    partition.number_of_mesh_base_nodes = _mesh->getNumberOfBaseNodes();
-    partition.number_of_mesh_all_nodes = _mesh->getNumberOfNodes();
+    partition.number_of_mesh_base_nodes = mesh_->getNumberOfBaseNodes();
+    partition.number_of_mesh_all_nodes = mesh_->getNumberOfNodes();
 }
 
 /// Copies the properties from global property vector \c pv to the
@@ -485,7 +485,7 @@ MeshLib::Properties partitionProperties(
 void NodeWiseMeshPartitioner::partitionByMETIS(
     const bool is_mixed_high_order_linear_elems)
 {
-    for (std::size_t part_id = 0; part_id < _partitions.size(); part_id++)
+    for (std::size_t part_id = 0; part_id < partitions_.size(); part_id++)
     {
         INFO("Processing partition: {:d}", part_id);
         processPartition(part_id, is_mixed_high_order_linear_elems);
@@ -493,8 +493,8 @@ void NodeWiseMeshPartitioner::partitionByMETIS(
 
     renumberNodeIndices(is_mixed_high_order_linear_elems);
 
-    _partitioned_properties =
-        partitionProperties(_mesh->getProperties(), _partitions);
+    partitioned_properties_ =
+        partitionProperties(mesh_->getProperties(), partitions_);
 }
 
 void NodeWiseMeshPartitioner::renumberBulkNodeIdsProperty(
@@ -510,11 +510,11 @@ void NodeWiseMeshPartitioner::renumberBulkNodeIdsProperty(
 
     std::size_t offset = 0;  // offset in property vector for current partition
 
-    assert(_partitions.size() == local_partitions.size());
-    int const n_partitions = static_cast<int>(_partitions.size());
+    assert(partitions_.size() == local_partitions.size());
+    int const n_partitions = static_cast<int>(partitions_.size());
     for (int partition_id = 0; partition_id < n_partitions; ++partition_id)
     {
-        auto const& bulk_partition = _partitions[partition_id];
+        auto const& bulk_partition = partitions_[partition_id];
         auto const& local_partition = local_partitions[partition_id];
 
         // Create global-to-local node id mapping for the bulk partition.
@@ -552,11 +552,11 @@ void NodeWiseMeshPartitioner::renumberBulkElementIdsProperty(
 
     std::size_t offset = 0;  // offset in property vector for current partition
 
-    assert(_partitions.size() == local_partitions.size());
-    int const n_partitions = static_cast<int>(_partitions.size());
+    assert(partitions_.size() == local_partitions.size());
+    int const n_partitions = static_cast<int>(partitions_.size());
     for (int partition_id = 0; partition_id < n_partitions; ++partition_id)
     {
-        auto const& bulk_partition = _partitions[partition_id];
+        auto const& bulk_partition = partitions_[partition_id];
         auto const& local_partition = local_partitions[partition_id];
 
         // Create global-to-local element id mapping for the bulk partition.
@@ -603,8 +603,8 @@ std::vector<Partition> NodeWiseMeshPartitioner::partitionOtherMesh(
         mesh.getProperties().getPropertyVector<std::size_t>(
             "bulk_node_ids", MeshLib::MeshItemType::Node, 1);
 
-    std::vector<Partition> partitions(_partitions.size());
-    for (std::size_t part_id = 0; part_id < _partitions.size(); part_id++)
+    std::vector<Partition> partitions(partitions_.size());
+    for (std::size_t part_id = 0; part_id < partitions_.size(); part_id++)
     {
         auto& partition = partitions[part_id];
         INFO("Processing partition: {:d}", part_id);
@@ -617,7 +617,7 @@ std::vector<Partition> NodeWiseMeshPartitioner::partitionOtherMesh(
             findNonGhostNodesInPartition(
                 part_id, is_mixed_high_order_linear_elems,
                 mesh.getNumberOfBaseNodes(), mesh.getNodes(),
-                _nodes_partition_ids, bulk_node_ids);
+                nodes_partition_ids_, bulk_node_ids);
 
         partition.number_of_non_ghost_base_nodes = partition.nodes.size();
         partition.number_of_non_ghost_nodes =
@@ -626,7 +626,7 @@ std::vector<Partition> NodeWiseMeshPartitioner::partitionOtherMesh(
 
         std::tie(partition.regular_elements, partition.ghost_elements) =
             findElementsInPartition(part_id, mesh.getElements(),
-                                    _nodes_partition_ids, bulk_node_ids);
+                                    nodes_partition_ids_, bulk_node_ids);
 
         std::vector<MeshLib::Node*> base_ghost_nodes;
         std::vector<MeshLib::Node*> higher_order_ghost_nodes;
@@ -634,7 +634,7 @@ std::vector<Partition> NodeWiseMeshPartitioner::partitionOtherMesh(
             findGhostNodesInPartition(part_id, is_mixed_high_order_linear_elems,
                                       mesh.getNumberOfBaseNodes(),
                                       mesh.getNodes(), partition.ghost_elements,
-                                      _nodes_partition_ids, bulk_node_ids);
+                                      nodes_partition_ids_, bulk_node_ids);
 
         std::copy(begin(base_ghost_nodes), end(base_ghost_nodes),
                   std::back_inserter(partition.nodes));
@@ -661,12 +661,12 @@ void NodeWiseMeshPartitioner::renumberNodeIndices(
     std::size_t node_global_id_offset = 0;
     // Renumber the global indices.
     // -- Base nodes
-    for (auto& partition : _partitions)
+    for (auto& partition : partitions_)
     {
         for (std::size_t i = 0; i < partition.number_of_non_ghost_base_nodes;
              i++)
         {
-            _nodes_global_ids[partition.nodes[i]->getID()] =
+            nodes_global_ids_[partition.nodes[i]->getID()] =
                 node_global_id_offset;
             node_global_id_offset++;
         }
@@ -678,14 +678,14 @@ void NodeWiseMeshPartitioner::renumberNodeIndices(
     }
 
     // -- Nodes for high order elements.
-    for (auto& partition : _partitions)
+    for (auto& partition : partitions_)
     {
         const std::size_t end_id = partition.number_of_base_nodes +
                                    partition.number_of_non_ghost_nodes -
                                    partition.number_of_non_ghost_base_nodes;
         for (std::size_t i = partition.number_of_base_nodes; i < end_id; i++)
         {
-            _nodes_global_ids[partition.nodes[i]->getID()] =
+            nodes_global_ids_[partition.nodes[i]->getID()] =
                 node_global_id_offset;
             node_global_id_offset++;
         }
@@ -1003,22 +1003,22 @@ void writeNodesBinary(const std::string& file_name_base,
 
 void NodeWiseMeshPartitioner::writeBinary(const std::string& file_name_base)
 {
-    writePropertiesBinary(file_name_base, _partitioned_properties, _partitions,
+    writePropertiesBinary(file_name_base, partitioned_properties_, partitions_,
                           MeshLib::MeshItemType::Node);
-    writePropertiesBinary(file_name_base, _partitioned_properties, _partitions,
+    writePropertiesBinary(file_name_base, partitioned_properties_, partitions_,
                           MeshLib::MeshItemType::Cell);
 
     const auto elem_integers =
-        writeConfigDataBinary(file_name_base, _partitions);
+        writeConfigDataBinary(file_name_base, partitions_);
 
     const std::vector<IntegerType>& num_elem_integers =
         std::get<0>(elem_integers);
     const std::vector<IntegerType>& num_g_elem_integers =
         std::get<1>(elem_integers);
-    writeElementsBinary(file_name_base, _partitions, num_elem_integers,
+    writeElementsBinary(file_name_base, partitions_, num_elem_integers,
                         num_g_elem_integers);
 
-    writeNodesBinary(file_name_base, _partitions, _nodes_global_ids);
+    writeNodesBinary(file_name_base, partitions_, nodes_global_ids_);
 }
 
 void NodeWiseMeshPartitioner::writeOtherMesh(
@@ -1026,7 +1026,7 @@ void NodeWiseMeshPartitioner::writeOtherMesh(
     std::vector<Partition> const& partitions,
     MeshLib::Properties const& partitioned_properties) const
 {
-    writeNodesBinary(output_filename_base, partitions, _nodes_global_ids);
+    writeNodesBinary(output_filename_base, partitions, nodes_global_ids_);
 
     const auto elem_integers =
         writeConfigDataBinary(output_filename_base, partitions);
@@ -1048,7 +1048,7 @@ void NodeWiseMeshPartitioner::writeConfigDataASCII(
     const std::string& file_name_base)
 {
     const std::string fname = file_name_base + "_partitioned_cfg" +
-                              std::to_string(_npartitions) + ".msh";
+                              std::to_string(npartitions_) + ".msh";
     std::fstream os_subd_head(fname, std::ios::out | std::ios::trunc);
     const std::string mesh_info =
         "Subdomain mesh ("
@@ -1060,9 +1060,9 @@ void NodeWiseMeshPartitioner::writeConfigDataASCII(
         " Number of integer variables to define non-ghost elements;"
         " Number of integer variables to define ghost elements.)";
     os_subd_head << mesh_info << "\n";
-    os_subd_head << _npartitions << "\n";
+    os_subd_head << npartitions_ << "\n";
 
-    for (const auto& partition : _partitions)
+    for (const auto& partition : partitions_)
     {
         os_subd_head << partition.nodes.size();
         os_subd_head << " " << partition.number_of_base_nodes;
@@ -1070,8 +1070,8 @@ void NodeWiseMeshPartitioner::writeConfigDataASCII(
         os_subd_head << " " << partition.ghost_elements.size();
         os_subd_head << " " << partition.number_of_non_ghost_base_nodes;
         os_subd_head << " " << partition.number_of_non_ghost_nodes;
-        os_subd_head << " " << _mesh->getNumberOfBaseNodes();
-        os_subd_head << " " << _mesh->getNumberOfNodes();
+        os_subd_head << " " << mesh_->getNumberOfBaseNodes();
+        os_subd_head << " " << mesh_->getNumberOfNodes();
         os_subd_head << " "
                      << getNumberOfIntegerVariablesOfElements(
                             partition.regular_elements);
@@ -1086,13 +1086,13 @@ void NodeWiseMeshPartitioner::writeElementsASCII(
     const std::string& file_name_base)
 {
     const std::string fname = file_name_base + "_partitioned_elems_" +
-                              std::to_string(_npartitions) + ".msh";
+                              std::to_string(npartitions_) + ".msh";
     std::fstream os_subd(fname, std::ios::out | std::ios::trunc);
-    for (const auto& partition : _partitions)
+    for (const auto& partition : partitions_)
     {
         // Set the local node indices of the current partition.
         IntegerType node_local_id_offset = 0;
-        std::vector<IntegerType> nodes_local_ids(_mesh->getNumberOfNodes(), -1);
+        std::vector<IntegerType> nodes_local_ids(mesh_->getNumberOfNodes(), -1);
         for (const auto* node : partition.nodes)
         {
             nodes_local_ids[node->getID()] = node_local_id_offset;
@@ -1114,17 +1114,17 @@ void NodeWiseMeshPartitioner::writeElementsASCII(
 void NodeWiseMeshPartitioner::writeNodesASCII(const std::string& file_name_base)
 {
     const std::string fname = file_name_base + "_partitioned_nodes_" +
-                              std::to_string(_npartitions) + ".msh";
+                              std::to_string(npartitions_) + ".msh";
     std::fstream os_subd_node(fname, std::ios::out | std::ios::trunc);
     os_subd_node.precision(std::numeric_limits<double>::digits10);
     os_subd_node.setf(std::ios::scientific);
 
-    for (const auto& partition : _partitions)
+    for (const auto& partition : partitions_)
     {
         for (const auto* node : partition.nodes)
         {
             double const* coords = node->getCoords();
-            os_subd_node << _nodes_global_ids[node->getID()] << " " << coords[0]
+            os_subd_node << nodes_global_ids_[node->getID()] << " " << coords[0]
                          << " " << coords[1] << " " << coords[2] << "\n";
         }
         os_subd_node << std::endl;

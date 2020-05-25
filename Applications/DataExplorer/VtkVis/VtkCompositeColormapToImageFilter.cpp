@@ -38,8 +38,8 @@ VtkCompositeColormapToImageFilter::~VtkCompositeColormapToImageFilter() =
 
 void VtkCompositeColormapToImageFilter::init()
 {
-    this->_inputDataObjectType = VTK_IMAGE_DATA;
-    this->_outputDataObjectType = VTK_IMAGE_DATA;
+    this->inputDataObjectType_ = VTK_IMAGE_DATA;
+    this->outputDataObjectType_ = VTK_IMAGE_DATA;
 
     vtkSmartPointer<VtkColorLookupTable> colormap = vtkSmartPointer<VtkColorLookupTable>::New();
 
@@ -49,7 +49,7 @@ void VtkCompositeColormapToImageFilter::init()
                                                     settings.value("lastOpenedLookupTableFileDirectory").toString(),
                                                     "Lookup table XML files (*.xml);;");
     double range[2];
-    dynamic_cast<vtkImageAlgorithm*>(_inputAlgorithm)->GetOutput()->GetPointData()->GetScalars()->GetRange(range);
+    dynamic_cast<vtkImageAlgorithm*>(inputAlgorithm_)->GetOutput()->GetPointData()->GetScalars()->GetRange(range);
 
     DataHolderLib::ColorLookupTable lut;
     if (FileIO::XmlLutReader::readFromFile(fileName, lut))
@@ -72,24 +72,24 @@ void VtkCompositeColormapToImageFilter::init()
     QList<QVariant> hueRangeList;
     hueRangeList.push_back(0.0);
     hueRangeList.push_back(0.666);
-    (*_algorithmUserVectorProperties)["TableRange"] = tableRangeList;
-    (*_algorithmUserVectorProperties)["HueRange"] = hueRangeList;
+    (*algorithmUserVectorProperties_)["TableRange"] = tableRangeList;
+    (*algorithmUserVectorProperties_)["HueRange"] = hueRangeList;
 
     vtkImageMapToColors* map = vtkImageMapToColors::New();
-    map->SetInputConnection(0, _inputAlgorithm->GetOutputPort());
+    map->SetInputConnection(0, inputAlgorithm_->GetOutputPort());
     map->SetLookupTable(colormap);
     map->SetPassAlphaToOutput(1);
-    (*_algorithmUserProperties)["PassAlphaToOutput"] = true;
-    (*_algorithmUserProperties)["NumberOfColors"] = 256;
+    (*algorithmUserProperties_)["PassAlphaToOutput"] = true;
+    (*algorithmUserProperties_)["NumberOfColors"] = 256;
 
-    _outputAlgorithm = map;
+    outputAlgorithm_ = map;
 }
 
 void VtkCompositeColormapToImageFilter::SetUserProperty( QString name, QVariant value )
 {
     VtkAlgorithmProperties::SetUserProperty(name, value);
 
-    auto* map = static_cast<vtkImageMapToColors*>(_outputAlgorithm);
+    auto* map = static_cast<vtkImageMapToColors*>(outputAlgorithm_);
     if (name.compare("PassAlphaToOutput") == 0)
     {
         map->SetPassAlphaToOutput(value.toBool());
@@ -105,7 +105,7 @@ void VtkCompositeColormapToImageFilter::SetUserVectorProperty( QString name, QLi
 {
     VtkAlgorithmProperties::SetUserVectorProperty(name, values);
 
-    auto* map = static_cast<vtkImageMapToColors*>(_outputAlgorithm);
+    auto* map = static_cast<vtkImageMapToColors*>(outputAlgorithm_);
     if (name.compare("TableRange") == 0)
     {
         static_cast<vtkLookupTable*>(map->GetLookupTable())->SetTableRange(

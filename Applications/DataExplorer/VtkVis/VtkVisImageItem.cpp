@@ -40,7 +40,7 @@
 VtkVisImageItem::VtkVisImageItem(
     vtkAlgorithm* algorithm, TreeItem* parentItem,
     const QList<QVariant> data /*= QList<QVariant>()*/)
-    : VtkVisPipelineItem(algorithm, parentItem, data), _transformFilter(nullptr)
+    : VtkVisPipelineItem(algorithm, parentItem, data), transformFilter_(nullptr)
 {
 }
 
@@ -48,20 +48,20 @@ VtkVisImageItem::VtkVisImageItem(
     VtkCompositeFilter* compositeFilter, TreeItem* parentItem,
     const QList<QVariant> data /*= QList<QVariant>()*/)
     : VtkVisPipelineItem(compositeFilter, parentItem, data),
-      _transformFilter(nullptr)
+      transformFilter_(nullptr)
 {
 }
 
 VtkVisImageItem::~VtkVisImageItem()
 {
-    _transformFilter->Delete();
+    transformFilter_->Delete();
 }
 
 void VtkVisImageItem::Initialize(vtkRenderer* renderer)
 {
-    auto* img = dynamic_cast<vtkImageAlgorithm*>(_algorithm);
+    auto* img = dynamic_cast<vtkImageAlgorithm*>(algorithm_);
     img->Update();
-    // VtkGeoImageSource* img = dynamic_cast<VtkGeoImageSource*>(_algorithm);
+    // VtkGeoImageSource* img = dynamic_cast<VtkGeoImageSource*>(algorithm_);
 
     double origin[3];
     double spacing[3];
@@ -76,25 +76,25 @@ void VtkVisImageItem::Initialize(vtkRenderer* renderer)
     scale->SetShift(-range[0]);
     scale->SetScale(255.0 / (range[1] - range[0]));
 
-    _transformFilter = vtkImageChangeInformation::New();
-    _transformFilter->SetInputConnection(scale->GetOutputPort());
+    transformFilter_ = vtkImageChangeInformation::New();
+    transformFilter_->SetInputConnection(scale->GetOutputPort());
     // double origin[3];
     // img->getOrigin(origin);
     // double spacing = img->getSpacing();
-    //_transformFilter->SetOutputOrigin(origin2);
-    //_transformFilter->SetOutputSpacing(spacing2);
-    _transformFilter->Update();
+    //transformFilter_->SetOutputOrigin(origin2);
+    //transformFilter_->SetOutputSpacing(spacing2);
+    transformFilter_->Update();
 
-    _renderer = renderer;
+    renderer_ = renderer;
 
     // Use a special vtkImageActor instead of vtkActor
     vtkImageActor* imageActor = vtkImageActor::New();
-    imageActor->SetInputData(_transformFilter->GetOutput());
-    _actor = imageActor;
-    _renderer->AddActor(_actor);
+    imageActor->SetInputData(transformFilter_->GetOutput());
+    actor_ = imageActor;
+    renderer_->AddActor(actor_);
 
     // Set pre-set properties
-    auto* vtkProps = dynamic_cast<VtkAlgorithmProperties*>(_algorithm);
+    auto* vtkProps = dynamic_cast<VtkAlgorithmProperties*>(algorithm_);
     if (vtkProps)
     {
         setVtkProperties(vtkProps);
@@ -173,10 +173,10 @@ int VtkVisImageItem::callVTKWriter(vtkAlgorithm* algorithm, const std::string &f
 
 void VtkVisImageItem::setTranslation(double x, double y, double z) const
 {
-    _transformFilter->SetOriginTranslation(x,y,z);
+    transformFilter_->SetOriginTranslation(x,y,z);
 }
 
 vtkAlgorithm* VtkVisImageItem::transformFilter() const
 {
-    return _transformFilter;
+    return transformFilter_;
 }

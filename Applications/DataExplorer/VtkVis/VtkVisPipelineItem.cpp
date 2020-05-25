@@ -47,16 +47,16 @@ VtkVisPipelineItem::VtkVisPipelineItem(
     vtkAlgorithm* algorithm, TreeItem* parentItem,
     const QList<QVariant> data /*= QList<QVariant>()*/)
     : TreeItem(data, parentItem),
-      _actor(nullptr),
-      _algorithm(algorithm),
-      _renderer(nullptr),
-      _compositeFilter(nullptr),
-      _vtkProps(nullptr)
+      actor_(nullptr),
+      algorithm_(algorithm),
+      renderer_(nullptr),
+      compositeFilter_(nullptr),
+      vtkProps_(nullptr)
 {
     auto* visParentItem = dynamic_cast<VtkVisPipelineItem*>(parentItem);
     if (parentItem->parentItem())
     {
-        _algorithm->SetInputConnection(
+        algorithm_->SetInputConnection(
             visParentItem->algorithm()->GetOutputPort());
     }
 }
@@ -65,19 +65,19 @@ VtkVisPipelineItem::VtkVisPipelineItem(
     VtkCompositeFilter* compositeFilter, TreeItem* parentItem,
     const QList<QVariant> data /*= QList<QVariant>()*/)
     : TreeItem(data, parentItem),
-      _actor(nullptr),
-      _renderer(nullptr),
-      _compositeFilter(compositeFilter),
-      _vtkProps(nullptr)
+      actor_(nullptr),
+      renderer_(nullptr),
+      compositeFilter_(compositeFilter),
+      vtkProps_(nullptr)
 {
-    _algorithm = _compositeFilter->GetOutputAlgorithm();
+    algorithm_ = compositeFilter_->GetOutputAlgorithm();
 }
 
 VtkVisPipelineItem::~VtkVisPipelineItem()
 {
-    _renderer->RemoveActor(_actor);
-    _actor->Delete();
-    delete _compositeFilter;
+    renderer_->RemoveActor(actor_);
+    actor_->Delete();
+    delete compositeFilter_;
 }
 
 VtkVisPipelineItem* VtkVisPipelineItem::child( int row ) const
@@ -113,14 +113,14 @@ bool VtkVisPipelineItem::setData( int column, const QVariant &value )
 }
 bool VtkVisPipelineItem::isVisible() const
 {
-    return static_cast<bool>(_actor->GetVisibility());
+    return static_cast<bool>(actor_->GetVisibility());
 }
 
 void VtkVisPipelineItem::setVisible( bool visible )
 {
-    _actor->SetVisibility(static_cast<int>(visible));
-    _actor->Modified();
-    _renderer->Render();
+    actor_->SetVisibility(static_cast<int>(visible));
+    actor_->Modified();
+    renderer_->Render();
 }
 
 int VtkVisPipelineItem::writeToFile(const std::string &filename) const
@@ -130,16 +130,16 @@ int VtkVisPipelineItem::writeToFile(const std::string &filename) const
 #ifdef VTKFBXCONVERTER_FOUND
         if (filename.substr(filename.size() - 4).find("fbx") != std::string::npos)
         {
-            if(!dynamic_cast<vtkImageActor*>(_actor))
+            if(!dynamic_cast<vtkImageActor*>(actor_))
             {
                 InitializeSdkObjects(lSdkManager, lScene);
 
-                VtkFbxConverter fbxConverter(static_cast<vtkActor*>(_actor), lScene);
+                VtkFbxConverter fbxConverter(static_cast<vtkActor*>(actor_), lScene);
                 fbxConverter.convert(BaseLib::extractBaseNameWithoutExtension(filename));
                 FbxNode* node = fbxConverter.getNode();
                 if(node)
                 {
-                    fbxConverter.addUserProperty("UseVertexColors", _vtkProps->GetScalarVisibility());
+                    fbxConverter.addUserProperty("UseVertexColors", vtkProps_->GetScalarVisibility());
                     lScene->GetRootNode()->AddChild(node);
                     // Get the file format. Use either "FBX [6.0] binary (*.fbx)" or "FBX [6.0] ascii (*.fbx)"
                     int fbxFormat = lSdkManager->GetIOPluginRegistry()
@@ -175,7 +175,7 @@ int VtkVisPipelineItem::callVTKWriter(vtkAlgorithm* algorithm, const std::string
 
 vtkProp3D* VtkVisPipelineItem::actor() const
 {
-    return _actor;
+    return actor_;
 }
 
 void VtkVisPipelineItem::setScale(double x, double y, double z) const

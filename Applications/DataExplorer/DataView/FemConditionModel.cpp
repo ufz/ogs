@@ -21,10 +21,10 @@
 FemConditionModel::FemConditionModel(QObject* parent) : TreeModel(parent)
 {
     QList<QVariant> root_data;
-    delete _rootItem;
+    delete rootItem_;
     root_data << "Parameter"
               << "Value";
-    _rootItem = new TreeItem(root_data, nullptr);
+    rootItem_ = new TreeItem(root_data, nullptr);
 }
 
 void FemConditionModel::setFemCondition(DataHolderLib::FemCondition* cond)
@@ -35,8 +35,8 @@ void FemConditionModel::setFemCondition(DataHolderLib::FemCondition* cond)
     QList<QVariant> cond_data;
     cond_data << QString::fromStdString(cond->getConditionClassStr()) + ":"
               << QString::fromStdString(cond->getParamName());
-    TreeItem* cond_item = new TreeItem(cond_data, _rootItem);
-    _rootItem->appendChild(cond_item);
+    TreeItem* cond_item = new TreeItem(cond_data, rootItem_);
+    rootItem_->appendChild(cond_item);
 
     QList<QVariant> type_data;
     std::string type_str;
@@ -89,8 +89,8 @@ void FemConditionModel::setProcessVariable(DataHolderLib::FemCondition* cond)
 
     QList<QVariant> pvar_data;
     pvar_data << "Process variable:" << QString::fromStdString(var.name);
-    TreeItem* pvar_item = new TreeItem(pvar_data, _rootItem);
-    _rootItem->appendChild(pvar_item);
+    TreeItem* pvar_item = new TreeItem(pvar_data, rootItem_);
+    rootItem_->appendChild(pvar_item);
 
     QList<QVariant> order_data;
     order_data << "Order:" << QString::number(var.order);
@@ -108,6 +108,6 @@ void FemConditionModel::setProcessVariable(DataHolderLib::FemCondition* cond)
 void FemConditionModel::clearView()
 {
     beginResetModel();
-    _rootItem->removeChildren(0, _rootItem->childCount());
+    rootItem_->removeChildren(0, rootItem_->childCount());
     endResetModel();
 }

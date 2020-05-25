@@ -38,7 +38,7 @@ vtkStandardNewMacro(VtkPolylinesSource);
 
 VtkPolylinesSource::VtkPolylinesSource()
 {
-    _removable = false; // From VtkAlgorithmProperties
+    removable_ = false; // From VtkAlgorithmProperties
     this->SetNumberOfInputPorts(0);
 
     const DataHolderLib::Color c = DataHolderLib::getRandomColor();
@@ -51,12 +51,12 @@ void VtkPolylinesSource::PrintSelf( ostream& os, vtkIndent indent )
 {
     this->Superclass::PrintSelf(os,indent);
 
-    if (_polylines->empty())
+    if (polylines_->empty())
     {
         return;
     }
 
-    for (auto polyline : *_polylines)
+    for (auto polyline : *polylines_)
     {
         os << indent << "== Polyline ==" << "\n";
         int numPoints = polyline->getNumberOfPoints();
@@ -77,11 +77,11 @@ int VtkPolylinesSource::RequestData( vtkInformation* request,
     (void)request;
     (void)inputVector;
 
-    if (!_polylines)
+    if (!polylines_)
     {
         return 0;
     }
-    if (_polylines->empty())
+    if (polylines_->empty())
     {
         ERR("VtkPolylineSource::RequestData(): Size of polyline vector is 0");
         return 0;
@@ -108,17 +108,17 @@ int VtkPolylinesSource::RequestData( vtkInformation* request,
     plyIDs->SetName("PolylineIDs");
 
     unsigned lastMaxIndex (0);
-    const std::size_t nPolylines (_polylines->size());
+    const std::size_t nPolylines (polylines_->size());
     for (std::size_t j = 0; j < nPolylines; j++)
     {
-        const int numPoints = (*_polylines)[j]->getNumberOfPoints();
-        const bool isClosed = (*_polylines)[j]->isClosed();
+        const int numPoints = (*polylines_)[j]->getNumberOfPoints();
+        const bool isClosed = (*polylines_)[j]->isClosed();
 
         // Generate points
         const int numVerts = (isClosed) ? numPoints-1 : numPoints;
         for (int i = 0; i < numVerts; i++)
         {
-            const GeoLib::Point* point = (*_polylines)[j]->getPoint(i);
+            const GeoLib::Point* point = (*polylines_)[j]->getPoint(i);
             const double* coords = point->getCoords();
             newPoints->InsertNextPoint(coords);
         }

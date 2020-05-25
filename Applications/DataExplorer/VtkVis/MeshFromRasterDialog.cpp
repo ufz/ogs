@@ -17,7 +17,7 @@
 #include "MeshGenerators/VtkMeshConverter.h"
 
 MeshFromRasterDialog::MeshFromRasterDialog(QDialog* parent)
-: QDialog(parent), _mesh_name("mesh"), _array_name("MaterialIDs")
+: QDialog(parent), mesh_name_("mesh"), array_name_("MaterialIDs")
 {
     setupUi(this);
 
@@ -53,23 +53,23 @@ void MeshFromRasterDialog::accept()
         OGSError::box("Please specify a name for the resulting mesh.");
         return;
     }
-    _mesh_name = this->mshNameEdit->text().toStdString();
+    mesh_name_ = this->mshNameEdit->text().toStdString();
 
-    _intensity_selection = MeshLib::UseIntensityAs::ELEVATION;
+    intensity_selection_ = MeshLib::UseIntensityAs::ELEVATION;
     if (this->materialButton->isChecked())
     {
-        _intensity_selection = MeshLib::UseIntensityAs::MATERIALS;
+        intensity_selection_ = MeshLib::UseIntensityAs::MATERIALS;
     }
     else if (this->otherButton->isChecked())
     {
-        _intensity_selection = MeshLib::UseIntensityAs::DATAVECTOR;
+        intensity_selection_ = MeshLib::UseIntensityAs::DATAVECTOR;
     }
     else if (this->ignoreButton->isChecked())
     {
-        _intensity_selection = MeshLib::UseIntensityAs::NONE;
+        intensity_selection_ = MeshLib::UseIntensityAs::NONE;
     }
 
-    if (_intensity_selection == MeshLib::UseIntensityAs::DATAVECTOR)
+    if (intensity_selection_ == MeshLib::UseIntensityAs::DATAVECTOR)
     {
         if (this->arrayNameEdit->text().isEmpty())
         {
@@ -77,20 +77,20 @@ void MeshFromRasterDialog::accept()
             return;
         }
 
-        _array_name = this->arrayNameEdit->text().toStdString();
+        array_name_ = this->arrayNameEdit->text().toStdString();
     }
-    _element_selection = MeshLib::MeshElemType::TRIANGLE;
+    element_selection_ = MeshLib::MeshElemType::TRIANGLE;
     if (this->quadButton->isChecked())
     {
-        _element_selection = MeshLib::MeshElemType::QUAD;
+        element_selection_ = MeshLib::MeshElemType::QUAD;
     }
     else if (this->prismButton->isChecked())
     {
-        _element_selection = MeshLib::MeshElemType::PRISM;
+        element_selection_ = MeshLib::MeshElemType::PRISM;
     }
     else if (this->hexButton->isChecked())
     {
-        _element_selection = MeshLib::MeshElemType::HEXAHEDRON;
+        element_selection_ = MeshLib::MeshElemType::HEXAHEDRON;
     }
 
     this->done(QDialog::Accepted);

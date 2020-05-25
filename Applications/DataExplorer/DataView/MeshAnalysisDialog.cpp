@@ -24,7 +24,7 @@
 MeshAnalysisDialog::MeshAnalysisDialog(
     std::vector<std::unique_ptr<MeshLib::Mesh>> const& mesh_vec,
     QDialog* parent)
-: QDialog(parent), _mesh_vec(mesh_vec)
+: QDialog(parent), mesh_vec_(mesh_vec)
 {
     setupUi(this);
 
@@ -51,7 +51,7 @@ MeshAnalysisDialog::~MeshAnalysisDialog() = default;
 
 void MeshAnalysisDialog::on_startButton_pressed()
 {
-    MeshLib::Mesh const& mesh (*_mesh_vec[this->meshListBox->currentIndex()].get());
+    MeshLib::Mesh const& mesh (*mesh_vec_[this->meshListBox->currentIndex()].get());
 
     MeshLib::NodeSearch ns(mesh);
     ns.searchUnused();

@@ -21,7 +21,7 @@
 GeoOnMeshMappingDialog::GeoOnMeshMappingDialog(
     std::vector<std::unique_ptr<MeshLib::Mesh>> const& mesh_vec,
     QDialog* parent)
-: QDialog(parent), _new_geo_name("")
+: QDialog(parent), new_geo_name_("")
 {
     setupUi(this);
 
@@ -56,8 +56,8 @@ void GeoOnMeshMappingDialog::accept()
 {
     if (this->advancedMappingButton->isChecked())
     {
-        _new_geo_name = this->geoNameEdit->text().toStdString();
-        if (_new_geo_name.empty())
+        new_geo_name_ = this->geoNameEdit->text().toStdString();
+        if (new_geo_name_.empty())
         {
             OGSError::box("Please enter name for new geometry.");
             return;

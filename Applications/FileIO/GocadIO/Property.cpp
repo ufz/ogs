@@ -24,8 +24,8 @@ namespace Gocad
 
 std::ostream& operator<<(std::ostream& os, Property const& p)
 {
-    return os << "'" << p._property_name << "' '" << p._property_id << "' '"
-              << p._property_data_type << "' '" << p._property_data_fname
+    return os << "'" << p.property_name_ << "' '" << p.property_id_ << "' '"
+              << p.property_data_type_ << "' '" << p.property_data_fname_
               << "'";
 }
 
@@ -47,16 +47,16 @@ Property parseGocadPropertyMetaData(std::string& line, std::istream& in,
     tok_it++;
 
     Property prop;
-    prop._property_id = std::stoul(*tok_it);
+    prop.property_id_ = std::stoul(*tok_it);
     tok_it++;
-    prop._property_name = *tok_it;
+    prop.property_name_ = *tok_it;
     tok_it++;
     while (tok_it != tokens.end())
     {
-        prop._property_name += " " + *tok_it;
+        prop.property_name_ += " " + *tok_it;
         tok_it++;
     }
-    BaseLib::trim(prop._property_name, '\"');
+    BaseLib::trim(prop.property_name_, '\"');
 
     auto checkPropertyID =
         [](boost::tokenizer<boost::char_separator<char>>::iterator const&
@@ -99,7 +99,7 @@ Property parseGocadPropertyMetaData(std::string& line, std::istream& in,
             {
                 tmp.erase(tmp.begin());
             }
-            prop._property_data_fname = path + tmp;
+            prop.property_data_fname_ = path + tmp;
             return prop;
         }
 
@@ -107,7 +107,7 @@ Property parseGocadPropertyMetaData(std::string& line, std::istream& in,
         {
             checkPropertyID(++tok_it, prop);
             tok_it++;
-            prop._property_class_name = *tok_it;
+            prop.property_class_name_ = *tok_it;
         }
 
         if (*tok_it == "PROPERTY_SUBCLASS")
@@ -126,7 +126,7 @@ Property parseGocadPropertyMetaData(std::string& line, std::istream& in,
             if (*tok_it == "QUANTITY")
             {
                 tok_it++;
-                prop._property_data_type = *tok_it;
+                prop.property_data_type_ = *tok_it;
             }
         }
 
@@ -134,14 +134,14 @@ Property parseGocadPropertyMetaData(std::string& line, std::istream& in,
         {
             checkPropertyID(++tok_it, prop);
             tok_it++;
-            prop._property_unit = *tok_it;
+            prop.property_unit_ = *tok_it;
         }
 
         if (*tok_it == "PROP_NO_DATA_VALUE")
         {
             checkPropertyID(++tok_it, prop);
             tok_it++;
-            prop._property_no_data_value = std::stoul(*tok_it);
+            prop.property_no_data_value_ = std::stoul(*tok_it);
         }
     }
     return prop;

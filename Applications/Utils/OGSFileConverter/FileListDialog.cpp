@@ -23,16 +23,16 @@
 #include "BaseLib/StringTools.h"
 
 FileListDialog::FileListDialog(FileType input, FileType output, QWidget* parent)
-: QDialog(parent), _output_dir(""), _input_file_type(input), _output_file_type(output)
+: QDialog(parent), output_dir_(""), input_file_type_(input), output_file_type_(output)
 {
     setupUi(this);
 
-    if (_input_file_type == FileType::VTU && _output_file_type == FileType::MSH)
+    if (input_file_type_ == FileType::VTU && output_file_type_ == FileType::MSH)
     {
         displayWarningLabel();
     }
 
-    this->listView->setModel(&_allFiles);
+    this->listView->setModel(&allFiles_);
 }
 
 FileListDialog::~FileListDialog() = default;
@@ -43,7 +43,7 @@ void FileListDialog::on_addButton_pressed()
     QFileDialog dlg(this);
     dlg.setDirectory(settings.value("lastOpenedOgsFileDirectory").toString());
     dlg.setFileMode(QFileDialog::ExistingFiles);
-    dlg.setNameFilter(this->getFileTypeString(_input_file_type));
+    dlg.setNameFilter(this->getFileTypeString(input_file_type_));
 
     if (dlg.exec())
     {
@@ -54,9 +54,9 @@ void FileListDialog::on_addButton_pressed()
             return;
         }
 
-        QStringList list = _allFiles.stringList();
+        QStringList list = allFiles_.stringList();
         list.append(file_names);
-        _allFiles.setStringList(list);
+        allFiles_.setStringList(list);
         QDir const dir = QDir(file_names[0]);
         settings.setValue("lastOpenedOgsFileDirectory", dir.absolutePath());
     }
@@ -67,7 +67,7 @@ void FileListDialog::on_removeButton_pressed()
     QModelIndexList selected = this->listView->selectionModel()->selectedIndexes();
     for (auto& item : selected)
     {
-        this->_allFiles.removeRow(item.row());
+        this->allFiles_.removeRow(item.row());
     }
 }
 
@@ -81,14 +81,14 @@ void FileListDialog::on_browseButton_pressed()
 
 void FileListDialog::accept()
 {
-    if (_allFiles.stringList().empty())
+    if (allFiles_.stringList().empty())
     {
         OGSError::box("No files selected.");
         return;
     }
 
-    _output_dir = this->outputDirEdit->text();
-    if (!this->outputDirEdit->text().isEmpty() && QDir(_output_dir).exists())
+    output_dir_ = this->outputDirEdit->text();
+    if (!this->outputDirEdit->text().isEmpty() && QDir(output_dir_).exists())
     {
         this->done(QDialog::Accepted);
     }

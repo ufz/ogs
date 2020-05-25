@@ -27,7 +27,7 @@ DiagramPrefsDialog::DiagramPrefsDialog(const GeoLib::Station* stn,
                                        const QString &listName,
                                        //DatabaseConnection* db,
                                        QDialog* parent)
-    : QDialog(parent), _window(nullptr)
+    : QDialog(parent), window_(nullptr)
 {
     setAttribute(Qt::WA_DeleteOnClose);
 
@@ -37,12 +37,12 @@ DiagramPrefsDialog::DiagramPrefsDialog(const GeoLib::Station* stn,
 }
 
 DiagramPrefsDialog::DiagramPrefsDialog(GeoLib::Station* stn, QDialog* parent)
-    : QDialog(parent), _window(nullptr)
+    : QDialog(parent), window_(nullptr)
 {
     setupUi(this);
     stationNameLabel->setText(QString::fromStdString(stn->getName()));
     stationTypeLabel->setText("");
-    DiagramList::readList(stn->getSensorData(), _list);
+    DiagramList::readList(stn->getSensorData(), list_);
 
     fromDateLine->setText(QString::number(stn->getSensorData()->getStartTime()));
     toDateLine->setText(QString::number(stn->getSensorData()->getEndTime()));
@@ -52,7 +52,7 @@ DiagramPrefsDialog::DiagramPrefsDialog(GeoLib::Station* stn, QDialog* parent)
 DiagramPrefsDialog::DiagramPrefsDialog(const QString &filename,
                                        DetailWindow* window,
                                        QDialog* parent)
-    : QDialog(parent), _window(window)
+    : QDialog(parent), window_(window)
 {
     QFileInfo fi(filename);
     setupUi(this);
@@ -72,13 +72,13 @@ void DiagramPrefsDialog::accept()
     QDateTime end_date(getDateTime(toDateLine->text()));
 
     if (start_date == QDateTime() || end_date == QDateTime() ||
-        start_date > end_date || _list.empty())
+        start_date > end_date || list_.empty())
     {
         OGSError::box("No data found...");
         return;
     }
 
-    if (_list[0]->size() == 0)
+    if (list_[0]->size() == 0)
     {
         OGSError::box("Invalid station data.");
         this->done(QDialog::Rejected);
@@ -88,32 +88,32 @@ void DiagramPrefsDialog::accept()
     // If loading lists beyond the first one fails at least nothing terrible
     // will happen.
     bool window_is_empty(false);
-    if (_window == nullptr)
+    if (window_ == nullptr)
     {
-        _window = new DetailWindow();
-        _window->setAttribute(Qt::WA_DeleteOnClose);
+        window_ = new DetailWindow();
+        window_->setAttribute(Qt::WA_DeleteOnClose);
         window_is_empty = true;
     }
 
-    for (std::size_t i = 0; i < _list.size(); i++)
+    for (std::size_t i = 0; i < list_.size(); i++)
     {
-        if (_visability[i]->isChecked())
+        if (visability_[i]->isChecked())
         {
-            _list[i]->truncateToRange(start_date, end_date);
-            _window->addList(_list[i]);
+            list_[i]->truncateToRange(start_date, end_date);
+            window_->addList(list_[i]);
             window_is_empty = false;
         }
     }
 
     if (!window_is_empty)
     {
-        _window->show();
+        window_->show();
         this->done(QDialog::Accepted);
     }
     else
     {
-        delete _window;
-        _window = nullptr;
+        delete window_;
+        window_ = nullptr;
         OGSError::box("No dataset selected.");
     }
 }
@@ -137,9 +137,9 @@ void DiagramPrefsDialog::on_loadFileButton_clicked()
 
 int DiagramPrefsDialog::loadFile(const QString &filename)
 {
-    if (DiagramList::readList(filename, _list))
+    if (DiagramList::readList(filename, list_))
     {
-        for (auto& item : _list)
+        for (auto& item : list_)
         {
             // item->setName(stationTypeLabel->text() + ": " +
             // stationNameLabel->text());
@@ -149,9 +149,9 @@ int DiagramPrefsDialog::loadFile(const QString &filename)
             // item->setYUnit("metres");
             item->setColor(QColor(Qt::red));
         }
-        fromDateLine->setText(_list[0]->getStartDate().toString("dd.MM.yyyy"));
-        QDateTime endDate = _list[0]->getStartDate().addSecs(
-            static_cast<int>(_list[0]->maxXValue()));
+        fromDateLine->setText(list_[0]->getStartDate().toString("dd.MM.yyyy"));
+        QDateTime endDate = list_[0]->getStartDate().addSecs(
+            static_cast<int>(list_[0]->maxXValue()));
         toDateLine->setText(endDate.toString("dd.MM.yyyy"));
         this->createVisibilityCheckboxes();
         return 1;
@@ -173,7 +173,7 @@ int DiagramPrefsDialog::loadList(const std::vector< std::pair<QDateTime, float> 
         //l->setYUnit("metres");
         l->setColor(QColor(Qt::red));
         l->setList(coords);
-        _list.push_back(l);
+        list_.push_back(l);
         return 1;
     }
     return 0;
@@ -181,12 +181,12 @@ int DiagramPrefsDialog::loadList(const std::vector< std::pair<QDateTime, float> 
 
 void DiagramPrefsDialog::createVisibilityCheckboxes()
 {
-    for (auto& item : _list)
+    for (auto& item : list_)
     {
         QCheckBox* box = new QCheckBox(item->getName());
         box->setChecked(true);
         this->CheckBoxLayout->addWidget(box);
-        _visability.push_back(box);
+        visability_.push_back(box);
     }
 }
 

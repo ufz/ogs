@@ -19,14 +19,14 @@ namespace GMSH
 {
 
 GMSHPoint::GMSHPoint(GeoLib::Point const& pnt, std::size_t id, double mesh_density) :
-    GeoLib::Point(pnt, id), _mesh_density(mesh_density)
+    GeoLib::Point(pnt, id), mesh_density_(mesh_density)
 {}
 
 void GMSHPoint::write(std::ostream &os) const
 {
-    os << "Point(" << _id << ") = {" << _x[0] << ", " << _x[1] << ", " << _x[2];
-    if (fabs(_mesh_density) > std::numeric_limits<double>::epsilon()) {
-        os << ", " << _mesh_density << "};";
+    os << "Point(" << id_ << ") = {" << x_[0] << ", " << x_[1] << ", " << x_[2];
+    if (fabs(mesh_density_) > std::numeric_limits<double>::epsilon()) {
+        os << ", " << mesh_density_ << "};";
     } else {
         os << "};";
     }

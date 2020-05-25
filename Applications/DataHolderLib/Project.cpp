@@ -24,7 +24,7 @@ void Project::addMesh(std::unique_ptr<MeshLib::Mesh> mesh)
     std::string name = mesh->getName();
     getUniqueName(name);
     mesh->setName(name);
-    _mesh_vec.push_back(std::move(mesh));
+    mesh_vec_.push_back(std::move(mesh));
 }
 
 std::vector<std::unique_ptr<MeshLib::Mesh>>::const_iterator
@@ -36,7 +36,7 @@ Project::findMeshByName(std::string const& name) const
 std::vector<std::unique_ptr<MeshLib::Mesh>>::iterator
 Project::findMeshByName(std::string const& name)
 {
-    return std::find_if(_mesh_vec.begin(), _mesh_vec.end(),
+    return std::find_if(mesh_vec_.begin(), mesh_vec_.end(),
         [&name](std::unique_ptr<MeshLib::Mesh> & mesh)
         { return mesh && (name == mesh->getName()); });
 }
@@ -44,16 +44,16 @@ Project::findMeshByName(std::string const& name)
 const MeshLib::Mesh* Project::getMesh(const std::string &name) const
 {
     auto it = findMeshByName(name);
-    return (it == _mesh_vec.end() ? nullptr : it->get());
+    return (it == mesh_vec_.end() ? nullptr : it->get());
 }
 
 bool Project::removeMesh(const std::string &name)
 {
     auto it = findMeshByName(name);
-    if (it != _mesh_vec.end())
+    if (it != mesh_vec_.end())
     {
         delete it->release();
-        _mesh_vec.erase(it);
+        mesh_vec_.erase(it);
         return true;
     }
     return false;
@@ -78,7 +78,7 @@ bool Project::getUniqueName(std::string &name) const
             cpName = cpName + "-" + std::to_string(count);
         }
 
-        for (auto& mesh : _mesh_vec)
+        for (auto& mesh : mesh_vec_)
         {
             if (cpName == mesh->getName())
             {
@@ -100,23 +100,23 @@ bool Project::getUniqueName(std::string &name) const
 
 void Project::removePrimaryVariable(std::string const& primary_var_name)
 {
-    std::size_t const n_bc(_boundary_conditions.size());
+    std::size_t const n_bc(boundary_conditions_.size());
     for (int i = n_bc - 1; i >= 0; --i)
     {
-        if (_boundary_conditions[i]->getProcessVarName() == primary_var_name)
+        if (boundary_conditions_[i]->getProcessVarName() == primary_var_name)
         {
             removeBoundaryCondition(primary_var_name,
-                                    _boundary_conditions[i]->getParamName());
+                                    boundary_conditions_[i]->getParamName());
         }
     }
 
-    std::size_t const n_st(_source_terms.size());
+    std::size_t const n_st(source_terms_.size());
     for (int i = n_st - 1; i >= 0; --i)
     {
-        if (_source_terms[i]->getProcessVarName() == primary_var_name)
+        if (source_terms_[i]->getProcessVarName() == primary_var_name)
         {
             removeSourceTerm(primary_var_name,
-                             _source_terms[i]->getParamName());
+                             source_terms_[i]->getParamName());
         }
     }
 }
@@ -124,14 +124,14 @@ void Project::removePrimaryVariable(std::string const& primary_var_name)
 void Project::removeBoundaryCondition(std::string const& primary_var_name,
                                       std::string const& param_name)
 {
-    std::size_t const n_bc(_boundary_conditions.size());
+    std::size_t const n_bc(boundary_conditions_.size());
     for (std::size_t i = 0; i < n_bc; ++i)
     {
-        if (_boundary_conditions[i]->getProcessVarName() == primary_var_name &&
-            _boundary_conditions[i]->getParamName() == param_name)
+        if (boundary_conditions_[i]->getProcessVarName() == primary_var_name &&
+            boundary_conditions_[i]->getParamName() == param_name)
         {
-            _boundary_conditions[i].reset();
-            _boundary_conditions.erase(_boundary_conditions.begin() + i);
+            boundary_conditions_[i].reset();
+            boundary_conditions_.erase(boundary_conditions_.begin() + i);
             return;
         }
     }
@@ -140,14 +140,14 @@ void Project::removeBoundaryCondition(std::string const& primary_var_name,
 void Project::removeSourceTerm(std::string const& primary_var_name,
                                std::string const& param_name)
 {
-    std::size_t const n_st(_source_terms.size());
+    std::size_t const n_st(source_terms_.size());
     for (std::size_t i = 0; i < n_st; ++i)
     {
-        if (_source_terms[i]->getProcessVarName() == primary_var_name &&
-            _source_terms[i]->getParamName() == param_name)
+        if (source_terms_[i]->getProcessVarName() == primary_var_name &&
+            source_terms_[i]->getParamName() == param_name)
         {
-            _source_terms[i].reset();
-            _source_terms.erase(_source_terms.begin() + i);
+            source_terms_[i].reset();
+            source_terms_.erase(source_terms_.begin() + i);
             return;
         }
     }

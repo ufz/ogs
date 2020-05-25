@@ -244,23 +244,23 @@ void CsvInterface::addIndexVectorForWriting(std::size_t s)
 
 bool CsvInterface::write()
 {
-    if (_data.empty())
+    if (data_.empty())
     {
         ERR ("CsvInterface::write() - No data to write.");
         return false;
     }
 
-    std::size_t const n_vecs (_data.size());
+    std::size_t const n_vecs (data_.size());
     std::size_t const vec_size (getVectorSize(0));
 
-    if (_writeCsvHeader)
+    if (writeCsvHeader_)
     {
-        _out << _vec_names[0];
+        out_ << vec_names_[0];
         for (std::size_t i = 1; i < n_vecs; ++i)
         {
-            _out << "\t" << _vec_names[i];
+            out_ << "\t" << vec_names_[i];
         }
-        _out << "\n";
+        out_ << "\n";
     }
 
     for (std::size_t j=0; j<vec_size; ++j)
@@ -268,44 +268,44 @@ bool CsvInterface::write()
         writeValue(0,j);
         for (std::size_t i=1; i<n_vecs; ++i)
         {
-            _out << "\t";
+            out_ << "\t";
             writeValue(i,j);
         }
-        _out << "\n";
+        out_ << "\n";
     }
     return true;
 }
 
 std::size_t CsvInterface::getVectorSize(std::size_t idx) const
 {
-    if (_data[idx].type() == typeid(std::vector<std::string>))
+    if (data_[idx].type() == typeid(std::vector<std::string>))
     {
-        return boost::any_cast<std::vector<std::string>>(_data[idx]).size();
+        return boost::any_cast<std::vector<std::string>>(data_[idx]).size();
     }
-    if (_data[idx].type() == typeid(std::vector<double>))
+    if (data_[idx].type() == typeid(std::vector<double>))
     {
-        return boost::any_cast<std::vector<double>>(_data[idx]).size();
+        return boost::any_cast<std::vector<double>>(data_[idx]).size();
     }
-    if (_data[idx].type() == typeid(std::vector<int>))
+    if (data_[idx].type() == typeid(std::vector<int>))
     {
-        return boost::any_cast<std::vector<int>>(_data[idx]).size();
+        return boost::any_cast<std::vector<int>>(data_[idx]).size();
     }
     return 0;
 }
 
 void CsvInterface::writeValue(std::size_t vec_idx, std::size_t in_vec_idx)
 {
-    if (_data[vec_idx].type() == typeid(std::vector<std::string>))
+    if (data_[vec_idx].type() == typeid(std::vector<std::string>))
     {
-        _out << boost::any_cast<std::vector<std::string>>(_data[vec_idx])[in_vec_idx];
+        out_ << boost::any_cast<std::vector<std::string>>(data_[vec_idx])[in_vec_idx];
     }
-    else if (_data[vec_idx].type() == typeid(std::vector<double>))
+    else if (data_[vec_idx].type() == typeid(std::vector<double>))
     {
-        _out << boost::any_cast<std::vector<double>>(_data[vec_idx])[in_vec_idx];
+        out_ << boost::any_cast<std::vector<double>>(data_[vec_idx])[in_vec_idx];
     }
-    else if (_data[vec_idx].type() == typeid(std::vector<int>))
+    else if (data_[vec_idx].type() == typeid(std::vector<int>))
     {
-        _out << boost::any_cast<std::vector<int>>(_data[vec_idx])[in_vec_idx];
+        out_ << boost::any_cast<std::vector<int>>(data_[vec_idx])[in_vec_idx];
     }
 }
 

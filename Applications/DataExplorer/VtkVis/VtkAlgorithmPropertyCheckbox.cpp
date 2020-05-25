@@ -24,7 +24,7 @@ VtkAlgorithmPropertyCheckbox::VtkAlgorithmPropertyCheckbox(
     QString name,
     VtkAlgorithmProperties* algProps,
     QWidget* parent /*= 0*/)
-    : QCheckBox(parent), _name(std::move(name)), _algProps(algProps)
+    : QCheckBox(parent), name_(std::move(name)), algProps_(algProps)
 {
     this->setChecked(value);
     connect(this, SIGNAL(stateChanged(int)), this, SLOT(setNewValue(int)));
@@ -35,5 +35,5 @@ VtkAlgorithmPropertyCheckbox::~VtkAlgorithmPropertyCheckbox() = default;
 void VtkAlgorithmPropertyCheckbox::setNewValue( int state )
 {
     auto boolState = static_cast<bool>(state);
-    _algProps->SetUserProperty(_name, QVariant(boolState));
+    algProps_->SetUserProperty(name_, QVariant(boolState));
 }
