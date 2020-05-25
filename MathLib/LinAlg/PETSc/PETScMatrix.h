@@ -99,7 +99,7 @@ public:
               \f$A(k, j) = \begin{cases}
                 0.0, &j\not=k, j=1,2,\dots,k-1, k+1, \dots, n \\
                 1.0, &j = k
-              \end{cases}\f$, where \f$k \in \mbox{row\pos_}\f$
+              \end{cases}\f$, where \f$k \in \mbox{row\_pos}\f$
               This function must be called by all ranks.
        \param row_pos The row indicies of the specified rows.
     */

@@ -19,17 +19,17 @@
 namespace MathLib
 {
 PETScMatrix::PETScMatrix(const PetscInt nrows, const PETScMatrixOption& mat_opt)
-    : _nrows(nrows),
-      _ncols(nrows),
-      _n_loc_rows(PETSC_DECIDE),
-      _n_loc_cols(mat_opt.n_local_cols)
+    : nrows_(nrows),
+      ncols_(nrows),
+      n_loc_rows_(PETSC_DECIDE),
+      n_loc_cols_(mat_opt.n_local_cols)
 {
     if (!mat_opt.is_global_size)
     {
-        _n_loc_rows = nrows;
-        _n_loc_cols = nrows;
-        _nrows = PETSC_DECIDE;
-        _ncols = PETSC_DECIDE;
+        n_loc_rows_ = nrows;
+        n_loc_cols_ = nrows;
+        nrows_ = PETSC_DECIDE;
+        ncols_ = PETSC_DECIDE;
     }
 
     create(mat_opt.d_nz, mat_opt.o_nz);
@@ -37,51 +37,51 @@ PETScMatrix::PETScMatrix(const PetscInt nrows, const PETScMatrixOption& mat_opt)
 
 PETScMatrix::PETScMatrix(const PetscInt nrows, const PetscInt ncols,
                          const PETScMatrixOption& mat_opt)
-    : _nrows(nrows),
-      _ncols(ncols),
-      _n_loc_rows(PETSC_DECIDE),
-      _n_loc_cols(mat_opt.n_local_cols)
+    : nrows_(nrows),
+      ncols_(ncols),
+      n_loc_rows_(PETSC_DECIDE),
+      n_loc_cols_(mat_opt.n_local_cols)
 {
     if (!mat_opt.is_global_size)
     {
-        _nrows = PETSC_DECIDE;
-        _ncols = PETSC_DECIDE;
-        _n_loc_rows = nrows;
-        _n_loc_cols = ncols;
+        nrows_ = PETSC_DECIDE;
+        ncols_ = PETSC_DECIDE;
+        n_loc_rows_ = nrows;
+        n_loc_cols_ = ncols;
     }
 
     create(mat_opt.d_nz, mat_opt.o_nz);
 }
 
 PETScMatrix::PETScMatrix(const PETScMatrix& A)
-    : _nrows(A._nrows),
-      _ncols(A._ncols),
-      _n_loc_rows(A._n_loc_rows),
-      _n_loc_cols(A._n_loc_cols),
-      _start_rank(A._start_rank),
-      _end_rank(A._end_rank)
+    : nrows_(A.nrows_),
+      ncols_(A.ncols_),
+      n_loc_rows_(A.n_loc_rows_),
+      n_loc_cols_(A.n_loc_cols_),
+      start_rank_(A.start_rank_),
+      end_rank_(A.end_rank_)
 {
-    MatConvert(A._A, MATSAME, MAT_INITIAL_MATRIX, &_A);
+    MatConvert(A.A_, MATSAME, MAT_INITIAL_MATRIX, &A_);
 }
 
 PETScMatrix& PETScMatrix::operator=(PETScMatrix const& A)
 {
-    _nrows = A._nrows;
-    _ncols = A._ncols;
-    _n_loc_rows = A._n_loc_rows;
-    _n_loc_cols = A._n_loc_cols;
-    _start_rank = A._start_rank;
-    _end_rank = A._end_rank;
+    nrows_ = A.nrows_;
+    ncols_ = A.ncols_;
+    n_loc_rows_ = A.n_loc_rows_;
+    n_loc_cols_ = A.n_loc_cols_;
+    start_rank_ = A.start_rank_;
+    end_rank_ = A.end_rank_;
 
-    if (_A)
+    if (A_)
     {
         // TODO this is the slowest option for copying
-        MatCopy(A._A, _A, DIFFERENT_NONZERO_PATTERN);
+        MatCopy(A.A_, A_, DIFFERENT_NONZERO_PATTERN);
     }
     else
     {
         destroy();
-        MatConvert(A._A, MATSAME, MAT_INITIAL_MATRIX, &_A);
+        MatConvert(A.A_, MATSAME, MAT_INITIAL_MATRIX, &A_);
     }
 
     return *this;
@@ -98,15 +98,15 @@ void PETScMatrix::setRowsColumnsZero(std::vector<PetscInt> const& row_pos)
     // This avoids all reductions in the zero row routines
     // and thus improves performance for very large process counts.
     // See PETSc doc about MAT_NO_OFF_PROC_ZERO_ROWS.
-    MatSetOption(_A, MAT_NO_OFF_PROC_ZERO_ROWS, PETSC_TRUE);
+    MatSetOption(A_, MAT_NO_OFF_PROC_ZERO_ROWS, PETSC_TRUE);
 
     // Keep the non-zero pattern for the assignment operator.
-    MatSetOption(_A, MAT_KEEP_NONZERO_PATTERN, PETSC_TRUE);
+    MatSetOption(A_, MAT_KEEP_NONZERO_PATTERN, PETSC_TRUE);
 
     if (nrows > 0)
-        MatZeroRows(_A, nrows, &row_pos[0], one, PETSC_NULL, PETSC_NULL);
+        MatZeroRows(A_, nrows, &row_pos[0], one, PETSC_NULL, PETSC_NULL);
     else
-        MatZeroRows(_A, 0, PETSC_NULL, one, PETSC_NULL, PETSC_NULL);
+        MatZeroRows(A_, 0, PETSC_NULL, one, PETSC_NULL, PETSC_NULL);
 }
 
 void PETScMatrix::viewer(const std::string& file_name,
@@ -118,14 +118,14 @@ void PETScMatrix::viewer(const std::string& file_name,
 
     finalizeAssembly();
 
-    PetscObjectSetName((PetscObject)_A, "Stiffness_matrix");
-    MatView(_A, viewer);
+    PetscObjectSetName((PetscObject)A_, "Stiffness_matrix");
+    MatView(A_, viewer);
 
 // This preprocessor is only for debugging, e.g. dump the matrix and exit the
 // program.
 //#define EXIT_TEST
 #ifdef EXIT_TEST
-    MatDestroy(_A);
+    MatDestroy(A_);
     PetscFinalize();
     exit(0);
 #endif
@@ -133,20 +133,20 @@ void PETScMatrix::viewer(const std::string& file_name,
 
 void PETScMatrix::create(const PetscInt d_nz, const PetscInt o_nz)
 {
-    MatCreate(PETSC_COMM_WORLD, &_A);
-    MatSetSizes(_A, _n_loc_rows, _n_loc_cols, _nrows, _ncols);
+    MatCreate(PETSC_COMM_WORLD, &A_);
+    MatSetSizes(A_, n_loc_rows_, n_loc_cols_, nrows_, ncols_);
 
-    MatSetFromOptions(_A);
+    MatSetFromOptions(A_);
 
-    MatSetType(_A, MATMPIAIJ);
-    MatSeqAIJSetPreallocation(_A, d_nz, PETSC_NULL);
-    MatMPIAIJSetPreallocation(_A, d_nz, PETSC_NULL, o_nz, PETSC_NULL);
-    // If pre-allocation does not work one can use MatSetUp(_A), which is much
+    MatSetType(A_, MATMPIAIJ);
+    MatSeqAIJSetPreallocation(A_, d_nz, PETSC_NULL);
+    MatMPIAIJSetPreallocation(A_, d_nz, PETSC_NULL, o_nz, PETSC_NULL);
+    // If pre-allocation does not work one can use MatSetUp(A_), which is much
     // slower.
 
-    MatGetOwnershipRange(_A, &_start_rank, &_end_rank);
-    MatGetSize(_A, &_nrows, &_ncols);
-    MatGetLocalSize(_A, &_n_loc_rows, &_n_loc_cols);
+    MatGetOwnershipRange(A_, &start_rank_, &end_rank_);
+    MatGetSize(A_, &nrows_, &ncols_);
+    MatGetLocalSize(A_, &n_loc_rows_, &n_loc_cols_);
 }
 
 bool finalizeMatrixAssembly(PETScMatrix& mat, const MatAssemblyType asm_type)
