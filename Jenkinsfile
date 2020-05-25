@@ -615,7 +615,8 @@ pipeline {
                     '-DOGS_CHECK_HEADER_COMPILATION=ON ' +
                     '-DOGS_BUILD_UTILS=ON ' +
                     '-DOGS_BUILD_GUI=ON ' +
-                    '-DOGS_USE_PYTHON=ON '
+                    '-DOGS_USE_PYTHON=ON ' +
+                    '-DBUILD_SHARED_LIBS=ON '
                   dir = 'build-check-header'
                 }
               }
