@@ -63,7 +63,7 @@ public:
     const T& operator[] (std::size_t idx) const
     {
         assert (idx < DIM);
-        return _x[idx];
+        return x_[idx];
     }
     /** \brief access operator (see book Effektiv C++ programmieren - subsection 1.3.2 ).
      * \sa const T& operator[] (std::size_t idx) const
@@ -76,7 +76,7 @@ public:
     /** returns an array containing the coordinates of the point */
     const T* getCoords () const
     {
-        return _x.data();
+        return x_.data();
     }
 
     /** write point coordinates into stream (used from operator<<)
@@ -84,26 +84,26 @@ public:
      */
     virtual void write (std::ostream &os) const
     {
-        std::copy(_x.cbegin(), _x.cend(), std::ostream_iterator<T>(os, " "));
+        std::copy(x_.cbegin(), x_.cend(), std::ostream_iterator<T>(os, " "));
     }
 
     /** read point coordinates into stream (used from operator>>) */
     virtual void read (std::istream &is)
     {
-        std::copy(std::istream_iterator<T>(is), std::istream_iterator<T>(), _x.begin());
+        std::copy(std::istream_iterator<T>(is), std::istream_iterator<T>(), x_.begin());
     }
 
 protected:
-    std::array<T, DIM> _x;
+    std::array<T, DIM> x_;
 };
 
 template <typename T, std::size_t DIM>
 TemplatePoint<T,DIM>::TemplatePoint() :
-    _x({{0}})
+    x_({{0}})
 {}
 
 template <typename T, std::size_t DIM>
-TemplatePoint<T, DIM>::TemplatePoint(std::array<T, DIM> x) : _x(std::move(x))
+TemplatePoint<T, DIM>::TemplatePoint(std::array<T, DIM> x) : x_(std::move(x))
 {}
 
 /** Equality of TemplatePoint's up to an epsilon.

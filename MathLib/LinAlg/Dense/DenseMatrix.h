@@ -50,7 +50,7 @@ public:
    */
    const FP_TYPE *getEntries() const
    {
-       return _data;
+       return data_;
    }
 
    /**
@@ -58,7 +58,7 @@ public:
    */
    const FP_TYPE *data() const
    {
-       return _data;
+       return data_;
    }
 
    /**
@@ -142,17 +142,17 @@ public:
      * get the number of rows
      * @return the number of rows
      */
-    IDX_TYPE getNumberOfRows () const { return _n_rows; }
+    IDX_TYPE getNumberOfRows () const { return n_rows_; }
     /**
      * get the number of columns
      * @return the number of columns
      */
-    IDX_TYPE getNumberOfColumns () const { return _n_cols; }
+    IDX_TYPE getNumberOfColumns () const { return n_cols_; }
 
     /**
      * get the number of entries in the matrix
      */
-    IDX_TYPE size() const { return _n_rows*_n_cols; }
+    IDX_TYPE size() const { return n_rows_*n_cols_; }
 
     /**
      * set the identity matrix
@@ -163,18 +163,18 @@ protected:
     /**
      * the number of rows
      */
-    IDX_TYPE _n_rows;
+    IDX_TYPE n_rows_;
     /**
      * the number of columns
      */
-    IDX_TYPE _n_cols;
+    IDX_TYPE n_cols_;
 
    // zero based addressing, but Fortran storage layout
    //inline IDX_TYPE address(IDX_TYPE i, IDX_TYPE j) const { return j*rows+i; }
    // zero based addressing, C storage layout
-   inline IDX_TYPE address(IDX_TYPE i, IDX_TYPE j) const { return i*_n_cols+j; }
+   inline IDX_TYPE address(IDX_TYPE i, IDX_TYPE j) const { return i*n_cols_+j; }
 
-   FP_TYPE *_data;
+   FP_TYPE *data_;
 };
 
 /** overload the output operator for class DenseMatrix */

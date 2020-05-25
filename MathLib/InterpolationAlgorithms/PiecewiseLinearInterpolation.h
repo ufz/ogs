@@ -76,7 +76,7 @@ public:
     double getSupportMin() const;
 
 protected:
-    std::vector<double> _supp_pnts;
-    std::vector<double> _values_at_supp_pnts;
+    std::vector<double> supp_pnts_;
+    std::vector<double> values_at_supp_pnts_;
 };
 }  // end namespace MathLib

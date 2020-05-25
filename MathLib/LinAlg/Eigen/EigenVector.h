@@ -38,13 +38,13 @@ public:
 
     /// Constructor for initialization of the number of rows
     /// @param length number of rows
-    explicit EigenVector(IndexType length) : _vec(length) {}
+    explicit EigenVector(IndexType length) : vec_(length) {}
 
     /// copy constructor
     EigenVector(EigenVector const& src) = default;
 
     /// return a vector length
-    IndexType size() const { return static_cast<IndexType>(_vec.size()); }
+    IndexType size() const { return static_cast<IndexType>(vec_.size()); }
 
     /// return a start index of the active data range
     IndexType getRangeBegin() const { return 0;}
@@ -53,16 +53,16 @@ public:
     IndexType getRangeEnd() const { return size(); }
 
     // TODO preliminary
-    void setZero() { _vec.setZero(); }
+    void setZero() { vec_.setZero(); }
 
     /// access entry
-    double const & operator[] (IndexType rowId) const { return _vec[rowId]; }
-    double& operator[] (IndexType rowId) { return _vec[rowId]; }
+    double const & operator[] (IndexType rowId) const { return vec_[rowId]; }
+    double& operator[] (IndexType rowId) { return vec_[rowId]; }
 
     /// get entry
     double get(IndexType rowId) const
     {
-        return _vec[rowId];
+        return vec_[rowId];
     }
 
     /// get entries
@@ -72,7 +72,7 @@ public:
         local_x.reserve(indices.size());
 
         for (auto i : indices) {
-            local_x.emplace_back(_vec[i]);
+            local_x.emplace_back(vec_[i]);
         }
 
         return local_x;
@@ -81,13 +81,13 @@ public:
     /// set entry
     void set(IndexType rowId, double v)
     {
-        _vec[rowId] = v;
+        vec_[rowId] = v;
     }
 
     /// add entry
     void add(IndexType rowId, double v)
     {
-        _vec[rowId] += v;
+        vec_[rowId] += v;
     }
 
     /// add entries
@@ -103,23 +103,23 @@ public:
     /// Copy vector values.
     void copyValues(std::vector<double>& u) const
     {
-        assert(u.size() == (std::size_t) _vec.size());
-        copy_n(_vec.data(), _vec.size(), u.begin());
+        assert(u.size() == (std::size_t) vec_.size());
+        copy_n(vec_.data(), vec_.size(), u.begin());
     }
 
 #ifndef NDEBUG
     /// printout this equation for debugging
-    void write (const std::string &filename) const { std::ofstream os(filename); os << _vec; }
+    void write (const std::string &filename) const { std::ofstream os(filename); os << vec_; }
 #endif
 
     /// return a raw Eigen vector object
-    RawVectorType& getRawVector() {return _vec; }
+    RawVectorType& getRawVector() {return vec_; }
 
     /// return a raw Eigen vector object
-    const RawVectorType& getRawVector() const {return _vec; }
+    const RawVectorType& getRawVector() const {return vec_; }
 
 private:
-    RawVectorType _vec;
+    RawVectorType vec_;
 };
 
 }  // namespace MathLib
