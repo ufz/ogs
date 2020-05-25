@@ -47,7 +47,7 @@ public:
     bool insertPoint(std::size_t pos, std::size_t pnt_id) override;
 
 private:
-    std::vector<bool> _marker;
+    std::vector<bool> marker_;
 };
 
 } // end namespace GeoLib

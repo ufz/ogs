@@ -39,7 +39,7 @@ public:
                       std::string output_name);
 
     // Returns the (possibly modified) output name of the new geometry.
-    std::string const& getFinalizedOutputName() const { return _output_name; }
+    std::string const& getFinalizedOutputName() const { return output_name_; }
     // Returns a reference to the copied point vector for modification
     std::vector<GeoLib::Point*>& getPointVectorCopy();
     // Returns a reference to the copied polyline vector for modification
@@ -59,8 +59,8 @@ private:
     std::unique_ptr<std::vector<GeoLib::Surface*>> copySurfacesVector(
         std::vector<GeoLib::Surface*> const& surfaces) const;
 
-    std::string _output_name;
-    GeoLib::GEOObjects& _geo_objects;
+    std::string output_name_;
+    GeoLib::GEOObjects& geo_objects_;
 
 }; // class
 

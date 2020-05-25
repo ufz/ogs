@@ -132,7 +132,7 @@ public:
     /// Removes the station vector with the given name from GEOObjects
     bool removeStationVec(const std::string &name)
     {
-        _callbacks->removeStationVec(name);
+        callbacks_->removeStationVec(name);
         return removePointVec(name);
     }
 
@@ -286,30 +286,30 @@ public:
     ~GEOObjects();
 
     /// Returns std::numeric_limits<std::size_t>::max() if no geometry of the
-    /// given name exists or the index of the geometry in _pnt_vecs otherwise
+    /// given name exists or the index of the geometry in pnt_vecs_ otherwise
     std::size_t exists(const std::string &geometry_name) const;
 
     /// Checks if the point vector with the given name is referenced in a polyline- or surface vector.
     bool isPntVecUsed (const std::string &name) const;
 
     /// Read access to points w/o using a name.
-    std::vector<PointVec*> const& getPoints() const { return _pnt_vecs; }
+    std::vector<PointVec*> const& getPoints() const { return pnt_vecs_; }
     /// Read access to polylines w/o using a name.
-    std::vector<PolylineVec*> const& getPolylines() const { return _ply_vecs; }
+    std::vector<PolylineVec*> const& getPolylines() const { return ply_vecs_; }
     /// Read access to surfaces w/o using a name.
-    std::vector<SurfaceVec*> const& getSurfaces() const { return _sfc_vecs; }
+    std::vector<SurfaceVec*> const& getSurfaces() const { return sfc_vecs_; }
 
     /**
      * vector manages pointers to PointVec objects
      */
-    std::vector<PointVec*> _pnt_vecs;
+    std::vector<PointVec*> pnt_vecs_;
 
     /** vector manages pointers to PolylineVec objects */
-    std::vector<PolylineVec*> _ply_vecs;
+    std::vector<PolylineVec*> ply_vecs_;
     /** vector manages pointers to SurfaceVec objects */
-    std::vector<SurfaceVec*> _sfc_vecs;
+    std::vector<SurfaceVec*> sfc_vecs_;
 
-    std::unique_ptr<Callbacks> _callbacks{new Callbacks};
+    std::unique_ptr<Callbacks> callbacks_{new Callbacks};
 
     std::function<void(std::string const&)> addPolylineVecCallback =
         [](std::string const& /*unused*/) {};

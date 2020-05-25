@@ -45,7 +45,7 @@ enum class Location
  * a vector that stores the indices in the point vector.
  * A polyline consists of at least one line segment. The polyline is specified by the points
  * of the line segments. The class Polyline stores ids of pointers to the points in the
- * _ply_pnt_ids vector.
+ * ply_pnt_ids_ vector.
  * */
 class Polyline : public GeoObject
 {
@@ -85,8 +85,8 @@ public:
         SegmentIterator operator-(std::vector<GeoLib::Point>::difference_type n);
 
     private:
-        GeoLib::Polyline const* _polyline;
-        std::vector<GeoLib::Point*>::size_type _segment_number;
+        GeoLib::Polyline const* polyline_;
+        std::vector<GeoLib::Point*>::size_type segment_number_;
     };
 
     friend class Polygon;
@@ -111,7 +111,7 @@ public:
     /**
      * Adds an id of a point at the end of the polyline if and only if the
      * resulting segment won't be empty. The id have to be inside the (internal)
-     * \c _ply_pnts vector the polyline is based on.
+     * \c ply_pnts_ vector the polyline is based on.
      * @return If the point could be added the return value is \c true. If the
      * addition of the point would result in empty line segment \c false is
      * returned.
@@ -119,7 +119,7 @@ public:
     virtual bool addPoint(std::size_t pnt_id);
 
     /**
-     * Method inserts a new point (that have to be inside the _ply_pnts vector)
+     * Method inserts a new point (that have to be inside the ply_pnts_ vector)
      * at the given position in the polyline if and only if the resulting
      * segments won't be empty.
      * @param pos the position in the polyline, pos have to be a value into the
@@ -231,13 +231,13 @@ protected:
     Location getLocationOfPoint (std::size_t k, GeoLib::Point const & pnt) const;
 
     /** a reference to the vector of pointers to the geometric points */
-    const std::vector<Point*> &_ply_pnts;
+    const std::vector<Point*> &ply_pnts_;
     /** position of pointers to the geometric points */
-    std::vector<std::size_t> _ply_pnt_ids;
+    std::vector<std::size_t> ply_pnt_ids_;
     /**
      * the k-th element of the vector contains the length of the polyline until the k-th segment
      */
-    std::vector<double> _length;
+    std::vector<double> length_;
 private:
     LineSegment getSegment(std::size_t i) const;
     LineSegment getSegment(std::size_t i);

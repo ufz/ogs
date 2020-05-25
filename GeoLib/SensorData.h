@@ -85,25 +85,25 @@ public:
     const std::vector<float>* getTimeSeries(SensorDataType time_series_name) const;
 
     /// Returns all time series names contained in this container
-    const std::vector<SensorDataType>& getTimeSeriesNames() const { return _vec_names; }
+    const std::vector<SensorDataType>& getTimeSeriesNames() const { return vec_names_; }
 
     /// Returns the time step vector (if it exists)
-    const std::vector<std::size_t>& getTimeSteps() const { return _time_steps; }
+    const std::vector<std::size_t>& getTimeSteps() const { return time_steps_; }
 
     /// Returns the first time step
-    std::size_t getStartTime() const { return _start; }
+    std::size_t getStartTime() const { return start_; }
 
     /// Returns the last time step
-    std::size_t getEndTime() const { return _end; }
+    std::size_t getEndTime() const { return end_; }
 
     /// Returns the interval between time steps (Returns "0" if a vector is given!)
-    std::size_t getStepSize() const { return _step_size; }
+    std::size_t getStepSize() const { return step_size_; }
 
     /// Allows to set a unit for the time steps
-    void setTimeUnit(TimeStepType t) { _time_unit = t; }
+    void setTimeUnit(TimeStepType t) { time_unit_ = t; }
 
     /// Returns the unit the time steps
-    TimeStepType getTimeUnit() const { return _time_unit; }
+    TimeStepType getTimeUnit() const { return time_unit_; }
 
     /// Converts Sensor Data Types to Strings
     static std::string convertSensorDataType2String(SensorDataType t);
@@ -115,13 +115,13 @@ private:
     /// Reads a CSV-file with time series data and fills the container.
     int readDataFromFile(const std::string &file_name);
 
-    std::size_t _start;
-    std::size_t _end;
-    std::size_t _step_size;
-    TimeStepType _time_unit;
-    std::vector<std::string> _data_unit_string;
-    std::vector<std::size_t> _time_steps;
-    std::vector<SensorDataType> _vec_names;
-    std::vector< std::vector<float>* > _data_vecs;
+    std::size_t start_;
+    std::size_t end_;
+    std::size_t step_size_;
+    TimeStepType time_unit_;
+    std::vector<std::string> data_unit_string_;
+    std::vector<std::size_t> time_steps_;
+    std::vector<SensorDataType> vec_names_;
+    std::vector< std::vector<float>* > data_vecs_;
 
 };

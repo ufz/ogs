@@ -56,7 +56,7 @@ OctTree<POINT, MAX_POINTS>* OctTree<POINT, MAX_POINTS>::createOctTree(T ll, T ur
 template <typename POINT, std::size_t MAX_POINTS>
 OctTree<POINT, MAX_POINTS>::~OctTree()
 {
-    for (auto c : _children)
+    for (auto c : children_)
     {
         delete c;
     }
@@ -68,14 +68,14 @@ bool OctTree<POINT, MAX_POINTS>::addPoint(POINT * pnt, POINT *& ret_pnt)
     // first do a range query using a epsilon box around the point pnt
     std::vector<POINT*> query_pnts;
     MathLib::Point3d min(
-        std::array<double,3>{{(*pnt)[0]-_eps, (*pnt)[1]-_eps, (*pnt)[2]-_eps}});
+        std::array<double,3>{{(*pnt)[0]-eps_, (*pnt)[1]-eps_, (*pnt)[2]-eps_}});
     MathLib::Point3d max(
-        std::array<double,3>{{(*pnt)[0]+_eps, (*pnt)[1]+_eps, (*pnt)[2]+_eps}});
+        std::array<double,3>{{(*pnt)[0]+eps_, (*pnt)[1]+eps_, (*pnt)[2]+eps_}});
     getPointsInRange(min, max, query_pnts);
     if (! query_pnts.empty()) {
         // check Euclidean norm
         for (auto p : query_pnts) {
-            if (MathLib::sqrDist(*p, *pnt) <= _eps*_eps) {
+            if (MathLib::sqrDist(*p, *pnt) <= eps_*eps_) {
                 ret_pnt = p;
                 return false;
             }
@@ -88,9 +88,9 @@ bool OctTree<POINT, MAX_POINTS>::addPoint(POINT * pnt, POINT *& ret_pnt)
         return false;
     }
 
-    // at this place it holds true that the point is within [_ll, _ur]
-    if (!_is_leaf) {
-        for (auto c : _children) {
+    // at this place it holds true that the point is within [ll_, ur_]
+    if (!is_leaf_) {
+        for (auto c : children_) {
             if (c->addPoint_(pnt, ret_pnt)) {
                 return true;
             }
@@ -103,11 +103,11 @@ bool OctTree<POINT, MAX_POINTS>::addPoint(POINT * pnt, POINT *& ret_pnt)
 
     ret_pnt = pnt;
 
-    if (_pnts.size () < MAX_POINTS) {
-        _pnts.push_back(pnt);
-    } else { // i.e. _pnts.size () == MAX_POINTS
+    if (pnts_.size () < MAX_POINTS) {
+        pnts_.push_back(pnt);
+    } else { // i.e. pnts_.size () == MAX_POINTS
         splitNode(pnt);
-        _pnts.clear();
+        pnts_.clear();
     }
     return true;
 }
@@ -117,18 +117,18 @@ template <typename T>
 void OctTree<POINT, MAX_POINTS>::getPointsInRange(T const& min, T const& max,
     std::vector<POINT*> &pnts) const
 {
-    if (_ur[0] < min[0] || _ur[1] < min[1] || _ur[2] < min[2])
+    if (ur_[0] < min[0] || ur_[1] < min[1] || ur_[2] < min[2])
     {
         return;
     }
 
-    if (max[0] < _ll[0] || max[1] < _ll[1] || max[2] < _ll[2])
+    if (max[0] < ll_[0] || max[1] < ll_[1] || max[2] < ll_[2])
     {
         return;
     }
 
-    if (_is_leaf) {
-        std::copy_if(_pnts.begin(), _pnts.end(), std::back_inserter(pnts),
+    if (is_leaf_) {
+        std::copy_if(pnts_.begin(), pnts_.end(), std::back_inserter(pnts),
                      [&min, &max](auto const* p) {
                          return (min[0] <= (*p)[0] && (*p)[0] < max[0] &&
                                  min[1] <= (*p)[1] && (*p)[1] < max[1] &&
@@ -136,7 +136,7 @@ void OctTree<POINT, MAX_POINTS>::getPointsInRange(T const& min, T const& max,
                      });
     } else {
         for (std::size_t k(0); k<8; k++) {
-            _children[k]->getPointsInRange(min, max, pnts);
+            children_[k]->getPointsInRange(min, max, pnts);
         }
     }
 }
@@ -144,9 +144,9 @@ void OctTree<POINT, MAX_POINTS>::getPointsInRange(T const& min, T const& max,
 template <typename POINT, std::size_t MAX_POINTS>
 OctTree<POINT, MAX_POINTS>::OctTree(
     MathLib::Point3d const& ll, MathLib::Point3d const& ur, double eps)
-    : _ll(ll), _ur(ur), _is_leaf(true), _eps(eps)
+    : ll_(ll), ur_(ur), is_leaf_(true), eps_(eps)
 {
-    _children.fill(nullptr);
+    children_.fill(nullptr);
 }
 
 template <typename POINT, std::size_t MAX_POINTS>
@@ -157,9 +157,9 @@ bool OctTree<POINT, MAX_POINTS>::addPoint_(POINT * pnt, POINT *& ret_pnt)
         return false;
     }
 
-    // at this place it holds true that the point is within [_ll, _ur]
-    if (!_is_leaf) {
-        for (auto c : _children) {
+    // at this place it holds true that the point is within [ll_, ur_]
+    if (!is_leaf_) {
+        for (auto c : children_) {
             if (c->addPoint_(pnt, ret_pnt)) {
                 return true;
             }
@@ -171,11 +171,11 @@ bool OctTree<POINT, MAX_POINTS>::addPoint_(POINT * pnt, POINT *& ret_pnt)
     }
 
     ret_pnt = pnt;
-    if (_pnts.size() < MAX_POINTS) {
-        _pnts.push_back(pnt);
-    } else { // i.e. _pnts.size () == MAX_POINTS
+    if (pnts_.size() < MAX_POINTS) {
+        pnts_.push_back(pnt);
+    } else { // i.e. pnts_.size () == MAX_POINTS
         splitNode(pnt);
-        _pnts.clear();
+        pnts_.clear();
     }
     return true;
 }
@@ -188,11 +188,11 @@ bool OctTree<POINT, MAX_POINTS>::addPointToChild(POINT * pnt)
         return false;
     }
 
-    if (_pnts.size() < MAX_POINTS) {
-        _pnts.push_back(pnt);
-    } else { // i.e. _pnts.size () == MAX_POINTS
+    if (pnts_.size() < MAX_POINTS) {
+        pnts_.push_back(pnt);
+    } else { // i.e. pnts_.size () == MAX_POINTS
         splitNode(pnt);
-        _pnts.clear();
+        pnts_.clear();
     }
     return true;
 }
@@ -200,90 +200,90 @@ bool OctTree<POINT, MAX_POINTS>::addPointToChild(POINT * pnt)
 template <typename POINT, std::size_t MAX_POINTS>
 void OctTree<POINT, MAX_POINTS>::splitNode(POINT * pnt)
 {
-    const double x_mid((_ur[0] + _ll[0]) / 2.0);
-    const double y_mid((_ur[1] + _ll[1]) / 2.0);
-    const double z_mid((_ur[2] + _ll[2]) / 2.0);
-    MathLib::Point3d p0(std::array<double,3>{{x_mid, y_mid, _ll[2]}});
-    MathLib::Point3d p1(std::array<double,3>{{_ur[0], _ur[1], z_mid}});
+    const double x_mid((ur_[0] + ll_[0]) / 2.0);
+    const double y_mid((ur_[1] + ll_[1]) / 2.0);
+    const double z_mid((ur_[2] + ll_[2]) / 2.0);
+    MathLib::Point3d p0(std::array<double,3>{{x_mid, y_mid, ll_[2]}});
+    MathLib::Point3d p1(std::array<double,3>{{ur_[0], ur_[1], z_mid}});
 
     // create child NEL
-    _children[static_cast<std::int8_t>(Quadrant::NEL)]
-        = new OctTree<POINT, MAX_POINTS> (p0, p1, _eps);
+    children_[static_cast<std::int8_t>(Quadrant::NEL)]
+        = new OctTree<POINT, MAX_POINTS> (p0, p1, eps_);
 
     // create child NWL
-    p0[0] = _ll[0];
+    p0[0] = ll_[0];
     p1[0] = x_mid;
-    _children[static_cast<std::int8_t>(Quadrant::NWL)]
-        = new OctTree<POINT, MAX_POINTS> (p0, p1, _eps);
+    children_[static_cast<std::int8_t>(Quadrant::NWL)]
+        = new OctTree<POINT, MAX_POINTS> (p0, p1, eps_);
 
     // create child SWL
-    p0[1] = _ll[1];
+    p0[1] = ll_[1];
     p1[1] = y_mid;
-    _children[static_cast<std::int8_t>(Quadrant::SWL)]
-        = new OctTree<POINT, MAX_POINTS> (_ll, p1, _eps);
+    children_[static_cast<std::int8_t>(Quadrant::SWL)]
+        = new OctTree<POINT, MAX_POINTS> (ll_, p1, eps_);
 
     // create child NEU
-    _children[static_cast<std::int8_t>(Quadrant::NEU)]
-        = new OctTree<POINT, MAX_POINTS> (p1, _ur, _eps);
+    children_[static_cast<std::int8_t>(Quadrant::NEU)]
+        = new OctTree<POINT, MAX_POINTS> (p1, ur_, eps_);
 
     // create child SEL
     p0[0] = x_mid;
-    p1[0] = _ur[0];
-    _children[static_cast<std::int8_t>(Quadrant::SEL)]
-        = new OctTree<POINT, MAX_POINTS> (p0, p1, _eps);
+    p1[0] = ur_[0];
+    children_[static_cast<std::int8_t>(Quadrant::SEL)]
+        = new OctTree<POINT, MAX_POINTS> (p0, p1, eps_);
 
     // create child NWU
-    p0[0] = _ll[0];
+    p0[0] = ll_[0];
     p0[1] = y_mid;
     p0[2] = z_mid;
     p1[0] = x_mid;
-    p1[1] = _ur[1];
-    p1[2] = _ur[2];
-    _children[static_cast<std::int8_t>(Quadrant::NWU)]
-        = new OctTree<POINT, MAX_POINTS> (p0, p1, _eps);
+    p1[1] = ur_[1];
+    p1[2] = ur_[2];
+    children_[static_cast<std::int8_t>(Quadrant::NWU)]
+        = new OctTree<POINT, MAX_POINTS> (p0, p1, eps_);
 
     // create child SWU
-    p0[1] = _ll[1];
+    p0[1] = ll_[1];
     p1[1] = y_mid;
-    _children[static_cast<std::int8_t>(Quadrant::SWU)]
-        = new OctTree<POINT, MAX_POINTS> (p0, p1, _eps);
+    children_[static_cast<std::int8_t>(Quadrant::SWU)]
+        = new OctTree<POINT, MAX_POINTS> (p0, p1, eps_);
 
     // create child SEU
     p0[0] = x_mid;
-    p1[0] = _ur[0];
+    p1[0] = ur_[0];
     p1[1] = y_mid;
-    p1[2] = _ur[2];
-    _children[static_cast<std::int8_t>(Quadrant::SEU)]
-        = new OctTree<POINT, MAX_POINTS> (p0, p1, _eps);
+    p1[2] = ur_[2];
+    children_[static_cast<std::int8_t>(Quadrant::SEU)]
+        = new OctTree<POINT, MAX_POINTS> (p0, p1, eps_);
 
     // add the passed point pnt to the childs at first
     for (std::size_t k(0); k < 8; k++) {
-        if (_children[k]->addPointToChild(pnt))
+        if (children_[k]->addPointToChild(pnt))
         {
             break;
         }
     }
 
     // distribute points to sub quadtrees
-    const std::size_t n_pnts(_pnts.size());
+    const std::size_t n_pnts(pnts_.size());
     for (std::size_t j(0); j < n_pnts; j++) {
-        for (auto c : _children) {
-            if (c->addPointToChild(_pnts[j])) {
+        for (auto c : children_) {
+            if (c->addPointToChild(pnts_[j])) {
                 break;
             }
         }
     }
-    _is_leaf = false;
+    is_leaf_ = false;
 }
 
 template <typename POINT, std::size_t MAX_POINTS>
 bool OctTree<POINT, MAX_POINTS>::isOutside(POINT * pnt) const
 {
-    if ((*pnt)[0] < _ll[0] || (*pnt)[1] < _ll[1] || (*pnt)[2] < _ll[2])
+    if ((*pnt)[0] < ll_[0] || (*pnt)[1] < ll_[1] || (*pnt)[2] < ll_[2])
     {
         return true;
     }
-    if ((*pnt)[0] >= _ur[0] || (*pnt)[1] >= _ur[1] || (*pnt)[2] >= _ur[2])
+    if ((*pnt)[0] >= ur_[0] || (*pnt)[1] >= ur_[1] || (*pnt)[2] >= ur_[2])
     {
         return true;
     }

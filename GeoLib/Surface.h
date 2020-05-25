@@ -27,8 +27,8 @@ class SurfaceGrid;
  * \ingroup GeoLib
  *
  * \brief A Surface is represented by Triangles. It consists of a reference
- * to a vector of (pointers to) points (_sfc_pnts) and a vector that stores
- * the Triangles consisting of points from _sfc_pnts.
+ * to a vector of (pointers to) points (sfc_pnts_) and a vector that stores
+ * the Triangles consisting of points from sfc_pnts_.
  * */
 class Surface final : public GeoObject
 {
@@ -71,23 +71,23 @@ public:
      */
     bool isPntInSfc(MathLib::Point3d const& pnt, double eps) const;
 
-    const std::vector<Point*>* getPointVec() const { return &_sfc_pnts; }
+    const std::vector<Point*>* getPointVec() const { return &sfc_pnts_; }
     /**
      * method allows access to the internal axis aligned bounding box
      * @return axis aligned bounding box
      */
-    AABB const& getAABB() const { return *_bounding_volume; }
+    AABB const& getAABB() const { return *bounding_volume_; }
 protected:
     /** a vector of pointers to Points */
-    const std::vector<Point*>& _sfc_pnts;
+    const std::vector<Point*>& sfc_pnts_;
     /** position of pointers to the geometric points */
-    std::vector<Triangle*> _sfc_triangles;
+    std::vector<Triangle*> sfc_triangles_;
     /** bounding volume is an axis aligned bounding box */
-    std::unique_ptr<AABB> _bounding_volume;
+    std::unique_ptr<AABB> bounding_volume_;
     /// The surface grid is a helper data structure to accelerate the point
     /// search. The method addTriangle() invalidates/resets the surface grid.
     /// A valid surface grid is created in case the const method isPntInSfc() is
     /// called and a valid surface grid is not existing.
-    mutable std::unique_ptr<SurfaceGrid> _surface_grid;
+    mutable std::unique_ptr<SurfaceGrid> surface_grid_;
 };
 }  // namespace GeoLib

@@ -47,10 +47,10 @@ public:
         std::vector<MathLib::Point3d*> const& points);
 
     /// Returns the center point of the sphere
-    MathLib::Point3d getCenter() const { return MathLib::Point3d(_center); }
+    MathLib::Point3d getCenter() const { return MathLib::Point3d(center_); }
 
     /// Returns the radius of the sphere
-    double getRadius() const {return _radius; }
+    double getRadius() const {return radius_; }
 
     /// Returns the squared euclidean distance of a point from the sphere (for points within the sphere distance is negative)
     double pointDistanceSquared(MathLib::Point3d const& pnt) const;
@@ -82,8 +82,8 @@ private:
         std::size_t length,
         std::size_t n_boundary_points);
 
-    double _radius{-1};
-    MathLib::Vector3 _center{std::numeric_limits<double>::max(),
+    double radius_{-1};
+    MathLib::Vector3 center_{std::numeric_limits<double>::max(),
                              std::numeric_limits<double>::max(),
                              std::numeric_limits<double>::max()};
 };

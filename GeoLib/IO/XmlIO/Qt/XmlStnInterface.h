@@ -59,7 +59,7 @@ private:
     /// Reads the stratigraphy of a borehole from an xml-file
     void readStratigraphy( const QDomNode &stratRoot, GeoLib::StationBorehole*  borehole );
 
-    GeoLib::GEOObjects& _geo_objs;
+    GeoLib::GEOObjects& geo_objs_;
 };
 
 } // end namespace IO

@@ -74,13 +74,13 @@ public:
     getPointsInRange(T const& min, T const& max, std::vector<POINT*> &pnts) const;
 
 #ifndef NDEBUG
-    MathLib::Point3d const& getLowerLeftCornerPoint() const { return _ll; }
-    MathLib::Point3d const& getUpperRightCornerPoint() const { return _ur; }
+    MathLib::Point3d const& getLowerLeftCornerPoint() const { return ll_; }
+    MathLib::Point3d const& getUpperRightCornerPoint() const { return ur_; }
     OctTree<POINT, MAX_POINTS> const* getChild(std::size_t i) const
     {
-        return _children[i];
+        return children_[i];
     }
-    std::vector<POINT*> const& getPointVector() const { return _pnts; }
+    std::vector<POINT*> const& getPointVector() const { return pnts_; }
 #endif
 
 private:
@@ -116,7 +116,7 @@ private:
     bool addPointToChild(POINT* pnt);
 
     /// Creates the child nodes of this leaf and distribute the points stored
-    /// in _pnts to the children.
+    /// in pnts_ to the children.
     /// @param pnt the pointer to the points that is responsible for the split
     void splitNode(POINT * pnt);
 
@@ -126,25 +126,25 @@ private:
     bool isOutside(POINT * pnt) const;
 
     /// children are sorted:
-    ///   _children[0] is north east lower child
-    ///   _children[1] is north west lower child
-    ///   _children[2] is south west lower child
-    ///   _children[3] is south east lower child
-    ///   _children[4] is north east upper child
-    ///   _children[5] is north west upper child
-    ///   _children[6] is south west upper child
-    ///   _children[7] is south east upper child
-    std::array<OctTree<POINT, MAX_POINTS>*, 8> _children;
+    ///   children_[0] is north east lower child
+    ///   children_[1] is north west lower child
+    ///   children_[2] is south west lower child
+    ///   children_[3] is south east lower child
+    ///   children_[4] is north east upper child
+    ///   children_[5] is north west upper child
+    ///   children_[6] is south west upper child
+    ///   children_[7] is south east upper child
+    std::array<OctTree<POINT, MAX_POINTS>*, 8> children_;
     /// lower left front face point of the cube
-    MathLib::Point3d const _ll;
+    MathLib::Point3d const ll_;
     /// upper right back face point of the cube
-    MathLib::Point3d const _ur;
+    MathLib::Point3d const ur_;
     /// vector of pointers to POINT objects
-    std::vector<POINT*> _pnts;
+    std::vector<POINT*> pnts_;
     /// flag if this OctTree is a leaf
-    bool _is_leaf;
+    bool is_leaf_;
     /// threshold for point uniqueness
-    double const _eps;
+    double const eps_;
 };
 
 } // end namespace GeoLib

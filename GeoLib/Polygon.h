@@ -137,8 +137,8 @@ private:
         const std::list<Polygon*>::const_iterator& polygon_it);
 #endif
     void splitPolygonAtPoint (const std::list<Polygon*>::iterator& polygon_it);
-    std::list<Polygon*> _simple_polygon_list;
-    AABB _aabb;
+    std::list<Polygon*> simple_polygon_list_;
+    AABB aabb_;
 };
 
 /**

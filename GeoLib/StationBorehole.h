@@ -50,19 +50,19 @@ public:
                                           const std::string &date = "");
 
     // Returns the depth of the borehole
-    double getDepth() const { return _depth; }
+    double getDepth() const { return depth_; }
 
     /// Returns the date entry for the borehole
-    double getDate() const { return _date; }
+    double getDate() const { return date_; }
 
     /// Returns a reference to a vector of Points representing the stratigraphy of the borehole (incl. the station-point itself)
-    const std::vector<Point*> &getProfile() const { return _profilePntVec; }
+    const std::vector<Point*> &getProfile() const { return profilePntVec_; }
 
     /// Returns a reference to a vector of soil names for the stratigraphy of the borehole
-    const std::vector<std::string> &getSoilNames() const { return _soilName; }
+    const std::vector<std::string> &getSoilNames() const { return soilName_; }
 
     /// Sets the depth of the borehole
-    void setDepth( double depth ) { _depth = depth; }
+    void setDepth( double depth ) { depth_ = depth; }
 
     /// Add a soil layer to the boreholes stratigraphy.
     void addSoilLayer ( double thickness, const std::string &soil_name);
@@ -79,15 +79,15 @@ public:
 
 private:
     //long profile_type;
-    //std::vector<long> _soilType;
-    double _depth{0};  // depth of the borehole
-    int _date{0};      // date when the borehole has been drilled
+    //std::vector<long> soilType_;
+    double depth_{0};  // depth of the borehole
+    int date_{0};      // date when the borehole has been drilled
 
     /// Contains the names for all the soil layers
-    std::vector<std::string> _soilName;
+    std::vector<std::string> soilName_;
 
     /// Contains the points for the lower boundaries of all layers
-    std::vector<Point*> _profilePntVec;
+    std::vector<Point*> profilePntVec_;
 };
 
 bool isBorehole(GeoLib::Point const* pnt);

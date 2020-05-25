@@ -48,7 +48,7 @@ public:
 
     /**
      * Constructor initializes the name of the PointVec object,
-     * the internal pointer _pnt_vec to the raw points and the internal
+     * the internal pointer pnt_vec_ to the raw points and the internal
      * pointer the vector of names of the points
      * and sets the type of PointVec.
      * @param name the name of the point group
@@ -84,7 +84,7 @@ public:
     std::size_t push_back (Point* pnt);
 
     /**
-     * push_back adds new elements at the end of the vector _data_vec.
+     * push_back adds new elements at the end of the vector data_vec_.
      * @param pnt a pointer to the point, PointVec takes ownership of the point
      * @param name the name of the point
      */
@@ -93,9 +93,9 @@ public:
     /**
      * get the type of Point, this can be either POINT or STATION
      */
-    PointType getType() const { return _type; }
+    PointType getType() const { return type_; }
 
-    const std::vector<std::size_t>& getIDMap () const { return _pnt_id_map; }
+    const std::vector<std::size_t>& getIDMap () const { return pnt_id_map_; }
 
     const GeoLib::AABB& getAABB () const;
 
@@ -128,7 +128,7 @@ private:
 
 	/**
 	 * Inserts the instance of the Point into internal data structures
-	 * (@see TemplateVec::_data_vec, _pnt_id_map) if and only if there
+	 * (@see TemplateVec::data_vec_, pnt_id_map_) if and only if there
 	 * does not exist a point with the same coordinates (upto
 	 * std::numeric_limits<double>::epsilon()). In case there exists
 	 * already a point with the same coordinates the given pnt-object
@@ -140,20 +140,20 @@ private:
     std::size_t uniqueInsert (Point* pnt);
 
     /** the type of the point (\sa enum PointType) */
-    PointType _type;
+    PointType type_;
 
     /**
      * permutation of the geometric elements according
      * to their lexicographical order
      */
-    std::vector<std::size_t> _pnt_id_map;
+    std::vector<std::size_t> pnt_id_map_;
 
     /// The reverse map to the name to id map, for fast lookup of the name to a
     /// given point id.
-    std::vector<std::string> _id_to_name_map;
+    std::vector<std::string> id_to_name_map_;
 
-    AABB _aabb;
-    double _rel_eps;
-    std::unique_ptr<GeoLib::OctTree<GeoLib::Point, 16>> _oct_tree;
+    AABB aabb_;
+    double rel_eps_;
+    std::unique_ptr<GeoLib::OctTree<GeoLib::Point, 16>> oct_tree_;
 };
 }  // namespace GeoLib

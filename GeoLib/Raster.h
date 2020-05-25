@@ -55,10 +55,10 @@ public:
      */
     template <typename InputIterator>
     Raster(RasterHeader header, InputIterator begin, InputIterator end)
-        : _header(std::move(header)),
-          _raster_data(new double[_header.n_cols * _header.n_rows])
+        : header_(std::move(header)),
+          raster_data_(new double[header_.n_cols * header_.n_rows])
     {
-        std::copy(begin, end, _raster_data);
+        std::copy(begin, end, raster_data_);
     }
 
     Raster(Raster const&) = delete;
@@ -67,7 +67,7 @@ public:
     Raster& operator=(Raster&&) = delete;
 
     /// Returns the complete header information
-    RasterHeader const& getHeader() const { return _header; }
+    RasterHeader const& getHeader() const { return header_; }
 
     /**
      * Refine the raster using scaling as a refinement parameter.
@@ -78,12 +78,12 @@ public:
      * Constant iterator that is pointing to the first raster pixel value.
      * @return constant iterator
      */
-    const_iterator begin() const { return _raster_data; }
+    const_iterator begin() const { return raster_data_; }
     /**
      * Constant iterator that is pointing to the last raster pixel value.
      * @return constant iterator
      */
-    const_iterator end() const { return _raster_data + _header.n_rows*_header.n_cols; }
+    const_iterator end() const { return raster_data_ + header_.n_rows*header_.n_cols; }
 
     /**
      * Returns the raster value at the position of the given point.
@@ -102,8 +102,8 @@ private:
     void setCellSize(double cell_size);
     void setNoDataVal (double no_data_val);
 
-    GeoLib::RasterHeader _header;
-    double* _raster_data;
+    GeoLib::RasterHeader header_;
+    double* raster_data_;
 };
 
 }  // namespace GeoLib

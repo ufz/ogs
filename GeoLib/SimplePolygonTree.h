@@ -54,28 +54,28 @@ public:
     const Polygon* getPolygon () const;
 
     /** returns the number of children */
-    std::size_t getNumberOfChildren() const { return _children.size(); }
+    std::size_t getNumberOfChildren() const { return children_.size(); }
 
 protected:
     /**
      * the polygon this node stands for
      */
-    Polygon* _node_polygon;
+    Polygon* node_polygon_;
     /**
      * the polygon represented by this node is contained in the
      * polygon represented by the parent node in the tree
      */
-    SimplePolygonTree* _parent;
+    SimplePolygonTree* parent_;
     /**
      * list of polygons (represented by SimplePolygonTree nodes) contained
-     * in the _node_polygon
+     * in the node_polygon_
      */
-    std::list<SimplePolygonTree*> _children;
+    std::list<SimplePolygonTree*> children_;
 
 private:
     void setParent(SimplePolygonTree* parent)
     {
-        _parent = parent;
+        parent_ = parent;
     }
 };
 
