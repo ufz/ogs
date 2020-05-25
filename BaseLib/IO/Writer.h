@@ -27,7 +27,7 @@ namespace IO
 /// can be set.
 ///
 /// When subclassing you only need to implement void write() in which you have
-/// to write to _out.
+/// to write to out_.
 class Writer
 {
 public:
@@ -50,7 +50,7 @@ protected:
     virtual bool write() = 0;
 
     /// @brief The stream to write to.
-    std::stringstream _out;
+    std::stringstream out_;
 
 private:
 
