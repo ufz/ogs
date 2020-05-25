@@ -49,6 +49,11 @@ function(_check_header_compilation TARGET)
     include(CheckCXXSourceCompiles)
 
     set(CMAKE_REQUIRED_INCLUDES ${INCLUDE_DIRS} ${SOURCE_DIR})
+    # HACK, maybe add Gui Widgets Xml XmlPatterns as well
+    if(OGS_BUILD_GUI)
+        set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES}
+            ${Qt5Core_INCLUDE_DIRS})
+    endif()
     set(CMAKE_REQUIRED_DEFINITIONS ${DEFS_CLEANED})
 
     foreach(FILE ${SOURCE_FILES})
