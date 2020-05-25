@@ -30,7 +30,7 @@ class ConvergenceCriterion
 {
 public:
     explicit ConvergenceCriterion(const MathLib::VecNormType norm_type)
-        : _norm_type(norm_type)
+        : norm_type_(norm_type)
     {
     }
 
@@ -65,11 +65,11 @@ public:
 
     //! Tell the ConvergenceCriterion that it is called for the first time now
     //! (while solving a specific nonlinear system).
-    virtual void preFirstIteration() { _is_first_iteration = true; }
+    virtual void preFirstIteration() { is_first_iteration_ = true; }
 
     //! Tell the ConvergenceCriterion that it is not called for the first time
     //! (while solving a coupling system).
-    virtual void setNoFirstIteration() { _is_first_iteration = false; }
+    virtual void setNoFirstIteration() { is_first_iteration_ = false; }
 
     //! Indicate that a new iteration now starts.
     //!
@@ -78,19 +78,19 @@ public:
     //! to be done anew. This method will make the ConvergenceCriterion forget
     //! the result of all checks already done, s.t. all necessary checks will
     //! have to be repeated in order to satisfy the ConvergenceCriterion.
-    virtual void reset() { _satisfied = true; _is_first_iteration = false; };
+    virtual void reset() { satisfied_ = true; is_first_iteration_ = false; };
 
     //! Tell if the convergence criterion is satisfied.
-    virtual bool isSatisfied() const { return _satisfied; };
+    virtual bool isSatisfied() const { return satisfied_; };
 
-    MathLib::VecNormType getVectorNormType() const { return _norm_type; }
+    MathLib::VecNormType getVectorNormType() const { return norm_type_; }
 
     virtual ~ConvergenceCriterion() = default;
 
 protected:
-    bool _satisfied = true;
-    bool _is_first_iteration = true;
-    const MathLib::VecNormType _norm_type;
+    bool satisfied_ = true;
+    bool is_first_iteration_ = true;
+    const MathLib::VecNormType norm_type_;
 };
 
 //! Creates a convergence criterion from the given configuration.

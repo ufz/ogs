@@ -37,15 +37,15 @@ public:
     /// Change the integration order.
     void setIntegrationOrder(unsigned /*order*/)
     {
-        _order = 2;  // fixed
-        _n_sampl_pt = getNumberOfPoints(_order);
+        order_ = 2;  // fixed
+        n_sampl_pt_ = getNumberOfPoints(order_);
     }
 
     /// return current integration order.
-    unsigned getIntegrationOrder() const { return _order; }
+    unsigned getIntegrationOrder() const { return order_; }
 
     /// return the number of sampling points
-    unsigned getNumberOfPoints() const { return _n_sampl_pt; }
+    unsigned getNumberOfPoints() const { return n_sampl_pt_; }
 
     /// \copydoc NumLib::IntegrationGaussLegendreRegular::getWeightedPoint(unsigned) const
     WeightedPoint getWeightedPoint(unsigned igp) const
@@ -88,8 +88,8 @@ public:
     }
 
 private:
-    unsigned _order{2};
-    unsigned _n_sampl_pt{0};
+    unsigned order_{2};
+    unsigned n_sampl_pt_{0};
 };
 
 }  // namespace NumLib

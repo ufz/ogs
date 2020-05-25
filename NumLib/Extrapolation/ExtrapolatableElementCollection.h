@@ -112,15 +112,15 @@ public:
     ExtrapolatableLocalAssemblerCollection(
         LocalAssemblerCollection const& local_assemblers,
         IntegrationPointValuesMethod const& integration_point_values_method)
-        : _local_assemblers(local_assemblers),
-          _integration_point_values_method{integration_point_values_method}
+        : local_assemblers_(local_assemblers),
+          integration_point_values_method_{integration_point_values_method}
     {
     }
 
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         std::size_t const id, unsigned const integration_point) const override
     {
-        ExtrapolatableElement const& loc_asm = *_local_assemblers[id];
+        ExtrapolatableElement const& loc_asm = *local_assemblers_[id];
         return loc_asm.getShapeMatrix(integration_point);
     }
 
@@ -130,15 +130,15 @@ public:
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const override
     {
-        auto const& loc_asm = *_local_assemblers[id];
-        return _integration_point_values_method(loc_asm, t, x, dof_table,
+        auto const& loc_asm = *local_assemblers_[id];
+        return integration_point_values_method_(loc_asm, t, x, dof_table,
                                                 cache);
     }
 
-    std::size_t size() const override { return _local_assemblers.size(); }
+    std::size_t size() const override { return local_assemblers_.size(); }
 private:
-    LocalAssemblerCollection const& _local_assemblers;
-    IntegrationPointValuesMethod const _integration_point_values_method;
+    LocalAssemblerCollection const& local_assemblers_;
+    IntegrationPointValuesMethod const integration_point_values_method_;
 };
 
 //! Creates an ExtrapolatableLocalAssemblerCollection, which can be used to

@@ -39,12 +39,12 @@ public:
                   ResidualUpdate residual_update,
                   SolutionUpdate solution_update,
                   NewtonRaphsonSolverParameters const& solver_parameters)
-        : _linear_solver(linear_solver),
-          _jacobian_update(jacobian_update),
-          _residual_update(residual_update),
-          _solution_update(solution_update),
-          _maximum_iterations(solver_parameters.maximum_iterations),
-          _tolerance_squared(solver_parameters.error_tolerance *
+        : linear_solver_(linear_solver),
+          jacobian_update_(jacobian_update),
+          residual_update_(residual_update),
+          solution_update_(solution_update),
+          maximum_iterations_(solver_parameters.maximum_iterations),
+          tolerance_squared_(solver_parameters.error_tolerance *
                              solver_parameters.error_tolerance)
     {
     }
@@ -61,26 +61,26 @@ public:
             // The jacobian and the residual are updated simulataniously to keep
             // consistency. The jacobian is used after the non-linear solver
             // onward.
-            _jacobian_update(jacobian);
-            _residual_update(residual);
+            jacobian_update_(jacobian);
+            residual_update_(residual);
 
-            if (residual.squaredNorm() < _tolerance_squared)
+            if (residual.squaredNorm() < tolerance_squared_)
             {
                 break;  // convergence criteria fulfilled.
             }
 
             increment.noalias() =
-                _linear_solver.compute(jacobian).solve(-residual);
+                linear_solver_.compute(jacobian).solve(-residual);
             // DBUG("Local linear solver accuracy |J dx - r| = {:g}",
             //      (jacobian * increment + residual).norm());
 
-            _solution_update(increment);
+            solution_update_(increment);
 
             // DBUG("Local Newton: Iteration #{:d} |dx| = {:g}, |r| = {:g}",
             //      iteration, increment.norm(), residual.norm());
-        } while (iteration++ < _maximum_iterations);
+        } while (iteration++ < maximum_iterations_);
 
-        if (iteration > _maximum_iterations)
+        if (iteration > maximum_iterations_)
         {
             ERR("The local Newton method did not converge within the given "
                 "number of iterations. Iteration: {:d}, increment {:g}, "
@@ -94,11 +94,11 @@ public:
     };
 
 private:
-    LinearSolver& _linear_solver;
-    JacobianMatrixUpdate _jacobian_update;
-    ResidualUpdate _residual_update;
-    SolutionUpdate _solution_update;
-    const int _maximum_iterations;  ///< Maximum number of iterations.
-    const double _tolerance_squared;    ///< Error tolerance for the residual.
+    LinearSolver& linear_solver_;
+    JacobianMatrixUpdate jacobian_update_;
+    ResidualUpdate residual_update_;
+    SolutionUpdate solution_update_;
+    const int maximum_iterations_;  ///< Maximum number of iterations.
+    const double tolerance_squared_;    ///< Error tolerance for the residual.
 };
 }  // namespace NumLib

@@ -85,12 +85,12 @@ public:
      * \param maxiter the maximum number of iterations used to solve the
      *                equation.
      * \param damping A positive damping factor.
-     * \see _damping
+     * \see damping_
      */
     explicit NonlinearSolver(GlobalLinearSolver& linear_solver,
                              int const maxiter,
                              double const damping = 1.0)
-        : _linear_solver(linear_solver), _maxiter(maxiter), _damping(damping)
+        : linear_solver_(linear_solver), maxiter_(maxiter), damping_(damping)
     {
     }
 
@@ -98,8 +98,8 @@ public:
     //! TODO doc
     void setEquationSystem(System& eq, ConvergenceCriterion& conv_crit)
     {
-        _equation_system = &eq;
-        _convergence_criterion = &conv_crit;
+        equation_system_ = &eq;
+        convergence_criterion_ = &conv_crit;
     }
 
     void calculateNonEquilibriumInitialResiduum(
@@ -116,28 +116,28 @@ public:
 
     void compensateNonEquilibriumInitialResiduum(bool const value)
     {
-        _compensate_non_equilibrium_initial_residuum = value;
+        compensate_non_equilibrium_initial_residuum_ = value;
     }
 
 private:
-    GlobalLinearSolver& _linear_solver;
-    System* _equation_system = nullptr;
+    GlobalLinearSolver& linear_solver_;
+    System* equation_system_ = nullptr;
 
     // TODO doc
-    ConvergenceCriterion* _convergence_criterion = nullptr;
-    int const _maxiter;  //!< maximum number of iterations
+    ConvergenceCriterion* convergence_criterion_ = nullptr;
+    int const maxiter_;  //!< maximum number of iterations
 
     //! A positive damping factor. The default value 1.0 gives a non-damped
     //! Newton method. Common values are in the range 0.5 to 0.7 for somewhat
     //! conservative method and seldom become smaller than 0.2 for very
     //! conservative approach.
-    double const _damping;
+    double const damping_;
 
-    GlobalVector* _r_neq = nullptr;      //!< non-equilibrium initial residuum.
-    std::size_t _res_id = 0u;            //!< ID of the residual vector.
-    std::size_t _J_id = 0u;              //!< ID of the Jacobian matrix.
-    std::size_t _minus_delta_x_id = 0u;  //!< ID of the \f$ -\Delta x\f$ vector.
-    std::size_t _x_new_id =
+    GlobalVector* r_neq_ = nullptr;      //!< non-equilibrium initial residuum.
+    std::size_t res_id_ = 0u;            //!< ID of the residual vector.
+    std::size_t J_id_ = 0u;              //!< ID of the Jacobian matrix.
+    std::size_t minus_delta_x_id_ = 0u;  //!< ID of the \f$ -\Delta x\f$ vector.
+    std::size_t x_new_id_ =
         0u;  //!< ID of the vector storing \f$ x - (-\Delta x) \f$.
 
     /// Enables computation of the non-equilibrium initial residuum \f$ r_{\rm
@@ -145,7 +145,7 @@ private:
     /// forces are in equilibrium with the initial state/initial conditions.
     /// During the simulation the new residuum reads \f$ \tilde r = r - r_{\rm
     /// neq} \f$.
-    bool _compensate_non_equilibrium_initial_residuum = false;
+    bool compensate_non_equilibrium_initial_residuum_ = false;
 };
 
 /*! Find a solution to a nonlinear equation using the Picard fixpoint iteration
@@ -168,7 +168,7 @@ public:
      */
     explicit NonlinearSolver(GlobalLinearSolver& linear_solver,
                              const int maxiter)
-        : _linear_solver(linear_solver), _maxiter(maxiter)
+        : linear_solver_(linear_solver), maxiter_(maxiter)
     {
     }
 
@@ -176,8 +176,8 @@ public:
     //! TODO doc
     void setEquationSystem(System& eq, ConvergenceCriterion& conv_crit)
     {
-        _equation_system = &eq;
-        _convergence_criterion = &conv_crit;
+        equation_system_ = &eq;
+        convergence_criterion_ = &conv_crit;
     }
 
     void calculateNonEquilibriumInitialResiduum(
@@ -194,26 +194,26 @@ public:
 
     void compensateNonEquilibriumInitialResiduum(bool const value)
     {
-        _compensate_non_equilibrium_initial_residuum = value;
+        compensate_non_equilibrium_initial_residuum_ = value;
     }
 
 private:
-    GlobalLinearSolver& _linear_solver;
-    System* _equation_system = nullptr;
+    GlobalLinearSolver& linear_solver_;
+    System* equation_system_ = nullptr;
 
     // TODO doc
-    ConvergenceCriterion* _convergence_criterion = nullptr;
-    const int _maxiter;  //!< maximum number of iterations
+    ConvergenceCriterion* convergence_criterion_ = nullptr;
+    const int maxiter_;  //!< maximum number of iterations
 
-    GlobalVector* _r_neq = nullptr;  //!< non-equilibrium initial residuum.
-    std::size_t _A_id = 0u;      //!< ID of the \f$ A \f$ matrix.
-    std::size_t _rhs_id = 0u;    //!< ID of the right-hand side vector.
-    std::size_t _x_new_id = 0u;  //!< ID of the vector storing the solution of
+    GlobalVector* r_neq_ = nullptr;  //!< non-equilibrium initial residuum.
+    std::size_t A_id_ = 0u;      //!< ID of the \f$ A \f$ matrix.
+    std::size_t rhs_id_ = 0u;    //!< ID of the right-hand side vector.
+    std::size_t x_new_id_ = 0u;  //!< ID of the vector storing the solution of
                                  //! the linearized equation.
 
     // clang-format off
-    /// \copydoc NumLib::NonlinearSolver<NonlinearSolverTag::Newton>::_compensate_non_equilibrium_initial_residuum
-    bool _compensate_non_equilibrium_initial_residuum = false;
+    /// \copydoc NumLib::NonlinearSolver<NonlinearSolverTag::Newton>::compensate_non_equilibrium_initial_residuum_
+    bool compensate_non_equilibrium_initial_residuum_ = false;
     // clang-format on
 };
 

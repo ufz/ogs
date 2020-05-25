@@ -92,7 +92,7 @@ public:
      * \param timeDisc the time discretization scheme to be used.
      */
     explicit MatrixTranslatorGeneral(TimeDiscretization const& timeDisc)
-        : _time_disc(timeDisc)
+        : time_disc_(timeDisc)
     {
     }
 
@@ -119,10 +119,10 @@ public:
 
 private:
     TimeDiscretization const&
-        _time_disc;  //!< the time discretization used.
+        time_disc_;  //!< the time discretization used.
 
     //! ID of the vector storing intermediate computations.
-    mutable std::size_t _tmp_id = 0u;
+    mutable std::size_t tmp_id_ = 0u;
 };
 
 //! Creates a GlobalMatrix translator suitable to work together with the given

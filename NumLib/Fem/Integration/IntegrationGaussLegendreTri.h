@@ -43,7 +43,7 @@ public:
      *
      * @param order     integration order (default 2)
      */
-    explicit IntegrationGaussLegendreTri(unsigned order = 2) : _order(order)
+    explicit IntegrationGaussLegendreTri(unsigned order = 2) : order_(order)
     {
         this->setIntegrationOrder(order);
     }
@@ -51,15 +51,15 @@ public:
     /// Change the integration order.
     void setIntegrationOrder(unsigned order)
     {
-        _order = order;
-        _n_sampl_pt = getNumberOfPoints(order);
+        order_ = order;
+        n_sampl_pt_ = getNumberOfPoints(order);
     }
 
     /// return current integration order.
-    unsigned getIntegrationOrder() const { return _order; }
+    unsigned getIntegrationOrder() const { return order_; }
 
     /// return the number of sampling points
-    unsigned getNumberOfPoints() const { return _n_sampl_pt; }
+    unsigned getNumberOfPoints() const { return n_sampl_pt_; }
 
     /**
      * get coordinates of a integration point
@@ -124,8 +124,8 @@ public:
     }
 
 private:
-    unsigned _order;
-    unsigned _n_sampl_pt{0};
+    unsigned order_;
+    unsigned n_sampl_pt_{0};
 };
 
 }  // namespace NumLib

@@ -35,7 +35,7 @@ public:
     /// integration order.
     ///
     /// @param order     integration order (default 2)
-    explicit IntegrationGaussLegendreRegular(unsigned order = 2) : _order(order)
+    explicit IntegrationGaussLegendreRegular(unsigned order = 2) : order_(order)
     {
         this->setIntegrationOrder(order);
     }
@@ -43,15 +43,15 @@ public:
     /// Change the integration order.
     void setIntegrationOrder(unsigned order)
     {
-        this->_n_sampl_pt = static_cast<unsigned>(std::pow(order, N_DIM));
-        this->_order = order;
+        this->n_sampl_pt_ = static_cast<unsigned>(std::pow(order, N_DIM));
+        this->order_ = order;
     }
 
     /// return current integration order.
-    unsigned getIntegrationOrder() const { return _order; }
+    unsigned getIntegrationOrder() const { return order_; }
 
     /// return the number of sampling points
-    unsigned getNumberOfPoints() const { return _n_sampl_pt; }
+    unsigned getNumberOfPoints() const { return n_sampl_pt_; }
 
     /// Get coordinates of the integration point.
     ///
@@ -87,8 +87,8 @@ private:
         std::array<unsigned, N_DIM> const& pos);
 
 private:
-    unsigned _order;
-    unsigned _n_sampl_pt{0};
+    unsigned order_;
+    unsigned n_sampl_pt_{0};
 };
 
 }  // namespace NumLib

@@ -60,11 +60,11 @@ public:
 
     bool next(double solution_error, int number_iterations) override;
 
-    bool accepted() const override { return _is_accepted; }
+    bool accepted() const override { return is_accepted_; }
 
     void setAcceptedOrNot(const bool accepted) override
     {
-        _is_accepted = accepted;
+        is_accepted_ = accepted;
     }
 
     bool isSolutionErrorComputationNeeded() const override { return true; }
@@ -75,28 +75,28 @@ public:
         std::vector<double> const& extra_fixed_output_times) override;
 
 private:
-    const double _kP = 0.075;  ///< Parameter. \see EvolutionaryPIDcontroller
-    const double _kI = 0.175;  ///< Parameter. \see EvolutionaryPIDcontroller
-    const double _kD = 0.01;   ///< Parameter. \see EvolutionaryPIDcontroller
+    const double kP_ = 0.075;  ///< Parameter. \see EvolutionaryPIDcontroller
+    const double kI_ = 0.175;  ///< Parameter. \see EvolutionaryPIDcontroller
+    const double kD_ = 0.01;   ///< Parameter. \see EvolutionaryPIDcontroller
 
-    const double _h0;     ///< initial time step size.
-    const double _h_min;  ///< minimum step size.
-    const double _h_max;  ///< maximum step size.
+    const double h0_;     ///< initial time step size.
+    const double h_min_;  ///< minimum step size.
+    const double h_max_;  ///< maximum step size.
 
     /// \f$l\f$ in \f$ h_{\mbox{min}} \leq h_{n+1} \leq h_{\mbox{max}},\f$
-    const double _rel_h_min;
+    const double rel_h_min_;
     /// \f$L\f$ in \f$ h_{\mbox{min}} \leq h_{n+1} \leq h_{\mbox{max}},\f$
-    const double _rel_h_max;
+    const double rel_h_max_;
 
     // Given times that steps have to reach.
-    std::vector<double> _fixed_output_times;
+    std::vector<double> fixed_output_times_;
 
-    const double _tol;
+    const double tol_;
 
-    double _e_n_minus1;  ///< \f$e_{n-1}\f$.
-    double _e_n_minus2;  ///< \f$e_{n-2}\f$.
+    double e_n_minus1_;  ///< \f$e_{n-1}\f$.
+    double e_n_minus2_;  ///< \f$e_{n-2}\f$.
 
-    bool _is_accepted;
+    bool is_accepted_;
 
     /**
      * Forced the computed time step size in the given range

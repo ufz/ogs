@@ -27,18 +27,18 @@ class TimeStepAlgorithm
 {
 public:
     TimeStepAlgorithm(const double t0, const double t_end)
-        : _t_initial(t0), _t_end(t_end), _ts_prev(t0), _ts_current(t0)
+        : t_initial_(t0), t_end_(t_end), ts_prev_(t0), ts_current_(t0)
     {
     }
 
     TimeStepAlgorithm(const double t0, const double t_end, const double dt)
-        : _t_initial(t0), _t_end(t_end), _ts_prev(t0), _ts_current(t0)
+        : t_initial_(t0), t_end_(t_end), ts_prev_(t0), ts_current_(t0)
     {
         auto const new_size =
             static_cast<std::size_t>(std::ceil((t_end - t0) / dt));
         try
         {
-            _dt_vector = std::vector<double>(new_size, dt);
+            dt_vector_ = std::vector<double>(new_size, dt);
         }
         catch (std::length_error const& e)
         {
@@ -65,27 +65,27 @@ public:
 
     TimeStepAlgorithm(const double t0, const double t_end,
                       const std::vector<double>& all_step_sizes)
-        : _t_initial(t0),
-          _t_end(t_end),
-          _ts_prev(t0),
-          _ts_current(t0),
-          _dt_vector(all_step_sizes)
+        : t_initial_(t0),
+          t_end_(t_end),
+          ts_prev_(t0),
+          ts_current_(t0),
+          dt_vector_(all_step_sizes)
     {
     }
 
     virtual ~TimeStepAlgorithm() = default;
 
     /// return the beginning of time steps
-    double begin() const { return _t_initial; }
+    double begin() const { return t_initial_; }
     /// return the end of time steps
-    double end() const { return _t_end; }
+    double end() const { return t_end_; }
     /// return current time step
-    const TimeStep getTimeStep() const { return _ts_current; }
+    const TimeStep getTimeStep() const { return ts_current_; }
     /// reset the current step size from the previous time
     void resetCurrentTimeStep(const double dt)
     {
-        _ts_current = _ts_prev;
-        _ts_current += dt;
+        ts_current_ = ts_prev_;
+        ts_current_ += dt;
     }
 
     /// Move to the next time step
@@ -106,7 +106,7 @@ public:
     /// return a history of time step sizes
     const std::vector<double>& getTimeStepSizeHistory() const
     {
-        return _dt_vector;
+        return dt_vector_;
     }
 
     /// Get a flag to indicate whether this algorithm needs to compute
@@ -128,17 +128,17 @@ public:
 
 protected:
     /// initial time
-    const double _t_initial;
+    const double t_initial_;
     /// end time
-    const double _t_end;
+    const double t_end_;
 
     /// previous time step information
-    TimeStep _ts_prev;
+    TimeStep ts_prev_;
     /// current time step information
-    TimeStep _ts_current;
+    TimeStep ts_current_;
 
     /// a vector of time step sizes
-    std::vector<double> _dt_vector;
+    std::vector<double> dt_vector_;
 };
 
 /// If any of the fixed times will be reached with given time increment, it will

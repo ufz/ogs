@@ -39,16 +39,16 @@ public:
                      GlobalVector const& x) override;
     void checkResidual(const GlobalVector& /*residual*/) override {}
 
-    void reset() override { this->_satisfied = true; }
+    void reset() override { this->satisfied_ = true; }
 
     void setDOFTable(const LocalToGlobalIndexMap& dof_table,
                      MeshLib::Mesh const& mesh) override;
 
 private:
-    const std::vector<double> _abstols;
-    const std::vector<double> _reltols;
-    LocalToGlobalIndexMap const* _dof_table = nullptr;
-    MeshLib::Mesh const* _mesh = nullptr;
+    const std::vector<double> abstols_;
+    const std::vector<double> reltols_;
+    LocalToGlobalIndexMap const* dof_table_ = nullptr;
+    MeshLib::Mesh const* mesh_ = nullptr;
 };
 
 std::unique_ptr<ConvergenceCriterionPerComponentDeltaX>

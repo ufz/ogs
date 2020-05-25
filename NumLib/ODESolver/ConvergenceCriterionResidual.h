@@ -39,9 +39,9 @@ public:
     void checkResidual(const GlobalVector& residual) override;
 
 private:
-    const boost::optional<double> _abstol;
-    const boost::optional<double> _reltol;
-    double _residual_norm_0;
+    const boost::optional<double> abstol_;
+    const boost::optional<double> reltol_;
+    double residual_norm_0_;
 };
 
 std::unique_ptr<ConvergenceCriterionResidual> createConvergenceCriterionResidual(

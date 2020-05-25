@@ -192,19 +192,19 @@ private:
         const int comp_id, const int comp_id_write);
 
     /// A vector of mesh subsets for each process variables' components.
-    std::vector<MeshLib::MeshSubset> _mesh_subsets;
-    NumLib::MeshComponentMap _mesh_component_map;
+    std::vector<MeshLib::MeshSubset> mesh_subsets_;
+    NumLib::MeshComponentMap mesh_component_map_;
 
     using Table = Eigen::Matrix<LineIndex, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 
     /// Table contains for each element (first index) and each component (second index)
     /// a vector (\c LineIndex) of indices in the global stiffness matrix or vector
-    Table _rows;
+    Table rows_;
 
-    /// \see _rows
-    Table const& _columns = _rows;
+    /// \see rows_
+    Table const& columns_ = rows_;
 
-    std::vector<int> const _variable_component_offsets;
+    std::vector<int> const variable_component_offsets_;
 #ifndef NDEBUG
     /// Prints first rows of the table, every line, and the mesh component map.
     friend std::ostream& operator<<(std::ostream& os, LocalToGlobalIndexMap const& map);

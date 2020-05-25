@@ -53,20 +53,20 @@ public:
      * Constructor without specifying a mesh element. setMeshElement() must be
      * called afterwards.
      */
-    TemplateIsoparametric() : _ele(nullptr) {}
+    TemplateIsoparametric() : ele_(nullptr) {}
 
     /**
      * Construct this object for the given mesh element.
      *
      * @param e                      Mesh element object
      */
-    explicit TemplateIsoparametric(const MeshElementType& e) : _ele(&e) {}
+    explicit TemplateIsoparametric(const MeshElementType& e) : ele_(&e) {}
 
     /// return current mesh element
-    const MeshElementType* getMeshElement() const { return _ele; }
+    const MeshElementType* getMeshElement() const { return ele_; }
 
     /// Sets the mesh element
-    void setMeshElement(const MeshElementType& e) { this->_ele = &e; }
+    void setMeshElement(const MeshElementType& e) { this->ele_ = &e; }
     /**
      * compute shape functions
      *
@@ -80,7 +80,7 @@ public:
                                const unsigned global_dim,
                                bool is_axially_symmetric) const
     {
-        NaturalCoordsMappingType::computeShapeMatrices(*_ele, natural_pt, shape,
+        NaturalCoordsMappingType::computeShapeMatrices(*ele_, natural_pt, shape,
                                                        global_dim);
         computeIntegralMeasure(is_axially_symmetric, shape);
     }
@@ -101,7 +101,7 @@ public:
                                bool is_axially_symmetric) const
     {
         NaturalCoordsMappingType::template computeShapeMatrices<
-            T_SHAPE_MATRIX_TYPE>(*_ele, natural_pt, shape, global_dim);
+            T_SHAPE_MATRIX_TYPE>(*ele_, natural_pt, shape, global_dim);
         computeIntegralMeasure(is_axially_symmetric, shape);
     }
 
@@ -110,7 +110,7 @@ public:
     double interpolateZerothCoordinate(
         typename ShapeMatrices::ShapeType const& N) const
     {
-        auto* nodes = _ele->getNodes();
+        auto* nodes = ele_->getNodes();
         typename ShapeMatrices::ShapeType rs(N.size());
         for (int i = 0; i < rs.size(); ++i)
         {
@@ -124,7 +124,7 @@ public:
     std::array<double, 3> interpolateCoordinates(
         typename ShapeMatrices::ShapeType const& N) const
     {
-        auto* nodes = _ele->getNodes();
+        auto* nodes = ele_->getNodes();
         typename ShapeMatrices::ShapeType rs(N.size());
         std::array<double, 3> interpolated_coords;
         for (int d = 0; d < 3; ++d)
@@ -158,7 +158,7 @@ private:
         shape.integralMeasure = boost::math::constants::two_pi<double>() * r;
     }
 
-    const MeshElementType* _ele;
+    const MeshElementType* ele_;
 };
 
 /// Creates a TemplateIsoparametric element for the given shape functions and

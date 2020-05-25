@@ -71,12 +71,12 @@ public:
 
     GlobalVector const& getNodalValues() const override
     {
-        return *_nodal_values;
+        return *nodal_values_;
     }
 
     GlobalVector const& getElementResiduals() const override
     {
-        return *_residuals;
+        return *residuals_;
     }
 
 private:
@@ -97,14 +97,14 @@ private:
         std::vector<GlobalVector*> const& x,
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table);
 
-    std::unique_ptr<GlobalVector> _nodal_values;  //!< extrapolated nodal values
-    std::unique_ptr<GlobalVector> _residuals;     //!< extrapolation residuals
+    std::unique_ptr<GlobalVector> nodal_values_;  //!< extrapolated nodal values
+    std::unique_ptr<GlobalVector> residuals_;     //!< extrapolation residuals
 
     //! DOF table used for writing to global vectors.
-    NumLib::LocalToGlobalIndexMap const& _dof_table_single_component;
+    NumLib::LocalToGlobalIndexMap const& dof_table_single_component_;
 
     //! Avoids frequent reallocations.
-    std::vector<double> _integration_point_values_cache;
+    std::vector<double> integration_point_values_cache_;
 
     //! Stores a matrix and its Moore-Penrose pseudo-inverse.
     struct CachedData
@@ -126,7 +126,7 @@ private:
      * \todo Add the element dimension as identifying criterion, or change to
      * typeid.
      */
-    std::map<std::pair<unsigned, unsigned>, CachedData> _qr_decomposition_cache;
+    std::map<std::pair<unsigned, unsigned>, CachedData> qr_decomposition_cache_;
 };
 
 }  // namespace NumLib

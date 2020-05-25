@@ -46,11 +46,11 @@ public:
                      MeshLib::Mesh const& mesh) override;
 
 private:
-    const std::vector<double> _abstols;
-    const std::vector<double> _reltols;
-    LocalToGlobalIndexMap const* _dof_table = nullptr;
-    MeshLib::Mesh const* _mesh = nullptr;
-    std::vector<double> _residual_norms_0;
+    const std::vector<double> abstols_;
+    const std::vector<double> reltols_;
+    LocalToGlobalIndexMap const* dof_table_ = nullptr;
+    MeshLib::Mesh const* mesh_ = nullptr;
+    std::vector<double> residual_norms_0_;
 };
 
 std::unique_ptr<ConvergenceCriterionPerComponentResidual>

@@ -76,13 +76,13 @@ private:
          std::map<MatVec*, std::size_t>& used_map,
          Args&&... args);
 
-    std::size_t _next_id = 1;
+    std::size_t next_id_ = 1;
 
-    std::map<std::size_t, GlobalMatrix*> _unused_matrices;
-    std::map<GlobalMatrix*, std::size_t> _used_matrices;
+    std::map<std::size_t, GlobalMatrix*> unused_matrices_;
+    std::map<GlobalMatrix*, std::size_t> used_matrices_;
 
-    std::map<std::size_t, GlobalVector*> _unused_vectors;
-    std::map<GlobalVector*, std::size_t> _used_vectors;
+    std::map<std::size_t, GlobalVector*> unused_vectors_;
+    std::map<GlobalVector*, std::size_t> used_vectors_;
 };
 
 

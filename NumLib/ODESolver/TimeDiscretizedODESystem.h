@@ -100,48 +100,48 @@ public:
     void applyKnownSolutionsNewton(GlobalMatrix& Jac, GlobalVector& res,
                                    GlobalVector& minus_delta_x) const override;
 
-    bool isLinear() const override { return _ode.isLinear(); }
+    bool isLinear() const override { return ode_.isLinear(); }
 
     void preIteration(const unsigned iter, GlobalVector const& x) override
     {
-        _ode.preIteration(iter, x);
+        ode_.preIteration(iter, x);
     }
 
     IterationResult postIteration(GlobalVector const& x) override
     {
-        return _ode.postIteration(x);
+        return ode_.postIteration(x);
     }
 
-    TimeDisc& getTimeDiscretization() override { return _time_disc; }
+    TimeDisc& getTimeDiscretization() override { return time_disc_; }
     MathLib::MatrixSpecifications getMatrixSpecifications(
         const int process_id) const override
     {
-        return _ode.getMatrixSpecifications(process_id);
+        return ode_.getMatrixSpecifications(process_id);
     }
 
 private:
-    ODE& _ode;             //!< ode the ODE being wrapped
-    TimeDisc& _time_disc;  //!< the time discretization to being used
+    ODE& ode_;             //!< ode the ODE being wrapped
+    TimeDisc& time_disc_;  //!< the time discretization to being used
 
     //! the object used to compute the matrix/vector for the nonlinear solver
-    std::unique_ptr<MatTrans> _mat_trans;
+    std::unique_ptr<MatTrans> mat_trans_;
 
     using Index = MathLib::MatrixVectorTraits<GlobalMatrix>::Index;
-    std::vector<NumLib::IndexValueVector<Index>> const* _known_solutions =
+    std::vector<NumLib::IndexValueVector<Index>> const* known_solutions_ =
         nullptr;  //!< stores precomputed values for known solutions
 
-    GlobalMatrix* _Jac;  //!< the Jacobian of the residual
-    GlobalMatrix* _M;    //!< Matrix \f$ M \f$.
-    GlobalMatrix* _K;    //!< Matrix \f$ K \f$.
-    GlobalVector* _b;    //!< Matrix \f$ b \f$.
+    GlobalMatrix* Jac_;  //!< the Jacobian of the residual
+    GlobalMatrix* M_;    //!< Matrix \f$ M \f$.
+    GlobalMatrix* K_;    //!< Matrix \f$ K \f$.
+    GlobalVector* b_;    //!< Matrix \f$ b \f$.
 
-    std::size_t _Jac_id = 0u;  //!< ID of the \c _Jac matrix.
-    std::size_t _M_id = 0u;    //!< ID of the \c _M matrix.
-    std::size_t _K_id = 0u;    //!< ID of the \c _K matrix.
-    std::size_t _b_id = 0u;    //!< ID of the \c _b vector.
+    std::size_t Jac_id_ = 0u;  //!< ID of the \c Jac_ matrix.
+    std::size_t M_id_ = 0u;    //!< ID of the \c M_ matrix.
+    std::size_t K_id_ = 0u;    //!< ID of the \c K_ matrix.
+    std::size_t b_id_ = 0u;    //!< ID of the \c b_ vector.
 
     //! ID of the vector storing xdot in intermediate computations.
-    mutable std::size_t _xdot_id = 0u;
+    mutable std::size_t xdot_id_ = 0u;
 };
 
 /*! Time discretized first order implicit quasi-linear ODE;
@@ -180,12 +180,12 @@ public:
 
     void getA(GlobalMatrix& A) const override
     {
-        _mat_trans->computeA(*_M, *_K, A);
+        mat_trans_->computeA(*M_, *K_, A);
     }
 
     void getRhs(GlobalVector const& x_prev, GlobalVector& rhs) const override
     {
-        _mat_trans->computeRhs(*_M, *_K, *_b, x_prev, rhs);
+        mat_trans_->computeRhs(*M_, *K_, *b_, x_prev, rhs);
     }
 
     void computeKnownSolutions(GlobalVector const& x,
@@ -196,43 +196,43 @@ public:
     void applyKnownSolutionsPicard(GlobalMatrix& A, GlobalVector& rhs,
                                    GlobalVector& x) const override;
 
-    bool isLinear() const override { return _ode.isLinear(); }
+    bool isLinear() const override { return ode_.isLinear(); }
 
     void preIteration(const unsigned iter, GlobalVector const& x) override
     {
-        _ode.preIteration(iter, x);
+        ode_.preIteration(iter, x);
     }
 
     IterationResult postIteration(GlobalVector const& x) override
     {
-        return _ode.postIteration(x);
+        return ode_.postIteration(x);
     }
 
-    TimeDisc& getTimeDiscretization() override { return _time_disc; }
+    TimeDisc& getTimeDiscretization() override { return time_disc_; }
     MathLib::MatrixSpecifications getMatrixSpecifications(
         const int process_id) const override
     {
-        return _ode.getMatrixSpecifications(process_id);
+        return ode_.getMatrixSpecifications(process_id);
     }
 
 private:
-    ODE& _ode;             //!< ode the ODE being wrapped
-    TimeDisc& _time_disc;  //!< the time discretization to being used
+    ODE& ode_;             //!< ode the ODE being wrapped
+    TimeDisc& time_disc_;  //!< the time discretization to being used
 
     //! the object used to compute the matrix/vector for the nonlinear solver
-    std::unique_ptr<MatTrans> _mat_trans;
+    std::unique_ptr<MatTrans> mat_trans_;
 
     using Index = MathLib::MatrixVectorTraits<GlobalMatrix>::Index;
-    std::vector<NumLib::IndexValueVector<Index>> const* _known_solutions =
+    std::vector<NumLib::IndexValueVector<Index>> const* known_solutions_ =
         nullptr;  //!< stores precomputed values for known solutions
 
-    GlobalMatrix* _M;  //!< Matrix \f$ M \f$.
-    GlobalMatrix* _K;  //!< Matrix \f$ K \f$.
-    GlobalVector* _b;  //!< Matrix \f$ b \f$.
+    GlobalMatrix* M_;  //!< Matrix \f$ M \f$.
+    GlobalMatrix* K_;  //!< Matrix \f$ K \f$.
+    GlobalVector* b_;  //!< Matrix \f$ b \f$.
 
-    std::size_t _M_id = 0u;  //!< ID of the \c _M matrix.
-    std::size_t _K_id = 0u;  //!< ID of the \c _K matrix.
-    std::size_t _b_id = 0u;  //!< ID of the \c _b vector.
+    std::size_t M_id_ = 0u;  //!< ID of the \c M_ matrix.
+    std::size_t K_id_ = 0u;  //!< ID of the \c K_ matrix.
+    std::size_t b_id_ = 0u;  //!< ID of the \c b_ vector.
 };
 
 //! @}

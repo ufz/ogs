@@ -150,24 +150,24 @@ public:
     virtual ~TimeDiscretization() = default;
 
 protected:
-    std::unique_ptr<GlobalVector> _dx;  ///< Used to store \f$ u_{n+1}-u_{n}\f$.
+    std::unique_ptr<GlobalVector> dx_;  ///< Used to store \f$ u_{n+1}-u_{n}\f$.
 };
 
 //! Backward Euler scheme.
 class BackwardEuler final : public TimeDiscretization
 {
 public:
-    void setInitialState(const double t0) override { _t = t0; }
+    void setInitialState(const double t0) override { t_ = t0; }
 
     void nextTimestep(const double t, const double delta_t) override
     {
-        _t = t;
-        _delta_t = delta_t;
+        t_ = t;
+        delta_t_ = delta_t;
     }
 
-    double getCurrentTime() const override { return _t; }
-    double getCurrentTimeIncrement() const override { return _delta_t; }
-    double getNewXWeight() const override { return 1.0 / _delta_t; }
+    double getCurrentTime() const override { return t_; }
+    double getCurrentTimeIncrement() const override { return delta_t_; }
+    double getNewXWeight() const override { return 1.0 / delta_t_; }
     void getWeightedOldX(GlobalVector& y,
                          GlobalVector const& x_old) const override
     {
@@ -175,12 +175,12 @@ public:
 
         // y = x_old / delta_t
         LinAlg::copy(x_old, y);
-        LinAlg::scale(y, 1.0 / _delta_t);
+        LinAlg::scale(y, 1.0 / delta_t_);
     }
 
 private:
-    double _t = std::numeric_limits<double>::quiet_NaN();  //!< \f$ t_C \f$
-    double _delta_t =
+    double t_ = std::numeric_limits<double>::quiet_NaN();  //!< \f$ t_C \f$
+    double delta_t_ =
         std::numeric_limits<double>::quiet_NaN();  //!< the timestep size
 };
 

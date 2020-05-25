@@ -82,7 +82,7 @@ public:
      * given by iter_times_vector.
      * A time step size is calculated by \f$\Delta t_{n+1} = a * \Delta t_{n}\f$
      * @param fixed_output_times
-     * \copydoc NumLib::IterationNumberBasedTimeStepping::_fixed_output_times
+     * \copydoc NumLib::IterationNumberBasedTimeStepping::fixed_output_times_
      */
     IterationNumberBasedTimeStepping(double const t_initial,
                                      double const t_end,
@@ -98,14 +98,14 @@ public:
     bool next(double solution_error, int number_iterations) override;
 
     bool accepted() const override;
-    void setAcceptedOrNot(bool accepted) override { _accepted = accepted; };
+    void setAcceptedOrNot(bool accepted) override { accepted_ = accepted; };
 
     bool isSolutionErrorComputationNeeded() const override { return true; }
 
     bool canReduceTimestepSize() const override;
 
     /// Return the number of repeated steps.
-    int getNumberOfRepeatedSteps() const { return _n_rejected_steps; }
+    int getNumberOfRepeatedSteps() const { return n_rejected_steps_; }
 
     void addFixedOutputTimes(
         std::vector<double> const& extra_fixed_output_times) override;
@@ -118,25 +118,25 @@ private:
 
     /// This vector stores the number of iterations to which the respective
     /// multiplier coefficient will be applied.
-    const std::vector<int> _iter_times_vector;
+    const std::vector<int> iter_times_vector_;
     /// This vector stores the multiplier coefficients.
-    const std::vector<double> _multiplier_vector;
+    const std::vector<double> multiplier_vector_;
     /// Timesteps to be taken independent of the time stepping scheme.
-    std::vector<double> _fixed_output_times;
+    std::vector<double> fixed_output_times_;
     /// The minimum allowed time step size.
-    const double _min_dt;
+    const double min_dt_;
     /// The maximum allowed time step size.
-    const double _max_dt;
+    const double max_dt_;
     /// Initial time step size.
-    const double _initial_dt;
+    const double initial_dt_;
     /// The maximum allowed iteration number to accept current time step.
-    const int _max_iter;
+    const int max_iter_;
     /// The number of nonlinear iterations.
-    int _iter_times = 0;
+    int iter_times_ = 0;
     /// The number of rejected steps.
-    int _n_rejected_steps = 0;
+    int n_rejected_steps_ = 0;
     /// True, if the timestep is accepted.
-    bool _accepted = true;
+    bool accepted_ = true;
 };
 
 }  // namespace NumLib

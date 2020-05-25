@@ -55,7 +55,7 @@ public:
         std::vector<int> const& new_global_component_ids) const;
 
     /// The number of dofs including the those located in the ghost nodes.
-    std::size_t dofSizeWithGhosts() const { return _dict.size(); }
+    std::size_t dofSizeWithGhosts() const { return dict_.size(); }
 
     /// Component ids at given location \c l.
     ///
@@ -118,12 +118,12 @@ public:
 
     /// Get the number of local unknowns excluding those associated
     /// with ghost nodes (for DDC with node-wise mesh partitioning).
-    std::size_t dofSizeWithoutGhosts() const { return _num_local_dof; }
+    std::size_t dofSizeWithoutGhosts() const { return num_local_dof_; }
 
     /// Get ghost indices (for DDC).
     std::vector<GlobalIndexType> const& getGhostIndices() const
     {
-        return _ghosts_indices;
+        return ghosts_indices_;
     }
 
     /// Computes the index in a local (for DDC) vector for a given location and
@@ -142,13 +142,13 @@ public:
 #ifndef NDEBUG
     const detail::ComponentGlobalIndexDict& getDictionary() const
     {
-        return _dict;
+        return dict_;
     }
 
     friend std::ostream& operator<<(std::ostream& os, MeshComponentMap const& m)
     {
-        os << "Dictionary size: " << m._dict.size() << "\n";
-        for (auto l : m._dict)
+        os << "Dictionary size: " << m.dict_.size() << "\n";
+        for (auto l : m.dict_)
             os << l << "\n";
         return os;
     }
@@ -157,7 +157,7 @@ public:
 private:
     /// Private constructor used by internally created mesh component maps.
     explicit MeshComponentMap(detail::ComponentGlobalIndexDict& dict)
-        : _dict(dict)
+        : dict_(dict)
     {
     }
 
@@ -169,19 +169,19 @@ private:
 
     void renumberByLocation(GlobalIndexType offset = 0);
 
-    detail::ComponentGlobalIndexDict _dict;
+    detail::ComponentGlobalIndexDict dict_;
 
     /// Number of local unknowns excluding those associated
     /// with ghost nodes (for domain decomposition).
-    std::size_t _num_local_dof = 0;
+    std::size_t num_local_dof_ = 0;
 
 #ifdef USE_PETSC
     /// Number of global unknowns. Used internally only.
-    std::size_t _num_global_dof = 0;
+    std::size_t num_global_dof_ = 0;
 #endif
 
     /// Global ID for ghost entries
-    std::vector<GlobalIndexType> _ghosts_indices;
+    std::vector<GlobalIndexType> ghosts_indices_;
 
     /// \param components   a vector of components
     /// \param order        type of ordering values in a vector
