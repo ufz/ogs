@@ -20,7 +20,7 @@
 #include "CreateConstant.h"
 #include "CreateCurveProperty.h"
 #include "CreateDupuitPermeability.h"
-#include "CreateExponentialProperty.h"
+#include "CreateExponential.h"
 #include "CreateIdealGasLaw.h"
 #include "CreateLinear.h"
 #include "CreateParameterProperty.h"

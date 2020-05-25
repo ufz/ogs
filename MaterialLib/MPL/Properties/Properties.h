@@ -19,7 +19,7 @@
 #include "CapillaryPressureSaturation/SaturationVanGenuchten.h"
 #include "CurveProperty.h"
 #include "DupuitPermeability.h"
-#include "ExponentialProperty.h"
+#include "Exponential.h"
 #include "IdealGasLaw.h"
 #include "Linear.h"
 #include "ParameterProperty.h"

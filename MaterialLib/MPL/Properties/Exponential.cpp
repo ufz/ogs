@@ -11,20 +11,20 @@
 #include <boost/math/special_functions/pow.hpp>
 #include <cmath>
 
-#include "MaterialLib/MPL/Properties/ExponentialProperty.h"
+#include "MaterialLib/MPL/Properties/Exponential.h"
 
 namespace MaterialPropertyLib
 {
-ExponentialProperty::ExponentialProperty(
-    std::string name, PropertyDataType const& property_reference_value,
-    ExponentData const& v)
+Exponential::Exponential(std::string name,
+                         PropertyDataType const& property_reference_value,
+                         ExponentData const& v)
     : exponent_data_(v)
 {
     name_ = std::move(name);
     value_ = property_reference_value;
 }
 
-PropertyDataType ExponentialProperty::value(
+PropertyDataType Exponential::value(
     VariableArray const& variable_array,
     ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
     double const /*dt*/) const
@@ -37,7 +37,7 @@ PropertyDataType ExponentialProperty::value(
                 std::get<double>(exponent_data_.reference_condition)));
 }
 
-PropertyDataType ExponentialProperty::dValue(
+PropertyDataType Exponential::dValue(
     VariableArray const& variable_array, Variable const primary_variable,
     ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
     double const /*dt*/) const
@@ -53,7 +53,7 @@ PropertyDataType ExponentialProperty::dValue(
                : decltype(value_){};
 }
 
-PropertyDataType ExponentialProperty::d2Value(
+PropertyDataType Exponential::d2Value(
     VariableArray const& variable_array, Variable const pv1, Variable const pv2,
     ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
     double const /*dt*/) const

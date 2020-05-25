@@ -21,11 +21,11 @@ class ConfigTree;
 
 namespace MaterialPropertyLib
 {
-class ExponentialProperty;
+class Exponential;
 }
 
 namespace MaterialPropertyLib
 {
-std::unique_ptr<ExponentialProperty> createExponentialProperty(
+std::unique_ptr<Exponential> createExponential(
     BaseLib::ConfigTree const& config);
 }  // namespace MaterialPropertyLib
