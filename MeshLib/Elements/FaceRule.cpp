@@ -23,14 +23,14 @@ bool FaceRule::testElementNodeOrder(const Element* e)
 
 MathLib::Vector3 FaceRule::getFirstSurfaceVector(Element const* const e)
 {
-    Node* const* const _nodes = e->getNodes();
-    return {*_nodes[1], *_nodes[0]};
+    Node* const* const nodes_ = e->getNodes();
+    return {*nodes_[1], *nodes_[0]};
 }
 
 MathLib::Vector3 FaceRule::getSecondSurfaceVector(Element const* const e)
 {
-    Node* const* const _nodes = e->getNodes();
-    return {*_nodes[1], *_nodes[2]};
+    Node* const* const nodes_ = e->getNodes();
+    return {*nodes_[1], *nodes_[2]};
 }
 
 MathLib::Vector3 FaceRule::getSurfaceNormal(const Element* e)

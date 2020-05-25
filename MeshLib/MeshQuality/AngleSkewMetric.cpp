@@ -31,8 +31,8 @@ AngleSkewMetric::AngleSkewMetric(Mesh const& mesh) :
 
 void AngleSkewMetric::calculateQuality ()
 {
-    const std::vector<MeshLib::Element*>& elements(_mesh.getElements());
-    const std::size_t nElements (_mesh.getNumberOfElements());
+    const std::vector<MeshLib::Element*>& elements(mesh_.getElements());
+    const std::size_t nElements (mesh_.getNumberOfElements());
 
     for (std::size_t k(0); k < nElements; k++)
     {
@@ -40,22 +40,22 @@ void AngleSkewMetric::calculateQuality ()
         switch (elem.getGeomType())
         {
         case MeshElemType::LINE:
-            _element_quality_metric[k] = -1.0;
+            element_quality_metric_[k] = -1.0;
             break;
         case MeshElemType::TRIANGLE:
-            _element_quality_metric[k] = checkTriangle (elem);
+            element_quality_metric_[k] = checkTriangle (elem);
             break;
         case MeshElemType::QUAD:
-            _element_quality_metric[k] = checkQuad (elem);
+            element_quality_metric_[k] = checkQuad (elem);
             break;
         case MeshElemType::TETRAHEDRON:
-            _element_quality_metric[k] = checkTetrahedron (elem);
+            element_quality_metric_[k] = checkTetrahedron (elem);
             break;
         case MeshElemType::HEXAHEDRON:
-            _element_quality_metric[k] = checkHexahedron (elem);
+            element_quality_metric_[k] = checkHexahedron (elem);
             break;
         case MeshElemType::PRISM:
-            _element_quality_metric[k] = checkPrism (elem);
+            element_quality_metric_[k] = checkPrism (elem);
             break;
         default:
             break;

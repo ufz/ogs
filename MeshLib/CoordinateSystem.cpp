@@ -20,19 +20,19 @@ CoordinateSystem::CoordinateSystem(const Element &ele)
     GeoLib::AABB const aabb(ele.getNodes(), ele.getNodes() + ele.getNumberOfNodes());
     CoordinateSystem const bboxCoordSys(getCoordinateSystem(aabb));
     if (bboxCoordSys.getDimension() >= ele.getDimension()) {
-        _type = bboxCoordSys.getType();
+        type_ = bboxCoordSys.getType();
     } else { // e.g. zero volume elements
         if (ele.getDimension() >= 1)
         {
-            _type = CoordinateSystemType::X;
+            type_ = CoordinateSystemType::X;
         }
         if (ele.getDimension() >= 2)
         {
-            _type |= CoordinateSystemType::Y;
+            type_ |= CoordinateSystemType::Y;
         }
         if (ele.getDimension() == 3)
         {
-            _type |= CoordinateSystemType::Z;
+            type_ |= CoordinateSystemType::Z;
         }
     }
 }

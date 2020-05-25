@@ -20,7 +20,7 @@ const unsigned PointRule1::edge_nodes[1][1] =
     {0}
 };
 
-double PointRule1::computeVolume(Node const* const* /*_nodes*/)
+double PointRule1::computeVolume(Node const* const* /*nodes_*/)
 {
     return 0;
 }
@@ -32,9 +32,9 @@ bool PointRule1::isPntInElement(Node const* const* nodes,
     return (dist < eps);
 }
 
-unsigned PointRule1::identifyFace(Node const* const* _nodes, Node* nodes[1])
+unsigned PointRule1::identifyFace(Node const* const* nodes_, Node* nodes[1])
 {
-    if (nodes[0] == _nodes[0])
+    if (nodes[0] == nodes_[0])
     {
         return 0;
     }

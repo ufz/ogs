@@ -19,9 +19,9 @@ const unsigned LineRule2::edge_nodes[1][2] =
     {0, 1} // Edge 0
 };
 
-double LineRule2::computeVolume(Node const* const* _nodes)
+double LineRule2::computeVolume(Node const* const* nodes_)
 {
-    return sqrt(MathLib::sqrDist(_nodes[0]->getCoords(), _nodes[1]->getCoords()));
+    return sqrt(MathLib::sqrDist(nodes_[0]->getCoords(), nodes_[1]->getCoords()));
 }
 
 bool LineRule2::isPntInElement(Node const* const* nodes,
@@ -35,13 +35,13 @@ bool LineRule2::isPntInElement(Node const* const* nodes,
     return (dist < eps);
 }
 
-unsigned LineRule2::identifyFace(Node const* const* _nodes, Node* nodes[1])
+unsigned LineRule2::identifyFace(Node const* const* nodes_, Node* nodes[1])
 {
-    if (nodes[0] == _nodes[0])
+    if (nodes[0] == nodes_[0])
     {
         return 0;
     }
-    if (nodes[0] == _nodes[1])
+    if (nodes[0] == nodes_[1])
     {
         return 1;
     }

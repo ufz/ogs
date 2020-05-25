@@ -34,7 +34,7 @@ vtkStandardNewMacro(VtkMappedMeshSource)
     void VtkMappedMeshSource::PrintSelf(std::ostream& os, vtkIndent indent)
 {
     this->Superclass::PrintSelf(os, indent);
-    os << indent << "Mesh: " << (_mesh ? _mesh->getName() : "(none)") << endl;
+    os << indent << "Mesh: " << (mesh_ ? mesh_->getName() : "(none)") << endl;
 }
 
 VtkMappedMeshSource::VtkMappedMeshSource()
@@ -80,12 +80,12 @@ int VtkMappedMeshSource::RequestData(vtkInformation* /*request*/,
     this->Points->Reset();
 
     vtkNew<VtkMeshNodalCoordinatesTemplate<double>> nodeCoords;
-    nodeCoords->SetNodes(_mesh->getNodes());
+    nodeCoords->SetNodes(mesh_->getNodes());
     this->Points->SetData(nodeCoords.GetPointer());
     output->SetPoints(this->Points.GetPointer());
 
     // Cells
-    auto elems = _mesh->getElements();
+    auto elems = mesh_->getElements();
     output->Allocate(elems.size());
     for (auto& cell : elems)
     {
@@ -140,7 +140,7 @@ int VtkMappedMeshSource::RequestData(vtkInformation* /*request*/,
     }
 
     // Arrays
-    MeshLib::Properties const& properties = _mesh->getProperties();
+    MeshLib::Properties const& properties = mesh_->getProperties();
     std::vector<std::string> const& propertyNames =
         properties.getPropertyVectorNames();
 
@@ -195,7 +195,7 @@ int VtkMappedMeshSource::RequestInformation(
     vtkInformationVector* /*outputVector*/)
 {
     this->NumberOfDimensions = 3;
-    this->NumberOfNodes = _mesh->getNumberOfNodes();
+    this->NumberOfNodes = mesh_->getNumberOfNodes();
 
     return 1;
 }

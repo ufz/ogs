@@ -25,16 +25,16 @@ ElementQualityMetric(mesh)
 
 void SizeDifferenceMetric::calculateQuality()
 {
-    std::vector<MeshLib::Element*> const& elements(_mesh.getElements());
-    std::size_t const nElements (_mesh.getNumberOfElements());
-    std::size_t const mesh_dim (_mesh.getDimension());
+    std::vector<MeshLib::Element*> const& elements(mesh_.getElements());
+    std::size_t const nElements (mesh_.getNumberOfElements());
+    std::size_t const mesh_dim (mesh_.getDimension());
 
     for (std::size_t k=0; k < nElements; ++k)
     {
         Element const& elem (*elements[k]);
         if (elem.getDimension() < mesh_dim)
         {
-            _element_quality_metric[k] = 0;
+            element_quality_metric_[k] = 0;
             continue;
         }
 
@@ -56,7 +56,7 @@ void SizeDifferenceMetric::calculateQuality()
                 worst_ratio = ratio;
             }
         }
-        _element_quality_metric[k] = worst_ratio;
+        element_quality_metric_[k] = worst_ratio;
     }
 }
 

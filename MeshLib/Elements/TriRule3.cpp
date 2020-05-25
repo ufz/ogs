@@ -23,9 +23,9 @@ const unsigned TriRule3::edge_nodes[3][2] =
         {2, 0}, // Edge 2
 };
 
-double TriRule3::computeVolume(Node const* const* _nodes)
+double TriRule3::computeVolume(Node const* const* nodes_)
 {
-    return MathLib::calcTriangleArea(*_nodes[0], *_nodes[1], *_nodes[2]);
+    return MathLib::calcTriangleArea(*nodes_[0], *nodes_[1], *nodes_[2]);
 }
 
 bool TriRule3::isPntInElement(Node const* const* nodes,
@@ -35,7 +35,7 @@ bool TriRule3::isPntInElement(Node const* const* nodes,
                                       eps);
 }
 
-unsigned TriRule3::identifyFace(Node const* const* _nodes, Node* nodes[3])
+unsigned TriRule3::identifyFace(Node const* const* nodes_, Node* nodes[3])
 {
     for (unsigned i=0; i<3; i++)
     {
@@ -44,7 +44,7 @@ unsigned TriRule3::identifyFace(Node const* const* _nodes, Node* nodes[3])
         {
             for (unsigned k = 0; k < 2; k++)
             {
-                if (_nodes[edge_nodes[i][j]] == nodes[k])
+                if (nodes_[edge_nodes[i][j]] == nodes[k])
                 {
                     flag++;
                 }

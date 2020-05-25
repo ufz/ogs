@@ -37,8 +37,8 @@ bool LayeredVolume::createRasterLayers(const MeshLib::Mesh &mesh,
         return false;
     }
 
-    _elevation_epsilon = calcEpsilon(*rasters[0], *rasters.back());
-    if (_elevation_epsilon <= 0)
+    elevation_epsilon_ = calcEpsilon(*rasters[0], *rasters.back());
+    if (elevation_epsilon_ <= 0)
     {
         return false;
     }
@@ -65,15 +65,15 @@ bool LayeredVolume::createRasterLayers(const MeshLib::Mesh &mesh,
         return false;
     }
 
-    this->_minimum_thickness = minimum_thickness;
-    _nodes = MeshLib::copyNodeVector(bottom->getNodes());
-    _elements = MeshLib::copyElementVector(bottom->getElements(), _nodes);
-    if (!_materials.empty())
+    this->minimum_thickness_ = minimum_thickness;
+    nodes_ = MeshLib::copyNodeVector(bottom->getNodes());
+    elements_ = MeshLib::copyElementVector(bottom->getElements(), nodes_);
+    if (!materials_.empty())
     {
         ERR("The materials vector is not empty.");
         return false;
     }
-    _materials.resize(_elements.size(), 0);
+    materials_.resize(elements_.size(), 0);
 
     // map each layer and attach to subsurface mesh
     const std::size_t nRasters (rasters.size());
@@ -93,15 +93,15 @@ void LayeredVolume::addLayerToMesh(const MeshLib::Mesh &dem_mesh, unsigned layer
 {
     const std::size_t nNodes (dem_mesh.getNumberOfNodes());
     const std::vector<MeshLib::Node*> &nodes (dem_mesh.getNodes());
-    const std::size_t node_id_offset (_nodes.size());
+    const std::size_t node_id_offset (nodes_.size());
     const std::size_t last_layer_node_offset (node_id_offset-nNodes);
 
     for (std::size_t i = 0; i < nNodes; ++i)
     {
-        _nodes.push_back(getNewLayerNode(*nodes[i],
-                                         *_nodes[last_layer_node_offset + i],
+        nodes_.push_back(getNewLayerNode(*nodes[i],
+                                         *nodes_[last_layer_node_offset + i],
                                          raster,
-                                         _nodes.size()));
+                                         nodes_.size()));
     }
 
     const std::vector<MeshLib::Element*> &layer_elements (dem_mesh.getElements());
@@ -109,20 +109,20 @@ void LayeredVolume::addLayerToMesh(const MeshLib::Mesh &dem_mesh, unsigned layer
     {
         if (elem->getGeomType() == MeshLib::MeshElemType::TRIANGLE)
         {
-            std::array<MeshLib::Node*,3> tri_nodes = {{ _nodes[node_id_offset+elem->getNodeIndex(0)],
-                                                        _nodes[node_id_offset+elem->getNodeIndex(1)],
-                                                        _nodes[node_id_offset+elem->getNodeIndex(2)] }};
-            _elements.push_back(new MeshLib::Tri(tri_nodes));
-            _materials.push_back(layer_id);
+            std::array<MeshLib::Node*,3> tri_nodes = {{ nodes_[node_id_offset+elem->getNodeIndex(0)],
+                                                        nodes_[node_id_offset+elem->getNodeIndex(1)],
+                                                        nodes_[node_id_offset+elem->getNodeIndex(2)] }};
+            elements_.push_back(new MeshLib::Tri(tri_nodes));
+            materials_.push_back(layer_id);
         }
         else if (elem->getGeomType() == MeshLib::MeshElemType::QUAD)
         {
-            std::array<MeshLib::Node*,4> quad_nodes = {{ _nodes[node_id_offset+elem->getNodeIndex(0)],
-                                                         _nodes[node_id_offset+elem->getNodeIndex(1)],
-                                                         _nodes[node_id_offset+elem->getNodeIndex(2)],
-                                                         _nodes[node_id_offset+elem->getNodeIndex(3)] }};
-            _elements.push_back(new MeshLib::Quad(quad_nodes));
-            _materials.push_back(layer_id);
+            std::array<MeshLib::Node*,4> quad_nodes = {{ nodes_[node_id_offset+elem->getNodeIndex(0)],
+                                                         nodes_[node_id_offset+elem->getNodeIndex(1)],
+                                                         nodes_[node_id_offset+elem->getNodeIndex(2)],
+                                                         nodes_[node_id_offset+elem->getNodeIndex(3)] }};
+            elements_.push_back(new MeshLib::Quad(quad_nodes));
+            materials_.push_back(layer_id);
         }
     }
 }
@@ -142,22 +142,22 @@ void LayeredVolume::addLayerBoundaries(const MeshLib::Mesh &layer, std::size_t n
                 for (unsigned j=0; j<nLayerBoundaries; ++j)
                 {
                     const std::size_t offset (j*nNodes);
-                    MeshLib::Node* n0 = _nodes[offset + elem->getNodeIndex(i)];
-                    MeshLib::Node* n1 = _nodes[offset + elem->getNodeIndex((i+1)%nElemNodes)];
-                    MeshLib::Node* n2 = _nodes[offset + nNodes + elem->getNodeIndex((i+1)%nElemNodes)];
-                    MeshLib::Node* n3 = _nodes[offset + nNodes + elem->getNodeIndex(i)];
+                    MeshLib::Node* n0 = nodes_[offset + elem->getNodeIndex(i)];
+                    MeshLib::Node* n1 = nodes_[offset + elem->getNodeIndex((i+1)%nElemNodes)];
+                    MeshLib::Node* n2 = nodes_[offset + nNodes + elem->getNodeIndex((i+1)%nElemNodes)];
+                    MeshLib::Node* n3 = nodes_[offset + nNodes + elem->getNodeIndex(i)];
 
                     if (MathLib::Vector3(*n1, *n2).getLength() > std::numeric_limits<double>::epsilon())
                     {
                         const std::array<MeshLib::Node*,3> tri_nodes = {{ n0, n2, n1 }};
-                        _elements.push_back(new MeshLib::Tri(tri_nodes));
-                        _materials.push_back(nLayers+j);
+                        elements_.push_back(new MeshLib::Tri(tri_nodes));
+                        materials_.push_back(nLayers+j);
                     }
                     if (MathLib::Vector3(*n0, *n3).getLength() > std::numeric_limits<double>::epsilon())
                     {
                         const std::array<MeshLib::Node*,3> tri_nodes = {{ n0, n3, n2 }};
-                        _elements.push_back(new MeshLib::Tri(tri_nodes));
-                        _materials.push_back(nLayers+j);
+                        elements_.push_back(new MeshLib::Tri(tri_nodes));
+                        materials_.push_back(nLayers+j);
                     }
                 }
             }
@@ -173,8 +173,8 @@ void LayeredVolume::removeCongruentElements(std::size_t nLayers, std::size_t nEl
         const std::size_t upper_offset ( i    * nElementsPerLayer);
         for (std::size_t j=0; j<nElementsPerLayer; ++j)
         {
-            MeshLib::Element const*const high (_elements[upper_offset+j]);
-            MeshLib::Element *const low  (_elements[lower_offset+j]);
+            MeshLib::Element const*const high (elements_[upper_offset+j]);
+            MeshLib::Element *const low  (elements_[lower_offset+j]);
 
             unsigned count(0);
             const std::size_t nElemNodes (low->getNumberOfBaseNodes());
@@ -182,32 +182,32 @@ void LayeredVolume::removeCongruentElements(std::size_t nLayers, std::size_t nEl
             {
                 if (high->getNodeIndex(k) == low->getNodeIndex(k))
                 {
-                    low->setNode(k, _nodes[high->getNodeIndex(k)]);
+                    low->setNode(k, nodes_[high->getNodeIndex(k)]);
                     count++;
                 }
             }
 
             if (count == nElemNodes)
             {
-                delete _elements[upper_offset+j];
+                delete elements_[upper_offset+j];
                 // mark element and material entries for deletion
-                _elements[upper_offset+j] = nullptr;
-                _materials[upper_offset+j] = -1;
+                elements_[upper_offset+j] = nullptr;
+                materials_[upper_offset+j] = -1;
             }
             else
             {
                 MeshLib::Node attr = high->getCenterOfGravity();
-                _attribute_points.emplace_back(
+                attribute_points_.emplace_back(
                     attr[0],
                     attr[1],
                     (attr[2] + low->getCenterOfGravity()[2]) / 2.0,
-                    _materials[lower_offset + j]);
+                    materials_[lower_offset + j]);
             }
         }
     }
     // delete marked entries
-    auto elem_vec_end = std::remove(_elements.begin(), _elements.end(), nullptr);
-    _elements.erase(elem_vec_end, _elements.end());
-    auto mat_vec_end = std::remove(_materials.begin(), _materials.end(), -1);
-    _materials.erase(mat_vec_end, _materials.end());
+    auto elem_vec_end = std::remove(elements_.begin(), elements_.end(), nullptr);
+    elements_.erase(elem_vec_end, elements_.end());
+    auto mat_vec_end = std::remove(materials_.begin(), materials_.end(), -1);
+    materials_.erase(mat_vec_end, materials_.end());
 }

@@ -25,23 +25,23 @@ ElementSizeMetric::ElementSizeMetric(Mesh const& mesh)
 void ElementSizeMetric::calculateQuality()
 {
     std::size_t error_count(0);
-    if (_mesh.getDimension() == 1)
+    if (mesh_.getDimension() == 1)
     {
         error_count = calc1dQuality();
     }
-    else if (_mesh.getDimension() == 2)
+    else if (mesh_.getDimension() == 2)
     {
         error_count = calc2dQuality();
     }
-    else if (_mesh.getDimension() == 3)
+    else if (mesh_.getDimension() == 3)
     {
         error_count = calc3dQuality();
     }
 
     INFO(
         "ElementSizeMetric::calculateQuality() minimum: {:f}, max_volume: {:f}",
-        _min,
-        _max);
+        min_,
+        max_);
     if (error_count > 0)
     {
         WARN("Warning: {:d} elements with zero volume found.", error_count);
@@ -50,28 +50,28 @@ void ElementSizeMetric::calculateQuality()
 
 std::size_t ElementSizeMetric::calc1dQuality()
 {
-    const std::vector<MeshLib::Element*> &elements(_mesh.getElements());
+    const std::vector<MeshLib::Element*> &elements(mesh_.getElements());
     const std::size_t nElems(elements.size());
     std::size_t error_count(0);
 
     for (std::size_t k(0); k < nElems; k++)
     {
         double area(std::numeric_limits<double>::max());
-        _element_quality_metric[k] = elements[k]->getContent();
-        if (_element_quality_metric[k] <
+        element_quality_metric_[k] = elements[k]->getContent();
+        if (element_quality_metric_[k] <
             sqrt(fabs(std::numeric_limits<double>::epsilon())))
         {
             error_count++;
         }
 
-        // update _min and _max values
-        if (_min > area)
+        // update min_ and max_ values
+        if (min_ > area)
         {
-            _min = area;
+            min_ = area;
         }
-        if (_max < area)
+        if (max_ < area)
         {
-            _max = area;
+            max_ = area;
         }
     }
     return error_count;
@@ -79,7 +79,7 @@ std::size_t ElementSizeMetric::calc1dQuality()
 
 std::size_t ElementSizeMetric::calc2dQuality()
 {
-    const std::vector<MeshLib::Element*> &elements(_mesh.getElements());
+    const std::vector<MeshLib::Element*> &elements(mesh_.getElements());
     const std::size_t nElems(elements.size());
     std::size_t error_count(0);
 
@@ -89,7 +89,7 @@ std::size_t ElementSizeMetric::calc2dQuality()
 
         if (elem.getDimension() == 1)
         {
-            _element_quality_metric[k] = 0.0;
+            element_quality_metric_[k] = 0.0;
             continue;
         }
         double const area = elem.getContent();
@@ -98,23 +98,23 @@ std::size_t ElementSizeMetric::calc2dQuality()
             error_count++;
         }
 
-        // update _min and _max values
-        if (_min > area)
+        // update min_ and max_ values
+        if (min_ > area)
         {
-            _min = area;
+            min_ = area;
         }
-        if (_max < area)
+        if (max_ < area)
         {
-            _max = area;
+            max_ = area;
         }
-        _element_quality_metric[k] = area;
+        element_quality_metric_[k] = area;
     }
     return error_count;
 }
 
 std::size_t ElementSizeMetric::calc3dQuality()
 {
-    const std::vector<MeshLib::Element*>& elements(_mesh.getElements());
+    const std::vector<MeshLib::Element*>& elements(mesh_.getElements());
     const std::size_t nElems(elements.size());
     std::size_t error_count(0);
 
@@ -123,7 +123,7 @@ std::size_t ElementSizeMetric::calc3dQuality()
         Element const& elem (*elements[k]);
         if (elem.getDimension()<3)
         {
-            _element_quality_metric[k] = 0.0;
+            element_quality_metric_[k] = 0.0;
             continue;
         }
 
@@ -133,15 +133,15 @@ std::size_t ElementSizeMetric::calc3dQuality()
             error_count++;
         }
 
-        if (_min > volume)
+        if (min_ > volume)
         {
-            _min = volume;
+            min_ = volume;
         }
-        if (_max < volume)
+        if (max_ < volume)
         {
-            _max = volume;
+            max_ = volume;
         }
-        _element_quality_metric[k] = volume;
+        element_quality_metric_[k] = volume;
     }
     return error_count;
 }

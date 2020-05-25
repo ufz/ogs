@@ -20,7 +20,7 @@
 namespace MeshLib {
 
 NodeSearch::NodeSearch(const MeshLib::Mesh &mesh)
-    : _mesh(mesh)
+    : mesh_(mesh)
 {
 }
 
@@ -31,11 +31,11 @@ std::size_t NodeSearch::searchNodesConnectedToOnlyGivenElements(
     //
     // Note: If there are only few elements to be removed, using a different
     // algorithm might be more memory efficient.
-    std::vector<std::size_t> node_marked_counts(_mesh.getNumberOfNodes(), 0);
+    std::vector<std::size_t> node_marked_counts(mesh_.getNumberOfNodes(), 0);
 
     for(std::size_t eid : elements)
     {
-        auto* e = _mesh.getElement(eid);
+        auto* e = mesh_.getElement(eid);
         for (unsigned i=0; i<e->getNumberOfNodes(); i++) {
             node_marked_counts[e->getNodeIndex(i)]++;
         }
@@ -47,7 +47,7 @@ std::size_t NodeSearch::searchNodesConnectedToOnlyGivenElements(
     std::vector<std::size_t> connected_nodes;
     for (std::size_t i=0; i<node_marked_counts.size(); i++)
     {
-        if (node_marked_counts[i] == _mesh.getNode(i)->getElements().size())
+        if (node_marked_counts[i] == mesh_.getNode(i)->getElements().size())
         {
             connected_nodes.push_back(i);
         }
@@ -59,8 +59,8 @@ std::size_t NodeSearch::searchNodesConnectedToOnlyGivenElements(
 
 std::size_t NodeSearch::searchUnused()
 {
-    const std::size_t nNodes (_mesh.getNumberOfNodes());
-    const std::vector<MeshLib::Node*> &nodes (_mesh.getNodes());
+    const std::size_t nNodes (mesh_.getNumberOfNodes());
+    const std::vector<MeshLib::Node*> &nodes (mesh_.getNodes());
     std::vector<std::size_t> del_node_idx;
 
     for (unsigned i = 0; i < nNodes; ++i)
@@ -78,9 +78,9 @@ std::size_t NodeSearch::searchUnused()
 std::size_t NodeSearch::searchBoundaryNodes()
 {
     std::vector<std::size_t> vec_boundary_nodes;
-    if (_mesh.getDimension() == 1)
+    if (mesh_.getDimension() == 1)
     {
-        for (MeshLib::Node const* n : _mesh.getNodes())
+        for (MeshLib::Node const* n : mesh_.getNodes())
         {
             if (n->getElements().size() == 1)
             {
@@ -88,11 +88,11 @@ std::size_t NodeSearch::searchBoundaryNodes()
             }
         }
     }
-    else if (_mesh.getDimension() == 2)
+    else if (mesh_.getDimension() == 2)
     {
-        for (MeshLib::Element const* elem : _mesh.getElements())
+        for (MeshLib::Element const* elem : mesh_.getElements())
         {
-            if (elem->getDimension() < _mesh.getDimension())
+            if (elem->getDimension() < mesh_.getDimension())
             {
                 continue;
             }
@@ -118,9 +118,9 @@ std::size_t NodeSearch::searchBoundaryNodes()
     }
     else
     {
-        for (MeshLib::Element const* elem : _mesh.getElements())
+        for (MeshLib::Element const* elem : mesh_.getElements())
         {
-            if (elem->getDimension() < _mesh.getDimension())
+            if (elem->getDimension() < mesh_.getDimension())
             {
                 continue;
             }
@@ -154,10 +154,10 @@ std::size_t NodeSearch::searchBoundaryNodes()
 
 void NodeSearch::updateUnion(const std::vector<std::size_t> &vec)
 {
-    std::vector<std::size_t> vec_temp(vec.size() + _marked_nodes.size());
-    auto it = std::set_union(vec.begin(), vec.end(), _marked_nodes.begin(), _marked_nodes.end(), vec_temp.begin());
+    std::vector<std::size_t> vec_temp(vec.size() + marked_nodes_.size());
+    auto it = std::set_union(vec.begin(), vec.end(), marked_nodes_.begin(), marked_nodes_.end(), vec_temp.begin());
     vec_temp.resize(it - vec_temp.begin());
-    _marked_nodes.assign(vec_temp.begin(), vec_temp.end());
+    marked_nodes_.assign(vec_temp.begin(), vec_temp.end());
 }
 
 std::vector<Node*> getUniqueNodes(std::vector<Element*> const& elements)

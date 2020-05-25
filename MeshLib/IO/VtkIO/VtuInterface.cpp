@@ -41,9 +41,9 @@ namespace IO
 {
 
 VtuInterface::VtuInterface(const MeshLib::Mesh* mesh, int dataMode, bool compress) :
-    _mesh(mesh), _data_mode(dataMode), _use_compressor(compress)
+    mesh_(mesh), data_mode_(dataMode), use_compressor_(compress)
 {
-    if (_data_mode == vtkXMLWriter::Ascii && compress)
+    if (data_mode_ == vtkXMLWriter::Ascii && compress)
     {
         WARN("Ascii data cannot be compressed, ignoring compression flag.");
     }

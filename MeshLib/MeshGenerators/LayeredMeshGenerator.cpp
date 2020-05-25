@@ -48,20 +48,20 @@ bool LayeredMeshGenerator::createLayers(
 std::unique_ptr<MeshLib::Mesh>
 LayeredMeshGenerator::getMesh(std::string const& mesh_name) const
 {
-    if (_nodes.empty() || _elements.empty())
+    if (nodes_.empty() || elements_.empty())
     {
         return nullptr;
     }
 
     MeshLib::Properties properties;
-    if (_materials.size() == _elements.size())
+    if (materials_.size() == elements_.size())
     {
         auto* const materials = properties.createNewPropertyVector<int>(
             "MaterialIDs", MeshLib::MeshItemType::Cell);
         assert(materials != nullptr);
-        materials->reserve(_materials.size());
-        std::copy(_materials.cbegin(),
-                  _materials.cend(),
+        materials->reserve(materials_.size());
+        std::copy(materials_.cbegin(),
+                  materials_.cend(),
                   std::back_inserter(*materials));
     }
     else
@@ -71,7 +71,7 @@ LayeredMeshGenerator::getMesh(std::string const& mesh_name) const
             "element number");
     }
 
-    std::unique_ptr<MeshLib::Mesh> result(new MeshLib::Mesh(mesh_name, _nodes, _elements, properties));
+    std::unique_ptr<MeshLib::Mesh> result(new MeshLib::Mesh(mesh_name, nodes_, elements_, properties));
     MeshLib::NodeSearch ns(*result);
     if (ns.searchUnused() > 0) {
         std::unique_ptr<MeshLib::Mesh> new_mesh(
@@ -97,7 +97,7 @@ MeshLib::Node* LayeredMeshGenerator::getNewLayerNode(MeshLib::Node const& dem_no
 
     if ((std::abs(elevation - raster.getHeader().no_data) <
          std::numeric_limits<double>::epsilon()) ||
-        (elevation - last_layer_node[2] < _minimum_thickness))
+        (elevation - last_layer_node[2] < minimum_thickness_))
     {
         return new MeshLib::Node(last_layer_node);
     }

@@ -18,25 +18,25 @@ namespace MeshLib
 void Properties::removePropertyVector(std::string const& name)
 {
     std::map<std::string, PropertyVectorBase*>::const_iterator it(
-        _properties.find(name)
+        properties_.find(name)
     );
-    if (it == _properties.end()) {
+    if (it == properties_.end()) {
         WARN("A property of the name '{:s}' does not exist.", name);
         return;
     }
     delete it->second;
-    _properties.erase(it);
+    properties_.erase(it);
 }
 
 bool Properties::hasPropertyVector(std::string const& name) const
 {
-    return _properties.find(name) != _properties.end();
+    return properties_.find(name) != properties_.end();
 }
 
 std::vector<std::string> Properties::getPropertyVectorNames() const
 {
     std::vector<std::string> names;
-    std::transform(_properties.begin(), _properties.end(),
+    std::transform(properties_.begin(), properties_.end(),
                    std::back_inserter(names),
                    [](auto const& pair) { return pair.first; });
     return names;
@@ -46,7 +46,7 @@ std::vector<std::string> Properties::getPropertyVectorNames(
     MeshLib::MeshItemType t) const
 {
     std::vector<std::string> names;
-    for (auto p : _properties)
+    for (auto p : properties_)
     {
         if (p.second->getMeshItemType() == t)
         {
@@ -61,18 +61,18 @@ Properties Properties::excludeCopyProperties(
     std::vector<std::size_t> const& exclude_node_ids) const
 {
     Properties exclude_copy;
-    for (auto name_vector_pair : _properties)
+    for (auto name_vector_pair : properties_)
     {
         if (name_vector_pair.second->getMeshItemType() == MeshItemType::Cell)
         {
-            exclude_copy._properties.insert(std::make_pair(
+            exclude_copy.properties_.insert(std::make_pair(
                 name_vector_pair.first,
                 name_vector_pair.second->clone(exclude_elem_ids)));
         }
         else if (name_vector_pair.second->getMeshItemType() ==
                  MeshItemType::Node)
         {
-            exclude_copy._properties.insert(std::make_pair(
+            exclude_copy.properties_.insert(std::make_pair(
                 name_vector_pair.first,
                 name_vector_pair.second->clone(exclude_node_ids)));
         }
@@ -84,7 +84,7 @@ Properties Properties::excludeCopyProperties(
     std::vector<MeshItemType> const& exclude_mesh_item_types) const
 {
     Properties new_properties;
-    for (auto name_vector_pair : _properties)
+    for (auto name_vector_pair : properties_)
     {
         if (std::find(exclude_mesh_item_types.begin(),
                       exclude_mesh_item_types.end(),
@@ -95,7 +95,7 @@ Properties Properties::excludeCopyProperties(
         }
 
         std::vector<std::size_t> const exclude_positions{};
-        new_properties._properties.insert(
+        new_properties.properties_.insert(
             std::make_pair(name_vector_pair.first,
                            name_vector_pair.second->clone(exclude_positions)));
     }
@@ -103,10 +103,10 @@ Properties Properties::excludeCopyProperties(
 }
 
 Properties::Properties(Properties const& properties)
-    : _properties(properties._properties)
+    : properties_(properties.properties_)
 {
     std::vector<std::size_t> exclude_positions;
-    for (auto& name_vector_pair : _properties)
+    for (auto& name_vector_pair : properties_)
     {
         PropertyVectorBase* t(
             name_vector_pair.second->clone(exclude_positions));
@@ -121,9 +121,9 @@ Properties& Properties::operator=(Properties const& properties)
         return *this;
     }
 
-    _properties = properties._properties;
+    properties_ = properties.properties_;
     std::vector<std::size_t> exclude_positions;
-    for (auto& name_vector_pair : _properties)
+    for (auto& name_vector_pair : properties_)
     {
         PropertyVectorBase* t(
             name_vector_pair.second->clone(exclude_positions));
@@ -135,7 +135,7 @@ Properties& Properties::operator=(Properties const& properties)
 
 Properties::~Properties()
 {
-    for (auto name_vector_pair : _properties)
+    for (auto name_vector_pair : properties_)
     {
         delete name_vector_pair.second;
     }

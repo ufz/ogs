@@ -73,25 +73,25 @@ namespace MeshLib
 {
 ElementCoordinatesMappingLocal::ElementCoordinatesMappingLocal(
     const Element& e, const unsigned global_dim)
-    : _global_dim(global_dim), _matR2global(3, 3)
+    : global_dim_(global_dim), matR2global_(3, 3)
 {
     assert(e.getDimension() <= global_dim);
-    _points.reserve(e.getNumberOfNodes());
+    points_.reserve(e.getNumberOfNodes());
     for (unsigned i = 0; i < e.getNumberOfNodes(); i++)
     {
-        _points.emplace_back(*(e.getNode(i)));
+        points_.emplace_back(*(e.getNode(i)));
     }
 
     auto const element_dim = e.getDimension();
 
     if (global_dim == element_dim)
     {
-        _matR2global.setIdentity();
+        matR2global_.setIdentity();
         return;
     }
 
-    detail::getRotationMatrixToGlobal(element_dim, global_dim, _points, _matR2global);
-    detail::rotateToLocal(_matR2global.transpose(), _points);
+    detail::getRotationMatrixToGlobal(element_dim, global_dim, points_, matR2global_);
+    detail::rotateToLocal(matR2global_.transpose(), points_);
 }
 
 }  // namespace MeshLib

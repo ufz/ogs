@@ -63,14 +63,14 @@ const Element* HexRule8::getFace(const Element* e, unsigned i)
     return nullptr;
 }
 
-double HexRule8::computeVolume(Node const* const* _nodes)
+double HexRule8::computeVolume(Node const* const* nodes_)
 {
-    return MathLib::calcTetrahedronVolume(*_nodes[4], *_nodes[7], *_nodes[5], *_nodes[0])
-         + MathLib::calcTetrahedronVolume(*_nodes[5], *_nodes[3], *_nodes[1], *_nodes[0])
-         + MathLib::calcTetrahedronVolume(*_nodes[5], *_nodes[7], *_nodes[3], *_nodes[0])
-         + MathLib::calcTetrahedronVolume(*_nodes[5], *_nodes[7], *_nodes[6], *_nodes[2])
-         + MathLib::calcTetrahedronVolume(*_nodes[1], *_nodes[3], *_nodes[5], *_nodes[2])
-         + MathLib::calcTetrahedronVolume(*_nodes[3], *_nodes[7], *_nodes[5], *_nodes[2]);
+    return MathLib::calcTetrahedronVolume(*nodes_[4], *nodes_[7], *nodes_[5], *nodes_[0])
+         + MathLib::calcTetrahedronVolume(*nodes_[5], *nodes_[3], *nodes_[1], *nodes_[0])
+         + MathLib::calcTetrahedronVolume(*nodes_[5], *nodes_[7], *nodes_[3], *nodes_[0])
+         + MathLib::calcTetrahedronVolume(*nodes_[5], *nodes_[7], *nodes_[6], *nodes_[2])
+         + MathLib::calcTetrahedronVolume(*nodes_[1], *nodes_[3], *nodes_[5], *nodes_[2])
+         + MathLib::calcTetrahedronVolume(*nodes_[3], *nodes_[7], *nodes_[5], *nodes_[2]);
 }
 
 bool HexRule8::isPntInElement(Node const* const* nodes,
@@ -91,7 +91,7 @@ bool HexRule8::isPntInElement(Node const* const* nodes,
                 pnt, *nodes[3], *nodes[7], *nodes[5], *nodes[2], eps));
 }
 
-unsigned HexRule8::identifyFace(Node const* const* _nodes, Node* nodes[3])
+unsigned HexRule8::identifyFace(Node const* const* nodes_, Node* nodes[3])
 {
     for (unsigned i=0; i<6; i++)
     {
@@ -100,7 +100,7 @@ unsigned HexRule8::identifyFace(Node const* const* _nodes, Node* nodes[3])
         {
             for (unsigned k = 0; k < 3; k++)
             {
-                if (_nodes[face_nodes[i][j]] == nodes[k])
+                if (nodes_[face_nodes[i][j]] == nodes[k])
                 {
                     flag++;
                 }
