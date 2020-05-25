@@ -89,9 +89,9 @@ protected:
     /// Calculates a data-dependent epsilon value
     double calcEpsilon(GeoLib::Raster const& low, GeoLib::Raster const& high);
 
-    double _elevation_epsilon{0.0001};
-    double _minimum_thickness{std::numeric_limits<float>::epsilon()};
-    std::vector<int> _materials;
-    std::vector<MeshLib::Node*> _nodes;
-    std::vector<MeshLib::Element*> _elements;
+    double elevation_epsilon_{0.0001};
+    double minimum_thickness_{std::numeric_limits<float>::epsilon()};
+    std::vector<int> materials_;
+    std::vector<MeshLib::Node*> nodes_;
+    std::vector<MeshLib::Element*> elements_;
 };

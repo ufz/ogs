@@ -36,21 +36,21 @@ public:
     ElementCoordinatesMappingLocal(const Element &e, const unsigned global_dim);
 
     /// return the global dimension
-    unsigned getGlobalDimension() const { return _global_dim; }
+    unsigned getGlobalDimension() const { return global_dim_; }
 
     /// return mapped coordinates of the node
     MathLib::Point3d const& getMappedCoordinates(std::size_t node_id) const
     {
-        return _points[node_id];
+        return points_[node_id];
     }
 
     /// return a rotation matrix converting to global coordinates
-    const RotationMatrix& getRotationMatrixToGlobal() const {return _matR2global;}
+    const RotationMatrix& getRotationMatrixToGlobal() const {return matR2global_;}
 
 private:
-    const unsigned _global_dim;
-    std::vector<MathLib::Point3d> _points;
-    RotationMatrix _matR2global;
+    const unsigned global_dim_;
+    std::vector<MathLib::Point3d> points_;
+    RotationMatrix matR2global_;
 };
 
 }  // namespace MeshLib

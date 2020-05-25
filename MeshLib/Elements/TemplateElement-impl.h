@@ -17,38 +17,38 @@ template <class ELEMENT_RULE>
 TemplateElement<ELEMENT_RULE>::TemplateElement(Node* nodes[n_all_nodes], std::size_t id)
 : Element(id)
 {
-    this->_nodes = nodes;
-    this->_neighbors = new Element*[getNumberOfNeighbors()];
-    std::fill(this->_neighbors, this->_neighbors + getNumberOfNeighbors(), nullptr);
-    this->_content = ELEMENT_RULE::computeVolume(this->_nodes);
+    this->nodes_ = nodes;
+    this->neighbors_ = new Element*[getNumberOfNeighbors()];
+    std::fill(this->neighbors_, this->neighbors_ + getNumberOfNeighbors(), nullptr);
+    this->content_ = ELEMENT_RULE::computeVolume(this->nodes_);
 }
 
 template <class ELEMENT_RULE>
 TemplateElement<ELEMENT_RULE>::TemplateElement(std::array<Node*, n_all_nodes> const& nodes, std::size_t id)
 : Element(id)
 {
-    this->_nodes = new Node*[n_all_nodes];
-    std::copy(nodes.begin(), nodes.end(), this->_nodes);
-    this->_neighbors = new Element*[getNumberOfNeighbors()];
-    std::fill(this->_neighbors, this->_neighbors + getNumberOfNeighbors(), nullptr);
-    this->_content = ELEMENT_RULE::computeVolume(this->_nodes);
+    this->nodes_ = new Node*[n_all_nodes];
+    std::copy(nodes.begin(), nodes.end(), this->nodes_);
+    this->neighbors_ = new Element*[getNumberOfNeighbors()];
+    std::fill(this->neighbors_, this->neighbors_ + getNumberOfNeighbors(), nullptr);
+    this->content_ = ELEMENT_RULE::computeVolume(this->nodes_);
 }
 
 template <class ELEMENT_RULE>
 TemplateElement<ELEMENT_RULE>::TemplateElement(const TemplateElement &e)
 : Element(e.getID())
 {
-    this->_nodes = new Node*[n_all_nodes];
+    this->nodes_ = new Node*[n_all_nodes];
     for (unsigned i = 0; i < n_all_nodes; i++)
     {
-        this->_nodes[i] = e._nodes[i];
+        this->nodes_[i] = e.nodes_[i];
     }
-    this->_neighbors = new Element*[getNumberOfNeighbors()];
+    this->neighbors_ = new Element*[getNumberOfNeighbors()];
     for (unsigned i = 0; i < getNumberOfNeighbors(); i++)
     {
-        this->_neighbors[i] = e._neighbors[i];
+        this->neighbors_[i] = e.neighbors_[i];
     }
-    this->_content = e.getContent();
+    this->content_ = e.getContent();
 }
 
 

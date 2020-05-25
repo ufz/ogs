@@ -53,16 +53,16 @@ public:
 
 private:
     /// Pointer to MPI communicator.
-    MPI_Comm _mpi_comm;
+    MPI_Comm mpi_comm_;
 
-    /// Number of processes in the communicator: _mpi_comm.
-    int _mpi_comm_size;
+    /// Number of processes in the communicator: mpi_comm_.
+    int mpi_comm_size_;
 
     /// Rank of compute core.
-    int _mpi_rank;
+    int mpi_rank_;
 
     /// MPI data type for struct NodeData.
-    MPI_Datatype _mpi_node_type;
+    MPI_Datatype mpi_node_type_;
 
     /// Node data only for parallel reading.
     struct NodeData
@@ -100,7 +100,7 @@ private:
 
         std::size_t size() const { return 14; }
         unsigned long* data() { return &nodes; }
-    } _mesh_info;
+    } mesh_info_;
 
     /*!
         \brief Create a new mesh of NodePartitionedMesh after reading and
@@ -144,10 +144,10 @@ private:
          \brief Create a NodePartitionedMesh object, read binary mesh data
                 in the manner of parallel, and return a pointer to it.
                 Four binary files have to been read in this function named as:
-                file_name_base+_partitioned_msh_cfg[number of partitions].bin
-                file_name_base+_partitioned_msh_nod[number of partitions].bin
-                file_name_base+_partitioned_msh_ele[number of partitions].bin
-                file_name_base+_partitioned_msh_ele_g[number of partitions].bin
+                file_name_base+partitioned_msh_cfg_[number of partitions].bin
+                file_name_base+partitioned_msh_nod_[number of partitions].bin
+                file_name_base+partitioned_msh_ele_[number of partitions].bin
+                file_name_base+partitioned_msh_ele_g_[number of partitions].bin
                 in which, the first file contains an array of integers for the
                 PartitionMeshInfo for all partitions
 
@@ -201,7 +201,7 @@ private:
             OGS_FATAL(
                 "Error in NodePartitionedMeshReader::readPropertiesBinary: "
                 "Could not read part {:d} of the PropertyVector.",
-                _mpi_rank);
+                mpi_rank_);
     }
 
     /*!
@@ -253,9 +253,9 @@ private:
          \brief Create a NodePartitionedMesh object, read ASCII mesh data,
                 and return a pointer to it.
                 Three ASCII files have to been read in this function named as:
-                file_name_base+_partitioned_cfg[number of partitions].msh
-                file_name_base+_partitioned_nodes[number of partitions].msh
-                file_name_base+_partitioned_elems[number of partitions].msh
+                file_name_base+partitioned_cfg_[number of partitions].msh
+                file_name_base+partitioned_nodes_[number of partitions].msh
+                file_name_base+partitioned_elems_[number of partitions].msh
                 in which, the first file contains an array of integers for the
                 PartitionMeshInfo for all partitions
 

@@ -87,10 +87,10 @@ public:
     static ElementErrorCode validate(const Element* e);
 
     /// Returns the ID of a face given an array of nodes.
-    static unsigned identifyFace(Node const* const* /*_nodes*/, Node* nodes[3]);
+    static unsigned identifyFace(Node const* const* /*nodes_*/, Node* nodes[3]);
 
     /// Calculates the volume of the element
-    static double computeVolume(Node const* const* _nodes);
+    static double computeVolume(Node const* const* nodes_);
 
 }; /* class */
 

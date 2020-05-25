@@ -17,15 +17,15 @@ PropertyVector<T>* Properties::createNewPropertyVector(
     std::size_t n_components)
 {
     std::map<std::string, PropertyVectorBase*>::const_iterator it(
-        _properties.find(name)
+        properties_.find(name)
     );
-    if (it != _properties.end()) {
+    if (it != properties_.end()) {
         ERR("A property of the name '{:s}' is already assigned to the mesh.",
             name);
         return nullptr;
     }
     auto entry_info(
-        _properties.insert(
+        properties_.insert(
             std::make_pair(
                 name, new PropertyVector<T>(name, mesh_item_type, n_components)
             )
@@ -45,9 +45,9 @@ PropertyVector<T>* Properties::createNewPropertyVector(
     // check if there is already a PropertyVector with the same name and
     // mesh_item_type
     std::map<std::string, PropertyVectorBase*>::const_iterator it(
-        _properties.find(name)
+        properties_.find(name)
     );
-    if (it != _properties.end()) {
+    if (it != properties_.end()) {
         ERR("A property of the name '{:s}' already assigned to the mesh.",
             name);
         return nullptr;
@@ -65,7 +65,7 @@ PropertyVector<T>* Properties::createNewPropertyVector(
     }
 
     auto entry_info(
-        _properties.insert(
+        properties_.insert(
             std::pair<std::string, PropertyVectorBase*>(
                 name,
                 new PropertyVector<T>(n_prop_groups,
@@ -79,9 +79,9 @@ PropertyVector<T>* Properties::createNewPropertyVector(
 template <typename T>
 bool Properties::existsPropertyVector(std::string const& name) const
 {
-    auto it(_properties.find(name));
+    auto it(properties_.find(name));
     // Check that a PropertyVector with the approriate name exists.
-    if (it == _properties.end())
+    if (it == properties_.end())
     {
         return false;
     }
@@ -94,8 +94,8 @@ bool Properties::existsPropertyVector(std::string const& name,
                                       MeshItemType const mesh_item_type,
                                       int const number_of_components) const
 {
-    auto const it = _properties.find(name);
-    if (it == _properties.end())
+    auto const it = properties_.find(name);
+    if (it == properties_.end())
     {
         return false;
     }
@@ -120,8 +120,8 @@ template <typename T>
 PropertyVector<T> const* Properties::getPropertyVector(
     std::string const& name) const
 {
-    auto it(_properties.find(name));
-    if (it == _properties.end())
+    auto it(properties_.find(name));
+    if (it == properties_.end())
     {
         OGS_FATAL("The PropertyVector '{:s}' is not available in the mesh.",
                   name);
@@ -139,8 +139,8 @@ PropertyVector<T> const* Properties::getPropertyVector(
 template <typename T>
 PropertyVector<T>* Properties::getPropertyVector(std::string const& name)
 {
-    auto it(_properties.find(name));
-    if (it == _properties.end())
+    auto it(properties_.find(name));
+    if (it == properties_.end())
     {
         OGS_FATAL(
             "A PropertyVector with the specified name '{:s}' is not available.",
@@ -161,8 +161,8 @@ PropertyVector<T> const* Properties::getPropertyVector(
     std::string const& name, MeshItemType const item_type,
     int const n_components) const
 {
-    auto const it = _properties.find(name);
-    if (it == _properties.end())
+    auto const it = properties_.find(name);
+    if (it == properties_.end())
     {
         OGS_FATAL(
             "A PropertyVector with name '{:s}' does not exist in the mesh.",
@@ -199,8 +199,8 @@ PropertyVector<T>* Properties::getPropertyVector(std::string const& name,
                                                  MeshItemType const item_type,
                                                  int const n_components)
 {
-    auto const it = _properties.find(name);
-    if (it == _properties.end())
+    auto const it = properties_.find(name);
+    if (it == properties_.end())
     {
         OGS_FATAL(
             "A PropertyVector with name '{:s}' does not exist in the mesh.",

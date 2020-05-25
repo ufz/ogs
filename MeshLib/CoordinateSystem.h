@@ -41,16 +41,16 @@ class CoordinateSystem
 {
 public:
     /// User provided coordinate system
-    explicit CoordinateSystem(unsigned char coord) : _type (coord) {}
+    explicit CoordinateSystem(unsigned char coord) : type_ (coord) {}
 
     /// Decides for a given element
     explicit CoordinateSystem(const Element &ele);
 
     /// Decides a coordinate system from a bounding box
-    explicit CoordinateSystem(const GeoLib::AABB &bbox) : _type(getCoordinateSystem(bbox)) {}
+    explicit CoordinateSystem(const GeoLib::AABB &bbox) : type_(getCoordinateSystem(bbox)) {}
 
     /// get this coordinate type
-    unsigned char getType() const { return _type; }
+    unsigned char getType() const { return type_; }
 
     /// get dimension size
     unsigned getDimension() const {
@@ -67,18 +67,18 @@ public:
     }
 
     /// has X dimension
-    bool hasX() const { return (_type & CoordinateSystemType::type::X) != 0; }
+    bool hasX() const { return (type_ & CoordinateSystemType::type::X) != 0; }
 
     /// has Y dimension
-    bool hasY() const { return (_type & CoordinateSystemType::type::Y) != 0; }
+    bool hasY() const { return (type_ & CoordinateSystemType::type::Y) != 0; }
 
     /// has z dimension
-    bool hasZ() const { return (_type & CoordinateSystemType::type::Z) != 0; }
+    bool hasZ() const { return (type_ & CoordinateSystemType::type::Z) != 0; }
 
 private:
     unsigned char getCoordinateSystem(const GeoLib::AABB &bbox) const;
 
-    unsigned char _type;
+    unsigned char type_;
 };
 
 }  // namespace MeshLib

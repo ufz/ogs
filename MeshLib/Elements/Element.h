@@ -54,7 +54,7 @@ public:
     MeshLib::Node getCenterOfGravity() const;
 
     /// Returns the length, area or volume of a 1D, 2D or 3D element
-    double getContent() const { return _content; }
+    double getContent() const { return content_; }
 
     /**
      * Get node with local index i where i should be at most the number
@@ -75,7 +75,7 @@ public:
     void setNode(unsigned idx, Node* node);
 
     /// Get array of element nodes.
-    Node* const* getNodes() const { return _nodes; }
+    Node* const* getNodes() const { return nodes_; }
 
     /// Get dimension of the mesh element.
     virtual unsigned getDimension() const = 0;
@@ -89,7 +89,7 @@ public:
     virtual const Element* getBoundary(unsigned i) const = 0;
 
     /// Returns the ID of the element.
-    virtual std::size_t getID() const final { return _id; }
+    virtual std::size_t getID() const final { return id_; }
 
     virtual unsigned getNumberOfBoundaries() const = 0;
 
@@ -213,14 +213,14 @@ protected:
     explicit Element(std::size_t id);
 
     /// Sets the element ID.
-    virtual void setID(std::size_t id) final { _id = id; }
+    virtual void setID(std::size_t id) final { id_ = id; }
 
-    Node** _nodes;
-    std::size_t _id;
+    Node** nodes_;
+    std::size_t id_;
     /// Content corresponds to length for 1D, area for 2D, and volume for 3D elements
-    double _content;
+    double content_;
 
-    Element** _neighbors;
+    Element** neighbors_;
     /// Sets the neighbor over the face with \c face_id to the given \c
     /// neighbor.
     void setNeighbor(Element* neighbor, unsigned const face_id);

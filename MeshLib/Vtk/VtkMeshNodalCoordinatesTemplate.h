@@ -124,7 +124,7 @@ protected:
     VtkMeshNodalCoordinatesTemplate();
     ~VtkMeshNodalCoordinatesTemplate() override;
 
-    const std::vector<MeshLib::Node*>* _nodes{nullptr};
+    const std::vector<MeshLib::Node*>* nodes_{nullptr};
 
 private:
     vtkIdType Lookup(const Scalar &val, vtkIdType startIndex);

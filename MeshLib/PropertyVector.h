@@ -28,23 +28,23 @@ public:
         std::vector<std::size_t> const& exclude_positions) const = 0;
     virtual ~PropertyVectorBase() = default;
 
-    MeshItemType getMeshItemType() const { return _mesh_item_type; }
-    std::string const& getPropertyName() const { return _property_name; }
-    int getNumberOfComponents() const { return _n_components; }
+    MeshItemType getMeshItemType() const { return mesh_item_type_; }
+    std::string const& getPropertyName() const { return property_name_; }
+    int getNumberOfComponents() const { return n_components_; }
 
 protected:
     PropertyVectorBase(std::string property_name,
                        MeshItemType mesh_item_type,
                        std::size_t n_components)
-        : _n_components(n_components),
-          _mesh_item_type(mesh_item_type),
-          _property_name(std::move(property_name))
+        : n_components_(n_components),
+          mesh_item_type_(mesh_item_type),
+          property_name_(std::move(property_name))
     {
     }
 
-    int const _n_components;
-    MeshItemType const _mesh_item_type;
-    std::string const _property_name;
+    int const n_components_;
+    MeshItemType const mesh_item_type_;
+    std::string const property_name_;
 };
 
 /// Class template PropertyVector is a std::vector with template parameter
@@ -60,13 +60,13 @@ class PropertyVector : public std::vector<PROP_VAL_TYPE>,
 public:
     std::size_t getNumberOfTuples() const
     {
-        return std::vector<PROP_VAL_TYPE>::size() / _n_components;
+        return std::vector<PROP_VAL_TYPE>::size() / n_components_;
     }
 
     //! Returns the value for the given component stored in the given tuple.
     PROP_VAL_TYPE& getComponent(std::size_t tuple_index, int component)
     {
-        assert(component < _n_components);
+        assert(component < n_components_);
         assert(tuple_index < getNumberOfTuples());
         return this->operator[](tuple_index* getNumberOfComponents() +
                                 component);
@@ -76,7 +76,7 @@ public:
     PROP_VAL_TYPE const& getComponent(std::size_t tuple_index,
                                       int component) const
     {
-        assert(component < _n_components);
+        assert(component < n_components_);
         assert(tuple_index < getNumberOfTuples());
         return this->operator[](tuple_index* getNumberOfComponents() +
                                 component);
@@ -86,7 +86,7 @@ public:
         std::vector<std::size_t> const& exclude_positions) const override
     {
         auto* t(new PropertyVector<PROP_VAL_TYPE>(
-            _property_name, _mesh_item_type, _n_components));
+            property_name_, mesh_item_type_, n_components_));
         BaseLib::excludeObjectCopy(*this, exclude_positions, *t);
         return t;
     }
@@ -145,7 +145,7 @@ public:
     /// Destructor ensures the deletion of the heap-constructed objects.
     ~PropertyVector() override
     {
-        for (auto v : _values)
+        for (auto v : values_)
         {
             delete[] v;
         }
@@ -155,17 +155,17 @@ public:
     /// correct property value/object.
     T* const& operator[](std::size_t id) const
     {
-        return _values[std::vector<std::size_t>::operator[](id)];
+        return values_[std::vector<std::size_t>::operator[](id)];
     }
 
     T*& operator[](std::size_t id)
     {
-        return _values[std::vector<std::size_t>::operator[](id)];
+        return values_[std::vector<std::size_t>::operator[](id)];
     }
 
     void initPropertyValue(std::size_t group_id, T const& value)
     {
-        if (_n_components != 1)
+        if (n_components_ != 1)
         {
             OGS_FATAL(
                 "Single-component version of initPropertyValue() is called "
@@ -173,12 +173,12 @@ public:
         }
         auto* p = new T[1];
         p[0] = value;
-        _values[group_id] = p;
+        values_[group_id] = p;
     }
 
     void initPropertyValue(std::size_t group_id, std::vector<T> const& values)
     {
-        if (_n_components != static_cast<int>(values.size()))
+        if (n_components_ != static_cast<int>(values.size()))
         {
             OGS_FATAL(
                 "The size of provided values in initPropertyValue() is "
@@ -190,7 +190,7 @@ public:
         {
             p[i] = values[i];
         }
-        _values[group_id] = p;
+        values_[group_id] = p;
     }
 
     std::size_t getNumberOfTuples() const
@@ -202,7 +202,7 @@ public:
     /// components.
     std::size_t size() const
     {
-        return _n_components * std::vector<std::size_t>::size();
+        return n_components_ * std::vector<std::size_t>::size();
     }
 
     PropertyVectorBase* clone(
@@ -210,13 +210,13 @@ public:
     {
         // create new PropertyVector with modified mapping
         PropertyVector<T*>* t(new PropertyVector<T*>(
-            _values.size() / _n_components,
+            values_.size() / n_components_,
             BaseLib::excludeObjectCopy(*this, exclude_positions),
-            _property_name, _mesh_item_type, _n_components));
+            property_name_, mesh_item_type_, n_components_));
         // copy pointers to property values
-        for (std::size_t j(0); j < _values.size(); j++)
+        for (std::size_t j(0); j < values_.size(); j++)
         {
-            std::vector<T> values(_values[j], _values[j] + _n_components);
+            std::vector<T> values(values_[j], values_[j] + n_components_);
             t->initPropertyValue(j, values);
         }
         return t;
@@ -225,7 +225,7 @@ public:
     //! Returns the value for the given component stored in the given tuple.
     T const& getComponent(std::size_t tuple_index, int component) const
     {
-        assert(component < _n_components);
+        assert(component < n_components_);
         assert(tuple_index < getNumberOfTuples());
         const double* p = this->operator[](tuple_index);
         if (p == nullptr)
@@ -245,10 +245,10 @@ public:
         os << "\tmapping (" << size() << "):\n";
         std::copy(this->cbegin(), this->cend(),
                   std::ostream_iterator<std::size_t>(os, " "));
-        os << "\n\tvalues (" << _values.size() << "):\n";
-        for (std::size_t k(0); k < _values.size(); k++)
+        os << "\n\tvalues (" << values_.size() << "):\n";
+        for (std::size_t k(0); k < values_.size(); k++)
         {
-            os << "val: " << *(_values[k]) << ", address: " << _values[k]
+            os << "val: " << *(values_[k]) << ", address: " << values_[k]
                << "\n";
         }
         return os;
@@ -275,12 +275,12 @@ protected:
                    std::size_t n_components)
         : std::vector<std::size_t>(std::move(item2group_mapping)),
           PropertyVectorBase(property_name, mesh_item_type, n_components),
-          _values(n_prop_groups * n_components)
+          values_(n_prop_groups * n_components)
     {
     }
 
 private:
-    std::vector<T*> _values;
+    std::vector<T*> values_;
     // hide method
     T* at(std::size_t);
 };

@@ -66,8 +66,8 @@ private:
     void interpolateElementPropertiesToNodeProperties(
         std::vector<double>& interpolated_properties) const;
 
-    Mesh const& _src_mesh;
-    std::string const& _property_name;
+    Mesh const& src_mesh_;
+    std::string const& property_name_;
 };
 
 } // end namespace MeshLib

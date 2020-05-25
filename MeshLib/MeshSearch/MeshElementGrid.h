@@ -53,14 +53,14 @@ public:
 
         std::vector<MeshLib::Element const*> elements_vec;
 
-        const std::size_t n_plane(_n_steps[0]*_n_steps[1]);
+        const std::size_t n_plane(n_steps_[0]*n_steps_[1]);
         for (std::size_t i(min_coords.second[0]); i<=max_coords.second[0]; i++) {
             for (std::size_t j(min_coords.second[1]); j<=max_coords.second[1]; j++) {
                 for (std::size_t k(min_coords.second[2]); k<=max_coords.second[2]; k++) {
-                    std::size_t idx(i+j*_n_steps[0]+k*n_plane);
+                    std::size_t idx(i+j*n_steps_[0]+k*n_plane);
                     elements_vec.insert(end(elements_vec),
-                                        begin(_elements_in_grid_box[idx]),
-                                        end(_elements_in_grid_box[idx]));
+                                        begin(elements_in_grid_box_[idx]),
+                                        end(elements_in_grid_box_[idx]));
                 }
             }
         }
@@ -78,15 +78,15 @@ private:
     void sortElementsInGridCells(MeshLib::Mesh const& sfc_mesh);
     bool sortElementInGridCells(MeshLib::Element const& element);
 
-    GeoLib::AABB _aabb;
+    GeoLib::AABB aabb_;
     /// Computes the grid cell coordinates for given point. The first element of
     /// the returned pair (bool) is true if the point is within the grid, else
     /// false.
     std::pair<bool, std::array<std::size_t,3>>
         getGridCellCoordinates(MathLib::Point3d const& p) const;
-    std::array<double,3> _step_sizes{};
-    std::array<double,3> _inverse_step_sizes{};
-    std::array<std::size_t,3> _n_steps;
-    std::vector<std::vector<MeshLib::Element const*>> _elements_in_grid_box;
+    std::array<double,3> step_sizes_{};
+    std::array<double,3> inverse_step_sizes_{};
+    std::array<std::size_t,3> n_steps_;
+    std::vector<std::vector<MeshLib::Element const*>> elements_in_grid_box_;
 };
 }  // namespace MeshLib

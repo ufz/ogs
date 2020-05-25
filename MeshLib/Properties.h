@@ -129,7 +129,7 @@ public:
 
     /** copy all PropertyVector objects stored in the (internal) map but only
      * those nodes/elements of a PropertyVector whose ids are not in the vectors
-     * exclude_*_ids.
+     * exclude_*ids_.
      */
     Properties excludeCopyProperties(
         std::vector<std::size_t> const& exclude_elem_ids,
@@ -153,7 +153,7 @@ public:
 private:
     /// A mapping from property's name to the stored object of any type.
     /// See addProperty() and getProperty() documentation.
-    std::map<std::string, PropertyVectorBase*> _properties;
+    std::map<std::string, PropertyVectorBase*> properties_;
 }; // end class
 
 #include "Properties-impl.h"

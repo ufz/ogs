@@ -62,7 +62,7 @@ public:
     /// attributes via TetGen
     std::vector<MeshLib::Node> getAttributePoints()
     {
-        return _attribute_points;
+        return attribute_points_;
     }
 
 private:
@@ -77,5 +77,5 @@ private:
     /// Removes duplicate 2D elements (possible due to outcroppings)
     void removeCongruentElements(std::size_t nLayers, std::size_t nElementsPerLayer);
 
-    std::vector<MeshLib::Node> _attribute_points;
+    std::vector<MeshLib::Node> attribute_points_;
 };

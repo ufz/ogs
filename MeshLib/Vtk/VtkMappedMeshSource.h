@@ -54,12 +54,12 @@ public:
     /// Sets the mesh. Calling is mandatory
     void SetMesh(const MeshLib::Mesh* mesh)
     {
-        this->_mesh = mesh;
+        this->mesh_ = mesh;
         this->Modified();
     }
 
     /// Returns the mesh.
-    const MeshLib::Mesh* GetMesh() const { return _mesh; }
+    const MeshLib::Mesh* GetMesh() const { return mesh_; }
 
 protected:
     VtkMappedMeshSource();
@@ -82,7 +82,7 @@ private:
     bool addProperty(MeshLib::Properties const& properties,
                      std::string const& prop_name) const;
 
-    const MeshLib::Mesh* _mesh{};
+    const MeshLib::Mesh* mesh_{};
 
     int NumberOfDimensions{0};
     int NumberOfNodes{0};

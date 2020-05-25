@@ -149,7 +149,7 @@ public:
         MathLib::Point3d const& pnt,
         double eps = std::numeric_limits<double>::epsilon()) const override
     {
-        return ELEMENT_RULE::isPntInElement(this->_nodes, pnt, eps);
+        return ELEMENT_RULE::isPntInElement(this->nodes_, pnt, eps);
     }
 
     /**
@@ -163,13 +163,13 @@ public:
     /// Returns the ID of a face given an array of nodes.
     unsigned identifyFace(Node* nodes[3]) const override
     {
-        return ELEMENT_RULE::identifyFace(this->_nodes, nodes);
+        return ELEMENT_RULE::identifyFace(this->nodes_, nodes);
     }
 
     /// Calculates the volume of a convex hexahedron by partitioning it into six tetrahedra.
     double computeVolume() override
     {
-        return ELEMENT_RULE::computeVolume(this->_nodes);
+        return ELEMENT_RULE::computeVolume(this->nodes_);
     }
 
     /// Return a specific edge node.
@@ -178,7 +178,7 @@ public:
         if (getNumberOfEdges() > 0)
         {
             return const_cast<Node*>(
-                this->_nodes[ELEMENT_RULE::edge_nodes[edge_id][node_id]]);
+                this->nodes_[ELEMENT_RULE::edge_nodes[edge_id][node_id]]);
         }
 
         return nullptr;

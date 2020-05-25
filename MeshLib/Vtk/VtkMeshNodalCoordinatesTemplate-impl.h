@@ -44,7 +44,7 @@ template <class Scalar> void VtkMeshNodalCoordinatesTemplate<Scalar>
 template <class Scalar> void VtkMeshNodalCoordinatesTemplate<Scalar>
 ::Initialize()
 {
-    this->_nodes = nullptr;
+    this->nodes_ = nullptr;
     delete [] this->TempDoubleArray;
     this->TempDoubleArray = nullptr;
     this->MaxId = -1;
@@ -56,9 +56,9 @@ template <class Scalar> void VtkMeshNodalCoordinatesTemplate<Scalar>
 ::SetNodes(std::vector<MeshLib::Node*> const & nodes)
 {
     Initialize();
-    _nodes = &nodes;
+    nodes_ = &nodes;
     this->NumberOfComponents = 3;
-    this->Size = this->NumberOfComponents * _nodes->size();
+    this->Size = this->NumberOfComponents * nodes_->size();
     this->MaxId = this->Size - 1;
     this->TempDoubleArray = new double [this->NumberOfComponents];
     this->Modified();
@@ -171,9 +171,9 @@ template <class Scalar> double* VtkMeshNodalCoordinatesTemplate<Scalar>
 template <class Scalar> void VtkMeshNodalCoordinatesTemplate<Scalar>
 ::GetTuple(vtkIdType i, double *tuple)
 {
-    tuple[0] = (*(*this->_nodes)[i])[0];
-    tuple[1] = (*(*this->_nodes)[i])[1];
-    tuple[2] = (*(*this->_nodes)[i])[2];
+    tuple[0] = (*(*this->nodes_)[i])[0];
+    tuple[1] = (*(*this->nodes_)[i])[1];
+    tuple[2] = (*(*this->nodes_)[i])[2];
 }
 
 template <class Scalar> vtkIdType VtkMeshNodalCoordinatesTemplate<Scalar>
@@ -198,7 +198,7 @@ template <class Scalar> Scalar& VtkMeshNodalCoordinatesTemplate<Scalar>
 {
     const vtkIdType tuple = idx / this->NumberOfComponents;
     const vtkIdType comp = idx % this->NumberOfComponents;
-    return (*(*this->_nodes)[tuple])[comp];
+    return (*(*this->nodes_)[tuple])[comp];
 }
 
 template <class Scalar>
@@ -435,7 +435,7 @@ template <class Scalar> Scalar& VtkMeshNodalCoordinatesTemplate<Scalar>
 {
     const vtkIdType tuple = idx / this->NumberOfComponents;
     const vtkIdType comp = idx % this->NumberOfComponents;
-    return (*(*this->_nodes)[tuple])[comp];
+    return (*(*this->nodes_)[tuple])[comp];
 }
 
 template <class Scalar> Scalar VtkMeshNodalCoordinatesTemplate<Scalar>
@@ -447,9 +447,9 @@ template <class Scalar> Scalar VtkMeshNodalCoordinatesTemplate<Scalar>
 template <class Scalar> void VtkMeshNodalCoordinatesTemplate<Scalar>
 ::GetTypedTuple(vtkIdType tupleId, Scalar *tuple) const
 {
-    tuple[0] = (*(*this->_nodes)[tupleId])[0];
-    tuple[1] = (*(*this->_nodes)[tupleId])[1];
-    tuple[2] = (*(*this->_nodes)[tupleId])[2];
+    tuple[0] = (*(*this->nodes_)[tupleId])[0];
+    tuple[1] = (*(*this->nodes_)[tupleId])[1];
+    tuple[2] = (*(*this->nodes_)[tupleId])[2];
 }
 
 template <class Scalar>
@@ -485,9 +485,9 @@ template <class Scalar> Scalar VtkMeshNodalCoordinatesTemplate<Scalar>
 template <class Scalar> void VtkMeshNodalCoordinatesTemplate<Scalar>
 ::GetTupleValue(vtkIdType tupleId, Scalar *tuple)
 {
-    tuple[0] = (*(*this->_nodes)[tupleId])[0];
-    tuple[1] = (*(*this->_nodes)[tupleId])[1];
-    tuple[2] = (*(*this->_nodes)[tupleId])[2];
+    tuple[0] = (*(*this->nodes_)[tupleId])[0];
+    tuple[1] = (*(*this->nodes_)[tupleId])[1];
+    tuple[2] = (*(*this->nodes_)[tupleId])[2];
 }
 
 template <class Scalar> void VtkMeshNodalCoordinatesTemplate<Scalar>

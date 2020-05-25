@@ -37,7 +37,7 @@ public:
 
 private:
     std::vector<std::pair<double, std::string>>
-        _datasets;  // a vector of (time, VTU file name)
+        datasets_;  // a vector of (time, VTU file name)
 };
 
 } // namespace IO

@@ -30,7 +30,7 @@ public:
     explicit ElementSearch(const MeshLib::Mesh &mesh);
 
     /// return marked elements
-    const std::vector<std::size_t>& getSearchedElementIDs() const { return _marked_elements; }
+    const std::vector<std::size_t>& getSearchedElementIDs() const { return marked_elements_; }
 
     /// @tparam PROPERTY_TYPE type of the property
     /// Different properties can be assigned to the elements of the mesh. These
@@ -76,7 +76,7 @@ public:
         MeshLib::PropertyVector<PROPERTY_TYPE> const* pv = nullptr;
         try
         {
-            pv = _mesh.getProperties().getPropertyVector<PROPERTY_TYPE>(
+            pv = mesh_.getProperties().getPropertyVector<PROPERTY_TYPE>(
                 property_name, MeshLib::MeshItemType::Cell, 1);
         }
         catch (std::runtime_error const& e)
@@ -133,9 +133,9 @@ private:
     void updateUnion(const std::vector<std::size_t> &vec);
 
     /// The mesh from which elements should be removed.
-    const MeshLib::Mesh &_mesh;
+    const MeshLib::Mesh &mesh_;
     /// The vector of element indices that should be removed.
-    std::vector<std::size_t> _marked_elements;
+    std::vector<std::size_t> marked_elements_;
 };
 
 } // end namespace MeshLib
