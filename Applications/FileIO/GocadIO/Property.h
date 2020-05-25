@@ -20,27 +20,27 @@ namespace Gocad
 {
 struct Property final
 {
-    std::size_t _property_id{};
-    std::string _property_name;
-    std::string _property_class_name;
-    std::string _property_unit;
-    std::string _property_data_type;
-    std::string _property_data_fname;
-    double _property_no_data_value{};
+    std::size_t property_id_{};
+    std::string property_name_;
+    std::string property_class_name_;
+    std::string property_unit_;
+    std::string property_data_type_;
+    std::string property_data_fname_;
+    double property_no_data_value_{};
 
     bool checkID(std::string const& id_string) const
     {
-        if (_property_id != std::stoul(id_string))
+        if (property_id_ != std::stoul(id_string))
         {
             ERR("Expected property id {:d} but found {:d}.",
-                _property_id,
+                property_id_,
                 std::stoul(id_string));
             return false;
         }
         return true;
     }
 
-    std::vector<double> _property_data;
+    std::vector<double> property_data_;
 };
 
 std::ostream& operator<<(std::ostream& os, Property const& p);

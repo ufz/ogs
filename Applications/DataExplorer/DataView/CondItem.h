@@ -28,15 +28,15 @@ public:
     /// Constructor
     CondItem(const QList<QVariant>& data, TreeItem* parent,
              DataHolderLib::FemCondition* cond)
-        : TreeItem(data, parent), _cond(cond)
+        : TreeItem(data, parent), cond_(cond)
     {
     }
 
     /// Returns the FEM Condition associated with the item.
-    DataHolderLib::FemCondition* getCondition() const { return _cond; }
+    DataHolderLib::FemCondition* getCondition() const { return cond_; }
 
     QString const getName() const { return data(0).toString(); }
 
 private:
-    DataHolderLib::FemCondition* _cond;
+    DataHolderLib::FemCondition* cond_;
 };

@@ -65,10 +65,10 @@ public:
 private:
     void initDefaultPens();
 
-    QPen _inside;
-    QPen _outside;
-    QRectF _bounds;
-    int _numberOfXCells;
-    int _numberOfYCells;
-    bool _showTicks;
+    QPen inside_;
+    QPen outside_;
+    QRectF bounds_;
+    int numberOfXCells_;
+    int numberOfYCells_;
+    bool showTicks_;
 };

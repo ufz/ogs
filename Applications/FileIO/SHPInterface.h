@@ -56,7 +56,7 @@ public:
 
     /// Constructor
     explicit SHPInterface(GeoLib::GEOObjects& geoObjects)
-        : _geoObjects(geoObjects)
+        : geoObjects_(geoObjects)
     {
     }
 
@@ -90,7 +90,7 @@ private:
     static SHPObject* createShapeObject(MeshLib::Element const& e,
                                         std::size_t const shp_record);
 
-    GeoLib::GEOObjects& _geoObjects;
+    GeoLib::GEOObjects& geoObjects_;
 };
 
 }  // namespace FileIO

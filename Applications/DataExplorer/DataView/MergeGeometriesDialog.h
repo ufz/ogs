@@ -43,9 +43,9 @@ public:
     std::string getGeometryName() const;
 
 private:
-    GeoLib::GEOObjects& _geo_objects;
-    QStringListModel* _allGeo;
-    QStringListModel* _selGeo;
+    GeoLib::GEOObjects& geo_objects_;
+    QStringListModel* allGeo_;
+    QStringListModel* selGeo_;
 
 private slots:
     void on_selectGeoButton_pressed();

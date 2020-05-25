@@ -24,8 +24,8 @@ public:
     void write(std::ostream &os, std::size_t id) const;
 
 private:
-    std::size_t _start_pnt_id;
-    std::size_t _end_pnt_id;
+    std::size_t start_pnt_id_;
+    std::size_t end_pnt_id_;
 };
 
 } // end namespace GMSH

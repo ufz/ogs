@@ -41,10 +41,10 @@ private:
     /// Constructs a dialog window
     void setupDialog(const QString &label, const std::string &old_name);
 
-    QLabel* _txt_label;
-    QLineEdit* _new_name;
-    QVBoxLayout* _layout;
-    QDialogButtonBox* _buttonBox;
+    QLabel* txt_label_;
+    QLineEdit* new_name_;
+    QVBoxLayout* layout_;
+    QDialogButtonBox* buttonBox_;
 
 private slots:
     /// Instructions if the OK-Button has been pressed.

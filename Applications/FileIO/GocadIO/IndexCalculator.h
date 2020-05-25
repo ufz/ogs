@@ -36,11 +36,11 @@ public:
      * @param z_dim
      */
     IndexCalculator(std::size_t x_dim, std::size_t y_dim, std::size_t z_dim)
-        : _x_dim(x_dim),
-          _y_dim(y_dim),
-          _z_dim(z_dim),
-          _n_nodes(x_dim * y_dim * z_dim),
-          _n_cells((_x_dim - 1) * (_y_dim - 1) * (_z_dim - 1))
+        : x_dim_(x_dim),
+          y_dim_(y_dim),
+          z_dim_(z_dim),
+          n_nodes_(x_dim * y_dim * z_dim),
+          n_cells_((x_dim_ - 1) * (y_dim_ - 1) * (z_dim_ - 1))
     {
     }
 
@@ -48,8 +48,8 @@ public:
 
     std::size_t operator()(std::array<std::size_t, 3> const& c) const
     {
-        const std::size_t idx(c[2] * _x_dim * _y_dim + c[1] * _x_dim + c[0]);
-        if (idx >= _n_nodes)
+        const std::size_t idx(c[2] * x_dim_ * y_dim_ + c[1] * x_dim_ + c[0]);
+        if (idx >= n_nodes_)
         {
             return std::numeric_limits<std::size_t>::max();
         }
@@ -59,32 +59,32 @@ public:
     std::size_t getCellIdx(std::size_t u, std::size_t v, std::size_t w) const
     {
         // ensure (u,v,w) is a valid cell
-        if (u >= _x_dim - 1 || v >= _y_dim - 1 || w >= _z_dim - 1)
+        if (u >= x_dim_ - 1 || v >= y_dim_ - 1 || w >= z_dim_ - 1)
         {
             ERR("GocadSGridReader::IndexCalculator::getCellIdx(): At least "
                 "one grid coordinate to big.");
             ERR("\t Given: ({:d}, {:d}, {:d}), max allowed cell grid coords: "
                 "({:d}, {:d}, {:d}).",
-                u, v, w, _x_dim - 1, _y_dim - 1, _z_dim - 1);
+                u, v, w, x_dim_ - 1, y_dim_ - 1, z_dim_ - 1);
             return std::numeric_limits<std::size_t>::max();
         }
 
-        return (_x_dim - 1) * (_y_dim - 1) + v * (_x_dim - 1) + u;
+        return (x_dim_ - 1) * (y_dim_ - 1) + v * (x_dim_ - 1) + u;
     }
 
     std::array<std::size_t, 3> getCoordsForID(std::size_t id) const
     {
         std::array<std::size_t, 3> const coords{
-            (id % (_x_dim * _y_dim)) % _x_dim,
-            (id % (_x_dim * _y_dim)) / _x_dim, id / (_x_dim * _y_dim)};
+            (id % (x_dim_ * y_dim_)) % x_dim_,
+            (id % (x_dim_ * y_dim_)) / x_dim_, id / (x_dim_ * y_dim_)};
         return coords;
     }
 
-    std::size_t _x_dim{0};
-    std::size_t _y_dim{0};
-    std::size_t _z_dim{0};
-    std::size_t _n_nodes{0};
-    std::size_t _n_cells{0};
+    std::size_t x_dim_{0};
+    std::size_t y_dim_{0};
+    std::size_t z_dim_{0};
+    std::size_t n_nodes_{0};
+    std::size_t n_cells_{0};
 };
 
 }  // end namespace Gocad

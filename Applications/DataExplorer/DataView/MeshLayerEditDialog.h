@@ -49,20 +49,20 @@ private:
     MeshLib::Mesh* createPrismMesh();
     MeshLib::Mesh* createTetMesh();
 
-    const MeshLib::Mesh* _msh;
-    unsigned _n_layers;
-    QMap<QPushButton*, QLineEdit*> _fileButtonMap;
-    QVector<QLineEdit*> _edits;
+    const MeshLib::Mesh* msh_;
+    unsigned n_layers_;
+    QMap<QPushButton*, QLineEdit*> fileButtonMap_;
+    QVector<QLineEdit*> edits_;
 
-    QLineEdit* _layerEdit;
-    QLineEdit* _noDataReplacementEdit;
-    QLineEdit* _minThicknessEdit;
-    QPushButton* _nextButton;
-    QGroupBox* _layerBox;
-    QGroupBox* _radioButtonBox;
-    QRadioButton* _ogsMeshButton;
-    QGridLayout* _layerSelectionLayout;
-    bool _use_rasters;
+    QLineEdit* layerEdit_;
+    QLineEdit* noDataReplacementEdit_;
+    QLineEdit* minThicknessEdit_;
+    QPushButton* nextButton_;
+    QGroupBox* layerBox_;
+    QGroupBox* radioButtonBox_;
+    QRadioButton* ogsMeshButton_;
+    QGridLayout* layerSelectionLayout_;
+    bool use_rasters_;
 
 private slots:
     void getFileName();

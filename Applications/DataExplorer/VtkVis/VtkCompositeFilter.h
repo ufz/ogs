@@ -22,16 +22,16 @@ class vtkAlgorithm;
  * @brief Is used to combine several filter in one VtkVisPipelineItem. You can
  * use vtk filter and custom filter. To subclass this you have to implement the
  * init() function. There you combine the filters. Make sure to set the members
- * _inputDataObjectType, _outputDataObjectType and _outputAlgorithm. Make also
+ * inputDataObjectType_, outputDataObjectType_ and outputAlgorithm_. Make also
  * sure to implement VtkAlgorithmProperties::SetUserProperty() and
  * VtkAlgorithmProperties::SetUserVectorProperty().
  *
  * Allocate vtk objects inside init() with vtkSmartPointer except for the last
- * filter. This filter must also be set to _outputAlgorithm, e.g.
+ * filter. This filter must also be set to outputAlgorithm_, e.g.
  *
  *     MyVtkFilter* lastFilter = MyVtkFilter::New();
  *     ...(do something here)
- *     _outputAlgorithm = lastFilter;
+ *     outputAlgorithm_ = lastFilter;
  *
  * Create user properties with `ogsUserPropertyMacro` or `ogsUserVecxPropertyMacro`
  * and initialize these properties inside the constructor with
@@ -57,13 +57,13 @@ public:
     /// - VTK_UNSTRUCTURED_GRID
     /// - VTK_IMAGE_DATA
     /// - VTK_DATA_SET
-    int GetInputDataObjectType() const { return _inputDataObjectType; }
+    int GetInputDataObjectType() const { return inputDataObjectType_; }
 
     /// @return the type of the data output.
-    int GetOutputDataObjectType() const { return _outputDataObjectType; }
+    int GetOutputDataObjectType() const { return outputDataObjectType_; }
 
     /// @return the last algorithm in this composite filter.
-    vtkAlgorithm* GetOutputAlgorithm() const { return _outputAlgorithm; }
+    vtkAlgorithm* GetOutputAlgorithm() const { return outputAlgorithm_; }
 
 protected:
     /// Calculates a 1/200th of the largest extension of the bounding box (this is used as default radius for various filters)
@@ -71,11 +71,11 @@ protected:
 
     /// See [vtkSetGet.h](https://github.com/Kitware/VTK/blob/master/Common/Core/vtkSetGet.h)
     /// for the defines
-    int _inputDataObjectType;
-    int _outputDataObjectType;
+    int inputDataObjectType_;
+    int outputDataObjectType_;
 
-    vtkAlgorithm* _inputAlgorithm;
-    vtkAlgorithm* _outputAlgorithm;
+    vtkAlgorithm* inputAlgorithm_;
+    vtkAlgorithm* outputAlgorithm_;
 
     virtual void init() = 0;
 };

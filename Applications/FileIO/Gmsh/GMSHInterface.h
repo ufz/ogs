@@ -86,7 +86,7 @@ protected:
 
 private:
     /**
-     * 1. get and merge data from _geo_objs
+     * 1. get and merge data from geo_objs_
      * 2. compute topological hierarchy
      * @param out
      * @todo activate error codes and hand them on to the Writer class,
@@ -97,25 +97,25 @@ private:
 
     void writePoints(std::ostream& out) const;
 
-    std::size_t _n_lines;
-    std::size_t _n_plane_sfc;
+    std::size_t n_lines_;
+    std::size_t n_plane_sfc_;
 
-    GeoLib::GEOObjects & _geo_objs;
-    std::vector<std::string> const& _selected_geometries;
-    std::string _gmsh_geo_name;
-    std::list<GMSH::GMSHPolygonTree*> _polygon_tree_list;
+    GeoLib::GEOObjects & geo_objs_;
+    std::vector<std::string> const& selected_geometries_;
+    std::string gmsh_geo_name_;
+    std::list<GMSH::GMSHPolygonTree*> polygon_tree_list_;
 
-    std::vector<GMSH::GMSHPoint*> _gmsh_pnts;
+    std::vector<GMSH::GMSHPoint*> gmsh_pnts_;
 
-    std::unique_ptr<GMSH::GMSHMeshDensityStrategy> _mesh_density_strategy;
+    std::unique_ptr<GMSH::GMSHMeshDensityStrategy> mesh_density_strategy_;
     /// Holds the inverse rotation matrix. The matrix is used in writePoints() to
     /// revert the rotation done in writeGMSHInputFile().
-    MathLib::DenseMatrix<double> _inverse_rot_mat =
+    MathLib::DenseMatrix<double> inverse_rot_mat_ =
         MathLib::DenseMatrix<double>(3, 3, 0);
     /// Signals if the input points should be rotated or projected to the
     /// \f$x\f$-\f$y\f$-plane
-    bool const _rotate = false;
-    bool _keep_preprocessed_geometry = true;
+    bool const rotate_ = false;
+    bool keep_preprocessed_geometry_ = true;
 };
 } // end namespace GMSH
 } // end namespace FileIO

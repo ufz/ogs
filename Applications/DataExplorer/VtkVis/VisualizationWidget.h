@@ -44,7 +44,7 @@ public:
     VtkPickCallback* vtkPickCallback() const;
 
     /// @brief See updateViewOnLoad().
-    void setShowAllOnLoad(bool show) { _isShowAllOnLoad = show; }
+    void setShowAllOnLoad(bool show) { isShowAllOnLoad_ = show; }
 
 public slots:
     /// @brief Updates the the 3d view.
@@ -61,7 +61,7 @@ public slots:
     void screenshot(QString filename, int magnification);
 
     /// @brief Returns the vtk renderer
-    vtkRenderer* renderer() const { return _vtkRender; }
+    vtkRenderer* renderer() const { return vtkRender_; }
 
     /// @brief Sets the widgets cursor shape.
     /// @see http://doc.qt.nokia.com/4.7/qt.html#CursorShape-enum
@@ -103,9 +103,9 @@ protected slots:
     void on_screenshotPushButton_pressed();
 
 private:
-    vtkRenderer* _vtkRender{nullptr};
-    vtkOrientationMarkerWidget* _markerWidget{nullptr};
-    VtkCustomInteractorStyle* _interactorStyle{nullptr};
-    VtkPickCallback* _vtkPickCallback{nullptr};
-    bool _isShowAllOnLoad;
+    vtkRenderer* vtkRender_{nullptr};
+    vtkOrientationMarkerWidget* markerWidget_{nullptr};
+    VtkCustomInteractorStyle* interactorStyle_{nullptr};
+    VtkPickCallback* vtkPickCallback_{nullptr};
+    bool isShowAllOnLoad_;
 };

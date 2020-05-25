@@ -63,5 +63,5 @@ protected:
     void SimpleExecute(vtkImageData* input, vtkImageData* output) override;
 
 private:
-    vtkImageAlgorithm* _imageSource{nullptr};
+    vtkImageAlgorithm* imageSource_{nullptr};
 };

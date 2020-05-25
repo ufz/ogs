@@ -39,12 +39,12 @@ public:
                       const std::vector<GeoLib::Point*>* geo_data = nullptr,
                       GeoLib::GEOTYPE type = GeoLib::GEOTYPE::POINT)
         : TreeItem(data, parent),
-          _vtkSource(VtkPointsSource::New()),
-          _type(type)
+          vtkSource_(VtkPointsSource::New()),
+          type_(type)
     {
         QString geo_name = parent->data(0).toString();
-        static_cast<VtkPointsSource*>(_vtkSource)->setPoints(geo_data);
-        static_cast<VtkPointsSource*>(_vtkSource)->SetName(geo_name + " - Points");
+        static_cast<VtkPointsSource*>(vtkSource_)->setPoints(geo_data);
+        static_cast<VtkPointsSource*>(vtkSource_)->SetName(geo_name + " - Points");
     }
 
     /// Constructor for the TreeItem specifying the "Polylines"-subtree of a geometry.
@@ -53,12 +53,12 @@ public:
                       const std::vector<GeoLib::Polyline*>* geo_data = nullptr,
                       GeoLib::GEOTYPE type = GeoLib::GEOTYPE::POLYLINE)
         : TreeItem(data, parent),
-          _vtkSource(VtkPolylinesSource::New()),
-          _type(type)
+          vtkSource_(VtkPolylinesSource::New()),
+          type_(type)
     {
         QString geo_name = parent->data(0).toString();
-        static_cast<VtkPolylinesSource*>(_vtkSource)->setPolylines(geo_data);
-        static_cast<VtkPolylinesSource*>(_vtkSource)->SetName(geo_name + " - Polylines");
+        static_cast<VtkPolylinesSource*>(vtkSource_)->setPolylines(geo_data);
+        static_cast<VtkPolylinesSource*>(vtkSource_)->SetName(geo_name + " - Polylines");
     }
 
     /// Constructor for the TreeItem specifying the "Surfaces"-subtree of a geometry.
@@ -67,25 +67,25 @@ public:
                       const std::vector<GeoLib::Surface*>* geo_data = nullptr,
                       GeoLib::GEOTYPE type = GeoLib::GEOTYPE::SURFACE)
         : TreeItem(data, parent),
-          _vtkSource(VtkSurfacesSource::New()),
-          _type(type)
+          vtkSource_(VtkSurfacesSource::New()),
+          type_(type)
     {
         QString geo_name = parent->data(0).toString();
-        static_cast<VtkSurfacesSource*>(_vtkSource)->setSurfaces(geo_data);
-        static_cast<VtkSurfacesSource*>(_vtkSource)->SetName(geo_name + " - Surfaces");
+        static_cast<VtkSurfacesSource*>(vtkSource_)->setSurfaces(geo_data);
+        static_cast<VtkSurfacesSource*>(vtkSource_)->SetName(geo_name + " - Surfaces");
     }
 
-    ~GeoObjectListItem() override { _vtkSource->Delete(); }
+    ~GeoObjectListItem() override { vtkSource_->Delete(); }
     /// Returns the type of geo-objects contained in the subtree of this item.
-    GeoLib::GEOTYPE getType() { return _type; }
+    GeoLib::GEOTYPE getType() { return type_; }
 
     /// Returns the Vtk polydata source object
-    vtkPolyDataAlgorithm* vtkSource() const { return _vtkSource; }
+    vtkPolyDataAlgorithm* vtkSource() const { return vtkSource_; }
 
 private:
     /// The Vtk data source object. This is the starting point for a Vtk data
     /// visualization pipeline.
-    vtkPolyDataAlgorithm* _vtkSource;
+    vtkPolyDataAlgorithm* vtkSource_;
 
-    GeoLib::GEOTYPE _type;
+    GeoLib::GEOTYPE type_;
 };

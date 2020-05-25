@@ -86,27 +86,27 @@ private:
         std::string const& name) const;
     void addGocadPropertiesToMesh(MeshLib::Mesh& mesh) const;
 
-    std::string const& _fname;
-    std::string const _path;
+    std::string const& fname_;
+    std::string const path_;
     // data read from sg file
-    Gocad::IndexCalculator _index_calculator;
-    Gocad::CoordinateSystem _coordinate_system;
-    std::string _pnts_fname;
-    std::string _flags_fname;
-    std::string _region_flags_fname;
+    Gocad::IndexCalculator index_calculator_;
+    Gocad::CoordinateSystem coordinate_system_;
+    std::string pnts_fname_;
+    std::string flags_fname_;
+    std::string region_flags_fname_;
 
     std::vector<Gocad::Region> regions;
     std::vector<Gocad::Layer> layers;
-    std::size_t _n_face_sets;
+    std::size_t n_face_sets_;
 
-    bool _double_precision_binary;
-    bool _bin_pnts_in_double_precision;
+    bool double_precision_binary_;
+    bool bin_pnts_in_double_precision_;
 
     // data read from binary points file
-    std::vector<GocadNode*> _nodes;
-    std::vector<GocadSplitNode*> _split_nodes;
+    std::vector<GocadNode*> nodes_;
+    std::vector<GocadSplitNode*> split_nodes_;
     // properties
-    std::vector<Gocad::Property> _property_meta_data_vecs;
+    std::vector<Gocad::Property> property_meta_data_vecs_;
 };  // end class GocadSGridReader
 
 }  // end namespace Gocad

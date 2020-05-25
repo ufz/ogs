@@ -37,7 +37,7 @@ public:
     ~MeshValueEditDialog() override;
 
 private:
-    MeshLib::Mesh* _mesh;
+    MeshLib::Mesh* mesh_;
 
 private slots:
     /// Instructions if the OK-Button has been pressed.

@@ -66,7 +66,7 @@ public:
     bool setData(int column, const QVariant& value) override;
 
     /// @brief Returns the algorithm object
-    vtkAlgorithm* algorithm() const { return _algorithm; }
+    vtkAlgorithm* algorithm() const { return algorithm_; }
 
     /// @brief Returns the actor as vtkProp3D
     vtkProp3D* actor() const;
@@ -78,7 +78,7 @@ public:
     virtual void SetActiveAttribute(const QString& str) { (void)str; }
 
     /// @brief Returns the composite filter
-    VtkCompositeFilter* compositeFilter() const { return _compositeFilter; }
+    VtkCompositeFilter* compositeFilter() const { return compositeFilter_; }
 
     /// @brief Returns if the VTK object is visible in the visualization.
     bool isVisible() const;
@@ -123,17 +123,17 @@ public:
     QStringList getScalarArrayNames() const;
 
     ///    @brief Returns the VtkAlgorithmProperties.
-    VtkAlgorithmProperties* getVtkProperties() const { return _vtkProps; };
+    VtkAlgorithmProperties* getVtkProperties() const { return vtkProps_; };
 
 protected:
-    vtkProp3D* _actor;
-    vtkAlgorithm* _algorithm;
-    vtkRenderer* _renderer;
-    VtkCompositeFilter* _compositeFilter;
+    vtkProp3D* actor_;
+    vtkAlgorithm* algorithm_;
+    vtkRenderer* renderer_;
+    VtkCompositeFilter* compositeFilter_;
 
     /// @brief The active VtkAlgorithmProperties.
     /// From algorithm, compositeFilter, or copied from parent
-    VtkAlgorithmProperties* _vtkProps;
+    VtkAlgorithmProperties* vtkProps_;
 
     /**
      * Selects the appropriate VTK-Writer object and writes the object to a file with the given name.

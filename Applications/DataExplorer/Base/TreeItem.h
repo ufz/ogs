@@ -41,7 +41,7 @@ public:
     bool removeChildren(int position, int count);
 
 private:
-    QList<TreeItem*> _childItems;
-    QList<QVariant> _itemData;
-    TreeItem* _parentItem;
+    QList<TreeItem*> childItems_;
+    QList<QVariant> itemData_;
+    TreeItem* parentItem_;
 };

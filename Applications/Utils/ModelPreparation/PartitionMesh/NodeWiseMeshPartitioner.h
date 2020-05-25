@@ -66,12 +66,12 @@ public:
      */
     NodeWiseMeshPartitioner(const IntegerType num_partitions,
                             std::unique_ptr<MeshLib::Mesh>&& mesh)
-        : _npartitions(num_partitions),
-          _partitions(num_partitions),
-          _partitioned_properties(),
-          _mesh(std::move(mesh)),
-          _nodes_global_ids(_mesh->getNumberOfNodes()),
-          _nodes_partition_ids(_mesh->getNumberOfNodes())
+        : npartitions_(num_partitions),
+          partitions_(num_partitions),
+          partitioned_properties_(),
+          mesh_(std::move(mesh)),
+          nodes_global_ids_(mesh_->getNumberOfNodes()),
+          nodes_partition_ids_(mesh_->getNumberOfNodes())
     {
     }
 
@@ -113,29 +113,29 @@ public:
     void resetPartitionIdsForNodes(
         std::vector<std::size_t>&& node_partition_ids)
     {
-        _nodes_partition_ids = std::move(node_partition_ids);
+        nodes_partition_ids_ = std::move(node_partition_ids);
     }
 
-    MeshLib::Mesh const& mesh() const { return *_mesh; }
+    MeshLib::Mesh const& mesh() const { return *mesh_; }
 
 private:
     /// Number of partitions.
-    IntegerType _npartitions;
+    IntegerType npartitions_;
 
     /// Data for all  partitions.
-    std::vector<Partition> _partitions;
+    std::vector<Partition> partitions_;
 
     /// Properties where values at ghost nodes and extra nodes are inserted.
-    MeshLib::Properties _partitioned_properties;
+    MeshLib::Properties partitioned_properties_;
 
     /// Pointer to a mesh object.
-    std::unique_ptr<MeshLib::Mesh> _mesh;
+    std::unique_ptr<MeshLib::Mesh> mesh_;
 
     /// Global IDs of all nodes after partitioning.
-    std::vector<std::size_t> _nodes_global_ids;
+    std::vector<std::size_t> nodes_global_ids_;
 
     /// Partition IDs of each nodes.
-    std::vector<std::size_t> _nodes_partition_ids;
+    std::vector<std::size_t> nodes_partition_ids_;
 
     // Renumber the global indices of nodes,
     /// \param is_mixed_high_order_linear_elems Flag to indicate whether the

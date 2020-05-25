@@ -60,7 +60,7 @@ public:
      * polyline, i.e. the two intersecting line segments are splitt into four line segment.
      *
      * Line segments of the polyline that are completely within the polygon are inserted into
-     * the internal vector _gmsh_lines_for_constraints. The children of this GMSHPolygonTree node
+     * the internal vector gmsh_lines_for_constraints_. The children of this GMSHPolygonTree node
      * are checked recursively.
      * @param ply the polyline that should be inserted
      */
@@ -92,13 +92,13 @@ private:
         GeoLib::PolylineWithSegmentMarker* ply,
         GeoLib::Polyline::SegmentIterator const& seg_it);
 
-    GeoLib::GEOObjects & _geo_objs;
-    std::string const& _geo_name;
-    std::vector<GeoLib::Point const*> _stations;
-    std::vector<GeoLib::PolylineWithSegmentMarker*> _plys;
-    std::vector<GMSHLine*> _gmsh_lines_for_constraints;
+    GeoLib::GEOObjects & geo_objs_;
+    std::string const& geo_name_;
+    std::vector<GeoLib::Point const*> stations_;
+    std::vector<GeoLib::PolylineWithSegmentMarker*> plys_;
+    std::vector<GMSHLine*> gmsh_lines_for_constraints_;
 
-    GMSHMeshDensityStrategy& _mesh_density_strategy;
+    GMSHMeshDensityStrategy& mesh_density_strategy_;
 };
 
 }  // end namespace GMSH

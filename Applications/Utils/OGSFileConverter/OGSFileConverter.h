@@ -34,7 +34,7 @@ public:
 private:
     /// Checks if a given file already exists
     bool fileExists(const std::string &file_name) const;
-    std::string const _gmsh_path;
+    std::string const gmsh_path_;
 
 private slots:
     /// Converts all files in the input list and writes the new files to the output directory with the same file name + updated extension.

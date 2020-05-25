@@ -46,21 +46,21 @@ public:
                     QDialog* parent = nullptr);
     ~SHPImportDialog() override;
 
-    QDialogButtonBox* _buttonBox; /// The buttons used in this dialog.
+    QDialogButtonBox* buttonBox_; /// The buttons used in this dialog.
 
 private:
     /// Constructs a dialog window based on the information found in the selected shape file
     void setupDialog();
 
-    QGridLayout* _layout;
-    QLabel* _shpContentLabel;
-    QLabel* _nameLabel;
-    QLineEdit* _listName;
-    QRadioButton* _choice1, * _choice2;
-    std::string _filename;
-    short _fileType;
-    FileIO::SHPInterface* _shpInterface;
-    std::string const _gmsh_path;
+    QGridLayout* layout_;
+    QLabel* shpContentLabel_;
+    QLabel* nameLabel_;
+    QLineEdit* listName_;
+    QRadioButton* choice1_, * choice2_;
+    std::string filename_;
+    short fileType_;
+    FileIO::SHPInterface* shpInterface_;
+    std::string const gmsh_path_;
 
 private slots:
     /// Instructions if the OK-Button has been pressed.

@@ -60,10 +60,10 @@ public:
     void getColor(vtkIdType indx, unsigned char rgba[4]) const;
 
     /// Returns the type of interpolation used.
-    DataHolderLib::LUTType getInterpolationType() const { return _type; }
+    DataHolderLib::LUTType getInterpolationType() const { return type_; }
 
     /// Sets the type of interpolation.
-    void setInterpolationType(DataHolderLib::LUTType type) { _type = type; }
+    void setInterpolationType(DataHolderLib::LUTType type) { type_ = type; }
 
     /// Imports settings of OGS lookup table class
     void setLookupTable(DataHolderLib::ColorLookupTable const& lut);
@@ -91,6 +91,6 @@ private:
     /// Interpolates values exponentially. gamma should roughly be in [0,4), for gamma=1 interpolation is linear.
     unsigned char expInterpolation(unsigned char a, unsigned char b, double gamma, double p) const;
 
-    std::map<double, unsigned char*> _dict;
-    DataHolderLib::LUTType _type{DataHolderLib::LUTType::LINEAR};
+    std::map<double, unsigned char*> dict_;
+    DataHolderLib::LUTType type_{DataHolderLib::LUTType::LINEAR};
 };

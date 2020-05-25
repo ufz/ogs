@@ -36,8 +36,8 @@ public:
     ~CondFromRasterDialog() override;
 
 private:
-    const std::vector<MeshLib::Mesh*> _msh_vec;
-    StrictDoubleValidator* _scale_validator;
+    const std::vector<MeshLib::Mesh*> msh_vec_;
+    StrictDoubleValidator* scale_validator_;
 
 private slots:
     void on_integrateButton_toggled(bool isSelected);

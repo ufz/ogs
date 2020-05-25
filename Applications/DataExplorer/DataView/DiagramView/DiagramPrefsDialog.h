@@ -96,9 +96,9 @@ private:
      */
     int loadList(const std::vector< std::pair<QDateTime, float> > &coords);
 
-    std::vector<DiagramList*> _list;
-    std::vector<QCheckBox*> _visability;
-    DetailWindow* _window;
+    std::vector<DiagramList*> list_;
+    std::vector<QCheckBox*> visability_;
+    DetailWindow* window_;
 
 private slots:
     /// Instructions if the OK-Button has been pressed.

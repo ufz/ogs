@@ -37,10 +37,10 @@ public:
     explicit MeshFromRasterDialog(QDialog* parent = nullptr);
     ~MeshFromRasterDialog() override;
 
-    std::string getMeshName() const { return _mesh_name; }
-    std::string getArrayName() const { return _array_name; }
-    MeshLib::MeshElemType getElementSelection() const { return _element_selection; }
-    MeshLib::UseIntensityAs getIntensitySelection() const { return _intensity_selection; }
+    std::string getMeshName() const { return mesh_name_; }
+    std::string getArrayName() const { return array_name_; }
+    MeshLib::MeshElemType getElementSelection() const { return element_selection_; }
+    MeshLib::UseIntensityAs getIntensitySelection() const { return intensity_selection_; }
 
 private slots:
     void on_elevationButton_toggled(bool isChecked);
@@ -52,9 +52,9 @@ private slots:
     void reject() override;
 
 private:
-    std::string _mesh_name;
-    std::string _array_name;
-    MeshLib::MeshElemType _element_selection;
-    MeshLib::UseIntensityAs _intensity_selection;
+    std::string mesh_name_;
+    std::string array_name_;
+    MeshLib::MeshElemType element_selection_;
+    MeshLib::UseIntensityAs intensity_selection_;
 
 };

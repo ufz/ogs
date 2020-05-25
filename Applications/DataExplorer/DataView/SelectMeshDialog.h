@@ -39,16 +39,16 @@ public:
                      QDialog* parent = nullptr);
     ~SelectMeshDialog() override;
 
-    QDialogButtonBox* _buttonBox; /// The buttons used in this dialog.
+    QDialogButtonBox* buttonBox_; /// The buttons used in this dialog.
 
 private:
     /// Constructs a dialog window
     void setupDialog(const std::list<std::string> &msh_names);
 
-    QLabel* _txt_label;
-    QComboBox* _msh_names;
-    QVBoxLayout* _layout;
-    const GeoLib::GeoObject* _geo_object;
+    QLabel* txt_label_;
+    QComboBox* msh_names_;
+    QVBoxLayout* layout_;
+    const GeoLib::GeoObject* geo_object_;
 
 
 private slots:

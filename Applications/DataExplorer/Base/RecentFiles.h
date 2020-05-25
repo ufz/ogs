@@ -65,9 +65,9 @@ private:
     /// Returns the filename from a full file path.
     QString strippedName(const QString& fullFileName);
 
-    QMenu* _filesMenu;
-    QString _currentFile;
-    QString _settingsName;
-    enum { _maxFiles = 5 };
-    QAction* _fileActions[_maxFiles];
+    QMenu* filesMenu_;
+    QString currentFile_;
+    QString settingsName_;
+    enum { maxFiles_ = 5 };
+    QAction* fileActions_[maxFiles_];
 };

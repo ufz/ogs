@@ -33,17 +33,17 @@ public:
     ~MeshQualitySelectionDialog() override;
 
     /// Returns selected metric
-    MeshLib::MeshQualityType getSelectedMetric() const { return _metric; }
+    MeshLib::MeshQualityType getSelectedMetric() const { return metric_; }
 
     /// Returns true if a histogram needs to be calculated
     bool getHistogram() const { return this->histogramCheckBox->isChecked(); }
 
     /// Returns selected path for histogram (or empty string if no histogram is required)
-    std::string getHistogramPath() const { return _histogram_path; }
+    std::string getHistogramPath() const { return histogram_path_; }
 
 private:
-    MeshLib::MeshQualityType _metric{MeshLib::MeshQualityType::EDGERATIO};
-    std::string _histogram_path;
+    MeshLib::MeshQualityType metric_{MeshLib::MeshQualityType::EDGERATIO};
+    std::string histogram_path_;
 
 private slots:
     void on_histogramCheckBox_toggled(bool is_checked) const;

@@ -37,7 +37,7 @@ public:
     vtkTypeMacro(VtkPolylinesSource,vtkPolyDataAlgorithm);
 
     /// Sets the polyline vector.
-    void setPolylines(const std::vector<GeoLib::Polyline*>* polylines) { _polylines = polylines; }
+    void setPolylines(const std::vector<GeoLib::Polyline*>* polylines) { polylines_ = polylines; }
 
     /// Prints its data on a stream.
     void PrintSelf(ostream& os, vtkIndent indent) override;
@@ -58,7 +58,7 @@ protected:
                            vtkInformationVector* outputVector) override;
 
     /// The polylines to visualize.
-    const std::vector<GeoLib::Polyline*>* _polylines{nullptr};
+    const std::vector<GeoLib::Polyline*>* polylines_{nullptr};
 
 private:
 };

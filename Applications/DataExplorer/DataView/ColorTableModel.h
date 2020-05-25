@@ -39,7 +39,7 @@ public:
     int rowCount(const QModelIndex& parent = QModelIndex()) const override
     {
         Q_UNUSED (parent);
-        return _listOfPairs.size();
+        return listOfPairs_.size();
     }
 
     QVariant headerData(int section, Qt::Orientation orientation,
@@ -48,5 +48,5 @@ public:
 private:
     bool buildTable( const std::map<std::string, DataHolderLib::Color*> &colorLookupTable );
 
-    QList< QPair<QString, QColor> > _listOfPairs;
+    QList< QPair<QString, QColor> > listOfPairs_;
 };

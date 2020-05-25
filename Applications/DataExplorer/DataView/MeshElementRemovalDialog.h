@@ -68,8 +68,8 @@ private:
 
     void toggleScalarEdits(bool outside) const;
 
-    DataHolderLib::Project const& _project;
-    unsigned _currentIndex, _aabbIndex, _scalarIndex;
+    DataHolderLib::Project const& project_;
+    unsigned currentIndex_, aabbIndex_, scalarIndex_;
     std::array<bool, 6> aabb_edits;
 
 signals:

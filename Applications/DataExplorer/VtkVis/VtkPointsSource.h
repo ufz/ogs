@@ -34,7 +34,7 @@ public:
     vtkTypeMacro(VtkPointsSource,vtkPolyDataAlgorithm);
 
     /// Sets the points as a vector
-    void setPoints(const std::vector<GeoLib::Point*>* points) { _points = points; }
+    void setPoints(const std::vector<GeoLib::Point*>* points) { points_ = points; }
 
     /// Prints its data on a stream.
     void PrintSelf(ostream& os, vtkIndent indent) override;
@@ -55,7 +55,7 @@ protected:
                            vtkInformationVector* outputVector) override;
 
     /// The points to visualize
-    const std::vector<GeoLib::Point*>* _points{nullptr};
+    const std::vector<GeoLib::Point*>* points_{nullptr};
 
 private:
 };

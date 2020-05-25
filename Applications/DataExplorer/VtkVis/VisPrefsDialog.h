@@ -54,8 +54,8 @@ protected slots:
     void on_cullBackfacesCheckBox_stateChanged(int state);
 
 private:
-    VtkVisPipeline& _vtkVisPipeline;
-    VisualizationWidget& _visWidget;
-    GeoLib::Point _above;
-    GeoLib::Point _below;
+    VtkVisPipeline& vtkVisPipeline_;
+    VisualizationWidget& visWidget_;
+    GeoLib::Point above_;
+    GeoLib::Point below_;
 };

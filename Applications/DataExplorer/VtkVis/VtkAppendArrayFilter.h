@@ -55,6 +55,6 @@ protected:
                     vtkInformationVector* outputVector) override;
 
 private:
-    std::vector<double> _array;
-    std::string _array_name;
+    std::vector<double> array_;
+    std::string array_name_;
 };

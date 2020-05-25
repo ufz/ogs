@@ -53,28 +53,28 @@ private:
     void setDiagramBoundaries(DiagramList* list);
 
     /// Sets an arrow as x-axis
-    void setXAxis(QArrow* arrow) { _xAxis = arrow; }
+    void setXAxis(QArrow* arrow) { xAxis_ = arrow; }
 
     /// Sets an arrow as y-axis
-    void setYAxis(QArrow* arrow) { _yAxis = arrow; }
+    void setYAxis(QArrow* arrow) { yAxis_ = arrow; }
 
     void update();
 
-    QRectF _bounds;
-    QRectF _unscaledBounds;
-    QVector<DiagramList*> _lists;
-    QVector<QGraphicsItemGroup*> _graphCaptions;
-    QVector<QGraphicsPathItem*> _graphs;
-    QGraphicsGrid* _grid;
-    QDateTime _startDate;
-    float _scaleX;
-    float _scaleY;
-    QArrow* _xAxis;
-    QArrow* _yAxis;
-    QNonScalableGraphicsTextItem* _xLabel;
-    QNonScalableGraphicsTextItem* _yLabel;
-    QNonScalableGraphicsTextItem* _xUnit;
-    QNonScalableGraphicsTextItem* _yUnit;
-    QVector<QNonScalableGraphicsTextItem*> _xTicksText;
-    QVector<QNonScalableGraphicsTextItem*> _yTicksText;
+    QRectF bounds_;
+    QRectF unscaledBounds_;
+    QVector<DiagramList*> lists_;
+    QVector<QGraphicsItemGroup*> graphCaptions_;
+    QVector<QGraphicsPathItem*> graphs_;
+    QGraphicsGrid* grid_;
+    QDateTime startDate_;
+    float scaleX_;
+    float scaleY_;
+    QArrow* xAxis_;
+    QArrow* yAxis_;
+    QNonScalableGraphicsTextItem* xLabel_;
+    QNonScalableGraphicsTextItem* yLabel_;
+    QNonScalableGraphicsTextItem* xUnit_;
+    QNonScalableGraphicsTextItem* yUnit_;
+    QVector<QNonScalableGraphicsTextItem*> xTicksText_;
+    QVector<QNonScalableGraphicsTextItem*> yTicksText_;
 };

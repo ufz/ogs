@@ -44,7 +44,7 @@ private:
     QString colorToCss(QColor color);
     QString colorToString(QColor color);
 
-    QColor _color;
+    QColor color_;
 
 signals:
     /// Is emitted when a color was picked from the dialog.

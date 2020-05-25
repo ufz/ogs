@@ -38,8 +38,8 @@ public:
     ~VtkAlgorithmPropertyCheckbox() override;
 
 private:
-    const QString _name;
-    VtkAlgorithmProperties* _algProps;
+    const QString name_;
+    VtkAlgorithmProperties* algProps_;
 
 private slots:
     /// @brief This slots is automatically called when the checkbox state changed.

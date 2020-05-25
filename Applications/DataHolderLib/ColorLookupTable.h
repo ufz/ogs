@@ -43,26 +43,26 @@ public:
 
     void setColor(std::string const& name, DataHolderLib::Color const& color);
 
-    DataHolderLib::LUTType getInterpolationType() const { return _type; }
+    DataHolderLib::LUTType getInterpolationType() const { return type_; }
 
-    void setInterpolationType(LUTType type) { _type = type; }
+    void setInterpolationType(LUTType type) { type_ = type; }
 
-    std::size_t size() const { return _lut.size(); }
+    std::size_t size() const { return lut_.size(); }
 
-    std::pair<double, double> getTableRange() const { return _range; }
+    std::pair<double, double> getTableRange() const { return range_; }
 
     void setTableRange(double min, double max);
 
     std::tuple<double, Color, std::string> const& operator[](std::size_t i) const
     {
-        assert (i < _lut.size());
-        return _lut[i];
+        assert (i < lut_.size());
+        return lut_[i];
     }
 
 private:
-    std::vector< std::tuple<double, Color, std::string> > _lut;
-    LUTType _type{DataHolderLib::LUTType::LINEAR};
-    std::pair<double, double> _range;
+    std::vector< std::tuple<double, Color, std::string> > lut_;
+    LUTType type_{DataHolderLib::LUTType::LINEAR};
+    std::pair<double, double> range_;
 };
 
 }  // namespace DataHolderLib

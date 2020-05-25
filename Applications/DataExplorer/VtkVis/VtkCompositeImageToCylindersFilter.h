@@ -34,5 +34,5 @@ public:
     void SetUserVectorProperty(QString name, QList<QVariant> values) override;
 
 private:
-    VtkImageDataToLinePolyDataFilter* _lineFilter;
+    VtkImageDataToLinePolyDataFilter* lineFilter_;
 };

@@ -45,7 +45,7 @@ private:
     /// Prepares the output for the node message window
     void elementsMsgOutput(const std::vector<ElementErrorCode> &error_codes);
 
-    std::vector<std::unique_ptr<MeshLib::Mesh>> const& _mesh_vec;
+    std::vector<std::unique_ptr<MeshLib::Mesh>> const& mesh_vec_;
 
 private slots:
     /// Starts the analysis

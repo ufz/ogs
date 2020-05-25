@@ -74,7 +74,7 @@ private:
 
     /// Checks if the name of the mesh is already exists, if so it generates a unique name.
     //bool isUniqueMeshName(std::string &name);
-    DataHolderLib::Project& _project;
+    DataHolderLib::Project& project_;
 
     /// Creates a static map of all element type name-strings in QVariant format
     static std::map<MeshLib::MeshElemType, QVariant> createMeshElemTypeMap();

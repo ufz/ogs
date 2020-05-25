@@ -42,10 +42,10 @@ public:
                     std::map<std::string, DataHolderLib::Color>* stratColors = nullptr);
 
     /// Returns the height of the bounding rectangle of all objects within the scene.
-    int getHeight() { return static_cast<int>((_scene->itemsBoundingRect()).height()); }
+    int getHeight() { return static_cast<int>((scene_->itemsBoundingRect()).height()); }
 
     /// Returns the width of the bounding rectangle of all objects within the scene.
-    int getWidth() { return static_cast<int>((_scene->itemsBoundingRect()).width()); }
+    int getWidth() { return static_cast<int>((scene_->itemsBoundingRect()).width()); }
 
     void saveAsImage(QString fileName);
 
@@ -60,17 +60,17 @@ private:
     /// The minimum size of the window.
     QSize minimumSizeHint() const override
     {
-        return QSize(3 * _scene->MARGIN, 2 * _scene->MARGIN);
+        return QSize(3 * scene_->MARGIN, 2 * scene_->MARGIN);
     }
 
     /// The default size of the window.
     QSize sizeHint() const override
     {
-        return QSize(6 * _scene->MARGIN, 4 * _scene->MARGIN);
+        return QSize(6 * scene_->MARGIN, 4 * scene_->MARGIN);
     }
 
     /// Updates the view automatically when a Borehole is added or when the window containing the view changes its state.
     void update();
 
-    StratScene* _scene{nullptr};
+    StratScene* scene_{nullptr};
 };
