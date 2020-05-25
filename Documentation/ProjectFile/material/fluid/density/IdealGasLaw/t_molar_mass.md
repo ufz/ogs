@@ -1,1 +1,1 @@
-\copydoc MaterialLib::Fluid::IdealGasLaw::_molar_mass
+\copydoc MaterialLib::Fluid::IdealGasLaw::molar_mass_

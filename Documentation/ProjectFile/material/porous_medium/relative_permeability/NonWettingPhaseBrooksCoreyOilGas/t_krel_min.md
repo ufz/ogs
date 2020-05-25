@@ -1,1 +1,1 @@
-\copydoc MaterialLib::PorousMedium::NonWettingPhaseBrooksCoreyOilGas::_krel_min
+\copydoc MaterialLib::PorousMedium::NonWettingPhaseBrooksCoreyOilGas::krel_min_

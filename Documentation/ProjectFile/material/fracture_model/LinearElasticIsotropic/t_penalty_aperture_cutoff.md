@@ -1,1 +1,1 @@
-\copydoc MaterialLib::Fracture::LinearElasticIsotropic::_penalty_aperture_cutoff
+\copydoc MaterialLib::Fracture::LinearElasticIsotropic::penalty_aperture_cutoff_

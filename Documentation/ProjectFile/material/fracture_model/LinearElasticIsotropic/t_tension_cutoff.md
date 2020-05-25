@@ -1,1 +1,1 @@
-\copydoc MaterialLib::Fracture::LinearElasticIsotropic::_tension_cutoff
+\copydoc MaterialLib::Fracture::LinearElasticIsotropic::tension_cutoff_

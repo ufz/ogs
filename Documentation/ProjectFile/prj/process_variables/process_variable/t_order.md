@@ -1,1 +1,1 @@
-\copydoc ProcessLib::ProcessVariable::_shapefunction_order
+\copydoc ProcessLib::ProcessVariable::shapefunction_order_

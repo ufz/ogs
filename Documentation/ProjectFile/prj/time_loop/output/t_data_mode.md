@@ -1,4 +1,4 @@
-\copydoc ProcessLib::Output::_output_file_data_mode
+\copydoc ProcessLib::Output::output_file_data_mode_
 
 The default value is Binary.
 

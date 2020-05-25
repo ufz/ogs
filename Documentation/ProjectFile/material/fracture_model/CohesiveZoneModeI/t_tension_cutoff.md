@@ -1,1 +1,1 @@
-\copydoc MaterialLib::Fracture::CohesiveZoneModeI::CohesiveZoneModeI::_tension_cutoff
+\copydoc MaterialLib::Fracture::CohesiveZoneModeI::CohesiveZoneModeI::tension_cutoff_

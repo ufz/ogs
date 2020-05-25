@@ -1,1 +1,1 @@
-\copydoc MaterialLib::PorousMedium::CapillaryPressureSaturation::_pc_max
+\copydoc MaterialLib::PorousMedium::CapillaryPressureSaturation::pc_max_

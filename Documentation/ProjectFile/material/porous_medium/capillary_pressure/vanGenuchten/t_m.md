@@ -1,1 +1,1 @@
-\copydoc MaterialLib::PorousMedium::VanGenuchtenCapillaryPressureSaturation::_m
+\copydoc MaterialLib::PorousMedium::VanGenuchtenCapillaryPressureSaturation::m_

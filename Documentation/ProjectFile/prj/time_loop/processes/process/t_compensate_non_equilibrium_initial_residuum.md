@@ -1,1 +1,1 @@
-\copydoc NumLib::NonlinearSolver<NonlinearSolverTag::Newton>::_compensate_non_equilibrium_initial_residuum
+\copydoc NumLib::NonlinearSolver<NonlinearSolverTag::Newton>::compensate_non_equilibrium_initial_residuum_

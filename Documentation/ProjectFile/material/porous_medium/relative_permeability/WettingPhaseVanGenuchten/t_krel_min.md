@@ -1,1 +1,1 @@
-\copydoc MaterialLib::PorousMedium::WettingPhaseVanGenuchten::_krel_min
+\copydoc MaterialLib::PorousMedium::WettingPhaseVanGenuchten::krel_min_

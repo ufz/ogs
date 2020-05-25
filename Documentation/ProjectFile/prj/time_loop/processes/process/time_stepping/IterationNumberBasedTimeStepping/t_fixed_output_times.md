@@ -1,1 +1,1 @@
-\copydoc NumLib::IterationNumberBasedTimeStepping::_fixed_output_times
+\copydoc NumLib::IterationNumberBasedTimeStepping::fixed_output_times_

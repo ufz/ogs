@@ -1,1 +1,1 @@
-\copydoc NumLib::NewtonRaphson::_maximum_iterations
+\copydoc NumLib::NewtonRaphson::maximum_iterations_

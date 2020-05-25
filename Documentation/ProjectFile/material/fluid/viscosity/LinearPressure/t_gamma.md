@@ -1,1 +1,1 @@
-\copydoc MaterialLib::Fluid::LinearPressureDependentViscosity::_gamma
+\copydoc MaterialLib::Fluid::LinearPressureDependentViscosity::gamma_

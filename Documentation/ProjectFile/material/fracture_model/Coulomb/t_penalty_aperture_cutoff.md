@@ -1,1 +1,1 @@
-\copydoc MaterialLib::Fracture::Coulomb::Coulomb::_penalty_aperture_cutoff
+\copydoc MaterialLib::Fracture::Coulomb::Coulomb::penalty_aperture_cutoff_

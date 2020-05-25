@@ -1,1 +1,1 @@
-\copydoc MaterialLib::Fracture::Coulomb::Coulomb::_tension_cutoff
+\copydoc MaterialLib::Fracture::Coulomb::Coulomb::tension_cutoff_

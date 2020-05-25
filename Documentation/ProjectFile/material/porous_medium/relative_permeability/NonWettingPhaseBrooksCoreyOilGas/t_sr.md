@@ -1,1 +1,1 @@
-\copydoc MaterialLib::PorousMedium::RelativePermeability::_saturation_r
+\copydoc MaterialLib::PorousMedium::RelativePermeability::saturation_r_

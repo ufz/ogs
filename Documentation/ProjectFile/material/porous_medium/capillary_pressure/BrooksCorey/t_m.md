@@ -1,1 +1,1 @@
-\copydoc MaterialLib::PorousMedium::BrooksCoreyCapillaryPressureSaturation::_m
+\copydoc MaterialLib::PorousMedium::BrooksCoreyCapillaryPressureSaturation::m_

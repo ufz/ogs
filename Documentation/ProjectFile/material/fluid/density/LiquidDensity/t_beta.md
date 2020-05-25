@@ -1,1 +1,1 @@
-\copydoc MaterialLib::Fluid::LiquidDensity::_beta
+\copydoc MaterialLib::Fluid::LiquidDensity::beta_

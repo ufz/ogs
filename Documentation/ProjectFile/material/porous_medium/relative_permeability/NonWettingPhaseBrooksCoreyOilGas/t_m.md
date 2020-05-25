@@ -1,1 +1,1 @@
-\copydoc MaterialLib::PorousMedium::NonWettingPhaseBrooksCoreyOilGas::_m
+\copydoc MaterialLib::PorousMedium::NonWettingPhaseBrooksCoreyOilGas::m_

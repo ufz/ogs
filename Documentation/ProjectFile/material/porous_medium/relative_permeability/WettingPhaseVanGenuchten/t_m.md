@@ -1,1 +1,1 @@
-\copydoc MaterialLib::PorousMedium::WettingPhaseVanGenuchten::_m
+\copydoc MaterialLib::PorousMedium::WettingPhaseVanGenuchten::m_

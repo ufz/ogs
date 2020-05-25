@@ -1,1 +1,1 @@
-\copydoc NumLib::NewtonRaphson::_tolerance_squared
+\copydoc NumLib::NewtonRaphson::tolerance_squared_

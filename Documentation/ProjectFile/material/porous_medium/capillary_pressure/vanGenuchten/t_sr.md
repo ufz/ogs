@@ -1,1 +1,1 @@
-\copydoc MaterialLib::PorousMedium::CapillaryPressureSaturation::_saturation_r
+\copydoc MaterialLib::PorousMedium::CapillaryPressureSaturation::saturation_r_

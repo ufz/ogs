@@ -1,1 +1,1 @@
-\copydoc MaterialLib::Fluid::LiquidDensity::_bulk_modulus
+\copydoc MaterialLib::Fluid::LiquidDensity::bulk_modulus_

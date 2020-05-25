@@ -1,1 +1,1 @@
-\copydoc NumLib::TimeStepAlgorithm::_t_initial
+\copydoc NumLib::TimeStepAlgorithm::t_initial_
