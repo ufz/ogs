@@ -21,7 +21,7 @@ ReactionRate::ReactionRate(std::string kinetic_reactant_,
     int line_number = 1;
     for (auto const& statement : statements)
     {
-        _commands += std::to_string(line_number) + " " + statement + "; ";
+        commands_ += std::to_string(line_number) + " " + statement + "; ";
         ++line_number;
     }
 }

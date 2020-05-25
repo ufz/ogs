@@ -31,9 +31,9 @@ PhreeqcKernel::PhreeqcKernel(
     std::unique_ptr<EquilibriumReactants>&& equilibrium_reactants,
     std::unique_ptr<Kinetics>&& kinetic_reactants,
     std::vector<ReactionRate>&& reaction_rates)
-    : _initial_aqueous_solution(aqueous_solution.getInitialAqueousSolution()),
-      _aqueous_solution(aqueous_solution.castToBaseClassNoninitialized()),
-      _reaction_rates(std::move(reaction_rates))
+    : initial_aqueous_solution_(aqueous_solution.getInitialAqueousSolution()),
+      aqueous_solution_(aqueous_solution.castToBaseClassNoninitialized()),
+      reaction_rates_(std::move(reaction_rates))
 {
     initializePhreeqcGeneralSettings();
 
@@ -101,7 +101,7 @@ PhreeqcKernel::PhreeqcKernel(
         auto master_species =
             master_bsearch(transport_process_variable.c_str());
 
-        _process_id_to_master_map[transport_process_id] = master_species;
+        process_id_to_master_map_[transport_process_id] = master_species;
     }
 }
 
@@ -140,11 +140,11 @@ void PhreeqcKernel::loadDatabase(std::string const& database)
 
 void PhreeqcKernel::reinitializeRates()
 {
-    count_rates = _reaction_rates.size();
+    count_rates = reaction_rates_.size();
     rates = (struct rate*)realloc(
         rates, (std::size_t)(count_rates) * sizeof(struct rate));
     int rate_id = 0;
-    for (auto const& reaction_rate : _reaction_rates)
+    for (auto const& reaction_rate : reaction_rates_)
     {
         rates[rate_id].name = reaction_rate.kinetic_reactant.data();
 
@@ -196,7 +196,7 @@ void PhreeqcKernel::setAqueousSolutions(
         auto& components = initial_aqueous_solution->Get_comps();
         // Loop over transport process id map to retrieve component
         // concentrations from process solutions
-        for (auto const& map_pair : _process_id_to_master_map)
+        for (auto const& map_pair : process_id_to_master_map_)
         {
             auto const transport_process_id = map_pair.first;
             auto const& master_species = map_pair.second;
@@ -235,7 +235,7 @@ cxxISolution* PhreeqcKernel::getOrCreateInitialAqueousSolution(
 {
     if (!aqueous_solution.Get_initial_data())
     {
-        aqueous_solution.Set_initial_data(_initial_aqueous_solution.get());
+        aqueous_solution.Set_initial_data(initial_aqueous_solution_.get());
         aqueous_solution.Set_new_def(true);
     }
 
@@ -293,7 +293,7 @@ void PhreeqcKernel::reset(std::size_t const chemical_system_id)
 
     // Solution
     {
-        Rxn_solution_map[chemical_system_id] = *_aqueous_solution;
+        Rxn_solution_map[chemical_system_id] = *aqueous_solution_;
         Rxn_solution_map[chemical_system_id].Set_n_user_both(
             chemical_system_id);
         Rxn_solution_map[chemical_system_id].Set_pe(-s_eminus->la);
@@ -339,7 +339,7 @@ void PhreeqcKernel::updateNodalProcessSolutions(
     std::vector<GlobalVector*> const& process_solutions,
     std::size_t const node_id)
 {
-    for (auto const& map_pair : _process_id_to_master_map)
+    for (auto const& map_pair : process_id_to_master_map_)
     {
         auto const transport_process_id = map_pair.first;
         auto const& master_species = map_pair.second;

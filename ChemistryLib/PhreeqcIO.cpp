@@ -57,18 +57,18 @@ PhreeqcIO::PhreeqcIO(std::string const project_file_name,
                      std::unique_ptr<Output>&& output,
                      std::unique_ptr<Dump>&& dump,
                      Knobs&& knobs)
-    : _phreeqc_input_file(project_file_name + "_phreeqc.inp"),
-      _mesh(mesh),
-      _database(std::move(database)),
-      _aqueous_solutions(std::move(aqueous_solutions)),
-      _equilibrium_reactants(std::move(equilibrium_reactants)),
-      _kinetic_reactants(std::move(kinetic_reactants)),
-      _reaction_rates(std::move(reaction_rates)),
-      _surface(std::move(surface)),
-      _user_punch(std::move(user_punch)),
-      _output(std::move(output)),
-      _dump(std::move(dump)),
-      _knobs(std::move(knobs))
+    : phreeqc_input_file_(project_file_name + "_phreeqc.inp"),
+      mesh_(mesh),
+      database_(std::move(database)),
+      aqueous_solutions_(std::move(aqueous_solutions)),
+      equilibrium_reactants_(std::move(equilibrium_reactants)),
+      kinetic_reactants_(std::move(kinetic_reactants)),
+      reaction_rates_(std::move(reaction_rates)),
+      surface_(std::move(surface)),
+      user_punch_(std::move(user_punch)),
+      output_(std::move(output)),
+      dump_(std::move(dump)),
+      knobs_(std::move(knobs))
 {
     // initialize phreeqc instance
     if (CreateIPhreeqc() != phreeqc_instance_id)
@@ -78,12 +78,12 @@ PhreeqcIO::PhreeqcIO(std::string const project_file_name,
     }
 
     // load specified thermodynamic database
-    if (LoadDatabase(phreeqc_instance_id, _database.c_str()) != IPQ_OK)
+    if (LoadDatabase(phreeqc_instance_id, database_.c_str()) != IPQ_OK)
     {
         OGS_FATAL(
             "Failed in loading the specified thermodynamic database file: "
             "{:s}.",
-            _database);
+            database_);
     }
 
     if (SetSelectedOutputFileOn(phreeqc_instance_id, 1) != IPQ_OK)
@@ -91,10 +91,10 @@ PhreeqcIO::PhreeqcIO(std::string const project_file_name,
         OGS_FATAL(
             "Failed to fly the flag for the specified file {:s} where phreeqc "
             "will write output.",
-            _output->basic_output_setups.output_file);
+            output_->basic_output_setups.output_file);
     }
 
-    if (_dump)
+    if (dump_)
     {
         // Chemical composition of the aqueous solution of last time step will
         // be written into .dmp file once the second function argument is set to
@@ -140,10 +140,10 @@ void PhreeqcIO::doWaterChemistryCalculation(
 void PhreeqcIO::setAqueousSolutionsOrUpdateProcessSolutions(
     std::vector<GlobalVector*> const& process_solutions, Status const status)
 {
-    std::size_t const num_chemical_systems = _mesh.getNumberOfBaseNodes();
+    std::size_t const num_chemical_systems = mesh_.getNumberOfBaseNodes();
 
     auto const chemical_system_map =
-        *_mesh.getProperties().template getPropertyVector<std::size_t>(
+        *mesh_.getProperties().template getPropertyVector<std::size_t>(
             "bulk_node_ids", MeshLib::MeshItemType::Node, 1);
 
     // Loop over chemical systems
@@ -151,7 +151,7 @@ void PhreeqcIO::setAqueousSolutionsOrUpdateProcessSolutions(
     {
         auto const global_id = chemical_system_map[local_id];
         // Get chemical compostion of solution in a particular chemical system
-        auto& aqueous_solution = _aqueous_solutions[local_id];
+        auto& aqueous_solution = aqueous_solutions_[local_id];
         auto& components = aqueous_solution.components;
         // Loop over transport process id map to retrieve component
         // concentrations from process solutions or to update process solutions
@@ -202,20 +202,20 @@ void PhreeqcIO::setAqueousSolutionsOrUpdateProcessSolutions(
 
 void PhreeqcIO::setAqueousSolutionsPrevFromDumpFile()
 {
-    if (!_dump)
+    if (!dump_)
     {
         return;
     }
 
-    auto const& dump_file = _dump->dump_file;
+    auto const& dump_file = dump_->dump_file;
     std::ifstream in(dump_file);
     if (!in)
     {
         OGS_FATAL("Could not open phreeqc dump file '{:s}'.", dump_file);
     }
 
-    std::size_t const num_chemical_systems = _mesh.getNumberOfBaseNodes();
-    _dump->readDumpFile(in, num_chemical_systems);
+    std::size_t const num_chemical_systems = mesh_.getNumberOfBaseNodes();
+    dump_->readDumpFile(in, num_chemical_systems);
 
     if (!in)
     {
@@ -227,13 +227,13 @@ void PhreeqcIO::setAqueousSolutionsPrevFromDumpFile()
 
 void PhreeqcIO::writeInputsToFile(double const dt)
 {
-    DBUG("Writing phreeqc inputs into file '{:s}'.", _phreeqc_input_file);
-    std::ofstream out(_phreeqc_input_file, std::ofstream::out);
+    DBUG("Writing phreeqc inputs into file '{:s}'.", phreeqc_input_file_);
+    std::ofstream out(phreeqc_input_file_, std::ofstream::out);
 
     if (!out)
     {
         OGS_FATAL("Could not open file '{:s}' for writing phreeqc inputs.",
-                  _phreeqc_input_file);
+                  phreeqc_input_file_);
     }
 
     out << (*this << dt);
@@ -241,7 +241,7 @@ void PhreeqcIO::writeInputsToFile(double const dt)
     if (!out)
     {
         OGS_FATAL("Failed in generating phreeqc input file '{:s}'.",
-                  _phreeqc_input_file);
+                  phreeqc_input_file_);
     }
 
     out.close();
@@ -249,17 +249,17 @@ void PhreeqcIO::writeInputsToFile(double const dt)
 
 std::ostream& operator<<(std::ostream& os, PhreeqcIO const& phreeqc_io)
 {
-    os << phreeqc_io._knobs << "\n";
+    os << phreeqc_io.knobs_ << "\n";
 
-    os << *phreeqc_io._output << "\n";
+    os << *phreeqc_io.output_ << "\n";
 
-    auto const& user_punch = phreeqc_io._user_punch;
+    auto const& user_punch = phreeqc_io.user_punch_;
     if (user_punch)
     {
         os << *user_punch << "\n";
     }
 
-    auto const& reaction_rates = phreeqc_io._reaction_rates;
+    auto const& reaction_rates = phreeqc_io.reaction_rates_;
     if (!reaction_rates.empty())
     {
         os << "RATES" << "\n";
@@ -267,10 +267,10 @@ std::ostream& operator<<(std::ostream& os, PhreeqcIO const& phreeqc_io)
     }
 
     std::size_t const num_chemical_systems =
-        phreeqc_io._mesh.getNumberOfBaseNodes();
+        phreeqc_io.mesh_.getNumberOfBaseNodes();
 
     auto const chemical_system_map =
-        *phreeqc_io._mesh.getProperties()
+        *phreeqc_io.mesh_.getProperties()
              .template getPropertyVector<std::size_t>(
                  "bulk_node_ids", MeshLib::MeshItemType::Node, 1);
 
@@ -278,11 +278,11 @@ std::ostream& operator<<(std::ostream& os, PhreeqcIO const& phreeqc_io)
     {
         auto const global_id = chemical_system_map[local_id];
         auto const& aqueous_solution =
-            phreeqc_io._aqueous_solutions[local_id];
+            phreeqc_io.aqueous_solutions_[local_id];
         os << "SOLUTION " << global_id + 1 << "\n";
         os << aqueous_solution << "\n";
 
-        auto const& dump = phreeqc_io._dump;
+        auto const& dump = phreeqc_io.dump_;
         if (dump)
         {
             auto const& aqueous_solutions_prev = dump->aqueous_solutions_prev;
@@ -297,7 +297,7 @@ std::ostream& operator<<(std::ostream& os, PhreeqcIO const& phreeqc_io)
 
         os << "USE solution " << global_id + 1 << "\n\n";
 
-        auto const& equilibrium_reactants = phreeqc_io._equilibrium_reactants;
+        auto const& equilibrium_reactants = phreeqc_io.equilibrium_reactants_;
         if (!equilibrium_reactants.empty())
         {
             os << "EQUILIBRIUM_PHASES " << global_id + 1 << "\n";
@@ -308,7 +308,7 @@ std::ostream& operator<<(std::ostream& os, PhreeqcIO const& phreeqc_io)
             os << "\n";
         }
 
-        auto const& kinetic_reactants = phreeqc_io._kinetic_reactants;
+        auto const& kinetic_reactants = phreeqc_io.kinetic_reactants_;
         if (!kinetic_reactants.empty())
         {
             os << "KINETICS " << global_id + 1 << "\n";
@@ -316,10 +316,10 @@ std::ostream& operator<<(std::ostream& os, PhreeqcIO const& phreeqc_io)
             {
                 kinetic_reactant.print(os, global_id);
             }
-            os << "-steps " << phreeqc_io._dt << "\n" << "\n";
+            os << "-steps " << phreeqc_io.dt_ << "\n" << "\n";
         }
 
-        auto const& surface = phreeqc_io._surface;
+        auto const& surface = phreeqc_io.surface_;
         if (!surface.empty())
         {
             os << "SURFACE " << global_id + 1 << "\n";
@@ -337,7 +337,7 @@ std::ostream& operator<<(std::ostream& os, PhreeqcIO const& phreeqc_io)
         os << "END" << "\n\n";
     }
 
-    auto const& dump = phreeqc_io._dump;
+    auto const& dump = phreeqc_io.dump_;
     if (dump)
     {
         dump->print(os, num_chemical_systems);
@@ -349,19 +349,19 @@ std::ostream& operator<<(std::ostream& os, PhreeqcIO const& phreeqc_io)
 void PhreeqcIO::execute()
 {
     INFO("Phreeqc: Executing chemical calculation.");
-    if (RunFile(phreeqc_instance_id, _phreeqc_input_file.c_str()) != IPQ_OK)
+    if (RunFile(phreeqc_instance_id, phreeqc_input_file_.c_str()) != IPQ_OK)
     {
         OutputErrorString(phreeqc_instance_id);
         OGS_FATAL(
             "Failed in performing speciation calculation with the generated "
             "phreeqc input file '{:s}'.",
-            _phreeqc_input_file);
+            phreeqc_input_file_);
     }
 }
 
 void PhreeqcIO::readOutputsFromFile()
 {
-    auto const& basic_output_setups = _output->basic_output_setups;
+    auto const& basic_output_setups = output_->basic_output_setups;
     auto const& phreeqc_result_file = basic_output_setups.output_file;
     DBUG("Reading phreeqc results from file '{:s}'.", phreeqc_result_file);
     std::ifstream in(phreeqc_result_file);
@@ -389,17 +389,17 @@ std::istream& operator>>(std::istream& in, PhreeqcIO& phreeqc_io)
     in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
     std::string line;
-    auto const& output = *phreeqc_io._output;
+    auto const& output = *phreeqc_io.output_;
     auto const& dropped_item_ids = output.dropped_item_ids;
 
-    auto const& surface = phreeqc_io._surface;
+    auto const& surface = phreeqc_io.surface_;
     int const num_skipped_lines = surface.empty() ? 1 : 2;
 
     std::size_t const num_chemical_systems =
-        phreeqc_io._mesh.getNumberOfBaseNodes();
+        phreeqc_io.mesh_.getNumberOfBaseNodes();
 
     auto const chemical_system_map =
-        *phreeqc_io._mesh.getProperties()
+        *phreeqc_io.mesh_.getProperties()
              .template getPropertyVector<std::size_t>(
                  "bulk_node_ids", MeshLib::MeshItemType::Node, 1);
 
@@ -462,11 +462,11 @@ std::istream& operator>>(std::istream& in, PhreeqcIO& phreeqc_io)
         assert(accepted_items.size() == output.accepted_items.size());
 
         auto& aqueous_solution =
-            phreeqc_io._aqueous_solutions[local_id];
+            phreeqc_io.aqueous_solutions_[local_id];
         auto& components = aqueous_solution.components;
-        auto& equilibrium_reactants = phreeqc_io._equilibrium_reactants;
-        auto& kinetic_reactants = phreeqc_io._kinetic_reactants;
-        auto& user_punch = phreeqc_io._user_punch;
+        auto& equilibrium_reactants = phreeqc_io.equilibrium_reactants_;
+        auto& kinetic_reactants = phreeqc_io.kinetic_reactants_;
+        auto& user_punch = phreeqc_io.user_punch_;
         for (int item_id = 0; item_id < static_cast<int>(accepted_items.size());
              ++item_id)
         {
@@ -547,7 +547,7 @@ std::istream& operator>>(std::istream& in, PhreeqcIO& phreeqc_io)
 std::vector<std::string> const PhreeqcIO::getComponentList() const
 {
     std::vector<std::string> component_names;
-    auto const& components = _aqueous_solutions.front().components;
+    auto const& components = aqueous_solutions_.front().components;
     std::transform(components.begin(), components.end(),
                    std::back_inserter(component_names),
                    [](auto const& c) { return c.name; });
