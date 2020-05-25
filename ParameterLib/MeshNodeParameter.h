@@ -31,7 +31,7 @@ struct MeshNodeParameter final : public Parameter<T>
     MeshNodeParameter(std::string const& name_,
                       MeshLib::Mesh const& mesh,
                       MeshLib::PropertyVector<T> const& property)
-        : Parameter<T>(name_, &mesh), _property(property)
+        : Parameter<T>(name_, &mesh), property_(property)
     {
     }
 
@@ -39,7 +39,7 @@ struct MeshNodeParameter final : public Parameter<T>
 
     int getNumberOfComponents() const override
     {
-        return _property.getNumberOfComponents();
+        return property_.getNumberOfComponents();
     }
 
     std::vector<T> operator()(double const /*t*/,
@@ -52,14 +52,14 @@ struct MeshNodeParameter final : public Parameter<T>
                 "Trying to access a MeshNodeParameter but the node id is not "
                 "specified.");
         }
-        auto const num_comp = _property.getNumberOfComponents();
+        auto const num_comp = property_.getNumberOfComponents();
         std::vector<T> cache(num_comp);
         for (int c = 0; c < num_comp; ++c)
         {
-            cache[c] = _property.getComponent(*n, c);
+            cache[c] = property_.getComponent(*n, c);
         }
 
-        if (!this->_coordinate_system)
+        if (!this->coordinate_system_)
         {
             return cache;
         }
@@ -89,7 +89,7 @@ struct MeshNodeParameter final : public Parameter<T>
     }
 
 private:
-    MeshLib::PropertyVector<T> const& _property;
+    MeshLib::PropertyVector<T> const& property_;
 };
 
 std::unique_ptr<ParameterBase> createMeshNodeParameter(

@@ -47,8 +47,8 @@ public:
         std::vector<std::unique_ptr<ParameterBase>> const& parameters) override;
 
 private:
-    std::vector<PairTimeParameterName> _time_parameter_name_mapping;
-    std::vector<PairTimeParameter> _time_parameter_mapping;
+    std::vector<PairTimeParameterName> time_parameter_name_mapping_;
+    std::vector<PairTimeParameter> time_parameter_mapping_;
 };
 
 std::unique_ptr<ParameterBase> createTimeDependentHeterogeneousParameter(

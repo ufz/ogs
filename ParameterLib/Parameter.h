@@ -49,7 +49,7 @@ struct ParameterBase
 {
     explicit ParameterBase(std::string name_,
                            MeshLib::Mesh const* mesh = nullptr)
-        : name(std::move(name_)), _mesh(mesh)
+        : name(std::move(name_)), mesh_(mesh)
     {
     }
 
@@ -59,7 +59,7 @@ struct ParameterBase
 
     void setCoordinateSystem(CoordinateSystem const& coordinate_system)
     {
-        _coordinate_system = coordinate_system;
+        coordinate_system_ = coordinate_system;
     }
 
     /// Parameters might depend on each other; this method allows to set up the
@@ -69,7 +69,7 @@ struct ParameterBase
     {
     }
 
-    MeshLib::Mesh const* mesh() const { return _mesh; }
+    MeshLib::Mesh const* mesh() const { return mesh_; }
 
     std::string const name;
 
@@ -77,7 +77,7 @@ protected:
     std::vector<double> rotateWithCoordinateSystem(
         std::vector<double> const& values, SpatialPosition const& pos) const
     {
-        assert(!!_coordinate_system);  // It is checked before calling this
+        assert(!!coordinate_system_);  // It is checked before calling this
                                        // function.
 
         // Don't rotate isotropic/scalar values.
@@ -88,13 +88,13 @@ protected:
         if (values.size() == 2)
         {
             auto const result =
-                _coordinate_system->rotateDiagonalTensor<2>(values, pos);
+                coordinate_system_->rotateDiagonalTensor<2>(values, pos);
             return {result(0, 0), result(0, 1), result(1, 0), result(1, 1)};
         }
         if (values.size() == 3)
         {
             auto const result =
-                _coordinate_system->rotateDiagonalTensor<3>(values, pos);
+                coordinate_system_->rotateDiagonalTensor<3>(values, pos);
             return {
                 result(0, 0), result(0, 1), result(0, 2),
                 result(1, 0), result(1, 1), result(1, 2),
@@ -104,13 +104,13 @@ protected:
         if (values.size() == 4)
         {
             auto const result =
-                _coordinate_system->rotateTensor<2>(values, pos);
+                coordinate_system_->rotateTensor<2>(values, pos);
             return {result(0, 0), result(0, 1), result(1, 0), result(1, 1)};
         }
         if (values.size() == 9)
         {
             auto const result =
-                _coordinate_system->rotateTensor<3>(values, pos);
+                coordinate_system_->rotateTensor<3>(values, pos);
             return {
                 result(0, 0), result(0, 1), result(0, 2),
                 result(1, 0), result(1, 1), result(1, 2),
@@ -124,11 +124,11 @@ protected:
     }
 
 protected:
-    boost::optional<CoordinateSystem> _coordinate_system;
+    boost::optional<CoordinateSystem> coordinate_system_;
 
     /// A mesh on which the parameter is defined. Some parameters might be
     /// mesh-independent.
-    MeshLib::Mesh const* _mesh;
+    MeshLib::Mesh const* mesh_;
 };
 
 /*! A Parameter is a function \f$ (t, x) \mapsto f(t, x) \in T^n \f$.

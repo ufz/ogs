@@ -32,46 +32,46 @@ public:
         boost::optional<std::size_t> const& element_id,
         boost::optional<unsigned> const& integration_point,
         boost::optional<MathLib::TemplatePoint<double, 3>> const& coordinates)
-        : _node_id(node_id),
-          _element_id(element_id),
-          _integration_point(integration_point),
-          _coordinates(coordinates)
+        : node_id_(node_id),
+          element_id_(element_id),
+          integration_point_(integration_point),
+          coordinates_(coordinates)
     {
     }
 
-    boost::optional<std::size_t> getNodeID() const { return _node_id; }
-    boost::optional<std::size_t> getElementID() const { return _element_id; }
+    boost::optional<std::size_t> getNodeID() const { return node_id_; }
+    boost::optional<std::size_t> getElementID() const { return element_id_; }
     boost::optional<unsigned> getIntegrationPoint() const
     {
-        return _integration_point;
+        return integration_point_;
     }
     boost::optional<MathLib::TemplatePoint<double, 3>> const& getCoordinates()
         const
     {
-        return _coordinates;
+        return coordinates_;
     }
 
     void setNodeID(std::size_t node_id)
     {
         clear();
-        _node_id = node_id;
+        node_id_ = node_id;
     }
 
     void setElementID(std::size_t element_id)
     {
         clear();
-        _element_id = element_id;
+        element_id_ = element_id;
     }
 
     void setIntegrationPoint(unsigned integration_point)
     {
-        assert(_element_id);
-        _integration_point = integration_point;
+        assert(element_id_);
+        integration_point_ = integration_point;
     }
 
     void setCoordinates(MathLib::TemplatePoint<double, 3> const& coordinates)
     {
-        _coordinates = coordinates;
+        coordinates_ = coordinates;
     }
 
     void setAll(
@@ -80,25 +80,25 @@ public:
         boost::optional<unsigned> const& integration_point,
         boost::optional<MathLib::TemplatePoint<double, 3>> const& coordinates)
     {
-        _node_id = node_id;
-        _element_id = element_id;
-        _integration_point = integration_point;
-        _coordinates = coordinates;
+        node_id_ = node_id;
+        element_id_ = element_id;
+        integration_point_ = integration_point;
+        coordinates_ = coordinates;
     }
 
     void clear()
     {
-        _node_id = boost::none;
-        _element_id = boost::none;
-        _integration_point = boost::none;
-        _coordinates = boost::none;
+        node_id_ = boost::none;
+        element_id_ = boost::none;
+        integration_point_ = boost::none;
+        coordinates_ = boost::none;
     }
 
 private:
-    boost::optional<std::size_t> _node_id;
-    boost::optional<std::size_t> _element_id;
-    boost::optional<unsigned> _integration_point;
-    boost::optional<MathLib::TemplatePoint<double, 3>> _coordinates;
+    boost::optional<std::size_t> node_id_;
+    boost::optional<std::size_t> element_id_;
+    boost::optional<unsigned> integration_point_;
+    boost::optional<MathLib::TemplatePoint<double, 3>> coordinates_;
 };
 
 }  // namespace ParameterLib

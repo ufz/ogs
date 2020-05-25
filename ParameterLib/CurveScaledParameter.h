@@ -25,8 +25,8 @@ struct CurveScaledParameter final : public Parameter<T>
                          MathLib::PiecewiseLinearInterpolation const& curve,
                          std::string referenced_parameter_name)
         : Parameter<T>(name_),
-          _curve(curve),
-          _referenced_parameter_name(std::move(referenced_parameter_name))
+          curve_(curve),
+          referenced_parameter_name_(std::move(referenced_parameter_name))
     {
     }
 
@@ -34,14 +34,14 @@ struct CurveScaledParameter final : public Parameter<T>
     void initialize(
         std::vector<std::unique_ptr<ParameterBase>> const& parameters) override
     {
-        _parameter =
-            &findParameter<T>(_referenced_parameter_name, parameters, 0);
-        ParameterBase::_mesh = _parameter->mesh();
+        parameter_ =
+            &findParameter<T>(referenced_parameter_name_, parameters, 0);
+        ParameterBase::mesh_ = parameter_->mesh();
     }
 
     int getNumberOfComponents() const override
     {
-        return _parameter->getNumberOfComponents();
+        return parameter_->getNumberOfComponents();
     }
 
     std::vector<T> operator()(double const t,
@@ -49,14 +49,14 @@ struct CurveScaledParameter final : public Parameter<T>
     {
         // No local coordinate transformation here, which might happen twice
         // otherwise.
-        assert(!this->_coordinate_system ||
+        assert(!this->coordinate_system_ ||
                "Coordinate system not expected to be set for curve scaled "
                "parameters.");
 
-        auto const& tup = (*_parameter)(t, pos);
-        auto const scaling = _curve.getValue(t);
+        auto const& tup = (*parameter_)(t, pos);
+        auto const scaling = curve_.getValue(t);
 
-        auto const num_comp = _parameter->getNumberOfComponents();
+        auto const num_comp = parameter_->getNumberOfComponents();
         std::vector<T> cache(num_comp);
         for (int c = 0; c < num_comp; ++c)
         {
@@ -66,9 +66,9 @@ struct CurveScaledParameter final : public Parameter<T>
     }
 
 private:
-    MathLib::PiecewiseLinearInterpolation const& _curve;
-    Parameter<T> const* _parameter;
-    std::string const _referenced_parameter_name;
+    MathLib::PiecewiseLinearInterpolation const& curve_;
+    Parameter<T> const* parameter_;
+    std::string const referenced_parameter_name_;
 };
 
 std::unique_ptr<ParameterBase> createCurveScaledParameter(

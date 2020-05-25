@@ -47,23 +47,23 @@ struct FunctionParameter final : public Parameter<T>
     FunctionParameter(std::string const& name,
                       MeshLib::Mesh const& mesh,
                       std::vector<std::string> const& vec_expression_str)
-        : Parameter<T>(name, &mesh), _vec_expression_str(vec_expression_str)
+        : Parameter<T>(name, &mesh), vec_expression_str_(vec_expression_str)
     {
-        _symbol_table.add_constants();
-        _symbol_table.create_variable("x");
-        _symbol_table.create_variable("y");
-        _symbol_table.create_variable("z");
+        symbol_table_.add_constants();
+        symbol_table_.create_variable("x");
+        symbol_table_.create_variable("y");
+        symbol_table_.create_variable("z");
 
-        _vec_expression.resize(_vec_expression_str.size());
-        for (unsigned i = 0; i < _vec_expression_str.size(); i++)
+        vec_expression_.resize(vec_expression_str_.size());
+        for (unsigned i = 0; i < vec_expression_str_.size(); i++)
         {
-            _vec_expression[i].register_symbol_table(_symbol_table);
+            vec_expression_[i].register_symbol_table(symbol_table_);
             parser_t parser;
-            if (!parser.compile(_vec_expression_str[i], _vec_expression[i]))
+            if (!parser.compile(vec_expression_str_[i], vec_expression_[i]))
             {
                 OGS_FATAL("Error: {:s}\tExpression: {:s}\n",
                           parser.error(),
-                          _vec_expression_str[i]);
+                          vec_expression_str_[i]);
             }
         }
     }
@@ -72,16 +72,16 @@ struct FunctionParameter final : public Parameter<T>
 
     int getNumberOfComponents() const override
     {
-        return _vec_expression.size();
+        return vec_expression_.size();
     }
 
     std::vector<T> operator()(double const /*t*/,
                               SpatialPosition const& pos) const override
     {
         std::vector<T> cache(getNumberOfComponents());
-        auto& x = _symbol_table.get_variable("x")->ref();
-        auto& y = _symbol_table.get_variable("y")->ref();
-        auto& z = _symbol_table.get_variable("z")->ref();
+        auto& x = symbol_table_.get_variable("x")->ref();
+        auto& y = symbol_table_.get_variable("y")->ref();
+        auto& z = symbol_table_.get_variable("z")->ref();
         if (pos.getCoordinates())
         {
             auto const coords = pos.getCoordinates().get();
@@ -92,18 +92,18 @@ struct FunctionParameter final : public Parameter<T>
         else if (pos.getNodeID())
         {
             auto const& node =
-                *ParameterBase::_mesh->getNode(pos.getNodeID().get());
+                *ParameterBase::mesh_->getNode(pos.getNodeID().get());
             x = node[0];
             y = node[1];
             z = node[2];
         }
 
-        for (unsigned i = 0; i < _vec_expression.size(); i++)
+        for (unsigned i = 0; i < vec_expression_.size(); i++)
         {
-            cache[i] = _vec_expression[i].value();
+            cache[i] = vec_expression_[i].value();
         }
 
-        if (!this->_coordinate_system)
+        if (!this->coordinate_system_)
         {
             return cache;
         }
@@ -112,9 +112,9 @@ struct FunctionParameter final : public Parameter<T>
     }
 
 private:
-    std::vector<std::string> const _vec_expression_str;
-    symbol_table_t _symbol_table;
-    std::vector<expression_t> _vec_expression;
+    std::vector<std::string> const vec_expression_str_;
+    symbol_table_t symbol_table_;
+    std::vector<expression_t> vec_expression_;
 };
 
 std::unique_ptr<ParameterBase> createFunctionParameter(

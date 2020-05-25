@@ -44,8 +44,8 @@ struct GroupBasedParameter final : public Parameter<T>
                         std::vector<std::vector<double>>
                             vec_values)
         : Parameter<T>(name_, &mesh),
-          _property_index(property),
-          _vec_values(std::move(vec_values))
+          property_index_(property),
+          vec_values_(std::move(vec_values))
     {
     }
 
@@ -53,9 +53,9 @@ struct GroupBasedParameter final : public Parameter<T>
 
     int getNumberOfComponents() const override
     {
-        return _vec_values.empty()
+        return vec_values_.empty()
                    ? 0
-                   : static_cast<int>(_vec_values.front().size());
+                   : static_cast<int>(vec_values_.front().size());
     }
 
     std::vector<T> operator()(double const /*t*/,
@@ -63,14 +63,14 @@ struct GroupBasedParameter final : public Parameter<T>
     {
         auto const item_id = getMeshItemID(pos, type<MeshItemType>());
         assert(item_id);
-        int const index = _property_index[item_id.get()];
-        auto const& values = _vec_values[index];
+        int const index = property_index_[item_id.get()];
+        auto const& values = vec_values_[index];
         if (values.empty())
         {
             OGS_FATAL("No data found for the group index {:d}", index);
         }
 
-        if (!this->_coordinate_system)
+        if (!this->coordinate_system_)
         {
             return values;
         }
@@ -98,8 +98,8 @@ private:
         return pos.getNodeID();
     }
 
-    MeshLib::PropertyVector<int> const& _property_index;
-    std::vector<std::vector<T>> const _vec_values;
+    MeshLib::PropertyVector<int> const& property_index_;
+    std::vector<std::vector<T>> const vec_values_;
 };
 
 std::unique_ptr<ParameterBase> createGroupBasedParameter(

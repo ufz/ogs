@@ -20,34 +20,34 @@ struct ConstantParameter final : public Parameter<T>
 {
     /// Construction with single value.
     explicit ConstantParameter(std::string const& name_, T const& value)
-        : Parameter<T>(name_), _values({value})
+        : Parameter<T>(name_), values_({value})
     {
     }
 
     /// Construction with a tuple.
     /// The given tuple must be non-empty.
     explicit ConstantParameter(std::string const& name_, std::vector<T> values)
-        : Parameter<T>(name_), _values(std::move(values))
+        : Parameter<T>(name_), values_(std::move(values))
     {
-        assert(!_values.empty());
+        assert(!values_.empty());
     }
 
     bool isTimeDependent() const override { return false; }
 
     int getNumberOfComponents() const override
     {
-        return static_cast<int>(_values.size());
+        return static_cast<int>(values_.size());
     }
 
     std::vector<T> operator()(double const /*t*/,
                               SpatialPosition const& pos) const override
     {
-        if (!this->_coordinate_system)
+        if (!this->coordinate_system_)
         {
-            return _values;
+            return values_;
         }
 
-        return this->rotateWithCoordinateSystem(_values, pos);
+        return this->rotateWithCoordinateSystem(values_, pos);
     }
 
     Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> getNodalValuesOnElement(
@@ -60,7 +60,7 @@ struct ConstantParameter final : public Parameter<T>
         // Column vector of values, copied for each node.
         auto const row_values =
             Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> const>(
-                _values.data(), _values.size());
+                values_.data(), values_.size());
         for (unsigned i = 0; i < n_nodes; ++i)
         {
             result.row(i) = row_values;
@@ -69,7 +69,7 @@ struct ConstantParameter final : public Parameter<T>
     }
 
 private:
-    std::vector<T> const _values;
+    std::vector<T> const values_;
 };
 
 std::unique_ptr<ParameterBase> createConstantParameter(

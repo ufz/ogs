@@ -47,7 +47,7 @@ struct CoordinateSystem final
         std::vector<double> const& values, SpatialPosition const& pos) const;
 
 private:
-    std::array<Parameter<double> const*, 3> _base;
+    std::array<Parameter<double> const*, 3> base_;
 };
 
 }  // namespace ParameterLib
