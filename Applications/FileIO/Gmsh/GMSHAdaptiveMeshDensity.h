@@ -47,10 +47,10 @@ public:
 #endif
 
 private:
-    double _pnt_density;
-    double _station_density;
-    std::size_t _max_pnts_per_leaf;
-    GeoLib::QuadTree<GeoLib::Point> *_quad_tree;
+    double pnt_density_;
+    double station_density_;
+    std::size_t max_pnts_per_leaf_;
+    GeoLib::QuadTree<GeoLib::Point> *quad_tree_;
 };
 
 }  // namespace GMSH

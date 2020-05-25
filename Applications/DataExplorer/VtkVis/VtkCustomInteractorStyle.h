@@ -71,17 +71,17 @@ protected:
     ~VtkCustomInteractorStyle() override;
 
     /// @brief The vtk object to pick.
-    vtkDataObject* _data{nullptr};
+    vtkDataObject* data_{nullptr};
 
     /// @brief The mapper for highlighting the selected cell.
-    vtkDataSetMapper* _selectedMapper;
+    vtkDataSetMapper* selectedMapper_;
 
     /// @brief The actor for highlighting the selected cell.
-    vtkActor* _selectedActor;
+    vtkActor* selectedActor_;
 
 private:
-    bool _highlightActor{false};
-    bool _alternateMouseActions{false};
+    bool highlightActor_{false};
+    bool alternateMouseActions_{false};
 
 signals:
     /// @brief Emitted when something was picked.

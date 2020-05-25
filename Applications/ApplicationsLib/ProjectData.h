@@ -75,10 +75,10 @@ public:
     std::vector<std::unique_ptr<ProcessLib::Process>> const& getProcesses()
         const
     {
-        return _processes;
+        return processes_;
     }
 
-    ProcessLib::TimeLoop& getTimeLoop() { return *_time_loop; }
+    ProcessLib::TimeLoop& getTimeLoop() { return *time_loop_; }
 
 private:
     /// Parses the process variables configuration and creates new variables for
@@ -117,28 +117,28 @@ private:
         boost::optional<BaseLib::ConfigTree> const& config,
         const std::string& output_directory);
 
-    std::vector<std::unique_ptr<MeshLib::Mesh>> _mesh_vec;
-    std::vector<std::unique_ptr<ProcessLib::Process>> _processes;
-    std::vector<ProcessLib::ProcessVariable> _process_variables;
+    std::vector<std::unique_ptr<MeshLib::Mesh>> mesh_vec_;
+    std::vector<std::unique_ptr<ProcessLib::Process>> processes_;
+    std::vector<ProcessLib::ProcessVariable> process_variables_;
 
     /// Buffer for each parameter config passed to the process.
-    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> _parameters;
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> parameters_;
 
-    boost::optional<ParameterLib::CoordinateSystem> _local_coordinate_system;
+    boost::optional<ParameterLib::CoordinateSystem> local_coordinate_system_;
 
-    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> _media;
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> media_;
 
     /// The time loop used to solve this project's processes.
-    std::unique_ptr<ProcessLib::TimeLoop> _time_loop;
+    std::unique_ptr<ProcessLib::TimeLoop> time_loop_;
 
-    std::map<std::string, std::unique_ptr<GlobalLinearSolver>> _linear_solvers;
+    std::map<std::string, std::unique_ptr<GlobalLinearSolver>> linear_solvers_;
 
     std::map<std::string, std::unique_ptr<NumLib::NonlinearSolverBase>>
-        _nonlinear_solvers;
+        nonlinear_solvers_;
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>>
-        _curves;
+        curves_;
 
     std::unique_ptr<ChemistryLib::ChemicalSolverInterface>
-        _chemical_solver_interface;
+        chemical_solver_interface_;
 };

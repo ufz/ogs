@@ -87,7 +87,7 @@ private:
     void removeCondition(ProcessVarItem* process_var,
                          QString const& param_name);
 
-    DataHolderLib::Project& _project;
+    DataHolderLib::Project& project_;
 
 signals:
 };

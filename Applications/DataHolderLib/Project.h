@@ -43,7 +43,7 @@ public:
     ~Project() = default;
 
     /// Returns the GEOObjects containing all points, polylines and surfaces.
-    GeoLib::GEOObjects& getGEOObjects() { return _geoObjects; }
+    GeoLib::GEOObjects& getGEOObjects() { return geoObjects_; }
 
     /// Adds a new mesh under a (possibly new) unique name.
     /// \attention This might change the given mesh's name.
@@ -56,7 +56,7 @@ public:
     /// Returns all the meshes with their respective names
     const std::vector<std::unique_ptr<MeshLib::Mesh>>& getMeshObjects() const
     {
-        return _mesh_vec;
+        return mesh_vec_;
     }
 
     /// Deletes all meshes with the given name and removes them from the list of
@@ -67,26 +67,26 @@ public:
     /// Adds a boundary condition to the project
     void addBoundaryCondition(std::unique_ptr<BoundaryCondition> bc)
     {
-        _boundary_conditions.push_back(std::move(bc));
+        boundary_conditions_.push_back(std::move(bc));
     }
 
     /// Adds a source term to the project
     void addSourceTerm(std::unique_ptr<SourceTerm> st)
     {
-        _source_terms.push_back(std::move(st));
+        source_terms_.push_back(std::move(st));
     }
 
     /// Returns the vector of boundary conditions
     std::vector<std::unique_ptr<BoundaryCondition>> const&
     getBoundaryConditions() const
     {
-        return _boundary_conditions;
+        return boundary_conditions_;
     }
 
     /// Returns the vector of source terms
     std::vector<std::unique_ptr<SourceTerm>> const& getSourceTerms() const
     {
-        return _source_terms;
+        return source_terms_;
     }
 
     /// Removes a primary variable incl. all associated conditions
@@ -112,10 +112,10 @@ private:
     std::vector<std::unique_ptr<MeshLib::Mesh>>::iterator findMeshByName(
         std::string const& name);
 
-    GeoLib::GEOObjects _geoObjects;
-    std::vector<std::unique_ptr<MeshLib::Mesh>> _mesh_vec;
-    std::vector<std::unique_ptr<BoundaryCondition>> _boundary_conditions;
-    std::vector<std::unique_ptr<SourceTerm>> _source_terms;
+    GeoLib::GEOObjects geoObjects_;
+    std::vector<std::unique_ptr<MeshLib::Mesh>> mesh_vec_;
+    std::vector<std::unique_ptr<BoundaryCondition>> boundary_conditions_;
+    std::vector<std::unique_ptr<SourceTerm>> source_terms_;
 };
 
 }  // namespace DataHolderLib

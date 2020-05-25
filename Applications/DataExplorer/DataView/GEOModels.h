@@ -42,8 +42,8 @@ public:
                        QObject* parent = nullptr);
     ~GEOModels() override;
 
-    GeoTreeModel* getGeoModel() { return _geoModel; }
-    StationTreeModel* getStationModel() { return _stationModel; }
+    GeoTreeModel* getGeoModel() { return geoModel_; }
+    StationTreeModel* getStationModel() { return stationModel_; }
 
 public slots:
     /**
@@ -99,11 +99,11 @@ public slots:
                                  std::string const& gmsh_path);
 
 protected:
-    GeoTreeModel* _geoModel;
-    StationTreeModel* _stationModel;
+    GeoTreeModel* geoModel_;
+    StationTreeModel* stationModel_;
 
 private:
-    GeoLib::GEOObjects& _geo_objects;
+    GeoLib::GEOObjects& geo_objects_;
 
 signals:
     void geoDataAdded(GeoTreeModel*, std::string, GeoLib::GEOTYPE);
@@ -116,66 +116,66 @@ signals:
 class GEOModelsCallbacks final : public GeoLib::GEOObjects::Callbacks
 {
 public:
-    explicit GEOModelsCallbacks(GEOModels& geo_models) : _geo_models(geo_models)
+    explicit GEOModelsCallbacks(GEOModels& geo_models) : geo_models_(geo_models)
     {
     }
 
     void addPointVec(std::string const& name) override
     {
-        _geo_models.addPointVec(name);
+        geo_models_.addPointVec(name);
     }
 
     void removePointVec(std::string const& name) override
     {
-        _geo_models.removePointVec(name);
+        geo_models_.removePointVec(name);
     }
 
     void addStationVec(std::string const& name) override
     {
-        _geo_models.addStationVec(name);
+        geo_models_.addStationVec(name);
     };
 
     void removeStationVec(std::string const& name) override
     {
-        _geo_models.removeStationVec(name);
+        geo_models_.removeStationVec(name);
     };
 
     void addPolylineVec(std::string const& name) override
     {
-        _geo_models.addPolylineVec(name);
+        geo_models_.addPolylineVec(name);
     };
 
     void appendPolylineVec(std::string const& name) override
     {
-        _geo_models.appendPolylineVec(name);
+        geo_models_.appendPolylineVec(name);
     };
 
     void removePolylineVec(std::string const& name) override
     {
-        _geo_models.removePolylineVec(name);
+        geo_models_.removePolylineVec(name);
     };
 
     void addSurfaceVec(std::string const& name) override
     {
-        _geo_models.addSurfaceVec(name);
+        geo_models_.addSurfaceVec(name);
     };
 
     void appendSurfaceVec(std::string const& name) override
     {
-        _geo_models.appendSurfaceVec(name);
+        geo_models_.appendSurfaceVec(name);
     };
 
     void removeSurfaceVec(std::string const& name) override
     {
-        _geo_models.removeSurfaceVec(name);
+        geo_models_.removeSurfaceVec(name);
     };
 
     void renameGeometry(std::string const& old_name,
                         std::string const& new_name) override
     {
-        _geo_models.renameGeometry(old_name, new_name);
+        geo_models_.renameGeometry(old_name, new_name);
     }
 
 private:
-    GEOModels& _geo_models;
+    GEOModels& geo_models_;
 };

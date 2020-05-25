@@ -34,8 +34,8 @@ public:
     explicit SurfaceExtractionDialog(QDialog* parent = nullptr);
     ~SurfaceExtractionDialog() override = default;
 
-    int getTolerance() const { return _tolerance; }
-    MathLib::Vector3 const& getNormal() const { return _dir; }
+    int getTolerance() const { return tolerance_; }
+    MathLib::Vector3 const& getNormal() const { return dir_; }
 
 private slots:
     /// Instructions if the OK-Button has been pressed.
@@ -45,6 +45,6 @@ private slots:
     void reject() override { this->done(QDialog::Rejected); };
 
 private:
-    int _tolerance{90};
-    MathLib::Vector3 _dir{0, 0, -1};
+    int tolerance_{90};
+    MathLib::Vector3 dir_{0, 0, -1};
 };

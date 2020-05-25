@@ -37,6 +37,6 @@ public:
     int writeToFile(const std::string& name) const;
 
 private:
-    std::vector< std::pair<std::size_t,double> > _direct_values;
+    std::vector< std::pair<std::size_t,double> > direct_values_;
 
 };

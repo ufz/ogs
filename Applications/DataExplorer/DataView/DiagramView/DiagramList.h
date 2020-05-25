@@ -33,28 +33,28 @@ public:
     ~DiagramList();
 
     /// Returns the colour of the graph.
-    QColor getColor() const {   return _colour; }
+    QColor getColor() const {   return colour_; }
 
     /// Returns the height of the bounding box of all data points within the list.
-    float height()    const { return _maxY - _minY;  }
+    float height()    const { return maxY_ - minY_;  }
 
     /// Returns the minimum x-value.
-    float minXValue() const { return _minX; }
+    float minXValue() const { return minX_; }
 
     /// Returns the maximum x-value.
-    float maxXValue() const { return _maxX; }
+    float maxXValue() const { return maxX_; }
 
     /// Returns the minimum y-value.
-    float minYValue() const { return _minY; }
+    float minYValue() const { return minY_; }
 
     /// Returns the maximum y-value.
-    float maxYValue() const { return _maxY; }
+    float maxYValue() const { return maxY_; }
 
     /// Returns the start date of this list
-    const QDateTime getStartDate() const { return _startDate; }
+    const QDateTime getStartDate() const { return startDate_; }
 
     /// Returns the name of the diagram.
-    QString getName() const { return _name; }
+    QString getName() const { return name_; }
 
     /**
      * Returns all the data points in form of a QPainterPath in scene coordinates.
@@ -75,16 +75,16 @@ public:
     bool getPoint(QPointF &p, std::size_t i);
 
     /// Returns the label associated with the x-axis
-    QString getXLabel() const { return _xLabel; }
+    QString getXLabel() const { return xLabel_; }
 
     /// Returns the label associated with the y-axis
-    QString getYLabel() const { return _yLabel; }
+    QString getYLabel() const { return yLabel_; }
 
     /// Returns the unit associated with the x-axis
-    QString getXUnit() const { return _xUnit; }
+    QString getXUnit() const { return xUnit_; }
 
     /// Returns the unit associated with the y-axis
-    QString getYUnit() const { return _yUnit; }
+    QString getYUnit() const { return yUnit_; }
 
     /**
      * Reads information from a file. The reader assumes that values in the file are separated
@@ -100,25 +100,25 @@ public:
     static int readList(const SensorData* data, std::vector<DiagramList*> &list);
 
     /// Sets the colour of the graph.
-    void setColor(QColor c) { _colour = c; }
+    void setColor(QColor c) { colour_ = c; }
 
     /// Sets the name of the graph to be displayed in the caption.
-    void setName(QString name) { _name = name; }
+    void setName(QString name) { name_ = name; }
 
     /// Adds a point at (x,y) to the list
-    void addNextPoint(float x, float y) { _coords.emplace_back(x, y); }
+    void addNextPoint(float x, float y) { coords_.emplace_back(x, y); }
 
     /// cut list entries not within the given range
     void truncateToRange(QDateTime const& start, QDateTime const& end);
 
     /// Sets the start date (i.e. the min-value of the x-axis).
-    void setStartDate(QDateTime date) { _startDate = date; }
+    void setStartDate(QDateTime date) { startDate_ = date; }
 
     /// Specifies the meaning of the x Axis.
-    void setXLabel(QString label) { _xLabel = label; }
+    void setXLabel(QString label) { xLabel_ = label; }
 
     /// Specifies the meaning of the y Axis.
-    void setYLabel(QString label) { _yLabel = label; }
+    void setYLabel(QString label) { yLabel_ = label; }
 
     /**
      * Sets the list of x/y-coordinates.
@@ -135,16 +135,16 @@ public:
     void setList(std::vector<std::pair<QDateTime, float>> const& coords);
 
     /// Specifies the unit of the x Axis.
-    void setXUnit(QString unit) { _xUnit = unit; }
+    void setXUnit(QString unit) { xUnit_ = unit; }
 
     /// Specifies the unit of the y Axis.
-    void setYUnit(QString unit) { _yUnit = unit; }
+    void setYUnit(QString unit) { yUnit_ = unit; }
 
     /// Returns the number of data points.
     std::size_t size() const;
 
     /// Returns the width of the bounding box of all data points within the list.
-    double width() const { return _maxX - _minX; }
+    double width() const { return maxX_ - minX_; }
 
 private:
     /// Returns the minimum x-value of all the data points.
@@ -171,16 +171,16 @@ private:
     /// Updates the bounds of the data points contained in the list.
     void update();
 
-    float _maxX{0};
-    float _maxY{0};
-    float _minX{0};
-    float _minY{0};
-    std::vector< std::pair<float, float> > _coords;
-    QString _name;
-    QString _xLabel;
-    QString _yLabel;
-    QString _xUnit;
-    QString _yUnit;
-    QColor _colour;
-    QDateTime _startDate;
+    float maxX_{0};
+    float maxY_{0};
+    float minX_{0};
+    float minY_{0};
+    std::vector< std::pair<float, float> > coords_;
+    QString name_;
+    QString xLabel_;
+    QString yLabel_;
+    QString xUnit_;
+    QString yUnit_;
+    QColor colour_;
+    QDateTime startDate_;
 };

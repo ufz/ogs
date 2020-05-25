@@ -36,7 +36,7 @@ public:
 private:
     void setupDialog(const std::vector<std::size_t> &dis_nodes, const std::vector<double> &dis_values);
 
-    const GeoLib::Polyline _line;
+    const GeoLib::Polyline line_;
 
 private slots:
     void on_comboBox_currentIndexChanged(int index);

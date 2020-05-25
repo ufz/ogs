@@ -46,6 +46,6 @@ private slots:
     void reject() override { this->done(QDialog::Rejected); };
 
 private:
-    MeshLib::Mesh const& _mesh;
+    MeshLib::Mesh const& mesh_;
 
 };

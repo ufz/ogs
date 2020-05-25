@@ -123,19 +123,19 @@ private:
     void writeSettings();
     QString getLastUsedDir();
 
-    DataHolderLib::Project _project;
-    std::unique_ptr<MeshModel> _meshModel;
-    std::unique_ptr<ElementTreeModel> _elementModel;
-    std::unique_ptr<ProcessModel> _processModel;
-    std::unique_ptr<FemConditionModel> _conditionModel;
-    std::unique_ptr<VtkVisPipeline> _vtkVisPipeline;
-    QList<QRect> _screenGeometries;
-    std::unique_ptr<QWidget> _vtkWidget;
-    QByteArray _windowState;
+    DataHolderLib::Project project_;
+    std::unique_ptr<MeshModel> meshModel_;
+    std::unique_ptr<ElementTreeModel> elementModel_;
+    std::unique_ptr<ProcessModel> processModel_;
+    std::unique_ptr<FemConditionModel> conditionModel_;
+    std::unique_ptr<VtkVisPipeline> vtkVisPipeline_;
+    QList<QRect> screenGeometries_;
+    std::unique_ptr<QWidget> vtkWidget_;
+    QByteArray windowState_;
 
-    std::unique_ptr<VisPrefsDialog> _visPrefsDialog;
+    std::unique_ptr<VisPrefsDialog> visPrefsDialog_;
 
-    std::unique_ptr<GEOModels> _geo_model;
+    std::unique_ptr<GEOModels> geo_model_;
 
 signals:
     void fileUsed( QString filename );

@@ -36,7 +36,7 @@ public:
     std::vector<std::string> const& getOutputFiles() const;
 
 private:
-    std::vector<std::string> _command_lines;
-    std::vector<std::string> _output_files;
+    std::vector<std::string> command_lines_;
+    std::vector<std::string> output_files_;
 };
 }  // namespace ApplicationsLib

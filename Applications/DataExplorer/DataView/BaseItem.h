@@ -33,34 +33,34 @@ class BaseItem
 public:
     explicit BaseItem(const QString& listName,
                       const std::vector<GeoLib::Point*>* stations = nullptr)
-        : _stations(stations), _vtkSource(VtkStationSource::New())
+        : stations_(stations), vtkSource_(VtkStationSource::New())
     {
         // create the vtk-object for 3d-visualisation of this list
-        static_cast<VtkStationSource*>(_vtkSource)->setStations(stations);
-        static_cast<VtkStationSource*>(_vtkSource)->SetName(listName);
+        static_cast<VtkStationSource*>(vtkSource_)->setStations(stations);
+        static_cast<VtkStationSource*>(vtkSource_)->SetName(listName);
     }
 
     ~BaseItem()
     {
-        _vtkSource->Delete();
+        vtkSource_->Delete();
     }
 
     /// Returns the associated QModelIndex which belongs to a Qt model
-    QModelIndex modelIndex() const { return _modelIndex; }
+    QModelIndex modelIndex() const { return modelIndex_; }
 
     /// Sets the model index
-    void setModelIndex( QModelIndex index ) { _modelIndex = index; }
+    void setModelIndex( QModelIndex index ) { modelIndex_ = index; }
 
-    const std::vector<GeoLib::Point*>* getStations() { return _stations; }
+    const std::vector<GeoLib::Point*>* getStations() { return stations_; }
 
     /// Returns the Vtk polydata source object
-    vtkPolyDataAlgorithm* vtkSource() const { return _vtkSource; }
+    vtkPolyDataAlgorithm* vtkSource() const { return vtkSource_; }
 
 private:
-    QModelIndex _modelIndex;
-    const std::vector<GeoLib::Point*>* _stations;
+    QModelIndex modelIndex_;
+    const std::vector<GeoLib::Point*>* stations_;
 
     /// The Vtk data source object. This is the starting point for a Vtk data
     /// visualization pipeline.
-    vtkPolyDataAlgorithm* _vtkSource;
+    vtkPolyDataAlgorithm* vtkSource_;
 };

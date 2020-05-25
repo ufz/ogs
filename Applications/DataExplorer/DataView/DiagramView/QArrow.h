@@ -42,9 +42,9 @@ private:
     double calcCos(double angle);
     double calcSin(double angle);
 
-    qreal _arrowLength;
-    qreal _arrowAngle;
-    qreal _headLength;
-    qreal _headWidth;
-    QPen _arrowPen;
+    qreal arrowLength_;
+    qreal arrowAngle_;
+    qreal headLength_;
+    qreal headWidth_;
+    QPen arrowPen_;
 };

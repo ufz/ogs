@@ -41,6 +41,6 @@ protected slots:
     void on_filterListWidget_currentRowChanged(int currentRow);
 
 private:
-    VtkVisPipeline& _pipeline;
-    QModelIndex _parentIndex;
+    VtkVisPipeline& pipeline_;
+    QModelIndex parentIndex_;
 };

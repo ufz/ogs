@@ -76,10 +76,10 @@ public:
     void setBackfaceCulling(bool enable) const override;
 
 protected:
-    QVtkDataSetMapper* _mapper;
-    vtkTransformFilter* _transformFilter;
-    bool _onPointData;
-    std::string _activeArrayName;
+    QVtkDataSetMapper* mapper_;
+    vtkTransformFilter* transformFilter_;
+    bool onPointData_;
+    std::string activeArrayName_;
 
     /// Selects the appropriate VTK-Writer object and writes the object to a file with the given name.
     int callVTKWriter(vtkAlgorithm* algorithm,

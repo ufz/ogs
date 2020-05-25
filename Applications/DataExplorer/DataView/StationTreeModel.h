@@ -48,7 +48,7 @@ public:
     ~StationTreeModel() override;
 
     void addStationList(QString listName, const std::vector<GeoLib::Point*>* stations);
-    const std::vector<ModelTreeItem*> &getLists() { return _lists; }
+    const std::vector<ModelTreeItem*> &getLists() { return lists_; }
     QModelIndex index(int row, int column,
                       const QModelIndex& parent = QModelIndex()) const override;
     //BaseItem* itemFromIndex( const QModelIndex& index ) const;
@@ -60,5 +60,5 @@ public:
     vtkPolyDataAlgorithm* vtkSource(const std::string &name) const;
 
 private:
-    std::vector<ModelTreeItem*> _lists;
+    std::vector<ModelTreeItem*> lists_;
 };

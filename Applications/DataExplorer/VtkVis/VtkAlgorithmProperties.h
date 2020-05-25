@@ -27,16 +27,16 @@ class vtkLookupTable;
 
 
 #define ogsUserPropertyMacro(name,type) \
-        virtual void Set ## name (type _arg) \
+        virtual void Set ## name (type arg_) \
     { \
         vtkDebugMacro( \
                 << this->GetClassName() << " (" << this << "): setting " # name " to " << \
-                _arg); \
-        if (this->name != _arg)  \
+                arg_); \
+        if (this->name != arg_)  \
         { \
-            this->name = _arg; \
+            this->name = arg_; \
             this->Modified(); \
-            (*(this->_algorithmUserProperties))[QString(# name)] = QVariant(_arg); \
+            (*(this->algorithmUserProperties_))[QString(# name)] = QVariant(arg_); \
         } \
     } \
 \
@@ -44,88 +44,88 @@ class vtkLookupTable;
 // End of ogsUserPropertyMacro
 
 #define ogsUserVec2PropertyMacro(name,type) \
-        virtual void Set ## name (type _arg1, type _arg2) \
+        virtual void Set ## name (type arg1_, type arg2_) \
     { \
         vtkDebugMacro( \
                 << this->GetClassName() << " (" << this << "): setting " << \
                 # name " to (" << \
-                _arg1 << "," << _arg2 << ")"); \
-        if ((this->name[0] != _arg1) || (this->name[1] != _arg2)) \
+                arg1_ << "," << arg2_ << ")"); \
+        if ((this->name[0] != arg1_) || (this->name[1] != arg2_)) \
         { \
-            this->name[0] = _arg1; \
-            this->name[1] = _arg2; \
+            this->name[0] = arg1_; \
+            this->name[1] = arg2_; \
             this->Modified(); \
             QList<QVariant> list; \
-            list.push_back(QVariant(_arg1)); \
-            list.push_back(QVariant(_arg2)); \
-            (*(this->_algorithmUserVectorProperties))[QString(# name)] = list; \
+            list.push_back(QVariant(arg1_)); \
+            list.push_back(QVariant(arg2_)); \
+            (*(this->algorithmUserVectorProperties_))[QString(# name)] = list; \
         } \
     } \
 \
-        virtual void Set ## name (type _arg[2]) \
+        virtual void Set ## name (type arg_[2]) \
     { \
-        this->Set ## name (_arg[0], _arg[1]); \
+        this->Set ## name (arg_[0], arg_[1]); \
     } \
 \
         type name[2];
 // End of ogsUserVec2PropertyMacro
 
 #define ogsUserVec3PropertyMacro(name,type) \
-        virtual void Set ## name (type _arg1, type _arg2, type _arg3) \
+        virtual void Set ## name (type arg1_, type arg2_, type arg3_) \
     { \
         vtkDebugMacro( \
                 << this->GetClassName() << " (" << this << "): setting " << \
                 # name " to (" << \
-                _arg1 << "," << _arg2 << "," << _arg3 << ")"); \
-        if ((this->name[0] != _arg1) || (this->name[1] != _arg2) || (this->name[2] != _arg3)) \
+                arg1_ << "," << arg2_ << "," << arg3_ << ")"); \
+        if ((this->name[0] != arg1_) || (this->name[1] != arg2_) || (this->name[2] != arg3_)) \
         { \
-            this->name[0] = _arg1; \
-            this->name[1] = _arg2; \
-            this->name[2] = _arg3; \
+            this->name[0] = arg1_; \
+            this->name[1] = arg2_; \
+            this->name[2] = arg3_; \
             this->Modified(); \
             QList<QVariant> list; \
-            list.push_back(QVariant(_arg1)); \
-            list.push_back(QVariant(_arg2)); \
-            list.push_back(QVariant(_arg3)); \
-            (*(this->_algorithmUserVectorProperties))[QString(# name)] = list; \
+            list.push_back(QVariant(arg1_)); \
+            list.push_back(QVariant(arg2_)); \
+            list.push_back(QVariant(arg3_)); \
+            (*(this->algorithmUserVectorProperties_))[QString(# name)] = list; \
         } \
     } \
 \
-        virtual void Set ## name (type _arg[3]) \
+        virtual void Set ## name (type arg_[3]) \
     { \
-        this->Set ## name (_arg[0], _arg[1], _arg[2]); \
+        this->Set ## name (arg_[0], arg_[1], arg_[2]); \
     } \
 \
         type name[3];
 // End of ogsUserVec3PropertyMacro
 
 #define ogsUserVec4PropertyMacro(name,type) \
-        virtual void Set ## name (type _arg1, type _arg2, type _arg3, type _arg4) \
+        virtual void Set ## name (type arg1_, type arg2_, type arg3_, type arg4_) \
     { \
         vtkDebugMacro( \
                 << this->GetClassName() << " (" << this << "): setting " << \
                 # name " to (" << \
-                _arg1 << "," << _arg2 << "," << _arg3 << "," << _arg4 << ")"); \
-        if ((this->name[0] != _arg1) || (this->name[1] != _arg2) || \
-            (this->name[2] != _arg3) || (this->name[3] != _arg4)) \
+                arg1_ << "," << arg2_ << "," << arg3_ << "," << arg4_ << ")"); \
+        if ((this->name[0] != arg1_) || (this->name[1] != arg2_) || \
+            (this->name[2] != arg3_) || (this->name[3] != arg4_)) \
         { \
-            this->name[0] = _arg1; \
-            this->name[1] = _arg2; \
-            this->name[2] = _arg3; \
-            this->name[3] = _arg4; \
+            this->name[0] = arg1_; \
+            this->name[1] = arg2_; \
+            this->name[2] = arg3_; \
+            this->name[3] = arg4_; \
             this->Modified(); \
             QList<QVariant> list; \
-            list.push_back(QVariant(_arg1)); \
-            list.push_back(QVariant(_arg2)); \
-            list.push_back(QVariant(_arg3)); \
-            list.push_back(QVariant(_arg4)); \
-            (*(this->_algorithmUserVectorProperties))[QString(# name)] = list; \
+            list.push_back(QVariant(arg1_)); \
+            list.push_back(QVariant(arg2_)); \
+            list.push_back(QVariant(arg3_)); \
+            list.push_back(QVariant(arg4_)); \
+            (*(this->algorithmUserVectorProperties_))[QString(# name)] = list; \
         } \
     } \
 \
-        virtual void Set ## name (type _arg[4]) \
+        virtual void Set ## name (type arg_[4]) \
     { \
-        this->Set ## name (_arg[0], _arg[1], _arg[2], _arg[3]); \
+        this->Set ## name (arg_[0], arg_[1], arg_[2], arg_[3]); \
     } \
 \
         type name[4];
@@ -145,13 +145,13 @@ public:
     ~VtkAlgorithmProperties() override;
 
     /// @brief Returns the vtk properties
-    vtkProperty* GetProperties() const { return _property; }
+    vtkProperty* GetProperties() const { return property_; }
 
     /// @brief Returns a texture (if one has been assigned).
-    vtkTexture* GetTexture() { return _texture; }
+    vtkTexture* GetTexture() { return texture_; }
 
     /// @brief Sets a texture for the VtkVisPipelineItem.
-    void SetTexture(vtkTexture* t) { _texture = t; }
+    void SetTexture(vtkTexture* t) { texture_ = t; }
 
     /// @brief Returns the colour lookup table (if one has been assigned).
     vtkLookupTable* GetLookupTable(const QString& array_name);
@@ -166,34 +166,34 @@ public:
     void SetLookUpTable(const QString &array_name, const QString &filename);
 
     /// @brief Returns the scalar visibility.
-    bool GetScalarVisibility() const { return _scalarVisibility; }
+    bool GetScalarVisibility() const { return scalarVisibility_; }
 
     /// @brief Sets the scalar visibility.
     void SetScalarVisibility(bool on);
 
     /// @brief Returns the name. This is set to the file path if it is a source algorithm.
-    QString GetName() const { return _name; }
+    QString GetName() const { return name_; }
 
     /// @brief Sets the name.
-    void SetName(QString name) { _name = name; }
+    void SetName(QString name) { name_ = name; }
 
     /// @brief Is this algorithm removable from the pipeline (view).
-    bool IsRemovable() const { return _removable; }
+    bool IsRemovable() const { return removable_; }
 
     /// @brief Returns a map of user properties.
     QMap<QString, QVariant>* GetAlgorithmUserProperties() const {
-        return _algorithmUserProperties;
+        return algorithmUserProperties_;
     }
 
     /// @brief Returns a map of vector user properties.
     QMap<QString, QList<QVariant> >* GetAlgorithmUserVectorProperties() const {
-        return _algorithmUserVectorProperties;
+        return algorithmUserVectorProperties_;
     }
 
     /// @brief Sets a user property. This should be implemented by subclasses.
     virtual void SetUserProperty(QString name, QVariant value)
     {
-        (*_algorithmUserProperties)[name] = value;
+        (*algorithmUserProperties_)[name] = value;
     }
 
     /// @brief Returns the value of a user property.
@@ -202,7 +202,7 @@ public:
     /// @brief Sets a vector user property. This should be implemented by subclasses.
     virtual void SetUserVectorProperty(QString name, QList<QVariant> values)
     {
-        (*_algorithmUserVectorProperties)[name] = values;
+        (*algorithmUserVectorProperties_)[name] = values;
     }
 
     /// @brief Returns a list of values of a vector user property.
@@ -212,26 +212,26 @@ public:
     void SetActiveAttribute(QString name);
 
     /// @brief Returns the desired active attribute.
-    QString GetActiveAttribute() const { return _activeAttributeName; }
+    QString GetActiveAttribute() const { return activeAttributeName_; }
 
 
 protected:
 
     // Properties set on vtkActor
-    vtkProperty* _property;
-    vtkTexture* _texture;
+    vtkProperty* property_;
+    vtkTexture* texture_;
 
     // Properties set on vtkMapper
-    bool _scalarVisibility;
-    std::map<QString, vtkLookupTable*> _lut;
+    bool scalarVisibility_;
+    std::map<QString, vtkLookupTable*> lut_;
 
     // Properties used in the GUI
-    QString _name;
-    QString _activeAttributeName;
-    bool _removable;
+    QString name_;
+    QString activeAttributeName_;
+    bool removable_;
 
-    QMap<QString, QVariant>* _algorithmUserProperties;
-    QMap<QString, QList<QVariant> >* _algorithmUserVectorProperties;
+    QMap<QString, QVariant>* algorithmUserProperties_;
+    QMap<QString, QList<QVariant> >* algorithmUserVectorProperties_;
 
 signals:
     void ScalarVisibilityChanged(bool on);

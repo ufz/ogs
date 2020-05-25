@@ -38,6 +38,6 @@ public:
     void SetIndex(std::size_t idx);
 
 private:
-    GeoLib::GEOTYPE _type;
-    vtkThreshold* _threshold;
+    GeoLib::GEOTYPE type_;
+    vtkThreshold* threshold_;
 };

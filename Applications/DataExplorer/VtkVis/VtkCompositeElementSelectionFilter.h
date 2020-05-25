@@ -32,7 +32,7 @@ public:
     void init() override;
 
     // Sets the range for the quality measure (default is [0,1] but this may vary for area- and volume-metrics).
-    void setRange(double min_val, double max_val) { _range = std::make_pair(min_val, max_val); }
+    void setRange(double min_val, double max_val) { range_ = std::make_pair(min_val, max_val); }
 
     void setSelectionArray(const std::string &selection_name, const std::vector<double> &selection = std::vector<double>());
 
@@ -42,7 +42,7 @@ private:
     /// Returns a colour lookup table optimised for quality measures
     VtkColorLookupTable* GetLookupTable();
 
-    std::pair<double, double> _range;
-    std::string _selection_name;
-    std::vector<double> _selection;
+    std::pair<double, double> range_;
+    std::string selection_name_;
+    std::vector<double> selection_;
 };

@@ -55,7 +55,7 @@ public slots:
     void updateData();
 
 protected:
-    TreeItem* _rootItem;
+    TreeItem* rootItem_;
 
 private:
     void setupModelData(const QStringList &lines, TreeItem* parent);

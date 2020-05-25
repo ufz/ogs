@@ -38,9 +38,9 @@ public:
 private:
     std::vector<std::size_t> getSelectedIndeces(QStringList list);
 
-    QStringListModel* _allPly;
-    QStringListModel* _selPly;
-    std::string _geoName;
+    QStringListModel* allPly_;
+    QStringListModel* selPly_;
+    std::string geoName_;
 
 private slots:
     /// Instructions when polylines are selected.

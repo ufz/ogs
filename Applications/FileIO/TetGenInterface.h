@@ -212,9 +212,9 @@ private:
                               std::string const& matId) const;
 
     /// the value is true if the indexing is zero based, else false
-    bool _zero_based_idx{false};
+    bool zero_based_idx_{false};
 
     /// true if boundary markers are set, false otherwise
-    bool _boundary_markers{false};
+    bool boundary_markers_{false};
 };
 }  // namespace FileIO

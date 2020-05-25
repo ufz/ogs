@@ -48,7 +48,7 @@ private:
     void readPetrelSurface (std::istream &in);
     void readPetrelWellTrace (std::istream &in);
     void readPetrelWellTraceData (std::istream &in);
-    std::string _unique_name;
+    std::string unique_name_;
     std::vector<GeoLib::Point*>* pnt_vec;
     std::vector<GeoLib::Point*>* well_vec;
     std::vector<GeoLib::Polyline*>* ply_vec;

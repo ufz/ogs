@@ -39,10 +39,10 @@ public:
     ~MeshItem() override;
 
     /// Returns the mesh.
-    MeshLib::Mesh const* getMesh() const { return _mesh_source->GetMesh(); }
+    MeshLib::Mesh const* getMesh() const { return mesh_source_->GetMesh(); }
     /// Returns the VTK object.
-    MeshLib::VtkMappedMeshSource*  vtkSource() const { return _mesh_source; }
+    MeshLib::VtkMappedMeshSource*  vtkSource() const { return mesh_source_; }
 
 private:
-    MeshLib::VtkMappedMeshSource * _mesh_source;
+    MeshLib::VtkMappedMeshSource * mesh_source_;
 };

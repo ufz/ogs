@@ -35,7 +35,7 @@ public:
     explicit ElementTreeModel(QObject* parent = nullptr);
     ~ElementTreeModel() override;
 
-    vtkUnstructuredGridAlgorithm const* getSource() const { return _mesh_source; };
+    vtkUnstructuredGridAlgorithm const* getSource() const { return mesh_source_; };
 
 public slots:
     /// Clears the tree.
@@ -48,5 +48,5 @@ public slots:
     void setMesh(MeshLib::Mesh const& mesh);
 
 private:
-    vtkUnstructuredGridAlgorithm const* _mesh_source{nullptr};
+    vtkUnstructuredGridAlgorithm const* mesh_source_{nullptr};
 };

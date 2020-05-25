@@ -41,9 +41,9 @@ public:
     ~VtkAlgorithmPropertyVectorEdit() override;
 
 private:
-    const QString _name;
-    VtkAlgorithmProperties* _algProps;
-    QVariant::Type _type;
+    const QString name_;
+    VtkAlgorithmProperties* algProps_;
+    QVariant::Type type_;
 
 private slots:
     /// @brief This slots is automatically called when the checkbox state changed.

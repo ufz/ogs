@@ -44,22 +44,22 @@ public:
     virtual ~FemCondition() = default;
 
     /// Returns the name of the associated process variable
-    std::string const getProcessVarName() const { return _process_var.name; }
+    std::string const getProcessVarName() const { return process_var_.name; }
 
     /// Returns the numerical order of the process vairable
-    ProcessVariable const& getProcessVar() const { return _process_var; }
+    ProcessVariable const& getProcessVar() const { return process_var_; }
 
     /// Returns the name of the parameter associated with the condition
-    std::string const getParamName() const { return _param_name; }
+    std::string const getParamName() const { return param_name_; }
 
     /// Specifies if the condition is set a geometry or on a mesh
-    BaseObjType getBaseObjType() const { return _base_type; }
+    BaseObjType getBaseObjType() const { return base_type_; }
 
     /// Returns the name of the base object (i.e. geometry or mesh)
-    std::string getBaseObjName() const { return _base_obj_name; }
+    std::string getBaseObjName() const { return base_obj_name_; }
 
     /// Returns the name of the geometric object
-    std::string const getObjName() const { return _obj_name; }
+    std::string const getObjName() const { return obj_name_; }
 
     /// Sets a mesh as corresponding object for the condition
     void setMesh(std::string const& mesh_name);
@@ -72,11 +72,11 @@ public:
     virtual std::string const getConditionClassStr() const = 0;
 
 private:
-    BaseObjType _base_type;
-    ProcessVariable _process_var;
-    std::string _param_name;
-    std::string _base_obj_name;
-    std::string _obj_name;
+    BaseObjType base_type_;
+    ProcessVariable process_var_;
+    std::string param_name_;
+    std::string base_obj_name_;
+    std::string obj_name_;
 };
 
 }  // namespace DataHolderLib

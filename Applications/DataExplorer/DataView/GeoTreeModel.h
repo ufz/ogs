@@ -46,7 +46,7 @@ public:
     ~GeoTreeModel() override;
 
     /**
-     * Inserts a new subtree under _rootItem for a geometry with the given name along with a subtree named "Points" for that new geometry.
+     * Inserts a new subtree under rootItem_ for a geometry with the given name along with a subtree named "Points" for that new geometry.
      * \param geoName Name of the new subtree. If no name is given a default name is assigned.
      * \param pointVec The list of points to be added as children of that subtree (no geometry can be added with a set of points!)
      */
@@ -60,7 +60,7 @@ public:
     /// Appends surfaces to the "Surface"-subtree
     void appendSurfaces(const std::string &name, GeoLib::SurfaceVec const& surfaceVec);
     /// Returns a list of all existing geometries.
-    const std::vector<GeoTreeItem*> &getLists() { return _lists; }
+    const std::vector<GeoTreeItem*> &getLists() { return lists_; }
     /**
      * Removes a geometry (points, polylines & surfaces) or just a specified subtree indicated by type.
      * Note that points cannot be deleted as long as other objects exist that depend on them.
@@ -96,5 +96,5 @@ private:
                      std::size_t start_index,
                      std::size_t end_index);
 
-    std::vector<GeoTreeItem*> _lists;
+    std::vector<GeoTreeItem*> lists_;
 };

@@ -58,5 +58,5 @@ private:
     QSize sizeHint() const override;
     void update();
 
-    DiagramScene* _scene;
+    DiagramScene* scene_;
 };

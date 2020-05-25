@@ -93,8 +93,8 @@ private:
     T* parseCondition(QDomNode const& node, QDomNode const& param_root,
                       DataHolderLib::ProcessVariable const& pvar) const;
 
-    std::string _filename;
-    DataHolderLib::Project& _project;
+    std::string filename_;
+    DataHolderLib::Project& project_;
 };
 
 }  // end namespace FileIO

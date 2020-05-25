@@ -34,7 +34,7 @@ public:
     }
 
     /// Returns the type of source term this is
-    ConditionType getType() const { return _type; }
+    ConditionType getType() const { return type_; }
 
     /// Converts the type enum into a string
     static std::string convertTypeToString(ConditionType type);
@@ -43,7 +43,7 @@ public:
     static ConditionType convertStringToType(std::string const& str);
 
 private:
-    ConditionType _type;
+    ConditionType type_;
 };
 
 }  // namespace DataHolderLib

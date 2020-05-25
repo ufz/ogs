@@ -46,16 +46,16 @@ public:
 
 private:
     /// \brief The current TreeItem.
-    TreeItem* _current;
+    TreeItem* current_;
 
     /// \brief The current child index.
-    int _currentIndex;
+    int currentIndex_;
 
     /// \brief Stack to save the child indices of the parent TreeItems.
-    QStack<int> _parentIndex;
+    QStack<int> parentIndex_;
 
     /// \brief The model to iterate over.
-    TreeModel* _model;
+    TreeModel* model_;
 
     /// \brief The traversal implementation.
     TreeItem* next(const TreeItem* current);

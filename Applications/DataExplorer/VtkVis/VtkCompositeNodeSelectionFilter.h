@@ -32,5 +32,5 @@ public:
     void setSelectionArray(const std::vector<unsigned> &point_indeces);
 
 private:
-    std::vector<GeoLib::Point*> _selection;
+    std::vector<GeoLib::Point*> selection_;
 };

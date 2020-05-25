@@ -36,9 +36,9 @@ public:
     explicit NetCdfConfigureDialog(const std::string& fileName,
                                    QDialog* parent = nullptr);
     ~NetCdfConfigureDialog() override;
-    MeshLib::Mesh* getMesh() { return _currentMesh; };
+    MeshLib::Mesh* getMesh() { return currentMesh_; };
     std::string getName();
-    VtkGeoImageSource* getRaster() { return _currentRaster; };
+    VtkGeoImageSource* getRaster() { return currentRaster_; };
 
 private slots:
     void accept() override;
@@ -66,9 +66,9 @@ private:
     QString setName();
     void reverseNorthSouth(double* data, std::size_t width, std::size_t height);
 
-    netCDF::NcFile _currentFile;
-    netCDF::NcVar _currentVar;
-    MeshLib::Mesh* _currentMesh;
-    VtkGeoImageSource* _currentRaster;
-    std::string _currentPath;
+    netCDF::NcFile currentFile_;
+    netCDF::NcVar currentVar_;
+    MeshLib::Mesh* currentMesh_;
+    VtkGeoImageSource* currentRaster_;
+    std::string currentPath_;
 };

@@ -35,20 +35,20 @@ public:
      */
     ModelTreeItem(const QList<QVariant>& data, TreeItem* parent,
                   BaseItem* item = nullptr);
-    ~ModelTreeItem() override { delete _item; }
+    ~ModelTreeItem() override { delete item_; }
     /// Returns the station object from which this item has been constructed
-    GeoLib::Station* getStation() { return _stn; }
+    GeoLib::Station* getStation() { return stn_; }
 
     /// Returns the BaseItem associated with this item
     BaseItem* getItem() const;
 
     /// Associates a station object with this item
-    void setStation(GeoLib::Station* stn) { _stn = stn; }
+    void setStation(GeoLib::Station* stn) { stn_ = stn; }
 
     /// Associates a BaseItem with this item
-    void setItem( BaseItem* item ) { _item = item; }
+    void setItem( BaseItem* item ) { item_ = item; }
 
 private:
-    BaseItem* _item;
-    GeoLib::Station* _stn;
+    BaseItem* item_;
+    GeoLib::Station* stn_;
 };

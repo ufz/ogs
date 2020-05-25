@@ -39,8 +39,8 @@ public:
 private:
     std::vector<std::string> getSelectedObjects(QStringList list);
 
-    QStringListModel* _allGeo;
-    QStringListModel* _selGeo;
+    QStringListModel* allGeo_;
+    QStringListModel* selGeo_;
 
 private slots:
     void on_selectGeoButton_pressed();

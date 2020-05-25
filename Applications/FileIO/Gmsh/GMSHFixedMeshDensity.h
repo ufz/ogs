@@ -29,7 +29,7 @@ public:
     ~GMSHFixedMeshDensity() override = default;
 
 private:
-    double _mesh_density;
+    double mesh_density_;
 };
 
 }  // namespace GMSH

@@ -24,7 +24,7 @@ public:
     void write(std::ostream& os) const override;
 
 private:
-    double _mesh_density;
+    double mesh_density_;
 };
 
 /** overload the output operator for class GMSHPoint */

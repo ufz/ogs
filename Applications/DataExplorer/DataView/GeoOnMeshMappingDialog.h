@@ -36,11 +36,11 @@ public:
         QDialog* parent = nullptr);
     ~GeoOnMeshMappingDialog() override;
 
-    std::string const& getNewGeoName() const { return _new_geo_name; };
+    std::string const& getNewGeoName() const { return new_geo_name_; };
     int getDataSetChoice() const;
 
 private:
-    std::string _new_geo_name;
+    std::string new_geo_name_;
 
 private slots:
     void on_advancedMappingButton_toggled(bool isSelected) { this->geoNameEdit->setEnabled(isSelected); };

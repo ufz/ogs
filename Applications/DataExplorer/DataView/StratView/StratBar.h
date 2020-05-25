@@ -62,6 +62,6 @@ private:
     /// The default width of the bar
     static const int BARWIDTH = 50;
 
-    GeoLib::StationBorehole* _station;
-    std::map<std::string, DataHolderLib::Color> _stratColors;
+    GeoLib::StationBorehole* station_;
+    std::map<std::string, DataHolderLib::Color> stratColors_;
 };

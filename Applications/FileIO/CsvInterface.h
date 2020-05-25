@@ -46,7 +46,7 @@ public:
     CsvInterface();
 
     /// Returns the number of vectors currently staged for writing.
-    std::size_t getNArrays() const { return _vec_names.size(); }
+    std::size_t getNArrays() const { return vec_names_.size(); }
 
     /// Returns a vector containing the names of columns in the file (assuming
     /// the file *has* a header)
@@ -57,7 +57,7 @@ public:
     void addIndexVectorForWriting(std::size_t s);
 
     /// Stores if the CSV file to be written should include a header or not.
-    void setCsvHeader(bool write_header) { _writeCsvHeader = write_header; }
+    void setCsvHeader(bool write_header) { writeCsvHeader_ = write_header; }
 
     /// Adds a data vector to the CSV file. All data vectors have to have the same size.
     /// Vectors will be written in the same sequence they have been added to the interface.
@@ -69,7 +69,7 @@ public:
                 || std::is_same<T, int>::value,
                 "CsvInterface can only write vectors of strings, doubles or ints.");
 
-        if (!_data.empty())
+        if (!data_.empty())
         {
             std::size_t const vec_size (getVectorSize(0));
             if (vec_size != vec.size())
@@ -81,8 +81,8 @@ public:
             }
         }
 
-        _vec_names.push_back(vec_name);
-        _data.push_back(vec);
+        vec_names_.push_back(vec_name);
+        data_.push_back(vec);
         return true;
     }
 
@@ -242,9 +242,9 @@ private:
      */
     void writeValue(std::size_t vec_idx, std::size_t in_vec_idx);
 
-    bool _writeCsvHeader{true};
-    std::vector<std::string> _vec_names;
-    std::vector< boost::any > _data;
+    bool writeCsvHeader_{true};
+    std::vector<std::string> vec_names_;
+    std::vector< boost::any > data_;
 };
 
 }  // namespace FileIO

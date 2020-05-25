@@ -69,7 +69,7 @@ public:
         std::string const& vec_name, std::vector<double> const& data);
 
     /// Returns the mesh generated from SWMM file content.
-    MeshLib::Mesh& getMesh() const { return *_mesh; }
+    MeshLib::Mesh& getMesh() const { return *mesh_; }
 
     /// Returns the name of the data array for the given object type and parameter index.
     std::string getArrayName(SwmmObject obj_type, std::size_t var_idx) const;
@@ -197,21 +197,21 @@ private:
 
     //variables
     /// All files for a given SWMM simulation have the same base name.
-    std::string const _base_name;
+    std::string const base_name_;
     /// Vector storing the names of all nodes/junctions
-    std::vector<std::string> _id_nodename_map;
+    std::vector<std::string> id_nodename_map_;
     /// Vector storing the names of all links/conduits
-    std::vector<std::string> _id_linkname_map;
+    std::vector<std::string> id_linkname_map_;
     /// Vector storing the names of all pollutants
-    std::vector<std::string> _pollutant_names;
+    std::vector<std::string> pollutant_names_;
     /// Vector storing information about all subcatchments
-    std::vector<Subcatchment> _subcatchments;
+    std::vector<Subcatchment> subcatchments_;
     /// Separate node vector containing points for defining subcatchment outlines
-    std::vector<GeoLib::Point*> _subcatchment_points;
+    std::vector<GeoLib::Point*> subcatchment_points_;
     /// Vector containing rain gauge information as well the position of external time series files
-    std::vector< std::pair<GeoLib::Station, std::string> > _rain_gauges;
+    std::vector< std::pair<GeoLib::Station, std::string> > rain_gauges_;
     /// Mesh generated from SWMM input (+ optional output data)
-    std::unique_ptr<MeshLib::Mesh> _mesh;
+    std::unique_ptr<MeshLib::Mesh> mesh_;
 };
 
 } // namespace FileIO

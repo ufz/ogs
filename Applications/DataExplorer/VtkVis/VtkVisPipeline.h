@@ -88,7 +88,7 @@ public:
     void loadFromFile(QString filename);
 
     /// \brief Defaults to on.
-    void resetCameraOnAddOrRemove(bool reset) { _resetCameraOnAddOrRemove = reset; }
+    void resetCameraOnAddOrRemove(bool reset) { resetCameraOnAddOrRemove_ = reset; }
 
     /// \brief Sets a global superelevation factor on all source items and resets
     /// the factor on other items to 1.
@@ -137,14 +137,14 @@ public slots:
 private:
     void listArrays(vtkDataSet* dataSet);
 
-    vtkRenderer* _renderer;
-    QVector<vtkAlgorithm*> _sources;
-    std::list<vtkLight*> _lights;
-    QMap<vtkProp3D*, QModelIndex> _actorMap;
-    bool _resetCameraOnAddOrRemove;
+    vtkRenderer* renderer_;
+    QVector<vtkAlgorithm*> sources_;
+    std::list<vtkLight*> lights_;
+    QMap<vtkProp3D*, QModelIndex> actorMap_;
+    bool resetCameraOnAddOrRemove_;
 
-    QModelIndex _highlighted_geo_index;
-    QModelIndex _highlighted_mesh_component;
+    QModelIndex highlighted_geo_index_;
+    QModelIndex highlighted_mesh_component_;
 
 signals:
     /// \brief Is emitted when a pipeline item was added or removed.

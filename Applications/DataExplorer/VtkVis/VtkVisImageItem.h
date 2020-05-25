@@ -62,5 +62,5 @@ protected:
     void setVtkProperties(VtkAlgorithmProperties* vtkProps);
 
 private:
-    vtkImageChangeInformation* _transformFilter;
+    vtkImageChangeInformation* transformFilter_;
 };

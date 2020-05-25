@@ -24,14 +24,14 @@ class GMSHLineLoop final
 public:
     explicit GMSHLineLoop(bool is_sfc = false);
     virtual ~GMSHLineLoop();
-    bool isSurface() const { return _is_sfc; }
-    void setSurface(bool is_sfc) { _is_sfc = is_sfc; }
+    bool isSurface() const { return is_sfc_; }
+    void setSurface(bool is_sfc) { is_sfc_ = is_sfc; }
     void write(std::ostream& os, std::size_t offset,
                std::size_t sfc_offset = 0) const;
 
 private:
-    std::vector<GMSHLine*> _lines;
-    bool _is_sfc;
+    std::vector<GMSHLine*> lines_;
+    bool is_sfc_;
 };
 
 }  // end namespace GMSH

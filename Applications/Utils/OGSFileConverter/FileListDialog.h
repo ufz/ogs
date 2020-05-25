@@ -40,9 +40,9 @@ public:
     ~FileListDialog() override;
 
     /// Returns list of all selected files
-    const QStringList getInputFileList() const { return _allFiles.stringList(); };
+    const QStringList getInputFileList() const { return allFiles_.stringList(); };
     /// Returns selected output directory
-    const QString getOutputDir() const { return _output_dir; };
+    const QString getOutputDir() const { return output_dir_; };
 
 private:
     /// Returns a string for the given file type enum
@@ -50,10 +50,10 @@ private:
     /// Display a warning for vtu- to msh-conversion
     void displayWarningLabel() const;
 
-    QStringListModel _allFiles;
-    QString _output_dir;
-    const FileType _input_file_type;
-    const FileType _output_file_type;
+    QStringListModel allFiles_;
+    QString output_dir_;
+    const FileType input_file_type_;
+    const FileType output_file_type_;
 
 private slots:
     void on_addButton_pressed();

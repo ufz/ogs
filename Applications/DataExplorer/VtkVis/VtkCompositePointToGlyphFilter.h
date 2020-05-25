@@ -30,5 +30,5 @@ public:
     void SetUserProperty(QString name, QVariant value) override;
 
 private:
-    vtkSphereSource* _glyphSource;
+    vtkSphereSource* glyphSource_;
 };
