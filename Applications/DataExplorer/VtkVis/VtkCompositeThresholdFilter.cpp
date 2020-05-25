@@ -32,17 +32,17 @@ VtkCompositeThresholdFilter::~VtkCompositeThresholdFilter() = default;
 void VtkCompositeThresholdFilter::init()
 {
     // Set meta information about input and output data types
-    this->_inputDataObjectType = VTK_DATA_SET;
-    this->_outputDataObjectType = VTK_UNSTRUCTURED_GRID;
+    this->inputDataObjectType_ = VTK_DATA_SET;
+    this->outputDataObjectType_ = VTK_UNSTRUCTURED_GRID;
 
     // Because this is the only filter here we cannot use vtkSmartPointer
     vtkThreshold* threshold = vtkThreshold::New();
-    threshold->SetInputConnection(_inputAlgorithm->GetOutputPort());
+    threshold->SetInputConnection(inputAlgorithm_->GetOutputPort());
 
     // Use first array of parent as input array
-    _inputAlgorithm->Update();
+    inputAlgorithm_->Update();
     vtkDataSet* dataSet = vtkDataSet::SafeDownCast(
-        _inputAlgorithm->GetOutputDataObject(0));
+        inputAlgorithm_->GetOutputDataObject(0));
     vtkDataSetAttributes* pointAttributes =
         dataSet->GetAttributes(vtkDataObject::AttributeTypes::POINT);
     vtkDataSetAttributes* cellAttributes =
@@ -78,17 +78,17 @@ void VtkCompositeThresholdFilter::init()
     thresholdRangeList.push_back(dMin);
     thresholdRangeList.push_back(dMax);
     // Put that list in the property map
-    (*_algorithmUserVectorProperties)["Range"] = thresholdRangeList;
+    (*algorithmUserVectorProperties_)["Range"] = thresholdRangeList;
 
     // Make a new entry in the property map for the SelectedComponent property
-    (*_algorithmUserProperties)["Selected Component"] = 0;
+    (*algorithmUserProperties_)["Selected Component"] = 0;
 
     // Must all scalars match the criterium
     threshold->SetAllScalars(1);
-    (*_algorithmUserProperties)["Evaluate all points"] = true;
+    (*algorithmUserProperties_)["Evaluate all points"] = true;
 
-    // The threshold filter is last one and so it is also the _outputAlgorithm
-    _outputAlgorithm = threshold;
+    // The threshold filter is last one and so it is also the outputAlgorithm_
+    outputAlgorithm_ = threshold;
 }
 
 void VtkCompositeThresholdFilter::SetUserProperty( QString name, QVariant value )
@@ -99,11 +99,11 @@ void VtkCompositeThresholdFilter::SetUserProperty( QString name, QVariant value 
     if (name.compare("Selected Component") == 0)
     {
         // Set the property on the algorithm
-        static_cast<vtkThreshold*>(_outputAlgorithm)->SetSelectedComponent(value.toInt());
+        static_cast<vtkThreshold*>(outputAlgorithm_)->SetSelectedComponent(value.toInt());
     }
     else if (name.compare("Evaluate all points") == 0)
     {
-        static_cast<vtkThreshold*>(_outputAlgorithm)
+        static_cast<vtkThreshold*>(outputAlgorithm_)
             ->SetAllScalars(value.toBool());
     }
 }
@@ -116,7 +116,7 @@ void VtkCompositeThresholdFilter::SetUserVectorProperty( QString name, QList<QVa
     if (name.compare("Range") == 0)
     {
         // Set the vector property on the algorithm
-        static_cast<vtkThreshold*>(_outputAlgorithm)
+        static_cast<vtkThreshold*>(outputAlgorithm_)
             ->ThresholdBetween(values[0].toDouble(), values[1].toDouble());
     }
 }

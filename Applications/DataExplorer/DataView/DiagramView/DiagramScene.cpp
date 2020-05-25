@@ -26,7 +26,7 @@ const float DEFAULTY = 300.0;
  */
 DiagramScene::DiagramScene(QObject* parent) : QGraphicsScene(parent)
 {
-    _bounds.setRect(0,0,1,1);
+    bounds_.setRect(0,0,1,1);
     initialize();
 }
 
@@ -43,38 +43,38 @@ DiagramScene::DiagramScene(DiagramList* list, QObject* parent) : QGraphicsScene(
 
 DiagramScene::~DiagramScene()
 {
-    delete _grid;
-    delete _xAxis;
-    delete _yAxis;
-    delete _xLabel;
-    delete _yLabel;
-    delete _xUnit;
-    delete _yUnit;
-    for (auto& graphCaption : _graphCaptions)
+    delete grid_;
+    delete xAxis_;
+    delete yAxis_;
+    delete xLabel_;
+    delete yLabel_;
+    delete xUnit_;
+    delete yUnit_;
+    for (auto& graphCaption : graphCaptions_)
     {
         delete graphCaption;
     }
-    _graphCaptions.clear();
-    for (auto& graph : _graphs)
+    graphCaptions_.clear();
+    for (auto& graph : graphs_)
     {
         delete graph;
     }
-    _graphs.clear();
-    for (auto& text : _xTicksText)
+    graphs_.clear();
+    for (auto& text : xTicksText_)
     {
         delete text;
     }
-    _xTicksText.clear();
-    for (auto& text : _yTicksText)
+    xTicksText_.clear();
+    for (auto& text : yTicksText_)
     {
         delete text;
     }
-    _yTicksText.clear();
-    for (auto& list : _lists)
+    yTicksText_.clear();
+    for (auto& list : lists_)
     {
         delete list;
     }
-    _lists.clear();
+    lists_.clear();
 }
 
 /// Adds an arrow object to the diagram which might be used as a coordinate axis, etc.
@@ -97,8 +97,8 @@ void DiagramScene::addCaption(const QString &name, QPen &pen)
     caption->addToGroup(t);
     caption->setFlag(QGraphicsItem::ItemIgnoresTransformations, true);
 
-    _graphCaptions.push_back(caption);
-    addItem(_graphCaptions[_graphCaptions.size() - 1]);
+    graphCaptions_.push_back(caption);
+    addItem(graphCaptions_[graphCaptions_.size() - 1]);
 }
 
 /// Adds a graph to the scene, including all data points and meta-information.
@@ -106,16 +106,16 @@ void DiagramScene::addGraph(DiagramList* list)
 {
     setDiagramBoundaries(list);
     adjustScaling();
-    _xLabel->setPlainText(list->getXLabel());
-    _yLabel->setPlainText(list->getYLabel());
-    _xUnit->setPlainText(list->getXUnit());
-    _yUnit->setPlainText(list->getYUnit());
+    xLabel_->setPlainText(list->getXLabel());
+    yLabel_->setPlainText(list->getYLabel());
+    xUnit_->setPlainText(list->getXUnit());
+    yUnit_->setPlainText(list->getYUnit());
 
     clearGrid();
     constructGrid();
 
-    _lists.push_back(list);
-    for (auto& list : _lists)
+    lists_.push_back(list);
+    for (auto& list : lists_)
     {
         drawGraph(list);
     }
@@ -167,41 +167,41 @@ void DiagramScene::adjustAxis(qreal& min, qreal& max, int& numberOfTicks)
 ///Calculates scaling factors to set coordinate system and graphs to default window size
 void DiagramScene::adjustScaling()
 {
-    if ( (_unscaledBounds.width() > 0) && (_unscaledBounds.height() > 0))
+    if ( (unscaledBounds_.width() > 0) && (unscaledBounds_.height() > 0))
     {
-        _scaleX = DEFAULTX / static_cast<float>(_unscaledBounds.width());
-        _scaleY = DEFAULTY / static_cast<float>(_unscaledBounds.height());
+        scaleX_ = DEFAULTX / static_cast<float>(unscaledBounds_.width());
+        scaleY_ = DEFAULTY / static_cast<float>(unscaledBounds_.height());
     }
 }
 
 /// Destroys the grid object (coordinate system) when a new graph is added.
 void DiagramScene::clearGrid()
 {
-    if (!_lists.isEmpty())
+    if (!lists_.isEmpty())
     {
-        removeItem(_grid);
+        removeItem(grid_);
 
-        for (auto& text : _xTicksText)
+        for (auto& text : xTicksText_)
         {
             removeItem(text);
         }
-        for (auto& text : _yTicksText)
+        for (auto& text : yTicksText_)
         {
             removeItem(text);
         }
-        for (auto& graph : _graphs)
+        for (auto& graph : graphs_)
         {
             removeItem(graph);
         }
-        for (auto& graphCaption : _graphCaptions)
+        for (auto& graphCaption : graphCaptions_)
         {
             removeItem(graphCaption);
         }
 
-        _xTicksText.clear();
-        _yTicksText.clear();
-        _graphs.clear();
-        _graphCaptions.clear();
+        xTicksText_.clear();
+        yTicksText_.clear();
+        graphs_.clear();
+        graphCaptions_.clear();
     }
 }
 
@@ -211,33 +211,33 @@ void DiagramScene::constructGrid()
     // be very careful with scaling parameters here!
     int numXTicks;
     int numYTicks;
-    qreal xMin = _unscaledBounds.left();
-    qreal yMin = _unscaledBounds.top();
-    qreal xMax = _unscaledBounds.right();
-    qreal yMax = _unscaledBounds.bottom();
+    qreal xMin = unscaledBounds_.left();
+    qreal yMin = unscaledBounds_.top();
+    qreal xMax = unscaledBounds_.right();
+    qreal yMax = unscaledBounds_.bottom();
 
     adjustAxis(xMin, xMax, numXTicks);
     adjustAxis(yMin, yMax, numYTicks);
 
     // adjust boundaries of coordinate system according to scaling
-    _bounds.setRect(    xMin * _scaleX,
-                        yMin * _scaleY,
-                        (xMax - xMin) * _scaleX,
-                        (yMax - yMin) * _scaleY
+    bounds_.setRect(    xMin * scaleX_,
+                        yMin * scaleY_,
+                        (xMax - xMin) * scaleX_,
+                        (yMax - yMin) * scaleY_
                         );
 
     QPen pen(Qt::black, 1, Qt::SolidLine, Qt::SquareCap, Qt::RoundJoin);
-    _grid = addGrid(_bounds, numXTicks, numYTicks, pen);
+    grid_ = addGrid(bounds_, numXTicks, numYTicks, pen);
 
-    if (_startDate == QDateTime())
+    if (startDate_ == QDateTime())
     {
         for (int i = 0; i <= numXTicks; ++i)
         {
             auto x =
-                static_cast<int>(_bounds.left() / _scaleX +
-                                 (i * (_bounds.width() / _scaleX) / numXTicks));
-            _xTicksText.push_back(addNonScalableText(QString::number(x)));
-            _xTicksText.last()->setPos(x * _scaleX, _bounds.bottom() + 15);
+                static_cast<int>(bounds_.left() / scaleX_ +
+                                 (i * (bounds_.width() / scaleX_) / numXTicks));
+            xTicksText_.push_back(addNonScalableText(QString::number(x)));
+            xTicksText_.last()->setPos(x * scaleX_, bounds_.bottom() + 15);
         }
     }
     else
@@ -245,23 +245,23 @@ void DiagramScene::constructGrid()
         for (int i = 0; i <= numXTicks; ++i)
         {
             auto x =
-                static_cast<int>(_bounds.left() / _scaleX +
-                                 (i * (_bounds.width() / _scaleX) / numXTicks));
-            QDateTime currentDate = _startDate.addSecs(x);
-            _xTicksText.push_back(
+                static_cast<int>(bounds_.left() / scaleX_ +
+                                 (i * (bounds_.width() / scaleX_) / numXTicks));
+            QDateTime currentDate = startDate_.addSecs(x);
+            xTicksText_.push_back(
                 addNonScalableText(currentDate.toString("dd.MM.yyyy")));
-            _xTicksText.last()->setPos(x * _scaleX, _bounds.bottom() + 15);
+            xTicksText_.last()->setPos(x * scaleX_, bounds_.bottom() + 15);
         }
     }
 
     for (int j = 0; j <= numYTicks; ++j)
     {
-        qreal y = _bounds.bottom() / _scaleY -
-                  (j * (_bounds.height() / _scaleY) / numYTicks);
-        qreal label = _bounds.top() / _scaleY +
-                      (j * (_bounds.height() / _scaleY) / numYTicks);
-        _yTicksText.push_back(addNonScalableText(QString::number(label)));
-        _yTicksText.last()->setPos(_bounds.left() - MARGIN / 2, y * _scaleY);
+        qreal y = bounds_.bottom() / scaleY_ -
+                  (j * (bounds_.height() / scaleY_) / numYTicks);
+        qreal label = bounds_.top() / scaleY_ +
+                      (j * (bounds_.height() / scaleY_) / numYTicks);
+        yTicksText_.push_back(addNonScalableText(QString::number(label)));
+        yTicksText_.last()->setPos(bounds_.left() - MARGIN / 2, y * scaleY_);
     }
 }
 
@@ -270,14 +270,14 @@ void DiagramScene::drawGraph(DiagramList* list)
 {
     QPainterPath path;
 
-    if (list->getPath(path, _scaleX, _scaleY))
+    if (list->getPath(path, scaleX_, scaleY_))
     {
         QPen pen(list->getColor(), 2, Qt::SolidLine, Qt::SquareCap, Qt::RoundJoin);
         pen.setCosmetic(true);
-        _graphs.push_back(addPath(path, pen));
+        graphs_.push_back(addPath(path, pen));
         addCaption(list->getName(), pen);
 
-        int last = _graphs.size() - 1;
+        int last = graphs_.size() - 1;
 
         /**
          * For correct display the graph needs to be flipped vertically and then
@@ -286,8 +286,8 @@ void DiagramScene::drawGraph(DiagramList* list)
         int verticalShift =
                 static_cast<int>(2 *
                                  (list->minYValue() *
-                                  _scaleY) + (_graphs[last]->boundingRect()).height());
-        _graphs[last]->setTransform(QTransform(QMatrix(1,0,0,-1,0,verticalShift)));
+                                  scaleY_) + (graphs_[last]->boundingRect()).height());
+        graphs_[last]->setTransform(QTransform(QMatrix(1,0,0,-1,0,verticalShift)));
     }
 }
 
@@ -295,18 +295,18 @@ void DiagramScene::drawGraph(DiagramList* list)
 /// This value is zero if minYValue<0<maxYValue and minYValue otherwise.
 int DiagramScene::getXAxisOffset()
 {
-    return (_bounds.top() <= 0 && _bounds.bottom() > 0)
-               ? static_cast<int>(_bounds.bottom() + _bounds.top())
-               : static_cast<int>(_bounds.bottom());
+    return (bounds_.top() <= 0 && bounds_.bottom() > 0)
+               ? static_cast<int>(bounds_.bottom() + bounds_.top())
+               : static_cast<int>(bounds_.bottom());
 }
 
 /// Returns the x-value at which the y-axis should cross the x-axis.
 /// This value is zero if minXValue<0<maxXValue and minXValue otherwise.
 int DiagramScene::getYAxisOffset()
 {
-    return (_bounds.left() <= 0 && _bounds.right() > 0)
+    return (bounds_.left() <= 0 && bounds_.right() > 0)
                ? 0
-               : static_cast<int>(_bounds.left());
+               : static_cast<int>(bounds_.left());
 }
 
 /// Initialises the coordinate axes, adds labels and/or units to the axes,
@@ -316,14 +316,14 @@ void DiagramScene::initialize()
     QPen pen(Qt::black, 1, Qt::SolidLine, Qt::SquareCap, Qt::RoundJoin);
     pen.setCosmetic(true);
 
-    setXAxis(addArrow(_bounds.width(),  0, pen));
-    setYAxis(addArrow(_bounds.height(), -90, pen));
-    _xLabel = addNonScalableText(" ");
-    _yLabel = addNonScalableText(" ");
-    _yLabel->setRotation(-90);
+    setXAxis(addArrow(bounds_.width(),  0, pen));
+    setYAxis(addArrow(bounds_.height(), -90, pen));
+    xLabel_ = addNonScalableText(" ");
+    yLabel_ = addNonScalableText(" ");
+    yLabel_->setRotation(-90);
 
-    _xUnit = addNonScalableText(" ");
-    _yUnit = addNonScalableText(" ");
+    xUnit_ = addNonScalableText(" ");
+    yUnit_ = addNonScalableText(" ");
 
     update();
 }
@@ -332,35 +332,35 @@ void DiagramScene::initialize()
 /// list is added (boundaries are rescaled in the constructGrid-method
 void DiagramScene::setDiagramBoundaries(DiagramList* list)
 {
-    if (!_lists.isEmpty())
+    if (!lists_.isEmpty())
     {
-        if (list->minXValue() < _unscaledBounds.left())
+        if (list->minXValue() < unscaledBounds_.left())
         {
-            _unscaledBounds.setLeft(list->minXValue());
+            unscaledBounds_.setLeft(list->minXValue());
         }
-        if (list->minYValue() < _unscaledBounds.top())
+        if (list->minYValue() < unscaledBounds_.top())
         {
-            _unscaledBounds.setTop(list->minYValue());
+            unscaledBounds_.setTop(list->minYValue());
         }
-        if (list->maxXValue() > _unscaledBounds.right())
+        if (list->maxXValue() > unscaledBounds_.right())
         {
-            _unscaledBounds.setRight(list->maxXValue());
+            unscaledBounds_.setRight(list->maxXValue());
         }
-        if (list->maxYValue() > _unscaledBounds.bottom())
+        if (list->maxYValue() > unscaledBounds_.bottom())
         {
-            _unscaledBounds.setBottom(list->maxYValue());
+            unscaledBounds_.setBottom(list->maxYValue());
         }
-        if (_startDate > list->getStartDate())
+        if (startDate_ > list->getStartDate())
         {
-            _startDate = list->getStartDate();
+            startDate_ = list->getStartDate();
         }
     }
     else
     {
-        _unscaledBounds.setRect(list->minXValue(), list->minYValue(),
+        unscaledBounds_.setRect(list->minXValue(), list->minYValue(),
                                 list->maxXValue() - list->minXValue(),
                                 list->maxYValue() - list->minYValue());
-        _startDate = list->getStartDate();
+        startDate_ = list->getStartDate();
     }
 }
 
@@ -372,27 +372,27 @@ void DiagramScene::setDiagramBoundaries(DiagramList* list)
  */
 void DiagramScene::update()
 {
-    _xAxis->setPos(_bounds.left(),getXAxisOffset());
-    _yAxis->setPos(getYAxisOffset(),_bounds.bottom());
-    _xAxis->setLength(_bounds.width());
-    _yAxis->setLength(_bounds.height());
+    xAxis_->setPos(bounds_.left(),getXAxisOffset());
+    yAxis_->setPos(getYAxisOffset(),bounds_.bottom());
+    xAxis_->setLength(bounds_.width());
+    yAxis_->setLength(bounds_.height());
 
-    _xLabel->setPos( _bounds.left() + _bounds.width() / 2, _bounds.bottom() + 1.5 * MARGIN );
-    _yLabel->setPos( _bounds.left() - 1.5 * MARGIN, _bounds.top() + _bounds.height() / 2 );
+    xLabel_->setPos( bounds_.left() + bounds_.width() / 2, bounds_.bottom() + 1.5 * MARGIN );
+    yLabel_->setPos( bounds_.left() - 1.5 * MARGIN, bounds_.top() + bounds_.height() / 2 );
 
-    _xUnit->setPos( _bounds.right(), _bounds.bottom() + 1.2 * MARGIN);
-    _yUnit->setPos( _bounds.left(), _bounds.top() - 0.5 * MARGIN);
+    xUnit_->setPos( bounds_.right(), bounds_.bottom() + 1.2 * MARGIN);
+    yUnit_->setPos( bounds_.left(), bounds_.top() - 0.5 * MARGIN);
 
     /* update graphs and their captions */
     QRectF rect;
-    for (int i = 0; i < _graphs.size(); i++)
+    for (int i = 0; i < graphs_.size(); i++)
     {
-        rect = _graphs[i]->boundingRect();
-        auto offset = static_cast<int>(fabs(rect.bottom() - _bounds.bottom()) -
-                                       fabs(rect.top() - _bounds.top()));
-        _graphs[i]->setPos(0, offset);
+        rect = graphs_[i]->boundingRect();
+        auto offset = static_cast<int>(fabs(rect.bottom() - bounds_.bottom()) -
+                                       fabs(rect.top() - bounds_.top()));
+        graphs_[i]->setPos(0, offset);
 
         rect = itemsBoundingRect();
-        _graphCaptions[i]->setPos(_bounds.left(),rect.bottom() + 10);
+        graphCaptions_[i]->setPos(bounds_.left(),rect.bottom() + 10);
     }
 }

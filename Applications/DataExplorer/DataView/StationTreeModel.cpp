@@ -28,9 +28,9 @@ StationTreeModel::StationTreeModel( QObject* parent )
     : TreeModel(parent)
 {
     QList<QVariant> rootData;
-    delete _rootItem;
+    delete rootItem_;
     rootData << "Station Name" << "x" << "y" << "z";
-    _rootItem = new ModelTreeItem(rootData, nullptr, nullptr);
+    rootItem_ = new ModelTreeItem(rootData, nullptr, nullptr);
 }
 
 StationTreeModel::~StationTreeModel() = default;
@@ -54,7 +54,7 @@ QModelIndex StationTreeModel::index( int row, int column,
 
     if (!parent.isValid())
     {
-        parentItem = static_cast<ModelTreeItem*>(_rootItem);
+        parentItem = static_cast<ModelTreeItem*>(rootItem_);
     }
     else
     {
@@ -99,12 +99,12 @@ GeoLib::Station* StationTreeModel::stationFromIndex( const QModelIndex& index,
 
 vtkPolyDataAlgorithm* StationTreeModel::vtkSource(const std::string &name) const
 {
-    std::size_t nLists = _lists.size();
+    std::size_t nLists = lists_.size();
     for (std::size_t i = 0; i < nLists; i++)
     {
-        if (name == _lists[i]->data(0).toString().toStdString())
+        if (name == lists_[i]->data(0).toString().toStdString())
         {
-            return dynamic_cast<BaseItem*>(_lists[i]->getItem())->vtkSource();
+            return dynamic_cast<BaseItem*>(lists_[i]->getItem())->vtkSource();
         }
     }
     return nullptr;
@@ -115,11 +115,11 @@ void StationTreeModel::setNameForItem(const std::string& stn_vec_name,
                                       std::string const& item_name)
 {
     auto const stn_list = find_if(
-        _lists.begin(), _lists.end(), [&stn_vec_name](ModelTreeItem* item) {
+        lists_.begin(), lists_.end(), [&stn_vec_name](ModelTreeItem* item) {
             return (stn_vec_name == item->data(0).toString().toStdString());
         });
 
-    if (stn_list == _lists.end() ||
+    if (stn_list == lists_.end() ||
         id >= static_cast<std::size_t>((*stn_list)->childCount()))
     {
         return;
@@ -129,7 +129,7 @@ void StationTreeModel::setNameForItem(const std::string& stn_vec_name,
 }
 
 /**
- * Inserts a subtree under _rootItem.
+ * Inserts a subtree under rootItem_.
  * \param listName Name of the new subtree. If no name is given a default name is assigned.
  * \param stations The list with stations to be added as children of that subtree
  */
@@ -145,9 +145,9 @@ void StationTreeModel::addStationList(QString listName, const std::vector<GeoLib
     }
     grpName << listName << "" << "" << "";
     auto* group =
-        new ModelTreeItem(grpName, _rootItem, new BaseItem(listName, stations));
-    _lists.push_back(group);
-    _rootItem->appendChild(group);
+        new ModelTreeItem(grpName, rootItem_, new BaseItem(listName, stations));
+    lists_.push_back(group);
+    rootItem_->appendChild(group);
     int vectorSize = stations->size();
 
     for (int i = 0; i < vectorSize; i++)
@@ -178,11 +178,11 @@ void StationTreeModel::removeStationList(QModelIndex index)
         auto* item = static_cast<ModelTreeItem*>(getItem(index));
 
         // also delete the lists entry in the list directory of the model
-        for (std::size_t i = 0; i < _lists.size(); i++)
+        for (std::size_t i = 0; i < lists_.size(); i++)
         {
-            if (item == _lists[i])
+            if (item == lists_[i])
             {
-                _lists.erase(_lists.begin() + i);
+                lists_.erase(lists_.begin() + i);
             }
         }
 
@@ -196,7 +196,7 @@ void StationTreeModel::removeStationList(QModelIndex index)
  */
 void StationTreeModel::removeStationList(const std::string &name)
 {
-    for (auto& list : _lists)
+    for (auto& list : lists_)
     {
         if (name == list->data(0).toString().toStdString())
         {

@@ -40,20 +40,20 @@ GMSHInterface::GMSHInterface(
     std::size_t const max_pnts_per_leaf,
     std::vector<std::string> const& selected_geometries, bool const rotate,
     bool const keep_preprocessed_geometry)
-    : _n_lines(0),
-      _n_plane_sfc(0),
-      _geo_objs(geo_objs),
-      _selected_geometries(selected_geometries),
-      _rotate(rotate),
-      _keep_preprocessed_geometry(keep_preprocessed_geometry)
+    : n_lines_(0),
+      n_plane_sfc_(0),
+      geo_objs_(geo_objs),
+      selected_geometries_(selected_geometries),
+      rotate_(rotate),
+      keep_preprocessed_geometry_(keep_preprocessed_geometry)
 {
     switch (mesh_density_algorithm) {
     case GMSH::MeshDensityAlgorithm::FixedMeshDensity:
-        _mesh_density_strategy =
+        mesh_density_strategy_ =
             std::make_unique<GMSH::GMSHFixedMeshDensity>(pnt_density);
         break;
     case GMSH::MeshDensityAlgorithm::AdaptiveMeshDensity:
-        _mesh_density_strategy =
+        mesh_density_strategy_ =
             std::make_unique<GMSH::GMSHAdaptiveMeshDensity>(
                 pnt_density, station_density, max_pnts_per_leaf);
         break;
@@ -62,11 +62,11 @@ GMSHInterface::GMSHInterface(
 
 GMSHInterface::~GMSHInterface()
 {
-    for (auto* gmsh_pnt : _gmsh_pnts)
+    for (auto* gmsh_pnt : gmsh_pnts_)
     {
         delete gmsh_pnt;
     }
-    for (auto* polygon_tree : _polygon_tree_list)
+    for (auto* polygon_tree : polygon_tree_list_)
     {
         delete polygon_tree;
     }
@@ -74,50 +74,50 @@ GMSHInterface::~GMSHInterface()
 
 bool GMSHInterface::write()
 {
-    _out << "// GMSH input file created by OpenGeoSys " << GitInfoLib::GitInfo::ogs_version;
-    _out << "\n\n";
+    out_ << "// GMSH input file created by OpenGeoSys " << GitInfoLib::GitInfo::ogs_version;
+    out_ << "\n\n";
 
-    return writeGMSHInputFile(_out) <= 0;
+    return writeGMSHInputFile(out_) <= 0;
 }
 
 int GMSHInterface::writeGMSHInputFile(std::ostream& out)
 {
     DBUG("GMSHInterface::writeGMSHInputFile(): get data from GEOObjects.");
 
-    if (_selected_geometries.empty())
+    if (selected_geometries_.empty())
     {
         return 1;
     }
 
-    // *** get and merge data from _geo_objs
-    if (_selected_geometries.size() > 1) {
-        _gmsh_geo_name = "GMSHGeometry";
-        if (_geo_objs.mergeGeometries(_selected_geometries, _gmsh_geo_name))
+    // *** get and merge data from geo_objs_
+    if (selected_geometries_.size() > 1) {
+        gmsh_geo_name_ = "GMSHGeometry";
+        if (geo_objs_.mergeGeometries(selected_geometries_, gmsh_geo_name_))
         {
             return 2;
         }
     } else {
-        _gmsh_geo_name = _selected_geometries[0];
-        _keep_preprocessed_geometry = true;
+        gmsh_geo_name_ = selected_geometries_[0];
+        keep_preprocessed_geometry_ = true;
     }
 
     auto* merged_pnts(const_cast<std::vector<GeoLib::Point*>*>(
-        _geo_objs.getPointVec(_gmsh_geo_name)));
+        geo_objs_.getPointVec(gmsh_geo_name_)));
     if (! merged_pnts) {
         ERR("GMSHInterface::writeGMSHInputFile(): Did not found any points.");
         return 2;
     }
 
-    if (_rotate) {
+    if (rotate_) {
         // Rotate points to the x-y-plane.
-        _inverse_rot_mat = GeoLib::rotatePointsToXY(*merged_pnts);
+        inverse_rot_mat_ = GeoLib::rotatePointsToXY(*merged_pnts);
         // Compute inverse rotation matrix to reverse the rotation later on.
-        _inverse_rot_mat.transposeInPlace();
+        inverse_rot_mat_.transposeInPlace();
     } else {
         // project data on the x-y-plane
-        _inverse_rot_mat(0,0) = 1.0;
-        _inverse_rot_mat(1,1) = 1.0;
-        _inverse_rot_mat(2,2) = 1.0;
+        inverse_rot_mat_(0,0) = 1.0;
+        inverse_rot_mat_(1,1) = 1.0;
+        inverse_rot_mat_(2,2) = 1.0;
         for (auto pnt : *merged_pnts)
         {
             (*pnt)[2] = 0.0;
@@ -125,7 +125,7 @@ int GMSHInterface::writeGMSHInputFile(std::ostream& out)
     }
 
     std::vector<GeoLib::Polyline*> const* merged_plys(
-        _geo_objs.getPolylineVec(_gmsh_geo_name));
+        geo_objs_.getPolylineVec(gmsh_geo_name_));
     DBUG("GMSHInterface::writeGMSHInputFile(): Obtained data.");
 
     if (!merged_plys) {
@@ -135,7 +135,7 @@ int GMSHInterface::writeGMSHInputFile(std::ostream& out)
 
     // *** compute and insert all intersection points between polylines
     GeoLib::PointVec& pnt_vec(*const_cast<GeoLib::PointVec*>(
-        _geo_objs.getPointVecObj(_gmsh_geo_name)));
+        geo_objs_.getPointVecObj(gmsh_geo_name_)));
     GeoLib::computeAndInsertAllIntersectionPoints(pnt_vec,
         *(const_cast<std::vector<GeoLib::Polyline*>*>(merged_plys)));
 
@@ -144,22 +144,22 @@ int GMSHInterface::writeGMSHInputFile(std::ostream& out)
         if (!polyline->isClosed()) {
             continue;
         }
-        _polygon_tree_list.push_back(new GMSH::GMSHPolygonTree(
-            new GeoLib::PolygonWithSegmentMarker(*polyline), nullptr, _geo_objs,
-            _gmsh_geo_name, *_mesh_density_strategy));
+        polygon_tree_list_.push_back(new GMSH::GMSHPolygonTree(
+            new GeoLib::PolygonWithSegmentMarker(*polyline), nullptr, geo_objs_,
+            gmsh_geo_name_, *mesh_density_strategy_));
     }
     DBUG(
         "GMSHInterface::writeGMSHInputFile(): Computed topological hierarchy - "
         "detected {:d} polygons.",
-        _polygon_tree_list.size());
-    GeoLib::createPolygonTrees<GMSH::GMSHPolygonTree>(_polygon_tree_list);
+        polygon_tree_list_.size());
+    GeoLib::createPolygonTrees<GMSH::GMSHPolygonTree>(polygon_tree_list_);
     DBUG(
         "GMSHInterface::writeGMSHInputFile(): Computed topological hierarchy - "
         "calculated {:d} polygon trees.",
-        _polygon_tree_list.size());
+        polygon_tree_list_.size());
 
     // *** Mark in each polygon tree the segments shared by two polygons.
-    for (auto* polygon_tree : _polygon_tree_list)
+    for (auto* polygon_tree : polygon_tree_list_)
     {
         polygon_tree->markSharedSegments();
     }
@@ -168,13 +168,13 @@ int GMSHInterface::writeGMSHInputFile(std::ostream& out)
     //     class GMSHPolygonTree
     // *** insert stations
     auto gmsh_stations = std::make_unique<std::vector<GeoLib::Point*>>();
-    for (auto const& geometry_name : _selected_geometries) {
-        auto const* stations(_geo_objs.getStationVec(geometry_name));
+    for (auto const& geometry_name : selected_geometries_) {
+        auto const* stations(geo_objs_.getStationVec(geometry_name));
         if (stations) {
             for (auto * station : *stations) {
                 bool found(false);
-                for (auto it(_polygon_tree_list.begin());
-                    it != _polygon_tree_list.end() && !found; ++it) {
+                for (auto it(polygon_tree_list_.begin());
+                    it != polygon_tree_list_.end() && !found; ++it) {
                     gmsh_stations->emplace_back(new GeoLib::Station(
                         *static_cast<GeoLib::Station*>(station)));
                     if ((*it)->insertStation(gmsh_stations->back())) {
@@ -184,15 +184,15 @@ int GMSHInterface::writeGMSHInputFile(std::ostream& out)
             }
         }
     }
-    std::string gmsh_stations_name(_gmsh_geo_name+"-Stations");
+    std::string gmsh_stations_name(gmsh_geo_name_+"-Stations");
     if (! gmsh_stations->empty()) {
-        _geo_objs.addStationVec(std::move(gmsh_stations), gmsh_stations_name);
+        geo_objs_.addStationVec(std::move(gmsh_stations), gmsh_stations_name);
     }
 
     // *** insert polylines
     for (auto polyline : *merged_plys) {
         if (!polyline->isClosed()) {
-            for (auto * polygon_tree : _polygon_tree_list) {
+            for (auto * polygon_tree : polygon_tree_list_) {
                 auto polyline_with_segment_marker =
                     new GeoLib::PolylineWithSegmentMarker(*polyline);
                 polygon_tree->insertPolyline(polyline_with_segment_marker);
@@ -201,39 +201,39 @@ int GMSHInterface::writeGMSHInputFile(std::ostream& out)
     }
 
     // *** init mesh density strategies
-    for (auto& polygon_tree : _polygon_tree_list)
+    for (auto& polygon_tree : polygon_tree_list_)
     {
         polygon_tree->initMeshDensityStrategy();
     }
 
     // *** create GMSH data structures
     const std::size_t n_merged_pnts(merged_pnts->size());
-    _gmsh_pnts.resize(n_merged_pnts);
+    gmsh_pnts_.resize(n_merged_pnts);
     for (std::size_t k(0); k<n_merged_pnts; k++) {
-        _gmsh_pnts[k] = nullptr;
+        gmsh_pnts_[k] = nullptr;
     }
-    for (auto& polygon_tree : _polygon_tree_list)
+    for (auto& polygon_tree : polygon_tree_list_)
     {
-        polygon_tree->createGMSHPoints(_gmsh_pnts);
+        polygon_tree->createGMSHPoints(gmsh_pnts_);
     }
 
     // *** finally write data :-)
     writePoints(out);
-    std::size_t pnt_id_offset(_gmsh_pnts.size());
-    for (auto* polygon_tree : _polygon_tree_list)
+    std::size_t pnt_id_offset(gmsh_pnts_.size());
+    for (auto* polygon_tree : polygon_tree_list_)
     {
-        polygon_tree->writeLineLoop(_n_lines, _n_plane_sfc, out);
-        polygon_tree->writeSubPolygonsAsLineConstraints(_n_lines, _n_plane_sfc-1, out);
-        polygon_tree->writeLineConstraints(_n_lines, _n_plane_sfc-1, out);
-        polygon_tree->writeStations(pnt_id_offset, _n_plane_sfc-1, out);
-        polygon_tree->writeAdditionalPointData(pnt_id_offset, _n_plane_sfc-1, out);
+        polygon_tree->writeLineLoop(n_lines_, n_plane_sfc_, out);
+        polygon_tree->writeSubPolygonsAsLineConstraints(n_lines_, n_plane_sfc_-1, out);
+        polygon_tree->writeLineConstraints(n_lines_, n_plane_sfc_-1, out);
+        polygon_tree->writeStations(pnt_id_offset, n_plane_sfc_-1, out);
+        polygon_tree->writeAdditionalPointData(pnt_id_offset, n_plane_sfc_-1, out);
     }
 
-    if (! _keep_preprocessed_geometry) {
-        _geo_objs.removeSurfaceVec(_gmsh_geo_name);
-        _geo_objs.removePolylineVec(_gmsh_geo_name);
-        _geo_objs.removePointVec(_gmsh_geo_name);
-        _geo_objs.removeStationVec(gmsh_stations_name);
+    if (! keep_preprocessed_geometry_) {
+        geo_objs_.removeSurfaceVec(gmsh_geo_name_);
+        geo_objs_.removePolylineVec(gmsh_geo_name_);
+        geo_objs_.removePointVec(gmsh_geo_name_);
+        geo_objs_.removeStationVec(gmsh_stations_name);
     }
 
     return 0;
@@ -241,10 +241,10 @@ int GMSHInterface::writeGMSHInputFile(std::ostream& out)
 
 void GMSHInterface::writePoints(std::ostream& out) const
 {
-    for (auto & gmsh_pnt : _gmsh_pnts) {
+    for (auto & gmsh_pnt : gmsh_pnts_) {
         // reverse rotation
         if (gmsh_pnt) {
-            double* tmp = _inverse_rot_mat * gmsh_pnt->getCoords();
+            double* tmp = inverse_rot_mat_ * gmsh_pnt->getCoords();
             (*gmsh_pnt)[0] = tmp[0];
             (*gmsh_pnt)[1] = tmp[1];
             (*gmsh_pnt)[2] = tmp[2];

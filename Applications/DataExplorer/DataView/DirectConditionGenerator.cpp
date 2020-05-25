@@ -33,7 +33,7 @@ const std::vector<std::pair<std::size_t, double>>&
 DirectConditionGenerator::directToSurfaceNodes(const MeshLib::Mesh& mesh,
                                                const std::string& filename)
 {
-    if (_direct_values.empty())
+    if (direct_values_.empty())
     {
         GeoLib::Raster* raster(
             FileIO::AsciiRasterInterface::readRaster(filename));
@@ -41,19 +41,19 @@ DirectConditionGenerator::directToSurfaceNodes(const MeshLib::Mesh& mesh,
         {
             ERR("Error in DirectConditionGenerator::directToSurfaceNodes() - "
                 "could not load raster file.");
-            return _direct_values;
+            return direct_values_;
         }
 
         const MathLib::Vector3 dir(0, 0, -1);
         const std::vector<MeshLib::Node*> surface_nodes(
             MeshLib::MeshSurfaceExtraction::getSurfaceNodes(mesh, dir, 90));
         const double no_data(raster->getHeader().no_data);
-        _direct_values.reserve(surface_nodes.size());
+        direct_values_.reserve(surface_nodes.size());
         for (auto const* surface_node : surface_nodes)
         {
             double val(raster->getValueAtPoint(*surface_node));
             val = (val == no_data) ? 0 : val;
-            _direct_values.emplace_back(surface_node->getID(), val);
+            direct_values_.emplace_back(surface_node->getID(), val);
         }
         delete raster;
 
@@ -64,15 +64,15 @@ DirectConditionGenerator::directToSurfaceNodes(const MeshLib::Mesh& mesh,
         ERR("Error in DirectConditionGenerator::directToSurfaceNodes() - Data "
             "vector contains outdated values.");
 
-    return _direct_values;
+    return direct_values_;
 }
 
 const std::vector< std::pair<std::size_t,double> >& DirectConditionGenerator::directWithSurfaceIntegration(MeshLib::Mesh &mesh, const std::string &filename, double scaling)
 {
-    if (!_direct_values.empty()) {
+    if (!direct_values_.empty()) {
         ERR("Error in DirectConditionGenerator::directWithSurfaceIntegration()"
             "- Data vector contains outdated values...");
-        return _direct_values;
+        return direct_values_;
     }
 
     std::unique_ptr<GeoLib::Raster> raster(
@@ -80,7 +80,7 @@ const std::vector< std::pair<std::size_t,double> >& DirectConditionGenerator::di
     if (!raster) {
         ERR("Error in DirectConditionGenerator::directWithSurfaceIntegration()"
             "- could not load raster file.");
-        return _direct_values;
+        return direct_values_;
     }
 
     MathLib::Vector3 const dir(0.0, 0.0, -1.0);
@@ -105,18 +105,18 @@ const std::vector< std::pair<std::size_t,double> >& DirectConditionGenerator::di
     catch (std::runtime_error const& e)
     {
         WARN("{:s}", e.what());
-        return _direct_values;
+        return direct_values_;
     }
 
-    _direct_values.reserve(nNodes);
+    direct_values_.reserve(nNodes);
     for (std::size_t i = 0; i < nNodes; ++i)
     {
         double val(raster->getValueAtPoint(*surface_nodes[i]));
         val = (val == no_data) ? 0 : ((val * node_area_vec[i]) / scaling);
-        _direct_values.emplace_back((*node_id_pv)[i], val);
+        direct_values_.emplace_back((*node_id_pv)[i], val);
     }
 
-    return _direct_values;
+    return direct_values_;
 }
 
 
@@ -126,7 +126,7 @@ int DirectConditionGenerator::writeToFile(const std::string &name) const
 
     if (out)
     {
-        for (const auto& direct_value : _direct_values)
+        for (const auto& direct_value : direct_values_)
         {
             out << direct_value.first << "\t" << direct_value.second << "\n";
         }

@@ -27,7 +27,7 @@
 #include "OGSError.h"
 
 GMSHPrefsDialog::GMSHPrefsDialog(GeoLib::GEOObjects const& geoObjects, QDialog* parent)
-    : QDialog(parent), _allGeo(new QStringListModel), _selGeo(new QStringListModel)
+    : QDialog(parent), allGeo_(new QStringListModel), selGeo_(new QStringListModel)
 {
     setupUi(this);
 
@@ -74,45 +74,45 @@ GMSHPrefsDialog::GMSHPrefsDialog(GeoLib::GEOObjects const& geoObjects, QDialog* 
         this->deselectGeoButton->setDisabled(true);
         list.append("[No geometry available.]");
     }
-    _allGeo->setStringList(list);
-    this->allGeoView->setModel(_allGeo);
-    this->selectedGeoView->setModel(_selGeo);
+    allGeo_->setStringList(list);
+    this->allGeoView->setModel(allGeo_);
+    this->selectedGeoView->setModel(selGeo_);
     this->radioAdaptive->toggle(); // default is adaptive meshing
     this->on_radioAdaptive_toggled(true);
 }
 
 GMSHPrefsDialog::~GMSHPrefsDialog()
 {
-    delete _allGeo;
-    delete _selGeo;
+    delete allGeo_;
+    delete selGeo_;
 }
 
 void GMSHPrefsDialog::on_selectGeoButton_pressed()
 {
     QModelIndexList selected = this->allGeoView->selectionModel()->selectedIndexes();
-    QStringList list = _selGeo->stringList();
+    QStringList list = selGeo_->stringList();
 
     for (auto& index : selected)
     {
         list.append(index.data().toString());
 
-        _allGeo->removeRow(index.row());
+        allGeo_->removeRow(index.row());
     }
-    _selGeo->setStringList(list);
+    selGeo_->setStringList(list);
 }
 
 void GMSHPrefsDialog::on_deselectGeoButton_pressed()
 {
     QModelIndexList selected = this->selectedGeoView->selectionModel()->selectedIndexes();
-    QStringList list = _allGeo->stringList();
+    QStringList list = allGeo_->stringList();
 
     for (auto& index : selected)
     {
         list.append(index.data().toString());
 
-        _selGeo->removeRow(index.row());
+        selGeo_->removeRow(index.row());
     }
-    _allGeo->setStringList(list);
+    allGeo_->setStringList(list);
 }
 
 void GMSHPrefsDialog::on_radioAdaptive_toggled(bool isTrue)
@@ -135,13 +135,13 @@ void GMSHPrefsDialog::on_radioAdaptive_toggled(bool isTrue)
 
 void GMSHPrefsDialog::accept()
 {
-    if (this->_selGeo->stringList().empty())
+    if (this->selGeo_->stringList().empty())
     {
         OGSError::box("No geometry selected. Geometric data\n is necessary for mesh generation.");
         return;
     }
 
-    std::vector<std::string> selectedObjects = this->getSelectedObjects(_selGeo->stringList());
+    std::vector<std::string> selectedObjects = this->getSelectedObjects(selGeo_->stringList());
     unsigned max_number_of_points_in_quadtree_leaf (10);
     double mesh_density_scaling_pnts(0.5);
     double mesh_density_scaling_stations (0.05);

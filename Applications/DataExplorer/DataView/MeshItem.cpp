@@ -19,11 +19,11 @@ MeshItem::MeshItem(const QList<QVariant>& data, TreeItem* parent,
                    const MeshLib::Mesh* mesh)
     : TreeItem(data, parent)
 {
-    _mesh_source = MeshLib::VtkMappedMeshSource::New();
-    static_cast<MeshLib::VtkMappedMeshSource*>(_mesh_source)->SetMesh(mesh);
+    mesh_source_ = MeshLib::VtkMappedMeshSource::New();
+    static_cast<MeshLib::VtkMappedMeshSource*>(mesh_source_)->SetMesh(mesh);
 }
 
 MeshItem::~MeshItem()
 {
-    _mesh_source->Delete();
+    mesh_source_->Delete();
 }

@@ -21,7 +21,7 @@
 
 /// Constructor
 MeshQualitySelectionDialog::MeshQualitySelectionDialog(QDialog* parent)
-    : QDialog(parent), _histogram_path("")
+    : QDialog(parent), histogram_path_("")
 {
     setupUi(this);
     this->choiceEdges->toggle();
@@ -50,33 +50,33 @@ void MeshQualitySelectionDialog::accept()
 {
     if (this->choiceEdges->isChecked())
     {
-        _metric = MeshLib::MeshQualityType::EDGERATIO;
+        metric_ = MeshLib::MeshQualityType::EDGERATIO;
     }
     else if (this->choiceArea->isChecked())
     {
-        _metric = MeshLib::MeshQualityType::ELEMENTSIZE;
+        metric_ = MeshLib::MeshQualityType::ELEMENTSIZE;
     }
     else if (this->choiceVolume->isChecked())
     {
-        _metric = MeshLib::MeshQualityType::SIZEDIFFERENCE;
+        metric_ = MeshLib::MeshQualityType::SIZEDIFFERENCE;
     }
     else if (this->choiceAngles->isChecked())
     {
-        _metric = MeshLib::MeshQualityType::EQUIANGLESKEW;
+        metric_ = MeshLib::MeshQualityType::EQUIANGLESKEW;
     }
     else if (this->choiceRadius->isChecked())
     {
-        _metric = MeshLib::MeshQualityType::RADIUSEDGERATIO;
+        metric_ = MeshLib::MeshQualityType::RADIUSEDGERATIO;
     }
     else
     {
-        _metric = MeshLib::MeshQualityType::INVALID;
+        metric_ = MeshLib::MeshQualityType::INVALID;
     }
 
     if (this->histogramCheckBox->isChecked())
     {
-        _histogram_path = this->histogramPathEdit->text().toStdString();
-        if (_histogram_path.empty())
+        histogram_path_ = this->histogramPathEdit->text().toStdString();
+        if (histogram_path_.empty())
         {
             OGSError::box("No path for histogram file specified.");
             return;

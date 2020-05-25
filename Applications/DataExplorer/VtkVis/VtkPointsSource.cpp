@@ -34,7 +34,7 @@ vtkStandardNewMacro(VtkPointsSource);
 
 VtkPointsSource::VtkPointsSource()
 {
-    _removable = false; // From VtkAlgorithmProperties
+    removable_ = false; // From VtkAlgorithmProperties
     this->SetNumberOfInputPorts(0);
 
     const DataHolderLib::Color c = DataHolderLib::getRandomColor();
@@ -45,7 +45,7 @@ void VtkPointsSource::PrintSelf( ostream& os, vtkIndent indent )
 {
     this->Superclass::PrintSelf(os,indent);
 
-    if (_points->empty())
+    if (points_->empty())
     {
         return;
     }
@@ -53,7 +53,7 @@ void VtkPointsSource::PrintSelf( ostream& os, vtkIndent indent )
     os << indent << "== VtkPointsSource ==" << "\n";
 
     int i = 0;
-    for (auto point : *_points)
+    for (auto point : *points_)
     {
         const double* coords = point->getCoords();
         os << indent << "Point " << i << " (" << coords[0] << ", " << coords[1] << ", " <<
@@ -69,11 +69,11 @@ int VtkPointsSource::RequestData( vtkInformation* request,
     (void)request;
     (void)inputVector;
 
-    if (!_points)
+    if (!points_)
     {
         return 0;
     }
-    int numPoints = _points->size();
+    int numPoints = points_->size();
     if (numPoints == 0)
     {
         ERR("VtkPointsSource::RequestData(): Size of point vector is 0");
@@ -102,7 +102,7 @@ int VtkPointsSource::RequestData( vtkInformation* request,
 
     // Generate points and vertices
     unsigned i = 0;
-    for (auto point : *_points)
+    for (auto point : *points_)
     {
         double coords[3] = {(*point)[0], (*point)[1], (*point)[2]};
         newPoints->SetPoint(i, coords);

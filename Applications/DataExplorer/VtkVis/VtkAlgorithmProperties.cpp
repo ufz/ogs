@@ -27,35 +27,35 @@
 VtkAlgorithmProperties::VtkAlgorithmProperties(QObject* parent /*= nullptr*/)
     : QObject(parent)
 {
-    _property = vtkProperty::New();
-    _texture  = nullptr;
-    _scalarVisibility = true;
-    _algorithmUserProperties = new QMap<QString, QVariant>;
-    _algorithmUserVectorProperties = new QMap<QString, QList<QVariant> >;
-    _activeAttributeName = "";
-    _removable = true;
+    property_ = vtkProperty::New();
+    texture_  = nullptr;
+    scalarVisibility_ = true;
+    algorithmUserProperties_ = new QMap<QString, QVariant>;
+    algorithmUserVectorProperties_ = new QMap<QString, QList<QVariant> >;
+    activeAttributeName_ = "";
+    removable_ = true;
 }
 
 VtkAlgorithmProperties::~VtkAlgorithmProperties()
 {
-    _property->Delete();
-    if (_texture != nullptr)
+    property_->Delete();
+    if (texture_ != nullptr)
     {
-        _texture->Delete();
+        texture_->Delete();
     }
 
-    for (auto& row : _lut)
+    for (auto& row : lut_)
     {
         row.second->Delete();
     }
-    delete _algorithmUserProperties;
-    delete _algorithmUserVectorProperties;
+    delete algorithmUserProperties_;
+    delete algorithmUserVectorProperties_;
 }
 
 vtkLookupTable* VtkAlgorithmProperties::GetLookupTable(const QString& array_name)
 {
-    auto it = _lut.find(array_name);
-    if (it != _lut.end())
+    auto it = lut_.find(array_name);
+    if (it != lut_.end())
     {
         return it->second;
     }
@@ -65,11 +65,11 @@ vtkLookupTable* VtkAlgorithmProperties::GetLookupTable(const QString& array_name
 
 void VtkAlgorithmProperties::RemoveLookupTable(const QString& array_name)
 {
-    auto it = _lut.find(array_name);
-    if (it != _lut.end())
+    auto it = lut_.find(array_name);
+    if (it != lut_.end())
     {
         it->second->Delete();
-        _lut.erase(it);
+        lut_.erase(it);
     }
 }
 
@@ -80,8 +80,8 @@ void VtkAlgorithmProperties::SetLookUpTable(const QString &array_name, vtkLookup
     if (array_name.length() > 0)
     {
         this->RemoveLookupTable(array_name);
-        _lut.insert( std::pair<QString, vtkLookupTable*>(array_name, lut) );
-        _activeAttributeName = array_name;
+        lut_.insert( std::pair<QString, vtkLookupTable*>(array_name, lut) );
+        activeAttributeName_ = array_name;
     }
 }
 
@@ -100,15 +100,15 @@ void VtkAlgorithmProperties::SetLookUpTable(const QString &array_name, const QSt
 
 void VtkAlgorithmProperties::SetScalarVisibility(bool on)
 {
-    _scalarVisibility = on;
+    scalarVisibility_ = on;
     emit ScalarVisibilityChanged(on);
 }
 
 QVariant VtkAlgorithmProperties::GetUserProperty(QString name) const
 {
-    if (this->_algorithmUserProperties->contains(name))
+    if (this->algorithmUserProperties_->contains(name))
     {
-        return this->_algorithmUserProperties->value(name);
+        return this->algorithmUserProperties_->value(name);
     }
 
     ERR("Not a valid property: {:s}", name.toStdString());
@@ -117,9 +117,9 @@ QVariant VtkAlgorithmProperties::GetUserProperty(QString name) const
 
 QList<QVariant> VtkAlgorithmProperties::GetUserVectorProperty(QString name) const
 {
-    if (this->_algorithmUserVectorProperties->contains(name))
+    if (this->algorithmUserVectorProperties_->contains(name))
     {
-        return this->_algorithmUserVectorProperties->value(name);
+        return this->algorithmUserVectorProperties_->value(name);
     }
 
     ERR("Not a valid property: {:s}", name.toStdString());
@@ -136,5 +136,5 @@ void VtkAlgorithmProperties::SetActiveAttribute(QString name)
     {
         SetScalarVisibility(true);
     }
-    _activeAttributeName = name;
+    activeAttributeName_ = name;
 }

@@ -29,11 +29,11 @@ QArrow::QArrow(qreal l, qreal a, qreal hl, qreal hw, QPen& pen,
                QGraphicsItem* parent)
     : QGraphicsItem(parent)
 {
-    _arrowLength = l;
-    _arrowAngle  = a;
-    _headLength  = hl;
-    _headWidth   = hw;
-    _arrowPen    = pen;
+    arrowLength_ = l;
+    arrowAngle_  = a;
+    headLength_  = hl;
+    headWidth_   = hw;
+    arrowPen_    = pen;
 }
 
 /**
@@ -46,11 +46,11 @@ QArrow::QArrow(qreal l, qreal a, qreal hl, qreal hw, QPen& pen,
 QArrow::QArrow(qreal l, qreal a, QPen& pen, QGraphicsItem* parent)
     : QGraphicsItem(parent)
 {
-    _arrowLength = l;
-    _arrowAngle  = a;
-    _headLength  = 8;   // default headlength
-    _headWidth   = 5;   // default headwidth
-    _arrowPen    = pen;
+    arrowLength_ = l;
+    arrowAngle_  = a;
+    headLength_  = 8;   // default headlength
+    headWidth_   = 5;   // default headwidth
+    arrowPen_    = pen;
 }
 
 QArrow::~QArrow() = default;
@@ -68,8 +68,8 @@ double QArrow::calcSin(double angle)
 /// The bounding box of the arrow
 QRectF QArrow::boundingRect() const
 {
-    double deltaX = cos(_arrowAngle) * _arrowLength;
-    double deltaY = sin(_arrowAngle) * _arrowLength;
+    double deltaX = cos(arrowAngle_) * arrowLength_;
+    double deltaY = sin(arrowAngle_) * arrowLength_;
 
     return QRectF(0, 0, deltaX, deltaY);
 }
@@ -77,13 +77,13 @@ QRectF QArrow::boundingRect() const
 /// Returns the length of the arrow.
 double QArrow::getLength()
 {
-    return _arrowLength;
+    return arrowLength_;
 }
 
 /// Returns the orientation of the arrow
 double QArrow::getAngle()
 {
-    return _arrowAngle;
+    return arrowAngle_;
 }
 
 /**
@@ -95,17 +95,17 @@ void QArrow::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QW
     Q_UNUSED (option)
     Q_UNUSED (widget)
 
-    double ddeltaX    = calcCos(_arrowAngle) * _arrowLength;
-    double ddeltaY    = calcSin(_arrowAngle) * _arrowLength;
+    double ddeltaX    = calcCos(arrowAngle_) * arrowLength_;
+    double ddeltaY    = calcSin(arrowAngle_) * arrowLength_;
     double theta     = atan(ddeltaY / ddeltaX);
     double theta2    = (ddeltaX < 0.0) ? (theta + PI) : theta;
-    int lengthdeltaX = -static_cast<int>(cos(theta2) * _headLength);
-    int lengthdeltaY = -static_cast<int>(sin(theta2) * _headLength);
-    auto widthdeltaX = static_cast<int>(sin(theta2) * _headWidth);
-    auto widthdeltaY = static_cast<int>(cos(theta2) * _headWidth);
+    int lengthdeltaX = -static_cast<int>(cos(theta2) * headLength_);
+    int lengthdeltaY = -static_cast<int>(sin(theta2) * headLength_);
+    auto widthdeltaX = static_cast<int>(sin(theta2) * headWidth_);
+    auto widthdeltaY = static_cast<int>(cos(theta2) * headWidth_);
     auto deltaX = static_cast<int>(ddeltaX);
     auto deltaY = static_cast<int>(ddeltaY);
-    painter->setPen(_arrowPen);
+    painter->setPen(arrowPen_);
     painter->drawLine(0, 0, deltaX, deltaY);
     painter->drawLine(deltaX,
                       deltaY,
@@ -120,11 +120,11 @@ void QArrow::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QW
 /// Changes orientation of the arrow.
 void QArrow::setAngle(qreal a)
 {
-    _arrowAngle = a;
+    arrowAngle_ = a;
 }
 
 /// Changes the length of the arrow.
 void QArrow::setLength(qreal l)
 {
-    _arrowLength = l;
+    arrowLength_ = l;
 }

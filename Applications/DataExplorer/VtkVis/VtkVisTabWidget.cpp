@@ -52,25 +52,25 @@ VtkVisTabWidget::VtkVisTabWidget(QWidget* parent /*= 0*/) : QWidget(parent)
 
 void VtkVisTabWidget::on_arrayResetPushButton_clicked()
 {
-    VtkAlgorithmProperties* props = _item->getVtkProperties();
+    VtkAlgorithmProperties* props = item_->getVtkProperties();
     const QString selected_array_name = this->activeScalarComboBox->currentText();
     props->RemoveLookupTable(selected_array_name);
-    _item->SetActiveAttribute(selected_array_name);
+    item_->SetActiveAttribute(selected_array_name);
 }
 
 void VtkVisTabWidget::setActiveItem( VtkVisPipelineItem* item )
 {
     if (item)
     {
-        _item = item;
+        item_ = item;
         transformTabWidget->setEnabled(true);
 
         auto* transform_filter =
-            dynamic_cast<vtkTransformFilter*>(_item->transformFilter());
+            dynamic_cast<vtkTransformFilter*>(item_->transformFilter());
         if (transform_filter) // if data set
         {
             actorPropertiesGroupBox->setEnabled(true);
-            vtkProperty* vtkProps = static_cast<vtkActor*>(_item->actor())->GetProperty();
+            vtkProperty* vtkProps = static_cast<vtkActor*>(item_->actor())->GetProperty();
             diffuseColorPickerButton->setColor(vtkProps->GetDiffuseColor());
             visibleEdgesCheckBox->setChecked(vtkProps->GetEdgeVisibility());
             edgeColorPickerButton->setColor(vtkProps->GetEdgeColor());
@@ -101,10 +101,10 @@ void VtkVisTabWidget::setActiveItem( VtkVisPipelineItem* item )
                 this->transZ->blockSignals(false);
                 //switch signals back on
             }
-            this->buildScalarArrayComboBox(_item);
+            this->buildScalarArrayComboBox(item_);
 
             // Set to last active attribute
-            QString activeAttribute = _item->GetActiveAttribute();
+            QString activeAttribute = item_->GetActiveAttribute();
             if (activeAttribute.length() > 0)
             {
                 for (int i = 0; i < this->activeScalarComboBox->count(); i++)
@@ -120,7 +120,7 @@ void VtkVisTabWidget::setActiveItem( VtkVisPipelineItem* item )
         }
         else // if image
         {
-            const VtkVisImageItem* img = static_cast<VtkVisImageItem*>(_item);
+            const VtkVisImageItem* img = static_cast<VtkVisImageItem*>(item_);
             actorPropertiesGroupBox->setEnabled(false);
             auto* transform =
                 static_cast<vtkImageChangeInformation*>(img->transformFilter());
@@ -151,7 +151,7 @@ void VtkVisTabWidget::setActiveItem( VtkVisPipelineItem* item )
 
 void VtkVisTabWidget::on_diffuseColorPickerButton_colorPicked( QColor color )
 {
-    static_cast<vtkActor*>(_item->actor())->GetProperty()->SetDiffuseColor(
+    static_cast<vtkActor*>(item_->actor())->GetProperty()->SetDiffuseColor(
             color.redF(), color.greenF(), color.blueF());
 
     emit requestViewUpdate();
@@ -161,12 +161,12 @@ void VtkVisTabWidget::on_visibleEdgesCheckBox_stateChanged( int state )
 {
     if (state == Qt::Checked)
     {
-        static_cast<vtkActor*>(_item->actor())->GetProperty()->SetEdgeVisibility(1);
+        static_cast<vtkActor*>(item_->actor())->GetProperty()->SetEdgeVisibility(1);
         edgeColorPickerButton->setEnabled(true);
     }
     else
     {
-        static_cast<vtkActor*>(_item->actor())->GetProperty()->SetEdgeVisibility(0);
+        static_cast<vtkActor*>(item_->actor())->GetProperty()->SetEdgeVisibility(0);
         edgeColorPickerButton->setEnabled(false);
     }
 
@@ -175,14 +175,14 @@ void VtkVisTabWidget::on_visibleEdgesCheckBox_stateChanged( int state )
 
 void VtkVisTabWidget::on_edgeColorPickerButton_colorPicked( QColor color )
 {
-    static_cast<vtkActor*>(_item->actor())->GetProperty()->SetEdgeColor(
+    static_cast<vtkActor*>(item_->actor())->GetProperty()->SetEdgeColor(
             color.redF(), color.greenF(), color.blueF());
     emit requestViewUpdate();
 }
 
 void VtkVisTabWidget::on_opacitySlider_sliderMoved( int value )
 {
-    static_cast<vtkActor*>(_item->actor())->GetProperty()->SetOpacity(value / 100.0);
+    static_cast<vtkActor*>(item_->actor())->GetProperty()->SetOpacity(value / 100.0);
     emit requestViewUpdate();
 }
 
@@ -194,11 +194,11 @@ void VtkVisTabWidget::on_scaleZ_textChanged(const QString &text)
     // If z scale becomes zero, the object becomes invisible
     if (ok && scale != 0.0)
     {
-        _item->setScale(1.0, 1.0, scale);
+        item_->setScale(1.0, 1.0, scale);
 
-        for (int i = 0; i < _item->childCount(); i++)
+        for (int i = 0; i < item_->childCount(); i++)
         {
-            VtkVisPipelineItem* childItem = _item->child(i);
+            VtkVisPipelineItem* childItem = item_->child(i);
             if (childItem)
             {
                 auto* colorFilter =
@@ -230,7 +230,7 @@ void VtkVisTabWidget::translateItem()
 
     if (okX && okY && okZ)
     {
-        _item->setTranslation(trans[0], trans[1], trans[2]);
+        item_->setTranslation(trans[0], trans[1], trans[2]);
         emit requestViewUpdate();
     }
 }
@@ -377,7 +377,7 @@ void VtkVisTabWidget::buildScalarArrayComboBox(VtkVisPipelineItem* item)
 
 void VtkVisTabWidget::SetActiveAttributeOnItem( const QString &name )
 {
-    _item->SetActiveAttribute(name);
+    item_->SetActiveAttribute(name);
     emit requestViewUpdate();
 }
 

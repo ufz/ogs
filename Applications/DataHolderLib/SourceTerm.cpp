@@ -15,7 +15,7 @@ namespace DataHolderLib
 {
 SourceTerm::SourceTerm(ProcessVariable const& process_var,
                        std::string const& param_name, ConditionType type)
-    : FemCondition(process_var, param_name), _type(type)
+    : FemCondition(process_var, param_name), type_(type)
 {
 }
 

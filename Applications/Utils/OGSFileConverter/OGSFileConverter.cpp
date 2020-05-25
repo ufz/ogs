@@ -31,7 +31,7 @@
 
 OGSFileConverter::OGSFileConverter(std::string const& gmsh_path,
                                    QWidget* parent)
-    : QDialog(parent), _gmsh_path(gmsh_path)
+    : QDialog(parent), gmsh_path_(gmsh_path)
 {
     setupUi(this);
 }
@@ -107,7 +107,7 @@ void OGSFileConverter::convertGLI2GML(const QStringList &input, const QString &o
         std::vector<std::string> errors;
 
         FileIO::Legacy::readGLIFileV4(input_string.toStdString(), geo_objects,
-                                      unique_name, errors, _gmsh_path);
+                                      unique_name, errors, gmsh_path_);
         if (errors.empty() ||
             (errors.size() == 1 &&
              errors[0] == "[readSurface] polyline for surface not found!"))

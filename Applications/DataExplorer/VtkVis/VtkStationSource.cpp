@@ -37,7 +37,7 @@ vtkStandardNewMacro(VtkStationSource);
 
 VtkStationSource::VtkStationSource()
 {
-    _removable = false; // From VtkAlgorithmProperties
+    removable_ = false; // From VtkAlgorithmProperties
     this->SetNumberOfInputPorts(0);
 
     const DataHolderLib::Color c = DataHolderLib::getRandomColor();
@@ -48,7 +48,7 @@ void VtkStationSource::PrintSelf( ostream& os, vtkIndent indent )
 {
     this->Superclass::PrintSelf(os,indent);
 
-    if (_stations->empty())
+    if (stations_->empty())
     {
         return;
     }
@@ -56,7 +56,7 @@ void VtkStationSource::PrintSelf( ostream& os, vtkIndent indent )
     os << indent << "== VtkStationSource ==" << "\n";
 
     int i = 0;
-    for (auto station : *_stations)
+    for (auto station : *stations_)
     {
         const double* coords = station->getCoords();
         os << indent << "Station " << i << " (" << coords[0] << ", " << coords[1] <<
@@ -73,28 +73,28 @@ int VtkStationSource::RequestData( vtkInformation* request,
     (void)request;
     (void)inputVector;
 
-    if (!_stations)
+    if (!stations_)
     {
         return 0;
     }
-    std::size_t nStations = _stations->size();
+    std::size_t nStations = stations_->size();
     if (nStations == 0)
     {
         return 0;
     }
 
     bool useStationValues(false);
-    double sValue=static_cast<GeoLib::Station*>((*_stations)[0])->getStationValue();
+    double sValue=static_cast<GeoLib::Station*>((*stations_)[0])->getStationValue();
     for (std::size_t i = 1; i < nStations; i++)
     {
-        if (static_cast<GeoLib::Station*>((*_stations)[i])->getStationValue() != sValue)
+        if (static_cast<GeoLib::Station*>((*stations_)[i])->getStationValue() != sValue)
         {
             useStationValues = true;
             break;
         }
     }
 
-    bool isBorehole = static_cast<GeoLib::Station*>((*_stations)[0])->type() ==
+    bool isBorehole = static_cast<GeoLib::Station*>((*stations_)[0])->type() ==
                       GeoLib::Station::StationType::BOREHOLE;
 
     vtkSmartPointer<vtkInformation> outInfo = outputVector->GetInformationObject(0);
@@ -134,7 +134,7 @@ int VtkStationSource::RequestData( vtkInformation* request,
     std::size_t site_count(0);
 
     // Generate graphic objects
-    for (auto station : *_stations)
+    for (auto station : *stations_)
     {
         double coords[3] = {(*station)[0], (*station)[1], (*station)[2]};
         vtkIdType sid = newStations->InsertNextPoint(coords);
@@ -222,7 +222,7 @@ void VtkStationSource::SetUserProperty( QString name, QVariant value )
 std::size_t VtkStationSource::GetIndexByName( std::string const& name )
 {
     vtkIdType max_key(0);
-    for (auto& it : _id_map)
+    for (auto& it : id_map_)
     {
         if (name == it.first)
         {
@@ -234,9 +234,9 @@ std::size_t VtkStationSource::GetIndexByName( std::string const& name )
         }
     }
 
-    vtkIdType new_index = (_id_map.empty()) ? 0 : (max_key+1);
+    vtkIdType new_index = (id_map_.empty()) ? 0 : (max_key+1);
     INFO("Key '{:s}' has been assigned index {:d}.", name, new_index);
-    _id_map.insert(std::pair<std::string, vtkIdType>(name, new_index));
+    id_map_.insert(std::pair<std::string, vtkIdType>(name, new_index));
     return new_index;
 }
 

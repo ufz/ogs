@@ -33,7 +33,7 @@ VtkCompositeNodeSelectionFilter::VtkCompositeNodeSelectionFilter( vtkAlgorithm* 
 
 VtkCompositeNodeSelectionFilter::~VtkCompositeNodeSelectionFilter()
 {
-    for (auto& item : _selection)
+    for (auto& item : selection_)
     {
         delete item;
     }
@@ -41,26 +41,26 @@ VtkCompositeNodeSelectionFilter::~VtkCompositeNodeSelectionFilter()
 
 void VtkCompositeNodeSelectionFilter::init()
 {
-    this->_inputDataObjectType = VTK_DATA_SET;
-    this->_outputDataObjectType = VTK_POLY_DATA;
+    this->inputDataObjectType_ = VTK_DATA_SET;
+    this->outputDataObjectType_ = VTK_POLY_DATA;
 
-    if (!_selection.empty())
+    if (!selection_.empty())
     {
         vtkSmartPointer<VtkPointsSource> point_source = vtkSmartPointer<VtkPointsSource>::New();
-        point_source->setPoints(&_selection);
+        point_source->setPoints(&selection_);
 
-        vtkSmartPointer<vtkSphereSource> _glyphSource = vtkSmartPointer<vtkSphereSource>::New();
-            _glyphSource->SetRadius(this->GetInitialRadius());
+        vtkSmartPointer<vtkSphereSource> glyphSource_ = vtkSmartPointer<vtkSphereSource>::New();
+            glyphSource_->SetRadius(this->GetInitialRadius());
 
         vtkGlyph3D* glyphFilter = vtkGlyph3D::New();
-            glyphFilter->SetSourceConnection(_glyphSource->GetOutputPort());
+            glyphFilter->SetSourceConnection(glyphSource_->GetOutputPort());
             glyphFilter->SetInputConnection(point_source->GetOutputPort());
 
-        _outputAlgorithm = glyphFilter;
+        outputAlgorithm_ = glyphFilter;
     }
     else
     {
-        _outputAlgorithm = nullptr;
+        outputAlgorithm_ = nullptr;
     }
 }
 
@@ -68,11 +68,11 @@ void VtkCompositeNodeSelectionFilter::setSelectionArray(const std::vector<unsign
 {
     for (unsigned int point_index : point_indeces)
     {
-        double* coords = static_cast<vtkDataSetAlgorithm*>(_inputAlgorithm)
+        double* coords = static_cast<vtkDataSetAlgorithm*>(inputAlgorithm_)
                              ->GetOutput()
                              ->GetPoint(point_index);
         auto* p(new GeoLib::Point(coords[0], coords[1], coords[2]));
-        _selection.push_back(p);
+        selection_.push_back(p);
     }
     init();
 }

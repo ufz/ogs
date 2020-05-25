@@ -30,33 +30,33 @@ SetNameDialog::SetNameDialog(const std::string &geo_object_type, std::size_t id,
 
 SetNameDialog::~SetNameDialog()
 {
-    delete _buttonBox;
-    delete _layout;
-    delete _new_name;
-    delete _txt_label;
+    delete buttonBox_;
+    delete layout_;
+    delete new_name_;
+    delete txt_label_;
 }
 
 void SetNameDialog::setupDialog(const QString &label, const std::string &old_name)
 {
-    _layout = new QVBoxLayout(this);
+    layout_ = new QVBoxLayout(this);
     QString dialog_text("Please enter a name for " + label);
-    _txt_label = new QLabel(dialog_text, this);
-    _new_name = new QLineEdit(QString::fromStdString(old_name));
+    txt_label_ = new QLabel(dialog_text, this);
+    new_name_ = new QLineEdit(QString::fromStdString(old_name));
 
     setWindowTitle("Set name...");
-    _layout->addWidget( _txt_label );
-    _layout->addWidget( _new_name );
-    _buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
-    connect(_buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
-    connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
-    _layout->addWidget( _buttonBox );
+    layout_->addWidget( txt_label_ );
+    layout_->addWidget( new_name_ );
+    buttonBox_ = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+    connect(buttonBox_, SIGNAL(accepted()), this, SLOT(accept()));
+    connect(buttonBox_, SIGNAL(rejected()), this, SLOT(reject()));
+    layout_->addWidget( buttonBox_ );
 
-    setLayout(_layout);
+    setLayout(layout_);
 }
 
 std::string SetNameDialog::getNewName()
 {
-    return _new_name->text().toStdString();
+    return new_name_->text().toStdString();
 }
 
 void SetNameDialog::accept()

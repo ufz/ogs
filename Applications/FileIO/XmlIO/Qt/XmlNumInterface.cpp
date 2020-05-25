@@ -32,7 +32,7 @@ int XmlNumInterface::readFile(QString const& fileName)
     }
 
     QDomDocument doc("OGS-NUM-DOM");
-    doc.setContent(_fileData);
+    doc.setContent(fileData_);
     QDomElement const docElement = doc.documentElement(); //OGSNonlinearSolverSetup
     if (docElement.nodeName().compare("OGSNonlinearSolverSetup"))
     {

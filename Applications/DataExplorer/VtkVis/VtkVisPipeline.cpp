@@ -63,12 +63,12 @@
 #include "VtkVisPointSetItem.h"
 
 VtkVisPipeline::VtkVisPipeline(vtkRenderer* renderer, QObject* parent /*= 0*/)
-    : TreeModel(parent), _renderer(renderer)
+    : TreeModel(parent), renderer_(renderer)
 {
     QList<QVariant> rootData;
     rootData << "Object name" << "Visible";
-    delete _rootItem;
-    _rootItem = new TreeItem(rootData, nullptr);
+    delete rootItem_;
+    rootItem_ = new TreeItem(rootData, nullptr);
 
     QSettings settings;
     QVariant backgroundColorVariant = settings.value("VtkBackgroundColor");
@@ -77,7 +77,7 @@ VtkVisPipeline::VtkVisPipeline(vtkRenderer* renderer, QObject* parent /*= 0*/)
         this->setBGColor(backgroundColorVariant.value<QColor>());
     }
 
-    _resetCameraOnAddOrRemove = settings.value("resetViewOnLoad", true).toBool();
+    resetCameraOnAddOrRemove_ = settings.value("resetViewOnLoad", true).toBool();
 }
 
 bool VtkVisPipeline::setData( const QModelIndex &index, const QVariant &value,
@@ -91,7 +91,7 @@ bool VtkVisPipeline::setData( const QModelIndex &index, const QVariant &value,
 void VtkVisPipeline::addLight(const GeoLib::Point &pos)
 {
     double lightPos[3];
-    for (auto& light : _lights)
+    for (auto& light : lights_)
     {
         light->GetPosition(lightPos);
         if (pos[0] == lightPos[0] && pos[1] == lightPos[1] &&
@@ -102,14 +102,14 @@ void VtkVisPipeline::addLight(const GeoLib::Point &pos)
     }
     vtkLight* l = vtkLight::New();
     l->SetPosition(pos[0], pos[1], pos[2]);
-    _renderer->AddLight(l);
-    _lights.push_back(l);
+    renderer_->AddLight(l);
+    lights_.push_back(l);
 }
 
 vtkLight* VtkVisPipeline::getLight(const GeoLib::Point &pos) const
 {
     double lightPos[3];
-    for (auto light : _lights)
+    for (auto light : lights_)
     {
         light->GetPosition(lightPos);
         if (pos[0] == lightPos[0] && pos[1] == lightPos[1] &&
@@ -124,14 +124,14 @@ vtkLight* VtkVisPipeline::getLight(const GeoLib::Point &pos) const
 void VtkVisPipeline::removeLight(const GeoLib::Point &pos)
 {
     double lightPos[3];
-    for (auto it = _lights.begin(); it != _lights.end(); ++it)
+    for (auto it = lights_.begin(); it != lights_.end(); ++it)
     {
         (*it)->GetPosition(lightPos);
         if (pos[0] == lightPos[0] && pos[1] == lightPos[1] && pos[2] == lightPos[2])
         {
-            _renderer->RemoveLight(*it);
+            renderer_->RemoveLight(*it);
             (*it)->Delete();
-            _lights.erase(it);
+            lights_.erase(it);
             return;
         }
     }
@@ -139,7 +139,7 @@ void VtkVisPipeline::removeLight(const GeoLib::Point &pos)
 
 QColor VtkVisPipeline::getBGColor() const
 {
-    double* color = _renderer->GetBackground();
+    double* color = renderer_->GetBackground();
     QColor c(static_cast<int>(color[0] * 255),
              static_cast<int>(color[1] * 255),
              static_cast<int>(color[2] * 255));
@@ -150,12 +150,12 @@ void VtkVisPipeline::setBGColor(const QColor &color)
 {
     QSettings settings;
     settings.setValue("VtkBackgroundColor", color);
-    _renderer->SetBackground(color.redF(), color.greenF(), color.blueF());
+    renderer_->SetBackground(color.redF(), color.greenF(), color.blueF());
 }
 
 QModelIndex VtkVisPipeline::getIndex( vtkProp3D* actor )
 {
-    return _actorMap.value(actor, QModelIndex());
+    return actorMap_.value(actor, QModelIndex());
 }
 
 Qt::ItemFlags VtkVisPipeline::flags( const QModelIndex &index ) const
@@ -251,9 +251,9 @@ void VtkVisPipeline::loadFromFile(QString filename)
 void VtkVisPipeline::setGlobalSuperelevation(double factor) const
 {
     // iterate over all source items
-    for (int i = 0; i < _rootItem->childCount(); ++i)
+    for (int i = 0; i < rootItem_->childCount(); ++i)
     {
-        auto* item = static_cast<VtkVisPipelineItem*>(_rootItem->child(i));
+        auto* item = static_cast<VtkVisPipelineItem*>(rootItem_->child(i));
         item->setScale(1.0, 1.0, factor);
 
         // recursively set on all child items
@@ -266,9 +266,9 @@ void VtkVisPipeline::setGlobalSuperelevation(double factor) const
 void VtkVisPipeline::setGlobalBackfaceCulling(bool enable) const
 {
     // iterate over all source items
-    for (int i = 0; i < _rootItem->childCount(); ++i)
+    for (int i = 0; i < rootItem_->childCount(); ++i)
     {
-        auto* item = static_cast<VtkVisPipelineItem*>(_rootItem->child(i));
+        auto* item = static_cast<VtkVisPipelineItem*>(rootItem_->child(i));
         item->setBackfaceCulling(enable);
 
         // recursively set on all child items
@@ -299,7 +299,7 @@ QModelIndex VtkVisPipeline::addPipelineItem(VtkVisPipelineItem* item, const QMod
 {
     beginResetModel();
 
-    item->Initialize(_renderer);
+    item->Initialize(renderer_);
     TreeItem* parentItem = item->parentItem();
     parentItem->appendChild(item);
 
@@ -317,11 +317,11 @@ QModelIndex VtkVisPipeline::addPipelineItem(VtkVisPipelineItem* item, const QMod
     int parentChildCount = parentItem->childCount();
     QModelIndex newIndex = index(parentChildCount - 1, 0, parent);
 
-    if (_resetCameraOnAddOrRemove || _rootItem->childCount() == 1)
+    if (resetCameraOnAddOrRemove_ || rootItem_->childCount() == 1)
     {
-        _renderer->ResetCamera(_renderer->ComputeVisiblePropBounds());
+        renderer_->ResetCamera(renderer_->ComputeVisiblePropBounds());
     }
-    _actorMap.insert(item->actor(), newIndex);
+    actorMap_.insert(item->actor(), newIndex);
 
     // Do not interpolate images
     if (dynamic_cast<vtkImageAlgorithm*>(item->algorithm()))
@@ -393,7 +393,7 @@ void VtkVisPipeline::removeSourceItem(GeoTreeModel* model,
                                       const std::string &name,
                                       GeoLib::GEOTYPE type)
 {
-    for (int i = 0; i < _rootItem->childCount(); i++)
+    for (int i = 0; i < rootItem_->childCount(); i++)
     {
         VtkVisPipelineItem* item = static_cast<VtkVisPipelineItem*>(getItem(index(i, 0)));
         if (item->algorithm() == model->vtkSource(name, type))
@@ -406,7 +406,7 @@ void VtkVisPipeline::removeSourceItem(GeoTreeModel* model,
 
 void VtkVisPipeline::removeSourceItem(StationTreeModel* model, const std::string &name)
 {
-    for (int i = 0; i < _rootItem->childCount(); i++)
+    for (int i = 0; i < rootItem_->childCount(); i++)
     {
         VtkVisPipelineItem* item = static_cast<VtkVisPipelineItem*>(getItem(index(i, 0)));
         if (item->algorithm() == model->vtkSource(name))
@@ -421,7 +421,7 @@ void VtkVisPipeline::removeSourceItem(MeshModel* model, const QModelIndex &idx)
 {
     auto* sItem = static_cast<MeshItem*>(model->getItem(idx));
 
-    for (int i = 0; i < _rootItem->childCount(); i++)
+    for (int i = 0; i < rootItem_->childCount(); i++)
     {
         VtkVisPipelineItem* item =
             static_cast<VtkVisPipelineItem*>(getItem(index(i, 0)));
@@ -440,13 +440,13 @@ void VtkVisPipeline::removePipelineItem( QModelIndex index )
         return;
     }
 
-    QMap<vtkProp3D*, QModelIndex>::iterator it = _actorMap.begin();
-    while (it != _actorMap.end())
+    QMap<vtkProp3D*, QModelIndex>::iterator it = actorMap_.begin();
+    while (it != actorMap_.end())
     {
         QModelIndex itIndex = it.value();
         if (itIndex == index)
         {
-            _actorMap.erase(it);
+            actorMap_.erase(it);
             break;
         }
         ++it;
@@ -455,9 +455,9 @@ void VtkVisPipeline::removePipelineItem( QModelIndex index )
     //TreeItem* item = getItem(index);
     removeRows(index.row(), 1, index.parent());
 
-    if (_resetCameraOnAddOrRemove)
+    if (resetCameraOnAddOrRemove_)
     {
-        _renderer->ResetCamera(_renderer->ComputeVisiblePropBounds());
+        renderer_->ResetCamera(renderer_->ComputeVisiblePropBounds());
     }
     emit vtkVisPipelineChanged();
 }
@@ -489,11 +489,11 @@ void VtkVisPipeline::showMeshElementQuality(
         return;
     }
 
-    int const nSources = this->_rootItem->childCount();
+    int const nSources = this->rootItem_->childCount();
     for (int i = 0; i < nSources; i++)
     {
         auto* parentItem =
-            static_cast<VtkVisPipelineItem*>(_rootItem->child(i));
+            static_cast<VtkVisPipelineItem*>(rootItem_->child(i));
         if (parentItem->algorithm() != source)
         {
             continue;
@@ -524,11 +524,11 @@ void VtkVisPipeline::showMeshElementQuality(
 void VtkVisPipeline::highlightGeoObject(const vtkPolyDataAlgorithm* source, int index)
 {
     this->removeHighlightedGeoObject();
-    int nSources = this->_rootItem->childCount();
+    int nSources = this->rootItem_->childCount();
     for (int i = 0; i < nSources; i++)
     {
         auto* parentItem =
-            static_cast<VtkVisPipelineItem*>(_rootItem->child(i));
+            static_cast<VtkVisPipelineItem*>(rootItem_->child(i));
         if (parentItem->algorithm() == source)
         {
             QList<QVariant> itemData;
@@ -543,7 +543,7 @@ void VtkVisPipeline::highlightGeoObject(const vtkPolyDataAlgorithm* source, int 
                 new VtkVisPointSetItem(filter, parentItem, itemData);
             QModelIndex parent_index =
                 static_cast<TreeModel*>(this)->index(i, 0, QModelIndex());
-            _highlighted_geo_index = this->addPipelineItem(item, parent_index);
+            highlighted_geo_index_ = this->addPipelineItem(item, parent_index);
             break;
         }
     }
@@ -551,20 +551,20 @@ void VtkVisPipeline::highlightGeoObject(const vtkPolyDataAlgorithm* source, int 
 
 void VtkVisPipeline::removeHighlightedGeoObject()
 {
-    if (_highlighted_geo_index != QModelIndex())
+    if (highlighted_geo_index_ != QModelIndex())
     {
-        this->removePipelineItem(_highlighted_geo_index);
-        _highlighted_geo_index = QModelIndex();
+        this->removePipelineItem(highlighted_geo_index_);
+        highlighted_geo_index_ = QModelIndex();
     }
 }
 
 void VtkVisPipeline::highlightMeshComponent(vtkUnstructuredGridAlgorithm const*const source, unsigned index, bool is_element)
 {
-    int nSources = this->_rootItem->childCount();
+    int nSources = this->rootItem_->childCount();
     for (int i = 0; i < nSources; i++)
     {
         auto* parentItem =
-            static_cast<VtkVisPipelineItem*>(_rootItem->child(i));
+            static_cast<VtkVisPipelineItem*>(rootItem_->child(i));
         if (parentItem->algorithm() == source)
         {
             QList<QVariant> itemData;
@@ -598,7 +598,7 @@ void VtkVisPipeline::highlightMeshComponent(vtkUnstructuredGridAlgorithm const*c
                 new VtkVisPointSetItem(filter, parentItem, itemData);
             QModelIndex parent_index =
                 static_cast<TreeModel*>(this)->index(i, 0, QModelIndex());
-            _highlighted_mesh_component =
+            highlighted_mesh_component_ =
                 this->addPipelineItem(item, parent_index);
             break;
         }
@@ -607,9 +607,9 @@ void VtkVisPipeline::highlightMeshComponent(vtkUnstructuredGridAlgorithm const*c
 
 void VtkVisPipeline::removeHighlightedMeshComponent()
 {
-    if (_highlighted_mesh_component != QModelIndex())
+    if (highlighted_mesh_component_ != QModelIndex())
     {
-        this->removePipelineItem(_highlighted_mesh_component);
-        _highlighted_mesh_component = QModelIndex();
+        this->removePipelineItem(highlighted_mesh_component_);
+        highlighted_mesh_component_ = QModelIndex();
     }
 }

@@ -32,12 +32,12 @@ const QVariant MeshModel::element_str = "Element";
 const std::map<MeshLib::MeshElemType, QVariant> MeshModel::elem_type_map = MeshModel::createMeshElemTypeMap();
 
 MeshModel::MeshModel(DataHolderLib::Project &project, QObject* parent /*= 0*/ )
-    : TreeModel(parent), _project(project)
+    : TreeModel(parent), project_(project)
 {
-    delete _rootItem;
+    delete rootItem_;
     QList<QVariant> rootData;
     rootData << "Mesh Name" << "#" << "Type";
-    _rootItem = new TreeItem(rootData, nullptr);
+    rootItem_ = new TreeItem(rootData, nullptr);
 }
 
 int MeshModel::columnCount( const QModelIndex &parent /*= QModelIndex()*/ ) const
@@ -49,15 +49,15 @@ int MeshModel::columnCount( const QModelIndex &parent /*= QModelIndex()*/ ) cons
 
 void MeshModel::addMesh(std::unique_ptr<MeshLib::Mesh> mesh)
 {
-    _project.addMesh(std::move(mesh));
-    auto const& meshes(_project.getMeshObjects());
+    project_.addMesh(std::move(mesh));
+    auto const& meshes(project_.getMeshObjects());
     this->addMeshObject(meshes.back().get());
 }
 
 void MeshModel::addMesh(MeshLib::Mesh* mesh)
 {
-    _project.addMesh(std::unique_ptr<MeshLib::Mesh>(mesh));
-    auto const& meshes(_project.getMeshObjects());
+    project_.addMesh(std::unique_ptr<MeshLib::Mesh>(mesh));
+    auto const& meshes(project_.getMeshObjects());
     this->addMeshObject(meshes.back().get());
 }
 
@@ -69,8 +69,8 @@ void MeshModel::addMeshObject(const MeshLib::Mesh* mesh)
     QVariant const display_name (QString::fromStdString(mesh->getName()));
     QList<QVariant> meshData;
     meshData << display_name << "" << "";
-    auto* const newMesh = new MeshItem(meshData, _rootItem, mesh);
-    _rootItem->appendChild(newMesh);
+    auto* const newMesh = new MeshItem(meshData, rootItem_, mesh);
+    rootItem_->appendChild(newMesh);
 
     // display elements
     std::vector<MeshLib::Element*> const& elems = mesh->getElements();
@@ -85,7 +85,7 @@ void MeshModel::addMeshObject(const MeshLib::Mesh* mesh)
     }
 
     endResetModel();
-    emit meshAdded(this, this->index(_rootItem->childCount() - 1, 0, QModelIndex()));
+    emit meshAdded(this, this->index(rootItem_->childCount() - 1, 0, QModelIndex()));
 }
 
 const MeshLib::Mesh* MeshModel::getMesh(const QModelIndex &idx) const
@@ -106,9 +106,9 @@ const MeshLib::Mesh* MeshModel::getMesh(const QModelIndex &idx) const
 
 const MeshLib::Mesh* MeshModel::getMesh(const std::string &name) const
 {
-    for (int i = 0; i < _rootItem->childCount(); i++)
+    for (int i = 0; i < rootItem_->childCount(); i++)
     {
-        auto* item = static_cast<MeshItem*>(_rootItem->child(i));
+        auto* item = static_cast<MeshItem*>(rootItem_->child(i));
         if (item->data(0).toString().toStdString() == name)
         {
             return item->getMesh();
@@ -135,16 +135,16 @@ bool MeshModel::removeMesh(const QModelIndex &idx)
 
 bool MeshModel::removeMesh(const std::string &name)
 {
-    for (int i = 0; i < _rootItem->childCount(); i++)
+    for (int i = 0; i < rootItem_->childCount(); i++)
     {
-        TreeItem* item = _rootItem->child(i);
+        TreeItem* item = rootItem_->child(i);
         if (item->data(0).toString().toStdString() == name)
         {
             beginResetModel();
             emit meshRemoved(this, this->index(i, 0, QModelIndex()));
-            _rootItem->removeChildren(i,1);
+            rootItem_->removeChildren(i,1);
             endResetModel();
-            return _project.removeMesh(name);
+            return project_.removeMesh(name);
         }
     }
 
@@ -154,12 +154,12 @@ bool MeshModel::removeMesh(const std::string &name)
 
 void MeshModel::updateMesh(MeshLib::Mesh* mesh)
 {
-    for (int i = 0; i < _rootItem->childCount(); i++)
+    for (int i = 0; i < rootItem_->childCount(); i++)
     {
-        if (dynamic_cast<MeshItem*>(this->_rootItem->child(i))->getMesh() == mesh)
+        if (dynamic_cast<MeshItem*>(this->rootItem_->child(i))->getMesh() == mesh)
         {
             emit meshRemoved(this, this->index(i, 0, QModelIndex()));
-            _rootItem->removeChildren(i,1);
+            rootItem_->removeChildren(i,1);
         }
     }
     this->addMeshObject(mesh);
@@ -167,7 +167,7 @@ void MeshModel::updateMesh(MeshLib::Mesh* mesh)
 
 void MeshModel::updateModel()
 {
-    auto const& mesh_vec = _project.getMeshObjects();
+    auto const& mesh_vec = project_.getMeshObjects();
     for (auto const& mesh : mesh_vec)
     {
         if (!getMesh(mesh->getName()))
@@ -205,9 +205,9 @@ vtkUnstructuredGridAlgorithm* MeshModel::vtkSource(const QModelIndex &idx) const
 
 vtkUnstructuredGridAlgorithm* MeshModel::vtkSource(const std::string &name) const
 {
-    for (int i = 0; i < _rootItem->childCount(); i++)
+    for (int i = 0; i < rootItem_->childCount(); i++)
     {
-        auto* item = static_cast<MeshItem*>(_rootItem->child(i));
+        auto* item = static_cast<MeshItem*>(rootItem_->child(i));
         if (item->data(0).toString().toStdString() == name)
         {
             return item->vtkSource();

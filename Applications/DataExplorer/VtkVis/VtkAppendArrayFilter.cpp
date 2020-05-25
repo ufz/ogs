@@ -43,7 +43,7 @@ int VtkAppendArrayFilter::RequestData(vtkInformation* /*request*/,
                                       vtkInformationVector** inputVector,
                                       vtkInformationVector* outputVector)
 {
-    if (this->_array.empty())
+    if (this->array_.empty())
     {
         ERR("VtkAppendArrayFilter::RequestData(): Selection array is empty.");
         return 0;
@@ -54,7 +54,7 @@ int VtkAppendArrayFilter::RequestData(vtkInformation* /*request*/,
 
     vtkSmartPointer<vtkDoubleArray> colors = vtkSmartPointer<vtkDoubleArray>::New();
     colors->SetNumberOfComponents(1);
-    std::size_t arrayLength = this->_array.size();
+    std::size_t arrayLength = this->array_.size();
     colors->SetNumberOfValues(arrayLength);
     colors->SetName("Selection");
 
@@ -64,7 +64,7 @@ int VtkAppendArrayFilter::RequestData(vtkInformation* /*request*/,
 
     for (std::size_t i = 0; i < arrayLength; i++)
     {
-        colors->SetValue(i, _array[i]);
+        colors->SetValue(i, array_[i]);
     }
 
     vtkInformation* outInfo = outputVector->GetInformationObject(0);
@@ -74,7 +74,7 @@ int VtkAppendArrayFilter::RequestData(vtkInformation* /*request*/,
     output->GetPointData()->PassData(input->GetPointData());
     output->GetCellData()->PassData(input->GetCellData());
     output->GetCellData()->AddArray(colors);
-    output->GetCellData()->SetActiveScalars(_array_name.c_str());
+    output->GetCellData()->SetActiveScalars(array_name_.c_str());
 
     return 1;
 }
@@ -82,6 +82,6 @@ int VtkAppendArrayFilter::RequestData(vtkInformation* /*request*/,
 void VtkAppendArrayFilter::SetArray(const std::string &array_name,
                                     const std::vector<double> &new_array)
 {
-    this->_array_name = array_name;
-    this->_array = new_array;
+    this->array_name_ = array_name;
+    this->array_ = new_array;
 }

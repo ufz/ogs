@@ -33,7 +33,7 @@
 vtkStandardNewMacro(VtkColorByHeightFilter);
 
 VtkColorByHeightFilter::VtkColorByHeightFilter()
-    : ColorLookupTable(VtkColorLookupTable::New()), _tableRange{0.0, 0.0}
+    : ColorLookupTable(VtkColorLookupTable::New()), tableRange_{0.0, 0.0}
 {
 }
 
@@ -96,8 +96,8 @@ void VtkColorByHeightFilter::SetTableRange(double min, double max)
 {
     if (min < max)
     {
-        this->_tableRange[0] = min;
-        this->_tableRange[1] = max;
+        this->tableRange_[0] = min;
+        this->tableRange_[1] = max;
         this->ColorLookupTable->SetTableRange(min, max);
     }
     else
@@ -109,7 +109,7 @@ void VtkColorByHeightFilter::SetTableRange(double min, double max)
 
 void VtkColorByHeightFilter::SetTableRangeScaling(double scale)
 {
-    this->_tableRangeScaling = scale;
+    this->tableRangeScaling_ = scale;
     this->ColorLookupTable->SetTableRange(
-            this->_tableRange[0] * scale, this->_tableRange[1] * scale);
+            this->tableRange_[0] * scale, this->tableRange_[1] * scale);
 }

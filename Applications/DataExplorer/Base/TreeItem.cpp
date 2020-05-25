@@ -21,19 +21,19 @@
  * and the data associated with each column.
  */
 TreeItem::TreeItem(QList<QVariant> data, TreeItem* parent)
-    : _itemData(std::move(data)), _parentItem(parent)
+    : itemData_(std::move(data)), parentItem_(parent)
 {
 }
 
 /**
  * A pointer to each of the child items belonging to this item
- * will be stored in the _childItems private member variable. When
+ * will be stored in the childItems_ private member variable. When
  * the class's destructor is called, it must delete each of these
  * to ensure that their memory is reused.
  */
 TreeItem::~TreeItem()
 {
-    qDeleteAll(_childItems);
+    qDeleteAll(childItems_);
 }
 
 /**
@@ -41,7 +41,7 @@ TreeItem::~TreeItem()
  */
 void TreeItem::appendChild(TreeItem* item)
 {
-    _childItems.append(item);
+    childItems_.append(item);
 }
 
 /**
@@ -51,20 +51,20 @@ void TreeItem::appendChild(TreeItem* item)
  */
 TreeItem* TreeItem::child(int row) const
 {
-    if (_childItems.count() > row)
+    if (childItems_.count() > row)
     {
-        return _childItems.value(row);
+        return childItems_.value(row);
     }
 
     return nullptr;
 }
 
 /**
- * Returns the number of _childItems
+ * Returns the number of childItems_
  */
 int TreeItem::childCount() const
 {
-    return _childItems.count();
+    return childItems_.count();
 }
 
 /**
@@ -72,9 +72,9 @@ int TreeItem::childCount() const
  */
 int TreeItem::row() const
 {
-    if (_parentItem)
+    if (parentItem_)
     {
-        return _parentItem->_childItems.indexOf(const_cast<TreeItem*>(this));
+        return parentItem_->childItems_.indexOf(const_cast<TreeItem*>(this));
     }
 
     return 0;
@@ -85,7 +85,7 @@ int TreeItem::row() const
  */
 int TreeItem::columnCount() const
 {
-    return _itemData.count();
+    return itemData_.count();
 }
 
 /**
@@ -93,7 +93,7 @@ int TreeItem::columnCount() const
  */
 QVariant TreeItem::data(int column) const
 {
-    return _itemData.value(column);
+    return itemData_.value(column);
 }
 
 /**
@@ -101,12 +101,12 @@ QVariant TreeItem::data(int column) const
  */
 bool TreeItem::setData( int column, const QVariant &value )
 {
-    if (column < 0 || column >= _itemData.size())
+    if (column < 0 || column >= itemData_.size())
     {
         return false;
     }
 
-    _itemData[column] = value;
+    itemData_[column] = value;
     return true;
 }
 /**
@@ -114,7 +114,7 @@ bool TreeItem::setData( int column, const QVariant &value )
  */
 TreeItem* TreeItem::parentItem() const
 {
-    return _parentItem;
+    return parentItem_;
 }
 
 /**
@@ -122,14 +122,14 @@ TreeItem* TreeItem::parentItem() const
  */
 bool TreeItem::removeChildren(int position, int count)
 {
-    if (position < 0 || position + count > _childItems.size())
+    if (position < 0 || position + count > childItems_.size())
     {
         return false;
     }
 
     for (int row = 0; row < count; ++row)
     {
-        delete _childItems.takeAt(position);
+        delete childItems_.takeAt(position);
     }
 
     return true;

@@ -30,7 +30,7 @@ namespace FileIO
 PetrelInterface::PetrelInterface(std::list<std::string> &sfc_fnames,
                                  std::list<std::string> &well_path_fnames,
                                  std::string &unique_model_name, GeoLib::GEOObjects* geo_obj) :
-    _unique_name(unique_model_name), pnt_vec(new std::vector<GeoLib::Point*>),
+    unique_name_(unique_model_name), pnt_vec(new std::vector<GeoLib::Point*>),
     well_vec(new std::vector<GeoLib::Point*>), ply_vec(new std::vector<GeoLib::Polyline*>)
 {
     for (std::list<std::string>::const_iterator it(sfc_fnames.begin()); it
@@ -75,18 +75,18 @@ PetrelInterface::PetrelInterface(std::list<std::string> &sfc_fnames,
 
     // store data in GEOObject
     geo_obj->addPointVec(std::unique_ptr<std::vector<GeoLib::Point*>>(pnt_vec),
-                         _unique_name);
+                         unique_name_);
     if (!well_vec->empty())
     {
         geo_obj->addStationVec(
             std::unique_ptr<std::vector<GeoLib::Point*>>(well_vec),
-            _unique_name);
+            unique_name_);
     }
     if (!ply_vec->empty())
     {
         geo_obj->addPolylineVec(
             std::unique_ptr<std::vector<GeoLib::Polyline*>>(ply_vec),
-            _unique_name);
+            unique_name_);
     }
 }
 

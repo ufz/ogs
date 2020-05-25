@@ -28,17 +28,17 @@ namespace Gocad
 using Bitset = boost::dynamic_bitset<>;
 
 GocadSGridReader::GocadSGridReader(std::string const& fname)
-    : _fname(fname),
-      _path(BaseLib::extractPath(fname)),
-      _n_face_sets(0),
-      _double_precision_binary(false),
-      _bin_pnts_in_double_precision(false)
+    : fname_(fname),
+      path_(BaseLib::extractPath(fname)),
+      n_face_sets_(0),
+      double_precision_binary_(false),
+      bin_pnts_in_double_precision_(false)
 {
     // check if file exists
-    std::ifstream in(_fname.c_str());
+    std::ifstream in(fname_.c_str());
     if (!in)
     {
-        ERR("Could not open '{:s}'.", _fname);
+        ERR("Could not open '{:s}'.", fname_);
         in.close();
         return;
     }
@@ -63,7 +63,7 @@ GocadSGridReader::GocadSGridReader(std::string const& fname)
         }
         if (line.substr(0, 32) == "GOCAD_ORIGINAL_COORDINATE_SYSTEM")
         {
-            _coordinate_system.parse(in);
+            coordinate_system_.parse(in);
             continue;
         }
         if (line.substr(0, 7) == "AXIS_N ")
@@ -72,24 +72,24 @@ GocadSGridReader::GocadSGridReader(std::string const& fname)
         }
         else if (line.substr(0, 12) == "POINTS_FILE ")
         {
-            parseFileName(line, _pnts_fname);
+            parseFileName(line, pnts_fname_);
         }
         else if (line.substr(0, 9) == "PROPERTY ")
         {
-            _property_meta_data_vecs.push_back(
-                Gocad::parseGocadPropertyMetaData(line, in, _path));
+            property_meta_data_vecs_.push_back(
+                Gocad::parseGocadPropertyMetaData(line, in, path_));
         }
         else if (line.substr(0, 35) == "BINARY_POINTS_IN_DOUBLE_PRECISION 1")
         {
-            _bin_pnts_in_double_precision = true;
+            bin_pnts_in_double_precision_ = true;
         }
         else if (line.substr(0, 11) == "FLAGS_FILE ")
         {
-            parseFileName(line, _flags_fname);
+            parseFileName(line, flags_fname_);
         }
         else if (line.substr(0, 18) == "REGION_FLAGS_FILE ")
         {
-            parseFileName(line, _region_flags_fname);
+            parseFileName(line, region_flags_fname_);
         }
         else if (line.substr(0, 7) == "REGION " ||
                  line.substr(0, 13) == "MODEL_REGION ")
@@ -140,9 +140,9 @@ GocadSGridReader::GocadSGridReader(std::string const& fname)
     DBUG("{:s}", layers_ss.str());
 
     std::stringstream properties_ss;
-    properties_ss << "meta data for " << _property_meta_data_vecs.size()
+    properties_ss << "meta data for " << property_meta_data_vecs_.size()
                   << " properties read:\n";
-    std::copy(_property_meta_data_vecs.begin(), _property_meta_data_vecs.end(),
+    std::copy(property_meta_data_vecs_.begin(), property_meta_data_vecs_.end(),
               std::ostream_iterator<Gocad::Property>(properties_ss, "\n"));
     DBUG("{:s}", properties_ss.str());
 #endif
@@ -163,11 +163,11 @@ GocadSGridReader::GocadSGridReader(std::string const& fname)
 
 GocadSGridReader::~GocadSGridReader()
 {
-    for (auto node : _nodes)
+    for (auto node : nodes_)
     {
         delete node;
     }
-    for (auto node : _split_nodes)
+    for (auto node : split_nodes_)
     {
         delete node;
     }
@@ -176,7 +176,7 @@ GocadSGridReader::~GocadSGridReader()
 std::unique_ptr<MeshLib::Mesh> GocadSGridReader::getMesh() const
 {
     std::vector<MeshLib::Node*> nodes;
-    std::transform(_nodes.cbegin(), _nodes.cend(), std::back_inserter(nodes),
+    std::transform(nodes_.cbegin(), nodes_.cend(), std::back_inserter(nodes),
                    [](MeshLib::Node const* const node) {
                        return new MeshLib::Node(*node);
                    });
@@ -186,7 +186,7 @@ std::unique_ptr<MeshLib::Mesh> GocadSGridReader::getMesh() const
 
     DBUG("Creating mesh from Gocad SGrid.");
     std::unique_ptr<MeshLib::Mesh> mesh(new MeshLib::Mesh(
-        BaseLib::extractBaseNameWithoutExtension(_fname), nodes, elements));
+        BaseLib::extractBaseNameWithoutExtension(fname_), nodes, elements));
     addGocadPropertiesToMesh(*mesh);
     DBUG("Mesh created.");
 
@@ -205,7 +205,7 @@ void GocadSGridReader::addGocadPropertiesToMesh(MeshLib::Mesh& mesh) const
         }
 
         DBUG("Adding Gocad property '{:s}' with {:d} values.", name,
-             prop->_property_data.size());
+             prop->property_data_.size());
 
         auto pv = MeshLib::getOrCreateMeshProperty<double>(
             mesh, name, MeshLib::MeshItemType::Cell, 1);
@@ -215,8 +215,8 @@ void GocadSGridReader::addGocadPropertiesToMesh(MeshLib::Mesh& mesh) const
             continue;
         }
 
-        pv->resize(prop->_property_data.size());
-        std::copy(prop->_property_data.cbegin(), prop->_property_data.cend(),
+        pv->resize(prop->property_data_.size());
+        std::copy(prop->property_data_.cbegin(), prop->property_data_.cend(),
                   pv->begin());
     }
 }
@@ -232,13 +232,13 @@ void GocadSGridReader::parseHeader(std::istream& in)
         }
         if (line.substr(0, 27) == "double_precision_binary: on")
         {
-            _double_precision_binary = true;
+            double_precision_binary_ = true;
         }
     }
-    if (_double_precision_binary)
+    if (double_precision_binary_)
     {
         DBUG(
-            "GocadSGridReader::parseHeader(): _double_precision_binary == "
+            "GocadSGridReader::parseHeader(): double_precision_binary_ == "
             "true.");
     }
 }
@@ -261,12 +261,12 @@ void GocadSGridReader::parseDims(std::string const& line)
     it++;
     std::stringstream ssz(*it, std::stringstream::in | std::stringstream::out);
     ssz >> z_dim;
-    _index_calculator = Gocad::IndexCalculator(x_dim, y_dim, z_dim);
+    index_calculator_ = Gocad::IndexCalculator(x_dim, y_dim, z_dim);
     DBUG(
         "x_dim = {:d}, y_dim = {:d}, z_dim = {:d} => #nodes = {:d}, #cells = "
         "{:d}",
-        x_dim, y_dim, z_dim, _index_calculator._n_nodes,
-        _index_calculator._n_cells);
+        x_dim, y_dim, z_dim, index_calculator_.n_nodes_,
+        index_calculator_.n_cells_);
 }
 
 void GocadSGridReader::parseFileName(std::string const& line,
@@ -276,7 +276,7 @@ void GocadSGridReader::parseFileName(std::string const& line,
     boost::tokenizer<boost::char_separator<char>> tok(line, sep);
     auto it(tok.begin());
     ++it;  // overread POINTS_FILE or FLAGS_FILE or REGION_FLAGS_FILE
-    result_string = _path + *it;
+    result_string = path_ + *it;
 }
 
 /**
@@ -287,17 +287,17 @@ void GocadSGridReader::parseFaceSet(std::string& line, std::istream& in)
 {
     // create and initialize a Gocad::Property object for storing face set data
     Gocad::Property face_set_property;
-    face_set_property._property_id = _n_face_sets;
-    face_set_property._property_name = "FaceSet";
-    face_set_property._property_class_name = "FaceSetData";
-    face_set_property._property_unit = "unitless";
-    face_set_property._property_data_type = "double";
-    face_set_property._property_data_fname = "";
-    face_set_property._property_no_data_value = -1.0;
-    face_set_property._property_data.resize(_index_calculator._n_cells);
-    std::fill(face_set_property._property_data.begin(),
-              face_set_property._property_data.end(),
-              face_set_property._property_no_data_value);
+    face_set_property.property_id_ = n_face_sets_;
+    face_set_property.property_name_ = "FaceSet";
+    face_set_property.property_class_name_ = "FaceSetData";
+    face_set_property.property_unit_ = "unitless";
+    face_set_property.property_data_type_ = "double";
+    face_set_property.property_data_fname_ = "";
+    face_set_property.property_no_data_value_ = -1.0;
+    face_set_property.property_data_.resize(index_calculator_.n_cells_);
+    std::fill(face_set_property.property_data_.begin(),
+              face_set_property.property_data_.end(),
+              face_set_property.property_no_data_value_);
 
     std::istringstream iss(line);
     std::istream_iterator<std::string> it(iss);
@@ -310,7 +310,7 @@ void GocadSGridReader::parseFaceSet(std::string& line, std::istream& in)
             "found.");
     }
     ++it;
-    face_set_property._property_name += *it;
+    face_set_property.property_name_ += *it;
     ++it;
     auto const n_of_face_set_ids(
         static_cast<std::size_t>(std::atoi(it->c_str())));
@@ -333,33 +333,33 @@ void GocadSGridReader::parseFaceSet(std::string& line, std::istream& in)
                 static_cast<std::size_t>(std::atoi(tok_it->c_str())));
             tok_it++;
 
-            if (id >= _index_calculator._n_nodes)
+            if (id >= index_calculator_.n_nodes_)
             {
                 ERR("Face set id {:d} is greater than the number of nodes "
                     "({:d}).",
-                    id, _index_calculator._n_nodes);
+                    id, index_calculator_.n_nodes_);
             }
             else
             {
-                static_cast<GocadNode*>(_nodes[id])
-                    ->setFaceSet(_n_face_sets, face_indicator);
+                static_cast<GocadNode*>(nodes_[id])
+                    ->setFaceSet(n_face_sets_, face_indicator);
                 std::array<std::size_t, 3> const c(
-                    _index_calculator.getCoordsForID(id));
-                if (c[0] >= _index_calculator._x_dim - 1)
+                    index_calculator_.getCoordsForID(id));
+                if (c[0] >= index_calculator_.x_dim_ - 1)
                 {
                     ERR("****** i coord {:d} to big for id {:d}.", c[0], id);
                 }
-                if (c[1] >= _index_calculator._y_dim - 1)
+                if (c[1] >= index_calculator_.y_dim_ - 1)
                 {
                     ERR("****** j coord {:d} to big for id {:d}.", c[1], id);
                 }
-                if (c[2] >= _index_calculator._z_dim - 1)
+                if (c[2] >= index_calculator_.z_dim_ - 1)
                 {
                     ERR("****** k coord {:d} to big for id {:d}.", c[2], id);
                 }
                 std::size_t const cell_id(
-                    _index_calculator.getCellIdx(c[0], c[1], c[2]));
-                face_set_property._property_data[cell_id] =
+                    index_calculator_.getCellIdx(c[0], c[1], c[2]));
+                face_set_property.property_data_[cell_id] =
                     static_cast<double>(face_indicator);
             }
             face_set_id_cnt++;
@@ -374,16 +374,16 @@ void GocadSGridReader::parseFaceSet(std::string& line, std::istream& in)
             "Expected number of face set points does not match number of read "
             "points.");
     }
-    _n_face_sets++;
+    n_face_sets_++;
 
     // pre condition: split nodes are read already
-    for (auto split_node : _split_nodes)
+    for (auto split_node : split_nodes_)
     {
-        std::size_t const id(_index_calculator(split_node->getGridCoords()));
-        split_node->transmitFaceDirections(*_nodes[id]);
+        std::size_t const id(index_calculator_(split_node->getGridCoords()));
+        split_node->transmitFaceDirections(*nodes_[id]);
     }
 
-    _property_meta_data_vecs.push_back(face_set_property);
+    property_meta_data_vecs_.push_back(face_set_property);
 }
 
 // Reads given number of bits (rounded up to next byte) into a bitset.
@@ -406,22 +406,22 @@ Bitset readBits(std::ifstream& in, const std::size_t bits)
 
 void GocadSGridReader::readNodesBinary()
 {
-    std::ifstream in(_pnts_fname.c_str(), std::ios::binary);
+    std::ifstream in(pnts_fname_.c_str(), std::ios::binary);
     if (!in)
     {
-        ERR("Could not open points file '{:s}'.", _pnts_fname);
+        ERR("Could not open points file '{:s}'.", pnts_fname_);
         throw std::runtime_error("Could not open points file.");
     }
 
-    std::size_t const n = _index_calculator._n_nodes;
-    _nodes.resize(n);
+    std::size_t const n = index_calculator_.n_nodes_;
+    nodes_.resize(n);
 
     double coords[3];
 
     std::size_t k = 0;
     while (in && k < n * 3)
     {
-        if (_bin_pnts_in_double_precision)
+        if (bin_pnts_in_double_precision_)
         {
             coords[k % 3] =
                 BaseLib::swapEndianness(BaseLib::readBinaryValue<double>(in));
@@ -434,8 +434,8 @@ void GocadSGridReader::readNodesBinary()
         if ((k + 1) % 3 == 0)
         {
             const std::size_t layer_transition_idx(
-                _index_calculator.getCoordsForID(k / 3)[2]);
-            _nodes[k / 3] =
+                index_calculator_.getCoordsForID(k / 3)[2]);
+            nodes_[k / 3] =
                 new GocadNode(coords, k / 3, layer_transition_idx);
         }
         k++;
@@ -457,69 +457,69 @@ void GocadSGridReader::mapRegionFlagsToCellProperties(
         rf.size());
 
     Gocad::Property region_flags;
-    region_flags._property_id = 0;
-    region_flags._property_name = "RegionFlags";
-    region_flags._property_class_name = "RegionFlags";
-    region_flags._property_unit = "unitless";
-    region_flags._property_data_type = "int";
-    region_flags._property_data_fname = "";
-    region_flags._property_no_data_value = -1;
-    std::size_t const n = _index_calculator._n_cells;
-    region_flags._property_data.resize(n);
-    std::fill(region_flags._property_data.begin(),
-              region_flags._property_data.end(), -1);
+    region_flags.property_id_ = 0;
+    region_flags.property_name_ = "RegionFlags";
+    region_flags.property_class_name_ = "RegionFlags";
+    region_flags.property_unit_ = "unitless";
+    region_flags.property_data_type_ = "int";
+    region_flags.property_data_fname_ = "";
+    region_flags.property_no_data_value_ = -1;
+    std::size_t const n = index_calculator_.n_cells_;
+    region_flags.property_data_.resize(n);
+    std::fill(region_flags.property_data_.begin(),
+              region_flags.property_data_.end(), -1);
 
     // region flags are stored in each node ijk and give the region index for
     // the ijk-th cell.
-    for (std::size_t i(0); i < _index_calculator._x_dim - 1; i++)
+    for (std::size_t i(0); i < index_calculator_.x_dim_ - 1; i++)
     {
-        for (std::size_t j(0); j < _index_calculator._y_dim - 1; j++)
+        for (std::size_t j(0); j < index_calculator_.y_dim_ - 1; j++)
         {
-            for (std::size_t k(0); k < _index_calculator._z_dim - 1; k++)
+            for (std::size_t k(0); k < index_calculator_.z_dim_ - 1; k++)
             {
                 std::size_t const cell_id(
-                    _index_calculator.getCellIdx(i, j, k));
-                std::size_t const node_id(_index_calculator({i, j, k}));
+                    index_calculator_.getCellIdx(i, j, k));
+                std::size_t const node_id(index_calculator_({i, j, k}));
                 for (auto& region : regions)
                 {
                     if (rf[node_id].test(region.bit))
                     {
-                        region_flags._property_data[cell_id] += region.bit + 1;
+                        region_flags.property_data_[cell_id] += region.bit + 1;
                     }
                 }
             }
         }
     }
 
-    _property_meta_data_vecs.push_back(region_flags);
+    property_meta_data_vecs_.push_back(region_flags);
 }
 
 void GocadSGridReader::readElementPropertiesBinary()
 {
-    for (auto& property : _property_meta_data_vecs)
+    for (auto& property : property_meta_data_vecs_)
     {
-        std::string const& fname(property._property_data_fname);
-        if (property._property_data_fname.empty())
+        std::string const& fname(property.property_data_fname_);
+        if (property.property_data_fname_.empty())
         {
-            WARN("Empty filename for property {:s}.", property._property_name);
+            WARN("Empty filename for property {:s}.", property.property_name_);
             continue;
         }
         std::vector<float> float_properties =
-            BaseLib::readBinaryArray<float>(fname, _index_calculator._n_cells);
+            BaseLib::readBinaryArray<float>(fname, index_calculator_.n_cells_);
         DBUG(
             "GocadSGridReader::readElementPropertiesBinary(): Read {:d} float "
             "properties from binary file.",
-            _index_calculator._n_cells);
+            index_calculator_.n_cells_);
 
         std::transform(float_properties.cbegin(), float_properties.cend(),
                        float_properties.begin(), [](float const& val) {
                            return BaseLib::swapEndianness(val);
                        });
 
-        property._property_data.resize(float_properties.size());
+        property.property_data_.resize(float_properties.size());
         std::copy(float_properties.begin(), float_properties.end(),
-                  property._property_data.begin());
-        if (property._property_data.empty())
+                  property.property_data_.begin());
+        if (property.property_data_.empty())
         {
             ERR("Reading of element properties file '{:s}' failed.", fname);
         }
@@ -530,16 +530,16 @@ std::vector<Bitset> GocadSGridReader::readRegionFlagsBinary() const
 {
     std::vector<Bitset> result;
 
-    std::ifstream in(_region_flags_fname.c_str());
+    std::ifstream in(region_flags_fname_.c_str());
     if (!in)
     {
         ERR("readRegionFlagsBinary(): Could not open file '{:s}' for input.\n",
-            _region_flags_fname);
+            region_flags_fname_);
         in.close();
         return result;
     }
 
-    std::size_t const n = _index_calculator._n_nodes;
+    std::size_t const n = index_calculator_.n_nodes_;
     result.resize(n);
 
     std::size_t k = 0;
@@ -558,26 +558,26 @@ std::vector<MeshLib::Element*> GocadSGridReader::createElements(
     std::vector<MeshLib::Node*> const& nodes) const
 {
     std::vector<MeshLib::Element*> elements;
-    elements.resize(_index_calculator._n_cells);
+    elements.resize(index_calculator_.n_cells_);
     std::array<MeshLib::Node*, 8> element_nodes{};
     std::size_t cnt(0);
-    for (std::size_t k(0); k < _index_calculator._z_dim - 1; k++)
+    for (std::size_t k(0); k < index_calculator_.z_dim_ - 1; k++)
     {
-        for (std::size_t j(0); j < _index_calculator._y_dim - 1; j++)
+        for (std::size_t j(0); j < index_calculator_.y_dim_ - 1; j++)
         {
-            for (std::size_t i(0); i < _index_calculator._x_dim - 1; i++)
+            for (std::size_t i(0); i < index_calculator_.x_dim_ - 1; i++)
             {
-                element_nodes[0] = nodes[_index_calculator({i, j, k})];
-                element_nodes[1] = nodes[_index_calculator({i + 1, j, k})];
-                element_nodes[2] = nodes[_index_calculator({i + 1, j + 1, k})];
-                element_nodes[3] = nodes[_index_calculator({i, j + 1, k})];
-                element_nodes[4] = nodes[_index_calculator({i, j, k + 1})];
-                element_nodes[5] = nodes[_index_calculator({i + 1, j, k + 1})];
+                element_nodes[0] = nodes[index_calculator_({i, j, k})];
+                element_nodes[1] = nodes[index_calculator_({i + 1, j, k})];
+                element_nodes[2] = nodes[index_calculator_({i + 1, j + 1, k})];
+                element_nodes[3] = nodes[index_calculator_({i, j + 1, k})];
+                element_nodes[4] = nodes[index_calculator_({i, j, k + 1})];
+                element_nodes[5] = nodes[index_calculator_({i + 1, j, k + 1})];
                 element_nodes[6] =
-                    nodes[_index_calculator({i + 1, j + 1, k + 1})];
-                element_nodes[7] = nodes[_index_calculator({i, j + 1, k + 1})];
+                    nodes[index_calculator_({i + 1, j + 1, k + 1})];
+                element_nodes[7] = nodes[index_calculator_({i, j + 1, k + 1})];
                 elements[cnt] = new MeshLib::Hex(
-                    element_nodes, _index_calculator.getCellIdx(i, j, k));
+                    element_nodes, index_calculator_.getCellIdx(i, j, k));
                 cnt++;
             }
         }
@@ -587,10 +587,10 @@ std::vector<MeshLib::Element*> GocadSGridReader::createElements(
 
 void GocadSGridReader::readSplitInformation()
 {
-    std::ifstream in(_fname.c_str());
+    std::ifstream in(fname_.c_str());
     if (!in)
     {
-        ERR("Could not open '{:s}'.", _fname);
+        ERR("Could not open '{:s}'.", fname_);
         in.close();
         return;
     }
@@ -626,8 +626,8 @@ void GocadSGridReader::readSplitInformation()
                 affected_cells[ac] = bit != '0';
             }
             const std::size_t layer_transition_index(
-                _nodes[id]->getLayerTransitionIndex());
-            _split_nodes.push_back(new GocadSplitNode(coords, id, grid_coords,
+                nodes_[id]->getLayerTransitionIndex());
+            split_nodes_.push_back(new GocadSplitNode(coords, id, grid_coords,
                                                       affected_cells,
                                                       layer_transition_index));
         }
@@ -638,7 +638,7 @@ void GocadSGridReader::applySplitInformation(
     std::vector<MeshLib::Node*>& nodes,
     std::vector<MeshLib::Element*> const& elements) const
 {
-    for (auto split_node : _split_nodes)
+    for (auto split_node : split_nodes_)
     {
         std::size_t const new_node_pos(nodes.size());
         nodes.push_back(
@@ -649,65 +649,65 @@ void GocadSGridReader::applySplitInformation(
         // get affected cells
         auto const& affected_cells(split_node->getAffectedCells());
         // get mesh node to substitute in elements
-        MeshLib::Node const* const node2sub(nodes[_index_calculator(gc)]);
+        MeshLib::Node const* const node2sub(nodes[index_calculator_(gc)]);
 
-        if (affected_cells[0] && gc[0] < _index_calculator._x_dim - 1 &&
-            gc[1] < _index_calculator._y_dim - 1 &&
-            gc[2] < _index_calculator._z_dim - 1)
+        if (affected_cells[0] && gc[0] < index_calculator_.x_dim_ - 1 &&
+            gc[1] < index_calculator_.y_dim_ - 1 &&
+            gc[2] < index_calculator_.z_dim_ - 1)
         {
             const std::size_t idx(
-                _index_calculator.getCellIdx(gc[0], gc[1], gc[2]));
+                index_calculator_.getCellIdx(gc[0], gc[1], gc[2]));
             modifyElement(elements[idx], node2sub, nodes[new_node_pos]);
         }
         if (affected_cells[1] && gc[0] > 0 &&
-            gc[1] < _index_calculator._y_dim - 1 &&
-            gc[2] < _index_calculator._z_dim - 1)
+            gc[1] < index_calculator_.y_dim_ - 1 &&
+            gc[2] < index_calculator_.z_dim_ - 1)
         {
             const std::size_t idx(
-                _index_calculator.getCellIdx(gc[0] - 1, gc[1], gc[2]));
+                index_calculator_.getCellIdx(gc[0] - 1, gc[1], gc[2]));
             modifyElement(elements[idx], node2sub, nodes[new_node_pos]);
         }
         if (affected_cells[2] && gc[1] > 0 &&
-            gc[0] < _index_calculator._x_dim - 1 &&
-            gc[2] < _index_calculator._z_dim - 1)
+            gc[0] < index_calculator_.x_dim_ - 1 &&
+            gc[2] < index_calculator_.z_dim_ - 1)
         {
             const std::size_t idx(
-                _index_calculator.getCellIdx(gc[0], gc[1] - 1, gc[2]));
+                index_calculator_.getCellIdx(gc[0], gc[1] - 1, gc[2]));
             modifyElement(elements[idx], node2sub, nodes[new_node_pos]);
         }
         if (affected_cells[3] && gc[0] > 0 && gc[1] > 0 &&
-            gc[2] < _index_calculator._z_dim - 1)
+            gc[2] < index_calculator_.z_dim_ - 1)
         {
             const std::size_t idx(
-                _index_calculator.getCellIdx(gc[0] - 1, gc[1] - 1, gc[2]));
+                index_calculator_.getCellIdx(gc[0] - 1, gc[1] - 1, gc[2]));
             modifyElement(elements[idx], node2sub, nodes[new_node_pos]);
         }
         if (affected_cells[4] && gc[2] > 0 &&
-            gc[0] < _index_calculator._x_dim - 1 &&
-            gc[1] < _index_calculator._y_dim - 1)
+            gc[0] < index_calculator_.x_dim_ - 1 &&
+            gc[1] < index_calculator_.y_dim_ - 1)
         {
             const std::size_t idx(
-                _index_calculator.getCellIdx(gc[0], gc[1], gc[2] - 1));
+                index_calculator_.getCellIdx(gc[0], gc[1], gc[2] - 1));
             modifyElement(elements[idx], node2sub, nodes[new_node_pos]);
         }
         if (affected_cells[5] && gc[0] > 0 && gc[2] > 0 &&
-            gc[1] < _index_calculator._y_dim - 1)
+            gc[1] < index_calculator_.y_dim_ - 1)
         {
             const std::size_t idx(
-                _index_calculator.getCellIdx(gc[0] - 1, gc[1], gc[2] - 1));
+                index_calculator_.getCellIdx(gc[0] - 1, gc[1], gc[2] - 1));
             modifyElement(elements[idx], node2sub, nodes[new_node_pos]);
         }
         if (affected_cells[6] && gc[1] > 0 && gc[2] > 0 &&
-            gc[0] < _index_calculator._x_dim - 1)
+            gc[0] < index_calculator_.x_dim_ - 1)
         {
             const std::size_t idx(
-                _index_calculator.getCellIdx(gc[0], gc[1] - 1, gc[2] - 1));
+                index_calculator_.getCellIdx(gc[0], gc[1] - 1, gc[2] - 1));
             modifyElement(elements[idx], node2sub, nodes[new_node_pos]);
         }
         if (affected_cells[7] && gc[0] > 0 && gc[1] > 0 && gc[2] > 0)
         {
             const std::size_t idx(
-                _index_calculator.getCellIdx(gc[0] - 1, gc[1] - 1, gc[2] - 1));
+                index_calculator_.getCellIdx(gc[0] - 1, gc[1] - 1, gc[2] - 1));
             modifyElement(elements[idx], node2sub, nodes[new_node_pos]);
         }
     }
@@ -733,12 +733,12 @@ void GocadSGridReader::modifyElement(MeshLib::Element* hex,
 boost::optional<Gocad::Property const&> GocadSGridReader::getProperty(
     std::string const& name) const
 {
-    auto const it(std::find_if(_property_meta_data_vecs.begin(),
-                               _property_meta_data_vecs.end(),
+    auto const it(std::find_if(property_meta_data_vecs_.begin(),
+                               property_meta_data_vecs_.end(),
                                [&name](Gocad::Property const& p) {
-                                   return p._property_name == name;
+                                   return p.property_name_ == name;
                                }));
-    if (it == _property_meta_data_vecs.end())
+    if (it == property_meta_data_vecs_.end())
     {
         return boost::optional<Gocad::Property const&>();
     }
@@ -748,10 +748,10 @@ boost::optional<Gocad::Property const&> GocadSGridReader::getProperty(
 std::vector<std::string> GocadSGridReader::getPropertyNames() const
 {
     std::vector<std::string> names;
-    std::transform(_property_meta_data_vecs.begin(),
-                   _property_meta_data_vecs.end(),
+    std::transform(property_meta_data_vecs_.begin(),
+                   property_meta_data_vecs_.end(),
                    std::back_inserter(names),
-                   [](Gocad::Property const& p) { return p._property_name; });
+                   [](Gocad::Property const& p) { return p.property_name_; });
     return names;
 }
 
@@ -761,7 +761,7 @@ std::unique_ptr<MeshLib::Mesh> GocadSGridReader::getFaceSetMesh(
     std::vector<MeshLib::Node*> face_set_nodes;
     std::vector<MeshLib::Element*> face_set_elements;
 
-    for (auto const node : _nodes)
+    for (auto const node : nodes_)
     {
         if (node->isMemberOfFaceSet(face_set_number))
         {
@@ -775,7 +775,7 @@ std::unique_ptr<MeshLib::Mesh> GocadSGridReader::getFaceSetMesh(
         return nullptr;
     }
 
-    for (auto const node : _split_nodes)
+    for (auto const node : split_nodes_)
     {
         if (node->isMemberOfFaceSet(face_set_number))
         {
@@ -800,34 +800,34 @@ void GocadSGridReader::addFaceSetQuad(
     std::array<MeshLib::Node*, 4> quad_nodes{};
     quad_nodes[0] = new GocadNode(*face_set_node);
     const std::size_t id(face_set_node->getID());
-    std::array<std::size_t, 3> const c(_index_calculator.getCoordsForID(id));
+    std::array<std::size_t, 3> const c(index_calculator_.getCoordsForID(id));
 
     const FaceDirection dir(face_set_node->getFaceDirection(face_set_number));
     switch (dir)
     {
         case FaceDirection::U:
             quad_nodes[1] = new GocadNode(
-                *_nodes[_index_calculator({c[0], c[1] + 1, c[2]})]);
+                *nodes_[index_calculator_({c[0], c[1] + 1, c[2]})]);
             quad_nodes[2] = new GocadNode(
-                *_nodes[_index_calculator({c[0], c[1] + 1, c[2] + 1})]);
+                *nodes_[index_calculator_({c[0], c[1] + 1, c[2] + 1})]);
             quad_nodes[3] = new GocadNode(
-                *_nodes[_index_calculator({c[0], c[1], c[2] + 1})]);
+                *nodes_[index_calculator_({c[0], c[1], c[2] + 1})]);
             break;
         case FaceDirection::V:
             quad_nodes[1] = new GocadNode(
-                *_nodes[_index_calculator({c[0] + 1, c[1], c[2]})]);
+                *nodes_[index_calculator_({c[0] + 1, c[1], c[2]})]);
             quad_nodes[2] = new GocadNode(
-                *_nodes[_index_calculator({c[0] + 1, c[1], c[2] + 1})]);
+                *nodes_[index_calculator_({c[0] + 1, c[1], c[2] + 1})]);
             quad_nodes[3] = new GocadNode(
-                *_nodes[_index_calculator({c[0], c[1], c[2] + 1})]);
+                *nodes_[index_calculator_({c[0], c[1], c[2] + 1})]);
             break;
         case FaceDirection::W:
             quad_nodes[1] = new GocadNode(
-                *_nodes[_index_calculator({c[0] + 1, c[1], c[2]})]);
+                *nodes_[index_calculator_({c[0] + 1, c[1], c[2]})]);
             quad_nodes[2] = new GocadNode(
-                *_nodes[_index_calculator({c[0] + 1, c[1] + 1, c[2]})]);
+                *nodes_[index_calculator_({c[0] + 1, c[1] + 1, c[2]})]);
             quad_nodes[3] = new GocadNode(
-                *_nodes[_index_calculator({c[0], c[1] + 1, c[2]})]);
+                *nodes_[index_calculator_({c[0], c[1] + 1, c[2]})]);
             break;
         default:
             ERR("Could not create face for node with id {:d}.", id);

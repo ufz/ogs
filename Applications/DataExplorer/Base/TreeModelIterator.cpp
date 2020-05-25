@@ -19,24 +19,24 @@
 #include "TreeModel.h"
 
 TreeModelIterator::TreeModelIterator(TreeModel* model)
-    : _current(nullptr), _model(model)
+    : current_(nullptr), model_(model)
 {
-    if (_model->rootItem()->childCount() > 0)
+    if (model_->rootItem()->childCount() > 0)
     {
-        _current = _model->rootItem();
+        current_ = model_->rootItem();
     }
 }
 
 TreeItem* TreeModelIterator::operator*() const
 {
-    return _current;
+    return current_;
 }
 
 TreeModelIterator& TreeModelIterator::operator++()
 {
-    if (_current)
+    if (current_)
     {
-        _current = next(_current);
+        current_ = next(current_);
     }
 
     return *this;
@@ -53,28 +53,28 @@ TreeItem* TreeModelIterator::next( const TreeItem* current )
     if (current->childCount())
     {
         // walk the child
-        _parentIndex.push(_currentIndex);
-        _currentIndex = 0;
+        parentIndex_.push(currentIndex_);
+        currentIndex_ = 0;
         next = current->child(0);
     }
     else
     {
         // walk the sibling
         TreeItem* parent = current->parentItem();
-        next = parent ? parent->child(_currentIndex + 1)
-               : _model->rootItem()->child(_currentIndex + 1);
+        next = parent ? parent->child(currentIndex_ + 1)
+               : model_->rootItem()->child(currentIndex_ + 1);
         while (!next && parent)
         {
             // if we had no sibling walk up the parent
             // and try the sibling of that
             parent = parent->parentItem();
-            _currentIndex = _parentIndex.pop();
-            next = parent ? parent->child(_currentIndex + 1)
-                   : _model->rootItem()->child(_currentIndex + 1);
+            currentIndex_ = parentIndex_.pop();
+            next = parent ? parent->child(currentIndex_ + 1)
+                   : model_->rootItem()->child(currentIndex_ + 1);
         }
         if (next)
         {
-            ++(_currentIndex);
+            ++(currentIndex_);
         }
     }
     return next;

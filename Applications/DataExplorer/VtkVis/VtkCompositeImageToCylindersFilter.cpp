@@ -30,25 +30,25 @@
 
 VtkCompositeImageToCylindersFilter::VtkCompositeImageToCylindersFilter(
         vtkAlgorithm* inputAlgorithm )
-    : VtkCompositeFilter(inputAlgorithm), _lineFilter(nullptr)
+    : VtkCompositeFilter(inputAlgorithm), lineFilter_(nullptr)
 {
     this->init();
 }
 
 void VtkCompositeImageToCylindersFilter::init()
 {
-    this->_inputDataObjectType = VTK_IMAGE_DATA;
-    this->_outputDataObjectType = VTK_POLY_DATA;
+    this->inputDataObjectType_ = VTK_IMAGE_DATA;
+    this->outputDataObjectType_ = VTK_POLY_DATA;
 
-    _lineFilter = VtkImageDataToLinePolyDataFilter::New();
-    _lineFilter->SetInputConnection(_inputAlgorithm->GetOutputPort());
-    _lineFilter->SetLengthScaleFactor(1);
-    (*_algorithmUserProperties)["LengthScaleFactor"] = 1.0;
-    _lineFilter->Update();
+    lineFilter_ = VtkImageDataToLinePolyDataFilter::New();
+    lineFilter_->SetInputConnection(inputAlgorithm_->GetOutputPort());
+    lineFilter_->SetLengthScaleFactor(1);
+    (*algorithmUserProperties_)["LengthScaleFactor"] = 1.0;
+    lineFilter_->Update();
 
     double range[2];
     // The data is always on points
-    vtkDataSet::SafeDownCast(_lineFilter->GetOutputDataObject(0))->GetPointData()->GetScalars()->GetRange(range);
+    vtkDataSet::SafeDownCast(lineFilter_->GetOutputDataObject(0))->GetPointData()->GetScalars()->GetRange(range);
 
     vtkLookupTable* colormap = vtkLookupTable::New();
     colormap->SetTableRange(range[0], range[1]);
@@ -61,32 +61,32 @@ void VtkCompositeImageToCylindersFilter::init()
     QList<QVariant> hueRangeList;
     hueRangeList.push_back(0.0);
     hueRangeList.push_back(0.666);
-    (*_algorithmUserVectorProperties)["TableRange"] = tableRangeList;
-    (*_algorithmUserVectorProperties)["HueRange"] = hueRangeList;
+    (*algorithmUserVectorProperties_)["TableRange"] = tableRangeList;
+    (*algorithmUserVectorProperties_)["HueRange"] = hueRangeList;
 
     this->SetLookUpTable("P-Colors", colormap);
 
     vtkTubeFilter* tubeFilter = vtkTubeFilter::New();
-    tubeFilter->SetInputConnection(_lineFilter->GetOutputPort());
+    tubeFilter->SetInputConnection(lineFilter_->GetOutputPort());
     tubeFilter->CappingOn();
     tubeFilter->SetNumberOfSides(6);
-    tubeFilter->SetRadius(_lineFilter->GetImageSpacing() * 0.25);
-    (*_algorithmUserProperties)["NumberOfColors"] = 256;
-    (*_algorithmUserProperties)["Capping"] = true;
-    (*_algorithmUserProperties)["NumberOfSides"] = 6;
-    (*_algorithmUserProperties)["RadiusFactor"] = 0.25;
+    tubeFilter->SetRadius(lineFilter_->GetImageSpacing() * 0.25);
+    (*algorithmUserProperties_)["NumberOfColors"] = 256;
+    (*algorithmUserProperties_)["Capping"] = true;
+    (*algorithmUserProperties_)["NumberOfSides"] = 6;
+    (*algorithmUserProperties_)["RadiusFactor"] = 0.25;
 
-    _outputAlgorithm = tubeFilter;
+    outputAlgorithm_ = tubeFilter;
 }
 
 void VtkCompositeImageToCylindersFilter::SetUserProperty( QString name, QVariant value )
 {
     VtkAlgorithmProperties::SetUserProperty(name, value);
 
-    _lineFilter->SetUserProperty(name, value);
+    lineFilter_->SetUserProperty(name, value);
 
-    // VtkImageDataToLinePolyDataFilter is equal to _firstAlgorithm
-    // vtkTubeFilter is equal _outputAlgorithm
+    // VtkImageDataToLinePolyDataFilter is equal to firstAlgorithm_
+    // vtkTubeFilter is equal outputAlgorithm_
     if (name.compare("NumberOfColors") == 0)
     {
         vtkLookupTable* lut = this->GetLookupTable("P-Colors");
@@ -97,16 +97,16 @@ void VtkCompositeImageToCylindersFilter::SetUserProperty( QString name, QVariant
     }
     else if (name.compare("NumberOfSides") == 0)
     {
-        static_cast<vtkTubeFilter*>(_outputAlgorithm)->SetNumberOfSides(value.toInt());
+        static_cast<vtkTubeFilter*>(outputAlgorithm_)->SetNumberOfSides(value.toInt());
     }
     else if (name.compare("Capping") == 0)
     {
-        static_cast<vtkTubeFilter*>(_outputAlgorithm)->SetCapping(value.toBool());
+        static_cast<vtkTubeFilter*>(outputAlgorithm_)->SetCapping(value.toBool());
     }
     else if (name.compare("RadiusFactor") == 0)
     {
-        static_cast<vtkTubeFilter*>(_outputAlgorithm)
-            ->SetRadius(_lineFilter->GetImageSpacing() * value.toDouble());
+        static_cast<vtkTubeFilter*>(outputAlgorithm_)
+            ->SetRadius(lineFilter_->GetImageSpacing() * value.toDouble());
     }
 }
 
@@ -115,7 +115,7 @@ void VtkCompositeImageToCylindersFilter::SetUserVectorProperty( QString name,
 {
     VtkAlgorithmProperties::SetUserVectorProperty(name, values);
 
-    _lineFilter->SetUserVectorProperty(name, values);
+    lineFilter_->SetUserVectorProperty(name, values);
 
     if (name.compare("TableRange") == 0)
     {
@@ -137,5 +137,5 @@ void VtkCompositeImageToCylindersFilter::SetUserVectorProperty( QString name,
 
 VtkCompositeImageToCylindersFilter::~VtkCompositeImageToCylindersFilter()
 {
-    _lineFilter->Delete();
+    lineFilter_->Delete();
 }

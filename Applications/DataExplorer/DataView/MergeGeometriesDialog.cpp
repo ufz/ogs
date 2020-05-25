@@ -21,16 +21,16 @@
 #include "OGSError.h"
 
 MergeGeometriesDialog::MergeGeometriesDialog(GeoLib::GEOObjects& geoObjects, QDialog* parent)
-    : QDialog(parent), _geo_objects(geoObjects), _allGeo(new QStringListModel), _selGeo(new QStringListModel)
+    : QDialog(parent), geo_objects_(geoObjects), allGeo_(new QStringListModel), selGeo_(new QStringListModel)
 {
     setupUi(this);
 
     std::vector<std::string> geoNames;
-    _geo_objects.getGeometryNames(geoNames);
+    geo_objects_.getGeometryNames(geoNames);
 
     // get station names
     std::vector<std::string> geo_station_names;
-    _geo_objects.getStationVectorNames(geo_station_names);
+    geo_objects_.getStationVectorNames(geo_station_names);
 
     // merge method does currently not merge stations, converter function needed first
     //geoNames.reserve(geo_station_names.size());
@@ -50,52 +50,52 @@ MergeGeometriesDialog::MergeGeometriesDialog(GeoLib::GEOObjects& geoObjects, QDi
         this->deselectGeoButton->setDisabled(true);
         list.append("(No geometry available.)");
     }
-    _allGeo->setStringList(list);
-    this->allGeoView->setModel(_allGeo);
-    this->selectedGeoView->setModel(_selGeo);
+    allGeo_->setStringList(list);
+    this->allGeoView->setModel(allGeo_);
+    this->selectedGeoView->setModel(selGeo_);
 
     std::string new_geo_name("MergedGeometry");
-    _geo_objects.isUniquePointVecName(new_geo_name);
+    geo_objects_.isUniquePointVecName(new_geo_name);
     this->newGeoNameEdit->setText(QString::fromStdString(new_geo_name));
 }
 
 MergeGeometriesDialog::~MergeGeometriesDialog()
 {
-    delete _allGeo;
-    delete _selGeo;
+    delete allGeo_;
+    delete selGeo_;
 }
 
 void MergeGeometriesDialog::on_selectGeoButton_pressed()
 {
     QModelIndexList selected = this->allGeoView->selectionModel()->selectedIndexes();
-    QStringList list = _selGeo->stringList();
+    QStringList list = selGeo_->stringList();
 
     for (auto& index : selected)
     {
         list.append(index.data().toString());
 
-        _allGeo->removeRow(index.row());
+        allGeo_->removeRow(index.row());
     }
-    _selGeo->setStringList(list);
+    selGeo_->setStringList(list);
 }
 
 void MergeGeometriesDialog::on_deselectGeoButton_pressed()
 {
     QModelIndexList selected = this->selectedGeoView->selectionModel()->selectedIndexes();
-    QStringList list = _allGeo->stringList();
+    QStringList list = allGeo_->stringList();
 
     for (auto& index : selected)
     {
         list.append(index.data().toString());
 
-        _selGeo->removeRow(index.row());
+        selGeo_->removeRow(index.row());
     }
-    _allGeo->setStringList(list);
+    allGeo_->setStringList(list);
 }
 
 void MergeGeometriesDialog::accept()
 {
-    if (_selGeo->stringList().size() > 1)
+    if (selGeo_->stringList().size() > 1)
     {
         this->done(QDialog::Accepted);
     }
@@ -114,7 +114,7 @@ void MergeGeometriesDialog::reject()
 std::vector<std::string> MergeGeometriesDialog::getSelectedGeometries() const
 {
     std::vector<std::string> indexList;
-    QStringList const& list(_selGeo->stringList());
+    QStringList const& list(selGeo_->stringList());
     std::transform(list.begin(), list.end(), std::back_inserter(indexList),
                    [](auto const& index) { return index.toStdString(); });
     return indexList;

@@ -25,16 +25,16 @@
 
 CondFromRasterDialog::CondFromRasterDialog(std::vector<MeshLib::Mesh*> msh_vec,
                                            QDialog* parent)
-    : QDialog(parent), _msh_vec(std::move(msh_vec))
+    : QDialog(parent), msh_vec_(std::move(msh_vec))
 {
     setupUi(this);
 
     this->scalingEdit->setEnabled(false);
-    _scale_validator = new StrictDoubleValidator(-1e+10, 1e+20, 5);
+    scale_validator_ = new StrictDoubleValidator(-1e+10, 1e+20, 5);
     this->scalingEdit->setText("1.0");
-    this->scalingEdit->setValidator (_scale_validator);
+    this->scalingEdit->setValidator (scale_validator_);
 
-    for (auto mesh : _msh_vec)
+    for (auto mesh : msh_vec_)
     {
         this->meshBox->addItem(QString::fromStdString(mesh->getName()));
     }
@@ -44,7 +44,7 @@ CondFromRasterDialog::CondFromRasterDialog(std::vector<MeshLib::Mesh*> msh_vec,
 
 CondFromRasterDialog::~CondFromRasterDialog()
 {
-    delete _scale_validator;
+    delete scale_validator_;
 }
 
 void CondFromRasterDialog::on_selectButton_pressed()
@@ -88,7 +88,7 @@ void CondFromRasterDialog::accept()
     }
 
     MeshLib::Mesh* mesh(nullptr);
-    for (auto mesh_ : _msh_vec)
+    for (auto mesh_ : msh_vec_)
     {
         if (mesh_->getName() == mesh_name)
         {

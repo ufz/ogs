@@ -16,7 +16,7 @@ namespace GMSH
 {
 
 GMSHFixedMeshDensity::GMSHFixedMeshDensity(double mesh_density) :
-    _mesh_density(mesh_density)
+    mesh_density_(mesh_density)
 {
 }
 
@@ -29,13 +29,13 @@ void GMSHFixedMeshDensity::initialize(std::vector<GeoLib::Point const*> const& v
 double GMSHFixedMeshDensity::getMeshDensityAtPoint(
     GeoLib::Point const* const /*unused*/) const
 {
-    return _mesh_density;
+    return mesh_density_;
 }
 
 double GMSHFixedMeshDensity::getMeshDensityAtStation(
     GeoLib::Point const* const /*unused*/) const
 {
-    return _mesh_density;
+    return mesh_density_;
 }
 
 }  // namespace GMSH

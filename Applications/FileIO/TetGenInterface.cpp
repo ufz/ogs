@@ -112,7 +112,7 @@ std::size_t TetGenInterface::getNFacets(std::ifstream &input)
         const auto nFacets(BaseLib::str2number<std::size_t>(*it));
         if (fields.size() > 1)
         {
-            _boundary_markers = BaseLib::str2number<std::size_t>(*(++it)) != 0;
+            boundary_markers_ = BaseLib::str2number<std::size_t>(*(++it)) != 0;
         }
         return nFacets;
     }
@@ -129,7 +129,7 @@ bool TetGenInterface::parseSmeshFacets(std::ifstream &input,
     surfaces.reserve(nFacets);
     std::list<std::string>::const_iterator it;
 
-    const unsigned offset = (_zero_based_idx) ? 0 : 1;
+    const unsigned offset = (zero_based_idx_) ? 0 : 1;
     std::vector<std::size_t> idx_map;
 
     std::size_t k(0);
@@ -158,7 +158,7 @@ bool TetGenInterface::parseSmeshFacets(std::ifstream &input,
             return false;
         }
         std::vector<std::size_t> point_ids;
-        const std::size_t point_field_size = (_boundary_markers) ? nPoints+1 : nPoints;
+        const std::size_t point_field_size = (boundary_markers_) ? nPoints+1 : nPoints;
         if (point_fields.size() > point_field_size)
         {
             for (std::size_t j(0); j < nPoints; ++j)
@@ -168,7 +168,7 @@ bool TetGenInterface::parseSmeshFacets(std::ifstream &input,
                                offset]);
             }
 
-            const std::size_t sfc_marker = (_boundary_markers) ? BaseLib::str2number<std::size_t>(*(++it)) : 0;
+            const std::size_t sfc_marker = (boundary_markers_) ? BaseLib::str2number<std::size_t>(*(++it)) : 0;
             const std::size_t idx = std::find(idx_map.begin(), idx_map.end(), sfc_marker) - idx_map.begin();
             if (idx >= surfaces.size())
             {
@@ -355,7 +355,7 @@ bool TetGenInterface::parseNodes(std::ifstream &ins,
             id = BaseLib::str2number<std::size_t> (line.substr(pos_beg, pos_end - pos_beg));
             if (k == 0 && id == 0)
             {
-                _zero_based_idx = true;
+                zero_based_idx_ = true;
             }
         } else {
             ERR("TetGenInterface::parseNodes(): Error reading ID of node {:d}.",
@@ -363,7 +363,7 @@ bool TetGenInterface::parseNodes(std::ifstream &ins,
             return false;
         }
         // read coordinates
-        const unsigned offset = (_zero_based_idx) ? 0 : 1;
+        const unsigned offset = (zero_based_idx_) ? 0 : 1;
         for (std::size_t i(0); i < dim; i++) {
             pos_beg = line.find_first_not_of(' ', pos_end);
             pos_end = line.find_first_of(" \n", pos_beg);
@@ -487,7 +487,7 @@ bool TetGenInterface::parseElements(std::ifstream& ins,
     elements.reserve(n_tets);
     materials.reserve(n_tets);
 
-    const unsigned offset = (_zero_based_idx) ? 0 : 1;
+    const unsigned offset = (zero_based_idx_) ? 0 : 1;
     for (std::size_t k(0); k < n_tets && !ins.fail(); k++)
     {
         getline (ins, line);

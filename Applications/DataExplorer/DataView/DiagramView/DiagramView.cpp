@@ -18,37 +18,37 @@
 
 DiagramView::DiagramView(QWidget* parent) : QGraphicsView(parent)
 {
-    _scene = new DiagramScene();
-    setScene(_scene);
+    scene_ = new DiagramScene();
+    setScene(scene_);
     initialize();
 }
 
 DiagramView::DiagramView(DiagramList* list, QWidget* parent) : QGraphicsView(parent)
 {
-    _scene = new DiagramScene(list);
-    setScene(_scene);
+    scene_ = new DiagramScene(list);
+    setScene(scene_);
     initialize();
 }
 
 DiagramView::~DiagramView()
 {
-    delete _scene;
+    delete scene_;
 }
 
 void DiagramView::addGraph(DiagramList* list)
 {
-    _scene->addGraph(list);
+    scene_->addGraph(list);
     update();
 }
 
 int DiagramView::getHeight()
 {
-    return static_cast<int>((_scene->itemsBoundingRect()).height());
+    return static_cast<int>((scene_->itemsBoundingRect()).height());
 }
 
 int DiagramView::getWidth()
 {
-    return static_cast<int>((_scene->itemsBoundingRect()).width());
+    return static_cast<int>((scene_->itemsBoundingRect()).width());
 }
 
 /**
@@ -112,10 +112,10 @@ void DiagramView::resizeEvent(QResizeEvent* event)
 void DiagramView::update()
 {
     //setResizeAnchor(QGraphicsView::AnchorViewCenter);
-    QRectF viewRect = _scene->itemsBoundingRect();
-    _scene->setSceneRect(viewRect);
-    QRectF sceneInView(0 /*_scene->MARGIN*/, DiagramScene::MARGIN / 2,
-                       viewRect.width() /*+_scene->MARGIN*/,
+    QRectF viewRect = scene_->itemsBoundingRect();
+    scene_->setSceneRect(viewRect);
+    QRectF sceneInView(0 /*scene_->MARGIN*/, DiagramScene::MARGIN / 2,
+                       viewRect.width() /*+scene_->MARGIN*/,
                        viewRect.height() + DiagramScene::MARGIN);
     fitInView(sceneInView, Qt::IgnoreAspectRatio);
 }

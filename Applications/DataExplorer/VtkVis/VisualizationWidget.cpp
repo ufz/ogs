@@ -53,19 +53,19 @@ VisualizationWidget::VisualizationWidget(QWidget* parent /*= 0*/)
     this->setupUi(this);
 
     vtkNew<vtkRenderer> ren;
-    _vtkRender = ren;
+    vtkRender_ = ren;
 
     vtkNew<vtkGenericOpenGLRenderWindow> renderWindow;
     vtkWidget->SetRenderWindow(renderWindow);
     vtkWidget->GetRenderWindow()->AddRenderer(ren);
 
-    _interactorStyle = VtkCustomInteractorStyle::New();
-    renderWindow->GetInteractor()->SetInteractorStyle(_interactorStyle);
-    _interactorStyle->SetDefaultRenderer(ren);
+    interactorStyle_ = VtkCustomInteractorStyle::New();
+    renderWindow->GetInteractor()->SetInteractorStyle(interactorStyle_);
+    interactorStyle_->SetDefaultRenderer(ren);
 
-    _vtkPickCallback = VtkPickCallback::New();
+    vtkPickCallback_ = VtkPickCallback::New();
     vtkSmartPointer<vtkCellPicker> picker = vtkSmartPointer<vtkCellPicker>::New();
-    picker->AddObserver(vtkCommand::EndPickEvent, _vtkPickCallback);
+    picker->AddObserver(vtkCommand::EndPickEvent, vtkPickCallback_);
     renderWindow->GetInteractor()->SetPicker(picker);
 
     QSettings settings;
@@ -74,37 +74,37 @@ VisualizationWidget::VisualizationWidget(QWidget* parent /*= 0*/)
 
     // Create an orientation marker using vtkAxesActor
     vtkSmartPointer<vtkAxesActor> axesActor = vtkSmartPointer<vtkAxesActor>::New();
-    _markerWidget = vtkOrientationMarkerWidget::New();
-    _markerWidget->SetOrientationMarker(axesActor);
-    _markerWidget->SetInteractor(renderWindow->GetInteractor());
-    _markerWidget->EnabledOn();
-    _markerWidget->InteractiveOff();
+    markerWidget_ = vtkOrientationMarkerWidget::New();
+    markerWidget_->SetOrientationMarker(axesActor);
+    markerWidget_->SetInteractor(renderWindow->GetInteractor());
+    markerWidget_->EnabledOn();
+    markerWidget_->InteractiveOff();
 
-    _isShowAllOnLoad = settings.value("resetViewOnLoad", true).toBool();
+    isShowAllOnLoad_ = settings.value("resetViewOnLoad", true).toBool();
 
     // Set alternate cursor shapes
-    connect(_interactorStyle, SIGNAL(cursorChanged(Qt::CursorShape)),
+    connect(interactorStyle_, SIGNAL(cursorChanged(Qt::CursorShape)),
             this, SLOT(setCursorShape(Qt::CursorShape)));
 
-    connect((QObject*)_interactorStyle, SIGNAL(requestViewUpdate()),
+    connect((QObject*)interactorStyle_, SIGNAL(requestViewUpdate()),
             this, SLOT(updateView()));
 }
 
 VisualizationWidget::~VisualizationWidget()
 {
-    _vtkPickCallback->Delete();
-    _interactorStyle->Delete();
-    _markerWidget->Delete();
+    vtkPickCallback_->Delete();
+    interactorStyle_->Delete();
+    markerWidget_->Delete();
 }
 
 VtkCustomInteractorStyle* VisualizationWidget::interactorStyle() const
 {
-    return _interactorStyle;
+    return interactorStyle_;
 }
 
 VtkPickCallback* VisualizationWidget::vtkPickCallback() const
 {
-    return _vtkPickCallback;
+    return vtkPickCallback_;
 }
 
 void VisualizationWidget::updateView()
@@ -117,8 +117,8 @@ void VisualizationWidget::updateView()
 
 void VisualizationWidget::showAll(int x, int y, int z)
 {
-    _vtkRender->ResetCamera();
-    vtkCamera* cam = _vtkRender->GetActiveCamera();
+    vtkRender_->ResetCamera();
+    vtkCamera* cam = vtkRender_->GetActiveCamera();
     double* fp = cam->GetFocalPoint();
     double* p = cam->GetPosition();
     double dist = sqrt(vtkMath::Distance2BetweenPoints(p, fp));
@@ -137,7 +137,7 @@ void VisualizationWidget::showAll(int x, int y, int z)
 
 void VisualizationWidget::updateViewOnLoad()
 {
-    if (_isShowAllOnLoad)
+    if (isShowAllOnLoad_)
     {
         this->showAll(0, 0, 1);
     }
@@ -160,7 +160,7 @@ void VisualizationWidget::on_zoomToolButton_toggled( bool checked )
     }
     else
     {
-        vtkWidget->GetRenderWindow()->GetInteractor()->SetInteractorStyle(_interactorStyle);
+        vtkWidget->GetRenderWindow()->GetInteractor()->SetInteractorStyle(interactorStyle_);
         QCursor cursor;
         cursor.setShape(Qt::ArrowCursor);
         vtkWidget->setCursor(cursor);
@@ -169,12 +169,12 @@ void VisualizationWidget::on_zoomToolButton_toggled( bool checked )
 
 void VisualizationWidget::on_highlightToolButton_toggled(bool checked)
 {
-    _interactorStyle->setHighlightActor(checked);
+    interactorStyle_->setHighlightActor(checked);
 }
 
 void VisualizationWidget::on_orthogonalProjectionToolButton_toggled( bool checked )
 {
-    _vtkRender->GetActiveCamera()->SetParallelProjection(checked);
+    vtkRender_->GetActiveCamera()->SetParallelProjection(checked);
     this->updateView();
 }
 

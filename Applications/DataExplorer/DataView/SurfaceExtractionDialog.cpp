@@ -27,10 +27,10 @@ SurfaceExtractionDialog::SurfaceExtractionDialog(QDialog* parent)
 
 void SurfaceExtractionDialog::accept()
 {
-    _dir = MathLib::Vector3(xNormalEdit->text().toDouble(),
+    dir_ = MathLib::Vector3(xNormalEdit->text().toDouble(),
                             yNormalEdit->text().toDouble(),
                             zNormalEdit->text().toDouble());
-    _tolerance = degreesSpinBox->text().toInt();
+    tolerance_ = degreesSpinBox->text().toInt();
 
     this->done(QDialog::Accepted);
 }

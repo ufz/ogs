@@ -22,16 +22,16 @@
 #include "ProcessVarItem.h"
 
 ProcessModel::ProcessModel(DataHolderLib::Project& project, QObject* parent)
-    : TreeModel(parent), _project(project)
+    : TreeModel(parent), project_(project)
 {
     QList<QVariant> rootData;
-    delete _rootItem;
+    delete rootItem_;
     rootData << "Name"
              << "Value"
              << ""
              << ""
              << "";
-    _rootItem = new TreeItem(rootData, nullptr);
+    rootItem_ = new TreeItem(rootData, nullptr);
 }
 
 int ProcessModel::columnCount(QModelIndex const& parent) const
@@ -88,18 +88,18 @@ ProcessVarItem* ProcessModel::addProcessVar(QString const& name)
     beginResetModel();
     QList<QVariant> process_var_data;
     process_var_data << QVariant(name) << "";
-    auto* process_var = new ProcessVarItem(process_var_data, _rootItem);
-    _rootItem->appendChild(process_var);
+    auto* process_var = new ProcessVarItem(process_var_data, rootItem_);
+    rootItem_->appendChild(process_var);
     endResetModel();
     return process_var;
 }
 
 ProcessVarItem* ProcessModel::getProcessVarItem(QString const& name) const
 {
-    int const n_children(_rootItem->childCount());
+    int const n_children(rootItem_->childCount());
     for (int i = 0; i < n_children; ++i)
     {
-        auto* item(dynamic_cast<ProcessVarItem*>(_rootItem->child(i)));
+        auto* item(dynamic_cast<ProcessVarItem*>(rootItem_->child(i)));
         if (item != nullptr && item->getName() == name)
         {
             return item;
@@ -137,9 +137,9 @@ void ProcessModel::removeCondition(QString const& process_var,
     }
 
     removeCondition(pv_item, param);
-    _project.removeBoundaryCondition(process_var.toStdString(),
+    project_.removeBoundaryCondition(process_var.toStdString(),
                                      param.toStdString());
-    _project.removeSourceTerm(process_var.toStdString(), param.toStdString());
+    project_.removeSourceTerm(process_var.toStdString(), param.toStdString());
     endResetModel();
 }
 
@@ -159,24 +159,24 @@ void ProcessModel::removeProcessVariable(QString const& name)
                         static_cast<CondItem*>(pv_item->child(i))->getName());
     }
 
-    _project.removePrimaryVariable(name.toStdString());
+    project_.removePrimaryVariable(name.toStdString());
     int const idx = pv_item->row();
-    _rootItem->removeChildren(idx, 1);
+    rootItem_->removeChildren(idx, 1);
     endResetModel();
 }
 
 void ProcessModel::clearModel()
 {
-    int const n_process_vars = _rootItem->childCount();
+    int const n_process_vars = rootItem_->childCount();
     for (int i = n_process_vars; i >= 0; --i)
     {
-        auto* pv_item = dynamic_cast<ProcessVarItem*>(_rootItem->child(i));
+        auto* pv_item = dynamic_cast<ProcessVarItem*>(rootItem_->child(i));
         removeProcessVariable(pv_item->getName());
     }
 }
 
 void ProcessModel::updateModel()
 {
-    addBoundaryConditions(_project.getBoundaryConditions());
-    addSourceTerms(_project.getSourceTerms());
+    addBoundaryConditions(project_.getBoundaryConditions());
+    addSourceTerms(project_.getSourceTerms());
 }

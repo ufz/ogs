@@ -32,14 +32,14 @@
 MeshElementRemovalDialog::MeshElementRemovalDialog(
     DataHolderLib::Project const& project, QDialog* parent)
     : QDialog(parent),
-      _project(project),
-      _currentIndex(0),
-      _aabbIndex(std::numeric_limits<unsigned>::max()),
-      _scalarIndex(std::numeric_limits<unsigned>::max())
+      project_(project),
+      currentIndex_(0),
+      aabbIndex_(std::numeric_limits<unsigned>::max()),
+      scalarIndex_(std::numeric_limits<unsigned>::max())
 {
     setupUi(this);
 
-    auto const& mesh_vec(_project.getMeshObjects());
+    auto const& mesh_vec(project_.getMeshObjects());
 
     const std::size_t nMeshes (mesh_vec.size());
     for (std::size_t i=0; i<nMeshes; ++i)
@@ -67,7 +67,7 @@ void MeshElementRemovalDialog::accept()
 
     bool anything_checked (false);
 
-    const MeshLib::Mesh* msh = _project.getMesh(this->meshNameComboBox->currentText().toStdString());
+    const MeshLib::Mesh* msh = project_.getMesh(this->meshNameComboBox->currentText().toStdString());
     MeshLib::ElementSearch ex(*msh);
     if (this->elementTypeCheckBox->isChecked())
     {
@@ -117,7 +117,7 @@ void MeshElementRemovalDialog::accept()
     }
     if (this->boundingBoxCheckBox->isChecked())
     {
-        std::vector<MeshLib::Node*> const& nodes (_project.getMesh(this->meshNameComboBox->currentText().toStdString())->getNodes());
+        std::vector<MeshLib::Node*> const& nodes (project_.getMesh(this->meshNameComboBox->currentText().toStdString())->getNodes());
         GeoLib::AABB const aabb(nodes.begin(), nodes.end());
         auto minAABB = aabb.getMinPoint();
         auto maxAABB = aabb.getMaxPoint();
@@ -234,10 +234,10 @@ void MeshElementRemovalDialog::on_boundingBoxCheckBox_toggled(bool is_checked)
     this->yMinEdit->setEnabled(is_checked); this->yMaxEdit->setEnabled(is_checked);
     this->zMinEdit->setEnabled(is_checked); this->zMaxEdit->setEnabled(is_checked);
 
-    if (is_checked && (_currentIndex != _aabbIndex))
+    if (is_checked && (currentIndex_ != aabbIndex_))
     {
-        _aabbIndex = _currentIndex;
-        std::vector<MeshLib::Node*> const& nodes (_project.getMesh(this->meshNameComboBox->currentText().toStdString())->getNodes());
+        aabbIndex_ = currentIndex_;
+        std::vector<MeshLib::Node*> const& nodes (project_.getMesh(this->meshNameComboBox->currentText().toStdString())->getNodes());
         GeoLib::AABB aabb(nodes.begin(), nodes.end());
         auto const& minAABB = aabb.getMinPoint();
         auto const& maxAABB = aabb.getMaxPoint();
@@ -265,7 +265,7 @@ void MeshElementRemovalDialog::on_scalarArrayCheckBox_toggled(bool is_checked)
     }
 
     MeshLib::Mesh const* const mesh =
-        _project.getMesh(meshNameComboBox->currentText().toStdString());
+        project_.getMesh(meshNameComboBox->currentText().toStdString());
     if (addScalarArrays(*mesh) > 0)
     {
         enableScalarArrayWidgets(true);
@@ -281,7 +281,7 @@ void MeshElementRemovalDialog::on_scalarArrayCheckBox_toggled(bool is_checked)
 void MeshElementRemovalDialog::on_meshNameComboBox_currentIndexChanged(int idx)
 {
     Q_UNUSED(idx);
-    this->_currentIndex = this->meshNameComboBox->currentIndex();
+    this->currentIndex_ = this->meshNameComboBox->currentIndex();
     this->newMeshNameEdit->setText(this->meshNameComboBox->currentText() + "_new");
     this->elementTypeListWidget->clearSelection();
     this->scalarArrayComboBox->clear();
@@ -303,7 +303,7 @@ void MeshElementRemovalDialog::on_scalarArrayComboBox_currentIndexChanged(int id
     }
 
     MeshLib::Mesh const* const mesh =
-        _project.getMesh(meshNameComboBox->currentText().toStdString());
+        project_.getMesh(meshNameComboBox->currentText().toStdString());
     if (mesh == nullptr)
     {
         return;

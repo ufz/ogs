@@ -158,7 +158,7 @@ TestDefinition::TestDefinition(BaseLib::ConfigTree const& config_tree,
     // Construct command lines for each entry.
     //! \ogs_file_param{prj__test_definition__vtkdiff}
     auto const& vtkdiff_configs = config_tree.getConfigSubtreeList("vtkdiff");
-    _command_lines.reserve(vtkdiff_configs.size());
+    command_lines_.reserve(vtkdiff_configs.size());
     for (auto const& vtkdiff_config : vtkdiff_configs)
     {
         std::string const& field_name =
@@ -237,7 +237,7 @@ TestDefinition::TestDefinition(BaseLib::ConfigTree const& config_tree,
         {
             std::string const& output_filename =
                 BaseLib::joinPaths(output_directory, filename);
-            _output_files.push_back(output_filename);
+            output_files_.push_back(output_filename);
             std::string const& reference_filename =
                 BaseLib::joinPaths(reference_path, filename);
 
@@ -250,7 +250,7 @@ TestDefinition::TestDefinition(BaseLib::ConfigTree const& config_tree,
                 " " + safeString(output_filename) + " " +
                 absolute_tolerance_parameter + " " + relative_tolerance_parameter;
             INFO("Will run '{:s}'", command_line);
-            _command_lines.emplace_back(std::move(command_line));
+            command_lines_.emplace_back(std::move(command_line));
         }
     }
 }
@@ -258,7 +258,7 @@ TestDefinition::TestDefinition(BaseLib::ConfigTree const& config_tree,
 bool TestDefinition::runTests() const
 {
     std::vector<int> return_values;
-    transform(begin(_command_lines), end(_command_lines),
+    transform(begin(command_lines_), end(command_lines_),
               back_inserter(return_values),
               [](std::string const& command_line) {
                   int const return_value = std::system(command_line.c_str());
@@ -276,6 +276,6 @@ bool TestDefinition::runTests() const
 
 std::vector<std::string> const& TestDefinition::getOutputFiles() const
 {
-    return _output_files;
+    return output_files_;
 }
 }  // namespace ApplicationsLib

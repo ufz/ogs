@@ -29,21 +29,21 @@ VtkCompositeColorByHeightFilter::VtkCompositeColorByHeightFilter( vtkAlgorithm* 
 
 void VtkCompositeColorByHeightFilter::init()
 {
-    this->_inputDataObjectType = VTK_DATA_SET;
-    this->_outputDataObjectType = VTK_POLY_DATA;
+    this->inputDataObjectType_ = VTK_DATA_SET;
+    this->outputDataObjectType_ = VTK_POLY_DATA;
 
     vtkSmartPointer<vtkDataSetSurfaceFilter> surfaceFilter;
     VtkColorByHeightFilter* heightFilter = VtkColorByHeightFilter::New();
 
-    if (dynamic_cast<vtkUnstructuredGrid*>(_inputAlgorithm->GetOutputDataObject(0)))
+    if (dynamic_cast<vtkUnstructuredGrid*>(inputAlgorithm_->GetOutputDataObject(0)))
     {
         surfaceFilter = vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
-        surfaceFilter->SetInputConnection(_inputAlgorithm->GetOutputPort());
+        surfaceFilter->SetInputConnection(inputAlgorithm_->GetOutputPort());
         heightFilter->SetInputConnection(surfaceFilter->GetOutputPort());
     }
     else
     {
-        heightFilter->SetInputConnection(_inputAlgorithm->GetOutputPort());
+        heightFilter->SetInputConnection(inputAlgorithm_->GetOutputPort());
     }
 
     DataHolderLib::Color a{{0, 0, 255, 255}};    // blue
@@ -67,8 +67,8 @@ void VtkCompositeColorByHeightFilter::init()
     heightFilter->SetLookUpTable("P-Colors", ColorLookupTable);
     heightFilter->Update();
 
-    _outputAlgorithm = heightFilter;
-    _activeAttributeName = heightFilter->GetActiveAttribute();
+    outputAlgorithm_ = heightFilter;
+    activeAttributeName_ = heightFilter->GetActiveAttribute();
 }
 
 void VtkCompositeColorByHeightFilter::SetUserProperty( QString name, QVariant value )

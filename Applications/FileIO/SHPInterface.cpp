@@ -102,7 +102,7 @@ void SHPInterface::readPoints(const SHPHandle &hSHP, int numberOfElements, std::
             points->push_back(pnt);
         }
 
-        _geoObjects.addPointVec(std::move(points), listName);
+        geoObjects_.addPointVec(std::move(points), listName);
         SHPDestroyObject(hSHPObject); // de-allocate SHPObject
     }
 }
@@ -123,7 +123,7 @@ void SHPInterface::readStations(const SHPHandle &hSHP, int numberOfElements, std
             stations->push_back(stn);
         }
 
-        _geoObjects.addStationVec(std::move(stations), listName);
+        geoObjects_.addStationVec(std::move(stations), listName);
         SHPDestroyObject(hSHPObject); // de-allocate SHPObject
     }
 }
@@ -159,8 +159,8 @@ void SHPInterface::readPolylines(const SHPHandle &hSHP, int numberOfElements, st
         SHPDestroyObject(hSHPObject); // de-allocate SHPObject
     }
 
-    _geoObjects.addPointVec(std::move(pnts), listName);
-    GeoLib::PointVec const& points(*(_geoObjects.getPointVecObj(listName)));
+    geoObjects_.addPointVec(std::move(pnts), listName);
+    GeoLib::PointVec const& points(*(geoObjects_.getPointVecObj(listName)));
     std::vector<std::size_t> const& pnt_id_map(points.getIDMap());
 
     pnt_id = 0;
@@ -186,7 +186,7 @@ void SHPInterface::readPolylines(const SHPHandle &hSHP, int numberOfElements, st
         }
         SHPDestroyObject(hSHPObject); // de-allocate SHPObject
     }
-    _geoObjects.addPolylineVec(std::move(lines), listName);
+    geoObjects_.addPolylineVec(std::move(lines), listName);
 }
 
 void SHPInterface::readPolygons(const SHPHandle& hSHP, int numberOfElements,
@@ -195,12 +195,12 @@ void SHPInterface::readPolygons(const SHPHandle& hSHP, int numberOfElements,
 {
     readPolylines(hSHP, numberOfElements, listName);
 
-    auto const polylines = _geoObjects.getPolylineVec(listName);
+    auto const polylines = geoObjects_.getPolylineVec(listName);
 
     for (auto const* polyline : *polylines)
     {
         INFO("Creating a surface by triangulation of the polyline ...");
-        if (FileIO::createSurface(*polyline, _geoObjects, listName, gmsh_path))
+        if (FileIO::createSurface(*polyline, geoObjects_, listName, gmsh_path))
         {
             INFO("\t done");
         }

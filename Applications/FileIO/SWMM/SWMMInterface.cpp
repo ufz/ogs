@@ -112,16 +112,16 @@ std::unique_ptr<SwmmInterface> SwmmInterface::create(std::string const& file_nam
 }
 
 SwmmInterface::SwmmInterface(std::string const& swmm_base_name)
-: _base_name (swmm_base_name), _mesh(nullptr)
+: base_name_ (swmm_base_name), mesh_(nullptr)
 {
 }
 
 SwmmInterface::~SwmmInterface()
 {
-    for (Subcatchment& sc  : _subcatchments)
+    for (Subcatchment& sc  : subcatchments_)
         delete sc.outline;
 
-    for (GeoLib::Point* pnt : _subcatchment_points)
+    for (GeoLib::Point* pnt : subcatchment_points_)
         delete pnt;
 }
 
@@ -171,7 +171,7 @@ bool SwmmInterface::isSwmmInputFile(std::string const& inp_file_name)
 
 bool SwmmInterface::existsSwmmOutputFile() const
 {
-    std::string const outfile (_base_name + ".out");
+    std::string const outfile (base_name_ + ".out");
     if (OpenSwmmOutFile(const_cast<char*>(outfile.c_str())) != 0)
         return false;
     return true;
@@ -584,7 +584,7 @@ bool SwmmInterface::readLineElements(std::ifstream &in, std::vector<MeshLib::Ele
 
         std::array<MeshLib::Node*, 2> const line_nodes = { nodes[i_it->second], nodes[o_it->second] };
         elements.push_back(new MeshLib::Line(line_nodes));
-        _id_linkname_map.push_back(split_str[0]);
+        id_linkname_map_.push_back(split_str[0]);
     }
     return true;
 }
@@ -610,10 +610,10 @@ bool SwmmInterface::readSubcatchments(std::ifstream &in, std::map< std::string, 
         Subcatchment sc;
         sc.name = split_str[0];
         sc.rain_gauge = std::numeric_limits<std::size_t>::max();
-        std::size_t const n_gauges (_rain_gauges.size());
+        std::size_t const n_gauges (rain_gauges_.size());
         for (std::size_t i=0; i<n_gauges; ++i)
         {
-            if (_rain_gauges[i].first.getName() == split_str[1])
+            if (rain_gauges_[i].first.getName() == split_str[1])
             {
                 sc.rain_gauge = i;
                 break;
@@ -633,7 +633,7 @@ bool SwmmInterface::readSubcatchments(std::ifstream &in, std::map< std::string, 
         }
         sc.outlet = it->second;
         sc.area = BaseLib::str2number<double>(split_str[3]);
-        _subcatchments.push_back(sc);
+        subcatchments_.push_back(sc);
     }
 
     return true;
@@ -641,13 +641,13 @@ bool SwmmInterface::readSubcatchments(std::ifstream &in, std::map< std::string, 
 
 bool SwmmInterface::readSwmmInputToLineMesh()
 {
-    if (_mesh != nullptr)
+    if (mesh_ != nullptr)
     {
         ERR ("Mesh already exists.");
         return false;
     }
 
-    std::string const inp_file_name (_base_name + ".inp");
+    std::string const inp_file_name (base_name_ + ".inp");
     if (!isSwmmInputFile(inp_file_name))
         return false;
 
@@ -658,7 +658,7 @@ bool SwmmInterface::readSwmmInputToLineMesh()
         return false;
     }
 
-    _id_nodename_map.clear();
+    id_nodename_map_.clear();
     std::vector< MeshLib::Node* > nodes;
     std::string line;
     while ( getline(in, line) )
@@ -666,14 +666,14 @@ bool SwmmInterface::readSwmmInputToLineMesh()
         if (line == "[COORDINATES]")
         {
             INFO ("Reading coordinates...");
-            if (!readCoordinates<MeshLib::Node>(in, nodes, _id_nodename_map))
+            if (!readCoordinates<MeshLib::Node>(in, nodes, id_nodename_map_))
                 return false;
         }
         /* TODO: check if needed
         else if (line == "[VERTICES]")
         {
             INFO ("Reading vertices...");
-            if (!readCoordinates(in, nodes, _id_nodename_map))
+            if (!readCoordinates(in, nodes, id_nodename_map_))
                 return false;
         }
         */
@@ -687,7 +687,7 @@ bool SwmmInterface::readSwmmInputToLineMesh()
             for (std::size_t i=0; i<points.size(); ++i)
             {
                 GeoLib::Station stn (points[i], names[i]);
-                _rain_gauges.push_back(std::pair<GeoLib::Station, std::string>(stn, ""));
+                rain_gauges_.push_back(std::pair<GeoLib::Station, std::string>(stn, ""));
             }
         }
     }
@@ -700,7 +700,7 @@ bool SwmmInterface::readSwmmInputToLineMesh()
     std::map< std::string, std::size_t> name_id_map;
     std::size_t const n_nodes (nodes.size());
     for (std::size_t i=0; i<n_nodes; ++i)
-        name_id_map[_id_nodename_map[i]] = i;
+        name_id_map[id_nodename_map_[i]] = i;
     in.clear();
     in.seekg(0, in.beg);
 
@@ -712,7 +712,7 @@ bool SwmmInterface::readSwmmInputToLineMesh()
     {
         if (line == "[RAINGAGES]")
         {
-            if (!_rain_gauges.empty())
+            if (!rain_gauges_.empty())
                 addRainGaugeTimeSeriesLocations(in);
         }
         else if (line == "[SUBCATCHMENTS]")
@@ -779,7 +779,7 @@ bool SwmmInterface::readSwmmInputToLineMesh()
             std::vector<GeoLib::Polyline*> lines;
             std::vector<std::string> line_names;
             std::vector<std::string> tmp_names; // polygon points are nameless but the method requires a vector
-            if (!readPolygons(in, lines, line_names, _subcatchment_points, tmp_names))
+            if (!readPolygons(in, lines, line_names, subcatchment_points_, tmp_names))
                 return false;
 
             if (!matchSubcatchmentsWithPolygons(lines, line_names))
@@ -814,14 +814,14 @@ bool SwmmInterface::readSwmmInputToLineMesh()
     else
         ERR ("Size of max depth array does not fit number of elements. Skipping array.");
 
-    _mesh.reset(new MeshLib::Mesh(_base_name, nodes, elements, props));
+    mesh_.reset(new MeshLib::Mesh(base_name_, nodes, elements, props));
     return true;
 }
 
 bool SwmmInterface::matchSubcatchmentsWithPolygons(std::vector<GeoLib::Polyline*> const& lines, std::vector<std::string> const& names)
 {
     std::size_t const n_lines (lines.size());
-    std::size_t const n_subcatchments (_subcatchments.size());
+    std::size_t const n_subcatchments (subcatchments_.size());
 
     if (n_lines != n_subcatchments)
     {
@@ -833,9 +833,9 @@ bool SwmmInterface::matchSubcatchmentsWithPolygons(std::vector<GeoLib::Polyline*
         bool found = false;
         for (std::size_t j=0; j<n_subcatchments; ++j)
         {
-            if (names[i] == _subcatchments[j].name)
+            if (names[i] == subcatchments_[j].name)
             {
-                _subcatchments[j].outline = lines[i];
+                subcatchments_[j].outline = lines[i];
                 found = true;
                 break;
             }
@@ -852,8 +852,8 @@ bool SwmmInterface::matchSubcatchmentsWithPolygons(std::vector<GeoLib::Polyline*
 std::vector<std::string> SwmmInterface::getSubcatchmentNameMap() const
 {
     std::vector<std::string> names;
-    names.reserve(_subcatchments.size());
-    std::transform(_subcatchments.begin(), _subcatchments.end(),
+    names.reserve(subcatchments_.size());
+    std::transform(subcatchments_.begin(), subcatchments_.end(),
                    std::back_inserter(names),
                    [](auto const& sc) { return sc.name; });
     return names;
@@ -864,9 +864,9 @@ std::vector<std::string> SwmmInterface::getNames(SwmmObject obj_type) const
     switch (obj_type)
     {
     case SwmmObject::NODE:
-        return _id_nodename_map;
+        return id_nodename_map_;
     case SwmmObject::LINK:
-        return _id_linkname_map;
+        return id_linkname_map_;
     case SwmmObject::SUBCATCHMENT:
         return getSubcatchmentNameMap();
     case SwmmObject::SYSTEM:
@@ -883,14 +883,14 @@ std::string SwmmInterface::getName(SwmmObject obj_type, std::size_t idx) const
     switch (obj_type)
     {
     case SwmmObject::NODE:
-        if (idx < _id_nodename_map.size())
-            return _id_nodename_map[idx];
+        if (idx < id_nodename_map_.size())
+            return id_nodename_map_[idx];
     case SwmmObject::LINK:
-        if (idx < _id_linkname_map.size())
-            return _id_linkname_map[idx];
+        if (idx < id_linkname_map_.size())
+            return id_linkname_map_[idx];
     case SwmmObject::SUBCATCHMENT:
-        if (idx < _subcatchments.size())
-            return _subcatchments[idx].name;
+        if (idx < subcatchments_.size())
+            return subcatchments_[idx].name;
     case SwmmObject::SYSTEM:
         if (idx == 0)
             return std::string("System");
@@ -901,7 +901,7 @@ std::string SwmmInterface::getName(SwmmObject obj_type, std::size_t idx) const
 
 std::size_t SwmmInterface::getNumberOfObjects(SwmmObject obj_type) const
 {
-    std::string const outfile (_base_name + ".out");
+    std::string const outfile (base_name_ + ".out");
     if (OpenSwmmOutFile(const_cast<char*>(outfile.c_str())) != 0)
         return 0;
 
@@ -924,7 +924,7 @@ std::size_t SwmmInterface::getNumberOfObjects(SwmmObject obj_type) const
 
 std::size_t SwmmInterface::getNumberOfParameters(SwmmObject obj_type) const
 {
-    std::string const outfile (_base_name + ".out");
+    std::string const outfile (base_name_ + ".out");
     std::size_t n_time_steps (std::numeric_limits<std::size_t>::max());
     if (OpenSwmmOutFile(const_cast<char*>(outfile.c_str())) != 0)
         return 0;
@@ -953,7 +953,7 @@ std::size_t SwmmInterface::getNumberOfParameters(SwmmObject obj_type) const
 
 std::size_t SwmmInterface::getNumberOfTimeSteps() const
 {
-    std::string const outfile (_base_name + ".out");
+    std::string const outfile (base_name_ + ".out");
     if (OpenSwmmOutFile(const_cast<char*>(outfile.c_str())) != 0)
         return std::numeric_limits<std::size_t>::max();
     std::size_t const n_time_steps (static_cast<std::size_t>(SWMM_Nperiods));
@@ -1009,7 +1009,7 @@ bool SwmmInterface::addResultsToMesh(MeshLib::Mesh &mesh, SwmmObject const swmm_
 std::vector<double> SwmmInterface::getArrayAtTimeStep(SwmmObject obj_type, std::size_t time_step, std::size_t var_idx) const
 {
     std::vector<double> data;
-    std::string const outfile (_base_name + ".out");
+    std::string const outfile (base_name_ + ".out");
     if (OpenSwmmOutFile(const_cast<char*>(outfile.c_str())) != 0)
         return data;
 
@@ -1079,7 +1079,7 @@ std::vector<double> SwmmInterface::getArrayAtTimeStep(SwmmObject obj_type, std::
 std::vector<double> SwmmInterface::getArrayForObject(SwmmObject obj_type, std::size_t obj_idx, std::size_t var_idx) const
 {
     std::vector<double> data;
-    std::string const outfile (_base_name + ".out");
+    std::string const outfile (base_name_ + ".out");
     if (OpenSwmmOutFile(const_cast<char*>(outfile.c_str())) != 0)
         return data;
 
@@ -1150,7 +1150,7 @@ std::vector<double> SwmmInterface::getArrayForObject(SwmmObject obj_type, std::s
 
 std::string SwmmInterface::getArrayName(SwmmObject obj_type, std::size_t var_idx) const
 {
-    std::string const outfile (_base_name + ".out");
+    std::string const outfile (base_name_ + ".out");
     if (OpenSwmmOutFile(const_cast<char*>(outfile.c_str())) != 0)
         return std::string("");
 
@@ -1166,7 +1166,7 @@ std::string SwmmInterface::getArrayName(SwmmObject obj_type, std::size_t var_idx
         if (var_idx < n_obj_params[0])
             return subcatchment_vars[var_idx];
         if (var_idx < n_obj_params[0]+n_pollutants)
-            return _pollutant_names[var_idx-n_obj_params[0]];
+            return pollutant_names_[var_idx-n_obj_params[0]];
     }
     if (obj_type == SwmmObject::NODE)
     {
@@ -1174,7 +1174,7 @@ std::string SwmmInterface::getArrayName(SwmmObject obj_type, std::size_t var_idx
             return node_vars[var_idx];
         if (var_idx < n_obj_params[1]+n_pollutants)
             return std::string("Node_" +
-                               _pollutant_names[var_idx - n_obj_params[1]]);
+                               pollutant_names_[var_idx - n_obj_params[1]]);
     }
     if (obj_type == SwmmObject::LINK)
     {
@@ -1182,7 +1182,7 @@ std::string SwmmInterface::getArrayName(SwmmObject obj_type, std::size_t var_idx
             return link_vars[var_idx];
         if (var_idx < n_obj_params[2]+n_pollutants)
             return std::string("Link_" +
-                               _pollutant_names[var_idx - n_obj_params[2]]);
+                               pollutant_names_[var_idx - n_obj_params[2]]);
     }
     if (obj_type == SwmmObject::SYSTEM && var_idx < n_obj_params[3])
     {
@@ -1210,14 +1210,14 @@ bool SwmmInterface::addRainGaugeTimeSeriesLocations(std::ifstream &in)
             return false;
         }
 
-        for (auto& stn : _rain_gauges)
+        for (auto& stn : rain_gauges_)
         {
             if (stn.first.getName() == split_str[0] && split_str[4] == "FILE")
                 stn.second = split_str[5].substr(1, split_str[5].size()-2);
         }
     }
 
-    for (auto const& stn : _rain_gauges)
+    for (auto const& stn : rain_gauges_)
         if (stn.second.empty())
             WARN("No associated time series found for rain gauge '{:s}'.",
                  stn.first.getName());
@@ -1241,7 +1241,7 @@ bool SwmmInterface::readPollutants(std::ifstream &in)
             ERR ("Parameter format for pollutants not recognised.");
             return false;
         }
-        _pollutant_names.push_back(split_str[0]);
+        pollutant_names_.push_back(split_str[0]);
     }
     return true;
 }
@@ -1265,7 +1265,7 @@ bool SwmmInterface::isCommentLine(std::string const& str)
 
 bool SwmmInterface::getNodeCoordinateVectors(std::vector<double> &x, std::vector<double> &y, std::vector<double> &z) const
 {
-    std::vector<MeshLib::Node*> const& nodes (_mesh->getNodes());
+    std::vector<MeshLib::Node*> const& nodes (mesh_->getNodes());
     for (MeshLib::Node const*const node : nodes)
     {
         x.push_back((*node)[0]);
@@ -1277,7 +1277,7 @@ bool SwmmInterface::getNodeCoordinateVectors(std::vector<double> &x, std::vector
 
 bool SwmmInterface::getLinkPointIds(std::vector<std::size_t> &inlets, std::vector<std::size_t> &outlets) const
 {
-    std::vector<MeshLib::Element*> const& elements (_mesh->getElements());
+    std::vector<MeshLib::Element*> const& elements (mesh_->getElements());
     for (MeshLib::Element const*const elem : elements)
     {
         if (elem->getGeomType() != MeshLib::MeshElemType::LINE)

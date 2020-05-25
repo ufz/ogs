@@ -17,24 +17,24 @@ namespace FileIO
 {
 namespace GMSH
 {
-GMSHLineLoop::GMSHLineLoop(bool is_sfc) : _is_sfc(is_sfc) {}
+GMSHLineLoop::GMSHLineLoop(bool is_sfc) : is_sfc_(is_sfc) {}
 
 GMSHLineLoop::~GMSHLineLoop()
 {
-    const std::size_t n_lines(_lines.size());
+    const std::size_t n_lines(lines_.size());
     for (std::size_t k(0); k < n_lines; k++)
     {
-        delete _lines[k];
+        delete lines_[k];
     }
 }
 
 void GMSHLineLoop::write(std::ostream& os, std::size_t line_offset,
                          std::size_t sfc_offset) const
 {
-    const std::size_t n_lines(_lines.size());
+    const std::size_t n_lines(lines_.size());
     for (std::size_t k(0); k < n_lines; k++)
     {
-        (_lines[k])->write(os, line_offset + k);
+        (lines_[k])->write(os, line_offset + k);
     }
     os << "Line Loop(" << line_offset + n_lines << ") = {";
     for (std::size_t k(0); k < n_lines - 1; k++)
@@ -43,7 +43,7 @@ void GMSHLineLoop::write(std::ostream& os, std::size_t line_offset,
     }
     os << line_offset + n_lines - 1 << "};\n";
 
-    if (_is_sfc)
+    if (is_sfc_)
     {
         // write plane surface
         os << "Plane Surface (" << sfc_offset << ") = {"

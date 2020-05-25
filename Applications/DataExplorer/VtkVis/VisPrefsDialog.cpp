@@ -25,20 +25,20 @@
 VisPrefsDialog::VisPrefsDialog(VtkVisPipeline &pipeline,
                                VisualizationWidget &widget,
                                QDialog* parent) :
-    QDialog(parent), _vtkVisPipeline(pipeline), _visWidget(widget),
-    _above(0,0,2000000), _below(0,0,-2000000)
+    QDialog(parent), vtkVisPipeline_(pipeline), visWidget_(widget),
+    above_(0,0,2000000), below_(0,0,-2000000)
 {
     setupUi(this);
-    if (_vtkVisPipeline.getLight(_above))
+    if (vtkVisPipeline_.getLight(above_))
     {
         lightAboveBox->toggle();
     }
-    if (_vtkVisPipeline.getLight(_below))
+    if (vtkVisPipeline_.getLight(below_))
     {
         lightBelowBox->toggle();
     }
 
-    bgColorButton->setColor(_vtkVisPipeline.getBGColor());
+    bgColorButton->setColor(vtkVisPipeline_.getBGColor());
 
     QValidator* validator = new QDoubleValidator(0, 100000, 2, this);
     superelevationLineEdit->setValidator(validator);
@@ -51,18 +51,18 @@ VisPrefsDialog::VisPrefsDialog(VtkVisPipeline &pipeline,
 void VisPrefsDialog::on_bgColorButton_colorPicked( QColor color )
 {
     QColor bgColor(color.red(), color.green(), color.blue());
-    _vtkVisPipeline.setBGColor(bgColor);
+    vtkVisPipeline_.setBGColor(bgColor);
 }
 
 void VisPrefsDialog::on_lightAboveBox_clicked()
 {
     if (lightAboveBox->isChecked())
     {
-        _vtkVisPipeline.addLight(_above);
+        vtkVisPipeline_.addLight(above_);
     }
     else
     {
-        _vtkVisPipeline.removeLight(_above);
+        vtkVisPipeline_.removeLight(above_);
     }
 }
 
@@ -70,18 +70,18 @@ void VisPrefsDialog::on_lightBelowBox_clicked()
 {
     if (lightBelowBox->isChecked())
     {
-        _vtkVisPipeline.addLight(_below);
+        vtkVisPipeline_.addLight(below_);
     }
     else
     {
-        _vtkVisPipeline.removeLight(_below);
+        vtkVisPipeline_.removeLight(below_);
     }
 }
 
 void VisPrefsDialog::on_superelevationPushButton_pressed()
 {
     double factor = superelevationLineEdit->text().toDouble();
-    _vtkVisPipeline.setGlobalSuperelevation(factor);
+    vtkVisPipeline_.setGlobalSuperelevation(factor);
 
     QSettings settings;
     settings.setValue("globalSuperelevation", factor);
@@ -89,8 +89,8 @@ void VisPrefsDialog::on_superelevationPushButton_pressed()
 
 void VisPrefsDialog::on_loadShowAllCheckBox_stateChanged(int state)
 {
-    _visWidget.setShowAllOnLoad(static_cast<bool>(state));
-    _vtkVisPipeline.resetCameraOnAddOrRemove(static_cast<bool>(state));
+    visWidget_.setShowAllOnLoad(static_cast<bool>(state));
+    vtkVisPipeline_.resetCameraOnAddOrRemove(static_cast<bool>(state));
 
     QSettings settings;
     settings.setValue("resetViewOnLoad", state);
@@ -98,7 +98,7 @@ void VisPrefsDialog::on_loadShowAllCheckBox_stateChanged(int state)
 
 void VisPrefsDialog::on_cullBackfacesCheckBox_stateChanged(int state)
 {
-    _vtkVisPipeline.setGlobalBackfaceCulling(static_cast<bool>(state));
+    vtkVisPipeline_.setGlobalBackfaceCulling(static_cast<bool>(state));
 
     QSettings settings;
     settings.setValue("globalCullBackfaces", state);

@@ -21,37 +21,37 @@
 
 RecentFiles::RecentFiles(QObject* parent, const char* slot,
                          QString settingsName)
-    : QObject(parent), _settingsName(std::move(settingsName))
+    : QObject(parent), settingsName_(std::move(settingsName))
 {
-    _filesMenu = new QMenu(tr("Recent files"));
-    for (auto& fileAction : _fileActions)
+    filesMenu_ = new QMenu(tr("Recent files"));
+    for (auto& fileAction : fileActions_)
     {
         fileAction = new QAction(this);
         fileAction->setVisible(false);
         connect(fileAction, SIGNAL(triggered()), parent, slot);
-        _filesMenu->addAction(fileAction);
+        filesMenu_->addAction(fileAction);
     }
     updateRecentFileActions();
 }
 
 RecentFiles::~RecentFiles()
 {
-    delete _filesMenu;
+    delete filesMenu_;
 }
 
 QMenu* RecentFiles::menu()
 {
-    return _filesMenu;
+    return filesMenu_;
 }
 void RecentFiles::setCurrentFile( const QString& filename )
 {
-    _currentFile = filename;
+    currentFile_ = filename;
 
     QSettings settings;
-    QStringList files = settings.value(_settingsName).toStringList();
+    QStringList files = settings.value(settingsName_).toStringList();
     files.removeAll(filename);
     files.prepend(filename);
-    while (files.size() > _maxFiles)
+    while (files.size() > maxFiles_)
     {
         files.removeLast();
     }
@@ -63,21 +63,21 @@ void RecentFiles::setCurrentFile( const QString& filename )
 void RecentFiles::updateRecentFileActions()
 {
     QSettings settings;
-    QStringList files = settings.value(_settingsName).toStringList();
+    QStringList files = settings.value(settingsName_).toStringList();
 
-    int numFiles = qMin(files.size(), static_cast<int>(_maxFiles));
+    int numFiles = qMin(files.size(), static_cast<int>(maxFiles_));
 
     for (int i = 0; i < numFiles; ++i)
     {
         QString text = tr("&%1 %2").arg(i + 1).arg(strippedName(files[i]));
-        _fileActions[i]->setText(text);
-        _fileActions[i]->setData(files[i]);
-        _fileActions[i]->setVisible(true);
+        fileActions_[i]->setText(text);
+        fileActions_[i]->setData(files[i]);
+        fileActions_[i]->setVisible(true);
     }
 
-    for (int i = numFiles; i < _maxFiles; ++i)
+    for (int i = numFiles; i < maxFiles_; ++i)
     {
-        _fileActions[i]->setVisible(false);
+        fileActions_[i]->setVisible(false);
     }
 }
 

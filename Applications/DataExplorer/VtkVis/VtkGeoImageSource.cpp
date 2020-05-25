@@ -61,9 +61,9 @@ VtkGeoImageSource::VtkGeoImageSource() = default;
 
 VtkGeoImageSource::~VtkGeoImageSource()
 {
-    if (_imageSource)
+    if (imageSource_)
     {
-        _imageSource->Delete();
+        imageSource_->Delete();
     }
 }
 
@@ -85,14 +85,14 @@ bool VtkGeoImageSource::readImage(const QString &filename)
 
 void VtkGeoImageSource::setImage(vtkImageAlgorithm* image, const QString &name)
 {
-    this->_imageSource = image;
-    this->SetInputConnection(_imageSource->GetOutputPort());
+    this->imageSource_ = image;
+    this->SetInputConnection(imageSource_->GetOutputPort());
     this->SetName(name);
 }
 
 vtkImageData* VtkGeoImageSource::getImageData()
 {
-    return this->_imageSource->GetImageDataInput(0);
+    return this->imageSource_->GetImageDataInput(0);
 }
 
 void VtkGeoImageSource::SimpleExecute(vtkImageData* input, vtkImageData* output)

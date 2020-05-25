@@ -21,13 +21,13 @@ ColorPickerPushButton::ColorPickerPushButton( QWidget* parent /*= 0*/ )
     : QPushButton(parent)
 {
     setAutoFillBackground(true);
-    _color = QColor("white");
+    color_ = QColor("white");
 }
 
 void ColorPickerPushButton::mouseReleaseEvent(QMouseEvent* e)
 {
     Q_UNUSED(e);
-    QColor newColor = QColorDialog::getColor(_color, nullptr, "Choose a color");
+    QColor newColor = QColorDialog::getColor(color_, nullptr, "Choose a color");
     if (!newColor.isValid())
     {
         return;
@@ -35,7 +35,7 @@ void ColorPickerPushButton::mouseReleaseEvent(QMouseEvent* e)
 
     setColor(newColor);
 
-    emit colorPicked(_color);
+    emit colorPicked(color_);
 }
 
 QString ColorPickerPushButton::colorToCss( QColor color )
@@ -61,10 +61,10 @@ QString ColorPickerPushButton::colorToString( QColor color )
 
 void ColorPickerPushButton::setColor( QColor color )
 {
-    _color = color;
+    color_ = color;
 
     // Compute text color
-    QColor hsv = _color.toHsv();
+    QColor hsv = color_.toHsv();
     QString textColorStr;
     if (hsv.valueF() < 0.5f)
     {
@@ -76,12 +76,12 @@ void ColorPickerPushButton::setColor( QColor color )
     }
 
     QString stylesheetStr = "background-color: ";
-    stylesheetStr.append(colorToCss(_color));
+    stylesheetStr.append(colorToCss(color_));
     stylesheetStr.append(";");
     stylesheetStr.append(textColorStr);
     this->setStyleSheet(stylesheetStr);
 
-    this->setText(colorToString(_color));
+    this->setText(colorToString(color_));
 }
 
 void ColorPickerPushButton::setColor( double* color )

@@ -18,7 +18,7 @@ LinearEditDialog::LinearEditDialog(const GeoLib::Polyline &line,
                                    const std::vector<std::size_t> &dis_nodes,
                                    const std::vector<double> &dis_values,
                                    QDialog* parent)
-    : QDialog(parent), _line(line)
+    : QDialog(parent), line_(line)
 {
     setupUi(this);
     setupDialog(dis_nodes, dis_values);
@@ -27,7 +27,7 @@ LinearEditDialog::LinearEditDialog(const GeoLib::Polyline &line,
 void LinearEditDialog::setupDialog(const std::vector<std::size_t> &dis_nodes,
                                    const std::vector<double> &dis_values)
 {
-    std::size_t nPoints(_line.getNumberOfPoints());
+    std::size_t nPoints(line_.getNumberOfPoints());
     this->tableWidget->setRowCount(nPoints);
     QList<QString> indexlist;
 
@@ -58,7 +58,7 @@ void LinearEditDialog::on_comboBox_currentIndexChanged(int index)
         for (std::size_t i = 0; i < nRows; i++)
         {
             tableWidget->item(i, 0)->setText(
-                QString::number(_line.getPoint(i)->getCoords()[2]));
+                QString::number(line_.getPoint(i)->getCoords()[2]));
         }
     }
 }

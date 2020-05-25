@@ -24,16 +24,16 @@
 #include <QTextStream>
 #include <limits>
 
-DiagramList::DiagramList() : _xLabel(""), _yLabel(""), _xUnit(""), _yUnit("") {}
+DiagramList::DiagramList() : xLabel_(""), yLabel_(""), xUnit_(""), yUnit_("") {}
 
 DiagramList::~DiagramList() = default;
 
 float DiagramList::calcMinXValue()
 {
     auto min = std::min_element(
-        _coords.begin(), _coords.end(),
+        coords_.begin(), coords_.end(),
         [](auto const& c0, auto const& c1) { return c0.first < c1.first; });
-    if (min != _coords.end())
+    if (min != coords_.end())
     {
         return min->first;
     }
@@ -43,12 +43,12 @@ float DiagramList::calcMinXValue()
 float DiagramList::calcMaxXValue()
 {
     float max = std::numeric_limits<float>::lowest();
-    std::size_t nCoords = _coords.size();
+    std::size_t nCoords = coords_.size();
     for (std::size_t i = 0; i < nCoords; i++)
     {
-        if (_coords[i].first > max)
+        if (coords_[i].first > max)
         {
-            max = _coords[i].first;
+            max = coords_[i].first;
         }
     }
     return max;
@@ -57,12 +57,12 @@ float DiagramList::calcMaxXValue()
 float DiagramList::calcMinYValue()
 {
     float min = std::numeric_limits<float>::max();
-    std::size_t nCoords = _coords.size();
+    std::size_t nCoords = coords_.size();
     for (std::size_t i = 0; i < nCoords; i++)
     {
-        if (_coords[i].second < min)
+        if (coords_[i].second < min)
         {
-            min = _coords[i].second;
+            min = coords_[i].second;
         }
     }
     return min;
@@ -71,12 +71,12 @@ float DiagramList::calcMinYValue()
 float DiagramList::calcMaxYValue()
 {
     float max = std::numeric_limits<float>::lowest();
-    std::size_t nCoords = _coords.size();
+    std::size_t nCoords = coords_.size();
     for (std::size_t i = 0; i < nCoords; i++)
     {
-        if (_coords[i].second > max)
+        if (coords_[i].second > max)
         {
-            max = _coords[i].second;
+            max = coords_[i].second;
         }
     }
     return max;
@@ -90,7 +90,7 @@ bool DiagramList::getPath(QPainterPath &path, float scaleX, float scaleY)
         QPainterPath pp(QPointF(p.x() * scaleX, p.y() * scaleY));
         path = pp;
 
-        std::size_t nCoords = _coords.size();
+        std::size_t nCoords = coords_.size();
         for (std::size_t i = 1; i < nCoords; i++)
         {
             getPoint(p, i);
@@ -104,10 +104,10 @@ bool DiagramList::getPath(QPainterPath &path, float scaleX, float scaleY)
 
 bool DiagramList::getPoint(QPointF &p, std::size_t i)
 {
-    if (i < _coords.size())
+    if (i < coords_.size())
     {
-        p.setX(_coords[i].first);
-        p.setY(_coords[i].second);
+        p.setX(coords_[i].first);
+        p.setY(coords_[i].second);
         return true;
     }
 
@@ -316,30 +316,30 @@ int DiagramList::readList(const SensorData* data, std::vector<DiagramList*> &lis
 
 void DiagramList::truncateToRange(QDateTime const& start, QDateTime const& end)
 {
-    auto start_secs = static_cast<float>(_startDate.secsTo(start));
+    auto start_secs = static_cast<float>(startDate_.secsTo(start));
     if (start_secs < 0)
     {
         start_secs = 0;
     }
-    auto end_secs = static_cast<float>(_startDate.secsTo(end));
+    auto end_secs = static_cast<float>(startDate_.secsTo(end));
     if (end_secs < start_secs)
     {
-        end_secs = _coords.back().first;
+        end_secs = coords_.back().first;
     }
 
-    if (start_secs == 0 && end_secs == _coords.back().first)
+    if (start_secs == 0 && end_secs == coords_.back().first)
     {
         return;
     }
 
-    _coords.erase(
-        std::remove_if(_coords.begin(), _coords.end(),
+    coords_.erase(
+        std::remove_if(coords_.begin(), coords_.end(),
                        [&](std::pair<float, float> const& c) {
                            return (c.first < start_secs || c.first > end_secs);
                        }),
-        _coords.end());
-    _startDate = start;
-    for (auto& c : _coords)
+        coords_.end());
+    startDate_ = start;
+    for (auto& c : coords_)
     {
         c.first -= start_secs;
     }
@@ -354,11 +354,11 @@ void DiagramList::setList(
         return;
     }
 
-    _startDate = coords[0].first;
-    std::transform(coords.begin(), coords.end(), std::back_inserter(_coords),
+    startDate_ = coords[0].first;
+    std::transform(coords.begin(), coords.end(), std::back_inserter(coords_),
                    [this](auto const& p) {
                        return std::make_pair(
-                           static_cast<float>(_startDate.daysTo(p.first)),
+                           static_cast<float>(startDate_.daysTo(p.first)),
                            p.second);
                    });
 
@@ -372,22 +372,22 @@ void DiagramList::setList(std::vector<std::pair<float, float>> const& coords)
         return;
     }
 
-    this->_startDate = QDateTime();
-    std::copy(coords.begin(), coords.end(), std::back_inserter(_coords));
+    this->startDate_ = QDateTime();
+    std::copy(coords.begin(), coords.end(), std::back_inserter(coords_));
     update();
 }
 
 std::size_t DiagramList::size() const
 {
-    return _coords.size();
+    return coords_.size();
 }
 
 void DiagramList::update()
 {
-    _minX = calcMinXValue();
-    _maxX = calcMaxXValue();
-    _minY = calcMinYValue();
-    _maxY = calcMaxYValue();
+    minX_ = calcMinXValue();
+    maxX_ = calcMaxXValue();
+    minY_ = calcMinYValue();
+    maxY_ = calcMaxYValue();
 }
 
 
